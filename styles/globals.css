@@ -24,3 +24,23 @@ a {
     background: black;
   }
 }
+
+.background {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-repeat: no-repeat;
+
+  background-color: #562a3b;
+  background-size: 100% auto;
+  background-image: url("/background.svg");
+  background-position: center top;
+
+  filter: brightness(1) hue-rotate(0deg);
+  transition: 3s filter linear, 3s -webkit-filter linear;
+
+  /* &.night {
+      filter: brightness(0.3) hue-rotate(-82deg);
+  } */
+}
