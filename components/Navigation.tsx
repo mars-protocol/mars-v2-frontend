@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const Navigation = () => {
   return (
-    <div className="flex items-center px-6 py-2">
+    <div className="flex justify-between items-center px-6 py-3">
       <Link href="/" passHref>
         <a>
           <img src="/logo.svg" alt="mars" />
@@ -16,6 +16,12 @@ const Navigation = () => {
         <Link href="/portfolio">Portfolio</Link>
         <Link href="/council">Council</Link>
       </div>
+      <button
+        className="rounded-3xl bg-green-500 py-2 px-3 font-semibold"
+        onClick={() => alert("TODO")}
+      >
+        Connect Wallet
+      </button>
     </div>
   );
 };
