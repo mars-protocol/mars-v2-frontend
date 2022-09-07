@@ -2,6 +2,8 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import SearchInput from "components/SearchInput";
+
 const mockedAccounts = [
   {
     label: "Subaccount 1",
@@ -58,16 +60,17 @@ const Navigation = () => (
     </div>
     {/* Sub navigation bar */}
     <div className="flex justify-between px-6 py-3 text-sm text-white/40">
-      <div className="flex">
+      <div className="flex items-center">
+        <SearchInput />
         {mockedAccounts.map((account, index) => (
-          <div key={index} className="px-4">
+          <div key={index} className="px-4 hover:text-white cursor-pointer">
             {account.label}
           </div>
         ))}
-        <div className="px-3 ">More</div>
+        <div className="px-3">More</div>
         <div className="px-3">Manage</div>
       </div>
-      <div className="flex gap-4">
+      <div className="flex gap-4 items-center">
         <p>$: 2500</p>
         <div>Lvg Gauge</div>
         <div>Risk Gauge</div>
