@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 import SearchInput from "components/SearchInput";
-import ConnectModal from "./ConnectModal";
+import Wallet from "./Wallet";
 
 const mockedAccounts = [
   {
@@ -37,8 +37,6 @@ const NavLink = ({ href, children }: { href: string; children: string }) => {
 };
 
 const Navigation = () => {
-  const [showConnectModal, setShowConnectModal] = useState(false);
-
   return (
     <div>
       {/* Main navigation bar */}
@@ -55,12 +53,7 @@ const Navigation = () => {
           <NavLink href="/portfolio">Portfolio</NavLink>
           <NavLink href="/council">Council</NavLink>
         </div>
-        <button
-          className="rounded-3xl bg-green-500 py-2 px-3 font-semibold"
-          onClick={() => setShowConnectModal(true)}
-        >
-          Connect Wallet
-        </button>
+        <Wallet />
       </div>
       {/* Sub navigation bar */}
       <div className="flex justify-between px-6 py-3 text-sm text-white/40">
@@ -80,10 +73,6 @@ const Navigation = () => {
           <div>Risk Gauge</div>
         </div>
       </div>
-      <ConnectModal
-        isOpen={showConnectModal}
-        onClose={() => setShowConnectModal(false)}
-      />
     </div>
   );
 };
