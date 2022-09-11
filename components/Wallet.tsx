@@ -1,6 +1,7 @@
 // import { useWalletManager, useWallet } from "@cosmos-kit/react";
 import React, { useState } from "react";
 import { Popover } from "@headlessui/react";
+import { toast } from "react-toastify";
 // import { useConnectedMetaMask } from "metamask-react";
 
 import { formatWalletAddress } from "utils/formatters";
@@ -33,8 +34,7 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
             className="flex items-center text-gray-500 hover:text-gray-700 text-sm"
             onClick={() => {
               navigator.clipboard.writeText(address).then(() => {
-                // TODO: replace with toastr
-                alert("Copied to clipboard");
+                toast.success("Address copied to your clipboard");
               });
             }}
           >

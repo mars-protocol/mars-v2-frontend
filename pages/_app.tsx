@@ -1,6 +1,6 @@
 import type { AppProps } from "next/app";
 import Head from "next/head";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, Zoom } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 // import { ChainInfoID } from "@cosmos-kit/types";
 // import { WalletManagerProvider } from "@cosmos-kit/react";
@@ -78,6 +78,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           icon={false}
           newestOnTop
           theme="colored"
+          transition={Zoom}
         />
       </WalletProvider>
       {/* </WalletManagerProvider>
