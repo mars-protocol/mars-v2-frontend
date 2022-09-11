@@ -13,7 +13,9 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <Popover className="relative">
-      <Popover.Button>{children}</Popover.Button>
+      <Popover.Button className="rounded-3xl bg-green-500 py-2 px-3 font-semibold w-[200px] overflow-hidden text-ellipsis">
+        {children}
+      </Popover.Button>
 
       <Popover.Panel className="absolute z-10 right-0 pt-2">
         <div className="bg-white rounded-2xl p-6 text-gray-900">
@@ -74,11 +76,7 @@ const Wallet = () => {
   return (
     <>
       {address ? (
-        <WalletPopover>
-          <button className="rounded-3xl bg-green-500 py-2 px-3 font-semibold w-[200px] overflow-hidden text-ellipsis">
-            {formatWalletAddress(address)}
-          </button>
-        </WalletPopover>
+        <WalletPopover>{formatWalletAddress(address)}</WalletPopover>
       ) : (
         <button
           className="rounded-3xl bg-green-500 py-2 px-3 font-semibold w-[200px]"
