@@ -10,13 +10,15 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.0",
+    "@keplr-wallet/cosmos": "^0.10.24",
     "@metamask/detect-provider": "^1.2.0",
     "@sentry/nextjs": "^7.12.1",
     "bech32": "^2.0.0",
     "ethereumjs-util": "^7.1.5",
     "next": "12.2.5",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-toastify": "^9.0.8"
   },
   "devDependencies": {
     "@keplr-wallet/types": "^0.10.24",

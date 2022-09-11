@@ -1,5 +1,7 @@
 import type { AppProps } from "next/app";
 import Head from "next/head";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.min.css";
 // import { ChainInfoID } from "@cosmos-kit/types";
 // import { WalletManagerProvider } from "@cosmos-kit/react";
 // import { Bech32Address } from "@keplr-wallet/cosmos";
@@ -68,6 +70,15 @@ function MyApp({ Component, pageProps }: AppProps) {
         <Layout>
           <Component {...pageProps} />
         </Layout>
+        <ToastContainer
+          autoClose={1500}
+          closeButton={false}
+          position="bottom-right"
+          hideProgressBar
+          icon={false}
+          newestOnTop
+          theme="colored"
+        />
       </WalletProvider>
       {/* </WalletManagerProvider>
       </MetaMaskProvider> */}

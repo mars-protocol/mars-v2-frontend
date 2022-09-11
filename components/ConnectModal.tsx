@@ -1,9 +1,12 @@
 import React, { Fragment, useState } from "react";
 import Image from "next/image";
 import { Dialog, Transition } from "@headlessui/react";
+import { toast } from "react-toastify";
 
 import { getInjectiveAddress } from "utils/address";
 import { useWallet } from "hooks/useWallet";
+import { getExperimentalChainConfigBasedOnChainId } from "utils/experimental-chains";
+import { ChainId } from "types";
 
 type Props = {
   isOpen: boolean;
@@ -26,14 +29,19 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
 
   const handleConnectKeplr = async () => {
     if (!window.keplr) {
-      alert("Missing Keplr extension!");
+      toast.error("Missing Keplr extension!");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      const key = await window.keplr.getKey("injective-1");
+      const chainData = getExperimentalChainConfigBasedOnChainId(
+        ChainId.Mainnet
+      );
+      await window.keplr.experimentalSuggestChain(chainData);
+
+      const key = await window.keplr.getKey(ChainId.Mainnet);
       setAddress(key.bech32Address);
       handleConnectSuccess();
     } catch (e) {
