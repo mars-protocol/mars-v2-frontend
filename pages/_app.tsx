@@ -48,9 +48,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           closeButton={false}
           position="bottom-right"
           hideProgressBar
-          icon={false}
           newestOnTop
-          theme="colored"
           transition={Zoom}
         />
       </QueryClientProvider>
