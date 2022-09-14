@@ -1,5 +1,7 @@
 import React from "react";
+
 import Container from "components/Container";
+import { formatCurrency } from "utils/formatters";
 
 const mockedAccounts = [
   {
@@ -71,6 +73,7 @@ const Portfolio = () => {
                     account.profit > 0 ? "text-green-400" : "text-red-500"
                   }`}
                 >
+                  {account.profit > 0 && "+"}
                   {formatCurrency(account.profit)}
                 </p>
                 <p className="text-sm text-white/40">P&L</p>
@@ -92,7 +95,3 @@ const Portfolio = () => {
 };
 
 export default Portfolio;
-
-function formatCurrency(value: string | number) {
-  return Number(value).toLocaleString();
-}

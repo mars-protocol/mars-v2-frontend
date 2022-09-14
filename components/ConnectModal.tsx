@@ -132,7 +132,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
                 ) : (
                   <div className="flex flex-col gap-3 mt-2">
                     <button
-                      className="flex items-center p-4 bg-black/90 rounded-xl hover:bg-black/70"
+                      className="flex items-center p-4 bg-black/90 rounded-xl hover:bg-black"
                       onClick={handleConnectMetamask}
                     >
                       <Image
@@ -162,7 +162,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
                       </div>
                     </button>
                     <button
-                      className="flex items-center p-4 bg-black/90 rounded-xl hover:bg-black/70"
+                      className="flex items-center p-4 bg-black/90 rounded-xl hover:bg-black"
                       onClick={handleConnectKeplr}
                     >
                       <Image

@@ -7,6 +7,7 @@ import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import SearchInput from "components/SearchInput";
 import ProgressBar from "components/ProgressBar";
 import Wallet from "./Wallet";
+import { formatCurrency } from "utils/formatters";
 
 const mockedAccounts = [
   {
@@ -102,7 +103,7 @@ const Navigation = () => {
           </Popover>
         </div>
         <div className="flex gap-4 items-center">
-          <p>$: 2500</p>
+          <p>$: ${formatCurrency(2500)}</p>
           <div>Lvg</div>
           <div>Risk</div>
           <ProgressBar value={0.43} />

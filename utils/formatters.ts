@@ -11,3 +11,7 @@ export const formatWalletAddress = (
     address.length
   )}`;
 };
+
+export const formatCurrency = (value: string | number) => {
+  return Number(value).toLocaleString();
+};
