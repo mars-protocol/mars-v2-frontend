@@ -1,6 +1,8 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { Popover } from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/24/solid";
 
 import SearchInput from "components/SearchInput";
 import Wallet from "./Wallet";
@@ -64,8 +66,39 @@ const Navigation = () => {
               {account.label}
             </div>
           ))}
-          <div className="px-3">More</div>
-          <div className="px-3">Manage</div>
+          <Popover className="relative">
+            <Popover.Button>
+              <div className="px-3 flex items-center hover:text-white cursor-pointer">
+                Manage
+                <ChevronDownIcon className="ml-1 h-4 w-4" />
+              </div>
+            </Popover.Button>
+            <Popover.Panel className="absolute z-10 pt-2 w-[200px]">
+              <div className="bg-white rounded-2xl p-4 text-gray-900">
+                <div
+                  className="mb-2 cursor-pointer"
+                  onClick={() => alert("TODO")}
+                >
+                  Create subaccount
+                </div>
+                <div
+                  className="mb-2 cursor-pointer"
+                  onClick={() => alert("TODO")}
+                >
+                  Close subaccount
+                </div>
+                <div
+                  className="mb-2 cursor-pointer"
+                  onClick={() => alert("TODO")}
+                >
+                  Transfer balance
+                </div>
+                <div className="cursor-pointer" onClick={() => alert("TODO")}>
+                  Rearrange
+                </div>
+              </div>
+            </Popover.Panel>
+          </Popover>
         </div>
         <div className="flex gap-4 items-center">
           <p>$: 2500</p>
