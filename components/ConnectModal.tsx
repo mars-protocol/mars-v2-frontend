@@ -127,7 +127,11 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
                   <div className="flex flex-col gap-3 mt-2">
                     <button
                       className="flex items-center p-4 bg-[#524bb1] rounded-xl hover:bg-[#6962cc]"
-                      onClick={handleConnectMetamask}
+                      onClick={
+                        metamaskInstalled
+                          ? handleConnectMetamask
+                          : () => window.open("https://metamask.io/", "_blank")
+                      }
                     >
                       <Image
                         src="/wallets/metamask.webp"
