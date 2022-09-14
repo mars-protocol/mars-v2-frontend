@@ -18,6 +18,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
 
   const actions = useWalletStore((state) => state.actions);
   const metamaskInstalled = useWalletStore((state) => state.metamaskInstalled);
+  const isKeplrInstalled = typeof window !== "undefined" && window.keplr;
 
   const handleConnectSuccess = () => {
     onClose();
@@ -30,7 +31,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
 
   const handleConnectKeplr = async () => {
     if (!window.keplr) {
-      toast.error("Missing Keplr extension!");
+      toast.error("You need Keplr extension installed");
       return;
     }
 
@@ -54,6 +55,11 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
   };
 
   const handleConnectMetamask = async () => {
+    if (!metamaskInstalled) {
+      toast.error("You need Metamask extension installed");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -126,12 +132,8 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
                 ) : (
                   <div className="flex flex-col gap-3 mt-2">
                     <button
-                      className="flex items-center p-4 bg-[#524bb1] rounded-xl hover:bg-[#6962cc]"
-                      onClick={
-                        metamaskInstalled
-                          ? handleConnectMetamask
-                          : () => window.open("https://metamask.io/", "_blank")
-                      }
+                      className="flex items-center p-4 bg-black/90 rounded-xl hover:bg-black/70"
+                      onClick={handleConnectMetamask}
                     >
                       <Image
                         src="/wallets/metamask.webp"
@@ -140,16 +142,27 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
                         alt="metamask"
                       />
                       <div className="ml-4 text-left">
-                        <p>Metamask</p>
+                        <div className="flex items-end">
+                          <p>Metamask</p>
+                          {!metamaskInstalled && (
+                            <a
+                              className="ml-3 text-sm text-blue-600"
+                              onClick={(e) => {
+                                window.open("https://metamask.io/", "_blank");
+                                e.stopPropagation();
+                              }}
+                            >
+                              Install
+                            </a>
+                          )}
+                        </div>
                         <p className="text-sm text-gray-400">
-                          {metamaskInstalled
-                            ? "Connect using Metamask"
-                            : "Install extension"}
+                          Connect using Metamask
                         </p>
                       </div>
                     </button>
                     <button
-                      className="flex items-center p-4 bg-[#524bb1] rounded-xl hover:bg-[#6962cc]"
+                      className="flex items-center p-4 bg-black/90 rounded-xl hover:bg-black/70"
                       onClick={handleConnectKeplr}
                     >
                       <Image
@@ -159,7 +172,20 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
                         alt="keplr"
                       />
                       <div className="ml-4 text-left">
-                        <p>Keplr</p>
+                        <div className="flex items-end">
+                          <p>Keplr</p>
+                          {!isKeplrInstalled && (
+                            <a
+                              className="ml-3 text-sm text-blue-600"
+                              onClick={(e) => {
+                                window.open("https://www.keplr.app/", "_blank");
+                                e.stopPropagation();
+                              }}
+                            >
+                              Install
+                            </a>
+                          )}
+                        </div>
                         <p className="text-sm text-gray-400">
                           Connect using Keplr
                         </p>
