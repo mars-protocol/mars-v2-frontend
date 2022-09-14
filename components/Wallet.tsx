@@ -72,12 +72,18 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
 
 const Wallet = () => {
   const [showConnectModal, setShowConnectModal] = useState(false);
+  const [hasHydrated, setHasHydrated] = useState<boolean>(false);
 
   const address = useWalletStore((state) => state.address);
 
+  // avoid server-client hydration mismatch
+  useEffect(() => {
+    setHasHydrated(true);
+  }, []);
+
   return (
     <>
-      {address ? (
+      {hasHydrated && address ? (
         <WalletPopover>{formatWalletAddress(address)}</WalletPopover>
       ) : (
         <button
