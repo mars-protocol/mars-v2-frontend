@@ -7,7 +7,6 @@ import detectEthereumProvider from "@metamask/detect-provider";
 
 import "../styles/globals.css";
 import Layout from "components/Layout";
-import { WalletProvider } from "hooks/useWallet/context";
 import { useEffect } from "react";
 import useWalletStore from "stores/useWalletStore";
 
