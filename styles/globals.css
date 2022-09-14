@@ -31,6 +31,10 @@ a {
 
 /* react-toastify */
 /* https://fkhadra.github.io/react-toastify/how-to-style#override-css-variables  */
+.Toastify__toast {
+  @apply text-sm;
+}
+
 .Toastify__toast-theme--colored.Toastify__toast--success {
   @apply bg-green-500;
 }

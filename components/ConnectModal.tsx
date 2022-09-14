@@ -4,9 +4,9 @@ import { Dialog, Transition } from "@headlessui/react";
 import { toast } from "react-toastify";
 
 import { getInjectiveAddress } from "utils/address";
-import { useWallet } from "hooks/useWallet";
 import { getExperimentalChainConfigBasedOnChainId } from "utils/experimental-chains";
 import { ChainId } from "types";
+import useWalletStore from "stores/useWalletStore";
 
 type Props = {
   isOpen: boolean;
@@ -16,7 +16,8 @@ type Props = {
 const ConnectModal = ({ isOpen, onClose }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const { setAddress, isMetamaskAvailable } = useWallet();
+  const actions = useWalletStore((state) => state.actions);
+  const metamaskInstalled = useWalletStore((state) => state.metamaskInstalled);
 
   const handleConnectSuccess = () => {
     onClose();
@@ -42,7 +43,8 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
       await window.keplr.experimentalSuggestChain(chainData);
 
       const key = await window.keplr.getKey(ChainId.Mainnet);
-      setAddress(key.bech32Address);
+      actions.setAddress(key.bech32Address);
+
       handleConnectSuccess();
     } catch (e) {
       // TODO: handle exception
@@ -60,7 +62,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
         method: "eth_requestAccounts",
       });
       const [address] = addresses;
-      setAddress(getInjectiveAddress(address));
+      actions.setAddress(getInjectiveAddress(address));
       handleConnectSuccess();
     } catch (e) {
       // TODO: handle exception
@@ -136,7 +138,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
                       <div className="ml-4 text-left">
                         <p>Metamask</p>
                         <p className="text-sm text-gray-400">
-                          {isMetamaskAvailable
+                          {metamaskInstalled
                             ? "Connect using Metamask"
                             : "Install extension"}
                         </p>

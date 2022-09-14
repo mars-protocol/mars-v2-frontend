@@ -995,6 +995,19 @@
   dependencies:
     tslib "^2.4.0"
 
+"@tanstack/query-core@4.3.4":
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-4.3.4.tgz#b93da17232fda91ec08ef14d2ca1d8326fc599f2"
+  integrity sha512-NLAe3j5Vk1yYEtoPP5fPGPjRzkZPx67KUM3f14L3InziJZJ0wVecCh7uKfgYkbRKJSeq6PlbND7iuCGdTplN6Q==
+
+"@tanstack/react-query@^4.3.4":
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-4.3.4.tgz#91a4232a967de04a0662d63d53b18ecc3e11c7e2"
+  integrity sha512-IiAo+B8bxphEpO7xwLQaCptd2rY4Ef3pW1q9J3pT66G+J/st4QpGQ+cSm9iESp9ccRy1YNUk3klk/hQtWewl6g==
+  dependencies:
+    "@tanstack/query-core" "4.3.4"
+    use-sync-external-store "^1.2.0"
+
 "@types/bn.js@^5.1.0":
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/@types/bn.js/-/bn.js-5.1.1.tgz#b51e1b55920a4ca26e9285ff79936bbdec910682"
@@ -1418,6 +1431,11 @@ big-integer@^1.6.48:
   version "1.6.51"
   resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.51.tgz#0df92a5d9880560d3ff2d5fd20245c889d130686"
   integrity sha512-GPEid2Y9QU1Exl1rpO9B2IPJGHPSupF5GnVIP0blYvNOMer2bTvSWs1jGOUg04hTmu67nmLsQ9TBo1puaotBHg==
+
+bignumber.js@^9.1.0:
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-9.1.0.tgz#8d340146107fe3a6cb8d40699643c302e8773b62"
+  integrity sha512-4LwHK4nfDOraBCtst+wOWIHbu1vhvAPJK8g8nROd4iuc3PSEjWif/qwbkh8jwCJz6yDBvtU4KPynETgrfh7y3A==
 
 binary-extensions@^2.0.0:
   version "2.2.0"
@@ -4715,7 +4733,7 @@ urix@^0.1.0:
   resolved "https://registry.npmjs.org/urix/-/urix-0.1.0.tgz"
   integrity sha512-Am1ousAhSLBeB9cG/7k7r2R0zj50uDRlZHPGbazid5s9rlF1F/QKYObEKSIunSjIOkJZqwRRLpvewjEkM7pSqg==
 
-use-sync-external-store@1.2.0:
+use-sync-external-store@1.2.0, use-sync-external-store@^1.2.0:
   version "1.2.0"
   resolved "https://registry.npmjs.org/use-sync-external-store/-/use-sync-external-store-1.2.0.tgz"
   integrity sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==
@@ -4818,3 +4836,10 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.npmjs.org/yocto-queue/-/yocto-queue-0.1.0.tgz"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
+
+zustand@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/zustand/-/zustand-4.1.1.tgz#5a61cc755a002df5f041840a414ae6e9a99ee22b"
+  integrity sha512-h4F3WMqsZgvvaE0n3lThx4MM81Ls9xebjvrABNzf5+jb3/03YjNTSgZXeyrvXDArMeV9untvWXRw1tY+ntPYbA==
+  dependencies:
+    use-sync-external-store "1.2.0"

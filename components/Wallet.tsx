@@ -1,37 +1,48 @@
-// import { useWalletManager, useWallet } from "@cosmos-kit/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Popover } from "@headlessui/react";
 import { toast } from "react-toastify";
-// import { useConnectedMetaMask } from "metamask-react";
+import Image from "next/image";
 
 import { formatWalletAddress } from "utils/formatters";
-import { useWallet } from "hooks/useWallet";
 
 import ConnectModal from "./ConnectModal";
+import useWalletStore from "stores/useWalletStore";
+import useInjectiveBalance from "hooks/useInjectiveBalance";
 
 const WalletPopover = ({ children }: { children: React.ReactNode }) => {
-  const { address, setAddress } = useWallet();
+  const address = useWalletStore((state) => state.address);
+  const actions = useWalletStore((state) => state.actions);
+
+  const { data } = useInjectiveBalance();
 
   return (
     <Popover className="relative">
-      <Popover.Button className="rounded-3xl bg-green-500 py-2 px-3 font-semibold w-[200px] overflow-hidden text-ellipsis">
+      <Popover.Button className="rounded-3xl bg-green-500 py-2 px-2 text-sm font-semibold w-[200px] overflow-hidden text-ellipsis">
         {children}
       </Popover.Button>
 
       <Popover.Panel className="absolute z-10 right-0 pt-2">
         <div className="bg-white rounded-2xl p-6 text-gray-900">
-          <div className="flex justify-between items-center mb-6">
-            <p className="font-semibold">My Account:</p>
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center">
+              <Image src="/injective.svg" alt="token" width={24} height={24} />
+              <p className="ml-2">
+                INJ{" "}
+                <span className="text-lg font-semibold ml-1">
+                  {data?.toFixed(2)}
+                </span>
+              </p>
+            </div>
             <button
               className="text-white text-sm bg-[#524bb1] rounded-3xl hover:bg-[#6962cc] cursor-pointer px-5 py-1.5 "
-              onClick={() => setAddress(null)}
+              onClick={() => actions.setAddress("")}
             >
               Disconnect
             </button>
           </div>
-          <p className="mb-4 text-sm">{address}</p>
+          <p className="mb-6 text-sm">{address}</p>
           <button
-            className="flex items-center text-gray-500 hover:text-gray-700 text-sm"
+            className="flex items-center text-slate-500 hover:text-slate-700 text-sm"
             onClick={() => {
               navigator.clipboard.writeText(address).then(() => {
                 toast.success("Address copied to your clipboard");
@@ -62,16 +73,7 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
 const Wallet = () => {
   const [showConnectModal, setShowConnectModal] = useState(false);
 
-  // const { address } = useWallet();
-  // const walletManager = useWalletManager();
-  //   const connectedMetamask = useConnectedMetaMask();
-
-  //   console.log("connectedMetamask", connectedMetamask);
-
-  // console.log(walletManager);
-  // console.log(address);
-
-  const { address, setAddress } = useWallet();
+  const address = useWalletStore((state) => state.address);
 
   return (
     <>
@@ -79,7 +81,7 @@ const Wallet = () => {
         <WalletPopover>{formatWalletAddress(address)}</WalletPopover>
       ) : (
         <button
-          className="rounded-3xl bg-green-500 py-2 px-3 font-semibold w-[200px]"
+          className="rounded-3xl bg-green-500 py-2 px-2 text-sm font-semibold w-[200px]"
           onClick={() => setShowConnectModal(true)}
         >
           Connect Wallet
