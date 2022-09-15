@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.0",
+    "@heroicons/react": "^2.0.11",
     "@keplr-wallet/cosmos": "^0.10.24",
     "@metamask/detect-provider": "^1.2.0",
     "@sentry/nextjs": "^7.12.1",
