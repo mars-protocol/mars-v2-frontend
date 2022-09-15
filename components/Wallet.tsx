@@ -3,11 +3,11 @@ import { Popover } from "@headlessui/react";
 import { toast } from "react-toastify";
 import Image from "next/image";
 
-import { formatWalletAddress } from "utils/formatters";
-
+import Button from "./Button";
 import ConnectModal from "./ConnectModal";
 import useWalletStore from "stores/useWalletStore";
 import useInjectiveBalance from "hooks/useInjectiveBalance";
+import { formatWalletAddress } from "utils/formatters";
 
 const WalletPopover = ({ children }: { children: React.ReactNode }) => {
   const address = useWalletStore((state) => state.address);
@@ -17,7 +17,7 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <Popover className="relative">
-      <Popover.Button className="rounded-3xl bg-green-500 py-2 px-2 text-sm font-semibold w-[200px] overflow-hidden text-ellipsis">
+      <Popover.Button as={Button} className="w-[200px]">
         {children}
       </Popover.Button>
 
@@ -33,12 +33,12 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
                 </span>
               </p>
             </div>
-            <button
-              className="text-white text-sm bg-[#524bb1] rounded-3xl hover:bg-[#6962cc] cursor-pointer px-5 py-1.5 "
+            <Button
+              className=" bg-[#524bb1] hover:bg-[#6962cc]"
               onClick={() => actions.setAddress("")}
             >
               Disconnect
-            </button>
+            </Button>
           </div>
           <p className="mb-6 text-sm">{address}</p>
           <button
@@ -86,12 +86,9 @@ const Wallet = () => {
       {hasHydrated && address ? (
         <WalletPopover>{formatWalletAddress(address)}</WalletPopover>
       ) : (
-        <button
-          className="rounded-3xl bg-green-500 py-2 px-2 text-sm font-semibold w-[200px]"
-          onClick={() => setShowConnectModal(true)}
-        >
+        <Button className="w-[200px]" onClick={() => setShowConnectModal(true)}>
           Connect Wallet
-        </button>
+        </Button>
       )}
       <ConnectModal
         isOpen={showConnectModal}
