@@ -16,8 +16,6 @@ const ProgressBar = ({ value }: Props) => {
     }, 3000);
   }, [value]);
 
-  console.log(newValue);
-
   const percentageNewValue = `${(newValue * 100).toFixed(0)}%`;
 
   return (
