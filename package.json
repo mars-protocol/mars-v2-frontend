@@ -18,7 +18,7 @@
     "bech32": "^2.0.0",
     "bignumber.js": "^9.1.0",
     "ethereumjs-util": "^7.1.5",
-    "next": "12.2.5",
+    "next": "12.3.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-toastify": "^9.0.8",
