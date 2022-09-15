@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.0",
+    "@heroicons/react": "^2.0.11",
     "@keplr-wallet/cosmos": "^0.10.24",
     "@metamask/detect-provider": "^1.2.0",
     "@sentry/nextjs": "^7.12.1",
@@ -28,7 +29,7 @@
     "@types/node": "18.7.14",
     "@types/react": "18.0.18",
     "@types/react-dom": "18.0.6",
-    "autoprefixer": "^10.4.8",
+    "autoprefixer": "^10.4.11",
     "eslint": "8.23.0",
     "eslint-config-next": "12.2.5",
     "postcss": "^8.4.16",
