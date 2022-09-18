@@ -5,6 +5,7 @@ import type { NextPage } from "next";
 // import styles from "../styles/Home.module.css";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 // import { Coin } from "@cosmjs/stargate";
+import { toast } from "react-toastify";
 
 import Container from "components/Container";
 import Button from "components/Button";
@@ -32,6 +33,8 @@ const Home: NextPage = () => {
   const [allTokens, setAllTokens] = useState<string[] | null>(null);
   const [walletTokens, setWalletTokens] = useState<string[] | null>(null);
 
+  const [error, setError] = useState(null);
+
   const address = useWalletStore((state) => state.address);
 
   // StdFee
@@ -47,6 +50,8 @@ const Home: NextPage = () => {
 
   const handleSendClick = async () => {
     if (!window.keplr) return;
+
+    setError(null);
 
     try {
       const offlineSigner = window.keplr.getOfflineSigner(chain.chainId);
@@ -79,13 +84,16 @@ const Home: NextPage = () => {
       );
 
       console.log("txResponse", res);
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
+      setError(e.message);
     }
   };
 
   const handleCreateCreditAccount = async () => {
     if (!window.keplr) return;
+
+    setError(null);
 
     try {
       const offlineSigner = window.keplr.getOfflineSigner(chain.chainId);
@@ -114,14 +122,17 @@ const Home: NextPage = () => {
         // ]
       );
       console.log("mint result", mintResult);
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
+      setError(e.message);
     }
   };
 
   // https://github.com/mars-protocol/rover/blob/master/scripts/types/generated/account-nft/AccountNft.types.ts
   const handleGetCreditAccounts = async () => {
     if (!window.keplr) return;
+
+    setError(null);
 
     try {
       const offlineSigner = window.keplr.getOfflineSigner(chain.chainId);
@@ -171,8 +182,9 @@ const Home: NextPage = () => {
 
       console.log("res tokens", tokensResponse);
       setWalletTokens(tokensResponse.tokens);
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
+      setError(e.message);
     }
   };
 
@@ -226,6 +238,7 @@ const Home: NextPage = () => {
           Fetch
         </Button>
       </Container>
+
       <div>
         {allTokens && (
           <div className="mb-4">
@@ -246,6 +259,7 @@ const Home: NextPage = () => {
           </>
         )}
       </div>
+      {error && <div className="bg-white p-4 text-red-500 mt-8">{error}</div>}
     </div>
   );
 };
