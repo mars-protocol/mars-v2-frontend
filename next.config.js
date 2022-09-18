@@ -9,6 +9,10 @@ const { withSentryConfig } = require("@sentry/nextjs");
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  sentry: {
+    // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#use-hidden-source-map
+    hideSourceMaps: true,
+  },
 };
 
 const sentryWebpackPluginOptions = {
