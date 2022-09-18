@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import useWalletStore from "stores/useWalletStore";
+import { chain } from "utils/chains";
 
 const useAllBalances = () => {
   const address = useWalletStore((state) => state.address);
@@ -8,9 +9,9 @@ const useAllBalances = () => {
   return useQuery(
     ["allBalances"],
     () =>
-      fetch(
-        `https://lcd.injective.network/cosmos/bank/v1beta1/balances/${address}`
-      ).then((res) => res.json()),
+      fetch(`${chain.rest}/cosmos/bank/v1beta1/balances/${address}`).then(
+        (res) => res.json()
+      ),
     {
       enabled: !!address,
     }

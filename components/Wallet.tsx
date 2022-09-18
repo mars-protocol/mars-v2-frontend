@@ -7,13 +7,21 @@ import Button from "./Button";
 import ConnectModal from "./ConnectModal";
 import useWalletStore from "stores/useWalletStore";
 import useInjectiveBalance from "hooks/useInjectiveBalance";
+import useAllBalances from "hooks/useAllBalances";
 import { formatWalletAddress } from "utils/formatters";
+import { chain } from "utils/chains";
 
 const WalletPopover = ({ children }: { children: React.ReactNode }) => {
   const address = useWalletStore((state) => state.address);
   const actions = useWalletStore((state) => state.actions);
 
   const { data } = useInjectiveBalance();
+  const { data: allBalancesData } = useAllBalances();
+
+  console.log({
+    data,
+    allBalancesData,
+  });
 
   return (
     <Popover className="relative">
@@ -25,9 +33,14 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
         <div className="bg-white rounded-2xl p-6 text-gray-900">
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center">
-              <Image src="/injective.svg" alt="token" width={24} height={24} />
+              <Image
+                src={chain.stakeCurrency.coinImageUrl}
+                alt="token"
+                width={24}
+                height={24}
+              />
               <p className="ml-2">
-                INJ{" "}
+                {chain.stakeCurrency.coinDenom}{" "}
                 <span className="text-lg font-semibold ml-1">
                   {data?.toFixed(2)}
                 </span>

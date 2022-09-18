@@ -2,11 +2,14 @@ import React, { Fragment, useState } from "react";
 import Image from "next/image";
 import { Dialog, Transition } from "@headlessui/react";
 import { toast } from "react-toastify";
+import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import { Coin } from "@cosmjs/stargate";
 
 import { getInjectiveAddress } from "utils/address";
 import { getExperimentalChainConfigBasedOnChainId } from "utils/experimental-chains";
 import { ChainId } from "types";
 import useWalletStore from "stores/useWalletStore";
+import { chain } from "utils/chains";
 
 type Props = {
   isOpen: boolean;
@@ -38,12 +41,13 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
     setIsLoading(true);
 
     try {
-      const chainData = getExperimentalChainConfigBasedOnChainId(
-        ChainId.Mainnet
-      );
-      await window.keplr.experimentalSuggestChain(chainData);
+      const chainData = getExperimentalChainConfigBasedOnChainId(chain.chainId);
 
-      const key = await window.keplr.getKey(ChainId.Mainnet);
+      if (chainData) {
+        await window.keplr.experimentalSuggestChain(chainData);
+      }
+
+      const key = await window.keplr.getKey(chain.chainId);
       actions.setAddress(key.bech32Address);
 
       handleConnectSuccess();
