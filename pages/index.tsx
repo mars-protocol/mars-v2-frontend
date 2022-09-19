@@ -45,7 +45,7 @@ const Home: NextPage = () => {
         amount: "100000",
       },
     ],
-    gas: "150000",
+    gas: "250000",
   };
 
   const handleSendClick = async () => {
@@ -102,26 +102,19 @@ const Home: NextPage = () => {
         offlineSigner
       );
 
+      // 200000 gas used
       const executeMsg = {
-        mint: {
-          user: address,
-        },
+        create_credit_account: {},
       };
 
-      const mintResult = await signingClient.execute(
+      const createResult = await signingClient.execute(
         address,
-        contractAddresses.accountNft,
+        contractAddresses.creditManager,
         executeMsg,
         hardcodedFee
-        // undefined,
-        // [
-        //   {
-        //     denom: "uosmo",
-        //     amount: "10000",
-        //   },
-        // ]
       );
-      console.log("mint result", mintResult);
+
+      console.log("mint result", createResult);
     } catch (e: any) {
       console.log(e);
       setError(e.message);
