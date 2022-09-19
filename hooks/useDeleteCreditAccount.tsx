@@ -1,6 +1,6 @@
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import useWalletStore from "stores/useWalletStore";
 import { chain } from "utils/chains";
@@ -27,7 +27,6 @@ const useCreateCreditAccount = (accountId: string) => {
     })();
   }, [address]);
 
-  // TODO: missing type definitions
   return useMutation(
     async () =>
       await signingClient?.execute(

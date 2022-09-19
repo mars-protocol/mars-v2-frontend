@@ -1,7 +1,6 @@
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 
 import useWalletStore from "stores/useWalletStore";
 import { chain } from "utils/chains";
@@ -37,8 +36,7 @@ const useCreateCreditAccount = () => {
     })();
   }, [address]);
 
-  // TODO: missing type definitions
-  return useMutation<any>(
+  return useMutation(
     async () =>
       await signingClient?.execute(
         address,
@@ -51,6 +49,8 @@ const useCreateCreditAccount = () => {
         queryClient.invalidateQueries(["creditAccounts"]);
       },
       onSuccess: (data) => {
+        if (!data) return;
+
         // TODO: is there some better way to parse response to extract token id???
         const createdID = data.logs[0].events[2].attributes[6].value;
         setSelectedAccount(createdID);
