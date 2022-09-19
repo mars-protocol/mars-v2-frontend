@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Popover } from "@headlessui/react";
@@ -36,11 +36,28 @@ const Navigation = () => {
     (s) => s.actions.setSelectedAccount
   );
 
-  const { data } = useCreditAccounts();
+  const { data: creditAccountsList } = useCreditAccounts();
   const { mutate: createCreditAccount, isLoading: isLoadingCreate } =
     useCreateCreditAccount();
   const { mutate: deleteCreditAccount, isLoading: isLoadingDelete } =
     useDeleteCreditAccount(selectedAccount || "");
+
+  // split credit accounts array in 2 (one with first five, other with the rest of the elements)
+  const { firstCreditAccounts, otherCreditAccounts } = useMemo(() => {
+    if (!creditAccountsList) {
+      return {
+        firstCreditAccounts: [],
+        otherCreditAccounts: [],
+      };
+    }
+
+    const [first, second, third, forth, fifth, ...rest] = creditAccountsList;
+
+    return {
+      firstCreditAccounts: [first, second, third, forth, fifth],
+      otherCreditAccounts: rest,
+    };
+  }, [creditAccountsList]);
 
   return (
     <div>
@@ -64,9 +81,9 @@ const Navigation = () => {
       <div className="flex justify-between px-6 py-3 text-sm text-white/40 border-b border-white/20">
         <div className="flex items-center">
           <SearchInput />
-          {data?.map((account, index) => (
+          {firstCreditAccounts.map((account) => (
             <div
-              key={index}
+              key={account}
               className={`px-4 hover:text-white cursor-pointer ${
                 selectedAccount === account ? "text-white" : ""
               }`}
@@ -75,6 +92,33 @@ const Navigation = () => {
               Account {account}
             </div>
           ))}
+          {otherCreditAccounts.length > 0 && (
+            <Popover className="relative">
+              <Popover.Button>
+                <div className="px-3 flex items-center hover:text-white cursor-pointer">
+                  More
+                  <ChevronDownIcon className="ml-1 h-4 w-4" />
+                </div>
+              </Popover.Button>
+              <Popover.Panel className="absolute z-10 pt-2 w-[200px]">
+                {({ close }) => (
+                  <div className="bg-white rounded-2xl p-4 text-gray-900">
+                    {otherCreditAccounts.map((account) => (
+                      <div
+                        key={account}
+                        className={`cursor-pointer hover:text-orange-500 ${
+                          selectedAccount === account ? "text-orange-500" : ""
+                        }`}
+                        onClick={() => setSelectedAccount(account)}
+                      >
+                        Account {account}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Popover.Panel>
+            </Popover>
+          )}
           <Popover className="relative">
             <Popover.Button>
               <div className="px-3 flex items-center hover:text-white cursor-pointer">
