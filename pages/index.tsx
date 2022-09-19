@@ -5,6 +5,7 @@ import type { NextPage } from "next";
 // import styles from "../styles/Home.module.css";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 // import { Coin } from "@cosmjs/stargate";
+import { toast } from "react-toastify";
 
 import Container from "components/Container";
 import Button from "components/Button";
@@ -93,6 +94,18 @@ const Home: NextPage = () => {
       );
 
       console.log("txResponse", res);
+      toast.success(
+        <div>
+          <a
+            href={`https://testnet.mintscan.io/osmosis-testnet/txs/${res?.transactionHash}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Check transaction
+          </a>
+        </div>,
+        { autoClose: false }
+      );
     } catch (e: any) {
       console.log(e);
       setError(e.message);
@@ -119,6 +132,18 @@ const Home: NextPage = () => {
       );
 
       console.log("mint result", createResult);
+      toast.success(
+        <div>
+          <a
+            href={`https://testnet.mintscan.io/osmosis-testnet/txs/${createResult?.transactionHash}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Check transaction
+          </a>
+        </div>,
+        { autoClose: false }
+      );
     } catch (e: any) {
       console.log(e);
       setError(e.message);
