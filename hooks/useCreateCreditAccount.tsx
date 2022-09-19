@@ -1,6 +1,7 @@
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 import useWalletStore from "stores/useWalletStore";
 import { chain } from "utils/chains";
@@ -54,6 +55,7 @@ const useCreateCreditAccount = () => {
         // TODO: is there some better way to parse response to extract token id???
         const createdID = data.logs[0].events[2].attributes[6].value;
         setSelectedAccount(createdID);
+        toast.success("New account created");
       },
     }
   );

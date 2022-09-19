@@ -1,6 +1,7 @@
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 import useWalletStore from "stores/useWalletStore";
 import { chain } from "utils/chains";
@@ -42,6 +43,9 @@ const useCreateCreditAccount = (accountId: string) => {
     {
       onSettled: () => {
         queryClient.invalidateQueries(["creditAccounts"]);
+      },
+      onSuccess: () => {
+        toast.success("Credit Account Deleted");
       },
     }
   );

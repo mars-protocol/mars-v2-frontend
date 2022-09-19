@@ -6,7 +6,8 @@ import { ChevronDownIcon } from "@heroicons/react/24/solid";
 
 import SearchInput from "components/SearchInput";
 import ProgressBar from "components/ProgressBar";
-import Wallet from "./Wallet";
+import Spinner from "components/Spinner";
+import Wallet from "components/Wallet";
 import { formatCurrency } from "utils/formatters";
 import useCreditAccounts from "hooks/useCreditAccounts";
 import useCreateCreditAccount from "hooks/useCreateCreditAccount";
@@ -36,10 +37,10 @@ const Navigation = () => {
   );
 
   const { data } = useCreditAccounts();
-  const { mutate: createCreditAccount } = useCreateCreditAccount();
-  const { mutate: deleteCreditAccount } = useDeleteCreditAccount(
-    selectedAccount || ""
-  );
+  const { mutate: createCreditAccount, isLoading: isLoadingCreate } =
+    useCreateCreditAccount();
+  const { mutate: deleteCreditAccount, isLoading: isLoadingDelete } =
+    useDeleteCreditAccount(selectedAccount || "");
 
   return (
     <div>
@@ -131,6 +132,11 @@ const Navigation = () => {
           </div>
         </div>
       </div>
+      {(isLoadingCreate || isLoadingDelete) && (
+        <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <Spinner />
+        </div>
+      )}
     </div>
   );
 };
