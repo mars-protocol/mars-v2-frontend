@@ -8,7 +8,7 @@ import SearchInput from "components/SearchInput";
 import ProgressBar from "components/ProgressBar";
 import Wallet from "./Wallet";
 import { formatCurrency } from "utils/formatters";
-import useCreditAccounts from "hooks/userCreditAccounts";
+import useCreditAccounts from "hooks/useCreditAccounts";
 
 const NavLink = ({ href, children }: { href: string; children: string }) => {
   const router = useRouter();
