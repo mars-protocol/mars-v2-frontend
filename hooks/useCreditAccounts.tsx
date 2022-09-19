@@ -1,6 +1,6 @@
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import useWalletStore from "stores/useWalletStore";
 import { chain } from "utils/chains";
@@ -10,13 +10,17 @@ type Result = {
   tokens: string[];
 };
 
-const allTokensQueryMsg = {
-  all_tokens: {},
-};
-
 const useCreditAccounts = () => {
   const [signingClient, setSigningClient] = useState<SigningCosmWasmClient>();
   const address = useWalletStore((state) => state.address);
+
+  const queryMsg = useMemo(() => {
+    return {
+      tokens: {
+        owner: address,
+      },
+    };
+  }, [address]);
 
   useEffect(() => {
     (async () => {
@@ -35,10 +39,7 @@ const useCreditAccounts = () => {
   const result = useQuery<Result>(
     ["creditAccounts"],
     async () =>
-      signingClient?.queryContractSmart(
-        contractAddresses.accountNft,
-        allTokensQueryMsg
-      ),
+      signingClient?.queryContractSmart(contractAddresses.accountNft, queryMsg),
     {
       enabled: !!address && !!signingClient,
     }
