@@ -3,12 +3,6 @@ import { persist } from "zustand/middleware";
 
 import { Wallet } from "types";
 
-const dummyStorageApi = {
-  getItem: () => null,
-  removeItem: () => undefined,
-  setItem: () => undefined,
-};
-
 interface WalletStore {
   address: string;
   injectiveAddress: string;
@@ -43,8 +37,6 @@ const useWalletStore = create<WalletStore>()(
             ([key]) => !["metamaskInstalled", "actions"].includes(key)
           )
         ),
-      // getStorage: () =>
-      //   typeof window !== "undefined" ? localStorage : dummyStorageApi,
     }
   )
 );
