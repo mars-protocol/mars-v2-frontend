@@ -8,21 +8,7 @@ import SearchInput from "components/SearchInput";
 import ProgressBar from "components/ProgressBar";
 import Wallet from "./Wallet";
 import { formatCurrency } from "utils/formatters";
-
-const mockedAccounts = [
-  {
-    label: "Subaccount 1",
-  },
-  {
-    label: "Subaccount 2",
-  },
-  {
-    label: "Subaccount 3",
-  },
-  {
-    label: "Subaccount 4",
-  },
-];
+import useCreditAccounts from "hooks/userCreditAccounts";
 
 const NavLink = ({ href, children }: { href: string; children: string }) => {
   const router = useRouter();
@@ -41,6 +27,8 @@ const NavLink = ({ href, children }: { href: string; children: string }) => {
 };
 
 const Navigation = () => {
+  const { data } = useCreditAccounts();
+
   return (
     <div>
       {/* Main navigation bar */}
@@ -63,9 +51,9 @@ const Navigation = () => {
       <div className="flex justify-between px-6 py-3 text-sm text-white/40 border-b border-white/20">
         <div className="flex items-center">
           <SearchInput />
-          {mockedAccounts.map((account, index) => (
+          {data?.map((account, index) => (
             <div key={index} className="px-4 hover:text-white cursor-pointer">
-              {account.label}
+              Account {account}
             </div>
           ))}
           <Popover className="relative">

@@ -6,25 +6,14 @@ import type { NextPage } from "next";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 // import { Coin } from "@cosmjs/stargate";
 import { toast } from "react-toastify";
+import BigNumber from "bignumber.js";
+import { useQueryClient } from "@tanstack/react-query";
 
 import Container from "components/Container";
 import Button from "components/Button";
 import useWalletStore from "stores/useWalletStore";
 import { chain } from "utils/chains";
-import BigNumber from "bignumber.js";
-
-// https://github.com/mars-protocol/rover/blob/master/scripts/deploy/addresses/osmo-test-4.json
-
-const contractAddresses = {
-  accountNft: "osmo1zwxt98d4w6dc7nwgh5znmqf2kglyax4gg9hr3497lmfywfcckppsgw3hkx",
-  mockRedBank:
-    "osmo1zqsgw96drq3cav4kwfecfy26zyl0wt6zpkh9xwfj08smt6acq45skrakkp",
-  mockOracle: "osmo1dqfzp4vqyfcz0f6yuajvky9gwaxnpw2kmh447z0wy37k40hl8g8sdwq9qp",
-  mockVault: "osmo1m7cx2r6czyqmqc7nt8zhlk8y63ewk23wfg3tvng9askeztzt7f7qq294hz",
-  swapper: "osmo1dkg8rkhgtvav3aufth6ud49pz5ces6vqg5vwdgthlhgtutq74q8qrrt2wd",
-  creditManager:
-    "osmo1zf26ahe5gqjtvnedh7ems7naf2wtw3z4ll6atf3t0hptal8ss4vq2mlx6w",
-};
+import { contractAddresses } from "config/contracts";
 
 const Home: NextPage = () => {
   const [sendAmount, setSendAmount] = useState("");
@@ -37,6 +26,7 @@ const Home: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const address = useWalletStore((state) => state.address);
+  const queryClient = useQueryClient();
 
   const [signingClient, setSigningClient] = useState<SigningCosmWasmClient>();
 
@@ -144,6 +134,8 @@ const Home: NextPage = () => {
         </div>,
         { autoClose: false }
       );
+
+      queryClient.invalidateQueries(["creditAccounts"]);
     } catch (e: any) {
       console.log(e);
       setError(e.message);
