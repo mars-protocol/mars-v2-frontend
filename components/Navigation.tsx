@@ -10,6 +10,7 @@ import Wallet from "./Wallet";
 import { formatCurrency } from "utils/formatters";
 import useCreditAccounts from "hooks/useCreditAccounts";
 import useCreateCreditAccount from "hooks/useCreateCreditAccount";
+import useDeleteCreditAccount from "hooks/useDeleteCreditAccount";
 import useCreditManagerStore from "stores/useCreditManagerStore";
 
 const NavLink = ({ href, children }: { href: string; children: string }) => {
@@ -36,6 +37,9 @@ const Navigation = () => {
 
   const { data } = useCreditAccounts();
   const { mutate: createCreditAccount } = useCreateCreditAccount();
+  const { mutate: deleteCreditAccount } = useDeleteCreditAccount(
+    selectedAccount || ""
+  );
 
   return (
     <div>
@@ -80,24 +84,27 @@ const Navigation = () => {
             <Popover.Panel className="absolute z-10 pt-2 w-[200px]">
               <div className="bg-white rounded-2xl p-4 text-gray-900">
                 <div
-                  className="mb-2 cursor-pointer"
+                  className="mb-2 cursor-pointer hover:text-orange-500"
                   onClick={() => createCreditAccount()}
                 >
                   Create Account
                 </div>
                 <div
-                  className="mb-2 cursor-pointer"
-                  onClick={() => alert("TODO")}
+                  className="mb-2 cursor-pointer hover:text-orange-500"
+                  onClick={() => deleteCreditAccount()}
                 >
                   Close Account
                 </div>
                 <div
-                  className="mb-2 cursor-pointer"
+                  className="mb-2 cursor-pointer hover:text-orange-500"
                   onClick={() => alert("TODO")}
                 >
                   Transfer Balance
                 </div>
-                <div className="cursor-pointer" onClick={() => alert("TODO")}>
+                <div
+                  className="cursor-pointer hover:text-orange-500"
+                  onClick={() => alert("TODO")}
+                >
                   Rearrange
                 </div>
               </div>

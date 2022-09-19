@@ -14,6 +14,7 @@ import Button from "components/Button";
 import useWalletStore from "stores/useWalletStore";
 import { chain } from "utils/chains";
 import { contractAddresses } from "config/contracts";
+import { hardcodedFee } from "utils/contants";
 
 const Home: NextPage = () => {
   const [sendAmount, setSendAmount] = useState("");
@@ -43,17 +44,6 @@ const Home: NextPage = () => {
       setSigningClient(clientInstance);
     })();
   }, [address]);
-
-  // StdFee
-  const hardcodedFee = {
-    amount: [
-      {
-        denom: chain.stakeCurrency.coinMinimalDenom,
-        amount: "100000",
-      },
-    ],
-    gas: "250000",
-  };
 
   const handleSendClick = async () => {
     setError(null);
