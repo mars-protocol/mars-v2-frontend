@@ -16,12 +16,6 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
   const actions = useWalletStore((state) => state.actions);
 
   const { data } = useInjectiveBalance();
-  const { data: allBalancesData } = useAllBalances();
-
-  console.log({
-    data,
-    allBalancesData,
-  });
 
   return (
     <Popover className="relative">

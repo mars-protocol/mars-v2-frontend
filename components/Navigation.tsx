@@ -9,6 +9,8 @@ import ProgressBar from "components/ProgressBar";
 import Wallet from "./Wallet";
 import { formatCurrency } from "utils/formatters";
 import useCreditAccounts from "hooks/useCreditAccounts";
+import useCreateCreditAccount from "hooks/useCreateCreditAccount";
+import useCreditManagerStore from "stores/useCreditManagerStore";
 
 const NavLink = ({ href, children }: { href: string; children: string }) => {
   const router = useRouter();
@@ -27,7 +29,13 @@ const NavLink = ({ href, children }: { href: string; children: string }) => {
 };
 
 const Navigation = () => {
+  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount);
+  const setSelectedAccount = useCreditManagerStore(
+    (s) => s.actions.setSelectedAccount
+  );
+
   const { data } = useCreditAccounts();
+  const { mutate: createCreditAccount } = useCreateCreditAccount();
 
   return (
     <div>
@@ -52,7 +60,13 @@ const Navigation = () => {
         <div className="flex items-center">
           <SearchInput />
           {data?.map((account, index) => (
-            <div key={index} className="px-4 hover:text-white cursor-pointer">
+            <div
+              key={index}
+              className={`px-4 hover:text-white cursor-pointer ${
+                selectedAccount === account ? "text-white" : ""
+              }`}
+              onClick={() => setSelectedAccount(account)}
+            >
               Account {account}
             </div>
           ))}
@@ -67,7 +81,7 @@ const Navigation = () => {
               <div className="bg-white rounded-2xl p-4 text-gray-900">
                 <div
                   className="mb-2 cursor-pointer"
-                  onClick={() => alert("TODO")}
+                  onClick={() => createCreditAccount()}
                 >
                   Create Account
                 </div>
