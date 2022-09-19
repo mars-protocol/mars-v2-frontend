@@ -82,32 +82,40 @@ const Navigation = () => {
               </div>
             </Popover.Button>
             <Popover.Panel className="absolute z-10 pt-2 w-[200px]">
-              <div className="bg-white rounded-2xl p-4 text-gray-900">
-                <div
-                  className="mb-2 cursor-pointer hover:text-orange-500"
-                  onClick={() => createCreditAccount()}
-                >
-                  Create Account
+              {({ close }) => (
+                <div className="bg-white rounded-2xl p-4 text-gray-900">
+                  <div
+                    className="mb-2 cursor-pointer hover:text-orange-500"
+                    onClick={() => {
+                      close();
+                      createCreditAccount();
+                    }}
+                  >
+                    Create Account
+                  </div>
+                  <div
+                    className="mb-2 cursor-pointer hover:text-orange-500"
+                    onClick={() => {
+                      close();
+                      deleteCreditAccount();
+                    }}
+                  >
+                    Close Account
+                  </div>
+                  <div
+                    className="mb-2 cursor-pointer hover:text-orange-500"
+                    onClick={() => alert("TODO")}
+                  >
+                    Transfer Balance
+                  </div>
+                  <div
+                    className="cursor-pointer hover:text-orange-500"
+                    onClick={() => alert("TODO")}
+                  >
+                    Rearrange
+                  </div>
                 </div>
-                <div
-                  className="mb-2 cursor-pointer hover:text-orange-500"
-                  onClick={() => deleteCreditAccount()}
-                >
-                  Close Account
-                </div>
-                <div
-                  className="mb-2 cursor-pointer hover:text-orange-500"
-                  onClick={() => alert("TODO")}
-                >
-                  Transfer Balance
-                </div>
-                <div
-                  className="cursor-pointer hover:text-orange-500"
-                  onClick={() => alert("TODO")}
-                >
-                  Rearrange
-                </div>
-              </div>
+              )}
             </Popover.Panel>
           </Popover>
         </div>
