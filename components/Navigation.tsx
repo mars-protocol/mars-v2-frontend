@@ -69,19 +69,19 @@ const Navigation = () => {
                   className="mb-2 cursor-pointer"
                   onClick={() => alert("TODO")}
                 >
-                  Create subaccount
+                  Create Account
                 </div>
                 <div
                   className="mb-2 cursor-pointer"
                   onClick={() => alert("TODO")}
                 >
-                  Close subaccount
+                  Close Account
                 </div>
                 <div
                   className="mb-2 cursor-pointer"
                   onClick={() => alert("TODO")}
                 >
-                  Transfer balance
+                  Transfer Balance
                 </div>
                 <div className="cursor-pointer" onClick={() => alert("TODO")}>
                   Rearrange
