@@ -1,6 +1,5 @@
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { useQuery } from "@tanstack/react-query";
-import BigNumber from "bignumber.js";
 import { useEffect, useState } from "react";
 
 import useWalletStore from "stores/useWalletStore";
@@ -44,8 +43,6 @@ const useCreditAccounts = () => {
       enabled: !!address && !!signingClient,
     }
   );
-
-  console.log(result);
 
   return {
     ...result,
