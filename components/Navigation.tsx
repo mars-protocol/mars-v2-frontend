@@ -42,20 +42,17 @@ const Navigation = () => {
   const { mutate: deleteCreditAccount, isLoading: isLoadingDelete } =
     useDeleteCreditAccount(selectedAccount || "");
 
-  // split credit accounts array in 2 (one with first five, other with the rest of the elements)
   const { firstCreditAccounts, otherCreditAccounts } = useMemo(() => {
-    if (!creditAccountsList) {
-      return {
-        firstCreditAccounts: [],
-        otherCreditAccounts: [],
-      };
-    }
+    // TODO: will require some tweaks depending on how lower viewport mocks pans out
+    const MAX_SIZE = 5;
+    const thresholdIndex = MAX_SIZE - 1;
 
-    const [first, second, third, forth, fifth, ...rest] = creditAccountsList;
+    const firstChunk = creditAccountsList?.slice(0, thresholdIndex) ?? [];
+    const secondChunk = creditAccountsList?.slice(thresholdIndex) ?? [];
 
     return {
-      firstCreditAccounts: [first, second, third, forth, fifth],
-      otherCreditAccounts: rest,
+      firstCreditAccounts: firstChunk,
+      otherCreditAccounts: secondChunk,
     };
   }, [creditAccountsList]);
 
