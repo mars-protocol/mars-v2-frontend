@@ -48,7 +48,7 @@ const Navigation = () => {
   const { firstCreditAccounts, otherCreditAccounts } = useMemo(() => {
     // TODO: will require some tweaks depending on how lower viewport mocks pans out
     const MAX_SIZE = 5;
-    const thresholdIndex = MAX_SIZE - 1;
+    const thresholdIndex = MAX_SIZE;
 
     const firstChunk = creditAccountsList?.slice(0, thresholdIndex) ?? [];
     const secondChunk = creditAccountsList?.slice(thresholdIndex) ?? [];
