@@ -165,7 +165,7 @@ const Navigation = () => {
           </Popover>
         </div>
         <div className="flex gap-4 items-center">
-          <p>$: ${formatCurrency(2500)}</p>
+          <p>{formatCurrency(2500)}</p>
           <div>Lvg</div>
           <div>Risk</div>
           <ProgressBar value={0.43} />

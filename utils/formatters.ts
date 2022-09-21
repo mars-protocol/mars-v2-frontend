@@ -13,5 +13,8 @@ export const formatWalletAddress = (
 };
 
 export const formatCurrency = (value: string | number) => {
-  return Number(value).toLocaleString();
+  return Number(value).toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+  });
 };
