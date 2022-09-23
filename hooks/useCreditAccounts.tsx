@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import useWalletStore from "stores/useWalletStore";
 import { chain } from "utils/chains";
 import { contractAddresses } from "config/contracts";
+import useCreditManagerStore from "stores/useCreditManagerStore";
 
 type Result = {
   tokens: string[];
@@ -13,6 +14,10 @@ type Result = {
 const useCreditAccounts = () => {
   const [signingClient, setSigningClient] = useState<SigningCosmWasmClient>();
   const address = useWalletStore((state) => state.address);
+  const selectedAccount = useCreditManagerStore(
+    (state) => state.selectedAccount
+  );
+  const creditManagerActions = useCreditManagerStore((state) => state.actions);
 
   const queryMsg = useMemo(() => {
     return {
@@ -42,6 +47,14 @@ const useCreditAccounts = () => {
       signingClient?.queryContractSmart(contractAddresses.accountNft, queryMsg),
     {
       enabled: !!address && !!signingClient,
+      onSuccess: (data) => {
+        if (
+          !data.tokens.includes(selectedAccount || "") &&
+          data.tokens.length > 0
+        ) {
+          creditManagerActions.setSelectedAccount(data.tokens[0]);
+        }
+      },
     }
   );
 
