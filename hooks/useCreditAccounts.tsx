@@ -37,7 +37,7 @@ const useCreditAccounts = () => {
   }, [address]);
 
   const result = useQuery<Result>(
-    ["creditAccounts"],
+    ["creditAccounts", address],
     async () =>
       signingClient?.queryContractSmart(contractAddresses.accountNft, queryMsg),
     {
