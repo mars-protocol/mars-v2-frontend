@@ -44,6 +44,9 @@ const useCreateCreditAccount = (accountId: string) => {
       onSettled: () => {
         queryClient.invalidateQueries(["creditAccounts"]);
       },
+      onError: (err: Error) => {
+        toast.error(err.message);
+      },
       onSuccess: () => {
         toast.success("Credit Account Deleted");
       },

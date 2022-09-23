@@ -49,6 +49,9 @@ const useCreateCreditAccount = () => {
       onSettled: () => {
         queryClient.invalidateQueries(["creditAccounts"]);
       },
+      onError: (err: Error) => {
+        toast.error(err.message);
+      },
       onSuccess: (data) => {
         if (!data) return;
 
