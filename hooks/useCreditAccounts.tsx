@@ -47,7 +47,11 @@ const useCreditAccounts = () => {
 
   return {
     ...result,
-    data: result?.data && result.data.tokens,
+    data: useMemo(() => {
+      if (!address) return [];
+
+      return result?.data && result.data.tokens;
+    }, [address, result?.data]),
   };
 };
 
