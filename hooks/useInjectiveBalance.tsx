@@ -27,11 +27,11 @@ const useInjectiveBalance = () => {
 
   return {
     ...result,
-    data:
-      result?.data &&
-      BigNumber(result.data.balance.amount)
-        .div(10 ** chain.stakeCurrency.coinDecimals)
-        .toNumber(),
+    data: result?.data
+      ? BigNumber(result.data.balance.amount)
+          .div(10 ** chain.stakeCurrency.coinDecimals)
+          .toNumber()
+      : 0,
   };
 };
 
