@@ -7,7 +7,6 @@ import useCreditManagerStore from "stores/useCreditManagerStore";
 import useWalletStore from "stores/useWalletStore";
 import useCreditAccountBalances from "hooks/useCreditAccountPositions";
 import { getTokenDecimals } from "utils/tokens";
-import usePriceOracle from "hooks/usePriceOracle";
 import FundAccount from "./FundAccount";
 
 export const ContainerStyled = ({
@@ -33,9 +32,6 @@ const CreditManager = () => {
   const selectedAccount = useCreditManagerStore(
     (state) => state.selectedAccount
   );
-
-  const prices = usePriceOracle();
-  console.log(prices);
 
   const { data: positionsData, isLoading: isLoadingPositions } =
     useCreditAccountBalances(selectedAccount ?? "");
