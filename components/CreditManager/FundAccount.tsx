@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import * as Slider from "@radix-ui/react-slider";
 import BigNumber from "bignumber.js";
+import { Switch } from "@headlessui/react";
 
 import Button from "../Button";
 import useAllowedCoins from "hooks/useAllowedCoins";
@@ -13,6 +14,7 @@ import { ContainerStyled } from ".";
 const FundAccount = () => {
   const [amount, setAmount] = useState(0);
   const [selectedToken, setSelectedToken] = useState("");
+  const [enabled, setEnabled] = useState(false);
 
   const selectedAccount = useCreditManagerStore(
     (state) => state.selectedAccount
@@ -120,8 +122,8 @@ const FundAccount = () => {
                   setAmount(newAmount);
                 }}
               >
-                <Slider.Track className="relative h-[6px] grow rounded-full bg-black/50">
-                  <Slider.Range className="absolute h-[100%] rounded-full bg-orange-500" />
+                <Slider.Track className="relative h-[6px] grow rounded-full bg-gray-400">
+                  <Slider.Range className="absolute h-[100%] rounded-full bg-blue-600" />
                 </Slider.Track>
                 <Slider.Thumb className="flex h-[20px] w-[20px] items-center justify-center rounded-full bg-white !outline-none">
                   <div className="relative top-5 text-xs">
@@ -130,7 +132,7 @@ const FundAccount = () => {
                 </Slider.Thumb>
               </Slider.Root>
               <button
-                className="ml-4 py-1 px-2 text-sm bg-orange-500 text-white rounded-md"
+                className="ml-4 py-1 px-2 text-sm bg-blue-600 text-white rounded-md"
                 onClick={() => setAmount(maxValue)}
               >
                 MAX
@@ -147,7 +149,19 @@ const FundAccount = () => {
           </div>
         </div>
 
-        <div>SWITCH</div>
+        <Switch
+          checked={enabled}
+          onChange={setEnabled}
+          className={`${
+            enabled ? "bg-blue-600" : "bg-gray-400"
+          } relative inline-flex h-6 w-11 items-center rounded-full`}
+        >
+          <span
+            className={`${
+              enabled ? "translate-x-6" : "translate-x-1"
+            } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+          />
+        </Switch>
       </ContainerStyled>
       <Button
         className="w-full !rounded-lg"
