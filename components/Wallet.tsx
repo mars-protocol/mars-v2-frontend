@@ -6,8 +6,7 @@ import Image from "next/image";
 import Button from "./Button";
 import ConnectModal from "./ConnectModal";
 import useWalletStore from "stores/useWalletStore";
-import useInjectiveBalance from "hooks/useInjectiveBalance";
-import useAllBalances from "hooks/useAllBalances";
+import useTokenBalance from "hooks/useTokenBalance";
 import { formatWalletAddress } from "utils/formatters";
 import { chain } from "utils/chains";
 
@@ -15,7 +14,7 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
   const address = useWalletStore((state) => state.address);
   const actions = useWalletStore((state) => state.actions);
 
-  const { data } = useInjectiveBalance();
+  const { data } = useTokenBalance();
 
   return (
     <Popover className="relative">

@@ -11,14 +11,16 @@ type Result = {
   };
 };
 
-const useInjectiveBalance = () => {
+const useTokenBalance = (denom?: string) => {
   const address = useWalletStore((state) => state.address);
 
   const result = useQuery<Result>(
     ["injectiveBalance"],
     async () =>
       fetch(
-        `${chain.rest}/cosmos/bank/v1beta1/balances/${address}/by_denom?denom=${chain.stakeCurrency.coinMinimalDenom}`
+        `${chain.rest}/cosmos/bank/v1beta1/balances/${address}/by_denom?denom=${
+          denom || chain.stakeCurrency.coinMinimalDenom
+        }`
       ).then((res) => res.json()),
     {
       enabled: !!address,
@@ -35,4 +37,4 @@ const useInjectiveBalance = () => {
   };
 };
 
-export default useInjectiveBalance;
+export default useTokenBalance;
