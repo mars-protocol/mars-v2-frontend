@@ -117,6 +117,19 @@ const CreditManager = () => {
                     <div className="flex-1">-</div>
                   </div>
                 ))}
+                {positionsData?.debt.map((coin) => (
+                  <div key={coin.denom} className="flex text-xs text-red-500">
+                    <div className="flex-1">{coin.denom}</div>
+                    <div className="flex-1">{formatCurrency(coin.value)}</div>
+                    <div className="flex-1">
+                      {BigNumber(coin.amount)
+                        .div(10 ** getTokenDecimals(coin.denom))
+                        .toNumber()
+                        .toLocaleString()}
+                    </div>
+                    <div className="flex-1">-</div>
+                  </div>
+                ))}
               </>
             )}
           </ContainerStyled>

@@ -16,6 +16,7 @@ import { chain } from "utils/chains";
 import { contractAddresses } from "config/contracts";
 import { hardcodedFee } from "utils/contants";
 import Spinner from "components/Spinner";
+import useCreditManagerStore from "stores/useCreditManagerStore";
 
 const Home: NextPage = () => {
   const [sendAmount, setSendAmount] = useState("");
@@ -24,10 +25,15 @@ const Home: NextPage = () => {
   const [allTokens, setAllTokens] = useState<string[] | null>(null);
   const [walletTokens, setWalletTokens] = useState<string[] | null>(null);
 
+  const [borrowAmount, setBorrowAmount] = useState(0);
+
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const address = useWalletStore((state) => state.address);
+  const selectedAccount = useCreditManagerStore(
+    (state) => state.selectedAccount
+  );
   const queryClient = useQueryClient();
 
   const [signingClient, setSigningClient] = useState<SigningCosmWasmClient>();
@@ -190,6 +196,59 @@ const Home: NextPage = () => {
     }
   };
 
+  const handleBorrowClick = async () => {
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      const executeMsg = {
+        update_credit_account: {
+          account_id: selectedAccount,
+          actions: [
+            {
+              borrow: {
+                denom: "uosmo",
+                amount: BigNumber(borrowAmount)
+                  .times(10 ** 6)
+                  .toString(),
+              },
+            },
+          ],
+        },
+      };
+
+      const borrowResult = await signingClient?.execute(
+        address,
+        contractAddresses.creditManager,
+        executeMsg,
+        hardcodedFee
+      );
+
+      console.log("borrow result", borrowResult);
+      toast.success(
+        <div>
+          <a
+            href={`https://testnet.mintscan.io/osmosis-testnet/txs/${borrowResult?.transactionHash}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Check transaction
+          </a>
+        </div>,
+        { autoClose: false }
+      );
+
+      queryClient.invalidateQueries(["creditAccounts"]);
+      queryClient.invalidateQueries(["injectiveBalance"]);
+      queryClient.invalidateQueries(["creditAccountPositions"]);
+    } catch (e: any) {
+      console.log(e);
+      setError(e.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-y-6 max-w-6xl mx-auto">
       <Container>
@@ -238,6 +297,20 @@ const Home: NextPage = () => {
           onClick={handleGetCreditAccounts}
         >
           Fetch
+        </Button>
+      </Container>
+      <Container>
+        <h4 className="text-xl mb-5">Borrow OSMO</h4>
+        <input
+          className="rounded-lg px-3 py-1 bg-black/40"
+          type="number"
+          onChange={(e) => setBorrowAmount(e.target.valueAsNumber)}
+        />
+        <Button
+          className="bg-[#524bb1] hover:bg-[#6962cc] ml-4"
+          onClick={handleBorrowClick}
+        >
+          Borrow
         </Button>
       </Container>
 
