@@ -17,9 +17,7 @@ export const ContainerStyled = ({
   className?: string;
 }) => {
   return (
-    <div
-      className={`p-2 bg-[#D8DAEA] rounded-lg text-[#585A74] text-sm ${className}`}
-    >
+    <div className={`p-2 bg-[#D8DAEA] rounded-lg text-[#585A74] ${className}`}>
       {children}
     </div>
   );
@@ -82,8 +80,8 @@ const CreditManager = () => {
         <FundAccount />
       ) : (
         <>
-          <ContainerStyled className="mb-2">
-            <div className="flex justify-between">
+          <ContainerStyled className="mb-2 text-sm">
+            <div className="flex justify-between mb-1">
               <div>Total Position:</div>
               <div className="font-semibold">
                 {formatCurrency(totalPosition)}
