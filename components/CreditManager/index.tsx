@@ -112,7 +112,9 @@ const CreditManager = () => {
                       {BigNumber(coin.amount)
                         .div(10 ** getTokenDecimals(coin.denom))
                         .toNumber()
-                        .toLocaleString()}
+                        .toLocaleString(undefined, {
+                          maximumFractionDigits: 6,
+                        })}
                     </div>
                     <div className="flex-1">-</div>
                   </div>
@@ -125,7 +127,9 @@ const CreditManager = () => {
                       {BigNumber(coin.amount)
                         .div(10 ** getTokenDecimals(coin.denom))
                         .toNumber()
-                        .toLocaleString()}
+                        .toLocaleString(undefined, {
+                          maximumFractionDigits: 6,
+                        })}
                     </div>
                     <div className="flex-1">-</div>
                   </div>
