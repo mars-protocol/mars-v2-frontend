@@ -1,73 +1,67 @@
-import React, { useEffect, useMemo, useState } from "react";
-import * as Slider from "@radix-ui/react-slider";
-import BigNumber from "bignumber.js";
-import { Switch } from "@headlessui/react";
+import React, { useEffect, useMemo, useState } from 'react'
+import * as Slider from '@radix-ui/react-slider'
+import BigNumber from 'bignumber.js'
+import { Switch } from '@headlessui/react'
 
-import Button from "../Button";
-import useAllowedCoins from "hooks/useAllowedCoins";
-import useDepositCreditAccount from "hooks/useDepositCreditAccount";
-import useCreditManagerStore from "stores/useCreditManagerStore";
-import useAllBalances from "hooks/useAllBalances";
-import { getTokenDecimals, getTokenSymbol } from "utils/tokens";
-import { ContainerStyled } from ".";
+import Button from '../Button'
+import useAllowedCoins from 'hooks/useAllowedCoins'
+import useDepositCreditAccount from 'hooks/useDepositCreditAccount'
+import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useAllBalances from 'hooks/useAllBalances'
+import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
+import { ContainerStyled } from '.'
 
 const FundAccount = () => {
-  const [amount, setAmount] = useState(0);
-  const [selectedToken, setSelectedToken] = useState("");
-  const [enabled, setEnabled] = useState(false);
+  const [amount, setAmount] = useState(0)
+  const [selectedToken, setSelectedToken] = useState('')
+  const [enabled, setEnabled] = useState(false)
 
-  const selectedAccount = useCreditManagerStore(
-    (state) => state.selectedAccount
-  );
+  const selectedAccount = useCreditManagerStore((state) => state.selectedAccount)
 
-  const { data: balancesData } = useAllBalances();
-  const { data: allowedCoinsData, isLoading: isLoadingAllowedCoins } =
-    useAllowedCoins();
+  const { data: balancesData } = useAllBalances()
+  const { data: allowedCoinsData, isLoading: isLoadingAllowedCoins } = useAllowedCoins()
   const { mutate } = useDepositCreditAccount(
-    selectedAccount || "",
+    selectedAccount || '',
     selectedToken,
     BigNumber(amount)
       .times(10 ** getTokenDecimals(selectedToken))
       .toNumber()
-  );
+  )
 
   useEffect(() => {
     if (allowedCoinsData && allowedCoinsData.length > 0) {
       // initialize selected token when allowedCoins fetch data is available
-      setSelectedToken(allowedCoinsData[0]);
+      setSelectedToken(allowedCoinsData[0])
     }
-  }, [allowedCoinsData]);
+  }, [allowedCoinsData])
 
   const walletAmount = useMemo(() => {
-    if (!selectedToken) return 0;
+    if (!selectedToken) return 0
 
-    return BigNumber(
-      balancesData?.find((balance) => balance.denom === selectedToken)
-        ?.amount ?? 0
-    )
+    return BigNumber(balancesData?.find((balance) => balance.denom === selectedToken)?.amount ?? 0)
       .div(10 ** getTokenDecimals(selectedToken))
-      .toNumber();
-  }, [balancesData, selectedToken]);
+      .toNumber()
+  }, [balancesData, selectedToken])
 
   const handleValueChange = (value: number) => {
     if (value > walletAmount) {
-      setAmount(walletAmount);
-      return;
+      setAmount(walletAmount)
+      return
     }
 
-    setAmount(value);
-  };
+    setAmount(value)
+  }
 
-  const maxValue = walletAmount;
-  const percentageValue = isNaN(amount) ? 0 : (amount * 100) / maxValue;
+  const maxValue = walletAmount
+  const percentageValue = isNaN(amount) ? 0 : (amount * 100) / maxValue
 
   return (
     <>
       <ContainerStyled className="p-3 mb-2">
         <p className="mb-6">
-          Transfer assets from your injective wallet to your Mars credit
-          account. If you don’t have any assets in your injective wallet use the
-          injective bridge to transfer funds to your injective wallet.
+          Transfer assets from your injective wallet to your Mars credit account. If you don’t have
+          any assets in your injective wallet use the injective bridge to transfer funds to your
+          injective wallet.
         </p>
         {isLoadingAllowedCoins ? (
           <p>Loading...</p>
@@ -79,9 +73,9 @@ const FundAccount = () => {
                 <select
                   className="bg-transparent"
                   onChange={(e) => {
-                    setSelectedToken(e.target.value);
+                    setSelectedToken(e.target.value)
 
-                    if (e.target.value !== selectedToken) setAmount(0);
+                    if (e.target.value !== selectedToken) setAmount(0)
                   }}
                 >
                   {allowedCoinsData?.map((entry) => (
@@ -112,23 +106,19 @@ const FundAccount = () => {
                 max={100}
                 step={1}
                 onValueChange={(value) => {
-                  const decimal = value[0] / 100;
-                  const tokenDecimals = getTokenDecimals(selectedToken);
+                  const decimal = value[0] / 100
+                  const tokenDecimals = getTokenDecimals(selectedToken)
                   // limit decimal precision based on token contract decimals
-                  const newAmount = Number(
-                    (decimal * maxValue).toFixed(tokenDecimals)
-                  );
+                  const newAmount = Number((decimal * maxValue).toFixed(tokenDecimals))
 
-                  setAmount(newAmount);
+                  setAmount(newAmount)
                 }}
               >
                 <Slider.Track className="relative h-[6px] grow rounded-full bg-gray-400">
                   <Slider.Range className="absolute h-[100%] rounded-full bg-blue-600" />
                 </Slider.Track>
                 <Slider.Thumb className="flex h-[20px] w-[20px] items-center justify-center rounded-full bg-white !outline-none">
-                  <div className="relative top-5 text-xs">
-                    {percentageValue.toFixed(0)}%
-                  </div>
+                  <div className="relative top-5 text-xs">{percentageValue.toFixed(0)}%</div>
                 </Slider.Thumb>
               </Slider.Root>
               <button
@@ -144,21 +134,19 @@ const FundAccount = () => {
       <ContainerStyled className="flex justify-between items-center mb-2">
         <div>
           <h3 className="font-bold">Lending Assets</h3>
-          <div className="opacity-50">
-            Lend assets from account to earn yield.
-          </div>
+          <div className="opacity-50">Lend assets from account to earn yield.</div>
         </div>
 
         <Switch
           checked={enabled}
           onChange={setEnabled}
           className={`${
-            enabled ? "bg-blue-600" : "bg-gray-400"
+            enabled ? 'bg-blue-600' : 'bg-gray-400'
           } relative inline-flex h-6 w-11 items-center rounded-full`}
         >
           <span
             className={`${
-              enabled ? "translate-x-6" : "translate-x-1"
+              enabled ? 'translate-x-6' : 'translate-x-1'
             } inline-block h-4 w-4 transform rounded-full bg-white transition`}
           />
         </Switch>
@@ -171,7 +159,7 @@ const FundAccount = () => {
         Fund
       </Button>
     </>
-  );
-};
+  )
+}
 
-export default FundAccount;
+export default FundAccount

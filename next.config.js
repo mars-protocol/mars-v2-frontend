@@ -1,4 +1,4 @@
-const { withSentryConfig } = require("@sentry/nextjs");
+const { withSentryConfig } = require('@sentry/nextjs')
 
 // This file sets a custom webpack configuration to use your Next.js app
 // with Sentry.
@@ -13,7 +13,7 @@ const nextConfig = {
     // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#use-hidden-source-map
     hideSourceMaps: true,
   },
-};
+}
 
 const sentryWebpackPluginOptions = {
   // Additional config options for the Sentry Webpack plugin. Keep in mind that
@@ -25,8 +25,8 @@ const sentryWebpackPluginOptions = {
   silent: true, // Suppresses all logs
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options.
-};
+}
 
 // Make sure adding Sentry options is the last code to run before exporting, to
 // ensure that your source maps include changes from all other Webpack plugins
-module.exports = withSentryConfig(nextConfig, sentryWebpackPluginOptions);
+module.exports = withSentryConfig(nextConfig, sentryWebpackPluginOptions)

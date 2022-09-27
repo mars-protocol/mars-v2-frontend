@@ -1,9 +1,9 @@
-import tokenInfo from "config/tokenInfo";
+import tokenInfo from 'config/tokenInfo'
 
 export const getTokenSymbol = (denom: string) => {
-  return tokenInfo[denom]?.symbol ?? denom;
-};
+  return tokenInfo[denom]?.symbol ?? denom
+}
 
 export const getTokenDecimals = (denom: string) => {
-  return tokenInfo[denom]?.decimals ?? 6;
-};
+  return tokenInfo[denom]?.decimals ?? 6
+}

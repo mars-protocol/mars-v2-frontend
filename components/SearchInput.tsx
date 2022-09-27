@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 
 const SearchInput = () => (
   <div className="relative text-white">
@@ -20,6 +20,6 @@ const SearchInput = () => (
       placeholder="Search"
     />
   </div>
-);
+)
 
-export default SearchInput;
+export default SearchInput

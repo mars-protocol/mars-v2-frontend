@@ -1,13 +1,13 @@
-import create from "zustand";
-import { persist } from "zustand/middleware";
+import create from 'zustand'
+import { persist } from 'zustand/middleware'
 
 interface CreditManagerStore {
-  isOpen: boolean;
-  selectedAccount: string | null;
+  isOpen: boolean
+  selectedAccount: string | null
   actions: {
-    toggleCreditManager: () => void;
-    setSelectedAccount: (id: string) => void;
-  };
+    toggleCreditManager: () => void
+    setSelectedAccount: (id: string) => void
+  }
 }
 
 const useCreditManagerStore = create<CreditManagerStore>()(
@@ -20,20 +20,18 @@ const useCreditManagerStore = create<CreditManagerStore>()(
         setSelectedAccount: (accountId: string) => {
           set(() => ({
             selectedAccount: accountId,
-          }));
+          }))
         },
       },
     }),
     {
-      name: "creditManager",
+      name: 'creditManager',
       partialize: (state) =>
         Object.fromEntries(
-          Object.entries(state).filter(([key]) =>
-            ["selectedAccount"].includes(key)
-          )
+          Object.entries(state).filter(([key]) => ['selectedAccount'].includes(key))
         ),
     }
   )
-);
+)
 
-export default useCreditManagerStore;
+export default useCreditManagerStore

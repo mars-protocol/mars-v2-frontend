@@ -1,55 +1,50 @@
-import React, { useState } from "react";
-import BigNumber from "bignumber.js";
+import React, { useState } from 'react'
+import BigNumber from 'bignumber.js'
 
-import Button from "../Button";
-import { formatCurrency } from "utils/formatters";
-import useCreditManagerStore from "stores/useCreditManagerStore";
-import useWalletStore from "stores/useWalletStore";
-import useCreditAccountBalances from "hooks/useCreditAccountPositions";
-import { getTokenDecimals } from "utils/tokens";
-import FundAccount from "./FundAccount";
+import Button from '../Button'
+import { formatCurrency } from 'utils/formatters'
+import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useWalletStore from 'stores/useWalletStore'
+import useCreditAccountBalances from 'hooks/useCreditAccountPositions'
+import { getTokenDecimals } from 'utils/tokens'
+import FundAccount from './FundAccount'
 
 export const ContainerStyled = ({
   children,
   className,
 }: {
-  children: React.ReactNode;
-  className?: string;
+  children: React.ReactNode
+  className?: string
 }) => {
-  return (
-    <div className={`p-2 bg-[#D8DAEA] rounded-lg text-[#585A74] ${className}`}>
-      {children}
-    </div>
-  );
-};
+  return <div className={`p-2 bg-[#D8DAEA] rounded-lg text-[#585A74] ${className}`}>{children}</div>
+}
 
 const CreditManager = () => {
-  const [isFund, setIsFund] = useState(false);
+  const [isFund, setIsFund] = useState(false)
 
-  const address = useWalletStore((state) => state.address);
-  const selectedAccount = useCreditManagerStore(
-    (state) => state.selectedAccount
-  );
+  const address = useWalletStore((state) => state.address)
+  const selectedAccount = useCreditManagerStore((state) => state.selectedAccount)
 
-  const { data: positionsData, isLoading: isLoadingPositions } =
-    useCreditAccountBalances(selectedAccount ?? "");
+  const { data: positionsData, isLoading: isLoadingPositions } = useCreditAccountBalances(
+    selectedAccount ?? ''
+  )
 
   const totalPosition =
     positionsData?.coins.reduce((acc, coin) => {
-      return Number(coin.value) + acc;
-    }, 0) ?? 0;
+      return Number(coin.value) + acc
+    }, 0) ?? 0
 
   const totalDebt =
     positionsData?.debt.reduce((acc, coin) => {
-      return Number(coin.value) + acc;
-    }, 0) ?? 0;
+      return Number(coin.value) + acc
+    }, 0) ?? 0
 
   if (!address) {
     return (
       <div className="absolute inset-0 left-auto p-2 w-[400px] bg-background-2 border-l border-white/20">
         <ContainerStyled>You must have a connected wallet</ContainerStyled>
       </div>
-    );
+    )
   }
 
   return (
@@ -64,13 +59,10 @@ const CreditManager = () => {
           </div>
         ) : (
           <div className="flex gap-3">
-            <Button
-              className="rounded-md flex-1"
-              onClick={() => setIsFund(true)}
-            >
+            <Button className="rounded-md flex-1" onClick={() => setIsFund(true)}>
               Fund
             </Button>
-            <Button className="rounded-md flex-1" onClick={() => alert("TODO")}>
+            <Button className="rounded-md flex-1" onClick={() => alert('TODO')}>
               Withdraw
             </Button>
           </div>
@@ -83,9 +75,7 @@ const CreditManager = () => {
           <ContainerStyled className="mb-2 text-sm">
             <div className="flex justify-between mb-1">
               <div>Total Position:</div>
-              <div className="font-semibold">
-                {formatCurrency(totalPosition)}
-              </div>
+              <div className="font-semibold">{formatCurrency(totalPosition)}</div>
             </div>
             <div className="flex justify-between">
               <div>Total Liabilities:</div>
@@ -140,7 +130,7 @@ const CreditManager = () => {
         </>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default CreditManager;
+export default CreditManager

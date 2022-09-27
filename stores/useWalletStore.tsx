@@ -1,44 +1,41 @@
-import create from "zustand";
-import { persist } from "zustand/middleware";
+import create from 'zustand'
+import { persist } from 'zustand/middleware'
 
-import { Wallet } from "types";
+import { Wallet } from 'types'
 
 interface WalletStore {
-  address: string;
-  injectiveAddress: string;
-  addresses: string[];
-  metamaskInstalled: boolean;
-  wallet: Wallet;
+  address: string
+  injectiveAddress: string
+  addresses: string[]
+  metamaskInstalled: boolean
+  wallet: Wallet
   actions: {
-    setAddress: (address: string) => void;
-    setMetamaskInstalledStatus: (value: boolean) => void;
-  };
+    setAddress: (address: string) => void
+    setMetamaskInstalledStatus: (value: boolean) => void
+  }
 }
 
 const useWalletStore = create<WalletStore>()(
   persist(
     (set, get) => ({
-      address: "",
-      injectiveAddress: "",
+      address: '',
+      injectiveAddress: '',
       addresses: [],
       metamaskInstalled: false,
       wallet: Wallet.Metamask,
       actions: {
         setAddress: (address: string) => set(() => ({ address })),
-        setMetamaskInstalledStatus: (value: boolean) =>
-          set(() => ({ metamaskInstalled: value })),
+        setMetamaskInstalledStatus: (value: boolean) => set(() => ({ metamaskInstalled: value })),
       },
     }),
     {
-      name: "wallet",
+      name: 'wallet',
       partialize: (state) =>
         Object.fromEntries(
-          Object.entries(state).filter(
-            ([key]) => !["metamaskInstalled", "actions"].includes(key)
-          )
+          Object.entries(state).filter(([key]) => !['metamaskInstalled', 'actions'].includes(key))
         ),
     }
   )
-);
+)
 
-export default useWalletStore;
+export default useWalletStore

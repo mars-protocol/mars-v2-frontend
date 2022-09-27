@@ -1,22 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { ArrowRightIcon } from "@heroicons/react/24/solid";
+import React, { useEffect, useState } from 'react'
+import { ArrowRightIcon } from '@heroicons/react/24/solid'
 
 type Props = {
-  value: number;
-};
+  value: number
+}
 
 const ProgressBar = ({ value }: Props) => {
-  const percentageValue = `${(value * 100).toFixed(0)}%`;
-  const [newValue, setNewValue] = useState(0.77);
+  const percentageValue = `${(value * 100).toFixed(0)}%`
+  const [newValue, setNewValue] = useState(0.77)
 
   useEffect(() => {
     setInterval(() => {
       // randomizing value between value and 1
-      setNewValue(Math.random() * (1 - value) + value);
-    }, 3000);
-  }, [value]);
+      setNewValue(Math.random() * (1 - value) + value)
+    }, 3000)
+  }, [value])
 
-  const percentageNewValue = `${(newValue * 100).toFixed(0)}%`;
+  const percentageNewValue = `${(newValue * 100).toFixed(0)}%`
 
   return (
     <div className="relative w-[130px] h-4 bg-black rounded-full z-0">
@@ -34,7 +34,7 @@ const ProgressBar = ({ value }: Props) => {
         {percentageNewValue}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ProgressBar;
+export default ProgressBar

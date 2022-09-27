@@ -1,60 +1,55 @@
-import React, { useEffect, useState } from "react";
-import type { NextPage } from "next";
+import React, { useEffect, useState } from 'react'
+import type { NextPage } from 'next'
 // import Head from "next/head";
 // import Image from "next/image";
 // import styles from "../styles/Home.module.css";
-import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 // import { Coin } from "@cosmjs/stargate";
-import { toast } from "react-toastify";
-import BigNumber from "bignumber.js";
-import { useQueryClient } from "@tanstack/react-query";
+import { toast } from 'react-toastify'
+import BigNumber from 'bignumber.js'
+import { useQueryClient } from '@tanstack/react-query'
 
-import Container from "components/Container";
-import Button from "components/Button";
-import useWalletStore from "stores/useWalletStore";
-import { chain } from "utils/chains";
-import { contractAddresses } from "config/contracts";
-import { hardcodedFee } from "utils/contants";
-import Spinner from "components/Spinner";
-import useCreditManagerStore from "stores/useCreditManagerStore";
+import Container from 'components/Container'
+import Button from 'components/Button'
+import useWalletStore from 'stores/useWalletStore'
+import { chain } from 'utils/chains'
+import { contractAddresses } from 'config/contracts'
+import { hardcodedFee } from 'utils/contants'
+import Spinner from 'components/Spinner'
+import useCreditManagerStore from 'stores/useCreditManagerStore'
 
 const Home: NextPage = () => {
-  const [sendAmount, setSendAmount] = useState("");
-  const [recipientAddress, setRecipientAddress] = useState("");
+  const [sendAmount, setSendAmount] = useState('')
+  const [recipientAddress, setRecipientAddress] = useState('')
 
-  const [allTokens, setAllTokens] = useState<string[] | null>(null);
-  const [walletTokens, setWalletTokens] = useState<string[] | null>(null);
+  const [allTokens, setAllTokens] = useState<string[] | null>(null)
+  const [walletTokens, setWalletTokens] = useState<string[] | null>(null)
 
-  const [borrowAmount, setBorrowAmount] = useState(0);
+  const [borrowAmount, setBorrowAmount] = useState(0)
 
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const address = useWalletStore((state) => state.address);
-  const selectedAccount = useCreditManagerStore(
-    (state) => state.selectedAccount
-  );
-  const queryClient = useQueryClient();
+  const address = useWalletStore((state) => state.address)
+  const selectedAccount = useCreditManagerStore((state) => state.selectedAccount)
+  const queryClient = useQueryClient()
 
-  const [signingClient, setSigningClient] = useState<SigningCosmWasmClient>();
+  const [signingClient, setSigningClient] = useState<SigningCosmWasmClient>()
 
   useEffect(() => {
-    (async () => {
-      if (!window.keplr) return;
+    ;(async () => {
+      if (!window.keplr) return
 
-      const offlineSigner = window.keplr.getOfflineSigner(chain.chainId);
-      const clientInstance = await SigningCosmWasmClient.connectWithSigner(
-        chain.rpc,
-        offlineSigner
-      );
+      const offlineSigner = window.keplr.getOfflineSigner(chain.chainId)
+      const clientInstance = await SigningCosmWasmClient.connectWithSigner(chain.rpc, offlineSigner)
 
-      setSigningClient(clientInstance);
-    })();
-  }, [address]);
+      setSigningClient(clientInstance)
+    })()
+  }, [address])
 
   const handleSendClick = async () => {
-    setError(null);
-    setIsLoading(true);
+    setError(null)
+    setIsLoading(true)
 
     try {
       // console.log(await signingClient.getHeight());
@@ -78,9 +73,9 @@ const Home: NextPage = () => {
           },
         ],
         hardcodedFee
-      );
+      )
 
-      console.log("txResponse", res);
+      console.log('txResponse', res)
       toast.success(
         <div>
           <a
@@ -92,33 +87,33 @@ const Home: NextPage = () => {
           </a>
         </div>,
         { autoClose: false }
-      );
+      )
     } catch (e: any) {
-      console.log(e);
-      setError(e.message);
+      console.log(e)
+      setError(e.message)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleCreateCreditAccount = async () => {
-    setError(null);
-    setIsLoading(true);
+    setError(null)
+    setIsLoading(true)
 
     try {
       // 200000 gas used
       const executeMsg = {
         create_credit_account: {},
-      };
+      }
 
       const createResult = await signingClient?.execute(
         address,
         contractAddresses.creditManager,
         executeMsg,
         hardcodedFee
-      );
+      )
 
-      console.log("mint result", createResult);
+      console.log('mint result', createResult)
       toast.success(
         <div>
           <a
@@ -130,35 +125,35 @@ const Home: NextPage = () => {
           </a>
         </div>,
         { autoClose: false }
-      );
+      )
 
-      queryClient.invalidateQueries(["creditAccounts"]);
+      queryClient.invalidateQueries(['creditAccounts'])
     } catch (e: any) {
-      console.log(e);
-      setError(e.message);
+      console.log(e)
+      setError(e.message)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   // https://github.com/mars-protocol/rover/blob/master/scripts/types/generated/account-nft/AccountNft.types.ts
   const handleGetCreditAccounts = async () => {
-    setError(null);
-    setIsLoading(true);
+    setError(null)
+    setIsLoading(true)
 
     try {
       const allTokensQueryMsg = {
         all_tokens: {},
-      };
+      }
 
       const allTokensResponse = await signingClient?.queryContractSmart(
         contractAddresses.accountNft,
         allTokensQueryMsg
-      );
+      )
 
-      setAllTokens(allTokensResponse.tokens);
+      setAllTokens(allTokensResponse.tokens)
 
-      console.log("all tokens", allTokensResponse);
+      console.log('all tokens', allTokensResponse)
 
       // Returns de owner of a specific "credit account"
       // const ownerOfQueryMsg = {
@@ -179,26 +174,26 @@ const Home: NextPage = () => {
         tokens: {
           owner: address,
         },
-      };
+      }
 
       const tokensResponse = await signingClient?.queryContractSmart(
         contractAddresses.accountNft,
         tokensQueryMsg
-      );
+      )
 
-      console.log("res tokens", tokensResponse);
-      setWalletTokens(tokensResponse.tokens);
+      console.log('res tokens', tokensResponse)
+      setWalletTokens(tokensResponse.tokens)
     } catch (e: any) {
-      console.log(e);
-      setError(e.message);
+      console.log(e)
+      setError(e.message)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleBorrowClick = async () => {
-    setError(null);
-    setIsLoading(true);
+    setError(null)
+    setIsLoading(true)
 
     try {
       const executeMsg = {
@@ -207,7 +202,7 @@ const Home: NextPage = () => {
           actions: [
             {
               borrow: {
-                denom: "uosmo",
+                denom: 'uosmo',
                 amount: BigNumber(borrowAmount)
                   .times(10 ** 6)
                   .toString(),
@@ -215,16 +210,16 @@ const Home: NextPage = () => {
             },
           ],
         },
-      };
+      }
 
       const borrowResult = await signingClient?.execute(
         address,
         contractAddresses.creditManager,
         executeMsg,
         hardcodedFee
-      );
+      )
 
-      console.log("borrow result", borrowResult);
+      console.log('borrow result', borrowResult)
       toast.success(
         <div>
           <a
@@ -236,18 +231,18 @@ const Home: NextPage = () => {
           </a>
         </div>,
         { autoClose: false }
-      );
+      )
 
-      queryClient.invalidateQueries(["creditAccounts"]);
-      queryClient.invalidateQueries(["injectiveBalance"]);
-      queryClient.invalidateQueries(["creditAccountPositions"]);
+      queryClient.invalidateQueries(['creditAccounts'])
+      queryClient.invalidateQueries(['injectiveBalance'])
+      queryClient.invalidateQueries(['creditAccountPositions'])
     } catch (e: any) {
-      console.log(e);
-      setError(e.message);
+      console.log(e)
+      setError(e.message)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <div className="flex flex-col gap-y-6 max-w-6xl mx-auto">
@@ -274,28 +269,19 @@ const Home: NextPage = () => {
             />
           </div>
         </div>
-        <Button
-          className="bg-[#524bb1] hover:bg-[#6962cc]"
-          onClick={handleSendClick}
-        >
+        <Button className="bg-[#524bb1] hover:bg-[#6962cc]" onClick={handleSendClick}>
           Send
         </Button>
       </Container>
       <Container>
         <h4 className="text-xl mb-5">Create Credit Account (Mint NFT)</h4>
-        <Button
-          className="bg-[#524bb1] hover:bg-[#6962cc]"
-          onClick={handleCreateCreditAccount}
-        >
+        <Button className="bg-[#524bb1] hover:bg-[#6962cc]" onClick={handleCreateCreditAccount}>
           Create
         </Button>
       </Container>
       <Container>
         <h4 className="text-xl mb-5">Get all Credit Accounts</h4>
-        <Button
-          className="bg-[#524bb1] hover:bg-[#6962cc]"
-          onClick={handleGetCreditAccounts}
-        >
+        <Button className="bg-[#524bb1] hover:bg-[#6962cc]" onClick={handleGetCreditAccounts}>
           Fetch
         </Button>
       </Container>
@@ -306,10 +292,7 @@ const Home: NextPage = () => {
           type="number"
           onChange={(e) => setBorrowAmount(e.target.valueAsNumber)}
         />
-        <Button
-          className="bg-[#524bb1] hover:bg-[#6962cc] ml-4"
-          onClick={handleBorrowClick}
-        >
+        <Button className="bg-[#524bb1] hover:bg-[#6962cc] ml-4" onClick={handleBorrowClick}>
           Borrow
         </Button>
       </Container>
@@ -345,7 +328,7 @@ const Home: NextPage = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

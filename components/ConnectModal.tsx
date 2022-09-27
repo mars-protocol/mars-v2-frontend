@@ -1,85 +1,85 @@
-import React, { Fragment, useState } from "react";
-import Image from "next/image";
-import { Dialog, Transition } from "@headlessui/react";
-import { toast } from "react-toastify";
-import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
-import { Coin } from "@cosmjs/stargate";
+import React, { Fragment, useState } from 'react'
+import Image from 'next/image'
+import { Dialog, Transition } from '@headlessui/react'
+import { toast } from 'react-toastify'
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
+import { Coin } from '@cosmjs/stargate'
 
-import { getInjectiveAddress } from "utils/address";
-import { getExperimentalChainConfigBasedOnChainId } from "utils/experimental-chains";
-import { ChainId } from "types";
-import useWalletStore from "stores/useWalletStore";
-import { chain } from "utils/chains";
+import { getInjectiveAddress } from 'utils/address'
+import { getExperimentalChainConfigBasedOnChainId } from 'utils/experimental-chains'
+import { ChainId } from 'types'
+import useWalletStore from 'stores/useWalletStore'
+import { chain } from 'utils/chains'
 
 type Props = {
-  isOpen: boolean;
-  onClose: () => void;
-};
+  isOpen: boolean
+  onClose: () => void
+}
 
 const ConnectModal = ({ isOpen, onClose }: Props) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
 
-  const actions = useWalletStore((state) => state.actions);
-  const metamaskInstalled = useWalletStore((state) => state.metamaskInstalled);
-  const isKeplrInstalled = typeof window !== "undefined" && window.keplr;
+  const actions = useWalletStore((state) => state.actions)
+  const metamaskInstalled = useWalletStore((state) => state.metamaskInstalled)
+  const isKeplrInstalled = typeof window !== 'undefined' && window.keplr
 
   const handleConnectSuccess = () => {
-    onClose();
+    onClose()
 
     // defering update on loading state to avoid updating before close animation is finished
     setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-  };
+      setIsLoading(false)
+    }, 500)
+  }
 
   const handleConnectKeplr = async () => {
     if (!window.keplr) {
-      toast.error("You need Keplr extension installed");
-      return;
+      toast.error('You need Keplr extension installed')
+      return
     }
 
-    setIsLoading(true);
+    setIsLoading(true)
 
     try {
-      const chainData = getExperimentalChainConfigBasedOnChainId(chain.chainId);
+      const chainData = getExperimentalChainConfigBasedOnChainId(chain.chainId)
 
       if (chainData) {
-        await window.keplr.experimentalSuggestChain(chainData);
+        await window.keplr.experimentalSuggestChain(chainData)
       }
 
-      const key = await window.keplr.getKey(chain.chainId);
-      actions.setAddress(key.bech32Address);
+      const key = await window.keplr.getKey(chain.chainId)
+      actions.setAddress(key.bech32Address)
 
-      handleConnectSuccess();
+      handleConnectSuccess()
     } catch (e) {
       // TODO: handle exception
-      console.log(e);
-      setIsLoading(false);
+      console.log(e)
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleConnectMetamask = async () => {
     if (!metamaskInstalled) {
-      toast.error("You need Metamask extension installed");
-      return;
+      toast.error('You need Metamask extension installed')
+      return
     }
 
-    setIsLoading(true);
+    setIsLoading(true)
 
     try {
       // TODO: missing type definitions
       const addresses = await (window.ethereum as any).request({
-        method: "eth_requestAccounts",
-      });
-      const [address] = addresses;
-      actions.setAddress(getInjectiveAddress(address));
-      handleConnectSuccess();
+        method: 'eth_requestAccounts',
+      })
+      const [address] = addresses
+      actions.setAddress(getInjectiveAddress(address))
+      handleConnectSuccess()
     } catch (e) {
       // TODO: handle exception
-      console.log(e);
-      setIsLoading(false);
+      console.log(e)
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -108,10 +108,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                <Dialog.Title
-                  as="h3"
-                  className="text-lg font-medium leading-6 text-gray-900 mb-6"
-                >
+                <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 mb-6">
                   Connect your wallet
                 </Dialog.Title>
                 {isLoading ? (
@@ -139,12 +136,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
                       className="flex items-center p-4 bg-black/90 rounded-xl hover:bg-black"
                       onClick={handleConnectMetamask}
                     >
-                      <Image
-                        src="/wallets/metamask.webp"
-                        height={30}
-                        width={30}
-                        alt="metamask"
-                      />
+                      <Image src="/wallets/metamask.webp" height={30} width={30} alt="metamask" />
                       <div className="ml-4 text-left">
                         <div className="flex items-end">
                           <p>Metamask</p>
@@ -152,29 +144,22 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
                             <a
                               className="ml-3 text-sm text-blue-600"
                               onClick={(e) => {
-                                window.open("https://metamask.io/", "_blank");
-                                e.stopPropagation();
+                                window.open('https://metamask.io/', '_blank')
+                                e.stopPropagation()
                               }}
                             >
                               Install
                             </a>
                           )}
                         </div>
-                        <p className="text-sm text-gray-400">
-                          Connect using Metamask
-                        </p>
+                        <p className="text-sm text-gray-400">Connect using Metamask</p>
                       </div>
                     </button>
                     <button
                       className="flex items-center p-4 bg-black/90 rounded-xl hover:bg-black"
                       onClick={handleConnectKeplr}
                     >
-                      <Image
-                        src="/wallets/keplr.png"
-                        height={30}
-                        width={30}
-                        alt="keplr"
-                      />
+                      <Image src="/wallets/keplr.png" height={30} width={30} alt="keplr" />
                       <div className="ml-4 text-left">
                         <div className="flex items-end">
                           <p>Keplr</p>
@@ -182,17 +167,15 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
                             <a
                               className="ml-3 text-sm text-blue-600"
                               onClick={(e) => {
-                                window.open("https://www.keplr.app/", "_blank");
-                                e.stopPropagation();
+                                window.open('https://www.keplr.app/', '_blank')
+                                e.stopPropagation()
                               }}
                             >
                               Install
                             </a>
                           )}
                         </div>
-                        <p className="text-sm text-gray-400">
-                          Connect using Keplr
-                        </p>
+                        <p className="text-sm text-gray-400">Connect using Keplr</p>
                       </div>
                     </button>
                   </div>
@@ -203,7 +186,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
         </div>
       </Dialog>
     </Transition>
-  );
-};
+  )
+}
 
-export default ConnectModal;
+export default ConnectModal

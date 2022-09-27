@@ -1,63 +1,55 @@
-import React, { useMemo } from "react";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { Popover } from "@headlessui/react";
-import { ChevronDownIcon } from "@heroicons/react/24/solid";
+import React, { useMemo } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { Popover } from '@headlessui/react'
+import { ChevronDownIcon } from '@heroicons/react/24/solid'
 
-import SearchInput from "components/SearchInput";
-import ProgressBar from "components/ProgressBar";
-import Spinner from "components/Spinner";
-import Wallet from "components/Wallet";
-import { formatCurrency } from "utils/formatters";
-import useCreditAccounts from "hooks/useCreditAccounts";
-import useCreateCreditAccount from "hooks/useCreateCreditAccount";
-import useDeleteCreditAccount from "hooks/useDeleteCreditAccount";
-import useCreditManagerStore from "stores/useCreditManagerStore";
+import SearchInput from 'components/SearchInput'
+import ProgressBar from 'components/ProgressBar'
+import Spinner from 'components/Spinner'
+import Wallet from 'components/Wallet'
+import { formatCurrency } from 'utils/formatters'
+import useCreditAccounts from 'hooks/useCreditAccounts'
+import useCreateCreditAccount from 'hooks/useCreateCreditAccount'
+import useDeleteCreditAccount from 'hooks/useDeleteCreditAccount'
+import useCreditManagerStore from 'stores/useCreditManagerStore'
 
 const NavLink = ({ href, children }: { href: string; children: string }) => {
-  const router = useRouter();
+  const router = useRouter()
 
   return (
     <Link href={href} passHref>
-      <a
-        className={`${
-          router.pathname === href ? "text-white" : ""
-        } hover:text-white`}
-      >
+      <a className={`${router.pathname === href ? 'text-white' : ''} hover:text-white`}>
         {children}
       </a>
     </Link>
-  );
-};
+  )
+}
 
 const Navigation = () => {
-  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount);
-  const setSelectedAccount = useCreditManagerStore(
-    (s) => s.actions.setSelectedAccount
-  );
-  const toggleCreditManager = useCreditManagerStore(
-    (s) => s.actions.toggleCreditManager
-  );
+  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
+  const setSelectedAccount = useCreditManagerStore((s) => s.actions.setSelectedAccount)
+  const toggleCreditManager = useCreditManagerStore((s) => s.actions.toggleCreditManager)
 
-  const { data: creditAccountsList } = useCreditAccounts();
-  const { mutate: createCreditAccount, isLoading: isLoadingCreate } =
-    useCreateCreditAccount();
-  const { mutate: deleteCreditAccount, isLoading: isLoadingDelete } =
-    useDeleteCreditAccount(selectedAccount || "");
+  const { data: creditAccountsList } = useCreditAccounts()
+  const { mutate: createCreditAccount, isLoading: isLoadingCreate } = useCreateCreditAccount()
+  const { mutate: deleteCreditAccount, isLoading: isLoadingDelete } = useDeleteCreditAccount(
+    selectedAccount || ''
+  )
 
   const { firstCreditAccounts, otherCreditAccounts } = useMemo(() => {
     // TODO: will require some tweaks depending on how lower viewport mocks pans out
-    const MAX_SIZE = 5;
-    const thresholdIndex = MAX_SIZE;
+    const MAX_SIZE = 5
+    const thresholdIndex = MAX_SIZE
 
-    const firstChunk = creditAccountsList?.slice(0, thresholdIndex) ?? [];
-    const secondChunk = creditAccountsList?.slice(thresholdIndex) ?? [];
+    const firstChunk = creditAccountsList?.slice(0, thresholdIndex) ?? []
+    const secondChunk = creditAccountsList?.slice(thresholdIndex) ?? []
 
     return {
       firstCreditAccounts: firstChunk,
       otherCreditAccounts: secondChunk,
-    };
-  }, [creditAccountsList]);
+    }
+  }, [creditAccountsList])
 
   return (
     <div>
@@ -85,7 +77,7 @@ const Navigation = () => {
             <div
               key={account}
               className={`px-4 hover:text-white cursor-pointer ${
-                selectedAccount === account ? "text-white" : ""
+                selectedAccount === account ? 'text-white' : ''
               }`}
               onClick={() => setSelectedAccount(account)}
             >
@@ -107,7 +99,7 @@ const Navigation = () => {
                       <div
                         key={account}
                         className={`cursor-pointer hover:text-orange-500 ${
-                          selectedAccount === account ? "text-orange-500" : ""
+                          selectedAccount === account ? 'text-orange-500' : ''
                         }`}
                         onClick={() => setSelectedAccount(account)}
                       >
@@ -132,8 +124,8 @@ const Navigation = () => {
                   <div
                     className="mb-2 cursor-pointer hover:text-orange-500"
                     onClick={() => {
-                      close();
-                      createCreditAccount();
+                      close()
+                      createCreditAccount()
                     }}
                   >
                     Create Account
@@ -141,21 +133,21 @@ const Navigation = () => {
                   <div
                     className="mb-2 cursor-pointer hover:text-orange-500"
                     onClick={() => {
-                      close();
-                      deleteCreditAccount();
+                      close()
+                      deleteCreditAccount()
                     }}
                   >
                     Close Account
                   </div>
                   <div
                     className="mb-2 cursor-pointer hover:text-orange-500"
-                    onClick={() => alert("TODO")}
+                    onClick={() => alert('TODO')}
                   >
                     Transfer Balance
                   </div>
                   <div
                     className="cursor-pointer hover:text-orange-500"
-                    onClick={() => alert("TODO")}
+                    onClick={() => alert('TODO')}
                   >
                     Rearrange
                   </div>
@@ -185,7 +177,7 @@ const Navigation = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Navigation;
+export default Navigation

@@ -1,7 +1,7 @@
-import React from "react";
-import Image from "next/image";
+import React from 'react'
+import Image from 'next/image'
 
-import Container from "components/Container";
+import Container from 'components/Container'
 
 const AssetRow = () => {
   return (
@@ -24,8 +24,8 @@ const AssetRow = () => {
       </div>
       <div className="w-[50px]">ACTION</div>
     </div>
-  );
-};
+  )
+}
 
 const Borrow = () => {
   return (
@@ -48,9 +48,7 @@ const Borrow = () => {
           </div>
         </div>
         <div>
-          <h3 className="font-medium uppercase text-center mb-1">
-            Not Borrowed Yet
-          </h3>
+          <h3 className="font-medium uppercase text-center mb-1">Not Borrowed Yet</h3>
           <div className="flex bg-[#D8DAEA] text-[#585A74]/50 text-sm rounded-md p-2 mb-2">
             <div className="flex-1">Asset</div>
             <div className="flex-1">Borrow Rate</div>
@@ -67,7 +65,7 @@ const Borrow = () => {
         </div>
       </Container>
     </div>
-  );
-};
+  )
+}
 
-export default Borrow;
+export default Borrow

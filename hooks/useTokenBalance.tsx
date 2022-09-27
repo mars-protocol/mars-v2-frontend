@@ -1,21 +1,21 @@
-import { useQuery } from "@tanstack/react-query";
-import BigNumber from "bignumber.js";
+import { useQuery } from '@tanstack/react-query'
+import BigNumber from 'bignumber.js'
 
-import useWalletStore from "stores/useWalletStore";
-import { chain } from "utils/chains";
+import useWalletStore from 'stores/useWalletStore'
+import { chain } from 'utils/chains'
 
 type Result = {
   balance: {
-    amount: number;
-    denom: string;
-  };
-};
+    amount: number
+    denom: string
+  }
+}
 
 const useTokenBalance = (denom?: string) => {
-  const address = useWalletStore((state) => state.address);
+  const address = useWalletStore((state) => state.address)
 
   const result = useQuery<Result>(
-    ["injectiveBalance"],
+    ['injectiveBalance'],
     async () =>
       fetch(
         `${chain.rest}/cosmos/bank/v1beta1/balances/${address}/by_denom?denom=${
@@ -25,7 +25,7 @@ const useTokenBalance = (denom?: string) => {
     {
       enabled: !!address,
     }
-  );
+  )
 
   return {
     ...result,
@@ -34,7 +34,7 @@ const useTokenBalance = (denom?: string) => {
           .div(10 ** chain.stakeCurrency.coinDecimals)
           .toNumber()
       : 0,
-  };
-};
+  }
+}
 
-export default useTokenBalance;
+export default useTokenBalance
