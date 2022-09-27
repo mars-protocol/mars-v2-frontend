@@ -48,13 +48,10 @@ const Navigation = () => {
     selectedAccount || ''
   )
 
-  const { firstCreditAccounts, otherCreditAccounts } = useMemo(() => {
-    const firstChunk = creditAccountsList?.slice(0, MAX_VISIBLE_CREDIT_ACCOUNTS) ?? []
-    const secondChunk = creditAccountsList?.slice(MAX_VISIBLE_CREDIT_ACCOUNTS) ?? []
-
+  const { firstCreditAccounts, restCreditAccounts } = useMemo(() => {
     return {
-      firstCreditAccounts: firstChunk,
-      otherCreditAccounts: secondChunk,
+      firstCreditAccounts: creditAccountsList?.slice(0, MAX_VISIBLE_CREDIT_ACCOUNTS) ?? [],
+      restCreditAccounts: creditAccountsList?.slice(MAX_VISIBLE_CREDIT_ACCOUNTS) ?? [],
     }
   }, [creditAccountsList])
 
@@ -91,7 +88,7 @@ const Navigation = () => {
               Account {account}
             </div>
           ))}
-          {otherCreditAccounts.length > 0 && (
+          {restCreditAccounts.length > 0 && (
             <Popover className="relative">
               <Popover.Button>
                 <div className="px-3 flex items-center hover:text-white cursor-pointer">
@@ -100,21 +97,19 @@ const Navigation = () => {
                 </div>
               </Popover.Button>
               <Popover.Panel className="absolute z-10 pt-2 w-[200px]">
-                {({ close }) => (
-                  <div className="bg-white rounded-2xl p-4 text-gray-900">
-                    {otherCreditAccounts.map((account) => (
-                      <div
-                        key={account}
-                        className={`cursor-pointer hover:text-orange-500 ${
-                          selectedAccount === account ? 'text-orange-500' : ''
-                        }`}
-                        onClick={() => setSelectedAccount(account)}
-                      >
-                        Account {account}
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <div className="bg-white rounded-2xl p-4 text-gray-900">
+                  {restCreditAccounts.map((account) => (
+                    <div
+                      key={account}
+                      className={`cursor-pointer hover:text-orange-500 ${
+                        selectedAccount === account ? 'text-orange-500' : ''
+                      }`}
+                      onClick={() => setSelectedAccount(account)}
+                    >
+                      Account {account}
+                    </div>
+                  ))}
+                </div>
               </Popover.Panel>
             </Popover>
           )}
