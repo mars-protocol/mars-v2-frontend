@@ -9,7 +9,7 @@ import useDepositCreditAccount from 'hooks/useDepositCreditAccount'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useAllBalances from 'hooks/useAllBalances'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-import { ContainerStyled } from '.'
+import CreditManagerContainer from './CreditManagerContainer'
 
 const FundAccount = () => {
   const [amount, setAmount] = useState(0)
@@ -57,7 +57,7 @@ const FundAccount = () => {
 
   return (
     <>
-      <ContainerStyled className="p-3 mb-2">
+      <CreditManagerContainer className="p-3 mb-2">
         <p className="mb-6">
           Transfer assets from your injective wallet to your Mars credit account. If you don’t have
           any assets in your injective wallet use the injective bridge to transfer funds to your
@@ -130,8 +130,8 @@ const FundAccount = () => {
             </div>
           </>
         )}
-      </ContainerStyled>
-      <ContainerStyled className="flex justify-between items-center mb-2">
+      </CreditManagerContainer>
+      <CreditManagerContainer className="flex justify-between items-center mb-2">
         <div>
           <h3 className="font-bold">Lending Assets</h3>
           <div className="opacity-50">Lend assets from account to earn yield.</div>
@@ -150,7 +150,7 @@ const FundAccount = () => {
             } inline-block h-4 w-4 transform rounded-full bg-white transition`}
           />
         </Switch>
-      </ContainerStyled>
+      </CreditManagerContainer>
       <Button
         className="w-full !rounded-lg"
         onClick={() => mutate()}
