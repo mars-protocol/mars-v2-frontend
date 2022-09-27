@@ -7,6 +7,7 @@ import useWalletStore from 'stores/useWalletStore'
 import { chain } from 'utils/chains'
 import { contractAddresses } from 'config/contracts'
 import { hardcodedFee } from 'utils/contants'
+import { QueryKeys } from 'types/query-keys'
 
 const useCreateCreditAccount = (accountId: string) => {
   const [signingClient, setSigningClient] = useState<SigningCosmWasmClient>()
@@ -39,7 +40,7 @@ const useCreateCreditAccount = (accountId: string) => {
       ),
     {
       onSettled: () => {
-        queryClient.invalidateQueries(['creditAccounts'])
+        queryClient.invalidateQueries([[QueryKeys.CreditAccounts]])
       },
       onError: (err: Error) => {
         toast.error(err.message)

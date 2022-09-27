@@ -15,7 +15,7 @@ const useTokenBalance = (denom?: string) => {
   const address = useWalletStore((state) => state.address)
 
   const result = useQuery<Result>(
-    ['injectiveBalance'],
+    ['tokenBalance', denom, address],
     async () =>
       fetch(
         `${chain.rest}/cosmos/bank/v1beta1/balances/${address}/by_denom?denom=${

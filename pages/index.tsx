@@ -17,6 +17,7 @@ import { contractAddresses } from 'config/contracts'
 import { hardcodedFee } from 'utils/contants'
 import Spinner from 'components/Spinner'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
+import { QueryKeys } from 'types/query-keys'
 
 const Home: NextPage = () => {
   const [sendAmount, setSendAmount] = useState('')
@@ -127,7 +128,7 @@ const Home: NextPage = () => {
         { autoClose: false }
       )
 
-      queryClient.invalidateQueries(['creditAccounts'])
+      queryClient.invalidateQueries([QueryKeys.CreditAccounts])
     } catch (e: any) {
       console.log(e)
       setError(e.message)
@@ -233,9 +234,9 @@ const Home: NextPage = () => {
         { autoClose: false }
       )
 
-      queryClient.invalidateQueries(['creditAccounts'])
-      queryClient.invalidateQueries(['injectiveBalance'])
-      queryClient.invalidateQueries(['creditAccountPositions'])
+      queryClient.invalidateQueries([QueryKeys.CreditAccounts])
+      queryClient.invalidateQueries([QueryKeys.TokenBalance])
+      queryClient.invalidateQueries([QueryKeys.CreditAccountPositions])
     } catch (e: any) {
       console.log(e)
       setError(e.message)
