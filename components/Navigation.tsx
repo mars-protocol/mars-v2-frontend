@@ -14,6 +14,17 @@ import useCreateCreditAccount from 'hooks/useCreateCreditAccount'
 import useDeleteCreditAccount from 'hooks/useDeleteCreditAccount'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 
+// TODO: will require some tweaks depending on how lower viewport mocks pans out
+const MAX_VISIBLE_CREDIT_ACCOUNTS = 5
+
+const navItems = [
+  { href: '/trade', label: 'Trade' },
+  { href: '/yield', label: 'Yield' },
+  { href: '/borrow', label: 'Borrow' },
+  { href: '/portfolio', label: 'Portfolio' },
+  { href: '/council', label: 'Council' },
+]
+
 const NavLink = ({ href, children }: { href: string; children: string }) => {
   const router = useRouter()
 
@@ -38,12 +49,8 @@ const Navigation = () => {
   )
 
   const { firstCreditAccounts, otherCreditAccounts } = useMemo(() => {
-    // TODO: will require some tweaks depending on how lower viewport mocks pans out
-    const MAX_SIZE = 5
-    const thresholdIndex = MAX_SIZE
-
-    const firstChunk = creditAccountsList?.slice(0, thresholdIndex) ?? []
-    const secondChunk = creditAccountsList?.slice(thresholdIndex) ?? []
+    const firstChunk = creditAccountsList?.slice(0, MAX_VISIBLE_CREDIT_ACCOUNTS) ?? []
+    const secondChunk = creditAccountsList?.slice(MAX_VISIBLE_CREDIT_ACCOUNTS) ?? []
 
     return {
       firstCreditAccounts: firstChunk,
@@ -61,11 +68,11 @@ const Navigation = () => {
           </a>
         </Link>
         <div className="flex px-12 gap-5 text-white/40">
-          <NavLink href="/trade">Trade</NavLink>
-          <NavLink href="/yield">Yield</NavLink>
-          <NavLink href="/borrow">Borrow</NavLink>
-          <NavLink href="/portfolio">Portfolio</NavLink>
-          <NavLink href="/council">Council</NavLink>
+          {navItems.map((item, index) => (
+            <NavLink key={index} href={item.href}>
+              {item.label}
+            </NavLink>
+          ))}
         </div>
         <Wallet />
       </div>
