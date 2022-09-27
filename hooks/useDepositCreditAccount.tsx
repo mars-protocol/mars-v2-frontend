@@ -7,7 +7,7 @@ import useWalletStore from 'stores/useWalletStore'
 import { chain } from 'utils/chains'
 import { contractAddresses } from 'config/contracts'
 import { hardcodedFee } from 'utils/contants'
-import { QueryKeys } from 'types/query-keys'
+import { queryKeys } from 'types/query-keys-factory'
 
 const useDepositCreditAccount = (accountId: string, denom: string, amount: number) => {
   const [signingClient, setSigningClient] = useState<SigningCosmWasmClient>()
@@ -58,8 +58,9 @@ const useDepositCreditAccount = (accountId: string, denom: string, amount: numbe
         toast.error(err.message)
       },
       onSuccess: () => {
-        queryClient.invalidateQueries([QueryKeys.TokenBalance])
-        queryClient.invalidateQueries([QueryKeys.CreditAccountPositions])
+        queryClient.invalidateQueries(queryKeys.allBalances(address))
+        queryClient.invalidateQueries(queryKeys.tokenBalance(address, denom))
+        queryClient.invalidateQueries(queryKeys.creditAccountsPositions(accountId))
 
         toast.success('Deposited Successfully')
       },

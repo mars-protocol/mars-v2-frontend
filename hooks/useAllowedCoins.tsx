@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import useWalletStore from 'stores/useWalletStore'
 import { chain } from 'utils/chains'
 import { contractAddresses } from 'config/contracts'
-import { QueryKeys } from 'types/query-keys'
+import { queryKeys } from 'types/query-keys-factory'
 
 type Result = string[]
 
@@ -29,7 +29,7 @@ const useAllowedCoins = () => {
   }, [address])
 
   const result = useQuery<Result>(
-    [QueryKeys.AllowedCoins],
+    queryKeys.allowedCoins(),
     async () => signingClient?.queryContractSmart(contractAddresses.creditManager, queryMsg),
     {
       enabled: !!address && !!signingClient,

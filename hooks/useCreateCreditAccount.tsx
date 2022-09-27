@@ -8,7 +8,7 @@ import { chain } from 'utils/chains'
 import { contractAddresses } from 'config/contracts'
 import { hardcodedFee } from 'utils/contants'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
-import { QueryKeys } from 'types/query-keys'
+import { queryKeys } from 'types/query-keys-factory'
 
 // 200000 gas used
 const executeMsg = {
@@ -43,7 +43,7 @@ const useCreateCreditAccount = () => {
       ),
     {
       onSettled: () => {
-        queryClient.invalidateQueries([QueryKeys.CreditAccounts])
+        queryClient.invalidateQueries(queryKeys.creditAccounts(address))
       },
       onError: (err: Error) => {
         toast.error(err.message)

@@ -17,7 +17,7 @@ import { contractAddresses } from 'config/contracts'
 import { hardcodedFee } from 'utils/contants'
 import Spinner from 'components/Spinner'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
-import { QueryKeys } from 'types/query-keys'
+import { queryKeys } from 'types/query-keys-factory'
 
 const Home: NextPage = () => {
   const [sendAmount, setSendAmount] = useState('')
@@ -128,7 +128,7 @@ const Home: NextPage = () => {
         { autoClose: false }
       )
 
-      queryClient.invalidateQueries([QueryKeys.CreditAccounts])
+      queryClient.invalidateQueries(queryKeys.creditAccounts(address))
     } catch (e: any) {
       console.log(e)
       setError(e.message)
@@ -197,6 +197,8 @@ const Home: NextPage = () => {
     setIsLoading(true)
 
     try {
+      if (!selectedAccount) return
+
       const executeMsg = {
         update_credit_account: {
           account_id: selectedAccount,
@@ -234,9 +236,9 @@ const Home: NextPage = () => {
         { autoClose: false }
       )
 
-      queryClient.invalidateQueries([QueryKeys.CreditAccounts])
-      queryClient.invalidateQueries([QueryKeys.TokenBalance])
-      queryClient.invalidateQueries([QueryKeys.CreditAccountPositions])
+      queryClient.invalidateQueries(queryKeys.creditAccounts(address))
+      queryClient.invalidateQueries(queryKeys.creditAccountsPositions(selectedAccount))
+      queryClient.invalidateQueries(queryKeys.tokenBalance(address, 'uosmo'))
     } catch (e: any) {
       console.log(e)
       setError(e.message)

@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js'
 
 import useWalletStore from 'stores/useWalletStore'
 import { chain } from 'utils/chains'
+import { queryKeys } from 'types/query-keys-factory'
 
 type Result = {
   balance: {
@@ -15,7 +16,7 @@ const useTokenBalance = (denom?: string) => {
   const address = useWalletStore((state) => state.address)
 
   const result = useQuery<Result>(
-    ['tokenBalance', denom, address],
+    queryKeys.tokenBalance(address, denom || chain.stakeCurrency.coinMinimalDenom),
     async () =>
       fetch(
         `${chain.rest}/cosmos/bank/v1beta1/balances/${address}/by_denom?denom=${

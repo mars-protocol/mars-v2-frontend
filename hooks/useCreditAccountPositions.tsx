@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react'
 import useWalletStore from 'stores/useWalletStore'
 import { chain } from 'utils/chains'
 import { contractAddresses } from 'config/contracts'
-import { QueryKeys } from 'types/query-keys'
+import { queryKeys } from 'types/query-keys-factory'
 
 interface CoinValue {
   amount: string
@@ -55,7 +55,7 @@ const useCreditAccountPositions = (accountId: string) => {
   }, [address])
 
   const result = useQuery<Result>(
-    [QueryKeys.CreditAccountPositions, accountId],
+    queryKeys.creditAccountsPositions(accountId),
     async () =>
       signingClient?.queryContractSmart(contractAddresses.creditManager, {
         positions: {

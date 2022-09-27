@@ -6,7 +6,7 @@ import useWalletStore from 'stores/useWalletStore'
 import { chain } from 'utils/chains'
 import { contractAddresses } from 'config/contracts'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
-import { QueryKeys } from 'types/query-keys'
+import { queryKeys } from 'types/query-keys-factory'
 
 type Result = {
   tokens: string[]
@@ -38,7 +38,7 @@ const useCreditAccounts = () => {
   }, [address])
 
   const result = useQuery<Result>(
-    [QueryKeys.CreditAccounts, address],
+    queryKeys.creditAccounts(address),
     async () => signingClient?.queryContractSmart(contractAddresses.accountNft, queryMsg),
     {
       enabled: !!address && !!signingClient,
