@@ -8,7 +8,7 @@ export const CreditManagerContainer = ({
   children: React.ReactNode
   className?: string
 }) => {
-  return <div className={`p-2 bg-[#D8DAEA] rounded-lg text-[#585A74] ${className}`}>{children}</div>
+  return <div className={`rounded-lg bg-[#D8DAEA] p-2 text-[#585A74] ${className}`}>{children}</div>
 }
 
 export default CreditManagerContainer

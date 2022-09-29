@@ -19,16 +19,16 @@ const ProgressBar = ({ value }: Props) => {
   const percentageNewValue = `${(newValue * 100).toFixed(0)}%`
 
   return (
-    <div className="relative w-[130px] h-4 bg-black rounded-full z-0">
+    <div className="relative z-0 h-4 w-[130px] rounded-full bg-black">
       <div
-        className="absolute bg-green-500 h-4 rounded-full z-10"
+        className="absolute z-10 h-4 rounded-full bg-green-500"
         style={{ width: percentageValue }}
       />
       <div
-        className="absolute bg-red-500 h-4 rounded-full transition-[width] duration-500"
+        className="absolute h-4 rounded-full bg-red-500 transition-[width] duration-500"
         style={{ width: percentageNewValue }}
       />
-      <div className="absolute w-full text-xs font-medium text-white flex justify-center items-center gap-x-2 z-20">
+      <div className="absolute z-20 flex w-full items-center justify-center gap-x-2 text-xs font-medium text-white">
         {percentageValue}
         <ArrowRightIcon className="h-3 w-3" />
         {percentageNewValue}

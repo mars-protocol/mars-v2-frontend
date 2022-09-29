@@ -10,13 +10,13 @@ const SearchInput = () => (
         strokeLinejoin="round"
         strokeWidth="2"
         viewBox="0 0 24 24"
-        className="w-6 h-6"
+        className="h-6 w-6"
       >
         <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
       </svg>
     </span>
     <input
-      className="py-2 text-sm text-white bg-black/70 rounded-md pl-10 focus:outline-none"
+      className="rounded-md bg-black/70 py-2 pl-10 text-sm text-white focus:outline-none"
       placeholder="Search"
     />
   </div>

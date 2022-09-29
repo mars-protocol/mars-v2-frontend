@@ -32,17 +32,17 @@ const CreditManager = () => {
 
   if (!address) {
     return (
-      <div className="absolute inset-0 left-auto p-2 w-[400px] bg-background-2 border-l border-white/20">
+      <div className="absolute inset-0 left-auto w-[400px] border-l border-white/20 bg-background-2 p-2">
         <CreditManagerContainer>You must have a connected wallet</CreditManagerContainer>
       </div>
     )
   }
 
   return (
-    <div className="absolute inset-0 left-auto p-2 w-[400px] bg-background-2 border-l border-white/20">
+    <div className="absolute inset-0 left-auto w-[400px] border-l border-white/20 bg-background-2 p-2">
       <CreditManagerContainer className="mb-2">
         {isFund ? (
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <h3 className="font-bold">Fund Account</h3>
             <Button className="rounded-md" onClick={() => setIsFund(false)}>
               Cancel
@@ -50,10 +50,10 @@ const CreditManager = () => {
           </div>
         ) : (
           <div className="flex gap-3">
-            <Button className="rounded-md flex-1" onClick={() => setIsFund(true)}>
+            <Button className="flex-1 rounded-md" onClick={() => setIsFund(true)}>
               Fund
             </Button>
-            <Button className="rounded-md flex-1" onClick={() => alert('TODO')}>
+            <Button className="flex-1 rounded-md" onClick={() => alert('TODO')}>
               Withdraw
             </Button>
           </div>
@@ -64,7 +64,7 @@ const CreditManager = () => {
       ) : (
         <>
           <CreditManagerContainer className="mb-2 text-sm">
-            <div className="flex justify-between mb-1">
+            <div className="mb-1 flex justify-between">
               <div>Total Position:</div>
               <div className="font-semibold">{formatCurrency(totalPosition)}</div>
             </div>
@@ -79,7 +79,7 @@ const CreditManager = () => {
               <div>Loading...</div>
             ) : (
               <>
-                <div className="flex font-semibold text-xs">
+                <div className="flex text-xs font-semibold">
                   <div className="flex-1">Asset</div>
                   <div className="flex-1">Value</div>
                   <div className="flex-1">Size</div>
