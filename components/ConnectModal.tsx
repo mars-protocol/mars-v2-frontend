@@ -135,6 +135,8 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
                     <button
                       className="flex items-center rounded-xl bg-black/90 p-4 hover:bg-black"
                       onClick={handleConnectMetamask}
+                      // temporarily disable metamask connection as its not supported on osmosis
+                      disabled
                     >
                       <Image src="/wallets/metamask.webp" height={30} width={30} alt="metamask" />
                       <div className="ml-4 text-left">
