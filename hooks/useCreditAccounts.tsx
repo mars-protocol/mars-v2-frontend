@@ -14,9 +14,9 @@ type Result = {
 
 const useCreditAccounts = () => {
   const [signingClient, setSigningClient] = useState<SigningCosmWasmClient>()
-  const address = useWalletStore((state) => state.address)
-  const selectedAccount = useCreditManagerStore((state) => state.selectedAccount)
-  const creditManagerActions = useCreditManagerStore((state) => state.actions)
+  const address = useWalletStore((s) => s.address)
+  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
+  const creditManagerActions = useCreditManagerStore((s) => s.actions)
 
   const queryMsg = useMemo(() => {
     return {

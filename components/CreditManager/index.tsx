@@ -13,8 +13,8 @@ import CreditManagerContainer from './CreditManagerContainer'
 const CreditManager = () => {
   const [isFund, setIsFund] = useState(false)
 
-  const address = useWalletStore((state) => state.address)
-  const selectedAccount = useCreditManagerStore((state) => state.selectedAccount)
+  const address = useWalletStore((s) => s.address)
+  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
 
   const { data: positionsData, isLoading: isLoadingPositions } = useCreditAccountBalances(
     selectedAccount ?? ''

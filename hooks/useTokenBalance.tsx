@@ -13,7 +13,7 @@ type Result = {
 }
 
 const useTokenBalance = (denom?: string) => {
-  const address = useWalletStore((state) => state.address)
+  const address = useWalletStore((s) => s.address)
 
   const result = useQuery<Result>(
     queryKeys.tokenBalance(address, denom || chain.stakeCurrency.coinMinimalDenom),

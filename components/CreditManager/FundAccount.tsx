@@ -16,7 +16,7 @@ const FundAccount = () => {
   const [selectedToken, setSelectedToken] = useState('')
   const [enabled, setEnabled] = useState(false)
 
-  const selectedAccount = useCreditManagerStore((state) => state.selectedAccount)
+  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
 
   const { data: balancesData } = useAllBalances()
   const { data: allowedCoinsData, isLoading: isLoadingAllowedCoins } = useAllowedCoins()

@@ -11,8 +11,8 @@ import { formatWalletAddress } from 'utils/formatters'
 import { chain } from 'utils/chains'
 
 const WalletPopover = ({ children }: { children: React.ReactNode }) => {
-  const address = useWalletStore((state) => state.address)
-  const actions = useWalletStore((state) => state.actions)
+  const address = useWalletStore((s) => s.address)
+  const actions = useWalletStore((s) => s.actions)
 
   const { data } = useTokenBalance()
 
@@ -73,7 +73,7 @@ const Wallet = () => {
   const [showConnectModal, setShowConnectModal] = useState(false)
   const [hasHydrated, setHasHydrated] = useState<boolean>(false)
 
-  const address = useWalletStore((state) => state.address)
+  const address = useWalletStore((s) => s.address)
 
   // avoid server-client hydration mismatch
   useEffect(() => {

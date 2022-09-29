@@ -11,7 +11,7 @@ import { queryKeys } from 'types/query-keys-factory'
 
 const useDepositCreditAccount = (accountId: string, denom: string, amount: number) => {
   const [signingClient, setSigningClient] = useState<SigningCosmWasmClient>()
-  const address = useWalletStore((state) => state.address)
+  const address = useWalletStore((s) => s.address)
 
   const queryClient = useQueryClient()
 

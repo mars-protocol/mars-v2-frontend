@@ -19,7 +19,7 @@ async function isMetamaskInstalled(): Promise<boolean> {
 const queryClient = new QueryClient()
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const actions = useWalletStore((state) => state.actions)
+  const actions = useWalletStore((s) => s.actions)
 
   // init store
   useEffect(() => {

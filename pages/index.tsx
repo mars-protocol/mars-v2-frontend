@@ -31,8 +31,8 @@ const Home: NextPage = () => {
   const [error, setError] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
 
-  const address = useWalletStore((state) => state.address)
-  const selectedAccount = useCreditManagerStore((state) => state.selectedAccount)
+  const address = useWalletStore((s) => s.address)
+  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
   const queryClient = useQueryClient()
 
   const [signingClient, setSigningClient] = useState<SigningCosmWasmClient>()

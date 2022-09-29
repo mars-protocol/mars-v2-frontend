@@ -19,8 +19,8 @@ type Props = {
 const ConnectModal = ({ isOpen, onClose }: Props) => {
   const [isLoading, setIsLoading] = useState(false)
 
-  const actions = useWalletStore((state) => state.actions)
-  const metamaskInstalled = useWalletStore((state) => state.metamaskInstalled)
+  const actions = useWalletStore((s) => s.actions)
+  const metamaskInstalled = useWalletStore((s) => s.metamaskInstalled)
   const isKeplrInstalled = typeof window !== 'undefined' && window.keplr
 
   const handleConnectSuccess = () => {
