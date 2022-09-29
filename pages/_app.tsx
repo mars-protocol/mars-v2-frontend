@@ -1,34 +1,34 @@
-import type { AppProps } from "next/app";
-import Head from "next/head";
-import { ToastContainer, Zoom } from "react-toastify";
-import "react-toastify/dist/ReactToastify.min.css";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import detectEthereumProvider from "@metamask/detect-provider";
+import type { AppProps } from 'next/app'
+import Head from 'next/head'
+import { ToastContainer, Zoom } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.min.css'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import detectEthereumProvider from '@metamask/detect-provider'
 
-import "../styles/globals.css";
-import Layout from "components/Layout";
-import { useEffect } from "react";
-import useWalletStore from "stores/useWalletStore";
+import '../styles/globals.css'
+import Layout from 'components/Layout'
+import { useEffect } from 'react'
+import useWalletStore from 'stores/useWalletStore'
 
 async function isMetamaskInstalled(): Promise<boolean> {
-  const provider = await detectEthereumProvider();
+  const provider = await detectEthereumProvider()
 
-  return !!provider;
+  return !!provider
 }
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const actions = useWalletStore((state) => state.actions);
+  const actions = useWalletStore((state) => state.actions)
 
   // init store
   useEffect(() => {
     const verifyMetamask = async () => {
-      actions.setMetamaskInstalledStatus(await isMetamaskInstalled());
-    };
+      actions.setMetamaskInstalledStatus(await isMetamaskInstalled())
+    }
 
-    verifyMetamask();
-  }, [actions]);
+    verifyMetamask()
+  }, [actions])
 
   return (
     <>
@@ -51,7 +51,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         />
       </QueryClientProvider>
     </>
-  );
+  )
 }
 
-export default MyApp;
+export default MyApp

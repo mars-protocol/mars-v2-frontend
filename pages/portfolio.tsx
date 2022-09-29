@@ -1,12 +1,12 @@
-import React from "react";
+import React from 'react'
 
-import Container from "components/Container";
-import { formatCurrency } from "utils/formatters";
+import Container from 'components/Container'
+import { formatCurrency } from 'utils/formatters'
 
 const mockedAccounts = [
   {
     id: 1,
-    label: "Subaccount 1",
+    label: 'Subaccount 1',
     networth: 100000,
     totalPositionValue: 150000,
     debt: 50000,
@@ -16,7 +16,7 @@ const mockedAccounts = [
   },
   {
     id: 2,
-    label: "Subaccount 2",
+    label: 'Subaccount 2',
     networth: 33000,
     totalPositionValue: 11000,
     debt: 20000,
@@ -26,7 +26,7 @@ const mockedAccounts = [
   },
   {
     id: 3,
-    label: "Subaccount 3",
+    label: 'Subaccount 3',
     networth: 0,
     totalPositionValue: 12938129,
     debt: 9999999999,
@@ -36,7 +36,7 @@ const mockedAccounts = [
   },
   {
     id: 4,
-    label: "Subaccount 4",
+    label: 'Subaccount 4',
     networth: 33653.22,
     totalPositionValue: 100000,
     debt: 50001.9,
@@ -44,7 +44,7 @@ const mockedAccounts = [
     leverage: 3,
     maxLeverage: 5,
   },
-];
+]
 
 const Portfolio = () => {
   return (
@@ -68,12 +68,8 @@ const Portfolio = () => {
                 <p className="text-sm text-white/40">Debt</p>
               </div>
               <div>
-                <p
-                  className={`${
-                    account.profit > 0 ? "text-green-400" : "text-red-500"
-                  }`}
-                >
-                  {account.profit > 0 && "+"}
+                <p className={`${account.profit > 0 ? 'text-green-400' : 'text-red-500'}`}>
+                  {account.profit > 0 && '+'}
                   {formatCurrency(account.profit)}
                 </p>
                 <p className="text-sm text-white/40">P&L</p>
@@ -91,7 +87,7 @@ const Portfolio = () => {
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Portfolio;
+export default Portfolio

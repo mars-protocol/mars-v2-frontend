@@ -1,20 +1,29 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query'
 
-import useWalletStore from "stores/useWalletStore";
+import useWalletStore from 'stores/useWalletStore'
+import { queryKeys } from 'types/query-keys-factory'
+import { chain } from 'utils/chains'
+
+type Result = {
+  balances: { amount: string; denom: string }[]
+}
 
 const useAllBalances = () => {
-  const address = useWalletStore((state) => state.address);
+  const address = useWalletStore((state) => state.address)
 
-  return useQuery(
-    ["allBalances"],
-    () =>
-      fetch(
-        `https://lcd.injective.network/cosmos/bank/v1beta1/balances/${address}`
-      ).then((res) => res.json()),
+  const result = useQuery<Result>(
+    queryKeys.allBalances(address),
+    () => fetch(`${chain.rest}/cosmos/bank/v1beta1/balances/${address}`).then((res) => res.json()),
     {
       enabled: !!address,
+      staleTime: Infinity,
     }
-  );
-};
+  )
 
-export default useAllBalances;
+  return {
+    ...result,
+    data: result?.data?.balances,
+  }
+}
+
+export default useAllBalances

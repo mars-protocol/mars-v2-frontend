@@ -1,5 +1,5 @@
-import React from "react";
-import Container from "components/Container";
+import React from 'react'
+import Container from 'components/Container'
 
 const Trade = () => {
   return (
@@ -14,7 +14,7 @@ const Trade = () => {
       </div>
       <Container>Trader order overview</Container>
     </div>
-  );
-};
+  )
+}
 
-export default Trade;
+export default Trade

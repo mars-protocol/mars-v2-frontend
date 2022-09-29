@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { Popover } from "@headlessui/react";
-import { toast } from "react-toastify";
-import Image from "next/image";
+import React, { useEffect, useState } from 'react'
+import { Popover } from '@headlessui/react'
+import { toast } from 'react-toastify'
+import Image from 'next/image'
 
-import Button from "./Button";
-import ConnectModal from "./ConnectModal";
-import useWalletStore from "stores/useWalletStore";
-import useInjectiveBalance from "hooks/useInjectiveBalance";
-import { formatWalletAddress } from "utils/formatters";
+import Button from './Button'
+import ConnectModal from './ConnectModal'
+import useWalletStore from 'stores/useWalletStore'
+import useTokenBalance from 'hooks/useTokenBalance'
+import { formatWalletAddress } from 'utils/formatters'
+import { chain } from 'utils/chains'
 
 const WalletPopover = ({ children }: { children: React.ReactNode }) => {
-  const address = useWalletStore((state) => state.address);
-  const actions = useWalletStore((state) => state.actions);
+  const address = useWalletStore((state) => state.address)
+  const actions = useWalletStore((state) => state.actions)
 
-  const { data } = useInjectiveBalance();
+  const { data } = useTokenBalance()
 
   return (
     <Popover className="relative">
@@ -25,17 +26,15 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
         <div className="bg-white rounded-2xl p-6 text-gray-900">
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center">
-              <Image src="/injective.svg" alt="token" width={24} height={24} />
+              <Image src={chain.stakeCurrency.coinImageUrl} alt="token" width={24} height={24} />
               <p className="ml-2">
-                INJ{" "}
-                <span className="text-lg font-semibold ml-1">
-                  {data?.toFixed(2)}
-                </span>
+                {chain.stakeCurrency.coinDenom}{' '}
+                <span className="text-lg font-semibold ml-1">{data?.toFixed(2)}</span>
               </p>
             </div>
             <Button
               className=" bg-[#524bb1] hover:bg-[#6962cc]"
-              onClick={() => actions.setAddress("")}
+              onClick={() => actions.setAddress('')}
             >
               Disconnect
             </Button>
@@ -45,8 +44,8 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
             className="flex items-center text-slate-500 hover:text-slate-700 text-sm"
             onClick={() => {
               navigator.clipboard.writeText(address).then(() => {
-                toast.success("Address copied to your clipboard");
-              });
+                toast.success('Address copied to your clipboard')
+              })
             }}
           >
             <svg
@@ -67,19 +66,19 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
         </div>
       </Popover.Panel>
     </Popover>
-  );
-};
+  )
+}
 
 const Wallet = () => {
-  const [showConnectModal, setShowConnectModal] = useState(false);
-  const [hasHydrated, setHasHydrated] = useState<boolean>(false);
+  const [showConnectModal, setShowConnectModal] = useState(false)
+  const [hasHydrated, setHasHydrated] = useState<boolean>(false)
 
-  const address = useWalletStore((state) => state.address);
+  const address = useWalletStore((state) => state.address)
 
   // avoid server-client hydration mismatch
   useEffect(() => {
-    setHasHydrated(true);
-  }, []);
+    setHasHydrated(true)
+  }, [])
 
   return (
     <>
@@ -90,12 +89,9 @@ const Wallet = () => {
           Connect Wallet
         </Button>
       )}
-      <ConnectModal
-        isOpen={showConnectModal}
-        onClose={() => setShowConnectModal(false)}
-      />
+      <ConnectModal isOpen={showConnectModal} onClose={() => setShowConnectModal(false)} />
     </>
-  );
-};
+  )
+}
 
-export default Wallet;
+export default Wallet
