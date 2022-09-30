@@ -58,13 +58,13 @@ const Navigation = () => {
   return (
     <div>
       {/* Main navigation bar */}
-      <div className="flex justify-between items-center px-6 py-3 border-b border-white/20">
+      <div className="flex items-center justify-between border-b border-white/20 px-6 py-3">
         <Link href="/" passHref>
           <a>
             <img src="/logo.svg" alt="mars" />
           </a>
         </Link>
-        <div className="flex px-12 gap-5 text-white/40">
+        <div className="flex gap-5 px-12 text-white/40">
           {navItems.map((item, index) => (
             <NavLink key={index} href={item.href}>
               {item.label}
@@ -74,13 +74,13 @@ const Navigation = () => {
         <Wallet />
       </div>
       {/* Sub navigation bar */}
-      <div className="flex justify-between px-6 py-3 text-sm text-white/40 border-b border-white/20">
+      <div className="flex justify-between border-b border-white/20 px-6 py-3 text-sm text-white/40">
         <div className="flex items-center">
           <SearchInput />
           {firstCreditAccounts.map((account) => (
             <div
               key={account}
-              className={`px-4 hover:text-white cursor-pointer ${
+              className={`cursor-pointer px-4 hover:text-white ${
                 selectedAccount === account ? 'text-white' : ''
               }`}
               onClick={() => setSelectedAccount(account)}
@@ -91,13 +91,13 @@ const Navigation = () => {
           {restCreditAccounts.length > 0 && (
             <Popover className="relative">
               <Popover.Button>
-                <div className="px-3 flex items-center hover:text-white cursor-pointer">
+                <div className="flex cursor-pointer items-center px-3 hover:text-white">
                   More
                   <ChevronDownIcon className="ml-1 h-4 w-4" />
                 </div>
               </Popover.Button>
-              <Popover.Panel className="absolute z-10 pt-2 w-[200px]">
-                <div className="bg-white rounded-2xl p-4 text-gray-900">
+              <Popover.Panel className="absolute z-10 w-[200px] pt-2">
+                <div className="rounded-2xl bg-white p-4 text-gray-900">
                   {restCreditAccounts.map((account) => (
                     <div
                       key={account}
@@ -115,14 +115,14 @@ const Navigation = () => {
           )}
           <Popover className="relative">
             <Popover.Button>
-              <div className="px-3 flex items-center hover:text-white cursor-pointer">
+              <div className="flex cursor-pointer items-center px-3 hover:text-white">
                 Manage
                 <ChevronDownIcon className="ml-1 h-4 w-4" />
               </div>
             </Popover.Button>
-            <Popover.Panel className="absolute z-10 pt-2 w-[200px]">
+            <Popover.Panel className="absolute z-10 w-[200px] pt-2">
               {({ close }) => (
-                <div className="bg-white rounded-2xl p-4 text-gray-900">
+                <div className="rounded-2xl bg-white p-4 text-gray-900">
                   <div
                     className="mb-2 cursor-pointer hover:text-orange-500"
                     onClick={() => {
@@ -158,13 +158,13 @@ const Navigation = () => {
             </Popover.Panel>
           </Popover>
         </div>
-        <div className="flex gap-4 items-center">
+        <div className="flex items-center gap-4">
           <p>{formatCurrency(2500)}</p>
           <div>Lvg</div>
           <div>Risk</div>
           <ProgressBar value={0.43} />
           <div
-            className="flex justify-center w-16 cursor-pointer hover:text-white"
+            className="flex w-16 cursor-pointer justify-center hover:text-white"
             onClick={toggleCreditManager}
           >
             <svg width="14" height="13" viewBox="0 0 14 13" fill="currentColor">

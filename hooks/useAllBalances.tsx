@@ -9,7 +9,7 @@ type Result = {
 }
 
 const useAllBalances = () => {
-  const address = useWalletStore((state) => state.address)
+  const address = useWalletStore((s) => s.address)
 
   const result = useQuery<Result>(
     queryKeys.allBalances(address),

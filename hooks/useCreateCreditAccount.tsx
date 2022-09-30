@@ -17,8 +17,8 @@ const executeMsg = {
 
 const useCreateCreditAccount = () => {
   const [signingClient, setSigningClient] = useState<SigningCosmWasmClient>()
-  const setSelectedAccount = useCreditManagerStore((state) => state.actions.setSelectedAccount)
-  const address = useWalletStore((state) => state.address)
+  const setSelectedAccount = useCreditManagerStore((s) => s.actions.setSelectedAccount)
+  const address = useWalletStore((s) => s.address)
 
   const queryClient = useQueryClient()
 

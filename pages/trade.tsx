@@ -4,7 +4,7 @@ import Container from 'components/Container'
 const Trade = () => {
   return (
     <div>
-      <div className="flex gap-4 mb-4">
+      <div className="mb-4 flex gap-4">
         <Container className="flex-1">Graph/Tradingview Module</Container>
         <div className="flex flex-col gap-4">
           <Container>Buy/Sell module</Container>

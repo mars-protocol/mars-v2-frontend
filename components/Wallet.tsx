@@ -11,8 +11,8 @@ import { formatWalletAddress } from 'utils/formatters'
 import { chain } from 'utils/chains'
 
 const WalletPopover = ({ children }: { children: React.ReactNode }) => {
-  const address = useWalletStore((state) => state.address)
-  const actions = useWalletStore((state) => state.actions)
+  const address = useWalletStore((s) => s.address)
+  const actions = useWalletStore((s) => s.actions)
 
   const { data } = useTokenBalance()
 
@@ -22,14 +22,14 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
         {children}
       </Popover.Button>
 
-      <Popover.Panel className="absolute z-10 right-0 pt-2">
-        <div className="bg-white rounded-2xl p-6 text-gray-900">
-          <div className="flex justify-between items-center mb-4">
+      <Popover.Panel className="absolute right-0 z-10 pt-2">
+        <div className="rounded-2xl bg-white p-6 text-gray-900">
+          <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center">
               <Image src={chain.stakeCurrency.coinImageUrl} alt="token" width={24} height={24} />
               <p className="ml-2">
                 {chain.stakeCurrency.coinDenom}{' '}
-                <span className="text-lg font-semibold ml-1">{data?.toFixed(2)}</span>
+                <span className="ml-1 text-lg font-semibold">{data?.toFixed(2)}</span>
               </p>
             </div>
             <Button
@@ -41,7 +41,7 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
           </div>
           <p className="mb-6 text-sm">{address}</p>
           <button
-            className="flex items-center text-slate-500 hover:text-slate-700 text-sm"
+            className="flex items-center text-sm text-slate-500 hover:text-slate-700"
             onClick={() => {
               navigator.clipboard.writeText(address).then(() => {
                 toast.success('Address copied to your clipboard')
@@ -53,7 +53,7 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-5 h-5 mr-1"
+              className="mr-1 h-5 w-5"
             >
               <path
                 strokeLinecap="round"
@@ -73,7 +73,7 @@ const Wallet = () => {
   const [showConnectModal, setShowConnectModal] = useState(false)
   const [hasHydrated, setHasHydrated] = useState<boolean>(false)
 
-  const address = useWalletStore((state) => state.address)
+  const address = useWalletStore((s) => s.address)
 
   // avoid server-client hydration mismatch
   useEffect(() => {

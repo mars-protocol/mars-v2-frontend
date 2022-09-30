@@ -41,7 +41,7 @@ interface Result {
 
 const useCreditAccountPositions = (accountId: string) => {
   const [signingClient, setSigningClient] = useState<SigningCosmWasmClient>()
-  const address = useWalletStore((state) => state.address)
+  const address = useWalletStore((s) => s.address)
 
   useEffect(() => {
     ;(async () => {

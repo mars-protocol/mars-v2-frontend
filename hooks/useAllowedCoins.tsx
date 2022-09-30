@@ -15,7 +15,7 @@ const queryMsg = {
 
 const useAllowedCoins = () => {
   const [signingClient, setSigningClient] = useState<SigningCosmWasmClient>()
-  const address = useWalletStore((state) => state.address)
+  const address = useWalletStore((s) => s.address)
 
   useEffect(() => {
     ;(async () => {

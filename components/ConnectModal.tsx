@@ -19,8 +19,8 @@ type Props = {
 const ConnectModal = ({ isOpen, onClose }: Props) => {
   const [isLoading, setIsLoading] = useState(false)
 
-  const actions = useWalletStore((state) => state.actions)
-  const metamaskInstalled = useWalletStore((state) => state.metamaskInstalled)
+  const actions = useWalletStore((s) => s.actions)
+  const metamaskInstalled = useWalletStore((s) => s.metamaskInstalled)
   const isKeplrInstalled = typeof window !== 'undefined' && window.keplr
 
   const handleConnectSuccess = () => {
@@ -108,13 +108,13 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 mb-6">
+                <Dialog.Title as="h3" className="mb-6 text-lg font-medium leading-6 text-gray-900">
                   Connect your wallet
                 </Dialog.Title>
                 {isLoading ? (
                   <div role="status" className="text-center">
                     <svg
-                      className="inline w-10 h-10 text-gray-200 animate-spin fill-orange-500"
+                      className="inline h-10 w-10 animate-spin fill-orange-500 text-gray-200"
                       viewBox="0 0 100 101"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
@@ -131,10 +131,12 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
                     <span className="sr-only">Loading...</span>
                   </div>
                 ) : (
-                  <div className="flex flex-col gap-3 mt-2">
+                  <div className="mt-2 flex flex-col gap-3">
                     <button
-                      className="flex items-center p-4 bg-black/90 rounded-xl hover:bg-black"
+                      className="flex items-center rounded-xl bg-black/90 p-4 hover:bg-black"
                       onClick={handleConnectMetamask}
+                      // temporarily disable metamask connection as its not supported on osmosis
+                      disabled
                     >
                       <Image src="/wallets/metamask.webp" height={30} width={30} alt="metamask" />
                       <div className="ml-4 text-left">
@@ -156,7 +158,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
                       </div>
                     </button>
                     <button
-                      className="flex items-center p-4 bg-black/90 rounded-xl hover:bg-black"
+                      className="flex items-center rounded-xl bg-black/90 p-4 hover:bg-black"
                       onClick={handleConnectKeplr}
                     >
                       <Image src="/wallets/keplr.png" height={30} width={30} alt="keplr" />

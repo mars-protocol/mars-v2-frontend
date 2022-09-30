@@ -16,7 +16,7 @@ const FundAccount = () => {
   const [selectedToken, setSelectedToken] = useState('')
   const [enabled, setEnabled] = useState(false)
 
-  const selectedAccount = useCreditManagerStore((state) => state.selectedAccount)
+  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
 
   const { data: balancesData } = useAllBalances()
   const { data: allowedCoinsData, isLoading: isLoadingAllowedCoins } = useAllowedCoins()
@@ -57,7 +57,7 @@ const FundAccount = () => {
 
   return (
     <>
-      <CreditManagerContainer className="p-3 mb-2">
+      <CreditManagerContainer className="mb-2 p-3">
         <p className="mb-6">
           Transfer assets from your injective wallet to your Mars credit account. If you don’t have
           any assets in your injective wallet use the injective bridge to transfer funds to your
@@ -68,7 +68,7 @@ const FundAccount = () => {
         ) : (
           <>
             <div className="mb-4">
-              <div className="flex justify-between mb-1">
+              <div className="mb-1 flex justify-between">
                 <div>Asset:</div>
                 <select
                   className="bg-transparent"
@@ -89,7 +89,7 @@ const FundAccount = () => {
                 <div>Amount:</div>
                 <input
                   type="number"
-                  className="bg-transparent border border-black/50 px-2"
+                  className="border border-black/50 bg-transparent px-2"
                   value={amount}
                   onChange={(e) => handleValueChange(e.target.valueAsNumber)}
                 />
@@ -98,7 +98,7 @@ const FundAccount = () => {
             <p>In wallet: {walletAmount.toLocaleString()}</p>
             {/* SLIDER - initial implementation to test functionality */}
             {/* TODO: will need to be revamped later on */}
-            <div className="relative flex flex-1 mb-6 items-center">
+            <div className="relative mb-6 flex flex-1 items-center">
               <Slider.Root
                 className="relative flex h-[20px] w-full cursor-pointer touch-none select-none items-center"
                 value={[percentageValue]}
@@ -122,7 +122,7 @@ const FundAccount = () => {
                 </Slider.Thumb>
               </Slider.Root>
               <button
-                className="ml-4 py-1 px-2 text-sm bg-blue-600 text-white rounded-md"
+                className="ml-4 rounded-md bg-blue-600 py-1 px-2 text-sm text-white"
                 onClick={() => setAmount(maxValue)}
               >
                 MAX
@@ -131,7 +131,7 @@ const FundAccount = () => {
           </>
         )}
       </CreditManagerContainer>
-      <CreditManagerContainer className="flex justify-between items-center mb-2">
+      <CreditManagerContainer className="mb-2 flex items-center justify-between">
         <div>
           <h3 className="font-bold">Lending Assets</h3>
           <div className="opacity-50">Lend assets from account to earn yield.</div>
