@@ -58,7 +58,7 @@ const FundAccount = () => {
   return (
     <>
       <CreditManagerContainer className="mb-2 p-3">
-        <p className="mb-6">
+        <p className="mb-6 text-sm">
           Transfer assets from your injective wallet to your Mars credit account. If you don’t have
           any assets in your injective wallet use the injective bridge to transfer funds to your
           injective wallet.
@@ -67,7 +67,7 @@ const FundAccount = () => {
           <p>Loading...</p>
         ) : (
           <>
-            <div className="mb-4">
+            <div className="mb-4 text-sm">
               <div className="mb-1 flex justify-between">
                 <div>Asset:</div>
                 <select
@@ -95,7 +95,7 @@ const FundAccount = () => {
                 />
               </div>
             </div>
-            <p>In wallet: {walletAmount.toLocaleString()}</p>
+            <p className="text-sm">In wallet: {walletAmount.toLocaleString()}</p>
             {/* SLIDER - initial implementation to test functionality */}
             {/* TODO: will need to be revamped later on */}
             <div className="relative mb-6 flex flex-1 items-center">
@@ -134,7 +134,7 @@ const FundAccount = () => {
       <CreditManagerContainer className="mb-2 flex items-center justify-between">
         <div>
           <h3 className="font-bold">Lending Assets</h3>
-          <div className="opacity-50">Lend assets from account to earn yield.</div>
+          <div className="text-sm opacity-50">Lend assets from account to earn yield.</div>
         </div>
 
         <Switch
