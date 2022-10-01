@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import * as Slider from '@radix-ui/react-slider'
 import BigNumber from 'bignumber.js'
 import { Switch } from '@headlessui/react'
+import useLocalStorageState from 'use-local-storage-state'
 
 import Button from '../Button'
 import useAllowedCoins from 'hooks/useAllowedCoins'
@@ -14,9 +15,12 @@ import CreditManagerContainer from './CreditManagerContainer'
 const FundAccount = () => {
   const [amount, setAmount] = useState(0)
   const [selectedToken, setSelectedToken] = useState('')
-  const [enabled, setEnabled] = useState(false)
 
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
+
+  const [lendAssets, setLendAssets] = useLocalStorageState(`lendAssets_${selectedAccount}`, {
+    defaultValue: false,
+  })
 
   const { data: balancesData } = useAllBalances()
   const { data: allowedCoinsData, isLoading: isLoadingAllowedCoins } = useAllowedCoins()
@@ -138,15 +142,15 @@ const FundAccount = () => {
         </div>
 
         <Switch
-          checked={enabled}
-          onChange={setEnabled}
+          checked={lendAssets}
+          onChange={setLendAssets}
           className={`${
-            enabled ? 'bg-blue-600' : 'bg-gray-400'
+            lendAssets ? 'bg-blue-600' : 'bg-gray-400'
           } relative inline-flex h-6 w-11 items-center rounded-full`}
         >
           <span
             className={`${
-              enabled ? 'translate-x-6' : 'translate-x-1'
+              lendAssets ? 'translate-x-6' : 'translate-x-1'
             } inline-block h-4 w-4 transform rounded-full bg-white transition`}
           />
         </Switch>
