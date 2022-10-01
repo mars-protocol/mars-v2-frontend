@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Popover } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
+import BigNumber from 'bignumber.js'
 
 import SearchInput from 'components/SearchInput'
 import ProgressBar from 'components/ProgressBar'
@@ -12,7 +13,10 @@ import { formatCurrency } from 'utils/formatters'
 import useCreditAccounts from 'hooks/useCreditAccounts'
 import useCreateCreditAccount from 'hooks/useCreateCreditAccount'
 import useDeleteCreditAccount from 'hooks/useDeleteCreditAccount'
+import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
+import { getTokenDecimals } from 'utils/tokens'
+import useTokenPrices from 'hooks/useTokenPrices'
 
 // TODO: will require some tweaks depending on how lower viewport mocks pans out
 const MAX_VISIBLE_CREDIT_ACCOUNTS = 5
@@ -47,6 +51,8 @@ const Navigation = () => {
   const { mutate: deleteCreditAccount, isLoading: isLoadingDelete } = useDeleteCreditAccount(
     selectedAccount || ''
   )
+  const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
+  const { data: tokenPrices } = useTokenPrices()
 
   const { firstCreditAccounts, restCreditAccounts } = useMemo(() => {
     return {
@@ -54,6 +60,31 @@ const Navigation = () => {
       restCreditAccounts: creditAccountsList?.slice(MAX_VISIBLE_CREDIT_ACCOUNTS) ?? [],
     }
   }, [creditAccountsList])
+
+  const netWorth = useMemo(() => {
+    const getTokenTotalUSDValue = (amount: string, denom: string) => {
+      // early return if prices are not fetched yet
+      if (!tokenPrices) return 0
+
+      return (
+        BigNumber(amount)
+          .div(10 ** getTokenDecimals(denom))
+          .toNumber() * tokenPrices[denom]
+      )
+    }
+
+    const totalPosition =
+      positionsData?.coins.reduce((acc, coin) => {
+        return getTokenTotalUSDValue(coin.amount, coin.denom) + acc
+      }, 0) ?? 0
+
+    const totalDebt =
+      positionsData?.debts.reduce((acc, coin) => {
+        return getTokenTotalUSDValue(coin.amount, coin.denom) + acc
+      }, 0) ?? 0
+
+    return totalPosition - totalDebt
+  }, [positionsData, tokenPrices])
 
   return (
     <div>
@@ -159,7 +190,7 @@ const Navigation = () => {
           </Popover>
         </div>
         <div className="flex items-center gap-4">
-          <p>{formatCurrency(2500)}</p>
+          <p>{formatCurrency(netWorth)}</p>
           <div>Lvg</div>
           <div>Risk</div>
           <ProgressBar value={0.43} />

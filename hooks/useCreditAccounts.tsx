@@ -1,9 +1,7 @@
-import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { useQuery } from '@tanstack/react-query'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 import useWalletStore from 'stores/useWalletStore'
-import { chain } from 'utils/chains'
 import { contractAddresses } from 'config/contracts'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import { queryKeys } from 'types/query-keys-factory'
@@ -13,8 +11,8 @@ type Result = {
 }
 
 const useCreditAccounts = () => {
-  const [signingClient, setSigningClient] = useState<SigningCosmWasmClient>()
   const address = useWalletStore((s) => s.address)
+  const client = useWalletStore((s) => s.client)
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
   const creditManagerActions = useCreditManagerStore((s) => s.actions)
 
@@ -26,22 +24,11 @@ const useCreditAccounts = () => {
     }
   }, [address])
 
-  useEffect(() => {
-    ;(async () => {
-      if (!window.keplr) return
-
-      const offlineSigner = window.keplr.getOfflineSigner(chain.chainId)
-      const clientInstance = await SigningCosmWasmClient.connectWithSigner(chain.rpc, offlineSigner)
-
-      setSigningClient(clientInstance)
-    })()
-  }, [address])
-
   const result = useQuery<Result>(
     queryKeys.creditAccounts(address),
-    async () => signingClient?.queryContractSmart(contractAddresses.accountNft, queryMsg),
+    async () => client?.queryContractSmart(contractAddresses.accountNft, queryMsg),
     {
-      enabled: !!address && !!signingClient,
+      enabled: !!address && !!client,
       onSuccess: (data) => {
         if (!data.tokens.includes(selectedAccount || '') && data.tokens.length > 0) {
           creditManagerActions.setSelectedAccount(data.tokens[0])

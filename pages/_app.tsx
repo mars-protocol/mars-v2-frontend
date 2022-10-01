@@ -27,6 +27,8 @@ function MyApp({ Component, pageProps }: AppProps) {
       actions.setMetamaskInstalledStatus(await isMetamaskInstalled())
     }
 
+    actions.initialize()
+
     verifyMetamask()
   }, [actions])
 

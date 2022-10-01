@@ -2,6 +2,8 @@ import create from 'zustand'
 import { persist } from 'zustand/middleware'
 
 import { Wallet } from 'types'
+import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
+import { chain } from 'utils/chains'
 
 interface WalletStore {
   address: string
@@ -9,7 +11,9 @@ interface WalletStore {
   addresses: string[]
   metamaskInstalled: boolean
   wallet: Wallet
+  client?: CosmWasmClient
   actions: {
+    initialize: () => void
     setAddress: (address: string) => void
     setMetamaskInstalledStatus: (value: boolean) => void
   }
@@ -24,6 +28,10 @@ const useWalletStore = create<WalletStore>()(
       metamaskInstalled: false,
       wallet: Wallet.Metamask,
       actions: {
+        initialize: async () => {
+          const clientInstance = await CosmWasmClient.connect(chain.rpc)
+          set(() => ({ client: clientInstance }))
+        },
         setAddress: (address: string) => set(() => ({ address })),
         setMetamaskInstalledStatus: (value: boolean) => set(() => ({ metamaskInstalled: value })),
       },
@@ -32,7 +40,9 @@ const useWalletStore = create<WalletStore>()(
       name: 'wallet',
       partialize: (state) =>
         Object.fromEntries(
-          Object.entries(state).filter(([key]) => !['metamaskInstalled', 'actions'].includes(key))
+          Object.entries(state).filter(
+            ([key]) => !['client', 'metamaskInstalled', 'actions'].includes(key)
+          )
         ),
     }
   )
