@@ -34,43 +34,41 @@ const useAccountStats = () => {
       )
     }
 
-    const totalPosition =
-      positionsData?.coins.reduce((acc, coin) => {
-        return getTokenTotalUSDValue(coin.amount, coin.denom) + acc
-      }, 0) ?? 0
+    const totalPosition = positionsData.coins.reduce((acc, coin) => {
+      return getTokenTotalUSDValue(coin.amount, coin.denom) + acc
+    }, 0)
 
-    const totalDebt =
-      positionsData?.debts.reduce((acc, coin) => {
-        return getTokenTotalUSDValue(coin.amount, coin.denom) + acc
-      }, 0) ?? 0
+    const totalDebt = positionsData.debts.reduce((acc, coin) => {
+      return getTokenTotalUSDValue(coin.amount, coin.denom) + acc
+    }, 0)
 
-    const netWorth = totalPosition - totalDebt
-    const currentLeverage = totalPosition / netWorth
-
-    let totalWeightedPositions = 0
-
-    positionsData?.coins.forEach((coin) => {
+    const totalWeightedPositions = positionsData.coins.reduce((acc, coin) => {
       const tokenWeightedValue =
         getTokenTotalUSDValue(coin.amount, coin.denom) *
         Number(marketsData[coin.denom].liquidation_threshold)
 
-      totalWeightedPositions += tokenWeightedValue
-    })
+      return tokenWeightedValue + acc
+    }, 0)
 
-    const liqLTVsWeightedAverage = totalWeightedPositions / totalPosition
-    const maxLeverage = 1 / (1 - liqLTVsWeightedAverage)
+    const netWorth = totalPosition - totalDebt
 
+    const liquidationLTVsWeightedAverage = totalWeightedPositions / totalPosition
+    const maxLeverage = 1 / (1 - liquidationLTVsWeightedAverage)
+    const currentLeverage = totalPosition / netWorth
     const leverage = currentLeverage / maxLeverage || 0
-    const risk = getRiskFromAverageLiquidationLTVs(liqLTVsWeightedAverage)
-    const health = 1 - currentLeverage / maxLeverage || 0
+    const health = 1 - currentLeverage / maxLeverage || 1
+
+    const risk = liquidationLTVsWeightedAverage
+      ? getRiskFromAverageLiquidationLTVs(liquidationLTVsWeightedAverage)
+      : 0
 
     return {
+      health,
       leverage,
+      netWorth,
+      risk,
       totalPosition,
       totalDebt,
-      netWorth,
-      health,
-      risk,
     }
   }, [marketsData, positionsData, tokenPrices])
 }
