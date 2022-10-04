@@ -10,6 +10,7 @@ import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 import FundAccount from './FundAccount'
 import CreditManagerContainer from './CreditManagerContainer'
 import useTokenPrices from 'hooks/useTokenPrices'
+import useAccountStats from 'hooks/useAccountStats'
 
 const CreditManager = () => {
   const [isFund, setIsFund] = useState(false)
@@ -22,6 +23,7 @@ const CreditManager = () => {
   )
 
   const { data: tokenPrices } = useTokenPrices()
+  const accountStats = useAccountStats()
 
   const getTokenTotalUSDValue = (amount: string, denom: string) => {
     // early return if prices are not fetched yet
@@ -33,16 +35,6 @@ const CreditManager = () => {
         .toNumber() * tokenPrices[denom]
     )
   }
-
-  const totalPosition =
-    positionsData?.coins.reduce((acc, coin) => {
-      return getTokenTotalUSDValue(coin.amount, coin.denom) + acc
-    }, 0) ?? 0
-
-  const totalDebt =
-    positionsData?.debts.reduce((acc, coin) => {
-      return getTokenTotalUSDValue(coin.amount, coin.denom) + acc
-    }, 0) ?? 0
 
   if (!address) {
     return (
@@ -80,11 +72,13 @@ const CreditManager = () => {
           <CreditManagerContainer className="mb-2 text-sm">
             <div className="mb-1 flex justify-between">
               <div>Total Position:</div>
-              <div className="font-semibold">{formatCurrency(totalPosition)}</div>
+              <div className="font-semibold">
+                {formatCurrency(accountStats?.totalPosition ?? 0)}
+              </div>
             </div>
             <div className="flex justify-between">
               <div>Total Liabilities:</div>
-              <div className="font-semibold">{formatCurrency(totalDebt)}</div>
+              <div className="font-semibold">{formatCurrency(accountStats?.totalDebt ?? 0)}</div>
             </div>
           </CreditManagerContainer>
           <CreditManagerContainer>

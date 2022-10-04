@@ -28,6 +28,7 @@ const useCreditAccounts = () => {
     queryKeys.creditAccounts(address),
     async () => client?.queryContractSmart(contractAddresses.accountNft, queryMsg),
     {
+      staleTime: Infinity,
       enabled: !!address && !!client,
       onSuccess: (data) => {
         if (!data.tokens.includes(selectedAccount || '') && data.tokens.length > 0) {
