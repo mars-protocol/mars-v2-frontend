@@ -11,6 +11,7 @@ import FundAccount from './FundAccount'
 import CreditManagerContainer from './CreditManagerContainer'
 import useTokenPrices from 'hooks/useTokenPrices'
 import useAccountStats from 'hooks/useAccountStats'
+import useMarkets from 'hooks/useMarkets'
 
 const CreditManager = () => {
   const [isFund, setIsFund] = useState(false)
@@ -23,6 +24,7 @@ const CreditManager = () => {
   )
 
   const { data: tokenPrices } = useTokenPrices()
+  const { data: marketsData } = useMarkets()
   const accountStats = useAccountStats()
 
   const getTokenTotalUSDValue = (amount: string, denom: string) => {
@@ -124,7 +126,9 @@ const CreditManager = () => {
                           maximumFractionDigits: 6,
                         })}
                     </div>
-                    <div className="flex-1">-</div>
+                    <div className="flex-1">
+                      {(Number(marketsData?.[coin.denom].borrow_rate) * 100).toFixed(1)}%
+                    </div>
                   </div>
                 ))}
               </>
