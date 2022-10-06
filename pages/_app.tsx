@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { ToastContainer, Zoom } from 'react-toastify'
@@ -7,7 +8,6 @@ import detectEthereumProvider from '@metamask/detect-provider'
 
 import '../styles/globals.css'
 import Layout from 'components/Layout'
-import { useEffect } from 'react'
 import useWalletStore from 'stores/useWalletStore'
 
 async function isMetamaskInstalled(): Promise<boolean> {
@@ -19,8 +19,15 @@ async function isMetamaskInstalled(): Promise<boolean> {
 const queryClient = new QueryClient()
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const [hasHydrated, setHasHydrated] = useState<boolean>(false)
+
   const address = useWalletStore((s) => s.address)
   const actions = useWalletStore((s) => s.actions)
+
+  // avoid server-client hydration mismatch
+  useEffect(() => {
+    setHasHydrated(true)
+  }, [])
 
   // init store
   useEffect(() => {
@@ -41,7 +48,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/favicon.svg" />
       </Head>
       <QueryClientProvider client={queryClient}>
-        <Layout>{address ? <Component {...pageProps} /> : <div>No wallet connected</div>}</Layout>
+        <Layout>
+          {hasHydrated && address ? <Component {...pageProps} /> : <div>No wallet connected</div>}
+        </Layout>
         <ToastContainer
           autoClose={1500}
           closeButton={false}
