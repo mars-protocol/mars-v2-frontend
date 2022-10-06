@@ -7,8 +7,12 @@ import useCreditAccountPositions from './useCreditAccountPositions'
 import useMarkets from './useMarkets'
 import useTokenPrices from './useTokenPrices'
 
+// displaying 3 levels of risk based on the weighted average of liquidation LTVs
+// 0.85 -> 25% risk
+// 0.65 - 0.85 -> 50% risk
+// < 0.65 -> 100% risk
 const getRiskFromAverageLiquidationLTVs = (value: number) => {
-  if (value > 0.85) return 0.25
+  if (value >= 0.85) return 0.25
   if (value > 0.65) return 0.5
   return 1
 }
