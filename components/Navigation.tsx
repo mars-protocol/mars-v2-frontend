@@ -16,6 +16,7 @@ import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useAccountStats from 'hooks/useAccountStats'
 import SemiCircleProgress from './SemiCircleProgress'
 import useWalletStore from 'stores/useWalletStore'
+import ArrowRightLine from 'components/Icons/arrow-right-line.svg'
 
 // TODO: will require some tweaks depending on how lower viewport mocks pans out
 const MAX_VISIBLE_CREDIT_ACCOUNTS = 5
@@ -185,9 +186,7 @@ const Navigation = () => {
               className="flex w-16 cursor-pointer justify-center hover:text-white"
               onClick={toggleCreditManager}
             >
-              <svg width="14" height="13" viewBox="0 0 14 13" fill="currentColor">
-                <path d="M0.234863 6.57567C0.234863 7.07288 0.581403 7.41188 1.08615 7.41188H8.04708L9.62912 7.33655L7.45194 9.31785L5.93771 10.8547C5.77951 11.0129 5.68157 11.2163 5.68157 11.4574C5.68157 11.9244 6.02811 12.2634 6.50272 12.2634C6.72872 12.2634 6.93213 12.173 7.12047 11.9922L11.859 7.20094C11.9871 7.07288 12.0775 6.92221 12.1152 6.74894V11.5478C12.1152 12.0148 12.4692 12.3538 12.9363 12.3538C13.4109 12.3538 13.765 12.0148 13.765 11.5478V1.6111C13.765 1.14403 13.4109 0.797485 12.9363 0.797485C12.4692 0.797485 12.1152 1.14403 12.1152 1.6111V6.39486C12.0775 6.22913 11.9871 6.07846 11.859 5.95039L7.12047 1.15156C6.93213 0.970755 6.72872 0.880354 6.50272 0.880354C6.02811 0.880354 5.68157 1.22689 5.68157 1.68644C5.68157 1.92751 5.77951 2.13845 5.93771 2.28911L7.45194 3.83348L9.62912 5.80725L8.04708 5.73192H1.08615C0.581403 5.73192 0.234863 6.07846 0.234863 6.57567Z" />
-              </svg>
+              <ArrowRightLine />
             </div>
           </div>
         </div>
