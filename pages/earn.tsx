@@ -1,7 +1,7 @@
 import React from 'react'
 import Container from 'components/Container'
 
-const Yield = () => {
+const Earn = () => {
   return (
     <div className="flex gap-4">
       <Container className="flex-1">Yield Module</Container>
@@ -10,4 +10,4 @@ const Yield = () => {
   )
 }
 
-export default Yield
+export default Earn

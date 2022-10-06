@@ -23,7 +23,7 @@ const MAX_VISIBLE_CREDIT_ACCOUNTS = 5
 
 const navItems = [
   { href: '/trade', label: 'Trade' },
-  { href: '/yield', label: 'Yield' },
+  { href: '/earn', label: 'Earn' },
   { href: '/borrow', label: 'Borrow' },
   { href: '/portfolio', label: 'Portfolio' },
   { href: '/council', label: 'Council' },
