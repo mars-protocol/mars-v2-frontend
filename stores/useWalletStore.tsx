@@ -13,7 +13,7 @@ interface WalletStore {
   actions: {
     disconnect: () => void
     initialize: () => void
-    setAddress: (address: string) => void
+    connect: (address: string, wallet: Wallet) => void
     setMetamaskInstalledStatus: (value: boolean) => void
   }
 }
@@ -39,7 +39,7 @@ const useWalletStore = create<WalletStore>()(
 
           set(() => ({ client: clientInstance, address }))
         },
-        setAddress: (address: string) => set(() => ({ address, wallet: Wallet.Keplr })),
+        connect: (address: string, wallet: Wallet) => set(() => ({ address, wallet })),
         setMetamaskInstalledStatus: (value: boolean) => set(() => ({ metamaskInstalled: value })),
       },
     }),
