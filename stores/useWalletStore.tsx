@@ -7,12 +7,11 @@ import { chain } from 'utils/chains'
 
 interface WalletStore {
   address: string
-  injectiveAddress: string
-  addresses: string[]
   metamaskInstalled: boolean
-  wallet: Wallet
+  wallet: Wallet | null
   client?: CosmWasmClient
   actions: {
+    disconnect: () => void
     initialize: () => void
     setAddress: (address: string) => void
     setMetamaskInstalledStatus: (value: boolean) => void
@@ -23,16 +22,24 @@ const useWalletStore = create<WalletStore>()(
   persist(
     (set, get) => ({
       address: '',
-      injectiveAddress: '',
-      addresses: [],
       metamaskInstalled: false,
-      wallet: Wallet.Metamask,
+      wallet: null,
       actions: {
+        disconnect: () => {
+          set(() => ({ address: '', wallet: null }))
+        },
         initialize: async () => {
           const clientInstance = await CosmWasmClient.connect(chain.rpc)
-          set(() => ({ client: clientInstance }))
+          let address = ''
+
+          if (get().wallet === Wallet.Keplr && window.keplr) {
+            const key = await window.keplr.getKey(chain.chainId)
+            address = key.bech32Address
+          }
+
+          set(() => ({ client: clientInstance, address }))
         },
-        setAddress: (address: string) => set(() => ({ address })),
+        setAddress: (address: string) => set(() => ({ address, wallet: Wallet.Keplr })),
         setMetamaskInstalledStatus: (value: boolean) => set(() => ({ metamaskInstalled: value })),
       },
     }),
@@ -41,7 +48,7 @@ const useWalletStore = create<WalletStore>()(
       partialize: (state) =>
         Object.fromEntries(
           Object.entries(state).filter(
-            ([key]) => !['client', 'metamaskInstalled', 'actions'].includes(key)
+            ([key]) => !['client', 'metamaskInstalled', 'actions', 'address'].includes(key)
           )
         ),
     }

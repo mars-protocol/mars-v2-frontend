@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Popover } from '@headlessui/react'
@@ -42,8 +42,6 @@ const NavLink = ({ href, children }: { href: string; children: string }) => {
 }
 
 const Navigation = () => {
-  const [hasHydrated, setHasHydrated] = useState<boolean>(false)
-
   const address = useWalletStore((s) => s.address)
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
   const setSelectedAccount = useCreditManagerStore((s) => s.actions.setSelectedAccount)
@@ -56,11 +54,6 @@ const Navigation = () => {
   )
 
   const accountStats = useAccountStats()
-
-  // avoid server-client hydration mismatch
-  useEffect(() => {
-    setHasHydrated(true)
-  }, [])
 
   const { firstCreditAccounts, restCreditAccounts } = useMemo(() => {
     return {
@@ -88,7 +81,7 @@ const Navigation = () => {
         <Wallet />
       </div>
       {/* Sub navigation bar */}
-      {hasHydrated && address && (
+      {address && (
         <div className="flex justify-between border-b border-white/20 px-6 py-3 text-sm text-white/40">
           <div className="flex items-center">
             <SearchInput />
