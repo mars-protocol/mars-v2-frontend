@@ -19,6 +19,7 @@ async function isMetamaskInstalled(): Promise<boolean> {
 const queryClient = new QueryClient()
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const address = useWalletStore((s) => s.address)
   const actions = useWalletStore((s) => s.actions)
 
   // init store
@@ -40,9 +41,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/favicon.svg" />
       </Head>
       <QueryClientProvider client={queryClient}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <Layout>{address ? <Component {...pageProps} /> : <div>No wallet connected</div>}</Layout>
         <ToastContainer
           autoClose={1500}
           closeButton={false}
