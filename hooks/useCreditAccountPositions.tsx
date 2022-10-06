@@ -1,14 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { Coin } from '@cosmjs/stargate'
 
 import useWalletStore from 'stores/useWalletStore'
 import { contractAddresses } from 'config/contracts'
 import { queryKeys } from 'types/query-keys-factory'
-
-interface Coin {
-  amount: string
-  denom: string
-}
 
 interface DebtAmount {
   amount: string
@@ -49,7 +45,7 @@ const useCreditAccountPositions = (accountId: string) => {
   return {
     ...result,
     data: useMemo(() => {
-      return result?.data
+      return result?.data && { ...result.data }
     }, [result.data]),
   }
 }
