@@ -31,36 +31,40 @@ const useAccountStats = () => {
       // early return if prices are not fetched yet
       if (!tokenPrices) return 0
 
-      return (
-        BigNumber(amount)
-          .div(10 ** getTokenDecimals(denom))
-          .toNumber() * tokenPrices[denom]
-      )
+      return BigNumber(amount)
+        .div(10 ** getTokenDecimals(denom))
+        .times(tokenPrices[denom])
+        .toNumber()
     }
 
     const totalPosition = positionsData.coins.reduce((acc, coin) => {
-      return getTokenTotalUSDValue(coin.amount, coin.denom) + acc
+      const tokenTotalValue = getTokenTotalUSDValue(coin.amount, coin.denom)
+      return BigNumber(tokenTotalValue).plus(acc).toNumber()
     }, 0)
 
     const totalDebt = positionsData.debts.reduce((acc, coin) => {
-      return getTokenTotalUSDValue(coin.amount, coin.denom) + acc
+      const tokenTotalValue = getTokenTotalUSDValue(coin.amount, coin.denom)
+      return BigNumber(tokenTotalValue).plus(acc).toNumber()
     }, 0)
 
     const totalWeightedPositions = positionsData.coins.reduce((acc, coin) => {
-      const tokenWeightedValue =
-        getTokenTotalUSDValue(coin.amount, coin.denom) *
+      const tokenWeightedValue = BigNumber(getTokenTotalUSDValue(coin.amount, coin.denom)).times(
         Number(marketsData[coin.denom].liquidation_threshold)
+      )
 
-      return tokenWeightedValue + acc
+      return tokenWeightedValue.plus(acc).toNumber()
     }, 0)
 
-    const netWorth = totalPosition - totalDebt
+    const netWorth = BigNumber(totalPosition).minus(totalDebt).toNumber()
 
-    const liquidationLTVsWeightedAverage = totalWeightedPositions / totalPosition
-    const maxLeverage = 1 / (1 - liquidationLTVsWeightedAverage)
-    const currentLeverage = totalPosition / netWorth
-    const leverage = currentLeverage / maxLeverage || 0
-    const health = 1 - currentLeverage / maxLeverage || 1
+    const liquidationLTVsWeightedAverage = BigNumber(totalWeightedPositions)
+      .div(totalPosition)
+      .toNumber()
+
+    const maxLeverage = BigNumber(1).div(BigNumber(1).minus(liquidationLTVsWeightedAverage))
+    const currentLeverage = BigNumber(totalPosition).div(netWorth)
+    const leverage = currentLeverage.div(maxLeverage).toNumber() || 0
+    const health = BigNumber(1).minus(currentLeverage.div(maxLeverage)).toNumber() || 1
 
     const risk = liquidationLTVsWeightedAverage
       ? getRiskFromAverageLiquidationLTVs(liquidationLTVsWeightedAverage)
