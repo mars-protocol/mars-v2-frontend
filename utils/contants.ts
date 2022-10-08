@@ -9,5 +9,5 @@ export const hardcodedFee = {
       amount: '100000',
     },
   ],
-  gas: '750000',
+  gas: '1500000',
 }
