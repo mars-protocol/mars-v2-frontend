@@ -38,7 +38,7 @@ const useMarkets = () => {
       wasm: {
         uosmo: {
           denom: 'uosmo',
-          max_loan_to_value: '0.55',
+          max_loan_to_value: '0.7',
           liquidation_threshold: '0.65',
           liquidation_bonus: '0.1',
           reserve_factor: '0.2',
@@ -50,7 +50,7 @@ const useMarkets = () => {
           },
           borrow_index: '1.002171957411401332',
           liquidity_index: '1.00055035491698614',
-          borrow_rate: '0.3',
+          borrow_rate: '0.1',
           liquidity_rate: '0',
           indexes_last_updated: 1664544343,
           collateral_total_scaled: '89947659146708',
@@ -61,7 +61,7 @@ const useMarkets = () => {
         },
         'ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2': {
           denom: 'ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2',
-          max_loan_to_value: '0.65',
+          max_loan_to_value: '0.8',
           liquidation_threshold: '0.7',
           liquidation_bonus: '0.1',
           reserve_factor: '0.2',
@@ -73,7 +73,7 @@ const useMarkets = () => {
           },
           borrow_index: '1.000000224611044228',
           liquidity_index: '1.000000023465246067',
-          borrow_rate: '0.3',
+          borrow_rate: '0.25',
           liquidity_rate: '0',
           indexes_last_updated: 1664367327,
           collateral_total_scaled: '0',

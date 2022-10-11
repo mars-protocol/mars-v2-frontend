@@ -49,7 +49,7 @@ const useAccountStats = () => {
 
     const totalWeightedPositions = positionsData.coins.reduce((acc, coin) => {
       const tokenWeightedValue = BigNumber(getTokenTotalUSDValue(coin.amount, coin.denom)).times(
-        Number(marketsData[coin.denom].liquidation_threshold)
+        Number(marketsData[coin.denom].max_loan_to_value)
       )
 
       return tokenWeightedValue.plus(acc).toNumber()
