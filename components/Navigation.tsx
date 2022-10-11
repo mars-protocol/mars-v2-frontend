@@ -170,7 +170,10 @@ const Navigation = () => {
             {accountStats && (
               <>
                 <p>{formatCurrency(accountStats.netWorth)}</p>
-                <SemiCircleProgress value={accountStats.leverage} label="Lvg" />
+                {/* TOOLTIP */}
+                <div title={`${String(accountStats.currentLeverage.toFixed(1))}x`}>
+                  <SemiCircleProgress value={accountStats.leverage} label="Lvg" />
+                </div>
                 <SemiCircleProgress value={accountStats.risk} label="Risk" />
                 <ProgressBar value={accountStats.health} />
               </>

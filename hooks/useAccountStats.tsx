@@ -62,9 +62,9 @@ const useAccountStats = () => {
       .toNumber()
 
     const maxLeverage = BigNumber(1).div(BigNumber(1).minus(liquidationLTVsWeightedAverage))
-    const currentLeverage = BigNumber(totalPosition).div(netWorth)
-    const leverage = currentLeverage.div(maxLeverage).toNumber() || 0
-    const health = BigNumber(1).minus(currentLeverage.div(maxLeverage)).toNumber() || 1
+    const currentLeverage = BigNumber(totalPosition).div(netWorth).toNumber()
+    const leverage = BigNumber(currentLeverage).div(maxLeverage).toNumber() || 0
+    const health = BigNumber(1).minus(BigNumber(currentLeverage).div(maxLeverage)).toNumber() || 1
 
     const risk = liquidationLTVsWeightedAverage
       ? getRiskFromAverageLiquidationLTVs(liquidationLTVsWeightedAverage)
@@ -73,6 +73,7 @@ const useAccountStats = () => {
     return {
       health,
       leverage,
+      currentLeverage,
       netWorth,
       risk,
       totalPosition,
