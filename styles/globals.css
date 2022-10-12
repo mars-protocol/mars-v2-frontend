@@ -20,16 +20,6 @@ a {
   box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-  body {
-    color: white;
-    background: black;
-  }
-}
-
 /* react-toastify */
 /* https://fkhadra.github.io/react-toastify/how-to-style#override-css-variables  */
 .Toastify__toast {
