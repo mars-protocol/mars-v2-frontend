@@ -7,7 +7,7 @@ import { Coin } from '@cosmjs/stargate'
 
 import { getInjectiveAddress } from 'utils/address'
 import { getExperimentalChainConfigBasedOnChainId } from 'utils/experimental-chains'
-import { ChainId } from 'types'
+import { ChainId, Wallet } from 'types'
 import useWalletStore from 'stores/useWalletStore'
 import { chain } from 'utils/chains'
 
@@ -48,7 +48,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
       }
 
       const key = await window.keplr.getKey(chain.chainId)
-      actions.setAddress(key.bech32Address)
+      actions.connect(key.bech32Address, Wallet.Keplr)
 
       handleConnectSuccess()
     } catch (e) {
@@ -72,7 +72,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
         method: 'eth_requestAccounts',
       })
       const [address] = addresses
-      actions.setAddress(getInjectiveAddress(address))
+      actions.connect(getInjectiveAddress(address), Wallet.Metamask)
       handleConnectSuccess()
     } catch (e) {
       // TODO: handle exception

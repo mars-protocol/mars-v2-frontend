@@ -40,8 +40,8 @@ export const chainsInfo = {
   },
   OsmosisTestnet: {
     chainId: 'osmo-test-4',
-    rpc: 'https://rpc-test.osmosis.zone',
-    rest: 'https://lcd-test.osmosis.zone',
+    rpc: 'https://osmosis-delphi-testnet-1.simply-vc.com.mt/XF32UOOU55CX/osmosis-rpc',
+    rest: 'https://osmosis-delphi-testnet-1.simply-vc.com.mt/XF32UOOU55CX/osmosis-lcd',
     stakeCurrency: {
       coinDenom: 'OSMO',
       coinMinimalDenom: 'uosmo',

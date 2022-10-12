@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import * as Slider from '@radix-ui/react-slider'
 import BigNumber from 'bignumber.js'
 import { Switch } from '@headlessui/react'
+import useLocalStorageState from 'use-local-storage-state'
 
 import Button from '../Button'
 import useAllowedCoins from 'hooks/useAllowedCoins'
@@ -14,9 +15,12 @@ import CreditManagerContainer from './CreditManagerContainer'
 const FundAccount = () => {
   const [amount, setAmount] = useState(0)
   const [selectedToken, setSelectedToken] = useState('')
-  const [enabled, setEnabled] = useState(false)
 
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
+
+  const [lendAssets, setLendAssets] = useLocalStorageState(`lendAssets_${selectedAccount}`, {
+    defaultValue: false,
+  })
 
   const { data: balancesData } = useAllBalances()
   const { data: allowedCoinsData, isLoading: isLoadingAllowedCoins } = useAllowedCoins()
@@ -58,7 +62,7 @@ const FundAccount = () => {
   return (
     <>
       <CreditManagerContainer className="mb-2 p-3">
-        <p className="mb-6">
+        <p className="mb-6 text-sm">
           Transfer assets from your injective wallet to your Mars credit account. If you don’t have
           any assets in your injective wallet use the injective bridge to transfer funds to your
           injective wallet.
@@ -67,7 +71,7 @@ const FundAccount = () => {
           <p>Loading...</p>
         ) : (
           <>
-            <div className="mb-4">
+            <div className="mb-4 text-sm">
               <div className="mb-1 flex justify-between">
                 <div>Asset:</div>
                 <select
@@ -95,7 +99,7 @@ const FundAccount = () => {
                 />
               </div>
             </div>
-            <p>In wallet: {walletAmount.toLocaleString()}</p>
+            <p className="text-sm">In wallet: {walletAmount.toLocaleString()}</p>
             {/* SLIDER - initial implementation to test functionality */}
             {/* TODO: will need to be revamped later on */}
             <div className="relative mb-6 flex flex-1 items-center">
@@ -134,19 +138,19 @@ const FundAccount = () => {
       <CreditManagerContainer className="mb-2 flex items-center justify-between">
         <div>
           <h3 className="font-bold">Lending Assets</h3>
-          <div className="opacity-50">Lend assets from account to earn yield.</div>
+          <div className="text-sm opacity-50">Lend assets from account to earn yield.</div>
         </div>
 
         <Switch
-          checked={enabled}
-          onChange={setEnabled}
+          checked={lendAssets}
+          onChange={setLendAssets}
           className={`${
-            enabled ? 'bg-blue-600' : 'bg-gray-400'
+            lendAssets ? 'bg-blue-600' : 'bg-gray-400'
           } relative inline-flex h-6 w-11 items-center rounded-full`}
         >
           <span
             className={`${
-              enabled ? 'translate-x-6' : 'translate-x-1'
+              lendAssets ? 'translate-x-6' : 'translate-x-1'
             } inline-block h-4 w-4 transform rounded-full bg-white transition`}
           />
         </Switch>

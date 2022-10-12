@@ -25,10 +25,12 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-toastify": "^9.0.8",
+    "use-local-storage-state": "^18.1.1",
     "zustand": "^4.1.1"
   },
   "devDependencies": {
     "@keplr-wallet/types": "^0.10.24",
+    "@svgr/webpack": "^6.4.0",
     "@types/node": "18.7.14",
     "@types/react": "18.0.18",
     "@types/react-dom": "18.0.6",

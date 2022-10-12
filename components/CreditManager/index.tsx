@@ -5,10 +5,13 @@ import Button from '../Button'
 import { formatCurrency } from 'utils/formatters'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useWalletStore from 'stores/useWalletStore'
-import useCreditAccountBalances from 'hooks/useCreditAccountPositions'
-import { getTokenDecimals } from 'utils/tokens'
+import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
+import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 import FundAccount from './FundAccount'
 import CreditManagerContainer from './CreditManagerContainer'
+import useTokenPrices from 'hooks/useTokenPrices'
+import useAccountStats from 'hooks/useAccountStats'
+import useMarkets from 'hooks/useMarkets'
 
 const CreditManager = () => {
   const [isFund, setIsFund] = useState(false)
@@ -16,19 +19,24 @@ const CreditManager = () => {
   const address = useWalletStore((s) => s.address)
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
 
-  const { data: positionsData, isLoading: isLoadingPositions } = useCreditAccountBalances(
+  const { data: positionsData, isLoading: isLoadingPositions } = useCreditAccountPositions(
     selectedAccount ?? ''
   )
 
-  const totalPosition =
-    positionsData?.coins.reduce((acc, coin) => {
-      return Number(coin.value) + acc
-    }, 0) ?? 0
+  const { data: tokenPrices } = useTokenPrices()
+  const { data: marketsData } = useMarkets()
+  const accountStats = useAccountStats()
 
-  const totalDebt =
-    positionsData?.debt.reduce((acc, coin) => {
-      return Number(coin.value) + acc
-    }, 0) ?? 0
+  const getTokenTotalUSDValue = (amount: string, denom: string) => {
+    // early return if prices are not fetched yet
+    if (!tokenPrices) return 0
+
+    return (
+      BigNumber(amount)
+        .div(10 ** getTokenDecimals(denom))
+        .toNumber() * tokenPrices[denom]
+    )
+  }
 
   if (!address) {
     return (
@@ -66,11 +74,13 @@ const CreditManager = () => {
           <CreditManagerContainer className="mb-2 text-sm">
             <div className="mb-1 flex justify-between">
               <div>Total Position:</div>
-              <div className="font-semibold">{formatCurrency(totalPosition)}</div>
+              <div className="font-semibold">
+                {formatCurrency(accountStats?.totalPosition ?? 0)}
+              </div>
             </div>
             <div className="flex justify-between">
               <div>Total Liabilities:</div>
-              <div className="font-semibold">{formatCurrency(totalDebt)}</div>
+              <div className="font-semibold">{formatCurrency(accountStats?.totalDebt ?? 0)}</div>
             </div>
           </CreditManagerContainer>
           <CreditManagerContainer>
@@ -87,8 +97,10 @@ const CreditManager = () => {
                 </div>
                 {positionsData?.coins.map((coin) => (
                   <div key={coin.denom} className="flex text-xs text-black/40">
-                    <div className="flex-1">{coin.denom}</div>
-                    <div className="flex-1">{formatCurrency(coin.value)}</div>
+                    <div className="flex-1">{getTokenSymbol(coin.denom)}</div>
+                    <div className="flex-1">
+                      {formatCurrency(getTokenTotalUSDValue(coin.amount, coin.denom))}
+                    </div>
                     <div className="flex-1">
                       {BigNumber(coin.amount)
                         .div(10 ** getTokenDecimals(coin.denom))
@@ -100,11 +112,14 @@ const CreditManager = () => {
                     <div className="flex-1">-</div>
                   </div>
                 ))}
-                {positionsData?.debt.map((coin) => (
+                {positionsData?.debts.map((coin) => (
                   <div key={coin.denom} className="flex text-xs text-red-500">
-                    <div className="flex-1">{coin.denom}</div>
-                    <div className="flex-1">{formatCurrency(coin.value)}</div>
+                    <div className="flex-1 text-black/40">{getTokenSymbol(coin.denom)}</div>
                     <div className="flex-1">
+                      -{formatCurrency(getTokenTotalUSDValue(coin.amount, coin.denom))}
+                    </div>
+                    <div className="flex-1">
+                      -
                       {BigNumber(coin.amount)
                         .div(10 ** getTokenDecimals(coin.denom))
                         .toNumber()
@@ -112,7 +127,9 @@ const CreditManager = () => {
                           maximumFractionDigits: 6,
                         })}
                     </div>
-                    <div className="flex-1">-</div>
+                    <div className="flex-1">
+                      {(Number(marketsData?.[coin.denom].borrow_rate) * 100).toFixed(1)}%
+                    </div>
                   </div>
                 ))}
               </>

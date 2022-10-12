@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Popover } from '@headlessui/react'
 import { toast } from 'react-toastify'
 import Image from 'next/image'
@@ -34,7 +34,7 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
             </div>
             <Button
               className=" bg-[#524bb1] hover:bg-[#6962cc]"
-              onClick={() => actions.setAddress('')}
+              onClick={() => actions.disconnect()}
             >
               Disconnect
             </Button>
@@ -71,18 +71,12 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
 
 const Wallet = () => {
   const [showConnectModal, setShowConnectModal] = useState(false)
-  const [hasHydrated, setHasHydrated] = useState<boolean>(false)
 
   const address = useWalletStore((s) => s.address)
 
-  // avoid server-client hydration mismatch
-  useEffect(() => {
-    setHasHydrated(true)
-  }, [])
-
   return (
     <>
-      {hasHydrated && address ? (
+      {address ? (
         <WalletPopover>{formatWalletAddress(address)}</WalletPopover>
       ) : (
         <Button className="w-[200px]" onClick={() => setShowConnectModal(true)}>

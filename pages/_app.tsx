@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { ToastContainer, Zoom } from 'react-toastify'
@@ -7,7 +8,6 @@ import detectEthereumProvider from '@metamask/detect-provider'
 
 import '../styles/globals.css'
 import Layout from 'components/Layout'
-import { useEffect } from 'react'
 import useWalletStore from 'stores/useWalletStore'
 
 async function isMetamaskInstalled(): Promise<boolean> {
@@ -19,6 +19,7 @@ async function isMetamaskInstalled(): Promise<boolean> {
 const queryClient = new QueryClient()
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const address = useWalletStore((s) => s.address)
   const actions = useWalletStore((s) => s.actions)
 
   // init store
@@ -26,6 +27,8 @@ function MyApp({ Component, pageProps }: AppProps) {
     const verifyMetamask = async () => {
       actions.setMetamaskInstalledStatus(await isMetamaskInstalled())
     }
+
+    actions.initialize()
 
     verifyMetamask()
   }, [actions])
@@ -38,9 +41,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/favicon.svg" />
       </Head>
       <QueryClientProvider client={queryClient}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <Layout>{address ? <Component {...pageProps} /> : <div>No wallet connected</div>}</Layout>
         <ToastContainer
           autoClose={1500}
           closeButton={false}
