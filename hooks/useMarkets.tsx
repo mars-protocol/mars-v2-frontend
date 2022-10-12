@@ -57,7 +57,7 @@ const useMarkets = () => {
           debt_total_scaled: '0',
           deposit_enabled: true,
           borrow_enabled: true,
-          deposit_cap: '100000000',
+          deposit_cap: '1000000000000',
         },
         'ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2': {
           denom: 'ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2',
