@@ -1,15 +1,10 @@
 import { Bech32Address } from '@keplr-wallet/cosmos'
-import { ChainId, CosmosChainId, DevnetCosmosChainId, TestnetCosmosChainId } from 'types'
+import { ChainId, CosmosChainId, TestnetCosmosChainId } from 'types'
 
 export const getEndpointsFromChainId = (
-  chainId: TestnetCosmosChainId | CosmosChainId | ChainId | DevnetCosmosChainId
+  chainId: TestnetCosmosChainId | CosmosChainId | ChainId
 ): { rpc: string; rest: string } => {
   switch (chainId) {
-    case CosmosChainId.Cosmoshub:
-      return {
-        rpc: 'https://tm.cosmos.injective.network',
-        rest: 'https://lcd.cosmos.injective.network',
-      }
     case CosmosChainId.Osmosis:
       return {
         rpc: 'https://tm.osmosis.injective.network',
@@ -20,65 +15,15 @@ export const getEndpointsFromChainId = (
         rpc: 'https://tm.injective.network',
         rest: 'https://lcd.injective.network',
       }
-    case CosmosChainId.Juno:
-      return {
-        rpc: 'https://tm.juno.injective.network',
-        rest: 'https://lcd.juno.injective.network',
-      }
-    case CosmosChainId.Terra:
-      return {
-        rpc: 'https://tm.terra.injective.network',
-        rest: 'https://lcd.terra.injective.network',
-      }
-    case CosmosChainId.TerraUST:
-      return {
-        rpc: 'https://tm.terra.injective.network',
-        rest: 'https://lcd.terra.injective.network',
-      }
     case TestnetCosmosChainId.Cosmoshub:
       return {
         rpc: 'https://testnet.tm.cosmos.injective.dev',
         rest: 'https://testnet.lcd.cosmos.injective.dev',
       }
-    case TestnetCosmosChainId.Injective:
+    case TestnetCosmosChainId.Osmosis:
       return {
-        rpc: 'https://testnet.tm.injective.dev',
-        rest: 'https://testnet.lcd.injective.dev',
-      }
-    case DevnetCosmosChainId.Injective:
-      return {
-        rpc: 'https://devnet.tm.injective.dev',
-        rest: 'https://devnet.lcd.injective.dev',
-      }
-    case CosmosChainId.Chihuahua:
-      return {
-        rpc: 'https://rpc.chihuahua.wtf',
-        rest: 'https://api.chihuahua.wtf',
-      }
-    case CosmosChainId.Axelar:
-      return {
-        rpc: 'https://tm.axelar.injective.network',
-        rest: 'https://lcd.axelar.injective.network',
-      }
-    case CosmosChainId.Evmos:
-      return {
-        rpc: 'https://tm.evmos.injective.network',
-        rest: 'https://lcd.evmos.injective.network',
-      }
-    case CosmosChainId.Persistence:
-      return {
-        rpc: 'https://tm.persistence.injective.network',
-        rest: 'https://lcd.persistence.injective.network',
-      }
-    case CosmosChainId.Secret:
-      return {
-        rpc: 'https://tm.secret.injective.network',
-        rest: 'https://lcd.secret.injective.network',
-      }
-    case CosmosChainId.Stride:
-      return {
-        rpc: 'https://tm.stride.injective.network',
-        rest: 'https://lcd.stride.injective.network',
+        rpc: 'https://rpc-test.osmosis.zone/',
+        rest: 'https://lcd-test.osmosis.zone/',
       }
     default:
       throw new Error(`Endpoints for ${chainId} not found`)
@@ -86,6 +31,48 @@ export const getEndpointsFromChainId = (
 }
 
 export const experimentalChainsConfig = {
+  [TestnetCosmosChainId.Osmosis]: {
+    ...getEndpointsFromChainId(TestnetCosmosChainId.Osmosis),
+    rpcConfig: undefined,
+    restConfig: undefined,
+    chainId: 'osmo-test-4',
+    chainName: 'Osmosis Testnet',
+    stakeCurrency: {
+      coinDenom: 'OSMO',
+      coinMinimalDenom: 'uosmo',
+      coinDecimals: 6,
+      coinGeckoId: 'osmosis',
+    },
+    walletUrl: 'https://wallet.keplr.app/#/cosmoshub/stake',
+    walletUrlForStaking: 'https://wallet.keplr.app/#/cosmoshub/stake',
+    bip44: {
+      coinType: 118,
+    },
+    bech32Config: Bech32Address.defaultBech32Config('osmo'),
+    currencies: [
+      {
+        coinDenom: 'OSMO',
+        coinMinimalDenom: 'uosmo',
+        coinDecimals: 6,
+        coinGeckoId: 'osmosis',
+      },
+      {
+        coinDenom: 'ION',
+        coinMinimalDenom: 'uion',
+        coinDecimals: 6,
+        coinGeckoId: 'ion',
+      },
+    ],
+    feeCurrencies: [
+      {
+        coinDenom: 'OSMO',
+        coinMinimalDenom: 'uosmo',
+        coinDecimals: 6,
+        coinGeckoId: 'osmosis',
+      },
+    ],
+    features: ['stargate', 'ibc-transfer', 'no-legacy-stdTx', 'ibc-go'],
+  },
   [TestnetCosmosChainId.Cosmoshub]: {
     ...getEndpointsFromChainId(TestnetCosmosChainId.Cosmoshub),
     rpcConfig: undefined,
@@ -98,8 +85,8 @@ export const experimentalChainsConfig = {
       coinDecimals: 6,
       coinGeckoId: 'cosmos',
     },
-    walletUrl: 'https://wallet.keplr.app/#/cosmoshub/stake',
-    walletUrlForStaking: 'https://wallet.keplr.app/#/cosmoshub/stake',
+    walletUrl: 'https://wallet.keplr.app/#/osmosis/stake',
+    walletUrlForStaking: 'https://wallet.keplr.app/#/osmosis/stake',
     bip44: {
       coinType: 118,
     },
@@ -120,92 +107,7 @@ export const experimentalChainsConfig = {
         coinGeckoId: 'cosmos',
       },
     ],
-    coinType: 118,
     features: ['ibc-transfer'],
-  },
-  [TestnetCosmosChainId.Injective]: {
-    ...getEndpointsFromChainId(TestnetCosmosChainId.Injective),
-    rpcConfig: undefined,
-    restConfig: undefined,
-    chainId: 'injective-888',
-    chainName: 'Injective Testnet',
-    stakeCurrency: {
-      coinDenom: 'INJ',
-      coinMinimalDenom: 'inj',
-      coinDecimals: 18,
-      coinGeckoId: 'injective-protocol',
-    },
-    walletUrl: 'https://hub.injective.dev/',
-    walletUrlForStaking: 'https://hub.injective.dev/',
-    bip44: {
-      coinType: 60,
-    },
-    bech32Config: Bech32Address.defaultBech32Config('inj'),
-    currencies: [
-      {
-        coinDenom: 'INJ',
-        coinMinimalDenom: 'inj',
-        coinDecimals: 18,
-        coinGeckoId: 'injective-protocol',
-      },
-    ],
-    feeCurrencies: [
-      {
-        coinDenom: 'INJ',
-        coinMinimalDenom: 'inj',
-        coinDecimals: 18,
-        coinGeckoId: 'injective-protocol',
-      },
-    ],
-    gasPriceStep: {
-      low: 5000000000,
-      average: 25000000000,
-      high: 40000000000,
-    },
-    coinType: 60,
-    features: ['ibc-transfer', 'ibc-go', 'eth-address-gen', 'eth-key-sign'],
-  },
-  [DevnetCosmosChainId.Injective]: {
-    ...getEndpointsFromChainId(DevnetCosmosChainId.Injective),
-    rpcConfig: undefined,
-    restConfig: undefined,
-    chainId: 'injective-777',
-    chainName: 'Injective - Devnet',
-    stakeCurrency: {
-      coinDenom: 'INJ',
-      coinMinimalDenom: 'inj',
-      coinDecimals: 18,
-      coinGeckoId: 'injective-protocol',
-    },
-    walletUrl: 'https://hub.injective.dev/',
-    walletUrlForStaking: 'https://hub.injective.dev/',
-    bip44: {
-      coinType: 60,
-    },
-    bech32Config: Bech32Address.defaultBech32Config('inj'),
-    currencies: [
-      {
-        coinDenom: 'INJ',
-        coinMinimalDenom: 'inj',
-        coinDecimals: 18,
-        coinGeckoId: 'injective-protocol',
-      },
-    ],
-    feeCurrencies: [
-      {
-        coinDenom: 'INJ',
-        coinMinimalDenom: 'inj',
-        coinDecimals: 18,
-        coinGeckoId: 'injective-protocol',
-      },
-    ],
-    gasPriceStep: {
-      low: 5000000000,
-      average: 25000000000,
-      high: 40000000000,
-    },
-    coinType: 60,
-    features: ['ibc-transfer', 'ibc-go', 'eth-address-gen', 'eth-key-sign'],
   },
   [CosmosChainId.Injective]: {
     ...getEndpointsFromChainId(CosmosChainId.Injective),
@@ -248,94 +150,6 @@ export const experimentalChainsConfig = {
     },
     features: ['ibc-transfer', 'ibc-go', 'eth-address-gen', 'eth-key-sign'],
     beta: true,
-  },
-  [CosmosChainId.Terra]: {
-    ...getEndpointsFromChainId(CosmosChainId.Terra),
-    rpcConfig: undefined,
-    restConfig: undefined,
-    chainId: 'columbus-5',
-    chainName: 'Terra',
-    stakeCurrency: {
-      coinDenom: 'LUNA',
-      coinMinimalDenom: 'uluna',
-      coinDecimals: 6,
-      coinGeckoId: 'terra-luna',
-    },
-    walletUrl: 'https://station.terra.money/wallet',
-    walletUrlForStaking: 'https://station.terra.money/wallet',
-    bip44: {
-      coinType: 118,
-    },
-    bech32Config: Bech32Address.defaultBech32Config('terra'),
-    currencies: [
-      {
-        coinDenom: 'LUNA',
-        coinMinimalDenom: 'uluna',
-        coinDecimals: 6,
-        coinGeckoId: 'terra-luna',
-      },
-      {
-        coinDenom: 'UST',
-        coinMinimalDenom: 'uusd',
-        coinGeckoId: 'terrausd',
-        coinDecimals: 6,
-      },
-    ],
-    feeCurrencies: [
-      {
-        coinDenom: 'LUNA',
-        coinMinimalDenom: 'uluna',
-        coinGeckoId: 'terra-luna',
-        coinDecimals: 6,
-      },
-      {
-        coinDenom: 'UST',
-        coinMinimalDenom: 'uusd',
-        coinGeckoId: 'terrausd',
-        coinDecimals: 6,
-      },
-    ],
-    coinType: 118,
-    gasPriceStep: {
-      low: 0.01,
-      average: 0.3,
-      high: 0.04,
-    },
-    features: ['ibc-transfer'],
-  },
-  [CosmosChainId.Chihuahua]: {
-    ...getEndpointsFromChainId(CosmosChainId.Chihuahua),
-    chainId: 'chihuahua-1',
-    chainName: 'Chihuahua',
-    stakeCurrency: {
-      coinDenom: 'HUAHUA',
-      coinMinimalDenom: 'uhuahua',
-      coinDecimals: 6,
-    },
-    bip44: {
-      coinType: 118,
-    },
-    bech32Config: Bech32Address.defaultBech32Config('chihuahua'),
-    currencies: [
-      {
-        coinDenom: 'HUAHUA',
-        coinMinimalDenom: 'uhuahua',
-        coinDecimals: 6,
-      },
-    ],
-    feeCurrencies: [
-      {
-        coinDenom: 'HUAHUA',
-        coinMinimalDenom: 'uhuahua',
-        coinDecimals: 6,
-      },
-    ],
-    gasPriceStep: {
-      low: 0.025,
-      average: 0.03,
-      high: 0.035,
-    },
-    features: ['ibc-transfer', 'ibc-go'],
   },
 } as Record<string, any>
 
