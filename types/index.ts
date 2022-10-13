@@ -1,14 +1,4 @@
 // ENUMS
-export enum EthereumChainId {
-  Mainnet = 1,
-  Ropsten = 3,
-  Rinkeby = 4,
-  Goerli = 5,
-  Kovan = 42,
-  Injective = 888,
-  Ganache = 1337,
-  HardHat = 31337,
-}
 
 export enum ChainId {
   Mainnet = 'injective-1',
@@ -29,25 +19,10 @@ export enum Wallet {
 // COSMOS
 export enum CosmosChainId {
   Injective = 'injective-1',
-  Cosmoshub = 'cosmoshub-4',
-  Juno = 'juno-1',
   Osmosis = 'osmosis-1',
-  Terra = 'columbus-5',
-  TerraUST = 'columbus-5',
-  Chihuahua = 'chihuahua-1',
-  Axelar = 'axelar-dojo-1',
-  Evmos = 'evmos_9001-2',
-  Persistence = 'core-1',
-  Secret = 'secret-4',
-  Stride = 'stride-1',
 }
 
 export enum TestnetCosmosChainId {
-  Injective = 'injective-888',
+  Osmosis = 'osmo-test-4',
   Cosmoshub = 'cosmoshub-testnet',
-}
-
-export enum DevnetCosmosChainId {
-  Injective = 'injective-777',
-  Injective1 = 'injective-777',
 }
