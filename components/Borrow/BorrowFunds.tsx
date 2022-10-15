@@ -35,7 +35,10 @@ const BorrowFunds = ({ tokenDenom, onClose }: any) => {
   const tokenSymbol = getTokenSymbol(tokenDenom)
 
   const { mutate } = useBorrowFunds(amount, tokenDenom, !borrowToCreditAccount, {
-    onSuccess: () => toast.success(`${amount} ${tokenSymbol} successfully Borrowed`),
+    onSuccess: () => {
+      onClose()
+      toast.success(`${amount} ${tokenSymbol} successfully Borrowed`)
+    },
   })
 
   const { data: tokenPrices } = useTokenPrices()
