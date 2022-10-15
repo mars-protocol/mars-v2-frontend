@@ -5,7 +5,7 @@ import { toast } from 'react-toastify'
 import Button from 'components/Button'
 import Container from 'components/Container'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-import useBorrowFunds from 'hooks/useBorrowFunds'
+import useRepayFunds from 'hooks/useRepayFunds'
 import useTokenPrices from 'hooks/useTokenPrices'
 import { formatCurrency } from 'utils/formatters'
 import BigNumber from 'bignumber.js'
@@ -27,14 +27,13 @@ const AnotherContainer = ({
 
 const BorrowFunds = ({ tokenDenom, onClose }: any) => {
   const [amount, setAmount] = useState(0)
-  const [borrowToCreditAccount, setBorrowToCreditAccount] = useState(false)
 
   const tokenSymbol = getTokenSymbol(tokenDenom)
 
-  const { mutate } = useBorrowFunds(amount, tokenDenom, !borrowToCreditAccount, {
+  const { mutate } = useRepayFunds(amount, tokenDenom, {
     onSuccess: () => {
       onClose()
-      toast.success(`${amount} ${tokenSymbol} successfully repaid”`)
+      toast.success(`${amount} ${tokenSymbol} successfully repaid`)
     },
   })
 
