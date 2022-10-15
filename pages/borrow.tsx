@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import Image from 'next/image'
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid'
+import { ChevronDownIcon, ChevronUpIcon, XMarkIcon } from '@heroicons/react/24/solid'
 import BigNumber from 'bignumber.js'
 
 import Container from 'components/Container'
@@ -12,6 +12,7 @@ import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useMarkets from 'hooks/useMarkets'
 import useTokenPrices from 'hooks/useTokenPrices'
 import { formatCurrency } from 'utils/formatters'
+import BorrowFunds from 'components/Borrow/BorrowFunds'
 
 type AssetRowProps = {
   data: {
@@ -26,9 +27,10 @@ type AssetRowProps = {
     borrowRate: number
     marketLiquidity: number
   }
+  onClick: () => void
 }
 
-const AssetRow = ({ data }: AssetRowProps) => {
+const AssetRow = ({ data, onClick }: AssetRowProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
   return (
@@ -63,14 +65,13 @@ const AssetRow = ({ data }: AssetRowProps) => {
         </div>
       </div>
       {isExpanded && (
-        // hardcoded height - remove later
-        <div className="flex h-[200px] items-center justify-between">
+        <div className="flex items-center justify-between">
           <div>Additional Stuff Placeholder</div>
           <div className="flex gap-2">
             <Button
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation()
-                alert('TODO')
+                onClick()
               }}
             >
               Borrow
@@ -91,6 +92,9 @@ const AssetRow = ({ data }: AssetRowProps) => {
 }
 
 const Borrow = () => {
+  const [showBorrow, setShowBorrow] = useState(false)
+  const [selectedTokenDenom, setSelectedTokenDenom] = useState('')
+
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
 
   const { data: allowedCoinsData } = useAllowedCoins()
@@ -167,7 +171,7 @@ const Borrow = () => {
   }, [allowedCoinsData, borrowedAssetsMap, marketsData, tokenPrices])
 
   return (
-    <div className="flex gap-4">
+    <div className="flex items-start gap-4">
       <Container className="flex-1">
         <div className="mb-5">
           <h3 className="mb-1 text-center font-medium uppercase">Borrowed</h3>
@@ -181,7 +185,16 @@ const Borrow = () => {
           <div className="flex flex-col gap-2">
             {borrowedAssets?.length === 0
               ? 'No data'
-              : borrowedAssets?.map((asset) => <AssetRow key={asset.denom} data={asset} />)}
+              : borrowedAssets?.map((asset) => (
+                  <AssetRow
+                    key={asset.denom}
+                    data={asset}
+                    onClick={() => {
+                      setShowBorrow(true)
+                      setSelectedTokenDenom(asset.denom)
+                    }}
+                  />
+                ))}
           </div>
         </div>
         <div>
@@ -196,10 +209,26 @@ const Borrow = () => {
           <div className="flex flex-col gap-2">
             {notBorrowedAssets?.length === 0
               ? 'No data'
-              : notBorrowedAssets?.map((asset) => <AssetRow key={asset.denom} data={asset} />)}
+              : notBorrowedAssets?.map((asset) => (
+                  <AssetRow
+                    key={asset.denom}
+                    data={asset}
+                    onClick={() => {
+                      setShowBorrow(true)
+                      setSelectedTokenDenom(asset.denom)
+                    }}
+                  />
+                ))}
           </div>
         </div>
       </Container>
+      {showBorrow && (
+        <BorrowFunds
+          key={selectedTokenDenom}
+          tokenDenom={selectedTokenDenom}
+          onClose={() => setShowBorrow(false)}
+        />
+      )}
     </div>
   )
 }
