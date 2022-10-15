@@ -13,6 +13,7 @@ import useMarkets from 'hooks/useMarkets'
 import useTokenPrices from 'hooks/useTokenPrices'
 import { formatCurrency } from 'utils/formatters'
 import BorrowFunds from 'components/Borrow/BorrowFunds'
+import RepayFunds from 'components/Borrow/RepayFunds'
 
 type AssetRowProps = {
   data: {
@@ -27,10 +28,11 @@ type AssetRowProps = {
     borrowRate: number
     marketLiquidity: number
   }
-  onClick: () => void
+  onBorrowClick: () => void
+  onRepayClick: () => void
 }
 
-const AssetRow = ({ data, onClick }: AssetRowProps) => {
+const AssetRow = ({ data, onBorrowClick, onRepayClick }: AssetRowProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
   return (
@@ -71,7 +73,7 @@ const AssetRow = ({ data, onClick }: AssetRowProps) => {
             <Button
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation()
-                onClick()
+                onBorrowClick()
               }}
             >
               Borrow
@@ -79,7 +81,7 @@ const AssetRow = ({ data, onClick }: AssetRowProps) => {
             <Button
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation()
-                alert('TODO')
+                onRepayClick()
               }}
             >
               Repay
@@ -93,6 +95,7 @@ const AssetRow = ({ data, onClick }: AssetRowProps) => {
 
 const Borrow = () => {
   const [showBorrow, setShowBorrow] = useState(false)
+  const [showRepay, setShowRepay] = useState(false)
   const [selectedTokenDenom, setSelectedTokenDenom] = useState('')
 
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
@@ -189,8 +192,12 @@ const Borrow = () => {
                   <AssetRow
                     key={asset.denom}
                     data={asset}
-                    onClick={() => {
+                    onBorrowClick={() => {
                       setShowBorrow(true)
+                      setSelectedTokenDenom(asset.denom)
+                    }}
+                    onRepayClick={() => {
+                      setShowRepay(true)
                       setSelectedTokenDenom(asset.denom)
                     }}
                   />
@@ -213,8 +220,12 @@ const Borrow = () => {
                   <AssetRow
                     key={asset.denom}
                     data={asset}
-                    onClick={() => {
+                    onBorrowClick={() => {
                       setShowBorrow(true)
+                      setSelectedTokenDenom(asset.denom)
+                    }}
+                    onRepayClick={() => {
+                      setShowRepay(true)
                       setSelectedTokenDenom(asset.denom)
                     }}
                   />
@@ -224,9 +235,16 @@ const Borrow = () => {
       </Container>
       {showBorrow && (
         <BorrowFunds
-          key={selectedTokenDenom}
+          key={`borrow_${selectedTokenDenom}`}
           tokenDenom={selectedTokenDenom}
           onClose={() => setShowBorrow(false)}
+        />
+      )}
+      {showRepay && (
+        <RepayFunds
+          key={`repay_${selectedTokenDenom}`}
+          tokenDenom={selectedTokenDenom}
+          onClose={() => setShowRepay(false)}
         />
       )}
     </div>
