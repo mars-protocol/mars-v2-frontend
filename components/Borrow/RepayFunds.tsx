@@ -12,13 +12,14 @@ import { formatCurrency } from 'utils/formatters'
 import BigNumber from 'bignumber.js'
 import useAllBalances from 'hooks/useAllBalances'
 import ContainerSecondary from 'components/ContainerSecondary'
+import Spinner from 'components/Spinner'
 
 const RepayFunds = ({ tokenDenom, amount: repayAmount, onClose }: any) => {
   const [amount, setAmount] = useState(0)
 
   const tokenSymbol = getTokenSymbol(tokenDenom)
 
-  const { mutate } = useRepayFunds(amount, tokenDenom, {
+  const { mutate, isLoading } = useRepayFunds(amount, tokenDenom, {
     onSuccess: () => {
       onClose()
       toast.success(`${amount} ${tokenSymbol} successfully repaid`)
@@ -55,6 +56,11 @@ const RepayFunds = ({ tokenDenom, amount: repayAmount, onClose }: any) => {
 
   return (
     <Container className="flex w-[350px] flex-col justify-between text-sm">
+      {isLoading && (
+        <div className="fixed inset-0 z-40 grid place-items-center bg-black/50">
+          <Spinner />
+        </div>
+      )}
       <div className="mb-3 flex justify-between text-base font-bold">
         <h3>Repay {tokenSymbol}</h3>
         <XMarkIcon className="w-5 cursor-pointer" onClick={onClose} />
