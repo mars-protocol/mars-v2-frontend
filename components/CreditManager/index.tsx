@@ -8,10 +8,10 @@ import useWalletStore from 'stores/useWalletStore'
 import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 import FundAccount from './FundAccount'
-import CreditManagerContainer from './CreditManagerContainer'
 import useTokenPrices from 'hooks/useTokenPrices'
 import useAccountStats from 'hooks/useAccountStats'
 import useMarkets from 'hooks/useMarkets'
+import ContainerSecondary from 'components/ContainerSecondary'
 
 const CreditManager = () => {
   const [isFund, setIsFund] = useState(false)
@@ -41,14 +41,14 @@ const CreditManager = () => {
   if (!address) {
     return (
       <div className="absolute inset-0 left-auto w-[400px] border-l border-white/20 bg-background-2 p-2">
-        <CreditManagerContainer>You must have a connected wallet</CreditManagerContainer>
+        <ContainerSecondary>You must have a connected wallet</ContainerSecondary>
       </div>
     )
   }
 
   return (
     <div className="absolute inset-0 left-auto w-[400px] border-l border-white/20 bg-background-2 p-2">
-      <CreditManagerContainer className="mb-2">
+      <ContainerSecondary className="mb-2">
         {isFund ? (
           <div className="flex items-center justify-between">
             <h3 className="font-bold">Fund Account</h3>
@@ -66,12 +66,12 @@ const CreditManager = () => {
             </Button>
           </div>
         )}
-      </CreditManagerContainer>
+      </ContainerSecondary>
       {isFund ? (
         <FundAccount />
       ) : (
         <>
-          <CreditManagerContainer className="mb-2 text-sm">
+          <ContainerSecondary className="mb-2 text-sm">
             <div className="mb-1 flex justify-between">
               <div>Total Position:</div>
               <div className="font-semibold">
@@ -82,8 +82,8 @@ const CreditManager = () => {
               <div>Total Liabilities:</div>
               <div className="font-semibold">{formatCurrency(accountStats?.totalDebt ?? 0)}</div>
             </div>
-          </CreditManagerContainer>
-          <CreditManagerContainer>
+          </ContainerSecondary>
+          <ContainerSecondary>
             <h4 className="font-bold">Balances</h4>
             {isLoadingPositions ? (
               <div>Loading...</div>
@@ -106,7 +106,7 @@ const CreditManager = () => {
                         .div(10 ** getTokenDecimals(coin.denom))
                         .toNumber()
                         .toLocaleString(undefined, {
-                          maximumFractionDigits: 6,
+                          maximumFractionDigits: getTokenDecimals(coin.denom),
                         })}
                     </div>
                     <div className="flex-1">-</div>
@@ -134,7 +134,7 @@ const CreditManager = () => {
                 ))}
               </>
             )}
-          </CreditManagerContainer>
+          </ContainerSecondary>
         </>
       )}
     </div>

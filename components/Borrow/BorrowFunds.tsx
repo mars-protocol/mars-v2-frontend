@@ -14,20 +14,7 @@ import BigNumber from 'bignumber.js'
 import useAllBalances from 'hooks/useAllBalances'
 import useMarkets from 'hooks/useMarkets'
 import Tooltip from 'components/Tooltip'
-
-const AnotherContainer = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode
-  className?: string
-}) => {
-  return (
-    <div className={`rounded-md bg-[#D8DAEA] px-3 py-2 text-[#585A74] ${className}`}>
-      {children}
-    </div>
-  )
-}
+import ContainerSecondary from 'components/ContainerSecondary'
 
 const BorrowFunds = ({ tokenDenom, onClose }: any) => {
   const [amount, setAmount] = useState(0)
@@ -86,7 +73,7 @@ const BorrowFunds = ({ tokenDenom, onClose }: any) => {
         <XMarkIcon className="w-5 cursor-pointer" onClick={onClose} />
       </div>
       <div className="mb-4 flex flex-col gap-2">
-        <AnotherContainer>
+        <ContainerSecondary>
           <p className="mb-2">
             In wallet:{' '}
             <span className="text-[#585A74]/50">
@@ -112,8 +99,8 @@ const BorrowFunds = ({ tokenDenom, onClose }: any) => {
             </div>
             <div className="text-[#585A74]/50">{formatCurrency(tokenPrice * amount)}</div>
           </div>
-        </AnotherContainer>
-        <AnotherContainer>
+        </ContainerSecondary>
+        <ContainerSecondary>
           <div className="relative mb-4 flex flex-1 items-center">
             <Slider.Root
               className="relative flex h-[20px] w-full cursor-pointer touch-none select-none items-center"
@@ -144,8 +131,8 @@ const BorrowFunds = ({ tokenDenom, onClose }: any) => {
               MAX
             </button>
           </div>
-        </AnotherContainer>
-        <AnotherContainer className="flex items-center justify-between">
+        </ContainerSecondary>
+        <ContainerSecondary className="flex items-center justify-between">
           <div className="flex">
             Borrow to Credit Account{' '}
             <Tooltip
@@ -177,7 +164,7 @@ const BorrowFunds = ({ tokenDenom, onClose }: any) => {
               } inline-block h-4 w-4 transform rounded-full bg-white transition`}
             />
           </Switch>
-        </AnotherContainer>
+        </ContainerSecondary>
       </div>
       <Button className="w-full" onClick={handleSubmit} disabled={isSubmitDisabled}>
         Borrow
