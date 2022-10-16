@@ -74,7 +74,12 @@ const RepayFunds = ({ tokenDenom, amount: repayAmount, onClose }: any) => {
       </div>
       <div className="mb-4 flex flex-col gap-2">
         <AnotherContainer>
-          <p className="mb-2">In wallet: {walletAmount.toLocaleString()}</p>
+          <p className="mb-2">
+            In wallet:{' '}
+            <span className="text-[#585A74]/50">
+              {walletAmount.toLocaleString()} {tokenSymbol}
+            </span>
+          </p>
           <div className="mb-2 flex justify-between">
             <div>Amount</div>
             <input
@@ -86,9 +91,10 @@ const RepayFunds = ({ tokenDenom, amount: repayAmount, onClose }: any) => {
           </div>
           <div className="flex justify-between">
             <div>
-              1 {tokenSymbol} = {formatCurrency(tokenPrice)}
+              1 {tokenSymbol} ={' '}
+              <span className="text-[#585A74]/50">{formatCurrency(tokenPrice)}</span>
             </div>
-            <div>{formatCurrency(tokenPrice * amount)}</div>
+            <div className="text-[#585A74]/50">{formatCurrency(tokenPrice * amount)}</div>
           </div>
         </AnotherContainer>
         <AnotherContainer>

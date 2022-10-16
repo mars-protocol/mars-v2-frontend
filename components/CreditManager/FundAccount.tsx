@@ -138,7 +138,7 @@ const FundAccount = () => {
       <CreditManagerContainer className="mb-2 flex items-center justify-between">
         <div>
           <h3 className="font-bold">Lending Assets</h3>
-          <div className="text-sm opacity-50">Lend assets from account to earn yield.</div>
+          <div className="text-sm text-[#585A74]/50">Lend assets from account to earn yield.</div>
         </div>
 
         <Switch
