@@ -41,15 +41,6 @@ const RepayFunds = ({ tokenDenom, amount: repayAmount, onClose }: any) => {
   const { data: tokenPrices } = useTokenPrices()
   const { data: balancesData } = useAllBalances()
 
-  const handleValueChange = (value: number) => {
-    // if (value > walletAmount) {
-    //   setAmount(walletAmount)
-    //   return
-    // }
-
-    setAmount(value)
-  }
-
   const handleSubmit = () => {
     mutate()
   }
@@ -65,6 +56,15 @@ const RepayFunds = ({ tokenDenom, amount: repayAmount, onClose }: any) => {
   const maxValue = walletAmount > repayAmount ? repayAmount : walletAmount
   const percentageValue = isNaN(amount) ? 0 : (amount * 100) / maxValue
   const isSubmitDisabled = !amount || amount < 0
+
+  const handleValueChange = (value: number) => {
+    if (value > maxValue) {
+      setAmount(maxValue)
+      return
+    }
+
+    setAmount(value)
+  }
 
   return (
     <Container className="flex w-[350px] flex-col justify-between text-sm">
