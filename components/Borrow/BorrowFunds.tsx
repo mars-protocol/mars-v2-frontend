@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { XMarkIcon } from '@heroicons/react/24/solid'
 import { toast } from 'react-toastify'
+import * as Slider from '@radix-ui/react-slider'
 
 import Button from 'components/Button'
 import Container from 'components/Container'
@@ -45,15 +46,6 @@ const BorrowFunds = ({ tokenDenom, onClose }: any) => {
   const { data: balancesData } = useAllBalances()
   const { data: marketsData } = useMarkets()
 
-  const handleValueChange = (value: number) => {
-    // if (value > walletAmount) {
-    //   setAmount(walletAmount)
-    //   return
-    // }
-
-    setAmount(value)
-  }
-
   const handleSubmit = () => {
     mutate()
   }
@@ -67,7 +59,25 @@ const BorrowFunds = ({ tokenDenom, onClose }: any) => {
   const tokenPrice = tokenPrices?.[tokenDenom] ?? 0
   const borrowRate = Number(marketsData?.[tokenDenom].borrow_rate)
 
+  // TODO - hardcoded value
+  const maxValue = 123
+  const percentageValue = isNaN(amount) ? 0 : (amount * 100) / maxValue
   const isSubmitDisabled = !amount || amount < 0
+
+  const handleValueChange = (value: number) => {
+    if (value > maxValue) {
+      setAmount(maxValue)
+      return
+    }
+
+    setAmount(value)
+  }
+
+  const handleBorrowTargetChange = () => {
+    setBorrowToCreditAccount((c) => !c)
+    // reset amount due to max value calculations changing depending on borrow target
+    setAmount(0)
+  }
 
   return (
     <Container className="flex w-[350px] flex-col justify-between text-sm">
@@ -103,7 +113,38 @@ const BorrowFunds = ({ tokenDenom, onClose }: any) => {
             <div className="text-[#585A74]/50">{formatCurrency(tokenPrice * amount)}</div>
           </div>
         </AnotherContainer>
-        <AnotherContainer className="h-[90px]">Insert Slider HERE</AnotherContainer>
+        <AnotherContainer>
+          <div className="relative mb-4 flex flex-1 items-center">
+            <Slider.Root
+              className="relative flex h-[20px] w-full cursor-pointer touch-none select-none items-center"
+              value={[percentageValue]}
+              min={0}
+              max={100}
+              step={1}
+              onValueChange={(value) => {
+                const decimal = value[0] / 100
+                const tokenDecimals = getTokenDecimals(tokenDenom)
+                // limit decimal precision based on token contract decimals
+                const newAmount = Number((decimal * maxValue).toFixed(tokenDecimals))
+
+                setAmount(newAmount)
+              }}
+            >
+              <Slider.Track className="relative h-[6px] grow rounded-full bg-gray-400">
+                <Slider.Range className="absolute h-[100%] rounded-full bg-blue-600" />
+              </Slider.Track>
+              <Slider.Thumb className="flex h-[20px] w-[20px] items-center justify-center rounded-full bg-white !outline-none">
+                <div className="relative top-5 text-xs">{percentageValue.toFixed(0)}%</div>
+              </Slider.Thumb>
+            </Slider.Root>
+            <button
+              className="ml-4 rounded-md bg-blue-600 py-1 px-2 text-sm text-white"
+              onClick={() => setAmount(maxValue)}
+            >
+              MAX
+            </button>
+          </div>
+        </AnotherContainer>
         <AnotherContainer className="flex items-center justify-between">
           <div className="flex">
             Borrow to Credit Account{' '}
@@ -125,7 +166,7 @@ const BorrowFunds = ({ tokenDenom, onClose }: any) => {
           </div>
           <Switch
             checked={borrowToCreditAccount}
-            onChange={setBorrowToCreditAccount}
+            onChange={handleBorrowTargetChange}
             className={`${
               borrowToCreditAccount ? 'bg-blue-600' : 'bg-gray-400'
             } relative inline-flex h-6 w-11 items-center rounded-full`}
