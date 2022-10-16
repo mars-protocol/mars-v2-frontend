@@ -29,7 +29,7 @@ type AssetRowProps = {
     marketLiquidity: number
   }
   onBorrowClick: () => void
-  onRepayClick: () => void
+  onRepayClick: (value: number) => void
 }
 
 const AssetRow = ({ data, onBorrowClick, onRepayClick }: AssetRowProps) => {
@@ -79,9 +79,12 @@ const AssetRow = ({ data, onBorrowClick, onRepayClick }: AssetRowProps) => {
               Borrow
             </Button>
             <Button
+              disabled={!data.borrowed}
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                if (!data.borrowed) return
+
                 e.stopPropagation()
-                onRepayClick()
+                onRepayClick(data.borrowed.amount)
               }}
             >
               Repay
@@ -93,10 +96,23 @@ const AssetRow = ({ data, onBorrowClick, onRepayClick }: AssetRowProps) => {
   )
 }
 
+type ModuleState =
+  | {
+      show: 'borrow'
+      data: {
+        tokenDenom: string
+      }
+    }
+  | {
+      show: 'repay'
+      data: {
+        tokenDenom: string
+        amount: number
+      }
+    }
+
 const Borrow = () => {
-  const [showBorrow, setShowBorrow] = useState(false)
-  const [showRepay, setShowRepay] = useState(false)
-  const [selectedTokenDenom, setSelectedTokenDenom] = useState('')
+  const [moduleState, setModuleState] = useState<ModuleState | null>(null)
 
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
 
@@ -173,6 +189,14 @@ const Borrow = () => {
     }
   }, [allowedCoinsData, borrowedAssetsMap, marketsData, tokenPrices])
 
+  const handleBorrowClick = (denom: string) => {
+    setModuleState({ show: 'borrow', data: { tokenDenom: denom } })
+  }
+
+  const handleRepayClick = (denom: string, repayAmount: number) => {
+    setModuleState({ show: 'repay', data: { tokenDenom: denom, amount: repayAmount } })
+  }
+
   return (
     <div className="flex items-start gap-4">
       <Container className="flex-1">
@@ -192,13 +216,9 @@ const Borrow = () => {
                   <AssetRow
                     key={asset.denom}
                     data={asset}
-                    onBorrowClick={() => {
-                      setShowBorrow(true)
-                      setSelectedTokenDenom(asset.denom)
-                    }}
-                    onRepayClick={() => {
-                      setShowRepay(true)
-                      setSelectedTokenDenom(asset.denom)
+                    onBorrowClick={() => handleBorrowClick(asset.denom)}
+                    onRepayClick={(repayAmount: number) => {
+                      handleRepayClick(asset.denom, repayAmount)
                     }}
                   />
                 ))}
@@ -220,31 +240,27 @@ const Borrow = () => {
                   <AssetRow
                     key={asset.denom}
                     data={asset}
-                    onBorrowClick={() => {
-                      setShowBorrow(true)
-                      setSelectedTokenDenom(asset.denom)
-                    }}
-                    onRepayClick={() => {
-                      setShowRepay(true)
-                      setSelectedTokenDenom(asset.denom)
+                    onBorrowClick={() => handleBorrowClick(asset.denom)}
+                    onRepayClick={(repayAmount: number) => {
+                      handleRepayClick(asset.denom, repayAmount)
                     }}
                   />
                 ))}
           </div>
         </div>
       </Container>
-      {showBorrow && (
+      {moduleState?.show === 'borrow' && (
         <BorrowFunds
-          key={`borrow_${selectedTokenDenom}`}
-          tokenDenom={selectedTokenDenom}
-          onClose={() => setShowBorrow(false)}
+          key={`borrow_${moduleState.data.tokenDenom}`}
+          {...moduleState.data}
+          onClose={() => setModuleState(null)}
         />
       )}
-      {showRepay && (
+      {moduleState?.show === 'repay' && (
         <RepayFunds
-          key={`repay_${selectedTokenDenom}`}
-          tokenDenom={selectedTokenDenom}
-          onClose={() => setShowRepay(false)}
+          key={`repay_${moduleState.data.tokenDenom}`}
+          {...moduleState.data}
+          onClose={() => setModuleState(null)}
         />
       )}
     </div>

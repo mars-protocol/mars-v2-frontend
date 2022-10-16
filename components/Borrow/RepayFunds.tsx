@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { XMarkIcon } from '@heroicons/react/24/solid'
 import { toast } from 'react-toastify'
+import * as Slider from '@radix-ui/react-slider'
 
 import Button from 'components/Button'
 import Container from 'components/Container'
@@ -25,7 +26,7 @@ const AnotherContainer = ({
   )
 }
 
-const BorrowFunds = ({ tokenDenom, onClose }: any) => {
+const RepayFunds = ({ tokenDenom, amount: repayAmount, onClose }: any) => {
   const [amount, setAmount] = useState(0)
 
   const tokenSymbol = getTokenSymbol(tokenDenom)
@@ -61,6 +62,8 @@ const BorrowFunds = ({ tokenDenom, onClose }: any) => {
 
   const tokenPrice = tokenPrices?.[tokenDenom] ?? 0
 
+  const maxValue = walletAmount > repayAmount ? repayAmount : walletAmount
+  const percentageValue = isNaN(amount) ? 0 : (amount * 100) / maxValue
   const isSubmitDisabled = !amount || amount < 0
 
   return (
@@ -88,7 +91,38 @@ const BorrowFunds = ({ tokenDenom, onClose }: any) => {
             <div>{formatCurrency(tokenPrice * amount)}</div>
           </div>
         </AnotherContainer>
-        <AnotherContainer className="h-[90px]">Insert Slider HERE</AnotherContainer>
+        <AnotherContainer>
+          <div className="relative mb-4 flex flex-1 items-center">
+            <Slider.Root
+              className="relative flex h-[20px] w-full cursor-pointer touch-none select-none items-center"
+              value={[percentageValue]}
+              min={0}
+              max={100}
+              step={1}
+              onValueChange={(value) => {
+                const decimal = value[0] / 100
+                const tokenDecimals = getTokenDecimals(tokenDenom)
+                // limit decimal precision based on token contract decimals
+                const newAmount = Number((decimal * maxValue).toFixed(tokenDecimals))
+
+                setAmount(newAmount)
+              }}
+            >
+              <Slider.Track className="relative h-[6px] grow rounded-full bg-gray-400">
+                <Slider.Range className="absolute h-[100%] rounded-full bg-blue-600" />
+              </Slider.Track>
+              <Slider.Thumb className="flex h-[20px] w-[20px] items-center justify-center rounded-full bg-white !outline-none">
+                <div className="relative top-5 text-xs">{percentageValue.toFixed(0)}%</div>
+              </Slider.Thumb>
+            </Slider.Root>
+            <button
+              className="ml-4 rounded-md bg-blue-600 py-1 px-2 text-sm text-white"
+              onClick={() => setAmount(maxValue)}
+            >
+              MAX
+            </button>
+          </div>
+        </AnotherContainer>
       </div>
       <Button className="w-full" onClick={handleSubmit} disabled={isSubmitDisabled}>
         Repay
@@ -97,4 +131,4 @@ const BorrowFunds = ({ tokenDenom, onClose }: any) => {
   )
 }
 
-export default BorrowFunds
+export default RepayFunds
