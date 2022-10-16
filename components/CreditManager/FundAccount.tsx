@@ -126,7 +126,7 @@ const FundAccount = () => {
                 </Slider.Thumb>
               </Slider.Root>
               <button
-                className="ml-4 rounded-md bg-blue-600 py-1 px-2 text-sm text-white"
+                className="ml-4 rounded-md bg-blue-600 py-1 px-2 text-xs font-semibold text-white"
                 onClick={() => setAmount(maxValue)}
               >
                 MAX
