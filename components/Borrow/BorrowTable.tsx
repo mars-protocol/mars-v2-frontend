@@ -68,7 +68,7 @@ const BorrowTable = () => {
   const columns = React.useMemo<ColumnDef<Market>[]>(
     () => [
       {
-        header: () => 'Asset',
+        header: 'Asset',
         id: 'symbol',
         accessorFn: (row) => (
           <div className="flex flex-1 items-center">
@@ -83,18 +83,17 @@ const BorrowTable = () => {
       },
       {
         accessorKey: 'borrowRate',
-        // id: 'lastName',
+        header: 'Borrow Rate',
         accessorFn: (row) => (
           <div className="flex flex-1 items-center text-xs">
             {row.borrowRate ? `${(row.borrowRate * 100).toFixed(2)}%` : '-'}
           </div>
         ),
         cell: (info) => info.getValue(),
-        header: () => <span>Borrow Rate</span>,
       },
       {
         accessorKey: 'age',
-        header: () => 'Borrowed',
+        header: 'Borrowed',
         accessorFn: (row) => (
           <div className="flex flex-1 items-center text-xs">
             {row.borrowed ? (
@@ -111,13 +110,13 @@ const BorrowTable = () => {
       },
       {
         accessorKey: 'marketLiquidity',
-        header: () => 'Liquidity Available',
+        header: 'Liquidity Available',
       },
       {
         accessorKey: 'status',
         enableSorting: false,
         header: 'Manage',
-        size: 50,
+        width: 150,
         cell: ({ row }) => (
           <div className="flex items-center justify-end">
             {row.getIsExpanded() ? (
@@ -151,7 +150,13 @@ const BorrowTable = () => {
           <tr key={headerGroup.id}>
             {headerGroup.headers.map((header) => {
               return (
-                <th key={header.id} colSpan={header.colSpan} className="py-2 px-4">
+                <th
+                  key={header.id}
+                  colSpan={header.colSpan}
+                  className={`${
+                    header.index === 4 ? 'w-[100px] text-right' : 'text-left'
+                  } py-2 px-4 `}
+                >
                   {header.isPlaceholder ? null : (
                     <div
                       {...{
