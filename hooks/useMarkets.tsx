@@ -38,8 +38,8 @@ const useMarkets = () => {
       wasm: {
         uosmo: {
           denom: 'uosmo',
-          max_loan_to_value: '0.7',
-          liquidation_threshold: '0.65',
+          max_loan_to_value: '0.65',
+          liquidation_threshold: '0.7',
           liquidation_bonus: '0.1',
           reserve_factor: '0.2',
           interest_rate_model: {
@@ -61,8 +61,8 @@ const useMarkets = () => {
         },
         'ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2': {
           denom: 'ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2',
-          max_loan_to_value: '0.8',
-          liquidation_threshold: '0.7',
+          max_loan_to_value: '0.77',
+          liquidation_threshold: '0.8',
           liquidation_bonus: '0.1',
           reserve_factor: '0.2',
           interest_rate_model: {
