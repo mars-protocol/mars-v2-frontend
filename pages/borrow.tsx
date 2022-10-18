@@ -171,14 +171,14 @@ const Borrow = () => {
       </div>
       {moduleState?.show === 'borrow' && (
         <BorrowFunds
-          key={`borrow_${moduleState.data.tokenDenom}`}
+          key={`borrow_${selectedAccount}_${moduleState.data.tokenDenom}`}
           {...moduleState.data}
           onClose={() => setModuleState(null)}
         />
       )}
       {moduleState?.show === 'repay' && (
         <RepayFunds
-          key={`repay_${moduleState.data.tokenDenom}`}
+          key={`repay_${selectedAccount}_${moduleState.data.tokenDenom}`}
           {...moduleState.data}
           onClose={() => setModuleState(null)}
         />
