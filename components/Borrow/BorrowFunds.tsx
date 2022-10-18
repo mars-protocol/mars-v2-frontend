@@ -16,6 +16,7 @@ import useMarkets from 'hooks/useMarkets'
 import Tooltip from 'components/Tooltip'
 import ContainerSecondary from 'components/ContainerSecondary'
 import Spinner from 'components/Spinner'
+import useCalculateMaxBorrowAmount from 'hooks/useCalculateMaxBorrowAmount'
 
 const BorrowFunds = ({ tokenDenom, onClose }: any) => {
   const [amount, setAmount] = useState(0)
@@ -47,9 +48,14 @@ const BorrowFunds = ({ tokenDenom, onClose }: any) => {
   const tokenPrice = tokenPrices?.[tokenDenom] ?? 0
   const borrowRate = Number(marketsData?.[tokenDenom].borrow_rate)
 
-  // TODO - hardcoded value
-  const maxValue = 123
-  const percentageValue = isNaN(amount) ? 0 : (amount * 100) / maxValue
+  const maxValue = useCalculateMaxBorrowAmount(tokenDenom, borrowToCreditAccount)
+
+  const percentageValue = useMemo(() => {
+    if (isNaN(amount) || maxValue === 0) return 0
+
+    return (amount * 100) / maxValue
+  }, [amount, maxValue])
+
   const isSubmitDisabled = !amount || amount < 0
 
   const handleValueChange = (value: number) => {
