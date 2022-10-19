@@ -51,56 +51,58 @@ const Borrow = () => {
     const borrowedAssetsDenomsList = Object.keys(borrowedAssetsMap)
 
     return {
-      borrowedAssets: allowedCoinsData
-        ?.filter((denom) => borrowedAssetsDenomsList.includes(denom))
-        .map((denom) => {
-          const { symbol, chain, icon } = getTokenInfo(denom)
-          const borrowRate = Number(marketsData?.[denom].borrow_rate)
-          const marketLiquidity = BigNumber(marketsData?.[denom].deposit_cap ?? '')
-            .div(10 ** getTokenDecimals(denom))
-            .toNumber()
+      borrowedAssets:
+        allowedCoinsData
+          ?.filter((denom) => borrowedAssetsDenomsList.includes(denom))
+          .map((denom) => {
+            const { symbol, chain, icon } = getTokenInfo(denom)
+            const borrowRate = Number(marketsData?.[denom].borrow_rate)
+            const marketLiquidity = BigNumber(marketsData?.[denom].deposit_cap ?? '')
+              .div(10 ** getTokenDecimals(denom))
+              .toNumber()
 
-          const borrowAmount = BigNumber(borrowedAssetsMap[denom])
-            .div(10 ** getTokenDecimals(denom))
-            .toNumber()
-          const borrowValue = borrowAmount * (tokenPrices?.[denom] ?? 0)
+            const borrowAmount = BigNumber(borrowedAssetsMap[denom])
+              .div(10 ** getTokenDecimals(denom))
+              .toNumber()
+            const borrowValue = borrowAmount * (tokenPrices?.[denom] ?? 0)
 
-          const rowData = {
-            denom,
-            symbol,
-            icon,
-            chain,
-            borrowed: {
-              amount: borrowAmount,
-              value: borrowValue,
-            },
-            borrowRate,
-            marketLiquidity,
-          }
+            const rowData = {
+              denom,
+              symbol,
+              icon,
+              chain,
+              borrowed: {
+                amount: borrowAmount,
+                value: borrowValue,
+              },
+              borrowRate,
+              marketLiquidity,
+            }
 
-          return rowData
-        }),
-      notBorrowedAssets: allowedCoinsData
-        ?.filter((denom) => !borrowedAssetsDenomsList.includes(denom))
-        .map((denom) => {
-          const { symbol, chain, icon } = getTokenInfo(denom)
-          const borrowRate = Number(marketsData?.[denom].borrow_rate)
-          const marketLiquidity = BigNumber(marketsData?.[denom].deposit_cap ?? '')
-            .div(10 ** getTokenDecimals(denom))
-            .toNumber()
+            return rowData
+          }) ?? [],
+      notBorrowedAssets:
+        allowedCoinsData
+          ?.filter((denom) => !borrowedAssetsDenomsList.includes(denom))
+          .map((denom) => {
+            const { symbol, chain, icon } = getTokenInfo(denom)
+            const borrowRate = Number(marketsData?.[denom].borrow_rate)
+            const marketLiquidity = BigNumber(marketsData?.[denom].deposit_cap ?? '')
+              .div(10 ** getTokenDecimals(denom))
+              .toNumber()
 
-          const rowData = {
-            denom,
-            symbol,
-            icon,
-            chain,
-            borrowed: null,
-            borrowRate,
-            marketLiquidity,
-          }
+            const rowData = {
+              denom,
+              symbol,
+              icon,
+              chain,
+              borrowed: null,
+              borrowRate,
+              marketLiquidity,
+            }
 
-          return rowData
-        }),
+            return rowData
+          }) ?? [],
     }
   }, [allowedCoinsData, borrowedAssetsMap, marketsData, tokenPrices])
 
@@ -126,7 +128,7 @@ const Borrow = () => {
               <div className="w-[50px]">Manage</div>
             </div>
             <div className="flex flex-col gap-2">
-              {borrowedAssets?.length === 0
+              {borrowedAssets.length === 0
                 ? 'No data'
                 : borrowedAssets?.map((asset) => (
                     <AssetRow
@@ -150,7 +152,7 @@ const Borrow = () => {
               <div className="w-[50px]">Manage</div>
             </div>
             <div className="flex flex-col gap-2">
-              {notBorrowedAssets?.length === 0
+              {notBorrowedAssets.length === 0
                 ? 'No data'
                 : notBorrowedAssets?.map((asset) => (
                     <AssetRow
@@ -165,9 +167,22 @@ const Borrow = () => {
             </div>
           </div>
         </Container>
-        <Container className="mt-10 overflow-hidden !p-0">
-          <BorrowTable />
-        </Container>
+        <div className="mt-10">
+          <Container className="mb-4 overflow-hidden !p-0">
+            <BorrowTable
+              data={borrowedAssets}
+              onBorrowClick={handleBorrowClick}
+              onRepayClick={handleRepayClick}
+            />
+          </Container>
+          <Container className="overflow-hidden !p-0">
+            <BorrowTable
+              data={notBorrowedAssets}
+              onBorrowClick={handleBorrowClick}
+              onRepayClick={handleRepayClick}
+            />
+          </Container>
+        </div>
       </div>
       {moduleState?.show === 'borrow' && (
         <BorrowFunds

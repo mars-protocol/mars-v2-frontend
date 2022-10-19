@@ -26,43 +26,49 @@ interface Market {
   marketLiquidity: number
 }
 
-const data = [
-  {
-    denom: 'uosmo',
-    symbol: 'OSMO',
-    icon: '/tokens/osmo.svg',
-    chain: 'Osmosis',
-    borrowed: {
-      amount: 2.005494,
-      value: 2.2060434000000004,
-    },
-    borrowRate: 0.1,
-    marketLiquidity: 1000000,
-  },
-  {
-    denom: 'ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2',
-    symbol: 'ATOM',
-    icon: '/tokens/atom.svg',
-    chain: 'Cosmos',
-    borrowed: null,
-    borrowRate: 0.25,
-    marketLiquidity: 1000,
-  },
-  {
-    denom: 'uusdc',
-    symbol: 'USDC',
-    icon: '/tokens/atom.svg',
-    chain: 'Ethereum',
-    borrowed: {
-      amount: 100,
-      value: 99.9776,
-    },
-    borrowRate: 0.35,
-    marketLiquidity: 333,
-  },
-]
+// const data = [
+//   {
+//     denom: 'uosmo',
+//     symbol: 'OSMO',
+//     icon: '/tokens/osmo.svg',
+//     chain: 'Osmosis',
+//     borrowed: {
+//       amount: 2.005494,
+//       value: 2.2060434000000004,
+//     },
+//     borrowRate: 0.1,
+//     marketLiquidity: 1000000,
+//   },
+//   {
+//     denom: 'ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2',
+//     symbol: 'ATOM',
+//     icon: '/tokens/atom.svg',
+//     chain: 'Cosmos',
+//     borrowed: null,
+//     borrowRate: 0.25,
+//     marketLiquidity: 1000,
+//   },
+//   {
+//     denom: 'uusdc',
+//     symbol: 'USDC',
+//     icon: '/tokens/atom.svg',
+//     chain: 'Ethereum',
+//     borrowed: {
+//       amount: 100,
+//       value: 99.9776,
+//     },
+//     borrowRate: 0.35,
+//     marketLiquidity: 333,
+//   },
+// ]
 
-const BorrowTable = () => {
+type Props = {
+  data: Market[]
+  onBorrowClick: (denom: string) => void
+  onRepayClick: (denom: string, repayAmount: number) => void
+}
+
+const BorrowTable = ({ data, onBorrowClick, onRepayClick }: Props) => {
   const [sorting, setSorting] = React.useState<SortingState>([])
 
   const columns = React.useMemo<ColumnDef<Market>[]>(
@@ -206,16 +212,19 @@ const BorrowTable = () => {
                           className="rounded-sm"
                           onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                             e.stopPropagation()
-                            alert('TODO')
+                            onBorrowClick(row.original.denom)
                           }}
                         >
                           Borrow
                         </Button>
                         <Button
+                          disabled={!row.original.borrowed}
                           className="rounded-sm"
                           onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                            if (!row.original.borrowed) return
+
                             e.stopPropagation()
-                            alert('TODO')
+                            onRepayClick(row.original.denom, row.original.borrowed.amount)
                           }}
                         >
                           Repay
