@@ -36,32 +36,29 @@ const Borrow = () => {
   const { data: marketsData } = useMarkets()
   const { data: tokenPrices } = useTokenPrices()
 
-  const borrowedAssetsMap: { [key: string]: string } = useMemo(() => {
-    if (!positionsData) return {}
+  const borrowedAssetsMap = useMemo(() => {
+    let borrowedAssetsMap: Map<string, string> = new Map()
 
-    return positionsData?.debts.reduce((acc, coin) => {
-      return {
-        ...acc,
-        [coin.denom]: coin.amount,
-      }
-    }, {})
+    positionsData?.debts.forEach((coin) => {
+      borrowedAssetsMap.set(coin.denom, coin.amount)
+    })
+
+    return borrowedAssetsMap
   }, [positionsData])
 
   const { borrowedAssets, notBorrowedAssets } = useMemo(() => {
-    const borrowedAssetsDenomsList = Object.keys(borrowedAssetsMap)
-
     return {
       borrowedAssets:
         allowedCoinsData
-          ?.filter((denom) => borrowedAssetsDenomsList.includes(denom))
+          ?.filter((denom) => borrowedAssetsMap.has(denom))
           .map((denom) => {
             const { symbol, chain, icon } = getTokenInfo(denom)
-            const borrowRate = Number(marketsData?.[denom].borrow_rate)
+            const borrowRate = Number(marketsData?.[denom].borrow_rate) || 0
             const marketLiquidity = BigNumber(marketsData?.[denom].deposit_cap ?? '')
               .div(10 ** getTokenDecimals(denom))
               .toNumber()
 
-            const borrowAmount = BigNumber(borrowedAssetsMap[denom])
+            const borrowAmount = BigNumber(borrowedAssetsMap.get(denom) as string)
               .div(10 ** getTokenDecimals(denom))
               .toNumber()
             const borrowValue = borrowAmount * (tokenPrices?.[denom] ?? 0)
@@ -83,10 +80,10 @@ const Borrow = () => {
           }) ?? [],
       notBorrowedAssets:
         allowedCoinsData
-          ?.filter((denom) => !borrowedAssetsDenomsList.includes(denom))
+          ?.filter((denom) => !borrowedAssetsMap.has(denom))
           .map((denom) => {
             const { symbol, chain, icon } = getTokenInfo(denom)
-            const borrowRate = Number(marketsData?.[denom].borrow_rate)
+            const borrowRate = Number(marketsData?.[denom].borrow_rate) || 0
             const marketLiquidity = BigNumber(marketsData?.[denom].deposit_cap ?? '')
               .div(10 ** getTokenDecimals(denom))
               .toNumber()
