@@ -10,7 +10,7 @@ import useDepositCreditAccount from 'hooks/useDepositCreditAccount'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useAllBalances from 'hooks/useAllBalances'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-import CreditManagerContainer from './CreditManagerContainer'
+import ContainerSecondary from 'components/ContainerSecondary'
 
 const FundAccount = () => {
   const [amount, setAmount] = useState(0)
@@ -61,7 +61,7 @@ const FundAccount = () => {
 
   return (
     <>
-      <CreditManagerContainer className="mb-2 p-3">
+      <ContainerSecondary className="mb-2 p-3">
         <p className="mb-6 text-sm">
           Transfer assets from your injective wallet to your Mars credit account. If you don’t have
           any assets in your injective wallet use the injective bridge to transfer funds to your
@@ -126,7 +126,7 @@ const FundAccount = () => {
                 </Slider.Thumb>
               </Slider.Root>
               <button
-                className="ml-4 rounded-md bg-blue-600 py-1 px-2 text-sm text-white"
+                className="ml-4 rounded-md bg-blue-600 py-1 px-2 text-xs font-semibold text-white"
                 onClick={() => setAmount(maxValue)}
               >
                 MAX
@@ -134,11 +134,11 @@ const FundAccount = () => {
             </div>
           </>
         )}
-      </CreditManagerContainer>
-      <CreditManagerContainer className="mb-2 flex items-center justify-between">
+      </ContainerSecondary>
+      <ContainerSecondary className="mb-2 flex items-center justify-between">
         <div>
           <h3 className="font-bold">Lending Assets</h3>
-          <div className="text-sm opacity-50">Lend assets from account to earn yield.</div>
+          <div className="text-sm text-[#585A74]/50">Lend assets from account to earn yield.</div>
         </div>
 
         <Switch
@@ -154,7 +154,7 @@ const FundAccount = () => {
             } inline-block h-4 w-4 transform rounded-full bg-white transition`}
           />
         </Switch>
-      </CreditManagerContainer>
+      </ContainerSecondary>
       <Button
         className="w-full !rounded-lg"
         onClick={() => mutate()}

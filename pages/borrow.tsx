@@ -1,69 +1,152 @@
-import React from 'react'
-import Image from 'next/image'
+import React, { useMemo, useState } from 'react'
+import BigNumber from 'bignumber.js'
 
 import Container from 'components/Container'
+import useAllowedCoins from 'hooks/useAllowedCoins'
+import { getTokenDecimals, getTokenInfo } from 'utils/tokens'
+import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
+import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useMarkets from 'hooks/useMarkets'
+import useTokenPrices from 'hooks/useTokenPrices'
+import { BorrowFunds, RepayFunds } from 'components/Borrow'
+import BorrowTable from 'components/Borrow/BorrowTable'
 
-const AssetRow = () => {
-  return (
-    <div className="flex rounded-md bg-[#D8DAEA] p-2 text-[#585A74]">
-      <div className="flex flex-1">
-        <Image src="/tokens/osmo.svg" alt="token" width={24} height={24} />
-        <div className="pl-2">
-          <div>DENOM</div>
-          <div className="text-xs">Name</div>
-        </div>
-      </div>
-      <div className="flex-1">10.00%</div>
-      <div className="flex-1">
-        <div>Amount</div>
-        <div>Value</div>
-      </div>
-      <div className="flex-1">
-        <div>Amount</div>
-        <div>Value</div>
-      </div>
-      <div className="w-[50px]">ACTION</div>
-    </div>
-  )
-}
+type ModuleState =
+  | {
+      show: 'borrow'
+      data: {
+        tokenDenom: string
+      }
+    }
+  | {
+      show: 'repay'
+      data: {
+        tokenDenom: string
+        amount: number
+      }
+    }
 
 const Borrow = () => {
+  const [moduleState, setModuleState] = useState<ModuleState | null>(null)
+
+  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
+
+  const { data: allowedCoinsData } = useAllowedCoins()
+  const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
+  const { data: marketsData } = useMarkets()
+  const { data: tokenPrices } = useTokenPrices()
+
+  const borrowedAssetsMap = useMemo(() => {
+    let borrowedAssetsMap: Map<string, string> = new Map()
+
+    positionsData?.debts.forEach((coin) => {
+      borrowedAssetsMap.set(coin.denom, coin.amount)
+    })
+
+    return borrowedAssetsMap
+  }, [positionsData])
+
+  const { borrowedAssets, notBorrowedAssets } = useMemo(() => {
+    return {
+      borrowedAssets:
+        allowedCoinsData
+          ?.filter((denom) => borrowedAssetsMap.has(denom))
+          .map((denom) => {
+            const { symbol, chain, icon } = getTokenInfo(denom)
+            const borrowRate = Number(marketsData?.[denom].borrow_rate) || 0
+            const marketLiquidity = BigNumber(marketsData?.[denom].deposit_cap ?? '')
+              .div(10 ** getTokenDecimals(denom))
+              .toNumber()
+
+            const borrowAmount = BigNumber(borrowedAssetsMap.get(denom) as string)
+              .div(10 ** getTokenDecimals(denom))
+              .toNumber()
+            const borrowValue = borrowAmount * (tokenPrices?.[denom] ?? 0)
+
+            const rowData = {
+              denom,
+              symbol,
+              icon,
+              chain,
+              borrowed: {
+                amount: borrowAmount,
+                value: borrowValue,
+              },
+              borrowRate,
+              marketLiquidity,
+            }
+
+            return rowData
+          }) ?? [],
+      notBorrowedAssets:
+        allowedCoinsData
+          ?.filter((denom) => !borrowedAssetsMap.has(denom))
+          .map((denom) => {
+            const { symbol, chain, icon } = getTokenInfo(denom)
+            const borrowRate = Number(marketsData?.[denom].borrow_rate) || 0
+            const marketLiquidity = BigNumber(marketsData?.[denom].deposit_cap ?? '')
+              .div(10 ** getTokenDecimals(denom))
+              .toNumber()
+
+            const rowData = {
+              denom,
+              symbol,
+              icon,
+              chain,
+              borrowed: null,
+              borrowRate,
+              marketLiquidity,
+            }
+
+            return rowData
+          }) ?? [],
+    }
+  }, [allowedCoinsData, borrowedAssetsMap, marketsData, tokenPrices])
+
+  const handleBorrowClick = (denom: string) => {
+    setModuleState({ show: 'borrow', data: { tokenDenom: denom } })
+  }
+
+  const handleRepayClick = (denom: string, repayAmount: number) => {
+    setModuleState({ show: 'repay', data: { tokenDenom: denom, amount: repayAmount } })
+  }
+
   return (
-    <div className="flex gap-4">
-      <Container className="flex-1">
-        <div className="mb-5">
-          <h3 className="mb-1 text-center font-medium uppercase">Borrowed</h3>
-          <div className="mb-2 flex rounded-md bg-[#D8DAEA] p-2 text-sm text-[#585A74]/50">
-            <div className="flex-1">Asset</div>
-            <div className="flex-1">Borrow Rate</div>
-            <div className="flex-1">Borrowed</div>
-            <div className="flex-1">Liquidity Available</div>
-            <div className="w-[50px]">Manage</div>
+    <div className="flex items-start gap-4">
+      <div className="flex-1">
+        <Container>
+          <div className="mb-5">
+            <h3 className="mb-1 text-center font-medium uppercase">Borrowed</h3>
+            <BorrowTable
+              data={borrowedAssets}
+              onBorrowClick={handleBorrowClick}
+              onRepayClick={handleRepayClick}
+            />
           </div>
-          <div className="flex flex-col gap-2">
-            {Array.from(Array(3).keys()).map(() => (
-              // eslint-disable-next-line react/jsx-key
-              <AssetRow />
-            ))}
+          <div>
+            <h3 className="mb-1 text-center font-medium uppercase">Not Borrowed Yet</h3>
+            <BorrowTable
+              data={notBorrowedAssets}
+              onBorrowClick={handleBorrowClick}
+              onRepayClick={handleRepayClick}
+            />
           </div>
-        </div>
-        <div>
-          <h3 className="mb-1 text-center font-medium uppercase">Not Borrowed Yet</h3>
-          <div className="mb-2 flex rounded-md bg-[#D8DAEA] p-2 text-sm text-[#585A74]/50">
-            <div className="flex-1">Asset</div>
-            <div className="flex-1">Borrow Rate</div>
-            <div className="flex-1">Borrowed</div>
-            <div className="flex-1">Liquidity Available</div>
-            <div className="w-[50px]">Manage</div>
-          </div>
-          <div className="flex flex-col gap-2">
-            {Array.from(Array(5).keys()).map(() => (
-              // eslint-disable-next-line react/jsx-key
-              <AssetRow />
-            ))}
-          </div>
-        </div>
-      </Container>
+        </Container>
+      </div>
+      {moduleState?.show === 'borrow' && (
+        <BorrowFunds
+          key={`borrow_${selectedAccount}_${moduleState.data.tokenDenom}`}
+          {...moduleState.data}
+          onClose={() => setModuleState(null)}
+        />
+      )}
+      {moduleState?.show === 'repay' && (
+        <RepayFunds
+          key={`repay_${selectedAccount}_${moduleState.data.tokenDenom}`}
+          {...moduleState.data}
+          onClose={() => setModuleState(null)}
+        />
+      )}
     </div>
   )
 }

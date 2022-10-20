@@ -50,6 +50,13 @@ const SemiCircleProgress = ({
     }
   }
 
+  let strokeColorClass = 'stroke-green-500'
+  if (value > 2 / 3) {
+    strokeColorClass = 'stroke-red-500'
+  } else if (value > 1 / 3) {
+    strokeColorClass = 'stroke-yellow-500'
+  }
+
   return (
     <div className="semicircle-container" style={{ position: 'relative' }}>
       <svg
@@ -70,11 +77,12 @@ const SemiCircleProgress = ({
           }}
         />
         <circle
+          className={strokeColorClass}
           cx={coordinateForCircle}
           cy={coordinateForCircle}
           r={radius}
           fill="none"
-          stroke={stroke}
+          // stroke={stroke}
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
           style={{
