@@ -8,7 +8,7 @@ import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useMarkets from 'hooks/useMarkets'
 import useTokenPrices from 'hooks/useTokenPrices'
-import { AssetRow, BorrowFunds, RepayFunds } from 'components/Borrow'
+import { BorrowFunds, RepayFunds } from 'components/Borrow'
 import BorrowTable from 'components/Borrow/BorrowTable'
 
 type ModuleState =
@@ -117,69 +117,21 @@ const Borrow = () => {
         <Container>
           <div className="mb-5">
             <h3 className="mb-1 text-center font-medium uppercase">Borrowed</h3>
-            <div className="mb-2 flex rounded-md bg-[#D8DAEA] px-4 py-2 text-xs text-[#585A74]/50">
-              <div className="flex-1">Asset</div>
-              <div className="flex-1">Borrow Rate</div>
-              <div className="flex-1">Borrowed</div>
-              <div className="flex-1">Liquidity Available</div>
-              <div className="w-[50px]">Manage</div>
-            </div>
-            <div className="flex flex-col gap-2">
-              {borrowedAssets.length === 0
-                ? 'No data'
-                : borrowedAssets?.map((asset) => (
-                    <AssetRow
-                      key={asset.denom}
-                      data={asset}
-                      onBorrowClick={() => handleBorrowClick(asset.denom)}
-                      onRepayClick={(repayAmount: number) => {
-                        handleRepayClick(asset.denom, repayAmount)
-                      }}
-                    />
-                  ))}
-            </div>
-          </div>
-          <div>
-            <h3 className="mb-1 text-center font-medium uppercase">Not Borrowed Yet</h3>
-            <div className="mb-2 flex rounded-md bg-[#D8DAEA] px-4 py-2 text-xs text-[#585A74]/50">
-              <div className="flex-1">Asset</div>
-              <div className="flex-1">Borrow Rate</div>
-              <div className="flex-1">Borrowed</div>
-              <div className="flex-1">Liquidity Available</div>
-              <div className="w-[50px]">Manage</div>
-            </div>
-            <div className="flex flex-col gap-2">
-              {notBorrowedAssets.length === 0
-                ? 'No data'
-                : notBorrowedAssets?.map((asset) => (
-                    <AssetRow
-                      key={asset.denom}
-                      data={asset}
-                      onBorrowClick={() => handleBorrowClick(asset.denom)}
-                      onRepayClick={(repayAmount: number) => {
-                        handleRepayClick(asset.denom, repayAmount)
-                      }}
-                    />
-                  ))}
-            </div>
-          </div>
-        </Container>
-        <div className="mt-10">
-          <Container className="mb-4 overflow-hidden !p-0">
             <BorrowTable
               data={borrowedAssets}
               onBorrowClick={handleBorrowClick}
               onRepayClick={handleRepayClick}
             />
-          </Container>
-          <Container className="overflow-hidden !p-0">
+          </div>
+          <div>
+            <h3 className="mb-1 text-center font-medium uppercase">Not Borrowed Yet</h3>
             <BorrowTable
               data={notBorrowedAssets}
               onBorrowClick={handleBorrowClick}
               onRepayClick={handleRepayClick}
             />
-          </Container>
-        </div>
+          </div>
+        </Container>
       </div>
       {moduleState?.show === 'borrow' && (
         <BorrowFunds

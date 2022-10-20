@@ -11,7 +11,7 @@ import {
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid'
 
 import { formatCurrency } from 'utils/formatters'
-import Button from 'components/Button'
+import AssetRow from './AssetRow'
 
 interface Market {
   denom: string
@@ -150,95 +150,47 @@ const BorrowTable = ({ data, onBorrowClick, onRepayClick }: Props) => {
   })
 
   return (
-    <table className="w-full table-fixed border-spacing-10 text-sm">
-      <thead className="px-4 py-2">
-        {table.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => {
-              return (
-                <th
-                  key={header.id}
-                  colSpan={header.colSpan}
-                  className={`${
-                    header.index === 4 ? 'w-[100px] text-right' : 'text-left'
-                  } py-2 px-4 `}
-                >
-                  {header.isPlaceholder ? null : (
-                    <div
-                      {...{
-                        className: header.column.getCanSort() ? 'cursor-pointer select-none' : '',
-                        onClick: header.column.getToggleSortingHandler(),
-                      }}
-                    >
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                      {{
-                        asc: ' 🔼',
-                        desc: ' 🔽',
-                      }[header.column.getIsSorted() as string] ?? null}
-                    </div>
-                  )}
-                </th>
-              )
-            })}
-          </tr>
-        ))}
-      </thead>
-      <tbody>
+    <div className="w-full table-fixed border-spacing-10 text-sm">
+      {table.getHeaderGroups().map((headerGroup) => (
+        <div
+          key={headerGroup.id}
+          className="mb-2 flex rounded-md bg-[#D8DAEA] px-4 py-2 text-xs text-[#585A74]/50"
+        >
+          {headerGroup.headers.map((header) => {
+            return (
+              <div key={header.id} className={`${header.index === 4 ? 'w-[50px]' : 'flex-1'}`}>
+                {header.isPlaceholder ? null : (
+                  <div
+                    {...{
+                      className: header.column.getCanSort() ? 'cursor-pointer select-none' : '',
+                      onClick: header.column.getToggleSortingHandler(),
+                    }}
+                  >
+                    {flexRender(header.column.columnDef.header, header.getContext())}
+                    {{
+                      asc: ' 🔼',
+                      desc: ' 🔽',
+                    }[header.column.getIsSorted() as string] ?? null}
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      ))}
+      <div className="flex flex-col gap-2">
         {table.getRowModel().rows.map((row) => {
-          const isExpanded = row.getIsExpanded()
-
           return (
-            <>
-              <tr
-                key={row.id}
-                onClick={() => row.toggleExpanded()}
-                className={`cursor-pointer ${isExpanded ? 'bg-black/50' : 'hover:bg-white/30'}`}
-              >
-                {row.getVisibleCells().map((cell) => {
-                  return (
-                    <td key={cell.id} className="p-4" colSpan={1}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  )
-                })}
-              </tr>
-              {isExpanded && (
-                <tr className="bg-black/50">
-                  <td colSpan={row.getVisibleCells().length} className="py-2 px-4">
-                    <div className="flex items-center justify-between">
-                      <div>Additional Stuff Placeholder</div>
-                      <div className="flex gap-2">
-                        <Button
-                          className="rounded-sm"
-                          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                            e.stopPropagation()
-                            onBorrowClick(row.original.denom)
-                          }}
-                        >
-                          Borrow
-                        </Button>
-                        <Button
-                          disabled={!row.original.borrowed}
-                          className="rounded-sm"
-                          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                            if (!row.original.borrowed) return
-
-                            e.stopPropagation()
-                            onRepayClick(row.original.denom, row.original.borrowed.amount)
-                          }}
-                        >
-                          Repay
-                        </Button>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </>
+            <AssetRow
+              key={row.index}
+              data={row.original}
+              onBorrowClick={() => onBorrowClick(row.original.denom)}
+              onRepayClick={(repayAmount: number) => onRepayClick(row.original.denom, repayAmount)}
+            />
           )
         })}
-      </tbody>
-    </table>
+      </div>
+    </div>
   )
 }
 
