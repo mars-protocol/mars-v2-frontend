@@ -10,6 +10,7 @@ import useMarkets from 'hooks/useMarkets'
 import useTokenPrices from 'hooks/useTokenPrices'
 import { BorrowFunds, RepayFunds } from 'components/Borrow'
 import BorrowTable from 'components/Borrow/BorrowTable'
+import useRedbankBalances from 'hooks/useRedbankBalances'
 
 type ModuleState =
   | {
@@ -35,6 +36,7 @@ const Borrow = () => {
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
   const { data: marketsData } = useMarkets()
   const { data: tokenPrices } = useTokenPrices()
+  const { data: redbankBalances } = useRedbankBalances()
 
   const borrowedAssetsMap = useMemo(() => {
     let borrowedAssetsMap: Map<string, string> = new Map()
@@ -54,7 +56,7 @@ const Borrow = () => {
           .map((denom) => {
             const { symbol, chain, icon } = getTokenInfo(denom)
             const borrowRate = Number(marketsData?.[denom].borrow_rate) || 0
-            const marketLiquidity = BigNumber(marketsData?.[denom].deposit_cap ?? '')
+            const marketLiquidity = BigNumber(redbankBalances?.[denom] ?? '')
               .div(10 ** getTokenDecimals(denom))
               .toNumber()
 
@@ -84,7 +86,7 @@ const Borrow = () => {
           .map((denom) => {
             const { symbol, chain, icon } = getTokenInfo(denom)
             const borrowRate = Number(marketsData?.[denom].borrow_rate) || 0
-            const marketLiquidity = BigNumber(marketsData?.[denom].deposit_cap ?? '')
+            const marketLiquidity = BigNumber(redbankBalances?.[denom] ?? '')
               .div(10 ** getTokenDecimals(denom))
               .toNumber()
 
@@ -101,7 +103,7 @@ const Borrow = () => {
             return rowData
           }) ?? [],
     }
-  }, [allowedCoinsData, borrowedAssetsMap, marketsData, tokenPrices])
+  }, [allowedCoinsData, borrowedAssetsMap, marketsData, redbankBalances, tokenPrices])
 
   const handleBorrowClick = (denom: string) => {
     setModuleState({ show: 'borrow', data: { tokenDenom: denom } })
