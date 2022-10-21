@@ -40,6 +40,14 @@ const useRepayFunds = (
         account_id: selectedAccount,
         actions: [
           {
+            deposit: {
+              denom: denom,
+              amount: BigNumber(amount)
+                .times(10 ** 6)
+                .toString(),
+            },
+          },
+          {
             repay: {
               denom: denom,
               amount: BigNumber(amount)
@@ -58,7 +66,16 @@ const useRepayFunds = (
         address,
         contractAddresses.creditManager,
         executeMsg,
-        hardcodedFee
+        hardcodedFee,
+        undefined,
+        [
+          {
+            denom,
+            amount: BigNumber(amount)
+              .times(10 ** 6)
+              .toString(),
+          },
+        ]
       ),
     {
       onSettled: () => {
