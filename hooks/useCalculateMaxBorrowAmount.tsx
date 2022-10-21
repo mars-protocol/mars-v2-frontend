@@ -27,6 +27,7 @@ const useCalculateMaxBorrowAmount = (denom: string, isUnderCollateralized: boole
         .toNumber()
     }
 
+    // max ltv adjusted collateral
     const totalWeightedPositions = positionsData?.coins.reduce((acc, coin) => {
       const tokenWeightedValue = BigNumber(getTokenTotalUSDValue(coin.amount, coin.denom)).times(
         Number(marketsData[coin.denom].max_loan_to_value)
@@ -35,6 +36,7 @@ const useCalculateMaxBorrowAmount = (denom: string, isUnderCollateralized: boole
       return tokenWeightedValue.plus(acc).toNumber()
     }, 0)
 
+    // total debt value
     const totalLiabilitiesValue = positionsData?.debts.reduce((acc, coin) => {
       const tokenUSDValue = BigNumber(getTokenTotalUSDValue(coin.amount, coin.denom))
 
@@ -44,19 +46,24 @@ const useCalculateMaxBorrowAmount = (denom: string, isUnderCollateralized: boole
     const borrowTokenPrice = tokenPrices[denom]
     const tokenDecimals = getTokenDecimals(denom)
 
+    let maxValue
     if (isUnderCollateralized) {
-      return BigNumber(totalLiabilitiesValue)
+      // MAX TO CREDIT ACCOUNT
+      maxValue = BigNumber(totalLiabilitiesValue)
         .minus(totalWeightedPositions)
         .div(borrowTokenPrice * Number(marketsData[denom].max_loan_to_value) - borrowTokenPrice)
         .decimalPlaces(tokenDecimals)
         .toNumber()
     } else {
-      return BigNumber(totalWeightedPositions)
+      // MAX TO WALLET
+      maxValue = BigNumber(totalWeightedPositions)
         .minus(totalLiabilitiesValue)
         .div(borrowTokenPrice)
         .decimalPlaces(tokenDecimals)
         .toNumber()
     }
+
+    return maxValue > 0 ? maxValue : 0
   }, [denom, isUnderCollateralized, marketsData, positionsData, tokenPrices])
 }
 
