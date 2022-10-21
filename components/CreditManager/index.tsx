@@ -128,7 +128,7 @@ const CreditManager = () => {
                         })}
                     </div>
                     <div className="flex-1">
-                      {(Number(marketsData?.[coin.denom].borrow_rate) * 100).toFixed(1)}%
+                      -{(Number(marketsData?.[coin.denom].borrow_rate) * 100).toFixed(1)}%
                     </div>
                   </div>
                 ))}
