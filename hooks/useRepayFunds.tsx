@@ -65,6 +65,7 @@ const useRepayFunds = (
         queryClient.invalidateQueries(queryKeys.creditAccountsPositions(selectedAccount ?? ''))
         queryClient.invalidateQueries(queryKeys.tokenBalance(address, denom))
         queryClient.invalidateQueries(queryKeys.allBalances(address))
+        queryClient.invalidateQueries(queryKeys.redbankBalances())
       },
       onError: (err: Error) => {
         toast.error(err.message)

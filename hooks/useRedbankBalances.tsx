@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Coin } from '@cosmjs/stargate'
 
 import { contractAddresses } from 'config/contracts'
+import { queryKeys } from 'types/query-keys-factory'
 
 const HIVE_URL =
   'https://osmosis-delphi-testnet-1.simply-vc.com.mt/XF32UOOU55CX/osmosis-hive/graphql'
@@ -39,7 +40,7 @@ const fetchBalances = () => {
 }
 
 const useRedbankBalances = () => {
-  const result = useQuery<Result>(['redbankBalances'], fetchBalances)
+  const result = useQuery<Result>(queryKeys.redbankBalances(), fetchBalances)
 
   return {
     ...result,

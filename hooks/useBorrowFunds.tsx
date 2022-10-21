@@ -90,6 +90,7 @@ const useBorrowFunds = (
     {
       onSettled: () => {
         queryClient.invalidateQueries(queryKeys.creditAccountsPositions(selectedAccount ?? ''))
+        queryClient.invalidateQueries(queryKeys.redbankBalances())
 
         // if withdrawing to wallet, need to explicility invalidate balances queries
         if (withdraw) {
