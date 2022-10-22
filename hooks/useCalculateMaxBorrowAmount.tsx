@@ -6,6 +6,7 @@ import { getTokenDecimals } from 'utils/tokens'
 import useCreditAccountPositions from './useCreditAccountPositions'
 import useMarkets from './useMarkets'
 import useTokenPrices from './useTokenPrices'
+import useRedbankBalances from './useRedbankBalances'
 
 const useCalculateMaxBorrowAmount = (denom: string, isUnderCollateralized: boolean) => {
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
@@ -13,9 +14,10 @@ const useCalculateMaxBorrowAmount = (denom: string, isUnderCollateralized: boole
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
   const { data: marketsData } = useMarkets()
   const { data: tokenPrices } = useTokenPrices()
+  const { data: redbankBalances } = useRedbankBalances()
 
   return useMemo(() => {
-    if (!marketsData || !tokenPrices || !positionsData) return 0
+    if (!marketsData || !tokenPrices || !positionsData || !redbankBalances) return 0
 
     const getTokenTotalUSDValue = (amount: string, denom: string) => {
       // early return if prices are not fetched yet
@@ -63,8 +65,14 @@ const useCalculateMaxBorrowAmount = (denom: string, isUnderCollateralized: boole
         .toNumber()
     }
 
+    const marketLiquidity = BigNumber(redbankBalances?.[denom] ?? '')
+      .div(10 ** getTokenDecimals(denom))
+      .toNumber()
+
+    if (marketLiquidity < maxValue) return marketLiquidity
+
     return maxValue > 0 ? maxValue : 0
-  }, [denom, isUnderCollateralized, marketsData, positionsData, tokenPrices])
+  }, [denom, isUnderCollateralized, marketsData, positionsData, redbankBalances, tokenPrices])
 }
 
 export default useCalculateMaxBorrowAmount
