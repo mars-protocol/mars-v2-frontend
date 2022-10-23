@@ -4,9 +4,7 @@ import { Coin } from '@cosmjs/stargate'
 
 import { contractAddresses } from 'config/contracts'
 import { queryKeys } from 'types/query-keys-factory'
-
-const HIVE_URL =
-  'https://osmosis-delphi-testnet-1.simply-vc.com.mt/XF32UOOU55CX/osmosis-hive/graphql'
+import { chain } from 'utils/chains'
 
 interface Result {
   data: {
@@ -17,7 +15,7 @@ interface Result {
 }
 
 const fetchBalances = () => {
-  return fetch(HIVE_URL, {
+  return fetch(chain.hive, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
