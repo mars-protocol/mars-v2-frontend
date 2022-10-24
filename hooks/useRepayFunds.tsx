@@ -10,6 +10,7 @@ import { contractAddresses } from 'config/contracts'
 import { hardcodedFee } from 'utils/contants'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import { queryKeys } from 'types/query-keys-factory'
+import { getTokenDecimals } from 'utils/tokens'
 
 const useRepayFunds = (
   amount: string | number,
@@ -34,23 +35,33 @@ const useRepayFunds = (
     })()
   }, [address])
 
+  const tokenDecimals = getTokenDecimals(denom)
+
   const executeMsg = useMemo(() => {
     return {
       update_credit_account: {
         account_id: selectedAccount,
         actions: [
           {
+            deposit: {
+              denom: denom,
+              amount: BigNumber(amount)
+                .times(10 ** tokenDecimals)
+                .toString(),
+            },
+          },
+          {
             repay: {
               denom: denom,
               amount: BigNumber(amount)
-                .times(10 ** 6)
+                .times(10 ** tokenDecimals)
                 .toString(),
             },
           },
         ],
       },
     }
-  }, [amount, denom, selectedAccount])
+  }, [amount, denom, selectedAccount, tokenDecimals])
 
   return useMutation(
     async () =>
@@ -58,13 +69,23 @@ const useRepayFunds = (
         address,
         contractAddresses.creditManager,
         executeMsg,
-        hardcodedFee
+        hardcodedFee,
+        undefined,
+        [
+          {
+            denom,
+            amount: BigNumber(amount)
+              .times(10 ** tokenDecimals)
+              .toString(),
+          },
+        ]
       ),
     {
       onSettled: () => {
         queryClient.invalidateQueries(queryKeys.creditAccountsPositions(selectedAccount ?? ''))
         queryClient.invalidateQueries(queryKeys.tokenBalance(address, denom))
         queryClient.invalidateQueries(queryKeys.allBalances(address))
+        queryClient.invalidateQueries(queryKeys.redbankBalances())
       },
       onError: (err: Error) => {
         toast.error(err.message)

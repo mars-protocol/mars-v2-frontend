@@ -10,6 +10,7 @@ import { contractAddresses } from 'config/contracts'
 import { hardcodedFee } from 'utils/contants'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import { queryKeys } from 'types/query-keys-factory'
+import { getTokenDecimals } from 'utils/tokens'
 
 const useBorrowFunds = (
   amount: string | number,
@@ -36,6 +37,8 @@ const useBorrowFunds = (
   }, [address])
 
   const executeMsg = useMemo(() => {
+    const tokenDecimals = getTokenDecimals(denom)
+
     if (!withdraw) {
       return {
         update_credit_account: {
@@ -45,7 +48,7 @@ const useBorrowFunds = (
               borrow: {
                 denom: denom,
                 amount: BigNumber(amount)
-                  .times(10 ** 6)
+                  .times(10 ** tokenDecimals)
                   .toString(),
               },
             },
@@ -62,7 +65,7 @@ const useBorrowFunds = (
             borrow: {
               denom: denom,
               amount: BigNumber(amount)
-                .times(10 ** 6)
+                .times(10 ** tokenDecimals)
                 .toString(),
             },
           },
@@ -70,14 +73,14 @@ const useBorrowFunds = (
             withdraw: {
               denom: denom,
               amount: BigNumber(amount)
-                .times(10 ** 6)
+                .times(10 ** tokenDecimals)
                 .toString(),
             },
           },
         ],
       },
     }
-  }, [amount, denom, withdraw, selectedAccount])
+  }, [withdraw, selectedAccount, denom, amount])
 
   return useMutation(
     async () =>
@@ -90,6 +93,7 @@ const useBorrowFunds = (
     {
       onSettled: () => {
         queryClient.invalidateQueries(queryKeys.creditAccountsPositions(selectedAccount ?? ''))
+        queryClient.invalidateQueries(queryKeys.redbankBalances())
 
         // if withdrawing to wallet, need to explicility invalidate balances queries
         if (withdraw) {

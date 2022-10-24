@@ -42,6 +42,7 @@ export const chainsInfo = {
     chainId: 'osmo-test-4',
     rpc: 'https://osmosis-delphi-testnet-1.simply-vc.com.mt/XF32UOOU55CX/osmosis-rpc',
     rest: 'https://osmosis-delphi-testnet-1.simply-vc.com.mt/XF32UOOU55CX/osmosis-lcd',
+    hive: 'https://osmosis-delphi-testnet-1.simply-vc.com.mt/XF32UOOU55CX/osmosis-hive/graphql',
     stakeCurrency: {
       coinDenom: 'OSMO',
       coinMinimalDenom: 'uosmo',
