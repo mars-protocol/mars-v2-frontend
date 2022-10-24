@@ -10,6 +10,7 @@ import { contractAddresses } from 'config/contracts'
 import { hardcodedFee } from 'utils/contants'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import { queryKeys } from 'types/query-keys-factory'
+import { getTokenDecimals } from 'utils/tokens'
 
 const useRepayFunds = (
   amount: string | number,
@@ -34,6 +35,8 @@ const useRepayFunds = (
     })()
   }, [address])
 
+  const tokenDecimals = getTokenDecimals(denom)
+
   const executeMsg = useMemo(() => {
     return {
       update_credit_account: {
@@ -43,7 +46,7 @@ const useRepayFunds = (
             deposit: {
               denom: denom,
               amount: BigNumber(amount)
-                .times(10 ** 6)
+                .times(10 ** tokenDecimals)
                 .toString(),
             },
           },
@@ -51,14 +54,14 @@ const useRepayFunds = (
             repay: {
               denom: denom,
               amount: BigNumber(amount)
-                .times(10 ** 6)
+                .times(10 ** tokenDecimals)
                 .toString(),
             },
           },
         ],
       },
     }
-  }, [amount, denom, selectedAccount])
+  }, [amount, denom, selectedAccount, tokenDecimals])
 
   return useMutation(
     async () =>
@@ -72,7 +75,7 @@ const useRepayFunds = (
           {
             denom,
             amount: BigNumber(amount)
-              .times(10 ** 6)
+              .times(10 ** tokenDecimals)
               .toString(),
           },
         ]
