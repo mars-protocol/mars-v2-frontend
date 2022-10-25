@@ -1,5 +1,5 @@
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
@@ -9,7 +9,14 @@ import { contractAddresses } from 'config/contracts'
 import { hardcodedFee } from 'utils/contants'
 import { queryKeys } from 'types/query-keys-factory'
 
-const useDepositCreditAccount = (accountId: string, denom: string, amount: number) => {
+const useDepositCreditAccount = (
+  accountId: string,
+  denom: string,
+  amount: number,
+  options?: {
+    onSuccess?: () => void
+  }
+) => {
   const [signingClient, setSigningClient] = useState<SigningCosmWasmClient>()
   const address = useWalletStore((s) => s.address)
 
@@ -62,7 +69,7 @@ const useDepositCreditAccount = (accountId: string, denom: string, amount: numbe
         queryClient.invalidateQueries(queryKeys.tokenBalance(address, denom))
         queryClient.invalidateQueries(queryKeys.creditAccountsPositions(accountId))
 
-        toast.success('Deposited Successfully')
+        options?.onSuccess && options.onSuccess()
       },
     }
   )

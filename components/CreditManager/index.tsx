@@ -7,14 +7,14 @@ import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useWalletStore from 'stores/useWalletStore'
 import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-import FundAccount from './FundAccount'
 import useTokenPrices from 'hooks/useTokenPrices'
 import useAccountStats from 'hooks/useAccountStats'
 import useMarkets from 'hooks/useMarkets'
 import ContainerSecondary from 'components/ContainerSecondary'
+import FundAccountModal from 'components/FundAccountModal'
 
 const CreditManager = () => {
-  const [isFund, setIsFund] = useState(false)
+  const [showFundWalletModal, setShowFundWalletModal] = useState(false)
 
   const address = useWalletStore((s) => s.address)
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
@@ -48,95 +48,85 @@ const CreditManager = () => {
 
   return (
     <div className="absolute inset-0 left-auto w-[400px] border-l border-white/20 bg-background-2 p-2">
-      <ContainerSecondary className="mb-2">
-        {isFund ? (
-          <div className="flex items-center justify-between">
-            <h3 className="font-bold">Fund Account</h3>
-            <Button className="rounded-md" onClick={() => setIsFund(false)}>
-              Cancel
-            </Button>
-          </div>
+      <ContainerSecondary className="mb-2 flex gap-3">
+        <Button className="flex-1 rounded-md" onClick={() => setShowFundWalletModal(true)}>
+          Fund
+        </Button>
+        <Button
+          className="flex-1 rounded-md"
+          onClick={() => alert('TODO')}
+          disabled={!positionsData || positionsData.coins.length === 0}
+        >
+          Withdraw
+        </Button>
+      </ContainerSecondary>
+      <ContainerSecondary className="mb-2 text-sm">
+        <div className="mb-1 flex justify-between">
+          <div>Total Position:</div>
+          <div className="font-semibold">{formatCurrency(accountStats?.totalPosition ?? 0)}</div>
+        </div>
+        <div className="flex justify-between">
+          <div>Total Liabilities:</div>
+          <div className="font-semibold">{formatCurrency(accountStats?.totalDebt ?? 0)}</div>
+        </div>
+      </ContainerSecondary>
+      <ContainerSecondary>
+        <h4 className="font-bold">Balances</h4>
+        {isLoadingPositions ? (
+          <div>Loading...</div>
         ) : (
-          <div className="flex gap-3">
-            <Button className="flex-1 rounded-md" onClick={() => setIsFund(true)}>
-              Fund
-            </Button>
-            <Button className="flex-1 rounded-md" onClick={() => alert('TODO')}>
-              Withdraw
-            </Button>
-          </div>
+          <>
+            <div className="flex text-xs font-semibold">
+              <div className="flex-1">Asset</div>
+              <div className="flex-1">Value</div>
+              <div className="flex-1">Size</div>
+              <div className="flex-1">APY</div>
+            </div>
+            {positionsData?.coins.map((coin) => (
+              <div key={coin.denom} className="flex text-xs text-black/40">
+                <div className="flex-1">{getTokenSymbol(coin.denom)}</div>
+                <div className="flex-1">
+                  {formatCurrency(getTokenTotalUSDValue(coin.amount, coin.denom))}
+                </div>
+                <div className="flex-1">
+                  {BigNumber(coin.amount)
+                    .div(10 ** getTokenDecimals(coin.denom))
+                    .toNumber()
+                    .toLocaleString(undefined, {
+                      maximumFractionDigits: getTokenDecimals(coin.denom),
+                    })}
+                </div>
+                <div className="flex-1">-</div>
+              </div>
+            ))}
+            {positionsData?.debts.map((coin) => (
+              <div key={coin.denom} className="flex text-xs text-red-500">
+                <div className="flex-1 text-black/40">{getTokenSymbol(coin.denom)}</div>
+                <div className="flex-1">
+                  -{formatCurrency(getTokenTotalUSDValue(coin.amount, coin.denom))}
+                </div>
+                <div className="flex-1">
+                  -
+                  {BigNumber(coin.amount)
+                    .div(10 ** getTokenDecimals(coin.denom))
+                    .toNumber()
+                    .toLocaleString(undefined, {
+                      maximumFractionDigits: 6,
+                    })}
+                </div>
+                <div className="flex-1">
+                  -{(Number(marketsData?.[coin.denom].borrow_rate) * 100).toFixed(1)}%
+                </div>
+              </div>
+            ))}
+          </>
         )}
       </ContainerSecondary>
-      {isFund ? (
-        <FundAccount />
-      ) : (
-        <>
-          <ContainerSecondary className="mb-2 text-sm">
-            <div className="mb-1 flex justify-between">
-              <div>Total Position:</div>
-              <div className="font-semibold">
-                {formatCurrency(accountStats?.totalPosition ?? 0)}
-              </div>
-            </div>
-            <div className="flex justify-between">
-              <div>Total Liabilities:</div>
-              <div className="font-semibold">{formatCurrency(accountStats?.totalDebt ?? 0)}</div>
-            </div>
-          </ContainerSecondary>
-          <ContainerSecondary>
-            <h4 className="font-bold">Balances</h4>
-            {isLoadingPositions ? (
-              <div>Loading...</div>
-            ) : (
-              <>
-                <div className="flex text-xs font-semibold">
-                  <div className="flex-1">Asset</div>
-                  <div className="flex-1">Value</div>
-                  <div className="flex-1">Size</div>
-                  <div className="flex-1">APY</div>
-                </div>
-                {positionsData?.coins.map((coin) => (
-                  <div key={coin.denom} className="flex text-xs text-black/40">
-                    <div className="flex-1">{getTokenSymbol(coin.denom)}</div>
-                    <div className="flex-1">
-                      {formatCurrency(getTokenTotalUSDValue(coin.amount, coin.denom))}
-                    </div>
-                    <div className="flex-1">
-                      {BigNumber(coin.amount)
-                        .div(10 ** getTokenDecimals(coin.denom))
-                        .toNumber()
-                        .toLocaleString(undefined, {
-                          maximumFractionDigits: getTokenDecimals(coin.denom),
-                        })}
-                    </div>
-                    <div className="flex-1">-</div>
-                  </div>
-                ))}
-                {positionsData?.debts.map((coin) => (
-                  <div key={coin.denom} className="flex text-xs text-red-500">
-                    <div className="flex-1 text-black/40">{getTokenSymbol(coin.denom)}</div>
-                    <div className="flex-1">
-                      -{formatCurrency(getTokenTotalUSDValue(coin.amount, coin.denom))}
-                    </div>
-                    <div className="flex-1">
-                      -
-                      {BigNumber(coin.amount)
-                        .div(10 ** getTokenDecimals(coin.denom))
-                        .toNumber()
-                        .toLocaleString(undefined, {
-                          maximumFractionDigits: 6,
-                        })}
-                    </div>
-                    <div className="flex-1">
-                      -{(Number(marketsData?.[coin.denom].borrow_rate) * 100).toFixed(1)}%
-                    </div>
-                  </div>
-                ))}
-              </>
-            )}
-          </ContainerSecondary>
-        </>
-      )}
+      <FundAccountModal
+        key={`fundModal_${selectedAccount}`}
+        show={showFundWalletModal}
+        onClose={() => setShowFundWalletModal(false)}
+      />
     </div>
   )
 }
