@@ -12,6 +12,9 @@ import useCreditManagerStore from 'stores/useCreditManagerStore'
 import { queryKeys } from 'types/query-keys-factory'
 import { getTokenDecimals } from 'utils/tokens'
 
+// 0.001% buffer / slippage to avoid repay action from not fully repaying the debt amount
+const REPAY_BUFFER = 1.00001
+
 const useRepayFunds = (
   amount: string | number,
   denom: string,
@@ -35,7 +38,11 @@ const useRepayFunds = (
     })()
   }, [address])
 
-  const tokenDecimals = getTokenDecimals(denom)
+  const amountWithDecimals = BigNumber(amount)
+    .times(10 ** getTokenDecimals(denom))
+    .times(REPAY_BUFFER)
+    .decimalPlaces(0)
+    .toString()
 
   const executeMsg = useMemo(() => {
     return {
@@ -45,23 +52,19 @@ const useRepayFunds = (
           {
             deposit: {
               denom: denom,
-              amount: BigNumber(amount)
-                .times(10 ** tokenDecimals)
-                .toString(),
+              amount: amountWithDecimals,
             },
           },
           {
             repay: {
               denom: denom,
-              amount: BigNumber(amount)
-                .times(10 ** tokenDecimals)
-                .toString(),
+              amount: amountWithDecimals,
             },
           },
         ],
       },
     }
-  }, [amount, denom, selectedAccount, tokenDecimals])
+  }, [amountWithDecimals, denom, selectedAccount])
 
   return useMutation(
     async () =>
@@ -74,9 +77,7 @@ const useRepayFunds = (
         [
           {
             denom,
-            amount: BigNumber(amount)
-              .times(10 ** tokenDecimals)
-              .toString(),
+            amount: amountWithDecimals,
           },
         ]
       ),
