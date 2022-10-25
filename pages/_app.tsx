@@ -5,6 +5,7 @@ import { ToastContainer, Zoom } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.min.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import detectEthereumProvider from '@metamask/detect-provider'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 import '../styles/globals.css'
 import Layout from 'components/Layout'
@@ -41,7 +42,10 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/favicon.svg" />
       </Head>
       <QueryClientProvider client={queryClient}>
-        <Layout>{address ? <Component {...pageProps} /> : <div>No wallet connected</div>}</Layout>
+        <ReactQueryDevtools initialIsOpen={false} />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
         <ToastContainer
           autoClose={1500}
           closeButton={false}
