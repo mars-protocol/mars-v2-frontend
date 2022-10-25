@@ -2,6 +2,8 @@ import React, { useMemo, useState } from 'react'
 import { XMarkIcon } from '@heroicons/react/24/solid'
 import { toast } from 'react-toastify'
 
+import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
+import useCreditManagerStore from 'stores/useCreditManagerStore'
 import Button from 'components/Button'
 import Container from 'components/Container'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
@@ -14,10 +16,22 @@ import ContainerSecondary from 'components/ContainerSecondary'
 import Spinner from 'components/Spinner'
 import Slider from 'components/Slider'
 
-const RepayFunds = ({ tokenDenom, amount: repayAmount, onClose }: any) => {
+const RepayFunds = ({ tokenDenom, onClose }: any) => {
   const [amount, setAmount] = useState(0)
 
+  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
+  const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
+
   const tokenSymbol = getTokenSymbol(tokenDenom)
+
+  const maxRepayAmount = useMemo(() => {
+    const tokenDebtAmount =
+      positionsData?.debts.find((coin) => coin.denom === tokenDenom)?.amount ?? 0
+
+    return BigNumber(tokenDebtAmount)
+      .div(10 ** getTokenDecimals(tokenDenom))
+      .toNumber()
+  }, [positionsData, tokenDenom])
 
   const { mutate, isLoading } = useRepayFunds(amount, tokenDenom, {
     onSuccess: () => {
@@ -41,7 +55,7 @@ const RepayFunds = ({ tokenDenom, amount: repayAmount, onClose }: any) => {
 
   const tokenPrice = tokenPrices?.[tokenDenom] ?? 0
 
-  const maxValue = walletAmount > repayAmount ? repayAmount : walletAmount
+  const maxValue = walletAmount > maxRepayAmount ? maxRepayAmount : walletAmount
   const percentageValue = isNaN(amount) ? 0 : (amount * 100) / maxValue
   const isSubmitDisabled = !amount || amount < 0
 

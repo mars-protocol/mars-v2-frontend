@@ -65,7 +65,7 @@ interface Market {
 type Props = {
   data: Market[]
   onBorrowClick: (denom: string) => void
-  onRepayClick: (denom: string, repayAmount: number) => void
+  onRepayClick: (denom: string) => void
 }
 
 const BorrowTable = ({ data, onBorrowClick, onRepayClick }: Props) => {
@@ -179,16 +179,20 @@ const BorrowTable = ({ data, onBorrowClick, onRepayClick }: Props) => {
         </div>
       ))}
       <div className="flex flex-col gap-2">
-        {table.getRowModel().rows.map((row) => {
-          return (
-            <AssetRow
-              key={row.index}
-              data={row.original}
-              onBorrowClick={() => onBorrowClick(row.original.denom)}
-              onRepayClick={(repayAmount: number) => onRepayClick(row.original.denom, repayAmount)}
-            />
-          )
-        })}
+        {table.getRowModel().rows.length === 0 ? (
+          <div>No Data</div>
+        ) : (
+          table.getRowModel().rows.map((row) => {
+            return (
+              <AssetRow
+                key={row.index}
+                data={row.original}
+                onBorrowClick={() => onBorrowClick(row.original.denom)}
+                onRepayClick={() => onRepayClick(row.original.denom)}
+              />
+            )
+          })
+        )}
       </div>
     </div>
   )

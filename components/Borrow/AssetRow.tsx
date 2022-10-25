@@ -19,7 +19,7 @@ type AssetRowProps = {
     marketLiquidity: number
   }
   onBorrowClick: () => void
-  onRepayClick: (value: number) => void
+  onRepayClick: () => void
 }
 
 const AssetRow = ({ data, onBorrowClick, onRepayClick }: AssetRowProps) => {
@@ -71,10 +71,8 @@ const AssetRow = ({ data, onBorrowClick, onRepayClick }: AssetRowProps) => {
             <Button
               disabled={!data.borrowed}
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                if (!data.borrowed) return
-
                 e.stopPropagation()
-                onRepayClick(data.borrowed.amount)
+                onRepayClick()
               }}
             >
               Repay

@@ -23,7 +23,6 @@ type ModuleState =
       show: 'repay'
       data: {
         tokenDenom: string
-        amount: number
       }
     }
 
@@ -109,8 +108,8 @@ const Borrow = () => {
     setModuleState({ show: 'borrow', data: { tokenDenom: denom } })
   }
 
-  const handleRepayClick = (denom: string, repayAmount: number) => {
-    setModuleState({ show: 'repay', data: { tokenDenom: denom, amount: repayAmount } })
+  const handleRepayClick = (denom: string) => {
+    setModuleState({ show: 'repay', data: { tokenDenom: denom } })
   }
 
   return (
