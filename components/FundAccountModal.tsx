@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
 import { Transition, Dialog, Switch } from '@headlessui/react'
-import * as Slider from '@radix-ui/react-slider'
 import BigNumber from 'bignumber.js'
 import { toast } from 'react-toastify'
 import useLocalStorageState from 'use-local-storage-state'
@@ -14,6 +13,7 @@ import Spinner from './Spinner'
 import useAllBalances from 'hooks/useAllBalances'
 import useAllowedCoins from 'hooks/useAllowedCoins'
 import useDepositCreditAccount from 'hooks/useDepositCreditAccount'
+import Slider from 'components/Slider'
 
 const FundAccountModal = ({ show, onClose }: any) => {
   const [amount, setAmount] = useState(0)
@@ -162,40 +162,19 @@ const FundAccountModal = ({ show, onClose }: any) => {
                           </div>
                         </div>
                         <p className="mb-2 text-sm">In wallet: {walletAmount.toLocaleString()}</p>
-                        {/* SLIDER - initial implementation to test functionality */}
-                        {/* TODO: will need to be revamped later on */}
-                        <div className="relative mb-6 flex flex-1 items-center">
-                          <Slider.Root
-                            className="relative flex h-[20px] w-full cursor-pointer touch-none select-none items-center"
-                            value={[percentageValue]}
-                            min={0}
-                            max={100}
-                            step={1}
-                            onValueChange={(value) => {
-                              const decimal = value[0] / 100
-                              const tokenDecimals = getTokenDecimals(selectedToken)
-                              // limit decimal precision based on token contract decimals
-                              const newAmount = Number((decimal * maxValue).toFixed(tokenDecimals))
+                        <Slider
+                          className="mb-6"
+                          value={percentageValue}
+                          onChange={(value) => {
+                            const decimal = value[0] / 100
+                            const tokenDecimals = getTokenDecimals(selectedToken)
+                            // limit decimal precision based on token contract decimals
+                            const newAmount = Number((decimal * maxValue).toFixed(tokenDecimals))
 
-                              setAmount(newAmount)
-                            }}
-                          >
-                            <Slider.Track className="relative h-[6px] grow rounded-full bg-gray-400">
-                              <Slider.Range className="absolute h-[100%] rounded-full bg-blue-600" />
-                            </Slider.Track>
-                            <Slider.Thumb className="flex h-[20px] w-[20px] items-center justify-center rounded-full bg-white !outline-none">
-                              <div className="relative top-5 text-xs">
-                                {percentageValue.toFixed(0)}%
-                              </div>
-                            </Slider.Thumb>
-                          </Slider.Root>
-                          <button
-                            className="ml-4 rounded-md bg-blue-600 py-1 px-2 text-xs font-semibold text-white"
-                            onClick={() => setAmount(maxValue)}
-                          >
-                            MAX
-                          </button>
-                        </div>
+                            setAmount(newAmount)
+                          }}
+                          onMaxClick={() => setAmount(maxValue)}
+                        />
                       </>
                     )}
                   </ContainerSecondary>
