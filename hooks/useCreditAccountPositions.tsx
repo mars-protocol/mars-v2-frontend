@@ -38,6 +38,7 @@ const useCreditAccountPositions = (accountId: string) => {
       }),
     {
       enabled: !!address && !!client,
+      refetchInterval: 30000,
       staleTime: Infinity,
     }
   )
