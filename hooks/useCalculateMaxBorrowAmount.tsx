@@ -65,7 +65,7 @@ const useCalculateMaxBorrowAmount = (denom: string, isUnderCollateralized: boole
         .toNumber()
     }
 
-    const marketLiquidity = BigNumber(redbankBalances?.[denom] ?? '')
+    const marketLiquidity = BigNumber(redbankBalances?.[denom] ?? 0)
       .div(10 ** getTokenDecimals(denom))
       .toNumber()
 
