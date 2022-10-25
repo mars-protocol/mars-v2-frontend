@@ -12,7 +12,7 @@ const Button = React.forwardRef<any, Props>(
     <button
       ref={ref}
       onClick={onClick}
-      className={`overflow-hidden text-ellipsis rounded-3xl bg-green-500 py-2 px-5 text-sm font-semibold text-white ${className} ${
+      className={`overflow-hidden text-ellipsis rounded-md bg-blue-500 py-2 px-5 text-sm font-semibold text-white ${className} ${
         disabled ? 'opacity-40' : ''
       }`}
       disabled={disabled}

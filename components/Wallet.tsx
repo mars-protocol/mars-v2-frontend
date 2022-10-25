@@ -18,7 +18,7 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <Popover className="relative">
-      <Popover.Button as={Button} className="w-[200px]">
+      <Popover.Button as={Button} className="w-[200px] !rounded-3xl !bg-green-500">
         {children}
       </Popover.Button>
 
@@ -79,7 +79,10 @@ const Wallet = () => {
       {address ? (
         <WalletPopover>{formatWalletAddress(address)}</WalletPopover>
       ) : (
-        <Button className="w-[200px]" onClick={() => setShowConnectModal(true)}>
+        <Button
+          className="w-[200px] !rounded-3xl !bg-green-500"
+          onClick={() => setShowConnectModal(true)}
+        >
           Connect Wallet
         </Button>
       )}
