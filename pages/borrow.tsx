@@ -56,7 +56,7 @@ const Borrow = () => {
           .map((denom) => {
             const { symbol, chain, icon } = getTokenInfo(denom)
             const borrowRate = Number(marketsData?.[denom].borrow_rate) || 0
-            const marketLiquidity = BigNumber(redbankBalances?.[denom] ?? '')
+            const marketLiquidity = BigNumber(redbankBalances?.[denom] ?? 0)
               .div(10 ** getTokenDecimals(denom))
               .toNumber()
 
@@ -86,7 +86,7 @@ const Borrow = () => {
           .map((denom) => {
             const { symbol, chain, icon } = getTokenInfo(denom)
             const borrowRate = Number(marketsData?.[denom].borrow_rate) || 0
-            const marketLiquidity = BigNumber(redbankBalances?.[denom] ?? '')
+            const marketLiquidity = BigNumber(redbankBalances?.[denom] ?? 0)
               .div(10 ** getTokenDecimals(denom))
               .toNumber()
 
