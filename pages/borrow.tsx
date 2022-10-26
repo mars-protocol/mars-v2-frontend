@@ -8,26 +8,23 @@ import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useMarkets from 'hooks/useMarkets'
 import useTokenPrices from 'hooks/useTokenPrices'
-import { BorrowFunds, RepayFunds } from 'components/Borrow'
+import BorrowModal from 'components/BorrowModal'
+import RepayModal from 'components/RepayModal'
 import BorrowTable from 'components/Borrow/BorrowTable'
 import useRedbankBalances from 'hooks/useRedbankBalances'
 
-type ModuleState =
-  | {
-      show: 'borrow'
-      data: {
-        tokenDenom: string
-      }
-    }
-  | {
-      show: 'repay'
-      data: {
-        tokenDenom: string
-      }
-    }
+type ModalState = {
+  show: 'borrow' | 'repay' | false
+  data: {
+    tokenDenom: string
+  }
+}
 
 const Borrow = () => {
-  const [moduleState, setModuleState] = useState<ModuleState | null>(null)
+  const [modalState, setModalState] = useState<ModalState>({
+    show: false,
+    data: { tokenDenom: '' },
+  })
 
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
 
@@ -105,11 +102,11 @@ const Borrow = () => {
   }, [allowedCoinsData, borrowedAssetsMap, marketsData, redbankBalances, tokenPrices])
 
   const handleBorrowClick = (denom: string) => {
-    setModuleState({ show: 'borrow', data: { tokenDenom: denom } })
+    setModalState({ show: 'borrow', data: { tokenDenom: denom } })
   }
 
   const handleRepayClick = (denom: string) => {
-    setModuleState({ show: 'repay', data: { tokenDenom: denom } })
+    setModalState({ show: 'repay', data: { tokenDenom: denom } })
   }
 
   return (
@@ -134,20 +131,16 @@ const Borrow = () => {
           </div>
         </Container>
       </div>
-      {moduleState?.show === 'borrow' && (
-        <BorrowFunds
-          key={`borrow_${selectedAccount}_${moduleState.data.tokenDenom}`}
-          {...moduleState.data}
-          onClose={() => setModuleState(null)}
-        />
-      )}
-      {moduleState?.show === 'repay' && (
-        <RepayFunds
-          key={`repay_${selectedAccount}_${moduleState.data.tokenDenom}`}
-          {...moduleState.data}
-          onClose={() => setModuleState(null)}
-        />
-      )}
+      <BorrowModal
+        tokenDenom={modalState.data.tokenDenom}
+        show={modalState.show === 'borrow'}
+        onClose={() => setModalState({ ...modalState, show: false })}
+      />
+      <RepayModal
+        tokenDenom={modalState.data.tokenDenom}
+        show={modalState.show === 'repay'}
+        onClose={() => setModalState({ ...modalState, show: false })}
+      />
     </div>
   )
 }
