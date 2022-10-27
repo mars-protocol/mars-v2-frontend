@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { Transition, Dialog } from '@headlessui/react'
 import BigNumber from 'bignumber.js'
 import { toast } from 'react-toastify'
+import { NumericFormat } from 'react-number-format'
 
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 import ContainerSecondary from './ContainerSecondary'
@@ -130,28 +131,29 @@ const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
                   </Dialog.Title>
                   <div className="mb-4 flex flex-col gap-2 text-sm">
                     <ContainerSecondary>
-                      <p className="mb-2">
+                      <p className="mb-7">
                         In wallet: {walletAmount.toLocaleString()} {tokenSymbol}
                       </p>
-                      <div className="mb-2 flex justify-between">
-                        <div>Amount</div>
-                        <input
-                          type="number"
-                          className="border border-black/50 bg-transparent px-2"
+
+                      <div className="mb-7">
+                        <p className="mb-2 font-semibold uppercase tracking-widest">Amount</p>
+                        <NumericFormat
+                          className="mb-2 h-[32px] w-full rounded-lg border border-black/50 bg-transparent px-2"
                           value={amount}
-                          min="0"
-                          onChange={(e) => handleValueChange(e.target.valueAsNumber)}
+                          placeholder="0"
+                          allowNegative={false}
+                          onValueChange={(v) => handleValueChange(v.floatValue || 0)}
+                          suffix={` ${tokenSymbol}`}
+                          decimalScale={getTokenDecimals(tokenDenom)}
                         />
-                      </div>
-                      <div className="mb-4 flex justify-between">
-                        <div>
-                          1 {tokenSymbol} ={' '}
-                          <span className="text-[#585A74]/50">{formatCurrency(tokenPrice)}</span>
-                        </div>
-                        <div className="text-[#585A74]/50">
-                          {formatCurrency(tokenPrice * amount)}
+                        <div className="flex justify-between text-xs tracking-widest">
+                          <div>
+                            1 {tokenSymbol} = {formatCurrency(tokenPrice)}
+                          </div>
+                          <div>{formatCurrency(tokenPrice * amount)}</div>
                         </div>
                       </div>
+
                       <Slider
                         className="mb-6"
                         value={percentageValue}
