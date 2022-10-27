@@ -12,7 +12,7 @@ import Button from './Button'
 import Spinner from './Spinner'
 import useAllBalances from 'hooks/useAllBalances'
 import useAllowedCoins from 'hooks/useAllowedCoins'
-import useDepositCreditAccount from 'hooks/useDepositCreditAccount'
+import useDepositCreditAccount from 'hooks/mutations/useDepositCreditAccount'
 import Slider from 'components/Slider'
 
 const FundAccountModal = ({ show, onClose }: any) => {

@@ -12,7 +12,7 @@ import Spinner from './Spinner'
 import useAllBalances from 'hooks/useAllBalances'
 import Slider from 'components/Slider'
 import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
-import useRepayFunds from 'hooks/useRepayFunds'
+import useRepayFunds from 'hooks/mutations/useRepayFunds'
 import useTokenPrices from 'hooks/useTokenPrices'
 import { formatCurrency } from 'utils/formatters'
 
