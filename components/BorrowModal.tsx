@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import Image from 'next/image'
 import { Transition, Dialog, Switch } from '@headlessui/react'
 import BigNumber from 'bignumber.js'
@@ -26,10 +26,6 @@ type Props = {
 const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
   const [amount, setAmount] = useState(0)
   const [borrowToCreditAccount, setBorrowToCreditAccount] = useState(false)
-
-  useEffect(() => {
-    if (show) setAmount(0)
-  }, [show])
 
   const tokenSymbol = getTokenSymbol(tokenDenom)
 

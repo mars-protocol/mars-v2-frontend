@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import BigNumber from 'bignumber.js'
 
 import Container from 'components/Container'
@@ -33,6 +33,9 @@ const Borrow = () => {
   const { data: marketsData } = useMarkets()
   const { data: tokenPrices } = useTokenPrices()
   const { data: redbankBalances } = useRedbankBalances()
+
+  // recreate modals and reset state whenever ref changes
+  const modalId = useRef(0)
 
   const borrowedAssetsMap = useMemo(() => {
     let borrowedAssetsMap: Map<string, string> = new Map()
@@ -103,10 +106,12 @@ const Borrow = () => {
 
   const handleBorrowClick = (denom: string) => {
     setModalState({ show: 'borrow', data: { tokenDenom: denom } })
+    modalId.current += 1
   }
 
   const handleRepayClick = (denom: string) => {
     setModalState({ show: 'repay', data: { tokenDenom: denom } })
+    modalId.current += 1
   }
 
   return (
@@ -132,11 +137,13 @@ const Borrow = () => {
         </Container>
       </div>
       <BorrowModal
+        key={`borrowModal_${modalId.current}`}
         tokenDenom={modalState.data.tokenDenom}
         show={modalState.show === 'borrow'}
         onClose={() => setModalState({ ...modalState, show: false })}
       />
       <RepayModal
+        key={`repayModal${modalId.current}`}
         tokenDenom={modalState.data.tokenDenom}
         show={modalState.show === 'repay'}
         onClose={() => setModalState({ ...modalState, show: false })}

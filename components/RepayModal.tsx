@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import Image from 'next/image'
 import { Transition, Dialog } from '@headlessui/react'
 import BigNumber from 'bignumber.js'
@@ -27,10 +27,6 @@ const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
 
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
-
-  useEffect(() => {
-    if (show) setAmount(0)
-  }, [show])
 
   const tokenSymbol = getTokenSymbol(tokenDenom)
 
