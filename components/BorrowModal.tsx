@@ -72,8 +72,6 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
     return (amount * 100) / maxValue
   }, [amount, maxValue])
 
-  const isSubmitDisabled = !amount || amount < 0
-
   const handleValueChange = (value: number) => {
     if (value > maxValue) {
       setAmount(maxValue)
@@ -159,6 +157,7 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
                           type="number"
                           className="border border-black/50 bg-transparent px-2"
                           value={amount}
+                          min="0"
                           onChange={(e) => handleValueChange(e.target.valueAsNumber)}
                         />
                       </div>
@@ -217,7 +216,7 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
                   <Button
                     className="mt-auto w-full"
                     onClick={handleSubmit}
-                    disabled={isSubmitDisabled}
+                    disabled={amount === 0 || !amount}
                   >
                     Borrow
                   </Button>

@@ -73,7 +73,6 @@ const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
 
   const maxValue = walletAmount > maxRepayAmount ? maxRepayAmount : walletAmount
   const percentageValue = isNaN(amount) ? 0 : (amount * 100) / maxValue
-  const isSubmitDisabled = !amount || amount < 0
 
   const handleValueChange = (value: number) => {
     if (value > maxValue) {
@@ -144,6 +143,7 @@ const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
                           type="number"
                           className="border border-black/50 bg-transparent px-2"
                           value={amount}
+                          min="0"
                           onChange={(e) => handleValueChange(e.target.valueAsNumber)}
                         />
                       </div>
@@ -174,7 +174,7 @@ const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
                   <Button
                     className="mt-auto w-full"
                     onClick={handleSubmit}
-                    disabled={isSubmitDisabled}
+                    disabled={amount === 0 || !amount}
                   >
                     Repay
                   </Button>
