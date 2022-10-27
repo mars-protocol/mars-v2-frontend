@@ -34,12 +34,19 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
 
   const tokenSymbol = getTokenSymbol(tokenDenom)
 
-  const { mutate, isLoading } = useBorrowFunds(amount, tokenDenom, !borrowToCreditAccount, {
-    onSuccess: () => {
-      onClose()
-      toast.success(`${amount} ${tokenSymbol} successfully Borrowed`)
-    },
-  })
+  const { mutate, isLoading } = useBorrowFunds(
+    BigNumber(amount)
+      .times(10 ** getTokenDecimals(tokenDenom))
+      .toNumber(),
+    tokenDenom,
+    !borrowToCreditAccount,
+    {
+      onSuccess: () => {
+        onClose()
+        toast.success(`${amount} ${tokenSymbol} successfully Borrowed`)
+      },
+    }
+  )
 
   const { data: tokenPrices } = useTokenPrices()
   const { data: balancesData } = useAllBalances()

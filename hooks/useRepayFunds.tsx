@@ -14,7 +14,7 @@ import { getTokenDecimals } from 'utils/tokens'
 const REPAY_BUFFER = 1.00001
 
 const useRepayFunds = (
-  amount: string | number,
+  amount: number,
   denom: string,
   options: Omit<UseMutationOptions, 'onError'>
 ) => {
@@ -24,11 +24,7 @@ const useRepayFunds = (
 
   const queryClient = useQueryClient()
 
-  const amountWithDecimals = BigNumber(amount)
-    .times(10 ** getTokenDecimals(denom))
-    .times(REPAY_BUFFER)
-    .decimalPlaces(0)
-    .toString()
+  const adjustedAmount = BigNumber(amount).times(REPAY_BUFFER).decimalPlaces(0).toString()
 
   const executeMsg = useMemo(() => {
     return {
@@ -38,19 +34,19 @@ const useRepayFunds = (
           {
             deposit: {
               denom: denom,
-              amount: amountWithDecimals,
+              amount: adjustedAmount,
             },
           },
           {
             repay: {
               denom: denom,
-              amount: amountWithDecimals,
+              amount: adjustedAmount,
             },
           },
         ],
       },
     }
-  }, [amountWithDecimals, denom, selectedAccount])
+  }, [adjustedAmount, denom, selectedAccount])
 
   return useMutation(
     async () =>
@@ -63,7 +59,7 @@ const useRepayFunds = (
         [
           {
             denom,
-            amount: amountWithDecimals,
+            amount: adjustedAmount,
           },
         ]
       ),
