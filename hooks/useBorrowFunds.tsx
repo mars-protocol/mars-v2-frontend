@@ -8,10 +8,9 @@ import { contractAddresses } from 'config/contracts'
 import { hardcodedFee } from 'utils/contants'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import { queryKeys } from 'types/query-keys-factory'
-import { getTokenDecimals } from 'utils/tokens'
 
 const useBorrowFunds = (
-  amount: string | number,
+  amount: number,
   denom: string,
   withdraw = false,
   options: Omit<UseMutationOptions, 'onError'>
@@ -23,8 +22,6 @@ const useBorrowFunds = (
   const queryClient = useQueryClient()
 
   const executeMsg = useMemo(() => {
-    const tokenDecimals = getTokenDecimals(denom)
-
     if (!withdraw) {
       return {
         update_credit_account: {
@@ -33,9 +30,7 @@ const useBorrowFunds = (
             {
               borrow: {
                 denom: denom,
-                amount: BigNumber(amount)
-                  .times(10 ** tokenDecimals)
-                  .toString(),
+                amount: String(amount),
               },
             },
           ],
@@ -50,17 +45,13 @@ const useBorrowFunds = (
           {
             borrow: {
               denom: denom,
-              amount: BigNumber(amount)
-                .times(10 ** tokenDecimals)
-                .toString(),
+              amount: String(amount),
             },
           },
           {
             withdraw: {
               denom: denom,
-              amount: BigNumber(amount)
-                .times(10 ** tokenDecimals)
-                .toString(),
+              amount: String(amount),
             },
           },
         ],

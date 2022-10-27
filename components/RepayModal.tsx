@@ -43,12 +43,18 @@ const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
       .toNumber()
   }, [positionsData, tokenDenom])
 
-  const { mutate, isLoading } = useRepayFunds(amount, tokenDenom, {
-    onSuccess: () => {
-      onClose()
-      toast.success(`${amount} ${tokenSymbol} successfully repaid`)
-    },
-  })
+  const { mutate, isLoading } = useRepayFunds(
+    BigNumber(amount)
+      .times(10 ** getTokenDecimals(tokenDenom))
+      .toNumber(),
+    tokenDenom,
+    {
+      onSuccess: () => {
+        onClose()
+        toast.success(`${amount} ${tokenSymbol} successfully repaid`)
+      },
+    }
+  )
 
   const { data: tokenPrices } = useTokenPrices()
   const { data: balancesData } = useAllBalances()
