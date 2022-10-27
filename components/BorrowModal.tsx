@@ -26,7 +26,7 @@ type Props = {
 
 const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
   const [amount, setAmount] = useState(0)
-  const [borrowToCreditAccount, setBorrowToCreditAccount] = useState(false)
+  const [isBorrowToCreditAccount, setIsBorrowToCreditAccount] = useState(false)
 
   const tokenSymbol = getTokenSymbol(tokenDenom)
 
@@ -35,7 +35,7 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
       .times(10 ** getTokenDecimals(tokenDenom))
       .toNumber(),
     tokenDenom,
-    !borrowToCreditAccount,
+    !isBorrowToCreditAccount,
     {
       onSuccess: () => {
         onClose()
@@ -61,7 +61,7 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
   const tokenPrice = tokenPrices?.[tokenDenom] ?? 0
   const borrowRate = Number(marketsData?.[tokenDenom]?.borrow_rate)
 
-  const maxValue = useCalculateMaxBorrowAmount(tokenDenom, borrowToCreditAccount)
+  const maxValue = useCalculateMaxBorrowAmount(tokenDenom, isBorrowToCreditAccount)
 
   const percentageValue = useMemo(() => {
     if (isNaN(amount) || maxValue === 0) return 0
@@ -88,7 +88,7 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
   }
 
   const handleBorrowTargetChange = () => {
-    setBorrowToCreditAccount((c) => !c)
+    setIsBorrowToCreditAccount((c) => !c)
     // reset amount due to max value calculations changing depending on borrow target
     setAmount(0)
   }
@@ -196,15 +196,15 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
                         />
                       </div>
                       <Switch
-                        checked={borrowToCreditAccount}
+                        checked={isBorrowToCreditAccount}
                         onChange={handleBorrowTargetChange}
                         className={`${
-                          borrowToCreditAccount ? 'bg-blue-600' : 'bg-gray-400'
+                          isBorrowToCreditAccount ? 'bg-blue-600' : 'bg-gray-400'
                         } relative inline-flex h-6 w-11 items-center rounded-full`}
                       >
                         <span
                           className={`${
-                            borrowToCreditAccount ? 'translate-x-6' : 'translate-x-1'
+                            isBorrowToCreditAccount ? 'translate-x-6' : 'translate-x-1'
                           } inline-block h-4 w-4 transform rounded-full bg-white transition`}
                         />
                       </Switch>
