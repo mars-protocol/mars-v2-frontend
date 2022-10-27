@@ -117,17 +117,19 @@ const Borrow = () => {
   return (
     <div className="flex items-start gap-4">
       <div className="flex-1">
-        <Container>
-          <div className="mb-5">
-            <h3 className="mb-1 text-center font-medium uppercase">Borrowed</h3>
+        <Container className="mb-4">
+          <div>
+            <h3 className="mb-7 text-center text-xl font-medium uppercase">Borrowings</h3>
             <BorrowTable
               data={borrowedAssets}
               onBorrowClick={handleBorrowClick}
               onRepayClick={handleRepayClick}
             />
           </div>
+        </Container>
+        <Container>
           <div>
-            <h3 className="mb-1 text-center font-medium uppercase">Not Borrowed Yet</h3>
+            <h3 className="mb-7 text-center text-xl font-medium uppercase">Available to Borrow</h3>
             <BorrowTable
               data={notBorrowedAssets}
               onBorrowClick={handleBorrowClick}

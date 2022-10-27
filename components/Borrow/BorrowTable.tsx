@@ -152,10 +152,7 @@ const BorrowTable = ({ data, onBorrowClick, onRepayClick }: Props) => {
   return (
     <div className="w-full table-fixed border-spacing-10 text-sm">
       {table.getHeaderGroups().map((headerGroup) => (
-        <div
-          key={headerGroup.id}
-          className="mb-2 flex rounded-md bg-[#D8DAEA] px-4 py-2 text-xs text-[#585A74]/50"
-        >
+        <div key={headerGroup.id} className="mb-2 flex rounded-md px-4 py-2 text-xs">
           {headerGroup.headers.map((header) => {
             return (
               <div key={header.id} className={`${header.index === 4 ? 'w-[50px]' : 'flex-1'}`}>
