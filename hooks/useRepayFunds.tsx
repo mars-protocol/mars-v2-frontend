@@ -1,11 +1,9 @@
-import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { toast } from 'react-toastify'
 import BigNumber from 'bignumber.js'
 
 import useWalletStore from 'stores/useWalletStore'
-import { chain } from 'utils/chains'
 import { contractAddresses } from 'config/contracts'
 import { hardcodedFee } from 'utils/contants'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
@@ -20,23 +18,11 @@ const useRepayFunds = (
   denom: string,
   options: Omit<UseMutationOptions, 'onError'>
 ) => {
-  const [signingClient, setSigningClient] = useState<SigningCosmWasmClient>()
-
+  const signingClient = useWalletStore((s) => s.signingClient)
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
   const address = useWalletStore((s) => s.address)
 
   const queryClient = useQueryClient()
-
-  useEffect(() => {
-    ;(async () => {
-      if (!window.keplr) return
-
-      const offlineSigner = window.keplr.getOfflineSigner(chain.chainId)
-      const clientInstance = await SigningCosmWasmClient.connectWithSigner(chain.rpc, offlineSigner)
-
-      setSigningClient(clientInstance)
-    })()
-  }, [address])
 
   const amountWithDecimals = BigNumber(amount)
     .times(10 ** getTokenDecimals(denom))
