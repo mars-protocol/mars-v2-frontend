@@ -65,7 +65,7 @@ interface Market {
 type Props = {
   data: Market[]
   onBorrowClick: (denom: string) => void
-  onRepayClick: (denom: string, repayAmount: number) => void
+  onRepayClick: (denom: string) => void
 }
 
 const BorrowTable = ({ data, onBorrowClick, onRepayClick }: Props) => {
@@ -152,10 +152,7 @@ const BorrowTable = ({ data, onBorrowClick, onRepayClick }: Props) => {
   return (
     <div className="w-full table-fixed border-spacing-10 text-sm">
       {table.getHeaderGroups().map((headerGroup) => (
-        <div
-          key={headerGroup.id}
-          className="mb-2 flex rounded-md bg-[#D8DAEA] px-4 py-2 text-xs text-[#585A74]/50"
-        >
+        <div key={headerGroup.id} className="mb-2 flex rounded-md px-4 py-2 text-xs">
           {headerGroup.headers.map((header) => {
             return (
               <div key={header.id} className={`${header.index === 4 ? 'w-[50px]' : 'flex-1'}`}>
@@ -179,16 +176,20 @@ const BorrowTable = ({ data, onBorrowClick, onRepayClick }: Props) => {
         </div>
       ))}
       <div className="flex flex-col gap-2">
-        {table.getRowModel().rows.map((row) => {
-          return (
-            <AssetRow
-              key={row.index}
-              data={row.original}
-              onBorrowClick={() => onBorrowClick(row.original.denom)}
-              onRepayClick={(repayAmount: number) => onRepayClick(row.original.denom, repayAmount)}
-            />
-          )
-        })}
+        {table.getRowModel().rows.length === 0 ? (
+          <div>No Data</div>
+        ) : (
+          table.getRowModel().rows.map((row) => {
+            return (
+              <AssetRow
+                key={row.index}
+                data={row.original}
+                onBorrowClick={() => onBorrowClick(row.original.denom)}
+                onRepayClick={() => onRepayClick(row.original.denom)}
+              />
+            )
+          })
+        )}
       </div>
     </div>
   )

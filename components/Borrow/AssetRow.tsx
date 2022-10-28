@@ -19,7 +19,7 @@ type AssetRowProps = {
     marketLiquidity: number
   }
   onBorrowClick: () => void
-  onRepayClick: (value: number) => void
+  onRepayClick: () => void
 }
 
 const AssetRow = ({ data, onBorrowClick, onRepayClick }: AssetRowProps) => {
@@ -27,7 +27,7 @@ const AssetRow = ({ data, onBorrowClick, onRepayClick }: AssetRowProps) => {
 
   return (
     <div
-      className="cursor-pointer rounded-md bg-[#D8DAEA] px-4 py-2 text-[#585A74] hover:bg-[#D8DAEA]/90"
+      className="cursor-pointer rounded-md px-4 py-2 hover:bg-black/30"
       onClick={() => setIsExpanded((current) => !current)}
     >
       <div className="flex">
@@ -71,10 +71,8 @@ const AssetRow = ({ data, onBorrowClick, onRepayClick }: AssetRowProps) => {
             <Button
               disabled={!data.borrowed}
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                if (!data.borrowed) return
-
                 e.stopPropagation()
-                onRepayClick(data.borrowed.amount)
+                onRepayClick()
               }}
             >
               Repay

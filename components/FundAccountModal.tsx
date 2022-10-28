@@ -12,7 +12,7 @@ import Button from './Button'
 import Spinner from './Spinner'
 import useAllBalances from 'hooks/useAllBalances'
 import useAllowedCoins from 'hooks/useAllowedCoins'
-import useDepositCreditAccount from 'hooks/useDepositCreditAccount'
+import useDepositCreditAccount from 'hooks/mutations/useDepositCreditAccount'
 import Slider from 'components/Slider'
 
 const FundAccountModal = ({ show, onClose }: any) => {
@@ -128,7 +128,7 @@ const FundAccountModal = ({ show, onClose }: any) => {
                       <p>Loading...</p>
                     ) : (
                       <>
-                        <div className="mb-2 rounded-md border border-[#585A74]  text-sm">
+                        <div className="mb-2 rounded-md border border-[#585A74] text-sm">
                           <div className="mb-1 flex justify-between border-b border-[#585A74] p-2">
                             <div className="font-bold">Asset:</div>
                             <select

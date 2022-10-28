@@ -1,10 +1,7 @@
-import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
 
 import useWalletStore from 'stores/useWalletStore'
-import { chain } from 'utils/chains'
 import { contractAddresses } from 'config/contracts'
 import { hardcodedFee } from 'utils/contants'
 import { queryKeys } from 'types/query-keys-factory'
@@ -17,21 +14,10 @@ const useDepositCreditAccount = (
     onSuccess?: () => void
   }
 ) => {
-  const [signingClient, setSigningClient] = useState<SigningCosmWasmClient>()
+  const signingClient = useWalletStore((s) => s.signingClient)
   const address = useWalletStore((s) => s.address)
 
   const queryClient = useQueryClient()
-
-  useEffect(() => {
-    ;(async () => {
-      if (!window.keplr) return
-
-      const offlineSigner = window.keplr.getOfflineSigner(chain.chainId)
-      const clientInstance = await SigningCosmWasmClient.connectWithSigner(chain.rpc, offlineSigner)
-
-      setSigningClient(clientInstance)
-    })()
-  }, [address])
 
   return useMutation(
     async () =>
