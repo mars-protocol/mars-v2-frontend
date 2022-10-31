@@ -32,12 +32,7 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
                 <span className="ml-1 text-lg font-semibold">{data?.toFixed(2)}</span>
               </p>
             </div>
-            <Button
-              className=" bg-[#524bb1] hover:bg-[#6962cc]"
-              onClick={() => actions.disconnect()}
-            >
-              Disconnect
-            </Button>
+            <Button onClick={() => actions.disconnect()}>Disconnect</Button>
           </div>
           <p className="mb-6 text-sm">{address}</p>
           <button
