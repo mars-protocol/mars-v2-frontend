@@ -46,8 +46,10 @@ const useCreditAccountPositions = (accountId: string) => {
   return {
     ...result,
     data: useMemo(() => {
+      if (!address) return
+
       return result?.data && { ...result.data }
-    }, [result.data]),
+    }, [result.data, address]),
   }
 }
 
