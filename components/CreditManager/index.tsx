@@ -11,10 +11,12 @@ import useTokenPrices from 'hooks/useTokenPrices'
 import useAccountStats from 'hooks/useAccountStats'
 import useMarkets from 'hooks/useMarkets'
 import ContainerSecondary from 'components/ContainerSecondary'
+import WithdrawModal from 'components/WithdrawModal'
 import FundAccountModal from 'components/FundAccountModal'
 
 const CreditManager = () => {
   const [showFundWalletModal, setShowFundWalletModal] = useState(false)
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false)
 
   const address = useWalletStore((s) => s.address)
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
@@ -54,7 +56,7 @@ const CreditManager = () => {
         </Button>
         <Button
           className="flex-1 rounded-md"
-          onClick={() => alert('TODO')}
+          onClick={() => setShowWithdrawModal(true)}
           disabled={!positionsData || positionsData.coins.length === 0}
         >
           Withdraw
@@ -126,6 +128,11 @@ const CreditManager = () => {
         key={`fundModal_${selectedAccount}`}
         show={showFundWalletModal}
         onClose={() => setShowFundWalletModal(false)}
+      />
+      <WithdrawModal
+        key={`withdrawModal_${selectedAccount}`}
+        show={showWithdrawModal}
+        onClose={() => setShowWithdrawModal(false)}
       />
     </div>
   )
