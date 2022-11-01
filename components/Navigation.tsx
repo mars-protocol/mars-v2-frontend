@@ -72,12 +72,10 @@ const Navigation = () => {
       return null
     }
 
-    // connected WITHOUT credit accounts
     if (!hasCreditAccounts) {
       return <Button onClick={() => createCreditAccount()}>Create Credit Account</Button>
     }
 
-    // connected WITH credit accounts
     return (
       <div className="flex items-center gap-4">
         {accountStats && (
