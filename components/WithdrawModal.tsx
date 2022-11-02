@@ -45,7 +45,7 @@ const WithdrawModal = ({ show, onClose }: any) => {
     },
   })
 
-  const maxValue = useCalculateMaxWithdrawAmount(selectedToken, isBorrowEnabled)
+  const maxWithdrawAmount = useCalculateMaxWithdrawAmount(selectedToken, isBorrowEnabled)
 
   const walletAmount = useMemo(() => {
     if (!selectedToken) return 0
@@ -69,8 +69,8 @@ const WithdrawModal = ({ show, onClose }: any) => {
   }
 
   const handleValueChange = (value: number) => {
-    if (value > maxValue) {
-      setAmount(maxValue)
+    if (value > maxWithdrawAmount) {
+      setAmount(maxWithdrawAmount)
       return
     }
 
@@ -94,7 +94,7 @@ const WithdrawModal = ({ show, onClose }: any) => {
     )
   }
 
-  const percentageValue = isNaN(amount) ? 0 : (amount * 100) / maxValue
+  const percentageValue = isNaN(amount) ? 0 : (amount * 100) / maxWithdrawAmount
 
   return (
     <Transition appear show={show} as={React.Fragment}>
@@ -164,11 +164,13 @@ const WithdrawModal = ({ show, onClose }: any) => {
                           const decimal = value[0] / 100
                           const tokenDecimals = getTokenDecimals(selectedToken)
                           // limit decimal precision based on token contract decimals
-                          const newAmount = Number((decimal * maxValue).toFixed(tokenDecimals))
+                          const newAmount = Number(
+                            (decimal * maxWithdrawAmount).toFixed(tokenDecimals)
+                          )
 
                           setAmount(newAmount)
                         }}
-                        onMaxClick={() => setAmount(maxValue)}
+                        onMaxClick={() => setAmount(maxWithdrawAmount)}
                       />
                     </ContainerSecondary>
                     <ContainerSecondary className="mb-10 flex items-center justify-between">
