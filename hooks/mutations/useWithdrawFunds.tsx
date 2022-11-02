@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { toast } from 'react-toastify'
-import BigNumber from 'bignumber.js'
 
 import useWalletStore from 'stores/useWalletStore'
 import { contractAddresses } from 'config/contracts'
@@ -10,7 +9,8 @@ import useCreditManagerStore from 'stores/useCreditManagerStore'
 import { queryKeys } from 'types/query-keys-factory'
 
 const useWithdrawFunds = (
-  amount: string | number,
+  amount: number,
+  borrowAmount: number,
   denom: string,
   options?: {
     onSuccess?: () => void
@@ -23,22 +23,42 @@ const useWithdrawFunds = (
   const queryClient = useQueryClient()
 
   const executeMsg = useMemo(() => {
+    if (borrowAmount > 0) {
+      return {
+        update_credit_account: {
+          account_id: selectedAccount,
+          actions: [
+            {
+              borrow: {
+                denom,
+                amount: String(borrowAmount),
+              },
+            },
+            {
+              withdraw: {
+                denom,
+                amount: String(amount),
+              },
+            },
+          ],
+        },
+      }
+    }
+
     return {
       update_credit_account: {
         account_id: selectedAccount,
         actions: [
           {
             withdraw: {
-              denom: denom,
-              amount: BigNumber(amount)
-                .times(10 ** 6)
-                .toString(),
+              denom,
+              amount: String(amount),
             },
           },
         ],
       },
     }
-  }, [amount, denom, selectedAccount])
+  }, [amount, borrowAmount, denom, selectedAccount])
 
   const { onSuccess } = { ...options }
 

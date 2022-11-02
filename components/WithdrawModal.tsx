@@ -37,13 +37,38 @@ const WithdrawModal = ({ show, onClose }: any) => {
   const accountStats = useAccountStats()
 
   const selectedTokenSymbol = getTokenSymbol(selectedToken)
+  const selectedTokenDecimals = getTokenDecimals(selectedToken)
 
-  const { mutate, isLoading } = useWithdrawFunds(amount, selectedToken, {
-    onSuccess: () => {
-      onClose()
-      toast.success(`${amount} ${selectedTokenSymbol} successfully withdrawn`)
-    },
-  })
+  const tokenAmountInCreditAccount = useMemo(() => {
+    return BigNumber(positionsData?.coins.find((coin) => coin.denom === selectedToken)?.amount ?? 0)
+      .div(10 ** selectedTokenDecimals)
+      .toNumber()
+  }, [positionsData, selectedTokenDecimals, selectedToken])
+
+  const borrowAmount = useMemo(() => {
+    if (amount > tokenAmountInCreditAccount) {
+      return BigNumber(amount)
+        .minus(tokenAmountInCreditAccount)
+        .times(10 ** selectedTokenDecimals)
+        .toNumber()
+    }
+
+    return 0
+  }, [amount, selectedTokenDecimals, tokenAmountInCreditAccount])
+
+  const { mutate, isLoading } = useWithdrawFunds(
+    BigNumber(amount)
+      .times(10 ** selectedTokenDecimals)
+      .toNumber(),
+    borrowAmount,
+    selectedToken,
+    {
+      onSuccess: () => {
+        onClose()
+        toast.success(`${amount} ${selectedTokenSymbol} successfully withdrawn`)
+      },
+    }
+  )
 
   const maxWithdrawAmount = useCalculateMaxWithdrawAmount(selectedToken, isBorrowEnabled)
 
@@ -51,10 +76,9 @@ const WithdrawModal = ({ show, onClose }: any) => {
     if (!selectedToken) return 0
 
     return BigNumber(balancesData?.find((balance) => balance.denom === selectedToken)?.amount ?? 0)
-      .div(10 ** getTokenDecimals(selectedToken))
+      .div(10 ** selectedTokenDecimals)
       .toNumber()
-  }, [balancesData, selectedToken])
-
+  }, [balancesData, selectedToken, selectedTokenDecimals])
   useEffect(() => {
     if (positionsData && positionsData.coins.length > 0) {
       // initialize selected token when allowedCoins fetch data is available
@@ -162,10 +186,9 @@ const WithdrawModal = ({ show, onClose }: any) => {
                         value={percentageValue}
                         onChange={(value) => {
                           const decimal = value[0] / 100
-                          const tokenDecimals = getTokenDecimals(selectedToken)
                           // limit decimal precision based on token contract decimals
                           const newAmount = Number(
-                            (decimal * maxWithdrawAmount).toFixed(tokenDecimals)
+                            (decimal * maxWithdrawAmount).toFixed(selectedTokenDecimals)
                           )
 
                           setAmount(newAmount)
