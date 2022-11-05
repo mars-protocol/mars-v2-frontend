@@ -45,30 +45,31 @@ const WithdrawModal = ({ show, onClose }: any) => {
       .toNumber()
   }, [positionsData, selectedTokenDecimals, selectedToken])
 
-  const borrowAmount = useMemo(() => {
-    if (amount > tokenAmountInCreditAccount) {
-      return BigNumber(amount)
-        .minus(tokenAmountInCreditAccount)
-        .times(10 ** selectedTokenDecimals)
-        .toNumber()
-    }
+  const { borrowAmount, withdrawAmount } = useMemo(() => {
+    const borrowAmount =
+      amount > tokenAmountInCreditAccount
+        ? BigNumber(amount)
+            .minus(tokenAmountInCreditAccount)
+            .times(10 ** selectedTokenDecimals)
+            .toNumber()
+        : 0
 
-    return 0
+    const withdrawAmount = BigNumber(amount)
+      .times(10 ** selectedTokenDecimals)
+      .toNumber()
+
+    return {
+      borrowAmount,
+      withdrawAmount,
+    }
   }, [amount, selectedTokenDecimals, tokenAmountInCreditAccount])
 
-  const { mutate, isLoading } = useWithdrawFunds(
-    BigNumber(amount)
-      .times(10 ** selectedTokenDecimals)
-      .toNumber(),
-    borrowAmount,
-    selectedToken,
-    {
-      onSuccess: () => {
-        onClose()
-        toast.success(`${amount} ${selectedTokenSymbol} successfully withdrawn`)
-      },
-    }
-  )
+  const { mutate, isLoading } = useWithdrawFunds(withdrawAmount, borrowAmount, selectedToken, {
+    onSuccess: () => {
+      onClose()
+      toast.success(`${amount} ${selectedTokenSymbol} successfully withdrawn`)
+    },
+  })
 
   const maxWithdrawAmount = useCalculateMaxWithdrawAmount(selectedToken, isBorrowEnabled)
 
@@ -79,6 +80,7 @@ const WithdrawModal = ({ show, onClose }: any) => {
       .div(10 ** selectedTokenDecimals)
       .toNumber()
   }, [balancesData, selectedToken, selectedTokenDecimals])
+
   useEffect(() => {
     if (positionsData && positionsData.coins.length > 0) {
       // initialize selected token when allowedCoins fetch data is available
@@ -118,7 +120,11 @@ const WithdrawModal = ({ show, onClose }: any) => {
     )
   }
 
-  const percentageValue = isNaN(amount) ? 0 : (amount * 100) / maxWithdrawAmount
+  const percentageValue = useMemo(() => {
+    if (isNaN(amount) || maxWithdrawAmount === 0) return 0
+
+    return (amount * 100) / maxWithdrawAmount
+  }, [amount, maxWithdrawAmount])
 
   return (
     <Transition appear show={show} as={React.Fragment}>
@@ -152,7 +158,7 @@ const WithdrawModal = ({ show, onClose }: any) => {
                     <Spinner />
                   </div>
                 )}
-                <div className="flex flex-1 flex-col p-4">
+                <div className="flex w-1/2 flex-col p-4">
                   <Dialog.Title as="h3" className="mb-4 text-center text-lg font-medium">
                     Withdraw from Account {selectedAccount}
                   </Dialog.Title>
@@ -221,7 +227,7 @@ const WithdrawModal = ({ show, onClose }: any) => {
                     Withdraw
                   </Button>
                 </div>
-                <div className="flex flex-1 flex-col justify-center bg-[#4A4C60] p-4">
+                <div className="flex w-1/2 flex-col justify-center bg-[#4A4C60] p-4">
                   <p className="text-bold mb-3 text-xs uppercase text-white/50">About</p>
                   <h4 className="mb-4 text-xl">Subaccount {selectedAccount}</h4>
                   <div className="mb-2 rounded-md border border-white/20 p-3">
