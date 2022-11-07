@@ -3,7 +3,6 @@ import { useMemo } from 'react'
 import { toast } from 'react-toastify'
 
 import useWalletStore from 'stores/useWalletStore'
-import { contractAddresses } from 'config/contracts'
 import { hardcodedFee } from 'utils/contants'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import { queryKeys } from 'types/query-keys-factory'
@@ -16,63 +15,51 @@ const useWithdrawFunds = (
     onSuccess?: () => void
   }
 ) => {
-  const signingClient = useWalletStore((s) => s.signingClient)
-  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
+  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount ?? '')
   const address = useWalletStore((s) => s.address)
+  const creditManagerClient = useWalletStore((s) => s.clients.creditManager)
 
   const queryClient = useQueryClient()
 
-  const executeMsg = useMemo(() => {
+  const actions = useMemo(() => {
     if (borrowAmount > 0) {
-      return {
-        update_credit_account: {
-          account_id: selectedAccount,
-          actions: [
-            {
-              borrow: {
-                denom,
-                amount: String(borrowAmount),
-              },
-            },
-            {
-              withdraw: {
-                denom,
-                amount: String(amount),
-              },
-            },
-          ],
+      return [
+        {
+          borrow: {
+            denom,
+            amount: String(borrowAmount),
+          },
         },
-      }
+        {
+          withdraw: {
+            denom,
+            amount: String(amount),
+          },
+        },
+      ]
     }
 
-    return {
-      update_credit_account: {
-        account_id: selectedAccount,
-        actions: [
-          {
-            withdraw: {
-              denom,
-              amount: String(amount),
-            },
-          },
-        ],
+    return [
+      {
+        withdraw: {
+          denom,
+          amount: String(amount),
+        },
       },
-    }
-  }, [amount, borrowAmount, denom, selectedAccount])
+    ]
+  }, [amount, borrowAmount, denom])
 
   const { onSuccess } = { ...options }
 
   return useMutation(
     async () =>
-      await signingClient?.execute(
-        address,
-        contractAddresses.creditManager,
-        executeMsg,
+      creditManagerClient?.updateCreditAccount(
+        { accountId: selectedAccount, actions },
         hardcodedFee
       ),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(queryKeys.creditAccountsPositions(selectedAccount ?? ''))
+        queryClient.invalidateQueries(queryKeys.creditAccountsPositions(selectedAccount))
         queryClient.invalidateQueries(queryKeys.tokenBalance(address, denom))
         queryClient.invalidateQueries(queryKeys.allBalances(address))
         queryClient.invalidateQueries(queryKeys.redbankBalances())
