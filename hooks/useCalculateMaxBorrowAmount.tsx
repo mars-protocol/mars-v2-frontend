@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import BigNumber from 'bignumber.js'
 
 import useCreditManagerStore from 'stores/useCreditManagerStore'
@@ -8,6 +8,12 @@ import useMarkets from './useMarkets'
 import useTokenPrices from './useTokenPrices'
 import useRedbankBalances from './useRedbankBalances'
 
+const getApproximateHourlyInterest = (amount: string, borrowAPY: string) => {
+  const hourlyAPY = BigNumber(borrowAPY).div(24 * 365)
+
+  return hourlyAPY.times(amount).toNumber()
+}
+
 const useCalculateMaxBorrowAmount = (denom: string, isUnderCollateralized: boolean) => {
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
 
@@ -16,33 +22,40 @@ const useCalculateMaxBorrowAmount = (denom: string, isUnderCollateralized: boole
   const { data: tokenPrices } = useTokenPrices()
   const { data: redbankBalances } = useRedbankBalances()
 
+  const getTokenValue = useCallback(
+    (amount: string, denom: string) => {
+      if (!tokenPrices) return 0
+
+      return BigNumber(amount).times(tokenPrices[denom]).toNumber()
+    },
+    [tokenPrices]
+  )
+
   return useMemo(() => {
     if (!marketsData || !tokenPrices || !positionsData || !redbankBalances) return 0
 
-    const getTokenTotalUSDValue = (amount: string, denom: string) => {
-      // early return if prices are not fetched yet
-      if (!tokenPrices) return 0
-
-      return BigNumber(amount)
-        .div(10 ** getTokenDecimals(denom))
-        .times(tokenPrices[denom])
-        .toNumber()
-    }
-
     // max ltv adjusted collateral
     const totalWeightedPositions = positionsData?.coins.reduce((acc, coin) => {
-      const tokenWeightedValue = BigNumber(getTokenTotalUSDValue(coin.amount, coin.denom)).times(
+      const tokenWeightedValue = BigNumber(getTokenValue(coin.amount, coin.denom)).times(
         Number(marketsData[coin.denom].max_loan_to_value)
       )
 
       return tokenWeightedValue.plus(acc).toNumber()
     }, 0)
 
-    // total debt value
+    // approximate debt value in an hour timespan to avoid throwing on smart contract level
+    // due to debt interest being applied
     const totalLiabilitiesValue = positionsData?.debts.reduce((acc, coin) => {
-      const tokenUSDValue = BigNumber(getTokenTotalUSDValue(coin.amount, coin.denom))
+      const estimatedInterestAmount = getApproximateHourlyInterest(
+        coin.amount,
+        marketsData[coin.denom].borrow_rate
+      )
 
-      return tokenUSDValue.plus(acc).toNumber()
+      const tokenDebtValue = BigNumber(getTokenValue(coin.amount, coin.denom)).plus(
+        estimatedInterestAmount
+      )
+
+      return tokenDebtValue.plus(acc).toNumber()
     }, 0)
 
     const borrowTokenPrice = tokenPrices[denom]
@@ -54,6 +67,7 @@ const useCalculateMaxBorrowAmount = (denom: string, isUnderCollateralized: boole
       maxValue = BigNumber(totalLiabilitiesValue)
         .minus(totalWeightedPositions)
         .div(borrowTokenPrice * Number(marketsData[denom].max_loan_to_value) - borrowTokenPrice)
+        .div(10 ** tokenDecimals)
         .decimalPlaces(tokenDecimals)
         .toNumber()
     } else {
@@ -61,6 +75,7 @@ const useCalculateMaxBorrowAmount = (denom: string, isUnderCollateralized: boole
       maxValue = BigNumber(totalWeightedPositions)
         .minus(totalLiabilitiesValue)
         .div(borrowTokenPrice)
+        .div(10 ** tokenDecimals)
         .decimalPlaces(tokenDecimals)
         .toNumber()
     }
@@ -72,7 +87,15 @@ const useCalculateMaxBorrowAmount = (denom: string, isUnderCollateralized: boole
     if (marketLiquidity < maxValue) return marketLiquidity
 
     return maxValue > 0 ? maxValue : 0
-  }, [denom, isUnderCollateralized, marketsData, positionsData, redbankBalances, tokenPrices])
+  }, [
+    denom,
+    getTokenValue,
+    isUnderCollateralized,
+    marketsData,
+    positionsData,
+    redbankBalances,
+    tokenPrices,
+  ])
 }
 
 export default useCalculateMaxBorrowAmount
