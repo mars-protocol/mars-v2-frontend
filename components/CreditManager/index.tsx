@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import BigNumber from 'bignumber.js'
 
 import Button from '../Button'
@@ -11,10 +11,15 @@ import useTokenPrices from 'hooks/useTokenPrices'
 import useAccountStats from 'hooks/useAccountStats'
 import useMarkets from 'hooks/useMarkets'
 import ContainerSecondary from 'components/ContainerSecondary'
+import WithdrawModal from 'components/WithdrawModal'
 import FundAccountModal from 'components/FundAccountModal'
 
 const CreditManager = () => {
   const [showFundWalletModal, setShowFundWalletModal] = useState(false)
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false)
+
+  // recreate modals and reset state whenever ref changes
+  const modalId = useRef(0)
 
   const address = useWalletStore((s) => s.address)
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
@@ -49,12 +54,21 @@ const CreditManager = () => {
   return (
     <div className="absolute inset-0 left-auto w-[400px] border-l border-white/20 bg-background-2 p-2">
       <ContainerSecondary className="mb-2 flex gap-3">
-        <Button className="flex-1 rounded-md" onClick={() => setShowFundWalletModal(true)}>
+        <Button
+          className="flex-1 rounded-md"
+          onClick={() => {
+            setShowFundWalletModal(true)
+            modalId.current += 1
+          }}
+        >
           Fund
         </Button>
         <Button
           className="flex-1 rounded-md"
-          onClick={() => alert('TODO')}
+          onClick={() => {
+            setShowWithdrawModal(true)
+            modalId.current += 1
+          }}
           disabled={!positionsData || positionsData.coins.length === 0}
         >
           Withdraw
@@ -123,9 +137,14 @@ const CreditManager = () => {
         )}
       </ContainerSecondary>
       <FundAccountModal
-        key={`fundModal_${selectedAccount}`}
+        key={`fundModal_${modalId.current}`}
         show={showFundWalletModal}
         onClose={() => setShowFundWalletModal(false)}
+      />
+      <WithdrawModal
+        key={`withdrawModal_${modalId.current}`}
+        show={showWithdrawModal}
+        onClose={() => setShowWithdrawModal(false)}
       />
     </div>
   )

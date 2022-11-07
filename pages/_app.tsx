@@ -20,7 +20,6 @@ async function isMetamaskInstalled(): Promise<boolean> {
 const queryClient = new QueryClient()
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const address = useWalletStore((s) => s.address)
   const actions = useWalletStore((s) => s.actions)
 
   // init store

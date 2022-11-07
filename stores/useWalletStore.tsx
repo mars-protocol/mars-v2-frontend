@@ -4,6 +4,9 @@ import { persist } from 'zustand/middleware'
 import { Wallet } from 'types'
 import { CosmWasmClient, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { chain } from 'utils/chains'
+import { contractAddresses } from 'config/contracts'
+import { AccountNftClient } from 'types/generated/account-nft/AccountNft.client'
+import { CreditManagerClient } from 'types/generated/credit-manager/CreditManager.client'
 
 interface WalletStore {
   address: string
@@ -11,8 +14,13 @@ interface WalletStore {
   wallet: Wallet | null
   client?: CosmWasmClient
   signingClient?: SigningCosmWasmClient
+  clients: {
+    accountNft: AccountNftClient | null
+    creditManager: CreditManagerClient | null
+  }
   actions: {
     disconnect: () => void
+    initClients: (address: string, signingClient: SigningCosmWasmClient) => void
     initialize: () => void
     connect: (address: string, wallet: Wallet) => void
     setMetamaskInstalledStatus: (value: boolean) => void
@@ -25,9 +33,32 @@ const useWalletStore = create<WalletStore>()(
       address: '',
       metamaskInstalled: false,
       wallet: null,
+      clients: {
+        accountNft: null,
+        creditManager: null,
+      },
       actions: {
         disconnect: () => {
           set(() => ({ address: '', wallet: null, signingClient: undefined }))
+        },
+        initClients: (address, signingClient) => {
+          const accountNft = new AccountNftClient(
+            signingClient,
+            address,
+            contractAddresses.accountNft
+          )
+          const creditManager = new CreditManagerClient(
+            signingClient,
+            address,
+            contractAddresses.creditManager
+          )
+
+          set(() => ({
+            clients: {
+              accountNft,
+              creditManager,
+            },
+          }))
         },
         initialize: async () => {
           const clientInstance = await CosmWasmClient.connect(chain.rpc)
@@ -41,6 +72,8 @@ const useWalletStore = create<WalletStore>()(
               chain.rpc,
               offlineSigner
             )
+
+            get().actions.initClients(address, signingClientInstance)
 
             set(() => ({
               client: clientInstance,
@@ -56,12 +89,14 @@ const useWalletStore = create<WalletStore>()(
           if (!window.keplr) return
 
           const offlineSigner = window.keplr.getOfflineSigner(chain.chainId)
-          const clientInstance = await SigningCosmWasmClient.connectWithSigner(
+          const signingClientInstance = await SigningCosmWasmClient.connectWithSigner(
             chain.rpc,
             offlineSigner
           )
 
-          set(() => ({ address, wallet, signingClient: clientInstance }))
+          get().actions.initClients(address, signingClientInstance)
+
+          set(() => ({ address, wallet, signingClient: signingClientInstance }))
         },
         setMetamaskInstalledStatus: (value: boolean) => set(() => ({ metamaskInstalled: value })),
       },

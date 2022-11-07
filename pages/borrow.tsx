@@ -145,7 +145,7 @@ const Borrow = () => {
         onClose={() => setModalState({ ...modalState, show: false })}
       />
       <RepayModal
-        key={`repayModal${modalId.current}`}
+        key={`repayModal_${modalId.current}`}
         tokenDenom={modalState.data.tokenDenom}
         show={modalState.show === 'repay'}
         onClose={() => setModalState({ ...modalState, show: false })}
