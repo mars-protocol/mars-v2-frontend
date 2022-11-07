@@ -7,6 +7,12 @@ import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useTokenPrices from './useTokenPrices'
 import useMarkets from './useMarkets'
 
+const getApproximateHourlyInterest = (amount: string, borrowAPY: string) => {
+  const hourlyAPY = BigNumber(borrowAPY).div(24 * 365)
+
+  return hourlyAPY.times(amount).toNumber()
+}
+
 const useCalculateMaxWithdrawAmount = (denom: string, borrow: boolean) => {
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
 
@@ -37,10 +43,18 @@ const useCalculateMaxWithdrawAmount = (denom: string, borrow: boolean) => {
     const borrowTokenPrice = tokenPrices[denom]
     const borrowTokenMaxLTV = Number(marketsData[denom].max_loan_to_value)
 
+    // approximate debt value in an hour timespan to avoid throwing on smart contract level
+    // due to debt interest being applied
     const totalLiabilitiesValue = positionsData?.debts.reduce((acc, coin) => {
-      const tokenUSDValue = BigNumber(getTokenValue(coin.amount, coin.denom))
+      const estimatedInterestAmount = getApproximateHourlyInterest(
+        coin.amount,
+        marketsData[coin.denom].borrow_rate
+      )
+      const tokenDebtValue = BigNumber(getTokenValue(coin.amount, coin.denom)).plus(
+        estimatedInterestAmount
+      )
 
-      return tokenUSDValue.plus(acc).toNumber()
+      return tokenDebtValue.plus(acc).toNumber()
     }, 0)
 
     const positionsWeightedAverageWithoutAsset = positionsData?.coins.reduce((acc, coin) => {
@@ -77,6 +91,10 @@ const useCalculateMaxWithdrawAmount = (denom: string, borrow: boolean) => {
         .minus(requiredCollateral)
         .decimalPlaces(tokenDecimals)
         .toNumber()
+
+      // required collateral might be greater than the amount in the credit account which will result
+      // in a negative max amount capacity
+      maxAmountCapacity = maxAmountCapacity < 0 ? 0 : maxAmountCapacity
     }
 
     const isCapacityHigherThanBalance = BigNumber(maxAmountCapacity).gt(tokenAmountInCreditAccount)
