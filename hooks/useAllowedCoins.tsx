@@ -11,14 +11,13 @@ const queryMsg = {
 }
 
 const useAllowedCoins = () => {
-  const address = useWalletStore((s) => s.address)
   const client = useWalletStore((s) => s.client)
 
   const result = useQuery<Result>(
     queryKeys.allowedCoins(),
     async () => client?.queryContractSmart(contractAddresses.creditManager, queryMsg),
     {
-      enabled: !!address && !!client,
+      enabled: !!client,
       staleTime: Infinity,
     }
   )

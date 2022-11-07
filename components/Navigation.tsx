@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { Popover } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
@@ -17,6 +18,7 @@ import useAccountStats from 'hooks/useAccountStats'
 import SemiCircleProgress from './SemiCircleProgress'
 import useWalletStore from 'stores/useWalletStore'
 import ArrowRightLine from 'components/Icons/arrow-right-line.svg'
+import Button from './Button'
 
 // TODO: will require some tweaks depending on how lower viewport mocks pans out
 const MAX_VISIBLE_CREDIT_ACCOUNTS = 5
@@ -47,7 +49,7 @@ const Navigation = () => {
   const setSelectedAccount = useCreditManagerStore((s) => s.actions.setSelectedAccount)
   const toggleCreditManager = useCreditManagerStore((s) => s.actions.toggleCreditManager)
 
-  const { data: creditAccountsList } = useCreditAccounts()
+  const { data: creditAccountsList, isLoading: isLoadingCreditAccounts } = useCreditAccounts()
   const { mutate: createCreditAccount, isLoading: isLoadingCreate } = useCreateCreditAccount()
   const { mutate: deleteCreditAccount, isLoading: isLoadingDelete } = useDeleteCreditAccount(
     selectedAccount || ''
@@ -62,13 +64,51 @@ const Navigation = () => {
     }
   }, [creditAccountsList])
 
+  const isConnected = !!address
+  const hasCreditAccounts = creditAccountsList && creditAccountsList.length > 0
+
+  const rightSideContent = () => {
+    if ((!isConnected && !hasCreditAccounts) || isLoadingCreditAccounts) {
+      return null
+    }
+
+    if (!hasCreditAccounts) {
+      return <Button onClick={() => createCreditAccount()}>Create Credit Account</Button>
+    }
+
+    return (
+      <div className="flex items-center gap-4">
+        {accountStats && (
+          <>
+            <p>{formatCurrency(accountStats.netWorth)}</p>
+            {/* TOOLTIP */}
+            <div title={`${String(accountStats.currentLeverage.toFixed(1))}x`}>
+              <SemiCircleProgress
+                value={accountStats.currentLeverage / accountStats.maxLeverage}
+                label="Lvg"
+              />
+            </div>
+            <SemiCircleProgress value={accountStats.risk} label="Risk" />
+            <ProgressBar value={accountStats.health} />
+          </>
+        )}
+        <div
+          className="flex w-16 cursor-pointer justify-center hover:text-white"
+          onClick={toggleCreditManager}
+        >
+          <ArrowRightLine />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div>
       {/* Main navigation bar */}
       <div className="flex items-center justify-between border-b border-white/20 px-6 py-3">
         <Link href="/" passHref>
           <a>
-            <img src="/logo.svg" alt="mars" />
+            <Image src="/logo.svg" alt="mars" width={123} height={40} />
           </a>
         </Link>
         <div className="flex gap-5 px-12 text-white/40">
@@ -81,117 +121,98 @@ const Navigation = () => {
         <Wallet />
       </div>
       {/* Sub navigation bar */}
-      {address && (
-        <div className="flex justify-between border-b border-white/20 px-6 py-3 text-sm text-white/40">
-          <div className="flex items-center">
-            <SearchInput />
-            {firstCreditAccounts.map((account) => (
-              <div
-                key={account}
-                className={`cursor-pointer px-4 hover:text-white ${
-                  selectedAccount === account ? 'text-white' : ''
-                }`}
-                onClick={() => setSelectedAccount(account)}
-              >
-                Account {account}
-              </div>
-            ))}
-            {restCreditAccounts.length > 0 && (
+      <div className="flex items-center justify-between border-b border-white/20 px-6 py-3 text-sm text-white/40">
+        <div className="flex items-center">
+          <SearchInput />
+          {isConnected && hasCreditAccounts && (
+            <>
+              {firstCreditAccounts.map((account) => (
+                <div
+                  key={account}
+                  className={`cursor-pointer px-4 hover:text-white ${
+                    selectedAccount === account ? 'text-white' : ''
+                  }`}
+                  onClick={() => setSelectedAccount(account)}
+                >
+                  Account {account}
+                </div>
+              ))}
+              {restCreditAccounts.length > 0 && (
+                <Popover className="relative">
+                  <Popover.Button>
+                    <div className="flex cursor-pointer items-center px-3 hover:text-white">
+                      More
+                      <ChevronDownIcon className="ml-1 h-4 w-4" />
+                    </div>
+                  </Popover.Button>
+                  <Popover.Panel className="absolute z-10 w-[200px] pt-2">
+                    <div className="rounded-2xl bg-white p-4 text-gray-900">
+                      {restCreditAccounts.map((account) => (
+                        <div
+                          key={account}
+                          className={`cursor-pointer hover:text-orange-500 ${
+                            selectedAccount === account ? 'text-orange-500' : ''
+                          }`}
+                          onClick={() => setSelectedAccount(account)}
+                        >
+                          Account {account}
+                        </div>
+                      ))}
+                    </div>
+                  </Popover.Panel>
+                </Popover>
+              )}
               <Popover className="relative">
                 <Popover.Button>
                   <div className="flex cursor-pointer items-center px-3 hover:text-white">
-                    More
+                    Manage
                     <ChevronDownIcon className="ml-1 h-4 w-4" />
                   </div>
                 </Popover.Button>
                 <Popover.Panel className="absolute z-10 w-[200px] pt-2">
-                  <div className="rounded-2xl bg-white p-4 text-gray-900">
-                    {restCreditAccounts.map((account) => (
+                  {({ close }) => (
+                    <div className="rounded-2xl bg-white p-4 text-gray-900">
                       <div
-                        key={account}
-                        className={`cursor-pointer hover:text-orange-500 ${
-                          selectedAccount === account ? 'text-orange-500' : ''
-                        }`}
-                        onClick={() => setSelectedAccount(account)}
+                        className="mb-2 cursor-pointer hover:text-orange-500"
+                        onClick={() => {
+                          close()
+                          createCreditAccount()
+                        }}
                       >
-                        Account {account}
+                        Create Account
                       </div>
-                    ))}
-                  </div>
+                      <div
+                        className="mb-2 cursor-pointer hover:text-orange-500"
+                        onClick={() => {
+                          close()
+                          deleteCreditAccount()
+                        }}
+                      >
+                        Close Account
+                      </div>
+                      <div
+                        className="mb-2 cursor-pointer hover:text-orange-500"
+                        onClick={() => alert('TODO')}
+                      >
+                        Transfer Balance
+                      </div>
+                      <div
+                        className="cursor-pointer hover:text-orange-500"
+                        onClick={() => alert('TODO')}
+                      >
+                        Rearrange
+                      </div>
+                    </div>
+                  )}
                 </Popover.Panel>
               </Popover>
-            )}
-            <Popover className="relative">
-              <Popover.Button>
-                <div className="flex cursor-pointer items-center px-3 hover:text-white">
-                  Manage
-                  <ChevronDownIcon className="ml-1 h-4 w-4" />
-                </div>
-              </Popover.Button>
-              <Popover.Panel className="absolute z-10 w-[200px] pt-2">
-                {({ close }) => (
-                  <div className="rounded-2xl bg-white p-4 text-gray-900">
-                    <div
-                      className="mb-2 cursor-pointer hover:text-orange-500"
-                      onClick={() => {
-                        close()
-                        createCreditAccount()
-                      }}
-                    >
-                      Create Account
-                    </div>
-                    <div
-                      className="mb-2 cursor-pointer hover:text-orange-500"
-                      onClick={() => {
-                        close()
-                        deleteCreditAccount()
-                      }}
-                    >
-                      Close Account
-                    </div>
-                    <div
-                      className="mb-2 cursor-pointer hover:text-orange-500"
-                      onClick={() => alert('TODO')}
-                    >
-                      Transfer Balance
-                    </div>
-                    <div
-                      className="cursor-pointer hover:text-orange-500"
-                      onClick={() => alert('TODO')}
-                    >
-                      Rearrange
-                    </div>
-                  </div>
-                )}
-              </Popover.Panel>
-            </Popover>
-          </div>
-          <div className="flex items-center gap-4">
-            {accountStats && (
-              <>
-                <p>{formatCurrency(accountStats.netWorth)}</p>
-                {/* TOOLTIP */}
-                <div title={`${String(accountStats.currentLeverage.toFixed(1))}x`}>
-                  <SemiCircleProgress
-                    value={accountStats.currentLeverage / accountStats.maxLeverage}
-                    label="Lvg"
-                  />
-                </div>
-                <SemiCircleProgress value={accountStats.risk} label="Risk" />
-                <ProgressBar value={accountStats.health} />
-              </>
-            )}
-            <div
-              className="flex w-16 cursor-pointer justify-center hover:text-white"
-              onClick={toggleCreditManager}
-            >
-              <ArrowRightLine />
-            </div>
-          </div>
+            </>
+          )}
         </div>
-      )}
+        {rightSideContent()}
+      </div>
       {(isLoadingCreate || isLoadingDelete) && (
-        <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        <div className="absolute inset-0 z-40 grid place-items-center bg-black/50">
           <Spinner />
         </div>
       )}
