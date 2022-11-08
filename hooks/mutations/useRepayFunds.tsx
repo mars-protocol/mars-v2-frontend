@@ -13,40 +13,33 @@ const useRepayFunds = (
   denom: string,
   options: Omit<UseMutationOptions, 'onError'>,
 ) => {
-  const signingClient = useWalletStore((s) => s.signingClient)
-  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
+  const creditManagerClient = useWalletStore((s) => s.clients.creditManager)
+  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount ?? '')
   const address = useWalletStore((s) => s.address)
 
   const queryClient = useQueryClient()
 
-  const executeMsg = useMemo(() => {
-    return {
-      update_credit_account: {
-        account_id: selectedAccount,
-        actions: [
-          {
-            deposit: {
-              denom: denom,
-              amount: String(amount),
-            },
-          },
-          {
-            repay: {
-              denom: denom,
-              amount: String(amount),
-            },
-          },
-        ],
+  const actions = useMemo(() => {
+    return [
+      {
+        deposit: {
+          denom: denom,
+          amount: String(amount),
+        },
       },
-    }
-  }, [amount, denom, selectedAccount])
+      {
+        repay: {
+          denom: denom,
+          amount: String(amount),
+        },
+      },
+    ]
+  }, [amount, denom])
 
   return useMutation(
     async () =>
-      await signingClient?.execute(
-        address,
-        contractAddresses.creditManager,
-        executeMsg,
+      await creditManagerClient?.updateCreditAccount(
+        { accountId: selectedAccount, actions },
         hardcodedFee,
         undefined,
         [
@@ -58,7 +51,7 @@ const useRepayFunds = (
       ),
     {
       onSettled: () => {
-        queryClient.invalidateQueries(queryKeys.creditAccountsPositions(selectedAccount ?? ''))
+        queryClient.invalidateQueries(queryKeys.creditAccountsPositions(selectedAccount))
         queryClient.invalidateQueries(queryKeys.tokenBalance(address, denom))
         queryClient.invalidateQueries(queryKeys.allBalances(address))
         queryClient.invalidateQueries(queryKeys.redbankBalances())
