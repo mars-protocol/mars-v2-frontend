@@ -1,9 +1,8 @@
-import { useQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
 import { Coin } from '@cosmjs/stargate'
-
-import useWalletStore from 'stores/useWalletStore'
+import { useQuery } from '@tanstack/react-query'
 import { contractAddresses } from 'config/contracts'
+import { useMemo } from 'react'
+import useWalletStore from 'stores/useWalletStore'
 import { queryKeys } from 'types/query-keys-factory'
 
 interface DebtAmount {
@@ -40,7 +39,7 @@ const useCreditAccountPositions = (accountId: string) => {
       enabled: !!address && !!client,
       refetchInterval: 30000,
       staleTime: Infinity,
-    }
+    },
   )
 
   return {

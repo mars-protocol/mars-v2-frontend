@@ -1,25 +1,25 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import { Transition, Dialog, Switch } from '@headlessui/react'
+import { Dialog, Switch, Transition } from '@headlessui/react'
 import * as RSlider from '@radix-ui/react-slider'
 import BigNumber from 'bignumber.js'
-import { toast } from 'react-toastify'
-
+import Slider from 'components/Slider'
+import useWithdrawFunds from 'hooks/mutations/useWithdrawFunds'
+import useAccountStats from 'hooks/useAccountStats'
+import useAllBalances from 'hooks/useAllBalances'
+import useCalculateMaxWithdrawAmount from 'hooks/useCalculateMaxWithdrawAmount'
 import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
-import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-import ContainerSecondary from './ContainerSecondary'
-import useCreditManagerStore from 'stores/useCreditManagerStore'
-import Button from './Button'
 import useMarkets from 'hooks/useMarkets'
 import useTokenPrices from 'hooks/useTokenPrices'
+import React, { useEffect, useMemo, useState } from 'react'
+import { toast } from 'react-toastify'
+import useCreditManagerStore from 'stores/useCreditManagerStore'
 import { formatCurrency } from 'utils/formatters'
+import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
+
+import Button from './Button'
+import ContainerSecondary from './ContainerSecondary'
 import ProgressBar from './ProgressBar'
 import SemiCircleProgress from './SemiCircleProgress'
-import useAccountStats from 'hooks/useAccountStats'
-import useWithdrawFunds from 'hooks/mutations/useWithdrawFunds'
 import Spinner from './Spinner'
-import useCalculateMaxWithdrawAmount from 'hooks/useCalculateMaxWithdrawAmount'
-import useAllBalances from 'hooks/useAllBalances'
-import Slider from 'components/Slider'
 
 const WithdrawModal = ({ show, onClose }: any) => {
   const [amount, setAmount] = useState(0)
@@ -28,7 +28,7 @@ const WithdrawModal = ({ show, onClose }: any) => {
 
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
   const { data: positionsData, isLoading: isLoadingPositions } = useCreditAccountPositions(
-    selectedAccount ?? ''
+    selectedAccount ?? '',
   )
 
   const { data: balancesData } = useAllBalances()
@@ -128,46 +128,46 @@ const WithdrawModal = ({ show, onClose }: any) => {
 
   return (
     <Transition appear show={show} as={React.Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={onClose}>
+      <Dialog as='div' className='relative z-10' onClose={onClose}>
         <Transition.Child
           as={React.Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
+          enter='ease-out duration-300'
+          enterFrom='opacity-0'
+          enterTo='opacity-100'
+          leave='ease-in duration-200'
+          leaveFrom='opacity-100'
+          leaveTo='opacity-0'
         >
-          <div className="fixed inset-0 bg-black bg-opacity-80" />
+          <div className='fixed inset-0 bg-black bg-opacity-80' />
         </Transition.Child>
 
-        <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4">
+        <div className='fixed inset-0 overflow-y-auto'>
+          <div className='flex min-h-full items-center justify-center p-4'>
             <Transition.Child
               as={React.Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
+              enter='ease-out duration-300'
+              enterFrom='opacity-0 scale-95'
+              enterTo='opacity-100 scale-100'
+              leave='ease-in duration-200'
+              leaveFrom='opacity-100 scale-100'
+              leaveTo='opacity-0 scale-95'
             >
-              <Dialog.Panel className="flex w-full max-w-3xl transform overflow-hidden rounded-2xl bg-[#585A74] align-middle shadow-xl transition-all">
+              <Dialog.Panel className='flex w-full max-w-3xl transform overflow-hidden rounded-2xl bg-[#585A74] align-middle shadow-xl transition-all'>
                 {isLoading && (
-                  <div className="absolute inset-0 z-40 grid place-items-center bg-black/50">
+                  <div className='absolute inset-0 z-40 grid place-items-center bg-black/50'>
                     <Spinner />
                   </div>
                 )}
-                <div className="flex w-1/2 flex-col p-4">
-                  <Dialog.Title as="h3" className="mb-4 text-center text-lg font-medium">
+                <div className='flex w-1/2 flex-col p-4'>
+                  <Dialog.Title as='h3' className='mb-4 text-center text-lg font-medium'>
                     Withdraw from Account {selectedAccount}
                   </Dialog.Title>
                   <div>
-                    <ContainerSecondary className="mb-3 p-3">
-                      <div className="mb-4 text-sm">
-                        <div className="mb-1 flex justify-between">
-                          <div className="font-bold">Asset:</div>
-                          <select className="bg-transparent" onChange={handleTokenChange}>
+                    <ContainerSecondary className='mb-3 p-3'>
+                      <div className='mb-4 text-sm'>
+                        <div className='mb-1 flex justify-between'>
+                          <div className='font-bold'>Asset:</div>
+                          <select className='bg-transparent' onChange={handleTokenChange}>
                             {positionsData?.coins?.map((coin) => (
                               <option key={coin.denom} value={coin.denom}>
                                 {getTokenSymbol(coin.denom)}
@@ -175,26 +175,26 @@ const WithdrawModal = ({ show, onClose }: any) => {
                             ))}
                           </select>
                         </div>
-                        <div className="flex justify-between">
-                          <div className="font-bold">Amount:</div>
+                        <div className='flex justify-between'>
+                          <div className='font-bold'>Amount:</div>
                           <input
-                            type="number"
-                            className="border border-black/50 bg-transparent px-2"
+                            type='number'
+                            className='border border-black/50 bg-transparent px-2'
                             value={amount}
-                            min="0"
+                            min='0'
                             onChange={(e) => handleValueChange(e.target.valueAsNumber)}
                           />
                         </div>
                       </div>
-                      <p className="mb-2 text-sm">In wallet: {walletAmount.toLocaleString()}</p>
+                      <p className='mb-2 text-sm'>In wallet: {walletAmount.toLocaleString()}</p>
                       <Slider
-                        className="mb-6"
+                        className='mb-6'
                         value={percentageValue}
                         onChange={(value) => {
                           const decimal = value[0] / 100
                           // limit decimal precision based on token contract decimals
                           const newAmount = Number(
-                            (decimal * maxWithdrawAmount).toFixed(selectedTokenDecimals)
+                            (decimal * maxWithdrawAmount).toFixed(selectedTokenDecimals),
                           )
 
                           setAmount(newAmount)
@@ -202,10 +202,10 @@ const WithdrawModal = ({ show, onClose }: any) => {
                         onMaxClick={() => setAmount(maxWithdrawAmount)}
                       />
                     </ContainerSecondary>
-                    <ContainerSecondary className="mb-10 flex items-center justify-between">
-                      <div className="text-left">
-                        <h3 className="font-bold">Withdraw with borrowing</h3>
-                        <div className="text-sm text-[#585A74]/50">Explanation....</div>
+                    <ContainerSecondary className='mb-10 flex items-center justify-between'>
+                      <div className='text-left'>
+                        <h3 className='font-bold'>Withdraw with borrowing</h3>
+                        <div className='text-sm text-[#585A74]/50'>Explanation....</div>
                       </div>
 
                       <Switch
@@ -223,60 +223,60 @@ const WithdrawModal = ({ show, onClose }: any) => {
                       </Switch>
                     </ContainerSecondary>
                   </div>
-                  <Button className="mt-auto w-full" onClick={() => mutate()}>
+                  <Button className='mt-auto w-full' onClick={() => mutate()}>
                     Withdraw
                   </Button>
                 </div>
-                <div className="flex w-1/2 flex-col justify-center bg-[#4A4C60] p-4">
-                  <p className="text-bold mb-3 text-xs uppercase text-white/50">About</p>
-                  <h4 className="mb-4 text-xl">Subaccount {selectedAccount}</h4>
-                  <div className="mb-2 rounded-md border border-white/20 p-3">
+                <div className='flex w-1/2 flex-col justify-center bg-[#4A4C60] p-4'>
+                  <p className='text-bold mb-3 text-xs uppercase text-white/50'>About</p>
+                  <h4 className='mb-4 text-xl'>Subaccount {selectedAccount}</h4>
+                  <div className='mb-2 rounded-md border border-white/20 p-3'>
                     {accountStats && (
-                      <div className="flex items-center gap-x-3">
+                      <div className='flex items-center gap-x-3'>
                         <p>{formatCurrency(accountStats.netWorth)}</p>
                         {/* TOOLTIP */}
                         <div title={`${String(accountStats.currentLeverage.toFixed(1))}x`}>
                           <SemiCircleProgress
                             value={accountStats.currentLeverage / accountStats.maxLeverage}
-                            label="Lvg"
+                            label='Lvg'
                           />
                         </div>
-                        <SemiCircleProgress value={accountStats.risk} label="Risk" />
+                        <SemiCircleProgress value={accountStats.risk} label='Risk' />
                         <ProgressBar value={accountStats.health} />
                       </div>
                     )}
                   </div>
-                  <div className="mb-2 rounded-md border border-white/20 p-3 text-sm">
-                    <div className="mb-1 flex justify-between">
+                  <div className='mb-2 rounded-md border border-white/20 p-3 text-sm'>
+                    <div className='mb-1 flex justify-between'>
                       <div>Total Position:</div>
-                      <div className="font-semibold">
+                      <div className='font-semibold'>
                         {formatCurrency(accountStats?.totalPosition ?? 0)}
                       </div>
                     </div>
-                    <div className="flex justify-between">
+                    <div className='flex justify-between'>
                       <div>Total Liabilities:</div>
-                      <div className="font-semibold">
+                      <div className='font-semibold'>
                         {formatCurrency(accountStats?.totalDebt ?? 0)}
                       </div>
                     </div>
                   </div>
-                  <div className="rounded-md border border-white/20 p-3">
-                    <h4 className="mb-2 font-bold">Balances</h4>
+                  <div className='rounded-md border border-white/20 p-3'>
+                    <h4 className='mb-2 font-bold'>Balances</h4>
                     {isLoadingPositions ? (
                       <div>Loading...</div>
                     ) : (
-                      <table className="w-full border-separate border-spacing-1">
-                        <thead className="text-left text-xs font-semibold">
+                      <table className='w-full border-separate border-spacing-1'>
+                        <thead className='text-left text-xs font-semibold'>
                           <tr>
                             <th>Asset</th>
                             <th>Value</th>
                             <th>Size</th>
-                            <th className="text-right">APY</th>
+                            <th className='text-right'>APY</th>
                           </tr>
                         </thead>
                         <tbody>
                           {positionsData?.coins.map((coin) => (
-                            <tr key={coin.denom} className="text-xs text-white/50">
+                            <tr key={coin.denom} className='text-xs text-white/50'>
                               <td>{getTokenSymbol(coin.denom)}</td>
                               <td>
                                 {formatCurrency(getTokenTotalUSDValue(coin.amount, coin.denom))}
@@ -289,12 +289,12 @@ const WithdrawModal = ({ show, onClose }: any) => {
                                     maximumFractionDigits: getTokenDecimals(coin.denom),
                                   })}
                               </td>
-                              <td className="text-right">-</td>
+                              <td className='text-right'>-</td>
                             </tr>
                           ))}
                           {positionsData?.debts.map((coin) => (
-                            <tr key={coin.denom} className="text-xs text-red-500">
-                              <td className="text-white/50">{getTokenSymbol(coin.denom)}</td>
+                            <tr key={coin.denom} className='text-xs text-red-500'>
+                              <td className='text-white/50'>{getTokenSymbol(coin.denom)}</td>
                               <td>
                                 -{formatCurrency(getTokenTotalUSDValue(coin.amount, coin.denom))}
                               </td>
@@ -307,7 +307,7 @@ const WithdrawModal = ({ show, onClose }: any) => {
                                     maximumFractionDigits: 6,
                                   })}
                               </td>
-                              <td className="text-right">
+                              <td className='text-right'>
                                 -{(Number(marketsData?.[coin.denom].borrow_rate) * 100).toFixed(1)}%
                               </td>
                             </tr>

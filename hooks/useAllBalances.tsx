@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-
 import useWalletStore from 'stores/useWalletStore'
 import { queryKeys } from 'types/query-keys-factory'
 import { chain } from 'utils/chains'
@@ -17,7 +16,7 @@ const useAllBalances = () => {
     {
       enabled: !!address,
       staleTime: Infinity,
-    }
+    },
   )
 
   return {

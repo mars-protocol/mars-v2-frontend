@@ -86,7 +86,7 @@ const useMarkets = () => {
     }),
     {
       staleTime: Infinity,
-    }
+    },
   )
 
   return {

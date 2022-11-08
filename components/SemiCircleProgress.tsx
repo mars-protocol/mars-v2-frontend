@@ -58,7 +58,7 @@ const SemiCircleProgress = ({
   }
 
   return (
-    <div className="semicircle-container" style={{ position: 'relative' }}>
+    <div className='semicircle-container' style={{ position: 'relative' }}>
       <svg
         width={diameter}
         height={diameter / 2}
@@ -68,7 +68,7 @@ const SemiCircleProgress = ({
           cx={coordinateForCircle}
           cy={coordinateForCircle}
           r={radius}
-          fill="none"
+          fill='none'
           stroke={background}
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
@@ -81,7 +81,7 @@ const SemiCircleProgress = ({
           cx={coordinateForCircle}
           cy={coordinateForCircle}
           r={radius}
-          fill="none"
+          fill='none'
           // stroke={stroke}
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
@@ -93,7 +93,7 @@ const SemiCircleProgress = ({
       </svg>
       {label && (
         <span
-          className="text-xs"
+          className='text-xs'
           style={{
             width: '100%',
             left: '0',

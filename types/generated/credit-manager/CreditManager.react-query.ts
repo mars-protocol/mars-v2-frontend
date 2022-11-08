@@ -5,45 +5,46 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tanstack/react-query'
-import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
+import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
+import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from '@tanstack/react-query'
+
+import { CreditManagerClient, CreditManagerQueryClient } from './CreditManager.client'
 import {
-  Decimal,
-  OracleBaseForString,
-  RedBankBaseForString,
-  SwapperBaseForString,
-  InstantiateMsg,
-  VaultBaseForString,
-  ExecuteMsg,
   Action,
-  Uint128,
-  CallbackMsg,
   Addr,
-  Coin,
-  ConfigUpdates,
-  VaultBaseForAddr,
-  QueryMsg,
   ArrayOfCoinBalanceResponseItem,
-  CoinBalanceResponseItem,
-  ArrayOfSharesResponseItem,
-  SharesResponseItem,
   ArrayOfDebtShares,
-  DebtShares,
-  ArrayOfVaultWithBalance,
-  VaultWithBalance,
-  ArrayOfVaultPositionResponseItem,
-  VaultPositionResponseItem,
-  VaultPosition,
-  VaultPositionState,
+  ArrayOfSharesResponseItem,
   ArrayOfString,
   ArrayOfVaultBaseForString,
+  ArrayOfVaultPositionResponseItem,
+  ArrayOfVaultWithBalance,
+  CallbackMsg,
+  Coin,
+  CoinBalanceResponseItem,
   ConfigResponse,
-  HealthResponse,
-  Positions,
+  ConfigUpdates,
   DebtAmount,
+  DebtShares,
+  Decimal,
+  ExecuteMsg,
+  HealthResponse,
+  InstantiateMsg,
+  OracleBaseForString,
+  Positions,
+  QueryMsg,
+  RedBankBaseForString,
+  SharesResponseItem,
+  SwapperBaseForString,
+  Uint128,
+  VaultBaseForAddr,
+  VaultBaseForString,
+  VaultPosition,
+  VaultPositionResponseItem,
+  VaultPositionState,
+  VaultWithBalance,
 } from './CreditManager.types'
-import { CreditManagerQueryClient, CreditManagerClient } from './CreditManager.client'
 export const creditManagerQueryKeys = {
   contract: [
     {

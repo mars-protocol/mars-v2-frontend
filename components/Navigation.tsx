@@ -1,24 +1,24 @@
-import React, { useMemo } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { useRouter } from 'next/router'
 import { Popover } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
-
-import SearchInput from 'components/SearchInput'
+import ArrowRightLine from 'components/Icons/arrow-right-line.svg'
 import ProgressBar from 'components/ProgressBar'
+import SearchInput from 'components/SearchInput'
 import Spinner from 'components/Spinner'
 import Wallet from 'components/Wallet'
-import { formatCurrency } from 'utils/formatters'
-import useCreditAccounts from 'hooks/useCreditAccounts'
 import useCreateCreditAccount from 'hooks/mutations/useCreateCreditAccount'
 import useDeleteCreditAccount from 'hooks/mutations/useDeleteCreditAccount'
-import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useAccountStats from 'hooks/useAccountStats'
-import SemiCircleProgress from './SemiCircleProgress'
+import useCreditAccounts from 'hooks/useCreditAccounts'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import React, { useMemo } from 'react'
+import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useWalletStore from 'stores/useWalletStore'
-import ArrowRightLine from 'components/Icons/arrow-right-line.svg'
+import { formatCurrency } from 'utils/formatters'
+
 import Button from './Button'
+import SemiCircleProgress from './SemiCircleProgress'
 
 // TODO: will require some tweaks depending on how lower viewport mocks pans out
 const MAX_VISIBLE_CREDIT_ACCOUNTS = 5
@@ -52,7 +52,7 @@ const Navigation = () => {
   const { data: creditAccountsList, isLoading: isLoadingCreditAccounts } = useCreditAccounts()
   const { mutate: createCreditAccount, isLoading: isLoadingCreate } = useCreateCreditAccount()
   const { mutate: deleteCreditAccount, isLoading: isLoadingDelete } = useDeleteCreditAccount(
-    selectedAccount || ''
+    selectedAccount || '',
   )
 
   const accountStats = useAccountStats()
@@ -77,7 +77,7 @@ const Navigation = () => {
     }
 
     return (
-      <div className="flex items-center gap-4">
+      <div className='flex items-center gap-4'>
         {accountStats && (
           <>
             <p>{formatCurrency(accountStats.netWorth)}</p>
@@ -85,15 +85,15 @@ const Navigation = () => {
             <div title={`${String(accountStats.currentLeverage.toFixed(1))}x`}>
               <SemiCircleProgress
                 value={accountStats.currentLeverage / accountStats.maxLeverage}
-                label="Lvg"
+                label='Lvg'
               />
             </div>
-            <SemiCircleProgress value={accountStats.risk} label="Risk" />
+            <SemiCircleProgress value={accountStats.risk} label='Risk' />
             <ProgressBar value={accountStats.health} />
           </>
         )}
         <div
-          className="flex w-16 cursor-pointer justify-center hover:text-white"
+          className='flex w-16 cursor-pointer justify-center hover:text-white'
           onClick={toggleCreditManager}
         >
           <ArrowRightLine />
@@ -105,13 +105,13 @@ const Navigation = () => {
   return (
     <div>
       {/* Main navigation bar */}
-      <div className="flex items-center justify-between border-b border-white/20 px-6 py-3">
-        <Link href="/" passHref>
+      <div className='flex items-center justify-between border-b border-white/20 px-6 py-3'>
+        <Link href='/' passHref>
           <a>
-            <Image src="/logo.svg" alt="mars" width={123} height={40} />
+            <Image src='/logo.svg' alt='mars' width={123} height={40} />
           </a>
         </Link>
-        <div className="flex gap-5 px-12 text-white/40">
+        <div className='flex gap-5 px-12 text-white/40'>
           {navItems.map((item, index) => (
             <NavLink key={index} href={item.href}>
               {item.label}
@@ -121,8 +121,8 @@ const Navigation = () => {
         <Wallet />
       </div>
       {/* Sub navigation bar */}
-      <div className="flex items-center justify-between border-b border-white/20 px-6 py-3 text-sm text-white/40">
-        <div className="flex items-center">
+      <div className='flex items-center justify-between border-b border-white/20 px-6 py-3 text-sm text-white/40'>
+        <div className='flex items-center'>
           <SearchInput />
           {isConnected && hasCreditAccounts && (
             <>
@@ -138,15 +138,15 @@ const Navigation = () => {
                 </div>
               ))}
               {restCreditAccounts.length > 0 && (
-                <Popover className="relative">
+                <Popover className='relative'>
                   <Popover.Button>
-                    <div className="flex cursor-pointer items-center px-3 hover:text-white">
+                    <div className='flex cursor-pointer items-center px-3 hover:text-white'>
                       More
-                      <ChevronDownIcon className="ml-1 h-4 w-4" />
+                      <ChevronDownIcon className='ml-1 h-4 w-4' />
                     </div>
                   </Popover.Button>
-                  <Popover.Panel className="absolute z-10 w-[200px] pt-2">
-                    <div className="rounded-2xl bg-white p-4 text-gray-900">
+                  <Popover.Panel className='absolute z-10 w-[200px] pt-2'>
+                    <div className='rounded-2xl bg-white p-4 text-gray-900'>
                       {restCreditAccounts.map((account) => (
                         <div
                           key={account}
@@ -162,18 +162,18 @@ const Navigation = () => {
                   </Popover.Panel>
                 </Popover>
               )}
-              <Popover className="relative">
+              <Popover className='relative'>
                 <Popover.Button>
-                  <div className="flex cursor-pointer items-center px-3 hover:text-white">
+                  <div className='flex cursor-pointer items-center px-3 hover:text-white'>
                     Manage
-                    <ChevronDownIcon className="ml-1 h-4 w-4" />
+                    <ChevronDownIcon className='ml-1 h-4 w-4' />
                   </div>
                 </Popover.Button>
-                <Popover.Panel className="absolute z-10 w-[200px] pt-2">
+                <Popover.Panel className='absolute z-10 w-[200px] pt-2'>
                   {({ close }) => (
-                    <div className="rounded-2xl bg-white p-4 text-gray-900">
+                    <div className='rounded-2xl bg-white p-4 text-gray-900'>
                       <div
-                        className="mb-2 cursor-pointer hover:text-orange-500"
+                        className='mb-2 cursor-pointer hover:text-orange-500'
                         onClick={() => {
                           close()
                           createCreditAccount()
@@ -182,7 +182,7 @@ const Navigation = () => {
                         Create Account
                       </div>
                       <div
-                        className="mb-2 cursor-pointer hover:text-orange-500"
+                        className='mb-2 cursor-pointer hover:text-orange-500'
                         onClick={() => {
                           close()
                           deleteCreditAccount()
@@ -191,13 +191,13 @@ const Navigation = () => {
                         Close Account
                       </div>
                       <div
-                        className="mb-2 cursor-pointer hover:text-orange-500"
+                        className='mb-2 cursor-pointer hover:text-orange-500'
                         onClick={() => alert('TODO')}
                       >
                         Transfer Balance
                       </div>
                       <div
-                        className="cursor-pointer hover:text-orange-500"
+                        className='cursor-pointer hover:text-orange-500'
                         onClick={() => alert('TODO')}
                       >
                         Rearrange
@@ -212,7 +212,7 @@ const Navigation = () => {
         {rightSideContent()}
       </div>
       {(isLoadingCreate || isLoadingDelete) && (
-        <div className="absolute inset-0 z-40 grid place-items-center bg-black/50">
+        <div className='absolute inset-0 z-40 grid place-items-center bg-black/50'>
           <Spinner />
         </div>
       )}

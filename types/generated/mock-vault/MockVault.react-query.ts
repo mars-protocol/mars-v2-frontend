@@ -5,20 +5,21 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tanstack/react-query'
-import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
+import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
+import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from '@tanstack/react-query'
+
+import { MockVaultClient, MockVaultQueryClient } from './MockVault.client'
 import {
-  OracleBaseForString,
-  InstantiateMsg,
+  ArrayOfCoin,
+  Coin,
   ExecuteMsg,
+  InstantiateMsg,
+  OracleBaseForString,
   QueryMsg,
   Uint128,
   VaultInfo,
-  Coin,
-  ArrayOfCoin,
 } from './MockVault.types'
-import { MockVaultQueryClient, MockVaultClient } from './MockVault.client'
 export const mockVaultQueryKeys = {
   contract: [
     {

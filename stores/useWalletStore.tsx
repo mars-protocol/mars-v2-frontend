@@ -1,12 +1,11 @@
-import create from 'zustand'
-import { persist } from 'zustand/middleware'
-
-import { Wallet } from 'types'
 import { CosmWasmClient, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { chain } from 'utils/chains'
 import { contractAddresses } from 'config/contracts'
+import { Wallet } from 'types'
 import { AccountNftClient } from 'types/generated/account-nft/AccountNft.client'
 import { CreditManagerClient } from 'types/generated/credit-manager/CreditManager.client'
+import { chain } from 'utils/chains'
+import create from 'zustand'
+import { persist } from 'zustand/middleware'
 
 interface WalletStore {
   address: string
@@ -45,12 +44,12 @@ const useWalletStore = create<WalletStore>()(
           const accountNft = new AccountNftClient(
             signingClient,
             address,
-            contractAddresses.accountNft
+            contractAddresses.accountNft,
           )
           const creditManager = new CreditManagerClient(
             signingClient,
             address,
-            contractAddresses.creditManager
+            contractAddresses.creditManager,
           )
 
           set(() => ({
@@ -70,7 +69,7 @@ const useWalletStore = create<WalletStore>()(
             const address = key.bech32Address
             const signingClientInstance = await SigningCosmWasmClient.connectWithSigner(
               chain.rpc,
-              offlineSigner
+              offlineSigner,
             )
 
             get().actions.initClients(address, signingClientInstance)
@@ -91,7 +90,7 @@ const useWalletStore = create<WalletStore>()(
           const offlineSigner = window.keplr.getOfflineSigner(chain.chainId)
           const signingClientInstance = await SigningCosmWasmClient.connectWithSigner(
             chain.rpc,
-            offlineSigner
+            offlineSigner,
           )
 
           get().actions.initClients(address, signingClientInstance)
@@ -106,11 +105,11 @@ const useWalletStore = create<WalletStore>()(
       partialize: (state) =>
         Object.fromEntries(
           Object.entries(state).filter(
-            ([key]) => !['client', 'metamaskInstalled', 'actions', 'address'].includes(key)
-          )
+            ([key]) => !['client', 'metamaskInstalled', 'actions', 'address'].includes(key),
+          ),
         ),
-    }
-  )
+    },
+  ),
 )
 
 export default useWalletStore

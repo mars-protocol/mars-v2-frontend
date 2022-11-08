@@ -1,5 +1,4 @@
-import React from 'react'
-import Image from 'next/image'
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid'
 import {
   ColumnDef,
   flexRender,
@@ -8,9 +7,10 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid'
-
+import Image from 'next/image'
+import React from 'react'
 import { formatCurrency } from 'utils/formatters'
+
 import AssetRow from './AssetRow'
 
 interface Market {
@@ -77,11 +77,11 @@ const BorrowTable = ({ data, onBorrowClick, onRepayClick }: Props) => {
         header: 'Asset',
         id: 'symbol',
         accessorFn: (row) => (
-          <div className="flex flex-1 items-center">
-            <Image src={row.icon} alt="token" width={32} height={32} />
-            <div className="pl-2">
+          <div className='flex flex-1 items-center'>
+            <Image src={row.icon} alt='token' width={32} height={32} />
+            <div className='pl-2'>
               <div>{row.symbol}</div>
-              <div className="text-xs">{row.chain}</div>
+              <div className='text-xs'>{row.chain}</div>
             </div>
           </div>
         ),
@@ -91,7 +91,7 @@ const BorrowTable = ({ data, onBorrowClick, onRepayClick }: Props) => {
         accessorKey: 'borrowRate',
         header: 'Borrow Rate',
         accessorFn: (row) => (
-          <div className="flex flex-1 items-center text-xs">
+          <div className='flex flex-1 items-center text-xs'>
             {row.borrowRate ? `${(row.borrowRate * 100).toFixed(2)}%` : '-'}
           </div>
         ),
@@ -101,10 +101,10 @@ const BorrowTable = ({ data, onBorrowClick, onRepayClick }: Props) => {
         accessorKey: 'age',
         header: 'Borrowed',
         accessorFn: (row) => (
-          <div className="flex flex-1 items-center text-xs">
+          <div className='flex flex-1 items-center text-xs'>
             {row.borrowed ? (
               <div>
-                <div className="font-bold">{row.borrowed.amount}</div>
+                <div className='font-bold'>{row.borrowed.amount}</div>
                 <div>{formatCurrency(row.borrowed.value)}</div>
               </div>
             ) : (
@@ -124,17 +124,17 @@ const BorrowTable = ({ data, onBorrowClick, onRepayClick }: Props) => {
         header: 'Manage',
         width: 150,
         cell: ({ row }) => (
-          <div className="flex items-center justify-end">
+          <div className='flex items-center justify-end'>
             {row.getIsExpanded() ? (
-              <ChevronUpIcon className="w-5" />
+              <ChevronUpIcon className='w-5' />
             ) : (
-              <ChevronDownIcon className="w-5" />
+              <ChevronDownIcon className='w-5' />
             )}
           </div>
         ),
       },
     ],
-    []
+    [],
   )
 
   const table = useReactTable({
@@ -150,9 +150,9 @@ const BorrowTable = ({ data, onBorrowClick, onRepayClick }: Props) => {
   })
 
   return (
-    <div className="w-full table-fixed border-spacing-10 text-sm">
+    <div className='w-full table-fixed border-spacing-10 text-sm'>
       {table.getHeaderGroups().map((headerGroup) => (
-        <div key={headerGroup.id} className="mb-2 flex rounded-md px-4 py-2 text-xs">
+        <div key={headerGroup.id} className='mb-2 flex rounded-md px-4 py-2 text-xs'>
           {headerGroup.headers.map((header) => {
             return (
               <div key={header.id} className={`${header.index === 4 ? 'w-[50px]' : 'flex-1'}`}>
@@ -175,7 +175,7 @@ const BorrowTable = ({ data, onBorrowClick, onRepayClick }: Props) => {
           })}
         </div>
       ))}
-      <div className="flex flex-col gap-2">
+      <div className='flex flex-col gap-2'>
         {table.getRowModel().rows.length === 0 ? (
           <div>No Data</div>
         ) : (

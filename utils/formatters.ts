@@ -5,7 +5,7 @@ export const formatWalletAddress = (address: string, substrLength = 6): string =
 
   return `${address.slice(0, substrLength)}...${address.slice(
     address.length - substrLength,
-    address.length
+    address.length,
   )}`
 }
 

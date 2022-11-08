@@ -1,11 +1,11 @@
-import { useCallback, useMemo } from 'react'
 import BigNumber from 'bignumber.js'
-
-import { getTokenDecimals } from 'utils/tokens'
-import useCreditAccountPositions from './useCreditAccountPositions'
+import { useCallback, useMemo } from 'react'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
-import useTokenPrices from './useTokenPrices'
+import { getTokenDecimals } from 'utils/tokens'
+
+import useCreditAccountPositions from './useCreditAccountPositions'
 import useMarkets from './useMarkets'
+import useTokenPrices from './useTokenPrices'
 
 const getApproximateHourlyInterest = (amount: string, borrowAPY: string) => {
   const hourlyAPY = BigNumber(borrowAPY).div(24 * 365)
@@ -28,7 +28,7 @@ const useCalculateMaxWithdrawAmount = (denom: string, borrow: boolean) => {
 
       return BigNumber(amount).times(tokenPrices[denom]).toNumber()
     },
-    [tokenPrices]
+    [tokenPrices],
   )
 
   const tokenAmountInCreditAccount = useMemo(() => {
@@ -48,10 +48,10 @@ const useCalculateMaxWithdrawAmount = (denom: string, borrow: boolean) => {
     const totalLiabilitiesValue = positionsData?.debts.reduce((acc, coin) => {
       const estimatedInterestAmount = getApproximateHourlyInterest(
         coin.amount,
-        marketsData[coin.denom].borrow_rate
+        marketsData[coin.denom].borrow_rate,
       )
       const tokenDebtValue = BigNumber(getTokenValue(coin.amount, coin.denom)).plus(
-        estimatedInterestAmount
+        estimatedInterestAmount,
       )
 
       return tokenDebtValue.plus(acc).toNumber()
@@ -61,7 +61,7 @@ const useCalculateMaxWithdrawAmount = (denom: string, borrow: boolean) => {
       if (coin.denom === denom) return acc
 
       const tokenWeightedValue = BigNumber(getTokenValue(coin.amount, coin.denom)).times(
-        Number(marketsData[coin.denom].max_loan_to_value)
+        Number(marketsData[coin.denom].max_loan_to_value),
       )
 
       return tokenWeightedValue.plus(acc).toNumber()

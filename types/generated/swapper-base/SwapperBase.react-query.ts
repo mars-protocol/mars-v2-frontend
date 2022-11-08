@@ -5,24 +5,25 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tanstack/react-query'
-import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
+import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
+import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from '@tanstack/react-query'
+
+import { SwapperBaseClient, SwapperBaseQueryClient } from './SwapperBase.client'
 import {
-  InstantiateMsg,
-  ExecuteMsg,
-  Uint128,
-  Decimal,
   Addr,
-  Empty,
-  Coin,
-  QueryMsg,
-  ConfigForString,
-  EstimateExactInSwapResponse,
-  RouteResponseForEmpty,
   ArrayOfRouteResponseForEmpty,
+  Coin,
+  ConfigForString,
+  Decimal,
+  Empty,
+  EstimateExactInSwapResponse,
+  ExecuteMsg,
+  InstantiateMsg,
+  QueryMsg,
+  RouteResponseForEmpty,
+  Uint128,
 } from './SwapperBase.types'
-import { SwapperBaseQueryClient, SwapperBaseClient } from './SwapperBase.client'
 export const swapperBaseQueryKeys = {
   contract: [
     {

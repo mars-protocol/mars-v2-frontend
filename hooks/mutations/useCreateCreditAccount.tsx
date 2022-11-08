@@ -1,11 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'react-toastify'
-
-import useWalletStore from 'stores/useWalletStore'
 import { contractAddresses } from 'config/contracts'
-import { hardcodedFee } from 'utils/contants'
+import { toast } from 'react-toastify'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useWalletStore from 'stores/useWalletStore'
 import { queryKeys } from 'types/query-keys-factory'
+import { hardcodedFee } from 'utils/contants'
 
 // 200000 gas used
 const executeMsg = {
@@ -25,7 +24,7 @@ const useCreateCreditAccount = () => {
         address,
         contractAddresses.creditManager,
         executeMsg,
-        hardcodedFee
+        hardcodedFee,
       ),
     {
       onSettled: () => {
@@ -42,7 +41,7 @@ const useCreateCreditAccount = () => {
         setSelectedAccount(createdID)
         toast.success('New account created')
       },
-    }
+    },
   )
 }
 

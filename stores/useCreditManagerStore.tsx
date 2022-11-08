@@ -28,10 +28,10 @@ const useCreditManagerStore = create<CreditManagerStore>()(
       name: 'creditManager',
       partialize: (state) =>
         Object.fromEntries(
-          Object.entries(state).filter(([key]) => ['selectedAccount'].includes(key))
+          Object.entries(state).filter(([key]) => ['selectedAccount'].includes(key)),
         ),
-    }
-  )
+    },
+  ),
 )
 
 export default useCreditManagerStore

@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
-
-import useWalletStore from 'stores/useWalletStore'
 import { contractAddresses } from 'config/contracts'
+import { useMemo } from 'react'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useWalletStore from 'stores/useWalletStore'
 import { queryKeys } from 'types/query-keys-factory'
 
 type Result = {
@@ -35,7 +34,7 @@ const useCreditAccounts = () => {
           creditManagerActions.setSelectedAccount(data.tokens[0])
         }
       },
-    }
+    },
   )
 
   return {

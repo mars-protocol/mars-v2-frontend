@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-
-import useWalletStore from 'stores/useWalletStore'
 import { contractAddresses } from 'config/contracts'
+import useWalletStore from 'stores/useWalletStore'
 import { queryKeys } from 'types/query-keys-factory'
 
 type Result = string[]
@@ -19,7 +18,7 @@ const useAllowedCoins = () => {
     {
       enabled: !!client,
       staleTime: Infinity,
-    }
+    },
   )
 
   return {

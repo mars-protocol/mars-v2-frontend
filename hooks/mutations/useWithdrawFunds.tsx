@@ -1,11 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { toast } from 'react-toastify'
-
-import useWalletStore from 'stores/useWalletStore'
-import { hardcodedFee } from 'utils/contants'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useWalletStore from 'stores/useWalletStore'
 import { queryKeys } from 'types/query-keys-factory'
+import { hardcodedFee } from 'utils/contants'
 
 const useWithdrawFunds = (
   amount: number,
@@ -13,7 +12,7 @@ const useWithdrawFunds = (
   denom: string,
   options?: {
     onSuccess?: () => void
-  }
+  },
 ) => {
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount ?? '')
   const address = useWalletStore((s) => s.address)
@@ -55,7 +54,7 @@ const useWithdrawFunds = (
     async () =>
       creditManagerClient?.updateCreditAccount(
         { accountId: selectedAccount, actions },
-        hardcodedFee
+        hardcodedFee,
       ),
     {
       onSuccess: () => {
@@ -69,7 +68,7 @@ const useWithdrawFunds = (
       onError: (err: Error) => {
         toast.error(err.message)
       },
-    }
+    },
   )
 }
 

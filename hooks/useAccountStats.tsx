@@ -1,8 +1,8 @@
-import { useMemo } from 'react'
 import BigNumber from 'bignumber.js'
-
+import { useMemo } from 'react'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import { getTokenDecimals } from 'utils/tokens'
+
 import useCreditAccountPositions from './useCreditAccountPositions'
 import useMarkets from './useMarkets'
 import useTokenPrices from './useTokenPrices'
@@ -49,7 +49,7 @@ const useAccountStats = () => {
 
     const totalWeightedPositions = positionsData.coins.reduce((acc, coin) => {
       const tokenWeightedValue = BigNumber(getTokenTotalUSDValue(coin.amount, coin.denom)).times(
-        Number(marketsData[coin.denom].liquidation_threshold)
+        Number(marketsData[coin.denom].liquidation_threshold),
       )
 
       return tokenWeightedValue.plus(acc).toNumber()
