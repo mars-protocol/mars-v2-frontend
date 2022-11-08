@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "format": "eslint ./ --fix && eslint ./pages/ --fix && prettier --write ./",
+    "format": "eslint . --ext=ts,tsx --fix && prettier --write ./**/*.ts ./**/*.tsx",
     "start": "next start",
     "lint": "next lint"
   },
