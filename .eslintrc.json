@@ -2,14 +2,14 @@
   "extends": "next/core-web-vitals",
   "rules": {
     "sort-imports": [
-      "error",
+      "warn",
       {
         "ignoreCase": true,
         "ignoreDeclarationSort": true
       }
     ],
     "import/order": [
-      "error",
+      "warn",
       {
         "newlines-between": "always",
         "groups": ["external", "builtin", "internal", "sibling", "parent", "index"]
