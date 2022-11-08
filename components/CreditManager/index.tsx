@@ -45,15 +45,15 @@ const CreditManager = () => {
 
   if (!address) {
     return (
-      <div className="absolute inset-0 left-auto w-[400px] border-l border-white/20 bg-background-2 p-2">
+      <div className="absolute inset-0 left-auto w-[400px] border-l border-white/20 bg-grey-medium p-2">
         <ContainerSecondary>You must have a connected wallet</ContainerSecondary>
       </div>
     )
   }
 
   return (
-    <div className="absolute inset-0 left-auto w-[400px] border-l border-white/20 bg-background-2 p-2">
-      <ContainerSecondary className="mb-2 flex gap-3">
+    <div className="absolute inset-0 left-auto w-[400px] border-l border-white/20 bg-grey-medium p-2">
+      <ContainerSecondary className="flex gap-3 mb-2">
         <Button
           className="flex-1 rounded-md"
           onClick={() => {
@@ -75,7 +75,7 @@ const CreditManager = () => {
         </Button>
       </ContainerSecondary>
       <ContainerSecondary className="mb-2 text-sm">
-        <div className="mb-1 flex justify-between">
+        <div className="flex justify-between mb-1">
           <div>Total Position:</div>
           <div className="font-semibold">{formatCurrency(accountStats?.totalPosition ?? 0)}</div>
         </div>
