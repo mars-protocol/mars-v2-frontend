@@ -17,6 +17,9 @@ import useRepayFunds from 'hooks/mutations/useRepayFunds'
 import useTokenPrices from 'hooks/useTokenPrices'
 import { formatCurrency } from 'utils/formatters'
 
+// 0.001% buffer / slippage to avoid repay action from not fully repaying the debt amount
+const REPAY_BUFFER = 1.00001
+
 type Props = {
   show: boolean
   onClose: () => void
@@ -36,6 +39,8 @@ const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
       positionsData?.debts.find((coin) => coin.denom === tokenDenom)?.amount ?? 0
 
     return BigNumber(tokenDebtAmount)
+      .times(REPAY_BUFFER)
+      .decimalPlaces(0)
       .div(10 ** getTokenDecimals(tokenDenom))
       .toNumber()
   }, [positionsData, tokenDenom])

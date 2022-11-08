@@ -1,17 +1,12 @@
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { toast } from 'react-toastify'
-import BigNumber from 'bignumber.js'
 
 import useWalletStore from 'stores/useWalletStore'
 import { contractAddresses } from 'config/contracts'
 import { hardcodedFee } from 'utils/contants'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import { queryKeys } from 'types/query-keys-factory'
-import { getTokenDecimals } from 'utils/tokens'
-
-// 0.001% buffer / slippage to avoid repay action from not fully repaying the debt amount
-const REPAY_BUFFER = 1.00001
 
 const useRepayFunds = (
   amount: number,
@@ -24,8 +19,6 @@ const useRepayFunds = (
 
   const queryClient = useQueryClient()
 
-  const adjustedAmount = BigNumber(amount).times(REPAY_BUFFER).decimalPlaces(0).toString()
-
   const executeMsg = useMemo(() => {
     return {
       update_credit_account: {
@@ -34,19 +27,19 @@ const useRepayFunds = (
           {
             deposit: {
               denom: denom,
-              amount: adjustedAmount,
+              amount: String(amount),
             },
           },
           {
             repay: {
               denom: denom,
-              amount: adjustedAmount,
+              amount: String(amount),
             },
           },
         ],
       },
     }
-  }, [adjustedAmount, denom, selectedAccount])
+  }, [amount, denom, selectedAccount])
 
   return useMutation(
     async () =>
@@ -59,7 +52,7 @@ const useRepayFunds = (
         [
           {
             denom,
-            amount: adjustedAmount,
+            amount: String(amount),
           },
         ]
       ),
