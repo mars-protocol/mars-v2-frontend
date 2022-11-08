@@ -2,7 +2,6 @@ import { useMemo } from 'react'
 import BigNumber from 'bignumber.js'
 
 import useCreditManagerStore from 'stores/useCreditManagerStore'
-import { getTokenDecimals } from 'utils/tokens'
 import useCreditAccountPositions from './useCreditAccountPositions'
 import useMarkets from './useMarkets'
 import useTokenPrices from './useTokenPrices'
@@ -17,59 +16,104 @@ const getRiskFromAverageLiquidationLTVs = (value: number) => {
   return 1
 }
 
-const useAccountStats = () => {
+type Asset = {
+  amount: string
+  denom: string
+  liquidationThreshold: string
+  basePrice: number
+}
+
+type Debt = {
+  amount: string
+  denom: string
+  basePrice: number
+}
+
+const calculateStatsFromAccountPositions = (assets: Asset[], debts: Debt[]) => {
+  const totalPosition = assets.reduce((acc, asset) => {
+    const tokenTotalValue = BigNumber(asset.amount).times(asset.basePrice)
+
+    return BigNumber(tokenTotalValue).plus(acc).toNumber()
+  }, 0)
+
+  const totalDebt = debts.reduce((acc, debt) => {
+    const tokenTotalValue = BigNumber(debt.amount).times(debt.basePrice)
+
+    return BigNumber(tokenTotalValue).plus(acc).toNumber()
+  }, 0)
+
+  const totalWeightedPositions = assets.reduce((acc, asset) => {
+    const assetWeightedValue = BigNumber(asset.amount)
+      .times(asset.basePrice)
+      .times(asset.liquidationThreshold)
+
+    return assetWeightedValue.plus(acc).toNumber()
+  }, 0)
+
+  const netWorth = BigNumber(totalPosition).minus(totalDebt).toNumber()
+
+  const liquidationLTVsWeightedAverage = BigNumber(totalWeightedPositions)
+    .div(totalPosition)
+    .toNumber()
+
+  const maxLeverage = BigNumber(1)
+    .div(BigNumber(1).minus(liquidationLTVsWeightedAverage))
+    .toNumber()
+  const currentLeverage = BigNumber(totalPosition).div(netWorth).toNumber()
+  const health = BigNumber(1).minus(BigNumber(currentLeverage).div(maxLeverage)).toNumber() || 1
+
+  const risk = liquidationLTVsWeightedAverage
+    ? getRiskFromAverageLiquidationLTVs(liquidationLTVsWeightedAverage)
+    : 0
+
+  return {
+    health,
+    maxLeverage,
+    currentLeverage,
+    netWorth,
+    risk,
+    totalPosition,
+    totalDebt,
+  }
+}
+
+export type AccountStatsAction = {
+  type: 'borrow' | 'repay' | 'deposit' | 'withdraw'
+  amount: number
+  denom: string
+}
+
+const useAccountStats = (actions?: AccountStatsAction[]) => {
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
 
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
   const { data: marketsData } = useMarkets()
   const { data: tokenPrices } = useTokenPrices()
 
-  return useMemo(() => {
+  const currentStats = useMemo(() => {
     if (!marketsData || !tokenPrices || !positionsData) return null
 
-    const getTokenTotalUSDValue = (amount: string, denom: string) => {
-      // early return if prices are not fetched yet
-      if (!tokenPrices) return 0
+    const assets = positionsData.coins.map((coin) => {
+      const market = marketsData[coin.denom]
 
-      return BigNumber(amount)
-        .div(10 ** getTokenDecimals(denom))
-        .times(tokenPrices[denom])
-        .toNumber()
-    }
+      return {
+        amount: coin.amount,
+        denom: coin.denom,
+        liquidationThreshold: market.liquidation_threshold,
+        basePrice: tokenPrices[coin.denom],
+      }
+    })
 
-    const totalPosition = positionsData.coins.reduce((acc, coin) => {
-      const tokenTotalValue = getTokenTotalUSDValue(coin.amount, coin.denom)
-      return BigNumber(tokenTotalValue).plus(acc).toNumber()
-    }, 0)
+    const debts = positionsData.debts.map((debt) => {
+      return {
+        amount: debt.amount,
+        denom: debt.denom,
+        basePrice: tokenPrices[debt.denom],
+      }
+    })
 
-    const totalDebt = positionsData.debts.reduce((acc, coin) => {
-      const tokenTotalValue = getTokenTotalUSDValue(coin.amount, coin.denom)
-      return BigNumber(tokenTotalValue).plus(acc).toNumber()
-    }, 0)
-
-    const totalWeightedPositions = positionsData.coins.reduce((acc, coin) => {
-      const tokenWeightedValue = BigNumber(getTokenTotalUSDValue(coin.amount, coin.denom)).times(
-        Number(marketsData[coin.denom].liquidation_threshold)
-      )
-
-      return tokenWeightedValue.plus(acc).toNumber()
-    }, 0)
-
-    const netWorth = BigNumber(totalPosition).minus(totalDebt).toNumber()
-
-    const liquidationLTVsWeightedAverage = BigNumber(totalWeightedPositions)
-      .div(totalPosition)
-      .toNumber()
-
-    const maxLeverage = BigNumber(1)
-      .div(BigNumber(1).minus(liquidationLTVsWeightedAverage))
-      .toNumber()
-    const currentLeverage = BigNumber(totalPosition).div(netWorth).toNumber()
-    const health = BigNumber(1).minus(BigNumber(currentLeverage).div(maxLeverage)).toNumber() || 1
-
-    const risk = liquidationLTVsWeightedAverage
-      ? getRiskFromAverageLiquidationLTVs(liquidationLTVsWeightedAverage)
-      : 0
+    const { health, maxLeverage, currentLeverage, netWorth, risk, totalPosition, totalDebt } =
+      calculateStatsFromAccountPositions(assets, debts)
 
     return {
       health,
@@ -81,6 +125,129 @@ const useAccountStats = () => {
       totalDebt,
     }
   }, [marketsData, positionsData, tokenPrices])
+
+  const actionResultStats = useMemo(() => {
+    if (!actions) return null
+    if (!tokenPrices || !marketsData || !positionsData) return null
+
+    let resultPositionsCoins = positionsData.coins.map((coin) => ({ ...coin }))
+    let resultPositionsDebts = positionsData.debts.map((debt) => {
+      const { shares, ...otherProps } = debt
+      return { ...otherProps }
+    })
+
+    actions.forEach((action) => {
+      if (action.amount === 0) return
+
+      if (action.type === 'deposit') {
+        const index = resultPositionsCoins.findIndex((coin) => coin.denom === action.denom)
+
+        if (index !== -1) {
+          resultPositionsCoins[index].amount = BigNumber(resultPositionsCoins[index].amount)
+            .plus(action.amount)
+            .toFixed()
+        } else {
+          resultPositionsCoins.push({
+            amount: action.amount.toString(),
+            denom: action.denom,
+          })
+        }
+
+        return
+      }
+
+      if (action.type === 'withdraw') {
+        const index = resultPositionsCoins.findIndex((coin) => coin.denom === action.denom)
+
+        if (index !== -1) {
+          resultPositionsCoins[index].amount = BigNumber(resultPositionsCoins[index].amount)
+            .minus(action.amount)
+            .toFixed()
+        } else {
+          throw new Error('Cannot withdraw more than you have')
+        }
+
+        return
+      }
+
+      if (action.type === 'borrow') {
+        const indexDebts = resultPositionsDebts.findIndex((coin) => coin.denom === action.denom)
+        const indexPositions = resultPositionsCoins.findIndex((coin) => coin.denom === action.denom)
+
+        if (indexDebts !== -1) {
+          resultPositionsDebts[indexDebts].amount = BigNumber(
+            resultPositionsDebts[indexDebts].amount
+          )
+            .plus(action.amount)
+            .toFixed()
+        } else {
+          resultPositionsDebts.push({
+            amount: action.amount.toString(),
+            denom: action.denom,
+          })
+        }
+
+        if (indexPositions !== -1) {
+          resultPositionsCoins[indexPositions].amount = BigNumber(
+            resultPositionsCoins[indexPositions].amount
+          )
+            .plus(action.amount)
+            .toFixed()
+        } else {
+          resultPositionsCoins.push({
+            amount: action.amount.toString(),
+            denom: action.denom,
+          })
+        }
+
+        return
+      }
+
+      // TODO: repay
+      if (action.type === 'repay') {
+        const index = resultPositionsDebts.findIndex((coin) => coin.denom === action.denom)
+        resultPositionsDebts[index].amount = BigNumber(resultPositionsDebts[index].amount)
+          .minus(action.amount)
+          .toFixed()
+
+        return
+      }
+    })
+
+    const assets = resultPositionsCoins.map((coin) => {
+      const market = marketsData[coin.denom]
+
+      return {
+        amount: coin.amount,
+        denom: coin.denom,
+        liquidationThreshold: market.liquidation_threshold,
+        basePrice: tokenPrices[coin.denom],
+      }
+    })
+
+    const debts = resultPositionsDebts.map((debt) => {
+      return {
+        amount: debt.amount,
+        denom: debt.denom,
+        basePrice: tokenPrices[debt.denom],
+      }
+    })
+
+    const { health, maxLeverage, currentLeverage, netWorth, risk, totalPosition, totalDebt } =
+      calculateStatsFromAccountPositions(assets, debts)
+
+    return {
+      health,
+      maxLeverage,
+      currentLeverage,
+      netWorth,
+      risk,
+      totalPosition,
+      totalDebt,
+    }
+  }, [actions, marketsData, positionsData, tokenPrices])
+
+  return actionResultStats || currentStats
 }
 
 export default useAccountStats

@@ -17,6 +17,12 @@ import useMarkets from 'hooks/useMarkets'
 import useCalculateMaxBorrowAmount from 'hooks/useCalculateMaxBorrowAmount'
 import Tooltip from './Tooltip'
 import { formatCurrency } from 'utils/formatters'
+import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
+import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useAccountStats, { AccountStatsAction } from 'hooks/useAccountStats'
+import { chain } from 'utils/chains'
+import ProgressBar from './ProgressBar'
+import SemiCircleProgress from './SemiCircleProgress'
 
 type Props = {
   show: boolean
@@ -28,21 +34,46 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
   const [amount, setAmount] = useState(0)
   const [isBorrowToCreditAccount, setIsBorrowToCreditAccount] = useState(false)
 
+  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
+  const { data: positionsData, isLoading: isLoadingPositions } = useCreditAccountPositions(
+    selectedAccount ?? ''
+  )
+
+  const { actions, borrowAmount } = useMemo(() => {
+    const borrowAmount = BigNumber(amount)
+      .times(10 ** getTokenDecimals(tokenDenom))
+      .toNumber()
+
+    const withdrawAmount = isBorrowToCreditAccount ? 0 : borrowAmount
+
+    return {
+      borrowAmount,
+      withdrawAmount,
+      actions: [
+        {
+          type: 'borrow',
+          amount: borrowAmount,
+          denom: tokenDenom,
+        },
+        {
+          type: 'withdraw',
+          amount: withdrawAmount,
+          denom: tokenDenom,
+        },
+      ] as AccountStatsAction[],
+    }
+  }, [amount, isBorrowToCreditAccount, tokenDenom])
+
+  const accountStats = useAccountStats(actions)
+
   const tokenSymbol = getTokenSymbol(tokenDenom)
 
-  const { mutate, isLoading } = useBorrowFunds(
-    BigNumber(amount)
-      .times(10 ** getTokenDecimals(tokenDenom))
-      .toNumber(),
-    tokenDenom,
-    !isBorrowToCreditAccount,
-    {
-      onSuccess: () => {
-        onClose()
-        toast.success(`${amount} ${tokenSymbol} successfully Borrowed`)
-      },
-    }
-  )
+  const { mutate, isLoading } = useBorrowFunds(borrowAmount, tokenDenom, !isBorrowToCreditAccount, {
+    onSuccess: () => {
+      onClose()
+      toast.success(`${amount} ${tokenSymbol} successfully Borrowed`)
+    },
+  })
 
   const { data: tokenPrices } = useTokenPrices()
   const { data: balancesData } = useAllBalances()
@@ -93,6 +124,17 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
     setAmount(0)
   }
 
+  const getTokenTotalUSDValue = (amount: string, denom: string) => {
+    // early return if prices are not fetched yet
+    if (!tokenPrices) return 0
+
+    return (
+      BigNumber(amount)
+        .div(10 ** getTokenDecimals(denom))
+        .toNumber() * tokenPrices[denom]
+    )
+  }
+
   return (
     <Transition appear show={show} as={React.Fragment}>
       <Dialog as="div" className="relative z-10" onClose={onClose}>
@@ -119,24 +161,12 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="flex min-h-[520px] w-full max-w-3xl transform overflow-hidden rounded-2xl bg-[#585A74] align-middle shadow-xl transition-all">
+              <Dialog.Panel className="flex w-full max-w-3xl transform overflow-hidden rounded-2xl bg-[#585A74] align-middle shadow-xl transition-all">
                 {isLoading && (
                   <div className="absolute inset-0 z-40 grid place-items-center bg-black/50">
                     <Spinner />
                   </div>
                 )}
-
-                <div className="flex flex-1 flex-col items-start justify-between bg-[#4A4C60] p-6">
-                  <div>
-                    <p className="text-bold mb-3 text-xs uppercase text-white/50">About</p>
-                    <h4 className="mb-4 text-xl leading-8">
-                      Bringing the next generation of video creation to the Metaverse.
-                      <br />
-                      Powered by deep-learning.
-                    </h4>
-                  </div>
-                  <Image src="/logo.svg" alt="mars" width={150} height={50} />
-                </div>
 
                 <div className="flex flex-1 flex-col p-4">
                   <Dialog.Title as="h3" className="mb-4 text-center font-medium">
@@ -217,6 +247,111 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
                   >
                     Borrow
                   </Button>
+                </div>
+
+                <div className="flex w-1/2 flex-col justify-center bg-[#4A4C60] p-4">
+                  <p className="text-bold mb-3 text-xs uppercase text-white/50">About</p>
+                  <h4 className="mb-4 text-xl">Subaccount {selectedAccount}</h4>
+                  <div className="mb-2 rounded-md border border-white/20 p-3">
+                    {accountStats && (
+                      <div className="flex items-center gap-x-3">
+                        <p className="flex-1 text-xs">
+                          {formatCurrency(
+                            BigNumber(accountStats.netWorth)
+                              .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
+                              .toNumber()
+                          )}
+                        </p>
+                        {/* TOOLTIP */}
+                        <div title={`${String(accountStats.currentLeverage.toFixed(1))}x`}>
+                          <SemiCircleProgress
+                            value={accountStats.currentLeverage / accountStats.maxLeverage}
+                            label="Lvg"
+                          />
+                        </div>
+                        <SemiCircleProgress value={accountStats.risk} label="Risk" />
+                        <ProgressBar value={accountStats.health} />
+                      </div>
+                    )}
+                  </div>
+                  <div className="mb-2 rounded-md border border-white/20 p-3 text-sm">
+                    <div className="mb-1 flex justify-between">
+                      <div>Total Position:</div>
+                      <div className="font-semibold">
+                        {formatCurrency(
+                          BigNumber(accountStats?.totalPosition ?? 0)
+                            .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
+                            .toNumber()
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex justify-between">
+                      <div>Total Liabilities:</div>
+                      <div className="font-semibold">
+                        {formatCurrency(
+                          BigNumber(accountStats?.totalDebt ?? 0)
+                            .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
+                            .toNumber()
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="rounded-md border border-white/20 p-3">
+                    <h4 className="mb-2 font-bold">Balances</h4>
+                    {isLoadingPositions ? (
+                      <div>Loading...</div>
+                    ) : (
+                      <table className="w-full border-separate border-spacing-1">
+                        <thead className="text-left text-xs font-semibold">
+                          <tr>
+                            <th>Asset</th>
+                            <th>Value</th>
+                            <th>Size</th>
+                            <th className="text-right">APY</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {positionsData?.coins.map((coin) => (
+                            <tr key={coin.denom} className="text-xs text-white/50">
+                              <td>{getTokenSymbol(coin.denom)}</td>
+                              <td>
+                                {formatCurrency(getTokenTotalUSDValue(coin.amount, coin.denom))}
+                              </td>
+                              <td>
+                                {BigNumber(coin.amount)
+                                  .div(10 ** getTokenDecimals(coin.denom))
+                                  .toNumber()
+                                  .toLocaleString(undefined, {
+                                    maximumFractionDigits: getTokenDecimals(coin.denom),
+                                  })}
+                              </td>
+                              <td className="text-right">-</td>
+                            </tr>
+                          ))}
+                          {positionsData?.debts.map((coin) => (
+                            <tr key={coin.denom} className="text-xs text-red-500">
+                              <td className="text-white/50">{getTokenSymbol(coin.denom)}</td>
+                              <td>
+                                -{formatCurrency(getTokenTotalUSDValue(coin.amount, coin.denom))}
+                              </td>
+                              <td>
+                                -
+                                {BigNumber(coin.amount)
+                                  .div(10 ** getTokenDecimals(coin.denom))
+                                  .toNumber()
+                                  .toLocaleString(undefined, {
+                                    maximumFractionDigits: 6,
+                                  })}
+                              </td>
+                              <td className="text-right">
+                                -{(Number(marketsData?.[coin.denom].borrow_rate) * 100).toFixed(1)}%
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
+                  </div>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

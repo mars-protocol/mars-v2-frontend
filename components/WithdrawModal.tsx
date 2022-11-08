@@ -14,12 +14,13 @@ import useTokenPrices from 'hooks/useTokenPrices'
 import { formatCurrency } from 'utils/formatters'
 import ProgressBar from './ProgressBar'
 import SemiCircleProgress from './SemiCircleProgress'
-import useAccountStats from 'hooks/useAccountStats'
+import useAccountStats, { AccountStatsAction } from 'hooks/useAccountStats'
 import useWithdrawFunds from 'hooks/mutations/useWithdrawFunds'
 import Spinner from './Spinner'
 import useCalculateMaxWithdrawAmount from 'hooks/useCalculateMaxWithdrawAmount'
 import useAllBalances from 'hooks/useAllBalances'
 import Slider from 'components/Slider'
+import { chain } from 'utils/chains'
 
 const WithdrawModal = ({ show, onClose }: any) => {
   const [amount, setAmount] = useState(0)
@@ -34,7 +35,6 @@ const WithdrawModal = ({ show, onClose }: any) => {
   const { data: balancesData } = useAllBalances()
   const { data: tokenPrices } = useTokenPrices()
   const { data: marketsData } = useMarkets()
-  const accountStats = useAccountStats()
 
   const selectedTokenSymbol = getTokenSymbol(selectedToken)
   const selectedTokenDecimals = getTokenDecimals(selectedToken)
@@ -45,7 +45,7 @@ const WithdrawModal = ({ show, onClose }: any) => {
       .toNumber()
   }, [positionsData, selectedTokenDecimals, selectedToken])
 
-  const { borrowAmount, withdrawAmount } = useMemo(() => {
+  const { actions, borrowAmount, withdrawAmount } = useMemo(() => {
     const borrowAmount =
       amount > tokenAmountInCreditAccount
         ? BigNumber(amount)
@@ -61,8 +61,22 @@ const WithdrawModal = ({ show, onClose }: any) => {
     return {
       borrowAmount,
       withdrawAmount,
+      actions: [
+        {
+          type: 'borrow',
+          amount: borrowAmount,
+          denom: selectedToken,
+        },
+        {
+          type: 'withdraw',
+          amount: withdrawAmount,
+          denom: selectedToken,
+        },
+      ] as AccountStatsAction[],
     }
-  }, [amount, selectedTokenDecimals, tokenAmountInCreditAccount])
+  }, [amount, selectedToken, selectedTokenDecimals, tokenAmountInCreditAccount])
+
+  const accountStats = useAccountStats(actions)
 
   const { mutate, isLoading } = useWithdrawFunds(withdrawAmount, borrowAmount, selectedToken, {
     onSuccess: () => {
@@ -233,7 +247,13 @@ const WithdrawModal = ({ show, onClose }: any) => {
                   <div className="mb-2 rounded-md border border-white/20 p-3">
                     {accountStats && (
                       <div className="flex items-center gap-x-3">
-                        <p>{formatCurrency(accountStats.netWorth)}</p>
+                        <p className="flex-1 text-xs">
+                          {formatCurrency(
+                            BigNumber(accountStats.netWorth)
+                              .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
+                              .toNumber()
+                          )}
+                        </p>
                         {/* TOOLTIP */}
                         <div title={`${String(accountStats.currentLeverage.toFixed(1))}x`}>
                           <SemiCircleProgress
@@ -250,13 +270,21 @@ const WithdrawModal = ({ show, onClose }: any) => {
                     <div className="mb-1 flex justify-between">
                       <div>Total Position:</div>
                       <div className="font-semibold">
-                        {formatCurrency(accountStats?.totalPosition ?? 0)}
+                        {formatCurrency(
+                          BigNumber(accountStats?.totalPosition ?? 0)
+                            .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
+                            .toNumber()
+                        )}
                       </div>
                     </div>
                     <div className="flex justify-between">
                       <div>Total Liabilities:</div>
                       <div className="font-semibold">
-                        {formatCurrency(accountStats?.totalDebt ?? 0)}
+                        {formatCurrency(
+                          BigNumber(accountStats?.totalDebt ?? 0)
+                            .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
+                            .toNumber()
+                        )}
                       </div>
                     </div>
                   </div>
