@@ -4,11 +4,12 @@ import '../styles/globals.css'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import Layout from 'components/Layout'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { useEffect } from 'react'
 import { ToastContainer, Zoom } from 'react-toastify'
+
+import Layout from 'components/Layout'
 import useWalletStore from 'stores/useWalletStore'
 
 async function isMetamaskInstalled(): Promise<boolean> {

@@ -1,8 +1,19 @@
 {
   "extends": "next/core-web-vitals",
-  "plugins": ["simple-import-sort"],
   "rules": {
-    "simple-import-sort/imports": "error",
-    "simple-import-sort/exports": "error"
+    "sort-imports": [
+      "error",
+      {
+        "ignoreCase": true,
+        "ignoreDeclarationSort": true
+      }
+    ],
+    "import/order": [
+      "error",
+      {
+        "newlines-between": "always",
+        "groups": ["external", "builtin", "internal", "sibling", "parent", "index"]
+      }
+    ]
   }
 }

@@ -4,6 +4,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import Image from 'next/image'
 import React, { Fragment, useState } from 'react'
 import { toast } from 'react-toastify'
+
 import useWalletStore from 'stores/useWalletStore'
 import { ChainId, Wallet } from 'types'
 import { getInjectiveAddress } from 'utils/address'

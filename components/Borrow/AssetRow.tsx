@@ -1,7 +1,8 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid'
-import Button from 'components/Button'
 import Image from 'next/image'
 import React, { useState } from 'react'
+
+import Button from 'components/Button'
 import { formatCurrency } from 'utils/formatters'
 
 type AssetRowProps = {

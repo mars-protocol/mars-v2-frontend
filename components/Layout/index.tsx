@@ -1,6 +1,7 @@
+import React from 'react'
+
 import CreditManager from 'components/CreditManager'
 import Navigation from 'components/Navigation'
-import React from 'react'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 
 import styles from './Layout.module.css'

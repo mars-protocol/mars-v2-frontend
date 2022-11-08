@@ -1,11 +1,12 @@
 import { CosmWasmClient, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
+import create from 'zustand'
+import { persist } from 'zustand/middleware'
+
 import { contractAddresses } from 'config/contracts'
 import { Wallet } from 'types'
 import { AccountNftClient } from 'types/generated/account-nft/AccountNft.client'
 import { CreditManagerClient } from 'types/generated/credit-manager/CreditManager.client'
 import { chain } from 'utils/chains'
-import create from 'zustand'
-import { persist } from 'zustand/middleware'
 
 interface WalletStore {
   address: string

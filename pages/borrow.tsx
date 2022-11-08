@@ -1,4 +1,6 @@
 import BigNumber from 'bignumber.js'
+import React, { useMemo, useRef, useState } from 'react'
+
 import BorrowTable from 'components/Borrow/BorrowTable'
 import BorrowModal from 'components/BorrowModal'
 import Container from 'components/Container'
@@ -8,7 +10,6 @@ import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useMarkets from 'hooks/useMarkets'
 import useRedbankBalances from 'hooks/useRedbankBalances'
 import useTokenPrices from 'hooks/useTokenPrices'
-import React, { useMemo, useRef, useState } from 'react'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import { getTokenDecimals, getTokenInfo } from 'utils/tokens'
 

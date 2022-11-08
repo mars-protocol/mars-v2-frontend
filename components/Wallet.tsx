@@ -1,8 +1,9 @@
 import { Popover } from '@headlessui/react'
-import useTokenBalance from 'hooks/useTokenBalance'
 import Image from 'next/image'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
+
+import useTokenBalance from 'hooks/useTokenBalance'
 import useWalletStore from 'stores/useWalletStore'
 import { chain } from 'utils/chains'
 import { formatWalletAddress } from 'utils/formatters'

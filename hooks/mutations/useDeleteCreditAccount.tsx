@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { contractAddresses } from 'config/contracts'
 import { toast } from 'react-toastify'
+
+import { contractAddresses } from 'config/contracts'
 import useWalletStore from 'stores/useWalletStore'
 import { queryKeys } from 'types/query-keys-factory'
 import { hardcodedFee } from 'utils/contants'

@@ -1,8 +1,9 @@
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
 import BigNumber from 'bignumber.js'
-import { contractAddresses } from 'config/contracts'
 import { useMemo } from 'react'
 import { toast } from 'react-toastify'
+
+import { contractAddresses } from 'config/contracts'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useWalletStore from 'stores/useWalletStore'
 import { queryKeys } from 'types/query-keys-factory'

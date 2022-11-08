@@ -1,4 +1,5 @@
 import { Bech32Address } from '@keplr-wallet/cosmos'
+
 import { ChainId, CosmosChainId, TestnetCosmosChainId } from 'types'
 
 export const getEndpointsFromChainId = (

@@ -1,7 +1,8 @@
 import { Coin } from '@cosmjs/stargate'
 import { useQuery } from '@tanstack/react-query'
-import { contractAddresses } from 'config/contracts'
 import { useMemo } from 'react'
+
+import { contractAddresses } from 'config/contracts'
 import { queryKeys } from 'types/query-keys-factory'
 import { chain } from 'utils/chains'
 

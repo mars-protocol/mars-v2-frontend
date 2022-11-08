@@ -9,6 +9,7 @@ import {
 } from '@tanstack/react-table'
 import Image from 'next/image'
 import React from 'react'
+
 import { formatCurrency } from 'utils/formatters'
 
 import AssetRow from './AssetRow'

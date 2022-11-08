@@ -1,5 +1,6 @@
-import Container from 'components/Container'
 import React from 'react'
+
+import Container from 'components/Container'
 
 const Council = () => {
   return (
