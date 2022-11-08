@@ -7,6 +7,7 @@ import { getTokenDecimals } from 'utils/tokens'
 import useCreditAccountPositions from './useCreditAccountPositions'
 import useMarkets from './useMarkets'
 import useTokenPrices from './useTokenPrices'
+import useRedbankBalances from './useRedbankBalances'
 
 const getApproximateHourlyInterest = (amount: string, borrowAPY: string) => {
   const hourlyAPY = BigNumber(borrowAPY).div(24 * 365)
@@ -20,6 +21,7 @@ const useCalculateMaxWithdrawAmount = (denom: string, borrow: boolean) => {
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
   const { data: marketsData } = useMarkets()
   const { data: tokenPrices } = useTokenPrices()
+  const { data: redbankBalances } = useRedbankBalances()
 
   const tokenDecimals = getTokenDecimals(denom)
 
@@ -37,7 +39,7 @@ const useCalculateMaxWithdrawAmount = (denom: string, borrow: boolean) => {
   }, [denom, positionsData])
 
   const maxAmount = useMemo(() => {
-    if (!marketsData || !tokenPrices || !positionsData || !denom) return 0
+    if (!marketsData || !tokenPrices || !positionsData || !redbankBalances || !denom) return 0
 
     const hasDebt = positionsData.debts.length > 0
 
@@ -98,15 +100,20 @@ const useCalculateMaxWithdrawAmount = (denom: string, borrow: boolean) => {
       maxAmountCapacity = maxAmountCapacity < 0 ? 0 : maxAmountCapacity
     }
 
-    const isCapacityHigherThanBalance = BigNumber(maxAmountCapacity).gt(tokenAmountInCreditAccount)
+    const marketLiquidity = redbankBalances?.[denom] ?? 0
 
-    if (!borrow && isCapacityHigherThanBalance) {
+    const maxWithdrawAmount = BigNumber(maxAmountCapacity).gt(marketLiquidity)
+      ? marketLiquidity
+      : maxAmountCapacity
+    const isMaxAmountHigherThanBalance = BigNumber(maxWithdrawAmount).gt(tokenAmountInCreditAccount)
+
+    if (!borrow && isMaxAmountHigherThanBalance) {
       return BigNumber(tokenAmountInCreditAccount)
         .div(10 ** tokenDecimals)
         .toNumber()
     }
 
-    return BigNumber(maxAmountCapacity)
+    return BigNumber(maxWithdrawAmount)
       .div(10 ** tokenDecimals)
       .decimalPlaces(tokenDecimals)
       .toNumber()
@@ -116,6 +123,7 @@ const useCalculateMaxWithdrawAmount = (denom: string, borrow: boolean) => {
     getTokenValue,
     marketsData,
     positionsData,
+    redbankBalances,
     tokenAmountInCreditAccount,
     tokenDecimals,
     tokenPrices,
