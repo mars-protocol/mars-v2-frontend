@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { Popover } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
+import BigNumber from 'bignumber.js'
 
 import SearchInput from 'components/SearchInput'
 import ProgressBar from 'components/ProgressBar'
@@ -19,6 +20,7 @@ import SemiCircleProgress from './SemiCircleProgress'
 import useWalletStore from 'stores/useWalletStore'
 import ArrowRightLine from 'components/Icons/arrow-right-line.svg'
 import Button from './Button'
+import { chain } from 'utils/chains'
 
 // TODO: will require some tweaks depending on how lower viewport mocks pans out
 const MAX_VISIBLE_CREDIT_ACCOUNTS = 5
@@ -80,7 +82,13 @@ const Navigation = () => {
       <div className="flex items-center gap-4">
         {accountStats && (
           <>
-            <p>{formatCurrency(accountStats.netWorth)}</p>
+            <p>
+              {formatCurrency(
+                BigNumber(accountStats.netWorth)
+                  .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
+                  .toNumber()
+              )}
+            </p>
             {/* TOOLTIP */}
             <div title={`${String(accountStats.currentLeverage.toFixed(1))}x`}>
               <SemiCircleProgress
