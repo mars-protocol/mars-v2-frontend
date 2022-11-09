@@ -1,6 +1,8 @@
 import React from 'react'
 
 import Card from 'components/Card'
+import Number from 'components/Number'
+import Text from 'components/Text'
 import { formatCurrency } from 'utils/formatters'
 
 const mockedAccounts = [
@@ -53,34 +55,61 @@ const Portfolio = () => {
       <div className='grid grid-cols-2 gap-4'>
         {mockedAccounts.map((account) => (
           <Card key={account.id}>
-            <p className='mb-4 font-bold text-center'>{account.label}</p>
+            <Text size='lg' uppercase={true} className='mb-4 text-center'>
+              {account.label}
+            </Text>
             <div className='grid grid-cols-3 gap-4'>
               <div>
-                <p>{formatCurrency(account.networth)}</p>
-                <p className='text-sm text-white/40'>Net worth</p>
+                <Text>
+                  <Number amount={account.networth} animate={true} prefix='$' />
+                </Text>
+                <Text size='sm' className='text-white/40'>
+                  Net worth
+                </Text>
               </div>
               <div>
-                <p>{formatCurrency(account.totalPositionValue)}</p>
-                <p className='text-sm text-white/40'>Total Position Value</p>
+                <Text>
+                  <Number amount={account.totalPositionValue} animate={true} prefix='$' />
+                </Text>
+                <Text size='sm' className='text-white/40'>
+                  Total Position Value
+                </Text>
               </div>
               <div>
-                <p>{formatCurrency(account.debt)}</p>
-                <p className='text-sm text-white/40'>Debt</p>
+                <Text>
+                  <Number amount={account.debt} animate={true} prefix='$' />
+                </Text>
+                <Text size='sm' className='text-white/40'>
+                  Debt
+                </Text>
               </div>
               <div>
-                <p className={`${account.profit > 0 ? 'text-green-400' : 'text-red-500'}`}>
-                  {account.profit > 0 && '+'}
-                  {formatCurrency(account.profit)}
-                </p>
-                <p className='text-sm text-white/40'>P&L</p>
+                <Text className={account.profit > 0 ? 'text-green-400' : 'text-red-500'}>
+                  <Number
+                    amount={account.debt}
+                    animate={true}
+                    prefix={account.profit > 0 ? '+$' : '$'}
+                  />
+                </Text>
+                <Text size='sm' className='text-white/40'>
+                  P&L
+                </Text>
               </div>
               <div>
-                <p>{account.leverage}</p>
-                <p className='text-sm text-white/40'>Current Leverage</p>
+                <Text>
+                  <Number amount={account.leverage} minDecimals={0} suffix='x' />
+                </Text>
+                <Text size='sm' className='text-white/40'>
+                  Current Leverage
+                </Text>
               </div>
               <div>
-                <p>{account.maxLeverage}</p>
-                <p className='text-sm text-white/40'>Max Leverage</p>
+                <Text>
+                  <Number amount={account.maxLeverage} minDecimals={0} suffix='x' />
+                </Text>
+                <Text size='sm' className='text-white/40'>
+                  Max Leverage
+                </Text>
               </div>
             </div>
           </Card>
