@@ -20,6 +20,9 @@ import ContainerSecondary from 'components/ContainerSecondary'
 // 0.001% buffer / slippage to avoid repay action from not fully repaying the debt amount
 const REPAY_BUFFER = 1.00001
 
+// 0.001% buffer / slippage to avoid repay action from not fully repaying the debt amount
+const REPAY_BUFFER = 1.00001
+
 type Props = {
   show: boolean
   onClose: () => void
