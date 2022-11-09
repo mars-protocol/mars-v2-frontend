@@ -1,6 +1,6 @@
 import React from 'react'
 
-import Container from 'components/Container'
+import Card from 'components/Card'
 import { formatCurrency } from 'utils/formatters'
 
 const mockedAccounts = [
@@ -49,10 +49,10 @@ const mockedAccounts = [
 const Portfolio = () => {
   return (
     <div className="flex flex-col gap-4">
-      <Container className="flex-1">Portfolio Module</Container>
+      <Card className="flex-1">Portfolio Module</Card>
       <div className="grid grid-cols-2 gap-4">
         {mockedAccounts.map((account) => (
-          <Container key={account.id}>
+          <Card key={account.id}>
             <p className="mb-4 text-center font-bold">{account.label}</p>
             <div className="grid grid-cols-3 gap-4">
               <div>
@@ -83,7 +83,7 @@ const Portfolio = () => {
                 <p className="text-sm text-white/40">Max Leverage</p>
               </div>
             </div>
-          </Container>
+          </Card>
         ))}
       </div>
     </div>

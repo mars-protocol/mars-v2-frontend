@@ -1,11 +1,11 @@
 import React from 'react'
-import Container from 'components/Container'
+import Card from 'components/Card'
 
 const Earn = () => {
   return (
     <div className="flex gap-4">
-      <Container className="flex-1">Yield Module</Container>
-      <Container className="w-[450px]">Placeholder</Container>
+      <Card className="flex-1">Yield Module</Card>
+      <Card className="w-[450px]">Placeholder</Card>
     </div>
   )
 }

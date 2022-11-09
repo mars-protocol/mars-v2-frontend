@@ -9,8 +9,9 @@ import { toast } from 'react-toastify'
 import BigNumber from 'bignumber.js'
 import { useQueryClient } from '@tanstack/react-query'
 
-import Container from 'components/Container'
+import Card from 'components/Card'
 import Button from 'components/Button'
+import Text from 'components/Text'
 import useWalletStore from 'stores/useWalletStore'
 import { chain } from 'utils/chains'
 import { contractAddresses } from 'config/contracts'
@@ -248,24 +249,24 @@ const Home: NextPage = () => {
   }
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-y-6">
-      <Container>
+    <div className="flex flex-col max-w-6xl mx-auto gap-y-6">
+      <Card>
         <h4 className="mb-5 text-xl">Send Tokens</h4>
-        <div className="mb-5 flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 mb-5">
           <div>
-            <p>Address:</p>
+            <Text>Address:</Text>
             <input
-              className="rounded-lg bg-black/40 px-3 py-1"
+              className="px-3 py-1 rounded-lg bg-black/40"
               value={recipientAddress}
               placeholder="address"
               onChange={(e) => setRecipientAddress(e.target.value)}
             />
           </div>
           <div>
-            <p>Amount:</p>
+            <Text>Amount:</Text>
             <input
               type="number"
-              className="rounded-lg bg-black/40 px-3 py-1"
+              className="px-3 py-1 rounded-lg bg-black/40"
               value={sendAmount}
               placeholder="amount"
               onChange={(e) => setSendAmount(e.target.value)}
@@ -275,47 +276,49 @@ const Home: NextPage = () => {
         <Button className="bg-[#524bb1] hover:bg-[#6962cc]" onClick={handleSendClick}>
           Send
         </Button>
-      </Container>
-      <Container>
+      </Card>
+      <Card>
         <h4 className="mb-5 text-xl">Create Credit Account (Mint NFT)</h4>
         <Button className="bg-[#524bb1] hover:bg-[#6962cc]" onClick={handleCreateCreditAccount}>
           Create
         </Button>
-      </Container>
-      <Container>
+      </Card>
+      <Card>
         <h4 className="mb-5 text-xl">Get all Credit Accounts</h4>
         <Button className="bg-[#524bb1] hover:bg-[#6962cc]" onClick={handleGetCreditAccounts}>
           Fetch
         </Button>
-      </Container>
-      <Container>
+      </Card>
+      <Card>
         <h4 className="mb-5 text-xl">Borrow OSMO</h4>
         <input
-          className="rounded-lg bg-black/40 px-3 py-1"
+          className="px-3 py-1 rounded-lg bg-black/40"
           type="number"
           onChange={(e) => setBorrowAmount(e.target.valueAsNumber)}
         />
         <Button className="ml-4 bg-[#524bb1] hover:bg-[#6962cc]" onClick={handleBorrowClick}>
           Borrow
         </Button>
-      </Container>
+      </Card>
 
       <div>
         {allTokens && (
           <div className="mb-4">
             <div className="flex items-end">
-              <h5 className="text-xl font-medium">All Tokens</h5>
-              <p className="ml-2 text-sm">- {allTokens.length} total</p>
+              <Text size="xl">All Tokens</Text>
+              <Text size="sm" className="ml-2">
+                - {allTokens.length} total
+              </Text>
             </div>
             {allTokens.map((token) => (
-              <p key={token}>{token}</p>
+              <Text key={token}>{token}</Text>
             ))}
           </div>
         )}
         {walletTokens && (
           <>
             <div className="flex items-end">
-              <h5 className="text-xl font-medium">Your Tokens</h5>
+              <Text size="xl">Your Tokens</Text>
               <p className="ml-2 text-sm">- {walletTokens.length} total</p>
             </div>
             {walletTokens.map((token) => (
@@ -324,7 +327,7 @@ const Home: NextPage = () => {
           </>
         )}
       </div>
-      {error && <div className="mt-8 bg-white p-4 text-red-500">{error}</div>}
+      {error && <div className="p-4 mt-8 text-red-500 bg-white">{error}</div>}
       {isLoading && (
         <div>
           <Spinner />
