@@ -17,7 +17,7 @@ const useAllBalances = () => {
     {
       enabled: !!address,
       staleTime: Infinity,
-    }
+    },
   )
 
   return {

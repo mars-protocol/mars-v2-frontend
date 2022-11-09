@@ -1,18 +1,19 @@
 import React from 'react'
-import Card from 'components/Card'
+
+import Container from 'components/Container'
 
 const Trade = () => {
   return (
     <div>
-      <div className="flex gap-4 mb-4">
-        <Card className="flex-1">Graph/Tradingview Module</Card>
-        <div className="flex flex-col gap-4">
-          <Card>Buy/Sell module</Card>
-          <Card>Orderbook module (optional)</Card>
+      <div className='mb-4 flex gap-4'>
+        <Container className='flex-1'>Graph/Tradingview Module</Container>
+        <div className='flex flex-col gap-4'>
+          <Container>Buy/Sell module</Container>
+          <Container>Orderbook module (optional)</Container>
         </div>
-        <Card>Credit Account essential module</Card>
+        <Container>Credit Account essential module</Container>
       </div>
-      <Card>Trader order overview</Card>
+      <Container>Trader order overview</Container>
     </div>
   )
 }

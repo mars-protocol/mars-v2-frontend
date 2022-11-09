@@ -1,6 +1,6 @@
 import React from 'react'
 
-import Card from 'components/Card'
+import Container from 'components/Container'
 import { formatCurrency } from 'utils/formatters'
 
 const mockedAccounts = [
@@ -48,42 +48,42 @@ const mockedAccounts = [
 
 const Portfolio = () => {
   return (
-    <div className="flex flex-col gap-4">
-      <Card className="flex-1">Portfolio Module</Card>
-      <div className="grid grid-cols-2 gap-4">
+    <div className='flex flex-col gap-4'>
+      <Container className='flex-1'>Portfolio Module</Container>
+      <div className='grid grid-cols-2 gap-4'>
         {mockedAccounts.map((account) => (
-          <Card key={account.id}>
-            <p className="mb-4 text-center font-bold">{account.label}</p>
-            <div className="grid grid-cols-3 gap-4">
+          <Container key={account.id}>
+            <p className='mb-4 text-center font-bold'>{account.label}</p>
+            <div className='grid grid-cols-3 gap-4'>
               <div>
                 <p>{formatCurrency(account.networth)}</p>
-                <p className="text-sm text-white/40">Net worth</p>
+                <p className='text-sm text-white/40'>Net worth</p>
               </div>
               <div>
                 <p>{formatCurrency(account.totalPositionValue)}</p>
-                <p className="text-sm text-white/40">Total Position Value</p>
+                <p className='text-sm text-white/40'>Total Position Value</p>
               </div>
               <div>
                 <p>{formatCurrency(account.debt)}</p>
-                <p className="text-sm text-white/40">Debt</p>
+                <p className='text-sm text-white/40'>Debt</p>
               </div>
               <div>
                 <p className={`${account.profit > 0 ? 'text-green-400' : 'text-red-500'}`}>
                   {account.profit > 0 && '+'}
                   {formatCurrency(account.profit)}
                 </p>
-                <p className="text-sm text-white/40">P&L</p>
+                <p className='text-sm text-white/40'>P&L</p>
               </div>
               <div>
                 <p>{account.leverage}</p>
-                <p className="text-sm text-white/40">Current Leverage</p>
+                <p className='text-sm text-white/40'>Current Leverage</p>
               </div>
               <div>
                 <p>{account.maxLeverage}</p>
-                <p className="text-sm text-white/40">Max Leverage</p>
+                <p className='text-sm text-white/40'>Max Leverage</p>
               </div>
             </div>
-          </Card>
+          </Container>
         ))}
       </div>
     </div>

@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import BigNumber from 'bignumber.js'
 
 import useWalletStore from 'stores/useWalletStore'
-import { chain } from 'utils/chains'
 import { queryKeys } from 'types/query-keys-factory'
+import { chain } from 'utils/chains'
 
 type Result = {
   balance: {
@@ -21,11 +21,11 @@ const useTokenBalance = (denom?: string) => {
       fetch(
         `${chain.rest}/cosmos/bank/v1beta1/balances/${address}/by_denom?denom=${
           denom || chain.stakeCurrency.coinMinimalDenom
-        }`
+        }`,
       ).then((res) => res.json()),
     {
       enabled: !!address,
-    }
+    },
   )
 
   return {

@@ -1,17 +1,17 @@
-import React, { useMemo, useRef, useState } from 'react'
 import BigNumber from 'bignumber.js'
+import React, { useMemo, useRef, useState } from 'react'
 
-import Card from 'components/Card'
-import useAllowedCoins from 'hooks/useAllowedCoins'
-import { getTokenDecimals, getTokenInfo } from 'utils/tokens'
-import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
-import useCreditManagerStore from 'stores/useCreditManagerStore'
-import useMarkets from 'hooks/useMarkets'
-import useTokenPrices from 'hooks/useTokenPrices'
-import BorrowModal from 'components/BorrowModal'
-import RepayModal from 'components/RepayModal'
 import BorrowTable from 'components/Borrow/BorrowTable'
+import BorrowModal from 'components/BorrowModal'
+import Container from 'components/Container'
+import RepayModal from 'components/RepayModal'
+import useAllowedCoins from 'hooks/useAllowedCoins'
+import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
+import useMarkets from 'hooks/useMarkets'
 import useRedbankBalances from 'hooks/useRedbankBalances'
+import useTokenPrices from 'hooks/useTokenPrices'
+import useCreditManagerStore from 'stores/useCreditManagerStore'
+import { getTokenDecimals, getTokenInfo } from 'utils/tokens'
 
 type ModalState = {
   show: 'borrow' | 'repay' | false
@@ -115,28 +115,28 @@ const Borrow = () => {
   }
 
   return (
-    <div className="flex items-start gap-4">
-      <div className="flex-1">
-        <Card className="mb-4">
+    <div className='flex items-start gap-4'>
+      <div className='flex-1'>
+        <Container className='mb-4'>
           <div>
-            <h3 className="text-xl font-medium text-center uppercase mb-7">Borrowings</h3>
+            <h3 className='mb-7 text-center text-xl font-medium uppercase'>Borrowings</h3>
             <BorrowTable
               data={borrowedAssets}
               onBorrowClick={handleBorrowClick}
               onRepayClick={handleRepayClick}
             />
           </div>
-        </Card>
-        <Card>
+        </Container>
+        <Container>
           <div>
-            <h3 className="text-xl font-medium text-center uppercase mb-7">Available to Borrow</h3>
+            <h3 className='mb-7 text-center text-xl font-medium uppercase'>Available to Borrow</h3>
             <BorrowTable
               data={notBorrowedAssets}
               onBorrowClick={handleBorrowClick}
               onRepayClick={handleRepayClick}
             />
           </div>
-        </Card>
+        </Container>
       </div>
       <BorrowModal
         key={`borrowModal_${modalId.current}`}

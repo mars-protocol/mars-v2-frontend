@@ -5,18 +5,19 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
+import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
+
 import {
-  Decimal,
-  InstantiateMsg,
-  CoinMarketInfo,
-  ExecuteMsg,
-  Uint128,
   Coin,
-  QueryMsg,
-  Market,
+  CoinMarketInfo,
+  Decimal,
+  ExecuteMsg,
+  InstantiateMsg,
   InterestRateModel,
+  Market,
+  QueryMsg,
+  Uint128,
   UserAssetDebtResponse,
 } from './MockRedBank.types'
 export interface MockRedBankReadOnlyInterface {

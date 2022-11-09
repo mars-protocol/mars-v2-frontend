@@ -5,25 +5,26 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tanstack/react-query'
+import { Coin, StdFee } from '@cosmjs/amino'
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
-import { StdFee, Coin } from '@cosmjs/amino'
+import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from '@tanstack/react-query'
+
+import { MarsOracleAdapterClient, MarsOracleAdapterQueryClient } from './MarsOracleAdapter.client'
 import {
-  OracleBaseForString,
   Addr,
-  PricingMethod,
-  InstantiateMsg,
-  VaultPricingInfo,
-  ExecuteMsg,
-  ConfigUpdates,
-  QueryMsg,
   ArrayOfVaultPricingInfo,
-  OracleBaseForAddr,
   ConfigResponse,
+  ConfigUpdates,
   Decimal,
+  ExecuteMsg,
+  InstantiateMsg,
+  OracleBaseForAddr,
+  OracleBaseForString,
   PriceResponse,
+  PricingMethod,
+  QueryMsg,
+  VaultPricingInfo,
 } from './MarsOracleAdapter.types'
-import { MarsOracleAdapterQueryClient, MarsOracleAdapterClient } from './MarsOracleAdapter.client'
 export const marsOracleAdapterQueryKeys = {
   contract: [
     {

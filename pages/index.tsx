@@ -1,24 +1,23 @@
-import React, { useEffect, useState } from 'react'
-import type { NextPage } from 'next'
 // import Head from "next/head";
 // import Image from "next/image";
 // import styles from "../styles/Home.module.css";
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-// import { Coin } from "@cosmjs/stargate";
-import { toast } from 'react-toastify'
-import BigNumber from 'bignumber.js'
 import { useQueryClient } from '@tanstack/react-query'
+import BigNumber from 'bignumber.js'
+import type { NextPage } from 'next'
+import React, { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 
-import Card from 'components/Card'
 import Button from 'components/Button'
-import Text from 'components/Text'
-import useWalletStore from 'stores/useWalletStore'
-import { chain } from 'utils/chains'
-import { contractAddresses } from 'config/contracts'
-import { hardcodedFee } from 'utils/contants'
+import Container from 'components/Container'
 import Spinner from 'components/Spinner'
+import { contractAddresses } from 'config/contracts'
+// import { Coin } from "@cosmjs/stargate";
 import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useWalletStore from 'stores/useWalletStore'
 import { queryKeys } from 'types/query-keys-factory'
+import { chain } from 'utils/chains'
+import { hardcodedFee } from 'utils/contants'
 
 const Home: NextPage = () => {
   const [sendAmount, setSendAmount] = useState('')
@@ -74,7 +73,7 @@ const Home: NextPage = () => {
               .toString(),
           },
         ],
-        hardcodedFee
+        hardcodedFee,
       )
 
       console.log('txResponse', res)
@@ -82,13 +81,13 @@ const Home: NextPage = () => {
         <div>
           <a
             href={`https://testnet.mintscan.io/osmosis-testnet/txs/${res?.transactionHash}`}
-            target="_blank"
-            rel="noreferrer"
+            target='_blank'
+            rel='noreferrer'
           >
             Check transaction
           </a>
         </div>,
-        { autoClose: false }
+        { autoClose: false },
       )
     } catch (e: any) {
       console.log(e)
@@ -112,7 +111,7 @@ const Home: NextPage = () => {
         address,
         contractAddresses.creditManager,
         executeMsg,
-        hardcodedFee
+        hardcodedFee,
       )
 
       console.log('mint result', createResult)
@@ -120,13 +119,13 @@ const Home: NextPage = () => {
         <div>
           <a
             href={`https://testnet.mintscan.io/osmosis-testnet/txs/${createResult?.transactionHash}`}
-            target="_blank"
-            rel="noreferrer"
+            target='_blank'
+            rel='noreferrer'
           >
             Check transaction
           </a>
         </div>,
-        { autoClose: false }
+        { autoClose: false },
       )
 
       queryClient.invalidateQueries(queryKeys.creditAccounts(address))
@@ -150,7 +149,7 @@ const Home: NextPage = () => {
 
       const allTokensResponse = await signingClient?.queryContractSmart(
         contractAddresses.accountNft,
-        allTokensQueryMsg
+        allTokensQueryMsg,
       )
 
       setAllTokens(allTokensResponse.tokens)
@@ -180,7 +179,7 @@ const Home: NextPage = () => {
 
       const tokensResponse = await signingClient?.queryContractSmart(
         contractAddresses.accountNft,
-        tokensQueryMsg
+        tokensQueryMsg,
       )
 
       console.log('res tokens', tokensResponse)
@@ -220,7 +219,7 @@ const Home: NextPage = () => {
         address,
         contractAddresses.creditManager,
         executeMsg,
-        hardcodedFee
+        hardcodedFee,
       )
 
       console.log('borrow result', borrowResult)
@@ -228,13 +227,13 @@ const Home: NextPage = () => {
         <div>
           <a
             href={`https://testnet.mintscan.io/osmosis-testnet/txs/${borrowResult?.transactionHash}`}
-            target="_blank"
-            rel="noreferrer"
+            target='_blank'
+            rel='noreferrer'
           >
             Check transaction
           </a>
         </div>,
-        { autoClose: false }
+        { autoClose: false },
       )
 
       queryClient.invalidateQueries(queryKeys.creditAccounts(address))
@@ -249,77 +248,75 @@ const Home: NextPage = () => {
   }
 
   return (
-    <div className="flex flex-col max-w-6xl mx-auto gap-y-6">
-      <Card>
-        <h4 className="mb-5 text-xl">Send Tokens</h4>
-        <div className="flex flex-wrap gap-2 mb-5">
+    <div className='mx-auto flex max-w-6xl flex-col gap-y-6'>
+      <Container>
+        <h4 className='mb-5 text-xl'>Send Tokens</h4>
+        <div className='mb-5 flex flex-wrap gap-2'>
           <div>
-            <Text>Address:</Text>
+            <p>Address:</p>
             <input
-              className="px-3 py-1 rounded-lg bg-black/40"
+              className='rounded-lg bg-black/40 px-3 py-1'
               value={recipientAddress}
-              placeholder="address"
+              placeholder='address'
               onChange={(e) => setRecipientAddress(e.target.value)}
             />
           </div>
           <div>
-            <Text>Amount:</Text>
+            <p>Amount:</p>
             <input
-              type="number"
-              className="px-3 py-1 rounded-lg bg-black/40"
+              type='number'
+              className='rounded-lg bg-black/40 px-3 py-1'
               value={sendAmount}
-              placeholder="amount"
+              placeholder='amount'
               onChange={(e) => setSendAmount(e.target.value)}
             />
           </div>
         </div>
-        <Button className="bg-[#524bb1] hover:bg-[#6962cc]" onClick={handleSendClick}>
+        <Button className='bg-[#524bb1] hover:bg-[#6962cc]' onClick={handleSendClick}>
           Send
         </Button>
-      </Card>
-      <Card>
-        <h4 className="mb-5 text-xl">Create Credit Account (Mint NFT)</h4>
-        <Button className="bg-[#524bb1] hover:bg-[#6962cc]" onClick={handleCreateCreditAccount}>
+      </Container>
+      <Container>
+        <h4 className='mb-5 text-xl'>Create Credit Account (Mint NFT)</h4>
+        <Button className='bg-[#524bb1] hover:bg-[#6962cc]' onClick={handleCreateCreditAccount}>
           Create
         </Button>
-      </Card>
-      <Card>
-        <h4 className="mb-5 text-xl">Get all Credit Accounts</h4>
-        <Button className="bg-[#524bb1] hover:bg-[#6962cc]" onClick={handleGetCreditAccounts}>
+      </Container>
+      <Container>
+        <h4 className='mb-5 text-xl'>Get all Credit Accounts</h4>
+        <Button className='bg-[#524bb1] hover:bg-[#6962cc]' onClick={handleGetCreditAccounts}>
           Fetch
         </Button>
-      </Card>
-      <Card>
-        <h4 className="mb-5 text-xl">Borrow OSMO</h4>
+      </Container>
+      <Container>
+        <h4 className='mb-5 text-xl'>Borrow OSMO</h4>
         <input
-          className="px-3 py-1 rounded-lg bg-black/40"
-          type="number"
+          className='rounded-lg bg-black/40 px-3 py-1'
+          type='number'
           onChange={(e) => setBorrowAmount(e.target.valueAsNumber)}
         />
-        <Button className="ml-4 bg-[#524bb1] hover:bg-[#6962cc]" onClick={handleBorrowClick}>
+        <Button className='ml-4 bg-[#524bb1] hover:bg-[#6962cc]' onClick={handleBorrowClick}>
           Borrow
         </Button>
-      </Card>
+      </Container>
 
       <div>
         {allTokens && (
-          <div className="mb-4">
-            <div className="flex items-end">
-              <Text size="xl">All Tokens</Text>
-              <Text size="sm" className="ml-2">
-                - {allTokens.length} total
-              </Text>
+          <div className='mb-4'>
+            <div className='flex items-end'>
+              <h5 className='text-xl font-medium'>All Tokens</h5>
+              <p className='ml-2 text-sm'>- {allTokens.length} total</p>
             </div>
             {allTokens.map((token) => (
-              <Text key={token}>{token}</Text>
+              <p key={token}>{token}</p>
             ))}
           </div>
         )}
         {walletTokens && (
           <>
-            <div className="flex items-end">
-              <Text size="xl">Your Tokens</Text>
-              <p className="ml-2 text-sm">- {walletTokens.length} total</p>
+            <div className='flex items-end'>
+              <h5 className='text-xl font-medium'>Your Tokens</h5>
+              <p className='ml-2 text-sm'>- {walletTokens.length} total</p>
             </div>
             {walletTokens.map((token) => (
               <p key={token}>{token}</p>
@@ -327,7 +324,7 @@ const Home: NextPage = () => {
           </>
         )}
       </div>
-      {error && <div className="p-4 mt-8 text-red-500 bg-white">{error}</div>}
+      {error && <div className='mt-8 bg-white p-4 text-red-500'>{error}</div>}
       {isLoading && (
         <div>
           <Spinner />

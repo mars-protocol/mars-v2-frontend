@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "format": "eslint . --ext=ts,tsx --fix && prettier --write ./**/*.ts ./**/*.tsx",
     "start": "next start",
     "lint": "next lint"
   },
@@ -43,6 +44,7 @@
     "autoprefixer": "^10.4.13",
     "eslint": "8.23.0",
     "eslint-config-next": "12.3.1",
+    "eslint-plugin-import": "^2.26.0",
     "postcss": "^8.4.16",
     "prettier": "^2.7.1",
     "prettier-plugin-tailwindcss": "^0.1.13",

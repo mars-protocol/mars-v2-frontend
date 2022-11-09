@@ -1,12 +1,13 @@
-import { useCallback, useMemo } from 'react'
 import BigNumber from 'bignumber.js'
+import { useCallback, useMemo } from 'react'
 
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import { getTokenDecimals } from 'utils/tokens'
+
 import useCreditAccountPositions from './useCreditAccountPositions'
 import useMarkets from './useMarkets'
-import useTokenPrices from './useTokenPrices'
 import useRedbankBalances from './useRedbankBalances'
+import useTokenPrices from './useTokenPrices'
 
 const getApproximateHourlyInterest = (amount: string, borrowAPY: string) => {
   const hourlyAPY = BigNumber(borrowAPY).div(24 * 365)
@@ -28,7 +29,7 @@ const useCalculateMaxBorrowAmount = (denom: string, isUnderCollateralized: boole
 
       return BigNumber(amount).times(tokenPrices[denom]).toNumber()
     },
-    [tokenPrices]
+    [tokenPrices],
   )
 
   return useMemo(() => {
@@ -37,7 +38,7 @@ const useCalculateMaxBorrowAmount = (denom: string, isUnderCollateralized: boole
     // max ltv adjusted collateral
     const totalWeightedPositions = positionsData?.coins.reduce((acc, coin) => {
       const tokenWeightedValue = BigNumber(getTokenValue(coin.amount, coin.denom)).times(
-        Number(marketsData[coin.denom].max_loan_to_value)
+        Number(marketsData[coin.denom].max_loan_to_value),
       )
 
       return tokenWeightedValue.plus(acc).toNumber()
@@ -48,11 +49,11 @@ const useCalculateMaxBorrowAmount = (denom: string, isUnderCollateralized: boole
     const totalLiabilitiesValue = positionsData?.debts.reduce((acc, coin) => {
       const estimatedInterestAmount = getApproximateHourlyInterest(
         coin.amount,
-        marketsData[coin.denom].borrow_rate
+        marketsData[coin.denom].borrow_rate,
       )
 
       const tokenDebtValue = BigNumber(getTokenValue(coin.amount, coin.denom)).plus(
-        estimatedInterestAmount
+        estimatedInterestAmount,
       )
 
       return tokenDebtValue.plus(acc).toNumber()

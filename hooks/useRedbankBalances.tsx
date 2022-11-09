@@ -1,6 +1,6 @@
-import { useMemo } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { Coin } from '@cosmjs/stargate'
+import { useQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
 
 import { contractAddresses } from 'config/contracts'
 import { queryKeys } from 'types/query-keys-factory'
@@ -50,7 +50,7 @@ const useRedbankBalances = () => {
           ...acc,
           [coin.denom]: coin.amount,
         }),
-        {}
+        {},
       ) as { [key in string]: string }
     }, [result.data]),
   }

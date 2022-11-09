@@ -5,9 +5,9 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import * as _9 from './MockOracle.types'
 import * as _10 from './MockOracle.client'
 import * as _11 from './MockOracle.react-query'
+import * as _9 from './MockOracle.types'
 export namespace contracts {
   export const MockOracle = { ..._9, ..._10, ..._11 }
 }
