@@ -60,6 +60,11 @@ a {
   display: none;
 }
 
+.number {
+  white-space: nowrap;
+  font-feature-settings: 'tnum' on;
+}
+
 /* react-toastify */
 /* https://fkhadra.github.io/react-toastify/how-to-style#override-css-variables  */
 .Toastify__toast {
