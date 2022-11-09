@@ -18,9 +18,9 @@ import useCreditAccounts from 'hooks/useCreditAccounts'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useWalletStore from 'stores/useWalletStore'
 import { formatCurrency } from 'utils/formatters'
+import { chain } from 'utils/chains'
 
 import Button from './Button'
-import { chain } from 'utils/chains'
 import SemiCircleProgress from './SemiCircleProgress'
 
 // TODO: will require some tweaks depending on how lower viewport mocks pans out
