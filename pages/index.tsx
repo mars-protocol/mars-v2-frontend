@@ -9,6 +9,7 @@ import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import Button from 'components/Button'
+import Text from 'components/Text'
 import Card from 'components/Card'
 import Spinner from 'components/Spinner'
 import { contractAddresses } from 'config/contracts'
@@ -250,10 +251,12 @@ const Home: NextPage = () => {
   return (
     <div className='flex flex-col max-w-6xl mx-auto gap-y-6'>
       <Card>
-        <h4 className='mb-5 text-xl'>Send Tokens</h4>
+        <Text tag='h4' className='mb-5'>
+          Send Tokens
+        </Text>
         <div className='flex flex-wrap gap-2 mb-5'>
           <div>
-            <p>Address:</p>
+            <Text>Address:</Text>
             <input
               className='px-3 py-1 rounded-lg bg-black/40'
               value={recipientAddress}
@@ -262,7 +265,7 @@ const Home: NextPage = () => {
             />
           </div>
           <div>
-            <p>Amount:</p>
+            <Text>Amount:</Text>
             <input
               type='number'
               className='px-3 py-1 rounded-lg bg-black/40'
@@ -277,19 +280,25 @@ const Home: NextPage = () => {
         </Button>
       </Card>
       <Card>
-        <h4 className='mb-5 text-xl'>Create Credit Account (Mint NFT)</h4>
+        <Text tag='h4' className='mb-5'>
+          Create Credit Account (Mint NFT)
+        </Text>
         <Button className='bg-[#524bb1] hover:bg-[#6962cc]' onClick={handleCreateCreditAccount}>
           Create
         </Button>
       </Card>
       <Card>
-        <h4 className='mb-5 text-xl'>Get all Credit Accounts</h4>
+        <Text tag='h4' className='mb-5'>
+          Get all Credit Accounts
+        </Text>
         <Button className='bg-[#524bb1] hover:bg-[#6962cc]' onClick={handleGetCreditAccounts}>
           Fetch
         </Button>
       </Card>
       <Card>
-        <h4 className='mb-5 text-xl'>Borrow OSMO</h4>
+        <Text tag='h4' className='mb-5'>
+          Borrow OSMO
+        </Text>
         <input
           className='px-3 py-1 rounded-lg bg-black/40'
           type='number'
@@ -304,8 +313,10 @@ const Home: NextPage = () => {
         {allTokens && (
           <div className='mb-4'>
             <div className='flex items-end'>
-              <h5 className='text-xl font-medium'>All Tokens</h5>
-              <p className='ml-2 text-sm'>- {allTokens.length} total</p>
+              <Text size='2xl'>All Tokens</Text>
+              <Text size='sm' className='ml-2'>
+                - {allTokens.length} total
+              </Text>
             </div>
             {allTokens.map((token) => (
               <p key={token}>{token}</p>
@@ -315,8 +326,10 @@ const Home: NextPage = () => {
         {walletTokens && (
           <>
             <div className='flex items-end'>
-              <h5 className='text-xl font-medium'>Your Tokens</h5>
-              <p className='ml-2 text-sm'>- {walletTokens.length} total</p>
+              <Text size='2xl'>Your Tokens</Text>
+              <Text size='sm' className='ml-2'>
+                - {walletTokens.length} total
+              </Text>
             </div>
             {walletTokens.map((token) => (
               <p key={token}>{token}</p>
