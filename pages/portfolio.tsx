@@ -3,7 +3,6 @@ import React from 'react'
 import Card from 'components/Card'
 import Number from 'components/Number'
 import Text from 'components/Text'
-import { formatCurrency } from 'utils/formatters'
 
 const mockedAccounts = [
   {
