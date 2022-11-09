@@ -5,14 +5,6 @@ module.exports = {
   content: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
-      border: {
-        1: '1px',
-        2: '2px',
-        3: '3px',
-        4: '4px',
-        5: '5px',
-        6: '6px',
-      },
       borderRadius: {
         '3xs': '3px',
         '2xs': '4px',
