@@ -12,8 +12,8 @@ import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useWalletStore from 'stores/useWalletStore'
 import { formatCurrency } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-
-import Button from '../Button'
+import { chain } from 'utils/chains'
+import Button from 'components/Button'
 
 const CreditManager = () => {
   const [showFundWalletModal, setShowFundWalletModal] = useState(false)
@@ -78,11 +78,23 @@ const CreditManager = () => {
       <ContainerSecondary className='mb-2 text-sm'>
         <div className='mb-1 flex justify-between'>
           <div>Total Position:</div>
-          <div className='font-semibold'>{formatCurrency(accountStats?.totalPosition ?? 0)}</div>
+          <div className='font-semibold'>
+            {formatCurrency(
+              BigNumber(accountStats?.totalPosition ?? 0)
+                .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
+                .toNumber(),
+            )}
+          </div>
         </div>
         <div className='flex justify-between'>
           <div>Total Liabilities:</div>
-          <div className='font-semibold'>{formatCurrency(accountStats?.totalDebt ?? 0)}</div>
+          <div className='font-semibold'>
+            {formatCurrency(
+              BigNumber(accountStats?.totalDebt ?? 0)
+                .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
+                .toNumber(),
+            )}
+          </div>
         </div>
       </ContainerSecondary>
       <ContainerSecondary>
