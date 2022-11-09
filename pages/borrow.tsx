@@ -3,7 +3,7 @@ import React, { useMemo, useRef, useState } from 'react'
 
 import BorrowTable from 'components/Borrow/BorrowTable'
 import BorrowModal from 'components/BorrowModal'
-import Container from 'components/Container'
+import Card from 'components/Card'
 import RepayModal from 'components/RepayModal'
 import useAllowedCoins from 'hooks/useAllowedCoins'
 import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
@@ -117,26 +117,26 @@ const Borrow = () => {
   return (
     <div className='flex items-start gap-4'>
       <div className='flex-1'>
-        <Container className='mb-4'>
+        <Card className='mb-4'>
           <div>
-            <h3 className='mb-7 text-center text-xl font-medium uppercase'>Borrowings</h3>
+            <h3 className='text-xl font-medium text-center uppercase mb-7'>Borrowings</h3>
             <BorrowTable
               data={borrowedAssets}
               onBorrowClick={handleBorrowClick}
               onRepayClick={handleRepayClick}
             />
           </div>
-        </Container>
-        <Container>
+        </Card>
+        <Card>
           <div>
-            <h3 className='mb-7 text-center text-xl font-medium uppercase'>Available to Borrow</h3>
+            <h3 className='text-xl font-medium text-center uppercase mb-7'>Available to Borrow</h3>
             <BorrowTable
               data={notBorrowedAssets}
               onBorrowClick={handleBorrowClick}
               onRepayClick={handleRepayClick}
             />
           </div>
-        </Container>
+        </Card>
       </div>
       <BorrowModal
         key={`borrowModal_${modalId.current}`}

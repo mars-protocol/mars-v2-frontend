@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import Button from 'components/Button'
-import Container from 'components/Container'
+import Card from 'components/Card'
 import Spinner from 'components/Spinner'
 import { contractAddresses } from 'config/contracts'
 // import { Coin } from "@cosmjs/stargate";
@@ -248,14 +248,14 @@ const Home: NextPage = () => {
   }
 
   return (
-    <div className='mx-auto flex max-w-6xl flex-col gap-y-6'>
-      <Container>
+    <div className='flex flex-col max-w-6xl mx-auto gap-y-6'>
+      <Card>
         <h4 className='mb-5 text-xl'>Send Tokens</h4>
-        <div className='mb-5 flex flex-wrap gap-2'>
+        <div className='flex flex-wrap gap-2 mb-5'>
           <div>
             <p>Address:</p>
             <input
-              className='rounded-lg bg-black/40 px-3 py-1'
+              className='px-3 py-1 rounded-lg bg-black/40'
               value={recipientAddress}
               placeholder='address'
               onChange={(e) => setRecipientAddress(e.target.value)}
@@ -265,7 +265,7 @@ const Home: NextPage = () => {
             <p>Amount:</p>
             <input
               type='number'
-              className='rounded-lg bg-black/40 px-3 py-1'
+              className='px-3 py-1 rounded-lg bg-black/40'
               value={sendAmount}
               placeholder='amount'
               onChange={(e) => setSendAmount(e.target.value)}
@@ -275,30 +275,30 @@ const Home: NextPage = () => {
         <Button className='bg-[#524bb1] hover:bg-[#6962cc]' onClick={handleSendClick}>
           Send
         </Button>
-      </Container>
-      <Container>
+      </Card>
+      <Card>
         <h4 className='mb-5 text-xl'>Create Credit Account (Mint NFT)</h4>
         <Button className='bg-[#524bb1] hover:bg-[#6962cc]' onClick={handleCreateCreditAccount}>
           Create
         </Button>
-      </Container>
-      <Container>
+      </Card>
+      <Card>
         <h4 className='mb-5 text-xl'>Get all Credit Accounts</h4>
         <Button className='bg-[#524bb1] hover:bg-[#6962cc]' onClick={handleGetCreditAccounts}>
           Fetch
         </Button>
-      </Container>
-      <Container>
+      </Card>
+      <Card>
         <h4 className='mb-5 text-xl'>Borrow OSMO</h4>
         <input
-          className='rounded-lg bg-black/40 px-3 py-1'
+          className='px-3 py-1 rounded-lg bg-black/40'
           type='number'
           onChange={(e) => setBorrowAmount(e.target.valueAsNumber)}
         />
         <Button className='ml-4 bg-[#524bb1] hover:bg-[#6962cc]' onClick={handleBorrowClick}>
           Borrow
         </Button>
-      </Container>
+      </Card>
 
       <div>
         {allTokens && (
@@ -324,7 +324,7 @@ const Home: NextPage = () => {
           </>
         )}
       </div>
-      {error && <div className='mt-8 bg-white p-4 text-red-500'>{error}</div>}
+      {error && <div className='p-4 mt-8 text-red-500 bg-white'>{error}</div>}
       {isLoading && (
         <div>
           <Spinner />
