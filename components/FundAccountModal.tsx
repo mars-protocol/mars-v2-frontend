@@ -1,19 +1,20 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import Image from 'next/image'
-import { Transition, Dialog, Switch } from '@headlessui/react'
+import { Dialog, Switch, Transition } from '@headlessui/react'
 import BigNumber from 'bignumber.js'
+import Image from 'next/image'
+import React, { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 import useLocalStorageState from 'use-local-storage-state'
 
-import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-import ContainerSecondary from './ContainerSecondary'
-import useCreditManagerStore from 'stores/useCreditManagerStore'
-import Button from './Button'
-import Spinner from './Spinner'
+import Slider from 'components/Slider'
+import useDepositCreditAccount from 'hooks/mutations/useDepositCreditAccount'
 import useAllBalances from 'hooks/useAllBalances'
 import useAllowedCoins from 'hooks/useAllowedCoins'
-import useDepositCreditAccount from 'hooks/mutations/useDepositCreditAccount'
-import Slider from 'components/Slider'
+import useCreditManagerStore from 'stores/useCreditManagerStore'
+import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
+
+import Button from './Button'
+import ContainerSecondary from './ContainerSecondary'
+import Spinner from './Spinner'
 
 const FundAccountModal = ({ show, onClose }: any) => {
   const [amount, setAmount] = useState(0)
@@ -39,7 +40,7 @@ const FundAccountModal = ({ show, onClose }: any) => {
         toast.success(`${amount} ${getTokenSymbol(selectedToken)} successfully Deposited`)
         onClose()
       },
-    }
+    },
   )
 
   useEffect(() => {
@@ -71,55 +72,55 @@ const FundAccountModal = ({ show, onClose }: any) => {
 
   return (
     <Transition appear show={show} as={React.Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={onClose}>
+      <Dialog as='div' className='relative z-10' onClose={onClose}>
         <Transition.Child
           as={React.Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
+          enter='ease-out duration-300'
+          enterFrom='opacity-0'
+          enterTo='opacity-100'
+          leave='ease-in duration-200'
+          leaveFrom='opacity-100'
+          leaveTo='opacity-0'
         >
-          <div className="fixed inset-0 bg-black bg-opacity-80" />
+          <div className='fixed inset-0 bg-black bg-opacity-80' />
         </Transition.Child>
 
-        <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4">
+        <div className='fixed inset-0 overflow-y-auto'>
+          <div className='flex min-h-full items-center justify-center p-4'>
             <Transition.Child
               as={React.Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
+              enter='ease-out duration-300'
+              enterFrom='opacity-0 scale-95'
+              enterTo='opacity-100 scale-100'
+              leave='ease-in duration-200'
+              leaveFrom='opacity-100 scale-100'
+              leaveTo='opacity-0 scale-95'
             >
-              <Dialog.Panel className="flex min-h-[520px] w-full max-w-3xl transform overflow-hidden rounded-2xl bg-[#585A74] align-middle shadow-xl transition-all">
+              <Dialog.Panel className='flex min-h-[520px] w-full max-w-3xl transform overflow-hidden rounded-2xl bg-[#585A74] align-middle shadow-xl transition-all'>
                 {isLoading && (
-                  <div className="absolute inset-0 z-40 grid place-items-center bg-black/50">
+                  <div className='absolute inset-0 z-40 grid place-items-center bg-black/50'>
                     <Spinner />
                   </div>
                 )}
 
-                <div className="flex flex-1 flex-col items-start justify-between bg-[#4A4C60] p-6">
+                <div className='flex flex-1 flex-col items-start justify-between bg-[#4A4C60] p-6'>
                   <div>
-                    <p className="text-bold mb-3 text-xs uppercase text-white/50">About</p>
-                    <h4 className="mb-4 text-xl leading-8">
+                    <p className='text-bold mb-3 text-xs uppercase text-white/50'>About</p>
+                    <h4 className='mb-4 text-xl leading-8'>
                       Bringing the next generation of video creation to the Metaverse.
                       <br />
                       Powered by deep-learning.
                     </h4>
                   </div>
-                  <Image src="/logo.svg" alt="mars" width={150} height={50} />
+                  <Image src='/logo.svg' alt='mars' width={150} height={50} />
                 </div>
 
-                <div className="flex flex-1 flex-col p-4">
-                  <Dialog.Title as="h3" className="mb-4 text-center font-medium">
+                <div className='flex flex-1 flex-col p-4'>
+                  <Dialog.Title as='h3' className='mb-4 text-center font-medium'>
                     Fund Account {selectedAccount}
                   </Dialog.Title>
-                  <ContainerSecondary className="mb-2 p-3">
-                    <p className="mb-6 text-sm text-[#585A74]/50">
+                  <ContainerSecondary className='mb-2 p-3'>
+                    <p className='mb-6 text-sm text-[#585A74]/50'>
                       Transfer assets from your injective wallet to your Mars credit account. If you
                       don’t have any assets in your injective wallet use the injective bridge to
                       transfer funds to your injective wallet.
@@ -128,11 +129,11 @@ const FundAccountModal = ({ show, onClose }: any) => {
                       <p>Loading...</p>
                     ) : (
                       <>
-                        <div className="mb-2 rounded-md border border-[#585A74] text-sm">
-                          <div className="mb-1 flex justify-between border-b border-[#585A74] p-2">
-                            <div className="font-bold">Asset:</div>
+                        <div className='mb-2 rounded-md border border-[#585A74] text-sm'>
+                          <div className='mb-1 flex justify-between border-b border-[#585A74] p-2'>
+                            <div className='font-bold'>Asset:</div>
                             <select
-                              className="bg-transparent outline-0"
+                              className='bg-transparent outline-0'
                               onChange={(e) => {
                                 setSelectedToken(e.target.value)
 
@@ -147,13 +148,13 @@ const FundAccountModal = ({ show, onClose }: any) => {
                               ))}
                             </select>
                           </div>
-                          <div className="flex justify-between p-2">
-                            <div className="font-bold">Amount:</div>
+                          <div className='flex justify-between p-2'>
+                            <div className='font-bold'>Amount:</div>
                             <input
-                              type="number"
-                              className="bg-transparent text-right outline-0"
+                              type='number'
+                              className='bg-transparent text-right outline-0'
                               value={amount}
-                              min="0"
+                              min='0'
                               onChange={(e) => handleValueChange(e.target.valueAsNumber)}
                               onBlur={(e) => {
                                 if (e.target.value === '') setAmount(0)
@@ -161,9 +162,9 @@ const FundAccountModal = ({ show, onClose }: any) => {
                             />
                           </div>
                         </div>
-                        <p className="mb-2 text-sm">In wallet: {walletAmount.toLocaleString()}</p>
+                        <p className='mb-2 text-sm'>In wallet: {walletAmount.toLocaleString()}</p>
                         <Slider
-                          className="mb-6"
+                          className='mb-6'
                           value={percentageValue}
                           onChange={(value) => {
                             const decimal = value[0] / 100
@@ -178,10 +179,10 @@ const FundAccountModal = ({ show, onClose }: any) => {
                       </>
                     )}
                   </ContainerSecondary>
-                  <ContainerSecondary className="mb-2 flex items-center justify-between">
+                  <ContainerSecondary className='mb-2 flex items-center justify-between'>
                     <div>
-                      <h3 className="font-bold">Lending Assets</h3>
-                      <div className="text-sm text-[#585A74]/50">
+                      <h3 className='font-bold'>Lending Assets</h3>
+                      <div className='text-sm text-[#585A74]/50'>
                         Lend assets from account to earn yield.
                       </div>
                     </div>
@@ -201,7 +202,7 @@ const FundAccountModal = ({ show, onClose }: any) => {
                     </Switch>
                   </ContainerSecondary>
                   <Button
-                    className="mt-auto w-full"
+                    className='mt-auto w-full'
                     onClick={() => mutate()}
                     disabled={amount === 0 || !amount}
                   >

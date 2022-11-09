@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
 
-import useWalletStore from 'stores/useWalletStore'
 import { contractAddresses } from 'config/contracts'
-import { hardcodedFee } from 'utils/contants'
+import useWalletStore from 'stores/useWalletStore'
 import { queryKeys } from 'types/query-keys-factory'
+import { hardcodedFee } from 'utils/contants'
 
 const useCreateCreditAccount = (accountId: string) => {
   const signingClient = useWalletStore((s) => s.signingClient)
@@ -22,7 +22,7 @@ const useCreateCreditAccount = (accountId: string) => {
             token_id: accountId,
           },
         },
-        hardcodedFee
+        hardcodedFee,
       ),
     {
       onSettled: () => {
@@ -34,7 +34,7 @@ const useCreateCreditAccount = (accountId: string) => {
       onSuccess: () => {
         toast.success('Credit Account Deleted')
       },
-    }
+    },
   )
 }
 

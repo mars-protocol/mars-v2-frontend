@@ -19,7 +19,7 @@ const Button = React.forwardRef<any, Props>(
     >
       {children}
     </button>
-  )
+  ),
 )
 
 Button.displayName = 'Button'

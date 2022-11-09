@@ -1,21 +1,22 @@
-import React, { useMemo, useState } from 'react'
-import Image from 'next/image'
-import { Transition, Dialog } from '@headlessui/react'
+import { Dialog, Transition } from '@headlessui/react'
 import BigNumber from 'bignumber.js'
-import { toast } from 'react-toastify'
+import Image from 'next/image'
+import React, { useMemo, useState } from 'react'
 import { NumericFormat } from 'react-number-format'
+import { toast } from 'react-toastify'
 
-import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-import ContainerSecondary from './ContainerSecondary'
-import useCreditManagerStore from 'stores/useCreditManagerStore'
-import Button from './Button'
-import Spinner from './Spinner'
-import useAllBalances from 'hooks/useAllBalances'
 import Slider from 'components/Slider'
-import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useRepayFunds from 'hooks/mutations/useRepayFunds'
+import useAllBalances from 'hooks/useAllBalances'
+import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useTokenPrices from 'hooks/useTokenPrices'
+import useCreditManagerStore from 'stores/useCreditManagerStore'
 import { formatCurrency } from 'utils/formatters'
+import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
+
+import Button from './Button'
+import ContainerSecondary from './ContainerSecondary'
+import Spinner from './Spinner'
 
 type Props = {
   show: boolean
@@ -50,7 +51,7 @@ const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
         onClose()
         toast.success(`${amount} ${tokenSymbol} successfully repaid`)
       },
-    }
+    },
   )
 
   const { data: tokenPrices } = useTokenPrices()
@@ -82,71 +83,71 @@ const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
 
   return (
     <Transition appear show={show} as={React.Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={onClose}>
+      <Dialog as='div' className='relative z-10' onClose={onClose}>
         <Transition.Child
           as={React.Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
+          enter='ease-out duration-300'
+          enterFrom='opacity-0'
+          enterTo='opacity-100'
+          leave='ease-in duration-200'
+          leaveFrom='opacity-100'
+          leaveTo='opacity-0'
         >
-          <div className="fixed inset-0 bg-black bg-opacity-80" />
+          <div className='fixed inset-0 bg-black bg-opacity-80' />
         </Transition.Child>
 
-        <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4">
+        <div className='fixed inset-0 overflow-y-auto'>
+          <div className='flex min-h-full items-center justify-center p-4'>
             <Transition.Child
               as={React.Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
+              enter='ease-out duration-300'
+              enterFrom='opacity-0 scale-95'
+              enterTo='opacity-100 scale-100'
+              leave='ease-in duration-200'
+              leaveFrom='opacity-100 scale-100'
+              leaveTo='opacity-0 scale-95'
             >
-              <Dialog.Panel className="flex min-h-[520px] w-full max-w-3xl transform overflow-hidden rounded-2xl bg-[#585A74] align-middle shadow-xl transition-all">
+              <Dialog.Panel className='flex min-h-[520px] w-full max-w-3xl transform overflow-hidden rounded-2xl bg-[#585A74] align-middle shadow-xl transition-all'>
                 {isLoading && (
-                  <div className="absolute inset-0 z-40 grid place-items-center bg-black/50">
+                  <div className='absolute inset-0 z-40 grid place-items-center bg-black/50'>
                     <Spinner />
                   </div>
                 )}
 
-                <div className="flex flex-1 flex-col items-start justify-between bg-[#4A4C60] p-6">
+                <div className='flex flex-1 flex-col items-start justify-between bg-[#4A4C60] p-6'>
                   <div>
-                    <p className="text-bold mb-3 text-xs uppercase text-white/50">About</p>
-                    <h4 className="mb-4 text-xl leading-8">
+                    <p className='text-bold mb-3 text-xs uppercase text-white/50'>About</p>
+                    <h4 className='mb-4 text-xl leading-8'>
                       Bringing the next generation of video creation to the Metaverse.
                       <br />
                       Powered by deep-learning.
                     </h4>
                   </div>
-                  <Image src="/logo.svg" alt="mars" width={150} height={50} />
+                  <Image src='/logo.svg' alt='mars' width={150} height={50} />
                 </div>
 
-                <div className="flex flex-1 flex-col p-4">
-                  <Dialog.Title as="h3" className="mb-4 text-center font-medium">
+                <div className='flex flex-1 flex-col p-4'>
+                  <Dialog.Title as='h3' className='mb-4 text-center font-medium'>
                     Repay {tokenSymbol}
                   </Dialog.Title>
-                  <div className="mb-4 flex flex-col gap-2 text-sm">
+                  <div className='mb-4 flex flex-col gap-2 text-sm'>
                     <ContainerSecondary>
-                      <p className="mb-7">
+                      <p className='mb-7'>
                         In wallet: {walletAmount.toLocaleString()} {tokenSymbol}
                       </p>
 
-                      <div className="mb-7">
-                        <p className="mb-2 font-semibold uppercase tracking-widest">Amount</p>
+                      <div className='mb-7'>
+                        <p className='mb-2 font-semibold uppercase tracking-widest'>Amount</p>
                         <NumericFormat
-                          className="mb-2 h-[32px] w-full rounded-lg border border-black/50 bg-transparent px-2"
+                          className='mb-2 h-[32px] w-full rounded-lg border border-black/50 bg-transparent px-2'
                           value={amount}
-                          placeholder="0"
+                          placeholder='0'
                           allowNegative={false}
                           onValueChange={(v) => handleValueChange(v.floatValue || 0)}
                           suffix={` ${tokenSymbol}`}
                           decimalScale={getTokenDecimals(tokenDenom)}
                         />
-                        <div className="flex justify-between text-xs tracking-widest">
+                        <div className='flex justify-between text-xs tracking-widest'>
                           <div>
                             1 {tokenSymbol} = {formatCurrency(tokenPrice)}
                           </div>
@@ -155,7 +156,7 @@ const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
                       </div>
 
                       <Slider
-                        className="mb-6"
+                        className='mb-6'
                         value={percentageValue}
                         onChange={(value) => {
                           const decimal = value[0] / 100
@@ -170,7 +171,7 @@ const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
                     </ContainerSecondary>
                   </div>
                   <Button
-                    className="mt-auto w-full"
+                    className='mt-auto w-full'
                     onClick={handleSubmit}
                     disabled={amount === 0 || !amount}
                   >

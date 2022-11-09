@@ -1,13 +1,13 @@
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
+import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
 import { toast } from 'react-toastify'
-import BigNumber from 'bignumber.js'
 
-import useWalletStore from 'stores/useWalletStore'
 import { contractAddresses } from 'config/contracts'
-import { hardcodedFee } from 'utils/contants'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useWalletStore from 'stores/useWalletStore'
 import { queryKeys } from 'types/query-keys-factory'
+import { hardcodedFee } from 'utils/contants'
 import { getTokenDecimals } from 'utils/tokens'
 
 // 0.001% buffer / slippage to avoid repay action from not fully repaying the debt amount
@@ -16,7 +16,7 @@ const REPAY_BUFFER = 1.00001
 const useRepayFunds = (
   amount: number,
   denom: string,
-  options: Omit<UseMutationOptions, 'onError'>
+  options: Omit<UseMutationOptions, 'onError'>,
 ) => {
   const signingClient = useWalletStore((s) => s.signingClient)
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
@@ -61,7 +61,7 @@ const useRepayFunds = (
             denom,
             amount: adjustedAmount,
           },
-        ]
+        ],
       ),
     {
       onSettled: () => {
@@ -74,7 +74,7 @@ const useRepayFunds = (
         toast.error(err.message)
       },
       ...options,
-    }
+    },
   )
 }
 

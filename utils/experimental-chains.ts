@@ -1,8 +1,9 @@
 import { Bech32Address } from '@keplr-wallet/cosmos'
+
 import { ChainId, CosmosChainId, TestnetCosmosChainId } from 'types'
 
 export const getEndpointsFromChainId = (
-  chainId: TestnetCosmosChainId | CosmosChainId | ChainId
+  chainId: TestnetCosmosChainId | CosmosChainId | ChainId,
 ): { rpc: string; rest: string } => {
   switch (chainId) {
     case CosmosChainId.Osmosis:

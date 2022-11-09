@@ -8,7 +8,7 @@
 
   background-color: #562a3b;
   background-size: 100% auto;
-  background-image: url("/background.svg");
+  background-image: url('/background.svg');
   background-position: center top;
 
   filter: brightness(1) hue-rotate(0deg);

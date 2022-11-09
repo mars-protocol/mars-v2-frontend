@@ -5,17 +5,18 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
+import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
+
 import {
-  OracleBaseForString,
-  InstantiateMsg,
+  ArrayOfCoin,
+  Coin,
   ExecuteMsg,
+  InstantiateMsg,
+  OracleBaseForString,
   QueryMsg,
   Uint128,
   VaultInfo,
-  Coin,
-  ArrayOfCoin,
 } from './MockVault.types'
 export interface MockVaultReadOnlyInterface {
   contractAddress: string
