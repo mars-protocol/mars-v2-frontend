@@ -37,24 +37,24 @@ const Button = React.forwardRef<any, Props>(
     const Button = () => {
       const colorClasses = {
         primary:
-          'bg-primary hover:bg-primary-highlight active:bg-primary-highlight-10 focus:bg-primary-highlight',
+          'border-none bg-primary hover:bg-primary-highlight active:bg-primary-highlight-10 focus:bg-primary-highlight',
         secondary:
-          'bg-secondary hover:bg-secondary-highlight active:bg-secondary-highlight-10 focus:bg-secondary-highlight',
+          'border-none bg-secondary hover:bg-secondary-highlight active:bg-secondary-highlight-10 focus:bg-secondary-highlight',
         tertiary:
-          'bg-secondary-dark border-white hover:border-white active:bg-secondary-dark-10 focus:border-white',
+          'border bg-secondary-dark/60 border-white/60 hover:bg-secondary-dark hover:border-white active:bg-secondary-dark-10 active:border-white focus:bg-secondary-dark focus:border-white',
         quaternary:
-          'bg-transparent color-white/60 border-transparent hover:color-white hover:border-white active:color-white active:border-white',
+          'border bg-transparent text-white/60 border-transparent hover:text-white hover:border-white active:text-white active:border-white',
       }
 
       const transparentColorClasses = {
         primary:
-          'color-primary hover:color-primary-highlight active:color-primary-highlight focus:color-primary-highlight',
+          'border-none text-primary hover:text-primary-highlight active:text-primary-highlight focus:text-primary-highlight',
         secondary:
-          'color-secondary hover:color-secondary-highlight active:color-secondary-highlight focus:color-secondary-highlight',
+          'border-none text-secondary hover:text-secondary-highlight active:text-secondary-highlight focus:text-secondary-highlight',
         tertiary:
-          'color-secondary-dark hover:color-secondary-dark-10 active:color-secondary-dark-10 focus:color-secondary-dark-10',
+          'text-secondary-dark hover:text-secondary-dark-10 active:text-secondary-dark-10 focus:text-secondary-dark-10',
         quaternary:
-          'color-white/60 border-transparent hover:color-white hover:border-white active:color-white active:border-white',
+          'border border-transparent text-white/60 hover:text-white hover:border-white active:text-white active:border-white',
       }
 
       const roundSizeClasses = {
@@ -70,13 +70,13 @@ const Button = React.forwardRef<any, Props>(
       }
 
       const variantClasses = {
-        solid: '',
+        solid: 'text-white',
         transparent: 'bg-transparent p-0',
         round: 'rounded-full p-0',
       }
 
       const buttonClasses = classNames(
-        'transition-colors color-white appearance-none border-none rounded-3xl cursor-pointer outline-none break-normal',
+        'transition-colors appearance-none rounded-3xl cursor-pointer outline-none break-normal',
         variant === 'round' ? `${sizeClasses[size]} ${roundSizeClasses[size]}` : sizeClasses[size],
         variant === 'transparent' ? transparentColorClasses[color] : colorClasses[color],
         variantClasses[variant],

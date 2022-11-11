@@ -24,8 +24,8 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
       </Popover.Button>
 
       <Popover.Panel className='absolute right-0 z-10 pt-2'>
-        <div className='rounded-2xl bg-white p-6 text-gray-900'>
-          <div className='mb-4 flex items-center justify-between'>
+        <div className='p-6 text-gray-900 bg-white rounded-2xl'>
+          <div className='flex items-center justify-between mb-4'>
             <div className='flex items-center'>
               <Image src={chain.stakeCurrency.coinImageUrl} alt='token' width={24} height={24} />
               <p className='ml-2'>
@@ -35,7 +35,7 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
             </div>
             <Button onClick={() => actions.disconnect()}>Disconnect</Button>
           </div>
-          <p className='mb-6 text-sm'>{address}</p>
+          <p className='mb-6 text-sm color-primary'>{address}</p>
           <button
             className='flex items-center text-sm text-slate-500 hover:text-slate-700'
             onClick={() => {
@@ -49,7 +49,7 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
               viewBox='0 0 24 24'
               strokeWidth={1.5}
               stroke='currentColor'
-              className='mr-1 h-5 w-5'
+              className='w-5 h-5 mr-1'
             >
               <path
                 strokeLinecap='round'
@@ -75,10 +75,7 @@ const Wallet = () => {
       {address ? (
         <WalletPopover>{formatWalletAddress(address)}</WalletPopover>
       ) : (
-        <Button
-          className='w-[200px] !rounded-3xl !bg-green-500'
-          onClick={() => setShowConnectModal(true)}
-        >
+        <Button className='w-[200px]' color='primary' onClick={() => setShowConnectModal(true)}>
           Connect Wallet
         </Button>
       )}
