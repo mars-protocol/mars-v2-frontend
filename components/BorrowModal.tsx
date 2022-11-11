@@ -212,7 +212,7 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
                     </ContainerSecondary>
                   </div>
                   <Button
-                    className='mt-auto w-full rounded-3xl'
+                    className='mt-auto'
                     onClick={handleSubmit}
                     disabled={amount === 0 || !amount}
                   >

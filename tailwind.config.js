@@ -27,6 +27,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      animation: {
+        progress: 'spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite',
+      },
       borderRadius: {
         '3xs': '3px',
         '2xs': '4px',
@@ -63,9 +66,12 @@ module.exports = {
         profit: '#41a4a9',
         primary: '#14a693',
         'primary-highlight': '#15bfa9',
+        'primary-highlight-10': '#20e7cd',
         secondary: '#524bb1',
         'secondary-dark': '#440b37',
+        'secondary-dark-10': '#70125b',
         'secondary-highlight': '#6962cc',
+        'secondary-highlight-10': '#8e88d9',
         'vote-against': '#eb9e49',
         warning: '#c83333',
       },
