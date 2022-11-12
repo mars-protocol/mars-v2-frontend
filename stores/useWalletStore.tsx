@@ -4,8 +4,9 @@ import { persist } from 'zustand/middleware'
 
 import { contractAddresses } from 'config/contracts'
 import { Wallet } from 'types'
-import { AccountNftClient } from 'types/generated/account-nft/AccountNft.client'
-import { CreditManagerClient } from 'types/generated/credit-manager/CreditManager.client'
+import { MarsAccountNftClient } from 'types/generated/mars-account-nft/MarsAccountNft.client'
+import { MarsCreditManagerClient } from 'types/generated/mars-credit-manager/MarsCreditManager.client'
+import { MarsSwapperBaseClient } from 'types/generated/mars-swapper-base/MarsSwapperBase.client'
 import { chain } from 'utils/chains'
 
 interface WalletStore {
@@ -15,8 +16,9 @@ interface WalletStore {
   client?: CosmWasmClient
   signingClient?: SigningCosmWasmClient
   clients: {
-    accountNft: AccountNftClient | null
-    creditManager: CreditManagerClient | null
+    accountNft: MarsAccountNftClient | null
+    creditManager: MarsCreditManagerClient | null
+    swapperBase: MarsSwapperBaseClient | null
   }
   actions: {
     disconnect: () => void
@@ -36,27 +38,34 @@ const useWalletStore = create<WalletStore>()(
       clients: {
         accountNft: null,
         creditManager: null,
+        swapperBase: null,
       },
       actions: {
         disconnect: () => {
           set(() => ({ address: '', wallet: null, signingClient: undefined }))
         },
         initClients: (address, signingClient) => {
-          const accountNft = new AccountNftClient(
+          const accountNft = new MarsAccountNftClient(
             signingClient,
             address,
             contractAddresses.accountNft,
           )
-          const creditManager = new CreditManagerClient(
+          const creditManager = new MarsCreditManagerClient(
             signingClient,
             address,
             contractAddresses.creditManager,
+          )
+          const swapperBase = new MarsSwapperBaseClient(
+            signingClient,
+            address,
+            contractAddresses.swapper,
           )
 
           set(() => ({
             clients: {
               accountNft,
               creditManager,
+              swapperBase,
             },
           }))
         },
