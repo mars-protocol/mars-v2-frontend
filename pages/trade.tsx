@@ -138,65 +138,63 @@ const Trade = () => {
         <div className='flex flex-col gap-4'>
           <Container className='!p-2 text-sm'>
             <div className='border-b border-b-white/20 p-2'>
-              <div className='mb-4 flex gap-4'>
-                <div className='flex-1'>
-                  <p>Buy</p>
-                  <select
-                    className='h-8 w-full text-black'
-                    onChange={handleSelectedTokenOutChange}
-                    value={selectedTokenOut}
-                  >
-                    {allowedCoinsData?.map((entry) => (
-                      <option key={entry} value={entry}>
-                        {getTokenSymbol(entry)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className='flex-1'>
-                  <p>Sell</p>
-                  <select
-                    className='h-8 w-full text-black'
-                    onChange={handleSelectedTokenInChange}
-                    value={selectedTokenIn}
-                  >
-                    {allowedCoinsData?.map((entry) => (
-                      <option key={entry} value={entry}>
-                        {getTokenSymbol(entry)}
-                      </option>
-                    ))}
-                  </select>
+              <div className='mb-2'>
+                <p className='mb-1'>From:</p>
+                <div className='flex gap-2'>
+                  <div className='flex-1'>
+                    <select
+                      className='h-8 w-full text-black'
+                      onChange={handleSelectedTokenInChange}
+                      value={selectedTokenIn}
+                    >
+                      {allowedCoinsData?.map((entry) => (
+                        <option key={entry} value={entry}>
+                          {getTokenSymbol(entry)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <input
+                      type='number'
+                      className='h-8 px-2 text-black outline-0'
+                      value={amountIn}
+                      min='0'
+                      placeholder='0.00'
+                      onChange={(e) => handleAmountChange(e.target.valueAsNumber, 'in')}
+                    />
+                  </div>
                 </div>
               </div>
-              <div className='mb-2 flex gap-4'>
-                <div>
-                  <p className='mb-1'>Buy</p>
-                  <input
-                    type='number'
-                    className='px-2 py-1 text-black outline-0'
-                    value={amountOut}
-                    min='0'
-                    onChange={(e) => handleAmountChange(e.target.valueAsNumber, 'out')}
-                    onBlur={(e) => {
-                      if (e.target.value === '') setAmountOut(0)
-                    }}
-                  />
-                </div>
-                <div>
-                  <p className='mb-1'>Sell</p>
-                  <input
-                    type='number'
-                    className='px-2 py-1 text-black outline-0'
-                    value={amountIn}
-                    min='0'
-                    onChange={(e) => handleAmountChange(e.target.valueAsNumber, 'in')}
-                    onBlur={(e) => {
-                      if (e.target.value === '') setAmountIn(0)
-                    }}
-                  />
+              <div className='mb-5'>
+                <p className='mb-1'>To:</p>
+                <div className='flex gap-2'>
+                  <div className='flex-1'>
+                    <select
+                      className='h-8 w-full text-black'
+                      onChange={handleSelectedTokenOutChange}
+                      value={selectedTokenOut}
+                    >
+                      {allowedCoinsData?.map((entry) => (
+                        <option key={entry} value={entry}>
+                          {getTokenSymbol(entry)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <input
+                      type='number'
+                      className='h-8 px-2 text-black outline-0'
+                      value={amountOut}
+                      min='0'
+                      placeholder='0.00'
+                      onChange={(e) => handleAmountChange(e.target.valueAsNumber, 'out')}
+                    />
+                  </div>
                 </div>
               </div>
-              <div className='mb-4'>
+              <div className='mb-1'>
                 In Wallet:{' '}
                 {walletAmount.toLocaleString(undefined, {
                   maximumFractionDigits: getTokenDecimals(selectedTokenIn),
@@ -223,7 +221,7 @@ const Trade = () => {
               />
             </div>
             <div className='border-b border-b-white/20 p-2'>
-              <div className='mb-2 flex items-center'>
+              <div className='mb-4 flex items-center'>
                 <p className='mr-2'>Margin</p>
                 <Switch
                   checked={isMarginEnabled}
@@ -239,7 +237,7 @@ const Trade = () => {
                   />
                 </Switch>
               </div>
-              <div className='mb-2 flex justify-between'>
+              <div className='mb-1 flex justify-between'>
                 <p>Borrow</p>
                 <p>{isMarginEnabled ? 'BORROW VALUE' : '-'}</p>
               </div>
