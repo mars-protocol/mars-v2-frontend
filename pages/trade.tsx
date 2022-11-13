@@ -136,62 +136,54 @@ const Trade = () => {
       <div className='mb-4 flex gap-4'>
         <Container className='grid flex-1 place-items-center'>Graph/Tradingview Module</Container>
         <div className='flex flex-col gap-4'>
-          <Container className='!p-2 text-sm'>
+          <Container className='min-w-[350px] !p-2 text-sm'>
             <div className='border-b border-b-white/20 p-2'>
               <div className='mb-2'>
                 <p className='mb-1'>From:</p>
                 <div className='flex gap-2'>
-                  <div className='flex-1'>
-                    <select
-                      className='h-8 w-full text-black'
-                      onChange={handleSelectedTokenInChange}
-                      value={selectedTokenIn}
-                    >
-                      {allowedCoinsData?.map((entry) => (
-                        <option key={entry} value={entry}>
-                          {getTokenSymbol(entry)}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <input
-                      type='number'
-                      className='h-8 px-2 text-black outline-0'
-                      value={amountIn}
-                      min='0'
-                      placeholder='0.00'
-                      onChange={(e) => handleAmountChange(e.target.valueAsNumber, 'in')}
-                    />
-                  </div>
+                  <select
+                    className='h-8 w-20 text-black'
+                    onChange={handleSelectedTokenInChange}
+                    value={selectedTokenIn}
+                  >
+                    {allowedCoinsData?.map((entry) => (
+                      <option key={entry} value={entry}>
+                        {getTokenSymbol(entry)}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type='number'
+                    className='h-8 flex-1 px-2 text-black outline-0'
+                    value={amountIn}
+                    min='0'
+                    placeholder='0.00'
+                    onChange={(e) => handleAmountChange(e.target.valueAsNumber, 'in')}
+                  />
                 </div>
               </div>
               <div className='mb-5'>
                 <p className='mb-1'>To:</p>
                 <div className='flex gap-2'>
-                  <div className='flex-1'>
-                    <select
-                      className='h-8 w-full text-black'
-                      onChange={handleSelectedTokenOutChange}
-                      value={selectedTokenOut}
-                    >
-                      {allowedCoinsData?.map((entry) => (
-                        <option key={entry} value={entry}>
-                          {getTokenSymbol(entry)}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <input
-                      type='number'
-                      className='h-8 px-2 text-black outline-0'
-                      value={amountOut}
-                      min='0'
-                      placeholder='0.00'
-                      onChange={(e) => handleAmountChange(e.target.valueAsNumber, 'out')}
-                    />
-                  </div>
+                  <select
+                    className='h-8 w-20 text-black'
+                    onChange={handleSelectedTokenOutChange}
+                    value={selectedTokenOut}
+                  >
+                    {allowedCoinsData?.map((entry) => (
+                      <option key={entry} value={entry}>
+                        {getTokenSymbol(entry)}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type='number'
+                    className='h-8 flex-1 px-2 text-black outline-0'
+                    value={amountOut}
+                    min='0'
+                    placeholder='0.00'
+                    onChange={(e) => handleAmountChange(e.target.valueAsNumber, 'out')}
+                  />
                 </div>
               </div>
               <div className='mb-1'>
