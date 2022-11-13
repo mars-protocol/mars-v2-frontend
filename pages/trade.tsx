@@ -13,6 +13,7 @@ import useMarkets from 'hooks/useMarkets'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useTokenPrices from 'hooks/useTokenPrices'
+import useCalculateMaxSwappableAmount from 'hooks/useCalculateMaxSwappableAmount'
 
 enum FundingMode {
   Wallet = 'Wallet',
@@ -59,38 +60,41 @@ const Trade = () => {
     }
   }, [allowedCoinsData])
 
-  useEffect(() => {
+  const handleSelectedTokenInChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedTokenIn(e.target.value)
     setAmountIn(0)
     setAmountOut(0)
-  }, [selectedTokenIn, selectedTokenOut, fundingMode])
+  }
 
-  const accountAmount = useMemo(() => {
-    return BigNumber(
+  const handleSelectedTokenOutChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedTokenOut(e.target.value)
+    setAmountIn(0)
+    setAmountOut(0)
+  }
+
+  const handleFundingModeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFundingMode(e.target.value as FundingMode)
+    setAmountIn(0)
+    setAmountOut(0)
+  }
+
+  const { accountAmount, walletAmount } = useMemo(() => {
+    const accountAmount = BigNumber(
       positionsData?.coins?.find((coin) => coin.denom === selectedTokenIn)?.amount ?? 0,
     )
       .div(10 ** getTokenDecimals(selectedTokenIn))
       .toNumber()
-  }, [positionsData, selectedTokenIn])
 
-  const walletAmount = useMemo(() => {
-    return BigNumber(
+    const walletAmount = BigNumber(
       balancesData?.find((balance) => balance.denom === selectedTokenIn)?.amount ?? 0,
     )
       .div(10 ** getTokenDecimals(selectedTokenIn))
       .toNumber()
-  }, [balancesData, selectedTokenIn])
 
-  const maxAmount = useMemo(() => {
-    if (fundingMode === FundingMode.CreditAccount) {
-      return accountAmount
-    }
+    return { accountAmount, walletAmount }
+  }, [balancesData, positionsData, selectedTokenIn])
 
-    if (fundingMode === FundingMode.Wallet) {
-      return walletAmount
-    }
-
-    return accountAmount + walletAmount
-  }, [accountAmount, fundingMode, walletAmount])
+  const maxAmount = useCalculateMaxSwappableAmount(selectedTokenIn, selectedTokenOut, fundingMode)
 
   const percentageValue = useMemo(() => {
     if (isNaN(amountIn) || amountIn === 0) return 0
@@ -139,9 +143,7 @@ const Trade = () => {
                   <p>Buy</p>
                   <select
                     className='h-8 w-full text-black'
-                    onChange={(e) => {
-                      setSelectedTokenOut(e.target.value)
-                    }}
+                    onChange={handleSelectedTokenOutChange}
                     value={selectedTokenOut}
                   >
                     {allowedCoinsData?.map((entry) => (
@@ -155,9 +157,7 @@ const Trade = () => {
                   <p>Sell</p>
                   <select
                     className='h-8 w-full text-black'
-                    onChange={(e) => {
-                      setSelectedTokenIn(e.target.value)
-                    }}
+                    onChange={handleSelectedTokenInChange}
                     value={selectedTokenIn}
                   >
                     {allowedCoinsData?.map((entry) => (
@@ -255,9 +255,7 @@ const Trade = () => {
                 <select
                   value={fundingMode}
                   className='text-black'
-                  onChange={(e) => {
-                    setFundingMode(e.target.value as FundingMode)
-                  }}
+                  onChange={handleFundingModeChange}
                 >
                   <option value={FundingMode.CreditAccount}>Account</option>
                   <option value={FundingMode.Wallet}>Wallet</option>
