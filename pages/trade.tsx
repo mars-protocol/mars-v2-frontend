@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Switch } from '@headlessui/react'
 import BigNumber from 'bignumber.js'
+import { toast } from 'react-toastify'
 
 import Container from 'components/Container'
 import Button from 'components/Button'
@@ -14,6 +15,7 @@ import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useTokenPrices from 'hooks/useTokenPrices'
 import useCalculateMaxSwappableAmount from 'hooks/useCalculateMaxSwappableAmount'
+import Spinner from 'components/Spinner'
 
 enum FundingMode {
   Wallet = 'Wallet',
@@ -38,13 +40,28 @@ const Trade = () => {
   const { data: tokenPrices } = useTokenPrices()
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
 
-  const { mutate } = useTradeAsset(
+  const resetAmounts = () => {
+    setAmountIn(0)
+    setAmountOut(0)
+  }
+
+  const { mutate, isLoading } = useTradeAsset(
     BigNumber(amountIn)
       .times(10 ** getTokenDecimals(selectedTokenIn))
       .toNumber(),
     selectedTokenIn,
     selectedTokenOut,
     0.1,
+    {
+      onSuccess: () => {
+        toast.success(
+          `${amountIn} ${getTokenSymbol(selectedTokenIn)} swapped for ${amountOut} ${getTokenSymbol(
+            selectedTokenOut,
+          )}`,
+        )
+        resetAmounts()
+      },
+    },
   )
 
   useEffect(() => {
@@ -62,20 +79,17 @@ const Trade = () => {
 
   const handleSelectedTokenInChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedTokenIn(e.target.value)
-    setAmountIn(0)
-    setAmountOut(0)
+    resetAmounts()
   }
 
   const handleSelectedTokenOutChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedTokenOut(e.target.value)
-    setAmountIn(0)
-    setAmountOut(0)
+    resetAmounts()
   }
 
   const handleFundingModeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFundingMode(e.target.value as FundingMode)
-    setAmountIn(0)
-    setAmountOut(0)
+    resetAmounts()
   }
 
   const { accountAmount, walletAmount } = useMemo(() => {
@@ -133,6 +147,11 @@ const Trade = () => {
 
   return (
     <div>
+      {isLoading && (
+        <div className='fixed inset-0 z-40 grid place-items-center bg-black/50'>
+          <Spinner />
+        </div>
+      )}
       <div className='mb-4 flex gap-4'>
         <Container className='grid flex-1 place-items-center'>Graph/Tradingview Module</Container>
         <div className='flex flex-col gap-4'>
