@@ -9,8 +9,8 @@ import { hardcodedFee } from 'utils/contants'
 
 const useTradeAsset = (
   amount: number,
-  denom: string,
-  denomOut: string,
+  tokenIn: string,
+  tokenOut: string,
   slippage: number,
   options?: Omit<UseMutationOptions, 'onError'>,
 ) => {
@@ -24,13 +24,13 @@ const useTradeAsset = (
     return [
       {
         swap_exact_in: {
-          coin_in: { amount: String(amount), denom },
-          denom_out: denomOut,
+          coin_in: { amount: String(amount), denom: tokenIn },
+          denom_out: tokenOut,
           slippage: String(slippage),
         },
       },
     ]
-  }, [amount, denom, denomOut, slippage])
+  }, [amount, tokenIn, tokenOut, slippage])
 
   return useMutation(
     async () =>
