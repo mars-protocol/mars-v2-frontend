@@ -12,7 +12,7 @@ import useTokenPrices from './useTokenPrices'
 
 // max swap amount doesnt consider wallet balance as its not relevant
 // the entire token balance within the wallet will always be able to be fully swapped
-const useCalculateMaxSwappableAmount = (tokenIn: string, tokenOut: string) => {
+const useCalculateMaxSwappableAmount = (tokenIn: string, tokenOut: string, isMargin: boolean) => {
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
 
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
@@ -77,6 +77,13 @@ const useCalculateMaxSwappableAmount = (tokenIn: string, tokenOut: string) => {
           .toNumber()
     }
 
+    // if margin is disabled, the max swap amount is capped at the account amount
+    if (!isMargin) {
+      return BigNumber(accountAmount)
+        .dividedBy(10 ** getTokenDecimals(tokenIn))
+        .toNumber()
+    }
+
     const estimatedTokenOutAmount = BigNumber(accountAmount).times(
       tokenPrices[tokenIn] / tokenPrices[tokenOut],
     )
@@ -113,6 +120,7 @@ const useCalculateMaxSwappableAmount = (tokenIn: string, tokenOut: string) => {
   }, [
     accountAmount,
     getTokenValue,
+    isMargin,
     marketsData,
     positionsData,
     redbankBalances,

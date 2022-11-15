@@ -45,10 +45,41 @@ const Trade = () => {
     setAmountOut(0)
   }
 
-  const { mutate, isLoading } = useTradeAsset(
-    BigNumber(amountIn)
+  const accountAmount = useMemo(() => {
+    return BigNumber(
+      positionsData?.coins?.find((coin) => coin.denom === selectedTokenIn)?.amount ?? 0,
+    )
+      .div(10 ** getTokenDecimals(selectedTokenIn))
+      .toNumber()
+  }, [positionsData, selectedTokenIn])
+
+  const walletAmount = useMemo(() => {
+    return BigNumber(
+      balancesData?.find((balance) => balance.denom === selectedTokenIn)?.amount ?? 0,
+    )
+      .div(10 ** getTokenDecimals(selectedTokenIn))
+      .toNumber()
+  }, [balancesData, selectedTokenIn])
+
+  const { swapAmount, borrowAmount } = useMemo(() => {
+    const swapAmount = BigNumber(amountIn)
       .times(10 ** getTokenDecimals(selectedTokenIn))
-      .toNumber(),
+      .toNumber()
+
+    const borrowAmount =
+      amountIn > accountAmount
+        ? BigNumber(amountIn)
+            .minus(accountAmount)
+            .times(10 ** getTokenDecimals(selectedTokenIn))
+            .toNumber()
+        : 0
+
+    return { swapAmount, borrowAmount }
+  }, [accountAmount, amountIn, selectedTokenIn])
+
+  const { mutate, isLoading } = useTradeAsset(
+    swapAmount,
+    borrowAmount,
     selectedTokenIn,
     selectedTokenOut,
     0.1,
@@ -67,12 +98,12 @@ const Trade = () => {
   useEffect(() => {
     if (allowedCoinsData && allowedCoinsData.length > 0) {
       // initialize selected token when allowedCoins fetch data is available
-      setSelectedTokenOut(allowedCoinsData[0])
+      setSelectedTokenIn(allowedCoinsData[0])
 
       if (allowedCoinsData.length > 1) {
-        setSelectedTokenIn(allowedCoinsData[1])
+        setSelectedTokenOut(allowedCoinsData[1])
       } else {
-        setSelectedTokenIn(allowedCoinsData[0])
+        setSelectedTokenOut(allowedCoinsData[0])
       }
     }
   }, [allowedCoinsData])
@@ -92,23 +123,11 @@ const Trade = () => {
     resetAmounts()
   }
 
-  const { accountAmount, walletAmount } = useMemo(() => {
-    const accountAmount = BigNumber(
-      positionsData?.coins?.find((coin) => coin.denom === selectedTokenIn)?.amount ?? 0,
-    )
-      .div(10 ** getTokenDecimals(selectedTokenIn))
-      .toNumber()
-
-    const walletAmount = BigNumber(
-      balancesData?.find((balance) => balance.denom === selectedTokenIn)?.amount ?? 0,
-    )
-      .div(10 ** getTokenDecimals(selectedTokenIn))
-      .toNumber()
-
-    return { accountAmount, walletAmount }
-  }, [balancesData, positionsData, selectedTokenIn])
-
-  const maxAmount = useCalculateMaxSwappableAmount(selectedTokenIn, selectedTokenOut, fundingMode)
+  const maxAmount = useCalculateMaxSwappableAmount(
+    selectedTokenIn,
+    selectedTokenOut,
+    isMarginEnabled,
+  )
 
   const percentageValue = useMemo(() => {
     if (isNaN(amountIn) || amountIn === 0) return 0
@@ -236,7 +255,12 @@ const Trade = () => {
                 <p className='mr-2'>Margin</p>
                 <Switch
                   checked={isMarginEnabled}
-                  onChange={setIsMarginEnabled}
+                  onChange={(value) => {
+                    // reset amounts only if margin is turned off
+                    if (!value) resetAmounts()
+
+                    setIsMarginEnabled(value)
+                  }}
                   className={`${
                     isMarginEnabled ? 'bg-[#524BB1]' : 'bg-gray-400'
                   } relative inline-flex h-4 w-8 items-center rounded-full`}
@@ -250,7 +274,16 @@ const Trade = () => {
               </div>
               <div className='mb-1 flex justify-between'>
                 <p>Borrow</p>
-                <p>{isMarginEnabled ? 'BORROW VALUE' : '-'}</p>
+                <p>
+                  {isMarginEnabled
+                    ? BigNumber(borrowAmount)
+                        .dividedBy(10 ** getTokenDecimals(selectedTokenIn))
+                        .toNumber()
+                        .toLocaleString(undefined, {
+                          maximumFractionDigits: getTokenDecimals(selectedTokenIn),
+                        })
+                    : '-'}
+                </p>
               </div>
               <div className='flex justify-between'>
                 <p>Borrow Rate</p>
