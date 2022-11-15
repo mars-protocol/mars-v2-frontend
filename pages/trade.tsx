@@ -44,6 +44,10 @@ const Trade = () => {
     setAmountOut(0)
   }
 
+  useEffect(() => {
+    resetAmounts()
+  }, [selectedAccount])
+
   const accountAmount = useMemo(() => {
     return Number(positionsData?.coins?.find((coin) => coin.denom === selectedTokenIn)?.amount ?? 0)
   }, [positionsData, selectedTokenIn])
