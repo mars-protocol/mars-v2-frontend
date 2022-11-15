@@ -18,9 +18,8 @@ import useCalculateMaxSwappableAmount from 'hooks/useCalculateMaxSwappableAmount
 import Spinner from 'components/Spinner'
 
 enum FundingMode {
-  Wallet = 'Wallet',
-  CreditAccount = 'CreditAccount',
-  Both = 'Both',
+  Account = 'Account',
+  WalletAndAccount = 'WalletAndAccount',
 }
 
 const Trade = () => {
@@ -28,7 +27,7 @@ const Trade = () => {
   const [selectedTokenOut, setSelectedTokenOut] = useState('')
   const [amountIn, setAmountIn] = useState(0)
   const [amountOut, setAmountOut] = useState(0)
-  const [fundingMode, setFundingMode] = useState<FundingMode>(FundingMode.CreditAccount)
+  const [fundingMode, setFundingMode] = useState<FundingMode>(FundingMode.Account)
 
   const [isMarginEnabled, setIsMarginEnabled] = React.useState(false)
 
@@ -247,7 +246,7 @@ const Trade = () => {
 
                   handleAmountChange(newAmount, 'in')
                 }}
-                onMaxClick={() => setAmountIn(maxAmount)}
+                onMaxClick={() => handleAmountChange(maxAmount, 'in')}
               />
             </div>
             <div className='border-b border-b-white/20 p-2'>
@@ -299,9 +298,8 @@ const Trade = () => {
                   className='text-black'
                   onChange={handleFundingModeChange}
                 >
-                  <option value={FundingMode.CreditAccount}>Account</option>
-                  <option value={FundingMode.Wallet}>Wallet</option>
-                  <option value={FundingMode.Both}>Wallet & Account</option>
+                  <option value={FundingMode.Account}>Account</option>
+                  <option value={FundingMode.WalletAndAccount}>Wallet & Account</option>
                 </select>
               </div>
             </div>
