@@ -8,7 +8,6 @@ import React, { useMemo } from 'react'
 import ArrowRightLine from 'components/Icons/arrow-right-line.svg'
 import ProgressBar from 'components/ProgressBar'
 import SearchInput from 'components/SearchInput'
-import Spinner from 'components/Spinner'
 import Wallet from 'components/Wallet'
 import useCreateCreditAccount from 'hooks/mutations/useCreateCreditAccount'
 import useDeleteCreditAccount from 'hooks/mutations/useDeleteCreditAccount'
@@ -20,6 +19,7 @@ import { formatCurrency } from 'utils/formatters'
 
 import Button from './Button'
 import SemiCircleProgress from './SemiCircleProgress'
+import CircularProgress from './CircularProgress'
 
 // TODO: will require some tweaks depending on how lower viewport mocks pans out
 const MAX_VISIBLE_CREDIT_ACCOUNTS = 5
@@ -214,7 +214,7 @@ const Navigation = () => {
       </div>
       {(isLoadingCreate || isLoadingDelete) && (
         <div className='absolute inset-0 z-40 grid place-items-center bg-black/50'>
-          <Spinner />
+          <CircularProgress />
         </div>
       )}
     </div>

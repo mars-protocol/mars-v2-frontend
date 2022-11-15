@@ -5,7 +5,7 @@ import Card from 'components/Card'
 const Trade = () => {
   return (
     <div>
-      <div className='flex gap-4 mb-4'>
+      <div className='mb-4 flex gap-4'>
         <Card className='flex-1'>Graph/Tradingview Module</Card>
         <div className='flex flex-col gap-4'>
           <Card>Buy/Sell module</Card>

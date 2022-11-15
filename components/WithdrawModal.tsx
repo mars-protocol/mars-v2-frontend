@@ -20,7 +20,7 @@ import Button from './Button'
 import ContainerSecondary from './ContainerSecondary'
 import ProgressBar from './ProgressBar'
 import SemiCircleProgress from './SemiCircleProgress'
-import Spinner from './Spinner'
+import CircularProgress from './CircularProgress'
 
 const WithdrawModal = ({ show, onClose }: any) => {
   const [amount, setAmount] = useState(0)
@@ -156,7 +156,7 @@ const WithdrawModal = ({ show, onClose }: any) => {
               <Dialog.Panel className='flex w-full max-w-3xl transform overflow-hidden rounded-2xl bg-[#585A74] align-middle shadow-xl transition-all'>
                 {isLoading && (
                   <div className='absolute inset-0 z-40 grid place-items-center bg-black/50'>
-                    <Spinner />
+                    <CircularProgress />
                   </div>
                 )}
                 <div className='flex w-1/2 flex-col p-4'>

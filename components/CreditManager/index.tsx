@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react'
 import BigNumber from 'bignumber.js'
 
-import Button from '../Button'
 import { formatCurrency } from 'utils/formatters'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useWalletStore from 'stores/useWalletStore'
@@ -13,6 +12,8 @@ import useMarkets from 'hooks/useMarkets'
 import ContainerSecondary from 'components/ContainerSecondary'
 import WithdrawModal from 'components/WithdrawModal'
 import FundAccountModal from 'components/FundAccountModal'
+
+import Button from '../Button'
 
 const CreditManager = () => {
   const [showFundWalletModal, setShowFundWalletModal] = useState(false)

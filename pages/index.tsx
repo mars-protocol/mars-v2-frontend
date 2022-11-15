@@ -11,7 +11,6 @@ import { toast } from 'react-toastify'
 import Button from 'components/Button'
 import Text from 'components/Text'
 import Card from 'components/Card'
-import Spinner from 'components/Spinner'
 import { contractAddresses } from 'config/contracts'
 // import { Coin } from "@cosmjs/stargate";
 import useCreditManagerStore from 'stores/useCreditManagerStore'
@@ -19,6 +18,7 @@ import useWalletStore from 'stores/useWalletStore'
 import { queryKeys } from 'types/query-keys-factory'
 import { chain } from 'utils/chains'
 import { hardcodedFee } from 'utils/contants'
+import CircularProgress from 'components/CircularProgress'
 
 const Home: NextPage = () => {
   const [sendAmount, setSendAmount] = useState('')
@@ -249,16 +249,16 @@ const Home: NextPage = () => {
   }
 
   return (
-    <div className='flex flex-col max-w-6xl mx-auto gap-y-6'>
+    <div className='mx-auto flex max-w-6xl flex-col gap-y-6'>
       <Card>
         <Text tag='h4' className='mb-5'>
           Send Tokens
         </Text>
-        <div className='flex flex-wrap gap-2 mb-5'>
+        <div className='mb-5 flex flex-wrap gap-2'>
           <div>
             <Text>Address:</Text>
             <input
-              className='px-3 py-1 rounded-lg bg-black/40'
+              className='rounded-lg bg-black/40 px-3 py-1'
               value={recipientAddress}
               placeholder='address'
               onChange={(e) => setRecipientAddress(e.target.value)}
@@ -268,7 +268,7 @@ const Home: NextPage = () => {
             <Text>Amount:</Text>
             <input
               type='number'
-              className='px-3 py-1 rounded-lg bg-black/40'
+              className='rounded-lg bg-black/40 px-3 py-1'
               value={sendAmount}
               placeholder='amount'
               onChange={(e) => setSendAmount(e.target.value)}
@@ -300,7 +300,7 @@ const Home: NextPage = () => {
           Borrow OSMO
         </Text>
         <input
-          className='px-3 py-1 rounded-lg bg-black/40'
+          className='rounded-lg bg-black/40 px-3 py-1'
           type='number'
           onChange={(e) => setBorrowAmount(e.target.valueAsNumber)}
         />
@@ -337,10 +337,10 @@ const Home: NextPage = () => {
           </>
         )}
       </div>
-      {error && <div className='p-4 mt-8 text-red-500 bg-white'>{error}</div>}
+      {error && <div className='mt-8 bg-white p-4 text-red-500'>{error}</div>}
       {isLoading && (
         <div>
-          <Spinner />
+          <CircularProgress />
         </div>
       )}
     </div>

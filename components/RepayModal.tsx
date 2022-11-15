@@ -16,7 +16,7 @@ import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 import Button from './Button'
 import ContainerSecondary from './ContainerSecondary'
-import Spinner from './Spinner'
+import CircularProgress from './CircularProgress'
 
 type Props = {
   show: boolean
@@ -110,7 +110,7 @@ const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
               <Dialog.Panel className='flex min-h-[520px] w-full max-w-3xl transform overflow-hidden rounded-2xl bg-[#585A74] align-middle shadow-xl transition-all'>
                 {isLoading && (
                   <div className='absolute inset-0 z-40 grid place-items-center bg-black/50'>
-                    <Spinner />
+                    <CircularProgress />
                   </div>
                 )}
 

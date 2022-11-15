@@ -119,7 +119,7 @@ const Borrow = () => {
       <div className='flex-1'>
         <Card className='mb-4'>
           <div>
-            <h3 className='text-xl font-medium text-center uppercase mb-7'>Borrowings</h3>
+            <h3 className='mb-7 text-center text-xl font-medium uppercase'>Borrowings</h3>
             <BorrowTable
               data={borrowedAssets}
               onBorrowClick={handleBorrowClick}
@@ -129,7 +129,7 @@ const Borrow = () => {
         </Card>
         <Card>
           <div>
-            <h3 className='text-xl font-medium text-center uppercase mb-7'>Available to Borrow</h3>
+            <h3 className='mb-7 text-center text-xl font-medium uppercase'>Available to Borrow</h3>
             <BorrowTable
               data={notBorrowedAssets}
               onBorrowClick={handleBorrowClick}
