@@ -3,7 +3,6 @@ import BigNumber from 'bignumber.js'
 
 import { getTokenDecimals } from 'utils/tokens'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
-import { chain } from 'utils/chains'
 
 import useCreditAccountPositions from './useCreditAccountPositions'
 import useMarkets from './useMarkets'
@@ -71,17 +70,12 @@ const useCalculateMaxSwappableAmount = (tokenIn: string, tokenOut: string, isMar
     // if the target token ltv higher, the full amount will always be able to be swapped
     if (tokenOutLTV < tokenInLTV) {
       // if the swappable amount is lower than the account amount, any further calculations are irrelevant
-      if (BigNumber(maxSwapAmount).isLessThanOrEqualTo(accountAmount))
-        return BigNumber(maxSwapAmount)
-          .dividedBy(10 ** getTokenDecimals(tokenIn))
-          .toNumber()
+      if (BigNumber(maxSwapAmount).isLessThanOrEqualTo(accountAmount)) return maxSwapAmount
     }
 
     // if margin is disabled, the max swap amount is capped at the account amount
     if (!isMargin) {
-      return BigNumber(accountAmount)
-        .dividedBy(10 ** getTokenDecimals(tokenIn))
-        .toNumber()
+      return accountAmount
     }
 
     const estimatedTokenOutAmount = BigNumber(accountAmount).times(
@@ -104,18 +98,19 @@ const useCalculateMaxSwappableAmount = (tokenIn: string, tokenOut: string, isMar
         return tokenWeightedValue.plus(acc).toNumber()
       }, 0)
 
-    const maxBorrowValue = BigNumber(totalWeightedPositionsAfterSwap)
-      .minus(totalLiabilitiesValue)
-      .dividedBy(1 - tokenOutLTV)
+    const maxBorrowValue =
+      totalWeightedPositionsAfterSwap === 0
+        ? 0
+        : BigNumber(totalWeightedPositionsAfterSwap)
+            .minus(totalLiabilitiesValue)
+            .dividedBy(1 - tokenOutLTV)
+            .toNumber()
 
-    const maxBorrowAmount = maxBorrowValue
-      .dividedBy(tokenPrices[tokenIn])
-      .decimalPlaces(getTokenDecimals(tokenIn))
-      .toNumber()
+    const maxBorrowAmount = BigNumber(maxBorrowValue).dividedBy(tokenPrices[tokenIn]).toNumber()
 
     return BigNumber(accountAmount)
       .plus(maxBorrowAmount)
-      .dividedBy(10 ** getTokenDecimals(tokenIn))
+      .decimalPlaces(getTokenDecimals(tokenIn))
       .toNumber()
   }, [
     accountAmount,

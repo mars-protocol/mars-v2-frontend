@@ -27,7 +27,7 @@ const Trade = () => {
   const [selectedTokenOut, setSelectedTokenOut] = useState('')
   const [amountIn, setAmountIn] = useState(0)
   const [amountOut, setAmountOut] = useState(0)
-  const [fundingMode, setFundingMode] = useState<FundingMode>(FundingMode.Account)
+  const [fundingMode, setFundingMode] = useState<FundingMode>(FundingMode.WalletAndAccount)
 
   const [isMarginEnabled, setIsMarginEnabled] = React.useState(false)
 
@@ -45,36 +45,21 @@ const Trade = () => {
   }
 
   const accountAmount = useMemo(() => {
-    return BigNumber(
-      positionsData?.coins?.find((coin) => coin.denom === selectedTokenIn)?.amount ?? 0,
-    )
-      .div(10 ** getTokenDecimals(selectedTokenIn))
-      .toNumber()
+    return Number(positionsData?.coins?.find((coin) => coin.denom === selectedTokenIn)?.amount ?? 0)
   }, [positionsData, selectedTokenIn])
 
   const walletAmount = useMemo(() => {
-    return BigNumber(
-      balancesData?.find((balance) => balance.denom === selectedTokenIn)?.amount ?? 0,
-    )
-      .div(10 ** getTokenDecimals(selectedTokenIn))
-      .toNumber()
+    return Number(balancesData?.find((balance) => balance.denom === selectedTokenIn)?.amount ?? 0)
   }, [balancesData, selectedTokenIn])
 
   const { swapAmount, borrowAmount } = useMemo(() => {
-    const swapAmount = BigNumber(amountIn)
-      .times(10 ** getTokenDecimals(selectedTokenIn))
-      .toNumber()
+    const swapAmount = amountIn
 
     const borrowAmount =
-      amountIn > accountAmount
-        ? BigNumber(amountIn)
-            .minus(accountAmount)
-            .times(10 ** getTokenDecimals(selectedTokenIn))
-            .toNumber()
-        : 0
+      amountIn > accountAmount ? BigNumber(amountIn).minus(accountAmount).toNumber() : 0
 
     return { swapAmount, borrowAmount }
-  }, [accountAmount, amountIn, selectedTokenIn])
+  }, [accountAmount, amountIn])
 
   const { mutate, isLoading } = useTradeAsset(
     swapAmount,
@@ -144,20 +129,10 @@ const Trade = () => {
 
     if (mode === 'in') {
       setAmountIn(value)
-      setAmountOut(
-        BigNumber(value)
-          .times(priceRatio)
-          .decimalPlaces(getTokenDecimals(selectedTokenOut))
-          .toNumber(),
-      )
+      setAmountOut(BigNumber(value).times(priceRatio).decimalPlaces(0).toNumber())
     } else {
       setAmountOut(value)
-      setAmountIn(
-        BigNumber(1)
-          .div(BigNumber(value).times(priceRatio))
-          .decimalPlaces(getTokenDecimals(selectedTokenIn))
-          .toNumber(),
-      )
+      setAmountIn(BigNumber(value).div(BigNumber(1).times(priceRatio)).decimalPlaces(0).toNumber())
     }
   }
 
@@ -192,10 +167,16 @@ const Trade = () => {
                   <input
                     type='number'
                     className='h-8 flex-1 px-2 text-black outline-0'
-                    value={amountIn}
+                    value={amountIn / 10 ** getTokenDecimals(selectedTokenIn)}
                     min='0'
                     placeholder='0.00'
-                    onChange={(e) => handleAmountChange(e.target.valueAsNumber, 'in')}
+                    onChange={(e) => {
+                      const valueAsNumber = e.target.valueAsNumber
+                      const valueWithDecimals =
+                        valueAsNumber * 10 ** getTokenDecimals(selectedTokenIn)
+
+                      handleAmountChange(valueWithDecimals, 'in')
+                    }}
                   />
                 </div>
               </div>
@@ -216,24 +197,36 @@ const Trade = () => {
                   <input
                     type='number'
                     className='h-8 flex-1 px-2 text-black outline-0'
-                    value={amountOut}
+                    value={amountOut / 10 ** getTokenDecimals(selectedTokenOut)}
                     min='0'
                     placeholder='0.00'
-                    onChange={(e) => handleAmountChange(e.target.valueAsNumber, 'out')}
+                    onChange={(e) => {
+                      const valueAsNumber = e.target.valueAsNumber
+                      const valueWithDecimals =
+                        valueAsNumber * 10 ** getTokenDecimals(selectedTokenOut)
+
+                      handleAmountChange(valueWithDecimals, 'out')
+                    }}
                   />
                 </div>
               </div>
               <div className='mb-1'>
                 In Wallet:{' '}
-                {walletAmount.toLocaleString(undefined, {
-                  maximumFractionDigits: getTokenDecimals(selectedTokenIn),
-                })}
+                {BigNumber(walletAmount)
+                  .dividedBy(10 ** getTokenDecimals(selectedTokenIn))
+                  .toNumber()
+                  .toLocaleString(undefined, {
+                    maximumFractionDigits: getTokenDecimals(selectedTokenIn),
+                  })}
               </div>
               <div className='mb-4'>
                 In Account:{' '}
-                {accountAmount.toLocaleString(undefined, {
-                  maximumFractionDigits: getTokenDecimals(selectedTokenIn),
-                })}
+                {BigNumber(accountAmount)
+                  .dividedBy(10 ** getTokenDecimals(selectedTokenIn))
+                  .toNumber()
+                  .toLocaleString(undefined, {
+                    maximumFractionDigits: getTokenDecimals(selectedTokenIn),
+                  })}
               </div>
               <Slider
                 className='mb-6'
@@ -242,7 +235,7 @@ const Trade = () => {
                   const decimal = value[0] / 100
                   const tokenDecimals = getTokenDecimals(selectedTokenIn)
                   // limit decimal precision based on token contract decimals
-                  const newAmount = Number((decimal * maxAmount).toFixed(tokenDecimals))
+                  const newAmount = Number((decimal * maxAmount).toFixed(0))
 
                   handleAmountChange(newAmount, 'in')
                 }}
