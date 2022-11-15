@@ -14,7 +14,7 @@ import useMarkets from 'hooks/useMarkets'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useTokenPrices from 'hooks/useTokenPrices'
-import useCalculateMaxSwappableAmount from 'hooks/useCalculateMaxSwappableAmount'
+import useCalculateMaxTradeAmount from 'hooks/useCalculateMaxTradeAmount'
 import Spinner from 'components/Spinner'
 
 enum FundingMode {
@@ -107,11 +107,7 @@ const Trade = () => {
     resetAmounts()
   }
 
-  const maxAmount = useCalculateMaxSwappableAmount(
-    selectedTokenIn,
-    selectedTokenOut,
-    isMarginEnabled,
-  )
+  const maxAmount = useCalculateMaxTradeAmount(selectedTokenIn, selectedTokenOut, isMarginEnabled)
 
   const percentageValue = useMemo(() => {
     if (isNaN(amountIn) || amountIn === 0) return 0

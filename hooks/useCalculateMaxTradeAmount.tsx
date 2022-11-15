@@ -11,7 +11,7 @@ import useTokenPrices from './useTokenPrices'
 
 // max swap amount doesnt consider wallet balance as its not relevant
 // the entire token balance within the wallet will always be able to be fully swapped
-const useCalculateMaxSwappableAmount = (tokenIn: string, tokenOut: string, isMargin: boolean) => {
+const useCalculateMaxTradeAmount = (tokenIn: string, tokenOut: string, isMargin: boolean) => {
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
 
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
@@ -125,4 +125,4 @@ const useCalculateMaxSwappableAmount = (tokenIn: string, tokenOut: string, isMar
   ])
 }
 
-export default useCalculateMaxSwappableAmount
+export default useCalculateMaxTradeAmount
