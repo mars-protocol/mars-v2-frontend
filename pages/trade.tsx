@@ -217,7 +217,8 @@ const Trade = () => {
                   .toNumber()
                   .toLocaleString(undefined, {
                     maximumFractionDigits: getTokenDecimals(selectedTokenIn),
-                  })}
+                  })}{' '}
+                <span>{getTokenSymbol(selectedTokenIn)}</span>
               </div>
               <div className='mb-4'>
                 In Account:{' '}
@@ -226,7 +227,8 @@ const Trade = () => {
                   .toNumber()
                   .toLocaleString(undefined, {
                     maximumFractionDigits: getTokenDecimals(selectedTokenIn),
-                  })}
+                  })}{' '}
+                <span>{getTokenSymbol(selectedTokenIn)}</span>
               </div>
               <Slider
                 className='mb-6'
