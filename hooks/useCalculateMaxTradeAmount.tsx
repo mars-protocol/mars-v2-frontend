@@ -8,6 +8,12 @@ import useMarkets from './useMarkets'
 import useRedbankBalances from './useRedbankBalances'
 import useTokenPrices from './useTokenPrices'
 
+const getApproximateHourlyInterest = (amount: string, borrowAPY: string) => {
+  const hourlyAPY = BigNumber(borrowAPY).div(24 * 365)
+
+  return hourlyAPY.times(amount).toNumber()
+}
+
 // max swap amount doesnt consider wallet balance as its not relevant
 // the entire token balance within the wallet will always be able to be fully swapped
 const useCalculateMaxTradeAmount = (tokenIn: string, tokenOut: string, isMargin: boolean) => {
@@ -45,8 +51,17 @@ const useCalculateMaxTradeAmount = (tokenIn: string, tokenOut: string, isMargin:
       return tokenWeightedValue.plus(acc).toNumber()
     }, 0)
 
+    // approximate debt value in an hour timespan to avoid throwing on smart contract level
+    // due to debt interest being applied
     const totalLiabilitiesValue = positionsData?.debts.reduce((acc, coin) => {
-      const tokenDebtValue = BigNumber(getTokenValue(coin.amount, coin.denom))
+      const estimatedInterestAmount = getApproximateHourlyInterest(
+        coin.amount,
+        marketsData[coin.denom].borrow_rate,
+      )
+
+      const tokenDebtValue = BigNumber(getTokenValue(coin.amount, coin.denom)).plus(
+        estimatedInterestAmount,
+      )
 
       return tokenDebtValue.plus(acc).toNumber()
     }, 0)
