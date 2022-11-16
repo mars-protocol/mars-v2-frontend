@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Switch } from '@headlessui/react'
 import BigNumber from 'bignumber.js'
 import { toast } from 'react-toastify'
+import { ArrowsUpDownIcon } from '@heroicons/react/24/solid'
 
 import Container from 'components/Container'
 import Button from 'components/Button'
@@ -180,6 +181,14 @@ const Trade = () => {
                   />
                 </div>
               </div>
+              <ArrowsUpDownIcon
+                className='mx-auto h-5 cursor-pointer text-white/70 hover:text-white'
+                onClick={() => {
+                  setSelectedTokenIn(selectedTokenOut)
+                  setSelectedTokenOut(selectedTokenIn)
+                  resetAmounts()
+                }}
+              />
               <div className='mb-5'>
                 <p className='mb-1'>To:</p>
                 <div className='flex gap-2'>
