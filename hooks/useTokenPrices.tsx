@@ -1,61 +1,44 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { gql, request } from 'graphql-request'
 
 import { contractAddresses } from 'config/contracts'
 import { queryKeys } from 'types/query-keys-factory'
 import { chain } from 'utils/chains'
+import tokenInfo from 'config/tokenInfo'
 
 interface Result {
-  data: {
-    prices: {
-      [key: string]: {
-        denom: string
-        price: string
-      }
+  prices: {
+    [key: string]: {
+      denom: string
+      price: string
     }
   }
 }
 
+const tokenInfoList = Object.values(tokenInfo)
+
 // TODO: build gql query dynamically on whitelisted tokens
 const fetchTokenPrices = () => {
-  return fetch(chain.hive, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: `
+  return request(
+    chain.hive,
+    gql`
       query PriceOracle {
         prices: wasm {
-          uosmo: contractQuery(
-            contractAddress: "${contractAddresses.oracle}"
-            query: {
-              price: {
-                denom: "uosmo"
+          ${tokenInfoList.map((token) => {
+            return `${token.symbol}: contractQuery(
+              contractAddress: "${contractAddresses.oracle}"
+              query: {
+                price: {
+                  denom: "${token.denom}"
+                }
               }
-            }
-          )
-          atom: contractQuery(
-            contractAddress: "${contractAddresses.oracle}"
-            query: {
-              price: {
-                denom: "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2"
-              }
-            }
-          )
-          cro: contractQuery(
-            contractAddress: "${contractAddresses.oracle}"
-            query: {
-              price: {
-                denom: "ibc/E6931F78057F7CC5DA0FD6CEF82FF39373A6E0452BF1FD76910B93292CF356C1"
-              }
-            }
-          )       
+            )`
+          })}   
         }
       }
       `,
-    }),
-  }).then((res) => res.json())
+  )
 }
 
 const useTokenPrices = () => {
@@ -69,7 +52,7 @@ const useTokenPrices = () => {
     data: useMemo(() => {
       if (!result.data) return
 
-      return Object.values(result.data?.data.prices).reduce(
+      return Object.values(result.data?.prices).reduce(
         (acc, entry) => ({
           ...acc,
           [entry.denom]: Number(entry.price),
