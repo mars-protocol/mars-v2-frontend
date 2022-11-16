@@ -14,7 +14,7 @@ const getApproximateHourlyInterest = (amount: string, borrowAPY: string) => {
   return hourlyAPY.times(amount).toNumber()
 }
 
-// max swap amount doesnt consider wallet balance as its not relevant
+// max trade amount doesnt consider wallet balance as its not relevant
 // the entire token balance within the wallet will always be able to be fully swapped
 const useCalculateMaxTradeAmount = (tokenIn: string, tokenOut: string, isMargin: boolean) => {
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
@@ -43,7 +43,7 @@ const useCalculateMaxTradeAmount = (tokenIn: string, tokenOut: string, isMargin:
     if (!marketsData || !tokenPrices || !positionsData || !redbankBalances || !tokenIn || !tokenOut)
       return 0
 
-    const totalWeightedPositions = positionsData?.coins.reduce((acc, coin) => {
+    const totalWeightedPositions = positionsData.coins.reduce((acc, coin) => {
       const tokenWeightedValue = BigNumber(getTokenValue(coin.amount, coin.denom)).times(
         Number(marketsData[coin.denom].max_loan_to_value),
       )
@@ -53,7 +53,7 @@ const useCalculateMaxTradeAmount = (tokenIn: string, tokenOut: string, isMargin:
 
     // approximate debt value in an hour timespan to avoid throwing on smart contract level
     // due to debt interest being applied
-    const totalLiabilitiesValue = positionsData?.debts.reduce((acc, coin) => {
+    const totalLiabilitiesValue = positionsData.debts.reduce((acc, coin) => {
       const estimatedInterestAmount = getApproximateHourlyInterest(
         coin.amount,
         marketsData[coin.denom].borrow_rate,
