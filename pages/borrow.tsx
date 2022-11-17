@@ -5,6 +5,7 @@ import BorrowTable from 'components/Borrow/BorrowTable'
 import BorrowModal from 'components/BorrowModal'
 import Card from 'components/Card'
 import RepayModal from 'components/RepayModal'
+import Text from 'components/Text'
 import useAllowedCoins from 'hooks/useAllowedCoins'
 import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useMarkets from 'hooks/useMarkets'
@@ -119,7 +120,9 @@ const Borrow = () => {
       <div className='flex-1'>
         <Card className='mb-4'>
           <div>
-            <h3 className='mb-7 text-center text-xl font-medium uppercase'>Borrowings</h3>
+            <Text tag='h3' size='xl' uppercase={true} className='text-center mb-7'>
+              Borrowings
+            </Text>
             <BorrowTable
               data={borrowedAssets}
               onBorrowClick={handleBorrowClick}
@@ -129,7 +132,9 @@ const Borrow = () => {
         </Card>
         <Card>
           <div>
-            <h3 className='mb-7 text-center text-xl font-medium uppercase'>Available to Borrow</h3>
+            <Text tag='h3' size='xl' uppercase={true} className='text-center mb-7'>
+              Available to Borrow
+            </Text>
             <BorrowTable
               data={notBorrowedAssets}
               onBorrowClick={handleBorrowClick}
