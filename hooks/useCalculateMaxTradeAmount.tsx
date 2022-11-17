@@ -91,8 +91,18 @@ const useCalculateMaxTradeAmount = (tokenIn: string, tokenOut: string, isMargin:
       tokenPrices[tokenIn] / tokenPrices[tokenOut],
     )
 
+    let positionsCoins = [...positionsData.coins]
+
+    // if the target token is not in the account, add it to the positions
+    if (!positionsCoins.find((coin) => coin.denom === tokenOut)) {
+      positionsCoins.push({
+        amount: '0',
+        denom: tokenOut,
+      })
+    }
+
     // calculate weighted positions assuming the initial swap is made
-    const totalWeightedPositionsAfterSwap = positionsData?.coins
+    const totalWeightedPositionsAfterSwap = positionsCoins
       .filter((coin) => coin.denom !== tokenIn)
       .reduce((acc, coin) => {
         const coinAmount =
