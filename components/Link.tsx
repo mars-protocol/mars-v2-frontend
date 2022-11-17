@@ -1,8 +1,5 @@
-import { StringOrTemplateHeader } from '@tanstack/react-table'
 import classNames from 'classnames'
 import React, { ReactNode } from 'react'
-
-import CircularProgress from './CircularProgress'
 
 interface Props {
   children?: string | ReactNode
