@@ -6,10 +6,12 @@ import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useWalletStore from 'stores/useWalletStore'
 import { queryKeys } from 'types/query-keys-factory'
 import { hardcodedFee } from 'utils/contants'
+import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 
 const useTradeAsset = (
   amount: number,
   borrowAmount: number,
+  depositAmount: number,
   tokenIn: string,
   tokenOut: string,
   slippage: number,
@@ -20,26 +22,10 @@ const useTradeAsset = (
 
   const queryClient = useQueryClient()
 
+  // actions need to be executed in order deposit -> borrow -> swap
+  // first two are optional
   const actions = useMemo(() => {
-    if (borrowAmount > 0) {
-      return [
-        {
-          borrow: {
-            denom: tokenIn,
-            amount: String(borrowAmount),
-          },
-        },
-        {
-          swap_exact_in: {
-            coin_in: { amount: String(amount), denom: tokenIn },
-            denom_out: tokenOut,
-            slippage: String(slippage),
-          },
-        },
-      ]
-    }
-
-    return [
+    const actionsBase = [
       {
         swap_exact_in: {
           coin_in: { amount: String(amount), denom: tokenIn },
@@ -47,8 +33,28 @@ const useTradeAsset = (
           slippage: String(slippage),
         },
       },
-    ]
-  }, [borrowAmount, amount, tokenIn, tokenOut, slippage])
+    ] as Action[]
+
+    if (borrowAmount > 0) {
+      actionsBase.unshift({
+        borrow: {
+          denom: tokenIn,
+          amount: String(borrowAmount),
+        },
+      })
+    }
+
+    if (depositAmount > 0) {
+      actionsBase.unshift({
+        deposit: {
+          denom: tokenIn,
+          amount: String(depositAmount),
+        },
+      })
+    }
+
+    return actionsBase
+  }, [amount, tokenIn, tokenOut, slippage, borrowAmount, depositAmount])
 
   return useMutation(
     async () =>

@@ -56,18 +56,35 @@ const TradeActionModule = () => {
     return Number(balancesData?.find((balance) => balance.denom === selectedTokenIn)?.amount ?? 0)
   }, [balancesData, selectedTokenIn])
 
-  const { swapAmount, borrowAmount } = useMemo(() => {
+  const { swapAmount, borrowAmount, depositAmount } = useMemo(() => {
     const swapAmount = amountIn
 
-    const borrowAmount =
-      amountIn > accountAmount ? BigNumber(amountIn).minus(accountAmount).toNumber() : 0
+    let borrowAmount = 0
+    let depositAmount = 0
 
-    return { swapAmount, borrowAmount }
-  }, [accountAmount, amountIn])
+    if (fundingMode === FundingMode.WalletAndAccount) {
+      const walletAndAccountAmount = walletAmount + accountAmount
+
+      borrowAmount =
+        amountIn > walletAndAccountAmount
+          ? BigNumber(amountIn).minus(walletAndAccountAmount).toNumber()
+          : 0
+
+      depositAmount = amountIn > walletAmount ? walletAmount : amountIn
+    }
+
+    if (fundingMode === FundingMode.Account) {
+      borrowAmount =
+        amountIn > accountAmount ? BigNumber(amountIn).minus(accountAmount).toNumber() : 0
+    }
+
+    return { swapAmount, borrowAmount, depositAmount }
+  }, [accountAmount, amountIn, fundingMode, walletAmount])
 
   const { mutate, isLoading } = useTradeAsset(
     swapAmount,
     borrowAmount,
+    depositAmount,
     selectedTokenIn,
     selectedTokenOut,
     0.1,
@@ -111,7 +128,22 @@ const TradeActionModule = () => {
     resetAmounts()
   }
 
-  const maxAmount = useCalculateMaxTradeAmount(selectedTokenIn, selectedTokenOut, isMarginEnabled)
+  // max amount that can be traded without considering wallet amount
+  // wallet amount should just be directly added to this amount in case user wants to include wallet as funding source
+  const maxTradeAmount = useCalculateMaxTradeAmount(
+    selectedTokenIn,
+    selectedTokenOut,
+    isMarginEnabled,
+  )
+
+  // if funding from wallet & account, add wallet amount to the max trade amount
+  const maxAmount = useMemo(() => {
+    if (fundingMode === FundingMode.WalletAndAccount) {
+      return walletAmount + maxTradeAmount
+    }
+
+    return maxTradeAmount
+  }, [fundingMode, maxTradeAmount, walletAmount])
 
   const percentageValue = useMemo(() => {
     if (isNaN(amountIn) || amountIn === 0) return 0
