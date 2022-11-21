@@ -7,7 +7,7 @@ import Text from './Text'
 
 interface TooltipProps {
   children?: ReactNode | string
-  content: string
+  content: ReactNode | string
   className?: string
   delay?: number
   inderactive?: boolean
@@ -41,7 +41,7 @@ const Tooltip = ({
             className='max-w-[320px] rounded-lg px-4 py-2 shadow-tooltip gradient-tooltip'
             {...attrs}
           >
-            <Text size='sm'>{content}</Text>
+            {content}
           </div>
         )
       }}

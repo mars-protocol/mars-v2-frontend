@@ -15,6 +15,7 @@ import { formatCurrency } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 import Button from './Button'
+import Text from './Text'
 import ContainerSecondary from './ContainerSecondary'
 import Tooltip from './Tooltip'
 import CircularProgress from './CircularProgress'
@@ -182,16 +183,16 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
                           className='ml-2'
                           content={
                             <>
-                              <p className='mb-2'>
+                              <Text size='sm' className='mb-2'>
                                 OFF = Borrow directly into your wallet by using your account Assets
                                 as collateral. The borrowed asset will become a liability in your
                                 account.
-                              </p>
-                              <p>
+                              </Text>
+                              <Text size='sm'>
                                 ON = Borrow into your Account. The borrowed asset will be available
                                 in the account as an Asset and appear also as a liability in your
                                 account.
-                              </p>
+                              </Text>
                             </>
                           }
                         />
