@@ -26,6 +26,7 @@ import { SortNone } from './SortNone'
 import { Subtract } from './Subtract'
 import { Success } from './Success'
 import { Telegram } from './Telegram'
+import { Tooltip } from './Tooltip'
 import { Twitter } from './Twitter'
 import { Wallet } from './Wallet'
 import { WalletConnect } from './WalletConnect'
@@ -62,6 +63,7 @@ export const SVG = {
   Subtract,
   Success,
   Telegram,
+  Tooltip,
   Twitter,
   Wallet,
   WalletConnect,

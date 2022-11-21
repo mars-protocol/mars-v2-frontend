@@ -28,8 +28,8 @@ export enum TestnetCosmosChainId {
 }
 
 export interface SVGProps {
+  className?: string
   color?: string
   secondaryColor?: string
-  className?: string
   opacity?: number
 }

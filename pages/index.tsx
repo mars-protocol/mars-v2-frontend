@@ -19,6 +19,7 @@ import { queryKeys } from 'types/query-keys-factory'
 import { chain } from 'utils/chains'
 import { hardcodedFee } from 'utils/contants'
 import CircularProgress from 'components/CircularProgress'
+import Tooltip from 'components/Tooltip'
 
 const Home: NextPage = () => {
   const [sendAmount, setSendAmount] = useState('')
@@ -249,16 +250,16 @@ const Home: NextPage = () => {
   }
 
   return (
-    <div className='mx-auto flex max-w-6xl flex-col gap-y-6'>
+    <div className='flex flex-col max-w-6xl mx-auto gap-y-6'>
       <Card>
         <Text tag='h4' className='mb-5'>
           Send Tokens
         </Text>
-        <div className='mb-5 flex flex-wrap gap-2'>
+        <div className='flex flex-wrap gap-2 mb-5'>
           <div>
             <Text>Address:</Text>
             <input
-              className='rounded-lg bg-black/40 px-3 py-1'
+              className='px-3 py-1 rounded-lg bg-black/40'
               value={recipientAddress}
               placeholder='address'
               onChange={(e) => setRecipientAddress(e.target.value)}
@@ -268,14 +269,14 @@ const Home: NextPage = () => {
             <Text>Amount:</Text>
             <input
               type='number'
-              className='rounded-lg bg-black/40 px-3 py-1'
+              className='px-3 py-1 rounded-lg bg-black/40'
               value={sendAmount}
               placeholder='amount'
               onChange={(e) => setSendAmount(e.target.value)}
             />
           </div>
         </div>
-        <Button className='bg-[#524bb1] hover:bg-[#6962cc]' onClick={handleSendClick}>
+        <Button color='secondary' onClick={handleSendClick}>
           Send
         </Button>
       </Card>
@@ -283,7 +284,7 @@ const Home: NextPage = () => {
         <Text tag='h4' className='mb-5'>
           Create Credit Account (Mint NFT)
         </Text>
-        <Button className='bg-[#524bb1] hover:bg-[#6962cc]' onClick={handleCreateCreditAccount}>
+        <Button color='secondary' onClick={handleCreateCreditAccount}>
           Create
         </Button>
       </Card>
@@ -291,7 +292,7 @@ const Home: NextPage = () => {
         <Text tag='h4' className='mb-5'>
           Get all Credit Accounts
         </Text>
-        <Button className='bg-[#524bb1] hover:bg-[#6962cc]' onClick={handleGetCreditAccounts}>
+        <Button color='secondary' onClick={handleGetCreditAccounts}>
           Fetch
         </Button>
       </Card>
@@ -300,11 +301,11 @@ const Home: NextPage = () => {
           Borrow OSMO
         </Text>
         <input
-          className='rounded-lg bg-black/40 px-3 py-1'
+          className='px-3 py-1 rounded-lg bg-black/40'
           type='number'
           onChange={(e) => setBorrowAmount(e.target.valueAsNumber)}
         />
-        <Button className='ml-4 bg-[#524bb1] hover:bg-[#6962cc]' onClick={handleBorrowClick}>
+        <Button className='ml-4' color='secondary' onClick={handleBorrowClick}>
           Borrow
         </Button>
       </Card>
@@ -337,7 +338,11 @@ const Home: NextPage = () => {
           </>
         )}
       </div>
-      {error && <div className='mt-8 bg-white p-4 text-red-500'>{error}</div>}
+      {error && (
+        <div className='p-4 mt-8 bg-white rounded-base'>
+          <Text className='text-red-500'>{error}</Text>
+        </div>
+      )}
       {isLoading && (
         <div>
           <CircularProgress />
