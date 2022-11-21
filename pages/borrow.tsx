@@ -132,7 +132,7 @@ const Borrow = () => {
         </Card>
         <Card>
           <div>
-            <Text tag='h3' size='xl' uppercase={true} className='text-center mb-7'>
+            <Text tag='h3' size='xl' uppercase={true} className='text-center mb-7 text-lg-caps'>
               Available to Borrow
             </Text>
             <BorrowTable
