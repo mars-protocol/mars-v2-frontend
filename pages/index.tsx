@@ -20,6 +20,7 @@ import { chain } from 'utils/chains'
 import { hardcodedFee } from 'utils/contants'
 import CircularProgress from 'components/CircularProgress'
 import Tooltip from 'components/Tooltip'
+import { BorrowCapacity } from 'components/BorrowCapacity'
 
 const Home: NextPage = () => {
   const [sendAmount, setSendAmount] = useState('')
@@ -250,16 +251,16 @@ const Home: NextPage = () => {
   }
 
   return (
-    <div className='mx-auto flex max-w-6xl flex-col gap-y-6'>
+    <div className='flex flex-col max-w-6xl mx-auto gap-y-6'>
       <Card>
         <Text tag='h4' className='mb-5'>
           Send Tokens
         </Text>
-        <div className='mb-5 flex flex-wrap gap-2'>
+        <div className='flex flex-wrap gap-2 mb-5'>
           <div>
             <Text>Address:</Text>
             <input
-              className='rounded-lg bg-black/40 px-3 py-1'
+              className='px-3 py-1 rounded-lg bg-black/40'
               value={recipientAddress}
               placeholder='address'
               onChange={(e) => setRecipientAddress(e.target.value)}
@@ -269,7 +270,7 @@ const Home: NextPage = () => {
             <Text>Amount:</Text>
             <input
               type='number'
-              className='rounded-lg bg-black/40 px-3 py-1'
+              className='px-3 py-1 rounded-lg bg-black/40'
               value={sendAmount}
               placeholder='amount'
               onChange={(e) => setSendAmount(e.target.value)}
@@ -301,7 +302,7 @@ const Home: NextPage = () => {
           Borrow OSMO
         </Text>
         <input
-          className='rounded-lg bg-black/40 px-3 py-1'
+          className='px-3 py-1 rounded-lg bg-black/40'
           type='number'
           onChange={(e) => setBorrowAmount(e.target.valueAsNumber)}
         />
@@ -339,7 +340,7 @@ const Home: NextPage = () => {
         )}
       </div>
       {error && (
-        <div className='mt-8 rounded-base bg-white p-4'>
+        <div className='p-4 mt-8 bg-white rounded-base'>
           <Text className='text-red-500'>{error}</Text>
         </div>
       )}

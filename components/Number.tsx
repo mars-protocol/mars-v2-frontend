@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import isEqual from 'lodash.isequal'
 import React, { useEffect, useRef } from 'react'
 import { animated, useSpring } from 'react-spring'
@@ -7,6 +8,7 @@ import { formatValue } from 'utils/formatters'
 interface NumberProps {
   amount: number
   animate?: boolean
+  className?: string
   minDecimals?: number
   maxDecimals?: number
   thousandSeparator?: boolean
@@ -19,6 +21,7 @@ interface NumberProps {
 const Number = ({
   amount,
   animate = false,
+  className,
   minDecimals = 2,
   maxDecimals = 2,
   thousandSeparator = true,
@@ -40,7 +43,7 @@ const Number = ({
   })
 
   return (prevAmountRef.current === amount && amount === 0) || !animate ? (
-    <span className='number'>
+    <span className={classNames('number', className)}>
       {formatValue(
         amount,
         minDecimals,
@@ -53,7 +56,7 @@ const Number = ({
       )}
     </span>
   ) : (
-    <animated.span className='number'>
+    <animated.span className={classNames('number', className)}>
       {springAmount.number.to((num) =>
         formatValue(
           num,

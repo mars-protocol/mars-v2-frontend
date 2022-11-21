@@ -11,6 +11,7 @@ interface TooltipProps {
   className?: string
   delay?: number
   inderactive?: boolean
+  underline?: boolean
 }
 
 const Tooltip = ({
@@ -19,13 +20,15 @@ const Tooltip = ({
   className,
   delay = 0,
   inderactive = false,
+  underline = false,
 }: TooltipProps) => {
   const iconClasses = classNames(
     'mb-2 inline-block w-[18px] cursor-pointer opacity-40 hover:opacity-80',
     className,
   )
   const tooltipClasses = classNames(
-    'border border-dashed border-x-0 border-t-0 border-b-1 cursor-pointer border-white/50 transition-all hover:border-transparent ',
+    underline &&
+      'border border-dashed border-x-0 border-t-0 border-b-1 cursor-pointer border-white/50 transition-all hover:border-transparent ',
     className,
   )
 
