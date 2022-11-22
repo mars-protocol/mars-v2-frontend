@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
+    "dev": "next dev",
     "format": "eslint . --ext=ts,tsx --fix && prettier --write ./**/*.ts ./**/*.tsx",
-    "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "start": "next start"
   },
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.29.0",
