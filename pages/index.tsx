@@ -18,6 +18,8 @@ import useWalletStore from 'stores/useWalletStore'
 import { queryKeys } from 'types/query-keys-factory'
 import { chain } from 'utils/chains'
 import { hardcodedFee } from 'utils/contants'
+import useMarkets from 'hooks/useMarkets'
+import useTokenPrices from 'hooks/useTokenPrices'
 
 const Home: NextPage = () => {
   const [sendAmount, setSendAmount] = useState('')
@@ -36,6 +38,9 @@ const Home: NextPage = () => {
   const queryClient = useQueryClient()
 
   const [signingClient, setSigningClient] = useState<SigningCosmWasmClient>()
+
+  const { data: marketsData } = useMarkets()
+  const { data: tokenPrices } = useTokenPrices()
 
   useEffect(() => {
     ;(async () => {
@@ -322,6 +327,20 @@ const Home: NextPage = () => {
               <p key={token}>{token}</p>
             ))}
           </>
+        )}
+      </div>
+      <div>
+        {tokenPrices && (
+          <div className='mb-6'>
+            <h3 className='text-xl font-semibold'>Token Prices:</h3>
+            <pre>{JSON.stringify(tokenPrices, null, 2)}</pre>
+          </div>
+        )}
+        {marketsData && (
+          <div>
+            <h3 className='text-xl font-semibold'>Markets Data:</h3>
+            <pre>{JSON.stringify(marketsData, null, 2)}</pre>
+          </div>
         )}
       </div>
       {error && <div className='mt-8 bg-white p-4 text-red-500'>{error}</div>}
