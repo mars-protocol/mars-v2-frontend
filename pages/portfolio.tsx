@@ -1,7 +1,8 @@
-import React from 'react'
+import { useState } from 'react'
 
 import Card from 'components/Card'
 import Number from 'components/Number'
+import Overlay from 'components/Overlay'
 import Text from 'components/Text'
 
 const mockedAccounts = [
@@ -48,9 +49,17 @@ const mockedAccounts = [
 ]
 
 const Portfolio = () => {
+  const [show, setShow] = useState<boolean>(false)
   return (
     <div className='flex flex-col gap-4'>
-      <Card className='flex-1'>Portfolio Module</Card>
+      <Card className='flex-1'>
+        <span onClick={() => setShow(!show)} role='button'>
+          Portfolio Module
+        </span>
+        <Overlay show={show} setShow={setShow}>
+          A test overlay
+        </Overlay>
+      </Card>
       <div className='grid grid-cols-2 gap-4'>
         {mockedAccounts.map((account) => (
           <Card key={account.id}>
