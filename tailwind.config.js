@@ -30,6 +30,12 @@ module.exports = {
       animation: {
         progress: 'spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite',
       },
+      backgroundImage: {
+        mars: 'url(/bg.svg)',
+      },
+      backgroundSize: {
+        desktop: '100% auto',
+      },
       borderRadius: {
         '3xs': '3px',
         '2xs': '4px',
@@ -47,6 +53,9 @@ module.exports = {
         overlay: '0 2px 2px rgba(0, 0, 0, 0.14), 0 1px 5px rgba(0, 0, 0, 0.2)',
         tooltip:
           '0 3px 4px rgba(0, 0, 0, 0.14), 0 3px 3px rgba(0, 0, 0, 0.12), 0 1px 8px rgba(0, 0, 0, 0.2)',
+      },
+      brightness: {
+        30: '.3',
       },
       colors: {
         accent: '#2c1b2f',
@@ -99,6 +108,9 @@ module.exports = {
         semibold: 600,
         bold: 600,
       },
+      hueRotate: {
+        '-82': '-82deg',
+      },
       letterSpacing: {
         normal: 0,
         wide: '2px',
@@ -111,6 +123,12 @@ module.exports = {
         lg: '1024px',
         xl: '1280px',
         '2xl': '1920px',
+      },
+      transitionDuration: {
+        3000: '3000ms',
+      },
+      transitionProperty: {
+        background: 'filter, -webkit-filter',
       },
     },
   },

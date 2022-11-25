@@ -3,7 +3,7 @@ import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import ArrowRightLine from 'components/Icons/arrow-right-line.svg'
 import ProgressBar from 'components/ProgressBar'
@@ -18,8 +18,8 @@ import useWalletStore from 'stores/useWalletStore'
 import { formatCurrency } from 'utils/formatters'
 
 import Button from './Button'
-import SemiCircleProgress from './SemiCircleProgress'
 import CircularProgress from './CircularProgress'
+import SemiCircleProgress from './SemiCircleProgress'
 
 // TODO: will require some tweaks depending on how lower viewport mocks pans out
 const MAX_VISIBLE_CREDIT_ACCOUNTS = 5
@@ -104,12 +104,12 @@ const Navigation = () => {
   }
 
   return (
-    <div>
+    <div className='relative'>
       {/* Main navigation bar */}
       <div className='flex items-center justify-between border-b border-white/20 px-6 py-3'>
         <Link href='/' passHref>
           <a>
-            <Image src='/logo.svg' alt='mars' width={123} height={40} />
+            <Image src='/logo.svg' alt='mars' width={40} height={40} />
           </a>
         </Link>
         <div className='flex gap-5 px-12 text-white/40'>

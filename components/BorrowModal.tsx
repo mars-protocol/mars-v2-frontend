@@ -137,7 +137,7 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
                       Powered by deep-learning.
                     </h4>
                   </div>
-                  <Image src='/logo.svg' alt='mars' width={150} height={50} />
+                  <Image src='/logo.svg' alt='mars' width={50} height={50} />
                 </div>
 
                 <div className='flex flex-1 flex-col p-4'>
