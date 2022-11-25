@@ -3,7 +3,8 @@ import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
+import BigNumber from 'bignumber.js'
 
 import ArrowRightLine from 'components/Icons/arrow-right-line.svg'
 import ProgressBar from 'components/ProgressBar'
@@ -16,6 +17,7 @@ import useCreditAccounts from 'hooks/useCreditAccounts'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useWalletStore from 'stores/useWalletStore'
 import { formatCurrency } from 'utils/formatters'
+import { chain } from 'utils/chains'
 
 import Button from './Button'
 import CircularProgress from './CircularProgress'
@@ -81,7 +83,13 @@ const Navigation = () => {
       <div className='flex items-center gap-4'>
         {accountStats && (
           <>
-            <p>{formatCurrency(accountStats.netWorth)}</p>
+            <p>
+              {formatCurrency(
+                BigNumber(accountStats.netWorth)
+                  .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
+                  .toNumber(),
+              )}
+            </p>
             {/* TOOLTIP */}
             <div title={`${String(accountStats.currentLeverage.toFixed(1))}x`}>
               <SemiCircleProgress

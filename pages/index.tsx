@@ -21,6 +21,8 @@ import { hardcodedFee } from 'utils/contants'
 import CircularProgress from 'components/CircularProgress'
 import Tooltip from 'components/Tooltip'
 import { BorrowCapacity } from 'components/BorrowCapacity'
+import useMarkets from 'hooks/useMarkets'
+import useTokenPrices from 'hooks/useTokenPrices'
 
 const Home: NextPage = () => {
   const [sendAmount, setSendAmount] = useState('')
@@ -39,6 +41,9 @@ const Home: NextPage = () => {
   const queryClient = useQueryClient()
 
   const [signingClient, setSigningClient] = useState<SigningCosmWasmClient>()
+
+  const { data: marketsData } = useMarkets()
+  const { data: tokenPrices } = useTokenPrices()
 
   useEffect(() => {
     ;(async () => {
@@ -337,6 +342,20 @@ const Home: NextPage = () => {
               <p key={token}>{token}</p>
             ))}
           </>
+        )}
+      </div>
+      <div>
+        {tokenPrices && (
+          <div className='mb-6'>
+            <h3 className='text-xl font-semibold'>Token Prices:</h3>
+            <pre>{JSON.stringify(tokenPrices, null, 2)}</pre>
+          </div>
+        )}
+        {marketsData && (
+          <div>
+            <h3 className='text-xl font-semibold'>Markets Data:</h3>
+            <pre>{JSON.stringify(marketsData, null, 2)}</pre>
+          </div>
         )}
       </div>
       {error && (

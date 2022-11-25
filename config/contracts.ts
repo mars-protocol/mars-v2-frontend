@@ -1,13 +1,15 @@
 // https://github.com/mars-protocol/rover/blob/master/scripts/deploy/addresses/osmo-test-4.json
 export const roverContracts = {
-  accountNft: 'osmo1dravtyd0425fkdmkysc3ns7zud05clf5uhj6qqsnkdtrpkewu73q9f3f02',
-  mockVault: 'osmo1emcckulm2mkx36xeanhsn3z3zjeql6pgd8yf8a5cf03ccvy7a4dqjw9tl7',
-  marsOracleAdapter: 'osmo1cw6pv97g7fmhqykrn0gc9ngrx5tnky75rmlwkzxuqhsk58u0n8asz036g0',
-  swapper: 'osmo1w2552km2u9w4k2gjw4n8drmuz5yxw8x4qzy6dl3da824km5cjlys00x3qp',
-  creditManager: 'osmo18dt5y0ecyd5qg8nqwzrgxuljfejglyh2fjd984s8cy7fcx8mxh9qfl3hwq',
+  accountNft: 'osmo1xvne7u9svgy9vtqtqnaet4nvn8zcpp984zzrlezfzgk4798tps8srkf5wa',
+  mockVault: 'osmo1yqgjaehalz0pv5j22fdnaaekuprlggd7hth8m66jmdxe58ztqs4sjqtrlk',
+  marsOracleAdapter: 'osmo1tlad2hj9rm7az7atx2qq8pdpl2007hrhpzua42j8wgxr0kc0ct4sahuyh7',
+  swapper: 'osmo15kxcpvjaqlrj8ezecnghf2qs2x87veqx0fcemye0jpdr8jq7qkvsnyvuuf',
+  mockZapper: 'osmo1axad429tgnvzvfax08s4ytmf7ndg0f9z4jy355zyh4m6nasgtnzs5aw8u7',
+  creditManager: 'osmo1krz37p6xkkyu0f240enyt4ccxk7ds69kfgc5pnldsmpmmuvn3vpsnmpjaf',
 }
 
 export const contractAddresses = {
   ...roverContracts,
-  redBank: 'osmo1w5rqrdhut890jplmsqnr8gj3uf0wq6lj5rfdnhrtl63lpf6e7v6qalrhhn',
+  redBank: 'osmo1g30recyv8pfy3qd4qn3dn7plc0rn5z68y5gn32j39e96tjhthzxsw3uvvu',
+  oracle: 'osmo1hkkx42777dyfz7wc8acjjhfdh9x2ugcjvdt7shtft6ha9cn420cquz3u3j',
 }

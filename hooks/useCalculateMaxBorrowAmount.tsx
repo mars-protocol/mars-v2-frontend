@@ -62,32 +62,31 @@ const useCalculateMaxBorrowAmount = (denom: string, isUnderCollateralized: boole
     const borrowTokenPrice = tokenPrices[denom]
     const tokenDecimals = getTokenDecimals(denom)
 
-    let maxValue
+    let maxAmountCapacity
     if (isUnderCollateralized) {
       // MAX TO CREDIT ACCOUNT
-      maxValue = BigNumber(totalLiabilitiesValue)
+      maxAmountCapacity = BigNumber(totalLiabilitiesValue)
         .minus(totalWeightedPositions)
         .div(borrowTokenPrice * Number(marketsData[denom].max_loan_to_value) - borrowTokenPrice)
-        .div(10 ** tokenDecimals)
-        .decimalPlaces(tokenDecimals)
-        .toNumber()
     } else {
       // MAX TO WALLET
-      maxValue = BigNumber(totalWeightedPositions)
+      maxAmountCapacity = BigNumber(totalWeightedPositions)
         .minus(totalLiabilitiesValue)
         .div(borrowTokenPrice)
-        .div(10 ** tokenDecimals)
-        .decimalPlaces(tokenDecimals)
-        .toNumber()
     }
 
-    const marketLiquidity = BigNumber(redbankBalances?.[denom] ?? 0)
-      .div(10 ** getTokenDecimals(denom))
+    const marketLiquidity = redbankBalances?.[denom] ?? 0
+
+    const maxBorrowAmount = maxAmountCapacity.gt(marketLiquidity)
+      ? marketLiquidity
+      : maxAmountCapacity.gt(0)
+      ? maxAmountCapacity
+      : 0
+
+    return BigNumber(maxBorrowAmount)
+      .dividedBy(10 ** tokenDecimals)
+      .decimalPlaces(tokenDecimals)
       .toNumber()
-
-    if (marketLiquidity < maxValue) return marketLiquidity
-
-    return maxValue > 0 ? maxValue : 0
   }, [
     denom,
     getTokenValue,
