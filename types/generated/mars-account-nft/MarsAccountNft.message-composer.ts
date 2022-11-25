@@ -9,27 +9,28 @@ import { Coin } from '@cosmjs/amino'
 import { MsgExecuteContractEncodeObject } from 'cosmwasm'
 import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
 import { toUtf8 } from '@cosmjs/encoding'
+
 import {
-  InstantiateMsg,
-  ExecuteMsg,
-  Binary,
-  Expiration,
-  Timestamp,
-  Uint64,
-  QueryMsg,
   AllNftInfoResponseForEmpty,
-  OwnerOfResponse,
   Approval,
-  NftInfoResponseForEmpty,
-  Empty,
-  OperatorsResponse,
-  TokensResponse,
   ApprovalResponse,
   ApprovalsResponse,
+  Binary,
   ContractInfoResponse,
+  Empty,
+  ExecuteMsg,
+  Expiration,
+  InstantiateMsg,
   MinterResponse,
+  NftInfoResponseForEmpty,
   NumTokensResponse,
+  OperatorsResponse,
+  OwnerOfResponse,
+  QueryMsg,
   String,
+  Timestamp,
+  TokensResponse,
+  Uint64,
 } from './MarsAccountNft.types'
 export interface MarsAccountNftMessage {
   contractAddress: string

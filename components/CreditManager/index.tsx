@@ -12,8 +12,9 @@ import useMarkets from 'hooks/useMarkets'
 import ContainerSecondary from 'components/ContainerSecondary'
 import WithdrawModal from 'components/WithdrawModal'
 import FundAccountModal from 'components/FundAccountModal'
-import Button from '../Button'
 import { chain } from 'utils/chains'
+
+import Button from '../Button'
 
 const CreditManager = () => {
   const [showFundWalletModal, setShowFundWalletModal] = useState(false)

@@ -9,7 +9,9 @@ const Trade = () => {
       <div className='mb-4 flex gap-4'>
         <Card className='flex-1'>Graph/Tradingview Module</Card>
         <div className='flex flex-col gap-4'>
-          <Card><TradeActionModule /></Card>
+          <Card>
+            <TradeActionModule />
+          </Card>
           <Card>Orderbook module (optional)</Card>
         </div>
         <Card>Credit Account essential module</Card>
