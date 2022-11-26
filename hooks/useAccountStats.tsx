@@ -124,6 +124,8 @@ const useAccountStats = (actions?: AccountStatsAction[]) => {
       risk,
       totalPosition,
       totalDebt,
+      assets,
+      debts,
     }
   }, [marketsData, positionsData, tokenPrices])
 
@@ -245,6 +247,8 @@ const useAccountStats = (actions?: AccountStatsAction[]) => {
       risk,
       totalPosition,
       totalDebt,
+      assets,
+      debts,
     }
   }, [actions, marketsData, positionsData, tokenPrices])
 

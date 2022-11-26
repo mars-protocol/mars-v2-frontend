@@ -1,5 +1,4 @@
 import { Dialog, Switch, Transition } from '@headlessui/react'
-import * as RSlider from '@radix-ui/react-slider'
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -304,7 +303,7 @@ const WithdrawModal = ({ show, onClose }: any) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {positionsData?.coins.map((coin) => (
+                          {accountStats?.assets.map((coin) => (
                             <tr key={coin.denom} className='text-xs text-white/50'>
                               <td>{getTokenSymbol(coin.denom)}</td>
                               <td>
@@ -321,7 +320,7 @@ const WithdrawModal = ({ show, onClose }: any) => {
                               <td className='text-right'>-</td>
                             </tr>
                           ))}
-                          {positionsData?.debts.map((coin) => (
+                          {accountStats?.debts.map((coin) => (
                             <tr key={coin.denom} className='text-xs text-red-500'>
                               <td className='text-white/50'>{getTokenSymbol(coin.denom)}</td>
                               <td>
