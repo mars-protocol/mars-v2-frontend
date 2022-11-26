@@ -1,20 +1,19 @@
-import React, { useRef, useState } from 'react'
 import BigNumber from 'bignumber.js'
+import { useRef, useState } from 'react'
 
-import { formatCurrency } from 'utils/formatters'
+import Button from 'components/Button'
+import ContainerSecondary from 'components/ContainerSecondary'
+import FundAccountModal from 'components/FundAccountModal'
+import WithdrawModal from 'components/WithdrawModal'
+import useAccountStats from 'hooks/useAccountStats'
+import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
+import useMarkets from 'hooks/useMarkets'
+import useTokenPrices from 'hooks/useTokenPrices'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useWalletStore from 'stores/useWalletStore'
-import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
-import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-import useTokenPrices from 'hooks/useTokenPrices'
-import useAccountStats from 'hooks/useAccountStats'
-import useMarkets from 'hooks/useMarkets'
-import ContainerSecondary from 'components/ContainerSecondary'
-import WithdrawModal from 'components/WithdrawModal'
-import FundAccountModal from 'components/FundAccountModal'
 import { chain } from 'utils/chains'
-
-import Button from '../Button'
+import { formatCurrency } from 'utils/formatters'
+import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 const CreditManager = () => {
   const [showFundWalletModal, setShowFundWalletModal] = useState(false)
@@ -27,7 +26,7 @@ const CreditManager = () => {
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
 
   const { data: positionsData, isLoading: isLoadingPositions } = useCreditAccountPositions(
-    selectedAccount ?? ''
+    selectedAccount ?? '',
   )
 
   const { data: tokenPrices } = useTokenPrices()
@@ -47,17 +46,17 @@ const CreditManager = () => {
 
   if (!address) {
     return (
-      <div className="absolute inset-0 left-auto w-[400px] border-l border-white/20 bg-grey-medium p-2">
+      <div className='absolute inset-0 left-auto w-[400px] border-l border-white/20 bg-grey-medium p-2'>
         <ContainerSecondary>You must have a connected wallet</ContainerSecondary>
       </div>
     )
   }
 
   return (
-    <div className="absolute inset-0 left-auto w-[400px] border-l border-white/20 bg-grey-medium p-2">
-      <ContainerSecondary className="mb-2 flex gap-3">
+    <div className='absolute inset-0 left-auto w-[400px] border-l border-white/20 bg-grey-medium p-2'>
+      <ContainerSecondary className='mb-2 flex gap-3'>
         <Button
-          className="flex-1 rounded-md"
+          className='flex-1 rounded-md'
           onClick={() => {
             setShowFundWalletModal(true)
             modalId.current += 1
@@ -66,7 +65,7 @@ const CreditManager = () => {
           Fund
         </Button>
         <Button
-          className="flex-1 rounded-md"
+          className='flex-1 rounded-md'
           onClick={() => {
             setShowWithdrawModal(true)
             modalId.current += 1
@@ -76,8 +75,8 @@ const CreditManager = () => {
           Withdraw
         </Button>
       </ContainerSecondary>
-      <ContainerSecondary className="mb-2 text-sm">
-        <div className="mb-1 flex justify-between">
+      <ContainerSecondary className='mb-2 text-sm'>
+        <div className='mb-1 flex justify-between'>
           <div>Total Position:</div>
 
           <div className='font-semibold'>
@@ -88,7 +87,7 @@ const CreditManager = () => {
             )}
           </div>
         </div>
-        <div className="flex justify-between">
+        <div className='flex justify-between'>
           <div>Total Liabilities:</div>
           <div className='font-semibold'>
             {formatCurrency(
@@ -100,24 +99,24 @@ const CreditManager = () => {
         </div>
       </ContainerSecondary>
       <ContainerSecondary>
-        <h4 className="font-bold">Balances</h4>
+        <h4 className='font-bold'>Balances</h4>
         {isLoadingPositions ? (
           <div>Loading...</div>
         ) : (
           <>
-            <div className="flex text-xs font-semibold">
-              <div className="flex-1">Asset</div>
-              <div className="flex-1">Value</div>
-              <div className="flex-1">Size</div>
-              <div className="flex-1">APY</div>
+            <div className='flex text-xs font-semibold'>
+              <div className='flex-1'>Asset</div>
+              <div className='flex-1'>Value</div>
+              <div className='flex-1'>Size</div>
+              <div className='flex-1'>APY</div>
             </div>
             {positionsData?.coins.map((coin) => (
-              <div key={coin.denom} className="flex text-xs text-black/40">
-                <div className="flex-1">{getTokenSymbol(coin.denom)}</div>
-                <div className="flex-1">
+              <div key={coin.denom} className='flex text-xs text-black/40'>
+                <div className='flex-1'>{getTokenSymbol(coin.denom)}</div>
+                <div className='flex-1'>
                   {formatCurrency(getTokenTotalUSDValue(coin.amount, coin.denom))}
                 </div>
-                <div className="flex-1">
+                <div className='flex-1'>
                   {BigNumber(coin.amount)
                     .div(10 ** getTokenDecimals(coin.denom))
                     .toNumber()
@@ -125,16 +124,16 @@ const CreditManager = () => {
                       maximumFractionDigits: getTokenDecimals(coin.denom),
                     })}
                 </div>
-                <div className="flex-1">-</div>
+                <div className='flex-1'>-</div>
               </div>
             ))}
             {positionsData?.debts.map((coin) => (
-              <div key={coin.denom} className="flex text-xs text-red-500">
-                <div className="flex-1 text-black/40">{getTokenSymbol(coin.denom)}</div>
-                <div className="flex-1">
+              <div key={coin.denom} className='flex text-xs text-red-500'>
+                <div className='flex-1 text-black/40'>{getTokenSymbol(coin.denom)}</div>
+                <div className='flex-1'>
                   -{formatCurrency(getTokenTotalUSDValue(coin.amount, coin.denom))}
                 </div>
-                <div className="flex-1">
+                <div className='flex-1'>
                   -
                   {BigNumber(coin.amount)
                     .div(10 ** getTokenDecimals(coin.denom))
@@ -143,7 +142,7 @@ const CreditManager = () => {
                       maximumFractionDigits: 6,
                     })}
                 </div>
-                <div className="flex-1">
+                <div className='flex-1'>
                   -{(Number(marketsData?.[coin.denom].borrow_rate) * 100).toFixed(1)}%
                 </div>
               </div>

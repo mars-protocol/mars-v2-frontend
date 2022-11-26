@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import React, { ReactNode } from 'react'
 
-import CircularProgress from './CircularProgress'
+import CircularProgress from 'components/CircularProgress'
 
 interface Props {
   children?: string | ReactNode
@@ -13,7 +13,7 @@ interface Props {
   size?: 'small' | 'medium' | 'large'
   text?: string | ReactNode
   variant?: 'solid' | 'transparent' | 'round'
-  onClick?: (e: any) => void
+  onClick?: (e: React.MouseEvent) => void
 }
 
 const Button = ({

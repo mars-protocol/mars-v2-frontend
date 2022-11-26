@@ -5,7 +5,7 @@ import { animated, useSpring } from 'react-spring'
 
 import { formatValue } from 'utils/formatters'
 
-interface NumberProps {
+interface Props {
   amount: number
   animate?: boolean
   className?: string
@@ -29,7 +29,7 @@ const Number = ({
   suffix = false,
   rounded = false,
   abbreviated = false,
-}: NumberProps) => {
+}: Props) => {
   const prevAmountRef = useRef<number>(0)
 
   useEffect(() => {
@@ -73,7 +73,7 @@ const Number = ({
   )
 }
 
-const amountsAreEqual = (prevProps: NumberProps, nextProps: NumberProps) => {
+const amountsAreEqual = (prevProps: Props, nextProps: Props) => {
   return isEqual(prevProps, nextProps)
 }
 

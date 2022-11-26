@@ -18,10 +18,9 @@ import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useWalletStore from 'stores/useWalletStore'
 import { formatCurrency } from 'utils/formatters'
 import { chain } from 'utils/chains'
-
-import Button from './Button'
-import CircularProgress from './CircularProgress'
-import SemiCircleProgress from './SemiCircleProgress'
+import Button from 'components/Button'
+import CircularProgress from 'components/CircularProgress'
+import SemiCircleProgress from 'components/SemiCircleProgress'
 
 // TODO: will require some tweaks depending on how lower viewport mocks pans out
 const MAX_VISIBLE_CREDIT_ACCOUNTS = 5

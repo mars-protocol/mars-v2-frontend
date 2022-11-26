@@ -1,10 +1,10 @@
 import classNames from 'classnames'
 import { ReactNode } from 'react'
 
-import Card from './Card'
-import { SVG } from './SVG/SVG'
+import Card from 'components/Card'
+import { SVG } from 'components/SVG/SVG'
 
-interface ModalProps {
+interface Props {
   children?: ReactNode | string
   content?: ReactNode | string
   className?: string
@@ -12,7 +12,7 @@ interface ModalProps {
   setOpen: (open: boolean) => void
 }
 
-const Modal = ({ children, content, className, open, setOpen }: ModalProps) => {
+const Modal = ({ children, content, className, open, setOpen }: Props) => {
   const onClickAway = () => {
     setOpen(false)
   }

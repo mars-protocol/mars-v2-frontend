@@ -136,7 +136,7 @@ const Portfolio = () => {
       </div>
       <Modal open={open} setOpen={setOpen}>
         {mockedAccounts.map((account) => (
-          <div key={account.id}>
+          <div key={account.id} className='mb-8'>
             <Text size='lg' uppercase={true} className='mb-4 px-10 text-center'>
               {account.label}
             </Text>

@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
 import classNames from 'classnames'
 
-interface TextProps {
+interface Props {
   children: ReactNode | string
   className?: string
   monospace?: boolean
@@ -17,7 +17,7 @@ const Text = ({
   size = 'base',
   tag = 'p',
   uppercase = false,
-}: TextProps) => {
+}: Props) => {
   const headlines = ['h1', 'h2', 'h3', 'h4']
   const headMap = ['6xl', '5xl', '4xl', '3xl']
   const tagIndex = headlines.indexOf(tag)

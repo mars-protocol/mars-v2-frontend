@@ -16,12 +16,11 @@ import { formatCurrency } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 import useAccountStats, { AccountStatsAction } from 'hooks/useAccountStats'
 import { chain } from 'utils/chains'
-
-import Button from './Button'
-import ContainerSecondary from './ContainerSecondary'
-import ProgressBar from './ProgressBar'
-import SemiCircleProgress from './SemiCircleProgress'
-import CircularProgress from './CircularProgress'
+import Button from 'components/Button'
+import ContainerSecondary from 'components/ContainerSecondary'
+import ProgressBar from 'components/ProgressBar'
+import SemiCircleProgress from 'components/SemiCircleProgress'
+import CircularProgress from 'components/CircularProgress'
 
 const WithdrawModal = ({ show, onClose }: any) => {
   const [amount, setAmount] = useState(0)

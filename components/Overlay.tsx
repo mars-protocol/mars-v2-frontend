@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { ReactNode } from 'react'
 
-interface OverlayProps {
+interface Props {
   children?: ReactNode | string
   content?: ReactNode | string
   className?: string
@@ -9,7 +9,7 @@ interface OverlayProps {
   setShow: (show: boolean) => void
 }
 
-const Overlay = ({ children, content, className, show, setShow }: OverlayProps) => {
+const Overlay = ({ children, content, className, show, setShow }: Props) => {
   const onClickAway = () => {
     setShow(false)
   }

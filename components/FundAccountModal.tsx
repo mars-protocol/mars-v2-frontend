@@ -11,10 +11,9 @@ import useAllBalances from 'hooks/useAllBalances'
 import useAllowedCoins from 'hooks/useAllowedCoins'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-
-import Button from './Button'
-import ContainerSecondary from './ContainerSecondary'
-import CircularProgress from './CircularProgress'
+import Button from 'components/Button'
+import ContainerSecondary from 'components/ContainerSecondary'
+import CircularProgress from 'components/CircularProgress'
 
 const FundAccountModal = ({ show, onClose }: any) => {
   const [amount, setAmount] = useState(0)

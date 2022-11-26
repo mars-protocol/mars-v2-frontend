@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 import { useMemo, useState } from 'react'
 
-import Number from './Number'
-import Tooltip from './Tooltip'
+import Number from 'components/Number'
+import Tooltip from 'components/Tooltip'
 
 interface Props {
   balance: number

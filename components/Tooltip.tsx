@@ -2,10 +2,9 @@ import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 import { ReactNode } from 'react'
 
-import { SVG } from './SVG/SVG'
-import Text from './Text'
+import { SVG } from 'components/SVG/SVG'
 
-interface TooltipProps {
+interface Props {
   children?: ReactNode | string
   content: ReactNode | string
   className?: string
@@ -21,7 +20,7 @@ const Tooltip = ({
   delay = 0,
   inderactive = false,
   underline = false,
-}: TooltipProps) => {
+}: Props) => {
   const iconClasses = classNames(
     'mb-2 inline-block w-[18px] cursor-pointer opacity-40 hover:opacity-80',
     className,

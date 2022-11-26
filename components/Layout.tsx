@@ -1,5 +1,5 @@
-import React from 'react'
 import classNames from 'classnames'
+import React from 'react'
 
 import CreditManager from 'components/CreditManager'
 import Navigation from 'components/Navigation'
@@ -23,14 +23,14 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   )
 
   return (
-    <main className='relative min-h-screen w-full'>
+    <div className='relative min-h-screen w-full'>
       <div className={backgroundClasses} />
       <Navigation />
-      <div className='relative flex-1 p-6'>
+      <main className='relative flex-1 p-6'>
         {children}
         {isOpen && <CreditManager />}
-      </div>
-    </main>
+      </main>
+    </div>
   )
 }
 

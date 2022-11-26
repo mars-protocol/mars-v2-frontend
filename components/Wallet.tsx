@@ -7,9 +7,8 @@ import useTokenBalance from 'hooks/useTokenBalance'
 import useWalletStore from 'stores/useWalletStore'
 import { chain } from 'utils/chains'
 import { formatWalletAddress } from 'utils/formatters'
-
-import Button from './Button'
-import ConnectModal from './ConnectModal'
+import Button from 'components/Button'
+import ConnectModal from 'components/ConnectModal'
 
 const WalletPopover = ({ children }: { children: React.ReactNode }) => {
   const address = useWalletStore((s) => s.address)

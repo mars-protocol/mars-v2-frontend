@@ -13,10 +13,9 @@ import useTokenPrices from 'hooks/useTokenPrices'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import { formatCurrency } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-
-import Button from './Button'
-import CircularProgress from './CircularProgress'
-import ContainerSecondary from './ContainerSecondary'
+import Button from 'components/Button'
+import CircularProgress from 'components/CircularProgress'
+import ContainerSecondary from 'components/ContainerSecondary'
 
 // 0.001% buffer / slippage to avoid repay action from not fully repaying the debt amount
 const REPAY_BUFFER = 1.00001
