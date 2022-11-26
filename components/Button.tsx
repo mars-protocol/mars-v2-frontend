@@ -13,7 +13,7 @@ interface Props {
   size?: 'small' | 'medium' | 'large'
   text?: string | ReactNode
   variant?: 'solid' | 'transparent' | 'round'
-  onClick?: (e: React.MouseEvent) => void
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
 }
 
 const Button = ({
