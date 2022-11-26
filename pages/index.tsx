@@ -1,28 +1,22 @@
-// import Head from "next/head";
-// import Image from "next/image";
-// import styles from "../styles/Home.module.css";
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { useQueryClient } from '@tanstack/react-query'
 import BigNumber from 'bignumber.js'
 import type { NextPage } from 'next'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import Button from 'components/Button'
-import Text from 'components/Text'
 import Card from 'components/Card'
+import CircularProgress from 'components/CircularProgress'
+import Text from 'components/Text'
 import { contractAddresses } from 'config/contracts'
-// import { Coin } from "@cosmjs/stargate";
+import useMarkets from 'hooks/useMarkets'
+import useTokenPrices from 'hooks/useTokenPrices'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useWalletStore from 'stores/useWalletStore'
 import { queryKeys } from 'types/query-keys-factory'
 import { chain } from 'utils/chains'
 import { hardcodedFee } from 'utils/contants'
-import CircularProgress from 'components/CircularProgress'
-import Tooltip from 'components/Tooltip'
-import { BorrowCapacity } from 'components/BorrowCapacity'
-import useMarkets from 'hooks/useMarkets'
-import useTokenPrices from 'hooks/useTokenPrices'
 
 const Home: NextPage = () => {
   const [sendAmount, setSendAmount] = useState('')
