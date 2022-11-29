@@ -2,7 +2,7 @@ import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 import { ReactNode } from 'react'
 
-import { SVG } from 'components/SVG/SVG'
+import TooltipIcon from 'components/Icons/tooltip.svg'
 
 interface Props {
   children?: ReactNode | string
@@ -55,7 +55,7 @@ const Tooltip = ({
             className,
           )}
         >
-          <SVG.Tooltip />
+          <TooltipIcon />
         </span>
       )}
     </Tippy>

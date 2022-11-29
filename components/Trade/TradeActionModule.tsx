@@ -1,11 +1,11 @@
 import { Switch } from '@headlessui/react'
-import { ArrowsUpDownIcon } from '@heroicons/react/24/solid'
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import Button from 'components/Button'
 import CircularProgress from 'components/CircularProgress'
+import ArrowsUpDownIcon from 'components/Icons/arrows-up-down.svg'
 import Slider from 'components/Slider'
 import useTradeAsset from 'hooks/mutations/useTradeAsset'
 import useAllBalances from 'hooks/useAllBalances'
@@ -207,14 +207,16 @@ const TradeActionModule = () => {
             />
           </div>
         </div>
-        <ArrowsUpDownIcon
-          className='mx-auto h-5 cursor-pointer text-white/70 hover:text-white'
+        <div
+          className='mx-auto h-5 w-6 cursor-pointer text-white/70 hover:text-white'
           onClick={() => {
             setSelectedTokenIn(selectedTokenOut)
             setSelectedTokenOut(selectedTokenIn)
             resetAmounts()
           }}
-        />
+        >
+          <ArrowsUpDownIcon />
+        </div>
         <div className='mb-5'>
           <p className='mb-1'>To:</p>
           <div className='flex gap-2'>
@@ -283,7 +285,7 @@ const TradeActionModule = () => {
           <p className='mr-2'>Margin</p>
           <Switch
             checked={isMarginEnabled}
-            onChange={(value) => {
+            onChange={(value: boolean) => {
               // reset amounts only if margin is turned off
               if (!value) resetAmounts()
 

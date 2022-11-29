@@ -26,10 +26,3 @@ export enum TestnetCosmosChainId {
   Osmosis = 'osmo-test-4',
   Cosmoshub = 'cosmoshub-testnet',
 }
-
-export interface SVGProps {
-  className?: string
-  color?: string
-  secondaryColor?: string
-  opacity?: number
-}

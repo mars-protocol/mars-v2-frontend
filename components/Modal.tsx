@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { ReactNode } from 'react'
 
 import Card from 'components/Card'
-import { SVG } from 'components/SVG/SVG'
+import CloseIcon from 'components/Icons/close.svg'
 
 interface Props {
   children?: ReactNode | string
@@ -30,7 +30,7 @@ const Modal = ({ children, content, className, open, setOpen }: Props) => {
           onClick={onClickAway}
           role='button'
         >
-          <SVG.Close />
+          <CloseIcon />
         </span>
         {children ? children : content}
       </Card>

@@ -1,7 +1,8 @@
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid'
 import Image from 'next/image'
 import React, { useState } from 'react'
 
+import ChevronUpIcon from 'components/Icons/collapse.svg'
+import ChevronDownIcon from 'components/Icons/expand.svg'
 import Button from 'components/Button'
 import { formatCurrency } from 'utils/formatters'
 
@@ -53,7 +54,7 @@ const AssetRow = ({ data, onBorrowClick, onRepayClick }: AssetRowProps) => {
         </div>
         <div className='flex flex-1 items-center text-xs'>{data.marketLiquidity}</div>
         <div className='flex w-[50px] items-center justify-end'>
-          {isExpanded ? <ChevronUpIcon className='w-5' /> : <ChevronDownIcon className='w-5' />}
+          <div className='w-5'>{isExpanded ? <ChevronUpIcon /> : <ChevronDownIcon />}</div>
         </div>
       </div>
       {isExpanded && (
