@@ -8,23 +8,24 @@
 import { MsgExecuteContractEncodeObject } from 'cosmwasm'
 import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
 import { toUtf8 } from '@cosmjs/encoding'
+
 import {
-  OracleBaseForString,
   Addr,
-  PricingMethod,
-  InstantiateMsg,
-  VaultPricingInfo,
-  ExecuteMsg,
+  ArrayOfCoin,
+  ArrayOfVaultPricingInfo,
+  Coin,
+  ConfigResponse,
   ConfigUpdates,
+  Decimal,
+  ExecuteMsg,
+  InstantiateMsg,
+  OracleBaseForAddr,
+  OracleBaseForString,
+  PriceResponse,
+  PricingMethod,
   QueryMsg,
   Uint128,
-  Coin,
-  ArrayOfVaultPricingInfo,
-  OracleBaseForAddr,
-  ConfigResponse,
-  Decimal,
-  PriceResponse,
-  ArrayOfCoin,
+  VaultPricingInfo,
 } from './MarsOracleAdapter.types'
 export interface MarsOracleAdapterMessage {
   contractAddress: string

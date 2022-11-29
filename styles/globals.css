@@ -2,13 +2,49 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: Inter;
+  src: url('../fonts/Inter-ExtraLight.woff2') format('woff2'),
+    url('../fonts/Inter-ExtraLight.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Inter;
+  src: url('../fonts/Inter-Regular.woff2') format('woff2'),
+    url('../fonts/Inter-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Inter;
+  src: url('../fonts/Inter-SemiBold.woff2') format('woff2'),
+    url('../fonts/Inter-SemiBold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell,
-    Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: Inter, sans-serif;
   color: white;
+  background-color: #141621;
+}
+
+html {
+  scrollbar-width: none;
+}
+
+body {
+  overflow-y: scroll;
+  cursor: default;
 }
 
 a {
@@ -18,6 +54,15 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+.number {
+  white-space: nowrap;
+  font-feature-settings: 'tnum' on;
 }
 
 /* react-toastify */

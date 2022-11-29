@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 
+import Button from 'components/Button'
 import ContainerSecondary from 'components/ContainerSecondary'
 import FundAccountModal from 'components/FundAccountModal'
 import WithdrawModal from 'components/WithdrawModal'
@@ -10,10 +11,9 @@ import useMarkets from 'hooks/useMarkets'
 import useTokenPrices from 'hooks/useTokenPrices'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useWalletStore from 'stores/useWalletStore'
+import { chain } from 'utils/chains'
 import { formatCurrency } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-import { chain } from 'utils/chains'
-import Button from 'components/Button'
 
 const CreditManager = () => {
   const [showFundWalletModal, setShowFundWalletModal] = useState(false)
@@ -46,14 +46,14 @@ const CreditManager = () => {
 
   if (!address) {
     return (
-      <div className='absolute inset-0 left-auto w-[400px] border-l border-white/20 bg-background-2 p-2'>
+      <div className='absolute inset-0 left-auto w-[400px] border-l border-white/20 bg-grey-medium p-2'>
         <ContainerSecondary>You must have a connected wallet</ContainerSecondary>
       </div>
     )
   }
 
   return (
-    <div className='absolute inset-0 left-auto w-[400px] border-l border-white/20 bg-background-2 p-2'>
+    <div className='absolute inset-0 left-auto w-[400px] border-l border-white/20 bg-grey-medium p-2'>
       <ContainerSecondary className='mb-2 flex gap-3'>
         <Button
           className='flex-1 rounded-md'
@@ -78,6 +78,7 @@ const CreditManager = () => {
       <ContainerSecondary className='mb-2 text-sm'>
         <div className='mb-1 flex justify-between'>
           <div>Total Position:</div>
+
           <div className='font-semibold'>
             {formatCurrency(
               BigNumber(accountStats?.totalPosition ?? 0)

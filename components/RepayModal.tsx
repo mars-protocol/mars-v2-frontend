@@ -13,10 +13,9 @@ import useTokenPrices from 'hooks/useTokenPrices'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import { formatCurrency } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-
-import Button from './Button'
-import ContainerSecondary from './ContainerSecondary'
-import Spinner from './Spinner'
+import Button from 'components/Button'
+import CircularProgress from 'components/CircularProgress'
+import ContainerSecondary from 'components/ContainerSecondary'
 
 // 0.001% buffer / slippage to avoid repay action from not fully repaying the debt amount
 const REPAY_BUFFER = 1.00001
@@ -115,7 +114,7 @@ const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
               <Dialog.Panel className='flex min-h-[520px] w-full max-w-3xl transform overflow-hidden rounded-2xl bg-[#585A74] align-middle shadow-xl transition-all'>
                 {isLoading && (
                   <div className='absolute inset-0 z-40 grid place-items-center bg-black/50'>
-                    <Spinner />
+                    <CircularProgress />
                   </div>
                 )}
 
@@ -128,7 +127,7 @@ const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
                       Powered by deep-learning.
                     </h4>
                   </div>
-                  <Image src='/logo.svg' alt='mars' width={150} height={50} />
+                  <Image src='/logo.svg' alt='mars' width={50} height={50} />
                 </div>
 
                 <div className='flex flex-1 flex-col p-4'>

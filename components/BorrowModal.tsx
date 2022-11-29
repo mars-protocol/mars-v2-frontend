@@ -1,29 +1,28 @@
 import { Dialog, Switch, Transition } from '@headlessui/react'
 import BigNumber from 'bignumber.js'
-import Image from 'next/image'
 import React, { useMemo, useState } from 'react'
 import { NumericFormat } from 'react-number-format'
 import { toast } from 'react-toastify'
 
+import Button from 'components/Button'
+import CircularProgress from 'components/CircularProgress'
+import ContainerSecondary from 'components/ContainerSecondary'
+import ProgressBar from 'components/ProgressBar'
+import SemiCircleProgress from 'components/SemiCircleProgress'
 import Slider from 'components/Slider'
+import Text from 'components/Text'
+import Tooltip from 'components/Tooltip'
 import useBorrowFunds from 'hooks/mutations/useBorrowFunds'
+import useAccountStats, { AccountStatsAction } from 'hooks/useAccountStats'
 import useAllBalances from 'hooks/useAllBalances'
 import useCalculateMaxBorrowAmount from 'hooks/useCalculateMaxBorrowAmount'
+import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useMarkets from 'hooks/useMarkets'
 import useTokenPrices from 'hooks/useTokenPrices'
-import { formatCurrency } from 'utils/formatters'
-import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
-import useAccountStats, { AccountStatsAction } from 'hooks/useAccountStats'
 import { chain } from 'utils/chains'
+import { formatCurrency } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-
-import ProgressBar from './ProgressBar'
-import SemiCircleProgress from './SemiCircleProgress'
-import ContainerSecondary from './ContainerSecondary'
-import Spinner from './Spinner'
-import Tooltip from './Tooltip'
-import Button from './Button'
 
 type Props = {
   show: boolean
@@ -165,10 +164,9 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
               <Dialog.Panel className='flex w-full max-w-3xl transform overflow-hidden rounded-2xl bg-[#585A74] align-middle shadow-xl transition-all'>
                 {isLoading && (
                   <div className='absolute inset-0 z-40 grid place-items-center bg-black/50'>
-                    <Spinner />
+                    <CircularProgress />
                   </div>
                 )}
-
                 <div className='flex flex-1 flex-col p-4'>
                   <Dialog.Title as='h3' className='mb-4 text-center font-medium'>
                     Borrow {tokenSymbol}
@@ -212,16 +210,16 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
                           className='ml-2'
                           content={
                             <>
-                              <p className='mb-2'>
+                              <Text size='sm' className='mb-2'>
                                 OFF = Borrow directly into your wallet by using your account Assets
                                 as collateral. The borrowed asset will become a liability in your
                                 account.
-                              </p>
-                              <p>
+                              </Text>
+                              <Text size='sm'>
                                 ON = Borrow into your Account. The borrowed asset will be available
                                 in the account as an Asset and appear also as a liability in your
                                 account.
-                              </p>
+                              </Text>
                             </>
                           }
                         />
@@ -242,7 +240,7 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
                     </ContainerSecondary>
                   </div>
                   <Button
-                    className='mt-auto w-full rounded-3xl'
+                    className='mt-auto'
                     onClick={handleSubmit}
                     disabled={amount === 0 || !amount}
                   >

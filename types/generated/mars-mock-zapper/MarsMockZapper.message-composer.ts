@@ -8,15 +8,16 @@
 import { MsgExecuteContractEncodeObject } from 'cosmwasm'
 import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
 import { toUtf8 } from '@cosmjs/encoding'
+
 import {
-  OracleBaseForString,
+  ArrayOfCoin,
+  Coin,
+  ExecuteMsg,
   InstantiateMsg,
   LpConfig,
-  ExecuteMsg,
-  Uint128,
+  OracleBaseForString,
   QueryMsg,
-  Coin,
-  ArrayOfCoin,
+  Uint128,
 } from './MarsMockZapper.types'
 export interface MarsMockZapperMessage {
   contractAddress: string

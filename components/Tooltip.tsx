@@ -1,21 +1,63 @@
-import { InformationCircleIcon } from '@heroicons/react/24/solid'
 import Tippy from '@tippyjs/react'
+import classNames from 'classnames'
 import { ReactNode } from 'react'
 
-interface TooltipProps {
-  content: string | ReactNode
+import TooltipIcon from 'components/Icons/tooltip.svg'
+
+interface Props {
+  children?: ReactNode | string
+  content: ReactNode | string
   className?: string
+  delay?: number
+  inderactive?: boolean
+  underline?: boolean
 }
 
-const Tooltip = ({ content, className }: TooltipProps) => {
+const Tooltip = ({
+  children,
+  content,
+  className,
+  delay = 0,
+  inderactive = false,
+  underline = false,
+}: Props) => {
   return (
     <Tippy
       appendTo={() => document.body}
-      className='rounded-md bg-[#ED512F] p-2 text-xs'
-      content={<span>{content}</span>}
-      interactive={true}
+      interactive={inderactive}
+      animation={false}
+      delay={[delay, 0]}
+      render={(attrs) => {
+        return (
+          <div
+            className='max-w-[320px] rounded-lg px-4 py-2 shadow-tooltip gradient-tooltip'
+            {...attrs}
+          >
+            {content}
+          </div>
+        )
+      }}
     >
-      <InformationCircleIcon className={`w-5 cursor-pointer ${className}`} />
+      {children ? (
+        <span
+          className={classNames(
+            underline &&
+              'border-b-1 cursor-pointer border border-x-0 border-t-0 border-dashed border-white/50 transition-all hover:border-transparent ',
+            className,
+          )}
+        >
+          {children}
+        </span>
+      ) : (
+        <span
+          className={classNames(
+            'mb-2 inline-block w-[18px] cursor-pointer opacity-40 hover:opacity-80',
+            className,
+          )}
+        >
+          <TooltipIcon />
+        </span>
+      )}
     </Tippy>
   )
 }

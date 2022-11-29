@@ -1,11 +1,11 @@
 import React from 'react'
 
-import Container from 'components/Container'
+import Card from 'components/Card'
 
 const Council = () => {
   return (
     <div>
-      <Container>Council Placeholder</Container>
+      <Card>Council Placeholder</Card>
     </div>
   )
 }
