@@ -21,16 +21,6 @@ const Tooltip = ({
   inderactive = false,
   underline = false,
 }: Props) => {
-  const iconClasses = classNames(
-    'mb-2 inline-block w-[18px] cursor-pointer opacity-40 hover:opacity-80',
-    className,
-  )
-  const tooltipClasses = classNames(
-    underline &&
-      'border border-dashed border-x-0 border-t-0 border-b-1 cursor-pointer border-white/50 transition-all hover:border-transparent ',
-    className,
-  )
-
   return (
     <Tippy
       appendTo={() => document.body}
@@ -49,9 +39,22 @@ const Tooltip = ({
       }}
     >
       {children ? (
-        <span className={tooltipClasses}>{children}</span>
+        <span
+          className={classNames(
+            underline &&
+              'border-b-1 cursor-pointer border border-x-0 border-t-0 border-dashed border-white/50 transition-all hover:border-transparent ',
+            className,
+          )}
+        >
+          {children}
+        </span>
       ) : (
-        <span className={iconClasses}>
+        <span
+          className={classNames(
+            'mb-2 inline-block w-[18px] cursor-pointer opacity-40 hover:opacity-80',
+            className,
+          )}
+        >
           <SVG.Tooltip />
         </span>
       )}

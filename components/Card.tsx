@@ -1,18 +1,22 @@
-import React, { ReactNode } from 'react'
 import classNames from 'classnames'
+import { ReactNode } from 'react'
 
 interface Props {
   children: ReactNode
   className?: string
 }
 
-const Text = ({ children, className }: Props) => {
-  const classes = classNames(
-    className,
-    'border-[7px] h-fit rounded-xl border-accent-highlight gradient-card w-full max-w-full p-4',
+const Card = ({ children, className }: Props) => {
+  return (
+    <div
+      className={classNames(
+        className,
+        'h-fit w-full max-w-full rounded-xl border-[7px] border-accent-highlight p-4 gradient-card',
+      )}
+    >
+      {children}
+    </div>
   )
-
-  return <div className={classes}>{children}</div>
 }
 
-export default Text
+export default Card

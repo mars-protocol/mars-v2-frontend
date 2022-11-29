@@ -1,5 +1,5 @@
-import React, { ReactNode } from 'react'
 import classNames from 'classnames'
+import { ReactNode } from 'react'
 
 interface Props {
   children: ReactNode | string
@@ -10,6 +10,9 @@ interface Props {
   uppercase?: boolean
 }
 
+const headlines = ['h1', 'h2', 'h3', 'h4']
+const headMap = ['6xl', '5xl', '4xl', '3xl']
+
 const Text = ({
   children,
   className,
@@ -18,18 +21,21 @@ const Text = ({
   tag = 'p',
   uppercase = false,
 }: Props) => {
-  const headlines = ['h1', 'h2', 'h3', 'h4']
-  const headMap = ['6xl', '5xl', '4xl', '3xl']
   const tagIndex = headlines.indexOf(tag)
   const sizeClass = tagIndex > -1 ? headMap[tagIndex] : size
-  const classes = classNames(
-    className,
-    uppercase ? `text-${sizeClass}-caps` : `text-${sizeClass}`,
-    monospace && 'number',
-  )
   const HtmlElement = tag as keyof JSX.IntrinsicElements
 
-  return <HtmlElement className={classes}>{children}</HtmlElement>
+  return (
+    <HtmlElement
+      className={classNames(
+        className,
+        uppercase ? `text-${sizeClass}-caps` : `text-${sizeClass}`,
+        monospace && 'number',
+      )}
+    >
+      {children}
+    </HtmlElement>
+  )
 }
 
 export default Text

@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Number from 'components/Number'
 import Tooltip from 'components/Tooltip'
@@ -31,7 +31,7 @@ export const BorrowCapacity = ({
   const [limitPercentOfMax, setLimitPercentOfMax] = useState(0)
   const [timer, setTimer] = useState<ReturnType<typeof setTimeout>>()
 
-  useMemo(
+  useEffect(
     () => {
       clearTimeout(timer)
       const percent = max === 0 ? 0 : (balance / max) * 100
@@ -64,10 +64,8 @@ export const BorrowCapacity = ({
     [balance, max],
   )
 
-  const containerClasses = classNames('flex items-center justify-center', className)
-
   return (
-    <div className={containerClasses}>
+    <div className={classNames('flex items-center justify-center', className)}>
       <div style={{ width: '100%' }}>
         <div
           className='flex justify-between'
