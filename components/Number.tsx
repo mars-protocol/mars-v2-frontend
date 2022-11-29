@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import isEqual from 'lodash.isequal'
 import React, { useEffect, useRef } from 'react'
 import { animated, useSpring } from 'react-spring'
 
@@ -73,8 +72,4 @@ const Number = ({
   )
 }
 
-const amountsAreEqual = (prevProps: Props, nextProps: Props) => {
-  return isEqual(prevProps, nextProps)
-}
-
-export default React.memo(Number, amountsAreEqual)
+export default React.memo(Number)
