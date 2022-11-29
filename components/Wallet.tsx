@@ -7,9 +7,8 @@ import useTokenBalance from 'hooks/useTokenBalance'
 import useWalletStore from 'stores/useWalletStore'
 import { chain } from 'utils/chains'
 import { formatWalletAddress } from 'utils/formatters'
-
-import Button from './Button'
-import ConnectModal from './ConnectModal'
+import Button from 'components/Button'
+import ConnectModal from 'components/ConnectModal'
 
 const WalletPopover = ({ children }: { children: React.ReactNode }) => {
   const address = useWalletStore((s) => s.address)
@@ -35,7 +34,7 @@ const WalletPopover = ({ children }: { children: React.ReactNode }) => {
             </div>
             <Button onClick={() => actions.disconnect()}>Disconnect</Button>
           </div>
-          <p className='mb-6 text-sm'>{address}</p>
+          <p className='color-primary mb-6 text-sm'>{address}</p>
           <button
             className='flex items-center text-sm text-slate-500 hover:text-slate-700'
             onClick={() => {
@@ -75,10 +74,7 @@ const Wallet = () => {
       {address ? (
         <WalletPopover>{formatWalletAddress(address)}</WalletPopover>
       ) : (
-        <Button
-          className='w-[200px] !rounded-3xl !bg-green-500'
-          onClick={() => setShowConnectModal(true)}
-        >
+        <Button className='w-[200px]' color='primary' onClick={() => setShowConnectModal(true)}>
           Connect Wallet
         </Button>
       )}

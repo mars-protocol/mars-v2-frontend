@@ -1,7 +1,11 @@
-import React from 'react'
+import { useState } from 'react'
 
-import Container from 'components/Container'
-import { formatCurrency } from 'utils/formatters'
+import Button from 'components/Button'
+import Card from 'components/Card'
+import Modal from 'components/Modal'
+import Number from 'components/Number'
+import Overlay from 'components/Overlay'
+import Text from 'components/Text'
 
 const mockedAccounts = [
   {
@@ -47,45 +51,152 @@ const mockedAccounts = [
 ]
 
 const Portfolio = () => {
+  const [show, setShow] = useState<boolean>(false)
+  const [open, setOpen] = useState<boolean>(true)
   return (
     <div className='flex flex-col gap-4'>
-      <Container className='flex-1'>Portfolio Module</Container>
+      <Card className='flex-1'>
+        <span onClick={() => setShow(!show)} role='button'>
+          Portfolio Module
+        </span>
+        <Overlay show={show} setShow={setShow}>
+          A test overlay
+        </Overlay>
+      </Card>
       <div className='grid grid-cols-2 gap-4'>
         {mockedAccounts.map((account) => (
-          <Container key={account.id}>
-            <p className='mb-4 text-center font-bold'>{account.label}</p>
+          <Card key={account.id}>
+            <Text size='lg' uppercase={true} className='mb-4 text-center'>
+              {account.label}
+            </Text>
             <div className='grid grid-cols-3 gap-4'>
               <div>
-                <p>{formatCurrency(account.networth)}</p>
-                <p className='text-sm text-white/40'>Net worth</p>
+                <Text>
+                  <Number amount={account.networth} animate={true} prefix='$' />
+                </Text>
+                <Text size='sm' className='text-white/40'>
+                  Net worth
+                </Text>
               </div>
               <div>
-                <p>{formatCurrency(account.totalPositionValue)}</p>
-                <p className='text-sm text-white/40'>Total Position Value</p>
+                <Text>
+                  <Number amount={account.totalPositionValue} animate={true} prefix='$' />
+                </Text>
+                <Text size='sm' className='text-white/40'>
+                  Total Position Value
+                </Text>
               </div>
               <div>
-                <p>{formatCurrency(account.debt)}</p>
-                <p className='text-sm text-white/40'>Debt</p>
+                <Text>
+                  <Number amount={account.debt} animate={true} prefix='$' />
+                </Text>
+                <Text size='sm' className='text-white/40'>
+                  Debt
+                </Text>
               </div>
               <div>
-                <p className={`${account.profit > 0 ? 'text-green-400' : 'text-red-500'}`}>
-                  {account.profit > 0 && '+'}
-                  {formatCurrency(account.profit)}
-                </p>
-                <p className='text-sm text-white/40'>P&L</p>
+                <Text className={account.profit > 0 ? 'text-green-400' : 'text-red-500'}>
+                  <Number
+                    amount={account.debt}
+                    animate={true}
+                    prefix={account.profit > 0 ? '+$' : '$'}
+                  />
+                </Text>
+                <Text size='sm' className='text-white/40'>
+                  P&L
+                </Text>
               </div>
               <div>
-                <p>{account.leverage}</p>
-                <p className='text-sm text-white/40'>Current Leverage</p>
+                <Text>
+                  <Number amount={account.leverage} minDecimals={0} suffix='x' />
+                </Text>
+                <Text size='sm' className='text-white/40'>
+                  Current Leverage
+                </Text>
               </div>
               <div>
-                <p>{account.maxLeverage}</p>
-                <p className='text-sm text-white/40'>Max Leverage</p>
+                <Text>
+                  <Number amount={account.maxLeverage} minDecimals={0} suffix='x' />
+                </Text>
+                <Text size='sm' className='text-white/40'>
+                  Max Leverage
+                </Text>
               </div>
             </div>
-          </Container>
+          </Card>
         ))}
       </div>
+      <div className='w-full'>
+        <Button
+          onClick={() => {
+            setOpen(!open)
+          }}
+          text='Toggle Modal'
+        />
+      </div>
+      <Modal open={open} setOpen={setOpen}>
+        {mockedAccounts.map((account) => (
+          <div key={account.id} className='mb-8'>
+            <Text size='lg' uppercase={true} className='mb-4 px-10 text-center'>
+              {account.label}
+            </Text>
+            <div className='grid grid-cols-3 gap-4'>
+              <div>
+                <Text>
+                  <Number amount={account.networth} animate={true} prefix='$' />
+                </Text>
+                <Text size='sm' className='text-white/40'>
+                  Net worth
+                </Text>
+              </div>
+              <div>
+                <Text>
+                  <Number amount={account.totalPositionValue} animate={true} prefix='$' />
+                </Text>
+                <Text size='sm' className='text-white/40'>
+                  Total Position Value
+                </Text>
+              </div>
+              <div>
+                <Text>
+                  <Number amount={account.debt} animate={true} prefix='$' />
+                </Text>
+                <Text size='sm' className='text-white/40'>
+                  Debt
+                </Text>
+              </div>
+              <div>
+                <Text className={account.profit > 0 ? 'text-green-400' : 'text-red-500'}>
+                  <Number
+                    amount={account.debt}
+                    animate={true}
+                    prefix={account.profit > 0 ? '+$' : '$'}
+                  />
+                </Text>
+                <Text size='sm' className='text-white/40'>
+                  P&L
+                </Text>
+              </div>
+              <div>
+                <Text>
+                  <Number amount={account.leverage} minDecimals={0} suffix='x' />
+                </Text>
+                <Text size='sm' className='text-white/40'>
+                  Current Leverage
+                </Text>
+              </div>
+              <div>
+                <Text>
+                  <Number amount={account.maxLeverage} minDecimals={0} suffix='x' />
+                </Text>
+                <Text size='sm' className='text-white/40'>
+                  Max Leverage
+                </Text>
+              </div>
+            </div>
+          </div>
+        ))}
+      </Modal>
     </div>
   )
 }

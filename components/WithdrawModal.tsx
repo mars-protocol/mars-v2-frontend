@@ -16,12 +16,11 @@ import { formatCurrency } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 import useAccountStats, { AccountStatsAction } from 'hooks/useAccountStats'
 import { chain } from 'utils/chains'
-
-import Spinner from './Spinner'
-import SemiCircleProgress from './SemiCircleProgress'
-import ProgressBar from './ProgressBar'
-import ContainerSecondary from './ContainerSecondary'
-import Button from './Button'
+import Button from 'components/Button'
+import ContainerSecondary from 'components/ContainerSecondary'
+import ProgressBar from 'components/ProgressBar'
+import SemiCircleProgress from 'components/SemiCircleProgress'
+import CircularProgress from 'components/CircularProgress'
 
 const WithdrawModal = ({ show, onClose }: any) => {
   const [amount, setAmount] = useState(0)
@@ -170,7 +169,7 @@ const WithdrawModal = ({ show, onClose }: any) => {
               <Dialog.Panel className='flex w-full max-w-3xl transform overflow-hidden rounded-2xl bg-[#585A74] align-middle shadow-xl transition-all'>
                 {isLoading && (
                   <div className='absolute inset-0 z-40 grid place-items-center bg-black/50'>
-                    <Spinner />
+                    <CircularProgress />
                   </div>
                 )}
                 <div className='flex w-1/2 flex-col p-4'>

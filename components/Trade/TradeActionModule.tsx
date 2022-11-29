@@ -1,21 +1,21 @@
-import React, { useEffect, useMemo, useState } from 'react'
 import { Switch } from '@headlessui/react'
 import BigNumber from 'bignumber.js'
+import React, { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
-import { ArrowsUpDownIcon } from '@heroicons/react/24/solid'
 
 import Button from 'components/Button'
-import useAllowedCoins from 'hooks/useAllowedCoins'
-import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
+import CircularProgress from 'components/CircularProgress'
+import ArrowsUpDownIcon from 'components/Icons/arrows-up-down.svg'
 import Slider from 'components/Slider'
 import useTradeAsset from 'hooks/mutations/useTradeAsset'
 import useAllBalances from 'hooks/useAllBalances'
-import useMarkets from 'hooks/useMarkets'
-import useCreditManagerStore from 'stores/useCreditManagerStore'
-import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
-import useTokenPrices from 'hooks/useTokenPrices'
+import useAllowedCoins from 'hooks/useAllowedCoins'
 import useCalculateMaxTradeAmount from 'hooks/useCalculateMaxTradeAmount'
-import Spinner from 'components/Spinner'
+import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
+import useMarkets from 'hooks/useMarkets'
+import useTokenPrices from 'hooks/useTokenPrices'
+import useCreditManagerStore from 'stores/useCreditManagerStore'
+import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 enum FundingMode {
   Account = 'Account',
@@ -174,7 +174,7 @@ const TradeActionModule = () => {
     <div>
       {isLoading && (
         <div className='fixed inset-0 z-40 grid place-items-center bg-black/50'>
-          <Spinner />
+          <CircularProgress />
         </div>
       )}
       <div className='border-b border-b-white/20 p-2'>
@@ -207,14 +207,16 @@ const TradeActionModule = () => {
             />
           </div>
         </div>
-        <ArrowsUpDownIcon
-          className='mx-auto h-5 cursor-pointer text-white/70 hover:text-white'
+        <div
+          className='mx-auto h-5 w-6 cursor-pointer text-white/70 hover:text-white'
           onClick={() => {
             setSelectedTokenIn(selectedTokenOut)
             setSelectedTokenOut(selectedTokenIn)
             resetAmounts()
           }}
-        />
+        >
+          <ArrowsUpDownIcon />
+        </div>
         <div className='mb-5'>
           <p className='mb-1'>To:</p>
           <div className='flex gap-2'>
@@ -283,7 +285,7 @@ const TradeActionModule = () => {
           <p className='mr-2'>Margin</p>
           <Switch
             checked={isMarginEnabled}
-            onChange={(value) => {
+            onChange={(value: boolean) => {
               // reset amounts only if margin is turned off
               if (!value) resetAmounts()
 

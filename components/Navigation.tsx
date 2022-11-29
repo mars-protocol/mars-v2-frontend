@@ -1,15 +1,17 @@
 import { Popover } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/24/solid'
+import BigNumber from 'bignumber.js'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useMemo } from 'react'
-import BigNumber from 'bignumber.js'
+import { useMemo } from 'react'
 
-import ArrowRightLine from 'components/Icons/arrow-right-line.svg'
+import ChevronDownIcon from 'components/Icons/expand.svg'
+import Button from 'components/Button'
+import CircularProgress from 'components/CircularProgress'
+import ArrowRightLineIcon from 'components/Icons/arrow-right-line.svg'
 import ProgressBar from 'components/ProgressBar'
 import SearchInput from 'components/SearchInput'
-import Spinner from 'components/Spinner'
+import SemiCircleProgress from 'components/SemiCircleProgress'
 import Wallet from 'components/Wallet'
 import useCreateCreditAccount from 'hooks/mutations/useCreateCreditAccount'
 import useDeleteCreditAccount from 'hooks/mutations/useDeleteCreditAccount'
@@ -17,11 +19,8 @@ import useAccountStats from 'hooks/useAccountStats'
 import useCreditAccounts from 'hooks/useCreditAccounts'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useWalletStore from 'stores/useWalletStore'
-import { formatCurrency } from 'utils/formatters'
 import { chain } from 'utils/chains'
-
-import Button from './Button'
-import SemiCircleProgress from './SemiCircleProgress'
+import { formatCurrency } from 'utils/formatters'
 
 // TODO: will require some tweaks depending on how lower viewport mocks pans out
 const MAX_VISIBLE_CREDIT_ACCOUNTS = 5
@@ -105,19 +104,19 @@ const Navigation = () => {
           className='flex w-16 cursor-pointer justify-center hover:text-white'
           onClick={toggleCreditManager}
         >
-          <ArrowRightLine />
+          <ArrowRightLineIcon />
         </div>
       </div>
     )
   }
 
   return (
-    <div>
+    <div className='relative'>
       {/* Main navigation bar */}
       <div className='flex items-center justify-between border-b border-white/20 px-6 py-3'>
         <Link href='/' passHref>
           <a>
-            <Image src='/logo.svg' alt='mars' width={123} height={40} />
+            <Image src='/logo.svg' alt='mars' width={40} height={40} />
           </a>
         </Link>
         <div className='flex gap-5 px-12 text-white/40'>
@@ -151,7 +150,9 @@ const Navigation = () => {
                   <Popover.Button>
                     <div className='flex cursor-pointer items-center px-3 hover:text-white'>
                       More
-                      <ChevronDownIcon className='ml-1 h-4 w-4' />
+                      <span className='ml-1 h-4 w-4'>
+                        <ChevronDownIcon />
+                      </span>
                     </div>
                   </Popover.Button>
                   <Popover.Panel className='absolute z-10 w-[200px] pt-2'>
@@ -222,7 +223,7 @@ const Navigation = () => {
       </div>
       {(isLoadingCreate || isLoadingDelete) && (
         <div className='absolute inset-0 z-40 grid place-items-center bg-black/50'>
-          <Spinner />
+          <CircularProgress />
         </div>
       )}
     </div>

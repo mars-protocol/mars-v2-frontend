@@ -5,26 +5,27 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tanstack/react-query'
+import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
-import { StdFee, Coin } from '@cosmjs/amino'
+import { Coin, StdFee } from '@cosmjs/amino'
+
 import {
   Duration,
-  OracleBaseForString,
-  InstantiateMsg,
-  ExecuteMsg,
-  Uint128,
-  ExtensionExecuteMsg,
-  LockupExecuteMsg,
-  ForceUnlockExecuteMsg,
-  QueryMsg,
-  ExtensionQueryMsg,
-  LockupQueryMsg,
-  VaultInfo,
   Empty,
+  ExecuteMsg,
+  ExtensionExecuteMsg,
+  ExtensionQueryMsg,
+  ForceUnlockExecuteMsg,
+  InstantiateMsg,
+  LockupExecuteMsg,
+  LockupQueryMsg,
+  OracleBaseForString,
+  QueryMsg,
+  Uint128,
+  VaultInfo,
   VaultStandardInfo,
 } from './MarsMockVault.types'
-import { MarsMockVaultQueryClient, MarsMockVaultClient } from './MarsMockVault.client'
+import { MarsMockVaultClient, MarsMockVaultQueryClient } from './MarsMockVault.client'
 export const marsMockVaultQueryKeys = {
   contract: [
     {

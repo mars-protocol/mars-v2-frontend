@@ -8,19 +8,20 @@
 import { MsgExecuteContractEncodeObject } from 'cosmwasm'
 import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
 import { toUtf8 } from '@cosmjs/encoding'
+
 import {
-  InstantiateMsg,
-  ExecuteMsg,
-  Uint128,
-  Decimal,
   Addr,
-  Empty,
-  Coin,
-  QueryMsg,
-  ConfigForString,
-  EstimateExactInSwapResponse,
-  RouteResponseForEmpty,
   ArrayOfRouteResponseForEmpty,
+  Coin,
+  ConfigForString,
+  Decimal,
+  Empty,
+  EstimateExactInSwapResponse,
+  ExecuteMsg,
+  InstantiateMsg,
+  QueryMsg,
+  RouteResponseForEmpty,
+  Uint128,
 } from './MarsSwapperBase.types'
 export interface MarsSwapperBaseMessage {
   contractAddress: string

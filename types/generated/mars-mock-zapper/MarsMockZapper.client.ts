@@ -5,17 +5,18 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
+import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
+
 import {
-  OracleBaseForString,
+  ArrayOfCoin,
+  Coin,
+  ExecuteMsg,
   InstantiateMsg,
   LpConfig,
-  ExecuteMsg,
-  Uint128,
+  OracleBaseForString,
   QueryMsg,
-  Coin,
-  ArrayOfCoin,
+  Uint128,
 } from './MarsMockZapper.types'
 export interface MarsMockZapperReadOnlyInterface {
   contractAddress: string

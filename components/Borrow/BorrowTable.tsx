@@ -1,4 +1,3 @@
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid'
 import {
   ColumnDef,
   flexRender,
@@ -10,6 +9,8 @@ import {
 import Image from 'next/image'
 import React from 'react'
 
+import ChevronUpIcon from 'components/Icons/collapse.svg'
+import ChevronDownIcon from 'components/Icons/expand.svg'
 import { formatCurrency } from 'utils/formatters'
 
 import AssetRow from './AssetRow'
@@ -26,42 +27,6 @@ interface Market {
   borrowRate: number
   marketLiquidity: number
 }
-
-// const data = [
-//   {
-//     denom: 'uosmo',
-//     symbol: 'OSMO',
-//     icon: '/tokens/osmo.svg',
-//     chain: 'Osmosis',
-//     borrowed: {
-//       amount: 2.005494,
-//       value: 2.2060434000000004,
-//     },
-//     borrowRate: 0.1,
-//     marketLiquidity: 1000000,
-//   },
-//   {
-//     denom: 'ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2',
-//     symbol: 'ATOM',
-//     icon: '/tokens/atom.svg',
-//     chain: 'Cosmos',
-//     borrowed: null,
-//     borrowRate: 0.25,
-//     marketLiquidity: 1000,
-//   },
-//   {
-//     denom: 'uusdc',
-//     symbol: 'USDC',
-//     icon: '/tokens/atom.svg',
-//     chain: 'Ethereum',
-//     borrowed: {
-//       amount: 100,
-//       value: 99.9776,
-//     },
-//     borrowRate: 0.35,
-//     marketLiquidity: 333,
-//   },
-// ]
 
 type Props = {
   data: Market[]
@@ -126,11 +91,9 @@ const BorrowTable = ({ data, onBorrowClick, onRepayClick }: Props) => {
         width: 150,
         cell: ({ row }) => (
           <div className='flex items-center justify-end'>
-            {row.getIsExpanded() ? (
-              <ChevronUpIcon className='w-5' />
-            ) : (
-              <ChevronDownIcon className='w-5' />
-            )}
+            <div className='w-5'>
+              {row.getIsExpanded() ? <ChevronUpIcon /> : <ChevronDownIcon />}
+            </div>
           </div>
         ),
       },

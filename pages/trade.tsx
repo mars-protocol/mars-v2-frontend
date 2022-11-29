@@ -1,21 +1,22 @@
 import React from 'react'
 
-import Container from 'components/Container'
+import Card from 'components/Card'
 import TradeActionModule from 'components/Trade/TradeActionModule'
 
 const Trade = () => {
   return (
     <div>
       <div className='mb-4 flex gap-4'>
-        <Container className='grid flex-1 place-items-center'>Graph/Tradingview Module</Container>
+        <Card className='flex-1'>Graph/Tradingview Module</Card>
         <div className='flex flex-col gap-4'>
-          <Container className='min-w-[350px] !p-2 text-sm'>
+          <Card>
             <TradeActionModule />
-          </Container>
-          <Container>Orderbook module (optional)</Container>
+          </Card>
+          <Card>Orderbook module (optional)</Card>
         </div>
+        <Card>Credit Account essential module</Card>
       </div>
-      <Container>Trader order overview</Container>
+      <Card>Trader order overview</Card>
     </div>
   )
 }

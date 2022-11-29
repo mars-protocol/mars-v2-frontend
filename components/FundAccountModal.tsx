@@ -11,10 +11,9 @@ import useAllBalances from 'hooks/useAllBalances'
 import useAllowedCoins from 'hooks/useAllowedCoins'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-
-import Button from './Button'
-import ContainerSecondary from './ContainerSecondary'
-import Spinner from './Spinner'
+import Button from 'components/Button'
+import ContainerSecondary from 'components/ContainerSecondary'
+import CircularProgress from 'components/CircularProgress'
 
 const FundAccountModal = ({ show, onClose }: any) => {
   const [amount, setAmount] = useState(0)
@@ -99,7 +98,7 @@ const FundAccountModal = ({ show, onClose }: any) => {
               <Dialog.Panel className='flex min-h-[520px] w-full max-w-3xl transform overflow-hidden rounded-2xl bg-[#585A74] align-middle shadow-xl transition-all'>
                 {isLoading && (
                   <div className='absolute inset-0 z-40 grid place-items-center bg-black/50'>
-                    <Spinner />
+                    <CircularProgress />
                   </div>
                 )}
 
@@ -112,7 +111,7 @@ const FundAccountModal = ({ show, onClose }: any) => {
                       Powered by deep-learning.
                     </h4>
                   </div>
-                  <Image src='/logo.svg' alt='mars' width={150} height={50} />
+                  <Image src='/logo.svg' alt='mars' width={50} height={50} />
                 </div>
 
                 <div className='flex flex-1 flex-col p-4'>
