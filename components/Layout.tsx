@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import React from 'react'
 
 import CreditManager from 'components/CreditManager'
-import Navigation from 'components/Navigation'
+import DesktopNavigation from 'components/DesktopNavigation'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useWalletStore from 'stores/useWalletStore'
 
@@ -25,7 +25,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className='relative min-h-screen w-full'>
       <div className={backgroundClasses} />
-      <Navigation />
+      <DesktopNavigation />
       <main className='relative flex-1 p-6'>
         {children}
         {isOpen && <CreditManager />}

@@ -8,6 +8,7 @@ interface Props extends React.HTMLProps<HTMLAnchorElement> {
   externalLink?: boolean
   textSize?: 'small' | 'medium' | 'large'
   text?: string | ReactNode
+  uppercase?: boolean
 }
 
 const colorClasses = {
@@ -17,7 +18,7 @@ const colorClasses = {
     'text-secondary hover:text-secondary-highlight active:text-secondary-highlight-10 focus:text-secondary-highlight',
   tertiary:
     'text-secondary-dark/60 hover:text-secondary-dark active:text-secondary-dark-10 focus:text-secondary-dark',
-  quaternary: 'text-transparent text-white/60 hover:text-white active:text-white',
+  quaternary: 'text-white/60 hover:text-white active:text-white',
 }
 const textSizeClasses = {
   small: 'text-sm',
@@ -34,11 +35,12 @@ const TextLink = ({
   href,
   textSize = 'small',
   text,
+  uppercase,
   onClick,
   ...restProps
 }: Props) => {
   const linkClasses = classNames(
-    textSizeClasses[textSize],
+    uppercase ? `${textSizeClasses[textSize]}-caps` : textSizeClasses[textSize],
     colorClasses[color],
     disabled && 'pointer-events-none opacity-50',
     className,
@@ -50,7 +52,7 @@ const TextLink = ({
       target={externalLink ? '_blank' : '_self'}
       rel='noreferrer'
       onClick={
-        onClick && href
+        onClick && !href
           ? (e) => {
               e.preventDefault()
               if (disabled) return

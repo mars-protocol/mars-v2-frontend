@@ -1,14 +1,14 @@
 import { Popover } from '@headlessui/react'
 import BigNumber from 'bignumber.js'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
 
-import ChevronDownIcon from 'components/Icons/expand.svg'
 import Button from 'components/Button'
 import CircularProgress from 'components/CircularProgress'
 import ArrowRightLineIcon from 'components/Icons/arrow-right-line.svg'
+import ChevronDownIcon from 'components/Icons/expand.svg'
+import Logo from 'components/Icons/logo.svg'
 import ProgressBar from 'components/ProgressBar'
 import SearchInput from 'components/SearchInput'
 import SemiCircleProgress from 'components/SemiCircleProgress'
@@ -22,7 +22,8 @@ import useWalletStore from 'stores/useWalletStore'
 import { chain } from 'utils/chains'
 import { formatCurrency } from 'utils/formatters'
 
-// TODO: will require some tweaks depending on how lower viewport mocks pans out
+import TextLink from './TextLink'
+
 const MAX_VISIBLE_CREDIT_ACCOUNTS = 5
 
 const navItems = [
@@ -35,12 +36,18 @@ const navItems = [
 
 const NavLink = ({ href, children }: { href: string; children: string }) => {
   const router = useRouter()
+  const isActive = router.pathname === href
 
   return (
     <Link href={href} passHref>
-      <a className={`${router.pathname === href ? 'text-white' : ''} hover:text-white`}>
+      <TextLink
+        className={`${isActive && 'pointer-events-none text-white'}`}
+        uppercase={true}
+        textSize='large'
+        color='quaternary'
+      >
         {children}
-      </a>
+      </TextLink>
     </Link>
   )
 }
@@ -111,20 +118,21 @@ const Navigation = () => {
   }
 
   return (
-    <div className='relative'>
-      {/* Main navigation bar */}
+    <div className='relative hidden lg:block'>
       <div className='flex items-center justify-between border-b border-white/20 px-6 py-3'>
-        <Link href='/' passHref>
-          <a>
-            <Image src='/logo.svg' alt='mars' width={40} height={40} />
-          </a>
-        </Link>
-        <div className='flex gap-5 px-12 text-white/40'>
-          {navItems.map((item, index) => (
-            <NavLink key={index} href={item.href}>
-              {item.label}
-            </NavLink>
-          ))}
+        <div className='flex flex-grow items-center'>
+          <Link href='/trade' passHref>
+            <span className='h-10 w-10'>
+              <Logo />
+            </span>
+          </Link>
+          <div className='flex gap-8 px-6 text-white/40'>
+            {navItems.map((item, index) => (
+              <NavLink key={index} href={item.href}>
+                {item.label}
+              </NavLink>
+            ))}
+          </div>
         </div>
         <Wallet />
       </div>
