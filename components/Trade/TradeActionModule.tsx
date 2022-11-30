@@ -27,6 +27,7 @@ const TradeActionModule = () => {
   const [selectedTokenOut, setSelectedTokenOut] = useState('')
   const [amountIn, setAmountIn] = useState(0)
   const [amountOut, setAmountOut] = useState(0)
+  const [slippageTolerance, setSlippageTolerance] = useState(0.1)
   const [fundingMode, setFundingMode] = useState<FundingMode>(FundingMode.WalletAndAccount)
 
   const [isMarginEnabled, setIsMarginEnabled] = React.useState(false)
@@ -87,7 +88,7 @@ const TradeActionModule = () => {
     depositAmount,
     selectedTokenIn,
     selectedTokenOut,
-    0.1,
+    slippageTolerance / 100,
     {
       onSuccess: () => {
         toast.success(
@@ -318,8 +319,18 @@ const TradeActionModule = () => {
           <p>{isMarginEnabled ? `${(borrowRate * 100).toFixed(2)}%` : '-'}</p>
         </div>
       </div>
-      <div className='h-[100px] p-2'>
+      <div className='p-2'>
         <div className='mb-6'>OTHER INFO PLACEHOLDER</div>
+        <div className='mb-2 flex justify-between'>
+          <p>Slippage Tolerance:</p>
+          <input
+            type='number'
+            step='0.1'
+            className='w-20 px-2 text-black'
+            onChange={(e) => setSlippageTolerance(e.target.valueAsNumber)}
+            value={slippageTolerance}
+          />
+        </div>
         <div className='flex justify-between'>
           <p>Funded From</p>
           <select value={fundingMode} className='text-black' onChange={handleFundingModeChange}>
