@@ -16,6 +16,7 @@ import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 const CreditManager = () => {
   const address = useWalletStore((s) => s.address)
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
+  const toggleCreditManager = useCreditManagerStore((s) => s.actions.toggleCreditManager)
 
   const { data: positionsData, isLoading: isLoadingPositions } = useCreditAccountPositions(
     selectedAccount ?? '',
@@ -51,7 +52,7 @@ const CreditManager = () => {
           Account {selectedAccount}
         </Text>
         <div className='flex border-l border-white/20 p-4' onClick={() => {}}>
-          <span className='w-5'>
+          <span className='w-5 hover:cursor-pointer' onClick={toggleCreditManager}>
             <ArrowRightLine />
           </span>
         </div>
