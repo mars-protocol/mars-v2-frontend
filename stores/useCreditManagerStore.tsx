@@ -13,7 +13,7 @@ interface CreditManagerStore {
 const useCreditManagerStore = create<CreditManagerStore>()(
   persist(
     (set, get) => ({
-      isOpen: false,
+      isOpen: true,
       selectedAccount: null,
       actions: {
         toggleCreditManager: () => set(() => ({ isOpen: !get().isOpen })),

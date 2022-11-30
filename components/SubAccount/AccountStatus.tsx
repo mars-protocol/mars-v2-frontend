@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js'
+
 import { BorrowCapacity } from 'components/BorrowCapacity'
 import Button from 'components/Button'
 import SemiCircleProgress from 'components/SemiCircleProgress'
@@ -27,7 +28,7 @@ const AccountStatus = ({ createCreditAccount }: Props) => {
   }
 
   return (
-    <div className='flex w-[400px] items-center justify-between gap-3 border border-transparent border-l-white/20 px-3 py-3'>
+    <div className='flex w-[400px] items-center justify-between gap-3 border-l border-l-white/20 px-3 py-3'>
       {accountStats && (
         <>
           <Text size='sm' className='flex flex-grow text-white'>

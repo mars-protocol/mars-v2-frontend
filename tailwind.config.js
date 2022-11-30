@@ -33,7 +33,8 @@ module.exports = {
         progress: 'spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite',
       },
       backgroundImage: {
-        mars: 'url(/bg.svg)',
+        mars: 'url(/images/bg.svg)',
+        'fund-modal': 'url(/images/fund-modal-bg.png)',
       },
       backgroundSize: {
         desktop: '100% auto',
@@ -73,6 +74,7 @@ module.exports = {
         'grey-highlight': '#4c4c4c',
         'grey-light': '#bfbfbf',
         'grey-medium': '#5f697a',
+        header: 'rgba(59, 25, 40, 0.4);',
         input: '#282a33',
         loss: '#f96363',
         mars: '#a03b45',

@@ -4,8 +4,8 @@ import TradeActionModule from 'components/Trade/TradeActionModule'
 
 const Trade = () => {
   return (
-    <div>
-      <div className='mb-4 flex gap-4'>
+    <div className='flex w-full flex-wrap'>
+      <div className='mb-4 flex flex-grow gap-4'>
         <Card className='flex-1'>
           <Text size='lg' uppercase={true}>
             Tradingview Graph
@@ -21,11 +21,6 @@ const Trade = () => {
             </Text>
           </Card>
         </div>
-        <Card className='flex w-[374px]'>
-          <Text size='lg' uppercase={true}>
-            Credit Account Stats
-          </Text>
-        </Card>
       </div>
       <Card>
         <Text size='lg' uppercase={true}>

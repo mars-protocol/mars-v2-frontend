@@ -3,12 +3,15 @@ import React from 'react'
 
 import CreditManager from 'components/CreditManager'
 import DesktopNavigation from 'components/Navigation/DesktopNavigation'
+import useCreditAccounts from 'hooks/useCreditAccounts'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useWalletStore from 'stores/useWalletStore'
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const isOpen = useCreditManagerStore((s) => s.isOpen)
   const address = useWalletStore((s) => s.address)
+  const { data: creditAccountsList, isLoading: isLoadingCreditAccounts } = useCreditAccounts()
+  const hasCreditAccounts = creditAccountsList && creditAccountsList.length > 0
 
   const filter = {
     day: 'brightness-100 hue-rotate-0',
@@ -26,9 +29,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <div className='relative min-h-screen w-full'>
       <div className={backgroundClasses} />
       <DesktopNavigation />
-      <main className='relative flex-1 p-6'>
-        {children}
-        {isOpen && <CreditManager />}
+      <main className='relative flex lg:h-[calc(100vh-120px)]'>
+        <div className='flex flex-grow flex-wrap p-6'>{children}</div>
+        {isOpen && hasCreditAccounts && <CreditManager />}
       </main>
     </div>
   )

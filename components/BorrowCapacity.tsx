@@ -99,7 +99,7 @@ export const BorrowCapacity = ({
         </div>
         <Tooltip content={<Text size='sm'>Borrow Capacity Tooltip</Text>}>
           <div
-            className='relative overflow-hidden rounded-3xl border-2 border-transparent border-r-loss '
+            className='relative overflow-hidden rounded-3xl border-r-2 border-r-loss '
             style={{ height: barHeight }}
           >
             <div className='absolute h-full w-full shadow-inset gradient-hatched'>

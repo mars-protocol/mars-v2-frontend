@@ -1,6 +1,8 @@
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { UseMutateFunction } from '@tanstack/react-query'
 import classNames from 'classnames'
+import { useMemo, useState } from 'react'
+
 import Button from 'components/Button'
 import FundAccountModal from 'components/FundAccountModal'
 import ArrowDown from 'components/Icons/arrow-down.svg'
@@ -9,7 +11,6 @@ import ChevronDownIcon from 'components/Icons/expand.svg'
 import Overlay from 'components/Overlay'
 import Text from 'components/Text'
 import WithdrawModal from 'components/WithdrawModal'
-import { useMemo, useState } from 'react'
 
 interface Props {
   creditAccountsList: string[]
@@ -46,7 +47,7 @@ const SubAccountNavigation = ({
         <Text
           key={account}
           className={classNames(
-            'cursor-pointer whitespace-nowrap px-4  hover:text-white',
+            'cursor-pointer whitespace-nowrap px-4 hover:text-white',
             selectedAccount === account ? 'text-white' : ' text-white/40',
           )}
           onClick={() => setSelectedAccount(account)}
@@ -115,7 +116,7 @@ const SubAccountNavigation = ({
             >
               Manage
             </Text>
-            <div className='flex w-full justify-between border border-transparent border-b-black/10 p-4'>
+            <div className='flex w-full justify-between border-b border-b-black/10 p-4'>
               <Button
                 className='flex w-[115px] items-center justify-center pl-0 pr-2'
                 onClick={() => {
@@ -181,7 +182,7 @@ const SubAccountNavigation = ({
           </div>
         </Overlay>
       </div>
-      <FundAccountModal show={showFundWalletModal} onClose={() => setShowFundWalletModal(false)} />
+      <FundAccountModal open={showFundWalletModal} setOpen={setShowFundWalletModal} />
       <WithdrawModal show={showWithdrawModal} onClose={() => setShowWithdrawModal(false)} />
     </>
   )

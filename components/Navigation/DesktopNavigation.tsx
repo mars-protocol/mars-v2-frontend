@@ -29,7 +29,7 @@ const Navigation = () => {
   const hasCreditAccounts = creditAccountsList && creditAccountsList.length > 0
 
   return (
-    <div className='relative hidden lg:block'>
+    <div className='relative hidden bg-header lg:block'>
       <div className='flex items-center justify-between border-b border-white/20 px-6 py-3'>
         <div className='flex flex-grow items-center'>
           <Link href='/trade' passHref>

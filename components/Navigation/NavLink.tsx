@@ -1,7 +1,8 @@
-import TextLink from 'components/TextLink'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ReactNode } from 'react'
+
+import TextLink from 'components/TextLink'
 
 interface Props {
   href: string
