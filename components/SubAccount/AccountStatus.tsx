@@ -19,7 +19,11 @@ const AccountStatus = ({ createCreditAccount }: Props) => {
   const hasCreditAccounts = creditAccountsList && creditAccountsList.length > 0
 
   if (!hasCreditAccounts) {
-    return <Button onClick={() => createCreditAccount()}>Create Credit Account</Button>
+    return (
+      <Button className='my-3 mr-6' onClick={() => createCreditAccount()}>
+        Create Credit Account
+      </Button>
+    )
   }
 
   return (
