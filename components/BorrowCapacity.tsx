@@ -118,7 +118,7 @@ export const BorrowCapacity = ({
                 <div
                   className='h-full rounded-lg transition-[width] duration-1000 ease-linear'
                   style={{
-                    width: `${percentOfMaxRange || 0.01}%`,
+                    width: `${percentOfMaxRange || 0.02}%`,
                     WebkitMask: 'linear-gradient(#fff 0 0)',
                   }}
                 >
