@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { ReactNode } from 'react'
+import React, { LegacyRef, ReactNode } from 'react'
 
 import CircularProgress from 'components/CircularProgress'
 
@@ -56,38 +56,46 @@ const variantClasses = {
   round: 'rounded-full p-0',
 }
 
-const Button = ({
-  children,
-  className = '',
-  color = 'primary',
-  disabled,
-  id = '',
-  showProgressIndicator,
-  size = 'small',
-  text,
-  variant = 'solid',
-  onClick,
-}: Props) => {
-  return (
-    <button
-      className={classNames(
-        'cursor-pointer appearance-none break-normal rounded-3xl outline-none transition-colors',
-        variant === 'round' ? `${sizeClasses[size]} ${roundSizeClasses[size]}` : sizeClasses[size],
-        variant === 'transparent' ? transparentColorClasses[color] : colorClasses[color],
-        variantClasses[variant],
-        disabled && 'pointer-events-none opacity-50',
-        className,
-      )}
-      id={id}
-      onClick={disabled ? () => {} : onClick}
-    >
-      {text && !children && !showProgressIndicator && <span>{text}</span>}
-      {children && !showProgressIndicator && children}
-      {showProgressIndicator && (
-        <CircularProgress size={size === 'small' ? 10 : size === 'medium' ? 12 : 18} />
-      )}
-    </button>
-  )
-}
+const Button = React.forwardRef(
+  (
+    {
+      children,
+      className = '',
+      color = 'primary',
+      disabled,
+      id = '',
+      showProgressIndicator,
+      size = 'small',
+      text,
+      variant = 'solid',
+      onClick,
+    }: Props,
+    ref,
+  ) => {
+    return (
+      <button
+        className={classNames(
+          'cursor-pointer appearance-none break-normal rounded-3xl outline-none transition-colors',
+          variant === 'round'
+            ? `${sizeClasses[size]} ${roundSizeClasses[size]}`
+            : sizeClasses[size],
+          variant === 'transparent' ? transparentColorClasses[color] : colorClasses[color],
+          variantClasses[variant],
+          disabled && 'pointer-events-none opacity-50',
+          className,
+        )}
+        id={id}
+        ref={ref as LegacyRef<HTMLButtonElement>}
+        onClick={disabled ? () => {} : onClick}
+      >
+        {text && !children && !showProgressIndicator && <span>{text}</span>}
+        {children && !showProgressIndicator && children}
+        {showProgressIndicator && (
+          <CircularProgress size={size === 'small' ? 10 : size === 'medium' ? 12 : 18} />
+        )}
+      </button>
+    )
+  },
+)
 
 export default Button

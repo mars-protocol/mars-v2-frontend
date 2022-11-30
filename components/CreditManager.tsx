@@ -1,5 +1,4 @@
 import BigNumber from 'bignumber.js'
-import { useRef } from 'react'
 
 import ContainerSecondary from 'components/ContainerSecondary'
 import ArrowRightLine from 'components/Icons/arrow-right-line.svg'
@@ -15,9 +14,6 @@ import { formatValue } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 const CreditManager = () => {
-  // recreate modals and reset state whenever ref changes
-  const modalId = useRef(0)
-
   const address = useWalletStore((s) => s.address)
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
 

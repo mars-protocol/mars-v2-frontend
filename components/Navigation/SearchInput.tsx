@@ -1,5 +1,5 @@
 const SearchInput = () => (
-  <div className='relative text-white'>
+  <div className='relative mt-[1px] py-2 text-white'>
     <span className='absolute inset-y-0 left-0 flex items-center pl-2'>
       <svg
         fill='none'

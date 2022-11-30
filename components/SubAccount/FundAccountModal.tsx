@@ -77,7 +77,7 @@ const FundAccountModal = ({ open, setOpen }: Props) => {
 
   return (
     <Modal open={open} setOpen={setOpen}>
-      <div className='max-w-screen flex min-h-[520px] w-[790px] transform overflow-hidden align-middle shadow-xl transition-all'>
+      <div className='flex min-h-[520px] w-full'>
         {isLoading && (
           <div className='absolute inset-0 z-40 grid place-items-center bg-black/50'>
             <CircularProgress />
@@ -117,8 +117,8 @@ const FundAccountModal = ({ open, setOpen }: Props) => {
               <p>Loading...</p>
             ) : (
               <>
-                <div className='mb-2 rounded-md border border-[#585A74] text-sm'>
-                  <div className='mb-1 flex justify-between border-b border-[#585A74] p-2'>
+                <div className='mb-4 rounded-md border border-white/20'>
+                  <div className='mb-1 flex justify-between border-b border-white/20 p-2'>
                     <Text size='sm' className='text-white'>
                       Asset:
                     </Text>
@@ -154,7 +154,7 @@ const FundAccountModal = ({ open, setOpen }: Props) => {
                     />
                   </div>
                 </div>
-                <Text size='xs' uppercase={true} className='mb-2'>
+                <Text size='xs' uppercase={true} className='mb-2 text-white/60'>
                   In wallet: {walletAmount.toLocaleString()}
                 </Text>
                 <Slider

@@ -4,13 +4,12 @@ import classNames from 'classnames'
 import { useMemo, useState } from 'react'
 
 import Button from 'components/Button'
-import FundAccountModal from 'components/FundAccountModal'
 import ArrowDown from 'components/Icons/arrow-down.svg'
 import ArrowUp from 'components/Icons/arrow-up.svg'
 import ChevronDownIcon from 'components/Icons/expand.svg'
 import Overlay from 'components/Overlay'
+import { FundAccountModal, WithdrawModal } from 'components/SubAccount'
 import Text from 'components/Text'
-import WithdrawModal from 'components/WithdrawModal'
 
 interface Props {
   creditAccountsList: string[]
@@ -183,7 +182,7 @@ const SubAccountNavigation = ({
         </Overlay>
       </div>
       <FundAccountModal open={showFundWalletModal} setOpen={setShowFundWalletModal} />
-      <WithdrawModal show={showWithdrawModal} onClose={() => setShowWithdrawModal(false)} />
+      <WithdrawModal open={showWithdrawModal} setOpen={setShowWithdrawModal} />
     </>
   )
 }
