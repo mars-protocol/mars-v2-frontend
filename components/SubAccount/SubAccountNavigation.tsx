@@ -17,7 +17,7 @@ interface Props {
   createCreditAccount: () => void
 }
 
-const MAX_VISIBLE_CREDIT_ACCOUNTS = 2
+const MAX_VISIBLE_CREDIT_ACCOUNTS = 5
 
 const SubAccountNavigation = ({
   creditAccountsList,
@@ -42,7 +42,7 @@ const SubAccountNavigation = ({
         <Text
           key={account}
           className={classNames(
-            'cursor-pointer px-4 hover:text-white',
+            'cursor-pointer whitespace-nowrap px-4  hover:text-white',
             selectedAccount === account ? 'text-white' : ' text-white/40',
           )}
           onClick={() => setSelectedAccount(account)}
