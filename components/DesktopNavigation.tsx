@@ -9,9 +9,11 @@ import CircularProgress from 'components/CircularProgress'
 import ArrowRightLineIcon from 'components/Icons/arrow-right-line.svg'
 import ChevronDownIcon from 'components/Icons/expand.svg'
 import Logo from 'components/Icons/logo.svg'
-import ProgressBar from 'components/ProgressBar'
+import Modal from 'components/Modal'
 import SearchInput from 'components/SearchInput'
 import SemiCircleProgress from 'components/SemiCircleProgress'
+import Text from 'components/Text'
+import TextLink from 'components/TextLink'
 import Wallet from 'components/Wallet'
 import useCreateCreditAccount from 'hooks/mutations/useCreateCreditAccount'
 import useDeleteCreditAccount from 'hooks/mutations/useDeleteCreditAccount'
@@ -21,8 +23,7 @@ import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useWalletStore from 'stores/useWalletStore'
 import { chain } from 'utils/chains'
 import { formatCurrency } from 'utils/formatters'
-
-import TextLink from './TextLink'
+import { BorrowCapacity } from './BorrowCapacity'
 
 const MAX_VISIBLE_CREDIT_ACCOUNTS = 5
 
@@ -85,6 +86,7 @@ const Navigation = () => {
       return <Button onClick={() => createCreditAccount()}>Create Credit Account</Button>
     }
 
+    console.log(accountStats)
     return (
       <div className='flex items-center gap-4'>
         {accountStats && (
@@ -104,11 +106,21 @@ const Navigation = () => {
               />
             </div>
             <SemiCircleProgress value={accountStats.risk} label='Risk' />
-            <ProgressBar value={accountStats.health} />
+            <BorrowCapacity
+              limit={80}
+              max={100}
+              balance={100 - accountStats.health * 100}
+              barHeight='16px'
+              decimals={1}
+              hideValues={true}
+              showTitle={false}
+              className='w-[140px]'
+              percentageDelta={40}
+            />
           </>
         )}
         <div
-          className='flex w-16 cursor-pointer justify-center hover:text-white'
+          className='flex w-4 cursor-pointer justify-center hover:text-white'
           onClick={toggleCreditManager}
         >
           <ArrowRightLineIcon />
@@ -229,11 +241,14 @@ const Navigation = () => {
         </div>
         {rightSideContent()}
       </div>
-      {(isLoadingCreate || isLoadingDelete) && (
-        <div className='absolute inset-0 z-40 grid place-items-center bg-black/50'>
-          <CircularProgress />
+      <Modal open={isLoadingCreate || isLoadingDelete}>
+        <Text size='2xl' uppercase={true} className='mb-6 w-full text-center'>
+          Confirm Transaction
+        </Text>
+        <div className='flex w-full justify-center pb-6'>
+          <CircularProgress size={40} />
         </div>
-      )}
+      </Modal>
     </div>
   )
 }

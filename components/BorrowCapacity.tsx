@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 
 import Number from 'components/Number'
+import Text from 'components/Text'
 import Tooltip from 'components/Tooltip'
 
 interface Props {
@@ -13,6 +14,8 @@ interface Props {
   showPercentageText?: boolean
   className?: string
   hideValues?: boolean
+  percentageDelta?: number
+  decimals?: number
 }
 
 export const BorrowCapacity = ({
@@ -24,6 +27,8 @@ export const BorrowCapacity = ({
   showPercentageText = true,
   className,
   hideValues,
+  percentageDelta = 15,
+  decimals = 2,
 }: Props) => {
   const [percentOfMaxRound, setPercentOfMaxRound] = useState(0)
   const [percentOfMaxRange, setPercentOfMaxRange] = useState(0)
@@ -55,7 +60,13 @@ export const BorrowCapacity = ({
         setTimer(
           setTimeout(() => {
             const currentPercentOfMax = startingPoint + (delta / 20) * i
-            setPercentOfMaxMargin(currentPercentOfMax > 15 ? '-60px' : '10px')
+            const leftMargin =
+              currentPercentOfMax >= percentageDelta
+                ? percentageDelta > 15
+                  ? '-50px'
+                  : '-60px'
+                : '10px'
+            setPercentOfMaxMargin(leftMargin)
           }, 50 * (i + 1)),
         )
       }
@@ -86,7 +97,7 @@ export const BorrowCapacity = ({
             </div>
           )}
         </div>
-        <Tooltip content='Tooltip'>
+        <Tooltip content={<Text size='sm'>Borrow Capacity Tooltip</Text>}>
           <div className='relative' style={{ height: barHeight }}>
             <div className='absolute h-full w-full rounded-3xl shadow-inset gradient-hatched'>
               <div
@@ -94,7 +105,7 @@ export const BorrowCapacity = ({
                 style={{ left: `${limitPercentOfMax || 0}%` }}
               />
               <div
-                className='absolute left-0 h-full max-w-full rounded-l-3xl bg-body-dark transition-[right] duration-1000 ease-linear'
+                className='border-r-red ease-loss absolute left-0 h-full max-w-full rounded-l-3xl border border-transparent bg-body-dark transition-[right] duration-1000'
                 style={{
                   right: `${limitPercentOfMax ? 100 - limitPercentOfMax : 100}%`,
                 }}
@@ -102,7 +113,7 @@ export const BorrowCapacity = ({
 
               <div className='absolute top-0 h-full w-full overflow-hidden'>
                 <div
-                  className='h-full rounded-l transition-[width] duration-1000 ease-linear'
+                  className='h-full rounded-lg transition-[width] duration-1000 ease-linear'
                   style={{
                     width: `${percentOfMaxRange || 0.01}%`,
                     WebkitMask: 'linear-gradient(#fff 0 0)',
@@ -112,7 +123,7 @@ export const BorrowCapacity = ({
                 </div>
                 {showPercentageText ? (
                   <span
-                    className='absolute top-1/2 w-[53px] -translate-y-1/2 transition-[left] duration-1000 ease-linear text-2xs-caps'
+                    className='absolute top-1/2 mt-[1px] w-[53px] -translate-y-1/2 transition-[left] duration-1000 ease-linear text-2xs-caps'
                     style={{
                       left: `${percentOfMaxRange}%`,
                       marginLeft: percentOfMaxMargin,
@@ -120,8 +131,11 @@ export const BorrowCapacity = ({
                   >
                     {max !== 0 && (
                       <Number
+                        className='text-white'
                         animate={true}
                         amount={percentOfMaxRound}
+                        minDecimals={decimals}
+                        maxDecimals={decimals}
                         suffix='%'
                         abbreviated={false}
                       />
