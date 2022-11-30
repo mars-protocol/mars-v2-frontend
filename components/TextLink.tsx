@@ -18,7 +18,7 @@ const colorClasses = {
     'text-secondary hover:text-secondary-highlight active:text-secondary-highlight-10 focus:text-secondary-highlight',
   tertiary:
     'text-secondary-dark/60 hover:text-secondary-dark active:text-secondary-dark-10 focus:text-secondary-dark',
-  quaternary: 'text-white/60 hover:text-white active:text-white',
+  quaternary: 'hover:text-white active:text-white',
 }
 const textSizeClasses = {
   small: 'text-sm',

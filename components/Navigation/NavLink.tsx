@@ -1,7 +1,7 @@
 import TextLink from 'components/TextLink'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 
 interface Props {
   href: string
@@ -15,7 +15,7 @@ const NavLink = ({ href, children }: Props) => {
   return (
     <Link href={href} passHref>
       <TextLink
-        className={`${isActive && 'pointer-events-none text-white'}`}
+        className={`${isActive ? 'pointer-events-none text-white' : 'text-white/60'}`}
         uppercase={true}
         textSize='large'
         color='quaternary'

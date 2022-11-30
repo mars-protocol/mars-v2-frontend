@@ -1,9 +1,6 @@
-import { Popover } from '@headlessui/react'
 import Link from 'next/link'
-import { useMemo } from 'react'
 
 import CircularProgress from 'components/CircularProgress'
-import ChevronDownIcon from 'components/Icons/expand.svg'
 import Logo from 'components/Icons/logo.svg'
 import Modal from 'components/Modal'
 import { menuTree, NavLink } from 'components/Navigation'
@@ -40,7 +37,7 @@ const Navigation = () => {
               <Logo />
             </span>
           </Link>
-          <div className='flex gap-8 px-6 text-white/40'>
+          <div className='flex gap-8 px-6'>
             {menuTree.map((item, index) => (
               <NavLink key={index} href={item.href}>
                 {item.label}
