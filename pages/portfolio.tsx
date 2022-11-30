@@ -51,18 +51,10 @@ const mockedAccounts = [
 ]
 
 const Portfolio = () => {
-  const [show, setShow] = useState<boolean>(false)
   const [open, setOpen] = useState<boolean>(true)
   return (
     <div className='flex flex-col gap-4'>
-      <Card className='flex-1'>
-        <span onClick={() => setShow(!show)} role='button'>
-          Portfolio Module
-        </span>
-        <Overlay show={show} setShow={setShow}>
-          A test overlay
-        </Overlay>
-      </Card>
+      <Card className='flex-1'>Portfolio Module</Card>
       <div className='grid grid-cols-2 gap-4'>
         {mockedAccounts.map((account) => (
           <Card key={account.id}>

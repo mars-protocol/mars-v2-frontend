@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import React from 'react'
 
 import CreditManager from 'components/CreditManager'
-import DesktopNavigation from 'components/DesktopNavigation'
+import DesktopNavigation from 'components/Navigation/DesktopNavigation'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useWalletStore from 'stores/useWalletStore'
 

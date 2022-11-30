@@ -12,6 +12,8 @@ module.exports = {
     'text-xs',
     'text-sm-caps',
     'text-sm',
+    'text-base-caps',
+    'text-base',
     'text-lg-caps',
     'text-lg',
     'text-xl-caps',
@@ -199,6 +201,13 @@ module.exports = {
           },
           '.text-sm-caps': {
             fontSize: '13.33px',
+            lineHeight: '20px',
+            textTransform: 'uppercase',
+            fontWeight: theme('fontWeight.semibold'),
+            letterSpacing: theme('letterSpacing.wider'),
+          },
+          '.text-base-caps': {
+            fontSize: '15px',
             lineHeight: '20px',
             textTransform: 'uppercase',
             fontWeight: theme('fontWeight.semibold'),

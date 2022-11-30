@@ -1,5 +1,3 @@
-import React from 'react'
-
 const SearchInput = () => (
   <div className='relative text-white'>
     <span className='absolute inset-y-0 left-0 flex items-center pl-2'>

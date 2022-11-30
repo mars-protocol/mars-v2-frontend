@@ -98,14 +98,17 @@ export const BorrowCapacity = ({
           )}
         </div>
         <Tooltip content={<Text size='sm'>Borrow Capacity Tooltip</Text>}>
-          <div className='relative' style={{ height: barHeight }}>
-            <div className='absolute h-full w-full rounded-3xl shadow-inset gradient-hatched'>
+          <div
+            className='relative overflow-hidden rounded-3xl border-2 border-transparent border-r-loss '
+            style={{ height: barHeight }}
+          >
+            <div className='absolute h-full w-full shadow-inset gradient-hatched'>
               <div
                 className='absolute bottom-0 h-[120%] w-[1px] bg-white transition-[left] duration-1000 ease-linear'
                 style={{ left: `${limitPercentOfMax || 0}%` }}
               />
               <div
-                className='border-r-red ease-loss absolute left-0 h-full max-w-full rounded-l-3xl border border-transparent bg-body-dark transition-[right] duration-1000'
+                className='ease-loss absolute left-0 h-full max-w-full rounded-l-3xl bg-body-dark transition-[right] duration-1000'
                 style={{
                   right: `${limitPercentOfMax ? 100 - limitPercentOfMax : 100}%`,
                 }}
