@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import React, { useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 
 import BorrowTable from 'components/Borrow/BorrowTable'
 import BorrowModal from 'components/BorrowModal'
@@ -116,7 +116,7 @@ const Borrow = () => {
   }
 
   return (
-    <div className='flex items-start gap-4'>
+    <div className='flex w-full items-start gap-4'>
       <div className='flex-1'>
         <Card className='mb-4'>
           <div>

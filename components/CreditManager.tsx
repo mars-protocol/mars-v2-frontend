@@ -100,7 +100,7 @@ const CreditManager = () => {
           <div>Loading...</div>
         ) : (
           <div className='flex w-full flex-wrap'>
-            <div className='mb-2 flex w-full bg-black/20 px-4 py-2'>
+            <div className='mb-2 flex w-full border-b border-white/20 bg-black/20 px-4 py-2'>
               <Text size='xs' uppercase={true} className='flex-1 text-white'>
                 Asset
               </Text>

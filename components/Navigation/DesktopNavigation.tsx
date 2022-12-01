@@ -64,11 +64,13 @@ const Navigation = () => {
         {isConnected && <AccountStatus createCreditAccount={createCreditAccount} />}
       </div>
       <Modal open={isLoadingCreate || isLoadingDelete}>
-        <Text size='2xl' uppercase={true} className='mb-6 w-full text-center'>
-          Confirm Transaction
-        </Text>
-        <div className='flex w-full justify-center pb-6'>
-          <CircularProgress size={40} />
+        <div className='w-full p-6'>
+          <Text size='2xl' uppercase={true} className='mb-6 w-full text-center'>
+            Confirm Transaction
+          </Text>
+          <div className='flex w-full justify-center pb-6'>
+            <CircularProgress size={40} />
+          </div>
         </div>
       </Modal>
     </div>
