@@ -1,23 +1,17 @@
-import React from 'react'
+import classNames from 'classnames'
 
 type Props = {
-  stroke?: string
   strokeWidth?: number
   background?: string
   diameter?: 60
-  orientation?: any
-  direction?: any
   value: number
   label?: string
 }
 
 const SemiCircleProgress = ({
-  stroke = '#02B732',
-  strokeWidth = 6,
-  background = '#D0D0CE',
+  strokeWidth = 4,
+  background = '#15161A',
   diameter = 60,
-  orientation = 'up',
-  direction = 'right',
   value = 0,
   label,
 }: Props) => {
@@ -37,58 +31,49 @@ const SemiCircleProgress = ({
 
   const semiCirclePercentage = percentageValue * (circumference / 100)
 
-  let rotation
-  if (orientation === 'down') {
-    if (direction === 'left') {
-      rotation = 'rotate(180deg) rotateY(180deg)'
-    } else {
-      rotation = 'rotate(180deg)'
-    }
-  } else {
-    if (direction === 'right') {
-      rotation = 'rotateY(180deg)'
-    }
-  }
-
-  let strokeColorClass = 'stroke-green-500'
-  if (value > 2 / 3) {
-    strokeColorClass = 'stroke-red-500'
-  } else if (value > 1 / 3) {
-    strokeColorClass = 'stroke-yellow-500'
-  }
-
   return (
-    <div className='semicircle-container' style={{ position: 'relative' }}>
+    <div
+      className={classNames(
+        'relative overflow-hidden',
+        `w-[${diameter}px] h-[${diameter / 2 + strokeWidth}px]`,
+      )}
+    >
       <svg
+        viewBox='2 -2 28 36'
         width={diameter}
-        height={diameter / 2}
-        style={{ transform: rotation, overflow: 'hidden' }}
+        height={diameter}
+        style={{ transform: 'rotate(180deg)' }}
       >
+        <linearGradient id='gradient'>
+          <stop stopColor='#15BFA9' offset='0%'></stop>
+          <stop stopColor='#4F3D9F' offset='50%'></stop>
+          <stop stopColor='#C13338' offset='100%'></stop>
+        </linearGradient>
         <circle
-          cx={coordinateForCircle}
-          cy={coordinateForCircle}
-          r={radius}
           fill='none'
           stroke={background}
           strokeWidth={strokeWidth}
-          strokeDasharray={circumference}
-          style={{
-            strokeDashoffset: circumference,
-          }}
+          strokeDasharray='50 100'
+          strokeLinecap='round'
+          cx={coordinateForCircle}
+          cy={coordinateForCircle}
+          r={radius}
+          shapeRendering='geometricPrecision'
         />
         <circle
-          className={strokeColorClass}
           cx={coordinateForCircle}
           cy={coordinateForCircle}
           r={radius}
           fill='none'
-          // stroke={stroke}
+          strokeLinecap='round'
+          stroke='url(#gradient)'
+          strokeDasharray='50 100'
           strokeWidth={strokeWidth}
-          strokeDasharray={circumference}
           style={{
             strokeDashoffset: semiCirclePercentage,
             transition: 'stroke-dashoffset .3s ease 0s, stroke-dasharray .3s ease 0s, stroke .3s',
           }}
+          shapeRendering='geometricPrecision'
         />
       </svg>
       {label && (
@@ -98,7 +83,7 @@ const SemiCircleProgress = ({
             width: '100%',
             left: '0',
             textAlign: 'center',
-            bottom: orientation === 'down' ? 'auto' : '-4px',
+            bottom: '-2px',
             position: 'absolute',
           }}
         >
