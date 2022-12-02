@@ -155,7 +155,7 @@ const FundAccountModal = ({ open, setOpen }: Props) => {
                   </div>
                 </div>
                 <Text size='xs' uppercase={true} className='mb-2 text-white/60'>
-                  In wallet: {walletAmount.toLocaleString()}
+                  {`In wallet: ${walletAmount.toLocaleString()} ${getTokenSymbol(selectedToken)}`}
                 </Text>
                 <Slider
                   className='mb-6'

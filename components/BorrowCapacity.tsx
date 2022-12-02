@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 
-import Number from 'components/Number'
+import FormattedNumber from 'components/FormattedNumber'
 import Text from 'components/Text'
 import Tooltip from 'components/Tooltip'
 
@@ -93,7 +93,7 @@ export const BorrowCapacity = ({
                 limitPercentOfMax ? 'opacity-60' : 'opacity-0',
               )}
             >
-              <Number animate={true} amount={limit} />
+              <FormattedNumber animate={true} amount={limit} />
             </div>
           )}
         </div>
@@ -133,7 +133,7 @@ export const BorrowCapacity = ({
                     }}
                   >
                     {max !== 0 && (
-                      <Number
+                      <FormattedNumber
                         className='text-white'
                         animate={true}
                         amount={percentOfMaxRound}
@@ -151,9 +151,9 @@ export const BorrowCapacity = ({
         </Tooltip>
         {!hideValues && (
           <div className='mt-2 flex opacity-60 text-3xs-caps'>
-            <Number animate={true} amount={balance} className='mr-1' />
+            <FormattedNumber animate={true} amount={balance} className='mr-1' />
             <span className='mr-1'>of</span>
-            <Number animate={true} amount={max} />
+            <FormattedNumber animate={true} amount={max} />
           </div>
         )}
       </div>

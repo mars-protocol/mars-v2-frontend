@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 
 import { BorrowCapacity } from 'components/BorrowCapacity'
 import Button from 'components/Button'
+import FormattedNumber from 'components/FormattedNumber'
 import Gauge from 'components/Gauge'
 import Text from 'components/Text'
 import Tooltip from 'components/Tooltip'
@@ -27,22 +28,20 @@ const AccountStatus = ({ createCreditAccount }: Props) => {
     )
   }
 
+  console.log(accountStats)
+
   return (
     <div className='flex w-[400px] items-center justify-between gap-3 border-l border-l-white/20 px-3 py-3'>
       {accountStats && (
         <>
           <Text size='sm' className='flex flex-grow text-white'>
-            {formatValue(
-              BigNumber(accountStats.netWorth)
+            <FormattedNumber
+              amount={BigNumber(accountStats.netWorth)
                 .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
-                .toNumber(),
-              2,
-              2,
-              true,
-              '$: ',
-              false,
-              false,
-            )}
+                .toNumber()}
+              animate={true}
+              prefix='$: '
+            />
           </Text>
           <Tooltip
             content={

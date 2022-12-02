@@ -7,6 +7,7 @@ import classNames from 'classnames'
 import { BorrowCapacity } from 'components/BorrowCapacity'
 import Button from 'components/Button'
 import CircularProgress from 'components/CircularProgress'
+import FormattedNumber from 'components/FormattedNumber'
 import Gauge from 'components/Gauge'
 import Modal from 'components/Modal'
 import Slider from 'components/Slider'
@@ -255,17 +256,13 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
               {accountStats && (
                 <div className='flex w-full items-center gap-x-3'>
                   <Text size='sm' className='flex flex-grow text-white'>
-                    {formatValue(
-                      BigNumber(accountStats.netWorth)
+                    <FormattedNumber
+                      amount={BigNumber(accountStats.netWorth)
                         .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
-                        .toNumber(),
-                      2,
-                      2,
-                      true,
-                      '$: ',
-                      false,
-                      false,
-                    )}
+                        .toNumber()}
+                      prefix='$: '
+                      animate={true}
+                    />
                   </Text>
                   <Tooltip
                     content={
@@ -301,15 +298,13 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
                 </Text>
 
                 <Text size='xs' className='text-white/60'>
-                  {formatValue(
-                    BigNumber(accountStats?.totalPosition ?? 0)
+                  <FormattedNumber
+                    amount={BigNumber(accountStats?.totalPosition ?? 0)
                       .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
-                      .toNumber(),
-                    2,
-                    2,
-                    true,
-                    '$',
-                  )}
+                      .toNumber()}
+                    prefix='$'
+                    animate={true}
+                  />
                 </Text>
               </div>
               <div className='flex w-full justify-between'>
@@ -317,15 +312,13 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
                   Total Liabilities:
                 </Text>
                 <Text size='xs' className=' text-white/60'>
-                  {formatValue(
-                    BigNumber(accountStats?.totalDebt ?? 0)
+                  <FormattedNumber
+                    amount={BigNumber(accountStats?.totalDebt ?? 0)
                       .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
-                      .toNumber(),
-                    2,
-                    2,
-                    true,
-                    '$',
-                  )}
+                      .toNumber()}
+                    prefix='$'
+                    animate={true}
+                  />
                 </Text>
               </div>
             </div>
@@ -360,23 +353,21 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
                         {getTokenSymbol(coin.denom)}
                       </Text>
                       <Text size='xs' className='flex-1 text-white/60'>
-                        {formatValue(
-                          getTokenTotalUSDValue(coin.amount, coin.denom),
-                          2,
-                          2,
-                          true,
-                          '$',
-                        )}
+                        <FormattedNumber
+                          amount={getTokenTotalUSDValue(coin.amount, coin.denom)}
+                          prefix='$'
+                          animate={true}
+                        />
                       </Text>
                       <Text size='xs' className='flex-1 text-white/60'>
-                        {formatValue(
-                          BigNumber(coin.amount)
+                        <FormattedNumber
+                          amount={BigNumber(coin.amount)
                             .div(10 ** getTokenDecimals(coin.denom))
-                            .toNumber(),
-                          0,
-                          4,
-                          true,
-                        )}
+                            .toNumber()}
+                          minDecimals={0}
+                          maxDecimals={4}
+                          animate={true}
+                        />
                       </Text>
                       <Text size='xs' className='flex-1 text-white/60'>
                         -
@@ -389,26 +380,31 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
                         {getTokenSymbol(coin.denom)}
                       </Text>
                       <Text size='xs' className='flex-1 text-white/60'>
-                        {formatValue(
-                          getTokenTotalUSDValue(coin.amount, coin.denom),
-                          2,
-                          2,
-                          true,
-                          '-$',
-                        )}
+                        <FormattedNumber
+                          amount={getTokenTotalUSDValue(coin.amount, coin.denom)}
+                          prefix='-$'
+                          animate={true}
+                        />
                       </Text>
                       <Text size='xs' className='flex-1 text-white/60'>
-                        {formatValue(
-                          BigNumber(coin.amount)
+                        <FormattedNumber
+                          amount={BigNumber(coin.amount)
                             .div(10 ** getTokenDecimals(coin.denom))
-                            .toNumber(),
-                          0,
-                          4,
-                          true,
-                        )}
+                            .toNumber()}
+                          minDecimals={0}
+                          maxDecimals={4}
+                          animate={true}
+                        />
                       </Text>
                       <Text size='xs' className='flex-1 text-white/60'>
-                        -{(Number(marketsData?.[coin.denom].borrow_rate) * 100).toFixed(1)}%
+                        <FormattedNumber
+                          amount={Number(marketsData?.[coin.denom].borrow_rate) * 100}
+                          minDecimals={0}
+                          maxDecimals={2}
+                          prefix='-'
+                          suffix='%'
+                          animate={true}
+                        />
                       </Text>
                     </div>
                   ))}

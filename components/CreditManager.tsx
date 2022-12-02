@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 
-import ContainerSecondary from 'components/ContainerSecondary'
+import FormattedNumber from 'components/FormattedNumber'
 import ArrowRightLine from 'components/Icons/arrow-right-line.svg'
 import Text from 'components/Text'
 import useAccountStats from 'hooks/useAccountStats'
@@ -10,7 +10,6 @@ import useTokenPrices from 'hooks/useTokenPrices'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import useWalletStore from 'stores/useWalletStore'
 import { chain } from 'utils/chains'
-import { formatValue } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 const CreditManager = () => {
@@ -37,14 +36,6 @@ const CreditManager = () => {
     )
   }
 
-  if (!address) {
-    return (
-      <div className='absolute inset-0 left-auto w-[400px] border-l border-white/20 bg-grey-medium p-2'>
-        <ContainerSecondary>You must have a connected wallet</ContainerSecondary>
-      </div>
-    )
-  }
-
   return (
     <div className='flex w-[400px] basis-[400px] flex-wrap content-start border-white/20 bg-header placeholder:border-l'>
       <div className='flex w-full flex-wrap items-center border-b border-white/20'>
@@ -64,15 +55,13 @@ const CreditManager = () => {
           </Text>
 
           <Text size='xs' className='text-white/60'>
-            {formatValue(
-              BigNumber(accountStats?.totalPosition ?? 0)
+            <FormattedNumber
+              amount={BigNumber(accountStats?.totalPosition ?? 0)
                 .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
-                .toNumber(),
-              2,
-              2,
-              true,
-              '$',
-            )}
+                .toNumber()}
+              animate={true}
+              prefix='$'
+            />
           </Text>
         </div>
         <div className='flex w-full justify-between'>
@@ -80,15 +69,13 @@ const CreditManager = () => {
             Total Liabilities:
           </Text>
           <Text size='xs' className=' text-white/60'>
-            {formatValue(
-              BigNumber(accountStats?.totalDebt ?? 0)
+            <FormattedNumber
+              amount={BigNumber(accountStats?.totalDebt ?? 0)
                 .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
-                .toNumber(),
-              2,
-              2,
-              true,
-              '$',
-            )}
+                .toNumber()}
+              animate={true}
+              prefix='$'
+            />
           </Text>
         </div>
       </div>
@@ -120,17 +107,21 @@ const CreditManager = () => {
                   {getTokenSymbol(coin.denom)}
                 </Text>
                 <Text size='xs' className='flex-1 text-white/60'>
-                  {formatValue(getTokenTotalUSDValue(coin.amount, coin.denom), 2, 2, true, '$')}
+                  <FormattedNumber
+                    amount={getTokenTotalUSDValue(coin.amount, coin.denom)}
+                    animate={true}
+                    prefix='$'
+                  />
                 </Text>
                 <Text size='xs' className='flex-1 text-white/60'>
-                  {formatValue(
-                    BigNumber(coin.amount)
+                  <FormattedNumber
+                    amount={BigNumber(coin.amount)
                       .div(10 ** getTokenDecimals(coin.denom))
-                      .toNumber(),
-                    0,
-                    4,
-                    true,
-                  )}
+                      .toNumber()}
+                    animate={true}
+                    minDecimals={0}
+                    maxDecimals={4}
+                  />
                 </Text>
                 <Text size='xs' className='flex-1 text-white/60'>
                   -
@@ -143,20 +134,31 @@ const CreditManager = () => {
                   {getTokenSymbol(coin.denom)}
                 </Text>
                 <Text size='xs' className='flex-1 text-white/60'>
-                  {formatValue(getTokenTotalUSDValue(coin.amount, coin.denom), 2, 2, true, '-$')}
+                  <FormattedNumber
+                    amount={getTokenTotalUSDValue(coin.amount, coin.denom)}
+                    prefix='-$'
+                    animate={true}
+                  />
                 </Text>
                 <Text size='xs' className='flex-1 text-white/60'>
-                  {formatValue(
-                    BigNumber(coin.amount)
+                  <FormattedNumber
+                    amount={BigNumber(coin.amount)
                       .div(10 ** getTokenDecimals(coin.denom))
-                      .toNumber(),
-                    0,
-                    4,
-                    true,
-                  )}
+                      .toNumber()}
+                    minDecimals={0}
+                    maxDecimals={4}
+                    animate={true}
+                  />
                 </Text>
                 <Text size='xs' className='flex-1 text-white/60'>
-                  -{(Number(marketsData?.[coin.denom].borrow_rate) * 100).toFixed(1)}%
+                  <FormattedNumber
+                    amount={Number(marketsData?.[coin.denom].borrow_rate) * 100}
+                    minDecimals={0}
+                    maxDecimals={2}
+                    prefix='-'
+                    suffix='%'
+                    animate={true}
+                  />
                 </Text>
               </div>
             ))}

@@ -1,5 +1,5 @@
 import Card from 'components/Card'
-import Number from 'components/Number'
+import FormattedNumber from 'components/FormattedNumber'
 import Text from 'components/Text'
 
 const mockedAccounts = [
@@ -62,7 +62,7 @@ const Portfolio = () => {
             <div className='grid grid-cols-3 gap-4'>
               <div>
                 <Text>
-                  <Number amount={account.networth} animate={true} prefix='$' />
+                  <FormattedNumber amount={account.networth} animate={true} prefix='$' />
                 </Text>
                 <Text size='sm' className='text-white/40'>
                   Net worth
@@ -70,7 +70,7 @@ const Portfolio = () => {
               </div>
               <div>
                 <Text>
-                  <Number amount={account.totalPositionValue} animate={true} prefix='$' />
+                  <FormattedNumber amount={account.totalPositionValue} animate={true} prefix='$' />
                 </Text>
                 <Text size='sm' className='text-white/40'>
                   Total Position Value
@@ -78,7 +78,7 @@ const Portfolio = () => {
               </div>
               <div>
                 <Text>
-                  <Number amount={account.debt} animate={true} prefix='$' />
+                  <FormattedNumber amount={account.debt} animate={true} prefix='$' />
                 </Text>
                 <Text size='sm' className='text-white/40'>
                   Debt
@@ -86,7 +86,7 @@ const Portfolio = () => {
               </div>
               <div>
                 <Text className={account.profit > 0 ? 'text-green-400' : 'text-red-500'}>
-                  <Number
+                  <FormattedNumber
                     amount={account.debt}
                     animate={true}
                     prefix={account.profit > 0 ? '+$' : '$'}
@@ -98,7 +98,7 @@ const Portfolio = () => {
               </div>
               <div>
                 <Text>
-                  <Number amount={account.leverage} minDecimals={0} suffix='x' />
+                  <FormattedNumber amount={account.leverage} minDecimals={0} suffix='x' />
                 </Text>
                 <Text size='sm' className='text-white/40'>
                   Current Leverage
@@ -106,7 +106,7 @@ const Portfolio = () => {
               </div>
               <div>
                 <Text>
-                  <Number amount={account.maxLeverage} minDecimals={0} suffix='x' />
+                  <FormattedNumber amount={account.maxLeverage} minDecimals={0} suffix='x' />
                 </Text>
                 <Text size='sm' className='text-white/40'>
                   Max Leverage
