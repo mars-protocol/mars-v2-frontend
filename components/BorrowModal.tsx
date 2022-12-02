@@ -7,8 +7,8 @@ import { toast } from 'react-toastify'
 import Button from 'components/Button'
 import CircularProgress from 'components/CircularProgress'
 import ContainerSecondary from 'components/ContainerSecondary'
+import Gauge from 'components/Gauge'
 import ProgressBar from 'components/ProgressBar'
-import SemiCircleProgress from 'components/SemiCircleProgress'
 import Slider from 'components/Slider'
 import Text from 'components/Text'
 import Tooltip from 'components/Tooltip'
@@ -263,12 +263,12 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
                         </p>
                         {/* TOOLTIP */}
                         <div title={`${String(accountStats.currentLeverage.toFixed(1))}x`}>
-                          <SemiCircleProgress
+                          <Gauge
                             value={accountStats.currentLeverage / accountStats.maxLeverage}
                             label='Lvg'
                           />
                         </div>
-                        <SemiCircleProgress value={accountStats.risk} label='Risk' />
+                        <Gauge value={accountStats.risk} label='Risk' />
                         <ProgressBar value={accountStats.health} />
                       </div>
                     )}

@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js'
 
 import { BorrowCapacity } from 'components/BorrowCapacity'
 import Button from 'components/Button'
-import SemiCircleProgress from 'components/SemiCircleProgress'
+import Gauge from 'components/Gauge'
 import Text from 'components/Text'
 import Tooltip from 'components/Tooltip'
 import useAccountStats from 'hooks/useAccountStats'
@@ -51,12 +51,9 @@ const AccountStatus = ({ createCreditAccount }: Props) => {
               </Text>
             }
           >
-            <SemiCircleProgress
-              value={accountStats.currentLeverage / accountStats.maxLeverage}
-              label='Lvg'
-            />
+            <Gauge value={accountStats.currentLeverage / accountStats.maxLeverage} label='Lvg' />
           </Tooltip>
-          <SemiCircleProgress value={accountStats.risk} label='Risk' />
+          <Gauge value={accountStats.risk} label='Risk' />
           <BorrowCapacity
             limit={80}
             max={100}

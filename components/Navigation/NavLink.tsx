@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ReactNode } from 'react'
 
-import TextLink from 'components/TextLink'
+import classNames from 'classnames'
 
 interface Props {
   href: string
@@ -15,14 +15,14 @@ const NavLink = ({ href, children }: Props) => {
 
   return (
     <Link href={href} passHref>
-      <TextLink
-        className={`${isActive ? 'pointer-events-none text-white' : 'text-white/60'}`}
-        uppercase={true}
-        textSize='large'
-        color='quaternary'
+      <a
+        className={classNames(
+          'text-lg-caps hover:text-white active:text-white',
+          isActive ? 'pointer-events-none text-white' : 'text-white/60',
+        )}
       >
         {children}
-      </TextLink>
+      </a>
     </Link>
   )
 }

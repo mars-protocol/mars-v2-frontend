@@ -52,8 +52,8 @@ const TextLink = React.forwardRef(
           className,
         )}
         ref={ref as LegacyRef<HTMLAnchorElement>}
-        target={externalLink ? '_blank' : '_self'}
-        rel='noreferrer'
+        target={externalLink ? '_blank' : undefined}
+        rel={externalLink ? 'noreferrer' : undefined}
         onClick={
           onClick && !href
             ? (e) => {

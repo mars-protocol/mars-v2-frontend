@@ -7,8 +7,8 @@ import classNames from 'classnames'
 import { BorrowCapacity } from 'components/BorrowCapacity'
 import Button from 'components/Button'
 import CircularProgress from 'components/CircularProgress'
+import Gauge from 'components/Gauge'
 import Modal from 'components/Modal'
-import SemiCircleProgress from 'components/SemiCircleProgress'
 import Slider from 'components/Slider'
 import Text from 'components/Text'
 import Tooltip from 'components/Tooltip'
@@ -274,12 +274,12 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
                       </Text>
                     }
                   >
-                    <SemiCircleProgress
+                    <Gauge
                       value={accountStats.currentLeverage / accountStats.maxLeverage}
                       label='Lvg'
                     />
                   </Tooltip>
-                  <SemiCircleProgress value={accountStats.risk} label='Risk' />
+                  <Gauge value={accountStats.risk} label='Risk' />
                   <BorrowCapacity
                     limit={80}
                     max={100}
