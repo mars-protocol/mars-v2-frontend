@@ -26,51 +26,49 @@ const textSizeClasses = {
   large: 'text-lg',
 }
 
-const TextLink = React.forwardRef(
-  (
-    {
-      children,
-      className = '',
-      color = 'primary',
-      disabled,
-      externalLink,
-      href,
-      textSize = 'small',
-      text,
-      uppercase,
-      onClick,
-      ...restProps
-    }: Props,
-    ref,
-  ) => {
-    return (
-      <a
-        className={classNames(
-          uppercase ? `${textSizeClasses[textSize]}-caps` : textSizeClasses[textSize],
-          colorClasses[color],
-          disabled && 'pointer-events-none opacity-50',
-          className,
-        )}
-        ref={ref as LegacyRef<HTMLAnchorElement>}
-        target={externalLink ? '_blank' : undefined}
-        rel={externalLink ? 'noreferrer' : undefined}
-        onClick={
-          onClick && !href
-            ? (e) => {
-                e.preventDefault()
-                if (disabled) return
-                onClick
-              }
-            : undefined
-        }
-        href={!href ? '#' : href}
-        {...restProps}
-      >
-        {text && !children && text}
-        {children && children}
-      </a>
-    )
-  },
-)
+const TextLink = React.forwardRef(function TextLink(
+  {
+    children,
+    className = '',
+    color = 'primary',
+    disabled,
+    externalLink,
+    href,
+    textSize = 'small',
+    text,
+    uppercase,
+    onClick,
+    ...restProps
+  }: Props,
+  ref,
+) {
+  return (
+    <a
+      className={classNames(
+        uppercase ? `${textSizeClasses[textSize]}-caps` : textSizeClasses[textSize],
+        colorClasses[color],
+        disabled && 'pointer-events-none opacity-50',
+        className,
+      )}
+      ref={ref as LegacyRef<HTMLAnchorElement>}
+      target={externalLink ? '_blank' : '_self'}
+      rel='noreferrer'
+      onClick={
+        onClick && !href
+          ? (e) => {
+              e.preventDefault()
+              if (disabled) return
+              onClick
+            }
+          : undefined
+      }
+      href={!href ? '#' : href}
+      {...restProps}
+    >
+      {text && !children && text}
+      {children && children}
+    </a>
+  )
+})
 
 export default TextLink

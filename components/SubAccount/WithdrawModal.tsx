@@ -2,8 +2,8 @@ import { Switch } from '@headlessui/react'
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
-
 import classNames from 'classnames'
+
 import { BorrowCapacity } from 'components/BorrowCapacity'
 import Button from 'components/Button'
 import CircularProgress from 'components/CircularProgress'
