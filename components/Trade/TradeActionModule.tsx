@@ -27,7 +27,7 @@ const TradeActionModule = () => {
   const [selectedTokenOut, setSelectedTokenOut] = useState('')
   const [amountIn, setAmountIn] = useState(0)
   const [amountOut, setAmountOut] = useState(0)
-  const [slippageTolerance, setSlippageTolerance] = useState(0.1)
+  const [slippageTolerance, setSlippageTolerance] = useState(1)
   const [fundingMode, setFundingMode] = useState<FundingMode>(FundingMode.WalletAndAccount)
 
   const [isMarginEnabled, setIsMarginEnabled] = React.useState(false)
