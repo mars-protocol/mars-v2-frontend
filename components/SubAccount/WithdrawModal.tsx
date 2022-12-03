@@ -1,8 +1,8 @@
 import { Switch } from '@headlessui/react'
 import BigNumber from 'bignumber.js'
+import classNames from 'classnames'
 import React, { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
-import classNames from 'classnames'
 
 import { BorrowCapacity } from 'components/BorrowCapacity'
 import Button from 'components/Button'
@@ -12,7 +12,6 @@ import Gauge from 'components/Gauge'
 import Modal from 'components/Modal'
 import Slider from 'components/Slider'
 import Text from 'components/Text'
-import Tooltip from 'components/Tooltip'
 import useWithdrawFunds from 'hooks/mutations/useWithdrawFunds'
 import useAccountStats, { AccountStatsAction } from 'hooks/useAccountStats'
 import useAllBalances from 'hooks/useAllBalances'
@@ -264,19 +263,29 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
                       animate={true}
                     />
                   </Text>
-                  <Tooltip
-                    content={
+
+                  <Gauge
+                    value={accountStats.currentLeverage / accountStats.maxLeverage}
+                    label='Lvg'
+                    tooltip={
                       <Text size='sm'>
-                        {formatValue(accountStats.currentLeverage, 0, 2, false, false, 'x')}
+                        Current Leverage:{' '}
+                        {formatValue(accountStats.currentLeverage, 0, 2, true, false, 'x')}
+                        <br />
+                        Max Leverage:{' '}
+                        {formatValue(accountStats.maxLeverage, 0, 2, true, false, 'x')}
                       </Text>
                     }
-                  >
-                    <Gauge
-                      value={accountStats.currentLeverage / accountStats.maxLeverage}
-                      label='Lvg'
-                    />
-                  </Tooltip>
-                  <Gauge value={accountStats.risk} label='Risk' />
+                  />
+                  <Gauge
+                    value={accountStats.risk}
+                    label='Risk'
+                    tooltip={
+                      <Text size='sm'>
+                        Current Risk: {formatValue(accountStats.risk * 100, 0, 2, true, false, '%')}
+                      </Text>
+                    }
+                  />
                   <BorrowCapacity
                     limit={80}
                     max={100}

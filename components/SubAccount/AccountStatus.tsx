@@ -5,7 +5,6 @@ import Button from 'components/Button'
 import FormattedNumber from 'components/FormattedNumber'
 import Gauge from 'components/Gauge'
 import Text from 'components/Text'
-import Tooltip from 'components/Tooltip'
 import useAccountStats from 'hooks/useAccountStats'
 import useCreditAccounts from 'hooks/useCreditAccounts'
 import { chain } from 'utils/chains'
@@ -43,16 +42,29 @@ const AccountStatus = ({ createCreditAccount }: Props) => {
               prefix='$: '
             />
           </Text>
-          <Tooltip
-            content={
+
+          <Gauge
+            value={accountStats.currentLeverage / accountStats.maxLeverage}
+            label='Lvg'
+            tooltip={
               <Text size='sm'>
-                {formatValue(accountStats.currentLeverage, 0, 2, false, false, 'x')}
+                Current Leverage:{' '}
+                {formatValue(accountStats.currentLeverage, 0, 2, true, false, 'x')}
+                <br />
+                Max Leverage: {formatValue(accountStats.maxLeverage, 0, 2, true, false, 'x')}
               </Text>
             }
-          >
-            <Gauge value={accountStats.currentLeverage / accountStats.maxLeverage} label='Lvg' />
-          </Tooltip>
-          <Gauge value={accountStats.risk} label='Risk' />
+          />
+
+          <Gauge
+            value={accountStats.risk}
+            label='Risk'
+            tooltip={
+              <Text size='sm'>
+                Current Risk: {formatValue(accountStats.risk * 100, 0, 2, true, false, '%')}
+              </Text>
+            }
+          />
           <BorrowCapacity
             limit={80}
             max={100}
