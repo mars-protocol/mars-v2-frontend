@@ -59,7 +59,7 @@ const Gauge = ({ background = '#15161A', diameter = 40, value = 0, label, toolti
             strokeWidth={5}
             style={{
               strokeDashoffset: semiCirclePercentage,
-              transition: 'stroke-dashoffset .3s ease 0s, stroke-dasharray .3s ease 0s, stroke .3s',
+              transition: 'stroke-dashoffset 1s ease',
             }}
             shapeRendering='geometricPrecision'
           />
