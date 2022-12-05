@@ -1,11 +1,11 @@
 import Link from 'next/link'
 
+import { AccountStatus, SubAccountNavigation } from 'components/Account'
 import CircularProgress from 'components/CircularProgress'
 import Logo from 'components/Icons/logo.svg'
 import Modal from 'components/Modal'
 import { menuTree, NavLink } from 'components/Navigation'
 import SearchInput from 'components/Navigation/SearchInput'
-import { AccountStatus, SubAccountNavigation } from 'components/SubAccount'
 import Text from 'components/Text'
 import Wallet from 'components/Wallet'
 import useCreateCreditAccount from 'hooks/mutations/useCreateCreditAccount'

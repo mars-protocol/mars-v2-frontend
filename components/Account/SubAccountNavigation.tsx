@@ -3,12 +3,12 @@ import { UseMutateFunction } from '@tanstack/react-query'
 import classNames from 'classnames'
 import { useMemo, useState } from 'react'
 
+import { FundAccountModal, WithdrawModal } from 'components/Account'
 import Button from 'components/Button'
 import ArrowDown from 'components/Icons/arrow-down.svg'
 import ArrowUp from 'components/Icons/arrow-up.svg'
 import ChevronDownIcon from 'components/Icons/expand.svg'
 import Overlay from 'components/Overlay'
-import { FundAccountModal, WithdrawModal } from 'components/SubAccount'
 import Text from 'components/Text'
 
 interface Props {
