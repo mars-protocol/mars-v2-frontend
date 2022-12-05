@@ -325,7 +325,7 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {positionsData?.coins.map((coin) => (
+                          {accountStats?.assets.map((coin) => (
                             <tr key={coin.denom} className='text-xs text-white/50'>
                               <td>{getTokenSymbol(coin.denom)}</td>
                               <td>
@@ -342,7 +342,7 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
                               <td className='text-right'>-</td>
                             </tr>
                           ))}
-                          {positionsData?.debts.map((coin) => (
+                          {accountStats?.debts.map((coin) => (
                             <tr key={coin.denom} className='text-xs text-red-500'>
                               <td className='text-white/50'>{getTokenSymbol(coin.denom)}</td>
                               <td>

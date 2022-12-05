@@ -128,6 +128,8 @@ const useAccountStats = (actions?: AccountStatsAction[]) => {
       risk,
       totalPosition,
       totalDebt,
+      assets,
+      debts,
     }
   }, [marketsData, positionsData, tokenPrices])
 
@@ -219,16 +221,18 @@ const useAccountStats = (actions?: AccountStatsAction[]) => {
       }
     })
 
-    const assets = resultPositionsCoins.map((coin) => {
-      const market = marketsData[coin.denom]
+    const assets = resultPositionsCoins
+      .filter((coin) => coin.amount !== '0')
+      .map((coin) => {
+        const market = marketsData[coin.denom]
 
-      return {
-        amount: coin.amount,
-        denom: coin.denom,
-        liquidationThreshold: market.liquidation_threshold,
-        basePrice: tokenPrices[coin.denom],
-      }
-    })
+        return {
+          amount: coin.amount,
+          denom: coin.denom,
+          liquidationThreshold: market.liquidation_threshold,
+          basePrice: tokenPrices[coin.denom],
+        }
+      })
 
     const debts = resultPositionsDebts.map((debt) => {
       return {
@@ -249,6 +253,8 @@ const useAccountStats = (actions?: AccountStatsAction[]) => {
       risk,
       totalPosition,
       totalDebt,
+      assets,
+      debts,
     }
   }, [actions, marketsData, positionsData, tokenPrices])
 
