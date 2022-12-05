@@ -27,8 +27,6 @@ const AccountStatus = ({ createCreditAccount }: Props) => {
     )
   }
 
-  console.log(accountStats)
-
   return (
     <div className='flex w-[400px] items-center justify-between gap-3 border-l border-l-white/20 px-3 py-3'>
       {accountStats && (
@@ -70,11 +68,9 @@ const AccountStatus = ({ createCreditAccount }: Props) => {
             max={100}
             balance={100 - accountStats.health * 100}
             barHeight='16px'
-            decimals={1}
             hideValues={true}
             showTitle={false}
             className='w-[140px]'
-            percentageDelta={40}
           />
         </>
       )}

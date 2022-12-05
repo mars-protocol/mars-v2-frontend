@@ -291,11 +291,9 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
                     max={100}
                     balance={100 - accountStats.health * 100}
                     barHeight='16px'
-                    decimals={1}
                     hideValues={true}
                     showTitle={false}
                     className='w-[140px]'
-                    percentageDelta={40}
                   />
                 </div>
               )}

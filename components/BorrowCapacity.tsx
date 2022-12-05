@@ -14,7 +14,6 @@ interface Props {
   showPercentageText?: boolean
   className?: string
   hideValues?: boolean
-  percentageDelta?: number
   decimals?: number
 }
 
@@ -27,50 +26,25 @@ export const BorrowCapacity = ({
   showPercentageText = true,
   className,
   hideValues,
-  percentageDelta = 15,
   decimals = 2,
 }: Props) => {
   const [percentOfMaxRound, setPercentOfMaxRound] = useState(0)
   const [percentOfMaxRange, setPercentOfMaxRange] = useState(0)
-  const [percentOfMaxMargin, setPercentOfMaxMargin] = useState('10px')
   const [limitPercentOfMax, setLimitPercentOfMax] = useState(0)
-  const [timer, setTimer] = useState<ReturnType<typeof setTimeout>>()
 
   useEffect(
     () => {
-      clearTimeout(timer)
-      const percent = max === 0 ? 0 : (balance / max) * 100
-      const delta = percent - percentOfMaxRound
-      const startingPoint = percentOfMaxRound
-
       if (max === 0) {
-        setPercentOfMaxMargin('10px')
         setPercentOfMaxRound(0)
         setPercentOfMaxRange(0)
         setLimitPercentOfMax(0)
         return
       }
 
-      const pOfMax = +((balance / max) * 100).toFixed(2)
-      setPercentOfMaxRound(+(Math.round(pOfMax * 100) / 100).toFixed(1))
+      const pOfMax = +((balance / max) * 100)
+      setPercentOfMaxRound(+(Math.round(pOfMax * 100) / 100))
       setPercentOfMaxRange(Math.min(Math.max(pOfMax, 0), 100))
       setLimitPercentOfMax((limit / max) * 100)
-
-      for (let i = 0; i < 20; i++) {
-        setTimer(
-          setTimeout(() => {
-            const currentPercentOfMax = startingPoint + (delta / 20) * i
-            const leftMargin =
-              currentPercentOfMax >= percentageDelta
-                ? percentageDelta > 15
-                  ? '-50px'
-                  : '-60px'
-                : '10px'
-            setPercentOfMaxMargin(leftMargin)
-          }, 50 * (i + 1)),
-        )
-      }
-      return () => clearTimeout(timer)
     }, // eslint-disable-next-line react-hooks/exhaustive-deps
     [balance, max],
   )
@@ -98,53 +72,50 @@ export const BorrowCapacity = ({
           )}
         </div>
         <Tooltip content={<Text size='sm'>Borrow Capacity Tooltip</Text>}>
-          <div
-            className='relative overflow-hidden rounded-3xl border-r-2 border-r-loss '
-            style={{ height: barHeight }}
-          >
-            <div className='absolute h-full w-full shadow-inset gradient-hatched'>
-              <div
-                className='absolute bottom-0 h-[120%] w-[1px] bg-white transition-[left] duration-1000 ease-linear'
-                style={{ left: `${limitPercentOfMax || 0}%` }}
-              />
-              <div
-                className='ease-loss absolute left-0 h-full max-w-full rounded-l-3xl bg-body-dark transition-[right] duration-1000'
-                style={{
-                  right: `${limitPercentOfMax ? 100 - limitPercentOfMax : 100}%`,
-                }}
-              ></div>
-
-              <div className='absolute top-0 h-full w-full overflow-hidden'>
+          <div className='relative'>
+            <div
+              className='overflow-hidden rounded-3xl border-r-2 border-r-loss '
+              style={{ height: barHeight }}
+            >
+              <div className='absolute h-full w-full rounded-lg shadow-inset gradient-hatched '>
                 <div
-                  className='h-full rounded-lg transition-[width] duration-1000 ease-linear'
+                  className='ease-loss absolute left-0 h-full max-w-full rounded-l-3xl bg-body-dark transition-[right] duration-1000'
                   style={{
-                    width: `${percentOfMaxRange || 0.02}%`,
-                    WebkitMask: 'linear-gradient(#fff 0 0)',
+                    right: `${limitPercentOfMax ? 100 - limitPercentOfMax : 100}%`,
                   }}
-                >
-                  <div className='absolute top-0 bottom-0 left-0 right-0 gradient-limit' />
-                </div>
-                {showPercentageText ? (
-                  <span
-                    className='absolute top-1/2 mt-[1px] w-[53px] -translate-y-1/2 transition-[left] duration-1000 ease-linear text-2xs-caps'
+                />
+
+                <div className='absolute top-0 h-full w-full'>
+                  <div
+                    className='h-full rounded-lg transition-[width] duration-1000 ease-linear'
                     style={{
-                      left: `${percentOfMaxRange}%`,
-                      marginLeft: percentOfMaxMargin,
+                      width: `${percentOfMaxRange || 0.02}%`,
+                      WebkitMask: 'linear-gradient(#fff 0 0)',
                     }}
                   >
-                    {max !== 0 && (
-                      <FormattedNumber
-                        className='text-white'
-                        animate
-                        amount={percentOfMaxRound}
-                        minDecimals={decimals}
-                        maxDecimals={decimals}
-                        suffix='%'
-                        abbreviated={false}
-                      />
-                    )}
-                  </span>
-                ) : null}
+                    <div className='absolute top-0 bottom-0 left-0 right-0 gradient-limit' />
+                  </div>
+
+                  <div
+                    className='absolute bottom-0 h-[120%] w-[1px] bg-white transition-[left] duration-1000 ease-linear'
+                    style={{ left: `${limitPercentOfMax || 0}%` }}
+                  />
+                  {showPercentageText ? (
+                    <span className='absolute top-1/2 mt-[1px] w-full -translate-y-1/2 animate-fadein text-center opacity-0 text-2xs-caps'>
+                      {max !== 0 && (
+                        <FormattedNumber
+                          className='text-white'
+                          animate
+                          amount={percentOfMaxRound}
+                          minDecimals={decimals}
+                          maxDecimals={decimals}
+                          suffix='%'
+                          abbreviated={false}
+                        />
+                      )}
+                    </span>
+                  ) : null}
+                </div>
               </div>
             </div>
           </div>

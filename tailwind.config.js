@@ -31,6 +31,7 @@ module.exports = {
     extend: {
       animation: {
         progress: 'spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite',
+        fadein: 'fadein 1s ease-in-out forwards',
       },
       backgroundImage: {
         mars: 'url(/images/bg.svg)',
@@ -114,6 +115,12 @@ module.exports = {
       },
       hueRotate: {
         '-82': '-82deg',
+      },
+      keyframes: {
+        fadein: {
+          '0%': { opacity: 0 },
+          '100%': { opacity: 1 },
+        },
       },
       letterSpacing: {
         normal: 0,
