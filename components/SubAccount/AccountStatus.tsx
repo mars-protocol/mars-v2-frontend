@@ -38,7 +38,7 @@ const AccountStatus = ({ createCreditAccount }: Props) => {
               amount={BigNumber(accountStats.netWorth)
                 .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
                 .toNumber()}
-              animate={true}
+              animate
               prefix='$: '
             />
           </Text>

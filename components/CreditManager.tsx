@@ -59,7 +59,7 @@ const CreditManager = () => {
               amount={BigNumber(accountStats?.totalPosition ?? 0)
                 .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
                 .toNumber()}
-              animate={true}
+              animate
               prefix='$'
             />
           </Text>
@@ -73,7 +73,7 @@ const CreditManager = () => {
               amount={BigNumber(accountStats?.totalDebt ?? 0)
                 .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
                 .toNumber()}
-              animate={true}
+              animate
               prefix='$'
             />
           </Text>
@@ -109,7 +109,7 @@ const CreditManager = () => {
                 <Text size='xs' className='flex-1 text-white/60'>
                   <FormattedNumber
                     amount={getTokenTotalUSDValue(coin.amount, coin.denom)}
-                    animate={true}
+                    animate
                     prefix='$'
                   />
                 </Text>
@@ -118,7 +118,7 @@ const CreditManager = () => {
                     amount={BigNumber(coin.amount)
                       .div(10 ** getTokenDecimals(coin.denom))
                       .toNumber()}
-                    animate={true}
+                    animate
                     minDecimals={0}
                     maxDecimals={4}
                   />
@@ -137,7 +137,7 @@ const CreditManager = () => {
                   <FormattedNumber
                     amount={getTokenTotalUSDValue(coin.amount, coin.denom)}
                     prefix='-$'
-                    animate={true}
+                    animate
                   />
                 </Text>
                 <Text size='xs' className='flex-1 text-white/60'>
@@ -147,7 +147,7 @@ const CreditManager = () => {
                       .toNumber()}
                     minDecimals={0}
                     maxDecimals={4}
-                    animate={true}
+                    animate
                   />
                 </Text>
                 <Text size='xs' className='flex-1 text-white/60'>
@@ -157,7 +157,7 @@ const CreditManager = () => {
                     maxDecimals={2}
                     prefix='-'
                     suffix='%'
-                    animate={true}
+                    animate
                   />
                 </Text>
               </div>

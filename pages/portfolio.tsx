@@ -62,7 +62,7 @@ const Portfolio = () => {
             <div className='grid grid-cols-3 gap-4'>
               <div>
                 <Text>
-                  <FormattedNumber amount={account.networth} animate={true} prefix='$' />
+                  <FormattedNumber amount={account.networth} animate prefix='$' />
                 </Text>
                 <Text size='sm' className='text-white/40'>
                   Net worth
@@ -70,7 +70,7 @@ const Portfolio = () => {
               </div>
               <div>
                 <Text>
-                  <FormattedNumber amount={account.totalPositionValue} animate={true} prefix='$' />
+                  <FormattedNumber amount={account.totalPositionValue} animate prefix='$' />
                 </Text>
                 <Text size='sm' className='text-white/40'>
                   Total Position Value
@@ -78,7 +78,7 @@ const Portfolio = () => {
               </div>
               <div>
                 <Text>
-                  <FormattedNumber amount={account.debt} animate={true} prefix='$' />
+                  <FormattedNumber amount={account.debt} animate prefix='$' />
                 </Text>
                 <Text size='sm' className='text-white/40'>
                   Debt
@@ -88,7 +88,7 @@ const Portfolio = () => {
                 <Text className={account.profit > 0 ? 'text-green-400' : 'text-red-500'}>
                   <FormattedNumber
                     amount={account.debt}
-                    animate={true}
+                    animate
                     prefix={account.profit > 0 ? '+$' : '$'}
                   />
                 </Text>

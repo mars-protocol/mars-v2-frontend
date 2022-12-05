@@ -260,7 +260,7 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
                         .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
                         .toNumber()}
                       prefix='$: '
-                      animate={true}
+                      animate
                     />
                   </Text>
 
@@ -312,7 +312,7 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
                       .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
                       .toNumber()}
                     prefix='$'
-                    animate={true}
+                    animate
                   />
                 </Text>
               </div>
@@ -326,7 +326,7 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
                       .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
                       .toNumber()}
                     prefix='$'
-                    animate={true}
+                    animate
                   />
                 </Text>
               </div>
@@ -365,7 +365,7 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
                         <FormattedNumber
                           amount={getTokenTotalUSDValue(coin.amount, coin.denom)}
                           prefix='$'
-                          animate={true}
+                          animate
                         />
                       </Text>
                       <Text size='xs' className='flex-1 text-white/60'>
@@ -375,7 +375,7 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
                             .toNumber()}
                           minDecimals={0}
                           maxDecimals={4}
-                          animate={true}
+                          animate
                         />
                       </Text>
                       <Text size='xs' className='flex-1 text-white/60'>
@@ -392,7 +392,7 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
                         <FormattedNumber
                           amount={getTokenTotalUSDValue(coin.amount, coin.denom)}
                           prefix='-$'
-                          animate={true}
+                          animate
                         />
                       </Text>
                       <Text size='xs' className='flex-1 text-white/60'>
@@ -402,7 +402,7 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
                             .toNumber()}
                           minDecimals={0}
                           maxDecimals={4}
-                          animate={true}
+                          animate
                         />
                       </Text>
                       <Text size='xs' className='flex-1 text-white/60'>
@@ -412,7 +412,7 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
                           maxDecimals={2}
                           prefix='-'
                           suffix='%'
-                          animate={true}
+                          animate
                         />
                       </Text>
                     </div>
