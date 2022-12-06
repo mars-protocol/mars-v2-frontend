@@ -1,9 +1,10 @@
-import { FundAccountModal, WithdrawModal } from './Account'
+import { ConfirmModal, FundAccountModal, WithdrawModal } from './Account'
 
 const Modals = () => (
   <>
     <FundAccountModal />
     <WithdrawModal />
+    <ConfirmModal />
   </>
 )
 

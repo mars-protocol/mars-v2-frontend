@@ -4,15 +4,18 @@ import classNames from 'classnames'
 import Button from 'components/Button'
 import FormattedNumber from 'components/FormattedNumber'
 import ArrowRightLine from 'components/Icons/arrow-right-line.svg'
+import ChevronDown from 'components/Icons/chevron-down.svg'
 import ChevronLeft from 'components/Icons/chevron-left.svg'
 import Text from 'components/Text'
 import useAccountStats from 'hooks/useAccountStats'
 import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useMarkets from 'hooks/useMarkets'
 import useTokenPrices from 'hooks/useTokenPrices'
+import { useState } from 'react'
 import useAccountDetailsStore from 'stores/useAccountDetailsStore'
 import { chain } from 'utils/chains'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
+import AccountManageOverlay from './AccountManageOverlay'
 
 const AccountDetails = () => {
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
@@ -26,6 +29,8 @@ const AccountDetails = () => {
   const { data: tokenPrices } = useTokenPrices()
   const { data: marketsData } = useMarkets()
   const accountStats = useAccountStats()
+
+  const [showManageMenu, setShowManageMenu] = useState(false)
 
   const getTokenTotalUSDValue = (amount: string, denom: string) => {
     // early return if prices are not fetched yet
@@ -63,10 +68,17 @@ const AccountDetails = () => {
           <ChevronLeft />
         </span>
       </Button>
-      <div className='flex w-full flex-wrap items-center border-b border-white/20'>
-        <Text size='xl' uppercase={true} className='flex-grow text-center text-white'>
+      <div className='relative flex w-full flex-wrap items-center border-b border-white/20'>
+        <Button
+          variant='text'
+          className='flex flex-grow flex-nowrap items-center justify-center p-4 text-center text-white text-xl-caps'
+          onClick={() => setShowManageMenu(!showManageMenu)}
+        >
           Account {selectedAccount}
-        </Text>
+          <span className='ml-2 flex w-4'>
+            <ChevronDown />
+          </span>
+        </Button>
         <div className='flex border-l border-white/20' onClick={() => {}}>
           <Button
             variant='text'
@@ -78,6 +90,11 @@ const AccountDetails = () => {
             <ArrowRightLine />
           </Button>
         </div>
+        <AccountManageOverlay
+          className='top-[60px] left-[36px]'
+          show={showManageMenu}
+          setShow={setShowManageMenu}
+        />
       </div>
       <div className='flex w-full flex-wrap p-2'>
         <div className='mb-2 flex w-full'>

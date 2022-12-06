@@ -1,23 +1,23 @@
 import Link from 'next/link'
 
 import { AccountNavigation, AccountStatus } from 'components/Account'
-import CircularProgress from 'components/CircularProgress'
 import Logo from 'components/Icons/logo.svg'
-import Modal from 'components/Modal'
 import { menuTree, NavLink } from 'components/Navigation'
 import SearchInput from 'components/Navigation/SearchInput'
-import Text from 'components/Text'
 import Wallet from 'components/Wallet'
 import useCreateCreditAccount from 'hooks/mutations/useCreateCreditAccount'
 import useDeleteCreditAccount from 'hooks/mutations/useDeleteCreditAccount'
 import useCreditAccounts from 'hooks/useCreditAccounts'
+import { useEffect } from 'react'
 import useAccountDetailsStore from 'stores/useAccountDetailsStore'
 import useWalletStore from 'stores/useWalletStore'
+import useModalStore from 'stores/useModalStore'
 
 const Navigation = () => {
   const address = useWalletStore((s) => s.address)
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
-
+  const setDeleteAccountModal = useModalStore((s) => s.actions.setDeleteAccountModal)
+  const setCreateAccountModal = useModalStore((s) => s.actions.setCreateAccountModal)
   const { mutate: createCreditAccount, isLoading: isLoadingCreate } = useCreateCreditAccount()
   const { mutate: deleteCreditAccount, isLoading: isLoadingDelete } = useDeleteCreditAccount(
     selectedAccount || '',
@@ -27,6 +27,14 @@ const Navigation = () => {
 
   const isConnected = !!address
   const hasCreditAccounts = creditAccountsList && creditAccountsList.length > 0
+
+  useEffect(() => {
+    setCreateAccountModal(isLoadingCreate)
+  }, [isLoadingCreate])
+
+  useEffect(() => {
+    setDeleteAccountModal(isLoadingDelete)
+  }, [isLoadingDelete])
 
   return (
     <div className='relative hidden bg-header lg:block'>
@@ -62,16 +70,6 @@ const Navigation = () => {
         </div>
         {isConnected && <AccountStatus createCreditAccount={createCreditAccount} />}
       </div>
-      <Modal open={isLoadingCreate || isLoadingDelete}>
-        <div className='w-full p-6'>
-          <Text size='2xl' uppercase={true} className='mb-6 w-full text-center'>
-            Confirm Transaction
-          </Text>
-          <div className='flex w-full justify-center pb-6'>
-            <CircularProgress size={40} />
-          </div>
-        </div>
-      </Modal>
     </div>
   )
 }
