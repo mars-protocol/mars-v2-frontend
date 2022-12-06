@@ -1,29 +1,22 @@
 import classNames from 'classnames'
-import React, { useEffect } from 'react'
-import { useWallet, WalletConnectionStatus } from '@marsprotocol/wallet-connector'
+import React from 'react'
 
 import AccountManager from 'components/Account/AccountDetails'
 import DesktopNavigation from 'components/Navigation/DesktopNavigation'
 import useCreditAccounts from 'hooks/useCreditAccounts'
-import { useWalletStore } from 'stores'
-
-const filter = {
-  day: 'brightness-100 hue-rotate-0',
-  night: '-hue-rotate-82 brightness-30',
-}
+import useWalletStore from 'stores/useWalletStore'
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
+  const address = useWalletStore((s) => s.address)
   const { data: creditAccountsList, isLoading: isLoadingCreditAccounts } = useCreditAccounts()
   const hasCreditAccounts = creditAccountsList && creditAccountsList.length > 0
 
-  const { status, signingCosmWasmClient, chainInfo, address, name } = useWallet()
-  const initialize = useWalletStore((s) => s.actions.initialize)
+  const filter = {
+    day: 'brightness-100 hue-rotate-0',
+    night: '-hue-rotate-82 brightness-30',
+  }
 
-  useEffect(() => {
-    initialize(status, signingCosmWasmClient, address, name, chainInfo)
-  }, [status, signingCosmWasmClient, chainInfo, address, name, initialize])
-
-  const isConnected = status === WalletConnectionStatus.Connected
+  const isConnected = !!address
 
   const backgroundClasses = classNames(
     isConnected ? filter.day : filter.night,

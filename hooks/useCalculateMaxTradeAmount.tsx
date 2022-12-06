@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { useCallback, useMemo } from 'react'
 
-import { useAccountDetailsStore } from 'stores'
+import useAccountDetailsStore from 'stores/useAccountDetailsStore'
 
 import useCreditAccountPositions from './useCreditAccountPositions'
 import useMarkets from './useMarkets'

@@ -13,7 +13,7 @@ import Text from 'components/Text'
 import useDepositCreditAccount from 'hooks/mutations/useDepositCreditAccount'
 import useAllBalances from 'hooks/useAllBalances'
 import useAllowedCoins from 'hooks/useAllowedCoins'
-import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useAccountDetailsStore from 'stores/useAccountDetailsStore'
 import useModalStore from 'stores/useModalStore'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
@@ -24,7 +24,7 @@ const FundAccountModal = () => {
   const open = useModalStore((s) => s.fundAccountModal)
   const setOpen = useModalStore((s) => s.actions.setFundAccountModal)
 
-  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
+  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
   const [lendAssets, setLendAssets] = useLocalStorageState(`lendAssets_${selectedAccount}`, {
     defaultValue: false,
   })

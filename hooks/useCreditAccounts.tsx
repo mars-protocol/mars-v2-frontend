@@ -2,7 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
 import { contractAddresses } from 'config/contracts'
-import { useAccountDetailsStore, useWalletStore } from 'stores'
+import useAccountDetailsStore from 'stores/useAccountDetailsStore'
+import useWalletStore from 'stores/useWalletStore'
 import { queryKeys } from 'types/query-keys-factory'
 
 type Result = {
@@ -11,11 +12,9 @@ type Result = {
 
 const useCreditAccounts = () => {
   const address = useWalletStore((s) => s.address)
-  const client = useWalletStore((s) => s.signingClient)
+  const client = useWalletStore((s) => s.client)
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
-  const setSelectedAccount = (account: string) => {
-    useAccountDetailsStore.setState({ selectedAccount: account })
-  }
+  const creditManagerActions = useAccountDetailsStore((s) => s.actions)
 
   const queryMsg = useMemo(() => {
     return {
@@ -26,14 +25,14 @@ const useCreditAccounts = () => {
   }, [address])
 
   const result = useQuery<Result>(
-    queryKeys.creditAccounts(address ?? ''),
+    queryKeys.creditAccounts(address),
     async () => client?.queryContractSmart(contractAddresses.accountNft, queryMsg),
     {
       staleTime: Infinity,
       enabled: !!address && !!client,
       onSuccess: (data) => {
         if (!data.tokens.includes(selectedAccount || '') && data.tokens.length > 0) {
-          setSelectedAccount(data.tokens[0])
+          creditManagerActions.setSelectedAccount(data.tokens[0])
         }
       },
     },

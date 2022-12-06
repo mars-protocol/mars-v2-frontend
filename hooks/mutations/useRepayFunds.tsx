@@ -2,7 +2,8 @@ import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react
 import { useMemo } from 'react'
 import { toast } from 'react-toastify'
 
-import { useAccountDetailsStore, useWalletStore } from 'stores'
+import useAccountDetailsStore from 'stores/useAccountDetailsStore'
+import useWalletStore from 'stores/useWalletStore'
 import { queryKeys } from 'types/query-keys-factory'
 import { hardcodedFee } from 'utils/contants'
 
@@ -50,8 +51,8 @@ const useRepayFunds = (
     {
       onSettled: () => {
         queryClient.invalidateQueries(queryKeys.creditAccountsPositions(selectedAccount))
-        queryClient.invalidateQueries(queryKeys.tokenBalance(address ?? '', denom))
-        queryClient.invalidateQueries(queryKeys.allBalances(address ?? ''))
+        queryClient.invalidateQueries(queryKeys.tokenBalance(address, denom))
+        queryClient.invalidateQueries(queryKeys.allBalances(address))
         queryClient.invalidateQueries(queryKeys.redbankBalances())
       },
       onError: (err: Error) => {
