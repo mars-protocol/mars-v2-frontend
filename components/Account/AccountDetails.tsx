@@ -16,7 +16,7 @@ import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 const AccountDetails = () => {
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
-  const toggleAccountManager = useAccountDetailsStore((s) => s.actions.toggleAccountManager)
+  const toggleAccountDetails = useAccountDetailsStore((s) => s.actions.toggleAccountDetails)
   const isOpen = useAccountDetailsStore((s) => s.isOpen)
 
   const { data: positionsData, isLoading: isLoadingPositions } = useCreditAccountPositions(
@@ -47,7 +47,7 @@ const AccountDetails = () => {
       )}
     >
       <Button
-        onClick={!isOpen ? toggleAccountManager : () => false}
+        onClick={!isOpen ? toggleAccountDetails : () => false}
         variant='text'
         className={classNames(
           'absolute top-1/2 -left-[22px] -translate-y-1/2 bg-header px-1 py-6',
@@ -67,7 +67,7 @@ const AccountDetails = () => {
           Account {selectedAccount}
         </Text>
         <div className='flex border-l border-white/20 p-4' onClick={() => {}}>
-          <span className='w-5 hover:cursor-pointer' onClick={toggleAccountManager}>
+          <span className='w-5 hover:cursor-pointer' onClick={toggleAccountDetails}>
             <ArrowRightLine />
           </span>
         </div>
