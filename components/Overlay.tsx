@@ -18,7 +18,7 @@ const Overlay = ({ children, content, className, show, setShow }: Props) => {
     <>
       <div
         className={classNames(
-          'absolute z-50 flex max-w-full rounded-lg p-6 text-accent-dark shadow-overlay gradient-popover',
+          'max-w-screen absolute z-50 rounded-lg shadow-overlay gradient-popover',
           className,
         )}
       >

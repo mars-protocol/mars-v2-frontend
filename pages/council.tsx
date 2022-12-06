@@ -1,11 +1,14 @@
-import React from 'react'
-
 import Card from 'components/Card'
+import Text from 'components/Text'
 
 const Council = () => {
   return (
-    <div>
-      <Card>Council Placeholder</Card>
+    <div className='flex w-full'>
+      <Card>
+        <Text size='lg' uppercase={true}>
+          Council Placeholder
+        </Text>
+      </Card>
     </div>
   )
 }

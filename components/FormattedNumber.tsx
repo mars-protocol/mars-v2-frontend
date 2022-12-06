@@ -17,7 +17,7 @@ interface Props {
   abbreviated?: boolean
 }
 
-const Number = ({
+const FormattedNumber = ({
   amount,
   animate = false,
   className,
@@ -72,4 +72,4 @@ const Number = ({
   )
 }
 
-export default React.memo(Number)
+export default React.memo(FormattedNumber)

@@ -7,8 +7,8 @@ import { toast } from 'react-toastify'
 import Button from 'components/Button'
 import CircularProgress from 'components/CircularProgress'
 import ContainerSecondary from 'components/ContainerSecondary'
+import Gauge from 'components/Gauge'
 import ProgressBar from 'components/ProgressBar'
-import SemiCircleProgress from 'components/SemiCircleProgress'
 import Slider from 'components/Slider'
 import Text from 'components/Text'
 import Tooltip from 'components/Tooltip'
@@ -21,7 +21,7 @@ import useMarkets from 'hooks/useMarkets'
 import useTokenPrices from 'hooks/useTokenPrices'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
 import { chain } from 'utils/chains'
-import { formatCurrency } from 'utils/formatters'
+import { formatCurrency, formatValue } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 type Props = {
@@ -261,14 +261,29 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
                               .toNumber(),
                           )}
                         </p>
-                        {/* TOOLTIP */}
-                        <div title={`${String(accountStats.currentLeverage.toFixed(1))}x`}>
-                          <SemiCircleProgress
-                            value={accountStats.currentLeverage / accountStats.maxLeverage}
-                            label='Lvg'
-                          />
-                        </div>
-                        <SemiCircleProgress value={accountStats.risk} label='Risk' />
+                        <Gauge
+                          value={accountStats.currentLeverage / accountStats.maxLeverage}
+                          label='Lvg'
+                          tooltip={
+                            <Text size='sm'>
+                              Current Leverage:{' '}
+                              {formatValue(accountStats.currentLeverage, 0, 2, true, false, 'x')}
+                              <br />
+                              Max Leverage:{' '}
+                              {formatValue(accountStats.maxLeverage, 0, 2, true, false, 'x')}
+                            </Text>
+                          }
+                        />
+                        <Gauge
+                          value={accountStats.risk}
+                          label='Risk'
+                          tooltip={
+                            <Text size='sm'>
+                              Current Risk:{' '}
+                              {formatValue(accountStats.risk * 100, 0, 2, true, false, '%')}
+                            </Text>
+                          }
+                        />
                         <ProgressBar value={accountStats.health} />
                       </div>
                     )}

@@ -53,15 +53,19 @@ const calculateStatsFromAccountPositions = (assets: Asset[], debts: Debt[]) => {
 
   const netWorth = BigNumber(totalPosition).minus(totalDebt).toNumber()
 
-  const liquidationLTVsWeightedAverage = BigNumber(totalWeightedPositions)
-    .div(totalPosition)
-    .toNumber()
+  const liquidationLTVsWeightedAverage =
+    totalWeightedPositions === 0
+      ? 0
+      : BigNumber(totalWeightedPositions).div(totalPosition).toNumber()
 
   const maxLeverage = BigNumber(1)
     .div(BigNumber(1).minus(liquidationLTVsWeightedAverage))
     .toNumber()
-  const currentLeverage = BigNumber(totalPosition).div(netWorth).toNumber()
-  const health = BigNumber(1).minus(BigNumber(currentLeverage).div(maxLeverage)).toNumber() || 1
+  const currentLeverage = netWorth === 0 ? 0 : BigNumber(totalPosition).div(netWorth).toNumber()
+  const health =
+    maxLeverage === 0
+      ? 1
+      : BigNumber(1).minus(BigNumber(currentLeverage).div(maxLeverage)).toNumber() || 1
 
   const risk = liquidationLTVsWeightedAverage
     ? getRiskFromAverageLiquidationLTVs(liquidationLTVsWeightedAverage)
