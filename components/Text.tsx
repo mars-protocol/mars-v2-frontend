@@ -5,7 +5,6 @@ interface Props {
   children: ReactNode | string
   className?: string
   monospace?: boolean
-  role?: 'button'
   size?: '3xs' | '2xs' | 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl' | '6xl'
   tag?: 'p' | 'span' | 'h1' | 'h2' | 'h3' | 'h4'
   uppercase?: boolean
@@ -19,7 +18,6 @@ const Text = ({
   children,
   className,
   monospace = false,
-  role,
   size = 'base',
   tag = 'p',
   uppercase = false,
@@ -37,7 +35,6 @@ const Text = ({
         monospace && 'number',
       )}
       onClick={onClick}
-      role={role}
     >
       {children}
     </HtmlElement>

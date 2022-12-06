@@ -12,7 +12,7 @@ interface Props {
   showProgressIndicator?: boolean
   size?: 'small' | 'medium' | 'large'
   text?: string | ReactNode
-  variant?: 'solid' | 'transparent' | 'round'
+  variant?: 'solid' | 'transparent' | 'round' | 'text'
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
 }
 
@@ -54,6 +54,7 @@ const variantClasses = {
   solid: 'text-white',
   transparent: 'bg-transparent p-0',
   round: 'rounded-full p-0',
+  text: 'border-none bg-transparent',
 }
 
 const Button = React.forwardRef(function Button(
@@ -71,13 +72,27 @@ const Button = React.forwardRef(function Button(
   }: Props,
   ref,
 ) {
+  const buttonClasses = []
+
+  switch (variant) {
+    case 'round':
+      buttonClasses.push(sizeClasses[size], roundSizeClasses[size], colorClasses[color])
+      break
+    case 'transparent':
+      buttonClasses.push(sizeClasses[size], transparentColorClasses[color])
+      break
+
+    case 'solid':
+      buttonClasses.push(sizeClasses[size], colorClasses[color])
+      break
+    default:
+  }
+
   return (
     <button
       className={classNames(
         'cursor-pointer appearance-none break-normal rounded-3xl outline-none transition-colors',
-        variant === 'round' ? `${sizeClasses[size]} ${roundSizeClasses[size]}` : sizeClasses[size],
-        variant === 'transparent' ? transparentColorClasses[color] : colorClasses[color],
-        variantClasses[variant],
+        buttonClasses,
         disabled && 'pointer-events-none opacity-50',
         className,
       )}

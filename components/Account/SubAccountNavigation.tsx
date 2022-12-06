@@ -57,16 +57,16 @@ const SubAccountNavigation = ({
       <div className='relative'>
         {restCreditAccounts.length > 0 && (
           <>
-            <Text
-              className='flex items-center px-3 py-3 hover:text-white'
+            <Button
+              className='flex items-center px-3 py-3 text-base hover:text-white'
+              variant='text'
               onClick={() => setShowMoreMenu(!showMoreMenu)}
-              role='button'
             >
               More
               <span className='ml-1 inline-block w-3'>
                 <ChevronDownIcon />
               </span>
-            </Text>
+            </Button>
             <Overlay show={showMoreMenu} setShow={setShowMoreMenu}>
               <div className='flex w-[120px] flex-wrap p-4'>
                 {restCreditAccounts.map((account) => (
@@ -93,19 +93,19 @@ const SubAccountNavigation = ({
         )}
       </div>
       <div className='relative'>
-        <Text
+        <Button
           className={classNames(
-            'flex items-center px-3 py-3 hover:text-white',
+            'flex items-center px-3 py-3 text-base hover:text-white',
             showManageMenu ? 'text-white' : 'text-white/40',
           )}
           onClick={() => setShowManageMenu(!showManageMenu)}
-          role='button'
+          variant='text'
         >
           Manage
           <span className='ml-1 inline-block w-3'>
             <ChevronDownIcon />
           </span>
-        </Text>
+        </Button>
         <Overlay className='-left-[86px]' show={showManageMenu} setShow={setShowManageMenu}>
           <div className='flex w-[274px] flex-wrap'>
             <Text
