@@ -8,12 +8,10 @@ import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useMarkets from 'hooks/useMarkets'
 import useTokenPrices from 'hooks/useTokenPrices'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
-import useWalletStore from 'stores/useWalletStore'
 import { chain } from 'utils/chains'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 const CreditManager = () => {
-  const address = useWalletStore((s) => s.address)
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
   const toggleCreditManager = useCreditManagerStore((s) => s.actions.toggleCreditManager)
 

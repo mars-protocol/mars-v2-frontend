@@ -250,7 +250,7 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
 
                 <div className='flex w-1/2 flex-col justify-center bg-[#4A4C60] p-4'>
                   <p className='text-bold mb-3 text-xs uppercase text-white/50'>About</p>
-                  <h4 className='mb-4 text-xl'>Subaccount {selectedAccount}</h4>
+                  <h4 className='mb-4 text-xl'>Account {selectedAccount}</h4>
                   <div className='mb-2 rounded-md border border-white/20 p-3'>
                     {accountStats && (
                       <div className='flex items-center gap-x-3'>

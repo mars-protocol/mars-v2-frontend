@@ -20,24 +20,33 @@ import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useMarkets from 'hooks/useMarkets'
 import useTokenPrices from 'hooks/useTokenPrices'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useModalStore from 'stores/useModalStore'
 import { chain } from 'utils/chains'
 import { formatValue } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-interface Props {
-  open: boolean
-  setOpen: (open: boolean) => void
-}
 
-const WithdrawModal = ({ open, setOpen }: Props) => {
-  const [amount, setAmount] = useState(0)
-  const [selectedToken, setSelectedToken] = useState('')
-  const [isBorrowEnabled, setIsBorrowEnabled] = useState(false)
+const WithdrawModal = () => {
+  // ---------------
+  // STORE
+  // ---------------
+  const open = useModalStore((s) => s.withdrawModal)
+  const setOpen = useModalStore((s) => s.actions.setWithdrawModal)
 
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
   const { data: positionsData, isLoading: isLoadingPositions } = useCreditAccountPositions(
     selectedAccount ?? '',
   )
 
+  // ---------------
+  // LOCAL STATE
+  // ---------------
+  const [amount, setAmount] = useState(0)
+  const [selectedToken, setSelectedToken] = useState('')
+  const [isBorrowEnabled, setIsBorrowEnabled] = useState(false)
+
+  // ---------------
+  // EXTERNAL HOOKS
+  // ---------------
   const { data: balancesData } = useAllBalances()
   const { data: tokenPrices } = useTokenPrices()
   const { data: marketsData } = useMarkets()

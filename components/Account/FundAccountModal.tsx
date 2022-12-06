@@ -14,23 +14,30 @@ import useDepositCreditAccount from 'hooks/mutations/useDepositCreditAccount'
 import useAllBalances from 'hooks/useAllBalances'
 import useAllowedCoins from 'hooks/useAllowedCoins'
 import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useModalStore from 'stores/useModalStore'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
-interface Props {
-  open: boolean
-  setOpen: (open: boolean) => void
-}
-
-const FundAccountModal = ({ open, setOpen }: Props) => {
-  const [amount, setAmount] = useState(0)
-  const [selectedToken, setSelectedToken] = useState('')
+const FundAccountModal = () => {
+  // ---------------
+  // STORE
+  // ---------------
+  const open = useModalStore((s) => s.fundAccountModal)
+  const setOpen = useModalStore((s) => s.actions.setFundAccountModal)
 
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
-
   const [lendAssets, setLendAssets] = useLocalStorageState(`lendAssets_${selectedAccount}`, {
     defaultValue: false,
   })
 
+  // ---------------
+  // LOCAL STATE
+  // ---------------
+  const [amount, setAmount] = useState(0)
+  const [selectedToken, setSelectedToken] = useState('')
+
+  // ---------------
+  // EXTERNAL HOOKS
+  // ---------------
   const { data: balancesData } = useAllBalances()
   const { data: allowedCoinsData, isLoading: isLoadingAllowedCoins } = useAllowedCoins()
   const { mutate, isLoading } = useDepositCreditAccount(
