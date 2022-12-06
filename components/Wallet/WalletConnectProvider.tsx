@@ -1,11 +1,10 @@
 import { ChainInfoID, WalletManagerProvider, WalletType } from '@marsprotocol/wallet-connector'
-import { FC } from 'react'
-
 import { buttonColorClasses, buttonSizeClasses, buttonVariantClasses } from 'components/Button'
 import CircularProgress from 'components/CircularProgress'
 import CloseIcon from 'components/Icons/close.svg'
 import KeplrImage from 'public/images/keplr-wallet-extension.png'
 import WalletConnectImage from 'public/images/walletconnect-keplr.png'
+import { FC } from 'react'
 
 type Props = {
   children?: React.ReactNode
