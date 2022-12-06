@@ -4,6 +4,7 @@ const plugin = require('tailwindcss/plugin')
 module.exports = {
   content: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
   safelist: [
+    'h-15',
     'text-3xs',
     'text-3xs-caps',
     'text-2xs',
@@ -26,6 +27,7 @@ module.exports = {
     'text-4xl',
     'text-5xl-caps',
     'text-5xl',
+    'w-15',
   ],
   theme: {
     extend: {
@@ -113,6 +115,9 @@ module.exports = {
         semibold: 600,
         bold: 600,
       },
+      height: {
+        15: '60px',
+      },
       hueRotate: {
         '-82': '-82deg',
       },
@@ -140,6 +145,9 @@ module.exports = {
       },
       transitionProperty: {
         background: 'filter, -webkit-filter',
+      },
+      width: {
+        15: '60px',
       },
     },
   },

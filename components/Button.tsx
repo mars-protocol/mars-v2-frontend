@@ -16,7 +16,7 @@ interface Props {
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
 }
 
-const colorClasses = {
+export const buttonColorClasses = {
   primary:
     'border-none text-white bg-primary hover:bg-primary-highlight active:bg-primary-highlight-10 focus:bg-primary-highlight',
   secondary:
@@ -27,7 +27,7 @@ const colorClasses = {
     'border bg-transparent text-white/60 border-transparent hover:text-white hover:border-white active:text-white active:border-white',
 }
 
-const transparentColorClasses = {
+const buttonTransparentColorClasses = {
   primary:
     'border-none text-primary hover:text-primary-highlight active:text-primary-highlight focus:text-primary-highlight',
   secondary:
@@ -38,19 +38,19 @@ const transparentColorClasses = {
     'border border-transparent text-white/60 hover:text-white hover:border-white active:text-white active:border-white',
 }
 
-const roundSizeClasses = {
+const buttonRoundSizeClasses = {
   small: 'h-[32px] w-[32px]',
   medium: 'h-[40px] w-[40px]',
   large: 'h-[56px] w-[56px]',
 }
 
-const sizeClasses = {
+export const buttonSizeClasses = {
   small: 'text-sm px-5 py-1.5 min-h-[32px]',
   medium: 'text-base px-6 py-2.5 min-h-[40px]',
   large: 'text-lg px-6 py-2.5 min-h-[56px]',
 }
 
-const variantClasses = {
+export const buttonVariantClasses = {
   solid: 'text-white',
   transparent: 'bg-transparent p-0',
   round: 'rounded-full p-0',
@@ -76,15 +76,19 @@ const Button = React.forwardRef(function Button(
 
   switch (variant) {
     case 'round':
-      buttonClasses.push(sizeClasses[size], roundSizeClasses[size], colorClasses[color])
+      buttonClasses.push(
+        buttonSizeClasses[size],
+        buttonRoundSizeClasses[size],
+        buttonColorClasses[color],
+      )
       break
 
     case 'transparent':
-      buttonClasses.push(sizeClasses[size], transparentColorClasses[color])
+      buttonClasses.push(buttonSizeClasses[size], buttonTransparentColorClasses[color])
       break
 
     case 'solid':
-      buttonClasses.push(sizeClasses[size], colorClasses[color])
+      buttonClasses.push(buttonSizeClasses[size], buttonColorClasses[color])
       break
     default:
   }
@@ -94,6 +98,7 @@ const Button = React.forwardRef(function Button(
       className={classNames(
         'cursor-pointer appearance-none break-normal rounded-3xl outline-none transition-colors',
         buttonClasses,
+        buttonVariantClasses[variant],
         disabled && 'pointer-events-none opacity-50',
         className,
       )}

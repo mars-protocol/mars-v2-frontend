@@ -39,7 +39,7 @@ const CreditManager = () => {
   return (
     <div className='flex w-[400px] basis-[400px] flex-wrap content-start border-white/20 bg-header placeholder:border-l'>
       <div className='flex w-full flex-wrap items-center border-b border-white/20'>
-        <Text size='xl' uppercase={true} className='flex-grow text-center text-white'>
+        <Text size='xl' uppercase className='flex-grow text-center text-white'>
           Account {selectedAccount}
         </Text>
         <div className='flex border-l border-white/20 p-4' onClick={() => {}}>
@@ -80,7 +80,7 @@ const CreditManager = () => {
         </div>
       </div>
       <div className='flex w-full flex-wrap'>
-        <Text uppercase={true} className='w-full bg-black/20 px-4 py-2 text-white/40'>
+        <Text uppercase className='w-full bg-black/20 px-4 py-2 text-white/40'>
           Balances
         </Text>
         {isLoadingPositions ? (
@@ -88,16 +88,16 @@ const CreditManager = () => {
         ) : (
           <div className='flex w-full flex-wrap'>
             <div className='mb-2 flex w-full border-b border-white/20 bg-black/20 px-4 py-2'>
-              <Text size='xs' uppercase={true} className='flex-1 text-white'>
+              <Text size='xs' uppercase className='flex-1 text-white'>
                 Asset
               </Text>
-              <Text size='xs' uppercase={true} className='flex-1 text-white'>
+              <Text size='xs' uppercase className='flex-1 text-white'>
                 Value
               </Text>
-              <Text size='xs' uppercase={true} className='flex-1 text-white'>
+              <Text size='xs' uppercase className='flex-1 text-white'>
                 Size
               </Text>
-              <Text size='xs' uppercase={true} className='flex-1 text-white'>
+              <Text size='xs' uppercase className='flex-1 text-white'>
                 APY
               </Text>
             </div>

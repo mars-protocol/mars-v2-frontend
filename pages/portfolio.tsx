@@ -49,14 +49,14 @@ const Portfolio = () => {
   return (
     <div className='flex w-full items-start gap-4'>
       <Card className='flex-1'>
-        <Text size='lg' uppercase={true}>
+        <Text size='lg' uppercase>
           Portfolio Module
         </Text>
       </Card>
       <div className='grid grid-cols-2 gap-4'>
         {mockedAccounts.map((account) => (
           <Card key={account.id}>
-            <Text size='lg' uppercase={true} className='mb-4 text-center'>
+            <Text size='lg' uppercase className='mb-4 text-center'>
               {account.label}
             </Text>
             <div className='grid grid-cols-3 gap-4'>

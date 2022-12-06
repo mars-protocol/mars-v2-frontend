@@ -1,12 +1,9 @@
-export const formatWalletAddress = (address: string, substrLength = 6): string => {
-  if (address.length <= 10) {
-    return address
-  }
-
-  return `${address.slice(0, substrLength)}...${address.slice(
-    address.length - substrLength,
-    address.length,
-  )}`
+export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
+  const head = text.slice(0, h)
+  if (t === 0) return text.length > h + t ? head + '...' : text
+  const tail = text.slice(-1 * t, text.length)
+  if (h === 0) return text.length > h + t ? '...' + tail : text
+  return text.length > h + t ? [head, tail].join('...') : text
 }
 
 export const formatCurrency = (value: string | number) => {

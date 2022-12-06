@@ -47,7 +47,7 @@ const SubAccountNavigation = ({
           key={account}
           className={classNames(
             'cursor-pointer whitespace-nowrap px-4 text-base hover:text-white',
-            selectedAccount === account ? 'text-white' : ' text-white/40',
+            selectedAccount === account ? 'text-white' : 'text-white/40',
           )}
           variant='text'
           onClick={() => setSelectedAccount(account)}
@@ -109,11 +109,7 @@ const SubAccountNavigation = ({
         </Button>
         <Overlay className='-left-[86px]' show={showManageMenu} setShow={setShowManageMenu}>
           <div className='flex w-[274px] flex-wrap'>
-            <Text
-              size='sm'
-              uppercase={true}
-              className='w-full px-4 pt-4 text-center text-accent-dark'
-            >
+            <Text size='sm' uppercase className='w-full px-4 pt-4 text-center text-accent-dark'>
               Manage
             </Text>
             <div className='flex w-full justify-between border-b border-b-black/10 p-4'>

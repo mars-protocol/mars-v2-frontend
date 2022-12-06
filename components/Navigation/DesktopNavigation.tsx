@@ -7,7 +7,7 @@ import Modal from 'components/Modal'
 import { menuTree, NavLink } from 'components/Navigation'
 import SearchInput from 'components/Navigation/SearchInput'
 import Text from 'components/Text'
-import Wallet from 'components/Wallet'
+import Wallet from 'components/Wallet/Wallet'
 import useCreateCreditAccount from 'hooks/mutations/useCreateCreditAccount'
 import useDeleteCreditAccount from 'hooks/mutations/useDeleteCreditAccount'
 import useCreditAccounts from 'hooks/useCreditAccounts'
@@ -65,7 +65,7 @@ const Navigation = () => {
       </div>
       <Modal open={isLoadingCreate || isLoadingDelete}>
         <div className='w-full p-6'>
-          <Text size='2xl' uppercase={true} className='mb-6 w-full text-center'>
+          <Text size='2xl' uppercase className='mb-6 w-full text-center'>
             Confirm Transaction
           </Text>
           <div className='flex w-full justify-center pb-6'>
