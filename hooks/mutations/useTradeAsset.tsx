@@ -61,6 +61,15 @@ const useTradeAsset = (
       await creditManagerClient?.updateCreditAccount(
         { accountId: selectedAccount, actions },
         hardcodedFee,
+        undefined,
+        depositAmount > 0
+          ? [
+              {
+                denom: tokenIn,
+                amount: String(depositAmount),
+              },
+            ]
+          : undefined,
       ),
     {
       onSettled: () => {
