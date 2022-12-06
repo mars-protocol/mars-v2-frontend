@@ -43,16 +43,17 @@ const SubAccountNavigation = ({
   return (
     <>
       {firstCreditAccounts.map((account) => (
-        <Text
+        <Button
           key={account}
           className={classNames(
-            'cursor-pointer whitespace-nowrap px-4 hover:text-white',
+            'cursor-pointer whitespace-nowrap px-4 text-base hover:text-white',
             selectedAccount === account ? 'text-white' : ' text-white/40',
           )}
+          variant='text'
           onClick={() => setSelectedAccount(account)}
         >
           Account {account}
-        </Text>
+        </Button>
       ))}
       <div className='relative'>
         {restCreditAccounts.length > 0 && (
@@ -70,11 +71,11 @@ const SubAccountNavigation = ({
             <Overlay show={showMoreMenu} setShow={setShowMoreMenu}>
               <div className='flex w-[120px] flex-wrap p-4'>
                 {restCreditAccounts.map((account) => (
-                  <Text
+                  <Button
                     key={account}
-                    size='sm'
+                    variant='text'
                     className={classNames(
-                      'w-full whitespace-nowrap py-2 ',
+                      'w-full whitespace-nowrap py-2 text-sm',
                       selectedAccount === account
                         ? 'text-secondary'
                         : 'cursor-pointer text-accent-dark hover:text-secondary',
@@ -85,7 +86,7 @@ const SubAccountNavigation = ({
                     }}
                   >
                     Account {account}
-                  </Text>
+                  </Button>
                 ))}
               </div>
             </Overlay>
@@ -143,40 +144,40 @@ const SubAccountNavigation = ({
               </Button>
             </div>
             <div className='flex w-full flex-wrap p-4'>
-              <Text
-                size='sm'
-                className='w-full cursor-pointer whitespace-nowrap py-2  text-accent-dark hover:text-secondary'
+              <Button
+                className='w-full cursor-pointer whitespace-nowrap py-2 text-left text-sm text-accent-dark hover:text-secondary'
+                variant='text'
                 onClick={() => {
                   setShowManageMenu(!showManageMenu)
                   createCreditAccount()
                 }}
               >
                 Create Account
-              </Text>
-              <Text
-                size='sm'
-                className='w-full cursor-pointer whitespace-nowrap py-2  text-accent-dark hover:text-secondary'
+              </Button>
+              <Button
+                className='w-full cursor-pointer whitespace-nowrap py-2 text-left text-sm text-accent-dark hover:text-secondary'
+                variant='text'
                 onClick={() => {
                   setShowManageMenu(!showManageMenu)
                   deleteCreditAccount()
                 }}
               >
                 Close Account
-              </Text>
-              <Text
-                size='sm'
-                className='w-full cursor-pointer whitespace-nowrap py-2  text-accent-dark hover:text-secondary'
+              </Button>
+              <Button
+                className='w-full cursor-pointer whitespace-nowrap py-2 text-left text-sm text-accent-dark hover:text-secondary'
+                variant='text'
                 onClick={() => alert('TODO')}
               >
                 Transfer Balance
-              </Text>
-              <Text
-                size='sm'
-                className='w-full cursor-pointer whitespace-nowrap py-2  text-accent-dark hover:text-secondary'
+              </Button>
+              <Button
+                className='w-full cursor-pointer whitespace-nowrap py-2 text-left text-sm text-accent-dark hover:text-secondary'
+                variant='text'
                 onClick={() => alert('TODO')}
               >
                 Rearrange
-              </Text>
+              </Button>
             </div>
           </div>
         </Overlay>
