@@ -78,6 +78,7 @@ const Button = React.forwardRef(function Button(
     case 'round':
       buttonClasses.push(sizeClasses[size], roundSizeClasses[size], colorClasses[color])
       break
+
     case 'transparent':
       buttonClasses.push(sizeClasses[size], transparentColorClasses[color])
       break
