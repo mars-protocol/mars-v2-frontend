@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-import { AccountStatus, SubAccountNavigation } from 'components/Account'
+import { AccountNavigation, AccountStatus } from 'components/Account'
 import CircularProgress from 'components/CircularProgress'
 import Logo from 'components/Icons/logo.svg'
 import Modal from 'components/Modal'
@@ -17,7 +17,7 @@ import useWalletStore from 'stores/useWalletStore'
 const Navigation = () => {
   const address = useWalletStore((s) => s.address)
   const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
-  const setSelectedAccount = useCreditManagerStore((s) => s.actions.setSelectedAccount)
+
   const { mutate: createCreditAccount, isLoading: isLoadingCreate } = useCreateCreditAccount()
   const { mutate: deleteCreditAccount, isLoading: isLoadingDelete } = useDeleteCreditAccount(
     selectedAccount || '',
@@ -52,11 +52,10 @@ const Navigation = () => {
         <div className='flex items-center'>
           <SearchInput />
           {isConnected && hasCreditAccounts && (
-            <SubAccountNavigation
+            <AccountNavigation
               selectedAccount={selectedAccount}
               createCreditAccount={createCreditAccount}
               deleteCreditAccount={deleteCreditAccount}
-              setSelectedAccount={setSelectedAccount}
               creditAccountsList={creditAccountsList}
             />
           )}

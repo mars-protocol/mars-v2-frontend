@@ -1,15 +1,24 @@
 import create from 'zustand'
+import { persist } from 'zustand/middleware'
 
-interface AccountDetailsStore {
+interface CreditManagerStore {
   fundAccountModal: boolean
   withdrawModal: boolean
-  createAccountModal: boolean
-  deleteAccountModal: boolean
+  actions: {
+    setFundAccountModal: (show: boolean) => void
+    setWithdrawModal: (show: boolean) => void
+  }
 }
 
-export const useModalStore = create<AccountDetailsStore>()(() => ({
-  fundAccountModal: false,
-  withdrawModal: false,
-  createAccountModal: false,
-  deleteAccountModal: false,
-}))
+const useModalStore = create<CreditManagerStore>()(
+  persist((set) => ({
+    fundAccountModal: false,
+    withdrawModal: false,
+    actions: {
+      setFundAccountModal: (show) => set(() => ({ fundAccountModal: show })),
+      setWithdrawModal: (show) => set(() => ({ withdrawModal: show })),
+    },
+  })),
+)
+
+export default useModalStore

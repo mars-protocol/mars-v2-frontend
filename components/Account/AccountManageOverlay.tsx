@@ -1,4 +1,5 @@
-import { useEffect } from 'react'
+import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
+import { UseMutateFunction } from '@tanstack/react-query'
 
 import Button from 'components/Button'
 import PlusIcon from 'components/Icons/add.svg'
@@ -9,34 +10,21 @@ import DeleteIcon from 'components/Icons/rubbish.svg'
 import Overlay from 'components/Overlay/Overlay'
 import OverlayAction from 'components/Overlay/OverlayLink'
 import Text from 'components/Text'
-import useCreateCreditAccount from 'hooks/mutations/useCreateCreditAccount'
-import useDeleteCreditAccount from 'hooks/mutations/useDeleteCreditAccount'
-import { useAccountDetailsStore, useModalStore } from 'stores'
+import useModalStore from 'stores/useModalStore'
 
 interface Props {
-  className?: string
+  deleteAccount: UseMutateFunction<ExecuteResult | undefined, Error, void, unknown>
+  createAccount: () => void
   setShow: (show: boolean) => void
   show: boolean
 }
 
-const AccountManageOverlay = ({ className, setShow, show }: Props) => {
-  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
-
-  const { mutate: createCreditAccount, isLoading: isLoadingCreate } = useCreateCreditAccount()
-  const { mutate: deleteCreditAccount, isLoading: isLoadingDelete } = useDeleteCreditAccount(
-    selectedAccount || '',
-  )
-
-  useEffect(() => {
-    useModalStore.setState({ createAccountModal: isLoadingCreate })
-  }, [isLoadingCreate])
-
-  useEffect(() => {
-    useModalStore.setState({ deleteAccountModal: isLoadingDelete })
-  }, [isLoadingDelete])
+const AccountManageOverlay = ({ createAccount, deleteAccount, setShow, show }: Props) => {
+  const setFundAccountModal = useModalStore((s) => s.actions.setFundAccountModal)
+  const setWithdrawModal = useModalStore((s) => s.actions.setWithdrawModal)
 
   return (
-    <Overlay className={className} show={show} setShow={setShow}>
+    <Overlay className='-left-[86px]' show={show} setShow={setShow}>
       <div className='flex w-[274px] flex-wrap'>
         <Text size='sm' uppercase={true} className='w-full px-4 pt-4 text-center text-accent-dark'>
           Manage
@@ -45,7 +33,7 @@ const AccountManageOverlay = ({ className, setShow, show }: Props) => {
           <Button
             className='flex w-[115px] items-center justify-center pl-0 pr-2'
             onClick={() => {
-              useModalStore.setState({ fundAccountModal: true })
+              setFundAccountModal(true)
               setShow(false)
             }}
           >
@@ -58,7 +46,7 @@ const AccountManageOverlay = ({ className, setShow, show }: Props) => {
             className='flex w-[115px] items-center justify-center pl-0 pr-2'
             color='secondary'
             onClick={() => {
-              useModalStore.setState({ withdrawModal: true })
+              setWithdrawModal(true)
               setShow(false)
             }}
           >
@@ -72,13 +60,13 @@ const AccountManageOverlay = ({ className, setShow, show }: Props) => {
           <OverlayAction
             setShow={setShow}
             text='Create New Account'
-            onClick={createCreditAccount}
+            onClick={createAccount}
             icon={<PlusIcon />}
           />
           <OverlayAction
             setShow={setShow}
             text='Close Account'
-            onClick={deleteCreditAccount}
+            onClick={deleteAccount}
             icon={<DeleteIcon />}
           />
           <OverlayAction

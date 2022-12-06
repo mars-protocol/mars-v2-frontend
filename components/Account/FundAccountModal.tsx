@@ -13,7 +13,8 @@ import Text from 'components/Text'
 import useDepositCreditAccount from 'hooks/mutations/useDepositCreditAccount'
 import useAllBalances from 'hooks/useAllBalances'
 import useAllowedCoins from 'hooks/useAllowedCoins'
-import { useAccountDetailsStore, useModalStore } from 'stores'
+import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useModalStore from 'stores/useModalStore'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 const FundAccountModal = () => {
@@ -21,8 +22,9 @@ const FundAccountModal = () => {
   // STORE
   // ---------------
   const open = useModalStore((s) => s.fundAccountModal)
+  const setOpen = useModalStore((s) => s.actions.setFundAccountModal)
 
-  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
+  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
   const [lendAssets, setLendAssets] = useLocalStorageState(`lendAssets_${selectedAccount}`, {
     defaultValue: false,
   })
@@ -48,7 +50,7 @@ const FundAccountModal = () => {
       onSuccess: () => {
         setAmount(0)
         toast.success(`${amount} ${getTokenSymbol(selectedToken)} successfully Deposited`)
-        useModalStore.setState({ fundAccountModal: false })
+        setOpen(false)
       },
     },
   )
@@ -77,10 +79,6 @@ const FundAccountModal = () => {
     setAmount(value)
   }
 
-  const setOpen = (open: boolean) => {
-    useModalStore.setState({ fundAccountModal: open })
-  }
-
   const maxValue = walletAmount
   const percentageValue = isNaN(amount) ? 0 : (amount * 100) / maxValue
 
@@ -95,7 +93,7 @@ const FundAccountModal = () => {
 
         <div className='flex flex-1 flex-col items-start justify-between bg-fund-modal bg-cover p-6'>
           <div>
-            <Text size='2xs' uppercase className='mb-3  text-white'>
+            <Text size='2xs' uppercase={true} className='mb-3  text-white'>
               About
             </Text>
             <Text size='xl' className='mb-4 text-white'>
@@ -110,11 +108,11 @@ const FundAccountModal = () => {
         </div>
 
         <div className='flex flex-1 flex-col p-6'>
-          <Text size='xl' uppercase className='mb-4 text-white'>
+          <Text size='xl' uppercase={true} className='mb-4 text-white'>
             Account {selectedAccount}
           </Text>
           <div className='p-3" mb-2'>
-            <Text size='sm' uppercase className='mb-1 text-white'>
+            <Text size='sm' uppercase={true} className='mb-1 text-white'>
               Fund Account
             </Text>
             <Text size='sm' className='mb-6 text-white/60'>
@@ -163,7 +161,7 @@ const FundAccountModal = () => {
                     />
                   </div>
                 </div>
-                <Text size='xs' uppercase className='mb-2 text-white/60'>
+                <Text size='xs' uppercase={true} className='mb-2 text-white/60'>
                   {`In wallet: ${walletAmount.toLocaleString()} ${getTokenSymbol(selectedToken)}`}
                 </Text>
                 <Slider
@@ -184,7 +182,7 @@ const FundAccountModal = () => {
           </div>
           <div className='mb-2 flex items-center justify-between'>
             <div>
-              <Text size='sm' uppercase className='mb-1 text-white'>
+              <Text size='sm' uppercase={true} className='mb-1 text-white'>
                 Lending Assets
               </Text>
               <Text size='sm' className='text-white/60'>

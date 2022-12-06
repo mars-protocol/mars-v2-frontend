@@ -19,7 +19,8 @@ import useCalculateMaxWithdrawAmount from 'hooks/useCalculateMaxWithdrawAmount'
 import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useMarkets from 'hooks/useMarkets'
 import useTokenPrices from 'hooks/useTokenPrices'
-import { useAccountDetailsStore, useModalStore } from 'stores'
+import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useModalStore from 'stores/useModalStore'
 import { chain } from 'utils/chains'
 import { formatValue } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
@@ -29,8 +30,9 @@ const WithdrawModal = () => {
   // STORE
   // ---------------
   const open = useModalStore((s) => s.withdrawModal)
+  const setOpen = useModalStore((s) => s.actions.setWithdrawModal)
 
-  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
+  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
   const { data: positionsData, isLoading: isLoadingPositions } = useCreditAccountPositions(
     selectedAccount ?? '',
   )
@@ -93,7 +95,7 @@ const WithdrawModal = () => {
 
   const { mutate, isLoading } = useWithdrawFunds(withdrawAmount, borrowAmount, selectedToken, {
     onSuccess: () => {
-      useModalStore.setState({ withdrawModal: false })
+      setOpen(false)
       toast.success(`${amount} ${selectedTokenSymbol} successfully withdrawn`)
     },
   })
@@ -153,10 +155,6 @@ const WithdrawModal = () => {
     return (amount * 100) / maxWithdrawAmount
   }, [amount, maxWithdrawAmount])
 
-  const setOpen = (open: boolean) => {
-    useModalStore.setState({ withdrawModal: open })
-  }
-
   return (
     <Modal open={open} setOpen={setOpen}>
       <div className='flex min-h-[470px] w-full flex-wrap'>
@@ -169,7 +167,7 @@ const WithdrawModal = () => {
         <Text
           className='flex w-full border-b border-white/20 px-8 pt-4 pb-2 text-white'
           size='2xl'
-          uppercase
+          uppercase={true}
         >
           Withdraw from Account {selectedAccount}
         </Text>
@@ -209,7 +207,7 @@ const WithdrawModal = () => {
                   />
                 </div>
               </div>
-              <Text size='xs' uppercase className='mb-2 text-white/60'>
+              <Text size='xs' uppercase={true} className='mb-2 text-white/60'>
                 Available: {formatValue(maxWithdrawAmount, 0, 4, true, false, false, false, false)}
               </Text>
               <Slider
@@ -229,7 +227,7 @@ const WithdrawModal = () => {
             </div>
             <div className='flex items-center justify-between p-6'>
               <div className='flex flex-1 flex-wrap'>
-                <Text size='sm' className='text-white' uppercase>
+                <Text size='sm' className='text-white' uppercase={true}>
                   Withdraw with borrowing
                 </Text>
                 <Text size='sm' className='text-white/60'>
@@ -341,7 +339,7 @@ const WithdrawModal = () => {
               </div>
             </div>
             <div className='flex w-full flex-wrap'>
-              <Text uppercase className='w-full bg-black/20 px-6 py-2 text-white/40'>
+              <Text uppercase={true} className='w-full bg-black/20 px-6 py-2 text-white/40'>
                 Balances
               </Text>
               {isLoadingPositions ? (
@@ -349,16 +347,16 @@ const WithdrawModal = () => {
               ) : (
                 <div className='flex w-full flex-wrap'>
                   <div className='mb-2 flex w-full border-b border-white/20 bg-black/20 px-6 py-2 '>
-                    <Text size='xs' uppercase className='flex-1 text-white'>
+                    <Text size='xs' uppercase={true} className='flex-1 text-white'>
                       Asset
                     </Text>
-                    <Text size='xs' uppercase className='flex-1 text-white'>
+                    <Text size='xs' uppercase={true} className='flex-1 text-white'>
                       Value
                     </Text>
-                    <Text size='xs' uppercase className='flex-1 text-white'>
+                    <Text size='xs' uppercase={true} className='flex-1 text-white'>
                       Size
                     </Text>
-                    <Text size='xs' uppercase className='flex-1 text-white'>
+                    <Text size='xs' uppercase={true} className='flex-1 text-white'>
                       APY
                     </Text>
                   </div>
