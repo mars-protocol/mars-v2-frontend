@@ -5,18 +5,18 @@ interface AccountDetailsStore {
   isOpen: boolean
   selectedAccount: string | null
   actions: {
-    toggleAccountDetails: () => void
+    showAccountDetails: (show: boolean) => void
     setSelectedAccount: (id: string) => void
   }
 }
 
 const useAccountDetailsStore = create<AccountDetailsStore>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       isOpen: true,
       selectedAccount: null,
       actions: {
-        toggleAccountDetails: () => set(() => ({ isOpen: !get().isOpen })),
+        showAccountDetails: (show) => set(() => ({ isOpen: show })),
         setSelectedAccount: (accountId: string) => {
           set(() => ({
             selectedAccount: accountId,
