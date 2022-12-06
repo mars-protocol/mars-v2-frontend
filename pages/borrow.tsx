@@ -11,7 +11,7 @@ import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useMarkets from 'hooks/useMarkets'
 import useRedbankBalances from 'hooks/useRedbankBalances'
 import useTokenPrices from 'hooks/useTokenPrices'
-import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useAccountDetailsStore from 'stores/useAccountDetailsStore'
 import { getTokenDecimals, getTokenInfo } from 'utils/tokens'
 
 type ModalState = {
@@ -27,7 +27,7 @@ const Borrow = () => {
     data: { tokenDenom: '' },
   })
 
-  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
+  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
 
   const { data: allowedCoinsData } = useAllowedCoins()
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')

@@ -1,22 +1,22 @@
 import create from 'zustand'
 import { persist } from 'zustand/middleware'
 
-interface CreditManagerStore {
+interface AccountDetailsStore {
   isOpen: boolean
   selectedAccount: string | null
   actions: {
-    toggleCreditManager: () => void
+    toggleAccountDetails: () => void
     setSelectedAccount: (id: string) => void
   }
 }
 
-const useCreditManagerStore = create<CreditManagerStore>()(
+const useAccountDetailsStore = create<AccountDetailsStore>()(
   persist(
     (set, get) => ({
       isOpen: true,
       selectedAccount: null,
       actions: {
-        toggleCreditManager: () => set(() => ({ isOpen: !get().isOpen })),
+        toggleAccountDetails: () => set(() => ({ isOpen: !get().isOpen })),
         setSelectedAccount: (accountId: string) => {
           set(() => ({
             selectedAccount: accountId,
@@ -34,4 +34,4 @@ const useCreditManagerStore = create<CreditManagerStore>()(
   ),
 )
 
-export default useCreditManagerStore
+export default useAccountDetailsStore

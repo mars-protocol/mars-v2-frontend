@@ -1,7 +1,7 @@
 import create from 'zustand'
 import { persist } from 'zustand/middleware'
 
-interface CreditManagerStore {
+interface AccountDetailsStore {
   fundAccountModal: boolean
   withdrawModal: boolean
   actions: {
@@ -10,7 +10,7 @@ interface CreditManagerStore {
   }
 }
 
-const useModalStore = create<CreditManagerStore>()(
+const useModalStore = create<AccountDetailsStore>()(
   persist((set) => ({
     fundAccountModal: false,
     withdrawModal: false,

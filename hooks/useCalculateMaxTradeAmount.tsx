@@ -1,7 +1,7 @@
-import { useCallback, useMemo } from 'react'
 import BigNumber from 'bignumber.js'
+import { useCallback, useMemo } from 'react'
 
-import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useAccountDetailsStore from 'stores/useAccountDetailsStore'
 
 import useCreditAccountPositions from './useCreditAccountPositions'
 import useMarkets from './useMarkets'
@@ -17,7 +17,7 @@ const getApproximateHourlyInterest = (amount: string, borrowAPY: string) => {
 // max trade amount doesnt consider wallet balance as its not relevant
 // the entire token balance within the wallet will always be able to be fully swapped
 const useCalculateMaxTradeAmount = (tokenIn: string, tokenOut: string, isMargin: boolean) => {
-  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
+  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
 
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
   const { data: marketsData } = useMarkets()

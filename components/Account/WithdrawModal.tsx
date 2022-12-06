@@ -19,7 +19,7 @@ import useCalculateMaxWithdrawAmount from 'hooks/useCalculateMaxWithdrawAmount'
 import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useMarkets from 'hooks/useMarkets'
 import useTokenPrices from 'hooks/useTokenPrices'
-import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useAccountDetailsStore from 'stores/useAccountDetailsStore'
 import useModalStore from 'stores/useModalStore'
 import { chain } from 'utils/chains'
 import { formatValue } from 'utils/formatters'
@@ -32,7 +32,7 @@ const WithdrawModal = () => {
   const open = useModalStore((s) => s.withdrawModal)
   const setOpen = useModalStore((s) => s.actions.setWithdrawModal)
 
-  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
+  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
   const { data: positionsData, isLoading: isLoadingPositions } = useCreditAccountPositions(
     selectedAccount ?? '',
   )

@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { useCallback, useMemo } from 'react'
 
-import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useAccountDetailsStore from 'stores/useAccountDetailsStore'
 import { getTokenDecimals } from 'utils/tokens'
 
 import useCreditAccountPositions from './useCreditAccountPositions'
@@ -16,7 +16,7 @@ const getApproximateHourlyInterest = (amount: string, borrowAPY: string) => {
 }
 
 const useCalculateMaxBorrowAmount = (denom: string, isUnderCollateralized: boolean) => {
-  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
+  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
 
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
   const { data: marketsData } = useMarkets()

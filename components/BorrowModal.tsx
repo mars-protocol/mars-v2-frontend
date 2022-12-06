@@ -19,7 +19,7 @@ import useCalculateMaxBorrowAmount from 'hooks/useCalculateMaxBorrowAmount'
 import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useMarkets from 'hooks/useMarkets'
 import useTokenPrices from 'hooks/useTokenPrices'
-import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useAccountDetailsStore from 'stores/useAccountDetailsStore'
 import { chain } from 'utils/chains'
 import { formatCurrency, formatValue } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
@@ -34,7 +34,7 @@ const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
   const [amount, setAmount] = useState(0)
   const [isBorrowToCreditAccount, setIsBorrowToCreditAccount] = useState(false)
 
-  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
+  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
   const { data: positionsData, isLoading: isLoadingPositions } = useCreditAccountPositions(
     selectedAccount ?? '',
   )

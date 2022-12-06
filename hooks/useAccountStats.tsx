@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
 
-import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useAccountDetailsStore from 'stores/useAccountDetailsStore'
 
 import useCreditAccountPositions from './useCreditAccountPositions'
 import useMarkets from './useMarkets'
@@ -89,7 +89,7 @@ export type AccountStatsAction = {
 }
 
 const useAccountStats = (actions?: AccountStatsAction[]) => {
-  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
+  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
 
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
   const { data: marketsData } = useMarkets()

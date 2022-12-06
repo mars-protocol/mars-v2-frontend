@@ -4,9 +4,9 @@ import classNames from 'classnames'
 import { useMemo, useState } from 'react'
 
 import Button from 'components/Button'
-import ChevronDownIcon from 'components/Icons/expand.svg'
+import ChevronDownIcon from 'components/Icons/chevron-down.svg'
 import Overlay from 'components/Overlay/Overlay'
-import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useAccountDetailsStore from 'stores/useAccountDetailsStore'
 
 import AccountManageOverlay from './AccountManageOverlay'
 
@@ -25,7 +25,7 @@ const AccountNavigation = ({
   deleteCreditAccount,
   selectedAccount,
 }: Props) => {
-  const setSelectedAccount = useCreditManagerStore((s) => s.actions.setSelectedAccount)
+  const setSelectedAccount = useAccountDetailsStore((s) => s.actions.setSelectedAccount)
 
   const { firstCreditAccounts, restCreditAccounts } = useMemo(() => {
     return {
