@@ -1,7 +1,7 @@
 import CircularProgress from 'components/CircularProgress'
 import Modal from 'components/Modal'
 import Text from 'components/Text'
-import { useModalStore } from 'stores'
+import useModalStore from 'stores/useModalStore'
 
 const ConfirmModal = () => {
   const createOpen = useModalStore((s) => s.createAccountModal)

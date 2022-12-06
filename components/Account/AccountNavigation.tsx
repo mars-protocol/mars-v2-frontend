@@ -19,12 +19,7 @@ interface Props {
 
 const MAX_VISIBLE_CREDIT_ACCOUNTS = 5
 
-const AccountNavigation = ({
-  creditAccountsList,
-  createCreditAccount,
-  deleteCreditAccount,
-  selectedAccount,
-}: Props) => {
+const AccountNavigation = ({ creditAccountsList, selectedAccount }: Props) => {
   const setSelectedAccount = useAccountDetailsStore((s) => s.actions.setSelectedAccount)
   const showAccountDetails = useAccountDetailsStore((s) => s.actions.showAccountDetails)
 
@@ -111,10 +106,9 @@ const AccountNavigation = ({
         </Button>
 
         <AccountManageOverlay
+          className='-left-[86px]'
           show={showManageMenu}
           setShow={setShowManageMenu}
-          deleteAccount={deleteCreditAccount}
-          createAccount={createCreditAccount}
         />
       </div>
     </>
