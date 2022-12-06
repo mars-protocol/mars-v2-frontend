@@ -8,7 +8,6 @@ interface Props {
   size?: '3xs' | '2xs' | 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl' | '6xl'
   tag?: 'p' | 'span' | 'h1' | 'h2' | 'h3' | 'h4'
   uppercase?: boolean
-  onClick?: () => void
 }
 
 const headlines = ['h1', 'h2', 'h3', 'h4']
@@ -21,7 +20,6 @@ const Text = ({
   size = 'base',
   tag = 'p',
   uppercase = false,
-  onClick,
 }: Props) => {
   const tagIndex = headlines.indexOf(tag)
   const sizeClass = tagIndex > -1 ? headMap[tagIndex] : size
@@ -34,7 +32,6 @@ const Text = ({
         uppercase ? `text-${sizeClass}-caps` : `text-${sizeClass}`,
         monospace && 'number',
       )}
-      onClick={onClick}
     >
       {children}
     </HtmlElement>
