@@ -11,7 +11,7 @@ const Card = ({ children, className }: Props) => {
     <div
       className={classNames(
         className,
-        'h-fit w-full max-w-full rounded-xl border-[7px] border-accent-highlight p-4 gradient-card',
+        'h-fit w-full max-w-full overflow-hidden rounded-xl border-[7px] border-accent-highlight p-4 gradient-card',
       )}
     >
       {children}

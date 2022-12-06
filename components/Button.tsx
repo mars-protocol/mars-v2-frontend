@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { ReactNode } from 'react'
+import React, { LegacyRef, ReactNode } from 'react'
 
 import CircularProgress from 'components/CircularProgress'
 
@@ -12,17 +12,17 @@ interface Props {
   showProgressIndicator?: boolean
   size?: 'small' | 'medium' | 'large'
   text?: string | ReactNode
-  variant?: 'solid' | 'transparent' | 'round'
+  variant?: 'solid' | 'transparent' | 'round' | 'text'
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
 }
 
 const colorClasses = {
   primary:
-    'border-none bg-primary hover:bg-primary-highlight active:bg-primary-highlight-10 focus:bg-primary-highlight',
+    'border-none text-white bg-primary hover:bg-primary-highlight active:bg-primary-highlight-10 focus:bg-primary-highlight',
   secondary:
-    'border-none bg-secondary hover:bg-secondary-highlight active:bg-secondary-highlight-10 focus:bg-secondary-highlight',
+    'border-none text-white bg-secondary hover:bg-secondary-highlight active:bg-secondary-highlight-10 focus:bg-secondary-highlight',
   tertiary:
-    'border bg-secondary-dark/60 border-white/60 hover:bg-secondary-dark hover:border-white active:bg-secondary-dark-10 active:border-white focus:bg-secondary-dark focus:border-white',
+    'border text-white bg-secondary-dark/60 border-white/60 hover:bg-secondary-dark hover:border-white active:bg-secondary-dark-10 active:border-white focus:bg-secondary-dark focus:border-white',
   quaternary:
     'border bg-transparent text-white/60 border-transparent hover:text-white hover:border-white active:text-white active:border-white',
 }
@@ -54,31 +54,51 @@ const variantClasses = {
   solid: 'text-white',
   transparent: 'bg-transparent p-0',
   round: 'rounded-full p-0',
+  text: 'border-none bg-transparent',
 }
 
-const Button = ({
-  children,
-  className = '',
-  color = 'primary',
-  disabled,
-  id = '',
-  showProgressIndicator,
-  size = 'small',
-  text,
-  variant = 'solid',
-  onClick,
-}: Props) => {
+const Button = React.forwardRef(function Button(
+  {
+    children,
+    className = '',
+    color = 'primary',
+    disabled,
+    id = '',
+    showProgressIndicator,
+    size = 'small',
+    text,
+    variant = 'solid',
+    onClick,
+  }: Props,
+  ref,
+) {
+  const buttonClasses = []
+
+  switch (variant) {
+    case 'round':
+      buttonClasses.push(sizeClasses[size], roundSizeClasses[size], colorClasses[color])
+      break
+
+    case 'transparent':
+      buttonClasses.push(sizeClasses[size], transparentColorClasses[color])
+      break
+
+    case 'solid':
+      buttonClasses.push(sizeClasses[size], colorClasses[color])
+      break
+    default:
+  }
+
   return (
     <button
       className={classNames(
         'cursor-pointer appearance-none break-normal rounded-3xl outline-none transition-colors',
-        variant === 'round' ? `${sizeClasses[size]} ${roundSizeClasses[size]}` : sizeClasses[size],
-        variant === 'transparent' ? transparentColorClasses[color] : colorClasses[color],
-        variantClasses[variant],
+        buttonClasses,
         disabled && 'pointer-events-none opacity-50',
         className,
       )}
       id={id}
+      ref={ref as LegacyRef<HTMLButtonElement>}
       onClick={disabled ? () => {} : onClick}
     >
       {text && !children && !showProgressIndicator && <span>{text}</span>}
@@ -88,6 +108,6 @@ const Button = ({
       )}
     </button>
   )
-}
+})
 
 export default Button
