@@ -26,6 +26,7 @@ const AccountNavigation = ({
   selectedAccount,
 }: Props) => {
   const setSelectedAccount = useAccountDetailsStore((s) => s.actions.setSelectedAccount)
+  const showAccountDetails = useAccountDetailsStore((s) => s.actions.showAccountDetails)
 
   const { firstCreditAccounts, restCreditAccounts } = useMemo(() => {
     return {
@@ -47,7 +48,10 @@ const AccountNavigation = ({
             selectedAccount === account ? 'text-white' : ' text-white/40',
           )}
           variant='text'
-          onClick={() => setSelectedAccount(account)}
+          onClick={() => {
+            setSelectedAccount(account)
+            showAccountDetails(true)
+          }}
         >
           Account {account}
         </Button>
@@ -80,6 +84,7 @@ const AccountNavigation = ({
                     onClick={() => {
                       setShowMoreMenu(!showMoreMenu)
                       setSelectedAccount(account)
+                      showAccountDetails(true)
                     }}
                   >
                     Account {account}

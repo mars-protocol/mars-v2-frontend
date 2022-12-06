@@ -16,7 +16,7 @@ import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 const AccountDetails = () => {
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
-  const toggleAccountDetails = useAccountDetailsStore((s) => s.actions.toggleAccountDetails)
+  const showAccountDetails = useAccountDetailsStore((s) => s.actions.showAccountDetails)
   const isOpen = useAccountDetailsStore((s) => s.isOpen)
 
   const { data: positionsData, isLoading: isLoadingPositions } = useCreditAccountPositions(
@@ -47,18 +47,19 @@ const AccountDetails = () => {
       )}
     >
       <Button
-        onClick={!isOpen ? toggleAccountDetails : () => false}
+        onClick={() => {
+          showAccountDetails(true)
+        }}
         variant='text'
         className={classNames(
-          'absolute top-1/2 -left-[22px] -translate-y-1/2 bg-header px-1 py-6',
-          'text-white/40 hover:text-white',
+          'absolute top-1/2 -left-[22px] -translate-y-1/2 bg-header p-0',
           'rounded-none rounded-tl-sm rounded-bl-sm',
           'border border-white/20',
           'transition-[opacity] delay-1000 duration-500 ease-in-out',
           isOpen ? 'pointer-events-none opacity-0' : 'opacity-100',
         )}
       >
-        <span className='flex h-5'>
+        <span className='flex h-20 w-5 px-1 py-6 text-white/40 transition-[color] hover:text-white'>
           <ChevronLeft />
         </span>
       </Button>
@@ -66,10 +67,16 @@ const AccountDetails = () => {
         <Text size='xl' uppercase className='flex-grow text-center text-white'>
           Account {selectedAccount}
         </Text>
-        <div className='flex border-l border-white/20 p-4' onClick={() => {}}>
-          <span className='w-5 hover:cursor-pointer' onClick={toggleAccountDetails}>
+        <div className='flex border-l border-white/20' onClick={() => {}}>
+          <Button
+            variant='text'
+            className='w-14 p-4 text-white/40 transition-[color] hover:cursor-pointer  hover:text-white'
+            onClick={() => {
+              showAccountDetails(false)
+            }}
+          >
             <ArrowRightLine />
-          </span>
+          </Button>
         </div>
       </div>
       <div className='flex w-full flex-wrap p-2'>
