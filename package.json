@@ -10,11 +10,10 @@
     "start": "next start"
   },
   "dependencies": {
-    "@cosmjs/cosmwasm-stargate": "^0.29.0",
-    "@cosmjs/stargate": "^0.29.0",
+    "@cosmjs/cosmwasm-stargate": "^0.29.4",
+    "@cosmjs/stargate": "^0.29.4",
     "@headlessui/react": "^1.7.0",
-    "@keplr-wallet/cosmos": "^0.10.24",
-    "@marsprotocol/wallet-connector": "^0.9.4-rc4",
+    "@marsprotocol/wallet-connector": "^0.9.5",
     "@metamask/detect-provider": "^1.2.0",
     "@radix-ui/react-slider": "^1.0.0",
     "@sentry/nextjs": "^7.12.1",
@@ -40,7 +39,6 @@
     "zustand": "^4.1.4"
   },
   "devDependencies": {
-    "@keplr-wallet/types": "^0.10.24",
     "@svgr/webpack": "^6.4.0",
     "@types/node": "18.11.11",
     "@types/react": "18.0.26",

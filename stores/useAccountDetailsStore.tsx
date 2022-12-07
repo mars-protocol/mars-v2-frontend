@@ -1,5 +1,4 @@
 import create from 'zustand'
-import { persist } from 'zustand/middleware'
 
 interface AccountDetailsStore {
   isOpen: boolean
@@ -10,26 +9,15 @@ interface AccountDetailsStore {
   }
 }
 
-export const useAccountDetailsStore = create<AccountDetailsStore>()(
-  persist(
-    (set) => ({
-      isOpen: true,
-      selectedAccount: null,
-      actions: {
-        showAccountDetails: (show) => set(() => ({ isOpen: show })),
-        setSelectedAccount: (accountId: string) => {
-          set(() => ({
-            selectedAccount: accountId,
-          }))
-        },
-      },
-    }),
-    {
-      name: 'creditManager',
-      partialize: (state) =>
-        Object.fromEntries(
-          Object.entries(state).filter(([key]) => ['selectedAccount'].includes(key)),
-        ),
+export const useAccountDetailsStore = create<AccountDetailsStore>()((set) => ({
+  isOpen: true,
+  selectedAccount: null,
+  actions: {
+    showAccountDetails: (show) => set(() => ({ isOpen: show })),
+    setSelectedAccount: (accountId: string) => {
+      set(() => ({
+        selectedAccount: accountId,
+      }))
     },
-  ),
-)
+  },
+}))

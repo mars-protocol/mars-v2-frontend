@@ -14,8 +14,6 @@ import { useAccountDetailsStore, useModalStore, useWalletStore } from 'stores'
 const Navigation = () => {
   const address = useWalletStore((s) => s.address)
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
-  const setDeleteAccountModal = useModalStore((s) => s.actions.setDeleteAccountModal)
-  const setCreateAccountModal = useModalStore((s) => s.actions.setCreateAccountModal)
   const { mutate: createCreditAccount, isLoading: isLoadingCreate } = useCreateCreditAccount()
   const { mutate: deleteCreditAccount, isLoading: isLoadingDelete } = useDeleteCreditAccount(
     selectedAccount || '',
@@ -27,11 +25,11 @@ const Navigation = () => {
   const hasCreditAccounts = creditAccountsList && creditAccountsList.length > 0
 
   useEffect(() => {
-    setCreateAccountModal(isLoadingCreate)
+    useModalStore.setState({ createAccountModal: isLoadingCreate })
   }, [isLoadingCreate])
 
   useEffect(() => {
-    setDeleteAccountModal(isLoadingDelete)
+    useModalStore.setState({ deleteAccountModal: isLoadingDelete })
   }, [isLoadingDelete])
 
   return (

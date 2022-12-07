@@ -12,7 +12,7 @@ const useAllBalances = () => {
   const address = useWalletStore((s) => s.address)
 
   const result = useQuery<Result>(
-    queryKeys.allBalances(address),
+    queryKeys.allBalances(address ?? ''),
     () => fetch(`${chain.rest}/cosmos/bank/v1beta1/balances/${address}`).then((res) => res.json()),
     {
       enabled: !!address,

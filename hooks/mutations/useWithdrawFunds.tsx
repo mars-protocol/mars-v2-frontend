@@ -59,8 +59,8 @@ const useWithdrawFunds = (
     {
       onSuccess: () => {
         queryClient.invalidateQueries(queryKeys.creditAccountsPositions(selectedAccount))
-        queryClient.invalidateQueries(queryKeys.tokenBalance(address, denom))
-        queryClient.invalidateQueries(queryKeys.allBalances(address))
+        queryClient.invalidateQueries(queryKeys.tokenBalance(address ?? '', denom))
+        queryClient.invalidateQueries(queryKeys.allBalances(address ?? ''))
         queryClient.invalidateQueries(queryKeys.redbankBalances())
 
         onSuccess && onSuccess()

@@ -1,7 +1,7 @@
 import classNames from 'classnames'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useWallet, WalletConnectionStatus } from '@marsprotocol/wallet-connector'
 
-import { WalletConnectionStatus } from '@marsprotocol/wallet-connector'
 import AccountManager from 'components/Account/AccountDetails'
 import DesktopNavigation from 'components/Navigation/DesktopNavigation'
 import useCreditAccounts from 'hooks/useCreditAccounts'
@@ -13,9 +13,15 @@ const filter = {
 }
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
-  const status = useWalletStore((s) => s.status)
   const { data: creditAccountsList, isLoading: isLoadingCreditAccounts } = useCreditAccounts()
   const hasCreditAccounts = creditAccountsList && creditAccountsList.length > 0
+
+  const { status, signingCosmWasmClient, chainInfo, address, name } = useWallet()
+  const initialize = useWalletStore((s) => s.actions.initialize)
+
+  useEffect(() => {
+    initialize(status, signingCosmWasmClient, address, name, chainInfo)
+  }, [status, signingCosmWasmClient, chainInfo, address, name, initialize])
 
   const isConnected = status === WalletConnectionStatus.Connected
 

@@ -26,7 +26,7 @@ interface Result {
 
 const useCreditAccountPositions = (accountId: string) => {
   const address = useWalletStore((s) => s.address)
-  const client = useWalletStore((s) => s.client)
+  const client = useWalletStore((s) => s.signingClient)
 
   const result = useQuery<Result>(
     queryKeys.creditAccountsPositions(accountId),

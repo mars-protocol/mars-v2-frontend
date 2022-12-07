@@ -22,7 +22,7 @@ const useDepositCreditAccount = (
   return useMutation(
     async () =>
       await signingClient?.execute(
-        address,
+        address ?? '',
         contractAddresses.creditManager,
         {
           update_credit_account: {
@@ -51,8 +51,8 @@ const useDepositCreditAccount = (
         toast.error(err.message)
       },
       onSuccess: () => {
-        queryClient.invalidateQueries(queryKeys.allBalances(address))
-        queryClient.invalidateQueries(queryKeys.tokenBalance(address, denom))
+        queryClient.invalidateQueries(queryKeys.allBalances(address ?? ''))
+        queryClient.invalidateQueries(queryKeys.tokenBalance(address ?? '', denom))
         queryClient.invalidateQueries(queryKeys.creditAccountsPositions(accountId))
 
         options?.onSuccess && options.onSuccess()

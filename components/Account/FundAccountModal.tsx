@@ -21,7 +21,6 @@ const FundAccountModal = () => {
   // STORE
   // ---------------
   const open = useModalStore((s) => s.fundAccountModal)
-  const setOpen = useModalStore((s) => s.actions.setFundAccountModal)
 
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
   const [lendAssets, setLendAssets] = useLocalStorageState(`lendAssets_${selectedAccount}`, {
@@ -49,7 +48,7 @@ const FundAccountModal = () => {
       onSuccess: () => {
         setAmount(0)
         toast.success(`${amount} ${getTokenSymbol(selectedToken)} successfully Deposited`)
-        setOpen(false)
+        useModalStore.setState({ fundAccountModal: false })
       },
     },
   )
@@ -76,6 +75,10 @@ const FundAccountModal = () => {
     }
 
     setAmount(value)
+  }
+
+  const setOpen = (open: boolean) => {
+    useModalStore.setState({ fundAccountModal: open })
   }
 
   const maxValue = walletAmount

@@ -11,7 +11,7 @@ const queryMsg = {
 }
 
 const useAllowedCoins = () => {
-  const client = useWalletStore((s) => s.client)
+  const client = useWalletStore((s) => s.signingClient)
 
   const result = useQuery<Result>(
     queryKeys.allowedCoins(),

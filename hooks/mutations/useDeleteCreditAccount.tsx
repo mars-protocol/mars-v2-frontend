@@ -15,7 +15,7 @@ const useCreateCreditAccount = (accountId: string) => {
   return useMutation(
     async () =>
       await signingClient?.execute(
-        address,
+        address ?? '',
         contractAddresses.accountNft,
         {
           burn: {
@@ -26,7 +26,7 @@ const useCreateCreditAccount = (accountId: string) => {
       ),
     {
       onSettled: () => {
-        queryClient.invalidateQueries(queryKeys.creditAccounts(address))
+        queryClient.invalidateQueries(queryKeys.creditAccounts(address ?? ''))
       },
       onError: (err: Error) => {
         toast.error(err.message)

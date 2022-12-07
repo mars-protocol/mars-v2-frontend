@@ -21,14 +21,14 @@ const useCreateCreditAccount = () => {
   return useMutation(
     async () =>
       await signingClient?.execute(
-        address,
+        address ?? '',
         contractAddresses.creditManager,
         executeMsg,
         hardcodedFee,
       ),
     {
       onSettled: () => {
-        queryClient.invalidateQueries(queryKeys.creditAccounts(address))
+        queryClient.invalidateQueries(queryKeys.creditAccounts(address ?? ''))
       },
       onError: (err: Error) => {
         toast.error(err.message)
