@@ -10,7 +10,7 @@ interface AccountDetailsStore {
   }
 }
 
-const useAccountDetailsStore = create<AccountDetailsStore>()(
+export const useAccountDetailsStore = create<AccountDetailsStore>()(
   persist(
     (set) => ({
       isOpen: true,
@@ -33,5 +33,3 @@ const useAccountDetailsStore = create<AccountDetailsStore>()(
     },
   ),
 )
-
-export default useAccountDetailsStore

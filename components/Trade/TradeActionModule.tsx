@@ -14,7 +14,7 @@ import useCalculateMaxTradeAmount from 'hooks/useCalculateMaxTradeAmount'
 import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useMarkets from 'hooks/useMarkets'
 import useTokenPrices from 'hooks/useTokenPrices'
-import useAccountDetailsStore from 'stores/useAccountDetailsStore'
+import { useAccountDetailsStore } from 'stores'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 enum FundingMode {

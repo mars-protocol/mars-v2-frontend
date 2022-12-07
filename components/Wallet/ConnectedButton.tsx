@@ -5,6 +5,9 @@ import {
   useWalletManager,
 } from '@marsprotocol/wallet-connector'
 import classNames from 'classnames'
+import { useCallback, useEffect, useState } from 'react'
+import useClipboard from 'react-use-clipboard'
+
 import Button from 'components/Button'
 import CircularProgress from 'components/CircularProgress'
 import FormattedNumber from 'components/FormattedNumber'
@@ -13,11 +16,9 @@ import CopyIcon from 'components/Icons/copy.svg'
 import ExternalLinkIcon from 'components/Icons/external-link.svg'
 import OsmoIcon from 'components/Icons/osmo.svg'
 import WalletIcon from 'components/Icons/wallet.svg'
-import Overlay from 'components/Overlay'
+import { Overlay } from 'components/Overlay'
 import Text from 'components/Text'
 import useTokenBalance from 'hooks/useTokenBalance'
-import { useCallback, useEffect, useState } from 'react'
-import useClipboard from 'react-use-clipboard'
 import { formatValue, truncate } from 'utils/formatters'
 
 const ConnectedButton = () => {

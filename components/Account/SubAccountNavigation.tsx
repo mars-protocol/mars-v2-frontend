@@ -2,11 +2,10 @@ import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { UseMutateFunction } from '@tanstack/react-query'
 import classNames from 'classnames'
 import { useMemo, useState } from 'react'
+import ChevronDownIcon from 'components/Icons/expand.svg'
 
 import Button from 'components/Button'
-import ChevronDownIcon from 'components/Icons/chevron-down.svg'
-import Overlay from 'components/Overlay/Overlay'
-import { useAccountDetailsStore } from 'stores'
+import { Overlay } from 'components/Overlay'
 
 import AccountManageOverlay from './AccountManageOverlay'
 
@@ -14,15 +13,19 @@ interface Props {
   creditAccountsList: string[]
   selectedAccount: string | null
   deleteCreditAccount: UseMutateFunction<ExecuteResult | undefined, Error, void, unknown>
+  setSelectedAccount: (id: string) => void
   createCreditAccount: () => void
 }
 
 const MAX_VISIBLE_CREDIT_ACCOUNTS = 5
 
-const AccountNavigation = ({ creditAccountsList, selectedAccount }: Props) => {
-  const setSelectedAccount = useAccountDetailsStore((s) => s.actions.setSelectedAccount)
-  const showAccountDetails = useAccountDetailsStore((s) => s.actions.showAccountDetails)
-
+const SubAccountNavigation = ({
+  creditAccountsList,
+  createCreditAccount,
+  deleteCreditAccount,
+  selectedAccount,
+  setSelectedAccount,
+}: Props) => {
   const { firstCreditAccounts, restCreditAccounts } = useMemo(() => {
     return {
       firstCreditAccounts: creditAccountsList?.slice(0, MAX_VISIBLE_CREDIT_ACCOUNTS) ?? [],
@@ -40,13 +43,10 @@ const AccountNavigation = ({ creditAccountsList, selectedAccount }: Props) => {
           key={account}
           className={classNames(
             'cursor-pointer whitespace-nowrap px-4 text-base hover:text-white',
-            selectedAccount === account ? 'text-white' : ' text-white/40',
+            selectedAccount === account ? 'text-white' : 'text-white/40',
           )}
           variant='text'
-          onClick={() => {
-            setSelectedAccount(account)
-            showAccountDetails(true)
-          }}
+          onClick={() => setSelectedAccount(account)}
         >
           Account {account}
         </Button>
@@ -79,7 +79,6 @@ const AccountNavigation = ({ creditAccountsList, selectedAccount }: Props) => {
                     onClick={() => {
                       setShowMoreMenu(!showMoreMenu)
                       setSelectedAccount(account)
-                      showAccountDetails(true)
                     }}
                   >
                     Account {account}
@@ -104,15 +103,10 @@ const AccountNavigation = ({ creditAccountsList, selectedAccount }: Props) => {
             <ChevronDownIcon />
           </span>
         </Button>
-
-        <AccountManageOverlay
-          className='-left-[86px]'
-          show={showManageMenu}
-          setShow={setShowManageMenu}
-        />
+        <AccountManageOverlay show={showManageMenu} setShow={setShowManageMenu} />
       </div>
     </>
   )
 }
 
-export default AccountNavigation
+export default SubAccountNavigation

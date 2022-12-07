@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+
 import Button from 'components/Button'
 import PlusIcon from 'components/Icons/add.svg'
 import ArrowDown from 'components/Icons/arrow-down.svg'
@@ -9,9 +11,7 @@ import OverlayAction from 'components/Overlay/OverlayLink'
 import Text from 'components/Text'
 import useCreateCreditAccount from 'hooks/mutations/useCreateCreditAccount'
 import useDeleteCreditAccount from 'hooks/mutations/useDeleteCreditAccount'
-import { useEffect } from 'react'
-import useAccountDetailsStore from 'stores/useAccountDetailsStore'
-import useModalStore from 'stores/useModalStore'
+import { useAccountDetailsStore, useModalStore } from 'stores'
 
 interface Props {
   className?: string
@@ -33,11 +33,11 @@ const AccountManageOverlay = ({ className, setShow, show }: Props) => {
 
   useEffect(() => {
     setCreateAccountModal(isLoadingCreate)
-  }, [isLoadingCreate])
+  }, [isLoadingCreate, setCreateAccountModal])
 
   useEffect(() => {
     setDeleteAccountModal(isLoadingDelete)
-  }, [isLoadingDelete])
+  }, [isLoadingDelete, setDeleteAccountModal])
 
   return (
     <Overlay className={className} show={show} setShow={setShow}>

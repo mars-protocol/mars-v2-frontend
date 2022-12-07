@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
+import { useState } from 'react'
 
 import Button from 'components/Button'
 import FormattedNumber from 'components/FormattedNumber'
@@ -11,10 +12,10 @@ import useAccountStats from 'hooks/useAccountStats'
 import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useMarkets from 'hooks/useMarkets'
 import useTokenPrices from 'hooks/useTokenPrices'
-import { useState } from 'react'
-import useAccountDetailsStore from 'stores/useAccountDetailsStore'
+import { useAccountDetailsStore } from 'stores'
 import { chain } from 'utils/chains'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
+
 import AccountManageOverlay from './AccountManageOverlay'
 
 const AccountDetails = () => {

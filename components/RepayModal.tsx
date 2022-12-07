@@ -13,7 +13,7 @@ import useRepayFunds from 'hooks/mutations/useRepayFunds'
 import useAllBalances from 'hooks/useAllBalances'
 import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useTokenPrices from 'hooks/useTokenPrices'
-import useAccountDetailsStore from 'stores/useAccountDetailsStore'
+import { useAccountDetailsStore } from 'stores'
 import { formatCurrency } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 

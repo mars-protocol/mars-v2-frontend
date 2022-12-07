@@ -10,8 +10,8 @@ import { useEffect } from 'react'
 import { ToastContainer, Zoom } from 'react-toastify'
 
 import Layout from 'components/Layout'
-import useWalletStore from 'stores/useWalletStore'
-import Modals from 'components/Modals'
+import WalletConnectProvider from 'components/Wallet/WalletConnectProvider'
+import { useWalletStore } from 'stores'
 
 async function isMetamaskInstalled(): Promise<boolean> {
   const provider = await detectEthereumProvider()
@@ -41,21 +41,22 @@ function MyApp({ Component, pageProps }: AppProps) {
         <title>Mars V2</title>
         <link rel='icon' href='/favicon.svg' />
       </Head>
-      <QueryClientProvider client={queryClient}>
-        <ReactQueryDevtools initialIsOpen={false} />
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-        <ToastContainer
-          autoClose={1500}
-          closeButton={false}
-          position='bottom-right'
-          hideProgressBar
-          newestOnTop
-          transition={Zoom}
-        />
-        <Modals />
-      </QueryClientProvider>
+      <WalletConnectProvider>
+        <QueryClientProvider client={queryClient}>
+          <ReactQueryDevtools initialIsOpen={false} />
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+          <ToastContainer
+            autoClose={1500}
+            closeButton={false}
+            position='bottom-right'
+            hideProgressBar
+            newestOnTop
+            transition={Zoom}
+          />
+        </QueryClientProvider>
+      </WalletConnectProvider>
     </>
   )
 }

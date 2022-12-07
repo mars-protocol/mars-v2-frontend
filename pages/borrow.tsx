@@ -11,7 +11,7 @@ import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useMarkets from 'hooks/useMarkets'
 import useRedbankBalances from 'hooks/useRedbankBalances'
 import useTokenPrices from 'hooks/useTokenPrices'
-import useAccountDetailsStore from 'stores/useAccountDetailsStore'
+import { useAccountDetailsStore } from 'stores'
 import { getTokenDecimals, getTokenInfo } from 'utils/tokens'
 
 type ModalState = {
