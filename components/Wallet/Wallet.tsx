@@ -1,6 +1,7 @@
 import { useWallet, WalletConnectionStatus } from '@marsprotocol/wallet-connector'
-import { ConnectButton, ConnectedButton } from 'components/Wallet'
 import { useEffect, useState } from 'react'
+
+import { ConnectButton, ConnectedButton } from 'components/Wallet'
 
 const Wallet = () => {
   const { status } = useWallet()

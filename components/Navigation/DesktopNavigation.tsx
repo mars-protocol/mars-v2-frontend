@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { useEffect } from 'react'
 
 import { AccountNavigation, AccountStatus } from 'components/Account'
 import Logo from 'components/Icons/logo.svg'
@@ -8,10 +9,7 @@ import Wallet from 'components/Wallet/Wallet'
 import useCreateCreditAccount from 'hooks/mutations/useCreateCreditAccount'
 import useDeleteCreditAccount from 'hooks/mutations/useDeleteCreditAccount'
 import useCreditAccounts from 'hooks/useCreditAccounts'
-import { useEffect } from 'react'
-import useAccountDetailsStore from 'stores/useAccountDetailsStore'
-import useModalStore from 'stores/useModalStore'
-import useWalletStore from 'stores/useWalletStore'
+import { useAccountDetailsStore, useModalStore, useWalletStore } from 'stores'
 
 const Navigation = () => {
   const address = useWalletStore((s) => s.address)

@@ -13,8 +13,7 @@ import Text from 'components/Text'
 import useDepositCreditAccount from 'hooks/mutations/useDepositCreditAccount'
 import useAllBalances from 'hooks/useAllBalances'
 import useAllowedCoins from 'hooks/useAllowedCoins'
-import useAccountDetailsStore from 'stores/useAccountDetailsStore'
-import useModalStore from 'stores/useModalStore'
+import { useAccountDetailsStore, useModalStore } from 'stores'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 const FundAccountModal = () => {

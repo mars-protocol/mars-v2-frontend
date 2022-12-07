@@ -6,7 +6,7 @@ import { useMemo, useState } from 'react'
 import Button from 'components/Button'
 import ChevronDownIcon from 'components/Icons/chevron-down.svg'
 import Overlay from 'components/Overlay/Overlay'
-import useAccountDetailsStore from 'stores/useAccountDetailsStore'
+import { useAccountDetailsStore } from 'stores'
 
 import AccountManageOverlay from './AccountManageOverlay'
 

@@ -4,7 +4,7 @@ import React from 'react'
 import AccountManager from 'components/Account/AccountDetails'
 import DesktopNavigation from 'components/Navigation/DesktopNavigation'
 import useCreditAccounts from 'hooks/useCreditAccounts'
-import useWalletStore from 'stores/useWalletStore'
+import { useWalletStore } from 'stores'
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const address = useWalletStore((s) => s.address)

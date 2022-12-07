@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import useWalletStore from 'stores/useWalletStore'
+import { useWalletStore } from 'stores'
 import { queryKeys } from 'types/query-keys-factory'
 import { chain } from 'utils/chains'
 

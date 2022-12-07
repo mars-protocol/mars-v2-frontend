@@ -2,8 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
 import { contractAddresses } from 'config/contracts'
-import useAccountDetailsStore from 'stores/useAccountDetailsStore'
-import useWalletStore from 'stores/useWalletStore'
+import { useAccountDetailsStore, useWalletStore } from 'stores'
 import { queryKeys } from 'types/query-keys-factory'
 
 type Result = {

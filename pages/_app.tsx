@@ -11,7 +11,7 @@ import { ToastContainer, Zoom } from 'react-toastify'
 
 import Layout from 'components/Layout'
 import WalletConnectProvider from 'components/Wallet/WalletConnectProvider'
-import useWalletStore from 'stores/useWalletStore'
+import { useWalletStore } from 'stores'
 
 async function isMetamaskInstalled(): Promise<boolean> {
   const provider = await detectEthereumProvider()

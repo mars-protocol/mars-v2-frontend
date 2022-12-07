@@ -2,10 +2,10 @@ import { CosmWasmClient, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate
 import create from 'zustand'
 import { persist } from 'zustand/middleware'
 
-import { MarsCreditManagerClient } from 'types/generated/mars-credit-manager/MarsCreditManager.client'
 import { contractAddresses } from 'config/contracts'
 import { Wallet } from 'types'
 import { MarsAccountNftClient } from 'types/generated/mars-account-nft/MarsAccountNft.client'
+import { MarsCreditManagerClient } from 'types/generated/mars-credit-manager/MarsCreditManager.client'
 import { MarsSwapperBaseClient } from 'types/generated/mars-swapper-base/MarsSwapperBase.client'
 import { chain } from 'utils/chains'
 
@@ -29,7 +29,7 @@ interface WalletStore {
   }
 }
 
-const useWalletStore = create<WalletStore>()(
+export const useWalletStore = create<WalletStore>()(
   persist(
     (set, get) => ({
       address: '',
@@ -121,5 +121,3 @@ const useWalletStore = create<WalletStore>()(
     },
   ),
 )
-
-export default useWalletStore
