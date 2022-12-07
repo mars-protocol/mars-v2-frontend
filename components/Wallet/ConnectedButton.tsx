@@ -72,7 +72,11 @@ const ConnectedButton = () => {
       )}
 
       <button
-        className='flex h-[31px] flex-1 flex-nowrap content-center items-center justify-center rounded-2xl border border-white/60 bg-secondary-dark/70 px-4 pt-0.5 text-sm text-white hover:border-white hover:bg-secondary-dark active:border-white active:bg-secondary-dark-10'
+        className={classNames(
+          'flex h-[31px] flex-1 flex-nowrap content-center items-center justify-center rounded-2xl border border-white/60 bg-secondary-dark/70 px-4 py-0 text-sm text-white ',
+          'hover:border-white hover:bg-secondary-dark',
+          'active:border-white active:bg-secondary-dark-10',
+        )}
         onClick={() => {
           setShowDetails(!showDetails)
         }}
@@ -85,7 +89,7 @@ const ConnectedButton = () => {
             <WalletIcon />
           )}
         </span>
-        <span className='ml-1.5'>{name ? name : truncate(address, [2, 4])}</span>
+        <span className='ml-2'>{name ? name : truncate(address, [2, 4])}</span>
         <div
           className={classNames(
             'number relative ml-2 flex h-full items-center pl-2',
