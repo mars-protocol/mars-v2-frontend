@@ -59,8 +59,8 @@ const useBorrowFunds = (
 
         // if withdrawing to wallet, need to explicility invalidate balances queries
         if (withdraw) {
-          queryClient.invalidateQueries(queryKeys.tokenBalance(address, denom))
-          queryClient.invalidateQueries(queryKeys.allBalances(address))
+          queryClient.invalidateQueries(queryKeys.tokenBalance(address ?? '', denom))
+          queryClient.invalidateQueries(queryKeys.allBalances(address ?? ''))
         }
       },
       onError: (err: Error) => {

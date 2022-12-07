@@ -29,7 +29,6 @@ const WithdrawModal = () => {
   // STORE
   // ---------------
   const open = useModalStore((s) => s.withdrawModal)
-  const setOpen = useModalStore((s) => s.actions.setWithdrawModal)
 
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
   const { data: positionsData, isLoading: isLoadingPositions } = useCreditAccountPositions(
@@ -94,7 +93,7 @@ const WithdrawModal = () => {
 
   const { mutate, isLoading } = useWithdrawFunds(withdrawAmount, borrowAmount, selectedToken, {
     onSuccess: () => {
-      setOpen(false)
+      useModalStore.setState({ withdrawModal: false })
       toast.success(`${amount} ${selectedTokenSymbol} successfully withdrawn`)
     },
   })
@@ -153,6 +152,10 @@ const WithdrawModal = () => {
 
     return (amount * 100) / maxWithdrawAmount
   }, [amount, maxWithdrawAmount])
+
+  const setOpen = (open: boolean) => {
+    useModalStore.setState({ withdrawModal: open })
+  }
 
   return (
     <Modal open={open} setOpen={setOpen}>

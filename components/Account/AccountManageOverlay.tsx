@@ -20,10 +20,6 @@ interface Props {
 }
 
 const AccountManageOverlay = ({ className, setShow, show }: Props) => {
-  const setFundAccountModal = useModalStore((s) => s.actions.setFundAccountModal)
-  const setWithdrawModal = useModalStore((s) => s.actions.setWithdrawModal)
-  const setDeleteAccountModal = useModalStore((s) => s.actions.setDeleteAccountModal)
-  const setCreateAccountModal = useModalStore((s) => s.actions.setCreateAccountModal)
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
 
   const { mutate: createCreditAccount, isLoading: isLoadingCreate } = useCreateCreditAccount()
@@ -32,12 +28,12 @@ const AccountManageOverlay = ({ className, setShow, show }: Props) => {
   )
 
   useEffect(() => {
-    setCreateAccountModal(isLoadingCreate)
-  }, [isLoadingCreate, setCreateAccountModal])
+    useModalStore.setState({ createAccountModal: isLoadingCreate })
+  }, [isLoadingCreate])
 
   useEffect(() => {
-    setDeleteAccountModal(isLoadingDelete)
-  }, [isLoadingDelete, setDeleteAccountModal])
+    useModalStore.setState({ deleteAccountModal: isLoadingDelete })
+  }, [isLoadingDelete])
 
   return (
     <Overlay className={className} show={show} setShow={setShow}>
@@ -49,7 +45,7 @@ const AccountManageOverlay = ({ className, setShow, show }: Props) => {
           <Button
             className='flex w-[115px] items-center justify-center pl-0 pr-2'
             onClick={() => {
-              setFundAccountModal(true)
+              useModalStore.setState({ fundAccountModal: true })
               setShow(false)
             }}
           >
@@ -62,7 +58,7 @@ const AccountManageOverlay = ({ className, setShow, show }: Props) => {
             className='flex w-[115px] items-center justify-center pl-0 pr-2'
             color='secondary'
             onClick={() => {
-              setWithdrawModal(true)
+              useModalStore.setState({ withdrawModal: true })
               setShow(false)
             }}
           >

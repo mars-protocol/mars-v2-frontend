@@ -11,7 +11,7 @@ type Result = {
 
 const useCreditAccounts = () => {
   const address = useWalletStore((s) => s.address)
-  const client = useWalletStore((s) => s.client)
+  const client = useWalletStore((s) => s.signingClient)
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
   const creditManagerActions = useAccountDetailsStore((s) => s.actions)
 
@@ -24,7 +24,7 @@ const useCreditAccounts = () => {
   }, [address])
 
   const result = useQuery<Result>(
-    queryKeys.creditAccounts(address),
+    queryKeys.creditAccounts(address ?? ''),
     async () => client?.queryContractSmart(contractAddresses.accountNft, queryMsg),
     {
       staleTime: Infinity,
