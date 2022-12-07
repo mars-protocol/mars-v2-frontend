@@ -2,6 +2,7 @@ import { CosmWasmClient, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate
 import create from 'zustand'
 import { persist } from 'zustand/middleware'
 
+import { WalletConnectionStatus } from '@marsprotocol/wallet-connector'
 import { contractAddresses } from 'config/contracts'
 import { Wallet } from 'types'
 import { MarsAccountNftClient } from 'types/generated/mars-account-nft/MarsAccountNft.client'
@@ -10,10 +11,11 @@ import { MarsSwapperBaseClient } from 'types/generated/mars-swapper-base/MarsSwa
 import { chain } from 'utils/chains'
 
 interface WalletStore {
-  address: string
+  address: string | null
   metamaskInstalled: boolean
   wallet: Wallet | null
   client?: CosmWasmClient
+  status: WalletConnectionStatus
   signingClient?: SigningCosmWasmClient
   clients: {
     accountNft: MarsAccountNftClient | null
@@ -32,9 +34,10 @@ interface WalletStore {
 export const useWalletStore = create<WalletStore>()(
   persist(
     (set, get) => ({
-      address: '',
+      address: null,
       metamaskInstalled: false,
       wallet: null,
+      status: WalletConnectionStatus.ReadyForConnection,
       clients: {
         accountNft: null,
         creditManager: null,
