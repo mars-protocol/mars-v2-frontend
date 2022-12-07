@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { toast } from 'react-toastify'
 
-import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useAccountDetailsStore from 'stores/useAccountDetailsStore'
 import useWalletStore from 'stores/useWalletStore'
 import { queryKeys } from 'types/query-keys-factory'
 import { hardcodedFee } from 'utils/contants'
@@ -15,7 +15,7 @@ const useWithdrawFunds = (
     onSuccess?: () => void
   },
 ) => {
-  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount ?? '')
+  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount ?? '')
   const address = useWalletStore((s) => s.address)
   const creditManagerClient = useWalletStore((s) => s.clients.creditManager)
 

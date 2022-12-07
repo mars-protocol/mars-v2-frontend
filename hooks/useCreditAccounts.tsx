@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
 import { contractAddresses } from 'config/contracts'
-import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useAccountDetailsStore from 'stores/useAccountDetailsStore'
 import useWalletStore from 'stores/useWalletStore'
 import { queryKeys } from 'types/query-keys-factory'
 
@@ -13,8 +13,8 @@ type Result = {
 const useCreditAccounts = () => {
   const address = useWalletStore((s) => s.address)
   const client = useWalletStore((s) => s.client)
-  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
-  const creditManagerActions = useCreditManagerStore((s) => s.actions)
+  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
+  const creditManagerActions = useAccountDetailsStore((s) => s.actions)
 
   const queryMsg = useMemo(() => {
     return {

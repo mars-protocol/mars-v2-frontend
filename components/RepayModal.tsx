@@ -5,17 +5,17 @@ import React, { useMemo, useState } from 'react'
 import { NumericFormat } from 'react-number-format'
 import { toast } from 'react-toastify'
 
+import Button from 'components/Button'
+import CircularProgress from 'components/CircularProgress'
+import ContainerSecondary from 'components/ContainerSecondary'
 import Slider from 'components/Slider'
 import useRepayFunds from 'hooks/mutations/useRepayFunds'
 import useAllBalances from 'hooks/useAllBalances'
 import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useTokenPrices from 'hooks/useTokenPrices'
-import useCreditManagerStore from 'stores/useCreditManagerStore'
+import useAccountDetailsStore from 'stores/useAccountDetailsStore'
 import { formatCurrency } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-import Button from 'components/Button'
-import CircularProgress from 'components/CircularProgress'
-import ContainerSecondary from 'components/ContainerSecondary'
 
 // 0.001% buffer / slippage to avoid repay action from not fully repaying the debt amount
 const REPAY_BUFFER = 1.00001
@@ -29,7 +29,7 @@ type Props = {
 const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
   const [amount, setAmount] = useState(0)
 
-  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
+  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
 
   const tokenSymbol = getTokenSymbol(tokenDenom)

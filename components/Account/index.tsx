@@ -1,4 +1,7 @@
+export { default as AccountDetails } from './AccountDetails'
+export { default as AccountManageOverlay } from './AccountManageOverlay'
+export { default as AccountNavigation } from './AccountNavigation'
 export { default as AccountStatus } from './AccountStatus'
+export { default as ConfirmModal } from './ConfirmModal'
 export { default as FundAccountModal } from './FundAccountModal'
-export { default as SubAccountNavigation } from './SubAccountNavigation'
 export { default as WithdrawModal } from './WithdrawModal'

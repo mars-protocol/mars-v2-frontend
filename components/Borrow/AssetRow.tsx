@@ -1,8 +1,8 @@
 import Image from 'next/image'
 import React, { useState } from 'react'
 
-import ChevronUpIcon from 'components/Icons/collapse.svg'
-import ChevronDownIcon from 'components/Icons/expand.svg'
+import ChevronUpIcon from 'components/Icons/chevron-up.svg'
+import ChevronDownIcon from 'components/Icons/chevron-down.svg'
 import Button from 'components/Button'
 import { formatCurrency } from 'utils/formatters'
 

@@ -178,8 +178,6 @@ const SubAccountNavigation = ({
           </div>
         </Overlay>
       </div>
-      <FundAccountModal open={showFundWalletModal} setOpen={setShowFundWalletModal} />
-      <WithdrawModal open={showWithdrawModal} setOpen={setShowWithdrawModal} />
     </>
   )
 }
