@@ -1,5 +1,4 @@
 import BigNumber from 'bignumber.js'
-import { useEffect } from 'react'
 
 import { BorrowCapacity } from 'components/BorrowCapacity'
 import Button from 'components/Button'
@@ -9,6 +8,7 @@ import Text from 'components/Text'
 import useCreateCreditAccount from 'hooks/mutations/useCreateCreditAccount'
 import useAccountStats from 'hooks/useAccountStats'
 import useCreditAccounts from 'hooks/useCreditAccounts'
+import { useEffect } from 'react'
 import { useModalStore } from 'stores'
 import { chain } from 'utils/chains'
 import { formatValue } from 'utils/formatters'

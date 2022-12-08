@@ -13,7 +13,9 @@ const useCreditAccounts = () => {
   const address = useWalletStore((s) => s.address)
   const client = useWalletStore((s) => s.signingClient)
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
-  const creditManagerActions = useAccountDetailsStore((s) => s.actions)
+  const setSelectedAccount = (account: string) => {
+    useAccountDetailsStore.setState({ selectedAccount: account })
+  }
 
   const queryMsg = useMemo(() => {
     return {
@@ -31,7 +33,7 @@ const useCreditAccounts = () => {
       enabled: !!address && !!client,
       onSuccess: (data) => {
         if (!data.tokens.includes(selectedAccount || '') && data.tokens.length > 0) {
-          creditManagerActions.setSelectedAccount(data.tokens[0])
+          setSelectedAccount(data.tokens[0])
         }
       },
     },

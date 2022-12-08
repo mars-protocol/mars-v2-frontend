@@ -13,7 +13,6 @@ const executeMsg = {
 
 const useCreateCreditAccount = () => {
   const signingClient = useWalletStore((s) => s.signingClient)
-  const setSelectedAccount = useAccountDetailsStore((s) => s.actions.setSelectedAccount)
   const address = useWalletStore((s) => s.address)
 
   const queryClient = useQueryClient()
@@ -38,7 +37,7 @@ const useCreateCreditAccount = () => {
 
         // TODO: is there some better way to parse response to extract token id???
         const createdID = data.logs[0].events[2].attributes[6].value
-        setSelectedAccount(createdID)
+        useAccountDetailsStore.setState({ selectedAccount: createdID })
         toast.success('New account created')
       },
     },
