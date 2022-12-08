@@ -9,8 +9,8 @@ import {
 import Image from 'next/image'
 import React from 'react'
 
-import ChevronUpIcon from 'components/Icons/collapse.svg'
-import ChevronDownIcon from 'components/Icons/expand.svg'
+import ChevronUpIcon from 'components/Icons/chevron-up.svg'
+import ChevronDownIcon from 'components/Icons/chevron-down.svg'
 import { formatCurrency } from 'utils/formatters'
 
 import AssetRow from './AssetRow'

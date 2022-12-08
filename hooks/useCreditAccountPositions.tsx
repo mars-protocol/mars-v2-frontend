@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
 import { contractAddresses } from 'config/contracts'
-import useWalletStore from 'stores/useWalletStore'
+import { useWalletStore } from 'stores'
 import { queryKeys } from 'types/query-keys-factory'
 
 interface DebtAmount {
@@ -26,7 +26,7 @@ interface Result {
 
 const useCreditAccountPositions = (accountId: string) => {
   const address = useWalletStore((s) => s.address)
-  const client = useWalletStore((s) => s.client)
+  const client = useWalletStore((s) => s.signingClient)
 
   const result = useQuery<Result>(
     queryKeys.creditAccountsPositions(accountId),

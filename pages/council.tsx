@@ -5,7 +5,7 @@ const Council = () => {
   return (
     <div className='flex w-full'>
       <Card>
-        <Text size='lg' uppercase={true}>
+        <Text size='lg' uppercase>
           Council Placeholder
         </Text>
       </Card>

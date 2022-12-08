@@ -19,25 +19,32 @@ import useCalculateMaxWithdrawAmount from 'hooks/useCalculateMaxWithdrawAmount'
 import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useMarkets from 'hooks/useMarkets'
 import useTokenPrices from 'hooks/useTokenPrices'
-import useCreditManagerStore from 'stores/useCreditManagerStore'
+import { useAccountDetailsStore, useModalStore } from 'stores'
 import { chain } from 'utils/chains'
 import { formatValue } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-interface Props {
-  open: boolean
-  setOpen: (open: boolean) => void
-}
 
-const WithdrawModal = ({ open, setOpen }: Props) => {
-  const [amount, setAmount] = useState(0)
-  const [selectedToken, setSelectedToken] = useState('')
-  const [isBorrowEnabled, setIsBorrowEnabled] = useState(false)
+const WithdrawModal = () => {
+  // ---------------
+  // STORE
+  // ---------------
+  const open = useModalStore((s) => s.withdrawModal)
 
-  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
+  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
   const { data: positionsData, isLoading: isLoadingPositions } = useCreditAccountPositions(
     selectedAccount ?? '',
   )
 
+  // ---------------
+  // LOCAL STATE
+  // ---------------
+  const [amount, setAmount] = useState(0)
+  const [selectedToken, setSelectedToken] = useState('')
+  const [isBorrowEnabled, setIsBorrowEnabled] = useState(false)
+
+  // ---------------
+  // EXTERNAL HOOKS
+  // ---------------
   const { data: balancesData } = useAllBalances()
   const { data: tokenPrices } = useTokenPrices()
   const { data: marketsData } = useMarkets()
@@ -86,7 +93,7 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
 
   const { mutate, isLoading } = useWithdrawFunds(withdrawAmount, borrowAmount, selectedToken, {
     onSuccess: () => {
-      setOpen(false)
+      useModalStore.setState({ withdrawModal: false })
       toast.success(`${amount} ${selectedTokenSymbol} successfully withdrawn`)
     },
   })
@@ -146,6 +153,10 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
     return (amount * 100) / maxWithdrawAmount
   }, [amount, maxWithdrawAmount])
 
+  const setOpen = (open: boolean) => {
+    useModalStore.setState({ withdrawModal: open })
+  }
+
   return (
     <Modal open={open} setOpen={setOpen}>
       <div className='flex min-h-[470px] w-full flex-wrap'>
@@ -158,7 +169,7 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
         <Text
           className='flex w-full border-b border-white/20 px-8 pt-4 pb-2 text-white'
           size='2xl'
-          uppercase={true}
+          uppercase
         >
           Withdraw from Account {selectedAccount}
         </Text>
@@ -198,7 +209,7 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
                   />
                 </div>
               </div>
-              <Text size='xs' uppercase={true} className='mb-2 text-white/60'>
+              <Text size='xs' uppercase className='mb-2 text-white/60'>
                 Available: {formatValue(maxWithdrawAmount, 0, 4, true, false, false, false, false)}
               </Text>
               <Slider
@@ -218,7 +229,7 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
             </div>
             <div className='flex items-center justify-between p-6'>
               <div className='flex flex-1 flex-wrap'>
-                <Text size='sm' className='text-white' uppercase={true}>
+                <Text size='sm' className='text-white' uppercase>
                   Withdraw with borrowing
                 </Text>
                 <Text size='sm' className='text-white/60'>
@@ -330,7 +341,7 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
               </div>
             </div>
             <div className='flex w-full flex-wrap'>
-              <Text uppercase={true} className='w-full bg-black/20 px-6 py-2 text-white/40'>
+              <Text uppercase className='w-full bg-black/20 px-6 py-2 text-white/40'>
                 Balances
               </Text>
               {isLoadingPositions ? (
@@ -338,16 +349,16 @@ const WithdrawModal = ({ open, setOpen }: Props) => {
               ) : (
                 <div className='flex w-full flex-wrap'>
                   <div className='mb-2 flex w-full border-b border-white/20 bg-black/20 px-6 py-2 '>
-                    <Text size='xs' uppercase={true} className='flex-1 text-white'>
+                    <Text size='xs' uppercase className='flex-1 text-white'>
                       Asset
                     </Text>
-                    <Text size='xs' uppercase={true} className='flex-1 text-white'>
+                    <Text size='xs' uppercase className='flex-1 text-white'>
                       Value
                     </Text>
-                    <Text size='xs' uppercase={true} className='flex-1 text-white'>
+                    <Text size='xs' uppercase className='flex-1 text-white'>
                       Size
                     </Text>
-                    <Text size='xs' uppercase={true} className='flex-1 text-white'>
+                    <Text size='xs' uppercase className='flex-1 text-white'>
                       APY
                     </Text>
                   </div>

@@ -7,7 +7,7 @@ const Trade = () => {
     <div className='flex w-full flex-wrap'>
       <div className='mb-4 flex flex-grow gap-4'>
         <Card className='flex-1'>
-          <Text size='lg' uppercase={true}>
+          <Text size='lg' uppercase>
             Tradingview Graph
           </Text>
         </Card>
@@ -16,14 +16,14 @@ const Trade = () => {
             <TradeActionModule />
           </Card>
           <Card>
-            <Text size='lg' uppercase={true}>
+            <Text size='lg' uppercase>
               Orderbook module (optional)
             </Text>
           </Card>
         </div>
       </div>
       <Card>
-        <Text size='lg' uppercase={true}>
+        <Text size='lg' uppercase>
           Order history
         </Text>
       </Card>

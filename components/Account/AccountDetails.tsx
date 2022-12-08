@@ -1,21 +1,26 @@
 import BigNumber from 'bignumber.js'
+import classNames from 'classnames'
+import { useState } from 'react'
 
+import Button from 'components/Button'
 import FormattedNumber from 'components/FormattedNumber'
 import ArrowRightLine from 'components/Icons/arrow-right-line.svg'
+import ChevronDown from 'components/Icons/chevron-down.svg'
+import ChevronLeft from 'components/Icons/chevron-left.svg'
 import Text from 'components/Text'
 import useAccountStats from 'hooks/useAccountStats'
 import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useMarkets from 'hooks/useMarkets'
 import useTokenPrices from 'hooks/useTokenPrices'
-import useCreditManagerStore from 'stores/useCreditManagerStore'
-import useWalletStore from 'stores/useWalletStore'
+import { useAccountDetailsStore } from 'stores'
 import { chain } from 'utils/chains'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
-const CreditManager = () => {
-  const address = useWalletStore((s) => s.address)
-  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
-  const toggleCreditManager = useCreditManagerStore((s) => s.actions.toggleCreditManager)
+import AccountManageOverlay from './AccountManageOverlay'
+
+const AccountDetails = () => {
+  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
+  const isOpen = useAccountDetailsStore((s) => s.isOpen)
 
   const { data: positionsData, isLoading: isLoadingPositions } = useCreditAccountPositions(
     selectedAccount ?? '',
@@ -24,6 +29,8 @@ const CreditManager = () => {
   const { data: tokenPrices } = useTokenPrices()
   const { data: marketsData } = useMarkets()
   const accountStats = useAccountStats()
+
+  const [showManageMenu, setShowManageMenu] = useState(false)
 
   const getTokenTotalUSDValue = (amount: string, denom: string) => {
     // early return if prices are not fetched yet
@@ -37,16 +44,57 @@ const CreditManager = () => {
   }
 
   return (
-    <div className='flex w-[400px] basis-[400px] flex-wrap content-start border-white/20 bg-header placeholder:border-l'>
-      <div className='flex w-full flex-wrap items-center border-b border-white/20'>
-        <Text size='xl' uppercase={true} className='flex-grow text-center text-white'>
+    <div
+      className={classNames(
+        'relative flex w-[400px] basis-[400px] flex-wrap content-start border-white/20 bg-header placeholder:border-l',
+        'transition-[margin] duration-1000 ease-in-out',
+        isOpen ? 'mr-0' : '-mr-[400px]',
+      )}
+    >
+      <Button
+        onClick={() => {
+          useAccountDetailsStore.setState({ isOpen: true })
+        }}
+        variant='text'
+        className={classNames(
+          'absolute top-1/2 -left-[20px] w-[21px] -translate-y-1/2 bg-header p-0',
+          'rounded-none rounded-tl-sm rounded-bl-sm',
+          'border border-white/20',
+          'transition-[opacity] delay-1000 duration-500 ease-in-out',
+          isOpen ? 'pointer-events-none opacity-0' : 'opacity-100',
+        )}
+      >
+        <span className='flex h-20 px-1 py-6 text-white/40 transition-[color] hover:text-white'>
+          <ChevronLeft />
+        </span>
+      </Button>
+      <div className='relative flex w-full flex-wrap items-center border-b border-white/20'>
+        <Button
+          variant='text'
+          className='flex flex-grow flex-nowrap items-center justify-center p-4 text-center text-white text-xl-caps'
+          onClick={() => setShowManageMenu(!showManageMenu)}
+        >
           Account {selectedAccount}
-        </Text>
-        <div className='flex border-l border-white/20 p-4' onClick={() => {}}>
-          <span className='w-5 hover:cursor-pointer' onClick={toggleCreditManager}>
-            <ArrowRightLine />
+          <span className='ml-2 flex w-4'>
+            <ChevronDown />
           </span>
+        </Button>
+        <div className='flex border-l border-white/20' onClick={() => {}}>
+          <Button
+            variant='text'
+            className='w-14 p-4 text-white/40 transition-[color] hover:cursor-pointer  hover:text-white'
+            onClick={() => {
+              useAccountDetailsStore.setState({ isOpen: false })
+            }}
+          >
+            <ArrowRightLine />
+          </Button>
         </div>
+        <AccountManageOverlay
+          className='top-[60px] left-[36px]'
+          show={showManageMenu}
+          setShow={setShowManageMenu}
+        />
       </div>
       <div className='flex w-full flex-wrap p-2'>
         <div className='mb-2 flex w-full'>
@@ -80,7 +128,7 @@ const CreditManager = () => {
         </div>
       </div>
       <div className='flex w-full flex-wrap'>
-        <Text uppercase={true} className='w-full bg-black/20 px-4 py-2 text-white/40'>
+        <Text uppercase className='w-full bg-black/20 px-4 py-2 text-white/40'>
           Balances
         </Text>
         {isLoadingPositions ? (
@@ -88,16 +136,16 @@ const CreditManager = () => {
         ) : (
           <div className='flex w-full flex-wrap'>
             <div className='mb-2 flex w-full border-b border-white/20 bg-black/20 px-4 py-2'>
-              <Text size='xs' uppercase={true} className='flex-1 text-white'>
+              <Text size='xs' uppercase className='flex-1 text-white'>
                 Asset
               </Text>
-              <Text size='xs' uppercase={true} className='flex-1 text-white'>
+              <Text size='xs' uppercase className='flex-1 text-white'>
                 Value
               </Text>
-              <Text size='xs' uppercase={true} className='flex-1 text-white'>
+              <Text size='xs' uppercase className='flex-1 text-white'>
                 Size
               </Text>
-              <Text size='xs' uppercase={true} className='flex-1 text-white'>
+              <Text size='xs' uppercase className='flex-1 text-white'>
                 APY
               </Text>
             </div>
@@ -169,4 +217,4 @@ const CreditManager = () => {
   )
 }
 
-export default CreditManager
+export default AccountDetails

@@ -1,26 +1,29 @@
 import classNames from 'classnames'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useWallet, WalletConnectionStatus } from '@marsprotocol/wallet-connector'
 
-import CreditManager from 'components/CreditManager'
-import ArrowLeftLine from 'components/Icons/arrow-left-line.svg'
+import AccountManager from 'components/Account/AccountDetails'
 import DesktopNavigation from 'components/Navigation/DesktopNavigation'
 import useCreditAccounts from 'hooks/useCreditAccounts'
-import useCreditManagerStore from 'stores/useCreditManagerStore'
-import useWalletStore from 'stores/useWalletStore'
+import { useWalletStore } from 'stores'
+
+const filter = {
+  day: 'brightness-100 hue-rotate-0',
+  night: '-hue-rotate-82 brightness-30',
+}
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
-  const toggleCreditManager = useCreditManagerStore((s) => s.actions.toggleCreditManager)
-  const isOpen = useCreditManagerStore((s) => s.isOpen)
-  const address = useWalletStore((s) => s.address)
   const { data: creditAccountsList, isLoading: isLoadingCreditAccounts } = useCreditAccounts()
   const hasCreditAccounts = creditAccountsList && creditAccountsList.length > 0
 
-  const filter = {
-    day: 'brightness-100 hue-rotate-0',
-    night: '-hue-rotate-82 brightness-30',
-  }
+  const { status, signingCosmWasmClient, chainInfo, address, name } = useWallet()
+  const initialize = useWalletStore((s) => s.actions.initialize)
 
-  const isConnected = !!address
+  useEffect(() => {
+    initialize(status, signingCosmWasmClient, address, name, chainInfo)
+  }, [status, signingCosmWasmClient, chainInfo, address, name, initialize])
+
+  const isConnected = status === WalletConnectionStatus.Connected
 
   const backgroundClasses = classNames(
     isConnected ? filter.day : filter.night,
@@ -33,14 +36,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <DesktopNavigation />
       <main className='relative flex lg:h-[calc(100vh-120px)]'>
         <div className='flex flex-grow flex-wrap p-6'>{children}</div>
-        {isOpen && hasCreditAccounts && <CreditManager />}
-        {!isOpen && hasCreditAccounts && (
-          <div className='absolute top-0 right-0 border-l border-b border-white/20 bg-header p-4'>
-            <div className='w-5 hover:cursor-pointer' onClick={toggleCreditManager}>
-              <ArrowLeftLine />
-            </div>
-          </div>
-        )}
+        {hasCreditAccounts && <AccountManager />}
       </main>
     </div>
   )

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import useWalletStore from 'stores/useWalletStore'
+import { useWalletStore } from 'stores'
 import { queryKeys } from 'types/query-keys-factory'
 import { chain } from 'utils/chains'
 
@@ -12,7 +12,7 @@ const useAllBalances = () => {
   const address = useWalletStore((s) => s.address)
 
   const result = useQuery<Result>(
-    queryKeys.allBalances(address),
+    queryKeys.allBalances(address ?? ''),
     () => fetch(`${chain.rest}/cosmos/bank/v1beta1/balances/${address}`).then((res) => res.json()),
     {
       enabled: !!address,

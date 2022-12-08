@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { contractAddresses } from 'config/contracts'
-import useWalletStore from 'stores/useWalletStore'
+import { useWalletStore } from 'stores'
 import { queryKeys } from 'types/query-keys-factory'
 
 type Result = string[]
@@ -11,7 +11,7 @@ const queryMsg = {
 }
 
 const useAllowedCoins = () => {
-  const client = useWalletStore((s) => s.client)
+  const client = useWalletStore((s) => s.signingClient)
 
   const result = useQuery<Result>(
     queryKeys.allowedCoins(),

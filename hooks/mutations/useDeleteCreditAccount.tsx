@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
 
 import { contractAddresses } from 'config/contracts'
-import useWalletStore from 'stores/useWalletStore'
+import { useWalletStore } from 'stores'
 import { queryKeys } from 'types/query-keys-factory'
 import { hardcodedFee } from 'utils/contants'
 
@@ -15,7 +15,7 @@ const useCreateCreditAccount = (accountId: string) => {
   return useMutation(
     async () =>
       await signingClient?.execute(
-        address,
+        address ?? '',
         contractAddresses.accountNft,
         {
           burn: {
@@ -26,7 +26,7 @@ const useCreateCreditAccount = (accountId: string) => {
       ),
     {
       onSettled: () => {
-        queryClient.invalidateQueries(queryKeys.creditAccounts(address))
+        queryClient.invalidateQueries(queryKeys.creditAccounts(address ?? ''))
       },
       onError: (err: Error) => {
         toast.error(err.message)

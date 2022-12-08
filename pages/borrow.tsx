@@ -11,7 +11,7 @@ import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useMarkets from 'hooks/useMarkets'
 import useRedbankBalances from 'hooks/useRedbankBalances'
 import useTokenPrices from 'hooks/useTokenPrices'
-import useCreditManagerStore from 'stores/useCreditManagerStore'
+import { useAccountDetailsStore } from 'stores'
 import { getTokenDecimals, getTokenInfo } from 'utils/tokens'
 
 type ModalState = {
@@ -27,7 +27,7 @@ const Borrow = () => {
     data: { tokenDenom: '' },
   })
 
-  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
+  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
 
   const { data: allowedCoinsData } = useAllowedCoins()
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
@@ -120,7 +120,7 @@ const Borrow = () => {
       <div className='flex-1'>
         <Card className='mb-4'>
           <div>
-            <Text tag='h3' size='xl' uppercase={true} className='mb-7 text-center'>
+            <Text tag='h3' size='xl' uppercase className='mb-7 text-center'>
               Borrowings
             </Text>
             <BorrowTable
@@ -132,7 +132,7 @@ const Borrow = () => {
         </Card>
         <Card>
           <div>
-            <Text tag='h3' size='xl' uppercase={true} className='mb-7 text-center text-lg-caps'>
+            <Text tag='h3' size='xl' uppercase className='mb-7 text-center text-lg-caps'>
               Available to Borrow
             </Text>
             <BorrowTable

@@ -5,7 +5,7 @@ import Text from 'components/Text'
 const mockedAccounts = [
   {
     id: 1,
-    label: 'Subaccount 1',
+    label: 'Account 1',
     networth: 100000,
     totalPositionValue: 150000,
     debt: 50000,
@@ -15,7 +15,7 @@ const mockedAccounts = [
   },
   {
     id: 2,
-    label: 'Subaccount 2',
+    label: 'Account 2',
     networth: 33000,
     totalPositionValue: 11000,
     debt: 20000,
@@ -25,7 +25,7 @@ const mockedAccounts = [
   },
   {
     id: 3,
-    label: 'Subaccount 3',
+    label: 'Account 3',
     networth: 0,
     totalPositionValue: 12938129,
     debt: 9999999999,
@@ -35,7 +35,7 @@ const mockedAccounts = [
   },
   {
     id: 4,
-    label: 'Subaccount 4',
+    label: 'Account 4',
     networth: 33653.22,
     totalPositionValue: 100000,
     debt: 50001.9,
@@ -49,14 +49,14 @@ const Portfolio = () => {
   return (
     <div className='flex w-full items-start gap-4'>
       <Card className='flex-1'>
-        <Text size='lg' uppercase={true}>
+        <Text size='lg' uppercase>
           Portfolio Module
         </Text>
       </Card>
       <div className='grid grid-cols-2 gap-4'>
         {mockedAccounts.map((account) => (
           <Card key={account.id}>
-            <Text size='lg' uppercase={true} className='mb-4 text-center'>
+            <Text size='lg' uppercase className='mb-4 text-center'>
               {account.label}
             </Text>
             <div className='grid grid-cols-3 gap-4'>

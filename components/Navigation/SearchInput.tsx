@@ -5,7 +5,7 @@ const SearchInput = () => (
       <SearchIcon />
     </span>
     <input
-      className='w-[280px] rounded-md border border-white/20 bg-black/30 py-2 pl-10 text-sm text-white placeholder:text-white/40 focus:outline-none'
+      className='w-[280px] rounded-md border border-white/20 bg-black/30 py-2 pl-10 text-sm text-white placeholder:text-white/40 focus:border-white/60 focus:outline-none'
       placeholder='Search'
     />
   </div>

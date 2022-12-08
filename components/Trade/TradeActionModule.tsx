@@ -14,7 +14,7 @@ import useCalculateMaxTradeAmount from 'hooks/useCalculateMaxTradeAmount'
 import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useMarkets from 'hooks/useMarkets'
 import useTokenPrices from 'hooks/useTokenPrices'
-import useCreditManagerStore from 'stores/useCreditManagerStore'
+import { useAccountDetailsStore } from 'stores'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 enum FundingMode {
@@ -32,7 +32,7 @@ const TradeActionModule = () => {
 
   const [isMarginEnabled, setIsMarginEnabled] = React.useState(false)
 
-  const selectedAccount = useCreditManagerStore((s) => s.selectedAccount)
+  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
 
   const { data: allowedCoinsData } = useAllowedCoins()
   const { data: balancesData } = useAllBalances()
