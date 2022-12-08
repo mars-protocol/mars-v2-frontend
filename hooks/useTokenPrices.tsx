@@ -1,20 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
 import { gql, request } from 'graphql-request'
+import { useMemo } from 'react'
 
 import { contractAddresses } from 'config/contracts'
+import tokenInfo from 'config/tokenInfo'
 import { queryKeys } from 'types/query-keys-factory'
 import { chain } from 'utils/chains'
-import tokenInfo from 'config/tokenInfo'
-
-interface Result {
-  prices: {
-    [key: string]: {
-      denom: string
-      price: string
-    }
-  }
-}
 
 const tokenInfoList = Object.values(tokenInfo)
 
@@ -42,7 +33,7 @@ const fetchTokenPrices = () => {
 }
 
 const useTokenPrices = () => {
-  const result = useQuery<Result>(queryKeys.tokenPrices(), fetchTokenPrices, {
+  const result = useQuery<TokenPricesResult>(queryKeys.tokenPrices(), fetchTokenPrices, {
     refetchInterval: 30000,
     staleTime: Infinity,
   })

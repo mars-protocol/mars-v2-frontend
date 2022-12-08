@@ -4,19 +4,6 @@ import { animated, useSpring } from 'react-spring'
 
 import { formatValue } from 'utils/formatters'
 
-interface Props {
-  amount: number
-  animate?: boolean
-  className?: string
-  minDecimals?: number
-  maxDecimals?: number
-  thousandSeparator?: boolean
-  prefix?: boolean | string
-  suffix?: boolean | string
-  rounded?: boolean
-  abbreviated?: boolean
-}
-
 const FormattedNumber = ({
   amount,
   animate = false,
@@ -28,15 +15,15 @@ const FormattedNumber = ({
   suffix = false,
   rounded = false,
   abbreviated = false,
-}: Props) => {
+}: FormattedNumberProps) => {
   const prevAmountRef = useRef<number>(0)
 
   useEffect(() => {
-    if (prevAmountRef.current !== amount) prevAmountRef.current = amount
+    if (prevAmountRef.current !== Number(amount)) prevAmountRef.current = Number(amount)
   }, [amount])
 
   const springAmount = useSpring({
-    number: amount,
+    number: Number(amount),
     from: { number: prevAmountRef.current },
     config: { duration: 1000 },
   })
