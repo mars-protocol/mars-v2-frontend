@@ -1,6 +1,3 @@
-import FormattedNumber from 'components/FormattedNumber'
-import Text from 'components/Text'
-import useAccountStats from 'hooks/useAccountStats'
 import moment from 'moment'
 import {
   Area,
@@ -11,6 +8,10 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+
+import FormattedNumber from 'components/FormattedNumber'
+import Text from 'components/Text'
+import useAccountStats from 'hooks/useAccountStats'
 import { formatValue } from 'utils/formatters'
 
 const data = [

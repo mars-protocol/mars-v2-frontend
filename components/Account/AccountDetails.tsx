@@ -10,17 +10,16 @@ import ChevronLeft from 'components/Icons/chevron-left.svg'
 import Text from 'components/Text'
 import useAccountStats from 'hooks/useAccountStats'
 import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
-import { useAccountDetailsStore } from 'stores'
-import { chain } from 'utils/chains'
-
 import useMarkets from 'hooks/useMarkets'
 import useTokenPrices from 'hooks/useTokenPrices'
-import { ValuesObject } from 'types'
-import { getTokenTotalUSDValue, lookup } from 'utils/formatters'
-import { getTokenSymbol } from 'utils/tokens'
-import { PositionsList } from '.'
+import { useAccountDetailsStore } from 'stores'
+import { formatBalances } from 'utils/balances'
+import { chain } from 'utils/chains'
+
 import AccountManageOverlay from './AccountManageOverlay'
 import RiskChart from './RiskChart'
+
+import { PositionsList } from '.'
 
 const AccountDetails = () => {
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
@@ -35,51 +34,19 @@ const AccountDetails = () => {
   const { data: tokenPrices } = useTokenPrices()
 
   const [showManageMenu, setShowManageMenu] = useState(false)
-  const [balanceData, setBalanceData] = useState([])
-  const [balanceDataDebts, setBalanceDataDebts] = useState([])
+  const [balanceData, setBalanceData] = useState<PositionsData[]>()
 
   useEffect(() => {
-    const balances: ValuesObject[] = []
-    const balancesDebt: ValuesObject[] = []
+    const balances =
+      positionsData?.coins && tokenPrices
+        ? formatBalances(positionsData.coins, tokenPrices, false)
+        : []
+    const debtBalances =
+      positionsData?.debts && tokenPrices
+        ? formatBalances(positionsData.debts, tokenPrices, true, marketsData)
+        : []
 
-    positionsData?.coins.forEach((coin) => {
-      const dataEntry = {
-        asset: { amount: getTokenSymbol(coin.denom), format: 'string' },
-        value: {
-          amount: getTokenTotalUSDValue(coin.amount, coin.denom, tokenPrices),
-          format: 'number',
-          prefix: '$',
-        },
-        size: { amount: lookup(coin.amount, coin.denom), maxDecimals: 4, minDecimals: 0 },
-        apy: { amount: '-', format: 'string' },
-      }
-      balances.push(dataEntry)
-    })
-
-    positionsData?.debts.forEach((coin) => {
-      const dataEntry = {
-        asset: { amount: getTokenSymbol(coin.denom), format: 'string' },
-        value: {
-          amount: getTokenTotalUSDValue(coin.amount, coin.denom, tokenPrices),
-          format: 'number',
-          prefix: '$',
-        },
-        size: {
-          amount: lookup(coin.amount, coin.denom),
-          format: 'number',
-          maxDecimals: 4,
-          minDecimals: 0,
-        },
-        apy: { amount: Number(marketsData?.[coin.denom].borrow_rate) * 100 },
-        format: 'number',
-        prefix: '%',
-        minDecimals: 0,
-      }
-      balancesDebt.push(dataEntry)
-    })
-
-    setBalanceData(balances)
-    setBalanceDataDebts(balancesDebt)
+    setBalanceData([...balances, ...debtBalances])
   }, [positionsData, isLoadingPositions, marketsData])
 
   return (
@@ -167,7 +134,7 @@ const AccountDetails = () => {
         </div>
       </div>
       <RiskChart />
-      <PositionsList title='Balances' data={balanceData} debtData={balanceDataDebts} />
+      {!isLoadingPositions && balanceData && <PositionsList title='Balances' data={balanceData} />}
     </div>
   )
 }

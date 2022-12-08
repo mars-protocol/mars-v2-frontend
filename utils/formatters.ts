@@ -1,7 +1,8 @@
 import BigNumber from 'bignumber.js'
+
 import { getTokenDecimals } from './tokens'
 
-interface KeyValuePair {
+export interface KeyValuePair {
   [key: string]: number
 }
 
@@ -25,7 +26,7 @@ export const getTokenTotalUSDValue = (
   denom: string,
   tokenPrices?: KeyValuePair,
 ) => {
-  if (!tokenPrices) return
+  if (!tokenPrices) return 0
 
   return (
     BigNumber(amount)

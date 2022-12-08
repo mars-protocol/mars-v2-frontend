@@ -20,9 +20,12 @@ import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import useMarkets from 'hooks/useMarkets'
 import useTokenPrices from 'hooks/useTokenPrices'
 import { useAccountDetailsStore, useModalStore } from 'stores'
+import { formatBalances } from 'utils/balances'
 import { chain } from 'utils/chains'
 import { formatValue } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
+
+import PositionsList from './PositionsList'
 
 const WithdrawModal = () => {
   // ---------------
@@ -157,6 +160,21 @@ const WithdrawModal = () => {
     useModalStore.setState({ withdrawModal: open })
   }
 
+  const [balanceData, setBalanceData] = useState<PositionsData[]>()
+
+  useEffect(() => {
+    const balances =
+      positionsData?.coins && tokenPrices
+        ? formatBalances(positionsData.coins, tokenPrices, false)
+        : []
+    const debtBalances =
+      positionsData?.debts && tokenPrices
+        ? formatBalances(positionsData.debts, tokenPrices, true, marketsData)
+        : []
+
+    setBalanceData([...balances, ...debtBalances])
+  }, [positionsData, isLoadingPositions, marketsData])
+
   return (
     <Modal open={open} setOpen={setOpen}>
       <div className='flex min-h-[470px] w-full flex-wrap'>
@@ -169,7 +187,7 @@ const WithdrawModal = () => {
         <Text
           className='flex w-full border-b border-white/20 px-8 pt-4 pb-2 text-white'
           size='2xl'
-          uppercase={true}
+          uppercase
         >
           Withdraw from Account {selectedAccount}
         </Text>
@@ -209,7 +227,7 @@ const WithdrawModal = () => {
                   />
                 </div>
               </div>
-              <Text size='xs' uppercase={true} className='mb-2 text-white/60'>
+              <Text size='xs' uppercase className='mb-2 text-white/60'>
                 Available: {formatValue(maxWithdrawAmount, 0, 4, true, false, false, false, false)}
               </Text>
               <Slider
@@ -229,7 +247,7 @@ const WithdrawModal = () => {
             </div>
             <div className='flex items-center justify-between p-6'>
               <div className='flex flex-1 flex-wrap'>
-                <Text size='sm' className='text-white' uppercase={true}>
+                <Text size='sm' className='text-white' uppercase>
                   Withdraw with borrowing
                 </Text>
                 <Text size='sm' className='text-white/60'>
@@ -340,95 +358,10 @@ const WithdrawModal = () => {
                 </Text>
               </div>
             </div>
-            <div className='flex w-full flex-wrap'>
-              <Text uppercase={true} className='w-full bg-black/20 px-6 py-2 text-white/40'>
-                Balances
-              </Text>
-              {isLoadingPositions ? (
-                <div>Loading...</div>
-              ) : (
-                <div className='flex w-full flex-wrap'>
-                  <div className='mb-2 flex w-full border-b border-white/20 bg-black/20 px-6 py-2 '>
-                    <Text size='xs' uppercase={true} className='flex-1 text-white'>
-                      Asset
-                    </Text>
-                    <Text size='xs' uppercase={true} className='flex-1 text-white'>
-                      Value
-                    </Text>
-                    <Text size='xs' uppercase={true} className='flex-1 text-white'>
-                      Size
-                    </Text>
-                    <Text size='xs' uppercase={true} className='flex-1 text-white'>
-                      APY
-                    </Text>
-                  </div>
-                  {positionsData?.coins.map((coin) => (
-                    <div key={coin.denom} className='flex w-full px-4 py-2'>
-                      <Text
-                        size='xs'
-                        className='flex-1 border-l-4 border-profit pl-2 text-white/60'
-                      >
-                        {getTokenSymbol(coin.denom)}
-                      </Text>
-                      <Text size='xs' className='flex-1 text-white/60'>
-                        <FormattedNumber
-                          amount={getTokenTotalUSDValue(coin.amount, coin.denom)}
-                          prefix='$'
-                          animate
-                        />
-                      </Text>
-                      <Text size='xs' className='flex-1 text-white/60'>
-                        <FormattedNumber
-                          amount={BigNumber(coin.amount)
-                            .div(10 ** getTokenDecimals(coin.denom))
-                            .toNumber()}
-                          minDecimals={0}
-                          maxDecimals={4}
-                          animate
-                        />
-                      </Text>
-                      <Text size='xs' className='flex-1 text-white/60'>
-                        -
-                      </Text>
-                    </div>
-                  ))}
-                  {positionsData?.debts.map((coin) => (
-                    <div key={coin.denom} className='flex w-full px-4 py-2'>
-                      <Text size='xs' className='flex-1 border-l-4 border-loss pl-2 text-white/60'>
-                        {getTokenSymbol(coin.denom)}
-                      </Text>
-                      <Text size='xs' className='flex-1 text-white/60'>
-                        <FormattedNumber
-                          amount={getTokenTotalUSDValue(coin.amount, coin.denom)}
-                          prefix='-$'
-                          animate
-                        />
-                      </Text>
-                      <Text size='xs' className='flex-1 text-white/60'>
-                        <FormattedNumber
-                          amount={BigNumber(coin.amount)
-                            .div(10 ** getTokenDecimals(coin.denom))
-                            .toNumber()}
-                          minDecimals={0}
-                          maxDecimals={4}
-                          animate
-                        />
-                      </Text>
-                      <Text size='xs' className='flex-1 text-white/60'>
-                        <FormattedNumber
-                          amount={Number(marketsData?.[coin.denom].borrow_rate) * 100}
-                          minDecimals={0}
-                          maxDecimals={2}
-                          prefix='-'
-                          suffix='%'
-                          animate
-                        />
-                      </Text>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+
+            {!isLoadingPositions && balanceData && (
+              <PositionsList title='Balances' data={balanceData} />
+            )}
           </div>
         </div>
       </div>

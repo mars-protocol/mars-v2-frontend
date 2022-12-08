@@ -26,7 +26,3 @@ export enum TestnetCosmosChainId {
   Osmosis = 'osmo-test-4',
   Cosmoshub = 'cosmoshub-testnet',
 }
-
-export interface ValuesObject {
-  [key: string]: number | string
-}
