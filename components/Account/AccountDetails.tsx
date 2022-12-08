@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Button from 'components/Button'
 import FormattedNumber from 'components/FormattedNumber'
@@ -10,14 +10,14 @@ import ChevronLeft from 'components/Icons/chevron-left.svg'
 import Text from 'components/Text'
 import useAccountStats from 'hooks/useAccountStats'
 import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
-import useMarkets from 'hooks/useMarkets'
-import useTokenPrices from 'hooks/useTokenPrices'
 import { useAccountDetailsStore } from 'stores'
 import { chain } from 'utils/chains'
-import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 import AccountManageOverlay from './AccountManageOverlay'
 import RiskChart from './RiskChart'
+import { PositionsList } from '.'
+
+const balancesLabels = ['Asset', 'Value', 'Size', 'Apy']
 
 const AccountDetails = () => {
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
@@ -27,22 +27,9 @@ const AccountDetails = () => {
     selectedAccount ?? '',
   )
 
-  const { data: tokenPrices } = useTokenPrices()
-  const { data: marketsData } = useMarkets()
   const accountStats = useAccountStats()
 
   const [showManageMenu, setShowManageMenu] = useState(false)
-
-  const getTokenTotalUSDValue = (amount: string, denom: string) => {
-    // early return if prices are not fetched yet
-    if (!tokenPrices) return 0
-
-    return (
-      BigNumber(amount)
-        .div(10 ** getTokenDecimals(denom))
-        .toNumber() * tokenPrices[denom]
-    )
-  }
 
   return (
     <div
@@ -129,92 +116,11 @@ const AccountDetails = () => {
         </div>
       </div>
       <RiskChart />
-      <div className='flex w-full flex-wrap'>
-        <Text uppercase className='w-full bg-black/20 px-4 py-2 text-white/40'>
-          Balances
-        </Text>
-        {isLoadingPositions ? (
-          <div>Loading...</div>
-        ) : (
-          <div className='flex w-full flex-wrap'>
-            <div className='mb-2 flex w-full border-b border-white/20 bg-black/20 px-4 py-2'>
-              <Text size='xs' uppercase className='flex-1 text-white'>
-                Asset
-              </Text>
-              <Text size='xs' uppercase className='flex-1 text-white'>
-                Value
-              </Text>
-              <Text size='xs' uppercase className='flex-1 text-white'>
-                Size
-              </Text>
-              <Text size='xs' uppercase className='flex-1 text-white'>
-                APY
-              </Text>
-            </div>
-            {positionsData?.coins.map((coin) => (
-              <div key={coin.denom} className='flex w-full px-4 py-2'>
-                <Text size='xs' className='flex-1 border-l-4 border-profit pl-2 text-white/60'>
-                  {getTokenSymbol(coin.denom)}
-                </Text>
-                <Text size='xs' className='flex-1 text-white/60'>
-                  <FormattedNumber
-                    amount={getTokenTotalUSDValue(coin.amount, coin.denom)}
-                    animate
-                    prefix='$'
-                  />
-                </Text>
-                <Text size='xs' className='flex-1 text-white/60'>
-                  <FormattedNumber
-                    amount={BigNumber(coin.amount)
-                      .div(10 ** getTokenDecimals(coin.denom))
-                      .toNumber()}
-                    animate
-                    minDecimals={0}
-                    maxDecimals={4}
-                  />
-                </Text>
-                <Text size='xs' className='flex-1 text-white/60'>
-                  -
-                </Text>
-              </div>
-            ))}
-            {positionsData?.debts.map((coin) => (
-              <div key={coin.denom} className='flex w-full px-4 py-2'>
-                <Text size='xs' className='flex-1 border-l-4 border-loss pl-2 text-white/60'>
-                  {getTokenSymbol(coin.denom)}
-                </Text>
-                <Text size='xs' className='flex-1 text-white/60'>
-                  <FormattedNumber
-                    amount={getTokenTotalUSDValue(coin.amount, coin.denom)}
-                    prefix='-$'
-                    animate
-                  />
-                </Text>
-                <Text size='xs' className='flex-1 text-white/60'>
-                  <FormattedNumber
-                    amount={BigNumber(coin.amount)
-                      .div(10 ** getTokenDecimals(coin.denom))
-                      .toNumber()}
-                    minDecimals={0}
-                    maxDecimals={4}
-                    animate
-                  />
-                </Text>
-                <Text size='xs' className='flex-1 text-white/60'>
-                  <FormattedNumber
-                    amount={Number(marketsData?.[coin.denom].borrow_rate) * 100}
-                    minDecimals={0}
-                    maxDecimals={2}
-                    prefix='-'
-                    suffix='%'
-                    animate
-                  />
-                </Text>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      <PositionsList
+        labels={balancesLabels}
+        data={positionsData?.coins}
+        debtData={positionsData?.debts}
+      />
     </div>
   )
 }
