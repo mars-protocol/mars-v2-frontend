@@ -8,6 +8,7 @@ import Head from 'next/head'
 import { ToastContainer, Zoom } from 'react-toastify'
 
 import Layout from 'components/Layout'
+import Modals from 'components/Modals'
 import WalletConnectProvider from 'components/Wallet/WalletConnectProvider'
 
 const queryClient = new QueryClient()
@@ -25,6 +26,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Layout>
             <Component {...pageProps} />
           </Layout>
+          <Modals />
           <ToastContainer
             autoClose={1500}
             closeButton={false}

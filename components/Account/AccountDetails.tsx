@@ -20,7 +20,6 @@ import AccountManageOverlay from './AccountManageOverlay'
 
 const AccountDetails = () => {
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
-  const showAccountDetails = useAccountDetailsStore((s) => s.actions.showAccountDetails)
   const isOpen = useAccountDetailsStore((s) => s.isOpen)
 
   const { data: positionsData, isLoading: isLoadingPositions } = useCreditAccountPositions(
@@ -54,18 +53,18 @@ const AccountDetails = () => {
     >
       <Button
         onClick={() => {
-          showAccountDetails(true)
+          useAccountDetailsStore.setState({ isOpen: true })
         }}
         variant='text'
         className={classNames(
-          'absolute top-1/2 -left-[22px] -translate-y-1/2 bg-header p-0',
+          'absolute top-1/2 -left-[20px] w-[21px] -translate-y-1/2 bg-header p-0',
           'rounded-none rounded-tl-sm rounded-bl-sm',
           'border border-white/20',
           'transition-[opacity] delay-1000 duration-500 ease-in-out',
           isOpen ? 'pointer-events-none opacity-0' : 'opacity-100',
         )}
       >
-        <span className='flex h-20 w-5 px-1 py-6 text-white/40 transition-[color] hover:text-white'>
+        <span className='flex h-20 px-1 py-6 text-white/40 transition-[color] hover:text-white'>
           <ChevronLeft />
         </span>
       </Button>
@@ -85,7 +84,7 @@ const AccountDetails = () => {
             variant='text'
             className='w-14 p-4 text-white/40 transition-[color] hover:cursor-pointer  hover:text-white'
             onClick={() => {
-              showAccountDetails(false)
+              useAccountDetailsStore.setState({ isOpen: false })
             }}
           >
             <ArrowRightLine />

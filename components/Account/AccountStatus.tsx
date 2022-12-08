@@ -5,18 +5,22 @@ import Button from 'components/Button'
 import FormattedNumber from 'components/FormattedNumber'
 import Gauge from 'components/Gauge'
 import Text from 'components/Text'
+import useCreateCreditAccount from 'hooks/mutations/useCreateCreditAccount'
 import useAccountStats from 'hooks/useAccountStats'
 import useCreditAccounts from 'hooks/useCreditAccounts'
+import { useEffect } from 'react'
+import { useModalStore } from 'stores'
 import { chain } from 'utils/chains'
 import { formatValue } from 'utils/formatters'
 
-interface Props {
-  createCreditAccount: () => void
-}
-
-const AccountStatus = ({ createCreditAccount }: Props) => {
+const AccountStatus = () => {
   const accountStats = useAccountStats()
-  const { data: creditAccountsList, isLoading: isLoadingCreditAccounts } = useCreditAccounts()
+  const { data: creditAccountsList } = useCreditAccounts()
+  const { mutate: createCreditAccount, isLoading: isLoadingCreate } = useCreateCreditAccount()
+  useEffect(() => {
+    useModalStore.setState({ createAccountModal: isLoadingCreate })
+  }, [isLoadingCreate])
+
   const hasCreditAccounts = creditAccountsList && creditAccountsList.length > 0
 
   if (!hasCreditAccounts) {
