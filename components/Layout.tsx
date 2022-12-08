@@ -1,6 +1,6 @@
+import { useWallet, WalletConnectionStatus } from '@marsprotocol/wallet-connector'
 import classNames from 'classnames'
 import React, { useEffect } from 'react'
-import { useWallet, WalletConnectionStatus } from '@marsprotocol/wallet-connector'
 
 import AccountManager from 'components/Account/AccountDetails'
 import DesktopNavigation from 'components/Navigation/DesktopNavigation'
@@ -34,7 +34,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <div className='relative min-h-screen w-full'>
       <div className={backgroundClasses} />
       <DesktopNavigation />
-      <main className='relative flex lg:h-[calc(100vh-120px)]'>
+      <main className='relative flex lg:min-h-[calc(100vh-120px)]'>
         <div className='flex flex-grow flex-wrap p-6'>{children}</div>
         {hasCreditAccounts && <AccountManager />}
       </main>

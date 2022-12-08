@@ -17,6 +17,7 @@ import { chain } from 'utils/chains'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 import AccountManageOverlay from './AccountManageOverlay'
+import RiskChart from './RiskChart'
 
 const AccountDetails = () => {
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
@@ -46,7 +47,7 @@ const AccountDetails = () => {
   return (
     <div
       className={classNames(
-        'relative flex w-[400px] basis-[400px] flex-wrap content-start border-white/20 bg-header placeholder:border-l',
+        'relative flex w-[400px] basis-[400px] flex-wrap content-start border-white/20 bg-header',
         'transition-[margin] duration-1000 ease-in-out',
         isOpen ? 'mr-0' : '-mr-[400px]',
       )}
@@ -96,7 +97,7 @@ const AccountDetails = () => {
           setShow={setShowManageMenu}
         />
       </div>
-      <div className='flex w-full flex-wrap p-2'>
+      <div className='flex w-full flex-wrap p-3'>
         <div className='mb-2 flex w-full'>
           <Text size='xs' className='flex-grow text-white/60'>
             Total Position:
@@ -127,6 +128,7 @@ const AccountDetails = () => {
           </Text>
         </div>
       </div>
+      <RiskChart />
       <div className='flex w-full flex-wrap'>
         <Text uppercase className='w-full bg-black/20 px-4 py-2 text-white/40'>
           Balances
