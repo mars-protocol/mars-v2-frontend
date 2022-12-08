@@ -1,3 +1,10 @@
+import BigNumber from 'bignumber.js'
+import { getTokenDecimals } from './tokens'
+
+interface KeyValuePair {
+  [key: string]: number
+}
+
 export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
   const head = text.slice(0, h)
   if (t === 0) return text.length > h + t ? head + '...' : text
@@ -11,6 +18,26 @@ export const formatCurrency = (value: string | number) => {
     style: 'currency',
     currency: 'USD',
   })
+}
+
+export const getTokenTotalUSDValue = (
+  amount: string,
+  denom: string,
+  tokenPrices?: KeyValuePair,
+) => {
+  if (!tokenPrices) return
+
+  return (
+    BigNumber(amount)
+      .div(10 ** getTokenDecimals(denom))
+      .toNumber() * tokenPrices[denom]
+  )
+}
+
+export const lookup = (amount: string, denom: string) => {
+  return BigNumber(amount)
+    .div(10 ** getTokenDecimals(denom))
+    .toNumber()
 }
 
 export const formatValue = (

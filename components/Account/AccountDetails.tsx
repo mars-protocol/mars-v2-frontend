@@ -13,11 +13,14 @@ import useCreditAccountPositions from 'hooks/useCreditAccountPositions'
 import { useAccountDetailsStore } from 'stores'
 import { chain } from 'utils/chains'
 
+import useMarkets from 'hooks/useMarkets'
+import useTokenPrices from 'hooks/useTokenPrices'
+import { ValuesObject } from 'types'
+import { getTokenTotalUSDValue, lookup } from 'utils/formatters'
+import { getTokenSymbol } from 'utils/tokens'
+import { PositionsList } from '.'
 import AccountManageOverlay from './AccountManageOverlay'
 import RiskChart from './RiskChart'
-import { PositionsList } from '.'
-
-const balancesLabels = ['Asset', 'Value', 'Size', 'Apy']
 
 const AccountDetails = () => {
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
@@ -28,8 +31,56 @@ const AccountDetails = () => {
   )
 
   const accountStats = useAccountStats()
+  const { data: marketsData } = useMarkets()
+  const { data: tokenPrices } = useTokenPrices()
 
   const [showManageMenu, setShowManageMenu] = useState(false)
+  const [balanceData, setBalanceData] = useState([])
+  const [balanceDataDebts, setBalanceDataDebts] = useState([])
+
+  useEffect(() => {
+    const balances: ValuesObject[] = []
+    const balancesDebt: ValuesObject[] = []
+
+    positionsData?.coins.forEach((coin) => {
+      const dataEntry = {
+        asset: { amount: getTokenSymbol(coin.denom), format: 'string' },
+        value: {
+          amount: getTokenTotalUSDValue(coin.amount, coin.denom, tokenPrices),
+          format: 'number',
+          prefix: '$',
+        },
+        size: { amount: lookup(coin.amount, coin.denom), maxDecimals: 4, minDecimals: 0 },
+        apy: { amount: '-', format: 'string' },
+      }
+      balances.push(dataEntry)
+    })
+
+    positionsData?.debts.forEach((coin) => {
+      const dataEntry = {
+        asset: { amount: getTokenSymbol(coin.denom), format: 'string' },
+        value: {
+          amount: getTokenTotalUSDValue(coin.amount, coin.denom, tokenPrices),
+          format: 'number',
+          prefix: '$',
+        },
+        size: {
+          amount: lookup(coin.amount, coin.denom),
+          format: 'number',
+          maxDecimals: 4,
+          minDecimals: 0,
+        },
+        apy: { amount: Number(marketsData?.[coin.denom].borrow_rate) * 100 },
+        format: 'number',
+        prefix: '%',
+        minDecimals: 0,
+      }
+      balancesDebt.push(dataEntry)
+    })
+
+    setBalanceData(balances)
+    setBalanceDataDebts(balancesDebt)
+  }, [positionsData, isLoadingPositions, marketsData])
 
   return (
     <div
@@ -116,11 +167,7 @@ const AccountDetails = () => {
         </div>
       </div>
       <RiskChart />
-      <PositionsList
-        labels={balancesLabels}
-        data={positionsData?.coins}
-        debtData={positionsData?.debts}
-      />
+      <PositionsList title='Balances' data={balanceData} debtData={balanceDataDebts} />
     </div>
   )
 }
