@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 
+import { AccountManageOverlay, PositionsList, RiskChart } from 'components/Account'
 import Button from 'components/Button'
 import FormattedNumber from 'components/FormattedNumber'
 import ArrowRightLine from 'components/Icons/arrow-right-line.svg'
@@ -15,11 +16,6 @@ import useTokenPrices from 'hooks/useTokenPrices'
 import { useAccountDetailsStore } from 'stores'
 import { formatBalances } from 'utils/balances'
 import { chain } from 'utils/chains'
-
-import AccountManageOverlay from './AccountManageOverlay'
-import RiskChart from './RiskChart'
-
-import { PositionsList } from '.'
 
 const AccountDetails = () => {
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
