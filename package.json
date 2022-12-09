@@ -5,9 +5,11 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "format": "eslint . --ext=ts,tsx --fix && prettier --write ./**/*.ts ./**/*.tsx",
-    "lint": "next lint",
-    "start": "next start"
+    "lint": "eslint ./src/ && yarn prettier-check",
+    "format": "yarn index && eslint ./src/ --fix && prettier --write ./src/",
+    "prettier-check": "prettier --ignore-path .gitignore --check ./src/",
+    "start": "next start",
+    "index": "vscode-generate-index-standalone src/"
   },
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.29.4",
@@ -53,6 +55,7 @@
     "prettier": "^2.7.1",
     "prettier-plugin-tailwindcss": "^0.1.13",
     "tailwindcss": "^3.2.1",
-    "typescript": "4.8.2"
+    "typescript": "4.8.2",
+    "vscode-generate-index-standalone": "^1.6.0"
   }
 }
