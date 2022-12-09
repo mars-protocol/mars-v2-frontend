@@ -14,54 +14,7 @@ import Text from 'components/Text'
 import useAccountStats from 'hooks/useAccountStats'
 import { formatValue } from 'utils/formatters'
 
-const data = [
-  {
-    date: '2022-12-01',
-    risk: 40,
-  },
-  {
-    date: '2022-12-02',
-    risk: 78,
-  },
-  {
-    date: '2022-12-03',
-    risk: 88,
-  },
-  {
-    date: '2022-12-04',
-    risk: 34,
-  },
-  {
-    date: '2022-12-05',
-    risk: 43,
-  },
-  {
-    date: '2022-12-06',
-    risk: 68,
-  },
-  {
-    date: '2022-12-07',
-    risk: 22,
-  },
-  {
-    date: '2022-12-08',
-    risk: 67,
-  },
-  {
-    date: '2022-12-09',
-    risk: 56,
-  },
-  {
-    date: '2022-12-10',
-    risk: 44,
-  },
-  {
-    date: '2022-12-11',
-    risk: 11,
-  },
-]
-
-const RiskChart = () => {
+const RiskChart = ({ data }: RiskChartProps) => {
   const accountStats = useAccountStats()
   const currentRisk = accountStats?.risk ?? 0
 
@@ -121,7 +74,7 @@ const RiskChart = () => {
                   const risk = Number(payload[0].value) ?? 0
                   return (
                     <div className='max-w-[320px] rounded-lg px-4 py-2 shadow-tooltip gradient-tooltip '>
-                      <Text size='sm'>{moment(label).format('MM.DD.YYYY')}</Text>
+                      <Text size='sm'>{moment(label).format('MM-DD-YYYY')}</Text>
                       <Text size='sm'>Risk: {formatValue(risk, 0, 0, true, false, '%')}</Text>
                     </div>
                   )

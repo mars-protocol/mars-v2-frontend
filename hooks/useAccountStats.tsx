@@ -82,12 +82,6 @@ const calculateStatsFromAccountPositions = (assets: Asset[], debts: Debt[]) => {
   }
 }
 
-export type AccountStatsAction = {
-  type: 'borrow' | 'repay' | 'deposit' | 'withdraw'
-  amount: number
-  denom: string
-}
-
 const useAccountStats = (actions?: AccountStatsAction[]) => {
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
 

@@ -16,6 +16,7 @@ import useTokenPrices from 'hooks/useTokenPrices'
 import { useAccountDetailsStore } from 'stores'
 import { formatBalances } from 'utils/balances'
 import { chain } from 'utils/chains'
+import { createRiskData } from 'utils/risk'
 
 const AccountDetails = () => {
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
@@ -31,6 +32,7 @@ const AccountDetails = () => {
 
   const [showManageMenu, setShowManageMenu] = useState(false)
   const [balanceData, setBalanceData] = useState<PositionsData[]>()
+  const [riskData, setRiskData] = useState<RiskTimePair[]>()
 
   useEffect(() => {
     const balances =
@@ -44,6 +46,10 @@ const AccountDetails = () => {
 
     setBalanceData([...balances, ...debtBalances])
   }, [positionsData, isLoadingPositions, marketsData])
+
+  useEffect(() => {
+    setRiskData(createRiskData(accountStats?.risk ?? 0))
+  }, [accountStats?.risk, selectedAccount])
 
   return (
     <div
@@ -129,7 +135,7 @@ const AccountDetails = () => {
           </Text>
         </div>
       </div>
-      <RiskChart />
+      {riskData && <RiskChart data={riskData} />}
       {!isLoadingPositions && balanceData && <PositionsList title='Balances' data={balanceData} />}
     </div>
   )
