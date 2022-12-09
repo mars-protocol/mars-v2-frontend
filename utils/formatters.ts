@@ -35,7 +35,7 @@ export const getTokenTotalUSDValue = (
   )
 }
 
-export const lookup = (amount: string, denom: string) => {
+export const lookup = (amount: string | number, denom: string) => {
   return BigNumber(amount)
     .div(10 ** getTokenDecimals(denom))
     .toNumber()

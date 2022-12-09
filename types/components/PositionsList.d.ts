@@ -1,5 +1,5 @@
 interface PositionsEntry extends FormattedNumberProps {
-  format: 'number' | 'string'
+  format?: 'number' | 'string'
   type?: 'debt'
 }
 

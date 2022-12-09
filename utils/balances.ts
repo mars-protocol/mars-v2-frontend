@@ -16,7 +16,6 @@ export const formatBalances = (
       asset: {
         amount: getTokenSymbol(coin.denom),
         type: debt ? 'debt' : undefined,
-        format: 'string',
       },
       value: {
         amount: getTokenTotalUSDValue(coin.amount, coin.denom, tokenPrices),

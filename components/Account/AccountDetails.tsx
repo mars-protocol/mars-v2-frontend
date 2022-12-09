@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 
@@ -16,7 +15,9 @@ import useTokenPrices from 'hooks/useTokenPrices'
 import { useAccountDetailsStore } from 'stores'
 import { formatBalances } from 'utils/balances'
 import { chain } from 'utils/chains'
+import { lookup } from 'utils/formatters'
 import { createRiskData } from 'utils/risk'
+import LabelValuePair from 'components/LabelValuePair'
 
 const AccountDetails = () => {
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
@@ -105,35 +106,23 @@ const AccountDetails = () => {
         />
       </div>
       <div className='flex w-full flex-wrap p-3'>
-        <div className='mb-2 flex w-full'>
-          <Text size='xs' className='flex-grow text-white/60'>
-            Total Position:
-          </Text>
-
-          <Text size='xs' className='text-white/60'>
-            <FormattedNumber
-              amount={BigNumber(accountStats?.totalPosition ?? 0)
-                .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
-                .toNumber()}
-              animate
-              prefix='$'
-            />
-          </Text>
-        </div>
-        <div className='flex w-full justify-between'>
-          <Text size='xs' className='flex-grow text-white/60'>
-            Total Liabilities:
-          </Text>
-          <Text size='xs' className=' text-white/60'>
-            <FormattedNumber
-              amount={BigNumber(accountStats?.totalDebt ?? 0)
-                .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
-                .toNumber()}
-              animate
-              prefix='$'
-            />
-          </Text>
-        </div>
+        <LabelValuePair
+          className='mb-2'
+          label='Total Position:'
+          value={{
+            format: 'number',
+            amount: lookup(accountStats?.totalPosition ?? 0, chain.stakeCurrency.coinDenom),
+            prefix: '$',
+          }}
+        />
+        <LabelValuePair
+          label='Total Liabilities:'
+          value={{
+            format: 'number',
+            amount: lookup(accountStats?.totalDebt ?? 0, chain.stakeCurrency.coinDenom),
+            prefix: '$',
+          }}
+        />
       </div>
       {riskData && <RiskChart data={riskData} />}
       {!isLoadingPositions && balanceData && <PositionsList title='Balances' data={balanceData} />}
