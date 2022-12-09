@@ -1,10 +1,9 @@
-import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import create from 'zustand'
 import {
   WalletChainInfo,
   WalletConnectionStatus,
   WalletSigningCosmWasmClient,
 } from '@marsprotocol/wallet-connector'
+import create from 'zustand'
 
 import { contractAddresses } from 'config/contracts'
 import { MarsAccountNftClient } from 'types/generated/mars-account-nft/MarsAccountNft.client'
@@ -24,7 +23,7 @@ interface WalletStore {
     swapperBase?: MarsSwapperBaseClient
   }
   actions: {
-    initClients: (address: string, signingClient: SigningCosmWasmClient) => void
+    initClients: (address: string, signingClient: WalletSigningCosmWasmClient) => void
     initialize: (
       status: WalletConnectionStatus,
       signingCosmWasmClient?: WalletSigningCosmWasmClient,
@@ -42,9 +41,12 @@ export const useWalletStore = create<WalletStore>()((set, get) => ({
   clients: {},
   actions: {
     initClients: (address, signingClient) => {
-      const client = get().signingClient
-      if (!client) return
-      const accountNft = new MarsAccountNftClient(client, address, contractAddresses.accountNft)
+      if (!signingClient) return
+      const accountNft = new MarsAccountNftClient(
+        signingClient,
+        address,
+        contractAddresses.accountNft,
+      )
       const creditManager = new MarsCreditManagerClient(
         signingClient,
         address,
