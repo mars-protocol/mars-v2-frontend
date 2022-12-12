@@ -1,44 +1,24 @@
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 
-import { Button, LabelValuePair } from 'components'
-import { AccountManageOverlay, PositionsList, RiskChart } from 'components/Account'
+import { Button, LabelValuePair, PositionsList } from 'components'
+import { AccountManageOverlay, RiskChart } from 'components/Account'
 import { ArrowRightLine, ChevronDown, ChevronLeft } from 'components/Icons'
-import { useAccountStats, useCreditAccountPositions, useMarkets, useTokenPrices } from 'hooks'
-import { useAccountDetailsStore } from 'stores'
-import { formatBalances } from 'utils/balances'
+import { useAccountStats, useBalances } from 'hooks/data'
+import { useAccountDetailsStore, useSettings } from 'stores'
 import { chain } from 'utils/chains'
 import { lookup } from 'utils/formatters'
 import { createRiskData } from 'utils/risk'
 
 export const AccountDetails = () => {
+  const animationsEnabled = useSettings((s) => s.animationsEnabled)
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
   const isOpen = useAccountDetailsStore((s) => s.isOpen)
-
-  const { data: positionsData, isLoading: isLoadingPositions } = useCreditAccountPositions(
-    selectedAccount ?? '',
-  )
-
+  const balances = useBalances()
   const accountStats = useAccountStats()
-  const { data: marketsData } = useMarkets()
-  const { data: tokenPrices } = useTokenPrices()
 
   const [showManageMenu, setShowManageMenu] = useState(false)
-  const [balanceData, setBalanceData] = useState<PositionsData[]>()
   const [riskData, setRiskData] = useState<RiskTimePair[]>()
-
-  useEffect(() => {
-    const balances =
-      positionsData?.coins && tokenPrices
-        ? formatBalances(positionsData.coins, tokenPrices, false)
-        : []
-    const debtBalances =
-      positionsData?.debts && tokenPrices
-        ? formatBalances(positionsData.debts, tokenPrices, true, marketsData)
-        : []
-
-    setBalanceData([...balances, ...debtBalances])
-  }, [positionsData, isLoadingPositions, marketsData, tokenPrices])
 
   useEffect(() => {
     setRiskData(createRiskData(accountStats?.risk ?? 0))
@@ -48,7 +28,7 @@ export const AccountDetails = () => {
     <div
       className={classNames(
         'relative flex w-[400px] basis-[400px] flex-wrap content-start border-white/20 bg-header',
-        'transition-[margin] duration-1000 ease-in-out',
+        animationsEnabled && 'transition-[margin] duration-1000 ease-in-out',
         isOpen ? 'mr-0' : '-mr-[400px]',
       )}
     >
@@ -61,11 +41,16 @@ export const AccountDetails = () => {
           'absolute top-1/2 -left-[20px] w-[21px] -translate-y-1/2 bg-header p-0',
           'rounded-none rounded-tl-sm rounded-bl-sm',
           'border border-white/20',
-          'transition-[opacity] delay-1000 duration-500 ease-in-out',
+          animationsEnabled && 'transition-[opacity] delay-1000 duration-500 ease-in-out',
           isOpen ? 'pointer-events-none opacity-0' : 'opacity-100',
         )}
       >
-        <span className='flex h-20 px-1 py-6 text-white/40 transition-[color] hover:text-white'>
+        <span
+          className={classNames(
+            'flex h-20 px-1 py-6 text-white/40 hover:text-white',
+            animationsEnabled && 'transition-[color]',
+          )}
+        >
           <ChevronLeft />
         </span>
       </Button>
@@ -83,7 +68,10 @@ export const AccountDetails = () => {
         <div className='flex border-l border-white/20' onClick={() => {}}>
           <Button
             variant='text'
-            className='w-14 p-4 text-white/40 transition-[color] hover:cursor-pointer  hover:text-white'
+            className={classNames(
+              'w-14 p-4 text-white/40 hover:cursor-pointer hover:text-white',
+              animationsEnabled && 'transition-[color]',
+            )}
             onClick={() => {
               useAccountDetailsStore.setState({ isOpen: false })
             }}
@@ -117,7 +105,7 @@ export const AccountDetails = () => {
         />
       </div>
       {riskData && <RiskChart data={riskData} />}
-      {!isLoadingPositions && balanceData && <PositionsList title='Balances' data={balanceData} />}
+      <PositionsList title='Balances' data={balances} />
     </div>
   )
 }

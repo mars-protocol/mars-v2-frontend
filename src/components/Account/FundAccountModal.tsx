@@ -6,8 +6,8 @@ import useLocalStorageState from 'use-local-storage-state'
 
 import { Button, CircularProgress, Modal, Slider, Text } from 'components'
 import { MarsProtocol } from 'components/Icons'
-import { useAllBalances, useAllowedCoins } from 'hooks'
 import { useDepositCreditAccount } from 'hooks/mutations'
+import { useAllBalances, useAllowedCoins } from 'hooks/queries'
 import { useAccountDetailsStore, useModalStore } from 'stores'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
@@ -197,7 +197,7 @@ export const FundAccountModal = () => {
               <span
                 className={`${
                   lendAssets ? 'translate-x-6' : 'translate-x-1'
-                } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+                } inline-block h-4 w-4 transform rounded-full bg-white`}
               />
             </Switch>
           </div>

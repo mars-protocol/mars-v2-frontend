@@ -2,15 +2,19 @@ import classNames from 'classnames'
 
 import { FormattedNumber, Text } from 'components'
 
-export const PositionsList = ({ title, data }: PositionsListProps) => {
-  if (data.length === 0) return null
+interface Props {
+  title: string
+  data?: PositionsData[]
+}
 
-  const arrayKeys = Object.keys(data[0])
+export const PositionsList = (props: Props) => {
+  if (!props?.data || props.data?.length === 0) return null
+  const arrayKeys = Object.keys(props.data[0])
 
   return (
     <div className='flex w-full flex-wrap'>
       <Text uppercase className='w-full bg-black/20 px-4 py-2 text-white/40'>
-        {title}
+        {props.title}
       </Text>
       <div className='flex w-full flex-wrap'>
         <>
@@ -21,8 +25,8 @@ export const PositionsList = ({ title, data }: PositionsListProps) => {
               </Text>
             ))}
           </div>
-          {data &&
-            data.map((positionsData: PositionsData, index) => (
+          {props.data &&
+            props.data.map((positionsData: PositionsData, index) => (
               <div key={index} className='align-center flex w-full px-4 py-2'>
                 {arrayKeys.map((key, index) => {
                   if (index === 0)

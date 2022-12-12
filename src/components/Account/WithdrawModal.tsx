@@ -11,22 +11,15 @@ import {
   Gauge,
   LabelValuePair,
   Modal,
+  PositionsList,
   Slider,
   Text,
 } from 'components'
-import { PositionsList } from 'components/Account'
 import { BorrowCapacity } from 'components/BorrowCapacity'
-import {
-  useAccountStats,
-  useAllBalances,
-  useCalculateMaxWithdrawAmount,
-  useCreditAccountPositions,
-  useMarkets,
-  useTokenPrices,
-} from 'hooks'
+import { useAccountStats, useBalances, useCalculateMaxWithdrawAmount } from 'hooks/data'
 import { useWithdrawFunds } from 'hooks/mutations'
+import { useCreditAccountPositions, useTokenPrices } from 'hooks/queries'
 import { useAccountDetailsStore, useModalStore } from 'stores'
-import { formatBalances } from 'utils/balances'
 import { chain } from 'utils/chains'
 import { formatValue, lookup } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
@@ -52,9 +45,8 @@ export const WithdrawModal = () => {
   // ---------------
   // EXTERNAL HOOKS
   // ---------------
-  const { data: balancesData } = useAllBalances()
   const { data: tokenPrices } = useTokenPrices()
-  const { data: marketsData } = useMarkets()
+  const balances = useBalances()
 
   const selectedTokenSymbol = getTokenSymbol(selectedToken)
   const selectedTokenDecimals = getTokenDecimals(selectedToken)
@@ -156,21 +148,6 @@ export const WithdrawModal = () => {
     useModalStore.setState({ withdrawModal: open })
   }
 
-  const [balanceData, setBalanceData] = useState<PositionsData[]>()
-
-  useEffect(() => {
-    const balances =
-      positionsData?.coins && tokenPrices
-        ? formatBalances(positionsData.coins, tokenPrices, false)
-        : []
-    const debtBalances =
-      positionsData?.debts && tokenPrices
-        ? formatBalances(positionsData.debts, tokenPrices, true, marketsData)
-        : []
-
-    setBalanceData([...balances, ...debtBalances])
-  }, [positionsData, isLoadingPositions, marketsData, tokenPrices])
-
   return (
     <Modal open={open} setOpen={setOpen}>
       <div className='flex min-h-[470px] w-full flex-wrap'>
@@ -262,7 +239,7 @@ export const WithdrawModal = () => {
                 <span
                   className={`${
                     isBorrowEnabled ? 'translate-x-6' : 'translate-x-1'
-                  } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+                  } inline-block h-4 w-4 transform rounded-full bg-white`}
                 />
               </Switch>
             </div>
@@ -342,9 +319,7 @@ export const WithdrawModal = () => {
                 }}
               />
             </div>
-            {!isLoadingPositions && balanceData && (
-              <PositionsList title='Balances' data={balanceData} />
-            )}
+            <PositionsList title='Balances' data={balances} />
           </div>
         </div>
       </div>

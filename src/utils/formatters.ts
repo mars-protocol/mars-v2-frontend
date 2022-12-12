@@ -2,10 +2,6 @@ import BigNumber from 'bignumber.js'
 
 import { getTokenDecimals } from './tokens'
 
-export interface KeyValuePair {
-  [key: string]: number
-}
-
 export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
   const head = text.slice(0, h)
   if (t === 0) return text.length > h + t ? head + '...' : text

@@ -5,7 +5,6 @@ export { AccountNavigation } from './AccountNavigation'
 export { AccountStatus } from './AccountStatus'
 export { ConfirmModal } from './ConfirmModal'
 export { FundAccountModal } from './FundAccountModal'
-export { PositionsList } from './PositionsList'
 export { RiskChart } from './RiskChart'
 export { WithdrawModal } from './WithdrawModal'
 // @endindex

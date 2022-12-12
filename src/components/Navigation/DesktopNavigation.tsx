@@ -4,7 +4,7 @@ import { AccountNavigation, AccountStatus } from 'components/Account'
 import { Logo } from 'components/Icons'
 import { menuTree, NavLink, SearchInput } from 'components/Navigation'
 import { Wallet } from 'components/Wallet'
-import { useCreditAccounts } from 'hooks'
+import { useCreditAccounts } from 'hooks/queries'
 import { useAccountDetailsStore, useWalletStore } from 'stores'
 
 export const DesktopNavigation = () => {

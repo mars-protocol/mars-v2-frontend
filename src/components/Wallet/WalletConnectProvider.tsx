@@ -1,17 +1,20 @@
 import { ChainInfoID, WalletManagerProvider, WalletType } from '@marsprotocol/wallet-connector'
 import { FC } from 'react'
+import classNames from 'classnames'
 
 import KeplrImage from 'images/keplr-wallet-extension.png'
 import WalletConnectImage from 'images/walletconnect-keplr.png'
 import { CircularProgress } from 'components'
 import { buttonColorClasses, buttonSizeClasses, buttonVariantClasses } from 'components/Button'
 import { Close } from 'components/Icons'
+import { useSettings } from 'stores'
 
 type Props = {
   children?: React.ReactNode
 }
 
 export const WalletConnectProvider: FC<Props> = ({ children }) => {
+  const animationsEnabled = useSettings((s) => s.animationsEnabled)
   return (
     <WalletManagerProvider
       chainInfoOverrides={{
@@ -46,7 +49,13 @@ export const WalletConnectProvider: FC<Props> = ({ children }) => {
         text: 'If nothing shows up in your wallet try to connect again, by clicking on the button below. Refresh the page if the problem persists.',
         textClassName: 'block w-full text-center text-base text-white',
         buttonText: 'Retry the Connection',
-        buttonClassName: `cursor-pointer appearance-none break-normal rounded-3xl outline-none transition-colors ${buttonColorClasses.primary} ${buttonSizeClasses.small}  ${buttonVariantClasses.solid}`,
+        buttonClassName: classNames(
+          'cursor-pointer appearance-none break-normal rounded-3xl outline-none',
+          animationsEnabled && 'transition-colors',
+          buttonColorClasses.primary,
+          buttonSizeClasses.small,
+          buttonVariantClasses.solid,
+        ),
         contentClassName: 'flex flex-wrap w-full justify-center',
       }}
       enablingStringOverride='connecting to wallet'

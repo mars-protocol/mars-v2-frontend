@@ -6,13 +6,24 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { ToastContainer, Zoom } from 'react-toastify'
+import { useEffect } from 'react'
 
 import { Layout, Modals } from 'components'
 import { WalletConnectProvider } from 'components/Wallet'
+import { useAnimations } from 'hooks/data'
+import { useSettings } from 'stores'
 
 const queryClient = new QueryClient()
 
 const App = ({ Component, pageProps }: AppProps) => {
+  const animationsEnabled = useSettings((s) => s.animationsEnabled)
+
+  const animations = useAnimations()
+
+  useEffect(() => {
+    useSettings.setState({ animationsEnabled: animations })
+  }, [animations])
+
   return (
     <>
       <Head>
@@ -32,7 +43,7 @@ const App = ({ Component, pageProps }: AppProps) => {
             position='bottom-right'
             hideProgressBar
             newestOnTop
-            transition={Zoom}
+            transition={animationsEnabled ? Zoom : undefined}
           />
         </QueryClientProvider>
       </WalletConnectProvider>

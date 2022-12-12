@@ -5,7 +5,7 @@ interface AccountDetailsStore {
   selectedAccount: string | null
 }
 
-export const useAccountDetailsStore = create<AccountDetailsStore>()((set) => ({
+export const useAccountDetailsStore = create<AccountDetailsStore>()(() => ({
   isOpen: true,
   selectedAccount: null,
 }))

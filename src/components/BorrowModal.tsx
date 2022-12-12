@@ -1,6 +1,6 @@
 import { Dialog, Switch, Transition } from '@headlessui/react'
 import BigNumber from 'bignumber.js'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { NumericFormat } from 'react-number-format'
 import { toast } from 'react-toastify'
 
@@ -9,27 +9,19 @@ import {
   CircularProgress,
   ContainerSecondary,
   Gauge,
+  PositionsList,
   ProgressBar,
   Slider,
   Text,
   Tooltip,
 } from 'components'
-import {
-  useAccountStats,
-  useAllBalances,
-  useCalculateMaxBorrowAmount,
-  useCreditAccountPositions,
-  useMarkets,
-  useTokenPrices,
-} from 'hooks'
+import { useAccountStats, useBalances, useCalculateMaxBorrowAmount } from 'hooks/data'
 import { useBorrowFunds } from 'hooks/mutations'
+import { useAllBalances, useMarkets, useTokenPrices } from 'hooks/queries'
 import { useAccountDetailsStore } from 'stores'
-import { formatBalances } from 'utils/balances'
 import { chain } from 'utils/chains'
 import { formatCurrency, formatValue } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-
-import { PositionsList } from './Account'
 
 type Props = {
   show: boolean
@@ -42,9 +34,8 @@ export const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
   const [isBorrowToCreditAccount, setIsBorrowToCreditAccount] = useState(false)
 
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
-  const { data: positionsData, isLoading: isLoadingPositions } = useCreditAccountPositions(
-    selectedAccount ?? '',
-  )
+
+  const balances = useBalances()
 
   const { actions, borrowAmount } = useMemo(() => {
     const borrowAmount = BigNumber(amount)
@@ -130,21 +121,6 @@ export const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
     // reset amount due to max value calculations changing depending on borrow target
     setAmount(0)
   }
-
-  const [balanceData, setBalanceData] = useState<PositionsData[]>()
-
-  useEffect(() => {
-    const balances =
-      positionsData?.coins && tokenPrices
-        ? formatBalances(positionsData.coins, tokenPrices, false)
-        : []
-    const debtBalances =
-      positionsData?.debts && tokenPrices
-        ? formatBalances(positionsData.debts, tokenPrices, true, marketsData)
-        : []
-
-    setBalanceData([...balances, ...debtBalances])
-  }, [positionsData, isLoadingPositions, marketsData, tokenPrices])
 
   return (
     <Transition appear show={show} as={React.Fragment}>
@@ -321,9 +297,7 @@ export const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
                       </div>
                     </div>
                   </div>
-                  {!isLoadingPositions && balanceData && (
-                    <PositionsList title='Balances' data={balanceData} />
-                  )}
+                  <PositionsList title='Balances' data={balances} />
                 </div>
               </Dialog.Panel>
             </Transition.Child>

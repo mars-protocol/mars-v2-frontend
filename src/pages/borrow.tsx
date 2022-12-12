@@ -3,15 +3,15 @@ import { useMemo, useRef, useState } from 'react'
 
 import { BorrowModal, Card, RepayModal, Text } from 'components'
 import { BorrowTable } from 'components/Borrow'
+import { useAccountDetailsStore } from 'stores'
+import { getTokenDecimals, getTokenInfo } from 'utils/tokens'
 import {
   useAllowedCoins,
   useCreditAccountPositions,
   useMarkets,
   useRedbankBalances,
   useTokenPrices,
-} from 'hooks'
-import { useAccountDetailsStore } from 'stores'
-import { getTokenDecimals, getTokenInfo } from 'utils/tokens'
+} from 'hooks/queries'
 
 type ModalState = {
   show: 'borrow' | 'repay' | false

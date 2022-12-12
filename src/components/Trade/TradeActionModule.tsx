@@ -3,17 +3,17 @@ import BigNumber from 'bignumber.js'
 import React, { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 
-import { ArrowsUpDown } from 'components/Icons'
 import { Button, CircularProgress, Slider } from 'components'
+import { ArrowsUpDown } from 'components/Icons'
+import { useCalculateMaxTradeAmount } from 'hooks/data'
+import { useTradeAsset } from 'hooks/mutations'
 import {
   useAllBalances,
   useAllowedCoins,
-  useCalculateMaxTradeAmount,
   useCreditAccountPositions,
   useMarkets,
   useTokenPrices,
-} from 'hooks'
-import { useTradeAsset } from 'hooks/mutations'
+} from 'hooks/queries'
 import { useAccountDetailsStore } from 'stores'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
@@ -299,7 +299,7 @@ export const TradeActionModule = () => {
             <span
               className={`${
                 isMarginEnabled ? 'translate-x-4' : ''
-              } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+              } inline-block h-4 w-4 transform rounded-full bg-white`}
             />
           </Switch>
         </div>

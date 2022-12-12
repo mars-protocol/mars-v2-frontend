@@ -11,7 +11,7 @@ import useClipboard from 'react-use-clipboard'
 import { Button, CircularProgress, FormattedNumber, Text } from 'components'
 import { Check, Copy, ExternalLink, Osmo, Wallet } from 'components/Icons'
 import { Overlay } from 'components/Overlay'
-import { useTokenBalance } from 'hooks'
+import { useTokenBalance } from 'hooks/queries'
 import { formatValue, truncate } from 'utils/formatters'
 
 export const ConnectedButton = () => {

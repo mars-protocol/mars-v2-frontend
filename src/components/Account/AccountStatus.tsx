@@ -1,10 +1,11 @@
 import BigNumber from 'bignumber.js'
 import { useEffect } from 'react'
 
-import { BorrowCapacity } from 'components/BorrowCapacity'
 import { Button, FormattedNumber, Gauge, Text } from 'components'
-import { useAccountStats, useCreditAccounts } from 'hooks'
+import { BorrowCapacity } from 'components/BorrowCapacity'
+import { useAccountStats } from 'hooks/data'
 import { useCreateCreditAccount } from 'hooks/mutations'
+import { useCreditAccounts } from 'hooks/queries'
 import { useModalStore } from 'stores'
 import { chain } from 'utils/chains'
 import { formatValue } from 'utils/formatters'

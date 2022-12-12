@@ -6,11 +6,11 @@ import { NumericFormat } from 'react-number-format'
 import { toast } from 'react-toastify'
 
 import { Button, CircularProgress, ContainerSecondary, Slider } from 'components'
-import { useAllBalances, useCreditAccountPositions, useTokenPrices } from 'hooks'
 import { useRepayFunds } from 'hooks/mutations'
 import { useAccountDetailsStore } from 'stores'
 import { formatCurrency } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
+import { useAllBalances, useCreditAccountPositions, useTokenPrices } from 'hooks/queries'
 
 // 0.001% buffer / slippage to avoid repay action from not fully repaying the debt amount
 const REPAY_BUFFER = 1.00001

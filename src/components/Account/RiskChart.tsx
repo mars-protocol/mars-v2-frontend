@@ -10,10 +10,12 @@ import {
 } from 'recharts'
 
 import { FormattedNumber, Text } from 'components'
-import { useAccountStats } from 'hooks'
+import { useAccountStats } from 'hooks/data'
+import { useSettings } from 'stores'
 import { formatValue } from 'utils/formatters'
 
 export const RiskChart = ({ data }: RiskChartProps) => {
+  const animationsEnabled = useSettings((s) => s.animationsEnabled)
   const accountStats = useAccountStats()
   const currentRisk = accountStats?.risk ?? 0
 
@@ -80,7 +82,13 @@ export const RiskChart = ({ data }: RiskChartProps) => {
                 }
               }}
             />
-            <Area type='monotone' dataKey='risk' stroke='#FFFFFF' fill='url(#chartGradient)' />
+            <Area
+              type='monotone'
+              dataKey='risk'
+              stroke='#FFFFFF'
+              fill='url(#chartGradient)'
+              isAnimationActive={animationsEnabled}
+            />
           </AreaChart>
         </ResponsiveContainer>
       </div>

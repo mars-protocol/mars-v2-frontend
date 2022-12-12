@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import React, { LegacyRef, ReactNode } from 'react'
 
 import { CircularProgress } from 'components'
+import { useSettings } from 'stores'
 
 interface Props {
   children?: string | ReactNode
@@ -73,6 +74,7 @@ export const Button = React.forwardRef(function Button(
   ref,
 ) {
   const buttonClasses = []
+  const animationsEnabled = useSettings((s) => s.animationsEnabled)
 
   switch (variant) {
     case 'round':
@@ -96,7 +98,8 @@ export const Button = React.forwardRef(function Button(
   return (
     <button
       className={classNames(
-        'cursor-pointer appearance-none break-normal rounded-3xl outline-none transition-colors',
+        'outline-nones cursor-pointer appearance-none break-normal rounded-3xl',
+        animationsEnabled && 'transition-color',
         buttonClasses,
         buttonVariantClasses[variant],
         disabled && 'pointer-events-none opacity-50',

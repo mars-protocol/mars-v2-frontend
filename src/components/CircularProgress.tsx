@@ -1,5 +1,8 @@
 import classNames from 'classnames'
 
+import { Text } from 'components'
+import { useSettings } from 'stores'
+
 interface Props {
   color?: string
   size?: number
@@ -7,11 +10,22 @@ interface Props {
 }
 
 export const CircularProgress = ({ color = '#FFFFFF', size = 20, className }: Props) => {
+  const animationsEnabled = useSettings((s) => s.animationsEnabled)
+
   const borderWidth = `${size / 10}px`
   const borderColor = `${color} transparent transparent transparent`
   const loaderClasses = classNames('inline-block relative', className)
   const elementClasses =
     'block absolute w-4/5 h-4/5 m-[10%] rounded-full animate-progress border-solid'
+
+  if (!animationsEnabled)
+    return (
+      <div className={loaderClasses} style={{ width: `${size}px`, height: `${size}px` }}>
+        <Text className='text-center' uppercase size='lg'>
+          ...
+        </Text>
+      </div>
+    )
 
   return (
     <div className={loaderClasses} style={{ width: `${size}px`, height: `${size}px` }}>

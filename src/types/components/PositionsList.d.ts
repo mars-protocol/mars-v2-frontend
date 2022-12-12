@@ -6,8 +6,3 @@ interface PositionsEntry extends FormattedNumberProps {
 interface PositionsData {
   [key: string]: PositionsEntry
 }
-
-interface PositionsListProps {
-  title: string
-  data: PositionsData[]
-}

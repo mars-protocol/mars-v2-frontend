@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
 
-import { useCreditAccountPositions, useMarkets, useTokenPrices } from 'hooks'
+import { useCreditAccountPositions, useMarkets, useTokenPrices } from 'hooks/queries'
 import { useAccountDetailsStore } from 'stores'
 
 // displaying 3 levels of risk based on the weighted average of liquidation LTVs

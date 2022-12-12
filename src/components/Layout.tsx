@@ -4,8 +4,8 @@ import React, { useEffect } from 'react'
 
 import { AccountDetails } from 'components/Account'
 import { DesktopNavigation } from 'components/Navigation'
-import { useCreditAccounts } from 'hooks'
-import { useWalletStore } from 'stores'
+import { useCreditAccounts } from 'hooks/queries'
+import { useSettings, useWalletStore } from 'stores'
 
 const filter = {
   day: 'brightness-100 hue-rotate-0',
@@ -13,7 +13,9 @@ const filter = {
 }
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
-  const { data: creditAccountsList, isLoading: isLoadingCreditAccounts } = useCreditAccounts()
+  const animationsEnabled = useSettings((s) => s.animationsEnabled)
+
+  const { data: creditAccountsList } = useCreditAccounts()
   const hasCreditAccounts = creditAccountsList && creditAccountsList.length > 0
 
   const { status, signingCosmWasmClient, chainInfo, address, name } = useWallet()
@@ -27,7 +29,8 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
 
   const backgroundClasses = classNames(
     isConnected ? filter.day : filter.night,
-    'top-0 left-0 absolute block h-full w-full flex-col bg-body bg-mars bg-desktop bg-top bg-no-repeat filter transition-background duration-3000 ease-linear',
+    'top-0 left-0 absolute block h-full w-full flex-col bg-body bg-mars bg-desktop bg-top bg-no-repeat filter',
+    animationsEnabled && 'transition-background duration-3000 ease-linear',
   )
 
   return (

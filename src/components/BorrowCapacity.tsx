@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 
 import { FormattedNumber, Text, Tooltip } from 'components'
+import { useSettings } from 'stores'
 
 interface Props {
   balance: number
@@ -26,6 +27,8 @@ export const BorrowCapacity = ({
   hideValues,
   decimals = 2,
 }: Props) => {
+  const animationsEnabled = useSettings((s) => s.animationsEnabled)
+
   const [percentOfMaxRound, setPercentOfMaxRound] = useState(0)
   const [percentOfMaxRange, setPercentOfMaxRange] = useState(0)
   const [limitPercentOfMax, setLimitPercentOfMax] = useState(0)
@@ -58,7 +61,8 @@ export const BorrowCapacity = ({
           {!hideValues && (
             <div
               className={classNames(
-                'duration-800 transition-[opcity] delay-[1600ms] text-3xs-caps',
+                animationsEnabled && 'duration-800 transition-[opcity] delay-[1600ms]',
+                'text-3xs-caps',
                 limitPercentOfMax ? 'opacity-60' : 'opacity-0',
               )}
             >
@@ -74,7 +78,10 @@ export const BorrowCapacity = ({
             >
               <div className='absolute h-full w-full rounded-lg shadow-inset gradient-hatched '>
                 <div
-                  className='ease-loss absolute left-0 h-full max-w-full rounded-l-3xl bg-body-dark transition-[right] duration-1000'
+                  className={classNames(
+                    'absolute left-0 h-full max-w-full rounded-l-3xl bg-body-dark',
+                    animationsEnabled && 'transition-[right] duration-1000 ease-linear',
+                  )}
                   style={{
                     right: `${limitPercentOfMax ? 100 - limitPercentOfMax : 100}%`,
                   }}
@@ -82,7 +89,10 @@ export const BorrowCapacity = ({
 
                 <div className='absolute top-0 h-full w-full'>
                   <div
-                    className='h-full rounded-lg transition-[width] duration-1000 ease-linear'
+                    className={classNames(
+                      'h-full rounded-lg',
+                      animationsEnabled && 'transition-[width] duration-1000 ease-linear',
+                    )}
                     style={{
                       width: `${percentOfMaxRange || 0.02}%`,
                       WebkitMask: 'linear-gradient(#fff 0 0)',
@@ -92,11 +102,19 @@ export const BorrowCapacity = ({
                   </div>
 
                   <div
-                    className='absolute bottom-0 h-[120%] w-[1px] bg-white transition-[left] duration-1000 ease-linear'
+                    className={classNames(
+                      'absolute bottom-0 h-[120%] w-[1px] bg-white',
+                      animationsEnabled && 'transition-[left] duration-1000 ease-linear',
+                    )}
                     style={{ left: `${limitPercentOfMax || 0}%` }}
                   />
                   {showPercentageText ? (
-                    <span className='absolute top-1/2 mt-[1px] w-full -translate-y-1/2 animate-fadein text-center opacity-0 text-2xs-caps'>
+                    <span
+                      className={classNames(
+                        'absolute top-1/2 mt-[1px] w-full -translate-y-1/2 text-center text-2xs-caps',
+                        animationsEnabled && 'animate-fadein opacity-0',
+                      )}
+                    >
                       {max !== 0 && (
                         <FormattedNumber
                           className='text-white'

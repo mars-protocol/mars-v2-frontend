@@ -3,6 +3,7 @@ import classNames from 'classnames'
 import { ReactNode } from 'react'
 
 import { Questionmark } from 'components/Icons'
+import { useSettings } from 'stores'
 
 interface Props {
   children?: ReactNode | string
@@ -21,6 +22,8 @@ export const Tooltip = ({
   inderactive = false,
   underline = false,
 }: Props) => {
+  const animationsEnabled = useSettings((s) => s.animationsEnabled)
+
   return (
     <Tippy
       appendTo={() => document.body}
@@ -42,7 +45,8 @@ export const Tooltip = ({
         <span
           className={classNames(
             underline &&
-              'border-b-1 cursor-pointer border border-x-0 border-t-0 border-dashed border-white/50 transition-all hover:border-transparent',
+              'border-b-1 cursor-pointer border border-x-0 border-t-0 border-dashed border-white/50 hover:border-transparent',
+            animationsEnabled && 'transition-all',
             className,
           )}
         >

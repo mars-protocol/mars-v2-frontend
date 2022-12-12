@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import { ReactNode } from 'react'
 
 import { Tooltip } from 'components'
+import { useSettings } from 'stores'
 
 interface Props {
   tooltip: string | ReactNode
@@ -19,6 +20,8 @@ export const Gauge = ({
   label,
   tooltip,
 }: Props) => {
+  const animationsEnabled = useSettings((s) => s.animationsEnabled)
+
   const percentage = value * 100
   const percentageValue = percentage > 100 ? 100 : percentage < 0 ? 0 : percentage
   const semiCirclePercentage = Math.abs(percentageValue / 2 - 50)
@@ -65,7 +68,7 @@ export const Gauge = ({
             strokeWidth={5}
             style={{
               strokeDashoffset: semiCirclePercentage,
-              transition: 'stroke-dashoffset 1s ease',
+              transition: animationsEnabled ? 'stroke-dashoffset 1s ease' : 'none',
             }}
             shapeRendering='geometricPrecision'
           />

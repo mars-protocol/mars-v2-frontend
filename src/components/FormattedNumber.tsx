@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import React, { useEffect, useRef } from 'react'
 import { animated, useSpring } from 'react-spring'
 
+import { useSettings } from 'stores'
 import { formatValue } from 'utils/formatters'
 
 export const FormattedNumber = React.memo(
@@ -17,6 +18,7 @@ export const FormattedNumber = React.memo(
     rounded = false,
     abbreviated = false,
   }: FormattedNumberProps) => {
+    const animationsEnabled = useSettings((s) => s.animationsEnabled)
     const prevAmountRef = useRef<number>(0)
 
     useEffect(() => {
@@ -29,7 +31,7 @@ export const FormattedNumber = React.memo(
       config: { duration: 1000 },
     })
 
-    return (prevAmountRef.current === amount && amount === 0) || !animate ? (
+    return (prevAmountRef.current === amount && amount === 0) || !animate || !animationsEnabled ? (
       <span className={classNames('number', className)}>
         {formatValue(
           amount,
