@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+
 import { useSettings } from 'stores'
 
 export const useAnimations = () => {
