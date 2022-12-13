@@ -1,12 +1,12 @@
 import { ChainInfoID, WalletManagerProvider, WalletType } from '@marsprotocol/wallet-connector'
-import { FC } from 'react'
 import classNames from 'classnames'
+import { FC } from 'react'
 
-import KeplrImage from 'images/keplr-wallet-extension.png'
-import WalletConnectImage from 'images/walletconnect-keplr.png'
 import { CircularProgress } from 'components'
 import { buttonColorClasses, buttonSizeClasses, buttonVariantClasses } from 'components/Button'
 import { Close } from 'components/Icons'
+import KeplrImage from 'images/keplr-wallet-extension.png'
+import WalletConnectImage from 'images/walletconnect-keplr.png'
 import { useSettings } from 'stores'
 
 type Props = {
@@ -14,7 +14,7 @@ type Props = {
 }
 
 export const WalletConnectProvider: FC<Props> = ({ children }) => {
-  const animationsEnabled = useSettings((s) => s.animationsEnabled)
+  const enableAnimations = useSettings((s) => s.enableAnimations)
   return (
     <WalletManagerProvider
       chainInfoOverrides={{
@@ -51,7 +51,7 @@ export const WalletConnectProvider: FC<Props> = ({ children }) => {
         buttonText: 'Retry the Connection',
         buttonClassName: classNames(
           'cursor-pointer appearance-none break-normal rounded-3xl outline-none',
-          animationsEnabled && 'transition-colors',
+          enableAnimations && 'transition-colors',
           buttonColorClasses.primary,
           buttonSizeClasses.small,
           buttonVariantClasses.solid,

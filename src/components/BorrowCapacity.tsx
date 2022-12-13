@@ -27,7 +27,7 @@ export const BorrowCapacity = ({
   hideValues,
   decimals = 2,
 }: Props) => {
-  const animationsEnabled = useSettings((s) => s.animationsEnabled)
+  const enableAnimations = useSettings((s) => s.enableAnimations)
 
   const [percentOfMaxRound, setPercentOfMaxRound] = useState(0)
   const [percentOfMaxRange, setPercentOfMaxRange] = useState(0)
@@ -61,7 +61,7 @@ export const BorrowCapacity = ({
           {!hideValues && (
             <div
               className={classNames(
-                animationsEnabled && 'duration-800 transition-[opcity] delay-[1600ms]',
+                enableAnimations && 'duration-800 transition-[opcity] delay-[1600ms]',
                 'text-3xs-caps',
                 limitPercentOfMax ? 'opacity-60' : 'opacity-0',
               )}
@@ -80,7 +80,7 @@ export const BorrowCapacity = ({
                 <div
                   className={classNames(
                     'absolute left-0 h-full max-w-full rounded-l-3xl bg-body-dark',
-                    animationsEnabled && 'transition-[right] duration-1000 ease-linear',
+                    enableAnimations && 'transition-[right] duration-1000 ease-linear',
                   )}
                   style={{
                     right: `${limitPercentOfMax ? 100 - limitPercentOfMax : 100}%`,
@@ -91,7 +91,7 @@ export const BorrowCapacity = ({
                   <div
                     className={classNames(
                       'h-full rounded-lg',
-                      animationsEnabled && 'transition-[width] duration-1000 ease-linear',
+                      enableAnimations && 'transition-[width] duration-1000 ease-linear',
                     )}
                     style={{
                       width: `${percentOfMaxRange || 0.02}%`,
@@ -104,7 +104,7 @@ export const BorrowCapacity = ({
                   <div
                     className={classNames(
                       'absolute bottom-0 h-[120%] w-[1px] bg-white',
-                      animationsEnabled && 'transition-[left] duration-1000 ease-linear',
+                      enableAnimations && 'transition-[left] duration-1000 ease-linear',
                     )}
                     style={{ left: `${limitPercentOfMax || 0}%` }}
                   />
@@ -112,7 +112,7 @@ export const BorrowCapacity = ({
                     <span
                       className={classNames(
                         'absolute top-1/2 mt-[1px] w-full -translate-y-1/2 text-center text-2xs-caps',
-                        animationsEnabled && 'animate-fadein opacity-0',
+                        enableAnimations && 'animate-fadein opacity-0',
                       )}
                     >
                       {max !== 0 && (

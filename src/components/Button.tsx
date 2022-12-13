@@ -74,7 +74,7 @@ export const Button = React.forwardRef(function Button(
   ref,
 ) {
   const buttonClasses = []
-  const animationsEnabled = useSettings((s) => s.animationsEnabled)
+  const enableAnimations = useSettings((s) => s.enableAnimations)
 
   switch (variant) {
     case 'round':
@@ -99,7 +99,7 @@ export const Button = React.forwardRef(function Button(
     <button
       className={classNames(
         'outline-nones cursor-pointer appearance-none break-normal rounded-3xl',
-        animationsEnabled && 'transition-color',
+        enableAnimations && 'transition-color',
         buttonClasses,
         buttonVariantClasses[variant],
         disabled && 'pointer-events-none opacity-50',

@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const CircularProgress = ({ color = '#FFFFFF', size = 20, className }: Props) => {
-  const animationsEnabled = useSettings((s) => s.animationsEnabled)
+  const enableAnimations = useSettings((s) => s.enableAnimations)
 
   const borderWidth = `${size / 10}px`
   const borderColor = `${color} transparent transparent transparent`
@@ -18,7 +18,7 @@ export const CircularProgress = ({ color = '#FFFFFF', size = 20, className }: Pr
   const elementClasses =
     'block absolute w-4/5 h-4/5 m-[10%] rounded-full animate-progress border-solid'
 
-  if (!animationsEnabled)
+  if (!enableAnimations)
     return (
       <div className={loaderClasses} style={{ width: `${size}px`, height: `${size}px` }}>
         <Text className='text-center' uppercase size='lg'>

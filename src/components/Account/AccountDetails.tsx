@@ -11,7 +11,7 @@ import { lookup } from 'utils/formatters'
 import { createRiskData } from 'utils/risk'
 
 export const AccountDetails = () => {
-  const animationsEnabled = useSettings((s) => s.animationsEnabled)
+  const enableAnimations = useSettings((s) => s.enableAnimations)
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
   const isOpen = useAccountDetailsStore((s) => s.isOpen)
   const balances = useBalances()
@@ -28,7 +28,7 @@ export const AccountDetails = () => {
     <div
       className={classNames(
         'relative flex w-[400px] basis-[400px] flex-wrap content-start border-white/20 bg-header',
-        animationsEnabled && 'transition-[margin] duration-1000 ease-in-out',
+        enableAnimations && 'transition-[margin] duration-1000 ease-in-out',
         isOpen ? 'mr-0' : '-mr-[400px]',
       )}
     >
@@ -41,14 +41,14 @@ export const AccountDetails = () => {
           'absolute top-1/2 -left-[20px] w-[21px] -translate-y-1/2 bg-header p-0',
           'rounded-none rounded-tl-sm rounded-bl-sm',
           'border border-white/20',
-          animationsEnabled && 'transition-[opacity] delay-1000 duration-500 ease-in-out',
+          enableAnimations && 'transition-[opacity] delay-1000 duration-500 ease-in-out',
           isOpen ? 'pointer-events-none opacity-0' : 'opacity-100',
         )}
       >
         <span
           className={classNames(
             'flex h-20 px-1 py-6 text-white/40 hover:text-white',
-            animationsEnabled && 'transition-[color]',
+            enableAnimations && 'transition-[color]',
           )}
         >
           <ChevronLeft />
@@ -70,7 +70,7 @@ export const AccountDetails = () => {
             variant='text'
             className={classNames(
               'w-14 p-4 text-white/40 hover:cursor-pointer hover:text-white',
-              animationsEnabled && 'transition-[color]',
+              enableAnimations && 'transition-[color]',
             )}
             onClick={() => {
               useAccountDetailsStore.setState({ isOpen: false })

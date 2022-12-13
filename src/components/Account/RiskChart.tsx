@@ -15,7 +15,7 @@ import { useSettings } from 'stores'
 import { formatValue } from 'utils/formatters'
 
 export const RiskChart = ({ data }: RiskChartProps) => {
-  const animationsEnabled = useSettings((s) => s.animationsEnabled)
+  const enableAnimations = useSettings((s) => s.enableAnimations)
   const accountStats = useAccountStats()
   const currentRisk = accountStats?.risk ?? 0
 
@@ -87,7 +87,7 @@ export const RiskChart = ({ data }: RiskChartProps) => {
               dataKey='risk'
               stroke='#FFFFFF'
               fill='url(#chartGradient)'
-              isAnimationActive={animationsEnabled}
+              isAnimationActive={enableAnimations}
             />
           </AreaChart>
         </ResponsiveContainer>

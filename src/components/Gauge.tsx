@@ -20,7 +20,7 @@ export const Gauge = ({
   label,
   tooltip,
 }: Props) => {
-  const animationsEnabled = useSettings((s) => s.animationsEnabled)
+  const enableAnimations = useSettings((s) => s.enableAnimations)
 
   const percentage = value * 100
   const percentageValue = percentage > 100 ? 100 : percentage < 0 ? 0 : percentage
@@ -68,7 +68,7 @@ export const Gauge = ({
             strokeWidth={5}
             style={{
               strokeDashoffset: semiCirclePercentage,
-              transition: animationsEnabled ? 'stroke-dashoffset 1s ease' : 'none',
+              transition: enableAnimations ? 'stroke-dashoffset 1s ease' : 'none',
             }}
             shapeRendering='geometricPrecision'
           />

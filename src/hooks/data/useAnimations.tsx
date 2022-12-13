@@ -1,18 +1,18 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
+import { useSettings } from 'stores'
 
 export const useAnimations = () => {
-  const [enableAnimations, setEnableAnimations] = useState(true)
+  const enableAnimations = useSettings((s) => s.enableAnimations)
 
   const queryChangeHandler = (event: MediaQueryListEvent) => {
-    setEnableAnimations(!event?.matches ?? true)
+    useSettings.setState({ enableAnimations: !event?.matches ?? true })
   }
 
   useEffect(() => {
     const mediaQuery: MediaQueryList = window.matchMedia('(prefers-reduced-motion: reduce)')
 
     if (mediaQuery) {
-      setEnableAnimations(!mediaQuery.matches)
-
+      useSettings.setState({ enableAnimations: !mediaQuery.matches })
       mediaQuery.addEventListener('change', queryChangeHandler)
       return () => mediaQuery.removeEventListener('change', queryChangeHandler)
     }

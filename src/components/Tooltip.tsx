@@ -22,7 +22,7 @@ export const Tooltip = ({
   inderactive = false,
   underline = false,
 }: Props) => {
-  const animationsEnabled = useSettings((s) => s.animationsEnabled)
+  const enableAnimations = useSettings((s) => s.enableAnimations)
 
   return (
     <Tippy
@@ -46,7 +46,7 @@ export const Tooltip = ({
           className={classNames(
             underline &&
               'border-b-1 cursor-pointer border border-x-0 border-t-0 border-dashed border-white/50 hover:border-transparent',
-            animationsEnabled && 'transition-all',
+            enableAnimations && 'transition-all',
             className,
           )}
         >

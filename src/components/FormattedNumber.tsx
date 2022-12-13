@@ -18,7 +18,7 @@ export const FormattedNumber = React.memo(
     rounded = false,
     abbreviated = false,
   }: FormattedNumberProps) => {
-    const animationsEnabled = useSettings((s) => s.animationsEnabled)
+    const enableAnimations = useSettings((s) => s.enableAnimations)
     const prevAmountRef = useRef<number>(0)
 
     useEffect(() => {
@@ -31,7 +31,7 @@ export const FormattedNumber = React.memo(
       config: { duration: 1000 },
     })
 
-    return (prevAmountRef.current === amount && amount === 0) || !animate || !animationsEnabled ? (
+    return (prevAmountRef.current === amount && amount === 0) || !animate || !enableAnimations ? (
       <span className={classNames('number', className)}>
         {formatValue(
           amount,

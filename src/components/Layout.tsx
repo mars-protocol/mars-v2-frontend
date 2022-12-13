@@ -13,7 +13,7 @@ const filter = {
 }
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
-  const animationsEnabled = useSettings((s) => s.animationsEnabled)
+  const enableAnimations = useSettings((s) => s.enableAnimations)
 
   const { data: creditAccountsList } = useCreditAccounts()
   const hasCreditAccounts = creditAccountsList && creditAccountsList.length > 0
@@ -30,7 +30,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   const backgroundClasses = classNames(
     isConnected ? filter.day : filter.night,
     'top-0 left-0 absolute block h-full w-full flex-col bg-body bg-mars bg-desktop bg-top bg-no-repeat filter',
-    animationsEnabled && 'transition-background duration-3000 ease-linear',
+    enableAnimations && 'transition-background duration-3000 ease-linear',
   )
 
   return (
