@@ -5,9 +5,11 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "format": "eslint . --ext=ts,tsx --fix && prettier --write ./**/*.ts ./**/*.tsx",
-    "lint": "next lint",
-    "start": "next start"
+    "lint": "eslint ./src/ && yarn prettier-check",
+    "format": "yarn index && eslint ./src/ --fix && prettier --write ./src/",
+    "prettier-check": "prettier --ignore-path .gitignore --check ./src/",
+    "start": "next start",
+    "index": "vscode-generate-index-standalone src/"
   },
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.29.4",
@@ -27,6 +29,7 @@
     "ethereumjs-util": "^7.1.5",
     "graphql": "^16.6.0",
     "graphql-request": "^5.0.0",
+    "moment": "^2.29.4",
     "next": "12.3.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -34,13 +37,14 @@
     "react-spring": "^9.5.5",
     "react-toastify": "^9.0.8",
     "react-use-clipboard": "^1.0.9",
+    "recharts": "^2.2.0",
     "tailwindcss-border-gradient-radius": "^3.0.1",
     "use-local-storage-state": "^18.1.1",
     "zustand": "^4.1.4"
   },
   "devDependencies": {
     "@svgr/webpack": "^6.4.0",
-    "@types/node": "18.11.11",
+    "@types/node": "^18.11.13",
     "@types/react": "18.0.26",
     "@types/react-dom": "18.0.9",
     "autoprefixer": "^10.4.13",
@@ -51,6 +55,7 @@
     "prettier": "^2.7.1",
     "prettier-plugin-tailwindcss": "^0.1.13",
     "tailwindcss": "^3.2.1",
-    "typescript": "4.8.2"
+    "typescript": "4.8.2",
+    "vscode-generate-index-standalone": "^1.6.0"
   }
 }

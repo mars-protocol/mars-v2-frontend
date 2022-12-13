@@ -2,7 +2,7 @@
 const plugin = require('tailwindcss/plugin')
 
 module.exports = {
-  content: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
+  content: ['./src/pages/**/*.{js,ts,jsx,tsx}', './src//components/**/*.{js,ts,jsx,tsx}'],
   safelist: [
     'h-15',
     'text-3xs',
@@ -37,7 +37,9 @@ module.exports = {
       },
       backgroundImage: {
         mars: 'url(/images/bg.svg)',
-        'fund-modal': 'url(/images/fund-modal-bg.png)',
+        'fund-modal': 'url(/images/fund-bg.webp), url(/images/fund-bg.png)',
+        'delete-modal': 'url(/images/delete-account-bg.webp), url(/images/delete-account-bg.png)',
+        'create-modal': 'url(/images/create-account-bg.webp), url(/images/create-account-bg.png)',
       },
       backgroundSize: {
         desktop: '100% auto',
