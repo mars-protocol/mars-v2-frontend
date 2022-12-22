@@ -110,7 +110,14 @@ const Borrow = () => {
             return rowData
           }) ?? [],
     }
-  }, [allowedCoinsData, borrowedAssetsMap, marketsData, redbankBalances, tokenPrices])
+  }, [
+    allowedCoinsData,
+    borrowedAssetsMap,
+    marketsData,
+    redbankBalances,
+    tokenPrices,
+    whitelistedAssets,
+  ])
 
   const handleBorrowClick = (denom: string) => {
     setModalState({ show: 'borrow', data: { tokenDenom: denom } })

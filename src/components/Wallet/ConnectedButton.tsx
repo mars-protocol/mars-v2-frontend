@@ -57,7 +57,7 @@ export const ConnectedButton = () => {
     return BigNumber(data?.find((balance) => balance.denom === coinDenom)?.amount ?? 0)
       .div(10 ** coinDecimals)
       .toNumber()
-  }, [data, coinDenom])
+  }, [data, coinDenom, coinDecimals])
 
   return (
     <div className={'relative'}>

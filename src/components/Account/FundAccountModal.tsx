@@ -64,7 +64,7 @@ export const FundAccountModal = () => {
     return BigNumber(balancesData?.find((balance) => balance.denom === selectedToken)?.amount ?? 0)
       .div(10 ** getTokenDecimals(selectedToken, whitelistedAssets))
       .toNumber()
-  }, [balancesData, selectedToken])
+  }, [balancesData, selectedToken, whitelistedAssets])
 
   const handleValueChange = (value: number) => {
     if (value > walletAmount) {

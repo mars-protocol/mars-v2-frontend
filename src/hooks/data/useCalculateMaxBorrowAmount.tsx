@@ -100,5 +100,6 @@ export const useCalculateMaxBorrowAmount = (denom: string, isUnderCollateralized
     positionsData,
     redbankBalances,
     tokenPrices,
+    whitelistedAssets,
   ])
 }

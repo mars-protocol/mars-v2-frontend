@@ -27,7 +27,7 @@ export const useBalances = () => {
         : []
 
     setBalanceData([...balances, ...debtBalances])
-  }, [positionsData, marketsData, tokenPrices])
+  }, [positionsData, marketsData, tokenPrices, whitelistedAssets])
 
   return balanceData
 }

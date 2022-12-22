@@ -63,7 +63,7 @@ export const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
         },
       ] as AccountStatsAction[],
     }
-  }, [amount, isBorrowToCreditAccount, tokenDenom])
+  }, [amount, isBorrowToCreditAccount, tokenDenom, whitelistedAssets])
 
   const accountStats = useAccountStats(actions)
 
@@ -88,7 +88,7 @@ export const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
     return BigNumber(balancesData?.find((balance) => balance.denom === tokenDenom)?.amount ?? 0)
       .div(10 ** getTokenDecimals(tokenDenom, whitelistedAssets))
       .toNumber()
-  }, [balancesData, tokenDenom])
+  }, [balancesData, tokenDenom, whitelistedAssets])
 
   const tokenPrice = tokenPrices?.[tokenDenom] ?? 0
   const borrowRate = Number(marketsData?.[tokenDenom]?.borrow_rate)

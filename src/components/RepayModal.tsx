@@ -39,7 +39,7 @@ export const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
       .decimalPlaces(0)
       .div(10 ** getTokenDecimals(tokenDenom, whitelistedAssets))
       .toNumber()
-  }, [positionsData, tokenDenom])
+  }, [positionsData, tokenDenom, whitelistedAssets])
 
   const { mutate, isLoading } = useRepayFunds(
     BigNumber(amount)
@@ -65,7 +65,7 @@ export const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
     return BigNumber(balancesData?.find((balance) => balance.denom === tokenDenom)?.amount ?? 0)
       .div(10 ** getTokenDecimals(tokenDenom, whitelistedAssets))
       .toNumber()
-  }, [balancesData, tokenDenom])
+  }, [balancesData, tokenDenom, whitelistedAssets])
 
   const tokenPrice = tokenPrices?.[tokenDenom] ?? 0
 
