@@ -94,12 +94,10 @@ export const FundAccountModal = () => {
         <div className='flex flex-1 flex-col items-start justify-between bg-fund-modal bg-cover p-6'>
           <div>
             <Text size='2xs' uppercase className='mb-3  text-white'>
-              About
+              Fund
             </Text>
-            <Text size='xl' className='mb-4 text-white'>
-              Bringing the next generation of video creation to the Metaverse.
-              <br />
-              Powered by deep-learning.
+            <Text size='lg' className='mb-4 text-white'>
+              Fund your Account to enable its borrowing and lending capabilities.
             </Text>
           </div>
           <div className='w-[153px] text-white'>
@@ -116,9 +114,9 @@ export const FundAccountModal = () => {
               Fund Account
             </Text>
             <Text size='sm' className='mb-6 text-white/60'>
-              Transfer assets from your injective wallet to your Mars credit account. If you don’t
-              have any assets in your injective wallet use the injective bridge to transfer funds to
-              your injective wallet.
+              Transfer assets from your osmosis wallet to your Mars credit account. If you don’t
+              have any assets in your osmosis wallet use the osmosis bridge to transfer funds to
+              your osmosis wallet.
             </Text>
             {isLoadingAllowedCoins ? (
               <p>Loading...</p>

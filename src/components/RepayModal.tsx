@@ -116,11 +116,9 @@ export const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
 
                 <div className='flex flex-1 flex-col items-start justify-between bg-[#4A4C60] p-6'>
                   <div>
-                    <p className='text-bold mb-3 text-xs uppercase text-white/50'>About</p>
+                    <p className='text-bold mb-3 text-xs uppercase text-white/50'>Repay</p>
                     <h4 className='mb-4 text-xl leading-8'>
-                      Bringing the next generation of video creation to the Metaverse.
-                      <br />
-                      Powered by deep-learning.
+                      Repay borrowed amounts to reduce risk.
                     </h4>
                   </div>
                   <Image src='/logo.svg' alt='mars' width={50} height={50} />
