@@ -5,7 +5,7 @@ import React, { useEffect } from 'react'
 import { AccountDetails } from 'components/Account'
 import { DesktopNavigation } from 'components/Navigation'
 import { useCreditAccounts } from 'hooks/queries'
-import { useSettings, useWalletStore } from 'stores'
+import { useSettingsStore, useWalletStore } from 'stores'
 
 const filter = {
   day: 'brightness-100 hue-rotate-0',
@@ -13,7 +13,7 @@ const filter = {
 }
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
-  const enableAnimations = useSettings((s) => s.enableAnimations)
+  const enableAnimations = useSettingsStore((s) => s.enableAnimations)
 
   const { data: creditAccountsList } = useCreditAccounts()
   const hasCreditAccounts = creditAccountsList && creditAccountsList.length > 0

@@ -20,20 +20,21 @@ export const formatCurrency = (value: string | number) => {
 export const getTokenTotalUSDValue = (
   amount: string,
   denom: string,
+  whitelistedAssets: Asset[],
   tokenPrices?: KeyValuePair,
 ) => {
   if (!tokenPrices) return 0
 
   return (
     BigNumber(amount)
-      .div(10 ** getTokenDecimals(denom))
+      .div(10 ** getTokenDecimals(denom, whitelistedAssets))
       .toNumber() * tokenPrices[denom]
   )
 }
 
-export const lookup = (amount: string | number, denom: string) => {
+export const lookup = (amount: string | number, denom: string, whitelistedAssets: Asset[]) => {
   return BigNumber(amount)
-    .div(10 ** getTokenDecimals(denom))
+    .div(10 ** getTokenDecimals(denom, whitelistedAssets))
     .toNumber()
 }
 

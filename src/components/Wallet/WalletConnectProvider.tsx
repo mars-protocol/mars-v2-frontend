@@ -1,26 +1,29 @@
 import { ChainInfoID, WalletManagerProvider, WalletType } from '@marsprotocol/wallet-connector'
 import classNames from 'classnames'
 import { FC } from 'react'
+import KeplrImage from 'images/wallets/keplr-wallet-extension.png'
+import WalletConnectImage from 'images/wallets/walletconnect-keplr.png'
 
 import { CircularProgress } from 'components'
 import { buttonColorClasses, buttonSizeClasses, buttonVariantClasses } from 'components/Button'
 import { Close } from 'components/Icons'
-import KeplrImage from 'images/keplr-wallet-extension.png'
-import WalletConnectImage from 'images/walletconnect-keplr.png'
-import { useSettings } from 'stores'
+import { useSettingsStore } from 'stores'
+import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
 
 type Props = {
   children?: React.ReactNode
 }
 
 export const WalletConnectProvider: FC<Props> = ({ children }) => {
-  const enableAnimations = useSettings((s) => s.enableAnimations)
+  const enableAnimations = useSettingsStore((s) => s.enableAnimations)
+  const restUrl = useNetworkConfigStore((s) => s.restUrl)
+  const rpcUrl = useNetworkConfigStore((s) => s.rpcUrl)
   return (
     <WalletManagerProvider
       chainInfoOverrides={{
         [ChainInfoID.OsmosisTestnet]: {
-          rpc: 'https://osmosis-delphi-testnet-1.simply-vc.com.mt/XF32UOOU55CX/osmosis-rpc',
-          rest: 'https://osmosis-delphi-testnet-1.simply-vc.com.mt/XF32UOOU55CX/osmosis-lcd',
+          rpc: restUrl,
+          rest: rpcUrl,
         },
       }}
       classNames={{

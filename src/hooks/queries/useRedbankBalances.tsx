@@ -2,9 +2,8 @@ import { Coin } from '@cosmjs/stargate'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { contractAddresses } from 'config/contracts'
+import { useNetworkConfigStore } from 'stores'
 import { queryKeys } from 'types/query-keys-factory'
-import { chain } from 'utils/chains'
 
 interface Result {
   data: {
@@ -14,8 +13,8 @@ interface Result {
   }
 }
 
-const fetchBalances = () => {
-  return fetch(chain.hive, {
+const fetchBalances = async (hiveUrl: string, redBankAddress: string) => {
+  return fetch(hiveUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -25,7 +24,7 @@ const fetchBalances = () => {
       query RedbankBalances {
         bank {
                 balance(
-                    address: "${contractAddresses.redBank}"
+                    address: "${redBankAddress}"
                 ) {
                     amount
                     denom
@@ -38,7 +37,12 @@ const fetchBalances = () => {
 }
 
 export const useRedbankBalances = () => {
-  const result = useQuery<Result>(queryKeys.redbankBalances(), fetchBalances)
+  const hiveUrl = useNetworkConfigStore((s) => s.hiveUrl)
+  const redBankAddress = useNetworkConfigStore((s) => s.contracts.redBank)
+  const result = useQuery<Result>(
+    queryKeys.redbankBalances(),
+    async () => await fetchBalances(hiveUrl, redBankAddress),
+  )
 
   return {
     ...result,

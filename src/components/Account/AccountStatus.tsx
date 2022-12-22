@@ -6,11 +6,12 @@ import { BorrowCapacity } from 'components/BorrowCapacity'
 import { useAccountStats } from 'hooks/data'
 import { useCreateCreditAccount } from 'hooks/mutations'
 import { useCreditAccounts } from 'hooks/queries'
-import { useModalStore } from 'stores'
-import { chain } from 'utils/chains'
+import { useModalStore, useWalletStore } from 'stores'
 import { formatValue } from 'utils/formatters'
 
 export const AccountStatus = () => {
+  const chainInfo = useWalletStore((s) => s.chainInfo)
+  const coinDecimals = chainInfo?.currencies[0].coinDecimals || 6
   const accountStats = useAccountStats()
   const { data: creditAccountsList } = useCreditAccounts()
   const { mutate: createCreditAccount, isLoading: isLoadingCreate } = useCreateCreditAccount()
@@ -35,7 +36,7 @@ export const AccountStatus = () => {
           <Text size='sm' className='flex flex-grow text-white'>
             <FormattedNumber
               amount={BigNumber(accountStats.netWorth)
-                .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
+                .dividedBy(10 ** coinDecimals)
                 .toNumber()}
               animate
               prefix='$: '

@@ -18,8 +18,7 @@ import {
 import { useAccountStats, useBalances, useCalculateMaxBorrowAmount } from 'hooks/data'
 import { useBorrowFunds } from 'hooks/mutations'
 import { useAllBalances, useMarkets, useTokenPrices } from 'hooks/queries'
-import { useAccountDetailsStore } from 'stores'
-import { chain } from 'utils/chains'
+import { useAccountDetailsStore, useNetworkConfigStore, useWalletStore } from 'stores'
 import { formatCurrency, formatValue } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
@@ -34,12 +33,16 @@ export const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
   const [isBorrowToCreditAccount, setIsBorrowToCreditAccount] = useState(false)
 
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
+  const chainInfo = useWalletStore((s) => s.chainInfo)
+  const whitelistedAssets = useNetworkConfigStore((s) => s.assets.whitelist)
+
+  const coinDecimals = chainInfo?.currencies[0].coinDecimals || 6
 
   const balances = useBalances()
 
   const { actions, borrowAmount } = useMemo(() => {
     const borrowAmount = BigNumber(amount)
-      .times(10 ** getTokenDecimals(tokenDenom))
+      .times(10 ** getTokenDecimals(tokenDenom, whitelistedAssets))
       .toNumber()
 
     const withdrawAmount = isBorrowToCreditAccount ? 0 : borrowAmount
@@ -64,7 +67,7 @@ export const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
 
   const accountStats = useAccountStats(actions)
 
-  const tokenSymbol = getTokenSymbol(tokenDenom)
+  const tokenSymbol = getTokenSymbol(tokenDenom, whitelistedAssets)
 
   const { mutate, isLoading } = useBorrowFunds(borrowAmount, tokenDenom, !isBorrowToCreditAccount, {
     onSuccess: () => {
@@ -83,7 +86,7 @@ export const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
 
   const walletAmount = useMemo(() => {
     return BigNumber(balancesData?.find((balance) => balance.denom === tokenDenom)?.amount ?? 0)
-      .div(10 ** getTokenDecimals(tokenDenom))
+      .div(10 ** getTokenDecimals(tokenDenom, whitelistedAssets))
       .toNumber()
   }, [balancesData, tokenDenom])
 
@@ -109,7 +112,7 @@ export const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
 
   const handleSliderValueChange = (value: number[]) => {
     const decimal = value[0] / 100
-    const tokenDecimals = getTokenDecimals(tokenDenom)
+    const tokenDecimals = getTokenDecimals(tokenDenom, whitelistedAssets)
     // limit decimal precision based on token contract decimals
     const newAmount = Number((decimal * maxValue).toFixed(tokenDecimals))
 
@@ -174,7 +177,7 @@ export const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
                           allowNegative={false}
                           onValueChange={(v) => handleValueChange(v.floatValue || 0)}
                           suffix={` ${tokenSymbol}`}
-                          decimalScale={getTokenDecimals(tokenDenom)}
+                          decimalScale={getTokenDecimals(tokenDenom, whitelistedAssets)}
                         />
                         <div className='flex justify-between text-xs tracking-widest'>
                           <div>
@@ -244,7 +247,7 @@ export const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
                         <p className='flex-1 text-xs'>
                           {formatCurrency(
                             BigNumber(accountStats.netWorth)
-                              .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
+                              .dividedBy(10 ** coinDecimals)
                               .toNumber(),
                           )}
                         </p>
@@ -281,7 +284,7 @@ export const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
                       <div className='font-semibold'>
                         {formatCurrency(
                           BigNumber(accountStats?.totalPosition ?? 0)
-                            .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
+                            .dividedBy(10 ** coinDecimals)
                             .toNumber(),
                         )}
                       </div>
@@ -291,7 +294,7 @@ export const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
                       <div className='font-semibold'>
                         {formatCurrency(
                           BigNumber(accountStats?.totalDebt ?? 0)
-                            .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
+                            .dividedBy(10 ** coinDecimals)
                             .toNumber(),
                         )}
                       </div>

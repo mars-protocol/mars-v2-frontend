@@ -3,7 +3,7 @@ import { useMemo, useRef, useState } from 'react'
 
 import { BorrowModal, Card, RepayModal, Text } from 'components'
 import { BorrowTable } from 'components/Borrow'
-import { useAccountDetailsStore } from 'stores'
+import { useAccountDetailsStore, useNetworkConfigStore } from 'stores'
 import { getTokenDecimals, getTokenInfo } from 'utils/tokens'
 import {
   useAllowedCoins,
@@ -21,6 +21,8 @@ type ModalState = {
 }
 
 const Borrow = () => {
+  const whitelistedAssets = useNetworkConfigStore((s) => s.assets.whitelist)
+
   const [modalState, setModalState] = useState<ModalState>({
     show: false,
     data: { tokenDenom: '' },
@@ -53,22 +55,22 @@ const Borrow = () => {
         allowedCoinsData
           ?.filter((denom) => borrowedAssetsMap.has(denom))
           .map((denom) => {
-            const { symbol, chain, icon } = getTokenInfo(denom)
+            const { symbol, name, logo } = getTokenInfo(denom, whitelistedAssets)
             const borrowRate = Number(marketsData?.[denom].borrow_rate) || 0
             const marketLiquidity = BigNumber(redbankBalances?.[denom] ?? 0)
-              .div(10 ** getTokenDecimals(denom))
+              .div(10 ** getTokenDecimals(denom, whitelistedAssets))
               .toNumber()
 
             const borrowAmount = BigNumber(borrowedAssetsMap.get(denom) as string)
-              .div(10 ** getTokenDecimals(denom))
+              .div(10 ** getTokenDecimals(denom, whitelistedAssets))
               .toNumber()
             const borrowValue = borrowAmount * (tokenPrices?.[denom] ?? 0)
 
             const rowData = {
               denom,
               symbol,
-              icon,
-              chain,
+              logo,
+              name,
               borrowed: {
                 amount: borrowAmount,
                 value: borrowValue,
@@ -83,17 +85,17 @@ const Borrow = () => {
         allowedCoinsData
           ?.filter((denom) => !borrowedAssetsMap.has(denom))
           .map((denom) => {
-            const { symbol, chain, icon } = getTokenInfo(denom)
+            const { symbol, name, logo } = getTokenInfo(denom, whitelistedAssets)
             const borrowRate = Number(marketsData?.[denom].borrow_rate) || 0
             const marketLiquidity = BigNumber(redbankBalances?.[denom] ?? 0)
-              .div(10 ** getTokenDecimals(denom))
+              .div(10 ** getTokenDecimals(denom, whitelistedAssets))
               .toNumber()
 
             const rowData = {
               denom,
               symbol,
-              icon,
-              chain,
+              logo,
+              name,
               borrowed: null,
               borrowRate,
               marketLiquidity,

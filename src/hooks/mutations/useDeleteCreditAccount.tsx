@@ -1,14 +1,14 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
 
-import { contractAddresses } from 'config/contracts'
-import { useWalletStore } from 'stores'
+import { useNetworkConfigStore, useWalletStore } from 'stores'
 import { queryKeys } from 'types/query-keys-factory'
 import { hardcodedFee } from 'utils/contants'
 
 export const useDeleteCreditAccount = (accountId: string) => {
   const signingClient = useWalletStore((s) => s.signingClient)
   const address = useWalletStore((s) => s.address)
+  const accountNftAddress = useNetworkConfigStore((s) => s.contracts.accountNft)
 
   const queryClient = useQueryClient()
 
@@ -16,7 +16,7 @@ export const useDeleteCreditAccount = (accountId: string) => {
     async () =>
       await signingClient?.execute(
         address ?? '',
-        contractAddresses.accountNft,
+        accountNftAddress,
         {
           burn: {
             token_id: accountId,

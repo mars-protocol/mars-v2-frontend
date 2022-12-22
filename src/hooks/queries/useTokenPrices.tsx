@@ -2,23 +2,22 @@ import { useQuery } from '@tanstack/react-query'
 import { gql, request } from 'graphql-request'
 import { useMemo } from 'react'
 
-import { contractAddresses } from 'config/contracts'
-import { tokenInfo } from 'config/tokenInfo'
+import { useNetworkConfigStore } from 'stores'
 import { queryKeys } from 'types/query-keys-factory'
-import { chain } from 'utils/chains'
 
-const tokenInfoList = Object.values(tokenInfo)
-
-// TODO: build gql query dynamically on whitelisted tokens
-const fetchTokenPrices = () => {
+const fetchTokenPrices = async (
+  hiveUrl: string,
+  whitelistedTokens: Asset[],
+  oracleAddress: string,
+) => {
   return request(
-    chain.hive,
+    hiveUrl,
     gql`
       query PriceOracle {
         prices: wasm {
-          ${tokenInfoList.map((token) => {
+          ${whitelistedTokens.map((token) => {
             return `${token.symbol}: contractQuery(
-              contractAddress: "${contractAddresses.oracle}"
+              contractAddress: "${oracleAddress}"
               query: {
                 price: {
                   denom: "${token.denom}"
@@ -33,10 +32,17 @@ const fetchTokenPrices = () => {
 }
 
 export const useTokenPrices = () => {
-  const result = useQuery<TokenPricesResult>(queryKeys.tokenPrices(), fetchTokenPrices, {
-    refetchInterval: 30000,
-    staleTime: Infinity,
-  })
+  const hiveUrl = useNetworkConfigStore((s) => s.hiveUrl)
+  const whitelistedTokens = useNetworkConfigStore((s) => s.assets.whitelist)
+  const oracleAddress = useNetworkConfigStore((s) => s.contracts.oracle)
+  const result = useQuery<TokenPricesResult>(
+    queryKeys.tokenPrices(),
+    async () => await fetchTokenPrices(hiveUrl, whitelistedTokens, oracleAddress),
+    {
+      refetchInterval: 30000,
+      staleTime: Infinity,
+    },
+  )
 
   return {
     ...result,

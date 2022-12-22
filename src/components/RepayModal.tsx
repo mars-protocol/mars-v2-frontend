@@ -7,10 +7,10 @@ import { toast } from 'react-toastify'
 
 import { Button, CircularProgress, ContainerSecondary, Slider } from 'components'
 import { useRepayFunds } from 'hooks/mutations'
-import { useAccountDetailsStore } from 'stores'
+import { useAllBalances, useCreditAccountPositions, useTokenPrices } from 'hooks/queries'
+import { useAccountDetailsStore, useNetworkConfigStore } from 'stores'
 import { formatCurrency } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-import { useAllBalances, useCreditAccountPositions, useTokenPrices } from 'hooks/queries'
 
 // 0.001% buffer / slippage to avoid repay action from not fully repaying the debt amount
 const REPAY_BUFFER = 1.00001
@@ -26,8 +26,9 @@ export const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
 
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
+  const whitelistedAssets = useNetworkConfigStore((s) => s.assets.whitelist)
 
-  const tokenSymbol = getTokenSymbol(tokenDenom)
+  const tokenSymbol = getTokenSymbol(tokenDenom, whitelistedAssets)
 
   const maxRepayAmount = useMemo(() => {
     const tokenDebtAmount =
@@ -36,13 +37,13 @@ export const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
     return BigNumber(tokenDebtAmount)
       .times(REPAY_BUFFER)
       .decimalPlaces(0)
-      .div(10 ** getTokenDecimals(tokenDenom))
+      .div(10 ** getTokenDecimals(tokenDenom, whitelistedAssets))
       .toNumber()
   }, [positionsData, tokenDenom])
 
   const { mutate, isLoading } = useRepayFunds(
     BigNumber(amount)
-      .times(10 ** getTokenDecimals(tokenDenom))
+      .times(10 ** getTokenDecimals(tokenDenom, whitelistedAssets))
       .toNumber(),
     tokenDenom,
     {
@@ -62,7 +63,7 @@ export const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
 
   const walletAmount = useMemo(() => {
     return BigNumber(balancesData?.find((balance) => balance.denom === tokenDenom)?.amount ?? 0)
-      .div(10 ** getTokenDecimals(tokenDenom))
+      .div(10 ** getTokenDecimals(tokenDenom, whitelistedAssets))
       .toNumber()
   }, [balancesData, tokenDenom])
 
@@ -144,7 +145,7 @@ export const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
                           allowNegative={false}
                           onValueChange={(v) => handleValueChange(v.floatValue || 0)}
                           suffix={` ${tokenSymbol}`}
-                          decimalScale={getTokenDecimals(tokenDenom)}
+                          decimalScale={getTokenDecimals(tokenDenom, whitelistedAssets)}
                         />
                         <div className='flex justify-between text-xs tracking-widest'>
                           <div>
@@ -159,7 +160,7 @@ export const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
                         value={percentageValue}
                         onChange={(value) => {
                           const decimal = value[0] / 100
-                          const tokenDecimals = getTokenDecimals(tokenDenom)
+                          const tokenDecimals = getTokenDecimals(tokenDenom, whitelistedAssets)
                           // limit decimal precision based on token contract decimals
                           const newAmount = Number((decimal * maxValue).toFixed(tokenDecimals))
 

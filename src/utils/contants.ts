@@ -1,11 +1,9 @@
-import { chain } from 'utils/chains'
-
 // StdFee
 // TODO: decide some strategy to handle fees
 export const hardcodedFee = {
   amount: [
     {
-      denom: chain.stakeCurrency.coinMinimalDenom,
+      denom: 'uosmo',
       amount: '100000',
     },
   ],

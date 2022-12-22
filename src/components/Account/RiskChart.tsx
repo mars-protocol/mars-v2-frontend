@@ -11,11 +11,11 @@ import {
 
 import { FormattedNumber, Text } from 'components'
 import { useAccountStats } from 'hooks/data'
-import { useSettings } from 'stores'
+import { useSettingsStore } from 'stores'
 import { formatValue } from 'utils/formatters'
 
 export const RiskChart = ({ data }: RiskChartProps) => {
-  const enableAnimations = useSettings((s) => s.enableAnimations)
+  const enableAnimations = useSettingsStore((s) => s.enableAnimations)
   const accountStats = useAccountStats()
   const currentRisk = accountStats?.risk ?? 0
 

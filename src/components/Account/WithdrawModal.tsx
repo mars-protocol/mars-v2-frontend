@@ -19,8 +19,12 @@ import { BorrowCapacity } from 'components/BorrowCapacity'
 import { useAccountStats, useBalances, useCalculateMaxWithdrawAmount } from 'hooks/data'
 import { useWithdrawFunds } from 'hooks/mutations'
 import { useCreditAccountPositions, useTokenPrices } from 'hooks/queries'
-import { useAccountDetailsStore, useModalStore } from 'stores'
-import { chain } from 'utils/chains'
+import {
+  useAccountDetailsStore,
+  useModalStore,
+  useNetworkConfigStore,
+  useWalletStore,
+} from 'stores'
 import { formatValue, lookup } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
@@ -29,11 +33,12 @@ export const WithdrawModal = () => {
   // STORE
   // ---------------
   const open = useModalStore((s) => s.withdrawModal)
-
+  const chainInfo = useWalletStore((s) => s.chainInfo)
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
   const { data: positionsData, isLoading: isLoadingPositions } = useCreditAccountPositions(
     selectedAccount ?? '',
   )
+  const whitelistedAssets = useNetworkConfigStore((s) => s.assets.whitelist)
 
   // ---------------
   // LOCAL STATE
@@ -48,8 +53,8 @@ export const WithdrawModal = () => {
   const { data: tokenPrices } = useTokenPrices()
   const balances = useBalances()
 
-  const selectedTokenSymbol = getTokenSymbol(selectedToken)
-  const selectedTokenDecimals = getTokenDecimals(selectedToken)
+  const selectedTokenSymbol = getTokenSymbol(selectedToken, whitelistedAssets)
+  const selectedTokenDecimals = getTokenDecimals(selectedToken, whitelistedAssets)
 
   const tokenAmountInCreditAccount = useMemo(() => {
     return BigNumber(positionsData?.coins.find((coin) => coin.denom === selectedToken)?.amount ?? 0)
@@ -127,13 +132,13 @@ export const WithdrawModal = () => {
     setAmount(0)
   }
 
-  const getTokenTotalUSDValue = (amount: string, denom: string) => {
+  const getTokenTotalUSDValue = (amount: string, denom: string, whitelistedAssets: Asset[]) => {
     // early return if prices are not fetched yet
     if (!tokenPrices) return 0
 
     return (
       BigNumber(amount)
-        .div(10 ** getTokenDecimals(denom))
+        .div(10 ** getTokenDecimals(denom, whitelistedAssets))
         .toNumber() * tokenPrices[denom]
     )
   }
@@ -147,6 +152,9 @@ export const WithdrawModal = () => {
   const setOpen = (open: boolean) => {
     useModalStore.setState({ withdrawModal: open })
   }
+
+  const coinDecimals = chainInfo?.currencies[0].coinDecimals || 6
+  const coinDenom = chainInfo?.currencies[0].coinDenom || 'uosmo'
 
   return (
     <Modal open={open} setOpen={setOpen}>
@@ -179,7 +187,7 @@ export const WithdrawModal = () => {
                   >
                     {positionsData?.coins?.map((coin) => (
                       <option key={coin.denom} value={coin.denom}>
-                        {getTokenSymbol(coin.denom)}
+                        {getTokenSymbol(coin.denom, whitelistedAssets)}
                       </option>
                     ))}
                   </select>
@@ -259,7 +267,7 @@ export const WithdrawModal = () => {
                   <Text size='sm' className='flex flex-grow text-white'>
                     <FormattedNumber
                       amount={BigNumber(accountStats.netWorth)
-                        .dividedBy(10 ** chain.stakeCurrency.coinDecimals)
+                        .dividedBy(10 ** coinDecimals)
                         .toNumber()}
                       prefix='$: '
                       animate
@@ -306,7 +314,7 @@ export const WithdrawModal = () => {
                 label='Total Position:'
                 value={{
                   format: 'number',
-                  amount: lookup(accountStats?.totalPosition ?? 0, chain.stakeCurrency.coinDenom),
+                  amount: lookup(accountStats?.totalPosition ?? 0, coinDenom, whitelistedAssets),
                   prefix: '$',
                 }}
               />
@@ -314,7 +322,7 @@ export const WithdrawModal = () => {
                 label='Total Liabilities:'
                 value={{
                   format: 'number',
-                  amount: lookup(accountStats?.totalDebt ?? 0, chain.stakeCurrency.coinDenom),
+                  amount: lookup(accountStats?.totalDebt ?? 0, coinDenom, whitelistedAssets),
                   prefix: '$',
                 }}
               />

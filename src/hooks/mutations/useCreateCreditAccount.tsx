@@ -1,8 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
 
-import { contractAddresses } from 'config/contracts'
-import { useAccountDetailsStore, useWalletStore } from 'stores'
+import { useAccountDetailsStore, useNetworkConfigStore, useWalletStore } from 'stores'
 import { queryKeys } from 'types/query-keys-factory'
 import { hardcodedFee } from 'utils/contants'
 
@@ -14,17 +13,13 @@ const executeMsg = {
 export const useCreateCreditAccount = () => {
   const signingClient = useWalletStore((s) => s.signingClient)
   const address = useWalletStore((s) => s.address)
+  const creditManagerAddress = useNetworkConfigStore((s) => s.contracts.creditManager)
 
   const queryClient = useQueryClient()
 
   return useMutation(
     async () =>
-      await signingClient?.execute(
-        address ?? '',
-        contractAddresses.creditManager,
-        executeMsg,
-        hardcodedFee,
-      ),
+      await signingClient?.execute(address ?? '', creditManagerAddress, executeMsg, hardcodedFee),
     {
       onSettled: () => {
         queryClient.invalidateQueries(queryKeys.creditAccounts(address ?? ''))
