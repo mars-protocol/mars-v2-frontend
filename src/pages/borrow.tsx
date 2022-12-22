@@ -3,8 +3,6 @@ import { useMemo, useRef, useState } from 'react'
 
 import { BorrowModal, Card, RepayModal, Text } from 'components'
 import { BorrowTable } from 'components/Borrow'
-import { useAccountDetailsStore, useNetworkConfigStore } from 'stores'
-import { getTokenDecimals, getTokenInfo } from 'utils/tokens'
 import {
   useAllowedCoins,
   useCreditAccountPositions,
@@ -12,6 +10,8 @@ import {
   useRedbankBalances,
   useTokenPrices,
 } from 'hooks/queries'
+import { useAccountDetailsStore, useNetworkConfigStore } from 'stores'
+import { getTokenDecimals, getTokenInfo } from 'utils/tokens'
 
 type ModalState = {
   show: 'borrow' | 'repay' | false
@@ -57,7 +57,10 @@ const Borrow = () => {
           .map((denom) => {
             const { symbol, name, logo } = getTokenInfo(denom, whitelistedAssets)
             const borrowRate = Number(marketsData?.[denom].borrow_rate) || 0
-            const marketLiquidity = BigNumber(redbankBalances?.[denom] ?? 0)
+            const marketLiquidity = BigNumber(
+              redbankBalances?.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())
+                ?.amount || 0,
+            )
               .div(10 ** getTokenDecimals(denom, whitelistedAssets))
               .toNumber()
 
@@ -85,9 +88,13 @@ const Borrow = () => {
         allowedCoinsData
           ?.filter((denom) => !borrowedAssetsMap.has(denom))
           .map((denom) => {
+            console.log(denom)
             const { symbol, name, logo } = getTokenInfo(denom, whitelistedAssets)
             const borrowRate = Number(marketsData?.[denom].borrow_rate) || 0
-            const marketLiquidity = BigNumber(redbankBalances?.[denom] ?? 0)
+            const marketLiquidity = BigNumber(
+              redbankBalances?.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())
+                ?.amount || 0,
+            )
               .div(10 ** getTokenDecimals(denom, whitelistedAssets))
               .toNumber()
 
@@ -133,7 +140,7 @@ const Borrow = () => {
         </Card>
         <Card>
           <div>
-            <Text tag='h3' size='xl' uppercase className='mb-7 text-center text-lg-caps'>
+            <Text tag='h3' size='xl' uppercase className='mb-7 text-center'>
               Available to Borrow
             </Text>
             <BorrowTable

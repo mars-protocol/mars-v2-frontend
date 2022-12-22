@@ -1,27 +1,48 @@
+import { Coin } from '@cosmjs/stargate'
 import { useQuery } from '@tanstack/react-query'
+import request, { gql } from 'graphql-request'
+import { useMemo } from 'react'
 
 import { useNetworkConfigStore, useWalletStore } from 'stores'
 import { queryKeys } from 'types/query-keys-factory'
 
-type Result = {
-  balances: { amount: string; denom: string }[]
+interface UserBalanceData {
+  balance: {
+    balance: Coin[]
+  }
 }
 
 export const useAllBalances = () => {
   const address = useWalletStore((s) => s.address)
-  const restUrl = useNetworkConfigStore((s) => s.restUrl)
+  const hiveUrl = useNetworkConfigStore((s) => s.hiveUrl)
 
-  const result = useQuery<Result>(
+  const result = useQuery<UserBalanceData>(
     queryKeys.allBalances(address ?? ''),
-    () => fetch(`${restUrl}/cosmos/bank/v1beta1/balances/${address}`).then((res) => res.json()),
+    async () => {
+      return await request(
+        hiveUrl!,
+        gql`
+          query UserBalanceQuery {
+                  balance: bank {
+                      balance(
+                          address: "${address}"
+                      ) {
+                          amount
+                          denom
+                      }
+                  }
+          }
+      `,
+      )
+    },
     {
-      enabled: !!address,
-      staleTime: Infinity,
+      enabled: !!hiveUrl && !!address,
+      staleTime: 30000,
+      refetchInterval: 30000,
     },
   )
-
   return {
     ...result,
-    data: result?.data?.balances,
+    data: useMemo(() => result.data && result.data.balance.balance, [result.data]),
   }
 }

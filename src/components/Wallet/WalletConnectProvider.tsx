@@ -1,14 +1,14 @@
 import { ChainInfoID, WalletManagerProvider, WalletType } from '@marsprotocol/wallet-connector'
 import classNames from 'classnames'
 import { FC } from 'react'
-import KeplrImage from 'images/wallets/keplr-wallet-extension.png'
-import WalletConnectImage from 'images/wallets/walletconnect-keplr.png'
 
 import { CircularProgress } from 'components'
 import { buttonColorClasses, buttonSizeClasses, buttonVariantClasses } from 'components/Button'
 import { Close } from 'components/Icons'
+import { networkConfig } from 'config/osmo-test-4'
+import KeplrImage from 'images/wallets/keplr-wallet-extension.png'
+import WalletConnectImage from 'images/wallets/walletconnect-keplr.png'
 import { useSettingsStore } from 'stores'
-import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
 
 type Props = {
   children?: React.ReactNode
@@ -16,14 +16,12 @@ type Props = {
 
 export const WalletConnectProvider: FC<Props> = ({ children }) => {
   const enableAnimations = useSettingsStore((s) => s.enableAnimations)
-  const restUrl = useNetworkConfigStore((s) => s.restUrl)
-  const rpcUrl = useNetworkConfigStore((s) => s.rpcUrl)
   return (
     <WalletManagerProvider
       chainInfoOverrides={{
         [ChainInfoID.OsmosisTestnet]: {
-          rpc: restUrl,
-          rest: rpcUrl,
+          rpc: networkConfig.rpcUrl,
+          rest: networkConfig.restUrl,
         },
       }}
       classNames={{

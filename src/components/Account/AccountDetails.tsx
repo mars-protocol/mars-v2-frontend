@@ -27,7 +27,7 @@ export const AccountDetails = () => {
   const [showManageMenu, setShowManageMenu] = useState(false)
   const [riskData, setRiskData] = useState<RiskTimePair[]>()
 
-  const coinDenom = chainInfo?.currencies[0].coinDenom || 'uosmo'
+  const coinDenom = chainInfo?.currencies[0].coinMinimalDenom || 'uosmo'
 
   useEffect(() => {
     setRiskData(createRiskData(accountStats?.risk ?? 0))

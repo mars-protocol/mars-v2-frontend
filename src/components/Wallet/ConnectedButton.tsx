@@ -1,17 +1,14 @@
-import {
-  ChainInfoID,
-  SimpleChainInfoList,
-  useWallet,
-  useWalletManager,
-} from '@marsprotocol/wallet-connector'
+import { ChainInfoID, SimpleChainInfoList, useWalletManager } from '@marsprotocol/wallet-connector'
+import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import useClipboard from 'react-use-clipboard'
 
 import { Button, CircularProgress, FormattedNumber, Text } from 'components'
 import { Check, Copy, ExternalLink, Osmo, Wallet } from 'components/Icons'
 import { Overlay } from 'components/Overlay'
-import { useTokenBalance } from 'hooks/queries'
+import { useAllBalances } from 'hooks/queries'
+import { useWalletStore } from 'stores'
 import { formatValue, truncate } from 'utils/formatters'
 
 export const ConnectedButton = () => {
@@ -19,12 +16,14 @@ export const ConnectedButton = () => {
   // EXTERNAL HOOKS
   // ---------------
   const { disconnect } = useWalletManager()
-  const { chainInfo, address, name } = useWallet()
+  const address = useWalletStore((s) => s.address)
+  const chainInfo = useWalletStore((s) => s.chainInfo)
+  const name = useWalletStore((s) => s.name)
 
   // ---------------
   // LOCAL HOOKS
   // ---------------
-  const { data } = useTokenBalance()
+  const { data } = useAllBalances()
 
   // ---------------
   // LOCAL STATE
@@ -38,6 +37,8 @@ export const ConnectedButton = () => {
   // ---------------
   // VARIABLES
   // ---------------
+  const coinDecimals = chainInfo?.currencies[0].coinDecimals || 6
+  const coinDenom = chainInfo?.currencies[0].coinMinimalDenom || 'uosmo'
   const explorerName =
     chainInfo && SimpleChainInfoList[chainInfo.chainId as ChainInfoID].explorerName
 
@@ -51,6 +52,13 @@ export const ConnectedButton = () => {
     const loading = !(address && name && chainInfo)
     setIsLoading(loading)
   }, [address, name, chainInfo])
+
+  const walletAmount = useMemo(() => {
+    console.log(data, coinDenom)
+    return BigNumber(data?.find((balance) => balance.denom === coinDenom)?.amount ?? 0)
+      .div(10 ** coinDecimals)
+      .toNumber()
+  }, [data, coinDenom])
 
   return (
     <div className={'relative'}>
@@ -90,7 +98,14 @@ export const ConnectedButton = () => {
           )}
         >
           {!isLoading ? (
-            `${formatValue(data, 2, 2, true, false, ` ${chainInfo?.stakeCurrency?.coinDenom}`)}`
+            `${formatValue(
+              walletAmount,
+              2,
+              2,
+              true,
+              false,
+              ` ${chainInfo?.stakeCurrency?.coinDenom}`,
+            )}`
           ) : (
             <CircularProgress size={12} />
           )}
@@ -101,13 +116,13 @@ export const ConnectedButton = () => {
           <div className='flex-0 mb-4 flex w-full flex-nowrap items-start'>
             <div className='flex w-auto flex-1'>
               <div className='mr-2 flex h-[31px] items-end pb-0.5 text-secondary-dark text-base-caps'>
-                {chainInfo?.stakeCurrency?.coinDenom}
+                {coinDenom}
               </div>
               <div className='flex-0 flex flex-wrap justify-end'>
                 <FormattedNumber
                   animate
                   className='flex items-end text-2xl text-secondary-dark'
-                  amount={data}
+                  amount={walletAmount}
                 />
               </div>
             </div>

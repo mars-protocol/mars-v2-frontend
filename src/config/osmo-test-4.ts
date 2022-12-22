@@ -1,9 +1,4 @@
 import { ChainInfoID } from '@marsprotocol/wallet-connector'
-import mars from 'images/tokens/mars.svg'
-
-import atom from 'images/tokens/atom.svg'
-import cro from 'images/tokens/cro.svg'
-import osmo from 'images/tokens/osmo.svg'
 
 const Assets: { [key: string]: Asset } = {
   osmo: {
@@ -13,14 +8,14 @@ const Assets: { [key: string]: Asset } = {
     color: '#9f1ab9',
     decimals: 6,
     hasOraclePrice: true,
-    logo: osmo,
+    logo: '/tokens/osmo.svg',
   },
   atom: {
     symbol: 'ATOM',
     name: 'Atom',
     denom: 'ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2',
     color: '#6f7390',
-    logo: atom,
+    logo: '/tokens/atom.svg',
     decimals: 6,
     hasOraclePrice: true,
   },
@@ -29,7 +24,7 @@ const Assets: { [key: string]: Asset } = {
     name: 'Cronos',
     denom: 'ibc/E6931F78057F7CC5DA0FD6CEF82FF39373A6E0452BF1FD76910B93292CF356C1',
     color: '#002D74',
-    logo: cro,
+    logo: '/tokens/cro.svg',
     decimals: 8,
     hasOraclePrice: true,
   },
@@ -42,7 +37,7 @@ const OtherAssets: { [key: string]: OtherAsset } = {
     denom: 'ibc/EA3E1640F9B1532AB129A571203A0B9F789A7F14BB66E350DCBFA18E1A1931F0',
     //denom: 'ibc/1BF910A3C8A30C8E3331764FA0113B920AE14B913F487DF7E1989FD75EFE61FD'
     color: '#a03b45',
-    logo: mars,
+    logo: '/tokens/mars.svg',
     decimals: 6,
     hasOraclePrice: true,
     poolId: 601,
@@ -66,7 +61,7 @@ export const networkConfig: NetworkConfig = {
   },
   assets: {
     base: Assets.osmo,
-    whitelist: [Assets.osmo, Assets.atom],
+    whitelist: [Assets.osmo, Assets.atom, Assets.cro],
     other: [OtherAssets.mars],
   },
   appUrl: 'https://testnet.osmosis.zone',

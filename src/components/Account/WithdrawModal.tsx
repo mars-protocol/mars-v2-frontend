@@ -154,7 +154,7 @@ export const WithdrawModal = () => {
   }
 
   const coinDecimals = chainInfo?.currencies[0].coinDecimals || 6
-  const coinDenom = chainInfo?.currencies[0].coinDenom || 'uosmo'
+  const coinDenom = chainInfo?.currencies[0].coinMinimalDenom || 'uosmo'
 
   return (
     <Modal open={open} setOpen={setOpen}>

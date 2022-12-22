@@ -3,9 +3,9 @@ import {
   WalletConnectionStatus,
   WalletSigningCosmWasmClient,
 } from '@marsprotocol/wallet-connector'
-import { networkConfig } from 'config/osmo-test-4'
 import create from 'zustand'
 
+import { networkConfig } from 'config/osmo-test-4'
 import { MarsAccountNftClient } from 'types/generated/mars-account-nft/MarsAccountNft.client'
 import { MarsCreditManagerClient } from 'types/generated/mars-credit-manager/MarsCreditManager.client'
 import { MarsSwapperBaseClient } from 'types/generated/mars-swapper-base/MarsSwapperBase.client'

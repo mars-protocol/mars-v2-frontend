@@ -102,7 +102,10 @@ export const useCalculateMaxWithdrawAmount = (denom: string, borrow: boolean) =>
       maxAmountCapacity = maxAmountCapacity < 0 ? 0 : maxAmountCapacity
     }
 
-    const marketLiquidity = redbankBalances?.[denom] ?? 0
+    const marketLiquidity = BigNumber(
+      redbankBalances?.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())?.amount ||
+        0,
+    )
 
     const maxWithdrawAmount = BigNumber(maxAmountCapacity).gt(marketLiquidity)
       ? marketLiquidity

@@ -4,10 +4,12 @@ export const getTokenSymbol = (denom: string, whitelistedAssets: Asset[]) =>
   whitelistedAssets.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())?.symbol || ''
 
 export const getTokenDecimals = (denom: string, whitelistedAssets: Asset[]) =>
-  whitelistedAssets.find((asset) => asset.denom === denom)?.decimals || 6
+  whitelistedAssets.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())?.decimals ||
+  6
 
 export const getTokenIcon = (denom: string, whitelistedAssets: Asset[]) =>
-  whitelistedAssets.find((asset) => asset.denom === denom)?.logo || ''
+  whitelistedAssets.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())?.logo || ''
 
 export const getTokenInfo = (denom: string, whitelistedAssets: Asset[]) =>
-  whitelistedAssets.find((asset) => asset.denom === denom) || networkConfig.assets.base
+  whitelistedAssets.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase()) ||
+  networkConfig.assets.base
