@@ -77,7 +77,6 @@ export const useCalculateMaxBorrowAmount = (denom: string, isUnderCollateralized
         .div(borrowTokenPrice)
     }
 
-    console.log(denom)
     const marketLiquidity = BigNumber(
       redbankBalances?.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())?.amount ||
         0,

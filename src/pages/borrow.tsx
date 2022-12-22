@@ -88,7 +88,6 @@ const Borrow = () => {
         allowedCoinsData
           ?.filter((denom) => !borrowedAssetsMap.has(denom))
           .map((denom) => {
-            console.log(denom)
             const { symbol, name, logo } = getTokenInfo(denom, whitelistedAssets)
             const borrowRate = Number(marketsData?.[denom].borrow_rate) || 0
             const marketLiquidity = BigNumber(

@@ -54,7 +54,6 @@ export const ConnectedButton = () => {
   }, [address, name, chainInfo])
 
   const walletAmount = useMemo(() => {
-    console.log(data, coinDenom)
     return BigNumber(data?.find((balance) => balance.denom === coinDenom)?.amount ?? 0)
       .div(10 ** coinDecimals)
       .toNumber()
