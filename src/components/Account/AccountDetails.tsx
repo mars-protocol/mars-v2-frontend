@@ -5,12 +5,7 @@ import { Button, LabelValuePair, PositionsList } from 'components'
 import { AccountManageOverlay, RiskChart } from 'components/Account'
 import { ArrowRightLine, ChevronDown, ChevronLeft } from 'components/Icons'
 import { useAccountStats, useBalances } from 'hooks/data'
-import {
-  useAccountDetailsStore,
-  useNetworkConfigStore,
-  useSettingsStore,
-  useWalletStore,
-} from 'stores'
+import { useAccountDetailsStore, useNetworkConfigStore, useSettingsStore } from 'stores'
 import { lookup } from 'utils/formatters'
 import { createRiskData } from 'utils/risk'
 
@@ -18,16 +13,14 @@ export const AccountDetails = () => {
   const enableAnimations = useSettingsStore((s) => s.enableAnimations)
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
   const isOpen = useAccountDetailsStore((s) => s.isOpen)
-  const chainInfo = useWalletStore((s) => s.chainInfo)
   const whitelistedAssets = useNetworkConfigStore((s) => s.assets.whitelist)
+  const baseAsset = useNetworkConfigStore((s) => s.assets.base)
 
   const balances = useBalances()
   const accountStats = useAccountStats()
 
   const [showManageMenu, setShowManageMenu] = useState(false)
   const [riskData, setRiskData] = useState<RiskTimePair[]>()
-
-  const coinDenom = chainInfo?.currencies[0].coinMinimalDenom || 'uosmo'
 
   useEffect(() => {
     setRiskData(createRiskData(accountStats?.risk ?? 0))
@@ -100,7 +93,7 @@ export const AccountDetails = () => {
           label='Total Position:'
           value={{
             format: 'number',
-            amount: lookup(accountStats?.totalPosition ?? 0, coinDenom, whitelistedAssets),
+            amount: lookup(accountStats?.totalPosition ?? 0, baseAsset.denom, whitelistedAssets),
             prefix: '$',
           }}
         />
@@ -108,7 +101,7 @@ export const AccountDetails = () => {
           label='Total Liabilities:'
           value={{
             format: 'number',
-            amount: lookup(accountStats?.totalDebt ?? 0, coinDenom, whitelistedAssets),
+            amount: lookup(accountStats?.totalDebt ?? 0, baseAsset.denom, whitelistedAssets),
             prefix: '$',
           }}
         />

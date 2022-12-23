@@ -35,10 +35,9 @@ export const WithdrawModal = () => {
   const open = useModalStore((s) => s.withdrawModal)
   const chainInfo = useWalletStore((s) => s.chainInfo)
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
-  const { data: positionsData, isLoading: isLoadingPositions } = useCreditAccountPositions(
-    selectedAccount ?? '',
-  )
+  const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
   const whitelistedAssets = useNetworkConfigStore((s) => s.assets.whitelist)
+  const baseAsset = useNetworkConfigStore((s) => s.assets.base)
 
   // ---------------
   // LOCAL STATE
@@ -153,9 +152,6 @@ export const WithdrawModal = () => {
     useModalStore.setState({ withdrawModal: open })
   }
 
-  const coinDecimals = chainInfo?.currencies[0].coinDecimals || 6
-  const coinDenom = chainInfo?.currencies[0].coinMinimalDenom || 'uosmo'
-
   return (
     <Modal open={open} setOpen={setOpen}>
       <div className='flex min-h-[470px] w-full flex-wrap'>
@@ -267,7 +263,7 @@ export const WithdrawModal = () => {
                   <Text size='sm' className='flex flex-grow text-white'>
                     <FormattedNumber
                       amount={BigNumber(accountStats.netWorth)
-                        .dividedBy(10 ** coinDecimals)
+                        .dividedBy(10 ** baseAsset.decimals)
                         .toNumber()}
                       prefix='$: '
                       animate
@@ -314,7 +310,11 @@ export const WithdrawModal = () => {
                 label='Total Position:'
                 value={{
                   format: 'number',
-                  amount: lookup(accountStats?.totalPosition ?? 0, coinDenom, whitelistedAssets),
+                  amount: lookup(
+                    accountStats?.totalPosition ?? 0,
+                    baseAsset.denom,
+                    whitelistedAssets,
+                  ),
                   prefix: '$',
                 }}
               />
@@ -322,7 +322,7 @@ export const WithdrawModal = () => {
                 label='Total Liabilities:'
                 value={{
                   format: 'number',
-                  amount: lookup(accountStats?.totalDebt ?? 0, coinDenom, whitelistedAssets),
+                  amount: lookup(accountStats?.totalDebt ?? 0, baseAsset.denom, whitelistedAssets),
                   prefix: '$',
                 }}
               />
