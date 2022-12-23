@@ -5,22 +5,24 @@ import { FC } from 'react'
 import { CircularProgress } from 'components'
 import { buttonColorClasses, buttonSizeClasses, buttonVariantClasses } from 'components/Button'
 import { Close } from 'components/Icons'
-import KeplrImage from 'images/keplr-wallet-extension.png'
-import WalletConnectImage from 'images/walletconnect-keplr.png'
-import { useSettings } from 'stores'
+// TODO: get networkConfig source dynamically
+import { networkConfig } from 'config/osmo-test-4'
+import KeplrImage from 'images/wallets/keplr-wallet-extension.png'
+import WalletConnectImage from 'images/wallets/walletconnect-keplr.png'
+import { useSettingsStore } from 'stores'
 
 type Props = {
   children?: React.ReactNode
 }
 
 export const WalletConnectProvider: FC<Props> = ({ children }) => {
-  const enableAnimations = useSettings((s) => s.enableAnimations)
+  const enableAnimations = useSettingsStore((s) => s.enableAnimations)
   return (
     <WalletManagerProvider
       chainInfoOverrides={{
         [ChainInfoID.OsmosisTestnet]: {
-          rpc: 'https://osmosis-delphi-testnet-1.simply-vc.com.mt/XF32UOOU55CX/osmosis-rpc',
-          rest: 'https://osmosis-delphi-testnet-1.simply-vc.com.mt/XF32UOOU55CX/osmosis-lcd',
+          rpc: networkConfig.rpcUrl,
+          rest: networkConfig.restUrl,
         },
       }}
       classNames={{

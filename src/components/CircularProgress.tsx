@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 
 import { Text } from 'components'
-import { useSettings } from 'stores'
+import { useSettingsStore } from 'stores'
 
 interface Props {
   color?: string
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const CircularProgress = ({ color = '#FFFFFF', size = 20, className }: Props) => {
-  const enableAnimations = useSettings((s) => s.enableAnimations)
+  const enableAnimations = useSettingsStore((s) => s.enableAnimations)
 
   const borderWidth = `${size / 10}px`
   const borderColor = `${color} transparent transparent transparent`

@@ -9,15 +9,15 @@ import {
 import Image from 'next/image'
 import React from 'react'
 
+import { AssetRow } from 'components/Borrow'
 import { ChevronDown, ChevronUp } from 'components/Icons'
 import { formatCurrency } from 'utils/formatters'
-import { AssetRow } from 'components/Borrow'
 
 interface Market {
   denom: string
   symbol: string
-  icon: string
-  chain: string
+  logo: string
+  name: string
   borrowed: {
     amount: number
     value: number
@@ -42,10 +42,10 @@ export const BorrowTable = ({ data, onBorrowClick, onRepayClick }: Props) => {
         id: 'symbol',
         accessorFn: (row) => (
           <div className='flex flex-1 items-center'>
-            <Image src={row.icon} alt='token' width={32} height={32} />
+            <Image src={row.logo} alt='token' width={32} height={32} />
             <div className='pl-2'>
               <div>{row.symbol}</div>
-              <div className='text-xs'>{row.chain}</div>
+              <div className='text-xs'>{row.name}</div>
             </div>
           </div>
         ),

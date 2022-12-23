@@ -9,8 +9,8 @@ type AssetRowProps = {
   data: {
     denom: string
     symbol: string
-    icon: string
-    chain: string
+    logo: string
+    name: string
     borrowed: {
       amount: number
       value: number
@@ -32,10 +32,10 @@ export const AssetRow = ({ data, onBorrowClick, onRepayClick }: AssetRowProps) =
     >
       <div className='flex'>
         <div className='flex flex-1 items-center'>
-          <Image src={data.icon} alt='token' width={32} height={32} />
+          <Image src={data.logo} alt='token' width={32} height={32} />
           <div className='pl-2'>
             <div>{data.symbol}</div>
-            <div className='text-xs'>{data.chain}</div>
+            <div className='text-xs'>{data.name}</div>
           </div>
         </div>
         <div className='flex flex-1 items-center text-xs'>

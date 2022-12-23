@@ -4,6 +4,6 @@ interface SettingsStore {
   enableAnimations: boolean
 }
 
-export const useSettings = create<SettingsStore>()(() => ({
+export const useSettingsStore = create<SettingsStore>()(() => ({
   enableAnimations: true,
 }))
