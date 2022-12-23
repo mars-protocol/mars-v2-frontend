@@ -99,7 +99,7 @@ export const ConnectedButton = () => {
           )}
         >
           {!isLoading ? (
-            `${formatValue(walletAmount, 2, 2, true, false, ` ${baseAsset.denom}`)}`
+            `${formatValue(walletAmount, 2, 2, true, false, ` ${baseAsset.symbol}`)}`
           ) : (
             <CircularProgress size={12} />
           )}
