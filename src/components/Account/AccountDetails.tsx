@@ -29,7 +29,7 @@ export const AccountDetails = () => {
   return (
     <div
       className={classNames(
-        'relative flex w-[400px] basis-[400px] flex-wrap content-start border-white/20 bg-header',
+        'relative flex w-[400px] basis-[400px] flex-wrap content-start border-l border-white/20 bg-header',
         enableAnimations && 'transition-[margin] duration-1000 ease-in-out',
         isOpen ? 'mr-0' : '-mr-[400px]',
       )}
