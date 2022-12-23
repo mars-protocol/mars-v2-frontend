@@ -5,6 +5,7 @@ import { FC } from 'react'
 import { CircularProgress } from 'components'
 import { buttonColorClasses, buttonSizeClasses, buttonVariantClasses } from 'components/Button'
 import { Close } from 'components/Icons'
+// TODO: get networkConfig source dynamically
 import { networkConfig } from 'config/osmo-test-4'
 import KeplrImage from 'images/wallets/keplr-wallet-extension.png'
 import WalletConnectImage from 'images/wallets/walletconnect-keplr.png'
