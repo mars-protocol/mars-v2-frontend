@@ -1,7 +1,7 @@
 import { ChainInfoID, SimpleChainInfoList, useWalletManager } from '@marsprotocol/wallet-connector'
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import useClipboard from 'react-use-clipboard'
 
 import { Button, CircularProgress, FormattedNumber, Text } from 'components'
@@ -31,6 +31,7 @@ export const ConnectedButton = () => {
   // ---------------
   const [isLoading, setIsLoading] = useState(false)
   const [showDetails, setShowDetails] = useState(false)
+  const [walletAmount, setWalletAmount] = useState(0)
   const [isCopied, setCopied] = useClipboard(address || '', {
     successDuration: 1000 * 5,
   })
@@ -52,10 +53,12 @@ export const ConnectedButton = () => {
     setIsLoading(loading)
   }, [address, name, chainInfo])
 
-  const walletAmount = useMemo(() => {
-    return BigNumber(data?.find((balance) => balance.denom === baseAsset.denom)?.amount ?? 0)
-      .div(10 ** baseAsset.decimals)
-      .toNumber()
+  useEffect(() => {
+    setWalletAmount(
+      BigNumber(data?.find((balance) => balance.denom === baseAsset.denom)?.amount ?? 0)
+        .div(10 ** baseAsset.decimals)
+        .toNumber(),
+    )
   }, [data, baseAsset.denom, baseAsset.decimals])
 
   return (
