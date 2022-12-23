@@ -7,7 +7,7 @@ import {
   useRedbankBalances,
   useTokenPrices,
 } from 'hooks/queries'
-import { useAccountDetailsStore } from 'stores'
+import { useAccountDetailsStore, useNetworkConfigStore } from 'stores'
 import { getTokenDecimals } from 'utils/tokens'
 
 const getApproximateHourlyInterest = (amount: string, borrowAPY: string) => {
@@ -18,13 +18,14 @@ const getApproximateHourlyInterest = (amount: string, borrowAPY: string) => {
 
 export const useCalculateMaxWithdrawAmount = (denom: string, borrow: boolean) => {
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
+  const whitelistedAssets = useNetworkConfigStore((s) => s.assets.whitelist)
 
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
   const { data: marketsData } = useMarkets()
   const { data: tokenPrices } = useTokenPrices()
   const { data: redbankBalances } = useRedbankBalances()
 
-  const tokenDecimals = getTokenDecimals(denom)
+  const tokenDecimals = getTokenDecimals(denom, whitelistedAssets)
 
   const getTokenValue = useCallback(
     (amount: string, denom: string) => {
@@ -101,7 +102,10 @@ export const useCalculateMaxWithdrawAmount = (denom: string, borrow: boolean) =>
       maxAmountCapacity = maxAmountCapacity < 0 ? 0 : maxAmountCapacity
     }
 
-    const marketLiquidity = redbankBalances?.[denom] ?? 0
+    const marketLiquidity = BigNumber(
+      redbankBalances?.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())?.amount ||
+        0,
+    )
 
     const maxWithdrawAmount = BigNumber(maxAmountCapacity).gt(marketLiquidity)
       ? marketLiquidity

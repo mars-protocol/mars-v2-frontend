@@ -5,15 +5,17 @@ import { Button, LabelValuePair, PositionsList } from 'components'
 import { AccountManageOverlay, RiskChart } from 'components/Account'
 import { ArrowRightLine, ChevronDown, ChevronLeft } from 'components/Icons'
 import { useAccountStats, useBalances } from 'hooks/data'
-import { useAccountDetailsStore, useSettings } from 'stores'
-import { chain } from 'utils/chains'
+import { useAccountDetailsStore, useNetworkConfigStore, useSettingsStore } from 'stores'
 import { lookup } from 'utils/formatters'
 import { createRiskData } from 'utils/risk'
 
 export const AccountDetails = () => {
-  const enableAnimations = useSettings((s) => s.enableAnimations)
+  const enableAnimations = useSettingsStore((s) => s.enableAnimations)
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
   const isOpen = useAccountDetailsStore((s) => s.isOpen)
+  const whitelistedAssets = useNetworkConfigStore((s) => s.assets.whitelist)
+  const baseAsset = useNetworkConfigStore((s) => s.assets.base)
+
   const balances = useBalances()
   const accountStats = useAccountStats()
 
@@ -27,7 +29,7 @@ export const AccountDetails = () => {
   return (
     <div
       className={classNames(
-        'relative flex w-[400px] basis-[400px] flex-wrap content-start border-white/20 bg-header',
+        'relative flex w-[400px] basis-[400px] flex-wrap content-start border-l border-white/20 bg-header',
         enableAnimations && 'transition-[margin] duration-1000 ease-in-out',
         isOpen ? 'mr-0' : '-mr-[400px]',
       )}
@@ -91,7 +93,7 @@ export const AccountDetails = () => {
           label='Total Position:'
           value={{
             format: 'number',
-            amount: lookup(accountStats?.totalPosition ?? 0, chain.stakeCurrency.coinDenom),
+            amount: lookup(accountStats?.totalPosition ?? 0, baseAsset.denom, whitelistedAssets),
             prefix: '$',
           }}
         />
@@ -99,7 +101,7 @@ export const AccountDetails = () => {
           label='Total Liabilities:'
           value={{
             format: 'number',
-            amount: lookup(accountStats?.totalDebt ?? 0, chain.stakeCurrency.coinDenom),
+            amount: lookup(accountStats?.totalDebt ?? 0, baseAsset.denom, whitelistedAssets),
             prefix: '$',
           }}
         />

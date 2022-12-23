@@ -8,7 +8,7 @@ import { Button, CircularProgress, Modal, Slider, Text } from 'components'
 import { MarsProtocol } from 'components/Icons'
 import { useDepositCreditAccount } from 'hooks/mutations'
 import { useAllBalances, useAllowedCoins } from 'hooks/queries'
-import { useAccountDetailsStore, useModalStore } from 'stores'
+import { useAccountDetailsStore, useModalStore, useNetworkConfigStore } from 'stores'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 export const FundAccountModal = () => {
@@ -18,6 +18,7 @@ export const FundAccountModal = () => {
   const open = useModalStore((s) => s.fundAccountModal)
 
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
+  const whitelistedAssets = useNetworkConfigStore((s) => s.assets.whitelist)
   const [lendAssets, setLendAssets] = useLocalStorageState(`lendAssets_${selectedAccount}`, {
     defaultValue: false,
   })
@@ -37,12 +38,14 @@ export const FundAccountModal = () => {
     selectedAccount || '',
     selectedToken,
     BigNumber(amount)
-      .times(10 ** getTokenDecimals(selectedToken))
+      .times(10 ** getTokenDecimals(selectedToken, whitelistedAssets))
       .toNumber(),
     {
       onSuccess: () => {
         setAmount(0)
-        toast.success(`${amount} ${getTokenSymbol(selectedToken)} successfully Deposited`)
+        toast.success(
+          `${amount} ${getTokenSymbol(selectedToken, whitelistedAssets)} successfully Deposited`,
+        )
         useModalStore.setState({ fundAccountModal: false })
       },
     },
@@ -59,9 +62,9 @@ export const FundAccountModal = () => {
     if (!selectedToken) return 0
 
     return BigNumber(balancesData?.find((balance) => balance.denom === selectedToken)?.amount ?? 0)
-      .div(10 ** getTokenDecimals(selectedToken))
+      .div(10 ** getTokenDecimals(selectedToken, whitelistedAssets))
       .toNumber()
-  }, [balancesData, selectedToken])
+  }, [balancesData, selectedToken, whitelistedAssets])
 
   const handleValueChange = (value: number) => {
     if (value > walletAmount) {
@@ -91,12 +94,10 @@ export const FundAccountModal = () => {
         <div className='flex flex-1 flex-col items-start justify-between bg-fund-modal bg-cover p-6'>
           <div>
             <Text size='2xs' uppercase className='mb-3  text-white'>
-              About
+              Fund
             </Text>
-            <Text size='xl' className='mb-4 text-white'>
-              Bringing the next generation of video creation to the Metaverse.
-              <br />
-              Powered by deep-learning.
+            <Text size='lg' className='mb-4 text-white'>
+              Fund your Account to enable its borrowing and lending capabilities.
             </Text>
           </div>
           <div className='w-[153px] text-white'>
@@ -113,9 +114,9 @@ export const FundAccountModal = () => {
               Fund Account
             </Text>
             <Text size='sm' className='mb-6 text-white/60'>
-              Transfer assets from your injective wallet to your Mars credit account. If you don’t
-              have any assets in your injective wallet use the injective bridge to transfer funds to
-              your injective wallet.
+              Transfer assets from your osmosis wallet to your Mars credit account. If you don’t
+              have any assets in your osmosis wallet use the osmosis bridge to transfer funds to
+              your osmosis wallet.
             </Text>
             {isLoadingAllowedCoins ? (
               <p>Loading...</p>
@@ -137,7 +138,7 @@ export const FundAccountModal = () => {
                     >
                       {allowedCoinsData?.map((entry) => (
                         <option key={entry} value={entry}>
-                          {getTokenSymbol(entry)}
+                          {getTokenSymbol(entry, whitelistedAssets)}
                         </option>
                       ))}
                     </select>
@@ -159,14 +160,17 @@ export const FundAccountModal = () => {
                   </div>
                 </div>
                 <Text size='xs' uppercase className='mb-2 text-white/60'>
-                  {`In wallet: ${walletAmount.toLocaleString()} ${getTokenSymbol(selectedToken)}`}
+                  {`In wallet: ${walletAmount.toLocaleString()} ${getTokenSymbol(
+                    selectedToken,
+                    whitelistedAssets,
+                  )}`}
                 </Text>
                 <Slider
                   className='mb-6'
                   value={percentageValue}
                   onChange={(value) => {
                     const decimal = value[0] / 100
-                    const tokenDecimals = getTokenDecimals(selectedToken)
+                    const tokenDecimals = getTokenDecimals(selectedToken, whitelistedAssets)
                     // limit decimal precision based on token contract decimals
                     const newAmount = Number((decimal * maxValue).toFixed(tokenDecimals))
 

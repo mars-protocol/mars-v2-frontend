@@ -14,7 +14,7 @@ import {
   useMarkets,
   useTokenPrices,
 } from 'hooks/queries'
-import { useAccountDetailsStore } from 'stores'
+import { useAccountDetailsStore, useNetworkConfigStore } from 'stores'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 enum FundingMode {
@@ -23,6 +23,8 @@ enum FundingMode {
 }
 
 export const TradeActionModule = () => {
+  const whitelistedAssets = useNetworkConfigStore((s) => s.assets.whitelist)
+
   const [selectedTokenIn, setSelectedTokenIn] = useState('')
   const [selectedTokenOut, setSelectedTokenOut] = useState('')
   const [amountIn, setAmountIn] = useState(0)
@@ -92,9 +94,10 @@ export const TradeActionModule = () => {
     {
       onSuccess: () => {
         toast.success(
-          `${amountIn} ${getTokenSymbol(selectedTokenIn)} swapped for ${amountOut} ${getTokenSymbol(
-            selectedTokenOut,
-          )}`,
+          `${amountIn} ${getTokenSymbol(
+            selectedTokenIn,
+            whitelistedAssets,
+          )} swapped for ${amountOut} ${getTokenSymbol(selectedTokenOut, whitelistedAssets)}`,
         )
         resetAmounts()
       },
@@ -189,19 +192,20 @@ export const TradeActionModule = () => {
             >
               {allowedCoinsData?.map((entry) => (
                 <option key={entry} value={entry}>
-                  {getTokenSymbol(entry)}
+                  {getTokenSymbol(entry, whitelistedAssets)}
                 </option>
               ))}
             </select>
             <input
               type='number'
               className='h-8 flex-1 px-2 text-black outline-0'
-              value={amountIn / 10 ** getTokenDecimals(selectedTokenIn)}
+              value={amountIn / 10 ** getTokenDecimals(selectedTokenIn, whitelistedAssets)}
               min='0'
               placeholder='0.00'
               onChange={(e) => {
                 const valueAsNumber = e.target.valueAsNumber
-                const valueWithDecimals = valueAsNumber * 10 ** getTokenDecimals(selectedTokenIn)
+                const valueWithDecimals =
+                  valueAsNumber * 10 ** getTokenDecimals(selectedTokenIn, whitelistedAssets)
 
                 handleAmountChange(valueWithDecimals, 'in')
               }}
@@ -228,19 +232,20 @@ export const TradeActionModule = () => {
             >
               {allowedCoinsData?.map((entry) => (
                 <option key={entry} value={entry}>
-                  {getTokenSymbol(entry)}
+                  {getTokenSymbol(entry, whitelistedAssets)}
                 </option>
               ))}
             </select>
             <input
               type='number'
               className='h-8 flex-1 px-2 text-black outline-0'
-              value={amountOut / 10 ** getTokenDecimals(selectedTokenOut)}
+              value={amountOut / 10 ** getTokenDecimals(selectedTokenOut, whitelistedAssets)}
               min='0'
               placeholder='0.00'
               onChange={(e) => {
                 const valueAsNumber = e.target.valueAsNumber
-                const valueWithDecimals = valueAsNumber * 10 ** getTokenDecimals(selectedTokenOut)
+                const valueWithDecimals =
+                  valueAsNumber * 10 ** getTokenDecimals(selectedTokenOut, whitelistedAssets)
 
                 handleAmountChange(valueWithDecimals, 'out')
               }}
@@ -250,29 +255,29 @@ export const TradeActionModule = () => {
         <div className='mb-1'>
           In Wallet:{' '}
           {BigNumber(walletAmount)
-            .dividedBy(10 ** getTokenDecimals(selectedTokenIn))
+            .dividedBy(10 ** getTokenDecimals(selectedTokenIn, whitelistedAssets))
             .toNumber()
             .toLocaleString(undefined, {
-              maximumFractionDigits: getTokenDecimals(selectedTokenIn),
+              maximumFractionDigits: getTokenDecimals(selectedTokenIn, whitelistedAssets),
             })}{' '}
-          <span>{getTokenSymbol(selectedTokenIn)}</span>
+          <span>{getTokenSymbol(selectedTokenIn, whitelistedAssets)}</span>
         </div>
         <div className='mb-4'>
           In Account:{' '}
           {BigNumber(accountAmount)
-            .dividedBy(10 ** getTokenDecimals(selectedTokenIn))
+            .dividedBy(10 ** getTokenDecimals(selectedTokenIn, whitelistedAssets))
             .toNumber()
             .toLocaleString(undefined, {
-              maximumFractionDigits: getTokenDecimals(selectedTokenIn),
+              maximumFractionDigits: getTokenDecimals(selectedTokenIn, whitelistedAssets),
             })}{' '}
-          <span>{getTokenSymbol(selectedTokenIn)}</span>
+          <span>{getTokenSymbol(selectedTokenIn, whitelistedAssets)}</span>
         </div>
         <Slider
           className='mb-6'
           value={percentageValue}
           onChange={(value) => {
             const decimal = value[0] / 100
-            const tokenDecimals = getTokenDecimals(selectedTokenIn)
+            const tokenDecimals = getTokenDecimals(selectedTokenIn, whitelistedAssets)
             // limit decimal precision based on token contract decimals
             const newAmount = Number((decimal * maxAmount).toFixed(0))
 
@@ -308,10 +313,10 @@ export const TradeActionModule = () => {
           <p>
             {isMarginEnabled
               ? BigNumber(borrowAmount)
-                  .dividedBy(10 ** getTokenDecimals(selectedTokenIn))
+                  .dividedBy(10 ** getTokenDecimals(selectedTokenIn, whitelistedAssets))
                   .toNumber()
                   .toLocaleString(undefined, {
-                    maximumFractionDigits: getTokenDecimals(selectedTokenIn),
+                    maximumFractionDigits: getTokenDecimals(selectedTokenIn, whitelistedAssets),
                   })
               : '-'}
           </p>

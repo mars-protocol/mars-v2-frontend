@@ -5,7 +5,7 @@ import {
 } from '@marsprotocol/wallet-connector'
 import create from 'zustand'
 
-import { contractAddresses } from 'config/contracts'
+import { networkConfig } from 'config/osmo-test-4'
 import { MarsAccountNftClient } from 'types/generated/mars-account-nft/MarsAccountNft.client'
 import { MarsCreditManagerClient } from 'types/generated/mars-credit-manager/MarsCreditManager.client'
 import { MarsSwapperBaseClient } from 'types/generated/mars-swapper-base/MarsSwapperBase.client'
@@ -40,22 +40,23 @@ export const useWalletStore = create<WalletStore>()((set, get) => ({
   status: WalletConnectionStatus.ReadyForConnection,
   clients: {},
   actions: {
+    // TODO: work with slices in one global store instead
     initClients: (address, signingClient) => {
       if (!signingClient) return
       const accountNft = new MarsAccountNftClient(
         signingClient,
         address,
-        contractAddresses.accountNft,
+        networkConfig.contracts.accountNft,
       )
       const creditManager = new MarsCreditManagerClient(
         signingClient,
         address,
-        contractAddresses.creditManager,
+        networkConfig.contracts.creditManager,
       )
       const swapperBase = new MarsSwapperBaseClient(
         signingClient,
         address,
-        contractAddresses.swapper,
+        networkConfig.contracts.swapper,
       )
 
       set(() => ({

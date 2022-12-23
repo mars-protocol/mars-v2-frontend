@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { ReactNode } from 'react'
 
 import { Questionmark } from 'components/Icons'
-import { useSettings } from 'stores'
+import { useSettingsStore } from 'stores'
 
 interface Props {
   children?: ReactNode | string
@@ -22,7 +22,7 @@ export const Tooltip = ({
   inderactive = false,
   underline = false,
 }: Props) => {
-  const enableAnimations = useSettings((s) => s.enableAnimations)
+  const enableAnimations = useSettingsStore((s) => s.enableAnimations)
 
   return (
     <Tippy

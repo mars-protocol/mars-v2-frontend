@@ -5,6 +5,5 @@ export { useCreditAccountPositions } from './useCreditAccountPositions'
 export { useCreditAccounts } from './useCreditAccounts'
 export { useMarkets } from './useMarkets'
 export { useRedbankBalances } from './useRedbankBalances'
-export { useTokenBalance } from './useTokenBalance'
 export { useTokenPrices } from './useTokenPrices'
 // @endindex
