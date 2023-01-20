@@ -11,7 +11,7 @@ export const createRiskData = (risk: number) => {
       .format('YYYY-MM-DD')
     data.push({
       date: date,
-      risk: risk === 0 ? 0 : i === days ? risk * 100 : Math.floor(Math.random() * 100),
+      risk: i === days ? risk * 100 : Math.floor(Math.random() * 100),
     })
   }
 

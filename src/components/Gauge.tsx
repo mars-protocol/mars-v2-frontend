@@ -24,7 +24,7 @@ export const Gauge = ({
 
   const percentage = value * 100
   const percentageValue = percentage > 100 ? 100 : percentage < 0 ? 0 : percentage
-  const semiCirclePercentage = Math.abs(percentageValue / 2 - 50)
+  const semiCirclePercentage = percentageValue == -50 ? 0 : Math.abs(percentageValue / 2 - 50)
 
   return (
     <Tooltip content={tooltip}>

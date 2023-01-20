@@ -7,6 +7,8 @@ import { DesktopNavigation } from 'components/Navigation'
 import { useCreditAccounts } from 'hooks/queries'
 import { useSettingsStore, useWalletStore } from 'stores'
 
+import { CookieConsent } from './CookieConsent'
+
 const filter = {
   day: 'brightness-100 hue-rotate-0',
   night: '-hue-rotate-82 brightness-30',
@@ -41,6 +43,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         <div className='flex flex-grow flex-wrap p-6'>{children}</div>
         {hasCreditAccounts && <AccountDetails />}
       </main>
+      <CookieConsent />
     </div>
   )
 }
