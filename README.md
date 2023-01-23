@@ -18,6 +18,35 @@ You can start editing the page by modifying `pages/index.tsx`. The page auto-upd
 
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
+## Hive endpoint
+
+Much of the requests the app sends are served via a graphql server known as '[Hive](https://github.com/terra-money/hive-graph)'. While this is built for Terra, it should operate fine ontop of any Cosmos chain. If you require a local or testnet deployment of hive, you need to do the following:
+
+Clone the [repo](https://github.com/terra-money/hive-graph)
+
+Install all the dependencies:
+
+```
+npm ci
+```
+
+Copy the `.env.sample` file to `.env`
+
+```
+cp .env.sample .env
+```
+
+Update `LCD_URL` and `CHAIN_ID` to the endpoints of the chain you want to be querying.
+
+In the project directory, you can run:
+
+`npm run start:dev`
+
+Runs the NodeJs services in the development mode.\
+Open [localhost:8085/graphql](http://localhost:8085/graphql) to view it in the browser or Postman.
+
+The service will reload if you make edits.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
