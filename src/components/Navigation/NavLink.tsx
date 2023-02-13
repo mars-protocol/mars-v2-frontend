@@ -13,15 +13,14 @@ export const NavLink = ({ href, children }: Props) => {
   const isActive = router.pathname === href
 
   return (
-    <Link href={href} passHref>
-      <a
-        className={classNames(
-          'text-lg-caps hover:text-white active:text-white',
-          isActive ? 'pointer-events-none text-white' : 'text-white/60',
-        )}
-      >
-        {children}
-      </a>
+    <Link
+      href={href}
+      className={classNames(
+        'text-lg-caps hover:text-white active:text-white',
+        isActive ? 'pointer-events-none text-white' : 'text-white/60',
+      )}
+    >
+      {children}
     </Link>
   )
 }
