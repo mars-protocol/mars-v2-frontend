@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 import { ReactNode } from 'react'
 
-import { Card } from 'components'
 import { Close } from 'components/Icons'
+import { Card } from './Card'
 
 interface Props {
   children?: ReactNode | string

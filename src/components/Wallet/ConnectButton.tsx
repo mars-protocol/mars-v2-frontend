@@ -1,8 +1,8 @@
 import { useWalletManager, WalletConnectionStatus } from '@marsprotocol/wallet-connector'
 import { ReactNode } from 'react'
 
-import { CircularProgress } from 'components'
 import { Wallet } from 'components/Icons'
+import { CircularProgress } from 'components/CircularProgress'
 
 interface Props {
   textOverride?: string | ReactNode

@@ -2,17 +2,20 @@ const { withSentryConfig } = require('@sentry/nextjs')
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
+  experimental: {
+    appDir: true
+  },
   reactStrictMode: true,
   sentry: {
     hideSourceMaps: true,
   },
   async redirects() {
     return [
-      {
-        source: '/',
-        destination: '/trade',
-        permanent: true,
-      },
+      // {
+      //   source: '/',
+      //   destination: '/trade',
+      //   permanent: true,
+      // },
     ]
   },
   webpack(config) {

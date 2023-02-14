@@ -1,11 +1,13 @@
+'use client'
+
 import classNames from 'classnames'
 import { useMemo, useState } from 'react'
 
-import { Button } from 'components'
 import { ChevronDown } from 'components/Icons'
-import { Overlay } from 'components/Overlay'
-import { useAccountDetailsStore } from 'stores'
-import { AccountManageOverlay } from 'components/Account'
+import { Button } from 'components/Button'
+import { Overlay } from 'components/Overlay/Overlay'
+import { AccountManageOverlay } from './AccountManageOverlay'
+import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
 
 interface Props {
   creditAccountsList: string[]

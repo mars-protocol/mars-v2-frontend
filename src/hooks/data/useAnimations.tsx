@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
-
-import { useSettingsStore } from 'stores'
+import { useSettingsStore } from 'stores/useSettingsStore'
 
 export const useAnimations = () => {
   const enableAnimations = useSettingsStore((s) => s.enableAnimations)

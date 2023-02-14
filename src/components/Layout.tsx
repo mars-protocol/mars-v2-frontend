@@ -2,12 +2,12 @@ import { useWallet, WalletConnectionStatus } from '@marsprotocol/wallet-connecto
 import classNames from 'classnames'
 import React, { useEffect } from 'react'
 
-import { AccountDetails } from 'components/Account'
-import { DesktopNavigation } from 'components/Navigation'
-import { useCreditAccounts } from 'hooks/queries'
-import { useSettingsStore, useWalletStore } from 'stores'
-
 import { CookieConsent } from './CookieConsent'
+import { DesktopNavigation } from './Navigation/DesktopNavigation'
+import { AccountDetails } from './Account/AccountDetails'
+import { useCreditAccounts } from 'hooks/queries/useCreditAccounts'
+import { useSettingsStore } from 'stores/useSettingsStore'
+import { useWalletStore } from 'stores/useWalletStore'
 
 const filter = {
   day: 'brightness-100 hue-rotate-0',

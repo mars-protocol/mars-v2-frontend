@@ -1,4 +1,6 @@
-import { Card, FormattedNumber, Text } from 'components'
+import getCreditAccounts from 'libs/getCreditAccounts'
+import { Card } from '../../components/Card'
+import { Text } from '../../components/Text'
 
 const mockedAccounts = [
   {
@@ -43,12 +45,19 @@ const mockedAccounts = [
   },
 ]
 
-const Portfolio = () => {
+export default async function page() {
+  const creditAccounts = await getCreditAccounts()
+
+  console.log('received todos')
+
   return (
     <div className='flex w-full items-start gap-4'>
       <Card className='flex-1'>
         <Text size='lg' uppercase>
           Portfolio Module
+          {creditAccounts.map((creditAccount: string) => (
+            <div key={creditAccount}>Credit account: {creditAccount}</div>
+          ))}
         </Text>
       </Card>
       <div className='grid grid-cols-2 gap-4'>
@@ -57,7 +66,8 @@ const Portfolio = () => {
             <Text size='lg' uppercase className='mb-4 text-center'>
               {account.label}
             </Text>
-            <div className='grid grid-cols-3 gap-4'>
+
+            {/* <div className='grid grid-cols-3 gap-4'>
               <div>
                 <Text>
                   <FormattedNumber amount={account.networth} animate prefix='$' />
@@ -110,12 +120,10 @@ const Portfolio = () => {
                   Max Leverage
                 </Text>
               </div>
-            </div>
+            </div> */}
           </Card>
         ))}
       </div>
     </div>
   )
 }
-
-export default Portfolio

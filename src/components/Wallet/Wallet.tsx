@@ -1,7 +1,9 @@
+'use client'
+
 import { useWallet, WalletConnectionStatus } from '@marsprotocol/wallet-connector'
 import { useEffect, useState } from 'react'
-
-import { ConnectButton, ConnectedButton } from 'components/Wallet'
+import { ConnectButton } from './ConnectButton'
+import { ConnectedButton } from './ConnectedButton'
 
 export const Wallet = () => {
   const { status } = useWallet()

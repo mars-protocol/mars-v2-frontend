@@ -1,6 +1,7 @@
-import { Card, Text } from 'components'
+import { Card } from 'components/Card'
+import { Text } from 'components/Text'
 
-const Earn = () => {
+export default function page() {
   return (
     <div className='flex w-full gap-4'>
       <Card>
@@ -18,5 +19,3 @@ const Earn = () => {
     </div>
   )
 }
-
-export default Earn

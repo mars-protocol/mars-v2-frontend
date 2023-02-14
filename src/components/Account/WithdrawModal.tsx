@@ -4,29 +4,29 @@ import classNames from 'classnames'
 import React, { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 
-import {
-  Button,
-  CircularProgress,
-  FormattedNumber,
-  Gauge,
-  LabelValuePair,
-  Modal,
-  PositionsList,
-  Slider,
-  Text,
-} from 'components'
 import { BorrowCapacity } from 'components/BorrowCapacity'
-import { useAccountStats, useBalances, useCalculateMaxWithdrawAmount } from 'hooks/data'
-import { useWithdrawFunds } from 'hooks/mutations'
-import { useCreditAccountPositions, useTokenPrices } from 'hooks/queries'
-import {
-  useAccountDetailsStore,
-  useModalStore,
-  useNetworkConfigStore,
-  useWalletStore,
-} from 'stores'
+
 import { formatValue, lookup } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
+import { CircularProgress } from 'components/CircularProgress'
+import { Button } from 'components/Button'
+import { Text } from 'components/Text'
+import { Slider } from 'components/Slider'
+import { FormattedNumber } from 'components/FormattedNumber'
+import { Gauge } from 'components/Gauge'
+import { LabelValuePair } from 'components/LabelValuePair'
+import { Modal } from 'components/Modal'
+import { PositionsList } from 'components/PositionsList'
+import { useAccountStats } from 'hooks/data/useAccountStats'
+import { useBalances } from 'hooks/data/useBalances'
+import { useCalculateMaxWithdrawAmount } from 'hooks/data/useCalculateMaxWithdrawAmount'
+import { useWithdrawFunds } from 'hooks/mutations/useWithdrawFunds'
+import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositions'
+import { useTokenPrices } from 'hooks/queries/useTokenPrices'
+import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
+import { useModalStore } from 'stores/useModalStore'
+import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
+import { useWalletStore } from 'stores/useWalletStore'
 
 export const WithdrawModal = () => {
   // ---------------

@@ -1,9 +1,9 @@
 import Image from 'next/image'
 import React, { useState } from 'react'
 
-import { Button } from 'components'
 import { ChevronDown, ChevronUp } from 'components/Icons'
 import { formatCurrency } from 'utils/formatters'
+import { Button } from 'components/Button'
 
 type AssetRowProps = {
   data: {

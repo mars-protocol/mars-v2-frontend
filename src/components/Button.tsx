@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 import React, { LegacyRef, ReactNode } from 'react'
+import { useSettingsStore } from 'stores/useSettingsStore'
 
-import { CircularProgress } from 'components'
-import { useSettingsStore } from 'stores'
+import { CircularProgress } from './CircularProgress'
 
 interface Props {
   children?: string | ReactNode

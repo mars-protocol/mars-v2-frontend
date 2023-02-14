@@ -1,13 +1,12 @@
 import BigNumber from 'bignumber.js'
+import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositions'
+import { useMarkets } from 'hooks/queries/useMarkets'
+import { useRedbankBalances } from 'hooks/queries/useRedbankBalances'
+import { useTokenPrices } from 'hooks/queries/useTokenPrices'
 import { useCallback, useMemo } from 'react'
+import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
+import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
 
-import {
-  useCreditAccountPositions,
-  useMarkets,
-  useRedbankBalances,
-  useTokenPrices,
-} from 'hooks/queries'
-import { useAccountDetailsStore, useNetworkConfigStore } from 'stores'
 import { getTokenDecimals } from 'utils/tokens'
 
 const getApproximateHourlyInterest = (amount: string, borrowAPY: string) => {

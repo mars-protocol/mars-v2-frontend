@@ -1,10 +1,15 @@
+'use client'
+
 import { useEffect } from 'react'
 
-import { Button, Text } from 'components'
 import { Add, ArrowDown, ArrowsLeftRight, ArrowUp, Rubbish } from 'components/Icons'
-import { Overlay, OverlayAction } from 'components/Overlay'
-import { useCreateCreditAccount, useDeleteCreditAccount } from 'hooks/mutations'
-import { useAccountDetailsStore, useModalStore } from 'stores'
+import { Button } from 'components/Button'
+import { Text } from 'components/Text'
+import { Overlay } from 'components/Overlay/Overlay'
+import { OverlayAction } from 'components/Overlay/OverlayAction'
+import { useCreateCreditAccount } from 'hooks/mutations/useCreateCreditAccount'
+import { useDeleteCreditAccount } from 'hooks/mutations/useDeleteCreditAccount'
+import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
 
 interface Props {
   className?: string

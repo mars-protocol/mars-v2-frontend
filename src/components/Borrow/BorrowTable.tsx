@@ -9,9 +9,9 @@ import {
 import Image from 'next/image'
 import React from 'react'
 
-import { AssetRow } from 'components/Borrow'
 import { ChevronDown, ChevronUp } from 'components/Icons'
 import { formatCurrency } from 'utils/formatters'
+import { AssetRow } from './AssetRow'
 
 interface Market {
   denom: string

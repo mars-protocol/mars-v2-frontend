@@ -7,9 +7,10 @@ import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { ToastContainer, Zoom } from 'react-toastify'
 
-import { Layout, Modals } from 'components'
-import { WalletConnectProvider } from 'components/Wallet'
-import { useAnimations } from 'hooks/data'
+import { WalletConnectProvider } from 'components/Wallet/WalletConnectProvider'
+import { Layout } from 'components/Layout'
+import { Modals } from 'components/Modals'
+import { useAnimations } from 'hooks/data/useAnimations'
 
 const queryClient = new QueryClient()
 

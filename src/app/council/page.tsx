@@ -1,6 +1,7 @@
-import { Card, Text } from 'components'
+import { Card } from 'components/Card'
+import { Text } from 'components/Text'
 
-const Council = () => {
+export default function page() {
   return (
     <div className='flex w-full'>
       <Card>
@@ -11,5 +12,3 @@ const Council = () => {
     </div>
   )
 }
-
-export default Council

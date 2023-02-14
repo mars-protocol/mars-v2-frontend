@@ -1,21 +1,25 @@
+'use client'
+
 import { Switch } from '@headlessui/react'
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 
-import { Button, CircularProgress, Slider } from 'components'
 import { ArrowsUpDown } from 'components/Icons'
-import { useCalculateMaxTradeAmount } from 'hooks/data'
-import { useTradeAsset } from 'hooks/mutations'
-import {
-  useAllBalances,
-  useAllowedCoins,
-  useCreditAccountPositions,
-  useMarkets,
-  useTokenPrices,
-} from 'hooks/queries'
-import { useAccountDetailsStore, useNetworkConfigStore } from 'stores'
+
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
+import { Slider } from 'components/Slider'
+import { Button } from 'components/Button'
+import { CircularProgress } from 'components/CircularProgress'
+import { useCalculateMaxTradeAmount } from 'hooks/data/useCalculateMaxTradeAmount'
+import { useTradeAsset } from 'hooks/mutations/useTradeAsset'
+import { useAllBalances } from 'hooks/queries/useAllBalances'
+import { useAllowedCoins } from 'hooks/queries/useAllowedCoins'
+import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositions'
+import { useMarkets } from 'hooks/queries/useMarkets'
+import { useTokenPrices } from 'hooks/queries/useTokenPrices'
+import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
+import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
 
 enum FundingMode {
   Account = 'Account',

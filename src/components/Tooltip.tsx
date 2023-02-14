@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { ReactNode } from 'react'
 
 import { Questionmark } from 'components/Icons'
-import { useSettingsStore } from 'stores'
+import { useSettingsStore } from 'stores/useSettingsStore'
 
 interface Props {
   children?: ReactNode | string

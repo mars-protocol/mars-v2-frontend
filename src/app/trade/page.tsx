@@ -1,7 +1,7 @@
-import { Card, Text } from 'components'
-import { TradeActionModule } from 'components/Trade'
+import { Card } from 'components/Card'
+import { Text } from 'components/Text'
 
-const Trade = () => {
+export default function page() {
   return (
     <div className='flex w-full flex-wrap'>
       <div className='mb-4 flex flex-grow gap-4'>
@@ -11,9 +11,7 @@ const Trade = () => {
           </Text>
         </Card>
         <div className='flex flex-col gap-4'>
-          <Card>
-            <TradeActionModule />
-          </Card>
+          <Card>{/* <TradeActionModule /> */}</Card>
           <Card>
             <Text size='lg' uppercase>
               Orderbook module (optional)
@@ -29,5 +27,3 @@ const Trade = () => {
     </div>
   )
 }
-
-export default Trade

@@ -1,7 +1,11 @@
+'use client'
+
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
+import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
+import { useWalletStore } from 'stores/useWalletStore'
 
-import { useAccountDetailsStore, useNetworkConfigStore, useWalletStore } from 'stores'
 import { queryKeys } from 'types/query-keys-factory'
 
 type Result = {

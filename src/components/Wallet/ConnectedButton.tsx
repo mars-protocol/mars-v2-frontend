@@ -4,12 +4,16 @@ import classNames from 'classnames'
 import { useCallback, useEffect, useState } from 'react'
 import useClipboard from 'react-use-clipboard'
 
-import { Button, CircularProgress, FormattedNumber, Text } from 'components'
 import { Check, Copy, ExternalLink, Osmo, Wallet } from 'components/Icons'
-import { Overlay } from 'components/Overlay'
-import { useAllBalances } from 'hooks/queries'
-import { useNetworkConfigStore, useWalletStore } from 'stores'
 import { formatValue, truncate } from 'utils/formatters'
+import { Text } from 'components/Text'
+import { Button } from 'components/Button'
+import { CircularProgress } from 'components/CircularProgress'
+import { FormattedNumber } from 'components/FormattedNumber'
+import { Overlay } from 'components/Overlay/Overlay'
+import { useAllBalances } from 'hooks/queries/useAllBalances'
+import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
+import { useWalletStore } from 'stores/useWalletStore'
 
 export const ConnectedButton = () => {
   // ---------------

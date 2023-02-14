@@ -1,8 +1,10 @@
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 
-import { FormattedNumber, Text, Tooltip } from 'components'
-import { useSettingsStore } from 'stores'
+import { FormattedNumber } from './FormattedNumber'
+import { Text } from 'components/Text'
+import { Tooltip } from 'components/Tooltip'
+import { useSettingsStore } from 'stores/useSettingsStore'
 
 interface Props {
   balance: number

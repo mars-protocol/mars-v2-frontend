@@ -4,12 +4,19 @@ import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 import useLocalStorageState from 'use-local-storage-state'
 
-import { Button, CircularProgress, Modal, Slider, Text } from 'components'
 import { MarsProtocol } from 'components/Icons'
-import { useDepositCreditAccount } from 'hooks/mutations'
-import { useAllBalances, useAllowedCoins } from 'hooks/queries'
-import { useAccountDetailsStore, useModalStore, useNetworkConfigStore } from 'stores'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
+import { Button } from 'components/Button'
+import { CircularProgress } from 'components/CircularProgress'
+import { Modal } from 'components/Modal'
+import { Text } from 'components/Text'
+import { Slider } from 'components/Slider'
+import { useDepositCreditAccount } from 'hooks/mutations/useDepositCreditAccount'
+import { useAllBalances } from 'hooks/queries/useAllBalances'
+import { useAllowedCoins } from 'hooks/queries/useAllowedCoins'
+import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
+import { useModalStore } from 'stores/useModalStore'
+import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
 
 export const FundAccountModal = () => {
   // ---------------

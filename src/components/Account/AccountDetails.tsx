@@ -1,13 +1,21 @@
+'use client'
+
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 
-import { Button, LabelValuePair, PositionsList } from 'components'
-import { AccountManageOverlay, RiskChart } from 'components/Account'
 import { ArrowRightLine, ChevronDown, ChevronLeft } from 'components/Icons'
-import { useAccountStats, useBalances } from 'hooks/data'
-import { useAccountDetailsStore, useNetworkConfigStore, useSettingsStore } from 'stores'
 import { lookup } from 'utils/formatters'
 import { createRiskData } from 'utils/risk'
+import { Button } from 'components/Button'
+import { LabelValuePair } from 'components/LabelValuePair'
+import { PositionsList } from 'components/PositionsList'
+import { AccountManageOverlay } from './AccountManageOverlay'
+import { RiskChart } from './RiskChart'
+import { useAccountStats } from 'hooks/data/useAccountStats'
+import { useBalances } from 'hooks/data/useBalances'
+import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
+import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
+import { useSettingsStore } from 'stores/useSettingsStore'
 
 export const AccountDetails = () => {
   const enableAnimations = useSettingsStore((s) => s.enableAnimations)

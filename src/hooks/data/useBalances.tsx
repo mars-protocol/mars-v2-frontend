@@ -1,7 +1,10 @@
+import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositions'
+import { useMarkets } from 'hooks/queries/useMarkets'
+import { useTokenPrices } from 'hooks/queries/useTokenPrices'
 import { useEffect, useState } from 'react'
+import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
+import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
 
-import { useCreditAccountPositions, useMarkets, useTokenPrices } from 'hooks/queries'
-import { useAccountDetailsStore, useNetworkConfigStore } from 'stores'
 import { formatBalances } from 'utils/balances'
 
 export const useBalances = () => {

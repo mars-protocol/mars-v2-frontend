@@ -1,13 +1,19 @@
+'use client'
+
 import BigNumber from 'bignumber.js'
 import { useEffect } from 'react'
 
-import { Button, FormattedNumber, Gauge, Text } from 'components'
 import { BorrowCapacity } from 'components/BorrowCapacity'
-import { useAccountStats } from 'hooks/data'
-import { useCreateCreditAccount } from 'hooks/mutations'
-import { useCreditAccounts } from 'hooks/queries'
-import { useModalStore, useNetworkConfigStore } from 'stores'
 import { formatValue } from 'utils/formatters'
+import { Button } from 'components/Button'
+import { FormattedNumber } from 'components/FormattedNumber'
+import { Gauge } from 'components/Gauge'
+import { Text } from 'components/Text'
+import { useAccountStats } from 'hooks/data/useAccountStats'
+import { useCreateCreditAccount } from 'hooks/mutations/useCreateCreditAccount'
+import { useCreditAccounts } from 'hooks/queries/useCreditAccounts'
+import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
+import { useModalStore } from 'stores/useModalStore'
 
 export const AccountStatus = () => {
   const baseAsset = useNetworkConfigStore((s) => s.assets.base)

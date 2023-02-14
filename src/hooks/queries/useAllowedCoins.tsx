@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
+import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
+import { useWalletStore } from 'stores/useWalletStore'
 
-import { useNetworkConfigStore, useWalletStore } from 'stores'
 import { queryKeys } from 'types/query-keys-factory'
 
 type Result = string[]

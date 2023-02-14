@@ -1,8 +1,10 @@
 import classNames from 'classnames'
+import { CircularProgress } from 'components/CircularProgress'
 
-import { CircularProgress, Modal, Text } from 'components'
 import { MarsProtocol } from 'components/Icons'
-import { useModalStore } from 'stores'
+import { Modal } from 'components/Modal'
+import { Text } from 'components/Text'
+import { useModalStore } from 'stores/useModalStore'
 
 export const ConfirmModal = () => {
   const createOpen = useModalStore((s) => s.createAccountModal)

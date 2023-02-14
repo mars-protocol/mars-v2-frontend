@@ -1,16 +1,18 @@
 import BigNumber from 'bignumber.js'
+import { BorrowTable } from 'components/Borrow/BorrowTable'
+import { BorrowModal } from 'components/BorrowModal'
+import { Card } from 'components/Card'
+import { RepayModal } from 'components/RepayModal'
+import { useAllowedCoins } from 'hooks/queries/useAllowedCoins'
+import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositions'
+import { useMarkets } from 'hooks/queries/useMarkets'
+import { useRedbankBalances } from 'hooks/queries/useRedbankBalances'
+import { useTokenPrices } from 'hooks/queries/useTokenPrices'
 import { useMemo, useRef, useState } from 'react'
+import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
+import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
+import { Text } from 'components/Text'
 
-import { BorrowModal, Card, RepayModal, Text } from 'components'
-import { BorrowTable } from 'components/Borrow'
-import {
-  useAllowedCoins,
-  useCreditAccountPositions,
-  useMarkets,
-  useRedbankBalances,
-  useTokenPrices,
-} from 'hooks/queries'
-import { useAccountDetailsStore, useNetworkConfigStore } from 'stores'
 import { getTokenDecimals, getTokenInfo } from 'utils/tokens'
 
 type ModalState = {

@@ -4,23 +4,26 @@ import React, { useMemo, useState } from 'react'
 import { NumericFormat } from 'react-number-format'
 import { toast } from 'react-toastify'
 
-import {
-  Button,
-  CircularProgress,
-  ContainerSecondary,
-  Gauge,
-  PositionsList,
-  ProgressBar,
-  Slider,
-  Text,
-  Tooltip,
-} from 'components'
-import { useAccountStats, useBalances, useCalculateMaxBorrowAmount } from 'hooks/data'
-import { useBorrowFunds } from 'hooks/mutations'
-import { useAllBalances, useMarkets, useTokenPrices } from 'hooks/queries'
-import { useAccountDetailsStore, useNetworkConfigStore } from 'stores'
 import { formatCurrency, formatValue } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
+import { Button } from './Button'
+import { CircularProgress } from './CircularProgress'
+import { ContainerSecondary } from './ContainerSecondary'
+import { Gauge } from './Gauge'
+import { PositionsList } from './PositionsList'
+import { ProgressBar } from './ProgressBar'
+import { Text } from 'components/Text'
+import { Tooltip } from './Tooltip'
+import { Slider } from './Slider'
+import { useAccountStats } from 'hooks/data/useAccountStats'
+import { useBalances } from 'hooks/data/useBalances'
+import { useCalculateMaxBorrowAmount } from 'hooks/data/useCalculateMaxBorrowAmount'
+import { useBorrowFunds } from 'hooks/mutations/useBorrowFunds'
+import { useAllBalances } from 'hooks/queries/useAllBalances'
+import { useMarkets } from 'hooks/queries/useMarkets'
+import { useTokenPrices } from 'hooks/queries/useTokenPrices'
+import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
+import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
 
 type Props = {
   show: boolean
