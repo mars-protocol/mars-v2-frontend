@@ -1,8 +1,14 @@
-import { ChainInfoID, SimpleChainInfoList, useWalletManager } from '@marsprotocol/wallet-connector'
+import {
+  ChainInfoID,
+  SimpleChainInfoList,
+  useWallet,
+  useWalletManager,
+} from '@marsprotocol/wallet-connector'
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
-import { useCallback, useEffect, useState } from 'react'
+import { use, useCallback, useEffect, useState } from 'react'
 import useClipboard from 'react-use-clipboard'
+import { Coin } from '@cosmjs/stargate'
 
 import { Check, Copy, ExternalLink, Osmo, Wallet } from 'components/Icons'
 import { formatValue, truncate } from 'utils/formatters'
@@ -11,69 +17,66 @@ import { Button } from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { Overlay } from 'components/Overlay/Overlay'
-import { useAllBalances } from 'hooks/queries/useAllBalances'
 import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
 import { useWalletStore } from 'stores/useWalletStore'
+import getUserBalances from 'libs/getUserBalances'
 
 export const ConnectedButton = () => {
-  // ---------------
+  // ---------------b
   // EXTERNAL HOOKS
   // ---------------
-  const { disconnect } = useWalletManager()
-  const address = useWalletStore((s) => s.address)
-  const chainInfo = useWalletStore((s) => s.chainInfo)
+  const { disconnect } = useWallet()
+  const { disconnect: terminate } = useWalletManager()
+  const address = useWalletStore((s) => s.client?.recentWallet.account?.address)
+  const network = useWalletStore((s) => s.client?.recentWallet.network)
   const name = useWalletStore((s) => s.name)
   const baseAsset = useNetworkConfigStore((s) => s.assets.base)
 
   // ---------------
   // LOCAL HOOKS
   // ---------------
-  const { data } = useAllBalances()
+  const coins: Coin[] = [{ denom: 'uosmo', amount: '198326487932' }]
 
   // ---------------
   // LOCAL STATE
   // ---------------
-  const [isLoading, setIsLoading] = useState(false)
   const [showDetails, setShowDetails] = useState(false)
   const [walletAmount, setWalletAmount] = useState(0)
   const [isCopied, setCopied] = useClipboard(address || '', {
     successDuration: 1000 * 5,
   })
 
+  const userBalances = use(getUserBalances(address || ''))
+
+  console.log(walletAmount, userBalances)
   // ---------------
   // VARIABLES
   // ---------------
-  const explorerName =
-    chainInfo && SimpleChainInfoList[chainInfo.chainId as ChainInfoID].explorerName
+  const explorerName = network && SimpleChainInfoList[network.chainId as ChainInfoID].explorerName
 
   const viewOnFinder = useCallback(() => {
-    const explorerUrl = chainInfo && SimpleChainInfoList[chainInfo.chainId as ChainInfoID].explorer
+    const explorerUrl = network && SimpleChainInfoList[network.chainId as ChainInfoID].explorer
 
     window.open(`${explorerUrl}account/${address}`, '_blank')
-  }, [chainInfo, address])
-
-  useEffect(() => {
-    const loading = !(address && name && chainInfo)
-    setIsLoading(loading)
-  }, [address, name, chainInfo])
+  }, [network, address])
 
   useEffect(() => {
     setWalletAmount(
-      BigNumber(data?.find((balance) => balance.denom === baseAsset.denom)?.amount ?? 0)
+      BigNumber(coins?.find((coin) => coin.denom === baseAsset.denom)?.amount ?? 0)
         .div(10 ** baseAsset.decimals)
         .toNumber(),
     )
-  }, [data, baseAsset.denom, baseAsset.decimals])
+  }, [coins, baseAsset.denom, baseAsset.decimals])
 
   return (
     <div className={'relative'}>
-      {chainInfo?.chainId !== ChainInfoID.Osmosis1 && (
+      {network?.chainId !== ChainInfoID.Osmosis1 && (
         <Text
           className='absolute -right-2 -top-2.5 rounded-lg bg-secondary-highlight p-0.5 px-2'
           size='3xs'
           uppercase
         >
-          {chainInfo?.chainId}
+          {network?.chainId}
         </Text>
       )}
 
@@ -88,8 +91,8 @@ export const ConnectedButton = () => {
         }}
       >
         <span className='flex h-4 w-4 items-center justify-center'>
-          {chainInfo?.chainId === ChainInfoID.Osmosis1 ||
-          chainInfo?.chainId === ChainInfoID.OsmosisTestnet ? (
+          {network?.chainId === ChainInfoID.Osmosis1 ||
+          network?.chainId === ChainInfoID.OsmosisTestnet ? (
             <Osmo />
           ) : (
             <Wallet />
@@ -102,7 +105,7 @@ export const ConnectedButton = () => {
             'before:content-[" "] before:absolute before:top-1.5 before:bottom-1.5 before:left-0 before:h-[calc(100%-12px)] before:border-l before:border-white',
           )}
         >
-          {!isLoading ? (
+          {true ? (
             `${formatValue(walletAmount, 2, 2, true, false, ` ${baseAsset.symbol}`)}`
           ) : (
             <CircularProgress size={12} />
@@ -125,7 +128,14 @@ export const ConnectedButton = () => {
               </div>
             </div>
             <div className='flex h-[31px] w-[116px] justify-end'>
-              <Button color='secondary' onClick={disconnect} text='Disconnect' />
+              <Button
+                color='secondary'
+                onClick={() => {
+                  disconnect()
+                  terminate()
+                }}
+                text='Disconnect'
+              />
             </div>
           </div>
           <div className='flex w-full flex-wrap'>

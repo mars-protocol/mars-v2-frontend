@@ -2,7 +2,6 @@ import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  console.log('fetching all credti accounts')
   const wallet = req.query.wallet
 
   const client = await CosmWasmClient.connect(
@@ -19,10 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   )
 
   if (data.tokens) {
-    return res
-      .status(200)
-      .setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
-      .json(data.tokens)
+    return res.status(200).json(data.tokens)
   }
 
   return res.status(404)

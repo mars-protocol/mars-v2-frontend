@@ -6,7 +6,6 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import { ArrowsUpDown } from 'components/Icons'
-
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 import { Slider } from 'components/Slider'
 import { Button } from 'components/Button'

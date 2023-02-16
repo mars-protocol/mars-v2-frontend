@@ -1,9 +1,9 @@
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { toast } from 'react-toastify'
+
 import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
 import { useWalletStore } from 'stores/useWalletStore'
-
 import { queryKeys } from 'types/query-keys-factory'
 import { hardcodedFee } from 'utils/contants'
 
@@ -16,9 +16,7 @@ export const useBorrowFunds = (
   const creditManagerClient = useWalletStore((s) => s.clients.creditManager)
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount ?? '')
   const address = useWalletStore((s) => s.address)
-
   const queryClient = useQueryClient()
-
   const actions = useMemo(() => {
     if (!withdraw) {
       return [
@@ -30,7 +28,6 @@ export const useBorrowFunds = (
         },
       ]
     }
-
     return [
       {
         borrow: {
@@ -46,7 +43,6 @@ export const useBorrowFunds = (
       },
     ]
   }, [withdraw, denom, amount])
-
   return useMutation(
     async () =>
       await creditManagerClient?.updateCreditAccount(
@@ -57,7 +53,6 @@ export const useBorrowFunds = (
       onSettled: () => {
         queryClient.invalidateQueries(queryKeys.creditAccountsPositions(selectedAccount))
         queryClient.invalidateQueries(queryKeys.redbankBalances())
-
         // if withdrawing to wallet, need to explicility invalidate balances queries
         if (withdraw) {
           queryClient.invalidateQueries(queryKeys.tokenBalance(address ?? '', denom))

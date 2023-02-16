@@ -1,6 +1,6 @@
 import classNames from 'classnames'
-import { CircularProgress } from 'components/CircularProgress'
 
+import { CircularProgress } from 'components/CircularProgress'
 import { MarsProtocol } from 'components/Icons'
 import { Modal } from 'components/Modal'
 import { Text } from 'components/Text'

@@ -5,7 +5,6 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import { BorrowCapacity } from 'components/BorrowCapacity'
-
 import { formatValue, lookup } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 import { CircularProgress } from 'components/CircularProgress'
@@ -26,14 +25,12 @@ import { useTokenPrices } from 'hooks/queries/useTokenPrices'
 import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
 import { useModalStore } from 'stores/useModalStore'
 import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
-import { useWalletStore } from 'stores/useWalletStore'
 
 export const WithdrawModal = () => {
   // ---------------
   // STORE
   // ---------------
   const open = useModalStore((s) => s.withdrawModal)
-  const chainInfo = useWalletStore((s) => s.chainInfo)
   const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
   const whitelistedAssets = useNetworkConfigStore((s) => s.assets.whitelist)

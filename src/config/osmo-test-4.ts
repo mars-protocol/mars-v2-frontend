@@ -1,4 +1,4 @@
-import { ChainInfoID } from '@marsprotocol/wallet-connector'
+import { ChainInfoID, WalletID } from '@marsprotocol/wallet-connector'
 
 const Assets: { [key: string]: Asset } = {
   osmo: {
@@ -46,9 +46,9 @@ const OtherAssets: { [key: string]: OtherAsset } = {
 
 export const networkConfig: NetworkConfig = {
   name: ChainInfoID.OsmosisTestnet,
-  hiveUrl: 'https://osmosis-delphi-testnet-1.simply-vc.com.mt/XF32UOOU55CX/osmosis-hive/graphql',
-  rpcUrl: 'https://osmosis-delphi-testnet-1.simply-vc.com.mt/XF32UOOU55CX/osmosis-rpc',
-  restUrl: 'https://osmosis-delphi-testnet-1.simply-vc.com.mt/XF32UOOU55CX/osmosis-lcd',
+  hiveUrl: 'https://testnet-osmosis-node.marsprotocol.io/XF32UOOU55CX/osmosis-hive-front/graphql',
+  rpcUrl: 'https://testnet-osmosis-node.marsprotocol.io/XF32UOOU55CX/osmosis-rpc-front/',
+  restUrl: 'https://testnet-osmosis-node.marsprotocol.io/XF32UOOU55CX/osmosis-lcd-front/',
   contracts: {
     accountNft: 'osmo1xpgx06z2c6zjk49feq75swgv78m6dvht6wramu2gltzjz5j959nq4hggxz',
     mockVault: 'osmo1yqgjaehalz0pv5j22fdnaaekuprlggd7hth8m66jmdxe58ztqs4sjqtrlk',
@@ -65,4 +65,5 @@ export const networkConfig: NetworkConfig = {
     other: [OtherAssets.mars],
   },
   appUrl: 'https://testnet.osmosis.zone',
+  wallets: [WalletID.Keplr, WalletID.Leap, WalletID.Cosmostation],
 }

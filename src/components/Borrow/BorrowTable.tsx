@@ -11,6 +11,7 @@ import React from 'react'
 
 import { ChevronDown, ChevronUp } from 'components/Icons'
 import { formatCurrency } from 'utils/formatters'
+
 import { AssetRow } from './AssetRow'
 
 interface Market {

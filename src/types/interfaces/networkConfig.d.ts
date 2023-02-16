@@ -19,4 +19,5 @@ interface NetworkConfig {
     other: OtherAsset[]
   }
   appUrl: string
+  wallets: import('@marsprotocol/wallet-connector').WalletID[]
 }

@@ -6,8 +6,9 @@ import { useMemo, useState } from 'react'
 import { ChevronDown } from 'components/Icons'
 import { Button } from 'components/Button'
 import { Overlay } from 'components/Overlay/Overlay'
-import { AccountManageOverlay } from './AccountManageOverlay'
 import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
+
+import { AccountManageOverlay } from './AccountManageOverlay'
 
 interface Props {
   creditAccountsList: string[]

@@ -2,8 +2,8 @@ import { Coin } from '@cosmjs/stargate'
 import { useQuery } from '@tanstack/react-query'
 import request, { gql } from 'graphql-request'
 import { useMemo } from 'react'
-import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
 
+import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
 import { queryKeys } from 'types/query-keys-factory'
 
 interface Result {

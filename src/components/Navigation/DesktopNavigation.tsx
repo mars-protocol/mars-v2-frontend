@@ -1,7 +1,13 @@
-import { Logo } from 'components/Icons'
+'use client'
+
 import Link from 'next/link'
+
+import { Logo } from 'components/Icons'
+import { Wallet } from 'components/Wallet/Wallet'
+
 import { menuTree } from './menuTree'
 import { NavLink } from './NavLink'
+import { WalletConnectProvider } from 'components/Wallet/WalletConnectProvider'
 
 export const DesktopNavigation = () => {
   // const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
@@ -28,7 +34,9 @@ export const DesktopNavigation = () => {
             ))}
           </div>
         </div>
-        {/* <Wallet /> */}
+        <WalletConnectProvider>
+          <Wallet />
+        </WalletConnectProvider>
       </div>
       {/* Sub navigation bar */}
       {/* <div className='flex items-center justify-between border-b border-white/20 pl-6 text-sm text-white/40'>

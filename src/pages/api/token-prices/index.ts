@@ -1,6 +1,7 @@
 import { gql, request as gqlRequest } from 'graphql-request'
-import { networkConfig } from 'config/osmo-test-4'
 import { NextApiRequest, NextApiResponse } from 'next'
+
+import { networkConfig } from 'config/osmo-test-4'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const whitelistedAssets = networkConfig.assets.whitelist

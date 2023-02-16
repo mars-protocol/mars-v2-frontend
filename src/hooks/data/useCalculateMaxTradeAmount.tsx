@@ -1,9 +1,10 @@
 import BigNumber from 'bignumber.js'
+import { useCallback, useMemo } from 'react'
+
 import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositions'
 import { useMarkets } from 'hooks/queries/useMarkets'
 import { useRedbankBalances } from 'hooks/queries/useRedbankBalances'
 import { useTokenPrices } from 'hooks/queries/useTokenPrices'
-import { useCallback, useMemo } from 'react'
 import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
 
 const getApproximateHourlyInterest = (amount: string, borrowAPY: string) => {

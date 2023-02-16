@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+
 import { DesktopNavigation } from 'components/Navigation/DesktopNavigation'
 import 'react-toastify/dist/ReactToastify.min.css'
 import '../styles/globals.css'
@@ -18,15 +19,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang='en'>
       <head />
+
       <body>
         <div className='relative min-h-screen w-full'>
           <div className={backgroundClasses} />
           <DesktopNavigation />
           <main className='relative flex lg:min-h-[calc(100vh-120px)]'>
             <div className='flex flex-grow flex-wrap p-6'>{children}</div>
-            {/* {true && <AccountDetails />} */}
           </main>
-          {/* <CookieConsent /> */}
         </div>
       </body>
     </html>

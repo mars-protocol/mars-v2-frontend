@@ -1,9 +1,9 @@
 import { Coin } from '@cosmjs/stargate'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
+
 import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
 import { useWalletStore } from 'stores/useWalletStore'
-
 import { queryKeys } from 'types/query-keys-factory'
 
 interface DebtAmount {

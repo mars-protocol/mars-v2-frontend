@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import { ReactNode } from 'react'
 
 import { Close } from 'components/Icons'
+
 import { Card } from './Card'
 
 interface Props {

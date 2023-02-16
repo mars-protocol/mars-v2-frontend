@@ -1,7 +1,9 @@
-const { withSentryConfig } = require('@sentry/nextjs')
+// const nodeExternals = require('webpack-node-externals');
+
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
+  output: 'standalone',
   experimental: {
     appDir: true
   },
@@ -18,7 +20,18 @@ const nextConfig = {
       // },
     ]
   },
-  webpack(config) {
+  webpack(config, {isServer}) {
+
+    if (isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback, 
+        'utf-8-validate': false,
+        'bufferutil': false,
+        './build/Release/ecdh': false,
+        'eccrypto': false
+      };
+    }
+
     config.module.rules.push({
       test: /\.svg$/i,
       issuer: /\.[jt]sx?$/,
@@ -43,4 +56,4 @@ const sentryWebpackPluginOptions = {
 
 // Make sure adding Sentry options is the last code to run before exporting, to
 // ensure that your source maps include changes from all other Webpack plugins
-module.exports = withSentryConfig(nextConfig, sentryWebpackPluginOptions)
+module.exports = nextConfig
