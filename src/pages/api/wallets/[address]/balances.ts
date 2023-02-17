@@ -7,10 +7,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const response = await fetch(url)
 
-  const data = 
-
   if (response.ok) {
-    return res.status(200).json(response.json())
+    const data = await response.json()
+    return res.status(200).json(data.balances)
   }
 
   return res.status(404)
