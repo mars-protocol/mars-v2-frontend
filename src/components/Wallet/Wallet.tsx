@@ -21,9 +21,8 @@ export const Wallet = () => {
 
   useEffect(() => {
     const connectedStatus = status === WalletConnectionStatus.Connected
-    if (connectedStatus !== isConnected) {
-      setIsConnected(connectedStatus)
-    }
+    if (connectedStatus === isConnected) return
+    setIsConnected(connectedStatus)
   }, [status, isConnected])
 
   useEffect(() => {

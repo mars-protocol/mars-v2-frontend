@@ -1,3 +1,4 @@
+import { Coin } from '@cosmjs/stargate'
 import {
   ChainInfoID,
   SimpleChainInfoList,
@@ -6,20 +7,18 @@ import {
 } from '@marsprotocol/wallet-connector'
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
-import { use, useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import useClipboard from 'react-use-clipboard'
-import { Coin } from '@cosmjs/stargate'
 
-import { Check, Copy, ExternalLink, Osmo, Wallet } from 'components/Icons'
-import { formatValue, truncate } from 'utils/formatters'
-import { Text } from 'components/Text'
 import { Button } from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
 import { FormattedNumber } from 'components/FormattedNumber'
+import { Check, Copy, ExternalLink, Osmo } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
+import { Text } from 'components/Text'
 import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
 import { useWalletStore } from 'stores/useWalletStore'
-import getUserBalances from 'libs/getUserBalances'
+import { formatValue, truncate } from 'utils/formatters'
 
 export const ConnectedButton = () => {
   // ---------------b
@@ -45,10 +44,6 @@ export const ConnectedButton = () => {
   const [isCopied, setCopied] = useClipboard(address || '', {
     successDuration: 1000 * 5,
   })
-
-  const userBalances = use(getUserBalances(address || ''))
-
-  console.log(walletAmount, userBalances)
   // ---------------
   // VARIABLES
   // ---------------
@@ -91,12 +86,7 @@ export const ConnectedButton = () => {
         }}
       >
         <span className='flex h-4 w-4 items-center justify-center'>
-          {network?.chainId === ChainInfoID.Osmosis1 ||
-          network?.chainId === ChainInfoID.OsmosisTestnet ? (
-            <Osmo />
-          ) : (
-            <Wallet />
-          )}
+          <Osmo />
         </span>
         <span className='ml-2'>{name ? name : truncate(address, [2, 4])}</span>
         <div
