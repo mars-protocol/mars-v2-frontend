@@ -9,6 +9,7 @@ import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import { useCallback, useEffect, useState } from 'react'
 import useClipboard from 'react-use-clipboard'
+import useSWR from 'swr'
 
 import { Button } from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
@@ -16,12 +17,13 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import { Check, Copy, ExternalLink, Osmo } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
 import { Text } from 'components/Text'
+import getUserBalances from 'libs/getUserBalances'
 import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
 import { useWalletStore } from 'stores/useWalletStore'
 import { formatValue, truncate } from 'utils/formatters'
 
-export const ConnectedButton = () => {
-  // ---------------b
+export default function ConnectedButton() {
+  // ---------------
   // EXTERNAL HOOKS
   // ---------------
   const { disconnect } = useWallet()
@@ -31,10 +33,7 @@ export const ConnectedButton = () => {
   const name = useWalletStore((s) => s.name)
   const baseAsset = useNetworkConfigStore((s) => s.assets.base)
 
-  // ---------------
-  // LOCAL HOOKS
-  // ---------------
-  const coins: Coin[] = [{ denom: 'uosmo', amount: '198326487932' }]
+  const { data, isLoading } = useSWR(address, getUserBalances)
 
   // ---------------
   // LOCAL STATE
@@ -52,16 +51,17 @@ export const ConnectedButton = () => {
   const viewOnFinder = useCallback(() => {
     const explorerUrl = network && SimpleChainInfoList[network.chainId as ChainInfoID].explorer
 
-    window.open(`${explorerUrl}account/${address}`, '_blank')
+    window.open(`${explorerUrl}/account/${address}`, '_blank')
   }, [network, address])
 
   useEffect(() => {
+    if (!data || data.length === 0) return
     setWalletAmount(
-      BigNumber(coins?.find((coin) => coin.denom === baseAsset.denom)?.amount ?? 0)
+      BigNumber(data?.find((coin: Coin) => coin.denom === baseAsset.denom)?.amount ?? 0)
         .div(10 ** baseAsset.decimals)
         .toNumber(),
     )
-  }, [coins, baseAsset.denom, baseAsset.decimals])
+  }, [data, baseAsset.denom, baseAsset.decimals])
 
   return (
     <div className={'relative'}>
@@ -95,10 +95,10 @@ export const ConnectedButton = () => {
             'before:content-[" "] before:absolute before:top-1.5 before:bottom-1.5 before:left-0 before:h-[calc(100%-12px)] before:border-l before:border-white',
           )}
         >
-          {true ? (
-            `${formatValue(walletAmount, 2, 2, true, false, ` ${baseAsset.symbol}`)}`
-          ) : (
+          {isLoading ? (
             <CircularProgress size={12} />
+          ) : (
+            `${formatValue(walletAmount, 2, 2, true, false, ` ${baseAsset.symbol}`)}`
           )}
         </div>
       </button>

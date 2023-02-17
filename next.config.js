@@ -5,7 +5,7 @@
 const nextConfig = {
   output: 'standalone',
   experimental: {
-    appDir: true
+    appDir: true,
   },
   reactStrictMode: true,
   sentry: {
@@ -20,16 +20,15 @@ const nextConfig = {
       // },
     ]
   },
-  webpack(config, {isServer}) {
-
+  webpack(config, { isServer }) {
     if (isServer) {
       config.resolve.fallback = {
-        ...config.resolve.fallback, 
+        ...config.resolve.fallback,
         'utf-8-validate': false,
-        'bufferutil': false,
+        bufferutil: false,
         './build/Release/ecdh': false,
-        'eccrypto': false
-      };
+        eccrypto: false,
+      }
     }
 
     config.module.rules.push({

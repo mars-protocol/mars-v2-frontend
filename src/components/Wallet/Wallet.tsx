@@ -8,11 +8,11 @@ import {
 } from '@marsprotocol/wallet-connector'
 import { useEffect, useState } from 'react'
 
-import { ConnectButton } from 'components/Wallet/ConnectButton'
-import { ConnectedButton } from 'components/Wallet/ConnectedButton'
+import ConnectButton from 'components/Wallet/ConnectButton'
+import ConnectedButton from 'components/Wallet/ConnectedButton'
 import { useWalletStore } from 'stores/useWalletStore'
 
-export const Wallet = () => {
+export default function Wallet() {
   const { status } = useWalletManager()
   const [isConnected, setIsConnected] = useState(false)
   const { recentWallet, simulate, sign, broadcast } = useWallet()
@@ -45,6 +45,5 @@ export const Wallet = () => {
       return
     }
   }, [simulate, sign, recentWallet, broadcast])
-
-  return !isConnected ? <ConnectButton status={status} /> : <ConnectedButton />
+  return isConnected ? <ConnectedButton /> : <ConnectButton status={status} />
 }

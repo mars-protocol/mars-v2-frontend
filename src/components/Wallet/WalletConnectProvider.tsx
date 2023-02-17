@@ -1,7 +1,7 @@
 'use client'
 
-import { WalletID, WalletManagerProvider } from '@marsprotocol/wallet-connector'
-import { FC, useEffect, useState } from 'react'
+import { WalletManagerProvider } from '@marsprotocol/wallet-connector'
+import { FC } from 'react'
 
 import { CircularProgress } from 'components/CircularProgress'
 
@@ -10,37 +10,12 @@ type Props = {
 }
 
 export const WalletConnectProvider: FC<Props> = ({ children }) => {
-  const [chainInfoOverrides, setChainInfoOverrides] = useState<{
-    rpc: string
-    rest: string
-    chainID: string
-  }>()
-  const [enabledWallets, setEnabledWallets] = useState<WalletID[]>([])
-
-  useEffect(() => {
-    if (chainInfoOverrides) return
-
-    const fetchConfig = async () => {
-      const file = await import(
-        `../../config/${
-          process.env.NEXT_PUBLIC_NETWORK === 'mainnet' ? 'osmosis-1' : 'osmo-test-4'
-        }.ts`
-      )
-
-      const networkConfig: NetworkConfig = file.networkConfig
-
-      setChainInfoOverrides({
-        rpc: networkConfig.rpcUrl,
-        rest: networkConfig.restUrl,
-        chainID: networkConfig.name,
-      })
-      setEnabledWallets(networkConfig.wallets)
-    }
-
-    fetchConfig()
-  })
-
-  if (!chainInfoOverrides || !enabledWallets?.length) return null
+  const chainInfoOverrides = {
+    rpc: process.env.NEXT_PUBLIC_RPC ?? '',
+    rest: process.env.NEXT_PUBLIC_REST ?? '',
+    chainID: process.env.NEXT_PUBLIC_CHAIN_ID ?? '',
+  }
+  const enabledWallets: string[] = process.env.NEXT_PUBLIC_WALLETS?.split(',') ?? []
 
   return (
     <WalletManagerProvider

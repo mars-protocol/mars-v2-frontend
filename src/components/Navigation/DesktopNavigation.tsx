@@ -5,10 +5,9 @@ import Link from 'next/link'
 import { Logo } from 'components/Icons'
 import { menuTree } from 'components/Navigation/menuTree'
 import { NavLink } from 'components/Navigation/NavLink'
-import { Wallet } from 'components/Wallet/Wallet'
-import { WalletConnectProvider } from 'components/Wallet/WalletConnectProvider'
+import Wallet from 'components/Wallet/Wallet'
 
-export const DesktopNavigation = () => {
+export default function DesktopNavigation() {
   // const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
 
   // const { data: creditAccountsList } = useCreditAccounts()
@@ -21,7 +20,7 @@ export const DesktopNavigation = () => {
       <div className='flex items-center justify-between border-b border-white/20 px-6 py-3'>
         <div className='flex flex-grow items-center'>
           <Link href='/trade'>
-            <span className='h-10 w-10'>
+            <span className='block h-10 w-10'>
               <Logo />
             </span>
           </Link>
@@ -33,9 +32,7 @@ export const DesktopNavigation = () => {
             ))}
           </div>
         </div>
-        <WalletConnectProvider>
-          <Wallet />
-        </WalletConnectProvider>
+        <Wallet />
       </div>
       {/* Sub navigation bar */}
       {/* <div className='flex items-center justify-between border-b border-white/20 pl-6 text-sm text-white/40'>
