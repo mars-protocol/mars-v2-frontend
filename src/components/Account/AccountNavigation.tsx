@@ -3,12 +3,11 @@
 import classNames from 'classnames'
 import { useMemo, useState } from 'react'
 
-import { ChevronDown } from 'components/Icons'
+import { AccountManageOverlay } from 'components/Account/AccountManageOverlay'
 import { Button } from 'components/Button'
+import { ChevronDown } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
 import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
-
-import { AccountManageOverlay } from './AccountManageOverlay'
 
 interface Props {
   creditAccountsList: string[]

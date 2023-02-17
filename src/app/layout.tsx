@@ -2,7 +2,7 @@ import classNames from 'classnames'
 
 import { DesktopNavigation } from 'components/Navigation/DesktopNavigation'
 import 'react-toastify/dist/ReactToastify.min.css'
-import '../styles/globals.css'
+import 'styles/globals.css'
 
 const filter = {
   day: 'brightness-100 hue-rotate-0',

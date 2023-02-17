@@ -1,9 +1,9 @@
 import { Suspense } from 'react'
 
+import { Card } from 'components/Card'
+
 import CreditAccounts from './CreditAccounts'
 import VaultsInfo from './VaultsInfo'
-
-import { Card } from '../../components/Card'
 
 export default async function page() {
   return (

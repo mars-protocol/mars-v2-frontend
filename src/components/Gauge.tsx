@@ -1,9 +1,8 @@
 import classNames from 'classnames'
 import { ReactNode } from 'react'
 
+import { Tooltip } from 'components/Tooltip'
 import { useSettingsStore } from 'stores/useSettingsStore'
-
-import { Tooltip } from './Tooltip'
 
 interface Props {
   tooltip: string | ReactNode

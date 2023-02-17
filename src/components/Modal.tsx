@@ -2,8 +2,7 @@ import classNames from 'classnames'
 import { ReactNode } from 'react'
 
 import { Close } from 'components/Icons'
-
-import { Card } from './Card'
+import { Card } from 'components/Card'
 
 interface Props {
   children?: ReactNode | string

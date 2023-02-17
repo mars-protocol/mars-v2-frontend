@@ -1,14 +1,11 @@
-import { useWallet, WalletConnectionStatus } from '@marsprotocol/wallet-connector'
 import classNames from 'classnames'
-import React, { useEffect } from 'react'
+import React from 'react'
 
+import { AccountDetails } from 'components/Account/AccountDetails'
+import { DesktopNavigation } from 'components/Navigation/DesktopNavigation'
 import { useCreditAccounts } from 'hooks/queries/useCreditAccounts'
 import { useSettingsStore } from 'stores/useSettingsStore'
 import { useWalletStore } from 'stores/useWalletStore'
-
-import { CookieConsent } from './CookieConsent'
-import { DesktopNavigation } from './Navigation/DesktopNavigation'
-import { AccountDetails } from './Account/AccountDetails'
 
 const filter = {
   day: 'brightness-100 hue-rotate-0',
@@ -44,7 +41,6 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         <div className='flex flex-grow flex-wrap p-6'>{children}</div>
         {hasCreditAccounts && <AccountDetails />}
       </main>
-      <CookieConsent />
     </div>
   )
 }

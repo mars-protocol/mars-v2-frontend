@@ -7540,6 +7540,13 @@ utility-types@^3.10.0:
   resolved "https://registry.yarnpkg.com/utility-types/-/utility-types-3.10.0.tgz#ea4148f9a741015f05ed74fd615e1d20e6bed82b"
   integrity sha512-O11mqxmi7wMKCo6HKFt5AhO4BwY3VV68YU07tgxfz8zJTIxr4BpsezN49Ffwy9j3ZpwwJp4fkRwjRzq3uWE6Rg==
 
+vscode-generate-index-standalone@^1.7.1:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/vscode-generate-index-standalone/-/vscode-generate-index-standalone-1.7.1.tgz#de16fb3300f62281554bacd70ccc34d75b866179"
+  integrity sha512-N0lwDq5v0d6ghhXiZ3zGLVzZ66yyVeCf2YwxaX70t2G2J5KA9RRPAu8p5uuokXYThxubDiw+cNNXkFqiwh2/1w==
+  optionalDependencies:
+    fsevents "~2.3.2"
+
 warning@^4.0.3:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/warning/-/warning-4.0.3.tgz#16e9e077eb8a86d6af7d64aa1e05fd85b4678ca3"

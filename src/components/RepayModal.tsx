@@ -5,19 +5,18 @@ import React, { useMemo, useState } from 'react'
 import { NumericFormat } from 'react-number-format'
 import { toast } from 'react-toastify'
 
-import { formatCurrency } from 'utils/formatters'
-import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
+import { Button } from 'components/Button'
+import { CircularProgress } from 'components/CircularProgress'
+import { ContainerSecondary } from 'components/ContainerSecondary'
+import { Slider } from 'components/Slider'
 import { useRepayFunds } from 'hooks/mutations/useRepayFunds'
 import { useAllBalances } from 'hooks/queries/useAllBalances'
 import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositions'
 import { useTokenPrices } from 'hooks/queries/useTokenPrices'
 import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
 import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
-
-import { ContainerSecondary } from './ContainerSecondary'
-import { CircularProgress } from './CircularProgress'
-import { Button } from './Button'
-import { Slider } from './Slider'
+import { formatCurrency } from 'utils/formatters'
+import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 // 0.001% buffer / slippage to avoid repay action from not fully repaying the debt amount
 const REPAY_BUFFER = 1.00001

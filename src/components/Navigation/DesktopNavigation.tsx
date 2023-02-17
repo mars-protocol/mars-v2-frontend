@@ -3,10 +3,9 @@
 import Link from 'next/link'
 
 import { Logo } from 'components/Icons'
+import { menuTree } from 'components/Navigation/menuTree'
+import { NavLink } from 'components/Navigation/NavLink'
 import { Wallet } from 'components/Wallet/Wallet'
-
-import { menuTree } from './menuTree'
-import { NavLink } from './NavLink'
 import { WalletConnectProvider } from 'components/Wallet/WalletConnectProvider'
 
 export const DesktopNavigation = () => {

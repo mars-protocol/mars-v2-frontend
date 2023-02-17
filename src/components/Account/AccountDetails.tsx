@@ -3,10 +3,10 @@
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 
-import { ArrowRightLine, ChevronDown, ChevronLeft } from 'components/Icons'
-import { lookup } from 'utils/formatters'
-import { createRiskData } from 'utils/risk'
+import { AccountManageOverlay } from 'components/Account/AccountManageOverlay'
+import { RiskChart } from 'components/Account/RiskChart'
 import { Button } from 'components/Button'
+import { ArrowRightLine, ChevronDown, ChevronLeft } from 'components/Icons'
 import { LabelValuePair } from 'components/LabelValuePair'
 import { PositionsList } from 'components/PositionsList'
 import { useAccountStats } from 'hooks/data/useAccountStats'
@@ -14,9 +14,8 @@ import { useBalances } from 'hooks/data/useBalances'
 import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
 import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
 import { useSettingsStore } from 'stores/useSettingsStore'
-
-import { RiskChart } from './RiskChart'
-import { AccountManageOverlay } from './AccountManageOverlay'
+import { lookup } from 'utils/formatters'
+import { createRiskData } from 'utils/risk'
 
 export const AccountDetails = () => {
   const enableAnimations = useSettingsStore((s) => s.enableAnimations)
