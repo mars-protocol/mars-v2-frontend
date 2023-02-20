@@ -1,15 +1,15 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { NextApiRequest, NextApiResponse } from 'next'
 
-import { ADDRESS_ACCOUNT_NFT, ENV_MISSING_MESSAGE, RPC } from 'constants/env'
+import { ADDRESS_ACCOUNT_NFT, ENV_MISSING_MESSAGE, URL_RPC } from 'constants/env'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (!RPC || !ADDRESS_ACCOUNT_NFT) {
+  if (!URL_RPC || !ADDRESS_ACCOUNT_NFT) {
     return res.status(404).json(ENV_MISSING_MESSAGE)
   }
   const address = req.query.address
 
-  const client = await CosmWasmClient.connect(RPC)
+  const client = await CosmWasmClient.connect(URL_RPC)
 
   const data = await client.queryContractSmart(ADDRESS_ACCOUNT_NFT, {
     tokens: {
