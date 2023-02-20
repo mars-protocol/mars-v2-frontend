@@ -1,5 +1,4 @@
 import Background from 'components/Background'
-
 import DesktopNavigation from 'components/Navigation/DesktopNavigation'
 import { WalletConnectProvider } from 'components/Wallet/WalletConnectProvider'
 import 'react-toastify/dist/ReactToastify.min.css'
