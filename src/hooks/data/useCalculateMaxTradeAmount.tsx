@@ -5,7 +5,7 @@ import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositio
 import { useMarkets } from 'hooks/queries/useMarkets'
 import { useRedbankBalances } from 'hooks/queries/useRedbankBalances'
 import { useTokenPrices } from 'hooks/queries/useTokenPrices'
-import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
+import { useAccountDetailsStore } from 'store/useAccountDetailsStore'
 
 const getApproximateHourlyInterest = (amount: string, borrowAPY: string) => {
   const hourlyAPY = BigNumber(borrowAPY).div(24 * 365)

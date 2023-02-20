@@ -14,9 +14,9 @@ import { Slider } from 'components/Slider'
 import { useDepositCreditAccount } from 'hooks/mutations/useDepositCreditAccount'
 import { useAllBalances } from 'hooks/queries/useAllBalances'
 import { useAllowedCoins } from 'hooks/queries/useAllowedCoins'
-import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
-import { useModalStore } from 'stores/useModalStore'
-import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
+import { useAccountDetailsStore } from 'store/useAccountDetailsStore'
+import { useModalStore } from 'store/useModalStore'
+import { useNetworkConfigStore } from 'store/useNetworkConfigStore'
 
 export const FundAccountModal = () => {
   // ---------------

@@ -17,8 +17,8 @@ import { useAllowedCoins } from 'hooks/queries/useAllowedCoins'
 import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositions'
 import { useMarkets } from 'hooks/queries/useMarkets'
 import { useTokenPrices } from 'hooks/queries/useTokenPrices'
-import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
-import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
+import { useAccountDetailsStore } from 'store/useAccountDetailsStore'
+import { useNetworkConfigStore } from 'store/useNetworkConfigStore'
 
 enum FundingMode {
   Account = 'Account',

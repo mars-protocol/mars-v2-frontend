@@ -4,7 +4,7 @@ import { CircularProgress } from 'components/CircularProgress'
 import { MarsProtocol } from 'components/Icons'
 import { Modal } from 'components/Modal'
 import { Text } from 'components/Text'
-import { useModalStore } from 'stores/useModalStore'
+import { useModalStore } from 'store/useModalStore'
 
 export const ConfirmModal = () => {
   const createOpen = useModalStore((s) => s.createAccountModal)

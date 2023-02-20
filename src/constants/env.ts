@@ -3,6 +3,7 @@ export const ADDRESS_CREDIT_MANAGER = process.env.NEXT_PUBLIC_CREDIT_MANAGER
 export const ADDRESS_INCENTIVES = process.env.NEXT_PUBLIC_INCENTIVES
 export const ADDRESS_ORACLE = process.env.NEXT_PUBLIC_ORACLE
 export const ADDRESS_RED_BANK = process.env.NEXT_PUBLIC_RED_BANK
+export const ADDRESS_SWAPPER = process.env.NEXT_PUBLIC_SWAPPER
 
 export const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 export const NETWORK = process.env.NEXT_PUBLIC_NETWORK

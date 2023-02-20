@@ -4,7 +4,7 @@ import classNames from 'classnames'
 import React, { useEffect, useRef } from 'react'
 import { animated, useSpring } from 'react-spring'
 
-import { useSettingsStore } from 'stores/useSettingsStore'
+import { useSettingsStore } from 'store/useSettingsStore'
 import { formatValue } from 'utils/formatters'
 
 export const FormattedNumber = React.memo(

@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
 
-import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
-import { useModalStore } from 'stores/useModalStore'
-import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
+import { useAccountDetailsStore } from 'store/useAccountDetailsStore'
+import { useModalStore } from 'store/useModalStore'
+import { useNetworkConfigStore } from 'store/useNetworkConfigStore'
 import { useWalletStore } from 'stores/useWalletStore'
 import { queryKeys } from 'types/query-keys-factory'
 import { hardcodedFee } from 'utils/contants'

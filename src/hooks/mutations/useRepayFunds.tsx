@@ -2,7 +2,7 @@ import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react
 import { useMemo } from 'react'
 import { toast } from 'react-toastify'
 
-import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
+import { useAccountDetailsStore } from 'store/useAccountDetailsStore'
 import { useWalletStore } from 'stores/useWalletStore'
 import { queryKeys } from 'types/query-keys-factory'
 import { hardcodedFee } from 'utils/contants'

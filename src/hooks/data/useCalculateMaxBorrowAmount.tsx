@@ -5,8 +5,8 @@ import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositio
 import { useMarkets } from 'hooks/queries/useMarkets'
 import { useRedbankBalances } from 'hooks/queries/useRedbankBalances'
 import { useTokenPrices } from 'hooks/queries/useTokenPrices'
-import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
-import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
+import { useAccountDetailsStore } from 'store/useAccountDetailsStore'
+import { useNetworkConfigStore } from 'store/useNetworkConfigStore'
 import { getTokenDecimals } from 'utils/tokens'
 
 const getApproximateHourlyInterest = (amount: string, borrowAPY: string) => {

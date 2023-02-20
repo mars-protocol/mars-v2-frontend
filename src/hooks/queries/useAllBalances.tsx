@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import request, { gql } from 'graphql-request'
 import { useMemo } from 'react'
 
-import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
+import { useNetworkConfigStore } from 'store/useNetworkConfigStore'
 import { useWalletStore } from 'stores/useWalletStore'
 import { queryKeys } from 'types/query-keys-factory'
 

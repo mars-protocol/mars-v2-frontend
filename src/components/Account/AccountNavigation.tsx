@@ -7,7 +7,7 @@ import { AccountManageOverlay } from 'components/Account/AccountManageOverlay'
 import { Button } from 'components/Button'
 import { ChevronDown } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
-import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
+import { useAccountDetailsStore } from 'store/useAccountDetailsStore'
 
 interface Props {
   creditAccountsList: string[]

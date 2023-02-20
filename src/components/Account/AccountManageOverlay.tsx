@@ -9,8 +9,8 @@ import { Overlay } from 'components/Overlay/Overlay'
 import { OverlayAction } from 'components/Overlay/OverlayAction'
 import { useCreateCreditAccount } from 'hooks/mutations/useCreateCreditAccount'
 import { useDeleteCreditAccount } from 'hooks/mutations/useDeleteCreditAccount'
-import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
-import { useModalStore } from 'stores/useModalStore'
+import { useAccountDetailsStore } from 'store/useAccountDetailsStore'
+import { useModalStore } from 'store/useModalStore'
 
 interface Props {
   className?: string

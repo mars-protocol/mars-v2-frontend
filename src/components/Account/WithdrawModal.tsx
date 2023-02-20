@@ -22,9 +22,9 @@ import { useCalculateMaxWithdrawAmount } from 'hooks/data/useCalculateMaxWithdra
 import { useWithdrawFunds } from 'hooks/mutations/useWithdrawFunds'
 import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositions'
 import { useTokenPrices } from 'hooks/queries/useTokenPrices'
-import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
-import { useModalStore } from 'stores/useModalStore'
-import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
+import { useAccountDetailsStore } from 'store/useAccountDetailsStore'
+import { useModalStore } from 'store/useModalStore'
+import { useNetworkConfigStore } from 'store/useNetworkConfigStore'
 
 export const WithdrawModal = () => {
   // ---------------

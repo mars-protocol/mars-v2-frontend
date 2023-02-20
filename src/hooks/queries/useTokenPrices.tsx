@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { gql, request } from 'graphql-request'
 import { useMemo } from 'react'
 
-import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
+import { useNetworkConfigStore } from 'store/useNetworkConfigStore'
 import { queryKeys } from 'types/query-keys-factory'
 
 const fetchTokenPrices = async (

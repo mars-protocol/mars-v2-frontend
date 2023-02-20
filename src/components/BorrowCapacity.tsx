@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { Text } from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
-import { useSettingsStore } from 'stores/useSettingsStore'
+import { useSettingsStore } from 'store/useSettingsStore'
 
 interface Props {
   balance: number

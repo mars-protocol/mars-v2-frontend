@@ -12,8 +12,8 @@ import { Text } from 'components/Text'
 import { useAccountStats } from 'hooks/data/useAccountStats'
 import { useCreateCreditAccount } from 'hooks/mutations/useCreateCreditAccount'
 import { useCreditAccounts } from 'hooks/queries/useCreditAccounts'
-import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
-import { useModalStore } from 'stores/useModalStore'
+import { useNetworkConfigStore } from 'store/useNetworkConfigStore'
+import { useModalStore } from 'store/useModalStore'
 
 export const AccountStatus = () => {
   const baseAsset = useNetworkConfigStore((s) => s.assets.base)

@@ -18,7 +18,7 @@ import { Check, Copy, ExternalLink, Osmo } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
 import { Text } from 'components/Text'
 import getUserBalances from 'libs/getUserBalances'
-import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
+import { useNetworkConfigStore } from 'store/useNetworkConfigStore'
 import { useWalletStore } from 'stores/useWalletStore'
 import { formatValue, truncate } from 'utils/formatters'
 

@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react'
 import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositions'
 import { useMarkets } from 'hooks/queries/useMarkets'
 import { useTokenPrices } from 'hooks/queries/useTokenPrices'
-import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
-import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
+import { useAccountDetailsStore } from 'store/useAccountDetailsStore'
+import { useNetworkConfigStore } from 'store/useNetworkConfigStore'
 import { formatBalances } from 'utils/balances'
 
 export const useBalances = () => {

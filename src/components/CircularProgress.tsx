@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 
 import { Text } from 'components/Text'
-import { useSettingsStore } from 'stores/useSettingsStore'
+import { useSettingsStore } from 'store/useSettingsStore'
 
 interface Props {
   color?: string

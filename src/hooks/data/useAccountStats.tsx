@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositions'
 import { useMarkets } from 'hooks/queries/useMarkets'
 import { useTokenPrices } from 'hooks/queries/useTokenPrices'
-import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
+import { useAccountDetailsStore } from 'store/useAccountDetailsStore'
 
 // displaying 3 levels of risk based on the weighted average of liquidation LTVs
 // 0.85 -> 25% risk
