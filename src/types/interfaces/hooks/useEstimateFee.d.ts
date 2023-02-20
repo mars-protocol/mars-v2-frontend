@@ -3,5 +3,4 @@ interface UseEstimateFee {
   funds?: import('@cosmjs/stargate').Coin[]
   contract?: string
   sender?: string
-  executeMsg?: import('@cosmjs/cosmwasm-stargate').MsgExecuteContractEncodeObject
 }
