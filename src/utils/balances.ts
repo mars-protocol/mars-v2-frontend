@@ -1,7 +1,7 @@
 import { Coin } from '@cosmjs/stargate'
 
-import { getTokenTotalUSDValue, lookup } from './formatters'
-import { getTokenSymbol } from './tokens'
+import { getTokenTotalUSDValue, lookup } from 'utils/formatters'
+import { getTokenSymbol } from 'utils/tokens'
 
 export const formatBalances = (
   positionData: Coin[],

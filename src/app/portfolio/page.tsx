@@ -1,9 +1,8 @@
 import { Suspense } from 'react'
 
+import CreditAccounts from 'app/portfolio/CreditAccounts'
+import VaultsInfo from 'app/portfolio/VaultsInfo'
 import { Card } from 'components/Card'
-
-import CreditAccounts from './CreditAccounts'
-import VaultsInfo from './VaultsInfo'
 
 export default async function page() {
   return (

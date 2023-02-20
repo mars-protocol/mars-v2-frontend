@@ -1,4 +1,4 @@
-import { getBaseAsset } from './assets'
+import { getBaseAsset } from 'utils/assets'
 
 export const getTokenSymbol = (denom: string, marketAssets: Asset[]) =>
   marketAssets.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())?.symbol || ''
