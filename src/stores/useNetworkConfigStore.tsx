@@ -1,5 +1,4 @@
 import create from 'zustand'
-
 import { networkConfig } from 'config/osmo-test-4'
 
 // TODO: Create dynamic network import

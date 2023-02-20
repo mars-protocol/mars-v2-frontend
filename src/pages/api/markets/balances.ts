@@ -1,25 +1,21 @@
 import { gql, request as gqlRequest } from 'graphql-request'
 import { NextApiRequest, NextApiResponse } from 'next'
-
 import { Coin } from '@cosmjs/stargate'
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const network = process.env.NEXT_PUBLIC_NETWORK
-  const url = process.env.NEXT_PUBLIC_GQL
-  const redBankAddress = process.env.NEXT_PUBLIC_RED_BANK
-  const incentivesAddress = process.env.NEXT_PUBLIC_INCENTIVES
+import { ADDRESS_RED_BANK, ENV_MISSING_MESSAGE, GQL } from 'constants/env'
 
-  if (!url || !redBankAddress || !incentivesAddress || !network) {
-    return res.status(404).json({ message: 'Env variables missing' })
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (!GQL || !ADDRESS_RED_BANK) {
+    return res.status(404).json(ENV_MISSING_MESSAGE)
   }
 
   const result = await gqlRequest<Result>(
-    url,
+    GQL,
     gql`
     query RedbankBalances {
       bank {
               balance(
-                  address: "${redBankAddress}"
+                  address: "${ADDRESS_RED_BANK}"
               ) {
                   amount
                   denom

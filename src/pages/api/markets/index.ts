@@ -1,16 +1,12 @@
 import { gql, request as gqlRequest } from 'graphql-request'
 import { NextApiRequest, NextApiResponse } from 'next'
 
+import { ADDRESS_INCENTIVES, ADDRESS_RED_BANK, ENV_MISSING_MESSAGE, GQL } from 'constants/env'
 import { getMarketAssets } from 'utils/assets'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const network = process.env.NEXT_PUBLIC_NETWORK
-  const url = process.env.NEXT_PUBLIC_GQL
-  const redBankAddress = process.env.NEXT_PUBLIC_RED_BANK
-  const incentivesAddress = process.env.NEXT_PUBLIC_INCENTIVES
-
-  if (!url || !redBankAddress || !incentivesAddress || !network) {
-    return res.status(404).json({ message: 'Env variables missing' })
+  if (!GQL || !ADDRESS_RED_BANK || !ADDRESS_INCENTIVES) {
+    return res.status(404).json(ENV_MISSING_MESSAGE)
   }
 
   const marketAssets = getMarketAssets()
@@ -18,17 +14,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const marketQueries = marketAssets.map(
     (asset: Asset) =>
       `${asset.symbol}Market: contractQuery(
-        contractAddress: "${redBankAddress}"
+        contractAddress: "${ADDRESS_RED_BANK}"
         query: { market: { denom: "${asset.denom}" } }
       )
       ${asset.symbol}MarketIncentive: contractQuery(
-        contractAddress: "${incentivesAddress}"
+        contractAddress: "${ADDRESS_INCENTIVES}"
         query: { asset_incentive: { denom: "${asset.denom}" } }
       )`,
   )
 
   const result = await gqlRequest<RedBankData>(
-    url,
+    GQL,
     gql`
       query RedbankQuery {
         rbwasmkey: wasm {

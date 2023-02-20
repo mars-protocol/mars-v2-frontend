@@ -4,18 +4,24 @@ import { WalletManagerProvider } from '@marsprotocol/wallet-connector'
 import { FC } from 'react'
 
 import { CircularProgress } from 'components/CircularProgress'
+import { CHAIN_ID, ENV_MISSING_MESSAGE, REST, RPC, WALLETS } from 'constants/env'
 
 type Props = {
   children?: React.ReactNode
 }
 
 export const WalletConnectProvider: FC<Props> = ({ children }) => {
-  const chainInfoOverrides = {
-    rpc: process.env.NEXT_PUBLIC_RPC ?? '',
-    rest: process.env.NEXT_PUBLIC_REST ?? '',
-    chainID: process.env.NEXT_PUBLIC_CHAIN_ID ?? '',
+  if (!CHAIN_ID || !REST || !RPC || !WALLETS) {
+    console.error(ENV_MISSING_MESSAGE)
+    return null
   }
-  const enabledWallets: string[] = process.env.NEXT_PUBLIC_WALLETS?.split(',') ?? []
+
+  const chainInfoOverrides = {
+    rpc: RPC,
+    rest: REST,
+    chainID: CHAIN_ID,
+  }
+  const enabledWallets: string[] = WALLETS
 
   return (
     <WalletManagerProvider

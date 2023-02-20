@@ -1,27 +1,24 @@
-import { getMarketAssets } from 'utils/assets'
 import { gql, request as gqlRequest } from 'graphql-request'
 import { NextApiRequest, NextApiResponse } from 'next'
 
+import { ADDRESS_ORACLE, ENV_MISSING_MESSAGE, GQL } from 'constants/env'
+import { getMarketAssets } from 'utils/assets'
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const network = process.env.NEXT_PUBLIC_NETWORK
-
-  const url = process.env.NEXT_PUBLIC_GQL
-  const oracleAddress = process.env.NEXT_PUBLIC_ORACLE
-
-  if (!network || !url || !oracleAddress) {
-    return res.status(404).json({ message: 'Env variables missing' })
+  if (!GQL || !ADDRESS_ORACLE) {
+    return res.status(404).json(ENV_MISSING_MESSAGE)
   }
 
   const marketAssets = getMarketAssets()
 
   const result = await gqlRequest<TokenPricesResult>(
-    url,
+    GQL,
     gql`
       query PriceOracle {
         prices: wasm {
           ${marketAssets.map((asset) => {
             return `${asset.symbol}: contractQuery(
-              contractAddress: "${oracleAddress}"
+              contractAddress: "${ADDRESS_ORACLE}"
               query: {
                 price: {
                   denom: "${asset.denom}"

@@ -1,4 +1,4 @@
-const isTestnet = process.env.NEXT_PUBLIC_NETWORK !== 'mainnet'
+import { IS_TESTNET } from 'constants/env'
 
 export const ASSETS: Asset[] = [
   {
@@ -20,7 +20,7 @@ export const ASSETS: Asset[] = [
     logo: '/tokens/atom.svg',
     decimals: 6,
     hasOraclePrice: true,
-    isEnabled: isTestnet ? true : false,
+    isEnabled: IS_TESTNET ? true : false,
     isMarket: true,
   },
   {
@@ -37,13 +37,13 @@ export const ASSETS: Asset[] = [
   {
     symbol: 'MARS',
     name: 'Mars',
-    denom: isTestnet
+    denom: IS_TESTNET
       ? 'ibc/ACA4C8A815A053CC027DB90D15915ADA31939FA331CE745862CDD00A2904FA17'
       : 'ibc/573FCD90FACEE750F55A8864EF7D38265F07E5A9273FA0E8DAFD39951332B580',
     color: '#dd5b65',
     logo: '/tokens/mars.svg',
     decimals: 6,
-    poolId: isTestnet ? 768 : 907,
+    poolId: IS_TESTNET ? 768 : 907,
     hasOraclePrice: true,
     isMarket: false,
     isEnabled: true,
@@ -56,7 +56,7 @@ export const ASSETS: Asset[] = [
     logo: '/tokens/juno.svg',
     decimals: 6,
     hasOraclePrice: true,
-    isMarket: true,
+    isMarket: IS_TESTNET,
     isEnabled: false,
   },
 ]

@@ -1,16 +1,15 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { NextApiRequest, NextApiResponse } from 'next'
 
+import { ADDRESS_CREDIT_MANAGER, ENV_MISSING_MESSAGE, RPC } from 'constants/env'
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const url = process.env.NEXT_PUBLIC_RPC
-  const creditManagerAddress = process.env.NEXT_PUBLIC_CREDIT_MANAGER
-
-  if (!url || !creditManagerAddress) {
-    return res.status(404).json({ message: 'Env variables missing' })
+  if (!RPC || !ADDRESS_CREDIT_MANAGER) {
+    return res.status(404).json(ENV_MISSING_MESSAGE)
   }
-  const client = await CosmWasmClient.connect(url)
+  const client = await CosmWasmClient.connect(RPC)
 
-  const data = await client.queryContractSmart(creditManagerAddress, {
+  const data = await client.queryContractSmart(ADDRESS_CREDIT_MANAGER, {
     vaults_info: { limit: 5, start_after: undefined },
   })
 

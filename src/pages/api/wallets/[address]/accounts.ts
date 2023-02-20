@@ -1,18 +1,17 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { NextApiRequest, NextApiResponse } from 'next'
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const url = process.env.NEXT_PUBLIC_RPC
-  const accountNftAddress = process.env.NEXT_PUBLIC_ACCOUNT_NFT
+import { ADDRESS_ACCOUNT_NFT, ENV_MISSING_MESSAGE, RPC } from 'constants/env'
 
-  if (!url || !accountNftAddress) {
-    return res.status(404).json({ message: 'Env variables missing' })
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (!RPC || !ADDRESS_ACCOUNT_NFT) {
+    return res.status(404).json(ENV_MISSING_MESSAGE)
   }
   const address = req.query.address
 
-  const client = await CosmWasmClient.connect(url)
+  const client = await CosmWasmClient.connect(RPC)
 
-  const data = await client.queryContractSmart(accountNftAddress, {
+  const data = await client.queryContractSmart(ADDRESS_ACCOUNT_NFT, {
     tokens: {
       owner: address,
     },
