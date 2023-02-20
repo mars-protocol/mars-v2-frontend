@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { ReactNode } from 'react'
 
 import { Tooltip } from 'components/Tooltip'
-import { useSettingsStore } from 'store/useSettingsStore'
+import useStore from 'store'
 
 interface Props {
   tooltip: string | ReactNode
@@ -20,7 +20,7 @@ export const Gauge = ({
   label,
   tooltip,
 }: Props) => {
-  const enableAnimations = useSettingsStore((s) => s.enableAnimations)
+  const enableAnimations = useStore((s) => s.enableAnimations)
 
   const percentage = value * 100
   const percentageValue = percentage > 100 ? 100 : percentage < 0 ? 0 : percentage

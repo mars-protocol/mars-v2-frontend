@@ -1,7 +1,7 @@
 import create, { GetState, SetState, StoreApi, UseBoundStore } from 'zustand'
 import { devtools } from 'zustand/middleware'
-import { CommonSlice, createCommonSlice } from './slices/common'
 
+import { CommonSlice, createCommonSlice } from './slices/common'
 import { createWalletSlice, WalletSlice } from './slices/wallet'
 
 export interface Store extends CommonSlice, WalletSlice {}

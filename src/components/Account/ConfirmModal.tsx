@@ -4,11 +4,11 @@ import { CircularProgress } from 'components/CircularProgress'
 import { MarsProtocol } from 'components/Icons'
 import { Modal } from 'components/Modal'
 import { Text } from 'components/Text'
-import { useModalStore } from 'store/useModalStore'
+import useStore from 'store'
 
 export const ConfirmModal = () => {
-  const createOpen = useModalStore((s) => s.createAccountModal)
-  const deleteOpen = useModalStore((s) => s.deleteAccountModal)
+  const createOpen = useStore((s) => s.createAccountModal)
+  const deleteOpen = useStore((s) => s.deleteAccountModal)
 
   return (
     <Modal open={createOpen || deleteOpen}>

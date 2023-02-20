@@ -2,12 +2,12 @@
 
 import classNames from 'classnames'
 import { useMemo, useState } from 'react'
+import { useAccountDetailsStore } from 'store/useAccountDetailsStore'
 
 import { AccountManageOverlay } from 'components/Account/AccountManageOverlay'
 import { Button } from 'components/Button'
 import { ChevronDown } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
-import { useAccountDetailsStore } from 'store/useAccountDetailsStore'
 
 interface Props {
   creditAccountsList: string[]

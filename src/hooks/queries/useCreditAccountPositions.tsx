@@ -2,8 +2,8 @@ import { Coin } from '@cosmjs/stargate'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { useNetworkConfigStore } from 'store/useNetworkConfigStore'
-import { useWalletStore } from 'stores/useWalletStore'
+import { ADDRESS_CREDIT_MANAGER } from 'constants/env'
+import useStore from 'store'
 import { queryKeys } from 'types/query-keys-factory'
 
 interface DebtAmount {
@@ -25,14 +25,14 @@ interface Result {
 }
 
 export const useCreditAccountPositions = (accountId: string) => {
-  const address = useWalletStore((s) => s.address)
-  const client = useWalletStore((s) => s.signingClient)
-  const creditManagerAddress = useNetworkConfigStore((s) => s.contracts.creditManager)
+  const address = useStore((s) => s.address)
+  const client = useStore((s) => s.signingClient)
+  const creditManagerAddress = ADDRESS_CREDIT_MANAGER
 
   const result = useQuery<Result>(
     queryKeys.creditAccountsPositions(accountId),
     async () =>
-      client?.queryContractSmart(creditManagerAddress, {
+      client?.queryContractSmart(creditManagerAddress || '', {
         positions: {
           account_id: accountId,
         },

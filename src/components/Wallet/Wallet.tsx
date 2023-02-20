@@ -10,13 +10,13 @@ import { useEffect, useState } from 'react'
 
 import ConnectButton from 'components/Wallet/ConnectButton'
 import ConnectedButton from 'components/Wallet/ConnectedButton'
-import { useWalletStore } from 'stores/useWalletStore'
+import useStore from 'store'
 
 export default function Wallet() {
   const { status } = useWalletManager()
   const [isConnected, setIsConnected] = useState(false)
   const { recentWallet, simulate, sign, broadcast } = useWallet()
-  const client = useWalletStore((s) => s.client)
+  const client = useStore((s) => s.client)
 
   useEffect(() => {
     const connectedStatus = status === WalletConnectionStatus.Connected
@@ -37,7 +37,7 @@ export default function Wallet() {
           sign,
           simulate,
         }
-        useWalletStore.setState({ client })
+        useStore.setState({ client })
       }
 
       getCosmWasmClient()

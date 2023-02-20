@@ -3,9 +3,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { useAccountDetailsStore } from 'store/useAccountDetailsStore'
-import { useNetworkConfigStore } from 'store/useNetworkConfigStore'
-import { useWalletStore } from 'stores/useWalletStore'
+import { ADDRESS_ACCOUNT_NFT } from 'constants/env'
+import useStore from 'store'
 import { queryKeys } from 'types/query-keys-factory'
 
 type Result = {
@@ -13,12 +12,12 @@ type Result = {
 }
 
 export const useCreditAccounts = () => {
-  const address = useWalletStore((s) => s.address)
-  const client = useWalletStore((s) => s.signingClient)
-  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
-  const accountNftAddress = useNetworkConfigStore((s) => s.contracts.accountNft)
+  const address = useStore((s) => s.address)
+  const client = useStore((s) => s.signingClient)
+  const selectedAccount = useStore((s) => s.selectedAccount)
+  const accountNftAddress = ADDRESS_ACCOUNT_NFT
   const setSelectedAccount = (account: string) => {
-    useAccountDetailsStore.setState({ selectedAccount: account })
+    useStore.setState({ selectedAccount: account })
   }
 
   const queryMsg = useMemo(() => {
@@ -31,7 +30,7 @@ export const useCreditAccounts = () => {
 
   const result = useQuery<Result>(
     queryKeys.creditAccounts(address ?? ''),
-    async () => client?.queryContractSmart(accountNftAddress, queryMsg),
+    async () => client?.queryContractSmart(accountNftAddress || '', queryMsg),
     {
       staleTime: Infinity,
       enabled: !!address && !!client,

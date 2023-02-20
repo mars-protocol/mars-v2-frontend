@@ -1,12 +1,13 @@
 import { MsgExecuteContract } from '@marsprotocol/wallet-connector'
 import { useQuery } from '@tanstack/react-query'
 import { isMobile } from 'react-device-detect'
-import { useWalletStore } from 'stores/useWalletStore'
+
+import useStore from 'store'
 import { queryKeys } from 'types/query-keys-factory'
 
 export const useBroadcast = (props: UseBroadcast) => {
-  const client = useWalletStore((s) => s.client)
-  const userWalletAddress = useWalletStore((s) => s.client?.recentWallet.account?.address)
+  const client = useStore((s) => s.client)
+  const userWalletAddress = useStore((s) => s.client?.recentWallet.account?.address)
   const sender = props.sender ?? userWalletAddress
 
   return useQuery(

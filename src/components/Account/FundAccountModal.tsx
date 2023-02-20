@@ -14,18 +14,17 @@ import { Slider } from 'components/Slider'
 import { useDepositCreditAccount } from 'hooks/mutations/useDepositCreditAccount'
 import { useAllBalances } from 'hooks/queries/useAllBalances'
 import { useAllowedCoins } from 'hooks/queries/useAllowedCoins'
-import { useAccountDetailsStore } from 'store/useAccountDetailsStore'
-import { useModalStore } from 'store/useModalStore'
-import { useNetworkConfigStore } from 'store/useNetworkConfigStore'
+import useStore from 'store'
+import { getMarketAssets } from 'utils/assets'
 
 export const FundAccountModal = () => {
   // ---------------
   // STORE
   // ---------------
-  const open = useModalStore((s) => s.fundAccountModal)
+  const open = useStore((s) => s.fundAccountModal)
 
-  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
-  const whitelistedAssets = useNetworkConfigStore((s) => s.assets.whitelist)
+  const selectedAccount = useStore((s) => s.selectedAccount)
+  const marketAssets = getMarketAssets()
   const [lendAssets, setLendAssets] = useLocalStorageState(`lendAssets_${selectedAccount}`, {
     defaultValue: false,
   })
@@ -45,15 +44,15 @@ export const FundAccountModal = () => {
     selectedAccount || '',
     selectedToken,
     BigNumber(amount)
-      .times(10 ** getTokenDecimals(selectedToken, whitelistedAssets))
+      .times(10 ** getTokenDecimals(selectedToken, marketAssets))
       .toNumber(),
     {
       onSuccess: () => {
         setAmount(0)
         toast.success(
-          `${amount} ${getTokenSymbol(selectedToken, whitelistedAssets)} successfully Deposited`,
+          `${amount} ${getTokenSymbol(selectedToken, marketAssets)} successfully Deposited`,
         )
-        useModalStore.setState({ fundAccountModal: false })
+        useStore.setState({ fundAccountModal: false })
       },
     },
   )
@@ -69,9 +68,9 @@ export const FundAccountModal = () => {
     if (!selectedToken) return 0
 
     return BigNumber(balancesData?.find((balance) => balance.denom === selectedToken)?.amount ?? 0)
-      .div(10 ** getTokenDecimals(selectedToken, whitelistedAssets))
+      .div(10 ** getTokenDecimals(selectedToken, marketAssets))
       .toNumber()
-  }, [balancesData, selectedToken, whitelistedAssets])
+  }, [balancesData, selectedToken, marketAssets])
 
   const handleValueChange = (value: number) => {
     if (value > walletAmount) {
@@ -83,7 +82,7 @@ export const FundAccountModal = () => {
   }
 
   const setOpen = (open: boolean) => {
-    useModalStore.setState({ fundAccountModal: open })
+    useStore.setState({ fundAccountModal: open })
   }
 
   const maxValue = walletAmount
@@ -145,7 +144,7 @@ export const FundAccountModal = () => {
                     >
                       {allowedCoinsData?.map((entry) => (
                         <option key={entry} value={entry}>
-                          {getTokenSymbol(entry, whitelistedAssets)}
+                          {getTokenSymbol(entry, marketAssets)}
                         </option>
                       ))}
                     </select>
@@ -169,7 +168,7 @@ export const FundAccountModal = () => {
                 <Text size='xs' uppercase className='mb-2 text-white/60'>
                   {`In wallet: ${walletAmount.toLocaleString()} ${getTokenSymbol(
                     selectedToken,
-                    whitelistedAssets,
+                    marketAssets,
                   )}`}
                 </Text>
                 <Slider
@@ -177,7 +176,7 @@ export const FundAccountModal = () => {
                   value={percentageValue}
                   onChange={(value) => {
                     const decimal = value[0] / 100
-                    const tokenDecimals = getTokenDecimals(selectedToken, whitelistedAssets)
+                    const tokenDecimals = getTokenDecimals(selectedToken, marketAssets)
                     // limit decimal precision based on token contract decimals
                     const newAmount = Number((decimal * maxValue).toFixed(tokenDecimals))
 

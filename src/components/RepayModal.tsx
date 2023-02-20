@@ -13,10 +13,10 @@ import { useRepayFunds } from 'hooks/mutations/useRepayFunds'
 import { useAllBalances } from 'hooks/queries/useAllBalances'
 import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositions'
 import { useTokenPrices } from 'hooks/queries/useTokenPrices'
-import { useAccountDetailsStore } from 'store/useAccountDetailsStore'
-import { useNetworkConfigStore } from 'store/useNetworkConfigStore'
 import { formatCurrency } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
+import { getMarketAssets } from 'utils/assets'
+import useStore from 'store'
 
 // 0.001% buffer / slippage to avoid repay action from not fully repaying the debt amount
 const REPAY_BUFFER = 1.00001
@@ -30,11 +30,11 @@ type Props = {
 export const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
   const [amount, setAmount] = useState(0)
 
-  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
+  const selectedAccount = useStore((s) => s.selectedAccount)
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
-  const whitelistedAssets = useNetworkConfigStore((s) => s.assets.whitelist)
+  const marketAssets = getMarketAssets()
 
-  const tokenSymbol = getTokenSymbol(tokenDenom, whitelistedAssets)
+  const tokenSymbol = getTokenSymbol(tokenDenom, marketAssets)
 
   const maxRepayAmount = useMemo(() => {
     const tokenDebtAmount =
@@ -43,13 +43,13 @@ export const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
     return BigNumber(tokenDebtAmount)
       .times(REPAY_BUFFER)
       .decimalPlaces(0)
-      .div(10 ** getTokenDecimals(tokenDenom, whitelistedAssets))
+      .div(10 ** getTokenDecimals(tokenDenom, marketAssets))
       .toNumber()
-  }, [positionsData, tokenDenom, whitelistedAssets])
+  }, [positionsData, tokenDenom, marketAssets])
 
   const { mutate, isLoading } = useRepayFunds(
     BigNumber(amount)
-      .times(10 ** getTokenDecimals(tokenDenom, whitelistedAssets))
+      .times(10 ** getTokenDecimals(tokenDenom, marketAssets))
       .toNumber(),
     tokenDenom,
     {
@@ -69,9 +69,9 @@ export const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
 
   const walletAmount = useMemo(() => {
     return BigNumber(balancesData?.find((balance) => balance.denom === tokenDenom)?.amount ?? 0)
-      .div(10 ** getTokenDecimals(tokenDenom, whitelistedAssets))
+      .div(10 ** getTokenDecimals(tokenDenom, marketAssets))
       .toNumber()
-  }, [balancesData, tokenDenom, whitelistedAssets])
+  }, [balancesData, tokenDenom, marketAssets])
 
   const tokenPrice = tokenPrices?.[tokenDenom] ?? 0
 
@@ -149,7 +149,7 @@ export const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
                           allowNegative={false}
                           onValueChange={(v) => handleValueChange(v.floatValue || 0)}
                           suffix={` ${tokenSymbol}`}
-                          decimalScale={getTokenDecimals(tokenDenom, whitelistedAssets)}
+                          decimalScale={getTokenDecimals(tokenDenom, marketAssets)}
                         />
                         <div className='flex justify-between text-xs tracking-widest'>
                           <div>
@@ -164,7 +164,7 @@ export const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
                         value={percentageValue}
                         onChange={(value) => {
                           const decimal = value[0] / 100
-                          const tokenDecimals = getTokenDecimals(tokenDenom, whitelistedAssets)
+                          const tokenDecimals = getTokenDecimals(tokenDenom, marketAssets)
                           // limit decimal precision based on token contract decimals
                           const newAmount = Number((decimal * maxValue).toFixed(tokenDecimals))
 

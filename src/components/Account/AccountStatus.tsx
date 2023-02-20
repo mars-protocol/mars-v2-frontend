@@ -12,16 +12,16 @@ import { Text } from 'components/Text'
 import { useAccountStats } from 'hooks/data/useAccountStats'
 import { useCreateCreditAccount } from 'hooks/mutations/useCreateCreditAccount'
 import { useCreditAccounts } from 'hooks/queries/useCreditAccounts'
-import { useNetworkConfigStore } from 'store/useNetworkConfigStore'
-import { useModalStore } from 'store/useModalStore'
+import useStore from 'store'
+import { getBaseAsset } from 'utils/assets'
 
 export const AccountStatus = () => {
-  const baseAsset = useNetworkConfigStore((s) => s.assets.base)
+  const baseAsset = getBaseAsset()
   const accountStats = useAccountStats()
   const { data: creditAccountsList } = useCreditAccounts()
   const { mutate: createCreditAccount, isLoading: isLoadingCreate } = useCreateCreditAccount()
   useEffect(() => {
-    useModalStore.setState({ createAccountModal: isLoadingCreate })
+    useStore.setState({ createAccountModal: isLoadingCreate })
   }, [isLoadingCreate])
 
   const hasCreditAccounts = creditAccountsList && creditAccountsList.length > 0

@@ -17,8 +17,8 @@ import { useAllowedCoins } from 'hooks/queries/useAllowedCoins'
 import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositions'
 import { useMarkets } from 'hooks/queries/useMarkets'
 import { useTokenPrices } from 'hooks/queries/useTokenPrices'
-import { useAccountDetailsStore } from 'store/useAccountDetailsStore'
-import { useNetworkConfigStore } from 'store/useNetworkConfigStore'
+import { getMarketAssets } from 'utils/assets'
+import useStore from 'store'
 
 enum FundingMode {
   Account = 'Account',
@@ -26,7 +26,7 @@ enum FundingMode {
 }
 
 export const TradeActionModule = () => {
-  const whitelistedAssets = useNetworkConfigStore((s) => s.assets.whitelist)
+  const marketAssets = getMarketAssets()
 
   const [selectedTokenIn, setSelectedTokenIn] = useState('')
   const [selectedTokenOut, setSelectedTokenOut] = useState('')
@@ -37,7 +37,7 @@ export const TradeActionModule = () => {
 
   const [isMarginEnabled, setIsMarginEnabled] = React.useState(false)
 
-  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
+  const selectedAccount = useStore((s) => s.selectedAccount)
 
   const { data: allowedCoinsData } = useAllowedCoins()
   const { data: balancesData } = useAllBalances()
@@ -99,8 +99,8 @@ export const TradeActionModule = () => {
         toast.success(
           `${amountIn} ${getTokenSymbol(
             selectedTokenIn,
-            whitelistedAssets,
-          )} swapped for ${amountOut} ${getTokenSymbol(selectedTokenOut, whitelistedAssets)}`,
+            marketAssets,
+          )} swapped for ${amountOut} ${getTokenSymbol(selectedTokenOut, marketAssets)}`,
         )
         resetAmounts()
       },
@@ -195,20 +195,20 @@ export const TradeActionModule = () => {
             >
               {allowedCoinsData?.map((entry) => (
                 <option key={entry} value={entry}>
-                  {getTokenSymbol(entry, whitelistedAssets)}
+                  {getTokenSymbol(entry, marketAssets)}
                 </option>
               ))}
             </select>
             <input
               type='number'
               className='h-8 flex-1 px-2 text-black outline-0'
-              value={amountIn / 10 ** getTokenDecimals(selectedTokenIn, whitelistedAssets)}
+              value={amountIn / 10 ** getTokenDecimals(selectedTokenIn, marketAssets)}
               min='0'
               placeholder='0.00'
               onChange={(e) => {
                 const valueAsNumber = e.target.valueAsNumber
                 const valueWithDecimals =
-                  valueAsNumber * 10 ** getTokenDecimals(selectedTokenIn, whitelistedAssets)
+                  valueAsNumber * 10 ** getTokenDecimals(selectedTokenIn, marketAssets)
 
                 handleAmountChange(valueWithDecimals, 'in')
               }}
@@ -235,20 +235,20 @@ export const TradeActionModule = () => {
             >
               {allowedCoinsData?.map((entry) => (
                 <option key={entry} value={entry}>
-                  {getTokenSymbol(entry, whitelistedAssets)}
+                  {getTokenSymbol(entry, marketAssets)}
                 </option>
               ))}
             </select>
             <input
               type='number'
               className='h-8 flex-1 px-2 text-black outline-0'
-              value={amountOut / 10 ** getTokenDecimals(selectedTokenOut, whitelistedAssets)}
+              value={amountOut / 10 ** getTokenDecimals(selectedTokenOut, marketAssets)}
               min='0'
               placeholder='0.00'
               onChange={(e) => {
                 const valueAsNumber = e.target.valueAsNumber
                 const valueWithDecimals =
-                  valueAsNumber * 10 ** getTokenDecimals(selectedTokenOut, whitelistedAssets)
+                  valueAsNumber * 10 ** getTokenDecimals(selectedTokenOut, marketAssets)
 
                 handleAmountChange(valueWithDecimals, 'out')
               }}
@@ -258,29 +258,29 @@ export const TradeActionModule = () => {
         <div className='mb-1'>
           In Wallet:{' '}
           {BigNumber(walletAmount)
-            .dividedBy(10 ** getTokenDecimals(selectedTokenIn, whitelistedAssets))
+            .dividedBy(10 ** getTokenDecimals(selectedTokenIn, marketAssets))
             .toNumber()
             .toLocaleString(undefined, {
-              maximumFractionDigits: getTokenDecimals(selectedTokenIn, whitelistedAssets),
+              maximumFractionDigits: getTokenDecimals(selectedTokenIn, marketAssets),
             })}{' '}
-          <span>{getTokenSymbol(selectedTokenIn, whitelistedAssets)}</span>
+          <span>{getTokenSymbol(selectedTokenIn, marketAssets)}</span>
         </div>
         <div className='mb-4'>
           In Account:{' '}
           {BigNumber(accountAmount)
-            .dividedBy(10 ** getTokenDecimals(selectedTokenIn, whitelistedAssets))
+            .dividedBy(10 ** getTokenDecimals(selectedTokenIn, marketAssets))
             .toNumber()
             .toLocaleString(undefined, {
-              maximumFractionDigits: getTokenDecimals(selectedTokenIn, whitelistedAssets),
+              maximumFractionDigits: getTokenDecimals(selectedTokenIn, marketAssets),
             })}{' '}
-          <span>{getTokenSymbol(selectedTokenIn, whitelistedAssets)}</span>
+          <span>{getTokenSymbol(selectedTokenIn, marketAssets)}</span>
         </div>
         <Slider
           className='mb-6'
           value={percentageValue}
           onChange={(value) => {
             const decimal = value[0] / 100
-            const tokenDecimals = getTokenDecimals(selectedTokenIn, whitelistedAssets)
+            const tokenDecimals = getTokenDecimals(selectedTokenIn, marketAssets)
             // limit decimal precision based on token contract decimals
             const newAmount = Number((decimal * maxAmount).toFixed(0))
 
@@ -316,10 +316,10 @@ export const TradeActionModule = () => {
           <p>
             {isMarginEnabled
               ? BigNumber(borrowAmount)
-                  .dividedBy(10 ** getTokenDecimals(selectedTokenIn, whitelistedAssets))
+                  .dividedBy(10 ** getTokenDecimals(selectedTokenIn, marketAssets))
                   .toNumber()
                   .toLocaleString(undefined, {
-                    maximumFractionDigits: getTokenDecimals(selectedTokenIn, whitelistedAssets),
+                    maximumFractionDigits: getTokenDecimals(selectedTokenIn, marketAssets),
                   })
               : '-'}
           </p>
