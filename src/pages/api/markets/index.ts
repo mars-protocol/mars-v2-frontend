@@ -1,25 +1,34 @@
 import { gql, request as gqlRequest } from 'graphql-request'
 import { NextApiRequest, NextApiResponse } from 'next'
 
-import { networkConfig } from 'config/osmo-test-4'
+import { getMarketAssets } from 'utils/assets'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const whitelistedAssets = networkConfig.assets.whitelist
+  const network = process.env.NEXT_PUBLIC_NETWORK
+  const url = process.env.NEXT_PUBLIC_GQL
+  const redBankAddress = process.env.NEXT_PUBLIC_RED_BANK
+  const incentivesAddress = process.env.NEXT_PUBLIC_INCENTIVES
 
-  const marketQueries = whitelistedAssets.map(
+  if (!url || !redBankAddress || !incentivesAddress || !network) {
+    return res.status(404).json({ message: 'Env variables missing' })
+  }
+
+  const marketAssets = getMarketAssets()
+
+  const marketQueries = marketAssets.map(
     (asset: Asset) =>
       `${asset.symbol}Market: contractQuery(
-        contractAddress: "osmo1t0dl6r27phqetfu0geaxrng0u9zn8qgrdwztapt5xr32adtwptaq6vwg36"
+        contractAddress: "${redBankAddress}"
         query: { market: { denom: "${asset.denom}" } }
       )
       ${asset.symbol}MarketIncentive: contractQuery(
-        contractAddress: "osmo1zxs8fry3m8j94pqg7h4muunyx86en27cl0xgk76fc839xg2qnn6qtpjs48"
+        contractAddress: "${incentivesAddress}"
         query: { asset_incentive: { denom: "${asset.denom}" } }
       )`,
   )
 
   const result = await gqlRequest<RedBankData>(
-    'https://osmosis-delphi-testnet-1.simply-vc.com.mt/XF32UOOU55CX/osmosis-hive/graphql',
+    url,
     gql`
       query RedbankQuery {
         rbwasmkey: wasm {

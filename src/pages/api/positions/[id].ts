@@ -8,10 +8,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!url || !creditManagerAddress) {
     return res.status(404).json({ message: 'Env variables missing' })
   }
+
+  const accountId = req.query.id
+
   const client = await CosmWasmClient.connect(url)
 
   const data = await client.queryContractSmart(creditManagerAddress, {
-    vaults_info: { limit: 5, start_after: undefined },
+    positions: {
+      account_id: accountId,
+    },
   })
 
   if (data) {
