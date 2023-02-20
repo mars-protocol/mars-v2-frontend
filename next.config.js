@@ -1,4 +1,4 @@
-// const nodeExternals = require('webpack-node-externals');
+const nodeExternals = require('webpack-node-externals');
 
 /** @type {import('next').NextConfig} */
 
@@ -20,7 +20,12 @@ const nextConfig = {
       // },
     ]
   },
-  webpack(config, { isServer }) {
+  exernalsPresets: {node: true},
+  externals: [nodeExternals()],
+  future: {
+    webpack5: true,
+  },
+  webpack(config, {isServer}) {
     if (isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
