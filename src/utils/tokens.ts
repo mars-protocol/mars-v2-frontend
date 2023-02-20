@@ -1,15 +1,13 @@
-import { networkConfig } from 'config/osmo-test-4'
+import { getBaseAsset } from './assets'
 
-export const getTokenSymbol = (denom: string, whitelistedAssets: Asset[]) =>
-  whitelistedAssets.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())?.symbol || ''
+export const getTokenSymbol = (denom: string, marketAssets: Asset[]) =>
+  marketAssets.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())?.symbol || ''
 
-export const getTokenDecimals = (denom: string, whitelistedAssets: Asset[]) =>
-  whitelistedAssets.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())?.decimals ||
-  6
+export const getTokenDecimals = (denom: string, marketAssets: Asset[]) =>
+  marketAssets.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())?.decimals || 6
 
-export const getTokenIcon = (denom: string, whitelistedAssets: Asset[]) =>
-  whitelistedAssets.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())?.logo || ''
+export const getTokenIcon = (denom: string, marketAssets: Asset[]) =>
+  marketAssets.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())?.logo || ''
 
-export const getTokenInfo = (denom: string, whitelistedAssets: Asset[]) =>
-  whitelistedAssets.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase()) ||
-  networkConfig.assets.base
+export const getTokenInfo = (denom: string, marketAssets: Asset[]) =>
+  marketAssets.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase()) || getBaseAsset()
