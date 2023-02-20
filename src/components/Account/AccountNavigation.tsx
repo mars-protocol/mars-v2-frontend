@@ -7,7 +7,7 @@ import { AccountManageOverlay } from 'components/Account/AccountManageOverlay'
 import { Button } from 'components/Button'
 import { ChevronDown } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
-import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
+import useStore from 'store'
 
 interface Props {
   creditAccountsList: string[]
@@ -38,7 +38,7 @@ export const AccountNavigation = ({ creditAccountsList, selectedAccount }: Props
           )}
           variant='text'
           onClick={() => {
-            useAccountDetailsStore.setState({ selectedAccount: account, isOpen: true })
+            useStore.setState({ selectedAccount: account, isOpen: true })
           }}
         >
           Account {account}
@@ -71,7 +71,7 @@ export const AccountNavigation = ({ creditAccountsList, selectedAccount }: Props
                     )}
                     onClick={() => {
                       setShowMoreMenu(!showMoreMenu)
-                      useAccountDetailsStore.setState({ selectedAccount: account, isOpen: true })
+                      useStore.setState({ selectedAccount: account, isOpen: true })
                     }}
                   >
                     Account {account}

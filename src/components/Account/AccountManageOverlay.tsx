@@ -9,8 +9,7 @@ import { Overlay } from 'components/Overlay/Overlay'
 import { OverlayAction } from 'components/Overlay/OverlayAction'
 import { useCreateCreditAccount } from 'hooks/mutations/useCreateCreditAccount'
 import { useDeleteCreditAccount } from 'hooks/mutations/useDeleteCreditAccount'
-import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
-import { useModalStore } from 'stores/useModalStore'
+import useStore from 'store'
 
 interface Props {
   className?: string
@@ -19,7 +18,7 @@ interface Props {
 }
 
 export const AccountManageOverlay = ({ className, setShow, show }: Props) => {
-  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
+  const selectedAccount = useStore((s) => s.selectedAccount)
 
   const { mutate: createCreditAccount, isLoading: isLoadingCreate } = useCreateCreditAccount()
   const { mutate: deleteCreditAccount, isLoading: isLoadingDelete } = useDeleteCreditAccount(
@@ -27,11 +26,11 @@ export const AccountManageOverlay = ({ className, setShow, show }: Props) => {
   )
 
   useEffect(() => {
-    useModalStore.setState({ createAccountModal: isLoadingCreate })
+    useStore.setState({ createAccountModal: isLoadingCreate })
   }, [isLoadingCreate])
 
   useEffect(() => {
-    useModalStore.setState({ deleteAccountModal: isLoadingDelete })
+    useStore.setState({ deleteAccountModal: isLoadingDelete })
   }, [isLoadingDelete])
 
   return (
@@ -44,7 +43,7 @@ export const AccountManageOverlay = ({ className, setShow, show }: Props) => {
           <Button
             className='flex w-[115px] items-center justify-center pl-0 pr-2'
             onClick={() => {
-              useModalStore.setState({ fundAccountModal: true })
+              useStore.setState({ fundAccountModal: true })
               setShow(false)
             }}
           >
@@ -57,7 +56,7 @@ export const AccountManageOverlay = ({ className, setShow, show }: Props) => {
             className='flex w-[115px] items-center justify-center pl-0 pr-2'
             color='secondary'
             onClick={() => {
-              useModalStore.setState({ withdrawModal: true })
+              useStore.setState({ withdrawModal: true })
               setShow(false)
             }}
           >

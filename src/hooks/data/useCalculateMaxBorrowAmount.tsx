@@ -5,9 +5,9 @@ import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositio
 import { useMarkets } from 'hooks/queries/useMarkets'
 import { useRedbankBalances } from 'hooks/queries/useRedbankBalances'
 import { useTokenPrices } from 'hooks/queries/useTokenPrices'
-import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
-import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
 import { getTokenDecimals } from 'utils/tokens'
+import useStore from 'store'
+import { getMarketAssets } from 'utils/assets'
 
 const getApproximateHourlyInterest = (amount: string, borrowAPY: string) => {
   const hourlyAPY = BigNumber(borrowAPY).div(24 * 365)
@@ -16,8 +16,8 @@ const getApproximateHourlyInterest = (amount: string, borrowAPY: string) => {
 }
 
 export const useCalculateMaxBorrowAmount = (denom: string, isUnderCollateralized: boolean) => {
-  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
-  const whitelistedAssets = useNetworkConfigStore((s) => s.assets.whitelist)
+  const selectedAccount = useStore((s) => s.selectedAccount)
+  const marketAssets = getMarketAssets()
 
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
   const { data: marketsData } = useMarkets()
@@ -61,7 +61,7 @@ export const useCalculateMaxBorrowAmount = (denom: string, isUnderCollateralized
     }, 0)
 
     const borrowTokenPrice = tokenPrices[denom]
-    const tokenDecimals = getTokenDecimals(denom, whitelistedAssets)
+    const tokenDecimals = getTokenDecimals(denom, marketAssets)
 
     let maxAmountCapacity
     if (isUnderCollateralized) {
@@ -99,6 +99,6 @@ export const useCalculateMaxBorrowAmount = (denom: string, isUnderCollateralized
     positionsData,
     redbankBalances,
     tokenPrices,
-    whitelistedAssets,
+    marketAssets,
   ])
 }

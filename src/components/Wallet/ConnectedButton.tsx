@@ -18,9 +18,9 @@ import { Check, Copy, ExternalLink, Osmo } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
 import { Text } from 'components/Text'
 import getUserBalances from 'libs/getUserBalances'
-import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
-import { useWalletStore } from 'stores/useWalletStore'
 import { formatValue, truncate } from 'utils/formatters'
+import useStore from 'store'
+import { getBaseAsset } from 'utils/assets'
 
 export default function ConnectedButton() {
   // ---------------
@@ -28,10 +28,10 @@ export default function ConnectedButton() {
   // ---------------
   const { disconnect } = useWallet()
   const { disconnect: terminate } = useWalletManager()
-  const address = useWalletStore((s) => s.client?.recentWallet.account?.address)
-  const network = useWalletStore((s) => s.client?.recentWallet.network)
-  const name = useWalletStore((s) => s.name)
-  const baseAsset = useNetworkConfigStore((s) => s.assets.base)
+  const address = useStore((s) => s.client?.recentWallet.account?.address)
+  const network = useStore((s) => s.client?.recentWallet.network)
+  const name = useStore((s) => s.name)
+  const baseAsset = getBaseAsset()
 
   const { data, isLoading } = useSWR(address, getUserBalances)
 

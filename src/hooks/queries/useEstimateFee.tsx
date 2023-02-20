@@ -1,13 +1,14 @@
 import { MsgExecuteContract } from '@marsprotocol/wallet-connector'
 import { useQuery } from '@tanstack/react-query'
 import BigNumber from 'bignumber.js'
+
 import { GAS_ADJUSTMENT } from 'constants/gas'
-import { useWalletStore } from 'stores/useWalletStore'
+import useStore from 'store'
 import { queryKeys } from 'types/query-keys-factory'
 
 export const useEstimateFee = (props: UseEstimateFee) => {
-  const client = useWalletStore((s) => s.client)
-  const userWalletAddress = useWalletStore((s) => s.client?.recentWallet.account?.address)
+  const client = useStore((s) => s.client)
+  const userWalletAddress = useStore((s) => s.client?.recentWallet.account?.address)
   const sender = props.sender ?? userWalletAddress
 
   return useQuery(

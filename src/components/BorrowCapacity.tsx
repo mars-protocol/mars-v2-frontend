@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { Text } from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
-import { useSettingsStore } from 'stores/useSettingsStore'
+import useStore from 'store'
 
 interface Props {
   balance: number
@@ -29,7 +29,7 @@ export const BorrowCapacity = ({
   hideValues,
   decimals = 2,
 }: Props) => {
-  const enableAnimations = useSettingsStore((s) => s.enableAnimations)
+  const enableAnimations = useStore((s) => s.enableAnimations)
 
   const [percentOfMaxRound, setPercentOfMaxRound] = useState(0)
   const [percentOfMaxRange, setPercentOfMaxRange] = useState(0)

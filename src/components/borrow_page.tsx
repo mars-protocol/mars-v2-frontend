@@ -10,10 +10,10 @@ import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositio
 import { useMarkets } from 'hooks/queries/useMarkets'
 import { useRedbankBalances } from 'hooks/queries/useRedbankBalances'
 import { useTokenPrices } from 'hooks/queries/useTokenPrices'
-import { useAccountDetailsStore } from 'stores/useAccountDetailsStore'
-import { useNetworkConfigStore } from 'stores/useNetworkConfigStore'
 import { Text } from 'components/Text'
 import { getTokenDecimals, getTokenInfo } from 'utils/tokens'
+import useStore from 'store'
+import { getMarketAssets } from 'utils/assets'
 
 type ModalState = {
   show: 'borrow' | 'repay' | false
@@ -23,14 +23,14 @@ type ModalState = {
 }
 
 const Borrow = () => {
-  const whitelistedAssets = useNetworkConfigStore((s) => s.assets.whitelist)
+  const marketAssets = getMarketAssets()
 
   const [modalState, setModalState] = useState<ModalState>({
     show: false,
     data: { tokenDenom: '' },
   })
 
-  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
+  const selectedAccount = useStore((s) => s.selectedAccount)
 
   const { data: allowedCoinsData } = useAllowedCoins()
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
@@ -57,17 +57,17 @@ const Borrow = () => {
         allowedCoinsData
           ?.filter((denom) => borrowedAssetsMap.has(denom))
           .map((denom) => {
-            const { symbol, name, logo } = getTokenInfo(denom, whitelistedAssets)
+            const { symbol, name, logo } = getTokenInfo(denom, marketAssets)
             const borrowRate = Number(marketsData?.[denom].borrow_rate) || 0
             const marketLiquidity = BigNumber(
               redbankBalances?.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())
                 ?.amount || 0,
             )
-              .div(10 ** getTokenDecimals(denom, whitelistedAssets))
+              .div(10 ** getTokenDecimals(denom, marketAssets))
               .toNumber()
 
             const borrowAmount = BigNumber(borrowedAssetsMap.get(denom) as string)
-              .div(10 ** getTokenDecimals(denom, whitelistedAssets))
+              .div(10 ** getTokenDecimals(denom, marketAssets))
               .toNumber()
             const borrowValue = borrowAmount * (tokenPrices?.[denom] ?? 0)
 
@@ -90,13 +90,13 @@ const Borrow = () => {
         allowedCoinsData
           ?.filter((denom) => !borrowedAssetsMap.has(denom))
           .map((denom) => {
-            const { symbol, name, logo } = getTokenInfo(denom, whitelistedAssets)
+            const { symbol, name, logo } = getTokenInfo(denom, marketAssets)
             const borrowRate = Number(marketsData?.[denom].borrow_rate) || 0
             const marketLiquidity = BigNumber(
               redbankBalances?.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())
                 ?.amount || 0,
             )
-              .div(10 ** getTokenDecimals(denom, whitelistedAssets))
+              .div(10 ** getTokenDecimals(denom, marketAssets))
               .toNumber()
 
             const rowData = {
@@ -112,14 +112,7 @@ const Borrow = () => {
             return rowData
           }) ?? [],
     }
-  }, [
-    allowedCoinsData,
-    borrowedAssetsMap,
-    marketsData,
-    redbankBalances,
-    tokenPrices,
-    whitelistedAssets,
-  ])
+  }, [allowedCoinsData, borrowedAssetsMap, marketsData, redbankBalances, tokenPrices, marketAssets])
 
   const handleBorrowClick = (denom: string) => {
     setModalState({ show: 'borrow', data: { tokenDenom: denom } })

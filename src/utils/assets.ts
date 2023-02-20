@@ -11,3 +11,7 @@ export function getAssetBySymbol(symbol: string) {
 export function getMarketAssets(): Asset[] {
   return ASSETS.filter((asset) => asset.isEnabled && asset.isMarket)
 }
+
+export function getBaseAsset() {
+  return ASSETS.find((asset) => asset.denom === 'uosmo')!
+}

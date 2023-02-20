@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 import React, { LegacyRef, ReactNode } from 'react'
 
-import { useSettingsStore } from 'stores/useSettingsStore'
 import { CircularProgress } from 'components/CircularProgress'
+import useStore from 'store'
 
 interface Props {
   children?: string | ReactNode
@@ -74,7 +74,7 @@ export const Button = React.forwardRef(function Button(
   ref,
 ) {
   const buttonClasses = []
-  const enableAnimations = useSettingsStore((s) => s.enableAnimations)
+  const enableAnimations = useStore((s) => s.enableAnimations)
 
   switch (variant) {
     case 'round':
