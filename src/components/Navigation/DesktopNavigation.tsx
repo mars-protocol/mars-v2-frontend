@@ -2,11 +2,11 @@
 
 import Link from 'next/link'
 
+import { AccountNavigation } from 'components/Account/AccountNavigation'
 import { Logo } from 'components/Icons'
 import { menuTree } from 'components/Navigation/menuTree'
 import { NavLink } from 'components/Navigation/NavLink'
 import Wallet from 'components/Wallet/Wallet'
-import { AccountNavigation } from 'components/Account/AccountNavigation'
 
 export default function DesktopNavigation() {
   return (
@@ -14,7 +14,7 @@ export default function DesktopNavigation() {
       <div className='flex items-center justify-between border-b border-white/20 px-6 py-3'>
         <div className='flex flex-grow items-center'>
           <Link href='/trade'>
-            <span className='block h-10 w-10'>
+            <span className='inline-block h-10 w-10'>
               <Logo />
             </span>
           </Link>
@@ -28,11 +28,7 @@ export default function DesktopNavigation() {
         </div>
         <Wallet />
       </div>
-      <div className='flex items-center justify-between border-b border-white/20 pl-6 text-sm text-white/40'>
-        <div className='flex items-center'>
-          <AccountNavigation />
-        </div>
-      </div>
+      <AccountNavigation />
     </div>
   )
 }

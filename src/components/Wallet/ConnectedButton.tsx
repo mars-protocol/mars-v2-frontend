@@ -18,9 +18,9 @@ import { Check, Copy, ExternalLink, Osmo } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
 import { Text } from 'components/Text'
 import getUserBalances from 'libs/getUserBalances'
-import { formatValue, truncate } from 'utils/formatters'
 import useStore from 'store'
 import { getBaseAsset } from 'utils/assets'
+import { formatValue, truncate } from 'utils/formatters'
 
 export default function ConnectedButton() {
   // ---------------
@@ -53,6 +53,12 @@ export default function ConnectedButton() {
 
     window.open(`${explorerUrl}/account/${address}`, '_blank')
   }, [network, address])
+
+  const disconnectWallet = () => {
+    disconnect()
+    terminate()
+    useStore.setState({ client: undefined })
+  }
 
   useEffect(() => {
     if (!data || data.length === 0) return
@@ -118,14 +124,7 @@ export default function ConnectedButton() {
               </div>
             </div>
             <div className='flex h-[31px] w-[116px] justify-end'>
-              <Button
-                color='secondary'
-                onClick={() => {
-                  disconnect()
-                  terminate()
-                }}
-                text='Disconnect'
-              />
+              <Button color='secondary' onClick={disconnectWallet} text='Disconnect' />
             </div>
           </div>
           <div className='flex w-full flex-wrap'>
