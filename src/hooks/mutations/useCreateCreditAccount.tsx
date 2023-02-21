@@ -1,10 +1,10 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
+import useSWR from 'swr'
 
 import { ADDRESS_CREDIT_MANAGER } from 'constants/env'
 import useStore from 'store'
-import { queryKeys } from 'types/query-keys-factory'
 import { hardcodedFee } from 'utils/contants'
+import { queryKeys } from 'types/query-keys-factory'
 
 // 200000 gas used
 const executeMsg = {
@@ -16,9 +16,8 @@ export const useCreateCreditAccount = () => {
   const address = useStore((s) => s.address)
   const creditManagerAddress = ADDRESS_CREDIT_MANAGER
 
-  const queryClient = useQueryClient()
-
-  return useMutation(
+  return useSWR(
+    'qklwfj',
     async () =>
       await signingClient?.execute(
         address ?? '',
@@ -26,21 +25,5 @@ export const useCreateCreditAccount = () => {
         executeMsg,
         hardcodedFee,
       ),
-    {
-      onSettled: () => {
-        queryClient.invalidateQueries(queryKeys.creditAccounts(address ?? ''))
-      },
-      onError: (err: Error) => {
-        toast.error(err.message)
-      },
-      onSuccess: (data) => {
-        if (!data) return
-
-        // TODO: is there some better way to parse response to extract token id???
-        const createdID = data.logs[0].events[2].attributes[6].value
-        useStore.setState({ selectedAccount: createdID })
-        useStore.setState({ fundAccountModal: true })
-      },
-    },
   )
 }

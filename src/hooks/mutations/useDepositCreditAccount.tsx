@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
+import useSWR from 'swr'
 
 import { ADDRESS_CREDIT_MANAGER } from 'constants/env'
 import useStore from 'store'
@@ -19,7 +20,7 @@ export const useDepositCreditAccount = (
   const creditManagerAddress = ADDRESS_CREDIT_MANAGER
   const queryClient = useQueryClient()
 
-  return useMutation(
+  return useSWR(
     async () =>
       await signingClient?.execute(
         address ?? '',

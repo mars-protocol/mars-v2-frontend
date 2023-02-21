@@ -1,9 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
+import useSWR from 'swr'
 
 import { ADDRESS_ACCOUNT_NFT } from 'constants/env'
 import useStore from 'store'
-import { queryKeys } from 'types/query-keys-factory'
 import { hardcodedFee } from 'utils/contants'
 
 export const useDeleteCreditAccount = (accountId: string) => {
@@ -11,9 +10,8 @@ export const useDeleteCreditAccount = (accountId: string) => {
   const address = useStore((s) => s.address)
   const accountNftAddress = ADDRESS_ACCOUNT_NFT
 
-  const queryClient = useQueryClient()
-
-  return useMutation(
+  return useSWR(
+    'qwef',
     async () =>
       await signingClient?.execute(
         address ?? '',
@@ -25,16 +23,5 @@ export const useDeleteCreditAccount = (accountId: string) => {
         },
         hardcodedFee,
       ),
-    {
-      onSettled: () => {
-        queryClient.invalidateQueries(queryKeys.creditAccounts(address ?? ''))
-      },
-      onError: (err: Error) => {
-        toast.error(err.message)
-      },
-      onSuccess: () => {
-        toast.success('Credit Account Deleted')
-      },
-    },
   )
 }

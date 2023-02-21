@@ -1,28 +1,30 @@
 'use client'
 
 import classNames from 'classnames'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 
 import { AccountManageOverlay } from 'components/Account/AccountManageOverlay'
 import { Button } from 'components/Button'
 import { ChevronDown } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
 import useStore from 'store'
+import useSWR from 'swr'
 
-interface Props {
-  creditAccountsList: string[]
-  selectedAccount: string | null
-}
+import { queryKeys } from 'types/query-keys-factory'
+import getCreditAccounts from 'libs/getCreditAccounts'
 
 const MAX_VISIBLE_CREDIT_ACCOUNTS = 5
 
-export const AccountNavigation = ({ creditAccountsList, selectedAccount }: Props) => {
-  const { firstCreditAccounts, restCreditAccounts } = useMemo(() => {
-    return {
-      firstCreditAccounts: creditAccountsList?.slice(0, MAX_VISIBLE_CREDIT_ACCOUNTS) ?? [],
-      restCreditAccounts: creditAccountsList?.slice(MAX_VISIBLE_CREDIT_ACCOUNTS) ?? [],
-    }
-  }, [creditAccountsList])
+export const AccountNavigation = () => {
+  const address = useStore((s) => s.client?.recentWallet.account?.address) || ''
+  const selectedAccount = useStore((s) => s.selectedAccount)
+
+  const { data: creditAccounts } = useSWR(address ? queryKeys.creditAccounts(address) : null, () =>
+    getCreditAccounts(address),
+  )
+
+  const firstCreditAccounts = creditAccounts?.slice(0, MAX_VISIBLE_CREDIT_ACCOUNTS) ?? []
+  const restCreditAccounts = creditAccounts?.slice(MAX_VISIBLE_CREDIT_ACCOUNTS) ?? []
 
   const [showManageMenu, setShowManageMenu] = useState(false)
   const [showMoreMenu, setShowMoreMenu] = useState(false)

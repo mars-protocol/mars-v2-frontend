@@ -1,4 +1,5 @@
 import Background from 'components/Background'
+import { Modals } from 'components/Modals'
 import DesktopNavigation from 'components/Navigation/DesktopNavigation'
 import { WalletConnectProvider } from 'components/Wallet/WalletConnectProvider'
 import 'react-toastify/dist/ReactToastify.min.css'
@@ -15,6 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Background />
             <DesktopNavigation />
           </WalletConnectProvider>
+          {/* <Modals /> */}
           <main className='relative flex lg:min-h-[calc(100vh-120px)]'>
             <div className='flex flex-grow flex-wrap p-6'>{children}</div>
           </main>

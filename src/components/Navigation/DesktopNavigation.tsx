@@ -6,15 +6,9 @@ import { Logo } from 'components/Icons'
 import { menuTree } from 'components/Navigation/menuTree'
 import { NavLink } from 'components/Navigation/NavLink'
 import Wallet from 'components/Wallet/Wallet'
+import { AccountNavigation } from 'components/Account/AccountNavigation'
 
 export default function DesktopNavigation() {
-  // const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
-
-  // const { data: creditAccountsList } = useCreditAccounts()
-
-  // // const isConnected = !!address
-  // const hasCreditAccounts = creditAccountsList && creditAccountsList.length > 0
-
   return (
     <div className='relative hidden bg-header lg:block'>
       <div className='flex items-center justify-between border-b border-white/20 px-6 py-3'>
@@ -34,19 +28,11 @@ export default function DesktopNavigation() {
         </div>
         <Wallet />
       </div>
-      {/* Sub navigation bar */}
-      {/* <div className='flex items-center justify-between border-b border-white/20 pl-6 text-sm text-white/40'>
+      <div className='flex items-center justify-between border-b border-white/20 pl-6 text-sm text-white/40'>
         <div className='flex items-center'>
-          <SearchInput />
-          {isConnected && hasCreditAccounts && (
-            <AccountNavigation
-              selectedAccount={selectedAccount}
-              creditAccountsList={creditAccountsList}
-            />
-          )}
+          <AccountNavigation />
         </div>
-        {isConnected && <AccountStatus />}
-      </div> */}
+      </div>
     </div>
   )
 }
