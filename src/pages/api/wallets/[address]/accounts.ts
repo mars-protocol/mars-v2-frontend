@@ -7,6 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!URL_RPC || !ADDRESS_ACCOUNT_NFT) {
     return res.status(404).json(ENV_MISSING_MESSAGE)
   }
+
   const address = req.query.address
 
   const client = await CosmWasmClient.connect(URL_RPC)

@@ -3,6 +3,7 @@
 import classNames from 'classnames'
 import { useState } from 'react'
 import useSWR from 'swr'
+import { useRouter } from 'next/navigation'
 
 import { AccountManageOverlay } from 'components/Account/AccountManageOverlay'
 import { Button } from 'components/Button'
@@ -13,12 +14,16 @@ import Loading from 'components/Loading'
 import { useCreateCreditAccount } from 'hooks/mutations/useCreateCreditAccount'
 import getCreditAccounts from 'libs/getCreditAccounts'
 import { queryKeys } from 'types/query-keys-factory'
+import useParams from 'hooks/useParams'
 
 const MAX_VISIBLE_CREDIT_ACCOUNTS = 5
 
 export const AccountNavigation = () => {
+  const router = useRouter()
+  const params = useParams()
+  console.log('params at account ', params)
   const address = useStore((s) => s.client?.recentWallet.account?.address) || ''
-  const selectedAccount = useStore((s) => s.selectedAccount)
+  const selectedAccount = params.account
 
   const { data: creditAccounts, isLoading } = useSWR(
     address ? queryKeys.creditAccounts(address) : null,
@@ -53,7 +58,7 @@ export const AccountNavigation = () => {
                   )}
                   variant='text'
                   onClick={() => {
-                    useStore.setState({ selectedAccount: account, isOpen: true })
+                    router.push(`/wallet/${params.wallet}/account/${account}/${params.page}`)
                   }}
                 >
                   Account {account}

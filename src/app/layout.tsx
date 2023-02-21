@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </WalletConnectProvider>
           {/* <Modals /> */}
           <main className='relative flex lg:min-h-[calc(100vh-120px)]'>
-            <div className='flex flex-grow flex-wrap p-6'>{children}</div>
+            <div className='flex flex-grow flex-col flex-wrap'>{children}</div>
           </main>
         </div>
       </body>

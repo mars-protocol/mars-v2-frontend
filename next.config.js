@@ -13,11 +13,11 @@ const nextConfig = {
   },
   async redirects() {
     return [
-      {
-        source: '/',
-        destination: '/trade',
-        permanent: true,
-      },
+      // {
+      //   source: '/',
+      //   destination: '/trade',
+      //   permanent: true,
+      // },
     ]
   },
   exernalsPresets: {node: true},
