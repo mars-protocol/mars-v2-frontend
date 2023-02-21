@@ -2,14 +2,13 @@
 
 import classNames from 'classnames'
 import { useState } from 'react'
+import useSWR from 'swr'
 
 import { AccountManageOverlay } from 'components/Account/AccountManageOverlay'
 import { Button } from 'components/Button'
 import { ChevronDown } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
 import useStore from 'store'
-import useSWR from 'swr'
-
 import Loading from 'components/Loading'
 import { useCreateCreditAccount } from 'hooks/mutations/useCreateCreditAccount'
 import getCreditAccounts from 'libs/getCreditAccounts'
