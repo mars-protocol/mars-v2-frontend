@@ -10,44 +10,60 @@ import { MsgExecuteContractEncodeObject } from 'cosmwasm'
 import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
 import { toUtf8 } from '@cosmjs/encoding'
 import {
-  Decimal,
   InstantiateMsg,
-  CoinPrice,
   ExecuteMsg,
+  OwnerUpdate,
   QueryMsg,
-  PriceResponse,
-} from './MarsMockOracle.types'
-export interface MarsMockOracleMessage {
+  ConfigResponse,
+  OwnerResponse,
+  Decimal,
+  Uint128,
+  HealthResponse,
+} from './MarsRoverHealthTypes.types'
+export interface MarsRoverHealthTypesMessage {
   contractAddress: string
   sender: string
-  changePrice: (
+  updateOwner: (funds?: Coin[]) => MsgExecuteContractEncodeObject
+  updateConfig: (
     {
-      denom,
-      price,
+      creditManager,
     }: {
-      denom: string
-      price: Decimal
+      creditManager: string
     },
     funds?: Coin[],
   ) => MsgExecuteContractEncodeObject
 }
-export class MarsMockOracleMessageComposer implements MarsMockOracleMessage {
+export class MarsRoverHealthTypesMessageComposer implements MarsRoverHealthTypesMessage {
   sender: string
   contractAddress: string
 
   constructor(sender: string, contractAddress: string) {
     this.sender = sender
     this.contractAddress = contractAddress
-    this.changePrice = this.changePrice.bind(this)
+    this.updateOwner = this.updateOwner.bind(this)
+    this.updateConfig = this.updateConfig.bind(this)
   }
 
-  changePrice = (
+  updateOwner = (funds?: Coin[]): MsgExecuteContractEncodeObject => {
+    return {
+      typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
+      value: MsgExecuteContract.fromPartial({
+        sender: this.sender,
+        contract: this.contractAddress,
+        msg: toUtf8(
+          JSON.stringify({
+            update_owner: {},
+          }),
+        ),
+        funds,
+      }),
+    }
+  }
+  updateConfig = (
     {
-      denom,
-      price,
+      creditManager,
     }: {
-      denom: string
-      price: Decimal
+      creditManager: string
     },
     funds?: Coin[],
   ): MsgExecuteContractEncodeObject => {
@@ -58,9 +74,8 @@ export class MarsMockOracleMessageComposer implements MarsMockOracleMessage {
         contract: this.contractAddress,
         msg: toUtf8(
           JSON.stringify({
-            change_price: {
-              denom,
-              price,
+            update_config: {
+              credit_manager: creditManager,
             },
           }),
         ),

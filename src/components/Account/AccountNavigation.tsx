@@ -1,29 +1,29 @@
 'use client'
 
 import classNames from 'classnames'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import useSWR from 'swr'
-import { useRouter } from 'next/navigation'
 
 import { AccountManageOverlay } from 'components/Account/AccountManageOverlay'
 import { Button } from 'components/Button'
 import { ChevronDown } from 'components/Icons'
-import { Overlay } from 'components/Overlay/Overlay'
-import useStore from 'store'
 import Loading from 'components/Loading'
-import { useCreateCreditAccount } from 'hooks/mutations/useCreateCreditAccount'
-import getCreditAccounts from 'libs/getCreditAccounts'
-import { queryKeys } from 'types/query-keys-factory'
+import { Overlay } from 'components/Overlay/Overlay'
 import useParams from 'hooks/useParams'
+import getCreditAccounts from 'libs/getCreditAccounts'
+import useStore from 'store'
+import { queryKeys } from 'types/query-keys-factory'
+import { hardcodedFee } from 'utils/contants'
 
 const MAX_VISIBLE_CREDIT_ACCOUNTS = 5
 
 export const AccountNavigation = () => {
   const router = useRouter()
   const params = useParams()
-  console.log('params at account ', params)
   const address = useStore((s) => s.client?.recentWallet.account?.address) || ''
   const selectedAccount = params.account
+  const createCreditAccount = useStore((s) => s.createCreditAccount)
 
   const { data: creditAccounts, isLoading } = useSWR(
     address ? queryKeys.creditAccounts(address) : null,
@@ -33,10 +33,14 @@ export const AccountNavigation = () => {
   const firstCreditAccounts = creditAccounts?.slice(0, MAX_VISIBLE_CREDIT_ACCOUNTS) ?? []
   const restCreditAccounts = creditAccounts?.slice(MAX_VISIBLE_CREDIT_ACCOUNTS) ?? []
 
-  const { mutate: createCreditAccount, isLoading: isLoadingCreate } = useCreateCreditAccount()
-
   const [showManageMenu, setShowManageMenu] = useState(false)
   const [showMoreMenu, setShowMoreMenu] = useState(false)
+
+  async function createAccountHandler() {
+    const accountId = await createCreditAccount({ fee: hardcodedFee })
+    if (!accountId) return
+    router.push(`/wallets/${params.wallet}/accounts/${accountId}`)
+  }
 
   return (
     <section
@@ -58,7 +62,7 @@ export const AccountNavigation = () => {
                   )}
                   variant='text'
                   onClick={() => {
-                    router.push(`/wallet/${params.wallet}/account/${account}/${params.page}`)
+                    router.push(`/wallets/${params.wallet}/accounts/${account}/${params.page}`)
                   }}
                 >
                   Account {account}
@@ -125,9 +129,7 @@ export const AccountNavigation = () => {
               </div>
             </>
           ) : (
-            <>
-              {address ? <Button onClick={() => createCreditAccount}>Create Account</Button> : ''}
-            </>
+            <>{address ? <Button onClick={createAccountHandler}>Create Account</Button> : ''}</>
           )}
         </>
       )}

@@ -5,11 +5,19 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { toUtf8 } from '@cosmjs/encoding'
-import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
 import { MsgExecuteContractEncodeObject } from 'cosmwasm'
-
-import { Coin, Uint128 } from './MarsZapperBase.types'
+import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
+import { toUtf8 } from '@cosmjs/encoding'
+import {
+  InstantiateMsg,
+  ExecuteMsg,
+  Uint128,
+  CallbackMsg,
+  Addr,
+  Coin,
+  QueryMsg,
+  ArrayOfCoin,
+} from './MarsZapperBase.types'
 export interface MarsZapperBaseMessage {
   contractAddress: string
   sender: string

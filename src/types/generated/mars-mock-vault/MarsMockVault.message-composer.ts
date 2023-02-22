@@ -6,11 +6,25 @@
  */
 
 import { Coin } from '@cosmjs/amino'
-import { toUtf8 } from '@cosmjs/encoding'
-import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
 import { MsgExecuteContractEncodeObject } from 'cosmwasm'
-
-import { Uint128 } from './MarsMockVault.types'
+import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
+import { toUtf8 } from '@cosmjs/encoding'
+import {
+  Duration,
+  OracleBaseForString,
+  InstantiateMsg,
+  ExecuteMsg,
+  Uint128,
+  ExtensionExecuteMsg,
+  LockupExecuteMsg,
+  ForceUnlockExecuteMsg,
+  QueryMsg,
+  ExtensionQueryMsg,
+  LockupQueryMsg,
+  VaultInfoResponse,
+  Empty,
+  VaultStandardInfoResponse,
+} from './MarsMockVault.types'
 export interface MarsMockVaultMessage {
   contractAddress: string
   sender: string

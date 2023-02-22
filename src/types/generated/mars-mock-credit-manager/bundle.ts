@@ -5,10 +5,10 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
+import * as _8 from './MarsMockCreditManager.types'
 import * as _9 from './MarsMockCreditManager.client'
 import * as _10 from './MarsMockCreditManager.message-composer'
 import * as _11 from './MarsMockCreditManager.react-query'
-import * as _8 from './MarsMockCreditManager.types'
 export namespace contracts {
   export const MarsMockCreditManager = { ..._8, ..._9, ..._10, ..._11 }
 }

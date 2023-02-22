@@ -5,10 +5,24 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
+import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { Coin, StdFee } from '@cosmjs/amino'
-import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-
-import { Empty, Uint128, VaultInfoResponse, VaultStandardInfoResponse } from './MarsMockVault.types'
+import {
+  Duration,
+  OracleBaseForString,
+  InstantiateMsg,
+  ExecuteMsg,
+  Uint128,
+  ExtensionExecuteMsg,
+  LockupExecuteMsg,
+  ForceUnlockExecuteMsg,
+  QueryMsg,
+  ExtensionQueryMsg,
+  LockupQueryMsg,
+  VaultInfoResponse,
+  Empty,
+  VaultStandardInfoResponse,
+} from './MarsMockVault.types'
 export interface MarsMockVaultReadOnlyInterface {
   contractAddress: string
   vaultStandardInfo: () => Promise<VaultStandardInfoResponse>

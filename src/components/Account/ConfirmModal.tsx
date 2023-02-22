@@ -1,3 +1,5 @@
+'use client'
+
 import classNames from 'classnames'
 
 import { CircularProgress } from 'components/CircularProgress'
@@ -25,7 +27,7 @@ export const ConfirmModal = () => {
           </div>
           <Text size='2xl' uppercase={true} className='w-full text-center'>
             {createOpen &&
-              'A small step for a Smart Contracts but a big leap for your financial freedom.'}
+              'A small step for a Smart Contract but a big leap for your financial freedom.'}
             {deleteOpen && 'Some rovers have to be recycled once in a while...'}
           </Text>
         </div>

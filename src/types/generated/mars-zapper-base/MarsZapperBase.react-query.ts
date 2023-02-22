@@ -5,12 +5,20 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { StdFee } from '@cosmjs/amino'
+import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tanstack/react-query'
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
-import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from '@tanstack/react-query'
-
-import { MarsZapperBaseClient, MarsZapperBaseQueryClient } from './MarsZapperBase.client'
-import { ArrayOfCoin, Coin, Uint128 } from './MarsZapperBase.types'
+import { StdFee } from '@cosmjs/amino'
+import {
+  InstantiateMsg,
+  ExecuteMsg,
+  Uint128,
+  CallbackMsg,
+  Addr,
+  Coin,
+  QueryMsg,
+  ArrayOfCoin,
+} from './MarsZapperBase.types'
+import { MarsZapperBaseQueryClient, MarsZapperBaseClient } from './MarsZapperBase.client'
 export const marsZapperBaseQueryKeys = {
   contract: [
     {

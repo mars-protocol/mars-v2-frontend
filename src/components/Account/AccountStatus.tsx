@@ -1,28 +1,25 @@
 'use client'
 
 import BigNumber from 'bignumber.js'
-import { useEffect } from 'react'
 
 import { BorrowCapacity } from 'components/BorrowCapacity'
-import { formatValue } from 'utils/formatters'
 import { Button } from 'components/Button'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { Gauge } from 'components/Gauge'
 import { Text } from 'components/Text'
 import { useAccountStats } from 'hooks/data/useAccountStats'
-import { useCreateCreditAccount } from 'hooks/mutations/useCreateCreditAccount'
 import { useCreditAccounts } from 'hooks/queries/useCreditAccounts'
-import useStore from 'store'
 import { getBaseAsset } from 'utils/assets'
+import { formatValue } from 'utils/formatters'
 
 export const AccountStatus = () => {
   const baseAsset = getBaseAsset()
   const accountStats = useAccountStats()
   const { data: creditAccountsList } = useCreditAccounts()
-  const { mutate: createCreditAccount, isLoading: isLoadingCreate } = useCreateCreditAccount()
-  useEffect(() => {
-    useStore.setState({ createAccountModal: isLoadingCreate })
-  }, [isLoadingCreate])
+
+  const createCreditAccount = () => {
+    console.log('create credit account')
+  }
 
   const hasCreditAccounts = creditAccountsList && creditAccountsList.length > 0
 

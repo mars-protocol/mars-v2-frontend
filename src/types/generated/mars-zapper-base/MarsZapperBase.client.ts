@@ -5,10 +5,18 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
+import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
-import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-
-import { ArrayOfCoin, Coin, Uint128 } from './MarsZapperBase.types'
+import {
+  InstantiateMsg,
+  ExecuteMsg,
+  Uint128,
+  CallbackMsg,
+  Addr,
+  Coin,
+  QueryMsg,
+  ArrayOfCoin,
+} from './MarsZapperBase.types'
 export interface MarsZapperBaseReadOnlyInterface {
   contractAddress: string
   estimateProvideLiquidity: ({

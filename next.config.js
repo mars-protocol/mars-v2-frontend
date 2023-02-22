@@ -1,4 +1,4 @@
-const nodeExternals = require('webpack-node-externals');
+const nodeExternals = require('webpack-node-externals')
 
 /** @type {import('next').NextConfig} */
 
@@ -12,20 +12,14 @@ const nextConfig = {
     hideSourceMaps: true,
   },
   async redirects() {
-    return [
-      // {
-      //   source: '/',
-      //   destination: '/trade',
-      //   permanent: true,
-      // },
-    ]
+    return []
   },
-  exernalsPresets: {node: true},
+  exernalsPresets: { node: true },
   externals: [nodeExternals()],
   future: {
     webpack5: true,
   },
-  webpack(config, {isServer}) {
+  webpack(config, { isServer }) {
     if (isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
@@ -47,7 +41,7 @@ const nextConfig = {
 }
 
 const sentryWebpackPluginOptions = {
-  // Additional config options for the Sentry Webpack plugin. Keep in mind that
+  // Additional config options for the Sentry Webpack plugin. weep in mind that
   // the following options are set automatically, and overriding them is not
   // recommended:
   //   release, url, org, project, authToken, configFile, stripPrefix,

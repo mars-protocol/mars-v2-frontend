@@ -5,11 +5,24 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { toUtf8 } from '@cosmjs/encoding'
-import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
 import { MsgExecuteContractEncodeObject } from 'cosmwasm'
-
-import { Addr, Coin, Decimal, Empty } from './MarsSwapperBase.types'
+import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
+import { toUtf8 } from '@cosmjs/encoding'
+import {
+  InstantiateMsg,
+  ExecuteMsg,
+  OwnerUpdate,
+  Uint128,
+  Decimal,
+  Addr,
+  Empty,
+  Coin,
+  QueryMsg,
+  EstimateExactInSwapResponse,
+  OwnerResponse,
+  RouteResponseForEmpty,
+  ArrayOfRouteResponseForEmpty,
+} from './MarsSwapperBase.types'
 export interface MarsSwapperBaseMessage {
   contractAddress: string
   sender: string

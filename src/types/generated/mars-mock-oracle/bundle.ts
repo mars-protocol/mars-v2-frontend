@@ -5,10 +5,10 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
+import * as _12 from './MarsMockOracle.types'
 import * as _13 from './MarsMockOracle.client'
 import * as _14 from './MarsMockOracle.message-composer'
 import * as _15 from './MarsMockOracle.react-query'
-import * as _12 from './MarsMockOracle.types'
 export namespace contracts {
   export const MarsMockOracle = { ..._12, ..._13, ..._14, ..._15 }
 }

@@ -5,12 +5,18 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { Coin, StdFee } from '@cosmjs/amino'
+import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tanstack/react-query'
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
-import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from '@tanstack/react-query'
-
-import { MarsMockOracleClient, MarsMockOracleQueryClient } from './MarsMockOracle.client'
-import { Decimal, PriceResponse } from './MarsMockOracle.types'
+import { StdFee, Coin } from '@cosmjs/amino'
+import {
+  Decimal,
+  InstantiateMsg,
+  CoinPrice,
+  ExecuteMsg,
+  QueryMsg,
+  PriceResponse,
+} from './MarsMockOracle.types'
+import { MarsMockOracleQueryClient, MarsMockOracleClient } from './MarsMockOracle.client'
 export const marsMockOracleQueryKeys = {
   contract: [
     {

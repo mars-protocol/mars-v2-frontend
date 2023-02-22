@@ -13,9 +13,9 @@ export default function useParams() {
   const segments = pathname.split('/')
 
   segments.forEach((segment, index) => {
-    if (segment === 'wallet' && segments[index + 1]) {
+    if (segment === 'wallets' && segments[index + 1]) {
       params.wallet = segments[index + 1]
-    } else if (segment === 'account' && segments[index + 1]) {
+    } else if (segment === 'accounts' && segments[index + 1]) {
       params.account = segments[index + 1]
     } else if (index === 5) {
       params.page = segment

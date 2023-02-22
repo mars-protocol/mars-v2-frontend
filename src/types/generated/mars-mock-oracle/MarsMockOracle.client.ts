@@ -5,10 +5,16 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
+import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { Coin, StdFee } from '@cosmjs/amino'
-import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-
-import { Decimal, PriceResponse } from './MarsMockOracle.types'
+import {
+  Decimal,
+  InstantiateMsg,
+  CoinPrice,
+  ExecuteMsg,
+  QueryMsg,
+  PriceResponse,
+} from './MarsMockOracle.types'
 export interface MarsMockOracleReadOnlyInterface {
   contractAddress: string
   price: ({ denom }: { denom: string }) => Promise<PriceResponse>

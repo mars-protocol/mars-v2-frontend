@@ -5,26 +5,33 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { Coin, StdFee } from '@cosmjs/amino'
+import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tanstack/react-query'
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
-import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from '@tanstack/react-query'
-
-import { MarsMockRedBankClient, MarsMockRedBankQueryClient } from './MarsMockRedBank.client'
+import { StdFee, Coin } from '@cosmjs/amino'
 import {
-  ArrayOfMarket,
-  ArrayOfUncollateralizedLoanLimitResponse,
-  ArrayOfUserCollateralResponse,
-  ArrayOfUserDebtResponse,
-  ConfigResponse,
+  Decimal,
+  InstantiateMsg,
+  CoinMarketInfo,
+  ExecuteMsg,
+  OwnerUpdate,
+  Uint128,
   CreateOrUpdateConfig,
   InitOrUpdateAssetParams,
+  InterestRateModel,
+  QueryMsg,
+  ConfigResponse,
   Market,
-  Uint128,
+  ArrayOfMarket,
   UncollateralizedLoanLimitResponse,
+  ArrayOfUncollateralizedLoanLimitResponse,
   UserCollateralResponse,
+  ArrayOfUserCollateralResponse,
   UserDebtResponse,
+  ArrayOfUserDebtResponse,
+  UserHealthStatus,
   UserPositionResponse,
 } from './MarsMockRedBank.types'
+import { MarsMockRedBankQueryClient, MarsMockRedBankClient } from './MarsMockRedBank.client'
 export const marsMockRedBankQueryKeys = {
   contract: [
     {

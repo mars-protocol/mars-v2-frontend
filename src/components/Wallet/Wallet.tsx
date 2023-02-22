@@ -10,11 +10,13 @@ import { useEffect, useState } from 'react'
 
 import ConnectButton from 'components/Wallet/ConnectButton'
 import ConnectedButton from 'components/Wallet/ConnectedButton'
-import useStore from 'store'
+import useParams from 'hooks/useParams'
 import { useRouter } from 'next/navigation'
+import useStore from 'store'
 
 export default function Wallet() {
   const router = useRouter()
+  const params = useParams()
   const { status } = useWalletManager()
   const [isConnected, setIsConnected] = useState(false)
   const { recentWallet, simulate, sign, broadcast } = useWallet()
@@ -24,8 +26,13 @@ export default function Wallet() {
     const connectedStatus = status === WalletConnectionStatus.Connected
     if (connectedStatus === isConnected) return
     setIsConnected(connectedStatus)
-    router.push(`/wallet/${'osmo1hn5gxjz9y02m7h7ngpayfx9rs67jxgm0a5dj5e'}`)
   }, [status, isConnected])
+
+  useEffect(() => {
+    const address = client?.recentWallet.account.address
+    if (!address || address === params.wallet) return
+    router.push(`/wallets/${client.recentWallet.account.address}`)
+  }, [client, params])
 
   useEffect(() => {
     if (!recentWallet) return

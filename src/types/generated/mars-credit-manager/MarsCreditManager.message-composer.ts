@@ -5,11 +5,64 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { toUtf8 } from '@cosmjs/encoding'
-import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
 import { MsgExecuteContractEncodeObject } from 'cosmwasm'
-
-import { Action, Coin, ConfigUpdates, NftConfigUpdates } from './MarsCreditManager.types'
+import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
+import { toUtf8 } from '@cosmjs/encoding'
+import {
+  HealthContractBaseForString,
+  Decimal,
+  Uint128,
+  OracleBaseForString,
+  RedBankBaseForString,
+  SwapperBaseForString,
+  ZapperBaseForString,
+  InstantiateMsg,
+  VaultInstantiateConfig,
+  VaultConfig,
+  Coin,
+  VaultBaseForString,
+  ExecuteMsg,
+  Action,
+  ActionAmount,
+  VaultPositionType,
+  OwnerUpdate,
+  CallbackMsg,
+  Addr,
+  ActionCoin,
+  ConfigUpdates,
+  NftConfigUpdates,
+  VaultBaseForAddr,
+  QueryMsg,
+  VaultPositionAmount,
+  VaultAmount,
+  VaultAmount1,
+  UnlockingPositions,
+  VaultPosition,
+  LockingVaultAmount,
+  VaultUnlockingPosition,
+  ArrayOfCoinBalanceResponseItem,
+  CoinBalanceResponseItem,
+  ArrayOfSharesResponseItem,
+  SharesResponseItem,
+  ArrayOfDebtShares,
+  DebtShares,
+  ArrayOfLentShares,
+  LentShares,
+  ArrayOfVaultWithBalance,
+  VaultWithBalance,
+  ArrayOfVaultPositionResponseItem,
+  VaultPositionResponseItem,
+  ArrayOfString,
+  ConfigResponse,
+  ArrayOfCoin,
+  Positions,
+  DebtAmount,
+  LentAmount,
+  VaultInfoResponse,
+  VaultPositionValue,
+  CoinValue,
+  ArrayOfVaultInfoResponse,
+} from './MarsCreditManager.types'
 export interface MarsCreditManagerMessage {
   contractAddress: string
   sender: string

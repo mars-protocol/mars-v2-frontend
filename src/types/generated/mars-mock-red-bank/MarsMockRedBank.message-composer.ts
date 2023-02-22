@@ -6,11 +6,32 @@
  */
 
 import { Coin } from '@cosmjs/amino'
-import { toUtf8 } from '@cosmjs/encoding'
-import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
 import { MsgExecuteContractEncodeObject } from 'cosmwasm'
-
-import { CreateOrUpdateConfig, InitOrUpdateAssetParams, Uint128 } from './MarsMockRedBank.types'
+import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
+import { toUtf8 } from '@cosmjs/encoding'
+import {
+  Decimal,
+  InstantiateMsg,
+  CoinMarketInfo,
+  ExecuteMsg,
+  OwnerUpdate,
+  Uint128,
+  CreateOrUpdateConfig,
+  InitOrUpdateAssetParams,
+  InterestRateModel,
+  QueryMsg,
+  ConfigResponse,
+  Market,
+  ArrayOfMarket,
+  UncollateralizedLoanLimitResponse,
+  ArrayOfUncollateralizedLoanLimitResponse,
+  UserCollateralResponse,
+  ArrayOfUserCollateralResponse,
+  UserDebtResponse,
+  ArrayOfUserDebtResponse,
+  UserHealthStatus,
+  UserPositionResponse,
+} from './MarsMockRedBank.types'
 export interface MarsMockRedBankMessage {
   contractAddress: string
   sender: string
