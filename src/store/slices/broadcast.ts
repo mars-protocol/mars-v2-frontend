@@ -8,7 +8,6 @@ import { ADDRESS_CREDIT_MANAGER, ENV_MISSING_MESSAGE } from 'constants/env'
 import { Store } from 'store'
 import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
 
-
 interface BroadcastResult {
   result?: TxBroadcastResult
   error?: string
