@@ -8,11 +8,26 @@ const nextConfig = {
   reactStrictMode: true,
   async redirects() {
     return [
-      // {
-      //   source: '/',
-      //   destination: '/trade',
-      //   permanent: true,
-      // },
+      {
+        source: '/',
+        destination: '/trade',
+        permanent: true,
+      },
+      {
+        source: '/wallets',
+        destination: '/trade',
+        permanent: true,
+      },
+      {
+        source: '/wallets/:wallet',
+        destination: '/wallets/:wallet/trade',
+        permanent: true,
+      },
+      {
+        source: '/wallets/:wallet/accounts',
+        destination: '/wallets/:wallet/accounts/trade',
+        permanent: true,
+      },
     ]
   },
   webpack(config, {isServer}) {

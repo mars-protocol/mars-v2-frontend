@@ -29,10 +29,16 @@ export default function Wallet() {
   }, [status, isConnected])
 
   useEffect(() => {
+    if (!isConnected && !params.wallet) {
+      router.push('/')
+      return
+    }
+
     const address = client?.recentWallet.account.address
     if (!address || address === params.wallet) return
+
     router.push(`/wallets/${client.recentWallet.account.address}`)
-  }, [client, params])
+  }, [client, params, isConnected])
 
   useEffect(() => {
     if (!recentWallet) return
