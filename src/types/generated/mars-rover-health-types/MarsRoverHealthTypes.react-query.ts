@@ -5,23 +5,24 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tanstack/react-query'
+import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
-import { StdFee, Coin } from '@cosmjs/amino'
+import { Coin, StdFee } from '@cosmjs/amino'
+
 import {
-  InstantiateMsg,
+  ConfigResponse,
+  Decimal,
   ExecuteMsg,
+  HealthResponse,
+  InstantiateMsg,
+  OwnerResponse,
   OwnerUpdate,
   QueryMsg,
-  ConfigResponse,
-  OwnerResponse,
-  Decimal,
   Uint128,
-  HealthResponse,
 } from './MarsRoverHealthTypes.types'
 import {
-  MarsRoverHealthTypesQueryClient,
   MarsRoverHealthTypesClient,
+  MarsRoverHealthTypesQueryClient,
 } from './MarsRoverHealthTypes.client'
 export const marsRoverHealthTypesQueryKeys = {
   contract: [

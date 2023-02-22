@@ -1,5 +1,6 @@
 'use client'
 import { ToastContainer, Zoom } from 'react-toastify'
+
 import useStore from 'store'
 
 export default function Toaster() {

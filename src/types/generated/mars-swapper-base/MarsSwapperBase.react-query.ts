@@ -5,25 +5,26 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tanstack/react-query'
+import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
+
 import {
-  InstantiateMsg,
-  ExecuteMsg,
-  OwnerUpdate,
-  Uint128,
-  Decimal,
   Addr,
-  Empty,
-  Coin,
-  QueryMsg,
-  EstimateExactInSwapResponse,
-  OwnerResponse,
-  RouteResponseForEmpty,
   ArrayOfRouteResponseForEmpty,
+  Coin,
+  Decimal,
+  Empty,
+  EstimateExactInSwapResponse,
+  ExecuteMsg,
+  InstantiateMsg,
+  OwnerResponse,
+  OwnerUpdate,
+  QueryMsg,
+  RouteResponseForEmpty,
+  Uint128,
 } from './MarsSwapperBase.types'
-import { MarsSwapperBaseQueryClient, MarsSwapperBaseClient } from './MarsSwapperBase.client'
+import { MarsSwapperBaseClient, MarsSwapperBaseQueryClient } from './MarsSwapperBase.client'
 export const marsSwapperBaseQueryKeys = {
   contract: [
     {

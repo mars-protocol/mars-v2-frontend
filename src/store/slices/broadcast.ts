@@ -1,11 +1,13 @@
 import { StdFee } from '@cosmjs/stargate'
 import { MsgExecuteContract, TxBroadcastResult } from '@marsprotocol/wallet-connector'
-import { ADDRESS_CREDIT_MANAGER, ENV_MISSING_MESSAGE } from 'constants/env'
 import { isMobile } from 'react-device-detect'
 import { toast } from 'react-toastify'
+import { GetState, SetState } from 'zustand'
+
+import { ADDRESS_CREDIT_MANAGER, ENV_MISSING_MESSAGE } from 'constants/env'
 import { Store } from 'store'
 import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
-import { GetState, SetState } from 'zustand'
+
 
 interface BroadcastResult {
   result?: TxBroadcastResult

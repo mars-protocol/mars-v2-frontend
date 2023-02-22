@@ -8,15 +8,16 @@
 import { MsgExecuteContractEncodeObject } from 'cosmwasm'
 import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
 import { toUtf8 } from '@cosmjs/encoding'
+
 import {
-  InstantiateMsg,
-  ExecuteMsg,
-  Uint128,
-  CallbackMsg,
   Addr,
-  Coin,
-  QueryMsg,
   ArrayOfCoin,
+  CallbackMsg,
+  Coin,
+  ExecuteMsg,
+  InstantiateMsg,
+  QueryMsg,
+  Uint128,
 } from './MarsZapperBase.types'
 export interface MarsZapperBaseMessage {
   contractAddress: string

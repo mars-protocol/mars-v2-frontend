@@ -9,13 +9,14 @@ import { Coin } from '@cosmjs/amino'
 import { MsgExecuteContractEncodeObject } from 'cosmwasm'
 import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
 import { toUtf8 } from '@cosmjs/encoding'
+
 import {
-  Decimal,
-  InstantiateMsg,
   CoinPrice,
+  Decimal,
   ExecuteMsg,
-  QueryMsg,
+  InstantiateMsg,
   PriceResponse,
+  QueryMsg,
 } from './MarsMockOracle.types'
 export interface MarsMockOracleMessage {
   contractAddress: string
