@@ -1,5 +1,3 @@
-const nodeExternals = require('webpack-node-externals');
-
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
@@ -8,9 +6,6 @@ const nextConfig = {
     appDir: true,
   },
   reactStrictMode: true,
-  sentry: {
-    hideSourceMaps: true,
-  },
   async redirects() {
     return [
       // {
@@ -19,11 +14,6 @@ const nextConfig = {
       //   permanent: true,
       // },
     ]
-  },
-  exernalsPresets: {node: true},
-  externals: [nodeExternals()],
-  future: {
-    webpack5: true,
   },
   webpack(config, {isServer}) {
     if (isServer) {
