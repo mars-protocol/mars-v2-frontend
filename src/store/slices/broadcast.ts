@@ -19,7 +19,7 @@ export interface BroadcastSlice {
   deleteCreditAccount: (options: { fee: StdFee; accountId: string }) => Promise<boolean>
 }
 
-export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>) {
+export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>): BroadcastSlice {
   return {
     createCreditAccount: async (options: { fee: StdFee }) => {
       const msg = {
@@ -37,6 +37,7 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
       } else {
         set({ createAccountModal: false })
         toast.error(response.error)
+        return null
       }
     },
     deleteCreditAccount: async (options: { fee: StdFee; accountId: string }) => {
@@ -56,7 +57,10 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
       }
       return !!response.result
     },
-    executeMsg: async (options: { fee: StdFee; msg: Record<string, unknown> }) => {
+    executeMsg: async (options: {
+      msg: Record<string, unknown>
+      fee: StdFee
+    }): Promise<BroadcastResult> => {
       try {
         const client = get().client
         if (!ADDRESS_CREDIT_MANAGER) return { error: ENV_MISSING_MESSAGE }
@@ -83,9 +87,10 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
         if (result.hash) {
           return { result }
         }
-        return { error: 'broadcast failed' }
-      } catch (e) {
-        return { error: e }
+        return { result: undefined, error: 'broadcast failed' }
+      } catch (e: unknown) {
+        const error = typeof e === 'string' ? e : 'broadcast failed'
+        return { result: undefined, error }
       }
     },
   }
