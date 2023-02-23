@@ -2,6 +2,7 @@
 
 import { Switch } from '@headlessui/react'
 import { useEffect, useMemo, useState } from 'react'
+import useSWR from 'swr'
 
 import { Button } from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
@@ -13,7 +14,6 @@ import useParams from 'hooks/useParams'
 import getAllowedCoins from 'libs/getAllowedCoins'
 import getUserBalances from 'libs/getUserBalances'
 import useStore from 'store'
-import useSWR from 'swr'
 import { getMarketAssets } from 'utils/assets'
 import { hardcodedFee } from 'utils/contants'
 import { convertFromGwei, convertToGwei } from 'utils/formatters'

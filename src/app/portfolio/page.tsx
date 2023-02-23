@@ -1,3 +1,3 @@
 export default function page() {
-  return 'Trade page'
+  return `You are a guest`
 }

@@ -31,9 +31,8 @@ export interface BroadcastSlice {
   }) => Promise<boolean>
 }
 
-export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>) {
+export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>): BroadcastSlice {
   const marketAssets = getMarketAssets()
-
   return {
     createCreditAccount: async (options: { fee: StdFee }) => {
       const msg = {
@@ -51,6 +50,7 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
       } else {
         set({ createAccountModal: false })
         toast.error(response.error)
+        return null
       }
     },
     deleteCreditAccount: async (options: { fee: StdFee; accountId: string }) => {
@@ -101,7 +101,11 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
       }
       return !!response.result
     },
-    executeMsg: async (options: { fee: StdFee; msg: Record<string, unknown>; funds?: Coin[] }) => {
+    executeMsg: async (options: {
+      fee: StdFee
+      msg: Record<string, unknown>
+      funds?: Coin[]
+    }): Promise<BroadcastResult> => {
       const funds = options.funds ?? []
 
       try {
@@ -130,9 +134,10 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
         if (result.hash) {
           return { result }
         }
-        return { error: 'broadcast failed' }
-      } catch (e) {
-        return { error: e }
+        return { result: undefined, error: 'broadcast failed' }
+      } catch (e: unknown) {
+        const error = typeof e === 'string' ? e : 'broadcast failed'
+        return { result: undefined, error }
       }
     },
   }
