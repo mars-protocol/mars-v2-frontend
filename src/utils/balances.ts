@@ -1,6 +1,6 @@
 import { Coin } from '@cosmjs/stargate'
 
-import { getTokenTotalUSDValue, lookup } from 'utils/formatters'
+import { convertFromGwei, getTokenTotalUSDValue } from 'utils/formatters'
 import { getTokenSymbol } from 'utils/tokens'
 
 export const formatBalances = (
@@ -24,7 +24,7 @@ export const formatBalances = (
         prefix: '$',
       },
       size: {
-        amount: lookup(coin.amount, coin.denom, marketAssets),
+        amount: convertFromGwei(coin.amount, coin.denom, marketAssets),
         format: 'number',
         maxDecimals: 4,
         minDecimals: 0,

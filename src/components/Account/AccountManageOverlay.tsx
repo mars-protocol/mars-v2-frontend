@@ -29,7 +29,7 @@ export const AccountManageOverlay = ({ className, setShow, show }: Props) => {
   }
 
   async function deleteAccountHandler() {
-    const isSuccess = await deleteCreditAccount({ fee: hardcodedFee, accountId: '1' })
+    const isSuccess = await deleteCreditAccount({ fee: hardcodedFee, accountId: params.account })
     if (isSuccess) {
       router.push(`/wallets/${params.wallet}/accounts`)
     }

@@ -32,9 +32,15 @@ export const getTokenTotalUSDValue = (
   )
 }
 
-export const lookup = (amount: string | number, denom: string, marketAssets: Asset[]) => {
+export const convertFromGwei = (amount: string | number, denom: string, marketAssets: Asset[]) => {
   return BigNumber(amount)
     .div(10 ** getTokenDecimals(denom, marketAssets))
+    .toNumber()
+}
+
+export const convertToGwei = (amount: string | number, denom: string, marketAssets: Asset[]) => {
+  return BigNumber(amount)
+    .times(10 ** getTokenDecimals(denom, marketAssets))
     .toNumber()
 }
 

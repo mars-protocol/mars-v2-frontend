@@ -1,34 +1,41 @@
-import { Switch } from '@headlessui/react'
-import BigNumber from 'bignumber.js'
-import { useEffect, useMemo, useState } from 'react'
-import { toast } from 'react-toastify'
-import useLocalStorageState from 'use-local-storage-state'
+'use client'
 
-import { MarsProtocol } from 'components/Icons'
-import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
+import { Switch } from '@headlessui/react'
+import { useEffect, useMemo, useState } from 'react'
+
 import { Button } from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
+import { MarsProtocol } from 'components/Icons'
 import { Modal } from 'components/Modal'
-import { Text } from 'components/Text'
 import { Slider } from 'components/Slider'
-import { useDepositCreditAccount } from 'hooks/mutations/useDepositCreditAccount'
-import { useAllBalances } from 'hooks/queries/useAllBalances'
-import { useAllowedCoins } from 'hooks/queries/useAllowedCoins'
+import { Text } from 'components/Text'
+import useParams from 'hooks/useParams'
+import getAllowedCoins from 'libs/getAllowedCoins'
+import getUserBalances from 'libs/getUserBalances'
 import useStore from 'store'
+import useSWR from 'swr'
 import { getMarketAssets } from 'utils/assets'
+import { hardcodedFee } from 'utils/contants'
+import { convertFromGwei, convertToGwei } from 'utils/formatters'
+import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 export const FundAccountModal = () => {
   // ---------------
   // STORE
   // ---------------
   const open = useStore((s) => s.fundAccountModal)
+  const params = useParams()
+  const depositCreditAccount = useStore((s) => s.depositCreditAccount)
+  const address = useStore((s) => s.client?.recentWallet.account?.address)
+  const { data: balancesData, isLoading: balanceIsLoading } = useSWR(address, getUserBalances)
+  const { data: allowedCoinsData, isLoading: allowedCoinsIsLoading } = useSWR(
+    'allowed-coins',
+    getAllowedCoins,
+  )
 
   const selectedAccount = useStore((s) => s.selectedAccount)
   const marketAssets = getMarketAssets()
-  const [lendAssets, setLendAssets] = useLocalStorageState(`lendAssets_${selectedAccount}`, {
-    defaultValue: false,
-  })
-
+  const [lendAssets, setLendAssets] = useState(false)
   // ---------------
   // LOCAL STATE
   // ---------------
@@ -36,40 +43,44 @@ export const FundAccountModal = () => {
   const [selectedToken, setSelectedToken] = useState('')
 
   // ---------------
-  // EXTERNAL HOOKS
+  // FUNCTIONS
   // ---------------
-  const { data: balancesData } = useAllBalances()
-  const { data: allowedCoinsData, isLoading: isLoadingAllowedCoins } = useAllowedCoins()
-  const { mutate, isLoading } = useDepositCreditAccount(
-    selectedAccount || '',
-    selectedToken,
-    BigNumber(amount)
-      .times(10 ** getTokenDecimals(selectedToken, marketAssets))
-      .toNumber(),
-    {
-      onSuccess: () => {
-        setAmount(0)
-        toast.success(
-          `${amount} ${getTokenSymbol(selectedToken, marketAssets)} successfully Deposited`,
-        )
-        useStore.setState({ fundAccountModal: false })
-      },
-    },
-  )
+  async function depositAccountHandler() {
+    if (!selectedToken) return
+    const deposit = {
+      amount: convertToGwei(amount, selectedToken, marketAssets).toString(),
+      denom: selectedToken,
+    }
+    const isSuccess = await depositCreditAccount({
+      fee: hardcodedFee,
+      accountId: params.account,
+      deposit,
+    })
+    if (isSuccess) {
+      useStore.setState({ fundAccountModal: false })
+    }
+  }
 
   useEffect(() => {
-    if (allowedCoinsData && allowedCoinsData.length > 0) {
-      // initialize selected token when allowedCoins fetch data is available
-      setSelectedToken(allowedCoinsData[0])
-    }
-  }, [allowedCoinsData])
+    if (!allowedCoinsData || !balancesData || selectedToken !== '') return
+    let found = false
+    allowedCoinsData.map((coinDenom) => {
+      if (found) return
+      if (balancesData?.find((balance) => balance.denom === coinDenom)?.amount ?? 0 > 0) {
+        setSelectedToken(coinDenom)
+        found = true
+      }
+    })
+  }, [allowedCoinsData, balancesData])
 
+  // ---------------
+  // VARIABLES
+  // ---------------
   const walletAmount = useMemo(() => {
     if (!selectedToken) return 0
-
-    return BigNumber(balancesData?.find((balance) => balance.denom === selectedToken)?.amount ?? 0)
-      .div(10 ** getTokenDecimals(selectedToken, marketAssets))
-      .toNumber()
+    const walletAmount =
+      balancesData?.find((balance) => balance.denom === selectedToken)?.amount ?? 0
+    return convertFromGwei(walletAmount, selectedToken, marketAssets)
   }, [balancesData, selectedToken, marketAssets])
 
   const handleValueChange = (value: number) => {
@@ -85,13 +96,12 @@ export const FundAccountModal = () => {
     useStore.setState({ fundAccountModal: open })
   }
 
-  const maxValue = walletAmount
-  const percentageValue = isNaN(amount) ? 0 : (amount * 100) / maxValue
+  const percentageValue = isNaN(amount) ? 0 : (amount * 100) / walletAmount
 
   return (
     <Modal open={open} setOpen={setOpen}>
       <div className='flex min-h-[520px] w-full'>
-        {isLoading && (
+        {balanceIsLoading && (
           <div className='absolute inset-0 z-40 grid place-items-center bg-black/50'>
             <CircularProgress />
           </div>
@@ -124,7 +134,7 @@ export const FundAccountModal = () => {
               have any assets in your osmosis wallet use the osmosis bridge to transfer funds to
               your osmosis wallet.
             </Text>
-            {isLoadingAllowedCoins ? (
+            {allowedCoinsIsLoading ? (
               <p>Loading...</p>
             ) : (
               <>
@@ -142,11 +152,16 @@ export const FundAccountModal = () => {
                       }}
                       value={selectedToken}
                     >
-                      {allowedCoinsData?.map((entry) => (
-                        <option key={entry} value={entry}>
-                          {getTokenSymbol(entry, marketAssets)}
-                        </option>
-                      ))}
+                      {allowedCoinsData?.map((entry) => {
+                        const entrySymbol = getTokenSymbol(entry, marketAssets)
+                        return (
+                          entrySymbol !== '' && (
+                            <option key={entry} value={entry}>
+                              {getTokenSymbol(entry, marketAssets)}
+                            </option>
+                          )
+                        )
+                      })}
                     </select>
                   </div>
                   <div className='flex justify-between p-2'>
@@ -165,27 +180,27 @@ export const FundAccountModal = () => {
                     />
                   </div>
                 </div>
-                <Text size='xs' uppercase className='mb-2 text-white/60'>
-                  {`In wallet: ${walletAmount.toLocaleString()} ${getTokenSymbol(
-                    selectedToken,
-                    marketAssets,
-                  )}`}
-                </Text>
-                <Slider
-                  className='mb-6'
-                  value={percentageValue}
-                  onChange={(value) => {
-                    const decimal = value[0] / 100
-                    const tokenDecimals = getTokenDecimals(selectedToken, marketAssets)
-                    // limit decimal precision based on token contract decimals
-                    const newAmount = Number((decimal * maxValue).toFixed(tokenDecimals))
-
-                    setAmount(newAmount)
-                  }}
-                  onMaxClick={() => setAmount(maxValue)}
-                />
               </>
             )}
+            <Text size='xs' uppercase className='mb-2 text-white/60'>
+              {`In wallet: ${walletAmount.toLocaleString()} ${getTokenSymbol(
+                selectedToken,
+                marketAssets,
+              )}`}
+            </Text>
+            <Slider
+              className='mb-6'
+              value={percentageValue}
+              onChange={(value) => {
+                const decimal = value[0] / 100
+                const tokenDecimals = getTokenDecimals(selectedToken, marketAssets)
+                // limit decimal precision based on token contract decimals
+                const newAmount = Number((decimal * walletAmount).toFixed(tokenDecimals))
+
+                setAmount(newAmount)
+              }}
+              onMaxClick={() => setAmount(walletAmount)}
+            />
           </div>
           <div className='mb-2 flex items-center justify-between'>
             <div>
@@ -213,7 +228,7 @@ export const FundAccountModal = () => {
           </div>
           <Button
             className='mt-auto w-full'
-            onClick={() => mutate()}
+            onClick={depositAccountHandler}
             disabled={amount === 0 || !amount}
           >
             Fund Account

@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import { BorrowCapacity } from 'components/BorrowCapacity'
-import { formatValue, lookup } from 'utils/formatters'
+import { convertFromGwei, formatValue } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 import { CircularProgress } from 'components/CircularProgress'
 import { Button } from 'components/Button'
@@ -306,7 +306,11 @@ export const WithdrawModal = () => {
                 label='Total Position:'
                 value={{
                   format: 'number',
-                  amount: lookup(accountStats?.totalPosition ?? 0, baseAsset.denom, marketAssets),
+                  amount: convertFromGwei(
+                    accountStats?.totalPosition ?? 0,
+                    baseAsset.denom,
+                    marketAssets,
+                  ),
                   prefix: '$',
                 }}
               />
@@ -314,7 +318,11 @@ export const WithdrawModal = () => {
                 label='Total Liabilities:'
                 value={{
                   format: 'number',
-                  amount: lookup(accountStats?.totalDebt ?? 0, baseAsset.denom, marketAssets),
+                  amount: convertFromGwei(
+                    accountStats?.totalDebt ?? 0,
+                    baseAsset.denom,
+                    marketAssets,
+                  ),
                   prefix: '$',
                 }}
               />

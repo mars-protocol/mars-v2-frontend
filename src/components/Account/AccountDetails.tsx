@@ -11,7 +11,7 @@ import { LabelValuePair } from 'components/LabelValuePair'
 import { PositionsList } from 'components/PositionsList'
 import { useAccountStats } from 'hooks/data/useAccountStats'
 import { useBalances } from 'hooks/data/useBalances'
-import { lookup } from 'utils/formatters'
+import { convertFromGwei } from 'utils/formatters'
 import { createRiskData } from 'utils/risk'
 import useStore from 'store'
 import { getBaseAsset, getMarketAssets } from 'utils/assets'
@@ -100,7 +100,11 @@ export const AccountDetails = () => {
           label='Total Position:'
           value={{
             format: 'number',
-            amount: lookup(accountStats?.totalPosition ?? 0, baseAsset.denom, marketAssets),
+            amount: convertFromGwei(
+              accountStats?.totalPosition ?? 0,
+              baseAsset.denom,
+              marketAssets,
+            ),
             prefix: '$',
           }}
         />
@@ -108,7 +112,7 @@ export const AccountDetails = () => {
           label='Total Liabilities:'
           value={{
             format: 'number',
-            amount: lookup(accountStats?.totalDebt ?? 0, baseAsset.denom, marketAssets),
+            amount: convertFromGwei(accountStats?.totalDebt ?? 0, baseAsset.denom, marketAssets),
             prefix: '$',
           }}
         />
