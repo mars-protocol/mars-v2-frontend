@@ -17,10 +17,10 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import { Check, Copy, ExternalLink, Osmo } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
 import { Text } from 'components/Text'
-import getUserBalances from 'libs/getUserBalances'
 import useStore from 'store'
 import { getBaseAsset } from 'utils/assets'
 import { formatValue, truncate } from 'utils/formatters'
+import { getWalletBalances } from 'utils/api'
 
 export default function ConnectedButton() {
   // ---------------
@@ -33,7 +33,7 @@ export default function ConnectedButton() {
   const name = useStore((s) => s.name)
   const baseAsset = getBaseAsset()
 
-  const { data, isLoading } = useSWR(address, getUserBalances)
+  const { data, isLoading } = useSWR(address, getWalletBalances)
 
   // ---------------
   // LOCAL STATE

@@ -13,13 +13,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const marketQueries = marketAssets.map(
     (asset: Asset) =>
-      `${asset.symbol}Market: contractQuery(
+      `${asset.denom}: contractQuery(
         contractAddress: "${ADDRESS_RED_BANK}"
         query: { market: { denom: "${asset.denom}" } }
-      )
-      ${asset.symbol}MarketIncentive: contractQuery(
-        contractAddress: "${ADDRESS_INCENTIVES}"
-        query: { asset_incentive: { denom: "${asset.denom}" } }
       )`,
   )
 
@@ -34,25 +30,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     `,
   )
 
-  return res.status(200).json(result.rbwasmkey)
+  const markets = marketAssets.map((asset) => {
+    const market = result.rbwasmkey[`${asset.denom}`]
+    return market
+  })
+  return res.status(200).json(markets)
 }
 
 interface RedBankData {
   rbwasmkey: {
-    OSMOMarket: Market
-    OSMOMarketIncentive: MarketIncentive
-    ATOMMarket: Market
-    ATOMMarketIncentive: MarketIncentive
-    JUNOMarket: Market
-    JUNOMarketIncentive: MarketIncentive
-    axlUSDCMarket: Market
-    axlUSDCMarketIncentive: MarketIncentive
+    [key: string]: Market
   }
-}
-
-interface MarketIncentive {
-  denom: string
-  emission_per_second: number
-  index: number
-  last_updated: number
 }

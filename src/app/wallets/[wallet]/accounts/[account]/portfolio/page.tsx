@@ -1,4 +1,4 @@
-import getCreditAccounts from 'libs/getCreditAccounts'
+import { getCreditAccounts } from 'utils/api'
 
 export default async function page({ params }: { params: PageParams }) {
   const creditAccounts = await getCreditAccounts(params.wallet)
