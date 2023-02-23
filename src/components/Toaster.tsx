@@ -1,5 +1,5 @@
 'use client'
-import { ToastContainer, Zoom } from 'react-toastify'
+import { Slide, ToastContainer } from 'react-toastify'
 
 import useStore from 'store'
 
@@ -8,12 +8,11 @@ export default function Toaster() {
 
   return (
     <ToastContainer
-      autoClose={1500}
+      autoClose={3000}
       closeButton={false}
       position='bottom-right'
-      hideProgressBar
       newestOnTop
-      transition={enableAnimations ? Zoom : undefined}
+      transition={enableAnimations ? Slide : undefined}
     />
   )
 }

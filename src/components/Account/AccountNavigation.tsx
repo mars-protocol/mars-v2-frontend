@@ -95,7 +95,7 @@ export const AccountNavigation = () => {
                             )}
                             onClick={() => {
                               setShowMoreMenu(!showMoreMenu)
-                              useStore.setState({ selectedAccount: account, isOpen: true })
+                              router.push(`/wallets/${params.wallet}/accounts/${account}`)
                             }}
                           >
                             Account {account}
