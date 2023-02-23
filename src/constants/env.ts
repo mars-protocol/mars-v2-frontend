@@ -12,6 +12,7 @@ export const IS_TESTNET = NETWORK !== 'mainnet'
 export const URL_GQL = process.env.NEXT_PUBLIC_GQL
 export const URL_REST = process.env.NEXT_PUBLIC_REST
 export const URL_RPC = process.env.NEXT_PUBLIC_RPC
+export const URL_API = process.env.NEXT_PUBLIC_API
 export const WALLETS = process.env.NEXT_PUBLIC_WALLETS?.split(',') ?? []
 
 export const ENV_MISSING_MESSAGE = 'Environment variable missing'

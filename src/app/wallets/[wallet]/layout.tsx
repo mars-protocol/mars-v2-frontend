@@ -1,10 +1,19 @@
 import { AccountNavigation } from 'components/Account/AccountNavigation'
+import { getCreditAccounts } from 'utils/api'
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode
+  params: PageParams
+}) {
+  const creditAccounts = await getCreditAccounts(params.wallet)
+
   return (
     <>
       <div className='relative hidden bg-header lg:block'>
-        <AccountNavigation />
+        <AccountNavigation creditAccounts={creditAccounts} />
       </div>
       {children}
     </>

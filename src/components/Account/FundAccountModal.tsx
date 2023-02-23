@@ -11,13 +11,12 @@ import { Modal } from 'components/Modal'
 import { Slider } from 'components/Slider'
 import { Text } from 'components/Text'
 import useParams from 'hooks/useParams'
-import getAllowedCoins from 'libs/getAllowedCoins'
-import getUserBalances from 'libs/getUserBalances'
 import useStore from 'store'
 import { getMarketAssets } from 'utils/assets'
 import { hardcodedFee } from 'utils/contants'
 import { convertFromGwei, convertToGwei } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
+import { getAccountDeposits } from 'utils/api'
 
 export const FundAccountModal = () => {
   // ---------------
@@ -27,11 +26,7 @@ export const FundAccountModal = () => {
   const params = useParams()
   const depositCreditAccount = useStore((s) => s.depositCreditAccount)
   const address = useStore((s) => s.client?.recentWallet.account?.address)
-  const { data: balancesData, isLoading: balanceIsLoading } = useSWR(address, getUserBalances)
-  const { data: allowedCoinsData, isLoading: allowedCoinsIsLoading } = useSWR(
-    'allowed-coins',
-    getAllowedCoins,
-  )
+  const { data: balancesData, isLoading: balanceIsLoading } = useSWR(address, getAccountDeposits)
 
   const selectedAccount = useStore((s) => s.selectedAccount)
   const marketAssets = getMarketAssets()
@@ -62,16 +57,16 @@ export const FundAccountModal = () => {
   }
 
   useEffect(() => {
-    if (!allowedCoinsData || !balancesData || selectedToken !== '') return
+    if (!marketAssets || !balancesData || selectedToken !== '') return
     let found = false
-    allowedCoinsData.map((coinDenom) => {
+    marketAssets.map((asset) => {
       if (found) return
-      if (balancesData?.find((balance) => balance.denom === coinDenom)?.amount ?? 0 > 0) {
-        setSelectedToken(coinDenom)
+      if (balancesData?.find((balance) => balance.denom === asset.denom)?.amount ?? 0 > 0) {
+        setSelectedToken(asset.denom)
         found = true
       }
     })
-  }, [allowedCoinsData, balancesData])
+  }, [marketAssets, balancesData])
 
   // ---------------
   // VARIABLES
@@ -134,54 +129,50 @@ export const FundAccountModal = () => {
               have any assets in your osmosis wallet use the osmosis bridge to transfer funds to
               your osmosis wallet.
             </Text>
-            {allowedCoinsIsLoading ? (
-              <p>Loading...</p>
-            ) : (
-              <>
-                <div className='mb-4 rounded-md border border-white/20'>
-                  <div className='mb-1 flex justify-between border-b border-white/20 p-2'>
-                    <Text size='sm' className='text-white'>
-                      Asset:
-                    </Text>
-                    <select
-                      className='bg-transparent text-white outline-0'
-                      onChange={(e) => {
-                        setSelectedToken(e.target.value)
+            <>
+              <div className='mb-4 rounded-md border border-white/20'>
+                <div className='mb-1 flex justify-between border-b border-white/20 p-2'>
+                  <Text size='sm' className='text-white'>
+                    Asset:
+                  </Text>
+                  <select
+                    className='bg-transparent text-white outline-0'
+                    onChange={(e) => {
+                      setSelectedToken(e.target.value)
 
-                        if (e.target.value !== selectedToken) setAmount(0)
-                      }}
-                      value={selectedToken}
-                    >
-                      {allowedCoinsData?.map((entry) => {
-                        const entrySymbol = getTokenSymbol(entry, marketAssets)
-                        return (
-                          entrySymbol !== '' && (
-                            <option key={entry} value={entry}>
-                              {getTokenSymbol(entry, marketAssets)}
-                            </option>
-                          )
+                      if (e.target.value !== selectedToken) setAmount(0)
+                    }}
+                    value={selectedToken}
+                  >
+                    {/* {marketAssets?.map((entry) => {
+                      const entrySymbol = getTokenSymbol(entry, marketAssets)
+                      return (
+                        entrySymbol !== '' && (
+                          <option key={entry} value={entry}>
+                            {getTokenSymbol(entry, marketAssets)}
+                          </option>
                         )
-                      })}
-                    </select>
-                  </div>
-                  <div className='flex justify-between p-2'>
-                    <Text size='sm' className='text-white'>
-                      Amount:
-                    </Text>
-                    <input
-                      type='number'
-                      className='appearance-none bg-transparent text-right text-white'
-                      value={amount}
-                      min='0'
-                      onChange={(e) => handleValueChange(e.target.valueAsNumber)}
-                      onBlur={(e) => {
-                        if (e.target.value === '') setAmount(0)
-                      }}
-                    />
-                  </div>
+                      ) */}
+                    {/* })} */}
+                  </select>
                 </div>
-              </>
-            )}
+                <div className='flex justify-between p-2'>
+                  <Text size='sm' className='text-white'>
+                    Amount:
+                  </Text>
+                  <input
+                    type='number'
+                    className='appearance-none bg-transparent text-right text-white'
+                    value={amount}
+                    min='0'
+                    onChange={(e) => handleValueChange(e.target.valueAsNumber)}
+                    onBlur={(e) => {
+                      if (e.target.value === '') setAmount(0)
+                    }}
+                  />
+                </div>
+              </div>
+            </>
             <Text size='xs' uppercase className='mb-2 text-white/60'>
               {`In wallet: ${walletAmount.toLocaleString()} ${getTokenSymbol(
                 selectedToken,
