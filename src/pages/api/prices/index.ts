@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 
 import { ADDRESS_ORACLE, ENV_MISSING_MESSAGE, URL_GQL } from 'constants/env'
 import { getMarketAssets } from 'utils/assets'
+import { Coin } from '@cosmjs/stargate'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!URL_GQL || !ADDRESS_ORACLE) {
@@ -31,13 +32,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       `,
   )
 
-  const data = Object.values(result?.prices).reduce(
-    (acc, entry) => ({
-      ...acc,
-      [entry.denom]: Number(entry.price),
-    }),
-    {},
-  ) as { [key in string]: number }
+  const data: Coin[] = Object.values(result?.prices).reduce((acc: Coin[], curr) => {
+    return [...acc, { denom: curr.denom, amount: curr.price }] as Coin[]
+  }, [])
 
   return res.status(200).json(data)
 }

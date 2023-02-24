@@ -1,3 +1,5 @@
+'use client'
+
 import {
   ColumnDef,
   flexRender,
@@ -11,76 +13,53 @@ import React from 'react'
 
 import { AssetRow } from 'components/Borrow/AssetRow'
 import { ChevronDown, ChevronUp } from 'components/Icons'
-import { formatCurrency } from 'utils/formatters'
-
-interface Market {
-  denom: string
-  symbol: string
-  logo: string
-  name: string
-  borrowed: {
-    amount: number
-    value: number
-  } | null
-  borrowRate: number
-  marketLiquidity: number
-}
+import { getMarketAssets } from 'utils/assets'
+import classNames from 'classnames'
+import AssetExpanded from './AssetExpanded'
 
 type Props = {
-  data: Market[]
-  onBorrowClick: (denom: string) => void
-  onRepayClick: (denom: string) => void
+  data: BorrowAsset[] | BorrowAssetActive[]
 }
 
-export const BorrowTable = ({ data, onBorrowClick, onRepayClick }: Props) => {
+export const BorrowTable = (props: Props) => {
   const [sorting, setSorting] = React.useState<SortingState>([])
+  const marketAssets = getMarketAssets()
 
-  const columns = React.useMemo<ColumnDef<Market>[]>(
+  const columns = React.useMemo<ColumnDef<BorrowAsset>[]>(
     () => [
       {
         header: 'Asset',
         id: 'symbol',
-        accessorFn: (row) => (
-          <div className='flex flex-1 items-center'>
-            <Image src={row.logo} alt='token' width={32} height={32} />
-            <div className='pl-2'>
-              <div>{row.symbol}</div>
-              <div className='text-xs'>{row.name}</div>
+        cell: ({ row }) => {
+          const asset = marketAssets.find((asset) => asset.denom === row.original.denom)
+
+          if (!asset) return null
+
+          return (
+            <div className='flex flex-1 items-center'>
+              <Image src={asset.logo} alt='token' width={32} height={32} />
+              <div className='pl-2'>
+                <div>{asset.symbol}</div>
+                <div className='text-xs'>{asset.name}</div>
+              </div>
             </div>
-          </div>
-        ),
-        cell: (info) => info.getValue(),
+          )
+        },
       },
       {
         accessorKey: 'borrowRate',
         header: 'Borrow Rate',
-        accessorFn: (row) => (
-          <div className='flex flex-1 items-center text-xs'>
-            {row.borrowRate ? `${(row.borrowRate * 100).toFixed(2)}%` : '-'}
-          </div>
-        ),
-        cell: (info) => info.getValue(),
+        cell: ({ row }) => <div>{(Number(row.original.borrowRate) * 100).toFixed(2)}%</div>,
       },
       {
-        accessorKey: 'age',
-        header: 'Borrowed',
-        accessorFn: (row) => (
-          <div className='flex flex-1 items-center text-xs'>
-            {row.borrowed ? (
-              <div>
-                <div className='font-bold'>{row.borrowed.amount}</div>
-                <div>{formatCurrency(row.borrowed.value)}</div>
-              </div>
-            ) : (
-              '-'
-            )}
-          </div>
-        ),
-        cell: (info) => info.getValue(),
-      },
-      {
-        accessorKey: 'marketLiquidity',
+        accessorKey: 'liquidity',
         header: 'Liquidity Available',
+        cell: ({ row }) => (
+          <div className='items-right flex flex-col'>
+            <div className=''>{row.original.liquidity.amount}</div>
+            <div className='text-xs opacity-60'>${row.original.liquidity.value}</div>
+          </div>
+        ),
       },
       {
         accessorKey: 'status',
@@ -98,7 +77,7 @@ export const BorrowTable = ({ data, onBorrowClick, onRepayClick }: Props) => {
   )
 
   const table = useReactTable({
-    data,
+    data: props.data,
     columns,
     state: {
       sorting,
@@ -110,47 +89,67 @@ export const BorrowTable = ({ data, onBorrowClick, onRepayClick }: Props) => {
   })
 
   return (
-    <div className='w-full table-fixed border-spacing-10 text-sm'>
-      {table.getHeaderGroups().map((headerGroup) => (
-        <div key={headerGroup.id} className='mb-2 flex rounded-md px-4 py-2 text-xs'>
-          {headerGroup.headers.map((header) => {
-            return (
-              <div key={header.id} className={`${header.index === 4 ? 'w-[50px]' : 'flex-1'}`}>
-                {header.isPlaceholder ? null : (
+    <table className='w-full'>
+      <thead className='bg-white/5'>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <tr key={headerGroup.id}>
+            {headerGroup.headers.map((header, index) => {
+              return (
+                <th
+                  key={header.id}
+                  onClick={header.column.getToggleSortingHandler()}
+                  className={classNames(
+                    'px-4 py-2',
+                    header.column.getCanSort() && 'cursor-pointer',
+                    header.id === 'symbol' ? 'text-left' : 'text-right',
+                  )}
+                >
                   <div
-                    {...{
-                      className: header.column.getCanSort() ? 'cursor-pointer select-none' : '',
-                      onClick: header.column.getToggleSortingHandler(),
-                    }}
+                    className={classNames(
+                      'flex',
+                      header.id === 'symbol' ? 'justify-start' : 'justify-end',
+                    )}
                   >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                    {{
-                      asc: ' 🔼',
-                      desc: ' 🔽',
-                    }[header.column.getIsSorted() as string] ?? null}
+                    {header.column.getCanSort()
+                      ? {
+                          asc: (
+                            <Image src='/images/sort-asc.svg' alt='mars' width={24} height={24} />
+                          ),
+                          desc: (
+                            <Image src='/images/sort-desc.svg' alt='mars' width={24} height={24} />
+                          ),
+                          false: (
+                            <Image src='/images/sort-none.svg' alt='mars' width={24} height={24} />
+                          ),
+                        }[header.column.getIsSorted() as string] ?? null
+                      : null}
+                    <span>{flexRender(header.column.columnDef.header, header.getContext())}</span>
                   </div>
-                )}
-              </div>
-            )
-          })}
-        </div>
-      ))}
-      <div className='flex flex-col gap-2'>
-        {table.getRowModel().rows.length === 0 ? (
-          <div>No Data</div>
-        ) : (
-          table.getRowModel().rows.map((row) => {
+                </th>
+              )
+            })}
+          </tr>
+        ))}
+      </thead>
+      <tbody>
+        {table.getRowModel().rows.map((row) => {
+          if (row.getIsExpanded()) {
             return (
-              <AssetRow
-                key={row.index}
-                data={row.original}
-                onBorrowClick={() => onBorrowClick(row.original.denom)}
-                onRepayClick={() => onRepayClick(row.original.denom)}
-              />
+              <React.Fragment key={`${row.id}_subrow`}>
+                <AssetRow key={`${row.id}_asset`} row={row} resetExpanded={table.resetExpanded} />
+                <AssetExpanded
+                  key={`${row.id}_expanded`}
+                  row={row}
+                  onBorrowClick={() => {}}
+                  onRepayClick={() => {}}
+                  resetExpanded={table.resetExpanded}
+                />
+              </React.Fragment>
             )
-          })
-        )}
-      </div>
-    </div>
+          }
+          return <AssetRow key={row.index} row={row} resetExpanded={table.resetExpanded} />
+        })}
+      </tbody>
+    </table>
   )
 }

@@ -1,3 +1,5 @@
-export default function Loading() {
-  return '...isLoading'
+import Loading from 'components/Loading'
+
+export default function page() {
+  return <Loading />
 }

@@ -1,31 +1,51 @@
-import { BorrowTable } from 'components/BorrowTable'
-import { AccountDebtTable } from 'components/AccountDebtTable'
+import { BorrowTable } from 'components/Borrow/BorrowTable'
 import { Card } from 'components/Card'
 import Loading from 'components/Loading'
 import { Text } from 'components/Text'
 import { Suspense } from 'react'
+import { getAccountDebts, getBorrowData } from 'utils/api'
+import { getMarketAssets } from 'utils/assets'
 
-export default function page({ params }: { params: PageParams }) {
+export default async function page({ params }: { params: PageParams }) {
+  const debtData = await getAccountDebts(params.account)
+  const borrowData = await getBorrowData()
+
+  const marketAssets = getMarketAssets()
+
+  const { available, active } = marketAssets.reduce(
+    (prev: { available: BorrowAsset[]; active: BorrowAssetActive[] }, curr) => {
+      const borrow = borrowData.find((borrow) => borrow.denom === curr.denom)
+      if (borrow) {
+        const debt = debtData.find((debt) => debt.denom === curr.denom)
+        if (debt) {
+          prev.active.push({
+            ...borrow,
+            debt: {
+              amount: '100000',
+              value: '12389478321',
+            },
+          })
+        } else {
+          prev.available.push(borrow)
+        }
+      }
+      return prev
+    },
+    { available: [], active: [] },
+  )
+
   return (
     <div className='flex w-full flex-col'>
-      <Card className='mb-4'>
-        <Text size='lg' uppercase>
-          Debt data
-        </Text>
-        <Suspense fallback={<Loading className='h-full w-full' />}>
-          {/* @ts-expect-error Server Component */}
-          <AccountDebtTable account={params.account} />
-        </Suspense>
-      </Card>
-      <Card>
-        <Text size='lg' uppercase>
-          Borrow data
-        </Text>
-        <Suspense fallback={<Loading className='h-full w-full' />}>
-          {/* @ts-expect-error Server Component */}
-          <BorrowTable />
-        </Suspense>
-      </Card>
+      {active.length > 0 && (
+        <Card title='Borrowings'>
+          <BorrowTable data={active} />
+        </Card>
+      )}
+      {available.length > 0 && (
+        <Card title='Available to borrow'>
+          <BorrowTable data={available} />
+        </Card>
+      )}
     </div>
   )
 }

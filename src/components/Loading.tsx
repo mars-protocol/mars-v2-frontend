@@ -14,10 +14,10 @@ export default function Loading(props: Props) {
         <div
           role='status'
           className={classNames(
-            'animate-pulse rounded-full bg-white/40',
+            'animate-pulse rounded-md bg-white/40',
             props.className,
-            props.height ? `h-${props.height}` : 'h-3',
-            props.width ? `w-${props.width}` : 'w-full',
+            props.height ? `h-[${props.height}px]` : 'h-[300px]',
+            props.width ? `w-[${props.width}px]` : 'w-full',
           )}
           key={i}
         />

@@ -1,6 +1,5 @@
 import { Coin } from '@cosmjs/stargate'
 import { URL_API } from 'constants/env'
-import { BorrowData } from 'pages/api/markets/borrow'
 
 export async function callAPI<T>(endpoint: string): Promise<T> {
   const response = await fetch(`${URL_API}${endpoint}`, {
@@ -11,7 +10,7 @@ export async function callAPI<T>(endpoint: string): Promise<T> {
 }
 
 export async function getBorrowData() {
-  return callAPI<BorrowData[]>('/markets/borrow')
+  return callAPI<BorrowAsset[]>('/markets/borrow')
 }
 
 export async function getCreditAccounts(address: string) {
