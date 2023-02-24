@@ -1,14 +1,19 @@
 import React from 'react'
 
 import { getMarketAssets } from 'utils/assets'
-import { flexRender, Row } from '@tanstack/react-table'
+import { Row } from '@tanstack/react-table'
+import { Button } from 'components/Button'
+import { useRouter } from 'next/navigation'
 
 type AssetRowProps = {
   row: Row<BorrowAsset>
+  onBorrowClick: () => void
+  onRepayClick: () => void
   resetExpanded: (defaultState?: boolean | undefined) => void
 }
 
-export const AssetRow = (props: AssetRowProps) => {
+export default function AssetExpanded(props: AssetRowProps) {
+  const router = useRouter()
   const marketAssets = getMarketAssets()
   const asset = marketAssets.find((asset) => asset.denom === props.row.original.denom)
 
@@ -25,13 +30,12 @@ export const AssetRow = (props: AssetRowProps) => {
         !isExpanded && props.row.toggleExpanded()
       }}
     >
-      {props.row.getVisibleCells().map((cell, index) => {
-        return (
-          <td key={cell.id} className={'p-4 text-right'}>
-            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-          </td>
-        )
-      })}
+      <td colSpan={4}>
+        <div className='flex justify-end p-4'>
+          <Button color='secondary' text='CLick me' onClick={() => router.refresh()} />
+          <Button color='primary' text='CLick me' />
+        </div>
+      </td>
     </tr>
   )
 }

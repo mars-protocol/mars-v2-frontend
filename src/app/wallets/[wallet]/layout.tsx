@@ -15,7 +15,7 @@ export default async function RootLayout({
       <div className='relative hidden bg-header lg:block'>
         <AccountNavigation creditAccounts={creditAccounts} />
       </div>
-      {children}
+      <main className='p-4'>{children}</main>
     </>
   )
 }

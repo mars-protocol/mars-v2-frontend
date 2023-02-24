@@ -2,19 +2,21 @@ import classNames from 'classnames'
 import { ReactNode } from 'react'
 
 interface Props {
+  title: string
   children: ReactNode
   className?: string
 }
 
-export const Card = ({ children, className }: Props) => {
+export const Card = (props: Props) => {
   return (
-    <div
+    <section
       className={classNames(
-        className,
-        'h-fit w-full max-w-full overflow-hidden rounded-xl border-[7px] border-accent-highlight p-4 gradient-card',
+        props.className,
+        'h-fit w-full max-w-full overflow-hidden rounded-md border-[1px] border-white/20',
       )}
     >
-      {children}
-    </div>
+      <div className='bg-white/10 p-4 font-semibold'>{props.title}</div>
+      <div className=''>{props.children}</div>
+    </section>
   )
 }
