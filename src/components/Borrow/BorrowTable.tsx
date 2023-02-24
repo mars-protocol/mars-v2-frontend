@@ -9,7 +9,7 @@ import {
 import Image from 'next/image'
 import React from 'react'
 
-import { AssetRow } from 'components/Borrow'
+import { AssetRow } from 'components/Borrow/AssetRow'
 import { ChevronDown, ChevronUp } from 'components/Icons'
 import { formatCurrency } from 'utils/formatters'
 

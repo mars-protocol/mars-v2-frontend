@@ -1,20 +1,27 @@
+'use client'
+
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 
-import { Button, LabelValuePair, PositionsList } from 'components'
-import { AccountManageOverlay, RiskChart } from 'components/Account'
+import { AccountManageOverlay } from 'components/Account/AccountManageOverlay'
+import { RiskChart } from 'components/Account/RiskChart'
+import { Button } from 'components/Button'
 import { ArrowRightLine, ChevronDown, ChevronLeft } from 'components/Icons'
-import { useAccountStats, useBalances } from 'hooks/data'
-import { useAccountDetailsStore, useNetworkConfigStore, useSettingsStore } from 'stores'
-import { lookup } from 'utils/formatters'
+import { LabelValuePair } from 'components/LabelValuePair'
+import { PositionsList } from 'components/PositionsList'
+import { useAccountStats } from 'hooks/data/useAccountStats'
+import { useBalances } from 'hooks/data/useBalances'
+import { convertFromGwei } from 'utils/formatters'
 import { createRiskData } from 'utils/risk'
+import useStore from 'store'
+import { getBaseAsset, getMarketAssets } from 'utils/assets'
 
 export const AccountDetails = () => {
-  const enableAnimations = useSettingsStore((s) => s.enableAnimations)
-  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
-  const isOpen = useAccountDetailsStore((s) => s.isOpen)
-  const whitelistedAssets = useNetworkConfigStore((s) => s.assets.whitelist)
-  const baseAsset = useNetworkConfigStore((s) => s.assets.base)
+  const enableAnimations = useStore((s) => s.enableAnimations)
+  const selectedAccount = useStore((s) => s.selectedAccount)
+  const isOpen = useStore((s) => s.isOpen)
+  const marketAssets = getMarketAssets()
+  const baseAsset = getBaseAsset()
 
   const balances = useBalances()
   const accountStats = useAccountStats()
@@ -36,7 +43,7 @@ export const AccountDetails = () => {
     >
       <Button
         onClick={() => {
-          useAccountDetailsStore.setState({ isOpen: true })
+          useStore.setState({ isOpen: true })
         }}
         variant='text'
         className={classNames(
@@ -75,7 +82,7 @@ export const AccountDetails = () => {
               enableAnimations && 'transition-[color]',
             )}
             onClick={() => {
-              useAccountDetailsStore.setState({ isOpen: false })
+              useStore.setState({ isOpen: false })
             }}
           >
             <ArrowRightLine />
@@ -93,7 +100,11 @@ export const AccountDetails = () => {
           label='Total Position:'
           value={{
             format: 'number',
-            amount: lookup(accountStats?.totalPosition ?? 0, baseAsset.denom, whitelistedAssets),
+            amount: convertFromGwei(
+              accountStats?.totalPosition ?? 0,
+              baseAsset.denom,
+              marketAssets,
+            ),
             prefix: '$',
           }}
         />
@@ -101,7 +112,7 @@ export const AccountDetails = () => {
           label='Total Liabilities:'
           value={{
             format: 'number',
-            amount: lookup(accountStats?.totalDebt ?? 0, baseAsset.denom, whitelistedAssets),
+            amount: convertFromGwei(accountStats?.totalDebt ?? 0, baseAsset.denom, marketAssets),
             prefix: '$',
           }}
         />

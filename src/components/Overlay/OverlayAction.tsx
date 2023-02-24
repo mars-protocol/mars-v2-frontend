@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { ReactNode } from 'react'
 
-import { Button } from 'components'
+import { Button } from 'components/Button'
 
 interface Props {
   className?: string

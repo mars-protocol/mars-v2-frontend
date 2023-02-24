@@ -1,0 +1,62 @@
+import { IS_TESTNET } from 'constants/env'
+
+export const ASSETS: Asset[] = [
+  {
+    symbol: 'OSMO',
+    name: 'Osmosis',
+    denom: 'uosmo',
+    color: '#9f1ab9',
+    decimals: 6,
+    hasOraclePrice: true,
+    logo: '/tokens/osmo.svg',
+    isEnabled: true,
+    isMarket: true,
+  },
+  {
+    symbol: 'ATOM',
+    name: 'Atom',
+    denom: 'ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2',
+    color: '#6f7390',
+    logo: '/tokens/atom.svg',
+    decimals: 6,
+    hasOraclePrice: true,
+    isEnabled: IS_TESTNET ? true : false,
+    isMarket: true,
+  },
+  {
+    symbol: 'CRO',
+    name: 'Cronos',
+    denom: 'ibc/E6931F78057F7CC5DA0FD6CEF82FF39373A6E0452BF1FD76910B93292CF356C1',
+    color: '#002D74',
+    logo: '/tokens/cro.svg',
+    decimals: 8,
+    hasOraclePrice: true,
+    isEnabled: false,
+    isMarket: true,
+  },
+  {
+    symbol: 'MARS',
+    name: 'Mars',
+    denom: IS_TESTNET
+      ? 'ibc/ACA4C8A815A053CC027DB90D15915ADA31939FA331CE745862CDD00A2904FA17'
+      : 'ibc/573FCD90FACEE750F55A8864EF7D38265F07E5A9273FA0E8DAFD39951332B580',
+    color: '#dd5b65',
+    logo: '/tokens/mars.svg',
+    decimals: 6,
+    poolId: IS_TESTNET ? 768 : 907,
+    hasOraclePrice: true,
+    isMarket: false,
+    isEnabled: true,
+  },
+  {
+    symbol: 'JUNO',
+    name: 'Juno',
+    denom: 'ibc/46B44899322F3CD854D2D46DEEF881958467CDD4B3B10086DA49296BBED94BED',
+    color: 'black',
+    logo: '/tokens/juno.svg',
+    decimals: 6,
+    hasOraclePrice: true,
+    isMarket: IS_TESTNET,
+    isEnabled: false,
+  },
+]

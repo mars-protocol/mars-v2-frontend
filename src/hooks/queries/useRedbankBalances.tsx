@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import request, { gql } from 'graphql-request'
 import { useMemo } from 'react'
 
-import { useNetworkConfigStore } from 'stores'
+import { ADDRESS_RED_BANK, URL_GQL } from 'constants/env'
 import { queryKeys } from 'types/query-keys-factory'
 
 interface Result {
@@ -13,13 +13,12 @@ interface Result {
 }
 
 export const useRedbankBalances = () => {
-  const hiveUrl = useNetworkConfigStore((s) => s.hiveUrl)
-  const redBankAddress = useNetworkConfigStore((s) => s.contracts.redBank)
+  const redBankAddress = ADDRESS_RED_BANK
   const result = useQuery<Result>(
     queryKeys.redbankBalances(),
     async () => {
       return await request(
-        hiveUrl!,
+        URL_GQL!,
         gql`
           query RedbankBalances {
             bank {
@@ -35,7 +34,7 @@ export const useRedbankBalances = () => {
       )
     },
     {
-      enabled: !!hiveUrl && !!redBankAddress,
+      enabled: !!redBankAddress,
       staleTime: 30000,
       refetchInterval: 30000,
     },

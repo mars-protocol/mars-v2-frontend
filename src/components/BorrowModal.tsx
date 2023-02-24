@@ -4,23 +4,26 @@ import React, { useMemo, useState } from 'react'
 import { NumericFormat } from 'react-number-format'
 import { toast } from 'react-toastify'
 
-import {
-  Button,
-  CircularProgress,
-  ContainerSecondary,
-  Gauge,
-  PositionsList,
-  ProgressBar,
-  Slider,
-  Text,
-  Tooltip,
-} from 'components'
-import { useAccountStats, useBalances, useCalculateMaxBorrowAmount } from 'hooks/data'
-import { useBorrowFunds } from 'hooks/mutations'
-import { useAllBalances, useMarkets, useTokenPrices } from 'hooks/queries'
-import { useAccountDetailsStore, useNetworkConfigStore } from 'stores'
+import { Button } from 'components/Button'
+import { CircularProgress } from 'components/CircularProgress'
+import { ContainerSecondary } from 'components/ContainerSecondary'
+import { Gauge } from 'components/Gauge'
+import { PositionsList } from 'components/PositionsList'
+import { ProgressBar } from 'components/ProgressBar'
+import { Slider } from 'components/Slider'
+import { Text } from 'components/Text'
+import { Tooltip } from 'components/Tooltip'
+import { useAccountStats } from 'hooks/data/useAccountStats'
+import { useBalances } from 'hooks/data/useBalances'
+import { useCalculateMaxBorrowAmount } from 'hooks/data/useCalculateMaxBorrowAmount'
+import { useBorrowFunds } from 'hooks/mutations/useBorrowFunds'
+import { useAllBalances } from 'hooks/queries/useAllBalances'
+import { useMarkets } from 'hooks/queries/useMarkets'
+import { useTokenPrices } from 'hooks/queries/useTokenPrices'
 import { formatCurrency, formatValue } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
+import useStore from 'store'
+import { getBaseAsset, getMarketAssets } from 'utils/assets'
 
 type Props = {
   show: boolean
@@ -32,15 +35,15 @@ export const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
   const [amount, setAmount] = useState(0)
   const [isBorrowToCreditAccount, setIsBorrowToCreditAccount] = useState(false)
 
-  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
-  const whitelistedAssets = useNetworkConfigStore((s) => s.assets.whitelist)
-  const baseAsset = useNetworkConfigStore((s) => s.assets.base)
+  const selectedAccount = useStore((s) => s.selectedAccount)
+  const marketAssets = getMarketAssets()
+  const baseAsset = getBaseAsset()
 
   const balances = useBalances()
 
   const { actions, borrowAmount } = useMemo(() => {
     const borrowAmount = BigNumber(amount)
-      .times(10 ** getTokenDecimals(tokenDenom, whitelistedAssets))
+      .times(10 ** getTokenDecimals(tokenDenom, marketAssets))
       .toNumber()
 
     const withdrawAmount = isBorrowToCreditAccount ? 0 : borrowAmount
@@ -61,11 +64,11 @@ export const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
         },
       ] as AccountStatsAction[],
     }
-  }, [amount, isBorrowToCreditAccount, tokenDenom, whitelistedAssets])
+  }, [amount, isBorrowToCreditAccount, tokenDenom, marketAssets])
 
   const accountStats = useAccountStats(actions)
 
-  const tokenSymbol = getTokenSymbol(tokenDenom, whitelistedAssets)
+  const tokenSymbol = getTokenSymbol(tokenDenom, marketAssets)
 
   const { mutate, isLoading } = useBorrowFunds(borrowAmount, tokenDenom, !isBorrowToCreditAccount, {
     onSuccess: () => {
@@ -84,9 +87,9 @@ export const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
 
   const walletAmount = useMemo(() => {
     return BigNumber(balancesData?.find((balance) => balance.denom === tokenDenom)?.amount ?? 0)
-      .div(10 ** getTokenDecimals(tokenDenom, whitelistedAssets))
+      .div(10 ** getTokenDecimals(tokenDenom, marketAssets))
       .toNumber()
-  }, [balancesData, tokenDenom, whitelistedAssets])
+  }, [balancesData, tokenDenom, marketAssets])
 
   const tokenPrice = tokenPrices?.[tokenDenom] ?? 0
   const borrowRate = Number(marketsData?.[tokenDenom]?.borrow_rate)
@@ -110,7 +113,7 @@ export const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
 
   const handleSliderValueChange = (value: number[]) => {
     const decimal = value[0] / 100
-    const tokenDecimals = getTokenDecimals(tokenDenom, whitelistedAssets)
+    const tokenDecimals = getTokenDecimals(tokenDenom, marketAssets)
     // limit decimal precision based on token contract decimals
     const newAmount = Number((decimal * maxValue).toFixed(tokenDecimals))
 
@@ -175,7 +178,7 @@ export const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
                           allowNegative={false}
                           onValueChange={(v) => handleValueChange(v.floatValue || 0)}
                           suffix={` ${tokenSymbol}`}
-                          decimalScale={getTokenDecimals(tokenDenom, whitelistedAssets)}
+                          decimalScale={getTokenDecimals(tokenDenom, marketAssets)}
                         />
                         <div className='flex justify-between text-xs tracking-widest'>
                           <div>

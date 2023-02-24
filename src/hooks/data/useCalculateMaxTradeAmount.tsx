@@ -1,13 +1,11 @@
 import BigNumber from 'bignumber.js'
 import { useCallback, useMemo } from 'react'
 
-import {
-  useCreditAccountPositions,
-  useMarkets,
-  useRedbankBalances,
-  useTokenPrices,
-} from 'hooks/queries'
-import { useAccountDetailsStore } from 'stores'
+import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositions'
+import { useMarkets } from 'hooks/queries/useMarkets'
+import { useRedbankBalances } from 'hooks/queries/useRedbankBalances'
+import { useTokenPrices } from 'hooks/queries/useTokenPrices'
+import useStore from 'store'
 
 const getApproximateHourlyInterest = (amount: string, borrowAPY: string) => {
   const hourlyAPY = BigNumber(borrowAPY).div(24 * 365)
@@ -22,7 +20,7 @@ export const useCalculateMaxTradeAmount = (
   tokenOut: string,
   isMargin: boolean,
 ) => {
-  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
+  const selectedAccount = useStore((s) => s.selectedAccount)
 
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
   const { data: marketsData } = useMarkets()

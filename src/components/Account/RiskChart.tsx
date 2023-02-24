@@ -9,13 +9,14 @@ import {
   YAxis,
 } from 'recharts'
 
-import { FormattedNumber, Text } from 'components'
-import { useAccountStats } from 'hooks/data'
-import { useSettingsStore } from 'stores'
 import { formatValue } from 'utils/formatters'
+import { FormattedNumber } from 'components/FormattedNumber'
+import { Text } from 'components/Text'
+import { useAccountStats } from 'hooks/data/useAccountStats'
+import useStore from 'store'
 
 export const RiskChart = ({ data }: RiskChartProps) => {
-  const enableAnimations = useSettingsStore((s) => s.enableAnimations)
+  const enableAnimations = useStore((s) => s.enableAnimations)
   const accountStats = useAccountStats()
   const currentRisk = accountStats?.risk ?? 0
 

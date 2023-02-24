@@ -4,40 +4,36 @@ import classNames from 'classnames'
 import React, { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 
-import {
-  Button,
-  CircularProgress,
-  FormattedNumber,
-  Gauge,
-  LabelValuePair,
-  Modal,
-  PositionsList,
-  Slider,
-  Text,
-} from 'components'
 import { BorrowCapacity } from 'components/BorrowCapacity'
-import { useAccountStats, useBalances, useCalculateMaxWithdrawAmount } from 'hooks/data'
-import { useWithdrawFunds } from 'hooks/mutations'
-import { useCreditAccountPositions, useTokenPrices } from 'hooks/queries'
-import {
-  useAccountDetailsStore,
-  useModalStore,
-  useNetworkConfigStore,
-  useWalletStore,
-} from 'stores'
-import { formatValue, lookup } from 'utils/formatters'
+import { convertFromGwei, formatValue } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
+import { CircularProgress } from 'components/CircularProgress'
+import { Button } from 'components/Button'
+import { Text } from 'components/Text'
+import { Slider } from 'components/Slider'
+import { FormattedNumber } from 'components/FormattedNumber'
+import { Gauge } from 'components/Gauge'
+import { LabelValuePair } from 'components/LabelValuePair'
+import { Modal } from 'components/Modal'
+import { PositionsList } from 'components/PositionsList'
+import { useAccountStats } from 'hooks/data/useAccountStats'
+import { useBalances } from 'hooks/data/useBalances'
+import { useCalculateMaxWithdrawAmount } from 'hooks/data/useCalculateMaxWithdrawAmount'
+import { useWithdrawFunds } from 'hooks/mutations/useWithdrawFunds'
+import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositions'
+import { useTokenPrices } from 'hooks/queries/useTokenPrices'
+import useStore from 'store'
+import { getBaseAsset, getMarketAssets } from 'utils/assets'
 
 export const WithdrawModal = () => {
   // ---------------
   // STORE
   // ---------------
-  const open = useModalStore((s) => s.withdrawModal)
-  const chainInfo = useWalletStore((s) => s.chainInfo)
-  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
+  const open = useStore((s) => s.withdrawModal)
+  const selectedAccount = useStore((s) => s.selectedAccount)
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
-  const whitelistedAssets = useNetworkConfigStore((s) => s.assets.whitelist)
-  const baseAsset = useNetworkConfigStore((s) => s.assets.base)
+  const marketAssets = getMarketAssets()
+  const baseAsset = getBaseAsset()
 
   // ---------------
   // LOCAL STATE
@@ -52,8 +48,8 @@ export const WithdrawModal = () => {
   const { data: tokenPrices } = useTokenPrices()
   const balances = useBalances()
 
-  const selectedTokenSymbol = getTokenSymbol(selectedToken, whitelistedAssets)
-  const selectedTokenDecimals = getTokenDecimals(selectedToken, whitelistedAssets)
+  const selectedTokenSymbol = getTokenSymbol(selectedToken, marketAssets)
+  const selectedTokenDecimals = getTokenDecimals(selectedToken, marketAssets)
 
   const tokenAmountInCreditAccount = useMemo(() => {
     return BigNumber(positionsData?.coins.find((coin) => coin.denom === selectedToken)?.amount ?? 0)
@@ -96,7 +92,7 @@ export const WithdrawModal = () => {
 
   const { mutate, isLoading } = useWithdrawFunds(withdrawAmount, borrowAmount, selectedToken, {
     onSuccess: () => {
-      useModalStore.setState({ withdrawModal: false })
+      useStore.setState({ withdrawModal: false })
       toast.success(`${amount} ${selectedTokenSymbol} successfully withdrawn`)
     },
   })
@@ -131,13 +127,13 @@ export const WithdrawModal = () => {
     setAmount(0)
   }
 
-  const getTokenTotalUSDValue = (amount: string, denom: string, whitelistedAssets: Asset[]) => {
+  const getTokenTotalUSDValue = (amount: string, denom: string, marketAssets: Asset[]) => {
     // early return if prices are not fetched yet
     if (!tokenPrices) return 0
 
     return (
       BigNumber(amount)
-        .div(10 ** getTokenDecimals(denom, whitelistedAssets))
+        .div(10 ** getTokenDecimals(denom, marketAssets))
         .toNumber() * tokenPrices[denom]
     )
   }
@@ -149,7 +145,7 @@ export const WithdrawModal = () => {
   }, [amount, maxWithdrawAmount])
 
   const setOpen = (open: boolean) => {
-    useModalStore.setState({ withdrawModal: open })
+    useStore.setState({ withdrawModal: open })
   }
 
   return (
@@ -183,7 +179,7 @@ export const WithdrawModal = () => {
                   >
                     {positionsData?.coins?.map((coin) => (
                       <option key={coin.denom} value={coin.denom}>
-                        {getTokenSymbol(coin.denom, whitelistedAssets)}
+                        {getTokenSymbol(coin.denom, marketAssets)}
                       </option>
                     ))}
                   </select>
@@ -310,10 +306,10 @@ export const WithdrawModal = () => {
                 label='Total Position:'
                 value={{
                   format: 'number',
-                  amount: lookup(
+                  amount: convertFromGwei(
                     accountStats?.totalPosition ?? 0,
                     baseAsset.denom,
-                    whitelistedAssets,
+                    marketAssets,
                   ),
                   prefix: '$',
                 }}
@@ -322,7 +318,11 @@ export const WithdrawModal = () => {
                 label='Total Liabilities:'
                 value={{
                   format: 'number',
-                  amount: lookup(accountStats?.totalDebt ?? 0, baseAsset.denom, whitelistedAssets),
+                  amount: convertFromGwei(
+                    accountStats?.totalDebt ?? 0,
+                    baseAsset.denom,
+                    marketAssets,
+                  ),
                   prefix: '$',
                 }}
               />

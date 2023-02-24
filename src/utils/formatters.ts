@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 
-import { getTokenDecimals } from './tokens'
+import { getTokenDecimals } from 'utils/tokens'
 
 export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
   const head = text.slice(0, h)
@@ -20,21 +20,27 @@ export const formatCurrency = (value: string | number) => {
 export const getTokenTotalUSDValue = (
   amount: string,
   denom: string,
-  whitelistedAssets: Asset[],
+  marketAssets: Asset[],
   tokenPrices?: KeyValuePair,
 ) => {
   if (!tokenPrices) return 0
 
   return (
     BigNumber(amount)
-      .div(10 ** getTokenDecimals(denom, whitelistedAssets))
+      .div(10 ** getTokenDecimals(denom, marketAssets))
       .toNumber() * tokenPrices[denom]
   )
 }
 
-export const lookup = (amount: string | number, denom: string, whitelistedAssets: Asset[]) => {
+export const convertFromGwei = (amount: string | number, denom: string, marketAssets: Asset[]) => {
   return BigNumber(amount)
-    .div(10 ** getTokenDecimals(denom, whitelistedAssets))
+    .div(10 ** getTokenDecimals(denom, marketAssets))
+    .toNumber()
+}
+
+export const convertToGwei = (amount: string | number, denom: string, marketAssets: Asset[]) => {
+  return BigNumber(amount)
+    .times(10 ** getTokenDecimals(denom, marketAssets))
     .toNumber()
 }
 

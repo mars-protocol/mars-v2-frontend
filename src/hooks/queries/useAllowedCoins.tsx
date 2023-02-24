@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { useNetworkConfigStore, useWalletStore } from 'stores'
+import { ADDRESS_CREDIT_MANAGER } from 'constants/env'
+import useStore from 'store'
 import { queryKeys } from 'types/query-keys-factory'
 
 type Result = string[]
@@ -10,12 +11,12 @@ const queryMsg = {
 }
 
 export const useAllowedCoins = () => {
-  const client = useWalletStore((s) => s.signingClient)
-  const creditManagerAddress = useNetworkConfigStore((s) => s.contracts.creditManager)
+  const client = useStore((s) => s.signingClient)
+  const creditManagerAddress = ADDRESS_CREDIT_MANAGER
 
   const result = useQuery<Result>(
     queryKeys.allowedCoins(),
-    async () => client?.queryContractSmart(creditManagerAddress, queryMsg),
+    async () => client?.queryContractSmart(creditManagerAddress || '', queryMsg),
     {
       enabled: !!client,
       staleTime: Infinity,

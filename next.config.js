@@ -1,11 +1,11 @@
-const { withSentryConfig } = require('@sentry/nextjs')
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
-  reactStrictMode: true,
-  sentry: {
-    hideSourceMaps: true,
+  output: 'standalone',
+  experimental: {
+    appDir: true,
   },
+  reactStrictMode: true,
   async redirects() {
     return [
       {
@@ -13,9 +13,34 @@ const nextConfig = {
         destination: '/trade',
         permanent: true,
       },
+      {
+        source: '/wallets',
+        destination: '/trade',
+        permanent: true,
+      },
+      {
+        source: '/wallets/:wallet',
+        destination: '/wallets/:wallet/trade',
+        permanent: true,
+      },
+      {
+        source: '/wallets/:wallet/accounts',
+        destination: '/wallets/:wallet/accounts/trade',
+        permanent: true,
+      },
     ]
   },
-  webpack(config) {
+  webpack(config, {isServer}) {
+    if (isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        'utf-8-validate': false,
+        bufferutil: false,
+        './build/Release/ecdh': false,
+        eccrypto: false,
+      }
+    }
+
     config.module.rules.push({
       test: /\.svg$/i,
       issuer: /\.[jt]sx?$/,
@@ -40,4 +65,4 @@ const sentryWebpackPluginOptions = {
 
 // Make sure adding Sentry options is the last code to run before exporting, to
 // ensure that your source maps include changes from all other Webpack plugins
-module.exports = withSentryConfig(nextConfig, sentryWebpackPluginOptions)
+module.exports = nextConfig

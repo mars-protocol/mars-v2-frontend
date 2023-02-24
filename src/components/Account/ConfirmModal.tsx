@@ -1,12 +1,16 @@
+'use client'
+
 import classNames from 'classnames'
 
-import { CircularProgress, Modal, Text } from 'components'
+import { CircularProgress } from 'components/CircularProgress'
 import { MarsProtocol } from 'components/Icons'
-import { useModalStore } from 'stores'
+import { Modal } from 'components/Modal'
+import { Text } from 'components/Text'
+import useStore from 'store'
 
 export const ConfirmModal = () => {
-  const createOpen = useModalStore((s) => s.createAccountModal)
-  const deleteOpen = useModalStore((s) => s.deleteAccountModal)
+  const createOpen = useStore((s) => s.createAccountModal)
+  const deleteOpen = useStore((s) => s.deleteAccountModal)
 
   return (
     <Modal open={createOpen || deleteOpen}>
@@ -23,7 +27,7 @@ export const ConfirmModal = () => {
           </div>
           <Text size='2xl' uppercase={true} className='w-full text-center'>
             {createOpen &&
-              'A small step for a Smart Contracts but a big leap for your financial freedom.'}
+              'A small step for a Smart Contract but a big leap for your financial freedom.'}
             {deleteOpen && 'Some rovers have to be recycled once in a while...'}
           </Text>
         </div>

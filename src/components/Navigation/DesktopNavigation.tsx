@@ -1,52 +1,42 @@
+'use client'
+
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
-import { AccountNavigation, AccountStatus } from 'components/Account'
 import { Logo } from 'components/Icons'
-import { menuTree, NavLink, SearchInput } from 'components/Navigation'
-import { Wallet } from 'components/Wallet'
-import { useCreditAccounts } from 'hooks/queries'
-import { useAccountDetailsStore, useWalletStore } from 'stores'
+import { NavLink } from 'components/Navigation/NavLink'
+import Wallet from 'components/Wallet/Wallet'
+import { getRoute } from 'utils/route'
 
-export const DesktopNavigation = () => {
-  const address = useWalletStore((s) => s.address)
-  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
+export const menuTree: { href: RouteSegment; label: string }[] = [
+  { href: 'trade', label: 'Trade' },
+  { href: 'earn', label: 'Earn' },
+  { href: 'borrow', label: 'Borrow' },
+  { href: 'portfolio', label: 'Portfolio' },
+  { href: 'council', label: 'Council' },
+]
 
-  const { data: creditAccountsList } = useCreditAccounts()
-
-  const isConnected = !!address
-  const hasCreditAccounts = creditAccountsList && creditAccountsList.length > 0
+export default function DesktopNavigation() {
+  const pathname = usePathname() || ''
 
   return (
     <div className='relative hidden bg-header lg:block'>
       <div className='flex items-center justify-between border-b border-white/20 px-6 py-3'>
         <div className='flex flex-grow items-center'>
-          <Link href='/trade' passHref>
-            <span className='h-10 w-10'>
+          <Link href={getRoute(pathname, { page: 'trade' })}>
+            <span className='block h-10 w-10'>
               <Logo />
             </span>
           </Link>
           <div className='flex gap-8 px-6'>
             {menuTree.map((item, index) => (
-              <NavLink key={index} href={item.href}>
+              <NavLink key={index} href={getRoute(pathname, { page: item.href })}>
                 {item.label}
               </NavLink>
             ))}
           </div>
         </div>
         <Wallet />
-      </div>
-      {/* Sub navigation bar */}
-      <div className='flex items-center justify-between border-b border-white/20 pl-6 text-sm text-white/40'>
-        <div className='flex items-center'>
-          <SearchInput />
-          {isConnected && hasCreditAccounts && (
-            <AccountNavigation
-              selectedAccount={selectedAccount}
-              creditAccountsList={creditAccountsList}
-            />
-          )}
-        </div>
-        {isConnected && <AccountStatus />}
       </div>
     </div>
   )

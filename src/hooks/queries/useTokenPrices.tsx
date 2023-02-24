@@ -2,20 +2,17 @@ import { useQuery } from '@tanstack/react-query'
 import { gql, request } from 'graphql-request'
 import { useMemo } from 'react'
 
-import { useNetworkConfigStore } from 'stores'
+import { ADDRESS_ORACLE, URL_GQL } from 'constants/env'
 import { queryKeys } from 'types/query-keys-factory'
+import { getMarketAssets } from 'utils/assets'
 
-const fetchTokenPrices = async (
-  hiveUrl: string,
-  whitelistedTokens: Asset[],
-  oracleAddress: string,
-) => {
+const fetchTokenPrices = async (hiveUrl: string, marketAssets: Asset[], oracleAddress: string) => {
   return request(
     hiveUrl,
     gql`
       query PriceOracle {
         prices: wasm {
-          ${whitelistedTokens.map((token) => {
+          ${marketAssets.map((token) => {
             return `${token.symbol}: contractQuery(
               contractAddress: "${oracleAddress}"
               query: {
@@ -32,12 +29,10 @@ const fetchTokenPrices = async (
 }
 
 export const useTokenPrices = () => {
-  const hiveUrl = useNetworkConfigStore((s) => s.hiveUrl)
-  const whitelistedTokens = useNetworkConfigStore((s) => s.assets.whitelist)
-  const oracleAddress = useNetworkConfigStore((s) => s.contracts.oracle)
+  const marketAssets = getMarketAssets()
   const result = useQuery<TokenPricesResult>(
     queryKeys.tokenPrices(),
-    async () => await fetchTokenPrices(hiveUrl, whitelistedTokens, oracleAddress),
+    async () => await fetchTokenPrices(URL_GQL!, marketAssets, ADDRESS_ORACLE || ''),
     {
       refetchInterval: 30000,
       staleTime: Infinity,

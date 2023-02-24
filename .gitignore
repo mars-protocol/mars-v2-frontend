@@ -37,3 +37,7 @@ next-env.d.ts
 
 # Sentry
 .sentryclirc
+
+# Environment variables
+.env.local
+.env.production

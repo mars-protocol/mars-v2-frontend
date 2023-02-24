@@ -1,10 +1,15 @@
-import { useEffect } from 'react'
+'use client'
 
-import { Button, Text } from 'components'
+import { useRouter } from 'next/navigation'
+
+import { Button } from 'components/Button'
 import { Add, ArrowDown, ArrowsLeftRight, ArrowUp, Rubbish } from 'components/Icons'
-import { Overlay, OverlayAction } from 'components/Overlay'
-import { useCreateCreditAccount, useDeleteCreditAccount } from 'hooks/mutations'
-import { useAccountDetailsStore, useModalStore } from 'stores'
+import { Overlay } from 'components/Overlay/Overlay'
+import { OverlayAction } from 'components/Overlay/OverlayAction'
+import { Text } from 'components/Text'
+import useParams from 'hooks/useParams'
+import useStore from 'store'
+import { hardcodedFee } from 'utils/contants'
 
 interface Props {
   className?: string
@@ -13,20 +18,22 @@ interface Props {
 }
 
 export const AccountManageOverlay = ({ className, setShow, show }: Props) => {
-  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
+  const router = useRouter()
+  const params = useParams()
+  const createCreditAccount = useStore((s) => s.createCreditAccount)
+  const deleteCreditAccount = useStore((s) => s.deleteCreditAccount)
 
-  const { mutate: createCreditAccount, isLoading: isLoadingCreate } = useCreateCreditAccount()
-  const { mutate: deleteCreditAccount, isLoading: isLoadingDelete } = useDeleteCreditAccount(
-    selectedAccount || '',
-  )
+  async function createAccount() {
+    const newAccountId = await createCreditAccount({ fee: hardcodedFee })
+    router.push(`/wallets/${params.wallet}/accounts/${newAccountId}`)
+  }
 
-  useEffect(() => {
-    useModalStore.setState({ createAccountModal: isLoadingCreate })
-  }, [isLoadingCreate])
-
-  useEffect(() => {
-    useModalStore.setState({ deleteAccountModal: isLoadingDelete })
-  }, [isLoadingDelete])
+  async function deleteAccountHandler() {
+    const isSuccess = await deleteCreditAccount({ fee: hardcodedFee, accountId: params.account })
+    if (isSuccess) {
+      router.push(`/wallets/${params.wallet}/accounts`)
+    }
+  }
 
   return (
     <Overlay className={className} show={show} setShow={setShow}>
@@ -38,7 +45,7 @@ export const AccountManageOverlay = ({ className, setShow, show }: Props) => {
           <Button
             className='flex w-[115px] items-center justify-center pl-0 pr-2'
             onClick={() => {
-              useModalStore.setState({ fundAccountModal: true })
+              useStore.setState({ fundAccountModal: true })
               setShow(false)
             }}
           >
@@ -51,7 +58,7 @@ export const AccountManageOverlay = ({ className, setShow, show }: Props) => {
             className='flex w-[115px] items-center justify-center pl-0 pr-2'
             color='secondary'
             onClick={() => {
-              useModalStore.setState({ withdrawModal: true })
+              useStore.setState({ withdrawModal: true })
               setShow(false)
             }}
           >
@@ -65,13 +72,13 @@ export const AccountManageOverlay = ({ className, setShow, show }: Props) => {
           <OverlayAction
             setShow={setShow}
             text='Create New Account'
-            onClick={createCreditAccount}
+            onClick={createAccount}
             icon={<Add />}
           />
           <OverlayAction
             setShow={setShow}
             text='Close Account'
-            onClick={deleteCreditAccount}
+            onClick={deleteAccountHandler}
             icon={<Rubbish />}
           />
           <OverlayAction

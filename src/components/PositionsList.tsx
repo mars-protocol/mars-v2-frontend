@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 
-import { FormattedNumber, Text } from 'components'
+import { Text } from 'components/Text'
+import { FormattedNumber } from 'components/FormattedNumber'
 
 interface Props {
   title: string

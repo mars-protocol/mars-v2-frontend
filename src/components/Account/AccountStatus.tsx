@@ -1,22 +1,25 @@
-import BigNumber from 'bignumber.js'
-import { useEffect } from 'react'
+'use client'
 
-import { Button, FormattedNumber, Gauge, Text } from 'components'
+import BigNumber from 'bignumber.js'
+
 import { BorrowCapacity } from 'components/BorrowCapacity'
-import { useAccountStats } from 'hooks/data'
-import { useCreateCreditAccount } from 'hooks/mutations'
-import { useCreditAccounts } from 'hooks/queries'
-import { useModalStore, useNetworkConfigStore } from 'stores'
+import { Button } from 'components/Button'
+import { FormattedNumber } from 'components/FormattedNumber'
+import { Gauge } from 'components/Gauge'
+import { Text } from 'components/Text'
+import { useAccountStats } from 'hooks/data/useAccountStats'
+import { useCreditAccounts } from 'hooks/queries/useCreditAccounts'
+import { getBaseAsset } from 'utils/assets'
 import { formatValue } from 'utils/formatters'
 
 export const AccountStatus = () => {
-  const baseAsset = useNetworkConfigStore((s) => s.assets.base)
+  const baseAsset = getBaseAsset()
   const accountStats = useAccountStats()
   const { data: creditAccountsList } = useCreditAccounts()
-  const { mutate: createCreditAccount, isLoading: isLoadingCreate } = useCreateCreditAccount()
-  useEffect(() => {
-    useModalStore.setState({ createAccountModal: isLoadingCreate })
-  }, [isLoadingCreate])
+
+  const createCreditAccount = () => {
+    console.log('create credit account')
+  }
 
   const hasCreditAccounts = creditAccountsList && creditAccountsList.length > 0
 

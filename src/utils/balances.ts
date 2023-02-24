@@ -1,13 +1,13 @@
 import { Coin } from '@cosmjs/stargate'
 
-import { getTokenTotalUSDValue, lookup } from './formatters'
-import { getTokenSymbol } from './tokens'
+import { convertFromGwei, getTokenTotalUSDValue } from 'utils/formatters'
+import { getTokenSymbol } from 'utils/tokens'
 
 export const formatBalances = (
   positionData: Coin[],
   tokenPrices: KeyValuePair,
   debt: boolean,
-  whitelistedAssets: Asset[],
+  marketAssets: Asset[],
   marketsData?: MarketData,
 ): PositionsData[] => {
   const balances: PositionsData[] = []
@@ -15,16 +15,16 @@ export const formatBalances = (
   positionData.forEach((coin) => {
     const dataEntry: PositionsData = {
       asset: {
-        amount: getTokenSymbol(coin.denom, whitelistedAssets),
+        amount: getTokenSymbol(coin.denom, marketAssets),
         type: debt ? 'debt' : undefined,
       },
       value: {
-        amount: getTokenTotalUSDValue(coin.amount, coin.denom, whitelistedAssets, tokenPrices),
+        amount: getTokenTotalUSDValue(coin.amount, coin.denom, marketAssets, tokenPrices),
         format: 'number',
         prefix: '$',
       },
       size: {
-        amount: lookup(coin.amount, coin.denom, whitelistedAssets),
+        amount: convertFromGwei(coin.amount, coin.denom, marketAssets),
         format: 'number',
         maxDecimals: 4,
         minDecimals: 0,

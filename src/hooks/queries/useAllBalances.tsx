@@ -3,7 +3,8 @@ import { useQuery } from '@tanstack/react-query'
 import request, { gql } from 'graphql-request'
 import { useMemo } from 'react'
 
-import { useNetworkConfigStore, useWalletStore } from 'stores'
+import { URL_GQL } from 'constants/env'
+import useStore from 'store'
 import { queryKeys } from 'types/query-keys-factory'
 
 interface UserBalanceData {
@@ -13,14 +14,13 @@ interface UserBalanceData {
 }
 
 export const useAllBalances = () => {
-  const address = useWalletStore((s) => s.address)
-  const hiveUrl = useNetworkConfigStore((s) => s.hiveUrl)
+  const address = useStore((s) => s.address)
 
   const result = useQuery<UserBalanceData>(
     queryKeys.allBalances(address ?? ''),
     async () => {
       return await request(
-        hiveUrl!,
+        URL_GQL!,
         gql`
           query UserBalanceQuery {
                   balance: bank {
@@ -36,7 +36,7 @@ export const useAllBalances = () => {
       )
     },
     {
-      enabled: !!hiveUrl && !!address,
+      enabled: !!address,
       staleTime: 30000,
       refetchInterval: 30000,
     },

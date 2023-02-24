@@ -1,14 +1,13 @@
 import BigNumber from 'bignumber.js'
 import { useCallback, useMemo } from 'react'
 
-import {
-  useCreditAccountPositions,
-  useMarkets,
-  useRedbankBalances,
-  useTokenPrices,
-} from 'hooks/queries'
-import { useAccountDetailsStore, useNetworkConfigStore } from 'stores'
+import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositions'
+import { useMarkets } from 'hooks/queries/useMarkets'
+import { useRedbankBalances } from 'hooks/queries/useRedbankBalances'
+import { useTokenPrices } from 'hooks/queries/useTokenPrices'
 import { getTokenDecimals } from 'utils/tokens'
+import useStore from 'store'
+import { getMarketAssets } from 'utils/assets'
 
 const getApproximateHourlyInterest = (amount: string, borrowAPY: string) => {
   const hourlyAPY = BigNumber(borrowAPY).div(24 * 365)
@@ -17,15 +16,15 @@ const getApproximateHourlyInterest = (amount: string, borrowAPY: string) => {
 }
 
 export const useCalculateMaxWithdrawAmount = (denom: string, borrow: boolean) => {
-  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
-  const whitelistedAssets = useNetworkConfigStore((s) => s.assets.whitelist)
+  const selectedAccount = useStore((s) => s.selectedAccount)
+  const marketAssets = getMarketAssets()
 
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
   const { data: marketsData } = useMarkets()
   const { data: tokenPrices } = useTokenPrices()
   const { data: redbankBalances } = useRedbankBalances()
 
-  const tokenDecimals = getTokenDecimals(denom, whitelistedAssets)
+  const tokenDecimals = getTokenDecimals(denom, marketAssets)
 
   const getTokenValue = useCallback(
     (amount: string, denom: string) => {

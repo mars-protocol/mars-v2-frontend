@@ -2,7 +2,7 @@
 const plugin = require('tailwindcss/plugin')
 
 module.exports = {
-  content: ['./src/pages/**/*.{js,ts,jsx,tsx}', './src//components/**/*.{js,ts,jsx,tsx}'],
+  content: ['./src/app/**/*.{js,ts,jsx,tsx}', './src/components/**/*.{js,ts,jsx,tsx}'],
   safelist: [
     'h-15',
     'text-3xs',
@@ -150,6 +150,7 @@ module.exports = {
       },
       width: {
         15: '60px',
+        30: '120px',
       },
     },
   },

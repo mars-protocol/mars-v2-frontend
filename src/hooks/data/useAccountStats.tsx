@@ -1,8 +1,10 @@
 import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
 
-import { useCreditAccountPositions, useMarkets, useTokenPrices } from 'hooks/queries'
-import { useAccountDetailsStore } from 'stores'
+import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositions'
+import { useMarkets } from 'hooks/queries/useMarkets'
+import { useTokenPrices } from 'hooks/queries/useTokenPrices'
+import useStore from 'store'
 
 // displaying 3 levels of risk based on the weighted average of liquidation LTVs
 // 0.85 -> 25% risk
@@ -80,7 +82,7 @@ const calculateStatsFromAccountPositions = (assets: Asset[], debts: Debt[]) => {
 }
 
 export const useAccountStats = (actions?: AccountStatsAction[]) => {
-  const selectedAccount = useAccountDetailsStore((s) => s.selectedAccount)
+  const selectedAccount = useStore((s) => s.selectedAccount)
 
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
   const { data: marketsData } = useMarkets()
