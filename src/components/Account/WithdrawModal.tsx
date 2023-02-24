@@ -24,6 +24,7 @@ import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositio
 import { useTokenPrices } from 'hooks/queries/useTokenPrices'
 import useStore from 'store'
 import { getBaseAsset, getMarketAssets } from 'utils/assets'
+import showToast from 'utils/toast'
 
 export const WithdrawModal = () => {
   // ---------------
@@ -93,7 +94,7 @@ export const WithdrawModal = () => {
   const { mutate, isLoading } = useWithdrawFunds(withdrawAmount, borrowAmount, selectedToken, {
     onSuccess: () => {
       useStore.setState({ withdrawModal: false })
-      toast.success(`${amount} ${selectedTokenSymbol} successfully withdrawn`)
+      showToast(`${amount} ${selectedTokenSymbol} successfully withdrawn`)
     },
   })
 

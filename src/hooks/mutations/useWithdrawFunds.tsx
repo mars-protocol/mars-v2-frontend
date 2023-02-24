@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 import useStore from 'store'
 import { queryKeys } from 'types/query-keys-factory'
 import { hardcodedFee } from 'utils/contants'
+import showToast from 'utils/toast'
 
 export const useWithdrawFunds = (
   amount: number,
@@ -60,7 +61,7 @@ export const useWithdrawFunds = (
         onSuccess && onSuccess()
       },
       onError: (err: Error) => {
-        toast.error(err.message)
+        showToast(err.message, false)
       },
     },
   )

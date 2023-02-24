@@ -12,11 +12,11 @@ import { Slider } from 'components/Slider'
 import { Text } from 'components/Text'
 import useParams from 'hooks/useParams'
 import useStore from 'store'
+import { getWalletBalances } from 'utils/api'
 import { getMarketAssets } from 'utils/assets'
 import { hardcodedFee } from 'utils/contants'
 import { convertFromGwei, convertToGwei } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-import { getAccountDeposits } from 'utils/api'
 
 export const FundAccountModal = () => {
   // ---------------
@@ -26,7 +26,7 @@ export const FundAccountModal = () => {
   const params = useParams()
   const depositCreditAccount = useStore((s) => s.depositCreditAccount)
   const address = useStore((s) => s.client?.recentWallet.account?.address)
-  const { data: balancesData, isLoading: balanceIsLoading } = useSWR(address, getAccountDeposits)
+  const { data: balancesData, isLoading: balanceIsLoading } = useSWR(address, getWalletBalances)
 
   const selectedAccount = useStore((s) => s.selectedAccount)
   const marketAssets = getMarketAssets()
@@ -144,16 +144,16 @@ export const FundAccountModal = () => {
                     }}
                     value={selectedToken}
                   >
-                    {/* {marketAssets?.map((entry) => {
-                      const entrySymbol = getTokenSymbol(entry, marketAssets)
+                    {marketAssets?.map((entry) => {
                       return (
-                        entrySymbol !== '' && (
-                          <option key={entry} value={entry}>
-                            {getTokenSymbol(entry, marketAssets)}
+                        balancesData?.find((balance) => balance.denom === selectedToken)
+                          ?.amount && (
+                          <option key={entry.denom} value={entry.denom}>
+                            {entry.symbol}
                           </option>
                         )
-                      ) */}
-                    {/* })} */}
+                      )
+                    })}
                   </select>
                 </div>
                 <div className='flex justify-between p-2'>

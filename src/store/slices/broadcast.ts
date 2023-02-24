@@ -1,7 +1,6 @@
 import { Coin, StdFee } from '@cosmjs/stargate'
 import { MsgExecuteContract, TxBroadcastResult } from '@marsprotocol/wallet-connector'
 import { isMobile } from 'react-device-detect'
-import { toast } from 'react-toastify'
 import { GetState, SetState } from 'zustand'
 
 import { ADDRESS_CREDIT_MANAGER, ENV_MISSING_MESSAGE } from 'constants/env'
@@ -9,6 +8,7 @@ import { Store } from 'store'
 import { getMarketAssets } from 'utils/assets'
 import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import { convertFromGwei } from 'utils/formatters'
+import showToast from 'utils/toast'
 import { getTokenSymbol } from 'utils/tokens'
 
 interface BroadcastResult {
@@ -44,12 +44,12 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
       if (response.result) {
         set({ createAccountModal: false })
         const id = getSingleValueFromBroadcastResult(response.result, 'wasm', 'token_id')
-        toast.success(`Account ${id} Created`)
+        showToast(`Account ${id} created`)
         set({ fundAccountModal: true })
         return id
       } else {
         set({ createAccountModal: false })
-        toast.error(response.error)
+        showToast(response.error ?? 'transaction failed', false)
         return null
       }
     },
@@ -64,9 +64,9 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
 
       set({ deleteAccountModal: false })
       if (response.result) {
-        toast.success(`Account ${options.accountId} deleted`)
+        showToast(`Account ${options.accountId} deleted`)
       } else {
-        toast.error(response.error)
+        showToast(response.error ?? 'transaction failed', false)
       }
       return !!response.result
     },
@@ -89,7 +89,7 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
 
       const response = await get().executeMsg({ msg, fee: options.fee, funds })
       if (response.result) {
-        toast.success(
+        showToast(
           `Deposited ${convertFromGwei(
             deposit.amount,
             deposit.denom,
@@ -97,7 +97,7 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
           )} ${getTokenSymbol(deposit.denom, marketAssets)} to Account ${options.accountId}`,
         )
       } else {
-        toast.error(response.error)
+        showToast(response.error ?? 'transaction failed', false)
       }
       return !!response.result
     },
