@@ -1,9 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next'
+import { Coin } from '@cosmjs/stargate'
+import BigNumber from 'bignumber.js'
 
 import { ENV_MISSING_MESSAGE, URL_API } from 'constants/env'
 import { getMarketAssets } from 'utils/assets'
-import { Coin } from '@cosmjs/stargate'
-import BigNumber from 'bignumber.js'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!URL_API) {

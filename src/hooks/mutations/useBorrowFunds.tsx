@@ -1,11 +1,9 @@
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { toast } from 'react-toastify'
 
 import useStore from 'store'
 import { queryKeys } from 'types/query-keys-factory'
 import { hardcodedFee } from 'utils/contants'
-import showToast from 'utils/toast'
 
 export const useBorrowFunds = (
   amount: number,
@@ -60,7 +58,9 @@ export const useBorrowFunds = (
         }
       },
       onError: (err: Error) => {
-        showToast(err.message, false)
+        useStore.setState({
+          toast: { message: err.message, isError: true },
+        })
       },
       ...options,
     },

@@ -1,8 +1,5 @@
 import { BorrowTable } from 'components/Borrow/BorrowTable'
 import { Card } from 'components/Card'
-import Loading from 'components/Loading'
-import { Text } from 'components/Text'
-import { Suspense } from 'react'
 import { getAccountDebts, getBorrowData } from 'utils/api'
 import { getMarketAssets } from 'utils/assets'
 

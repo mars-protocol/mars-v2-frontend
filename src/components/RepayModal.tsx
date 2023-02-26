@@ -17,7 +17,6 @@ import { formatCurrency } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 import { getMarketAssets } from 'utils/assets'
 import useStore from 'store'
-import showToast from 'utils/toast'
 
 // 0.001% buffer / slippage to avoid repay action from not fully repaying the debt amount
 const REPAY_BUFFER = 1.00001
@@ -56,7 +55,9 @@ export const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
     {
       onSuccess: () => {
         onClose()
-        showToast(`${amount} ${tokenSymbol} successfully repaid`)
+        useStore.setState({
+          toast: { message: `${amount} ${tokenSymbol} successfully repaid` },
+        })
       },
     },
   )

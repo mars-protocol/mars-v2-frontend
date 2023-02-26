@@ -10,11 +10,12 @@ import {
 } from '@tanstack/react-table'
 import Image from 'next/image'
 import React from 'react'
+import classNames from 'classnames'
 
 import { AssetRow } from 'components/Borrow/AssetRow'
 import { ChevronDown, ChevronUp } from 'components/Icons'
 import { getMarketAssets } from 'utils/assets'
-import classNames from 'classnames'
+
 import AssetExpanded from './AssetExpanded'
 
 type Props = {

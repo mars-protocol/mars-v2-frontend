@@ -8,7 +8,6 @@ import { Store } from 'store'
 import { getMarketAssets } from 'utils/assets'
 import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import { convertFromGwei } from 'utils/formatters'
-import showToast from 'utils/toast'
 import { getTokenSymbol } from 'utils/tokens'
 
 interface BroadcastResult {
@@ -17,6 +16,7 @@ interface BroadcastResult {
 }
 
 export interface BroadcastSlice {
+  toast: { message: string; isError?: boolean } | null
   executeMsg: (options: {
     msg: Record<string, unknown>
     fee: StdFee
@@ -34,6 +34,7 @@ export interface BroadcastSlice {
 export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>): BroadcastSlice {
   const marketAssets = getMarketAssets()
   return {
+    toast: null,
     createCreditAccount: async (options: { fee: StdFee }) => {
       const msg = {
         create_credit_account: {},
@@ -44,12 +45,13 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
       if (response.result) {
         set({ createAccountModal: false })
         const id = getSingleValueFromBroadcastResult(response.result, 'wasm', 'token_id')
-        showToast(`Account ${id} created`)
-        set({ fundAccountModal: true })
+        set({ fundAccountModal: true, toast: { message: `Account ${id} created` } })
         return id
       } else {
-        set({ createAccountModal: false })
-        showToast(response.error ?? 'transaction failed', false)
+        set({
+          createAccountModal: false,
+          toast: { message: response.error ?? 'transaction failed', isError: true },
+        })
         return null
       }
     },
@@ -64,9 +66,9 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
 
       set({ deleteAccountModal: false })
       if (response.result) {
-        showToast(`Account ${options.accountId} deleted`)
+        set({ toast: { message: `Account ${options.accountId} deleted` } })
       } else {
-        showToast(response.error ?? 'transaction failed', false)
+        set({ toast: { message: response.error ?? 'transaction failed', isError: true } })
       }
       return !!response.result
     },
@@ -89,15 +91,17 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
 
       const response = await get().executeMsg({ msg, fee: options.fee, funds })
       if (response.result) {
-        showToast(
-          `Deposited ${convertFromGwei(
-            deposit.amount,
-            deposit.denom,
-            marketAssets,
-          )} ${getTokenSymbol(deposit.denom, marketAssets)} to Account ${options.accountId}`,
-        )
+        set({
+          toast: {
+            message: `Deposited ${convertFromGwei(
+              deposit.amount,
+              deposit.denom,
+              marketAssets,
+            )} ${getTokenSymbol(deposit.denom, marketAssets)} to Account ${options.accountId}`,
+          },
+        })
       } else {
-        showToast(response.error ?? 'transaction failed', false)
+        set({ toast: { message: response.error ?? 'transaction failed', isError: true } })
       }
       return !!response.result
     },

@@ -22,7 +22,6 @@ import { useTokenPrices } from 'hooks/queries/useTokenPrices'
 import useStore from 'store'
 import { getBaseAsset, getMarketAssets } from 'utils/assets'
 import { formatCurrency, formatValue } from 'utils/formatters'
-import showToast from 'utils/toast'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 type Props = {
@@ -73,7 +72,9 @@ export const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
   const { mutate, isLoading } = useBorrowFunds(borrowAmount, tokenDenom, !isBorrowToCreditAccount, {
     onSuccess: () => {
       onClose()
-      showToast(`${amount} ${tokenSymbol} successfully Borrowed`)
+      useStore.setState({
+        toast: { message: `${amount} ${tokenSymbol} successfully Borrowed` },
+      })
     },
   })
 

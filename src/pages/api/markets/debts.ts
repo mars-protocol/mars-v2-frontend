@@ -1,8 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-
-import { ADDRESS_RED_BANK, ENV_MISSING_MESSAGE, URL_API, URL_GQL } from 'constants/env'
 import { gql, request as gqlRequest } from 'graphql-request'
 
+import { ADDRESS_RED_BANK, ENV_MISSING_MESSAGE, URL_API, URL_GQL } from 'constants/env'
 import { getContractQuery } from 'utils/query'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

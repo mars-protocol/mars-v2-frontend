@@ -19,7 +19,6 @@ import { useMarkets } from 'hooks/queries/useMarkets'
 import { useTokenPrices } from 'hooks/queries/useTokenPrices'
 import { getMarketAssets } from 'utils/assets'
 import useStore from 'store'
-import showToast from 'utils/toast'
 
 enum FundingMode {
   Account = 'Account',
@@ -97,12 +96,14 @@ export const TradeActionModule = () => {
     slippageTolerance / 100,
     {
       onSuccess: () => {
-        showToast(
-          `${amountIn} ${getTokenSymbol(
-            selectedTokenIn,
-            marketAssets,
-          )} swapped for ${amountOut} ${getTokenSymbol(selectedTokenOut, marketAssets)}`,
-        )
+        useStore.setState({
+          toast: {
+            message: `${amountIn} ${getTokenSymbol(
+              selectedTokenIn,
+              marketAssets,
+            )} swapped for ${amountOut} ${getTokenSymbol(selectedTokenOut, marketAssets)}`,
+          },
+        })
         resetAmounts()
       },
     },

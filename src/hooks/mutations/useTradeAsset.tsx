@@ -5,7 +5,6 @@ import useStore from 'store'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { queryKeys } from 'types/query-keys-factory'
 import { hardcodedFee } from 'utils/contants'
-import showToast from 'utils/toast'
 
 export const useTradeAsset = (
   amount: number,
@@ -70,7 +69,9 @@ export const useTradeAsset = (
         queryClient.invalidateQueries(queryKeys.redbankBalances())
       },
       onError: (err: Error) => {
-        showToast(err.message, false)
+        useStore.setState({
+          toast: { message: err.message, isError: true },
+        })
       },
       ...options,
     },

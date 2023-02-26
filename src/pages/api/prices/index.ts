@@ -1,9 +1,9 @@
 import { gql, request as gqlRequest } from 'graphql-request'
 import { NextApiRequest, NextApiResponse } from 'next'
+import { Coin } from '@cosmjs/stargate'
 
 import { ADDRESS_ORACLE, ENV_MISSING_MESSAGE, URL_GQL } from 'constants/env'
 import { getMarketAssets } from 'utils/assets'
-import { Coin } from '@cosmjs/stargate'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!URL_GQL || !ADDRESS_ORACLE) {
