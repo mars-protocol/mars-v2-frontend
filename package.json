@@ -14,7 +14,7 @@
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.29.4",
     "@cosmjs/stargate": "^0.29.5",
-    "@headlessui/react": "^1.7.0",
+    "@headlessui/react": "^1.7.12",
     "@marsprotocol/wallet-connector": "^1.4.2",
     "@radix-ui/react-slider": "^1.0.0",
     "@sentry/nextjs": "^7.12.1",
