@@ -121,11 +121,12 @@ export const BorrowCapacity = ({
                         <FormattedNumber
                           className='text-white'
                           animate
+                          options={{
+                            minDecimals: decimals,
+                            maxDecimals: decimals,
+                            suffix: '%',
+                          }}
                           amount={percentOfMaxRound}
-                          minDecimals={decimals}
-                          maxDecimals={decimals}
-                          suffix='%'
-                          abbreviated={false}
                         />
                       )}
                     </span>

@@ -26,8 +26,5 @@ interface BorrowAsset {
 }
 
 interface BorrowAssetActive extends BorrowAsset {
-  debt: {
-    amount: string
-    value: string
-  }
+  debt: string
 }

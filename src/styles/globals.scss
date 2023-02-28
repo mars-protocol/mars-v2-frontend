@@ -66,18 +66,19 @@ a {
 }
 
 /* ORBS */
-@mixin orbs($count) {
+@mixin orbs($count, $hue) {
   $text-shadow: ();
   @for $i from 0 through $count {
     $text-shadow: $text-shadow,
-      (-0.5+ (random()) * 3) +
-        em
-        (-0.5+ (random()) * 3) +
-        em
-        7px
-        hsla((random() * 50)+210, 100%, 45%, 0.3);
+      (-0.5+ (random()) * 3) + em (-0.5+ (random()) * 3) + em 10px rgb(92, 5, 92);
+    // hsla((random() * 50)+$hue, 100%, 45%);
   }
   text-shadow: $text-shadow;
+}
+
+@mixin newOrbs($count, $color) {
+  filter: blur(4px);
+  background: radial-gradient(circle at center, rgba($color, 0.25) 0%, rgba($color, 0) 20%);
 }
 
 .background {
@@ -98,18 +99,27 @@ a {
     width: 3em;
     height: 3em;
     content: '.';
+    color: transparent;
     mix-blend-mode: screen;
   }
 
+  &:after {
+    top: 10%;
+    left: 10%;
+    @include newOrbs(1, rgb(177, 47, 37));
+  }
+
   &:before {
-    @include orbs(15);
+    top: 80%;
+    left: 80%;
+    @include newOrbs(1, rgb(83, 7, 129));
     animation-duration: 300s;
-    animation-delay: -50s;
+    // animation-delay: -50s;
     animation: 180s -15s move infinite ease-in-out alternate;
   }
 
   &:after {
-    @include orbs(25);
+    // @include orbs(15, 260);
     animation-duration: 600s;
     animation: 180s 0s move infinite ease-in-out alternate;
   }

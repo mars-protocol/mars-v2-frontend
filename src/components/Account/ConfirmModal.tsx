@@ -13,7 +13,7 @@ export const ConfirmModal = () => {
   const deleteOpen = useStore((s) => s.deleteAccountModal)
 
   return (
-    <Modal open={createOpen || deleteOpen}>
+    <Modal title='Confirm' open={createOpen || deleteOpen}>
       <div
         className={classNames(
           'relative flex h-[630px] w-full flex-wrap items-center justify-center p-6',

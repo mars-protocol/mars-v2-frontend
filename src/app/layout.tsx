@@ -1,4 +1,5 @@
 import Background from 'components/Background'
+import FetchPrices from 'components/FetchPrices'
 import { Modals } from 'components/Modals'
 import DesktopNavigation from 'components/Navigation/DesktopNavigation'
 import Toaster from 'components/Toaster'
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </WalletConnectProvider>
           <Modals />
           <Toaster />
+          <FetchPrices />
           <main className='relative flex lg:min-h-[calc(100vh-120px)]'>
             <div className='flex flex-grow flex-col flex-wrap'>{children}</div>
           </main>

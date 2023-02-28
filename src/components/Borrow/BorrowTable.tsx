@@ -15,6 +15,11 @@ import classNames from 'classnames'
 import { AssetRow } from 'components/Borrow/AssetRow'
 import { ChevronDown, ChevronUp } from 'components/Icons'
 import { getMarketAssets } from 'utils/assets'
+import { Text } from 'components/Text'
+import TitleAndSubCell from 'components/TitleAndSubCell'
+import { FormattedNumber } from 'components/FormattedNumber'
+import AmountAndValue from 'components/AmountAndValue'
+import { formatPercent } from 'utils/formatters'
 
 import AssetExpanded from './AssetExpanded'
 
@@ -26,7 +31,7 @@ export const BorrowTable = (props: Props) => {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const marketAssets = getMarketAssets()
 
-  const columns = React.useMemo<ColumnDef<BorrowAsset>[]>(
+  const columns = React.useMemo<ColumnDef<BorrowAsset | BorrowAssetActive>[]>(
     () => [
       {
         header: 'Asset',
@@ -37,12 +42,9 @@ export const BorrowTable = (props: Props) => {
           if (!asset) return null
 
           return (
-            <div className='flex flex-1 items-center'>
+            <div className='flex flex-1 items-center gap-3'>
               <Image src={asset.logo} alt='token' width={32} height={32} />
-              <div className='pl-2'>
-                <div>{asset.symbol}</div>
-                <div className='text-xs'>{asset.name}</div>
-              </div>
+              <TitleAndSubCell title={asset.symbol} sub={asset.name} />
             </div>
           )
         },
@@ -50,17 +52,38 @@ export const BorrowTable = (props: Props) => {
       {
         accessorKey: 'borrowRate',
         header: 'Borrow Rate',
-        cell: ({ row }) => <div>{(Number(row.original.borrowRate) * 100).toFixed(2)}%</div>,
+        cell: ({ row }) => (
+          <Text className='justify-end' size='sm'>
+            {formatPercent(row.original.borrowRate)}
+          </Text>
+        ),
       },
+      ...((props.data[0] as BorrowAssetActive)?.debt
+        ? [
+            {
+              accessorKey: 'debt',
+              header: 'Borrowed',
+              cell: (info: any) => {
+                const borrowAsset = info.row.original as BorrowAssetActive
+                const asset = marketAssets.find((asset) => asset.denom === borrowAsset.denom)
+
+                if (!asset) return null
+
+                return <AmountAndValue asset={asset} amount={borrowAsset.debt} />
+              },
+            },
+          ]
+        : []),
       {
         accessorKey: 'liquidity',
         header: 'Liquidity Available',
-        cell: ({ row }) => (
-          <div className='items-right flex flex-col'>
-            <div className=''>{row.original.liquidity.amount}</div>
-            <div className='text-xs opacity-60'>${row.original.liquidity.value}</div>
-          </div>
-        ),
+        cell: ({ row }) => {
+          const asset = marketAssets.find((asset) => asset.denom === row.original.denom)
+
+          if (!asset) return null
+
+          return <AmountAndValue asset={asset} amount={row.original.liquidity.amount} />
+        },
       },
       {
         accessorKey: 'status',
@@ -91,7 +114,7 @@ export const BorrowTable = (props: Props) => {
 
   return (
     <table className='w-full'>
-      <thead className='bg-white/5'>
+      <thead className='bg-black/20'>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
             {headerGroup.headers.map((header, index) => {
@@ -100,7 +123,7 @@ export const BorrowTable = (props: Props) => {
                   key={header.id}
                   onClick={header.column.getToggleSortingHandler()}
                   className={classNames(
-                    'px-4 py-2',
+                    'px-4 py-3',
                     header.column.getCanSort() && 'cursor-pointer',
                     header.id === 'symbol' ? 'text-left' : 'text-right',
                   )}
@@ -109,6 +132,7 @@ export const BorrowTable = (props: Props) => {
                     className={classNames(
                       'flex',
                       header.id === 'symbol' ? 'justify-start' : 'justify-end',
+                      'align-center',
                     )}
                   >
                     {header.column.getCanSort()
@@ -124,7 +148,9 @@ export const BorrowTable = (props: Props) => {
                           ),
                         }[header.column.getIsSorted() as string] ?? null
                       : null}
-                    <span>{flexRender(header.column.columnDef.header, header.getContext())}</span>
+                    <Text tag='span' size='sm' className='font-normal text-white/40'>
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                    </Text>
                   </div>
                 </th>
               )

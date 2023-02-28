@@ -10,7 +10,6 @@ import { ArrowRightLine, ChevronDown, ChevronLeft } from 'components/Icons'
 import { LabelValuePair } from 'components/LabelValuePair'
 import { PositionsList } from 'components/PositionsList'
 import { useAccountStats } from 'hooks/data/useAccountStats'
-import { useBalances } from 'hooks/data/useBalances'
 import { convertFromGwei } from 'utils/formatters'
 import { createRiskData } from 'utils/risk'
 import useStore from 'store'
@@ -23,7 +22,6 @@ export const AccountDetails = () => {
   const marketAssets = getMarketAssets()
   const baseAsset = getBaseAsset()
 
-  const balances = useBalances()
   const accountStats = useAccountStats()
 
   const [showManageMenu, setShowManageMenu] = useState(false)
@@ -118,7 +116,6 @@ export const AccountDetails = () => {
         />
       </div>
       {riskData && <RiskChart data={riskData} />}
-      <PositionsList title='Balances' data={balances} />
     </div>
   )
 }

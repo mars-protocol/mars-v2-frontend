@@ -17,10 +17,7 @@ export default async function page({ params }: { params: PageParams }) {
         if (debt) {
           prev.active.push({
             ...borrow,
-            debt: {
-              amount: '100000',
-              value: '12389478321',
-            },
+            debt: debt.amount,
           })
         } else {
           prev.available.push(borrow)

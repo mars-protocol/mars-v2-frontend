@@ -10,7 +10,7 @@ import { Text } from 'components/Text'
 import { useAccountStats } from 'hooks/data/useAccountStats'
 import { useCreditAccounts } from 'hooks/queries/useCreditAccounts'
 import { getBaseAsset } from 'utils/assets'
-import { formatValue } from 'utils/formatters'
+import { formatLeverage, formatValue } from 'utils/formatters'
 
 export const AccountStatus = () => {
   const baseAsset = getBaseAsset()
@@ -41,7 +41,7 @@ export const AccountStatus = () => {
                 .dividedBy(10 ** baseAsset.decimals)
                 .toNumber()}
               animate
-              prefix='$: '
+              options={{ prefix: '$: ' }}
             />
           </Text>
 
@@ -50,10 +50,9 @@ export const AccountStatus = () => {
             label='Lvg'
             tooltip={
               <Text size='sm'>
-                Current Leverage:{' '}
-                {formatValue(accountStats.currentLeverage, 0, 2, true, false, 'x')}
+                Current Leverage: {formatLeverage(accountStats.currentLeverage)}
                 <br />
-                Max Leverage: {formatValue(accountStats.maxLeverage, 0, 2, true, false, 'x')}
+                Max Leverage: {formatLeverage(accountStats.maxLeverage)}
               </Text>
             }
           />
@@ -63,7 +62,8 @@ export const AccountStatus = () => {
             label='Risk'
             tooltip={
               <Text size='sm'>
-                Current Risk: {formatValue(accountStats.risk * 100, 0, 2, true, false, '%')}
+                Current Risk:{' '}
+                {formatValue(accountStats.risk * 100, { minDecimals: 0, suffix: '%' })}
               </Text>
             }
           />

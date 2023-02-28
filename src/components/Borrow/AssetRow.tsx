@@ -4,7 +4,7 @@ import { flexRender, Row } from '@tanstack/react-table'
 import { getMarketAssets } from 'utils/assets'
 
 type AssetRowProps = {
-  row: Row<BorrowAsset>
+  row: Row<BorrowAsset | BorrowAssetActive>
   resetExpanded: (defaultState?: boolean | undefined) => void
 }
 

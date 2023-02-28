@@ -13,7 +13,6 @@ import { useRepayFunds } from 'hooks/mutations/useRepayFunds'
 import { useAllBalances } from 'hooks/queries/useAllBalances'
 import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositions'
 import { useTokenPrices } from 'hooks/queries/useTokenPrices'
-import { formatCurrency } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 import { getMarketAssets } from 'utils/assets'
 import useStore from 'store'
@@ -33,6 +32,7 @@ export const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
   const selectedAccount = useStore((s) => s.selectedAccount)
   const { data: positionsData } = useCreditAccountPositions(selectedAccount ?? '')
   const marketAssets = getMarketAssets()
+  const formatCurrency = useStore((s) => s.formatCurrency)
 
   const tokenSymbol = getTokenSymbol(tokenDenom, marketAssets)
 
@@ -155,9 +155,11 @@ export const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
                         />
                         <div className='flex justify-between text-xs tracking-widest'>
                           <div>
-                            1 {tokenSymbol} = {formatCurrency(tokenPrice)}
+                            1 {tokenSymbol} = {formatCurrency({ denom: tokenDenom, amount: '1' })}
                           </div>
-                          <div>{formatCurrency(tokenPrice * amount)}</div>
+                          <div>
+                            {formatCurrency({ denom: tokenDenom, amount: amount.toString() })}
+                          </div>
                         </div>
                       </div>
 

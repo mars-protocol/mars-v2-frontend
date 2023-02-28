@@ -94,7 +94,7 @@ export const FundAccountModal = () => {
   const percentageValue = isNaN(amount) ? 0 : (amount * 100) / walletAmount
 
   return (
-    <Modal open={open} setOpen={setOpen}>
+    <Modal title='Fund account' open={open} setOpen={setOpen}>
       <div className='flex min-h-[520px] w-full'>
         {balanceIsLoading && (
           <div className='absolute inset-0 z-40 grid place-items-center bg-black/50'>
