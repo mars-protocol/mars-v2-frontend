@@ -1,6 +1,5 @@
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { toast } from 'react-toastify'
 
 import useStore from 'store'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
@@ -70,7 +69,9 @@ export const useTradeAsset = (
         queryClient.invalidateQueries(queryKeys.redbankBalances())
       },
       onError: (err: Error) => {
-        toast.error(err.message)
+        useStore.setState({
+          toast: { message: err.message, isError: true },
+        })
       },
       ...options,
     },

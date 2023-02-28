@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { toast } from 'react-toastify'
 
 import useStore from 'store'
 import { queryKeys } from 'types/query-keys-factory'
@@ -60,7 +59,9 @@ export const useWithdrawFunds = (
         onSuccess && onSuccess()
       },
       onError: (err: Error) => {
-        toast.error(err.message)
+        useStore.setState({
+          toast: { message: err.message, isError: true },
+        })
       },
     },
   )

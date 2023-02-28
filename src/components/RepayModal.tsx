@@ -55,7 +55,9 @@ export const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
     {
       onSuccess: () => {
         onClose()
-        toast.success(`${amount} ${tokenSymbol} successfully repaid`)
+        useStore.setState({
+          toast: { message: `${amount} ${tokenSymbol} successfully repaid` },
+        })
       },
     },
   )

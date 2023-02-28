@@ -92,8 +92,12 @@ export const WithdrawModal = () => {
 
   const { mutate, isLoading } = useWithdrawFunds(withdrawAmount, borrowAmount, selectedToken, {
     onSuccess: () => {
-      useStore.setState({ withdrawModal: false })
-      toast.success(`${amount} ${selectedTokenSymbol} successfully withdrawn`)
+      useStore.setState({
+        withdrawModal: false,
+        toast: {
+          message: `${amount} ${selectedTokenSymbol} successfully withdrawn`,
+        },
+      })
     },
   })
 

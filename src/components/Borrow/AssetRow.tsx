@@ -1,7 +1,7 @@
 import React from 'react'
+import { flexRender, Row } from '@tanstack/react-table'
 
 import { getMarketAssets } from 'utils/assets'
-import { flexRender, Row } from '@tanstack/react-table'
 
 type AssetRowProps = {
   row: Row<BorrowAsset>

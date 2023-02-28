@@ -65,6 +65,56 @@ a {
   font-feature-settings: 'tnum' on;
 }
 
+/* ORBS */
+@mixin orbs($count) {
+  $text-shadow: ();
+  @for $i from 0 through $count {
+    $text-shadow: $text-shadow,
+      (-0.5+ (random()) * 3) +
+        em
+        (-0.5+ (random()) * 3) +
+        em
+        7px
+        hsla((random() * 50)+210, 100%, 45%, 0.3);
+  }
+  text-shadow: $text-shadow;
+}
+
+.background {
+  font-family: serif;
+  font-size: 90px;
+  overflow: hidden;
+  background: #0b0e20;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  inset: 0;
+
+  &:before,
+  &:after {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 3em;
+    height: 3em;
+    content: '.';
+    mix-blend-mode: screen;
+  }
+
+  &:before {
+    @include orbs(15);
+    animation-duration: 300s;
+    animation-delay: -50s;
+    animation: 180s -15s move infinite ease-in-out alternate;
+  }
+
+  &:after {
+    @include orbs(25);
+    animation-duration: 600s;
+    animation: 180s 0s move infinite ease-in-out alternate;
+  }
+}
+
 /* react-toastify */
 /* https://fkhadra.github.io/react-toastify/how-to-style#override-css-variables  */
 .Toastify__toast {
@@ -73,4 +123,14 @@ a {
 
 .Toastify__toast-theme--colored.Toastify__toast--success {
   @apply bg-green-500;
+}
+
+/* KEYFRAMES */
+@keyframes move {
+  from {
+    transform: rotate(0deg) scale(12) translateX(-20px);
+  }
+  to {
+    transform: rotate(360deg) scale(18) translateX(20px);
+  }
 }

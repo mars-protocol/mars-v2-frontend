@@ -6,8 +6,7 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "eslint ./src/ && yarn prettier-check",
-    "index": "vscode-generate-index-standalone src/",
-    "format": "yarn index && eslint ./src/ --fix && prettier --write ./src/",
+    "format": "eslint ./src/ --fix && prettier --write ./src/",
     "prettier-check": "prettier --ignore-path .gitignore --check ./src/",
     "start": "next start"
   },
@@ -38,6 +37,7 @@
     "react-toastify": "^9.0.8",
     "react-use-clipboard": "^1.0.9",
     "recharts": "^2.2.0",
+    "sass": "^1.58.3",
     "swr": "^2.0.3",
     "tailwindcss-border-gradient-radius": "^3.0.1",
     "use-local-storage-state": "^18.1.1",

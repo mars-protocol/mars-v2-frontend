@@ -96,12 +96,14 @@ export const TradeActionModule = () => {
     slippageTolerance / 100,
     {
       onSuccess: () => {
-        toast.success(
-          `${amountIn} ${getTokenSymbol(
-            selectedTokenIn,
-            marketAssets,
-          )} swapped for ${amountOut} ${getTokenSymbol(selectedTokenOut, marketAssets)}`,
-        )
+        useStore.setState({
+          toast: {
+            message: `${amountIn} ${getTokenSymbol(
+              selectedTokenIn,
+              marketAssets,
+            )} swapped for ${amountOut} ${getTokenSymbol(selectedTokenOut, marketAssets)}`,
+          },
+        })
         resetAmounts()
       },
     },

@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-
 import { Coin } from '@cosmjs/stargate'
+
 import { ENV_MISSING_MESSAGE, URL_API } from 'constants/env'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

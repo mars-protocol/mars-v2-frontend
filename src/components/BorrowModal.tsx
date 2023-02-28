@@ -2,7 +2,6 @@ import { Dialog, Switch, Transition } from '@headlessui/react'
 import BigNumber from 'bignumber.js'
 import React, { useMemo, useState } from 'react'
 import { NumericFormat } from 'react-number-format'
-import { toast } from 'react-toastify'
 
 import { Button } from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
@@ -20,10 +19,10 @@ import { useBorrowFunds } from 'hooks/mutations/useBorrowFunds'
 import { useAllBalances } from 'hooks/queries/useAllBalances'
 import { useMarkets } from 'hooks/queries/useMarkets'
 import { useTokenPrices } from 'hooks/queries/useTokenPrices'
-import { formatCurrency, formatValue } from 'utils/formatters'
-import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 import useStore from 'store'
 import { getBaseAsset, getMarketAssets } from 'utils/assets'
+import { formatCurrency, formatValue } from 'utils/formatters'
+import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 type Props = {
   show: boolean
@@ -73,7 +72,9 @@ export const BorrowModal = ({ show, onClose, tokenDenom }: Props) => {
   const { mutate, isLoading } = useBorrowFunds(borrowAmount, tokenDenom, !isBorrowToCreditAccount, {
     onSuccess: () => {
       onClose()
-      toast.success(`${amount} ${tokenSymbol} successfully Borrowed`)
+      useStore.setState({
+        toast: { message: `${amount} ${tokenSymbol} successfully Borrowed` },
+      })
     },
   })
 

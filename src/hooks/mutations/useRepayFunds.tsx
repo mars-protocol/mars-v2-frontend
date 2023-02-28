@@ -1,6 +1,5 @@
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { toast } from 'react-toastify'
 
 import useStore from 'store'
 import { queryKeys } from 'types/query-keys-factory'
@@ -54,7 +53,9 @@ export const useRepayFunds = (
         queryClient.invalidateQueries(queryKeys.redbankBalances())
       },
       onError: (err: Error) => {
-        toast.error(err.message)
+        useStore.setState({
+          toast: { message: err.message, isError: true },
+        })
       },
       ...options,
     },

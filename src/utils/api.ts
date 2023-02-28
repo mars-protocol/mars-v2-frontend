@@ -1,4 +1,5 @@
 import { Coin } from '@cosmjs/stargate'
+
 import { URL_API } from 'constants/env'
 
 export async function callAPI<T>(endpoint: string): Promise<T> {
