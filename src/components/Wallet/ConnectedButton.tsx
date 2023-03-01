@@ -104,7 +104,7 @@ export default function ConnectedButton() {
           {isLoading ? (
             <CircularProgress size={12} />
           ) : (
-            `${formatValue(walletAmount, 2, 2, true, false, ` ${baseAsset.symbol}`)}`
+            `${formatValue(walletAmount, { suffix: baseAsset.symbol })}`
           )}
         </div>
       </button>

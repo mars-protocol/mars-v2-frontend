@@ -25,11 +25,13 @@ export const RiskChart = ({ data }: RiskChartProps) => {
       <FormattedNumber
         className='px-3 pb-2 text-lg'
         amount={currentRisk * 100}
-        maxDecimals={0}
-        minDecimals={0}
+        options={{
+          maxDecimals: 0,
+          minDecimals: 0,
+          prefix: 'Risk score: ',
+          suffix: '/100',
+        }}
         animate
-        prefix='Risk Score: '
-        suffix='/100'
       />
       <div className='-ml-6 h-[100px] w-[412px]'>
         <ResponsiveContainer width='100%' height='100%'>
@@ -77,7 +79,9 @@ export const RiskChart = ({ data }: RiskChartProps) => {
                   return (
                     <div className='max-w-[320px] rounded-lg px-4 py-2 shadow-tooltip gradient-tooltip '>
                       <Text size='sm'>{moment(label).format('MM-DD-YYYY')}</Text>
-                      <Text size='sm'>Risk: {formatValue(risk, 0, 0, true, false, '%')}</Text>
+                      <Text size='sm'>
+                        Risk: {formatValue(risk, { minDecimals: 0, maxDecimals: 0, suffix: '%' })}
+                      </Text>
                     </div>
                   )
                 }

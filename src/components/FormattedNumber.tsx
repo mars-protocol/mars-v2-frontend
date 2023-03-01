@@ -5,64 +5,60 @@ import React, { useEffect, useRef } from 'react'
 import { animated, useSpring } from 'react-spring'
 
 import useStore from 'store'
-import { formatValue } from 'utils/formatters'
+import { FormatOptions, formatValue } from 'utils/formatters'
 
-export const FormattedNumber = React.memo(
-  ({
-    amount,
-    animate = false,
-    className,
-    minDecimals = 2,
-    maxDecimals = 2,
-    thousandSeparator = true,
-    prefix = false,
-    suffix = false,
-    rounded = false,
-    abbreviated = false,
-  }: FormattedNumberProps) => {
-    const enableAnimations = useStore((s) => s.enableAnimations)
-    const prevAmountRef = useRef<number>(0)
+interface Props {
+  amount: number | string
+  options?: FormatOptions
+  className?: string
+  animate?: boolean
+}
 
-    useEffect(() => {
-      if (prevAmountRef.current !== Number(amount)) prevAmountRef.current = Number(amount)
-    }, [amount])
+export const FormattedNumber = React.memo((props: Props) => {
+  const enableAnimations = useStore((s) => s.enableAnimations)
+  const prevAmountRef = useRef<number>(0)
 
-    const springAmount = useSpring({
-      number: Number(amount),
-      from: { number: prevAmountRef.current },
-      config: { duration: 1000 },
-    })
+  useEffect(() => {
+    if (prevAmountRef.current !== Number(props.amount)) prevAmountRef.current = Number(props.amount)
+  }, [props.amount])
 
-    return (prevAmountRef.current === amount && amount === 0) || !animate || !enableAnimations ? (
-      <span className={classNames('number', className)}>
-        {formatValue(
-          amount,
-          minDecimals,
-          maxDecimals,
-          thousandSeparator,
-          prefix,
-          suffix,
-          rounded,
-          abbreviated,
-        )}
-      </span>
-    ) : (
-      <animated.span className={classNames('number', className)}>
-        {springAmount.number.to((num) =>
-          formatValue(
-            num,
-            minDecimals,
-            maxDecimals,
-            thousandSeparator,
-            prefix,
-            suffix,
-            rounded,
-            abbreviated,
-          ),
-        )}
-      </animated.span>
-    )
-  },
-)
+  const springAmount = useSpring({
+    number: Number(props.amount),
+    from: { number: prevAmountRef.current },
+    config: { duration: 1000 },
+  })
+
+  return (prevAmountRef.current === props.amount && props.amount === 0) ||
+    !props.animate ||
+    !enableAnimations ? (
+    <span className={classNames('number', props.className)}>
+      {formatValue(props.amount, {
+        minDecimals: props.options?.minDecimals,
+        maxDecimals: props.options?.maxDecimals,
+        thousandSeparator: props.options?.thousandSeparator,
+        prefix: props.options?.prefix,
+        suffix: props.options?.suffix,
+        rounded: props.options?.rounded,
+        abbreviated: props.options?.abbreviated,
+        decimals: props.options?.decimals,
+      })}
+    </span>
+  ) : (
+    <animated.span className={classNames('number', props.className)}>
+      {springAmount.number.to((num) =>
+        formatValue(num, {
+          minDecimals: props.options?.minDecimals,
+          maxDecimals: props.options?.maxDecimals,
+          thousandSeparator: props.options?.thousandSeparator,
+          prefix: props.options?.prefix,
+          suffix: props.options?.suffix,
+          rounded: props.options?.rounded,
+          abbreviated: props.options?.abbreviated,
+          decimals: props.options?.decimals,
+        }),
+      )}
+    </animated.span>
+  )
+})
 
 FormattedNumber.displayName = 'FormattedNumber'

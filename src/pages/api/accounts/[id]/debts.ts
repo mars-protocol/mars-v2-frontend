@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const account = await (await fetch(`${URL_API}/accounts/${accountId}`)).json()
 
   if (account) {
-    return res.status(200).json(account.debts)
+    return res.status(200).json([{ denom: 'uosmo', amount: '123876' }])
   }
 
   return res.status(404)

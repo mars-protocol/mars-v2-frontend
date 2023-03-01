@@ -1,6 +1,8 @@
 import classNames from 'classnames'
 import { ReactNode } from 'react'
 
+import { Text } from 'components/Text'
+
 interface Props {
   title: string
   children: ReactNode
@@ -15,8 +17,10 @@ export const Card = (props: Props) => {
         'h-fit w-full max-w-full overflow-hidden rounded-md border-[1px] border-white/20',
       )}
     >
-      <div className='bg-white/10 p-4 font-semibold'>{props.title}</div>
-      <div className=''>{props.children}</div>
+      <Text size='lg' className='bg-white/10 p-4 font-semibold'>
+        {props.title}
+      </Text>
+      <div>{props.children}</div>
     </section>
   )
 }

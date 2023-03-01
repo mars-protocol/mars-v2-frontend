@@ -10,28 +10,6 @@ export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
   return text.length > h + t ? [head, tail].join('...') : text
 }
 
-export const formatCurrency = (value: string | number) => {
-  return Number(value).toLocaleString('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  })
-}
-
-export const getTokenTotalUSDValue = (
-  amount: string,
-  denom: string,
-  marketAssets: Asset[],
-  tokenPrices?: KeyValuePair,
-) => {
-  if (!tokenPrices) return 0
-
-  return (
-    BigNumber(amount)
-      .div(10 ** getTokenDecimals(denom, marketAssets))
-      .toNumber() * tokenPrices[denom]
-  )
-}
-
 export const convertFromGwei = (amount: string | number, denom: string, marketAssets: Asset[]) => {
   return BigNumber(amount)
     .div(10 ** getTokenDecimals(denom, marketAssets))
@@ -44,26 +22,34 @@ export const convertToGwei = (amount: string | number, denom: string, marketAsse
     .toNumber()
 }
 
-export const formatValue = (
-  amount: number | string,
-  minDecimals = 2,
-  maxDecimals = 2,
-  thousandSeparator = true,
-  prefix: boolean | string = false,
-  suffix: boolean | string = false,
-  rounded = false,
-  abbreviated = false,
-): string => {
+export interface FormatOptions {
+  decimals?: number
+  minDecimals?: number
+  maxDecimals?: number
+  thousandSeparator?: boolean
+  prefix?: string
+  suffix?: string
+  rounded?: boolean
+  abbreviated?: boolean
+}
+
+export const formatValue = (amount: number | string, options?: FormatOptions): string => {
   let numberOfZeroDecimals: number | null = null
+  const minDecimals = options?.minDecimals ?? 2
+  const maxDecimals = options?.maxDecimals ?? 2
+  const thousandSeparator = options?.thousandSeparator ?? true
+
   if (typeof amount === 'string') {
     const decimals = amount.split('.')[1] ?? null
     if (decimals && Number(decimals) === 0) {
       numberOfZeroDecimals = decimals.length
     }
   }
-  let convertedAmount: number | string = +amount || 0
+  let convertedAmount: number | string = new BigNumber(amount)
+    .dividedBy(10 ** (options?.decimals ?? 0))
+    .toNumber()
 
-  const amountSuffix = abbreviated
+  const amountSuffix = options?.abbreviated
     ? convertedAmount >= 1_000_000_000
       ? 'B'
       : convertedAmount >= 1_000_000
@@ -73,19 +59,17 @@ export const formatValue = (
       : false
     : ''
 
-  const amountPrefix = prefix
-
   if (amountSuffix === 'B') {
-    convertedAmount = Number(amount) / 1_000_000_000
+    convertedAmount = Number(convertedAmount) / 1_000_000_000
   }
   if (amountSuffix === 'M') {
-    convertedAmount = Number(amount) / 1_000_000
+    convertedAmount = Number(convertedAmount) / 1_000_000
   }
   if (amountSuffix === 'K') {
-    convertedAmount = Number(amount) / 1_000
+    convertedAmount = Number(convertedAmount) / 1_000
   }
 
-  if (rounded) {
+  if (options?.rounded) {
     convertedAmount = convertedAmount.toFixed(maxDecimals)
   } else {
     const amountFractions = String(convertedAmount).split('.')
@@ -112,8 +96,8 @@ export const formatValue = (
   }
 
   let returnValue = ''
-  if (amountPrefix) {
-    returnValue += amountPrefix
+  if (options?.prefix) {
+    returnValue += options.prefix
   }
 
   returnValue += convertedAmount
@@ -131,9 +115,23 @@ export const formatValue = (
     returnValue += amountSuffix
   }
 
-  if (suffix) {
-    returnValue += suffix
+  if (options?.suffix) {
+    returnValue += options.suffix
   }
 
   return returnValue
+}
+
+export function formatLeverage(leverage: number) {
+  return formatValue(leverage, {
+    minDecimals: 0,
+    suffix: 'x',
+  })
+}
+
+export function formatPercent(percent: number | string) {
+  return formatValue(+percent * 100, {
+    minDecimals: 0,
+    suffix: '%',
+  })
 }

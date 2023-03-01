@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import { BorrowCapacity } from 'components/BorrowCapacity'
-import { convertFromGwei, formatValue } from 'utils/formatters'
+import { convertFromGwei, formatLeverage, formatValue } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 import { CircularProgress } from 'components/CircularProgress'
 import { Button } from 'components/Button'
@@ -17,7 +17,6 @@ import { LabelValuePair } from 'components/LabelValuePair'
 import { Modal } from 'components/Modal'
 import { PositionsList } from 'components/PositionsList'
 import { useAccountStats } from 'hooks/data/useAccountStats'
-import { useBalances } from 'hooks/data/useBalances'
 import { useCalculateMaxWithdrawAmount } from 'hooks/data/useCalculateMaxWithdrawAmount'
 import { useWithdrawFunds } from 'hooks/mutations/useWithdrawFunds'
 import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositions'
@@ -46,7 +45,6 @@ export const WithdrawModal = () => {
   // EXTERNAL HOOKS
   // ---------------
   const { data: tokenPrices } = useTokenPrices()
-  const balances = useBalances()
 
   const selectedTokenSymbol = getTokenSymbol(selectedToken, marketAssets)
   const selectedTokenDecimals = getTokenDecimals(selectedToken, marketAssets)
@@ -153,7 +151,7 @@ export const WithdrawModal = () => {
   }
 
   return (
-    <Modal open={open} setOpen={setOpen}>
+    <Modal title='Withdraw' open={open} setOpen={setOpen}>
       <div className='flex min-h-[470px] w-full flex-wrap'>
         {isLoading && (
           <div className='absolute inset-0 z-40 grid place-items-center bg-black/50'>
@@ -205,7 +203,7 @@ export const WithdrawModal = () => {
                 </div>
               </div>
               <Text size='xs' uppercase className='mb-2 text-white/60'>
-                Available: {formatValue(maxWithdrawAmount, 0, 4, true, false, false, false, false)}
+                Available: {formatValue(maxWithdrawAmount, { minDecimals: 0, maxDecimals: 4 })}
               </Text>
               <Slider
                 className='mb-6'
@@ -265,7 +263,7 @@ export const WithdrawModal = () => {
                       amount={BigNumber(accountStats.netWorth)
                         .dividedBy(10 ** baseAsset.decimals)
                         .toNumber()}
-                      prefix='$: '
+                      options={{ prefix: '$: ' }}
                       animate
                     />
                   </Text>
@@ -275,11 +273,9 @@ export const WithdrawModal = () => {
                     label='Lvg'
                     tooltip={
                       <Text size='sm'>
-                        Current Leverage:{' '}
-                        {formatValue(accountStats.currentLeverage, 0, 2, true, false, 'x')}
+                        Current Leverage: {formatLeverage(accountStats.currentLeverage)}
                         <br />
-                        Max Leverage:{' '}
-                        {formatValue(accountStats.maxLeverage, 0, 2, true, false, 'x')}
+                        Max Leverage: {formatLeverage(accountStats.maxLeverage)}
                       </Text>
                     }
                   />
@@ -288,7 +284,8 @@ export const WithdrawModal = () => {
                     label='Risk'
                     tooltip={
                       <Text size='sm'>
-                        Current Risk: {formatValue(accountStats.risk * 100, 0, 2, true, false, '%')}
+                        Current Risk:{' '}
+                        {formatValue(accountStats.risk * 100, { minDecimals: 0, suffix: '%' })}
                       </Text>
                     }
                   />
@@ -331,7 +328,6 @@ export const WithdrawModal = () => {
                 }}
               />
             </div>
-            <PositionsList title='Balances' data={balances} />
           </div>
         </div>
       </div>
