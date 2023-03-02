@@ -1,5 +1,5 @@
 'use client'
 
 export default function Background() {
-  return <div className='background' />
+  return <div className='background bg-body' />
 }

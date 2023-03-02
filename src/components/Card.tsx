@@ -14,7 +14,7 @@ export const Card = (props: Props) => {
     <section
       className={classNames(
         props.className,
-        'h-fit w-full max-w-full overflow-hidden rounded-md border-[1px] border-white/20',
+        'h-fit w-full max-w-full overflow-hidden rounded-md border border-white/20',
       )}
     >
       <Text size='lg' className='bg-white/10 p-4 font-semibold'>

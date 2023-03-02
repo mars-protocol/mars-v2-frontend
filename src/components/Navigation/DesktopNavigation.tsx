@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
+import { AccountNavigation } from 'components/Account/AccountNavigation'
 import { Logo } from 'components/Icons'
 import { NavLink } from 'components/Navigation/NavLink'
 import Wallet from 'components/Wallet/Wallet'
@@ -20,7 +21,7 @@ export default function DesktopNavigation() {
   const pathname = usePathname() || ''
 
   return (
-    <div className='relative hidden bg-header lg:block'>
+    <div className='relative hidden lg:block'>
       <div className='flex items-center justify-between border-b border-white/20 px-6 py-3'>
         <div className='flex flex-grow items-center'>
           <Link href={getRoute(pathname, { page: 'trade' })}>
@@ -36,7 +37,10 @@ export default function DesktopNavigation() {
             ))}
           </div>
         </div>
-        <Wallet />
+        <div className='flex gap-4'>
+          <AccountNavigation />
+          <Wallet />
+        </div>
       </div>
     </div>
   )

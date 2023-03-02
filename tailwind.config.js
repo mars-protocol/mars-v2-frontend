@@ -58,6 +58,7 @@ module.exports = {
       boxShadow: {
         inset: 'inset 0px 2px 2px rgba(0, 0, 0, 0.25)',
         overlay: '0 2px 2px rgba(0, 0, 0, 0.14), 0 1px 5px rgba(0, 0, 0, 0.2)',
+        button: '0px 1px 1px rgba(0, 0, 0, 0.14), 0px 1px 3px rgba(0, 0, 0, 0.2)',
         tooltip:
           '0 3px 4px rgba(0, 0, 0, 0.14), 0 3px 3px rgba(0, 0, 0, 0.12), 0 1px 8px rgba(0, 0, 0, 0.2)',
       },
@@ -71,7 +72,7 @@ module.exports = {
         'accent-highlight': '#421f32',
         atom: '#6f7390',
         axlusdc: '#478edc',
-        body: '#562a3b',
+        body: '#0b0e20',
         'body-dark': '#141621',
         grey: '#3a3c49',
         'grey-dark': '#1a1c25',
@@ -94,26 +95,27 @@ module.exports = {
         'secondary-highlight-10': '#8e88d9',
         'vote-against': '#eb9e49',
         warning: '#c83333',
+        white: '#FFF',
       },
       fontFamily: {
         sans: ['Inter'],
       },
       fontSize: {
-        xs: ['11.85px', '16px'],
-        sm: ['13.33px', '20px'],
+        xs: ['12px', '16px'],
+        sm: ['14px', '18px'],
         base: ['15px', '20px'],
-        lg: ['16.88px', '24px'],
-        xl: ['18.98px', '28px'],
-        '2xl': ['21.36px', '32px'],
-        '3xl': ['24.03px', '36px'],
-        '4xl': ['30.42px', '40px'],
-        '5xl': ['38.49px', '56px'],
-        '6xl': ['60.84px', '80px'],
+        lg: ['17px', '24px'],
+        xl: ['19px', '28px'],
+        '2xl': ['21px', '32px'],
+        '3xl': ['24px', '36px'],
+        '4xl': ['30px', '40px'],
+        '5xl': ['39px', '56px'],
+        '6xl': ['61px', '80px'],
       },
       fontWeight: {
         light: 300,
         normal: 400,
-        semibold: 600,
+        semibold: 500,
         bold: 600,
       },
       height: {
@@ -154,7 +156,6 @@ module.exports = {
     },
   },
   plugins: [
-    require('tailwindcss-border-gradient-radius'),
     plugin(function ({ addBase, addUtilities, theme }) {
       addBase({
         h1: { fontSize: '60.84px', lineHeight: '80px', fontWeight: theme('fontWeight.light') },
@@ -168,6 +169,10 @@ module.exports = {
           },
           '.gradient-axlusdc': {
             background: 'linear-gradient(to bottom, #1f5c9e, #478edc)',
+          },
+          '.gradient-primary-button': {
+            background:
+              'linear-gradient(90deg, #FF625E 0%, #FF625E 6.67%, #FF645E 13.33%, #FF665E 20%, #FE6A5F 26.67%, #FE6E5F 33.33%, #FE735F 40%, #FD7960 46.67%, #FD7E60 53.33%, #FC8461 60%, #FC8961 66.67%, #FC8D61 73.33%, #FB9162 80%, #FB9362 86.67%, #FB9562 93.33%, #FB9562 100%)',
           },
           '.gradient-card': {
             background:
@@ -189,7 +194,8 @@ module.exports = {
             background: 'linear-gradient(to bottom, #3a02e2, #e700ca)',
           },
           '.gradient-popover': {
-            background: 'linear-gradient(180deg, #fef4ed -2.1%, #ecdbe0 97.53%)',
+            background:
+              'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2))',
           },
           '.gradient-tooltip': {
             background:

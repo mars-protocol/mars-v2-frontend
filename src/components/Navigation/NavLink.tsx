@@ -1,9 +1,9 @@
 'use client'
 
+import classNames from 'classnames'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ReactNode } from 'react'
-import classNames from 'classnames'
 
 interface Props {
   href: string
@@ -18,7 +18,7 @@ export const NavLink = ({ href, children }: Props) => {
     <Link
       href={href}
       className={classNames(
-        'text-lg-caps hover:text-white active:text-white',
+        'text-sm font-semibold hover:text-white active:text-white',
         isActive ? 'pointer-events-none text-white' : 'text-white/60',
       )}
     >

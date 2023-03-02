@@ -1,4 +1,5 @@
 // @index(['./*.svg'], f => `export { default as ${f.name} } from 'components/Icons/${f.name}.svg'`)
+export { default as Account } from 'components/Icons/Account.svg'
 export { default as Add } from 'components/Icons/Add.svg'
 export { default as ArrowBack } from 'components/Icons/ArrowBack.svg'
 export { default as ArrowDown } from 'components/Icons/ArrowDown.svg'

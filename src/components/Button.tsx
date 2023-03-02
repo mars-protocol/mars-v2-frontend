@@ -1,7 +1,8 @@
 import classNames from 'classnames'
-import React, { LegacyRef, ReactNode } from 'react'
+import React, { LegacyRef, ReactElement, ReactNode } from 'react'
 
 import { CircularProgress } from 'components/CircularProgress'
+import { ChevronDown } from 'components/Icons'
 import useStore from 'store'
 
 interface Props {
@@ -15,17 +16,19 @@ interface Props {
   text?: string | ReactNode
   variant?: 'solid' | 'transparent' | 'round' | 'text'
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
+  icon?: ReactElement
+  hasSubmenu?: boolean
 }
 
 export const buttonColorClasses = {
   primary:
-    'border-none text-white bg-primary hover:bg-primary-highlight active:bg-primary-highlight-10 focus:bg-primary-highlight',
+    'border-none gradient-primary-button text-white hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   secondary:
-    'border-none text-white bg-secondary hover:bg-secondary-highlight active:bg-secondary-highlight-10 focus:bg-secondary-highlight',
+    'border border-white/30 bg-transparent text-white hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   tertiary:
-    'border text-white bg-secondary-dark/60 border-white/60 hover:bg-secondary-dark hover:border-white active:bg-secondary-dark-10 active:border-white focus:bg-secondary-dark focus:border-white',
+    'border-none button-tertiary bg-white/10 text-white hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   quaternary:
-    'border bg-transparent text-white/60 border-transparent hover:text-white hover:border-white active:text-white active:border-white',
+    'bg-transparent text-white/60 border-transparent hover:text-white hover:border-white active:text-white active:border-white',
 }
 
 const buttonTransparentColorClasses = {
@@ -46,13 +49,13 @@ const buttonRoundSizeClasses = {
 }
 
 export const buttonSizeClasses = {
-  small: 'text-sm px-5 py-1.5 min-h-[32px]',
-  medium: 'text-base px-6 py-2.5 min-h-[40px]',
-  large: 'text-lg px-6 py-2.5 min-h-[56px]',
+  small: 'text-sm px-2.5 py-1.5 min-h-[32px]',
+  medium: 'text-base px-3 py-2 min-h-[40px]',
+  large: 'text-lg px-3.5 py-2.5 min-h-[56px]',
 }
 
 export const buttonVariantClasses = {
-  solid: 'text-white',
+  solid: 'text-white shadow-button',
   transparent: 'bg-transparent p-0',
   round: 'rounded-full p-0',
   text: 'border-none bg-transparent',
@@ -70,6 +73,8 @@ export const Button = React.forwardRef(function Button(
     text,
     variant = 'solid',
     onClick,
+    icon,
+    hasSubmenu,
   }: Props,
   ref,
 ) {
@@ -98,7 +103,8 @@ export const Button = React.forwardRef(function Button(
   return (
     <button
       className={classNames(
-        'outline-nones cursor-pointer appearance-none break-normal rounded-3xl',
+        'flex items-center',
+        'outline-nones cursor-pointer appearance-none break-normal rounded-2xs',
         enableAnimations && 'transition-color',
         buttonClasses,
         buttonVariantClasses[variant],
@@ -109,8 +115,16 @@ export const Button = React.forwardRef(function Button(
       ref={ref as LegacyRef<HTMLButtonElement>}
       onClick={disabled ? () => {} : onClick}
     >
+      {icon && !showProgressIndicator && (
+        <span className='mr-2 flex h-4 w-4 items-center justify-center'>{icon}</span>
+      )}
       {text && !children && !showProgressIndicator && <span>{text}</span>}
       {children && !showProgressIndicator && children}
+      {hasSubmenu && !showProgressIndicator && (
+        <span className='ml-2 inline-block w-2.5'>
+          <ChevronDown />
+        </span>
+      )}
       {showProgressIndicator && (
         <CircularProgress size={size === 'small' ? 10 : size === 'medium' ? 12 : 18} />
       )}

@@ -3880,7 +3880,7 @@ color-string@^1.6.0:
     color-name "^1.0.0"
     simple-swizzle "^0.2.2"
 
-color@^3.1.2:
+color@^3.1.1, color@^3.1.2:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/color/-/color-3.2.1.tgz#3544dc198caf4490c3ecc9a790b54fe9ff45e164"
   integrity sha512-aBl7dZI9ENN6fUGC7mWpMTPNHmWUSNan9tuWN6ahh5ZLNk9baLJOnSMlrQkHcrfFgz2/RigjUVAjdx36VcemKA==
@@ -5793,7 +5793,7 @@ lodash.values@^4.3.0:
   resolved "https://registry.yarnpkg.com/lodash.values/-/lodash.values-4.3.0.tgz#a3a6c2b0ebecc5c2cba1c17e6e620fe81b53d347"
   integrity sha512-r0RwvdCv8id9TUblb/O7rYPwVy6lerCbcawrfdo9iC/1t1wsNMJknO79WNBgwkH0hIeJ08jmvvESbFpNb4jH0Q==
 
-lodash@^4.17.19, lodash@^4.17.21:
+lodash@^4.17.11, lodash@^4.17.19, lodash@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -7259,6 +7259,14 @@ tailwindcss-border-gradient-radius@^3.0.1:
   dependencies:
     color "^3.1.2"
     lodash "^4.17.19"
+
+tailwindcss-border-gradients@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/tailwindcss-border-gradients/-/tailwindcss-border-gradients-2.0.3.tgz#c07cd44a0dc7c86fe2fa160117f6ac640866bca3"
+  integrity sha512-LI2FOtuX1QcTcmXz49f038SfitEw/7d50vcdWD18foEUSpT7VS8etZAWxn4FdH9vxnAjbGVcEGiTKz3Y9iZvoA==
+  dependencies:
+    color "^3.1.1"
+    lodash "^4.17.11"
 
 tailwindcss@^3.2.1:
   version "3.2.4"
