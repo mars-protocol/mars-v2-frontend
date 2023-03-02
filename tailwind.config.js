@@ -179,7 +179,7 @@ module.exports = {
             filter: 'blur(clamp(50px, 8vw, 100px))',
           },
           '.blur-orb-secondary': {
-            filter: 'blur(clamp(10px, 18vw, 120px))',
+            filter: 'blur(clamp(60px, 20vw, 140px))',
           },
           '.blur-orb-tertiary': {
             filter: 'blur(clamp(60px, 10vw, 110px))',
