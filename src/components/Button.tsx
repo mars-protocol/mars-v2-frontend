@@ -55,7 +55,7 @@ export const buttonSizeClasses = {
 }
 
 export const buttonVariantClasses = {
-  solid: 'text-white shadow-button',
+  solid: 'text-white shadow-button justify-center',
   transparent: 'bg-transparent p-0',
   round: 'rounded-full p-0',
   text: 'border-none bg-transparent',

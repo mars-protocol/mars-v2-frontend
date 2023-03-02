@@ -15,7 +15,7 @@ export const OverlayAction = ({ className, icon, onClick, setShow, text }: Props
   return (
     <Button
       className={classNames(
-        'flex items-center whitespace-nowrap py-2 text-left text-sm text-accent-dark hover:text-secondary',
+        'flex items-center whitespace-nowrap py-2 text-left text-sm text-white/80 hover:text-white',
         className,
       )}
       variant='text'
