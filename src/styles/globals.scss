@@ -60,27 +60,6 @@ a {
   display: none;
 }
 
-.number {
-  white-space: nowrap;
-  font-feature-settings: 'tnum' on;
-}
-
-/* ORBS */
-@mixin orbs($count, $hue) {
-  $text-shadow: ();
-  @for $i from 0 through $count {
-    $text-shadow: $text-shadow,
-      (-0.5+ (random()) * 3) + em (-0.5+ (random()) * 3) + em 10px rgb(92, 5, 92);
-    // hsla((random() * 50)+$hue, 100%, 45%);
-  }
-  text-shadow: $text-shadow;
-}
-
-@mixin newOrbs($color) {
-  filter: blur(4px);
-  background: radial-gradient(circle at center, rgba($color, 0.25) 0%, rgba($color, 0) 20%);
-}
-
 .button-tertiary {
   position: relative;
 
@@ -88,56 +67,12 @@ a {
     content: '';
     position: absolute;
     inset: 0;
-
     border-radius: 4px;
     padding: 1px;
     background: linear-gradient(180deg, rgb(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
-  }
-}
-
-.background {
-  font-family: serif;
-  font-size: 90px;
-  overflow: hidden;
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  inset: 0;
-
-  &:before,
-  &:after {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 3em;
-    height: 3em;
-    content: '.';
-    color: transparent;
-    mix-blend-mode: screen;
-  }
-
-  &:after {
-    top: 10%;
-    left: 10%;
-    @include newOrbs(rgb(177, 47, 37));
-  }
-
-  &:before {
-    top: 80%;
-    left: 80%;
-    @include newOrbs(rgb(83, 7, 129));
-    animation-duration: 300s;
-    // animation-delay: -50s;
-    animation: 180s -15s move infinite ease-in-out alternate;
-  }
-
-  &:after {
-    // @include orbs(15, 260);
-    animation-duration: 600s;
-    animation: 180s 0s move infinite ease-in-out alternate;
   }
 }
 
@@ -149,14 +84,4 @@ a {
 
 .Toastify__toast-theme--colored.Toastify__toast--success {
   @apply bg-green-500;
-}
-
-/* KEYFRAMES */
-@keyframes move {
-  from {
-    transform: rotate(0deg) scale(12) translateX(-20px);
-  }
-  to {
-    transform: rotate(360deg) scale(18) translateX(20px);
-  }
 }

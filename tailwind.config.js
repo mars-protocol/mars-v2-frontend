@@ -72,7 +72,7 @@ module.exports = {
         'accent-highlight': '#421f32',
         atom: '#6f7390',
         axlusdc: '#478edc',
-        body: '#0b0e20',
+        body: '#0D0012',
         'body-dark': '#141621',
         grey: '#3a3c49',
         'grey-dark': '#1a1c25',
@@ -84,6 +84,9 @@ module.exports = {
         loss: '#f96363',
         mars: '#a03b45',
         osmo: '#9f1ab9',
+        'orb-primary': '#b12f25',
+        'orb-secondary': '#530781',
+        'orb-tertiary': '#ff00c7',
         profit: '#41a4a9',
         primary: '#14a693',
         'primary-highlight': '#15bfa9',
@@ -129,6 +132,11 @@ module.exports = {
           '0%': { opacity: 0 },
           '100%': { opacity: 1 },
         },
+        float: {
+          '0%': { transform: 'translate(0%,0%)' },
+          '50%': { transform: 'translate(50%, 50%)' },
+          '100%': { transform: 'translate(0%, 0%' },
+        },
       },
       letterSpacing: {
         normal: 0,
@@ -145,6 +153,9 @@ module.exports = {
       },
       transitionDuration: {
         3000: '3000ms',
+        120000: '120000ms',
+        150000: '150000ms',
+        180000: '180000ms',
       },
       transitionProperty: {
         background: 'filter, -webkit-filter',
@@ -164,6 +175,15 @@ module.exports = {
         h4: { fontSize: '24.03px', lineHeight: '36px', fontWeight: theme('fontWeight.normal') },
       }),
         addUtilities({
+          '.blur-orb-primary': {
+            filter: 'blur(clamp(50px, 8vw, 100px))',
+          },
+          '.blur-orb-secondary': {
+            filter: 'blur(clamp(10px, 18vw, 120px))',
+          },
+          '.blur-orb-tertiary': {
+            filter: 'blur(clamp(60px, 10vw, 110px))',
+          },
           '.gradient-atom': {
             background: 'linear-gradient(to bottom, #2e3148, #6f7390)',
           },
@@ -200,6 +220,10 @@ module.exports = {
           '.gradient-tooltip': {
             background:
               'linear-gradient(77.47deg, rgba(20, 24, 57, 0.9) 11.58%, rgba(34, 16, 57, 0.9) 93.89%)',
+          },
+          '.number': {
+            whiteSpace: 'nowrap',
+            fontFeatureSettings: '"tnum" on',
           },
           '.text-3xs': { fontSize: '9.36px', lineHeight: '12px' },
           '.text-3xs-caps': {
