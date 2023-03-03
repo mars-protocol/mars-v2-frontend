@@ -27,7 +27,7 @@ export const buttonColorClasses = {
   secondary:
     'border border-white/30 bg-transparent hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   tertiary:
-    'border-none button-tertiary bg-white/10 hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
+    'border-none border-button bg-white/10 hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   quaternary:
     'bg-transparent text-white/60 border-transparent hover:text-white hover:border-white active:text-white active:border-white',
 }
@@ -114,7 +114,7 @@ export const Button = React.forwardRef(function Button(
     <button
       className={classNames(
         'flex items-center',
-        'outline-nones cursor-pointer appearance-none break-normal rounded-2xs',
+        'outline-nones cursor-pointer appearance-none break-normal rounded-sm',
         'text-white',
         enableAnimations && 'transition-color',
         buttonClasses,

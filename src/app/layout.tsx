@@ -1,3 +1,6 @@
+import classNames from 'classnames'
+
+import AccountDetails from 'components/Account/AccountDetails'
 import Background from 'components/Background'
 import FetchAccounts from 'components/FetchAccounts'
 import FetchPrices from 'components/FetchPrices'
@@ -23,8 +26,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Toaster />
           <FetchPrices />
           <FetchAccounts />
-          <main className='relative flex lg:min-h-[calc(100vh-120px)]'>
-            <div className='flex flex-grow flex-col flex-wrap'>{children}</div>
+          <main
+            className={classNames(
+              'relative flex justify-center py-6',
+              'lg:mt-[65px] lg:min-h-[calc(100vh-65px)]',
+            )}
+          >
+            <div className='flex max-w-content flex-grow flex-col flex-wrap'>{children}</div>
+            <AccountDetails />
           </main>
         </div>
       </body>

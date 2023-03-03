@@ -60,7 +60,7 @@ a {
   display: none;
 }
 
-.button-tertiary {
+.border-button {
   position: relative;
 
   &:before {
@@ -70,6 +70,22 @@ a {
     border-radius: 4px;
     padding: 1px;
     background: linear-gradient(180deg, rgb(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+}
+
+.border-card {
+  position: relative;
+
+  &:before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    padding: 1px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;

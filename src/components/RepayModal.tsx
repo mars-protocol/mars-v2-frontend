@@ -3,19 +3,18 @@ import BigNumber from 'bignumber.js'
 import Image from 'next/image'
 import React, { useMemo, useState } from 'react'
 import { NumericFormat } from 'react-number-format'
-import { toast } from 'react-toastify'
 
 import { Button } from 'components/Button'
+import { Card } from 'components/Card'
 import { CircularProgress } from 'components/CircularProgress'
-import { ContainerSecondary } from 'components/ContainerSecondary'
 import { Slider } from 'components/Slider'
 import { useRepayFunds } from 'hooks/mutations/useRepayFunds'
 import { useAllBalances } from 'hooks/queries/useAllBalances'
 import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositions'
 import { useTokenPrices } from 'hooks/queries/useTokenPrices'
-import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-import { getMarketAssets } from 'utils/assets'
 import useStore from 'store'
+import { getMarketAssets } from 'utils/assets'
+import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 // 0.001% buffer / slippage to avoid repay action from not fully repaying the debt amount
 const REPAY_BUFFER = 1.00001
@@ -137,7 +136,7 @@ export const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
                     Repay {tokenSymbol}
                   </Dialog.Title>
                   <div className='mb-4 flex flex-col gap-2 text-sm'>
-                    <ContainerSecondary>
+                    <Card>
                       <p className='mb-7'>
                         In wallet: {walletAmount.toLocaleString()} {tokenSymbol}
                       </p>
@@ -176,7 +175,7 @@ export const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
                         }}
                         onMaxClick={() => setAmount(maxValue)}
                       />
-                    </ContainerSecondary>
+                    </Card>
                   </div>
                   <Button
                     className='mt-auto w-full'

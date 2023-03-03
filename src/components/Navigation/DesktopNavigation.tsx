@@ -21,8 +21,8 @@ export default function DesktopNavigation() {
   const pathname = usePathname() || ''
 
   return (
-    <div className='relative hidden lg:block'>
-      <div className='flex items-center justify-between border-b border-white/20 px-6 py-3'>
+    <div className='fixed top-0 left-0 z-40 hidden w-full backdrop-blur-sticky lg:block'>
+      <div className='flex items-center justify-between border-b border-white/20 py-3 pl-6 pr-4'>
         <div className='flex flex-grow items-center'>
           <Link href={getRoute(pathname, { page: 'trade' })}>
             <span className='block h-10 w-10'>

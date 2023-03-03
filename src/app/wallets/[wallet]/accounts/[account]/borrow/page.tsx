@@ -31,12 +31,12 @@ export default async function page({ params }: { params: PageParams }) {
   return (
     <div className='flex w-full flex-col'>
       {active.length > 0 && (
-        <Card title='Borrowings'>
+        <Card className='h-fit w-full' title='Borrowings'>
           <BorrowTable data={active} />
         </Card>
       )}
       {available.length > 0 && (
-        <Card title='Available to borrow'>
+        <Card className='h-fit w-full' title='Available to borrow'>
           <BorrowTable data={available} />
         </Card>
       )}

@@ -37,6 +37,9 @@ module.exports = {
         progress: 'spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite',
         fadein: 'fadein 1s ease-in-out forwards',
       },
+      backdropBlur: {
+        sticky: '50px',
+      },
       backgroundImage: {
         'fund-modal': 'url(/images/fund-bg.webp), url(/images/fund-bg.png)',
         'delete-modal': 'url(/images/delete-account-bg.webp), url(/images/delete-account-bg.png)',
@@ -46,11 +49,9 @@ module.exports = {
         desktop: '100% auto',
       },
       borderRadius: {
-        '3xs': '3px',
-        '2xs': '4px',
-        xs: '5px',
-        sm: '8px',
-        base: '9px',
+        xs: '2px',
+        sm: '4px',
+        base: '8px',
         lg: '12px',
         xl: '16px',
         '2xl': '20px',
@@ -100,6 +101,7 @@ module.exports = {
         sans: ['Inter'],
       },
       fontSize: {
+        '2xs': ['10px', '16px'],
         xs: ['12px', '16px'],
         sm: ['14px', '18px'],
         base: ['15px', '20px'],
@@ -140,12 +142,18 @@ module.exports = {
         wider: '3px',
         widest: '5px',
       },
+      maxWidth: {
+        content: '1024px',
+      },
       screens: {
         sm: '480px',
         md: '720px',
         lg: '1024px',
         xl: '1280px',
         '2xl': '1920px',
+      },
+      spacing: {
+        35: '140px',
       },
       transitionDuration: {
         3000: '3000ms',
@@ -159,6 +167,7 @@ module.exports = {
       width: {
         15: '60px',
         30: '120px',
+        35: '140px',
       },
     },
   },
@@ -188,7 +197,7 @@ module.exports = {
           },
           '.gradient-card': {
             background:
-              'linear-gradient(99.79deg, rgba(8, 11, 30, 0.79) 8.17%, rgba(52, 20, 33, 0.9) 94.54%)',
+              'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))',
           },
           '.gradient-hatched': {
             backgroundImage:
@@ -207,7 +216,7 @@ module.exports = {
           },
           '.gradient-popover': {
             background:
-              'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2))',
+              'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1))',
           },
           '.gradient-primary-to-secondary': {
             background: 'linear-gradient(90deg, #FF625E 0%, #FB9562 100%)',

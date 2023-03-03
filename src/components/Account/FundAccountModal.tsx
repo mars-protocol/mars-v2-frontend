@@ -130,7 +130,7 @@ export const FundAccountModal = () => {
               your osmosis wallet.
             </Text>
             <>
-              <div className='mb-4 rounded-md border border-white/20'>
+              <div className='mb-4 rounded-base border border-white/20'>
                 <div className='mb-1 flex justify-between border-b border-white/20 p-2'>
                   <Text size='sm' className='text-white'>
                     Asset:

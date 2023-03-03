@@ -4,7 +4,7 @@ import { ReactNode } from 'react'
 import { Text } from 'components/Text'
 
 interface Props {
-  title: string
+  title?: string
   children: ReactNode
   className?: string
 }
@@ -14,12 +14,14 @@ export const Card = (props: Props) => {
     <section
       className={classNames(
         props.className,
-        'h-fit w-full max-w-full overflow-hidden rounded-md border border-white/20',
+        'border-card max-w-full overflow-hidden rounded-base bg-white/5',
       )}
     >
-      <Text size='lg' className='bg-white/10 p-4 font-semibold'>
-        {props.title}
-      </Text>
+      {props.title && (
+        <Text size='lg' className='bg-white/10 p-4 font-semibold'>
+          {props.title}
+        </Text>
+      )}
       <div>{props.children}</div>
     </section>
   )

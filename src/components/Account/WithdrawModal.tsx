@@ -2,20 +2,16 @@ import { Switch } from '@headlessui/react'
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import React, { useEffect, useMemo, useState } from 'react'
-import { toast } from 'react-toastify'
 
 import { BorrowCapacity } from 'components/BorrowCapacity'
-import { convertFromGwei, formatLeverage, formatValue } from 'utils/formatters'
-import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-import { CircularProgress } from 'components/CircularProgress'
 import { Button } from 'components/Button'
-import { Text } from 'components/Text'
-import { Slider } from 'components/Slider'
+import { CircularProgress } from 'components/CircularProgress'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { Gauge } from 'components/Gauge'
 import { LabelValuePair } from 'components/LabelValuePair'
 import { Modal } from 'components/Modal'
-import { PositionsList } from 'components/PositionsList'
+import { Slider } from 'components/Slider'
+import { Text } from 'components/Text'
 import { useAccountStats } from 'hooks/data/useAccountStats'
 import { useCalculateMaxWithdrawAmount } from 'hooks/data/useCalculateMaxWithdrawAmount'
 import { useWithdrawFunds } from 'hooks/mutations/useWithdrawFunds'
@@ -23,6 +19,8 @@ import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositio
 import { useTokenPrices } from 'hooks/queries/useTokenPrices'
 import useStore from 'store'
 import { getBaseAsset, getMarketAssets } from 'utils/assets'
+import { convertFromGwei, formatLeverage, formatValue } from 'utils/formatters'
+import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
 
 export const WithdrawModal = () => {
   // ---------------
@@ -169,7 +167,7 @@ export const WithdrawModal = () => {
         <div className='flex w-full'>
           <div className='flex flex-1 flex-col border-r border-white/20'>
             <div className='border-b border-white/20 p-6'>
-              <div className='mb-4 rounded-md border border-white/20'>
+              <div className='mb-4 rounded-base border border-white/20'>
                 <div className='mb-1 flex justify-between border-b border-white/20 p-2'>
                   <Text size='sm' className='text-white'>
                     Asset:

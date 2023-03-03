@@ -34,14 +34,14 @@ export const WalletConnectProvider: FC<Props> = ({ children }) => {
       persistent
       classNames={{
         modalContent:
-          'relative z-50 w-[460px] max-w-full rounded-md border border-white/20 bg-white/5 p-6 pb-4 backdrop-blur-3xl flex flex-wrap',
+          'relative z-50 w-[460px] max-w-full rounded-base border border-white/20 bg-white/5 p-6 pb-4 backdrop-blur-3xl flex flex-wrap',
         modalOverlay:
           'fixed inset-0 bg-black/60 w-full h-full z-40 flex items-center justify-center cursor-pointer m-0 backdrop-blur-sm',
         modalHeader: 'text-lg text-white mb-4 flex-grow',
         modalCloseButton: 'inline-block',
         walletList: 'w-full',
         wallet:
-          'flex bg-transparent p-2 w-full rounded-xs cursor-pointer transition duration-500 ease-in mb-2 hover:bg-primary',
+          'flex bg-transparent p-2 w-full rounded-sm cursor-pointer transition duration-500 ease-in mb-2 hover:bg-primary',
         walletImage: 'w-10 h-10',
         walletName: 'w-full text-lg',
         walletDescription: 'w-full text-xs text-white/60 break-all',

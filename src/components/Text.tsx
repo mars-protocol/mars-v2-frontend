@@ -29,7 +29,6 @@ export const Text = ({
     <HtmlElement
       className={classNames(
         className,
-        'flex items-center',
         uppercase ? `text-${sizeClass}-caps` : `text-${sizeClass}`,
         monospace && 'number',
       )}
