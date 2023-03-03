@@ -125,7 +125,11 @@ export const Button = React.forwardRef(function Button(
       onClick={disabled ? () => {} : onClick}
     >
       {icon && !showProgressIndicator && (
-        <span className='mr-2 flex h-4 w-4 items-center justify-center'>{icon}</span>
+        <span
+          className={`flex h-4 w-4 items-center justify-center${(text || children) && ' mr-2'}`}
+        >
+          {icon}
+        </span>
       )}
       {text && !children && !showProgressIndicator && <span>{text}</span>}
       {children && !showProgressIndicator && children}
