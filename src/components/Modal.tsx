@@ -3,8 +3,7 @@ import { ReactNode } from 'react'
 
 import { Close } from 'components/Icons'
 import { Text } from 'components/Text'
-
-import { Button } from './Button'
+import { Button } from 'components/Button'
 
 interface Props {
   title: string

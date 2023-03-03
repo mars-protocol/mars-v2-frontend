@@ -8,20 +8,18 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
+import classNames from 'classnames'
 import Image from 'next/image'
 import React from 'react'
-import classNames from 'classnames'
 
+import AmountAndValue from 'components/AmountAndValue'
 import { AssetRow } from 'components/Borrow/AssetRow'
 import { ChevronDown, ChevronUp } from 'components/Icons'
-import { getMarketAssets } from 'utils/assets'
 import { Text } from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
-import { FormattedNumber } from 'components/FormattedNumber'
-import AmountAndValue from 'components/AmountAndValue'
+import { getMarketAssets } from 'utils/assets'
 import { formatPercent } from 'utils/formatters'
-
-import AssetExpanded from './AssetExpanded'
+import AssetExpanded from 'components/Borrow/AssetExpanded'
 
 type Props = {
   data: BorrowAsset[] | BorrowAssetActive[]

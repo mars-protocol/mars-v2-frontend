@@ -3,8 +3,7 @@ import { useRouter } from 'next/navigation'
 import { toast as createToast, Slide, ToastContainer } from 'react-toastify'
 
 import useStore from 'store'
-
-import { Check, Warning } from './Icons'
+import { Check, Warning } from 'components/Icons'
 
 export default function Toaster() {
   const enableAnimations = useStore((s) => s.enableAnimations)
