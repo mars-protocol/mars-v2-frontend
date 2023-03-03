@@ -73,7 +73,7 @@ export default function ConnectedButton() {
     <div className={'relative'}>
       {network?.chainId !== ChainInfoID.Osmosis1 && (
         <Text
-          className='absolute -right-2 -top-2.5 z-10 rounded-lg bg-secondary-highlight p-0.5 px-2'
+          className='absolute -right-2 -top-2.5 z-10 rounded-lg p-0.5 px-2 gradient-primary-to-secondary'
           size='3xs'
           uppercase
         >
@@ -92,7 +92,7 @@ export default function ConnectedButton() {
         <span>{name ? name : truncate(address, [2, 4])}</span>
         <div
           className={classNames(
-            'number relative ml-2 flex h-full items-center pl-2',
+            'relative ml-2 flex h-full items-center pl-2 number',
             'before:content-[" "] before:absolute before:top-0.5 before:bottom-1.5 before:left-0 before:h-[calc(100%-4px)] before:border-l before:border-white/20',
           )}
         >
@@ -134,30 +134,33 @@ export default function ConnectedButton() {
               {truncate(address, [14, 14])}
             </Text>
             <div className='flex w-full pt-1'>
-              <button
-                className='mr-10 flex w-auto appearance-none items-center border-none py-2  opacity-70 hover:opacity-100'
+              <Button
+                icon={<Copy />}
+                variant='transparent'
+                className='mr-10 flex w-auto py-2'
+                color='quaternary'
                 onClick={setCopied}
               >
-                <span className='mr-1 w-4'>
-                  <Copy />
-                </span>
                 {isCopied ? (
                   <Text size='sm'>
-                    Copied <Check />
+                    Copied{' '}
+                    <span className='ml-1 w-4'>
+                      <Check />
+                    </span>
                   </Text>
                 ) : (
                   <Text size='sm'>Copy Address</Text>
                 )}
-              </button>
-              <button
-                className='py-2opacity-70 flex w-auto appearance-none items-center border-none hover:opacity-100'
+              </Button>
+              <Button
+                icon={<ExternalLink />}
+                variant='transparent'
+                className='flex w-auto py-2'
+                color='quaternary'
                 onClick={viewOnFinder}
               >
-                <span className='mr-1 w-4'>
-                  <ExternalLink />
-                </span>
                 <Text size='sm'>View on {explorerName}</Text>
-              </button>
+              </Button>
             </div>
           </div>
         </div>

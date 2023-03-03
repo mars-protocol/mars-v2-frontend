@@ -88,14 +88,8 @@ module.exports = {
         'orb-secondary': '#530781',
         'orb-tertiary': '#ff00c7',
         profit: '#41a4a9',
-        primary: '#14a693',
-        'primary-highlight': '#15bfa9',
-        'primary-highlight-10': '#20e7cd',
-        secondary: '#524bb1',
-        'secondary-dark': '#440b37',
-        'secondary-dark-10': '#70125b',
-        'secondary-highlight': '#6962cc',
-        'secondary-highlight-10': '#8e88d9',
+        primary: '#FF625E',
+        secondary: '#FB9562',
         'vote-against': '#eb9e49',
         warning: '#c83333',
         white: '#FFF',
@@ -190,10 +184,6 @@ module.exports = {
           '.gradient-axlusdc': {
             background: 'linear-gradient(to bottom, #1f5c9e, #478edc)',
           },
-          '.gradient-primary-button': {
-            background:
-              'linear-gradient(90deg, #FF625E 0%, #FF625E 6.67%, #FF645E 13.33%, #FF665E 20%, #FE6A5F 26.67%, #FE6E5F 33.33%, #FE735F 40%, #FD7960 46.67%, #FD7E60 53.33%, #FC8461 60%, #FC8961 66.67%, #FC8D61 73.33%, #FB9162 80%, #FB9362 86.67%, #FB9562 93.33%, #FB9562 100%)',
-          },
           '.gradient-card': {
             background:
               'linear-gradient(99.79deg, rgba(8, 11, 30, 0.79) 8.17%, rgba(52, 20, 33, 0.9) 94.54%)',
@@ -216,6 +206,9 @@ module.exports = {
           '.gradient-popover': {
             background:
               'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2))',
+          },
+          '.gradient-primary-to-secondary': {
+            background: 'linear-gradient(90deg, #FF625E 0%, #FB9562 100%)',
           },
           '.gradient-tooltip': {
             background:

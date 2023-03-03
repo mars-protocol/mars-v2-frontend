@@ -22,24 +22,21 @@ interface Props {
 
 export const buttonColorClasses = {
   primary:
-    'border-none gradient-primary-button text-white hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
+    'border-none gradient-primary-to-secondary hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   secondary:
-    'border border-white/30 bg-transparent text-white hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
+    'border border-white/30 bg-transparent hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   tertiary:
-    'border-none button-tertiary bg-white/10 text-white hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
+    'border-none button-tertiary bg-white/10 hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   quaternary:
     'bg-transparent text-white/60 border-transparent hover:text-white hover:border-white active:text-white active:border-white',
 }
 
 const buttonTransparentColorClasses = {
-  primary:
-    'border-none text-primary hover:text-primary-highlight active:text-primary-highlight focus:text-primary-highlight',
-  secondary:
-    'border-none text-secondary hover:text-secondary-highlight active:text-secondary-highlight focus:text-secondary-highlight',
-  tertiary:
-    'text-secondary-dark hover:text-secondary-dark-10 active:text-secondary-dark-10 focus:text-secondary-dark-10',
+  primary: 'border-none hover:text-primary active:text-primary focus:text-primary',
+  secondary: 'border-none hover:text-secondary active:text-secondary focus:text-secondary',
+  tertiary: 'border-none hover:text-white/80 active:text-white/80 focus:text-white/80',
   quaternary:
-    'border border-transparent text-white/60 hover:text-white hover:border-white active:text-white active:border-white',
+    'border-none text-white/60 hover:text-white hover:border-white active:text-white active:border-white',
 }
 
 const buttonRoundSizeClasses = {
@@ -49,9 +46,15 @@ const buttonRoundSizeClasses = {
 }
 
 export const buttonSizeClasses = {
-  small: 'text-sm px-2.5 py-1.5 min-h-[32px]',
-  medium: 'text-base px-3 py-2 min-h-[40px]',
-  large: 'text-lg px-3.5 py-2.5 min-h-[56px]',
+  small: 'text-sm',
+  medium: 'text-base',
+  large: 'text-lg',
+}
+
+export const buttonPaddingClasses = {
+  small: 'px-2.5 py-1.5 min-h-[32px]',
+  medium: 'px-3 py-2 min-h-[40px]',
+  large: 'px-3.5 py-2.5 min-h-[56px]',
 }
 
 export const buttonVariantClasses = {
@@ -86,6 +89,7 @@ export const Button = React.forwardRef(function Button(
       buttonClasses.push(
         buttonSizeClasses[size],
         buttonRoundSizeClasses[size],
+        buttonPaddingClasses[size],
         buttonColorClasses[color],
       )
       break
@@ -95,7 +99,11 @@ export const Button = React.forwardRef(function Button(
       break
 
     case 'solid':
-      buttonClasses.push(buttonSizeClasses[size], buttonColorClasses[color])
+      buttonClasses.push(
+        buttonSizeClasses[size],
+        buttonPaddingClasses[size],
+        buttonColorClasses[color],
+      )
       break
     default:
   }
@@ -105,6 +113,7 @@ export const Button = React.forwardRef(function Button(
       className={classNames(
         'flex items-center',
         'outline-nones cursor-pointer appearance-none break-normal rounded-2xs',
+        'text-white',
         enableAnimations && 'transition-color',
         buttonClasses,
         buttonVariantClasses[variant],
