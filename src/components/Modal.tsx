@@ -25,7 +25,7 @@ export const Modal = (props: Props) => {
       <div className='relative flex h-full w-full items-center justify-center'>
         <section
           className={classNames(
-            'relative z-40 w-[790px] max-w-full rounded-md border border-white/20 bg-white/5 p-6 backdrop-blur-3xl	',
+            'relative z-40 w-[790px] max-w-full rounded-md border border-white/20 bg-white/5 p-6 backdrop-blur-3xl',
             props.className,
           )}
         >
