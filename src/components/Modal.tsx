@@ -21,7 +21,7 @@ export const Modal = (props: Props) => {
   }
 
   return props.open ? (
-    <div className='fixed top-0 left-0 z-20 h-screen w-screen'>
+    <div className='fixed top-0 left-0 z-40 h-screen w-screen'>
       <div className='relative flex h-full w-full items-center justify-center'>
         <section
           className={classNames(

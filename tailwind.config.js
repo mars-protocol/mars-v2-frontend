@@ -98,7 +98,7 @@ module.exports = {
         white: '#FFF',
       },
       fontFamily: {
-        sans: ['Inter'],
+        sans: ['Inter', 'sans-serif'],
       },
       fontSize: {
         '2xs': ['10px', '16px'],
@@ -172,6 +172,7 @@ module.exports = {
     },
   },
   plugins: [
+    require('tailwind-scrollbar-hide'),
     plugin(function ({ addBase, addUtilities, theme }) {
       addBase({
         h1: { fontSize: '60.84px', lineHeight: '80px', fontWeight: theme('fontWeight.light') },
@@ -188,6 +189,12 @@ module.exports = {
           },
           '.blur-orb-tertiary': {
             filter: 'blur(clamp(60px, 10vw, 110px))',
+          },
+          '.border-glas': {
+            background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0))',
+            mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+            '-webkit-mask-composite': 'xor',
+            maskComposite: 'exclude',
           },
           '.gradient-atom': {
             background: 'linear-gradient(to bottom, #2e3148, #6f7390)',

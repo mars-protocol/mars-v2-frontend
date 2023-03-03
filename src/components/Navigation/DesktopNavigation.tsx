@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import classNames from 'classnames'
 
 import { AccountNavigation } from 'components/Account/AccountNavigation'
 import { Logo } from 'components/Icons'
@@ -21,7 +22,13 @@ export default function DesktopNavigation() {
   const pathname = usePathname() || ''
 
   return (
-    <div className='fixed top-0 left-0 z-40 hidden w-full backdrop-blur-sticky lg:block'>
+    <header
+      className={classNames(
+        'fixed top-0 left-0 z-30 hidden w-full',
+        'before:content-[" "] before:absolute before:inset-0 before:z-[-1] before:h-full before:w-full before:rounded-sm before:backdrop-blur-sticky',
+        'lg:block',
+      )}
+    >
       <div className='flex items-center justify-between border-b border-white/20 py-3 pl-6 pr-4'>
         <div className='flex flex-grow items-center'>
           <Link href={getRoute(pathname, { page: 'trade' })}>
@@ -42,6 +49,6 @@ export default function DesktopNavigation() {
           <Wallet />
         </div>
       </div>
-    </div>
+    </header>
   )
 }

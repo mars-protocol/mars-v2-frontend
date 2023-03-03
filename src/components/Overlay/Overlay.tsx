@@ -18,7 +18,7 @@ export const Overlay = ({ children, content, className, show, setShow }: Props) 
     <>
       <div
         className={classNames(
-          'max-w-screen absolute z-50 rounded-sm border border-white/40 shadow-overlay backdrop-blur-sticky gradient-popover',
+          'max-w-screen absolute z-50 rounded-sm border border-white/40 shadow-overlay backdrop-blur-sm gradient-popover',
           className,
         )}
       >

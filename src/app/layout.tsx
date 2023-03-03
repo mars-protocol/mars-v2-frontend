@@ -13,29 +13,26 @@ import 'styles/globals.scss'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang='en'>
+    <html className='m-0 p-0' lang='en'>
       <head />
-
-      <body>
-        <div className='relative min-h-screen w-full'>
-          <WalletConnectProvider>
-            <Background />
-            <DesktopNavigation />
-          </WalletConnectProvider>
-          <Modals />
-          <Toaster />
-          <FetchPrices />
-          <FetchAccounts />
-          <main
-            className={classNames(
-              'relative flex justify-center py-6',
-              'lg:mt-[65px] lg:min-h-[calc(100vh-65px)]',
-            )}
-          >
-            <div className='flex max-w-content flex-grow flex-col flex-wrap'>{children}</div>
-            <AccountDetails />
-          </main>
-        </div>
+      <body className='m-0 cursor-default bg-body p-0 font-sans text-white'>
+        <WalletConnectProvider>
+          <Background />
+          <DesktopNavigation />
+        </WalletConnectProvider>
+        <FetchPrices />
+        <FetchAccounts />
+        <main
+          className={classNames(
+            'relative flex justify-center py-6',
+            'lg:mt-[65px] lg:h-[calc(100vh-65px)]',
+          )}
+        >
+          <div className='flex max-w-content flex-grow flex-col flex-wrap'>{children}</div>
+          <AccountDetails />
+        </main>
+        <Modals />
+        <Toaster />
       </body>
     </html>
   )

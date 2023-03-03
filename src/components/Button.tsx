@@ -32,6 +32,9 @@ export const buttonColorClasses = {
     'bg-transparent text-white/60 border-transparent hover:text-white hover:border-white active:text-white active:border-white',
 }
 
+const buttonBorderClasses =
+  'relative before:content-[" "] before:absolute before:inset-0 before:rounded-base before:p-[1px] before:border-glas'
+
 const buttonTransparentColorClasses = {
   primary: 'border-none hover:text-primary active:text-primary focus:text-primary',
   secondary: 'border-none hover:text-secondary active:text-secondary focus:text-secondary',
@@ -119,6 +122,7 @@ export const Button = React.forwardRef(function Button(
         enableAnimations && 'transition-color',
         buttonClasses,
         buttonVariantClasses[variant],
+        variant === 'solid' && color === 'tertiary' && buttonBorderClasses,
         disabled && 'pointer-events-none opacity-50',
         className,
       )}

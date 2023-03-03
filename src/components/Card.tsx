@@ -14,7 +14,8 @@ export const Card = (props: Props) => {
     <section
       className={classNames(
         props.className,
-        'border-card max-w-full overflow-hidden rounded-base bg-white/5',
+        'relative max-w-full overflow-hidden rounded-base bg-white/5',
+        'before:content-[" "] before:absolute before:inset-0 before:rounded-base before:p-[1px] before:border-glas',
       )}
     >
       {props.title && (
