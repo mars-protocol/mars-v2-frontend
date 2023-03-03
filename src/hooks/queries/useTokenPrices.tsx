@@ -6,7 +6,11 @@ import { ADDRESS_ORACLE, URL_GQL } from 'constants/env'
 import { queryKeys } from 'types/query-keys-factory'
 import { getMarketAssets } from 'utils/assets'
 
-const fetchTokenPrices = async (hiveUrl: string, marketAssets: Asset[], oracleAddress: string) => {
+const fetchTokenPrices = async (
+  hiveUrl: string,
+  marketAssets: Asset[],
+  oracleAddress: string,
+): Promise<TokenPricesResult> => {
   return request(
     hiveUrl,
     gql`
