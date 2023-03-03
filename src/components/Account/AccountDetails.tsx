@@ -3,17 +3,15 @@
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 
-import { AccountManageOverlay } from 'components/Account/AccountManageOverlay'
 import { RiskChart } from 'components/Account/RiskChart'
 import { Button } from 'components/Button'
 import { ArrowRightLine, ChevronDown, ChevronLeft } from 'components/Icons'
 import { LabelValuePair } from 'components/LabelValuePair'
-import { PositionsList } from 'components/PositionsList'
 import { useAccountStats } from 'hooks/data/useAccountStats'
-import { convertFromGwei } from 'utils/formatters'
-import { createRiskData } from 'utils/risk'
 import useStore from 'store'
 import { getBaseAsset, getMarketAssets } from 'utils/assets'
+import { convertFromGwei } from 'utils/formatters'
+import { createRiskData } from 'utils/risk'
 
 export const AccountDetails = () => {
   const enableAnimations = useStore((s) => s.enableAnimations)
@@ -86,11 +84,6 @@ export const AccountDetails = () => {
             <ArrowRightLine />
           </Button>
         </div>
-        <AccountManageOverlay
-          className='top-[60px] left-[36px]'
-          show={showManageMenu}
-          setShow={setShowManageMenu}
-        />
       </div>
       <div className='flex w-full flex-wrap p-3'>
         <LabelValuePair

@@ -17,7 +17,7 @@ interface Props {
   variant?: 'solid' | 'transparent' | 'round' | 'text'
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
   icon?: ReactElement
-  iconSize?: number
+  iconClassName?: string
   hasSubmenu?: boolean
 }
 
@@ -60,7 +60,7 @@ export const buttonPaddingClasses = {
 
 export const buttonVariantClasses = {
   solid: 'text-white shadow-button justify-center',
-  transparent: 'bg-transparent p-0',
+  transparent: 'bg-transparent p-0 transition duration-200 ease-in',
   round: 'rounded-full p-0',
   text: 'border-none bg-transparent',
 }
@@ -78,7 +78,7 @@ export const Button = React.forwardRef(function Button(
     variant = 'solid',
     onClick,
     icon,
-    iconSize,
+    iconClassName,
     hasSubmenu,
   }: Props,
   ref,
@@ -131,7 +131,7 @@ export const Button = React.forwardRef(function Button(
           className={classNames(
             'flex items-center justify-center',
             (text || children) && 'mr-2',
-            iconSize ? `w-${iconSize} h-${iconSize}` : 'h-4 w-4',
+            iconClassName ?? 'h-4 w-4',
           )}
         >
           {icon}

@@ -4,9 +4,15 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import { Button } from 'components/Button'
-import { Account, Add, ArrowDown, ArrowsLeftRight, ArrowUp, Rubbish } from 'components/Icons'
+import {
+  Account,
+  Add,
+  ArrowDownLine,
+  ArrowsLeftRight,
+  ArrowUpLine,
+  Rubbish,
+} from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
-import { OverlayAction } from 'components/Overlay/OverlayAction'
 import { Text } from 'components/Text'
 import useParams from 'hooks/useParams'
 import useStore from 'store'
@@ -67,47 +73,56 @@ export const AccountNavigation = () => {
                       <div className='flex w-full justify-between p-4'>
                         <Button
                           className='flex w-[115px] items-center justify-center pl-0 pr-2'
+                          text='Fund'
+                          icon={<ArrowUpLine />}
                           onClick={() => {
                             useStore.setState({ fundAccountModal: true })
                             setShowMenu(false)
                           }}
-                        >
-                          <span className='mr-1 w-3'>
-                            <ArrowUp />
-                          </span>
-                          Fund
-                        </Button>
+                        />
                         <Button
                           className='flex w-[115px] items-center justify-center pl-0 pr-2'
                           color='secondary'
+                          icon={<ArrowDownLine />}
+                          text='Withdraw'
                           onClick={() => {
                             useStore.setState({ withdrawModal: true })
                             setShowMenu(false)
                           }}
-                        >
-                          <span className='mr-1 w-3'>
-                            <ArrowDown />
-                          </span>
-                          Withdraw
-                        </Button>
+                        />
                       </div>
                       <div className='flex w-full flex-wrap border-t border-t-white/10 p-4'>
-                        <OverlayAction
-                          setShow={setShowMenu}
+                        <Button
+                          className='w-full whitespace-nowrap py-2'
+                          variant='transparent'
+                          color='quaternary'
                           text='Create New Account'
-                          onClick={createAccountHandler}
+                          onClick={() => {
+                            setShowMenu(false)
+                            createAccountHandler()
+                          }}
                           icon={<Add />}
                         />
-                        <OverlayAction
-                          setShow={setShowMenu}
+                        <Button
+                          className='w-full whitespace-nowrap py-2'
+                          variant='transparent'
+                          color='quaternary'
                           text='Close Account'
-                          onClick={deleteAccountHandler}
+                          onClick={() => {
+                            setShowMenu(false)
+                            deleteAccountHandler()
+                          }}
                           icon={<Rubbish />}
                         />
-                        <OverlayAction
-                          setShow={setShowMenu}
+                        <Button
+                          className='w-full whitespace-nowrap py-2'
+                          variant='transparent'
+                          color='quaternary'
                           text='Transfer Balance'
-                          onClick={() => alert('TODO')}
+                          onClick={() => {
+                            setShowMenu(false)
+                            /* TODO: add Transfer Balance Function */
+                          }}
                           icon={<ArrowsLeftRight />}
                         />
                       </div>
@@ -122,15 +137,15 @@ export const AccountNavigation = () => {
                         selectedAccount === account ? null : (
                           <Button
                             key={account}
-                            variant='text'
-                            className='w-full cursor-pointer whitespace-nowrap py-2 text-sm text-white/80 hover:text-white'
+                            className='w-full whitespace-nowrap py-2'
+                            variant='transparent'
+                            color='quaternary'
                             onClick={() => {
                               router.push(`/wallets/${params.wallet}/accounts/${account}`)
                               setShowMenu(!showMenu)
                             }}
-                          >
-                            {`Account ${account}`}
-                          </Button>
+                            text={`Account ${account}`}
+                          />
                         ),
                       )}
                     </div>
