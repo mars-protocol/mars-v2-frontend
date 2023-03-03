@@ -17,6 +17,7 @@ interface Props {
   variant?: 'solid' | 'transparent' | 'round' | 'text'
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
   icon?: ReactElement
+  iconSize: number
   hasSubmenu?: boolean
 }
 
@@ -77,6 +78,7 @@ export const Button = React.forwardRef(function Button(
     variant = 'solid',
     onClick,
     icon,
+    iconSize,
     hasSubmenu,
   }: Props,
   ref,
@@ -126,7 +128,11 @@ export const Button = React.forwardRef(function Button(
     >
       {icon && !showProgressIndicator && (
         <span
-          className={`flex h-4 w-4 items-center justify-center${(text || children) && ' mr-2'}`}
+          className={classNames(
+            'flex items-center justify-center',
+            (text || children) && 'mr-2',
+            iconSize ? `w-${iconSize} h-${iconSize}` : 'h-4 w-4',
+          )}
         >
           {icon}
         </span>

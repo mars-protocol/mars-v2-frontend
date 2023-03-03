@@ -4,6 +4,7 @@ const plugin = require('tailwindcss/plugin')
 module.exports = {
   content: ['./src/app/**/*.{js,ts,jsx,tsx}', './src/components/**/*.{js,ts,jsx,tsx}'],
   safelist: [
+    'h-2',
     'h-15',
     'text-3xs',
     'text-3xs-caps',
@@ -27,6 +28,7 @@ module.exports = {
     'text-4xl',
     'text-5xl-caps',
     'text-5xl',
+    'w-2',
     'w-15',
   ],
   theme: {
