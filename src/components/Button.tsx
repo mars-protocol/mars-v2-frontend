@@ -17,7 +17,7 @@ interface Props {
   variant?: 'solid' | 'transparent' | 'round' | 'text'
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
   icon?: ReactElement
-  iconSize: number
+  iconSize?: number
   hasSubmenu?: boolean
 }
 
