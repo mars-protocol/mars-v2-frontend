@@ -1,5 +1,4 @@
 import { Card } from 'components/Card'
-import Loading from 'components/Loading'
 import { Text } from 'components/Text'
 
 export default function page() {
@@ -16,7 +15,9 @@ export default function page() {
         </Text>
       </Card>
       <Card className='h-full w-full' title='Order Book' contentClassName='px-4 py-6'>
-        <Loading className='w-50 h-4' />
+        <Text size='sm' className='w-full'>
+          You need to be connected to see the order book
+        </Text>
       </Card>
     </div>
   )
