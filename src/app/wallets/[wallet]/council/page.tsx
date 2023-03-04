@@ -1,3 +1,13 @@
-export default function page() {
-  return `You are a viewer or a user`
+import { Card } from 'components/Card'
+import { Text } from 'components/Text'
+
+export default function page({ params }: { params: PageParams }) {
+  const wallet = params.wallet
+  return (
+    <div className='flex w-full'>
+      <Card className='h-fit w-full justify-center' title='Council' contentClassName='px-4 py-6'>
+        <Text size='sm'>{`Council page of ${wallet}`}</Text>
+      </Card>
+    </div>
+  )
 }

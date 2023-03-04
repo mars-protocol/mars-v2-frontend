@@ -14,7 +14,7 @@ export default function Loading(props: Props) {
         <div
           role='status'
           className={classNames(
-            'animate-pulse rounded-base bg-white/40',
+            'max-w-full animate-pulse rounded-base bg-white/40',
             props.className,
             props.height ? `h-[${props.height}px]` : 'h-[300px]',
             props.width ? `w-[${props.width}px]` : 'w-full',

@@ -1,20 +1,26 @@
 import { Card } from 'components/Card'
+import { Text } from 'components/Text'
 
-export default function page() {
+export default function page({ params }: { params: PageParams }) {
+  const account = params.account
+  const wallet = params.wallet
+
   return (
-    <div className='flex w-full flex-wrap'>
-      <div className='mb-4 flex flex-grow gap-4'>
-        <Card title='TradingView graph' className='flex-1'>
-          <></>
-        </Card>
-        <div className='flex flex-col gap-4'>
-          <Card title='Orderbook module'>
-            <></>
-          </Card>
-        </div>
-      </div>
-      <Card title='Order history'>
-        <></>
+    <div className='mb-4 flex w-full flex-wrap gap-4'>
+      <Card className='h-full flex-grow' title='Trading View' contentClassName='px-4 py-6'>
+        <Text size='sm' className='w-full'>
+          Chart view
+        </Text>
+      </Card>
+      <Card className='h-full w-1/3' title='Trade Module' contentClassName='px-4 py-6'>
+        <Text size='sm' className='w-full'>
+          {`Trade with Account ${account}`}
+        </Text>
+      </Card>
+      <Card className='h-full w-full' title='Order Book' contentClassName='px-4 py-6'>
+        <Text size='sm' className='w-full'>
+          {`Order book for ${wallet}`}
+        </Text>
       </Card>
     </div>
   )

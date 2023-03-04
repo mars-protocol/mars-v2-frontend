@@ -1,7 +1,14 @@
-import { getBorrowData } from 'utils/api'
+import { Card } from 'components/Card'
+import { Text } from 'components/Text'
 
 export default async function page() {
-  const borrowData = await getBorrowData()
-
-  return `You are a guest`
+  return (
+    <div className='flex w-full'>
+      <Card className='h-fit w-full justify-center' title='Borrow' contentClassName='px-4 py-6'>
+        <Text size='sm' className='w-full text-center'>
+          You need to be connected to use the borrow page
+        </Text>
+      </Card>
+    </div>
+  )
 }

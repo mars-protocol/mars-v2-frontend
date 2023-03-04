@@ -169,6 +169,10 @@ module.exports = {
         30: '120px',
         35: '140px',
       },
+      zIndex: {
+        1: '1',
+        2: '2',
+      },
     },
   },
   plugins: [

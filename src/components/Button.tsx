@@ -14,7 +14,7 @@ interface Props {
   showProgressIndicator?: boolean
   size?: 'small' | 'medium' | 'large'
   text?: string | ReactNode
-  variant?: 'solid' | 'transparent' | 'round' | 'text'
+  variant?: 'solid' | 'transparent' | 'round'
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
   icon?: ReactElement
   iconClassName?: string
@@ -27,13 +27,13 @@ export const buttonColorClasses = {
   secondary:
     'border border-white/30 bg-transparent hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   tertiary:
-    'border-none border-button bg-white/10 hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
+    'border border-transparent z-1 bg-white/10 hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   quaternary:
     'bg-transparent text-white/60 border-transparent hover:text-white hover:border-white active:text-white active:border-white',
 }
 
 const buttonBorderClasses =
-  'relative before:content-[" "] before:absolute before:inset-0 before:rounded-base before:p-[1px] before:border-glas'
+  'relative before:content-[" "] before:absolute before:inset-0 before:rounded-sm before:p-[1px] before:border-glas before:z-[-1]'
 
 const buttonTransparentColorClasses = {
   primary: 'border-none hover:text-primary active:text-primary focus:text-primary',
@@ -62,10 +62,9 @@ export const buttonPaddingClasses = {
 }
 
 export const buttonVariantClasses = {
-  solid: 'text-white shadow-button justify-center',
-  transparent: 'bg-transparent p-0 transition duration-200 ease-in',
+  solid: 'rounded-sm text-white shadow-button justify-center',
+  transparent: 'rounded-sm bg-transparent p-0 transition duration-200 ease-in',
   round: 'rounded-full p-0',
-  text: 'border-none bg-transparent',
 }
 
 export const Button = React.forwardRef(function Button(
@@ -117,7 +116,7 @@ export const Button = React.forwardRef(function Button(
     <button
       className={classNames(
         'flex items-center',
-        'outline-nones cursor-pointer appearance-none break-normal rounded-sm',
+        'outline-nones cursor-pointer appearance-none break-normal',
         'text-white',
         enableAnimations && 'transition-color',
         buttonClasses,

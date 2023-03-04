@@ -1,15 +1,28 @@
+import { Card } from 'components/Card'
+import { Text } from 'components/Text'
 import { getCreditAccounts } from 'utils/api'
 
 export default async function page({ params }: { params: PageParams }) {
-  const creditAccounts = await getCreditAccounts(params.wallet)
+  const wallet = params.wallet
+  const currentAccount = params.account
+  const creditAccounts = await getCreditAccounts(wallet)
 
   return (
-    <div className='flex w-full items-start gap-4'>
-      <ul>
+    <div className='flex w-full'>
+      <div className='mb-4 flex flex-grow gap-4'>
         {creditAccounts.map((account: string, index: number) => (
-          <li key={index}>{account}</li>
+          <Card
+            className='h-fit w-full'
+            title={`Account ${account}`}
+            contentClassName='px-4 py-6'
+            key={index}
+          >
+            <Text size='sm'>
+              {account === currentAccount ? 'Current account' : 'Account details'}
+            </Text>
+          </Card>
         ))}
-      </ul>
+      </div>
     </div>
   )
 }
