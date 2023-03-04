@@ -43,7 +43,7 @@ export default function Toaster() {
       transition={enableAnimations ? Slide : undefined}
       className='w-[280px] p-0'
       toastClassName='z-50 text-xs rounded-sm border border-white/40 shadow-overlay backdrop-blur-sm gradient-popover px-2 py-4'
-      contentClassName='p-0 text-white m-0'
+      bodyClassName='p-0 text-white m-0'
     />
   )
 }
