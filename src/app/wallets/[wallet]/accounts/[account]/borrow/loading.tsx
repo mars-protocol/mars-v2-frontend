@@ -5,7 +5,7 @@ export default function laoding() {
   return (
     <div className='flex w-full'>
       <Card className='h-fit w-full justify-center' title='Borrow' contentClassName='px-4 py-6'>
-        <Loading height={16} width={320} />
+        <Loading className='w-50 h-4' />
       </Card>
     </div>
   )
