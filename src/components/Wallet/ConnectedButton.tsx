@@ -1,3 +1,5 @@
+'use client'
+
 import { Coin } from '@cosmjs/stargate'
 import {
   ChainInfoID,

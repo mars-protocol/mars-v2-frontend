@@ -1,3 +1,5 @@
+'use client'
+
 import { useWalletManager, WalletConnectionStatus } from '@marsprotocol/wallet-connector'
 import { ReactNode } from 'react'
 
