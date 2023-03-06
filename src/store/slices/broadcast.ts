@@ -50,7 +50,10 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
       } else {
         set({
           createAccountModal: false,
-          toast: { message: response.error ?? 'transaction failed', isError: true },
+          toast: {
+            message: response.error ?? `Transaction failed: ${response.error}`,
+            isError: true,
+          },
         })
         return null
       }
@@ -68,7 +71,12 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
       if (response.result) {
         set({ toast: { message: `Account ${options.accountId} deleted` } })
       } else {
-        set({ toast: { message: response.error ?? 'transaction failed', isError: true } })
+        set({
+          toast: {
+            message: response.error ?? `Transaction failed: ${response.error}`,
+            isError: true,
+          },
+        })
       }
       return !!response.result
     },
@@ -101,7 +109,12 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
           },
         })
       } else {
-        set({ toast: { message: response.error ?? 'transaction failed', isError: true } })
+        set({
+          toast: {
+            message: response.error ?? `Transaction failed: ${response.error}`,
+            isError: true,
+          },
+        })
       }
       return !!response.result
     },
@@ -138,9 +151,9 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
         if (result.hash) {
           return { result }
         }
-        return { result: undefined, error: 'broadcast failed' }
+        return { result: undefined, error: 'Tramsaction failed' }
       } catch (e: unknown) {
-        const error = typeof e === 'string' ? e : 'broadcast failed'
+        const error = typeof e === 'string' ? e : 'Tramsaction failed'
         return { result: undefined, error }
       }
     },

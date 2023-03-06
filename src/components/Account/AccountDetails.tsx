@@ -11,7 +11,7 @@ export default function AccountDetails() {
   return hasAccount ? (
     <div className='fixed top-[89px] right-4 w-16 rounded-base border border-white/20 bg-white/5 backdrop-blur-sticky'>
       <div className='flex w-full flex-wrap justify-center py-4'>
-        <Gauge tooltip='Health Factor' value={0.43} icon={<Heart />} />
+        <Gauge tooltip='Health Factor' value={0.2} icon={<Heart />} />
         <Text size='2xs' className='mt-1 mb-0.5 w-full text-center text-white/50'>
           Health
         </Text>
