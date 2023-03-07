@@ -252,6 +252,9 @@ module.exports = {
           '.gradient-primary-to-secondary': {
             background: 'linear-gradient(90deg, #FF625E 0%, #FB9562 100%)',
           },
+          '.gradient-secondary-to-primary': {
+            background: 'linear-gradient(90deg, #FB9562 0%, #FF625E 100%)',
+          },
           '.gradient-tooltip': {
             background:
               'linear-gradient(77.47deg, rgba(20, 24, 57, 0.9) 11.58%, rgba(34, 16, 57, 0.9) 93.89%)',

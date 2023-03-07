@@ -27,13 +27,19 @@ export const buttonColorClasses = {
   secondary:
     'border border-white/30 bg-transparent hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   tertiary:
-    'border border-transparent z-1 bg-white/10 hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
+    'border border-transparent bg-white/10 hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   quaternary:
     'bg-transparent text-white/60 border-transparent hover:text-white hover:border-white active:text-white active:border-white',
 }
 
 const buttonBorderClasses =
   'before:content-[" "] before:absolute before:inset-0 before:rounded-sm before:p-[1px] before:border-glas before:z-[-1]'
+
+const buttonGradientClasses = [
+  'before:content-[" "] before:absolute before:inset-0 before:rounded-sm before:z-[-1] before:opacity-0',
+  'before:gradient-secondary-to-primary before:transition-opacity before:duration-500 before:ease-in',
+  'hover:before:opacity-100',
+]
 
 const buttonTransparentColorClasses = {
   primary: 'border-none hover:text-primary active:text-primary focus:text-primary',
@@ -77,7 +83,7 @@ function glowElement() {
     >
       <rect
         pathLength='100'
-        stroke-linecap='round'
+        strokeLinecap='round'
         width='100%'
         height='100%'
         rx='4'
@@ -136,13 +142,14 @@ export const Button = React.forwardRef(function Button(
   return (
     <button
       className={classNames(
-        'relative flex items-center',
+        'relative z-1 flex items-center',
         'cursor-pointer appearance-none break-normal outline-none',
-        'text-white',
+        'text-white transition-all duration-500',
         enableAnimations && 'transition-color',
         buttonClasses,
         buttonVariantClasses[variant],
         variant === 'solid' && color === 'tertiary' && buttonBorderClasses,
+        variant === 'solid' && color === 'primary' && buttonGradientClasses,
         disabled && 'pointer-events-none opacity-50',
         className,
       )}
