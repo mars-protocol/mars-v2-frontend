@@ -3,3 +3,7 @@ interface PageParams {
   account: string
   page: string
 }
+
+interface PageProps {
+  params: PageParams
+}

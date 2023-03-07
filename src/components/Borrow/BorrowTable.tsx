@@ -20,6 +20,7 @@ import TitleAndSubCell from 'components/TitleAndSubCell'
 import { getMarketAssets } from 'utils/assets'
 import { formatPercent } from 'utils/formatters'
 import AssetExpanded from 'components/Borrow/AssetExpanded'
+import Loading from 'components/Loading'
 
 type Props = {
   data: BorrowAsset[] | BorrowAssetActive[]
@@ -50,11 +51,17 @@ export const BorrowTable = (props: Props) => {
       {
         accessorKey: 'borrowRate',
         header: 'Borrow Rate',
-        cell: ({ row }) => (
-          <Text className='justify-end' size='sm'>
-            {formatPercent(row.original.borrowRate)}
-          </Text>
-        ),
+        cell: ({ row }) => {
+          if (row.original.borrowRate === null) {
+            return <Loading />
+          }
+
+          return (
+            <Text className='justify-end' size='sm'>
+              {formatPercent(row.original.borrowRate)}
+            </Text>
+          )
+        },
       },
       ...((props.data[0] as BorrowAssetActive)?.debt
         ? [
@@ -79,6 +86,10 @@ export const BorrowTable = (props: Props) => {
           const asset = marketAssets.find((asset) => asset.denom === row.original.denom)
 
           if (!asset) return null
+
+          if (row.original.liquidity === null) {
+            return <Loading />
+          }
 
           return <AmountAndValue asset={asset} amount={row.original.liquidity.amount} />
         },
