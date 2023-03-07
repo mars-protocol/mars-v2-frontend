@@ -42,5 +42,5 @@ export const ENV_MISSING_MESSAGE = () => {
     }
   })
 
-  return `Environment variable(s) missing: ${missing.join(', ')}`
+  return `Environment variable(s) missing for: ${missing.join(', ')}`
 }
