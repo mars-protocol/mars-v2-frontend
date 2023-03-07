@@ -65,7 +65,7 @@ export default function Wallet() {
 
     if (!address || address === params.wallet) return
     router.push(`/wallets/${address}`)
-  }, [broadcast, params, recentWallet, simulate, sign, status])
+  }, [address, broadcast, client, params, recentWallet, router, simulate, sign, status])
 
   return address ? <ConnectedButton /> : <ConnectButton status={status} />
 }

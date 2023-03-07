@@ -106,7 +106,7 @@ export const BorrowTable = (props: Props) => {
         ),
       },
     ],
-    [],
+    [marketAssets, props.data],
   )
 
   const table = useReactTable({

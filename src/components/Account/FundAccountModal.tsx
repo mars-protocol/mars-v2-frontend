@@ -66,7 +66,7 @@ export const FundAccountModal = () => {
         found = true
       }
     })
-  }, [marketAssets, balancesData])
+  }, [balancesData, marketAssets, selectedToken])
 
   // ---------------
   // VARIABLES
