@@ -1,24 +1,5 @@
-import { Card } from 'components/Card'
-import { Text } from 'components/Text'
+import TradePage from 'components/pages/trade'
 
-export default function page() {
-  return (
-    <div className='mb-4 flex w-full flex-wrap gap-4'>
-      <Card className='h-full flex-grow' title='Trading View' contentClassName='px-4 py-6'>
-        <Text size='sm' className='w-full'>
-          Chart view
-        </Text>
-      </Card>
-      <Card className='h-full w-1/3' title='Trade Module' contentClassName='px-4 py-6'>
-        <Text size='sm' className='w-full'>
-          You need to be connected and select an account to use the trading module
-        </Text>
-      </Card>
-      <Card className='h-full w-full' title='Order Book' contentClassName='px-4 py-6'>
-        <Text size='sm' className='w-full'>
-          You need to be connected to see the order book
-        </Text>
-      </Card>
-    </div>
-  )
+export default async function page({ params }: PageProps) {
+  return <TradePage params={params} />
 }

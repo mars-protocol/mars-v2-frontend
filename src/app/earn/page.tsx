@@ -1,14 +1,5 @@
-import { Card } from 'components/Card'
-import { Text } from 'components/Text'
+import EarnPage from 'components/pages/earn'
 
-export default async function page() {
-  return (
-    <div className='flex w-full'>
-      <Card className='h-fit w-full justify-center' title='Earn' contentClassName='px-4 py-6'>
-        <Text size='sm' className='w-full text-center'>
-          You need to be connected to use the earn page
-        </Text>
-      </Card>
-    </div>
-  )
+export default async function page({ params }: PageProps) {
+  return <EarnPage params={params} />
 }
