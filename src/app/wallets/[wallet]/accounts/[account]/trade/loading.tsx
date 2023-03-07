@@ -11,10 +11,10 @@ export default function loading() {
         </Text>
       </Card>
       <Card className='h-full w-1/3' title='Trade Module' contentClassName='px-4 py-6'>
-        <Loading className='w-50 h-4' />
+        <Loading className='h-4 w-50' />
       </Card>
       <Card className='h-full w-full' title='Order Book' contentClassName='px-4 py-6'>
-        <Loading className='w-50 h-4' />
+        <Loading className='h-4 w-50' />
       </Card>
     </div>
   )

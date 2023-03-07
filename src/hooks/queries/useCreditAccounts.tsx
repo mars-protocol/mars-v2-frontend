@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
+import { ENV } from 'constants/env'
 import useStore from 'store'
 import { queryKeys } from 'types/query-keys-factory'
 
@@ -12,11 +12,6 @@ type Result = {
 }
 
 export const useCreditAccounts = () => {
-  if (!ENV.ADDRESS_ACCOUNT_NFT) {
-    console.error(ENV_MISSING_MESSAGE)
-    return null
-  }
-
   const address = useStore((s) => s.address)
   const client = useStore((s) => s.signingClient)
   const selectedAccount = useStore((s) => s.selectedAccount)

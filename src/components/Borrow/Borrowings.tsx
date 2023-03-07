@@ -1,8 +1,10 @@
+import { Suspense } from 'react'
+
 import { Card } from 'components/Card'
 import useParams from 'hooks/useParams'
-import { Suspense } from 'react'
 import { getAccountDebts, getBorrowData } from 'utils/api'
 import { getMarketAssets } from 'utils/assets'
+
 import { BorrowTable } from './BorrowTable'
 
 async function Content(props: Props) {

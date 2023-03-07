@@ -1,6 +1,6 @@
 'use client'
 import { useRouter } from 'next/navigation'
-import { Slide, toast as createToast, ToastContainer } from 'react-toastify'
+import { toast as createToast, Slide, ToastContainer } from 'react-toastify'
 
 import { Check, Warning } from 'components/Icons'
 import useStore from 'store'

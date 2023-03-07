@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 
-import { ENV_MISSING_MESSAGE, ENV } from 'constants/env'
+import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!ENV.URL_REST) {
