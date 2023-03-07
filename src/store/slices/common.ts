@@ -13,7 +13,7 @@ export interface CommonSlice {
   repayModal: boolean
   fundAccountModal: boolean
   prices: Coin[]
-  creditAccounts: string[]
+  creditAccounts: string[] | null
   isOpen: boolean
   selectedAccount: string | null
   withdrawModal: boolean
@@ -29,7 +29,7 @@ export function createCommonSlice(set: SetState<CommonSlice>, get: GetState<Comm
     enableAnimations: true,
     fundAccountModal: false,
     prices: [],
-    creditAccounts: [],
+    creditAccounts: null,
     isOpen: true,
     selectedAccount: null,
     withdrawModal: false,

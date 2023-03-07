@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
-
 import classNames from 'classnames'
+
 import { Card } from 'components/Card'
 import Loading from 'components/Loading'
 import { Text } from 'components/Text'
