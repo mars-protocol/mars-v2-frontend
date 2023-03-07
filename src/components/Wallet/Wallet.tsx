@@ -33,10 +33,10 @@ export default function Wallet() {
         ? {
             address: recentWallet?.account.address,
           }
-        : { address: undefined, creditAccounts: null },
+        : { address: undefined, creditAccounts: null, client: undefined },
     )
 
-    if (!isConnected) return
+    if (!isConnected || !recentWallet) return
 
     const fetchCreditAccounts = async () => {
       if (!recentWallet?.account.address) return
@@ -45,15 +45,7 @@ export default function Wallet() {
     }
 
     fetchCreditAccounts()
-  }, [status, recentWallet])
 
-  useEffect(() => {
-    if (!address || address === params.wallet) return
-    router.push(`/wallets/${address}`)
-  }, [client, params, address])
-
-  useEffect(() => {
-    if (!recentWallet) return
     if (!client) {
       const getCosmWasmClient = async () => {
         const cosmClient = await getClient(recentWallet.network.rpc)
@@ -70,7 +62,10 @@ export default function Wallet() {
 
       getCosmWasmClient()
     }
-  }, [simulate, sign, recentWallet, broadcast])
+
+    if (!address || address === params.wallet) return
+    router.push(`/wallets/${address}`)
+  }, [broadcast, params, recentWallet, simulate, sign, status])
 
   return address ? <ConnectedButton /> : <ConnectButton status={status} />
 }
