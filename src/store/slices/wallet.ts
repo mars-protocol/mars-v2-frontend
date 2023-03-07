@@ -10,9 +10,9 @@ import { MarsSwapperBaseClient } from 'types/generated/mars-swapper-base/MarsSwa
 export interface WalletSlice {
   address?: string
   client?: WalletClient
-  name?: string
   status: WalletConnectionStatus
   signingClient?: SigningCosmWasmClient
+  creditAccounts: string[] | null
   clients: {
     accountNft?: MarsAccountNftClient
     creditManager?: MarsCreditManagerClient
@@ -20,12 +20,6 @@ export interface WalletSlice {
   }
   actions: {
     initClients: (address: string, signingClient: SigningCosmWasmClient) => void
-    initialize: (
-      status: WalletConnectionStatus,
-      signingCosmWasmClient?: SigningCosmWasmClient,
-      address?: string,
-      name?: string,
-    ) => void
   }
 }
 
@@ -33,6 +27,7 @@ export function createWalletSlice(set: SetState<WalletSlice>, get: GetState<Wall
   return {
     status: WalletConnectionStatus.Unconnected,
     clients: {},
+    creditAccounts: null,
     actions: {
       // TODO: work with slices in one global store instead
       initClients: (address: string, signingClient: SigningCosmWasmClient) => {
@@ -60,23 +55,6 @@ export function createWalletSlice(set: SetState<WalletSlice>, get: GetState<Wall
             swapperBase,
           },
         }))
-      },
-      initialize: async (
-        status: WalletConnectionStatus,
-        signingCosmWasmClient?: SigningCosmWasmClient,
-        address?: string,
-        name?: string,
-      ) => {
-        if (address && signingCosmWasmClient) {
-          get().actions.initClients(address, signingCosmWasmClient)
-        }
-
-        set({
-          signingClient: signingCosmWasmClient,
-          address,
-          status,
-          name,
-        })
       },
     },
   }

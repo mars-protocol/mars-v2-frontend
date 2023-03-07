@@ -32,7 +32,6 @@ export default function ConnectedButton() {
   const { disconnect: terminate } = useWalletManager()
   const address = useStore((s) => s.client?.recentWallet.account?.address)
   const network = useStore((s) => s.client?.recentWallet.network)
-  const name = useStore((s) => s.name)
   const baseAsset = getBaseAsset()
 
   const { data, isLoading } = useSWR(address, getWalletBalances)
@@ -91,7 +90,7 @@ export default function ConnectedButton() {
           setShowDetails(!showDetails)
         }}
       >
-        <span>{name ? name : truncate(address, [2, 4])}</span>
+        <span>{truncate(address, [2, 4])}</span>
         <div
           className={classNames(
             'relative ml-2 flex h-full items-center pl-2 number',
@@ -106,7 +105,7 @@ export default function ConnectedButton() {
         </div>
       </Button>
       <Overlay className='right-0 mt-2' show={showDetails} setShow={setShowDetails}>
-        <div className='flex w-[420px] flex-wrap p-6'>
+        <div className='flex w-[440px] flex-wrap p-6'>
           <div className='flex-0 mb-4 flex w-full flex-nowrap items-start'>
             <div className='flex w-auto flex-1'>
               <div className='mr-2 flex h-[31px] items-end pb-0.5  text-base-caps'>
@@ -126,7 +125,7 @@ export default function ConnectedButton() {
           </div>
           <div className='flex w-full flex-wrap'>
             <Text uppercase className='/80 mb-1 break-all'>
-              {name ? `‘${name}’` : 'Your Address'}
+              {'Your Address'}
             </Text>
 
             <Text size='sm' className='mb-1 hidden break-all font-bold  md:block'>

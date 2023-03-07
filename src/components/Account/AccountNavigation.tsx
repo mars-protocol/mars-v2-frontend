@@ -22,12 +22,12 @@ import { hardcodedFee } from 'utils/contants'
 export const AccountNavigation = () => {
   const router = useRouter()
   const params = useParams()
-  const address = useStore((s) => s.client?.recentWallet.account?.address) || ''
   const selectedAccount = params.account
 
   const createCreditAccount = useStore((s) => s.createCreditAccount)
   const deleteCreditAccount = useStore((s) => s.deleteCreditAccount)
   const creditAccounts = useStore((s) => s.creditAccounts)
+  const address = useStore((s) => s.address)
 
   const hasCreditAccounts = !!creditAccounts?.length
   const accountSelected = !!selectedAccount && !isNaN(Number(selectedAccount))
@@ -156,7 +156,9 @@ export const AccountNavigation = () => {
               </Overlay>
             </div>
           ) : (
-            <Button onClick={createAccountHandler}>Create Account</Button>
+            <Button onClick={createAccountHandler} icon={<Add />} color='tertiary'>
+              Create Account
+            </Button>
           )}
         </>
       )}
