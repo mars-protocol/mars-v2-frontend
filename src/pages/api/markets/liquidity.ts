@@ -1,15 +1,15 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { Coin } from '@cosmjs/stargate'
 
-import { ENV_MISSING_MESSAGE, URL_API } from 'constants/env'
+import { ENV_MISSING_MESSAGE, ENV } from 'constants/env'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (!URL_API) {
+  if (!ENV.URL_API) {
     return res.status(404).json(ENV_MISSING_MESSAGE)
   }
 
-  const $deposits = fetch(`${URL_API}/markets/deposits`)
-  const $debts = fetch(`${URL_API}/markets/debts`)
+  const $deposits = fetch(`${ENV.URL_API}/markets/deposits`)
+  const $debts = fetch(`${ENV.URL_API}/markets/debts`)
 
   const liquidity: Coin[] = await Promise.all([$deposits, $debts]).then(
     async ([$deposits, $debts]) => {

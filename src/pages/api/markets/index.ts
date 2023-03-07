@@ -1,11 +1,11 @@
 import { gql, request as gqlRequest } from 'graphql-request'
 import { NextApiRequest, NextApiResponse } from 'next'
 
-import { ADDRESS_INCENTIVES, ADDRESS_RED_BANK, ENV_MISSING_MESSAGE, URL_GQL } from 'constants/env'
+import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import { getMarketAssets } from 'utils/assets'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (!URL_GQL || !ADDRESS_RED_BANK || !ADDRESS_INCENTIVES) {
+  if (!ENV.URL_GQL || !ENV.ADDRESS_RED_BANK || !ENV.ADDRESS_INCENTIVES) {
     return res.status(404).json(ENV_MISSING_MESSAGE)
   }
 
@@ -14,13 +14,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const marketQueries = marketAssets.map(
     (asset: Asset) =>
       `${asset.denom}: contractQuery(
-        contractAddress: "${ADDRESS_RED_BANK}"
+        contractAddress: "${ENV.ADDRESS_RED_BANK}"
         query: { market: { denom: "${asset.denom}" } }
       )`,
   )
 
   const result = await gqlRequest<RedBankData>(
-    URL_GQL,
+    ENV.URL_GQL,
     gql`
       query RedbankQuery {
         rbwasmkey: wasm {

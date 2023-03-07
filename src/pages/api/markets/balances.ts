@@ -2,20 +2,20 @@ import { Coin } from '@cosmjs/stargate'
 import { gql, request as gqlRequest } from 'graphql-request'
 import { NextApiRequest, NextApiResponse } from 'next'
 
-import { ADDRESS_RED_BANK, ENV_MISSING_MESSAGE, URL_GQL } from 'constants/env'
+import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (!URL_GQL || !ADDRESS_RED_BANK) {
+  if (!ENV.URL_GQL || !ENV.ADDRESS_RED_BANK) {
     return res.status(404).json(ENV_MISSING_MESSAGE)
   }
 
   const result = await gqlRequest<Result>(
-    URL_GQL,
+    ENV.URL_GQL,
     gql`
     query RedbankBalances {
       bank {
               balance(
-                  address: "${ADDRESS_RED_BANK}"
+                  address: "${ENV.ADDRESS_RED_BANK}"
               ) {
                   amount
                   denom

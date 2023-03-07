@@ -1,22 +1,22 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { gql, request as gqlRequest } from 'graphql-request'
 
-import { ADDRESS_RED_BANK, ENV_MISSING_MESSAGE, URL_API, URL_GQL, URL_RPC } from 'constants/env'
+import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import { getContractQuery } from 'utils/query'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (!URL_RPC || !ADDRESS_RED_BANK || !URL_GQL || !URL_API) {
+  if (!ENV.URL_RPC || !ENV.ADDRESS_RED_BANK || !ENV.URL_GQL || !ENV.URL_API) {
     return res.status(404).json(ENV_MISSING_MESSAGE)
   }
 
-  const markets = await (await fetch(`${URL_API}/markets`)).json()
+  const markets = await (await fetch(`${ENV.URL_API}/markets`)).json()
 
   let query = ''
 
   markets.forEach((asset: any) => {
     query += getContractQuery(
       asset.denom,
-      ADDRESS_RED_BANK || '',
+      ENV.ADDRESS_RED_BANK || '',
       `
     {
       underlying_liquidity_amount: {
@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   })
 
   const result = await gqlRequest<DepositsQuery>(
-    URL_GQL,
+    ENV.URL_GQL,
     gql`
     query RedbankBalances {
         deposits: wasm {

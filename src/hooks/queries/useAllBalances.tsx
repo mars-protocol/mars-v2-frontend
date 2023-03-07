@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import request, { gql } from 'graphql-request'
 import { useMemo } from 'react'
 
-import { URL_GQL } from 'constants/env'
+import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import useStore from 'store'
 import { queryKeys } from 'types/query-keys-factory'
 
@@ -14,13 +14,18 @@ interface UserBalanceData {
 }
 
 export const useAllBalances = () => {
+  if (!ENV.URL_GQL) {
+    console.error(ENV_MISSING_MESSAGE)
+    return null
+  }
+
   const address = useStore((s) => s.address)
 
   const result = useQuery<UserBalanceData>(
     queryKeys.allBalances(address ?? ''),
     async () => {
       return await request(
-        URL_GQL!,
+        ENV.URL_GQL!,
         gql`
           query UserBalanceQuery {
                   balance: bank {

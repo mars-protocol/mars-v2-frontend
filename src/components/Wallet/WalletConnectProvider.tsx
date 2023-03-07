@@ -6,24 +6,24 @@ import { FC } from 'react'
 import { Button } from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
 import { Close } from 'components/Icons'
-import { CHAIN_ID, ENV_MISSING_MESSAGE, URL_REST, URL_RPC, WALLETS } from 'constants/env'
+import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 
 type Props = {
   children?: React.ReactNode
 }
 
 export const WalletConnectProvider: FC<Props> = ({ children }) => {
-  if (!CHAIN_ID || !URL_REST || !URL_RPC || !WALLETS) {
+  if (!ENV.CHAIN_ID || !ENV.URL_REST || !ENV.URL_RPC || !ENV.WALLETS) {
     console.error(ENV_MISSING_MESSAGE)
     return null
   }
 
   const chainInfoOverrides = {
-    rpc: URL_RPC,
-    rest: URL_REST,
-    chainID: CHAIN_ID,
+    rpc: ENV.URL_RPC,
+    rest: ENV.URL_REST,
+    chainID: ENV.CHAIN_ID,
   }
-  const enabledWallets: string[] = WALLETS
+  const enabledWallets: string[] = ENV.WALLETS
 
   return (
     <WalletManagerProvider

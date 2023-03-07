@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import request, { gql } from 'graphql-request'
 import { useMemo } from 'react'
 
-import { ADDRESS_RED_BANK, URL_GQL } from 'constants/env'
+import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import { queryKeys } from 'types/query-keys-factory'
 
 interface Result {
@@ -13,12 +13,17 @@ interface Result {
 }
 
 export const useRedbankBalances = () => {
-  const redBankAddress = ADDRESS_RED_BANK
+  if (!ENV.ADDRESS_RED_BANK || !ENV.URL_GQL) {
+    console.error(ENV_MISSING_MESSAGE)
+    return null
+  }
+
+  const redBankAddress = ENV.ADDRESS_RED_BANK
   const result = useQuery<Result>(
     queryKeys.redbankBalances(),
     async () => {
       return await request(
-        URL_GQL!,
+        ENV.URL_GQL!,
         gql`
           query RedbankBalances {
             bank {

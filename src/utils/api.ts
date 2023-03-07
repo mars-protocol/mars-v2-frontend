@@ -1,9 +1,9 @@
 import { Coin } from '@cosmjs/stargate'
 
-import { URL_API } from 'constants/env'
+import { ENV } from 'constants/env'
 
 export async function callAPI<T>(endpoint: string): Promise<T> {
-  const response = await fetch(`${URL_API}${endpoint}`, {
+  const response = await fetch(`${ENV.URL_API}${endpoint}`, {
     cache: 'no-store',
   })
 
