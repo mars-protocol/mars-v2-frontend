@@ -1,9 +1,13 @@
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { Coin } from '@cosmjs/stargate'
+import { WalletClient, WalletConnectionStatus } from '@marsprotocol/wallet-connector'
 import BigNumber from 'bignumber.js'
 import { GetState, SetState } from 'zustand'
-import { WalletClient, WalletConnectionStatus } from '@marsprotocol/wallet-connector'
-import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 
+import { ENV } from 'constants/env'
+import { MarsAccountNftClient } from 'types/generated/mars-account-nft/MarsAccountNft.client'
+import { MarsCreditManagerClient } from 'types/generated/mars-credit-manager/MarsCreditManager.client'
+import { MarsSwapperBaseClient } from 'types/generated/mars-swapper-base/MarsSwapperBase.client'
 import { getMarketAssets } from 'utils/assets'
 import { formatValue } from 'utils/formatters'
 
@@ -11,6 +15,11 @@ export interface CommonSlice {
   address?: string
   borrowModal: boolean
   client?: WalletClient
+  clients: {
+    accountNft?: MarsAccountNftClient
+    creditManager?: MarsCreditManagerClient
+    swapperBase?: MarsSwapperBaseClient
+  }
   createAccountModal: boolean
   creditAccounts: string[] | null
   deleteAccountModal: boolean
@@ -24,6 +33,7 @@ export interface CommonSlice {
   status: WalletConnectionStatus
   withdrawModal: boolean
   formatCurrency: (coin: Coin) => string
+  initClients: (address: string, signingClient: SigningCosmWasmClient) => void
 }
 
 export function createCommonSlice(set: SetState<CommonSlice>, get: GetState<CommonSlice>) {
@@ -57,6 +67,32 @@ export function createCommonSlice(set: SetState<CommonSlice>, get: GetState<Comm
           prefix: '$',
         },
       )
+    },
+    initClients: (address: string, signingClient: SigningCosmWasmClient) => {
+      if (!signingClient) return
+      const accountNft = new MarsAccountNftClient(
+        signingClient,
+        address,
+        ENV.ADDRESS_ACCOUNT_NFT || '',
+      )
+      const creditManager = new MarsCreditManagerClient(
+        signingClient,
+        address,
+        ENV.ADDRESS_CREDIT_MANAGER || '',
+      )
+      const swapperBase = new MarsSwapperBaseClient(
+        signingClient,
+        address,
+        ENV.ADDRESS_SWAPPER || '',
+      )
+
+      set(() => ({
+        clients: {
+          accountNft,
+          creditManager,
+          swapperBase,
+        },
+      }))
     },
   }
 }
