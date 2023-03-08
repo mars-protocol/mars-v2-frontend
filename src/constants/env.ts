@@ -48,9 +48,5 @@ export const ENV_MISSING_MESSAGE = () => {
 }
 
 export const VERCEL_BYPASS = process.env.NEXT_PUBLIC_BYPASS
-  ? '?' +
-    new URLSearchParams({
-      'x-vercel-protection-bypass': process.env.NEXT_PUBLIC_BYPASS ?? '',
-      'x-vercel-set-bypass-cookie': 'true',
-    })
+  ? `?x-vercel-protection-bypass=${process.env.NEXT_PUBLIC_BYPASS}`
   : ''
