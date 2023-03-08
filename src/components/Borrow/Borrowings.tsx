@@ -1,7 +1,6 @@
 import { Suspense } from 'react'
 
 import { Card } from 'components/Card'
-import useParams from 'hooks/useParams'
 import { getAccountDebts, getBorrowData } from 'utils/api'
 import { getMarketAssets } from 'utils/assets'
 

@@ -1,10 +1,10 @@
 import classNames from 'classnames'
-import { ReactNode } from 'react'
+import { ReactElement, ReactNode } from 'react'
 
 import { Text } from 'components/Text'
 
 interface Props {
-  title?: string
+  title?: string | ReactElement
   children: ReactNode
   className?: string
   contentClassName?: string
@@ -20,7 +20,7 @@ export const Card = (props: Props) => {
       )}
     >
       {props.title && (
-        <Text size='lg' className='flex w-full bg-white/10 p-4 font-semibold'>
+        <Text size='lg' className='flex w-full items-center bg-white/10 p-4 font-semibold'>
           {props.title}
         </Text>
       )}

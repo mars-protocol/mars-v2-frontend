@@ -1,3 +1,5 @@
-export default function page() {
-  return 'Connect to your wallet'
+import TradePage from 'components/pages/trade'
+
+export default async function page({ params }: PageProps) {
+  return <TradePage params={params} />
 }

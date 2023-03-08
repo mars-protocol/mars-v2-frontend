@@ -2,7 +2,6 @@ import classNames from 'classnames'
 
 import AccountDetails from 'components/Account/AccountDetails'
 import Background from 'components/Background'
-import FetchAccounts from 'components/FetchAccounts'
 import FetchPrices from 'components/FetchPrices'
 import { Modals } from 'components/Modals'
 import DesktopNavigation from 'components/Navigation/DesktopNavigation'
@@ -21,7 +20,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <DesktopNavigation />
         </WalletConnectProvider>
         <FetchPrices />
-        <FetchAccounts />
         <main
           className={classNames(
             'relative flex justify-center py-6',
