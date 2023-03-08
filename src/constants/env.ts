@@ -34,6 +34,10 @@ export const ENV: EnvironmentVariables = {
   WALLETS: process.env.NEXT_PUBLIC_WALLETS?.split(','),
 }
 
+export const VERCEL_BYPASS = process.env.NEXT_PUBLIC_BYPASS
+  ? `?x-vercel-protection-bypass=${process.env.NEXT_PUBLIC_BYPASS}`
+  : ''
+
 export const IS_TESTNET = ENV.NETWORK !== 'mainnet'
 
 export const ENV_MISSING_MESSAGE = () => {
@@ -46,7 +50,3 @@ export const ENV_MISSING_MESSAGE = () => {
 
   return `Environment variable(s) missing for: ${missing.join(', ')}`
 }
-
-export const VERCEL_BYPASS = process.env.NEXT_PUBLIC_BYPASS
-  ? `?x-vercel-protection-bypass=${process.env.NEXT_PUBLIC_BYPASS}`
-  : ''
