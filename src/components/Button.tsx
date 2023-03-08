@@ -27,13 +27,19 @@ export const buttonColorClasses = {
   secondary:
     'border border-white/30 bg-transparent hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   tertiary:
-    'border border-transparent z-1 bg-white/10 hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
+    'border border-transparent bg-white/10 hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   quaternary:
     'bg-transparent text-white/60 border-transparent hover:text-white hover:border-white active:text-white active:border-white',
 }
 
 const buttonBorderClasses =
-  'relative before:content-[" "] before:absolute before:inset-0 before:rounded-sm before:p-[1px] before:border-glas before:z-[-1]'
+  'before:content-[" "] before:absolute before:inset-0 before:rounded-sm before:p-[1px] before:border-glas before:z-[-1]'
+
+const buttonGradientClasses = [
+  'before:content-[" "] before:absolute before:inset-0 before:rounded-sm before:z-[-1] before:opacity-0',
+  'before:gradient-secondary-to-primary before:transition-opacity before:duration-500 before:ease-in',
+  'hover:before:opacity-100',
+]
 
 const buttonTransparentColorClasses = {
   primary: 'border-none hover:text-primary active:text-primary focus:text-primary',
@@ -62,9 +68,29 @@ export const buttonPaddingClasses = {
 }
 
 export const buttonVariantClasses = {
-  solid: 'rounded-sm text-white shadow-button justify-center',
+  solid: 'rounded-sm text-white shadow-button justify-center group',
   transparent: 'rounded-sm bg-transparent p-0 transition duration-200 ease-in',
   round: 'rounded-full p-0',
+}
+
+function glowElement() {
+  return (
+    <svg
+      className={classNames(
+        'glow-container z-1 opacity-0 group-hover:animate-glow group-focus:animate-glow',
+        'pointer-events-none absolute inset-0 h-full w-full',
+      )}
+    >
+      <rect
+        pathLength='100'
+        strokeLinecap='round'
+        width='100%'
+        height='100%'
+        rx='4'
+        className='absolute glow-line group-hover:glow-hover group-focus:glow-hover'
+      />
+    </svg>
+  )
 }
 
 export const Button = React.forwardRef(function Button(
@@ -87,6 +113,7 @@ export const Button = React.forwardRef(function Button(
 ) {
   const buttonClasses = []
   const enableAnimations = useStore((s) => s.enableAnimations)
+  const isDisabled = disabled || showProgressIndicator
 
   switch (variant) {
     case 'round':
@@ -115,13 +142,14 @@ export const Button = React.forwardRef(function Button(
   return (
     <button
       className={classNames(
-        'flex items-center',
-        'outline-nones cursor-pointer appearance-none break-normal',
-        'text-white',
+        'relative z-1 flex items-center',
+        'cursor-pointer appearance-none break-normal outline-none',
+        'text-white transition-all duration-500',
         enableAnimations && 'transition-color',
         buttonClasses,
         buttonVariantClasses[variant],
         variant === 'solid' && color === 'tertiary' && buttonBorderClasses,
+        variant === 'solid' && color === 'primary' && buttonGradientClasses,
         disabled && 'pointer-events-none opacity-50',
         className,
       )}
@@ -129,7 +157,7 @@ export const Button = React.forwardRef(function Button(
       ref={ref as LegacyRef<HTMLButtonElement>}
       onClick={disabled ? () => {} : onClick}
     >
-      {icon && !showProgressIndicator && (
+      {icon && !isDisabled && (
         <span
           className={classNames(
             'flex items-center justify-center',
@@ -140,13 +168,14 @@ export const Button = React.forwardRef(function Button(
           {icon}
         </span>
       )}
-      {text && !children && !showProgressIndicator && <span>{text}</span>}
-      {children && !showProgressIndicator && children}
-      {hasSubmenu && !showProgressIndicator && (
+      {text && !children && !isDisabled && <span>{text}</span>}
+      {children && !isDisabled && children}
+      {hasSubmenu && !isDisabled && (
         <span className='ml-2 inline-block w-2.5'>
           <ChevronDown />
         </span>
       )}
+      {variant === 'solid' && !isDisabled && glowElement()}
       {showProgressIndicator && (
         <CircularProgress size={size === 'small' ? 10 : size === 'medium' ? 12 : 18} />
       )}

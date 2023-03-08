@@ -34,8 +34,9 @@ module.exports = {
   theme: {
     extend: {
       animation: {
-        progress: 'spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite',
         fadein: 'fadein 1s ease-in-out forwards',
+        glow: 'glow 1000ms ease-in-out forwards',
+        progress: 'spin 1200ms cubic-bezier(0.5, 0, 0.5, 1) infinite',
       },
       backdropBlur: {
         sticky: '50px',
@@ -131,9 +132,15 @@ module.exports = {
           '100%': { opacity: 1 },
         },
         float: {
-          '0%': { transform: 'translate(0%,0%)' },
+          '0%': { transform: 'translate(0%, 0%)' },
           '50%': { transform: 'translate(50%, 50%)' },
-          '100%': { transform: 'translate(0%, 0%' },
+          '100%': { transform: 'translate(0%, 0%)' },
+        },
+        glow: {
+          '0%': { opacity: 0 },
+          '33%': { opacity: 1 },
+          '66%': { opacity: 1 },
+          '100%': { opacity: 0 },
         },
       },
       letterSpacing: {
@@ -201,6 +208,18 @@ module.exports = {
             '-webkit-mask-composite': 'xor',
             maskComposite: 'exclude',
           },
+          '.glow-line': {
+            x: 0,
+            y: 0,
+            fill: 'transparent',
+            stroke: '#FFF',
+            strokeWidth: '0.5',
+            strokeDasharray: '20px 30px',
+          },
+          '.glow-hover': {
+            strokeDashoffset: '-80px',
+            transition: 'stroke-dashoffset 1000ms ease-in',
+          },
           '.gradient-atom': {
             background: 'linear-gradient(to bottom, #2e3148, #6f7390)',
           },
@@ -232,6 +251,9 @@ module.exports = {
           },
           '.gradient-primary-to-secondary': {
             background: 'linear-gradient(90deg, #FF625E 0%, #FB9562 100%)',
+          },
+          '.gradient-secondary-to-primary': {
+            background: 'linear-gradient(90deg, #FB9562 0%, #FF625E 100%)',
           },
           '.gradient-tooltip': {
             background:
