@@ -13,11 +13,9 @@ interface Props extends React.HTMLProps<HTMLAnchorElement> {
 
 const colorClasses = {
   primary:
-    'text-primary hover:text-primary-highlight active:text-primary-highlight-10 focus:text-primary-highlight',
-  secondary:
-    'text-secondary hover:text-secondary-highlight active:text-secondary-highlight-10 focus:text-secondary-highlight',
-  tertiary:
-    'text-secondary-dark/60 hover:text-secondary-dark active:text-secondary-dark-10 focus:text-secondary-dark',
+    'text-primary hover:text-secondary active:text-secondary/90 focus:text-text-secondary/90',
+  secondary: 'text-secondary hover:text-primary active:text-primary/90 focus:text-text-primary/90',
+  tertiary: 'text-white/80 hover:text-white active:text-white/90 focus:text-text-white/90',
   quaternary: 'hover:text-white active:text-white',
 }
 const textSizeClasses = {

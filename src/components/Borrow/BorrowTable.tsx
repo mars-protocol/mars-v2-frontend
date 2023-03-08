@@ -8,20 +8,19 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
+import classNames from 'classnames'
 import Image from 'next/image'
 import React from 'react'
-import classNames from 'classnames'
 
+import AmountAndValue from 'components/AmountAndValue'
 import { AssetRow } from 'components/Borrow/AssetRow'
 import { ChevronDown, ChevronUp } from 'components/Icons'
-import { getMarketAssets } from 'utils/assets'
 import { Text } from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
-import { FormattedNumber } from 'components/FormattedNumber'
-import AmountAndValue from 'components/AmountAndValue'
+import { getMarketAssets } from 'utils/assets'
 import { formatPercent } from 'utils/formatters'
-
-import AssetExpanded from './AssetExpanded'
+import AssetExpanded from 'components/Borrow/AssetExpanded'
+import Loading from 'components/Loading'
 
 type Props = {
   data: BorrowAsset[] | BorrowAssetActive[]
@@ -52,11 +51,17 @@ export const BorrowTable = (props: Props) => {
       {
         accessorKey: 'borrowRate',
         header: 'Borrow Rate',
-        cell: ({ row }) => (
-          <Text className='justify-end' size='sm'>
-            {formatPercent(row.original.borrowRate)}
-          </Text>
-        ),
+        cell: ({ row }) => {
+          if (row.original.borrowRate === null) {
+            return <Loading />
+          }
+
+          return (
+            <Text className='justify-end' size='sm'>
+              {formatPercent(row.original.borrowRate)}
+            </Text>
+          )
+        },
       },
       ...((props.data[0] as BorrowAssetActive)?.debt
         ? [
@@ -82,6 +87,10 @@ export const BorrowTable = (props: Props) => {
 
           if (!asset) return null
 
+          if (row.original.liquidity === null) {
+            return <Loading />
+          }
+
           return <AmountAndValue asset={asset} amount={row.original.liquidity.amount} />
         },
       },
@@ -97,7 +106,7 @@ export const BorrowTable = (props: Props) => {
         ),
       },
     ],
-    [],
+    [marketAssets, props.data],
   )
 
   const table = useReactTable({

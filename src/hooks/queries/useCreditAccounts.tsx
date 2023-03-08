@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { ADDRESS_ACCOUNT_NFT } from 'constants/env'
+import { ENV } from 'constants/env'
 import useStore from 'store'
 import { queryKeys } from 'types/query-keys-factory'
 
@@ -15,7 +15,7 @@ export const useCreditAccounts = () => {
   const address = useStore((s) => s.address)
   const client = useStore((s) => s.signingClient)
   const selectedAccount = useStore((s) => s.selectedAccount)
-  const accountNftAddress = ADDRESS_ACCOUNT_NFT
+  const accountNftAddress = ENV.ADDRESS_ACCOUNT_NFT
   const setSelectedAccount = (account: string) => {
     useStore.setState({ selectedAccount: account })
   }

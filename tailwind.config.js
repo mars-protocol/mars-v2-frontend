@@ -4,6 +4,7 @@ const plugin = require('tailwindcss/plugin')
 module.exports = {
   content: ['./src/app/**/*.{js,ts,jsx,tsx}', './src/components/**/*.{js,ts,jsx,tsx}'],
   safelist: [
+    'h-2',
     'h-15',
     'text-3xs',
     'text-3xs-caps',
@@ -27,13 +28,18 @@ module.exports = {
     'text-4xl',
     'text-5xl-caps',
     'text-5xl',
+    'w-2',
     'w-15',
   ],
   theme: {
     extend: {
       animation: {
-        progress: 'spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite',
         fadein: 'fadein 1s ease-in-out forwards',
+        glow: 'glow 1000ms ease-in-out forwards',
+        progress: 'spin 1200ms cubic-bezier(0.5, 0, 0.5, 1) infinite',
+      },
+      backdropBlur: {
+        sticky: '50px',
       },
       backgroundImage: {
         'fund-modal': 'url(/images/fund-bg.webp), url(/images/fund-bg.png)',
@@ -44,11 +50,9 @@ module.exports = {
         desktop: '100% auto',
       },
       borderRadius: {
-        '3xs': '3px',
-        '2xs': '4px',
-        xs: '5px',
-        sm: '8px',
-        base: '9px',
+        xs: '2px',
+        sm: '4px',
+        base: '8px',
         lg: '12px',
         xl: '16px',
         '2xl': '20px',
@@ -58,6 +62,7 @@ module.exports = {
       boxShadow: {
         inset: 'inset 0px 2px 2px rgba(0, 0, 0, 0.25)',
         overlay: '0 2px 2px rgba(0, 0, 0, 0.14), 0 1px 5px rgba(0, 0, 0, 0.2)',
+        button: '0px 1px 1px rgba(0, 0, 0, 0.14), 0px 1px 3px rgba(0, 0, 0, 0.2)',
         tooltip:
           '0 3px 4px rgba(0, 0, 0, 0.14), 0 3px 3px rgba(0, 0, 0, 0.12), 0 1px 8px rgba(0, 0, 0, 0.2)',
       },
@@ -71,7 +76,7 @@ module.exports = {
         'accent-highlight': '#421f32',
         atom: '#6f7390',
         axlusdc: '#478edc',
-        body: '#562a3b',
+        body: '#0D0012',
         'body-dark': '#141621',
         grey: '#3a3c49',
         'grey-dark': '#1a1c25',
@@ -83,37 +88,36 @@ module.exports = {
         loss: '#f96363',
         mars: '#a03b45',
         osmo: '#9f1ab9',
+        'orb-primary': '#b12f25',
+        'orb-secondary': '#530781',
+        'orb-tertiary': '#ff00c7',
         profit: '#41a4a9',
-        primary: '#14a693',
-        'primary-highlight': '#15bfa9',
-        'primary-highlight-10': '#20e7cd',
-        secondary: '#524bb1',
-        'secondary-dark': '#440b37',
-        'secondary-dark-10': '#70125b',
-        'secondary-highlight': '#6962cc',
-        'secondary-highlight-10': '#8e88d9',
+        primary: '#FF625E',
+        secondary: '#FB9562',
         'vote-against': '#eb9e49',
         warning: '#c83333',
+        white: '#FFF',
       },
       fontFamily: {
-        sans: ['Inter'],
+        sans: ['Inter', 'sans-serif'],
       },
       fontSize: {
-        xs: ['11.85px', '16px'],
-        sm: ['13.33px', '20px'],
+        '2xs': ['10px', '16px'],
+        xs: ['12px', '16px'],
+        sm: ['14px', '18px'],
         base: ['15px', '20px'],
-        lg: ['16.88px', '24px'],
-        xl: ['18.98px', '28px'],
-        '2xl': ['21.36px', '32px'],
-        '3xl': ['24.03px', '36px'],
-        '4xl': ['30.42px', '40px'],
-        '5xl': ['38.49px', '56px'],
-        '6xl': ['60.84px', '80px'],
+        lg: ['17px', '24px'],
+        xl: ['19px', '28px'],
+        '2xl': ['21px', '32px'],
+        '3xl': ['24px', '36px'],
+        '4xl': ['30px', '40px'],
+        '5xl': ['39px', '56px'],
+        '6xl': ['61px', '80px'],
       },
       fontWeight: {
         light: 300,
         normal: 400,
-        semibold: 600,
+        semibold: 500,
         bold: 600,
       },
       height: {
@@ -127,12 +131,26 @@ module.exports = {
           '0%': { opacity: 0 },
           '100%': { opacity: 1 },
         },
+        float: {
+          '0%': { transform: 'translate(0%, 0%)' },
+          '50%': { transform: 'translate(50%, 50%)' },
+          '100%': { transform: 'translate(0%, 0%)' },
+        },
+        glow: {
+          '0%': { opacity: 0 },
+          '33%': { opacity: 1 },
+          '66%': { opacity: 1 },
+          '100%': { opacity: 0 },
+        },
       },
       letterSpacing: {
         normal: 0,
         wide: '2px',
         wider: '3px',
         widest: '5px',
+      },
+      maxWidth: {
+        content: '1024px',
       },
       screens: {
         sm: '480px',
@@ -141,8 +159,14 @@ module.exports = {
         xl: '1280px',
         '2xl': '1920px',
       },
+      spacing: {
+        35: '140px',
+      },
       transitionDuration: {
         3000: '3000ms',
+        120000: '120000ms',
+        150000: '150000ms',
+        180000: '180000ms',
       },
       transitionProperty: {
         background: 'filter, -webkit-filter',
@@ -150,11 +174,17 @@ module.exports = {
       width: {
         15: '60px',
         30: '120px',
+        35: '140px',
+        50: '200px',
+      },
+      zIndex: {
+        1: '1',
+        2: '2',
       },
     },
   },
   plugins: [
-    require('tailwindcss-border-gradient-radius'),
+    require('tailwind-scrollbar-hide'),
     plugin(function ({ addBase, addUtilities, theme }) {
       addBase({
         h1: { fontSize: '60.84px', lineHeight: '80px', fontWeight: theme('fontWeight.light') },
@@ -163,6 +193,33 @@ module.exports = {
         h4: { fontSize: '24.03px', lineHeight: '36px', fontWeight: theme('fontWeight.normal') },
       }),
         addUtilities({
+          '.blur-orb-primary': {
+            filter: 'blur(clamp(50px, 8vw, 100px))',
+          },
+          '.blur-orb-secondary': {
+            filter: 'blur(clamp(60px, 20vw, 140px))',
+          },
+          '.blur-orb-tertiary': {
+            filter: 'blur(clamp(60px, 10vw, 110px))',
+          },
+          '.border-glas': {
+            background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0))',
+            mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+            '-webkit-mask-composite': 'xor',
+            maskComposite: 'exclude',
+          },
+          '.glow-line': {
+            x: 0,
+            y: 0,
+            fill: 'transparent',
+            stroke: '#FFF',
+            strokeWidth: '0.5',
+            strokeDasharray: '20px 30px',
+          },
+          '.glow-hover': {
+            strokeDashoffset: '-80px',
+            transition: 'stroke-dashoffset 1000ms ease-in',
+          },
           '.gradient-atom': {
             background: 'linear-gradient(to bottom, #2e3148, #6f7390)',
           },
@@ -171,7 +228,7 @@ module.exports = {
           },
           '.gradient-card': {
             background:
-              'linear-gradient(99.79deg, rgba(8, 11, 30, 0.79) 8.17%, rgba(52, 20, 33, 0.9) 94.54%)',
+              'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))',
           },
           '.gradient-hatched': {
             backgroundImage:
@@ -189,11 +246,22 @@ module.exports = {
             background: 'linear-gradient(to bottom, #3a02e2, #e700ca)',
           },
           '.gradient-popover': {
-            background: 'linear-gradient(180deg, #fef4ed -2.1%, #ecdbe0 97.53%)',
+            background:
+              'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1))',
+          },
+          '.gradient-primary-to-secondary': {
+            background: 'linear-gradient(90deg, #FF625E 0%, #FB9562 100%)',
+          },
+          '.gradient-secondary-to-primary': {
+            background: 'linear-gradient(90deg, #FB9562 0%, #FF625E 100%)',
           },
           '.gradient-tooltip': {
             background:
               'linear-gradient(77.47deg, rgba(20, 24, 57, 0.9) 11.58%, rgba(34, 16, 57, 0.9) 93.89%)',
+          },
+          '.number': {
+            whiteSpace: 'nowrap',
+            fontFeatureSettings: '"tnum" on',
           },
           '.text-3xs': { fontSize: '9.36px', lineHeight: '12px' },
           '.text-3xs-caps': {

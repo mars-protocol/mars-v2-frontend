@@ -1,21 +1,5 @@
-import { Card } from 'components/Card'
+import TradePage from 'components/pages/trade'
 
-export default function page() {
-  return (
-    <div className='flex w-full flex-wrap'>
-      <div className='mb-4 flex flex-grow gap-4'>
-        <Card title='TradingView graph' className='flex-1'>
-          <></>
-        </Card>
-        <div className='flex flex-col gap-4'>
-          <Card title='Orderbook module'>
-            <></>
-          </Card>
-        </div>
-      </div>
-      <Card title='Order history'>
-        <></>
-      </Card>
-    </div>
-  )
+export default async function page({ params }: PageProps) {
+  return <TradePage params={params} />
 }

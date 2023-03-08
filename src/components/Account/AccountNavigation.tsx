@@ -1,36 +1,38 @@
 'use client'
 
-import classNames from 'classnames'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-import { AccountManageOverlay } from 'components/Account/AccountManageOverlay'
 import { Button } from 'components/Button'
-import { ChevronDown } from 'components/Icons'
+import {
+  Account,
+  Add,
+  ArrowDownLine,
+  ArrowsLeftRight,
+  ArrowUpLine,
+  Rubbish,
+} from 'components/Icons'
+import Loading from 'components/Loading'
 import { Overlay } from 'components/Overlay/Overlay'
+import { Text } from 'components/Text'
 import useParams from 'hooks/useParams'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
 
-const MAX_VISIBLE_CREDIT_ACCOUNTS = 5
-
-interface Props {
-  creditAccounts: string[]
-}
-
-export const AccountNavigation = (props: Props) => {
+export const AccountNavigation = () => {
   const router = useRouter()
   const params = useParams()
-  const address = useStore((s) => s.client?.recentWallet.account?.address) || ''
   const selectedAccount = params.account
+
   const createCreditAccount = useStore((s) => s.createCreditAccount)
+  const deleteCreditAccount = useStore((s) => s.deleteCreditAccount)
+  const creditAccounts = useStore((s) => s.creditAccounts)
+  const address = useStore((s) => s.address)
 
-  const hasCreditAccounts = !!props.creditAccounts?.length
-  const firstCreditAccounts = props.creditAccounts?.slice(0, MAX_VISIBLE_CREDIT_ACCOUNTS) ?? []
-  const restCreditAccounts = props.creditAccounts?.slice(MAX_VISIBLE_CREDIT_ACCOUNTS) ?? []
+  const hasCreditAccounts = !!creditAccounts?.length
+  const accountSelected = !!selectedAccount && !isNaN(Number(selectedAccount))
 
-  const [showManageMenu, setShowManageMenu] = useState(false)
-  const [showMoreMenu, setShowMoreMenu] = useState(false)
+  const [showMenu, setShowMenu] = useState(false)
 
   async function createAccountHandler() {
     const accountId = await createCreditAccount({ fee: hardcodedFee })
@@ -38,93 +40,128 @@ export const AccountNavigation = (props: Props) => {
     router.push(`/wallets/${params.wallet}/accounts/${accountId}`)
   }
 
-  return (
-    <section
-      role='navigation'
-      className='flex h-11 w-full items-center gap-6 border-b border-white/20 px-6 text-sm text-white/40'
-    >
-      <>
-        {hasCreditAccounts ? (
-          <>
-            {firstCreditAccounts.map((account) => (
-              <Button
-                key={account}
-                className={classNames(
-                  'cursor-pointer whitespace-nowrap px-4 text-base hover:text-white',
-                  selectedAccount === account ? 'text-white' : 'text-white/40',
-                )}
-                variant='text'
-                onClick={() => {
-                  router.push(`/wallets/${params.wallet}/accounts/${account}/${params.page}`)
-                }}
-              >
-                Account {account}
-              </Button>
-            ))}
+  async function deleteAccountHandler() {
+    if (!accountSelected) return
+    const isSuccess = await deleteCreditAccount({ fee: hardcodedFee, accountId: selectedAccount })
+    if (isSuccess) {
+      router.push(`/wallets/${params.wallet}/accounts`)
+    }
+  }
+
+  return !address ? null : (
+    <>
+      {creditAccounts === null ? (
+        <Loading className='h-8 w-35' />
+      ) : (
+        <>
+          {' '}
+          {hasCreditAccounts ? (
             <div className='relative'>
-              {restCreditAccounts.length > 0 && (
-                <>
-                  <Button
-                    className='flex items-center px-3 py-3 text-base hover:text-white'
-                    variant='text'
-                    onClick={() => setShowMoreMenu(!showMoreMenu)}
-                  >
-                    More
-                    <span className='ml-1 inline-block w-3'>
-                      <ChevronDown />
-                    </span>
-                  </Button>
-                  <Overlay show={showMoreMenu} setShow={setShowMoreMenu}>
-                    <div className='flex w-[120px] flex-wrap p-4'>
-                      {restCreditAccounts.map((account) => (
+              <Button
+                variant='solid'
+                color='tertiary'
+                className='flex flex-1 flex-nowrap'
+                icon={<Account />}
+                onClick={() => setShowMenu(!showMenu)}
+                hasSubmenu
+              >
+                <span>{accountSelected ? `Account ${selectedAccount}` : 'Select Account'}</span>
+              </Button>
+              <Overlay className='l-0 mt-2 w-[274px]' show={showMenu} setShow={setShowMenu}>
+                {accountSelected && (
+                  <div className='flex w-full flex-wrap'>
+                    <Text size='sm' uppercase={true} className='w-full justify-center px-4 pt-4'>
+                      Manage Account {selectedAccount}
+                    </Text>
+                    <div className='flex w-full justify-between p-4'>
+                      <Button
+                        className='flex w-[115px] items-center justify-center pl-0 pr-2'
+                        text='Fund'
+                        icon={<ArrowUpLine />}
+                        onClick={() => {
+                          useStore.setState({ fundAccountModal: true })
+                          setShowMenu(false)
+                        }}
+                      />
+                      <Button
+                        className='flex w-[115px] items-center justify-center pl-0 pr-2'
+                        color='secondary'
+                        icon={<ArrowDownLine />}
+                        text='Withdraw'
+                        onClick={() => {
+                          useStore.setState({ withdrawModal: true })
+                          setShowMenu(false)
+                        }}
+                      />
+                    </div>
+                    <div className='flex w-full flex-wrap border-t border-t-white/10 p-4'>
+                      <Button
+                        className='w-full whitespace-nowrap py-2'
+                        variant='transparent'
+                        color='quaternary'
+                        text='Create New Account'
+                        onClick={() => {
+                          setShowMenu(false)
+                          createAccountHandler()
+                        }}
+                        icon={<Add />}
+                      />
+                      <Button
+                        className='w-full whitespace-nowrap py-2'
+                        variant='transparent'
+                        color='quaternary'
+                        text='Close Account'
+                        onClick={() => {
+                          setShowMenu(false)
+                          deleteAccountHandler()
+                        }}
+                        icon={<Rubbish />}
+                      />
+                      <Button
+                        className='w-full whitespace-nowrap py-2'
+                        variant='transparent'
+                        color='quaternary'
+                        text='Transfer Balance'
+                        onClick={() => {
+                          setShowMenu(false)
+                          /* TODO: add Transfer Balance Function */
+                        }}
+                        icon={<ArrowsLeftRight />}
+                      />
+                    </div>
+                  </div>
+                )}
+                {creditAccounts.length > 1 && (
+                  <div className='flex w-full flex-wrap border-t border-t-white/10 p-4'>
+                    <Text size='sm' uppercase={true} className='w-full justify-center pb-2'>
+                      Select Account
+                    </Text>
+                    {creditAccounts.map((account) =>
+                      selectedAccount === account ? null : (
                         <Button
                           key={account}
-                          variant='text'
-                          className={classNames(
-                            'w-full whitespace-nowrap py-2 text-sm',
-                            selectedAccount === account
-                              ? 'text-secondary'
-                              : 'cursor-pointer text-accent-dark hover:text-secondary',
-                          )}
+                          className='w-full whitespace-nowrap py-2'
+                          variant='transparent'
+                          color='quaternary'
                           onClick={() => {
-                            setShowMoreMenu(!showMoreMenu)
                             router.push(`/wallets/${params.wallet}/accounts/${account}`)
+                            setShowMenu(!showMenu)
                           }}
-                        >
-                          Account {account}
-                        </Button>
-                      ))}
-                    </div>
-                  </Overlay>
-                </>
-              )}
-            </div>
-            <div className='relative'>
-              <Button
-                className={classNames(
-                  'flex items-center px-3 py-3 text-base hover:text-white',
-                  showManageMenu ? 'text-white' : 'text-white/40',
+                          text={`Account ${account}`}
+                        />
+                      ),
+                    )}
+                  </div>
                 )}
-                onClick={() => setShowManageMenu(!showManageMenu)}
-                variant='text'
-              >
-                Manage
-                <span className='ml-1 inline-block w-3'>
-                  <ChevronDown />
-                </span>
-              </Button>
-
-              <AccountManageOverlay
-                className='-left-[86px]'
-                show={showManageMenu}
-                setShow={setShowManageMenu}
-              />
+              </Overlay>
             </div>
-          </>
-        ) : (
-          <>{address ? <Button onClick={createAccountHandler}>Create Account</Button> : ''}</>
-        )}
-      </>
-    </section>
+          ) : (
+            <Button onClick={createAccountHandler} icon={<Add />} color='tertiary'>
+              Create Account
+            </Button>
+          )}
+        </>
+      )}
+    </>
   )
 }

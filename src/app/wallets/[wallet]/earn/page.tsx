@@ -1,3 +1,5 @@
-export default function page() {
-  return `You are a viewer or a user`
+import EarnPage from 'components/pages/earn'
+
+export default async function page({ params }: PageProps) {
+  return <EarnPage params={params} />
 }

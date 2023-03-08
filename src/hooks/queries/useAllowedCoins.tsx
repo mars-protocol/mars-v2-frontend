@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { ADDRESS_CREDIT_MANAGER } from 'constants/env'
+import { ENV } from 'constants/env'
 import useStore from 'store'
 import { queryKeys } from 'types/query-keys-factory'
 
@@ -12,7 +12,7 @@ const queryMsg = {
 
 export const useAllowedCoins = () => {
   const client = useStore((s) => s.signingClient)
-  const creditManagerAddress = ADDRESS_CREDIT_MANAGER
+  const creditManagerAddress = ENV.ADDRESS_CREDIT_MANAGER
 
   const result = useQuery<Result>(
     queryKeys.allowedCoins(),

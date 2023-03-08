@@ -1,5 +1,5 @@
-import { FormattedNumber } from './FormattedNumber'
-import TitleAndSubCell from './TitleAndSubCell'
+import { FormattedNumber } from 'components/FormattedNumber'
+import TitleAndSubCell from 'components/TitleAndSubCell'
 
 interface Props {
   asset: Asset

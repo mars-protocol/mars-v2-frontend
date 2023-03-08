@@ -2,11 +2,15 @@ import { useQuery } from '@tanstack/react-query'
 import { gql, request } from 'graphql-request'
 import { useMemo } from 'react'
 
-import { ADDRESS_ORACLE, URL_GQL } from 'constants/env'
+import { ENV } from 'constants/env'
 import { queryKeys } from 'types/query-keys-factory'
 import { getMarketAssets } from 'utils/assets'
 
-const fetchTokenPrices = async (hiveUrl: string, marketAssets: Asset[], oracleAddress: string) => {
+const fetchTokenPrices = async (
+  hiveUrl: string,
+  marketAssets: Asset[],
+  oracleAddress: string,
+): Promise<TokenPricesResult> => {
   return request(
     hiveUrl,
     gql`
@@ -32,7 +36,7 @@ export const useTokenPrices = () => {
   const marketAssets = getMarketAssets()
   const result = useQuery<TokenPricesResult>(
     queryKeys.tokenPrices(),
-    async () => await fetchTokenPrices(URL_GQL!, marketAssets, ADDRESS_ORACLE || ''),
+    async () => await fetchTokenPrices(ENV.URL_GQL!, marketAssets, ENV.ADDRESS_ORACLE || ''),
     {
       refetchInterval: 30000,
       staleTime: Infinity,

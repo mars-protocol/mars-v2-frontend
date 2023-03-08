@@ -1,3 +1,5 @@
-export default function page() {
-  return `You are a guest`
+import PortfolioPage from 'components/pages/portfolio'
+
+export default async function page({ params }: PageProps) {
+  return <PortfolioPage params={params} />
 }

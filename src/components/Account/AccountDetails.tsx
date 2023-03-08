@@ -1,121 +1,40 @@
 'use client'
+import { Gauge } from 'components/Gauge'
+import { Heart } from 'components/Icons'
+import { Text } from 'components/Text'
+import useParams from 'hooks/useParams'
 
-import classNames from 'classnames'
-import { useEffect, useState } from 'react'
+export default function AccountDetails() {
+  const params = useParams()
+  const hasAccount = params.account && !isNaN(Number(params.account))
 
-import { AccountManageOverlay } from 'components/Account/AccountManageOverlay'
-import { RiskChart } from 'components/Account/RiskChart'
-import { Button } from 'components/Button'
-import { ArrowRightLine, ChevronDown, ChevronLeft } from 'components/Icons'
-import { LabelValuePair } from 'components/LabelValuePair'
-import { PositionsList } from 'components/PositionsList'
-import { useAccountStats } from 'hooks/data/useAccountStats'
-import { convertFromGwei } from 'utils/formatters'
-import { createRiskData } from 'utils/risk'
-import useStore from 'store'
-import { getBaseAsset, getMarketAssets } from 'utils/assets'
-
-export const AccountDetails = () => {
-  const enableAnimations = useStore((s) => s.enableAnimations)
-  const selectedAccount = useStore((s) => s.selectedAccount)
-  const isOpen = useStore((s) => s.isOpen)
-  const marketAssets = getMarketAssets()
-  const baseAsset = getBaseAsset()
-
-  const accountStats = useAccountStats()
-
-  const [showManageMenu, setShowManageMenu] = useState(false)
-  const [riskData, setRiskData] = useState<RiskTimePair[]>()
-
-  useEffect(() => {
-    setRiskData(createRiskData(accountStats?.risk ?? 0))
-  }, [accountStats?.risk, selectedAccount])
-
-  return (
-    <div
-      className={classNames(
-        'relative flex w-[400px] basis-[400px] flex-wrap content-start border-l border-white/20 bg-header',
-        enableAnimations && 'transition-[margin] duration-1000 ease-in-out',
-        isOpen ? 'mr-0' : '-mr-[400px]',
-      )}
-    >
-      <Button
-        onClick={() => {
-          useStore.setState({ isOpen: true })
-        }}
-        variant='text'
-        className={classNames(
-          'absolute top-1/2 -left-[20px] w-[21px] -translate-y-1/2 bg-header p-0',
-          'rounded-none rounded-tl-sm rounded-bl-sm',
-          'border border-white/20',
-          enableAnimations && 'transition-[opacity] delay-1000 duration-500 ease-in-out',
-          isOpen ? 'pointer-events-none opacity-0' : 'opacity-100',
-        )}
-      >
-        <span
-          className={classNames(
-            'flex h-20 px-1 py-6 text-white/40 hover:text-white',
-            enableAnimations && 'transition-[color]',
-          )}
-        >
-          <ChevronLeft />
-        </span>
-      </Button>
-      <div className='relative flex w-full flex-wrap items-center border-b border-white/20'>
-        <Button
-          variant='text'
-          className='flex flex-grow flex-nowrap items-center justify-center p-4 text-center text-white text-xl-caps'
-          onClick={() => setShowManageMenu(!showManageMenu)}
-        >
-          Account {selectedAccount}
-          <span className='ml-2 flex w-4'>
-            <ChevronDown />
-          </span>
-        </Button>
-        <div className='flex border-l border-white/20' onClick={() => {}}>
-          <Button
-            variant='text'
-            className={classNames(
-              'w-14 p-4 text-white/40 hover:cursor-pointer hover:text-white',
-              enableAnimations && 'transition-[color]',
-            )}
-            onClick={() => {
-              useStore.setState({ isOpen: false })
-            }}
-          >
-            <ArrowRightLine />
-          </Button>
-        </div>
-        <AccountManageOverlay
-          className='top-[60px] left-[36px]'
-          show={showManageMenu}
-          setShow={setShowManageMenu}
-        />
+  return hasAccount ? (
+    <div className='fixed top-[89px] right-4 w-16 rounded-base border border-white/20 bg-white/5 backdrop-blur-sticky'>
+      <div className='flex w-full flex-wrap justify-center py-4'>
+        <Gauge tooltip='Health Factor' value={0.2} icon={<Heart />} />
+        <Text size='2xs' className='mt-1 mb-0.5 w-full text-center text-white/50'>
+          Health
+        </Text>
+        <Text size='xs' className='w-full text-center'>
+          89%
+        </Text>
       </div>
-      <div className='flex w-full flex-wrap p-3'>
-        <LabelValuePair
-          className='mb-2'
-          label='Total Position:'
-          value={{
-            format: 'number',
-            amount: convertFromGwei(
-              accountStats?.totalPosition ?? 0,
-              baseAsset.denom,
-              marketAssets,
-            ),
-            prefix: '$',
-          }}
-        />
-        <LabelValuePair
-          label='Total Liabilities:'
-          value={{
-            format: 'number',
-            amount: convertFromGwei(accountStats?.totalDebt ?? 0, baseAsset.denom, marketAssets),
-            prefix: '$',
-          }}
-        />
+      <div className='w-full border border-x-0 border-white/20 py-4'>
+        <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
+          Leverage
+        </Text>
+        <Text size='xs' className='w-full text-center'>
+          4.5x
+        </Text>
       </div>
-      {riskData && <RiskChart data={riskData} />}
+      <div className='w-full py-4'>
+        <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
+          Balance
+        </Text>{' '}
+        <Text size='xs' className='w-full text-center'>
+          $300M
+        </Text>
+      </div>
     </div>
-  )
+  ) : null
 }

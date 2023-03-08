@@ -1,3 +1,5 @@
-export default function page() {
-  return `You are a viewer or a user`
+import PortfolioPage from 'components/pages/portfolio'
+
+export default async function page({ params }: PageProps) {
+  return <PortfolioPage params={params} />
 }

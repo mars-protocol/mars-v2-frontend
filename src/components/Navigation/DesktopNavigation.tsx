@@ -2,7 +2,9 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import classNames from 'classnames'
 
+import { AccountNavigation } from 'components/Account/AccountNavigation'
 import { Logo } from 'components/Icons'
 import { NavLink } from 'components/Navigation/NavLink'
 import Wallet from 'components/Wallet/Wallet'
@@ -20,8 +22,14 @@ export default function DesktopNavigation() {
   const pathname = usePathname() || ''
 
   return (
-    <div className='relative hidden bg-header lg:block'>
-      <div className='flex items-center justify-between border-b border-white/20 px-6 py-3'>
+    <header
+      className={classNames(
+        'fixed top-0 left-0 z-30 hidden w-full',
+        'before:content-[" "] before:absolute before:inset-0 before:z-[-1] before:h-full before:w-full before:rounded-sm before:backdrop-blur-sticky',
+        'lg:block',
+      )}
+    >
+      <div className='flex items-center justify-between border-b border-white/20 py-3 pl-6 pr-4'>
         <div className='flex flex-grow items-center'>
           <Link href={getRoute(pathname, { page: 'trade' })}>
             <span className='block h-10 w-10'>
@@ -36,8 +44,11 @@ export default function DesktopNavigation() {
             ))}
           </div>
         </div>
-        <Wallet />
+        <div className='flex gap-4'>
+          <AccountNavigation />
+          <Wallet />
+        </div>
       </div>
-    </div>
+    </header>
   )
 }

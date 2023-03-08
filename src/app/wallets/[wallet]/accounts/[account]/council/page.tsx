@@ -1,11 +1,5 @@
-import { Card } from 'components/Card'
+import CouncilPage from 'components/pages/council'
 
-export default function page() {
-  return (
-    <div className='flex w-full'>
-      <Card title='Council'>
-        <></>
-      </Card>
-    </div>
-  )
+export default async function page({ params }: PageProps) {
+  return <CouncilPage params={params} />
 }

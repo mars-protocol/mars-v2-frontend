@@ -1,7 +1,6 @@
 import useStore from 'store'
-
-import { Modal } from './Modal'
-import TitleAndSubCell from './TitleAndSubCell'
+import { Modal } from 'components/Modal'
+import TitleAndSubCell from 'components/TitleAndSubCell'
 
 export default function BorrowModal() {
   const open = useStore((s) => s.borrowModal)

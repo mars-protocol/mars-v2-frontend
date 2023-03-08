@@ -3,8 +3,6 @@ import classNames from 'classnames'
 interface Props {
   className?: string
   count?: number
-  height?: number
-  width?: number
 }
 
 export default function Loading(props: Props) {
@@ -14,10 +12,8 @@ export default function Loading(props: Props) {
         <div
           role='status'
           className={classNames(
-            'animate-pulse rounded-md bg-white/40',
-            props.className,
-            props.height ? `h-[${props.height}px]` : 'h-[300px]',
-            props.width ? `w-[${props.width}px]` : 'w-full',
+            'max-w-full animate-pulse rounded-sm bg-white/40',
+            props.className ? props.className : 'h-4 w-full',
           )}
           key={i}
         />

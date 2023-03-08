@@ -1,7 +1,5 @@
-import { getBorrowData } from 'utils/api'
+import BorrowPage from 'components/pages/borrow'
 
-export default async function page() {
-  const borrowData = await getBorrowData()
-
-  return `You are a guest`
+export default async function page({ params }: PageProps) {
+  return <BorrowPage params={params} />
 }

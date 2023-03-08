@@ -3,7 +3,7 @@ import { MsgExecuteContract, TxBroadcastResult } from '@marsprotocol/wallet-conn
 import { isMobile } from 'react-device-detect'
 import { GetState, SetState } from 'zustand'
 
-import { ADDRESS_CREDIT_MANAGER, ENV_MISSING_MESSAGE } from 'constants/env'
+import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import { Store } from 'store'
 import { getMarketAssets } from 'utils/assets'
 import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
@@ -50,7 +50,10 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
       } else {
         set({
           createAccountModal: false,
-          toast: { message: response.error ?? 'transaction failed', isError: true },
+          toast: {
+            message: response.error ?? `Transaction failed: ${response.error}`,
+            isError: true,
+          },
         })
         return null
       }
@@ -68,7 +71,12 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
       if (response.result) {
         set({ toast: { message: `Account ${options.accountId} deleted` } })
       } else {
-        set({ toast: { message: response.error ?? 'transaction failed', isError: true } })
+        set({
+          toast: {
+            message: response.error ?? `Transaction failed: ${response.error}`,
+            isError: true,
+          },
+        })
       }
       return !!response.result
     },
@@ -101,7 +109,12 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
           },
         })
       } else {
-        set({ toast: { message: response.error ?? 'transaction failed', isError: true } })
+        set({
+          toast: {
+            message: response.error ?? `Transaction failed: ${response.error}`,
+            isError: true,
+          },
+        })
       }
       return !!response.result
     },
@@ -114,14 +127,14 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
 
       try {
         const client = get().client
-        if (!ADDRESS_CREDIT_MANAGER) return { error: ENV_MISSING_MESSAGE }
+        if (!ENV.ADDRESS_CREDIT_MANAGER) return { error: ENV_MISSING_MESSAGE() }
         if (!client) return { error: 'no client detected' }
 
         const broadcastOptions = {
           messages: [
             new MsgExecuteContract({
               sender: client.recentWallet.account.address,
-              contract: ADDRESS_CREDIT_MANAGER,
+              contract: ENV.ADDRESS_CREDIT_MANAGER,
               msg: options.msg,
               funds,
             }),
@@ -138,9 +151,9 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
         if (result.hash) {
           return { result }
         }
-        return { result: undefined, error: 'broadcast failed' }
+        return { result: undefined, error: 'Transaction failed' }
       } catch (e: unknown) {
-        const error = typeof e === 'string' ? e : 'broadcast failed'
+        const error = typeof e === 'string' ? e : 'Transaction failed'
         return { result: undefined, error }
       }
     },

@@ -3,13 +3,11 @@ import { devtools } from 'zustand/middleware'
 
 import { BroadcastSlice, createBroadcastSlice } from 'store/slices/broadcast'
 import { CommonSlice, createCommonSlice } from 'store/slices/common'
-import { createWalletSlice, WalletSlice } from 'store/slices/wallet'
 
-export interface Store extends CommonSlice, WalletSlice, BroadcastSlice {}
+export interface Store extends CommonSlice, BroadcastSlice {}
 
 const store = (set: SetState<any>, get: GetState<any>) => ({
   ...createCommonSlice(set, get),
-  ...createWalletSlice(set, get),
   ...createBroadcastSlice(set, get),
 })
 

@@ -1,7 +1,8 @@
 import classNames from 'classnames'
-import React, { LegacyRef, ReactNode } from 'react'
+import React, { LegacyRef, ReactElement, ReactNode } from 'react'
 
 import { CircularProgress } from 'components/CircularProgress'
+import { ChevronDown } from 'components/Icons'
 import useStore from 'store'
 
 interface Props {
@@ -13,30 +14,39 @@ interface Props {
   showProgressIndicator?: boolean
   size?: 'small' | 'medium' | 'large'
   text?: string | ReactNode
-  variant?: 'solid' | 'transparent' | 'round' | 'text'
+  variant?: 'solid' | 'transparent' | 'round'
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
+  icon?: ReactElement
+  iconClassName?: string
+  hasSubmenu?: boolean
 }
 
 export const buttonColorClasses = {
   primary:
-    'border-none text-white bg-primary hover:bg-primary-highlight active:bg-primary-highlight-10 focus:bg-primary-highlight',
+    'border-none gradient-primary-to-secondary hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   secondary:
-    'border-none text-white bg-secondary hover:bg-secondary-highlight active:bg-secondary-highlight-10 focus:bg-secondary-highlight',
+    'border border-white/30 bg-transparent hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   tertiary:
-    'border text-white bg-secondary-dark/60 border-white/60 hover:bg-secondary-dark hover:border-white active:bg-secondary-dark-10 active:border-white focus:bg-secondary-dark focus:border-white',
+    'border border-transparent bg-white/10 hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   quaternary:
-    'border bg-transparent text-white/60 border-transparent hover:text-white hover:border-white active:text-white active:border-white',
+    'bg-transparent text-white/60 border-transparent hover:text-white hover:border-white active:text-white active:border-white',
 }
 
+const buttonBorderClasses =
+  'before:content-[" "] before:absolute before:inset-0 before:rounded-sm before:p-[1px] before:border-glas before:z-[-1]'
+
+const buttonGradientClasses = [
+  'before:content-[" "] before:absolute before:inset-0 before:rounded-sm before:z-[-1] before:opacity-0',
+  'before:gradient-secondary-to-primary before:transition-opacity before:duration-500 before:ease-in',
+  'hover:before:opacity-100',
+]
+
 const buttonTransparentColorClasses = {
-  primary:
-    'border-none text-primary hover:text-primary-highlight active:text-primary-highlight focus:text-primary-highlight',
-  secondary:
-    'border-none text-secondary hover:text-secondary-highlight active:text-secondary-highlight focus:text-secondary-highlight',
-  tertiary:
-    'text-secondary-dark hover:text-secondary-dark-10 active:text-secondary-dark-10 focus:text-secondary-dark-10',
+  primary: 'border-none hover:text-primary active:text-primary focus:text-primary',
+  secondary: 'border-none hover:text-secondary active:text-secondary focus:text-secondary',
+  tertiary: 'border-none hover:text-white/80 active:text-white/80 focus:text-white/80',
   quaternary:
-    'border border-transparent text-white/60 hover:text-white hover:border-white active:text-white active:border-white',
+    'border-none text-white/60 hover:text-white hover:border-white active:text-white active:border-white',
 }
 
 const buttonRoundSizeClasses = {
@@ -46,16 +56,41 @@ const buttonRoundSizeClasses = {
 }
 
 export const buttonSizeClasses = {
-  small: 'text-sm px-5 py-1.5 min-h-[32px]',
-  medium: 'text-base px-6 py-2.5 min-h-[40px]',
-  large: 'text-lg px-6 py-2.5 min-h-[56px]',
+  small: 'text-sm',
+  medium: 'text-base',
+  large: 'text-lg',
+}
+
+export const buttonPaddingClasses = {
+  small: 'px-2.5 py-1.5 min-h-[32px]',
+  medium: 'px-3 py-2 min-h-[40px]',
+  large: 'px-3.5 py-2.5 min-h-[56px]',
 }
 
 export const buttonVariantClasses = {
-  solid: 'text-white',
-  transparent: 'bg-transparent p-0',
+  solid: 'rounded-sm text-white shadow-button justify-center group',
+  transparent: 'rounded-sm bg-transparent p-0 transition duration-200 ease-in',
   round: 'rounded-full p-0',
-  text: 'border-none bg-transparent',
+}
+
+function glowElement() {
+  return (
+    <svg
+      className={classNames(
+        'glow-container z-1 opacity-0 group-hover:animate-glow group-focus:animate-glow',
+        'pointer-events-none absolute inset-0 h-full w-full',
+      )}
+    >
+      <rect
+        pathLength='100'
+        strokeLinecap='round'
+        width='100%'
+        height='100%'
+        rx='4'
+        className='absolute glow-line group-hover:glow-hover group-focus:glow-hover'
+      />
+    </svg>
+  )
 }
 
 export const Button = React.forwardRef(function Button(
@@ -70,17 +105,22 @@ export const Button = React.forwardRef(function Button(
     text,
     variant = 'solid',
     onClick,
+    icon,
+    iconClassName,
+    hasSubmenu,
   }: Props,
   ref,
 ) {
   const buttonClasses = []
   const enableAnimations = useStore((s) => s.enableAnimations)
+  const isDisabled = disabled || showProgressIndicator
 
   switch (variant) {
     case 'round':
       buttonClasses.push(
         buttonSizeClasses[size],
         buttonRoundSizeClasses[size],
+        buttonPaddingClasses[size],
         buttonColorClasses[color],
       )
       break
@@ -90,7 +130,11 @@ export const Button = React.forwardRef(function Button(
       break
 
     case 'solid':
-      buttonClasses.push(buttonSizeClasses[size], buttonColorClasses[color])
+      buttonClasses.push(
+        buttonSizeClasses[size],
+        buttonPaddingClasses[size],
+        buttonColorClasses[color],
+      )
       break
     default:
   }
@@ -98,10 +142,14 @@ export const Button = React.forwardRef(function Button(
   return (
     <button
       className={classNames(
-        'outline-nones cursor-pointer appearance-none break-normal rounded-3xl',
+        'relative z-1 flex items-center',
+        'cursor-pointer appearance-none break-normal outline-none',
+        'text-white transition-all duration-500',
         enableAnimations && 'transition-color',
         buttonClasses,
         buttonVariantClasses[variant],
+        variant === 'solid' && color === 'tertiary' && buttonBorderClasses,
+        variant === 'solid' && color === 'primary' && buttonGradientClasses,
         disabled && 'pointer-events-none opacity-50',
         className,
       )}
@@ -109,8 +157,25 @@ export const Button = React.forwardRef(function Button(
       ref={ref as LegacyRef<HTMLButtonElement>}
       onClick={disabled ? () => {} : onClick}
     >
-      {text && !children && !showProgressIndicator && <span>{text}</span>}
-      {children && !showProgressIndicator && children}
+      {icon && !isDisabled && (
+        <span
+          className={classNames(
+            'flex items-center justify-center',
+            (text || children) && 'mr-2',
+            iconClassName ?? 'h-4 w-4',
+          )}
+        >
+          {icon}
+        </span>
+      )}
+      {text && !children && !isDisabled && <span>{text}</span>}
+      {children && !isDisabled && children}
+      {hasSubmenu && !isDisabled && (
+        <span className='ml-2 inline-block w-2.5'>
+          <ChevronDown />
+        </span>
+      )}
+      {variant === 'solid' && !isDisabled && glowElement()}
       {showProgressIndicator && (
         <CircularProgress size={size === 'small' ? 10 : size === 'medium' ? 12 : 18} />
       )}

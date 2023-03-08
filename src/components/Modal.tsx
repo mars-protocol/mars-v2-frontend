@@ -3,8 +3,7 @@ import { ReactNode } from 'react'
 
 import { Close } from 'components/Icons'
 import { Text } from 'components/Text'
-
-import { Button } from './Button'
+import { Button } from 'components/Button'
 
 interface Props {
   title: string
@@ -21,17 +20,22 @@ export const Modal = (props: Props) => {
   }
 
   return props.open ? (
-    <div className='fixed top-0 left-0 z-20 h-screen w-screen'>
+    <div className='fixed top-0 left-0 z-40 h-screen w-screen'>
       <div className='relative flex h-full w-full items-center justify-center'>
         <section
           className={classNames(
-            'relative z-40 w-[790px] max-w-full rounded-md border-[1px] border-white/20 bg-white/5 p-6 backdrop-blur-3xl	',
+            'relative z-40 w-[790px] max-w-full rounded-base border border-white/20 bg-white/5 p-6 backdrop-blur-3xl',
             props.className,
           )}
         >
           <div className='flex justify-between pb-6'>
             <Text>{props.title}</Text>
-            <Button onClick={onClickAway} text='X' color='tertiary' />
+            <Button
+              onClick={onClickAway}
+              icon={<Close />}
+              iconClassName='h-2 w-2'
+              color='tertiary'
+            />
           </div>
           <div>{props.children ? props.children : props.content}</div>
         </section>

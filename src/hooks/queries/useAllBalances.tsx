@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import request, { gql } from 'graphql-request'
 import { useMemo } from 'react'
 
-import { URL_GQL } from 'constants/env'
+import { ENV } from 'constants/env'
 import useStore from 'store'
 import { queryKeys } from 'types/query-keys-factory'
 
@@ -20,7 +20,7 @@ export const useAllBalances = () => {
     queryKeys.allBalances(address ?? ''),
     async () => {
       return await request(
-        URL_GQL!,
+        ENV.URL_GQL!,
         gql`
           query UserBalanceQuery {
                   balance: bank {
