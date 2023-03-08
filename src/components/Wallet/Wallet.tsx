@@ -7,36 +7,45 @@ import {
   WalletConnectionStatus,
 } from '@marsprotocol/wallet-connector'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 import ConnectButton from 'components/Wallet/ConnectButton'
 import ConnectedButton from 'components/Wallet/ConnectedButton'
 import useParams from 'hooks/useParams'
 import useStore from 'store'
+import { getCreditAccounts } from 'utils/api'
 
 export default function Wallet() {
   const router = useRouter()
   const params = useParams()
+
   const { status } = useWalletManager()
-  const [isConnected, setIsConnected] = useState(false)
   const { recentWallet, simulate, sign, broadcast } = useWallet()
   const client = useStore((s) => s.client)
+  const address = useStore((s) => s.address)
 
   useEffect(() => {
-    const connectedStatus = status === WalletConnectionStatus.Connected
-    if (connectedStatus === isConnected) return
-    setIsConnected(connectedStatus)
-  }, [status, isConnected])
+    const isConnected = status === WalletConnectionStatus.Connected
 
-  useEffect(() => {
-    const address = client?.recentWallet.account.address
-    if (!address || address === params.wallet || address === 'accounts') return
+    useStore.setState({ status })
+    useStore.setState(
+      isConnected
+        ? {
+            address: recentWallet?.account.address,
+          }
+        : { address: undefined, creditAccounts: null, client: undefined },
+    )
 
-    router.push(`/wallets/${client.recentWallet.account.address}`)
-  }, [client, params, isConnected])
+    if (!isConnected || !recentWallet) return
 
-  useEffect(() => {
-    if (!recentWallet) return
+    const fetchCreditAccounts = async () => {
+      if (!recentWallet?.account.address) return
+      const walletCreditAccounts = await getCreditAccounts(recentWallet?.account.address)
+      useStore.setState({ creditAccounts: walletCreditAccounts })
+    }
+
+    fetchCreditAccounts()
+
     if (!client) {
       const getCosmWasmClient = async () => {
         const cosmClient = await getClient(recentWallet.network.rpc)
@@ -52,9 +61,11 @@ export default function Wallet() {
       }
 
       getCosmWasmClient()
-
-      return
     }
-  }, [simulate, sign, recentWallet, broadcast])
-  return isConnected ? <ConnectedButton /> : <ConnectButton status={status} />
+
+    if (!address || address === params.wallet) return
+    router.push(`/wallets/${address}`)
+  }, [address, broadcast, client, params, recentWallet, router, simulate, sign, status])
+
+  return address ? <ConnectedButton /> : <ConnectButton status={status} />
 }
