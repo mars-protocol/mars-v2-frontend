@@ -151,9 +151,9 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
         if (result.hash) {
           return { result }
         }
-        return { result: undefined, error: 'Tramsaction failed' }
+        return { result: undefined, error: 'Transaction failed' }
       } catch (e: unknown) {
-        const error = typeof e === 'string' ? e : 'Tramsaction failed'
+        const error = typeof e === 'string' ? e : 'Transaction failed'
         return { result: undefined, error }
       }
     },
