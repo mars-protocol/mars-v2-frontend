@@ -1,10 +1,11 @@
 import { Coin } from '@cosmjs/stargate'
 
-import { ENV } from 'constants/env'
+import { ENV, FETCH_HEADERS } from 'constants/env'
 
 export async function callAPI<T>(endpoint: string): Promise<T> {
   const response = await fetch(`${ENV.URL_API}${endpoint}`, {
     cache: 'no-store',
+    ...FETCH_HEADERS,
   })
 
   return response.json() as T

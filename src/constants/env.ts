@@ -46,3 +46,10 @@ export const ENV_MISSING_MESSAGE = () => {
 
   return `Environment variable(s) missing for: ${missing.join(', ')}`
 }
+
+export const FETCH_HEADERS = {
+  headers: {
+    'x-vercel-protection-bypass': process.env.NEXT_PUBLIC_BYPASS ?? '',
+    'x-vercel-set-bypass-cookie': 'true',
+  },
+}

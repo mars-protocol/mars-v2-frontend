@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 
-import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
+import { ENV, ENV_MISSING_MESSAGE, FETCH_HEADERS } from 'constants/env'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!ENV.URL_RPC || !ENV.ADDRESS_CREDIT_MANAGER || !ENV.URL_API) {
@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const accountId = req.query.id
 
-  const account = await (await fetch(`${ENV.URL_API}/accounts/${accountId}`)).json()
+  const account = await (await fetch(`${ENV.URL_API}/accounts/${accountId}`, FETCH_HEADERS)).json()
 
   if (account) {
     return res.status(200).json(account.deposits)
