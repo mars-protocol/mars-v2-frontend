@@ -37,8 +37,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     },
   )
 
-  console.log(borrow)
-
   if (borrow) {
     return res.status(200).json(borrow)
   }

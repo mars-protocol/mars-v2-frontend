@@ -9,10 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(404).json(ENV_MISSING_MESSAGE)
   }
 
-  console.log(`${ENV.URL_API}/markets${VERCEL_BYPASS}`)
   const markets = await (await fetch(`${ENV.URL_API}/markets${VERCEL_BYPASS}`)).json()
-
-  console.log(markets)
 
   let query = ''
 
