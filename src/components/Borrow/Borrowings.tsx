@@ -6,6 +6,10 @@ import { getMarketAssets } from 'utils/assets'
 
 import { BorrowTable } from './BorrowTable'
 
+interface Props extends PageProps {
+  type: 'active' | 'available'
+}
+
 async function Content(props: Props) {
   const debtData = await getAccountDebts(props.params?.account)
   const borrowData = await getBorrowData()
@@ -35,7 +39,22 @@ async function Content(props: Props) {
 
   const { available, active } = getBorrowAssets()
 
-  return <BorrowTable data={props.type === 'active' ? active : available} />
+  const assets = props.type === 'active' ? active : available
+
+  if (!assets.length) return null
+
+  if (props.type === 'active') {
+    return (
+      <Card
+        className='h-fit w-full'
+        title={props.type === 'active' ? 'Borrowings' : 'Available to borrow'}
+      >
+        <BorrowTable data={assets} />
+      </Card>
+    )
+  }
+
+  return <BorrowTable data={assets} />
 }
 
 function Fallback() {
@@ -50,20 +69,22 @@ function Fallback() {
   return <BorrowTable data={available} />
 }
 
-export default function BorrowPage(props: Props) {
+export function AvailableBorrowings(props: PageProps) {
   return (
-    <Card
-      className='h-fit w-full'
-      title={props.type === 'active' ? 'Borrowings' : 'Available to borrow'}
-    >
+    <Card className='h-fit w-full' title={'Available to borrow'}>
       <Suspense fallback={<Fallback />}>
         {/* @ts-expect-error Server Component */}
-        <Content params={props.params} type={props.type} />
+        <Content params={props.params} type='available' />
       </Suspense>
     </Card>
   )
 }
 
-interface Props extends PageProps {
-  type: 'active' | 'available'
+export function ActiveBorrowings(props: PageProps) {
+  return (
+    <Suspense fallback={null}>
+      {/* @ts-expect-error Server Component */}
+      <Content params={props.params} type='active' />
+    </Suspense>
+  )
 }
