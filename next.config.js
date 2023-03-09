@@ -30,7 +30,7 @@ const nextConfig = {
       },
     ]
   },
-  webpack(config, {isServer}) {
+  webpack(config, { isServer }) {
     if (isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,

@@ -28,9 +28,15 @@ export const ENV: EnvironmentVariables = {
   URL_GQL: process.env.NEXT_PUBLIC_GQL,
   URL_REST: process.env.NEXT_PUBLIC_REST,
   URL_RPC: process.env.NEXT_PUBLIC_RPC,
-  URL_API: process.env.NEXT_PUBLIC_API,
+  URL_API: process.env.NEXT_PUBLIC_VERCEL_URL
+    ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api`
+    : process.env.NEXT_PUBLIC_API,
   WALLETS: process.env.NEXT_PUBLIC_WALLETS?.split(','),
 }
+
+export const VERCEL_BYPASS = process.env.NEXT_PUBLIC_BYPASS
+  ? `?x-vercel-protection-bypass=${process.env.NEXT_PUBLIC_BYPASS}`
+  : ''
 
 export const IS_TESTNET = ENV.NETWORK !== 'mainnet'
 

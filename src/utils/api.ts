@@ -1,9 +1,9 @@
 import { Coin } from '@cosmjs/stargate'
 
-import { ENV } from 'constants/env'
+import { ENV, VERCEL_BYPASS } from 'constants/env'
 
 export async function callAPI<T>(endpoint: string): Promise<T> {
-  const response = await fetch(`${ENV.URL_API}${endpoint}`, {
+  const response = await fetch(`${ENV.URL_API}${endpoint}${VERCEL_BYPASS}`, {
     cache: 'no-store',
   })
 

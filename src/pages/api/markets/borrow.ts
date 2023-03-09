@@ -2,7 +2,7 @@ import { Coin } from '@cosmjs/stargate'
 import BigNumber from 'bignumber.js'
 import { NextApiRequest, NextApiResponse } from 'next'
 
-import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
+import { ENV, ENV_MISSING_MESSAGE, VERCEL_BYPASS } from 'constants/env'
 import { getMarketAssets } from 'utils/assets'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -11,9 +11,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const marketAssets = getMarketAssets()
-  const $liquidity = fetch(`${ENV.URL_API}/markets/liquidity`)
-  const $markets = fetch(`${ENV.URL_API}/markets`)
-  const $prices = fetch(`${ENV.URL_API}/prices`)
+  const $liquidity = fetch(`${ENV.URL_API}/markets/liquidity${VERCEL_BYPASS}`)
+  const $markets = fetch(`${ENV.URL_API}/markets${VERCEL_BYPASS}`)
+  const $prices = fetch(`${ENV.URL_API}/prices${VERCEL_BYPASS}`)
 
   const borrow: BorrowAsset[] = await Promise.all([$liquidity, $markets, $prices]).then(
     async ([$liquidity, $markets, $prices]) => {

@@ -1,7 +1,7 @@
-import { NextApiRequest, NextApiResponse } from 'next'
 import { gql, request as gqlRequest } from 'graphql-request'
+import { NextApiRequest, NextApiResponse } from 'next'
 
-import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
+import { ENV, ENV_MISSING_MESSAGE, VERCEL_BYPASS } from 'constants/env'
 import { getContractQuery } from 'utils/query'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(404).json(ENV_MISSING_MESSAGE)
   }
 
-  const markets = await (await fetch(`${ENV.URL_API}/markets`)).json()
+  const markets = await (await fetch(`${ENV.URL_API}/markets${VERCEL_BYPASS}`)).json()
 
   let query = ''
 
