@@ -1,6 +1,5 @@
 'use client'
 
-import { Switch } from '@headlessui/react'
 import { useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
@@ -9,6 +8,7 @@ import { CircularProgress } from 'components/CircularProgress'
 import { MarsProtocol } from 'components/Icons'
 import { Modal } from 'components/Modal'
 import { Slider } from 'components/Slider'
+import Switch from 'components/Switch'
 import { Text } from 'components/Text'
 import useParams from 'hooks/useParams'
 import useStore from 'store'
@@ -203,19 +203,7 @@ export const FundAccountModal = () => {
               </Text>
             </div>
 
-            <Switch
-              checked={lendAssets}
-              onChange={setLendAssets}
-              className={`${
-                lendAssets ? 'bg-blue-600' : 'bg-gray-400'
-              } relative inline-flex h-6 w-11 items-center rounded-full`}
-            >
-              <span
-                className={`${
-                  lendAssets ? 'translate-x-6' : 'translate-x-1'
-                } inline-block h-4 w-4 transform rounded-full bg-white`}
-              />
-            </Switch>
+            <Switch name='lendAssets' checked={lendAssets} onChange={setLendAssets} />
           </div>
           <Button
             className='mt-auto w-full'

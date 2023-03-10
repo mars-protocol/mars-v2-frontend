@@ -8,7 +8,7 @@ import DesktopNavigation from 'components/Navigation/DesktopNavigation'
 import Toaster from 'components/Toaster'
 import { WalletConnectProvider } from 'components/Wallet/WalletConnectProvider'
 import 'react-toastify/dist/ReactToastify.min.css'
-import 'styles/globals.scss'
+import 'styles/globals.css'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

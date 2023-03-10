@@ -1,15 +1,12 @@
 'use client'
 
-import { Switch } from '@headlessui/react'
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useMemo, useState } from 'react'
-import { toast } from 'react-toastify'
 
-import { ArrowsUpDown } from 'components/Icons'
-import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-import { Slider } from 'components/Slider'
 import { Button } from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
+import { ArrowsUpDown } from 'components/Icons'
+import { Slider } from 'components/Slider'
 import { useCalculateMaxTradeAmount } from 'hooks/data/useCalculateMaxTradeAmount'
 import { useTradeAsset } from 'hooks/mutations/useTradeAsset'
 import { useAllBalances } from 'hooks/queries/useAllBalances'
@@ -17,8 +14,10 @@ import { useAllowedCoins } from 'hooks/queries/useAllowedCoins'
 import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositions'
 import { useMarkets } from 'hooks/queries/useMarkets'
 import { useTokenPrices } from 'hooks/queries/useTokenPrices'
-import { getMarketAssets } from 'utils/assets'
 import useStore from 'store'
+import { getMarketAssets } from 'utils/assets'
+import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
+import Switch from 'components/Switch'
 
 enum FundingMode {
   Account = 'Account',
@@ -295,6 +294,7 @@ export const TradeActionModule = () => {
         <div className='mb-4 flex items-center'>
           <p className='mr-2'>Margin</p>
           <Switch
+            name='marginEnabled'
             checked={isMarginEnabled}
             onChange={(value: boolean) => {
               // reset amounts only if margin is turned off
@@ -302,16 +302,7 @@ export const TradeActionModule = () => {
 
               setIsMarginEnabled(value)
             }}
-            className={`${
-              isMarginEnabled ? 'bg-[#524BB1]' : 'bg-gray-400'
-            } relative inline-flex h-4 w-8 items-center rounded-full`}
-          >
-            <span
-              className={`${
-                isMarginEnabled ? 'translate-x-4' : ''
-              } inline-block h-4 w-4 transform rounded-full bg-white`}
-            />
-          </Switch>
+          />
         </div>
         <div className='mb-1 flex justify-between'>
           <p>Borrow</p>

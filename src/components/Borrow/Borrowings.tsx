@@ -4,7 +4,7 @@ import { Card } from 'components/Card'
 import { getAccountDebts, getBorrowData } from 'utils/api'
 import { getMarketAssets } from 'utils/assets'
 
-import { BorrowTable } from './BorrowTable'
+import { BorrowTable } from 'components/Borrow/BorrowTable'
 
 async function Content(props: Props) {
   const debtData = await getAccountDebts(props.params?.account)
