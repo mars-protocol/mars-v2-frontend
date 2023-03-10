@@ -8,7 +8,6 @@ interface Props {
 }
 
 export default function Toggle(props: Props) {
-  console.log(props.checked)
   return (
     <div className={classNames('relative', props.className)}>
       <input
