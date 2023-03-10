@@ -6,7 +6,7 @@ import { Text } from 'components/Text'
 import { Button } from 'components/Button'
 
 interface Props {
-  title: string
+  title: string | ReactNode
   children?: ReactNode | string
   content?: ReactNode | string
   className?: string
