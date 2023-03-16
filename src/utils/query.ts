@@ -4,3 +4,11 @@ export function getContractQuery(key: string, contractAddress: string, query: st
           ${contractKey}contractQuery(contractAddress: "${contractAddress}", query: ${query})
                   `
 }
+
+export function denomToKey(denom: string) {
+  return denom.replace('ibc/', 'ibc_')
+}
+
+export function keyToDenom(key: string) {
+  return key.replace('ibc_', 'ibc/')
+}

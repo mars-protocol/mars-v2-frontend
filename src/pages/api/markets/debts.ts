@@ -2,7 +2,7 @@ import { gql, request as gqlRequest } from 'graphql-request'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 import { ENV, ENV_MISSING_MESSAGE, VERCEL_BYPASS } from 'constants/env'
-import { getContractQuery } from 'utils/query'
+import { denomToKey, getContractQuery, keyToDenom } from 'utils/query'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!ENV.URL_API || !ENV.ADDRESS_RED_BANK || !ENV.URL_GQL) {
@@ -13,9 +13,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   let query = ''
 
-  markets.forEach((asset: any) => {
+  markets.forEach((asset) => {
     query += getContractQuery(
-      asset.denom,
+      denomToKey(asset.denom),
       ENV.ADDRESS_RED_BANK || '',
       `
     {
@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (result) {
     const debts = Object.keys(result.debts).map((key) => {
       return {
-        denom: key,
+        denom: keyToDenom(key),
         amount: result.debts[key],
       }
     })

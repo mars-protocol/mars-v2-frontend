@@ -57,6 +57,6 @@ export const ASSETS: Asset[] = [
     decimals: 6,
     hasOraclePrice: true,
     isMarket: IS_TESTNET,
-    isEnabled: false,
+    isEnabled: true,
   },
 ]
