@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 
 import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import { getMarketAssets } from 'utils/assets'
+import { denomToKey } from 'utils/query'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!ENV.URL_GQL || !ENV.ADDRESS_RED_BANK || !ENV.ADDRESS_INCENTIVES) {
@@ -13,8 +14,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const marketQueries = marketAssets.map(
     (asset: Asset) =>
-      `${asset.denom}: contractQuery(
-        contractAddress: "${ENV.ADDRESS_RED_BANK}"
+      `${denomToKey(asset.denom)}: contractQuery(
+    contractAddress: "${ENV.ADDRESS_RED_BANK}"
         query: { market: { denom: "${asset.denom}" } }
       )`,
   )
@@ -31,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   )
 
   const markets = marketAssets.map((asset) => {
-    const market = result.rbwasmkey[`${asset.denom}`]
+    const market = result.rbwasmkey[`${denomToKey(asset.denom)}`]
     return market
   })
   return res.status(200).json(markets)
