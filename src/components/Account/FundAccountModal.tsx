@@ -8,7 +8,7 @@ import { Button } from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
 import { MarsProtocol } from 'components/Icons'
 import { Modal } from 'components/Modal'
-import { Slider } from 'components/Slider'
+import Slider from 'components/Slider'
 import { Text } from 'components/Text'
 import useParams from 'hooks/useParams'
 import useStore from 'store'
@@ -183,14 +183,13 @@ export const FundAccountModal = () => {
               className='mb-6'
               value={percentageValue}
               onChange={(value) => {
-                const decimal = value[0] / 100
+                const decimal = value / 100
                 const tokenDecimals = getTokenDecimals(selectedToken, marketAssets)
                 // limit decimal precision based on token contract decimals
                 const newAmount = Number((decimal * walletAmount).toFixed(tokenDecimals))
 
                 setAmount(newAmount)
               }}
-              onMaxClick={() => setAmount(walletAmount)}
             />
           </div>
           <div className='mb-2 flex items-center justify-between'>

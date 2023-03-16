@@ -7,7 +7,7 @@ import { NumericFormat } from 'react-number-format'
 import { Button } from 'components/Button'
 import { Card } from 'components/Card'
 import { CircularProgress } from 'components/CircularProgress'
-import { Slider } from 'components/Slider'
+import Slider from 'components/Slider'
 import { useRepayFunds } from 'hooks/mutations/useRepayFunds'
 import { useAllBalances } from 'hooks/queries/useAllBalances'
 import { useCreditAccountPositions } from 'hooks/queries/useCreditAccountPositions'
@@ -166,14 +166,13 @@ export const RepayModal = ({ show, onClose, tokenDenom }: Props) => {
                         className='mb-6'
                         value={percentageValue}
                         onChange={(value) => {
-                          const decimal = value[0] / 100
+                          const decimal = value / 100
                           const tokenDecimals = getTokenDecimals(tokenDenom, marketAssets)
                           // limit decimal precision based on token contract decimals
                           const newAmount = Number((decimal * maxValue).toFixed(tokenDecimals))
 
                           setAmount(newAmount)
                         }}
-                        onMaxClick={() => setAmount(maxValue)}
                       />
                     </Card>
                   </div>

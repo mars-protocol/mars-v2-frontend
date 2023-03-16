@@ -29,7 +29,7 @@ export const Modal = (props: Props) => {
           )}
         >
           <div className='flex justify-between pb-6'>
-            <Text>{props.title}</Text>
+            {props.title}
             <Button
               onClick={onClickAway}
               icon={<Close />}

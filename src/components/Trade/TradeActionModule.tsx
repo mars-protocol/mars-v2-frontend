@@ -7,7 +7,7 @@ import { toast } from 'react-toastify'
 
 import { ArrowsUpDown } from 'components/Icons'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
-import { Slider } from 'components/Slider'
+import Slider from 'components/Slider'
 import { Button } from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
 import { useCalculateMaxTradeAmount } from 'hooks/data/useCalculateMaxTradeAmount'
@@ -281,14 +281,13 @@ export const TradeActionModule = () => {
           className='mb-6'
           value={percentageValue}
           onChange={(value) => {
-            const decimal = value[0] / 100
+            const decimal = value / 100
             const tokenDecimals = getTokenDecimals(selectedTokenIn, marketAssets)
             // limit decimal precision based on token contract decimals
             const newAmount = Number((decimal * maxAmount).toFixed(0))
 
             handleAmountChange(newAmount, 'in')
           }}
-          onMaxClick={() => handleAmountChange(maxAmount, 'in')}
         />
       </div>
       <div className='border-b border-b-white/20 p-2'>
