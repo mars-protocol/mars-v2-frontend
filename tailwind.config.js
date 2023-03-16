@@ -87,6 +87,7 @@ module.exports = {
         input: '#282a33',
         loss: '#f96363',
         mars: '#a03b45',
+        'martian-red': '#FF645F',
         osmo: '#9f1ab9',
         'orb-primary': '#b12f25',
         'orb-secondary': '#530781',
