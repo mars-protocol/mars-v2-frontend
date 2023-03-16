@@ -1,15 +1,19 @@
+import Image from 'next/image'
+import { useCallback, useState } from 'react'
+
 import { Modal } from 'components/Modal'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import useStore from 'store'
-import Image from 'next/image'
 import { Text } from 'components/Text'
 import { formatPercent, formatValue } from 'utils/formatters'
+
 import Slider from './Slider'
-import { useCallback, useState } from 'react'
 
 export default function BorrowModal() {
   const modal = useStore((s) => s.borrowModal)
   const [sliderValue, setSliderValue] = useState(0)
+
+  const onSliderChange = useCallback((value: number) => setSliderValue(value), [])
 
   function setOpen(isOpen: boolean) {
     useStore.setState({ borrowModal: null })
@@ -52,10 +56,7 @@ export default function BorrowModal() {
         />
       </div>
       <div className='flex'>
-        <Slider
-          value={sliderValue}
-          onChange={useCallback((value: number) => setSliderValue(value), [])}
-        />
+        <Slider value={sliderValue} onChange={onSliderChange} />
       </div>
     </Modal>
   )
