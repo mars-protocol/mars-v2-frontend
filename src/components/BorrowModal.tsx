@@ -1,13 +1,15 @@
 import { Modal } from 'components/Modal'
 import TitleAndSubCell from 'components/TitleAndSubCell'
-import { usePathname } from 'next/navigation'
 import useStore from 'store'
 import Image from 'next/image'
 import { Text } from 'components/Text'
 import { formatPercent, formatValue } from 'utils/formatters'
+import Slider from './Slider'
+import { useCallback, useState } from 'react'
 
 export default function BorrowModal() {
   const modal = useStore((s) => s.borrowModal)
+  const [sliderValue, setSliderValue] = useState(0)
 
   function setOpen(isOpen: boolean) {
     useStore.setState({ borrowModal: null })
@@ -49,7 +51,12 @@ export default function BorrowModal() {
           sub={'Liquidity available'}
         />
       </div>
-      <div className='flex'></div>
+      <div className='flex'>
+        <Slider
+          value={sliderValue}
+          onChange={useCallback((value: number) => setSliderValue(value), [])}
+        />
+      </div>
     </Modal>
   )
 }

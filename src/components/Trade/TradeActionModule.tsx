@@ -3,10 +3,10 @@
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useMemo, useState } from 'react'
 
+import Slider from 'components/Slider'
 import { Button } from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
 import { ArrowsUpDown } from 'components/Icons'
-import { Slider } from 'components/Slider'
 import { useCalculateMaxTradeAmount } from 'hooks/data/useCalculateMaxTradeAmount'
 import { useTradeAsset } from 'hooks/mutations/useTradeAsset'
 import { useAllBalances } from 'hooks/queries/useAllBalances'
@@ -280,14 +280,13 @@ export const TradeActionModule = () => {
           className='mb-6'
           value={percentageValue}
           onChange={(value) => {
-            const decimal = value[0] / 100
+            const decimal = value / 100
             const tokenDecimals = getTokenDecimals(selectedTokenIn, marketAssets)
             // limit decimal precision based on token contract decimals
             const newAmount = Number((decimal * maxAmount).toFixed(0))
 
             handleAmountChange(newAmount, 'in')
           }}
-          onMaxClick={() => handleAmountChange(maxAmount, 'in')}
         />
       </div>
       <div className='border-b border-b-white/20 p-2'>

@@ -9,7 +9,7 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import { Gauge } from 'components/Gauge'
 import { LabelValuePair } from 'components/LabelValuePair'
 import { Modal } from 'components/Modal'
-import { Slider } from 'components/Slider'
+import Slider from 'components/Slider'
 import { Text } from 'components/Text'
 import { useAccountStats } from 'hooks/data/useAccountStats'
 import { useCalculateMaxWithdrawAmount } from 'hooks/data/useCalculateMaxWithdrawAmount'
@@ -207,7 +207,7 @@ export const WithdrawModal = () => {
                 className='mb-6'
                 value={percentageValue}
                 onChange={(value) => {
-                  const decimal = value[0] / 100
+                  const decimal = value / 100
                   // limit decimal precision based on token contract decimals
                   const newAmount = Number(
                     (decimal * maxWithdrawAmount).toFixed(selectedTokenDecimals),
@@ -215,7 +215,6 @@ export const WithdrawModal = () => {
 
                   setAmount(newAmount)
                 }}
-                onMaxClick={() => setAmount(maxWithdrawAmount)}
               />
             </div>
             <div className='flex items-center justify-between p-6'>
