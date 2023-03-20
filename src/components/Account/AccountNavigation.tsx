@@ -63,14 +63,15 @@ export const AccountNavigation = () => {
                 className='flex flex-1 flex-nowrap'
                 icon={<Account />}
                 onClick={() => setShowMenu(!showMenu)}
+                hasFocus={showMenu}
                 hasSubmenu
               >
                 <span>{accountSelected ? `Account ${selectedAccount}` : 'Select Account'}</span>
               </Button>
-              <Overlay className='l-0 mt-2 w-[274px]' show={showMenu} setShow={setShowMenu}>
+              <Overlay className='left-0 mt-2 w-[274px]' show={showMenu} setShow={setShowMenu}>
                 {accountSelected && (
                   <div className='flex w-full flex-wrap'>
-                    <Text size='sm' uppercase={true} className='w-full justify-center px-4 pt-4'>
+                    <Text size='sm' uppercase={true} className='w-full px-4 pt-4'>
                       Manage Account {selectedAccount}
                     </Text>
                     <div className='flex w-full justify-between p-4'>
@@ -133,7 +134,7 @@ export const AccountNavigation = () => {
                 )}
                 {creditAccounts.length > 1 && (
                   <div className='flex w-full flex-wrap border-t border-t-white/10 p-4'>
-                    <Text size='sm' uppercase={true} className='w-full justify-center pb-2'>
+                    <Text size='sm' uppercase={true} className='w-full pb-2'>
                       Select Account
                     </Text>
                     {creditAccounts.map((account) =>

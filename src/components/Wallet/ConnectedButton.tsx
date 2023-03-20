@@ -89,6 +89,7 @@ export default function ConnectedButton() {
         onClick={() => {
           setShowDetails(!showDetails)
         }}
+        hasFocus={showDetails}
       >
         <span>{truncate(address, [2, 4])}</span>
         <div

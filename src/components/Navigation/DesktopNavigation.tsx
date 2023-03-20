@@ -1,13 +1,15 @@
 'use client'
 
+import classNames from 'classnames'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import classNames from 'classnames'
 
 import { AccountNavigation } from 'components/Account/AccountNavigation'
 import { Logo } from 'components/Icons'
 import { NavLink } from 'components/Navigation/NavLink'
+import Settings from 'components/Settings'
 import Wallet from 'components/Wallet/Wallet'
+import { useAnimations } from 'hooks/data/useAnimations'
 import { getRoute } from 'utils/route'
 
 export const menuTree: { href: RouteSegment; label: string }[] = [
@@ -47,6 +49,7 @@ export default function DesktopNavigation() {
         <div className='flex gap-4'>
           <AccountNavigation />
           <Wallet />
+          <Settings />
         </div>
       </div>
     </header>
