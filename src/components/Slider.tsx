@@ -70,52 +70,50 @@ export default function Slider(props: Props) {
   }
 
   return (
-    <div>
-      <div ref={ref} className='relative w-[446px]' onMouseEnter={handleSliderRect}>
-        <input
-          type='range'
-          value={props.value}
-          onChange={handleSliderClick}
-          onMouseDown={handleShowTooltip}
-          className='absolute z-2 w-[100%] cursor-pointer appearance-none bg-transparent [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:appearance-none'
-        />
-        <div className='absolute flex  w-[100%] items-center gap-1'>
-          <Mark onClick={props.onChange} value={0} sliderValue={props.value} />
-          <Track maxValue={23} sliderValue={props.value} />
-          <Mark onClick={props.onChange} value={25} sliderValue={props.value} />
-          <Track maxValue={48} sliderValue={props.value} />
-          <Mark onClick={props.onChange} value={50} sliderValue={props.value} />
-          <Track maxValue={73} sliderValue={props.value} />
-          <Mark onClick={props.onChange} value={75} sliderValue={props.value} />
-          <Track maxValue={98} sliderValue={props.value} />
-          <Mark onClick={props.onChange} value={100} sliderValue={props.value} />
-        </div>
-        <div onMouseEnter={handleShowTooltip} onMouseLeave={handleHideTooltip}>
-          <Draggable
-            nodeRef={nodeRef}
-            axis='x'
-            grid={[sliderRect.width / 100, 0]}
-            bounds={{ left: 0, right: sliderRect.width }}
-            positionOffset={{ x: (props.value / 100) * -12, y: 0 }}
-            onDrag={handleDrag}
-            onStop={() => setIsDragging(false)}
-            position={{ x: (sliderRect.width / 100) * props.value, y: 0 }}
-          >
-            <div ref={nodeRef} className='absolute z-20 leading-3'>
-              <div
-                className={
-                  'z-20 h-3 w-3 rotate-45 cursor-pointer rounded-xs border-[2px] border-white bg-martian-red'
-                }
-              ></div>
-              {(showTooltip || isDragging) && (
-                <div className='absolute top-[-32px] left-[50%] translate-x-[-50%] rounded-xs bg-martian-red py-[2px] px-2 text-xs'>
-                  <SliderMark className='absolute left-[50%] bottom-[-4px] translate-x-[-50%]' />
-                  {props.value}%
-                </div>
-              )}
-            </div>
-          </Draggable>
-        </div>
+    <div ref={ref} className='relative w-full' onMouseEnter={handleSliderRect}>
+      <input
+        type='range'
+        value={props.value}
+        onChange={handleSliderClick}
+        onMouseDown={handleShowTooltip}
+        className='absolute z-2 w-full cursor-pointer appearance-none bg-transparent [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:appearance-none'
+      />
+      <div className='absolute flex  w-full items-center gap-1'>
+        <Mark onClick={props.onChange} value={0} sliderValue={props.value} />
+        <Track maxValue={23} sliderValue={props.value} />
+        <Mark onClick={props.onChange} value={25} sliderValue={props.value} />
+        <Track maxValue={48} sliderValue={props.value} />
+        <Mark onClick={props.onChange} value={50} sliderValue={props.value} />
+        <Track maxValue={73} sliderValue={props.value} />
+        <Mark onClick={props.onChange} value={75} sliderValue={props.value} />
+        <Track maxValue={98} sliderValue={props.value} />
+        <Mark onClick={props.onChange} value={100} sliderValue={props.value} />
+      </div>
+      <div onMouseEnter={handleShowTooltip} onMouseLeave={handleHideTooltip}>
+        <Draggable
+          nodeRef={nodeRef}
+          axis='x'
+          grid={[sliderRect.width / 100, 0]}
+          bounds={{ left: 0, right: sliderRect.width }}
+          positionOffset={{ x: (props.value / 100) * -12, y: 0 }}
+          onDrag={handleDrag}
+          onStop={() => setIsDragging(false)}
+          position={{ x: (sliderRect.width / 100) * props.value, y: 0 }}
+        >
+          <div ref={nodeRef} className='absolute z-20 leading-3'>
+            <div
+              className={
+                'z-20 h-3 w-3 rotate-45 cursor-pointer rounded-xs border-[2px] border-white bg-martian-red'
+              }
+            />
+            {(showTooltip || isDragging) && (
+              <div className='absolute -top-8 left-1/2 -translate-x-1/2 rounded-xs bg-martian-red py-[2px] px-2 text-xs'>
+                <SliderMark className='absolute left-1/2 bottom-[-4px] -translate-x-1/2' />
+                {props.value}%
+              </div>
+            )}
+          </div>
+        </Draggable>
       </div>
     </div>
   )
@@ -155,8 +153,8 @@ function Track(props: TrackProps) {
 
   return (
     <div className='relative h-1 flex-grow overflow-hidden rounded-sm bg-transparent'>
-      <div className='absolute z-1 h-3 bg-martian-red ' style={{ width: `${percentage}%` }}></div>
-      <div className='absolute h-3 w-[100%] bg-white/20'></div>
+      <div className='absolute z-1 h-3 bg-martian-red ' style={{ width: `${percentage}%` }} />
+      <div className='absolute h-3 w-full bg-white/20' />
     </div>
   )
 }
