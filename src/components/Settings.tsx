@@ -1,5 +1,7 @@
 'use client'
 
+import { useState } from 'react'
+
 import { Button } from 'components/Button'
 import { Gear } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
@@ -8,7 +10,6 @@ import { Text } from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
 import { ENABLE_ANIMATIONS_KEY } from 'constants/localStore'
 import { useAnimations } from 'hooks/data/useAnimations'
-import { useState } from 'react'
 import useStore from 'store'
 
 export default function Settings() {

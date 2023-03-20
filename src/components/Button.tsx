@@ -81,9 +81,7 @@ export const buttonVariantClasses = {
   round: 'rounded-full p-0',
 }
 
-function glowElement() {
-  const enableAnimations = useStore((s) => s.enableAnimations)
-
+function glowElement(enableAnimations: boolean) {
   return (
     <svg
       className={classNames(
@@ -188,7 +186,7 @@ export const Button = React.forwardRef(function Button(
           <ChevronDown />
         </span>
       )}
-      {variant === 'solid' && !isDisabled && glowElement()}
+      {variant === 'solid' && !isDisabled && glowElement(enableAnimations)}
       {showProgressIndicator && (
         <CircularProgress size={size === 'small' ? 10 : size === 'medium' ? 12 : 18} />
       )}

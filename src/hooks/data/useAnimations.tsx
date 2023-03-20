@@ -1,6 +1,6 @@
-import { ENABLE_ANIMATIONS_KEY } from 'constants/localStore'
 import { useCallback, useEffect } from 'react'
 
+import { ENABLE_ANIMATIONS_KEY } from 'constants/localStore'
 import useStore from 'store'
 
 export const useAnimations = () => {
