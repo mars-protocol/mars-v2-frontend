@@ -5,7 +5,8 @@ import useStore from 'store'
 
 export const useAnimations = () => {
   const enableAnimations = useStore((s) => s.enableAnimations)
-  const enableAnimationsLocalStorage = localStorage.getItem(ENABLE_ANIMATIONS_KEY)
+  const enableAnimationsLocalStorage =
+    typeof window !== 'undefined' ? window.localStorage.getItem(ENABLE_ANIMATIONS_KEY) : false
 
   const queryChangeHandler = useCallback(
     (event: MediaQueryListEvent) => {

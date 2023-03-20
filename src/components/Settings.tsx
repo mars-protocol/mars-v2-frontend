@@ -20,7 +20,8 @@ export default function Settings() {
 
   function handleReduceMotion(val: boolean) {
     useStore.setState({ enableAnimations: !val })
-    localStorage.setItem(ENABLE_ANIMATIONS_KEY, val ? 'false' : 'true')
+    if (typeof window !== 'undefined')
+      window.localStorage.setItem(ENABLE_ANIMATIONS_KEY, val ? 'false' : 'true')
   }
 
   return (
