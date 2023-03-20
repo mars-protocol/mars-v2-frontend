@@ -12,7 +12,7 @@ export default function Background() {
           'top-[-10vw] left-[-10vw]',
           'bg-orb-primary blur-orb-primary ',
           'translate-x-0 translate-y-0 rounded-full opacity-20',
-          'animate-[float_120s_ease_in_out_infinite_2s]',
+          'animate-[float_120s_ease-in-out_infinite_2s]',
         )}
       />
       <div
@@ -24,7 +24,7 @@ export default function Background() {
           'bottom-[-10vw] right-[-8vw]',
           'bg-orb-secondary blur-orb-secondary',
           'translate-x-0 translate-y-0  rounded-full opacity-30',
-          'animate-[float_150s_bounce_out_infinite_1s]',
+          'animate-[float_150s_ease-in-out_infinite_1s]',
         )}
       />
       <div
@@ -36,7 +36,7 @@ export default function Background() {
           'top-[-10vw] right-[-4vw]',
           'bg-orb-tertiary blur-orb-tertiary ',
           'translate-x-0 translate-y-0 rounded-full opacity-20',
-          'animate-[float_180s_ease_in_infinite]',
+          'animate-[float_180s_ease-in_infinite]',
         )}
       />
     </div>
