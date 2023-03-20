@@ -84,9 +84,7 @@ export const buttonVariantClasses = {
   round: 'rounded-full p-0',
 }
 
-function glowElement() {
-  const enableAnimations = useStore((s) => s.enableAnimations)
-
+function glowElement(enableAnimations: boolean) {
   return (
     <svg
       className={classNames(

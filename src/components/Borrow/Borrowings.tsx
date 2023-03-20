@@ -3,7 +3,6 @@ import { Suspense } from 'react'
 import { Card } from 'components/Card'
 import { getAccountDebts, getBorrowData } from 'utils/api'
 import { getMarketAssets } from 'utils/assets'
-
 import { BorrowTable } from 'components/Borrow/BorrowTable'
 
 interface Props extends PageProps {
