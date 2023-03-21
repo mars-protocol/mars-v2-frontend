@@ -5,6 +5,7 @@ module.exports = {
   content: ['./src/app/**/*.{js,ts,jsx,tsx}', './src/components/**/*.{js,ts,jsx,tsx}'],
   safelist: [
     'h-2',
+    'h-4.5',
     'h-15',
     'text-3xs',
     'text-3xs-caps',
@@ -29,6 +30,7 @@ module.exports = {
     'text-5xl-caps',
     'text-5xl',
     'w-2',
+    'w-4.5',
     'w-15',
   ],
   theme: {
@@ -121,6 +123,7 @@ module.exports = {
         bold: 600,
       },
       height: {
+        4.5: '18px',
         15: '60px',
       },
       hueRotate: {
@@ -172,6 +175,7 @@ module.exports = {
         background: 'filter, -webkit-filter',
       },
       width: {
+        4.5: '18px',
         15: '60px',
         30: '120px',
         35: '140px',

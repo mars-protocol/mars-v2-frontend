@@ -157,7 +157,7 @@ export const Button = React.forwardRef(function Button(
       ref={ref as LegacyRef<HTMLButtonElement>}
       onClick={disabled ? () => {} : onClick}
     >
-      {icon && !isDisabled && (
+      {icon && !showProgressIndicator && (
         <span
           className={classNames(
             'flex items-center justify-center',
@@ -168,9 +168,9 @@ export const Button = React.forwardRef(function Button(
           {icon}
         </span>
       )}
-      {text && !children && !isDisabled && <span>{text}</span>}
-      {children && !isDisabled && children}
-      {hasSubmenu && !isDisabled && (
+      {text && !children && !showProgressIndicator && <span>{text}</span>}
+      {children && !showProgressIndicator && children}
+      {hasSubmenu && !showProgressIndicator && (
         <span className='ml-2 inline-block w-2.5'>
           <ChevronDown />
         </span>

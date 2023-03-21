@@ -1,4 +1,3 @@
-import { Switch } from '@headlessui/react'
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -21,6 +20,7 @@ import useStore from 'store'
 import { getBaseAsset, getMarketAssets } from 'utils/assets'
 import { convertFromGwei, formatLeverage, formatValue } from 'utils/formatters'
 import { getTokenDecimals, getTokenSymbol } from 'utils/tokens'
+import Switch from 'components/Switch'
 
 export const WithdrawModal = () => {
   // ---------------
@@ -228,20 +228,7 @@ export const WithdrawModal = () => {
                 </Text>
               </div>
 
-              <Switch
-                checked={isBorrowEnabled}
-                onChange={handleBorrowChange}
-                className={classNames(
-                  'relative inline-flex h-6 w-11 items-center rounded-full',
-                  isBorrowEnabled ? 'bg-blue-600' : 'bg-gray-400',
-                )}
-              >
-                <span
-                  className={`${
-                    isBorrowEnabled ? 'translate-x-6' : 'translate-x-1'
-                  } inline-block h-4 w-4 transform rounded-full bg-white`}
-                />
-              </Switch>
+              <Switch name='borrowAssets' checked={isBorrowEnabled} onChange={handleBorrowChange} />
             </div>
             <div className='flex p-6'>
               <Button className='mt-auto w-full' onClick={() => mutate()}>
