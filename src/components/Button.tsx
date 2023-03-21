@@ -41,10 +41,10 @@ const focusClasses = {
 }
 
 const buttonBorderClasses =
-  'before:content-[" "] before:absolute before:inset-0 before:rounded-sm before:p-[1px] before:border-glas before:z-[-1]'
+  'before:content-[" "] before:absolute before:inset-0 before:rounded-sm before:p-[1px] before:border-glas before:-z-1'
 
 const buttonGradientClasses = [
-  'before:content-[" "] before:absolute before:inset-0 before:rounded-sm before:z-[-1] before:opacity-0',
+  'before:content-[" "] before:absolute before:inset-0 before:rounded-sm before:-z-1 before:opacity-0',
   'before:gradient-secondary-to-primary before:transition-opacity before:duration-500 before:ease-in',
   'hover:before:opacity-100',
 ]
