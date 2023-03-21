@@ -1,22 +1,53 @@
-import useStore from 'store'
 import { Modal } from 'components/Modal'
 import TitleAndSubCell from 'components/TitleAndSubCell'
+import { usePathname } from 'next/navigation'
+import useStore from 'store'
+import Image from 'next/image'
+import { Text } from 'components/Text'
+import { formatPercent, formatValue } from 'utils/formatters'
 
 export default function BorrowModal() {
-  const open = useStore((s) => s.borrowModal)
+  const modal = useStore((s) => s.borrowModal)
 
   function setOpen(isOpen: boolean) {
-    useStore.setState({ borrowModal: isOpen })
+    useStore.setState({ borrowModal: null })
   }
 
+  if (!modal) return null
+
+  const liquidityAmount: string = formatValue(modal.marketData.liquidity?.amount || '0', {
+    abbreviated: true,
+    decimals: 6,
+  })
+
+  const liquidityValue: string = formatValue(modal.marketData.liquidity?.value || '0', {
+    abbreviated: true,
+    decimals: 6,
+  })
+
   return (
-    <Modal open={open} setOpen={setOpen} title='Borrow OSMO'>
+    <Modal
+      open={true}
+      setOpen={setOpen}
+      title={
+        <span className='flex items-center gap-4'>
+          <Image src={modal?.asset.logo} alt='token' width={24} height={24} />
+          <Text>Borrow {modal.asset.symbol}</Text>
+        </span>
+      }
+    >
       <div className='flex gap-3'>
-        <TitleAndSubCell title='10.00%' sub={'Borrow rate'} />
+        <TitleAndSubCell
+          title={formatPercent(modal.marketData.borrowRate || '0')}
+          sub={'Borrow rate'}
+        />
         <div className='h-100 w-[1px] bg-white/10'></div>
-        <TitleAndSubCell title='$200' sub={'Borrowed'} />
+        <TitleAndSubCell title={'$0'} sub={'Borrowed'} />
         <div className='h-100 w-[1px] bg-white/10'></div>
-        <TitleAndSubCell title='10.5M ($105M)' sub={'Liquidity available'} />
+        <TitleAndSubCell
+          title={`${liquidityAmount} (${liquidityValue})`}
+          sub={'Liquidity available'}
+        />
       </div>
       <div className='flex'></div>
     </Modal>

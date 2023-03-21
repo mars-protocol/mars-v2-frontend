@@ -26,7 +26,8 @@ export default function AssetExpanded(props: AssetRowProps) {
   if (!asset) return null
 
   function borrowHandler() {
-    useStore.setState({ borrowModal: true })
+    if (!asset) return null
+    useStore.setState({ borrowModal: { asset: asset, marketData: props.row.original } })
   }
 
   function repayHandler() {

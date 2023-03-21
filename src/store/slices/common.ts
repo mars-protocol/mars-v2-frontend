@@ -13,7 +13,10 @@ import { formatValue } from 'utils/formatters'
 
 export interface CommonSlice {
   address?: string
-  borrowModal: boolean
+  borrowModal: {
+    asset: Asset
+    marketData: BorrowAsset | BorrowAssetActive
+  } | null
   client?: WalletClient
   clients: {
     accountNft?: MarsAccountNftClient
@@ -38,7 +41,7 @@ export interface CommonSlice {
 
 export function createCommonSlice(set: SetState<CommonSlice>, get: GetState<CommonSlice>) {
   return {
-    borrowModal: false,
+    borrowModal: null,
     createAccountModal: false,
     clients: {},
     creditAccounts: null,
