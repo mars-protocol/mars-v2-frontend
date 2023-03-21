@@ -19,6 +19,7 @@ interface Props {
   icon?: ReactElement
   iconClassName?: string
   hasSubmenu?: boolean
+  hasFocus?: boolean
 }
 
 export const buttonColorClasses = {
@@ -30,6 +31,13 @@ export const buttonColorClasses = {
     'border border-transparent bg-white/10 hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   quaternary:
     'bg-transparent text-white/60 border-transparent hover:text-white hover:border-white active:text-white active:border-white',
+}
+
+const focusClasses = {
+  primary: 'bg-white/20',
+  secondary: 'bg-white/20',
+  tertiary: 'bg-white/20',
+  quaternary: 'text-white border-white',
 }
 
 const buttonBorderClasses =
@@ -73,11 +81,12 @@ export const buttonVariantClasses = {
   round: 'rounded-full p-0',
 }
 
-function glowElement() {
+function glowElement(enableAnimations: boolean) {
   return (
     <svg
       className={classNames(
-        'glow-container z-1 opacity-0 group-hover:animate-glow group-focus:animate-glow',
+        enableAnimations && 'group-hover:animate-glow group-focus:animate-glow',
+        'glow-container z-1 opacity-0 ',
         'pointer-events-none absolute inset-0 h-full w-full',
       )}
     >
@@ -108,6 +117,7 @@ export const Button = React.forwardRef(function Button(
     icon,
     iconClassName,
     hasSubmenu,
+    hasFocus,
   }: Props,
   ref,
 ) {
@@ -151,6 +161,7 @@ export const Button = React.forwardRef(function Button(
         variant === 'solid' && color === 'tertiary' && buttonBorderClasses,
         variant === 'solid' && color === 'primary' && buttonGradientClasses,
         disabled && 'pointer-events-none opacity-50',
+        hasFocus && focusClasses[color],
         className,
       )}
       id={id}
@@ -175,7 +186,7 @@ export const Button = React.forwardRef(function Button(
           <ChevronDown />
         </span>
       )}
-      {variant === 'solid' && !isDisabled && glowElement()}
+      {variant === 'solid' && !isDisabled && glowElement(enableAnimations)}
       {showProgressIndicator && (
         <CircularProgress size={size === 'small' ? 10 : size === 'medium' ? 12 : 18} />
       )}
