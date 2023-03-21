@@ -9,14 +9,6 @@ interface Props extends PageProps {
   type: 'active' | 'available'
 }
 
-interface Props extends PageProps {
-  type: 'active' | 'available'
-}
-
-interface Props extends PageProps {
-  type: 'active' | 'available'
-}
-
 async function Content(props: Props) {
   const debtData = await getAccountDebts(props.params?.account)
   const borrowData = await getBorrowData()
