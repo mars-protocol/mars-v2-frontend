@@ -1,9 +1,8 @@
 import { Suspense } from 'react'
 
-import { Card } from 'components/Card'
+import Card from 'components/Card'
 import { getAccountDebts, getBorrowData } from 'utils/api'
 import { getMarketAssets } from 'utils/assets'
-
 import { BorrowTable } from 'components/Borrow/BorrowTable'
 
 interface Props extends PageProps {
@@ -46,7 +45,7 @@ async function Content(props: Props) {
   if (props.type === 'active') {
     return (
       <Card
-        className='h-fit w-full'
+        className='h-fit w-full bg-white/5'
         title={props.type === 'active' ? 'Borrowings' : 'Available to borrow'}
       >
         <BorrowTable data={assets} />
@@ -71,7 +70,7 @@ function Fallback() {
 
 export function AvailableBorrowings(props: PageProps) {
   return (
-    <Card className='h-fit w-full' title={'Available to borrow'}>
+    <Card className='h-fit w-full bg-white/5' title={'Available to borrow'}>
       <Suspense fallback={<Fallback />}>
         {/* @ts-expect-error Server Component */}
         <Content params={props.params} type='available' />

@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 import classNames from 'classnames'
 
-import { Card } from 'components/Card'
+import Card from 'components/Card'
 import Loading from 'components/Loading'
 import { Text } from 'components/Text'
 import { getCreditAccounts } from 'utils/api'
@@ -16,7 +16,7 @@ async function Content(props: PageProps) {
     <div className={classNames('grid grid-cols-1 gap-4', 'md:grid-cols-2', 'lg:grid-cols-3')}>
       {creditAccounts.map((account: string, index: number) => (
         <Card
-          className='h-fit w-full'
+          className='h-fit w-full bg-white/5'
           title={`Account ${account}`}
           key={index}
           contentClassName='px-4 py-6'
@@ -30,7 +30,11 @@ async function Content(props: PageProps) {
       ))}
     </div>
   ) : (
-    <Card className='h-fit w-full justify-center' title='Portfolio' contentClassName='px-4 py-6'>
+    <Card
+      className='h-fit w-full justify-center bg-white/5'
+      title='Portfolio'
+      contentClassName='px-4 py-6'
+    >
       <Text size='sm' className='w-full text-center'>
         You need to be connected to view the porfolio page
       </Text>
@@ -45,7 +49,7 @@ function Fallback() {
       {Array.from({ length: cardCount }, (_, i) => (
         <Card
           key={i}
-          className='h-fit w-full'
+          className='h-fit w-full bg-white/5'
           title={
             <>
               Account <Loading className='ml-2 h-4 w-8' />

@@ -46,7 +46,7 @@ export const WalletConnectProvider: FC<Props> = ({ children }) => {
         walletName: 'w-full text-lg',
         walletDescription: 'w-full text-xs text-white/60 break-all',
       }}
-      closeIcon={<Button icon={<Close />} iconClassName='h-2 w-2' color='tertiary' />}
+      closeIcon={<Button leftIcon={<Close />} iconClassName='h-2 w-2' color='tertiary' />}
       renderLoader={() => (
         <div>
           <CircularProgress size={30} />

@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 
-import { Card } from 'components/Card'
+import Card from 'components/Card'
 import Loading from 'components/Loading'
 import { Text } from 'components/Text'
 
@@ -28,7 +28,7 @@ function Fallback() {
 
 export default function Trade(props: PageProps) {
   return (
-    <Card className='h-full w-full' title='Trade Module' contentClassName='px-4 py-6'>
+    <Card className='h-full w-full bg-white/5' title='Trade Module' contentClassName='px-4 py-6'>
       <Suspense fallback={<Fallback />}>
         {/* @ts-expect-error Server Component */}
         <Content params={props.params} />

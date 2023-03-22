@@ -1,5 +1,6 @@
-import NumberInput from 'components/NumberInput'
 import Image from 'next/image'
+
+import NumberInput from 'components/NumberInput'
 import { Text } from 'components/Text'
 
 interface Props {

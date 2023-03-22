@@ -1,28 +1,33 @@
 import Image from 'next/image'
 import { useCallback, useState } from 'react'
+import BigNumber from 'bignumber.js'
 
 import { Modal } from 'components/Modal'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import useStore from 'store'
 import { Text } from 'components/Text'
 import { formatPercent, formatValue } from 'utils/formatters'
-
 import Slider from 'components/Slider'
 import AccountSummary from 'components/Account/AccountSummary'
-import Container from 'components/Container'
+import Card from 'components/Card'
 import Divider from 'components/Divider'
 import TokenInput from 'components/TokenInput'
 import { Button } from 'components/Button'
 import { ArrowRight } from 'components/Icons'
-import BigNumber from 'bignumber.js'
 
 export default function BorrowModal() {
   const modal = useStore((s) => s.borrowModal)
   const [percentage, setPercentage] = useState(0)
   const [value, setValue] = useState(0)
 
-  const onSliderChange = useCallback((percentage: number) => onPercentageChange(percentage), [])
-  const onInputChange = useCallback((value: number) => onValueChange(value, percentage), [])
+  const onSliderChange = useCallback(
+    (percentage: number) => onPercentageChange(percentage),
+    [onPercentageChange],
+  )
+  const onInputChange = useCallback(
+    (value: number) => onValueChange(value, percentage),
+    [onValueChange],
+  )
 
   function setOpen(isOpen: boolean) {
     useStore.setState({ borrowModal: null })
@@ -58,14 +63,16 @@ export default function BorrowModal() {
     <Modal
       open={true}
       setOpen={setOpen}
-      title={
-        <span className='flex items-center gap-4'>
+      header={
+        <span className='flex items-center gap-4 px-4'>
           <Image src={modal?.asset.logo} alt='token' width={24} height={24} />
           <Text>Borrow {modal.asset.symbol}</Text>
         </span>
       }
+      headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
+      contentClassName='flex flex-col'
     >
-      <div className='flex gap-3'>
+      <div className='flex gap-3 border-b border-b-white/5 px-6 py-4 gradient-header'>
         <TitleAndSubCell
           title={formatPercent(modal.marketData.borrowRate || '0')}
           sub={'Borrow rate'}
@@ -78,8 +85,8 @@ export default function BorrowModal() {
           sub={'Liquidity available'}
         />
       </div>
-      <div className='flex gap-4'>
-        <Container className='w-full gap-6'>
+      <div className='flex items-start gap-6 p-6'>
+        <Card className='w-full bg-white/5 p-4' contentClassName='gap-6 flex flex-col'>
           <TokenInput
             asset={modal.asset}
             onChange={onInputChange}
@@ -94,10 +101,8 @@ export default function BorrowModal() {
             text='Borrow'
             rightIcon={<ArrowRight />}
           />
-        </Container>
-        <Container>
-          <AccountSummary />
-        </Container>
+        </Card>
+        <AccountSummary />
       </div>
     </Modal>
   )

@@ -85,7 +85,7 @@ export default function ConnectedButton() {
       <Button
         variant='solid'
         color='tertiary'
-        icon={<Osmo />}
+        leftIcon={<Osmo />}
         onClick={() => {
           setShowDetails(!showDetails)
         }}
@@ -136,7 +136,7 @@ export default function ConnectedButton() {
             </Text>
             <div className='flex w-full pt-1'>
               <Button
-                icon={<Copy />}
+                leftIcon={<Copy />}
                 variant='transparent'
                 className='mr-10 flex w-auto py-2'
                 color='quaternary'
@@ -154,7 +154,7 @@ export default function ConnectedButton() {
                 )}
               </Button>
               <Button
-                icon={<ExternalLink />}
+                leftIcon={<ExternalLink />}
                 variant='transparent'
                 className='flex w-auto py-2'
                 color='quaternary'
