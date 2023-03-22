@@ -11,25 +11,45 @@ import Slider from 'components/Slider'
 import AccountSummary from 'components/Account/AccountSummary'
 import Container from 'components/Container'
 import Divider from 'components/Divider'
+import TokenInput from 'components/TokenInput'
+import { Button } from 'components/Button'
+import { ArrowRight } from 'components/Icons'
+import BigNumber from 'bignumber.js'
 
 export default function BorrowModal() {
   const modal = useStore((s) => s.borrowModal)
-  const [sliderValue, setSliderValue] = useState(0)
+  const [percentage, setPercentage] = useState(0)
+  const [value, setValue] = useState(0)
 
-  const onSliderChange = useCallback((value: number) => setSliderValue(value), [])
+  const onSliderChange = useCallback((percentage: number) => onPercentageChange(percentage), [])
+  const onInputChange = useCallback((value: number) => onValueChange(value, percentage), [])
 
   function setOpen(isOpen: boolean) {
     useStore.setState({ borrowModal: null })
   }
 
+  function onBorrowClick() {}
+
+  function onPercentageChange(percentage: number) {
+    setPercentage(percentage)
+    setValue(new BigNumber(percentage).div(100).times(liquidityAmount).toNumber())
+  }
+
+  function onValueChange(value: number, percentage: number) {
+    setValue(value)
+    setPercentage(new BigNumber(value).div(liquidityAmount).times(100).toNumber())
+  }
+
   if (!modal) return null
 
-  const liquidityAmount: string = formatValue(modal.marketData.liquidity?.amount || '0', {
+  const liquidityAmount = Number(modal.marketData.liquidity?.amount || 0)
+  const liquidityAmountString: string = formatValue(liquidityAmount, {
     abbreviated: true,
     decimals: 6,
   })
 
-  const liquidityValue: string = formatValue(modal.marketData.liquidity?.value || '0', {
+  const liquidityValue = Number(modal.marketData.liquidity?.value || 0)
+  const liquidityValueString: string = formatValue(liquidityValue, {
     abbreviated: true,
     decimals: 6,
   })
@@ -54,15 +74,26 @@ export default function BorrowModal() {
         <TitleAndSubCell title={'$0'} sub={'Borrowed'} />
         <div className='h-100 w-[1px] bg-white/10'></div>
         <TitleAndSubCell
-          title={`${liquidityAmount} (${liquidityValue})`}
+          title={`${liquidityAmountString} (${liquidityValueString})`}
           sub={'Liquidity available'}
         />
       </div>
       <div className='flex gap-4'>
-        <Container className='w-full'>
-          <Text>Hello</Text>
+        <Container className='w-full gap-6'>
+          <TokenInput
+            asset={modal.asset}
+            onChange={onInputChange}
+            value={value}
+            max={liquidityAmount}
+          />
+          <Slider value={percentage} onChange={onSliderChange} />
           <Divider />
-          <Slider value={sliderValue} onChange={onSliderChange} />
+          <Button
+            onClick={onBorrowClick}
+            className='w-full'
+            text='Borrow'
+            rightIcon={<ArrowRight />}
+          />
         </Container>
         <Container>
           <AccountSummary />

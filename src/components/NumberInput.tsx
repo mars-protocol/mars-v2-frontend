@@ -8,7 +8,7 @@ interface Props {
   className: string
   maxDecimals: number
   minValue?: number
-  maxValue?: number
+  max?: number
   maxLength?: number
   allowNegative?: boolean
   suffix?: string
@@ -84,7 +84,7 @@ export default function NumberInput(props: Props) {
     const isSeparator = lastChar === '.' || lastChar === ','
     const isNegative = value.indexOf('-') > -1
     const isLowerThanMinimum = props.minValue !== undefined && Number(value) < props.minValue
-    const isHigherThanMaximum = props.maxValue !== undefined && Number(value) > props.maxValue
+    const isHigherThanMaximum = props.max !== undefined && Number(value) > props.max
     const isTooLong = props.maxLength !== undefined && numberCount > props.maxLength
     const exceedsMaxDecimals = props.maxDecimals !== undefined && decimals > props.maxDecimals
 
@@ -114,7 +114,7 @@ export default function NumberInput(props: Props) {
     }
 
     if (isHigherThanMaximum) {
-      updateValues(String(props.maxValue), props.maxValue!)
+      updateValues(String(props.max), props.max!)
       return
     }
 
