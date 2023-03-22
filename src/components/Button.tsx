@@ -37,13 +37,6 @@ const focusClasses = {
   quaternary: 'text-white',
 }
 
-const focusClasses = {
-  primary: 'bg-white/20',
-  secondary: 'bg-white/20',
-  tertiary: 'bg-white/20',
-  quaternary: 'text-white border-white',
-}
-
 const buttonBorderClasses =
   'before:content-[" "] before:absolute before:inset-0 before:rounded-sm before:p-[1px] before:border-glas before:z-[-1]'
 
