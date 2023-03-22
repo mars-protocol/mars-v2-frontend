@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev": "next dev -p 3001",
+    "dev": "next dev",
     "lint": "eslint ./src/ && yarn prettier-check",
     "format": "eslint ./src/ --fix && prettier --write ./src/",
     "prettier-check": "prettier --ignore-path .gitignore --check ./src/",

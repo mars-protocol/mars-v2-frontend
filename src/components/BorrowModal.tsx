@@ -7,7 +7,10 @@ import useStore from 'store'
 import { Text } from 'components/Text'
 import { formatPercent, formatValue } from 'utils/formatters'
 
-import Slider from './Slider'
+import Slider from 'components/Slider'
+import AccountSummary from 'components/Account/AccountSummary'
+import Container from 'components/Container'
+import Divider from 'components/Divider'
 
 export default function BorrowModal() {
   const modal = useStore((s) => s.borrowModal)
@@ -55,8 +58,15 @@ export default function BorrowModal() {
           sub={'Liquidity available'}
         />
       </div>
-      <div className='flex'>
-        <Slider value={sliderValue} onChange={onSliderChange} />
+      <div className='flex gap-4'>
+        <Container className='w-full'>
+          <Text>Hello</Text>
+          <Divider />
+          <Slider value={sliderValue} onChange={onSliderChange} />
+        </Container>
+        <Container>
+          <AccountSummary />
+        </Container>
       </div>
     </Modal>
   )
