@@ -20,7 +20,10 @@ export const CircularProgress = ({ color = '#FFFFFF', size = 20, className }: Pr
 
   if (!enableAnimations)
     return (
-      <div className={loaderClasses} style={{ width: `${size}px`, height: `${size}px` }}>
+      <div
+        className={classNames('flex items-center', loaderClasses)}
+        style={{ width: `${size}px`, height: `${size}px` }}
+      >
         <Text className='text-center' uppercase size='lg'>
           ...
         </Text>
