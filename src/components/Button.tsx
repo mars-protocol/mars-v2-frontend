@@ -22,12 +22,10 @@ interface Props {
 }
 
 export const buttonColorClasses = {
-  primary:
-    'border-none gradient-primary-to-secondary hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
+  primary: 'gradient-primary-to-secondary hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   secondary:
     'border border-white/30 bg-transparent hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
-  tertiary:
-    'border border-transparent bg-white/10 hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
+  tertiary: 'bg-white/10 hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   quaternary:
     'bg-transparent text-white/60 border-transparent hover:text-white hover:border-white active:text-white active:border-white',
 }
