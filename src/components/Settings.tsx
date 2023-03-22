@@ -29,7 +29,7 @@ export default function Settings() {
       <Button
         variant='solid'
         color='tertiary'
-        icon={<Gear />}
+        leftIcon={<Gear />}
         onClick={() => setShowMenu(!showMenu)}
         hasFocus={showMenu}
       />
