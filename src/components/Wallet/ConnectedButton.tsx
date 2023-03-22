@@ -136,23 +136,13 @@ export default function ConnectedButton() {
             </Text>
             <div className='flex w-full pt-1'>
               <Button
-                icon={<Copy />}
+                icon={isCopied ? <Check /> : <Copy />}
                 variant='transparent'
                 className='mr-10 flex w-auto py-2'
                 color='quaternary'
                 onClick={setCopied}
-              >
-                {isCopied ? (
-                  <Text size='sm'>
-                    Copied{' '}
-                    <span className='ml-1 w-4'>
-                      <Check />
-                    </span>
-                  </Text>
-                ) : (
-                  <Text size='sm'>Copy Address</Text>
-                )}
-              </Button>
+                text={isCopied ? 'Copied' : 'Copy Address'}
+              />
               <Button
                 icon={<ExternalLink />}
                 variant='transparent'
