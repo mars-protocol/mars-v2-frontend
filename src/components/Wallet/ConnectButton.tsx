@@ -23,7 +23,7 @@ export default function ConnectButton(props: Props) {
         color='tertiary'
         disabled={props.disabled}
         onClick={connect}
-        icon={<Wallet />}
+        leftIcon={<Wallet />}
       >
         {props.status === WalletConnectionStatus.Connecting ? (
           <span className='flex justify-center'>

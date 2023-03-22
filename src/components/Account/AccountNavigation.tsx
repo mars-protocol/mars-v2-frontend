@@ -61,7 +61,7 @@ export const AccountNavigation = () => {
                 variant='solid'
                 color='tertiary'
                 className='flex flex-1 flex-nowrap'
-                icon={<Account />}
+                leftIcon={<Account />}
                 onClick={() => setShowMenu(!showMenu)}
                 hasSubmenu
               >
@@ -77,7 +77,7 @@ export const AccountNavigation = () => {
                       <Button
                         className='flex w-[115px] items-center justify-center pl-0 pr-2'
                         text='Fund'
-                        icon={<ArrowUpLine />}
+                        leftIcon={<ArrowUpLine />}
                         onClick={() => {
                           useStore.setState({ fundAccountModal: true })
                           setShowMenu(false)
@@ -86,7 +86,7 @@ export const AccountNavigation = () => {
                       <Button
                         className='flex w-[115px] items-center justify-center pl-0 pr-2'
                         color='secondary'
-                        icon={<ArrowDownLine />}
+                        leftIcon={<ArrowDownLine />}
                         text='Withdraw'
                         onClick={() => {
                           useStore.setState({ withdrawModal: true })
@@ -104,7 +104,7 @@ export const AccountNavigation = () => {
                           setShowMenu(false)
                           createAccountHandler()
                         }}
-                        icon={<Add />}
+                        leftIcon={<Add />}
                       />
                       <Button
                         className='w-full whitespace-nowrap py-2'
@@ -115,7 +115,7 @@ export const AccountNavigation = () => {
                           setShowMenu(false)
                           deleteAccountHandler()
                         }}
-                        icon={<Rubbish />}
+                        leftIcon={<Rubbish />}
                       />
                       <Button
                         className='w-full whitespace-nowrap py-2'
@@ -126,7 +126,7 @@ export const AccountNavigation = () => {
                           setShowMenu(false)
                           /* TODO: add Transfer Balance Function */
                         }}
-                        icon={<ArrowsLeftRight />}
+                        leftIcon={<ArrowsLeftRight />}
                       />
                     </div>
                   </div>
@@ -156,7 +156,7 @@ export const AccountNavigation = () => {
               </Overlay>
             </div>
           ) : (
-            <Button onClick={createAccountHandler} icon={<Add />} color='tertiary'>
+            <Button onClick={createAccountHandler} leftIcon={<Add />} color='tertiary'>
               Create Account
             </Button>
           )}

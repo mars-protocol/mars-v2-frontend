@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 
-import { Card } from 'components/Card'
+import Card from 'components/Card'
 import Loading from 'components/Loading'
 import { Text } from 'components/Text'
 
@@ -22,7 +22,7 @@ function Fallback() {
 
 export default function OrderBook(props: PageProps) {
   return (
-    <Card className='col-span-3' title='Order Book' contentClassName='px-4 py-6'>
+    <Card className='col-span-3 bg-white/5' title='Order Book' contentClassName='px-4 py-6'>
       <Suspense fallback={<Fallback />}>
         {/* @ts-expect-error Server Component */}
         <Content params={props.params} />

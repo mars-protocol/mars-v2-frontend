@@ -4,12 +4,15 @@ import { ReactNode } from 'react'
 import { Close } from 'components/Icons'
 import { Text } from 'components/Text'
 import { Button } from 'components/Button'
+import Card from 'components/Card'
 
 interface Props {
-  title: string | ReactNode
+  header: string | ReactNode
+  headerClassName?: string
   children?: ReactNode | string
   content?: ReactNode | string
   className?: string
+  contentClassName?: string
   open: boolean
   setOpen?: (open: boolean) => void
 }
@@ -22,23 +25,26 @@ export const Modal = (props: Props) => {
   return props.open ? (
     <div className='fixed top-0 left-0 z-40 h-screen w-screen'>
       <div className='relative flex h-full w-full items-center justify-center'>
-        <section
+        <Card
           className={classNames(
-            'relative z-40 w-[790px] max-w-full rounded-base border border-white/20 bg-white/5 p-6 backdrop-blur-3xl',
+            'relative z-40 w-[790px] max-w-full bg-white/5 backdrop-blur-3xl',
             props.className,
           )}
         >
-          <div className='flex justify-between pb-6'>
-            <Text>{props.title}</Text>
+          <div className={classNames('flex justify-between', props.headerClassName)}>
+            {props.header}
             <Button
               onClick={onClickAway}
-              icon={<Close />}
+              leftIcon={<Close />}
+              className='h-8 w-8'
               iconClassName='h-2 w-2'
               color='tertiary'
             />
           </div>
-          <div>{props.children ? props.children : props.content}</div>
-        </section>
+          <div className={props.contentClassName}>
+            {props.children ? props.children : props.content}
+          </div>
+        </Card>
         <div
           className='fixed top-0 left-0 z-30 block h-full w-full bg-black/50 hover:cursor-pointer'
           onClick={onClickAway}

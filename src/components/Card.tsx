@@ -10,12 +10,12 @@ interface Props {
   contentClassName?: string
 }
 
-export const Card = (props: Props) => {
+export default function Card(props: Props) {
   return (
     <section
       className={classNames(
         props.className,
-        'relative z-1 flex max-w-full flex-col flex-wrap items-start overflow-hidden rounded-base bg-white/5',
+        'relative z-1 flex max-w-full flex-wrap items-start overflow-hidden rounded-base',
         'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
       )}
     >

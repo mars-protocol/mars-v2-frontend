@@ -89,6 +89,7 @@ module.exports = {
         input: '#282a33',
         loss: '#f96363',
         mars: '#a03b45',
+        'martian-red': '#FF645F',
         osmo: '#9f1ab9',
         'orb-primary': '#b12f25',
         'orb-secondary': '#530781',
@@ -238,6 +239,10 @@ module.exports = {
             backgroundImage:
               'linear-gradient(135deg,transparent 33.33%,#826d6b 33.33%,#826d6b 50%,transparent 50%,transparent 83.33%,#826d6b 83.33%,#826d6b 100%)',
             backgroundSize: '5px 5px',
+          },
+          '.gradient-header': {
+            background:
+              'linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 50%)',
           },
           '.gradient-limit': {
             background:

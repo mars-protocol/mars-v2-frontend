@@ -16,7 +16,8 @@ interface Props {
   text?: string | ReactNode
   variant?: 'solid' | 'transparent' | 'round'
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
-  icon?: ReactElement
+  leftIcon?: ReactElement
+  rightIcon?: ReactElement
   iconClassName?: string
   hasSubmenu?: boolean
   hasFocus?: boolean
@@ -110,7 +111,8 @@ export const Button = React.forwardRef(function Button(
     text,
     variant = 'solid',
     onClick,
-    icon,
+    leftIcon,
+    rightIcon,
     iconClassName,
     hasSubmenu,
     hasFocus,
@@ -164,7 +166,7 @@ export const Button = React.forwardRef(function Button(
       ref={ref as LegacyRef<HTMLButtonElement>}
       onClick={disabled ? () => {} : onClick}
     >
-      {icon && !showProgressIndicator && (
+      {leftIcon && !showProgressIndicator && (
         <span
           className={classNames(
             'flex items-center justify-center',
@@ -172,11 +174,22 @@ export const Button = React.forwardRef(function Button(
             iconClassName ?? 'h-4 w-4',
           )}
         >
-          {icon}
+          {leftIcon}
         </span>
       )}
       {text && !children && !showProgressIndicator && <span>{text}</span>}
       {children && !showProgressIndicator && children}
+      {rightIcon && !showProgressIndicator && (
+        <span
+          className={classNames(
+            'flex items-center justify-center',
+            (text || children) && 'ml-2',
+            iconClassName ?? 'h-4 w-4',
+          )}
+        >
+          {rightIcon}
+        </span>
+      )}
       {hasSubmenu && !showProgressIndicator && (
         <span className='ml-2 inline-block w-2.5'>
           <ChevronDown />

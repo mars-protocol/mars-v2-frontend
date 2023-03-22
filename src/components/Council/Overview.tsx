@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 
-import { Card } from 'components/Card'
+import Card from 'components/Card'
 import Loading from 'components/Loading'
 import { Text } from 'components/Text'
 
@@ -20,7 +20,11 @@ function Fallback() {
 
 export default function Overview(props: PageProps) {
   return (
-    <Card className='h-fit w-full justify-center' title='Council' contentClassName='px-4 py-6'>
+    <Card
+      className='h-fit w-full justify-center bg-white/5'
+      title='Council'
+      contentClassName='px-4 py-6'
+    >
       <Suspense fallback={<Fallback />}>
         {/* @ts-expect-error Server Component */}
         <Content params={props.params} />
