@@ -24,10 +24,7 @@ export default function BorrowModal() {
     (percentage: number) => onPercentageChange(percentage),
     [onPercentageChange],
   )
-  const onInputChange = useCallback(
-    (value: number) => onValueChange(value, percentage),
-    [onValueChange],
-  )
+  const onInputChange = useCallback((value: number) => onValueChange(value), [onValueChange])
 
   function setOpen(isOpen: boolean) {
     useStore.setState({ borrowModal: null })
@@ -40,7 +37,7 @@ export default function BorrowModal() {
     setValue(new BigNumber(percentage).div(100).times(liquidityAmount).toNumber())
   }
 
-  function onValueChange(value: number, percentage: number) {
+  function onValueChange(value: number) {
     setValue(value)
     setPercentage(new BigNumber(value).div(liquidityAmount).times(100).toNumber())
   }
