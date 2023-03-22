@@ -20,17 +20,22 @@ interface Props {
   rightIcon?: ReactElement
   iconClassName?: string
   hasSubmenu?: boolean
+  hasFocus?: boolean
 }
 
 export const buttonColorClasses = {
-  primary:
-    'border-none gradient-primary-to-secondary hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
+  primary: 'gradient-primary-to-secondary hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   secondary:
     'border border-white/30 bg-transparent hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
-  tertiary:
-    'border border-transparent bg-white/10 hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
-  quaternary:
-    'bg-transparent text-white/60 border-transparent hover:text-white hover:border-white active:text-white active:border-white',
+  tertiary: 'bg-white/10 hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
+  quaternary: 'bg-transparent text-white/60 hover:text-white ctive:text-white',
+}
+
+const focusClasses = {
+  primary: 'bg-white/20',
+  secondary: 'bg-white/20',
+  tertiary: 'bg-white/20',
+  quaternary: 'text-white',
 }
 
 const buttonBorderClasses =
@@ -43,11 +48,10 @@ const buttonGradientClasses = [
 ]
 
 const buttonTransparentColorClasses = {
-  primary: 'border-none hover:text-primary active:text-primary focus:text-primary',
-  secondary: 'border-none hover:text-secondary active:text-secondary focus:text-secondary',
-  tertiary: 'border-none hover:text-white/80 active:text-white/80 focus:text-white/80',
-  quaternary:
-    'border-none text-white/60 hover:text-white hover:border-white active:text-white active:border-white',
+  primary: 'hover:text-primary active:text-primary focus:text-primary',
+  secondary: 'hover:text-secondary active:text-secondary focus:text-secondary',
+  tertiary: 'hover:text-white/80 active:text-white/80 focus:text-white/80',
+  quaternary: 'text-white/60 hover:text-white active:text-white',
 }
 
 const buttonRoundSizeClasses = {
@@ -74,11 +78,12 @@ export const buttonVariantClasses = {
   round: 'rounded-full p-0',
 }
 
-function glowElement() {
+function glowElement(enableAnimations: boolean) {
   return (
     <svg
       className={classNames(
-        'glow-container z-1 opacity-0 group-hover:animate-glow group-focus:animate-glow',
+        enableAnimations && 'group-hover:animate-glow group-focus:animate-glow',
+        'glow-container z-1 opacity-0 ',
         'pointer-events-none absolute inset-0 h-full w-full',
       )}
     >
@@ -110,6 +115,7 @@ export const Button = React.forwardRef(function Button(
     rightIcon,
     iconClassName,
     hasSubmenu,
+    hasFocus,
   }: Props,
   ref,
 ) {
@@ -153,6 +159,7 @@ export const Button = React.forwardRef(function Button(
         variant === 'solid' && color === 'tertiary' && buttonBorderClasses,
         variant === 'solid' && color === 'primary' && buttonGradientClasses,
         disabled && 'pointer-events-none opacity-50',
+        hasFocus && focusClasses[color],
         className,
       )}
       id={id}
@@ -188,7 +195,7 @@ export const Button = React.forwardRef(function Button(
           <ChevronDown />
         </span>
       )}
-      {variant === 'solid' && !isDisabled && glowElement()}
+      {variant === 'solid' && !isDisabled && glowElement(enableAnimations)}
       {showProgressIndicator && (
         <CircularProgress size={size === 'small' ? 10 : size === 'medium' ? 12 : 18} />
       )}

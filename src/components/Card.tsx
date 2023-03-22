@@ -15,8 +15,8 @@ export default function Card(props: Props) {
     <section
       className={classNames(
         props.className,
-        'relative z-1 flex max-w-full flex-wrap items-start overflow-hidden rounded-base border border-transparent',
-        'before:content-[" "] before:absolute before:inset-0 before:z-[-1] before:rounded-base before:p-[1px] before:border-glas',
+        'relative z-1 flex max-w-full flex-wrap items-start overflow-hidden rounded-base',
+        'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
       )}
     >
       {props.title && (
