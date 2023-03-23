@@ -41,7 +41,6 @@ export const AccountNavigation = () => {
     setShowMenu(true)
     setCreateAccount(true)
     const accountId = await createCreditAccount({ fee: hardcodedFee })
-
     setCreateAccount(false)
     if (!accountId) return
     router.push(`/wallets/${params.wallet}/accounts/${accountId}`)
@@ -82,7 +81,7 @@ export const AccountNavigation = () => {
             show={showMenu}
             setShow={setShowMenu}
           >
-            <div className='bg-account absolute inset-0 z-1 h-full w-full' />
+            <div className='absolute inset-0 z-1 h-full w-full bg-account' />
             {!hasCreditAccounts && (
               <div className='relative z-10 w-full p-4'>
                 <Text size='lg' className='font-bold'>
