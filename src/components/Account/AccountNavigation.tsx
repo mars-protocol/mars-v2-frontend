@@ -1,8 +1,8 @@
 'use client'
 
+import classNames from 'classnames'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import classNames from 'classnames'
 
 import { Button } from 'components/Button'
 import {
@@ -76,7 +76,7 @@ export const AccountNavigation = () => {
           </Button>
           <Overlay
             className={classNames(
-              'max-w-screen left-0 mt-2 flex h-[530px] w-[336px] flex-wrap overflow-y-scroll scrollbar-hide',
+              'max-w-screen right-0 mt-2 flex h-[530px] w-[336px] flex-wrap overflow-y-scroll scrollbar-hide',
               hasCreditAccounts ? 'items-start' : 'items-end',
             )}
             show={showMenu}
