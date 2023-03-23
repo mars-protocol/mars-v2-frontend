@@ -1,11 +1,10 @@
 'use client'
 
-import React from 'react'
 import { Row } from '@tanstack/react-table'
 
-import { getMarketAssets } from 'utils/assets'
 import { Button } from 'components/Button'
 import useStore from 'store'
+import { getMarketAssets } from 'utils/assets'
 
 type AssetRowProps = {
   row: Row<BorrowAsset | BorrowAssetActive>
@@ -46,7 +45,7 @@ export default function AssetExpanded(props: AssetRowProps) {
       }}
     >
       <td colSpan={isActive ? 5 : 4}>
-        <div className='flex justify-end p-4'>
+        <div className='flex justify-end gap-4 p-4'>
           <Button
             onClick={borrowHandler}
             color='primary'
