@@ -1,10 +1,9 @@
 import classNames from 'classnames'
 import { ReactNode } from 'react'
 
-import { Close } from 'components/Icons'
-import { Text } from 'components/Text'
 import { Button } from 'components/Button'
 import Card from 'components/Card'
+import { Close } from 'components/Icons'
 
 interface Props {
   header: string | ReactNode
@@ -23,7 +22,7 @@ export const Modal = (props: Props) => {
   }
 
   return props.open ? (
-    <div className='fixed top-0 left-0 z-40 h-screen w-screen'>
+    <div className='fixed inset-0 z-40 h-screen w-screen '>
       <div className='relative flex h-full w-full items-center justify-center'>
         <Card
           className={classNames(
@@ -46,7 +45,7 @@ export const Modal = (props: Props) => {
           </div>
         </Card>
         <div
-          className='fixed top-0 left-0 z-30 block h-full w-full bg-black/50 hover:cursor-pointer'
+          className='fixed inset-0 z-30 block h-full w-full bg-black/50 backdrop-blur-sm hover:cursor-pointer'
           onClick={onClickAway}
           role='button'
         />
