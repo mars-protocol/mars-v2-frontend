@@ -44,9 +44,7 @@ module.exports = {
         sticky: '50px',
       },
       backgroundImage: {
-        'create-account': 'url(/images/create-account.webp), url(/images/create-account.png)',
-        'fund-modal': 'url(/images/fund-bg.webp), url(/images/fund-bg.png)',
-        'delete-modal': 'url(/images/delete-account-bg.webp), url(/images/delete-account-bg.png)',
+        account: 'url(/images/account.webp), url(/images/account.png)',
       },
       backgroundSize: {
         desktop: '100% auto',

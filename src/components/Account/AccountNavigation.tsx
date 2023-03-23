@@ -82,7 +82,7 @@ export const AccountNavigation = () => {
             show={showMenu}
             setShow={setShowMenu}
           >
-            <div className='absolute inset-0 z-1 h-full w-full bg-create-account opacity-60' />
+            <div className='bg-account absolute inset-0 z-1 h-full w-full' />
             {!hasCreditAccounts && (
               <div className='relative z-10 w-full p-4'>
                 <Text size='lg' className='font-bold'>
