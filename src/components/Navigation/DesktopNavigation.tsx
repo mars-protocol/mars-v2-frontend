@@ -9,7 +9,7 @@ import { Logo } from 'components/Icons'
 import { NavLink } from 'components/Navigation/NavLink'
 import Settings from 'components/Settings'
 import Wallet from 'components/Wallet/Wallet'
-import { useAnimations } from 'hooks/data/useAnimations'
+import { useAnimations } from 'hooks/useAnimations'
 import { getRoute } from 'utils/route'
 
 export const menuTree: { href: RouteSegment; label: string }[] = [

@@ -9,7 +9,7 @@ import Switch from 'components/Switch'
 import { Text } from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
 import { ENABLE_ANIMATIONS_KEY } from 'constants/localStore'
-import { useAnimations } from 'hooks/data/useAnimations'
+import { useAnimations } from 'hooks/useAnimations'
 import useStore from 'store'
 
 export default function Settings() {
