@@ -74,7 +74,7 @@ export default function ConnectedButton() {
     <div className={'relative'}>
       {network?.chainId !== ChainInfoID.Osmosis1 && (
         <Text
-          className='absolute -right-2 -top-2.5 z-10 rounded-lg p-0.5 px-2 gradient-primary-to-secondary'
+          className='absolute -right-2 -top-2.5 z-10 rounded-sm p-0.5 px-2 gradient-primary-to-secondary'
           size='3xs'
           uppercase
         >
