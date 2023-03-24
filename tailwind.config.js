@@ -154,6 +154,9 @@ module.exports = {
       maxWidth: {
         content: '1024px',
       },
+      minWidth: {
+        15: '60px',
+      },
       screens: {
         sm: '480px',
         md: '720px',
@@ -169,6 +172,7 @@ module.exports = {
         120000: '120000ms',
         150000: '150000ms',
         180000: '180000ms',
+        DEFAULT: '500ms',
       },
       transitionProperty: {
         background: 'filter, -webkit-filter',
