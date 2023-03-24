@@ -2,8 +2,11 @@
 import { useRouter } from 'next/navigation'
 import { toast as createToast, Slide, ToastContainer } from 'react-toastify'
 
-import { Check, Warning } from 'components/Icons'
+import classNames from 'classnames'
+import { CheckCircled, X, XCircled } from 'components/Icons'
+import { Text } from 'components/Text'
 import useStore from 'store'
+import { Button } from './Button'
 
 export default function Toaster() {
   const enableAnimations = useStore((s) => s.enableAnimations)
@@ -11,25 +14,54 @@ export default function Toaster() {
   const router = useRouter()
 
   if (toast) {
-    if (toast.isError) {
-      createToast.error(toast.message, {
-        progressClassName: 'bg-loss',
-        icon: (
-          <span className='h-4 w-4'>
-            <Warning />
-          </span>
-        ),
-      })
-    } else {
-      createToast.success(toast.message, {
-        progressClassName: 'bg-profit',
-        icon: (
-          <span className='h-4 w-4'>
-            <Check />
-          </span>
-        ),
-      })
-    }
+    const Msg = () => (
+      <div
+        className={classNames(
+          'relative z-1 m-0 flex w-full flex-wrap rounded-sm p-6 shadow-overlay backdrop-blur-lg',
+          'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-sm before:p-[1px] before:border-glas',
+          toast.isError ? 'bg-error-bg/20' : 'bg-success-bg/20',
+        )}
+      >
+        <div className='mb-4 flex w-full gap-2'>
+          <div
+            className={classNames('rounded-sm p-1.5', toast.isError ? 'bg-error' : 'bg-success')}
+          >
+            <span className='block h-4 w-4 text-white'>
+              {toast.isError ? <XCircled /> : <CheckCircled />}
+            </span>
+          </div>
+          <Text
+            size='base'
+            className={classNames(
+              'flex items-center font-bold',
+              toast.isError ? 'text-error' : 'text-success',
+            )}
+          >
+            {toast.isError ? 'Error' : 'Success'}
+          </Text>
+        </div>
+
+        <Text size='sm' className='text-bold text-white'>
+          {toast.message}
+        </Text>
+        <div className='absolute top-8 right-6 '>
+          <Button
+            leftIcon={<X />}
+            variant='transparent'
+            className='w-2'
+            iconClassName={classNames('w-2 h-2', toast.isError ? 'text-error' : 'text-success')}
+          />
+        </div>
+      </div>
+    )
+
+    createToast(Msg, {
+      icon: false,
+      draggable: false,
+      closeOnClick: true,
+      progressClassName: classNames('h-[1px] bg-none', toast.isError ? 'bg-error' : 'bg-success'),
+    })
+
     useStore.setState({ toast: null })
     router.refresh()
   }
@@ -38,12 +70,12 @@ export default function Toaster() {
     <ToastContainer
       autoClose={5000}
       closeButton={false}
-      position='bottom-right'
+      position='top-right'
       newestOnTop
       transition={enableAnimations ? Slide : undefined}
-      className='w-[280px] p-0'
-      toastClassName='z-50 text-xs rounded-sm border border-white/40 shadow-overlay backdrop-blur-sm gradient-popover px-2 py-4'
-      bodyClassName='p-0 text-white m-0'
+      className='p-0'
+      toastClassName='top-[73px] z-50 m-0 mb-4 flex w-full bg-transparent p-0'
+      bodyClassName='p-0 m-0 w-full flex'
     />
   )
 }

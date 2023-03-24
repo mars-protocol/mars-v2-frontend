@@ -3,7 +3,7 @@ import { ReactNode } from 'react'
 
 import { Button } from 'components/Button'
 import Card from 'components/Card'
-import { Close } from 'components/Icons'
+import { X } from 'components/Icons'
 
 interface Props {
   header: string | ReactNode
@@ -34,7 +34,7 @@ export const Modal = (props: Props) => {
             {props.header}
             <Button
               onClick={onClickAway}
-              leftIcon={<Close />}
+              leftIcon={<X />}
               className='h-8 w-8'
               iconClassName='h-2 w-2'
               color='tertiary'
