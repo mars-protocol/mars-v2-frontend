@@ -22,6 +22,7 @@ export interface BroadcastSlice {
     fee: StdFee
     funds?: Coin[]
   }) => Promise<BroadcastResult>
+  borrow: (options: { fee: StdFee; accountId: string; coin: Coin }) => Promise<void>
   createCreditAccount: (options: { fee: StdFee }) => Promise<string | null>
   deleteCreditAccount: (options: { fee: StdFee; accountId: string }) => Promise<boolean>
   depositCreditAccount: (options: {
@@ -35,6 +36,31 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
   const marketAssets = getMarketAssets()
   return {
     toast: null,
+    borrow: async (options: { fee: StdFee; accountId: string; coin: Coin }) => {
+      const msg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: [{ borrow: options.coin }],
+        },
+      }
+
+      const response = await get().executeMsg({ msg, fee: options.fee })
+
+      if (response.result) {
+        set({
+          toast: {
+            message: `Borrowed ${options.coin.amount} ${options.coin.denom} to Account ${options.accountId}`,
+          },
+        })
+      } else {
+        set({
+          toast: {
+            message: response.error ?? `Transaction failed: ${response.error}`,
+            isError: true,
+          },
+        })
+      }
+    },
     createCreditAccount: async (options: { fee: StdFee }) => {
       const msg = {
         create_credit_account: {},
