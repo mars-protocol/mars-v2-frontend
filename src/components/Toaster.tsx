@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation'
 import { toast as createToast, Slide, ToastContainer } from 'react-toastify'
 import classNames from 'classnames'
 
-import { CheckCircled, X, XCircled } from 'components/Icons'
+import { CheckCircled, Cross, CrossCircled } from 'components/Icons'
 import { Text } from 'components/Text'
 import useStore from 'store'
 
@@ -28,7 +28,7 @@ export default function Toaster() {
             className={classNames('rounded-sm p-1.5', toast.isError ? 'bg-error' : 'bg-success')}
           >
             <span className='block h-4 w-4 text-white'>
-              {toast.isError ? <XCircled /> : <CheckCircled />}
+              {toast.isError ? <CrossCircled /> : <CheckCircled />}
             </span>
           </div>
           <Text
@@ -47,7 +47,7 @@ export default function Toaster() {
         </Text>
         <div className='absolute top-8 right-6 '>
           <Button
-            leftIcon={<X />}
+            leftIcon={<Cross />}
             variant='transparent'
             className='w-2'
             iconClassName={classNames('w-2 h-2', toast.isError ? 'text-error' : 'text-success')}

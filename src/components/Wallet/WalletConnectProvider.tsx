@@ -5,7 +5,7 @@ import { FC } from 'react'
 
 import { Button } from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
-import { X } from 'components/Icons'
+import { Cross } from 'components/Icons'
 import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 
 type Props = {
@@ -46,7 +46,7 @@ export const WalletConnectProvider: FC<Props> = ({ children }) => {
         walletName: 'w-full text-lg',
         walletDescription: 'w-full text-xs text-white/60 break-all',
       }}
-      closeIcon={<Button leftIcon={<X />} iconClassName='h-2 w-2' color='tertiary' />}
+      closeIcon={<Button leftIcon={<Cross />} iconClassName='h-2 w-2' color='tertiary' />}
       renderLoader={() => (
         <div>
           <CircularProgress size={30} />
