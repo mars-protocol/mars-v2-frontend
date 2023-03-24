@@ -24,7 +24,8 @@ interface Props {
 }
 
 export const buttonColorClasses = {
-  primary: 'gradient-primary-to-secondary hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
+  primary:
+    'font-bold gradient-primary-to-secondary hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   secondary:
     'border border-white/30 bg-transparent hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
   tertiary: 'bg-white/10 hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
