@@ -18,7 +18,7 @@ export const AssetRow = (props: AssetRowProps) => {
     <tr
       key={props.row.id}
       className={classNames(
-        'peer cursor-pointer transition-colors',
+        'cursor-pointer transition-colors',
         props.row.getIsExpanded() ? ' bg-black/20' : 'bg-white/0 hover:bg-white/5',
       )}
       onClick={(e) => {
