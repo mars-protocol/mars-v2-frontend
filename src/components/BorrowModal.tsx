@@ -14,11 +14,15 @@ import Divider from 'components/Divider'
 import TokenInput from 'components/TokenInput'
 import { Button } from 'components/Button'
 import { ArrowRight } from 'components/Icons'
+import useParams from 'hooks/useParams'
+import { hardcodedFee } from 'utils/contants'
 
 export default function BorrowModal() {
-  const modal = useStore((s) => s.borrowModal)
   const [percentage, setPercentage] = useState(0)
   const [value, setValue] = useState(0)
+  const modal = useStore((s) => s.borrowModal)
+  const borrow = useStore((s) => s.borrow)
+  const params = useParams()
 
   const onSliderChange = useCallback(
     (percentage: number) => onPercentageChange(percentage),
@@ -30,7 +34,17 @@ export default function BorrowModal() {
     useStore.setState({ borrowModal: null })
   }
 
-  function onBorrowClick() {}
+  function onBorrowClick() {
+    if (!modal?.asset) return
+
+    const amount = new BigNumber(value).shiftedBy(modal.asset.decimals)
+
+    borrow({
+      fee: hardcodedFee,
+      accountId: params.account,
+      coin: { denom: modal.asset.denom, amount: amount.toString() },
+    })
+  }
 
   function onPercentageChange(percentage: number) {
     setPercentage(percentage)

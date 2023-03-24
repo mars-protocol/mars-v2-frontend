@@ -30,6 +30,7 @@ export default function AccountMenu() {
   const deleteCreditAccount = useStore((s) => s.deleteCreditAccount)
   const creditAccounts = useStore((s) => s.creditAccounts)
   const address = useStore((s) => s.address)
+  const deposit = useStore((s) => s.deposit)
 
   const hasCreditAccounts = !!creditAccounts?.length
   const accountSelected = !!selectedAccount && !isNaN(Number(selectedAccount))
@@ -113,7 +114,11 @@ export default function AccountMenu() {
                     text='Fund'
                     leftIcon={<ArrowUpLine />}
                     onClick={() => {
-                      useStore.setState({ fundAccountModal: true })
+                      deposit({
+                        fee: hardcodedFee,
+                        accountId: params.account,
+                        coin: { denom: 'uosmo', amount: '10000000' },
+                      })
                       setShowMenu(false)
                     }}
                   />
