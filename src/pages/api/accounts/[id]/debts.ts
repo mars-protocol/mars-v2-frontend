@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const account = await (await fetch(`${ENV.URL_API}/accounts/${accountId}${VERCEL_BYPASS}`)).json()
 
   if (account) {
-    return res.status(200).json([{ denom: 'uosmo', amount: '123876' }])
+    return res.status(200).json(account.debts)
   }
 
   return res.status(404)
