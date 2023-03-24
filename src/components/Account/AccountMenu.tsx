@@ -70,7 +70,7 @@ export default function AccountMenu() {
           >
             {hasCreditAccounts
               ? accountSelected
-                ? `Account ${selectedAccount}`
+                ? `Account #${selectedAccount}`
                 : 'Select Account'
               : 'Create Account'}
           </Button>
@@ -83,7 +83,7 @@ export default function AccountMenu() {
             setShow={setShowMenu}
           >
             <div className='absolute inset-0 z-1 h-full w-full bg-account' />
-            {!hasCreditAccounts && (
+            {(!hasCreditAccounts || createAccount) && (
               <div className='relative z-10 w-full p-4'>
                 <Text size='lg' className='mb-2 font-bold'>
                   Create your first Credit Account
