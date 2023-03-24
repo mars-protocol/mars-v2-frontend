@@ -1,13 +1,14 @@
 'use client'
 
 import classNames from 'classnames'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+
 import AccountMenu from 'components/Account/AccountMenu'
 import { Logo } from 'components/Icons'
 import { NavLink } from 'components/Navigation/NavLink'
 import Settings from 'components/Settings'
 import Wallet from 'components/Wallet/Wallet'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { getRoute } from 'utils/route'
 
 export const menuTree: { href: RouteSegment; label: string }[] = [

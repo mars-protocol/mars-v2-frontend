@@ -1,11 +1,12 @@
 'use client'
 import { useRouter } from 'next/navigation'
 import { toast as createToast, Slide, ToastContainer } from 'react-toastify'
-
 import classNames from 'classnames'
+
 import { CheckCircled, X, XCircled } from 'components/Icons'
 import { Text } from 'components/Text'
 import useStore from 'store'
+
 import { Button } from './Button'
 
 export default function Toaster() {
