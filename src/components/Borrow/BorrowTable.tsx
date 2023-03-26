@@ -13,14 +13,14 @@ import Image from 'next/image'
 import React from 'react'
 
 import AmountAndValue from 'components/AmountAndValue'
+import AssetExpanded from 'components/Borrow/AssetExpanded'
 import { AssetRow } from 'components/Borrow/AssetRow'
-import { ChevronDown, ChevronUp } from 'components/Icons'
+import { ChevronDown, SortAsc, SortDesc, SortNone } from 'components/Icons'
+import Loading from 'components/Loading'
 import { Text } from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import { getMarketAssets } from 'utils/assets'
 import { formatPercent } from 'utils/formatters'
-import AssetExpanded from 'components/Borrow/AssetExpanded'
-import Loading from 'components/Loading'
 
 type Props = {
   data: BorrowAsset[] | BorrowAssetActive[]
@@ -43,7 +43,7 @@ export const BorrowTable = (props: Props) => {
           return (
             <div className='flex flex-1 items-center gap-3'>
               <Image src={asset.logo} alt='token' width={32} height={32} />
-              <TitleAndSubCell title={asset.symbol} sub={asset.name} />
+              <TitleAndSubCell title={asset.symbol} sub={asset.name} className='min-w-15' />
             </div>
           )
         },
@@ -101,7 +101,9 @@ export const BorrowTable = (props: Props) => {
         width: 150,
         cell: ({ row }) => (
           <div className='flex items-center justify-end'>
-            <div className='w-5'>{row.getIsExpanded() ? <ChevronUp /> : <ChevronDown />}</div>
+            <div className={classNames('w-4', row.getIsExpanded() && 'rotate-180')}>
+              <ChevronDown />
+            </div>
           </div>
         ),
       },
@@ -144,20 +146,20 @@ export const BorrowTable = (props: Props) => {
                       'align-center',
                     )}
                   >
-                    {header.column.getCanSort()
-                      ? {
-                          asc: (
-                            <Image src='/images/sort-asc.svg' alt='mars' width={24} height={24} />
-                          ),
-                          desc: (
-                            <Image src='/images/sort-desc.svg' alt='mars' width={24} height={24} />
-                          ),
-                          false: (
-                            <Image src='/images/sort-none.svg' alt='mars' width={24} height={24} />
-                          ),
-                        }[header.column.getIsSorted() as string] ?? null
-                      : null}
-                    <Text tag='span' size='sm' className='font-normal text-white/40'>
+                    <span className='h-6 w-6 text-white'>
+                      {header.column.getCanSort()
+                        ? {
+                            asc: <SortAsc />,
+                            desc: <SortDesc />,
+                            false: <SortNone />,
+                          }[header.column.getIsSorted() as string] ?? null
+                        : null}
+                    </span>
+                    <Text
+                      tag='span'
+                      size='sm'
+                      className='flex items-center font-normal text-white/40'
+                    >
                       {flexRender(header.column.columnDef.header, header.getContext())}
                     </Text>
                   </div>

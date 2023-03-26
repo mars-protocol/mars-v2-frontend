@@ -1,5 +1,5 @@
-import React from 'react'
 import { flexRender, Row } from '@tanstack/react-table'
+import classNames from 'classnames'
 
 import { getMarketAssets } from 'utils/assets'
 
@@ -17,7 +17,10 @@ export const AssetRow = (props: AssetRowProps) => {
   return (
     <tr
       key={props.row.id}
-      className='cursor-pointer'
+      className={classNames(
+        'cursor-pointer transition-colors',
+        props.row.getIsExpanded() ? ' bg-black/20' : 'bg-white/0 hover:bg-white/5',
+      )}
       onClick={(e) => {
         e.preventDefault()
         const isExpanded = props.row.getIsExpanded()

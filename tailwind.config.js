@@ -78,6 +78,8 @@ module.exports = {
         axlusdc: '#478edc',
         body: '#0D0012',
         'body-dark': '#141621',
+        error: '#F97066',
+        'error-bg': '#FDA29B',
         grey: '#3a3c49',
         'grey-dark': '#1a1c25',
         'grey-highlight': '#4c4c4c',
@@ -95,6 +97,8 @@ module.exports = {
         profit: '#41a4a9',
         primary: '#FF625E',
         secondary: '#FB9562',
+        success: '#32D583',
+        'success-bg': '#6CE9A6',
         'vote-against': '#eb9e49',
         warning: '#c83333',
         white: '#FFF',
@@ -106,7 +110,7 @@ module.exports = {
         '2xs': ['10px', '16px'],
         xs: ['12px', '16px'],
         sm: ['14px', '18px'],
-        base: ['15px', '20px'],
+        base: ['16px', '20px'],
         lg: ['17px', '24px'],
         xl: ['19px', '28px'],
         '2xl': ['21px', '32px'],
@@ -154,6 +158,9 @@ module.exports = {
       maxWidth: {
         content: '1024px',
       },
+      minWidth: {
+        15: '60px',
+      },
       screens: {
         sm: '480px',
         md: '720px',
@@ -169,6 +176,7 @@ module.exports = {
         120000: '120000ms',
         150000: '150000ms',
         180000: '180000ms',
+        DEFAULT: '500ms',
       },
       transitionProperty: {
         background: 'filter, -webkit-filter',
@@ -301,7 +309,7 @@ module.exports = {
             letterSpacing: theme('letterSpacing.wider'),
           },
           '.text-base-caps': {
-            fontSize: '15px',
+            fontSize: '16px',
             lineHeight: '20px',
             textTransform: 'uppercase',
             fontWeight: theme('fontWeight.semibold'),

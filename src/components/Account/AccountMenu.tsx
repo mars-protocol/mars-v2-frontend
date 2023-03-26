@@ -9,6 +9,7 @@ import {
   Account,
   Add,
   ArrowDownLine,
+  ArrowRight,
   ArrowsLeftRight,
   ArrowUpLine,
   Rubbish,
@@ -20,7 +21,7 @@ import useParams from 'hooks/useParams'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
 
-export const AccountNavigation = () => {
+export default function AccountMenu() {
   const router = useRouter()
   const params = useParams()
   const selectedAccount = params.account
@@ -69,7 +70,7 @@ export const AccountNavigation = () => {
           >
             {hasCreditAccounts
               ? accountSelected
-                ? `Account ${selectedAccount}`
+                ? `Account #${selectedAccount}`
                 : 'Select Account'
               : 'Create Account'}
           </Button>
@@ -82,22 +83,21 @@ export const AccountNavigation = () => {
             setShow={setShowMenu}
           >
             <div className='absolute inset-0 z-1 h-full w-full bg-account' />
-            {!hasCreditAccounts && (
+            {(!hasCreditAccounts || createAccount) && (
               <div className='relative z-10 w-full p-4'>
-                <Text size='lg' className='font-bold'>
-                  Create Credit Account
+                <Text size='lg' className='mb-2 font-bold'>
+                  Create your first Credit Account
                 </Text>
                 <Text className='mb-4 text-white/70'>
-                  Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-                  tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-                  vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-                  no sea takimata sanctus est Lorem ipsum dolor sit amet.
+                  Please approve the transaction in your wallet in order to create your first Credit
+                  Account.
                 </Text>
                 <Button
                   className='w-full'
                   showProgressIndicator={createAccount}
                   disabled={createAccount}
                   text='Create Account'
+                  rightIcon={<ArrowRight />}
                   onClick={createAccountHandler}
                 />
               </div>

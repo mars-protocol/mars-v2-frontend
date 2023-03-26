@@ -40,11 +40,11 @@ const focusClasses = {
 }
 
 const buttonBorderClasses =
-  'before:content-[" "] before:absolute before:inset-0 before:rounded-sm before:p-[1px] before:border-glas before:z-[-1]'
+  'before:content-[" "] before:absolute before:inset-0 before:rounded-sm before:p-[1px] before:border-glas before:-z-1'
 
 const buttonGradientClasses = [
-  'before:content-[" "] before:absolute before:inset-0 before:rounded-sm before:z-[-1] before:opacity-0',
-  'before:gradient-secondary-to-primary before:transition-opacity before:duration-500 before:ease-in',
+  'before:content-[" "] before:absolute before:inset-0 before:rounded-sm before:-z-1 before:opacity-0',
+  'before:gradient-secondary-to-primary before:transition-opacity before:ease-in',
   'hover:before:opacity-100',
 ]
 
@@ -153,7 +153,7 @@ export const Button = React.forwardRef(function Button(
       className={classNames(
         'relative z-1 flex items-center',
         'cursor-pointer appearance-none break-normal outline-none',
-        'text-white transition-all duration-500',
+        'text-white transition-all',
         enableAnimations && 'transition-color',
         buttonClasses,
         buttonVariantClasses[variant],

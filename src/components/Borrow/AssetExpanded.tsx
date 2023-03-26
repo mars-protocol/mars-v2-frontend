@@ -36,7 +36,7 @@ export default function AssetExpanded(props: AssetRowProps) {
   return (
     <tr
       key={props.row.id}
-      className='cursor-pointer'
+      className='cursor-pointer bg-black/20 transition-colors'
       onClick={(e) => {
         e.preventDefault()
         const isExpanded = props.row.getIsExpanded()
