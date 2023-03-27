@@ -25,6 +25,7 @@ export default function Head() {
       <meta content='Mars Protocol V2' property='og:site_name' />
       <meta content='#ffffff' name='msapplication-TileColor' />
       <meta content='#ffffff' name='theme-color' />
+      <script src='https://cdn.jsdelivr.net/npm/tw-elements/dist/js/index.min.js'></script>
     </>
   )
 }
