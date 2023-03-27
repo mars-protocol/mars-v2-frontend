@@ -32,6 +32,7 @@
     "recharts": "^2.5.0",
     "swr": "^2.1.1",
     "tailwind-scrollbar-hide": "^1.1.7",
+    "tw-elements": "^1.0.0-beta1",
     "zustand": "^4.3.6"
   },
   "devDependencies": {

@@ -2,7 +2,11 @@
 const plugin = require('tailwindcss/plugin')
 
 module.exports = {
-  content: ['./src/app/**/*.{js,ts,jsx,tsx}', './src/components/**/*.{js,ts,jsx,tsx}'],
+  content: [
+    './src/app/**/*.{js,ts,jsx,tsx}',
+    './src/components/**/*.{js,ts,jsx,tsx}',
+    './node_modules/tw-elements/dist/js/**/*.js',
+  ],
   safelist: [
     'h-2',
     'h-4.5',
@@ -196,6 +200,7 @@ module.exports = {
   },
   plugins: [
     require('tailwind-scrollbar-hide'),
+    require('tw-elements/dist/plugin'),
     plugin(function ({ addBase, addUtilities, theme }) {
       addBase({
         h1: { fontSize: '61px', lineHeight: '80px', fontWeight: theme('fontWeight.light') },
