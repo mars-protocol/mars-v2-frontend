@@ -26,7 +26,7 @@ export const Modal = (props: Props) => {
       <div className='relative flex h-full w-full items-center justify-center'>
         <Card
           className={classNames(
-            'relative z-40 w-[790px] max-w-full bg-white/5 backdrop-blur-3xl',
+            'relative z-40 w-[895px] max-w-full bg-white/5 backdrop-blur-3xl',
             props.className,
           )}
         >

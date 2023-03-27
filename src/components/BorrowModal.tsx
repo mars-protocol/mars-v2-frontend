@@ -106,6 +106,7 @@ export default function BorrowModal() {
           />
           <Slider value={percentage} onChange={onSliderChange} />
           <Divider />
+          <Text size='lg'>Borrow to</Text>
           <Button
             onClick={onBorrowClick}
             className='w-full'
