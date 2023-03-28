@@ -26,12 +26,6 @@ export default function BorrowModal() {
   const borrow = useStore((s) => s.borrow)
   const creditAccounts = useStore((s) => s.creditAccounts)
 
-  const onSliderChange = useCallback(
-    (percentage: number) => onPercentageChange(percentage),
-    [onPercentageChange],
-  )
-  const onInputChange = useCallback((value: number) => onValueChange(value), [onValueChange])
-
   function onAccountSelect(accountId: string) {
     setSelectedAccount(accountId)
   }
@@ -52,15 +46,16 @@ export default function BorrowModal() {
     })
   }
 
-  function onPercentageChange(percentage: number) {
-    setPercentage(percentage)
-    setValue(new BigNumber(percentage).div(100).times(liquidityAmount).toNumber())
-  }
+  const onSliderChange = useCallback(
+    (percentage: number, liquidityAmount: number) =>
+      setValue(new BigNumber(percentage).div(100).times(liquidityAmount).toNumber()),
+    [],
+  )
 
-  function onValueChange(value: number) {
+  const onInputChange = useCallback((value: number, liquidityAmount: number) => {
     setValue(value)
     setPercentage(new BigNumber(value).div(liquidityAmount).times(100).toNumber())
-  }
+  }, [])
 
   if (!modal) return null
 
@@ -109,11 +104,11 @@ export default function BorrowModal() {
         >
           <TokenInput
             asset={modal.asset}
-            onChange={onInputChange}
+            onChange={(value) => onInputChange(value, liquidityAmount)}
             value={value}
             max={liquidityAmount}
           />
-          <Slider value={percentage} onChange={onSliderChange} />
+          <Slider value={percentage} onChange={(value) => onSliderChange(value, liquidityAmount)} />
           <Divider />
           <Text size='lg'>Borrow to</Text>
           <select
