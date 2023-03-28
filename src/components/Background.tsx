@@ -1,20 +1,11 @@
 'use client'
 
 import classNames from 'classnames'
-import { useEffect } from 'react'
 
 import useStore from 'store'
 
 export default function Background() {
   const enableAnimations = useStore((s) => s.enableAnimations)
-
-  useEffect(() => {
-    const importTE = async () => {
-      // eslint-disable-next-line
-      await import('tw-elements')
-    }
-    importTE()
-  }, [])
 
   return (
     <div className='background pointer-events-none fixed inset-0 h-full w-full overflow-hidden bg-body'>
