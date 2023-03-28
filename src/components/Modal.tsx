@@ -22,11 +22,11 @@ export const Modal = (props: Props) => {
   }
 
   return props.open ? (
-    <div className='fixed inset-0 z-40 h-screen w-screen '>
+    <div className='fixed inset-0 z-40 h-screen w-screen'>
       <div className='relative flex h-full w-full items-center justify-center'>
         <Card
           className={classNames(
-            'relative z-40 w-[790px] max-w-full bg-white/5 backdrop-blur-3xl',
+            'relative z-40 w-[895px] max-w-full bg-white/5 backdrop-blur-3xl',
             props.className,
           )}
         >
@@ -40,7 +40,7 @@ export const Modal = (props: Props) => {
               color='tertiary'
             />
           </div>
-          <div className={props.contentClassName}>
+          <div className={classNames(props.contentClassName, ' flex-grow')}>
             {props.children ? props.children : props.content}
           </div>
         </Card>

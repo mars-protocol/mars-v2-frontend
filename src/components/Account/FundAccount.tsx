@@ -10,11 +10,20 @@ import SwitchWithLabel from 'components/SwitchWithLabel'
 import { Text } from 'components/Text'
 import TokenInput from 'components/TokenInput'
 import { ASSETS } from 'constants/assets'
+import useParams from 'hooks/useParams'
+import useStore from 'store'
+import { getMarketAssets } from 'utils/assets'
+import { hardcodedFee } from 'utils/contants'
+import { convertToGwei } from 'utils/formatters'
 
 export default function FundAccount() {
+  const params = useParams()
+  const deposit = useStore((s) => s.deposit)
+
+  const marketAssets = getMarketAssets()
+
   const [percentage, setPercentage] = useState(0)
   const [value, setValue] = useState(0)
-
   const [lendAssets, setLendAssets] = useState(false)
   const [fundAccount, setFundAccount] = useState(false)
 
@@ -40,6 +49,14 @@ export default function FundAccount() {
 
   function onDeposit() {
     setFundAccount(true)
+    deposit({
+      fee: hardcodedFee,
+      accountId: params.account,
+      coin: {
+        denom: 'uosmo',
+        amount: convertToGwei(value, ASSETS[0].denom, marketAssets).toString(),
+      },
+    })
   }
 
   return (

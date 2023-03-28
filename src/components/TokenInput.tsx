@@ -25,7 +25,7 @@ export default function TokenInput(props: Props) {
       <div className='box-content flex h-11 w-full rounded-sm border border-white/20 bg-white/5'>
         <div className='flex min-w-fit items-center gap-2 border-r border-white/20 bg-white/5 p-3'>
           <Image src={props.asset.logo} alt='token' width={20} height={20} />
-          <Text size='lg'>{props.asset.symbol}</Text>
+          <Text size='base'>{props.asset.symbol}</Text>
         </div>
         <NumberInput
           disabled={props.disabled}

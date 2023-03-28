@@ -22,19 +22,42 @@ export interface BroadcastSlice {
     fee: StdFee
     funds?: Coin[]
   }) => Promise<BroadcastResult>
+  borrow: (options: { fee: StdFee; accountId: string; coin: Coin }) => Promise<void>
   createCreditAccount: (options: { fee: StdFee }) => Promise<string | null>
   deleteCreditAccount: (options: { fee: StdFee; accountId: string }) => Promise<boolean>
-  depositCreditAccount: (options: {
-    fee: StdFee
-    accountId: string
-    deposit: Coin
-  }) => Promise<boolean>
+  deposit: (options: { fee: StdFee; accountId: string; coin: Coin }) => Promise<boolean>
 }
 
 export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>): BroadcastSlice {
   const marketAssets = getMarketAssets()
   return {
     toast: null,
+    borrow: async (options: { fee: StdFee; accountId: string; coin: Coin }) => {
+      const msg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: [{ borrow: options.coin }],
+        },
+      }
+
+      const response = await get().executeMsg({ msg, fee: options.fee })
+
+      if (response.result?.response.code === 0) {
+        set({
+          toast: {
+            message: `Borrowed ${options.coin.amount} ${options.coin.denom} to Account ${options.accountId}`,
+          },
+        })
+      } else {
+        const error = response.error ? response.error : response.result?.rawLogs
+        set({
+          toast: {
+            message: `Transaction failed: ${error}`,
+            isError: true,
+          },
+        })
+      }
+    },
     createCreditAccount: async (options: { fee: StdFee }) => {
       const msg = {
         create_credit_account: {},
@@ -80,32 +103,23 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
       }
       return !!response.result
     },
-    depositCreditAccount: async (options: { fee: StdFee; accountId: string; deposit: Coin }) => {
-      const deposit = {
-        denom: options.deposit.denom,
-        amount: String(options.deposit.amount),
-      }
+    deposit: async (options: { fee: StdFee; accountId: string; coin: Coin }) => {
       const msg = {
         update_credit_account: {
           account_id: options.accountId,
           actions: [
             {
-              deposit: deposit,
+              deposit: options.coin,
             },
           ],
         },
       }
-      const funds = [deposit]
 
-      const response = await get().executeMsg({ msg, fee: options.fee, funds })
+      const response = await get().executeMsg({ msg, fee: options.fee, funds: [options.coin] })
       if (response.result) {
         set({
           toast: {
-            message: `Deposited ${convertFromGwei(
-              deposit.amount,
-              deposit.denom,
-              marketAssets,
-            )} ${getTokenSymbol(deposit.denom, marketAssets)} to Account ${options.accountId}`,
+            message: `Deposited ${options.coin} to Account ${options.accountId}`,
           },
         })
       } else {
