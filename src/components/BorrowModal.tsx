@@ -14,33 +14,48 @@ import Divider from 'components/Divider'
 import TokenInput from 'components/TokenInput'
 import { Button } from 'components/Button'
 import { ArrowRight } from 'components/Icons'
+import useParams from 'hooks/useParams'
+import { hardcodedFee } from 'utils/contants'
 
 export default function BorrowModal() {
-  const modal = useStore((s) => s.borrowModal)
+  const params = useParams()
   const [percentage, setPercentage] = useState(0)
   const [value, setValue] = useState(0)
+  const [selectedAccount, setSelectedAccount] = useState(params.account)
+  const modal = useStore((s) => s.borrowModal)
+  const borrow = useStore((s) => s.borrow)
+  const creditAccounts = useStore((s) => s.creditAccounts)
 
-  const onSliderChange = useCallback(
-    (percentage: number) => onPercentageChange(percentage),
-    [onPercentageChange],
-  )
-  const onInputChange = useCallback((value: number) => onValueChange(value), [onValueChange])
+  function onAccountSelect(accountId: string) {
+    setSelectedAccount(accountId)
+  }
 
   function setOpen(isOpen: boolean) {
     useStore.setState({ borrowModal: null })
   }
 
-  function onBorrowClick() {}
+  function onBorrowClick() {
+    if (!modal?.asset) return
 
-  function onPercentageChange(percentage: number) {
-    setPercentage(percentage)
-    setValue(new BigNumber(percentage).div(100).times(liquidityAmount).toNumber())
+    const amount = new BigNumber(value).shiftedBy(modal.asset.decimals)
+
+    borrow({
+      fee: hardcodedFee,
+      accountId: selectedAccount,
+      coin: { denom: modal.asset.denom, amount: amount.toString() },
+    })
   }
 
-  function onValueChange(value: number) {
+  const onSliderChange = useCallback(
+    (percentage: number, liquidityAmount: number) =>
+      setValue(new BigNumber(percentage).div(100).times(liquidityAmount).toNumber()),
+    [],
+  )
+
+  const onInputChange = useCallback((value: number, liquidityAmount: number) => {
     setValue(value)
     setPercentage(new BigNumber(value).div(liquidityAmount).times(100).toNumber())
-  }
+  }, [])
 
   if (!modal) return null
 
@@ -82,16 +97,32 @@ export default function BorrowModal() {
           sub={'Liquidity available'}
         />
       </div>
-      <div className='flex items-start gap-6 p-6'>
-        <Card className='w-full bg-white/5 p-4' contentClassName='gap-6 flex flex-col'>
+      <div className='flex flex-grow items-start gap-6 p-6'>
+        <Card
+          className='w-full bg-white/5 p-4'
+          contentClassName='gap-6 flex flex-col justify-between h-full'
+        >
           <TokenInput
             asset={modal.asset}
-            onChange={onInputChange}
+            onChange={(value) => onInputChange(value, liquidityAmount)}
             value={value}
             max={liquidityAmount}
           />
-          <Slider value={percentage} onChange={onSliderChange} />
+          <Slider value={percentage} onChange={(value) => onSliderChange(value, liquidityAmount)} />
           <Divider />
+          <Text size='lg'>Borrow to</Text>
+          <select
+            name='creditAccount'
+            value={selectedAccount}
+            onChange={(e) => onAccountSelect(e.target.value)}
+            className='rounded-base border border-white/10 bg-white/5 p-4'
+          >
+            {creditAccounts?.map((account) => (
+              <option key={account} value={account}>
+                {account}
+              </option>
+            ))}
+          </select>
           <Button
             onClick={onBorrowClick}
             className='w-full'
