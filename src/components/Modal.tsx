@@ -40,12 +40,12 @@ export const Modal = (props: Props) => {
               color='tertiary'
             />
           </div>
-          <div className={props.contentClassName + ' flex-grow'}>
+          <div className={classNames(props.contentClassName, ' flex-grow')}>
             {props.children ? props.children : props.content}
           </div>
         </Card>
         <div
-          className='fixed inset-0 z-30 block h-full w-full bg-black/50 hover:cursor-pointer'
+          className='fixed inset-0 z-30 block h-full w-full bg-black/50 backdrop-blur-sm hover:cursor-pointer'
           onClick={onClickAway}
           role='button'
         />
