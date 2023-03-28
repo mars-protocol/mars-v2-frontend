@@ -18,17 +18,23 @@ import useParams from 'hooks/useParams'
 import { hardcodedFee } from 'utils/contants'
 
 export default function BorrowModal() {
+  const params = useParams()
   const [percentage, setPercentage] = useState(0)
   const [value, setValue] = useState(0)
+  const [selectedAccount, setSelectedAccount] = useState(params.account)
   const modal = useStore((s) => s.borrowModal)
   const borrow = useStore((s) => s.borrow)
-  const params = useParams()
+  const creditAccounts = useStore((s) => s.creditAccounts)
 
   const onSliderChange = useCallback(
     (percentage: number) => onPercentageChange(percentage),
     [onPercentageChange],
   )
   const onInputChange = useCallback((value: number) => onValueChange(value), [onValueChange])
+
+  function onAccountSelect(accountId: string) {
+    setSelectedAccount(accountId)
+  }
 
   function setOpen(isOpen: boolean) {
     useStore.setState({ borrowModal: null })
@@ -41,7 +47,7 @@ export default function BorrowModal() {
 
     borrow({
       fee: hardcodedFee,
-      accountId: params.account,
+      accountId: selectedAccount,
       coin: { denom: modal.asset.denom, amount: amount.toString() },
     })
   }
@@ -96,8 +102,11 @@ export default function BorrowModal() {
           sub={'Liquidity available'}
         />
       </div>
-      <div className='flex items-start gap-6 p-6'>
-        <Card className='w-full bg-white/5 p-4' contentClassName='gap-6 flex flex-col'>
+      <div className='flex flex-grow items-start gap-6 p-6'>
+        <Card
+          className='w-full bg-white/5 p-4'
+          contentClassName='gap-6 flex flex-col justify-between h-full'
+        >
           <TokenInput
             asset={modal.asset}
             onChange={onInputChange}
@@ -107,6 +116,18 @@ export default function BorrowModal() {
           <Slider value={percentage} onChange={onSliderChange} />
           <Divider />
           <Text size='lg'>Borrow to</Text>
+          <select
+            name='creditAccount'
+            value={selectedAccount}
+            onChange={(e) => onAccountSelect(e.target.value)}
+            className='rounded-base border border-white/10 bg-white/5 p-4'
+          >
+            {creditAccounts?.map((account) => (
+              <option key={account} value={account}>
+                {account}
+              </option>
+            ))}
+          </select>
           <Button
             onClick={onBorrowClick}
             className='w-full'

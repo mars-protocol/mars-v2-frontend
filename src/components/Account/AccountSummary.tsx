@@ -2,17 +2,20 @@ import Accordion from 'components/Accordion'
 import Card from 'components/Card'
 import { ArrowBullish, Shield } from 'components/Icons'
 import { Text } from 'components/Text'
+import useParams from 'hooks/useParams'
 
 export default function AccountSummary() {
+  const params = useParams()
+
   return (
     <div className='flex min-w-[320px] flex-col'>
       <Card className='mb-4 min-w-fit bg-white/10' contentClassName='flex'>
         <Item>
-          <Text size='xs'>$90,000</Text>
+          <Text size='sm'>$90,000</Text>
         </Item>
         <Item>
           <ArrowBullish />
-          <Text size='xs'>4.5x</Text>
+          <Text size='sm'>4.5x</Text>
         </Item>
         <Item>
           <Shield />
@@ -23,7 +26,7 @@ export default function AccountSummary() {
       </Card>
       <Accordion
         items={[
-          { title: 'Subaccount 1 Composition', content: <p>My content</p> },
+          { title: `Subaccount ${params.account} Composition`, content: <p>My content</p> },
           { title: 'Risk Score: 60/100', content: <p>My content</p> },
           { title: 'Balances', content: <p>My content</p> },
         ]}
