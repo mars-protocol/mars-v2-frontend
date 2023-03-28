@@ -155,6 +155,9 @@ module.exports = {
         wider: '3px',
         widest: '5px',
       },
+      minHeight: {
+        3: '12px',
+      },
       maxWidth: {
         content: '1024px',
       },

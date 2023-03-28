@@ -13,6 +13,7 @@ interface Props {
   allowNegative?: boolean
   suffix?: string
   style?: {}
+  disabled?: boolean
   onChange: (value: number) => void
   onBlur?: () => void
   onFocus?: () => void
@@ -140,6 +141,7 @@ export default function NumberInput(props: Props) {
       onFocus={onInputFocus}
       onChange={(e) => onInputChange(e.target.value)}
       onBlur={props.onBlur}
+      disabled={props.disabled}
       className={classNames(
         'w-full cursor-pointer appearance-none border-none bg-transparent text-right outline-none',
         props.className,

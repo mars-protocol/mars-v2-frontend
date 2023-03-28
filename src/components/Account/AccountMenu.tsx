@@ -2,24 +2,22 @@
 
 import classNames from 'classnames'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
+import AccountList from 'components/Account/AccountList'
+import CurrentAccount from 'components/Account/CurrentAccount'
+import FundAccount from 'components/Account/FundAccount'
 import { Button } from 'components/Button'
-import {
-  Account,
-  Add,
-  ArrowDownLine,
-  ArrowRight,
-  ArrowsLeftRight,
-  ArrowUpLine,
-  Rubbish,
-} from 'components/Icons'
+import { CircularProgress } from 'components/CircularProgress'
+import { Account, PlusCircled } from 'components/Icons'
 import Loading from 'components/Loading'
 import { Overlay } from 'components/Overlay/Overlay'
-import { Text } from 'components/Text'
 import useParams from 'hooks/useParams'
 import useStore from 'store'
+import { getAccountDebts, getAccountDeposits } from 'utils/api'
 import { hardcodedFee } from 'utils/contants'
+
+import CreateAccount from './CreateAccount'
 
 export default function AccountMenu() {
   const router = useRouter()
@@ -27,15 +25,16 @@ export default function AccountMenu() {
   const selectedAccount = params.account
 
   const createCreditAccount = useStore((s) => s.createCreditAccount)
-  const deleteCreditAccount = useStore((s) => s.deleteCreditAccount)
+  const selectedAccountDetails = useStore((s) => s.selectedAccountDetails)
   const creditAccounts = useStore((s) => s.creditAccounts)
   const address = useStore((s) => s.address)
 
   const hasCreditAccounts = !!creditAccounts?.length
   const accountSelected = !!selectedAccount && !isNaN(Number(selectedAccount))
+  const hasBalance = !!selectedAccountDetails?.deposits?.length
 
   const [showMenu, setShowMenu] = useState(false)
-
+  const [loadingAccount, setLoadingAccount] = useState(false)
   const [createAccount, setCreateAccount] = useState(false)
 
   async function createAccountHandler() {
@@ -47,13 +46,28 @@ export default function AccountMenu() {
     router.push(`/wallets/${params.wallet}/accounts/${accountId}`)
   }
 
-  async function deleteAccountHandler() {
+  useEffect(() => {
     if (!accountSelected) return
-    const isSuccess = await deleteCreditAccount({ fee: hardcodedFee, accountId: selectedAccount })
-    if (isSuccess) {
-      router.push(`/wallets/${params.wallet}/accounts`)
+    setLoadingAccount(selectedAccountDetails?.id !== selectedAccount)
+  }, [selectedAccount, selectedAccountDetails?.id, accountSelected])
+
+  useEffect(() => {
+    if (!accountSelected) return
+
+    const fetchAccountDetails = async () => {
+      const accountDeposits = await getAccountDeposits(selectedAccount)
+      const accountDebts = await getAccountDebts(selectedAccount)
+      useStore.setState({
+        selectedAccountDetails: {
+          id: selectedAccount,
+          deposits: accountDeposits,
+          debts: accountDebts,
+        },
+      })
     }
-  }
+
+    fetchAccountDetails()
+  }, [creditAccounts, selectedAccount, accountSelected])
 
   return !address ? null : (
     <>
@@ -63,7 +77,7 @@ export default function AccountMenu() {
         <div className='relative'>
           <Button
             onClick={hasCreditAccounts ? () => setShowMenu(!showMenu) : createAccountHandler}
-            leftIcon={hasCreditAccounts ? <Account /> : <Add />}
+            leftIcon={hasCreditAccounts ? <Account /> : <PlusCircled />}
             color={hasCreditAccounts ? 'tertiary' : 'primary'}
             hasFocus={showMenu}
             hasSubmenu={hasCreditAccounts}
@@ -77,116 +91,33 @@ export default function AccountMenu() {
           <Overlay
             className={classNames(
               'max-w-screen right-0 mt-2 flex h-[530px] w-[336px] flex-wrap overflow-y-scroll scrollbar-hide',
-              hasCreditAccounts ? 'items-start' : 'items-end',
+              hasCreditAccounts && hasBalance ? 'items-start' : 'items-end',
             )}
             show={showMenu}
             setShow={setShowMenu}
           >
             <div className='absolute inset-0 z-1 h-full w-full bg-account' />
             {(!hasCreditAccounts || createAccount) && (
-              <div className='relative z-10 w-full p-4'>
-                <Text size='lg' className='mb-2 font-bold'>
-                  Create your first Credit Account
-                </Text>
-                <Text className='mb-4 text-white/70'>
-                  Please approve the transaction in your wallet in order to create your first Credit
-                  Account.
-                </Text>
-                <Button
-                  className='w-full'
-                  showProgressIndicator={createAccount}
-                  disabled={createAccount}
-                  text='Create Account'
-                  rightIcon={<ArrowRight />}
-                  onClick={createAccountHandler}
-                />
-              </div>
+              <CreateAccount
+                createAccountHandler={createAccountHandler}
+                createAccount={createAccount}
+                setCreateAccount={setCreateAccount}
+              />
             )}
             {accountSelected && (
               <div className='flex w-full flex-wrap'>
-                <Text size='sm' uppercase={true} className='w-full px-4 pt-4'>
-                  Manage Account {selectedAccount}
-                </Text>
-                <div className='flex w-full justify-between p-4'>
-                  <Button
-                    className='flex w-[115px] items-center justify-center pl-0 pr-2'
-                    text='Fund'
-                    leftIcon={<ArrowUpLine />}
-                    onClick={() => {
-                      useStore.setState({ fundAccountModal: true })
-                      setShowMenu(false)
-                    }}
-                  />
-                  <Button
-                    className='flex w-[115px] items-center justify-center pl-0 pr-2'
-                    color='secondary'
-                    leftIcon={<ArrowDownLine />}
-                    text='Withdraw'
-                    onClick={() => {
-                      useStore.setState({ withdrawModal: true })
-                      setShowMenu(false)
-                    }}
-                  />
-                </div>
-                <div className='flex w-full flex-wrap border-t border-t-white/10 p-4'>
-                  <Button
-                    className='w-full whitespace-nowrap py-2'
-                    variant='transparent'
-                    color='quaternary'
-                    text='Create New Account'
-                    onClick={() => {
-                      setShowMenu(false)
-                      createAccountHandler()
-                    }}
-                    leftIcon={<Add />}
-                  />
-                  <Button
-                    className='w-full whitespace-nowrap py-2'
-                    variant='transparent'
-                    color='quaternary'
-                    text='Close Account'
-                    onClick={() => {
-                      setShowMenu(false)
-                      deleteAccountHandler()
-                    }}
-                    leftIcon={<Rubbish />}
-                  />
-                  <Button
-                    className='w-full whitespace-nowrap py-2'
-                    variant='transparent'
-                    color='quaternary'
-                    text='Transfer Balance'
-                    onClick={() => {
-                      setShowMenu(false)
-                      /* TODO: add Transfer Balance Function */
-                    }}
-                    leftIcon={<ArrowsLeftRight />}
-                  />
-                </div>
+                {loadingAccount ? (
+                  <div className='flex h-[530px] w-full items-center justify-center p-4'>
+                    <CircularProgress size={40} />
+                  </div>
+                ) : (
+                  <>{hasBalance ? <CurrentAccount /> : <FundAccount />}</>
+                )}
               </div>
             )}
-            {creditAccounts.length > 1 && (
-              <div className='flex w-full flex-wrap border-t border-t-white/10 p-4'>
-                <Text size='sm' uppercase={true} className='w-full pb-2'>
-                  Select Account
-                </Text>
-                {creditAccounts.map((account) => {
-                  return selectedAccount === account ? null : (
-                    <Button
-                      key={account}
-                      className='w-full whitespace-nowrap py-2'
-                      variant='transparent'
-                      color='quaternary'
-                      onClick={() => {
-                        router.push(`/wallets/${params.wallet}/accounts/${account}`)
-                        setShowMenu(!showMenu)
-                      }}
-                      text={`Account ${account}`}
-                    />
-                  )
-                })}
-              </div>
-            )}
+            {((selectedAccount && hasBalance) || !selectedAccount) &&
+              !!creditAccounts.length &&
+              !loadingAccount && <AccountList />}
           </Overlay>
         </div>
       )}

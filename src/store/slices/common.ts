@@ -25,6 +25,7 @@ export interface CommonSlice {
   }
   createAccountModal: boolean
   creditAccounts: string[] | null
+  selectedAccountDetails?: AccountDetails
   deleteAccountModal: boolean
   enableAnimations: boolean
   fundAccountModal: boolean

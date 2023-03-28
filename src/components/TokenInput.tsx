@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import Image from 'next/image'
 
 import NumberInput from 'components/NumberInput'
@@ -8,17 +9,26 @@ interface Props {
   max: number
   asset: Asset
   onChange: (value: number) => void
+  className?: string
+  disabled?: boolean
 }
 
 export default function TokenInput(props: Props) {
   return (
-    <div className='flex w-full flex-col gap-2'>
+    <div
+      className={classNames(
+        'flex w-full flex-col gap-2 transition-opacity',
+        props.className,
+        props.disabled && 'pointer-events-none opacity-50',
+      )}
+    >
       <div className='box-content flex h-11 w-full rounded-sm border border-white/20 bg-white/5'>
         <div className='flex min-w-fit items-center gap-2 border-r border-white/20 bg-white/5 p-3'>
           <Image src={props.asset.logo} alt='token' width={20} height={20} />
           <Text size='lg'>{props.asset.symbol}</Text>
         </div>
         <NumberInput
+          disabled={props.disabled}
           maxDecimals={props.asset.decimals}
           onChange={props.onChange}
           value={props.value.toString()}

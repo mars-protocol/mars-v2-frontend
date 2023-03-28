@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import { ChangeEvent, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
 
@@ -6,6 +7,8 @@ import { SliderMark } from 'components/Icons/index'
 type Props = {
   value: number
   onChange: (value: number) => void
+  className?: string
+  disabled?: boolean
 }
 
 export default function Slider(props: Props) {
@@ -70,7 +73,15 @@ export default function Slider(props: Props) {
   }
 
   return (
-    <div ref={ref} className='relative w-full' onMouseEnter={handleSliderRect}>
+    <div
+      ref={ref}
+      className={classNames(
+        'relative min-h-3 w-full transition-opacity',
+        props.className,
+        props.disabled && 'pointer-events-none opacity-50',
+      )}
+      onMouseEnter={handleSliderRect}
+    >
       <input
         type='range'
         value={props.value}

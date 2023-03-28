@@ -1,7 +1,7 @@
 'use client'
+import classNames from 'classnames'
 import { useRouter } from 'next/navigation'
 import { toast as createToast, Slide, ToastContainer } from 'react-toastify'
-import classNames from 'classnames'
 
 import { CheckCircled, Cross, CrossCircled } from 'components/Icons'
 import { Text } from 'components/Text'
@@ -32,7 +32,6 @@ export default function Toaster() {
             </span>
           </div>
           <Text
-            size='base'
             className={classNames(
               'flex items-center font-bold',
               toast.isError ? 'text-error' : 'text-success',
