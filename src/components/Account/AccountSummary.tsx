@@ -1,6 +1,6 @@
 import Accordion from 'components/Accordion'
 import Card from 'components/Card'
-import { ArrowBullish, Shield } from 'components/Icons'
+import { ArrowChartLineUp, Shield } from 'components/Icons'
 import { Text } from 'components/Text'
 import useParams from 'hooks/useParams'
 
@@ -14,14 +14,20 @@ export default function AccountSummary() {
           <Text size='sm'>$90,000</Text>
         </Item>
         <Item>
-          <ArrowBullish />
+          <span className='flex h-4 w-4 items-center'>
+            <ArrowChartLineUp />
+          </span>
           <Text size='sm'>4.5x</Text>
         </Item>
         <Item>
-          <Shield />
+          <span className='h-3 w-3'>
+            <Shield />
+          </span>
         </Item>
         <Item style={{ border: 'none' }}>
-          <Shield />
+          <span className='h-3 w-3'>
+            <Shield />
+          </span>
         </Item>
       </Card>
       <Accordion
