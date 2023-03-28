@@ -32,20 +32,15 @@ export default function FundAccount() {
   }
 
   const onSliderChange = useCallback(
-    (percentage: number) => onPercentageChange(percentage),
-    [onPercentageChange],
+    (percentage: number, liquidityAmount: number) =>
+      setValue(new BigNumber(percentage).div(100).times(liquidityAmount).toNumber()),
+    [],
   )
-  const onInputChange = useCallback((value: number) => onValueChange(value), [onValueChange])
 
-  function onPercentageChange(percentage: number) {
-    setPercentage(percentage)
-    setValue(new BigNumber(percentage).div(100).times(100).toNumber())
-  }
-
-  function onValueChange(value: number) {
+  const onInputChange = useCallback((value: number, liquidityAmount: number) => {
     setValue(value)
-    setPercentage(new BigNumber(value).div(100).times(100).toNumber())
-  }
+    setPercentage(new BigNumber(value).div(liquidityAmount).times(100).toNumber())
+  }, [])
 
   function onDeposit() {
     setFundAccount(true)
@@ -70,7 +65,7 @@ export default function FundAccount() {
       </Text>
       <TokenInput
         asset={ASSETS[0]}
-        onChange={onInputChange}
+        onChange={(value) => onInputChange(value, 100)}
         value={value}
         max={100}
         className='mb-4'
@@ -78,7 +73,7 @@ export default function FundAccount() {
       />
       <Slider
         value={percentage}
-        onChange={onSliderChange}
+        onChange={(value) => onSliderChange(value, 100)}
         className='mb-4'
         disabled={fundAccount}
       />
