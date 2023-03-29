@@ -24,6 +24,7 @@ export default function BorrowModal() {
   const [selectedAccount, setSelectedAccount] = useState(params.account)
   const modal = useStore((s) => s.borrowModal)
   const borrow = useStore((s) => s.borrow)
+  const repay = useStore((s) => s.repay)
   const creditAccounts = useStore((s) => s.creditAccounts)
 
   function onAccountSelect(accountId: string) {
@@ -34,10 +35,19 @@ export default function BorrowModal() {
     useStore.setState({ borrowModal: null })
   }
 
-  function onBorrowClick() {
+  function onConfirmClick() {
     if (!modal?.asset) return
 
     const amount = new BigNumber(value).shiftedBy(modal.asset.decimals)
+
+    if (modal.isRepay) {
+      repay({
+        fee: hardcodedFee,
+        accountId: selectedAccount,
+        coin: { denom: modal.asset.denom, amount: amount.toString() },
+      })
+      return
+    }
 
     borrow({
       fee: hardcodedFee,
@@ -78,7 +88,9 @@ export default function BorrowModal() {
       header={
         <span className='flex items-center gap-4 px-4'>
           <Image src={modal?.asset.logo} alt='token' width={24} height={24} />
-          <Text>Borrow {modal.asset.symbol}</Text>
+          <Text>
+            {modal.isRepay ? 'Repay' : 'Borrow'} {modal.asset.symbol}
+          </Text>
         </span>
       }
       headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
@@ -110,7 +122,7 @@ export default function BorrowModal() {
           />
           <Slider value={percentage} onChange={(value) => onSliderChange(value, liquidityAmount)} />
           <Divider />
-          <Text size='lg'>Borrow to</Text>
+          <Text size='lg'>{modal.isRepay ? 'Repay for' : 'Borrow to'}</Text>
           <select
             name='creditAccount'
             value={selectedAccount}
@@ -124,10 +136,11 @@ export default function BorrowModal() {
             ))}
           </select>
           <Button
-            onClick={onBorrowClick}
+            onClick={onConfirmClick}
             className='w-full'
-            text='Borrow'
+            text={modal.isRepay ? 'Repay' : 'Borrow'}
             rightIcon={<ArrowRight />}
+            showProgressIndicator={}
           />
         </Card>
         <AccountSummary />
