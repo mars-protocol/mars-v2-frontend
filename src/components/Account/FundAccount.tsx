@@ -97,7 +97,7 @@ export default function FundAccount(props: Props) {
           value={lendAssets}
           changeHandler={handleLendAssets}
           className='mb-4'
-          tooltip='Tooltip text'
+          tooltip={`Fund your account and lend assets effortlessly! By lending, you'll earn attractive interest (APY) without impacting your LTV. It's a win-win situation - don't miss out on this easy opportunity to grow your holdings!`}
           disabled={fundAccount || value === 0}
         />
         <Button

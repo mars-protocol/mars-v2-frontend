@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { ChangeEvent, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
 
-import { SliderMark } from 'components/Icons/index'
+import { OverlayMark } from 'components/Icons/index'
 
 type Props = {
   value: number
@@ -119,7 +119,7 @@ export default function Slider(props: Props) {
             />
             {(showTooltip || isDragging) && (
               <div className='absolute -top-8 left-1/2 -translate-x-1/2 rounded-xs bg-martian-red py-[2px] px-2 text-xs'>
-                <SliderMark className='absolute left-1/2 bottom-[-4px] -z-1 h-2 -translate-x-1/2 text-martian-red' />
+                <OverlayMark className='absolute left-1/2 -bottom-2 -z-1 h-2 -translate-x-1/2 text-martian-red' />
                 {props.value}%
               </div>
             )}
