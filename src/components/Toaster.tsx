@@ -18,7 +18,7 @@ export default function Toaster() {
     const Msg = () => (
       <div
         className={classNames(
-          'relative z-1 m-0 flex w-full flex-wrap rounded-sm p-6 shadow-overlay backdrop-blur-lg',
+          'relative isolate m-0 flex w-full flex-wrap rounded-sm p-6 shadow-overlay backdrop-blur-lg',
           'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-sm before:p-[1px] before:border-glas',
           toast.isError ? 'bg-error-bg/20' : 'bg-success-bg/20',
         )}

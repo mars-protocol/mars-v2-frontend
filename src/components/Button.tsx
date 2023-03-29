@@ -84,7 +84,7 @@ function glowElement(enableAnimations: boolean) {
     <svg
       className={classNames(
         enableAnimations && 'group-hover:animate-glow group-focus:animate-glow',
-        'glow-container z-1 opacity-0 ',
+        'glow-container isolate opacity-0',
         'pointer-events-none absolute inset-0 h-full w-full',
       )}
     >

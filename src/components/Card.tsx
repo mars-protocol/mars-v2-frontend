@@ -15,7 +15,7 @@ export default function Card(props: Props) {
     <section
       className={classNames(
         props.className,
-        'relative z-1 max-w-full overflow-hidden rounded-base',
+        'relative isolate max-w-full overflow-hidden rounded-base',
         'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
       )}
     >

@@ -101,7 +101,7 @@ export default function AccountMenu() {
           >
             <div
               className={classNames(
-                'absolute inset-0 z-1 flex h-full w-full flex-wrap  overflow-y-scroll bg-account scrollbar-hide',
+                'absolute inset-0 isolate flex h-full w-full flex-wrap  overflow-y-scroll bg-account scrollbar-hide',
                 hasCreditAccounts && hasBalance && !showFundAccount ? 'items-start' : 'items-end',
               )}
             >
