@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 
-import { getTokenDecimals } from 'utils/tokens'
+import { getMarketAssets } from './assets'
+import { Coin } from '@cosmjs/stargate'
 
 export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
   const head = text.slice(0, h)
@@ -8,18 +9,6 @@ export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
   const tail = text.slice(-1 * t, text.length)
   if (h === 0) return text.length > h + t ? '...' + tail : text
   return text.length > h + t ? [head, tail].join('...') : text
-}
-
-export const convertFromGwei = (amount: string | number, denom: string, marketAssets: Asset[]) => {
-  return BigNumber(amount)
-    .div(10 ** getTokenDecimals(denom, marketAssets))
-    .toNumber()
-}
-
-export const convertToGwei = (amount: string | number, denom: string, marketAssets: Asset[]) => {
-  return BigNumber(amount)
-    .times(10 ** getTokenDecimals(denom, marketAssets))
-    .toNumber()
 }
 
 export interface FormatOptions {
@@ -133,5 +122,18 @@ export function formatPercent(percent: number | string) {
   return formatValue(+percent * 100, {
     minDecimals: 0,
     suffix: '%',
+  })
+}
+
+export function formatAmountWithSymbol(coin: Coin) {
+  const marketAssets = getMarketAssets()
+
+  const asset = marketAssets.find((asset) => asset.denom === coin.denom)
+
+  return formatValue(coin.amount, {
+    decimals: asset?.decimals,
+    suffix: ` ${asset?.symbol}`,
+    abbreviated: true,
+    rounded: true,
   })
 }
