@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import classNames from 'classnames'
 import { Button } from 'components/Button'
 import Card from 'components/Card'
-import { ArrowDownLine, ArrowsLeftRight, ArrowUpLine, Rubbish } from 'components/Icons'
+import { ArrowCircledTopRight, ArrowDownLine, ArrowUpLine, TrashBin } from 'components/Icons'
 import Radio from 'components/Radio'
 import SwitchWithLabel from 'components/SwitchWithLabel'
 import { Text } from 'components/Text'
@@ -84,14 +84,14 @@ export default function AccountList(props: Props) {
             <Button
               className='w-full'
               color='tertiary'
-              leftIcon={<Rubbish />}
+              leftIcon={<TrashBin />}
               text='Delete'
               onClick={() => deleteAccountHandler()}
             />
             <Button
               className='w-full'
               color='tertiary'
-              leftIcon={<ArrowsLeftRight />}
+              leftIcon={<ArrowCircledTopRight />}
               text='Transfer'
               onClick={() => {}}
             />
