@@ -33,7 +33,7 @@ export const Tooltip = ({
       render={(attrs) => {
         return (
           <div
-            className='max-w-[320px] rounded-lg px-4 py-2 text-xs shadow-tooltip gradient-tooltip'
+            className='max-w-[320px] rounded-lg bg-black/80 px-4 py-2 text-xs shadow-tooltip backdrop-blur-lg'
             {...attrs}
           >
             {content}
