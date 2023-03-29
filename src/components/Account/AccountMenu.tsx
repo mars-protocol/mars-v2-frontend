@@ -5,19 +5,21 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import AccountList from 'components/Account/AccountList'
-import CurrentAccount from 'components/Account/CurrentAccount'
 import FundAccount from 'components/Account/FundAccount'
 import { Button } from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
-import { Account, PlusCircled } from 'components/Icons'
+import { Account, Plus, PlusCircled } from 'components/Icons'
 import Loading from 'components/Loading'
 import { Overlay } from 'components/Overlay/Overlay'
+import { Text } from 'components/Text'
 import useParams from 'hooks/useParams'
 import useStore from 'store'
 import { getAccountDebts, getAccountDeposits } from 'utils/api'
 import { hardcodedFee } from 'utils/contants'
 
 import CreateAccount from './CreateAccount'
+
+const menuClasses = 'absolute isolate flex w-full flex-wrap overflow-y-scroll scrollbar-hide'
 
 export default function AccountMenu() {
   const router = useRouter()
@@ -31,11 +33,11 @@ export default function AccountMenu() {
 
   const hasCreditAccounts = !!creditAccounts?.length
   const accountSelected = !!selectedAccount && !isNaN(Number(selectedAccount))
-  const hasBalance = !!selectedAccountDetails?.deposits?.length
 
   const [showMenu, setShowMenu] = useState(false)
   const [loadingAccount, setLoadingAccount] = useState(false)
   const [createAccount, setCreateAccount] = useState(false)
+  const [showCreateAccount, setShowCreateAccount] = useState(false)
   const [showFundAccount, setShowFundAccount] = useState(false)
 
   async function createAccountHandler() {
@@ -71,6 +73,10 @@ export default function AccountMenu() {
   }, [creditAccounts, selectedAccount, accountSelected])
 
   useEffect(() => {
+    setShowCreateAccount(!hasCreditAccounts || createAccount)
+  }, [hasCreditAccounts, createAccount])
+
+  useEffect(() => {
     if (!selectedAccountDetails?.deposits) return
     setShowFundAccount(!!!selectedAccountDetails?.deposits?.length)
   }, [selectedAccountDetails?.deposits])
@@ -99,40 +105,50 @@ export default function AccountMenu() {
             show={showMenu}
             setShow={setShowMenu}
           >
-            <div
-              className={classNames(
-                'absolute inset-0 isolate flex h-full w-full flex-wrap  overflow-y-scroll bg-account scrollbar-hide',
-                hasCreditAccounts && hasBalance && !showFundAccount ? 'items-start' : 'items-end',
-              )}
-            >
-              {(!hasCreditAccounts || createAccount) && (
-                <CreateAccount
-                  createAccountHandler={createAccountHandler}
-                  createAccount={createAccount}
-                  setCreateAccount={setCreateAccount}
-                />
-              )}
-              {accountSelected && (
-                <div className='flex w-full flex-wrap'>
-                  {loadingAccount ? (
-                    <div className='flex h-[530px] w-full items-center justify-center p-4'>
+            {!showFundAccount && !showCreateAccount ? (
+              <>
+                <div
+                  className={classNames(
+                    'flex h-[54px] w-full items-center justify-between bg-white/5 px-4 py-3',
+                    'border border-transparent border-b-white/10',
+                  )}
+                >
+                  <Text size='lg' className='font-bold'>
+                    Accounts
+                  </Text>
+                  <Button
+                    color='secondary'
+                    rightIcon={<Plus />}
+                    text='Create'
+                    onClick={createAccountHandler}
+                  />
+                </div>
+                <div
+                  className={classNames(menuClasses, 'top-[54px] h-[calc(100%-54px)] items-start')}
+                >
+                  {accountSelected && loadingAccount && (
+                    <div className='flex h-full w-full items-center justify-center p-4'>
                       <CircularProgress size={40} />
                     </div>
-                  ) : (
-                    <>
-                      {showFundAccount ? (
-                        <FundAccount setShowFundAccount={setShowFundAccount} />
-                      ) : (
-                        <CurrentAccount setShowFundAccount={setShowFundAccount} />
-                      )}
-                    </>
+                  )}
+                  {(!selectedAccount || !showFundAccount) && !loadingAccount && (
+                    <AccountList setShowFundAccount={setShowFundAccount} />
                   )}
                 </div>
-              )}
-              {(!selectedAccount || !showFundAccount) &&
-                !!creditAccounts.length &&
-                !loadingAccount && <AccountList />}
-            </div>
+              </>
+            ) : (
+              <div className={classNames(menuClasses, 'inset-0 h-full items-end bg-account')}>
+                {showCreateAccount ? (
+                  <CreateAccount
+                    createAccountHandler={createAccountHandler}
+                    createAccount={createAccount}
+                    setCreateAccount={setCreateAccount}
+                  />
+                ) : showFundAccount ? (
+                  <FundAccount setShowFundAccount={setShowFundAccount} />
+                ) : null}
+              </div>
+            )}
           </Overlay>
         </div>
       )}
