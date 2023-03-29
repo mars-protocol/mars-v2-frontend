@@ -5,10 +5,9 @@ import { GetState, SetState } from 'zustand'
 
 import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import { Store } from 'store'
-import { getMarketAssets } from 'utils/assets'
+import { getAssetByDenom, getMarketAssets } from 'utils/assets'
 import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import { convertFromGwei } from 'utils/formatters'
-import { getTokenSymbol } from 'utils/tokens'
 
 interface BroadcastResult {
   result?: TxBroadcastResult
@@ -45,7 +44,7 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
       if (response.result?.response.code === 0) {
         set({
           toast: {
-            message: `Borrowed ${options.coin.amount} ${options.coin.denom} to Account ${options.accountId}`,
+            message: `Borrowed ${options.coin.amount} ${options.coin.denom} to Account #${options.accountId}`,
           },
         })
       } else {
@@ -68,7 +67,7 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
       if (response.result) {
         set({ createAccountModal: false })
         const id = getSingleValueFromBroadcastResult(response.result, 'wasm', 'token_id')
-        set({ fundAccountModal: true, toast: { message: `Account ${id} created` } })
+        set({ fundAccountModal: true, toast: { message: `Account #${id} created` } })
         return id
       } else {
         set({
@@ -92,7 +91,7 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
 
       set({ deleteAccountModal: false })
       if (response.result) {
-        set({ toast: { message: `Account ${options.accountId} deleted` } })
+        set({ toast: { message: `Account #${options.accountId} deleted` } })
       } else {
         set({
           toast: {
@@ -119,7 +118,11 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
       if (response.result) {
         set({
           toast: {
-            message: `Deposited ${options.coin} to Account ${options.accountId}`,
+            message: `Deposited ${convertFromGwei(
+              options.coin.amount,
+              options.coin.denom,
+              marketAssets,
+            )} ${getAssetByDenom(options.coin.denom)?.symbol} to Account #${options.accountId}`,
           },
         })
       } else {
