@@ -36,6 +36,7 @@ export default function AccountMenu() {
   const [showMenu, setShowMenu] = useState(false)
   const [loadingAccount, setLoadingAccount] = useState(false)
   const [createAccount, setCreateAccount] = useState(false)
+  const [showFundAccount, setShowFundAccount] = useState(false)
 
   async function createAccountHandler() {
     setShowMenu(true)
@@ -69,6 +70,11 @@ export default function AccountMenu() {
     fetchAccountDetails()
   }, [creditAccounts, selectedAccount, accountSelected])
 
+  useEffect(() => {
+    if (!selectedAccountDetails?.deposits) return
+    setShowFundAccount(!!!selectedAccountDetails?.deposits?.length)
+  }, [selectedAccountDetails?.deposits])
+
   return !address ? null : (
     <>
       {creditAccounts === null ? (
@@ -89,35 +95,47 @@ export default function AccountMenu() {
               : 'Create Account'}
           </Button>
           <Overlay
-            className={classNames(
-              'max-w-screen right-0 mt-2 flex h-[530px] w-[336px] flex-wrap overflow-y-scroll scrollbar-hide',
-              hasCreditAccounts && hasBalance ? 'items-start' : 'items-end',
-            )}
+            className='max-w-screen right-0 mt-2 flex h-[530px] w-[336px] overflow-hidden'
             show={showMenu}
             setShow={setShowMenu}
           >
-            <div className='absolute inset-0 z-1 h-full w-full bg-account' />
-            {(!hasCreditAccounts || createAccount) && (
-              <CreateAccount
-                createAccountHandler={createAccountHandler}
-                createAccount={createAccount}
-                setCreateAccount={setCreateAccount}
-              />
-            )}
-            {accountSelected && (
-              <div className='flex w-full flex-wrap'>
-                {loadingAccount ? (
-                  <div className='flex h-[530px] w-full items-center justify-center p-4'>
-                    <CircularProgress size={40} />
-                  </div>
-                ) : (
-                  <>{hasBalance ? <CurrentAccount /> : <FundAccount />}</>
-                )}
-              </div>
-            )}
-            {((selectedAccount && hasBalance) || !selectedAccount) &&
-              !!creditAccounts.length &&
-              !loadingAccount && <AccountList />}
+            <div
+              className={classNames(
+                'absolute inset-0 z-1 flex h-full w-full flex-wrap  overflow-y-scroll bg-account scrollbar-hide',
+                hasCreditAccounts && hasBalance && !showFundAccount ? 'items-start' : 'items-end',
+              )}
+            >
+              {(!hasCreditAccounts || createAccount) && (
+                <CreateAccount
+                  createAccountHandler={createAccountHandler}
+                  createAccount={createAccount}
+                  setCreateAccount={setCreateAccount}
+                />
+              )}
+              {accountSelected && (
+                <div className='flex w-full flex-wrap'>
+                  {loadingAccount ? (
+                    <div className='flex h-[530px] w-full items-center justify-center p-4'>
+                      <CircularProgress size={40} />
+                    </div>
+                  ) : (
+                    <>
+                      {showFundAccount ? (
+                        <FundAccount
+                          setShowFundAccount={setShowFundAccount}
+                          hasBalance={hasBalance}
+                        />
+                      ) : (
+                        <CurrentAccount setShowFundAccount={setShowFundAccount} />
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
+              {(!selectedAccount || !showFundAccount) &&
+                !!creditAccounts.length &&
+                !loadingAccount && <AccountList />}
+            </div>
           </Overlay>
         </div>
       )}

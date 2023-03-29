@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js'
 import { useCallback, useState } from 'react'
 
 import { Button } from 'components/Button'
-import { ArrowRight } from 'components/Icons'
+import { ArrowRight, Cross } from 'components/Icons'
 import Slider from 'components/Slider'
 import SwitchWithLabel from 'components/SwitchWithLabel'
 import { Text } from 'components/Text'
@@ -16,7 +16,12 @@ import { getMarketAssets } from 'utils/assets'
 import { hardcodedFee } from 'utils/contants'
 import { convertToGwei } from 'utils/formatters'
 
-export default function FundAccount() {
+interface Props {
+  setShowFundAccount: (showFundAccount: boolean) => void
+  hasBalance: boolean
+}
+
+export default function FundAccount(props: Props) {
   const params = useParams()
   const deposit = useStore((s) => s.deposit)
 
@@ -31,11 +36,10 @@ export default function FundAccount() {
     setLendAssets(val)
   }
 
-  const onSliderChange = useCallback(
-    (percentage: number, liquidityAmount: number) =>
-      setValue(new BigNumber(percentage).div(100).times(liquidityAmount).toNumber()),
-    [],
-  )
+  const onSliderChange = useCallback((percentage: number, liquidityAmount: number) => {
+    setPercentage(percentage)
+    setValue(new BigNumber(percentage).div(100).times(liquidityAmount).toNumber())
+  }, [])
 
   const onInputChange = useCallback((value: number, liquidityAmount: number) => {
     setValue(value)
@@ -55,46 +59,59 @@ export default function FundAccount() {
   }
 
   return (
-    <div className='relative z-10 w-full p-4'>
-      <Text size='lg' className='mb-2 font-bold'>
-        Fund your Account
-      </Text>
-      <Text className='mb-4 text-white/70'>
-        Deposit assets from your Osmosis address to your Mars credit account. Bridge assets if your
-        Osmosis address has no assets.
-      </Text>
-      <TokenInput
-        asset={ASSETS[0]}
-        onChange={(value) => onInputChange(value, 100)}
-        value={value}
-        max={100}
-        className='mb-4'
-        disabled={fundAccount}
-      />
-      <Slider
-        value={percentage}
-        onChange={(value) => onSliderChange(value, 100)}
-        className='mb-4'
-        disabled={fundAccount}
-      />
-      <div className='mb-4 w-full border-b border-white/10' />
-      <SwitchWithLabel
-        name='lendAssets'
-        label='Lend assets to earn yield'
-        value={lendAssets}
-        changeHandler={handleLendAssets}
-        className='mb-4'
-        tooltip='Tooltip text'
-        disabled={fundAccount || value === 0}
-      />
-      <Button
-        className='w-full'
-        showProgressIndicator={fundAccount}
-        disabled={value === 0}
-        text='Fund Account'
-        rightIcon={<ArrowRight />}
-        onClick={onDeposit}
-      />
-    </div>
+    <>
+      {props.hasBalance && (
+        <div className='absolute top-4 right-4'>
+          <Button
+            onClick={() => props.setShowFundAccount(false)}
+            leftIcon={<Cross />}
+            className='h-8 w-8'
+            iconClassName='h-2 w-2'
+            color='tertiary'
+          />
+        </div>
+      )}
+      <div className='relative z-10 w-full p-4'>
+        <Text size='lg' className='mb-2 font-bold'>
+          {`Fund Account #${params.account}`}
+        </Text>
+        <Text className='mb-4 text-white/70'>
+          Deposit assets from your Osmosis address to your Mars credit account. Bridge assets if
+          your Osmosis address has no assets.
+        </Text>
+        <TokenInput
+          asset={ASSETS[0]}
+          onChange={(value) => onInputChange(value, 100)}
+          value={value}
+          max={100}
+          className='mb-4'
+          disabled={fundAccount}
+        />
+        <Slider
+          value={percentage}
+          onChange={(value) => onSliderChange(value, 100)}
+          className='mb-4'
+          disabled={fundAccount}
+        />
+        <div className='mb-4 w-full border-b border-white/10' />
+        <SwitchWithLabel
+          name='lendAssets'
+          label='Lend assets to earn yield'
+          value={lendAssets}
+          changeHandler={handleLendAssets}
+          className='mb-4'
+          tooltip='Tooltip text'
+          disabled={fundAccount || value === 0}
+        />
+        <Button
+          className='w-full'
+          showProgressIndicator={fundAccount}
+          disabled={value === 0}
+          text='Fund Account'
+          rightIcon={<ArrowRight />}
+          onClick={onDeposit}
+        />
+      </div>
+    </>
   )
 }

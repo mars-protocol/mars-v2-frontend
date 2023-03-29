@@ -9,7 +9,11 @@ import useParams from 'hooks/useParams'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
 
-export default function CurrentAccount() {
+interface Props {
+  setShowFundAccount: (showFundAccount: boolean) => void
+}
+
+export default function CurrentAccount(props: Props) {
   const router = useRouter()
   const params = useParams()
   const selectedAccount = params.account
@@ -43,9 +47,7 @@ export default function CurrentAccount() {
           className='flex w-[115px] items-center justify-center pl-0 pr-2'
           text='Fund'
           leftIcon={<ArrowUpLine />}
-          onClick={() => {
-            useStore.setState({ fundAccountModal: true })
-          }}
+          onClick={() => props.setShowFundAccount(true)}
         />
         <Button
           className='flex w-[115px] items-center justify-center pl-0 pr-2'

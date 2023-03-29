@@ -44,7 +44,11 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
       if (response.result?.response.code === 0) {
         set({
           toast: {
-            message: `Borrowed ${options.coin.amount} ${options.coin.denom} to Account #${options.accountId}`,
+            message: `Borrowed ${convertFromGwei(
+              options.coin.amount,
+              options.coin.denom,
+              marketAssets,
+            )} ${getAssetByDenom(options.coin.denom)?.symbol} to Account #${options.accountId}`,
           },
         })
       } else {
