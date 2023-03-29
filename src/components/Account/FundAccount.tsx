@@ -18,7 +18,6 @@ import { convertToGwei } from 'utils/formatters'
 
 interface Props {
   setShowFundAccount: (showFundAccount: boolean) => void
-  hasBalance: boolean
 }
 
 export default function FundAccount(props: Props) {
@@ -32,10 +31,6 @@ export default function FundAccount(props: Props) {
   const [lendAssets, setLendAssets] = useState(false)
   const [fundAccount, setFundAccount] = useState(false)
 
-  function handleLendAssets(val: boolean) {
-    setLendAssets(val)
-  }
-
   const onSliderChange = useCallback((percentage: number, liquidityAmount: number) => {
     setPercentage(percentage)
     setValue(new BigNumber(percentage).div(100).times(liquidityAmount).toNumber())
@@ -45,6 +40,10 @@ export default function FundAccount(props: Props) {
     setValue(value)
     setPercentage(new BigNumber(value).div(liquidityAmount).times(100).toNumber())
   }, [])
+
+  function handleLendAssets(val: boolean) {
+    setLendAssets(val)
+  }
 
   function onDeposit() {
     setFundAccount(true)
@@ -60,17 +59,15 @@ export default function FundAccount(props: Props) {
 
   return (
     <>
-      {props.hasBalance && (
-        <div className='absolute top-4 right-4'>
-          <Button
-            onClick={() => props.setShowFundAccount(false)}
-            leftIcon={<Cross />}
-            className='h-8 w-8'
-            iconClassName='h-2 w-2'
-            color='tertiary'
-          />
-        </div>
-      )}
+      <div className='absolute top-4 right-4'>
+        <Button
+          onClick={() => props.setShowFundAccount(false)}
+          leftIcon={<Cross />}
+          className='h-8 w-8'
+          iconClassName='h-2 w-2'
+          color='tertiary'
+        />
+      </div>
       <div className='relative z-10 w-full p-4'>
         <Text size='lg' className='mb-2 font-bold'>
           {`Fund Account #${params.account}`}

@@ -121,10 +121,7 @@ export default function AccountMenu() {
                   ) : (
                     <>
                       {showFundAccount ? (
-                        <FundAccount
-                          setShowFundAccount={setShowFundAccount}
-                          hasBalance={hasBalance}
-                        />
+                        <FundAccount setShowFundAccount={setShowFundAccount} />
                       ) : (
                         <CurrentAccount setShowFundAccount={setShowFundAccount} />
                       )}
