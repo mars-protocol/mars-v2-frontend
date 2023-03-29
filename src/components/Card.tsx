@@ -4,10 +4,10 @@ import { ReactElement, ReactNode } from 'react'
 import { Text } from 'components/Text'
 
 interface Props {
-  title?: string | ReactElement
   children: ReactNode
   className?: string
   contentClassName?: string
+  title?: string | ReactElement
 }
 
 export default function Card(props: Props) {
@@ -19,11 +19,12 @@ export default function Card(props: Props) {
         'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
       )}
     >
-      {props.title && (
+      {typeof props.title === 'string' && (
         <Text size='lg' className='flex w-full items-center bg-white/10 p-4 font-semibold'>
           {props.title}
         </Text>
       )}
+      {typeof props.title === 'object' && props.title}
       <div className={classNames('w-full', props.contentClassName)}>{props.children}</div>
     </section>
   )

@@ -118,7 +118,9 @@ export default function AccountMenu() {
                   </Text>
                   <Button
                     color='secondary'
+                    className='w-[108px]'
                     rightIcon={<Plus />}
+                    iconClassName='h-2.5 w-2.5'
                     text='Create'
                     onClick={createAccountHandler}
                   />

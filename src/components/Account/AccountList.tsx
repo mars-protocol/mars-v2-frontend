@@ -2,16 +2,27 @@
 
 import { useRouter } from 'next/navigation'
 
+import classNames from 'classnames'
 import { Button } from 'components/Button'
-import { ArrowDownLine, ArrowsLeftRight, ArrowUpLine, PlusCircled, Rubbish } from 'components/Icons'
+import Card from 'components/Card'
+import { ArrowDownLine, ArrowsLeftRight, ArrowUpLine, Rubbish } from 'components/Icons'
+import Radio from 'components/Radio'
+import SwitchWithLabel from 'components/SwitchWithLabel'
 import { Text } from 'components/Text'
 import useParams from 'hooks/useParams'
+import { useState } from 'react'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
+import AccountStats from './AccountStats'
 
 interface Props {
   setShowFundAccount: (showFundAccount: boolean) => void
 }
+
+const accountCardHeaderClasses = classNames(
+  'flex w-full items-center justify-between bg-white/20 px-4 py-2.5 text-white/70',
+  'border border-transparent border-b-white/20 ',
+)
 
 export default function AccountList(props: Props) {
   const router = useRouter()
@@ -19,16 +30,10 @@ export default function AccountList(props: Props) {
   const selectedAccount = params.account
   const creditAccounts = useStore((s) => s.creditAccounts)
 
-  const createCreditAccount = useStore((s) => s.createCreditAccount)
   const deleteCreditAccount = useStore((s) => s.deleteCreditAccount)
 
+  const [lendAssets, setLendAssets] = useState(false)
   const accountSelected = !!selectedAccount && !isNaN(Number(selectedAccount))
-
-  async function createAccountHandler() {
-    const accountId = await createCreditAccount({ fee: hardcodedFee })
-    if (!accountId) return
-    router.push(`/wallets/${params.wallet}/accounts/${accountId}`)
-  }
 
   async function deleteAccountHandler() {
     if (!accountSelected) return
@@ -37,79 +42,99 @@ export default function AccountList(props: Props) {
       router.push(`/wallets/${params.wallet}/accounts`)
     }
   }
+
+  function handleLendAssets(val: boolean) {
+    setLendAssets(val)
+  }
   return !creditAccounts ? null : (
-    <>
-      <>
-        <Text size='sm' uppercase={true} className='w-full px-4 pt-4'>
-          Manage Account {selectedAccount}
-        </Text>
-        <div className='flex w-full justify-between p-4'>
-          <Button
-            className='flex w-[115px] items-center justify-center pl-0 pr-2'
-            text='Fund'
-            leftIcon={<ArrowUpLine />}
-            onClick={() => props.setShowFundAccount(true)}
-          />
-          <Button
-            className='flex w-[115px] items-center justify-center pl-0 pr-2'
-            color='secondary'
-            leftIcon={<ArrowDownLine />}
-            text='Withdraw'
-            onClick={() => {
-              useStore.setState({ withdrawModal: true })
-            }}
-          />
-        </div>
-        <div className='flex w-full flex-wrap border-t border-t-white/10 p-4'>
-          <Button
-            className='w-full whitespace-nowrap py-2'
-            variant='transparent'
-            color='quaternary'
-            text='Create New Account'
-            onClick={() => {
-              createAccountHandler()
-            }}
-            leftIcon={<PlusCircled />}
-          />
-          <Button
-            className='w-full whitespace-nowrap py-2'
-            variant='transparent'
-            color='quaternary'
-            text='Close Account'
-            onClick={() => {
-              deleteAccountHandler()
-            }}
-            leftIcon={<Rubbish />}
-          />
-          <Button
-            className='w-full whitespace-nowrap py-2'
-            variant='transparent'
-            color='quaternary'
-            text='Transfer Balance'
-            onClick={() => {}}
-            leftIcon={<ArrowsLeftRight />}
-          />
-        </div>
-      </>
-      <div className='flex w-full flex-wrap border-t border-t-white/10 p-4'>
-        <Text size='sm' uppercase={true} className='w-full pb-2'>
-          Select Account
-        </Text>
-        {creditAccounts.map((account) => {
-          return selectedAccount === account ? null : (
+    <div className='flex w-full flex-wrap gap-4 p-4'>
+      {accountSelected && (
+        <Card
+          className='w-full'
+          contentClassName='bg-white/10'
+          title={
+            <div className={accountCardHeaderClasses}>
+              <Text size='xs' className='flex flex-1'>
+                Credit Account #{selectedAccount}
+              </Text>
+              <Radio active={true} />
+            </div>
+          }
+        >
+          <div className='w-full border border-transparent border-b-white/20 p-4'>
+            <AccountStats balance='$ 26,000.55' risk={75} health={0.85} />
+          </div>
+          <div className='grid grid-flow-row grid-cols-2 gap-4 p-4'>
             <Button
-              key={account}
-              className='w-full whitespace-nowrap py-2'
-              variant='transparent'
-              color='quaternary'
-              onClick={() => {
-                router.push(`/wallets/${params.wallet}/accounts/${account}`)
-              }}
-              text={`Account ${account}`}
+              className='w-full'
+              text='Fund'
+              color='tertiary'
+              leftIcon={<ArrowUpLine />}
+              onClick={() => props.setShowFundAccount(true)}
             />
-          )
-        })}
-      </div>
-    </>
+            <Button
+              className='w-full'
+              color='tertiary'
+              leftIcon={<ArrowDownLine />}
+              text='Withdraw'
+              onClick={() => {
+                useStore.setState({ withdrawModal: true })
+              }}
+            />
+            <Button
+              className='w-full'
+              color='tertiary'
+              leftIcon={<Rubbish />}
+              text='Delete'
+              onClick={() => deleteAccountHandler()}
+            />
+            <Button
+              className='w-full'
+              color='tertiary'
+              leftIcon={<ArrowsLeftRight />}
+              text='Transfer'
+              onClick={() => {}}
+            />
+            <div className='col-span-2 border border-transparent border-t-white/10 pt-4'>
+              <SwitchWithLabel
+                name='lendAssets'
+                label='Lend assets to earn yield'
+                value={lendAssets}
+                changeHandler={handleLendAssets}
+                tooltip={`Fund your account and lend assets effortlessly! By lending, you'll earn attractive interest (APY) without impacting your LTV. It's a win-win situation - don't miss out on this easy opportunity to grow your holdings!`}
+              />
+            </div>
+          </div>
+        </Card>
+      )}
+      {creditAccounts.map((account) => {
+        return selectedAccount === account ? null : (
+          <Card
+            key={account}
+            className='w-full'
+            contentClassName='bg-white/10'
+            title={
+              <div className={accountCardHeaderClasses}>
+                <Text size='xs' className='flex flex-1'>
+                  Credit Account #{account}
+                </Text>
+                <Button
+                  variant='transparent'
+                  color='quaternary'
+                  onClick={() => {
+                    router.push(`/wallets/${params.wallet}/accounts/${account}`)
+                  }}
+                  text={<Radio />}
+                />
+              </div>
+            }
+          >
+            <div className='w-full p-4'>
+              <AccountStats balance='$ 26,000.55' risk={60} health={0.5} />
+            </div>
+          </Card>
+        )
+      })}
+    </div>
   )
 }

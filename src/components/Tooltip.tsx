@@ -56,7 +56,7 @@ export const Tooltip = ({
       ) : (
         <span
           className={classNames(
-            'mb-2 inline-block w-[18px] cursor-pointer opacity-40 hover:opacity-80',
+            'inline-block w-[18px] cursor-pointer opacity-40 hover:opacity-80',
             className,
           )}
         >

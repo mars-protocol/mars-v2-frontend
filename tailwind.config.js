@@ -265,7 +265,7 @@ module.exports = {
           },
           '.gradient-popover': {
             background:
-              'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1))',
+              'linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))',
           },
           '.gradient-primary-to-secondary': {
             background: 'linear-gradient(90deg, #FF625E 0%, #FB9562 100%)',
