@@ -33,6 +33,8 @@ export default function BorrowModal() {
 
   function setOpen(isOpen: boolean) {
     useStore.setState({ borrowModal: null })
+    setValue(0)
+    setPercentage(0)
   }
 
   function onConfirmClick() {
@@ -45,6 +47,7 @@ export default function BorrowModal() {
         fee: hardcodedFee,
         accountId: selectedAccount,
         coin: { denom: modal.asset.denom, amount: amount.toString() },
+        accountBalance: percentage === 100,
       })
       return
     }
@@ -57,15 +60,22 @@ export default function BorrowModal() {
   }
 
   const onSliderChange = useCallback(
-    (percentage: number, liquidityAmount: number) =>
-      setValue(new BigNumber(percentage).div(100).times(liquidityAmount).toNumber()),
-    [],
+    (percentage: number, maxAmount: number) => {
+      const amount = new BigNumber(percentage).div(100).times(maxAmount).toNumber()
+
+      setValue(amount)
+      setPercentage(percentage)
+    },
+    [modal?.asset.decimals],
   )
 
-  const onInputChange = useCallback((value: number, liquidityAmount: number) => {
-    setValue(value)
-    setPercentage(new BigNumber(value).div(liquidityAmount).times(100).toNumber())
-  }, [])
+  const onInputChange = useCallback(
+    (value: number, maxAmount: number) => {
+      setValue(value)
+      setPercentage(new BigNumber(value).div(maxAmount).times(100).toNumber())
+    },
+    [modal?.asset.decimals],
+  )
 
   if (!modal) return null
 
@@ -80,6 +90,15 @@ export default function BorrowModal() {
     abbreviated: true,
     decimals: 6,
   })
+
+  let debtAmount = 0
+
+  if ((modal.marketData as BorrowAssetActive)?.debt)
+    debtAmount = Number((modal.marketData as BorrowAssetActive).debt)
+
+  const maxAmount = new BigNumber(modal.isRepay ? debtAmount : liquidityAmount)
+    .shiftedBy(-modal.asset.decimals)
+    .toNumber()
 
   return (
     <Modal
@@ -102,7 +121,10 @@ export default function BorrowModal() {
           sub={'Borrow rate'}
         />
         <div className='h-100 w-[1px] bg-white/10'></div>
-        <TitleAndSubCell title={'$0'} sub={'Borrowed'} />
+        <TitleAndSubCell
+          title={formatValue(debtAmount, { abbreviated: true, decimals: modal.asset.decimals })}
+          sub={'Borrowed'}
+        />
         <div className='h-100 w-[1px] bg-white/10'></div>
         <TitleAndSubCell
           title={`${liquidityAmountString} (${liquidityValueString})`}
@@ -116,11 +138,11 @@ export default function BorrowModal() {
         >
           <TokenInput
             asset={modal.asset}
-            onChange={(value) => onInputChange(value, liquidityAmount)}
+            onChange={(value) => onInputChange(value, maxAmount)}
             value={value}
-            max={liquidityAmount}
+            max={maxAmount}
           />
-          <Slider value={percentage} onChange={(value) => onSliderChange(value, liquidityAmount)} />
+          <Slider value={percentage} onChange={(value) => onSliderChange(value, maxAmount)} />
           <Divider />
           <Text size='lg'>{modal.isRepay ? 'Repay for' : 'Borrow to'}</Text>
           <select
@@ -140,7 +162,6 @@ export default function BorrowModal() {
             className='w-full'
             text={modal.isRepay ? 'Repay' : 'Borrow'}
             rightIcon={<ArrowRight />}
-            showProgressIndicator={}
           />
         </Card>
         <AccountSummary />
