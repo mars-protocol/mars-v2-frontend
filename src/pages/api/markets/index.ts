@@ -4,6 +4,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import { getMarketAssets } from 'utils/assets'
 import { denomToKey } from 'utils/query'
+import { resolveMarketResponses } from 'utils/resolvers'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!ENV.URL_GQL || !ENV.ADDRESS_RED_BANK || !ENV.ADDRESS_INCENTIVES) {
@@ -35,11 +36,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const market = result.rbwasmkey[`${denomToKey(asset.denom)}`]
     return market
   })
-  return res.status(200).json(markets)
+  return res.status(200).json(resolveMarketResponses(markets))
 }
 
 interface RedBankData {
   rbwasmkey: {
-    [key: string]: Market
+    [key: string]: MarketResponse
   }
 }

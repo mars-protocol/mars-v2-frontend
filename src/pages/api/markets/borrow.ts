@@ -10,7 +10,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(404).json(ENV_MISSING_MESSAGE)
   }
 
-  const marketAssets = getMarketAssets()
   const $liquidity = fetch(`${ENV.URL_API}/markets/liquidity${VERCEL_BYPASS}`)
   const $markets = fetch(`${ENV.URL_API}/markets${VERCEL_BYPASS}`)
   const $prices = fetch(`${ENV.URL_API}/prices${VERCEL_BYPASS}`)
@@ -18,16 +17,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const borrow: BorrowAsset[] = await Promise.all([$liquidity, $markets, $prices]).then(
     async ([$liquidity, $markets, $prices]) => {
       const liquidity: Coin[] = await $liquidity.json()
-      const markets: Market[] = await $markets.json()
+      const borrowEnabledMarkets: Market[] = (await $markets.json()).filter(
+        (market: Market) => market.borrowEnabled,
+      )
       const prices: Coin[] = await $prices.json()
 
-      return marketAssets.map((asset) => {
-        const currentMarket = markets.find((market) => market.denom === asset.denom)
-        const price = prices.find((coin) => coin.denom === asset.denom)?.amount ?? '1'
-        const amount = liquidity.find((coin) => coin.denom === asset.denom)?.amount ?? '0'
+      return borrowEnabledMarkets.map((market) => {
+        const price = prices.find((coin) => coin.denom === market.denom)?.amount ?? '1'
+        const amount = liquidity.find((coin) => coin.denom === market.denom)?.amount ?? '0'
         return {
-          denom: asset.denom,
-          borrowRate: currentMarket?.borrow_rate ?? '0',
+          denom: market.denom,
+          borrowRate: market.borrowRate ?? 0,
           liquidity: {
             amount: amount,
             value: new BigNumber(amount).times(price).toString(),

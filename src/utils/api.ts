@@ -16,7 +16,7 @@ export async function getBorrowData() {
 
 export async function getCreditAccounts(address: string) {
   if (!address) return []
-  return callAPI<any[]>(`/wallets/${address}/accounts`)
+  return callAPI<string[]>(`/wallets/${address}/accounts`)
 }
 
 export async function getMarkets() {

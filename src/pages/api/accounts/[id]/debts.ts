@@ -9,10 +9,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const accountId = req.query.id
 
-  const account = await (await fetch(`${ENV.URL_API}/accounts/${accountId}${VERCEL_BYPASS}`)).json()
+  const position: Position = await (
+    await fetch(`${ENV.URL_API}/accounts/${accountId}${VERCEL_BYPASS}`)
+  ).json()
 
-  if (account) {
-    return res.status(200).json(account.debts)
+  if (position) {
+    return res.status(200).json(position.debts)
   }
 
   return res.status(404)
