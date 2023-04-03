@@ -112,7 +112,6 @@ export default function AccountList(props: Props) {
         </Card>
       )}
       {creditAccountsPositions.map((position) => {
-        console.log(position)
         return selectedAccount === position.account ? null : (
           <Card
             key={position.account}

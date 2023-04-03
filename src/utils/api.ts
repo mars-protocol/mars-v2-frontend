@@ -41,12 +41,12 @@ export async function getAccountDeposits(account: string) {
   return callAPI<Coin[]>(`/accounts/${account}/deposits`)
 }
 
-export async function getWalletBalances(wallet: string) {
-  if (!wallet) return []
-  return callAPI<Coin[]>(`/wallets/${wallet}/balances`)
+export async function getWalletBalances(props: { key: string; wallet: string }) {
+  if (!props.wallet) return []
+  return callAPI<Coin[]>(`/wallets/${props.wallet}/balances`)
 }
 
-export async function getAccountsPositions(wallet: string) {
-  if (!wallet) return []
-  return callAPI<Position[]>(`/wallets/${wallet}/accounts/positions`)
+export async function getAccountsPositions(props: { key: string; wallet: string }) {
+  if (!props.wallet) return []
+  return callAPI<Position[]>(`/wallets/${props.wallet}/accounts/positions`)
 }

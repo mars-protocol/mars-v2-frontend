@@ -56,7 +56,7 @@ export default function AccountMenu() {
   }
 
   const { data: positions, isLoading } = useSWR(
-    `/wallets/${address}/accounts/positions`,
+    { key: `getAccountsPositions`, wallet: address },
     getAccountsPositions,
   )
   if (positions && !isLoading) useStore.setState({ creditAccountsPositions: positions })
@@ -64,8 +64,6 @@ export default function AccountMenu() {
   if (!address) return null
 
   if (creditAccountsPositions === null) return <Loading className='h-8 w-35' />
-
-  console.log(selectedAccount, showFundAccount, isLoadingAccount)
 
   return (
     <div className='relative'>
