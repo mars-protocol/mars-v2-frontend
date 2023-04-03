@@ -1,14 +1,16 @@
 import classNames from 'classnames'
 import Image from 'next/image'
 
+import BigNumber from 'bignumber.js'
 import NumberInput from 'components/NumberInput'
 import { Text } from 'components/Text'
+import { useState } from 'react'
 
 interface Props {
-  value: number
+  amount: number
   max: number
   asset: Asset
-  onChange: (value: number) => void
+  onChange: (amount: number) => void
   className?: string
   disabled?: boolean
 }
@@ -29,9 +31,10 @@ export default function TokenInput(props: Props) {
         </div>
         <NumberInput
           disabled={props.disabled}
+          asset={props.asset}
           maxDecimals={props.asset.decimals}
           onChange={props.onChange}
-          value={props.value.toString()}
+          amount={props.amount}
           max={props.max}
           className='border-none p-3'
         />

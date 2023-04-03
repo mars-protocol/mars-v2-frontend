@@ -12,7 +12,6 @@ import TokenInput from 'components/TokenInput'
 import { ASSETS } from 'constants/assets'
 import useParams from 'hooks/useParams'
 import useStore from 'store'
-import { getMarketAssets } from 'utils/assets'
 import { hardcodedFee } from 'utils/contants'
 
 interface Props {
@@ -23,21 +22,19 @@ export default function FundAccount(props: Props) {
   const params = useParams()
   const deposit = useStore((s) => s.deposit)
 
-  const marketAssets = getMarketAssets()
-
   const [percentage, setPercentage] = useState(0)
-  const [value, setValue] = useState(0)
+  const [amount, setAmount] = useState(0)
   const [lendAssets, setLendAssets] = useState(false)
   const [fundAccount, setFundAccount] = useState(false)
 
   const onSliderChange = useCallback((percentage: number, liquidityAmount: number) => {
     setPercentage(percentage)
-    setValue(new BigNumber(percentage).div(100).times(liquidityAmount).toNumber())
+    setAmount(new BigNumber(percentage).div(100).times(liquidityAmount).toNumber())
   }, [])
 
-  const onInputChange = useCallback((value: number, liquidityAmount: number) => {
-    setValue(value)
-    setPercentage(new BigNumber(value).div(liquidityAmount).times(100).toNumber())
+  const onInputChange = useCallback((amount: number, liquidityAmount: number) => {
+    setAmount(amount)
+    setPercentage(new BigNumber(amount).div(liquidityAmount).times(100).toNumber())
   }, [])
 
   function handleLendAssets(val: boolean) {
@@ -51,7 +48,7 @@ export default function FundAccount(props: Props) {
       accountId: params.account,
       coin: {
         denom: ASSETS[0].denom,
-        amount: value.toString(),
+        amount: amount.toString(),
       },
     })
   }
@@ -77,8 +74,8 @@ export default function FundAccount(props: Props) {
         </Text>
         <TokenInput
           asset={ASSETS[0]}
-          onChange={(value) => onInputChange(value, 100)}
-          value={value}
+          onChange={(amount) => onInputChange(amount, 100)}
+          amount={amount}
           max={100}
           className='mb-4'
           disabled={fundAccount}
@@ -97,12 +94,12 @@ export default function FundAccount(props: Props) {
           changeHandler={handleLendAssets}
           className='mb-4'
           tooltip={`Fund your account and lend assets effortlessly! By lending, you'll earn attractive interest (APY) without impacting your LTV. It's a win-win situation - don't miss out on this easy opportunity to grow your holdings!`}
-          disabled={fundAccount || value === 0}
+          disabled={fundAccount || amount === 0}
         />
         <Button
           className='w-full'
           showProgressIndicator={fundAccount}
-          disabled={value === 0}
+          disabled={amount === 0}
           text='Fund Account'
           rightIcon={<ArrowRight />}
           onClick={onDeposit}
