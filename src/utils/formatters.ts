@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 
-import { getMarketAssets } from './assets'
 import { Coin } from '@cosmjs/stargate'
+import { getMarketAssets } from './assets'
 
 export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
   const head = text.slice(0, h)

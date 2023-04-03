@@ -14,7 +14,6 @@ import useParams from 'hooks/useParams'
 import useStore from 'store'
 import { getMarketAssets } from 'utils/assets'
 import { hardcodedFee } from 'utils/contants'
-import { convertToGwei } from 'utils/formatters'
 
 interface Props {
   setShowFundAccount: (showFundAccount: boolean) => void
@@ -51,8 +50,8 @@ export default function FundAccount(props: Props) {
       fee: hardcodedFee,
       accountId: params.account,
       coin: {
-        denom: 'uosmo',
-        amount: convertToGwei(value, ASSETS[0].denom, marketAssets).toString(),
+        denom: ASSETS[0].denom,
+        amount: value.toString(),
       },
     })
   }
