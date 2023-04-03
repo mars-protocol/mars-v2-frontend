@@ -13,8 +13,7 @@ import { Text } from 'components/Text'
 import useParams from 'hooks/useParams'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
-
-import AccountStats from './AccountStats'
+import AccountStats from 'components/Account/AccountStats'
 
 interface Props {
   setShowFundAccount: (showFundAccount: boolean) => void

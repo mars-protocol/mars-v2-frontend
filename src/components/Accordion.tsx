@@ -1,9 +1,6 @@
-import { useState } from 'react'
-
+import Card from 'components/Card'
+import { Plus, Subtract } from 'components/Icons'
 import { Text } from 'components/Text'
-
-import { Plus, Subtract } from './Icons'
-import Card from './Card'
 
 interface Props {
   items: Item[]

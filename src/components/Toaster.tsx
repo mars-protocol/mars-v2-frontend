@@ -7,7 +7,7 @@ import { CheckCircled, Cross, CrossCircled } from 'components/Icons'
 import { Text } from 'components/Text'
 import useStore from 'store'
 
-import { Button } from './Button'
+import { Button } from 'components/Button'
 
 export default function Toaster() {
   const enableAnimations = useStore((s) => s.enableAnimations)

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import AccountList from 'components/Account/AccountList'
+import CreateAccount from 'components/Account/CreateAccount'
 import FundAccount from 'components/Account/FundAccount'
 import { Button } from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
@@ -16,8 +17,6 @@ import useParams from 'hooks/useParams'
 import useStore from 'store'
 import { getAccountDebts, getAccountDeposits } from 'utils/api'
 import { hardcodedFee } from 'utils/contants'
-
-import CreateAccount from './CreateAccount'
 
 const menuClasses = 'absolute isolate flex w-full flex-wrap overflow-y-scroll scrollbar-hide'
 
