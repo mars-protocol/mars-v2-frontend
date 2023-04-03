@@ -3,6 +3,7 @@ interface Asset {
   name: string
   denom: string
   symbol: 'OSMO' | 'ATOM' | 'CRO' | 'MARS' | 'JUNO'
+  prefix?: string
   contract_addr?: string
   logo: string
   decimals: number
