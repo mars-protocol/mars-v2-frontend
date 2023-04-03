@@ -24,6 +24,7 @@ export default function BorrowModal() {
   const [selectedAccount, setSelectedAccount] = useState(params.account)
   const modal = useStore((s) => s.borrowModal)
   const borrow = useStore((s) => s.borrow)
+  const repay = useStore((s) => s.repay)
   const creditAccounts = useStore((s) => s.creditAccounts)
 
   function onAccountSelect(accountId: string) {
@@ -32,12 +33,24 @@ export default function BorrowModal() {
 
   function setOpen(isOpen: boolean) {
     useStore.setState({ borrowModal: null })
+    setValue(0)
+    setPercentage(0)
   }
 
-  function onBorrowClick() {
+  function onConfirmClick() {
     if (!modal?.asset) return
 
     const amount = new BigNumber(value).shiftedBy(modal.asset.decimals)
+
+    if (modal.isRepay) {
+      repay({
+        fee: hardcodedFee,
+        accountId: selectedAccount,
+        coin: { denom: modal.asset.denom, amount: amount.toString() },
+        accountBalance: percentage === 100,
+      })
+      return
+    }
 
     borrow({
       fee: hardcodedFee,
@@ -47,15 +60,22 @@ export default function BorrowModal() {
   }
 
   const onSliderChange = useCallback(
-    (percentage: number, liquidityAmount: number) =>
-      setValue(new BigNumber(percentage).div(100).times(liquidityAmount).toNumber()),
-    [],
+    (percentage: number, maxAmount: number) => {
+      const amount = new BigNumber(percentage).div(100).times(maxAmount).toNumber()
+
+      setValue(amount)
+      setPercentage(percentage)
+    },
+    [modal?.asset.decimals],
   )
 
-  const onInputChange = useCallback((value: number, liquidityAmount: number) => {
-    setValue(value)
-    setPercentage(new BigNumber(value).div(liquidityAmount).times(100).toNumber())
-  }, [])
+  const onInputChange = useCallback(
+    (value: number, maxAmount: number) => {
+      setValue(value)
+      setPercentage(new BigNumber(value).div(maxAmount).times(100).toNumber())
+    },
+    [modal?.asset.decimals],
+  )
 
   if (!modal) return null
 
@@ -71,6 +91,15 @@ export default function BorrowModal() {
     decimals: 6,
   })
 
+  let debtAmount = 0
+
+  if ((modal.marketData as BorrowAssetActive)?.debt)
+    debtAmount = Number((modal.marketData as BorrowAssetActive).debt)
+
+  const maxAmount = new BigNumber(modal.isRepay ? debtAmount : liquidityAmount)
+    .shiftedBy(-modal.asset.decimals)
+    .toNumber()
+
   return (
     <Modal
       open={true}
@@ -78,7 +107,9 @@ export default function BorrowModal() {
       header={
         <span className='flex items-center gap-4 px-4'>
           <Image src={modal?.asset.logo} alt='token' width={24} height={24} />
-          <Text>Borrow {modal.asset.symbol}</Text>
+          <Text>
+            {modal.isRepay ? 'Repay' : 'Borrow'} {modal.asset.symbol}
+          </Text>
         </span>
       }
       headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
@@ -90,7 +121,10 @@ export default function BorrowModal() {
           sub={'Borrow rate'}
         />
         <div className='h-100 w-[1px] bg-white/10'></div>
-        <TitleAndSubCell title={'$0'} sub={'Borrowed'} />
+        <TitleAndSubCell
+          title={formatValue(debtAmount, { abbreviated: true, decimals: modal.asset.decimals })}
+          sub={'Borrowed'}
+        />
         <div className='h-100 w-[1px] bg-white/10'></div>
         <TitleAndSubCell
           title={`${liquidityAmountString} (${liquidityValueString})`}
@@ -104,13 +138,13 @@ export default function BorrowModal() {
         >
           <TokenInput
             asset={modal.asset}
-            onChange={(value) => onInputChange(value, liquidityAmount)}
+            onChange={(value) => onInputChange(value, maxAmount)}
             value={value}
-            max={liquidityAmount}
+            max={maxAmount}
           />
-          <Slider value={percentage} onChange={(value) => onSliderChange(value, liquidityAmount)} />
+          <Slider value={percentage} onChange={(value) => onSliderChange(value, maxAmount)} />
           <Divider />
-          <Text size='lg'>Borrow to</Text>
+          <Text size='lg'>{modal.isRepay ? 'Repay for' : 'Borrow to'}</Text>
           <select
             name='creditAccount'
             value={selectedAccount}
@@ -124,9 +158,9 @@ export default function BorrowModal() {
             ))}
           </select>
           <Button
-            onClick={onBorrowClick}
+            onClick={onConfirmClick}
             className='w-full'
-            text='Borrow'
+            text={modal.isRepay ? 'Repay' : 'Borrow'}
             rightIcon={<ArrowRight />}
           />
         </Card>
