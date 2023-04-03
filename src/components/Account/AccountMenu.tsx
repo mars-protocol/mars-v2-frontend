@@ -3,6 +3,7 @@
 import classNames from 'classnames'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import useSWR from 'swr'
 
 import AccountList from 'components/Account/AccountList'
 import CreateAccount from 'components/Account/CreateAccount'
@@ -15,7 +16,6 @@ import { Overlay } from 'components/Overlay/Overlay'
 import { Text } from 'components/Text'
 import useParams from 'hooks/useParams'
 import useStore from 'store'
-import useSWR from 'swr'
 import { getAccountsPositions } from 'utils/api'
 import { hardcodedFee } from 'utils/contants'
 

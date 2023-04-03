@@ -44,7 +44,7 @@ export default function NumberInput(props: Props) {
       formatted: demagnify(props.amount, props.asset).toString(),
       value: demagnify(props.amount, props.asset),
     })
-  }, [props.amount])
+  }, [props.amount, props.asset])
 
   useEffect(() => {
     if (!props.onRef) return

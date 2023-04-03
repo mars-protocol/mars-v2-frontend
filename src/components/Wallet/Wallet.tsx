@@ -13,7 +13,6 @@ import ConnectButton from 'components/Wallet/ConnectButton'
 import ConnectedButton from 'components/Wallet/ConnectedButton'
 import useParams from 'hooks/useParams'
 import useStore from 'store'
-import { getCreditAccounts } from 'utils/api'
 
 export default function Wallet() {
   const router = useRouter()
@@ -33,18 +32,10 @@ export default function Wallet() {
         ? {
             address: recentWallet?.account.address,
           }
-        : { address: undefined, creditAccounts: null, client: undefined },
+        : { address: undefined, creditAccountsPositions: null, client: undefined },
     )
 
     if (!isConnected || !recentWallet) return
-
-    const fetchCreditAccounts = async () => {
-      if (!recentWallet?.account.address) return
-      const walletCreditAccounts = await getCreditAccounts(recentWallet?.account.address)
-      useStore.setState({ creditAccounts: walletCreditAccounts })
-    }
-
-    fetchCreditAccounts()
 
     if (!client) {
       const getCosmWasmClient = async () => {

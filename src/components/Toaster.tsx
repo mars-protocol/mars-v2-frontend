@@ -6,7 +6,6 @@ import { toast as createToast, Slide, ToastContainer } from 'react-toastify'
 import { CheckCircled, Cross, CrossCircled } from 'components/Icons'
 import { Text } from 'components/Text'
 import useStore from 'store'
-
 import { Button } from 'components/Button'
 
 export default function Toaster() {
