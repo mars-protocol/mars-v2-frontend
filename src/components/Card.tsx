@@ -19,12 +19,13 @@ export default function Card(props: Props) {
         'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
       )}
     >
-      {typeof props.title === 'string' && (
+      {typeof props.title === 'string' ? (
         <Text size='lg' className='flex w-full items-center bg-white/10 p-4 font-semibold'>
           {props.title}
         </Text>
-      )}
-      {typeof props.title === 'object' && props.title}
+      ) : typeof props.title === 'object' ? (
+        props.title
+      ) : null}
       <div className={classNames('w-full', props.contentClassName)}>{props.children}</div>
     </section>
   )

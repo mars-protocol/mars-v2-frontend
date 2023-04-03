@@ -1,9 +1,10 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import classNames from 'classnames'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
+import AccountStats from 'components/Account/AccountStats'
 import { Button } from 'components/Button'
 import Card from 'components/Card'
 import { ArrowCircledTopRight, ArrowDownLine, ArrowUpLine, TrashBin } from 'components/Icons'
@@ -13,7 +14,6 @@ import { Text } from 'components/Text'
 import useParams from 'hooks/useParams'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
-import AccountStats from 'components/Account/AccountStats'
 
 interface Props {
   setShowFundAccount: (showFundAccount: boolean) => void
@@ -28,11 +28,11 @@ export default function AccountList(props: Props) {
   const router = useRouter()
   const params = useParams()
   const selectedAccount = params.account
-  const creditAccounts = useStore((s) => s.creditAccounts)
+  const creditAccountsPositions = useStore((s) => s.creditAccountsPositions)
 
   const deleteCreditAccount = useStore((s) => s.deleteCreditAccount)
 
-  const [lendAssets, setLendAssets] = useState(false)
+  const [isLending, setIsLending] = useState(false)
   const accountSelected = !!selectedAccount && !isNaN(Number(selectedAccount))
 
   async function deleteAccountHandler() {
@@ -44,9 +44,13 @@ export default function AccountList(props: Props) {
   }
 
   function handleLendAssets(val: boolean) {
-    setLendAssets(val)
+    setIsLending(val)
+    /* TODO: handle lending assets */
   }
-  return !creditAccounts ? null : (
+
+  if (!creditAccountsPositions?.length) return null
+
+  return (
     <div className='flex w-full flex-wrap gap-4 p-4'>
       {accountSelected && (
         <Card
@@ -97,32 +101,33 @@ export default function AccountList(props: Props) {
             />
             <div className='col-span-2 border border-transparent border-t-white/10 pt-4'>
               <SwitchWithLabel
-                name='lendAssets'
+                name='isLending'
                 label='Lend assets to earn yield'
-                value={lendAssets}
-                changeHandler={handleLendAssets}
+                value={isLending}
+                onChange={handleLendAssets}
                 tooltip={`Fund your account and lend assets effortlessly! By lending, you'll earn attractive interest (APY) without impacting your LTV. It's a win-win situation - don't miss out on this easy opportunity to grow your holdings!`}
               />
             </div>
           </div>
         </Card>
       )}
-      {creditAccounts.map((account) => {
-        return selectedAccount === account ? null : (
+      {creditAccountsPositions.map((position) => {
+        console.log(position)
+        return selectedAccount === position.account ? null : (
           <Card
-            key={account}
+            key={position.account}
             className='w-full'
             contentClassName='bg-white/10'
             title={
               <div className={accountCardHeaderClasses}>
                 <Text size='xs' className='flex flex-1'>
-                  Credit Account #{account}
+                  Credit Account #{position.account}
                 </Text>
                 <Button
                   variant='transparent'
                   color='quaternary'
                   onClick={() => {
-                    router.push(`/wallets/${params.wallet}/accounts/${account}`)
+                    router.push(`/wallets/${params.wallet}/accounts/${position.account}`)
                   }}
                   text={<Radio />}
                 />

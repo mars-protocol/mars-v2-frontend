@@ -72,6 +72,7 @@ export default function Toaster() {
       closeButton={false}
       position='top-right'
       newestOnTop
+      closeOnClick
       transition={enableAnimations ? Slide : undefined}
       className='p-0'
       toastClassName='top-[73px] z-50 m-0 mb-4 flex w-full bg-transparent p-0'

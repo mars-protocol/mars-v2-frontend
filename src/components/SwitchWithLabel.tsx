@@ -8,7 +8,7 @@ interface Props {
   name: string
   label: string
   value: boolean
-  changeHandler: (checked: boolean) => void
+  onChange: (checked: boolean) => void
   className?: string
   tooltip?: string
   disabled?: boolean
@@ -26,7 +26,7 @@ export default function SwitchWithLabel(props: Props) {
       <Switch
         name={props.name}
         checked={props.value}
-        onChange={props.changeHandler}
+        onChange={props.onChange}
         disabled={props.disabled}
       />
     </div>

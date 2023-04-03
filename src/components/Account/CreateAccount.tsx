@@ -5,12 +5,11 @@ import { ArrowRight } from 'components/Icons'
 import { Text } from 'components/Text'
 
 interface Props {
-  createAccount: boolean
-  setCreateAccount: (createAccount: boolean) => void
-  createAccountHandler: () => void
+  isCreating: boolean
+  createAccount: () => void
 }
 
-export default function AccountMenu(props: Props) {
+export default function CreateAccount(props: Props) {
   return (
     <div className='relative z-10 w-full p-4'>
       <Text size='lg' className='mb-2 font-bold'>
@@ -21,10 +20,10 @@ export default function AccountMenu(props: Props) {
       </Text>
       <Button
         className='w-full'
-        showProgressIndicator={props.createAccount}
+        showProgressIndicator={props.isCreating}
         text='Create Account'
         rightIcon={<ArrowRight />}
-        onClick={props.createAccountHandler}
+        onClick={props.createAccount}
       />
     </div>
   )

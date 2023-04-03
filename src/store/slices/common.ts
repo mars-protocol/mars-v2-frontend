@@ -25,8 +25,7 @@ export interface CommonSlice {
     swapperBase?: MarsSwapperBaseClient
   }
   createAccountModal: boolean
-  creditAccounts: string[] | null
-  selectedAccountDetails?: Position
+  creditAccountsPositions: Position[] | null
   deleteAccountModal: boolean
   enableAnimations: boolean
   fundAccountModal: boolean
@@ -45,7 +44,7 @@ export function createCommonSlice(set: SetState<CommonSlice>, get: GetState<Comm
     borrowModal: null,
     createAccountModal: false,
     clients: {},
-    creditAccounts: null,
+    creditAccountsPositions: null,
     deleteAccountModal: false,
     enableAnimations: true,
     fundAccountModal: false,

@@ -25,7 +25,9 @@ export default function BorrowModal() {
   const modal = useStore((s) => s.borrowModal)
   const borrow = useStore((s) => s.borrow)
   const repay = useStore((s) => s.repay)
-  const creditAccounts = useStore((s) => s.creditAccounts)
+  const creditAccounts = useStore((s) => s.creditAccountsPositions)?.map((position) => {
+    return position.account
+  })
 
   function onAccountSelect(accountId: string) {
     setSelectedAccount(accountId)

@@ -55,9 +55,9 @@ export default function AccountStats(props: Props) {
                 y2='0'
                 gradientUnits='userSpaceOnUse'
               >
-                <stop stop-color='#FF645F' />
-                <stop offset='0.489583' stop-color='#FFB1AE' />
-                <stop offset='1' stop-color='#FFD5D3' />
+                <stop stopColor='#FF645F' />
+                <stop offset='0.489583' stopColor='#FFB1AE' />
+                <stop offset='1' stopColor='#FFD5D3' />
               </linearGradient>
             </defs>
           </svg>

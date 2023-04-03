@@ -15,7 +15,7 @@ import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
 
 interface Props {
-  setShowFundAccount: (showFundAccount: boolean) => void
+  setShow: (show: boolean) => void
 }
 
 export default function FundAccount(props: Props) {
@@ -24,7 +24,7 @@ export default function FundAccount(props: Props) {
 
   const [percentage, setPercentage] = useState(0)
   const [amount, setAmount] = useState(0)
-  const [lendAssets, setLendAssets] = useState(false)
+  const [isLending, setIsLending] = useState(false)
   const [fundAccount, setFundAccount] = useState(false)
 
   const onSliderChange = useCallback((percentage: number, liquidityAmount: number) => {
@@ -38,7 +38,8 @@ export default function FundAccount(props: Props) {
   }, [])
 
   function handleLendAssets(val: boolean) {
-    setLendAssets(val)
+    setIsLending(val)
+    /* TODO: handle lending assets */
   }
 
   function onDeposit() {
@@ -57,7 +58,7 @@ export default function FundAccount(props: Props) {
     <>
       <div className='absolute right-4 top-4'>
         <Button
-          onClick={() => props.setShowFundAccount(false)}
+          onClick={() => props.setShow(false)}
           leftIcon={<Cross />}
           className='h-8 w-8'
           iconClassName='h-2 w-2'
@@ -88,12 +89,12 @@ export default function FundAccount(props: Props) {
         />
         <div className='mb-4 w-full border-b border-white/10' />
         <SwitchWithLabel
-          name='lendAssets'
+          name='isLending'
           label='Lend assets to earn yield'
-          value={lendAssets}
-          changeHandler={handleLendAssets}
+          value={isLending}
+          onChange={handleLendAssets}
           className='mb-4'
-          tooltip={`Fund your account and lend assets effortlessly! By lending, you'll earn attractive interest (APY) without impacting your LTV. It's a win-win situation - don't miss out on this easy opportunity to grow your holdings!`}
+          tooltip="Fund your account and lend assets effortlessly! By lending, you'll earn attractive interest (APY) without impacting your LTV. It's a win-win situation - don't miss out on this easy opportunity to grow your holdings!"
           disabled={fundAccount || amount === 0}
         />
         <Button
