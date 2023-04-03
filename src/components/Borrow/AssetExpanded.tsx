@@ -30,7 +30,10 @@ export default function AssetExpanded(props: AssetRowProps) {
   }
 
   function repayHandler() {
-    useStore.setState({ repayModal: true })
+    if (!asset) return null
+    useStore.setState({
+      borrowModal: { asset: asset, marketData: props.row.original, isRepay: true },
+    })
   }
 
   return (
@@ -51,7 +54,7 @@ export default function AssetExpanded(props: AssetRowProps) {
             color='primary'
             text={isActive ? 'Borrow more' : 'Borrow'}
           />
-          {isActive && <Button color='primary' text='Repay' />}
+          {isActive && <Button color='primary' text='Repay' onClick={repayHandler} />}
         </div>
       </td>
     </tr>

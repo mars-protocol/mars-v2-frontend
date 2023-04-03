@@ -21,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     {
         underlying_debt_amount: {
         denom: "${asset.denom}"
-        amount_scaled: "${asset.debt_total_scaled}"
+        amount_scaled: "${asset.debtTotalScaled}"
       }
     }`,
     )

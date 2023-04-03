@@ -16,6 +16,7 @@ export interface CommonSlice {
   borrowModal: {
     asset: Asset
     marketData: BorrowAsset | BorrowAssetActive
+    isRepay?: boolean
   } | null
   client?: WalletClient
   clients: {
@@ -31,7 +32,6 @@ export interface CommonSlice {
   fundAccountModal: boolean
   isOpen: boolean
   prices: Coin[]
-  repayModal: boolean
   selectedAccount: string | null
   signingClient?: SigningCosmWasmClient
   status: WalletConnectionStatus

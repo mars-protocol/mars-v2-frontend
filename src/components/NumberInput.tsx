@@ -11,7 +11,6 @@ interface Props {
   max?: number
   maxLength?: number
   allowNegative?: boolean
-  suffix?: string
   style?: {}
   disabled?: boolean
   onChange: (value: number) => void
@@ -74,9 +73,6 @@ export default function NumberInput(props: Props) {
   }, [inputValue, inputRef])
 
   const onInputChange = (value: string) => {
-    if (props.suffix) {
-      value = value.replace(props.suffix, '')
-    }
     const numberCount = value.match(/[0-9]/g)?.length || 0
     const decimals = value.split('.')[1]?.length || 0
     const lastChar = value.charAt(value.length - 1)
@@ -137,7 +133,7 @@ export default function NumberInput(props: Props) {
     <input
       ref={inputRef}
       type='text'
-      value={`${inputValue.formatted}${props.suffix ? props.suffix : ''}`}
+      value={inputValue.formatted === '0' ? '' : inputValue.formatted}
       onFocus={onInputFocus}
       onChange={(e) => onInputChange(e.target.value)}
       onBlur={props.onBlur}

@@ -5,9 +5,9 @@ import { GetState, SetState } from 'zustand'
 
 import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import { Store } from 'store'
-import { getAssetByDenom, getMarketAssets } from 'utils/assets'
+import { getMarketAssets } from 'utils/assets'
 import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
-import { convertFromGwei } from 'utils/formatters'
+import { formatAmountWithSymbol } from 'utils/formatters'
 
 interface BroadcastResult {
   result?: TxBroadcastResult
@@ -25,6 +25,12 @@ export interface BroadcastSlice {
   createCreditAccount: (options: { fee: StdFee }) => Promise<string | null>
   deleteCreditAccount: (options: { fee: StdFee; accountId: string }) => Promise<boolean>
   deposit: (options: { fee: StdFee; accountId: string; coin: Coin }) => Promise<boolean>
+  repay: (options: {
+    fee: StdFee
+    accountId: string
+    coin: Coin
+    accountBalance?: boolean
+  }) => Promise<boolean>
 }
 
 export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>): BroadcastSlice {
@@ -44,11 +50,9 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
       if (response.result?.response.code === 0) {
         set({
           toast: {
-            message: `Borrowed ${convertFromGwei(
-              options.coin.amount,
-              options.coin.denom,
-              marketAssets,
-            )} ${getAssetByDenom(options.coin.denom)?.symbol} to Account #${options.accountId}`,
+            message: `Borrowed ${formatAmountWithSymbol(options.coin)} to Account ${
+              options.accountId
+            }`,
           },
         })
       } else {
@@ -122,11 +126,9 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
       if (response.result) {
         set({
           toast: {
-            message: `Deposited ${convertFromGwei(
-              options.coin.amount,
-              options.coin.denom,
-              marketAssets,
-            )} ${getAssetByDenom(options.coin.denom)?.symbol} to Account #${options.accountId}`,
+            message: `Deposited ${formatAmountWithSymbol(options.coin)} to Account ${
+              options.accountId
+            }`,
           },
         })
       } else {
@@ -177,6 +179,45 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
         const error = typeof e === 'string' ? e : 'Transaction failed'
         return { result: undefined, error }
       }
+    },
+    repay: async (options: {
+      fee: StdFee
+      accountId: string
+      coin: Coin
+      accountBalance?: boolean
+    }) => {
+      const msg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: [
+            {
+              repay: {
+                denom: options.coin.denom,
+                amount: options.accountBalance ? 'account_balance' : { exact: options.coin.amount },
+              },
+            },
+          ],
+        },
+      }
+
+      const response = await get().executeMsg({ msg, fee: options.fee, funds: [] })
+      if (response.result?.response.code === 0) {
+        set({
+          toast: {
+            message: `Repayed ${formatAmountWithSymbol(options.coin)} to Account ${
+              options.accountId
+            }`,
+          },
+        })
+      } else {
+        set({
+          toast: {
+            message: response.error ?? `Transaction failed: ${response.error}`,
+            isError: true,
+          },
+        })
+      }
+      return !!response.result
     },
   }
 }
