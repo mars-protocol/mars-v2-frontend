@@ -35,7 +35,7 @@ export const Gauge = ({
           width={diameter}
           height={diameter}
           style={{ transform: 'rotate(-90deg)' }}
-          className='absolute top-0 left-0'
+          className='absolute left-0 top-0'
         >
           <linearGradient id='gradient'>
             <stop stopColor='rgba(255, 160, 187)' offset='0%'></stop>

@@ -25,7 +25,7 @@ export default function DesktopNavigation() {
   return (
     <header
       className={classNames(
-        'fixed top-0 left-0 z-30 hidden w-full',
+        'fixed left-0 top-0 z-30 hidden w-full',
         'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:h-full before:w-full before:rounded-sm before:backdrop-blur-sticky',
         'lg:block',
       )}

@@ -55,7 +55,7 @@ export default function FundAccount(props: Props) {
 
   return (
     <>
-      <div className='absolute top-4 right-4'>
+      <div className='absolute right-4 top-4'>
         <Button
           onClick={() => props.setShowFundAccount(false)}
           leftIcon={<Cross />}

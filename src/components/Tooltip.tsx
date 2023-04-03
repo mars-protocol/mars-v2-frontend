@@ -36,7 +36,7 @@ export const Tooltip = ({
             className='max-w-[320px] rounded-lg bg-black/80 p-4 pl-12 text-xs shadow-tooltip backdrop-blur-lg'
             {...attrs}
           >
-            <ExclamationMarkCircled className='absolute top-3.5 left-4 h-5 w-5 text-white' />
+            <ExclamationMarkCircled className='absolute left-4 top-3.5 h-5 w-5 text-white' />
             {content}
           </div>
         )

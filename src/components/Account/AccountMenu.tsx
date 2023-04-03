@@ -51,8 +51,8 @@ export default function AccountMenu() {
 
   useEffect(() => {
     if (!accountSelected) return
-    setLoadingAccount(selectedAccountDetails?.id !== selectedAccount)
-  }, [selectedAccount, selectedAccountDetails?.id, accountSelected])
+    setLoadingAccount(selectedAccountDetails?.account !== selectedAccount)
+  }, [selectedAccount, selectedAccountDetails?.account, accountSelected])
 
   useEffect(() => {
     if (!accountSelected) return
@@ -62,9 +62,10 @@ export default function AccountMenu() {
       const accountDebts = await getAccountDebts(selectedAccount)
       useStore.setState({
         selectedAccountDetails: {
-          id: selectedAccount,
+          account: selectedAccount,
           deposits: accountDeposits,
           debts: accountDebts,
+          lends: [],
         },
       })
     }

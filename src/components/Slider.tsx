@@ -118,8 +118,8 @@ export default function Slider(props: Props) {
               }
             />
             {(showTooltip || isDragging) && (
-              <div className='absolute -top-8 left-1/2 -translate-x-1/2 rounded-xs bg-martian-red py-[2px] px-2 text-xs'>
-                <OverlayMark className='absolute left-1/2 -bottom-2 -z-1 h-2 -translate-x-1/2 text-martian-red' />
+              <div className='absolute -top-8 left-1/2 -translate-x-1/2 rounded-xs bg-martian-red px-2 py-[2px] text-xs'>
+                <OverlayMark className='absolute -bottom-2 left-1/2 -z-1 h-2 -translate-x-1/2 text-martian-red' />
                 {props.value}%
               </div>
             )}

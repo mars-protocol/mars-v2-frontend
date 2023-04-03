@@ -1,8 +1,9 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-
 import classNames from 'classnames'
+import { useState } from 'react'
+
 import { Button } from 'components/Button'
 import Card from 'components/Card'
 import { ArrowCircledTopRight, ArrowDownLine, ArrowUpLine, TrashBin } from 'components/Icons'
@@ -10,9 +11,9 @@ import Radio from 'components/Radio'
 import SwitchWithLabel from 'components/SwitchWithLabel'
 import { Text } from 'components/Text'
 import useParams from 'hooks/useParams'
-import { useState } from 'react'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
+
 import AccountStats from './AccountStats'
 
 interface Props {

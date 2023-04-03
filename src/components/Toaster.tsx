@@ -44,7 +44,7 @@ export default function Toaster() {
         <Text size='sm' className='text-bold text-white'>
           {toast.message}
         </Text>
-        <div className='absolute top-8 right-6 '>
+        <div className='absolute right-6 top-8 '>
           <Button
             leftIcon={<Cross />}
             variant='transparent'

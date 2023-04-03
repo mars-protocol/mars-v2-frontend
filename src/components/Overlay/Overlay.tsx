@@ -26,7 +26,7 @@ export const Overlay = ({ children, content, className, show, setShow }: Props) 
         {children ? children : content}
       </div>
       <div
-        className='fixed top-0 left-0 z-40 block h-full w-full hover:cursor-pointer'
+        className='fixed left-0 top-0 z-40 block h-full w-full hover:cursor-pointer'
         onClick={onClickAway}
         role='button'
       />

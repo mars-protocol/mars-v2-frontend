@@ -1,10 +1,10 @@
 import classNames from 'classnames'
 import Image from 'next/image'
-
 import BigNumber from 'bignumber.js'
+import { useState } from 'react'
+
 import NumberInput from 'components/NumberInput'
 import { Text } from 'components/Text'
-import { useState } from 'react'
 
 interface Props {
   amount: number

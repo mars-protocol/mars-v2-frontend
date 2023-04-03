@@ -95,7 +95,7 @@ export default function ConnectedButton() {
         <div
           className={classNames(
             'relative ml-2 flex h-full items-center pl-2 number',
-            'before:content-[" "] before:absolute before:top-0.5 before:bottom-1.5 before:left-0 before:h-[calc(100%-4px)] before:border-l before:border-white/20',
+            'before:content-[" "] before:absolute before:bottom-1.5 before:left-0 before:top-0.5 before:h-[calc(100%-4px)] before:border-l before:border-white/20',
           )}
         >
           {isLoading ? (
