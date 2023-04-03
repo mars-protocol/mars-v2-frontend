@@ -13,15 +13,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   let query = ''
 
-  markets.forEach((asset: any) => {
+  markets.forEach((market: Market) => {
     query += getContractQuery(
-      denomToKey(asset.denom),
+      denomToKey(market.denom),
       ENV.ADDRESS_RED_BANK || '',
       `
     {
       underlying_liquidity_amount: {
-        denom: "${asset.denom}"
-        amount_scaled: "${asset.collateral_total_scaled}"
+        denom: "${market.denom}"
+        amount_scaled: "${market.collateralTotalScaled}"
       }
     }`,
     )

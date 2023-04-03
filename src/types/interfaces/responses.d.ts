@@ -1,4 +1,11 @@
-interface Market {
+interface PositionResponse {
+  account_id: string
+  deposits: Coin[]
+  debts: Coin[]
+  lends: Coin[]
+}
+
+interface MarketResponse {
   denom: string
   max_loan_to_value: string
   liquidation_threshold: string
@@ -20,12 +27,4 @@ interface Market {
   deposit_enabled: boolean
   borrow_enabled: boolean
   deposit_cap: string
-}
-
-interface MarketResult {
-  wasm: MarketData
-}
-
-interface MarketData {
-  [key: string]: Market
 }
