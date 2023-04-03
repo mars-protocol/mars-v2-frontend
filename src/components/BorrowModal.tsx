@@ -1,26 +1,26 @@
+import BigNumber from 'bignumber.js'
 import Image from 'next/image'
 import { useCallback, useState } from 'react'
-import BigNumber from 'bignumber.js'
 
-import { Modal } from 'components/Modal'
-import TitleAndSubCell from 'components/TitleAndSubCell'
-import useStore from 'store'
-import { Text } from 'components/Text'
-import { formatPercent, formatValue } from 'utils/formatters'
-import Slider from 'components/Slider'
 import AccountSummary from 'components/Account/AccountSummary'
+import { Button } from 'components/Button'
 import Card from 'components/Card'
 import Divider from 'components/Divider'
-import TokenInput from 'components/TokenInput'
-import { Button } from 'components/Button'
 import { ArrowRight } from 'components/Icons'
+import { Modal } from 'components/Modal'
+import Slider from 'components/Slider'
+import { Text } from 'components/Text'
+import TitleAndSubCell from 'components/TitleAndSubCell'
+import TokenInput from 'components/TokenInput'
 import useParams from 'hooks/useParams'
+import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
+import { formatPercent, formatValue } from 'utils/formatters'
 
 export default function BorrowModal() {
   const params = useParams()
   const [percentage, setPercentage] = useState(0)
-  const [value, setValue] = useState(0)
+  const [amount, setAmount] = useState(0)
   const [selectedAccount, setSelectedAccount] = useState(params.account)
   const modal = useStore((s) => s.borrowModal)
   const borrow = useStore((s) => s.borrow)
@@ -33,15 +33,12 @@ export default function BorrowModal() {
 
   function setOpen(isOpen: boolean) {
     useStore.setState({ borrowModal: null })
-    setValue(0)
+    setAmount(0)
     setPercentage(0)
   }
 
   function onConfirmClick() {
     if (!modal?.asset) return
-
-    const amount = new BigNumber(value).shiftedBy(modal.asset.decimals)
-
     if (modal.isRepay) {
       repay({
         fee: hardcodedFee,
@@ -63,16 +60,16 @@ export default function BorrowModal() {
     (percentage: number, maxAmount: number) => {
       const amount = new BigNumber(percentage).div(100).times(maxAmount).toNumber()
 
-      setValue(amount)
+      setAmount(amount)
       setPercentage(percentage)
     },
     [modal?.asset.decimals],
   )
 
   const onInputChange = useCallback(
-    (value: number, maxAmount: number) => {
-      setValue(value)
-      setPercentage(new BigNumber(value).div(maxAmount).times(100).toNumber())
+    (amount: number, maxAmount: number) => {
+      setAmount(amount)
+      setPercentage(new BigNumber(amount).div(maxAmount).times(100).toNumber())
     },
     [modal?.asset.decimals],
   )
@@ -96,9 +93,7 @@ export default function BorrowModal() {
   if ((modal.marketData as BorrowAssetActive)?.debt)
     debtAmount = Number((modal.marketData as BorrowAssetActive).debt)
 
-  const maxAmount = new BigNumber(modal.isRepay ? debtAmount : liquidityAmount)
-    .shiftedBy(-modal.asset.decimals)
-    .toNumber()
+  const maxAmount = modal.isRepay ? debtAmount : liquidityAmount
 
   return (
     <Modal
@@ -138,8 +133,8 @@ export default function BorrowModal() {
         >
           <TokenInput
             asset={modal.asset}
-            onChange={(value) => onInputChange(value, maxAmount)}
-            value={value}
+            onChange={(amount) => onInputChange(amount, maxAmount)}
+            amount={amount}
             max={maxAmount}
           />
           <Slider value={percentage} onChange={(value) => onSliderChange(value, maxAmount)} />
