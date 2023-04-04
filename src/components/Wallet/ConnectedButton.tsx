@@ -19,7 +19,7 @@ import { Check, Copy, ExternalLink, Osmo } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
 import { Text } from 'components/Text'
 import useStore from 'store'
-import { getWalletBalances } from 'utils/api'
+import { Endpoints, getEndpoint, getWalletBalancesSWR } from 'utils/api'
 import { getBaseAsset } from 'utils/assets'
 import { formatValue, truncate } from 'utils/formatters'
 
@@ -34,8 +34,8 @@ export default function ConnectedButton() {
   const baseAsset = getBaseAsset()
 
   const { data, isLoading } = useSWR(
-    { key: `getWalletBalances`, wallet: address },
-    getWalletBalances,
+    getEndpoint(Endpoints.WALLET_BALANCES, { wallet: address }),
+    getWalletBalancesSWR,
   )
 
   // ---------------

@@ -16,7 +16,7 @@ import { Overlay } from 'components/Overlay/Overlay'
 import { Text } from 'components/Text'
 import useParams from 'hooks/useParams'
 import useStore from 'store'
-import { getAccountsPositions } from 'utils/api'
+import { Endpoints, getAccountsPositionsSWR, getEndpoint } from 'utils/api'
 import { hardcodedFee } from 'utils/contants'
 
 const menuClasses = 'absolute isolate flex w-full flex-wrap overflow-y-scroll scrollbar-hide'
@@ -56,9 +56,10 @@ export default function AccountMenu() {
   }
 
   const { data: positions, isLoading } = useSWR(
-    { key: `getAccountsPositions`, wallet: address },
-    getAccountsPositions,
+    getEndpoint(Endpoints.ACCOUNT_POSITIONS, { wallet: params.wallet }),
+    getAccountsPositionsSWR,
   )
+
   if (positions && !isLoading) useStore.setState({ creditAccountsPositions: positions })
 
   if (!address) return null
