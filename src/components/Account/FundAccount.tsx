@@ -1,7 +1,7 @@
 'use client'
 
 import BigNumber from 'bignumber.js'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { Button } from 'components/Button'
 import { ArrowRight, Cross } from 'components/Icons'
@@ -23,14 +23,19 @@ export default function FundAccount(props: Props) {
 
   const [amount, setAmount] = useState(0)
   const [isLending, setIsLending] = useState(false)
-  const [fundAccount, setFundAccount] = useState(false)
-  function handleLendAssets(val: boolean) {
+  const [isFunding, setIsFunding] = useState(false)
+
+  const onChangeAmount = useCallback((amount: number) => {
+    setAmount(amount)
+  }, [])
+
+  const handleLendAssets = useCallback((val: boolean) => {
     setIsLending(val)
     /* TODO: handle lending assets */
-  }
+  }, [])
 
   function onDeposit() {
-    setFundAccount(true)
+    setIsFunding(true)
     deposit({
       fee: hardcodedFee,
       accountId: params.account,
@@ -62,11 +67,11 @@ export default function FundAccount(props: Props) {
         </Text>
         <TokenInputWithSlider
           asset={ASSETS[0]}
-          onChange={setAmount}
+          onChange={onChangeAmount}
           amount={amount}
           max={new BigNumber(1).shiftedBy(ASSETS[0].decimals).toNumber()}
           className='mb-4'
-          disabled={fundAccount}
+          disabled={isFunding}
         />
         <div className='mb-4 w-full border-b border-white/10' />
         <SwitchWithLabel
@@ -76,11 +81,11 @@ export default function FundAccount(props: Props) {
           onChange={handleLendAssets}
           className='mb-4'
           tooltip="Fund your account and lend assets effortlessly! By lending, you'll earn attractive interest (APY) without impacting your LTV. It's a win-win situation - don't miss out on this easy opportunity to grow your holdings!"
-          disabled={fundAccount || amount === 0}
+          disabled={isFunding || amount === 0}
         />
         <Button
           className='w-full'
-          showProgressIndicator={fundAccount}
+          showProgressIndicator={isFunding}
           disabled={amount === 0}
           text='Fund Account'
           rightIcon={<ArrowRight />}
