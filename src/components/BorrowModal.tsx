@@ -1,6 +1,5 @@
-import BigNumber from 'bignumber.js'
 import Image from 'next/image'
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 
 import AccountSummary from 'components/Account/AccountSummary'
 import { Button } from 'components/Button'
@@ -8,14 +7,14 @@ import Card from 'components/Card'
 import Divider from 'components/Divider'
 import { ArrowRight } from 'components/Icons'
 import { Modal } from 'components/Modal'
-import Slider from 'components/Slider'
 import { Text } from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
-import TokenInput from 'components/TokenInput'
 import useParams from 'hooks/useParams'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
 import { formatPercent, formatValue } from 'utils/formatters'
+
+import TokenInputWithSlider from './TokenInputWithSlider'
 
 export default function BorrowModal() {
   const params = useParams()
@@ -57,24 +56,6 @@ export default function BorrowModal() {
       coin: { denom: modal.asset.denom, amount: amount.toString() },
     })
   }
-
-  const onSliderChange = useCallback(
-    (percentage: number, maxAmount: number) => {
-      const amount = new BigNumber(percentage).div(100).times(maxAmount).toNumber()
-
-      setAmount(amount)
-      setPercentage(percentage)
-    },
-    [modal?.asset.decimals],
-  )
-
-  const onInputChange = useCallback(
-    (amount: number, maxAmount: number) => {
-      setAmount(amount)
-      setPercentage(new BigNumber(amount).div(maxAmount).times(100).toNumber())
-    },
-    [modal?.asset.decimals],
-  )
 
   if (!modal) return null
 
@@ -133,13 +114,12 @@ export default function BorrowModal() {
           className='w-full bg-white/5 p-4'
           contentClassName='gap-6 flex flex-col justify-between h-full'
         >
-          <TokenInput
+          <TokenInputWithSlider
             asset={modal.asset}
-            onChange={(amount) => onInputChange(amount, maxAmount)}
+            onChange={setAmount}
             amount={amount}
             max={maxAmount}
           />
-          <Slider value={percentage} onChange={(value) => onSliderChange(value, maxAmount)} />
           <Divider />
           <Text size='lg'>{modal.isRepay ? 'Repay for' : 'Borrow to'}</Text>
           <select

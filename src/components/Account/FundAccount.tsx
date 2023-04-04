@@ -1,14 +1,13 @@
 'use client'
 
 import BigNumber from 'bignumber.js'
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 
 import { Button } from 'components/Button'
 import { ArrowRight, Cross } from 'components/Icons'
-import Slider from 'components/Slider'
 import SwitchWithLabel from 'components/SwitchWithLabel'
 import { Text } from 'components/Text'
-import TokenInput from 'components/TokenInput'
+import TokenInputWithSlider from 'components/TokenInputWithSlider'
 import { ASSETS } from 'constants/assets'
 import useParams from 'hooks/useParams'
 import useStore from 'store'
@@ -22,21 +21,9 @@ export default function FundAccount(props: Props) {
   const params = useParams()
   const deposit = useStore((s) => s.deposit)
 
-  const [percentage, setPercentage] = useState(0)
   const [amount, setAmount] = useState(0)
   const [isLending, setIsLending] = useState(false)
   const [fundAccount, setFundAccount] = useState(false)
-
-  const onSliderChange = useCallback((percentage: number, liquidityAmount: number) => {
-    setPercentage(percentage)
-    setAmount(new BigNumber(percentage).div(100).times(liquidityAmount).toNumber())
-  }, [])
-
-  const onInputChange = useCallback((amount: number, liquidityAmount: number) => {
-    setAmount(amount)
-    setPercentage(new BigNumber(amount).div(liquidityAmount).times(100).toNumber())
-  }, [])
-
   function handleLendAssets(val: boolean) {
     setIsLending(val)
     /* TODO: handle lending assets */
@@ -73,17 +60,11 @@ export default function FundAccount(props: Props) {
           Deposit assets from your Osmosis address to your Mars credit account. Bridge assets if
           your Osmosis address has no assets.
         </Text>
-        <TokenInput
+        <TokenInputWithSlider
           asset={ASSETS[0]}
-          onChange={(amount) => onInputChange(amount, 100)}
+          onChange={setAmount}
           amount={amount}
-          max={100}
-          className='mb-4'
-          disabled={fundAccount}
-        />
-        <Slider
-          value={percentage}
-          onChange={(value) => onSliderChange(value, 100)}
+          max={new BigNumber(1).shiftedBy(ASSETS[0].decimals).toNumber()}
           className='mb-4'
           disabled={fundAccount}
         />
