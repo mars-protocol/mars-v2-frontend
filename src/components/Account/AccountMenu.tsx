@@ -25,7 +25,7 @@ export default function AccountMenu() {
   const router = useRouter()
   const params = useParams()
   const selectedAccount = params.account
-  const createCreditAccount = useStore((s) => s.createCreditAccount)
+  const createAccount = useStore((s) => s.createAccount)
   const address = useStore((s) => s.address)
   const creditAccountsPositions = useStore((s) => s.creditAccountsPositions)
   const hasCreditAccounts = !!creditAccountsPositions?.length
@@ -49,7 +49,7 @@ export default function AccountMenu() {
   async function createAccountHandler() {
     setShowMenu(true)
     setIsCreating(true)
-    const accountId = await createCreditAccount({ fee: hardcodedFee })
+    const accountId = await createAccount({ fee: hardcodedFee })
     setIsCreating(false)
     if (!accountId) return
     router.push(`/wallets/${params.wallet}/accounts/${accountId}`)

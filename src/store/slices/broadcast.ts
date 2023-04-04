@@ -22,8 +22,8 @@ export interface BroadcastSlice {
     funds?: Coin[]
   }) => Promise<BroadcastResult>
   borrow: (options: { fee: StdFee; accountId: string; coin: Coin }) => Promise<void>
-  createCreditAccount: (options: { fee: StdFee }) => Promise<string | null>
-  deleteCreditAccount: (options: { fee: StdFee; accountId: string }) => Promise<boolean>
+  createAccount: (options: { fee: StdFee }) => Promise<string | null>
+  deleteAccount: (options: { fee: StdFee; accountId: string }) => Promise<boolean>
   deposit: (options: { fee: StdFee; accountId: string; coin: Coin }) => Promise<boolean>
   repay: (options: {
     fee: StdFee
@@ -65,7 +65,7 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
         })
       }
     },
-    createCreditAccount: async (options: { fee: StdFee }) => {
+    createAccount: async (options: { fee: StdFee }) => {
       const msg = {
         create_credit_account: {},
       }
@@ -88,7 +88,7 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
         return null
       }
     },
-    deleteCreditAccount: async (options: { fee: StdFee; accountId: string }) => {
+    deleteAccount: async (options: { fee: StdFee; accountId: string }) => {
       const msg = {
         burn: {
           token_id: options.accountId,

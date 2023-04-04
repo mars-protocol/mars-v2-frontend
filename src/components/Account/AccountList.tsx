@@ -41,7 +41,7 @@ export default function AccountList(props: Props) {
   const creditAccountsPositions = useStore((s) => s.creditAccountsPositions)
   const prices = useStore((s) => s.prices)
 
-  const deleteCreditAccount = useStore((s) => s.deleteCreditAccount)
+  const deleteAccount = useStore((s) => s.deleteAccount)
 
   const [isLending, setIsLending] = useState(false)
   const accountSelected = !!selectedAccount && !isNaN(Number(selectedAccount))
@@ -54,7 +54,7 @@ export default function AccountList(props: Props) {
 
   async function deleteAccountHandler() {
     if (!accountSelected) return
-    const isSuccess = await deleteCreditAccount({ fee: hardcodedFee, accountId: selectedAccount })
+    const isSuccess = await deleteAccount({ fee: hardcodedFee, accountId: selectedAccount })
     if (isSuccess) {
       router.push(`/wallets/${params.wallet}/accounts`)
     }
