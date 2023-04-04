@@ -9,9 +9,9 @@ export function getRouteParams(url: string | null): PageParams {
 
   segments.forEach((segment, index) => {
     if (segment === 'wallets' && segments[index + 1]) {
-      params.wallet = segments[index + 1]
+      params.address = segments[index + 1]
     } else if (segment === 'accounts' && segments[index + 1]) {
-      params.account = segments[index + 1]
+      params.accountId = segments[index + 1]
     } else if (index === 5) {
       params.page = segment
     }
@@ -35,10 +35,10 @@ export function getRoute(
   let account = ''
   let page = ''
 
-  if (params.wallet) wallet = params.wallet
+  if (params.address) wallet = params.address
   if (overrides?.wallet) wallet = overrides.wallet
 
-  if (params.account) account = params.account
+  if (params.accountId) account = params.accountId
   if (overrides?.account) account = overrides.account
 
   if (params.page) page = params.page

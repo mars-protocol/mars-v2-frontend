@@ -37,17 +37,15 @@ const formatOptions = {
 export default function AccountList(props: Props) {
   const router = useRouter()
   const params = useParams()
-  const selectedAccount = params.account
-  const creditAccountsPositions = useStore((s) => s.creditAccountsPositions)
+  const selectedAccount = params.accountId
+  const accounts = useStore((s) => s.accounts)
   const prices = useStore((s) => s.prices)
 
   const deleteAccount = useStore((s) => s.deleteAccount)
 
   const [isLending, setIsLending] = useState(false)
   const accountSelected = !!selectedAccount && !isNaN(Number(selectedAccount))
-  const selectedAccountDetails = creditAccountsPositions?.find(
-    (position) => position.account === selectedAccount,
-  )
+  const selectedAccountDetails = accounts?.find((account) => account.id === selectedAccount)
   const selectedAccountBalance = selectedAccountDetails
     ? calculateAccountBalance(selectedAccountDetails, prices)
     : 0
@@ -56,7 +54,7 @@ export default function AccountList(props: Props) {
     if (!accountSelected) return
     const isSuccess = await deleteAccount({ fee: hardcodedFee, accountId: selectedAccount })
     if (isSuccess) {
-      router.push(`/wallets/${params.wallet}/accounts`)
+      router.push(`/wallets/${params.address}/accounts`)
     }
   }
 
@@ -65,7 +63,7 @@ export default function AccountList(props: Props) {
     /* TODO: handle lending assets */
   }
 
-  if (!creditAccountsPositions?.length) return null
+  if (!accounts?.length) return null
 
   return (
     <div className='flex w-full flex-wrap gap-4 p-4'>
@@ -76,7 +74,7 @@ export default function AccountList(props: Props) {
           title={
             <div className={accountCardHeaderClasses}>
               <Text size='xs' className='flex flex-1'>
-                Credit Account #{selectedAccountDetails.account}
+                Credit Account #{selectedAccountDetails.id}
               </Text>
               <Radio active={true} />
             </div>
@@ -132,23 +130,23 @@ export default function AccountList(props: Props) {
           </div>
         </Card>
       )}
-      {creditAccountsPositions.map((position) => {
-        const positionBalance = calculateAccountBalance(position, prices)
-        return selectedAccount === position.account ? null : (
+      {accounts.map((account) => {
+        const positionBalance = calculateAccountBalance(account, prices)
+        return selectedAccount === account.id ? null : (
           <Card
-            key={position.account}
+            key={account.id}
             className='w-full'
             contentClassName='bg-white/10'
             title={
               <div className={accountCardHeaderClasses}>
                 <Text size='xs' className='flex flex-1'>
-                  Credit Account #{position.account}
+                  Credit Account #{account.id}
                 </Text>
                 <Button
                   variant='transparent'
                   color='quaternary'
                   onClick={() => {
-                    router.push(`/wallets/${params.wallet}/accounts/${position.account}`)
+                    router.push(`/wallets/${params.address}/accounts/${account.id}`)
                   }}
                   text={<Radio />}
                 />

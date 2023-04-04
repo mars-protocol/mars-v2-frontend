@@ -8,6 +8,7 @@ import { MarsCreditManagerClient } from 'types/generated/mars-credit-manager/Mar
 import { MarsSwapperBaseClient } from 'types/generated/mars-swapper-base/MarsSwapperBase.client'
 
 export interface CommonSlice {
+  accounts: Account[] | null
   address?: string
   borrowModal: {
     asset: Asset
@@ -21,7 +22,6 @@ export interface CommonSlice {
     swapperBase?: MarsSwapperBaseClient
   }
   createAccountModal: boolean
-  creditAccountsPositions: Position[] | null
   deleteAccountModal: boolean
   enableAnimations: boolean
   fundAccountModal: boolean
@@ -36,10 +36,10 @@ export interface CommonSlice {
 
 export function createCommonSlice(set: SetState<CommonSlice>, get: GetState<CommonSlice>) {
   return {
+    accounts: null,
     borrowModal: null,
     createAccountModal: false,
     clients: {},
-    creditAccountsPositions: null,
     deleteAccountModal: false,
     enableAnimations: true,
     fundAccountModal: false,

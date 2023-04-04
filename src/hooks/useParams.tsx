@@ -3,8 +3,8 @@ import { usePathname } from 'next/navigation'
 export default function useParams() {
   const pathname = usePathname()
   const params = {
-    wallet: '',
-    account: '',
+    address: '',
+    accountId: '',
     page: '',
   }
 
@@ -14,9 +14,9 @@ export default function useParams() {
 
   segments.forEach((segment, index) => {
     if (segment === 'wallets' && segments[index + 1]) {
-      params.wallet = segments[index + 1]
+      params.address = segments[index + 1]
     } else if (segment === 'accounts' && segments[index + 1]) {
-      params.account = segments[index + 1]
+      params.accountId = segments[index + 1]
     } else if (index === 5) {
       params.page = segment
     }

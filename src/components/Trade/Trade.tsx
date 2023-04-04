@@ -5,8 +5,8 @@ import Loading from 'components/Loading'
 import { Text } from 'components/Text'
 
 async function Content(props: PageProps) {
-  const wallet = props.params.wallet
-  const currentAccount = props.params.account
+  const wallet = props.params.address
+  const currentAccount = props.params.accountId
   const hasAccount = !isNaN(Number(currentAccount))
 
   return wallet ? (

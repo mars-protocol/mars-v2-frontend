@@ -1,10 +1,10 @@
-export function resolvePositionResponses(responses: PositionResponse[]): Position[] {
+export function resolvePositionResponses(responses: AccountResponse[]): Account[] {
   return responses.map(resolvePositionResponse)
 }
 
-export function resolvePositionResponse(response: PositionResponse): Position {
+export function resolvePositionResponse(response: AccountResponse): Account {
   return {
-    account: response.account_id,
+    id: response.account_id,
     deposits: response.deposits,
     debts: response.debts,
     lends: response.lends,

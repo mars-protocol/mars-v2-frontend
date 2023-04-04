@@ -32,7 +32,7 @@ export default function AccountSummary() {
       </Card>
       <Accordion
         items={[
-          { title: `Subaccount ${params.account} Composition`, content: <p>My content</p> },
+          { title: `Subaccount ${params.accountId} Composition`, content: <p>My content</p> },
           { title: 'Risk Score: 60/100', content: <p>My content</p> },
           { title: 'Balances', content: <p>My content</p> },
         ]}

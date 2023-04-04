@@ -32,7 +32,7 @@ export default function Wallet() {
         ? {
             address: recentWallet?.account.address,
           }
-        : { address: undefined, creditAccountsPositions: null, client: undefined },
+        : { address: undefined, accounts: null, client: undefined },
     )
 
     if (!isConnected || !recentWallet) return
@@ -54,7 +54,7 @@ export default function Wallet() {
       getCosmWasmClient()
     }
 
-    if (!address || address === params.wallet) return
+    if (!address || address === params.address) return
     router.push(`/wallets/${address}`)
   }, [address, broadcast, client, params, recentWallet, router, simulate, sign, status])
 

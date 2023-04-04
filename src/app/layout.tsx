@@ -6,7 +6,6 @@ import FetchPrices from 'components/FetchPrices'
 import { Modals } from 'components/Modals'
 import DesktopNavigation from 'components/Navigation/DesktopNavigation'
 import Toaster from 'components/Toaster'
-import { WalletConnectProvider } from 'components/Wallet/WalletConnectProvider'
 import 'react-toastify/dist/ReactToastify.min.css'
 import 'styles/globals.css'
 
@@ -16,9 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head />
       <body className='m-0 cursor-default bg-body p-0 font-sans text-white'>
         <Background />
-        <WalletConnectProvider>
-          <DesktopNavigation />
-        </WalletConnectProvider>
+        <DesktopNavigation />
         <FetchPrices />
         <main
           className={classNames(

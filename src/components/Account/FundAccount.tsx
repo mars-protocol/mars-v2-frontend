@@ -38,7 +38,7 @@ export default function FundAccount(props: Props) {
     setIsFunding(true)
     deposit({
       fee: hardcodedFee,
-      accountId: params.account,
+      accountId: params.accountId,
       coin: {
         denom: ASSETS[0].denom,
         amount: amount.toString(),
@@ -59,7 +59,7 @@ export default function FundAccount(props: Props) {
       </div>
       <div className='relative z-10 w-full p-4'>
         <Text size='lg' className='mb-2 font-bold'>
-          {`Fund Account #${params.account}`}
+          {`Fund Account #${params.accountId}`}
         </Text>
         <Text className='mb-4 text-white/70'>
           Deposit assets from your Osmosis address to your Mars credit account. Bridge assets if

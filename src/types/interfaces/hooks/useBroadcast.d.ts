@@ -1,7 +1,7 @@
 interface UseBroadcast {
   msg: Record<string, unknown>
-  funds?: import('@cosmjs/stargate').Coin[]
+  funds?: Coin[]
   contract: string
-  fee: import('@cosmjs/stargate').StdFee
+  fee: StdFee
   sender?: string
 }

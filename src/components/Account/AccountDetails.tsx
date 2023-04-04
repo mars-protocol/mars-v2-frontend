@@ -6,7 +6,7 @@ import useParams from 'hooks/useParams'
 
 export default function AccountDetails() {
   const params = useParams()
-  const hasAccount = params.account && !isNaN(Number(params.account))
+  const hasAccount = params.accountId && !isNaN(Number(params.accountId))
 
   return hasAccount ? (
     <div className='fixed right-4 top-[89px] w-16 rounded-base border border-white/20 bg-white/5 backdrop-blur-sticky'>

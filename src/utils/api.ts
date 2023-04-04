@@ -5,8 +5,8 @@ import { ENV, VERCEL_BYPASS } from 'constants/env'
  */
 
 export enum Endpoints {
+  ACCOUNTS = '/wallets/{address}/accounts/positions',
   ACCOUNT_DEBTS = '/accounts/{account}/debts',
-  ACCOUNT_POSITIONS = '/wallets/{address}/accounts/positions',
   MARKETS_BORROW = '/markets/borrow',
   PRICES = '/prices',
   WALLET_BALANCES = '/wallets/{address}/balances',
@@ -41,13 +41,13 @@ export async function getAccountDebts(account: string) {
   return callAPI<Coin[]>(getEndpoint(Endpoints.ACCOUNT_DEBTS, { account }))
 }
 
-export async function getAccountsPositions(wallet: string) {
+export async function getAccounts(wallet: string) {
   if (!wallet) return []
-  return callAPI<Coin[]>(getEndpoint(Endpoints.ACCOUNT_POSITIONS, { wallet }))
+  return callAPI<Account[]>(getEndpoint(Endpoints.ACCOUNTS, { wallet }))
 }
 
-export async function getAccountsPositionsSWR(url: string) {
-  return callAPI<Position[]>(url)
+export async function getAccountsSWR(url: string) {
+  return callAPI<Account[]>(url)
 }
 
 export async function getBorrowData() {

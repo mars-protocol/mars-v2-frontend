@@ -1,6 +1,6 @@
 interface PageParams {
-  wallet: string
-  account: string
+  address: string
+  accountId: string
   page: string
 }
 

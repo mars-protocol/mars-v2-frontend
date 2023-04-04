@@ -20,12 +20,12 @@ export default function BorrowModal() {
   const params = useParams()
   const [percentage, setPercentage] = useState(0)
   const [amount, setAmount] = useState(0)
-  const [selectedAccount, setSelectedAccount] = useState(params.account)
+  const [selectedAccount, setSelectedAccount] = useState(params.accountId)
   const modal = useStore((s) => s.borrowModal)
   const borrow = useStore((s) => s.borrow)
   const repay = useStore((s) => s.repay)
-  const creditAccounts = useStore((s) => s.creditAccountsPositions)?.map((position) => {
-    return position.account
+  const accounts = useStore((s) => s.accounts)?.map((account) => {
+    return account.id
   })
 
   function onAccountSelect(accountId: string) {
@@ -123,12 +123,12 @@ export default function BorrowModal() {
           <Divider />
           <Text size='lg'>{modal.isRepay ? 'Repay for' : 'Borrow to'}</Text>
           <select
-            name='creditAccount'
+            name='account'
             value={selectedAccount}
             onChange={(e) => onAccountSelect(e.target.value)}
             className='rounded-base border border-white/10 bg-white/5 p-4'
           >
-            {creditAccounts?.map((account) => (
+            {accounts?.map((account) => (
               <option key={account} value={account}>
                 {account}
               </option>

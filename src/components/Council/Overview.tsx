@@ -5,7 +5,7 @@ import Loading from 'components/Loading'
 import { Text } from 'components/Text'
 
 async function Content(props: PageProps) {
-  const wallet = props.params.wallet
+  const wallet = props.params.address
 
   return wallet ? (
     <Text size='sm'>{`Council page for ${wallet}`}</Text>
