@@ -1,5 +1,4 @@
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { Coin } from '@cosmjs/stargate'
 import { WalletClient, WalletConnectionStatus } from '@marsprotocol/wallet-connector'
 import { GetState, SetState } from 'zustand'
 

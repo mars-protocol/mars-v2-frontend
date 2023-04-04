@@ -1,4 +1,3 @@
-import { Coin } from '@cosmjs/stargate'
 import { gql, request as gqlRequest } from 'graphql-request'
 import { NextApiRequest, NextApiResponse } from 'next'
 

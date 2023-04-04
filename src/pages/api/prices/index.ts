@@ -1,6 +1,5 @@
 import { gql, request as gqlRequest } from 'graphql-request'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { Coin } from '@cosmjs/stargate'
 
 import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import { getMarketAssets } from 'utils/assets'

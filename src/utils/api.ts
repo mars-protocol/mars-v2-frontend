@@ -1,5 +1,3 @@
-import { Coin } from '@cosmjs/stargate'
-
 import { ENV, VERCEL_BYPASS } from 'constants/env'
 
 export async function callAPI<T>(endpoint: string): Promise<T> {

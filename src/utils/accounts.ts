@@ -1,4 +1,3 @@
-import { Coin } from '@cosmjs/stargate'
 import BigNumber from 'bignumber.js'
 
 export const calculateAccountBalance = (position: Position, prices: Coin[]) => {

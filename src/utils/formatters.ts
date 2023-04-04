@@ -1,5 +1,4 @@
 import BigNumber from 'bignumber.js'
-import { Coin } from '@cosmjs/stargate'
 
 import { getMarketAssets } from './assets'
 
