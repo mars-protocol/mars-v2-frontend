@@ -1,10 +1,12 @@
 'use client'
 
+import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import React, { useEffect, useState } from 'react'
 
 interface Props {
-  value: string
+  asset: Asset
+  amount: number
   className: string
   maxDecimals: number
   minValue?: number
@@ -12,26 +14,36 @@ interface Props {
   maxLength?: number
   allowNegative?: boolean
   style?: {}
-  onChange: (value: number) => void
+  onChange: (amount: number) => void
   onBlur?: () => void
   onFocus?: () => void
   onRef?: (ref: React.RefObject<HTMLInputElement>) => void
 }
 
+function magnify(value: number, asset: Asset) {
+  return value === 0 ? 0 : new BigNumber(value).shiftedBy(asset.decimals).toNumber()
+}
+
+function demagnify(amount: number, asset: Asset) {
+  return amount === 0 ? 0 : new BigNumber(amount).dividedBy(10 ** asset.decimals).toNumber()
+}
+
 export default function NumberInput(props: Props) {
   const inputRef = React.useRef<HTMLInputElement>(null)
   const cursorRef = React.useRef(0)
+  const max = props.max ? demagnify(props.max, props.asset) : undefined
+
   const [inputValue, setInputValue] = useState({
-    formatted: props.value,
-    value: Number(props.value),
+    formatted: demagnify(props.amount, props.asset).toString(),
+    value: demagnify(props.amount, props.asset),
   })
 
   useEffect(() => {
     setInputValue({
-      formatted: props.value,
-      value: Number(props.value),
+      formatted: demagnify(props.amount, props.asset).toString(),
+      value: demagnify(props.amount, props.asset),
     })
-  }, [props.value])
+  }, [props.amount])
 
   useEffect(() => {
     if (!props.onRef) return
@@ -53,7 +65,7 @@ export default function NumberInput(props: Props) {
     }
     setInputValue({ formatted, value })
     if (value !== inputValue.value) {
-      props.onChange(value)
+      props.onChange(magnify(value, props.asset))
     }
   }
 
@@ -80,7 +92,7 @@ export default function NumberInput(props: Props) {
     const isSeparator = lastChar === '.' || lastChar === ','
     const isNegative = value.indexOf('-') > -1
     const isLowerThanMinimum = props.minValue !== undefined && Number(value) < props.minValue
-    const isHigherThanMaximum = props.max !== undefined && Number(value) > props.max
+    const isHigherThanMaximum = max !== undefined && Number(value) > max
     const isTooLong = props.maxLength !== undefined && numberCount > props.maxLength
     const exceedsMaxDecimals = props.maxDecimals !== undefined && decimals > props.maxDecimals
 
@@ -110,7 +122,7 @@ export default function NumberInput(props: Props) {
     }
 
     if (isHigherThanMaximum) {
-      updateValues(String(props.max), props.max!)
+      updateValues(String(max), max!)
       return
     }
 
