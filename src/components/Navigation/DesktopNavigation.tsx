@@ -1,14 +1,13 @@
 import classNames from 'classnames'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 
 import AccountMenu from 'components/Account/AccountMenu'
 import { Logo } from 'components/Icons'
 import { NavLink } from 'components/Navigation/NavLink'
 import Settings from 'components/Settings'
 import Wallet from 'components/Wallet/Wallet'
-import { getRoute } from 'utils/route'
 import { WalletConnectProvider } from 'components/Wallet/WalletConnectProvider'
+import { getRoute, getRouteParams } from 'utils/route'
 
 export const menuTree: { href: RouteSegment; label: string }[] = [
   { href: 'trade', label: 'Trade' },
@@ -19,7 +18,8 @@ export const menuTree: { href: RouteSegment; label: string }[] = [
 ]
 
 export default function DesktopNavigation() {
-  const pathname = usePathname() || ''
+  const href = '/wallets/osmo1ev02crc36675xd8s029qh7wg3wjtfk37jr004z/trade'
+  const params = getRouteParams('/wallets/osmo1ev02crc36675xd8s029qh7wg3wjtfk37jr004z/trade')
 
   return (
     <header
@@ -31,14 +31,14 @@ export default function DesktopNavigation() {
     >
       <div className='flex items-center justify-between border-b border-white/20 py-3 pl-6 pr-4'>
         <div className='flex flex-grow items-center'>
-          <Link href={getRoute(pathname, { page: 'trade' })}>
+          <Link href={getRoute(href, { page: 'trade' })}>
             <span className='block h-10 w-10'>
               <Logo />
             </span>
           </Link>
           <div className='flex gap-8 px-6'>
             {menuTree.map((item, index) => (
-              <NavLink key={index} href={getRoute(pathname, { page: item.href })}>
+              <NavLink key={index} href={getRoute(href, { page: item.href })} isActive={true}>
                 {item.label}
               </NavLink>
             ))}

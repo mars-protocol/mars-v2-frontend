@@ -5,11 +5,11 @@ import Loading from 'components/Loading'
 import { Text } from 'components/Text'
 
 async function Content(props: PageProps) {
-  const wallet = props.params.address
+  const address = props.params.address
   const currentAccount = props.params.accountId
   const hasAccount = !isNaN(Number(currentAccount))
 
-  return wallet ? (
+  return address ? (
     <>
       {hasAccount ? (
         <Text size='sm'>{`Trade with Account ${currentAccount}`}</Text>

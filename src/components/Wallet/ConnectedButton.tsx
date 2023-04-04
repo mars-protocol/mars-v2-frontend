@@ -32,9 +32,8 @@ export default function ConnectedButton() {
   const address = useStore((s) => s.client?.recentWallet.account?.address)
   const network = useStore((s) => s.client?.recentWallet.network)
   const baseAsset = getBaseAsset()
-
   const { data, isLoading } = useSWR(
-    getEndpoint(Endpoints.WALLET_BALANCES, { wallet: address }),
+    getEndpoint(Endpoints.WALLET_BALANCES, { address }),
     getWalletBalancesSWR,
   )
 

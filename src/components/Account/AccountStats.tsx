@@ -36,7 +36,7 @@ export default function AccountStats(props: Props) {
             fill='none'
             xmlns='http://www.w3.org/2000/svg'
           >
-            <rect width='53' height='4' rx='2' fill='white' fill-opacity='0.1' />
+            <rect width='53' height='4' rx='2' fill='white' fillOpacity='0.1' />
             <rect
               width={healthBarWidth}
               height='4'

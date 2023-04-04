@@ -10,7 +10,7 @@ interface Props extends PageProps {
 }
 
 async function Content(props: Props) {
-  const debtData = await getAccountDebts(props.params?.account)
+  const debtData = await getAccountDebts(props.params?.accountId)
   const borrowData = await getBorrowData()
 
   const marketAssets = getMarketAssets()

@@ -20,6 +20,7 @@ import { formatValue } from 'utils/formatters'
 
 interface Props {
   setShowFundAccount: (showFundAccount: boolean) => void
+  accounts: Account[]
 }
 
 const accountCardHeaderClasses = classNames(
@@ -38,14 +39,13 @@ export default function AccountList(props: Props) {
   const router = useRouter()
   const params = useParams()
   const selectedAccount = params.accountId
-  const accounts = useStore((s) => s.accounts)
   const prices = useStore((s) => s.prices)
 
   const deleteAccount = useStore((s) => s.deleteAccount)
 
   const [isLending, setIsLending] = useState(false)
   const accountSelected = !!selectedAccount && !isNaN(Number(selectedAccount))
-  const selectedAccountDetails = accounts?.find((account) => account.id === selectedAccount)
+  const selectedAccountDetails = props.accounts.find((account) => account.id === selectedAccount)
   const selectedAccountBalance = selectedAccountDetails
     ? calculateAccountBalance(selectedAccountDetails, prices)
     : 0
@@ -63,7 +63,9 @@ export default function AccountList(props: Props) {
     /* TODO: handle lending assets */
   }
 
-  if (!accounts?.length) return null
+  if (!props.accounts?.length) return null
+
+  useStore.setState({ accounts: props.accounts })
 
   return (
     <div className='flex w-full flex-wrap gap-4 p-4'>
@@ -130,7 +132,7 @@ export default function AccountList(props: Props) {
           </div>
         </Card>
       )}
-      {accounts.map((account) => {
+      {props.accounts.map((account) => {
         const positionBalance = calculateAccountBalance(account, prices)
         return selectedAccount === account.id ? null : (
           <Card

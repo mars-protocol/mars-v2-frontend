@@ -1,11 +1,11 @@
 import { getAccountDebts } from 'utils/api'
 
 interface Props {
-  account: string
+  accountId: string
 }
 
 export async function AccountDebtTable(props: Props) {
-  const debtData = await getAccountDebts(props.account)
+  const debtData = await getAccountDebts(props.accountId)
 
   return debtData.map((debt) => {
     return (

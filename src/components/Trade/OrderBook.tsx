@@ -5,10 +5,10 @@ import Loading from 'components/Loading'
 import { Text } from 'components/Text'
 
 async function Content(props: PageProps) {
-  const wallet = props.params.address
+  const address = props.params.address
 
-  return wallet ? (
-    <Text size='sm'>{`Order book for ${wallet}`}</Text>
+  return address ? (
+    <Text size='sm'>{`Order book for ${address}`}</Text>
   ) : (
     <Text size='sm' className='w-full text-center'>
       You need to be connected to see the order book

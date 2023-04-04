@@ -17,10 +17,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const client = await CosmWasmClient.connect(ENV.URL_RPC)
 
-  const $accounts: Promise<AccountResponse>[] = accountIds.map((id) =>
+  const $accounts: Promise<AccountResponse>[] = accountIds.map((accountId) =>
     client.queryContractSmart(ENV.ADDRESS_CREDIT_MANAGER!, {
-      accounts: {
-        account_id: `${id}`,
+      positions: {
+        account_id: `${accountId}`,
       },
     }),
   )

@@ -1,26 +1,23 @@
 import classNames from 'classnames'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { ReactNode } from 'react'
 
 interface Props {
   href: string
   children: string | ReactNode
+  isActive: boolean
 }
 
-export const NavLink = ({ href, children }: Props) => {
-  const pathname = usePathname()
-  const isActive = pathname === href
-
+export const NavLink = (props: Props) => {
   return (
     <Link
-      href={href}
+      href={props.href}
       className={classNames(
         'text-sm font-semibold hover:text-white active:text-white',
-        isActive ? 'pointer-events-none text-white' : 'text-white/60',
+        props.isActive ? 'pointer-events-none text-white' : 'text-white/60',
       )}
     >
-      {children}
+      {props.children}
     </Link>
   )
 }

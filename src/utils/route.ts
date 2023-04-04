@@ -1,9 +1,10 @@
 export function getRouteParams(url: string | null): PageParams {
-  const segments = (url || location.href).split('/')
+  const href = typeof location !== 'undefined' ? location.href : ''
+  const segments = (url || href).split('/')
 
   const params = {
-    wallet: '',
-    account: '',
+    address: '',
+    accountId: '',
     page: '',
   }
 
@@ -23,32 +24,32 @@ export function getRouteParams(url: string | null): PageParams {
 export function getRoute(
   url: string,
   overrides?: {
-    wallet?: string
-    account?: string
+    address?: string
+    accountId?: string
     page?: RouteSegment
   },
 ) {
   const params = getRouteParams(url)
 
   let nextUrl = ''
-  let wallet = ''
-  let account = ''
+  let address = ''
+  let accountId = ''
   let page = ''
 
-  if (params.address) wallet = params.address
-  if (overrides?.wallet) wallet = overrides.wallet
+  if (params.address) address = params.address
+  if (overrides?.address) address = overrides.address
 
-  if (params.accountId) account = params.accountId
-  if (overrides?.account) account = overrides.account
+  if (params.accountId) accountId = params.accountId
+  if (overrides?.accountId) accountId = overrides.accountId
 
   if (params.page) page = params.page
   if (overrides?.page) page = overrides.page
 
-  if (wallet) {
-    nextUrl += `/wallets/${wallet}`
+  if (address) {
+    nextUrl += `/wallets/${address}`
 
-    if (account) {
-      nextUrl += `/accounts/${account}`
+    if (accountId) {
+      nextUrl += `/accounts/${accountId}`
     }
   }
 

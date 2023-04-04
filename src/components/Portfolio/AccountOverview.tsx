@@ -1,5 +1,5 @@
-import { Suspense } from 'react'
 import classNames from 'classnames'
+import { Suspense } from 'react'
 
 import Card from 'components/Card'
 import Loading from 'components/Loading'
@@ -7,12 +7,12 @@ import { Text } from 'components/Text'
 import { getAccounts } from 'utils/api'
 
 async function Content(props: PageProps) {
-  const wallet = props.params.address
+  const address = props.params.address
   const currentAccount = props.params.accountId
   const hasAccount = !isNaN(Number(currentAccount))
-  const account = await getAccounts(wallet)
+  const account = await getAccounts(address)
 
-  return wallet ? (
+  return address ? (
     <div className={classNames('grid grid-cols-1 gap-4', 'md:grid-cols-2', 'lg:grid-cols-3')}>
       {account.map((account: Account, index: number) => (
         <Card

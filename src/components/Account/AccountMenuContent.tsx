@@ -28,17 +28,17 @@ export default function AccountMenuContent(props: Props) {
   const createAccount = useStore((s) => s.createAccount)
   const [showMenu, setShowMenu] = useState(false)
   const [isCreating, setIsCreating] = useState(false)
-  const selectedAccountDetails = props.accounts.find((account) => account.id === selectedAccountId)
-  const [showFundAccount, setShowFundAccount] = useState<boolean>(
-    !selectedAccountDetails?.deposits?.length,
-  )
 
   const selectedAccountId = params.accountId
   const hasCreditAccounts = !!props.accounts.length
   const accountSelected = !!selectedAccountId && !isNaN(Number(selectedAccountId))
 
-  const isLoadingAccount =
-    selectedAccountDetails && selectedAccountDetails?.id !== selectedAccountId
+  const selectedAccountDetails = props.accounts.find((account) => account.id === selectedAccountId)
+  const [showFundAccount, setShowFundAccount] = useState<boolean>(
+    accountSelected && !selectedAccountDetails?.deposits?.length,
+  )
+
+  const isLoadingAccount = accountSelected && selectedAccountDetails?.id !== selectedAccountId
   const showCreateAccount = !hasCreditAccounts || isCreating
 
   async function createAccountHandler() {
@@ -96,8 +96,8 @@ export default function AccountMenuContent(props: Props) {
                   <CircularProgress size={40} />
                 </div>
               )}
-              {(!selectedAccountId || !showFundAccount) && !isLoadingAccount && (
-                <AccountList setShowFundAccount={setShowFundAccount} />
+              {hasCreditAccounts && !showFundAccount && !isLoadingAccount && (
+                <AccountList accounts={props.accounts} setShowFundAccount={setShowFundAccount} />
               )}
             </div>
           </>

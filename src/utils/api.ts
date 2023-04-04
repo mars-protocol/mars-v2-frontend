@@ -5,23 +5,25 @@ import { ENV, VERCEL_BYPASS } from 'constants/env'
  */
 
 export enum Endpoints {
-  ACCOUNTS = '/wallets/{address}/accounts/positions',
-  ACCOUNT_DEBTS = '/accounts/{account}/debts',
+  ACCOUNTS = '/wallets/{address}/accounts',
+  ACCOUNT_DEBTS = '/accounts/{accountId}/debts',
   MARKETS_BORROW = '/markets/borrow',
   PRICES = '/prices',
   WALLET_BALANCES = '/wallets/{address}/balances',
 }
 
 interface ParamProps {
-  wallet?: string
-  account?: string
+  address?: string
+  accountId?: string
 }
 
 export function getEndpoint(endpoint: Endpoints, props?: ParamProps) {
-  endpoint.replace('{address}', props?.wallet || '')
-  endpoint.replace('{account}', props?.account || '')
+  let returnEndpoint: string = endpoint
 
-  return endpoint
+  returnEndpoint = returnEndpoint.replace('{address}', props?.address || '')
+  returnEndpoint = returnEndpoint.replace('{accountId}', props?.accountId || '')
+
+  return returnEndpoint
 }
 
 export async function callAPI<T>(endpoint: string): Promise<T> {
@@ -36,14 +38,14 @@ export async function callAPI<T>(endpoint: string): Promise<T> {
  * API GETTERS
  */
 
-export async function getAccountDebts(account: string) {
-  if (!account) return []
-  return callAPI<Coin[]>(getEndpoint(Endpoints.ACCOUNT_DEBTS, { account }))
+export async function getAccountDebts(accountId: string) {
+  if (!accountId) return []
+  return callAPI<Coin[]>(getEndpoint(Endpoints.ACCOUNT_DEBTS, { accountId }))
 }
 
-export async function getAccounts(wallet: string) {
-  if (!wallet) return []
-  return callAPI<Account[]>(getEndpoint(Endpoints.ACCOUNTS, { wallet }))
+export async function getAccounts(address: string) {
+  if (!address) return []
+  return callAPI<Account[]>(getEndpoint(Endpoints.ACCOUNTS, { address }))
 }
 
 export async function getAccountsSWR(url: string) {

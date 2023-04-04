@@ -1,24 +1,23 @@
 import { Suspense } from 'react'
 
+import AccountMenuContent from 'components/Account/AccountMenuContent'
 import Loading from 'components/Loading'
 import { getAccounts } from 'utils/api'
-import AccountMenuContent from 'components/Account/AccountMenuContent'
 
-async function getAccountsData(props: PageProps) {
-  return getAccounts(props.params.address)
+async function getAccountsData(address: string) {
+  return getAccounts(address)
 }
 
-async function Content(props: PageProps) {
-  const accounts = await getAccountsData(props)
-
+async function Content(props: { params: PageParams }) {
+  const accounts = await getAccountsData(props.params.address)
   return <AccountMenuContent accounts={accounts} />
 }
 
-export default function AccountMenu(props: PageProps) {
+export default function AccountMenu(props: { params: PageParams }) {
   return (
     <Suspense fallback={<Loading className='h-8 w-35' />}>
       {/* @ts-expect-error Server Component */}
-      <Content props={props} />
+      <Content params={props.params} />
     </Suspense>
   )
 }
