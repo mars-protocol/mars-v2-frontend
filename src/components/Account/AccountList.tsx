@@ -11,9 +11,12 @@ import { ArrowCircledTopRight, ArrowDownLine, ArrowUpLine, TrashBin } from 'comp
 import Radio from 'components/Radio'
 import SwitchWithLabel from 'components/SwitchWithLabel'
 import { Text } from 'components/Text'
+import { ASSETS } from 'constants/assets'
 import useParams from 'hooks/useParams'
 import useStore from 'store'
+import { calculateAccountBalance } from 'utils/accounts'
 import { hardcodedFee } from 'utils/contants'
+import { formatValue } from 'utils/formatters'
 
 interface Props {
   setShowFundAccount: (showFundAccount: boolean) => void
@@ -24,16 +27,30 @@ const accountCardHeaderClasses = classNames(
   'border border-transparent border-b-white/20 ',
 )
 
+const formatOptions = {
+  decimals: ASSETS[0].decimals,
+  minDecimals: 0,
+  maxDecimals: ASSETS[0].decimals,
+  suffix: ` ${ASSETS[0].symbol}`,
+}
+
 export default function AccountList(props: Props) {
   const router = useRouter()
   const params = useParams()
   const selectedAccount = params.account
   const creditAccountsPositions = useStore((s) => s.creditAccountsPositions)
+  const prices = useStore((s) => s.prices)
 
   const deleteCreditAccount = useStore((s) => s.deleteCreditAccount)
 
   const [isLending, setIsLending] = useState(false)
   const accountSelected = !!selectedAccount && !isNaN(Number(selectedAccount))
+  const selectedAccountDetails = creditAccountsPositions?.find(
+    (position) => position.account === selectedAccount,
+  )
+  const selectedAccountBalance = selectedAccountDetails
+    ? calculateAccountBalance(selectedAccountDetails, prices)
+    : 0
 
   async function deleteAccountHandler() {
     if (!accountSelected) return
@@ -52,21 +69,25 @@ export default function AccountList(props: Props) {
 
   return (
     <div className='flex w-full flex-wrap gap-4 p-4'>
-      {accountSelected && (
+      {selectedAccountDetails && (
         <Card
           className='w-full'
           contentClassName='bg-white/10'
           title={
             <div className={accountCardHeaderClasses}>
               <Text size='xs' className='flex flex-1'>
-                Credit Account #{selectedAccount}
+                Credit Account #{selectedAccountDetails.account}
               </Text>
               <Radio active={true} />
             </div>
           }
         >
           <div className='w-full border border-transparent border-b-white/20 p-4'>
-            <AccountStats balance='$ 26,000.55' risk={75} health={0.85} />
+            <AccountStats
+              balance={formatValue(selectedAccountBalance, formatOptions)}
+              risk={75}
+              health={0.85}
+            />
           </div>
           <div className='grid grid-flow-row grid-cols-2 gap-4 p-4'>
             <Button
@@ -112,6 +133,7 @@ export default function AccountList(props: Props) {
         </Card>
       )}
       {creditAccountsPositions.map((position) => {
+        const positionBalance = calculateAccountBalance(position, prices)
         return selectedAccount === position.account ? null : (
           <Card
             key={position.account}
@@ -134,7 +156,11 @@ export default function AccountList(props: Props) {
             }
           >
             <div className='w-full p-4'>
-              <AccountStats balance='$ 26,000.55' risk={60} health={0.5} />
+              <AccountStats
+                balance={formatValue(positionBalance, formatOptions)}
+                risk={60}
+                health={0.5}
+              />
             </div>
           </Card>
         )

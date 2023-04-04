@@ -15,8 +15,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html className='m-0 p-0' lang='en'>
       <head />
       <body className='m-0 cursor-default bg-body p-0 font-sans text-white'>
+        <Background />
         <WalletConnectProvider>
-          <Background />
           <DesktopNavigation />
         </WalletConnectProvider>
         <FetchPrices />
