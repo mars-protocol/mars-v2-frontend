@@ -37,7 +37,7 @@ export default function TokenInputWithSlider(props: Props) {
   )
 
   return (
-    <>
+    <div className={props.className}>
       <TokenInput
         asset={props.asset}
         onChange={(amount) => onInputChange(amount, props.max)}
@@ -49,9 +49,8 @@ export default function TokenInputWithSlider(props: Props) {
       <Slider
         value={percentage}
         onChange={(value) => onSliderChange(value, props.max)}
-        className='mb-4'
         disabled={props.disabled}
       />
-    </>
+    </div>
   )
 }
