@@ -9,15 +9,17 @@ export function getRouteParams(url: string | null): PageParams {
   }
 
   segments.forEach((segment, index) => {
-    if (segment === 'wallets' && segments[index + 1]) {
-      params.address = segments[index + 1]
-    } else if (segment === 'accounts' && segments[index + 1]) {
-      params.accountId = segments[index + 1]
-    } else if (index === 5) {
-      params.page = segment
+    switch (segment) {
+      case 'wallets':
+        params.address = segments[index + 1]
+        break
+      case 'accounts':
+        params.accountId = segments[index + 1]
+        break
+      default:
+        params.page = segment
     }
   })
-
   return params
 }
 
