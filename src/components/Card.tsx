@@ -8,11 +8,13 @@ interface Props {
   className?: string
   contentClassName?: string
   title?: string | ReactElement
+  id?: string
 }
 
 export default function Card(props: Props) {
   return (
     <section
+      id={props.id}
       className={classNames(
         props.className,
         'relative isolate max-w-full overflow-hidden rounded-base',

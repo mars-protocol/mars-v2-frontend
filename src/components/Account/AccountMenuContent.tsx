@@ -16,7 +16,8 @@ import useParams from 'hooks/useParams'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
 
-const menuClasses = 'absolute isolate flex w-full flex-wrap overflow-y-scroll scrollbar-hide'
+const menuClasses =
+  'absolute isolate flex w-full flex-wrap overflow-y-scroll scrollbar-hide scroll-smooth'
 
 interface Props {
   accounts: Account[]
