@@ -17,7 +17,7 @@ export function getRouteParams(url: string | null): PageParams {
         params.accountId = segments[index + 1]
         break
       default:
-        if (index === 3 || index === 7) params.page = segment
+        if (index === 3 || index === 5 || index === 7) params.page = segment
     }
   })
   if (!params.page) params.page = 'trade'

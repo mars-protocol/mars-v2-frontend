@@ -13,14 +13,18 @@ export default function useParams() {
   const segments = pathname.split('/')
 
   segments.forEach((segment, index) => {
-    if (segment === 'wallets' && segments[index + 1]) {
-      params.address = segments[index + 1]
-    } else if (segment === 'accounts' && segments[index + 1]) {
-      params.accountId = segments[index + 1]
-    } else if (index === 5) {
-      params.page = segment
+    switch (segment) {
+      case 'wallets':
+        params.address = segments[index + 1]
+        break
+      case 'accounts':
+        params.accountId = segments[index + 1]
+        break
+      default:
+        if (index === 3 || index === 5 || index === 7) params.page = segment
     }
   })
+  if (!params.page) params.page = 'trade'
 
   return params
 }
