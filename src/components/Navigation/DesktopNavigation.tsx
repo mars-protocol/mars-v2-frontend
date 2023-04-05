@@ -1,6 +1,6 @@
 import classNames from 'classnames'
-import Link from 'next/link'
 import { headers } from 'next/headers'
+import Link from 'next/link'
 
 import AccountMenu from 'components/Account/AccountMenu'
 import { Logo } from 'components/Icons'
@@ -39,7 +39,11 @@ export default function DesktopNavigation() {
           </Link>
           <div className='flex gap-8 px-6'>
             {menuTree.map((item, index) => (
-              <NavLink key={index} href={getRoute(href, { page: item.href })} isActive={true}>
+              <NavLink
+                key={index}
+                href={getRoute(href, { page: item.href })}
+                isActive={params.page === item.href}
+              >
                 {item.label}
               </NavLink>
             ))}
