@@ -3,10 +3,10 @@ import classNames from 'classnames'
 import { useRouter } from 'next/navigation'
 import { toast as createToast, Slide, ToastContainer } from 'react-toastify'
 
+import { Button } from 'components/Button'
 import { CheckCircled, Cross, CrossCircled } from 'components/Icons'
 import { Text } from 'components/Text'
 import useStore from 'store'
-import { Button } from 'components/Button'
 
 export default function Toaster() {
   const enableAnimations = useStore((s) => s.enableAnimations)
@@ -74,7 +74,7 @@ export default function Toaster() {
       closeOnClick
       transition={enableAnimations ? Slide : undefined}
       className='p-0'
-      toastClassName='top-[73px] z-50 m-0 mb-4 flex w-full bg-transparent p-0'
+      toastClassName='top-[73px] z-20 m-0 mb-4 flex w-full bg-transparent p-0'
       bodyClassName='p-0 m-0 w-full flex'
     />
   )

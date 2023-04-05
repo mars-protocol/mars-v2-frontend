@@ -15,6 +15,7 @@ import { hardcodedFee } from 'utils/contants'
 
 interface Props {
   setShow: (show: boolean) => void
+  setShowMenu: (show: boolean) => void
 }
 
 export default function FundAccount(props: Props) {
@@ -34,9 +35,9 @@ export default function FundAccount(props: Props) {
     /* TODO: handle lending assets */
   }, [])
 
-  function onDeposit() {
+  async function onDeposit() {
     setIsFunding(true)
-    deposit({
+    const result = await deposit({
       fee: hardcodedFee,
       accountId: params.accountId,
       coin: {
@@ -44,6 +45,11 @@ export default function FundAccount(props: Props) {
         amount: amount.toString(),
       },
     })
+    setIsFunding(false)
+    if (result) {
+      props.setShowMenu(false)
+      props.setShow(false)
+    }
   }
 
   return (
@@ -59,7 +65,7 @@ export default function FundAccount(props: Props) {
       </div>
       <div className='relative z-10 w-full p-4'>
         <Text size='lg' className='mb-2 font-bold'>
-          {`Fund Account #${params.accountId}`}
+          {`Fund Account ${params.accountId}`}
         </Text>
         <Text className='mb-4 text-white/70'>
           Deposit assets from your Osmosis address to your Mars credit account. Bridge assets if

@@ -51,6 +51,8 @@ export default function AccountMenuContent(props: Props) {
     router.push(`/wallets/${params.address}/accounts/${accountId}`)
   }
 
+  if (!params.address) return null
+
   return (
     <div className='relative'>
       <Button
@@ -62,7 +64,7 @@ export default function AccountMenuContent(props: Props) {
       >
         {hasCreditAccounts
           ? accountSelected
-            ? `Account #${selectedAccountId}`
+            ? `Account ${selectedAccountId}`
             : 'Select Account'
           : 'Create Account'}
       </Button>
@@ -107,7 +109,7 @@ export default function AccountMenuContent(props: Props) {
             {showCreateAccount ? (
               <CreateAccount createAccount={createAccountHandler} isCreating={isCreating} />
             ) : showFundAccount ? (
-              <FundAccount setShow={setShowFundAccount} />
+              <FundAccount setShow={setShowFundAccount} setShowMenu={setShowMenu} />
             ) : null}
           </div>
         )}

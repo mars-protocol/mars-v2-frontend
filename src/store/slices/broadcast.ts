@@ -75,7 +75,7 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
       if (response.result) {
         set({ createAccountModal: false })
         const id = getSingleValueFromBroadcastResult(response.result, 'wasm', 'token_id')
-        set({ fundAccountModal: true, toast: { message: `Account #${id} created` } })
+        set({ fundAccountModal: true, toast: { message: `Account ${id} created` } })
         return id
       } else {
         set({
@@ -99,7 +99,7 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
 
       set({ deleteAccountModal: false })
       if (response.result) {
-        set({ toast: { message: `Account #${options.accountId} deleted` } })
+        set({ toast: { message: `Account ${options.accountId} deleted` } })
       } else {
         set({
           toast: {

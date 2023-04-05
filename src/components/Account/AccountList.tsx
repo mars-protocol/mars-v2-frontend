@@ -99,7 +99,7 @@ export default function AccountList(props: Props) {
                   }}
                 >
                   <Text size='xs' className='flex flex-1'>
-                    Credit Account #{account.id}
+                    Credit Account {account.id}
                   </Text>
                   <Radio active={isActive} className='group-hover:opacity-100' />
                 </div>
