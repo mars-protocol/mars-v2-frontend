@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import Link from 'next/link'
+import { headers } from 'next/headers'
 
 import AccountMenu from 'components/Account/AccountMenu'
 import { Logo } from 'components/Icons'
@@ -18,9 +19,8 @@ export const menuTree: { href: RouteSegment; label: string }[] = [
 ]
 
 export default function DesktopNavigation() {
-  /* TODO: find a way to fetch href and params in a server sided component */
-  const href = '/wallets/osmo1ev02crc36675xd8s029qh7wg3wjtfk37jr004z/trade'
-  const params = getRouteParams('/wallets/osmo1ev02crc36675xd8s029qh7wg3wjtfk37jr004z/trade')
+  const href = headers().get('x-url') || ''
+  const params = getRouteParams(href)
 
   return (
     <header

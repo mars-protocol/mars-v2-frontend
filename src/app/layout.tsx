@@ -9,7 +9,7 @@ import Toaster from 'components/Toaster'
 import 'react-toastify/dist/ReactToastify.min.css'
 import 'styles/globals.css'
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html className='m-0 p-0' lang='en'>
       <head />
@@ -23,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             'lg:mt-[65px] lg:h-[calc(100vh-65px)]',
           )}
         >
-          <div className='flex max-w-content flex-grow flex-col flex-wrap'>{children}</div>
+          <div className='flex max-w-content flex-grow flex-col flex-wrap'>{props.children}</div>
           <AccountDetails />
         </main>
         <Modals />
