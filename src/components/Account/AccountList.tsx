@@ -95,7 +95,7 @@ export default function AccountList(props: Props) {
                   role={!isActive ? 'button' : undefined}
                   onClick={() => {
                     if (isActive) return
-                    router.push(`/wallets/${params.address}/accounts/${account.id}`)
+                    router.push(`/wallets/${params.address}/accounts/${account.id}/${params.page}`)
                   }}
                 >
                   <Text size='xs' className='flex flex-1'>
