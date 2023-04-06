@@ -7,13 +7,14 @@ import { Text } from 'components/Text'
 async function Content(props: PageProps) {
   const address = props.params.address
 
-  return address ? (
-    <Text size='sm'>{`Earn page for ${address}`}</Text>
-  ) : (
-    <Text size='sm' className='w-full text-center'>
-      You need to be connected to use the earn page
-    </Text>
-  )
+  if (!address)
+    return (
+      <Text size='sm' className='w-full text-center'>
+        You need to be connected to use the earn page
+      </Text>
+    )
+
+  return <Text size='sm'>{`Earn page for ${address}`}</Text>
 }
 
 function Fallback() {

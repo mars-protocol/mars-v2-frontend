@@ -9,17 +9,11 @@ async function Content(props: PageProps) {
   const currentAccount = props.params.accountId
   const hasAccount = !isNaN(Number(currentAccount))
 
-  return address ? (
-    <>
-      {hasAccount ? (
-        <Text size='sm'>{`Trade with Account ${currentAccount}`}</Text>
-      ) : (
-        <Text size='sm'>Select an Account to trade</Text>
-      )}
-    </>
-  ) : (
-    <Text size='sm'>You need to be connected to trade</Text>
-  )
+  if (!address) return <Text size='sm'>You need to be connected to trade</Text>
+
+  if (!hasAccount) return <Text size='sm'>Select an Account to trade</Text>
+
+  return <Text size='sm'>{`Trade with Account ${currentAccount}`}</Text>
 }
 
 function Fallback() {

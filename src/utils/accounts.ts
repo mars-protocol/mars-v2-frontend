@@ -1,22 +1,17 @@
 import BigNumber from 'bignumber.js'
 
 export const calculateAccountBalance = (account: Account, prices: Coin[]) => {
-  let totalDepositValue = new BigNumber(0)
-  let totalDebtValue = new BigNumber(0)
+  const totalDepositValue = account.deposits.reduce((acc, deposit) => {
+    const price = prices.find((price) => price.denom === deposit.denom)?.amount ?? 0
+    const depositValue = new BigNumber(deposit.amount).multipliedBy(price)
+    return acc.plus(depositValue)
+  }, new BigNumber(0))
 
-  account.deposits.map((deposit) => {
-    const priceObject = prices.find((priceObject) => priceObject.denom === deposit.denom)
-    const assetPrice = new BigNumber(priceObject?.amount || 0)
-    const depositValue = new BigNumber(deposit.amount).multipliedBy(assetPrice)
-    totalDepositValue = totalDepositValue.plus(depositValue)
-  })
-
-  account.debts.map((debt) => {
-    const priceObject = prices.find((priceObject) => priceObject.denom === debt.denom)
-    const assetPrice = new BigNumber(priceObject?.amount || 0)
-    const debtValue = new BigNumber(debt.amount).multipliedBy(assetPrice)
-    totalDebtValue = totalDebtValue.plus(debtValue)
-  })
+  const totalDebtValue = account.debts.reduce((acc, debt) => {
+    const price = prices.find((price) => price.denom === debt.denom)?.amount ?? 0
+    const debtValue = new BigNumber(debt.amount).multipliedBy(price)
+    return acc.plus(debtValue)
+  }, new BigNumber(0))
 
   return totalDepositValue.minus(totalDebtValue).toNumber()
 }

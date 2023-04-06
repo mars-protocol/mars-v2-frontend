@@ -2,7 +2,7 @@ import Accordion from 'components/Accordion'
 import Card from 'components/Card'
 import { ArrowChartLineUp, Shield } from 'components/Icons'
 import { Text } from 'components/Text'
-import useParams from 'hooks/useParams'
+import useParams from 'utils/route'
 
 export default function AccountSummary() {
   const params = useParams()

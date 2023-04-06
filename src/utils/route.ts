@@ -1,11 +1,24 @@
+import { usePathname } from 'next/navigation'
+
+export default function useParams() {
+  const pathname = usePathname()
+
+  return getParamsFromUrl(pathname || '')
+}
+
 export function getRouteParams(url: string | null): PageParams {
   const href = typeof location !== 'undefined' ? location.href : ''
-  const segments = (url || href).split('/')
 
-  const params = {
+  return getParamsFromUrl(url || href)
+}
+
+export function getParamsFromUrl(url: string) {
+  const segments = url.split('/')
+
+  const params: PageParams = {
     address: '',
     accountId: '',
-    page: '',
+    page: 'trade',
   }
 
   segments.forEach((segment, index) => {
@@ -17,10 +30,9 @@ export function getRouteParams(url: string | null): PageParams {
         params.accountId = segments[index + 1]
         break
       default:
-        if (index === 3 || index === 5 || index === 7) params.page = segment
+        if ([3, 5, 7].includes(index)) params.page = segment
     }
   })
-  if (!params.page) params.page = 'trade'
 
   return params
 }

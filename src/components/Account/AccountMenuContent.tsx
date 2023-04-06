@@ -2,7 +2,7 @@
 
 import classNames from 'classnames'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import AccountList from 'components/Account/AccountList'
 import CreateAccount from 'components/Account/CreateAccount'
@@ -12,9 +12,10 @@ import { CircularProgress } from 'components/CircularProgress'
 import { Account, Plus, PlusCircled } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
 import { Text } from 'components/Text'
-import useParams from 'hooks/useParams'
+import useParams from 'utils/route'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
+import { isNumber } from 'utils/parsers'
 
 const menuClasses =
   'absolute isolate flex w-full flex-wrap overflow-y-scroll scrollbar-hide scroll-smooth'
@@ -32,14 +33,14 @@ export default function AccountMenuContent(props: Props) {
 
   const selectedAccountId = params.accountId
   const hasCreditAccounts = !!props.accounts.length
-  const accountSelected = !!selectedAccountId && !isNaN(Number(selectedAccountId))
+  const isAccountSelected = isNumber(selectedAccountId)
 
   const selectedAccountDetails = props.accounts.find((account) => account.id === selectedAccountId)
   const [showFundAccount, setShowFundAccount] = useState<boolean>(
-    accountSelected && !selectedAccountDetails?.deposits?.length,
+    isAccountSelected && !selectedAccountDetails?.deposits?.length,
   )
 
-  const isLoadingAccount = accountSelected && selectedAccountDetails?.id !== selectedAccountId
+  const isLoadingAccount = isAccountSelected && selectedAccountDetails?.id !== selectedAccountId
   const showCreateAccount = !hasCreditAccounts || isCreating
 
   async function createAccountHandler() {
@@ -53,6 +54,8 @@ export default function AccountMenuContent(props: Props) {
 
   if (!params.address) return null
 
+  useStore.setState({ accounts: props.accounts })
+
   return (
     <div className='relative'>
       <Button
@@ -63,7 +66,7 @@ export default function AccountMenuContent(props: Props) {
         hasSubmenu={hasCreditAccounts}
       >
         {hasCreditAccounts
-          ? accountSelected
+          ? isAccountSelected
             ? `Account ${selectedAccountId}`
             : 'Select Account'
           : 'Create Account'}
@@ -94,7 +97,7 @@ export default function AccountMenuContent(props: Props) {
               />
             </div>
             <div className={classNames(menuClasses, 'top-[54px] h-[calc(100%-54px)] items-start')}>
-              {accountSelected && isLoadingAccount && (
+              {isAccountSelected && isLoadingAccount && (
                 <div className='flex h-full w-full items-center justify-center p-4'>
                   <CircularProgress size={40} />
                 </div>
@@ -109,7 +112,7 @@ export default function AccountMenuContent(props: Props) {
             {showCreateAccount ? (
               <CreateAccount createAccount={createAccountHandler} isCreating={isCreating} />
             ) : showFundAccount ? (
-              <FundAccount setShow={setShowFundAccount} setShowMenu={setShowMenu} />
+              <FundAccount setShowFundAccount={setShowFundAccount} setShowMenu={setShowMenu} />
             ) : null}
           </div>
         )}

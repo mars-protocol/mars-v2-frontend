@@ -2,11 +2,12 @@
 import { Gauge } from 'components/Gauge'
 import { Heart } from 'components/Icons'
 import { Text } from 'components/Text'
-import useParams from 'hooks/useParams'
+import { isNumber } from 'utils/parsers'
+import useParams from 'utils/route'
 
 export default function AccountDetails() {
   const params = useParams()
-  const hasAccount = params.accountId && !isNaN(Number(params.accountId))
+  const hasAccount = isNumber(params.accountId)
 
   return hasAccount ? (
     <div className='fixed right-4 top-[89px] w-16 rounded-base border border-white/20 bg-white/5 backdrop-blur-sticky'>
@@ -30,7 +31,7 @@ export default function AccountDetails() {
       <div className='w-full py-4'>
         <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
           Balance
-        </Text>{' '}
+        </Text>
         <Text size='xs' className='w-full text-center'>
           $300M
         </Text>

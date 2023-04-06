@@ -9,12 +9,12 @@ import SwitchWithLabel from 'components/SwitchWithLabel'
 import { Text } from 'components/Text'
 import TokenInputWithSlider from 'components/TokenInputWithSlider'
 import { ASSETS } from 'constants/assets'
-import useParams from 'hooks/useParams'
+import useParams from 'utils/route'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
 
 interface Props {
-  setShow: (show: boolean) => void
+  setShowFundAccount: (show: boolean) => void
   setShowMenu: (show: boolean) => void
 }
 
@@ -48,7 +48,7 @@ export default function FundAccount(props: Props) {
     setIsFunding(false)
     if (result) {
       props.setShowMenu(false)
-      props.setShow(false)
+      props.setShowFundAccount(false)
     }
   }
 
@@ -56,7 +56,7 @@ export default function FundAccount(props: Props) {
     <>
       <div className='absolute right-4 top-4'>
         <Button
-          onClick={() => props.setShow(false)}
+          onClick={() => props.setShowFundAccount(false)}
           leftIcon={<Cross />}
           className='h-8 w-8'
           iconClassName='h-2 w-2'

@@ -9,12 +9,11 @@ import { ArrowRight } from 'components/Icons'
 import { Modal } from 'components/Modal'
 import { Text } from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
-import useParams from 'hooks/useParams'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
 import { formatPercent, formatValue } from 'utils/formatters'
-
-import TokenInputWithSlider from './TokenInputWithSlider'
+import TokenInputWithSlider from 'components/TokenInputWithSlider'
+import useParams from 'utils/route'
 
 export default function BorrowModal() {
   const params = useParams()

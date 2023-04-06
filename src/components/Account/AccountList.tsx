@@ -1,7 +1,7 @@
 'use client'
 
 import classNames from 'classnames'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import AccountStats from 'components/Account/AccountStats'
@@ -12,7 +12,7 @@ import Radio from 'components/Radio'
 import SwitchWithLabel from 'components/SwitchWithLabel'
 import { Text } from 'components/Text'
 import { ASSETS } from 'constants/assets'
-import useParams from 'hooks/useParams'
+import useParams, { getRoute } from 'utils/route'
 import useStore from 'store'
 import { calculateAccountBalance } from 'utils/accounts'
 import { hardcodedFee } from 'utils/contants'
@@ -38,6 +38,8 @@ const formatOptions = {
 export default function AccountList(props: Props) {
   const router = useRouter()
   const params = useParams()
+  const pathname = usePathname() || ''
+
   const selectedAccount = params.accountId
   const prices = useStore((s) => s.prices)
 
@@ -58,8 +60,8 @@ export default function AccountList(props: Props) {
     }
   }
 
-  function handleLendAssets(val: boolean) {
-    setIsLending(val)
+  function onChangeLendSwitch(isLending: boolean) {
+    setIsLending(isLending)
     /* TODO: handle lending assets */
   }
 
@@ -71,8 +73,6 @@ export default function AccountList(props: Props) {
   }, [selectedAccount])
 
   if (!props.accounts?.length) return null
-
-  useStore.setState({ accounts: props.accounts })
 
   return (
     <div className='flex w-full flex-wrap p-4'>
@@ -95,7 +95,7 @@ export default function AccountList(props: Props) {
                   role={!isActive ? 'button' : undefined}
                   onClick={() => {
                     if (isActive) return
-                    router.push(`/wallets/${params.address}/accounts/${account.id}/${params.page}`)
+                    router.push(getRoute(pathname, { accountId: account.id }))
                   }}
                 >
                   <Text size='xs' className='flex flex-1'>
@@ -150,7 +150,7 @@ export default function AccountList(props: Props) {
                         name='isLending'
                         label='Lend assets to earn yield'
                         value={isLending}
-                        onChange={handleLendAssets}
+                        onChange={onChangeLendSwitch}
                         tooltip={`Fund your account and lend assets effortlessly! By lending, you'll earn attractive interest (APY) without impacting your LTV. It's a win-win situation - don't miss out on this easy opportunity to grow your holdings!`}
                       />
                     </div>

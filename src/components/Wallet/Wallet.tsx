@@ -11,7 +11,7 @@ import { useEffect } from 'react'
 
 import ConnectButton from 'components/Wallet/ConnectButton'
 import ConnectedButton from 'components/Wallet/ConnectedButton'
-import useParams from 'hooks/useParams'
+import useParams from 'utils/route'
 import useStore from 'store'
 
 export default function Wallet() {

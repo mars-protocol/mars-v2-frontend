@@ -12,7 +12,21 @@ async function Content(props: PageProps) {
   const hasAccount = !isNaN(Number(currentAccount))
   const account = await getAccounts(address)
 
-  return address ? (
+  if (!address) {
+    return (
+      <Card
+        className='h-fit w-full justify-center bg-white/5'
+        title='Portfolio'
+        contentClassName='px-4 py-6'
+      >
+        <Text size='sm' className='w-full text-center'>
+          You need to be connected to view the porfolio page
+        </Text>
+      </Card>
+    )
+  }
+
+  return (
     <div className={classNames('grid grid-cols-1 gap-4', 'md:grid-cols-2', 'lg:grid-cols-3')}>
       {account.map((account: Account, index: number) => (
         <Card
@@ -29,16 +43,6 @@ async function Content(props: PageProps) {
         </Card>
       ))}
     </div>
-  ) : (
-    <Card
-      className='h-fit w-full justify-center bg-white/5'
-      title='Portfolio'
-      contentClassName='px-4 py-6'
-    >
-      <Text size='sm' className='w-full text-center'>
-        You need to be connected to view the porfolio page
-      </Text>
-    </Card>
   )
 }
 
