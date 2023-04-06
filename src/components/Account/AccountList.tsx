@@ -28,6 +28,7 @@ const accountCardHeaderClasses = classNames(
   'border border-transparent border-b-white/20',
 )
 
+// TODO: Make this dynamic (token select)
 const formatOptions = {
   decimals: ASSETS[0].decimals,
   minDecimals: 0,
@@ -38,7 +39,6 @@ const formatOptions = {
 export default function AccountList(props: Props) {
   const router = useRouter()
   const params = useParams()
-  const pathname = usePathname() || ''
 
   const selectedAccount = params.accountId
   const prices = useStore((s) => s.prices)
@@ -95,7 +95,7 @@ export default function AccountList(props: Props) {
                   role={!isActive ? 'button' : undefined}
                   onClick={() => {
                     if (isActive) return
-                    router.push(getRoute(pathname, { accountId: account.id }))
+                    router.push(getRoute(params, { accountId: account.id }))
                   }}
                 >
                   <Text size='xs' className='flex flex-1'>

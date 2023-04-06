@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import { headers } from 'next/headers'
 
 import AccountDetails from 'components/Account/AccountDetails'
 import Background from 'components/Background'
@@ -6,7 +7,6 @@ import FetchPrices from 'components/FetchPrices'
 import DesktopHeader from 'components/Header/DesktopHeader'
 import { Modals } from 'components/Modals'
 import Toaster from 'components/Toaster'
-import { headers } from 'next/headers'
 import 'react-toastify/dist/ReactToastify.min.css'
 import 'styles/globals.css'
 import { getRouteParams } from 'utils/route'

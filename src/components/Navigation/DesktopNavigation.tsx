@@ -5,8 +5,7 @@ import Link from 'next/link'
 import { menuTree } from 'components/Header/DesktopHeader'
 import { Logo } from 'components/Icons'
 import { NavLink } from 'components/Navigation/NavLink'
-import useParams from 'hooks/useParams'
-import { getRoute } from 'utils/route'
+import useParams, { getRoute } from 'utils/route'
 
 export default function DesktopNavigation() {
   const params = useParams()

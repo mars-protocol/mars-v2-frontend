@@ -47,7 +47,6 @@ export default function NumberInput(props: Props) {
     })
   }, [props.amount, props.asset])
 
-
   useEffect(() => {
     if (!props.onRef) return
     props.onRef(inputRef)

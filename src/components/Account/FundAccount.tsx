@@ -37,6 +37,7 @@ export default function FundAccount(props: Props) {
 
   async function onDeposit() {
     setIsFunding(true)
+    // TODO: Make this dynamic (token select)
     const result = await deposit({
       fee: hardcodedFee,
       accountId: params.accountId,

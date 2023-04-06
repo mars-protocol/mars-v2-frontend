@@ -2,7 +2,6 @@ import BigNumber from 'bignumber.js'
 import Image from 'next/image'
 import { useState } from 'react'
 
-
 import AccountSummary from 'components/Account/AccountSummary'
 import { Button } from 'components/Button'
 import Card from 'components/Card'
@@ -16,7 +15,6 @@ import { hardcodedFee } from 'utils/contants'
 import { formatPercent, formatValue } from 'utils/formatters'
 import TokenInputWithSlider from 'components/TokenInputWithSlider'
 import useParams from 'utils/route'
-
 
 export default function BorrowModal() {
   const params = useParams()
