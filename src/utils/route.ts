@@ -26,28 +26,26 @@ export function getRouteParams(url: string | null): PageParams {
 }
 
 export function getRoute(
-  url: string,
+  params: PageParams,
   overrides?: {
     address?: string
     accountId?: string
     page?: RouteSegment
   },
 ) {
-  const params = getRouteParams(url)
-
   let nextUrl = ''
-  let address = ''
-  let accountId = ''
-  let page = ''
 
-  if (params.address) address = params.address
-  if (overrides?.address) address = overrides.address
-
-  if (params.accountId) accountId = params.accountId
-  if (overrides?.accountId) accountId = overrides.accountId
-
-  if (params.page) page = params.page
-  if (overrides?.page) page = overrides.page
+  const address = overrides?.address
+    ? overrides.address
+    : params.address
+    ? params.address
+    : undefined
+  const accountId = overrides?.accountId
+    ? overrides.accountId
+    : params.accountId
+    ? params.accountId
+    : undefined
+  const page = overrides?.page ? overrides.page : params.page ? params.page : 'trade'
 
   if (address) {
     nextUrl += `/wallets/${address}`
@@ -57,9 +55,6 @@ export function getRoute(
     }
   }
 
-  if (page) {
-    nextUrl += `/${page}`
-  }
-
+  nextUrl += `/${page}`
   return nextUrl
 }

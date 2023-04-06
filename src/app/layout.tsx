@@ -3,19 +3,23 @@ import classNames from 'classnames'
 import AccountDetails from 'components/Account/AccountDetails'
 import Background from 'components/Background'
 import FetchPrices from 'components/FetchPrices'
+import DesktopHeader from 'components/Header/DesktopHeader'
 import { Modals } from 'components/Modals'
-import DesktopNavigation from 'components/Navigation/DesktopNavigation'
 import Toaster from 'components/Toaster'
+import { headers } from 'next/headers'
 import 'react-toastify/dist/ReactToastify.min.css'
 import 'styles/globals.css'
+import { getRouteParams } from 'utils/route'
 
 export default function RootLayout(props: { children: React.ReactNode }) {
+  const href = headers().get('x-url') || ''
+  const params = getRouteParams(href)
   return (
     <html className='m-0 p-0' lang='en'>
       <head />
       <body className='m-0 cursor-default bg-body p-0 font-sans text-white'>
         <Background />
-        <DesktopNavigation />
+        <DesktopHeader params={params} />
         <FetchPrices />
         <main
           className={classNames(
