@@ -15,6 +15,7 @@ interface Props {
   allowNegative?: boolean
   style?: {}
   disabled?: boolean
+
   onChange: (amount: number) => void
   onBlur?: () => void
   onFocus?: () => void
@@ -45,6 +46,7 @@ export default function NumberInput(props: Props) {
       value: demagnify(props.amount, props.asset),
     })
   }, [props.amount, props.asset])
+
 
   useEffect(() => {
     if (!props.onRef) return

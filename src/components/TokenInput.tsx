@@ -3,8 +3,10 @@ import Image from 'next/image'
 import BigNumber from 'bignumber.js'
 import { useState } from 'react'
 
+import BigNumber from 'bignumber.js'
 import NumberInput from 'components/NumberInput'
 import { Text } from 'components/Text'
+import { useState } from 'react'
 
 interface Props {
   amount: number
@@ -13,6 +15,7 @@ interface Props {
   onChange: (amount: number) => void
   className?: string
   disabled?: boolean
+
 }
 
 export default function TokenInput(props: Props) {
