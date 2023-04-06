@@ -1,4 +1,4 @@
-interface PositionResponse {
+interface AccountResponse {
   account_id: string
   deposits: Coin[]
   debts: Coin[]

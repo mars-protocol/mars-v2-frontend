@@ -1,27 +1,41 @@
-import { Suspense } from 'react'
 import classNames from 'classnames'
+import { Suspense } from 'react'
 
 import Card from 'components/Card'
 import Loading from 'components/Loading'
 import { Text } from 'components/Text'
-import { getCreditAccounts } from 'utils/api'
+import { getAccounts } from 'utils/api'
 
 async function Content(props: PageProps) {
-  const wallet = props.params.wallet
-  const currentAccount = props.params.account
+  const address = props.params.address
+  const currentAccount = props.params.accountId
   const hasAccount = !isNaN(Number(currentAccount))
-  const creditAccounts = await getCreditAccounts(wallet)
+  const account = await getAccounts(address)
 
-  return wallet ? (
+  if (!address) {
+    return (
+      <Card
+        className='h-fit w-full justify-center bg-white/5'
+        title='Portfolio'
+        contentClassName='px-4 py-6'
+      >
+        <Text size='sm' className='w-full text-center'>
+          You need to be connected to view the porfolio page
+        </Text>
+      </Card>
+    )
+  }
+
+  return (
     <div className={classNames('grid grid-cols-1 gap-4', 'md:grid-cols-2', 'lg:grid-cols-3')}>
-      {creditAccounts.map((account: string, index: number) => (
+      {account.map((account: Account, index: number) => (
         <Card
           className='h-fit w-full bg-white/5'
           title={`Account ${account}`}
           key={index}
           contentClassName='px-4 py-6'
         >
-          {hasAccount && currentAccount === account ? (
+          {hasAccount && currentAccount === account.id ? (
             <Text size='sm'>Current Account</Text>
           ) : (
             <Text size='sm'>Account details</Text>
@@ -29,16 +43,6 @@ async function Content(props: PageProps) {
         </Card>
       ))}
     </div>
-  ) : (
-    <Card
-      className='h-fit w-full justify-center bg-white/5'
-      title='Portfolio'
-      contentClassName='px-4 py-6'
-    >
-      <Text size='sm' className='w-full text-center'>
-        You need to be connected to view the porfolio page
-      </Text>
-    </Card>
   )
 }
 

@@ -2,7 +2,7 @@ import Accordion from 'components/Accordion'
 import Card from 'components/Card'
 import { ArrowChartLineUp, Shield } from 'components/Icons'
 import { Text } from 'components/Text'
-import useParams from 'hooks/useParams'
+import useParams from 'utils/route'
 
 export default function AccountSummary() {
   const params = useParams()
@@ -32,7 +32,7 @@ export default function AccountSummary() {
       </Card>
       <Accordion
         items={[
-          { title: `Subaccount ${params.account} Composition`, content: <p>My content</p> },
+          { title: `Subaccount ${params.accountId} Composition`, content: <p>My content</p> },
           { title: 'Risk Score: 60/100', content: <p>My content</p> },
           { title: 'Balances', content: <p>My content</p> },
         ]}

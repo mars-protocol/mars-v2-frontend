@@ -14,6 +14,8 @@ interface Props {
   maxLength?: number
   allowNegative?: boolean
   style?: {}
+  disabled?: boolean
+
   onChange: (amount: number) => void
   onBlur?: () => void
   onFocus?: () => void
@@ -25,7 +27,7 @@ function magnify(value: number, asset: Asset) {
 }
 
 function demagnify(amount: number, asset: Asset) {
-  return amount === 0 ? 0 : new BigNumber(amount).dividedBy(10 ** asset.decimals).toNumber()
+  return amount === 0 ? 0 : new BigNumber(amount).dividedBy(-1 * asset.decimals).toNumber()
 }
 
 export default function NumberInput(props: Props) {
@@ -43,7 +45,7 @@ export default function NumberInput(props: Props) {
       formatted: demagnify(props.amount, props.asset).toString(),
       value: demagnify(props.amount, props.asset),
     })
-  }, [props.amount])
+  }, [props.amount, props.asset])
 
   useEffect(() => {
     if (!props.onRef) return
@@ -148,6 +150,7 @@ export default function NumberInput(props: Props) {
       onFocus={onInputFocus}
       onChange={(e) => onInputChange(e.target.value)}
       onBlur={props.onBlur}
+      disabled={props.disabled}
       className={classNames(
         'w-full cursor-pointer appearance-none border-none bg-transparent text-right outline-none',
         props.className,

@@ -1,0 +1,34 @@
+import classNames from 'classnames'
+
+import Switch from 'components/Switch'
+import { Text } from 'components/Text'
+import { Tooltip } from 'components/Tooltip'
+
+interface Props {
+  name: string
+  label: string
+  value: boolean
+  onChange: (checked: boolean) => void
+  className?: string
+  tooltip?: string
+  disabled?: boolean
+}
+
+export default function SwitchWithLabel(props: Props) {
+  return (
+    <div className={classNames('flex w-full', props.className)}>
+      <div className='flex flex-1'>
+        <Text className='mr-2 text-white/70' size='sm'>
+          {props.label}
+        </Text>
+        {props.tooltip && <Tooltip content={<Text size='sm'>{props.tooltip}</Text>} />}
+      </div>
+      <Switch
+        name={props.name}
+        checked={props.value}
+        onChange={props.onChange}
+        disabled={props.disabled}
+      />
+    </div>
+  )
+}

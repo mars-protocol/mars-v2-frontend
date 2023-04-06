@@ -5,11 +5,18 @@ interface Props {
   checked: boolean
   onChange: (checked: boolean) => void
   className?: string
+  disabled?: boolean
 }
 
-export default function Toggle(props: Props) {
+export default function Switch(props: Props) {
   return (
-    <div className={classNames('relative', props.className)}>
+    <div
+      className={classNames(
+        'relative transition-opacity',
+        props.className,
+        props.disabled && 'pointer-events-none opacity-50',
+      )}
+    >
       <input
         type='checkbox'
         id={props.name}
@@ -21,13 +28,20 @@ export default function Toggle(props: Props) {
       <label
         htmlFor={props.name}
         className={classNames(
-          'flex cursor-pointer items-center justify-between',
+          'isolate flex cursor-pointer items-center justify-between overflow-hidden',
           'relative h-5 w-10 rounded-full bg-white/20 shadow-sm',
           'before:content-[" "] before:absolute before:left-[1px] before:top-[1px]',
           'before:z-1 before:h-4.5 before:w-4.5 before:rounded-full before:bg-white before:transition-transform',
-          'peer-checked:gradient-primary-to-secondary peer-checked:before:translate-x-5',
+          'peer-checked:active group peer-checked:before:translate-x-5',
         )}
-      ></label>
+      >
+        <span
+          className={classNames(
+            'absolute inset-0 opacity-0 transition-opacity gradient-primary-to-secondary',
+            props.checked && 'opacity-100',
+          )}
+        />
+      </label>
     </div>
   )
 }

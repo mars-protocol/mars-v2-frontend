@@ -1,4 +1,3 @@
-import { Coin } from '@cosmjs/stargate'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 import { ENV, ENV_MISSING_MESSAGE, VERCEL_BYPASS } from 'constants/env'

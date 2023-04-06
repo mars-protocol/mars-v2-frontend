@@ -1,6 +1,6 @@
 'use client'
 
-import { WalletManagerProvider } from '@marsprotocol/wallet-connector'
+import { ChainInfoID, WalletManagerProvider } from '@marsprotocol/wallet-connector'
 import { FC } from 'react'
 
 import { Button } from 'components/Button'
@@ -21,7 +21,7 @@ export const WalletConnectProvider: FC<Props> = ({ children }) => {
   const chainInfoOverrides = {
     rpc: ENV.URL_RPC,
     rest: ENV.URL_REST,
-    chainID: ENV.CHAIN_ID,
+    chainID: ENV.CHAIN_ID as ChainInfoID,
   }
   const enabledWallets: string[] = ENV.WALLETS
 

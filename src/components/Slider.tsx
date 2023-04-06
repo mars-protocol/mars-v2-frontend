@@ -1,11 +1,14 @@
+import classNames from 'classnames'
 import { ChangeEvent, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
 
-import { SliderMark } from 'components/Icons/index'
+import { OverlayMark } from 'components/Icons/index'
 
 type Props = {
   value: number
   onChange: (value: number) => void
+  className?: string
+  disabled?: boolean
 }
 
 export default function Slider(props: Props) {
@@ -70,7 +73,15 @@ export default function Slider(props: Props) {
   }
 
   return (
-    <div ref={ref} className='relative w-full' onMouseEnter={handleSliderRect}>
+    <div
+      ref={ref}
+      className={classNames(
+        'relative min-h-3 w-full transition-opacity',
+        props.className,
+        props.disabled && 'pointer-events-none opacity-50',
+      )}
+      onMouseEnter={handleSliderRect}
+    >
       <input
         type='range'
         value={props.value}
@@ -107,8 +118,8 @@ export default function Slider(props: Props) {
               }
             />
             {(showTooltip || isDragging) && (
-              <div className='absolute -top-8 left-1/2 -translate-x-1/2 rounded-xs bg-martian-red py-[2px] px-2 text-xs'>
-                <SliderMark className='absolute left-1/2 bottom-[-4px] -z-1 h-2 -translate-x-1/2 text-martian-red' />
+              <div className='absolute -top-8 left-1/2 -translate-x-1/2 rounded-xs bg-martian-red px-2 py-[2px] text-xs'>
+                <OverlayMark className='absolute -bottom-2 left-1/2 -z-1 h-2 -translate-x-1/2 text-martian-red' />
                 {props.value}%
               </div>
             )}

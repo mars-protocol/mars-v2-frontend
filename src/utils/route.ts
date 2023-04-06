@@ -1,19 +1,36 @@
-export function getRouteParams(url: string | null): PageParams {
-  const segments = (url || location.href).split('/')
+import { usePathname } from 'next/navigation'
 
-  const params = {
-    wallet: '',
-    account: '',
-    page: '',
+export default function useParams() {
+  const pathname = usePathname()
+
+  return getParamsFromUrl(pathname || '')
+}
+
+export function getRouteParams(url: string | null): PageParams {
+  const href = typeof location !== 'undefined' ? location.href : ''
+
+  return getParamsFromUrl(url || href)
+}
+
+export function getParamsFromUrl(url: string) {
+  const segments = url.split('/')
+
+  const params: PageParams = {
+    address: '',
+    accountId: '',
+    page: 'trade',
   }
 
   segments.forEach((segment, index) => {
-    if (segment === 'wallets' && segments[index + 1]) {
-      params.wallet = segments[index + 1]
-    } else if (segment === 'accounts' && segments[index + 1]) {
-      params.account = segments[index + 1]
-    } else if (index === 5) {
-      params.page = segment
+    switch (segment) {
+      case 'wallets':
+        params.address = segments[index + 1]
+        break
+      case 'accounts':
+        params.accountId = segments[index + 1]
+        break
+      default:
+        if ([3, 5, 7].includes(index)) params.page = segment
     }
   })
 
@@ -21,40 +38,35 @@ export function getRouteParams(url: string | null): PageParams {
 }
 
 export function getRoute(
-  url: string,
+  params: PageParams,
   overrides?: {
-    wallet?: string
-    account?: string
+    address?: string
+    accountId?: string
     page?: RouteSegment
   },
 ) {
-  const params = getRouteParams(url)
-
   let nextUrl = ''
-  let wallet = ''
-  let account = ''
-  let page = ''
 
-  if (params.wallet) wallet = params.wallet
-  if (overrides?.wallet) wallet = overrides.wallet
+  const address = overrides?.address
+    ? overrides.address
+    : params.address
+    ? params.address
+    : undefined
+  const accountId = overrides?.accountId
+    ? overrides.accountId
+    : params.accountId
+    ? params.accountId
+    : undefined
+  const page = overrides?.page ? overrides.page : params.page ? params.page : 'trade'
 
-  if (params.account) account = params.account
-  if (overrides?.account) account = overrides.account
+  if (address) {
+    nextUrl += `/wallets/${address}`
 
-  if (params.page) page = params.page
-  if (overrides?.page) page = overrides.page
-
-  if (wallet) {
-    nextUrl += `/wallets/${wallet}`
-
-    if (account) {
-      nextUrl += `/accounts/${account}`
+    if (accountId) {
+      nextUrl += `/accounts/${accountId}`
     }
   }
 
-  if (page) {
-    nextUrl += `/${page}`
-  }
-
+  nextUrl += `/${page}`
   return nextUrl
 }

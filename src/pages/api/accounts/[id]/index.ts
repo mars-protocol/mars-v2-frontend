@@ -13,14 +13,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const client = await CosmWasmClient.connect(ENV.URL_RPC)
 
-  const data: PositionResponse = await client.queryContractSmart(ENV.ADDRESS_CREDIT_MANAGER, {
+  const account: AccountResponse = await client.queryContractSmart(ENV.ADDRESS_CREDIT_MANAGER, {
     positions: {
       account_id: accountId,
     },
   })
 
-  if (data) {
-    return res.status(200).json(resolvePositionResponse(data))
+  if (account) {
+    return res.status(200).json(resolvePositionResponse(account))
   }
 
   return res.status(404)

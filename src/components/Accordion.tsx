@@ -1,9 +1,6 @@
-import { useState } from 'react'
-
+import Card from 'components/Card'
+import { Plus, Subtract } from 'components/Icons'
 import { Text } from 'components/Text'
-
-import { Plus, Subtract } from './Icons'
-import Card from './Card'
 
 interface Props {
   items: Item[]
@@ -20,7 +17,7 @@ export default function Accordion(props: Props) {
       {props.items.map((item, index) => (
         <details key={item.title} className='group border-b-white/10 [&:not(:last-child)]:border-b'>
           <summary className='mb-0 flex cursor-pointer items-center justify-between border-t border-white/10 bg-white/10 p-4 text-white group-[&:first-child]:border-t-0 group-[[open]]:border-b [&::marker]:hidden [&::marker]:content-[""]'>
-            <Text size='base'>{item.title}</Text>
+            <Text>{item.title}</Text>
             <div className='block h-[14px] w-[14px] group-[[open]]:hidden'>
               <Plus />
             </div>

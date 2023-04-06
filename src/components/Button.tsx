@@ -84,7 +84,7 @@ function glowElement(enableAnimations: boolean) {
     <svg
       className={classNames(
         enableAnimations && 'group-hover:animate-glow group-focus:animate-glow',
-        'glow-container z-1 opacity-0 ',
+        'glow-container isolate opacity-0',
         'pointer-events-none absolute inset-0 h-full w-full',
       )}
     >
@@ -159,13 +159,13 @@ export const Button = React.forwardRef(function Button(
         buttonVariantClasses[variant],
         variant === 'solid' && color === 'tertiary' && buttonBorderClasses,
         variant === 'solid' && color === 'primary' && buttonGradientClasses,
-        disabled && 'pointer-events-none opacity-50',
+        isDisabled && 'pointer-events-none opacity-50',
         hasFocus && focusClasses[color],
         className,
       )}
       id={id}
       ref={ref as LegacyRef<HTMLButtonElement>}
-      onClick={disabled ? () => {} : onClick}
+      onClick={isDisabled ? () => {} : onClick}
     >
       {leftIcon && !showProgressIndicator && (
         <span

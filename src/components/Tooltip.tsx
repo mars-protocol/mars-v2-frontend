@@ -2,7 +2,7 @@ import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 import { ReactNode } from 'react'
 
-import { Questionmark } from 'components/Icons'
+import { ExclamationMarkCircled, Questionmark } from 'components/Icons'
 import useStore from 'store'
 
 interface Props {
@@ -33,9 +33,10 @@ export const Tooltip = ({
       render={(attrs) => {
         return (
           <div
-            className='max-w-[320px] rounded-lg px-4 py-2 text-xs shadow-tooltip gradient-tooltip'
+            className='max-w-[320px] rounded-lg bg-black/80 p-4 pl-12 text-xs shadow-tooltip backdrop-blur-lg'
             {...attrs}
           >
+            <ExclamationMarkCircled className='absolute left-4 top-3.5 h-5 w-5 text-white' />
             {content}
           </div>
         )
@@ -55,7 +56,7 @@ export const Tooltip = ({
       ) : (
         <span
           className={classNames(
-            'mb-2 inline-block w-[18px] cursor-pointer opacity-40 hover:opacity-80',
+            'inline-block w-[18px] cursor-pointer opacity-40 hover:opacity-80',
             className,
           )}
         >

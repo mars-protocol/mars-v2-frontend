@@ -11,9 +11,8 @@ import { useEffect } from 'react'
 
 import ConnectButton from 'components/Wallet/ConnectButton'
 import ConnectedButton from 'components/Wallet/ConnectedButton'
-import useParams from 'hooks/useParams'
+import useParams from 'utils/route'
 import useStore from 'store'
-import { getCreditAccounts } from 'utils/api'
 
 export default function Wallet() {
   const router = useRouter()
@@ -33,18 +32,10 @@ export default function Wallet() {
         ? {
             address: recentWallet?.account.address,
           }
-        : { address: undefined, creditAccounts: null, client: undefined },
+        : { address: undefined, accounts: null, client: undefined },
     )
 
     if (!isConnected || !recentWallet) return
-
-    const fetchCreditAccounts = async () => {
-      if (!recentWallet?.account.address) return
-      const walletCreditAccounts = await getCreditAccounts(recentWallet?.account.address)
-      useStore.setState({ creditAccounts: walletCreditAccounts })
-    }
-
-    fetchCreditAccounts()
 
     if (!client) {
       const getCosmWasmClient = async () => {
@@ -63,7 +54,7 @@ export default function Wallet() {
       getCosmWasmClient()
     }
 
-    if (!address || address === params.wallet) return
+    if (!address || address === params.address) return
     router.push(`/wallets/${address}`)
   }, [address, broadcast, client, params, recentWallet, router, simulate, sign, status])
 

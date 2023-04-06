@@ -1,6 +1,6 @@
 interface UseEstimateFee {
   msg?: Record<string, unknown>
-  funds?: import('@cosmjs/stargate').Coin[]
+  funds?: Coin[]
   contract?: string
   sender?: string
 }

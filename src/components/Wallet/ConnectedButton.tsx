@@ -1,6 +1,5 @@
 'use client'
 
-import { Coin } from '@cosmjs/stargate'
 import {
   ChainInfoID,
   SimpleChainInfoList,
@@ -20,7 +19,7 @@ import { Check, Copy, ExternalLink, Osmo } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
 import { Text } from 'components/Text'
 import useStore from 'store'
-import { getWalletBalances } from 'utils/api'
+import { Endpoints, getEndpoint, getWalletBalancesSWR } from 'utils/api'
 import { getBaseAsset } from 'utils/assets'
 import { formatValue, truncate } from 'utils/formatters'
 
@@ -33,8 +32,10 @@ export default function ConnectedButton() {
   const address = useStore((s) => s.client?.recentWallet.account?.address)
   const network = useStore((s) => s.client?.recentWallet.network)
   const baseAsset = getBaseAsset()
-
-  const { data, isLoading } = useSWR(address, getWalletBalances)
+  const { data, isLoading } = useSWR(
+    getEndpoint(Endpoints.WALLET_BALANCES, { address }),
+    getWalletBalancesSWR,
+  )
 
   // ---------------
   // LOCAL STATE
@@ -95,7 +96,7 @@ export default function ConnectedButton() {
         <div
           className={classNames(
             'relative ml-2 flex h-full items-center pl-2 number',
-            'before:content-[" "] before:absolute before:top-0.5 before:bottom-1.5 before:left-0 before:h-[calc(100%-4px)] before:border-l before:border-white/20',
+            'before:content-[" "] before:absolute before:bottom-1.5 before:left-0 before:top-0.5 before:h-[calc(100%-4px)] before:border-l before:border-white/20',
           )}
         >
           {isLoading ? (

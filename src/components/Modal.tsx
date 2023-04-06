@@ -40,7 +40,7 @@ export const Modal = (props: Props) => {
               color='tertiary'
             />
           </div>
-          <div className={classNames(props.contentClassName, ' flex-grow')}>
+          <div className={classNames(props.contentClassName, 'flex-grow')}>
             {props.children ? props.children : props.content}
           </div>
         </Card>

@@ -5,21 +5,15 @@ import Loading from 'components/Loading'
 import { Text } from 'components/Text'
 
 async function Content(props: PageProps) {
-  const wallet = props.params.wallet
-  const currentAccount = props.params.account
+  const address = props.params.address
+  const currentAccount = props.params.accountId
   const hasAccount = !isNaN(Number(currentAccount))
 
-  return wallet ? (
-    <>
-      {hasAccount ? (
-        <Text size='sm'>{`Trade with Account ${currentAccount}`}</Text>
-      ) : (
-        <Text size='sm'>Select an Account to trade</Text>
-      )}
-    </>
-  ) : (
-    <Text size='sm'>You need to be connected to trade</Text>
-  )
+  if (!address) return <Text size='sm'>You need to be connected to trade</Text>
+
+  if (!hasAccount) return <Text size='sm'>Select an Account to trade</Text>
+
+  return <Text size='sm'>{`Trade with Account ${currentAccount}`}</Text>
 }
 
 function Fallback() {
