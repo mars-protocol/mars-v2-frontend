@@ -26,7 +26,7 @@ export default function DisplayCurrency(props: Props) {
 
     return new BigNumber(coin.amount)
       .times(price.amount)
-      .times(displayPrice.amount)
+      .div(displayPrice.amount)
       .integerValue(BigNumber.ROUND_HALF_DOWN)
       .toNumber()
   }

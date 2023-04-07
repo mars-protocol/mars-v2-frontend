@@ -1,10 +1,11 @@
 'use client'
+import DisplayCurrency from 'components/DisplayCurrency'
 import { Heart, Shield } from 'components/Icons'
 import { Text } from 'components/Text'
 import useStore from 'store'
 
 interface Props {
-  balance: string
+  balance: number
   risk: number
   health: number
 }
@@ -15,9 +16,10 @@ export default function AccountStats(props: Props) {
 
   return (
     <div className='w-full flex-wrap'>
-      <Text className='w-full' size='xl'>
-        {props.balance}
-      </Text>
+      <DisplayCurrency
+        coin={{ amount: props.balance.toString(), denom: 'uosmo' }}
+        className='w-full text-xl'
+      />
       <div className='mt-1 flex w-full items-center'>
         <Text size='xs' className='flex items-center'>
           <Shield className='mr-1.5 h-3' />
