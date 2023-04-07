@@ -1,8 +1,10 @@
 import { Coin } from '@cosmjs/stargate'
-import { FormattedNumber } from './FormattedNumber'
+import BigNumber from 'bignumber.js'
+
 import useStore from 'store'
 import { getMarketAssets } from 'utils/assets'
-import BigNumber from 'bignumber.js'
+
+import { FormattedNumber } from './FormattedNumber'
 
 interface Props {
   coin: Coin

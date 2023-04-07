@@ -3,8 +3,8 @@ import { devtools } from 'zustand/middleware'
 
 import { BroadcastSlice, createBroadcastSlice } from 'store/slices/broadcast'
 import { CommonSlice, createCommonSlice } from 'store/slices/common'
-import { CurrencySlice, createCurrencySlice } from 'store/slices/currency'
-import { ModalSlice, createModalSlice } from 'store/slices/modal'
+import { createCurrencySlice, CurrencySlice } from 'store/slices/currency'
+import { createModalSlice, ModalSlice } from 'store/slices/modal'
 
 export interface Store extends CommonSlice, BroadcastSlice, CurrencySlice, ModalSlice {}
 

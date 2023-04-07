@@ -37,3 +37,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   return res.status(200).json(data)
 }
+
+interface TokenPricesResult {
+  prices: {
+    [key: string]: {
+      denom: string
+      price: string
+    }
+  }
+}
