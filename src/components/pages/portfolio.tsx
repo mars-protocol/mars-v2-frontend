@@ -4,6 +4,6 @@ interface Props {
   params: PageParams
 }
 
-export default function PortfolioPage(props: Props) {
+export default function Portfoliopage(props: Props) {
   return <AccountOverview params={props.params} />
 }

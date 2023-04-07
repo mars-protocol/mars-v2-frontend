@@ -1,15 +1,10 @@
 import Card from 'components/Card'
 import Tab from 'components/Earn/Tab'
 
-interface Props {
-  children: React.ReactNode
-  params: PageParams
-}
-
-export default function LendPage(props: Props) {
+export default function Lendpage({ params }: { params: PageParams }) {
   return (
     <>
-      <Tab params={props.params} />
+      <Tab params={params} />
       <Card title='Lend'>
         <></>
       </Card>

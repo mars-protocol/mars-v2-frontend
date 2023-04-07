@@ -6,7 +6,7 @@ interface Props {
   params: PageParams
 }
 
-export default function TradePage(props: Props) {
+export default function Tradepage(props: Props) {
   return (
     <div className='grid grid-flow-row grid-cols-3 grid-rows-2 gap-4'>
       <TradingView params={props.params} />

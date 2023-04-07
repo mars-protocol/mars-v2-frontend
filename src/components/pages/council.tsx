@@ -4,6 +4,6 @@ interface Props {
   params: PageParams
 }
 
-export default function CouncilPage(props: Props) {
+export default function Councilpage(props: Props) {
   return <Overview params={props.params} />
 }
