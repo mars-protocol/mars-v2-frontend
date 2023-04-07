@@ -1,1 +1,1 @@
-type RouteSegment = 'trade' | 'borrow' | 'earn' | 'portfolio' | 'council'
+type RouteSegment = 'trade' | 'borrow' | 'earn/farm' | 'earn/lend' | 'portfolio' | 'council'

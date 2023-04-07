@@ -10,6 +10,11 @@ import useParams, { getRoute } from 'utils/route'
 export default function DesktopNavigation() {
   const params = useParams()
 
+  function getIsActive(href: string) {
+    if (params.page.includes('earn') && href.includes('earn')) return true
+    return params.page === href
+  }
+
   return (
     <div className='flex flex-grow items-center'>
       <Link href={getRoute(params, { page: 'trade' })}>
@@ -22,7 +27,7 @@ export default function DesktopNavigation() {
           <NavLink
             key={index}
             href={getRoute(params, { page: item.href })}
-            isActive={params.page === item.href}
+            isActive={getIsActive(item.href)}
           >
             {item.label}
           </NavLink>

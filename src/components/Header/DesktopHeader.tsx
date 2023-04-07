@@ -8,7 +8,7 @@ import { WalletConnectProvider } from 'components/Wallet/WalletConnectProvider'
 
 export const menuTree: { href: RouteSegment; label: string }[] = [
   { href: 'trade', label: 'Trade' },
-  { href: 'earn', label: 'Earn' },
+  { href: 'earn/farm', label: 'Earn' },
   { href: 'borrow', label: 'Borrow' },
   { href: 'portfolio', label: 'Portfolio' },
   { href: 'council', label: 'Council' },

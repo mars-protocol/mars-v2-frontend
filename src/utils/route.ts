@@ -30,7 +30,13 @@ export function getParamsFromUrl(url: string) {
         params.accountId = segments[index + 1]
         break
       default:
-        if ([3, 5, 7].includes(index)) params.page = segment
+        if ([3, 5, 7].includes(index)) {
+          if (segment === 'earn') {
+            params.page = `${segment}/${segments[index + 1]}`
+            break
+          }
+          params.page = segment
+        }
     }
   })
 
