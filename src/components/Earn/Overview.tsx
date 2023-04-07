@@ -3,8 +3,11 @@ import { Suspense } from 'react'
 import Card from 'components/Card'
 import Loading from 'components/Loading'
 import { Text } from 'components/Text'
+import { getVaults } from 'utils/api'
 
 async function Content(props: PageProps) {
+  const vaults = await getVaults()
+
   const address = props.params.address
 
   if (!address)

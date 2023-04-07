@@ -1,52 +1,16 @@
 export const VAULTS: VaultMetaData[] = [
   {
     address: 'osmo108q2krqr0y9g0rtesenvsw68sap2xefelwwjs0wedyvdl0cmrntqvllfjk',
-    name: 'Vault #1',
+    name: 'OSMO-ATOM',
     lockup: {
-      duration: 1,
+      duration: 14,
       timeframe: 'day',
     },
     provider: 'Apollo',
     denoms: {
       primary: 'uosmo',
-      secondary: '',
-      lp: '',
-    },
-    symbols: {
-      primary: 'OSMO',
-      secondary: 'ATOM',
-    },
-  },
-  {
-    address: 'osmo173jhe6v3pzhnm600ghczs4jxfjftfm0a037vy7yda6s0z04jlrusfk3my2',
-    name: 'Vault #2',
-    lockup: {
-      duration: 1,
-      timeframe: 'day',
-    },
-    provider: 'Apollo',
-    denoms: {
-      primary: 'uosmo',
-      secondary: '',
-      lp: '',
-    },
-    symbols: {
-      primary: 'OSMO',
-      secondary: 'ATOM',
-    },
-  },
-  {
-    address: 'osmo1eht92w5dr0vx8dzl6dn9770yq0ycln50zfhzvz8uc6928mp8vvgqwcram9',
-    name: 'Vault #3',
-    lockup: {
-      duration: 1,
-      timeframe: 'day',
-    },
-    provider: 'Apollo',
-    denoms: {
-      primary: 'uosmo',
-      secondary: '',
-      lp: '',
+      secondary: 'ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2',
+      lp: 'gamm/pool/1',
     },
     symbols: {
       primary: 'OSMO',
@@ -55,20 +19,20 @@ export const VAULTS: VaultMetaData[] = [
   },
   {
     address: 'osmo1g5hryv0gp9dzlchkp3yxk8fmcf5asjun6cxkvyffetqzkwmvy75qfmeq3f',
-    name: 'Vault #4',
+    name: 'OSMO - JUNO',
     lockup: {
-      duration: 1,
+      duration: 14,
       timeframe: 'day',
     },
     provider: 'Apollo',
     denoms: {
       primary: 'uosmo',
-      secondary: '',
-      lp: '',
+      secondary: 'ibc/46B44899322F3CD854D2D46DEEF881958467CDD4B3B10086DA49296BBED94BED',
+      lp: 'gamm/pool/497',
     },
     symbols: {
       primary: 'OSMO',
-      secondary: 'ATOM',
+      secondary: 'JUNO',
     },
   },
 ]

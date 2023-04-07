@@ -9,3 +9,7 @@ export function isNumber(value: unknown) {
 
   return false
 }
+
+export const convertAprToApy = (apr: number, numberOfCompoundingPeriods: number): number => {
+  return ((1 + apr / 100 / numberOfCompoundingPeriods) ** numberOfCompoundingPeriods - 1) * 100
+}

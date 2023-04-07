@@ -30,5 +30,5 @@ interface VaultConfig extends VaultMetaData {
 }
 
 interface Vault extends VaultConfig {
-  apy: number
+  apy: number | null
 }
