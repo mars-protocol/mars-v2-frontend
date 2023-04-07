@@ -7,17 +7,13 @@ import { getAssetByDenom } from 'utils/assets'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import { formatPercent, formatValue } from 'utils/formatters'
 import { Button } from 'components/Button'
+import VaultLogo from 'components/Earn/VaultLogo'
 
 interface Props {
   vault: Vault
 }
 
 export default function VaultCard(props: Props) {
-  const primaryAsset = getAssetByDenom(props.vault.denoms.primary)
-  const secondaryAsset = getAssetByDenom(props.vault.denoms.secondary)
-
-  if (!primaryAsset || !secondaryAsset) return null
-
   function openVaultModal() {}
 
   return (
@@ -34,20 +30,7 @@ export default function VaultCard(props: Props) {
             </Text>
           </span>
         </div>
-        <div className='relative grid w-12 place-items-center'>
-          <div className='absolute'>
-            <Image src={primaryAsset.logo} alt='token' width={24} height={24} />
-          </div>
-          <div className='absolute'>
-            <Image
-              className='ml-5 mt-5'
-              src={secondaryAsset.logo}
-              alt='token'
-              width={16}
-              height={16}
-            />
-          </div>
-        </div>
+        <VaultLogo vault={props.vault} />
       </div>
       <div className='mb-6 flex justify-between'>
         <TitleAndSubCell

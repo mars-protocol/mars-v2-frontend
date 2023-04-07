@@ -1,3 +1,5 @@
+export const VAULT_DEPOSIT_BUFFER = 0.999
+
 export const VAULTS: VaultMetaData[] = [
   {
     address: 'osmo108q2krqr0y9g0rtesenvsw68sap2xefelwwjs0wedyvdl0cmrntqvllfjk',

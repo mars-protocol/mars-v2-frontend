@@ -1,17 +1,18 @@
-import Card from 'components/Card'
 import { Suspense } from 'react'
+
+import Card from 'components/Card'
 import { getVaults } from 'utils/api'
 import { Text } from 'components/Text'
 import { VAULTS } from 'constants/vaults'
+
+import { VaultTable } from './VaultTable'
 
 async function Content() {
   const vaults = await getVaults()
 
   if (!vaults.length) return null
 
-  return vaults.map((vault) => {
-    return <Text>{vault.name}</Text>
-  })
+  return <VaultTable data={vaults} />
 }
 
 export default function AvailableVaults() {
@@ -26,10 +27,11 @@ export default function AvailableVaults() {
 }
 
 function Fallback() {
+  // TODO: Replace with loading state of vaulttable
   return (
     <>
       {VAULTS.map((vault) => (
-        <Text>{vault.name}</Text>
+        <Text key={vault.address}>{vault.name}</Text>
       ))}
     </>
   )

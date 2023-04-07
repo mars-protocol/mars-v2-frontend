@@ -136,3 +136,10 @@ export function formatAmountWithSymbol(coin: Coin) {
     rounded: true,
   })
 }
+
+export const convertPercentage = (percent: number) => {
+  let percentage = percent
+  if (percent >= 100) percentage = 100
+  if (percent !== 0 && percent < 0.01) percentage = 0.01
+  return Number(formatValue(percentage, { minDecimals: 0, maxDecimals: 0 }))
+}
