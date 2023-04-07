@@ -65,7 +65,7 @@ export async function getPrices() {
 }
 
 export async function getVaults() {
-  return callAPI<Coin[]>(getEndpoint(Endpoints.VAULTS), 'default')
+  return callAPI<Vault[]>(getEndpoint(Endpoints.VAULTS), 'default')
 }
 
 export async function getWalletBalancesSWR(url: string) {

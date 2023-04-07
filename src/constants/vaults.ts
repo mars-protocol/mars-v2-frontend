@@ -16,6 +16,7 @@ export const VAULTS: VaultMetaData[] = [
       primary: 'OSMO',
       secondary: 'ATOM',
     },
+    isFeatured: true,
   },
   {
     address: 'osmo1g5hryv0gp9dzlchkp3yxk8fmcf5asjun6cxkvyffetqzkwmvy75qfmeq3f',
