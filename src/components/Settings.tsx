@@ -11,17 +11,24 @@ import { Tooltip } from 'components/Tooltip'
 import { ENABLE_ANIMATIONS_KEY } from 'constants/localStore'
 import { useAnimations } from 'hooks/useAnimations'
 import useStore from 'store'
+import { getDisplayCurrencies } from 'utils/assets'
 
 export default function Settings() {
   useAnimations()
 
   const [showMenu, setShowMenu] = useState(false)
   const enableAnimations = useStore((s) => s.enableAnimations)
+  const displayCurrencies = getDisplayCurrencies()
 
   function handleReduceMotion(val: boolean) {
     useStore.setState({ enableAnimations: !val })
     if (typeof window !== 'undefined')
       window.localStorage.setItem(ENABLE_ANIMATIONS_KEY, val ? 'false' : 'true')
+  }
+
+  function handleCurrencyChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    const currency = displayCurrencies.find((c) => c.symbol === e.target.value)
+    useStore.setState({ displayCurrency: currency })
   }
 
   return (
@@ -53,6 +60,30 @@ export default function Settings() {
               />
             </div>
             <Switch name='reduceMotion' checked={!enableAnimations} onChange={handleReduceMotion} />
+          </div>
+          <div className='mt-4 flex w-full flex-col'>
+            <div className='flex'>
+              <Text size='sm' className='mr-2'>
+                Display Currency
+              </Text>
+              <Tooltip
+                content={
+                  <Text size='sm'>
+                    Sets the denomination of values to a different currency. While OSMO is the
+                    currency the TWAP oracles return. All other values are fetched from liquidity
+                    pools.
+                  </Text>
+                }
+              />
+            </div>
+            <select
+              onChange={handleCurrencyChange}
+              className='mt-2 w-full rounded-sm border border-white/20 bg-transparent p-1 text-sm'
+            >
+              {displayCurrencies.map((currency) => (
+                <option key={currency.denom}>{currency.symbol}</option>
+              ))}
+            </select>
           </div>
         </div>
       </Overlay>

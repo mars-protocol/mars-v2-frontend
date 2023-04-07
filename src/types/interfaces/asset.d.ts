@@ -11,6 +11,7 @@ interface Asset {
   poolId?: number
   isEnabled: boolean
   isMarket: boolean
+  isDisplayCurrency?: boolean
 }
 
 interface OtherAsset extends Omit<Asset, 'symbol'> {
