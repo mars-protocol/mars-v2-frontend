@@ -4,6 +4,7 @@ export interface ModalSlice {
   borrowModal: {
     asset: Asset
     marketData: BorrowAsset | BorrowAssetActive
+    isRepay?: boolean
   } | null
   createAccountModal: boolean
   deleteAccountModal: boolean
