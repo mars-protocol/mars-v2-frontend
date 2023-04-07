@@ -14,13 +14,6 @@ export interface CommonSlice {
     marketData: BorrowAsset | BorrowAssetActive
     isRepay?: boolean
   } | null
-  client?: WalletClient
-  clients: {
-    accountNft?: MarsAccountNftClient
-    creditManager?: MarsCreditManagerClient
-    swapperBase?: MarsSwapperBaseClient
-  }
-  creditAccounts: string[] | null
   enableAnimations: boolean
   isOpen: boolean
   selectedAccount: string | null
