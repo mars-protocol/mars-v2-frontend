@@ -13,11 +13,12 @@ interface Props {
 export default function AccountStats(props: Props) {
   const enableAnimations = useStore((s) => s.enableAnimations)
   const healthBarWidth = 53 * props.health
+  const baseCurrency = useStore((s) => s.baseCurrency)
 
   return (
     <div className='w-full flex-wrap'>
       <DisplayCurrency
-        coin={{ amount: props.balance.toString(), denom: 'uosmo' }}
+        coin={{ amount: props.balance.toString(), denom: baseCurrency.denom }}
         className='w-full text-xl'
       />
       <div className='mt-1 flex w-full items-center'>

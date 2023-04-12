@@ -28,13 +28,6 @@ const accountCardHeaderClasses = classNames(
   'border border-transparent border-b-white/20',
 )
 
-const formatOptions = {
-  decimals: ASSETS[0].decimals,
-  minDecimals: 0,
-  maxDecimals: ASSETS[0].decimals,
-  suffix: ` ${ASSETS[0].symbol}`,
-}
-
 export default function AccountList(props: Props) {
   const router = useRouter()
   const params = useParams()

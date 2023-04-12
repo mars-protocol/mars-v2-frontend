@@ -34,27 +34,18 @@ export default function DisplayCurrency(props: Props) {
   }
 
   return (
-    <span className={props.className}>
-      {displayCurrency.prefix && (
-        <span className={props.prefixClassName}>
-          {displayCurrency.prefix}
-          {props.isApproximation && '~'}
-        </span>
-      )}
-      <span className={props.valueClassName}>
-        <FormattedNumber
-          amount={convertToDisplayAmount(props.coin)}
-          options={{
-            minDecimals: 0,
-            maxDecimals: 2,
-            abbreviated: true,
-            decimals: displayCurrency.decimals,
-          }}
-        />
-      </span>
-      {displayCurrency.symbol && (
-        <span className={props.valueClassName}>{' ' + displayCurrency.symbol}</span>
-      )}
-    </span>
+    <FormattedNumber
+      amount={convertToDisplayAmount(props.coin)}
+      options={{
+        minDecimals: 0,
+        maxDecimals: 2,
+        abbreviated: true,
+        decimals: displayCurrency.decimals,
+        prefix: `${props.isApproximation ? '~' : ''}${
+          displayCurrency.prefix ? displayCurrency.prefix : ''
+        }`,
+        suffix: displayCurrency.symbol ? ` ${displayCurrency.symbol}` : '',
+      }}
+    />
   )
 }
