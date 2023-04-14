@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js'
 import Image from 'next/image'
 import { useState } from 'react'
 

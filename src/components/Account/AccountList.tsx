@@ -28,14 +28,6 @@ const accountCardHeaderClasses = classNames(
   'border border-transparent border-b-white/20',
 )
 
-// TODO: Make this dynamic (token select)
-const formatOptions = {
-  decimals: ASSETS[0].decimals,
-  minDecimals: 0,
-  maxDecimals: ASSETS[0].decimals,
-  suffix: ` ${ASSETS[0].symbol}`,
-}
-
 export default function AccountList(props: Props) {
   const router = useRouter()
   const params = useParams()
@@ -108,11 +100,7 @@ export default function AccountList(props: Props) {
               {isActive ? (
                 <>
                   <div className='w-full border border-transparent border-b-white/20 p-4'>
-                    <AccountStats
-                      balance={formatValue(selectedAccountBalance, formatOptions)}
-                      risk={75}
-                      health={0.85}
-                    />
+                    <AccountStats balance={selectedAccountBalance} risk={75} health={0.85} />
                   </div>
                   <div className='grid grid-flow-row grid-cols-2 gap-4 p-4'>
                     <Button
@@ -158,11 +146,7 @@ export default function AccountList(props: Props) {
                 </>
               ) : (
                 <div className='w-full p-4'>
-                  <AccountStats
-                    balance={formatValue(positionBalance, formatOptions)}
-                    risk={60}
-                    health={0.5}
-                  />
+                  <AccountStats balance={positionBalance} risk={60} health={0.5} />
                 </div>
               )}
             </Card>
