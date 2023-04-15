@@ -3,6 +3,9 @@ import Link from 'next/link'
 
 import { getRoute } from 'utils/route'
 
+const underlineClasses =
+  'relative before:absolute before:h-[2px] before:-bottom-1 before:left-0 before:right-0 before:gradient-active-tab'
+
 interface Props {
   params: PageParams
   isFarm?: boolean
@@ -15,24 +18,24 @@ export default function Tab(props: Props) {
         <div className='relative'>
           <Link
             href={getRoute(props.params, { page: 'earn/farm' })}
-            className={classNames(!props.isFarm && 'text-white/20', 'relative mr-8 text-xl')}
+            className={classNames(
+              !props.isFarm ? 'text-white/20' : underlineClasses,
+              'relative mr-8 text-xl',
+            )}
           >
             Farm
-            {props.isFarm && <UnderLine />}
           </Link>
         </div>
         <Link
           href={getRoute(props.params, { page: 'earn/lend' })}
-          className={classNames(props.isFarm && 'text-white/20', 'relative text-xl')}
+          className={classNames(
+            props.isFarm ? 'text-white/20' : underlineClasses,
+            'relative text-xl',
+          )}
         >
           Lend
-          {!props.isFarm && <UnderLine />}
         </Link>
       </div>
     </div>
   )
-}
-
-function UnderLine() {
-  return <div className='absolute -bottom-2 left-0 right-0 h-[2px] gradient-active-tab' />
 }
