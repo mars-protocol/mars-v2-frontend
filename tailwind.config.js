@@ -277,6 +277,10 @@ module.exports = {
             background:
               'linear-gradient(77.47deg, rgba(20, 24, 57, 0.9) 11.58%, rgba(34, 16, 57, 0.9) 93.89%)',
           },
+          '.gradient-active-tab': {
+            background:
+              'linear-gradient(270deg, rgba(186, 8, 189, 0.764896) 0%, rgba(255, 160, 187, 0.88641) 23.77%, rgba(48, 29, 24, 0.26) 99.2%)',
+          },
           '.number': {
             whiteSpace: 'nowrap',
             fontFeatureSettings: '"tnum" on',
