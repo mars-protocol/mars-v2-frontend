@@ -3,6 +3,7 @@ interface Asset {
   name: string
   denom: string
   symbol: 'OSMO' | 'ATOM' | 'CRO' | 'MARS' | 'JUNO'
+  prefix?: string
   contract_addr?: string
   logo: string
   decimals: number
@@ -10,6 +11,7 @@ interface Asset {
   poolId?: number
   isEnabled: boolean
   isMarket: boolean
+  isDisplayCurrency?: boolean
 }
 
 interface OtherAsset extends Omit<Asset, 'symbol'> {

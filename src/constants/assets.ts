@@ -11,6 +11,7 @@ export const ASSETS: Asset[] = [
     logo: '/tokens/osmo.svg',
     isEnabled: true,
     isMarket: true,
+    isDisplayCurrency: true,
   },
   {
     symbol: 'ATOM',
@@ -22,6 +23,7 @@ export const ASSETS: Asset[] = [
     hasOraclePrice: true,
     isEnabled: IS_TESTNET ? true : false,
     isMarket: true,
+    isDisplayCurrency: true,
   },
   {
     symbol: 'CRO',
@@ -58,5 +60,6 @@ export const ASSETS: Asset[] = [
     hasOraclePrice: true,
     isMarket: IS_TESTNET,
     isEnabled: true,
+    isDisplayCurrency: true,
   },
 ]

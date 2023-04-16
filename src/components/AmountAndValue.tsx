@@ -1,5 +1,6 @@
 import { FormattedNumber } from 'components/FormattedNumber'
 import TitleAndSubCell from 'components/TitleAndSubCell'
+import DisplayCurrency from 'components/DisplayCurrency'
 
 interface Props {
   asset: Asset
@@ -15,12 +16,7 @@ export default function AmountAndValue(props: Props) {
           options={{ decimals: props.asset.decimals, abbreviated: true }}
         />
       }
-      sub={
-        <FormattedNumber
-          amount={props.amount}
-          options={{ prefix: '$', abbreviated: true, decimals: props.asset.decimals }}
-        />
-      }
+      sub={<DisplayCurrency coin={{ amount: props.amount, denom: props.asset.denom }} />}
       className='justify-end'
     />
   )

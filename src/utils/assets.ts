@@ -15,3 +15,7 @@ export function getMarketAssets(): Asset[] {
 export function getBaseAsset() {
   return ASSETS.find((asset) => asset.denom === 'uosmo')!
 }
+
+export function getDisplayCurrencies() {
+  return ASSETS.filter((asset) => asset.isDisplayCurrency)
+}
