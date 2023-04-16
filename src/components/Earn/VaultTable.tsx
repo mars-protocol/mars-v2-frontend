@@ -19,7 +19,7 @@ import TitleAndSubCell from 'components/TitleAndSubCell'
 import { convertPercentage, formatPercent, formatValue } from 'utils/formatters'
 import { VAULT_DEPOSIT_BUFFER } from 'constants/vaults'
 
-import { VaultRow } from './VaultRow'
+import { VaultRow } from 'components/Earn/VaultRow'
 
 type Props = {
   data: Vault[]
