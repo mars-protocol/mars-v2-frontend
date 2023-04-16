@@ -1,3 +1,5 @@
+export const VAULT_DEPOSIT_BUFFER = 0.999
+
 export const VAULTS: VaultMetaData[] = [
   {
     address: 'osmo108q2krqr0y9g0rtesenvsw68sap2xefelwwjs0wedyvdl0cmrntqvllfjk',
@@ -16,6 +18,7 @@ export const VAULTS: VaultMetaData[] = [
       primary: 'OSMO',
       secondary: 'ATOM',
     },
+    isFeatured: true,
   },
   {
     address: 'osmo1g5hryv0gp9dzlchkp3yxk8fmcf5asjun6cxkvyffetqzkwmvy75qfmeq3f',

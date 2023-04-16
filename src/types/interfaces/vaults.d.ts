@@ -15,6 +15,7 @@ interface VaultMetaData {
     primary: string
     secondary: string
   }
+  isFeatured?: boolean
 }
 
 interface VaultConfig extends VaultMetaData {

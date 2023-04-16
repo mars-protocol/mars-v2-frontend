@@ -1,6 +1,6 @@
 import { ASSETS } from 'constants/assets'
 
-export function getAssetByDenom(denom: string) {
+export function getAssetByDenom(denom: string): Asset | undefined {
   return ASSETS.find((asset) => asset.denom === denom)
 }
 
