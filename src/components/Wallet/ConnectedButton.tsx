@@ -17,7 +17,7 @@ import { CircularProgress } from 'components/CircularProgress'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { Check, Copy, ExternalLink, Osmo } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
-import { Text } from 'components/Text'
+import Text from 'components/Text'
 import useStore from 'store'
 import { Endpoints, getEndpoint, getWalletBalancesSWR } from 'utils/api'
 import { getBaseAsset } from 'utils/assets'
@@ -102,7 +102,7 @@ export default function ConnectedButton() {
           {isLoading ? (
             <CircularProgress size={12} />
           ) : (
-            `${formatValue(walletAmount, { suffix: baseAsset.symbol })}`
+            `${formatValue(walletAmount, { suffix: ` ${baseAsset.symbol}` })}`
           )}
         </div>
       </Button>

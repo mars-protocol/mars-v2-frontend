@@ -13,14 +13,10 @@ interface Props {
 const headlines = ['h1', 'h2', 'h3', 'h4']
 const headMap = ['6xl', '5xl', '4xl', '3xl']
 
-export const Text = ({
-  children,
-  className,
-  monospace = false,
-  size = 'base',
-  tag = 'p',
-  uppercase = false,
-}: Props) => {
+export default function Text(props: Props) {
+  const tag = props.tag ?? 'p'
+  const size = props.size ?? 'base'
+
   const tagIndex = headlines.indexOf(tag)
   const sizeClass = tagIndex > -1 ? headMap[tagIndex] : size
   const HtmlElement = tag as keyof JSX.IntrinsicElements
@@ -28,12 +24,12 @@ export const Text = ({
   return (
     <HtmlElement
       className={classNames(
-        className,
-        uppercase ? `text-${sizeClass}-caps` : `text-${sizeClass}`,
-        monospace && 'number',
+        props.className,
+        props.uppercase ? `text-${sizeClass}-caps` : `text-${sizeClass}`,
+        props.monospace && 'number',
       )}
     >
-      {children}
+      {props.children}
     </HtmlElement>
   )
 }

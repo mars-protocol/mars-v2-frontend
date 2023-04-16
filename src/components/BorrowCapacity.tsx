@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 
 import { FormattedNumber } from 'components/FormattedNumber'
-import { Text } from 'components/Text'
+import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
 import useStore from 'store'
 

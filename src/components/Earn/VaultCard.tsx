@@ -1,13 +1,11 @@
 'use client'
 
-import Image from 'next/image'
-
-import { Text } from 'components/Text'
-import { getAssetByDenom } from 'utils/assets'
-import TitleAndSubCell from 'components/TitleAndSubCell'
-import { formatPercent, formatValue } from 'utils/formatters'
 import { Button } from 'components/Button'
 import VaultLogo from 'components/Earn/VaultLogo'
+import Text from 'components/Text'
+import TitleAndSubCell from 'components/TitleAndSubCell'
+import { getAssetByDenom } from 'utils/assets'
+import { formatPercent, formatValue } from 'utils/formatters'
 
 interface Props {
   vault: Vault

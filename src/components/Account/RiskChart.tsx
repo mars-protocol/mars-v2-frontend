@@ -9,10 +9,10 @@ import {
   YAxis,
 } from 'recharts'
 
-import { formatValue } from 'utils/formatters'
 import { FormattedNumber } from 'components/FormattedNumber'
-import { Text } from 'components/Text'
+import Text from 'components/Text'
 import useStore from 'store'
+import { formatValue } from 'utils/formatters'
 
 export const RiskChart = ({ data }: RiskChartProps) => {
   const enableAnimations = useStore((s) => s.enableAnimations)

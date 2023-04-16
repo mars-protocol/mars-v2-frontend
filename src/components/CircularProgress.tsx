@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 
-import { Text } from 'components/Text'
+import Text from 'components/Text'
 import useStore from 'store'
 
 interface Props {

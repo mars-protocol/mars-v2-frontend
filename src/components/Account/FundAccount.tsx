@@ -6,12 +6,12 @@ import { useCallback, useState } from 'react'
 import { Button } from 'components/Button'
 import { ArrowRight, Cross } from 'components/Icons'
 import SwitchWithLabel from 'components/SwitchWithLabel'
-import { Text } from 'components/Text'
+import Text from 'components/Text'
 import TokenInputWithSlider from 'components/TokenInputWithSlider'
 import { ASSETS } from 'constants/assets'
-import useParams from 'utils/route'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
+import useParams from 'utils/route'
 
 interface Props {
   setShowFundAccount: (show: boolean) => void

@@ -6,13 +6,13 @@ import { Button } from 'components/Button'
 import { Gear } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
 import Switch from 'components/Switch'
-import { Text } from 'components/Text'
+import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
+import { ASSETS } from 'constants/assets'
 import { DISPLAY_CURRENCY_KEY, ENABLE_ANIMATIONS_KEY } from 'constants/localStore'
 import { useAnimations } from 'hooks/useAnimations'
 import useStore from 'store'
 import { getDisplayCurrencies } from 'utils/assets'
-import { ASSETS } from 'constants/assets'
 
 export default function Settings() {
   useAnimations()

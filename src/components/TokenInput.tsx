@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import Image from 'next/image'
 
 import NumberInput from 'components/NumberInput'
-import { Text } from 'components/Text'
+import Text from 'components/Text'
 
 interface Props {
   amount: number

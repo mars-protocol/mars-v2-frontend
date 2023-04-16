@@ -2,7 +2,6 @@ import { Suspense } from 'react'
 
 import Card from 'components/Card'
 import { getVaults } from 'utils/api'
-import { Text } from 'components/Text'
 
 import VaultCard from './VaultCard'
 
