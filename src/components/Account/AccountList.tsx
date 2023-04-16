@@ -1,7 +1,7 @@
 'use client'
 
 import classNames from 'classnames'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import AccountStats from 'components/Account/AccountStats'
@@ -10,13 +10,11 @@ import Card from 'components/Card'
 import { ArrowCircledTopRight, ArrowDownLine, ArrowUpLine, TrashBin } from 'components/Icons'
 import Radio from 'components/Radio'
 import SwitchWithLabel from 'components/SwitchWithLabel'
-import { Text } from 'components/Text'
-import { ASSETS } from 'constants/assets'
-import useParams, { getRoute } from 'utils/route'
+import Text from 'components/Text'
 import useStore from 'store'
 import { calculateAccountBalance } from 'utils/accounts'
 import { hardcodedFee } from 'utils/contants'
-import { formatValue } from 'utils/formatters'
+import useParams, { getRoute } from 'utils/route'
 
 interface Props {
   setShowFundAccount: (showFundAccount: boolean) => void

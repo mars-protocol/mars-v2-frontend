@@ -2,7 +2,7 @@
 
 import classNames from 'classnames'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import AccountList from 'components/Account/AccountList'
 import CreateAccount from 'components/Account/CreateAccount'
@@ -11,11 +11,11 @@ import { Button } from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
 import { Account, Plus, PlusCircled } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
-import { Text } from 'components/Text'
-import useParams from 'utils/route'
+import Text from 'components/Text'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
 import { isNumber } from 'utils/parsers'
+import useParams from 'utils/route'
 
 const menuClasses =
   'absolute isolate flex w-full flex-wrap overflow-y-scroll scrollbar-hide scroll-smooth'

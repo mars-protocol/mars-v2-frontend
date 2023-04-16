@@ -11,15 +11,14 @@ import {
 import classNames from 'classnames'
 import React from 'react'
 
-import { ChevronDown, SortAsc, SortDesc, SortNone } from 'components/Icons'
-import { Text } from 'components/Text'
-import { getAssetByDenom, getMarketAssets } from 'utils/assets'
 import VaultLogo from 'components/Earn/VaultLogo'
-import TitleAndSubCell from 'components/TitleAndSubCell'
-import { convertPercentage, formatPercent, formatValue } from 'utils/formatters'
-import { VAULT_DEPOSIT_BUFFER } from 'constants/vaults'
-
 import { VaultRow } from 'components/Earn/VaultRow'
+import { ChevronDown, SortAsc, SortDesc, SortNone } from 'components/Icons'
+import Text from 'components/Text'
+import TitleAndSubCell from 'components/TitleAndSubCell'
+import { VAULT_DEPOSIT_BUFFER } from 'constants/vaults'
+import { getAssetByDenom, getMarketAssets } from 'utils/assets'
+import { convertPercentage, formatPercent, formatValue } from 'utils/formatters'
 
 type Props = {
   data: Vault[]
@@ -90,7 +89,7 @@ export const VaultTable = (props: Props) => {
         ),
       },
     ],
-    [marketAssets, props.data],
+    [],
   )
 
   const table = useReactTable({

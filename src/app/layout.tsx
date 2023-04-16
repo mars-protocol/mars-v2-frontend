@@ -4,6 +4,7 @@ import { headers } from 'next/headers'
 import AccountDetails from 'components/Account/AccountDetails'
 import Background from 'components/Background'
 import FetchPrices from 'components/FetchPrices'
+import Footer from 'components/Footer'
 import DesktopHeader from 'components/Header/DesktopHeader'
 import { Modals } from 'components/Modals'
 import Toaster from 'components/Toaster'
@@ -23,13 +24,14 @@ export default function RootLayout(props: { children: React.ReactNode }) {
         <FetchPrices />
         <main
           className={classNames(
-            'relative flex justify-center py-6',
-            'lg:mt-[65px] lg:h-[calc(100vh-65px)]',
+            'relative flex justify-center pt-6',
+            'lg:mt-[65px] lg:h-[calc(100vh-89px)]',
           )}
         >
           <div className='flex max-w-content flex-grow flex-col flex-wrap'>{props.children}</div>
           <AccountDetails />
         </main>
+        <Footer />
         <Modals />
         <Toaster />
       </body>

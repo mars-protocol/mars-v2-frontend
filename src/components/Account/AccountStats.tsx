@@ -1,7 +1,7 @@
 'use client'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { Heart, Shield } from 'components/Icons'
-import { Text } from 'components/Text'
+import Text from 'components/Text'
 import useStore from 'store'
 
 interface Props {

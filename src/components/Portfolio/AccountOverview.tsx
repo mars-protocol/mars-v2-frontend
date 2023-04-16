@@ -3,7 +3,7 @@ import { Suspense } from 'react'
 
 import Card from 'components/Card'
 import Loading from 'components/Loading'
-import { Text } from 'components/Text'
+import Text from 'components/Text'
 import { getAccounts } from 'utils/api'
 
 async function Content(props: PageProps) {

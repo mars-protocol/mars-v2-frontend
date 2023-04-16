@@ -2,7 +2,7 @@
 
 import { Button } from 'components/Button'
 import { ArrowRight } from 'components/Icons'
-import { Text } from 'components/Text'
+import Text from 'components/Text'
 
 interface Props {
   isCreating: boolean
