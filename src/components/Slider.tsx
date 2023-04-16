@@ -17,7 +17,7 @@ export default function Slider(props: Props) {
   const [sliderRect, setSliderRect] = useState({ width: 0, left: 0, right: 0 })
   const ref = useRef<HTMLDivElement>(null)
   const nodeRef = useRef(null)
-  const [isDragging, setIsDragging] = useState(false)
+  const [isDragging, setIsDragging] = useToggle()
 
   function handleSliderRect() {
     const leftCap = ref.current?.getBoundingClientRect().left ?? 0

@@ -2,7 +2,7 @@
 
 import classNames from 'classnames'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 import AccountStats from 'components/Account/AccountStats'
 import { Button } from 'components/Button'
@@ -11,6 +11,7 @@ import { ArrowCircledTopRight, ArrowDownLine, ArrowUpLine, TrashBin } from 'comp
 import Radio from 'components/Radio'
 import SwitchWithLabel from 'components/SwitchWithLabel'
 import Text from 'components/Text'
+import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { calculateAccountBalance } from 'utils/accounts'
 import { hardcodedFee } from 'utils/contants'
@@ -35,7 +36,7 @@ export default function AccountList(props: Props) {
 
   const deleteAccount = useStore((s) => s.deleteAccount)
 
-  const [isLending, setIsLending] = useState(false)
+  const [isLending, setIsLending] = useToggle()
   const accountSelected = !!selectedAccount && !isNaN(Number(selectedAccount))
   const selectedAccountDetails = props.accounts.find((account) => account.id === selectedAccount)
   const selectedAccountBalance = selectedAccountDetails

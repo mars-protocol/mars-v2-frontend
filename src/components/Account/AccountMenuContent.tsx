@@ -30,7 +30,7 @@ export default function AccountMenuContent(props: Props) {
   const params = useParams()
   const createAccount = useStore((s) => s.createAccount)
   const [showMenu, setShowMenu] = useToggle()
-  const [isCreating, setIsCreating] = useState(false)
+  const [isCreating, setIsCreating] = useToggle()
 
   const selectedAccountId = params.accountId
   const hasCreditAccounts = !!props.accounts.length

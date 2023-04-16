@@ -12,6 +12,7 @@ import { ASSETS } from 'constants/assets'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
 import useParams from 'utils/route'
+import useToggle from 'hooks/useToggle'
 
 interface Props {
   setShowFundAccount: (show: boolean) => void
@@ -23,8 +24,8 @@ export default function FundAccount(props: Props) {
   const deposit = useStore((s) => s.deposit)
 
   const [amount, setAmount] = useState(0)
-  const [isLending, setIsLending] = useState(false)
-  const [isFunding, setIsFunding] = useState(false)
+  const [isLending, setIsLending] = useToggle()
+  const [isFunding, setIsFunding] = useToggle()
 
   const onChangeAmount = useCallback((amount: number) => {
     setAmount(amount)
