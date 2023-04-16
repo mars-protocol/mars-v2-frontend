@@ -12,6 +12,7 @@ import { CircularProgress } from 'components/CircularProgress'
 import { Account, Plus, PlusCircled } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
 import Text from 'components/Text'
+import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
 import { isNumber } from 'utils/parsers'
@@ -28,7 +29,7 @@ export default function AccountMenuContent(props: Props) {
   const router = useRouter()
   const params = useParams()
   const createAccount = useStore((s) => s.createAccount)
-  const [showMenu, setShowMenu] = useState(false)
+  const [showMenu, setShowMenu] = useToggle()
   const [isCreating, setIsCreating] = useState(false)
 
   const selectedAccountId = params.accountId

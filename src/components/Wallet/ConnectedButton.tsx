@@ -18,6 +18,7 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import { Check, Copy, ExternalLink, Osmo } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
 import Text from 'components/Text'
+import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { Endpoints, getEndpoint, getWalletBalancesSWR } from 'utils/api'
 import { getBaseAsset } from 'utils/assets'
@@ -40,7 +41,7 @@ export default function ConnectedButton() {
   // ---------------
   // LOCAL STATE
   // ---------------
-  const [showDetails, setShowDetails] = useState(false)
+  const [showDetails, setShowDetails] = useToggle()
   const [walletAmount, setWalletAmount] = useState(0)
   const [isCopied, setCopied] = useClipboard(address || '', {
     successDuration: 1000 * 5,

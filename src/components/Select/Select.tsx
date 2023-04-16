@@ -1,11 +1,12 @@
 'use client'
 
 import classNames from 'classnames'
+import { useState } from 'react'
+
 import { Overlay } from 'components/Overlay/Overlay'
 import Option from 'components/Select/Option'
 import Text from 'components/Text'
 import useToggle from 'hooks/useToggle'
-import { useState } from 'react'
 
 interface Props {
   options: Option[]
@@ -18,7 +19,7 @@ interface Props {
 export default function Select(props: Props) {
   const [value, setValue] = useState(props.defaultValue)
 
-  const [showDropdown, setShowDropdown] = useToggle(false)
+  const [showDropdown, setShowDropdown] = useToggle()
   const selectedOption = value
     ? props.options.find((option) => option?.value || option?.denom === value)
     : null
@@ -42,8 +43,8 @@ export default function Select(props: Props) {
       )}
 
       <Overlay show={showDropdown} setShow={setShowDropdown}>
-        {props.options.map((option) => (
-          <Option {...option} onClick={handleChange} />
+        {props.options.map((option, index) => (
+          <Option key={index} {...option} onClick={handleChange} />
         ))}
       </Overlay>
     </div>

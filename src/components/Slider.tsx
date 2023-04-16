@@ -3,6 +3,7 @@ import { ChangeEvent, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
 
 import { OverlayMark } from 'components/Icons/index'
+import useToggle from 'hooks/useToggle'
 
 type Props = {
   value: number
@@ -12,7 +13,7 @@ type Props = {
 }
 
 export default function Slider(props: Props) {
-  const [showTooltip, setShowTooltip] = useState(false)
+  const [showTooltip, setShowTooltip] = useToggle()
   const [sliderRect, setSliderRect] = useState({ width: 0, left: 0, right: 0 })
   const ref = useRef<HTMLDivElement>(null)
   const nodeRef = useRef(null)
