@@ -9,6 +9,7 @@ import { VaultTable } from './VaultTable'
 
 async function Content() {
   const vaults = await getVaults()
+  console.log(vaults)
 
   if (!vaults.length) return null
 

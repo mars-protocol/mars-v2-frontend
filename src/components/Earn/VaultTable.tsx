@@ -17,7 +17,7 @@ import { ChevronDown, SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import { VAULT_DEPOSIT_BUFFER } from 'constants/vaults'
-import { getAssetByDenom, getMarketAssets } from 'utils/assets'
+import { getAssetByDenom } from 'utils/assets'
 import { convertPercentage, formatPercent, formatValue } from 'utils/formatters'
 
 type Props = {
@@ -26,7 +26,6 @@ type Props = {
 
 export const VaultTable = (props: Props) => {
   const [sorting, setSorting] = React.useState<SortingState>([])
-  const marketAssets = getMarketAssets()
 
   const columns = React.useMemo<ColumnDef<Vault>[]>(
     () => [
@@ -89,7 +88,7 @@ export const VaultTable = (props: Props) => {
         ),
       },
     ],
-    [],
+    [props.data],
   )
 
   const table = useReactTable({
