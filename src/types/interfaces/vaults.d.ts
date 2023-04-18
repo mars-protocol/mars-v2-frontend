@@ -33,3 +33,16 @@ interface VaultConfig extends VaultMetaData {
 interface Vault extends VaultConfig {
   apy: number | null
 }
+
+interface ActiveVault extends Vault {
+  status: 'active' | 'unlocking' | 'unlocked'
+  amounts: {
+    primary: number
+    secondary: number
+  }
+  values: {
+    primary: number
+    secondary: number
+  }
+  unlocksAt?: number
+}
