@@ -1,10 +1,10 @@
 import BigNumber from 'bignumber.js'
 import { useCallback, useState } from 'react'
 
+import Slider from 'components/Slider'
+import TokenInput from 'components/TokenInput'
 import { ASSETS } from 'constants/assets'
 
-import Slider from './Slider'
-import TokenInput from './TokenInput'
 interface Props {
   amount: number
   onChange: (amount: number) => void

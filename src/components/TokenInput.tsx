@@ -5,11 +5,10 @@ import Image from 'next/image'
 import { useCallback, useEffect, useState } from 'react'
 
 import NumberInput from 'components/NumberInput'
+import Select from 'components/Select/Select'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
 import useStore from 'store'
-
-import Select from './Select/Select'
 
 interface Props {
   amount: number
@@ -81,14 +80,14 @@ export default function TokenInput(props: SingleProps | SelectProps) {
         props.disabled && 'pointer-events-none opacity-50',
       )}
     >
-      <div className='box-content flex h-11 w-full rounded-sm border border-white/20 bg-white/5'>
+      <div className='relative isolate z-50 box-content flex h-11 w-full rounded-sm border border-white/20  bg-white/5'>
         {props.hasSelect && balances ? (
           <Select
             options={balances}
             defaultValue={coin.denom}
             onChange={(value) => updateAsset(value)}
             title='Your Wallet'
-            className='flex min-w-fit items-center gap-2 border-r border-white/20 bg-white/5 p-3'
+            className=' border-r border-white/20 bg-white/5'
           />
         ) : (
           <div className='flex min-w-fit items-center gap-2 border-r border-white/20 bg-white/5 p-3'>

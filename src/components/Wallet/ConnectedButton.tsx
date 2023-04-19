@@ -18,17 +18,17 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import { Check, Copy, ExternalLink, Osmo } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
 import Text from 'components/Text'
-import { ASSETS } from 'constants/assets'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { Endpoints, getEndpoint, getWalletBalancesSWR } from 'utils/api'
-import { getBaseAsset } from 'utils/assets'
+import { getBaseAsset, getMarketAssets } from 'utils/assets'
 import { formatValue, truncate } from 'utils/formatters'
 
 export default function ConnectedButton() {
   // ---------------
   // EXTERNAL HOOKS
   // ---------------
+  const marketAssets = getMarketAssets()
   const { disconnect } = useWallet()
   const { disconnect: terminate } = useWalletManager()
   const address = useStore((s) => s.client?.recentWallet.account?.address)
@@ -72,7 +72,7 @@ export default function ConnectedButton() {
         .toNumber(),
     )
 
-    const assetDenoms = ASSETS.map((asset) => asset.denom)
+    const assetDenoms = marketAssets.map((asset) => asset.denom)
     const balances = data.filter((coin) => assetDenoms.includes(coin.denom))
     useStore.setState({ balances })
   }, [data, baseAsset.denom, baseAsset.decimals])
