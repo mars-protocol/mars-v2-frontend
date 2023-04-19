@@ -15,6 +15,7 @@ export interface CommonSlice {
 export function createCommonSlice(set: SetState<CommonSlice>, get: GetState<CommonSlice>) {
   return {
     accounts: null,
+    balances: null,
     creditAccounts: null,
     enableAnimations: true,
     isOpen: true,
