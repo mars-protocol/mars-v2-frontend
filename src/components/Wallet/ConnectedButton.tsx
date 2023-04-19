@@ -18,6 +18,7 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import { Check, Copy, ExternalLink, Osmo } from 'components/Icons'
 import { Overlay } from 'components/Overlay/Overlay'
 import Text from 'components/Text'
+import { ASSETS } from 'constants/assets'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { Endpoints, getEndpoint, getWalletBalancesSWR } from 'utils/api'
@@ -60,7 +61,7 @@ export default function ConnectedButton() {
   const disconnectWallet = () => {
     disconnect()
     terminate()
-    useStore.setState({ client: undefined })
+    useStore.setState({ client: undefined, balances: null })
   }
 
   useEffect(() => {
@@ -70,6 +71,10 @@ export default function ConnectedButton() {
         .div(10 ** baseAsset.decimals)
         .toNumber(),
     )
+
+    const assetDenoms = ASSETS.map((asset) => asset.denom)
+    const balances = data.filter((coin) => assetDenoms.includes(coin.denom))
+    useStore.setState({ balances })
   }, [data, baseAsset.denom, baseAsset.decimals])
 
   return (

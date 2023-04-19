@@ -27,7 +27,7 @@ function magnify(value: number, asset: Asset) {
 }
 
 function demagnify(amount: number, asset: Asset) {
-  return amount === 0 ? 0 : new BigNumber(amount).dividedBy(-1 * asset.decimals).toNumber()
+  return amount === 0 ? 0 : new BigNumber(amount).shiftedBy(-1 * asset.decimals).toNumber()
 }
 
 export default function NumberInput(props: Props) {

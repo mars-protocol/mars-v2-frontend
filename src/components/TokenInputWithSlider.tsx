@@ -1,21 +1,36 @@
 import BigNumber from 'bignumber.js'
 import { useCallback, useState } from 'react'
 
+import { ASSETS } from 'constants/assets'
+
 import Slider from './Slider'
 import TokenInput from './TokenInput'
-
 interface Props {
   amount: number
-  max: number
-  asset: Asset
   onChange: (amount: number) => void
   className?: string
   disabled?: boolean
 }
 
-export default function TokenInputWithSlider(props: Props) {
+interface SingleProps extends Props {
+  max: number
+  asset: Asset
+  hasSelect?: boolean
+  onChangeAsset?: (asset: Asset) => void
+}
+
+interface SelectProps extends Props {
+  max?: number
+  asset?: Asset
+  onChangeAsset: (asset: Asset) => void
+  hasSelect: boolean
+}
+
+export default function TokenInputWithSlider(props: SingleProps | SelectProps) {
   const [amount, setAmount] = useState(props.amount)
   const [percentage, setPercentage] = useState(0)
+  const [asset, setAsset] = useState<Asset>(props.asset ? props.asset : ASSETS[0])
+  const [max, setMax] = useState<number>(props.max ? props.max : 0)
 
   const onSliderChange = useCallback(
     (percentage: number, liquidityAmount: number) => {
@@ -36,19 +51,32 @@ export default function TokenInputWithSlider(props: Props) {
     [props],
   )
 
+  const onAssetChange = useCallback(
+    (newAsset: Asset, liquidtyAmount: number) => {
+      props.onChangeAsset && props.onChangeAsset(newAsset)
+      setAsset(newAsset)
+      setMax(liquidtyAmount)
+      setPercentage(0)
+      setAmount(0)
+    },
+    [props],
+  )
+
   return (
     <div className={props.className}>
       <TokenInput
-        asset={props.asset}
-        onChange={(amount) => onInputChange(amount, props.max)}
+        asset={asset}
+        onChange={(amount) => onInputChange(amount, max)}
+        onChangeAsset={(asset, max) => onAssetChange(asset, max)}
         amount={amount}
-        max={props.max}
+        max={max}
         className='mb-4'
         disabled={props.disabled}
+        hasSelect
       />
       <Slider
         value={percentage}
-        onChange={(value) => onSliderChange(value, props.max)}
+        onChange={(value) => onSliderChange(value, max)}
         disabled={props.disabled}
       />
     </div>

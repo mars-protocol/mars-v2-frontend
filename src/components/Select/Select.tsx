@@ -14,6 +14,7 @@ interface Props {
   onChange: (value: string) => void
   isParent?: boolean
   className?: string
+  title?: string
 }
 
 export default function Select(props: Props) {
@@ -41,8 +42,8 @@ export default function Select(props: Props) {
       ) : (
         <Text className='w-full opacity-50'>Select</Text>
       )}
-
       <Overlay show={showDropdown} setShow={setShowDropdown}>
+        {props.title && <Text className='w-full bg-white/25 p-4'>{props.title}</Text>}
         {props.options.map((option, index) => (
           <Option key={index} {...option} onClick={handleChange} />
         ))}
