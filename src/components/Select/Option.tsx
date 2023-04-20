@@ -1,7 +1,10 @@
 import classNames from 'classnames'
+import Image from 'next/image'
 
-import { getMarketAssets } from 'utils/assets'
-import { getTokenSymbol } from 'utils/tokens'
+import DisplayCurrency from 'components/DisplayCurrency'
+import Text from 'components/Text'
+import { ASSETS } from 'constants/assets'
+import { formatValue } from 'utils/formatters'
 
 interface Props extends Option {
   isSelected?: boolean
@@ -9,41 +12,64 @@ interface Props extends Option {
   onClick?: (value: string) => void
 }
 
-const optionClasses = 'block p-3 hover:cursor-pointer'
-
 export default function Option(props: Props) {
-  const marketAssets = getMarketAssets()
+  const isCoin = !!props.denom
 
-  if (props.isDisplay) {
+  if (isCoin) {
+    const currentAsset = ASSETS.find((asset) => asset.denom === props.denom)
+    const symbol = currentAsset?.symbol ?? ASSETS[0].symbol
+    const logo = currentAsset?.logo ?? ASSETS[0].logo
+    const denom = currentAsset?.denom ?? ASSETS[0].denom
+    const decimals = currentAsset?.decimals ?? ASSETS[0].decimals
+    const balance = props.amount ?? '0'
+
+    if (props.isDisplay) {
+      return (
+        <div className={classNames('block bg-white/10 p-3 hover:cursor-pointer')}>{symbol}</div>
+      )
+    }
+
     return (
-      <div className={classNames('bg-white/10', optionClasses)}>
-        {getTokenSymbol(props.denom, marketAssets) ?? props.label}
+      <div
+        className={classNames(
+          'grid grid-flow-row grid-cols-5 grid-rows-2 py-3.5 pr-4',
+          'border-b border-b-white/20 last:border-none',
+          'hover:cursor-pointer hover:bg-white/20',
+          props.isSelected && 'bg-white/10',
+        )}
+        onClick={() => props?.onClick && props.onClick(denom)}
+      >
+        <div className='row-span-2 flex h-full items-center justify-center'>
+          <Image src={logo} alt={`${symbol} token logo`} width={32} height={32} />
+        </div>
+        <Text className='col-span-2 pb-1'>{symbol}</Text>
+        <Text size='sm' className='col-span-2 pb-1 text-right font-bold'>
+          {formatValue(balance, { decimals, maxDecimals: 4, minDecimals: 0, rounded: true })}
+        </Text>
+        <Text size='sm' className='col-span-2 text-white/50'>
+          {formatValue(5, { maxDecimals: 2, minDecimals: 0, prefix: 'APY ', suffix: '%' })}
+        </Text>
+        <Text size='sm' className='col-span-2 text-right text-white/50'>
+          <DisplayCurrency coin={{ denom, amount: balance }} />
+        </Text>
       </div>
     )
   }
 
-  if (props?.denom) {
-    const coinSymbol = getTokenSymbol(props.denom, marketAssets)
-    return (
-      <div
-        className={classNames(
-          'hover:bg-white/20 ',
-          optionClasses,
-          props.isSelected && 'bg-white/10',
-        )}
-        onClick={() => props?.onClick && props.onClick(props.denom)}
-      >
-        {coinSymbol}
-      </div>
-    )
+  const label = props.label
+  if (props.isDisplay) {
+    return <div className={classNames('block bg-white/10 p-3 hover:cursor-pointer')}>{label}</div>
   }
 
   return (
     <div
-      className={classNames('hover:bg-white/20', optionClasses, props.isSelected && 'bg-white/10')}
+      className={classNames(
+        'block  p-3 hover:cursor-pointer hover:bg-white/20',
+        props.isSelected && 'bg-white/10',
+      )}
       onClick={() => props?.onClick && props.onClick(props.value)}
     >
-      {props.label}
+      {label}
     </div>
   )
 }

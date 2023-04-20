@@ -35,6 +35,7 @@ export default function DisplayCurrency(props: Props) {
 
   return (
     <FormattedNumber
+      className={props.className}
       amount={convertToDisplayAmount(props.coin)}
       options={{
         minDecimals: 0,

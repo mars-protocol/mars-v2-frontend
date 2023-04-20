@@ -3,7 +3,7 @@
 import classNames from 'classnames'
 import { useState } from 'react'
 
-import { Overlay } from 'components/Overlay/Overlay'
+import Overlay from 'components/Overlay/Overlay'
 import Option from 'components/Select/Option'
 import Text from 'components/Text'
 import useToggle from 'hooks/useToggle'
@@ -53,27 +53,29 @@ export default function Select(props: Props) {
       )}
       <Overlay
         show={showDropdown}
-        className={classNames(
-          'left-0 top-[calc(100%+8px)] isolate w-full',
-          'after:backdrop-blur-3x after:absolute after:inset-0 after:-z-2 after:rounded-sm after:content-[""]',
-        )}
+        className={classNames('left-0 top-[calc(100%+8px)] isolate w-full')}
         setShow={setShowDropdown}
+        hasBackdropIsolation
       >
-        {props.title && (
-          <Text size='lg' className='text-bold block bg-white/25 p-4'>
-            {props.title}
-          </Text>
-        )}
-        {props.options.map((option: Option, index: number) => (
-          <Option
-            key={index}
-            {...option}
-            isSelected={
-              option?.value ? option?.value === selected?.value : option?.denom === selected?.denom
-            }
-            onClick={handleChange}
-          />
-        ))}
+        <div className='relative isolate w-full overflow-hidden rounded-sm'>
+          {props.title && (
+            <Text size='lg' className='block bg-white/25 p-4 font-bold'>
+              {props.title}
+            </Text>
+          )}
+          {props.options.map((option: Option, index: number) => (
+            <Option
+              key={index}
+              {...option}
+              isSelected={
+                option?.value
+                  ? option?.value === selected?.value
+                  : option?.denom === selected?.denom
+              }
+              onClick={handleChange}
+            />
+          ))}
+        </div>
       </Overlay>
     </div>
   )

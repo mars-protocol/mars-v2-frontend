@@ -4,6 +4,8 @@ import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import React, { useEffect, useState } from 'react'
 
+import { demagnify, magnify } from 'utils/formatters'
+
 interface Props {
   asset: Asset
   amount: number
@@ -20,14 +22,6 @@ interface Props {
   onBlur?: () => void
   onFocus?: () => void
   onRef?: (ref: React.RefObject<HTMLInputElement>) => void
-}
-
-function magnify(value: number, asset: Asset) {
-  return value === 0 ? 0 : new BigNumber(value).shiftedBy(asset.decimals).toNumber()
-}
-
-function demagnify(amount: number, asset: Asset) {
-  return amount === 0 ? 0 : new BigNumber(amount).shiftedBy(-1 * asset.decimals).toNumber()
 }
 
 export default function NumberInput(props: Props) {

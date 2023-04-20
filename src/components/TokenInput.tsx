@@ -9,6 +9,9 @@ import Select from 'components/Select/Select'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
 import useStore from 'store'
+import { magnify } from 'utils/formatters'
+
+import DisplayCurrency from './DisplayCurrency'
 
 interface Props {
   amount: number
@@ -80,7 +83,7 @@ export default function TokenInput(props: SingleProps | SelectProps) {
         props.disabled && 'pointer-events-none opacity-50',
       )}
     >
-      <div className='relative isolate z-50 box-content flex h-11 w-full rounded-sm border border-white/20  bg-white/5'>
+      <div className='relative isolate z-40 box-content flex h-11 w-full rounded-sm border border-white/20  bg-white/5'>
         {props.hasSelect && balances ? (
           <Select
             options={balances}
@@ -105,13 +108,25 @@ export default function TokenInput(props: SingleProps | SelectProps) {
           className='border-none p-3'
         />
       </div>
-      <div className='flex justify-between'>
-        <Text size='xs' className='text-white/50' monospace>
-          1 OSMO = $0.9977
-        </Text>
-        <Text size='xs' monospace className='text-white/50'>
-          ~ $0.00
-        </Text>
+      <div className='flex'>
+        <div className='flex flex-1'>
+          <Text size='xs' className='text-white/50' monospace>
+            {`1 ${asset.symbol} =`}
+          </Text>
+          <DisplayCurrency
+            className='inline pl-0.5 text-xs text-white/50'
+            coin={{ denom: asset.denom, amount: String(magnify(1, asset)) }}
+          />
+        </div>
+        <div className='flex'>
+          <Text size='xs' monospace className='text-white/50'>
+            ~
+          </Text>
+          <DisplayCurrency
+            className='inline pl-0.5 text-xs text-white/50'
+            coin={{ denom: asset.denom, amount: String(props.amount) }}
+          />
+        </div>
       </div>
     </div>
   )

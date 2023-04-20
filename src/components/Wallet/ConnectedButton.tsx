@@ -16,7 +16,7 @@ import { Button } from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { Check, Copy, ExternalLink, Osmo } from 'components/Icons'
-import { Overlay } from 'components/Overlay/Overlay'
+import Overlay from 'components/Overlay/Overlay'
 import Text from 'components/Text'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
@@ -75,7 +75,7 @@ export default function ConnectedButton() {
     const assetDenoms = marketAssets.map((asset) => asset.denom)
     const balances = data.filter((coin) => assetDenoms.includes(coin.denom))
     useStore.setState({ balances })
-  }, [data, baseAsset.denom, baseAsset.decimals])
+  }, [data, baseAsset.denom, baseAsset.decimals, marketAssets])
 
   return (
     <div className={'relative'}>

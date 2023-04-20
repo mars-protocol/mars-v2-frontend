@@ -40,7 +40,7 @@ export default function Toaster() {
           </Text>
         </div>
 
-        <Text size='sm' className='text-bold text-white'>
+        <Text size='sm' className='font-bold text-white'>
           {toast.message}
         </Text>
         <div className='absolute right-6 top-8 '>
