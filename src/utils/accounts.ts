@@ -15,3 +15,7 @@ export const calculateAccountBalance = (account: Account, prices: Coin[]) => {
 
   return totalDepositValue.minus(totalDebtValue).toNumber()
 }
+
+export function getAmount(denom: string, coins: Coin[]) {
+  return Number(coins.find((asset) => asset.denom === denom)?.amount ?? 0)
+}

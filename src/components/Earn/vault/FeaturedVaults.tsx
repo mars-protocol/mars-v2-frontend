@@ -2,8 +2,7 @@ import { Suspense } from 'react'
 
 import Card from 'components/Card'
 import { getVaults } from 'utils/api'
-
-import VaultCard from './VaultCard'
+import VaultCard from 'components/earn/vault/VaultCard'
 
 async function Content() {
   const vaults = await getVaults()
@@ -19,7 +18,13 @@ async function Content() {
       contentClassName='grid grid-cols-3'
     >
       {featuredVaults.map((vault) => (
-        <VaultCard key={vault.address} vault={vault} />
+        <VaultCard
+          key={vault.address}
+          vault={vault}
+          title={vault.name}
+          subtitle='Hot off the presses'
+          provider={vault.provider}
+        />
       ))}
     </Card>
   )

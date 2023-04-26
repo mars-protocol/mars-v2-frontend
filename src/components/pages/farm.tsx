@@ -1,7 +1,6 @@
-import Card from 'components/Card'
-import AvailableVaults from 'components/Earn/AvailableVaults'
-import FeaturedVaults from 'components/Earn/FeaturedVaults'
-import Tab from 'components/Earn/Tab'
+import AvailableVaults from 'components/earn/vault/AvailableVaults'
+import FeaturedVaults from 'components/earn//vault/FeaturedVaults'
+import Tab from 'components/earn/Tab'
 
 export default function Farmpage({ params }: { params: PageParams }) {
   return (

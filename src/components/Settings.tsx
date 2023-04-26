@@ -32,10 +32,10 @@ export default function Settings() {
     }
   }
 
-  function handleReduceMotion(val: boolean) {
-    useStore.setState({ enableAnimations: !val })
+  function handleReduceMotion() {
+    useStore.setState({ enableAnimations: !enableAnimations })
     if (typeof window !== 'undefined')
-      window.localStorage.setItem(ENABLE_ANIMATIONS_KEY, val ? 'false' : 'true')
+      window.localStorage.setItem(ENABLE_ANIMATIONS_KEY, enableAnimations ? 'false' : 'true')
   }
 
   function handleCurrencyChange(e: React.ChangeEvent<HTMLSelectElement>) {

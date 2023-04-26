@@ -1,5 +1,5 @@
 import Card from 'components/Card'
-import Tab from 'components/Earn/Tab'
+import Tab from 'components/earn/Tab'
 
 export default function Lendpage({ params }: { params: PageParams }) {
   return (
