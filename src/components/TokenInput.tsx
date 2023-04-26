@@ -3,6 +3,8 @@ import Image from 'next/image'
 
 import NumberInput from 'components/NumberInput'
 import Text from 'components/Text'
+import { Button } from './Button'
+import DisplayCurrency from './DisplayCurrency'
 
 interface Props {
   amount: number
@@ -14,6 +16,10 @@ interface Props {
 }
 
 export default function TokenInput(props: Props) {
+  function onClickMax() {
+    props.onChange(props.max)
+  }
+
   return (
     <div
       className={classNames(
@@ -38,12 +44,19 @@ export default function TokenInput(props: Props) {
         />
       </div>
       <div className='flex justify-between'>
-        <Text size='xs' className='text-white/50' monospace>
-          1 OSMO = $0.9977
-        </Text>
-        <Text size='xs' monospace className='text-white/50'>
-          ~ $0.00
-        </Text>
+        <Button onClick={onClickMax} variant='transparent'>
+          <Text size='xs' className='mr-1 font-bold text-martian-red' tag='span'>
+            Max:
+          </Text>
+          <Text size='xs' className='text-white/50' tag='span' monospace>
+            {props.max}
+          </Text>
+        </Button>
+        <DisplayCurrency
+          className='text-xs text-white/50'
+          coin={{ amount: props.amount.toString(), denom: props.asset.denom }}
+          isApproximation
+        />
       </div>
     </div>
   )

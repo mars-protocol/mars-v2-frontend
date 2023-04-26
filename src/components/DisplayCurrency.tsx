@@ -9,8 +9,6 @@ import { FormattedNumber } from './FormattedNumber'
 interface Props {
   coin: Coin
   className?: string
-  prefixClassName?: string
-  valueClassName?: string
   isApproximation?: boolean
 }
 
@@ -35,13 +33,14 @@ export default function DisplayCurrency(props: Props) {
 
   return (
     <FormattedNumber
+      className={props.className}
       amount={convertToDisplayAmount(props.coin)}
       options={{
         minDecimals: 0,
         maxDecimals: 2,
         abbreviated: true,
         decimals: displayCurrency.decimals,
-        prefix: `${props.isApproximation ? '~' : ''}${
+        prefix: `${props.isApproximation ? '~ ' : ''}${
           displayCurrency.prefix ? displayCurrency.prefix : ''
         }`,
         suffix: displayCurrency.symbol ? ` ${displayCurrency.symbol}` : '',
