@@ -50,8 +50,8 @@ export default function AccountList(props: Props) {
     }
   }
 
-  function onChangeLendSwitch(isLending: boolean) {
-    setIsLending(isLending)
+  function onChangeLendSwitch() {
+    setIsLending(!isLending)
     /* TODO: handle lending assets */
   }
 

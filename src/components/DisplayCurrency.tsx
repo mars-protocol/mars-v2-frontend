@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js'
 
 import useStore from 'store'
 import { getMarketAssets } from 'utils/assets'
+import { BN } from 'utils/helpers'
 
 import { FormattedNumber } from './FormattedNumber'
 
@@ -24,7 +25,7 @@ export default function DisplayCurrency(props: Props) {
 
     if (!price || !asset || !displayPrice) return '0'
 
-    return new BigNumber(coin.amount)
+    return BN(coin.amount)
       .times(price.amount)
       .div(displayPrice.amount)
       .integerValue(BigNumber.ROUND_HALF_DOWN)

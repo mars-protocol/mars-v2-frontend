@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import BigNumber from 'bignumber.js'
 
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
@@ -17,15 +18,15 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import Slider from 'components/Slider'
 import useParams from 'utils/route'
 import { getAmount } from 'utils/accounts'
+import { BN } from 'utils/helpers'
 
 import VaultLogo from './VaultLogo'
 
 export default function VaultModal() {
   const modal = useStore((s) => s.vaultModal)
   const accounts = useStore((s) => s.accounts)
-  const prices = useStore((s) => s.prices)
   const params = useParams()
-  const [amount, setAmount] = useState(0)
+  const [amount, setAmount] = useState(BN(0))
   const [percentage, setPercentage] = useState(0)
   const [isCustomAmount, setIsCustomAmount] = useState(false)
   const currentAccount = accounts?.find((account) => account.id === params.accountId)
@@ -39,14 +40,13 @@ export default function VaultModal() {
   }
 
   function onChangeSlider(value: number) {}
-  function onChangePrimary(value: number) {}
-  function onChangeSecondary(value: number) {}
+  function onChangePrimary(value: BigNumber) {}
+  function onChangeSecondary(value: BigNumber) {}
 
   if (!modal || !currentAccount) return null
 
   const primaryAsset = ASSETS.find((asset) => asset.denom === modal.vault.denoms.primary)
   const secondaryAsset = ASSETS.find((asset) => asset.denom === modal.vault.denoms.secondary)
-  const maxAmount = 0
 
   if (!primaryAsset || !secondaryAsset) return null
 
@@ -89,7 +89,7 @@ export default function VaultModal() {
           <TokenInput
             onChange={onChangeSecondary}
             amount={amount}
-            max={maxAmount}
+            max={secondaryMaxAmount}
             asset={secondaryAsset}
           />
           <Divider />

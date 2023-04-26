@@ -22,5 +22,6 @@ export function createModalSlice(set: SetState<ModalSlice>, get: GetState<ModalS
     deleteAccountModal: false,
     fundAccountModal: false,
     withdrawModal: false,
+    vaultModal: null,
   }
 }

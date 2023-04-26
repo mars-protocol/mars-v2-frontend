@@ -89,7 +89,7 @@ export const VaultTable = (props: Props) => {
         ),
       },
     ],
-    [props.data],
+    [],
   )
 
   const table = useReactTable({

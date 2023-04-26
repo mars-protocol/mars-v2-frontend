@@ -8,7 +8,7 @@ interface Props {
   name: string
   label: string
   value: boolean
-  onChange: (checked: boolean) => void
+  onChange: () => void
   className?: string
   tooltip?: string
   disabled?: boolean

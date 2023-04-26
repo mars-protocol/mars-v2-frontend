@@ -1,14 +1,16 @@
 import BigNumber from 'bignumber.js'
 import { useCallback, useState } from 'react'
 
+import { BN } from 'utils/helpers'
+
 import Slider from './Slider'
 import TokenInput from './TokenInput'
 
 interface Props {
-  amount: number
-  max: number
+  amount: BigNumber
+  max: BigNumber
   asset: Asset
-  onChange: (amount: number) => void
+  onChange: (amount: BigNumber) => void
   className?: string
   disabled?: boolean
 }
@@ -18,8 +20,8 @@ export default function TokenInputWithSlider(props: Props) {
   const [percentage, setPercentage] = useState(0)
 
   const onSliderChange = useCallback(
-    (percentage: number, liquidityAmount: number) => {
-      const newAmount = new BigNumber(percentage).div(100).times(liquidityAmount).toNumber()
+    (percentage: number, liquidityAmount: BigNumber) => {
+      const newAmount = BN(percentage).div(100).times(liquidityAmount)
       setPercentage(percentage)
       setAmount(newAmount)
       props.onChange(newAmount)
@@ -28,14 +30,15 @@ export default function TokenInputWithSlider(props: Props) {
   )
 
   const onInputChange = useCallback(
-    (newAmount: number, liquidityAmount: number) => {
+    (newAmount: BigNumber, liquidityAmount: BigNumber) => {
       setAmount(newAmount)
-      setPercentage(new BigNumber(newAmount).div(liquidityAmount).times(100).toNumber())
+      setPercentage(BN(newAmount).div(liquidityAmount).times(100).toNumber())
       props.onChange(newAmount)
     },
     [props],
   )
 
+  console.log(percentage)
   return (
     <div className={props.className}>
       <TokenInput

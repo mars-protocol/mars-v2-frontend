@@ -12,6 +12,7 @@ import { ASSETS } from 'constants/assets'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
 import useParams from 'utils/route'
+import { BN } from 'utils/helpers'
 
 interface Props {
   setShowFundAccount: (show: boolean) => void
@@ -22,11 +23,11 @@ export default function FundAccount(props: Props) {
   const params = useParams()
   const deposit = useStore((s) => s.deposit)
 
-  const [amount, setAmount] = useState(0)
+  const [amount, setAmount] = useState(BN(0))
   const [isLending, setIsLending] = useState(false)
   const [isFunding, setIsFunding] = useState(false)
 
-  const onChangeAmount = useCallback((amount: number) => {
+  const onChangeAmount = useCallback((amount: BigNumber) => {
     setAmount(amount)
   }, [])
 
@@ -76,7 +77,7 @@ export default function FundAccount(props: Props) {
           asset={ASSETS[0]}
           onChange={onChangeAmount}
           amount={amount}
-          max={new BigNumber(1).shiftedBy(ASSETS[0].decimals).toNumber()}
+          max={BN(1).shiftedBy(ASSETS[0].decimals)}
           className='mb-4'
           disabled={isFunding}
         />
@@ -85,15 +86,15 @@ export default function FundAccount(props: Props) {
           name='isLending'
           label='Lend assets to earn yield'
           value={isLending}
-          onChange={handleLendAssets}
+          onChange={() => handleLendAssets(!isLending)}
           className='mb-4'
           tooltip="Fund your account and lend assets effortlessly! By lending, you'll earn attractive interest (APY) without impacting your LTV. It's a win-win situation - don't miss out on this easy opportunity to grow your holdings!"
-          disabled={isFunding || amount === 0}
+          disabled={isFunding || amount.isEqualTo(0)}
         />
         <Button
           className='w-full'
           showProgressIndicator={isFunding}
-          disabled={amount === 0}
+          disabled={amount.isEqualTo(0)}
           text='Fund Account'
           rightIcon={<ArrowRight />}
           onClick={onDeposit}

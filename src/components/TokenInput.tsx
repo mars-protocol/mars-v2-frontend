@@ -1,16 +1,18 @@
 import classNames from 'classnames'
 import Image from 'next/image'
+import BigNumber from 'bignumber.js'
 
 import NumberInput from 'components/NumberInput'
 import Text from 'components/Text'
+
 import { Button } from './Button'
 import DisplayCurrency from './DisplayCurrency'
 
 interface Props {
-  amount: number
-  max: number
+  amount: BigNumber
+  max: BigNumber
   asset: Asset
-  onChange: (amount: number) => void
+  onChange: (amount: BigNumber) => void
   className?: string
   disabled?: boolean
 }
@@ -49,7 +51,7 @@ export default function TokenInput(props: Props) {
             Max:
           </Text>
           <Text size='xs' className='text-white/50' tag='span' monospace>
-            {props.max}
+            {props.max.toString()}
           </Text>
         </Button>
         <DisplayCurrency
