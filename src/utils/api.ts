@@ -68,6 +68,10 @@ export async function getVaults() {
   return callAPI<Vault[]>(getEndpoint(Endpoints.VAULTS), 'default')
 }
 
-export async function getWalletBalancesSWR(url: string) {
-  return callAPI<Coin[]>(url)
+export async function getWalletBalancesSWR(address: string) {
+  const path = '/cosmos/bank/v1beta1/balances/'
+  const uri = `${ENV.URL_REST}${path}${address}`
+  const response = await fetch(uri)
+  const balances = (await response.json()).balances
+  return balances as Coin[]
 }
