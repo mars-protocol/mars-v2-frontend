@@ -1,0 +1,32 @@
+.container {
+  @apply fixed 
+  left-0 
+  top-0
+  z-30 
+  hidden 
+  w-full
+  before:absolute
+  before:inset-0 
+  before:-z-1 
+  before:h-full 
+  before:w-full 
+  before:rounded-sm 
+  before:backdrop-blur-sticky 
+  before:content-['']
+  lg:block;
+}
+
+.wrapper {
+  @apply flex 
+  items-center 
+  justify-between 
+  border-b 
+  border-white/20 
+  py-3 
+  pl-6 
+  pr-4;
+}
+
+.accountPanel {
+  @apply flex gap-4;
+}
