@@ -144,9 +144,13 @@ export const convertPercentage = (percent: number) => {
 }
 
 export function magnify(value: number, asset: Asset) {
-  return value === 0 ? 0 : new BigNumber(value).shiftedBy(asset.decimals).toNumber()
+  return value === 0 ? 0 : BN(value).shiftedBy(asset.decimals).toNumber()
 }
 
 export function demagnify(amount: number, asset: Asset) {
-  return amount === 0 ? 0 : new BigNumber(amount).shiftedBy(-1 * asset.decimals).toNumber()
+  return amount === 0
+    ? 0
+    : BN(amount)
+        .shiftedBy(-1 * asset.decimals)
+        .toNumber()
 }
