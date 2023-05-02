@@ -13,7 +13,7 @@
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.30.1",
     "@cosmjs/stargate": "^0.30.1",
-    "@marsprotocol/wallet-connector": "^1.5.3",
+    "@marsprotocol/wallet-connector": "^1.5.4",
     "@sentry/nextjs": "^7.48.0",
     "@tanstack/react-table": "^8.8.5",
     "@tippyjs/react": "^4.2.6",
