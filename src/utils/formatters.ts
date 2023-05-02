@@ -1,5 +1,5 @@
-import { getMarketAssets } from './assets'
-import { BN } from './helpers'
+import { getMarketAssets } from 'utils/assets'
+import { BN } from 'utils/helpers'
 
 export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
   const head = text.slice(0, h)

@@ -1,6 +1,4 @@
-import BigNumber from 'bignumber.js'
-
-import { BN } from './helpers'
+import { BN } from 'utils/helpers'
 
 export const calculateAccountBalance = (account: Account, prices: Coin[]) => {
   const totalDepositValue = account.deposits.reduce((acc, deposit) => {
