@@ -1,23 +1,22 @@
 'use client'
 
-import { useState } from 'react'
-
 import { Button } from 'components/Button'
 import { Gear } from 'components/Icons'
-import { Overlay } from 'components/Overlay/Overlay'
+import Overlay from 'components/Overlay/Overlay'
 import Switch from 'components/Switch'
 import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
 import { ASSETS } from 'constants/assets'
 import { DISPLAY_CURRENCY_KEY, ENABLE_ANIMATIONS_KEY } from 'constants/localStore'
 import { useAnimations } from 'hooks/useAnimations'
+import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { getDisplayCurrencies } from 'utils/assets'
 
 export default function Settings() {
   useAnimations()
 
-  const [showMenu, setShowMenu] = useState(false)
+  const [showMenu, setShowMenu] = useToggle()
   const enableAnimations = useStore((s) => s.enableAnimations)
   const displayCurrency = useStore((s) => s.displayCurrency)
   const displayCurrencies = getDisplayCurrencies()

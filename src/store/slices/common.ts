@@ -1,4 +1,3 @@
-import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { WalletClient, WalletConnectionStatus } from '@marsprotocol/wallet-connector'
 import { GetState, SetState } from 'zustand'
 
@@ -7,6 +6,7 @@ export interface CommonSlice {
   address?: string
   enableAnimations: boolean
   isOpen: boolean
+  balances: Coin[] | null
   selectedAccount: string | null
   client?: WalletClient
   status: WalletConnectionStatus
@@ -15,6 +15,7 @@ export interface CommonSlice {
 export function createCommonSlice(set: SetState<CommonSlice>, get: GetState<CommonSlice>) {
   return {
     accounts: null,
+    balances: null,
     creditAccounts: null,
     enableAnimations: true,
     isOpen: true,

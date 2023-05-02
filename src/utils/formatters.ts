@@ -142,3 +142,11 @@ export const convertPercentage = (percent: number) => {
   if (percent !== 0 && percent < 0.01) percentage = 0.01
   return Number(formatValue(percentage, { minDecimals: 0, maxDecimals: 0 }))
 }
+
+export function magnify(value: number, asset: Asset) {
+  return value === 0 ? 0 : new BigNumber(value).shiftedBy(asset.decimals).toNumber()
+}
+
+export function demagnify(amount: number, asset: Asset) {
+  return amount === 0 ? 0 : new BigNumber(amount).shiftedBy(-1 * asset.decimals).toNumber()
+}

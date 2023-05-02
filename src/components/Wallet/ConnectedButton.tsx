@@ -16,17 +16,19 @@ import { Button } from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { Check, Copy, ExternalLink, Osmo } from 'components/Icons'
-import { Overlay } from 'components/Overlay/Overlay'
+import Overlay from 'components/Overlay/Overlay'
 import Text from 'components/Text'
+import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { Endpoints, getEndpoint, getWalletBalancesSWR } from 'utils/api'
-import { getBaseAsset } from 'utils/assets'
+import { getBaseAsset, getMarketAssets } from 'utils/assets'
 import { formatValue, truncate } from 'utils/formatters'
 
 export default function ConnectedButton() {
   // ---------------
   // EXTERNAL HOOKS
   // ---------------
+  const marketAssets = getMarketAssets()
   const { disconnect } = useWallet()
   const { disconnect: terminate } = useWalletManager()
   const address = useStore((s) => s.client?.recentWallet.account?.address)
@@ -40,7 +42,7 @@ export default function ConnectedButton() {
   // ---------------
   // LOCAL STATE
   // ---------------
-  const [showDetails, setShowDetails] = useState(false)
+  const [showDetails, setShowDetails] = useToggle()
   const [walletAmount, setWalletAmount] = useState(0)
   const [isCopied, setCopied] = useClipboard(address || '', {
     successDuration: 1000 * 5,
@@ -59,7 +61,7 @@ export default function ConnectedButton() {
   const disconnectWallet = () => {
     disconnect()
     terminate()
-    useStore.setState({ client: undefined })
+    useStore.setState({ client: undefined, balances: null })
   }
 
   useEffect(() => {
@@ -69,7 +71,11 @@ export default function ConnectedButton() {
         .div(10 ** baseAsset.decimals)
         .toNumber(),
     )
-  }, [data, baseAsset.denom, baseAsset.decimals])
+
+    const assetDenoms = marketAssets.map((asset) => asset.denom)
+    const balances = data.filter((coin) => assetDenoms.includes(coin.denom))
+    useStore.setState({ balances })
+  }, [data, baseAsset.denom, baseAsset.decimals, marketAssets])
 
   return (
     <div className={'relative'}>

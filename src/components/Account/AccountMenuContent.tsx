@@ -10,15 +10,15 @@ import FundAccount from 'components/Account/FundAccount'
 import { Button } from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
 import { Account, Plus, PlusCircled } from 'components/Icons'
-import { Overlay } from 'components/Overlay/Overlay'
+import Overlay from 'components/Overlay/Overlay'
 import Text from 'components/Text'
+import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
 import { isNumber } from 'utils/parsers'
 import useParams from 'utils/route'
 
-const menuClasses =
-  'absolute isolate flex w-full flex-wrap overflow-y-scroll scrollbar-hide scroll-smooth'
+const menuClasses = 'absolute isolate flex w-full flex-wrap scrollbar-hide'
 
 interface Props {
   accounts: Account[]
@@ -28,8 +28,8 @@ export default function AccountMenuContent(props: Props) {
   const router = useRouter()
   const params = useParams()
   const createAccount = useStore((s) => s.createAccount)
-  const [showMenu, setShowMenu] = useState(false)
-  const [isCreating, setIsCreating] = useState(false)
+  const [showMenu, setShowMenu] = useToggle()
+  const [isCreating, setIsCreating] = useToggle()
 
   const selectedAccountId = params.accountId
   const hasCreditAccounts = !!props.accounts.length
@@ -72,7 +72,10 @@ export default function AccountMenuContent(props: Props) {
           : 'Create Account'}
       </Button>
       <Overlay
-        className='max-w-screen right-0 mt-2 flex h-[530px] w-[336px] overflow-hidden'
+        className={classNames(
+          'max-w-screen right-0 mt-2 flex h-[530px] w-[336px]',
+          !showFundAccount && 'overflow-hidden',
+        )}
         show={showMenu}
         setShow={setShowMenu}
       >
@@ -96,7 +99,13 @@ export default function AccountMenuContent(props: Props) {
                 onClick={createAccountHandler}
               />
             </div>
-            <div className={classNames(menuClasses, 'top-[54px] h-[calc(100%-54px)] items-start')}>
+            <div
+              className={classNames(
+                menuClasses,
+                !showFundAccount && 'overflow-y-scroll scroll-smooth',
+                'top-[54px] h-[calc(100%-54px)] items-start',
+              )}
+            >
               {isAccountSelected && isLoadingAccount && (
                 <div className='flex h-full w-full items-center justify-center p-4'>
                   <CircularProgress size={40} />
@@ -108,7 +117,13 @@ export default function AccountMenuContent(props: Props) {
             </div>
           </>
         ) : (
-          <div className={classNames(menuClasses, 'inset-0 h-full items-end bg-account')}>
+          <div
+            className={classNames(
+              menuClasses,
+              !showFundAccount && 'overflow-y-scroll scroll-smooth',
+              'inset-0 h-full items-end bg-account',
+            )}
+          >
             {showCreateAccount ? (
               <CreateAccount createAccount={createAccountHandler} isCreating={isCreating} />
             ) : showFundAccount ? (
