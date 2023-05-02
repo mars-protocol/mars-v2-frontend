@@ -12,6 +12,7 @@ import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
 import useStore from 'store'
 import { magnify } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 
 interface Props {
@@ -25,14 +26,14 @@ interface SingleProps extends Props {
   asset: Asset
   max: BigNumber
   hasSelect?: boolean
-  onChangeAsset?: (asset: Asset, max: number) => void
+  onChangeAsset?: (asset: Asset, max: BigNumber) => void
 }
 
 interface SelectProps extends Props {
   asset?: Asset
   max?: BigNumber
   hasSelect: boolean
-  onChangeAsset: (asset: Asset, max: number) => void
+  onChangeAsset: (asset: Asset, max: BigNumber) => void
 }
 
 export default function TokenInput(props: SingleProps | SelectProps) {
@@ -73,7 +74,7 @@ export default function TokenInput(props: SingleProps | SelectProps) {
   )
 
   useEffect(() => {
-    props.onChangeAsset && props.onChangeAsset(asset, coin ? Number(coin.amount) : 0)
+    props.onChangeAsset && props.onChangeAsset(asset, coin ? BN(coin.amount) : BN(0))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coin, asset])
 
