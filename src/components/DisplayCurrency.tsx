@@ -4,8 +4,7 @@ import BigNumber from 'bignumber.js'
 import useStore from 'store'
 import { getMarketAssets } from 'utils/assets'
 import { BN } from 'utils/helpers'
-
-import { FormattedNumber } from './FormattedNumber'
+import { FormattedNumber } from 'components/FormattedNumber'
 
 interface Props {
   coin: Coin

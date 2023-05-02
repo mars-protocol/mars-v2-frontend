@@ -1,12 +1,11 @@
+import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import Image from 'next/image'
-import BigNumber from 'bignumber.js'
 
+import { Button } from 'components/Button'
+import DisplayCurrency from 'components/DisplayCurrency'
 import NumberInput from 'components/NumberInput'
 import Text from 'components/Text'
-
-import { Button } from './Button'
-import DisplayCurrency from './DisplayCurrency'
 
 interface Props {
   amount: BigNumber

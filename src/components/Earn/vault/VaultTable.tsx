@@ -11,15 +11,15 @@ import {
 import classNames from 'classnames'
 import React from 'react'
 
-import VaultLogo from 'components/earn/vault/VaultLogo'
-import { VaultRow } from 'components/earn/vault/VaultRow'
+import VaultExpanded from 'components/Earn/vault/VaultExpanded'
+import VaultLogo from 'components/Earn/vault/VaultLogo'
+import { VaultRow } from 'components/Earn/vault/VaultRow'
 import { ChevronDown, SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import { VAULT_DEPOSIT_BUFFER } from 'constants/vaults'
 import { getAssetByDenom } from 'utils/assets'
 import { convertPercentage, formatPercent, formatValue } from 'utils/formatters'
-import VaultExpanded from 'components/earn/vault/VaultExpanded'
 
 type Props = {
   data: Vault[]

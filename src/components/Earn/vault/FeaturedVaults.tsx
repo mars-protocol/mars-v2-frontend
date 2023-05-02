@@ -1,8 +1,8 @@
 import { Suspense } from 'react'
 
 import Card from 'components/Card'
+import VaultCard from 'components/Earn/vault/VaultCard'
 import { getVaults } from 'utils/api'
-import VaultCard from 'components/earn/vault/VaultCard'
 
 async function Content() {
   const vaults = await getVaults()

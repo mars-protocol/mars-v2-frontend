@@ -2,9 +2,8 @@ import BigNumber from 'bignumber.js'
 import { useCallback, useState } from 'react'
 
 import { BN } from 'utils/helpers'
-
-import Slider from './Slider'
-import TokenInput from './TokenInput'
+import Slider from 'components/Slider'
+import TokenInput from 'components/TokenInput'
 
 interface Props {
   amount: BigNumber

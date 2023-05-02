@@ -1,8 +1,8 @@
 import { Row } from '@tanstack/react-table'
 
-import useStore from 'store'
-import VaultCard from 'components/earn/vault/VaultCard'
+import VaultCard from 'components/Earn/vault/VaultCard'
 import Text from 'components/Text'
+import useStore from 'store'
 
 interface Props {
   row: Row<Vault>
