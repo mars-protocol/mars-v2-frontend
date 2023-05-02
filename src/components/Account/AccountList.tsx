@@ -1,8 +1,8 @@
 'use client'
 
 import classNames from 'classnames'
-import { usePathname, useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 import AccountStats from 'components/Account/AccountStats'
 import { Button } from 'components/Button'
@@ -10,13 +10,12 @@ import Card from 'components/Card'
 import { ArrowCircledTopRight, ArrowDownLine, ArrowUpLine, TrashBin } from 'components/Icons'
 import Radio from 'components/Radio'
 import SwitchWithLabel from 'components/SwitchWithLabel'
-import { Text } from 'components/Text'
-import { ASSETS } from 'constants/assets'
-import useParams, { getRoute } from 'utils/route'
+import Text from 'components/Text'
+import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { calculateAccountBalance } from 'utils/accounts'
 import { hardcodedFee } from 'utils/contants'
-import { formatValue } from 'utils/formatters'
+import useParams, { getRoute } from 'utils/route'
 
 interface Props {
   setShowFundAccount: (showFundAccount: boolean) => void
@@ -37,7 +36,7 @@ export default function AccountList(props: Props) {
 
   const deleteAccount = useStore((s) => s.deleteAccount)
 
-  const [isLending, setIsLending] = useState(false)
+  const [isLending, setIsLending] = useToggle()
   const accountSelected = !!selectedAccount && !isNaN(Number(selectedAccount))
   const selectedAccountDetails = props.accounts.find((account) => account.id === selectedAccount)
   const selectedAccountBalance = selectedAccountDetails
@@ -52,8 +51,8 @@ export default function AccountList(props: Props) {
     }
   }
 
-  function onChangeLendSwitch(isLending: boolean) {
-    setIsLending(isLending)
+  function onChangeLendSwitch() {
+    setIsLending(!isLending)
     /* TODO: handle lending assets */
   }
 

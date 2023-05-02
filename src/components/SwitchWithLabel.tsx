@@ -1,14 +1,14 @@
 import classNames from 'classnames'
 
 import Switch from 'components/Switch'
-import { Text } from 'components/Text'
+import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
 
 interface Props {
   name: string
   label: string
   value: boolean
-  onChange: (checked: boolean) => void
+  onChange: () => void
   className?: string
   tooltip?: string
   disabled?: boolean

@@ -1,6 +1,6 @@
 import Card from 'components/Card'
 import { Plus, Subtract } from 'components/Icons'
-import { Text } from 'components/Text'
+import Text from 'components/Text'
 
 interface Props {
   items: Item[]

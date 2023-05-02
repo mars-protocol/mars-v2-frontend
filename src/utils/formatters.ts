@@ -1,6 +1,5 @@
-import BigNumber from 'bignumber.js'
-
 import { getMarketAssets } from './assets'
+import { BN } from './helpers'
 
 export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
   const head = text.slice(0, h)
@@ -33,7 +32,7 @@ export const formatValue = (amount: number | string, options?: FormatOptions): s
       numberOfZeroDecimals = decimals.length
     }
   }
-  let convertedAmount: number | string = new BigNumber(amount)
+  let convertedAmount: number | string = BN(amount)
     .dividedBy(10 ** (options?.decimals ?? 0))
     .toNumber()
 
@@ -142,4 +141,16 @@ export const convertPercentage = (percent: number) => {
   if (percent >= 100) percentage = 100
   if (percent !== 0 && percent < 0.01) percentage = 0.01
   return Number(formatValue(percentage, { minDecimals: 0, maxDecimals: 0 }))
+}
+
+export function magnify(value: number, asset: Asset) {
+  return value === 0 ? 0 : BN(value).shiftedBy(asset.decimals).toNumber()
+}
+
+export function demagnify(amount: number, asset: Asset) {
+  return amount === 0
+    ? 0
+    : BN(amount)
+        .shiftedBy(-1 * asset.decimals)
+        .toNumber()
 }

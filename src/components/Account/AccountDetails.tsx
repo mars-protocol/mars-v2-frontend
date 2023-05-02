@@ -1,7 +1,7 @@
 'use client'
 import { Gauge } from 'components/Gauge'
 import { Heart } from 'components/Icons'
-import { Text } from 'components/Text'
+import Text from 'components/Text'
 import { isNumber } from 'utils/parsers'
 import useParams from 'utils/route'
 

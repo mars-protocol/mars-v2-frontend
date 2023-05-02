@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 
-import { Text } from 'components/Text'
 import { FormattedNumber } from 'components/FormattedNumber'
+import Text from 'components/Text'
 
 interface ValueData extends FormattedNumberProps {
   format?: 'number' | 'string'

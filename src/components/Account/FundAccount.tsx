@@ -1,17 +1,19 @@
 'use client'
 
-import BigNumber from 'bignumber.js'
 import { useCallback, useState } from 'react'
+import BigNumber from 'bignumber.js'
 
 import { Button } from 'components/Button'
 import { ArrowRight, Cross } from 'components/Icons'
 import SwitchWithLabel from 'components/SwitchWithLabel'
-import { Text } from 'components/Text'
+import Text from 'components/Text'
 import TokenInputWithSlider from 'components/TokenInputWithSlider'
 import { ASSETS } from 'constants/assets'
-import useParams from 'utils/route'
+import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
+import { BN } from 'utils/helpers'
+import useParams from 'utils/route'
 
 interface Props {
   setShowFundAccount: (show: boolean) => void
@@ -22,27 +24,34 @@ export default function FundAccount(props: Props) {
   const params = useParams()
   const deposit = useStore((s) => s.deposit)
 
-  const [amount, setAmount] = useState(0)
-  const [isLending, setIsLending] = useState(false)
-  const [isFunding, setIsFunding] = useState(false)
+  const [amount, setAmount] = useState(BN(0))
+  const [asset, setAsset] = useState<Asset>(ASSETS[0])
+  const [isLending, setIsLending] = useToggle()
+  const [isFunding, setIsFunding] = useToggle()
 
-  const onChangeAmount = useCallback((amount: number) => {
+  const onChangeAmount = useCallback((amount: BigNumber) => {
     setAmount(amount)
   }, [])
 
-  const handleLendAssets = useCallback((val: boolean) => {
-    setIsLending(val)
-    /* TODO: handle lending assets */
+  const onChangeAsset = useCallback((asset: Asset) => {
+    setAsset(asset)
   }, [])
+
+  const handleLendAssets = useCallback(
+    (val: boolean) => {
+      setIsLending(val)
+      /* TODO: handle lending assets */
+    },
+    [setIsLending],
+  )
 
   async function onDeposit() {
     setIsFunding(true)
-    // TODO: Make this dynamic (token select)
     const result = await deposit({
       fee: hardcodedFee,
       accountId: params.accountId,
       coin: {
-        denom: ASSETS[0].denom,
+        denom: asset.denom,
         amount: amount.toString(),
       },
     })
@@ -73,27 +82,28 @@ export default function FundAccount(props: Props) {
           your Osmosis address has no assets.
         </Text>
         <TokenInputWithSlider
-          asset={ASSETS[0]}
           onChange={onChangeAmount}
+          onChangeAsset={onChangeAsset}
           amount={amount}
-          max={new BigNumber(1).shiftedBy(ASSETS[0].decimals).toNumber()}
+          max={BN(1).shiftedBy(ASSETS[0].decimals)}
           className='mb-4'
           disabled={isFunding}
+          hasSelect
         />
         <div className='mb-4 w-full border-b border-white/10' />
         <SwitchWithLabel
           name='isLending'
           label='Lend assets to earn yield'
           value={isLending}
-          onChange={handleLendAssets}
+          onChange={() => handleLendAssets(!isLending)}
           className='mb-4'
           tooltip="Fund your account and lend assets effortlessly! By lending, you'll earn attractive interest (APY) without impacting your LTV. It's a win-win situation - don't miss out on this easy opportunity to grow your holdings!"
-          disabled={isFunding || amount === 0}
+          disabled={isFunding || amount.isEqualTo(0)}
         />
         <Button
           className='w-full'
           showProgressIndicator={isFunding}
-          disabled={amount === 0}
+          disabled={amount.isEqualTo(0)}
           text='Fund Account'
           rightIcon={<ArrowRight />}
           onClick={onDeposit}

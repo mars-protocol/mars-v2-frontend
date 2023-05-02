@@ -3,14 +3,12 @@ import BigNumber from 'bignumber.js'
 
 import useStore from 'store'
 import { getMarketAssets } from 'utils/assets'
-
-import { FormattedNumber } from './FormattedNumber'
+import { BN } from 'utils/helpers'
+import { FormattedNumber } from 'components/FormattedNumber'
 
 interface Props {
   coin: Coin
   className?: string
-  prefixClassName?: string
-  valueClassName?: string
   isApproximation?: boolean
 }
 
@@ -26,7 +24,7 @@ export default function DisplayCurrency(props: Props) {
 
     if (!price || !asset || !displayPrice) return '0'
 
-    return new BigNumber(coin.amount)
+    return BN(coin.amount)
       .times(price.amount)
       .div(displayPrice.amount)
       .integerValue(BigNumber.ROUND_HALF_DOWN)
@@ -35,13 +33,14 @@ export default function DisplayCurrency(props: Props) {
 
   return (
     <FormattedNumber
+      className={props.className}
       amount={convertToDisplayAmount(props.coin)}
       options={{
         minDecimals: 0,
         maxDecimals: 2,
         abbreviated: true,
         decimals: displayCurrency.decimals,
-        prefix: `${props.isApproximation ? '~' : ''}${
+        prefix: `${props.isApproximation ? '~ ' : ''}${
           displayCurrency.prefix ? displayCurrency.prefix : ''
         }`,
         suffix: displayCurrency.symbol ? ` ${displayCurrency.symbol}` : '',

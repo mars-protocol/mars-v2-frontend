@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 
 import { FormattedNumber } from 'components/FormattedNumber'
-import { Text } from 'components/Text'
+import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
 import useStore from 'store'
 
@@ -65,7 +65,7 @@ export const BorrowCapacity = ({
               className={classNames(
                 enableAnimations && 'duration-800 transition-[opcity] delay-[1600ms]',
                 'text-3xs-caps',
-                limitPercentOfMax ? 'opacity-60' : 'opacity-0',
+                limitPercentOfMax ? 'opacity-50' : 'opacity-0',
               )}
             >
               <FormattedNumber animate amount={limit} />
@@ -137,7 +137,7 @@ export const BorrowCapacity = ({
           </div>
         </Tooltip>
         {!hideValues && (
-          <div className='mt-2 flex opacity-60 text-3xs-caps'>
+          <div className='mt-2 flex opacity-50 text-3xs-caps'>
             <FormattedNumber animate amount={balance} className='mr-1' />
             <span className='mr-1'>of</span>
             <FormattedNumber animate amount={max} />

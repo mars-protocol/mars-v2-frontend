@@ -5,7 +5,7 @@ import { toast as createToast, Slide, ToastContainer } from 'react-toastify'
 
 import { Button } from 'components/Button'
 import { CheckCircled, Cross, CrossCircled } from 'components/Icons'
-import { Text } from 'components/Text'
+import Text from 'components/Text'
 import useStore from 'store'
 
 export default function Toaster() {
@@ -40,7 +40,7 @@ export default function Toaster() {
           </Text>
         </div>
 
-        <Text size='sm' className='text-bold text-white'>
+        <Text size='sm' className='font-bold text-white'>
           {toast.message}
         </Text>
         <div className='absolute right-6 top-8 '>
