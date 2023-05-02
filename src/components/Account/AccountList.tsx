@@ -1,6 +1,9 @@
 'use client'
 
 import classNames from 'classnames'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+
 import AccountStats from 'components/Account/AccountStats'
 import { Button } from 'components/Button'
 import Card from 'components/Card'
@@ -9,8 +12,6 @@ import Radio from 'components/Radio'
 import SwitchWithLabel from 'components/SwitchWithLabel'
 import Text from 'components/Text'
 import useToggle from 'hooks/useToggle'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
 import useStore from 'store'
 import { calculateAccountBalance } from 'utils/accounts'
 import { hardcodedFee } from 'utils/contants'

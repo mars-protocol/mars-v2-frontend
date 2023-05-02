@@ -52,7 +52,6 @@ export default function TokenInputWithSlider(props: SingleProps | SelectProps) {
     [props],
   )
 
-
   const onAssetChange = useCallback(
     (newAsset: Asset, liquidtyAmount: BigNumber) => {
       props.onChangeAsset && props.onChangeAsset(newAsset)
@@ -69,7 +68,7 @@ export default function TokenInputWithSlider(props: SingleProps | SelectProps) {
       <TokenInput
         asset={asset}
         onChange={(amount) => onInputChange(amount, max)}
-        onChangeAsset={(asset:Asset, max: BigNumber) => onAssetChange(asset, max)}
+        onChangeAsset={(asset: Asset, max: BigNumber) => onAssetChange(asset, max)}
         amount={amount}
         max={max}
         className='mb-4'

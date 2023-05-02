@@ -3,6 +3,7 @@
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import React, { useEffect, useState } from 'react'
+
 import { formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 

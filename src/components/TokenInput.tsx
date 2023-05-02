@@ -14,7 +14,6 @@ import useStore from 'store'
 import { magnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
-
 interface Props {
   amount: BigNumber
   onChange: (amount: BigNumber) => void
@@ -123,9 +122,8 @@ export default function TokenInput(props: SingleProps | SelectProps) {
           />
         </div>
         <div className='flex'>
-
           <DisplayCurrency
-          isApproximation
+            isApproximation
             className='inline pl-0.5 text-xs text-white/50'
             coin={{ denom: asset.denom, amount: props.amount.toString() }}
           />
