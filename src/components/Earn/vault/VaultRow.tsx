@@ -11,8 +11,7 @@ export const VaultRow = (props: AssetRowProps) => {
     <tr
       key={props.row.id}
       className={classNames(
-        'cursor-pointer transition-colors',
-        props.row.getIsExpanded() ? ' bg-black/20' : 'bg-white/0 hover:bg-white/5',
+        'bg-white/3 cursor-pointer border-b border-t border-white/5 transition-colors hover:bg-white/5',
       )}
       onClick={(e) => {
         e.preventDefault()

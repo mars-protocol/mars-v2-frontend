@@ -1,37 +1,38 @@
 'use client'
 
+import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import Image from 'next/image'
 import { useCallback, useEffect, useState } from 'react'
 
+import DisplayCurrency from 'components/DisplayCurrency'
 import NumberInput from 'components/NumberInput'
 import Select from 'components/Select/Select'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
 import useStore from 'store'
 import { magnify } from 'utils/formatters'
-
-import DisplayCurrency from './DisplayCurrency'
+import { BN } from 'utils/helpers'
 
 interface Props {
-  amount: number
-  onChange: (amount: number) => void
+  amount: BigNumber
+  onChange: (amount: BigNumber) => void
   className?: string
   disabled?: boolean
 }
 
 interface SingleProps extends Props {
   asset: Asset
-  max: number
+  max: BigNumber
   hasSelect?: boolean
-  onChangeAsset?: (asset: Asset, max: number) => void
+  onChangeAsset?: (asset: Asset, max: BigNumber) => void
 }
 
 interface SelectProps extends Props {
   asset?: Asset
-  max?: number
+  max?: BigNumber
   hasSelect: boolean
-  onChangeAsset: (asset: Asset, max: number) => void
+  onChangeAsset: (asset: Asset, max: BigNumber) => void
 }
 
 export default function TokenInput(props: SingleProps | SelectProps) {
@@ -42,6 +43,7 @@ export default function TokenInput(props: SingleProps | SelectProps) {
     denom: props.asset ? props.asset.denom : baseCurrency.denom,
     amount: '0',
   })
+
   const selectedAssetDenom = props.asset ? props.asset.denom : baseCurrency.denom
 
   const updateAsset = useCallback(
@@ -71,7 +73,7 @@ export default function TokenInput(props: SingleProps | SelectProps) {
   )
 
   useEffect(() => {
-    props.onChangeAsset && props.onChangeAsset(asset, coin ? Number(coin.amount) : 0)
+    props.onChangeAsset && props.onChangeAsset(asset, coin ? BN(coin.amount) : BN(0))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coin, asset])
 
@@ -108,6 +110,7 @@ export default function TokenInput(props: SingleProps | SelectProps) {
           className='border-none p-3'
         />
       </div>
+
       <div className='flex'>
         <div className='flex flex-1'>
           <Text size='xs' className='text-white/50' monospace>
@@ -119,12 +122,10 @@ export default function TokenInput(props: SingleProps | SelectProps) {
           />
         </div>
         <div className='flex'>
-          <Text size='xs' monospace className='text-white/50'>
-            ~
-          </Text>
           <DisplayCurrency
+            isApproximation
             className='inline pl-0.5 text-xs text-white/50'
-            coin={{ denom: asset.denom, amount: String(props.amount) }}
+            coin={{ denom: asset.denom, amount: props.amount.toString() }}
           />
         </div>
       </div>

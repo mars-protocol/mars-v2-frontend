@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { useState } from 'react'
+import BigNumber from 'bignumber.js'
 
 import AccountSummary from 'components/Account/AccountSummary'
 import { Button } from 'components/Button'
@@ -14,11 +15,12 @@ import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
 import { formatPercent, formatValue } from 'utils/formatters'
 import useParams from 'utils/route'
+import { BN } from 'utils/helpers'
 
 export default function BorrowModal() {
   const params = useParams()
   const [percentage, setPercentage] = useState(0)
-  const [amount, setAmount] = useState(0)
+  const [amount, setAmount] = useState(BN(0))
   const [selectedAccount, setSelectedAccount] = useState(params.accountId)
   const modal = useStore((s) => s.borrowModal)
   const borrow = useStore((s) => s.borrow)
@@ -33,7 +35,7 @@ export default function BorrowModal() {
 
   function setOpen(isOpen: boolean) {
     useStore.setState({ borrowModal: null })
-    setAmount(0)
+    setAmount(BN(0))
     setPercentage(0)
   }
 
@@ -75,7 +77,7 @@ export default function BorrowModal() {
   if ((modal.marketData as BorrowAssetActive)?.debt)
     debtAmount = Number((modal.marketData as BorrowAssetActive).debt)
 
-  const maxAmount = modal.isRepay ? debtAmount : liquidityAmount
+  const max = BN(modal.isRepay ? debtAmount : liquidityAmount)
 
   return (
     <Modal
@@ -115,9 +117,12 @@ export default function BorrowModal() {
         >
           <TokenInputWithSlider
             asset={modal.asset}
-            onChange={setAmount}
+            onChange={(val) => {
+              console.log('new value received', val)
+              setAmount(val)
+            }}
             amount={amount}
-            max={maxAmount}
+            max={max}
           />
           <Divider />
           <Text size='lg'>{modal.isRepay ? 'Repay for' : 'Borrow to'}</Text>

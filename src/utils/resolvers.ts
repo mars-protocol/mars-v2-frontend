@@ -8,6 +8,7 @@ export function resolvePositionResponse(response: AccountResponse): Account {
     deposits: response.deposits,
     debts: response.debts,
     lends: response.lends,
+    vaults: response.vaults,
   }
 }
 

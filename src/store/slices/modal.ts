@@ -10,6 +10,9 @@ export interface ModalSlice {
   deleteAccountModal: boolean
   fundAccountModal: boolean
   withdrawModal: boolean
+  vaultModal: {
+    vault: Vault
+  } | null
 }
 
 export function createModalSlice(set: SetState<ModalSlice>, get: GetState<ModalSlice>) {
@@ -19,5 +22,6 @@ export function createModalSlice(set: SetState<ModalSlice>, get: GetState<ModalS
     deleteAccountModal: false,
     fundAccountModal: false,
     withdrawModal: false,
+    vaultModal: null,
   }
 }

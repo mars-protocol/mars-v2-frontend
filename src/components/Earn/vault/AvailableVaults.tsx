@@ -1,11 +1,10 @@
 import { Suspense } from 'react'
 
 import Card from 'components/Card'
+import { VaultTable } from 'components/Earn/vault/VaultTable'
 import Text from 'components/Text'
 import { VAULTS } from 'constants/vaults'
 import { getVaults } from 'utils/api'
-
-import { VaultTable } from './VaultTable'
 
 async function Content() {
   const vaults = await getVaults()

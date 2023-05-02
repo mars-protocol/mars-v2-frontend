@@ -1,7 +1,7 @@
-import BigNumber from 'bignumber.js'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 import { ENV, ENV_MISSING_MESSAGE, VERCEL_BYPASS } from 'constants/env'
+import { BN } from 'utils/helpers'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!ENV.URL_API) {
@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           borrowRate: market.borrowRate ?? 0,
           liquidity: {
             amount: amount,
-            value: new BigNumber(amount).times(price).toString(),
+            value: BN(amount).times(price).toString(),
           },
         }
       })
