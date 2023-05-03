@@ -31,7 +31,7 @@ export default function ConnectedButton() {
   const marketAssets = getMarketAssets()
   const { disconnect } = useWallet()
   const { disconnect: terminate } = useWalletManager()
-  const address = useStore((s) => s.client?.recentWallet.account?.address)
+  const address = useStore((s) => s.address)
   const network = useStore((s) => s.client?.recentWallet.network)
   const baseAsset = getBaseAsset()
   const { data, isLoading } = useSWR(
