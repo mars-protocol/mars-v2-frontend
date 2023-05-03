@@ -2,7 +2,7 @@ interface Asset {
   color: string
   name: string
   denom: string
-  symbol: 'OSMO' | 'ATOM' | 'CRO' | 'MARS' | 'JUNO'
+  symbol: 'OSMO' | 'ATOM' | 'CRO' | 'MARS' | 'USDC.axl'
   prefix?: string
   contract_addr?: string
   logo: string
