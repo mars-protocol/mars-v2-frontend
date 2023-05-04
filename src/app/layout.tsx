@@ -16,9 +16,9 @@ export default function RootLayout(props: { children: React.ReactNode }) {
   const href = headers().get('x-url') || ''
   const params = getRouteParams(href)
   return (
-    <html className='m-0 p-0' lang='en'>
+    <html className='p-0 m-0' lang='en'>
       <head />
-      <body className='m-0 cursor-default bg-body p-0 font-sans text-white'>
+      <body className='p-0 m-0 font-sans text-white cursor-default bg-body'>
         <Background />
         <DesktopHeader params={params} />
         <FetchPrices />
@@ -28,7 +28,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
             'lg:mt-[65px] lg:h-[calc(100vh-89px)]',
           )}
         >
-          <div className='flex max-w-content flex-grow flex-col flex-wrap'>{props.children}</div>
+          <div className='flex flex-wrap flex-grow max-w-content'>{props.children}</div>
           <AccountDetails />
         </main>
         <Footer />

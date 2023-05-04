@@ -1,8 +1,12 @@
+import { IS_TESTNET } from './env'
+
 export const VAULT_DEPOSIT_BUFFER = 0.999
 
 export const VAULTS: VaultMetaData[] = [
   {
-    address: 'osmo108q2krqr0y9g0rtesenvsw68sap2xefelwwjs0wedyvdl0cmrntqvllfjk',
+    address: IS_TESTNET
+      ? 'osmo108q2krqr0y9g0rtesenvsw68sap2xefelwwjs0wedyvdl0cmrntqvllfjk'
+      : 'osmo1g3kmqpp8608szfp0pdag3r6z85npph7wmccat8lgl3mp407kv73qlj7qwp',
     name: 'OSMO-ATOM',
     lockup: {
       duration: 14,
@@ -19,23 +23,5 @@ export const VAULTS: VaultMetaData[] = [
       secondary: 'ATOM',
     },
     isFeatured: true,
-  },
-  {
-    address: 'osmo1g5hryv0gp9dzlchkp3yxk8fmcf5asjun6cxkvyffetqzkwmvy75qfmeq3f',
-    name: 'OSMO - JUNO',
-    lockup: {
-      duration: 14,
-      timeframe: 'day',
-    },
-    provider: 'Apollo',
-    denoms: {
-      primary: 'uosmo',
-      secondary: 'ibc/46B44899322F3CD854D2D46DEEF881958467CDD4B3B10086DA49296BBED94BED',
-      lp: 'gamm/pool/497',
-    },
-    symbols: {
-      primary: 'OSMO',
-      secondary: 'JUNO',
-    },
   },
 ]

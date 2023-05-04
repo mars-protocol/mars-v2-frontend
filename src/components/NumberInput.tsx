@@ -62,7 +62,7 @@ export default function NumberInput(props: Props) {
       cursorRef.current = inputRef.current?.selectionEnd || 0
     }
     setFormattedAmount(formatted)
-    console.log(props.amount.toNumber(), amount.toNumber())
+
     if (props.amount.isEqualTo(amount)) {
       props.onChange(amount)
     }

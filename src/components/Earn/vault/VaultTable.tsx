@@ -79,7 +79,7 @@ export const VaultTable = (props: Props) => {
         },
       },
       {
-        accessorKey: 'cap',
+        accessorKey: 'details',
         enableSorting: false,
         header: 'Details',
         cell: ({ row }) => (
@@ -129,7 +129,7 @@ export const VaultTable = (props: Props) => {
                       'align-center',
                     )}
                   >
-                    <span className='h-6 w-6 text-white'>
+                    <span className='w-6 h-6 text-white'>
                       {header.column.getCanSort()
                         ? {
                             asc: <SortAsc />,

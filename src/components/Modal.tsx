@@ -15,18 +15,19 @@ interface Props {
   className?: string
   contentClassName?: string
   open: boolean
-  setOpen?: (open: boolean) => void
+  onClose: () => void
 }
 
 export const Modal = (props: Props) => {
   const modalRef: any = useRef(null)
-  const preventAutoClose = (e: React.MouseEvent) => e.stopPropagation()
 
   function onClose() {
     modalRef.current?.close()
+    props.onClose()
   }
 
   useEffect(() => {
+    modalRef.current?.removeAttribute('open')
     if (props.open) {
       modalRef.current?.showModal()
     } else {
@@ -34,14 +35,18 @@ export const Modal = (props: Props) => {
     }
   }, [props.open])
 
+  // remove open attribute on mount
+  useEffect(() => {
+    modalRef.current?.removeAttribute('open')
+  }, [])
+
   return (
     <dialog
       ref={modalRef}
       onCancel={onClose}
-      onClick={onClose}
       className={classNames(
-        'w-[895px] border-none',
-        'backdrop:bg-black/50 backdrop:backdrop-blur-sm backdrop:hover:cursor-pointer',
+        'w-[895px] border-none bg-transparent text-white',
+        'backdrop:bg-black/50 backdrop:backdrop-blur-sm',
       )}
     >
       <Card
@@ -49,7 +54,6 @@ export const Modal = (props: Props) => {
           'relative w-full max-w-full bg-white/5 backdrop-blur-3xl',
           props.className,
         )}
-        onClick={preventAutoClose}
       >
         <div className={classNames('flex justify-between', props.headerClassName)}>
           {props.header}
