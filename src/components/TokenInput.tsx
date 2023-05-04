@@ -85,17 +85,17 @@ export default function TokenInput(props: SingleProps | SelectProps) {
         props.disabled && 'pointer-events-none opacity-50',
       )}
     >
-      <div className='relative isolate z-40 box-content flex h-11 w-full rounded-sm border border-white/20  bg-white/5'>
+      <div className='box-content relative z-40 flex w-full border rounded-sm isolate h-11 border-white/20 bg-white/5'>
         {props.hasSelect && balances ? (
           <Select
             options={balances}
             defaultValue={coin.denom}
             onChange={(value) => updateAsset(value)}
             title='Your Wallet'
-            className=' border-r border-white/20 bg-white/5'
+            className='border-r  border-white/20 bg-white/5'
           />
         ) : (
-          <div className='flex min-w-fit items-center gap-2 border-r border-white/20 bg-white/5 p-3'>
+          <div className='flex items-center gap-2 p-3 border-r min-w-fit border-white/20 bg-white/5'>
             <Image src={asset.logo} alt='token' width={20} height={20} />
             <Text>{asset.symbol}</Text>
           </div>
@@ -107,7 +107,7 @@ export default function TokenInput(props: SingleProps | SelectProps) {
           onChange={props.onChange}
           amount={props.amount}
           max={props.max}
-          className='border-none p-3'
+          className='p-3 border-none'
         />
       </div>
 
@@ -118,7 +118,7 @@ export default function TokenInput(props: SingleProps | SelectProps) {
           </Text>
           <DisplayCurrency
             className='inline pl-0.5 text-xs text-white/50'
-            coin={{ denom: asset.denom, amount: String(magnify(1, asset)) }}
+            coin={{ denom: asset.denom, amount: magnify(1, asset).toString() }}
           />
         </div>
         <div className='flex'>

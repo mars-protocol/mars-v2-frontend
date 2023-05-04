@@ -45,7 +45,7 @@ export default function Select(props: Props) {
       onClick={() => setShowDropdown(!showDropdown)}
     >
       {selectedOption ? (
-        <Option {...selectedOption} isDisplay />
+        <Option {...selectedOption} isClicked={showDropdown} isDisplay />
       ) : (
         <Text className='w-full opacity-50 hover:cursor-pointer'>Select</Text>
       )}

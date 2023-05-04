@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import React, { useEffect, useState } from 'react'
 
-import { formatValue } from 'utils/formatters'
+import { demagnify, formatValue, magnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
 interface Props {
@@ -63,7 +63,7 @@ export default function NumberInput(props: Props) {
     }
     setFormattedAmount(formatted)
 
-    if (props.amount.isEqualTo(amount)) {
+    if (!props.amount.isEqualTo(amount)) {
       props.onChange(amount)
     }
   }
@@ -90,8 +90,10 @@ export default function NumberInput(props: Props) {
     const hasMultipleDots = (formattedAmount.match(/[.,]/g)?.length || 0) > 1
     const isSeparator = lastChar === '.' || lastChar === ','
     const isNegative = formattedAmount.indexOf('-') > -1
-    const isLowerThanMinimum = props.min !== undefined && props.min.isGreaterThan(formattedAmount)
-    const isHigherThanMaximum = props.max !== undefined && props.max.isLessThan(formattedAmount)
+    const isLowerThanMinimum =
+      props.min !== undefined && props.min.isGreaterThan(magnify(formattedAmount, props.asset))
+    const isHigherThanMaximum =
+      props.max !== undefined && props.max.isLessThan(magnify(formattedAmount, props.asset))
     const isTooLong = props.maxLength !== undefined && numberCount > props.maxLength
     const exceedsMaxDecimals = props.maxDecimals !== undefined && decimals > props.maxDecimals
 
@@ -116,12 +118,12 @@ export default function NumberInput(props: Props) {
     if (isTooLong) return
 
     if (isLowerThanMinimum && props.min) {
-      updateValues(String(props.min), props.min)
+      updateValues(String(demagnify(props.min, props.asset)), props.min)
       return
     }
 
     if (isHigherThanMaximum && props.max) {
-      updateValues(String(props.max), props.max)
+      updateValues(String(demagnify(props.max, props.asset)), props.max)
       return
     }
 
@@ -133,12 +135,7 @@ export default function NumberInput(props: Props) {
       return
     }
 
-    if (!formattedAmount) {
-      updateValues(formattedAmount, BN(0))
-      return
-    }
-
-    updateValues(formattedAmount, amount)
+    updateValues(amount.shiftedBy(-1 * props.asset.decimals).toString(), amount)
   }
 
   return (

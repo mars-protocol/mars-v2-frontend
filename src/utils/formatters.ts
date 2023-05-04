@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js'
 import { getMarketAssets } from 'utils/assets'
 import { BN } from 'utils/helpers'
 
@@ -143,14 +144,12 @@ export const convertPercentage = (percent: number) => {
   return Number(formatValue(percentage, { minDecimals: 0, maxDecimals: 0 }))
 }
 
-export function magnify(value: number, asset: Asset) {
-  return value === 0 ? 0 : BN(value).shiftedBy(asset.decimals).toNumber()
+export function magnify(value: number | string, asset: Asset) {
+  const amount = BN(value)
+  return amount.isZero() ? amount : BN(value).shiftedBy(asset.decimals)
 }
 
-export function demagnify(amount: number | string, asset: Asset) {
-  return amount === 0 || amount === '0'
-    ? 0
-    : BN(amount)
-        .shiftedBy(-1 * asset.decimals)
-        .toNumber()
+export function demagnify(amount: number | string | BigNumber, asset: Asset) {
+  const value = BN(amount)
+  return value.isZero() ? 0 : value.shiftedBy(-1 * asset.decimals).toNumber()
 }
