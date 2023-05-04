@@ -62,7 +62,7 @@ export const BorrowTable = (props: Props) => {
 
           return (
             <Text className='justify-end' size='sm'>
-              {formatPercent(row.original.borrowRate)}
+              {formatPercent(row.original.borrowRate, 2)}
             </Text>
           )
         },

@@ -116,9 +116,9 @@ export function formatLeverage(leverage: number) {
   })
 }
 
-export function formatPercent(percent: number | string) {
+export function formatPercent(percent: number | string, minDecimals?: number) {
   return formatValue(+percent * 100, {
-    minDecimals: 0,
+    minDecimals: minDecimals ?? 0,
     suffix: '%',
   })
 }
@@ -147,8 +147,8 @@ export function magnify(value: number, asset: Asset) {
   return value === 0 ? 0 : BN(value).shiftedBy(asset.decimals).toNumber()
 }
 
-export function demagnify(amount: number, asset: Asset) {
-  return amount === 0
+export function demagnify(amount: number | string, asset: Asset) {
+  return amount === 0 || amount === '0'
     ? 0
     : BN(amount)
         .shiftedBy(-1 * asset.decimals)
