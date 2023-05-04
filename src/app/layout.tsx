@@ -28,7 +28,9 @@ export default function RootLayout(props: { children: React.ReactNode }) {
             'lg:mt-[65px] lg:h-[calc(100vh-89px)]',
           )}
         >
-          <div className='flex flex-wrap flex-grow max-w-content'>{props.children}</div>
+          <div className='flex flex-wrap content-start flex-grow max-w-content'>
+            {props.children}
+          </div>
           <AccountDetails />
         </main>
         <Footer />
