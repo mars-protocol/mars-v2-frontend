@@ -43,7 +43,11 @@ export const BorrowTable = (props: Props) => {
           return (
             <div className='flex flex-1 items-center gap-3'>
               <Image src={asset.logo} alt='token' width={32} height={32} />
-              <TitleAndSubCell title={asset.symbol} sub={asset.name} className='min-w-15' />
+              <TitleAndSubCell
+                title={asset.symbol}
+                sub={asset.name}
+                className='min-w-15 text-left'
+              />
             </div>
           )
         },

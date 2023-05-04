@@ -19,7 +19,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         (market: Market) => market.borrowEnabled,
       )
       const prices: Coin[] = await $prices.json()
-
       return borrowEnabledMarkets.map((market) => {
         const price = prices.find((coin) => coin.denom === market.denom)?.amount ?? '1'
         const amount = liquidity.find((coin) => coin.denom === market.denom)?.amount ?? '0'

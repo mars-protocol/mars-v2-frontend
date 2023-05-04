@@ -1,9 +1,9 @@
 interface Market {
   denom: string
   borrowRate: number
-  debtTotalScaled: number
-  collateralTotalScaled: number
+  debtTotalScaled: string
+  collateralTotalScaled: string
   depositEnabled: boolean
   borrowEnabled: boolean
-  depositCap: number
+  depositCap: string
 }
