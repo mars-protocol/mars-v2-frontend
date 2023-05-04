@@ -19,30 +19,31 @@ interface Props {
 }
 
 export const Modal = (props: Props) => {
-  const modalRef: any = useRef(null)
+  const ref: any = useRef(null)
 
   function onClose() {
-    modalRef.current?.close()
+    ref.current?.close()
     props.onClose()
   }
 
   useEffect(() => {
-    modalRef.current?.removeAttribute('open')
+    ref.current?.removeAttribute('open')
     if (props.open) {
-      modalRef.current?.showModal()
+      ref.current?.showModal()
     } else {
-      modalRef.current?.close()
+      ref.current?.close()
     }
   }, [props.open])
 
-  // remove open attribute on mount
+  // close dialog on unmount
   useEffect(() => {
-    modalRef.current?.removeAttribute('open')
+    const dialog = ref.current
+    return () => dialog.close()
   }, [])
 
   return (
     <dialog
-      ref={modalRef}
+      ref={ref}
       onCancel={onClose}
       className={classNames(
         'w-[895px] border-none bg-transparent text-white',

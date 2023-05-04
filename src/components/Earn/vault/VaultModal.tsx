@@ -55,7 +55,7 @@ export default function VaultModal() {
 
   return (
     <Modal
-      open={!!modal}
+      open={!!(modal && isValid)}
       onClose={onClose}
       header={
         modal && (
@@ -70,7 +70,7 @@ export default function VaultModal() {
     >
       {modal && isValid && (
         <>
-          <div className='flex gap-3 px-6 py-4 border-b border-b-white/5 gradient-header'>
+          <div className='flex gap-3 border-b border-b-white/5 px-6 py-4 gradient-header'>
             <TitleAndSubCell
               title={formatValue(1000000, { abbreviated: true, decimals: 6 })}
               sub={'Borrowed'}
@@ -78,9 +78,9 @@ export default function VaultModal() {
             <div className='h-100 w-[1px] bg-white/10'></div>
             <TitleAndSubCell title={`${1000} (${10000})`} sub={'Liquidity available'} />
           </div>
-          <div className='flex items-start flex-grow gap-6 p-6'>
+          <div className='flex flex-grow items-start gap-6 p-6'>
             <Card
-              className='w-full p-4 bg-white/5'
+              className='w-full bg-white/5 p-4'
               contentClassName='gap-6 flex flex-col justify-between h-full'
             >
               <TokenInput
