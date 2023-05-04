@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 
 import { ENV, ENV_MISSING_MESSAGE, VERCEL_BYPASS } from 'constants/env'
+import { BN } from 'utils/helpers'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!ENV.URL_API) {
@@ -21,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (debt) {
           return {
             denom: deposit.denom,
-            amount: (Number(deposit.amount) - Number(debt.amount)).toString(),
+            amount: BN(deposit.amount).minus(debt.amount).toString(),
           }
         }
 

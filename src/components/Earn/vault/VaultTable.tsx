@@ -41,7 +41,9 @@ export const VaultTable = (props: Props) => {
         accessorKey: 'apy',
         header: 'APY',
         cell: ({ row }) => {
-          return <Text size='xs'>{row.original.apy ? formatPercent(row.original.apy) : '-'}</Text>
+          return (
+            <Text size='xs'>{row.original.apy ? formatPercent(row.original.apy, 2) : '-'}</Text>
+          )
         },
       },
       {

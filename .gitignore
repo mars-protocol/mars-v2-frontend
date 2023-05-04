@@ -37,5 +37,7 @@ next-env.d.ts
 
 # Environment variables
 .env.local
+.env.local.testnet
+.env.local.mainnet
 .env.production
 .env

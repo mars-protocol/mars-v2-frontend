@@ -16,10 +16,10 @@ export function resolveMarketResponses(responses: MarketResponse[]): Market[] {
   return responses.map((response) => ({
     denom: response.denom,
     borrowRate: Number(response.borrow_rate),
-    debtTotalScaled: Number(response.debt_total_scaled),
-    collateralTotalScaled: Number(response.collateral_total_scaled),
+    debtTotalScaled: response.debt_total_scaled,
+    collateralTotalScaled: response.collateral_total_scaled,
     depositEnabled: response.deposit_enabled,
     borrowEnabled: response.borrow_enabled,
-    depositCap: Number(response.deposit_cap),
+    depositCap: response.deposit_cap,
   }))
 }

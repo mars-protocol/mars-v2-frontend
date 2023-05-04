@@ -1,3 +1,5 @@
+import classNames from 'classnames'
+
 import Text from 'components/Text'
 
 interface Props {
@@ -9,10 +11,10 @@ interface Props {
 export default function TitleAndSubCell(props: Props) {
   return (
     <div className='flex flex-col gap-[0.5]'>
-      <Text className={props.className} size='sm'>
+      <Text size='sm' className={props.className}>
         {props.title}
       </Text>
-      <Text size='sm' className={'text-white/50 ' + props.className}>
+      <Text size='sm' className={classNames('text-white/50', props.className)}>
         {props.sub}
       </Text>
     </div>

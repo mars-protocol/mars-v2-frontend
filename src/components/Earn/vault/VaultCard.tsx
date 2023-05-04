@@ -42,7 +42,7 @@ export default function VaultCard(props: Props) {
       <div className='mb-6 flex justify-between'>
         <TitleAndSubCell
           className='text-xs'
-          title={props.vault.apy ? formatPercent(props.vault.apy) : '-'}
+          title={props.vault.apy ? formatPercent(props.vault.apy, 2) : '-'}
           sub={'APY'}
         />
         <TitleAndSubCell

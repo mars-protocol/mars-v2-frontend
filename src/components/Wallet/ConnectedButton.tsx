@@ -18,6 +18,7 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import { Check, Copy, ExternalLink, Osmo } from 'components/Icons'
 import Overlay from 'components/Overlay/Overlay'
 import Text from 'components/Text'
+import { IS_TESTNET } from 'constants/env'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { Endpoints, getEndpoint, getWalletBalancesSWR } from 'utils/api'
@@ -31,7 +32,7 @@ export default function ConnectedButton() {
   const marketAssets = getMarketAssets()
   const { disconnect } = useWallet()
   const { disconnect: terminate } = useWalletManager()
-  const address = useStore((s) => s.client?.recentWallet.account?.address)
+  const address = useStore((s) => s.address)
   const network = useStore((s) => s.client?.recentWallet.network)
   const baseAsset = getBaseAsset()
   const { data, isLoading } = useSWR(
@@ -79,7 +80,7 @@ export default function ConnectedButton() {
 
   return (
     <div className={'relative'}>
-      {network?.chainId !== ChainInfoID.Osmosis1 && (
+      {IS_TESTNET && (
         <Text
           className='absolute -right-2 -top-2.5 z-10 rounded-sm p-0.5 px-2 gradient-primary-to-secondary'
           size='3xs'
@@ -136,10 +137,10 @@ export default function ConnectedButton() {
               {'Your Address'}
             </Text>
 
-            <Text size='sm' className='mb-1 hidden break-all font-bold  md:block'>
+            <Text size='sm' className={classNames('mb-1 hidden break-all font-bold', 'md:block')}>
               {address}
             </Text>
-            <Text size='sm' className='mb-1 break-all font-bold  md:hidden'>
+            <Text size='sm' className={classNames('mb-1 break-all font-bold', 'md:hidden')}>
               {truncate(address, [14, 14])}
             </Text>
             <div className='flex w-full pt-1'>
