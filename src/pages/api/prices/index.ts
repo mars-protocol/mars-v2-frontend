@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       query PriceOracle {
         prices: wasm {
           ${marketAssets.map((asset) => {
-            return `${asset.symbol}: contractQuery(
+            return `${asset.id}: contractQuery(
               contractAddress: "${ENV.ADDRESS_ORACLE}"
               query: {
                 price: {
