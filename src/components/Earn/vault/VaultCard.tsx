@@ -28,7 +28,7 @@ export default function VaultCard(props: Props) {
 
   return (
     <div className='border-r-[1px] border-r-white/10 p-4'>
-      <div className='flex justify-between mb-8 align-center'>
+      <div className='align-center mb-8 flex justify-between'>
         <div>
           <Text size='xs' className='mb-2 text-white/60'>
             {props.subtitle}
@@ -44,7 +44,7 @@ export default function VaultCard(props: Props) {
         </div>
         <VaultLogo vault={props.vault} />
       </div>
-      <div className='flex justify-between mb-6'>
+      <div className='mb-6 flex justify-between'>
         <TitleAndSubCell
           className='text-xs'
           title={props.vault.apy ? formatPercent(props.vault.apy, 2) : '-'}

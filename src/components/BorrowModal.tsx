@@ -96,7 +96,7 @@ export default function BorrowModal() {
     >
       {modal && (
         <>
-          <div className='flex gap-3 px-6 py-4 border-b border-b-white/5 gradient-header'>
+          <div className='flex gap-3 border-b border-b-white/5 px-6 py-4 gradient-header'>
             <TitleAndSubCell
               title={formatPercent(modal.marketData.borrowRate || '0')}
               sub={'Borrow rate'}
@@ -112,9 +112,9 @@ export default function BorrowModal() {
               sub={'Liquidity available'}
             />
           </div>
-          <div className='flex items-start flex-grow gap-6 p-6'>
+          <div className='flex flex-grow items-start gap-6 p-6'>
             <Card
-              className='w-full p-4 bg-white/5'
+              className='w-full bg-white/5 p-4'
               contentClassName='gap-6 flex flex-col justify-between h-full'
             >
               <TokenInputWithSlider
@@ -131,7 +131,7 @@ export default function BorrowModal() {
                 name='account'
                 value={selectedAccount}
                 onChange={(e) => onAccountSelect(e.target.value)}
-                className='p-4 border rounded-base border-white/10 bg-white/5'
+                className='rounded-base border border-white/10 bg-white/5 p-4'
               >
                 {accounts?.map((account) => (
                   <option key={account} value={account}>

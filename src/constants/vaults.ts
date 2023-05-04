@@ -1,4 +1,4 @@
-import { IS_TESTNET } from './env'
+import { IS_TESTNET } from 'constants/env'
 
 export const VAULT_DEPOSIT_BUFFER = 0.999
 

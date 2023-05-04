@@ -54,11 +54,11 @@ export default function Option(props: Props) {
         )}
         onClick={() => props?.onClick && props.onClick(denom)}
       >
-        <div className='flex items-center justify-center h-full row-span-2'>
+        <div className='row-span-2 flex h-full items-center justify-center'>
           <Image src={logo} alt={`${symbol} token logo`} width={32} height={32} />
         </div>
         <Text className='col-span-2 pb-1'>{symbol}</Text>
-        <Text size='sm' className='col-span-2 pb-1 font-bold text-right'>
+        <Text size='sm' className='col-span-2 pb-1 text-right font-bold'>
           {formatValue(balance, { decimals, maxDecimals: 4, minDecimals: 0, rounded: true })}
         </Text>
         <Text size='sm' className='col-span-2 text-white/50'>

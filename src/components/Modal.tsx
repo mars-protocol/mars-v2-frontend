@@ -61,7 +61,7 @@ export const Modal = (props: Props) => {
           <Button
             onClick={onClose}
             leftIcon={<Cross />}
-            className='w-8 h-8'
+            className='h-8 w-8'
             iconClassName='h-2 w-2'
             color='tertiary'
           />

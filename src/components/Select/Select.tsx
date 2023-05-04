@@ -55,9 +55,9 @@ export default function Select(props: Props) {
         setShow={setShowDropdown}
         hasBackdropIsolation
       >
-        <div className='relative w-full overflow-hidden rounded-sm isolate'>
+        <div className='relative isolate w-full overflow-hidden rounded-sm'>
           {props.title && (
-            <Text size='lg' className='block p-4 font-bold bg-white/25'>
+            <Text size='lg' className='block bg-white/25 p-4 font-bold'>
               {props.title}
             </Text>
           )}
