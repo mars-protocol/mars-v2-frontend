@@ -73,7 +73,7 @@ export default function TokenInputWithSlider(props: SingleProps | SelectProps) {
         max={max}
         className='mb-4'
         disabled={props.disabled}
-        hasSelect
+        hasSelect={props.hasSelect}
       />
       <Slider
         value={percentage}

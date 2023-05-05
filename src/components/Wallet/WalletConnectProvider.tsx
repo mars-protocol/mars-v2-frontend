@@ -34,7 +34,7 @@ export const WalletConnectProvider: FC<Props> = ({ children }) => {
       persistent
       classNames={{
         modalContent:
-          'relative z-50 w-[460px] max-w-full rounded-base border border-white/20 bg-white/5 p-6 pb-4 backdrop-blur-3xl flex flex-wrap',
+          'relative z-50 w-[460px] max-w-full rounded-base border border-white/20 bg-white/5 p-6 pb-4 backdrop-blur-3xl flex flex-wrap focus-visible:outline-none',
         modalOverlay:
           'fixed inset-0 bg-black/60 w-full h-full z-40 flex items-center justify-center cursor-pointer m-0 backdrop-blur-sm',
         modalHeader: 'text-lg text-white mb-4 flex-grow',

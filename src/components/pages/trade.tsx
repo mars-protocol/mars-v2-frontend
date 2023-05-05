@@ -8,7 +8,7 @@ interface Props {
 
 export default function Tradepage(props: Props) {
   return (
-    <div className='grid grid-flow-row grid-cols-3 grid-rows-2 gap-4'>
+    <div className='grid w-full grid-flow-row grid-cols-3 grid-rows-2 gap-4'>
       <TradingView params={props.params} />
       <Trade params={props.params} />
       <OrderBook params={props.params} />

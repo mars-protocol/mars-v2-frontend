@@ -3,7 +3,7 @@
 import classNames from 'classnames'
 import { useState } from 'react'
 
-import Overlay from 'components/Overlay/Overlay'
+import Overlay from 'components/Overlay'
 import Option from 'components/Select/Option'
 import Text from 'components/Text'
 import useToggle from 'hooks/useToggle'

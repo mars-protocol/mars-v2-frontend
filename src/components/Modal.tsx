@@ -47,6 +47,7 @@ export const Modal = (props: Props) => {
       onCancel={onClose}
       className={classNames(
         'w-[895px] border-none bg-transparent text-white',
+        'focus-visible:outline-none',
         'backdrop:bg-black/50 backdrop:backdrop-blur-sm',
       )}
     >
