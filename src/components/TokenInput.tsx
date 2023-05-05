@@ -45,22 +45,26 @@ export default function TokenInput(props: SingleProps | SelectProps) {
     amount: '0',
   })
 
+  const selectableBalances = props.currentAccount ? props.currentAccount.deposits : balances
+
   const selectedAssetDenom = props.asset ? props.asset.denom : baseCurrency.denom
 
   const updateAsset = useCallback(
     (coinDenom: string) => {
       const newAsset = ASSETS.find((asset) => asset.denom === coinDenom) ?? baseCurrency
-      const newCoin = balances?.find((coin) => coin.denom === coinDenom)
+      const newCoin = selectableBalances?.find((coin) => coin.denom === coinDenom)
       setAsset(newAsset)
       setCoin(newCoin ?? { denom: coinDenom, amount: '0' })
     },
-    [balances, baseCurrency],
+    [selectableBalances, baseCurrency],
   )
 
   function setDefaultAsset() {
-    if (!balances || balances?.length === 0) return setAsset(baseCurrency)
-    if (balances.length === 1)
-      return setAsset(ASSETS.find((asset) => asset.denom === balances[0].denom) ?? baseCurrency)
+    if (!selectableBalances || selectableBalances?.length === 0) return setAsset(baseCurrency)
+    if (selectableBalances.length === 1)
+      return setAsset(
+        ASSETS.find((asset) => asset.denom === selectableBalances[0].denom) ?? baseCurrency,
+      )
     return setAsset(ASSETS.find((asset) => asset.denom === selectedAssetDenom) ?? baseCurrency)
   }
 
@@ -87,9 +91,9 @@ export default function TokenInput(props: SingleProps | SelectProps) {
       )}
     >
       <div className='relative isolate z-40 box-content flex h-11 w-full rounded-sm border border-white/20 bg-white/5'>
-        {props.hasSelect && balances ? (
+        {props.hasSelect && selectableBalances ? (
           <Select
-            options={balances}
+            options={selectableBalances}
             defaultValue={coin.denom}
             onChange={(value) => updateAsset(value)}
             title={props.currentAccount ? `Account ${props.currentAccount.id}` : 'Your Wallet'}

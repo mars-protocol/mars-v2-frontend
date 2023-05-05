@@ -117,6 +117,7 @@ export default function AccountList(props: Props) {
                       onClick={() => {
                         useStore.setState({ withdrawModal: true })
                       }}
+                      disabled={positionBalance <= 0}
                     />
                     <Button
                       className='w-full'
@@ -145,7 +146,7 @@ export default function AccountList(props: Props) {
                 </>
               ) : (
                 <div className='w-full p-4'>
-                  <AccountStats balance={positionBalance} risk={60} health={0.5} />
+                  <AccountStats balance={positionBalance} risk={60} health={50} />
                 </div>
               )}
             </Card>

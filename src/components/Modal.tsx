@@ -27,7 +27,6 @@ export const Modal = (props: Props) => {
   }
 
   useEffect(() => {
-    ref.current?.removeAttribute('open')
     if (props.open) {
       ref.current?.showModal()
     } else {
@@ -38,6 +37,7 @@ export const Modal = (props: Props) => {
   // close dialog on unmount
   useEffect(() => {
     const dialog = ref.current
+    dialog?.removeAttribute('open')
     return () => dialog.close()
   }, [])
 

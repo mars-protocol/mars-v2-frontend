@@ -25,6 +25,7 @@ export interface BroadcastSlice {
   createAccount: (options: { fee: StdFee }) => Promise<string | null>
   deleteAccount: (options: { fee: StdFee; accountId: string }) => Promise<boolean>
   deposit: (options: { fee: StdFee; accountId: string; coin: Coin }) => Promise<boolean>
+  withdraw: (options: { fee: StdFee; accountId: string; coin: Coin }) => Promise<boolean>
   repay: (options: {
     fee: StdFee
     accountId: string
@@ -127,6 +128,37 @@ export function createBroadcastSlice(set: SetState<Store>, get: GetState<Store>)
         set({
           toast: {
             message: `Deposited ${formatAmountWithSymbol(options.coin)} to Account ${
+              options.accountId
+            }`,
+          },
+        })
+      } else {
+        set({
+          toast: {
+            message: response.error ?? `Transaction failed: ${response.error}`,
+            isError: true,
+          },
+        })
+      }
+      return !!response.result
+    },
+    withdraw: async (options: { fee: StdFee; accountId: string; coin: Coin }) => {
+      const msg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: [
+            {
+              withdraw: options.coin,
+            },
+          ],
+        },
+      }
+
+      const response = await get().executeMsg({ msg, fee: options.fee })
+      if (response.result) {
+        set({
+          toast: {
+            message: `Withdrew ${formatAmountWithSymbol(options.coin)} from Account ${
               options.accountId
             }`,
           },

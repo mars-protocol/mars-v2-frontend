@@ -9,24 +9,41 @@ import { Modal } from 'components/Modal'
 import Text from 'components/Text'
 import TokenInputWithSlider from 'components/TokenInputWithSlider'
 import useCurrentAccount from 'hooks/useCurrentAccount'
+import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { getAmount } from 'utils/accounts'
+import { hardcodedFee } from 'utils/contants'
 import { BN } from 'utils/helpers'
 
 export default function WithdrawModal() {
   const currentAccount = useCurrentAccount()
   const modal = useStore((s) => s.withdrawModal)
   const baseCurrency = useStore((s) => s.baseCurrency)
+  const withdraw = useStore((s) => s.withdraw)
   const [amount, setAmount] = useState(BN(0))
   const [currentAsset, setCurrentAsset] = useState(baseCurrency)
+  const [isWithdrawing, setIsWithdrawing] = useToggle()
 
   function onClose() {
     useStore.setState({ withdrawModal: false })
     setAmount(BN(0))
   }
 
-  function onWithdrawClick() {
-    console.log('Withdraw')
+  async function onWithdraw() {
+    if (!currentAccount) return
+    setIsWithdrawing(true)
+    const result = await withdraw({
+      fee: hardcodedFee,
+      accountId: currentAccount.id,
+      coin: {
+        denom: currentAsset.denom,
+        amount: amount.toString(),
+      },
+    })
+    setIsWithdrawing(false)
+    if (result) {
+      useStore.setState({ withdrawModal: false })
+    }
   }
 
   const maxWithdraw = currentAccount
@@ -45,7 +62,7 @@ export default function WithdrawModal() {
         )
       }
       headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
-      contentClassName='flex flex-col'
+      contentClassName='flex flex-col min-h-[400px]'
     >
       {modal && (
         <div className='flex flex-grow items-start gap-6 p-6'>
@@ -58,6 +75,9 @@ export default function WithdrawModal() {
               onChange={(val) => {
                 setAmount(val)
               }}
+              onChangeAsset={(asset) => {
+                setCurrentAsset(asset)
+              }}
               amount={amount}
               max={maxWithdraw}
               hasSelect
@@ -65,7 +85,8 @@ export default function WithdrawModal() {
             />
             <Divider />
             <Button
-              onClick={onWithdrawClick}
+              onClick={onWithdraw}
+              showProgressIndicator={isWithdrawing}
               className='w-full'
               text='Withdraw'
               rightIcon={<ArrowRight />}
