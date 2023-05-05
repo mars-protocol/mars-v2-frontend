@@ -1,6 +1,7 @@
 import Accordion from 'components/Accordion'
+import AccountHealth from 'components/Account/AccountHealth'
 import Card from 'components/Card'
-import { ArrowChartLineUp, Shield } from 'components/Icons'
+import { ArrowChartLineUp } from 'components/Icons'
 import Text from 'components/Text'
 import useParams from 'utils/route'
 
@@ -20,14 +21,7 @@ export default function AccountSummary() {
           <Text size='sm'>4.5x</Text>
         </Item>
         <Item>
-          <span className='h-3 w-3'>
-            <Shield />
-          </span>
-        </Item>
-        <Item style={{ border: 'none' }}>
-          <span className='h-3 w-3'>
-            <Shield />
-          </span>
+          <AccountHealth health={80} />
         </Item>
       </Card>
       <Accordion

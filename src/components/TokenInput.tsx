@@ -19,6 +19,7 @@ interface Props {
   onChange: (amount: BigNumber) => void
   className?: string
   disabled?: boolean
+  currentAccount?: Account
 }
 
 interface SingleProps extends Props {
@@ -91,8 +92,8 @@ export default function TokenInput(props: SingleProps | SelectProps) {
             options={balances}
             defaultValue={coin.denom}
             onChange={(value) => updateAsset(value)}
-            title='Your Wallet'
-            className='border-r  border-white/20 bg-white/5'
+            title={props.currentAccount ? `Account ${props.currentAccount.id}` : 'Your Wallet'}
+            className='border-r border-white/20 bg-white/5'
           />
         ) : (
           <div className='flex min-w-fit items-center gap-2 border-r border-white/20 bg-white/5 p-3'>

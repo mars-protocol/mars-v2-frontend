@@ -26,7 +26,7 @@ export default function WithdrawModal() {
   }
 
   function onWithdrawClick() {
-    console.log('Withdreaw')
+    console.log('Withdraw')
   }
 
   const maxWithdraw = currentAccount
@@ -61,6 +61,7 @@ export default function WithdrawModal() {
               amount={amount}
               max={maxWithdraw}
               hasSelect
+              currentAccount={currentAccount}
             />
             <Divider />
             <Button
