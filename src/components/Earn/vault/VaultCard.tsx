@@ -4,10 +4,10 @@ import { Button } from 'components/Button'
 import VaultLogo from 'components/Earn/vault/VaultLogo'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
+import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
 import { getAssetByDenom } from 'utils/assets'
 import { formatPercent, formatValue } from 'utils/formatters'
-import useParams from 'utils/route'
 
 interface Props {
   vault: Vault
@@ -18,9 +18,7 @@ interface Props {
 }
 
 export default function VaultCard(props: Props) {
-  const params = useParams()
-  const accounts = useStore((s) => s.accounts)
-  const currentAccount = accounts?.find((account) => account.id === params.accountId)
+  const currentAccount = useCurrentAccount()
 
   function openVaultModal() {
     useStore.setState({ vaultModal: { vault: props.vault } })

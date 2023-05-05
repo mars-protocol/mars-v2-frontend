@@ -40,7 +40,7 @@ export default function TokenInputWithSlider(props: SingleProps | SelectProps) {
       setAmount(newAmount)
       props.onChange(newAmount)
     },
-    [props],
+    [props, max],
   )
 
   const onInputChange = useCallback(
@@ -49,7 +49,7 @@ export default function TokenInputWithSlider(props: SingleProps | SelectProps) {
       setPercentage(BN(newAmount).div(max).times(100).toNumber())
       props.onChange(newAmount)
     },
-    [props],
+    [props, max],
   )
 
   const onAssetChange = useCallback(

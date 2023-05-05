@@ -15,20 +15,18 @@ import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import TokenInput from 'components/TokenInput'
 import { ASSETS } from 'constants/assets'
+import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
 import { getAmount } from 'utils/accounts'
 import { formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import useParams from 'utils/route'
 
 export default function VaultModal() {
   const modal = useStore((s) => s.vaultModal)
-  const accounts = useStore((s) => s.accounts)
-  const params = useParams()
   const [amount, setAmount] = useState(BN(0))
   const [percentage, setPercentage] = useState(0)
   const [isCustomAmount, setIsCustomAmount] = useState(false)
-  const currentAccount = accounts?.find((account) => account.id === params.accountId)
+  const currentAccount = useCurrentAccount()
 
   function handleSwitch() {
     setIsCustomAmount(() => !isCustomAmount)
