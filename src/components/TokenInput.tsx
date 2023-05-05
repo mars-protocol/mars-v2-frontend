@@ -45,7 +45,7 @@ export default function TokenInput(props: SingleProps | SelectProps) {
     amount: '0',
   })
 
-  const selectableBalances = props.currentAccount ? props.currentAccount.deposits : balances
+  const selectableBalances = props.currentAccount?.deposits ?? balances
 
   const selectedAssetDenom = props.asset ? props.asset.denom : baseCurrency.denom
 

@@ -6,7 +6,7 @@ import Background from 'components/Background'
 import FetchPrices from 'components/FetchPrices'
 import Footer from 'components/Footer'
 import DesktopHeader from 'components/Header/DesktopHeader'
-import { Modals } from 'components/Modals/Modals'
+import ModalsContainer from 'components/Modals/ModalsContainer'
 import Toaster from 'components/Toaster'
 import 'react-toastify/dist/ReactToastify.min.css'
 import 'styles/globals.css'
@@ -34,7 +34,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
           <AccountDetails />
         </main>
         <Footer />
-        <Modals />
+        <ModalsContainer />
         <Toaster />
       </body>
     </html>
