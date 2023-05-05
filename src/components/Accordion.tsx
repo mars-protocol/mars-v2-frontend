@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import Card from 'components/Card'
 import { Plus, Subtract } from 'components/Icons'
 import Text from 'components/Text'
@@ -14,9 +15,15 @@ interface Item {
 export default function Accordion(props: Props) {
   return (
     <Card>
-      {props.items.map((item, index) => (
+      {props.items.map((item) => (
         <details key={item.title} className='group border-b-white/10 [&:not(:last-child)]:border-b'>
-          <summary className='mb-0 flex cursor-pointer items-center justify-between border-t border-white/10 bg-white/10 p-4 text-white group-[&:first-child]:border-t-0 group-[[open]]:border-b [&::marker]:hidden [&::marker]:content-[""]'>
+          <summary
+            className={classNames(
+              'mb-0 flex cursor-pointer items-center justify-between border-t border-white/10 bg-white/10 p-4 text-white',
+              'group-[&:first-child]:border-t-0 group-[[open]]:border-b',
+              '[&::marker]:hidden [&::marker]:content-[""]',
+            )}
+          >
             <Text>{item.title}</Text>
             <div className='block h-[14px] w-[14px] group-[[open]]:hidden'>
               <Plus />
@@ -25,7 +32,9 @@ export default function Accordion(props: Props) {
               <Subtract />
             </div>
           </summary>
-          <div className='bg-white/5 p-4'>{item.content}</div>
+          <div className='bg-white/5 px-4 py-0 transition-[padding] group-[[open]]:py-4'>
+            {item.content}
+          </div>
         </details>
       ))}
     </Card>

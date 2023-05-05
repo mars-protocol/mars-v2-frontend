@@ -11,6 +11,7 @@ interface Props {
   onChange: (amount: BigNumber) => void
   className?: string
   disabled?: boolean
+  currentAccount?: Account
 }
 
 interface SingleProps extends Props {
@@ -73,7 +74,8 @@ export default function TokenInputWithSlider(props: SingleProps | SelectProps) {
         max={max}
         className='mb-4'
         disabled={props.disabled}
-        hasSelect
+        hasSelect={props.hasSelect}
+        currentAccount={props.currentAccount}
       />
       <Slider
         value={percentage}

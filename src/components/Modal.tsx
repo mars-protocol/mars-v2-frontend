@@ -27,7 +27,6 @@ export const Modal = (props: Props) => {
   }
 
   useEffect(() => {
-    ref.current?.removeAttribute('open')
     if (props.open) {
       ref.current?.showModal()
     } else {
@@ -38,6 +37,7 @@ export const Modal = (props: Props) => {
   // close dialog on unmount
   useEffect(() => {
     const dialog = ref.current
+    dialog?.removeAttribute('open')
     return () => dialog.close()
   }, [])
 
@@ -47,6 +47,7 @@ export const Modal = (props: Props) => {
       onCancel={onClose}
       className={classNames(
         'w-[895px] border-none bg-transparent text-white',
+        'focus-visible:outline-none',
         'backdrop:bg-black/50 backdrop:backdrop-blur-sm',
       )}
     >
