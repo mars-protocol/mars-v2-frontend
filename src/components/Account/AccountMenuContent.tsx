@@ -54,8 +54,6 @@ export default function AccountMenuContent(props: Props) {
 
   if (!params.address) return null
 
-  useStore.setState({ accounts: props.accounts })
-
   return (
     <div className='relative'>
       <Button
