@@ -14,8 +14,8 @@ export const VAULTS: VaultMetaData[] = IS_TESTNET
         provider: 'Apollo',
         denoms: {
           primary: 'uosmo',
-          secondary: 'ibc/6F34E1BD664C36CE49ACC28E60D62559A5F96C4F9A6CCE4FC5A67B2852E24CFE',
-          lp: 'gamm/pool/1',
+          secondary: 'B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4',
+          lp: 'gamm/pool/6',
         },
         symbols: {
           primary: 'OSMO',
@@ -33,8 +33,8 @@ export const VAULTS: VaultMetaData[] = IS_TESTNET
         provider: 'Apollo',
         denoms: {
           primary: 'uosmo',
-          secondary: 'ibc/6F34E1BD664C36CE49ACC28E60D62559A5F96C4F9A6CCE4FC5A67B2852E24CFE',
-          lp: 'gamm/pool/1',
+          secondary: 'B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4',
+          lp: 'gamm/pool/6',
         },
         symbols: {
           primary: 'OSMO',
@@ -52,8 +52,8 @@ export const VAULTS: VaultMetaData[] = IS_TESTNET
         provider: 'Apollo',
         denoms: {
           primary: 'uosmo',
-          secondary: 'ibc/6F34E1BD664C36CE49ACC28E60D62559A5F96C4F9A6CCE4FC5A67B2852E24CFE',
-          lp: 'gamm/pool/1',
+          secondary: 'B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4',
+          lp: 'gamm/pool/6',
         },
         symbols: {
           primary: 'OSMO',

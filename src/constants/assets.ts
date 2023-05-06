@@ -98,4 +98,19 @@ export const ASSETS: Asset[] = [
     isMarket: true,
     isDisplayCurrency: true,
   },
+  {
+    symbol: 'USDC.n',
+    name: 'Noble USDC',
+    id: 'nUSDC',
+    denom: IS_TESTNET
+      ? 'ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4'
+      : 'ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4',
+    color: '#478edc',
+    logo: '/tokens/nusdc.svg',
+    decimals: 6,
+    hasOraclePrice: IS_TESTNET,
+    isEnabled: IS_TESTNET,
+    isMarket: IS_TESTNET,
+    isDisplayCurrency: IS_TESTNET,
+  },
 ]
