@@ -18,7 +18,7 @@ interface Props {
   onClose: () => void
 }
 
-export const Modal = (props: Props) => {
+export default function Modal(props: Props) {
   const ref: any = useRef(null)
 
   function onClose() {
