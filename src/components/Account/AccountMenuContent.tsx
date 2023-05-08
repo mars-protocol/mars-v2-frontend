@@ -2,7 +2,7 @@
 
 import classNames from 'classnames'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import AccountList from 'components/Account/AccountList'
 import CreateAccount from 'components/Account/CreateAccount'
@@ -53,6 +53,10 @@ export default function AccountMenuContent(props: Props) {
   }
 
   if (!params.address) return null
+
+  useEffect(() => {
+    useStore.setState({ accounts: props.accounts })
+  }, [props.accounts])
 
   return (
     <div className='relative'>
@@ -105,7 +109,7 @@ export default function AccountMenuContent(props: Props) {
               )}
             >
               {isAccountSelected && isLoadingAccount && (
-                <div className='flex h-full w-full items-center justify-center p-4'>
+                <div className='flex items-center justify-center w-full h-full p-4'>
                   <CircularProgress size={40} />
                 </div>
               )}

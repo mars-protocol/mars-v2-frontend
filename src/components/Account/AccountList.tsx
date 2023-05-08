@@ -66,7 +66,7 @@ export default function AccountList(props: Props) {
   if (!props.accounts?.length) return null
 
   return (
-    <div className='flex w-full flex-wrap p-4'>
+    <div className='flex flex-wrap w-full p-4'>
       {props.accounts.map((account) => {
         const positionBalance = calculateAccountBalance(account, prices)
         const isActive = selectedAccount === account.id
@@ -98,7 +98,7 @@ export default function AccountList(props: Props) {
             >
               {isActive ? (
                 <>
-                  <div className='w-full border border-transparent border-b-white/20 p-4'>
+                  <div className='w-full p-4 border border-transparent border-b-white/20'>
                     <AccountStats balance={selectedAccountBalance} risk={75} health={85} />
                   </div>
                   <div className='grid grid-flow-row grid-cols-2 gap-4 p-4'>
@@ -107,7 +107,9 @@ export default function AccountList(props: Props) {
                       text='Fund'
                       color='tertiary'
                       leftIcon={<ArrowUpLine />}
-                      onClick={() => props.setShowFundAccount(true)}
+                      onClick={() => {
+                        useStore.setState({ fundAndWithdrawModal: 'fund' })
+                      }}
                     />
                     <Button
                       className='w-full'
@@ -115,7 +117,7 @@ export default function AccountList(props: Props) {
                       leftIcon={<ArrowDownLine />}
                       text='Withdraw'
                       onClick={() => {
-                        useStore.setState({ withdrawModal: true })
+                        useStore.setState({ fundAndWithdrawModal: 'withdraw' })
                       }}
                       disabled={positionBalance <= 0}
                     />
@@ -133,7 +135,7 @@ export default function AccountList(props: Props) {
                       text='Transfer'
                       onClick={() => {}}
                     />
-                    <div className='col-span-2 border border-transparent border-t-white/10 pt-4'>
+                    <div className='col-span-2 pt-4 border border-transparent border-t-white/10'>
                       <SwitchWithLabel
                         name='isLending'
                         label='Lend assets to earn yield'

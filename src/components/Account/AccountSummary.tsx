@@ -15,7 +15,7 @@ export default function AccountSummary() {
           <Text size='sm'>$90,000</Text>
         </Item>
         <Item>
-          <span className='flex h-4 w-4 items-center'>
+          <span className='flex items-center w-4 h-4'>
             <ArrowChartLineUp />
           </span>
           <Text size='sm'>4.5x</Text>
@@ -27,7 +27,6 @@ export default function AccountSummary() {
       <Accordion
         items={[
           { title: `Subaccount ${params.accountId} Composition`, content: <p>My content</p> },
-          { title: 'Risk Score: 60/100', content: <p>My content</p> },
           { title: 'Balances', content: <p>My content</p> },
         ]}
       />
@@ -38,7 +37,7 @@ export default function AccountSummary() {
 function Item(props: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className='flex flex-1 items-center justify-center gap-1 border-r border-r-white/10 px-2 py-2'
+      className='flex items-center justify-center flex-1 gap-1 px-2 py-2 border-r border-r-white/10'
       {...props}
     >
       {props.children}

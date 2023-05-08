@@ -2,8 +2,7 @@ import { usePathname } from 'next/navigation'
 
 export default function useParams() {
   const pathname = usePathname()
-
-  return getParamsFromUrl(pathname || '')
+  return getParamsFromUrl(pathname ?? '')
 }
 
 export function getRouteParams(url: string | null): PageParams {
