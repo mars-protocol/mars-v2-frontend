@@ -15,6 +15,7 @@ import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { calculateAccountBalance } from 'utils/accounts'
 import { hardcodedFee } from 'utils/contants'
+import { BN } from 'utils/helpers'
 import useParams, { getRoute } from 'utils/route'
 
 interface Props {
@@ -41,7 +42,7 @@ export default function AccountList(props: Props) {
   const selectedAccountDetails = props.accounts.find((account) => account.id === selectedAccount)
   const selectedAccountBalance = selectedAccountDetails
     ? calculateAccountBalance(selectedAccountDetails, prices)
-    : 0
+    : BN(0)
 
   async function deleteAccountHandler() {
     if (!accountSelected) return
@@ -66,7 +67,7 @@ export default function AccountList(props: Props) {
   if (!props.accounts?.length) return null
 
   return (
-    <div className='flex flex-wrap w-full p-4'>
+    <div className='flex w-full flex-wrap p-4'>
       {props.accounts.map((account) => {
         const positionBalance = calculateAccountBalance(account, prices)
         const isActive = selectedAccount === account.id
@@ -98,7 +99,7 @@ export default function AccountList(props: Props) {
             >
               {isActive ? (
                 <>
-                  <div className='w-full p-4 border border-transparent border-b-white/20'>
+                  <div className='w-full border border-transparent border-b-white/20 p-4'>
                     <AccountStats balance={selectedAccountBalance} risk={75} health={85} />
                   </div>
                   <div className='grid grid-flow-row grid-cols-2 gap-4 p-4'>
@@ -119,7 +120,7 @@ export default function AccountList(props: Props) {
                       onClick={() => {
                         useStore.setState({ fundAndWithdrawModal: 'withdraw' })
                       }}
-                      disabled={positionBalance <= 0}
+                      disabled={positionBalance.isLessThanOrEqualTo(0)}
                     />
                     <Button
                       className='w-full'
@@ -135,7 +136,7 @@ export default function AccountList(props: Props) {
                       text='Transfer'
                       onClick={() => {}}
                     />
-                    <div className='col-span-2 pt-4 border border-transparent border-t-white/10'>
+                    <div className='col-span-2 border border-transparent border-t-white/10 pt-4'>
                       <SwitchWithLabel
                         name='isLending'
                         label='Lend assets to earn yield'

@@ -1,3 +1,5 @@
+'use client'
+
 import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -40,6 +42,7 @@ export default function TokenInputWithSlider(props: SingleProps | SelectProps) {
       const newAmount = BN(percentage).div(100).times(max)
       setPercentage(percentage)
       setAmount(newAmount)
+      props.onChange(newAmount)
     },
     [props, max],
   )
@@ -65,8 +68,13 @@ export default function TokenInputWithSlider(props: SingleProps | SelectProps) {
   )
 
   useEffect(() => {
+    if (props.max?.isEqualTo(max)) return
     setMax(props.max ? props.max : BN(0))
-  }, [props.max])
+    setPercentage(0)
+    setAmount(BN(0))
+    setAsset(props.asset ? props.asset : ASSETS[0])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.max, props.asset])
 
   return (
     <div className={props.className}>

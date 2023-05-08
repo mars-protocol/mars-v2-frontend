@@ -1,4 +1,6 @@
-import { useState } from 'react'
+'use client'
+
+import { useEffect, useState } from 'react'
 
 import AccountSummary from 'components/Account/AccountSummary'
 import { Button } from 'components/Button'
@@ -23,11 +25,19 @@ export default function FundAndWithdrawModal() {
   const deposit = useStore((s) => s.deposit)
   const [amount, setAmount] = useState(BN(0))
   const [currentAsset, setCurrentAsset] = useState(baseCurrency)
+  const [change, setChange] = useState<AccountChange | undefined>()
   const [isConfirming, setIsConfirming] = useToggle()
   const balances = useStore((s) => s.balances)
+  const isFunding = modal === 'fund'
+
+  function resetState() {
+    setCurrentAsset(baseCurrency)
+    setAmount(BN(0))
+    setChange(undefined)
+  }
 
   function onClose() {
-    setAmount(BN(0))
+    resetState()
     useStore.setState({ fundAndWithdrawModal: null })
   }
 
@@ -35,7 +45,7 @@ export default function FundAndWithdrawModal() {
     if (!currentAccount) return
     setIsConfirming(true)
     let result
-    if (modal === 'fund') {
+    if (isFunding) {
       result = await await deposit({
         fee: hardcodedFee,
         accountId: currentAccount.id,
@@ -57,18 +67,27 @@ export default function FundAndWithdrawModal() {
 
     setIsConfirming(false)
     if (result) {
-      setCurrentAsset(baseCurrency)
-      setAmount(BN(0))
+      resetState()
       useStore.setState({ fundAndWithdrawModal: null })
     }
   }
-  const isFunding = modal === 'fund'
 
   const max = isFunding
     ? getAmount(currentAsset.denom, balances ?? [])
     : currentAccount
     ? getAmount(currentAsset.denom, currentAccount.deposits)
     : BN(0)
+
+  useEffect(() => {
+    setChange({
+      deposits: [
+        {
+          amount: isFunding ? BN(0).plus(amount).toString() : BN(0).minus(amount).toString(),
+          denom: currentAsset.denom,
+        },
+      ],
+    })
+  }, [amount, currentAsset, currentAccount, isFunding])
 
   return (
     <Modal
@@ -86,9 +105,9 @@ export default function FundAndWithdrawModal() {
       headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col min-h-[400px]'
     >
-      <div className='flex items-start flex-grow gap-6 p-6'>
+      <div className='flex flex-grow items-start gap-6 p-6'>
         <Card
-          className='w-full p-4 bg-white/5'
+          className='flex flex-grow bg-white/5 p-4'
           contentClassName='gap-6 flex flex-col justify-between h-full'
         >
           <TokenInputWithSlider
@@ -114,7 +133,7 @@ export default function FundAndWithdrawModal() {
             rightIcon={<ArrowRight />}
           />
         </Card>
-        <AccountSummary />
+        <AccountSummary account={currentAccount} change={change} />
       </div>
     </Modal>
   )

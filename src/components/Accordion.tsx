@@ -11,13 +11,18 @@ interface Props {
 interface Item {
   title: string
   content: React.ReactNode
+  open?: boolean
 }
 
 export default function Accordion(props: Props) {
   return (
-    <Card>
+    <Card className='w-full'>
       {props.items.map((item) => (
-        <details key={item.title} className='group border-b-white/10 [&:not(:last-child)]:border-b'>
+        <details
+          key={item.title}
+          open={item.open}
+          className='group border-b-white/10 [&:not(:last-child)]:border-b'
+        >
           <summary
             className={classNames(
               'mb-0 flex cursor-pointer items-center justify-between border-t border-white/10 bg-white/10 p-4 text-white',

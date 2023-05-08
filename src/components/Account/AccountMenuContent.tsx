@@ -52,11 +52,11 @@ export default function AccountMenuContent(props: Props) {
     router.push(`/wallets/${params.address}/accounts/${accountId}`)
   }
 
-  if (!params.address) return null
-
   useEffect(() => {
     useStore.setState({ accounts: props.accounts })
   }, [props.accounts])
+
+  if (!params.address) return null
 
   return (
     <div className='relative'>
@@ -109,7 +109,7 @@ export default function AccountMenuContent(props: Props) {
               )}
             >
               {isAccountSelected && isLoadingAccount && (
-                <div className='flex items-center justify-center w-full h-full p-4'>
+                <div className='flex h-full w-full items-center justify-center p-4'>
                   <CircularProgress size={40} />
                 </div>
               )}

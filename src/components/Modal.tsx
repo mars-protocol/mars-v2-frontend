@@ -53,7 +53,7 @@ export default function Modal(props: Props) {
     >
       <Card
         className={classNames(
-          'relative w-full max-w-full bg-white/5 backdrop-blur-3xl',
+          'relative flex max-w-full flex-grow bg-white/5 backdrop-blur-3xl',
           props.className,
         )}
       >
