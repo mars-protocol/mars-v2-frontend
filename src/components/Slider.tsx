@@ -73,6 +73,10 @@ export default function Slider(props: Props) {
     setShowTooltip(false)
   }
 
+  // draggable workaround - to solve node compatibility issues
+  // TODO: find a replacement for react-draggable
+  const DraggableElement: any = Draggable
+
   return (
     <div
       ref={ref}
@@ -90,7 +94,7 @@ export default function Slider(props: Props) {
         onMouseDown={handleShowTooltip}
         className='absolute z-2 w-full cursor-pointer appearance-none bg-transparent [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:appearance-none'
       />
-      <div className='absolute flex  w-full items-center gap-1'>
+      <div className='absolute flex w-full items-center gap-1'>
         <Mark onClick={props.onChange} value={0} sliderValue={props.value} />
         <Track maxValue={23} sliderValue={props.value} />
         <Mark onClick={props.onChange} value={25} sliderValue={props.value} />
@@ -102,7 +106,7 @@ export default function Slider(props: Props) {
         <Mark onClick={props.onChange} value={100} sliderValue={props.value} />
       </div>
       <div onMouseEnter={handleShowTooltip} onMouseLeave={handleHideTooltip}>
-        <Draggable
+        <DraggableElement
           nodeRef={nodeRef}
           axis='x'
           grid={[sliderRect.width / 100, 0]}
@@ -125,7 +129,7 @@ export default function Slider(props: Props) {
               </div>
             )}
           </div>
-        </Draggable>
+        </DraggableElement>
       </div>
     </div>
   )
