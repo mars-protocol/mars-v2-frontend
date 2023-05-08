@@ -1,4 +1,4 @@
-import create, { GetState, SetState, StoreApi, UseBoundStore } from 'zustand'
+import { create, GetState, SetState, StoreApi, UseBoundStore } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
 import createBroadcastSlice from 'store/slices/broadcast'
@@ -17,7 +17,7 @@ const store = (set: SetState<any>, get: GetState<any>) => ({
 
 let useStore: UseBoundStore<StoreApi<Store>>
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV === 'development') {
   useStore = create(devtools(store))
 } else {
   useStore = create<Store>(store)

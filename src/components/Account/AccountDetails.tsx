@@ -10,7 +10,10 @@ export default function AccountDetails() {
   const hasAccount = isNumber(params.accountId)
 
   return hasAccount ? (
-    <div className='fixed right-4 top-[89px] w-16 rounded-base border border-white/20 bg-white/5 backdrop-blur-sticky'>
+    <div
+      data-testid='account-details'
+      className='fixed right-4 top-[89px] w-16 rounded-base border border-white/20 bg-white/5 backdrop-blur-sticky'
+    >
       <div className='flex w-full flex-wrap justify-center py-4'>
         <Gauge tooltip='Health Factor' value={0.2} icon={<Heart />} />
         <Text size='2xs' className='mb-0.5 mt-1 w-full text-center text-white/50'>

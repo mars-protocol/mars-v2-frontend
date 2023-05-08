@@ -1,0 +1,29 @@
+import { render, screen } from '@testing-library/react'
+
+import * as useParams from 'utils/route'
+import AccountDetails from 'components/Account/AccountDetails'
+
+jest.mock('utils/route')
+const mockedUseParams = useParams.default as jest.Mock
+
+describe('<AccountDetails />', () => {
+  afterAll(() => {
+    mockedUseParams.mockRestore()
+  })
+
+  it('renders account details WHEN accountId specified in the params', () => {
+    mockedUseParams.mockReturnValue({ accountId: 1 })
+    render(<AccountDetails />)
+
+    const container = screen.queryByTestId('account-details')
+    expect(container).toBeInTheDocument()
+  })
+
+  it('does not render WHEN accountId is NOT specified in the params', () => {
+    mockedUseParams.mockReturnValue({ accountId: null })
+    render(<AccountDetails />)
+
+    const container = screen.queryByTestId('account-details')
+    expect(container).not.toBeInTheDocument()
+  })
+})
