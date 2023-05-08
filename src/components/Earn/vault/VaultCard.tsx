@@ -4,6 +4,7 @@ import { Button } from 'components/Button'
 import VaultLogo from 'components/Earn/vault/VaultLogo'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
+import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
 import { getAssetByDenom } from 'utils/assets'
 import { formatPercent, formatValue } from 'utils/formatters'
@@ -17,6 +18,8 @@ interface Props {
 }
 
 export default function VaultCard(props: Props) {
+  const currentAccount = useCurrentAccount()
+
   function openVaultModal() {
     useStore.setState({ vaultModal: { vault: props.vault } })
   }
@@ -42,7 +45,7 @@ export default function VaultCard(props: Props) {
       <div className='mb-6 flex justify-between'>
         <TitleAndSubCell
           className='text-xs'
-          title={props.vault.apy ? formatPercent(props.vault.apy) : '-'}
+          title={props.vault.apy ? formatPercent(props.vault.apy, 2) : '-'}
           sub={'APY'}
         />
         <TitleAndSubCell
@@ -67,8 +70,13 @@ export default function VaultCard(props: Props) {
           sub={'Depo. Cap'}
         />
       </div>
-      <Button color='secondary' onClick={openVaultModal} className='w-full'>
-        Deposit
+      <Button
+        color='secondary'
+        onClick={openVaultModal}
+        className='w-full'
+        disabled={!currentAccount}
+      >
+        {currentAccount ? 'Deposit' : 'Select Account'}
       </Button>
     </div>
   )

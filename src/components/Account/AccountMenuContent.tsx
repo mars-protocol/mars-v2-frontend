@@ -10,7 +10,7 @@ import FundAccount from 'components/Account/FundAccount'
 import { Button } from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
 import { Account, Plus, PlusCircled } from 'components/Icons'
-import Overlay from 'components/Overlay/Overlay'
+import Overlay from 'components/Overlay'
 import Text from 'components/Text'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
@@ -53,8 +53,6 @@ export default function AccountMenuContent(props: Props) {
   }
 
   if (!params.address) return null
-
-  useStore.setState({ accounts: props.accounts })
 
   return (
     <div className='relative'>

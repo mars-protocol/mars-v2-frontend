@@ -1,16 +1,17 @@
 import BigNumber from 'bignumber.js'
 import { useCallback, useState } from 'react'
 
-import { BN } from 'utils/helpers'
 import Slider from 'components/Slider'
 import TokenInput from 'components/TokenInput'
 import { ASSETS } from 'constants/assets'
+import { BN } from 'utils/helpers'
 
 interface Props {
   amount: BigNumber
   onChange: (amount: BigNumber) => void
   className?: string
   disabled?: boolean
+  currentAccount?: Account
 }
 
 interface SingleProps extends Props {
@@ -34,22 +35,22 @@ export default function TokenInputWithSlider(props: SingleProps | SelectProps) {
   const [max, setMax] = useState<BigNumber>(props.max ? props.max : BN(0))
 
   const onSliderChange = useCallback(
-    (percentage: number, liquidityAmount: BigNumber) => {
-      const newAmount = BN(percentage).div(100).times(liquidityAmount)
+    (percentage: number) => {
+      const newAmount = BN(percentage).div(100).times(max)
       setPercentage(percentage)
       setAmount(newAmount)
       props.onChange(newAmount)
     },
-    [props],
+    [props, max],
   )
 
   const onInputChange = useCallback(
-    (newAmount: BigNumber, liquidityAmount: BigNumber) => {
+    (newAmount: BigNumber) => {
       setAmount(newAmount)
-      setPercentage(BN(newAmount).div(liquidityAmount).times(100).toNumber())
+      setPercentage(BN(newAmount).div(max).times(100).toNumber())
       props.onChange(newAmount)
     },
-    [props],
+    [props, max],
   )
 
   const onAssetChange = useCallback(
@@ -67,17 +68,18 @@ export default function TokenInputWithSlider(props: SingleProps | SelectProps) {
     <div className={props.className}>
       <TokenInput
         asset={asset}
-        onChange={(amount) => onInputChange(amount, max)}
+        onChange={(amount) => onInputChange(amount)}
         onChangeAsset={(asset: Asset, max: BigNumber) => onAssetChange(asset, max)}
         amount={amount}
         max={max}
         className='mb-4'
         disabled={props.disabled}
-        hasSelect
+        hasSelect={props.hasSelect}
+        currentAccount={props.currentAccount}
       />
       <Slider
         value={percentage}
-        onChange={(value) => onSliderChange(value, max)}
+        onChange={(value) => onSliderChange(value)}
         disabled={props.disabled}
       />
     </div>

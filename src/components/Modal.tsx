@@ -1,5 +1,7 @@
+'use client'
+
 import classNames from 'classnames'
-import { ReactNode } from 'react'
+import { ReactNode, useEffect, useRef } from 'react'
 
 import { Button } from 'components/Button'
 import Card from 'components/Card'
@@ -13,43 +15,62 @@ interface Props {
   className?: string
   contentClassName?: string
   open: boolean
-  setOpen?: (open: boolean) => void
+  onClose: () => void
 }
 
-export const Modal = (props: Props) => {
-  const onClickAway = () => {
-    if (props.setOpen) props.setOpen(false)
+export default function Modal(props: Props) {
+  const ref: any = useRef(null)
+
+  function onClose() {
+    ref.current?.close()
+    props.onClose()
   }
 
-  return props.open ? (
-    <div className='fixed inset-0 z-40 h-screen w-screen'>
-      <div className='relative flex h-full w-full items-center justify-center'>
-        <Card
-          className={classNames(
-            'relative z-40 w-[895px] max-w-full bg-white/5 backdrop-blur-3xl',
-            props.className,
-          )}
-        >
-          <div className={classNames('flex justify-between', props.headerClassName)}>
-            {props.header}
-            <Button
-              onClick={onClickAway}
-              leftIcon={<Cross />}
-              className='h-8 w-8'
-              iconClassName='h-2 w-2'
-              color='tertiary'
-            />
-          </div>
-          <div className={classNames(props.contentClassName, 'flex-grow')}>
-            {props.children ? props.children : props.content}
-          </div>
-        </Card>
-        <div
-          className='fixed inset-0 z-30 block h-full w-full bg-black/50 backdrop-blur-sm hover:cursor-pointer'
-          onClick={onClickAway}
-          role='button'
-        />
-      </div>
-    </div>
-  ) : null
+  useEffect(() => {
+    if (props.open) {
+      ref.current?.showModal()
+    } else {
+      ref.current?.close()
+    }
+  }, [props.open])
+
+  // close dialog on unmount
+  useEffect(() => {
+    const dialog = ref.current
+    dialog?.removeAttribute('open')
+    return () => dialog.close()
+  }, [])
+
+  return (
+    <dialog
+      ref={ref}
+      onCancel={onClose}
+      className={classNames(
+        'w-[895px] border-none bg-transparent text-white',
+        'focus-visible:outline-none',
+        'backdrop:bg-black/50 backdrop:backdrop-blur-sm',
+      )}
+    >
+      <Card
+        className={classNames(
+          'relative w-full max-w-full bg-white/5 backdrop-blur-3xl',
+          props.className,
+        )}
+      >
+        <div className={classNames('flex justify-between', props.headerClassName)}>
+          {props.header}
+          <Button
+            onClick={onClose}
+            leftIcon={<Cross />}
+            className='h-8 w-8'
+            iconClassName='h-2 w-2'
+            color='tertiary'
+          />
+        </div>
+        <div className={classNames(props.contentClassName, 'flex-grow')}>
+          {props.children ? props.children : props.content}
+        </div>
+      </Card>
+    </dialog>
+  )
 }

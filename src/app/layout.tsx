@@ -6,7 +6,7 @@ import Background from 'components/Background'
 import FetchPrices from 'components/FetchPrices'
 import Footer from 'components/Footer'
 import DesktopHeader from 'components/Header/DesktopHeader'
-import { Modals } from 'components/Modals'
+import ModalsContainer from 'components/Modals/ModalsContainer'
 import Toaster from 'components/Toaster'
 import 'react-toastify/dist/ReactToastify.min.css'
 import 'styles/globals.css'
@@ -28,11 +28,13 @@ export default function RootLayout(props: { children: React.ReactNode }) {
             'lg:mt-[65px] lg:h-[calc(100vh-89px)]',
           )}
         >
-          <div className='flex max-w-content flex-grow flex-col flex-wrap'>{props.children}</div>
+          <div className='flex w-full max-w-content flex-grow flex-wrap content-start'>
+            {props.children}
+          </div>
           <AccountDetails />
         </main>
         <Footer />
-        <Modals />
+        <ModalsContainer />
         <Toaster />
       </body>
     </html>

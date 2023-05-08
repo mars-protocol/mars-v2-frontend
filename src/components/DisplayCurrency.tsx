@@ -1,10 +1,9 @@
 import { Coin } from '@cosmjs/stargate'
-import BigNumber from 'bignumber.js'
 
+import { FormattedNumber } from 'components/FormattedNumber'
 import useStore from 'store'
 import { getMarketAssets } from 'utils/assets'
 import { BN } from 'utils/helpers'
-import { FormattedNumber } from 'components/FormattedNumber'
 
 interface Props {
   coin: Coin
@@ -19,15 +18,14 @@ export default function DisplayCurrency(props: Props) {
   function convertToDisplayAmount(coin: Coin) {
     const price = prices.find((price) => price.denom === coin.denom)
     const asset = getMarketAssets().find((asset) => asset.denom === coin.denom)
-
     const displayPrice = prices.find((price) => price.denom === displayCurrency.denom)
 
     if (!price || !asset || !displayPrice) return '0'
 
     return BN(coin.amount)
+      .shiftedBy(-1 * asset.decimals)
       .times(price.amount)
       .div(displayPrice.amount)
-      .integerValue(BigNumber.ROUND_HALF_DOWN)
       .toNumber()
   }
 
@@ -39,7 +37,6 @@ export default function DisplayCurrency(props: Props) {
         minDecimals: 0,
         maxDecimals: 2,
         abbreviated: true,
-        decimals: displayCurrency.decimals,
         prefix: `${props.isApproximation ? '~ ' : ''}${
           displayCurrency.prefix ? displayCurrency.prefix : ''
         }`,

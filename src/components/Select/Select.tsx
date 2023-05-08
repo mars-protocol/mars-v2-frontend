@@ -3,7 +3,8 @@
 import classNames from 'classnames'
 import { useState } from 'react'
 
-import Overlay from 'components/Overlay/Overlay'
+import { ChevronDown } from 'components/Icons'
+import Overlay from 'components/Overlay'
 import Option from 'components/Select/Option'
 import Text from 'components/Text'
 import useToggle from 'hooks/useToggle'
@@ -34,8 +35,6 @@ export default function Select(props: Props) {
     props.onChange(optionValue)
   }
 
-  console.log(selected)
-
   return (
     <div
       className={classNames(
@@ -47,9 +46,21 @@ export default function Select(props: Props) {
       onClick={() => setShowDropdown(!showDropdown)}
     >
       {selectedOption ? (
-        <Option {...selectedOption} isDisplay />
+        <Option {...selectedOption} isClicked={showDropdown} isDisplay />
       ) : (
-        <Text className='w-full opacity-50 hover:cursor-pointer'>Select</Text>
+        <div
+          className={classNames('flex items-center gap-2 bg-white/10 p-3', 'hover:cursor-pointer')}
+        >
+          <Text className='w-full opacity-50 hover:cursor-pointer'>Select</Text>
+          <span
+            className={classNames(
+              'inline-block w-2.5 transition-transform',
+              showDropdown ? 'rotate-0' : '-rotate-90',
+            )}
+          >
+            <ChevronDown />
+          </span>
+        </div>
       )}
       <Overlay
         show={showDropdown}

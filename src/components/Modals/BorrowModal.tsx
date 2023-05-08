@@ -1,21 +1,31 @@
 import Image from 'next/image'
 import { useState } from 'react'
-import BigNumber from 'bignumber.js'
 
 import AccountSummary from 'components/Account/AccountSummary'
 import { Button } from 'components/Button'
 import Card from 'components/Card'
 import Divider from 'components/Divider'
 import { ArrowRight } from 'components/Icons'
-import { Modal } from 'components/Modal'
+import Modal from 'components/Modal'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import TokenInputWithSlider from 'components/TokenInputWithSlider'
+import { ASSETS } from 'constants/assets'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
 import { formatPercent, formatValue } from 'utils/formatters'
-import useParams from 'utils/route'
 import { BN } from 'utils/helpers'
+import useParams from 'utils/route'
+
+function getDebtAmount(modal: BorrowModal | null) {
+  if (!(modal?.marketData as BorrowAssetActive)?.debt) return '0'
+  return BN((modal?.marketData as BorrowAssetActive).debt).toString()
+}
+
+function getAssetLogo(modal: BorrowModal | null) {
+  if (!modal?.asset) return null
+  return <Image src={modal.asset.logo} alt={modal.asset.symbol} width={24} height={24} />
+}
 
 export default function BorrowModal() {
   const params = useParams()
@@ -25,18 +35,13 @@ export default function BorrowModal() {
   const modal = useStore((s) => s.borrowModal)
   const borrow = useStore((s) => s.borrow)
   const repay = useStore((s) => s.repay)
+  const asset = modal?.asset ?? ASSETS[0]
   const accounts = useStore((s) => s.accounts)?.map((account) => {
     return account.id
   })
 
   function onAccountSelect(accountId: string) {
     setSelectedAccount(accountId)
-  }
-
-  function setOpen(isOpen: boolean) {
-    useStore.setState({ borrowModal: null })
-    setAmount(BN(0))
-    setPercentage(0)
   }
 
   function onConfirmClick() {
@@ -58,36 +63,33 @@ export default function BorrowModal() {
     })
   }
 
-  if (!modal) return null
+  function onClose() {
+    useStore.setState({ borrowModal: null })
+    setAmount(BN(0))
+    setPercentage(0)
+  }
 
-  const liquidityAmount = Number(modal.marketData.liquidity?.amount || 0)
-  const liquidityAmountString: string = formatValue(liquidityAmount, {
+  const liquidityAmountString = formatValue(modal?.marketData?.liquidity?.amount || 0, {
     abbreviated: true,
     decimals: 6,
   })
 
-  const liquidityValue = Number(modal.marketData.liquidity?.value || 0)
-  const liquidityValueString: string = formatValue(liquidityValue, {
+  const liquidityValueString = formatValue(modal?.marketData?.liquidity?.value || 0, {
     abbreviated: true,
     decimals: 6,
   })
 
-  let debtAmount = 0
-
-  if ((modal.marketData as BorrowAssetActive)?.debt)
-    debtAmount = Number((modal.marketData as BorrowAssetActive).debt)
-
-  const max = BN(modal.isRepay ? debtAmount : liquidityAmount)
+  const max = BN(modal?.isRepay ? getDebtAmount(modal) : liquidityAmountString)
 
   return (
     <Modal
-      open={true}
-      setOpen={setOpen}
+      open={!!modal}
+      onClose={onClose}
       header={
         <span className='flex items-center gap-4 px-4'>
-          <Image src={modal?.asset.logo} alt='token' width={24} height={24} />
+          {getAssetLogo(modal)}
           <Text>
-            {modal.isRepay ? 'Repay' : 'Borrow'} {modal.asset.symbol}
+            {modal?.isRepay ? 'Repay' : 'Borrow'} {asset.symbol}
           </Text>
         </span>
       }
@@ -96,12 +98,15 @@ export default function BorrowModal() {
     >
       <div className='flex gap-3 border-b border-b-white/5 px-6 py-4 gradient-header'>
         <TitleAndSubCell
-          title={formatPercent(modal.marketData.borrowRate || '0')}
+          title={formatPercent(modal?.marketData.borrowRate || '0')}
           sub={'Borrow rate'}
         />
         <div className='h-100 w-[1px] bg-white/10'></div>
         <TitleAndSubCell
-          title={formatValue(debtAmount, { abbreviated: true, decimals: modal.asset.decimals })}
+          title={formatValue(getDebtAmount(modal), {
+            abbreviated: true,
+            decimals: asset.decimals,
+          })}
           sub={'Borrowed'}
         />
         <div className='h-100 w-[1px] bg-white/10'></div>
@@ -116,16 +121,15 @@ export default function BorrowModal() {
           contentClassName='gap-6 flex flex-col justify-between h-full'
         >
           <TokenInputWithSlider
-            asset={modal.asset}
+            asset={asset}
             onChange={(val) => {
-              console.log('new value received', val)
               setAmount(val)
             }}
             amount={amount}
             max={max}
           />
           <Divider />
-          <Text size='lg'>{modal.isRepay ? 'Repay for' : 'Borrow to'}</Text>
+          <Text size='lg'>{modal?.isRepay ? 'Repay for' : 'Borrow to'}</Text>
           <select
             name='account'
             value={selectedAccount}
@@ -141,7 +145,7 @@ export default function BorrowModal() {
           <Button
             onClick={onConfirmClick}
             className='w-full'
-            text={modal.isRepay ? 'Repay' : 'Borrow'}
+            text={modal?.isRepay ? 'Repay' : 'Borrow'}
             rightIcon={<ArrowRight />}
           />
         </Card>

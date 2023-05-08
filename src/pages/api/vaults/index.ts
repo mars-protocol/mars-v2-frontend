@@ -1,12 +1,12 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { NextApiRequest, NextApiResponse } from 'next'
 
-import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
+import { ENV, ENV_MISSING_MESSAGE, IS_TESTNET } from 'constants/env'
+import { TESTNET_VAULTS, VAULTS } from 'constants/vaults'
 import {
   ArrayOfVaultInfoResponse,
   VaultBaseForString,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { VAULTS } from 'constants/vaults'
 import { convertAprToApy } from 'utils/parsers'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -45,7 +45,6 @@ async function getVaultConfigs(client: CosmWasmClient, startAfter?: VaultBaseFor
 
   const getBatch = async (startAfter?: VaultBaseForString) => {
     if (!ENV.ADDRESS_CREDIT_MANAGER) return
-
     const batch: ArrayOfVaultInfoResponse = await client.queryContractSmart(
       ENV.ADDRESS_CREDIT_MANAGER,
       {
@@ -78,8 +77,9 @@ async function getVaultConfigs(client: CosmWasmClient, startAfter?: VaultBaseFor
   }
 
   await getBatch()
+  const vaults = IS_TESTNET ? TESTNET_VAULTS : VAULTS
 
-  return VAULTS.map((vaultMetaData) => {
+  return vaults.map((vaultMetaData) => {
     const vaultInfo = data.find((vault) => vault.address === vaultMetaData.address)
 
     return {
@@ -104,7 +104,7 @@ interface NestedApr {
 }
 
 async function getAprs() {
-  const APOLLO_URL = 'https://api.apollo.farm/api/vault_infos/v2/osmo-test-4'
+  const APOLLO_URL = 'https://api.apollo.farm/api/vault_infos/v2/osmo-test-5'
 
   try {
     const response = await fetch(APOLLO_URL)

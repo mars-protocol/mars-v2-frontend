@@ -2,7 +2,7 @@
 
 import { Button } from 'components/Button'
 import { Gear } from 'components/Icons'
-import Overlay from 'components/Overlay/Overlay'
+import Overlay from 'components/Overlay'
 import Switch from 'components/Switch'
 import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'

@@ -99,7 +99,7 @@ export default function AccountList(props: Props) {
               {isActive ? (
                 <>
                   <div className='w-full border border-transparent border-b-white/20 p-4'>
-                    <AccountStats balance={selectedAccountBalance} risk={75} health={0.85} />
+                    <AccountStats balance={selectedAccountBalance} risk={75} health={85} />
                   </div>
                   <div className='grid grid-flow-row grid-cols-2 gap-4 p-4'>
                     <Button
@@ -117,6 +117,7 @@ export default function AccountList(props: Props) {
                       onClick={() => {
                         useStore.setState({ withdrawModal: true })
                       }}
+                      disabled={positionBalance <= 0}
                     />
                     <Button
                       className='w-full'
@@ -145,7 +146,7 @@ export default function AccountList(props: Props) {
                 </>
               ) : (
                 <div className='w-full p-4'>
-                  <AccountStats balance={positionBalance} risk={60} health={0.5} />
+                  <AccountStats balance={positionBalance} risk={60} health={50} />
                 </div>
               )}
             </Card>

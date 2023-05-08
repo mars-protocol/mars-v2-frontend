@@ -9,6 +9,7 @@ interface Props {
   contentClassName?: string
   title?: string | ReactElement
   id?: string
+  onClick?: (e: React.MouseEvent) => void
 }
 
 export default function Card(props: Props) {

@@ -3,7 +3,8 @@ import { Suspense } from 'react'
 import Card from 'components/Card'
 import { VaultTable } from 'components/Earn/vault/VaultTable'
 import Text from 'components/Text'
-import { VAULTS } from 'constants/vaults'
+import { IS_TESTNET } from 'constants/env'
+import { TESTNET_VAULTS, VAULTS } from 'constants/vaults'
 import { getVaults } from 'utils/api'
 
 async function Content() {
@@ -27,9 +28,10 @@ export default function AvailableVaults() {
 
 function Fallback() {
   // TODO: Replace with loading state of vaulttable
+  const vaults = IS_TESTNET ? TESTNET_VAULTS : VAULTS
   return (
     <>
-      {VAULTS.map((vault) => (
+      {vaults.map((vault) => (
         <Text key={vault.address}>{vault.name}</Text>
       ))}
     </>
