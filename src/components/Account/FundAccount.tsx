@@ -1,7 +1,7 @@
 'use client'
 
-import { useCallback, useState } from 'react'
 import BigNumber from 'bignumber.js'
+import { useCallback, useState } from 'react'
 
 import { Button } from 'components/Button'
 import { ArrowRight, Cross } from 'components/Icons'
@@ -11,6 +11,7 @@ import TokenInputWithSlider from 'components/TokenInputWithSlider'
 import { ASSETS } from 'constants/assets'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
+import { getAmount } from 'utils/accounts'
 import { hardcodedFee } from 'utils/contants'
 import { BN } from 'utils/helpers'
 import useParams from 'utils/route'
@@ -23,11 +24,14 @@ interface Props {
 export default function FundAccount(props: Props) {
   const params = useParams()
   const deposit = useStore((s) => s.deposit)
+  const balances = useStore((s) => s.balances)
 
   const [amount, setAmount] = useState(BN(0))
   const [asset, setAsset] = useState<Asset>(ASSETS[0])
   const [isLending, setIsLending] = useToggle()
   const [isFunding, setIsFunding] = useToggle()
+
+  const max = getAmount(asset.denom, balances ?? [])
 
   const onChangeAmount = useCallback((amount: BigNumber) => {
     setAmount(amount)
@@ -85,10 +89,11 @@ export default function FundAccount(props: Props) {
           onChange={onChangeAmount}
           onChangeAsset={onChangeAsset}
           amount={amount}
-          max={BN(1).shiftedBy(ASSETS[0].decimals)}
+          max={max}
           className='mb-4'
           disabled={isFunding}
           hasSelect
+          balances={balances}
         />
         <div className='mb-4 w-full border-b border-white/10' />
         <SwitchWithLabel
