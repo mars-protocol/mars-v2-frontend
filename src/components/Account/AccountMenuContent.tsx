@@ -2,7 +2,7 @@
 
 import classNames from 'classnames'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import AccountList from 'components/Account/AccountList'
 import CreateAccount from 'components/Account/CreateAccount'
@@ -51,6 +51,10 @@ export default function AccountMenuContent(props: Props) {
     if (!accountId) return
     router.push(`/wallets/${params.address}/accounts/${accountId}`)
   }
+
+  useEffect(() => {
+    useStore.setState({ accounts: props.accounts })
+  }, [props.accounts])
 
   if (!params.address) return null
 

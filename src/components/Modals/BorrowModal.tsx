@@ -11,6 +11,7 @@ import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import TokenInputWithSlider from 'components/TokenInputWithSlider'
 import { ASSETS } from 'constants/assets'
+import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
 import { formatPercent, formatValue } from 'utils/formatters'
@@ -29,6 +30,7 @@ function getAssetLogo(modal: BorrowModal | null) {
 
 export default function BorrowModal() {
   const params = useParams()
+  const currentAccount = useCurrentAccount()
   const [percentage, setPercentage] = useState(0)
   const [amount, setAmount] = useState(BN(0))
   const [selectedAccount, setSelectedAccount] = useState(params.accountId)
@@ -149,7 +151,7 @@ export default function BorrowModal() {
             rightIcon={<ArrowRight />}
           />
         </Card>
-        <AccountSummary />
+        <AccountSummary account={currentAccount} />
       </div>
     </Modal>
   )

@@ -31,7 +31,7 @@ async function Content(props: PageProps) {
       {account.map((account: Account, index: number) => (
         <Card
           className='h-fit w-full bg-white/5'
-          title={`Account ${account}`}
+          title={`Account ${account.id}`}
           key={index}
           contentClassName='px-4 py-6'
         >

@@ -3,7 +3,7 @@ interface ModalSlice {
   createAccountModal: boolean
   deleteAccountModal: boolean
   fundAccountModal: boolean
-  withdrawModal: boolean
+  fundAndWithdrawModal: 'fund' | 'withdraw' | null
   vaultModal: {
     vault: Vault
   } | null

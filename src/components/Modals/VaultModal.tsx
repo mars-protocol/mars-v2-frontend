@@ -22,11 +22,11 @@ import { formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
 export default function VaultModal() {
+  const currentAccount = useCurrentAccount()
   const modal = useStore((s) => s.vaultModal)
   const [amount, setAmount] = useState(BN(0))
   const [percentage, setPercentage] = useState(0)
   const [isCustomAmount, setIsCustomAmount] = useState(false)
-  const currentAccount = useCurrentAccount()
 
   function handleSwitch() {
     setIsCustomAmount(() => !isCustomAmount)
@@ -80,7 +80,7 @@ export default function VaultModal() {
       </div>
       <div className='flex flex-grow items-start gap-6 p-6'>
         <Card
-          className='w-full bg-white/5 p-4'
+          className='flex flex-grow bg-white/5 p-4'
           contentClassName='gap-6 flex flex-col justify-between h-full'
         >
           <TokenInput
@@ -112,7 +112,7 @@ export default function VaultModal() {
             rightIcon={<ArrowRight />}
           />
         </Card>
-        <AccountSummary />
+        <AccountSummary account={currentAccount} />
       </div>
     </Modal>
   )

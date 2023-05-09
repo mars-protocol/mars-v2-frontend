@@ -15,6 +15,7 @@ import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { calculateAccountBalance } from 'utils/accounts'
 import { hardcodedFee } from 'utils/contants'
+import { BN } from 'utils/helpers'
 import useParams, { getRoute } from 'utils/route'
 
 interface Props {
@@ -41,7 +42,7 @@ export default function AccountList(props: Props) {
   const selectedAccountDetails = props.accounts.find((account) => account.id === selectedAccount)
   const selectedAccountBalance = selectedAccountDetails
     ? calculateAccountBalance(selectedAccountDetails, prices)
-    : 0
+    : BN(0)
 
   async function deleteAccountHandler() {
     if (!accountSelected) return
@@ -107,7 +108,9 @@ export default function AccountList(props: Props) {
                       text='Fund'
                       color='tertiary'
                       leftIcon={<ArrowUpLine />}
-                      onClick={() => props.setShowFundAccount(true)}
+                      onClick={() => {
+                        useStore.setState({ fundAndWithdrawModal: 'fund' })
+                      }}
                     />
                     <Button
                       className='w-full'
@@ -115,9 +118,9 @@ export default function AccountList(props: Props) {
                       leftIcon={<ArrowDownLine />}
                       text='Withdraw'
                       onClick={() => {
-                        useStore.setState({ withdrawModal: true })
+                        useStore.setState({ fundAndWithdrawModal: 'withdraw' })
                       }}
-                      disabled={positionBalance <= 0}
+                      disabled={positionBalance.isLessThanOrEqualTo(0)}
                     />
                     <Button
                       className='w-full'
