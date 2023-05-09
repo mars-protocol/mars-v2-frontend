@@ -69,12 +69,12 @@ export default function TokenInputWithSlider(props: SingleProps | SelectProps) {
 
   useEffect(() => {
     if (props.max?.isEqualTo(max)) return
-    setMax(props.max ? props.max : BN(0))
+
+    setMax(props.max ?? BN(0))
     setPercentage(0)
     setAmount(BN(0))
-    setAsset(props.asset ? props.asset : ASSETS[0])
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.max, props.asset])
+    setAsset(props.asset ?? ASSETS[0])
+  }, [props.max, props.asset, max])
 
   return (
     <div className={props.className}>

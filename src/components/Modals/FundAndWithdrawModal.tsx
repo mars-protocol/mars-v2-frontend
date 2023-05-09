@@ -46,7 +46,7 @@ export default function FundAndWithdrawModal() {
     setIsConfirming(true)
     let result
     if (isFunding) {
-      result = await await deposit({
+      result = await deposit({
         fee: hardcodedFee,
         accountId: currentAccount.id,
         coin: {
