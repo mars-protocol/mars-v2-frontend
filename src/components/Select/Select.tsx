@@ -39,7 +39,7 @@ export default function Select(props: Props) {
   }
 
   useEffect(() => {
-    if (value === props.defaultValue) return
+    if (props.defaultValue && value === props.defaultValue && selected) return
     setValue(props.defaultValue)
     setSelected(
       props.options.find(

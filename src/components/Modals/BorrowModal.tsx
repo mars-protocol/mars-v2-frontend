@@ -48,6 +48,12 @@ export default function BorrowModal() {
   })
   const isRepay = modal?.isRepay ?? false
 
+  function resetState() {
+    setAmount(BN(0))
+    setPercentage(0)
+    setIsConfirming(false)
+  }
+
   async function onConfirmClick() {
     if (!modal?.asset) return
     setIsConfirming(true)
@@ -69,16 +75,14 @@ export default function BorrowModal() {
 
     setIsConfirming(false)
     if (result) {
-      setAmount(BN(0))
-      setPercentage(0)
+      resetState()
       useStore.setState({ borrowModal: null })
     }
   }
 
   function onClose() {
+    resetState()
     useStore.setState({ borrowModal: null })
-    setAmount(BN(0))
-    setPercentage(0)
   }
 
   const liquidityAmountString = formatValue(modal?.marketData?.liquidity?.amount || 0, {

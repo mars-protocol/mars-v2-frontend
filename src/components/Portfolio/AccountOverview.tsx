@@ -53,11 +53,7 @@ function Fallback() {
         <Card
           key={i}
           className='h-fit w-full bg-white/5'
-          title={
-            <>
-              Account <Loading className='ml-2 h-4 w-8' />
-            </>
-          }
+          title='Account'
           contentClassName='px-4 py-6'
         >
           <Loading className='h-4 w-50' />
