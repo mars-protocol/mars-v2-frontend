@@ -1,7 +1,7 @@
 'use client'
 
 import classNames from 'classnames'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { ChevronDown } from 'components/Icons'
 import Overlay from 'components/Overlay'
@@ -20,9 +20,8 @@ interface Props {
 
 export default function Select(props: Props) {
   const [value, setValue] = useState(props.defaultValue)
-
   const selectedOption = value
-    ? props.options.find((option) => option?.value || option?.denom === value)
+    ? props.options.find((option) => option?.value === value || option?.denom === value)
     : null
 
   const [selected, setSelected] = useState<Option>(selectedOption)
@@ -30,10 +29,24 @@ export default function Select(props: Props) {
   const [showDropdown, setShowDropdown] = useToggle()
   function handleChange(optionValue: string) {
     setValue(optionValue)
-    setSelected(props.options.find((option) => option?.value || option?.denom === optionValue))
+    setSelected(
+      props.options.find(
+        (option) => option?.value === optionValue || option?.denom === optionValue,
+      ),
+    )
     setShowDropdown(false)
     props.onChange(optionValue)
   }
+
+  useEffect(() => {
+    if (value === props.defaultValue) return
+    setValue(props.defaultValue)
+    setSelected(
+      props.options.find(
+        (option) => option?.value === props.defaultValue || option?.denom === props.defaultValue,
+      ),
+    )
+  }, [value, props.defaultValue, props.options])
 
   return (
     <div
@@ -45,8 +58,8 @@ export default function Select(props: Props) {
       role='select'
       onClick={() => setShowDropdown(!showDropdown)}
     >
-      {selectedOption ? (
-        <Option {...selectedOption} isClicked={showDropdown} isDisplay />
+      {selected ? (
+        <Option {...selected} isClicked={showDropdown} isDisplay />
       ) : (
         <div
           className={classNames('flex items-center gap-2 bg-white/10 p-3', 'hover:cursor-pointer')}

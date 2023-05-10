@@ -19,7 +19,7 @@ import { BN } from 'utils/helpers'
 
 export default function FundAndWithdrawModal() {
   const currentAccount = useCurrentAccount()
-  const modal = useStore((s) => s.fundAndWithdrawModal)
+  const modal = useStore<string | null>((s) => s.fundAndWithdrawModal)
   const baseCurrency = useStore((s) => s.baseCurrency)
   const withdraw = useStore((s) => s.withdraw)
   const deposit = useStore((s) => s.deposit)
