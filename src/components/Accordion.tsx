@@ -38,9 +38,7 @@ export default function Accordion(props: Props) {
               <Subtract />
             </div>
           </summary>
-          <div className='bg-white/5 px-4 py-0 transition-[padding] group-[[open]]:py-4'>
-            {item.content}
-          </div>
+          <div className='bg-white/5 transition-[padding]'>{item.content}</div>
         </details>
       ))}
     </Card>
