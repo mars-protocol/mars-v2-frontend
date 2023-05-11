@@ -9,6 +9,7 @@ interface Props {
 }
 
 async function Content(props: Props) {
+  if (props.params.address === undefined) return null
   const accounts = await getAccounts(props.params.address)
   return <AccountMenuContent accounts={accounts} />
 }

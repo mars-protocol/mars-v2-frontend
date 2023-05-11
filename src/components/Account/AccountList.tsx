@@ -13,7 +13,7 @@ import SwitchWithLabel from 'components/SwitchWithLabel'
 import Text from 'components/Text'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
-import { calculateAccountBalance } from 'utils/accounts'
+import { calculateAccountDeposits } from 'utils/accounts'
 import { hardcodedFee } from 'utils/contants'
 import { BN } from 'utils/helpers'
 import useParams, { getRoute } from 'utils/route'
@@ -41,7 +41,7 @@ export default function AccountList(props: Props) {
   const accountSelected = !!selectedAccount && !isNaN(Number(selectedAccount))
   const selectedAccountDetails = props.accounts.find((account) => account.id === selectedAccount)
   const selectedAccountBalance = selectedAccountDetails
-    ? calculateAccountBalance(selectedAccountDetails, prices)
+    ? calculateAccountDeposits(selectedAccountDetails, prices)
     : BN(0)
 
   async function deleteAccountHandler() {
@@ -69,7 +69,7 @@ export default function AccountList(props: Props) {
   return (
     <div className='flex w-full flex-wrap p-4'>
       {props.accounts.map((account) => {
-        const positionBalance = calculateAccountBalance(account, prices)
+        const positionBalance = calculateAccountDeposits(account, prices)
         const isActive = selectedAccount === account.id
         return (
           <div key={account.id} id={`account-${account.id}`} className='w-full pt-4'>
