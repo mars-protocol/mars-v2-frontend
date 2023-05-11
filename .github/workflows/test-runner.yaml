@@ -20,7 +20,7 @@ jobs:
         uses: anuraag016/Jest-Coverage-Diff@master
         with:
           fullCoverageDiff: false
-          runCommand: "yarn jest --coverage --collectCoverage=true --coverageDirectory='./' --coverageReporters='json-summary' --forceExit --detectOpenHandles __tests__/**/*.test.*"
+          runCommand: "yarn jest --coverage --collectCoverage=true --coverageDirectory='./' --coverageReporters='json-summary' --forceExit --detectOpenHandles"
           delta: 0.1
       # - name: Upload coverage reports to Codecov
       #   uses: codecov/codecov-action@v3
