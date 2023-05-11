@@ -163,9 +163,7 @@ export default function BorrowModal() {
           <div className='flex w-full flex-wrap'>
             <TokenInputWithSlider
               asset={asset}
-              onChange={(val) => {
-                setAmount(val)
-              }}
+              onChange={setAmount}
               amount={amount}
               max={max}
               className='w-full'
