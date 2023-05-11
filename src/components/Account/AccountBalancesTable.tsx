@@ -11,19 +11,21 @@ import {
 import classNames from 'classnames'
 import React from 'react'
 
-import { AssetRow } from 'components/Account/AssetRow'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
-import { demagnify } from 'utils/formatters'
+import useStore from 'store'
+import { convertToDisplayAmount, demagnify } from 'utils/formatters'
 
 interface Props {
   data: Account
 }
 
 export const AcccountBalancesTable = (props: Props) => {
+  const displayCurrency = useStore((s) => s.displayCurrency)
+  const prices = useStore((s) => s.prices)
   const [sorting, setSorting] = React.useState<SortingState>([])
 
   const balanceData = React.useMemo<AccountBalanceRow[]>(() => {
@@ -38,25 +40,35 @@ export const AcccountBalancesTable = (props: Props) => {
         symbol: asset.symbol,
         denom: deposit.denom,
         amount: deposit.amount,
+        size: demagnify(deposit.amount, asset),
+        value: convertToDisplayAmount(
+          { amount: deposit.amount, denom: deposit.denom },
+          displayCurrency,
+          prices,
+        ),
         apy: apy,
       }
     })
-    const lends = accountLends.map((lends) => {
-      const asset = ASSETS.find((asset) => asset.denom === lends.denom) ?? ASSETS[0]
+    const lends = accountLends.map((lending) => {
+      const asset = ASSETS.find((asset) => asset.denom === lending.denom) ?? ASSETS[0]
       const apy = 0
       return {
-        type: 'debt',
+        type: 'lending',
         symbol: asset.symbol,
-        denom: lends.denom,
-        amount: lends.amount,
+        denom: lending.denom,
+        amount: lending.amount,
+        size: demagnify(lending.amount, asset),
+        value: convertToDisplayAmount(
+          { amount: lending.amount, denom: lending.denom },
+          displayCurrency,
+          prices,
+        ),
         apy: apy,
       }
     })
 
     return [...deposits, ...lends]
   }, [props.data.id])
-
-  console.log(balanceData)
 
   const columns = React.useMemo<ColumnDef<AccountBalanceRow>[]>(
     () => [
@@ -65,11 +77,17 @@ export const AcccountBalancesTable = (props: Props) => {
         accessorKey: 'symbol',
         id: 'symbol',
         cell: ({ row }) => {
-          return <Text size='xs'>{row.original.symbol}</Text>
+          return (
+            <Text size='xs'>
+              {row.original.symbol}
+              {row.original.type === 'lending' && <span className='text-profit'>(Lent)</span>}
+            </Text>
+          )
         },
       },
       {
         header: 'Value',
+        accessorKey: 'value',
         id: 'value',
         cell: ({ row }) => {
           return (
@@ -82,6 +100,7 @@ export const AcccountBalancesTable = (props: Props) => {
       },
       {
         id: 'size',
+        accessorKey: 'size',
         header: 'Size',
         cell: ({ row }) => {
           return (
@@ -174,7 +193,25 @@ export const AcccountBalancesTable = (props: Props) => {
       </thead>
       <tbody>
         {table.getRowModel().rows.map((row) => {
-          return <AssetRow key={row.index} row={row} />
+          return (
+            <tr key={row.id} className=' text-white/60'>
+              {row.getVisibleCells().map((cell) => {
+                const borderClass =
+                  cell.row.original.type === 'deposit' ? 'border-profit' : 'border-loss'
+                return (
+                  <td
+                    key={cell.id}
+                    className={classNames(
+                      cell.column.id === 'symbol' ? `border-l ${borderClass}` : 'pl-4 text-right',
+                      'p-2',
+                    )}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                )
+              })}
+            </tr>
+          )
         })}
       </tbody>
     </table>
