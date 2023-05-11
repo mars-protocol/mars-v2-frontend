@@ -1,6 +1,7 @@
 'use client'
 
 import Accordion from 'components/Accordion'
+import { AcccountBalancesTable } from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
 import AccountHealth from 'components/Account/AccountHealth'
 import Card from 'components/Card'
@@ -23,7 +24,7 @@ export default function AccountSummary(props: Props) {
   if (!props.account) return null
 
   return (
-    <div className='flex basis-[345px] flex-wrap'>
+    <div className='flex max-w-[345px] basis-[345px] flex-wrap'>
       <Card className='mb-4 min-w-fit bg-white/10' contentClassName='flex'>
         <Item>
           <DisplayCurrency
@@ -48,7 +49,7 @@ export default function AccountSummary(props: Props) {
             content: <AccountComposition account={props.account} change={props.change} />,
             open: true,
           },
-          { title: 'Balances', content: <p>My content</p> },
+          { title: 'Balances', content: <AcccountBalancesTable data={props.account} /> },
         ]}
       />
     </div>

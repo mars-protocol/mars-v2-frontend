@@ -44,7 +44,7 @@ export default function AccountComposition(props: Props) {
   const borrowRateChange = props.change ? calculateAccountPnL(props.change, prices) : BN(0)
 
   return (
-    <div className='w-full flex-wrap'>
+    <div className='w-full flex-wrap p-4'>
       <Item
         title='Total Position Value'
         current={balance}
