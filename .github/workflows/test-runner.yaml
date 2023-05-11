@@ -19,8 +19,13 @@ jobs:
           node-version: '20.x'
       - name: Install dependencies
         run: yarn
-      - name: Run tests
-        run: yarn test
+      - name: Test Coverage
+        id: testCoverage
+        uses: anuraag016/Jest-Coverage-Diff@master
+        with:
+          fullCoverageDiff: false
+          runCommand: 'yarn jest --collectCoverageFrom=''["src/**/*.{js,jsx,ts,tsx}"]'' --coverage --collectCoverage=true --coverageDirectory=''./'' --coverageReporters=''json-summary'' --forceExit --detectOpenHandles __tests__/**/*.test.*'
+          delta: 0.5
       # - name: Upload coverage reports to Codecov
       #   uses: codecov/codecov-action@v3
       #   with:
