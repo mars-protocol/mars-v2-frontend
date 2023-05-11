@@ -63,7 +63,7 @@ export const AcccountBalancesTable = (props: Props) => {
           displayCurrency,
           prices,
         ),
-        apy: apy,
+        apy,
       }
     })
 
