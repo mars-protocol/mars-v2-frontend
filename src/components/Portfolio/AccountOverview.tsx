@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 import { Suspense } from 'react'
 
+import { AcccountBalancesTable } from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
 import Card from 'components/Card'
 import Loading from 'components/Loading'
@@ -30,13 +31,10 @@ async function Content(props: PageProps) {
       className={classNames('grid w-full grid-cols-1 gap-4', 'md:grid-cols-2', 'lg:grid-cols-3')}
     >
       {account.map((account: Account, index: number) => (
-        <Card
-          className='h-fit w-full bg-white/5'
-          title={`Account ${account.id}`}
-          key={index}
-          contentClassName='px-4 py-6'
-        >
+        <Card className='h-fit w-full bg-white/5' title={`Account ${account.id}`} key={index}>
           <AccountComposition account={account} />
+          <Text className='mt-3 w-full bg-white/10 px-4 py-2 text-white/40'>Balances</Text>
+          <AcccountBalancesTable data={account} />
         </Card>
       ))}
     </div>
@@ -50,13 +48,12 @@ function Fallback() {
       className={classNames('grid w-full grid-cols-1 gap-4', 'md:grid-cols-2', 'lg:grid-cols-3')}
     >
       {Array.from({ length: cardCount }, (_, i) => (
-        <Card
-          key={i}
-          className='h-fit w-full bg-white/5'
-          title='Account'
-          contentClassName='px-4 py-6'
-        >
-          <Loading className='h-4 w-50' />
+        <Card key={i} className='h-fit w-full bg-white/5' title='Account' contentClassName='py-6'>
+          <div className='p-4'>
+            <Loading className='h-4 w-50' />
+          </div>
+          <Text className='mt-3 w-full bg-white/10 px-4 py-2 text-white/40'>Balances</Text>
+          <Loading className='h-4 w-full' />
         </Card>
       ))}
     </div>
