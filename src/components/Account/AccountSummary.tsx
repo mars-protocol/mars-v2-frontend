@@ -9,7 +9,7 @@ import DisplayCurrency from 'components/DisplayCurrency'
 import { ArrowChartLineUp } from 'components/Icons'
 import Text from 'components/Text'
 import useStore from 'store'
-import { calculateAccountBalance } from 'utils/accounts'
+import { calculateAccountDeposits } from 'utils/accounts'
 import { BN } from 'utils/helpers'
 
 interface Props {
@@ -20,7 +20,7 @@ interface Props {
 export default function AccountSummary(props: Props) {
   const prices = useStore((s) => s.prices)
   const baseCurrency = useStore((s) => s.baseCurrency)
-  const accountBalance = props.account ? calculateAccountBalance(props.account, prices) : BN(0)
+  const accountBalance = props.account ? calculateAccountDeposits(props.account, prices) : BN(0)
   if (!props.account) return null
 
   return (

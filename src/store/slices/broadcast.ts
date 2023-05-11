@@ -1,5 +1,5 @@
 import { Coin, StdFee } from '@cosmjs/stargate'
-import { MsgExecuteContract, TxBroadcastResult } from '@marsprotocol/wallet-connector'
+import { MsgExecuteContract } from '@marsprotocol/wallet-connector'
 import { isMobile } from 'react-device-detect'
 import { GetState, SetState } from 'zustand'
 
@@ -43,6 +43,8 @@ export default function createBroadcastSlice(
           },
         })
       }
+
+      return !!response.result
     },
     createAccount: async (options: { fee: StdFee }) => {
       const msg = {

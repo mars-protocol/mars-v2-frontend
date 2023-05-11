@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 import { Suspense } from 'react'
 
+import AccountComposition from 'components/Account/AccountComposition'
 import Card from 'components/Card'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
@@ -8,8 +9,6 @@ import { getAccounts } from 'utils/api'
 
 async function Content(props: PageProps) {
   const address = props.params.address
-  const currentAccount = props.params.accountId
-  const hasAccount = !isNaN(Number(currentAccount))
   const account = await getAccounts(address)
 
   if (!address) {
@@ -27,7 +26,9 @@ async function Content(props: PageProps) {
   }
 
   return (
-    <div className={classNames('grid grid-cols-1 gap-4', 'md:grid-cols-2', 'lg:grid-cols-3')}>
+    <div
+      className={classNames('grid w-full grid-cols-1 gap-4', 'md:grid-cols-2', 'lg:grid-cols-3')}
+    >
       {account.map((account: Account, index: number) => (
         <Card
           className='h-fit w-full bg-white/5'
@@ -35,11 +36,7 @@ async function Content(props: PageProps) {
           key={index}
           contentClassName='px-4 py-6'
         >
-          {hasAccount && currentAccount === account.id ? (
-            <Text size='sm'>Current Account</Text>
-          ) : (
-            <Text size='sm'>Account details</Text>
-          )}
+          <AccountComposition account={account} />
         </Card>
       ))}
     </div>
@@ -49,16 +46,14 @@ async function Content(props: PageProps) {
 function Fallback() {
   const cardCount = 3
   return (
-    <div className={classNames('grid grid-cols-1 gap-4', 'md:grid-cols-2', 'lg:grid-cols-3')}>
+    <div
+      className={classNames('grid w-full grid-cols-1 gap-4', 'md:grid-cols-2', 'lg:grid-cols-3')}
+    >
       {Array.from({ length: cardCount }, (_, i) => (
         <Card
           key={i}
           className='h-fit w-full bg-white/5'
-          title={
-            <>
-              Account <Loading className='ml-2 h-4 w-8' />
-            </>
-          }
+          title='Account'
           contentClassName='px-4 py-6'
         >
           <Loading className='h-4 w-50' />

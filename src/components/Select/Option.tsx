@@ -73,13 +73,29 @@ export default function Option(props: Props) {
 
   const label = props.label
   if (props.isDisplay) {
-    return <div className={classNames('block bg-white/10 p-3 hover:cursor-pointer')}>{label}</div>
+    return (
+      <div
+        className={classNames(
+          'flex w-full items-center justify-between bg-white/10 p-3 hover:cursor-pointer',
+        )}
+      >
+        <span>{label}</span>
+        <span
+          className={classNames(
+            'inline-block w-2.5 transition-transform',
+            props.isClicked ? 'rotate-0' : '-rotate-90',
+          )}
+        >
+          <ChevronDown />
+        </span>
+      </div>
+    )
   }
 
   return (
     <div
       className={classNames(
-        'block  p-3 hover:cursor-pointer hover:bg-white/20',
+        'block p-3 hover:cursor-pointer hover:bg-white/20',
         props.isSelected && 'bg-white/10',
       )}
       onClick={() => props?.onClick && props.onClick(props.value)}
