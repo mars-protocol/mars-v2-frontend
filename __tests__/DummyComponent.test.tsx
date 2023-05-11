@@ -6,7 +6,7 @@ describe('<DummyComponent />', () => {
   it('should render correctly', () => {
     render(<DummyComponent />)
 
-    const content = screen.getByText('Hello World!x')
+    const content = screen.getByText('Hello World!')
     expect(content).toBeInTheDocument()
   })
 })
