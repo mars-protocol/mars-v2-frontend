@@ -21,7 +21,7 @@ jobs:
         with:
           fullCoverageDiff: false
           runCommand: 'yarn jest --collectCoverageFrom=''["src/**/*.{js,jsx,ts,tsx}"]'' --coverage --collectCoverage=true --coverageDirectory=''./'' --coverageReporters=''json-summary'' --forceExit --detectOpenHandles __tests__/**/*.test.*'
-          delta: 0.5
+          delta: 0.1
       # - name: Upload coverage reports to Codecov
       #   uses: codecov/codecov-action@v3
       #   with:
