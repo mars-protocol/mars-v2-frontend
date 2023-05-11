@@ -68,7 +68,7 @@ export const AcccountBalancesTable = (props: Props) => {
     })
 
     return [...deposits, ...lends]
-  }, [props.data.id])
+  }, [displayCurrency, prices, props.data?.deposits, props.data?.lends])
 
   const columns = React.useMemo<ColumnDef<AccountBalanceRow>[]>(
     () => [
@@ -130,7 +130,7 @@ export const AcccountBalancesTable = (props: Props) => {
         },
       },
     ],
-    [props.data.id],
+    [],
   )
 
   const table = useReactTable({

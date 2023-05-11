@@ -46,7 +46,7 @@ export default function Select(props: Props) {
         (option) => option?.value === props.defaultValue || option?.denom === props.defaultValue,
       ),
     )
-  }, [value, props.defaultValue, props.options])
+  }, [value, props.defaultValue, props.options, selected])
 
   return (
     <div

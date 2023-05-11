@@ -98,8 +98,7 @@ export default function BorrowModal() {
   const max = BN(isRepay ? getDebtAmount(modal) : modal?.marketData?.liquidity?.amount ?? '0')
 
   useEffect(() => {
-    if (!selectedAccount) 
-        setSelectedAccount(currentAccount)
+    if (!selectedAccount) setSelectedAccount(currentAccount)
   }, [selectedAccount, currentAccount])
 
   useEffect(() => {
