@@ -180,8 +180,7 @@ export default function BorrowModal() {
                 title='Accounts'
                 defaultValue={selectedAccount?.id}
                 onChange={(account) => {
-                  if (!accounts) return
-                  setSelectedAccount(accounts?.find((a) => a.id === account))
+                  accounts && setSelectedAccount(accounts?.find((a) => a.id === account))
                 }}
                 className='w-full rounded-base border border-white/10 bg-white/5'
               />
