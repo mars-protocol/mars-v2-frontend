@@ -46,7 +46,7 @@ export const AcccountBalancesTable = (props: Props) => {
           displayCurrency,
           prices,
         ),
-        apy: apy,
+        apy,
       }
     })
     const lends = accountLends.map((lending) => {
