@@ -8,16 +8,16 @@ interface Props {
   params: PageParams
 }
 
-async function Content(props: Props) {
+// TODO: fix the content and data below
+function Content(props: Props) {
   if (props.params.address === undefined) return null
-  const accounts = await getAccounts(props.params.address)
-  return <AccountMenuContent accounts={accounts} />
+  const accounts = getAccounts(props.params.address)
+  return <AccountMenuContent accounts={[]} />
 }
 
 export default function AccountMenu(props: Props) {
   return (
     <Suspense fallback={<Loading className='h-8 w-35' />}>
-      {/* @ts-expect-error Server Component */}
       <Content params={props.params} />
     </Suspense>
   )

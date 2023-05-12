@@ -3,30 +3,14 @@
 const nextConfig = {
   output: 'standalone',
   experimental: {
-    appDir: true,
+    appDir: false,
   },
   reactStrictMode: true,
-  async redirects() {
+  async rewrites() {
     return [
       {
-        source: '/',
-        destination: '/trade',
-        permanent: true,
-      },
-      {
-        source: '/wallets',
-        destination: '/trade',
-        permanent: true,
-      },
-      {
-        source: '/wallets/:wallet',
-        destination: '/wallets/:wallet/trade',
-        permanent: true,
-      },
-      {
-        source: '/wallets/:wallet/accounts',
-        destination: '/wallets/:wallet/accounts/trade',
-        permanent: true,
+        source: '/:any*',
+        destination: '/',
       },
     ]
   },
