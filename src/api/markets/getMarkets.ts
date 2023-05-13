@@ -1,14 +1,13 @@
 import { gql, request as gqlRequest } from 'graphql-request'
-import { NextApiRequest, NextApiResponse } from 'next'
 
 import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import { getMarketAssets } from 'utils/assets'
 import { denomToKey } from 'utils/query'
 import { resolveMarketResponses } from 'utils/resolvers'
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function getMarkets(): Promise<Market[]> {
   if (!ENV.URL_GQL || !ENV.ADDRESS_RED_BANK || !ENV.ADDRESS_INCENTIVES) {
-    return res.status(404).json(ENV_MISSING_MESSAGE)
+    return new Promise((_, reject) => reject(ENV_MISSING_MESSAGE))
   }
 
   const marketAssets = getMarketAssets()
@@ -36,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const market = result.rbwasmkey[`${denomToKey(asset.denom)}`]
     return market
   })
-  return res.status(200).json(resolveMarketResponses(markets))
+  return resolveMarketResponses(markets)
 }
 
 interface RedBankData {

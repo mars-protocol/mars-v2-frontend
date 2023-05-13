@@ -1,14 +1,13 @@
 import { gql, request as gqlRequest } from 'graphql-request'
-import { NextApiRequest, NextApiResponse } from 'next'
 
 import { ASSETS } from 'constants/assets'
 import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import { getMarketAssets } from 'utils/assets'
 import { BN } from 'utils/helpers'
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function getPrices(): Promise<Coin[]> {
   if (!ENV.URL_GQL || !ENV.ADDRESS_ORACLE) {
-    return res.status(404).json(ENV_MISSING_MESSAGE)
+    return new Promise((_, reject) => reject(ENV_MISSING_MESSAGE))
   }
 
   const marketAssets = getMarketAssets()
@@ -51,7 +50,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     ] as Coin[]
   }, [])
 
-  return res.status(200).json(data)
+  return data
 }
 
 interface TokenPricesResult {

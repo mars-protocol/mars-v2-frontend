@@ -1,11 +1,11 @@
-import Tab from 'components/Earn/Tab'
 import AvailableVaults from 'components/Earn/vault/AvailableVaults'
 import FeaturedVaults from 'components/Earn/vault/FeaturedVaults'
+import Tab from 'components/Earn/Tab'
 
-export default function Farmpage({ params }: { params: PageParams }) {
+export default function Farmpage() {
   return (
     <>
-      <Tab params={params} isFarm />
+      <Tab isFarm />
       <FeaturedVaults />
       <AvailableVaults />
     </>

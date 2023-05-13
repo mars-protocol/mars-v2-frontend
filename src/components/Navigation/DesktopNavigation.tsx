@@ -1,7 +1,3 @@
-'use client'
-
-import Link from 'next/link'
-
 import { menuTree } from 'components/Header/DesktopHeader'
 import { Logo } from 'components/Icons'
 import { NavLink } from 'components/Navigation/NavLink'
@@ -17,11 +13,11 @@ export default function DesktopNavigation() {
 
   return (
     <div className='flex flex-grow items-center'>
-      <Link href={getRoute(params, { page: 'trade' })}>
+      <NavLink href={getRoute(params, { page: 'trade' })}>
         <span className='block h-10 w-10'>
           <Logo />
         </span>
-      </Link>
+      </NavLink>
       <div className='flex gap-8 px-6'>
         {menuTree.map((item, index) => (
           <NavLink

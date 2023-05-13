@@ -1,5 +1,3 @@
-'use client'
-
 import { ChainInfoID, WalletManagerProvider } from '@marsprotocol/wallet-connector'
 import { FC } from 'react'
 

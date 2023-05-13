@@ -1,5 +1,3 @@
-'use client'
-
 import classNames from 'classnames'
 import { ChangeEvent, useRef, useState } from 'react'
 import Draggable from 'react-draggable'

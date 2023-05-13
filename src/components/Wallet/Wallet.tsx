@@ -1,21 +1,19 @@
-'use client'
-
 import {
   getClient,
   useWallet,
   useWalletManager,
   WalletConnectionStatus,
 } from '@marsprotocol/wallet-connector'
-import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 import ConnectButton from 'components/Wallet/ConnectButton'
 import ConnectedButton from 'components/Wallet/ConnectedButton'
 import useParams from 'utils/route'
 import useStore from 'store'
+import { useNavigate } from 'react-router-dom'
 
 export default function Wallet() {
-  const router = useRouter()
+  const navigate = useNavigate()
   const params = useParams()
 
   const { status } = useWalletManager()
@@ -55,8 +53,8 @@ export default function Wallet() {
     }
 
     if (!address || address === params.address) return
-    router.push(`/wallets/${address}`)
-  }, [address, broadcast, client, params, recentWallet, router, simulate, sign, status])
+    navigate(`/wallets/${address}`)
+  }, [address, broadcast, client, params, recentWallet, navigate, simulate, sign, status])
 
   return address ? <ConnectedButton /> : <ConnectButton status={status} />
 }

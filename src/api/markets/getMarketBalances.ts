@@ -1,11 +1,10 @@
 import { gql, request as gqlRequest } from 'graphql-request'
-import { NextApiRequest, NextApiResponse } from 'next'
 
 import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function getBalances() {
   if (!ENV.URL_GQL || !ENV.ADDRESS_RED_BANK) {
-    return res.status(404).json(ENV_MISSING_MESSAGE)
+    return new Promise((_, reject) => reject(ENV_MISSING_MESSAGE))
   }
 
   const result = await gqlRequest<Result>(
@@ -24,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     `,
   )
 
-  return res.status(200).json(result.bank.balance)
+  return result.bank.balance
 }
 
 interface Result {

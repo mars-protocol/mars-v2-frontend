@@ -1,15 +1,15 @@
 import { gql, request as gqlRequest } from 'graphql-request'
-import { NextApiRequest, NextApiResponse } from 'next'
 
-import { ENV, ENV_MISSING_MESSAGE, VERCEL_BYPASS } from 'constants/env'
+import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import { denomToKey, getContractQuery, keyToDenom } from 'utils/query'
+import getMarkets from './getMarkets'
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function getMarketDebts(): Promise<Coin[]> {
   if (!ENV.URL_API || !ENV.ADDRESS_RED_BANK || !ENV.URL_GQL) {
-    return res.status(404).json(ENV_MISSING_MESSAGE)
+    return new Promise((_, reject) => reject(ENV_MISSING_MESSAGE))
   }
 
-  const markets: Market[] = await (await fetch(`${ENV.URL_API}/markets${VERCEL_BYPASS}`)).json()
+  const markets: Market[] = await getMarkets()
 
   let query = ''
 
@@ -45,10 +45,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         amount: result.debts[key],
       }
     })
-    return res.status(200).json(debts)
+    return debts
   }
 
-  return res.status(404)
+  return new Promise((_, reject) => reject('No data'))
 }
 
 interface DebtsQuery {

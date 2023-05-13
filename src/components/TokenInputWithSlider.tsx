@@ -1,5 +1,3 @@
-'use client'
-
 import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useState } from 'react'
 

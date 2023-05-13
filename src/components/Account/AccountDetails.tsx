@@ -1,4 +1,3 @@
-'use client'
 import { Gauge } from 'components/Gauge'
 import { Heart } from 'components/Icons'
 import Text from 'components/Text'

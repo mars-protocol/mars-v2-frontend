@@ -5,10 +5,11 @@ import { VaultTable } from 'components/Earn/vault/VaultTable'
 import Text from 'components/Text'
 import { IS_TESTNET } from 'constants/env'
 import { TESTNET_VAULTS, VAULTS } from 'constants/vaults'
-import { getVaults } from 'utils/api'
+import useSWR from 'swr'
+import getVaults from 'api/vaults/getVaults'
 
-async function Content() {
-  const vaults = await getVaults()
+function Content() {
+  const { data: vaults } = useSWR('vaults', getVaults, { suspense: true })
 
   if (!vaults.length) return null
 
@@ -19,7 +20,6 @@ export default function AvailableVaults() {
   return (
     <Card title='Available vaults' className='mb-4 h-fit w-full bg-white/5'>
       <Suspense fallback={<Fallback />}>
-        {/* @ts-expect-error Server Component */}
         <Content />
       </Suspense>
     </Card>

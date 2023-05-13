@@ -1,16 +1,19 @@
 import classNames from 'classnames'
 import { Suspense } from 'react'
+import { useParams } from 'react-router-dom'
 
 import { AcccountBalancesTable } from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
 import Card from 'components/Card'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
-import { getAccounts } from 'utils/api'
 
-async function Content(props: PageProps) {
-  const address = props.params.address
-  const account = await getAccounts(address)
+import useSWR from 'swr'
+import getWalletAccounts from 'api/wallets/getWalletAccounts'
+
+function Content() {
+  const address = useParams().address || ''
+  const { data: account } = useSWR(address, getWalletAccounts, { suspense: true })
 
   if (!address) {
     return (
@@ -60,11 +63,10 @@ function Fallback() {
   )
 }
 
-export default function AccountOverview(props: PageProps) {
+export default function AccountOverview() {
   return (
     <Suspense fallback={<Fallback />}>
-      {/* @ts-expect-error Server Component */}
-      <Content params={props.params} />
+      <Content />
     </Suspense>
   )
 }

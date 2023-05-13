@@ -1,11 +1,12 @@
 import { Suspense } from 'react'
+import { useParams } from 'react-router-dom'
 
 import Card from 'components/Card'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
 
-async function Content(props: PageProps) {
-  const address = props.params.address
+function Content() {
+  const address = useParams().address || ''
 
   return address ? (
     <Text size='sm'>{`Council page for ${address}`}</Text>
@@ -18,7 +19,7 @@ function Fallback() {
   return <Loading className='h-4 w-50' />
 }
 
-export default function Overview(props: PageProps) {
+export default function Overview() {
   return (
     <Card
       className='h-fit w-full justify-center bg-white/5'
@@ -26,8 +27,7 @@ export default function Overview(props: PageProps) {
       contentClassName='px-4 py-6'
     >
       <Suspense fallback={<Fallback />}>
-        {/* @ts-expect-error Server Component */}
-        <Content params={props.params} />
+        <Content />
       </Suspense>
     </Card>
   )

@@ -1,9 +1,7 @@
-'use client'
-
 import useSWR from 'swr'
 
 import useStore from 'store'
-import { getPrices } from 'utils/api'
+import getPrices from 'api/prices/getPrices'
 
 export default function FetchPrices() {
   useSWR('prices', getPrices, {

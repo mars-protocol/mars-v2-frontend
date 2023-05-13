@@ -1,15 +1,11 @@
 import { AvailableBorrowings } from 'components/Borrow/Borrowings'
 import { ActiveBorrowings } from 'components/Borrow/Borrowings'
 
-interface Props {
-  params: PageParams
-}
-
-export default function Borrowpage(props: Props) {
+export default function Borrowpage() {
   return (
     <div className='flex w-full flex-col gap-4'>
-      <ActiveBorrowings params={props.params} />
-      <AvailableBorrowings params={props.params} />
+      <ActiveBorrowings />
+      <AvailableBorrowings />
     </div>
   )
 }

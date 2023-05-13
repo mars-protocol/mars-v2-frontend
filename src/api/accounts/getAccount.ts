@@ -1,15 +1,11 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { NextApiRequest, NextApiResponse } from 'next'
 
 import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
-import { resolvePositionResponse } from 'utils/resolvers'
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function getAccount(accountId: string): Promise<AccountResponse> {
   if (!ENV.URL_RPC || !ENV.ADDRESS_CREDIT_MANAGER) {
-    return res.status(404).json(ENV_MISSING_MESSAGE)
+    return new Promise((_, reject) => reject(ENV_MISSING_MESSAGE))
   }
-
-  const accountId = req.query.id
 
   const client = await CosmWasmClient.connect(ENV.URL_RPC)
 
@@ -20,8 +16,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   })
 
   if (account) {
-    return res.status(200).json(resolvePositionResponse(account))
+    return account
   }
 
-  return res.status(404)
+  return new Promise((_, reject) => reject('No account found'))
 }

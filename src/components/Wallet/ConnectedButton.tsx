@@ -1,5 +1,3 @@
-'use client'
-
 import {
   ChainInfoID,
   SimpleChainInfoList,
@@ -21,9 +19,9 @@ import Text from 'components/Text'
 import { IS_TESTNET } from 'constants/env'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
-import { Endpoints, getEndpoint, getWalletBalancesSWR } from 'utils/api'
 import { getBaseAsset, getMarketAssets } from 'utils/assets'
 import { formatValue, truncate } from 'utils/formatters'
+import getWalletBalances from 'api/wallets/getWalletBalances'
 
 export default function ConnectedButton() {
   // ---------------
@@ -35,10 +33,7 @@ export default function ConnectedButton() {
   const address = useStore((s) => s.address)
   const network = useStore((s) => s.client?.recentWallet.network)
   const baseAsset = getBaseAsset()
-  const { data, isLoading } = useSWR(
-    getEndpoint(Endpoints.WALLET_BALANCES, { address }),
-    getWalletBalancesSWR,
-  )
+  const { data, isLoading } = useSWR(address, getWalletBalances)
 
   // ---------------
   // LOCAL STATE

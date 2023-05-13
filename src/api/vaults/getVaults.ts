@@ -1,5 +1,4 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { NextApiRequest, NextApiResponse } from 'next'
 
 import { ENV, ENV_MISSING_MESSAGE, IS_TESTNET } from 'constants/env'
 import { TESTNET_VAULTS, VAULTS } from 'constants/vaults'
@@ -9,9 +8,9 @@ import {
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { convertAprToApy } from 'utils/parsers'
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function getVaults(): Promise<Vault[]> {
   if (!ENV.URL_RPC || !ENV.ADDRESS_CREDIT_MANAGER) {
-    return res.status(404).json(ENV_MISSING_MESSAGE)
+    return new Promise((_, reject) => reject(ENV_MISSING_MESSAGE))
   }
   const client = await CosmWasmClient.connect(ENV.URL_RPC)
 
@@ -34,13 +33,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   })
 
   if (vaults) {
-    return res.status(200).json(vaults)
+    return vaults
   }
 
-  return res.status(404)
+  return new Promise((_, reject) => reject('No data'))
 }
 
-async function getVaultConfigs(client: CosmWasmClient, startAfter?: VaultBaseForString) {
+async function getVaultConfigs(client: CosmWasmClient) {
   let data: VaultConfig[] = []
 
   const getBatch = async (startAfter?: VaultBaseForString) => {
@@ -76,8 +75,11 @@ async function getVaultConfigs(client: CosmWasmClient, startAfter?: VaultBaseFor
     }
   }
 
-  await getBatch()
+  // TODO: Enable when vaults are deployed
+  // await getBatch()
   const vaults = IS_TESTNET ? TESTNET_VAULTS : VAULTS
+
+  console.log(vaults)
 
   return vaults.map((vaultMetaData) => {
     const vaultInfo = data.find((vault) => vault.address === vaultMetaData.address)

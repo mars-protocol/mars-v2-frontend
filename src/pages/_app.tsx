@@ -1,19 +1,24 @@
 import classNames from 'classnames'
-import { AppProps } from 'next/app'
-import { headers } from 'next/headers'
 import { useEffect, useState } from 'react'
+import { Routes, Route } from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
 
 import AccountDetails from 'components/Account/AccountDetails'
 import Background from 'components/Background'
-import FetchPrices from 'components/FetchPrices'
 import Footer from 'components/Footer'
 import DesktopHeader from 'components/Header/DesktopHeader'
 import ModalsContainer from 'components/Modals/ModalsContainer'
 import Toaster from 'components/Toaster'
 import 'react-toastify/dist/ReactToastify.min.css'
 import 'styles/globals.css'
+import Tradepage from 'components/pages/trade'
+import Borrowpage from 'components/pages/borrow'
+import Portfoliopage from 'components/pages/portfolio'
+import Councilpage from 'components/pages/council'
+import Farmpage from 'components/pages/farm'
+import Lendpage from 'components/pages/lend'
 
-function App({ Component, pageProps }: AppProps) {
+function App() {
   const [isServer, setIsServer] = useState(true)
   useEffect(() => {
     setIsServer(false)
@@ -21,7 +26,7 @@ function App({ Component, pageProps }: AppProps) {
   if (isServer) return null
 
   return (
-    <>
+    <BrowserRouter>
       <Background />
       <DesktopHeader params={{ address: '', accountId: '', page: '' }} />
       <main
@@ -31,16 +36,40 @@ function App({ Component, pageProps }: AppProps) {
         )}
       >
         <div className='flex w-full max-w-content flex-grow flex-wrap content-start'>
-          <div suppressHydrationWarning>
-            {typeof window === 'undefined' ? null : <Component {...pageProps} />}
-          </div>
+          <Routes>
+            <Route path='/trade' element={<Tradepage />} />
+            <Route path='/farm' element={<Farmpage />} />
+            <Route path='/lend' element={<Lendpage />} />
+            <Route path='/borrow' element={<Borrowpage />} />
+            <Route path='/portfolio' element={<Portfoliopage />} />
+            <Route path='/council' element={<Councilpage />} />
+            <Route path='/' element={<Tradepage />} />
+            <Route path='/wallets/:address'>
+              <Route path='accounts/:accountId'>
+                <Route path='trade' element={<Tradepage />} />
+                <Route path='farm' element={<Farmpage />} />
+                <Route path='lend' element={<Lendpage />} />
+                <Route path='borrow' element={<Borrowpage />} />
+                <Route path='portfolio' element={<Portfoliopage />} />
+                <Route path='council' element={<Councilpage />} />
+                <Route path='' element={<Tradepage />} />
+              </Route>
+              <Route path='trade' element={<Tradepage />} />
+              <Route path='farm' element={<Farmpage />} />
+              <Route path='lend' element={<Lendpage />} />
+              <Route path='borrow' element={<Borrowpage />} />
+              <Route path='portfolio' element={<Portfoliopage />} />
+              <Route path='council' element={<Councilpage />} />
+              <Route path='' element={<Tradepage />} />
+            </Route>
+          </Routes>
         </div>
         <AccountDetails />
       </main>
       <Footer />
       <ModalsContainer />
       <Toaster />
-    </>
+    </BrowserRouter>
   )
 }
 

@@ -51,7 +51,10 @@ export default function createBroadcastSlice(
         create_credit_account: {},
       }
       set({ createAccountModal: true })
+      console.log(msg, options.fee)
       const response = await get().executeMsg({ msg, fee: options.fee })
+      console.log(response)
+      debugger
 
       if (response.result) {
         set({ createAccountModal: false })

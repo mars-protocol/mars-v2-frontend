@@ -1,10 +1,10 @@
 import Card from 'components/Card'
 import Tab from 'components/Earn/Tab'
 
-export default function Lendpage({ params }: { params: PageParams }) {
+export default function Lendpage() {
   return (
     <>
-      <Tab params={params} />
+      <Tab />
       <Card title='Lend'>
         <></>
       </Card>

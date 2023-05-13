@@ -1,19 +1,15 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { NextApiRequest, NextApiResponse } from 'next'
 
-import { ENV, ENV_MISSING_MESSAGE, VERCEL_BYPASS } from 'constants/env'
+import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import { resolvePositionResponses } from 'utils/resolvers'
+import getWalletAccountIds from './getWalletAccountIds'
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function getWalletAccounts(address: string): Promise<Account[]> {
   if (!ENV.URL_RPC || !ENV.ADDRESS_CREDIT_MANAGER || !ENV.URL_API) {
-    return res.status(404).json(ENV_MISSING_MESSAGE)
+    return new Promise((_, reject) => reject(ENV_MISSING_MESSAGE))
   }
 
-  const address = req.query.address
-
-  const accountIds: string[] = await (
-    await fetch(`${ENV.URL_API}/wallets/${address}/accounts/ids${VERCEL_BYPASS}`)
-  ).json()
+  const accountIds: string[] = await getWalletAccountIds(address)
 
   const client = await CosmWasmClient.connect(ENV.URL_RPC)
 
@@ -28,8 +24,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const accounts = await Promise.all($accounts).then((accounts) => accounts)
 
   if (accounts) {
-    return res.status(200).json(resolvePositionResponses(accounts))
+    return resolvePositionResponses(accounts)
   }
 
-  return res.status(404)
+  return new Promise((_, reject) => reject('No data'))
 }

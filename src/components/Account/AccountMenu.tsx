@@ -2,7 +2,6 @@ import { Suspense } from 'react'
 
 import AccountMenuContent from 'components/Account/AccountMenuContent'
 import Loading from 'components/Loading'
-import { getAccounts } from 'utils/api'
 
 interface Props {
   params: PageParams
@@ -11,7 +10,6 @@ interface Props {
 // TODO: fix the content and data below
 function Content(props: Props) {
   if (props.params.address === undefined) return null
-  const accounts = getAccounts(props.params.address)
   return <AccountMenuContent accounts={[]} />
 }
 

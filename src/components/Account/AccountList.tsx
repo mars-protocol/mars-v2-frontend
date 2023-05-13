@@ -1,7 +1,4 @@
-'use client'
-
 import classNames from 'classnames'
-import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 import AccountStats from 'components/Account/AccountStats'
@@ -17,6 +14,7 @@ import { calculateAccountDeposits } from 'utils/accounts'
 import { hardcodedFee } from 'utils/contants'
 import { BN } from 'utils/helpers'
 import useParams, { getRoute } from 'utils/route'
+import { useNavigate } from 'react-router-dom'
 
 interface Props {
   setShowFundAccount: (showFundAccount: boolean) => void
@@ -29,7 +27,7 @@ const accountCardHeaderClasses = classNames(
 )
 
 export default function AccountList(props: Props) {
-  const router = useRouter()
+  const navigate = useNavigate()
   const params = useParams()
 
   const selectedAccount = params.accountId
@@ -48,7 +46,7 @@ export default function AccountList(props: Props) {
     if (!accountSelected) return
     const isSuccess = await deleteAccount({ fee: hardcodedFee, accountId: selectedAccount })
     if (isSuccess) {
-      router.push(`/wallets/${params.address}/accounts`)
+      navigate(`/wallets/${params.address}/accounts`)
     }
   }
 
@@ -87,7 +85,7 @@ export default function AccountList(props: Props) {
                   role={!isActive ? 'button' : undefined}
                   onClick={() => {
                     if (isActive) return
-                    router.push(getRoute(params, { accountId: account.id }))
+                    navigate(getRoute(params, { accountId: account.id }))
                   }}
                 >
                   <Text size='xs' className='flex flex-1'>

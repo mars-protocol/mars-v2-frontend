@@ -1,7 +1,4 @@
-'use client'
-
 import classNames from 'classnames'
-import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import AccountList from 'components/Account/AccountList'
@@ -17,6 +14,7 @@ import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
 import { isNumber } from 'utils/parsers'
 import useParams from 'utils/route'
+import { useNavigate } from 'react-router-dom'
 
 const menuClasses = 'absolute isolate flex w-full flex-wrap scrollbar-hide'
 
@@ -25,7 +23,7 @@ interface Props {
 }
 
 export default function AccountMenuContent(props: Props) {
-  const router = useRouter()
+  const navigate = useNavigate()
   const params = useParams()
   const createAccount = useStore((s) => s.createAccount)
   const [showMenu, setShowMenu] = useToggle()
@@ -49,7 +47,7 @@ export default function AccountMenuContent(props: Props) {
     const accountId = await createAccount({ fee: hardcodedFee })
     setIsCreating(false)
     if (!accountId) return
-    router.push(`/wallets/${params.address}/accounts/${accountId}`)
+    navigate(`/wallets/${params.address}/accounts/${accountId}`)
   }
 
   useEffect(() => {

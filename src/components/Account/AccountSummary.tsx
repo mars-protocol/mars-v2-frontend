@@ -1,5 +1,3 @@
-'use client'
-
 import Accordion from 'components/Accordion'
 import { AcccountBalancesTable } from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
