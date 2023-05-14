@@ -2,21 +2,21 @@ import { Suspense } from 'react'
 
 import AccountMenuContent from 'components/Account/AccountMenuContent'
 import Loading from 'components/Loading'
+import useSWR from 'swr'
+import getWalletAccounts from 'api/wallets/getWalletAccounts'
+import useStore from 'store'
 
-interface Props {
-  params: PageParams
+function Content() {
+  const address = useStore((s) => s.address)
+  const { data: accounts } = useSWR(address, getWalletAccounts, { suspense: true })
+  if (!accounts) return null
+  return <AccountMenuContent accounts={accounts} />
 }
 
-// TODO: fix the content and data below
-function Content(props: Props) {
-  if (props.params.address === undefined) return null
-  return <AccountMenuContent accounts={[]} />
-}
-
-export default function AccountMenu(props: Props) {
+export default function AccountMenu() {
   return (
     <Suspense fallback={<Loading className='h-8 w-35' />}>
-      <Content params={props.params} />
+      <Content />
     </Suspense>
   )
 }

@@ -9,6 +9,8 @@ export default async function getWalletAccounts(address: string): Promise<Accoun
     return new Promise((_, reject) => reject(ENV_MISSING_MESSAGE))
   }
 
+  console.log('getting accounts for wallet ', address)
+
   const accountIds: string[] = await getWalletAccountIds(address)
 
   const client = await CosmWasmClient.connect(ENV.URL_RPC)

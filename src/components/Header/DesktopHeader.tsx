@@ -14,11 +14,7 @@ export const menuTree: { href: RouteSegment; label: string }[] = [
   { href: 'council', label: 'Council' },
 ]
 
-interface Props {
-  params: PageParams
-}
-
-export default function DesktopHeader(props: Props) {
+export default function DesktopHeader() {
   return (
     <header
       className={classNames(
@@ -30,7 +26,7 @@ export default function DesktopHeader(props: Props) {
       <div className='flex items-center justify-between border-b border-white/20 py-3 pl-6 pr-4'>
         <DesktopNavigation />
         <div className='flex gap-4'>
-          <AccountMenu params={props.params} />
+          <AccountMenu />
           <WalletConnectProvider>
             <Wallet />
           </WalletConnectProvider>

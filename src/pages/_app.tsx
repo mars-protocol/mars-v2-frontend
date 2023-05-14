@@ -28,7 +28,7 @@ function App() {
   return (
     <BrowserRouter>
       <Background />
-      <DesktopHeader params={{ address: '', accountId: '', page: '' }} />
+      <DesktopHeader />
       <main
         className={classNames(
           'relative flex justify-center pt-6',
@@ -44,6 +44,7 @@ function App() {
             <Route path='/portfolio' element={<Portfoliopage />} />
             <Route path='/council' element={<Councilpage />} />
             <Route path='/' element={<Tradepage />} />
+            <Route path='/wallets/:address/trade' element={<Tradepage />} />
             <Route path='/wallets/:address'>
               <Route path='accounts/:accountId'>
                 <Route path='trade' element={<Tradepage />} />
