@@ -15,6 +15,7 @@ import { calculateAccountDeposits } from 'utils/accounts'
 import { hardcodedFee } from 'utils/contants'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
+import usePrices from 'hooks/usePrices'
 
 interface Props {
   setShowFundAccount: (showFundAccount: boolean) => void
@@ -30,8 +31,7 @@ export default function AccountList(props: Props) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { accountId, address } = useParams()
-
-  const prices = useStore((s) => s.prices)
+  const { data: prices } = usePrices()
 
   const deleteAccount = useStore((s) => s.deleteAccount)
 
