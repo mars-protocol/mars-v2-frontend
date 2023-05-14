@@ -13,8 +13,8 @@ import useStore from 'store'
 import { calculateAccountDeposits } from 'utils/accounts'
 import { hardcodedFee } from 'utils/contants'
 import { BN } from 'utils/helpers'
-import useParams, { getRoute } from 'utils/route'
-import { useNavigate } from 'react-router-dom'
+import { getRoute } from 'utils/route'
+import { useNavigate, useParams } from 'react-router-dom'
 
 interface Props {
   setShowFundAccount: (showFundAccount: boolean) => void
@@ -28,25 +28,24 @@ const accountCardHeaderClasses = classNames(
 
 export default function AccountList(props: Props) {
   const navigate = useNavigate()
-  const params = useParams()
+  const { accountId, address } = useParams()
 
-  const selectedAccount = params.accountId
   const prices = useStore((s) => s.prices)
 
   const deleteAccount = useStore((s) => s.deleteAccount)
 
   const [isLending, setIsLending] = useToggle()
-  const accountSelected = !!selectedAccount && !isNaN(Number(selectedAccount))
-  const selectedAccountDetails = props.accounts.find((account) => account.id === selectedAccount)
+  const accountSelected = !!accountId && !isNaN(Number(accountId))
+  const selectedAccountDetails = props.accounts.find((account) => account.id === accountId)
   const selectedAccountBalance = selectedAccountDetails
     ? calculateAccountDeposits(selectedAccountDetails, prices)
     : BN(0)
 
   async function deleteAccountHandler() {
     if (!accountSelected) return
-    const isSuccess = await deleteAccount({ fee: hardcodedFee, accountId: selectedAccount })
+    const isSuccess = await deleteAccount({ fee: hardcodedFee, accountId: accountId })
     if (isSuccess) {
-      navigate(`/wallets/${params.address}/accounts`)
+      navigate(`/wallets/${address}/accounts`)
     }
   }
 
@@ -56,11 +55,11 @@ export default function AccountList(props: Props) {
   }
 
   useEffect(() => {
-    const element = document.getElementById(`account-${selectedAccount}`)
+    const element = document.getElementById(`account-${accountId}`)
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' })
     }
-  }, [selectedAccount])
+  }, [accountId])
 
   if (!props.accounts?.length) return null
 
@@ -68,7 +67,7 @@ export default function AccountList(props: Props) {
     <div className='flex w-full flex-wrap p-4'>
       {props.accounts.map((account) => {
         const positionBalance = calculateAccountDeposits(account, prices)
-        const isActive = selectedAccount === account.id
+        const isActive = accountId === account.id
         return (
           <div key={account.id} id={`account-${account.id}`} className='w-full pt-4'>
             <Card
@@ -85,7 +84,7 @@ export default function AccountList(props: Props) {
                   role={!isActive ? 'button' : undefined}
                   onClick={() => {
                     if (isActive) return
-                    navigate(getRoute(params, { accountId: account.id }))
+                    navigate('', { state: { accountId: account.id } })
                   }}
                 >
                   <Text size='xs' className='flex flex-1'>

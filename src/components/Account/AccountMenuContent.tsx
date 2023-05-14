@@ -13,8 +13,7 @@ import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
 import { isNumber } from 'utils/parsers'
-import useParams from 'utils/route'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const menuClasses = 'absolute isolate flex w-full flex-wrap scrollbar-hide'
 
@@ -24,21 +23,20 @@ interface Props {
 
 export default function AccountMenuContent(props: Props) {
   const navigate = useNavigate()
-  const params = useParams()
+  const { accountId, address } = useParams()
   const createAccount = useStore((s) => s.createAccount)
   const [showMenu, setShowMenu] = useToggle()
   const [isCreating, setIsCreating] = useToggle()
 
-  const selectedAccountId = params.accountId
   const hasCreditAccounts = !!props.accounts.length
-  const isAccountSelected = isNumber(selectedAccountId)
+  const isAccountSelected = isNumber(accountId)
 
-  const selectedAccountDetails = props.accounts.find((account) => account.id === selectedAccountId)
+  const selectedAccountDetails = props.accounts.find((account) => account.id === accountId)
   const [showFundAccount, setShowFundAccount] = useState<boolean>(
     isAccountSelected && !selectedAccountDetails?.deposits?.length,
   )
 
-  const isLoadingAccount = isAccountSelected && selectedAccountDetails?.id !== selectedAccountId
+  const isLoadingAccount = isAccountSelected && selectedAccountDetails?.id !== accountId
   const showCreateAccount = !hasCreditAccounts || isCreating
 
   async function createAccountHandler() {
@@ -47,14 +45,14 @@ export default function AccountMenuContent(props: Props) {
     const accountId = await createAccount({ fee: hardcodedFee })
     setIsCreating(false)
     if (!accountId) return
-    navigate(`/wallets/${params.address}/accounts/${accountId}`)
+    navigate(`/wallets/${address}/accounts/${accountId}`)
   }
 
   useEffect(() => {
     useStore.setState({ accounts: props.accounts })
   }, [props.accounts])
 
-  if (!params.address) return null
+  if (!address) return null
 
   return (
     <div className='relative'>
@@ -67,7 +65,7 @@ export default function AccountMenuContent(props: Props) {
       >
         {hasCreditAccounts
           ? isAccountSelected
-            ? `Account ${selectedAccountId}`
+            ? `Account ${accountId}`
             : 'Select Account'
           : 'Create Account'}
       </Button>

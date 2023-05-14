@@ -1,8 +1,8 @@
+import { useParams } from 'react-router-dom'
 import useStore from 'store'
-import useParams from 'utils/route'
 
 export default function useCurrentAccount(): Account | undefined {
-  const params = useParams()
+  const { accountId } = useParams()
   const accounts = useStore((s) => s.accounts)
-  return accounts?.find((account) => account.id === params.accountId)
+  return accounts?.find((account) => account.id === accountId)
 }

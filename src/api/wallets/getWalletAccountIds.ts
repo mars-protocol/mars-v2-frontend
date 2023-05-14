@@ -15,7 +15,6 @@ export default async function getWalletAccountIds(address: string) {
     },
   })
 
-  console.log('tokens owned ', data.tokens)
   if (data.tokens) {
     return data.tokens
   }

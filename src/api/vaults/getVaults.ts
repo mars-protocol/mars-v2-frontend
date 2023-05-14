@@ -79,8 +79,6 @@ async function getVaultConfigs(client: CosmWasmClient) {
   // await getBatch()
   const vaults = IS_TESTNET ? TESTNET_VAULTS : VAULTS
 
-  console.log(vaults)
-
   return vaults.map((vaultMetaData) => {
     const vaultInfo = data.find((vault) => vault.address === vaultMetaData.address)
 

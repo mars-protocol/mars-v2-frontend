@@ -8,9 +8,8 @@ import { useEffect } from 'react'
 
 import ConnectButton from 'components/Wallet/ConnectButton'
 import ConnectedButton from 'components/Wallet/ConnectedButton'
-import useParams from 'utils/route'
 import useStore from 'store'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 export default function Wallet() {
   const navigate = useNavigate()
@@ -21,6 +20,7 @@ export default function Wallet() {
   const client = useStore((s) => s.client)
   const address = useStore((s) => s.address)
 
+  // TODO: Clean up this useEffect, way too many renders / dependencies
   useEffect(() => {
     const isConnected = status === WalletConnectionStatus.Connected
 

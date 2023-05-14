@@ -1,19 +1,20 @@
 import { menuTree } from 'components/Header/DesktopHeader'
 import { Logo } from 'components/Icons'
 import { NavLink } from 'components/Navigation/NavLink'
-import useParams, { getRoute } from 'utils/route'
+import { useLocation, useParams } from 'react-router-dom'
+import { getRoute } from 'utils/route'
 
 export default function DesktopNavigation() {
   const params = useParams()
+  const location = useLocation()
 
   function getIsActive(href: string) {
-    if (params.page.includes('earn') && href.includes('earn')) return true
-    return params.page === href
+    return location.pathname.includes(href)
   }
 
   return (
     <div className='flex flex-grow items-center'>
-      <NavLink href={getRoute(params, { page: 'trade' })}>
+      <NavLink href={getRoute(params, { page: 'trade' })} isActive={false}>
         <span className='block h-10 w-10'>
           <Logo />
         </span>
