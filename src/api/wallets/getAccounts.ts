@@ -3,9 +3,9 @@ import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import { resolvePositionResponses } from 'utils/resolvers'
 
-import getWalletAccountIds from './getWalletAccountIds'
+import getWalletAccountIds from './getAccountIds'
 
-export default async function getWalletAccounts(address: string): Promise<Account[]> {
+export default async function getAccounts(address: string): Promise<Account[]> {
   if (!ENV.URL_RPC || !ENV.ADDRESS_CREDIT_MANAGER || !ENV.URL_API) {
     return new Promise((_, reject) => reject(ENV_MISSING_MESSAGE))
   }

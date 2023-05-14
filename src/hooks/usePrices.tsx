@@ -1,13 +1,11 @@
 import useSWR from 'swr'
 
-import useStore from 'store'
 import getPrices from 'api/prices/getPrices'
+import useStore from 'store'
 
-export default function FetchPrices() {
-  useSWR('prices', getPrices, {
+export default function usePrices() {
+  return useSWR('prices', getPrices, {
     refreshInterval: 30000,
     onSuccess: (prices) => useStore.setState({ prices }),
   })
-
-  return null
 }

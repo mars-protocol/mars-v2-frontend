@@ -140,7 +140,6 @@ export const AcccountBalancesTable = (props: Props) => {
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    debugTable: true,
   })
 
   return (

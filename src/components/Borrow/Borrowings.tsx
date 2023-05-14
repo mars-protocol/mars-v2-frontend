@@ -1,21 +1,20 @@
-import { Suspense, use } from 'react'
+import { Suspense } from 'react'
 import { useParams } from 'react-router-dom'
-import useSWR from 'swr'
 
 import Card from 'components/Card'
 import { getMarketAssets } from 'utils/assets'
 import { BorrowTable } from 'components/Borrow/BorrowTable'
-import getAccountDebts from 'api/accounts/getAccountDebts'
-import getMarketBorrowings from 'api/markets/getMarketBorrowings'
+import useAccountDebts from 'hooks/useAccountDebts'
+import useMarketBorrowings from 'hooks/useMarketBorrowings'
 
 interface Props {
   type: 'active' | 'available'
 }
 
 function Content(props: Props) {
-  const params = useParams()
-  const { data: debtData } = useSWR(params?.accountId || '', getAccountDebts, { suspense: true })
-  const { data: borrowData } = useSWR('borrowdata', getMarketBorrowings, { suspense: true })
+  const { accountId } = useParams()
+  const { data: debtData } = useAccountDebts(accountId)
+  const { data: borrowData } = useMarketBorrowings()
 
   const marketAssets = getMarketAssets()
 

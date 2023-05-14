@@ -1,18 +1,17 @@
 import classNames from 'classnames'
 import { Suspense } from 'react'
 import { useParams } from 'react-router-dom'
-import useSWR from 'swr'
 
 import { AcccountBalancesTable } from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
 import Card from 'components/Card'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
-import getWalletAccounts from 'api/wallets/getWalletAccounts'
+import useAccounts from 'hooks/useAccounts'
 
 function Content() {
   const address = useParams().address || ''
-  const { data: account } = useSWR(address, getWalletAccounts, { suspense: true })
+  const { data: account } = useAccounts(address)
 
   if (!address) {
     return (

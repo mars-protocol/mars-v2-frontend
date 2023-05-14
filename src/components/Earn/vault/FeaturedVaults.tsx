@@ -1,12 +1,11 @@
 import { Suspense } from 'react'
-import useSWR from 'swr'
 
 import Card from 'components/Card'
 import VaultCard from 'components/Earn/vault/VaultCard'
-import getVaults from 'api/vaults/getVaults'
+import useVaults from 'hooks/useVaults'
 
 function Content() {
-  const { data: vaults } = useSWR('vaults', getVaults, { suspense: true })
+  const { data: vaults } = useVaults()
 
   const featuredVaults = vaults.filter((vault) => vault.isFeatured)
 
