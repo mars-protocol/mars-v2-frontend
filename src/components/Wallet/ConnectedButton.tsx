@@ -20,7 +20,6 @@ import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { getBaseAsset, getMarketAssets } from 'utils/assets'
 import { formatValue, truncate } from 'utils/formatters'
-import getWalletBalances from 'api/wallets/getWalletBalances'
 import useWalletBalances from 'hooks/useWalletBalances'
 
 export default function ConnectedButton() {

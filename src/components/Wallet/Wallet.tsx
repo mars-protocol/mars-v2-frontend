@@ -55,6 +55,6 @@ export default function Wallet() {
     if (!address || address === params.address) return
     navigate(`/wallets/${address}`)
   }, [address, broadcast, client, params, recentWallet, navigate, simulate, sign, status])
-
+  return null
   return address ? <ConnectedButton /> : <ConnectButton status={status} />
 }
