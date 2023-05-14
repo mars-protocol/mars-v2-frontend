@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom'
+
 import useStore from 'store'
 
 export default function useCurrentAccount(): Account | undefined {

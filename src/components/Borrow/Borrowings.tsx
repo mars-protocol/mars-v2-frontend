@@ -1,11 +1,10 @@
 import { Suspense, use } from 'react'
 import { useParams } from 'react-router-dom'
+import useSWR from 'swr'
 
 import Card from 'components/Card'
-
 import { getMarketAssets } from 'utils/assets'
 import { BorrowTable } from 'components/Borrow/BorrowTable'
-import useSWR from 'swr'
 import getAccountDebts from 'api/accounts/getAccountDebts'
 import getMarketBorrowings from 'api/markets/getMarketBorrowings'
 

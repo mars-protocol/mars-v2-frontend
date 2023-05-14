@@ -5,11 +5,11 @@ import {
   WalletConnectionStatus,
 } from '@marsprotocol/wallet-connector'
 import { useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import ConnectButton from 'components/Wallet/ConnectButton'
 import ConnectedButton from 'components/Wallet/ConnectedButton'
 import useStore from 'store'
-import { useNavigate, useParams } from 'react-router-dom'
 
 export default function Wallet() {
   const navigate = useNavigate()

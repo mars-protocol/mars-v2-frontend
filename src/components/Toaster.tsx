@@ -1,11 +1,11 @@
 import classNames from 'classnames'
 import { toast as createToast, Slide, ToastContainer } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 
 import { Button } from 'components/Button'
 import { CheckCircled, Cross, CrossCircled } from 'components/Icons'
 import Text from 'components/Text'
 import useStore from 'store'
-import { useNavigate } from 'react-router-dom'
 
 export default function Toaster() {
   const enableAnimations = useStore((s) => s.enableAnimations)

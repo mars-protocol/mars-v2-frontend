@@ -9,11 +9,15 @@ export default async function getWalletAccountIds(address: string) {
 
   const client = await CosmWasmClient.connect(ENV.URL_RPC)
 
+  console.log(client)
+
   const data = await client.queryContractSmart(ENV.ADDRESS_ACCOUNT_NFT, {
     tokens: {
       owner: address,
     },
   })
+
+  console.log(data.tokens)
 
   if (data.tokens) {
     return data.tokens

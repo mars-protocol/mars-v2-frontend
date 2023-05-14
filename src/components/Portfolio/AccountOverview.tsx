@@ -1,14 +1,13 @@
 import classNames from 'classnames'
 import { Suspense } from 'react'
 import { useParams } from 'react-router-dom'
+import useSWR from 'swr'
 
 import { AcccountBalancesTable } from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
 import Card from 'components/Card'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
-
-import useSWR from 'swr'
 import getWalletAccounts from 'api/wallets/getWalletAccounts'
 
 function Content() {

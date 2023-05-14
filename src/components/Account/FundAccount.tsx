@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { useCallback, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
 import { Button } from 'components/Button'
 import { ArrowRight, Cross } from 'components/Icons'
@@ -12,7 +13,6 @@ import useStore from 'store'
 import { getAmount } from 'utils/accounts'
 import { hardcodedFee } from 'utils/contants'
 import { BN } from 'utils/helpers'
-import { useParams } from 'react-router-dom'
 
 interface Props {
   setShowFundAccount: (show: boolean) => void

@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import { useParams } from 'react-router-dom'
+
 import Card from 'components/Card'
 import Loading from 'components/Loading'
 import Text from 'components/Text'

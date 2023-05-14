@@ -1,11 +1,11 @@
 import { Suspense } from 'react'
+import useSWR from 'swr'
 
 import Card from 'components/Card'
 import { VaultTable } from 'components/Earn/vault/VaultTable'
 import Text from 'components/Text'
 import { IS_TESTNET } from 'constants/env'
 import { TESTNET_VAULTS, VAULTS } from 'constants/vaults'
-import useSWR from 'swr'
 import getVaults from 'api/vaults/getVaults'
 
 function Content() {

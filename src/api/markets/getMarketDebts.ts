@@ -2,6 +2,7 @@ import { gql, request as gqlRequest } from 'graphql-request'
 
 import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import { denomToKey, getContractQuery, keyToDenom } from 'utils/query'
+
 import getMarkets from './getMarkets'
 
 export default async function getMarketDebts(): Promise<Coin[]> {

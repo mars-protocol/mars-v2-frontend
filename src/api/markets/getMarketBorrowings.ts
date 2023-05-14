@@ -1,8 +1,9 @@
 import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import { BN } from 'utils/helpers'
+import getPrices from 'api/prices/getPrices'
+
 import getMarkets from './getMarkets'
 import getMarketLiquidity from './getMarketLiquidity'
-import getPrices from 'api/prices/getPrices'
 
 export default async function getMarketBorrowings(): Promise<BorrowAsset[]> {
   if (!ENV.URL_API) {

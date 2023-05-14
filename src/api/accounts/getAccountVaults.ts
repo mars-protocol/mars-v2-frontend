@@ -1,4 +1,5 @@
 import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
+
 import getAccount from './getAccount'
 
 export default async function getAccountDeposits(accountId: string) {

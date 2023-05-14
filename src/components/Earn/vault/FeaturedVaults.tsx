@@ -1,9 +1,8 @@
 import { Suspense } from 'react'
+import useSWR from 'swr'
 
 import Card from 'components/Card'
 import VaultCard from 'components/Earn/vault/VaultCard'
-
-import useSWR from 'swr'
 import getVaults from 'api/vaults/getVaults'
 
 function Content() {

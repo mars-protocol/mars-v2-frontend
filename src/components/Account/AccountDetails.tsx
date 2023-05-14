@@ -1,7 +1,8 @@
+import { useParams } from 'react-router-dom'
+
 import { Gauge } from 'components/Gauge'
 import { Heart } from 'components/Icons'
 import Text from 'components/Text'
-import { useParams } from 'react-router-dom'
 import { isNumber } from 'utils/parsers'
 
 export default function AccountDetails() {

@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import { useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import AccountStats from 'components/Account/AccountStats'
 import { Button } from 'components/Button'
@@ -13,7 +14,6 @@ import useStore from 'store'
 import { calculateAccountDeposits } from 'utils/accounts'
 import { hardcodedFee } from 'utils/contants'
 import { BN } from 'utils/helpers'
-import { useNavigate, useParams } from 'react-router-dom'
 
 interface Props {
   setShowFundAccount: (showFundAccount: boolean) => void

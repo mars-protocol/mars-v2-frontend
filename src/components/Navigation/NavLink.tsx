@@ -3,7 +3,7 @@ import { ReactNode } from 'react'
 import { NavLink as Link } from 'react-router-dom'
 
 interface Props {
-  page: string
+  href: string
   children: string | ReactNode
   isActive?: boolean
 }
@@ -11,7 +11,7 @@ interface Props {
 export const NavLink = (props: Props) => {
   return (
     <Link
-      to={props.page}
+      to={props.href}
       className={({ isActive }) =>
         classNames(
           'text-sm font-semibold hover:text-white active:text-white',

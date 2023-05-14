@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import AccountList from 'components/Account/AccountList'
 import CreateAccount from 'components/Account/CreateAccount'
@@ -13,7 +14,6 @@ import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
 import { isNumber } from 'utils/parsers'
-import { useNavigate, useParams } from 'react-router-dom'
 
 const menuClasses = 'absolute isolate flex w-full flex-wrap scrollbar-hide'
 

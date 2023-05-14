@@ -2,6 +2,7 @@ import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 
 import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import { resolvePositionResponses } from 'utils/resolvers'
+
 import getWalletAccountIds from './getWalletAccountIds'
 
 export default async function getWalletAccounts(address: string): Promise<Account[]> {
@@ -23,6 +24,7 @@ export default async function getWalletAccounts(address: string): Promise<Accoun
 
   const accounts = await Promise.all($accounts).then((accounts) => accounts)
 
+  console.log(accounts)
   if (accounts) {
     return resolvePositionResponses(accounts)
   }

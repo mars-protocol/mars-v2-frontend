@@ -1,11 +1,14 @@
+import { useParams } from 'react-router-dom'
+
 import { menuTree } from 'components/Header/DesktopHeader'
 import { Logo } from 'components/Icons'
 import { NavLink } from 'components/Navigation/NavLink'
-import { useLocation } from 'react-router-dom'
-import { navigateToPage } from 'utils/route'
+import { getRoute } from 'utils/route'
 
 export default function DesktopNavigation() {
-  const location = useLocation()
+  const { address, accountId } = useParams()
+
+  console.log(address, accountId)
 
   function getIsActive(href: string) {
     return location.pathname.includes(href)
@@ -13,7 +16,7 @@ export default function DesktopNavigation() {
 
   return (
     <div className='flex flex-grow items-center'>
-      <NavLink href={navigateToPage(location.pathname, 'trade')} isActive={false}>
+      <NavLink href={getRoute('trade', address, accountId)} isActive={false}>
         <span className='block h-10 w-10'>
           <Logo />
         </span>
@@ -22,8 +25,8 @@ export default function DesktopNavigation() {
         {menuTree.map((item, index) => (
           <NavLink
             key={index}
-            href={navigateToPage(location.pathname, item.href)}
-            isActive={getIsActive(item.href)}
+            href={getRoute(item.page, address, accountId)}
+            isActive={getIsActive(item.page)}
           >
             {item.label}
           </NavLink>

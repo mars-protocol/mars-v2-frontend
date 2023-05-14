@@ -1,5 +1,6 @@
 import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import { BN } from 'utils/helpers'
+
 import getMarketDeposits from './getMarketDeposits'
 import getMarketDebts from './getMarketDebts'
 
