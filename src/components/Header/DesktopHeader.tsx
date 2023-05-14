@@ -6,12 +6,12 @@ import Settings from 'components/Settings'
 import Wallet from 'components/Wallet/Wallet'
 import { WalletConnectProvider } from 'components/Wallet/WalletConnectProvider'
 
-export const menuTree: { href: RouteSegment; label: string }[] = [
-  { href: 'trade', label: 'Trade' },
-  { href: 'farm', label: 'Earn' },
-  { href: 'borrow', label: 'Borrow' },
-  { href: 'portfolio', label: 'Portfolio' },
-  { href: 'council', label: 'Council' },
+export const menuTree: { page: Page; label: string }[] = [
+  { page: 'trade', label: 'Trade' },
+  { page: 'farm', label: 'Earn' },
+  { page: 'borrow', label: 'Borrow' },
+  { page: 'portfolio', label: 'Portfolio' },
+  { page: 'council', label: 'Council' },
 ]
 
 export default function DesktopHeader() {

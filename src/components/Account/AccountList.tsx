@@ -13,7 +13,6 @@ import useStore from 'store'
 import { calculateAccountDeposits } from 'utils/accounts'
 import { hardcodedFee } from 'utils/contants'
 import { BN } from 'utils/helpers'
-import { getRoute } from 'utils/route'
 import { useNavigate, useParams } from 'react-router-dom'
 
 interface Props {

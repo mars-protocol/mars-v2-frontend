@@ -1,5 +1,5 @@
 import AccountOverview from 'components/Portfolio/AccountOverview'
 
-export default function Portfoliopage() {
+export default function PortfolioPage() {
   return <AccountOverview />
 }

@@ -11,12 +11,12 @@ import ModalsContainer from 'components/Modals/ModalsContainer'
 import Toaster from 'components/Toaster'
 import 'react-toastify/dist/ReactToastify.min.css'
 import 'styles/globals.css'
-import Tradepage from 'components/pages/trade'
-import Borrowpage from 'components/pages/borrow'
-import Portfoliopage from 'components/pages/portfolio'
-import Councilpage from 'components/pages/council'
-import Farmpage from 'components/pages/farm'
-import Lendpage from 'components/pages/lend'
+import BorrowPage from 'pages/BorrowPage'
+import PortfolioPage from './PortfolioPage'
+import FarmPage from './FarmPage'
+import TradePage from './TradePage'
+import LendPage from './LendPage'
+import CouncilPage from './CouncilPage'
 
 function App() {
   const [isServer, setIsServer] = useState(true)
@@ -37,31 +37,31 @@ function App() {
       >
         <div className='flex w-full max-w-content flex-grow flex-wrap content-start'>
           <Routes>
-            <Route path='/trade' element={<Tradepage />} />
-            <Route path='/farm' element={<Farmpage />} />
-            <Route path='/lend' element={<Lendpage />} />
-            <Route path='/borrow' element={<Borrowpage />} />
-            <Route path='/portfolio' element={<Portfoliopage />} />
-            <Route path='/council' element={<Councilpage />} />
-            <Route path='/' element={<Tradepage />} />
-            <Route path='/wallets/:address/trade' element={<Tradepage />} />
+            <Route path='/trade' element={<TradePage />} />
+            <Route path='/farm' element={<FarmPage />} />
+            <Route path='/lend' element={<LendPage />} />
+            <Route path='/borrow' element={<BorrowPage />} />
+            <Route path='/portfolio' element={<PortfolioPage />} />
+            <Route path='/council' element={<CouncilPage />} />
+            <Route path='/' element={<TradePage />} />
+            <Route path='/wallets/:address/trade' element={<TradePage />} />
             <Route path='/wallets/:address'>
               <Route path='accounts/:accountId'>
-                <Route path='trade' element={<Tradepage />} />
-                <Route path='farm' element={<Farmpage />} />
-                <Route path='lend' element={<Lendpage />} />
-                <Route path='borrow' element={<Borrowpage />} />
-                <Route path='portfolio' element={<Portfoliopage />} />
-                <Route path='council' element={<Councilpage />} />
-                <Route path='' element={<Tradepage />} />
+                <Route path='trade' element={<TradePage />} />
+                <Route path='farm' element={<FarmPage />} />
+                <Route path='lend' element={<LendPage />} />
+                <Route path='borrow' element={<BorrowPage />} />
+                <Route path='portfolio' element={<PortfolioPage />} />
+                <Route path='council' element={<CouncilPage />} />
+                <Route path='' element={<TradePage />} />
               </Route>
-              <Route path='trade' element={<Tradepage />} />
-              <Route path='farm' element={<Farmpage />} />
-              <Route path='lend' element={<Lendpage />} />
-              <Route path='borrow' element={<Borrowpage />} />
-              <Route path='portfolio' element={<Portfoliopage />} />
-              <Route path='council' element={<Councilpage />} />
-              <Route path='' element={<Tradepage />} />
+              <Route path='trade' element={<TradePage />} />
+              <Route path='farm' element={<FarmPage />} />
+              <Route path='lend' element={<LendPage />} />
+              <Route path='borrow' element={<BorrowPage />} />
+              <Route path='portfolio' element={<PortfolioPage />} />
+              <Route path='council' element={<CouncilPage />} />
+              <Route path='' element={<TradePage />} />
             </Route>
           </Routes>
         </div>

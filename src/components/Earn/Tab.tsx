@@ -1,7 +1,6 @@
 import classNames from 'classnames'
-import { useParams, NavLink } from 'react-router-dom'
-
-import { getRoute } from 'utils/route'
+import { NavLink, useLocation } from 'react-router-dom'
+import { navigateToPage } from 'utils/route'
 
 const underlineClasses =
   'relative before:absolute before:h-[2px] before:-bottom-1 before:left-0 before:right-0 before:gradient-active-tab'
@@ -11,21 +10,14 @@ interface Props {
 }
 
 export default function Tab(props: Props) {
-  const params = useParams()
+  const location = useLocation()
 
   return (
     <div className='mb-8 w-full'>
       <div className='flex gap-2'>
         <div className='relative'>
           <NavLink
-            to={getRoute(
-              {
-                accountId: params.accountId || '',
-                address: params.addres || '',
-                page: params.page || '',
-              },
-              { page: 'farm' },
-            )}
+            to={navigateToPage(location.pathname, 'farm')}
             className={classNames(
               !props.isFarm ? 'text-white/20' : underlineClasses,
               'relative mr-8 text-xl',
@@ -35,14 +27,7 @@ export default function Tab(props: Props) {
           </NavLink>
         </div>
         <NavLink
-          to={getRoute(
-            {
-              accountId: params.accountId || '',
-              address: params.addres || '',
-              page: params.page || '',
-            },
-            { page: 'lend' },
-          )}
+          to={navigateToPage(location.pathname, 'lend')}
           className={classNames(
             props.isFarm ? 'text-white/20' : underlineClasses,
             'relative text-xl',
