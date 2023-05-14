@@ -9,7 +9,6 @@ import useStore from 'store'
 function Content() {
   const address = useStore((s) => s.address)
   const { data: accounts } = useSWR(address, getWalletAccounts, { suspense: true })
-  console.log(accounts)
   if (!accounts) return null
   return <AccountMenuContent accounts={accounts} />
 }

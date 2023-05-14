@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import AccountStats from 'components/Account/AccountStats'
 import { Button } from 'components/Button'
@@ -14,6 +14,7 @@ import useStore from 'store'
 import { calculateAccountDeposits } from 'utils/accounts'
 import { hardcodedFee } from 'utils/contants'
 import { BN } from 'utils/helpers'
+import { getPage, getRoute } from 'utils/route'
 
 interface Props {
   setShowFundAccount: (showFundAccount: boolean) => void
@@ -27,6 +28,7 @@ const accountCardHeaderClasses = classNames(
 
 export default function AccountList(props: Props) {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const { accountId, address } = useParams()
 
   const prices = useStore((s) => s.prices)
@@ -83,7 +85,7 @@ export default function AccountList(props: Props) {
                   role={!isActive ? 'button' : undefined}
                   onClick={() => {
                     if (isActive) return
-                    navigate('', { state: { accountId: account.id } })
+                    navigate(getRoute(getPage(pathname), address, account.id))
                   }}
                 >
                   <Text size='xs' className='flex flex-1'>

@@ -24,7 +24,6 @@ export default async function getWalletAccounts(address: string): Promise<Accoun
 
   const accounts = await Promise.all($accounts).then((accounts) => accounts)
 
-  console.log(accounts)
   if (accounts) {
     return resolvePositionResponses(accounts)
   }

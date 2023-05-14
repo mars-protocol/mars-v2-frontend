@@ -8,8 +8,6 @@ import { getRoute } from 'utils/route'
 export default function DesktopNavigation() {
   const { address, accountId } = useParams()
 
-  console.log(address, accountId)
-
   function getIsActive(href: string) {
     return location.pathname.includes(href)
   }
