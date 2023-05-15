@@ -1,5 +1,4 @@
-import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-
+import { getClient } from 'api/client'
 import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 
 export default async function getAccountIds(address: string) {
@@ -7,7 +6,7 @@ export default async function getAccountIds(address: string) {
     return new Promise((_, reject) => reject(ENV_MISSING_MESSAGE))
   }
 
-  const client = await CosmWasmClient.connect(ENV.URL_RPC)
+  const client = await getClient()
 
   const data = await client.queryContractSmart(ENV.ADDRESS_ACCOUNT_NFT, {
     tokens: {

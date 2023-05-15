@@ -1,8 +1,7 @@
-import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-
 import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import { resolvePositionResponses } from 'utils/resolvers'
 import getWalletAccountIds from 'api/wallets/getAccountIds'
+import { getClient } from 'api/client'
 
 export default async function getAccounts(address: string): Promise<Account[]> {
   if (!ENV.URL_RPC || !ENV.ADDRESS_CREDIT_MANAGER || !ENV.URL_API) {
@@ -11,7 +10,7 @@ export default async function getAccounts(address: string): Promise<Account[]> {
 
   const accountIds: string[] = await getWalletAccountIds(address)
 
-  const client = await CosmWasmClient.connect(ENV.URL_RPC)
+  const client = await getClient()
 
   const $accounts: Promise<AccountResponse>[] = accountIds.map((accountId) =>
     client.queryContractSmart(ENV.ADDRESS_CREDIT_MANAGER!, {
