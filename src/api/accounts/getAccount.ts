@@ -1,4 +1,4 @@
-import { getClient } from 'api/client'
+import { getClient } from 'api/cosmwasm-client'
 import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 
 export default async function getAccount(accountId: string): Promise<AccountResponse> {

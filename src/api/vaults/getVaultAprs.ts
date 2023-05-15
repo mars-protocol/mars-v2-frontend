@@ -1,8 +1,8 @@
-export default async function getAprs() {
-  const APOLLO_URL = 'https://api.apollo.farm/api/vault_infos/v2/osmo-test-5'
+import { ENV } from 'constants/env'
 
+export default async function getAprs() {
   try {
-    const response = await fetch(APOLLO_URL)
+    const response = await fetch(ENV.URL_APOLLO_APR)
 
     if (response.ok) {
       const data: FlatApr[] | NestedApr[] = await response.json()

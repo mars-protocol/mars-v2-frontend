@@ -1,4 +1,4 @@
-import { getClient } from 'api/client'
+import { getClient } from 'api/cosmwasm-client'
 import { ENV, IS_TESTNET } from 'constants/env'
 import { TESTNET_VAULTS, VAULTS } from 'constants/vaults'
 import {
