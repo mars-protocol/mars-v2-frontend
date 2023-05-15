@@ -1,5 +1,4 @@
 import Head from 'next/head'
-import { useEffect, useState } from 'react'
 import { BrowserRouter } from 'react-router-dom'
 
 import RouterOutlet from 'components/RouterOutlet'
@@ -8,12 +7,6 @@ import 'react-toastify/dist/ReactToastify.min.css'
 import 'styles/globals.css'
 
 function App() {
-  const [isServer, setIsServer] = useState(true)
-  useEffect(() => {
-    setIsServer(false)
-  }, [])
-  if (isServer) return null
-
   return (
     <>
       <Head>

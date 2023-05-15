@@ -25,7 +25,6 @@ export default function RouterOutlet() {
         <Route path='/portfolio' element={<PortfolioPage />} />
         <Route path='/council' element={<CouncilPage />} />
         <Route path='/' element={<TradePage />} />
-        <Route path='/wallets/:address/trade' element={<TradePage />} />
         <Route path='/wallets/:address'>
           <Route path='accounts/:accountId'>
             <Route path='trade' element={<TradePage />} />
