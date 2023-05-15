@@ -1,4 +1,3 @@
-import { Coin, StdFee } from '@cosmjs/stargate'
 import { MsgExecuteContract } from '@marsprotocol/wallet-connector'
 import { isMobile } from 'react-device-detect'
 import { GetState, SetState } from 'zustand'
