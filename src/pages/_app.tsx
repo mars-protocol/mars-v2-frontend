@@ -1,12 +1,18 @@
 import Head from 'next/head'
-import { BrowserRouter } from 'react-router-dom'
+import { AppProps } from 'next/app'
+import { useEffect, useState } from 'react'
 
-import RouterOutlet from 'components/RouterOutlet'
-import { WalletConnectProvider } from 'components/Wallet/WalletConnectProvider'
 import 'react-toastify/dist/ReactToastify.min.css'
 import 'styles/globals.css'
 
-function App() {
+export default function App({ Component, pageProps }: AppProps) {
+  const PageComponent = Component as any
+  const [isServer, setIsServer] = useState(true)
+  useEffect(() => {
+    setIsServer(false)
+  }, [])
+  if (isServer) return null
+
   return (
     <>
       <Head>
@@ -35,13 +41,9 @@ function App() {
         <meta content='#ffffff' name='msapplication-TileColor' />
         <meta content='#ffffff' name='theme-color' />
       </Head>
-      <WalletConnectProvider>
-        <BrowserRouter>
-          <RouterOutlet />
-        </BrowserRouter>
-      </WalletConnectProvider>
+      <div suppressHydrationWarning>
+        {typeof window === 'undefined' ? null : <PageComponent {...pageProps} />}
+      </div>
     </>
   )
 }
-
-export default App

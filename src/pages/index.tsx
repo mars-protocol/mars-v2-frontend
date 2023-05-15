@@ -1,12 +1,18 @@
 import React from 'react'
-import { BrowserRouter, BrowserRouter as Router } from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
 
-export default function App({ Component, pageProps }: { Component: any; pageProps: any }) {
+import { WalletConnectProvider } from 'components/Wallet/WalletConnectProvider'
+import Routes from 'components/Routes'
+import Layout from 'pages/_layout'
+
+export default function Router() {
   return (
-    <Router>
+    <WalletConnectProvider>
       <BrowserRouter>
-        <Component {...pageProps} />
+        <Layout>
+          <Routes />
+        </Layout>
       </BrowserRouter>
-    </Router>
+    </WalletConnectProvider>
   )
 }
