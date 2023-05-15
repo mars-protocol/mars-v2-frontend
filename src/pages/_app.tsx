@@ -1,17 +1,11 @@
-import classNames from 'classnames'
+import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { BrowserRouter } from 'react-router-dom'
-import Head from 'next/head'
 
-import AccountDetails from 'components/Account/AccountDetails'
-import Background from 'components/Background'
-import Footer from 'components/Footer'
-import DesktopHeader from 'components/Header/DesktopHeader'
-import ModalsContainer from 'components/Modals/ModalsContainer'
-import Toaster from 'components/Toaster'
+import RouterOutlet from 'components/RouterOutlet'
+import { WalletConnectProvider } from 'components/Wallet/WalletConnectProvider'
 import 'react-toastify/dist/ReactToastify.min.css'
 import 'styles/globals.css'
-import RouterOutlet from 'components/RouterOutlet'
 
 function App() {
   const [isServer, setIsServer] = useState(true)
@@ -48,9 +42,11 @@ function App() {
         <meta content='#ffffff' name='msapplication-TileColor' />
         <meta content='#ffffff' name='theme-color' />
       </Head>
-      <BrowserRouter>
-        <RouterOutlet />
-      </BrowserRouter>
+      <WalletConnectProvider>
+        <BrowserRouter>
+          <RouterOutlet />
+        </BrowserRouter>
+      </WalletConnectProvider>
     </>
   )
 }

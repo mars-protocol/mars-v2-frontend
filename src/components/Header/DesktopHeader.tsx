@@ -4,7 +4,7 @@ import AccountMenu from 'components/Account/AccountMenu'
 import DesktopNavigation from 'components/Navigation/DesktopNavigation'
 import Settings from 'components/Settings'
 import Wallet from 'components/Wallet/Wallet'
-import { WalletConnectProvider } from 'components/Wallet/WalletConnectProvider'
+import useStore from 'store'
 
 export const menuTree: { page: Page; label: string }[] = [
   { page: 'trade', label: 'Trade' },
@@ -15,6 +15,7 @@ export const menuTree: { page: Page; label: string }[] = [
 ]
 
 export default function DesktopHeader() {
+  const address = useStore((s) => s.address)
   return (
     <header
       className={classNames(
@@ -26,10 +27,8 @@ export default function DesktopHeader() {
       <div className='flex items-center justify-between border-b border-white/20 py-3 pl-6 pr-4'>
         <DesktopNavigation />
         <div className='flex gap-4'>
-          <AccountMenu />
-          <WalletConnectProvider>
-            <Wallet />
-          </WalletConnectProvider>
+          {address && <AccountMenu />}
+          <Wallet />
           <Settings />
         </div>
       </div>
