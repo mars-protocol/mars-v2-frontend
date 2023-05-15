@@ -1,15 +1,11 @@
 import { gql, request as gqlRequest } from 'graphql-request'
 
-import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
+import { ENV } from 'constants/env'
 import { getMarketAssets } from 'utils/assets'
 import { denomToKey } from 'utils/query'
 import { resolveMarketResponses } from 'utils/resolvers'
 
 export default async function getMarkets(): Promise<Market[]> {
-  if (!ENV.URL_GQL || !ENV.ADDRESS_RED_BANK || !ENV.ADDRESS_INCENTIVES) {
-    return new Promise((_, reject) => reject(ENV_MISSING_MESSAGE))
-  }
-
   const marketAssets = getMarketAssets()
 
   const marketQueries = marketAssets.map(

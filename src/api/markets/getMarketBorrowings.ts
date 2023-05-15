@@ -1,14 +1,9 @@
-import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import { BN } from 'utils/helpers'
 import getPrices from 'api/prices/getPrices'
 import getMarkets from 'api/markets/getMarkets'
 import getMarketLiquidity from 'api/markets/getMarketLiquidity'
 
 export default async function getMarketBorrowings(): Promise<BorrowAsset[]> {
-  if (!ENV.URL_API) {
-    return new Promise((_, reject) => reject(ENV_MISSING_MESSAGE))
-  }
-
   const liquidity = await getMarketLiquidity()
   const borrowEnabledMarkets = (await getMarkets()).filter((market: Market) => market.borrowEnabled)
   const prices = await getPrices()

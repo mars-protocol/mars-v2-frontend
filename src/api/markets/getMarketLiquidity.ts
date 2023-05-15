@@ -1,13 +1,8 @@
-import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import { BN } from 'utils/helpers'
 import getMarketDeposits from 'api/markets/getMarketDeposits'
 import getMarketDebts from 'api/markets/getMarketDebts'
 
 export default async function getMarketLiquidity(): Promise<Coin[]> {
-  if (!ENV.URL_API) {
-    return new Promise((_, reject) => reject(ENV_MISSING_MESSAGE))
-  }
-
   const deposits = await getMarketDeposits()
   const debts = await getMarketDebts()
 

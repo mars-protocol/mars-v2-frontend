@@ -3,13 +3,14 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
-    "build": "next build",
+    "build": "yarn validate-env && next build",
     "dev": "next dev",
     "test": "jest",
     "lint": "eslint ./src/ && yarn prettier-check",
     "format": "eslint ./src/ --fix && prettier --write ./src/",
     "prettier-check": "prettier --ignore-path .gitignore --check ./src/",
-    "start": "next start"
+    "start": "next start",
+    "validate-env": "node ./validate-env"
   },
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.30.1",
@@ -44,6 +45,7 @@
     "@types/react-dom": "18.2.4",
     "autoprefixer": "^10.4.14",
     "babel-jest": "^29.5.0",
+    "dotenv": "^16.0.3",
     "eslint": "8.40.0",
     "eslint-config-next": "^13.4.1",
     "eslint-plugin-import": "^2.27.5",
