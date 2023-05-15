@@ -1,13 +1,8 @@
-import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
 import { convertAprToApy } from 'utils/parsers'
 import getVaultConfigs from 'api/vaults/getVaultConfigs'
 import getAprs from 'api/vaults/getVaultAprs'
 
 export default async function getVaults(): Promise<Vault[]> {
-  if (!ENV.URL_RPC || !ENV.ADDRESS_CREDIT_MANAGER) {
-    return new Promise((_, reject) => reject(ENV_MISSING_MESSAGE))
-  }
-
   const $vaultConfigs = getVaultConfigs()
   const $aprs = getAprs()
   const vaults: Vault[] = await Promise.all([$vaultConfigs, $aprs]).then(([vaultConfigs, aprs]) => {

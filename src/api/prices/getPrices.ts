@@ -1,15 +1,11 @@
 import { gql, request as gqlRequest } from 'graphql-request'
 
 import { ASSETS } from 'constants/assets'
-import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
+import { ENV } from 'constants/env'
 import { getMarketAssets } from 'utils/assets'
 import { BN } from 'utils/helpers'
 
 export default async function getPrices(): Promise<Coin[]> {
-  if (!ENV.URL_GQL || !ENV.ADDRESS_ORACLE) {
-    return new Promise((_, reject) => reject(ENV_MISSING_MESSAGE))
-  }
-
   const marketAssets = getMarketAssets()
   const baseCurrency = ASSETS[0]
 

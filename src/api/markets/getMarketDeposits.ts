@@ -1,14 +1,10 @@
 import { gql, request as gqlRequest } from 'graphql-request'
 
-import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
+import { ENV } from 'constants/env'
 import { denomToKey, getContractQuery, keyToDenom } from 'utils/query'
 import getMarkets from 'api/markets/getMarkets'
 
 export default async function getMarketDeposits(): Promise<Coin[]> {
-  if (!ENV.URL_RPC || !ENV.ADDRESS_RED_BANK || !ENV.URL_GQL || !ENV.URL_API) {
-    return new Promise((_, reject) => reject(ENV_MISSING_MESSAGE))
-  }
-
   const markets = await getMarkets()
 
   let query = ''

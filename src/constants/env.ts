@@ -41,14 +41,3 @@ export const VERCEL_BYPASS = process.env.NEXT_PUBLIC_BYPASS
   : ''
 
 export const IS_TESTNET = ENV.NETWORK !== 'mainnet'
-
-export const ENV_MISSING_MESSAGE = () => {
-  const missing: string[] = []
-  Object.keys(ENV).forEach((key) => {
-    if (!ENV[key as keyof EnvironmentVariables]) {
-      missing.push(key)
-    }
-  })
-
-  return `Environment variable(s) missing for: ${missing.join(', ')}`
-}
