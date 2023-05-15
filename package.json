@@ -30,7 +30,7 @@
     "react-spring": "^9.7.1",
     "react-toastify": "^9.1.2",
     "react-use-clipboard": "^1.0.9",
-    "recharts": "^2.6.0",
+    "recharts": "^2.6.2",
     "swr": "^2.1.5",
     "tailwind-scrollbar-hide": "^1.1.7",
     "zustand": "^4.3.8"
