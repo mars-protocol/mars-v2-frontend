@@ -10,17 +10,7 @@ const nextConfig = {
       },
     ]
   },
-  webpack(config, { isServer }) {
-    if (isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        'utf-8-validate': false,
-        bufferutil: false,
-        './build/Release/ecdh': false,
-        eccrypto: false,
-      }
-    }
-
+  webpack(config) {
     config.module.rules.push({
       test: /\.svg$/i,
       issuer: /\.[jt]sx?$/,
