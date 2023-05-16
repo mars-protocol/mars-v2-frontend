@@ -1,5 +1,3 @@
-import { Coin } from '@cosmjs/stargate'
-
 import { FormattedNumber } from 'components/FormattedNumber'
 import useStore from 'store'
 import { convertToDisplayAmount } from 'utils/formatters'

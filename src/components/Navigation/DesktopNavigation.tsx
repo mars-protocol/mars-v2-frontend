@@ -1,33 +1,30 @@
-'use client'
-
-import Link from 'next/link'
+import { useParams } from 'react-router-dom'
 
 import { menuTree } from 'components/Header/DesktopHeader'
 import { Logo } from 'components/Icons'
 import { NavLink } from 'components/Navigation/NavLink'
-import useParams, { getRoute } from 'utils/route'
+import { getRoute } from 'utils/route'
 
 export default function DesktopNavigation() {
-  const params = useParams()
+  const { address, accountId } = useParams()
 
   function getIsActive(href: string) {
-    if (params.page.includes('earn') && href.includes('earn')) return true
-    return params.page === href
+    return location.pathname.includes(href)
   }
 
   return (
     <div className='flex flex-grow items-center'>
-      <Link href={getRoute(params, { page: 'trade' })}>
+      <NavLink href={getRoute('trade', address, accountId)} isActive={false}>
         <span className='block h-10 w-10'>
           <Logo />
         </span>
-      </Link>
+      </NavLink>
       <div className='flex gap-8 px-6'>
         {menuTree.map((item, index) => (
           <NavLink
             key={index}
-            href={getRoute(params, { page: item.href })}
-            isActive={getIsActive(item.href)}
+            href={getRoute(item.page, address, accountId)}
+            isActive={getIsActive(item.page)}
           >
             {item.label}
           </NavLink>

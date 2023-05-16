@@ -1,9 +1,8 @@
-import { Coin, StdFee } from '@cosmjs/stargate'
 import { MsgExecuteContract } from '@marsprotocol/wallet-connector'
 import { isMobile } from 'react-device-detect'
 import { GetState, SetState } from 'zustand'
 
-import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
+import { ENV } from 'constants/env'
 import { Store } from 'store'
 import { getMarketAssets } from 'utils/assets'
 import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
@@ -162,7 +161,6 @@ export default function createBroadcastSlice(
 
       try {
         const client = get().client
-        if (!ENV.ADDRESS_CREDIT_MANAGER) return { error: ENV_MISSING_MESSAGE() }
         if (!client) return { error: 'no client detected' }
 
         const broadcastOptions = {

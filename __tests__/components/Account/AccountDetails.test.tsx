@@ -1,10 +1,10 @@
 import { render, screen } from '@testing-library/react'
+import * as rrd from 'react-router-dom'
 
-import * as useParams from 'utils/route'
 import AccountDetails from 'components/Account/AccountDetails'
 
-jest.mock('utils/route')
-const mockedUseParams = useParams.default as jest.Mock
+jest.mock('react-router-dom')
+const mockedUseParams = rrd.useParams as jest.Mock
 
 describe('<AccountDetails />', () => {
   afterAll(() => {

@@ -1,5 +1,3 @@
-'use client'
-
 import {
   ChainInfoID,
   SimpleChainInfoList,
@@ -10,7 +8,6 @@ import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import { useCallback, useEffect, useState } from 'react'
 import useClipboard from 'react-use-clipboard'
-import useSWR from 'swr'
 
 import { Button } from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
@@ -21,9 +18,9 @@ import Text from 'components/Text'
 import { IS_TESTNET } from 'constants/env'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
-import { Endpoints, getEndpoint, getWalletBalancesSWR } from 'utils/api'
 import { getBaseAsset, getMarketAssets } from 'utils/assets'
 import { formatValue, truncate } from 'utils/formatters'
+import useWalletBalances from 'hooks/useWalletBalances'
 
 export default function ConnectedButton() {
   // ---------------
@@ -35,10 +32,7 @@ export default function ConnectedButton() {
   const address = useStore((s) => s.address)
   const network = useStore((s) => s.client?.recentWallet.network)
   const baseAsset = getBaseAsset()
-  const { data, isLoading } = useSWR(
-    getEndpoint(Endpoints.WALLET_BALANCES, { address }),
-    getWalletBalancesSWR,
-  )
+  const { data: walletBalances, isLoading } = useWalletBalances(address)
 
   // ---------------
   // LOCAL STATE
@@ -66,17 +60,17 @@ export default function ConnectedButton() {
   }
 
   useEffect(() => {
-    if (!data || data.length === 0) return
+    if (!walletBalances || walletBalances.length === 0) return
     setWalletAmount(
-      BigNumber(data?.find((coin: Coin) => coin.denom === baseAsset.denom)?.amount ?? 0)
+      BigNumber(walletBalances?.find((coin: Coin) => coin.denom === baseAsset.denom)?.amount ?? 0)
         .div(10 ** baseAsset.decimals)
         .toNumber(),
     )
 
     const assetDenoms = marketAssets.map((asset) => asset.denom)
-    const balances = data.filter((coin) => assetDenoms.includes(coin.denom))
+    const balances = walletBalances.filter((coin) => assetDenoms.includes(coin.denom))
     useStore.setState({ balances })
-  }, [data, baseAsset.denom, baseAsset.decimals, marketAssets])
+  }, [walletBalances, baseAsset.denom, baseAsset.decimals, marketAssets])
 
   return (
     <div className={'relative'}>

@@ -1,3 +1,13 @@
-type Coin = import('@cosmjs/stargate').Coin
+type Coin = {
+  readonly denom: string
+  readonly amount: string
+}
 
-type StdFee = import('@cosmjs/stargate').StdFee
+type StdFee = {
+  readonly amount: readonly Coin[]
+  readonly gas: string
+  /** The granter address that is used for paying with feegrants */
+  readonly granter?: string
+  /** The fee payer address. The payer must have signed the transaction. */
+  readonly payer?: string
+}

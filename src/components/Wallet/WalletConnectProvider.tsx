@@ -1,23 +1,16 @@
-'use client'
-
 import { ChainInfoID, WalletManagerProvider } from '@marsprotocol/wallet-connector'
 import { FC } from 'react'
 
 import { Button } from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
 import { Cross } from 'components/Icons'
-import { ENV, ENV_MISSING_MESSAGE } from 'constants/env'
+import { ENV } from 'constants/env'
 
 type Props = {
   children?: React.ReactNode
 }
 
 export const WalletConnectProvider: FC<Props> = ({ children }) => {
-  if (!ENV.CHAIN_ID || !ENV.URL_REST || !ENV.URL_RPC || !ENV.WALLETS) {
-    console.error(ENV_MISSING_MESSAGE)
-    return null
-  }
-
   const chainInfoOverrides = {
     rpc: ENV.URL_RPC,
     rest: ENV.URL_REST,

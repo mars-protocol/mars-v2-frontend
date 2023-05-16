@@ -1,4 +1,3 @@
-'use client'
 import BigNumber from 'bignumber.js'
 
 import AccountHealth from 'components/Account/AccountHealth'

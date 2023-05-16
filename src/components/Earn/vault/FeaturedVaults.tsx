@@ -2,10 +2,10 @@ import { Suspense } from 'react'
 
 import Card from 'components/Card'
 import VaultCard from 'components/Earn/vault/VaultCard'
-import { getVaults } from 'utils/api'
+import useVaults from 'hooks/useVaults'
 
-async function Content() {
-  const vaults = await getVaults()
+function Content() {
+  const { data: vaults } = useVaults()
 
   const featuredVaults = vaults.filter((vault) => vault.isFeatured)
 
@@ -33,7 +33,6 @@ async function Content() {
 export default function FeaturedVaults() {
   return (
     <Suspense fallback={null}>
-      {/* @ts-expect-error Server Component */}
       <Content />
     </Suspense>
   )

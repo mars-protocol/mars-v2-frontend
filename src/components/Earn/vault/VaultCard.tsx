@@ -1,5 +1,3 @@
-'use client'
-
 import { Button } from 'components/Button'
 import VaultLogo from 'components/Earn/vault/VaultLogo'
 import Text from 'components/Text'

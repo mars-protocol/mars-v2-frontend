@@ -1,7 +1,7 @@
-'use client'
 import classNames from 'classnames'
-import { useRouter } from 'next/navigation'
 import { toast as createToast, Slide, ToastContainer } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
+import { mutate } from 'swr'
 
 import { Button } from 'components/Button'
 import { CheckCircled, Cross, CrossCircled } from 'components/Icons'
@@ -11,7 +11,6 @@ import useStore from 'store'
 export default function Toaster() {
   const enableAnimations = useStore((s) => s.enableAnimations)
   const toast = useStore((s) => s.toast)
-  const router = useRouter()
 
   if (toast) {
     const Msg = () => (
@@ -62,7 +61,7 @@ export default function Toaster() {
     })
 
     useStore.setState({ toast: null })
-    router.refresh()
+    mutate(() => true)
   }
 
   return (

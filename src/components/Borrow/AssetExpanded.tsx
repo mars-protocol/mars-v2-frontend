@@ -1,5 +1,3 @@
-'use client'
-
 import { Row } from '@tanstack/react-table'
 
 import { Button } from 'components/Button'
