@@ -1,5 +1,3 @@
-'use client'
-
 import { useEffect, useState } from 'react'
 
 import AccountSummary from 'components/Account/AccountSummary'

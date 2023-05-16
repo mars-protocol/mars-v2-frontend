@@ -1,28 +1,28 @@
-'use client'
-
 import {
   getClient,
   useWallet,
   useWalletManager,
   WalletConnectionStatus,
 } from '@marsprotocol/wallet-connector'
-import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import ConnectButton from 'components/Wallet/ConnectButton'
 import ConnectedButton from 'components/Wallet/ConnectedButton'
-import useParams from 'utils/route'
 import useStore from 'store'
+import { getPage, getRoute } from 'utils/route'
 
 export default function Wallet() {
-  const router = useRouter()
-  const params = useParams()
+  const navigate = useNavigate()
+  const { address: addressInUrl } = useParams()
+  const { pathname } = useLocation()
 
   const { status } = useWalletManager()
   const { recentWallet, simulate, sign, broadcast } = useWallet()
   const client = useStore((s) => s.client)
   const address = useStore((s) => s.address)
 
+  // Set connection status
   useEffect(() => {
     const isConnected = status === WalletConnectionStatus.Connected
 
@@ -34,29 +34,33 @@ export default function Wallet() {
           }
         : { address: undefined, accounts: null, client: undefined },
     )
+  }, [status, recentWallet?.account.address])
 
-    if (!isConnected || !recentWallet) return
+  // Set the client
+  useEffect(() => {
+    if (!recentWallet || client) return
+    async function getCosmWasmClient() {
+      if (!recentWallet) return
 
-    if (!client) {
-      const getCosmWasmClient = async () => {
-        const cosmClient = await getClient(recentWallet.network.rpc)
-
-        const client = {
-          broadcast,
-          cosmWasmClient: cosmClient,
-          recentWallet,
-          sign,
-          simulate,
-        }
-        useStore.setState({ client })
+      const cosmClient = await getClient(recentWallet.network.rpc)
+      const client = {
+        broadcast,
+        cosmWasmClient: cosmClient,
+        recentWallet,
+        sign,
+        simulate,
       }
-
-      getCosmWasmClient()
+      useStore.setState({ client })
     }
 
-    if (!address || address === params.address) return
-    router.push(`/wallets/${address}`)
-  }, [address, broadcast, client, params, recentWallet, router, simulate, sign, status])
+    getCosmWasmClient()
+  }, [recentWallet, client, simulate, sign, broadcast])
+
+  // Redirect when switching wallets or on first connection
+  useEffect(() => {
+    if (!address || address === addressInUrl) return
+    navigate(getRoute(getPage(pathname), address))
+  }, [address, addressInUrl, navigate, pathname])
 
   return address ? <ConnectedButton /> : <ConnectButton status={status} />
 }

@@ -18,17 +18,20 @@ interface VaultMetaData {
   isFeatured?: boolean
 }
 
-interface VaultConfig extends VaultMetaData {
+interface VaultInfo {
+  address: string
   ltv: {
     max: number
     liq: number
   }
   cap: {
     denom: string
-    used: numnber
+    used: number
     max: number
   }
 }
+
+interface VaultConfig extends VaultMetaData, VaultInfo {}
 
 interface Vault extends VaultConfig {
   apy: number | null

@@ -1,4 +1,4 @@
-import { getAccountDebts } from 'utils/api'
+import getAccountDebts from 'api/accounts/getAccountDebts'
 
 interface Props {
   accountId: string

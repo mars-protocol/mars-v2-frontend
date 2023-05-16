@@ -1,17 +1,20 @@
 import { Suspense } from 'react'
+import { useParams } from 'react-router-dom'
 
 import Card from 'components/Card'
-import { getAccountDebts, getBorrowData } from 'utils/api'
 import { getMarketAssets } from 'utils/assets'
 import { BorrowTable } from 'components/Borrow/BorrowTable'
+import useAccountDebts from 'hooks/useAccountDebts'
+import useMarketBorrowings from 'hooks/useMarketBorrowings'
 
-interface Props extends PageProps {
+interface Props {
   type: 'active' | 'available'
 }
 
-async function Content(props: Props) {
-  const debtData = await getAccountDebts(props.params?.accountId)
-  const borrowData = await getBorrowData()
+function Content(props: Props) {
+  const { accountId } = useParams()
+  const { data: debtData } = useAccountDebts(accountId)
+  const { data: borrowData } = useMarketBorrowings()
 
   const marketAssets = getMarketAssets()
 
@@ -20,7 +23,7 @@ async function Content(props: Props) {
       (prev: { available: BorrowAsset[]; active: BorrowAssetActive[] }, curr) => {
         const borrow = borrowData.find((borrow) => borrow.denom === curr.denom)
         if (borrow) {
-          const debt = debtData.find((debt) => debt.denom === curr.denom)
+          const debt = debtData?.find((debt) => debt.denom === curr.denom)
           if (debt) {
             prev.active.push({
               ...borrow,
@@ -68,22 +71,20 @@ function Fallback() {
   return <BorrowTable data={available} />
 }
 
-export function AvailableBorrowings(props: PageProps) {
+export function AvailableBorrowings() {
   return (
     <Card className='h-fit w-full bg-white/5' title={'Available to borrow'}>
       <Suspense fallback={<Fallback />}>
-        {/* @ts-expect-error Server Component */}
-        <Content params={props.params} type='available' />
+        <Content type='available' />
       </Suspense>
     </Card>
   )
 }
 
-export function ActiveBorrowings(props: PageProps) {
+export function ActiveBorrowings() {
   return (
     <Suspense fallback={null}>
-      {/* @ts-expect-error Server Component */}
-      <Content params={props.params} type='active' />
+      <Content type='active' />
     </Suspense>
   )
 }

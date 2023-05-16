@@ -1,7 +1,6 @@
-'use client'
-
 import BigNumber from 'bignumber.js'
 import { useCallback, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
 import { Button } from 'components/Button'
 import { ArrowRight, Cross } from 'components/Icons'
@@ -14,7 +13,6 @@ import useStore from 'store'
 import { getAmount } from 'utils/accounts'
 import { hardcodedFee } from 'utils/contants'
 import { BN } from 'utils/helpers'
-import useParams from 'utils/route'
 
 interface Props {
   setShowFundAccount: (show: boolean) => void
@@ -22,7 +20,7 @@ interface Props {
 }
 
 export default function FundAccount(props: Props) {
-  const params = useParams()
+  const { accountId } = useParams()
   const deposit = useStore((s) => s.deposit)
   const balances = useStore((s) => s.balances)
 
@@ -50,10 +48,11 @@ export default function FundAccount(props: Props) {
   )
 
   async function onDeposit() {
+    if (!accountId) return
     setIsFunding(true)
     const result = await deposit({
       fee: hardcodedFee,
-      accountId: params.accountId,
+      accountId,
       coin: {
         denom: asset.denom,
         amount: amount.toString(),
@@ -79,7 +78,7 @@ export default function FundAccount(props: Props) {
       </div>
       <div className='relative z-10 w-full p-4'>
         <Text size='lg' className='mb-2 font-bold'>
-          {`Fund Account ${params.accountId}`}
+          {`Fund Account ${accountId}`}
         </Text>
         <Text className='mb-4 text-white/70'>
           Deposit assets from your Osmosis address to your Mars credit account. Bridge assets if

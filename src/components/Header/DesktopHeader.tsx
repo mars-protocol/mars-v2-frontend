@@ -4,21 +4,18 @@ import AccountMenu from 'components/Account/AccountMenu'
 import DesktopNavigation from 'components/Navigation/DesktopNavigation'
 import Settings from 'components/Settings'
 import Wallet from 'components/Wallet/Wallet'
-import { WalletConnectProvider } from 'components/Wallet/WalletConnectProvider'
+import useStore from 'store'
 
-export const menuTree: { href: RouteSegment; label: string }[] = [
-  { href: 'trade', label: 'Trade' },
-  { href: 'earn/farm', label: 'Earn' },
-  { href: 'borrow', label: 'Borrow' },
-  { href: 'portfolio', label: 'Portfolio' },
-  { href: 'council', label: 'Council' },
+export const menuTree: { page: Page; label: string }[] = [
+  { page: 'trade', label: 'Trade' },
+  { page: 'farm', label: 'Earn' },
+  { page: 'borrow', label: 'Borrow' },
+  { page: 'portfolio', label: 'Portfolio' },
+  { page: 'council', label: 'Council' },
 ]
 
-interface Props {
-  params: PageParams
-}
-
-export default function DesktopHeader(props: Props) {
+export default function DesktopHeader() {
+  const address = useStore((s) => s.address)
   return (
     <header
       className={classNames(
@@ -30,10 +27,8 @@ export default function DesktopHeader(props: Props) {
       <div className='flex items-center justify-between border-b border-white/20 py-3 pl-6 pr-4'>
         <DesktopNavigation />
         <div className='flex gap-4'>
-          <AccountMenu params={props.params} />
-          <WalletConnectProvider>
-            <Wallet />
-          </WalletConnectProvider>
+          {address && <AccountMenu />}
+          <Wallet />
           <Settings />
         </div>
       </div>

@@ -1,5 +1,3 @@
-'use client'
-
 import { Button } from 'components/Button'
 import { ArrowRight } from 'components/Icons'
 import Text from 'components/Text'

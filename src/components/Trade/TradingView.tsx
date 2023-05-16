@@ -4,7 +4,7 @@ import Card from 'components/Card'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
 
-async function Content(props: PageProps) {
+function Content() {
   return <Text size='sm'>Chart view</Text>
 }
 
@@ -12,7 +12,7 @@ function Fallback() {
   return <Loading className='h-4 w-50' />
 }
 
-export default function TradingView(props: PageProps) {
+export default function TradingView() {
   return (
     <Card
       className='col-span-2 h-full bg-white/5'
@@ -20,8 +20,7 @@ export default function TradingView(props: PageProps) {
       contentClassName='px-4 py-6'
     >
       <Suspense fallback={<Fallback />}>
-        {/* @ts-expect-error Server Component */}
-        <Content params={props.params} />
+        <Content />
       </Suspense>
     </Card>
   )

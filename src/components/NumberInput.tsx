@@ -1,5 +1,3 @@
-'use client'
-
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import React, { useEffect, useState } from 'react'

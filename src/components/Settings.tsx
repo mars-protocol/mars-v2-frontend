@@ -1,5 +1,3 @@
-'use client'
-
 import { Button } from 'components/Button'
 import { Gear } from 'components/Icons'
 import Overlay from 'components/Overlay'

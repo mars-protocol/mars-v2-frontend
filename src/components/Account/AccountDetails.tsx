@@ -1,13 +1,13 @@
-'use client'
+import { useParams } from 'react-router-dom'
+
 import { Gauge } from 'components/Gauge'
 import { Heart } from 'components/Icons'
 import Text from 'components/Text'
 import { isNumber } from 'utils/parsers'
-import useParams from 'utils/route'
 
 export default function AccountDetails() {
-  const params = useParams()
-  const hasAccount = isNumber(params.accountId)
+  const { accountId } = useParams()
+  const hasAccount = isNumber(accountId)
 
   return hasAccount ? (
     <div

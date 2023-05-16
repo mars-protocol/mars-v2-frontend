@@ -1,5 +1,3 @@
-'use client'
-
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import Image from 'next/image'

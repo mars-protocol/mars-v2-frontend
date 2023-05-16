@@ -1,4 +1,4 @@
-interface Account {
+interface Account extends AccountChange {
   id: string
   deposits: Coin[]
   debts: Coin[]

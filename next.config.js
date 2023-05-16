@@ -1,46 +1,16 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
-  output: 'standalone',
-  experimental: {
-    appDir: true,
-  },
   reactStrictMode: true,
-  async redirects() {
+  async rewrites() {
     return [
       {
-        source: '/',
-        destination: '/trade',
-        permanent: true,
-      },
-      {
-        source: '/wallets',
-        destination: '/trade',
-        permanent: true,
-      },
-      {
-        source: '/wallets/:wallet',
-        destination: '/wallets/:wallet/trade',
-        permanent: true,
-      },
-      {
-        source: '/wallets/:wallet/accounts',
-        destination: '/wallets/:wallet/accounts/trade',
-        permanent: true,
+        source: '/:any*',
+        destination: '/',
       },
     ]
   },
-  webpack(config, { isServer }) {
-    if (isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        'utf-8-validate': false,
-        bufferutil: false,
-        './build/Release/ecdh': false,
-        eccrypto: false,
-      }
-    }
-
+  webpack(config) {
     config.module.rules.push({
       test: /\.svg$/i,
       issuer: /\.[jt]sx?$/,

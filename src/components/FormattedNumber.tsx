@@ -1,5 +1,3 @@
-'use client'
-
 import classNames from 'classnames'
 import React, { useEffect, useRef } from 'react'
 import { animated, useSpring } from 'react-spring'
