@@ -34,7 +34,7 @@ export default function Wallet() {
           }
         : { address: undefined, accounts: null, client: undefined },
     )
-  }, [status])
+  }, [status, recentWallet?.account.address])
 
   // Set the client
   useEffect(() => {
@@ -60,7 +60,7 @@ export default function Wallet() {
   useEffect(() => {
     if (!address || address === addressInUrl) return
     navigate(getRoute(getPage(pathname), address))
-  }, [address, addressInUrl, navigate])
+  }, [address, addressInUrl, navigate, pathname])
 
   return address ? <ConnectedButton /> : <ConnectButton status={status} />
 }
