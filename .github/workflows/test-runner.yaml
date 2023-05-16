@@ -4,6 +4,7 @@ on: pull_request
 
 jobs:
   build:
+    if: github.actor != 'dependabot[bot]'
     name: Tests
     runs-on: ubuntu-latest
 
@@ -17,7 +18,7 @@ jobs:
         run: yarn
       - name: Test Coverage
         id: testCoverage
-        uses: anuraag016/Jest-Coverage-Diff@master
+        uses: anuraag016/Jest-Coverage-Diff@V1.4
         with:
           fullCoverageDiff: false
           runCommand: "yarn jest --coverage --collectCoverage=true --coverageDirectory='./' --coverageReporters='json-summary' --forceExit --detectOpenHandles"
