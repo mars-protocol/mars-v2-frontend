@@ -1,7 +1,8 @@
-import Head from 'next/head'
 import { AppProps } from 'next/app'
+import Head from 'next/head'
 import { useEffect, useState } from 'react'
 
+import { WalletConnectProvider } from 'components/Wallet/WalletConnectProvider'
 import 'react-toastify/dist/ReactToastify.min.css'
 import 'styles/globals.css'
 
@@ -42,7 +43,11 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta content='#ffffff' name='theme-color' />
       </Head>
       <div suppressHydrationWarning>
-        {typeof window === 'undefined' ? null : <PageComponent {...pageProps} />}
+        {typeof window === 'undefined' ? null : (
+          <WalletConnectProvider>
+            <PageComponent {...pageProps} />
+          </WalletConnectProvider>
+        )}
       </div>
     </>
   )
