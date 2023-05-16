@@ -6,6 +6,7 @@ import Card from 'components/Card'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { ArrowChartLineUp } from 'components/Icons'
 import Text from 'components/Text'
+import useIsOpenArray from 'hooks/useIsOpenArray'
 import useStore from 'store'
 import { calculateAccountDeposits } from 'utils/accounts'
 import { BN } from 'utils/helpers'
@@ -16,6 +17,8 @@ interface Props {
 }
 
 export default function AccountSummary(props: Props) {
+  const [isOpen, toggleOpen] = useIsOpenArray(2, true)
+
   const prices = useStore((s) => s.prices)
   const baseCurrency = useStore((s) => s.baseCurrency)
   const accountBalance = props.account ? calculateAccountDeposits(props.account, prices) : BN(0)
@@ -45,10 +48,17 @@ export default function AccountSummary(props: Props) {
           {
             title: `Subaccount ${props.account.id} Composition`,
             content: <AccountComposition account={props.account} change={props.change} />,
-            open: true,
+            isOpen: isOpen[0],
+            toggleOpen: (index: number) => toggleOpen(index),
           },
-          { title: 'Balances', content: <AcccountBalancesTable data={props.account} /> },
+          {
+            title: 'Balances',
+            content: <AcccountBalancesTable data={props.account} />,
+            isOpen: isOpen[1],
+            toggleOpen: (index: number) => toggleOpen(index),
+          },
         ]}
+        allowMultipleOpen
       />
     </div>
   )
