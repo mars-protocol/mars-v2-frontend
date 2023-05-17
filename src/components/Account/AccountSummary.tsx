@@ -25,7 +25,7 @@ export default function AccountSummary(props: Props) {
   if (!props.account) return null
 
   return (
-    <div className='flex max-w-[345px] basis-[345px] flex-wrap'>
+    <div className='flex min-w-[345px] basis-[345px] flex-wrap'>
       <Card className='mb-4 min-w-fit bg-white/10' contentClassName='flex'>
         <Item>
           <DisplayCurrency
