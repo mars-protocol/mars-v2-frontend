@@ -137,6 +137,13 @@ export default function VaultModal() {
                     max={maxSecondaryAmount}
                     asset={secondaryAsset}
                   />
+                  <Slider value={percentage} onChange={onChangeSlider} />
+                  <TokenInput
+                    onChange={onChangeSecondary}
+                    amount={amount}
+                    max={maxSecondaryAmount}
+                    asset={secondaryAsset}
+                  />
                   <Divider />
                   <div className='flex justify-between'>
                     <Text className='text-white/50'>Custom amount</Text>

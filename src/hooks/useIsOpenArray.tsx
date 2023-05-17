@@ -5,16 +5,10 @@ export default function useIsOpenArray(length: number, allowMultiple: boolean) {
 
   function toggleOpen(index: number) {
     setIsOpen((prev) => {
-      const list = prev.map((_, i) => {
-        if (i === index) return allowMultiple ? !prev[i] : true
+      return prev.map((_, i) => {
+        if (i === index) return !prev[i]
         return allowMultiple ? prev[i] : false
       })
-
-      if (list.every((item) => item === false)) {
-        list[index] = true
-      }
-
-      return list
     })
   }
 
