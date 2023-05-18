@@ -48,7 +48,9 @@ export default function Accordion(props: Props) {
   return (
     <div className='w-full'>
       {props.items.map((item, index) => (
-        <Card className='mb-4'>{Content(item, index)}</Card>
+        <Card key={item.title} className='mb-4'>
+          {Content(item, index)}
+        </Card>
       ))}
     </div>
   )
