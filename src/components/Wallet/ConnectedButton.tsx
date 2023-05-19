@@ -109,12 +109,12 @@ export default function ConnectedButton() {
       </Button>
       <Overlay className='right-0 mt-2' show={showDetails} setShow={setShowDetails}>
         <div className='flex w-[440px] flex-wrap p-6'>
-          <div className='flex items-start w-full mb-4 flex-0 flex-nowrap'>
-            <div className='flex flex-1 w-auto'>
+          <div className='flex-0 mb-4 flex w-full flex-nowrap items-start'>
+            <div className='flex w-auto flex-1'>
               <div className='mr-2 flex h-[31px] items-end pb-0.5  text-base-caps'>
                 {baseAsset.denom}
               </div>
-              <div className='flex flex-wrap justify-end flex-0'>
+              <div className='flex-0 flex flex-wrap justify-end'>
                 <FormattedNumber
                   animate
                   className='flex items-end text-2xl '
@@ -126,8 +126,8 @@ export default function ConnectedButton() {
               <Button color='secondary' onClick={disconnectWallet} text='Disconnect' />
             </div>
           </div>
-          <div className='flex flex-wrap w-full'>
-            <Text uppercase className='mb-1 break-all /80'>
+          <div className='flex w-full flex-wrap'>
+            <Text uppercase className='/80 mb-1 break-all'>
               {'Your Address'}
             </Text>
 
@@ -141,7 +141,7 @@ export default function ConnectedButton() {
               <Button
                 leftIcon={isCopied ? <Check /> : <Copy />}
                 variant='transparent'
-                className='flex w-auto py-2 mr-10'
+                className='mr-10 flex w-auto py-2'
                 color='quaternary'
                 onClick={setCopied}
                 text={isCopied ? 'Copied' : 'Copy Address'}
