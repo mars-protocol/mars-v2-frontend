@@ -166,7 +166,7 @@ export default function createBroadcastSlice(
         const broadcastOptions = {
           messages: [
             new MsgExecuteContract({
-              sender: client.recentWallet.account.address,
+              sender: client.connectedWallet.account.address,
               contract: ENV.ADDRESS_CREDIT_MANAGER,
               msg: options.msg,
               funds,
@@ -175,7 +175,7 @@ export default function createBroadcastSlice(
           feeAmount: options.fee.amount[0].amount,
           gasLimit: options.fee.gas,
           memo: undefined,
-          wallet: client.recentWallet,
+          wallet: client.connectedWallet,
           mobile: isMobile,
         }
 
