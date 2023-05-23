@@ -1,5 +1,5 @@
 import Accordion from 'components/Accordion'
-import { AcccountBalancesTable } from 'components/Account/AccountBalancesTable'
+import { AccountBalancesTable } from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
 import AccountHealth from 'components/Account/AccountHealth'
 import Card from 'components/Card'
@@ -47,13 +47,17 @@ export default function AccountSummary(props: Props) {
         items={[
           {
             title: `Subaccount ${props.account.id} Composition`,
-            content: <AccountComposition account={props.account} change={props.change} />,
+            renderContent: () =>
+              props.account ? (
+                <AccountComposition account={props.account} change={props.change} />
+              ) : null,
             isOpen: isOpen[0],
             toggleOpen: (index: number) => toggleOpen(index),
           },
           {
             title: 'Balances',
-            content: <AcccountBalancesTable data={props.account} />,
+            renderContent: () =>
+              props.account ? <AccountBalancesTable data={props.account} /> : null,
             isOpen: isOpen[1],
             toggleOpen: (index: number) => toggleOpen(index),
           },

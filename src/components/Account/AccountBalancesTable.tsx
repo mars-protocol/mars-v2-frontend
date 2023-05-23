@@ -21,7 +21,7 @@ interface Props {
   data: Account
 }
 
-export const AcccountBalancesTable = (props: Props) => {
+export const AccountBalancesTable = (props: Props) => {
   const displayCurrency = useStore((s) => s.displayCurrency)
   const prices = useStore((s) => s.prices)
   const [sorting, setSorting] = React.useState<SortingState>([])
