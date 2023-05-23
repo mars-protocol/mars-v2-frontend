@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { useState } from 'react'
 
-import { Button } from 'components/Button'
+import Button from 'components/Button'
 import Divider from 'components/Divider'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { ArrowRight } from 'components/Icons'
