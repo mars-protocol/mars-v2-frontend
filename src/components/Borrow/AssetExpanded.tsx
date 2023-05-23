@@ -1,6 +1,6 @@
 import { Row } from '@tanstack/react-table'
 
-import { Button } from 'components/Button'
+import Button from 'components/Button'
 import useStore from 'store'
 import { getMarketAssets } from 'utils/assets'
 

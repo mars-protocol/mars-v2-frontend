@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import AccountStats from 'components/Account/AccountStats'
-import { Button } from 'components/Button'
+import Button from 'components/Button'
 import Card from 'components/Card'
 import { ArrowCircledTopRight, ArrowDownLine, ArrowUpLine, TrashBin } from 'components/Icons'
 import Radio from 'components/Radio'

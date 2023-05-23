@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js'
 import { useCallback, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-import { Button } from 'components/Button'
+import Button from 'components/Button'
 import { ArrowRight, Cross } from 'components/Icons'
 import SwitchWithLabel from 'components/SwitchWithLabel'
 import Text from 'components/Text'

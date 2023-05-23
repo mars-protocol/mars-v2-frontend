@@ -2,7 +2,7 @@ import Image from 'next/image'
 import { useEffect, useState } from 'react'
 
 import AccountSummary from 'components/Account/AccountSummary'
-import { Button } from 'components/Button'
+import Button from 'components/Button'
 import Card from 'components/Card'
 import Divider from 'components/Divider'
 import { ArrowRight } from 'components/Icons'

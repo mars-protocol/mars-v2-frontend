@@ -1,4 +1,4 @@
-import { Button } from 'components/Button'
+import Button from 'components/Button'
 import { Gear } from 'components/Icons'
 import Overlay from 'components/Overlay'
 import Switch from 'components/Switch'
