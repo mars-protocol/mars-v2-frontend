@@ -43,7 +43,7 @@ export default function VaultModal() {
           vault={modal.vault}
           primaryAsset={primaryAsset}
           secondaryAsset={secondaryAsset}
-          currentAccount={currentAccount}
+          account={currentAccount}
         />
       ) : (
         <CircularProgress />
