@@ -17,6 +17,7 @@ interface Props {
 
 interface SingleProps extends Props {
   max: BigNumber
+  maxText: string
   asset: Asset
   hasSelect?: boolean
   onChangeAsset?: (asset: Asset) => void
@@ -24,6 +25,7 @@ interface SingleProps extends Props {
 
 interface SelectProps extends Props {
   max?: BigNumber
+  maxText?: string
   asset?: Asset
   onChangeAsset: (asset: Asset) => void
   hasSelect: boolean
@@ -82,6 +84,7 @@ export default function TokenInputWithSlider(props: SingleProps | SelectProps) {
         onChangeAsset={(asset: Asset, max: BigNumber) => onAssetChange(asset, max)}
         amount={amount}
         max={max}
+        maxText={props.maxText || ''}
         className='mb-4'
         disabled={props.disabled}
         hasSelect={props.hasSelect}

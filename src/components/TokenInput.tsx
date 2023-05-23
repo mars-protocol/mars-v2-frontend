@@ -15,7 +15,6 @@ import { Button } from 'components/Button'
 
 interface Props {
   amount: BigNumber
-  maxText: string
   onChange: (amount: BigNumber) => void
   className?: string
   disabled?: boolean
@@ -26,6 +25,7 @@ interface Props {
 interface SingleProps extends Props {
   asset: Asset
   max: BigNumber
+  maxText: string
   hasSelect?: boolean
   onChangeAsset?: (asset: Asset, max: BigNumber) => void
 }
@@ -33,6 +33,7 @@ interface SingleProps extends Props {
 interface SelectProps extends Props {
   asset?: Asset
   max?: BigNumber
+  maxText?: string
   hasSelect: boolean
   onChangeAsset: (asset: Asset, max: BigNumber) => void
 }
@@ -45,22 +46,9 @@ export default function TokenInput(props: SingleProps | SelectProps) {
     amount: '0',
   })
 
-  const selectedAssetDenom = props.asset ? props.asset.denom : baseCurrency.denom
-
-  // TODO: Refactor the useEffect
-  useEffect(
-    () => {
-      setDefaultAsset()
-      updateAsset(asset.denom)
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  )
-
   // TODO: Refactor the useEffect
   useEffect(() => {
     props.onChangeAsset && props.onChangeAsset(asset, coin ? BN(coin.amount) : BN(0))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coin, asset])
 
   const updateAsset = useCallback(
@@ -72,15 +60,6 @@ export default function TokenInput(props: SingleProps | SelectProps) {
     },
     [props.balances, baseCurrency],
   )
-
-  function setDefaultAsset() {
-    if (!props.balances || props.balances?.length === 0) return setAsset(baseCurrency)
-    if (props.balances.length === 1) {
-      const balances = props.balances ?? []
-      return setAsset(ASSETS.find((asset) => asset.denom === balances[0].denom) ?? baseCurrency)
-    }
-    return setAsset(ASSETS.find((asset) => asset.denom === selectedAssetDenom) ?? baseCurrency)
-  }
 
   function onMaxBtnClick() {
     if (!props.max) return
@@ -123,22 +102,26 @@ export default function TokenInput(props: SingleProps | SelectProps) {
 
       <div className='flex'>
         <div className='flex flex-1 items-center'>
-          <Text size='xs' className='mr-1 text-white' monospace>
-            {`${props.maxText}:`}
-          </Text>
-          <FormattedNumber
-            className='mr-1 text-xs text-white/50'
-            amount={props.max?.toNumber() || 0}
-            options={{ decimals: asset.decimals }}
-          />
-          <Button
-            color='tertiary'
-            className='h-4 bg-white/20 px-1.5 py-0.5 text-2xs'
-            variant='transparent'
-            onClick={onMaxBtnClick}
-          >
-            MAX
-          </Button>
+          {props.max && props.maxText && (
+            <>
+              <Text size='xs' className='mr-1 text-white' monospace>
+                {`${props.maxText}:`}
+              </Text>
+              <FormattedNumber
+                className='mr-1 text-xs text-white/50'
+                amount={props.max?.toNumber() || 0}
+                options={{ decimals: asset.decimals }}
+              />
+              <Button
+                color='tertiary'
+                className='h-4 bg-white/20 px-1.5 py-0.5 text-2xs'
+                variant='transparent'
+                onClick={onMaxBtnClick}
+              >
+                MAX
+              </Button>
+            </>
+          )}
         </div>
         <div className='flex'>
           <DisplayCurrency
