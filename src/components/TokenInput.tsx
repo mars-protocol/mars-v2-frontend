@@ -9,8 +9,9 @@ import Select from 'components/Select/Select'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
 import useStore from 'store'
-import { magnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+import { FormattedNumber } from 'components/FormattedNumber'
+import { Button } from 'components/Button'
 
 interface Props {
   amount: BigNumber
@@ -24,6 +25,7 @@ interface Props {
 interface SingleProps extends Props {
   asset: Asset
   max: BigNumber
+  maxText: string
   hasSelect?: boolean
   onChangeAsset?: (asset: Asset, max: BigNumber) => void
 }
@@ -31,6 +33,7 @@ interface SingleProps extends Props {
 interface SelectProps extends Props {
   asset?: Asset
   max?: BigNumber
+  maxText?: string
   hasSelect: boolean
   onChangeAsset: (asset: Asset, max: BigNumber) => void
 }
@@ -43,7 +46,10 @@ export default function TokenInput(props: SingleProps | SelectProps) {
     amount: '0',
   })
 
-  const selectedAssetDenom = props.asset ? props.asset.denom : baseCurrency.denom
+  // TODO: Refactor the useEffect
+  useEffect(() => {
+    props.onChangeAsset && props.onChangeAsset(asset, coin ? BN(coin.amount) : BN(0))
+  }, [coin, asset])
 
   const updateAsset = useCallback(
     (coinDenom: string) => {
@@ -55,28 +61,10 @@ export default function TokenInput(props: SingleProps | SelectProps) {
     [props.balances, baseCurrency],
   )
 
-  function setDefaultAsset() {
-    if (!props.balances || props.balances?.length === 0) return setAsset(baseCurrency)
-    if (props.balances.length === 1) {
-      const balances = props.balances ?? []
-      return setAsset(ASSETS.find((asset) => asset.denom === balances[0].denom) ?? baseCurrency)
-    }
-    return setAsset(ASSETS.find((asset) => asset.denom === selectedAssetDenom) ?? baseCurrency)
+  function onMaxBtnClick() {
+    if (!props.max) return
+    props.onChange(BN(props.max))
   }
-
-  useEffect(
-    () => {
-      setDefaultAsset()
-      updateAsset(asset.denom)
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  )
-
-  useEffect(() => {
-    props.onChangeAsset && props.onChangeAsset(asset, coin ? BN(coin.amount) : BN(0))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [coin, asset])
 
   return (
     <div
@@ -113,14 +101,27 @@ export default function TokenInput(props: SingleProps | SelectProps) {
       </div>
 
       <div className='flex'>
-        <div className='flex flex-1'>
-          <Text size='xs' className='text-white/50' monospace>
-            {`1 ${asset.symbol} =`}
-          </Text>
-          <DisplayCurrency
-            className='inline pl-0.5 text-xs text-white/50'
-            coin={{ denom: asset.denom, amount: magnify(1, asset).toString() }}
-          />
+        <div className='flex flex-1 items-center'>
+          {props.max && props.maxText && (
+            <>
+              <Text size='xs' className='mr-1 text-white' monospace>
+                {`${props.maxText}:`}
+              </Text>
+              <FormattedNumber
+                className='mr-1 text-xs text-white/50'
+                amount={props.max?.toNumber() || 0}
+                options={{ decimals: asset.decimals }}
+              />
+              <Button
+                color='tertiary'
+                className='h-4 bg-white/20 px-1.5 py-0.5 text-2xs'
+                variant='transparent'
+                onClick={onMaxBtnClick}
+              >
+                MAX
+              </Button>
+            </>
+          )}
         </div>
         <div className='flex'>
           <DisplayCurrency

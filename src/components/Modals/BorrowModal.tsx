@@ -164,6 +164,7 @@ export default function BorrowModal() {
               amount={amount}
               max={max}
               className='w-full'
+              maxText='Max'
             />
             <Divider className='my-6' />
             <Text size='lg' className='pb-2'>

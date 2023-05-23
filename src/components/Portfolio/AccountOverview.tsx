@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { Suspense } from 'react'
 import { useParams } from 'react-router-dom'
 
-import { AcccountBalancesTable } from 'components/Account/AccountBalancesTable'
+import { AccountBalancesTable } from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
 import Card from 'components/Card'
 import Loading from 'components/Loading'
@@ -35,7 +35,7 @@ function Content() {
         <Card className='h-fit w-full bg-white/5' title={`Account ${account.id}`} key={index}>
           <AccountComposition account={account} />
           <Text className='mt-3 w-full bg-white/10 px-4 py-2 text-white/40'>Balances</Text>
-          <AcccountBalancesTable data={account} />
+          <AccountBalancesTable data={account} />
         </Card>
       ))}
     </div>
