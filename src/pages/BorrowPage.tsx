@@ -1,3 +1,5 @@
+import { Helmet } from 'react-helmet'
+
 import { AvailableBorrowings } from 'components/Borrow/Borrowings'
 import { ActiveBorrowings } from 'components/Borrow/Borrowings'
 
