@@ -1,7 +1,7 @@
 import { ChainInfoID, WalletManagerProvider } from '@marsprotocol/wallet-connector'
 import { FC } from 'react'
 
-import { Button } from 'components/Button'
+import Button from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
 import { Cross } from 'components/Icons'
 import { ENV } from 'constants/env'

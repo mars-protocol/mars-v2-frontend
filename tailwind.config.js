@@ -268,10 +268,10 @@ module.exports = {
               'linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))',
           },
           '.gradient-primary-to-secondary': {
-            background: 'linear-gradient(90deg, #FF625E 0%, #FB9562 100%)',
+            background: 'linear-gradient(180deg, #7F78E8 0%, #926AC8 100%)',
           },
           '.gradient-secondary-to-primary': {
-            background: 'linear-gradient(90deg, #FB9562 0%, #FF625E 100%)',
+            background: 'linear-gradient(180deg, #926AC8 100%, #7F78E8 0%)',
           },
           '.gradient-tooltip': {
             background:

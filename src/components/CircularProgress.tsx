@@ -31,7 +31,11 @@ export const CircularProgress = ({ color = '#FFFFFF', size = 20, className }: Pr
     )
 
   return (
-    <div className={loaderClasses} style={{ width: `${size}px`, height: `${size}px` }}>
+    <div
+      data-testid='circular-progress-component'
+      className={loaderClasses}
+      style={{ width: `${size}px`, height: `${size}px` }}
+    >
       <div
         className={elementClasses}
         style={{

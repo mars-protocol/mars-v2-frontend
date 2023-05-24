@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { ReactNode, useEffect, useRef } from 'react'
 
-import { Button } from 'components/Button'
+import Button from 'components/Button'
 import Card from 'components/Card'
 import { Cross } from 'components/Icons'
 

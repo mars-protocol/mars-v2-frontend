@@ -1,4 +1,4 @@
-import { Button } from 'components/Button'
+import Button from 'components/Button'
 import { ArrowRight } from 'components/Icons'
 import Text from 'components/Text'
 

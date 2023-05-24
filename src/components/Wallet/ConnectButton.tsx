@@ -1,7 +1,7 @@
 import { useWalletManager, WalletConnectionStatus } from '@marsprotocol/wallet-connector'
 import { ReactNode } from 'react'
 
-import { Button } from 'components/Button'
+import Button from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
 import { Wallet } from 'components/Icons'
 

@@ -11,7 +11,7 @@ import { ASSETS } from 'constants/assets'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
 import { FormattedNumber } from 'components/FormattedNumber'
-import { Button } from 'components/Button'
+import Button from 'components/Button'
 
 interface Props {
   amount: BigNumber

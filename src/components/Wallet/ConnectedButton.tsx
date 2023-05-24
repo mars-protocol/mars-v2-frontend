@@ -9,7 +9,7 @@ import classNames from 'classnames'
 import { useCallback, useEffect, useState } from 'react'
 import useClipboard from 'react-use-clipboard'
 
-import { Button } from 'components/Button'
+import Button from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { Check, Copy, ExternalLink, Osmo } from 'components/Icons'
