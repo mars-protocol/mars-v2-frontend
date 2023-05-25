@@ -1,7 +1,7 @@
 import { flexRender, Row } from '@tanstack/react-table'
 import classNames from 'classnames'
 
-import { getMarketAssets } from 'utils/assets'
+import { getEnabledMarketAssets } from 'utils/assets'
 
 type AssetRowProps = {
   row: Row<BorrowAsset | BorrowAssetActive>
@@ -9,7 +9,7 @@ type AssetRowProps = {
 }
 
 export const AssetRow = (props: AssetRowProps) => {
-  const marketAssets = getMarketAssets()
+  const marketAssets = getEnabledMarketAssets()
   const asset = marketAssets.find((asset) => asset.denom === props.row.original.denom)
 
   if (!asset) return null

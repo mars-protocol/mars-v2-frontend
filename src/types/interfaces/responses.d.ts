@@ -29,3 +29,8 @@ interface MarketResponse {
   borrow_enabled: boolean
   deposit_cap: string
 }
+
+interface PriceResult {
+  denom: string
+  price: string
+}

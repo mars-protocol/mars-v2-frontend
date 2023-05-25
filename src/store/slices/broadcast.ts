@@ -4,7 +4,7 @@ import { GetState, SetState } from 'zustand'
 
 import { ENV } from 'constants/env'
 import { Store } from 'store'
-import { getMarketAssets } from 'utils/assets'
+import { getEnabledMarketAssets } from 'utils/assets'
 import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import { formatAmountWithSymbol } from 'utils/formatters'
 
@@ -12,7 +12,7 @@ export default function createBroadcastSlice(
   set: SetState<Store>,
   get: GetState<Store>,
 ): BroadcastSlice {
-  const marketAssets = getMarketAssets()
+  const marketAssets = getEnabledMarketAssets()
   return {
     toast: null,
     borrow: async (options: { fee: StdFee; accountId: string; coin: Coin }) => {

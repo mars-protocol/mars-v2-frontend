@@ -18,7 +18,7 @@ import Text from 'components/Text'
 import { IS_TESTNET } from 'constants/env'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
-import { getBaseAsset, getMarketAssets } from 'utils/assets'
+import { getBaseAsset, getEnabledMarketAssets } from 'utils/assets'
 import { formatValue, truncate } from 'utils/formatters'
 import useWalletBalances from 'hooks/useWalletBalances'
 
@@ -26,7 +26,7 @@ export default function ConnectedButton() {
   // ---------------
   // EXTERNAL HOOKS
   // ---------------
-  const marketAssets = getMarketAssets()
+  const marketAssets = getEnabledMarketAssets()
   const { disconnect } = useWallet()
   const { disconnect: terminate } = useWalletManager()
   const address = useStore((s) => s.address)

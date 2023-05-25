@@ -1,54 +1,24 @@
-import { gql, request as gqlRequest } from 'graphql-request'
-
 import { ENV } from 'constants/env'
-import { denomToKey, getContractQuery, keyToDenom } from 'utils/query'
 import getMarkets from 'api/markets/getMarkets'
+import { getClient } from 'api/cosmwasm-client'
 
 export default async function getMarketDebts(): Promise<Coin[]> {
-  const markets: Market[] = await getMarkets()
+  try {
+    const markets: Market[] = await getMarkets()
+    const client = await getClient()
 
-  let query = ''
-
-  markets.forEach((asset) => {
-    query += getContractQuery(
-      denomToKey(asset.denom),
-      ENV.ADDRESS_RED_BANK || '',
-      `
-    {
+    const debtQueries = markets.map((asset) =>
+      client.queryContractSmart(ENV.ADDRESS_RED_BANK, {
         underlying_debt_amount: {
-        denom: "${asset.denom}"
-        amount_scaled: "${asset.debtTotalScaled}"
-      }
-    }`,
+          denom: asset.denom,
+          amount_scaled: asset.debtTotalScaled,
+        },
+      }),
     )
-  })
+    const debtsResults = await Promise.all(debtQueries)
 
-  const result = await gqlRequest<DebtsQuery>(
-    ENV.URL_GQL,
-    gql`
-    query RedbankBalances {
-        debts: wasm {
-            ${query}
-        }
-      }
-    `,
-  )
-
-  if (result) {
-    const debts = Object.keys(result.debts).map((key) => {
-      return {
-        denom: keyToDenom(key),
-        amount: result.debts[key],
-      }
-    })
-    return debts
-  }
-
-  return new Promise((_, reject) => reject('No data'))
-}
-
-interface DebtsQuery {
-  debts: {
-    [key: string]: string
+    return debtsResults.map<Coin>((debt, index) => ({ denom: markets[index].denom, amount: debt }))
+  } catch (ex) {
+    throw ex
   }
 }

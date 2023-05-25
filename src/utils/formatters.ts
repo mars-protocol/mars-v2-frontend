@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 
-import { getMarketAssets } from 'utils/assets'
+import { getEnabledMarketAssets } from 'utils/assets'
 import { BN } from 'utils/helpers'
 
 export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
@@ -126,7 +126,7 @@ export function formatPercent(percent: number | string, minDecimals?: number) {
 }
 
 export function formatAmountWithSymbol(coin: Coin) {
-  const marketAssets = getMarketAssets()
+  const marketAssets = getEnabledMarketAssets()
 
   const asset = marketAssets.find((asset) => asset.denom === coin.denom)
 
@@ -157,7 +157,7 @@ export function demagnify(amount: number | string | BigNumber, asset: Asset) {
 
 export function convertToDisplayAmount(coin: Coin, displayCurrency: Asset, prices: Coin[]) {
   const price = prices.find((price) => price.denom === coin.denom)
-  const asset = getMarketAssets().find((asset) => asset.denom === coin.denom)
+  const asset = getEnabledMarketAssets().find((asset) => asset.denom === coin.denom)
   const displayPrice = prices.find((price) => price.denom === displayCurrency.denom)
 
   if (!price || !asset || !displayPrice) return '0'
