@@ -10,16 +10,21 @@ export default async function getPrices(): Promise<Coin[]> {
     const client = await getClient()
     const baseCurrency = ASSETS[0]
 
-    const pricesResponse: PriceResult[] = await client.queryContractSmart(ENV.ADDRESS_ORACLE, {
-      prices: { limit: 500 },
-    })
+    const priceQueries = enabledAssets.map((asset) =>
+      client.queryContractSmart(ENV.ADDRESS_ORACLE, {
+        price: {
+          denom: asset.denom,
+        },
+      }),
+    )
+    const priceResults: PriceResult[] = await Promise.all(priceQueries)
 
-    const assetPrices = enabledAssets.map((asset) => {
-      const price = pricesResponse.find((response) => response.denom === asset.denom)?.price ?? '0'
+    const assetPrices = priceResults.map(({ denom, price }, index) => {
+      const asset = enabledAssets[index]
       const decimalDiff = asset.decimals - baseCurrency.decimals
 
       return {
-        denom: asset.denom,
+        denom,
         amount: BN(price).shiftedBy(decimalDiff).toString(),
       }
     })

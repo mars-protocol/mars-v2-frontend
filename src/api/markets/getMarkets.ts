@@ -8,17 +8,16 @@ export default async function getMarkets(): Promise<Market[]> {
     const enabledAssets = getEnabledMarketAssets()
     const client = await getClient()
 
-    const marketsResponse: MarketResponse[] = await client.queryContractSmart(
-      ENV.ADDRESS_RED_BANK,
-      {
-        markets: { limit: 500 },
-      },
+    const marketQueries = enabledAssets.map((asset) =>
+      client.queryContractSmart(ENV.ADDRESS_RED_BANK, {
+        market: {
+          denom: asset.denom,
+        },
+      }),
     )
-    const filteredMarketResponses = marketsResponse.filter(
-      (response) => enabledAssets.findIndex((asset) => asset.denom === response.denom) >= 0,
-    )
+    const marketResults = await Promise.all(marketQueries)
 
-    return resolveMarketResponses(filteredMarketResponses)
+    return resolveMarketResponses(marketResults)
   } catch (ex) {
     throw ex
   }
