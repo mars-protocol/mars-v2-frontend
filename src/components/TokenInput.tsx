@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import Image from 'next/image'
-import { useCallback, useEffect, useState } from 'react'
 
 import DisplayCurrency from 'components/DisplayCurrency'
 import NumberInput from 'components/NumberInput'
@@ -15,55 +14,30 @@ import Button from 'components/Button'
 
 interface Props {
   amount: BigNumber
-  onChange: (amount: BigNumber) => void
-  className?: string
-  disabled?: boolean
-  balances?: Coin[] | null
-  accountId?: string
-}
-
-interface SingleProps extends Props {
   asset: Asset
   max: BigNumber
-  maxText: string
+  onChange: (amount: BigNumber) => void
+  accountId?: string
+  balances?: Coin[]
+  className?: string
+  disabled?: boolean
   hasSelect?: boolean
-  onChangeAsset?: (asset: Asset, max: BigNumber) => void
-}
-
-interface SelectProps extends Props {
-  asset?: Asset
-  max?: BigNumber
   maxText?: string
-  hasSelect: boolean
-  onChangeAsset: (asset: Asset, max: BigNumber) => void
+  onChangeAsset?: (asset: Asset) => void
 }
 
-export default function TokenInput(props: SingleProps | SelectProps) {
+export default function TokenInput(props: Props) {
   const baseCurrency = useStore((s) => s.baseCurrency)
-  const [asset, setAsset] = useState<Asset>(props.asset ? props.asset : baseCurrency)
-  const [coin, setCoin] = useState<Coin>({
-    denom: props.asset ? props.asset.denom : baseCurrency.denom,
-    amount: '0',
-  })
-
-  // TODO: Refactor the useEffect
-  useEffect(() => {
-    props.onChangeAsset && props.onChangeAsset(asset, coin ? BN(coin.amount) : BN(0))
-  }, [coin, asset])
-
-  const updateAsset = useCallback(
-    (coinDenom: string) => {
-      const newAsset = ASSETS.find((asset) => asset.denom === coinDenom) ?? baseCurrency
-      const newCoin = props.balances?.find((coin) => coin.denom === coinDenom)
-      setAsset(newAsset)
-      setCoin(newCoin ?? { denom: coinDenom, amount: '0' })
-    },
-    [props.balances, baseCurrency],
-  )
 
   function onMaxBtnClick() {
     if (!props.max) return
     props.onChange(BN(props.max))
+  }
+
+  function onChangeAsset(denom: string) {
+    if (!props.onChangeAsset) return
+    const newAsset = ASSETS.find((asset) => asset.denom === denom) ?? baseCurrency
+    props.onChangeAsset(newAsset)
   }
 
   return (
@@ -78,21 +52,21 @@ export default function TokenInput(props: SingleProps | SelectProps) {
         {props.hasSelect && props.balances ? (
           <Select
             options={props.balances}
-            defaultValue={coin.denom}
-            onChange={(value) => updateAsset(value)}
+            defaultValue={props.asset.denom}
+            onChange={onChangeAsset}
             title={props.accountId ? `Account ${props.accountId}` : 'Your Wallet'}
             className='border-r border-white/20 bg-white/5'
           />
         ) : (
           <div className='flex min-w-fit items-center gap-2 border-r border-white/20 bg-white/5 p-3'>
-            <Image src={asset.logo} alt='token' width={20} height={20} />
-            <Text>{asset.symbol}</Text>
+            <Image src={props.asset.logo} alt='token' width={20} height={20} />
+            <Text>{props.asset.symbol}</Text>
           </div>
         )}
         <NumberInput
           disabled={props.disabled}
-          asset={asset}
-          maxDecimals={asset.decimals}
+          asset={props.asset}
+          maxDecimals={props.asset.decimals}
           onChange={props.onChange}
           amount={props.amount}
           max={props.max}
@@ -110,7 +84,7 @@ export default function TokenInput(props: SingleProps | SelectProps) {
               <FormattedNumber
                 className='mr-1 text-xs text-white/50'
                 amount={props.max?.toNumber() || 0}
-                options={{ decimals: asset.decimals }}
+                options={{ decimals: props.asset.decimals }}
               />
               <Button
                 color='tertiary'
@@ -127,7 +101,7 @@ export default function TokenInput(props: SingleProps | SelectProps) {
           <DisplayCurrency
             isApproximation
             className='inline pl-0.5 text-xs text-white/50'
-            coin={{ denom: asset.denom, amount: props.amount.toString() }}
+            coin={{ denom: props.asset.denom, amount: props.amount.toString() }}
           />
         </div>
       </div>
