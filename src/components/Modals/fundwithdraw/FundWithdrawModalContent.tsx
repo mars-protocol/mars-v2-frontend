@@ -94,9 +94,10 @@ export default function FundWithdrawModalContent(props: Props) {
           onChangeAsset={setCurrentAsset}
           amount={amount}
           max={max}
-          balances={props.isFunding ? balances : props.account.deposits ?? []}
+          balances={props.isFunding ? balances : props.account.deposits}
           accountId={!props.isFunding ? props.account.id : undefined}
           hasSelect
+          maxText='Max'
         />
         <Divider />
         <Button
