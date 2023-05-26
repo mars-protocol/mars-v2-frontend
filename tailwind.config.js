@@ -100,7 +100,7 @@ module.exports = {
         success: '#32D583',
         'success-bg': '#6CE9A6',
         'vote-against': '#eb9e49',
-        warning: '#c83333',
+        warning: '#F79009',
         white: '#FFF',
       },
       fontFamily: {
