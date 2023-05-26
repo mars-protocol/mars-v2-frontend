@@ -62,7 +62,7 @@ export default function TokenInput(props: Props) {
             options={props.balances}
             defaultValue={props.asset.denom}
             onChange={onChangeAsset}
-            accountId={props.accountId}
+            title={props.accountId ? `Account ${props.accountId}` : 'Your Wallet'}
             className='border-r border-white/20 bg-white/5'
           />
         ) : (
