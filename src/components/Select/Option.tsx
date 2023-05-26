@@ -46,6 +46,7 @@ export default function Option(props: Props) {
 
     return (
       <div
+        data-testid='option-component'
         className={classNames(
           'grid grid-flow-row grid-cols-5 grid-rows-2 py-3.5 pr-4',
           'border-b border-b-white/20 last:border-none',

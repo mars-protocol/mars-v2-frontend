@@ -13,7 +13,7 @@ interface Props {
   onChange: (value: string) => void
   isParent?: boolean
   className?: string
-  title?: string
+  accountId?: string
 }
 
 export default function Select(props: Props) {
@@ -48,6 +48,7 @@ export default function Select(props: Props) {
 
   return (
     <div
+      data-testid='select-component'
       className={classNames(
         props.isParent && 'relative',
         'flex min-w-fit items-center gap-2',
@@ -80,9 +81,9 @@ export default function Select(props: Props) {
         hasBackdropIsolation
       >
         <div className='relative isolate w-full overflow-hidden rounded-sm'>
-          {props.title && (
+          {props.accountId && (
             <Text size='lg' className='block bg-white/25 p-4 font-bold'>
-              {props.title}
+              {props.accountId ? `Account ${props.accountId}` : 'Your Wallet'}
             </Text>
           )}
           {props.options.map((option: Option, index: number) => (
