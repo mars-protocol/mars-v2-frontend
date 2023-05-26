@@ -11,6 +11,7 @@ import useStore from 'store'
 import { BN } from 'utils/helpers'
 import { FormattedNumber } from 'components/FormattedNumber'
 import Button from 'components/Button'
+import { ExclamationMarkTriangle } from 'components/Icons'
 
 interface Props {
   amount: BigNumber
@@ -23,6 +24,7 @@ interface Props {
   disabled?: boolean
   hasSelect?: boolean
   maxText?: string
+  warning?: string
   onChangeAsset?: (asset: Asset) => void
 }
 
@@ -30,7 +32,6 @@ export default function TokenInput(props: Props) {
   const baseCurrency = useStore((s) => s.baseCurrency)
 
   function onMaxBtnClick() {
-    if (!props.max) return
     props.onChange(BN(props.max))
   }
 
@@ -42,19 +43,26 @@ export default function TokenInput(props: Props) {
 
   return (
     <div
+      data-testid='token-input-component'
       className={classNames(
         'flex w-full flex-col gap-2 transition-opacity',
         props.className,
         props.disabled && 'pointer-events-none opacity-50',
       )}
     >
-      <div className='relative isolate z-40 box-content flex h-11 w-full rounded-sm border border-white/20 bg-white/5'>
+      <div
+        data-testid='token-input-wrapper'
+        className={classNames(
+          'relative isolate z-40 box-content flex h-11 w-full rounded-sm border bg-white/5',
+          props.warning ? 'border-warning' : 'border-white/20',
+        )}
+      >
         {props.hasSelect && props.balances ? (
           <Select
             options={props.balances}
             defaultValue={props.asset.denom}
             onChange={onChangeAsset}
-            title={props.accountId ? `Account ${props.accountId}` : 'Your Wallet'}
+            accountId={props.accountId}
             className='border-r border-white/20 bg-white/5'
           />
         ) : (
@@ -72,21 +80,27 @@ export default function TokenInput(props: Props) {
           max={props.max}
           className='border-none p-3'
         />
+        {props.warning && (
+          <div className='grid items-center px-2'>
+            <ExclamationMarkTriangle className='text-warning' />
+          </div>
+        )}
       </div>
 
       <div className='flex'>
         <div className='flex flex-1 items-center'>
-          {props.max && props.maxText && (
+          {props.maxText && (
             <>
               <Text size='xs' className='mr-1 text-white' monospace>
                 {`${props.maxText}:`}
               </Text>
               <FormattedNumber
                 className='mr-1 text-xs text-white/50'
-                amount={props.max?.toNumber() || 0}
+                amount={props.max.toNumber()}
                 options={{ decimals: props.asset.decimals }}
               />
               <Button
+                dataTestId='token-input-max-button'
                 color='tertiary'
                 className='h-4 bg-white/20 px-1.5 py-0.5 text-2xs'
                 variant='transparent'
