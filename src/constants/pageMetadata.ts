@@ -1,4 +1,11 @@
 const PAGE_METADATA = {
+  main: {
+    title: 'Mars Protocol V2',
+    description:
+      "Spot trade, margin trade, lend, and earn on the Cosmos' most powerful credit protocol. Featuring cross-collateralization and a single liquidation point.",
+    keywords:
+      'mars protocol, cosmos, credit protocol, crypto trading, margin trading, spot trading, cross-collateralization, defi, mars rovers, decentralized credit accounts, credit accounts',
+  },
   trade: {
     title: 'Mars Protocol V2 - Trade',
     description:
@@ -23,7 +30,7 @@ const PAGE_METADATA = {
   borrow: {
     title: 'Mars Protocol V2 - Borrow',
     description:
-      "Use your positions on Mars as collateral to borrow other assets. Then, use them for trading or put them to work in Mars' Farm Vaults.",
+      "Use your positions on Mars as collateral to borrow other assets. Then, put them to work in Mars' Farm Vaults or your trading strategies.",
     keywords:
       'borrow crypto, defi, cosmos credit protocol, cosmos lending, decentralized finance, crypto collateral, mars farm vaults, crypto lending',
   },
