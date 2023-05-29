@@ -97,6 +97,10 @@ export default function VaultDeposit(props: Props) {
     })
   }
 
+  function getWarningText(asset: Asset) {
+    return `You don't have ${asset.symbol} balance in your account. Toggle custom amount to deposit.`
+  }
+
   return (
     <div className='flex h-full flex-col justify-between gap-6 p-4'>
       <TokenInput
@@ -105,6 +109,7 @@ export default function VaultDeposit(props: Props) {
         max={primaryMax}
         maxText='Balance'
         asset={props.primaryAsset}
+        warning={primaryMax.isZero() ? getWarningText(props.primaryAsset) : undefined}
       />
       {!isCustomAmount && <Slider value={percentage} onChange={onChangeSlider} />}
       <TokenInput
@@ -113,6 +118,7 @@ export default function VaultDeposit(props: Props) {
         max={secondaryMax}
         maxText='Balance'
         asset={props.secondaryAsset}
+        warning={secondaryMax.isZero() ? getWarningText(props.secondaryAsset) : undefined}
       />
       <Divider />
       <div className='flex justify-between'>

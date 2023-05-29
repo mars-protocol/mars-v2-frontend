@@ -85,6 +85,7 @@ export default function FundAccount(props: Props) {
           your Osmosis address has no assets.
         </Text>
         <TokenInputWithSlider
+          asset={asset}
           onChange={onChangeAmount}
           onChangeAsset={onChangeAsset}
           amount={amount}
