@@ -39,7 +39,11 @@ module.exports = {
     '^store': '<rootDir>/src/store',
   },
   // Add more setup options before each test is run
-  setupFilesAfterEnv: ['<rootDir>/test.polyfills.js', '<rootDir>/test.setup.js'],
+  setupFilesAfterEnv: [
+    '<rootDir>/test.polyfills.js',
+    '<rootDir>/test.setup.js',
+    '<rootDir>/__mocks__/store.js',
+  ],
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
   testEnvironment: 'jsdom',
   transform: {
