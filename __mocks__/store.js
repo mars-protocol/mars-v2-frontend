@@ -12,7 +12,7 @@ jest.mock('store', () => {
     }
   }
 
-  mockUseStore.resetState = () => {
+  mockUseStore.clearState = () => {
     state = {}
   }
 

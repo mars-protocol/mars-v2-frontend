@@ -15,6 +15,12 @@ const store = (set: SetState<any>, get: GetState<any>) => ({
   ...createModalSlice(set, get),
 })
 
+interface UseStoreWithClear extends UseBoundStore<StoreApi<Store>> {
+  /**
+   * For tests only: Clears the state, and set it to an empty object.
+   */
+  clearState: () => {}
+}
 let useStore: UseBoundStore<StoreApi<Store>>
 
 if (process.env.NODE_ENV === 'development') {
@@ -23,4 +29,4 @@ if (process.env.NODE_ENV === 'development') {
   useStore = create<Store>(store)
 }
 
-export default useStore
+export default useStore as UseStoreWithClear
