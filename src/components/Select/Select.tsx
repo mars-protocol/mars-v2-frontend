@@ -48,6 +48,7 @@ export default function Select(props: Props) {
 
   return (
     <div
+      data-testid='select-component'
       className={classNames(
         props.isParent && 'relative',
         'flex min-w-fit items-center gap-2',

@@ -56,7 +56,7 @@ export default function ConnectedButton() {
   const disconnectWallet = () => {
     disconnect()
     terminate()
-    useStore.setState({ client: undefined, balances: null })
+    useStore.setState({ client: undefined, balances: [] })
   }
 
   useEffect(() => {

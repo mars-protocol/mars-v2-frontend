@@ -1,14 +1,16 @@
-import { render, screen } from '@testing-library/react'
+import { shallow } from 'enzyme'
 
 import Footer from 'components/Footer'
+import Text from 'components/Text'
 
 import packageJSON from '../package.json'
 
 describe('<Footer />', () => {
   it('should render correctly', () => {
-    render(<Footer />)
+    const wrapper = shallow(<Footer />)
+    const textComponent = wrapper.find(Text).at(0)
+    const text = textComponent.dive().text()
 
-    const content = screen.getByText(`v${packageJSON.version}`)
-    expect(content).toBeInTheDocument()
+    expect(text).toBe(`v${packageJSON.version}`)
   })
 })
