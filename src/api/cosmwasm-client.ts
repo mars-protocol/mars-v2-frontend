@@ -7,7 +7,7 @@ let _cosmWasmClient: CosmWasmClient
 const getClient = async () => {
   try {
     if (!_cosmWasmClient) {
-      _cosmWasmClient = await CosmWasmClient.connect(ENV.URL_RPC || '')
+      _cosmWasmClient = await CosmWasmClient.connect(ENV.URL_RPC)
     }
 
     return _cosmWasmClient

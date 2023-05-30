@@ -8,7 +8,7 @@ export function getAssetBySymbol(symbol: string) {
   return ASSETS.find((asset) => asset.symbol === symbol)
 }
 
-export function getMarketAssets(): Asset[] {
+export function getEnabledMarketAssets(): Asset[] {
   return ASSETS.filter((asset) => asset.isEnabled && asset.isMarket)
 }
 

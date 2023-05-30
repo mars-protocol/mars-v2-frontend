@@ -17,7 +17,7 @@ import { ChevronDown, SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
-import { getMarketAssets } from 'utils/assets'
+import { getEnabledMarketAssets } from 'utils/assets'
 import { formatPercent } from 'utils/formatters'
 
 type Props = {
@@ -26,7 +26,7 @@ type Props = {
 
 export const BorrowTable = (props: Props) => {
   const [sorting, setSorting] = React.useState<SortingState>([])
-  const marketAssets = getMarketAssets()
+  const marketAssets = getEnabledMarketAssets()
 
   const columns = React.useMemo<ColumnDef<BorrowAsset | BorrowAssetActive>[]>(
     () => [

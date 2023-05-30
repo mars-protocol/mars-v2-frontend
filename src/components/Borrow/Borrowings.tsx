@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import { useParams } from 'react-router-dom'
 
 import Card from 'components/Card'
-import { getMarketAssets } from 'utils/assets'
+import { getEnabledMarketAssets } from 'utils/assets'
 import { BorrowTable } from 'components/Borrow/BorrowTable'
 import useAccountDebts from 'hooks/useAccountDebts'
 import useMarketBorrowings from 'hooks/useMarketBorrowings'
@@ -16,7 +16,7 @@ function Content(props: Props) {
   const { data: debtData } = useAccountDebts(accountId)
   const { data: borrowData } = useMarketBorrowings()
 
-  const marketAssets = getMarketAssets()
+  const marketAssets = getEnabledMarketAssets()
 
   function getBorrowAssets() {
     return marketAssets.reduce(
@@ -60,7 +60,7 @@ function Content(props: Props) {
 }
 
 function Fallback() {
-  const marketAssets = getMarketAssets()
+  const marketAssets = getEnabledMarketAssets()
 
   const available: BorrowAsset[] = marketAssets.reduce((prev: BorrowAsset[], curr) => {
     prev.push({ ...curr, borrowRate: null, liquidity: null })
