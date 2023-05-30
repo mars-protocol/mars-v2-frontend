@@ -23,6 +23,7 @@ export default function Text(props: Props) {
 
   return (
     <HtmlElement
+      data-testid='text-component'
       className={classNames(
         props.className,
         props.uppercase ? `text-${sizeClass}-caps` : `text-${sizeClass}`,
