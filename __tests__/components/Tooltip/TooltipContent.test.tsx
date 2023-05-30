@@ -17,7 +17,7 @@ describe('<Tooltip />', () => {
     const types = { info: 'bg-white/20', warning: 'bg-warning', error: 'bg-error' }
     Object.entries(types).forEach(([key, value]) => {
       const { container } = render(<TooltipContent {...defaultProps} type={key as TooltipType} />)
-      expect(container.querySelector('div')).toHaveClass(value)
+      expect(container.getElementsByClassName(value)).toHaveLength(1)
     })
   })
 

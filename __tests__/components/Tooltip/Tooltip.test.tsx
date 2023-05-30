@@ -39,7 +39,7 @@ describe('<Tooltip />', () => {
 
     it('should not have border class when children are passed', () => {
       const { container } = render(<Tooltip {...defaultProps} type='info' underline />)
-      expect(container.querySelector('span')).not.toHaveClass('border-b-1')
+      expect(container.getElementsByClassName('border-b-1')).toHaveLength(0)
     })
   })
 })
