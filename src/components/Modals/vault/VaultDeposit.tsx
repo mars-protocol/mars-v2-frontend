@@ -12,6 +12,7 @@ import TokenInput from 'components/TokenInput'
 import usePrice from 'hooks/usePrice'
 import { getAmount } from 'utils/accounts'
 import { BN } from 'utils/helpers'
+import { Gauge } from 'components/Gauge'
 
 interface Props {
   primaryAsset: Asset
@@ -24,12 +25,23 @@ interface Props {
 export default function VaultDeposit(props: Props) {
   const [isCustomAmount, setIsCustomAmount] = useState(false)
   const [percentage, setPercentage] = useState(0)
-  const [deposits, setDeposits] = useState<Map<string, BigNumber>>(new Map())
+  const [primaryAmount, setPrimaryAmount] = useState<BigNumber>(BN(0))
+  const [secondaryAmount, setSecondaryAmount] = useState<BigNumber>(BN(0))
 
   const availablePrimaryAmount = getAmount(props.primaryAsset.denom, props.account.deposits)
   const availableSecondaryAmount = getAmount(props.secondaryAsset.denom, props.account.deposits)
   const primaryPrice = usePrice(props.primaryAsset.denom)
   const secondaryPrice = usePrice(props.secondaryAsset.denom)
+
+  const primaryValue = primaryAmount.times(primaryPrice)
+  const secondaryValue = secondaryAmount.times(secondaryPrice)
+  const totalValue = primaryValue.plus(secondaryValue)
+  const primaryValuePercentage = primaryValue.isEqualTo(secondaryValue)
+    ? 0.5
+    : primaryValue.div(totalValue).toNumber()
+  const secondaryValuePercentage = secondaryValue.isEqualTo(primaryValue)
+    ? 0.5
+    : secondaryValue.div(totalValue).toNumber()
 
   const maxAssetValueNonCustom = BN(
     Math.min(availablePrimaryAmount.toNumber(), availableSecondaryAmount.toNumber()),
@@ -44,57 +56,31 @@ export default function VaultDeposit(props: Props) {
   function handleSwitch() {
     const isCustomAmountNew = !isCustomAmount
     if (!isCustomAmountNew) {
-      setDeposits((deposits) => {
-        deposits.clear()
-        return new Map(deposits)
-      })
+      setPrimaryAmount(BN(0))
+      setSecondaryAmount(BN(0))
       setPercentage(0)
     }
     setIsCustomAmount(isCustomAmountNew)
   }
 
   function onChangePrimaryDeposit(amount: BigNumber) {
-    onChangeDeposit(props.primaryAsset.denom, amount)
+    setPrimaryAmount(amount)
     if (!isCustomAmount) {
-      onChangeDeposit(
-        props.secondaryAsset.denom,
-        secondaryMax.multipliedBy(amount.dividedBy(primaryMax)),
-      )
+      setSecondaryAmount(secondaryMax.multipliedBy(amount.dividedBy(primaryMax)))
     }
   }
 
   function onChangeSecondaryDeposit(amount: BigNumber) {
-    onChangeDeposit(props.secondaryAsset.denom, amount)
+    setSecondaryAmount(amount)
     if (!isCustomAmount) {
-      onChangeDeposit(
-        props.primaryAsset.denom,
-        primaryMax.multipliedBy(amount.dividedBy(secondaryMax)),
-      )
+      setPrimaryAmount(primaryMax.multipliedBy(amount.dividedBy(secondaryMax)))
     }
-  }
-
-  function onChangeDeposit(denom: string, amount: BigNumber) {
-    if (amount.isZero()) {
-      return setDeposits((deposits) => {
-        deposits.delete(denom)
-        return new Map(deposits)
-      })
-    }
-
-    setDeposits((deposits) => {
-      deposits.set(denom, amount)
-      props.onChangeDeposits(deposits)
-      return new Map(deposits)
-    })
   }
 
   function onChangeSlider(value: number) {
     setPercentage(value)
-    setDeposits((deposits) => {
-      deposits.set(props.primaryAsset.denom, primaryMax.multipliedBy(value / 100))
-      deposits.set(props.secondaryAsset.denom, secondaryMax.multipliedBy(value / 100))
-      return new Map(deposits)
-    })
+    setPrimaryAmount(primaryMax.multipliedBy(value / 100))
+    setSecondaryAmount(secondaryMax.multipliedBy(value / 100))
   }
 
   function getWarningText(asset: Asset) {
@@ -102,39 +88,64 @@ export default function VaultDeposit(props: Props) {
   }
 
   return (
-    <div className='flex h-full flex-col justify-between gap-6 p-4'>
-      <TokenInput
-        onChange={onChangePrimaryDeposit}
-        amount={deposits.get(props.primaryAsset.denom) ?? BN(0)}
-        max={primaryMax}
-        maxText='Balance'
-        asset={props.primaryAsset}
-        warning={primaryMax.isZero() ? getWarningText(props.primaryAsset) : undefined}
-      />
-      {!isCustomAmount && <Slider value={percentage} onChange={onChangeSlider} />}
-      <TokenInput
-        onChange={onChangeSecondaryDeposit}
-        amount={deposits.get(props.secondaryAsset.denom) ?? BN(0)}
-        max={secondaryMax}
-        maxText='Balance'
-        asset={props.secondaryAsset}
-        warning={secondaryMax.isZero() ? getWarningText(props.secondaryAsset) : undefined}
-      />
-      <Divider />
-      <div className='flex justify-between'>
-        <Text className='text-white/50'>Custom amount</Text>
-        <Switch checked={isCustomAmount} onChange={handleSwitch} name='customAmount' />
+    <div className='flex flex-col'>
+      <div className='flex gap-4 p-4'>
+        <div className='flex flex-col items-center justify-between gap-1 pb-[30px] pt-2'>
+          <Gauge
+            value={primaryValuePercentage}
+            tooltip={`${primaryValuePercentage}% of value is ${props.primaryAsset.symbol}`}
+            labelClassName='text-martian-red'
+            diameter={32}
+            strokeColor='#FF645F'
+            strokeWidth={3}
+          />
+          <div className='h-full w-[1px] rounded-xl bg-white/10'></div>
+          <Gauge
+            value={secondaryValuePercentage}
+            tooltip={`${secondaryValuePercentage}% of value is ${props.secondaryAsset.symbol}`}
+            labelClassName='text-martian-red'
+            diameter={32}
+            strokeColor='#FF645F'
+            strokeWidth={3}
+          />
+        </div>
+        <div className='flex h-full flex-grow flex-col justify-between gap-6'>
+          <TokenInput
+            onChange={onChangePrimaryDeposit}
+            amount={primaryAmount}
+            max={availablePrimaryAmount}
+            maxText='Balance'
+            asset={props.primaryAsset}
+            warning={primaryMax.isZero() ? getWarningText(props.primaryAsset) : undefined}
+          />
+          {!isCustomAmount && <Slider value={percentage} onChange={onChangeSlider} />}
+          <TokenInput
+            onChange={onChangeSecondaryDeposit}
+            amount={secondaryAmount}
+            max={availableSecondaryAmount}
+            maxText='Balance'
+            asset={props.secondaryAsset}
+            warning={secondaryMax.isZero() ? getWarningText(props.secondaryAsset) : undefined}
+          />
+        </div>
       </div>
-      <div className='flex justify-between'>
-        <Text className='text-white/50'>{`${props.primaryAsset.symbol}-${props.secondaryAsset.symbol} Position Value`}</Text>
-        <FormattedNumber amount={0} options={{ prefix: '$' }} />
+      <div className='flex flex-col gap-6 p-4'>
+        <Divider />
+        <div className='flex justify-between'>
+          <Text className='text-white/50'>Custom amount</Text>
+          <Switch checked={isCustomAmount} onChange={handleSwitch} name='customAmount' />
+        </div>
+        <div className='flex justify-between'>
+          <Text className='text-white/50'>{`${props.primaryAsset.symbol}-${props.secondaryAsset.symbol} Position Value`}</Text>
+          <FormattedNumber amount={0} options={{ prefix: '$' }} />
+        </div>
+        <Button
+          onClick={() => props.toggleOpen(1)}
+          className='w-full'
+          text='Continue'
+          rightIcon={<ArrowRight />}
+        />
       </div>
-      <Button
-        onClick={() => props.toggleOpen(1)}
-        className='w-full'
-        text='Continue'
-        rightIcon={<ArrowRight />}
-      />
     </div>
   )
 }

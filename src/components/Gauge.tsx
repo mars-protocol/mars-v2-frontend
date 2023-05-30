@@ -3,23 +3,28 @@ import { ReactElement, ReactNode } from 'react'
 
 import { Tooltip } from 'components/Tooltip'
 import useStore from 'store'
+import { FormattedNumber } from './FormattedNumber'
 
 interface Props {
   tooltip: string | ReactNode
+  strokeColor?: string
   strokeWidth?: number
   background?: string
   diameter?: number
   value: number
-  label?: string
+  labelClassName: string
   icon?: ReactElement
 }
 
 export const Gauge = ({
   background = '#FFFFFF22',
+  strokeColor,
+  strokeWidth = 4,
   diameter = 40,
   value = 0,
   tooltip,
   icon,
+  labelClassName,
 }: Props) => {
   const enableAnimations = useStore((s) => s.enableAnimations)
   const radius = 16
@@ -29,7 +34,12 @@ export const Gauge = ({
 
   return (
     <Tooltip type='info' content={tooltip}>
-      <div className={classNames('relative', `w-${diameter / 4} h-${diameter / 4}`)}>
+      <div
+        className={classNames(
+          'relative grid place-items-center',
+          `w-${diameter / 4} h-${diameter / 4}`,
+        )}
+      >
         <svg
           viewBox='2 -2 28 36'
           width={diameter}
@@ -37,15 +47,17 @@ export const Gauge = ({
           style={{ transform: 'rotate(-90deg)' }}
           className='absolute left-0 top-0'
         >
-          <linearGradient id='gradient'>
-            <stop stopColor='rgba(255, 160, 187)' offset='0%'></stop>
-            <stop stopColor='rgba(186, 8, 189)' offset='50%'></stop>
-            <stop stopColor='rgba(255, 160, 187)' offset='100%'></stop>
-          </linearGradient>
+          {!strokeColor && (
+            <linearGradient id='gradient'>
+              <stop stopColor='rgba(255, 160, 187)' offset='0%'></stop>
+              <stop stopColor='rgba(186, 8, 189)' offset='50%'></stop>
+              <stop stopColor='rgba(255, 160, 187)' offset='100%'></stop>
+            </linearGradient>
+          )}
           <circle
             fill='none'
             stroke={background}
-            strokeWidth={4}
+            strokeWidth={strokeWidth}
             strokeDashoffset='0'
             r={radius}
             cx={radius}
@@ -57,8 +69,8 @@ export const Gauge = ({
             cx={radius}
             cy={radius}
             fill='transparent'
-            stroke='url(#gradient)'
-            strokeWidth={5}
+            stroke={strokeColor ? strokeColor : `url(#gradient)`}
+            strokeWidth={strokeWidth}
             strokeDashoffset={circlePercent}
             strokeDasharray='100'
             pathLength='100'
@@ -74,6 +86,12 @@ export const Gauge = ({
             {icon}
           </div>
         )}
+        <FormattedNumber
+          className={classNames(labelClassName, 'text-2xs')}
+          amount={value * 100}
+          options={{ maxDecimals: 0, minDecimals: 0 }}
+          animate
+        />
       </div>
     </Tooltip>
   )
