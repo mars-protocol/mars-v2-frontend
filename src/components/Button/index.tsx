@@ -33,6 +33,7 @@ interface Props {
   iconClassName?: string
   hasSubmenu?: boolean
   hasFocus?: boolean
+  dataTestId?: string
 }
 
 const Button = React.forwardRef(function Button(
@@ -52,6 +53,7 @@ const Button = React.forwardRef(function Button(
     iconClassName,
     hasSubmenu,
     hasFocus,
+    dataTestId,
   }: Props,
   ref,
 ) {
@@ -99,6 +101,7 @@ const Button = React.forwardRef(function Button(
 
   return (
     <button
+      data-testid={dataTestId}
       className={buttonClassNames}
       id={id}
       ref={ref as LegacyRef<HTMLButtonElement>}
