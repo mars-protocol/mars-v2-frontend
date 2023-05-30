@@ -2,62 +2,67 @@ import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 import { ReactNode } from 'react'
 
+import Text from 'components/Text'
 import { ExclamationMarkCircled, Questionmark } from 'components/Icons'
 import useStore from 'store'
 
 interface Props {
-  children?: ReactNode | string
   content: ReactNode | string
+  type: 'info' | 'warning' | 'error'
+  children?: ReactNode | string
   className?: string
   delay?: number
-  inderactive?: boolean
+  interactive?: boolean
   underline?: boolean
 }
 
-export const Tooltip = ({
-  children,
-  content,
-  className,
-  delay = 0,
-  inderactive = false,
-  underline = false,
-}: Props) => {
+export const Tooltip = (props: Props) => {
   const enableAnimations = useStore((s) => s.enableAnimations)
 
   return (
     <Tippy
-      appendTo={() => document.body}
-      interactive={inderactive}
+      appendTo={() => document.querySelector('dialog[open]') ?? document.body}
+      interactive={props.interactive}
       animation={false}
-      delay={[delay, 0]}
+      delay={[props.delay ?? 0, 0]}
       render={(attrs) => {
         return (
           <div
-            className='max-w-[320px] rounded-lg bg-black/80 p-4 pl-12 text-xs shadow-tooltip backdrop-blur-lg'
+            className={classNames(
+              'flex max-w-[320px] gap-2 rounded-sm p-3 text-xs shadow-tooltip backdrop-blur-lg',
+              'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
+              props.type === 'info' && 'bg-white/20',
+              props.type === 'warning' && 'bg-warning',
+              props.type === 'error' && 'bg-error',
+            )}
             {...attrs}
           >
-            <ExclamationMarkCircled className='absolute left-4 top-3.5 h-5 w-5 text-white' />
-            {content}
+            <ExclamationMarkCircled className='w-10 gap-3 text-white' />
+            {typeof props.content === 'string' ? (
+              <Text size='sm'>{props.content}</Text>
+            ) : (
+              props.content
+            )}
           </div>
         )
       }}
     >
-      {children ? (
+      {props.children ? (
         <span
           className={classNames(
-            underline &&
+            props.underline &&
               'border-b-1 cursor-pointer border border-x-0 border-t-0 border-dashed border-white/50 hover:border-transparent',
             enableAnimations && 'transition-all',
-            className,
+            props.className,
           )}
         >
-          {children}
+          {props.children}
         </span>
       ) : (
         <span
           className={classNames(
             'inline-block w-[18px] cursor-pointer opacity-40 hover:opacity-80',
-            className,
+            props.className,
           )}
         >
           <Questionmark />
