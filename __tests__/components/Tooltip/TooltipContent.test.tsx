@@ -1,4 +1,5 @@
 import { render } from '@testing-library/react'
+
 import { TooltipType } from 'components/Tooltip'
 import TooltipContent from 'components/Tooltip/TooltipContent'
 
@@ -27,18 +28,17 @@ describe('<Tooltip />', () => {
         <TooltipContent {...defaultProps} type='info' content={testText} />,
       )
       const textComponent = getByTestId('text-component')
-      expect(textComponent).toBeInTheDocument()
       expect(textComponent).toHaveTextContent(testText)
     })
 
     it('should render content when type is ReactNode', () => {
-      const testNode = <p className='test-node'>Test node</p>
-      const { container, queryByTestId } = render(
+      const testNode = <p data-testid='test-node'>Test node</p>
+      const { queryByTestId } = render(
         <TooltipContent {...defaultProps} type='info' content={testNode} />,
       )
 
       expect(queryByTestId('text-component')).not.toBeInTheDocument()
-      expect(container.querySelector('p.test-node')).toBeInTheDocument()
+      expect(queryByTestId('test-node')).toBeInTheDocument()
     })
   })
 })

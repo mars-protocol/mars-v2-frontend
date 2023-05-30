@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
-import Card from 'components/Card'
 import { shallow } from 'enzyme'
+
+import Card from 'components/Card'
 import Text from 'components/Text'
 import Button from 'components/Button'
 

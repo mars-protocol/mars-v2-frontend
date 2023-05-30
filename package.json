@@ -7,7 +7,7 @@
     "dev": "next dev",
     "test": "jest",
     "lint": "eslint ./src/ && yarn prettier-check",
-    "format": "eslint ./src/ --fix && prettier --write ./src/",
+    "format": "eslint ./src/ ./__tests__/ --fix && prettier --write ./src/ ./__tests__/",
     "prettier-check": "prettier --ignore-path .gitignore --check ./src/",
     "start": "next start",
     "validate-env": "node ./validate-env"
