@@ -12,6 +12,7 @@ import { BN } from 'utils/helpers'
 import { FormattedNumber } from 'components/FormattedNumber'
 import Button from 'components/Button'
 import { ExclamationMarkTriangle } from 'components/Icons'
+import { Tooltip } from 'components/Tooltip'
 
 interface Props {
   amount: BigNumber
@@ -82,7 +83,13 @@ export default function TokenInput(props: Props) {
         />
         {props.warning && (
           <div className='grid items-center px-2'>
-            <ExclamationMarkTriangle className='text-warning' />
+            <Tooltip
+              content={`You don't have any ${props.asset.symbol}. Please first deposit ${props.asset.symbol} into your credit account before.`}
+              type='info'
+              interactive
+            >
+              <ExclamationMarkTriangle className='text-warning' />
+            </Tooltip>
           </div>
         )}
       </div>

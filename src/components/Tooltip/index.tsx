@@ -2,19 +2,22 @@ import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 import { ReactNode } from 'react'
 
-import Text from 'components/Text'
-import { ExclamationMarkCircled, Questionmark } from 'components/Icons'
+import { Questionmark } from 'components/Icons'
 import useStore from 'store'
+
+import TooltipContent from './TooltipContent'
 
 interface Props {
   content: ReactNode | string
-  type: 'info' | 'warning' | 'error'
+  type: TooltipType
   children?: ReactNode | string
   className?: string
   delay?: number
   interactive?: boolean
   underline?: boolean
 }
+
+export type TooltipType = 'info' | 'warning' | 'error'
 
 export const Tooltip = (props: Props) => {
   const enableAnimations = useStore((s) => s.enableAnimations)
@@ -25,27 +28,7 @@ export const Tooltip = (props: Props) => {
       interactive={props.interactive}
       animation={false}
       delay={[props.delay ?? 0, 0]}
-      render={(attrs) => {
-        return (
-          <div
-            className={classNames(
-              'flex max-w-[320px] gap-2 rounded-sm p-3 text-xs shadow-tooltip backdrop-blur-lg',
-              'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
-              props.type === 'info' && 'bg-white/20',
-              props.type === 'warning' && 'bg-warning',
-              props.type === 'error' && 'bg-error',
-            )}
-            {...attrs}
-          >
-            <ExclamationMarkCircled className='w-10 gap-3 text-white' />
-            {typeof props.content === 'string' ? (
-              <Text size='sm'>{props.content}</Text>
-            ) : (
-              props.content
-            )}
-          </div>
-        )
-      }}
+      render={() => <TooltipContent type={props.type} content={props.content} />}
     >
       {props.children ? (
         <span

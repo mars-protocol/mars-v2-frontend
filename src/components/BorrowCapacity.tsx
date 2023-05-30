@@ -72,7 +72,7 @@ export const BorrowCapacity = ({
             </div>
           )}
         </div>
-        <Tooltip content={<Text size='sm'>Borrow Capacity Tooltip</Text>}>
+        <Tooltip type='info' content={<Text size='sm'>Borrow Capacity Tooltip</Text>}>
           <div className='relative'>
             <div
               className='overflow-hidden rounded-3xl border-r-2 border-r-loss '
