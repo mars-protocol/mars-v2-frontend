@@ -5,7 +5,6 @@ import { getClient } from 'api/cosmwasm-client'
 
 export default async function getAccounts(address: string): Promise<Account[]> {
   const accountIds: string[] = await getWalletAccountIds(address)
-
   const client = await getClient()
 
   const $accounts: Promise<AccountResponse>[] = accountIds.map((accountId) =>
