@@ -1,5 +1,6 @@
-import { render, fireEvent } from '@testing-library/react'
+import { fireEvent, render } from '@testing-library/react'
 import BigNumber from 'bignumber.js'
+
 import TokenInput from 'components/TokenInput'
 import { ASSETS } from 'constants/assets'
 

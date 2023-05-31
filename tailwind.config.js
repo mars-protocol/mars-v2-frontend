@@ -78,7 +78,7 @@ module.exports = {
         axlusdc: '#478edc',
         body: '#0D0012',
         'body-dark': '#141621',
-        error: '#F97066',
+        error: '#F04438',
         'error-bg': '#FDA29B',
         grey: '#3a3c49',
         'grey-dark': '#1a1c25',

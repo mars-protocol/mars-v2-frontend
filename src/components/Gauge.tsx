@@ -28,7 +28,7 @@ export const Gauge = ({
   const circlePercent = 100 - percentageValue
 
   return (
-    <Tooltip content={tooltip}>
+    <Tooltip type='info' content={tooltip}>
       <div className={classNames('relative', `w-${diameter / 4} h-${diameter / 4}`)}>
         <svg
           viewBox='2 -2 28 36'

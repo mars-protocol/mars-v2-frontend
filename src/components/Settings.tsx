@@ -67,6 +67,8 @@ export default function Settings() {
                 Reduce Motion
               </Text>
               <Tooltip
+                type='info'
+                interactive
                 content={
                   <Text size='sm'>
                     Turns off all animations inside the dApp. Turning animations off can increase
@@ -83,6 +85,7 @@ export default function Settings() {
                 Display Currency
               </Text>
               <Tooltip
+                type='info'
                 content={
                   <Text size='sm'>
                     Sets the denomination of values to a different currency. While OSMO is the

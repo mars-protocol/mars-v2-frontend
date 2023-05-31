@@ -21,7 +21,7 @@ export default function SwitchWithLabel(props: Props) {
         <Text className='mr-2 text-white/70' size='sm'>
           {props.label}
         </Text>
-        {props.tooltip && <Tooltip content={<Text size='sm'>{props.tooltip}</Text>} />}
+        {props.tooltip && <Tooltip type='info' content={<Text size='sm'>{props.tooltip}</Text>} />}
       </div>
       <Switch
         name={props.name}
