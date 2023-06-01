@@ -25,16 +25,18 @@ interface Props {
 export default function NumberInput(props: Props) {
   const inputRef = React.useRef<HTMLInputElement>(null)
   const cursorRef = React.useRef(0)
-  // const max = props.max ? demagnify(props.max, props.asset) : undefined
 
   const [formattedAmount, setFormattedAmount] = useState(
     props.amount.shiftedBy(-1 * props.asset.decimals).toString(),
   )
 
   useEffect(() => {
+    if (props.amount.isZero()) return setFormattedAmount('')
+
     setFormattedAmount(
       formatValue(props.amount.toNumber(), {
         decimals: props.asset.decimals,
+        minDecimals: 0,
         maxDecimals: props.asset.decimals,
         thousandSeparator: false,
       }),
@@ -95,6 +97,11 @@ export default function NumberInput(props: Props) {
     const isTooLong = props.maxLength !== undefined && numberCount > props.maxLength
     const exceedsMaxDecimals = props.maxDecimals !== undefined && decimals > props.maxDecimals
 
+    if (formattedAmount === '') {
+      updateValues('0', BN(0))
+      return
+    }
+
     if (isNegative && !props.allowNegative) return
 
     if (isSeparator && formattedAmount.length === 1) {
@@ -140,7 +147,7 @@ export default function NumberInput(props: Props) {
     <input
       ref={inputRef}
       type='text'
-      value={formattedAmount === '0' ? '' : formattedAmount}
+      value={formattedAmount === '0' ? '0' : formattedAmount}
       onFocus={onInputFocus}
       onChange={(e) => onInputChange(e.target.value)}
       onBlur={props.onBlur}

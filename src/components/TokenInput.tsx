@@ -45,11 +45,7 @@ export default function TokenInput(props: Props) {
   return (
     <div
       data-testid='token-input-component'
-      className={classNames(
-        'flex w-full flex-col gap-2 transition-opacity',
-        props.className,
-        props.disabled && 'pointer-events-none opacity-50',
-      )}
+      className={classNames('flex w-full flex-col gap-2 transition-opacity', props.className)}
     >
       <div
         data-testid='token-input-wrapper'
@@ -109,9 +105,10 @@ export default function TokenInput(props: Props) {
               <Button
                 dataTestId='token-input-max-button'
                 color='tertiary'
-                className='h-4 bg-white/20 px-1.5 py-0.5 text-2xs'
+                className='!h-4 !min-h-0 bg-white/20 !px-2 !py-0.5 text-2xs'
                 variant='transparent'
                 onClick={onMaxBtnClick}
+                disabled={props.disabled}
               >
                 MAX
               </Button>
