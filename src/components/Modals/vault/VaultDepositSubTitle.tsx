@@ -38,8 +38,12 @@ export default function VaultDepositSubTitle(props: Props) {
       {showPrimaryText && primaryText}
       {showPrimaryText && showSecondaryText && ' + '}
       {showSecondaryText && secondaryText}
-      {(showPrimaryText || showSecondaryText) && ' = '}
-      <DisplayCurrency coin={{ denom: baseCurrency.denom, amount: positionValue.toString() }} />
+      {(showPrimaryText || showSecondaryText) && (
+        <>
+          {` = `}
+          <DisplayCurrency coin={{ denom: baseCurrency.denom, amount: positionValue.toString() }} />
+        </>
+      )}
     </>
   )
 }

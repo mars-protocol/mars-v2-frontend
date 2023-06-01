@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import Button from 'components/Button'
 import DisplayCurrency from 'components/DisplayCurrency'
@@ -36,29 +36,50 @@ export default function VaultDeposit(props: Props) {
   const primaryPrice = usePrice(props.primaryAsset.denom)
   const secondaryPrice = usePrice(props.secondaryAsset.denom)
 
-  const primaryValue = props.primaryAmount.times(primaryPrice)
-  const secondaryValue = props.secondaryAmount.times(secondaryPrice)
-  const totalValue = primaryValue.plus(secondaryValue)
-
-  const primaryValuePercentage = primaryValue.isEqualTo(secondaryValue)
-    ? 50
-    : primaryValue.div(totalValue).times(100).decimalPlaces(2).toNumber()
-  const secondaryValuePercentage = primaryValue.isEqualTo(secondaryValue)
-    ? 50
-    : new BigNumber(100).minus(primaryValuePercentage).decimalPlaces(2).toNumber()
-
-  const maxAssetValueNonCustom = BN(
-    Math.min(
-      availablePrimaryAmount.times(primaryPrice).toNumber(),
-      availableSecondaryAmount.times(secondaryPrice).toNumber(),
-    ),
+  const primaryValue = useMemo(
+    () => props.primaryAmount.times(primaryPrice),
+    [props.primaryAmount, primaryPrice],
   )
-  const primaryMax = props.isCustomRatio
-    ? availablePrimaryAmount
-    : maxAssetValueNonCustom.dividedBy(primaryPrice)
-  const secondaryMax = props.isCustomRatio
-    ? availableSecondaryAmount
-    : maxAssetValueNonCustom.dividedBy(secondaryPrice)
+  const secondaryValue = useMemo(
+    () => props.secondaryAmount.times(secondaryPrice),
+    [props.secondaryAmount, secondaryPrice],
+  )
+  const totalValue = useMemo(
+    () => primaryValue.plus(secondaryValue),
+    [primaryValue, secondaryValue],
+  )
+
+  const primaryValuePercentage = useMemo(
+    () => primaryValue.div(totalValue).times(100).decimalPlaces(2).toNumber() || 50,
+    [primaryValue, totalValue],
+  )
+  const secondaryValuePercentage = useMemo(
+    () => new BigNumber(100).minus(primaryValuePercentage).decimalPlaces(2).toNumber() || 50,
+    [primaryValuePercentage],
+  )
+
+  const maxAssetValueNonCustom = useMemo(
+    () =>
+      BN(
+        Math.min(
+          availablePrimaryAmount.times(primaryPrice).toNumber(),
+          availableSecondaryAmount.times(secondaryPrice).toNumber(),
+        ),
+      ),
+    [availablePrimaryAmount, primaryPrice, availableSecondaryAmount, secondaryPrice],
+  )
+  const primaryMax = useMemo(
+    () =>
+      props.isCustomRatio ? availablePrimaryAmount : maxAssetValueNonCustom.dividedBy(primaryPrice),
+    [props.isCustomRatio, availablePrimaryAmount, primaryPrice, maxAssetValueNonCustom],
+  )
+  const secondaryMax = useMemo(
+    () =>
+      props.isCustomRatio
+        ? availableSecondaryAmount
+        : maxAssetValueNonCustom.dividedBy(secondaryPrice),
+    [props.isCustomRatio, availableSecondaryAmount, secondaryPrice, maxAssetValueNonCustom],
+  )
 
   const [percentage, setPercentage] = useState(
     primaryValue.dividedBy(maxAssetValueNonCustom).times(100).decimalPlaces(0).toNumber(),
@@ -92,7 +113,7 @@ export default function VaultDeposit(props: Props) {
       amount = secondaryMax
     }
     props.onChangeSecondaryAmount(amount)
-    setPercentage(amount.dividedBy(primaryMax).times(100).decimalPlaces(0).toNumber())
+    setPercentage(amount.dividedBy(secondaryMax).times(100).decimalPlaces(0).toNumber())
     if (!props.isCustomRatio) {
       props.onChangePrimaryAmount(primaryMax.multipliedBy(amount.dividedBy(secondaryMax)))
     }
