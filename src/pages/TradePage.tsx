@@ -1,7 +1,6 @@
 import OrderBook from 'components/Trade/OrderBook'
 import Trade from 'components/Trade/Trade'
 import TradingView from 'components/Trade/TradingView'
-import useDepositedVaults from 'hooks/useDepositedVaults'
 
 export default function TradePage() {
   return (
