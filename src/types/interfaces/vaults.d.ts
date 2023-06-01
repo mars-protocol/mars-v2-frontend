@@ -49,9 +49,9 @@ interface VaultValuesAndAmounts {
   }
 }
 
-type ActiveVaultStatus = 'active' | 'unlocking' | 'unlocked'
-interface ActiveVault extends Vault, VaultValuesAndAmounts {
-  status: ActiveVaultStatus
+type VaultStatus = 'active' | 'unlocking' | 'unlocked'
+interface DepositedVault extends Vault, VaultValuesAndAmounts {
+  status: VaultStatus
   unlocksAt?: number
 }
 

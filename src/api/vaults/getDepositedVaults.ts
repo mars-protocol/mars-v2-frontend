@@ -27,7 +27,7 @@ async function getUnlocksAtTimestamp(unlockingId: number, vaultAddress: string) 
 
 async function getVaultPositionStatusAndUnlockTime(
   vaultPosition: VaultPosition,
-): Promise<[ActiveVaultStatus, number | undefined]> {
+): Promise<[VaultStatus, number | undefined]> {
   const amount = vaultPosition.amount
 
   if ('unlocked' in amount) return ['unlocked', undefined]
@@ -142,7 +142,7 @@ async function getVaultValuesAndAmounts(
   }
 }
 
-async function getDepositedVaults(accountId: string): Promise<ActiveVault[]> {
+async function getDepositedVaults(accountId: string): Promise<DepositedVault[]> {
   try {
     const client = await getClient()
 
