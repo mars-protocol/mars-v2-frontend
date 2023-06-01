@@ -12,13 +12,17 @@ import { BN } from 'utils/helpers'
 import getPrice from 'api/prices/getPrice'
 
 async function getUnlocksAtTimestamp(unlockingId: number, vaultAddress: string) {
-  const client = await getClient()
+  try {
+    const client = await getClient()
 
-  const vaultExtension = (await client.queryContractSmart(vaultAddress, {
-    vault_extension: { lockup: { unlocking_position: { lockup_id: unlockingId } } },
-  })) as VaultExtensionResponse
+    const vaultExtension = (await client.queryContractSmart(vaultAddress, {
+      vault_extension: { lockup: { unlocking_position: { lockup_id: unlockingId } } },
+    })) as VaultExtensionResponse
 
-  return Number(vaultExtension.release_at.at_time) / 1e6
+    return Number(vaultExtension.release_at.at_time) / 1e6
+  } catch (ex) {
+    throw ex
+  }
 }
 
 async function getVaultPositionStatusAndUnlockTime(
@@ -64,7 +68,10 @@ function flatVaultPositionAmount(
   return amounts
 }
 
-async function getLpTokens(vault: Vault, vaultPosition: VaultPosition): Promise<Coin[]> {
+async function getLpTokensForVaultPosition(
+  vault: Vault,
+  vaultPosition: VaultPosition,
+): Promise<Coin[]> {
   try {
     const client = await getClient()
     const amounts = flatVaultPositionAmount(vaultPosition.amount)
@@ -79,7 +86,7 @@ async function getLpTokens(vault: Vault, vaultPosition: VaultPosition): Promise<
       },
     })
 
-    const lpTokens = await client.queryContractSmart(ENV.ADDRESS_CREDIT_MANAGER, {
+    const lpTokens: Coin[] = await client.queryContractSmart(ENV.ADDRESS_CREDIT_MANAGER, {
       estimate_withdraw_liquidity: {
         lp_token: {
           amount: lpAmount,
@@ -88,7 +95,16 @@ async function getLpTokens(vault: Vault, vaultPosition: VaultPosition): Promise<
       },
     })
 
-    return lpTokens
+    const primaryLpToken = lpTokens.find((t) => t.denom === vault.denoms.primary) ?? {
+      amount: '0',
+      denom: vault.denoms.primary,
+    }
+    const secondaryLpToken = lpTokens.find((t) => t.denom === vault.denoms.secondary) ?? {
+      amount: '0',
+      denom: vault.denoms.secondary,
+    }
+
+    return [primaryLpToken, secondaryLpToken]
   } catch (ex) {
     throw ex
   }
@@ -98,70 +114,70 @@ async function getVaultValuesAndAmounts(
   vault: Vault,
   vaultPosition: VaultPosition,
 ): Promise<VaultValuesAndAmounts> {
-  const pricesQueries = Promise.all([
-    getPrice(vault.denoms.primary),
-    getPrice(vault.denoms.secondary),
-  ])
+  try {
+    const pricesQueries = Promise.all([
+      getPrice(vault.denoms.primary),
+      getPrice(vault.denoms.secondary),
+    ])
 
-  const lpTokensQuery = getLpTokens(vault, vaultPosition)
+    const lpTokensQuery = getLpTokensForVaultPosition(vault, vaultPosition)
 
-  const [lpTokens, [primaryAsset, secondaryAsset]] = await Promise.all([
-    lpTokensQuery,
-    pricesQueries,
-  ])
+    const [[primaryLpToken, secondaryLpToken], [primaryAsset, secondaryAsset]] = await Promise.all([
+      lpTokensQuery,
+      pricesQueries,
+    ])
 
-  const primaryLpToken = lpTokens.find((t) => t.denom === primaryAsset.denom) ?? {
-    amount: '0',
-  }
-  const secondaryLpToken = lpTokens.find((t) => t.denom === secondaryAsset.denom) ?? {
-    amount: '0',
-  }
-
-  return {
-    amounts: {
-      primary: BN(primaryLpToken.amount),
-      secondary: BN(secondaryLpToken.amount),
-    },
-    values: {
-      primary: BN(primaryLpToken.amount).multipliedBy(BN(primaryAsset.price)),
-      secondary: BN(secondaryLpToken.amount).multipliedBy(BN(secondaryAsset.price)),
-    },
+    return {
+      amounts: {
+        primary: BN(primaryLpToken.amount),
+        secondary: BN(secondaryLpToken.amount),
+      },
+      values: {
+        primary: BN(primaryLpToken.amount).multipliedBy(BN(primaryAsset.price)),
+        secondary: BN(secondaryLpToken.amount).multipliedBy(BN(secondaryAsset.price)),
+      },
+    }
+  } catch (ex) {
+    throw ex
   }
 }
 
 async function getDepositedVaults(accountId: string): Promise<ActiveVault[]> {
-  const client = await getClient()
+  try {
+    const client = await getClient()
 
-  const positionsQuery = client.queryContractSmart(ENV.ADDRESS_CREDIT_MANAGER, {
-    positions: {
-      account_id: accountId,
-    },
-  }) as Promise<Positions>
+    const positionsQuery = client.queryContractSmart(ENV.ADDRESS_CREDIT_MANAGER, {
+      positions: {
+        account_id: accountId,
+      },
+    }) as Promise<Positions>
 
-  const [positions, allVaults] = await Promise.all([positionsQuery, getVaults()])
+    const [positions, allVaults] = await Promise.all([positionsQuery, getVaults()])
 
-  // TODO: positions seems to be keeping only 1 vault. Check if this is always gonna be the case
-  const depositedVaults = positions.vaults.map(async (vaultPosition) => {
-    const vault = allVaults.find((v) => v.address === vaultPosition.vault.address)
+    const depositedVaults = positions.vaults.map(async (vaultPosition) => {
+      const vault = allVaults.find((v) => v.address === vaultPosition.vault.address)
 
-    if (!vault) {
-      throw 'Could not find the deposited vault among all vaults'
-    }
+      if (!vault) {
+        throw 'Could not find the deposited vault among all vaults'
+      }
 
-    const [[status, unlocksAt], valuesAndAmounts] = await Promise.all([
-      getVaultPositionStatusAndUnlockTime(vaultPosition),
-      getVaultValuesAndAmounts(vault, vaultPosition),
-    ])
+      const [[status, unlocksAt], valuesAndAmounts] = await Promise.all([
+        getVaultPositionStatusAndUnlockTime(vaultPosition),
+        getVaultValuesAndAmounts(vault, vaultPosition),
+      ])
 
-    return {
-      ...vault,
-      status,
-      unlocksAt,
-      ...valuesAndAmounts,
-    }
-  })
+      return {
+        ...vault,
+        status,
+        unlocksAt,
+        ...valuesAndAmounts,
+      }
+    })
 
-  return await Promise.all(depositedVaults)
+    return await Promise.all(depositedVaults)
+  } catch (ex) {
+    throw ex
+  }
 }
 
 export default getDepositedVaults
