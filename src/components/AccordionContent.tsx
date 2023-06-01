@@ -12,10 +12,13 @@ export interface Item {
   title: string
   renderContent: () => React.ReactNode
   isOpen?: boolean
+  subTitle?: string | React.ReactNode
   toggleOpen: (index: number) => void
 }
 
 export default function AccordionContent(props: Props) {
+  const shouldShowSubTitle = props.item.subTitle && !props.item.isOpen
+
   return (
     <div key={props.item.title} className='group border-b-white/10 [&:not(:last-child)]:border-b'>
       <div
@@ -27,9 +30,16 @@ export default function AccordionContent(props: Props) {
           props.item.isOpen && 'border-b [&:first-child]:border-t-0',
         )}
       >
-        <Text>{props.item.title}</Text>
+        <div>
+          <Text>{props.item.title}</Text>
+          {shouldShowSubTitle && (
+            <Text size='xs' className='mt-1 text-white/60'>
+              {props.item.subTitle}
+            </Text>
+          )}
+        </div>
         <div className='block pr-1 group-[[open]]:hidden'>
-          {props.item.isOpen ? <ChevronRight /> : <ChevronDown />}
+          {props.item.isOpen ? <ChevronDown /> : <ChevronRight />}
         </div>
       </div>
       {props.item.isOpen && (

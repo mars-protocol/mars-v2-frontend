@@ -83,7 +83,7 @@ export default function Slider(props: Props) {
       className={classNames(
         'relative min-h-3 w-full transition-opacity',
         props.className,
-        props.disabled && 'pointer-events-none opacity-50',
+        props.disabled && 'pointer-events-none',
       )}
       onMouseEnter={handleSliderRect}
     >
@@ -95,15 +95,40 @@ export default function Slider(props: Props) {
         className='absolute z-2 w-full cursor-pointer appearance-none bg-transparent [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:appearance-none'
       />
       <div className='absolute flex w-full items-center gap-1'>
-        <Mark onClick={props.onChange} value={0} sliderValue={props.value} />
+        <Mark
+          onClick={props.onChange}
+          value={0}
+          sliderValue={props.value}
+          disabled={props.disabled}
+        />
         <Track maxValue={23} sliderValue={props.value} />
-        <Mark onClick={props.onChange} value={25} sliderValue={props.value} />
+        <Mark
+          onClick={props.onChange}
+          value={25}
+          sliderValue={props.value}
+          disabled={props.disabled}
+        />
         <Track maxValue={48} sliderValue={props.value} />
-        <Mark onClick={props.onChange} value={50} sliderValue={props.value} />
+        <Mark
+          onClick={props.onChange}
+          value={50}
+          sliderValue={props.value}
+          disabled={props.disabled}
+        />
         <Track maxValue={73} sliderValue={props.value} />
-        <Mark onClick={props.onChange} value={75} sliderValue={props.value} />
+        <Mark
+          onClick={props.onChange}
+          value={75}
+          sliderValue={props.value}
+          disabled={props.disabled}
+        />
         <Track maxValue={98} sliderValue={props.value} />
-        <Mark onClick={props.onChange} value={100} sliderValue={props.value} />
+        <Mark
+          onClick={props.onChange}
+          value={100}
+          sliderValue={props.value}
+          disabled={props.disabled}
+        />
       </div>
       <div onMouseEnter={handleShowTooltip} onMouseLeave={handleHideTooltip}>
         <DraggableElement
@@ -139,6 +164,7 @@ interface MarkProps {
   value: number
   sliderValue: number
   onClick: (value: number) => void
+  disabled?: boolean
 }
 
 function Mark(props: MarkProps) {
@@ -148,6 +174,7 @@ function Mark(props: MarkProps) {
       className={`z-20 h-3 w-3 rotate-45 rounded-xs border-[1px] border-white/20 hover:border-[2px] hover:border-white ${
         props.sliderValue >= props.value ? 'bg-martian-red hover:border-white' : 'bg-grey-medium'
       }`}
+      disabled={props.disabled}
     ></button>
   )
 }

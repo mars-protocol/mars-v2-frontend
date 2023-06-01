@@ -3,7 +3,7 @@ import { ReactElement, ReactNode } from 'react'
 
 import { Tooltip } from 'components/Tooltip'
 import useStore from 'store'
-import { FormattedNumber } from './FormattedNumber'
+import { FormattedNumber } from 'components/FormattedNumber'
 
 interface Props {
   tooltip: string | ReactNode
@@ -11,8 +11,8 @@ interface Props {
   strokeWidth?: number
   background?: string
   diameter?: number
-  value: number
-  labelClassName: string
+  percentage: number
+  labelClassName?: string
   icon?: ReactElement
 }
 
@@ -21,14 +21,13 @@ export const Gauge = ({
   strokeColor,
   strokeWidth = 4,
   diameter = 40,
-  value = 0,
+  percentage = 0,
   tooltip,
   icon,
   labelClassName,
 }: Props) => {
   const enableAnimations = useStore((s) => s.enableAnimations)
   const radius = 16
-  const percentage = value * 100
   const percentageValue = percentage > 100 ? 100 : percentage < 0 ? 0 : percentage
   const circlePercent = 100 - percentageValue
 
@@ -88,7 +87,7 @@ export const Gauge = ({
         )}
         <FormattedNumber
           className={classNames(labelClassName, 'text-2xs')}
-          amount={value * 100}
+          amount={Math.round(percentage)}
           options={{ maxDecimals: 0, minDecimals: 0 }}
           animate
         />
