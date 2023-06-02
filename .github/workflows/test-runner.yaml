@@ -22,4 +22,4 @@ jobs:
         with:
           fullCoverageDiff: false
           runCommand: "npx jest --coverage --collectCoverage=true --coverageDirectory='./' --coverageReporters='json-summary' --forceExit --detectOpenHandles"
-          delta: 0.5
+          delta: 0.4
