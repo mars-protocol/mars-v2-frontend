@@ -7,18 +7,18 @@ import {
   buttonVariantClasses,
   focusClasses,
 } from 'components/Button/constants'
-import { parseMockComponent } from 'utils/testing'
+import { parseMockComponentProps } from 'utils/testing'
 
 jest.mock('components/CircularProgress', () => {
-  const { createMockComponent } = require('utils/testing')
   return {
-    CircularProgress: (props: any) => createMockComponent('circular-progress-component', props),
+    CircularProgress: (props: any) =>
+      require('utils/testing').createMockComponent('circular-progress-component', props),
   }
 })
 
 describe('<Button />', () => {
   afterAll(() => {
-    jest.clearAllMocks()
+    jest.unmock('components/CircularProgress')
   })
 
   it('should render', () => {
@@ -87,7 +87,7 @@ describe('<Button />', () => {
         <Button showProgressIndicator={true} size={size as keyof typeof buttonSizeClasses} />,
       )
       const circularProgressComponent = getByTestId('circular-progress-component')
-      const sizeProp = parseMockComponent(circularProgressComponent).size
+      const sizeProp = parseMockComponentProps(circularProgressComponent).size
 
       expect(sizeProp).toBe(value)
       cleanup()

@@ -1,8 +1,16 @@
-import { fireEvent, render } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import BigNumber from 'bignumber.js'
 
 import TokenInput from 'components/TokenInput'
 import { ASSETS } from 'constants/assets'
+
+jest.mock('components/DisplayCurrency', () => {
+  return {
+    __esModule: true,
+    default: (props: any) =>
+      require('utils/testing').createMockComponent('mock-display-currency-component', props),
+  }
+})
 
 describe('<TokenInput />', () => {
   const asset = ASSETS[0]
@@ -13,6 +21,10 @@ describe('<TokenInput />', () => {
     onChangeAsset: jest.fn(),
     onChange: jest.fn(),
   }
+
+  afterAll(() => {
+    jest.unmock('components/DisplayCurrency')
+  })
 
   it('should render', () => {
     const { container } = render(<TokenInput {...defaultProps} />)
@@ -26,8 +38,8 @@ describe('<TokenInput />', () => {
   })
 
   it('should handle `disabled` prop correctly', () => {
-    const { getByTestId } = render(<TokenInput {...defaultProps} disabled />)
-    expect(getByTestId('token-input-component')).toHaveClass('pointer-events-none opacity-50')
+    const { getByTestId } = render(<TokenInput {...defaultProps} disabled={true} />)
+    expect(getByTestId('token-input-component')).toHaveClass('pointer-events-none', 'opacity-50')
   })
 
   it('should handle `maxText` prop correctly', () => {

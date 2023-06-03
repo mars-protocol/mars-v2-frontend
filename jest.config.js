@@ -40,9 +40,9 @@ module.exports = {
   },
   // Add more setup options before each test is run
   setupFilesAfterEnv: [
-    '<rootDir>/test.polyfills.js',
-    '<rootDir>/test.setup.js',
+    '<rootDir>/jest.setup.js',
     '<rootDir>/__mocks__/store.js',
+    '<rootDir>/__mocks__/helmet.js',
   ],
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
   testEnvironment: 'jsdom',
