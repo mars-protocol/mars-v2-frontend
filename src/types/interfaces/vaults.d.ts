@@ -1,3 +1,4 @@
+type BigNumber = import('bignumber.js').BigNumber
 interface VaultMetaData {
   address: string
   name: string
@@ -37,15 +38,34 @@ interface Vault extends VaultConfig {
   apy: number | null
 }
 
-interface ActiveVault extends Vault {
-  status: 'active' | 'unlocking' | 'unlocked'
+interface VaultValuesAndAmounts {
   amounts: {
-    primary: number
-    secondary: number
+    primary: BigNumber
+    secondary: BigNumber
   }
   values: {
-    primary: number
-    secondary: number
+    primary: BigNumber
+    secondary: BigNumber
   }
+}
+
+type VaultStatus = 'active' | 'unlocking' | 'unlocked'
+interface DepositedVault extends Vault, VaultValuesAndAmounts {
+  status: VaultStatus
   unlocksAt?: number
+}
+
+interface VaultExtensionResponse {
+  base_token_amount: string
+  id: number
+  owner: string
+  release_at: {
+    at_time: string
+  }
+}
+
+interface VaultPositionFlatAmounts {
+  locked: string
+  unlocking: string
+  unlocked: string
 }
