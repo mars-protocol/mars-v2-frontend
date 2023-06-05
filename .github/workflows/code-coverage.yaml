@@ -1,11 +1,11 @@
-name: Test Runner
+name: Jest Coverage Diff
 
 on: pull_request
 
 jobs:
-  build:
+  coverage-check:
     if: github.actor != 'dependabot[bot]'
-    name: Tests
+    name: Code Coverage Diff Check
     runs-on: ubuntu-latest
 
     steps:
@@ -14,6 +14,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
+          cache: yarn
       - name: Install dependencies
         run: yarn
       - name: Test Coverage
@@ -22,4 +23,4 @@ jobs:
         with:
           fullCoverageDiff: false
           runCommand: "yarn jest --coverage --collectCoverage=true --coverageDirectory='./' --coverageReporters='json-summary' --forceExit --detectOpenHandles"
-          delta: 0.5
+          delta: 0.1

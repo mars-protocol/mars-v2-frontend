@@ -1,14 +1,23 @@
 import { render, screen } from '@testing-library/react'
-import { shallow } from 'enzyme'
 
 import Card from 'components/Card'
-import Text from 'components/Text'
-import Button from 'components/Button'
+
+jest.mock('components/Text', () => {
+  return {
+    __esModule: true,
+    default: (props: any) =>
+      require('utils/testing').createMockComponent('mock-text-component', props),
+  }
+})
 
 describe('<Card />', () => {
   const defaultProps = {
     children: <></>,
   }
+
+  afterAll(() => {
+    jest.unmock('components/Text')
+  })
 
   it('should render', () => {
     const { container } = render(<Card {...defaultProps} />)
@@ -29,24 +38,23 @@ describe('<Card />', () => {
   })
 
   it('should handle `title` prop as string correctly', () => {
-    const testTitle = 'test-title'
-    const wrapper = shallow(<Card {...defaultProps} title={testTitle} />)
-    const textComponent = wrapper.find(Text).at(0)
-    const text = textComponent.dive().text()
+    const testTitle = 'this-is-the-test-title'
+    const { queryByText } = render(<Card {...defaultProps} title={testTitle} />)
 
-    expect(text).toBe(testTitle)
+    expect(queryByText(testTitle)).toBeInTheDocument()
   })
 
   it('should handle `title` prop as element correctly', () => {
-    const testTitle = <p className='test-class'>Test title</p>
-    const wrapper = shallow(<Card {...defaultProps} title={testTitle} />)
-    expect(wrapper.find('p.test-class')).toHaveLength(1)
-    expect(wrapper.find(Text)).toHaveLength(0)
+    const testTitle = <p data-testid='test-title'>Test title</p>
+    const { queryByTestId } = render(<Card {...defaultProps} title={testTitle} />)
+
+    expect(queryByTestId('test-title')).toBeInTheDocument()
+    expect(queryByTestId('mock-text-component')).not.toBeInTheDocument()
   })
 
   it('should handle `id` prop as element correctly', () => {
     const testId = 'test-id'
-    const wrapper = shallow(<Card {...defaultProps} id={testId} />)
-    expect(wrapper.find(`section#${testId}`).at(0)).toHaveLength(1)
+    const { container } = render(<Card {...defaultProps} id={testId} />)
+    expect(container.querySelector(`section#${testId}`)).toBeInTheDocument()
   })
 })

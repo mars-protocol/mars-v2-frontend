@@ -45,7 +45,9 @@ export default function TokenInput(props: Props) {
   return (
     <div
       data-testid='token-input-component'
-      className={classNames('flex w-full flex-col gap-2 transition-opacity', props.className)}
+      className={classNames('flex w-full flex-col gap-2 transition-opacity', props.className, {
+        'pointer-events-none opacity-50': props.disabled,
+      })}
     >
       <div
         data-testid='token-input-wrapper'
