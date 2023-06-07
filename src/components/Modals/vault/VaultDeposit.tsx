@@ -82,7 +82,7 @@ export default function VaultDeposit(props: Props) {
   )
 
   const [percentage, setPercentage] = useState(
-    primaryValue.dividedBy(maxAssetValueNonCustom).times(100).decimalPlaces(0).toNumber(),
+    primaryValue.dividedBy(maxAssetValueNonCustom).times(100).decimalPlaces(0).toNumber() || 0,
   )
   const disableInput =
     (availablePrimaryAmount.isZero() || availableSecondaryAmount.isZero()) && !props.isCustomRatio

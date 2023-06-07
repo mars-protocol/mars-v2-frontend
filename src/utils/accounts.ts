@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 
-import { BN } from 'utils/helpers'
+import { BN, getApproximateHourlyInterest } from 'utils/helpers'
+import { getTokenValue } from 'utils/tokens'
 
 export const calculateAccountBalance = (
   account: Account | AccountChange,
@@ -58,4 +59,36 @@ export const calculateAccountBorrowRate = (
 
 export function getAmount(denom: string, coins: Coin[]): BigNumber {
   return BN(coins.find((asset) => asset.denom === denom)?.amount ?? 0)
+}
+
+export function getNetCollateralValue(account: Account, marketAssets: Market[], prices: Coin[]) {
+  const depositCollateralValue = account.deposits.reduce((acc, coin) => {
+    const asset = marketAssets.find((asset) => asset.denom === coin.denom)
+
+    if (!asset) return acc
+
+    const marketValue = BN(getTokenValue(coin, prices))
+    const collateralValue = marketValue.times(asset.maxLtv)
+
+    return collateralValue.plus(acc)
+  }, BN(0))
+
+  // Implement Vault Collateral calculation (MP-2915)
+
+  const liabilitiesValue = account.debts.reduce((acc, coin) => {
+    const asset = marketAssets.find((asset) => asset.denom === coin.denom)
+
+    if (!asset) return acc
+
+    const estimatedInterestAmount = getApproximateHourlyInterest(coin.amount, asset.borrowRate)
+    const liability = BN(getTokenValue(coin, prices)).plus(estimatedInterestAmount)
+
+    return liability.plus(acc)
+  }, BN(0))
+
+  if (liabilitiesValue.isGreaterThan(depositCollateralValue)) {
+    return BN(0)
+  }
+
+  return depositCollateralValue.minus(liabilitiesValue)
 }

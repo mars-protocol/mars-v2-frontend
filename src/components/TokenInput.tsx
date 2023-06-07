@@ -11,7 +11,7 @@ import useStore from 'store'
 import { BN } from 'utils/helpers'
 import { FormattedNumber } from 'components/FormattedNumber'
 import Button from 'components/Button'
-import { ExclamationMarkTriangle } from 'components/Icons'
+import { ExclamationMarkTriangle, TrashBin } from 'components/Icons'
 import { Tooltip } from 'components/Tooltip'
 
 interface Props {
@@ -27,6 +27,7 @@ interface Props {
   maxText?: string
   warning?: string
   onChangeAsset?: (asset: Asset) => void
+  onDelete?: () => void
 }
 
 export default function TokenInput(props: Props) {
@@ -77,6 +78,11 @@ export default function TokenInput(props: Props) {
           max={props.max}
           className='border-none p-3'
         />
+        {props.onDelete && (
+          <div role='button' className='grid items-center pr-2' onClick={props.onDelete}>
+            <TrashBin width={16} />
+          </div>
+        )}
         {props.warning && (
           <div className='grid items-center px-2'>
             <Tooltip

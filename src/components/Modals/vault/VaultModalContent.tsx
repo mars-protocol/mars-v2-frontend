@@ -8,6 +8,7 @@ import VaultDeposit from 'components/Modals/vault/VaultDeposit'
 import VaultDepositSubTitle from 'components/Modals/vault/VaultDepositSubTitle'
 import useIsOpenArray from 'hooks/useIsOpenArray'
 import { BN } from 'utils/helpers'
+import useUpdateAccount from 'hooks/useUpdateAccount'
 
 interface Props {
   vault: Vault
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export default function VaultModalContent(props: Props) {
+  const { updatedAccount, onChangeBorrowings } = useUpdateAccount(props.account)
   const [isOpen, toggleOpen] = useIsOpenArray(2, false)
   const [primaryAmount, setPrimaryAmount] = useState<BigNumber>(BN(0))
   const [secondaryAmount, setSecondaryAmount] = useState<BigNumber>(BN(0))
@@ -68,7 +70,13 @@ export default function VaultModalContent(props: Props) {
             toggleOpen: (index: number) => toggleOpen(index),
           },
           {
-            renderContent: () => <VaultBorrowings />,
+            renderContent: () => (
+              <VaultBorrowings
+                account={updatedAccount}
+                defaultBorrowDenom={props.secondaryAsset.denom}
+                onChangeBorrowings={onChangeBorrowings}
+              />
+            ),
             title: 'Borrow',
             isOpen: isOpen[1],
             toggleOpen: (index: number) => toggleOpen(index),
