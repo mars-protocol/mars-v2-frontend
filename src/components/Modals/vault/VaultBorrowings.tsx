@@ -13,6 +13,7 @@ import Slider from 'components/Slider'
 import usePrices from 'hooks/usePrices'
 import useMarketAssets from 'hooks/useMarketAssets'
 import { calculateMaxBorrowAmounts } from 'utils/vaults'
+import React from 'react'
 
 interface Props {
   account: Account
@@ -76,7 +77,7 @@ export default function VaultBorrowings(props: Props) {
     <div className='flex flex-grow flex-col gap-4 p-4'>
       {Array.from(borrowings.entries()).map(([denom, amount]) => {
         const asset = getAssetByDenom(denom)
-        if (!asset) return <></>
+        if (!asset) return <React.Fragment key={`input-${denom}`}></React.Fragment>
         return (
           <TokenInput
             key={`input-${denom}`}
@@ -96,7 +97,8 @@ export default function VaultBorrowings(props: Props) {
         const asset = getAssetByDenom(denom)
         const borrowRate = marketAssets?.find((market) => market.denom === denom)?.borrowRate
 
-        if (!asset || !borrowRate) return <></>
+        if (!asset || !borrowRate)
+          return <React.Fragment key={`borrow-rate-${denom}`}></React.Fragment>
         return (
           <div key={`borrow-rate-${denom}`} className='flex justify-between'>
             <Text className='text-white/50'>Borrow APR {asset.symbol}</Text>

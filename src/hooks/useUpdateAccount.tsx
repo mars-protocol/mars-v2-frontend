@@ -18,7 +18,7 @@ export default function useUpdateAccount(account: Account) {
       const debts: Coin[] = [...account.debts]
       const deposits: Coin[] = [...account.deposits]
       const currentDebtDenoms = debts.map((debt) => debt.denom)
-      const currentDepositDenoms = deposits.map((debt) => debt.denom)
+      const currentDepositDenoms = deposits.map((deposit) => deposit.denom)
 
       borrowings.forEach((amount, denom) => {
         if (amount.isZero()) return
