@@ -21,5 +21,6 @@ export function resolveMarketResponses(responses: MarketResponse[]): Market[] {
     depositEnabled: response.deposit_enabled,
     borrowEnabled: response.borrow_enabled,
     depositCap: response.deposit_cap,
+    maxLtv: Number(response.max_loan_to_value),
   }))
 }

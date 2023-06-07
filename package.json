@@ -6,6 +6,7 @@
     "build": "yarn validate-env && next build",
     "dev": "next dev",
     "test": "jest",
+    "test:cov": "jest --coverage",
     "lint": "eslint ./src/ && yarn prettier-check",
     "format": "eslint ./src/ ./__tests__/ --fix && prettier --write ./src/ ./__tests__/",
     "prettier-check": "prettier --ignore-path .gitignore --check ./src/",
