@@ -12,6 +12,7 @@ interface Props {
   content?: ReactNode | string
   className?: string
   contentClassName?: string
+  modalClassName?: string
   open: boolean
   onClose: () => void
 }
@@ -47,6 +48,7 @@ export default function Modal(props: Props) {
         'w-[895px] border-none bg-transparent text-white',
         'focus-visible:outline-none',
         'backdrop:bg-black/50 backdrop:backdrop-blur-sm',
+        props.modalClassName,
       )}
     >
       <Card

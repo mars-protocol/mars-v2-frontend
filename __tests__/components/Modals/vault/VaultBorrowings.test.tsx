@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react'
-
-import VaultBorrowings from 'components/Modals/vault/VaultBorrowings'
 import BigNumber from 'bignumber.js'
+
+import VaultBorrowings from 'components/modals/Vault/VaultBorrowings'
 
 jest.mock('hooks/usePrices', () =>
   jest.fn(() => ({

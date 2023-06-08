@@ -1,6 +1,8 @@
-import BorrowModal from 'components/Modals/BorrowModal'
-import FundAndWithdrawModal from 'components/Modals/fundwithdraw/FundAndWithdrawModal'
-import VaultModal from 'components/Modals/vault/VaultModal'
+import BorrowModal from 'components/modals/BorrowModal'
+import FundAndWithdrawModal from 'components/modals/FundWithdraw'
+import VaultModal from 'components/modals/Vault'
+
+import { AddVaultBorrowAssetsModal } from './AddVaultAssets'
 
 export default function ModalsContainer() {
   return (
@@ -8,6 +10,7 @@ export default function ModalsContainer() {
       <BorrowModal />
       <FundAndWithdrawModal />
       <VaultModal />
+      <AddVaultBorrowAssetsModal />
     </>
   )
 }

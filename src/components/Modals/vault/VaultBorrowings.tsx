@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import BigNumber from 'bignumber.js'
+import React from 'react'
 
 import { BN } from 'utils/helpers'
 import { getAssetByDenom } from 'utils/assets'
@@ -13,7 +14,7 @@ import Slider from 'components/Slider'
 import usePrices from 'hooks/usePrices'
 import useMarketAssets from 'hooks/useMarketAssets'
 import { calculateMaxBorrowAmounts } from 'utils/vaults'
-import React from 'react'
+import useStore from 'store'
 
 interface Props {
   account: Account
@@ -66,6 +67,7 @@ export default function VaultBorrowings(props: Props) {
   }
 
   function addAsset() {
+    useStore.setState({ addVaultBorrowingsModal: true })
     const newborrowings = new Map(borrowings)
     // Replace with denom parameter from the modal (MP-2546)
     newborrowings.set('', BN(0))

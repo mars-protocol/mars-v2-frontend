@@ -1,4 +1,5 @@
 interface ModalSlice {
+  addVaultBorrowingsModal: boolean
   borrowModal: BorrowModal | null
   createAccountModal: boolean
   deleteAccountModal: boolean
