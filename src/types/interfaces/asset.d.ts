@@ -19,8 +19,7 @@ interface OtherAsset extends Omit<Asset, 'symbol'> {
   symbol: 'MARS'
 }
 
-interface BorrowAsset {
-  denom: string
+interface BorrowAsset extends Asset {
   borrowRate: number | null
   liquidity: {
     amount: string

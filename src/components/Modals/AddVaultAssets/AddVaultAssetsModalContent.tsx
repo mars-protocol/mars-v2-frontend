@@ -2,13 +2,17 @@ import { useState } from 'react'
 
 import SearchBar from 'components/SearchBar'
 import Text from 'components/Text'
+import AssetTable from './AssetTable'
+import useMarketBorrowings from 'hooks/useMarketBorrowings'
 
 export default function AddVaultAssetsModalContent() {
   const [searchString, setSearchString] = useState<string>('')
+  const { data: borrowAssets } = useMarketBorrowings()
 
   function onChangeSearchString(value: string) {
     setSearchString(value)
   }
+
   return (
     <>
       <div className='border-b border-b-white/5 bg-white/10 px-4 py-3'>
@@ -25,6 +29,7 @@ export default function AddVaultAssetsModalContent() {
             Leverage will be set at 50% for both assets by default
           </Text>
         </div>
+        <AssetTable assets={borrowAssets} />
         <div className='p-4'>
           <Text>Assets not in the liquidity pool</Text>
           <Text size='xs' className='mt-1 text-white/60'>
@@ -32,6 +37,7 @@ export default function AddVaultAssetsModalContent() {
             these assets below.
           </Text>
         </div>
+        <AssetTable assets={borrowAssets} />
       </div>
     </>
   )
