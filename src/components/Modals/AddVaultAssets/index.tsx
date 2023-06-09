@@ -22,10 +22,10 @@ export function AddVaultBorrowAssetsModal() {
   return (
     <Modal
       open={!!(modal && showContent)}
-      header={<Text className='p-4'>Add Assets</Text>}
+      header={<Text>Add Assets</Text>}
       onClose={onClose}
       modalClassName='max-w-[478px]'
-      headerClassName='bg-white/10 border-b-white/5 border-b'
+      headerClassName='bg-white/10 border-b-white/5 border-b items-center p-4'
     >
       {showContent ? (
         <AddVaultAssetsModalContent vault={vaultModal?.vault} />

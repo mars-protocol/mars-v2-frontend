@@ -4,6 +4,7 @@ import { ReactNode, useEffect, useRef } from 'react'
 import Button from 'components/Button'
 import Card from 'components/Card'
 import { Cross } from 'components/Icons'
+import Text from 'components/Text'
 
 interface Props {
   header: string | ReactNode
@@ -62,10 +63,11 @@ export default function Modal(props: Props) {
           <Button
             onClick={onClose}
             leftIcon={<Cross />}
-            className='h-8 w-8'
-            iconClassName='h-2 w-2'
+            iconClassName='h-3 w-3 ml-0'
             color='tertiary'
-          />
+          >
+            <Text size='sm'>ESC</Text>
+          </Button>
         </div>
         <div className={classNames(props.contentClassName, 'flex-grow')}>
           {props.children ? props.children : props.content}
