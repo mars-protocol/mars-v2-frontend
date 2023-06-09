@@ -23,6 +23,7 @@ interface Props {
 }
 
 export default function VaultBorrowings(props: Props) {
+  console.log('rendering borrowings ', props.borrowings)
   const { data: prices } = usePrices()
   const { data: marketAssets } = useMarketAssets()
   const selectedBorrowDenoms = useStore((s) => s.selectedBorrowDenoms)

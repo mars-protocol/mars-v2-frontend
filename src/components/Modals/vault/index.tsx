@@ -20,7 +20,7 @@ export default function VaultModal() {
   const hasValidData = primaryAsset && currentAccount && secondaryAsset
 
   function onClose() {
-    useStore.setState({ vaultModal: null })
+    useStore.setState({ vaultModal: null, selectedBorrowDenoms: [] })
   }
 
   return (

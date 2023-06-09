@@ -15,6 +15,7 @@ export default function VaultExpanded(props: Props) {
       vaultModal: {
         vault: props.row.original,
       },
+      selectedBorrowDenoms: [props.row.original.denoms.secondary],
     })
   }
 

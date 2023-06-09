@@ -23,6 +23,7 @@ export default function VaultCard(props: Props) {
       vaultModal: {
         vault: props.vault,
       },
+      selectedBorrowDenoms: [props.vault.denoms.secondary],
     })
   }
 
