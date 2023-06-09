@@ -11,7 +11,11 @@ interface Props {
 
 export default function VaultExpanded(props: Props) {
   function enterVaultHandler() {
-    useStore.setState({ vaultModal: { vault: props.row.original } })
+    useStore.setState({
+      vaultModal: {
+        vault: props.row.original,
+      },
+    })
   }
 
   return (

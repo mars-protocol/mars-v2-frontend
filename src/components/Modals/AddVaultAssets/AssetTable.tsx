@@ -1,22 +1,36 @@
 import {
-  SortingState,
-  useReactTable,
+  flexRender,
   getCoreRowModel,
   getSortedRowModel,
-  flexRender,
+  RowSelectionState,
+  SortingState,
+  useReactTable,
 } from '@tanstack/react-table'
-import { useState } from 'react'
-import useAssetTableColumns from './useAssetTableColumns'
+import { useEffect, useState } from 'react'
 import classNames from 'classnames'
+
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Text from 'components/Text'
+import useStore from 'store'
+
+import useAssetTableColumns from './useAssetTableColumns'
 
 interface Props {
   assets: BorrowAsset[]
 }
 
 export default function AssetTable(props: Props) {
+  const selectedBorrowDenoms = useStore((s) => s.selectedBorrowDenoms)
+
+  const defaultSelected = props.assets.reduce((acc, asset, index) => {
+    if (selectedBorrowDenoms.includes(asset.denom)) {
+      acc[index] = true
+    }
+    return acc
+  }, {} as { [key: string]: boolean })
+
   const [sorting, setSorting] = useState<SortingState>([{ id: 'symbol', desc: false }])
+  const [selected, setSelected] = useState<RowSelectionState>(defaultSelected)
   const columns = useAssetTableColumns()
 
   const table = useReactTable({
@@ -24,11 +38,33 @@ export default function AssetTable(props: Props) {
     columns,
     state: {
       sorting,
+      rowSelection: selected,
     },
+    onRowSelectionChange: setSelected,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   })
+
+  useEffect(() => {
+    const selectedDenoms = props.assets
+      .filter((_, index) => selected[index])
+      .map((asset) => asset.denom)
+    const updatedBorrowDenoms = [...selectedBorrowDenoms]
+    props.assets.forEach((asset) => {
+      const isCurrentlySelected = selectedDenoms.includes(asset.denom)
+      const isPreviouslySelected = selectedBorrowDenoms.includes(asset.denom)
+      if (!isCurrentlySelected && isPreviouslySelected) {
+        updatedBorrowDenoms.splice(selectedBorrowDenoms.indexOf(asset.denom), 1)
+      } else if (isCurrentlySelected && !isPreviouslySelected) {
+        updatedBorrowDenoms.push(asset.denom)
+      }
+    })
+    useStore.setState({ selectedBorrowDenoms: updatedBorrowDenoms })
+    // Ignore of selectedDenoms is required to prevent infinite loop.
+    // THis is needed because sekectedDenoms is adjusted from 2 different tables.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected, props.assets])
 
   return (
     <table className='w-full'>

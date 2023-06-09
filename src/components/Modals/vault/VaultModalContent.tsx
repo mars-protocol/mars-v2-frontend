@@ -18,7 +18,10 @@ interface Props {
 }
 
 export default function VaultModalContent(props: Props) {
-  const { updatedAccount, onChangeBorrowings } = useUpdateAccount(props.account)
+  const { updatedAccount, onChangeBorrowings, borrowings } = useUpdateAccount(
+    props.account,
+    props.vault,
+  )
   const [isOpen, toggleOpen] = useIsOpenArray(2, false)
   const [primaryAmount, setPrimaryAmount] = useState<BigNumber>(BN(0))
   const [secondaryAmount, setSecondaryAmount] = useState<BigNumber>(BN(0))
@@ -39,7 +42,7 @@ export default function VaultModalContent(props: Props) {
   )
 
   return (
-    <div className='flex flex-grow items-start gap-6 p-6'>
+    <div className='flex h-[546px] flex-grow items-start gap-6 p-6'>
       <Accordion
         items={[
           {
@@ -73,7 +76,7 @@ export default function VaultModalContent(props: Props) {
             renderContent: () => (
               <VaultBorrowings
                 account={updatedAccount}
-                defaultBorrowDenom={props.secondaryAsset.denom}
+                borrowings={borrowings}
                 onChangeBorrowings={onChangeBorrowings}
               />
             ),

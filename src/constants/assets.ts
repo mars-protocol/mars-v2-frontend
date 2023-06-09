@@ -97,6 +97,7 @@ export const ASSETS: Asset[] = [
     isEnabled: true,
     isMarket: true,
     isDisplayCurrency: true,
+    isStable: true,
   },
   {
     symbol: 'USDC.n',
@@ -112,5 +113,6 @@ export const ASSETS: Asset[] = [
     isEnabled: IS_TESTNET,
     isMarket: IS_TESTNET,
     isDisplayCurrency: IS_TESTNET,
+    isStable: true,
   },
 ]

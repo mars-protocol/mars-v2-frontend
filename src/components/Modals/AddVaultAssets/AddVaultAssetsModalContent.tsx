@@ -1,17 +1,50 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import SearchBar from 'components/SearchBar'
 import Text from 'components/Text'
-import AssetTable from './AssetTable'
 import useMarketBorrowings from 'hooks/useMarketBorrowings'
 
-export default function AddVaultAssetsModalContent() {
+import AssetTable from './AssetTable'
+
+interface Props {
+  vault: Vault
+}
+
+export default function AddVaultAssetsModalContent(props: Props) {
   const [searchString, setSearchString] = useState<string>('')
   const { data: borrowAssets } = useMarketBorrowings()
+
+  const filteredBorrowAssets: BorrowAsset[] = useMemo(() => {
+    return borrowAssets.filter(
+      (asset) =>
+        asset.name.toLowerCase().includes(searchString.toLowerCase()) ||
+        asset.denom.toLowerCase().includes(searchString.toLowerCase()) ||
+        asset.symbol.toLowerCase().includes(searchString.toLowerCase()),
+    )
+  }, [borrowAssets, searchString])
 
   function onChangeSearchString(value: string) {
     setSearchString(value)
   }
+
+  const [poolAssets, stableAssets] = useMemo(
+    () =>
+      filteredBorrowAssets.reduce(
+        (acc, asset) => {
+          if (
+            asset.denom === props.vault.denoms.primary ||
+            asset.denom === props.vault.denoms.secondary
+          ) {
+            acc[0].push(asset)
+          } else if (asset.isStable) {
+            acc[1].push(asset)
+          }
+          return acc
+        },
+        [[], []] as [BorrowAsset[], BorrowAsset[]],
+      ),
+    [filteredBorrowAssets, props.vault.denoms.primary, props.vault.denoms.secondary],
+  )
 
   return (
     <>
@@ -22,14 +55,14 @@ export default function AddVaultAssetsModalContent() {
           onChange={onChangeSearchString}
         />
       </div>
-      <div>
+      <div className='h-[446px] overflow-y-scroll scrollbar-hide'>
         <div className='p-4'>
           <Text>Available Assets</Text>
           <Text size='xs' className='mt-1 text-white/60'>
             Leverage will be set at 50% for both assets by default
           </Text>
         </div>
-        <AssetTable assets={borrowAssets} />
+        <AssetTable assets={poolAssets} />
         <div className='p-4'>
           <Text>Assets not in the liquidity pool</Text>
           <Text size='xs' className='mt-1 text-white/60'>
@@ -37,7 +70,7 @@ export default function AddVaultAssetsModalContent() {
             these assets below.
           </Text>
         </div>
-        <AssetTable assets={borrowAssets} />
+        <AssetTable assets={stableAssets} />
       </div>
     </>
   )

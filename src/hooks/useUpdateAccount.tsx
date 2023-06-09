@@ -3,8 +3,11 @@ import { useCallback, useState } from 'react'
 
 import { BN } from 'utils/helpers'
 
-export default function useUpdateAccount(account: Account) {
+export default function useUpdateAccount(account: Account, vault: Vault) {
   const [updatedAccount, setUpdatedAccount] = useState<Account>(account)
+  const [borrowings, setBorrowings] = useState<Map<string, BigNumber>>(
+    new Map().set(vault.denoms.secondary, BN(0)),
+  )
 
   function getCoin(denom: string, amount: BigNumber): Coin {
     return {
@@ -40,6 +43,7 @@ export default function useUpdateAccount(account: Account) {
         }
       })
 
+      setBorrowings(borrowings)
       setUpdatedAccount({
         ...account,
         debts,
@@ -49,5 +53,5 @@ export default function useUpdateAccount(account: Account) {
     [account],
   )
 
-  return { updatedAccount, onChangeBorrowings }
+  return { borrowings, updatedAccount, onChangeBorrowings }
 }

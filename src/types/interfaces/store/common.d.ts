@@ -1,10 +1,11 @@
 interface CommonSlice {
   accounts: Account[] | null
   address?: string
+  balances: Coin[]
+  client?: import('@marsprotocol/wallet-connector').WalletClient
   enableAnimations: boolean
   isOpen: boolean
-  balances: Coin[]
   selectedAccount: string | null
-  client?: import('@marsprotocol/wallet-connector').WalletClient
+  selectedBorrowDenoms: string[]
   status: import('@marsprotocol/wallet-connector').WalletConnectionStatus
 }

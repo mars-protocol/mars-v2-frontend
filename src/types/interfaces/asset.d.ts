@@ -13,6 +13,7 @@ interface Asset {
   isEnabled: boolean
   isMarket: boolean
   isDisplayCurrency?: boolean
+  isStable?: boolean
 }
 
 interface OtherAsset extends Omit<Asset, 'symbol'> {

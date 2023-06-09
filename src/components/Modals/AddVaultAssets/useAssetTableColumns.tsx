@@ -1,8 +1,9 @@
-import Text from 'components/Text'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
-import Checkbox from 'components/Checkbox'
 import Image from 'next/image'
+
+import Checkbox from 'components/Checkbox'
+import Text from 'components/Text'
 import { formatPercent } from 'utils/formatters'
 import { getAssetByDenom } from 'utils/assets'
 

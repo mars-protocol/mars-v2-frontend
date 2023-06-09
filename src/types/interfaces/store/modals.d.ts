@@ -5,13 +5,15 @@ interface ModalSlice {
   deleteAccountModal: boolean
   fundAccountModal: boolean
   fundAndWithdrawModal: 'fund' | 'withdraw' | null
-  vaultModal: {
-    vault: Vault
-  } | null
+  vaultModal: VaultModal | null
 }
 
 interface BorrowModal {
   asset: Asset
   marketData: BorrowAsset | BorrowAssetActive
   isRepay?: boolean
+}
+
+interface VaultModal {
+  vault: Vault
 }
