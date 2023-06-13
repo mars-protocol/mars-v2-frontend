@@ -8,25 +8,56 @@ import Button from 'components/Button'
 import TokenInput from 'components/TokenInput'
 import Divider from 'components/Divider'
 import Text from 'components/Text'
-import { ArrowRight } from 'components/Icons'
+import { ArrowRight, ExclamationMarkCircled } from 'components/Icons'
 import { formatPercent } from 'utils/formatters'
 import Slider from 'components/Slider'
 import usePrices from 'hooks/usePrices'
 import useMarketAssets from 'hooks/useMarketAssets'
 import { calculateMaxBorrowAmounts } from 'utils/vaults'
 import useStore from 'store'
+import DisplayCurrency from 'components/DisplayCurrency'
+import usePrice from 'hooks/usePrice'
 
 interface Props {
   account: Account
   borrowings: Map<string, BigNumber>
+  primaryAmount: BigNumber
+  secondaryAmount: BigNumber
+  primaryAsset: Asset
+  secondaryAsset: Asset
   onChangeBorrowings: (borrowings: Map<string, BigNumber>) => void
 }
 
 export default function VaultBorrowings(props: Props) {
-  console.log('rendering borrowings ', props.borrowings)
   const { data: prices } = usePrices()
+  const primaryPrice = usePrice(props.primaryAsset.denom)
+  const secondaryPrice = usePrice(props.secondaryAsset.denom)
   const { data: marketAssets } = useMarketAssets()
+  const baseCurrency = useStore((s) => s.baseCurrency)
   const selectedBorrowDenoms = useStore((s) => s.selectedBorrowDenoms)
+
+  const primaryValue = useMemo(
+    () => props.primaryAmount.times(primaryPrice),
+    [props.primaryAmount, primaryPrice],
+  )
+  const secondaryValue = useMemo(
+    () => props.secondaryAmount.times(secondaryPrice),
+    [props.secondaryAmount, secondaryPrice],
+  )
+
+  const borrowingValue = useMemo(() => {
+    return Array.from(props.borrowings.entries()).reduce((prev, [denom, amount]) => {
+      const price = prices.find((price) => price.denom === denom)?.amount
+      if (!price) return prev
+
+      return prev.plus(amount.times(price))
+    }, BN(0) as BigNumber)
+  }, [props.borrowings])
+
+  const totalValue = useMemo(
+    () => primaryValue.plus(secondaryValue).plus(borrowingValue),
+    [primaryValue, secondaryValue, borrowingValue],
+  )
 
   useEffect(() => {
     const updatedBorrowings = new Map()
@@ -58,11 +89,13 @@ export default function VaultBorrowings(props: Props) {
     if (props.borrowings.size !== 1) return
 
     const denom = Array.from(props.borrowings.keys())[0]
-
+    const currentAmount = props.borrowings.get(denom) ?? BN(0)
+    const maxAmount = maxAmounts.get(denom) ?? BN(0)
     const newBorrowings = new Map().set(
       denom,
-      maxAmounts.get(denom)?.times(value).div(100).toPrecision(0) || BN(0),
+      maxAmount.plus(currentAmount).times(value).div(100).decimalPlaces(0) || BN(0),
     )
+
     props.onChangeBorrowings(newBorrowings)
     setPercentage(value)
   }
@@ -102,21 +135,38 @@ export default function VaultBorrowings(props: Props) {
         )
       })}
       {props.borrowings.size === 1 && <Slider onChange={onChangeSlider} value={percentage} />}
+      {props.borrowings.size === 0 && (
+        <div className='flex items-center gap-4 py-2'>
+          <div className='w-4'>
+            <ExclamationMarkCircled width={20} height={20} />
+          </div>
+          <Text size='xs'>
+            You have no borrowing assets selected. Click on select borrow assets if you would like
+            to add assets to borrow.
+          </Text>
+        </div>
+      )}
       <Button text='Select borrow assets +' color='tertiary' onClick={addAsset} />
       <Divider />
-      {Array.from(props.borrowings.entries()).map(([denom, amount]) => {
-        const asset = getAssetByDenom(denom)
-        const borrowRate = marketAssets?.find((market) => market.denom === denom)?.borrowRate
+      <div className='flex flex-col gap-2'>
+        <div className='flex justify-between'>
+          <Text className='text-white/50'>{`${props.primaryAsset.symbol}-${props.secondaryAsset.symbol} Position Value`}</Text>
+          <DisplayCurrency coin={{ denom: baseCurrency.denom, amount: totalValue.toString() }} />
+        </div>
+        {Array.from(props.borrowings.entries()).map(([denom, amount]) => {
+          const asset = getAssetByDenom(denom)
+          const borrowRate = marketAssets?.find((market) => market.denom === denom)?.borrowRate
 
-        if (!asset || !borrowRate)
-          return <React.Fragment key={`borrow-rate-${denom}`}></React.Fragment>
-        return (
-          <div key={`borrow-rate-${denom}`} className='flex justify-between'>
-            <Text className='text-white/50'>Borrow APR {asset.symbol}</Text>
-            <Text>{formatPercent(borrowRate)}</Text>
-          </div>
-        )
-      })}
+          if (!asset || !borrowRate)
+            return <React.Fragment key={`borrow-rate-${denom}`}></React.Fragment>
+          return (
+            <div key={`borrow-rate-${denom}`} className='flex justify-between'>
+              <Text className='text-white/50'>Borrow APR {asset.symbol}</Text>
+              <Text>{formatPercent(borrowRate)}</Text>
+            </div>
+          )
+        })}
+      </div>
       <Button color='primary' text='Deposit' rightIcon={<ArrowRight />} />
     </div>
   )

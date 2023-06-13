@@ -9,6 +9,7 @@ import VaultDepositSubTitle from 'components/modals/Vault/VaultDepositSubTitle'
 import useIsOpenArray from 'hooks/useIsOpenArray'
 import { BN } from 'utils/helpers'
 import useUpdateAccount from 'hooks/useUpdateAccount'
+import VaultBorrowingsSubTitle from 'components/modals/Vault/VaultBorrowingsSubTitle'
 
 interface Props {
   vault: Vault
@@ -78,10 +79,15 @@ export default function VaultModalContent(props: Props) {
               <VaultBorrowings
                 account={updatedAccount}
                 borrowings={borrowings}
+                primaryAmount={primaryAmount}
+                secondaryAmount={secondaryAmount}
+                primaryAsset={props.primaryAsset}
+                secondaryAsset={props.secondaryAsset}
                 onChangeBorrowings={onChangeBorrowings}
               />
             ),
             title: 'Borrow',
+            subTitle: <VaultBorrowingsSubTitle borrowings={borrowings} />,
             isOpen: isOpen[1],
             toggleOpen: (index: number) => toggleOpen(index),
           },

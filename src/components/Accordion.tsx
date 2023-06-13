@@ -1,7 +1,8 @@
+import classNames from 'classnames'
+
 import Card from 'components/Card'
 
 import AccordionContent, { Item } from './AccordionContent'
-import classNames from 'classnames'
 
 interface Props {
   items: Item[]
