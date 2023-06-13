@@ -2,7 +2,7 @@ import { GetState, SetState } from 'zustand'
 
 export default function createModalSlice(set: SetState<ModalSlice>, get: GetState<ModalSlice>) {
   return {
-    addVaultBorrowingsModal: null,
+    addVaultBorrowingsModal: false,
     borrowModal: null,
     createAccountModal: false,
     deleteAccountModal: false,
