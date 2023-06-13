@@ -6,13 +6,13 @@ import useStore from 'store'
 import { mocked } from 'jest-mock'
 import DisplayCurrency from 'components/DisplayCurrency'
 
-jest.mock('hooks/usePrice', () => jest.fn(() => '1'))
-
 jest.mock('hooks/usePrices', () =>
   jest.fn(() => ({
     data: [],
   })),
 )
+
+jest.mock('hooks/usePrice', () => jest.fn(() => '1'))
 
 jest.mock('hooks/useMarketAssets', () =>
   jest.fn(() => ({
