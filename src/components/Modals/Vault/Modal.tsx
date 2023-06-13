@@ -6,7 +6,7 @@ import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
 import { CircularProgress } from 'components/CircularProgress'
 
-import VaultModalContent from './VaultModalContent'
+import VaultModalContent from './Content'
 
 export default function VaultModal() {
   const currentAccount = useCurrentAccount()

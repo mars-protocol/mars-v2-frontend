@@ -3,7 +3,7 @@ import useStore from 'store'
 import Text from 'components/Text'
 import { CircularProgress } from 'components/CircularProgress'
 
-import AddVaultAssetsModalContent from './AddVaultAssetsModalContent'
+import AddVaultAssetsModalContent from './Content'
 
 export function AddVaultBorrowAssetsModal() {
   const modal = useStore((s) => s.addVaultBorrowingsModal)

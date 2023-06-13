@@ -4,7 +4,7 @@ import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
 import { CircularProgress } from 'components/CircularProgress'
 
-import FundWithdrawModalContent from './FundWithdrawModalContent'
+import FundWithdrawModalContent from './Content'
 
 export default function FundAndWithdrawModal() {
   const currentAccount = useCurrentAccount()
