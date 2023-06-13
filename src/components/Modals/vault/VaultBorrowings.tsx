@@ -18,7 +18,7 @@ import useStore from 'store'
 import DisplayCurrency from 'components/DisplayCurrency'
 import usePrice from 'hooks/usePrice'
 
-interface Props {
+export interface VaultBorrowingsProps {
   account: Account
   borrowings: Map<string, BigNumber>
   primaryAmount: BigNumber
@@ -28,11 +28,11 @@ interface Props {
   onChangeBorrowings: (borrowings: Map<string, BigNumber>) => void
 }
 
-export default function VaultBorrowings(props: Props) {
+export default function VaultBorrowings(props: VaultBorrowingsProps) {
+  const { data: marketAssets } = useMarketAssets()
   const { data: prices } = usePrices()
   const primaryPrice = usePrice(props.primaryAsset.denom)
   const secondaryPrice = usePrice(props.secondaryAsset.denom)
-  const { data: marketAssets } = useMarketAssets()
   const baseCurrency = useStore((s) => s.baseCurrency)
   const selectedBorrowDenoms = useStore((s) => s.selectedBorrowDenoms)
 

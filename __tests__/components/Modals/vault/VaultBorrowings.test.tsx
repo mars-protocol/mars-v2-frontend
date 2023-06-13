@@ -1,25 +1,34 @@
 import { render } from '@testing-library/react'
-import BigNumber from 'bignumber.js'
+import VaultBorrowings, { VaultBorrowingsProps } from 'components/modals/Vault/VaultBorrowings'
+import { ASSETS } from 'constants/assets'
+import { BN } from 'utils/helpers'
+import useStore from 'store'
 
-import VaultBorrowings from 'components/modals/Vault/VaultBorrowings'
+jest.mock('hooks/usePrice', () => jest.fn(() => '1'))
 
 jest.mock('hooks/usePrices', () =>
   jest.fn(() => ({
     data: [],
   })),
 )
+
 jest.mock('hooks/useMarketAssets', () =>
   jest.fn(() => ({
     data: [],
   })),
 )
 
+jest.mock('components/DisplayCurrency', () => ({
+  __esModule: true,
+  default: jest.fn(() => <div>Display currency</div>),
+}))
+
 describe('<VaultBorrowings />', () => {
-  const defaultProps: {
-    account: Account
-    defaultBorrowDenom: string
-    onChangeBorrowings: (borrowings: Map<string, BigNumber>) => void
-  } = {
+  const defaultProps: VaultBorrowingsProps = {
+    primaryAsset: ASSETS[0],
+    secondaryAsset: ASSETS[1],
+    primaryAmount: BN(0),
+    secondaryAmount: BN(0),
     account: {
       id: 'test',
       deposits: [],
@@ -27,9 +36,15 @@ describe('<VaultBorrowings />', () => {
       vaults: [],
       lends: [],
     },
-    defaultBorrowDenom: 'test-denom',
+    borrowings: new Map(),
     onChangeBorrowings: jest.fn(),
   }
+  beforeAll(() => {
+    useStore.setState({
+      baseCurrency: ASSETS[0],
+      selectedBorrowDenoms: [ASSETS[1].denom],
+    })
+  })
 
   it('should render', () => {
     const { container } = render(<VaultBorrowings {...defaultProps} />)
