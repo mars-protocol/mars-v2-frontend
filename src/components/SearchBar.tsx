@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { ChangeEvent } from 'react'
 
-import { Search } from './Icons'
+import { Search } from 'components/Icons'
 
 interface Props {
   value: string

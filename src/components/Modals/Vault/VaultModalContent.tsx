@@ -3,13 +3,13 @@ import { useCallback, useState } from 'react'
 
 import Accordion from 'components/Accordion'
 import AccountSummary from 'components/Account/AccountSummary'
-import VaultBorrowings from 'components/Modals/Vault/Borrowings'
-import VaultDeposit from 'components/Modals/Vault/Deposits'
-import VaultDepositSubTitle from 'components/Modals/Vault/DepositsSubTitle'
 import useIsOpenArray from 'hooks/useIsOpenArray'
 import { BN } from 'utils/helpers'
 import useUpdateAccount from 'hooks/useUpdateAccount'
-import VaultBorrowingsSubTitle from 'components/Modals/Vault/BorrowingsSubTitle'
+import VaultBorrowingsSubTitle from 'components/Modals/Vault/VaultBorrowingsSubTitle'
+import VaultDeposit from 'components/Modals/Vault/VaultDeposits'
+import VaultBorrowings from 'components/Modals/Vault/VaultBorrowings'
+import VaultDepositSubTitle from 'components/Modals/Vault/VaultDepositsSubTitle'
 
 interface Props {
   vault: Vault

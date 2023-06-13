@@ -3,8 +3,7 @@ import { useMemo, useState } from 'react'
 import SearchBar from 'components/SearchBar'
 import Text from 'components/Text'
 import useMarketBorrowings from 'hooks/useMarketBorrowings'
-
-import AssetTable from './AssetTable'
+import AddVaultAssetTable from 'components/Modals/AddVaultAssets/AddVaultAssetTable'
 
 interface Props {
   vault: Vault
@@ -62,7 +61,7 @@ export default function AddVaultAssetsModalContent(props: Props) {
             Leverage will be set at 50% for both assets by default
           </Text>
         </div>
-        <AssetTable assets={poolAssets} />
+        <AddVaultAssetTable assets={poolAssets} />
         <div className='p-4'>
           <Text>Assets not in the liquidity pool</Text>
           <Text size='xs' className='mt-1 text-white/60'>
@@ -70,7 +69,7 @@ export default function AddVaultAssetsModalContent(props: Props) {
             these assets below.
           </Text>
         </div>
-        <AssetTable assets={stableAssets} />
+        <AddVaultAssetTable assets={stableAssets} />
       </div>
     </>
   )

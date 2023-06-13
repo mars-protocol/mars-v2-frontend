@@ -4,8 +4,7 @@ import { ReactNode } from 'react'
 
 import { Questionmark } from 'components/Icons'
 import useStore from 'store'
-
-import TooltipContent from './TooltipContent'
+import TooltipContent from 'components/Tooltip/TooltipContent'
 
 interface Props {
   content: ReactNode | string

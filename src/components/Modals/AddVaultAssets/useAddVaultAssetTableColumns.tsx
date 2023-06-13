@@ -7,7 +7,7 @@ import Text from 'components/Text'
 import { formatPercent } from 'utils/formatters'
 import { getAssetByDenom } from 'utils/assets'
 
-export default function useAssetTableColumns() {
+export default function useAddVaultAssetTableColumns() {
   const columns = React.useMemo<ColumnDef<BorrowAsset>[]>(
     () => [
       {

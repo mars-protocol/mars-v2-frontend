@@ -1,11 +1,11 @@
 import { render } from '@testing-library/react'
 import { mocked } from 'jest-mock'
 
-import VaultBorrowings, { VaultBorrowingsProps } from 'components/Modals/Vault/Borrowings'
 import { ASSETS } from 'constants/assets'
 import { BN } from 'utils/helpers'
 import useStore from 'store'
 import DisplayCurrency from 'components/DisplayCurrency'
+import VaultBorrowings, { VaultBorrowingsProps } from 'components/Modals/Vault/VaultBorrowings'
 
 jest.mock('hooks/usePrices', () =>
   jest.fn(() => ({

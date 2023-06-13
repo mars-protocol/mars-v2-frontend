@@ -12,14 +12,13 @@ import classNames from 'classnames'
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Text from 'components/Text'
 import useStore from 'store'
-
-import useAssetTableColumns from './useAssetTableColumns'
+import useAddVaultAssetTableColumns from 'components/Modals/AddVaultAssets/useAddVaultAssetTableColumns'
 
 interface Props {
   assets: BorrowAsset[]
 }
 
-export default function AssetTable(props: Props) {
+export default function AddVaultAssetTable(props: Props) {
   const selectedBorrowDenoms = useStore((s) => s.selectedBorrowDenoms)
 
   const defaultSelected = props.assets.reduce((acc, asset, index) => {
@@ -31,7 +30,7 @@ export default function AssetTable(props: Props) {
 
   const [sorting, setSorting] = useState<SortingState>([{ id: 'symbol', desc: false }])
   const [selected, setSelected] = useState<RowSelectionState>(defaultSelected)
-  const columns = useAssetTableColumns()
+  const columns = useAddVaultAssetTableColumns()
 
   const table = useReactTable({
     data: props.assets,
