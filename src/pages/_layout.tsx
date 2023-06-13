@@ -4,7 +4,7 @@ import AccountDetails from 'components/Account/AccountDetails'
 import Background from 'components/Background'
 import Footer from 'components/Footer'
 import DesktopHeader from 'components/Header/DesktopHeader'
-import ModalsContainer from 'components/modals/ModalsContainer'
+import ModalsContainer from 'components/Modals/ModalsContainer'
 import PageMetadata from 'components/PageMetadata'
 import Toaster from 'components/Toaster'
 
