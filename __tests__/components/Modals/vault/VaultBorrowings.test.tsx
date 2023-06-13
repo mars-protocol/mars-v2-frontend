@@ -1,5 +1,4 @@
 import { render } from '@testing-library/react'
-import { mocked } from 'jest-mock'
 
 import { ASSETS } from 'constants/assets'
 import { BN } from 'utils/helpers'
@@ -22,9 +21,9 @@ jest.mock('hooks/useMarketAssets', () =>
 )
 
 jest.mock('components/DisplayCurrency')
-const mockedDisplayCurrency = mocked(DisplayCurrency).mockImplementation(() => (
-  <div>Display currency</div>
-))
+const mockedDisplayCurrency = jest
+  .mocked(DisplayCurrency)
+  .mockImplementation(() => <div>Display currency</div>)
 
 describe('<VaultBorrowings />', () => {
   const defaultProps: VaultBorrowingsProps = {
