@@ -52,7 +52,7 @@ export default function VaultBorrowings(props: Props) {
 
       return prev.plus(amount.times(price))
     }, BN(0) as BigNumber)
-  }, [props.borrowings])
+  }, [props.borrowings, prices])
 
   const totalValue = useMemo(
     () => primaryValue.plus(secondaryValue).plus(borrowingValue),
