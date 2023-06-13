@@ -5,10 +5,6 @@ import { CircularProgress } from 'components/CircularProgress'
 
 import AddVaultAssetsModalContent from './AddVaultAssetsModalContent'
 
-interface Props {
-  vault?: Vault
-}
-
 export function AddVaultBorrowAssetsModal() {
   const modal = useStore((s) => s.addVaultBorrowingsModal)
   const vaultModal = useStore((s) => s.vaultModal)
