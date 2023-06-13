@@ -3,6 +3,8 @@ import VaultBorrowings, { VaultBorrowingsProps } from 'components/modals/Vault/V
 import { ASSETS } from 'constants/assets'
 import { BN } from 'utils/helpers'
 import useStore from 'store'
+import { mocked } from 'jest-mock'
+import DisplayCurrency from 'components/DisplayCurrency'
 
 jest.mock('hooks/usePrice', () => jest.fn(() => '1'))
 
@@ -18,10 +20,10 @@ jest.mock('hooks/useMarketAssets', () =>
   })),
 )
 
-jest.mock('components/DisplayCurrency', () => ({
-  __esModule: true,
-  default: jest.fn(() => <div>Display currency</div>),
-}))
+jest.mock('components/DisplayCurrency')
+const mockedDisplayCurrency = mocked(DisplayCurrency).mockImplementation(() => (
+  <div>Display currency</div>
+))
 
 describe('<VaultBorrowings />', () => {
   const defaultProps: VaultBorrowingsProps = {
@@ -39,6 +41,7 @@ describe('<VaultBorrowings />', () => {
     borrowings: new Map(),
     onChangeBorrowings: jest.fn(),
   }
+
   beforeAll(() => {
     useStore.setState({
       baseCurrency: ASSETS[0],
@@ -46,8 +49,21 @@ describe('<VaultBorrowings />', () => {
     })
   })
 
+  afterAll(() => {
+    useStore.clearState()
+    mockedDisplayCurrency.mockClear()
+  })
+
   it('should render', () => {
     const { container } = render(<VaultBorrowings {...defaultProps} />)
     expect(container).toBeInTheDocument()
+  })
+
+  it('should render DisplayCurrency correctly', () => {
+    expect(mockedDisplayCurrency).toHaveBeenCalledTimes(1)
+    expect(mockedDisplayCurrency).toHaveBeenCalledWith(
+      { coin: { denom: 'uosmo', amount: '0' } },
+      expect.anything(),
+    )
   })
 })
