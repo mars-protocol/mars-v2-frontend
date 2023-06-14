@@ -4,6 +4,7 @@ import { IS_TESTNET } from 'constants/env'
 import { TESTNET_VAULTS, VAULTS } from 'constants/vaults'
 import { BN } from 'utils/helpers'
 import { getNetCollateralValue } from 'utils/accounts'
+import { BNCoin } from 'types/classes/BNCoin'
 
 export function getVaultMetaData(address: string) {
   const vaults = IS_TESTNET ? TESTNET_VAULTS : VAULTS
@@ -16,8 +17,8 @@ export function calculateMaxBorrowAmounts(
   marketAssets: Market[],
   prices: Coin[],
   denoms: string[],
-): Map<string, BigNumber> {
-  const maxAmounts = new Map<string, BigNumber>()
+): BNCoin[] {
+  const maxAmounts: BNCoin[] = []
   const collateralValue = getNetCollateralValue(account, marketAssets, prices)
 
   for (const denom of denoms) {
@@ -29,7 +30,7 @@ export function calculateMaxBorrowAmounts(
     const borrowValue = BN(1).minus(borrowAsset.maxLtv).times(borrowAssetPrice)
     const amount = collateralValue.dividedBy(borrowValue).decimalPlaces(0)
 
-    maxAmounts.set(denom, amount)
+    maxAmounts.push(new BNCoin({denom, amount: amount.toString()}))
   }
 
   return maxAmounts

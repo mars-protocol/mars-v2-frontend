@@ -38,7 +38,7 @@ describe('<VaultBorrowings />', () => {
       vaults: [],
       lends: [],
     },
-    borrowings: new Map(),
+    borrowings: [],
     onChangeBorrowings: jest.fn(),
   }
 

@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js'
 import React from 'react'
 
 import { BN } from 'utils/helpers'
-import { getAssetByDenom } from 'utils/assets'
+import { findCoinByDenom, getAssetByDenom } from 'utils/assets'
 import Button from 'components/Button'
 import TokenInput from 'components/TokenInput'
 import Divider from 'components/Divider'
@@ -17,15 +17,16 @@ import { calculateMaxBorrowAmounts } from 'utils/vaults'
 import useStore from 'store'
 import DisplayCurrency from 'components/DisplayCurrency'
 import usePrice from 'hooks/usePrice'
+import { BNCoin } from 'types/classes/BNCoin'
 
 export interface VaultBorrowingsProps {
   account: Account
-  borrowings: Map<string, BigNumber>
+  borrowings: BNCoin[]
   primaryAmount: BigNumber
   secondaryAmount: BigNumber
   primaryAsset: Asset
   secondaryAsset: Asset
-  onChangeBorrowings: (borrowings: Map<string, BigNumber>) => void
+  onChangeBorrowings: (borrowings: BNCoin[]) => void
 }
 
 export default function VaultBorrowings(props: VaultBorrowingsProps) {
@@ -46,11 +47,11 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   )
 
   const borrowingValue = useMemo(() => {
-    return Array.from(props.borrowings.entries()).reduce((prev, [denom, amount]) => {
-      const price = prices.find((price) => price.denom === denom)?.amount
+    return props.borrowings.reduce((prev, curr) => {
+      const price = prices.find((price) => price.denom === curr.denom)?.amount
       if (!price) return prev
 
-      return prev.plus(amount.times(price))
+      return prev.plus(curr.amount.times(price))
     }, BN(0) as BigNumber)
   }, [props.borrowings, prices])
 
@@ -60,11 +61,12 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   )
 
   useEffect(() => {
-    const updatedBorrowings = new Map()
-
-    selectedBorrowDenoms.forEach((denom) => {
-      const amount = props.borrowings.get(denom) || BN(0)
-      updatedBorrowings.set(denom, amount)
+    const updatedBorrowings = selectedBorrowDenoms.map((denom) => {
+      const amount = findCoinByDenom(denom, props.borrowings)?.amount || BN(0)
+      return new BNCoin({
+        denom,
+        amount: amount.toString()
+      })
     })
     props.onChangeBorrowings(updatedBorrowings)
     // Ignore of props is required to prevent infinite loop.
@@ -72,13 +74,13 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedBorrowDenoms])
 
-  const maxAmounts: Map<string, BigNumber> = useMemo(
+  const maxAmounts: BNCoin[] = useMemo(
     () =>
       calculateMaxBorrowAmounts(
         props.account,
         marketAssets,
         prices,
-        Array.from(props.borrowings.keys()),
+        props.borrowings.map((coin) => coin.denom)
       ),
     [props.borrowings, marketAssets, prices, props.account],
   )
@@ -86,31 +88,31 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   const [percentage, setPercentage] = useState<number>(0)
 
   function onChangeSlider(value: number) {
-    if (props.borrowings.size !== 1) return
+    if (props.borrowings.length !== 1) return
 
-    const denom = Array.from(props.borrowings.keys())[0]
-    const currentAmount = props.borrowings.get(denom) ?? BN(0)
-    const maxAmount = maxAmounts.get(denom) ?? BN(0)
-    const newBorrowings = new Map().set(
+    const denom = props.borrowings[0].denom
+    const currentAmount = props.borrowings[0].amount
+    const maxAmount = maxAmounts.find((coin) => coin.denom === denom)?.amount ?? BN(0)
+    const newBorrowings: BNCoin[] = [new BNCoin({
       denom,
-      maxAmount.plus(currentAmount).times(value).div(100).decimalPlaces(0) || BN(0),
-    )
+      amount: (maxAmount.plus(currentAmount).times(value).div(100).decimalPlaces(0) || BN(0)).toString(),
+    })]
 
     props.onChangeBorrowings(newBorrowings)
     setPercentage(value)
   }
 
   function updateAssets(denom: string, amount: BigNumber) {
-    const newborrowings = new Map(props.borrowings)
-    newborrowings.set(denom, amount)
-    props.onChangeBorrowings(newborrowings)
+    const index = props.borrowings.findIndex((coin) => coin.denom === denom)
+    props.borrowings[index].amount = amount
+    props.onChangeBorrowings([...props.borrowings])
   }
 
   function onDelete(denom: string) {
-    const newborrowings = new Map(props.borrowings)
-    newborrowings.delete(denom)
-    props.onChangeBorrowings(newborrowings)
-    useStore.setState({ selectedBorrowDenoms: Array.from(newborrowings.keys()) })
+    const index = props.borrowings.findIndex((coin) => coin.denom === denom)
+    props.borrowings.splice(index, 1)
+    props.onChangeBorrowings([...props.borrowings])
+    useStore.setState({ selectedBorrowDenoms: props.borrowings.map((coin) => coin.denom) })
   }
 
   function addAsset() {
@@ -119,23 +121,24 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
 
   return (
     <div className='flex flex-grow flex-col gap-4 p-4'>
-      {Array.from(props.borrowings.entries()).map(([denom, amount]) => {
-        const asset = getAssetByDenom(denom)
-        if (!asset) return <React.Fragment key={`input-${denom}`}></React.Fragment>
+      {props.borrowings.map((coin) => {
+        const asset = getAssetByDenom(coin.denom)
+        const maxAmount = maxAmounts.find((maxAmount) => maxAmount.denom === coin.denom)?.amount
+        if (!asset || !maxAmount) return <React.Fragment key={`input-${coin.denom}`}></React.Fragment>
         return (
           <TokenInput
-            key={`input-${denom}`}
-            amount={amount}
+            key={`input-${coin.denom}`}
+            amount={coin.amount}
             asset={asset}
-            max={maxAmounts.get(denom)?.plus(amount) || BN(0)}
+            max={maxAmount.plus(coin.amount)}
             maxText='Max Borrow'
-            onChange={(amount) => updateAssets(denom, amount)}
-            onDelete={() => onDelete(denom)}
+            onChange={(amount) => updateAssets(coin.denom, amount)}
+            onDelete={() => onDelete(coin.denom)}
           />
         )
       })}
-      {props.borrowings.size === 1 && <Slider onChange={onChangeSlider} value={percentage} />}
-      {props.borrowings.size === 0 && (
+      {props.borrowings.length === 1 && <Slider onChange={onChangeSlider} value={percentage} />}
+      {props.borrowings.length === 0 && (
         <div className='flex items-center gap-4 py-2'>
           <div className='w-4'>
             <ExclamationMarkCircled width={20} height={20} />
@@ -153,14 +156,14 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
           <Text className='text-white/50'>{`${props.primaryAsset.symbol}-${props.secondaryAsset.symbol} Position Value`}</Text>
           <DisplayCurrency coin={{ denom: baseCurrency.denom, amount: totalValue.toString() }} />
         </div>
-        {Array.from(props.borrowings.entries()).map(([denom, amount]) => {
-          const asset = getAssetByDenom(denom)
-          const borrowRate = marketAssets?.find((market) => market.denom === denom)?.borrowRate
+        {props.borrowings.map((coin) => {
+          const asset = getAssetByDenom(coin.denom)
+          const borrowRate = marketAssets?.find((market) => market.denom === coin.denom)?.borrowRate
 
           if (!asset || !borrowRate)
-            return <React.Fragment key={`borrow-rate-${denom}`}></React.Fragment>
+            return <React.Fragment key={`borrow-rate-${coin.denom}`}></React.Fragment>
           return (
-            <div key={`borrow-rate-${denom}`} className='flex justify-between'>
+            <div key={`borrow-rate-${coin.denom}`} className='flex justify-between'>
               <Text className='text-white/50'>Borrow APR {asset.symbol}</Text>
               <Text>{formatPercent(borrowRate)}</Text>
             </div>

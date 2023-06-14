@@ -31,3 +31,8 @@ interface BorrowAsset extends Asset {
 interface BorrowAssetActive extends BorrowAsset {
   debt: string
 }
+
+interface BigNumberCoin {
+  denom: string
+  amount: BigNumber
+}

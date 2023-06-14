@@ -26,7 +26,7 @@ export default function AddVaultAssetTable(props: Props) {
       acc[index] = true
     }
     return acc
-  }, {} as { [key: string]: boolean })
+  }, {} as { [key: number]: boolean })
 
   const [sorting, setSorting] = useState<SortingState>([{ id: 'symbol', desc: false }])
   const [selected, setSelected] = useState<RowSelectionState>(defaultSelected)

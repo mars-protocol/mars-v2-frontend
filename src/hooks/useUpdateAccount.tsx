@@ -1,13 +1,12 @@
 import BigNumber from 'bignumber.js'
 import { useCallback, useState } from 'react'
+import { BNCoin } from 'types/classes/BNCoin'
 
 import { BN } from 'utils/helpers'
 
 export default function useUpdateAccount(account: Account, vault: Vault) {
   const [updatedAccount, setUpdatedAccount] = useState<Account>(account)
-  const [borrowings, setBorrowings] = useState<Map<string, BigNumber>>(
-    new Map().set(vault.denoms.secondary, BN(0)),
-  )
+  const [borrowings, setBorrowings] = useState<BNCoin[]>([])
 
   function getCoin(denom: string, amount: BigNumber): Coin {
     return {
@@ -17,29 +16,29 @@ export default function useUpdateAccount(account: Account, vault: Vault) {
   }
 
   const onChangeBorrowings = useCallback(
-    (borrowings: Map<string, BigNumber>) => {
+    (borrowings: BNCoin[]) => {
       const debts: Coin[] = [...account.debts]
       const deposits: Coin[] = [...account.deposits]
       const currentDebtDenoms = debts.map((debt) => debt.denom)
       const currentDepositDenoms = deposits.map((deposit) => deposit.denom)
 
-      borrowings.forEach((amount, denom) => {
-        if (amount.isZero()) return
+      borrowings.map((coin) => {
+        if (coin.amount.isZero()) return
 
-        if (currentDebtDenoms.includes(denom)) {
-          const index = currentDebtDenoms.indexOf(denom)
-          const newAmount = BN(debts[index].amount).plus(amount)
-          debts[index] = getCoin(denom, newAmount)
+        if (currentDebtDenoms.includes(coin.denom)) {
+          const index = currentDebtDenoms.indexOf(coin.denom)
+          const newAmount = BN(debts[index].amount).plus(coin.amount)
+          debts[index] = getCoin(coin.denom, newAmount)
         } else {
-          debts.push(getCoin(denom, amount))
+          debts.push(coin.toCoin())
         }
 
-        if (currentDepositDenoms.includes(denom)) {
-          const index = currentDepositDenoms.indexOf(denom)
-          const newAmount = BN(deposits[index].amount).plus(amount)
-          deposits[index] = getCoin(denom, newAmount)
+        if (currentDepositDenoms.includes(coin.denom)) {
+          const index = currentDepositDenoms.indexOf(coin.denom)
+          const newAmount = BN(deposits[index].amount).plus(coin.amount)
+          deposits[index] = getCoin(coin.denom, newAmount)
         } else {
-          deposits.push(getCoin(denom, amount))
+          deposits.push(coin.toCoin())
         }
       })
 

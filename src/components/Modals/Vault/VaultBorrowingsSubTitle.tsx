@@ -6,9 +6,10 @@ import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { formatAmountWithSymbol } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
-  borrowings: Map<string, BigNumber>
+  borrowings: BNCoin[]
 }
 
 export default function VaultDepositSubTitle(props: Props) {
@@ -18,14 +19,14 @@ export default function VaultDepositSubTitle(props: Props) {
   const [borrowingTexts, borrowingValue] = useMemo(() => {
     const texts: string[] = []
     let borrowingValue = BN(0)
-    Array.from(props.borrowings.entries()).forEach(([denom, amount]) => {
-      const price = prices.find((p) => p.denom === denom)?.amount
-      if (!price || amount.isZero()) return
-      borrowingValue = borrowingValue.plus(amount.times(price))
+    props.borrowings.map((coin) => {
+      const price = prices.find((p) => p.denom === coin.denom)?.amount
+      if (!price || coin.amount.isZero()) return
+      borrowingValue = borrowingValue.plus(coin.amount.times(price))
       texts.push(
         formatAmountWithSymbol({
-          denom,
-          amount: amount.toString(),
+          denom: coin.denom,
+          amount: coin.amount.toString(),
         }),
       )
     })
