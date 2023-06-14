@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import { useEffect, useState } from 'react'
 
 import AccountSummary from 'components/Account/AccountSummary'
@@ -18,6 +17,7 @@ import useStore from 'store'
 import { hardcodedFee } from 'utils/contants'
 import { formatPercent, formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+import AssetImage from 'components/AssetImage'
 
 function getDebtAmount(modal: BorrowModal | null) {
   if (!(modal?.marketData as BorrowAssetActive)?.debt) return '0'
@@ -26,7 +26,7 @@ function getDebtAmount(modal: BorrowModal | null) {
 
 function getAssetLogo(modal: BorrowModal | null) {
   if (!modal?.asset) return null
-  return <Image src={modal.asset.logo} alt={modal.asset.symbol} width={24} height={24} />
+  return <AssetImage asset={modal.asset} size={24} />
 }
 
 export default function BorrowModal() {

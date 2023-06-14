@@ -6,6 +6,7 @@ import Checkbox from 'components/Checkbox'
 import Text from 'components/Text'
 import { formatPercent } from 'utils/formatters'
 import { getAssetByDenom } from 'utils/assets'
+import AssetImage from 'components/AssetImage'
 
 export default function useAddVaultAssetTableColumns() {
   const columns = React.useMemo<ColumnDef<BorrowAsset>[]>(
@@ -21,7 +22,7 @@ export default function useAddVaultAssetTableColumns() {
           return (
             <div className='flex items-center'>
               <Checkbox checked={row.getIsSelected()} onChange={row.getToggleSelectedHandler()} />
-              <Image src={asset.logo} alt={asset.symbol} width={24} height={24} className='ml-4' />
+              <AssetImage asset={asset} size={24} className='ml-4' />
               <div className='ml-2 text-left'>
                 <Text size='sm' className='mb-0.5 text-white'>
                   {asset.symbol}

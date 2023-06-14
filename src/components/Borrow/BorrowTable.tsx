@@ -19,6 +19,7 @@ import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import { getEnabledMarketAssets } from 'utils/assets'
 import { formatPercent } from 'utils/formatters'
+import AssetImage from 'components/AssetImage'
 
 type Props = {
   data: BorrowAsset[] | BorrowAssetActive[]
@@ -40,7 +41,7 @@ export const BorrowTable = (props: Props) => {
 
           return (
             <div className='flex flex-1 items-center gap-3'>
-              <Image src={asset.logo} alt='token' width={32} height={32} />
+              <AssetImage asset={asset} size={32} />
               <TitleAndSubCell
                 title={asset.symbol}
                 sub={asset.name}

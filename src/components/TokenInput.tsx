@@ -13,6 +13,7 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import Button from 'components/Button'
 import { ExclamationMarkTriangle, TrashBin } from 'components/Icons'
 import { Tooltip } from 'components/Tooltip'
+import AssetImage from 'components/AssetImage'
 
 interface Props {
   amount: BigNumber
@@ -67,7 +68,7 @@ export default function TokenInput(props: Props) {
           />
         ) : (
           <div className='flex min-w-fit items-center gap-2 border-r border-white/20 bg-white/5 p-3'>
-            <Image src={props.asset.logo} alt='token' width={20} height={20} />
+            <AssetImage asset={props.asset} size={20} />
             <Text>{props.asset.symbol}</Text>
           </div>
         )}

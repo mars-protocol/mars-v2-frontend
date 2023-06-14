@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { useCallback, useState } from 'react'
-import { BNCoin } from 'types/classes/BNCoin'
 
+import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
 export default function useUpdateAccount(account: Account, vault: Vault) {

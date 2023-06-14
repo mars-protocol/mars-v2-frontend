@@ -65,7 +65,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
       const amount = findCoinByDenom(denom, props.borrowings)?.amount || BN(0)
       return new BNCoin({
         denom,
-        amount: amount.toString()
+        amount: amount.toString(),
       })
     })
     props.onChangeBorrowings(updatedBorrowings)
@@ -80,7 +80,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
         props.account,
         marketAssets,
         prices,
-        props.borrowings.map((coin) => coin.denom)
+        props.borrowings.map((coin) => coin.denom),
       ),
     [props.borrowings, marketAssets, prices, props.account],
   )
@@ -93,10 +93,14 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
     const denom = props.borrowings[0].denom
     const currentAmount = props.borrowings[0].amount
     const maxAmount = maxAmounts.find((coin) => coin.denom === denom)?.amount ?? BN(0)
-    const newBorrowings: BNCoin[] = [new BNCoin({
-      denom,
-      amount: (maxAmount.plus(currentAmount).times(value).div(100).decimalPlaces(0) || BN(0)).toString(),
-    })]
+    const newBorrowings: BNCoin[] = [
+      new BNCoin({
+        denom,
+        amount: (
+          maxAmount.plus(currentAmount).times(value).div(100).decimalPlaces(0) || BN(0)
+        ).toString(),
+      }),
+    ]
 
     props.onChangeBorrowings(newBorrowings)
     setPercentage(value)
@@ -124,7 +128,8 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
       {props.borrowings.map((coin) => {
         const asset = getAssetByDenom(coin.denom)
         const maxAmount = maxAmounts.find((maxAmount) => maxAmount.denom === coin.denom)?.amount
-        if (!asset || !maxAmount) return <React.Fragment key={`input-${coin.denom}`}></React.Fragment>
+        if (!asset || !maxAmount)
+          return <React.Fragment key={`input-${coin.denom}`}></React.Fragment>
         return (
           <TokenInput
             key={`input-${coin.denom}`}

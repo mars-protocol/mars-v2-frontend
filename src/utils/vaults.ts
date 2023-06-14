@@ -30,7 +30,7 @@ export function calculateMaxBorrowAmounts(
     const borrowValue = BN(1).minus(borrowAsset.maxLtv).times(borrowAssetPrice)
     const amount = collateralValue.dividedBy(borrowValue).decimalPlaces(0)
 
-    maxAmounts.push(new BNCoin({denom, amount: amount.toString()}))
+    maxAmounts.push(new BNCoin({ denom, amount: amount.toString() }))
   }
 
   return maxAmounts

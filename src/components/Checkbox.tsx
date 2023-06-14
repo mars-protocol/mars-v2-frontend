@@ -12,6 +12,7 @@ export default function Checkbox(props: Props) {
     <button
       onClick={() => props.onChange(props.checked)}
       role='checkbox'
+      aria-checked={props.checked}
       className={classNames(
         'h-5 w-5 rounded-sm p-0.5',
         props.checked && 'relative isolate overflow-hidden rounded-sm',

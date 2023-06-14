@@ -1,5 +1,6 @@
 import Image from 'next/image'
 
+import AssetImage from 'components/AssetImage'
 import { getAssetByDenom } from 'utils/assets'
 
 interface Props {
@@ -15,10 +16,10 @@ export default function VaultLogo(props: Props) {
   return (
     <div className='relative grid w-12 place-items-center'>
       <div className='absolute'>
-        <Image src={primaryAsset.logo} alt={`${primaryAsset.symbol} logo`} width={24} height={24} />
+        <AssetImage asset={primaryAsset} size={24} />
       </div>
       <div className='absolute'>
-        <Image className='ml-5 mt-5' src={secondaryAsset.logo} alt='token' width={16} height={16} />
+        <AssetImage asset={primaryAsset} size={16} className='ml-5 mt-5' />
       </div>
     </div>
   )
