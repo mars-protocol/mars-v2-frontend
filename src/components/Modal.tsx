@@ -60,12 +60,7 @@ export default function Modal(props: Props) {
       >
         <div className={classNames('flex justify-between', props.headerClassName)}>
           {props.header}
-          <Button
-            onClick={onClose}
-            leftIcon={<Cross />}
-            iconClassName='h-3 w-3 ml-0'
-            color='tertiary'
-          >
+          <Button onClick={onClose} leftIcon={<Cross />} iconClassName='h-3 w-3' color='tertiary'>
             <Text size='sm'>ESC</Text>
           </Button>
         </div>
