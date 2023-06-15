@@ -1,15 +1,16 @@
 import { LockUnlocked } from 'components/Icons'
 import Modal from 'components/Modal'
 import useStore from 'store'
-import UnlockVaultModalContent from 'components/Modals/UnlockVault/UnlockVaultModalContent'
+import UnlockModalContent from 'components/Modals/Unlock/UnlockModalContent'
 import { CircularProgress } from 'components/CircularProgress'
 
-export default function UnlockVaultModal() {
-  const modal = useStore((s) => s.unlockVaultModal)
+export default function UnlockModal() {
+  const modal = useStore((s) => s.unlockModal)
 
   function onClose() {
-    useStore.setState({ unlockVaultModal: null })
+    useStore.setState({ unlockModal: null })
   }
+
   return (
     <Modal
       open={!!modal}
@@ -25,7 +26,7 @@ export default function UnlockVaultModal() {
       hideCloseBtn
     >
       {modal ? (
-        <UnlockVaultModalContent vault={modal.vault} onClose={onClose} />
+        <UnlockModalContent depositedVault={modal.vault} onClose={onClose} />
       ) : (
         <CircularProgress />
       )}

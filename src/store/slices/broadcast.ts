@@ -119,6 +119,36 @@ export default function createBroadcastSlice(
       }
       return !!response.result
     },
+    unlock: async (options: { fee: StdFee; vault: Vault; amount: string }) => {
+      const msg = {
+        request_vault_unlock: {
+          vault: { address: options.vault.address },
+          amount: options.amount,
+        },
+      }
+
+      const response = await get().executeMsg({
+        msg,
+        fee: options.fee,
+        funds: [],
+      })
+
+      if (response.result) {
+        set({
+          toast: {
+            message: `Requested unlock for ${options.vault.name}`,
+          },
+        })
+      } else {
+        set({
+          toast: {
+            message: response.error ?? `Request unlocked failed: ${response.error}`,
+            isError: true,
+          },
+        })
+      }
+      return !!response.result
+    },
     withdraw: async (options: { fee: StdFee; accountId: string; coin: Coin }) => {
       const msg = {
         update_credit_account: {

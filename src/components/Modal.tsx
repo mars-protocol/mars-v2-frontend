@@ -9,7 +9,7 @@ import Text from 'components/Text'
 interface Props {
   header: string | ReactNode
   headerClassName?: string
-  hideCloseBtn: boolean
+  hideCloseBtn?: boolean
   children?: ReactNode | string
   content?: ReactNode | string
   className?: string

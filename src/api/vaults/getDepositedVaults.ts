@@ -52,17 +52,17 @@ function flatVaultPositionAmount(
   vaultPositionAmount: VaultPositionAmount,
 ): VaultPositionFlatAmounts {
   const amounts = {
-    locked: '0',
-    unlocking: '0',
-    unlocked: '0',
+    locked: BN(0),
+    unlocking: BN(0),
+    unlocked: BN(0),
   }
 
   if ('locking' in vaultPositionAmount) {
     const { locked, unlocking } = vaultPositionAmount.locking
-    amounts.locked = locked
-    amounts.unlocking = unlocking[0]?.coin.amount ?? '0'
+    amounts.locked = BN(locked)
+    amounts.unlocking = BN(unlocking[0]?.coin.amount ?? '0')
   } else if ('unlocked' in vaultPositionAmount) {
-    amounts.unlocked = vaultPositionAmount.unlocked
+    amounts.unlocked = BN(vaultPositionAmount.unlocked)
   }
 
   return amounts
@@ -121,6 +121,7 @@ async function getVaultValuesAndAmounts(
     ])
 
     const lpTokensQuery = getLpTokensForVaultPosition(vault, vaultPosition)
+    const amounts = flatVaultPositionAmount(vaultPosition.amount)
 
     const [[primaryLpToken, secondaryLpToken], [primaryAsset, secondaryAsset]] = await Promise.all([
       lpTokensQuery,
@@ -129,6 +130,7 @@ async function getVaultValuesAndAmounts(
 
     return {
       amounts: {
+        ...amounts,
         primary: BN(primaryLpToken.amount),
         secondary: BN(secondaryLpToken.amount),
       },

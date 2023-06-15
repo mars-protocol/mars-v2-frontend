@@ -45,7 +45,6 @@ describe('<VaultBorrowings />', () => {
   beforeAll(() => {
     useStore.setState({
       baseCurrency: ASSETS[0],
-      selectedBorrowDenoms: [ASSETS[1].denom],
     })
   })
 
