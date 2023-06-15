@@ -6,11 +6,12 @@ interface Props {
   title: string | React.ReactNode
   sub: string | React.ReactNode
   className?: string
+  containerClassName?: string
 }
 
 export default function TitleAndSubCell(props: Props) {
   return (
-    <div className='flex flex-col gap-[0.5]'>
+    <div className={classNames('flex flex-col gap-[0.5]', props.containerClassName)}>
       <Text size='sm' className={props.className}>
         {props.title}
       </Text>

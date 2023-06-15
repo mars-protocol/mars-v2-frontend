@@ -7,4 +7,6 @@ interface Market {
   borrowEnabled: boolean
   depositCap: string
   maxLtv: number
+  liquidityRate: number
+  liquidationThreshold: number
 }
