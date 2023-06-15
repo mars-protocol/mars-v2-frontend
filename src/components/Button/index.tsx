@@ -34,6 +34,7 @@ interface Props {
   hasSubmenu?: boolean
   hasFocus?: boolean
   dataTestId?: string
+  tabIndex?: number
 }
 
 const Button = React.forwardRef(function Button(
@@ -54,6 +55,7 @@ const Button = React.forwardRef(function Button(
     hasSubmenu,
     hasFocus,
     dataTestId,
+    tabIndex = 0,
   }: Props,
   ref,
 ) {
@@ -106,6 +108,7 @@ const Button = React.forwardRef(function Button(
       id={id}
       ref={ref as LegacyRef<HTMLButtonElement>}
       onClick={isDisabled ? () => {} : onClick}
+      tabIndex={tabIndex}
     >
       {showProgressIndicator ? (
         <CircularProgress size={size === 'small' ? 10 : size === 'medium' ? 12 : 18} />
