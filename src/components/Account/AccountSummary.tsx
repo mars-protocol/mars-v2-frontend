@@ -25,8 +25,8 @@ export default function AccountSummary(props: Props) {
   if (!props.account) return null
 
   return (
-    <div className='flex min-w-[345px] basis-[345px] flex-wrap'>
-      <Card className='mb-4 min-w-fit bg-white/10' contentClassName='flex'>
+    <div className='h-[546px] min-w-[345px] basis-[345px] overflow-y-scroll scrollbar-hide'>
+      <Card className='mb-4 h-min min-w-fit bg-white/10' contentClassName='flex'>
         <Item>
           <DisplayCurrency
             coin={{ amount: accountBalance.toString(), denom: baseCurrency.denom }}

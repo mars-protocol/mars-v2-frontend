@@ -13,14 +13,14 @@ interface Asset {
   isEnabled: boolean
   isMarket: boolean
   isDisplayCurrency?: boolean
+  isStable?: boolean
 }
 
 interface OtherAsset extends Omit<Asset, 'symbol'> {
   symbol: 'MARS'
 }
 
-interface BorrowAsset {
-  denom: string
+interface BorrowAsset extends Asset {
   borrowRate: number | null
   liquidity: {
     amount: string
@@ -30,4 +30,9 @@ interface BorrowAsset {
 
 interface BorrowAssetActive extends BorrowAsset {
   debt: string
+}
+
+interface BigNumberCoin {
+  denom: string
+  amount: BigNumber
 }

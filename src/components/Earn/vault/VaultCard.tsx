@@ -19,7 +19,12 @@ export default function VaultCard(props: Props) {
   const currentAccount = useCurrentAccount()
 
   function openVaultModal() {
-    useStore.setState({ vaultModal: { vault: props.vault } })
+    useStore.setState({
+      vaultModal: {
+        vault: props.vault,
+        selectedBorrowDenoms: [props.vault.denoms.secondary],
+      },
+    })
   }
 
   return (

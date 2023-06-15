@@ -19,3 +19,7 @@ export function getBaseAsset() {
 export function getDisplayCurrencies() {
   return ASSETS.filter((asset) => asset.isDisplayCurrency)
 }
+
+export function findCoinByDenom(denom: string, coins: BigNumberCoin[]) {
+  return coins.find((coin) => coin.denom === denom)
+}

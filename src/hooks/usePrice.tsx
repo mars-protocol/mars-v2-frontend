@@ -1,4 +1,4 @@
-import usePrices from './usePrices'
+import usePrices from 'hooks/usePrices'
 
 export default function usePrice(denom: string) {
   const { data: prices } = usePrices()

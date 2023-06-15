@@ -93,10 +93,10 @@ const Button = React.forwardRef(function Button(
   const [leftIconClassNames, rightIconClassNames] = useMemo(() => {
     const hasContent = !!(text || children)
     const iconClasses = ['flex items-center justify-center', iconClassName ?? 'h-4 w-4']
-    const leftIconClasses = [iconClasses, hasContent && 'mr-2']
-    const rightIconClasses = [iconClasses, hasContent && 'ml-2']
+    const leftIconClasses = [...iconClasses, hasContent && 'mr-2']
+    const rightIconClasses = [...iconClasses, hasContent && 'ml-2']
 
-    return [leftIconClasses, rightIconClasses].map(classNames)
+    return [leftIconClasses, rightIconClasses]
   }, [children, iconClassName, text])
 
   return (
@@ -111,10 +111,10 @@ const Button = React.forwardRef(function Button(
         <CircularProgress size={size === 'small' ? 10 : size === 'medium' ? 12 : 18} />
       ) : (
         <>
-          {leftIcon && <span className={leftIconClassNames}>{leftIcon}</span>}
+          {leftIcon && <span className={classNames(leftIconClassNames)}>{leftIcon}</span>}
           {shouldShowText && <span>{text}</span>}
           {children && children}
-          {rightIcon && <span className={rightIconClassNames}>{rightIcon}</span>}
+          {rightIcon && <span className={classNames(rightIconClassNames)}>{rightIcon}</span>}
           {hasSubmenu && (
             <span data-testid='button-submenu-indicator' className='ml-2 inline-block w-2.5'>
               <ChevronDown />

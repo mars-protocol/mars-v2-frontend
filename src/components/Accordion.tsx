@@ -1,10 +1,12 @@
-import Card from 'components/Card'
+import classNames from 'classnames'
 
-import AccordionContent, { Item } from './AccordionContent'
+import Card from 'components/Card'
+import AccordionContent, { Item } from 'components/AccordionContent'
 
 interface Props {
   items: Item[]
   allowMultipleOpen?: boolean
+  className?: string
 }
 
 export default function Accordion(props: Props) {
@@ -19,7 +21,7 @@ export default function Accordion(props: Props) {
   }
 
   return (
-    <div className='w-full'>
+    <div className={classNames('w-full', props.className)}>
       {props.items.map((item, index) => (
         <Card key={item.title} className='mb-4'>
           <AccordionContent item={item} index={index} />

@@ -4,6 +4,7 @@ import { ReactNode, useEffect, useRef } from 'react'
 import Button from 'components/Button'
 import Card from 'components/Card'
 import { Cross } from 'components/Icons'
+import Text from 'components/Text'
 
 interface Props {
   header: string | ReactNode
@@ -12,6 +13,7 @@ interface Props {
   content?: ReactNode | string
   className?: string
   contentClassName?: string
+  modalClassName?: string
   open: boolean
   onClose: () => void
 }
@@ -47,6 +49,7 @@ export default function Modal(props: Props) {
         'w-[895px] border-none bg-transparent text-white',
         'focus-visible:outline-none',
         'backdrop:bg-black/50 backdrop:backdrop-blur-sm',
+        props.modalClassName,
       )}
     >
       <Card
@@ -57,13 +60,9 @@ export default function Modal(props: Props) {
       >
         <div className={classNames('flex justify-between', props.headerClassName)}>
           {props.header}
-          <Button
-            onClick={onClose}
-            leftIcon={<Cross />}
-            className='h-8 w-8'
-            iconClassName='h-2 w-2'
-            color='tertiary'
-          />
+          <Button onClick={onClose} leftIcon={<Cross />} iconClassName='h-3 w-3' color='tertiary'>
+            <Text size='sm'>ESC</Text>
+          </Button>
         </div>
         <div className={classNames(props.contentClassName, 'flex-grow')}>
           {props.children ? props.children : props.content}

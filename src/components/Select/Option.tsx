@@ -6,6 +6,7 @@ import { ChevronDown } from 'components/Icons'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
 import { formatValue } from 'utils/formatters'
+import AssetImage from 'components/AssetImage'
 
 interface Props extends Option {
   isSelected?: boolean
@@ -18,11 +19,7 @@ export default function Option(props: Props) {
   const isCoin = !!props.denom
 
   if (isCoin) {
-    const currentAsset = ASSETS.find((asset) => asset.denom === props.denom)
-    const symbol = currentAsset?.symbol ?? ASSETS[0].symbol
-    const logo = currentAsset?.logo ?? ASSETS[0].logo
-    const denom = currentAsset?.denom ?? ASSETS[0].denom
-    const decimals = currentAsset?.decimals ?? ASSETS[0].decimals
+    const asset = ASSETS.find((asset) => asset.denom === props.denom) || ASSETS[0]
     const balance = props.amount ?? '0'
 
     if (props.isDisplay) {
@@ -30,8 +27,8 @@ export default function Option(props: Props) {
         <div
           className={classNames('flex items-center gap-2 bg-white/10 p-3', 'hover:cursor-pointer')}
         >
-          <Image src={logo} alt={`${symbol} token logo`} width={20} height={20} />
-          <span>{symbol}</span>
+          <AssetImage asset={asset} size={20} />
+          <span>{asset.symbol}</span>
           <span
             className={classNames(
               'inline-block w-2.5 transition-transform',
@@ -53,20 +50,25 @@ export default function Option(props: Props) {
           'hover:cursor-pointer hover:bg-white/20',
           !props.isSelected ? 'bg-white/10' : 'pointer-events-none',
         )}
-        onClick={() => props?.onClick && props.onClick(denom)}
+        onClick={() => props?.onClick && props.onClick(asset.denom)}
       >
         <div className='row-span-2 flex h-full items-center justify-center'>
-          <Image src={logo} alt={`${symbol} token logo`} width={32} height={32} />
+          <AssetImage asset={asset} size={32} />
         </div>
-        <Text className='col-span-2 pb-1'>{symbol}</Text>
+        <Text className='col-span-2 pb-1'>{asset.symbol}</Text>
         <Text size='sm' className='col-span-2 pb-1 text-right font-bold'>
-          {formatValue(balance, { decimals, maxDecimals: 4, minDecimals: 0, rounded: true })}
+          {formatValue(balance, {
+            decimals: asset.decimals,
+            maxDecimals: 4,
+            minDecimals: 0,
+            rounded: true,
+          })}
         </Text>
         <Text size='sm' className='col-span-2 text-white/50'>
           {formatValue(5, { maxDecimals: 2, minDecimals: 0, prefix: 'APY ', suffix: '%' })}
         </Text>
         <Text size='sm' className='col-span-2 text-right text-white/50'>
-          <DisplayCurrency coin={{ denom, amount: balance }} />
+          <DisplayCurrency coin={{ denom: asset.denom, amount: balance }} />
         </Text>
       </div>
     )

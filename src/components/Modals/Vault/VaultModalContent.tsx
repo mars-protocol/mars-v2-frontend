@@ -3,12 +3,13 @@ import { useCallback, useState } from 'react'
 
 import Accordion from 'components/Accordion'
 import AccountSummary from 'components/Account/AccountSummary'
-import VaultBorrowings from 'components/Modals/vault/VaultBorrowings'
-import VaultDeposit from 'components/Modals/vault/VaultDeposit'
-import VaultDepositSubTitle from 'components/Modals/vault/VaultDepositSubTitle'
 import useIsOpenArray from 'hooks/useIsOpenArray'
 import { BN } from 'utils/helpers'
 import useUpdateAccount from 'hooks/useUpdateAccount'
+import VaultBorrowingsSubTitle from 'components/Modals/Vault/VaultBorrowingsSubTitle'
+import VaultDeposit from 'components/Modals/Vault/VaultDeposits'
+import VaultBorrowings from 'components/Modals/Vault/VaultBorrowings'
+import VaultDepositSubTitle from 'components/Modals/Vault/VaultDepositsSubTitle'
 
 interface Props {
   vault: Vault
@@ -18,7 +19,10 @@ interface Props {
 }
 
 export default function VaultModalContent(props: Props) {
-  const { updatedAccount, onChangeBorrowings } = useUpdateAccount(props.account)
+  const { updatedAccount, onChangeBorrowings, borrowings } = useUpdateAccount(
+    props.account,
+    props.vault,
+  )
   const [isOpen, toggleOpen] = useIsOpenArray(2, false)
   const [primaryAmount, setPrimaryAmount] = useState<BigNumber>(BN(0))
   const [secondaryAmount, setSecondaryAmount] = useState<BigNumber>(BN(0))
@@ -41,6 +45,7 @@ export default function VaultModalContent(props: Props) {
   return (
     <div className='flex flex-grow items-start gap-6 p-6'>
       <Accordion
+        className='h-[546px] overflow-y-scroll scrollbar-hide'
         items={[
           {
             renderContent: () => (
@@ -73,11 +78,16 @@ export default function VaultModalContent(props: Props) {
             renderContent: () => (
               <VaultBorrowings
                 account={updatedAccount}
-                defaultBorrowDenom={props.secondaryAsset.denom}
+                borrowings={borrowings}
+                primaryAmount={primaryAmount}
+                secondaryAmount={secondaryAmount}
+                primaryAsset={props.primaryAsset}
+                secondaryAsset={props.secondaryAsset}
                 onChangeBorrowings={onChangeBorrowings}
               />
             ),
             title: 'Borrow',
+            subTitle: <VaultBorrowingsSubTitle borrowings={borrowings} />,
             isOpen: isOpen[1],
             toggleOpen: (index: number) => toggleOpen(index),
           },
