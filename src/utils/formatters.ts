@@ -168,3 +168,8 @@ export function convertToDisplayAmount(coin: Coin, displayCurrency: Asset, price
     .div(displayPrice.amount)
     .toNumber()
 }
+
+export function convertLiquidityRateToAPR(rate: number) {
+  const rateMulHundred = rate * 100
+  return rateMulHundred >= 0.01 ? rateMulHundred : 0.0
+}

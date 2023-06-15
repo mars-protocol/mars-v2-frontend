@@ -36,3 +36,14 @@ interface BigNumberCoin {
   denom: string
   amount: BigNumber
 }
+
+interface LendingMarketTableData {
+  asset: Asset
+  marketMaxLtv: number
+  marketLiquidityRate: number
+  marketDepositCap: BigNumber
+  marketDepositAmount: BigNumber
+  accountDepositValue?: BigNumber
+  marketLiquidityAmount: BigNumber
+  marketLiquidationThreshold: number
+}

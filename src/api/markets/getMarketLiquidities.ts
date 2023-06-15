@@ -2,7 +2,7 @@ import { BN } from 'utils/helpers'
 import getMarketDeposits from 'api/markets/getMarketDeposits'
 import getMarketDebts from 'api/markets/getMarketDebts'
 
-export default async function getMarketLiquidity(): Promise<Coin[]> {
+export default async function getMarketLiquidities(): Promise<Coin[]> {
   const deposits = await getMarketDeposits()
   const debts = await getMarketDebts()
 
