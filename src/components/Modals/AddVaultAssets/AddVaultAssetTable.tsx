@@ -16,13 +16,13 @@ import useAddVaultAssetTableColumns from 'components/Modals/AddVaultAssets/useAd
 
 interface Props {
   assets: BorrowAsset[]
+  onChangeSelected: (denoms: string[]) => void
 }
 
 export default function AddVaultAssetTable(props: Props) {
-  const selectedBorrowDenoms = useStore((s) => s.selectedBorrowDenoms)
-
+  const selectedDenoms = useStore((s) => s.addVaultBorrowingsModal?.selectedDenoms) || []
   const defaultSelected = props.assets.reduce((acc, asset, index) => {
-    if (selectedBorrowDenoms.includes(asset.denom)) {
+    if (selectedDenoms.includes(asset.denom)) {
       acc[index] = true
     }
     return acc
@@ -49,21 +49,9 @@ export default function AddVaultAssetTable(props: Props) {
     const selectedDenoms = props.assets
       .filter((_, index) => selected[index])
       .map((asset) => asset.denom)
-    const updatedBorrowDenoms = [...selectedBorrowDenoms]
-    props.assets.forEach((asset) => {
-      const isCurrentlySelected = selectedDenoms.includes(asset.denom)
-      const isPreviouslySelected = selectedBorrowDenoms.includes(asset.denom)
-      if (!isCurrentlySelected && isPreviouslySelected) {
-        updatedBorrowDenoms.splice(selectedBorrowDenoms.indexOf(asset.denom), 1)
-      } else if (isCurrentlySelected && !isPreviouslySelected) {
-        updatedBorrowDenoms.push(asset.denom)
-      }
-    })
-    useStore.setState({ selectedBorrowDenoms: updatedBorrowDenoms })
-    // Ignore of selectedDenoms is required to prevent infinite loop.
-    // THis is needed because sekectedDenoms is adjusted from 2 different tables.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selected, props.assets])
+
+    props.onChangeSelected(selectedDenoms)
+  }, [selected, props])
 
   return (
     <table className='w-full'>
@@ -114,7 +102,11 @@ export default function AddVaultAssetTable(props: Props) {
       <tbody>
         {table.getRowModel().rows.map((row) => {
           return (
-            <tr key={row.id} className=' text-white/60'>
+            <tr
+              key={row.id}
+              className='cursor-pointer text-white/60'
+              onClick={() => row.toggleSelected()}
+            >
               {row.getVisibleCells().map((cell) => {
                 return (
                   <td

@@ -9,7 +9,6 @@ export default function createCommonSlice(set: SetState<CommonSlice>, get: GetSt
     enableAnimations: true,
     isOpen: true,
     selectedAccount: null,
-    selectedBorrowDenoms: [],
     status: WalletConnectionStatus.Unconnected,
   }
 }

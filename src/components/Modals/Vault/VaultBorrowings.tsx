@@ -35,7 +35,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   const primaryPrice = usePrice(props.primaryAsset.denom)
   const secondaryPrice = usePrice(props.secondaryAsset.denom)
   const baseCurrency = useStore((s) => s.baseCurrency)
-  const selectedBorrowDenoms = useStore((s) => s.selectedBorrowDenoms)
+  const vaultModal = useStore((s) => s.vaultModal)
 
   const primaryValue = useMemo(
     () => props.primaryAmount.times(primaryPrice),
@@ -61,6 +61,14 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   )
 
   useEffect(() => {
+    const selectedBorrowDenoms = vaultModal?.selectedBorrowDenoms || []
+    if (
+      props.borrowings.length === selectedBorrowDenoms.length &&
+      props.borrowings.every((coin) => selectedBorrowDenoms.includes(coin.denom))
+    ) {
+      return
+    }
+
     const updatedBorrowings = selectedBorrowDenoms.map((denom) => {
       const amount = findCoinByDenom(denom, props.borrowings)?.amount || BN(0)
       return new BNCoin({
@@ -69,10 +77,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
       })
     })
     props.onChangeBorrowings(updatedBorrowings)
-    // Ignore of props is required to prevent infinite loop.
-    // THis is needed because of selectedDenoms is extrapolated into the store.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedBorrowDenoms])
+  }, [vaultModal, props])
 
   const maxAmounts: BNCoin[] = useMemo(
     () =>
@@ -116,11 +121,22 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
     const index = props.borrowings.findIndex((coin) => coin.denom === denom)
     props.borrowings.splice(index, 1)
     props.onChangeBorrowings([...props.borrowings])
-    useStore.setState({ selectedBorrowDenoms: props.borrowings.map((coin) => coin.denom) })
+    if (!vaultModal) return
+
+    useStore.setState({
+      vaultModal: {
+        ...vaultModal,
+        selectedBorrowDenoms: props.borrowings.map((coin) => coin.denom),
+      },
+    })
   }
 
   function addAsset() {
-    useStore.setState({ addVaultBorrowingsModal: true })
+    useStore.setState({
+      addVaultBorrowingsModal: {
+        selectedDenoms: props.borrowings.map((coin) => coin.denom),
+      },
+    })
   }
 
   return (

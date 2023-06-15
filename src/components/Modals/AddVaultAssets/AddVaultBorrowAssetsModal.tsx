@@ -1,3 +1,5 @@
+import { useCallback, useState } from 'react'
+
 import Modal from 'components/Modal'
 import useStore from 'store'
 import Text from 'components/Text'
@@ -7,10 +9,18 @@ import AddVaultAssetsModalContent from 'components/Modals/AddVaultAssets/AddVaul
 export default function AddVaultBorrowAssetsModal() {
   const modal = useStore((s) => s.addVaultBorrowingsModal)
   const vaultModal = useStore((s) => s.vaultModal)
+  const [selectedDenoms, setSelectedDenoms] = useState<string[]>([])
 
   function onClose() {
-    useStore.setState({ addVaultBorrowingsModal: false })
+    if (!vaultModal) return
+
+    useStore.setState({
+      addVaultBorrowingsModal: null,
+      vaultModal: { ...vaultModal, selectedBorrowDenoms: selectedDenoms },
+    })
   }
+
+  const updateSelectedDenoms = useCallback((denoms: string[]) => setSelectedDenoms(denoms), [])
 
   const showContent = modal && vaultModal?.vault
 
@@ -23,7 +33,11 @@ export default function AddVaultBorrowAssetsModal() {
       headerClassName='bg-white/10 border-b-white/5 border-b items-center p-4'
     >
       {showContent ? (
-        <AddVaultAssetsModalContent vault={vaultModal?.vault} />
+        <AddVaultAssetsModalContent
+          vault={vaultModal?.vault}
+          defaultSelectedDenoms={modal.selectedDenoms}
+          onChangeBorrowDenoms={updateSelectedDenoms}
+        />
       ) : (
         <CircularProgress />
       )}

@@ -22,8 +22,8 @@ export default function VaultCard(props: Props) {
     useStore.setState({
       vaultModal: {
         vault: props.vault,
+        selectedBorrowDenoms: [props.vault.denoms.secondary],
       },
-      selectedBorrowDenoms: [props.vault.denoms.secondary],
     })
   }
 
