@@ -7,6 +7,7 @@ import { Store } from 'store'
 import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import { formatAmountWithSymbol } from 'utils/formatters'
 import AccountBalanceSettableCoin from 'types/classes/AccountBalanceSettableCoin'
+import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 
 export default function createBroadcastSlice(
   set: SetState<Store>,
@@ -125,6 +126,30 @@ export default function createBroadcastSlice(
       })
 
       handleResponseMessages(response, `Requested unlock for ${options.vault.name}`)
+      return !!response.result
+    },
+    depositIntoVault: async (options: { fee: StdFee; accountId: string; actions: Action[] }) => {
+      const msg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: options.actions,
+        },
+      }
+      const response = await get().executeMsg({ msg, fee: options.fee })
+      if (response.result) {
+        set({
+          toast: {
+            message: `Deposited into vault`,
+          },
+        })
+      } else {
+        set({
+          toast: {
+            message: response.error ?? `Transaction failed: ${response.error}`,
+            isError: true,
+          },
+        })
+      }
       return !!response.result
     },
     withdraw: async (options: { fee: StdFee; accountId: string; coin: Coin }) => {

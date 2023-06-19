@@ -9,6 +9,7 @@ export default function createCommonSlice(set: SetState<CommonSlice>, get: GetSt
     enableAnimations: true,
     isOpen: true,
     selectedAccount: null,
+    slippage: 0.02,
     status: WalletConnectionStatus.Unconnected,
   }
 }

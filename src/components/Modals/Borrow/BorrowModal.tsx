@@ -83,12 +83,12 @@ export default function BorrowModal() {
     useStore.setState({ borrowModal: null })
   }
 
-  const liquidityAmountString = formatValue(modal?.marketData?.liquidity?.amount || 0, {
+  const liquidityAmountString = formatValue(modal?.marketData?.liquidity?.amount.toString() || 0, {
     abbreviated: true,
     decimals: 6,
   })
 
-  const liquidityValueString = formatValue(modal?.marketData?.liquidity?.value || 0, {
+  const liquidityValueString = formatValue(modal?.marketData?.liquidity?.value.toString() || 0, {
     abbreviated: true,
     decimals: 6,
   })

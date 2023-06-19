@@ -21,6 +21,7 @@ import useStore from 'store'
 import { getBaseAsset, getEnabledMarketAssets } from 'utils/assets'
 import { formatValue, truncate } from 'utils/formatters'
 import useWalletBalances from 'hooks/useWalletBalances'
+import { BN } from 'utils/helpers'
 
 export default function ConnectedButton() {
   // ---------------
@@ -38,7 +39,7 @@ export default function ConnectedButton() {
   // LOCAL STATE
   // ---------------
   const [showDetails, setShowDetails] = useToggle()
-  const [walletAmount, setWalletAmount] = useState(0)
+  const [walletAmount, setWalletAmount] = useState(BN(0))
   const [isCopied, setCopied] = useClipboard(address || '', {
     successDuration: 1000 * 5,
   })
@@ -62,9 +63,9 @@ export default function ConnectedButton() {
   useEffect(() => {
     if (!walletBalances || walletBalances.length === 0) return
     setWalletAmount(
-      BigNumber(walletBalances?.find((coin: Coin) => coin.denom === baseAsset.denom)?.amount ?? 0)
-        .div(10 ** baseAsset.decimals)
-        .toNumber(),
+      BigNumber(
+        walletBalances?.find((coin: Coin) => coin.denom === baseAsset.denom)?.amount ?? 0,
+      ).div(10 ** baseAsset.decimals),
     )
 
     const assetDenoms = marketAssets.map((asset) => asset.denom)
@@ -103,7 +104,7 @@ export default function ConnectedButton() {
           {isLoading ? (
             <CircularProgress size={12} />
           ) : (
-            `${formatValue(walletAmount, { suffix: ` ${baseAsset.symbol}` })}`
+            `${formatValue(walletAmount.toString(), { suffix: ` ${baseAsset.symbol}` })}`
           )}
         </div>
       </Button>

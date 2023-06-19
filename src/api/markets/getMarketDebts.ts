@@ -1,7 +1,8 @@
 import getMarkets from 'api/markets/getMarkets'
 import { getRedBankQueryClient } from 'api/cosmwasm-client'
+import { BNCoin } from 'types/classes/BNCoin'
 
-export default async function getMarketDebts(): Promise<Coin[]> {
+export default async function getMarketDebts(): Promise<BNCoin[]> {
   try {
     const markets: Market[] = await getMarkets()
     const redBankQueryClient = await getRedBankQueryClient()
@@ -14,7 +15,9 @@ export default async function getMarketDebts(): Promise<Coin[]> {
     )
     const debtsResults = await Promise.all(debtQueries)
 
-    return debtsResults.map<Coin>((debt, index) => ({ denom: markets[index].denom, amount: debt }))
+    return debtsResults.map<BNCoin>(
+      (debt, index) => new BNCoin({ denom: markets[index].denom, amount: debt }),
+    )
   } catch (ex) {
     throw ex
   }

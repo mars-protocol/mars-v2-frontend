@@ -77,7 +77,7 @@ export default function VaultDeposit(props: Props) {
     () =>
       props.isCustomRatio
         ? availableSecondaryAmount
-        : maxAssetValueNonCustom.dividedBy(secondaryPrice),
+        : maxAssetValueNonCustom.dividedBy(secondaryPrice).decimalPlaces(0),
     [props.isCustomRatio, availableSecondaryAmount, secondaryPrice, maxAssetValueNonCustom],
   )
 

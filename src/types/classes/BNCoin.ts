@@ -1,3 +1,4 @@
+import { ActionCoin } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { BN } from 'utils/helpers'
 
 export class BNCoin {
@@ -13,6 +14,15 @@ export class BNCoin {
     return {
       denom: this.denom,
       amount: this.amount.toString(),
+    }
+  }
+
+  toActionCoin(): ActionCoin {
+    return {
+      denom: this.denom,
+      amount: {
+        exact: this.amount.toString(),
+      },
     }
   }
 }

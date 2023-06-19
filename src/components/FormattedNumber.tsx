@@ -4,9 +4,10 @@ import { animated, useSpring } from 'react-spring'
 
 import useStore from 'store'
 import { FormatOptions, formatValue } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 interface Props {
-  amount: number | string
+  amount: BigNumber
   options?: FormatOptions
   className?: string
   animate?: boolean
@@ -14,23 +15,23 @@ interface Props {
 
 export const FormattedNumber = React.memo((props: Props) => {
   const enableAnimations = useStore((s) => s.enableAnimations)
-  const prevAmountRef = useRef<number>(0)
+  const prevAmountRef = useRef<BigNumber>(BN(0))
 
   useEffect(() => {
-    if (prevAmountRef.current !== Number(props.amount)) prevAmountRef.current = Number(props.amount)
+    if (!prevAmountRef.current.eq(props.amount)) prevAmountRef.current = props.amount
   }, [props.amount])
 
   const springAmount = useSpring({
-    number: Number(props.amount),
-    from: { number: prevAmountRef.current },
+    number: props.amount.toNumber(),
+    from: { number: prevAmountRef.current.toNumber() },
     config: { duration: 1000 },
   })
 
-  return (prevAmountRef.current === props.amount && props.amount === 0) ||
+  return (prevAmountRef.current.eq(props.amount) && props.amount.isZero()) ||
     !props.animate ||
     !enableAnimations ? (
     <span className={classNames('number', props.className)}>
-      {formatValue(props.amount, {
+      {formatValue(props.amount.toString(), {
         minDecimals: props.options?.minDecimals,
         maxDecimals: props.options?.maxDecimals,
         thousandSeparator: props.options?.thousandSeparator,

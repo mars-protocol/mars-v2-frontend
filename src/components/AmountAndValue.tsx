@@ -1,10 +1,11 @@
 import { FormattedNumber } from 'components/FormattedNumber'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import DisplayCurrency from 'components/DisplayCurrency'
+import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   asset: Asset
-  amount: string
+  amount: BigNumber
 }
 
 export default function AmountAndValue(props: Props) {
@@ -16,7 +17,11 @@ export default function AmountAndValue(props: Props) {
           options={{ decimals: props.asset.decimals, abbreviated: true }}
         />
       }
-      sub={<DisplayCurrency coin={{ amount: props.amount, denom: props.asset.denom }} />}
+      sub={
+        <DisplayCurrency
+          coin={new BNCoin({ amount: props.amount.toString(), denom: props.asset.denom })}
+        />
+      }
       className='justify-end'
     />
   )

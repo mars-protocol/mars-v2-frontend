@@ -64,7 +64,7 @@ function LendingMarketsTable(props: Props) {
               accessorKey: 'accountDepositValue',
               header: 'Deposited',
               cell: ({ row }) => {
-                const accountDepositValue = (row.original.accountLentValue as BigNumber).toNumber()
+                const accountDepositValue = row.original.accountLentValue as BigNumber
 
                 return (
                   <FormattedNumber

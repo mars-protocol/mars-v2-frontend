@@ -23,13 +23,13 @@ interface OtherAsset extends Omit<Asset, 'symbol'> {
 interface BorrowAsset extends Asset {
   borrowRate: number | null
   liquidity: {
-    amount: string
-    value: string
+    amount: BigNumber
+    value: BigNumber
   } | null
 }
 
 interface BorrowAssetActive extends BorrowAsset {
-  debt: string
+  debt: BigNumber
 }
 
 interface BigNumberCoin {

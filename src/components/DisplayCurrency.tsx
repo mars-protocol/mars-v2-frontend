@@ -1,9 +1,10 @@
 import { FormattedNumber } from 'components/FormattedNumber'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 import { convertToDisplayAmount } from 'utils/formatters'
 
 interface Props {
-  coin: Coin
+  coin: BNCoin | Coin
   className?: string
   isApproximation?: boolean
 }
