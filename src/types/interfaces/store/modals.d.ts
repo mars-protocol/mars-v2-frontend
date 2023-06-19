@@ -6,6 +6,7 @@ interface ModalSlice {
   fundAccountModal: boolean
   fundAndWithdrawModal: 'fund' | 'withdraw' | null
   vaultModal: VaultModal | null
+  unlockModal: UnlockModal | null
 }
 
 interface BorrowModal {
@@ -21,4 +22,8 @@ interface VaultModal {
 
 interface AddVaultBorrowingsModal {
   selectedDenoms: string[]
+}
+
+interface UnlockModal {
+  vault: DepositedVault
 }

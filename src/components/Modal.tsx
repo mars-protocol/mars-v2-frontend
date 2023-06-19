@@ -9,6 +9,7 @@ import Text from 'components/Text'
 interface Props {
   header: string | ReactNode
   headerClassName?: string
+  hideCloseBtn?: boolean
   children?: ReactNode | string
   content?: ReactNode | string
   className?: string
@@ -60,9 +61,11 @@ export default function Modal(props: Props) {
       >
         <div className={classNames('flex justify-between', props.headerClassName)}>
           {props.header}
-          <Button onClick={onClose} leftIcon={<Cross />} iconClassName='h-3 w-3' color='tertiary'>
-            <Text size='sm'>ESC</Text>
-          </Button>
+          {!props.hideCloseBtn && (
+            <Button onClick={onClose} leftIcon={<Cross />} iconClassName='h-3 w-3' color='tertiary'>
+              <Text size='sm'>ESC</Text>
+            </Button>
+          )}
         </div>
         <div className={classNames(props.contentClassName, 'flex-grow')}>
           {props.children ? props.children : props.content}
