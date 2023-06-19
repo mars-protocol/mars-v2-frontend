@@ -25,7 +25,6 @@ module.exports = {
     '^.+\\.svg$': `<rootDir>/__mocks__/svgMock.js`,
 
     // Handle module aliases
-    '^mocks/(.*)$': '<rootDir>/__mocks__/mocks/$1',
     '^app/(.*)$': '<rootDir>/src/app/$1',
     '^components/(.*)$': '<rootDir>/src/components/$1',
     '^constants/(.*)$': '<rootDir>/src/constants/$1',
@@ -36,7 +35,6 @@ module.exports = {
     '^styles/(.*)$': '<rootDir>/src/styles/$1',
     '^types/(.*)$': '<rootDir>/src/types/$1',
     '^utils/(.*)$': '<rootDir>/src/utils/$1',
-
     '^store': '<rootDir>/src/store',
   },
   // Add more setup options before each test is run
