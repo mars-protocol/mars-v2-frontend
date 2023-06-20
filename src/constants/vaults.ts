@@ -1,6 +1,6 @@
 export const VAULT_DEPOSIT_BUFFER = 0.999
 
-export const TESTNET_VAULTS: VaultMetaData[] = [
+export const TESTNET_VAULTS_META_DATA: VaultMetaData[] = [
   {
     address: 'osmo1q40xvrzpldwq5he4ftsf7zm2jf80tj373qaven38yqrvhex8r9rs8n94kv',
     name: 'OSMO-USDC.n',
@@ -60,7 +60,7 @@ export const TESTNET_VAULTS: VaultMetaData[] = [
   },
 ]
 
-export const VAULTS: VaultMetaData[] = [
+export const VAULTS_META_DATA: VaultMetaData[] = [
   // Mainnet Vaults
   {
     address: 'osmo1g3kmqpp8608szfp0pdag3r6z85npph7wmccat8lgl3mp407kv73qlj7qwp',

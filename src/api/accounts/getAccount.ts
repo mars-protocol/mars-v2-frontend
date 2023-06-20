@@ -1,14 +1,10 @@
-import { getClient } from 'api/cosmwasm-client'
-import { ENV } from 'constants/env'
+import { getCreditManagerQueryClient } from 'api/cosmwasm-client'
+import { Positions } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 
-export default async function getAccount(accountId: string): Promise<AccountResponse> {
-  const client = await getClient()
+export default async function getAccount(accountId: string): Promise<Positions> {
+  const creditManagerQueryClient = await getCreditManagerQueryClient()
 
-  const account: AccountResponse = await client.queryContractSmart(ENV.ADDRESS_CREDIT_MANAGER, {
-    positions: {
-      account_id: accountId,
-    },
-  })
+  const account = creditManagerQueryClient.positions({ accountId })
 
   if (account) {
     return account

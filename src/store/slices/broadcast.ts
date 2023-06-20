@@ -45,7 +45,7 @@ export default function createBroadcastSlice(
     },
     createAccount: async (options: { fee: StdFee }) => {
       const msg = {
-        create_credit_account: {},
+        create_credit_account: 'default',
       }
       set({ createAccountModal: true })
       const response = await get().executeMsg({ msg, fee: options.fee })

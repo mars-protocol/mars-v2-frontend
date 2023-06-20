@@ -1,15 +1,13 @@
 import moment from 'moment'
 
-import { getClient } from 'api/cosmwasm-client'
-import { ENV } from 'constants/env'
+import { getClient, getCreditManagerQueryClient, getVaultQueryClient } from 'api/cosmwasm-client'
 import getVaults from 'api/vaults/getVaults'
+import { BN } from 'utils/helpers'
+import getPrice from 'api/prices/getPrice'
 import {
-  Positions,
   VaultPosition,
   VaultPositionAmount,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { BN } from 'utils/helpers'
-import getPrice from 'api/prices/getPrice'
 
 async function getUnlocksAtTimestamp(unlockingId: number, vaultAddress: string) {
   try {
@@ -73,25 +71,22 @@ async function getLpTokensForVaultPosition(
   vaultPosition: VaultPosition,
 ): Promise<Coin[]> {
   try {
-    const client = await getClient()
+    const vaultQueryClient = await getVaultQueryClient(vault.address)
+    const creditManagerQueryClient = await getCreditManagerQueryClient()
     const amounts = flatVaultPositionAmount(vaultPosition.amount)
     const totalAmount = BN(amounts.locked)
       .plus(BN(amounts.unlocked))
       .plus(BN(amounts.unlocking))
       .toString()
 
-    const lpAmount = await client.queryContractSmart(vault.address, {
-      preview_redeem: {
-        amount: totalAmount,
-      },
+    const lpAmount = await vaultQueryClient.previewRedeem({
+      amount: totalAmount,
     })
 
-    const lpTokens: Coin[] = await client.queryContractSmart(ENV.ADDRESS_CREDIT_MANAGER, {
-      estimate_withdraw_liquidity: {
-        lp_token: {
-          amount: lpAmount,
-          denom: vault.denoms.lp,
-        },
+    const lpTokens = await creditManagerQueryClient.estimateWithdrawLiquidity({
+      lpToken: {
+        amount: lpAmount,
+        denom: vault.denoms.lp,
       },
     })
 
@@ -146,13 +141,8 @@ async function getVaultValuesAndAmounts(
 
 async function getDepositedVaults(accountId: string): Promise<DepositedVault[]> {
   try {
-    const client = await getClient()
-
-    const positionsQuery = client.queryContractSmart(ENV.ADDRESS_CREDIT_MANAGER, {
-      positions: {
-        account_id: accountId,
-      },
-    }) as Promise<Positions>
+    const creditManagerQueryClient = await getCreditManagerQueryClient()
+    const positionsQuery = creditManagerQueryClient.positions({ accountId })
 
     const [positions, allVaults] = await Promise.all([positionsQuery, getVaults()])
 

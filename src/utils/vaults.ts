@@ -1,13 +1,11 @@
-import BigNumber from 'bignumber.js'
-
 import { IS_TESTNET } from 'constants/env'
-import { TESTNET_VAULTS, VAULTS } from 'constants/vaults'
+import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import { BN } from 'utils/helpers'
 import { getNetCollateralValue } from 'utils/accounts'
 import { BNCoin } from 'types/classes/BNCoin'
 
 export function getVaultMetaData(address: string) {
-  const vaults = IS_TESTNET ? TESTNET_VAULTS : VAULTS
+  const vaults = IS_TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
   return vaults.find((vault) => vault.address === address)
 }
 

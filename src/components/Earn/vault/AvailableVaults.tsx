@@ -4,7 +4,7 @@ import Card from 'components/Card'
 import { VaultTable } from 'components/Earn/vault/VaultTable'
 import Text from 'components/Text'
 import { IS_TESTNET } from 'constants/env'
-import { TESTNET_VAULTS, VAULTS } from 'constants/vaults'
+import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import useVaults from 'hooks/useVaults'
 
 function Content() {
@@ -27,7 +27,7 @@ export default function AvailableVaults() {
 
 function Fallback() {
   // TODO: Replace with loading state of vaulttable
-  const vaults = IS_TESTNET ? TESTNET_VAULTS : VAULTS
+  const vaults = IS_TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
   return (
     <>
       {vaults.map((vault) => (

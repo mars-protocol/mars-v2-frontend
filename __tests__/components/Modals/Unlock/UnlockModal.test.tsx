@@ -2,7 +2,7 @@ import { render } from '@testing-library/react'
 
 import Modal from 'components/Modal'
 import UnlockModal from 'components/Modals/Unlock/UnlockModal'
-import { TESTNET_VAULTS } from 'constants/vaults'
+import { TESTNET_VAULTS_META_DATA } from 'constants/vaults'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
 
@@ -10,7 +10,7 @@ jest.mock('components/Modal')
 const mockedModal = jest.mocked(Modal).mockImplementation(() => <div>Modal</div>)
 
 const mockedDepositedVault: DepositedVault = {
-  ...TESTNET_VAULTS[0],
+  ...TESTNET_VAULTS_META_DATA[0],
   status: 'active',
   apy: 1,
   ltv: {
