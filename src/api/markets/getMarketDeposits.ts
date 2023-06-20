@@ -1,18 +1,15 @@
-import { ENV } from 'constants/env'
 import getMarkets from 'api/markets/getMarkets'
-import { getClient } from 'api/cosmwasm-client'
+import { getRedBankQueryClient } from 'api/cosmwasm-client'
 
 export default async function getMarketDeposits(): Promise<Coin[]> {
   try {
     const markets: Market[] = await getMarkets()
-    const client = await getClient()
+    const redBankQueryClient = await getRedBankQueryClient()
 
     const depositQueries = markets.map((asset) =>
-      client.queryContractSmart(ENV.ADDRESS_RED_BANK, {
-        underlying_liquidity_amount: {
-          denom: asset.denom,
-          amount_scaled: asset.collateralTotalScaled,
-        },
+      redBankQueryClient.underlyingLiquidityAmount({
+        denom: asset.denom,
+        amountScaled: asset.collateralTotalScaled,
       }),
     )
     const depositsResults = await Promise.all(depositQueries)

@@ -1,15 +1,11 @@
-import { getClient } from 'api/cosmwasm-client'
-import { ENV } from 'constants/env'
+import { getOracleQueryClient } from 'api/cosmwasm-client'
+import { PriceResponse } from 'types/generated/mars-mock-oracle/MarsMockOracle.types'
 
-export default async function getPrice(denom: string): Promise<PriceResult> {
+export default async function getPrice(denom: string): Promise<PriceResponse> {
   try {
-    const client = await getClient()
+    const oracleQueryClient = getOracleQueryClient()
 
-    return await client.queryContractSmart(ENV.ADDRESS_ORACLE, {
-      price: {
-        denom,
-      },
-    })
+    return (await oracleQueryClient).price({ denom })
   } catch (ex) {
     throw ex
   }

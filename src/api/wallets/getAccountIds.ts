@@ -1,14 +1,9 @@
-import { getClient } from 'api/cosmwasm-client'
-import { ENV } from 'constants/env'
+import { getAccountNftQueryClient } from 'api/cosmwasm-client'
 
-export default async function getAccountIds(address: string) {
-  const client = await getClient()
+export default async function getAccountIds(address: string): Promise<string[]> {
+  const accountNftQueryClient = await getAccountNftQueryClient()
 
-  const data = await client.queryContractSmart(ENV.ADDRESS_ACCOUNT_NFT, {
-    tokens: {
-      owner: address,
-    },
-  })
+  const data = await accountNftQueryClient.tokens({ owner: address })
 
   if (data.tokens) {
     return data.tokens
