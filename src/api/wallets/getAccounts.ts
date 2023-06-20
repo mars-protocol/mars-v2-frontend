@@ -6,9 +6,7 @@ export default async function getAccounts(address: string): Promise<Account[]> {
   const accountIds: string[] = await getWalletAccountIds(address)
   const creditManagerQueryClient = await getCreditManagerQueryClient()
 
-  const $accounts: Promise<AccountResponse>[] = accountIds.map((accountId) =>
-    creditManagerQueryClient.positions({ accountId }),
-  )
+  const $accounts = accountIds.map((accountId) => creditManagerQueryClient.positions({ accountId }))
 
   const accounts = await Promise.all($accounts).then((accounts) => accounts)
 

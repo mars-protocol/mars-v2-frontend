@@ -1,8 +1,11 @@
-export function resolvePositionResponses(responses: AccountResponse[]): Account[] {
+import { Positions as CreditManagerPosition } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { Market as RedBankMarket } from 'types/generated/mars-mock-red-bank/MarsMockRedBank.types'
+
+export function resolvePositionResponses(responses: CreditManagerPosition[]): Account[] {
   return responses.map(resolvePositionResponse)
 }
 
-export function resolvePositionResponse(response: AccountResponse): Account {
+export function resolvePositionResponse(response: CreditManagerPosition): Account {
   return {
     id: response.account_id,
     deposits: response.deposits,
@@ -12,7 +15,7 @@ export function resolvePositionResponse(response: AccountResponse): Account {
   }
 }
 
-export function resolveMarketResponses(responses: MarketResponse[]): Market[] {
+export function resolveMarketResponses(responses: RedBankMarket[]): Market[] {
   return responses.map((response) => ({
     denom: response.denom,
     borrowRate: Number(response.borrow_rate),
