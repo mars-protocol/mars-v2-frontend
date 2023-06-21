@@ -1,18 +1,12 @@
 import { getEnabledMarketAssets } from 'utils/assets'
-import { resolveMarketResponses } from 'utils/resolvers'
-import { getRedBankQueryClient } from 'api/cosmwasm-client'
+import getMarket from 'api/markets/getMarket'
 
 export default async function getMarkets(): Promise<Market[]> {
   try {
     const enabledAssets = getEnabledMarketAssets()
-    const redBankQueryClient = await getRedBankQueryClient()
+    const marketQueries = enabledAssets.map((asset) => getMarket(asset.denom))
 
-    const marketQueries = enabledAssets.map((asset) =>
-      redBankQueryClient.market({ denom: asset.denom }),
-    )
-    const marketResults = await Promise.all(marketQueries)
-
-    return resolveMarketResponses(marketResults)
+    return await Promise.all(marketQueries)
   } catch (ex) {
     throw ex
   }

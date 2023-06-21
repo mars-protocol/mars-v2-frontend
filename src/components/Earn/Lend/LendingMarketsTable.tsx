@@ -22,7 +22,7 @@ interface Props {
 function LendingMarketsTable(props: Props) {
   const { title, data } = props
   const { symbol: displayCurrencySymbol } = useDisplayCurrencyPrice()
-  const shouldShowAccountDeposit = !!data[0]?.accountDepositValue
+  const shouldShowAccountDeposit = !!data[0]?.accountLendValue
 
   const rowRenderer = (row: Row<LendingMarketTableData>, table: Table<LendingMarketTableData>) => {
     return (
@@ -64,9 +64,7 @@ function LendingMarketsTable(props: Props) {
               accessorKey: 'accountDepositValue',
               header: 'Deposited',
               cell: ({ row }) => {
-                const accountDepositValue = (
-                  row.original.accountDepositValue as BigNumber
-                ).toNumber()
+                const accountDepositValue = (row.original.accountLendValue as BigNumber).toNumber()
 
                 return (
                   <FormattedNumber

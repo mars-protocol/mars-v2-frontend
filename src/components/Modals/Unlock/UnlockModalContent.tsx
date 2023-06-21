@@ -1,8 +1,8 @@
+import { hardcodedFee } from 'utils/constants'
 import Button from 'components/Button'
 import { Enter } from 'components/Icons'
 import Text from 'components/Text'
 import useStore from 'store'
-import { hardcodedFee } from 'utils/contants'
 
 interface Props {
   depositedVault: DepositedVault

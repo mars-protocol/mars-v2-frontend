@@ -11,7 +11,7 @@ import { ASSETS } from 'constants/assets'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { getAmount } from 'utils/accounts'
-import { hardcodedFee } from 'utils/contants'
+import { hardcodedFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
 
 interface Props {

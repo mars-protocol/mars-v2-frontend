@@ -5,7 +5,6 @@ import { MarsAccountNftQueryClient } from 'types/generated/mars-account-nft/Mars
 import { MarsCreditManagerQueryClient } from 'types/generated/mars-credit-manager/MarsCreditManager.client'
 import { MarsMockOracleQueryClient } from 'types/generated/mars-mock-oracle/MarsMockOracle.client'
 import { MarsMockRedBankQueryClient } from 'types/generated/mars-mock-red-bank/MarsMockRedBank.client'
-import { MarsMockRedBankReactQuery } from 'types/generated/mars-mock-red-bank/MarsMockRedBank.react-query'
 import { MarsMockVaultQueryClient } from 'types/generated/mars-mock-vault/MarsMockVault.client'
 import { MarsParamsQueryClient } from 'types/generated/mars-params/MarsParams.client'
 

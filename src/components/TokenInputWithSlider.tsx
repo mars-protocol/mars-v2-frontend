@@ -24,7 +24,7 @@ export default function TokenInputWithSlider(props: Props) {
   const [percentage, setPercentage] = useState(0)
 
   function onChangeSlider(percentage: number) {
-    const newAmount = BN(percentage).div(100).times(props.max)
+    const newAmount = BN(percentage).div(100).times(props.max).integerValue()
     setPercentage(percentage)
     setAmount(newAmount)
     props.onChange(newAmount)
