@@ -4,15 +4,11 @@ import useStore from 'store'
 import useToggle from 'hooks/useToggle'
 import { hardcodedFee } from 'utils/constants'
 import useCurrentAccount from 'hooks/useCurrentAccount'
-import useLendAndWithdrawModal from 'hooks/useLendAndWithdrawModal'
-import DetailsHeader from 'components/Modals/LendAndWithdraw/DetailsHeader'
+import useLendAndReclaimModal from 'hooks/useLendAndReclaimModal'
+import DetailsHeader from 'components/Modals/LendAndReclaim/DetailsHeader'
 import AssetAmountSelectActionModal from 'components/Modals/AssetAmountSelectActionModal'
 
-const getLendAndWithdrawAccountChange = (
-  isLend: boolean,
-  value: BigNumber,
-  denom: string,
-): AccountChange => {
+const getAccountChange = (isLend: boolean, value: BigNumber, denom: string): AccountChange => {
   const makeCoin = (denom: string, shouldNegate: boolean) => [
     {
       amount: (shouldNegate ? value.negated() : value).toString(),
@@ -26,13 +22,11 @@ const getLendAndWithdrawAccountChange = (
   }
 }
 
-const getOptions = () => {}
-
-function LendAndWithdrawModal() {
+function LendAndReclaimModal() {
   const lend = useStore((s) => s.lend)
   const reclaim = useStore((s) => s.reclaim)
   const currentAccount = useCurrentAccount()
-  const { config, close } = useLendAndWithdrawModal()
+  const { config, close } = useLendAndReclaimModal()
   const [isConfirming, setIsConfirming] = useToggle()
   const [accountChange, setAccountChange] = useState<AccountChange | undefined>()
 
@@ -46,7 +40,7 @@ function LendAndWithdrawModal() {
   const coinBalances = currentAccount[isLendAction ? 'deposits' : 'lends'] ?? []
 
   const handleAmountChange = (value: BigNumber) => {
-    setAccountChange(getLendAndWithdrawAccountChange(isLendAction, value, asset.denom))
+    setAccountChange(getAccountChange(isLendAction, value, asset.denom))
   }
 
   const handleAction = async (value: BigNumber) => {
@@ -70,7 +64,7 @@ function LendAndWithdrawModal() {
     <AssetAmountSelectActionModal
       asset={asset}
       isOpen={true}
-      header={<DetailsHeader data={data} />}
+      contentHeader={<DetailsHeader data={data} />}
       coinBalances={coinBalances}
       actionButtonText={actionText}
       showLoaderInButton={isConfirming}
@@ -83,4 +77,4 @@ function LendAndWithdrawModal() {
   )
 }
 
-export default LendAndWithdrawModal
+export default LendAndReclaimModal

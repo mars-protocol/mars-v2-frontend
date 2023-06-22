@@ -4,7 +4,7 @@ import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
 import useCurrentAccountDeposits from 'hooks/useCurrentAccountDeposits'
-import useLendAndWithdrawModal from 'hooks/useLendAndWithdrawModal'
+import useLendAndReclaimModal from 'hooks/useLendAndReclaimModal'
 import { byDenom } from 'utils/array'
 
 interface Props {
@@ -15,9 +15,9 @@ const buttonClassnames = 'm-0 flex w-40 text-lg'
 const iconClassnames = 'ml-0 mr-1 w-4 h-4'
 
 function LendingActionButtons(props: Props) {
-  const { asset, accountLendValue } = props.data
+  const { asset, accountLentValue: accountLendValue } = props.data
   const accountDeposits = useCurrentAccountDeposits()
-  const { openLend, openWithdraw } = useLendAndWithdrawModal()
+  const { openLend, openReclaim } = useLendAndReclaimModal()
   const assetDepositAmount = accountDeposits.find(byDenom(asset.denom))?.amount
 
   return (
@@ -27,7 +27,7 @@ function LendingActionButtons(props: Props) {
           leftIcon={<ArrowDownLine />}
           iconClassName={iconClassnames}
           color='secondary'
-          onClick={() => openWithdraw(props.data)}
+          onClick={() => openReclaim(props.data)}
           className={buttonClassnames}
         >
           Withdraw

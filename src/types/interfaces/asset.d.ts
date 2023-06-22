@@ -42,9 +42,9 @@ interface LendingMarketTableData {
   marketMaxLtv: number
   marketLiquidityRate: number
   marketDepositCap: BigNumber
-  accountLendAmount?: string
+  accountLentAmount?: string
   marketDepositAmount: BigNumber
-  accountLendValue?: BigNumber
+  accountLentValue?: BigNumber
   marketLiquidityAmount: BigNumber
   marketLiquidationThreshold: number
 }

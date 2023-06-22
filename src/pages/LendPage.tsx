@@ -3,7 +3,8 @@ import LendingMarketsTable from 'components/Earn/Lend/LendingMarketsTable'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 
 export default function LendPage() {
-  const { lentAssets, availableAssets } = useLendingMarketAssetsTableData()
+  const { accountLentMarkets: lentAssets, availableMarkets: availableAssets } =
+    useLendingMarketAssetsTableData()
 
   return (
     <>

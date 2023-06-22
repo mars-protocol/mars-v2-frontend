@@ -11,13 +11,14 @@ import TokenInputWithSlider from 'components/TokenInputWithSlider'
 import { BN } from 'utils/helpers'
 import { byDenom } from 'utils/array'
 import CurrentAccountSummary from 'components/Account/CurrentAccountSummary'
+import AssetImage from 'components/AssetImage'
 
 interface Props {
   asset: Asset
   title: string
   isOpen: boolean
   coinBalances: Coin[]
-  header?: JSX.Element
+  contentHeader?: JSX.Element
   actionButtonText: string
   showLoaderInButton: boolean
   accountSummaryChange?: AccountChange
@@ -32,7 +33,7 @@ export default function AssetAmountSelectActionModal(props: Props) {
     title,
     isOpen,
     coinBalances,
-    header = null,
+    contentHeader = null,
     actionButtonText,
     showLoaderInButton,
     accountSummaryChange,
@@ -58,14 +59,14 @@ export default function AssetAmountSelectActionModal(props: Props) {
       onClose={onClose}
       header={
         <span className='flex items-center gap-4 px-4'>
-          <Image src={asset.logo} alt={asset.symbol} width={24} height={24} />
+          <AssetImage size={24} asset={asset} />
           <Text>{title}</Text>
         </span>
       }
       headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col min-h-[400px]'
     >
-      {header}
+      {contentHeader}
       <div className='flex flex-grow items-start gap-6 p-6'>
         <Card
           className='flex flex-grow bg-white/5 p-4'

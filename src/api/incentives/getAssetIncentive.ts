@@ -1,16 +1,16 @@
 import moment from 'moment'
 
-import { ENV } from 'constants/env'
-import { getClient } from 'api/cosmwasm-client'
+import { getIncentivesQueryClient } from 'api/cosmwasm-client'
+import { AssetIncentiveResponse } from 'types/generated/mars-incentives/MarsIncentives.types'
 
-export default async function getAssetIncentive(denom: string): Promise<AssetIncentive | null> {
+export default async function getAssetIncentive(
+  denom: string,
+): Promise<AssetIncentiveResponse | null> {
   try {
-    const client = await getClient()
-    const assetIncentive = (await client.queryContractSmart(ENV.ADDRESS_INCENTIVES, {
-      asset_incentive: {
-        denom,
-      },
-    })) as AssetIncentive
+    const client = await getIncentivesQueryClient()
+    const assetIncentive = await client.assetIncentive({
+      denom,
+    })
 
     const { duration, start_time } = assetIncentive
     const isValid = moment(start_time + duration).isBefore(moment.now())

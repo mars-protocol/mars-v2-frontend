@@ -3,6 +3,7 @@ import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { ENV } from 'constants/env'
 import { MarsAccountNftQueryClient } from 'types/generated/mars-account-nft/MarsAccountNft.client'
 import { MarsCreditManagerQueryClient } from 'types/generated/mars-credit-manager/MarsCreditManager.client'
+import { MarsIncentivesQueryClient } from 'types/generated/mars-incentives/MarsIncentives.client'
 import { MarsMockOracleQueryClient } from 'types/generated/mars-mock-oracle/MarsMockOracle.client'
 import { MarsMockRedBankQueryClient } from 'types/generated/mars-mock-red-bank/MarsMockRedBank.client'
 import { MarsMockVaultQueryClient } from 'types/generated/mars-mock-vault/MarsMockVault.client'
@@ -14,6 +15,7 @@ let _creditManagerQueryClient: MarsCreditManagerQueryClient
 let _oracleQueryClient: MarsMockOracleQueryClient
 let _redBankQueryClient: MarsMockRedBankQueryClient
 let _paramsQueryClient: MarsParamsQueryClient
+let _incentivesQueryClient: MarsIncentivesQueryClient
 
 const getClient = async () => {
   try {
@@ -104,6 +106,19 @@ const getVaultQueryClient = async (address: string) => {
   }
 }
 
+const getIncentivesQueryClient = async () => {
+  try {
+    if (!_incentivesQueryClient) {
+      const client = await getClient()
+      _incentivesQueryClient = new MarsIncentivesQueryClient(client, ENV.ADDRESS_INCENTIVES)
+    }
+
+    return _incentivesQueryClient
+  } catch (error) {
+    throw error
+  }
+}
+
 export {
   getClient,
   getAccountNftQueryClient,
@@ -112,4 +127,5 @@ export {
   getOracleQueryClient,
   getRedBankQueryClient,
   getVaultQueryClient,
+  getIncentivesQueryClient,
 }
