@@ -6,7 +6,7 @@ import { ENV } from 'constants/env'
 import { Store } from 'store'
 import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import { formatAmountWithSymbol } from 'utils/formatters'
-import { BN } from 'utils/helpers'
+import AccountBalanceSettableCoin from 'types/classes/AccountBalanceSettableCoin'
 
 export default function createBroadcastSlice(
   set: SetState<Store>,
@@ -213,7 +213,7 @@ export default function createBroadcastSlice(
       )
       return !!response.result
     },
-    lend: async (options: { fee: StdFee; accountId: string; coin: Coin }) => {
+    lend: async (options: { fee: StdFee; accountId: string; coin: AccountBalanceSettableCoin }) => {
       const msg = {
         update_credit_account: {
           account_id: options.accountId,
@@ -233,14 +233,17 @@ export default function createBroadcastSlice(
       )
       return !!response.result
     },
-    reclaim: async (options: { fee: StdFee; accountId: string; coin: Coin }) => {
-      const reclaim = { denom: options.coin.denom, amount: { exact: BN(options.coin.amount) } }
+    reclaim: async (options: {
+      fee: StdFee
+      accountId: string
+      coin: AccountBalanceSettableCoin
+    }) => {
       const msg = {
         update_credit_account: {
           account_id: options.accountId,
           actions: [
             {
-              reclaim,
+              reclaim: options.coin.toActionCoin(),
             },
           ],
         },
@@ -250,7 +253,7 @@ export default function createBroadcastSlice(
 
       handleResponseMessages(
         response,
-        `Successfully deposited ${formatAmountWithSymbol(options.coin)}`,
+        `Successfully withdrew ${formatAmountWithSymbol(options.coin)}`,
       )
       return !!response.result
     },

@@ -1,6 +1,6 @@
 type Coin = {
-  readonly denom: string
-  readonly amount: string
+  denom: string
+  amount: string
 }
 
 type StdFee = {

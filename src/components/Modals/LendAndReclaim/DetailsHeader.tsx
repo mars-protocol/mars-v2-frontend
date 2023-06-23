@@ -9,7 +9,7 @@ interface Props {
 }
 
 function DetailsHeader({ data }: Props) {
-  const { asset, marketDepositCap, accountLentAmount: accountLendAmount } = data
+  const { asset, marketDepositCap, accountLentAmount } = data
   const { data: assetApy } = useAssetIncentivesApy(asset.denom)
   const balanceInWallet = useCurrentWalletBalance(asset.denom)
 
@@ -33,10 +33,10 @@ function DetailsHeader({ data }: Props) {
           <div className='h-100 w-[1px] bg-white/10'></div>
         </>
       )}
-      {accountLendAmount && (
+      {accountLentAmount && (
         <>
           <TitleAndSubCell
-            title={<DisplayCurrency coin={{ denom: asset.denom, amount: accountLendAmount }} />}
+            title={<DisplayCurrency coin={{ denom: asset.denom, amount: accountLentAmount }} />}
             sub={'Deposited'}
           />
           <div className='h-100 w-[1px] bg-white/10'></div>

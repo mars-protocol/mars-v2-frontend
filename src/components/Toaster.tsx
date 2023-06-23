@@ -43,12 +43,7 @@ export default function Toaster() {
           {toast.message}
         </Text>
         <div className='absolute right-6 top-8 '>
-          <Button
-            leftIcon={<Cross />}
-            variant='transparent'
-            className='w-2'
-            iconClassName={classNames('w-2 h-2', toast.isError ? 'text-error' : 'text-success')}
-          />
+          <Cross className={classNames('h-2 w-2', toast.isError ? 'text-error' : 'text-success')} />
         </div>
       </div>
     )
