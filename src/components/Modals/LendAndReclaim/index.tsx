@@ -7,6 +7,7 @@ import useCurrentAccount from 'hooks/useCurrentAccount'
 import useLendAndReclaimModal from 'hooks/useLendAndReclaimModal'
 import DetailsHeader from 'components/Modals/LendAndReclaim/DetailsHeader'
 import AssetAmountSelectActionModal from 'components/Modals/AssetAmountSelectActionModal'
+import AccountBalanceSettableCoin from 'types/classes/AccountBalanceSettableCoin'
 
 const getAccountChange = (isLend: boolean, value: BigNumber, denom: string): AccountChange => {
   const makeCoin = (denom: string, shouldNegate: boolean) => [
@@ -43,16 +44,14 @@ function LendAndReclaimModal() {
     setAccountChange(getAccountChange(isLendAction, value, asset.denom))
   }
 
-  const handleAction = async (value: BigNumber) => {
+  const handleAction = async (value: BigNumber, isMax: boolean) => {
     setIsConfirming(true)
 
+    const coin = new AccountBalanceSettableCoin(asset.denom, value.integerValue().toString(), isMax)
     const options = {
       fee: hardcodedFee,
       accountId: currentAccount.id,
-      coin: {
-        denom: asset.denom,
-        amount: value.toString(),
-      },
+      coin,
     }
     await (isLendAction ? lend : reclaim)(options)
 

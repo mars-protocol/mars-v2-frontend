@@ -1,5 +1,4 @@
-import Image from 'next/image'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import Button from 'components/Button'
 import Card from 'components/Card'
@@ -24,7 +23,7 @@ interface Props {
   accountSummaryChange?: AccountChange
   onClose: () => void
   onChange: (value: BigNumber) => void
-  onAction: (value: BigNumber) => void
+  onAction: (value: BigNumber, isMax: boolean) => void
 }
 
 export default function AssetAmountSelectActionModal(props: Props) {
@@ -44,14 +43,17 @@ export default function AssetAmountSelectActionModal(props: Props) {
   const [amount, setAmount] = useState(BN(0))
   const maxAmount = BN(coinBalances.find(byDenom(asset.denom))?.amount ?? 0)
 
-  const handleAmountChange = (value: BigNumber) => {
-    setAmount(value)
-    onChange(value)
-  }
+  const handleAmountChange = useCallback(
+    (value: BigNumber) => {
+      setAmount(value)
+      onChange(value)
+    },
+    [onChange],
+  )
 
-  const handleActionClick = () => {
-    onAction(amount)
-  }
+  const handleActionClick = useCallback(() => {
+    onAction(amount, amount.eq(maxAmount))
+  }, [amount, maxAmount, onAction])
 
   return (
     <Modal
