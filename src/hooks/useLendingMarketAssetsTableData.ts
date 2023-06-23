@@ -7,36 +7,36 @@ import useMarketDeposits from 'hooks/useMarketDeposits'
 import useMarketLiquidities from 'hooks/useMarketLiquidities'
 import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
 import useDepositEnabledMarkets from 'hooks/useDepositEnabledMarkets'
-import useCurrentAccountDeposits from 'hooks/useCurrentAccountDeposits'
+import useCurrentAccountLends from 'hooks/useCurrentAccountLends'
 
 function useLendingMarketAssetsTableData(): {
-  lentAssets: LendingMarketTableData[]
+  accountLentAssets: LendingMarketTableData[]
   availableAssets: LendingMarketTableData[]
 } {
   const markets = useDepositEnabledMarkets()
-  const accountDeposits = useCurrentAccountDeposits()
-  // TODO: replace market deposits with account.lends when credit manager contract has lend feature
+  const accountLentAmounts = useCurrentAccountLends()
   const { data: marketDeposits } = useMarketDeposits()
   const { data: marketLiquidities } = useMarketLiquidities()
   const { convertAmount } = useDisplayCurrencyPrice()
 
   return useMemo(() => {
-    const lentAssets: LendingMarketTableData[] = [],
+    const accountLentAssets: LendingMarketTableData[] = [],
       availableAssets: LendingMarketTableData[] = []
 
     markets.forEach(({ denom, depositCap, liquidityRate, liquidationThreshold, maxLtv }) => {
       const asset = getAssetByDenom(denom) as Asset
       const marketDepositAmount = BN(marketDeposits.find(byDenom(denom))?.amount ?? 0)
       const marketLiquidityAmount = BN(marketLiquidities.find(byDenom(denom))?.amount ?? 0)
-      const accountDepositAmount = accountDeposits.find(byDenom(denom))?.amount
-      const accountDepositValue = accountDepositAmount
-        ? convertAmount(asset, accountDepositAmount)
+      const accountLentAmount = accountLentAmounts.find(byDenom(denom))?.amount
+      const accountLentValue = accountLentAmount
+        ? convertAmount(asset, accountLentAmount)
         : undefined
 
       const lendingMarketAsset: LendingMarketTableData = {
         asset,
         marketDepositAmount,
-        accountDepositValue,
+        accountLentValue,
+        accountLentAmount,
         marketLiquidityAmount,
         marketDepositCap: BN(depositCap),
         marketLiquidityRate: liquidityRate,
@@ -44,13 +44,13 @@ function useLendingMarketAssetsTableData(): {
         marketMaxLtv: maxLtv,
       }
 
-      ;(lendingMarketAsset.accountDepositValue ? lentAssets : availableAssets).push(
+      ;(lendingMarketAsset.accountLentValue ? accountLentAssets : availableAssets).push(
         lendingMarketAsset,
       )
     })
 
-    return { lentAssets, availableAssets }
-  }, [markets, marketDeposits, marketLiquidities, accountDeposits, convertAmount])
+    return { accountLentAssets, availableAssets }
+  }, [markets, marketDeposits, marketLiquidities, accountLentAmounts, convertAmount])
 }
 
 export default useLendingMarketAssetsTableData

@@ -16,7 +16,11 @@ export function resolvePositionResponse(response: CreditManagerPosition): Accoun
 }
 
 export function resolveMarketResponses(responses: RedBankMarket[]): Market[] {
-  return responses.map((response) => ({
+  return responses.map(resolveMarketResponse)
+}
+
+export function resolveMarketResponse(response: RedBankMarket): Market {
+  return {
     denom: response.denom,
     borrowRate: Number(response.borrow_rate),
     debtTotalScaled: response.debt_total_scaled,
@@ -27,5 +31,5 @@ export function resolveMarketResponses(responses: RedBankMarket[]): Market[] {
     maxLtv: Number(response.max_loan_to_value),
     liquidityRate: Number(response.liquidity_rate),
     liquidationThreshold: Number(response.liquidation_threshold),
-  }))
+  }
 }

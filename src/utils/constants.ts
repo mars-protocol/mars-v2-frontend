@@ -9,3 +9,5 @@ export const hardcodedFee = {
   ],
   gas: '5000000',
 }
+
+export const SECONDS_IN_A_YEAR = 31540000

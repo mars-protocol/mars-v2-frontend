@@ -12,7 +12,7 @@ import Overlay from 'components/Overlay'
 import Text from 'components/Text'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
-import { hardcodedFee } from 'utils/contants'
+import { hardcodedFee } from 'utils/constants'
 import { isNumber } from 'utils/parsers'
 
 const menuClasses = 'absolute isolate flex w-full flex-wrap scrollbar-hide'

@@ -7,6 +7,13 @@ interface ModalSlice {
   fundAndWithdrawModal: 'fund' | 'withdraw' | null
   vaultModal: VaultModal | null
   unlockModal: UnlockModal | null
+  lendAndReclaimModal: LendAndReclaimModalConfig | null
+}
+
+type LendAndReclaimModalAction = 'lend' | 'reclaim'
+interface LendAndReclaimModalConfig {
+  data: LendingMarketTableData
+  action: LendAndReclaimModalAction
 }
 
 interface BorrowModal {

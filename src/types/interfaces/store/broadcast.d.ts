@@ -16,6 +16,8 @@ interface BroadcastSlice {
   deposit: (options: { fee: StdFee; accountId: string; coin: Coin }) => Promise<boolean>
   unlock: (options: { fee: StdFee; vault: Vault; amount: string }) => Promise<boolean>
   withdraw: (options: { fee: StdFee; accountId: string; coin: Coin }) => Promise<boolean>
+  lend: (options: { fee: StdFee; accountId: string; coin: Coin }) => Promise<boolean>
+  reclaim: (options: { fee: StdFee; accountId: string; coin: Coin }) => Promise<boolean>
   repay: (options: {
     fee: StdFee
     accountId: string

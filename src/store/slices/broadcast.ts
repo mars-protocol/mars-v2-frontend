@@ -6,11 +6,34 @@ import { ENV } from 'constants/env'
 import { Store } from 'store'
 import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import { formatAmountWithSymbol } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 export default function createBroadcastSlice(
   set: SetState<Store>,
   get: GetState<Store>,
 ): BroadcastSlice {
+  const handleResponseMessages = (
+    response: BroadcastResult,
+    successMessage: string,
+    errorMessage?: string,
+  ) => {
+    if (response.result?.response.code === 0) {
+      set({
+        toast: {
+          message: successMessage,
+        },
+      })
+    } else {
+      const error = response.error ? response.error : response.result?.rawLogs
+      set({
+        toast: {
+          message: errorMessage ?? `Transaction failed: ${error}`,
+          isError: true,
+        },
+      })
+    }
+  }
+
   return {
     toast: null,
     borrow: async (options: { fee: StdFee; accountId: string; coin: Coin }) => {
@@ -23,24 +46,10 @@ export default function createBroadcastSlice(
 
       const response = await get().executeMsg({ msg, fee: options.fee })
 
-      if (response.result?.response.code === 0) {
-        set({
-          toast: {
-            message: `Borrowed ${formatAmountWithSymbol(options.coin)} to Account ${
-              options.accountId
-            }`,
-          },
-        })
-      } else {
-        const error = response.error ? response.error : response.result?.rawLogs
-        set({
-          toast: {
-            message: `Transaction failed: ${error}`,
-            isError: true,
-          },
-        })
-      }
-
+      handleResponseMessages(
+        response,
+        `Borrowed ${formatAmountWithSymbol(options.coin)} to Account ${options.accountId}`,
+      )
       return !!response.result
     },
     createAccount: async (options: { fee: StdFee }) => {
@@ -76,16 +85,9 @@ export default function createBroadcastSlice(
       const response = await get().executeMsg({ msg, fee: options.fee })
 
       set({ deleteAccountModal: false })
-      if (response.result) {
-        set({ toast: { message: `Account ${options.accountId} deleted` } })
-      } else {
-        set({
-          toast: {
-            message: response.error ?? `Transaction failed: ${response.error}`,
-            isError: true,
-          },
-        })
-      }
+
+      handleResponseMessages(response, `Account ${options.accountId} deleted`)
+
       return !!response.result
     },
     deposit: async (options: { fee: StdFee; accountId: string; coin: Coin }) => {
@@ -101,22 +103,11 @@ export default function createBroadcastSlice(
       }
 
       const response = await get().executeMsg({ msg, fee: options.fee, funds: [options.coin] })
-      if (response.result) {
-        set({
-          toast: {
-            message: `Deposited ${formatAmountWithSymbol(options.coin)} to Account ${
-              options.accountId
-            }`,
-          },
-        })
-      } else {
-        set({
-          toast: {
-            message: response.error ?? `Transaction failed: ${response.error}`,
-            isError: true,
-          },
-        })
-      }
+
+      handleResponseMessages(
+        response,
+        `Deposited ${formatAmountWithSymbol(options.coin)} to Account ${options.accountId}`,
+      )
       return !!response.result
     },
     unlock: async (options: { fee: StdFee; vault: Vault; amount: string }) => {
@@ -133,20 +124,7 @@ export default function createBroadcastSlice(
         funds: [],
       })
 
-      if (response.result) {
-        set({
-          toast: {
-            message: `Requested unlock for ${options.vault.name}`,
-          },
-        })
-      } else {
-        set({
-          toast: {
-            message: response.error ?? `Request unlocked failed: ${response.error}`,
-            isError: true,
-          },
-        })
-      }
+      handleResponseMessages(response, `Requested unlock for ${options.vault.name}`)
       return !!response.result
     },
     withdraw: async (options: { fee: StdFee; accountId: string; coin: Coin }) => {
@@ -162,22 +140,11 @@ export default function createBroadcastSlice(
       }
 
       const response = await get().executeMsg({ msg, fee: options.fee })
-      if (response.result) {
-        set({
-          toast: {
-            message: `Withdrew ${formatAmountWithSymbol(options.coin)} from Account ${
-              options.accountId
-            }`,
-          },
-        })
-      } else {
-        set({
-          toast: {
-            message: response.error ?? `Transaction failed: ${response.error}`,
-            isError: true,
-          },
-        })
-      }
+
+      handleResponseMessages(
+        response,
+        `Withdrew ${formatAmountWithSymbol(options.coin)} from Account ${options.accountId}`,
+      )
       return !!response.result
     },
     executeMsg: async (options: {
@@ -239,22 +206,52 @@ export default function createBroadcastSlice(
       }
 
       const response = await get().executeMsg({ msg, fee: options.fee, funds: [] })
-      if (response.result?.response.code === 0) {
-        set({
-          toast: {
-            message: `Repayed ${formatAmountWithSymbol(options.coin)} to Account ${
-              options.accountId
-            }`,
-          },
-        })
-      } else {
-        set({
-          toast: {
-            message: response.error ?? `Transaction failed: ${response.error}`,
-            isError: true,
-          },
-        })
+
+      handleResponseMessages(
+        response,
+        `Repayed ${formatAmountWithSymbol(options.coin)} to Account ${options.accountId}`,
+      )
+      return !!response.result
+    },
+    lend: async (options: { fee: StdFee; accountId: string; coin: Coin }) => {
+      const msg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: [
+            {
+              lend: options.coin,
+            },
+          ],
+        },
       }
+
+      const response = await get().executeMsg({ msg, fee: options.fee })
+
+      handleResponseMessages(
+        response,
+        `Successfully deposited ${formatAmountWithSymbol(options.coin)}`,
+      )
+      return !!response.result
+    },
+    reclaim: async (options: { fee: StdFee; accountId: string; coin: Coin }) => {
+      const reclaim = { denom: options.coin.denom, amount: { exact: BN(options.coin.amount) } }
+      const msg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: [
+            {
+              reclaim,
+            },
+          ],
+        },
+      }
+
+      const response = await get().executeMsg({ msg, fee: options.fee })
+
+      handleResponseMessages(
+        response,
+        `Successfully deposited ${formatAmountWithSymbol(options.coin)}`,
+      )
       return !!response.result
     },
   }

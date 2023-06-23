@@ -38,8 +38,10 @@ export default function Modal(props: Props) {
   // close dialog on unmount
   useEffect(() => {
     const dialog = ref.current
-    dialog?.removeAttribute('open')
-    return () => dialog.close()
+    return () => {
+      dialog.removeAttribute('open')
+      dialog.close()
+    }
   }, [])
 
   return (
