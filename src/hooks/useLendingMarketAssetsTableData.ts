@@ -10,8 +10,8 @@ import useDepositEnabledMarkets from 'hooks/useDepositEnabledMarkets'
 import useCurrentAccountLends from 'hooks/useCurrentAccountLends'
 
 function useLendingMarketAssetsTableData(): {
-  accountLentMarkets: LendingMarketTableData[]
-  availableMarkets: LendingMarketTableData[]
+  accountLentAssets: LendingMarketTableData[]
+  availableAssets: LendingMarketTableData[]
 } {
   const markets = useDepositEnabledMarkets()
   const accountLentAmounts = useCurrentAccountLends()
@@ -20,8 +20,8 @@ function useLendingMarketAssetsTableData(): {
   const { convertAmount } = useDisplayCurrencyPrice()
 
   return useMemo(() => {
-    const accountLentMarkets: LendingMarketTableData[] = [],
-      availableMarkets: LendingMarketTableData[] = []
+    const accountLentAssets: LendingMarketTableData[] = [],
+      availableAssets: LendingMarketTableData[] = []
 
     markets.forEach(({ denom, depositCap, liquidityRate, liquidationThreshold, maxLtv }) => {
       const asset = getAssetByDenom(denom) as Asset
@@ -44,12 +44,12 @@ function useLendingMarketAssetsTableData(): {
         marketMaxLtv: maxLtv,
       }
 
-      ;(lendingMarketAsset.accountLentValue ? accountLentMarkets : availableMarkets).push(
+      ;(lendingMarketAsset.accountLentValue ? accountLentAssets : availableAssets).push(
         lendingMarketAsset,
       )
     })
 
-    return { accountLentMarkets, availableMarkets }
+    return { accountLentAssets, availableAssets }
   }, [markets, marketDeposits, marketLiquidities, accountLentAmounts, convertAmount])
 }
 

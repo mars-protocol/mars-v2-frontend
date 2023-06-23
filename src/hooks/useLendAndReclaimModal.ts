@@ -3,7 +3,7 @@ import { useCallback } from 'react'
 import useStore from 'store'
 
 function useLendAndReclaimModal() {
-  const config = useStore<LendAndReclaimModalConfig | null>((s) => s.lendAndReclaimModal)
+  const config = useStore((s) => s.lendAndReclaimModal)
 
   const open = useCallback((action: LendAndReclaimModalAction, data: LendingMarketTableData) => {
     const _config: LendAndReclaimModalConfig = {
