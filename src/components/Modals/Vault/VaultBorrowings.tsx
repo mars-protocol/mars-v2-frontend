@@ -43,8 +43,8 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
 
   const { actions: depositActions, fee: depositFee } = useDepositVault({
     vault: props.vault,
-    deposits: props.deposits.filter((borrowing) => borrowing.amount.gt(0)),
-    borrowings: props.borrowings.filter((borrowing) => borrowing.amount.gt(0)),
+    deposits: props.deposits,
+    borrowings: props.borrowings,
   })
 
   const primaryValue = useMemo(
