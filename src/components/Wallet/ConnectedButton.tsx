@@ -62,11 +62,12 @@ export default function ConnectedButton() {
 
   useEffect(() => {
     if (!walletBalances || walletBalances.length === 0) return
-    setWalletAmount(
-      BigNumber(
-        walletBalances?.find((coin: Coin) => coin.denom === baseAsset.denom)?.amount ?? 0,
-      ).div(10 ** baseAsset.decimals),
-    )
+    const newAmount = BigNumber(
+      walletBalances?.find((coin: Coin) => coin.denom === baseAsset.denom)?.amount ?? 0,
+    ).div(10 ** baseAsset.decimals)
+
+    if (walletAmount.isEqualTo(newAmount)) return
+    setWalletAmount(newAmount)
 
     const assetDenoms = marketAssets.map((asset) => asset.denom)
     const balances = walletBalances.filter((coin) => assetDenoms.includes(coin.denom))
