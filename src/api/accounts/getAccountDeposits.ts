@@ -5,7 +5,7 @@ export default async function getAccountDeposits(accountId: string): Promise<BNC
   const account = await getAccount(accountId)
 
   if (account) {
-    return account.deposits.map((coin) => new BNCoin(coin))
+    return account.deposits
   }
 
   return new Promise((_, reject) => reject('Account not found'))
