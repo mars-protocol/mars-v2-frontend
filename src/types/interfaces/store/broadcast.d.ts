@@ -1,5 +1,3 @@
-type AccountBalanceSettableCoin = import('types/classes/AccountBalanceSettableCoin')
-
 interface BroadcastResult {
   result?: import('@marsprotocol/wallet-connector').TxBroadcastResult
   error?: string
@@ -26,12 +24,14 @@ interface BroadcastSlice {
   lend: (options: {
     fee: StdFee
     accountId: string
-    coin: AccountBalanceSettableCoin
+    coin: BNCoin
+    isMax?: boolean
   }) => Promise<boolean>
   reclaim: (options: {
     fee: StdFee
     accountId: string
-    coin: AccountBalanceSettableCoin
+    coin: BNCoin
+    isMax?: boolean
   }) => Promise<boolean>
   repay: (options: {
     fee: StdFee

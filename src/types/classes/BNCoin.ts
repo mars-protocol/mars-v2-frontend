@@ -10,6 +10,10 @@ export class BNCoin {
     this.amount = BN(coin.amount)
   }
 
+  static fromDenomAndBigNumber(denom: string, amount: BigNumber) {
+    return new BNCoin({ denom, amount: amount.toString() })
+  }
+
   toCoin(): Coin {
     return {
       denom: this.denom,
@@ -17,12 +21,14 @@ export class BNCoin {
     }
   }
 
-  toActionCoin(): ActionCoin {
+  toActionCoin(max?: boolean): ActionCoin {
     return {
       denom: this.denom,
-      amount: {
-        exact: this.amount.toString(),
-      },
+      amount: max
+        ? 'account_balance'
+        : {
+            exact: this.amount.toString(),
+          },
     }
   }
 }

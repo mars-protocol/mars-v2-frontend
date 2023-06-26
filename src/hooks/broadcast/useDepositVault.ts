@@ -1,12 +1,12 @@
 import debounce from 'debounce-promise'
 import { useMemo, useState } from 'react'
+import { hardcodedFee } from 'utils/contants'
 
 import getMinLpToReceive from 'api/vaults/getMinLpToReceive'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { hardcodedFee } from 'utils/contants'
 import {
   getEnterVaultActions,
   getVaultDepositCoinsAndValue,

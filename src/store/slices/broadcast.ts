@@ -6,8 +6,8 @@ import { ENV } from 'constants/env'
 import { Store } from 'store'
 import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import { formatAmountWithSymbol } from 'utils/formatters'
-import AccountBalanceSettableCoin from 'types/classes/AccountBalanceSettableCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { BNCoin } from 'types/classes/BNCoin'
 
 export default function createBroadcastSlice(
   set: SetState<Store>,
@@ -238,13 +238,13 @@ export default function createBroadcastSlice(
       )
       return !!response.result
     },
-    lend: async (options: { fee: StdFee; accountId: string; coin: AccountBalanceSettableCoin }) => {
+    lend: async (options: { fee: StdFee; accountId: string; coin: BNCoin; isMax?: boolean }) => {
       const msg = {
         update_credit_account: {
           account_id: options.accountId,
           actions: [
             {
-              lend: options.coin,
+              lend: options.coin.toActionCoin(options.isMax),
             },
           ],
         },
@@ -254,21 +254,17 @@ export default function createBroadcastSlice(
 
       handleResponseMessages(
         response,
-        `Successfully deposited ${formatAmountWithSymbol(options.coin)}`,
+        `Successfully deposited ${formatAmountWithSymbol(options.coin.toCoin())}`,
       )
       return !!response.result
     },
-    reclaim: async (options: {
-      fee: StdFee
-      accountId: string
-      coin: AccountBalanceSettableCoin
-    }) => {
+    reclaim: async (options: { fee: StdFee; accountId: string; coin: BNCoin; isMax?: boolean }) => {
       const msg = {
         update_credit_account: {
           account_id: options.accountId,
           actions: [
             {
-              reclaim: options.coin.toActionCoin(),
+              reclaim: options.coin.toActionCoin(options.isMax),
             },
           ],
         },
@@ -278,7 +274,7 @@ export default function createBroadcastSlice(
 
       handleResponseMessages(
         response,
-        `Successfully withdrew ${formatAmountWithSymbol(options.coin)}`,
+        `Successfully withdrew ${formatAmountWithSymbol(options.coin.toCoin())}`,
       )
       return !!response.result
     },
