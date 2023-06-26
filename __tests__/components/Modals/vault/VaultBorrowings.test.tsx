@@ -5,6 +5,7 @@ import { BN } from 'utils/helpers'
 import useStore from 'store'
 import DisplayCurrency from 'components/DisplayCurrency'
 import VaultBorrowings, { VaultBorrowingsProps } from 'components/Modals/Vault/VaultBorrowings'
+import { TESTNET_VAULTS_META_DATA } from 'constants/vaults'
 
 jest.mock('hooks/usePrices', () =>
   jest.fn(() => ({
@@ -20,11 +21,27 @@ jest.mock('hooks/useMarketAssets', () =>
   })),
 )
 
+jest.mock('hooks/broadcast/useDepositVault', () => jest.fn(() => ({})))
+
 jest.mock('components/DisplayCurrency')
+
 const mockedDisplayCurrency = jest
   .mocked(DisplayCurrency)
   .mockImplementation(() => <div>Display currency</div>)
 
+const mockedVault: Vault = {
+  ...TESTNET_VAULTS_META_DATA[0],
+  apy: 0,
+  ltv: {
+    liq: 0.2,
+    max: 0.1,
+  },
+  cap: {
+    denom: 'test',
+    max: 10,
+    used: 2,
+  },
+}
 describe('<VaultBorrowings />', () => {
   const defaultProps: VaultBorrowingsProps = {
     primaryAsset: ASSETS[0],
@@ -38,7 +55,9 @@ describe('<VaultBorrowings />', () => {
       vaults: [],
       lends: [],
     },
+    vault: mockedVault,
     borrowings: [],
+    deposits: [],
     onChangeBorrowings: jest.fn(),
   }
 
