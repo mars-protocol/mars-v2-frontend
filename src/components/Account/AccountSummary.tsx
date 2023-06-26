@@ -8,6 +8,7 @@ import { ArrowChartLineUp } from 'components/Icons'
 import Text from 'components/Text'
 import useIsOpenArray from 'hooks/useIsOpenArray'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountDeposits } from 'utils/accounts'
 import { BN } from 'utils/helpers'
 
@@ -29,7 +30,7 @@ export default function AccountSummary(props: Props) {
       <Card className='mb-4 h-min min-w-fit bg-white/10' contentClassName='flex'>
         <Item>
           <DisplayCurrency
-            coin={{ amount: accountBalance.toString(), denom: baseCurrency.denom }}
+            coin={new BNCoin({ amount: accountBalance.toString(), denom: baseCurrency.denom })}
             className='text-sm'
           />
         </Item>

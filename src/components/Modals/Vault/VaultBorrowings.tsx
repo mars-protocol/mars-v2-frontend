@@ -189,7 +189,9 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
       <div className='flex flex-col gap-2'>
         <div className='flex justify-between'>
           <Text className='text-white/50'>{`${props.primaryAsset.symbol}-${props.secondaryAsset.symbol} Position Value`}</Text>
-          <DisplayCurrency coin={{ denom: baseCurrency.denom, amount: totalValue.toString() }} />
+          <DisplayCurrency
+            coin={new BNCoin({ denom: baseCurrency.denom, amount: totalValue.toString() })}
+          />
         </div>
         {props.borrowings.map((coin) => {
           const asset = getAssetByDenom(coin.denom)

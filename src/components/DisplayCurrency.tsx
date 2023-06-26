@@ -4,7 +4,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { convertToDisplayAmount } from 'utils/formatters'
 
 interface Props {
-  coin: BNCoin | Coin
+  coin: BNCoin
   className?: string
   isApproximation?: boolean
 }

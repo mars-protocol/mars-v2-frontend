@@ -17,6 +17,7 @@ import { ASSETS } from 'constants/assets'
 import useStore from 'store'
 import { convertToDisplayAmount, demagnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   data: Account
@@ -89,12 +90,8 @@ export const AccountBalancesTable = (props: Props) => {
         accessorKey: 'value',
         id: 'value',
         cell: ({ row }) => {
-          return (
-            <DisplayCurrency
-              coin={{ denom: row.original.denom, amount: row.original.amount }}
-              className='text-right text-xs'
-            />
-          )
+          const coin = new BNCoin({ denom: row.original.denom, amount: row.original.amount })
+          return <DisplayCurrency coin={coin} className='text-right text-xs' />
         },
       },
       {
