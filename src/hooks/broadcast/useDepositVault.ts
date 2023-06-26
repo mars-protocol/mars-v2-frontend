@@ -1,7 +1,7 @@
 import debounce from 'debounce-promise'
 import { useMemo, useState } from 'react'
-import { hardcodedFee } from 'utils/contants'
 
+import { hardcodedFee } from 'utils/constants'
 import getMinLpToReceive from 'api/vaults/getMinLpToReceive'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
