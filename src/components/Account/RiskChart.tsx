@@ -13,17 +13,18 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import Text from 'components/Text'
 import useStore from 'store'
 import { formatValue } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 export const RiskChart = ({ data }: RiskChartProps) => {
   const enableAnimations = useStore((s) => s.enableAnimations)
   const accountStats = null
-  const currentRisk = 0
+  const currentRisk = BN(0)
 
   return (
     <div className='flex w-full flex-wrap overflow-hidden py-2'>
       <FormattedNumber
         className='px-3 pb-2 text-lg'
-        amount={currentRisk * 100}
+        amount={currentRisk.times(100)}
         options={{
           maxDecimals: 0,
           minDecimals: 0,

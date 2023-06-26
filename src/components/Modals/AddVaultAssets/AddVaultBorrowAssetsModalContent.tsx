@@ -4,6 +4,7 @@ import SearchBar from 'components/SearchBar'
 import Text from 'components/Text'
 import useMarketBorrowings from 'hooks/useMarketBorrowings'
 import AddVaultAssetTable from 'components/Modals/AddVaultAssets/AddVaultAssetTable'
+import useStore from 'store'
 
 interface Props {
   vault: Vault
@@ -14,8 +15,6 @@ interface Props {
 export default function AddVaultAssetsModalContent(props: Props) {
   const [searchString, setSearchString] = useState<string>('')
   const { data: borrowAssets } = useMarketBorrowings()
-  const [selectedPoolDenoms, setSelectedPoolDenoms] = useState<string[]>([])
-  const [selectedOtherDenoms, setSelectedOtherDenoms] = useState<string[]>([])
 
   const filteredBorrowAssets: BorrowAsset[] = useMemo(() => {
     return borrowAssets.filter(
@@ -47,6 +46,15 @@ export default function AddVaultAssetsModalContent(props: Props) {
         [[], []] as [BorrowAsset[], BorrowAsset[]],
       ),
     [filteredBorrowAssets, props.vault.denoms.primary, props.vault.denoms.secondary],
+  )
+
+  const selectedDenoms = useStore((s) => s.addVaultBorrowingsModal?.selectedDenoms)
+  const [selectedPoolDenoms, setSelectedPoolDenoms] = useState<string[]>(
+    selectedDenoms?.filter((denom) => poolAssets.map((asset) => asset.denom).includes(denom)) || [],
+  )
+  const [selectedOtherDenoms, setSelectedOtherDenoms] = useState<string[]>(
+    selectedDenoms?.filter((denom) => stableAssets.map((asset) => asset.denom).includes(denom)) ||
+      [],
   )
 
   const onChangePoolDenoms = useCallback(
@@ -81,7 +89,11 @@ export default function AddVaultAssetsModalContent(props: Props) {
             Leverage will be set at 50% for both assets by default
           </Text>
         </div>
-        <AddVaultAssetTable assets={poolAssets} onChangeSelected={onChangePoolDenoms} />
+        <AddVaultAssetTable
+          assets={poolAssets}
+          onChangeSelected={onChangePoolDenoms}
+          selectedDenoms={selectedPoolDenoms}
+        />
         <div className='p-4'>
           <Text>Assets not in the liquidity pool</Text>
           <Text size='xs' className='mt-1 text-white/60'>
@@ -89,7 +101,11 @@ export default function AddVaultAssetsModalContent(props: Props) {
             these assets below.
           </Text>
         </div>
-        <AddVaultAssetTable assets={stableAssets} onChangeSelected={onChangeOtherDenoms} />
+        <AddVaultAssetTable
+          assets={stableAssets}
+          onChangeSelected={onChangeOtherDenoms}
+          selectedDenoms={selectedOtherDenoms}
+        />
       </div>
     </>
   )

@@ -16,6 +16,7 @@ import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
 import useStore from 'store'
 import { convertToDisplayAmount, demagnify } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 interface Props {
   data: Account
@@ -43,7 +44,7 @@ export const AccountBalancesTable = (props: Props) => {
           { amount: deposit.amount, denom: deposit.denom },
           displayCurrency,
           prices,
-        ),
+        ).toString(),
         apy,
       }
     })
@@ -60,7 +61,7 @@ export const AccountBalancesTable = (props: Props) => {
           { amount: lending.amount, denom: lending.denom },
           displayCurrency,
           prices,
-        ),
+        ).toString(),
         apy,
       }
     })
@@ -104,9 +105,11 @@ export const AccountBalancesTable = (props: Props) => {
           return (
             <FormattedNumber
               className='text-right text-xs'
-              amount={demagnify(
-                row.original.amount,
-                ASSETS.find((asset) => asset.denom === row.original.denom) ?? ASSETS[0],
+              amount={BN(
+                demagnify(
+                  row.original.amount,
+                  ASSETS.find((asset) => asset.denom === row.original.denom) ?? ASSETS[0],
+                ),
               )}
               options={{ maxDecimals: 4 }}
             />
@@ -121,7 +124,7 @@ export const AccountBalancesTable = (props: Props) => {
           return (
             <FormattedNumber
               className='text-xs'
-              amount={row.original.apy}
+              amount={BN(row.original.apy)}
               options={{ maxDecimals: 2, minDecimals: 2, suffix: '%' }}
             />
           )

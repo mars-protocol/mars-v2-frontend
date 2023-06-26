@@ -4,6 +4,7 @@ import { ReactElement, ReactNode } from 'react'
 import { Tooltip } from 'components/Tooltip'
 import useStore from 'store'
 import { FormattedNumber } from 'components/FormattedNumber'
+import { BN } from 'utils/helpers'
 
 interface Props {
   tooltip: string | ReactNode
@@ -87,7 +88,7 @@ export const Gauge = ({
         )}
         <FormattedNumber
           className={classNames(labelClassName, 'text-2xs')}
-          amount={Math.round(percentage)}
+          amount={BN(Math.round(percentage))}
           options={{ maxDecimals: 0, minDecimals: 0 }}
           animate
         />

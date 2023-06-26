@@ -5,6 +5,7 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
 import useStore from 'store'
+import { BN } from 'utils/helpers'
 
 interface Props {
   balance: number
@@ -68,7 +69,7 @@ export const BorrowCapacity = ({
                 limitPercentOfMax ? 'opacity-50' : 'opacity-0',
               )}
             >
-              <FormattedNumber animate amount={limit} />
+              <FormattedNumber animate amount={BN(limit)} />
             </div>
           )}
         </div>
@@ -126,7 +127,7 @@ export const BorrowCapacity = ({
                             maxDecimals: decimals,
                             suffix: '%',
                           }}
-                          amount={percentOfMaxRound}
+                          amount={BN(percentOfMaxRound)}
                         />
                       )}
                     </span>
@@ -138,9 +139,9 @@ export const BorrowCapacity = ({
         </Tooltip>
         {!hideValues && (
           <div className='mt-2 flex opacity-50 text-3xs-caps'>
-            <FormattedNumber animate amount={balance} className='mr-1' />
+            <FormattedNumber animate amount={BN(balance)} className='mr-1' />
             <span className='mr-1'>of</span>
-            <FormattedNumber animate amount={max} />
+            <FormattedNumber animate amount={BN(max)} />
           </div>
         )}
       </div>

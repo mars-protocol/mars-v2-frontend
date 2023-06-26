@@ -23,7 +23,7 @@ function DetailsHeader({ data }: Props) {
                 <FormattedNumber amount={assetApy} options={{ suffix: '%' }} />
                 <FormattedNumber
                   className='ml-2 text-xs'
-                  amount={assetApy / 365}
+                  amount={assetApy.div(365)}
                   options={{ suffix: '%/day' }}
                 />
               </>

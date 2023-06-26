@@ -7,7 +7,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import classNames from 'classnames'
-import Image from 'next/image'
 import React from 'react'
 
 import AmountAndValue from 'components/AmountAndValue'

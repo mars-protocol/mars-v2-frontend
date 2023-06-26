@@ -18,6 +18,7 @@ import useStore from 'store'
 import DisplayCurrency from 'components/DisplayCurrency'
 import usePrice from 'hooks/usePrice'
 import { BNCoin } from 'types/classes/BNCoin'
+import useDepositVault from 'hooks/broadcast/useDepositVault'
 
 export interface VaultBorrowingsProps {
   account: Account
@@ -26,6 +27,8 @@ export interface VaultBorrowingsProps {
   secondaryAmount: BigNumber
   primaryAsset: Asset
   secondaryAsset: Asset
+  deposits: BNCoin[]
+  vault: Vault
   onChangeBorrowings: (borrowings: BNCoin[]) => void
 }
 
@@ -36,6 +39,13 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   const secondaryPrice = usePrice(props.secondaryAsset.denom)
   const baseCurrency = useStore((s) => s.baseCurrency)
   const vaultModal = useStore((s) => s.vaultModal)
+  const depositIntoVault = useStore((s) => s.depositIntoVault)
+
+  const { actions: depositActions, fee: depositFee } = useDepositVault({
+    vault: props.vault,
+    deposits: props.deposits.filter((borrowing) => borrowing.amount.gt(0)),
+    borrowings: props.borrowings.filter((borrowing) => borrowing.amount.gt(0)),
+  })
 
   const primaryValue = useMemo(
     () => props.primaryAmount.times(primaryPrice),
@@ -139,6 +149,10 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
     })
   }
 
+  function onConfirm() {
+    depositIntoVault({ fee: depositFee, accountId: props.account.id, actions: depositActions })
+  }
+
   return (
     <div className='flex flex-grow flex-col gap-4 p-4'>
       {props.borrowings.map((coin) => {
@@ -191,7 +205,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
           )
         })}
       </div>
-      <Button color='primary' text='Deposit' rightIcon={<ArrowRight />} />
+      <Button onClick={onConfirm} color='primary' text='Deposit' rightIcon={<ArrowRight />} />
     </div>
   )
 }

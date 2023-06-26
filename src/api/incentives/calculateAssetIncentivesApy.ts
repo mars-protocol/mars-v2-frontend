@@ -8,7 +8,9 @@ import getMarsPrice from 'api/prices/getMarsPrice'
 import { ASSETS } from 'constants/assets'
 import { byDenom } from 'utils/array'
 
-export default async function calculateAssetIncentivesApy(denom: string): Promise<number | null> {
+export default async function calculateAssetIncentivesApy(
+  denom: string,
+): Promise<BigNumber | null> {
   try {
     const [assetIncentive, market] = await Promise.all([getAssetIncentive(denom), getMarket(denom)])
 
@@ -38,7 +40,7 @@ export default async function calculateAssetIncentivesApy(denom: string): Promis
     const totalAnnualReturnsValue = annualEmission.plus(marketReturns)
     const incentivesApy = totalAnnualReturnsValue.dividedBy(marketLiquidityValue).multipliedBy(100)
 
-    return incentivesApy.toNumber()
+    return incentivesApy
   } catch (ex) {
     console.error(ex)
     return null

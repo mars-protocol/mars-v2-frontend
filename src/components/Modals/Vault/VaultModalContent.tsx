@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import Accordion from 'components/Accordion'
 import AccountSummary from 'components/Account/AccountSummary'
@@ -10,6 +10,7 @@ import VaultBorrowingsSubTitle from 'components/Modals/Vault/VaultBorrowingsSubT
 import VaultDeposit from 'components/Modals/Vault/VaultDeposits'
 import VaultBorrowings from 'components/Modals/Vault/VaultBorrowings'
 import VaultDepositSubTitle from 'components/Modals/Vault/VaultDepositsSubTitle'
+import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   vault: Vault
@@ -28,12 +29,24 @@ export default function VaultModalContent(props: Props) {
   const [secondaryAmount, setSecondaryAmount] = useState<BigNumber>(BN(0))
   const [isCustomRatio, setIsCustomRatio] = useState(false)
 
+  const deposits: BNCoin[] = useMemo(() => {
+    const primaryBNCoin = new BNCoin({
+      denom: props.vault.denoms.primary,
+      amount: primaryAmount.toString(),
+    })
+    const secondaryBNCoin = new BNCoin({
+      denom: props.vault.denoms.secondary,
+      amount: secondaryAmount.toString(),
+    })
+    return [primaryBNCoin, secondaryBNCoin]
+  }, [primaryAmount, secondaryAmount, props.vault.denoms.primary, props.vault.denoms.secondary])
+
   const onChangePrimaryAmount = useCallback(
-    (amount: BigNumber) => setPrimaryAmount(amount),
+    (amount: BigNumber) => setPrimaryAmount(amount.decimalPlaces(0)),
     [setPrimaryAmount],
   )
   const onChangeSecondaryAmount = useCallback(
-    (amount: BigNumber) => setSecondaryAmount(amount),
+    (amount: BigNumber) => setSecondaryAmount(amount.decimalPlaces(0)),
     [setSecondaryAmount],
   )
 
@@ -84,6 +97,8 @@ export default function VaultModalContent(props: Props) {
                 primaryAsset={props.primaryAsset}
                 secondaryAsset={props.secondaryAsset}
                 onChangeBorrowings={onChangeBorrowings}
+                deposits={deposits}
+                vault={props.vault}
               />
             ),
             title: 'Borrow',

@@ -6,5 +6,6 @@ interface CommonSlice {
   enableAnimations: boolean
   isOpen: boolean
   selectedAccount: string | null
+  slippage: number
   status: import('@marsprotocol/wallet-connector').WalletConnectionStatus
 }

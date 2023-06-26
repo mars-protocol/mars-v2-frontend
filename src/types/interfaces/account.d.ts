@@ -1,15 +1,15 @@
 interface Account extends AccountChange {
   id: string
-  deposits: Coin[]
-  debts: Coin[]
-  lends: Coin[]
+  deposits: BNCoin[]
+  debts: BNCoin[]
+  lends: BNCoin[]
   vaults: import('types/generated/mars-mock-credit-manager/MarsMockCreditManager.types').ArrayOfVaultInfoResponse
 }
 
 interface AccountChange {
-  deposits?: Coin[]
-  debts?: Coin[]
-  lends?: Coin[]
+  deposits?: BNCoin[]
+  debts?: BNCoin[]
+  lends?: BNCoin[]
   vaults?: import('types/generated/mars-mock-credit-manager/MarsMockCreditManager.types').ArrayOfVaultInfoResponse
 }
 

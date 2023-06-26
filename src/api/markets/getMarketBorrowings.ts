@@ -19,8 +19,8 @@ export default async function getMarketBorrowings(): Promise<BorrowAsset[]> {
       ...asset,
       borrowRate: market.borrowRate ?? 0,
       liquidity: {
-        amount: amount,
-        value: BN(amount).times(price).toString(),
+        amount: BN(amount),
+        value: BN(amount).times(price),
       },
     }
   })

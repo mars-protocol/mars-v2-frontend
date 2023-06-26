@@ -14,6 +14,7 @@ import Button from 'components/Button'
 import { ExclamationMarkTriangle, TrashBin } from 'components/Icons'
 import { Tooltip } from 'components/Tooltip'
 import AssetImage from 'components/AssetImage'
+import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   amount: BigNumber
@@ -108,7 +109,7 @@ export default function TokenInput(props: Props) {
               </Text>
               <FormattedNumber
                 className='mr-1 text-xs text-white/50'
-                amount={props.max.toNumber()}
+                amount={props.max}
                 options={{ decimals: props.asset.decimals }}
               />
               <Button
@@ -127,8 +128,8 @@ export default function TokenInput(props: Props) {
         <div className='flex'>
           <DisplayCurrency
             isApproximation
-            className='inline pl-0.5 text-xs text-white/50'
-            coin={{ denom: props.asset.denom, amount: props.amount.toString() }}
+            className='inline pl-1 text-xs text-white/50'
+            coin={new BNCoin({ denom: props.asset.denom, amount: props.amount.toString() })}
           />
         </div>
       </div>

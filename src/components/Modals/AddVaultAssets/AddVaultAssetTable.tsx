@@ -6,27 +6,28 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import classNames from 'classnames'
 
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Text from 'components/Text'
-import useStore from 'store'
 import useAddVaultAssetTableColumns from 'components/Modals/AddVaultAssets/useAddVaultAssetTableColumns'
 
 interface Props {
   assets: BorrowAsset[]
+  selectedDenoms: string[]
   onChangeSelected: (denoms: string[]) => void
 }
 
 export default function AddVaultAssetTable(props: Props) {
-  const selectedDenoms = useStore((s) => s.addVaultBorrowingsModal?.selectedDenoms) || []
-  const defaultSelected = props.assets.reduce((acc, asset, index) => {
-    if (selectedDenoms.includes(asset.denom)) {
-      acc[index] = true
-    }
-    return acc
-  }, {} as { [key: number]: boolean })
+  const defaultSelected = useMemo(() => {
+    return props.assets.reduce((acc, asset, index) => {
+      if (props.selectedDenoms?.includes(asset.denom)) {
+        acc[index] = true
+      }
+      return acc
+    }, {} as { [key: number]: boolean })
+  }, [props.selectedDenoms, props.assets])
 
   const [sorting, setSorting] = useState<SortingState>([{ id: 'symbol', desc: false }])
   const [selected, setSelected] = useState<RowSelectionState>(defaultSelected)
@@ -46,11 +47,16 @@ export default function AddVaultAssetTable(props: Props) {
   })
 
   useEffect(() => {
-    const selectedDenoms = props.assets
+    const newSelectedDenoms = props.assets
       .filter((_, index) => selected[index])
       .map((asset) => asset.denom)
 
-    props.onChangeSelected(selectedDenoms)
+    if (
+      props.selectedDenoms.length === newSelectedDenoms.length &&
+      newSelectedDenoms.every((denom) => props.selectedDenoms.includes(denom))
+    )
+      return
+    props.onChangeSelected(newSelectedDenoms)
   }, [selected, props])
 
   return (

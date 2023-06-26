@@ -10,7 +10,7 @@ export async function AccountDebtTable(props: Props) {
   return debtData.map((debt) => {
     return (
       <p key={debt.denom}>
-        {debt.denom} {debt.amount}
+        {debt.denom} {debt.amount.toString()}
       </p>
     )
   })
