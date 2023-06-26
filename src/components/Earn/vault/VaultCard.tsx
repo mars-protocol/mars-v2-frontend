@@ -58,7 +58,7 @@ export default function VaultCard(props: Props) {
         />
         <TitleAndSubCell
           className='text-xs'
-          title={formatValue(props.vault.cap.used || '0', {
+          title={formatValue(props.vault.cap.used.integerValue().toNumber() || '0', {
             abbreviated: true,
             decimals: getAssetByDenom(props.vault.cap.denom)?.decimals,
           })}
@@ -66,7 +66,7 @@ export default function VaultCard(props: Props) {
         />
         <TitleAndSubCell
           className='text-xs'
-          title={formatValue(props.vault.cap.max || '0', {
+          title={formatValue(props.vault.cap.max.integerValue().toNumber() || '0', {
             abbreviated: true,
             decimals: getAssetByDenom(props.vault.cap.denom)?.decimals,
           })}

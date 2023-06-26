@@ -3,6 +3,7 @@ import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
+  Row,
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
@@ -18,15 +19,20 @@ import TitleAndSubCell from 'components/TitleAndSubCell'
 import { VAULT_DEPOSIT_BUFFER } from 'constants/vaults'
 import { getAssetByDenom } from 'utils/assets'
 import { convertPercentage, formatPercent, formatValue } from 'utils/formatters'
+import DisplayCurrency from 'components/DisplayCurrency'
+import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 
 type Props = {
-  data: Vault[]
+  data: Vault[] | DepositedVault[]
 }
 
 export const VaultTable = (props: Props) => {
   const [sorting, setSorting] = React.useState<SortingState>([])
 
-  const columns = React.useMemo<ColumnDef<Vault>[]>(
+  const baseCurrency = useStore((s) => s.baseCurrency)
+
+  const columns = React.useMemo<ColumnDef<Vault | DepositedVault>[]>(
     () => [
       {
         header: 'Vault',
@@ -35,6 +41,19 @@ export const VaultTable = (props: Props) => {
           return <VaultLogo vault={row.original} />
         },
       },
+      ...((props.data[0] as DepositedVault)?.values
+        ? [
+            {
+              header: 'Pos. Value',
+              cell: ({ row }: { row: Row<DepositedVault | Vault> }) => {
+                const vault = row.original as DepositedVault
+                const positionValue = vault.values.primary.plus(vault.values.secondary)
+                const coin = BNCoin.fromDenomAndBigNumber(baseCurrency.denom, positionValue)
+                return <DisplayCurrency coin={coin} className='text-xs' />
+              },
+            },
+          ]
+        : []),
       {
         accessorKey: 'apy',
         header: 'APY',
@@ -48,13 +67,12 @@ export const VaultTable = (props: Props) => {
         accessorKey: 'tvl',
         header: 'TVL',
         cell: ({ row }) => {
-          // TODO: Replace with DisplayCurrency
-          const symbol = getAssetByDenom(row.original.cap.denom)?.symbol ?? ''
-          return (
-            <Text size='xs'>
-              {formatValue(row.original.cap.used, { abbreviated: true, suffix: ` ${symbol}` })}
-            </Text>
-          )
+          const coin = new BNCoin({
+            denom: row.original.cap.denom,
+            amount: row.original.cap.used.toString(),
+          })
+
+          return <DisplayCurrency coin={coin} className='text-xs' />
         },
       },
       {
@@ -62,15 +80,21 @@ export const VaultTable = (props: Props) => {
         header: 'Depo. Cap',
         cell: ({ row }) => {
           const percent = convertPercentage(
-            (row.original.cap.used / (row.original.cap.max * VAULT_DEPOSIT_BUFFER)) * 100,
+            row.original.cap.used
+              .div(row.original.cap.max.times(VAULT_DEPOSIT_BUFFER))
+              .times(100)
+              .integerValue()
+              .toNumber(),
           )
           const decimals = getAssetByDenom(row.original.cap.denom)?.decimals ?? 6
 
-          // TODO: Replace with DisplayCurrency
           return (
             <TitleAndSubCell
               className='text-xs'
-              title={formatValue(row.original.cap.max, { abbreviated: true, decimals })}
+              title={formatValue(row.original.cap.max.integerValue().toNumber(), {
+                abbreviated: true,
+                decimals,
+              })}
               sub={`${percent}% Filled`}
             />
           )
@@ -89,7 +113,7 @@ export const VaultTable = (props: Props) => {
         ),
       },
     ],
-    [],
+    [baseCurrency.denom, props.data],
   )
 
   const table = useReactTable({

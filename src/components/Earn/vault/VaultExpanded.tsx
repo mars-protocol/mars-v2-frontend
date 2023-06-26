@@ -5,7 +5,7 @@ import Text from 'components/Text'
 import useStore from 'store'
 
 interface Props {
-  row: Row<Vault>
+  row: Row<Vault | DepositedVault>
   resetExpanded: (defaultState?: boolean | undefined) => void
 }
 
@@ -19,6 +19,11 @@ export default function VaultExpanded(props: Props) {
     })
   }
 
+  let isDeposited: boolean = false
+  if ((props.row.original as DepositedVault)?.amounts) {
+    isDeposited = true
+  }
+
   return (
     <tr
       key={props.row.id}
@@ -30,7 +35,7 @@ export default function VaultExpanded(props: Props) {
         !isExpanded && props.row.toggleExpanded()
       }}
     >
-      <td colSpan={5}>
+      <td colSpan={isDeposited ? 6 : 5}>
         <Text className='border-b border-white/10 px-4 py-5 '>Select bonding period</Text>
         <div className='grid grid-cols-3 md:[&>div:nth-child(3)]:border-none'>
           <VaultCard

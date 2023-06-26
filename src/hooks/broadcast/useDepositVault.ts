@@ -73,6 +73,7 @@ export default function useDepositVault(props: Props): { actions: Action[]; fee:
     props.vault.denoms.lp,
     debouncedGetMinLpToReceive,
     minLpToReceive,
+    slippage,
   ])
 
   const enterVaultActions: Action[] = useMemo(() => {

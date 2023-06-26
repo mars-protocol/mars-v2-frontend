@@ -27,8 +27,8 @@ interface VaultInfo {
   }
   cap: {
     denom: string
-    used: number
-    max: number
+    used: BigNumber
+    max: BigNumber
   }
 }
 
