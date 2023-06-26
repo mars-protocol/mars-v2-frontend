@@ -1,5 +1,5 @@
 import debounce from 'debounce-promise'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { hardcodedFee } from 'utils/constants'
 import getMinLpToReceive from 'api/vaults/getMinLpToReceive'
@@ -62,6 +62,7 @@ export default function useDepositVault(props: Props): { actions: Action[]; fee:
     const lpAmount = await debouncedGetMinLpToReceive(
       [secondaryCoin.toCoin(), primaryCoin.toCoin()],
       props.vault.denoms.lp,
+      slippage,
     )
 
     if (!lpAmount || lpAmount.eq(minLpToReceive)) return
