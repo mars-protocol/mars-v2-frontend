@@ -4,7 +4,7 @@ import AssetImage from 'components/AssetImage'
 import { getAssetByDenom } from 'utils/assets'
 
 interface Props {
-  vault: Vault
+  vault: VaultMetaData
 }
 
 export default function VaultLogo(props: Props) {

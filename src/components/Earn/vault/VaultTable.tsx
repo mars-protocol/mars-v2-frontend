@@ -22,9 +22,11 @@ import { convertPercentage, formatPercent, formatValue } from 'utils/formatters'
 import DisplayCurrency from 'components/DisplayCurrency'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
+import Loading from 'components/Loading'
 
 type Props = {
   data: Vault[] | DepositedVault[]
+  isLoading?: boolean
 }
 
 export const VaultTable = (props: Props) => {
@@ -32,8 +34,8 @@ export const VaultTable = (props: Props) => {
 
   const baseCurrency = useStore((s) => s.baseCurrency)
 
-  const columns = React.useMemo<ColumnDef<Vault | DepositedVault>[]>(
-    () => [
+  const columns = React.useMemo<ColumnDef<Vault | DepositedVault>[]>(() => {
+    return [
       {
         header: 'Vault',
         id: 'address',
@@ -41,6 +43,7 @@ export const VaultTable = (props: Props) => {
           return <VaultLogo vault={row.original} />
         },
       },
+
       ...((props.data[0] as DepositedVault)?.values
         ? [
             {
@@ -58,6 +61,7 @@ export const VaultTable = (props: Props) => {
         accessorKey: 'apy',
         header: 'APY',
         cell: ({ row }) => {
+          if (row.original.apy === null) return <Loading />
           return (
             <Text size='xs'>{row.original.apy ? formatPercent(row.original.apy, 2) : '-'}</Text>
           )
@@ -67,6 +71,7 @@ export const VaultTable = (props: Props) => {
         accessorKey: 'tvl',
         header: 'TVL',
         cell: ({ row }) => {
+          if (props.isLoading) return <Loading />
           const coin = new BNCoin({
             denom: row.original.cap.denom,
             amount: row.original.cap.used.toString(),
@@ -79,6 +84,8 @@ export const VaultTable = (props: Props) => {
         accessorKey: 'cap',
         header: 'Depo. Cap',
         cell: ({ row }) => {
+          if (props.isLoading) return <Loading />
+
           const percent = convertPercentage(
             row.original.cap.used
               .div(row.original.cap.max.times(VAULT_DEPOSIT_BUFFER))
@@ -104,21 +111,24 @@ export const VaultTable = (props: Props) => {
         accessorKey: 'details',
         enableSorting: false,
         header: 'Details',
-        cell: ({ row }) => (
-          <div className='flex items-center justify-end'>
-            <div className={classNames('w-4', row.getIsExpanded() && 'rotate-180')}>
-              <ChevronDown />
+        cell: ({ row }) => {
+          if (props.isLoading) return <Loading />
+
+          return (
+            <div className='flex items-center justify-end'>
+              <div className={classNames('w-4', row.getIsExpanded() && 'rotate-180')}>
+                <ChevronDown />
+              </div>
             </div>
-          </div>
-        ),
+          )
+        },
       },
-    ],
-    [baseCurrency.denom, props.data],
-  )
+    ]
+  }, [baseCurrency.denom, props.data, props.isLoading])
 
   const table = useReactTable({
     data: props.data,
-    columns,
+    columns: columns,
     state: {
       sorting,
     },
