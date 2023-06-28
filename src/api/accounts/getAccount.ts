@@ -1,4 +1,5 @@
 import { getCreditManagerQueryClient } from 'api/cosmwasm-client'
+import { BNCoin } from 'types/classes/BNCoin'
 import { Positions } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { resolvePositionResponse } from 'utils/resolvers'
 
