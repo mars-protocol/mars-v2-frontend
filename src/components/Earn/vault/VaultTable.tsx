@@ -30,7 +30,7 @@ type Props = {
 }
 
 export const VaultTable = (props: Props) => {
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [sorting, setSorting] = React.useState<SortingState>([{ id: 'name', desc: true }])
 
   const baseCurrency = useStore((s) => s.baseCurrency)
 
@@ -38,9 +38,18 @@ export const VaultTable = (props: Props) => {
     return [
       {
         header: 'Vault',
-        id: 'address',
+        accessorKey: 'name',
         cell: ({ row }) => {
-          return <VaultLogo vault={row.original} />
+          return (
+            <div className='flex'>
+              <VaultLogo vault={row.original} />
+              <TitleAndSubCell
+                className='ml-2 mr-2 text-left'
+                title={`${row.original.name} - (${row.original.lockup.duration} ${row.original.lockup.timeframe})`}
+                sub={row.original.provider}
+              />
+            </div>
+          )
         },
       },
 
@@ -97,7 +106,6 @@ export const VaultTable = (props: Props) => {
 
           return (
             <TitleAndSubCell
-              className='text-xs'
               title={formatValue(row.original.cap.max.integerValue().toNumber(), {
                 abbreviated: true,
                 decimals,
@@ -156,7 +164,7 @@ export const VaultTable = (props: Props) => {
                   <div
                     className={classNames(
                       'flex',
-                      header.id === 'symbol' ? 'justify-start' : 'justify-end',
+                      header.id === 'name' ? 'justify-start' : 'justify-end',
                       'align-center',
                     )}
                   >
