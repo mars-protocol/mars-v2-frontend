@@ -1,6 +1,6 @@
 import { Row } from '@tanstack/react-table'
-import Button from 'components/Button'
 
+import Button from 'components/Button'
 import { LockUnlocked, Plus } from 'components/Icons'
 import useStore from 'store'
 
