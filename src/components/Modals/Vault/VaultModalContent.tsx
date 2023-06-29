@@ -60,6 +60,8 @@ export default function VaultModalContent(props: Props) {
     if (isOpen[0] && props.isDeposited)
       return 'The amounts you enter below will be added to your current position.'
 
+    if (isOpen[0]) return null
+
     return (
       <VaultDepositSubTitle
         primaryAmount={primaryAmount}
@@ -73,6 +75,8 @@ export default function VaultModalContent(props: Props) {
   function getBorrowingsSubTitle() {
     if (isOpen[1] && props.isDeposited)
       return 'The amounts you enter below will be added to your current position.'
+
+    if (isOpen[1]) return null
 
     return <VaultBorrowingsSubTitle borrowings={borrowings} />
   }

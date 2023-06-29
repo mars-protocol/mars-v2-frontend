@@ -54,6 +54,7 @@ function VaultModal(props: Props) {
         primaryAsset={props.primaryAsset}
         secondaryAsset={props.secondaryAsset}
         account={props.currentAccount}
+        isDeposited={props.modal.isDeposited}
       />
     </Modal>
   )
