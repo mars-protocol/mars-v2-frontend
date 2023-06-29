@@ -76,3 +76,21 @@ function Fallback() {
 
   return <VaultTable data={mockVaults} isLoading />
 }
+
+export function AvailableVaults() {
+  return (
+    <Card className='h-fit w-full bg-white/5' title='Available vaults'>
+      <Suspense fallback={<Fallback />}>
+        <Content type='available' />
+      </Suspense>
+    </Card>
+  )
+}
+
+export function DepositedVaults() {
+  return (
+    <Suspense fallback={null}>
+      <Content type='deposited' />
+    </Suspense>
+  )
+}
