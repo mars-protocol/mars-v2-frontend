@@ -136,20 +136,8 @@ export default function createBroadcastSlice(
         },
       }
       const response = await get().executeMsg({ msg, fee: options.fee })
-      if (response.result) {
-        set({
-          toast: {
-            message: `Deposited into vault`,
-          },
-        })
-      } else {
-        set({
-          toast: {
-            message: response.error ?? `Transaction failed: ${response.error}`,
-            isError: true,
-          },
-        })
-      }
+
+      handleResponseMessages(response, `Deposited into vault`)
       return !!response.result
     },
     withdraw: async (options: { fee: StdFee; accountId: string; coin: Coin }) => {

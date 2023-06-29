@@ -12,10 +12,10 @@ interface Props {
 export default function TitleAndSubCell(props: Props) {
   return (
     <div className={classNames('flex flex-col gap-[0.5]', props.containerClassName)}>
-      <Text size='sm' className={props.className}>
+      <Text size='xs' className={props.className}>
         {props.title}
       </Text>
-      <Text size='sm' className={classNames('text-white/50', props.className)}>
+      <Text size='xs' className={classNames('text-white/50', props.className)}>
         {props.sub}
       </Text>
     </div>

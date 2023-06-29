@@ -1,11 +1,11 @@
 import { Row } from '@tanstack/react-table'
+import Button from 'components/Button'
 
-import VaultCard from 'components/Earn/vault/VaultCard'
-import Text from 'components/Text'
+import { LockUnlocked, Plus } from 'components/Icons'
 import useStore from 'store'
 
 interface Props {
-  row: Row<Vault>
+  row: Row<Vault | DepositedVault>
   resetExpanded: (defaultState?: boolean | undefined) => void
 }
 
@@ -19,6 +19,11 @@ export default function VaultExpanded(props: Props) {
     })
   }
 
+  let isDeposited: boolean = false
+  if ((props.row.original as DepositedVault)?.amounts) {
+    isDeposited = true
+  }
+
   return (
     <tr
       key={props.row.id}
@@ -30,27 +35,26 @@ export default function VaultExpanded(props: Props) {
         !isExpanded && props.row.toggleExpanded()
       }}
     >
-      <td colSpan={5}>
-        <Text className='border-b border-white/10 px-4 py-5 '>Select bonding period</Text>
-        <div className='grid grid-cols-3 md:[&>div:nth-child(3)]:border-none'>
-          <VaultCard
-            vault={props.row.original}
-            title='1 day unbonding'
-            subtitle='$0 deposited'
-            unbondingPeriod={1}
-          />
-          <VaultCard
-            vault={props.row.original}
-            title='7 day unbonding'
-            subtitle='$0 deposited'
-            unbondingPeriod={7}
-          />
-          <VaultCard
-            vault={props.row.original}
-            title='14 day unbonding'
-            subtitle='$0 deposited'
-            unbondingPeriod={14}
-          />
+      <td colSpan={isDeposited ? 6 : 5}>
+        <div className='align-center flex justify-end gap-3 p-4'>
+          {isDeposited ? (
+            <>
+              <Button color='secondary' leftIcon={<Plus className='w-3' />}>
+                Deposit more
+              </Button>
+              <Button color='tertiary' leftIcon={<LockUnlocked />}>
+                Unlock to withdraw
+              </Button>
+            </>
+          ) : (
+            <Button
+              onClick={enterVaultHandler}
+              color='tertiary'
+              leftIcon={<Plus className='w-3' />}
+            >
+              Deposit
+            </Button>
+          )}
         </div>
       </td>
     </tr>

@@ -17,6 +17,8 @@ import { ASSETS } from 'constants/assets'
 import useStore from 'store'
 import { convertToDisplayAmount, demagnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+import { BNCoin } from 'types/classes/BNCoin'
+import usePrices from 'hooks/usePrices'
 
 interface Props {
   data: Account
@@ -24,7 +26,8 @@ interface Props {
 
 export const AccountBalancesTable = (props: Props) => {
   const displayCurrency = useStore((s) => s.displayCurrency)
-  const prices = useStore((s) => s.prices)
+  const { data: prices } = usePrices()
+
   const [sorting, setSorting] = React.useState<SortingState>([])
 
   const balanceData = React.useMemo<AccountBalanceRow[]>(() => {
@@ -41,7 +44,7 @@ export const AccountBalancesTable = (props: Props) => {
         amount: deposit.amount,
         size: demagnify(deposit.amount, asset),
         value: convertToDisplayAmount(
-          { amount: deposit.amount, denom: deposit.denom },
+          new BNCoin({ amount: deposit.amount, denom: deposit.denom }),
           displayCurrency,
           prices,
         ).toString(),
@@ -58,7 +61,7 @@ export const AccountBalancesTable = (props: Props) => {
         amount: lending.amount,
         size: demagnify(lending.amount, asset),
         value: convertToDisplayAmount(
-          { amount: lending.amount, denom: lending.denom },
+          new BNCoin({ amount: lending.amount, denom: lending.denom }),
           displayCurrency,
           prices,
         ).toString(),
@@ -89,12 +92,8 @@ export const AccountBalancesTable = (props: Props) => {
         accessorKey: 'value',
         id: 'value',
         cell: ({ row }) => {
-          return (
-            <DisplayCurrency
-              coin={{ denom: row.original.denom, amount: row.original.amount }}
-              className='text-right text-xs'
-            />
-          )
+          const coin = new BNCoin({ denom: row.original.denom, amount: row.original.amount })
+          return <DisplayCurrency coin={coin} className='text-right text-xs' />
         },
       },
       {

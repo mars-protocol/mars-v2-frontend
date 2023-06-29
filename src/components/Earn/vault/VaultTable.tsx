@@ -3,6 +3,7 @@ import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
+  Row,
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
@@ -18,27 +19,58 @@ import TitleAndSubCell from 'components/TitleAndSubCell'
 import { VAULT_DEPOSIT_BUFFER } from 'constants/vaults'
 import { getAssetByDenom } from 'utils/assets'
 import { convertPercentage, formatPercent, formatValue } from 'utils/formatters'
+import DisplayCurrency from 'components/DisplayCurrency'
+import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
+import Loading from 'components/Loading'
 
 type Props = {
-  data: Vault[]
+  data: Vault[] | DepositedVault[]
+  isLoading?: boolean
 }
 
 export const VaultTable = (props: Props) => {
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [sorting, setSorting] = React.useState<SortingState>([{ id: 'name', desc: true }])
 
-  const columns = React.useMemo<ColumnDef<Vault>[]>(
-    () => [
+  const baseCurrency = useStore((s) => s.baseCurrency)
+
+  const columns = React.useMemo<ColumnDef<Vault | DepositedVault>[]>(() => {
+    return [
       {
         header: 'Vault',
-        id: 'address',
+        accessorKey: 'name',
         cell: ({ row }) => {
-          return <VaultLogo vault={row.original} />
+          return (
+            <div className='flex'>
+              <VaultLogo vault={row.original} />
+              <TitleAndSubCell
+                className='ml-2 mr-2 text-left'
+                title={`${row.original.name} - (${row.original.lockup.duration} ${row.original.lockup.timeframe})`}
+                sub={row.original.provider}
+              />
+            </div>
+          )
         },
       },
+
+      ...((props.data[0] as DepositedVault)?.values
+        ? [
+            {
+              header: 'Pos. Value',
+              cell: ({ row }: { row: Row<DepositedVault | Vault> }) => {
+                const vault = row.original as DepositedVault
+                const positionValue = vault.values.primary.plus(vault.values.secondary)
+                const coin = BNCoin.fromDenomAndBigNumber(baseCurrency.denom, positionValue)
+                return <DisplayCurrency coin={coin} className='text-xs' />
+              },
+            },
+          ]
+        : []),
       {
         accessorKey: 'apy',
         header: 'APY',
         cell: ({ row }) => {
+          if (row.original.apy === null) return <Loading />
           return (
             <Text size='xs'>{row.original.apy ? formatPercent(row.original.apy, 2) : '-'}</Text>
           )
@@ -48,29 +80,36 @@ export const VaultTable = (props: Props) => {
         accessorKey: 'tvl',
         header: 'TVL',
         cell: ({ row }) => {
-          // TODO: Replace with DisplayCurrency
-          const symbol = getAssetByDenom(row.original.cap.denom)?.symbol ?? ''
-          return (
-            <Text size='xs'>
-              {formatValue(row.original.cap.used, { abbreviated: true, suffix: ` ${symbol}` })}
-            </Text>
-          )
+          if (props.isLoading) return <Loading />
+          const coin = new BNCoin({
+            denom: row.original.cap.denom,
+            amount: row.original.cap.used.toString(),
+          })
+
+          return <DisplayCurrency coin={coin} className='text-xs' />
         },
       },
       {
         accessorKey: 'cap',
         header: 'Depo. Cap',
         cell: ({ row }) => {
+          if (props.isLoading) return <Loading />
+
           const percent = convertPercentage(
-            (row.original.cap.used / (row.original.cap.max * VAULT_DEPOSIT_BUFFER)) * 100,
+            row.original.cap.used
+              .div(row.original.cap.max.times(VAULT_DEPOSIT_BUFFER))
+              .times(100)
+              .integerValue()
+              .toNumber(),
           )
           const decimals = getAssetByDenom(row.original.cap.denom)?.decimals ?? 6
 
-          // TODO: Replace with DisplayCurrency
           return (
             <TitleAndSubCell
-              className='text-xs'
-              title={formatValue(row.original.cap.max, { abbreviated: true, decimals })}
+              title={formatValue(row.original.cap.max.integerValue().toNumber(), {
+                abbreviated: true,
+                decimals,
+              })}
               sub={`${percent}% Filled`}
             />
           )
@@ -80,21 +119,24 @@ export const VaultTable = (props: Props) => {
         accessorKey: 'details',
         enableSorting: false,
         header: 'Details',
-        cell: ({ row }) => (
-          <div className='flex items-center justify-end'>
-            <div className={classNames('w-4', row.getIsExpanded() && 'rotate-180')}>
-              <ChevronDown />
+        cell: ({ row }) => {
+          if (props.isLoading) return <Loading />
+
+          return (
+            <div className='flex items-center justify-end'>
+              <div className={classNames('w-4', row.getIsExpanded() && 'rotate-180')}>
+                <ChevronDown />
+              </div>
             </div>
-          </div>
-        ),
+          )
+        },
       },
-    ],
-    [],
-  )
+    ]
+  }, [baseCurrency.denom, props.data, props.isLoading])
 
   const table = useReactTable({
     data: props.data,
-    columns,
+    columns: columns,
     state: {
       sorting,
     },
@@ -122,7 +164,7 @@ export const VaultTable = (props: Props) => {
                   <div
                     className={classNames(
                       'flex',
-                      header.id === 'symbol' ? 'justify-start' : 'justify-end',
+                      header.id === 'name' ? 'justify-start' : 'justify-end',
                       'align-center',
                     )}
                   >

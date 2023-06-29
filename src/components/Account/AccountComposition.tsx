@@ -5,7 +5,9 @@ import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { ArrowRight } from 'components/Icons'
 import Text from 'components/Text'
+import usePrices from 'hooks/usePrices'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 import {
   calculateAccountApr,
   calculateAccountBorrowRate,
@@ -30,7 +32,7 @@ interface ItemProps {
 }
 
 export default function AccountComposition(props: Props) {
-  const prices = useStore((s) => s.prices)
+  const { data: prices } = usePrices()
   const balance = calculateAccountDeposits(props.account, prices)
   const balanceChange = props.change ? calculateAccountDeposits(props.change, prices) : BN(0)
   const debtBalance = calculateAccountDebt(props.account, prices)
@@ -96,7 +98,7 @@ function Item(props: ItemProps) {
           />
         ) : (
           <DisplayCurrency
-            coin={{ amount: props.current.toString(), denom: baseCurrency.denom }}
+            coin={new BNCoin({ amount: props.current.toString(), denom: baseCurrency.denom })}
             className='text-sm'
           />
         )}
@@ -113,7 +115,7 @@ function Item(props: ItemProps) {
               />
             ) : (
               <DisplayCurrency
-                coin={{ amount: props.change.toString(), denom: baseCurrency.denom }}
+                coin={new BNCoin({ amount: props.change.toString(), denom: baseCurrency.denom })}
                 className={classNames('text-sm', increase ? 'text-profit' : 'text-loss')}
               />
             )}

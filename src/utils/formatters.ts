@@ -156,11 +156,7 @@ export function demagnify(amount: number | string | BigNumber, asset: Asset) {
   return value.isZero() ? 0 : value.shiftedBy(-1 * asset.decimals).toNumber()
 }
 
-export function convertToDisplayAmount(
-  coin: BNCoin | Coin,
-  displayCurrency: Asset,
-  prices: Coin[],
-) {
+export function convertToDisplayAmount(coin: BNCoin, displayCurrency: Asset, prices: Coin[]) {
   const price = prices.find((price) => price.denom === coin.denom)
   const asset = getEnabledMarketAssets().find((asset) => asset.denom === coin.denom)
   const displayPrice = prices.find((price) => price.denom === displayCurrency.denom)

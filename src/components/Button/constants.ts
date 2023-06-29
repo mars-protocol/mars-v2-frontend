@@ -43,9 +43,9 @@ export const buttonSizeClasses = {
 }
 
 export const buttonPaddingClasses = {
-  small: 'px-2.5 py-1.5 min-h-[32px]',
-  medium: 'px-3 py-2 min-h-[40px]',
-  large: 'px-3.5 py-2.5 min-h-[56px]',
+  small: 'px-4 py-1.5 min-h-[32px]',
+  medium: 'px-4 py-2 min-h-[40px]',
+  large: 'px-4 py-2.5 min-h-[56px]',
 }
 
 export const buttonVariantClasses = {

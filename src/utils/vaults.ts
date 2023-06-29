@@ -49,14 +49,14 @@ export function getVaultDepositCoinsAndValue(
     return prev.plus(bnCoin.amount.times(price))
   }, BN(0))
 
-  const primaryDepositAmount = getTokenPrice(vault.denoms.primary, prices)
-    .times(totalValue)
-    .div(2)
+  const halfValue = totalValue.div(2)
+
+  const primaryDepositAmount = halfValue
+    .div(getTokenPrice(vault.denoms.primary, prices))
     .integerValue()
 
-  const secondaryDepositAmount = getTokenPrice(vault.denoms.secondary, prices)
-    .times(totalValue)
-    .div(2)
+  const secondaryDepositAmount = halfValue
+    .div(getTokenPrice(vault.denoms.secondary, prices))
     .integerValue()
 
   return {

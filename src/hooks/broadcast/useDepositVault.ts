@@ -27,7 +27,13 @@ export default function useDepositVault(props: Props): { actions: Action[]; fee:
   const debouncedGetMinLpToReceive = useMemo(() => debounce(getMinLpToReceive, 500), [])
 
   const { primaryCoin, secondaryCoin, totalValue } = useMemo(
-    () => getVaultDepositCoinsAndValue(props.vault, props.deposits, props.borrowings, prices),
+    () =>
+      getVaultDepositCoinsAndValue(
+        props.vault,
+        props.deposits.filter((borrowing) => borrowing.amount.gt(0)),
+        props.borrowings.filter((borrowing) => borrowing.amount.gt(0)),
+        prices,
+      ),
     [props.deposits, props.borrowings, props.vault, prices],
   )
 
@@ -41,8 +47,8 @@ export default function useDepositVault(props: Props): { actions: Action[]; fee:
     () =>
       getVaultSwapActions(
         props.vault,
-        props.deposits,
-        props.borrowings,
+        props.deposits.filter((borrowing) => borrowing.amount.gt(0)),
+        props.borrowings.filter((borrowing) => borrowing.amount.gt(0)),
         prices,
         slippage,
         totalValue,
@@ -56,9 +62,10 @@ export default function useDepositVault(props: Props): { actions: Action[]; fee:
     const lpAmount = await debouncedGetMinLpToReceive(
       [secondaryCoin.toCoin(), primaryCoin.toCoin()],
       props.vault.denoms.lp,
+      slippage,
     )
 
-    if (!lpAmount || lpAmount === minLpToReceive) return
+    if (!lpAmount || lpAmount.eq(minLpToReceive)) return
     setMinLpToReceive(lpAmount)
   }, [
     primaryCoin,
@@ -66,6 +73,7 @@ export default function useDepositVault(props: Props): { actions: Action[]; fee:
     props.vault.denoms.lp,
     debouncedGetMinLpToReceive,
     minLpToReceive,
+    slippage,
   ])
 
   const enterVaultActions: Action[] = useMemo(() => {

@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+import { Suspense, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 
 import Card from 'components/Card'
@@ -18,28 +18,28 @@ function Content(props: Props) {
 
   const marketAssets = getEnabledMarketAssets()
 
-  function getBorrowAssets() {
-    return marketAssets.reduce(
-      (prev: { available: BorrowAsset[]; active: BorrowAssetActive[] }, curr) => {
-        const borrow = borrowData.find((borrow) => borrow.denom === curr.denom)
-        if (borrow) {
-          const debt = debtData?.find((debt) => debt.denom === curr.denom)
-          if (debt) {
-            prev.active.push({
-              ...borrow,
-              debt: debt.amount,
-            })
-          } else {
-            prev.available.push(borrow)
+  const { available, active } = useMemo(
+    () =>
+      marketAssets.reduce(
+        (prev: { available: BorrowAsset[]; active: BorrowAssetActive[] }, curr) => {
+          const borrow = borrowData.find((borrow) => borrow.denom === curr.denom)
+          if (borrow) {
+            const debt = debtData?.find((debt) => debt.denom === curr.denom)
+            if (debt) {
+              prev.active.push({
+                ...borrow,
+                debt: debt.amount,
+              })
+            } else {
+              prev.available.push(borrow)
+            }
           }
-        }
-        return prev
-      },
-      { available: [], active: [] },
-    )
-  }
-
-  const { available, active } = getBorrowAssets()
+          return prev
+        },
+        { available: [], active: [] },
+      ),
+    [marketAssets, borrowData, debtData],
+  )
 
   const assets = props.type === 'active' ? active : available
 

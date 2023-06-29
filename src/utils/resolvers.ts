@@ -1,3 +1,4 @@
+import { BNCoin } from 'types/classes/BNCoin'
 import { Positions as CreditManagerPosition } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { Market as RedBankMarket } from 'types/generated/mars-mock-red-bank/MarsMockRedBank.types'
 
@@ -8,9 +9,9 @@ export function resolvePositionResponses(responses: CreditManagerPosition[]): Ac
 export function resolvePositionResponse(response: CreditManagerPosition): Account {
   return {
     id: response.account_id,
-    deposits: response.deposits,
-    debts: response.debts,
-    lends: response.lends,
+    debts: response.debts.map((debt) => new BNCoin(debt)),
+    lends: response.lends.map((lend) => new BNCoin(lend)),
+    deposits: response.deposits.map((deposit) => new BNCoin(deposit)),
     vaults: response.vaults,
   }
 }
