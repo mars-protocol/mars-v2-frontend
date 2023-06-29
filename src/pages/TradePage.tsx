@@ -1,12 +1,12 @@
 import OrderBook from 'components/Trade/OrderBook'
-import Trade from 'components/Trade/Trade'
+import TradeModule from 'components/Trade/TradeModule'
 import TradingView from 'components/Trade/TradingView'
 
 export default function TradePage() {
   return (
-    <div className='grid w-full grid-flow-row grid-cols-3 grid-rows-2 gap-4'>
+    <div className=' grid w-full grid-cols-[346px_auto] gap-4'>
+      <TradeModule />
       <TradingView />
-      <Trade />
       <OrderBook />
     </div>
   )
