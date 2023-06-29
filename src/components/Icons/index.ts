@@ -34,6 +34,7 @@ export { default as SortAsc } from 'components/Icons/SortAsc.svg'
 export { default as SortDesc } from 'components/Icons/SortDesc.svg'
 export { default as SortNone } from 'components/Icons/SortNone.svg'
 export { default as Subtract } from 'components/Icons/Subtract.svg'
+export { default as SwapIcon } from 'components/Icons/SwapIcon.svg'
 export { default as TrashBin } from 'components/Icons/TrashBin.svg'
 export { default as Wallet } from 'components/Icons/Wallet.svg'
 // @endindex
