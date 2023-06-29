@@ -157,6 +157,7 @@ export default function NumberInput(props: Props) {
         props.className,
       )}
       style={props.style}
+      placeholder='0'
     />
   )
 }

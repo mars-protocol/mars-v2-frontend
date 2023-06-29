@@ -22,7 +22,7 @@ jest.mock('hooks/useMarketAssets', () =>
   })),
 )
 
-jest.mock('hooks/broadcast/useDepositVault', () => jest.fn(() => ({})))
+jest.mock('hooks/broadcast/useDepositVault', () => jest.fn(() => ({ actions: [] })))
 
 jest.mock('components/DisplayCurrency')
 

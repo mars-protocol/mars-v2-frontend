@@ -1,3 +1,4 @@
+import { render } from '@testing-library/react'
 import classNames from 'classnames'
 
 import { ChevronDown, ChevronRight } from 'components/Icons'
@@ -12,14 +13,12 @@ export interface Item {
   title: string
   renderContent: () => React.ReactNode
   isOpen?: boolean
-  subTitle?: string | React.ReactNode
+  renderSubTitle: () => React.ReactNode
   toggleOpen: (index: number) => void
 }
 
 export default function AccordionContent(props: Props) {
-  const { title, renderContent, isOpen, subTitle, toggleOpen } = props.item
-
-  const shouldShowSubTitle = subTitle && !isOpen
+  const { title, renderContent, isOpen, renderSubTitle, toggleOpen } = props.item
 
   return (
     <div key={title} className='group border-b-white/10 [&:not(:last-child)]:border-b'>
@@ -34,11 +33,9 @@ export default function AccordionContent(props: Props) {
       >
         <div>
           <Text>{title}</Text>
-          {shouldShowSubTitle && (
-            <Text size='xs' className='mt-1 text-white/60'>
-              {subTitle}
-            </Text>
-          )}
+          <Text size='xs' className='mt-1 text-white/60'>
+            {renderSubTitle()}
+          </Text>
         </div>
         <div className='block pr-1 group-[[open]]:hidden'>
           {isOpen ? <ChevronDown /> : <ChevronRight />}

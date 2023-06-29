@@ -13,10 +13,11 @@ import VaultDepositSubTitle from 'components/Modals/Vault/VaultDepositsSubTitle'
 import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
-  vault: Vault
+  vault: Vault | DepositedVault
   primaryAsset: Asset
   secondaryAsset: Asset
   account: Account
+  isDeposited?: boolean
 }
 
 export default function VaultModalContent(props: Props) {
@@ -55,6 +56,31 @@ export default function VaultModalContent(props: Props) {
     [setIsCustomRatio],
   )
 
+  function getDepositSubTitle() {
+    if (isOpen[0] && props.isDeposited)
+      return 'The amounts you enter below will be added to your current position.'
+
+    if (isOpen[0]) return null
+
+    return (
+      <VaultDepositSubTitle
+        primaryAmount={primaryAmount}
+        secondaryAmount={secondaryAmount}
+        primaryAsset={props.primaryAsset}
+        secondaryAsset={props.secondaryAsset}
+      />
+    )
+  }
+
+  function getBorrowingsSubTitle() {
+    if (isOpen[1] && props.isDeposited)
+      return 'The amounts you enter below will be added to your current position.'
+
+    if (isOpen[1]) return null
+
+    return <VaultBorrowingsSubTitle borrowings={borrowings} />
+  }
+
   return (
     <div className='flex flex-grow items-start gap-6 p-6'>
       <Accordion
@@ -76,14 +102,7 @@ export default function VaultModalContent(props: Props) {
               />
             ),
             title: 'Deposit',
-            subTitle: (
-              <VaultDepositSubTitle
-                primaryAmount={primaryAmount}
-                secondaryAmount={secondaryAmount}
-                primaryAsset={props.primaryAsset}
-                secondaryAsset={props.secondaryAsset}
-              />
-            ),
+            renderSubTitle: getDepositSubTitle,
             isOpen: isOpen[0],
             toggleOpen: (index: number) => toggleOpen(index),
           },
@@ -102,7 +121,7 @@ export default function VaultModalContent(props: Props) {
               />
             ),
             title: 'Borrow',
-            subTitle: <VaultBorrowingsSubTitle borrowings={borrowings} />,
+            renderSubTitle: getBorrowingsSubTitle,
             isOpen: isOpen[1],
             toggleOpen: (index: number) => toggleOpen(index),
           },

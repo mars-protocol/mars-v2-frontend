@@ -24,36 +24,31 @@ export default function useDepositVault(props: Props): { actions: Action[]; fee:
   const { data: prices } = usePrices()
   const slippage = useStore((s) => s.slippage)
 
+  const borrowings: BNCoin[] = useMemo(
+    () => props.borrowings.filter((borrowing) => borrowing.amount.gt(0)),
+    [props.borrowings],
+  )
+  const deposits: BNCoin[] = useMemo(
+    () => props.deposits.filter((deposit) => deposit.amount.gt(0)),
+    [props.deposits],
+  )
+
   const debouncedGetMinLpToReceive = useMemo(() => debounce(getMinLpToReceive, 500), [])
 
   const { primaryCoin, secondaryCoin, totalValue } = useMemo(
-    () =>
-      getVaultDepositCoinsAndValue(
-        props.vault,
-        props.deposits.filter((borrowing) => borrowing.amount.gt(0)),
-        props.borrowings.filter((borrowing) => borrowing.amount.gt(0)),
-        prices,
-      ),
-    [props.deposits, props.borrowings, props.vault, prices],
+    () => getVaultDepositCoinsAndValue(props.vault, deposits, borrowings, prices),
+    [deposits, borrowings, props.vault, prices],
   )
 
   const borrowActions: Action[] = useMemo(() => {
-    return props.borrowings.map((bnCoin) => ({
+    return borrowings.map((bnCoin) => ({
       borrow: bnCoin.toCoin(),
     }))
-  }, [props.borrowings])
+  }, [borrowings])
 
   const swapActions: Action[] = useMemo(
-    () =>
-      getVaultSwapActions(
-        props.vault,
-        props.deposits.filter((borrowing) => borrowing.amount.gt(0)),
-        props.borrowings.filter((borrowing) => borrowing.amount.gt(0)),
-        prices,
-        slippage,
-        totalValue,
-      ),
-    [totalValue, prices, props.vault, props.deposits, props.borrowings, slippage],
+    () => getVaultSwapActions(props.vault, deposits, borrowings, prices, slippage, totalValue),
+    [totalValue, prices, props.vault, deposits, borrowings, slippage],
   )
 
   useMemo(async () => {
@@ -77,6 +72,8 @@ export default function useDepositVault(props: Props): { actions: Action[]; fee:
   ])
 
   const enterVaultActions: Action[] = useMemo(() => {
+    if (primaryCoin.amount.isZero() || secondaryCoin.amount.isZero()) return []
+
     return getEnterVaultActions(props.vault, primaryCoin, secondaryCoin, minLpToReceive)
   }, [props.vault, primaryCoin, secondaryCoin, minLpToReceive])
 

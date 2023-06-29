@@ -1,6 +1,6 @@
 import { Row } from '@tanstack/react-table'
-import Button from 'components/Button'
 
+import Button from 'components/Button'
 import { LockUnlocked, Plus } from 'components/Icons'
 import useStore from 'store'
 
@@ -14,6 +14,16 @@ export default function VaultExpanded(props: Props) {
     useStore.setState({
       vaultModal: {
         vault: props.row.original,
+        selectedBorrowDenoms: [props.row.original.denoms.secondary],
+      },
+    })
+  }
+
+  function depositMoreHandler() {
+    useStore.setState({
+      vaultModal: {
+        vault: props.row.original,
+        isDeposited: true,
         selectedBorrowDenoms: [props.row.original.denoms.secondary],
       },
     })
@@ -39,7 +49,11 @@ export default function VaultExpanded(props: Props) {
         <div className='align-center flex justify-end gap-3 p-4'>
           {isDeposited ? (
             <>
-              <Button color='secondary' leftIcon={<Plus className='w-3' />}>
+              <Button
+                onClick={depositMoreHandler}
+                color='secondary'
+                leftIcon={<Plus className='w-3' />}
+              >
                 Deposit more
               </Button>
               <Button color='tertiary' leftIcon={<LockUnlocked />}>

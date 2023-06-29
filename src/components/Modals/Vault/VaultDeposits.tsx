@@ -50,12 +50,12 @@ export default function VaultDeposit(props: Props) {
     [primaryValue, secondaryValue],
   )
 
-  const primaryValuePercentage = useMemo(
-    () => primaryValue.div(totalValue).times(100).decimalPlaces(2).toNumber() || 50,
-    [primaryValue, totalValue],
-  )
+  const primaryValuePercentage = useMemo(() => {
+    const value = primaryValue.div(totalValue).times(100).decimalPlaces(2).toNumber()
+    return isNaN(value) ? 50 : value
+  }, [primaryValue, totalValue])
   const secondaryValuePercentage = useMemo(
-    () => new BigNumber(100).minus(primaryValuePercentage).decimalPlaces(2).toNumber() || 50,
+    () => new BigNumber(100).minus(primaryValuePercentage).integerValue(2).toNumber() ?? 50,
     [primaryValuePercentage],
   )
 

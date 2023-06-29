@@ -40,6 +40,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   const baseCurrency = useStore((s) => s.baseCurrency)
   const vaultModal = useStore((s) => s.vaultModal)
   const depositIntoVault = useStore((s) => s.depositIntoVault)
+  const [isConfirming, setIsConfirming] = useState(false)
 
   const { actions: depositActions, fee: depositFee } = useDepositVault({
     vault: props.vault,
@@ -149,8 +150,17 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
     })
   }
 
-  function onConfirm() {
-    depositIntoVault({ fee: depositFee, accountId: props.account.id, actions: depositActions })
+  async function onConfirm() {
+    setIsConfirming(true)
+    const isSuccess = await depositIntoVault({
+      fee: depositFee,
+      accountId: props.account.id,
+      actions: depositActions,
+    })
+    setIsConfirming(false)
+    if (isSuccess) {
+      useStore.setState({ vaultModal: null })
+    }
   }
 
   return (
@@ -207,7 +217,14 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
           )
         })}
       </div>
-      <Button onClick={onConfirm} color='primary' text='Deposit' rightIcon={<ArrowRight />} />
+      <Button
+        onClick={onConfirm}
+        color='primary'
+        text='Deposit'
+        rightIcon={<ArrowRight />}
+        showProgressIndicator={isConfirming}
+        disabled={!depositActions.length}
+      />
     </div>
   )
 }

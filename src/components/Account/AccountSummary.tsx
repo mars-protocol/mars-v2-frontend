@@ -54,6 +54,7 @@ export default function AccountSummary(props: Props) {
               ) : null,
             isOpen: isOpen[0],
             toggleOpen: (index: number) => toggleOpen(index),
+            renderSubTitle: () => <></>,
           },
           {
             title: 'Balances',
@@ -61,6 +62,7 @@ export default function AccountSummary(props: Props) {
               props.account ? <AccountBalancesTable data={props.account} /> : null,
             isOpen: isOpen[1],
             toggleOpen: (index: number) => toggleOpen(index),
+            renderSubTitle: () => <></>,
           },
         ]}
         allowMultipleOpen
