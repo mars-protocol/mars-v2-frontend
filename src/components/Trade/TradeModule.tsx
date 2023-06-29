@@ -22,9 +22,13 @@ function Fallback() {
   return <Loading className='h-4 w-50' />
 }
 
-export default function Trade() {
+export default function TradeModule() {
   return (
-    <Card className='h-full w-full bg-white/5' title='Trade Module' contentClassName='px-4 py-6'>
+    <Card
+      className='row-span-2 h-full w-full bg-white/5'
+      title='Trade Module'
+      contentClassName='px-4 py-6'
+    >
       <Suspense fallback={<Fallback />}>
         <Content />
       </Suspense>

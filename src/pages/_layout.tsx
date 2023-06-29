@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import { useLocation } from 'react-router-dom'
 
 import AccountDetails from 'components/Account/AccountDetails'
 import Background from 'components/Background'
@@ -9,6 +10,9 @@ import PageMetadata from 'components/PageMetadata'
 import Toaster from 'components/Toaster'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const location = useLocation()
+  const isFullWidth = location.pathname.includes('trade')
+
   return (
     <>
       <PageMetadata />
@@ -16,13 +20,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <DesktopHeader />
       <main
         className={classNames(
-          'relative flex justify-center pt-6',
-          'lg:mt-[65px] lg:h-[calc(100vh-89px)]',
+          'lg:h-[calc(100vh-89px)]',
+          'p-6 lg:mt-[65px]',
+          'align-items-center grid h-full grid-cols-[auto_min-content] place-items-start gap-6',
         )}
       >
-        <div className='flex w-full max-w-content flex-grow flex-wrap content-start'>
-          {children}
-        </div>
+        {isFullWidth ? children : <div className='mx-auto w-full max-w-content'>{children}</div>}
         <AccountDetails />
       </main>
       <Footer />
