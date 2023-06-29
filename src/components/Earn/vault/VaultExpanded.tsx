@@ -2,6 +2,7 @@ import { Row } from '@tanstack/react-table'
 
 import Button from 'components/Button'
 import { LockUnlocked, Plus } from 'components/Icons'
+import { Tooltip } from 'components/Tooltip'
 import useStore from 'store'
 
 interface Props {
@@ -10,6 +11,8 @@ interface Props {
 }
 
 export default function VaultExpanded(props: Props) {
+  const vault = props.row.original as DepositedVault
+
   function enterVaultHandler() {
     useStore.setState({
       vaultModal: {
@@ -29,8 +32,12 @@ export default function VaultExpanded(props: Props) {
     })
   }
 
+  function unlockHandler() {
+    useStore.setState({ unlockModal: { vault } })
+  }
+
   let isDeposited: boolean = false
-  if ((props.row.original as DepositedVault)?.amounts) {
+  if (vault?.amounts) {
     isDeposited = true
   }
 
@@ -56,9 +63,14 @@ export default function VaultExpanded(props: Props) {
               >
                 Deposit more
               </Button>
-              <Button color='tertiary' leftIcon={<LockUnlocked />}>
-                Unlock to withdraw
-              </Button>
+              <Tooltip
+                type='info'
+                content='In order to withdraw this position, you must first unlock it. This will unlock all the funds within this position.'
+              >
+                <Button onClick={unlockHandler} color='tertiary' leftIcon={<LockUnlocked />}>
+                  Unlock to withdraw
+                </Button>
+              </Tooltip>
             </>
           ) : (
             <Button

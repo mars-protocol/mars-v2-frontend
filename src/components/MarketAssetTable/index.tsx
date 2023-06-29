@@ -11,20 +11,21 @@ import {
 import classNames from 'classnames'
 import React from 'react'
 
+import Card from 'components/Card'
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Text from 'components/Text'
-import Card from 'components/Card'
 
 interface Props<TData> {
   title: string
   data: TData[]
   columns: ColumnDef<TData>[]
+  sorting?: SortingState
   rowRenderer: (row: Row<TData>, table: Table<TData>) => JSX.Element
 }
 
 function AssetListTable<TData>(props: Props<TData>) {
   const { title, data, columns } = props
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [sorting, setSorting] = React.useState<SortingState>(props.sorting ?? [])
 
   const table = useReactTable({
     data,

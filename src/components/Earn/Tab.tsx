@@ -14,7 +14,7 @@ export default function Tab(props: Props) {
   const { address, accountId } = useParams()
 
   return (
-    <div className='mb-8 w-full'>
+    <div className='mb-4 w-full'>
       <div className='flex gap-2'>
         <div className='relative'>
           <NavLink

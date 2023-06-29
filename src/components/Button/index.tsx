@@ -1,7 +1,6 @@
 import classNames from 'classnames'
 import React, { LegacyRef, ReactElement, ReactNode, useMemo } from 'react'
 
-import { CircularProgress } from 'components/CircularProgress'
 import {
   buttonBorderClasses,
   buttonColorClasses,
@@ -14,6 +13,7 @@ import {
   focusClasses,
 } from 'components/Button/constants'
 import { glowElement } from 'components/Button/utils'
+import { CircularProgress } from 'components/CircularProgress'
 import { ChevronDown } from 'components/Icons'
 import useStore from 'store'
 

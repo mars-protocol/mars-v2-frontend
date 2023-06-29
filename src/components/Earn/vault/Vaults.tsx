@@ -1,12 +1,13 @@
 import { Suspense, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 
+import classNames from 'classnames'
 import Card from 'components/Card'
 import { VaultTable } from 'components/Earn/vault/VaultTable'
 import { IS_TESTNET } from 'constants/env'
 import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
-import useVaults from 'hooks/useVaults'
 import useDepositedVaults from 'hooks/useDepositedVaults'
+import useVaults from 'hooks/useVaults'
 import { BN } from 'utils/helpers'
 
 interface Props {
@@ -17,6 +18,7 @@ function Content(props: Props) {
   const { accountId } = useParams()
   const { data: vaults } = useVaults()
   const { data: depositedVaults } = useDepositedVaults(accountId || '')
+  const isAvailable = props.type === 'available'
 
   const vaultsMetaData = IS_TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
 
@@ -38,22 +40,16 @@ function Content(props: Props) {
     )
   }, [vaults, depositedVaults, vaultsMetaData])
 
-  const vaultsToDisplay = props.type === 'available' ? available : deposited
+  const vaultsToDisplay = isAvailable ? available : deposited
 
   if (!vaultsToDisplay.length) return null
 
-  return <VaultTable data={vaultsToDisplay} />
-}
-
-export default function Vaults(props: Props) {
   return (
     <Card
-      title={props.type === 'available' ? 'Available vaults' : 'Deposited'}
-      className='mb-4 h-fit w-full bg-white/5'
+      className={classNames('h-fit w-full bg-white/5', !isAvailable && 'mb-4')}
+      title={isAvailable ? 'Available vaults' : 'Deposited'}
     >
-      <Suspense fallback={props.type === 'available' ? <Fallback /> : null}>
-        <Content type={props.type} />
-      </Suspense>
+      <VaultTable data={vaultsToDisplay} />
     </Card>
   )
 }
@@ -74,16 +70,18 @@ function Fallback() {
     },
   }))
 
-  return <VaultTable data={mockVaults} isLoading />
+  return (
+    <Card className='h-fit w-full bg-white/5' title='Available vaults'>
+      <VaultTable data={mockVaults} isLoading />
+    </Card>
+  )
 }
 
 export function AvailableVaults() {
   return (
-    <Card className='h-fit w-full bg-white/5' title='Available vaults'>
-      <Suspense fallback={<Fallback />}>
-        <Content type='available' />
-      </Suspense>
-    </Card>
+    <Suspense fallback={<Fallback />}>
+      <Content type='available' />
+    </Suspense>
   )
 }
 

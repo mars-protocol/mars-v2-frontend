@@ -1,8 +1,9 @@
-import { hardcodedFee } from 'utils/constants'
 import Button from 'components/Button'
 import { Enter } from 'components/Icons'
 import Text from 'components/Text'
+import { useState } from 'react'
 import useStore from 'store'
+import { hardcodedFee } from 'utils/constants'
 
 interface Props {
   depositedVault: DepositedVault
@@ -27,8 +28,10 @@ function YesIcon() {
 
 export default function UnlockModalContent(props: Props) {
   const unlock = useStore((s) => s.unlock)
+  const [waiting, setWaiting] = useState(false)
 
   async function onConfirm() {
+    setWaiting(true)
     await unlock({
       fee: hardcodedFee,
       vault: props.depositedVault,
@@ -50,6 +53,7 @@ export default function UnlockModalContent(props: Props) {
           className='px-6'
           rightIcon={<YesIcon />}
           onClick={onConfirm}
+          showProgressIndicator={waiting}
         />
         <Button
           text='No'
@@ -58,6 +62,7 @@ export default function UnlockModalContent(props: Props) {
           rightIcon={<NoIcon />}
           tabIndex={1}
           onClick={props.onClose}
+          disabled={waiting}
         />
       </div>
     </>

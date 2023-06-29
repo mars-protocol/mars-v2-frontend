@@ -20,7 +20,7 @@ export default function UnlockModal() {
           <LockUnlocked width={18} />
         </div>
       }
-      modalClassName='w-[577px]'
+      modalClassName='w-[517px]'
       headerClassName='p-8'
       contentClassName='px-8 pb-8'
       hideCloseBtn
