@@ -48,7 +48,7 @@ function Content(props: Props) {
   if (props.type === 'active') {
     return (
       <Card
-        className='h-fit w-full bg-white/5'
+        className='mb-4 h-fit w-full bg-white/5'
         title={props.type === 'active' ? 'Borrowings' : 'Available to borrow'}
       >
         <BorrowTable data={assets} />

@@ -42,6 +42,14 @@ function Content(props: Props) {
 
   if (!vaultsToDisplay.length) return null
 
+  if (props.type === 'deposited') {
+    return (
+      <Card className='mb-4 h-fit w-full bg-white/5' title={'Deposited'}>
+        <VaultTable data={vaultsToDisplay} />
+      </Card>
+    )
+  }
+
   return <VaultTable data={vaultsToDisplay} />
 }
 
