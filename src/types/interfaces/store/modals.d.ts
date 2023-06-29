@@ -23,7 +23,8 @@ interface BorrowModal {
 }
 
 interface VaultModal {
-  vault: Vault
+  vault: Vault | DepositedVault
+  isDeposited?: boolean
   selectedBorrowDenoms: string[]
 }
 
