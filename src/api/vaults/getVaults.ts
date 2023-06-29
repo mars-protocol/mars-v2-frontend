@@ -4,7 +4,6 @@ import { getVaultConfigs } from 'api/vaults/getVaultConfigs'
 import { getVaultUtilizations } from 'api/vaults/getVaultUtilizations'
 import { ENV } from 'constants/env'
 import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
-import { BN } from 'utils/helpers'
 
 export default async function getVaults(): Promise<Vault[]> {
   const vaultConfigs = await getVaultConfigs([])
@@ -25,12 +24,12 @@ export default async function getVaults(): Promise<Vault[]> {
       const vault: Vault = {
         ...vaultMetaData,
         cap: {
-          max: BN(vaultConfig.deposit_cap.amount),
+          max: Number(vaultConfig.deposit_cap.amount),
           denom: vaultConfig.deposit_cap.denom,
-          used: BN(
+          used: Number(
             vaultUtilizations.find(
               (vaultUtilization) => vaultUtilization.vault.address === vaultConfig.addr,
-            )?.utilization.amount || 0,
+            ) || 0,
           ),
         },
         apy: apr ? convertAprToApy(apr.apr, 365) : null,

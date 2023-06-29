@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import Image from 'next/image'
 
 import DisplayCurrency from 'components/DisplayCurrency'
 import { ChevronDown } from 'components/Icons'
@@ -6,7 +7,6 @@ import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
 import { formatValue } from 'utils/formatters'
 import AssetImage from 'components/AssetImage'
-import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props extends Option {
   isSelected?: boolean
@@ -68,7 +68,7 @@ export default function Option(props: Props) {
           {formatValue(5, { maxDecimals: 2, minDecimals: 0, prefix: 'APY ', suffix: '%' })}
         </Text>
         <Text size='sm' className='col-span-2 text-right text-white/50'>
-          <DisplayCurrency coin={new BNCoin({ denom: asset.denom, amount: balance })} />
+          <DisplayCurrency coin={{ denom: asset.denom, amount: balance }} />
         </Text>
       </div>
     )

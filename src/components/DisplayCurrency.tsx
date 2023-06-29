@@ -1,18 +1,17 @@
 import { FormattedNumber } from 'components/FormattedNumber'
-import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { convertToDisplayAmount } from 'utils/formatters'
 
 interface Props {
-  coin: BNCoin
+  coin: BNCoin | Coin
   className?: string
   isApproximation?: boolean
 }
 
 export default function DisplayCurrency(props: Props) {
   const displayCurrency = useStore((s) => s.displayCurrency)
-  const { data: prices } = usePrices()
+  const prices = useStore((s) => s.prices)
 
   return (
     <FormattedNumber

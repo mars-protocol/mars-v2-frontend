@@ -16,6 +16,10 @@ export default function AssetExpanded(props: AssetRowProps) {
   const asset = marketAssets.find((asset) => asset.denom === props.row.original.denom)
   let isActive: boolean = false
 
+  if ((props.row.original as BorrowAssetActive)?.debt) {
+    isActive = true
+  }
+
   if (!asset) return null
 
   function borrowHandler() {

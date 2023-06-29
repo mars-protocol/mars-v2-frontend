@@ -40,7 +40,7 @@ export default function VaultDepositSubTitle(props: Props) {
         <>
           {` = `}
           <DisplayCurrency
-            coin={new BNCoin({ denom: baseCurrency.denom, amount: borrowingValue.toString() })}
+            coin={{ denom: baseCurrency.denom, amount: borrowingValue.toString() }}
           />
         </>
       )}

@@ -43,8 +43,8 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
 
   const { actions: depositActions, fee: depositFee } = useDepositVault({
     vault: props.vault,
-    deposits: props.deposits,
-    borrowings: props.borrowings,
+    deposits: props.deposits.filter((borrowing) => borrowing.amount.gt(0)),
+    borrowings: props.borrowings.filter((borrowing) => borrowing.amount.gt(0)),
   })
 
   const primaryValue = useMemo(
@@ -189,9 +189,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
       <div className='flex flex-col gap-2'>
         <div className='flex justify-between'>
           <Text className='text-white/50'>{`${props.primaryAsset.symbol}-${props.secondaryAsset.symbol} Position Value`}</Text>
-          <DisplayCurrency
-            coin={new BNCoin({ denom: baseCurrency.denom, amount: totalValue.toString() })}
-          />
+          <DisplayCurrency coin={{ denom: baseCurrency.denom, amount: totalValue.toString() }} />
         </div>
         {props.borrowings.map((coin) => {
           const asset = getAssetByDenom(coin.denom)

@@ -14,7 +14,6 @@ import { getAmount } from 'utils/accounts'
 import { BN } from 'utils/helpers'
 import { Gauge } from 'components/Gauge'
 import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   primaryAmount: BigNumber
@@ -205,9 +204,7 @@ export default function VaultDeposit(props: Props) {
         </div>
         <div className='flex justify-between'>
           <Text className='text-white/50'>{`${props.primaryAsset.symbol}-${props.secondaryAsset.symbol} Deposit Value`}</Text>
-          <DisplayCurrency
-            coin={new BNCoin({ denom: baseCurrency.denom, amount: totalValue.toString() })}
-          />
+          <DisplayCurrency coin={{ denom: baseCurrency.denom, amount: totalValue.toString() }} />
         </div>
         <Button
           onClick={() => props.toggleOpen(1)}

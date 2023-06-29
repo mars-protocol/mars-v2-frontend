@@ -3,7 +3,6 @@ import TitleAndSubCell from 'components/TitleAndSubCell'
 import { FormattedNumber } from 'components/FormattedNumber'
 import useAssetIncentivesApy from 'hooks/useAssetIncentiveApy'
 import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
-import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   data: LendingMarketTableData
@@ -37,11 +36,7 @@ function DetailsHeader({ data }: Props) {
       {accountLentAmount && (
         <>
           <TitleAndSubCell
-            title={
-              <DisplayCurrency
-                coin={new BNCoin({ denom: asset.denom, amount: accountLentAmount })}
-              />
-            }
+            title={<DisplayCurrency coin={{ denom: asset.denom, amount: accountLentAmount }} />}
             sub={'Deposited'}
           />
           <div className='h-100 w-[1px] bg-white/10'></div>
@@ -49,18 +44,13 @@ function DetailsHeader({ data }: Props) {
       )}
       {balanceInWallet && (
         <>
-          <TitleAndSubCell
-            title={<DisplayCurrency coin={new BNCoin(balanceInWallet)} />}
-            sub={'In Wallet'}
-          />
+          <TitleAndSubCell title={<DisplayCurrency coin={balanceInWallet} />} sub={'In Wallet'} />
           <div className='h-100 w-[1px] bg-white/10'></div>
         </>
       )}
       <TitleAndSubCell
         title={
-          <DisplayCurrency
-            coin={new BNCoin({ denom: asset.denom, amount: marketDepositCap.toString() })}
-          />
+          <DisplayCurrency coin={{ denom: asset.denom, amount: marketDepositCap.toString() }} />
         }
         sub={'Deposit Cap'}
       />

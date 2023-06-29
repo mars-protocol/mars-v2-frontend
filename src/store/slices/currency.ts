@@ -9,5 +9,6 @@ export default function createCurrencySlice(
   return {
     baseCurrency: ASSETS[0],
     displayCurrency: ASSETS.find((asset) => asset.denom === ASSETS[0].denom)!,
+    prices: [],
   }
 }

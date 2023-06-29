@@ -2,12 +2,8 @@ import { getCreditManagerQueryClient } from 'api/cosmwasm-client'
 import { ENV } from 'constants/env'
 import { BN } from 'utils/helpers'
 
-export default async function getVaultConfigs(
-  coins: Coin[],
-  lpDenom: string,
-  slippage: number,
-): Promise<BigNumber> {
-  if (!ENV.ADDRESS_CREDIT_MANAGER) return BN(Infinity)
+export default async function getVaultConfigs(coins: Coin[], lpDenom: string): Promise<BigNumber> {
+  if (!ENV.ADDRESS_CREDIT_MANAGER) return BN(0)
 
   const creditManagerQueryClient = await getCreditManagerQueryClient()
   try {
@@ -17,8 +13,6 @@ export default async function getVaultConfigs(
         lpTokenOut: lpDenom,
       }),
     )
-      .times(1 - slippage)
-      .integerValue()
   } catch (ex) {
     throw ex
   }

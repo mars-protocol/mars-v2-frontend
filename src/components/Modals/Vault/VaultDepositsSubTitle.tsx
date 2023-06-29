@@ -3,7 +3,6 @@ import BigNumber from 'bignumber.js'
 import DisplayCurrency from 'components/DisplayCurrency'
 import usePrice from 'hooks/usePrice'
 import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
 import { formatAmountWithSymbol } from 'utils/formatters'
 
 interface Props {
@@ -42,9 +41,7 @@ export default function VaultDepositSubTitle(props: Props) {
       {(showPrimaryText || showSecondaryText) && (
         <>
           {` = `}
-          <DisplayCurrency
-            coin={new BNCoin({ denom: baseCurrency.denom, amount: positionValue.toString() })}
-          />
+          <DisplayCurrency coin={{ denom: baseCurrency.denom, amount: positionValue.toString() }} />
         </>
       )}
     </>

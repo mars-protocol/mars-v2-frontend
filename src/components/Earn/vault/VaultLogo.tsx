@@ -1,8 +1,10 @@
+import Image from 'next/image'
+
 import AssetImage from 'components/AssetImage'
 import { getAssetByDenom } from 'utils/assets'
 
 interface Props {
-  vault: VaultMetaData
+  vault: Vault
 }
 
 export default function VaultLogo(props: Props) {
@@ -17,7 +19,7 @@ export default function VaultLogo(props: Props) {
         <AssetImage asset={primaryAsset} size={24} />
       </div>
       <div className='absolute'>
-        <AssetImage asset={secondaryAsset} size={16} className='ml-5 mt-5' />
+        <AssetImage asset={primaryAsset} size={16} className='ml-5 mt-5' />
       </div>
     </div>
   )

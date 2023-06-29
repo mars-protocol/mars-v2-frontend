@@ -6,7 +6,6 @@ import useStore from 'store'
 import DisplayCurrency from 'components/DisplayCurrency'
 import VaultBorrowings, { VaultBorrowingsProps } from 'components/Modals/Vault/VaultBorrowings'
 import { TESTNET_VAULTS_META_DATA } from 'constants/vaults'
-import { BNCoin } from 'types/classes/BNCoin'
 
 jest.mock('hooks/usePrices', () =>
   jest.fn(() => ({
@@ -39,8 +38,8 @@ const mockedVault: Vault = {
   },
   cap: {
     denom: 'test',
-    max: BN(10),
-    used: BN(2),
+    max: 10,
+    used: 2,
   },
 }
 describe('<VaultBorrowings />', () => {
@@ -81,7 +80,7 @@ describe('<VaultBorrowings />', () => {
   it('should render DisplayCurrency correctly', () => {
     expect(mockedDisplayCurrency).toHaveBeenCalledTimes(1)
     expect(mockedDisplayCurrency).toHaveBeenCalledWith(
-      { coin: new BNCoin({ denom: 'uosmo', amount: '0' }) },
+      { coin: { denom: 'uosmo', amount: '0' } },
       expect.anything(),
     )
   })

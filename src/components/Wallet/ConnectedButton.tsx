@@ -72,7 +72,7 @@ export default function ConnectedButton() {
     const assetDenoms = marketAssets.map((asset) => asset.denom)
     const balances = walletBalances.filter((coin) => assetDenoms.includes(coin.denom))
     useStore.setState({ balances })
-  }, [walletBalances, baseAsset.denom, baseAsset.decimals, marketAssets, walletAmount])
+  }, [walletBalances, baseAsset.denom, baseAsset.decimals, marketAssets])
 
   return (
     <div className={'relative'}>
