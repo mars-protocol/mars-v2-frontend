@@ -12,7 +12,7 @@ export default function AccountDetails() {
   return hasAccount ? (
     <div
       data-testid='account-details'
-      className='fixed right-4 top-[89px] w-16 rounded-base border border-white/20 bg-white/5 backdrop-blur-sticky'
+      className='w-16 rounded-base border border-white/20 bg-white/5 backdrop-blur-sticky'
     >
       <div className='flex w-full flex-wrap justify-center py-4'>
         <Gauge tooltip='Health Factor' percentage={20} icon={<Heart />} />

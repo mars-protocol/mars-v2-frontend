@@ -24,7 +24,7 @@ function Fallback() {
 
 export default function OrderBook() {
   return (
-    <Card className='col-span-3 bg-white/5' title='Order Book' contentClassName='px-4 py-6'>
+    <Card className='bg-white/5' title='Order Book' contentClassName='px-4 py-6'>
       <Suspense fallback={<Fallback />}>
         <Content />
       </Suspense>
