@@ -1,6 +1,7 @@
+import moment from 'moment'
+
 import { IS_TESTNET } from 'constants/env'
 import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
-import moment from 'moment'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultStatus } from 'types/enums/vault'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'

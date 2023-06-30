@@ -60,11 +60,11 @@ function Content(props: Props) {
       {!isAvailable && !!unlockedVaults && (
         <NotificationBanner
           type='success'
-          text={`There ${
-            unlockedVaults === 1 ? 'is one vault' : `are ${unlockedVaults} vaults`
-          } with funds unlocked.  ${
-            unlockedVaults === 1 ? 'It is' : `They are`
-          } not earning fees and can be liquidated.`}
+          text={
+            unlockedVaults === 1
+              ? 'There is one vault with funds unlocked. It is not earning fees and can be liquidated'
+              : `There are ${unlockedVaults} vaults with funds unlocked. They are not earning fees and can be liquidated.`
+          }
         />
       )}
       <Card
