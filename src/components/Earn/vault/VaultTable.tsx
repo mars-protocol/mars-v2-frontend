@@ -79,15 +79,15 @@ export const VaultTable = (props: Props) => {
                 sub={vault.provider}
               />
               {status === VaultStatus.UNLOCKING && (
-                <div className='h-5 w-[80px] perspective'>
+                <div className='h-5 w-[84px] perspective'>
                   <div className='delay-5000 relative h-full w-full animate-flip preserve-3d'>
                     <div className='absolute h-5 rounded-sm bg-green backface-hidden'>
-                      <Text className='w-[80px] text-center leading-5 text-white' size='xs'>
+                      <Text className='w-[84px] text-center leading-5 text-white' size='xs'>
                         {produceCountdown(remainingTime)}
                       </Text>
                     </div>
                     <div className='absolute h-full w-full overflow-hidden rounded-sm bg-green flip-x-180 backface-hidden'>
-                      <Text className='w-[80px] text-center leading-5 text-white' size='xs'>
+                      <Text className='w-[84px] text-center leading-5 text-white' size='xs'>
                         Unlocking
                       </Text>
                     </div>
@@ -96,7 +96,7 @@ export const VaultTable = (props: Props) => {
               )}
               {status === VaultStatus.UNLOCKED && (
                 <Text
-                  className='h-5 w-[80px] rounded-sm bg-green text-center leading-5 text-white'
+                  className='h-5 w-[84px] rounded-sm bg-green text-center leading-5 text-white'
                   size='xs'
                 >
                   Unlocked
