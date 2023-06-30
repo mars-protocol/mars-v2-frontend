@@ -1,5 +1,6 @@
 // @index(['./*.svg'], f => `export { default as ${f.name} } from 'components/Icons/${f.name}.svg'`)
 export { default as Account } from 'components/Icons/Account.svg'
+export { default as AccountArrowDown } from 'components/Icons/AccountArrowDown.svg'
 export { default as ArrowChartLineUp } from 'components/Icons/ArrowChartLineUp.svg'
 export { default as ArrowCircledTopRight } from 'components/Icons/ArrowCircledTopRight.svg'
 export { default as ArrowDownLine } from 'components/Icons/ArrowDownLine.svg'
@@ -20,6 +21,7 @@ export { default as ExclamationMarkTriangle } from 'components/Icons/Exclamation
 export { default as ExternalLink } from 'components/Icons/ExternalLink.svg'
 export { default as Gear } from 'components/Icons/Gear.svg'
 export { default as Heart } from 'components/Icons/Heart.svg'
+export { default as LockLocked } from 'components/Icons/LockLocked.svg'
 export { default as LockUnlocked } from 'components/Icons/LockUnlocked.svg'
 export { default as Logo } from 'components/Icons/Logo.svg'
 export { default as MarsProtocol } from 'components/Icons/MarsProtocol.svg'

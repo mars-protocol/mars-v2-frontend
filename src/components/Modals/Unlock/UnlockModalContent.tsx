@@ -1,7 +1,9 @@
+import { useState } from 'react'
+import { useParams } from 'react-router-dom'
+
 import Button from 'components/Button'
 import { Enter } from 'components/Icons'
 import Text from 'components/Text'
-import { useState } from 'react'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/constants'
 
@@ -29,11 +31,14 @@ function YesIcon() {
 export default function UnlockModalContent(props: Props) {
   const unlock = useStore((s) => s.unlock)
   const [waiting, setWaiting] = useState(false)
+  const { accountId } = useParams()
 
   async function onConfirm() {
+    if (!accountId) return
     setWaiting(true)
     await unlock({
       fee: hardcodedFee,
+      accountId: accountId,
       vault: props.depositedVault,
       amount: props.depositedVault.amounts.locked.toString(),
     })

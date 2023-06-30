@@ -4,10 +4,10 @@ import { GetState, SetState } from 'zustand'
 
 import { ENV } from 'constants/env'
 import { Store } from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
+import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import { formatAmountWithSymbol } from 'utils/formatters'
-import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { BNCoin } from 'types/classes/BNCoin'
 
 export default function createBroadcastSlice(
   set: SetState<Store>,
@@ -111,11 +111,18 @@ export default function createBroadcastSlice(
       )
       return !!response.result
     },
-    unlock: async (options: { fee: StdFee; vault: Vault; amount: string }) => {
+    unlock: async (options: { fee: StdFee; accountId: string; vault: Vault; amount: string }) => {
       const msg = {
-        request_vault_unlock: {
-          vault: { address: options.vault.address },
-          amount: options.amount,
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: [
+            {
+              request_vault_unlock: {
+                vault: { address: options.vault.address },
+                amount: options.amount,
+              },
+            },
+          ],
         },
       }
 

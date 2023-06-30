@@ -1,7 +1,8 @@
 import { Row } from '@tanstack/react-table'
+import moment from 'moment'
 
 import Button from 'components/Button'
-import { LockUnlocked, Plus } from 'components/Icons'
+import { AccountArrowDown, LockLocked, LockUnlocked, Plus } from 'components/Icons'
 import { Tooltip } from 'components/Tooltip'
 import useStore from 'store'
 
@@ -36,10 +37,13 @@ export default function VaultExpanded(props: Props) {
     useStore.setState({ unlockModal: { vault } })
   }
 
-  let isDeposited: boolean = false
-  if (vault?.amounts) {
-    isDeposited = true
+  function withdrawHandler() {
+    console.log('Withdraw')
   }
+
+  const isDeposited = !!vault?.amounts
+  const isUnlocking = !!vault?.unlocksAt
+  const isUnlocked = moment().valueOf() >= Number(vault?.unlocksAt ?? 0)
 
   return (
     <tr
@@ -63,14 +67,28 @@ export default function VaultExpanded(props: Props) {
               >
                 Deposit more
               </Button>
-              <Tooltip
-                type='info'
-                content='In order to withdraw this position, you must first unlock it. This will unlock all the funds within this position.'
-              >
-                <Button onClick={unlockHandler} color='tertiary' leftIcon={<LockUnlocked />}>
-                  Unlock to withdraw
+
+              {isUnlocking ? (
+                <Button
+                  onClick={withdrawHandler}
+                  color='tertiary'
+                  disabled={isUnlocking}
+                  leftIcon={isUnlocked ? <AccountArrowDown /> : <LockLocked />}
+                >
+                  {isUnlocked
+                    ? 'Withdraw funds'
+                    : `Withdraw in ${moment(vault?.unlocksAt).fromNow(true)}`}
                 </Button>
-              </Tooltip>
+              ) : (
+                <Tooltip
+                  type='info'
+                  content='In order to withdraw this position, you must first unlock it. This will unlock all the funds within this position.'
+                >
+                  <Button onClick={unlockHandler} color='tertiary' leftIcon={<LockUnlocked />}>
+                    Unlock to withdraw
+                  </Button>
+                </Tooltip>
+              )}
             </>
           ) : (
             <Button

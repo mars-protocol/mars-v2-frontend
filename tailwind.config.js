@@ -86,6 +86,8 @@ module.exports = {
         'grey-light': '#bfbfbf',
         'grey-medium': '#5f697a',
         header: 'rgba(59, 25, 40, 0.4);',
+        info: '#FDB022',
+        'info-bg': '#FEDB7C',
         input: '#282a33',
         loss: '#f96363',
         mars: '#a03b45',
@@ -101,6 +103,7 @@ module.exports = {
         'success-bg': '#6CE9A6',
         'vote-against': '#eb9e49',
         warning: '#F79009',
+        'warning-bg': '#FEC84B',
         white: '#FFF',
       },
       fontFamily: {

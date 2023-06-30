@@ -1,9 +1,10 @@
 import { Suspense, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
+import moment from 'moment'
 
-import classNames from 'classnames'
 import Card from 'components/Card'
 import { VaultTable } from 'components/Earn/vault/VaultTable'
+import NotificationBanner from 'components/NotificationBanner'
 import { IS_TESTNET } from 'constants/env'
 import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import useDepositedVaults from 'hooks/useDepositedVaults'
@@ -44,13 +45,34 @@ function Content(props: Props) {
 
   if (!vaultsToDisplay.length) return null
 
+  let unlockedVaults = 0
+  if (!isAvailable && depositedVaults?.length > 0) {
+    depositedVaults.forEach((vault) => {
+      if (vault?.unlocksAt && moment().valueOf() >= Number(vault.unlocksAt)) {
+        unlockedVaults++
+      }
+    })
+  }
+
   return (
-    <Card
-      className={classNames('h-fit w-full bg-white/5', !isAvailable && 'mb-4')}
-      title={isAvailable ? 'Available vaults' : 'Deposited'}
-    >
-      <VaultTable data={vaultsToDisplay} />
-    </Card>
+    <>
+      {!isAvailable && !!unlockedVaults && (
+        <NotificationBanner
+          type='success'
+          text={`There ${
+            unlockedVaults === 1 ? 'is one vault' : `are ${unlockedVaults} vaults`
+          } with funds unlocked.  ${
+            unlockedVaults === 1 ? 'It is' : `They are`
+          } not earning fees and can be liquidated.`}
+        />
+      )}
+      <Card
+        className='h-fit w-full bg-white/5'
+        title={isAvailable ? 'Available vaults' : 'Deposited'}
+      >
+        <VaultTable data={vaultsToDisplay} />
+      </Card>
+    </>
   )
 }
 
