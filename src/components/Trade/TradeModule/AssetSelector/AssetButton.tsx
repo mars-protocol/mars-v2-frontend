@@ -3,6 +3,7 @@ import Button from 'components/Button'
 
 interface Props {
   asset: Asset
+  onClick: () => void
 }
 
 export default function AssetButton(props: Props) {
@@ -13,8 +14,9 @@ export default function AssetButton(props: Props) {
       color='tertiary'
       variant='transparent'
       className='w-full border border-white/20'
-      size='medium'
+      size='md'
       hasSubmenu
+      {...props}
     />
   )
 }

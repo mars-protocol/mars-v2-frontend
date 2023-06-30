@@ -80,7 +80,7 @@ describe('<Button />', () => {
   })
 
   it('should set correct values for progress indicator size', () => {
-    const sizeValues = { small: 10, medium: 12, large: 18 }
+    const sizeValues = { xs: 8, sm: 10, md: 12, lg: 18 }
 
     Object.entries(sizeValues).forEach(([size, value]) => {
       const { getByTestId } = render(

@@ -11,6 +11,7 @@ import {
   buttonSizeClasses,
   buttonTransparentColorClasses,
   buttonVariantClasses,
+  circularProgressSize,
   focusClasses,
 } from 'components/Button/constants'
 import { glowElement } from 'components/Button/utils'
@@ -24,7 +25,7 @@ interface Props {
   disabled?: boolean
   id?: string
   showProgressIndicator?: boolean
-  size?: 'small' | 'medium' | 'large'
+  size?: 'xs' | 'sm' | 'md' | 'lg'
   text?: string | ReactNode
   variant?: 'solid' | 'transparent' | 'round'
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
@@ -45,7 +46,7 @@ const Button = React.forwardRef(function Button(
     disabled,
     id = '',
     showProgressIndicator,
-    size = 'small',
+    size = 'sm',
     text,
     variant = 'solid',
     onClick,
@@ -111,7 +112,7 @@ const Button = React.forwardRef(function Button(
       tabIndex={tabIndex}
     >
       {showProgressIndicator ? (
-        <CircularProgress size={size === 'small' ? 10 : size === 'medium' ? 12 : 18} />
+        <CircularProgress size={circularProgressSize[size]} />
       ) : (
         <>
           {leftIcon && <span className={classNames(leftIconClassNames)}>{leftIcon}</span>}
