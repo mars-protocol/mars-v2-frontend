@@ -5,6 +5,8 @@ import Button from 'components/Button'
 import { AccountArrowDown, LockLocked, LockUnlocked, Plus } from 'components/Icons'
 import { Tooltip } from 'components/Tooltip'
 import useStore from 'store'
+import { VaultStatus } from 'types/enums/vault'
+import { getVaultPositionStatus } from 'utils/vaults'
 
 interface Props {
   row: Row<Vault | DepositedVault>
@@ -41,9 +43,7 @@ export default function VaultExpanded(props: Props) {
     console.log('Withdraw')
   }
 
-  const isDeposited = !!vault?.amounts
-  const isUnlocking = !!vault?.unlocksAt
-  const isUnlocked = moment().valueOf() >= Number(vault?.unlocksAt ?? 0)
+  const status = getVaultPositionStatus(vault)
 
   return (
     <tr
@@ -56,9 +56,17 @@ export default function VaultExpanded(props: Props) {
         !isExpanded && props.row.toggleExpanded()
       }}
     >
-      <td colSpan={isDeposited ? 6 : 5}>
+      <td colSpan={status === VaultStatus.AVAILABLE ? 5 : 6}>
         <div className='align-center flex justify-end gap-3 p-4'>
-          {isDeposited ? (
+          {status === VaultStatus.AVAILABLE ? (
+            <Button
+              onClick={enterVaultHandler}
+              color='tertiary'
+              leftIcon={<Plus className='w-3' />}
+            >
+              Deposit
+            </Button>
+          ) : (
             <>
               <Button
                 onClick={depositMoreHandler}
@@ -68,18 +76,7 @@ export default function VaultExpanded(props: Props) {
                 Deposit more
               </Button>
 
-              {isUnlocking ? (
-                <Button
-                  onClick={withdrawHandler}
-                  color='tertiary'
-                  disabled={isUnlocking}
-                  leftIcon={isUnlocked ? <AccountArrowDown /> : <LockLocked />}
-                >
-                  {isUnlocked
-                    ? 'Withdraw funds'
-                    : `Withdraw in ${moment(vault?.unlocksAt).fromNow(true)}`}
-                </Button>
-              ) : (
+              {status === VaultStatus.DEPOSITED ? (
                 <Tooltip
                   type='info'
                   content='In order to withdraw this position, you must first unlock it. This will unlock all the funds within this position.'
@@ -88,16 +85,19 @@ export default function VaultExpanded(props: Props) {
                     Unlock to withdraw
                   </Button>
                 </Tooltip>
+              ) : (
+                <Button
+                  onClick={withdrawHandler}
+                  color='tertiary'
+                  disabled={status === VaultStatus.UNLOCKING}
+                  leftIcon={status === VaultStatus.UNLOCKED ? <AccountArrowDown /> : <LockLocked />}
+                >
+                  {status === VaultStatus.UNLOCKED
+                    ? 'Withdraw funds'
+                    : `Withdraw in ${moment(vault?.unlocksAt).fromNow(true)}`}
+                </Button>
               )}
             </>
-          ) : (
-            <Button
-              onClick={enterVaultHandler}
-              color='tertiary'
-              leftIcon={<Plus className='w-3' />}
-            >
-              Deposit
-            </Button>
           )}
         </div>
       </td>

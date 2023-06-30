@@ -10,19 +10,20 @@ import {
 import classNames from 'classnames'
 import React from 'react'
 
+import DisplayCurrency from 'components/DisplayCurrency'
 import VaultExpanded from 'components/Earn/vault/VaultExpanded'
 import VaultLogo from 'components/Earn/vault/VaultLogo'
 import { VaultRow } from 'components/Earn/vault/VaultRow'
 import { ChevronDown, SortAsc, SortDesc, SortNone } from 'components/Icons'
+import Loading from 'components/Loading'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import { VAULT_DEPOSIT_BUFFER } from 'constants/vaults'
-import { getAssetByDenom } from 'utils/assets'
-import { convertPercentage, formatPercent, formatValue } from 'utils/formatters'
-import DisplayCurrency from 'components/DisplayCurrency'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import Loading from 'components/Loading'
+import { getAssetByDenom } from 'utils/assets'
+import { convertPercentage, formatPercent, formatValue } from 'utils/formatters'
+import { getVaultPositionStatus } from 'utils/vaults'
 
 type Props = {
   data: Vault[] | DepositedVault[]
@@ -40,13 +41,36 @@ export const VaultTable = (props: Props) => {
         header: 'Vault',
         accessorKey: 'name',
         cell: ({ row }) => {
+          const vault = row.original as DepositedVault
+
+          let timeframe
+
+          switch (vault.lockup.timeframe) {
+            case 'day':
+            case 'days':
+              timeframe = 'd'
+              break
+            case 'hour':
+            case 'hours':
+              timeframe = 'h'
+              break
+            case 'minute':
+            case 'minutes':
+              timeframe = 'm'
+              break
+          }
+
+          const unlockDuration = !!timeframe ? ` - (${vault.lockup.duration}${timeframe})` : ''
+
+          const status = getVaultPositionStatus(vault)
+
           return (
             <div className='flex'>
-              <VaultLogo vault={row.original} />
+              <VaultLogo vault={vault} />
               <TitleAndSubCell
                 className='ml-2 mr-2 text-left'
-                title={`${row.original.name} - (${row.original.lockup.duration} ${row.original.lockup.timeframe})`}
-                sub={row.original.provider}
+                title={`${vault.name}${unlockDuration}`}
+                sub={vault.provider}
               />
             </div>
           )

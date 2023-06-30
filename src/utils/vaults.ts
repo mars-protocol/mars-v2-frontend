@@ -1,9 +1,11 @@
 import { IS_TESTNET } from 'constants/env'
 import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
-import { BN } from 'utils/helpers'
-import { getNetCollateralValue } from 'utils/accounts'
+import moment from 'moment'
 import { BNCoin } from 'types/classes/BNCoin'
+import { VaultStatus } from 'types/enums/vault'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { getNetCollateralValue } from 'utils/accounts'
+import { BN } from 'utils/helpers'
 import { getTokenPrice, getTokenValue } from 'utils/tokens'
 
 export function getVaultMetaData(address: string) {
@@ -191,4 +193,15 @@ function getSwapAction(denomIn: string, denomOut: string, amount: BigNumber, sli
       slippage: slippage.toString(),
     },
   }
+}
+
+export function getVaultPositionStatus(vault: DepositedVault) {
+  const isDeposited = !!vault?.amounts
+  const isUnlocking = !!vault?.unlocksAt
+  const isUnlocked = vault?.unlocksAt && moment().valueOf() >= vault?.unlocksAt
+
+  if (isUnlocked) return VaultStatus.UNLOCKED
+  if (isUnlocking) return VaultStatus.UNLOCKING
+  if (isDeposited) return VaultStatus.DEPOSITED
+  return VaultStatus.AVAILABLE
 }

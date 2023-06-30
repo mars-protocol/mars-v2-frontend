@@ -1,6 +1,5 @@
 import { Suspense, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import moment from 'moment'
 
 import Card from 'components/Card'
 import { VaultTable } from 'components/Earn/vault/VaultTable'
@@ -9,7 +8,9 @@ import { IS_TESTNET } from 'constants/env'
 import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import useDepositedVaults from 'hooks/useDepositedVaults'
 import useVaults from 'hooks/useVaults'
+import { VaultStatus } from 'types/enums/vault'
 import { BN } from 'utils/helpers'
+import { getVaultPositionStatus } from 'utils/vaults'
 
 interface Props {
   type: 'available' | 'deposited'
@@ -48,7 +49,7 @@ function Content(props: Props) {
   let unlockedVaults = 0
   if (!isAvailable && depositedVaults?.length > 0) {
     depositedVaults.forEach((vault) => {
-      if (vault?.unlocksAt && moment().valueOf() >= Number(vault.unlocksAt)) {
+      if (getVaultPositionStatus(vault) === VaultStatus.UNLOCKED) {
         unlockedVaults++
       }
     })
