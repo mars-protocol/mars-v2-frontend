@@ -30,12 +30,12 @@ function YesIcon() {
 
 export default function UnlockModalContent(props: Props) {
   const unlock = useStore((s) => s.unlock)
-  const [waiting, setWaiting] = useState(false)
+  const [isWating, setIsWaiting] = useState(false)
   const { accountId } = useParams()
 
   async function onConfirm() {
     if (!accountId) return
-    setWaiting(true)
+    setIsWaiting(true)
     await unlock({
       fee: hardcodedFee,
       accountId: accountId,
@@ -58,7 +58,7 @@ export default function UnlockModalContent(props: Props) {
           className='px-6'
           rightIcon={<YesIcon />}
           onClick={onConfirm}
-          showProgressIndicator={waiting}
+          showProgressIndicator={isWating}
         />
         <Button
           text='No'
@@ -67,7 +67,7 @@ export default function UnlockModalContent(props: Props) {
           rightIcon={<NoIcon />}
           tabIndex={1}
           onClick={props.onClose}
-          disabled={waiting}
+          disabled={isWating}
         />
       </div>
     </>

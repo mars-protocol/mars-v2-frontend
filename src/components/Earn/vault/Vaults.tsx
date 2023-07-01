@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 
 import Card from 'components/Card'
 import { VaultTable } from 'components/Earn/vault/VaultTable'
-import NotificationBanner from 'components/NotificationBanner'
+import VaultUnlockBanner from 'components/Earn/vault/VaultUnlockBanner'
 import { IS_TESTNET } from 'constants/env'
 import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import useDepositedVaults from 'hooks/useDepositedVaults'
@@ -46,27 +46,18 @@ function Content(props: Props) {
 
   if (!vaultsToDisplay.length) return null
 
-  let unlockedVaults = 0
+  const unlockedVaults: DepositedVault[] = []
   if (!isAvailable && depositedVaults?.length > 0) {
     depositedVaults.forEach((vault) => {
       if (getVaultPositionStatus(vault) === VaultStatus.UNLOCKED) {
-        unlockedVaults++
+        unlockedVaults.push(vault)
       }
     })
   }
 
   return (
     <>
-      {!isAvailable && !!unlockedVaults && (
-        <NotificationBanner
-          type='success'
-          text={
-            unlockedVaults === 1
-              ? 'There is one vault with funds unlocked. It is not earning fees and can be liquidated'
-              : `There are ${unlockedVaults} vaults with funds unlocked. They are not earning fees and can be liquidated.`
-          }
-        />
-      )}
+      {!isAvailable && <VaultUnlockBanner vaults={unlockedVaults} />}
       <Card
         className='h-fit w-full bg-white/5'
         title={isAvailable ? 'Available vaults' : 'Deposited'}

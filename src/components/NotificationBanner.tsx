@@ -11,7 +11,7 @@ import Text from 'components/Text'
 interface Props {
   type: 'success' | 'error' | 'warning' | 'info'
   text: string
-  onClick?: () => void
+  button: React.ReactNode
 }
 
 export default function NotificationBanner(props: Props) {
@@ -59,9 +59,10 @@ export default function NotificationBanner(props: Props) {
         <div className={classNames('rounded-sm p-1.5', bgColor)}>
           <span className='block h-4 w-4 text-white'>{icon}</span>
         </div>
-        <Text size='sm' className='text-white'>
+        <Text size='sm' className='flex-1 text-white'>
           {props.text}
         </Text>
+        {props.button}
       </div>
     </div>
   )
