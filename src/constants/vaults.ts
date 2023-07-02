@@ -16,7 +16,7 @@ export const TESTNET_VAULTS_META_DATA: VaultMetaData[] = [
     },
     symbols: {
       primary: 'OSMO',
-      secondary: 'OSMO-USDC.n',
+      secondary: 'USDC.n',
     },
     isFeatured: true,
   },
@@ -35,7 +35,7 @@ export const TESTNET_VAULTS_META_DATA: VaultMetaData[] = [
     },
     symbols: {
       primary: 'OSMO',
-      secondary: 'OSMO-USDC.n',
+      secondary: 'USDC.n',
     },
     isFeatured: true,
   },
@@ -54,7 +54,7 @@ export const TESTNET_VAULTS_META_DATA: VaultMetaData[] = [
     },
     symbols: {
       primary: 'OSMO',
-      secondary: 'OSMO-USDC.n',
+      secondary: 'USDC.n',
     },
     isFeatured: true,
   },

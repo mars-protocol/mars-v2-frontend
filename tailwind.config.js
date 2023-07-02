@@ -22,8 +22,6 @@ module.exports = {
   content: ['./src/pages/**/*.{js,ts,jsx,tsx}', './src/components/**/*.{js,ts,jsx,tsx}'],
   safelist: [
     'h-2',
-    'h-4.5',
-    'h-15',
     'text-3xs',
     'text-3xs-caps',
     'text-2xs',
@@ -47,8 +45,6 @@ module.exports = {
     'text-5xl-caps',
     'text-5xl',
     'w-2',
-    'w-4.5',
-    'w-15',
   ],
   theme: {
     extend: {
@@ -191,6 +187,9 @@ module.exports = {
       },
       minWidth: {
         15: '60px',
+      },
+      padding: {
+        5.5: '22px',
       },
       screens: {
         sm: '480px',

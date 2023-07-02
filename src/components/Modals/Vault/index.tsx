@@ -1,10 +1,10 @@
 import VaultLogo from 'components/Earn/vault/VaultLogo'
 import Modal from 'components/Modal'
+import VaultModalContent from 'components/Modals/Vault/VaultModalContent'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
-import VaultModalContent from 'components/Modals/Vault/VaultModalContent'
 
 export default function VaultModalController() {
   const currentAccount = useCurrentAccount()
@@ -43,9 +43,10 @@ function VaultModal(props: Props) {
       header={
         <span className='flex items-center gap-4 px-4'>
           <VaultLogo vault={props.modal.vault} />
-          <Text>{`${props.modal.vault.symbols.primary} - ${props.modal.vault.symbols.secondary}`}</Text>
+          <Text>{props.modal.vault.name}</Text>
         </span>
       }
+      modalClassName='max-w-[895px]'
       headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col'
     >

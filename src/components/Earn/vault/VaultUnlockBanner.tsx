@@ -18,12 +18,12 @@ export default function VaultUnlockBanner(props: Props) {
 
   async function handleWithdraw() {
     if (!accountId) return
-    setIsWaiting(true)
     if (props.vaults.length > 1) {
       useStore.setState({
-        vaultWithdrawModal: props.vaults,
+        withdrawFromVaultsModal: props.vaults,
       })
     } else {
+      setIsWaiting(true)
       await withdrawFromVaults({
         fee: hardcodedFee,
         accountId: accountId,
