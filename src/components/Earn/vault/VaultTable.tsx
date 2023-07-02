@@ -24,7 +24,6 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { VaultStatus } from 'types/enums/vault'
 import { getAssetByDenom } from 'utils/assets'
 import { convertPercentage, formatPercent, formatValue, produceCountdown } from 'utils/formatters'
-import { getVaultPositionStatus } from 'utils/vaults'
 
 type Props = {
   data: Vault[] | DepositedVault[]
@@ -63,7 +62,7 @@ export const VaultTable = (props: Props) => {
 
           const unlockDuration = !!timeframe ? ` - (${vault.lockup.duration}${timeframe})` : ''
 
-          const status = getVaultPositionStatus(vault)
+          const status = vault.status
           let remainingTime = 0
 
           if (status === VaultStatus.UNLOCKING && vault.unlocksAt) {

@@ -195,14 +195,3 @@ function getSwapAction(denomIn: string, denomOut: string, amount: BigNumber, sli
     },
   }
 }
-
-export function getVaultPositionStatus(vault: DepositedVault) {
-  const isDeposited = !!vault?.amounts
-  const isUnlocking = !!vault?.unlocksAt
-  const isUnlocked = vault?.unlocksAt && moment().valueOf() >= vault?.unlocksAt
-
-  if (isUnlocked) return VaultStatus.UNLOCKED
-  if (isUnlocking) return VaultStatus.UNLOCKING
-  if (isDeposited) return VaultStatus.DEPOSITED
-  return VaultStatus.AVAILABLE
-}

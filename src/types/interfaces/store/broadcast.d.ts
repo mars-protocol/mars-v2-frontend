@@ -17,8 +17,13 @@ interface BroadcastSlice {
   unlock: (options: {
     fee: StdFee
     accountId: string
-    vault: Vault
+    vault: DepositedVault
     amount: string
+  }) => Promise<boolean>
+  withdrawFromVaults: (options: {
+    fee: StdFee
+    accountId: string
+    vaults: DepositedVault[]
   }) => Promise<boolean>
   depositIntoVault: (options: {
     fee: StdFee

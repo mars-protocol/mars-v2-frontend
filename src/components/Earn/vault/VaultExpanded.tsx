@@ -1,12 +1,14 @@
 import { Row } from '@tanstack/react-table'
 import moment from 'moment'
+import { useState } from 'react'
+import { useParams } from 'react-router-dom'
 
 import Button from 'components/Button'
 import { AccountArrowDown, LockLocked, LockUnlocked, Plus } from 'components/Icons'
 import { Tooltip } from 'components/Tooltip'
 import useStore from 'store'
 import { VaultStatus } from 'types/enums/vault'
-import { getVaultPositionStatus } from 'utils/vaults'
+import { hardcodedFee } from 'utils/constants'
 
 interface Props {
   row: Row<Vault | DepositedVault>
@@ -15,6 +17,9 @@ interface Props {
 
 export default function VaultExpanded(props: Props) {
   const vault = props.row.original as DepositedVault
+  const { accountId } = useParams()
+  const [isWaiting, setIsWaiting] = useState(false)
+  const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
 
   function enterVaultHandler() {
     useStore.setState({
@@ -39,11 +44,18 @@ export default function VaultExpanded(props: Props) {
     useStore.setState({ unlockModal: { vault } })
   }
 
-  function withdrawHandler() {
-    console.log('Withdraw')
+  async function withdrawHandler() {
+    if (!accountId) return
+    const vaults = [props.row.original as DepositedVault]
+    setIsWaiting(true)
+    await withdrawFromVaults({
+      fee: hardcodedFee,
+      accountId: accountId,
+      vaults,
+    })
   }
 
-  const status = getVaultPositionStatus(vault)
+  const status = vault.status
 
   return (
     <tr
@@ -56,9 +68,9 @@ export default function VaultExpanded(props: Props) {
         !isExpanded && props.row.toggleExpanded()
       }}
     >
-      <td colSpan={status === VaultStatus.AVAILABLE ? 5 : 6}>
+      <td colSpan={!status ? 5 : 6}>
         <div className='align-center flex justify-end gap-3 p-4'>
-          {status === VaultStatus.AVAILABLE ? (
+          {!status ? (
             <Button
               onClick={enterVaultHandler}
               color='tertiary'
@@ -76,7 +88,7 @@ export default function VaultExpanded(props: Props) {
                 Deposit more
               </Button>
 
-              {status === VaultStatus.DEPOSITED ? (
+              {status === VaultStatus.ACTIVE ? (
                 <Tooltip
                   type='info'
                   content='In order to withdraw this position, you must first unlock it. This will unlock all the funds within this position.'
@@ -89,6 +101,7 @@ export default function VaultExpanded(props: Props) {
                 <Button
                   onClick={withdrawHandler}
                   color='tertiary'
+                  showProgressIndicator={isWaiting}
                   disabled={status === VaultStatus.UNLOCKING}
                   leftIcon={status === VaultStatus.UNLOCKED ? <AccountArrowDown /> : <LockLocked />}
                 >

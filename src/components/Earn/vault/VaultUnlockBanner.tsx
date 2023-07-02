@@ -1,25 +1,35 @@
 import { useState } from 'react'
+import { useParams } from 'react-router-dom'
 
 import Button from 'components/Button'
 import { ChevronRight } from 'components/Icons'
 import NotificationBanner from 'components/NotificationBanner'
 import useStore from 'store'
+import { hardcodedFee } from 'utils/constants'
 
 interface Props {
   vaults: DepositedVault[]
 }
 
 export default function VaultUnlockBanner(props: Props) {
+  const { accountId } = useParams()
   const [isWaiting, setIsWaiting] = useState(false)
+  const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
 
   async function handleWithdraw() {
+    if (!accountId) return
     setIsWaiting(true)
     if (props.vaults.length > 1) {
       useStore.setState({
         vaultWithdrawModal: props.vaults,
       })
     } else {
-      console.log('Withdraw')
+      await withdrawFromVaults({
+        fee: hardcodedFee,
+        accountId: accountId,
+        vaults: props.vaults,
+      })
+      setIsWaiting(false)
     }
   }
 

@@ -111,7 +111,12 @@ export default function createBroadcastSlice(
       )
       return !!response.result
     },
-    unlock: async (options: { fee: StdFee; accountId: string; vault: Vault; amount: string }) => {
+    unlock: async (options: {
+      fee: StdFee
+      accountId: string
+      vault: DepositedVault
+      amount: string
+    }) => {
       const msg = {
         update_credit_account: {
           account_id: options.accountId,
@@ -133,6 +138,33 @@ export default function createBroadcastSlice(
       })
 
       handleResponseMessages(response, `Requested unlock for ${options.vault.name}`)
+      return !!response.result
+    },
+
+    withdrawFromVaults: async (options: {
+      fee: StdFee
+      accountId: string
+      vaults: DepositedVault[]
+    }) => {
+      const actions = options.vaults.map((vault) => ({
+        exit_vault_unlocked: {
+          id: vault.positionId,
+          vault: { address: vault.address },
+        },
+      }))
+      const msg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions,
+        },
+      }
+
+      const response = await get().executeMsg({ msg, fee: options.fee })
+      const vaultsString = options.vaults.length === 1 ? 'vault' : 'vaults'
+      handleResponseMessages(
+        response,
+        `You successfully withdrew ${options.vaults.length} unlocked ${vaultsString} to your account`,
+      )
       return !!response.result
     },
     depositIntoVault: async (options: { fee: StdFee; accountId: string; actions: Action[] }) => {

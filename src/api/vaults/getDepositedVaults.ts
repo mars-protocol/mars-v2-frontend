@@ -1,13 +1,14 @@
 import moment from 'moment'
 
 import { getClient, getCreditManagerQueryClient, getVaultQueryClient } from 'api/cosmwasm-client'
-import getVaults from 'api/vaults/getVaults'
-import { BN } from 'utils/helpers'
 import getPrice from 'api/prices/getPrice'
+import getVaults from 'api/vaults/getVaults'
+import { VaultStatus } from 'types/enums/vault'
 import {
   VaultPosition,
   VaultPositionAmount,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { BN } from 'utils/helpers'
 
 async function getUnlocksAtTimestamp(unlockingId: number, vaultAddress: string) {
   try {
@@ -25,24 +26,22 @@ async function getUnlocksAtTimestamp(unlockingId: number, vaultAddress: string) 
 
 async function getVaultPositionStatusAndUnlockTime(
   vaultPosition: VaultPosition,
-): Promise<[VaultStatus, number | undefined]> {
+): Promise<[VaultStatus, number | undefined, number | undefined]> {
   const amount = vaultPosition.amount
 
-  if ('unlocked' in amount) return ['unlocked', undefined]
+  if (VaultStatus.UNLOCKED in amount) return [VaultStatus.UNLOCKED, undefined, undefined]
 
   if (amount.locking.unlocking.length) {
-    const unlocksAtTimestamp = await getUnlocksAtTimestamp(
-      amount.locking.unlocking[0].id,
-      vaultPosition.vault.address,
-    )
+    const positionId = amount.locking.unlocking[0].id
+    const unlocksAtTimestamp = await getUnlocksAtTimestamp(positionId, vaultPosition.vault.address)
 
     if (moment(unlocksAtTimestamp).isBefore(new Date())) {
-      return ['unlocked', unlocksAtTimestamp]
+      return [VaultStatus.UNLOCKED, positionId, unlocksAtTimestamp]
     }
 
-    return ['unlocking', unlocksAtTimestamp]
+    return [VaultStatus.UNLOCKING, positionId, unlocksAtTimestamp]
   } else {
-    return ['active', undefined]
+    return [VaultStatus.ACTIVE, undefined, undefined]
   }
 }
 
@@ -153,7 +152,7 @@ async function getDepositedVaults(accountId: string): Promise<DepositedVault[]> 
         throw 'Could not find the deposited vault among all vaults'
       }
 
-      const [[status, unlocksAt], valuesAndAmounts] = await Promise.all([
+      const [[status, positionId, unlocksAt], valuesAndAmounts] = await Promise.all([
         getVaultPositionStatusAndUnlockTime(vaultPosition),
         getVaultValuesAndAmounts(vault, vaultPosition),
       ])
@@ -161,6 +160,7 @@ async function getDepositedVaults(accountId: string): Promise<DepositedVault[]> 
       return {
         ...vault,
         status,
+        positionId,
         unlocksAt,
         ...valuesAndAmounts,
       }

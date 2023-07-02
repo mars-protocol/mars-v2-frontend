@@ -10,7 +10,6 @@ import useDepositedVaults from 'hooks/useDepositedVaults'
 import useVaults from 'hooks/useVaults'
 import { VaultStatus } from 'types/enums/vault'
 import { BN } from 'utils/helpers'
-import { getVaultPositionStatus } from 'utils/vaults'
 
 interface Props {
   type: 'available' | 'deposited'
@@ -47,9 +46,10 @@ function Content(props: Props) {
   if (!vaultsToDisplay.length) return null
 
   const unlockedVaults: DepositedVault[] = []
+
   if (!isAvailable && depositedVaults?.length > 0) {
     depositedVaults.forEach((vault) => {
-      if (getVaultPositionStatus(vault) === VaultStatus.UNLOCKED) {
+      if (vault.status === VaultStatus.UNLOCKED) {
         unlockedVaults.push(vault)
       }
     })
