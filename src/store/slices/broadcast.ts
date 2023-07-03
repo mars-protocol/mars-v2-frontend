@@ -8,6 +8,11 @@ import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import { formatAmountWithSymbol } from 'utils/formatters'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { BNCoin } from 'types/classes/BNCoin'
+import {
+  Action as CreditManagerAction,
+  ExecuteMsg as CreditManagerExecuteMsg,
+} from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { ExecuteMsg as AccountNftExecuteMsg } from 'types/generated/mars-account-nft/MarsAccountNft.types'
 
 export default function createBroadcastSlice(
   set: SetState<Store>,
@@ -38,7 +43,7 @@ export default function createBroadcastSlice(
   return {
     toast: null,
     borrow: async (options: { fee: StdFee; accountId: string; coin: Coin }) => {
-      const msg = {
+      const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
           actions: [{ borrow: options.coin }],
@@ -54,7 +59,7 @@ export default function createBroadcastSlice(
       return !!response.result
     },
     createAccount: async (options: { fee: StdFee }) => {
-      const msg = {
+      const msg: CreditManagerExecuteMsg = {
         create_credit_account: 'default',
       }
       set({ createAccountModal: true })
@@ -77,7 +82,7 @@ export default function createBroadcastSlice(
       }
     },
     deleteAccount: async (options: { fee: StdFee; accountId: string }) => {
-      const msg = {
+      const msg: AccountNftExecuteMsg = {
         burn: {
           token_id: options.accountId,
         },
@@ -92,7 +97,7 @@ export default function createBroadcastSlice(
       return !!response.result
     },
     deposit: async (options: { fee: StdFee; accountId: string; coin: Coin }) => {
-      const msg = {
+      const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
           actions: [
@@ -112,7 +117,7 @@ export default function createBroadcastSlice(
       return !!response.result
     },
     unlock: async (options: { fee: StdFee; vault: Vault; amount: string }) => {
-      const msg = {
+      const msg: CreditManagerAction = {
         request_vault_unlock: {
           vault: { address: options.vault.address },
           amount: options.amount,
@@ -129,7 +134,7 @@ export default function createBroadcastSlice(
       return !!response.result
     },
     depositIntoVault: async (options: { fee: StdFee; accountId: string; actions: Action[] }) => {
-      const msg = {
+      const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
           actions: options.actions,
@@ -141,7 +146,7 @@ export default function createBroadcastSlice(
       return !!response.result
     },
     withdraw: async (options: { fee: StdFee; accountId: string; coin: Coin }) => {
-      const msg = {
+      const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
           actions: [
@@ -201,17 +206,16 @@ export default function createBroadcastSlice(
     repay: async (options: {
       fee: StdFee
       accountId: string
-      coin: Coin
+      coin: BNCoin
       accountBalance?: boolean
     }) => {
-      const msg = {
+      const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
           actions: [
             {
               repay: {
-                denom: options.coin.denom,
-                amount: options.accountBalance ? 'account_balance' : { exact: options.coin.amount },
+                coin: options.coin.toActionCoin(options.accountBalance),
               },
             },
           ],
@@ -222,12 +226,12 @@ export default function createBroadcastSlice(
 
       handleResponseMessages(
         response,
-        `Repayed ${formatAmountWithSymbol(options.coin)} to Account ${options.accountId}`,
+        `Repayed ${formatAmountWithSymbol(options.coin.toCoin())} to Account ${options.accountId}`,
       )
       return !!response.result
     },
     lend: async (options: { fee: StdFee; accountId: string; coin: BNCoin; isMax?: boolean }) => {
-      const msg = {
+      const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
           actions: [
@@ -247,7 +251,7 @@ export default function createBroadcastSlice(
       return !!response.result
     },
     reclaim: async (options: { fee: StdFee; accountId: string; coin: BNCoin; isMax?: boolean }) => {
-      const msg = {
+      const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
           actions: [
