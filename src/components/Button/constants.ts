@@ -31,10 +31,10 @@ export const buttonTransparentColorClasses = {
 }
 
 export const buttonRoundSizeClasses = {
-  xs: 'h-[20px] w-[20px]',
-  sm: 'h-[32px] w-[32px]',
-  md: 'h-[40px] w-[40px]',
-  lg: 'h-[56px] w-[56px]',
+  xs: 'h-5 w-5',
+  sm: 'h-8 w-8',
+  md: 'h-10 w-10',
+  lg: 'h-14 w-14',
 }
 
 export const buttonSizeClasses = {
@@ -45,10 +45,10 @@ export const buttonSizeClasses = {
 }
 
 export const buttonPaddingClasses = {
-  xs: 'px-[6px] py-[2px] min-h-[20px]',
-  sm: 'px-4 py-1.5 min-h-[32px]',
-  md: 'px-4 py-2 min-h-[40px]',
-  lg: 'px-4 py-2.5 min-h-[56px]',
+  xs: 'px-1.5 py-0.5 min-h-5',
+  sm: 'px-4 py-1.5 min-h-8',
+  md: 'px-4 py-2 min-h-10',
+  lg: 'px-4 py-2.5 min-h-14',
 }
 
 export const buttonVariantClasses = {
