@@ -30,12 +30,12 @@ function YesIcon() {
 
 export default function UnlockModalContent(props: Props) {
   const unlock = useStore((s) => s.unlock)
-  const [isWating, setIsWaiting] = useState(false)
+  const [isWating, setIsConfirming] = useState(false)
   const { accountId } = useParams()
 
   async function onConfirm() {
     if (!accountId) return
-    setIsWaiting(true)
+    setIsConfirming(true)
     await unlock({
       fee: hardcodedFee,
       accountId: accountId,

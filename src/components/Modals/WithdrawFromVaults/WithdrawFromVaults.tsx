@@ -18,7 +18,7 @@ import { BN } from 'utils/helpers'
 export default function WithdrawFromVaults() {
   const modal = useStore((s) => s.withdrawFromVaultsModal)
   const { accountId } = useParams()
-  const [isWaiting, setIsWaiting] = useState(false)
+  const [isConfirming, setIsConfirming] = useState(false)
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
   const baseCurrency = useStore((s) => s.baseCurrency)
 
@@ -28,13 +28,13 @@ export default function WithdrawFromVaults() {
 
   async function withdrawHandler() {
     if (!accountId || !modal) return
-    setIsWaiting(true)
+    setIsConfirming(true)
     await withdrawFromVaults({
       fee: hardcodedFee,
       accountId: accountId,
       vaults: modal,
     })
-    setIsWaiting(false)
+    setIsConfirming(false)
     onClose()
   }
 
@@ -86,7 +86,7 @@ export default function WithdrawFromVaults() {
             )
           })}
           <Button
-            showProgressIndicator={isWaiting}
+            showProgressIndicator={isConfirming}
             onClick={withdrawHandler}
             className='mt-4 w-full'
             text='Withdraw from all'

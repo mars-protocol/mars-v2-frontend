@@ -18,7 +18,7 @@ interface Props {
 export default function VaultExpanded(props: Props) {
   const vault = props.row.original as DepositedVault
   const { accountId } = useParams()
-  const [isWaiting, setIsWaiting] = useState(false)
+  const [isConfirming, setIsConfirming] = useState(false)
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
 
   function enterVaultHandler() {
@@ -47,7 +47,7 @@ export default function VaultExpanded(props: Props) {
   async function withdrawHandler() {
     if (!accountId) return
     const vaults = [props.row.original as DepositedVault]
-    setIsWaiting(true)
+    setIsConfirming(true)
     await withdrawFromVaults({
       fee: hardcodedFee,
       accountId: accountId,
@@ -93,7 +93,7 @@ export default function VaultExpanded(props: Props) {
       <Button
         onClick={withdrawHandler}
         color='tertiary'
-        showProgressIndicator={isWaiting}
+        showProgressIndicator={isConfirming}
         disabled={true}
         leftIcon={<LockLocked />}
       >
@@ -107,7 +107,7 @@ export default function VaultExpanded(props: Props) {
       <Button
         onClick={withdrawHandler}
         color='tertiary'
-        showProgressIndicator={isWaiting}
+        showProgressIndicator={isConfirming}
         leftIcon={<AccountArrowDown />}
       >
         Withdraw funds

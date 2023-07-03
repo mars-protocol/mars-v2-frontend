@@ -13,7 +13,7 @@ interface Props {
 
 export default function VaultUnlockBanner(props: Props) {
   const { accountId } = useParams()
-  const [isWaiting, setIsWaiting] = useState(false)
+  const [isConfirming, setIsConfirming] = useState(false)
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
 
   async function handleWithdraw() {
@@ -23,13 +23,13 @@ export default function VaultUnlockBanner(props: Props) {
         withdrawFromVaultsModal: props.vaults,
       })
     } else {
-      setIsWaiting(true)
+      setIsConfirming(true)
       await withdrawFromVaults({
         fee: hardcodedFee,
         accountId: accountId,
         vaults: props.vaults,
       })
-      setIsWaiting(false)
+      setIsConfirming(false)
     }
   }
 
@@ -52,7 +52,7 @@ export default function VaultUnlockBanner(props: Props) {
           text='Withdraw Unlocked Positions'
           rightIcon={<ChevronRight />}
           iconClassName='text-success w-2 h-4'
-          showProgressIndicator={isWaiting}
+          showProgressIndicator={isConfirming}
         />
       }
     />
