@@ -232,7 +232,7 @@ export default function createBroadcastSlice(
           account_id: options.accountId,
           actions: [
             {
-              lend: options.coin.toActionCoin(options.isMax),
+              lend: options.coin.toCoin(),
             },
           ],
         },
