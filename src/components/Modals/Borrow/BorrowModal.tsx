@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import AccountSummary from 'components/Account/AccountSummary'
+import AssetImage from 'components/AssetImage'
 import Button from 'components/Button'
 import Card from 'components/Card'
 import Divider from 'components/Divider'
@@ -17,7 +18,6 @@ import useStore from 'store'
 import { hardcodedFee } from 'utils/constants'
 import { formatPercent, formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import AssetImage from 'components/AssetImage'
 
 function getDebtAmount(modal: BorrowModal | null) {
   if (!(modal?.marketData as BorrowAssetActive)?.debt) return '0'
@@ -130,7 +130,7 @@ export default function BorrowModal() {
           </Text>
         </span>
       }
-      modalClassName='max-w-[895px]'
+      modalClassName='max-w-modal'
       headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col'
     >

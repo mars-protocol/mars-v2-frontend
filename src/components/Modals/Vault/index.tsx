@@ -46,7 +46,7 @@ function VaultModal(props: Props) {
           <Text>{props.modal.vault.name}</Text>
         </span>
       }
-      modalClassName='max-w-[895px]'
+      modalClassName='max-w-modal'
       headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col'
     >

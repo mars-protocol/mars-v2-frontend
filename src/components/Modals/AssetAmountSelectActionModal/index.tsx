@@ -1,5 +1,7 @@
 import { useCallback, useState } from 'react'
 
+import CurrentAccountSummary from 'components/Account/CurrentAccountSummary'
+import AssetImage from 'components/AssetImage'
 import Button from 'components/Button'
 import Card from 'components/Card'
 import Divider from 'components/Divider'
@@ -7,10 +9,8 @@ import { ArrowRight } from 'components/Icons'
 import Modal from 'components/Modal'
 import Text from 'components/Text'
 import TokenInputWithSlider from 'components/TokenInputWithSlider'
-import { BN } from 'utils/helpers'
 import { byDenom } from 'utils/array'
-import CurrentAccountSummary from 'components/Account/CurrentAccountSummary'
-import AssetImage from 'components/AssetImage'
+import { BN } from 'utils/helpers'
 
 interface Props {
   asset: Asset
@@ -65,7 +65,7 @@ export default function AssetAmountSelectActionModal(props: Props) {
           <Text>{title}</Text>
         </span>
       }
-      modalClassName='max-w-[895px]'
+      modalClassName='max-w-modal'
       headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col min-h-[400px]'
     >
