@@ -61,7 +61,7 @@ export default function WithdrawFromVaults() {
 
             if (!primaryAsset || !secondaryAsset) return null
             return (
-              <div className='flex items-center gap-4' key={vault.positionId}>
+              <div className='flex items-center gap-4' key={vault.unlockId}>
                 <VaultLogo vault={vault} />
                 <div className='flex flex-grow flex-wrap'>
                   <Text className='w-full'>{vault.name}</Text>

@@ -148,7 +148,7 @@ export default function createBroadcastSlice(
     }) => {
       const actions = options.vaults.map((vault) => ({
         exit_vault_unlocked: {
-          id: vault.positionId,
+          id: vault.unlockId,
           vault: { address: vault.address },
         },
       }))

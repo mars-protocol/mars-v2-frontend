@@ -24,7 +24,7 @@ async function getUnlocksAtTimestamp(unlockingId: number, vaultAddress: string) 
   }
 }
 
-async function getVaultPositionStatusAndUnlockTime(
+async function getVaultPositionStatusAndUnlockIdAndUnlockTime(
   vaultPosition: VaultPosition,
 ): Promise<[VaultStatus, number | undefined, number | undefined]> {
   const amount = vaultPosition.amount
@@ -32,14 +32,14 @@ async function getVaultPositionStatusAndUnlockTime(
   if (VaultStatus.UNLOCKED in amount) return [VaultStatus.UNLOCKED, undefined, undefined]
 
   if (amount.locking.unlocking.length) {
-    const positionId = amount.locking.unlocking[0].id
-    const unlocksAtTimestamp = await getUnlocksAtTimestamp(positionId, vaultPosition.vault.address)
+    const unlockId = amount.locking.unlocking[0].id
+    const unlocksAtTimestamp = await getUnlocksAtTimestamp(unlockId, vaultPosition.vault.address)
 
     if (moment(unlocksAtTimestamp).isBefore(new Date())) {
-      return [VaultStatus.UNLOCKED, positionId, unlocksAtTimestamp]
+      return [VaultStatus.UNLOCKED, unlockId, unlocksAtTimestamp]
     }
 
-    return [VaultStatus.UNLOCKING, positionId, unlocksAtTimestamp]
+    return [VaultStatus.UNLOCKING, unlockId, unlocksAtTimestamp]
   } else {
     return [VaultStatus.ACTIVE, undefined, undefined]
   }
@@ -152,15 +152,15 @@ async function getDepositedVaults(accountId: string): Promise<DepositedVault[]> 
         throw 'Could not find the deposited vault among all vaults'
       }
 
-      const [[status, positionId, unlocksAt], valuesAndAmounts] = await Promise.all([
-        getVaultPositionStatusAndUnlockTime(vaultPosition),
+      const [[status, unlockId, unlocksAt], valuesAndAmounts] = await Promise.all([
+        getVaultPositionStatusAndUnlockIdAndUnlockTime(vaultPosition),
         getVaultValuesAndAmounts(vault, vaultPosition),
       ])
 
       return {
         ...vault,
         status,
-        positionId,
+        unlockId,
         unlocksAt,
         ...valuesAndAmounts,
       }

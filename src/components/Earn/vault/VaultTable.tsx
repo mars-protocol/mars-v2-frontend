@@ -42,24 +42,7 @@ export const VaultTable = (props: Props) => {
         accessorKey: 'name',
         cell: ({ row }) => {
           const vault = row.original as DepositedVault
-
-          let timeframe
-
-          switch (vault.lockup.timeframe) {
-            case 'day':
-            case 'days':
-              timeframe = 'd'
-              break
-            case 'hour':
-            case 'hours':
-              timeframe = 'h'
-              break
-            case 'minute':
-            case 'minutes':
-              timeframe = 'm'
-              break
-          }
-
+          const timeframe = vault.lockup.timeframe[0]
           const unlockDuration = !!timeframe ? ` - (${vault.lockup.duration}${timeframe})` : ''
 
           const status = vault.status
