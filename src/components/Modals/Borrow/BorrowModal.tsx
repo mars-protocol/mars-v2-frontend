@@ -18,6 +18,7 @@ import { hardcodedFee } from 'utils/constants'
 import { formatPercent, formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import AssetImage from 'components/AssetImage'
+import { BNCoin } from 'types/classes/BNCoin'
 
 function getDebtAmount(modal: BorrowModal | null) {
   if (!(modal?.marketData as BorrowAssetActive)?.debt) return '0'
@@ -60,7 +61,7 @@ export default function BorrowModal() {
       result = await repay({
         fee: hardcodedFee,
         accountId: selectedAccount?.id ?? '0',
-        coin: { denom: modal.asset.denom, amount: amount.toString() },
+        coin: BNCoin.fromDenomAndBigNumber(modal.asset.denom, amount),
         accountBalance: percentage === 100,
       })
     } else {
