@@ -13,13 +13,29 @@ interface Props {
 export default function NotificationBanner(props: Props) {
   const [glasColor, bgColor, icon] = useMemo(() => {
     if (props.type === 'success')
-      return ['bg-success-bg/20', 'bg-success', <CheckCircled key={props.type} />]
+      return [
+        'bg-success-bg/20',
+        'bg-success',
+        <CheckCircled className='block h-4 w-4 text-white' key={props.type} />,
+      ]
     if (props.type === 'error')
-      return ['bg-error-bg/20', 'bg-error', <CrossCircled key={props.type} />]
+      return [
+        'bg-error-bg/20',
+        'bg-error',
+        <CrossCircled className='block h-4 w-4 text-white' key={props.type} />,
+      ]
     if (props.type === 'warning')
-      return ['bg-warning-bg/20', 'bg-warning', <ExclamationMarkTriangle key={props.type} />]
+      return [
+        'bg-warning-bg/20',
+        'bg-warning',
+        <ExclamationMarkTriangle className='block h-4 w-4 text-white' key={props.type} />,
+      ]
 
-    return ['bg-info-bg/20', 'bg-info', <ExclamationMarkTriangle key={props.type} />]
+    return [
+      'bg-info-bg/20',
+      'bg-info',
+      <ExclamationMarkTriangle className='block h-4 w-4 text-white' key={props.type} />,
+    ]
   }, [props.type])
 
   return (
@@ -31,9 +47,7 @@ export default function NotificationBanner(props: Props) {
       )}
     >
       <div className='flex w-full items-center gap-2'>
-        <div className={classNames('rounded-sm p-1.5', bgColor)}>
-          <span className='block h-4 w-4 text-white'>{icon}</span>
-        </div>
+        <div className={classNames('rounded-sm p-1.5', bgColor)}>{icon}</div>
         <Text size='sm' className='flex-1 text-white'>
           {props.text}
         </Text>
