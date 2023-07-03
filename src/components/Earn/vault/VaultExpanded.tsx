@@ -57,6 +57,64 @@ export default function VaultExpanded(props: Props) {
 
   const status = vault.status
 
+  /* BUTTONS */
+
+  function DepositButton() {
+    return (
+      <Button onClick={enterVaultHandler} color='tertiary' leftIcon={<Plus className='w-3' />}>
+        Deposit
+      </Button>
+    )
+  }
+
+  function DepositMoreButton() {
+    return (
+      <Button onClick={depositMoreHandler} color='secondary' leftIcon={<Plus className='w-3' />}>
+        Deposit more
+      </Button>
+    )
+  }
+
+  function UnlockButton() {
+    return (
+      <Tooltip
+        type='info'
+        content='In order to withdraw this position, you must first unlock it. This will unlock all the funds within this position.'
+      >
+        <Button onClick={unlockHandler} color='tertiary' leftIcon={<LockUnlocked />}>
+          Unlock to withdraw
+        </Button>
+      </Tooltip>
+    )
+  }
+
+  function UnlockingButton() {
+    return (
+      <Button
+        onClick={withdrawHandler}
+        color='tertiary'
+        showProgressIndicator={isWaiting}
+        disabled={true}
+        leftIcon={<LockLocked />}
+      >
+        {`Withdraw in ${moment(vault?.unlocksAt).fromNow(true)}`}
+      </Button>
+    )
+  }
+
+  function UnlockedButton() {
+    return (
+      <Button
+        onClick={withdrawHandler}
+        color='tertiary'
+        showProgressIndicator={isWaiting}
+        leftIcon={<AccountArrowDown />}
+      >
+        Withdraw funds
+      </Button>
+    )
+  }
+
   return (
     <tr
       key={props.row.id}
@@ -70,48 +128,11 @@ export default function VaultExpanded(props: Props) {
     >
       <td colSpan={!status ? 5 : 6}>
         <div className='align-center flex justify-end gap-3 p-4'>
-          {!status ? (
-            <Button
-              onClick={enterVaultHandler}
-              color='tertiary'
-              leftIcon={<Plus className='w-3' />}
-            >
-              Deposit
-            </Button>
-          ) : (
-            <>
-              <Button
-                onClick={depositMoreHandler}
-                color='secondary'
-                leftIcon={<Plus className='w-3' />}
-              >
-                Deposit more
-              </Button>
-
-              {status === VaultStatus.ACTIVE ? (
-                <Tooltip
-                  type='info'
-                  content='In order to withdraw this position, you must first unlock it. This will unlock all the funds within this position.'
-                >
-                  <Button onClick={unlockHandler} color='tertiary' leftIcon={<LockUnlocked />}>
-                    Unlock to withdraw
-                  </Button>
-                </Tooltip>
-              ) : (
-                <Button
-                  onClick={withdrawHandler}
-                  color='tertiary'
-                  showProgressIndicator={isWaiting}
-                  disabled={status === VaultStatus.UNLOCKING}
-                  leftIcon={status === VaultStatus.UNLOCKED ? <AccountArrowDown /> : <LockLocked />}
-                >
-                  {status === VaultStatus.UNLOCKED
-                    ? 'Withdraw funds'
-                    : `Withdraw in ${moment(vault?.unlocksAt).fromNow(true)}`}
-                </Button>
-              )}
-            </>
-          )}
+          {!status && <DepositButton />}
+          <DepositMoreButton />
+          {status === VaultStatus.ACTIVE && <UnlockButton />}
+          {status === VaultStatus.UNLOCKING && <UnlockingButton />}
+          {status === VaultStatus.UNLOCKED && <UnlockedButton />}
         </div>
       </td>
     </tr>

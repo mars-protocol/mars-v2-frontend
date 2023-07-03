@@ -20,7 +20,7 @@ export default function AssetList(props: Props) {
         onClick={props.toggleOpen}
       >
         <Text>{props.type === 'buy' ? 'Buy asset' : 'Sell asset'}</Text>
-        <ChevronDown className={classNames(props.isOpen && '-rotate-180')} />
+        <ChevronDown className={classNames(props.isOpen && '-rotate-180', 'w-4')} />
       </button>
       {props.isOpen &&
         (props.assets.length === 0 ? (

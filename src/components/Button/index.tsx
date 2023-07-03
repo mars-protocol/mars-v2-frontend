@@ -120,7 +120,7 @@ const Button = React.forwardRef(function Button(
           {children && children}
           {rightIcon && <span className={classNames(rightIconClassNames)}>{rightIcon}</span>}
           {hasSubmenu && (
-            <span data-testid='button-submenu-indicator' className='ml-auto inline-block w-2.5'>
+            <span data-testid='button-submenu-indicator' className='ml-2 inline-block w-2.5'>
               <ChevronDown />
             </span>
           )}
