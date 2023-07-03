@@ -20,7 +20,7 @@ export default function UnlockModal() {
           <LockUnlocked width={18} />
         </div>
       }
-      modalClassName='max-w-[517px]'
+      modalClassName='max-w-modal-sm'
       headerClassName='p-8'
       contentClassName='px-8 pb-8'
       hideCloseBtn

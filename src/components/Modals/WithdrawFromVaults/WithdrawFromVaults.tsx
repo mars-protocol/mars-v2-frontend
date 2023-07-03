@@ -47,7 +47,7 @@ export default function WithdrawFromVaults() {
           <Text>Unlocked Vaults</Text>
         </span>
       }
-      modalClassName='max-w-[442px]'
+      modalClassName='max-w-modal-xs'
       headerClassName='px-4 py-5.5 border-b-white/5 border-b'
       contentClassName='p-4'
     >

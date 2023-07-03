@@ -52,7 +52,7 @@ export default function AssetOverlay(props: Props) {
 
   return (
     <Overlay className='w-full' show={props.state !== 'closed'} setShow={handleClose}>
-      <div className='flex justify-between p-4 overflow-hidden'>
+      <div className='flex justify-between overflow-hidden p-4'>
         <Text>Select asset</Text>
         <EscButton onClick={handleClose} enableKeyPress />
       </div>

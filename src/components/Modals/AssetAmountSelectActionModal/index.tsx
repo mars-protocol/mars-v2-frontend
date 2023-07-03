@@ -65,7 +65,6 @@ export default function AssetAmountSelectActionModal(props: Props) {
           <Text>{title}</Text>
         </span>
       }
-      modalClassName='max-w-modal'
       headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col min-h-[400px]'
     >

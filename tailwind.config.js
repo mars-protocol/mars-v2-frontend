@@ -189,6 +189,8 @@ module.exports = {
       maxWidth: {
         content: '1024px',
         modal: '895px',
+        'modal-sm': '517px',
+        'modal-xs': '442px'
       },
       minWidth: {
         15: '60px',
