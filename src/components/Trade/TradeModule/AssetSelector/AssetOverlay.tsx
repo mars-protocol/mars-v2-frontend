@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import EscButton from 'components/Button/EscButton'
 import Divider from 'components/Divider'
@@ -52,7 +52,7 @@ export default function AssetOverlay(props: Props) {
 
   return (
     <Overlay className='w-full' show={props.state !== 'closed'} setShow={handleClose}>
-      <div className='flex justify-between p-4'>
+      <div className='flex justify-between p-4 overflow-hidden'>
         <Text>Select asset</Text>
         <EscButton onClick={handleClose} enableKeyPress />
       </div>
