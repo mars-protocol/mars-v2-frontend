@@ -1,10 +1,9 @@
 import classNames from 'classnames'
 import { ReactNode, useEffect, useRef } from 'react'
 
-import Button from 'components/Button'
 import Card from 'components/Card'
-import { Cross } from 'components/Icons'
-import Text from 'components/Text'
+
+import EscButton from './Button/EscButton'
 
 interface Props {
   header: string | ReactNode
@@ -63,11 +62,7 @@ export default function Modal(props: Props) {
       >
         <div className={classNames('flex justify-between', props.headerClassName)}>
           {props.header}
-          {!props.hideCloseBtn && (
-            <Button onClick={onClose} leftIcon={<Cross />} iconClassName='h-3 w-3' color='tertiary'>
-              <Text size='sm'>ESC</Text>
-            </Button>
-          )}
+          {!props.hideCloseBtn && <EscButton onClick={props.onClose} />}
         </div>
         <div className={classNames(props.contentClassName, 'flex-grow')}>
           {props.children ? props.children : props.content}

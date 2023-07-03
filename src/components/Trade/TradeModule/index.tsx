@@ -1,9 +1,11 @@
-import { Suspense } from 'react'
 import { useParams } from 'react-router-dom'
+import classNames from 'classnames'
 
-import Card from 'components/Card'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
+import Divider from 'components/Divider'
+
+import AssetSelector from './AssetSelector/AssetSelector'
 
 function Content() {
   const params = useParams()
@@ -24,14 +26,15 @@ function Fallback() {
 
 export default function TradeModule() {
   return (
-    <Card
-      className='row-span-2 h-full w-full bg-white/5'
-      title='Trade Module'
-      contentClassName='px-4 py-6'
+    <div
+      className={classNames(
+        'relative isolate max-w-full overflow-hidden rounded-base',
+        'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
+        'row-span-2 h-full',
+      )}
     >
-      <Suspense fallback={<Fallback />}>
-        <Content />
-      </Suspense>
-    </Card>
+      <AssetSelector />
+      <Divider />
+    </div>
   )
 }
