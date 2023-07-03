@@ -31,25 +31,35 @@ export const buttonTransparentColorClasses = {
 }
 
 export const buttonRoundSizeClasses = {
-  small: 'h-[32px] w-[32px]',
-  medium: 'h-[40px] w-[40px]',
-  large: 'h-[56px] w-[56px]',
+  xs: 'h-5 w-5',
+  sm: 'h-8 w-8',
+  md: 'h-10 w-10',
+  lg: 'h-14 w-14',
 }
 
 export const buttonSizeClasses = {
-  small: 'text-sm',
-  medium: 'text-base',
-  large: 'text-lg',
+  xs: 'text-xs',
+  sm: 'text-sm',
+  md: 'text-base',
+  lg: 'text-lg',
 }
 
 export const buttonPaddingClasses = {
-  small: 'px-4 py-1.5 min-h-[32px]',
-  medium: 'px-4 py-2 min-h-[40px]',
-  large: 'px-4 py-2.5 min-h-[56px]',
+  xs: 'px-1.5 py-0.5 min-h-5',
+  sm: 'px-4 py-1.5 min-h-8',
+  md: 'px-4 py-2 min-h-10',
+  lg: 'px-4 py-2.5 min-h-14',
 }
 
 export const buttonVariantClasses = {
   solid: 'rounded-sm text-white shadow-button justify-center group',
   transparent: 'rounded-sm bg-transparent p-0 transition duration-200 ease-in',
   round: 'rounded-full p-0',
+}
+
+export const circularProgressSize = {
+  xs: 8,
+  sm: 10,
+  md: 12,
+  lg: 18,
 }
