@@ -1,3 +1,5 @@
+const BNCoin = import('types/classes/BNCoin').BNCoin
+
 interface BroadcastResult {
   result?: import('@marsprotocol/wallet-connector').TxBroadcastResult
   error?: string
@@ -46,7 +48,7 @@ interface BroadcastSlice {
   repay: (options: {
     fee: StdFee
     accountId: string
-    coin: Coin
+    coin: BNCoin
     accountBalance?: boolean
   }) => Promise<boolean>
 }
