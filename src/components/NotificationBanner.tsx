@@ -1,12 +1,8 @@
 import classNames from 'classnames'
 
-import {
-  CheckCircled,
-  CrossCircled,
-  ExclamationMarkCircled,
-  ExclamationMarkTriangle,
-} from 'components/Icons'
+import { CheckCircled, CrossCircled, ExclamationMarkTriangle } from 'components/Icons'
 import Text from 'components/Text'
+import { useMemo } from 'react'
 
 interface Props {
   type: 'success' | 'error' | 'warning' | 'info'
@@ -15,37 +11,14 @@ interface Props {
 }
 
 export default function NotificationBanner(props: Props) {
-  let glasColor
-  let bgColor
-  let textColor
-  let icon
+  const [glasColor, bgColor, icon] = useMemo(() => {
+    if (props.type === 'success') return ['bg-success-bg/20', 'bg-success', <CheckCircled />]
+    if (props.type === 'error') return ['bg-error-bg/20', 'bg-error', <CrossCircled />]
+    if (props.type === 'warning')
+      return ['bg-warning-bg/20', 'bg-warning', <ExclamationMarkTriangle />]
 
-  switch (props.type) {
-    case 'success':
-      glasColor = 'bg-success-bg/20'
-      bgColor = 'bg-success'
-      textColor = 'text-success'
-      icon = <CheckCircled />
-      break
-    case 'error':
-      glasColor = 'bg-error-bg/20'
-      bgColor = 'bg-error'
-      textColor = 'text-error'
-      icon = <CrossCircled />
-      break
-    case 'warning':
-      glasColor = 'bg-warning-bg/20'
-      bgColor = 'bg-warning'
-      textColor = 'text-warning'
-      icon = <ExclamationMarkTriangle />
-      break
-    case 'info':
-      glasColor = 'bg-info-bg/20'
-      bgColor = 'bg-info'
-      textColor = 'text-info'
-      icon = <ExclamationMarkCircled />
-      break
-  }
+    return ['bg-info-bg/20', 'bg-info', <ExclamationMarkTriangle />]
+  }, [props.type])
 
   return (
     <div
