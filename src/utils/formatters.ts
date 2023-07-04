@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js'
+import moment from 'moment'
 
 import { BNCoin } from 'types/classes/BNCoin'
 import { getEnabledMarketAssets } from 'utils/assets'
@@ -21,6 +22,19 @@ export interface FormatOptions {
   suffix?: string
   rounded?: boolean
   abbreviated?: boolean
+}
+
+export const produceCountdown = (remainingTime: number) => {
+  const duration = moment.duration(remainingTime, 'milliseconds')
+  const days = formatValue(duration.asDays(), { minDecimals: 0, maxDecimals: 0 })
+
+  duration.subtract(days, 'days')
+  const hours = formatValue(duration.asHours(), { minDecimals: 0, maxDecimals: 0 })
+
+  duration.subtract(hours, 'hours')
+  const minutes = formatValue(duration.asMinutes(), { minDecimals: 0, maxDecimals: 0 })
+
+  return `${days}d ${hours}h ${minutes}m`
 }
 
 export const formatValue = (amount: number | string, options?: FormatOptions): string => {

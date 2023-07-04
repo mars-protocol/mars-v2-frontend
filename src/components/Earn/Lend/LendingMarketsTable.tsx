@@ -1,18 +1,18 @@
 import { ColumnDef, Row, Table } from '@tanstack/react-table'
-import { useMemo } from 'react'
-import Image from 'next/image'
 import classNames from 'classnames'
+import Image from 'next/image'
+import { useMemo } from 'react'
 
-import Text from 'components/Text'
-import AssetListTable from 'components/MarketAssetTable'
-import TitleAndSubCell from 'components/TitleAndSubCell'
-import { ChevronDown, ChevronRight } from 'components/Icons'
-import { convertLiquidityRateToAPR, demagnify, formatValue } from 'utils/formatters'
-import MarketAssetTableRow from 'components/MarketAssetTable/MarketAssetTableRow'
 import LendingActionButtons from 'components/Earn/Lend/LendingActionButtons'
 import LendingDetails from 'components/Earn/Lend/LendingDetails'
-import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
 import { FormattedNumber } from 'components/FormattedNumber'
+import { ChevronDown, ChevronRight } from 'components/Icons'
+import AssetListTable from 'components/MarketAssetTable'
+import MarketAssetTableRow from 'components/MarketAssetTable/MarketAssetTableRow'
+import Text from 'components/Text'
+import TitleAndSubCell from 'components/TitleAndSubCell'
+import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
+import { convertLiquidityRateToAPR, demagnify, formatValue } from 'utils/formatters'
 
 interface Props {
   title: string

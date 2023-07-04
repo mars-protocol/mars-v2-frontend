@@ -1,8 +1,8 @@
+import { CircularProgress } from 'components/CircularProgress'
 import { LockUnlocked } from 'components/Icons'
 import Modal from 'components/Modal'
-import useStore from 'store'
 import UnlockModalContent from 'components/Modals/Unlock/UnlockModalContent'
-import { CircularProgress } from 'components/CircularProgress'
+import useStore from 'store'
 
 export default function UnlockModal() {
   const modal = useStore((s) => s.unlockModal)
@@ -20,7 +20,7 @@ export default function UnlockModal() {
           <LockUnlocked width={18} />
         </div>
       }
-      modalClassName='w-[577px]'
+      modalClassName='max-w-modal-sm'
       headerClassName='p-8'
       contentClassName='px-8 pb-8'
       hideCloseBtn

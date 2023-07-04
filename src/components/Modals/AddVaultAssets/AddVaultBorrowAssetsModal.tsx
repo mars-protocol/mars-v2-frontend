@@ -29,7 +29,7 @@ export default function AddVaultBorrowAssetsModal() {
       open={!!(modal && showContent)}
       header={<Text>Add Assets</Text>}
       onClose={onClose}
-      modalClassName='max-w-[478px]'
+      modalClassName='max-w-modal-xs'
       headerClassName='bg-white/10 border-b-white/5 border-b items-center p-4'
     >
       {showContent ? (

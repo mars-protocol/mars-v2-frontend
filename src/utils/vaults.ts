@@ -1,9 +1,12 @@
+import moment from 'moment'
+
 import { IS_TESTNET } from 'constants/env'
 import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
-import { BN } from 'utils/helpers'
-import { getNetCollateralValue } from 'utils/accounts'
 import { BNCoin } from 'types/classes/BNCoin'
+import { VaultStatus } from 'types/enums/vault'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { getNetCollateralValue } from 'utils/accounts'
+import { BN } from 'utils/helpers'
 import { getTokenPrice, getTokenValue } from 'utils/tokens'
 
 export function getVaultMetaData(address: string) {

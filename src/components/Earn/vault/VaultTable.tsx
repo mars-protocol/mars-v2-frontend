@@ -10,19 +10,20 @@ import {
 import classNames from 'classnames'
 import React from 'react'
 
+import DisplayCurrency from 'components/DisplayCurrency'
 import VaultExpanded from 'components/Earn/vault/VaultExpanded'
 import VaultLogo from 'components/Earn/vault/VaultLogo'
 import { VaultRow } from 'components/Earn/vault/VaultRow'
 import { ChevronDown, SortAsc, SortDesc, SortNone } from 'components/Icons'
+import Loading from 'components/Loading'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import { VAULT_DEPOSIT_BUFFER } from 'constants/vaults'
-import { getAssetByDenom } from 'utils/assets'
-import { convertPercentage, formatPercent, formatValue } from 'utils/formatters'
-import DisplayCurrency from 'components/DisplayCurrency'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import Loading from 'components/Loading'
+import { VaultStatus } from 'types/enums/vault'
+import { getAssetByDenom } from 'utils/assets'
+import { convertPercentage, formatPercent, formatValue, produceCountdown } from 'utils/formatters'
 
 type Props = {
   data: Vault[] | DepositedVault[]
@@ -40,14 +41,49 @@ export const VaultTable = (props: Props) => {
         header: 'Vault',
         accessorKey: 'name',
         cell: ({ row }) => {
+          const vault = row.original as DepositedVault
+          const timeframe = vault.lockup.timeframe[0]
+          const unlockDuration = !!timeframe ? ` - (${vault.lockup.duration}${timeframe})` : ''
+
+          const status = vault.status
+          let remainingTime = 0
+
+          if (status === VaultStatus.UNLOCKING && vault.unlocksAt) {
+            remainingTime = vault.unlocksAt - Date.now()
+          }
+
           return (
             <div className='flex'>
-              <VaultLogo vault={row.original} />
+              <VaultLogo vault={vault} />
               <TitleAndSubCell
                 className='ml-2 mr-2 text-left'
-                title={`${row.original.name} - (${row.original.lockup.duration} ${row.original.lockup.timeframe})`}
-                sub={row.original.provider}
+                title={`${vault.name}${unlockDuration}`}
+                sub={vault.provider}
               />
+              {status === VaultStatus.UNLOCKING && (
+                <div className='h-5 w-[84px] perspective'>
+                  <div className='delay-5000 relative h-full w-full animate-flip preserve-3d'>
+                    <div className='absolute h-5 rounded-sm bg-green backface-hidden'>
+                      <Text className='w-[84px] text-center leading-5 text-white' size='xs'>
+                        {produceCountdown(remainingTime)}
+                      </Text>
+                    </div>
+                    <div className='absolute h-full w-full overflow-hidden rounded-sm bg-green flip-x-180 backface-hidden'>
+                      <Text className='w-[84px] text-center leading-5 text-white' size='xs'>
+                        Unlocking
+                      </Text>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {status === VaultStatus.UNLOCKED && (
+                <Text
+                  className='h-5 w-[84px] rounded-sm bg-green text-center leading-5 text-white'
+                  size='xs'
+                >
+                  Unlocked
+                </Text>
+              )}
             </div>
           )
         },

@@ -1,8 +1,11 @@
-import { hardcodedFee } from 'utils/constants'
+import { useState } from 'react'
+import { useParams } from 'react-router-dom'
+
 import Button from 'components/Button'
 import { Enter } from 'components/Icons'
 import Text from 'components/Text'
 import useStore from 'store'
+import { hardcodedFee } from 'utils/constants'
 
 interface Props {
   depositedVault: DepositedVault
@@ -27,10 +30,15 @@ function YesIcon() {
 
 export default function UnlockModalContent(props: Props) {
   const unlock = useStore((s) => s.unlock)
+  const [isWating, setIsConfirming] = useState(false)
+  const { accountId } = useParams()
 
   async function onConfirm() {
+    if (!accountId) return
+    setIsConfirming(true)
     await unlock({
       fee: hardcodedFee,
+      accountId: accountId,
       vault: props.depositedVault,
       amount: props.depositedVault.amounts.locked.toString(),
     })
@@ -50,6 +58,7 @@ export default function UnlockModalContent(props: Props) {
           className='px-6'
           rightIcon={<YesIcon />}
           onClick={onConfirm}
+          showProgressIndicator={isWating}
         />
         <Button
           text='No'
@@ -58,6 +67,7 @@ export default function UnlockModalContent(props: Props) {
           rightIcon={<NoIcon />}
           tabIndex={1}
           onClick={props.onClose}
+          disabled={isWating}
         />
       </div>
     </>

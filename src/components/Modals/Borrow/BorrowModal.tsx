@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import AccountSummary from 'components/Account/AccountSummary'
+import AssetImage from 'components/AssetImage'
 import Button from 'components/Button'
 import Card from 'components/Card'
 import Divider from 'components/Divider'
@@ -14,11 +15,10 @@ import { ASSETS } from 'constants/assets'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 import { hardcodedFee } from 'utils/constants'
 import { formatPercent, formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import AssetImage from 'components/AssetImage'
-import { BNCoin } from 'types/classes/BNCoin'
 
 function getDebtAmount(modal: BorrowModal | null) {
   if (!(modal?.marketData as BorrowAssetActive)?.debt) return '0'

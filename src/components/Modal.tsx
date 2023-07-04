@@ -20,6 +20,7 @@ interface Props {
 
 export default function Modal(props: Props) {
   const ref: any = useRef(null)
+  const modalClassName = props.modalClassName ?? 'max-w-modal'
 
   function onClose() {
     ref.current?.close()
@@ -48,10 +49,10 @@ export default function Modal(props: Props) {
       ref={ref}
       onCancel={onClose}
       className={classNames(
-        'w-[895px] border-none bg-transparent text-white',
+        `w-screen border-none bg-transparent text-white`,
         'focus-visible:outline-none',
         'backdrop:bg-black/50 backdrop:backdrop-blur-sm',
-        props.modalClassName,
+        modalClassName,
       )}
     >
       <Card

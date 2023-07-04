@@ -1,12 +1,27 @@
 /** @type {import('tailwindcss').Config} */
 const plugin = require('tailwindcss/plugin')
 
+const flipClass = plugin(function ({ addUtilities }) {
+  addUtilities({
+    '.flip-x-180': {
+      transform: 'rotateX(180deg)',
+    },
+    '.preserve-3d': {
+      transformStyle: 'preserve-3d',
+    },
+    '.perspective': {
+      perspective: '1000px',
+    },
+    '.backface-hidden': {
+      backfaceVisibility: 'hidden',
+    },
+  })
+})
+
 module.exports = {
   content: ['./src/pages/**/*.{js,ts,jsx,tsx}', './src/components/**/*.{js,ts,jsx,tsx}'],
   safelist: [
     'h-2',
-    'h-4.5',
-    'h-15',
     'text-3xs',
     'text-3xs-caps',
     'text-2xs',
@@ -30,8 +45,6 @@ module.exports = {
     'text-5xl-caps',
     'text-5xl',
     'w-2',
-    'w-4.5',
-    'w-15',
   ],
   theme: {
     extend: {
@@ -39,6 +52,7 @@ module.exports = {
         fadein: 'fadein 1s ease-in-out forwards',
         glow: 'glow 1000ms ease-in-out forwards',
         progress: 'spin 1200ms cubic-bezier(0.5, 0, 0.5, 1) infinite',
+        flip: 'flip 10s linear alternate-reverse infinite',
       },
       backdropBlur: {
         sticky: '50px',
@@ -80,12 +94,15 @@ module.exports = {
         'body-dark': '#141621',
         error: '#F04438',
         'error-bg': '#FDA29B',
+        green: '#039855',
         grey: '#3a3c49',
         'grey-dark': '#1a1c25',
         'grey-highlight': '#4c4c4c',
         'grey-light': '#bfbfbf',
         'grey-medium': '#5f697a',
         header: 'rgba(59, 25, 40, 0.4);',
+        info: '#FDB022',
+        'info-bg': '#FEDB7C',
         input: '#282a33',
         loss: '#f96363',
         mars: '#a03b45',
@@ -101,6 +118,7 @@ module.exports = {
         'success-bg': '#6CE9A6',
         'vote-against': '#eb9e49',
         warning: '#F79009',
+        'warning-bg': '#FEC84B',
         white: '#FFF',
       },
       fontFamily: {
@@ -148,6 +166,12 @@ module.exports = {
           '66%': { opacity: 1 },
           '100%': { opacity: 0 },
         },
+        flip: {
+          '0%': { transform: 'rotateX(0deg)' },
+          '45%': { transform: 'rotateX(0deg)' },
+          '55%': { transform: 'rotateX(180deg)' },
+          '100%': { transform: 'rotateX(180deg)' },
+        },
       },
       letterSpacing: {
         normal: 0,
@@ -164,9 +188,15 @@ module.exports = {
       },
       maxWidth: {
         content: '1024px',
+        modal: '895px',
+        'modal-sm': '517px',
+        'modal-xs': '442px'
       },
       minWidth: {
         15: '60px',
+      },
+      padding: {
+        5.5: '22px',
       },
       screens: {
         sm: '480px',
@@ -202,6 +232,7 @@ module.exports = {
     },
   },
   plugins: [
+    flipClass,
     require('tailwind-scrollbar-hide'),
     plugin(function ({ addBase, addUtilities, theme }) {
       addBase({

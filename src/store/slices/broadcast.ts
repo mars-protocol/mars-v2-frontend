@@ -4,15 +4,15 @@ import { GetState, SetState } from 'zustand'
 
 import { ENV } from 'constants/env'
 import { Store } from 'store'
-import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
-import { formatAmountWithSymbol } from 'utils/formatters'
-import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { BNCoin } from 'types/classes/BNCoin'
+import { ExecuteMsg as AccountNftExecuteMsg } from 'types/generated/mars-account-nft/MarsAccountNft.types'
 import {
+  Action,
   Action as CreditManagerAction,
   ExecuteMsg as CreditManagerExecuteMsg,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { ExecuteMsg as AccountNftExecuteMsg } from 'types/generated/mars-account-nft/MarsAccountNft.types'
+import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
+import { formatAmountWithSymbol } from 'utils/formatters'
 
 export default function createBroadcastSlice(
   set: SetState<Store>,
@@ -116,11 +116,23 @@ export default function createBroadcastSlice(
       )
       return !!response.result
     },
-    unlock: async (options: { fee: StdFee; vault: Vault; amount: string }) => {
-      const msg: CreditManagerAction = {
-        request_vault_unlock: {
-          vault: { address: options.vault.address },
-          amount: options.amount,
+    unlock: async (options: {
+      fee: StdFee
+      accountId: string
+      vault: DepositedVault
+      amount: string
+    }) => {
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: [
+            {
+              request_vault_unlock: {
+                vault: { address: options.vault.address },
+                amount: options.amount,
+              },
+            },
+          ],
         },
       }
 
@@ -131,6 +143,37 @@ export default function createBroadcastSlice(
       })
 
       handleResponseMessages(response, `Requested unlock for ${options.vault.name}`)
+      return !!response.result
+    },
+
+    withdrawFromVaults: async (options: {
+      fee: StdFee
+      accountId: string
+      vaults: DepositedVault[]
+    }) => {
+      const actions: CreditManagerAction[] = []
+      options.vaults.forEach((vault) => {
+        if (vault.unlockId)
+          actions.push({
+            exit_vault_unlocked: {
+              id: vault.unlockId,
+              vault: { address: vault.address },
+            },
+          })
+      })
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions,
+        },
+      }
+
+      const response = await get().executeMsg({ msg, fee: options.fee })
+      const vaultsString = options.vaults.length === 1 ? 'vault' : 'vaults'
+      handleResponseMessages(
+        response,
+        `You successfully withdrew ${options.vaults.length} unlocked ${vaultsString} to your account`,
+      )
       return !!response.result
     },
     depositIntoVault: async (options: { fee: StdFee; accountId: string; actions: Action[] }) => {

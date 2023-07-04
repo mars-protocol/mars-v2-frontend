@@ -55,6 +55,7 @@ interface VaultValuesAndAmounts {
 type VaultStatus = 'active' | 'unlocking' | 'unlocked'
 interface DepositedVault extends Vault, VaultValuesAndAmounts {
   status: VaultStatus
+  unlockId?: number
   unlocksAt?: number
 }
 

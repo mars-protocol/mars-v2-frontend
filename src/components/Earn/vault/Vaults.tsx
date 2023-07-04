@@ -3,10 +3,12 @@ import { useParams } from 'react-router-dom'
 
 import Card from 'components/Card'
 import { VaultTable } from 'components/Earn/vault/VaultTable'
+import VaultUnlockBanner from 'components/Earn/vault/VaultUnlockBanner'
 import { IS_TESTNET } from 'constants/env'
 import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
-import useVaults from 'hooks/useVaults'
 import useDepositedVaults from 'hooks/useDepositedVaults'
+import useVaults from 'hooks/useVaults'
+import { VaultStatus } from 'types/enums/vault'
 import { BN } from 'utils/helpers'
 
 interface Props {
@@ -17,6 +19,7 @@ function Content(props: Props) {
   const { accountId } = useParams()
   const { data: vaults } = useVaults()
   const { data: depositedVaults } = useDepositedVaults(accountId || '')
+  const isAvailable = props.type === 'available'
 
   const vaultsMetaData = IS_TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
 
@@ -38,31 +41,30 @@ function Content(props: Props) {
     )
   }, [vaults, depositedVaults, vaultsMetaData])
 
-  const vaultsToDisplay = props.type === 'available' ? available : deposited
+  const vaultsToDisplay = isAvailable ? available : deposited
 
   if (!vaultsToDisplay.length) return null
 
-  if (props.type === 'deposited') {
-    return (
-      <Card className='mb-4 h-fit w-full bg-white/5' title={'Deposited'}>
-        <VaultTable data={vaultsToDisplay} />
-      </Card>
-    )
+  const unlockedVaults: DepositedVault[] = []
+
+  if (!isAvailable && depositedVaults?.length > 0) {
+    depositedVaults.forEach((vault) => {
+      if (vault.status === VaultStatus.UNLOCKED) {
+        unlockedVaults.push(vault)
+      }
+    })
   }
 
-  return <VaultTable data={vaultsToDisplay} />
-}
-
-export default function Vaults(props: Props) {
   return (
-    <Card
-      title={props.type === 'available' ? 'Available vaults' : 'Deposited'}
-      className='mb-4 h-fit w-full bg-white/5'
-    >
-      <Suspense fallback={props.type === 'available' ? <Fallback /> : null}>
-        <Content type={props.type} />
-      </Suspense>
-    </Card>
+    <>
+      {!isAvailable && <VaultUnlockBanner vaults={unlockedVaults} />}
+      <Card
+        className='h-fit w-full bg-white/5'
+        title={isAvailable ? 'Available vaults' : 'Deposited'}
+      >
+        <VaultTable data={vaultsToDisplay} />
+      </Card>
+    </>
   )
 }
 
@@ -82,16 +84,18 @@ function Fallback() {
     },
   }))
 
-  return <VaultTable data={mockVaults} isLoading />
+  return (
+    <Card className='h-fit w-full bg-white/5' title='Available vaults'>
+      <VaultTable data={mockVaults} isLoading />
+    </Card>
+  )
 }
 
 export function AvailableVaults() {
   return (
-    <Card className='h-fit w-full bg-white/5' title='Available vaults'>
-      <Suspense fallback={<Fallback />}>
-        <Content type='available' />
-      </Suspense>
-    </Card>
+    <Suspense fallback={<Fallback />}>
+      <Content type='available' />
+    </Suspense>
   )
 }
 
