@@ -16,6 +16,7 @@ import { hardcodedFee } from 'utils/constants'
 import { isNumber } from 'utils/parsers'
 
 const menuClasses = 'absolute isolate flex w-full flex-wrap scrollbar-hide'
+const ACCOUNT_MENU_BUTTON_ID = 'account-menu-button'
 
 interface Props {
   accounts: Account[]
@@ -57,6 +58,7 @@ export default function AccountMenuContent(props: Props) {
   return (
     <div className='relative'>
       <Button
+        id={ACCOUNT_MENU_BUTTON_ID}
         onClick={hasCreditAccounts ? () => setShowMenu(!showMenu) : createAccountHandler}
         leftIcon={hasCreditAccounts ? <Account /> : <PlusCircled />}
         color={hasCreditAccounts ? 'tertiary' : 'primary'}
@@ -133,3 +135,5 @@ export default function AccountMenuContent(props: Props) {
     </div>
   )
 }
+
+export { ACCOUNT_MENU_BUTTON_ID }

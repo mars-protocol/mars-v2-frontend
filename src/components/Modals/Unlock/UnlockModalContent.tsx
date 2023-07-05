@@ -2,30 +2,14 @@ import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import Button from 'components/Button'
-import { Enter } from 'components/Icons'
 import Text from 'components/Text'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/constants'
+import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
 
 interface Props {
   depositedVault: DepositedVault
   onClose: () => void
-}
-
-function NoIcon() {
-  return (
-    <div className='ml-1 flex items-center rounded-xs border-[1px] border-white/5 bg-white/5 px-1 py-0.5 text-[8px] font-bold leading-[10px] text-white/60 '>
-      ESC
-    </div>
-  )
-}
-
-function YesIcon() {
-  return (
-    <div className='ml-1 rounded-xs border-[1px] border-white/5 bg-white/5 px-1 py-0.5'>
-      <Enter width={12} />
-    </div>
-  )
 }
 
 export default function UnlockModalContent(props: Props) {
