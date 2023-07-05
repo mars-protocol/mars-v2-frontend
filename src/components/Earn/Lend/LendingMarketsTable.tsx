@@ -1,5 +1,4 @@
 import { ColumnDef, Row, Table } from '@tanstack/react-table'
-import classNames from 'classnames'
 import Image from 'next/image'
 import { useMemo } from 'react'
 
@@ -118,7 +117,7 @@ function LendingMarketsTable(props: Props) {
         header: 'Manage',
         cell: ({ row }) => (
           <div className='flex items-center justify-end'>
-            <div className={classNames('w-4')}>
+            <div className={row.getIsExpanded() ? 'w-4' : 'w-2'}>
               {row.getIsExpanded() ? <ChevronDown /> : <ChevronRight />}
             </div>
           </div>
