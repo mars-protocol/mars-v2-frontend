@@ -10,6 +10,7 @@ import {
 import classNames from 'classnames'
 import React from 'react'
 
+import Button from 'components/Button'
 import DisplayCurrency from 'components/DisplayCurrency'
 import VaultExpanded from 'components/Earn/vault/VaultExpanded'
 import VaultLogo from 'components/Earn/vault/VaultLogo'
@@ -61,20 +62,29 @@ export const VaultTable = (props: Props) => {
                 sub={vault.provider}
               />
               {status === VaultStatus.UNLOCKING && (
-                <div className='h-5 w-[84px] perspective'>
-                  <div className='delay-5000 relative h-full w-full animate-flip preserve-3d'>
-                    <div className='absolute h-5 rounded-sm bg-green backface-hidden'>
-                      <Text className='w-[84px] text-center leading-5 text-white' size='xs'>
-                        {produceCountdown(remainingTime)}
-                      </Text>
-                    </div>
-                    <div className='absolute h-full w-full overflow-hidden rounded-sm bg-green flip-x-180 backface-hidden'>
-                      <Text className='w-[84px] text-center leading-5 text-white' size='xs'>
-                        Unlocking
-                      </Text>
-                    </div>
-                  </div>
-                </div>
+                <Text
+                  className='group/label relative h-5 w-[84px] rounded-sm bg-green text-center leading-5 text-white'
+                  size='xs'
+                >
+                  <span
+                    className={classNames(
+                      'absolute inset-0 text-center',
+                      'opacity-100 transition-opacity duration-500',
+                      'group-hover/label:opacity-0 group-[.is-expanded]/row:opacity-0',
+                    )}
+                  >
+                    Unlocking
+                  </span>
+                  <span
+                    className={classNames(
+                      'absolute inset-0 text-center',
+                      'opacity-0 transition-opacity duration-500',
+                      'group-hover/label:opacity-100 group-[.is-expanded]/row:opacity-100',
+                    )}
+                  >
+                    {produceCountdown(remainingTime)}
+                  </span>
+                </Text>
               )}
               {status === VaultStatus.UNLOCKED && (
                 <Text
@@ -154,15 +164,35 @@ export const VaultTable = (props: Props) => {
       {
         accessorKey: 'details',
         enableSorting: false,
-        header: 'Details',
+        header: (data) => {
+          const tableData = data.table.options.data as DepositedVault[]
+          if (tableData.length && tableData[0].status) return 'Details'
+          return 'Deposit'
+        },
         cell: ({ row }) => {
+          function enterVaultHandler() {
+            useStore.setState({
+              vaultModal: {
+                vault: row.original,
+                selectedBorrowDenoms: [row.original.denoms.secondary],
+              },
+            })
+          }
+
           if (props.isLoading) return <Loading />
+          const vault = row.original as DepositedVault
 
           return (
             <div className='flex items-center justify-end'>
-              <div className={classNames('w-4', row.getIsExpanded() && 'rotate-180')}>
-                <ChevronDown />
-              </div>
+              {vault.status ? (
+                <div className={classNames('w-4', row.getIsExpanded() && 'rotate-180')}>
+                  <ChevronDown />
+                </div>
+              ) : (
+                <Button onClick={enterVaultHandler} color='tertiary'>
+                  Deposit
+                </Button>
+              )}
             </div>
           )
         },
