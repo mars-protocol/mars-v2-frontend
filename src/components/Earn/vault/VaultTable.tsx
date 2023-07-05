@@ -15,7 +15,7 @@ import DisplayCurrency from 'components/DisplayCurrency'
 import VaultExpanded from 'components/Earn/vault/VaultExpanded'
 import VaultLogo from 'components/Earn/vault/VaultLogo'
 import { VaultRow } from 'components/Earn/vault/VaultRow'
-import { ChevronDown, Plus, SortAsc, SortDesc, SortNone } from 'components/Icons'
+import { ChevronDown, SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
@@ -185,11 +185,7 @@ export const VaultTable = (props: Props) => {
                   <ChevronDown />
                 </div>
               ) : (
-                <Button
-                  onClick={enterVaultHandler}
-                  color='tertiary'
-                  leftIcon={<Plus className='w-3' />}
-                >
+                <Button onClick={enterVaultHandler} color='tertiary'>
                   Deposit
                 </Button>
               )}

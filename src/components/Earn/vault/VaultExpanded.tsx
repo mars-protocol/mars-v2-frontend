@@ -21,15 +21,6 @@ export default function VaultExpanded(props: Props) {
   const [isConfirming, setIsConfirming] = useState(false)
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
 
-  function enterVaultHandler() {
-    useStore.setState({
-      vaultModal: {
-        vault: props.row.original,
-        selectedBorrowDenoms: [props.row.original.denoms.secondary],
-      },
-    })
-  }
-
   function depositMoreHandler() {
     useStore.setState({
       vaultModal: {
@@ -58,14 +49,6 @@ export default function VaultExpanded(props: Props) {
   const status = vault.status
 
   /* BUTTONS */
-
-  function DepositButton() {
-    return (
-      <Button onClick={enterVaultHandler} color='tertiary' leftIcon={<Plus className='w-3' />}>
-        Deposit
-      </Button>
-    )
-  }
 
   function DepositMoreButton() {
     return (
@@ -128,7 +111,6 @@ export default function VaultExpanded(props: Props) {
     >
       <td colSpan={!status ? 5 : 6}>
         <div className='align-center flex justify-end gap-3 p-4'>
-          {!status && <DepositButton />}
           {status && <DepositMoreButton />}
           {status === VaultStatus.ACTIVE && <UnlockButton />}
           {status === VaultStatus.UNLOCKING && <UnlockingButton />}
