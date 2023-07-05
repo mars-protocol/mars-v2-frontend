@@ -1,26 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 const plugin = require('tailwindcss/plugin')
 
-const flipClass = plugin(function ({ addUtilities }) {
-  addUtilities({
-    '.flip-x-180': {
-      transform: 'rotateX(180deg)',
-    },
-    '.flip-x-0': {
-      transform: 'rotateX(0deg)',
-    },
-    '.preserve-3d': {
-      transformStyle: 'preserve-3d',
-    },
-    '.perspective': {
-      perspective: '1000px',
-    },
-    '.backface-hidden': {
-      backfaceVisibility: 'hidden',
-    },
-  })
-})
-
 module.exports = {
   content: ['./src/pages/**/*.{js,ts,jsx,tsx}', './src/components/**/*.{js,ts,jsx,tsx}'],
   safelist: [
@@ -228,7 +208,6 @@ module.exports = {
     },
   },
   plugins: [
-    flipClass,
     require('tailwind-scrollbar-hide'),
     plugin(function ({ addBase, addUtilities, theme }) {
       addBase({
