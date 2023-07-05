@@ -12,7 +12,7 @@ export const VaultRow = (props: AssetRowProps) => {
     <tr
       key={props.row.id}
       className={classNames(
-        'bg-white/3 group border-b border-t border-white/5 transition-colors hover:bg-white/5',
+        'bg-white/3 group/row border-b border-t border-white/5 transition-colors hover:bg-white/5',
         vault.status && 'cursor-pointer',
         props.row.getIsExpanded() && 'is-expanded',
       )}

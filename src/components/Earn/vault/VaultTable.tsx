@@ -62,25 +62,29 @@ export const VaultTable = (props: Props) => {
                 sub={vault.provider}
               />
               {status === VaultStatus.UNLOCKING && (
-                <div className='h-5 w-[84px] perspective'>
-                  <div
+                <Text
+                  className='group/label relative h-5 w-[84px] rounded-sm bg-green text-center leading-5 text-white'
+                  size='xs'
+                >
+                  <span
                     className={classNames(
-                      'relative h-full w-full transition-[transform] duration-1000 flip-x-180 preserve-3d ',
-                      'group-hover:flip-x-0 group-[.is-expanded]:flip-x-0',
+                      'absolute inset-0 text-center',
+                      'opacity-100 transition-opacity duration-500',
+                      'group-hover/label:opacity-0 group-[.is-expanded]/row:opacity-0',
                     )}
                   >
-                    <div className='absolute h-5 rounded-sm bg-green backface-hidden'>
-                      <Text className='w-[84px] text-center leading-5 text-white' size='xs'>
-                        {produceCountdown(remainingTime)}
-                      </Text>
-                    </div>
-                    <div className='absolute h-full w-full overflow-hidden rounded-sm bg-green flip-x-180 backface-hidden'>
-                      <Text className='w-[84px] text-center leading-5 text-white' size='xs'>
-                        Unlocking
-                      </Text>
-                    </div>
-                  </div>
-                </div>
+                    Unlocking
+                  </span>
+                  <span
+                    className={classNames(
+                      'absolute inset-0 text-center',
+                      'opacity-0 transition-opacity duration-500',
+                      'group-hover/label:opacity-100 group-[.is-expanded]/row:opacity-100',
+                    )}
+                  >
+                    {produceCountdown(remainingTime)}
+                  </span>
+                </Text>
               )}
               {status === VaultStatus.UNLOCKED && (
                 <Text
