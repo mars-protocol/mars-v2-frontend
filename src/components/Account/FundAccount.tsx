@@ -13,6 +13,7 @@ import useStore from 'store'
 import { getAmount } from 'utils/accounts'
 import { hardcodedFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
+import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
 
 interface Props {
   setShowFundAccount: (show: boolean) => void
@@ -26,7 +27,7 @@ export default function FundAccount(props: Props) {
 
   const [amount, setAmount] = useState(BN(0))
   const [asset, setAsset] = useState<Asset>(ASSETS[0])
-  const [isLending, setIsLending] = useToggle()
+  const { autoLendEnabledAccountIds, toggleAutoLend } = useAutoLendEnabledAccountIds()
   const [isFunding, setIsFunding] = useToggle()
 
   const max = getAmount(asset.denom, balances ?? [])
@@ -38,14 +39,6 @@ export default function FundAccount(props: Props) {
   const onChangeAsset = useCallback((asset: Asset) => {
     setAsset(asset)
   }, [])
-
-  const handleLendAssets = useCallback(
-    (val: boolean) => {
-      setIsLending(val)
-      /* TODO: handle lending assets */
-    },
-    [setIsLending],
-  )
 
   async function onDeposit() {
     if (!accountId) return
@@ -64,6 +57,8 @@ export default function FundAccount(props: Props) {
       props.setShowFundAccount(false)
     }
   }
+
+  if (!accountId) return null
 
   return (
     <>
@@ -100,8 +95,8 @@ export default function FundAccount(props: Props) {
         <SwitchWithLabel
           name='isLending'
           label='Lend assets to earn yield'
-          value={isLending}
-          onChange={() => handleLendAssets(!isLending)}
+          value={autoLendEnabledAccountIds.includes(accountId)}
+          onChange={() => toggleAutoLend(accountId)}
           className='mb-4'
           tooltip="Fund your account and lend assets effortlessly! By lending, you'll earn attractive interest (APY) without impacting your LTV. It's a win-win situation - don't miss out on this easy opportunity to grow your holdings!"
           disabled={isFunding || amount.isEqualTo(0)}

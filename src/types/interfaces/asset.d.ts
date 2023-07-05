@@ -15,6 +15,7 @@ interface Asset {
   isDisplayCurrency?: boolean
   isStable?: boolean
   isFavorite?: boolean
+  isAutoLendEnabled?: boolean
 }
 
 interface OtherAsset extends Omit<Asset, 'symbol'> {

@@ -9,13 +9,13 @@ import { ArrowCircledTopRight, ArrowDownLine, ArrowUpLine, TrashBin } from 'comp
 import Radio from 'components/Radio'
 import SwitchWithLabel from 'components/SwitchWithLabel'
 import Text from 'components/Text'
-import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { calculateAccountDeposits } from 'utils/accounts'
 import { hardcodedFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
 import usePrices from 'hooks/usePrices'
+import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
 
 interface Props {
   setShowFundAccount: (showFundAccount: boolean) => void
@@ -32,10 +32,9 @@ export default function AccountList(props: Props) {
   const { pathname } = useLocation()
   const { accountId, address } = useParams()
   const { data: prices } = usePrices()
-
+  const { autoLendEnabledAccountIds, toggleAutoLend } = useAutoLendEnabledAccountIds()
   const deleteAccount = useStore((s) => s.deleteAccount)
 
-  const [isLending, setIsLending] = useToggle()
   const accountSelected = !!accountId && !isNaN(Number(accountId))
   const selectedAccountDetails = props.accounts.find((account) => account.id === accountId)
   const selectedAccountBalance = selectedAccountDetails
@@ -48,11 +47,6 @@ export default function AccountList(props: Props) {
     if (isSuccess) {
       navigate(`/wallets/${address}/accounts`)
     }
-  }
-
-  function onChangeLendSwitch() {
-    setIsLending(!isLending)
-    /* TODO: handle lending assets */
   }
 
   useEffect(() => {
@@ -69,6 +63,8 @@ export default function AccountList(props: Props) {
       {props.accounts.map((account) => {
         const positionBalance = calculateAccountDeposits(account, prices)
         const isActive = accountId === account.id
+        const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
+
         return (
           <div key={account.id} id={`account-${account.id}`} className='w-full pt-4'>
             <Card
@@ -138,8 +134,8 @@ export default function AccountList(props: Props) {
                       <SwitchWithLabel
                         name='isLending'
                         label='Lend assets to earn yield'
-                        value={isLending}
-                        onChange={onChangeLendSwitch}
+                        value={isAutoLendEnabled}
+                        onChange={() => toggleAutoLend(account.id)}
                         tooltip={`Fund your account and lend assets effortlessly! By lending, you'll earn attractive interest (APY) without impacting your LTV. It's a win-win situation - don't miss out on this easy opportunity to grow your holdings!`}
                       />
                     </div>

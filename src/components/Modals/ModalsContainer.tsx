@@ -1,5 +1,6 @@
 import {
   AddVaultBorrowAssetsModal,
+  AlertDialogController,
   BorrowModal,
   FundAndWithdrawModal,
   LendAndReclaimModalController,
@@ -18,6 +19,7 @@ export default function ModalsContainer() {
       <UnlockModal />
       <LendAndReclaimModalController />
       <WithdrawFromVaults />
+      <AlertDialogController />
     </>
   )
 }

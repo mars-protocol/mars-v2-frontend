@@ -117,7 +117,7 @@ function LendingMarketsTable(props: Props) {
         header: 'Manage',
         cell: ({ row }) => (
           <div className='flex items-center justify-end'>
-            <div className='w-4'>{row.getIsExpanded() ? <ChevronUp /> : <ChevronDown />}</div>
+            <div className='w-4'>{row.getIsExpanded() ? <ChevronDown /> : <ChevronUp />}</div>
           </div>
         ),
       },

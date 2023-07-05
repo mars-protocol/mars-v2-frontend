@@ -9,6 +9,21 @@ interface ModalSlice {
   withdrawFromVaultsModal: DepositedVault[] | null
   unlockModal: UnlockModal | null
   lendAndReclaimModal: LendAndReclaimModalConfig | null
+  alertDialog: AlertDialogConfig | null
+}
+
+interface AlertDialogButton {
+  text?: string
+  icon?: JSX.Element
+  onClick?: () => void
+}
+
+interface AlertDialogConfig {
+  icon?: JSX.Element
+  title: JSX.Element | string
+  description: JSX.Element | string
+  negativeButton?: AlertDialogButton
+  positiveButton: AlertDialogButton
 }
 
 type LendAndReclaimModalAction = 'lend' | 'reclaim'
