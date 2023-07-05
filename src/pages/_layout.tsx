@@ -21,8 +21,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <main
         className={classNames(
           'lg:h-[calc(100vh-89px)]',
-          'p-6 lg:mt-[65px]',
-          'align-items-center grid h-full min-h-[900px] grid-cols-[auto_min-content] place-items-start gap-6',
+          'lg:mt-[65px]',
+          'align-items-center grid h-full min-h-[900px] grid-cols-[auto_min-content] place-items-start gap-6 p-6',
         )}
       >
         {isFullWidth ? children : <div className='mx-auto w-full max-w-content'>{children}</div>}
