@@ -31,7 +31,8 @@ export const calculateAccountDebt = (
   if (!account.debts) return BN(0)
   return account.debts.reduce((acc, debt) => {
     const price = prices.find((price) => price.denom === debt.denom)?.amount ?? 0
-    const debtValue = debt.amount.multipliedBy(price)
+    const debtAmount = BN(debt.amount)
+    const debtValue = debtAmount.multipliedBy(price)
     return acc.plus(debtValue)
   }, BN(0))
 }

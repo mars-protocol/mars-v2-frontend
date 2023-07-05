@@ -1,12 +1,11 @@
 import { ColumnDef, Row, Table } from '@tanstack/react-table'
-import classNames from 'classnames'
 import Image from 'next/image'
 import { useMemo } from 'react'
 
 import LendingActionButtons from 'components/Earn/Lend/LendingActionButtons'
 import LendingDetails from 'components/Earn/Lend/LendingDetails'
 import { FormattedNumber } from 'components/FormattedNumber'
-import { ChevronDown, ChevronRight } from 'components/Icons'
+import { ChevronDown, ChevronUp } from 'components/Icons'
 import AssetListTable from 'components/MarketAssetTable'
 import MarketAssetTableRow from 'components/MarketAssetTable/MarketAssetTableRow'
 import Text from 'components/Text'
@@ -118,9 +117,7 @@ function LendingMarketsTable(props: Props) {
         header: 'Manage',
         cell: ({ row }) => (
           <div className='flex items-center justify-end'>
-            <div className={classNames('w-4')}>
-              {row.getIsExpanded() ? <ChevronDown /> : <ChevronRight />}
-            </div>
+            <div className='w-4'>{row.getIsExpanded() ? <ChevronUp /> : <ChevronDown />}</div>
           </div>
         ),
       },

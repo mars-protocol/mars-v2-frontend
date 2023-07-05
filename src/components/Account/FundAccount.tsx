@@ -74,6 +74,7 @@ export default function FundAccount(props: Props) {
           className='h-8 w-8'
           iconClassName='h-2 w-2'
           color='tertiary'
+          size='xs'
         />
       </div>
       <div className='relative z-10 w-full p-4'>
