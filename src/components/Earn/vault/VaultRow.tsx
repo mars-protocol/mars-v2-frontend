@@ -7,20 +7,24 @@ type AssetRowProps = {
 }
 
 export const VaultRow = (props: AssetRowProps) => {
+  const vault = props.row.original as DepositedVault
   return (
     <tr
       key={props.row.id}
       className={classNames(
-        'bg-white/3 cursor-pointer border-b border-t border-white/5 transition-colors hover:bg-white/5',
+        'bg-white/3 group border-b border-t border-white/5 transition-colors hover:bg-white/5',
+        vault.status && 'cursor-pointer',
+        props.row.getIsExpanded() && 'is-expanded',
       )}
       onClick={(e) => {
         e.preventDefault()
+        if (!vault.status) return
         const isExpanded = props.row.getIsExpanded()
         props.resetExpanded()
         !isExpanded && props.row.toggleExpanded()
       }}
     >
-      {props.row.getVisibleCells().map((cell, index) => {
+      {props.row.getVisibleCells().map((cell) => {
         return (
           <td key={cell.id} className={'p-4 text-right'}>
             {flexRender(cell.column.columnDef.cell, cell.getContext())}

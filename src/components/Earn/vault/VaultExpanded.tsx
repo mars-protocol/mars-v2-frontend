@@ -129,7 +129,7 @@ export default function VaultExpanded(props: Props) {
       <td colSpan={!status ? 5 : 6}>
         <div className='align-center flex justify-end gap-3 p-4'>
           {!status && <DepositButton />}
-          <DepositMoreButton />
+          {status && <DepositMoreButton />}
           {status === VaultStatus.ACTIVE && <UnlockButton />}
           {status === VaultStatus.UNLOCKING && <UnlockingButton />}
           {status === VaultStatus.UNLOCKED && <UnlockedButton />}
