@@ -55,8 +55,6 @@ module.exports = {
         fadein: 'fadein 1s ease-in-out forwards',
         glow: 'glow 1000ms ease-in-out forwards',
         progress: 'spin 1200ms cubic-bezier(0.5, 0, 0.5, 1) infinite',
-        flip: 'flip 1s linear forwards',
-        'flip-out': 'flip-out 1s linear forwards',
       },
       backdropBlur: {
         sticky: '50px',
