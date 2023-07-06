@@ -13,6 +13,7 @@ export const ASSETS: Asset[] = [
     isEnabled: true,
     isMarket: true,
     isDisplayCurrency: true,
+    isAutoLendEnabled: true,
   },
   {
     symbol: 'ATOM',
@@ -28,6 +29,7 @@ export const ASSETS: Asset[] = [
     isEnabled: true,
     isMarket: true,
     isDisplayCurrency: true,
+    isAutoLendEnabled: true,
   },
   {
     symbol: 'stATOM',
