@@ -1,9 +1,16 @@
+import { FormattedNumber } from 'components/FormattedNumber'
 import TitleAndSubCell from 'components/TitleAndSubCell'
-import { formatPercent, formatValue } from 'utils/formatters'
 import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
+import { BN } from 'utils/helpers'
 
 interface Props {
   data: LendingMarketTableData
+}
+
+interface Details {
+  amount: BigNumber
+  options: FormatOptions
+  title: string
 }
 
 function LendingDetails({ data }: Props) {
@@ -19,29 +26,35 @@ function LendingDetails({ data }: Props) {
     marketLiquidityAmount,
     marketLiquidationThreshold,
   } = data
-  const formattedTotalSuppliedValue = formatValue(
-    convertAmount(asset, marketDepositAmount).toNumber(),
-    {
-      abbreviated: true,
-      suffix: ` ${displayCurrencySymbol}`,
-    },
-  )
-  const formattedPrice = formatValue(getConversionRate(asset.denom).toNumber(), {
-    maxDecimals: 2,
-    suffix: ` ${displayCurrencySymbol}`,
-  })
-  const totalBorrowed = marketDepositAmount.minus(marketLiquidityAmount)
-  const utilizationRatePercent = formatPercent(
-    totalBorrowed.dividedBy(marketDepositAmount).toNumber(),
-    2,
-  )
 
-  const details = [
-    { info: formattedTotalSuppliedValue, title: 'Total Supplied' },
-    { info: formatPercent(marketMaxLtv, 2), title: 'Max LTV' },
-    { info: formatPercent(marketLiquidationThreshold, 2), title: 'Liquidation Threshold' },
-    { info: formattedPrice, title: 'Oracle Price' },
-    { info: utilizationRatePercent, title: 'Utilization Rate' },
+  const totalBorrowed = marketDepositAmount.minus(marketLiquidityAmount)
+
+  const details: Details[] = [
+    {
+      amount: convertAmount(asset, marketDepositAmount),
+      options: { abbreviated: true, suffix: ` ${displayCurrencySymbol}` },
+      title: 'Total Supplied',
+    },
+    {
+      amount: BN(marketMaxLtv).multipliedBy(100),
+      options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
+      title: 'Max LTV',
+    },
+    {
+      amount: BN(marketLiquidationThreshold).multipliedBy(100),
+      options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
+      title: 'Liquidation Threshold',
+    },
+    {
+      amount: getConversionRate(asset.denom),
+      options: { minDecimals: 2, maxDecimals: 2, suffix: ` ${displayCurrencySymbol}` },
+      title: 'Oracle Price',
+    },
+    {
+      amount: totalBorrowed.dividedBy(marketDepositAmount).multipliedBy(100),
+      options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
+      title: 'Utilization Rate',
+    },
   ]
 
   return (
@@ -49,9 +62,16 @@ function LendingDetails({ data }: Props) {
       {details.map((detail, index) => (
         <TitleAndSubCell
           key={index}
-          className='text-md text-center'
-          containerClassName='m-5 ml-10 mr-10 space-y-2'
-          title={detail.info}
+          className='text-center'
+          containerClassName='m-5 ml-10 mr-10 space-y-1'
+          title={
+            <FormattedNumber
+              className='text-center text-xs'
+              amount={detail.amount}
+              options={detail.options}
+              animate
+            />
+          }
           sub={detail.title}
         />
       ))}

@@ -20,6 +20,10 @@ export function getDisplayCurrencies() {
   return ASSETS.filter((asset) => asset.isDisplayCurrency)
 }
 
+export function getAllAssets(): Asset[] {
+  return ASSETS
+}
+
 export function findCoinByDenom(denom: string, coins: BigNumberCoin[]) {
   return coins.find((coin) => coin.denom === denom)
 }

@@ -195,7 +195,7 @@ function Track(props: TrackProps) {
   }
 
   return (
-    <div className='relative h-1 flex-grow overflow-hidden rounded-sm bg-transparent'>
+    <div className='relative h-1 flex-1 overflow-hidden rounded-sm bg-transparent'>
       <div className='absolute z-1 h-3 bg-martian-red ' style={{ width: `${percentage}%` }} />
       <div className='absolute h-3 w-full bg-white/20' />
     </div>

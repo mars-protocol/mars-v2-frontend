@@ -1,8 +1,8 @@
 import { Row } from '@tanstack/react-table'
+import { useMemo } from 'react'
 
 import Button from 'components/Button'
 import { Plus } from 'components/Icons'
-import { useMemo } from 'react'
 import useStore from 'store'
 import { getEnabledMarketAssets } from 'utils/assets'
 
@@ -39,7 +39,7 @@ export default function AssetExpanded(props: AssetRowProps) {
   return (
     <tr
       key={props.row.id}
-      className='transition-colors cursor-pointer bg-black/20'
+      className='cursor-pointer bg-black/20 transition-colors'
       onClick={(e) => {
         e.preventDefault()
         const isExpanded = props.row.getIsExpanded()
@@ -54,7 +54,7 @@ export default function AssetExpanded(props: AssetRowProps) {
             onClick={borrowHandler}
             color='secondary'
             text={isActive ? 'Borrow more' : 'Borrow'}
-            className='text-center min-w-40'
+            className='min-w-40 text-center'
           />
           {isActive && <Button color='secondary' text='Repay' onClick={repayHandler} />}
         </div>

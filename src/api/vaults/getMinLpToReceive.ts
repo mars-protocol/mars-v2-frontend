@@ -17,7 +17,7 @@ export default async function getVaultConfigs(
         lpTokenOut: lpDenom,
       }),
     )
-      .times(1 - slippage)
+      .multipliedBy(1 - slippage)
       .integerValue()
   } catch (ex) {
     throw ex

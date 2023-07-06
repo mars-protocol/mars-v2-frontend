@@ -27,6 +27,7 @@ export default function DisplayCurrency(props: Props) {
         }`,
         suffix: displayCurrency.symbol ? ` ${displayCurrency.symbol}` : '',
       }}
+      animate
     />
   )
 }

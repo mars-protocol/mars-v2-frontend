@@ -5,6 +5,7 @@ import createBroadcastSlice from 'store/slices/broadcast'
 import createCommonSlice from 'store/slices/common'
 import createCurrencySlice from 'store/slices/currency'
 import createModalSlice from 'store/slices/modal'
+import createSettingsSlice from 'store/slices/settings'
 
 export interface Store extends CommonSlice, BroadcastSlice, CurrencySlice, ModalSlice {}
 
@@ -13,6 +14,7 @@ const store = (set: SetState<any>, get: GetState<any>) => ({
   ...createBroadcastSlice(set, get),
   ...createCurrencySlice(set, get),
   ...createModalSlice(set, get),
+  ...createSettingsSlice(set, get),
 })
 
 interface UseStoreWithClear extends UseBoundStore<StoreApi<Store>> {

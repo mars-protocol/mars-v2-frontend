@@ -15,6 +15,7 @@ export default function AmountAndValue(props: Props) {
         <FormattedNumber
           amount={props.amount}
           options={{ decimals: props.asset.decimals, abbreviated: true }}
+          animate
         />
       }
       sub={

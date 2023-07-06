@@ -1,19 +1,23 @@
+import { useMemo } from 'react'
+
 import AssetImage from 'components/AssetImage'
 import Modal from 'components/Modal'
+import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
 import Select from 'components/Select/Select'
-import Switch from 'components/Switch'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
 import { DISPLAY_CURRENCY_KEY, ENABLE_ANIMATIONS_KEY } from 'constants/localStore'
-import { useMemo } from 'react'
 import useStore from 'store'
-import { getDisplayCurrencies } from 'utils/assets'
+import { getAllAssets, getDisplayCurrencies } from 'utils/assets'
 
 export default function SettingsModal() {
   const modal = useStore((s) => s.settingsModal)
   const enableAnimations = useStore((s) => s.enableAnimations)
+  const lendAssets = useStore((s) => s.lendAssets)
   const displayCurrency = useStore((s) => s.displayCurrency)
   const displayCurrencies = getDisplayCurrencies()
+  const globalAsset = useStore((s) => s.globalAsset)
+  const globalAssets = getAllAssets()
 
   const displayCurrenciesOptions = useMemo(
     () =>
@@ -29,6 +33,22 @@ export default function SettingsModal() {
         value: asset.denom,
       })),
     [displayCurrencies],
+  )
+
+  const globalAssetsOptions = useMemo(
+    () =>
+      globalAssets.map((asset, index) => ({
+        label: [
+          <div className='flex w-full gap-2' key={index}>
+            <AssetImage asset={asset} size={16} />
+            <Text size='sm' className='leading-4'>
+              {asset.symbol}
+            </Text>
+          </div>,
+        ],
+        value: asset.denom,
+      })),
+    [globalAssets],
   )
 
   function onClose() {
@@ -51,7 +71,20 @@ export default function SettingsModal() {
       window.localStorage.setItem(ENABLE_ANIMATIONS_KEY, enableAnimations ? 'false' : 'true')
   }
 
+  function handleLendAssets() {
+    useStore.setState({ enableAnimations: !lendAssets })
+    if (typeof window !== 'undefined')
+      window.localStorage.setItem(ENABLE_ANIMATIONS_KEY, lendAssets ? 'false' : 'true')
+  }
+
   function handleCurrencyChange(value: string) {
+    const displayCurrency = displayCurrencies.find((c) => c.denom === value)
+    if (!displayCurrency) return
+
+    setDisplayCurrency(displayCurrency)
+  }
+
+  function handleDisplayCurrency(value: string) {
     const displayCurrency = displayCurrencies.find((c) => c.denom === value)
     if (!displayCurrency) return
 
@@ -80,36 +113,49 @@ export default function SettingsModal() {
       headerClassName='p-6'
       contentClassName='flex flex-wrap px-6 pb-6 pt-4'
     >
-      <div className='flex items-start justify-between w-full pb-6 mb-6 border-b border-white/5'>
-        <div className='flex flex-wrap w-100'>
-          <Text size='lg' className='w-full mb-2'>
-            Reduce Motion
+      <SettingsSwitch
+        onChange={handleLendAssets}
+        name='lendAssets'
+        value={lendAssets}
+        label='Lend assets in credit account'
+        decsription='Turns off all animations inside the dApp. Turning animations off can increase the
+        overall performance on lower-end hardware.'
+      />
+      <SettingsSwitch
+        onChange={handleReduceMotion}
+        name='reduceMotion'
+        value={!enableAnimations}
+        label='Reduce Motion'
+        decsription='By turning this on you will automatically lend out all the assets you deposit into your credit account to earn yield.'
+      />
+      <div className='mb-6 flex w-full items-start justify-between border-b border-white/5 pb-6'>
+        <div className='flex w-100 flex-wrap'>
+          <Text size='lg' className='mb-2 w-full'>
+            Preferred asset
           </Text>
           <Text size='xs' className='text-white/50'>
-            Turns off all animations inside the dApp. Turning animations off can increase the
-            overall performance on lower-end hardware.
+            By selecting a different asset you always have the trading pair or asset selector
+            pre-filled with this asset.
           </Text>
         </div>
-        <div className='flex justify-end w-60'>
-          <Switch name='reduceMotion' checked={!enableAnimations} onChange={handleReduceMotion} />
+        <div className='flex w-60 flex-wrap justify-end'>
+          <Select
+            label='Global'
+            options={globalAssetsOptions}
+            defaultValue={globalAsset.denom}
+            onChange={handleCurrencyChange}
+            className='relative w-60 rounded-base border border-white/10'
+            containerClassName='justify-end mb-4'
+          />
+          <Select
+            label='Display Currency'
+            options={displayCurrenciesOptions}
+            defaultValue={displayCurrency.denom}
+            onChange={handleDisplayCurrency}
+            className='relative w-60 rounded-base border border-white/10'
+            containerClassName='justify-end'
+          />
         </div>
-      </div>
-      <div className='flex items-start justify-between w-full pb-6 mb-6 border-b border-white/5'>
-        <div className='flex flex-wrap w-100'>
-          <Text size='lg' className='w-full mb-2'>
-            Display Currency
-          </Text>
-          <Text size='xs' className='text-white/50'>
-            Sets the denomination of values to a different currency. While OSMO is the currency the
-            TWAP oracles return. All other values are fetched from liquidity pools.
-          </Text>
-        </div>
-        <Select
-          options={displayCurrenciesOptions}
-          defaultValue={displayCurrency.denom}
-          onChange={handleCurrencyChange}
-          className='relative border w-60 rounded-base border-white/10'
-        />
       </div>
     </Modal>
   )

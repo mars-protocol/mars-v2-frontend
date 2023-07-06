@@ -63,7 +63,7 @@ export default function WithdrawFromVaults() {
             return (
               <div className='flex items-center gap-4' key={vault.unlockId}>
                 <VaultLogo vault={vault} />
-                <div className='flex flex-grow flex-wrap'>
+                <div className='flex flex-1 flex-wrap'>
                   <Text className='w-full'>{vault.name}</Text>
                   <Text size='sm' className='w-full text-white/50'>
                     Unlocked
@@ -75,11 +75,13 @@ export default function WithdrawFromVaults() {
                     amount={BN(demagnify(vault.amounts.primary, primaryAsset))}
                     className='w-full text-right text-sm text-white/50'
                     options={{ suffix: ` ${vault.symbols.primary}` }}
+                    animate
                   />
                   <FormattedNumber
                     amount={BN(demagnify(vault.amounts.secondary, secondaryAsset))}
                     className='w-full text-right text-sm text-white/50'
                     options={{ suffix: ` ${vault.symbols.secondary}` }}
+                    animate
                   />
                 </div>
               </div>

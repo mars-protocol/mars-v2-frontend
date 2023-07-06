@@ -13,7 +13,7 @@ export default function DesktopNavigation() {
   }
 
   return (
-    <div className='flex flex-grow items-center'>
+    <div className='flex flex-1 items-center'>
       <NavLink href={getRoute('trade', address, accountId)} isActive={false}>
         <span className='block h-10 w-10'>
           <Logo />

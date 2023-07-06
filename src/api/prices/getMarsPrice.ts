@@ -1,5 +1,5 @@
-import { BN } from 'utils/helpers'
 import getPrice from 'api/prices/getPrice'
+import { BN } from 'utils/helpers'
 
 const MARS_MAINNET_DENOM = 'ibc/573FCD90FACEE750F55A8864EF7D38265F07E5A9273FA0E8DAFD39951332B580'
 const MARS_OSMO_POOL_URL = 'https://lcd-osmosis.blockapsis.com/osmosis/gamm/v1beta1/pools/907'
@@ -36,8 +36,8 @@ const calculateSpotPrice = (poolAssets: PoolAsset[]) => {
 
   const assetOut = findPoolAssetByTokenDenom(poolAssets, 'uosmo') as PoolAsset
 
-  const numerator = BN(assetIn.token.amount).div(assetIn.weight)
-  const denominator = BN(assetOut.token.amount).div(assetOut.weight)
+  const numerator = BN(assetIn.token.amount).dividedBy(assetIn.weight)
+  const denominator = BN(assetOut.token.amount).dividedBy(assetOut.weight)
 
   return numerator.dividedBy(denominator)
 }

@@ -7,6 +7,6 @@ export function BN(n: BigNumber.Value) {
 
 export function getApproximateHourlyInterest(amount: string, borrowRate: number) {
   return BigNumber(borrowRate)
-    .div(24 * 365)
-    .times(amount)
+    .dividedBy(24 * 365)
+    .multipliedBy(amount)
 }

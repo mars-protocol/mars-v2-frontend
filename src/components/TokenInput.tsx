@@ -1,20 +1,19 @@
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
-import Image from 'next/image'
 
+import AssetImage from 'components/AssetImage'
+import Button from 'components/Button'
 import DisplayCurrency from 'components/DisplayCurrency'
+import { FormattedNumber } from 'components/FormattedNumber'
+import { ExclamationMarkTriangle, TrashBin } from 'components/Icons'
 import NumberInput from 'components/NumberInput'
 import Select from 'components/Select/Select'
 import Text from 'components/Text'
+import { Tooltip } from 'components/Tooltip'
 import { ASSETS } from 'constants/assets'
 import useStore from 'store'
-import { BN } from 'utils/helpers'
-import { FormattedNumber } from 'components/FormattedNumber'
-import Button from 'components/Button'
-import { ExclamationMarkTriangle, TrashBin } from 'components/Icons'
-import { Tooltip } from 'components/Tooltip'
-import AssetImage from 'components/AssetImage'
 import { BNCoin } from 'types/classes/BNCoin'
+import { BN } from 'utils/helpers'
 
 interface Props {
   amount: BigNumber
@@ -65,7 +64,8 @@ export default function TokenInput(props: Props) {
             defaultValue={props.asset.denom}
             onChange={onChangeAsset}
             title={props.accountId ? `Account ${props.accountId}` : 'Your Wallet'}
-            className='border-r border-white/20 bg-white/5'
+            className='h-full border-r border-white/20 bg-white/5'
+            displayClassName='rounded-l-sm'
           />
         ) : (
           <div className='flex min-w-fit items-center gap-2 border-r border-white/20 bg-white/5 p-3'>
@@ -80,7 +80,7 @@ export default function TokenInput(props: Props) {
           onChange={props.onChange}
           amount={props.amount}
           max={props.max}
-          className='border-none p-3'
+          className='flex-1 border-none p-3'
         />
         {props.onDelete && (
           <div role='button' className='grid items-center pr-2' onClick={props.onDelete}>
@@ -111,6 +111,7 @@ export default function TokenInput(props: Props) {
                 className='mr-1 text-xs text-white/50'
                 amount={props.max}
                 options={{ decimals: props.asset.decimals }}
+                animate
               />
               <Button
                 dataTestId='token-input-max-button'

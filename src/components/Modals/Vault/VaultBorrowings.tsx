@@ -1,24 +1,23 @@
-import { useEffect, useMemo, useState } from 'react'
 import BigNumber from 'bignumber.js'
-import React from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
-import { BN } from 'utils/helpers'
-import { findCoinByDenom, getAssetByDenom } from 'utils/assets'
 import Button from 'components/Button'
-import TokenInput from 'components/TokenInput'
-import Divider from 'components/Divider'
-import Text from 'components/Text'
-import { ArrowRight, ExclamationMarkCircled } from 'components/Icons'
-import { formatPercent } from 'utils/formatters'
-import Slider from 'components/Slider'
-import usePrices from 'hooks/usePrices'
-import useMarketAssets from 'hooks/useMarketAssets'
-import { calculateMaxBorrowAmounts } from 'utils/vaults'
-import useStore from 'store'
 import DisplayCurrency from 'components/DisplayCurrency'
-import usePrice from 'hooks/usePrice'
-import { BNCoin } from 'types/classes/BNCoin'
+import Divider from 'components/Divider'
+import { ArrowRight, ExclamationMarkCircled } from 'components/Icons'
+import Slider from 'components/Slider'
+import Text from 'components/Text'
+import TokenInput from 'components/TokenInput'
 import useDepositVault from 'hooks/broadcast/useDepositVault'
+import useMarketAssets from 'hooks/useMarketAssets'
+import usePrice from 'hooks/usePrice'
+import usePrices from 'hooks/usePrices'
+import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
+import { findCoinByDenom, getAssetByDenom } from 'utils/assets'
+import { formatPercent } from 'utils/formatters'
+import { BN } from 'utils/helpers'
+import { calculateMaxBorrowAmounts } from 'utils/vaults'
 
 export interface VaultBorrowingsProps {
   account: Account
@@ -49,11 +48,11 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   })
 
   const primaryValue = useMemo(
-    () => props.primaryAmount.times(primaryPrice),
+    () => props.primaryAmount.multipliedBy(primaryPrice),
     [props.primaryAmount, primaryPrice],
   )
   const secondaryValue = useMemo(
-    () => props.secondaryAmount.times(secondaryPrice),
+    () => props.secondaryAmount.multipliedBy(secondaryPrice),
     [props.secondaryAmount, secondaryPrice],
   )
 
@@ -62,7 +61,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
       const price = prices.find((price) => price.denom === curr.denom)?.amount
       if (!price) return prev
 
-      return prev.plus(curr.amount.times(price))
+      return prev.plus(curr.amount.multipliedBy(price))
     }, BN(0) as BigNumber)
   }, [props.borrowings, prices])
 
@@ -113,7 +112,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
       new BNCoin({
         denom,
         amount: (
-          maxAmount.plus(currentAmount).times(value).div(100).decimalPlaces(0) || BN(0)
+          maxAmount.plus(currentAmount).multipliedBy(value).dividedBy(100).decimalPlaces(0) || BN(0)
         ).toString(),
       }),
     ]
@@ -164,7 +163,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   }
 
   return (
-    <div className='flex flex-grow flex-col gap-4 p-4'>
+    <div className='flex flex-1 flex-col gap-4 p-4'>
       {props.borrowings.map((coin) => {
         const asset = getAssetByDenom(coin.denom)
         const maxAmount = maxAmounts.find((maxAmount) => maxAmount.denom === coin.denom)?.amount

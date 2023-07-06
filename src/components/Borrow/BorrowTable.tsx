@@ -10,15 +10,16 @@ import classNames from 'classnames'
 import React from 'react'
 
 import AmountAndValue from 'components/AmountAndValue'
+import AssetImage from 'components/AssetImage'
 import AssetExpanded from 'components/Borrow/AssetExpanded'
 import { AssetRow } from 'components/Borrow/AssetRow'
+import { FormattedNumber } from 'components/FormattedNumber'
 import { ChevronDown, SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import { getEnabledMarketAssets } from 'utils/assets'
-import { formatPercent } from 'utils/formatters'
-import AssetImage from 'components/AssetImage'
+import { BN } from 'utils/helpers'
 
 type Props = {
   data: BorrowAsset[] | BorrowAssetActive[]
@@ -59,9 +60,12 @@ export const BorrowTable = (props: Props) => {
           }
 
           return (
-            <Text className='justify-end' size='sm'>
-              {formatPercent(row.original.borrowRate, 2)}
-            </Text>
+            <FormattedNumber
+              className='justify-end text-xs'
+              amount={BN(row.original.borrowRate).multipliedBy(100)}
+              options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
+              animate
+            />
           )
         },
       },

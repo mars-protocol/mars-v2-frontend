@@ -51,13 +51,14 @@ export default function Modal(props: Props) {
       className={classNames(
         `w-screen border-none bg-transparent text-white`,
         'focus-visible:outline-none',
+        'scrollbar-hide',
         'backdrop:bg-black/50 backdrop:backdrop-blur-sm',
         modalClassName,
       )}
     >
       <Card
         className={classNames(
-          'relative flex max-w-full flex-grow bg-white/5 backdrop-blur-3xl',
+          'relative flex max-w-full flex-1 bg-white/5 backdrop-blur-3xl',
           props.className,
         )}
       >
@@ -65,7 +66,7 @@ export default function Modal(props: Props) {
           {props.header}
           {!props.hideCloseBtn && <EscButton onClick={props.onClose} />}
         </div>
-        <div className={classNames(props.contentClassName, 'flex-grow')}>
+        <div className={classNames(props.contentClassName, 'flex-1')}>
           {props.children ? props.children : props.content}
         </div>
       </Card>

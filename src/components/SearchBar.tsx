@@ -1,5 +1,6 @@
 import classNames from 'classnames'
-import { ChangeEvent, forwardRef } from 'react'
+import { ChangeEvent, LegacyRef } from 'react'
+import React from 'react'
 
 import { Search } from 'components/Icons'
 
@@ -10,7 +11,7 @@ interface Props {
   onChange: (value: string) => void
 }
 
-const SearchBar = (props: Props) => {
+const SearchBar = (props: Props, ref: LegacyRef<HTMLDivElement>) => {
   function onChange(event: ChangeEvent<HTMLInputElement>) {
     props.onChange(event.target.value)
   }
@@ -22,11 +23,12 @@ const SearchBar = (props: Props) => {
         'relative isolate max-w-full overflow-hidden rounded-sm',
         'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-sm before:p-[1px] before:border-glas',
       )}
+      ref={ref}
     >
       <Search width={14} height={14} className='mr-2.5 text-white' />
       <input
         value={props.value}
-        className='h-full w-full bg-transparent text-xs placeholder-white/30 outline-none'
+        className='h-full w-full bg-transparent text-xs placeholder-white/50 outline-none'
         placeholder={props.placeholder}
         onChange={(event) => onChange(event)}
         autoFocus={props.autofocus}
@@ -35,4 +37,4 @@ const SearchBar = (props: Props) => {
   )
 }
 
-export default forwardRef(SearchBar)
+export default React.forwardRef(SearchBar)

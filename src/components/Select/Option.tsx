@@ -2,7 +2,7 @@ import classNames from 'classnames'
 
 import AssetImage from 'components/AssetImage'
 import DisplayCurrency from 'components/DisplayCurrency'
-import { ChevronDown } from 'components/Icons'
+import { ChevronDown, ChevronRight } from 'components/Icons'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -13,6 +13,7 @@ interface Props extends SelectOption {
   isDisplay?: boolean
   isClicked?: boolean
   onClick?: (value: string) => void
+  displayClassName?: string
 }
 
 export default function Option(props: Props) {
@@ -26,20 +27,19 @@ export default function Option(props: Props) {
       return (
         <div
           className={classNames(
-            'flex items-center gap-2 rounded-base bg-white/10 p-3 ',
+            'flex h-full w-auto items-center gap-2 bg-white/10 px-2',
             'hover:cursor-pointer',
+            props.displayClassName,
           )}
         >
           <AssetImage asset={asset} size={20} />
-          <span className='flex flex-1'>{asset.symbol}</span>
-          <span
+          <span className='flex'>{asset.symbol}</span>
+          <ChevronRight
             className={classNames(
-              'inline-block w-2.5 transition-transform',
-              props.isClicked ? 'rotate-0' : '-rotate-90',
+              'block h-3 w-1.5 transition-transform',
+              props.isClicked ? 'rotate-90' : 'rotate-0',
             )}
-          >
-            <ChevronDown />
-          </span>
+          />
         </div>
       )
     }
@@ -55,11 +55,11 @@ export default function Option(props: Props) {
         )}
         onClick={() => props?.onClick && props.onClick(asset.denom)}
       >
-        <div className='flex items-center justify-center h-full row-span-2'>
+        <div className='row-span-2 flex h-full items-center justify-center'>
           <AssetImage asset={asset} size={32} />
         </div>
         <Text className='col-span-2 pb-1'>{asset.symbol}</Text>
-        <Text size='sm' className='col-span-2 pb-1 font-bold text-right'>
+        <Text size='sm' className='col-span-2 pb-1 text-right font-bold'>
           {formatValue(balance, {
             decimals: asset.decimals,
             maxDecimals: 4,

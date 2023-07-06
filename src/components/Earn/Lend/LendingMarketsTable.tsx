@@ -8,10 +8,10 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import { ChevronDown, ChevronUp } from 'components/Icons'
 import AssetListTable from 'components/MarketAssetTable'
 import MarketAssetTableRow from 'components/MarketAssetTable/MarketAssetTableRow'
-import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
-import { convertLiquidityRateToAPR, demagnify, formatValue } from 'utils/formatters'
+import { convertLiquidityRateToAPR, demagnify } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 interface Props {
   title: string
@@ -46,12 +46,12 @@ function LendingMarketsTable(props: Props) {
           const asset = row.original.asset
 
           return (
-            <div className='flex items-center flex-1 gap-3'>
+            <div className='flex flex-1 items-center gap-3'>
               <Image src={asset.logo} alt={asset.symbol} width={32} height={32} />
               <TitleAndSubCell
                 title={asset.symbol}
                 sub={asset.name}
-                className='text-left min-w-15'
+                className='min-w-15 text-left'
               />
             </div>
           )
@@ -68,7 +68,7 @@ function LendingMarketsTable(props: Props) {
                 return (
                   <FormattedNumber
                     className='text-xs'
-                    animate={true}
+                    animate
                     amount={accountDepositValue}
                     options={{ suffix: ` ${displayCurrencySymbol}` }}
                   />
@@ -82,7 +82,14 @@ function LendingMarketsTable(props: Props) {
         header: 'APR',
         cell: ({ row }) => {
           const apr = convertLiquidityRateToAPR(row.original.marketLiquidityRate)
-          return <Text size='xs'>{apr.toFixed(2)}%</Text>
+          return (
+            <FormattedNumber
+              amount={BN(convertLiquidityRateToAPR(row.original.marketLiquidityRate))}
+              options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
+              className='text-xs'
+              animate
+            />
+          )
         },
       },
       {
@@ -94,19 +101,23 @@ function LendingMarketsTable(props: Props) {
             demagnify(marketDepositAmount, asset),
           )
 
-          const [formattedRemainingCap, formattedDepositCap] = [remainingCap, marketDepositCap].map(
-            (value) =>
-              formatValue(value.toNumber(), {
-                decimals: asset.decimals,
-                abbreviated: true,
-              }),
-          )
-
           return (
             <TitleAndSubCell
               className='text-xs'
-              title={formattedDepositCap}
-              sub={`${formattedRemainingCap} left`}
+              title={
+                <FormattedNumber
+                  amount={marketDepositCap}
+                  options={{ abbreviated: true, decimals: asset.decimals }}
+                  animate
+                />
+              }
+              sub={
+                <FormattedNumber
+                  amount={remainingCap}
+                  options={{ abbreviated: true, decimals: asset.decimals, suffix: ` left` }}
+                  animate
+                />
+              }
             />
           )
         },

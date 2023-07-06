@@ -27,8 +27,8 @@ export default function VaultDepositSubTitle(props: Props) {
   })
 
   const positionValue = props.primaryAmount
-    .times(primaryPrice)
-    .plus(props.secondaryAmount.times(secondaryPrice))
+    .multipliedBy(primaryPrice)
+    .plus(props.secondaryAmount.multipliedBy(secondaryPrice))
     .toNumber()
 
   const showPrimaryText = !props.primaryAmount.isZero()

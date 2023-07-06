@@ -15,6 +15,7 @@ import DisplayCurrency from 'components/DisplayCurrency'
 import VaultExpanded from 'components/Earn/vault/VaultExpanded'
 import VaultLogo from 'components/Earn/vault/VaultLogo'
 import { VaultRow } from 'components/Earn/vault/VaultRow'
+import { FormattedNumber } from 'components/FormattedNumber'
 import { ChevronDown, SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
@@ -24,7 +25,8 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultStatus } from 'types/enums/vault'
 import { getAssetByDenom } from 'utils/assets'
-import { convertPercentage, formatPercent, formatValue, produceCountdown } from 'utils/formatters'
+import { produceCountdown } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 type Props = {
   data: Vault[] | DepositedVault[]
@@ -118,7 +120,12 @@ export const VaultTable = (props: Props) => {
         cell: ({ row }) => {
           if (row.original.apy === null) return <Loading />
           return (
-            <Text size='xs'>{row.original.apy ? formatPercent(row.original.apy, 2) : '-'}</Text>
+            <FormattedNumber
+              amount={BN(row.original.apy ?? 0).multipliedBy(100)}
+              options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
+              className='text-xs'
+              animate
+            />
           )
         },
       },
@@ -141,22 +148,31 @@ export const VaultTable = (props: Props) => {
         cell: ({ row }) => {
           if (props.isLoading) return <Loading />
 
-          const percent = convertPercentage(
-            row.original.cap.used
-              .div(row.original.cap.max.times(VAULT_DEPOSIT_BUFFER))
-              .times(100)
-              .integerValue()
-              .toNumber(),
-          )
+          const percent = row.original.cap.used
+            .dividedBy(row.original.cap.max.multipliedBy(VAULT_DEPOSIT_BUFFER))
+            .multipliedBy(100)
+            .integerValue()
+
           const decimals = getAssetByDenom(row.original.cap.denom)?.decimals ?? 6
 
           return (
             <TitleAndSubCell
-              title={formatValue(row.original.cap.max.integerValue().toNumber(), {
-                abbreviated: true,
-                decimals,
-              })}
-              sub={`${percent}% Filled`}
+              title={
+                <FormattedNumber
+                  amount={row.original.cap.max}
+                  options={{ minDecimals: 2, abbreviated: true, decimals }}
+                  className='text-xs'
+                  animate
+                />
+              }
+              sub={
+                <FormattedNumber
+                  amount={percent}
+                  options={{ minDecimals: 2, maxDecimals: 2, suffix: '% Filled' }}
+                  className='text-xs'
+                  animate
+                />
+              }
             />
           )
         },

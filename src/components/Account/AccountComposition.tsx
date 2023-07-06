@@ -89,12 +89,13 @@ function Item(props: ItemProps) {
           {props.title}
         </Text>
       </div>
-      <div className='flex flex-grow items-center justify-end gap-2'>
+      <div className='flex flex-1 items-center justify-end gap-2'>
         {props.isPercentage ? (
           <FormattedNumber
             amount={props.current}
             options={{ suffix: '%', minDecimals: 2, maxDecimals: 2 }}
             className='text-sm'
+            animate
           />
         ) : (
           <DisplayCurrency
@@ -112,6 +113,7 @@ function Item(props: ItemProps) {
                 amount={props.change}
                 options={{ suffix: '%', minDecimals: 2, maxDecimals: 2 }}
                 className={classNames('text-sm', increase ? 'text-profit' : 'text-loss')}
+                animate
               />
             ) : (
               <DisplayCurrency

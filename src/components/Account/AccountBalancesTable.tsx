@@ -93,7 +93,7 @@ export const AccountBalancesTable = (props: Props) => {
         id: 'value',
         cell: ({ row }) => {
           const coin = new BNCoin({ denom: row.original.denom, amount: row.original.amount })
-          return <DisplayCurrency coin={coin} className='text-xs text-right' />
+          return <DisplayCurrency coin={coin} className='text-right text-xs' />
         },
       },
       {
@@ -103,7 +103,7 @@ export const AccountBalancesTable = (props: Props) => {
         cell: ({ row }) => {
           return (
             <FormattedNumber
-              className='text-xs text-right'
+              className='text-right text-xs'
               amount={BN(
                 demagnify(
                   row.original.amount,
@@ -111,6 +111,7 @@ export const AccountBalancesTable = (props: Props) => {
                 ),
               )}
               options={{ maxDecimals: 4 }}
+              animate
             />
           )
         },
@@ -125,6 +126,7 @@ export const AccountBalancesTable = (props: Props) => {
               className='text-xs'
               amount={BN(row.original.apy)}
               options={{ maxDecimals: 2, minDecimals: 2, suffix: '%' }}
+              animate
             />
           )
         },
@@ -167,7 +169,7 @@ export const AccountBalancesTable = (props: Props) => {
                       'align-center',
                     )}
                   >
-                    <span className='w-6 h-6 text-white'>
+                    <span className='h-6 w-6 text-white'>
                       {header.column.getCanSort()
                         ? {
                             asc: <SortAsc />,

@@ -18,7 +18,7 @@ export const getTokenInfo = (denom: string, marketAssets: Asset[]) =>
 
 export function getTokenValue(coin: BNCoin, prices: Coin[]): BigNumber {
   const price = prices.find((price) => price.denom === coin.denom)?.amount || '0'
-  return BN(price).times(coin.amount).decimalPlaces(0)
+  return BN(price).multipliedBy(coin.amount).decimalPlaces(0)
 }
 
 export function getTokenPrice(denom: string, prices: Coin[]): BigNumber {

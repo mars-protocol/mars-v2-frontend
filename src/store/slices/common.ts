@@ -6,7 +6,6 @@ export default function createCommonSlice(set: SetState<CommonSlice>, get: GetSt
     accounts: null,
     balances: [],
     creditAccounts: null,
-    enableAnimations: true,
     isOpen: true,
     selectedAccount: null,
     slippage: 0.02,

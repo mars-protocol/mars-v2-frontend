@@ -16,7 +16,7 @@ interface Props {
 
 export const LabelValuePair = ({ label, value, className }: Props) => (
   <div className={classNames('flex w-full', className)}>
-    <Text size='xs' className='flex-grow text-white/60'>
+    <Text size='xs' className='flex-1 text-white/60'>
       {label}
     </Text>
     <Text size='xs' className='text-white/60'>

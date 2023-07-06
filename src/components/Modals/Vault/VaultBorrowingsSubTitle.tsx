@@ -1,12 +1,11 @@
-import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
 
 import DisplayCurrency from 'components/DisplayCurrency'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 import { formatAmountWithSymbol } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   borrowings: BNCoin[]
@@ -22,7 +21,7 @@ export default function VaultDepositSubTitle(props: Props) {
     props.borrowings.map((coin) => {
       const price = prices.find((p) => p.denom === coin.denom)?.amount
       if (!price || coin.amount.isZero()) return
-      borrowingValue = borrowingValue.plus(coin.amount.times(price))
+      borrowingValue = borrowingValue.plus(coin.amount.multipliedBy(price))
       texts.push(
         formatAmountWithSymbol({
           denom: coin.denom,

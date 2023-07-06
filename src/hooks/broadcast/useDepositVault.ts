@@ -1,18 +1,18 @@
 import debounce from 'debounce-promise'
 import { useMemo, useState } from 'react'
 
-import { hardcodedFee } from 'utils/constants'
 import getMinLpToReceive from 'api/vaults/getMinLpToReceive'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { hardcodedFee } from 'utils/constants'
+import { BN } from 'utils/helpers'
 import {
   getEnterVaultActions,
   getVaultDepositCoinsAndValue,
   getVaultSwapActions,
 } from 'utils/vaults'
-import { BN } from 'utils/helpers'
 
 interface Props {
   vault: Vault
@@ -60,7 +60,7 @@ export default function useDepositVault(props: Props): { actions: Action[]; fee:
       slippage,
     )
 
-    if (!lpAmount || lpAmount.eq(minLpToReceive)) return
+    if (!lpAmount || lpAmount.isEqualTo(minLpToReceive)) return
     setMinLpToReceive(lpAmount)
   }, [
     primaryCoin,

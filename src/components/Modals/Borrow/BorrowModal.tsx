@@ -153,9 +153,9 @@ export default function BorrowModal() {
           sub={'Liquidity available'}
         />
       </div>
-      <div className='flex flex-grow items-start gap-6 p-6'>
+      <div className='flex flex-1 items-start gap-6 p-6'>
         <Card
-          className='flex flex-grow bg-white/5 p-4'
+          className='flex flex-1 bg-white/5 p-4'
           contentClassName='gap-6 flex flex-col justify-between h-full min-h-[380px]'
         >
           <div className='flex w-full flex-wrap'>
