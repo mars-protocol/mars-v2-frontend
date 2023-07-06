@@ -21,18 +21,18 @@ export default function SettingsSwitch(props: Props) {
         props.className,
       )}
     >
-      <div className='flex flex-wrap w-100'>
-        <Text size='lg' className='w-full mb-2'>
+      <div className='flex w-100 flex-wrap'>
+        <Text size='lg' className='mb-2 w-full'>
           {props.label}
         </Text>
         <Text size='xs' className='text-white/50'>
           {props.decsription}
         </Text>
       </div>
-      <div className='flex flex-wrap justify-end w-60'>
+      <div className='flex w-60 flex-wrap justify-end'>
         <Switch name={props.name} checked={props.value} onChange={props.onChange} />
         {props.withStatus && (
-          <Text size='sm' className='w-full mt-2 text-end'>
+          <Text size='sm' className='mt-2 w-full text-end'>
             {props.value ? 'ON' : 'OFF'}
           </Text>
         )}

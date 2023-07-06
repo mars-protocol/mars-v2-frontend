@@ -1,5 +1,6 @@
-import { LEND_ASSETS_KEY } from 'constants/localStore'
 import { useEffect } from 'react'
+
+import { LEND_ASSETS_KEY } from 'constants/localStore'
 import useStore from 'store'
 
 export const useLendAssets = () => {
@@ -11,7 +12,7 @@ export const useLendAssets = () => {
     if (lendAssetsLocalStorage === null) {
       window.localStorage.setItem(LEND_ASSETS_KEY, 'true')
     }
-  }, [])
+  }, [lendAssetsLocalStorage])
 
   return lendAssets
 }

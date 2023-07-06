@@ -15,7 +15,7 @@ function AssetListTableRow<TData>(props: Props<TData>) {
   const renderFullRow = (key: string, content: JSX.Element) => (
     <tr key={key} className='bg-black/20'>
       <td
-        className='p-4 border-b border-white border-opacity-10'
+        className='border-b border-white border-opacity-10 p-4'
         colSpan={props.rowData.getAllCells().length}
       >
         {content}
@@ -29,8 +29,8 @@ function AssetListTableRow<TData>(props: Props<TData>) {
         {props.expandedActionButtons &&
           renderFullRow(
             `${props.rowData.id}-expanded-actions`,
-            <div className='flex flex-row justify-between flex-1'>
-              <Text className='flex p-0 mt-1 font-bold' size='base'>
+            <div className='flex flex-1 flex-row justify-between'>
+              <Text className='mt-1 flex p-0 font-bold' size='base'>
                 Details
               </Text>
               <div>{props.expandedActionButtons}</div>
