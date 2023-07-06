@@ -1,4 +1,4 @@
-import VaultLogo from 'components/Earn/vault/VaultLogo'
+import VaultLogo from 'components/Earn/Vault/VaultLogo'
 import Modal from 'components/Modal'
 import VaultModalContent from 'components/Modals/Vault/VaultModalContent'
 import Text from 'components/Text'

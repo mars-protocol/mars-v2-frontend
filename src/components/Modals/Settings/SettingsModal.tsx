@@ -138,19 +138,21 @@ export default function SettingsModal() {
         name='lendAssets'
         value={lendAssets}
         label='Lend assets in credit account'
-        decsription='Turns off all animations inside the dApp. Turning animations off can increase the
-        overall performance on lower-end hardware.'
+        decsription='By turning this on you will automatically lend out all the assets you deposit into your credit account to earn yield.'
+        withStatus
       />
       <SettingsSwitch
         onChange={handleReduceMotion}
         name='reduceMotion'
         value={!enableAnimations}
         label='Reduce Motion'
-        decsription='By turning this on you will automatically lend out all the assets you deposit into your credit account to earn yield.'
+        decsription='Turns off all animations inside the dApp. Turning animations off can increase the
+        overall performance on lower-end hardware.'
+        withStatus
       />
-      <div className='flex items-start justify-between w-full pb-6 mb-6 border-b border-white/5'>
-        <div className='flex flex-wrap w-100'>
-          <Text size='lg' className='w-full mb-2'>
+      <div className='mb-6 flex w-full items-start justify-between border-b border-white/5 pb-6'>
+        <div className='flex w-100 flex-wrap'>
+          <Text size='lg' className='mb-2 w-full'>
             Preferred asset
           </Text>
           <Text size='xs' className='text-white/50'>
@@ -158,13 +160,13 @@ export default function SettingsModal() {
             pre-filled with this asset.
           </Text>
         </div>
-        <div className='flex flex-wrap justify-end w-60'>
+        <div className='flex w-60 flex-wrap justify-end'>
           <Select
             label='Global'
             options={globalAssetsOptions}
             defaultValue={globalAsset.denom}
             onChange={handleGlobalAsset}
-            className='relative border w-60 rounded-base border-white/10'
+            className='relative w-60 rounded-base border border-white/10'
             containerClassName='justify-end mb-4'
           />
           <Select
@@ -172,7 +174,7 @@ export default function SettingsModal() {
             options={displayCurrenciesOptions}
             defaultValue={displayCurrency.denom}
             onChange={handleDisplayCurrency}
-            className='relative border w-60 rounded-base border-white/10'
+            className='relative w-60 rounded-base border border-white/10'
             containerClassName='justify-end'
           />
         </div>

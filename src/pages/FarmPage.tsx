@@ -1,5 +1,5 @@
 import Tab from 'components/Earn/Tab'
-import { AvailableVaults, DepositedVaults } from 'components/Earn/vault/Vaults'
+import { AvailableVaults, DepositedVaults } from 'components/Earn/Vault/Vaults'
 
 export default function FarmPage() {
   return (

@@ -1,5 +1,5 @@
 import Button from 'components/Button'
-import VaultLogo from 'components/Earn/vault/VaultLogo'
+import VaultLogo from 'components/Earn/Vault/VaultLogo'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import useCurrentAccount from 'hooks/useCurrentAccount'

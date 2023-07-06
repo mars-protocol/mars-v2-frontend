@@ -81,7 +81,6 @@ function LendingMarketsTable(props: Props) {
         accessorKey: 'marketLiquidityRate',
         header: 'APR',
         cell: ({ row }) => {
-          const apr = convertLiquidityRateToAPR(row.original.marketLiquidityRate)
           return (
             <FormattedNumber
               amount={BN(convertLiquidityRateToAPR(row.original.marketLiquidityRate))}
