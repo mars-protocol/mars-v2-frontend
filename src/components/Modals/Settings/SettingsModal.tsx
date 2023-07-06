@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 
 import AssetImage from 'components/AssetImage'
 import Modal from 'components/Modal'
+import SettingsSelect from 'components/Modals/Settings/SettingsSelect'
 import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
 import Select from 'components/Select/Select'
 import Text from 'components/Text'
@@ -150,17 +151,12 @@ export default function SettingsModal() {
         overall performance on lower-end hardware.'
         withStatus
       />
-      <div className='mb-6 flex w-full items-start justify-between border-b border-white/5 pb-6'>
-        <div className='flex w-100 flex-wrap'>
-          <Text size='lg' className='mb-2 w-full'>
-            Preferred asset
-          </Text>
-          <Text size='xs' className='text-white/50'>
-            By selecting a different asset you always have the trading pair or asset selector
-            pre-filled with this asset.
-          </Text>
-        </div>
-        <div className='flex w-60 flex-wrap justify-end'>
+      <SettingsSelect
+        label='Preferred asset'
+        decsription='By selecting a different asset you always have the trading pair or asset selector
+        pre-filled with this asset.'
+      >
+        <>
           <Select
             label='Global'
             options={globalAssetsOptions}
@@ -177,8 +173,8 @@ export default function SettingsModal() {
             className='relative w-60 rounded-base border border-white/10'
             containerClassName='justify-end'
           />
-        </div>
-      </div>
+        </>
+      </SettingsSelect>
     </Modal>
   )
 }
