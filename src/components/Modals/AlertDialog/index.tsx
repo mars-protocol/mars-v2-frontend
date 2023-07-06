@@ -1,9 +1,9 @@
 import Button from 'components/Button'
 import { ExclamationMarkCircled } from 'components/Icons'
 import Modal from 'components/Modal'
+import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
 import Text from 'components/Text'
 import useAlertDialog from 'hooks/useAlertDialog'
-import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
 
 function AlertDialogController() {
   const { config, close } = useAlertDialog()
@@ -28,7 +28,6 @@ function AlertDialog(props: Props) {
 
   return (
     <Modal
-      open
       onClose={props.close}
       header={
         <div className='grid h-12 w-12 place-items-center rounded-sm bg-white/5'>
