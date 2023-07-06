@@ -70,6 +70,16 @@ export default function SettingsModal() {
     }
   }
 
+  const storageGlobalAsset = localStorage.getItem(GLOBAL_ASSET_KEY)
+  if (storageGlobalAsset) {
+    const storedGlobalAsset = ASSETS.find(
+      (asset) => asset.symbol === JSON.parse(storageGlobalAsset).symbol,
+    )
+    if (storedGlobalAsset && storedGlobalAsset !== displayCurrency) {
+      setGlobalAsset(storedGlobalAsset)
+    }
+  }
+
   function handleReduceMotion() {
     useStore.setState({ enableAnimations: !enableAnimations })
     if (typeof window !== 'undefined')
