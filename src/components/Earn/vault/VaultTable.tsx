@@ -12,9 +12,6 @@ import React from 'react'
 
 import Button from 'components/Button'
 import DisplayCurrency from 'components/DisplayCurrency'
-import VaultExpanded from 'components/Earn/Vault/VaultExpanded'
-import VaultLogo from 'components/Earn/Vault/VaultLogo'
-import { VaultRow } from 'components/Earn/Vault/VaultRow'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { ChevronDown, SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Loading from 'components/Loading'
@@ -27,6 +24,9 @@ import { VaultStatus } from 'types/enums/vault'
 import { getAssetByDenom } from 'utils/assets'
 import { produceCountdown } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+import VaultExpanded from './VaultExpanded'
+import VaultLogo from './VaultLogo'
+import { VaultRow } from './VaultRow'
 
 type Props = {
   data: Vault[] | DepositedVault[]
@@ -250,7 +250,7 @@ export const VaultTable = (props: Props) => {
                       'align-center',
                     )}
                   >
-                    <span className='h-6 w-6 text-white'>
+                    <span className='w-6 h-6 text-white'>
                       {header.column.getCanSort()
                         ? {
                             asc: <SortAsc />,

@@ -2,14 +2,14 @@ import { Suspense, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 
 import Card from 'components/Card'
-import { VaultTable } from 'components/Earn/Vault/VaultTable'
-import VaultUnlockBanner from 'components/Earn/Vault/VaultUnlockBanner'
 import { IS_TESTNET } from 'constants/env'
 import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import useDepositedVaults from 'hooks/useDepositedVaults'
 import useVaults from 'hooks/useVaults'
 import { VaultStatus } from 'types/enums/vault'
 import { BN } from 'utils/helpers'
+import { VaultTable } from './VaultTable'
+import VaultUnlockBanner from './VaultUnlockBanner'
 
 interface Props {
   type: 'available' | 'deposited'
@@ -59,7 +59,7 @@ function Content(props: Props) {
     <>
       {!isAvailable && <VaultUnlockBanner vaults={unlockedVaults} />}
       <Card
-        className='h-fit w-full bg-white/5'
+        className='w-full h-fit bg-white/5'
         title={isAvailable ? 'Available vaults' : 'Deposited'}
       >
         <VaultTable data={vaultsToDisplay} />
@@ -85,7 +85,7 @@ function Fallback() {
   }))
 
   return (
-    <Card className='h-fit w-full bg-white/5' title='Available vaults'>
+    <Card className='w-full h-fit bg-white/5' title='Available vaults'>
       <VaultTable data={mockVaults} isLoading />
     </Card>
   )
