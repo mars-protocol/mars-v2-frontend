@@ -1,9 +1,9 @@
 import { useCallback, useMemo, useState } from 'react'
 
+import AddVaultAssetTable from 'components/Modals/AddVaultAssets/AddVaultAssetTable'
 import SearchBar from 'components/SearchBar'
 import Text from 'components/Text'
 import useMarketBorrowings from 'hooks/useMarketBorrowings'
-import AddVaultAssetTable from 'components/Modals/AddVaultAssets/AddVaultAssetTable'
 import useStore from 'store'
 
 interface Props {
@@ -75,7 +75,7 @@ export default function AddVaultAssetsModalContent(props: Props) {
 
   return (
     <>
-      <div className='border-b border-b-white/5 bg-white/10 px-4 py-3'>
+      <div className='border-b border-white/5 bg-white/10 px-4 py-3'>
         <SearchBar
           value={searchString}
           placeholder={`Search for e.g. "ETH" or "Ethereum"`}

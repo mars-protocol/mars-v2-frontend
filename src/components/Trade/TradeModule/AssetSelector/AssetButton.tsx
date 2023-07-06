@@ -14,6 +14,7 @@ export default function AssetButton(props: Props) {
       color='tertiary'
       variant='transparent'
       className='w-full border border-white/20'
+      textClassNames='flex flex-1'
       size='md'
       hasSubmenu
       {...props}

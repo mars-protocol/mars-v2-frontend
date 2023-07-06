@@ -46,12 +46,12 @@ function LendingMarketsTable(props: Props) {
           const asset = row.original.asset
 
           return (
-            <div className='flex flex-1 items-center gap-3'>
+            <div className='flex items-center flex-1 gap-3'>
               <Image src={asset.logo} alt={asset.symbol} width={32} height={32} />
               <TitleAndSubCell
                 title={asset.symbol}
                 sub={asset.name}
-                className='min-w-15 text-left'
+                className='text-left min-w-15'
               />
             </div>
           )
@@ -117,7 +117,7 @@ function LendingMarketsTable(props: Props) {
         header: 'Manage',
         cell: ({ row }) => (
           <div className='flex items-center justify-end'>
-            <div className='w-4'>{row.getIsExpanded() ? <ChevronDown /> : <ChevronUp />}</div>
+            <div className='w-4'>{row.getIsExpanded() ? <ChevronUp /> : <ChevronDown />}</div>
           </div>
         ),
       },

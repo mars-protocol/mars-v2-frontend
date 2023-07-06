@@ -1,6 +1,8 @@
 import { Row } from '@tanstack/react-table'
 
 import Button from 'components/Button'
+import { Plus } from 'components/Icons'
+import { useMemo } from 'react'
 import useStore from 'store'
 import { getEnabledMarketAssets } from 'utils/assets'
 
@@ -14,11 +16,11 @@ type AssetRowProps = {
 export default function AssetExpanded(props: AssetRowProps) {
   const marketAssets = getEnabledMarketAssets()
   const asset = marketAssets.find((asset) => asset.denom === props.row.original.denom)
-  let isActive: boolean = false
 
-  if ((props.row.original as BorrowAssetActive)?.debt) {
-    isActive = true
-  }
+  const isActive = useMemo(
+    () => !!(props.row.original as BorrowAssetActive)?.debt,
+    [props.row.original],
+  )
 
   if (!asset) return null
 
@@ -37,7 +39,7 @@ export default function AssetExpanded(props: AssetRowProps) {
   return (
     <tr
       key={props.row.id}
-      className='cursor-pointer bg-black/20 transition-colors'
+      className='transition-colors cursor-pointer bg-black/20'
       onClick={(e) => {
         e.preventDefault()
         const isExpanded = props.row.getIsExpanded()
@@ -48,11 +50,13 @@ export default function AssetExpanded(props: AssetRowProps) {
       <td colSpan={isActive ? 5 : 4}>
         <div className='flex justify-end gap-4 p-4'>
           <Button
+            leftIcon={isActive ? <Plus /> : undefined}
             onClick={borrowHandler}
-            color='primary'
+            color='secondary'
             text={isActive ? 'Borrow more' : 'Borrow'}
+            className='text-center min-w-40'
           />
-          {isActive && <Button color='primary' text='Repay' onClick={repayHandler} />}
+          {isActive && <Button color='secondary' text='Repay' onClick={repayHandler} />}
         </div>
       </td>
     </tr>

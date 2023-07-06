@@ -14,11 +14,11 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
+import usePrices from 'hooks/usePrices'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 import { convertToDisplayAmount, demagnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import { BNCoin } from 'types/classes/BNCoin'
-import usePrices from 'hooks/usePrices'
 
 interface Props {
   data: Account
@@ -93,7 +93,7 @@ export const AccountBalancesTable = (props: Props) => {
         id: 'value',
         cell: ({ row }) => {
           const coin = new BNCoin({ denom: row.original.denom, amount: row.original.amount })
-          return <DisplayCurrency coin={coin} className='text-right text-xs' />
+          return <DisplayCurrency coin={coin} className='text-xs text-right' />
         },
       },
       {
@@ -103,7 +103,7 @@ export const AccountBalancesTable = (props: Props) => {
         cell: ({ row }) => {
           return (
             <FormattedNumber
-              className='text-right text-xs'
+              className='text-xs text-right'
               amount={BN(
                 demagnify(
                   row.original.amount,
@@ -146,7 +146,7 @@ export const AccountBalancesTable = (props: Props) => {
 
   return (
     <table className='w-full'>
-      <thead className='border-b border-b-white/5'>
+      <thead className='border-b border-white/5'>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
             {headerGroup.headers.map((header, index) => {
@@ -167,7 +167,7 @@ export const AccountBalancesTable = (props: Props) => {
                       'align-center',
                     )}
                   >
-                    <span className='h-6 w-6 text-white'>
+                    <span className='w-6 h-6 text-white'>
                       {header.column.getCanSort()
                         ? {
                             asc: <SortAsc />,

@@ -1,15 +1,16 @@
 interface ModalSlice {
   addVaultBorrowingsModal: AddVaultBorrowingsModal | null
+  alertDialog: AlertDialogConfig | null
   borrowModal: BorrowModal | null
   createAccountModal: boolean
   deleteAccountModal: boolean
   fundAccountModal: boolean
   fundAndWithdrawModal: 'fund' | 'withdraw' | null
+  lendAndReclaimModal: LendAndReclaimModalConfig | null
+  settingsModal: boolean
   vaultModal: VaultModal | null
   withdrawFromVaultsModal: DepositedVault[] | null
   unlockModal: UnlockModal | null
-  lendAndReclaimModal: LendAndReclaimModalConfig | null
-  alertDialog: AlertDialogConfig | null
 }
 
 interface AlertDialogButton {

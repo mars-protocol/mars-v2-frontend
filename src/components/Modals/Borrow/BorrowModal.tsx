@@ -134,7 +134,7 @@ export default function BorrowModal() {
       headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col'
     >
-      <div className='flex gap-3 border-b border-b-white/5 px-6 py-4 gradient-header'>
+      <div className='flex gap-3 border-b border-white/5 px-6 py-4 gradient-header'>
         <TitleAndSubCell
           title={formatPercent(modal?.marketData.borrowRate || '0')}
           sub={'Borrow rate'}

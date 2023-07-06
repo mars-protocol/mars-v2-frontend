@@ -36,6 +36,7 @@ interface Props {
   hasFocus?: boolean
   dataTestId?: string
   tabIndex?: number
+  textClassNames?: string
 }
 
 const Button = React.forwardRef(function Button(
@@ -57,6 +58,7 @@ const Button = React.forwardRef(function Button(
     hasFocus,
     dataTestId,
     tabIndex = 0,
+    textClassNames,
   }: Props,
   ref,
 ) {
@@ -116,7 +118,7 @@ const Button = React.forwardRef(function Button(
       ) : (
         <>
           {leftIcon && <span className={classNames(leftIconClassNames)}>{leftIcon}</span>}
-          {shouldShowText && <span>{text}</span>}
+          {shouldShowText && <span className={textClassNames}>{text}</span>}
           {children && children}
           {rightIcon && <span className={classNames(rightIconClassNames)}>{rightIcon}</span>}
           {hasSubmenu && (

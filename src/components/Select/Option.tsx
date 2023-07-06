@@ -1,14 +1,14 @@
 import classNames from 'classnames'
 
+import AssetImage from 'components/AssetImage'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { ChevronDown } from 'components/Icons'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
-import { formatValue } from 'utils/formatters'
-import AssetImage from 'components/AssetImage'
 import { BNCoin } from 'types/classes/BNCoin'
+import { formatValue } from 'utils/formatters'
 
-interface Props extends Option {
+interface Props extends SelectOption {
   isSelected?: boolean
   isDisplay?: boolean
   isClicked?: boolean
@@ -25,10 +25,13 @@ export default function Option(props: Props) {
     if (props.isDisplay) {
       return (
         <div
-          className={classNames('flex items-center gap-2 bg-white/10 p-3', 'hover:cursor-pointer')}
+          className={classNames(
+            'flex items-center gap-2 rounded-base bg-white/10 p-3 ',
+            'hover:cursor-pointer',
+          )}
         >
           <AssetImage asset={asset} size={20} />
-          <span>{asset.symbol}</span>
+          <span className='flex flex-1'>{asset.symbol}</span>
           <span
             className={classNames(
               'inline-block w-2.5 transition-transform',
@@ -52,11 +55,11 @@ export default function Option(props: Props) {
         )}
         onClick={() => props?.onClick && props.onClick(asset.denom)}
       >
-        <div className='row-span-2 flex h-full items-center justify-center'>
+        <div className='flex items-center justify-center h-full row-span-2'>
           <AssetImage asset={asset} size={32} />
         </div>
         <Text className='col-span-2 pb-1'>{asset.symbol}</Text>
-        <Text size='sm' className='col-span-2 pb-1 text-right font-bold'>
+        <Text size='sm' className='col-span-2 pb-1 font-bold text-right'>
           {formatValue(balance, {
             decimals: asset.decimals,
             maxDecimals: 4,
@@ -78,11 +81,9 @@ export default function Option(props: Props) {
   if (props.isDisplay) {
     return (
       <div
-        className={classNames(
-          'flex w-full items-center justify-between bg-white/10 p-3 hover:cursor-pointer',
-        )}
+        className={classNames('flex w-full items-center justify-between p-3 hover:cursor-pointer')}
       >
-        <span>{label}</span>
+        <span className='flex flex-1'>{label}</span>
         <span
           className={classNames(
             'inline-block w-2.5 transition-transform',
@@ -101,7 +102,7 @@ export default function Option(props: Props) {
         'block p-3 hover:cursor-pointer hover:bg-white/20',
         props.isSelected && 'bg-white/10',
       )}
-      onClick={() => props?.onClick && props.onClick(props.value)}
+      onClick={() => props?.onClick && props.value && props.onClick(props.value)}
     >
       {label}
     </div>
