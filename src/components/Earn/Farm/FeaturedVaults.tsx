@@ -1,8 +1,8 @@
 import { Suspense } from 'react'
 
 import Card from 'components/Card'
+import VaultCard from 'components/Earn/Farm/VaultCard'
 import useVaults from 'hooks/useVaults'
-import VaultCard from './VaultCard'
 
 function Content() {
   const { data: vaults } = useVaults()
@@ -14,7 +14,7 @@ function Content() {
   return (
     <Card
       title='Featured vaults'
-      className='w-full mb-4 h-fit bg-white/5'
+      className='mb-4 h-fit w-full bg-white/5'
       contentClassName='grid grid-cols-3'
     >
       {featuredVaults.map((vault) => (

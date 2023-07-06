@@ -1,11 +1,10 @@
-import { useParams } from 'react-router-dom'
 import classNames from 'classnames'
+import { useParams } from 'react-router-dom'
 
+import Divider from 'components/Divider'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
-import Divider from 'components/Divider'
-
-import AssetSelector from './AssetSelector/AssetSelector'
+import AssetSelector from 'components/Trade/TradeModule/AssetSelector/AssetSelector'
 
 function Content() {
   const params = useParams()

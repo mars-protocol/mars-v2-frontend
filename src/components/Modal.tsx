@@ -1,9 +1,8 @@
 import classNames from 'classnames'
 import { ReactNode, useEffect, useRef } from 'react'
 
+import EscButton from 'components/Button/EscButton'
 import Card from 'components/Card'
-
-import EscButton from './Button/EscButton'
 
 interface Props {
   header: string | ReactNode
