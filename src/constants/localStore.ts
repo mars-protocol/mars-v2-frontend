@@ -1,4 +1,6 @@
+export const GLOBAL_ASSET_KEY = 'globalAsset'
 export const DISPLAY_CURRENCY_KEY = 'displayCurrency'
 export const ENABLE_ANIMATIONS_KEY = 'enableAnimations'
 export const FAVORITE_ASSETS = 'favoriteAssets'
+export const LEND_ASSETS_KEY = 'lendAssets'
 export const AUTO_LEND_ENABLED_ACCOUNT_IDS_KEY = 'autoLendEnabledAccountIds'

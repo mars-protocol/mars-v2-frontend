@@ -6,7 +6,12 @@ import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
 import Select from 'components/Select/Select'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
-import { DISPLAY_CURRENCY_KEY, ENABLE_ANIMATIONS_KEY } from 'constants/localStore'
+import {
+  DISPLAY_CURRENCY_KEY,
+  ENABLE_ANIMATIONS_KEY,
+  GLOBAL_ASSET_KEY,
+  LEND_ASSETS_KEY,
+} from 'constants/localStore'
 import useStore from 'store'
 import { getAllAssets, getDisplayCurrencies } from 'utils/assets'
 
@@ -72,16 +77,16 @@ export default function SettingsModal() {
   }
 
   function handleLendAssets() {
-    useStore.setState({ enableAnimations: !lendAssets })
+    useStore.setState({ lendAssets: !lendAssets })
     if (typeof window !== 'undefined')
-      window.localStorage.setItem(ENABLE_ANIMATIONS_KEY, lendAssets ? 'false' : 'true')
+      window.localStorage.setItem(LEND_ASSETS_KEY, lendAssets ? 'false' : 'true')
   }
 
-  function handleCurrencyChange(value: string) {
-    const displayCurrency = displayCurrencies.find((c) => c.denom === value)
-    if (!displayCurrency) return
+  function handleGlobalAsset(value: string) {
+    const globalAsset = globalAssets.find((c) => c.denom === value)
+    if (!globalAsset) return
 
-    setDisplayCurrency(displayCurrency)
+    setGlobalAsset(globalAsset)
   }
 
   function handleDisplayCurrency(value: string) {
@@ -94,6 +99,11 @@ export default function SettingsModal() {
   function setDisplayCurrency(displayCurrency: Asset) {
     useStore.setState({ displayCurrency: displayCurrency })
     localStorage.setItem(DISPLAY_CURRENCY_KEY, JSON.stringify(displayCurrency))
+  }
+
+  function setGlobalAsset(globalAsset: Asset) {
+    useStore.setState({ globalAsset: globalAsset })
+    localStorage.setItem(GLOBAL_ASSET_KEY, JSON.stringify(globalAsset))
   }
 
   return (
@@ -128,9 +138,9 @@ export default function SettingsModal() {
         label='Reduce Motion'
         decsription='By turning this on you will automatically lend out all the assets you deposit into your credit account to earn yield.'
       />
-      <div className='mb-6 flex w-full items-start justify-between border-b border-white/5 pb-6'>
-        <div className='flex w-100 flex-wrap'>
-          <Text size='lg' className='mb-2 w-full'>
+      <div className='flex items-start justify-between w-full pb-6 mb-6 border-b border-white/5'>
+        <div className='flex flex-wrap w-100'>
+          <Text size='lg' className='w-full mb-2'>
             Preferred asset
           </Text>
           <Text size='xs' className='text-white/50'>
@@ -138,13 +148,13 @@ export default function SettingsModal() {
             pre-filled with this asset.
           </Text>
         </div>
-        <div className='flex w-60 flex-wrap justify-end'>
+        <div className='flex flex-wrap justify-end w-60'>
           <Select
             label='Global'
             options={globalAssetsOptions}
             defaultValue={globalAsset.denom}
-            onChange={handleCurrencyChange}
-            className='relative w-60 rounded-base border border-white/10'
+            onChange={handleGlobalAsset}
+            className='relative border w-60 rounded-base border-white/10'
             containerClassName='justify-end mb-4'
           />
           <Select
@@ -152,7 +162,7 @@ export default function SettingsModal() {
             options={displayCurrenciesOptions}
             defaultValue={displayCurrency.denom}
             onChange={handleDisplayCurrency}
-            className='relative w-60 rounded-base border border-white/10'
+            className='relative border w-60 rounded-base border-white/10'
             containerClassName='justify-end'
           />
         </div>
