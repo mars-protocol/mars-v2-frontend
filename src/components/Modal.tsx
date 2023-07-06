@@ -27,6 +27,7 @@ export default function Modal(props: Props) {
 
   useEffect(() => {
     ref.current?.showModal()
+    document.body.classList.add('h-screen', 'overflow-hidden')
   }, [])
 
   // close dialog on unmount
@@ -35,6 +36,7 @@ export default function Modal(props: Props) {
     return () => {
       dialog.removeAttribute('open')
       dialog.close()
+      document.body.classList.remove('h-screen', 'overflow-hidden')
     }
   }, [])
 
@@ -45,7 +47,7 @@ export default function Modal(props: Props) {
       className={classNames(
         `w-screen border-none bg-transparent text-white`,
         'focus-visible:outline-none',
-        'scrollbar-hide',
+        'max-h-full scrollbar-hide',
         'backdrop:bg-black/50 backdrop:backdrop-blur-sm',
         modalClassName,
       )}
@@ -60,7 +62,7 @@ export default function Modal(props: Props) {
           {props.header}
           {!props.hideCloseBtn && <EscButton onClick={props.onClose} />}
         </div>
-        <div className={classNames(props.contentClassName, 'flex-1')}>
+        <div className={classNames(props.contentClassName, 'flex-1 overflow-y-scroll')}>
           {props.children ? props.children : props.content}
         </div>
       </Card>
