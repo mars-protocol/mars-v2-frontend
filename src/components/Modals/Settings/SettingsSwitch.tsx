@@ -4,7 +4,7 @@ import Switch from 'components/Switch'
 import Text from 'components/Text'
 
 interface Props {
-  onChange: () => void
+  onChange: (value: boolean) => void
   name: string
   value: boolean
   label: string

@@ -1,10 +1,10 @@
 import { useCallback, useState } from 'react'
 
-import Modal from 'components/Modal'
-import useStore from 'store'
-import Text from 'components/Text'
 import { CircularProgress } from 'components/CircularProgress'
+import Modal from 'components/Modal'
 import AddVaultAssetsModalContent from 'components/Modals/AddVaultAssets/AddVaultBorrowAssetsModalContent'
+import Text from 'components/Text'
+import useStore from 'store'
 
 export default function AddVaultBorrowAssetsModal() {
   const modal = useStore((s) => s.addVaultBorrowingsModal)
@@ -24,9 +24,9 @@ export default function AddVaultBorrowAssetsModal() {
 
   const showContent = modal && vaultModal?.vault
 
+  if (!showContent) return null
   return (
     <Modal
-      open={!!(modal && showContent)}
       header={<Text>Add Assets</Text>}
       onClose={onClose}
       modalClassName='max-w-modal-xs'

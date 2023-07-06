@@ -3,7 +3,7 @@ import classNames from 'classnames'
 interface Props {
   name: string
   checked: boolean
-  onChange: () => void
+  onChange: (value: boolean) => void
   className?: string
   disabled?: boolean
 }
@@ -23,7 +23,7 @@ export default function Switch(props: Props) {
         name={props.name}
         className={classNames('peer hidden')}
         checked={props.checked}
-        onChange={props.onChange}
+        onChange={() => props.onChange(!props.checked)}
       />
       <label
         htmlFor={props.name}

@@ -119,9 +119,9 @@ export default function BorrowModal() {
     })
   }, [amount, modal?.asset, currentAccount, isRepay])
 
+  if (!modal) return null
   return (
     <Modal
-      open={!!modal}
       onClose={onClose}
       header={
         <span className='flex items-center gap-4 px-4'>

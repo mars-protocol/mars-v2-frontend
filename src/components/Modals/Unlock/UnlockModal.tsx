@@ -11,9 +11,9 @@ export default function UnlockModal() {
     useStore.setState({ unlockModal: null })
   }
 
+  if (!modal) return null
   return (
     <Modal
-      open={!!modal}
       onClose={onClose}
       header={
         <div className='grid h-12 w-12 place-items-center rounded-sm bg-white/5'>

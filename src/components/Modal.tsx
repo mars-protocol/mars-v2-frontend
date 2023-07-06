@@ -13,7 +13,6 @@ interface Props {
   className?: string
   contentClassName?: string
   modalClassName?: string
-  open: boolean
   onClose: () => void
 }
 
@@ -27,12 +26,8 @@ export default function Modal(props: Props) {
   }
 
   useEffect(() => {
-    if (props.open) {
-      ref.current?.showModal()
-    } else {
-      ref.current?.close()
-    }
-  }, [props.open])
+    ref.current?.showModal()
+  }, [])
 
   // close dialog on unmount
   useEffect(() => {

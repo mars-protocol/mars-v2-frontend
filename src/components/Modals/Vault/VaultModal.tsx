@@ -38,7 +38,6 @@ function VaultModal(props: Props) {
 
   return (
     <Modal
-      open={true}
       onClose={onClose}
       header={
         <span className='flex items-center gap-4 px-4'>

@@ -11,7 +11,7 @@ import Toaster from 'components/Toaster'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
-  const isFullWidth = location.pathname.includes('trade')
+  const isFullWidth = location.pathname.includes('trade') || location.pathname === '/'
 
   return (
     <>

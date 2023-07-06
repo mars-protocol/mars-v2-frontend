@@ -15,7 +15,6 @@ import { BN } from 'utils/helpers'
 interface Props {
   asset: Asset
   title: string
-  isOpen: boolean
   coinBalances: Coin[]
   contentHeader?: JSX.Element
   actionButtonText: string
@@ -30,7 +29,6 @@ export default function AssetAmountSelectActionModal(props: Props) {
   const {
     asset,
     title,
-    isOpen,
     coinBalances,
     contentHeader = null,
     actionButtonText,
@@ -57,7 +55,6 @@ export default function AssetAmountSelectActionModal(props: Props) {
 
   return (
     <Modal
-      open={isOpen}
       onClose={onClose}
       header={
         <span className='flex items-center gap-4 px-4'>

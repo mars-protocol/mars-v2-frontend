@@ -66,7 +66,6 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
   return (
     <AssetAmountSelectActionModal
       asset={asset}
-      isOpen={true}
       contentHeader={<DetailsHeader data={data} />}
       coinBalances={coinBalances}
       actionButtonText={actionText}

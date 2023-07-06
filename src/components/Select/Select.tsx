@@ -24,9 +24,9 @@ export default function Select(props: Props) {
   const selectedOption = value
     ? props.options.find((option) => option?.value === value || option?.denom === value)
     : undefined
-
-  const [selected, setSelected] = useState<SelectOption | undefined>(selectedOption)
+  const [selected, setSelected] = useState<SelectOption | undefined>(undefined)
   const [showDropdown, setShowDropdown] = useToggle()
+
   function handleChange(optionValue: string) {
     setValue(optionValue)
     const option = props.options.find(
@@ -39,14 +39,16 @@ export default function Select(props: Props) {
   }
 
   useEffect(() => {
-    if (props.defaultValue && value === props.defaultValue && selected) return
+    if (selectedOption && !selected) setSelected(selectedOption)
+
+    if (props.defaultValue && value === props.defaultValue) return
     setValue(props.defaultValue)
     const option = props.options.find(
       (option) => option?.value === value || option?.denom === value,
     )
     if (!option) return
     setSelected(option)
-  }, [value, props.defaultValue, props.options, selected])
+  }, [value, props.defaultValue, props.options, selected, selectedOption])
 
   return (
     <div className={classNames('flex flex-col flex-wrap', props.containerClassName)}>

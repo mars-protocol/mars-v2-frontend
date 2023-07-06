@@ -1,9 +1,9 @@
+import { CircularProgress } from 'components/CircularProgress'
 import Modal from 'components/Modal'
+import FundWithdrawModalContent from 'components/Modals/FundWithdraw/FundAndWithdrawModalContent'
 import Text from 'components/Text'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
-import { CircularProgress } from 'components/CircularProgress'
-import FundWithdrawModalContent from 'components/Modals/FundWithdraw/FundAndWithdrawModalContent'
 
 export default function FundAndWithdrawModal() {
   const currentAccount = useCurrentAccount()
@@ -14,9 +14,9 @@ export default function FundAndWithdrawModal() {
     useStore.setState({ fundAndWithdrawModal: null })
   }
 
+  if (!modal) return null
   return (
     <Modal
-      open={!!modal}
       onClose={onClose}
       header={
         <span className='flex items-center gap-4 px-4'>

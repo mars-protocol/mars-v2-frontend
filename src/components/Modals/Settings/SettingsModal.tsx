@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import AssetImage from 'components/AssetImage'
 import Modal from 'components/Modal'
@@ -6,24 +6,36 @@ import SettingsSelect from 'components/Modals/Settings/SettingsSelect'
 import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
 import Select from 'components/Select/Select'
 import Text from 'components/Text'
-import { ASSETS } from 'constants/assets'
 import {
   DISPLAY_CURRENCY_KEY,
   ENABLE_ANIMATIONS_KEY,
   GLOBAL_ASSET_KEY,
   LEND_ASSETS_KEY,
 } from 'constants/localStore'
+import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 import { getAllAssets, getDisplayCurrencies } from 'utils/assets'
 
 export default function SettingsModal() {
   const modal = useStore((s) => s.settingsModal)
-  const enableAnimations = useStore((s) => s.enableAnimations)
-  const lendAssets = useStore((s) => s.lendAssets)
-  const displayCurrency = useStore((s) => s.displayCurrency)
   const displayCurrencies = getDisplayCurrencies()
-  const globalAsset = useStore((s) => s.globalAsset)
   const globalAssets = getAllAssets()
+  const [displayCurrency, setDisplayCurrency] = useLocalStorage<Asset>(
+    DISPLAY_CURRENCY_KEY,
+    useStore((s) => s.displayCurrency),
+  )
+  const [globalAsset, setGlobalAsset] = useLocalStorage<Asset>(
+    GLOBAL_ASSET_KEY,
+    useStore((s) => s.globalAsset),
+  )
+  const [enableAnimations, setEnableAnimations] = useLocalStorage<boolean>(
+    ENABLE_ANIMATIONS_KEY,
+    useStore((s) => s.enableAnimations),
+  )
+  const [lendAssets, setLendAssets] = useLocalStorage<boolean>(
+    LEND_ASSETS_KEY,
+    useStore((s) => s.lendAssets),
+  )
 
   const displayCurrenciesOptions = useMemo(
     () =>
@@ -57,46 +69,22 @@ export default function SettingsModal() {
     [globalAssets],
   )
 
-  function onClose() {
-    useStore.setState({ settingsModal: false })
+  function handleEnableAnimations(value: boolean) {
+    setEnableAnimations(!value)
   }
 
-  const storageDisplayCurrency = localStorage.getItem(DISPLAY_CURRENCY_KEY)
-  if (storageDisplayCurrency) {
-    const storedDisplayCurrency = ASSETS.find(
-      (asset) => asset.symbol === JSON.parse(storageDisplayCurrency).symbol,
-    )
-    if (storedDisplayCurrency && storedDisplayCurrency !== displayCurrency) {
-      setDisplayCurrency(storedDisplayCurrency)
-    }
-  }
-
-  const storageGlobalAsset = localStorage.getItem(GLOBAL_ASSET_KEY)
-  if (storageGlobalAsset) {
-    const storedGlobalAsset = ASSETS.find(
-      (asset) => asset.symbol === JSON.parse(storageGlobalAsset).symbol,
-    )
-    if (storedGlobalAsset && storedGlobalAsset !== displayCurrency) {
-      setGlobalAsset(storedGlobalAsset)
-    }
-  }
-
-  function handleReduceMotion() {
-    useStore.setState({ enableAnimations: !enableAnimations })
-    if (typeof window !== 'undefined')
-      window.localStorage.setItem(ENABLE_ANIMATIONS_KEY, enableAnimations ? 'false' : 'true')
-  }
-
-  function handleLendAssets() {
-    useStore.setState({ lendAssets: !lendAssets })
-    if (typeof window !== 'undefined')
-      window.localStorage.setItem(LEND_ASSETS_KEY, lendAssets ? 'false' : 'true')
-  }
+  useEffect(() => {
+    useStore.setState({
+      globalAsset,
+      displayCurrency,
+      enableAnimations,
+      lendAssets,
+    })
+  }, [globalAsset, displayCurrency, enableAnimations, lendAssets])
 
   function handleGlobalAsset(value: string) {
     const globalAsset = globalAssets.find((c) => c.denom === value)
     if (!globalAsset) return
-
     setGlobalAsset(globalAsset)
   }
 
@@ -104,22 +92,18 @@ export default function SettingsModal() {
     const displayCurrency = displayCurrencies.find((c) => c.denom === value)
     if (!displayCurrency) return
 
+    useStore.setState({ displayCurrency })
     setDisplayCurrency(displayCurrency)
   }
 
-  function setDisplayCurrency(displayCurrency: Asset) {
-    useStore.setState({ displayCurrency: displayCurrency })
-    localStorage.setItem(DISPLAY_CURRENCY_KEY, JSON.stringify(displayCurrency))
+  function onClose() {
+    useStore.setState({ settingsModal: false })
   }
 
-  function setGlobalAsset(globalAsset: Asset) {
-    useStore.setState({ globalAsset: globalAsset })
-    localStorage.setItem(GLOBAL_ASSET_KEY, JSON.stringify(globalAsset))
-  }
+  if (!modal) return null
 
   return (
     <Modal
-      open={!!modal}
       onClose={onClose}
       header={
         <span className='flex flex-wrap items-center'>
@@ -135,7 +119,7 @@ export default function SettingsModal() {
       contentClassName='flex flex-wrap px-6 pb-6 pt-4'
     >
       <SettingsSwitch
-        onChange={handleLendAssets}
+        onChange={setLendAssets}
         name='lendAssets'
         value={lendAssets}
         label='Lend assets in credit account'
@@ -143,7 +127,7 @@ export default function SettingsModal() {
         withStatus
       />
       <SettingsSwitch
-        onChange={handleReduceMotion}
+        onChange={handleEnableAnimations}
         name='reduceMotion'
         value={!enableAnimations}
         label='Reduce Motion'

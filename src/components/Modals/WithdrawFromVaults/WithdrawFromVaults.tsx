@@ -38,9 +38,10 @@ export default function WithdrawFromVaults() {
     onClose()
   }
 
+  if (!modal) return null
+
   return (
     <Modal
-      open={!!modal}
       onClose={onClose}
       header={
         <span className='flex items-center'>
