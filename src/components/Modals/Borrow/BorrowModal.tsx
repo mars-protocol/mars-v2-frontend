@@ -21,8 +21,7 @@ import { formatPercent, formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
 function getDebtAmount(modal: BorrowModal | null) {
-  if (!(modal?.marketData as BorrowAssetActive)?.debt) return '0'
-  return BN((modal?.marketData as BorrowAssetActive).debt).toString()
+  return BN((modal?.marketData as BorrowMarketTableData)?.debt ?? 0).toString()
 }
 
 function getAssetLogo(modal: BorrowModal | null) {
@@ -176,6 +175,7 @@ export default function BorrowModal() {
                 options={accountOptions ?? []}
                 title='Accounts'
                 defaultValue={selectedAccount?.id}
+                containerClassName='w-full'
                 onChange={(account) => {
                   accounts && setSelectedAccount(accounts?.find((a) => a.id === account))
                 }}

@@ -4,7 +4,7 @@ import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
 import { BN } from 'utils/helpers'
 
 interface Props {
-  data: LendingMarketTableData
+  data: BorrowMarketTableData | LendingMarketTableData
 }
 
 interface Details {
@@ -13,7 +13,7 @@ interface Details {
   title: string
 }
 
-function LendingDetails({ data }: Props) {
+export default function MarketDetails({ data }: Props) {
   const {
     convertAmount,
     getConversionRate,
@@ -78,5 +78,3 @@ function LendingDetails({ data }: Props) {
     </div>
   )
 }
-
-export default LendingDetails

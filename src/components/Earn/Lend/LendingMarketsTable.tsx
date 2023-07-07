@@ -3,11 +3,11 @@ import Image from 'next/image'
 import { useMemo } from 'react'
 
 import LendingActionButtons from 'components/Earn/Lend/LendingActionButtons'
-import LendingDetails from 'components/Earn/Lend/LendingDetails'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { ChevronDown, ChevronUp } from 'components/Icons'
 import AssetListTable from 'components/MarketAssetTable'
 import MarketAssetTableRow from 'components/MarketAssetTable/MarketAssetTableRow'
+import MarketDetails from 'components/MarketAssetTable/MarketDetails'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
 import { convertLiquidityRateToAPR, demagnify } from 'utils/formatters'
@@ -18,7 +18,7 @@ interface Props {
   data: LendingMarketTableData[]
 }
 
-function LendingMarketsTable(props: Props) {
+export default function LendingMarketsTable(props: Props) {
   const { title, data } = props
   const { symbol: displayCurrencySymbol } = useDisplayCurrencyPrice()
   const shouldShowAccountDeposit = !!data[0]?.accountLentValue
@@ -31,7 +31,7 @@ function LendingMarketsTable(props: Props) {
         resetExpanded={table.resetExpanded}
         rowData={row}
         expandedActionButtons={<LendingActionButtons data={row.original} />}
-        expandedDetails={<LendingDetails data={row.original} />}
+        expandedDetails={<MarketDetails data={row.original} />}
       />
     )
   }
@@ -137,5 +137,3 @@ function LendingMarketsTable(props: Props) {
 
   return <AssetListTable title={title} rowRenderer={rowRenderer} columns={columns} data={data} />
 }
-
-export default LendingMarketsTable

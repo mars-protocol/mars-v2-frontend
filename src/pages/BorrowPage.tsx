@@ -1,11 +1,13 @@
-import { AvailableBorrowings } from 'components/Borrow/Borrowings'
-import { ActiveBorrowings } from 'components/Borrow/Borrowings'
+import BorrowTable from 'components/Borrow/BorrowTable'
+import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 
 export default function BorrowPage() {
+  const { accountBorrowedAssets, availableAssets } = useBorrowMarketAssetsTableData()
+
   return (
     <>
-      <ActiveBorrowings />
-      <AvailableBorrowings />
+      <BorrowTable data={accountBorrowedAssets} title='Borrowed Assets' />
+      <BorrowTable data={availableAssets} title='Available to borrow' />
     </>
   )
 }

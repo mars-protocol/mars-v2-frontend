@@ -35,7 +35,7 @@ interface LendAndReclaimModalConfig {
 
 interface BorrowModal {
   asset: Asset
-  marketData: BorrowAsset | BorrowAssetActive
+  marketData: BorrowMarketTableData
   isRepay?: boolean
 }
 

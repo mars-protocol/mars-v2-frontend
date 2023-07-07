@@ -19,7 +19,7 @@ interface Props {
 const buttonClassnames = 'm-0 flex w-40'
 const iconClassnames = 'ml-0 mr-1 w-4 h-4'
 
-function LendingActionButtons(props: Props) {
+export default function LendingActionButtons(props: Props) {
   const { asset, accountLentValue: accountLendValue } = props.data
   const accountDeposits = useCurrentAccountDeposits()
   const { openLend, openReclaim } = useLendAndReclaimModal()
@@ -90,5 +90,3 @@ function LendingActionButtons(props: Props) {
     </div>
   )
 }
-
-export default LendingActionButtons

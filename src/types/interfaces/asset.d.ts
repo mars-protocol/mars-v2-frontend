@@ -30,23 +30,31 @@ interface BorrowAsset extends Asset {
   } | null
 }
 
-interface BorrowAssetActive extends BorrowAsset {
-  debt: BigNumber
-}
-
 interface BigNumberCoin {
   denom: string
   amount: BigNumber
 }
 
-interface LendingMarketTableData {
-  asset: Asset
-  marketMaxLtv: number
-  marketLiquidityRate: number
+interface BorrowMarketTableData extends MarketTableData {
+  borrowRate: number | null
+  liquidity: {
+    amount: BigNumber
+    value: BigNumber
+  } | null
+  debt?: BigNumber
+}
+
+interface LendingMarketTableData extends MarketTableData {
   marketDepositCap: BigNumber
   accountLentAmount?: string
-  marketDepositAmount: BigNumber
   accountLentValue?: BigNumber
+}
+
+interface MarketTableData {
+  asset: Asset
+  marketMaxLtv: number
+  marketDepositAmount: BigNumber
+  marketLiquidityRate: number
   marketLiquidityAmount: BigNumber
   marketLiquidationThreshold: number
 }
