@@ -98,15 +98,16 @@ export default function BorrowTable(props: Props) {
         accessorKey: 'liquidity',
         header: 'Liquidity Available',
         cell: ({ row }) => {
-          const { liquidity, asset } = row.original
-          const currentAsset = marketAssets.find((asset) => asset.denom === asset.denom)
+          const { liquidity, asset: borrowAsset } = row.original
+          const asset = marketAssets.find((asset) => asset.denom === borrowAsset.denom)
 
-          if (!currentAsset) return null
+          if (!asset) return null
 
-          if (row.original.liquidity === null) {
+          if (liquidity === null) {
             return <Loading />
           }
-          return <AmountAndValue asset={currentAsset} amount={liquidity?.amount ?? BN(0)} />
+
+          return <AmountAndValue asset={asset} amount={liquidity.amount ?? BN(0)} />
         },
       },
       {
