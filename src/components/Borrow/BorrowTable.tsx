@@ -80,10 +80,14 @@ export default function BorrowTable(props: Props) {
         accessorKey: 'borrowRate',
         header: 'Borrow Rate',
         cell: ({ row }) => {
+          if (row.original.borrowRate === null) {
+            return <Loading />
+          }
+
           return (
             <FormattedNumber
               className='justify-end text-xs'
-              amount={BN(row.original.borrowRate ?? 0).multipliedBy(100)}
+              amount={BN(row.original.borrowRate).multipliedBy(100)}
               options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
               animate
             />
