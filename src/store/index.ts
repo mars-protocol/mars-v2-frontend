@@ -7,7 +7,12 @@ import createCurrencySlice from 'store/slices/currency'
 import createModalSlice from 'store/slices/modal'
 import createSettingsSlice from 'store/slices/settings'
 
-export interface Store extends CommonSlice, BroadcastSlice, CurrencySlice, ModalSlice {}
+export interface Store
+  extends CommonSlice,
+    BroadcastSlice,
+    CurrencySlice,
+    ModalSlice,
+    SettingsSlice {}
 
 const store = (set: SetState<any>, get: GetState<any>) => ({
   ...createCommonSlice(set, get),

@@ -121,7 +121,7 @@ export default function BorrowTable(props: Props) {
         ),
       },
     ],
-    [displayCurrencySymbol, shouldShowAccountBorrowed, marketAssets],
+    [shouldShowAccountBorrowed, marketAssets],
   )
 
   return <AssetListTable title={title} rowRenderer={rowRenderer} columns={columns} data={data} />

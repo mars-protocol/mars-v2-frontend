@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 
 import useDepositEnabledMarkets from 'hooks/useDepositEnabledMarkets'
-import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
 import useMarketBorrowings from 'hooks/useMarketBorrowings'
 import useMarketDeposits from 'hooks/useMarketDeposits'
 import useMarketLiquidities from 'hooks/useMarketLiquidities'
@@ -20,7 +19,6 @@ export default function useBorrowMarketAssetsTableData(): {
   const { data: borrowData } = useMarketBorrowings()
   const { data: marketDeposits } = useMarketDeposits()
   const { data: marketLiquidities } = useMarketLiquidities()
-  const { convertAmount } = useDisplayCurrencyPrice()
 
   return useMemo(() => {
     const accountBorrowedAssets: BorrowMarketTableData[] = [],
@@ -49,5 +47,5 @@ export default function useBorrowMarketAssetsTableData(): {
     })
 
     return { accountBorrowedAssets, availableAssets }
-  }, [accountDebts, markets, marketDeposits, marketLiquidities, convertAmount])
+  }, [accountDebts, borrowData, markets, marketDeposits, marketLiquidities])
 }

@@ -1,16 +1,10 @@
 import { GetState, SetState } from 'zustand'
 
-import { ASSETS } from 'constants/assets'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 
 export default function createSettingsSlice(
-  set: SetState<CommonSlice>,
-  get: GetState<CommonSlice>,
+  set: SetState<SettingsSlice>,
+  get: GetState<SettingsSlice>,
 ) {
-  return {
-    enableAnimations: true,
-    lendAssets: true,
-    preferredAsset: ASSETS.find((asset) => asset.denom === ASSETS[0].denom)!,
-    displayCurrency: ASSETS.find((asset) => asset.denom === ASSETS[0].denom)!,
-    slippage: 0.02,
-  }
+  return DEFAULT_SETTINGS
 }

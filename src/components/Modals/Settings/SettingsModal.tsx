@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
-
 import classNames from 'classnames'
+
 import AssetImage from 'components/AssetImage'
 import Button from 'components/Button'
 import { ArrowCircle, Enter } from 'components/Icons'
@@ -10,7 +10,7 @@ import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
 import NumberInput from 'components/NumberInput'
 import Select from 'components/Select/Select'
 import Text from 'components/Text'
-import { ASSETS } from 'constants/assets'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import {
   DISPLAY_CURRENCY_KEY,
   ENABLE_ANIMATIONS_KEY,
@@ -33,24 +33,21 @@ export default function SettingsModal() {
   const [isCustom, setIsCustom] = useState(false)
   const [displayCurrency, setDisplayCurrency] = useLocalStorage<Asset>(
     DISPLAY_CURRENCY_KEY,
-    useStore((s) => s.displayCurrency),
+    DEFAULT_SETTINGS.displayCurrency,
   )
   const [preferredAsset, setPreferredAsset] = useLocalStorage<Asset>(
     PREFERRED_ASSET_KEY,
-    useStore((s) => s.preferredAsset),
+    DEFAULT_SETTINGS.preferredAsset,
   )
   const [enableAnimations, setEnableAnimations] = useLocalStorage<boolean>(
     ENABLE_ANIMATIONS_KEY,
-    useStore((s) => s.enableAnimations),
+    DEFAULT_SETTINGS.enableAnimations,
   )
   const [lendAssets, setLendAssets] = useLocalStorage<boolean>(
     LEND_ASSETS_KEY,
-    useStore((s) => s.lendAssets),
+    DEFAULT_SETTINGS.lendAssets,
   )
-  const [slippage, setSlippage] = useLocalStorage<number>(
-    SLIPPAGE_KEY,
-    useStore((s) => s.slippage),
-  )
+  const [slippage, setSlippage] = useLocalStorage<number>(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
 
   const resetSettingsModal: AlertDialogConfig = {
     icon: <ArrowCircle />,
@@ -175,11 +172,11 @@ export default function SettingsModal() {
   }
 
   function handleResetSettings() {
-    handleDisplayCurrency(ASSETS[0].denom)
-    handlePreferredAsset(ASSETS[0].denom)
-    handleSlippage(slippages[0])
-    handleEnableAnimations(true)
-    handleLendAssets(false)
+    handleDisplayCurrency(DEFAULT_SETTINGS.displayCurrency.denom)
+    handlePreferredAsset(DEFAULT_SETTINGS.preferredAsset.denom)
+    handleSlippage(DEFAULT_SETTINGS.slippage)
+    handleEnableAnimations(DEFAULT_SETTINGS.enableAnimations)
+    handleLendAssets(DEFAULT_SETTINGS.lendAssets)
   }
 
   function onClose() {

@@ -18,7 +18,7 @@ export default function SettingsOptions(props: Props) {
         props.className,
       )}
     >
-      <div className='w-120 flex flex-wrap'>
+      <div className='flex w-120 flex-wrap'>
         <Text size='lg' className='mb-2 w-full'>
           {props.label}
         </Text>

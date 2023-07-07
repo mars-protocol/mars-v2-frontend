@@ -42,7 +42,7 @@ export default function NumberInput(props: Props) {
         thousandSeparator: false,
       }),
     )
-  }, [props.amount, props.asset])
+  }, [props.amount, props.asset, props.maxDecimals])
 
   useEffect(() => {
     if (!props.onRef) return
