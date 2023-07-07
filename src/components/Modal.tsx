@@ -17,7 +17,7 @@ interface Props {
 }
 
 export default function Modal(props: Props) {
-  const ref: any = useRef(null)
+  const ref: React.RefObject<HTMLDialogElement> = useRef(null)
   const modalClassName = props.modalClassName ?? 'max-w-modal'
 
   function onClose() {
@@ -34,8 +34,8 @@ export default function Modal(props: Props) {
   useEffect(() => {
     const dialog = ref.current
     return () => {
-      dialog.removeAttribute('open')
-      dialog.close()
+      dialog?.removeAttribute('open')
+      dialog?.close()
       document.body.classList.remove('h-screen', 'overflow-hidden')
     }
   }, [])

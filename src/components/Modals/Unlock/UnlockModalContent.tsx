@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import Button from 'components/Button'
+import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
 import Text from 'components/Text'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/constants'
-import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
 
 interface Props {
   depositedVault: DepositedVault

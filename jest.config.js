@@ -26,6 +26,7 @@ module.exports = {
 
     // Handle module aliases
     '^app/(.*)$': '<rootDir>/src/app/$1',
+    '^api/(.*)$': '<rootDir>/src/api/$1',
     '^components/(.*)$': '<rootDir>/src/components/$1',
     '^constants/(.*)$': '<rootDir>/src/constants/$1',
     '^fonts/(.*)$': '<rootDir>/src/fonts/$1',
