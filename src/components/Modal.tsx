@@ -62,7 +62,9 @@ export default function Modal(props: Props) {
           {props.header}
           {!props.hideCloseBtn && <EscButton onClick={props.onClose} />}
         </div>
-        <div className={classNames(props.contentClassName, 'flex-1 overflow-y-scroll')}>
+        <div
+          className={classNames(props.contentClassName, 'flex-1 overflow-y-scroll scrollbar-hide')}
+        >
           {props.children ? props.children : props.content}
         </div>
       </Card>

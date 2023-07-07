@@ -1,6 +1,6 @@
 interface CommonSlice {
   displayCurrency: Asset
   enableAnimations: boolean
-  globalAsset: Asset
+  preferredAsset: Asset
   lendAssets: boolean
 }

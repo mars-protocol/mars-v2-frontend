@@ -9,7 +9,7 @@ export default function createSettingsSlice(
   return {
     enableAnimations: true,
     lendAssets: true,
-    globalAsset: ASSETS.find((asset) => asset.denom === ASSETS[0].denom)!,
+    preferredAsset: ASSETS.find((asset) => asset.denom === ASSETS[0].denom)!,
     displayCurrency: ASSETS.find((asset) => asset.denom === ASSETS[0].denom)!,
   }
 }

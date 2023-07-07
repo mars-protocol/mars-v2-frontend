@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 
 import AssetImage from 'components/AssetImage'
 import Modal from 'components/Modal'
@@ -9,8 +9,8 @@ import Text from 'components/Text'
 import {
   DISPLAY_CURRENCY_KEY,
   ENABLE_ANIMATIONS_KEY,
-  GLOBAL_ASSET_KEY,
   LEND_ASSETS_KEY,
+  PREFERRED_ASSET_KEY,
 } from 'constants/localStore'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
@@ -19,14 +19,14 @@ import { getAllAssets, getDisplayCurrencies } from 'utils/assets'
 export default function SettingsModal() {
   const modal = useStore((s) => s.settingsModal)
   const displayCurrencies = getDisplayCurrencies()
-  const globalAssets = getAllAssets()
+  const assets = getAllAssets()
   const [displayCurrency, setDisplayCurrency] = useLocalStorage<Asset>(
     DISPLAY_CURRENCY_KEY,
     useStore((s) => s.displayCurrency),
   )
-  const [globalAsset, setGlobalAsset] = useLocalStorage<Asset>(
-    GLOBAL_ASSET_KEY,
-    useStore((s) => s.globalAsset),
+  const [preferredAsset, setPreferredAsset] = useLocalStorage<Asset>(
+    PREFERRED_ASSET_KEY,
+    useStore((s) => s.preferredAsset),
   )
   const [enableAnimations, setEnableAnimations] = useLocalStorage<boolean>(
     ENABLE_ANIMATIONS_KEY,
@@ -53,9 +53,9 @@ export default function SettingsModal() {
     [displayCurrencies],
   )
 
-  const globalAssetsOptions = useMemo(
+  const preferredAssetsOptions = useMemo(
     () =>
-      globalAssets.map((asset, index) => ({
+      assets.map((asset, index) => ({
         label: [
           <div className='flex w-full gap-2' key={index}>
             <AssetImage asset={asset} size={16} />
@@ -66,34 +66,37 @@ export default function SettingsModal() {
         ],
         value: asset.denom,
       })),
-    [globalAssets],
+    [assets],
   )
 
   function handleEnableAnimations(value: boolean) {
     setEnableAnimations(!value)
+    useStore.setState({
+      enableAnimations: !value,
+    })
   }
 
-  useEffect(() => {
+  function handleLendAssets(value: boolean) {
+    setLendAssets(value)
     useStore.setState({
-      globalAsset,
-      displayCurrency,
-      enableAnimations,
-      lendAssets,
+      lendAssets: value,
     })
-  }, [globalAsset, displayCurrency, enableAnimations, lendAssets])
+  }
 
-  function handleGlobalAsset(value: string) {
-    const globalAsset = globalAssets.find((c) => c.denom === value)
-    if (!globalAsset) return
-    setGlobalAsset(globalAsset)
+  function handlePreferredAsset(value: string) {
+    const preferredAsset = assets.find((c) => c.denom === value)
+    if (!preferredAsset) return
+    setPreferredAsset(preferredAsset)
+    useStore.setState({
+      preferredAsset,
+    })
   }
 
   function handleDisplayCurrency(value: string) {
     const displayCurrency = displayCurrencies.find((c) => c.denom === value)
     if (!displayCurrency) return
-
-    useStore.setState({ displayCurrency })
     setDisplayCurrency(displayCurrency)
+    useStore.setState({ displayCurrency })
   }
 
   function onClose() {
@@ -119,7 +122,7 @@ export default function SettingsModal() {
       contentClassName='flex flex-wrap px-6 pb-6 pt-4'
     >
       <SettingsSwitch
-        onChange={setLendAssets}
+        onChange={handleLendAssets}
         name='lendAssets'
         value={lendAssets}
         label='Lend assets in credit account'
@@ -140,24 +143,22 @@ export default function SettingsModal() {
         decsription='By selecting a different asset you always have the trading pair or asset selector
         pre-filled with this asset.'
       >
-        <>
-          <Select
-            label='Global'
-            options={globalAssetsOptions}
-            defaultValue={globalAsset.denom}
-            onChange={handleGlobalAsset}
-            className='relative w-60 rounded-base border border-white/10'
-            containerClassName='justify-end mb-4'
-          />
-          <Select
-            label='Display Currency'
-            options={displayCurrenciesOptions}
-            defaultValue={displayCurrency.denom}
-            onChange={handleDisplayCurrency}
-            className='relative w-60 rounded-base border border-white/10'
-            containerClassName='justify-end'
-          />
-        </>
+        <Select
+          label='Global'
+          options={preferredAssetsOptions}
+          defaultValue={preferredAsset.denom}
+          onChange={handlePreferredAsset}
+          className='relative w-60 rounded-base border border-white/10'
+          containerClassName='justify-end mb-4'
+        />
+        <Select
+          label='Display Currency'
+          options={displayCurrenciesOptions}
+          defaultValue={displayCurrency.denom}
+          onChange={handleDisplayCurrency}
+          className='relative w-60 rounded-base border border-white/10'
+          containerClassName='justify-end'
+        />
       </SettingsSelect>
     </Modal>
   )

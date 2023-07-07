@@ -7,7 +7,7 @@ interface Props {
   label: string
   decsription: string
   className?: string
-  children: ReactNode
+  children: ReactNode | ReactNode[]
 }
 
 export default function SettingsSwitch(props: Props) {

@@ -19,6 +19,11 @@ interface Props extends SelectOption {
 export default function Option(props: Props) {
   const isCoin = !!props.denom
 
+  function handleOnClick(value: string | undefined) {
+    if (!props.onClick || !value) return
+    props.onClick(value)
+  }
+
   if (isCoin) {
     const asset = ASSETS.find((asset) => asset.denom === props.denom) || ASSETS[0]
     const balance = props.amount ?? '0'
@@ -47,13 +52,14 @@ export default function Option(props: Props) {
     return (
       <div
         data-testid='option-component'
+        role='option'
         className={classNames(
           'grid grid-flow-row grid-cols-5 grid-rows-2 py-3.5 pr-4',
           'border-b border-b-white/20 last:border-none',
           'hover:cursor-pointer hover:bg-white/20',
           !props.isSelected ? 'bg-white/10' : 'pointer-events-none',
         )}
-        onClick={() => props?.onClick && props.onClick(asset.denom)}
+        onClick={() => handleOnClick(asset.denom)}
       >
         <div className='row-span-2 flex h-full items-center justify-center'>
           <AssetImage asset={asset} size={32} />
@@ -77,13 +83,12 @@ export default function Option(props: Props) {
     )
   }
 
-  const label = props.label
   if (props.isDisplay) {
     return (
       <div
         className={classNames('flex w-full items-center justify-between p-3 hover:cursor-pointer')}
       >
-        <span className='flex flex-1'>{label}</span>
+        <span className='flex flex-1'>{props.label}</span>
         <span
           className={classNames(
             'inline-block w-2.5 transition-transform',
@@ -98,13 +103,14 @@ export default function Option(props: Props) {
 
   return (
     <div
+      role='option'
       className={classNames(
         'block p-3 hover:cursor-pointer hover:bg-white/20',
         props.isSelected && 'bg-white/10',
       )}
-      onClick={() => props?.onClick && props.value && props.onClick(props.value)}
+      onClick={() => handleOnClick(props.value)}
     >
-      {label}
+      {props.label}
     </div>
   )
 }
