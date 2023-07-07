@@ -1,9 +1,11 @@
-import classNames from 'classnames'
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
+import classNames from 'classnames'
 
 import Divider from 'components/Divider'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
+import RangeInput from 'components/RangeInput'
 import AssetSelector from 'components/Trade/TradeModule/AssetSelector/AssetSelector'
 
 function Content() {
@@ -24,6 +26,8 @@ function Fallback() {
 }
 
 export default function TradeModule() {
+  const [value, setValue] = useState(0)
+
   return (
     <div
       className={classNames(
@@ -34,6 +38,10 @@ export default function TradeModule() {
     >
       <AssetSelector />
       <Divider />
+
+      <div className='p-4'>
+        <RangeInput max={4000} marginThreshold={2222} value={value} onChange={setValue} />
+      </div>
     </div>
   )
 }
