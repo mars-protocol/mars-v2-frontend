@@ -1,4 +1,5 @@
 import { ChangeEvent, useCallback } from 'react'
+import classNames from 'classnames'
 
 import InputOverlay from 'components/RangeInput/InputOverlay'
 
@@ -11,7 +12,7 @@ type Props = {
   marginThreshold?: number
 }
 
-function RangeSlider(props: Props) {
+function RangeInput(props: Props) {
   const { value, max, onChange, wrapperClassName, disabled, marginThreshold } = props
 
   const handleOnChange = useCallback(
@@ -23,11 +24,9 @@ function RangeSlider(props: Props) {
 
   return (
     <div
-      className={[
-        className.containerDefault,
-        wrapperClassName,
-        disabled && className.disabled,
-      ].join(' ')}
+      className={classNames(className.containerDefault, wrapperClassName, {
+        [className.disabled]: !disabled,
+      })}
     >
       <div className={className.inputWrapper}>
         <input
@@ -78,4 +77,4 @@ const className = {
   `,
 }
 
-export default RangeSlider
+export default RangeInput

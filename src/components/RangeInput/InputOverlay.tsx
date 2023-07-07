@@ -56,7 +56,7 @@ const className = {
     w-[33px] h-4 absolute text-[10px] top-[5px]
     pointer-events-none text-center font-bold
     bg-pink shadow-md border-b-0 border-1
-    border-solid rounded-sm backdrop-blur-sm border-white/[.1]
+    border-solid rounded-sm backdrop-blur-sm border-white/10
   `,
   mark: `w-1 h-1 bg-black rounded-full bg-opacity-30`,
   marginMark: `w-1 h-1 bg-white rounded-full`,

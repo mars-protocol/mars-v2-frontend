@@ -5,7 +5,7 @@ import classNames from 'classnames'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
 import Divider from 'components/Divider'
-import RangeSlider from 'components/RangeInput'
+import RangeInput from 'components/RangeInput'
 import AssetSelector from 'components/Trade/TradeModule/AssetSelector/AssetSelector'
 
 function Content() {
@@ -40,7 +40,7 @@ export default function TradeModule() {
       <Divider />
 
       <div className='p-4'>
-        <RangeSlider max={4000} marginThreshold={2222} value={value} onChange={setValue} />
+        <RangeInput max={4000} marginThreshold={2222} value={value} onChange={setValue} />
       </div>
     </div>
   )
