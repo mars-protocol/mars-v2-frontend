@@ -6,8 +6,7 @@ import Loading from 'components/Loading'
 import Text from 'components/Text'
 import Divider from 'components/Divider'
 import RangeSlider from 'components/RangeInput'
-
-import AssetSelector from './AssetSelector/AssetSelector'
+import AssetSelector from 'components/Trade/TradeModule/AssetSelector/AssetSelector'
 
 function Content() {
   const params = useParams()
