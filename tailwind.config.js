@@ -102,6 +102,7 @@ module.exports = {
         warning: '#F79009',
         'warning-bg': '#FEC84B',
         white: '#FFF',
+        pink: '#de587f',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
