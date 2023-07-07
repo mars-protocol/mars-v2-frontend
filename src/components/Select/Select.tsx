@@ -44,7 +44,7 @@ export default function Select(props: Props) {
     if (props.defaultValue && value === props.defaultValue) return
     setValue(props.defaultValue)
     const option = props.options.find(
-      (option) => option?.value === value || option?.denom === value,
+      (option) => option?.value === props.defaultValue || option?.denom === props.defaultValue,
     )
     if (!option) return
     setSelected(option)

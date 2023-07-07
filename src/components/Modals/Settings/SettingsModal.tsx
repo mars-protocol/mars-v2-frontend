@@ -3,12 +3,14 @@ import { useMemo, useState } from 'react'
 import classNames from 'classnames'
 import AssetImage from 'components/AssetImage'
 import Button from 'components/Button'
+import { ArrowCircle, Enter } from 'components/Icons'
 import Modal from 'components/Modal'
 import SettingsOptions from 'components/Modals/Settings/SettingsOptions'
 import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
 import NumberInput from 'components/NumberInput'
 import Select from 'components/Select/Select'
 import Text from 'components/Text'
+import { ASSETS } from 'constants/assets'
 import {
   DISPLAY_CURRENCY_KEY,
   ENABLE_ANIMATIONS_KEY,
@@ -49,6 +51,24 @@ export default function SettingsModal() {
     SLIPPAGE_KEY,
     useStore((s) => s.slippage),
   )
+
+  const resetSettingsModal: AlertDialogConfig = {
+    icon: <ArrowCircle />,
+    title: 'Are you sure you want to restore to default?',
+    description:
+      'Once you reset to default settings you can’t revert it, and will result in the permanent loss of your current settings',
+    positiveButton: {
+      text: 'Yes',
+      icon: <Enter />,
+      onClick: handleResetSettings,
+    },
+    negativeButton: {
+      text: 'No',
+      onClick: () => {
+        useStore.setState({ alertDialog: undefined })
+      },
+    },
+  }
 
   const displayCurrenciesOptions = useMemo(
     () =>
@@ -97,7 +117,7 @@ export default function SettingsModal() {
   }
 
   function handlePreferredAsset(value: string) {
-    const preferredAsset = assets.find((c) => c.denom === value)
+    const preferredAsset = assets.find((asset) => asset.denom === value)
     if (!preferredAsset) return
     setPreferredAsset(preferredAsset)
     useStore.setState({
@@ -106,7 +126,7 @@ export default function SettingsModal() {
   }
 
   function handleDisplayCurrency(value: string) {
-    const displayCurrency = displayCurrencies.find((c) => c.denom === value)
+    const displayCurrency = displayCurrencies.find((asset) => asset.denom === value)
     if (!displayCurrency) return
     setDisplayCurrency(displayCurrency)
     useStore.setState({ displayCurrency })
@@ -146,6 +166,20 @@ export default function SettingsModal() {
   function handleSlippage(value: number) {
     setSlippage(value)
     useStore.setState({ slippage: value })
+  }
+
+  function showResetModal() {
+    useStore.setState({
+      alertDialog: resetSettingsModal,
+    })
+  }
+
+  function handleResetSettings() {
+    handleDisplayCurrency(ASSETS[0].denom)
+    handlePreferredAsset(ASSETS[0].denom)
+    handleSlippage(slippages[0])
+    handleEnableAnimations(true)
+    handleLendAssets(false)
   }
 
   function onClose() {
@@ -254,6 +288,13 @@ export default function SettingsModal() {
           %
         </Button>
       </SettingsOptions>
+      <Button
+        color='quaternary'
+        variant='transparent'
+        onClick={showResetModal}
+        leftIcon={<ArrowCircle />}
+        text='Reset to default settings'
+      />
     </Modal>
   )
 }

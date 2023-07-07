@@ -2,6 +2,7 @@
 export { default as Account } from 'components/Icons/Account.svg'
 export { default as AccountArrowDown } from 'components/Icons/AccountArrowDown.svg'
 export { default as ArrowChartLineUp } from 'components/Icons/ArrowChartLineUp.svg'
+export { default as ArrowCircle } from 'components/Icons/ArrowCircle.svg'
 export { default as ArrowCircledTopRight } from 'components/Icons/ArrowCircledTopRight.svg'
 export { default as ArrowDownLine } from 'components/Icons/ArrowDownLine.svg'
 export { default as ArrowRight } from 'components/Icons/ArrowRight.svg'

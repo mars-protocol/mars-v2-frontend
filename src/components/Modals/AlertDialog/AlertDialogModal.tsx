@@ -5,7 +5,7 @@ import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
 import Text from 'components/Text'
 import useAlertDialog from 'hooks/useAlertDialog'
 
-function AlertDialogController() {
+export default function AlertDialogController() {
   const { config, close } = useAlertDialog()
 
   if (!config) return null
@@ -34,7 +34,7 @@ function AlertDialog(props: Props) {
           {icon ?? <ExclamationMarkCircled width={18} />}
         </div>
       }
-      modalClassName='w-[577px]'
+      modalClassName='max-w-modal-sm'
       headerClassName='p-8'
       contentClassName='px-8 pb-8'
       hideCloseBtn
@@ -61,5 +61,3 @@ function AlertDialog(props: Props) {
     </Modal>
   )
 }
-
-export default AlertDialogController
