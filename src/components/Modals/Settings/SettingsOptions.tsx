@@ -18,15 +18,15 @@ export default function SettingsOptions(props: Props) {
         props.className,
       )}
     >
-      <div className='flex flex-wrap w-100'>
-        <Text size='lg' className='w-full mb-2'>
+      <div className='w-120 flex flex-wrap'>
+        <Text size='lg' className='mb-2 w-full'>
           {props.label}
         </Text>
         <Text size='xs' className='text-white/50'>
           {props.decsription}
         </Text>
       </div>
-      <div className='flex flex-wrap justify-end w-60'>{props.children}</div>
+      <div className='flex w-60 flex-wrap justify-end'>{props.children}</div>
     </div>
   )
 }
