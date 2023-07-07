@@ -30,8 +30,8 @@ const mockedDepositedVault: DepositedVault = {
   },
   cap: {
     denom: 'mock',
-    max: 10,
-    used: 1,
+    max: BN(10),
+    used: BN(1),
   },
 }
 
