@@ -1,19 +1,19 @@
 import { ColumnDef, Row, Table } from '@tanstack/react-table'
-import Image from 'next/image'
 import { useMemo } from 'react'
 
 import AmountAndValue from 'components/AmountAndValue'
+import AssetImage from 'components/AssetImage'
 import BorrowActionButtons from 'components/Borrow/BorrowActionButtons'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { ChevronDown, ChevronUp } from 'components/Icons'
 import Loading from 'components/Loading'
 import AssetListTable from 'components/MarketAssetTable'
 import MarketAssetTableRow from 'components/MarketAssetTable/MarketAssetTableRow'
+import MarketDetails from 'components/MarketAssetTable/MarketDetails'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
 import { getEnabledMarketAssets } from 'utils/assets'
 import { BN } from 'utils/helpers'
-import MarketDetails from 'components/MarketAssetTable/MarketDetails'
 
 interface Props {
   title: string
@@ -50,7 +50,7 @@ export default function BorrowTable(props: Props) {
 
           return (
             <div className='flex flex-1 items-center gap-3'>
-              <Image src={asset.logo} alt={asset.symbol} width={32} height={32} />
+              <AssetImage asset={asset} size={32} />
               <TitleAndSubCell
                 title={asset.symbol}
                 sub={asset.name}

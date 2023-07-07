@@ -1,7 +1,7 @@
 import { ColumnDef, Row, Table } from '@tanstack/react-table'
-import Image from 'next/image'
 import { useMemo } from 'react'
 
+import AssetImage from 'components/AssetImage'
 import LendingActionButtons from 'components/Earn/Lend/LendingActionButtons'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { ChevronDown, ChevronUp } from 'components/Icons'
@@ -47,7 +47,7 @@ export default function LendingMarketsTable(props: Props) {
 
           return (
             <div className='flex flex-1 items-center gap-3'>
-              <Image src={asset.logo} alt={asset.symbol} width={32} height={32} />
+              <AssetImage asset={asset} size={32} />
               <TitleAndSubCell
                 title={asset.symbol}
                 sub={asset.name}
