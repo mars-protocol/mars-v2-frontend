@@ -55,6 +55,7 @@ export const buttonVariantClasses = {
   solid: 'rounded-sm text-white shadow-button justify-center group',
   transparent: 'rounded-sm bg-transparent p-0 transition duration-200 ease-in',
   round: 'rounded-full p-0',
+  rounded: 'rounded-2xl',
 }
 
 export const circularProgressSize = {

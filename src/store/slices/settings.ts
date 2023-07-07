@@ -11,5 +11,6 @@ export default function createSettingsSlice(
     lendAssets: true,
     preferredAsset: ASSETS.find((asset) => asset.denom === ASSETS[0].denom)!,
     displayCurrency: ASSETS.find((asset) => asset.denom === ASSETS[0].denom)!,
+    slippage: 0.02,
   }
 }

@@ -174,6 +174,7 @@ module.exports = {
       },
       padding: {
         5.5: '22px',
+        21: '84px',
       },
       screens: {
         sm: '480px',

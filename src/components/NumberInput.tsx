@@ -6,7 +6,7 @@ import { demagnify, formatValue, magnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
 interface Props {
-  asset: Asset
+  asset: Asset | PseudoAsset
   amount: BigNumber
   min?: BigNumber
   max?: BigNumber
@@ -16,6 +16,7 @@ interface Props {
   allowNegative?: boolean
   style?: {}
   disabled?: boolean
+  placeholder?: string
   onChange: (amount: BigNumber) => void
   onBlur?: () => void
   onFocus?: () => void
@@ -37,7 +38,7 @@ export default function NumberInput(props: Props) {
       formatValue(props.amount.toNumber(), {
         decimals: props.asset.decimals,
         minDecimals: 0,
-        maxDecimals: props.asset.decimals,
+        maxDecimals: props.maxDecimals,
         thousandSeparator: false,
       }),
     )
@@ -157,7 +158,7 @@ export default function NumberInput(props: Props) {
         props.className,
       )}
       style={props.style}
-      placeholder='0'
+      placeholder={props.placeholder ?? '0'}
     />
   )
 }

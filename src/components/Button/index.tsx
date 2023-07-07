@@ -27,7 +27,7 @@ interface Props {
   showProgressIndicator?: boolean
   size?: 'xs' | 'sm' | 'md' | 'lg'
   text?: string | ReactNode
-  variant?: 'solid' | 'transparent' | 'round'
+  variant?: 'solid' | 'transparent' | 'round' | 'rounded'
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
   leftIcon?: ReactElement
   rightIcon?: ReactElement
@@ -65,7 +65,7 @@ const Button = React.forwardRef(function Button(
   const enableAnimations = useStore((s) => s.enableAnimations)
   const isDisabled = disabled || showProgressIndicator
   const shouldShowText = text && !children
-  const shouldShowGlowElement = variant === 'solid' && !isDisabled
+  const shouldShowGlowElement = variant === 'solid' && !isDisabled && enableAnimations
 
   const buttonClassNames = useMemo(() => {
     const buttonClasses = [

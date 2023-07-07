@@ -18,6 +18,11 @@ interface Asset {
   isAutoLendEnabled?: boolean
 }
 
+interface PseudoAsset {
+  decimals: number
+  symbol: string
+}
+
 interface OtherAsset extends Omit<Asset, 'symbol'> {
   symbol: 'MARS'
 }

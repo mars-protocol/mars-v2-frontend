@@ -1,9 +1,12 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
+import classNames from 'classnames'
 import AssetImage from 'components/AssetImage'
+import Button from 'components/Button'
 import Modal from 'components/Modal'
-import SettingsSelect from 'components/Modals/Settings/SettingsSelect'
+import SettingsOptions from 'components/Modals/Settings/SettingsOptions'
 import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
+import NumberInput from 'components/NumberInput'
 import Select from 'components/Select/Select'
 import Text from 'components/Text'
 import {
@@ -11,15 +14,21 @@ import {
   ENABLE_ANIMATIONS_KEY,
   LEND_ASSETS_KEY,
   PREFERRED_ASSET_KEY,
+  SLIPPAGE_KEY,
 } from 'constants/localStore'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 import { getAllAssets, getDisplayCurrencies } from 'utils/assets'
+import { BN } from 'utils/helpers'
 
 export default function SettingsModal() {
   const modal = useStore((s) => s.settingsModal)
   const displayCurrencies = getDisplayCurrencies()
   const assets = getAllAssets()
+  const slippages = [0.02, 0.03]
+  const [customSlippage, setCustomSlippage] = useState<number>(0)
+  const [inputRef, setInputRef] = useState<React.RefObject<HTMLInputElement>>()
+  const [isCustom, setIsCustom] = useState(false)
   const [displayCurrency, setDisplayCurrency] = useLocalStorage<Asset>(
     DISPLAY_CURRENCY_KEY,
     useStore((s) => s.displayCurrency),
@@ -35,6 +44,10 @@ export default function SettingsModal() {
   const [lendAssets, setLendAssets] = useLocalStorage<boolean>(
     LEND_ASSETS_KEY,
     useStore((s) => s.lendAssets),
+  )
+  const [slippage, setSlippage] = useLocalStorage<number>(
+    SLIPPAGE_KEY,
+    useStore((s) => s.slippage),
   )
 
   const displayCurrenciesOptions = useMemo(
@@ -99,6 +112,42 @@ export default function SettingsModal() {
     useStore.setState({ displayCurrency })
   }
 
+  function handleSlippageInput(value: BigNumber) {
+    if (!value.toString()) {
+      return
+    }
+    setCustomSlippage(value.dividedBy(100).toNumber())
+    handleSlippage(value.dividedBy(100).toNumber())
+  }
+
+  function handleSlippageInputBlur() {
+    setIsCustom(false)
+
+    if (!customSlippage) {
+      setCustomSlippage(0)
+      handleSlippage(slippages[0])
+      return
+    }
+
+    const value = Number(customSlippage || 0)
+    if (slippages.includes(value)) {
+      setCustomSlippage(0)
+      handleSlippage(value)
+      return
+    }
+
+    handleSlippage(BN(customSlippage).toNumber())
+  }
+
+  function handleSlippageInputFocus() {
+    setIsCustom(true)
+  }
+
+  function handleSlippage(value: number) {
+    setSlippage(value)
+    useStore.setState({ slippage: value })
+  }
+
   function onClose() {
     useStore.setState({ settingsModal: false })
   }
@@ -138,10 +187,11 @@ export default function SettingsModal() {
         overall performance on lower-end hardware.'
         withStatus
       />
-      <SettingsSelect
+      <SettingsOptions
         label='Preferred asset'
         decsription='By selecting a different asset you always have the trading pair or asset selector
         pre-filled with this asset.'
+        className='pb-6'
       >
         <Select
           label='Global'
@@ -159,7 +209,51 @@ export default function SettingsModal() {
           className='relative w-60 rounded-base border border-white/10'
           containerClassName='justify-end'
         />
-      </SettingsSelect>
+      </SettingsOptions>
+      <SettingsOptions
+        label='Slippage tolerance'
+        decsription='Some vaults require token swaps. The transaction will fail if the price of the swap asset changes unfavourably by more than this percentage'
+        className='pb-21'
+      >
+        {slippages.map((value) => (
+          <Button
+            key={`slippage-${value}`}
+            color='secondary'
+            variant='rounded'
+            onClick={() => {
+              handleSlippage(value)
+            }}
+            className={classNames(
+              'mr-3 text-[16px]',
+              slippage === value && !isCustom && 'bg-white/10',
+            )}
+            text={`${value * 100}%`}
+          />
+        ))}
+        <Button
+          onClick={() => inputRef?.current?.focus()}
+          color='secondary'
+          variant='rounded'
+          className={classNames('w-16', !slippages.includes(slippage) && 'bg-white/10')}
+        >
+          <NumberInput
+            asset={{ decimals: 0, symbol: '%' }}
+            onRef={setInputRef}
+            onChange={handleSlippageInput}
+            onBlur={handleSlippageInputBlur}
+            onFocus={handleSlippageInputFocus}
+            amount={BN(customSlippage).multipliedBy(100)}
+            max={BN(10)}
+            min={BN(0)}
+            maxDecimals={1}
+            maxLength={2}
+            style={{ fontSize: 16 }}
+            placeholder='...'
+            className='!w-6'
+          />
+          %
+        </Button>
+      </SettingsOptions>
     </Modal>
   )
 }
