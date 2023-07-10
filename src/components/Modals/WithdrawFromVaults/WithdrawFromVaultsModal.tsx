@@ -13,7 +13,6 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { getAssetByDenom } from 'utils/assets'
 import { hardcodedFee } from 'utils/constants'
 import { demagnify } from 'utils/formatters'
-import { BN } from 'utils/helpers'
 
 export default function WithdrawFromVaults() {
   const modal = useStore((s) => s.withdrawFromVaultsModal)
@@ -73,13 +72,13 @@ export default function WithdrawFromVaults() {
                 <div className='flex flex-wrap'>
                   <DisplayCurrency coin={coin} className='w-full text-right' />
                   <FormattedNumber
-                    amount={BN(demagnify(vault.amounts.primary, primaryAsset))}
+                    amount={demagnify(vault.amounts.primary, primaryAsset)}
                     className='w-full text-right text-sm text-white/50'
                     options={{ suffix: ` ${vault.symbols.primary}` }}
                     animate
                   />
                   <FormattedNumber
-                    amount={BN(demagnify(vault.amounts.secondary, secondaryAsset))}
+                    amount={demagnify(vault.amounts.secondary, secondaryAsset)}
                     className='w-full text-right text-sm text-white/50'
                     options={{ suffix: ` ${vault.symbols.secondary}` }}
                     animate

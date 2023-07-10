@@ -1,14 +1,12 @@
 import classNames from 'classnames'
 import React, { useEffect, useRef } from 'react'
 import { animated, useSpring } from 'react-spring'
-import isEqual from 'lodash.isequal'
 
 import useStore from 'store'
 import { formatValue } from 'utils/formatters'
-import { BN } from 'utils/helpers'
 
 interface Props {
-  amount: BigNumber
+  amount: number
   options?: FormatOptions
   className?: string
   animate?: boolean
@@ -17,20 +15,20 @@ interface Props {
 export const FormattedNumber = React.memo(
   (props: Props) => {
     const enableAnimations = useStore((s) => s.enableAnimations)
-    const prevAmountRef = useRef<BigNumber>(BN(0))
+    const prevAmountRef = useRef<number>(0)
 
     useEffect(() => {
-      if (!prevAmountRef.current.isEqualTo(props.amount)) prevAmountRef.current = props.amount
+      if (prevAmountRef.current !== props.amount) prevAmountRef.current = props.amount
     }, [props.amount])
 
     const springAmount = useSpring({
-      number: props.amount.toNumber(),
-      from: { number: prevAmountRef.current.toNumber() },
+      number: props.amount,
+      from: { number: prevAmountRef.current },
       config: { duration: 1000 },
     })
 
     if (
-      (prevAmountRef.current.isEqualTo(props.amount) && props.amount.isZero()) ||
+      (prevAmountRef.current === props.amount && props.amount === 0) ||
       !props.animate ||
       !enableAnimations
     )
@@ -46,7 +44,7 @@ export const FormattedNumber = React.memo(
       </animated.span>
     )
   },
-  (prevProps, nextProps) => isEqual(prevProps, nextProps),
+  (prevProps, nextProps) => prevProps.amount === nextProps.amount,
 )
 
 FormattedNumber.displayName = 'FormattedNumber'

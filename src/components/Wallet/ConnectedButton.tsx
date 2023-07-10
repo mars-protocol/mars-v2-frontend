@@ -120,7 +120,7 @@ export default function ConnectedButton() {
                 <FormattedNumber
                   animate
                   className='flex items-end text-2xl '
-                  amount={walletAmount}
+                  amount={walletAmount.toNumber()}
                 />
               </div>
             </div>

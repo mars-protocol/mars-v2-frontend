@@ -1,14 +1,14 @@
 import { FormattedNumber } from 'components/FormattedNumber'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
-import { BN } from 'utils/helpers'
+import { useMemo } from 'react'
 
 interface Props {
   data: BorrowMarketTableData | LendingMarketTableData
 }
 
-interface Details {
-  amount: BigNumber
+interface Detail {
+  amount: number
   options: FormatOptions
   title: string
 }
@@ -29,33 +29,46 @@ export default function MarketDetails({ data }: Props) {
 
   const totalBorrowed = marketDepositAmount.minus(marketLiquidityAmount)
 
-  const details: Details[] = [
-    {
-      amount: convertAmount(asset, marketDepositAmount),
-      options: { abbreviated: true, suffix: ` ${displayCurrencySymbol}` },
-      title: 'Total Supplied',
-    },
-    {
-      amount: BN(marketMaxLtv).multipliedBy(100),
-      options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
-      title: 'Max LTV',
-    },
-    {
-      amount: BN(marketLiquidationThreshold).multipliedBy(100),
-      options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
-      title: 'Liquidation Threshold',
-    },
-    {
-      amount: getConversionRate(asset.denom),
-      options: { minDecimals: 2, maxDecimals: 2, suffix: ` ${displayCurrencySymbol}` },
-      title: 'Oracle Price',
-    },
-    {
-      amount: totalBorrowed.dividedBy(marketDepositAmount).multipliedBy(100),
-      options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
-      title: 'Utilization Rate',
-    },
-  ]
+  const details: Detail[] = useMemo(
+    () => [
+      {
+        amount: convertAmount(asset, marketDepositAmount).toNumber(),
+        options: { abbreviated: true, suffix: ` ${displayCurrencySymbol}` },
+        title: 'Total Supplied',
+      },
+      {
+        amount: marketMaxLtv * 100,
+        options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
+        title: 'Max LTV',
+      },
+      {
+        amount: marketLiquidationThreshold * 100,
+        options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
+        title: 'Liquidation Threshold',
+      },
+      {
+        amount: getConversionRate(asset.denom).toNumber(),
+        options: { minDecimals: 2, maxDecimals: 2, suffix: ` ${displayCurrencySymbol}` },
+        title: 'Oracle Price',
+      },
+      {
+        amount: totalBorrowed.dividedBy(marketDepositAmount).multipliedBy(100).toNumber(),
+        options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
+        title: 'Utilization Rate',
+      },
+    ],
+    [
+      asset,
+      marketDepositAmount,
+      marketLiquidationThreshold,
+      marketLiquidityAmount,
+      marketMaxLtv,
+      displayCurrencySymbol,
+      convertAmount,
+      getConversionRate,
+      totalBorrowed,
+    ],
+  )
 
   return (
     <div className='flex flex-1 justify-center rounded-md bg-white bg-opacity-5'>

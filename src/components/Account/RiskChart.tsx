@@ -24,7 +24,7 @@ export const RiskChart = ({ data }: RiskChartProps) => {
     <div className='flex w-full flex-wrap overflow-hidden py-2'>
       <FormattedNumber
         className='px-3 pb-2 text-lg'
-        amount={currentRisk.multipliedBy(100)}
+        amount={currentRisk.multipliedBy(100).toNumber()}
         options={{
           maxDecimals: 0,
           minDecimals: 0,

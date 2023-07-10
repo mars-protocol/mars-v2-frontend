@@ -109,7 +109,7 @@ export default function TokenInput(props: Props) {
               </Text>
               <FormattedNumber
                 className='mr-1 text-xs text-white/50'
-                amount={props.max}
+                amount={props.max.toNumber()}
                 options={{ decimals: props.asset.decimals }}
                 animate
               />

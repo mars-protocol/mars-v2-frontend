@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
 import classNames from 'classnames'
+import { useMemo, useState } from 'react'
 
 import AssetImage from 'components/AssetImage'
 import Button from 'components/Button'
@@ -23,11 +23,12 @@ import useStore from 'store'
 import { getAllAssets, getDisplayCurrencies } from 'utils/assets'
 import { BN } from 'utils/helpers'
 
+const slippages = [0.02, 0.03]
+
 export default function SettingsModal() {
   const modal = useStore((s) => s.settingsModal)
   const displayCurrencies = getDisplayCurrencies()
   const assets = getAllAssets()
-  const slippages = [0.02, 0.03]
   const [customSlippage, setCustomSlippage] = useState<number>(0)
   const [inputRef, setInputRef] = useState<React.RefObject<HTMLInputElement>>()
   const [isCustom, setIsCustom] = useState(false)
@@ -50,7 +51,11 @@ export default function SettingsModal() {
   const [slippage, setSlippage] = useLocalStorage<number>(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
 
   const resetSettingsModal: AlertDialogConfig = {
-    icon: <ArrowCircle />,
+    icon: (
+      <div className='flex h-full w-full p-3'>
+        <ArrowCircle />
+      </div>
+    ),
     title: 'Are you sure you want to restore to default?',
     description:
       'Once you reset to default settings you can’t revert it, and will result in the permanent loss of your current settings',
@@ -59,25 +64,19 @@ export default function SettingsModal() {
       icon: <Enter />,
       onClick: handleResetSettings,
     },
-    negativeButton: {
-      text: 'No',
-      onClick: () => {
-        useStore.setState({ alertDialog: undefined })
-      },
-    },
   }
 
   const displayCurrenciesOptions = useMemo(
     () =>
       displayCurrencies.map((asset, index) => ({
-        label: [
+        label: (
           <div className='flex w-full gap-2' key={index}>
             <AssetImage asset={asset} size={16} />
             <Text size='sm' className='leading-4'>
               {asset.symbol}
             </Text>
-          </div>,
-        ],
+          </div>
+        ),
         value: asset.denom,
       })),
     [displayCurrencies],

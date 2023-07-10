@@ -10,30 +10,23 @@ interface Props {
 export default function BorrowActionButtons(props: Props) {
   const { asset, debt } = props.data
   const marketAssets = getEnabledMarketAssets()
-  const currentAsset = marketAssets.find((asset) => asset.denom === asset.denom)
+  const currentAsset = marketAssets.find((a) => a.denom === asset.denom)
 
-  function borrowHandler() {
+  function actionHandler(isRepay: boolean) {
     if (!currentAsset) return null
-    useStore.setState({ borrowModal: { asset: currentAsset, marketData: props.data } })
-  }
-
-  function repayHandler() {
-    if (!currentAsset) return null
-    useStore.setState({
-      borrowModal: { asset: currentAsset, marketData: props.data, isRepay: true },
-    })
+    useStore.setState({ borrowModal: { asset: currentAsset, marketData: props.data, isRepay } })
   }
 
   return (
     <div className='flex flex-row space-x-2'>
       <Button
         leftIcon={debt ? <Plus /> : undefined}
-        onClick={borrowHandler}
+        onClick={() => actionHandler(false)}
         color='secondary'
         text={debt ? 'Borrow more' : 'Borrow'}
         className='min-w-40 text-center'
       />
-      {debt && <Button color='secondary' text='Repay' onClick={repayHandler} />}
+      {debt && <Button color='secondary' text='Repay' onClick={() => actionHandler(true)} />}
     </div>
   )
 }

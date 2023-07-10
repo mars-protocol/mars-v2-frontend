@@ -69,7 +69,7 @@ export const BorrowCapacity = ({
                 limitPercentOfMax ? 'opacity-50' : 'opacity-0',
               )}
             >
-              <FormattedNumber animate amount={BN(limit)} />
+              <FormattedNumber animate amount={limit} />
             </div>
           )}
         </div>
@@ -127,7 +127,7 @@ export const BorrowCapacity = ({
                             maxDecimals: decimals,
                             suffix: '%',
                           }}
-                          amount={BN(percentOfMaxRound)}
+                          amount={percentOfMaxRound}
                         />
                       )}
                     </span>
@@ -139,9 +139,9 @@ export const BorrowCapacity = ({
         </Tooltip>
         {!hideValues && (
           <div className='mt-2 flex opacity-50 text-3xs-caps'>
-            <FormattedNumber animate amount={BN(balance)} className='mr-1' />
+            <FormattedNumber animate amount={balance} className='mr-1' />
             <span className='mr-1'>of</span>
-            <FormattedNumber animate amount={BN(max)} />
+            <FormattedNumber animate amount={max} />
           </div>
         )}
       </div>

@@ -88,7 +88,7 @@ export const Gauge = ({
         )}
         <FormattedNumber
           className={classNames(labelClassName, 'text-2xs')}
-          amount={BN(Math.round(percentage))}
+          amount={Math.round(percentage)}
           options={{ maxDecimals: 0, minDecimals: 0 }}
           animate
         />

@@ -18,7 +18,6 @@ import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { convertToDisplayAmount, demagnify } from 'utils/formatters'
-import { BN } from 'utils/helpers'
 
 interface Props {
   data: Account
@@ -104,11 +103,9 @@ export const AccountBalancesTable = (props: Props) => {
           return (
             <FormattedNumber
               className='text-right text-xs'
-              amount={BN(
-                demagnify(
-                  row.original.amount,
-                  ASSETS.find((asset) => asset.denom === row.original.denom) ?? ASSETS[0],
-                ),
+              amount={demagnify(
+                row.original.amount,
+                ASSETS.find((asset) => asset.denom === row.original.denom) ?? ASSETS[0],
               )}
               options={{ maxDecimals: 4 }}
               animate
@@ -124,7 +121,7 @@ export const AccountBalancesTable = (props: Props) => {
           return (
             <FormattedNumber
               className='text-xs'
-              amount={BN(row.original.apy)}
+              amount={row.original.apy}
               options={{ maxDecimals: 2, minDecimals: 2, suffix: '%' }}
               animate
             />

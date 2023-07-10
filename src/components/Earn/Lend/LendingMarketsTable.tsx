@@ -1,5 +1,5 @@
 import { ColumnDef, Row, Table } from '@tanstack/react-table'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import AssetImage from 'components/AssetImage'
 import LendingActionButtons from 'components/Earn/Lend/LendingActionButtons'
@@ -23,18 +23,21 @@ export default function LendingMarketsTable(props: Props) {
   const { symbol: displayCurrencySymbol } = useDisplayCurrencyPrice()
   const shouldShowAccountDeposit = !!data[0]?.accountLentValue
 
-  const rowRenderer = (row: Row<LendingMarketTableData>, table: Table<LendingMarketTableData>) => {
-    return (
-      <MarketAssetTableRow
-        key={`lend-asset-${row.id}`}
-        isExpanded={row.getIsExpanded()}
-        resetExpanded={table.resetExpanded}
-        rowData={row}
-        expandedActionButtons={<LendingActionButtons data={row.original} />}
-        expandedDetails={<MarketDetails data={row.original} />}
-      />
-    )
-  }
+  const rowRenderer = useCallback(
+    (row: Row<LendingMarketTableData>, table: Table<LendingMarketTableData>) => {
+      return (
+        <MarketAssetTableRow
+          key={`lend-asset-${row.id}`}
+          isExpanded={row.getIsExpanded()}
+          resetExpanded={table.resetExpanded}
+          rowData={row}
+          expandedActionButtons={<LendingActionButtons data={row.original} />}
+          expandedDetails={<MarketDetails data={row.original} />}
+        />
+      )
+    },
+    [],
+  )
 
   const columns = useMemo<ColumnDef<LendingMarketTableData>[]>(
     () => [
@@ -69,7 +72,7 @@ export default function LendingMarketsTable(props: Props) {
                   <FormattedNumber
                     className='text-xs'
                     animate
-                    amount={accountDepositValue}
+                    amount={accountDepositValue.toNumber()}
                     options={{ suffix: ` ${displayCurrencySymbol}` }}
                   />
                 )
@@ -83,7 +86,7 @@ export default function LendingMarketsTable(props: Props) {
         cell: ({ row }) => {
           return (
             <FormattedNumber
-              amount={BN(convertLiquidityRateToAPR(row.original.marketLiquidityRate))}
+              amount={convertLiquidityRateToAPR(row.original.marketLiquidityRate)}
               options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
               className='text-xs'
               animate
@@ -105,14 +108,14 @@ export default function LendingMarketsTable(props: Props) {
               className='text-xs'
               title={
                 <FormattedNumber
-                  amount={marketDepositCap}
+                  amount={marketDepositCap.toNumber()}
                   options={{ abbreviated: true, decimals: asset.decimals }}
                   animate
                 />
               }
               sub={
                 <FormattedNumber
-                  amount={remainingCap}
+                  amount={remainingCap.toNumber()}
                   options={{ abbreviated: true, decimals: asset.decimals, suffix: ` left` }}
                   animate
                 />

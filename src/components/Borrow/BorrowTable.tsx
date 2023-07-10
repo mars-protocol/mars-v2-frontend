@@ -1,5 +1,5 @@
 import { ColumnDef, Row, Table } from '@tanstack/react-table'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import AmountAndValue from 'components/AmountAndValue'
 import AssetImage from 'components/AssetImage'
@@ -11,7 +11,6 @@ import AssetListTable from 'components/MarketAssetTable'
 import MarketAssetTableRow from 'components/MarketAssetTable/MarketAssetTableRow'
 import MarketDetails from 'components/MarketAssetTable/MarketDetails'
 import TitleAndSubCell from 'components/TitleAndSubCell'
-import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
 import { getEnabledMarketAssets } from 'utils/assets'
 import { BN } from 'utils/helpers'
 
@@ -22,22 +21,24 @@ interface Props {
 
 export default function BorrowTable(props: Props) {
   const { title, data } = props
-  const { symbol: displayCurrencySymbol } = useDisplayCurrencyPrice()
   const shouldShowAccountBorrowed = !!data[0]?.debt
   const marketAssets = getEnabledMarketAssets()
 
-  const rowRenderer = (row: Row<BorrowMarketTableData>, table: Table<BorrowMarketTableData>) => {
-    return (
-      <MarketAssetTableRow
-        key={`borrow-asset-${row.id}`}
-        isExpanded={row.getIsExpanded()}
-        resetExpanded={table.resetExpanded}
-        rowData={row}
-        expandedActionButtons={<BorrowActionButtons data={row.original} />}
-        expandedDetails={<MarketDetails data={row.original} />}
-      />
-    )
-  }
+  const rowRenderer = useCallback(
+    (row: Row<BorrowMarketTableData>, table: Table<BorrowMarketTableData>) => {
+      return (
+        <MarketAssetTableRow
+          key={`borrow-asset-${row.id}`}
+          isExpanded={row.getIsExpanded()}
+          resetExpanded={table.resetExpanded}
+          rowData={row}
+          expandedActionButtons={<BorrowActionButtons data={row.original} />}
+          expandedDetails={<MarketDetails data={row.original} />}
+        />
+      )
+    },
+    [],
+  )
 
   const columns = useMemo<ColumnDef<BorrowMarketTableData>[]>(
     () => [
@@ -87,7 +88,7 @@ export default function BorrowTable(props: Props) {
           return (
             <FormattedNumber
               className='justify-end text-xs'
-              amount={BN(row.original.borrowRate).multipliedBy(100)}
+              amount={row.original.borrowRate * 100}
               options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
               animate
             />
