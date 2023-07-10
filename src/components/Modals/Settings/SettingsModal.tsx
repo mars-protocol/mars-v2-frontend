@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import AssetImage from 'components/AssetImage'
 import Button from 'components/Button'
@@ -18,6 +18,7 @@ import {
   PREFERRED_ASSET_KEY,
   SLIPPAGE_KEY,
 } from 'constants/localStore'
+import useAlertDialog from 'hooks/useAlertDialog'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 import { getAllAssets, getDisplayCurrencies } from 'utils/assets'
@@ -27,6 +28,7 @@ const slippages = [0.02, 0.03]
 
 export default function SettingsModal() {
   const modal = useStore((s) => s.settingsModal)
+  const { open: showResetDialog } = useAlertDialog()
   const displayCurrencies = getDisplayCurrencies()
   const assets = getAllAssets()
   const [customSlippage, setCustomSlippage] = useState<number>(0)
@@ -49,22 +51,6 @@ export default function SettingsModal() {
     DEFAULT_SETTINGS.lendAssets,
   )
   const [slippage, setSlippage] = useLocalStorage<number>(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
-
-  const resetSettingsModal: AlertDialogConfig = {
-    icon: (
-      <div className='flex h-full w-full p-3'>
-        <ArrowCircle />
-      </div>
-    ),
-    title: 'Are you sure you want to restore to default?',
-    description:
-      'Once you reset to default settings you can’t revert it, and will result in the permanent loss of your current settings',
-    positiveButton: {
-      text: 'Yes',
-      icon: <Enter />,
-      onClick: handleResetSettings,
-    },
-  }
 
   const displayCurrenciesOptions = useMemo(
     () =>
@@ -98,45 +84,49 @@ export default function SettingsModal() {
     [assets],
   )
 
-  function handleEnableAnimations(value: boolean) {
+  const handleReduceMotion = useCallback((value: boolean) => {
     setEnableAnimations(!value)
     useStore.setState({
       enableAnimations: !value,
     })
-  }
+  }, [])
 
-  function handleLendAssets(value: boolean) {
+  const handleLendAssets = useCallback((value: boolean) => {
     setLendAssets(value)
     useStore.setState({
       lendAssets: value,
     })
-  }
+  }, [])
 
-  function handlePreferredAsset(value: string) {
+  const handlePreferredAsset = useCallback((value: string) => {
     const preferredAsset = assets.find((asset) => asset.denom === value)
     if (!preferredAsset) return
     setPreferredAsset(preferredAsset)
     useStore.setState({
       preferredAsset,
     })
-  }
+  }, [])
 
-  function handleDisplayCurrency(value: string) {
+  const handleDisplayCurrency = useCallback((value: string) => {
     const displayCurrency = displayCurrencies.find((asset) => asset.denom === value)
     if (!displayCurrency) return
     setDisplayCurrency(displayCurrency)
     useStore.setState({ displayCurrency })
-  }
+  }, [])
 
-  function handleSlippageInput(value: BigNumber) {
-    if (!value.toString()) {
-      return
-    }
-    setCustomSlippage(value.dividedBy(100).toNumber())
-    handleSlippage(value.dividedBy(100).toNumber())
-  }
+  const handleSlippageInputFocus = useCallback(() => {
+    setIsCustom(true)
+  }, [])
 
-  function handleSlippageInputBlur() {
+  const handleSlippage = useCallback(
+    (value: number) => {
+      setSlippage(value)
+      useStore.setState({ slippage: value })
+    },
+    [setSlippage],
+  )
+
+  const handleSlippageInputBlur = useCallback(() => {
     setIsCustom(false)
 
     if (!customSlippage) {
@@ -153,40 +143,60 @@ export default function SettingsModal() {
     }
 
     handleSlippage(BN(customSlippage).toNumber())
-  }
+  }, [customSlippage, handleSlippage, slippages])
 
-  function handleSlippageInputFocus() {
-    setIsCustom(true)
-  }
+  const handleSlippageInput = useCallback(
+    (value: BigNumber) => {
+      if (!value.toString()) {
+        return
+      }
+      setCustomSlippage(value.dividedBy(100).toNumber())
+      handleSlippage(value.dividedBy(100).toNumber())
+    },
+    [handleSlippage],
+  )
 
-  function handleSlippage(value: number) {
-    setSlippage(value)
-    useStore.setState({ slippage: value })
-  }
-
-  function showResetModal() {
-    useStore.setState({
-      alertDialog: resetSettingsModal,
+  const showResetModal = useCallback(() => {
+    showResetDialog({
+      icon: (
+        <div className='flex h-full w-full p-3'>
+          <ArrowCircle />
+        </div>
+      ),
+      title: 'Are you sure you want to restore to default?',
+      description:
+        'Once you reset to default settings you can’t revert it, and will result in the permanent loss of your current settings',
+      positiveButton: {
+        text: 'Yes',
+        icon: <Enter />,
+        onClick: handleResetSettings,
+      },
     })
-  }
+  }, [showResetDialog])
 
-  function handleResetSettings() {
+  const handleResetSettings = useCallback(() => {
     handleDisplayCurrency(DEFAULT_SETTINGS.displayCurrency.denom)
     handlePreferredAsset(DEFAULT_SETTINGS.preferredAsset.denom)
     handleSlippage(DEFAULT_SETTINGS.slippage)
-    handleEnableAnimations(DEFAULT_SETTINGS.enableAnimations)
+    handleReduceMotion(!DEFAULT_SETTINGS.enableAnimations)
     handleLendAssets(DEFAULT_SETTINGS.lendAssets)
-  }
+  }, [
+    handleDisplayCurrency,
+    handleReduceMotion,
+    handleLendAssets,
+    handlePreferredAsset,
+    handleSlippage,
+  ])
 
-  function onClose() {
+  const handleCloseModal = useCallback(() => {
     useStore.setState({ settingsModal: false })
-  }
+  }, [])
 
   if (!modal) return null
 
   return (
     <Modal
-      onClose={onClose}
+      onClose={handleCloseModal}
       header={
         <span className='flex flex-wrap items-center'>
           <Text size='3xl' className='w-full pb-1'>
@@ -209,7 +219,7 @@ export default function SettingsModal() {
         withStatus
       />
       <SettingsSwitch
-        onChange={handleEnableAnimations}
+        onChange={handleReduceMotion}
         name='reduceMotion'
         value={!enableAnimations}
         label='Reduce Motion'
@@ -284,13 +294,16 @@ export default function SettingsModal() {
           %
         </Button>
       </SettingsOptions>
-      <Button
-        color='quaternary'
-        variant='transparent'
-        onClick={showResetModal}
-        leftIcon={<ArrowCircle />}
-        text='Reset to default settings'
-      />
+      <div className='flex w-full justify-between'>
+        <Button
+          color='quaternary'
+          variant='transparent'
+          onClick={showResetModal}
+          leftIcon={<ArrowCircle />}
+          text='Reset to default settings'
+        />
+        <Button text='OK' onClick={handleCloseModal} />
+      </div>
     </Modal>
   )
 }
