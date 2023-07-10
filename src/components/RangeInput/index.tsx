@@ -25,7 +25,7 @@ function RangeInput(props: Props) {
   return (
     <div
       className={classNames(className.containerDefault, wrapperClassName, {
-        [className.disabled]: !disabled,
+        [className.disabled]: disabled,
       })}
     >
       <div className={className.inputWrapper}>
