@@ -302,7 +302,7 @@ export default function SettingsModal() {
           leftIcon={<ArrowCircle />}
           text='Reset to default settings'
         />
-        <Button text='OK' onClick={handleCloseModal} />
+        <Button text='Confirm' onClick={handleCloseModal} />
       </div>
     </Modal>
   )

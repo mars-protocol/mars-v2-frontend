@@ -1,7 +1,8 @@
+import { useMemo } from 'react'
+
 import { FormattedNumber } from 'components/FormattedNumber'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
-import { useMemo } from 'react'
 
 interface Props {
   data: BorrowMarketTableData | LendingMarketTableData

@@ -1,3 +1,5 @@
+import { useCallback } from 'react'
+
 import Button from 'components/Button'
 import { Plus } from 'components/Icons'
 import useStore from 'store'
@@ -12,10 +14,13 @@ export default function BorrowActionButtons(props: Props) {
   const marketAssets = getEnabledMarketAssets()
   const currentAsset = marketAssets.find((a) => a.denom === asset.denom)
 
-  function actionHandler(isRepay: boolean) {
-    if (!currentAsset) return null
-    useStore.setState({ borrowModal: { asset: currentAsset, marketData: props.data, isRepay } })
-  }
+  const actionHandler = useCallback(
+    (isRepay: boolean) => {
+      if (!currentAsset) return null
+      useStore.setState({ borrowModal: { asset: currentAsset, marketData: props.data, isRepay } })
+    },
+    [currentAsset, props.data],
+  )
 
   return (
     <div className='flex flex-row space-x-2'>
