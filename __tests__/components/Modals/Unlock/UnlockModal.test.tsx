@@ -1,12 +1,13 @@
 import { render } from '@testing-library/react'
 
+import Modal from 'components/Modal'
 import UnlockModal from 'components/Modals/Unlock/UnlockModal'
-import UnlockModalContent from 'components/Modals/Unlock/UnlockModalContent'
 import { TESTNET_VAULTS_META_DATA } from 'constants/vaults'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
 
 jest.mock('components/Modal')
+const mockedModal = jest.mocked(Modal).mockImplementation(() => <div>Mock</div>)
 
 const mockedDepositedVault: DepositedVault = {
   ...TESTNET_VAULTS_META_DATA[0],
@@ -35,10 +36,6 @@ const mockedDepositedVault: DepositedVault = {
 }
 
 describe('<UnlockModal />', () => {
-  beforeAll(() => {
-    useStore.setState({ unlockModal: null })
-  })
-
   afterAll(() => {
     useStore.clearState()
   })
@@ -50,22 +47,15 @@ describe('<UnlockModal />', () => {
 
   describe('should set content correctly', () => {
     it('should have no content when no modal is present in store', () => {
+      useStore.setState({ unlockModal: null })
       render(<UnlockModal />)
-      expect.objectContaining(null)
-      expect.anything()
+      expect(mockedModal).toHaveBeenCalledTimes(0)
     })
 
     it('should have content when modal is present in store', () => {
       useStore.setState({ unlockModal: { vault: mockedDepositedVault } })
       render(<UnlockModal />)
-
-      expect.objectContaining(
-        <UnlockModalContent
-          depositedVault={mockedDepositedVault}
-          onClose={() => useStore.setState({ unlockModal: null })}
-        />,
-      )
-      expect.anything()
+      expect(mockedModal).toHaveBeenCalledTimes(1)
     })
   })
 })

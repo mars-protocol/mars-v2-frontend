@@ -1,4 +1,3 @@
-import { CircularProgress } from 'components/CircularProgress'
 import { LockUnlocked } from 'components/Icons'
 import Modal from 'components/Modal'
 import UnlockModalContent from 'components/Modals/Unlock/UnlockModalContent'
@@ -25,11 +24,7 @@ export default function UnlockModal() {
       contentClassName='px-8 pb-8'
       hideCloseBtn
     >
-      {modal ? (
-        <UnlockModalContent depositedVault={modal.vault} onClose={onClose} />
-      ) : (
-        <CircularProgress />
-      )}
+      <UnlockModalContent depositedVault={modal.vault} onClose={onClose} />
     </Modal>
   )
 }
