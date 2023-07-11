@@ -14,7 +14,7 @@ import { getAssetByDenom } from 'utils/assets'
 import { hardcodedFee } from 'utils/constants'
 import { demagnify } from 'utils/formatters'
 
-export default function WithdrawFromVaults() {
+export default function WithdrawFromVaultsModal() {
   const modal = useStore((s) => s.withdrawFromVaultsModal)
   const { accountId } = useParams()
   const [isConfirming, setIsConfirming] = useState(false)

@@ -6,4 +6,4 @@ export { default as LendAndReclaimModalController } from 'components/Modals/Lend
 export { default as SettingsModal } from 'components/Modals/Settings'
 export { default as UnlockModal } from 'components/Modals/Unlock'
 export { default as VaultModal } from 'components/Modals/Vault/VaultModal'
-export { default as WithdrawFromVaults } from 'components/Modals/WithdrawFromVaultsModal'
+export { default as WithdrawFromVaultsModal } from 'components/Modals/WithdrawFromVaultsModal'

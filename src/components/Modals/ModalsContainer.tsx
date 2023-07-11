@@ -7,7 +7,7 @@ import {
   SettingsModal,
   UnlockModal,
   VaultModal,
-  WithdrawFromVaults,
+  WithdrawFromVaultsModal,
 } from 'components/Modals'
 
 export default function ModalsContainer() {
@@ -20,7 +20,7 @@ export default function ModalsContainer() {
       <SettingsModal />
       <UnlockModal />
       <VaultModal />
-      <WithdrawFromVaults />
+      <WithdrawFromVaultsModal />
       <AlertDialogController />
     </>
   )
