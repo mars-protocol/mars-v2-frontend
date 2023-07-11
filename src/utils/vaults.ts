@@ -1,9 +1,6 @@
-import moment from 'moment'
-
 import { IS_TESTNET } from 'constants/env'
 import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import { BNCoin } from 'types/classes/BNCoin'
-import { VaultStatus } from 'types/enums/vault'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getNetCollateralValue } from 'utils/accounts'
 import { BN } from 'utils/helpers'
@@ -30,7 +27,7 @@ export function calculateMaxBorrowAmounts(
 
     if (!borrowAssetPrice || !borrowAsset) continue
 
-    const borrowValue = BN(1).minus(borrowAsset.maxLtv).times(borrowAssetPrice)
+    const borrowValue = BN(1).minus(borrowAsset.maxLtv).multipliedBy(borrowAssetPrice)
     const amount = collateralValue.dividedBy(borrowValue).decimalPlaces(0)
 
     maxAmounts.push(new BNCoin({ denom, amount: amount.toString() }))
@@ -49,17 +46,17 @@ export function getVaultDepositCoinsAndValue(
     const price = prices.find((coin) => coin.denom === bnCoin.denom)?.amount
     if (!price) return prev
 
-    return prev.plus(bnCoin.amount.times(price))
+    return prev.plus(bnCoin.amount.multipliedBy(price))
   }, BN(0))
 
-  const halfValue = totalValue.div(2)
+  const halfValue = totalValue.dividedBy(2)
 
   const primaryDepositAmount = halfValue
-    .div(getTokenPrice(vault.denoms.primary, prices))
+    .dividedBy(getTokenPrice(vault.denoms.primary, prices))
     .integerValue()
 
   const secondaryDepositAmount = halfValue
-    .div(getTokenPrice(vault.denoms.secondary, prices))
+    .dividedBy(getTokenPrice(vault.denoms.secondary, prices))
     .integerValue()
 
   return {
@@ -86,8 +83,8 @@ export function getVaultSwapActions(
   const swapActions: Action[] = []
   const coins = [...deposits, ...borrowings]
 
-  let primaryLeftoverValue = totalValue.div(2).integerValue()
-  let secondaryLeftoverValue = totalValue.div(2).integerValue()
+  let primaryLeftoverValue = totalValue.dividedBy(2).integerValue()
+  let secondaryLeftoverValue = totalValue.dividedBy(2).integerValue()
 
   const [primaryCoins, secondaryCoins, otherCoins] = coins.reduce(
     (prev, bnCoin) => {

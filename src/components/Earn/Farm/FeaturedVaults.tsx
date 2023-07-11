@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 
 import Card from 'components/Card'
-import VaultCard from 'components/Earn/vault/VaultCard'
+import VaultCard from 'components/Earn/Farm/VaultCard'
 import useVaults from 'hooks/useVaults'
 
 function Content() {

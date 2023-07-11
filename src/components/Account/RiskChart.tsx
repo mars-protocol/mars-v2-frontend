@@ -11,20 +11,21 @@ import {
 
 import { FormattedNumber } from 'components/FormattedNumber'
 import Text from 'components/Text'
-import useStore from 'store'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { REDUCE_MOTION_KEY } from 'constants/localStore'
+import useLocalStorage from 'hooks/useLocalStorage'
 import { formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
 export const RiskChart = ({ data }: RiskChartProps) => {
-  const enableAnimations = useStore((s) => s.enableAnimations)
-  const accountStats = null
+  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
   const currentRisk = BN(0)
 
   return (
     <div className='flex w-full flex-wrap overflow-hidden py-2'>
       <FormattedNumber
         className='px-3 pb-2 text-lg'
-        amount={currentRisk.times(100)}
+        amount={currentRisk.multipliedBy(100).toNumber()}
         options={{
           maxDecimals: 0,
           minDecimals: 0,
@@ -92,7 +93,7 @@ export const RiskChart = ({ data }: RiskChartProps) => {
               dataKey='risk'
               stroke='#FFFFFF'
               fill='url(#chartGradient)'
-              isAnimationActive={enableAnimations}
+              isAnimationActive={!reduceMotion}
             />
           </AreaChart>
         </ResponsiveContainer>

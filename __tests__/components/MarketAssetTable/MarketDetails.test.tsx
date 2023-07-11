@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react'
 
-import LendingDetails from 'components/Earn/Lend/LendingDetails'
+import LendingDetails from 'components/MarketAssetTable/MarketDetails'
 import { ASSETS } from 'constants/assets'
 import { BN } from 'utils/helpers'
 

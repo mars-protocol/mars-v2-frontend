@@ -1,11 +1,11 @@
 import { render } from '@testing-library/react'
 
 import { CircularProgress } from 'components/CircularProgress'
-import useStore from 'store'
+import { REDUCE_MOTION_KEY } from 'constants/localStore'
 
 describe('<CircularProgress />', () => {
   afterAll(() => {
-    useStore.clearState()
+    localStorage.removeItem(REDUCE_MOTION_KEY)
   })
 
   it('should render', () => {
@@ -15,7 +15,7 @@ describe('<CircularProgress />', () => {
   })
 
   it('should render `...` when animations disabled', () => {
-    useStore.setState({ enableAnimations: false })
+    localStorage.setItem(REDUCE_MOTION_KEY, 'true')
 
     const { getByText } = render(<CircularProgress />)
     const threeDots = getByText('...')
@@ -24,7 +24,7 @@ describe('<CircularProgress />', () => {
   })
 
   it('should render the component with animation classes when animations enabled', () => {
-    useStore.setState({ enableAnimations: true })
+    localStorage.setItem(REDUCE_MOTION_KEY, 'false')
 
     const { container } = render(<CircularProgress />)
     const progressWithAnimations = container.querySelector('.animate-progress')

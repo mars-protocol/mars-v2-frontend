@@ -14,18 +14,23 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
-import useStore from 'store'
-import { convertToDisplayAmount, demagnify } from 'utils/formatters'
-import { BN } from 'utils/helpers'
-import { BNCoin } from 'types/classes/BNCoin'
 import usePrices from 'hooks/usePrices'
+import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
+import { convertToDisplayAmount, demagnify } from 'utils/formatters'
+import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import useLocalStorage from 'hooks/useLocalStorage'
 
 interface Props {
   data: Account
 }
 
 export const AccountBalancesTable = (props: Props) => {
-  const displayCurrency = useStore((s) => s.displayCurrency)
+  const [displayCurrency] = useLocalStorage<string>(
+    DISPLAY_CURRENCY_KEY,
+    DEFAULT_SETTINGS.displayCurrency,
+  )
   const { data: prices } = usePrices()
 
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -104,13 +109,12 @@ export const AccountBalancesTable = (props: Props) => {
           return (
             <FormattedNumber
               className='text-right text-xs'
-              amount={BN(
-                demagnify(
-                  row.original.amount,
-                  ASSETS.find((asset) => asset.denom === row.original.denom) ?? ASSETS[0],
-                ),
+              amount={demagnify(
+                row.original.amount,
+                ASSETS.find((asset) => asset.denom === row.original.denom) ?? ASSETS[0],
               )}
               options={{ maxDecimals: 4 }}
+              animate
             />
           )
         },
@@ -123,8 +127,9 @@ export const AccountBalancesTable = (props: Props) => {
           return (
             <FormattedNumber
               className='text-xs'
-              amount={BN(row.original.apy)}
+              amount={row.original.apy}
               options={{ maxDecimals: 2, minDecimals: 2, suffix: '%' }}
+              animate
             />
           )
         },
@@ -146,7 +151,7 @@ export const AccountBalancesTable = (props: Props) => {
 
   return (
     <table className='w-full'>
-      <thead className='border-b border-b-white/5'>
+      <thead className='border-b border-white/5'>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
             {headerGroup.headers.map((header, index) => {

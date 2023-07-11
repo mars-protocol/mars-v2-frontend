@@ -2,7 +2,9 @@ import classNames from 'classnames'
 
 import { Heart } from 'components/Icons'
 import Text from 'components/Text'
-import useStore from 'store'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { REDUCE_MOTION_KEY } from 'constants/localStore'
+import useLocalStorage from 'hooks/useLocalStorage'
 
 interface Props {
   health: number
@@ -11,7 +13,7 @@ interface Props {
 }
 
 export default function AccountHealth(props: Props) {
-  const enableAnimations = useStore((s) => s.enableAnimations)
+  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
   const healthBarWidth = (props.health / 100) * 53
 
   return (
@@ -33,7 +35,7 @@ export default function AccountHealth(props: Props) {
             rx='2'
             fill='url(#bar)'
             style={{
-              transition: enableAnimations ? 'width 1s ease' : 'none',
+              transition: reduceMotion ? 'none' : 'width 1s ease',
             }}
           />
           <defs>

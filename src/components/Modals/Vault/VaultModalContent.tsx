@@ -3,14 +3,14 @@ import { useCallback, useMemo, useState } from 'react'
 
 import Accordion from 'components/Accordion'
 import AccountSummary from 'components/Account/AccountSummary'
-import useIsOpenArray from 'hooks/useIsOpenArray'
-import { BN } from 'utils/helpers'
-import useUpdateAccount from 'hooks/useUpdateAccount'
+import VaultBorrowings from 'components/Modals/Vault/VaultBorrowings'
 import VaultBorrowingsSubTitle from 'components/Modals/Vault/VaultBorrowingsSubTitle'
 import VaultDeposit from 'components/Modals/Vault/VaultDeposits'
-import VaultBorrowings from 'components/Modals/Vault/VaultBorrowings'
 import VaultDepositSubTitle from 'components/Modals/Vault/VaultDepositsSubTitle'
+import useIsOpenArray from 'hooks/useIsOpenArray'
+import useUpdateAccount from 'hooks/useUpdateAccount'
 import { BNCoin } from 'types/classes/BNCoin'
+import { BN } from 'utils/helpers'
 
 interface Props {
   vault: Vault | DepositedVault
@@ -82,7 +82,7 @@ export default function VaultModalContent(props: Props) {
   }
 
   return (
-    <div className='flex flex-grow items-start gap-6 p-6'>
+    <div className='flex flex-1 items-start gap-6 p-6'>
       <Accordion
         className='h-[546px] overflow-y-scroll scrollbar-hide'
         items={[

@@ -1,7 +1,9 @@
 import classNames from 'classnames'
 
 import Text from 'components/Text'
-import useStore from 'store'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { REDUCE_MOTION_KEY } from 'constants/localStore'
+import useLocalStorage from 'hooks/useLocalStorage'
 
 interface Props {
   color?: string
@@ -10,15 +12,14 @@ interface Props {
 }
 
 export const CircularProgress = ({ color = '#FFFFFF', size = 20, className }: Props) => {
-  const enableAnimations = useStore((s) => s.enableAnimations)
-
+  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
   const borderWidth = `${size / 10}px`
   const borderColor = `${color} transparent transparent transparent`
   const loaderClasses = classNames('inline-block relative', className)
   const elementClasses =
     'block absolute w-4/5 h-4/5 m-[10%] rounded-full animate-progress border-solid'
 
-  if (!enableAnimations)
+  if (reduceMotion)
     return (
       <div
         className={classNames('flex items-center', loaderClasses)}

@@ -1,8 +1,8 @@
-import { BN } from 'utils/helpers'
-import getPrices from 'api/prices/getPrices'
-import getMarkets from 'api/markets/getMarkets'
-import { getEnabledMarketAssets } from 'utils/assets'
 import getMarketLiquidities from 'api/markets/getMarketLiquidities'
+import getMarkets from 'api/markets/getMarkets'
+import getPrices from 'api/prices/getPrices'
+import { getEnabledMarketAssets } from 'utils/assets'
+import { BN } from 'utils/helpers'
 
 export default async function getMarketBorrowings(): Promise<BorrowAsset[]> {
   const liquidities = await getMarketLiquidities()
@@ -20,7 +20,7 @@ export default async function getMarketBorrowings(): Promise<BorrowAsset[]> {
       borrowRate: market.borrowRate ?? 0,
       liquidity: {
         amount: BN(amount),
-        value: BN(amount).times(price),
+        value: BN(amount).multipliedBy(price),
       },
     }
   })

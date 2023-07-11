@@ -6,12 +6,12 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
-import { useEffect, useMemo, useState } from 'react'
 import classNames from 'classnames'
+import { useEffect, useMemo, useState } from 'react'
 
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
-import Text from 'components/Text'
 import useAddVaultAssetTableColumns from 'components/Modals/AddVaultAssets/useAddVaultAssetTableColumns'
+import Text from 'components/Text'
 
 interface Props {
   assets: BorrowAsset[]
@@ -61,7 +61,7 @@ export default function AddVaultAssetTable(props: Props) {
 
   return (
     <table className='w-full'>
-      <thead className='border-b border-b-white/5'>
+      <thead className='border-b border-white/5'>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
             {headerGroup.headers.map((header, index) => {

@@ -1,11 +1,11 @@
 import Button from 'components/Button'
 import { ExclamationMarkCircled } from 'components/Icons'
 import Modal from 'components/Modal'
+import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
 import Text from 'components/Text'
 import useAlertDialog from 'hooks/useAlertDialog'
-import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
 
-function AlertDialogController() {
+export default function AlertDialogController() {
   const { config, close } = useAlertDialog()
 
   if (!config) return null
@@ -28,14 +28,13 @@ function AlertDialog(props: Props) {
 
   return (
     <Modal
-      open
       onClose={props.close}
       header={
         <div className='grid h-12 w-12 place-items-center rounded-sm bg-white/5'>
           {icon ?? <ExclamationMarkCircled width={18} />}
         </div>
       }
-      modalClassName='w-[577px]'
+      modalClassName='max-w-modal-sm'
       headerClassName='p-8'
       contentClassName='px-8 pb-8'
       hideCloseBtn
@@ -62,5 +61,3 @@ function AlertDialog(props: Props) {
     </Modal>
   )
 }
-
-export default AlertDialogController

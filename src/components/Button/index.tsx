@@ -16,7 +16,9 @@ import {
 import { glowElement } from 'components/Button/utils'
 import { CircularProgress } from 'components/CircularProgress'
 import { ChevronDown } from 'components/Icons'
-import useStore from 'store'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { REDUCE_MOTION_KEY } from 'constants/localStore'
+import useLocalStorage from 'hooks/useLocalStorage'
 
 interface Props {
   children?: string | ReactNode
@@ -27,7 +29,7 @@ interface Props {
   showProgressIndicator?: boolean
   size?: 'xs' | 'sm' | 'md' | 'lg'
   text?: string | ReactNode
-  variant?: 'solid' | 'transparent' | 'round'
+  variant?: 'solid' | 'transparent' | 'round' | 'rounded'
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
   leftIcon?: ReactElement
   rightIcon?: ReactElement
@@ -36,6 +38,7 @@ interface Props {
   hasFocus?: boolean
   dataTestId?: string
   tabIndex?: number
+  textClassNames?: string
 }
 
 const Button = React.forwardRef(function Button(
@@ -57,13 +60,14 @@ const Button = React.forwardRef(function Button(
     hasFocus,
     dataTestId,
     tabIndex = 0,
+    textClassNames,
   }: Props,
   ref,
 ) {
-  const enableAnimations = useStore((s) => s.enableAnimations)
+  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
   const isDisabled = disabled || showProgressIndicator
   const shouldShowText = text && !children
-  const shouldShowGlowElement = variant === 'solid' && !isDisabled
+  const shouldShowGlowElement = variant === 'solid' && !isDisabled && !reduceMotion
 
   const buttonClassNames = useMemo(() => {
     const buttonClasses = [
@@ -82,7 +86,7 @@ const Button = React.forwardRef(function Button(
       'relative z-1 flex items-center',
       'cursor-pointer appearance-none break-normal outline-none',
       'text-white transition-all',
-      enableAnimations && 'transition-color',
+      !reduceMotion && 'transition-color',
       buttonClasses,
       buttonVariantClasses[variant],
       variant === 'solid' && color === 'tertiary' && buttonBorderClasses,
@@ -91,7 +95,7 @@ const Button = React.forwardRef(function Button(
       hasFocus && focusClasses[color],
       className,
     )
-  }, [className, color, enableAnimations, hasFocus, isDisabled, size, variant])
+  }, [className, color, reduceMotion, hasFocus, isDisabled, size, variant])
 
   const [leftIconClassNames, rightIconClassNames] = useMemo(() => {
     const hasContent = !!(text || children)
@@ -116,7 +120,7 @@ const Button = React.forwardRef(function Button(
       ) : (
         <>
           {leftIcon && <span className={classNames(leftIconClassNames)}>{leftIcon}</span>}
-          {shouldShowText && <span>{text}</span>}
+          {shouldShowText && <span className={textClassNames}>{text}</span>}
           {children && children}
           {rightIcon && <span className={classNames(rightIconClassNames)}>{rightIcon}</span>}
           {hasSubmenu && (
@@ -126,7 +130,7 @@ const Button = React.forwardRef(function Button(
           )}
         </>
       )}
-      {shouldShowGlowElement && glowElement(enableAnimations)}
+      {shouldShowGlowElement && glowElement(!reduceMotion)}
     </button>
   )
 })

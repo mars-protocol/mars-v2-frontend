@@ -17,10 +17,10 @@ import Overlay from 'components/Overlay'
 import Text from 'components/Text'
 import { IS_TESTNET } from 'constants/env'
 import useToggle from 'hooks/useToggle'
+import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
 import { getBaseAsset, getEnabledMarketAssets } from 'utils/assets'
 import { formatValue, truncate } from 'utils/formatters'
-import useWalletBalances from 'hooks/useWalletBalances'
 import { BN } from 'utils/helpers'
 
 export default function ConnectedButton() {
@@ -64,7 +64,7 @@ export default function ConnectedButton() {
     if (!walletBalances || walletBalances.length === 0) return
     const newAmount = BigNumber(
       walletBalances?.find((coin: Coin) => coin.denom === baseAsset.denom)?.amount ?? 0,
-    ).div(10 ** baseAsset.decimals)
+    ).dividedBy(10 ** baseAsset.decimals)
 
     if (walletAmount.isEqualTo(newAmount)) return
     setWalletAmount(newAmount)
@@ -120,7 +120,7 @@ export default function ConnectedButton() {
                 <FormattedNumber
                   animate
                   className='flex items-end text-2xl '
-                  amount={walletAmount}
+                  amount={walletAmount.toNumber()}
                 />
               </div>
             </div>

@@ -1,10 +1,11 @@
 import classNames from 'classnames'
 import { ReactElement, ReactNode } from 'react'
 
-import { Tooltip } from 'components/Tooltip'
-import useStore from 'store'
 import { FormattedNumber } from 'components/FormattedNumber'
-import { BN } from 'utils/helpers'
+import { Tooltip } from 'components/Tooltip'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { REDUCE_MOTION_KEY } from 'constants/localStore'
+import useLocalStorage from 'hooks/useLocalStorage'
 
 interface Props {
   tooltip: string | ReactNode
@@ -27,7 +28,7 @@ export const Gauge = ({
   icon,
   labelClassName,
 }: Props) => {
-  const enableAnimations = useStore((s) => s.enableAnimations)
+  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
   const radius = 16
   const percentageValue = percentage > 100 ? 100 : percentage < 0 ? 0 : percentage
   const circlePercent = 100 - percentageValue
@@ -75,7 +76,7 @@ export const Gauge = ({
             strokeDasharray='100'
             pathLength='100'
             style={{
-              transition: enableAnimations ? 'stroke-dashoffset 1s ease' : 'none',
+              transition: reduceMotion ? 'none' : 'stroke-dashoffset 1s ease',
             }}
             shapeRendering='geometricPrecision'
             strokeLinecap='round'
@@ -88,7 +89,7 @@ export const Gauge = ({
         )}
         <FormattedNumber
           className={classNames(labelClassName, 'text-2xs')}
-          amount={BN(Math.round(percentage))}
+          amount={Math.round(percentage)}
           options={{ maxDecimals: 0, minDecimals: 0 }}
           animate
         />

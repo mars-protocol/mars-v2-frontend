@@ -49,34 +49,33 @@ export const formatValue = (amount: number | string, options?: FormatOptions): s
       numberOfZeroDecimals = decimals.length
     }
   }
-  let convertedAmount: number | string = BN(amount)
-    .dividedBy(10 ** (options?.decimals ?? 0))
-    .toNumber()
+  let convertedAmount: BigNumber | string = BN(amount).dividedBy(10 ** (options?.decimals ?? 0))
 
   const amountSuffix = options?.abbreviated
-    ? convertedAmount >= 1_000_000_000
+    ? convertedAmount.isGreaterThanOrEqualTo(1_000_000_000)
       ? 'B'
-      : convertedAmount >= 1_000_000
+      : convertedAmount.isGreaterThanOrEqualTo(1_000_000)
       ? 'M'
-      : convertedAmount >= 1_000
+      : convertedAmount.isGreaterThanOrEqualTo(1_000)
       ? 'K'
       : false
     : ''
 
   if (amountSuffix === 'B') {
-    convertedAmount = Number(convertedAmount) / 1_000_000_000
+    convertedAmount = convertedAmount.dividedBy(1_000_000_000)
   }
   if (amountSuffix === 'M') {
-    convertedAmount = Number(convertedAmount) / 1_000_000
+    convertedAmount = convertedAmount.dividedBy(1_000_000)
   }
   if (amountSuffix === 'K') {
-    convertedAmount = Number(convertedAmount) / 1_000
+    convertedAmount = convertedAmount.dividedBy(1_000)
   }
 
   if (options?.rounded) {
     convertedAmount = convertedAmount.toFixed(maxDecimals)
   } else {
-    const amountFractions = String(convertedAmount).split('.')
+    const amountFractions = convertedAmount.toString().split('.')
+
     if (maxDecimals > 0) {
       if (typeof amountFractions[1] !== 'undefined') {
         if (amountFractions[1].length >= maxDecimals) {
@@ -92,7 +91,7 @@ export const formatValue = (amount: number | string, options?: FormatOptions): s
   }
 
   if (thousandSeparator) {
-    convertedAmount = Number(convertedAmount).toLocaleString('en', {
+    convertedAmount = BN(convertedAmount).toNumber().toLocaleString('en', {
       useGrouping: true,
       minimumFractionDigits: minDecimals,
       maximumFractionDigits: maxDecimals,
@@ -100,13 +99,7 @@ export const formatValue = (amount: number | string, options?: FormatOptions): s
   }
 
   let returnValue = ''
-  if (options?.prefix) {
-    returnValue += options.prefix
-  }
 
-  returnValue += convertedAmount
-
-  // Used to allow for numbers like 1.0 or 3.00 (otherwise impossible with string to number conversion)
   if (numberOfZeroDecimals) {
     if (numberOfZeroDecimals < maxDecimals) {
       returnValue = Number(returnValue).toFixed(numberOfZeroDecimals)
@@ -115,12 +108,17 @@ export const formatValue = (amount: number | string, options?: FormatOptions): s
     }
   }
 
+  if (options?.prefix) {
+    returnValue = `${options.prefix}${returnValue}`
+  }
+
+  returnValue = `${returnValue}${convertedAmount}`
   if (amountSuffix) {
-    returnValue += amountSuffix
+    returnValue = `${returnValue}${amountSuffix}`
   }
 
   if (options?.suffix) {
-    returnValue += options.suffix
+    returnValue = `${returnValue}${options.suffix}`
   }
 
   return returnValue
@@ -160,27 +158,27 @@ export const convertPercentage = (percent: number) => {
   return Number(formatValue(percentage, { minDecimals: 0, maxDecimals: 0 }))
 }
 
-export function magnify(value: number | string, asset: Asset) {
+export function magnify(value: number | string, asset: Asset | PseudoAsset) {
   const amount = BN(value)
   return amount.isZero() ? amount : BN(value).shiftedBy(asset.decimals)
 }
 
-export function demagnify(amount: number | string | BigNumber, asset: Asset) {
+export function demagnify(amount: number | string | BigNumber, asset: Asset | PseudoAsset) {
   const value = BN(amount)
   return value.isZero() ? 0 : value.shiftedBy(-1 * asset.decimals).toNumber()
 }
 
-export function convertToDisplayAmount(coin: BNCoin, displayCurrency: Asset, prices: Coin[]) {
+export function convertToDisplayAmount(coin: BNCoin, displayCurrency: string, prices: Coin[]) {
   const price = prices.find((price) => price.denom === coin.denom)
   const asset = getEnabledMarketAssets().find((asset) => asset.denom === coin.denom)
-  const displayPrice = prices.find((price) => price.denom === displayCurrency.denom)
+  const displayPrice = prices.find((price) => price.denom === displayCurrency)
 
   if (!price || !asset || !displayPrice) return BN(0)
 
   return BN(coin.amount)
     .shiftedBy(-1 * asset.decimals)
-    .times(price.amount)
-    .div(displayPrice.amount)
+    .multipliedBy(price.amount)
+    .dividedBy(displayPrice.amount)
 }
 
 export function convertLiquidityRateToAPR(rate: number) {

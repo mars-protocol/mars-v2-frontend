@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import AccountMenu from 'components/Account/AccountMenu'
 import DesktopNavigation from 'components/Navigation/DesktopNavigation'
 import Settings from 'components/Settings'
-import Wallet from 'components/Wallet/Wallet'
+import Wallet from 'components/Wallet'
 import useStore from 'store'
 
 export const menuTree: { page: Page; label: string }[] = [

@@ -13,8 +13,9 @@ export default function AmountAndValue(props: Props) {
     <TitleAndSubCell
       title={
         <FormattedNumber
-          amount={props.amount}
+          amount={props.amount.toNumber()}
           options={{ decimals: props.asset.decimals, abbreviated: true }}
+          animate
         />
       }
       sub={

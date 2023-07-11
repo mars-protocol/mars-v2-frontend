@@ -7,7 +7,7 @@ import Card from 'components/Card'
 import Divider from 'components/Divider'
 import { ArrowRight } from 'components/Icons'
 import Modal from 'components/Modal'
-import Select from 'components/Select/Select'
+import Select from 'components/Select'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import TokenInputWithSlider from 'components/TokenInputWithSlider'
@@ -21,8 +21,7 @@ import { formatPercent, formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
 function getDebtAmount(modal: BorrowModal | null) {
-  if (!(modal?.marketData as BorrowAssetActive)?.debt) return '0'
-  return BN((modal?.marketData as BorrowAssetActive).debt).toString()
+  return BN((modal?.marketData as BorrowMarketTableData)?.debt ?? 0).toString()
 }
 
 function getAssetLogo(modal: BorrowModal | null) {
@@ -119,9 +118,9 @@ export default function BorrowModal() {
     })
   }, [amount, modal?.asset, currentAccount, isRepay])
 
+  if (!modal) return null
   return (
     <Modal
-      open={!!modal}
       onClose={onClose}
       header={
         <span className='flex items-center gap-4 px-4'>
@@ -134,7 +133,7 @@ export default function BorrowModal() {
       headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col'
     >
-      <div className='flex gap-3 border-b border-b-white/5 px-6 py-4 gradient-header'>
+      <div className='flex gap-3 border-b border-white/5 px-6 py-4 gradient-header'>
         <TitleAndSubCell
           title={formatPercent(modal?.marketData.borrowRate || '0')}
           sub={'Borrow rate'}
@@ -153,9 +152,9 @@ export default function BorrowModal() {
           sub={'Liquidity available'}
         />
       </div>
-      <div className='flex flex-grow items-start gap-6 p-6'>
+      <div className='flex flex-1 items-start gap-6 p-6'>
         <Card
-          className='flex flex-grow bg-white/5 p-4'
+          className='flex flex-1 bg-white/5 p-4'
           contentClassName='gap-6 flex flex-col justify-between h-full min-h-[380px]'
         >
           <div className='flex w-full flex-wrap'>
@@ -176,6 +175,7 @@ export default function BorrowModal() {
                 options={accountOptions ?? []}
                 title='Accounts'
                 defaultValue={selectedAccount?.id}
+                containerClassName='w-full'
                 onChange={(account) => {
                   accounts && setSelectedAccount(accounts?.find((a) => a.id === account))
                 }}

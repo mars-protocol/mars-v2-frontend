@@ -1,25 +1,25 @@
 import { useCallback } from 'react'
 
+import { ACCOUNT_MENU_BUTTON_ID } from 'components/Account/AccountMenuContent'
 import Button from 'components/Button'
 import { ArrowDownLine, ArrowUpLine, Enter } from 'components/Icons'
 import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
 import useAlertDialog from 'hooks/useAlertDialog'
+import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
 import useCurrentAccountDeposits from 'hooks/useCurrentAccountDeposits'
 import useLendAndReclaimModal from 'hooks/useLendAndReclaimModal'
 import { byDenom } from 'utils/array'
-import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
-import { ACCOUNT_MENU_BUTTON_ID } from 'components/Account/AccountMenuContent'
 
 interface Props {
   data: LendingMarketTableData
 }
 
-const buttonClassnames = 'm-0 flex w-40 text-lg'
+const buttonClassnames = 'm-0 flex w-40'
 const iconClassnames = 'ml-0 mr-1 w-4 h-4'
 
-function LendingActionButtons(props: Props) {
+export default function LendingActionButtons(props: Props) {
   const { asset, accountLentValue: accountLendValue } = props.data
   const accountDeposits = useCurrentAccountDeposits()
   const { openLend, openReclaim } = useLendAndReclaimModal()
@@ -90,5 +90,3 @@ function LendingActionButtons(props: Props) {
     </div>
   )
 }
-
-export default LendingActionButtons

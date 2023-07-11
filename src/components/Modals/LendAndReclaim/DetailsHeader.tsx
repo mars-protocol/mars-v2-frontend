@@ -1,6 +1,6 @@
 import DisplayCurrency from 'components/DisplayCurrency'
-import TitleAndSubCell from 'components/TitleAndSubCell'
 import { FormattedNumber } from 'components/FormattedNumber'
+import TitleAndSubCell from 'components/TitleAndSubCell'
 import useAssetIncentivesApy from 'hooks/useAssetIncentiveApy'
 import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -15,17 +15,18 @@ function DetailsHeader({ data }: Props) {
   const balanceInWallet = useCurrentWalletBalance(asset.denom)
 
   return (
-    <div className='flex gap-6 border-b border-b-white/5 px-6 py-4 gradient-header'>
+    <div className='flex gap-6 border-b border-white/5 px-6 py-4 gradient-header'>
       {assetApy && (
         <>
           <TitleAndSubCell
             title={
               <>
-                <FormattedNumber amount={assetApy} options={{ suffix: '%' }} />
+                <FormattedNumber amount={assetApy.toNumber()} options={{ suffix: '%' }} animate />
                 <FormattedNumber
                   className='ml-2 text-xs'
-                  amount={assetApy.div(365)}
+                  amount={assetApy.dividedBy(365).toNumber()}
                   options={{ suffix: '%/day' }}
+                  animate
                 />
               </>
             }

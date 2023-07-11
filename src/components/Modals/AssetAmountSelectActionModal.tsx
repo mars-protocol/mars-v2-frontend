@@ -15,7 +15,6 @@ import { BN } from 'utils/helpers'
 interface Props {
   asset: Asset
   title: string
-  isOpen: boolean
   coinBalances: Coin[]
   contentHeader?: JSX.Element
   actionButtonText: string
@@ -30,7 +29,6 @@ export default function AssetAmountSelectActionModal(props: Props) {
   const {
     asset,
     title,
-    isOpen,
     coinBalances,
     contentHeader = null,
     actionButtonText,
@@ -52,12 +50,11 @@ export default function AssetAmountSelectActionModal(props: Props) {
   )
 
   const handleActionClick = useCallback(() => {
-    onAction(amount, amount.eq(maxAmount))
+    onAction(amount, amount.isEqualTo(maxAmount))
   }, [amount, maxAmount, onAction])
 
   return (
     <Modal
-      open={isOpen}
       onClose={onClose}
       header={
         <span className='flex items-center gap-4 px-4'>
@@ -69,9 +66,9 @@ export default function AssetAmountSelectActionModal(props: Props) {
       contentClassName='flex flex-col min-h-[400px]'
     >
       {contentHeader}
-      <div className='flex flex-grow items-start gap-6 p-6'>
+      <div className='flex flex-1 items-start gap-6 p-6'>
         <Card
-          className='flex flex-grow bg-white/5 p-4'
+          className='flex flex-1 bg-white/5 p-4'
           contentClassName='gap-6 flex flex-col justify-between h-full'
         >
           <TokenInputWithSlider

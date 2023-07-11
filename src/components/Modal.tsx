@@ -1,9 +1,8 @@
 import classNames from 'classnames'
 import { ReactNode, useEffect, useRef } from 'react'
 
+import EscButton from 'components/Button/EscButton'
 import Card from 'components/Card'
-
-import EscButton from './Button/EscButton'
 
 interface Props {
   header: string | ReactNode
@@ -14,12 +13,11 @@ interface Props {
   className?: string
   contentClassName?: string
   modalClassName?: string
-  open: boolean
   onClose: () => void
 }
 
 export default function Modal(props: Props) {
-  const ref: any = useRef(null)
+  const ref: React.RefObject<HTMLDialogElement> = useRef(null)
   const modalClassName = props.modalClassName ?? 'max-w-modal'
 
   function onClose() {
@@ -28,19 +26,17 @@ export default function Modal(props: Props) {
   }
 
   useEffect(() => {
-    if (props.open) {
-      ref.current?.showModal()
-    } else {
-      ref.current?.close()
-    }
-  }, [props.open])
+    ref.current?.showModal()
+    document.body.classList.add('h-screen', 'overflow-hidden')
+  }, [])
 
   // close dialog on unmount
   useEffect(() => {
     const dialog = ref.current
     return () => {
-      dialog.removeAttribute('open')
-      dialog.close()
+      dialog?.removeAttribute('open')
+      dialog?.close()
+      document.body.classList.remove('h-screen', 'overflow-hidden')
     }
   }, [])
 
@@ -51,13 +47,14 @@ export default function Modal(props: Props) {
       className={classNames(
         `w-screen border-none bg-transparent text-white`,
         'focus-visible:outline-none',
+        'max-h-full scrollbar-hide',
         'backdrop:bg-black/50 backdrop:backdrop-blur-sm',
         modalClassName,
       )}
     >
       <Card
         className={classNames(
-          'relative flex max-w-full flex-grow bg-white/5 backdrop-blur-3xl',
+          'relative flex max-w-full flex-1 bg-white/5 backdrop-blur-3xl',
           props.className,
         )}
       >
@@ -65,7 +62,9 @@ export default function Modal(props: Props) {
           {props.header}
           {!props.hideCloseBtn && <EscButton onClick={props.onClose} />}
         </div>
-        <div className={classNames(props.contentClassName, 'flex-grow')}>
+        <div
+          className={classNames(props.contentClassName, 'flex-1 overflow-y-scroll scrollbar-hide')}
+        >
           {props.children ? props.children : props.content}
         </div>
       </Card>

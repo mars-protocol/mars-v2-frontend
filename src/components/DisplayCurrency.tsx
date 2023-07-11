@@ -1,7 +1,12 @@
+import { useMemo } from 'react'
+
 import { FormattedNumber } from 'components/FormattedNumber'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
+import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
-import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
+import { getDisplayCurrencies } from 'utils/assets'
 import { convertToDisplayAmount } from 'utils/formatters'
 
 interface Props {
@@ -11,22 +16,33 @@ interface Props {
 }
 
 export default function DisplayCurrency(props: Props) {
-  const displayCurrency = useStore((s) => s.displayCurrency)
+  const displayCurrencies = getDisplayCurrencies()
+  const [displayCurrency] = useLocalStorage<string>(
+    DISPLAY_CURRENCY_KEY,
+    DEFAULT_SETTINGS.displayCurrency,
+  )
   const { data: prices } = usePrices()
+
+  const displayCurrencyAsset = useMemo(
+    () =>
+      displayCurrencies.find((asset) => asset.denom === displayCurrency) ?? displayCurrencies[0],
+    [displayCurrency, displayCurrencies],
+  )
 
   return (
     <FormattedNumber
       className={props.className}
-      amount={convertToDisplayAmount(props.coin, displayCurrency, prices)}
+      amount={convertToDisplayAmount(props.coin, displayCurrency, prices).toNumber()}
       options={{
         minDecimals: 0,
         maxDecimals: 2,
         abbreviated: true,
         prefix: `${props.isApproximation ? '~ ' : ''}${
-          displayCurrency.prefix ? displayCurrency.prefix : ''
+          displayCurrencyAsset.prefix ? displayCurrencyAsset.prefix : ''
         }`,
-        suffix: displayCurrency.symbol ? ` ${displayCurrency.symbol}` : '',
+        suffix: displayCurrencyAsset.symbol ? ` ${displayCurrencyAsset.symbol}` : '',
       }}
+      animate
     />
   )
 }

@@ -1,4 +1,4 @@
-import VaultLogo from 'components/Earn/vault/VaultLogo'
+import VaultLogo from 'components/Earn/Farm/VaultLogo'
 import Modal from 'components/Modal'
 import VaultModalContent from 'components/Modals/Vault/VaultModalContent'
 import Text from 'components/Text'
@@ -38,7 +38,6 @@ function VaultModal(props: Props) {
 
   return (
     <Modal
-      open={true}
       onClose={onClose}
       header={
         <span className='flex items-center gap-4 px-4'>

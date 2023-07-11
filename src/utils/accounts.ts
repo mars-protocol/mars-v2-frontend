@@ -69,7 +69,7 @@ export function getNetCollateralValue(account: Account, marketAssets: Market[], 
     if (!asset) return acc
 
     const marketValue = BN(getTokenValue(coin, prices))
-    const collateralValue = marketValue.times(asset.maxLtv)
+    const collateralValue = marketValue.multipliedBy(asset.maxLtv)
 
     return collateralValue.plus(acc)
   }, BN(0))

@@ -12,9 +12,10 @@ import React from 'react'
 
 import Button from 'components/Button'
 import DisplayCurrency from 'components/DisplayCurrency'
-import VaultExpanded from 'components/Earn/vault/VaultExpanded'
-import VaultLogo from 'components/Earn/vault/VaultLogo'
-import { VaultRow } from 'components/Earn/vault/VaultRow'
+import VaultExpanded from 'components/Earn/Farm/VaultExpanded'
+import VaultLogo from 'components/Earn/Farm/VaultLogo'
+import { VaultRow } from 'components/Earn/Farm/VaultRow'
+import { FormattedNumber } from 'components/FormattedNumber'
 import { ChevronDown, SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
@@ -24,7 +25,7 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultStatus } from 'types/enums/vault'
 import { getAssetByDenom } from 'utils/assets'
-import { convertPercentage, formatPercent, formatValue, produceCountdown } from 'utils/formatters'
+import { produceCountdown } from 'utils/formatters'
 
 type Props = {
   data: Vault[] | DepositedVault[]
@@ -116,9 +117,15 @@ export const VaultTable = (props: Props) => {
         accessorKey: 'apy',
         header: 'APY',
         cell: ({ row }) => {
-          if (row.original.apy === null) return <Loading />
+          const vault = row.original as DepositedVault
+          if (vault.apy === null) return <Loading />
           return (
-            <Text size='xs'>{row.original.apy ? formatPercent(row.original.apy, 2) : '-'}</Text>
+            <FormattedNumber
+              amount={(vault.apy ?? 0) * 100}
+              options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
+              className='text-xs'
+              animate
+            />
           )
         },
       },
@@ -126,10 +133,11 @@ export const VaultTable = (props: Props) => {
         accessorKey: 'tvl',
         header: 'TVL',
         cell: ({ row }) => {
+          const vault = row.original as DepositedVault
           if (props.isLoading) return <Loading />
           const coin = new BNCoin({
-            denom: row.original.cap.denom,
-            amount: row.original.cap.used.toString(),
+            denom: vault.cap.denom,
+            amount: vault.cap.used.toString(),
           })
 
           return <DisplayCurrency coin={coin} className='text-xs' />
@@ -139,24 +147,33 @@ export const VaultTable = (props: Props) => {
         accessorKey: 'cap',
         header: 'Depo. Cap',
         cell: ({ row }) => {
+          const vault = row.original as DepositedVault
           if (props.isLoading) return <Loading />
+          const percent = vault.cap.used
+            .dividedBy(vault.cap.max.multipliedBy(VAULT_DEPOSIT_BUFFER))
+            .multipliedBy(100)
+            .integerValue()
 
-          const percent = convertPercentage(
-            row.original.cap.used
-              .div(row.original.cap.max.times(VAULT_DEPOSIT_BUFFER))
-              .times(100)
-              .integerValue()
-              .toNumber(),
-          )
-          const decimals = getAssetByDenom(row.original.cap.denom)?.decimals ?? 6
+          const decimals = getAssetByDenom(vault.cap.denom)?.decimals ?? 6
 
           return (
             <TitleAndSubCell
-              title={formatValue(row.original.cap.max.integerValue().toNumber(), {
-                abbreviated: true,
-                decimals,
-              })}
-              sub={`${percent}% Filled`}
+              title={
+                <FormattedNumber
+                  amount={vault.cap.max.toNumber()}
+                  options={{ minDecimals: 2, abbreviated: true, decimals }}
+                  className='text-xs'
+                  animate
+                />
+              }
+              sub={
+                <FormattedNumber
+                  amount={percent.toNumber()}
+                  options={{ minDecimals: 2, maxDecimals: 2, suffix: '% Filled' }}
+                  className='text-xs'
+                  animate
+                />
+              }
             />
           )
         },
@@ -170,18 +187,17 @@ export const VaultTable = (props: Props) => {
           return 'Deposit'
         },
         cell: ({ row }) => {
+          const vault = row.original as DepositedVault
           function enterVaultHandler() {
             useStore.setState({
               vaultModal: {
-                vault: row.original,
-                selectedBorrowDenoms: [row.original.denoms.secondary],
+                vault,
+                selectedBorrowDenoms: [vault.denoms.secondary],
               },
             })
           }
 
           if (props.isLoading) return <Loading />
-          const vault = row.original as DepositedVault
-
           return (
             <div className='flex items-center justify-end'>
               {vault.status ? (

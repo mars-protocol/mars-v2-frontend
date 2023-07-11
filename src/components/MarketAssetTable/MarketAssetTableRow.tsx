@@ -48,7 +48,7 @@ function AssetListTableRow<TData>(props: Props<TData>) {
         key={props.rowData.id}
         className={classNames(
           'cursor-pointer transition-colors',
-          'border-b border-white border-opacity-10',
+
           props.rowData.getIsExpanded() ? 'bg-black/20' : 'bg-white/0 hover:bg-white/5',
         )}
         onClick={() => {

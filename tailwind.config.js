@@ -174,6 +174,7 @@ module.exports = {
       },
       padding: {
         5.5: '22px',
+        21: '84px',
       },
       screens: {
         sm: '480px',
@@ -201,6 +202,9 @@ module.exports = {
         30: '120px',
         35: '140px',
         50: '200px',
+        60: '240px',
+        100: '400px',
+        120: '480px',
       },
       zIndex: {
         1: '1',

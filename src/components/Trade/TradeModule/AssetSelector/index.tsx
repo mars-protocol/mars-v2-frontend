@@ -1,10 +1,10 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { SwapIcon } from 'components/Icons'
 import Text from 'components/Text'
-import { ASSETS } from 'constants/assets'
 import AssetButton from 'components/Trade/TradeModule/AssetSelector/AssetButton'
 import AssetOverlay, { OverlayState } from 'components/Trade/TradeModule/AssetSelector/AssetOverlay'
+import { ASSETS } from 'constants/assets'
 
 export default function AssetSelector() {
   const [overlayState, setOverlayState] = useState<OverlayState>('closed')
@@ -36,11 +36,6 @@ export default function AssetSelector() {
       setOverlayState(state)
     },
     [setOverlayState],
-  )
-
-  const buyAssets = useMemo(
-    () => ASSETS.filter((asset) => asset.denom !== sellAsset.denom),
-    [sellAsset],
   )
 
   return (

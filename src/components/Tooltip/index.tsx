@@ -3,8 +3,10 @@ import classNames from 'classnames'
 import { ReactNode } from 'react'
 
 import { Questionmark } from 'components/Icons'
-import useStore from 'store'
 import TooltipContent from 'components/Tooltip/TooltipContent'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { REDUCE_MOTION_KEY } from 'constants/localStore'
+import useLocalStorage from 'hooks/useLocalStorage'
 
 interface Props {
   content: ReactNode | string
@@ -19,7 +21,7 @@ interface Props {
 export type TooltipType = 'info' | 'warning' | 'error'
 
 export const Tooltip = (props: Props) => {
-  const enableAnimations = useStore((s) => s.enableAnimations)
+  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
 
   return (
     <Tippy
@@ -34,7 +36,7 @@ export const Tooltip = (props: Props) => {
           className={classNames(
             props.underline &&
               'border-b-1 cursor-pointer border border-x-0 border-t-0 border-dashed border-white/50 hover:border-transparent',
-            enableAnimations && 'transition-all',
+            !reduceMotion && 'transition-all',
             props.className,
           )}
         >

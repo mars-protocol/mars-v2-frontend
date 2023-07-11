@@ -4,17 +4,17 @@ import { useMemo, useState } from 'react'
 import Button from 'components/Button'
 import DisplayCurrency from 'components/DisplayCurrency'
 import Divider from 'components/Divider'
+import { Gauge } from 'components/Gauge'
 import { ArrowRight, ExclamationMarkCircled } from 'components/Icons'
 import Slider from 'components/Slider'
 import Switch from 'components/Switch'
 import Text from 'components/Text'
 import TokenInput from 'components/TokenInput'
 import usePrice from 'hooks/usePrice'
-import { getAmount } from 'utils/accounts'
-import { BN } from 'utils/helpers'
-import { Gauge } from 'components/Gauge'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
+import { getAmount } from 'utils/accounts'
+import { BN } from 'utils/helpers'
 
 interface Props {
   primaryAmount: BigNumber
@@ -38,11 +38,11 @@ export default function VaultDeposit(props: Props) {
   const secondaryPrice = usePrice(props.secondaryAsset.denom)
 
   const primaryValue = useMemo(
-    () => props.primaryAmount.times(primaryPrice),
+    () => props.primaryAmount.multipliedBy(primaryPrice),
     [props.primaryAmount, primaryPrice],
   )
   const secondaryValue = useMemo(
-    () => props.secondaryAmount.times(secondaryPrice),
+    () => props.secondaryAmount.multipliedBy(secondaryPrice),
     [props.secondaryAmount, secondaryPrice],
   )
   const totalValue = useMemo(
@@ -51,7 +51,7 @@ export default function VaultDeposit(props: Props) {
   )
 
   const primaryValuePercentage = useMemo(() => {
-    const value = primaryValue.div(totalValue).times(100).decimalPlaces(2).toNumber()
+    const value = primaryValue.dividedBy(totalValue).multipliedBy(100).decimalPlaces(2).toNumber()
     return isNaN(value) ? 50 : value
   }, [primaryValue, totalValue])
   const secondaryValuePercentage = useMemo(
@@ -63,8 +63,8 @@ export default function VaultDeposit(props: Props) {
     () =>
       BN(
         Math.min(
-          availablePrimaryAmount.times(primaryPrice).toNumber(),
-          availableSecondaryAmount.times(secondaryPrice).toNumber(),
+          availablePrimaryAmount.multipliedBy(primaryPrice).toNumber(),
+          availableSecondaryAmount.multipliedBy(secondaryPrice).toNumber(),
         ),
       ),
     [availablePrimaryAmount, primaryPrice, availableSecondaryAmount, secondaryPrice],
@@ -83,7 +83,8 @@ export default function VaultDeposit(props: Props) {
   )
 
   const [percentage, setPercentage] = useState(
-    primaryValue.dividedBy(maxAssetValueNonCustom).times(100).decimalPlaces(0).toNumber() || 0,
+    primaryValue.dividedBy(maxAssetValueNonCustom).multipliedBy(100).decimalPlaces(0).toNumber() ||
+      0,
   )
   const disableInput =
     (availablePrimaryAmount.isZero() || availableSecondaryAmount.isZero()) && !props.isCustomRatio
@@ -103,7 +104,7 @@ export default function VaultDeposit(props: Props) {
       amount = primaryMax
     }
     props.onChangePrimaryAmount(amount)
-    setPercentage(amount.dividedBy(primaryMax).times(100).decimalPlaces(0).toNumber())
+    setPercentage(amount.dividedBy(primaryMax).multipliedBy(100).decimalPlaces(0).toNumber())
     if (!props.isCustomRatio) {
       props.onChangeSecondaryAmount(secondaryMax.multipliedBy(amount.dividedBy(primaryMax)))
     }
@@ -114,7 +115,7 @@ export default function VaultDeposit(props: Props) {
       amount = secondaryMax
     }
     props.onChangeSecondaryAmount(amount)
-    setPercentage(amount.dividedBy(secondaryMax).times(100).decimalPlaces(0).toNumber())
+    setPercentage(amount.dividedBy(secondaryMax).multipliedBy(100).decimalPlaces(0).toNumber())
     if (!props.isCustomRatio) {
       props.onChangePrimaryAmount(primaryMax.multipliedBy(amount.dividedBy(secondaryMax)))
     }
@@ -152,7 +153,7 @@ export default function VaultDeposit(props: Props) {
             strokeWidth={3}
           />
         </div>
-        <div className='flex h-full flex-grow flex-col justify-between gap-6'>
+        <div className='flex h-full flex-1 flex-col justify-between gap-6'>
           <TokenInput
             onChange={onChangePrimaryDeposit}
             amount={props.primaryAmount}

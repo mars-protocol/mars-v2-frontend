@@ -1,15 +1,16 @@
 import classNames from 'classnames'
 import { toast as createToast, Slide, ToastContainer } from 'react-toastify'
-import { useNavigate } from 'react-router-dom'
 import { mutate } from 'swr'
 
-import Button from 'components/Button'
 import { CheckCircled, Cross, CrossCircled } from 'components/Icons'
 import Text from 'components/Text'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { REDUCE_MOTION_KEY } from 'constants/localStore'
+import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 
 export default function Toaster() {
-  const enableAnimations = useStore((s) => s.enableAnimations)
+  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
   const toast = useStore((s) => s.toast)
 
   if (toast) {
@@ -66,7 +67,7 @@ export default function Toaster() {
       position='top-right'
       newestOnTop
       closeOnClick
-      transition={enableAnimations ? Slide : undefined}
+      transition={reduceMotion ? undefined : Slide}
       className='p-0'
       toastClassName='top-[73px] z-20 m-0 mb-4 flex w-full bg-transparent p-0'
       bodyClassName='p-0 m-0 w-full flex'
