@@ -80,7 +80,7 @@ export const ASSETS: Asset[] = [
     color: '#dd5b65',
     logo: '/tokens/mars.svg',
     decimals: 6,
-    poolId: IS_TESTNET ? 768 : 907,
+    poolId: 907,
     hasOraclePrice: true,
     isMarket: false,
     isEnabled: true,

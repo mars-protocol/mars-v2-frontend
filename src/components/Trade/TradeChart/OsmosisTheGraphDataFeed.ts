@@ -26,7 +26,7 @@ interface BarQueryData {
 
 export const PAIR_SEPARATOR = '<>'
 
-export class OsmosisTheGraphDatafeed implements IDatafeedChartApi {
+export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
   candlesEndpoint = ENV.CANDLES_ENDPOINT
   debug = false
   exchangeName = 'Osmosis'
@@ -48,18 +48,10 @@ export class OsmosisTheGraphDatafeed implements IDatafeedChartApi {
     '1D': '1d',
   }
 
+  // TODO: Add poolIds to the assets
   supportedPools = ['1', '907', '803', '704', '712', '678']
 
-  supportedResolutions: ResolutionString[] = [
-    '5' as ResolutionString,
-    '15' as ResolutionString,
-    '30' as ResolutionString,
-    '60' as ResolutionString,
-    '240' as ResolutionString,
-    '360' as ResolutionString,
-    '720' as ResolutionString,
-    '1D' as ResolutionString,
-  ]
+  supportedResolutions = ['15', '30', '60', '240', '360', '720', '1D'] as ResolutionString[]
 
   constructor(debug = false, baseDecimals: number, baseDenom: string) {
     if (debug) console.log('Start TheGraph charting library datafeed')
@@ -165,10 +157,10 @@ export class OsmosisTheGraphDatafeed implements IDatafeedChartApi {
     if (!this.pairsWithData.includes(pair1)) {
       if (this.debug) console.log('Pair does not have data, need to combine with 2nd pair')
 
-      const [base, quote] = pair1.split(PAIR_SEPARATOR)
+      const [buyAssetDenom, sellAssetDenom] = pair1.split(PAIR_SEPARATOR)
 
-      pair1 = `${base}${PAIR_SEPARATOR}${this.baseDenom}`
-      pair2 = `${this.baseDenom}${PAIR_SEPARATOR}${quote}`
+      pair1 = `${buyAssetDenom}${PAIR_SEPARATOR}${this.baseDenom}`
+      pair2 = `${this.baseDenom}${PAIR_SEPARATOR}${sellAssetDenom}`
     }
 
     const pair1Bars = this.queryBarData(
@@ -204,8 +196,7 @@ export class OsmosisTheGraphDatafeed implements IDatafeedChartApi {
                 where: {
                 interval: "${interval}",
                 quote: "${quote}",
-                base: "${base}",
-
+                base: "${base}"
             }) {
                 timestamp
                 open
