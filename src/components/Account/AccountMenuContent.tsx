@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import AccountList from 'components/Account/AccountList'
@@ -14,6 +14,8 @@ import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/constants'
 import { isNumber } from 'utils/parsers'
+import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
+import { BN } from 'utils/helpers'
 
 const menuClasses = 'absolute isolate flex w-full flex-wrap scrollbar-hide'
 const ACCOUNT_MENU_BUTTON_ID = 'account-menu-button'
@@ -26,8 +28,10 @@ export default function AccountMenuContent(props: Props) {
   const navigate = useNavigate()
   const { accountId, address } = useParams()
   const createAccount = useStore((s) => s.createAccount)
+  const baseCurrency = useStore((s) => s.baseCurrency)
   const [showMenu, setShowMenu] = useToggle()
   const [isCreating, setIsCreating] = useToggle()
+  const transactionFeeCoinBalance = useCurrentWalletBalance(baseCurrency.denom)
 
   const hasCreditAccounts = !!props.accounts.length
   const isAccountSelected = isNumber(accountId)
@@ -40,14 +44,25 @@ export default function AccountMenuContent(props: Props) {
   const isLoadingAccount = isAccountSelected && selectedAccountDetails?.id !== accountId
   const showCreateAccount = !hasCreditAccounts || isCreating
 
-  async function createAccountHandler() {
+  const checkHasFunds = useCallback(() => {
+    return transactionFeeCoinBalance && BN(transactionFeeCoinBalance.amount).isGreaterThan(0)
+  }, [transactionFeeCoinBalance])
+
+  const performCreateAccount = useCallback(async () => {
     setShowMenu(true)
     setIsCreating(true)
     const accountId = await createAccount({ fee: hardcodedFee })
     setIsCreating(false)
-    if (!accountId) return
-    navigate(`/wallets/${address}/accounts/${accountId}`)
-  }
+
+    accountId && navigate(`/wallets/${address}/accounts/${accountId}`)
+  }, [address, createAccount, navigate, setIsCreating, setShowMenu])
+
+  const handleCreateAccountClick = useCallback(() => {
+    setShowMenu(!showMenu)
+    if (!hasCreditAccounts && checkHasFunds()) {
+      performCreateAccount()
+    }
+  }, [checkHasFunds, hasCreditAccounts, performCreateAccount, setShowMenu, showMenu])
 
   useEffect(() => {
     useStore.setState({ accounts: props.accounts })
@@ -59,7 +74,7 @@ export default function AccountMenuContent(props: Props) {
     <div className='relative'>
       <Button
         id={ACCOUNT_MENU_BUTTON_ID}
-        onClick={hasCreditAccounts ? () => setShowMenu(!showMenu) : createAccountHandler}
+        onClick={handleCreateAccountClick}
         leftIcon={hasCreditAccounts ? <Account /> : <PlusCircled />}
         color={hasCreditAccounts ? 'tertiary' : 'primary'}
         hasFocus={showMenu}
@@ -96,7 +111,7 @@ export default function AccountMenuContent(props: Props) {
                 rightIcon={<Plus />}
                 iconClassName='h-2.5 w-2.5'
                 text='Create'
-                onClick={createAccountHandler}
+                onClick={performCreateAccount}
               />
             </div>
             <div
@@ -125,7 +140,7 @@ export default function AccountMenuContent(props: Props) {
             )}
           >
             {showCreateAccount ? (
-              <CreateAccount createAccount={createAccountHandler} isCreating={isCreating} />
+              <CreateAccount createAccount={performCreateAccount} isCreating={isCreating} />
             ) : showFundAccount ? (
               <FundAccount setShowFundAccount={setShowFundAccount} setShowMenu={setShowMenu} />
             ) : null}
