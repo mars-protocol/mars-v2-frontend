@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 import Divider from 'components/Divider'
 import RangeInput from 'components/RangeInput'
-import AssetSelector from 'components/Trade/TradeModule/AssetSelector/AssetSelector'
+import AssetSelector from 'components/Trade/TradeModule/AssetSelector'
 
 export default function TradeModule() {
   const [value, setValue] = useState(0)

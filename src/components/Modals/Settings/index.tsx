@@ -8,7 +8,7 @@ import Modal from 'components/Modal'
 import SettingsOptions from 'components/Modals/Settings/SettingsOptions'
 import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
 import NumberInput from 'components/NumberInput'
-import Select from 'components/Select/Select'
+import Select from 'components/Select'
 import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import {

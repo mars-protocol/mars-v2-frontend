@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react'
 
 import Modal from 'components/Modal'
-import UnlockModal from 'components/Modals/Unlock/UnlockModal'
+import UnlockModal from 'components/Modals/Unlock'
 import { TESTNET_VAULTS_META_DATA } from 'constants/vaults'
 import useStore from 'store'
 import { BN } from 'utils/helpers'

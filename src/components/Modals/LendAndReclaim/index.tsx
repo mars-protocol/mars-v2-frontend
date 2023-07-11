@@ -6,7 +6,7 @@ import { hardcodedFee } from 'utils/constants'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useLendAndReclaimModal from 'hooks/useLendAndReclaimModal'
 import DetailsHeader from 'components/Modals/LendAndReclaim/DetailsHeader'
-import AssetAmountSelectActionModal from 'components/Modals/AssetAmountSelectAction/AssetAmountSelectActionModal'
+import AssetAmountSelectActionModal from 'components/Modals/AssetAmountSelectActionModal'
 import { BNCoin } from 'types/classes/BNCoin'
 
 function LendAndReclaimModalController() {
