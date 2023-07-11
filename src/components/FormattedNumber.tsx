@@ -2,7 +2,9 @@ import classNames from 'classnames'
 import React, { useEffect, useRef } from 'react'
 import { animated, useSpring } from 'react-spring'
 
-import useStore from 'store'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { ENABLE_ANIMATIONS_KEY } from 'constants/localStore'
+import useLocalStorage from 'hooks/useLocalStorage'
 import { formatValue } from 'utils/formatters'
 
 interface Props {
@@ -14,7 +16,10 @@ interface Props {
 
 export const FormattedNumber = React.memo(
   (props: Props) => {
-    const enableAnimations = useStore((s) => s.enableAnimations)
+    const [reduceMotion] = useLocalStorage<boolean>(
+      ENABLE_ANIMATIONS_KEY,
+      DEFAULT_SETTINGS.reduceMotion,
+    )
     const prevAmountRef = useRef<number>(0)
 
     useEffect(() => {
@@ -30,7 +35,7 @@ export const FormattedNumber = React.memo(
     if (
       (prevAmountRef.current === props.amount && props.amount === 0) ||
       !props.animate ||
-      !enableAnimations
+      reduceMotion
     )
       return (
         <span className={classNames('number', props.className)}>

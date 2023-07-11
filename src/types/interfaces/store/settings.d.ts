@@ -1,7 +1,7 @@
-interface SettingsSlice {
-  displayCurrency: Asset
-  enableAnimations: boolean
-  preferredAsset: Asset
+interface Settings {
+  displayCurrency: string
+  reduceMotion: boolean
+  preferredAsset: string
   lendAssets: boolean
   slippage: number
 }

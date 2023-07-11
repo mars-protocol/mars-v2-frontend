@@ -25,7 +25,7 @@ export default function Option(props: Props) {
   }
 
   if (isCoin) {
-    const asset = ASSETS.find((asset) => asset.denom === props.denom) || ASSETS[0]
+    const asset = ASSETS.find((asset) => asset.denom === props.denom) ?? ASSETS[0]
     const balance = props.amount ?? '0'
 
     if (props.isDisplay) {

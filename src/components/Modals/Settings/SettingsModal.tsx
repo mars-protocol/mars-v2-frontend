@@ -34,17 +34,17 @@ export default function SettingsModal() {
   const [customSlippage, setCustomSlippage] = useState<number>(0)
   const [inputRef, setInputRef] = useState<React.RefObject<HTMLInputElement>>()
   const [isCustom, setIsCustom] = useState(false)
-  const [displayCurrency, setDisplayCurrency] = useLocalStorage<Asset>(
+  const [displayCurrency, setDisplayCurrency] = useLocalStorage<string>(
     DISPLAY_CURRENCY_KEY,
     DEFAULT_SETTINGS.displayCurrency,
   )
-  const [preferredAsset, setPreferredAsset] = useLocalStorage<Asset>(
+  const [preferredAsset, setPreferredAsset] = useLocalStorage<string>(
     PREFERRED_ASSET_KEY,
     DEFAULT_SETTINGS.preferredAsset,
   )
-  const [enableAnimations, setEnableAnimations] = useLocalStorage<boolean>(
+  const [reduceMotion, setReduceMotion] = useLocalStorage<boolean>(
     ENABLE_ANIMATIONS_KEY,
-    DEFAULT_SETTINGS.enableAnimations,
+    DEFAULT_SETTINGS.reduceMotion,
   )
   const [lendAssets, setLendAssets] = useLocalStorage<boolean>(
     LEND_ASSETS_KEY,
@@ -84,35 +84,33 @@ export default function SettingsModal() {
     [assets],
   )
 
-  const handleReduceMotion = useCallback((value: boolean) => {
-    setEnableAnimations(!value)
-    useStore.setState({
-      enableAnimations: !value,
-    })
-  }, [])
+  const handleReduceMotion = useCallback(
+    (value: boolean) => {
+      setReduceMotion(!value)
+    },
+    [setReduceMotion],
+  )
 
-  const handleLendAssets = useCallback((value: boolean) => {
-    setLendAssets(value)
-    useStore.setState({
-      lendAssets: value,
-    })
-  }, [])
+  const handleLendAssets = useCallback(
+    (value: boolean) => {
+      setLendAssets(value)
+    },
+    [setLendAssets],
+  )
 
-  const handlePreferredAsset = useCallback((value: string) => {
-    const preferredAsset = assets.find((asset) => asset.denom === value)
-    if (!preferredAsset) return
-    setPreferredAsset(preferredAsset)
-    useStore.setState({
-      preferredAsset,
-    })
-  }, [])
+  const handlePreferredAsset = useCallback(
+    (value: string) => {
+      setPreferredAsset(value)
+    },
+    [setPreferredAsset],
+  )
 
-  const handleDisplayCurrency = useCallback((value: string) => {
-    const displayCurrency = displayCurrencies.find((asset) => asset.denom === value)
-    if (!displayCurrency) return
-    setDisplayCurrency(displayCurrency)
-    useStore.setState({ displayCurrency })
-  }, [])
+  const handleDisplayCurrency = useCallback(
+    (value: string) => {
+      setDisplayCurrency(value)
+    },
+    [setDisplayCurrency],
+  )
 
   const handleSlippageInputFocus = useCallback(() => {
     setIsCustom(true)
@@ -121,7 +119,6 @@ export default function SettingsModal() {
   const handleSlippage = useCallback(
     (value: number) => {
       setSlippage(value)
-      useStore.setState({ slippage: value })
     },
     [setSlippage],
   )
@@ -143,7 +140,7 @@ export default function SettingsModal() {
     }
 
     handleSlippage(BN(customSlippage).toNumber())
-  }, [customSlippage, handleSlippage, slippages])
+  }, [customSlippage, handleSlippage])
 
   const handleSlippageInput = useCallback(
     (value: BigNumber) => {
@@ -155,6 +152,20 @@ export default function SettingsModal() {
     },
     [handleSlippage],
   )
+
+  const handleResetSettings = useCallback(() => {
+    handleDisplayCurrency(DEFAULT_SETTINGS.displayCurrency)
+    handlePreferredAsset(DEFAULT_SETTINGS.preferredAsset)
+    handleSlippage(DEFAULT_SETTINGS.slippage)
+    handleReduceMotion(!DEFAULT_SETTINGS.reduceMotion)
+    handleLendAssets(DEFAULT_SETTINGS.lendAssets)
+  }, [
+    handleDisplayCurrency,
+    handleReduceMotion,
+    handleLendAssets,
+    handlePreferredAsset,
+    handleSlippage,
+  ])
 
   const showResetModal = useCallback(() => {
     showResetDialog({
@@ -172,21 +183,7 @@ export default function SettingsModal() {
         onClick: handleResetSettings,
       },
     })
-  }, [showResetDialog])
-
-  const handleResetSettings = useCallback(() => {
-    handleDisplayCurrency(DEFAULT_SETTINGS.displayCurrency.denom)
-    handlePreferredAsset(DEFAULT_SETTINGS.preferredAsset.denom)
-    handleSlippage(DEFAULT_SETTINGS.slippage)
-    handleReduceMotion(!DEFAULT_SETTINGS.enableAnimations)
-    handleLendAssets(DEFAULT_SETTINGS.lendAssets)
-  }, [
-    handleDisplayCurrency,
-    handleReduceMotion,
-    handleLendAssets,
-    handlePreferredAsset,
-    handleSlippage,
-  ])
+  }, [showResetDialog, handleResetSettings])
 
   const handleCloseModal = useCallback(() => {
     useStore.setState({ settingsModal: false })
@@ -221,7 +218,7 @@ export default function SettingsModal() {
       <SettingsSwitch
         onChange={handleReduceMotion}
         name='reduceMotion'
-        value={!enableAnimations}
+        value={!reduceMotion}
         label='Reduce Motion'
         decsription='Turns off all animations inside the dApp. Turning animations off can increase the
         overall performance on lower-end hardware.'
@@ -236,7 +233,7 @@ export default function SettingsModal() {
         <Select
           label='Global'
           options={preferredAssetsOptions}
-          defaultValue={preferredAsset.denom}
+          defaultValue={preferredAsset}
           onChange={handlePreferredAsset}
           className='relative w-60 rounded-base border border-white/10'
           containerClassName='justify-end mb-4'
@@ -244,7 +241,7 @@ export default function SettingsModal() {
         <Select
           label='Display Currency'
           options={displayCurrenciesOptions}
-          defaultValue={displayCurrency.denom}
+          defaultValue={displayCurrency}
           onChange={handleDisplayCurrency}
           className='relative w-60 rounded-base border border-white/10'
           containerClassName='justify-end'

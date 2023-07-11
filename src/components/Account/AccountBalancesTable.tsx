@@ -18,13 +18,19 @@ import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { convertToDisplayAmount, demagnify } from 'utils/formatters'
+import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import useLocalStorage from 'hooks/useLocalStorage'
 
 interface Props {
   data: Account
 }
 
 export const AccountBalancesTable = (props: Props) => {
-  const displayCurrency = useStore((s) => s.displayCurrency)
+  const [displayCurrency] = useLocalStorage<string>(
+    DISPLAY_CURRENCY_KEY,
+    DEFAULT_SETTINGS.displayCurrency,
+  )
   const { data: prices } = usePrices()
 
   const [sorting, setSorting] = React.useState<SortingState>([])

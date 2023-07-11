@@ -62,7 +62,6 @@ export default function MarketDetails({ data }: Props) {
       asset,
       marketDepositAmount,
       marketLiquidationThreshold,
-      marketLiquidityAmount,
       marketMaxLtv,
       displayCurrencySymbol,
       convertAmount,

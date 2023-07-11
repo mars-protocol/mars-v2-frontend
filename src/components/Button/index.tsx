@@ -17,6 +17,9 @@ import { glowElement } from 'components/Button/utils'
 import { CircularProgress } from 'components/CircularProgress'
 import { ChevronDown } from 'components/Icons'
 import useStore from 'store'
+import useLocalStorage from 'hooks/useLocalStorage'
+import { ENABLE_ANIMATIONS_KEY } from 'constants/localStore'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 
 interface Props {
   children?: string | ReactNode
@@ -62,10 +65,13 @@ const Button = React.forwardRef(function Button(
   }: Props,
   ref,
 ) {
-  const enableAnimations = useStore((s) => s.enableAnimations)
+  const [reduceMotion] = useLocalStorage<boolean>(
+    ENABLE_ANIMATIONS_KEY,
+    DEFAULT_SETTINGS.reduceMotion,
+  )
   const isDisabled = disabled || showProgressIndicator
   const shouldShowText = text && !children
-  const shouldShowGlowElement = variant === 'solid' && !isDisabled && enableAnimations
+  const shouldShowGlowElement = variant === 'solid' && !isDisabled && !reduceMotion
 
   const buttonClassNames = useMemo(() => {
     const buttonClasses = [
@@ -84,7 +90,7 @@ const Button = React.forwardRef(function Button(
       'relative z-1 flex items-center',
       'cursor-pointer appearance-none break-normal outline-none',
       'text-white transition-all',
-      enableAnimations && 'transition-color',
+      !reduceMotion && 'transition-color',
       buttonClasses,
       buttonVariantClasses[variant],
       variant === 'solid' && color === 'tertiary' && buttonBorderClasses,
@@ -93,7 +99,7 @@ const Button = React.forwardRef(function Button(
       hasFocus && focusClasses[color],
       className,
     )
-  }, [className, color, enableAnimations, hasFocus, isDisabled, size, variant])
+  }, [className, color, reduceMotion, hasFocus, isDisabled, size, variant])
 
   const [leftIconClassNames, rightIconClassNames] = useMemo(() => {
     const hasContent = !!(text || children)
@@ -128,7 +134,7 @@ const Button = React.forwardRef(function Button(
           )}
         </>
       )}
-      {shouldShowGlowElement && glowElement(enableAnimations)}
+      {shouldShowGlowElement && glowElement(!reduceMotion)}
     </button>
   )
 })

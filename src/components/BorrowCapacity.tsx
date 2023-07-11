@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react'
 import { FormattedNumber } from 'components/FormattedNumber'
 import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
-import useStore from 'store'
-import { BN } from 'utils/helpers'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { ENABLE_ANIMATIONS_KEY } from 'constants/localStore'
+import useLocalStorage from 'hooks/useLocalStorage'
 
 interface Props {
   balance: number
@@ -30,8 +31,10 @@ export const BorrowCapacity = ({
   hideValues,
   decimals = 2,
 }: Props) => {
-  const enableAnimations = useStore((s) => s.enableAnimations)
-
+  const [reduceMotion] = useLocalStorage<boolean>(
+    ENABLE_ANIMATIONS_KEY,
+    DEFAULT_SETTINGS.reduceMotion,
+  )
   const [percentOfMaxRound, setPercentOfMaxRound] = useState(0)
   const [percentOfMaxRange, setPercentOfMaxRange] = useState(0)
   const [limitPercentOfMax, setLimitPercentOfMax] = useState(0)
@@ -64,7 +67,7 @@ export const BorrowCapacity = ({
           {!hideValues && (
             <div
               className={classNames(
-                enableAnimations && 'duration-800 transition-[opcity] delay-[1600ms]',
+                !reduceMotion && 'duration-800 transition-[opcity] delay-[1600ms]',
                 'text-3xs-caps',
                 limitPercentOfMax ? 'opacity-50' : 'opacity-0',
               )}
@@ -83,7 +86,7 @@ export const BorrowCapacity = ({
                 <div
                   className={classNames(
                     'absolute left-0 h-full max-w-full rounded-l-3xl bg-body-dark',
-                    enableAnimations && 'transition-[right] duration-1000 ease-linear',
+                    !reduceMotion && 'transition-[right] duration-1000 ease-linear',
                   )}
                   style={{
                     right: `${limitPercentOfMax ? 100 - limitPercentOfMax : 100}%`,
@@ -94,7 +97,7 @@ export const BorrowCapacity = ({
                   <div
                     className={classNames(
                       'h-full rounded-lg',
-                      enableAnimations && 'transition-[width] duration-1000 ease-linear',
+                      !reduceMotion && 'transition-[width] duration-1000 ease-linear',
                     )}
                     style={{
                       width: `${percentOfMaxRange || 0.02}%`,
@@ -107,7 +110,7 @@ export const BorrowCapacity = ({
                   <div
                     className={classNames(
                       'absolute bottom-0 h-[120%] w-[1px] bg-white',
-                      enableAnimations && 'transition-[left] duration-1000 ease-linear',
+                      !reduceMotion && 'transition-[left] duration-1000 ease-linear',
                     )}
                     style={{ left: `${limitPercentOfMax || 0}%` }}
                   />
@@ -115,7 +118,7 @@ export const BorrowCapacity = ({
                     <span
                       className={classNames(
                         'absolute top-1/2 mt-[1px] w-full -translate-y-1/2 text-center text-2xs-caps',
-                        enableAnimations && 'animate-fadein opacity-0',
+                        !reduceMotion && 'animate-fadein opacity-0',
                       )}
                     >
                       {max !== 0 && (

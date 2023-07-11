@@ -1,9 +1,14 @@
 import classNames from 'classnames'
 
-import useStore from 'store'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { ENABLE_ANIMATIONS_KEY } from 'constants/localStore'
+import useLocalStorage from 'hooks/useLocalStorage'
 
 export default function Background() {
-  const enableAnimations = useStore((s) => s.enableAnimations)
+  const [reduceMotion] = useLocalStorage<boolean>(
+    ENABLE_ANIMATIONS_KEY,
+    DEFAULT_SETTINGS.reduceMotion,
+  )
 
   return (
     <div className='background pointer-events-none fixed inset-0 h-full w-full overflow-hidden bg-body'>
@@ -16,7 +21,7 @@ export default function Background() {
           'left-[-10vw] top-[-10vw]',
           'bg-orb-primary blur-orb-primary ',
           'translate-x-0 translate-y-0 rounded-full opacity-20',
-          enableAnimations && 'animate-[float_120s_ease-in-out_infinite_2s]',
+          !reduceMotion && 'animate-[float_120s_ease-in-out_infinite_2s]',
         )}
       />
       <div
@@ -28,7 +33,7 @@ export default function Background() {
           'bottom-[-10vw] right-[-8vw]',
           'bg-orb-secondary blur-orb-secondary',
           'translate-x-0 translate-y-0  rounded-full opacity-30',
-          enableAnimations && 'animate-[float_150s_ease-in-out_infinite_1s]',
+          !reduceMotion && 'animate-[float_150s_ease-in-out_infinite_1s]',
         )}
       />
       <div
@@ -40,7 +45,7 @@ export default function Background() {
           'right-[-4vw] top-[-10vw]',
           'bg-orb-tertiary blur-orb-tertiary ',
           'translate-x-0 translate-y-0 rounded-full opacity-20',
-          enableAnimations && 'animate-[float_180s_ease-in_infinite]',
+          !reduceMotion && 'animate-[float_180s_ease-in_infinite]',
         )}
       />
     </div>
