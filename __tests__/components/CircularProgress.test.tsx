@@ -4,6 +4,10 @@ import { CircularProgress } from 'components/CircularProgress'
 import { REDUCE_MOTION_KEY } from 'constants/localStore'
 
 describe('<CircularProgress />', () => {
+  afterAll(() => {
+    localStorage.removeItem(REDUCE_MOTION_KEY)
+  })
+
   it('should render', () => {
     const { container } = render(<CircularProgress />)
 

@@ -38,6 +38,11 @@ describe('<UnlockModal />', () => {
   beforeAll(() => {
     useStore.setState({ unlockModal: null })
   })
+
+  afterAll(() => {
+    useStore.clearState()
+  })
+
   it('should render', () => {
     const { container } = render(<UnlockModal />)
     expect(container).toBeInTheDocument()
