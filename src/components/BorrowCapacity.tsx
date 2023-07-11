@@ -5,7 +5,7 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { ENABLE_ANIMATIONS_KEY } from 'constants/localStore'
+import { REDUCE_MOTION_KEY } from 'constants/localStore'
 import useLocalStorage from 'hooks/useLocalStorage'
 
 interface Props {
@@ -31,10 +31,7 @@ export const BorrowCapacity = ({
   hideValues,
   decimals = 2,
 }: Props) => {
-  const [reduceMotion] = useLocalStorage<boolean>(
-    ENABLE_ANIMATIONS_KEY,
-    DEFAULT_SETTINGS.reduceMotion,
-  )
+  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
   const [percentOfMaxRound, setPercentOfMaxRound] = useState(0)
   const [percentOfMaxRange, setPercentOfMaxRange] = useState(0)
   const [limitPercentOfMax, setLimitPercentOfMax] = useState(0)

@@ -2,7 +2,7 @@ import classNames from 'classnames'
 
 import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { ENABLE_ANIMATIONS_KEY } from 'constants/localStore'
+import { REDUCE_MOTION_KEY } from 'constants/localStore'
 import useLocalStorage from 'hooks/useLocalStorage'
 
 interface Props {
@@ -12,10 +12,7 @@ interface Props {
 }
 
 export const CircularProgress = ({ color = '#FFFFFF', size = 20, className }: Props) => {
-  const [reduceMotion] = useLocalStorage<boolean>(
-    ENABLE_ANIMATIONS_KEY,
-    DEFAULT_SETTINGS.reduceMotion,
-  )
+  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
   const borderWidth = `${size / 10}px`
   const borderColor = `${color} transparent transparent transparent`
   const loaderClasses = classNames('inline-block relative', className)

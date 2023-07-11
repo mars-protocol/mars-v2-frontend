@@ -5,15 +5,12 @@ import { mutate } from 'swr'
 import { CheckCircled, Cross, CrossCircled } from 'components/Icons'
 import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { ENABLE_ANIMATIONS_KEY } from 'constants/localStore'
+import { REDUCE_MOTION_KEY } from 'constants/localStore'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 
 export default function Toaster() {
-  const [reduceMotion] = useLocalStorage<boolean>(
-    ENABLE_ANIMATIONS_KEY,
-    DEFAULT_SETTINGS.reduceMotion,
-  )
+  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
   const toast = useStore((s) => s.toast)
 
   if (toast) {

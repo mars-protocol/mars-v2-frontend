@@ -13,9 +13,9 @@ import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import {
   DISPLAY_CURRENCY_KEY,
-  ENABLE_ANIMATIONS_KEY,
   LEND_ASSETS_KEY,
   PREFERRED_ASSET_KEY,
+  REDUCE_MOTION_KEY,
   SLIPPAGE_KEY,
 } from 'constants/localStore'
 import useAlertDialog from 'hooks/useAlertDialog'
@@ -43,7 +43,7 @@ export default function SettingsModal() {
     DEFAULT_SETTINGS.preferredAsset,
   )
   const [reduceMotion, setReduceMotion] = useLocalStorage<boolean>(
-    ENABLE_ANIMATIONS_KEY,
+    REDUCE_MOTION_KEY,
     DEFAULT_SETTINGS.reduceMotion,
   )
   const [lendAssets, setLendAssets] = useLocalStorage<boolean>(

@@ -12,16 +12,13 @@ import {
 import { FormattedNumber } from 'components/FormattedNumber'
 import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { ENABLE_ANIMATIONS_KEY } from 'constants/localStore'
+import { REDUCE_MOTION_KEY } from 'constants/localStore'
 import useLocalStorage from 'hooks/useLocalStorage'
 import { formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
 export const RiskChart = ({ data }: RiskChartProps) => {
-  const [reduceMotion] = useLocalStorage<boolean>(
-    ENABLE_ANIMATIONS_KEY,
-    DEFAULT_SETTINGS.reduceMotion,
-  )
+  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
   const currentRisk = BN(0)
 
   return (

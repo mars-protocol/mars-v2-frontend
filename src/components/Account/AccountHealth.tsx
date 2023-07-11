@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { Heart } from 'components/Icons'
 import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { ENABLE_ANIMATIONS_KEY } from 'constants/localStore'
+import { REDUCE_MOTION_KEY } from 'constants/localStore'
 import useLocalStorage from 'hooks/useLocalStorage'
 
 interface Props {
@@ -13,10 +13,7 @@ interface Props {
 }
 
 export default function AccountHealth(props: Props) {
-  const [reduceMotion] = useLocalStorage<boolean>(
-    ENABLE_ANIMATIONS_KEY,
-    DEFAULT_SETTINGS.reduceMotion,
-  )
+  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
   const healthBarWidth = (props.health / 100) * 53
 
   return (

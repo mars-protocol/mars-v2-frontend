@@ -5,7 +5,7 @@ import { ReactNode } from 'react'
 import { Questionmark } from 'components/Icons'
 import TooltipContent from 'components/Tooltip/TooltipContent'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { ENABLE_ANIMATIONS_KEY } from 'constants/localStore'
+import { REDUCE_MOTION_KEY } from 'constants/localStore'
 import useLocalStorage from 'hooks/useLocalStorage'
 
 interface Props {
@@ -21,10 +21,7 @@ interface Props {
 export type TooltipType = 'info' | 'warning' | 'error'
 
 export const Tooltip = (props: Props) => {
-  const [reduceMotion] = useLocalStorage<boolean>(
-    ENABLE_ANIMATIONS_KEY,
-    DEFAULT_SETTINGS.reduceMotion,
-  )
+  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
 
   return (
     <Tippy

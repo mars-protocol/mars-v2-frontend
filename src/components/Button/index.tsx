@@ -16,10 +16,9 @@ import {
 import { glowElement } from 'components/Button/utils'
 import { CircularProgress } from 'components/CircularProgress'
 import { ChevronDown } from 'components/Icons'
-import useStore from 'store'
-import useLocalStorage from 'hooks/useLocalStorage'
-import { ENABLE_ANIMATIONS_KEY } from 'constants/localStore'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { REDUCE_MOTION_KEY } from 'constants/localStore'
+import useLocalStorage from 'hooks/useLocalStorage'
 
 interface Props {
   children?: string | ReactNode
@@ -65,10 +64,7 @@ const Button = React.forwardRef(function Button(
   }: Props,
   ref,
 ) {
-  const [reduceMotion] = useLocalStorage<boolean>(
-    ENABLE_ANIMATIONS_KEY,
-    DEFAULT_SETTINGS.reduceMotion,
-  )
+  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
   const isDisabled = disabled || showProgressIndicator
   const shouldShowText = text && !children
   const shouldShowGlowElement = variant === 'solid' && !isDisabled && !reduceMotion
