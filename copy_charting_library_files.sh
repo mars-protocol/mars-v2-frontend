@@ -27,4 +27,3 @@ cp -r "$LATEST_HASH/datafeeds" public/
 cp -r "$LATEST_HASH/datafeeds" src/utils/
 
 remove_if_directory_exists "$LATEST_HASH"
-src/utils/parsers.ts
