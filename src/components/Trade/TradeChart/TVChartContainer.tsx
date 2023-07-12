@@ -13,7 +13,12 @@ import {
   PAIR_SEPARATOR,
 } from 'components/Trade/TradeChart/OsmosisTheGraphDataFeed'
 import useStore from 'store'
-import { disabledFeatures, enabledFeatures, overrides, settingsOverrides } from './constants'
+import {
+  disabledFeatures,
+  enabledFeatures,
+  overrides,
+  settingsOverrides,
+} from 'components/Trade/TradeChart/constants'
 
 interface Props {
   buyAsset: Asset
@@ -84,7 +89,7 @@ export const TVChartContainer = (props: Props) => {
   }, [props.buyAsset.denom, props.sellAsset.denom])
 
   return (
-    <Card title='Trading Chart' contentClassName='px-0.5 pb-0.5 h-full'>
+    <Card title='Trading Chart' contentClassName='px-0.5 pb-0.5 h-full '>
       <div ref={chartContainerRef} className='h-full' />
     </Card>
   )

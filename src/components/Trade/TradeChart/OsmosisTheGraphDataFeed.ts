@@ -8,12 +8,11 @@ import {
   PeriodParams,
   ResolutionString,
   ResolveCallback,
-  SeriesFormat,
-  Timezone,
 } from 'utils/charting_library'
 import { ENV } from 'constants/env'
 import { getAssetByDenom, getEnabledMarketAssets } from 'utils/assets'
 import { BN } from 'utils/helpers'
+import { defaultSymbolInfo } from 'components/Trade/TradeChart/constants'
 
 interface BarQueryData {
   close: string
@@ -37,28 +36,24 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
   pairs: string[] = []
   pairsWithData: string[] = []
   intervals: { [key: string]: string } = {
-    '5': '5m',
     '15': '15m',
     '30': '30m',
     '60': '1h',
-    '240': '4h',
-    '480': '8h',
-    '720': '12h',
-    D: '1d',
-    '1D': '1d',
   }
 
-  // TODO: Add poolIds to the assets
-  supportedPools = ['1', '907', '803', '704', '712', '678']
-
-  supportedResolutions = ['15', '30', '60', '240', '360', '720', '1D'] as ResolutionString[]
+  supportedPools: string[] = []
+  supportedResolutions = ['15', '30', '60'] as ResolutionString[]
 
   constructor(debug = false, baseDecimals: number, baseDenom: string) {
     if (debug) console.log('Start TheGraph charting library datafeed')
     this.debug = debug
     this.baseDecimals = baseDecimals
     this.baseDenom = baseDenom
-    this.enabledMarketAssetDenoms = getEnabledMarketAssets().map((asset) => asset.denom)
+    const enabledMarketAssets = getEnabledMarketAssets()
+    this.enabledMarketAssetDenoms = enabledMarketAssets.map((asset) => asset.denom)
+    this.supportedPools = enabledMarketAssets
+      .map((asset) => asset.poolId?.toString())
+      .filter((poolId) => typeof poolId === 'string') as string[]
     this.getAllPairs()
   }
 
@@ -76,17 +71,20 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
 
   async getPairsWithData() {
     const query = `
-         {
-          pairs(first: ${
-            this.batchSize
-          }, orderBy: symbol, orderDirection: asc, where: {baseAsset_in: ${JSON.stringify(
-      this.enabledMarketAssetDenoms,
-    )}, quoteAsset_in: ${JSON.stringify(
-      this.enabledMarketAssetDenoms,
-    )}, poolId_in: ${JSON.stringify(this.supportedPools)}}) {
-            baseAsset
-            quoteAsset
-          }}`
+      {
+        pairs(first: ${this.batchSize}, 
+            orderBy: symbol, 
+            orderDirection: asc, 
+            where: {
+              baseAsset_in: ${JSON.stringify(this.enabledMarketAssetDenoms)}, 
+              quoteAsset_in: ${JSON.stringify(this.enabledMarketAssetDenoms)}, 
+              poolId_in: ${JSON.stringify(this.supportedPools)}
+            }
+        ) {
+          baseAsset
+          quoteAsset
+        }
+      }`
 
     return fetch(this.candlesEndpoint, {
       method: 'POST',
@@ -121,23 +119,14 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
   async resolveSymbol(pairName: string, onResolve: ResolveCallback, onError: ErrorCallback) {
     setTimeout(() =>
       onResolve({
+        ...defaultSymbolInfo,
         currency_code: pairName.split(PAIR_SEPARATOR)[0],
         original_currency_code: pairName.split(PAIR_SEPARATOR)[1],
         full_name: pairName,
-        name: 'Osmosis',
         description: pairName,
         ticker: pairName,
         exchange: this.exchangeName,
         listed_exchange: this.exchangeName,
-        type: 'AMM',
-        session: '24x7',
-        minmov: 1,
-        pricescale: 100000,
-        timezone: 'Etc/UTC' as Timezone,
-        has_intraday: true,
-        has_daily: true,
-        has_weekly_and_monthly: true,
-        format: 'price' as SeriesFormat,
         supported_resolutions: this.supportedResolutions,
       }),
     )

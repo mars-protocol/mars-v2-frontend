@@ -6,8 +6,9 @@ import TradeModule from 'components/Trade/TradeModule'
 import { getEnabledMarketAssets } from 'utils/assets'
 
 export default function TradePage() {
-  const [buyAsset, setBuyAsset] = useState(getEnabledMarketAssets()[0])
-  const [sellAsset, setSellAsset] = useState(getEnabledMarketAssets()[1])
+  const enabledMarketAssets = getEnabledMarketAssets()
+  const [buyAsset, setBuyAsset] = useState(enabledMarketAssets[0])
+  const [sellAsset, setSellAsset] = useState(enabledMarketAssets[1])
 
   const handleChangeBuyAsset = useCallback((asset: Asset) => {
     setBuyAsset(asset)
