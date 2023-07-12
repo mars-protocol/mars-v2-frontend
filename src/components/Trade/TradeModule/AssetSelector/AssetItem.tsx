@@ -2,7 +2,8 @@ import AssetImage from 'components/AssetImage'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { StarFilled, StarOutlined } from 'components/Icons'
 import Text from 'components/Text'
-import { FAVORITE_ASSETS } from 'constants/localStore'
+import { FAVORITE_ASSETS_KEY } from 'constants/localStore'
+import useLocalStorage from 'hooks/useLocalStorage'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
@@ -13,18 +14,21 @@ interface Props {
 
 export default function AssetItem(props: Props) {
   const asset = props.asset
+  const [favoriteAssetsDenoms] = useLocalStorage<string[]>(FAVORITE_ASSETS_KEY, [])
 
   function handleToggleFavorite(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     event.stopPropagation()
-    const favoriteAssets: string[] = JSON.parse(localStorage.getItem(FAVORITE_ASSETS) || '[]')
-    if (favoriteAssets) {
-      if (favoriteAssets.includes(asset.denom)) {
+    if (favoriteAssetsDenoms) {
+      if (favoriteAssetsDenoms.includes(asset.denom)) {
         localStorage.setItem(
-          FAVORITE_ASSETS,
-          JSON.stringify(favoriteAssets.filter((item: string) => item !== asset.denom)),
+          FAVORITE_ASSETS_KEY,
+          JSON.stringify(favoriteAssetsDenoms.filter((item: string) => item !== asset.denom)),
         )
       } else {
-        localStorage.setItem(FAVORITE_ASSETS, JSON.stringify([...favoriteAssets, asset.denom]))
+        localStorage.setItem(
+          FAVORITE_ASSETS_KEY,
+          JSON.stringify([...favoriteAssetsDenoms, asset.denom]),
+        )
       }
       window.dispatchEvent(new Event('storage'))
     }

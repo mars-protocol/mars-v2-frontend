@@ -13,14 +13,15 @@ interface Props {
 }
 
 export default function AssetSelector(props: Props) {
+  const { buyAsset, sellAsset, onChangeBuyAsset, onChangeSellAsset } = props
   const [overlayState, setOverlayState] = useState<OverlayState>('closed')
   const [cachedBuyAsset, setCachedBuyAsset] = useState<Asset>(props.buyAsset)
   const [cachedSellAsset, setCachedSellAsset] = useState<Asset>(props.sellAsset)
 
-  function handleSwapAssets() {
-    props.onChangeBuyAsset(props.sellAsset)
-    props.onChangeSellAsset(props.buyAsset)
-  }
+  const handleSwapAssets = useCallback(() => {
+    onChangeBuyAsset(sellAsset)
+    onChangeSellAsset(buyAsset)
+  }, [onChangeBuyAsset, onChangeSellAsset, sellAsset, buyAsset])
 
   const handleChangeBuyAsset = useCallback((asset: Asset) => {
     setCachedBuyAsset(asset)
@@ -31,6 +32,7 @@ export default function AssetSelector(props: Props) {
     setCachedSellAsset(asset)
     setOverlayState('closed')
   }, [])
+
   const handleChangeState = useCallback(
     (state: OverlayState) => {
       setOverlayState(state)
@@ -40,10 +42,10 @@ export default function AssetSelector(props: Props) {
 
   useEffect(() => {
     if (overlayState === 'closed') {
-      props.onChangeBuyAsset(cachedBuyAsset)
-      props.onChangeSellAsset(cachedSellAsset)
+      onChangeBuyAsset(cachedBuyAsset)
+      onChangeSellAsset(cachedSellAsset)
     }
-  }, [overlayState, cachedBuyAsset, cachedSellAsset, props])
+  }, [onChangeBuyAsset, onChangeSellAsset, overlayState, cachedBuyAsset, cachedSellAsset])
 
   return (
     <div className='grid-rows-auto relative grid grid-cols-[1fr_min-content_1fr] gap-y-2 bg-white/5 p-3'>
