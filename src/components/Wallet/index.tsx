@@ -19,7 +19,6 @@ export default function Wallet() {
 
   const { status, connectedWallet } = useWalletManager()
   const { simulate, sign, broadcast } = useWallet()
-  const client = useStore((s) => s.client)
   const address = useStore((s) => s.address)
 
   // Set connection status
@@ -38,23 +37,22 @@ export default function Wallet() {
 
   // Set the client
   useEffect(() => {
-    if (!connectedWallet || client) return
     async function getCosmWasmClient() {
-      if (!connectedWallet) return
-
-      const cosmClient = await getClient(connectedWallet.network.rpc)
-      const client = {
-        broadcast,
-        cosmWasmClient: cosmClient,
-        connectedWallet,
-        sign,
-        simulate,
+      if (connectedWallet && connectedWallet.account.address !== address) {
+        const cosmClient = await getClient(connectedWallet.network.rpc)
+        const client = {
+          broadcast,
+          cosmWasmClient: cosmClient,
+          connectedWallet,
+          sign,
+          simulate,
+        }
+        useStore.setState({ client })
       }
-      useStore.setState({ client })
     }
 
     getCosmWasmClient()
-  }, [connectedWallet, client, simulate, sign, broadcast])
+  }, [connectedWallet, address, simulate, sign, broadcast])
 
   // Redirect when switching wallets or on first connection
   useEffect(() => {
