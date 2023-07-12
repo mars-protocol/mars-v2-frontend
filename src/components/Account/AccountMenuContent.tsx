@@ -45,7 +45,10 @@ export default function AccountMenuContent(props: Props) {
   const showCreateAccount = !hasCreditAccounts || isCreating
 
   const checkHasFunds = useCallback(() => {
-    return transactionFeeCoinBalance && BN(transactionFeeCoinBalance.amount).isGreaterThan(0)
+    return (
+      transactionFeeCoinBalance &&
+      BN(transactionFeeCoinBalance.amount).isGreaterThan(hardcodedFee.amount[0].amount)
+    )
   }, [transactionFeeCoinBalance])
 
   const performCreateAccount = useCallback(async () => {
