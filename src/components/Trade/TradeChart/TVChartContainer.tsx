@@ -13,12 +13,7 @@ import {
   PAIR_SEPARATOR,
 } from 'components/Trade/TradeChart/OsmosisTheGraphDataFeed'
 import useStore from 'store'
-import {
-  disabledFeatures,
-  enabledFeatures,
-  overrides,
-  settingsOverrides,
-} from 'components/Trade/TradeChart/constants'
+import { disabledFeatures, enabledFeatures, overrides } from 'components/Trade/TradeChart/constants'
 
 interface Props {
   buyAsset: Asset
@@ -58,7 +53,28 @@ export const TVChartContainer = (props: Props) => {
       autosize: true,
       container: chartContainerRef.current,
       custom_css_url: '/tradingview.css',
-      settings_overrides: settingsOverrides,
+      settings_overrides: {
+        'paneProperties.background': '#220E1D',
+        'paneProperties.backgroundType': 'solid',
+        'paneProperties.vertGridProperties.color': '#220E1D',
+        'paneProperties.horzGridProperties.color': '#220E1D',
+        'mainSeriesProperties.candleStyle.upColor': '#3DAE9A',
+        'mainSeriesProperties.candleStyle.downColor': '#AE3D3D',
+        'mainSeriesProperties.candleStyle.borderColor': '#232834',
+        'mainSeriesProperties.candleStyle.borderUpColor': '#3DAE9A',
+        'mainSeriesProperties.candleStyle.borderDownColor': '#AE3D3D',
+        'mainSeriesProperties.candleStyle.wickUpColor': '#3DAE9A',
+        'mainSeriesProperties.candleStyle.wickDownColor': '#AE3D3D',
+        'mainSeriesProperties.candleStyle.barColorsOnPrevClose': false,
+        'scalesProperties.textColor': 'rgba(255, 255, 255, 0.3)',
+        'paneProperties.legendProperties.showSeriesTitle': false,
+        'paneProperties.legendProperties.showVolume': false,
+        'paneProperties.legendProperties.showStudyValues': false,
+        'paneProperties.legendProperties.showStudyTitles': false,
+        'scalesProperties.axisHighlightColor': '#381730',
+        'linetooltrendline.color': 'rgba( 21, 153, 128, 1)',
+        'linetooltrendline.linewidth': 10,
+      },
       overrides,
       loading_screen: {
         backgroundColor: '#220E1D',
