@@ -14,25 +14,21 @@ interface Props {
 
 export default function AssetItem(props: Props) {
   const asset = props.asset
-  const [favoriteAssetsDenoms] = useLocalStorage<string[]>(FAVORITE_ASSETS_KEY, [])
+  const [favoriteAssetsDenoms, setFavoriteAssetsDenoms] = useLocalStorage<string[]>(
+    FAVORITE_ASSETS_KEY,
+    [],
+  )
 
   function handleToggleFavorite(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     event.stopPropagation()
-    if (favoriteAssetsDenoms) {
-      if (favoriteAssetsDenoms.includes(asset.denom)) {
-        localStorage.setItem(
-          FAVORITE_ASSETS_KEY,
-          JSON.stringify(favoriteAssetsDenoms.filter((item: string) => item !== asset.denom)),
-        )
-      } else {
-        localStorage.setItem(
-          FAVORITE_ASSETS_KEY,
-          JSON.stringify([...favoriteAssetsDenoms, asset.denom]),
-        )
-      }
-      window.dispatchEvent(new Event('storage'))
+
+    if (!favoriteAssetsDenoms.includes(asset.denom)) {
+      setFavoriteAssetsDenoms([...favoriteAssetsDenoms, asset.denom])
+      return
     }
+    setFavoriteAssetsDenoms(favoriteAssetsDenoms.filter((item: string) => item !== asset.denom))
   }
+
   return (
     <li className='border-b border-white/10 hover:bg-black/10'>
       <button
