@@ -6,9 +6,7 @@ remove_if_directory_exists() {
 
 BRANCH="master"
 
-REPOSITORY="https://$TV_USERNAME:$TV_ACCESS_TOKEN@github.com/tradingview/charting_library/"
-
-echo $REPOSITORY
+REPOSITORY="https://$CHARTING_LIBRARY_USERNAME:$CHARTING_LIBRARY_ACCESS_TOKEN@$CHARTING_LIBRARY_REPOSITORY"
 
 LATEST_HASH=$(git ls-remote $REPOSITORY $BRANCH | grep -Eo '^[[:alnum:]]+')
 

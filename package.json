@@ -11,7 +11,8 @@
     "format": "eslint ./src/ ./__tests__/ --fix && prettier --write ./src/ ./__tests__/",
     "prettier-check": "prettier --ignore-path .gitignore --check ./src/",
     "start": "next start",
-    "validate-env": "node ./validate-env"
+    "validate-env": "node ./validate-env",
+    "install-charting-library": "dotenv -e .env.local node install_charting_library.js"
   },
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.31.0",
@@ -50,6 +51,7 @@
     "autoprefixer": "^10.4.14",
     "babel-jest": "^29.5.0",
     "dotenv": "^16.3.1",
+    "dotenv-cli": "^7.2.1",
     "eslint": "8.43.0",
     "eslint-config-next": "^13.4.4",
     "eslint-plugin-import": "^2.27.5",
@@ -58,6 +60,7 @@
     "jest-environment-jsdom": "^29.6.1",
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.3.0",
+    "shelljs": "^0.8.5",
     "tailwindcss": "^3.3.2",
     "typescript": "5.1.6"
   }
