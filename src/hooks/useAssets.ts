@@ -16,7 +16,7 @@ export default function useAssets() {
         ...asset,
         isFavorite: favoriteAssetsDenoms.includes(asset.denom),
       }))
-      .sort((a, b) => b.isFavorite - a.isFavorite)
+      .sort((a, b) => +b.isFavorite - +a.isFavorite)
 
     setAssets(assets)
   }, [favoriteAssetsDenoms])
