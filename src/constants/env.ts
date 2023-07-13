@@ -7,6 +7,7 @@ interface EnvironmentVariables {
   ADDRESS_RED_BANK: string
   ADDRESS_SWAPPER: string
   ADDRESS_ZAPPER: string
+  CANDLES_ENDPOINT: string
   CHAIN_ID: string
   NETWORK: string
   URL_GQL: string
@@ -26,6 +27,7 @@ export const ENV: EnvironmentVariables = {
   ADDRESS_RED_BANK: process.env.NEXT_PUBLIC_RED_BANK || '',
   ADDRESS_SWAPPER: process.env.NEXT_PUBLIC_SWAPPER || '',
   ADDRESS_ZAPPER: process.env.NEXT_PUBLIC_ZAPPER || '',
+  CANDLES_ENDPOINT: process.env.NEXT_PUBLIC_CANDLES_ENDPOINT || '',
   CHAIN_ID: process.env.NEXT_PUBLIC_CHAIN_ID || '',
   NETWORK: process.env.NEXT_PUBLIC_NETWORK || '',
   URL_GQL: process.env.NEXT_PUBLIC_GQL || '',
