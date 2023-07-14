@@ -129,8 +129,8 @@ async function getVaultValuesAndAmounts(
         secondary: BN(secondaryLpToken.amount),
       },
       values: {
-        primary: BN(primaryLpToken.amount).multipliedBy(BN(primaryAsset.price)),
-        secondary: BN(secondaryLpToken.amount).multipliedBy(BN(secondaryAsset.price)),
+        primary: BN(primaryLpToken.amount).multipliedBy(primaryAsset),
+        secondary: BN(secondaryLpToken.amount).multipliedBy(secondaryAsset),
       },
     }
   } catch (ex) {

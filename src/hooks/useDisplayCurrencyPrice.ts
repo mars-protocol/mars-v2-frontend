@@ -30,16 +30,16 @@ function useDisplayCurrencyPrice() {
 
       if (assetPrice && displayCurrencyPrice) {
         return BN(assetPrice.amount).dividedBy(displayCurrencyPrice.amount)
-      } else {
-        throw 'Given denom or display currency price has not found'
       }
+
+      return BN(0)
     },
     [prices, displayCurrency],
   )
 
   const convertAmount = useCallback(
     (asset: Asset, amount: string | number | BigNumber) =>
-      getConversionRate(asset.denom).multipliedBy(BN(amount).shiftedBy(-asset.decimals)),
+      getConversionRate(asset.denom)?.multipliedBy(BN(amount).shiftedBy(-asset.decimals)) ?? BN(0),
     [getConversionRate],
   )
 

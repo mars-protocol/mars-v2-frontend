@@ -1,11 +1,12 @@
 import BigNumber from 'bignumber.js'
 
+import { BNCoin } from 'types/classes/BNCoin'
 import { BN, getApproximateHourlyInterest } from 'utils/helpers'
 import { getTokenValue } from 'utils/tokens'
 
 export const calculateAccountBalance = (
   account: Account | AccountChange,
-  prices: Coin[],
+  prices: BNCoin[],
 ): BigNumber => {
   const totalDepositValue = calculateAccountDeposits(account, prices)
   const totalDebtValue = calculateAccountDebt(account, prices)
@@ -15,7 +16,7 @@ export const calculateAccountBalance = (
 
 export const calculateAccountDeposits = (
   account: Account | AccountChange,
-  prices: Coin[],
+  prices: BNCoin[],
 ): BigNumber => {
   if (!account.deposits) return BN(0)
   return account.deposits.reduce((acc, deposit) => {
@@ -26,7 +27,7 @@ export const calculateAccountDeposits = (
 }
 export const calculateAccountDebt = (
   account: Account | AccountChange,
-  prices: Coin[],
+  prices: BNCoin[],
 ): BigNumber => {
   if (!account.debts) return BN(0)
   return account.debts.reduce((acc, debt) => {
@@ -39,21 +40,21 @@ export const calculateAccountDebt = (
 
 export const calculateAccountPnL = (
   account: Account | AccountChange,
-  prices: Coin[],
+  prices: BNCoin[],
 ): BigNumber => {
   return BN(0)
 }
 
 export const calculateAccountApr = (
   account: Account | AccountChange,
-  prices: Coin[],
+  prices: BNCoin[],
 ): BigNumber => {
   return BN(0)
 }
 
 export const calculateAccountBorrowRate = (
   account: Account | AccountChange,
-  prices: Coin[],
+  prices: BNCoin[],
 ): BigNumber => {
   return BN(0)
 }
@@ -62,7 +63,7 @@ export function getAmount(denom: string, coins: Coin[]): BigNumber {
   return BN(coins.find((asset) => asset.denom === denom)?.amount ?? 0)
 }
 
-export function getNetCollateralValue(account: Account, marketAssets: Market[], prices: Coin[]) {
+export function getNetCollateralValue(account: Account, marketAssets: Market[], prices: BNCoin[]) {
   const depositCollateralValue = account.deposits.reduce((acc, coin) => {
     const asset = marketAssets.find((asset) => asset.denom === coin.denom)
 
