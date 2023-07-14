@@ -16,17 +16,15 @@ export default async function calculateAssetIncentivesApy(
 
     if (!assetIncentive) return null
 
-    const [marketLiquidityAmount, assetPriceResponse, marsPrice] = await Promise.all([
+    const [marketLiquidityAmount, assetPrice, marsPrice] = await Promise.all([
       getUnderlyingLiquidityAmount(market),
       getPrice(denom),
       getMarsPrice(),
     ])
 
     const assetDecimals = (ASSETS.find(byDenom(denom)) as Asset).decimals
-    const marsDecimals = 6,
-      priceFeedDecimals = 6
+    const marsDecimals = 6
 
-    const assetPrice = BN(assetPriceResponse).shiftedBy(assetDecimals - priceFeedDecimals)
     const marketLiquidityValue = BN(marketLiquidityAmount)
       .shiftedBy(-assetDecimals)
       .multipliedBy(assetPrice)

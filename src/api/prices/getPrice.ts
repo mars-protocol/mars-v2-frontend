@@ -4,6 +4,7 @@ import { byDenom } from 'utils/array'
 import getPythPrice from 'api/prices/getPythPrices'
 import getPoolPrice from 'api/prices/getPoolPrice'
 import { BN } from 'utils/helpers'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 
 export default async function getPrice(denom: string): Promise<BigNumber> {
   try {
@@ -16,8 +17,9 @@ export default async function getPrice(denom: string): Promise<BigNumber> {
     if (asset.hasOraclePrice) {
       const oracleQueryClient = await getOracleQueryClient()
       const priceResponse = await oracleQueryClient.price({ denom: asset.denom })
+      const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
 
-      return BN(priceResponse.price)
+      return BN(priceResponse.price).shiftedBy(decimalDiff)
     }
 
     if (asset.poolId) {

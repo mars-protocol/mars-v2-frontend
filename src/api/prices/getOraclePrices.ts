@@ -1,5 +1,5 @@
 import { getOracleQueryClient } from 'api/cosmwasm-client'
-import { ITEM_LIMIT_PER_QUERY } from 'constants/query'
+import { ITEM_LIMIT_PER_QUERY, PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { BNCoin } from 'types/classes/BNCoin'
 import { PriceResponse } from 'types/generated/mars-oracle-osmosis/MarsOracleOsmosis.types'
 import { byDenom } from 'utils/array'
@@ -9,12 +9,11 @@ export default async function getOraclePrices(...assets: Asset[]): Promise<BNCoi
   try {
     if (!assets.length) return []
 
-    const baseDecimals = 6
     const priceResults = await queryPrices()
 
     return assets.map((asset) => {
       const priceResponse = priceResults.find(byDenom(asset.denom)) as PriceResponse
-      const decimalDiff = asset.decimals - baseDecimals
+      const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
 
       return BNCoin.fromDenomAndBigNumber(
         asset.denom,

@@ -1,6 +1,5 @@
-import { ENV } from 'constants/env'
 import { resolveMarketResponse } from 'utils/resolvers'
-import { getClient, getRedBankQueryClient } from 'api/cosmwasm-client'
+import { getRedBankQueryClient } from 'api/cosmwasm-client'
 
 export default async function getMarket(denom: string): Promise<Market> {
   try {
