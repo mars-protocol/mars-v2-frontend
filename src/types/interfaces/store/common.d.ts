@@ -6,4 +6,6 @@ interface CommonSlice {
   isOpen: boolean
   selectedAccount: string | null
   status: import('@marsprotocol/wallet-connector').WalletConnectionStatus
+  isFocusMode: boolean
+  showTermsOfService: boolean
 }

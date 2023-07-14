@@ -218,7 +218,7 @@ export default function SettingsModal() {
       <SettingsSwitch
         onChange={handleReduceMotion}
         name='reduceMotion'
-        value={!reduceMotion}
+        value={reduceMotion}
         label='Reduce Motion'
         decsription='Turns off all animations inside the dApp. Turning animations off can increase the
         overall performance on lower-end hardware.'

@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 
 import AccountMenu from 'components/Account/AccountMenu'
+import EscButton from 'components/Button/EscButton'
 import DesktopNavigation from 'components/Navigation/DesktopNavigation'
 import Settings from 'components/Settings'
 import Wallet from 'components/Wallet'
@@ -16,6 +17,12 @@ export const menuTree: { page: Page; label: string }[] = [
 
 export default function DesktopHeader() {
   const address = useStore((s) => s.address)
+  const isFocusMode = useStore((s) => s.isFocusMode)
+
+  function handleCloseFocusMode() {
+    useStore.setState({ isFocusMode: false, showTermsOfService: false })
+  }
+
   return (
     <header
       className={classNames(
@@ -24,13 +31,22 @@ export default function DesktopHeader() {
         'lg:block',
       )}
     >
-      <div className='flex items-center justify-between border-b border-white/20 py-3 pl-6 pr-4'>
+      <div
+        className={classNames(
+          'flex items-center justify-between py-3 pl-6 pr-4',
+          !isFocusMode && ' border-b border-white/20',
+        )}
+      >
         <DesktopNavigation />
-        <div className='flex gap-4'>
-          {address && <AccountMenu />}
-          <Wallet />
-          <Settings />
-        </div>
+        {isFocusMode ? (
+          <EscButton onClick={handleCloseFocusMode} />
+        ) : (
+          <div className='flex gap-4'>
+            {address && <AccountMenu />}
+            <Wallet />
+            <Settings />
+          </div>
+        )}
       </div>
     </header>
   )
