@@ -5,7 +5,14 @@ import Divider from 'components/Divider'
 import RangeInput from 'components/RangeInput'
 import AssetSelector from 'components/Trade/TradeModule/AssetSelector'
 
-export default function TradeModule() {
+interface Props {
+  buyAsset: Asset
+  sellAsset: Asset
+  onChangeBuyAsset: (asset: Asset) => void
+  onChangeSellAsset: (asset: Asset) => void
+}
+
+export default function TradeModule(props: Props) {
   const [value, setValue] = useState(0)
 
   return (
@@ -16,7 +23,12 @@ export default function TradeModule() {
         'row-span-2 h-full',
       )}
     >
-      <AssetSelector />
+      <AssetSelector
+        buyAsset={props.buyAsset}
+        sellAsset={props.sellAsset}
+        onChangeBuyAsset={props.onChangeBuyAsset}
+        onChangeSellAsset={props.onChangeSellAsset}
+      />
       <Divider />
       <RangeInput
         max={4000}

@@ -1,0 +1,151 @@
+:root {
+  --tv-background: #220e1d;
+  --tv-menu-background: #31142a !important;
+  --tv-menu-text: rgba(255, 255, 255, 0.3) !important;
+  --tv-menu-text-hover: rgba(255, 255, 255, 1) !important;
+}
+
+.theme-dark:root {
+  --tv-color-pane-background: var(--tv-background);
+  --tv-color-platform-background: var(--tv-background);
+  --tv-color-toolbar-button-text: var(--tv-menu-text);
+  --tv-color-toolbar-button-text-hover: var(--tv-menu-text-hover);
+  --tv-color-toolbar-button-text-active: var(--tv-menu-text-hover);
+  --tv-color-toolbar-button-text-active-hover: var(--tv-menu-text-hover);
+  --tv-color-toolbar-button-background-hover: var(--tv-background);
+  --tv-color-toolbar-button-background-expanded: var(--tv-background);
+  --tv-color-toolbar-button-background-active: var(--tv-background);
+  --tv-color-toolbar-button-background-active-hover: var(--tv-background);
+  --tv-color-toolbar-toggle-button-background-active: rgba(255, 255, 255, 0.2);
+  --tv-color-toolbar-toggle-button-background-active-hover: rgba(255, 255, 255, 0.2);
+  --tv-color-toolbar-divider-background: var(--tv-menu-text);
+}
+
+/* Favorited menus */
+.tv-floating-toolbar__widget-wrapper > div {
+  background: var(--tv-menu-background) !important;
+}
+.tv-floating-toolbar__widget:hover,
+.tv-favorited-drawings-toolbar__widget:hover *,
+.tv-favorited-drawings-toolbar__widget:hover:before {
+  background: var(--tv-menu-background) !important;
+  color: var(--tv-menu-text-hover) !important;
+  border-color: var(--tv-menu-background) !important;
+  cursor: pointer;
+}
+
+/* Floating menu */
+.floating-toolbar-react-widgets__button:hover,
+.button-reABrhVR:hover:before,
+.button-uO7HM85b.isInteractive-uO7HM85b:hover:before {
+  background: var(--tv-menu-background) !important;
+  color: var(--tv-menu-text-hover) !important;
+  border-color: var(--tv-menu-background) !important;
+  cursor: pointer;
+}
+
+.layout__area--left {
+  min-width: 10px !important;
+}
+
+div[data-role='button']:hover,
+/* Indiator dialog list items */
+div[data-role="dialog-content"] div[data-role="list-item"]:hover,
+/* Series left sidebar */
+.active-a7Y2yl3G {
+  cursor: pointer;
+}
+
+/* General pop-up menus */
+div[data-name='popup-menu-container'] div:not(.swatch-pNRFZrPx, .opacitySliderGradient-uujjxY8O),
+/* Indicator dialog */
+div[data-name='indicators-dialog'] *,
+/* Layers dialog */
+div[data-name="object-tree-dialog"] * ,
+/* Layers dialog */
+div[data-name="series-properties-dialog"],
+/* Series left sidetabs */
+.tab-a7Y2yl3G:hover,
+.active-a7Y2yl3G,
+/* Checkbox */
+.check-bUw_gKIQ,
+/* Close buton series popup */
+.close-HS2PTQRJ:hover {
+  background: var(--tv-menu-background) !important;
+  outline: white !important;
+}
+
+/* General toolbar popup list items */
+.item-RhC5uhZw,
+/* Emoji topbar items */
+.wrapper-rSoA6gh6 svg,
+.wrapper-rSoA6gh6.categories-TlKkLixs,
+/* Emoji items */
+.wrapper-yrezKVPX svg,
+/* Indiator dialog list items */
+div[data-role="dialog-content"] div[data-role="list-item"] span,
+/*  Layers dialog list item */
+.wrap-G4AKrzja span,
+/* Series proerties */
+div[data-name="series-properties-dialog"],
+/* Series left sidetabs */
+.tab-a7Y2yl3G ,
+/* Close buton series popup */
+.close-HS2PTQRJ {
+  color: var(--tv-menu-text) !important;
+}
+
+/* General toolbar popup list items */
+.item-RhC5uhZw:hover,
+/* Sub headers for inteval popup */
+.section-_8r4li9v:hover,
+/* Emoji picker categories */
+.wrapper-wawooJAf:hover,
+/* Emoji topbar items */
+.isActive-rSoA6gh6,
+.isActive-rSoA6gh6.categories-TlKkLixs,
+.wrapper-rSoA6gh6:hover svg,
+.wrapper-rSoA6gh6.categories-TlKkLixs:hover,
+/* Emoji items */
+.isActive-yrezKVPX,
+.wrapper-yrezKVPX:hover svg,
+/* Indiator dialog list items */
+div[data-role="dialog-content"] div[data-role="list-item"]:hover span,
+/*  Layers dialog list item */
+.wrap-G4AKrzja:hover span,
+/* Series left sidetabs */
+.tab-a7Y2yl3G:hover,
+/* Series left sidetabs */
+.active-a7Y2yl3G,
+/* Close buton series popup */
+.close-HS2PTQRJ:hover {
+  cursor: pointer !important;
+  color: var(--tv-menu-text-hover) !important;
+}
+
+/* Top and bottom scroll indicator for toolbar */
+.scrollBot-g7ay5OPA,
+.scrollTop-g7ay5OPA {
+  cursor: pointer;
+  background: var(--tv-menu-background) !important;
+}
+
+/* Checkbox */
+.check-bUw_gKIQ {
+  border-color: var(--tv-menu-text) !important;
+}
+
+/* Buttons for series popup */
+.variant-secondary-OvB35Th_,
+.variant-primary-OvB35Th_ {
+  border-color: var(--tv-menu-text) !important;
+  color: var(--tv-menu-text) !important;
+  cursor: pointer;
+  background: none !important;
+}
+.variant-secondary-OvB35Th_:hover,
+.variant-primary-OvB35Th_:hover {
+  border-color: var(--tv-menu-text-hover) !important;
+  color: var(--tv-menu-text-hover) !important;
+  background: none !important;
+}

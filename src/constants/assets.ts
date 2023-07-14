@@ -30,6 +30,7 @@ export const ASSETS: Asset[] = [
     isMarket: true,
     isDisplayCurrency: true,
     isAutoLendEnabled: true,
+    poolId: 1,
   },
   {
     symbol: 'stATOM',
@@ -43,6 +44,7 @@ export const ASSETS: Asset[] = [
     isEnabled: !IS_TESTNET,
     isMarket: !IS_TESTNET,
     isDisplayCurrency: !IS_TESTNET,
+    poolId: 803,
   },
   {
     symbol: 'WBTC.axl',
@@ -56,6 +58,7 @@ export const ASSETS: Asset[] = [
     isEnabled: !IS_TESTNET,
     isMarket: !IS_TESTNET,
     isDisplayCurrency: !IS_TESTNET,
+    poolId: 712,
   },
   {
     symbol: 'WETH.axl',
@@ -69,6 +72,7 @@ export const ASSETS: Asset[] = [
     isEnabled: !IS_TESTNET,
     isMarket: !IS_TESTNET,
     isDisplayCurrency: !IS_TESTNET,
+    poolId: 704,
   },
   {
     symbol: 'MARS',
@@ -80,10 +84,10 @@ export const ASSETS: Asset[] = [
     color: '#dd5b65',
     logo: '/tokens/mars.svg',
     decimals: 6,
-    poolId: IS_TESTNET ? 768 : 907,
     hasOraclePrice: true,
     isMarket: false,
     isEnabled: true,
+    poolId: 907,
   },
   {
     symbol: 'USDC.axl',
@@ -100,6 +104,7 @@ export const ASSETS: Asset[] = [
     isMarket: true,
     isDisplayCurrency: true,
     isStable: true,
+    poolId: 678,
   },
   {
     symbol: 'USDC.n',

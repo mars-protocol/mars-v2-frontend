@@ -61,9 +61,8 @@ export default function ConnectedButton() {
   }
 
   useEffect(() => {
-    if (!walletBalances || walletBalances.length === 0) return
     const newAmount = BigNumber(
-      walletBalances?.find((coin: Coin) => coin.denom === baseAsset.denom)?.amount ?? 0,
+      walletBalances.find((coin: Coin) => coin.denom === baseAsset.denom)?.amount ?? 0,
     ).dividedBy(10 ** baseAsset.decimals)
 
     if (walletAmount.isEqualTo(newAmount)) return
