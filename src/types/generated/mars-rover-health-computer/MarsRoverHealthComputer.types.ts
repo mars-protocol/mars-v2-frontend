@@ -47,8 +47,9 @@ export interface DenomsData {
 export interface AssetParamsBaseForAddr {
   credit_manager: CmSettingsForAddr
   denom: string
-  liquidation_bonus: Decimal
+  liquidation_bonus: LiquidationBonus
   liquidation_threshold: Decimal
+  protocol_liquidation_fee: Decimal
   max_loan_to_value: Decimal
   red_bank: RedBankSettings
 }
@@ -127,4 +128,11 @@ export interface CoinValue {
   amount: Uint128
   denom: string
   value: Uint128
+}
+
+export interface LiquidationBonus {
+  max_lb: Decimal
+  min_lb: Decimal
+  slope: Decimal
+  starting_lb: Decimal
 }

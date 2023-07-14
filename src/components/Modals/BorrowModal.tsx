@@ -19,6 +19,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { hardcodedFee } from 'utils/constants'
 import { formatPercent, formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+import useHealthComputer from 'hooks/useHealthComputer'
 
 function getDebtAmount(modal: BorrowModal | null) {
   return BN((modal?.marketData as BorrowMarketTableData)?.debt ?? 0).toString()
@@ -29,8 +30,18 @@ function getAssetLogo(modal: BorrowModal | null) {
   return <AssetImage asset={modal.asset} size={24} />
 }
 
-export default function BorrowModal() {
-  const currentAccount = useCurrentAccount()
+interface Props {
+  account: Account
+}
+
+export default function BorrowModalController() {
+  const account = useCurrentAccount()
+  if (!account) return null
+
+  return <BorrowModal account={account} />
+}
+
+function BorrowModal(props: Props) {
   const [percentage, setPercentage] = useState(0)
   const [amount, setAmount] = useState(BN(0))
   const [change, setChange] = useState<AccountChange | undefined>()
@@ -41,6 +52,9 @@ export default function BorrowModal() {
   const repay = useStore((s) => s.repay)
   const asset = modal?.asset ?? ASSETS[0]
   const isRepay = modal?.isRepay ?? false
+  const [max, setMax] = useState(BN(0))
+
+  const { computeMaxBorrowAmount } = useHealthComputer(props.account)
 
   function resetState() {
     setAmount(BN(0))
@@ -49,20 +63,20 @@ export default function BorrowModal() {
   }
 
   async function onConfirmClick() {
-    if (!modal?.asset || !currentAccount) return
+    if (!modal?.asset) return
     setIsConfirming(true)
     let result
     if (isRepay) {
       result = await repay({
         fee: hardcodedFee,
-        accountId: currentAccount.id,
+        accountId: props.account.id,
         coin: BNCoin.fromDenomAndBigNumber(modal.asset.denom, amount),
         accountBalance: percentage === 100,
       })
     } else {
       result = await borrow({
         fee: hardcodedFee,
-        accountId: currentAccount.id,
+        accountId: props.account.id,
         coin: { denom: modal.asset.denom, amount: amount.toString() },
         borrowToWallet,
       })
@@ -90,7 +104,13 @@ export default function BorrowModal() {
     decimals: 6,
   })
 
-  const max = BN(isRepay ? getDebtAmount(modal) : modal?.marketData?.liquidity?.amount ?? '0')
+  useEffect(() => {
+    if (isRepay) setMax(BN(getDebtAmount(modal)))
+
+    computeMaxBorrowAmount(asset.denom).then((maxBorrowAmount) => {
+      setMax(BN(Math.min(maxBorrowAmount, modal?.marketData?.liquidity?.amount.toNumber() || 0)))
+    })
+  }, [isRepay, modal, asset.denom, computeMaxBorrowAmount])
 
   useEffect(() => {
     if (!modal?.asset) return
@@ -109,7 +129,7 @@ export default function BorrowModal() {
         },
       ],
     })
-  }, [amount, modal?.asset, currentAccount, isRepay])
+  }, [amount, modal?.asset, props.account, isRepay])
 
   if (!modal) return null
   return (
@@ -183,7 +203,7 @@ export default function BorrowModal() {
             rightIcon={<ArrowRight />}
           />
         </Card>
-        <AccountSummary account={currentAccount} change={change} />
+        <AccountSummary account={props.account} change={change} />
       </div>
     </Modal>
   )

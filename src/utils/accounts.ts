@@ -1,8 +1,11 @@
 import BigNumber from 'bignumber.js'
 
+import {
+  Positions,
+  VaultPosition,
+} from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
-import { BN, getApproximateHourlyInterest } from 'utils/helpers'
-import { getTokenValue } from 'utils/tokens'
 
 export const calculateAccountBalance = (
   account: Account | AccountChange,
@@ -25,6 +28,7 @@ export const calculateAccountDeposits = (
     return acc.plus(depositValue)
   }, BN(0))
 }
+
 export const calculateAccountDebt = (
   account: Account | AccountChange,
   prices: BNCoin[],
@@ -63,34 +67,73 @@ export function getAmount(denom: string, coins: Coin[]): BigNumber {
   return BN(coins.find((asset) => asset.denom === denom)?.amount ?? 0)
 }
 
-export function getNetCollateralValue(account: Account, marketAssets: Market[], prices: BNCoin[]) {
-  const depositCollateralValue = account.deposits.reduce((acc, coin) => {
-    const asset = marketAssets.find((asset) => asset.denom === coin.denom)
-
-    if (!asset) return acc
-
-    const marketValue = BN(getTokenValue(coin, prices))
-    const collateralValue = marketValue.multipliedBy(asset.maxLtv)
-
-    return collateralValue.plus(acc)
-  }, BN(0))
-
-  // Implement Vault Collateral calculation (MP-2915)
-
-  const liabilitiesValue = account.debts.reduce((acc, coin) => {
-    const asset = marketAssets.find((asset) => asset.denom === coin.denom)
-
-    if (!asset) return acc
-
-    const estimatedInterestAmount = getApproximateHourlyInterest(coin.amount, asset.borrowRate)
-    const liability = BN(getTokenValue(coin, prices)).plus(estimatedInterestAmount)
-
-    return liability.plus(acc)
-  }, BN(0))
-
-  if (liabilitiesValue.isGreaterThan(depositCollateralValue)) {
-    return BN(0)
+export function convertAccountToPositions(account: Account): Positions {
+  return {
+    account_id: account.id,
+    debts: account.debts.map((debt) => ({
+      shares: '0', // This is not needed, but required by the contract
+      amount: debt.amount.toString(),
+      denom: debt.denom,
+    })),
+    deposits: account.deposits.map((deposit) => deposit.toCoin()),
+    lends: account.lends.map((lend) => ({
+      shares: '0', // This is not needed, but required by the contract
+      amount: lend.amount.toString(),
+      denom: lend.denom,
+    })),
+    vaults: account.vaults.map(
+      (vault) =>
+        ({
+          vault: {
+            address: vault.address,
+          },
+          amount: {
+            locking: {
+              locked: vault.amounts.locked.toString(),
+              unlocking: [
+                {
+                  id: 0,
+                  coin: { amount: vault.amounts.unlocking.toString(), denom: vault.denoms.lp },
+                },
+              ],
+            },
+          },
+        } as VaultPosition),
+    ),
   }
+}
 
-  return depositCollateralValue.minus(liabilitiesValue)
+export function cloneAccount(account: Account): Account {
+  return {
+    id: account.id,
+    debts: account.debts.map(
+      (debt) =>
+        new BNCoin({
+          amount: debt.amount.toString(),
+          denom: debt.denom,
+        }),
+    ),
+    deposits: account.deposits.map((deposit) => new BNCoin(deposit.toCoin())),
+    lends: account.lends.map(
+      (lend) =>
+        new BNCoin({
+          amount: lend.amount.toString(),
+          denom: lend.denom,
+        }),
+    ),
+    vaults: account.vaults.map((vault) => ({
+      ...vault,
+      amounts: {
+        locked: BN(vault.amounts.locked),
+        unlocking: BN(vault.amounts.unlocking),
+        unlocked: BN(vault.amounts.unlocked),
+        primary: BN(vault.amounts.primary),
+        secondary: BN(vault.amounts.secondary),
+      },
+      values: {
+        primary: BN(vault.values.primary),
+        secondary: BN(vault.values.secondary),
+      },
+    })),
+  }
 }
