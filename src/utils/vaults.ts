@@ -15,7 +15,7 @@ export function getVaultMetaData(address: string) {
 export function calculateMaxBorrowAmounts(
   account: Account,
   marketAssets: Market[],
-  prices: Coin[],
+  prices: BNCoin[],
   denoms: string[],
 ): BNCoin[] {
   const maxAmounts: BNCoin[] = []
@@ -40,7 +40,7 @@ export function getVaultDepositCoinsAndValue(
   vault: Vault,
   deposits: BNCoin[],
   borrowings: BNCoin[],
-  prices: Coin[],
+  prices: BNCoin[],
 ) {
   const totalValue = [...deposits, ...borrowings].reduce((prev, bnCoin) => {
     const price = prices.find((coin) => coin.denom === bnCoin.denom)?.amount
@@ -76,7 +76,7 @@ export function getVaultSwapActions(
   vault: Vault,
   deposits: BNCoin[],
   borrowings: BNCoin[],
-  prices: Coin[],
+  prices: BNCoin[],
   slippage: number,
   totalValue: BigNumber,
 ): Action[] {

@@ -12,6 +12,10 @@ export function getEnabledMarketAssets(): Asset[] {
   return ASSETS.filter((asset) => asset.isEnabled && asset.isMarket)
 }
 
+export function getAssetsMustHavePriceInfo(): Asset[] {
+  return ASSETS.filter((asset) => (asset.isEnabled && asset.isMarket) || asset.forceFetchPrice)
+}
+
 export function getBaseAsset() {
   return ASSETS.find((asset) => asset.denom === 'uosmo')!
 }

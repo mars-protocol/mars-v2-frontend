@@ -1,11 +1,30 @@
 import { getOracleQueryClient } from 'api/cosmwasm-client'
-import { PriceResponse } from 'types/generated/mars-mock-oracle/MarsMockOracle.types'
+import { ASSETS } from 'constants/assets'
+import { byDenom } from 'utils/array'
+import getPythPrice from 'api/prices/getPythPrices'
+import getPoolPrice from 'api/prices/getPoolPrice'
+import { BN } from 'utils/helpers'
 
-export default async function getPrice(denom: string): Promise<PriceResponse> {
+export default async function getPrice(denom: string): Promise<BigNumber> {
   try {
-    const oracleQueryClient = getOracleQueryClient()
+    const asset = ASSETS.find(byDenom(denom)) as Asset
 
-    return (await oracleQueryClient).price({ denom })
+    if (asset.pythPriceFeedId) {
+      return (await getPythPrice(asset.pythPriceFeedId))[0]
+    }
+
+    if (asset.hasOraclePrice) {
+      const oracleQueryClient = await getOracleQueryClient()
+      const priceResponse = await oracleQueryClient.price({ denom: asset.denom })
+
+      return BN(priceResponse.price)
+    }
+
+    if (asset.poolId) {
+      return await getPoolPrice(asset)
+    }
+
+    throw `could not fetch the price info for the given denom: ${denom}`
   } catch (ex) {
     throw ex
   }

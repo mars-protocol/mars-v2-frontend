@@ -26,7 +26,7 @@ export default async function calculateAssetIncentivesApy(
     const marsDecimals = 6,
       priceFeedDecimals = 6
 
-    const assetPrice = BN(assetPriceResponse.price).shiftedBy(assetDecimals - priceFeedDecimals)
+    const assetPrice = BN(assetPriceResponse).shiftedBy(assetDecimals - priceFeedDecimals)
     const marketLiquidityValue = BN(marketLiquidityAmount)
       .shiftedBy(-assetDecimals)
       .multipliedBy(assetPrice)
