@@ -6,9 +6,8 @@ import Text from 'components/Text'
 import { TERMS_OF_SERVICE_KEY } from 'constants/localStore'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
-
-import Button from './Button'
-import { Check, ExternalLink } from './Icons'
+import Button from 'components/Button'
+import { Check, ExternalLink } from 'components/Icons'
 
 interface BenefitsProps {
   benefits: string[]
@@ -42,9 +41,8 @@ export default function TermsOfService() {
 
   const handleAgreeTermsOfService = useCallback(() => {
     useStore.setState({ showTermsOfService: false, isFocusMode: false })
-    connect()
-    if (hasAgreedToTerms) return
     setHasAgreedToTerms(true)
+    connect()
   }, [connect, hasAgreedToTerms, setHasAgreedToTerms])
 
   return (
