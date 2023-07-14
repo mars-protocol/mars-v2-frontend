@@ -170,7 +170,7 @@ export default function SettingsModal() {
   const showResetModal = useCallback(() => {
     showResetDialog({
       icon: (
-        <div className='flex w-full h-full p-3'>
+        <div className='flex h-full w-full p-3'>
           <ArrowCircle />
         </div>
       ),
@@ -235,7 +235,7 @@ export default function SettingsModal() {
           options={preferredAssetsOptions}
           defaultValue={preferredAsset}
           onChange={handlePreferredAsset}
-          className='relative border w-60 rounded-base border-white/10'
+          className='relative w-60 rounded-base border border-white/10'
           containerClassName='justify-end mb-4'
         />
         <Select
@@ -243,7 +243,7 @@ export default function SettingsModal() {
           options={displayCurrenciesOptions}
           defaultValue={displayCurrency}
           onChange={handleDisplayCurrency}
-          className='relative border w-60 rounded-base border-white/10'
+          className='relative w-60 rounded-base border border-white/10'
           containerClassName='justify-end'
         />
       </SettingsOptions>
@@ -291,7 +291,7 @@ export default function SettingsModal() {
           %
         </Button>
       </SettingsOptions>
-      <div className='flex justify-between w-full'>
+      <div className='flex w-full justify-between'>
         <Button
           color='quaternary'
           variant='transparent'
