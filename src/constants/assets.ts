@@ -1,5 +1,8 @@
 import { IS_TESTNET } from 'constants/env'
 
+export const MARS_MAINNET_DENOM =
+  'ibc/573FCD90FACEE750F55A8864EF7D38265F07E5A9273FA0E8DAFD39951332B580'
+
 export const ASSETS: Asset[] = [
   {
     symbol: 'OSMO',
@@ -14,6 +17,7 @@ export const ASSETS: Asset[] = [
     isMarket: true,
     isDisplayCurrency: true,
     isAutoLendEnabled: true,
+    pythPriceFeedId: '5867f5683c757393a0670ef0f701490950fe93fdb006d181c8265a831ac0c5c6',
   },
   {
     symbol: 'ATOM',
@@ -31,6 +35,7 @@ export const ASSETS: Asset[] = [
     isDisplayCurrency: true,
     isAutoLendEnabled: true,
     poolId: 1,
+    pythPriceFeedId: 'b00b60f88b03a6a625a8d1c048c3f66653edf217439983d037e7222c4e612819',
   },
   {
     symbol: 'stATOM',
@@ -40,11 +45,11 @@ export const ASSETS: Asset[] = [
     color: '#9f1ab9',
     logo: '/tokens/statom.svg',
     decimals: 6,
-    hasOraclePrice: true,
+    poolId: 803,
+    hasOraclePrice: !IS_TESTNET,
     isEnabled: !IS_TESTNET,
     isMarket: !IS_TESTNET,
     isDisplayCurrency: !IS_TESTNET,
-    poolId: 803,
   },
   {
     symbol: 'WBTC.axl',
@@ -59,6 +64,7 @@ export const ASSETS: Asset[] = [
     isMarket: !IS_TESTNET,
     isDisplayCurrency: !IS_TESTNET,
     poolId: 712,
+    pythPriceFeedId: 'e62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43',
   },
   {
     symbol: 'WETH.axl',
@@ -73,6 +79,7 @@ export const ASSETS: Asset[] = [
     isMarket: !IS_TESTNET,
     isDisplayCurrency: !IS_TESTNET,
     poolId: 704,
+    pythPriceFeedId: 'ff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace',
   },
   {
     symbol: 'MARS',
@@ -80,14 +87,15 @@ export const ASSETS: Asset[] = [
     id: 'MARS',
     denom: IS_TESTNET
       ? 'ibc/DB9D326CF53EA07610C394D714D78F8BB4DC7E312D4213193791A9046BF45E20'
-      : 'ibc/573FCD90FACEE750F55A8864EF7D38265F07E5A9273FA0E8DAFD39951332B580',
+      : MARS_MAINNET_DENOM,
     color: '#dd5b65',
     logo: '/tokens/mars.svg',
     decimals: 6,
-    hasOraclePrice: true,
+    poolId: 907,
+    hasOraclePrice: false,
     isMarket: false,
     isEnabled: true,
-    poolId: 907,
+    forceFetchPrice: true,
   },
   {
     symbol: 'USDC.axl',
@@ -105,6 +113,7 @@ export const ASSETS: Asset[] = [
     isDisplayCurrency: true,
     isStable: true,
     poolId: 678,
+    pythPriceFeedId: 'eaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a',
   },
   {
     symbol: 'USDC.n',
@@ -121,5 +130,6 @@ export const ASSETS: Asset[] = [
     isMarket: IS_TESTNET,
     isDisplayCurrency: IS_TESTNET,
     isStable: true,
+    pythPriceFeedId: 'eaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a',
   },
 ]

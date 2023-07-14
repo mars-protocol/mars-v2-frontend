@@ -16,12 +16,12 @@ export const getTokenIcon = (denom: string, marketAssets: Asset[]) =>
 export const getTokenInfo = (denom: string, marketAssets: Asset[]) =>
   marketAssets.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase()) || getBaseAsset()
 
-export function getTokenValue(coin: BNCoin, prices: Coin[]): BigNumber {
+export function getTokenValue(coin: BNCoin, prices: BNCoin[]): BigNumber {
   const price = prices.find((price) => price.denom === coin.denom)?.amount || '0'
   return BN(price).multipliedBy(coin.amount).decimalPlaces(0)
 }
 
-export function getTokenPrice(denom: string, prices: Coin[]): BigNumber {
+export function getTokenPrice(denom: string, prices: BNCoin[]): BigNumber {
   const price = prices.find((price) => price.denom === denom)?.amount || '0'
   return BN(price)
 }

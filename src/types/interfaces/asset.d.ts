@@ -16,6 +16,9 @@ interface Asset {
   isStable?: boolean
   isFavorite?: boolean
   isAutoLendEnabled?: boolean
+  pythPriceFeedId?: string
+  forceFetchPrice?: boolean
+  testnetDenom?: string
 }
 
 interface PseudoAsset {
