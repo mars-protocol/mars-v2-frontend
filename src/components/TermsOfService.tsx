@@ -37,13 +37,13 @@ function Benefits({ benefits }: BenefitsProps) {
 
 export default function TermsOfService() {
   const { connect } = useWalletManager()
-  const [hasAgreedToTerms, setHasAgreedToTerms] = useLocalStorage(TERMS_OF_SERVICE_KEY, false)
+  const [_, setHasAgreedToTerms] = useLocalStorage(TERMS_OF_SERVICE_KEY, false)
 
   const handleAgreeTermsOfService = useCallback(() => {
     useStore.setState({ showTermsOfService: false, isFocusMode: false })
     setHasAgreedToTerms(true)
     connect()
-  }, [connect, hasAgreedToTerms, setHasAgreedToTerms])
+  }, [connect, setHasAgreedToTerms])
 
   return (
     <div className='relative flex h-full w-full items-center justify-center'>
