@@ -6,7 +6,7 @@ import { SECONDS_IN_A_YEAR } from 'utils/constants'
 import getPrice from 'api/prices/getPrice'
 import getMarsPrice from 'api/prices/getMarsPrice'
 import { ASSETS } from 'constants/assets'
-import { byDenom } from 'utils/array'
+import { byDenom, bySymbol } from 'utils/array'
 
 export default async function calculateAssetIncentivesApy(
   denom: string,
@@ -16,17 +16,15 @@ export default async function calculateAssetIncentivesApy(
 
     if (!assetIncentive) return null
 
-    const [marketLiquidityAmount, assetPriceResponse, marsPrice] = await Promise.all([
+    const [marketLiquidityAmount, assetPrice, marsPrice] = await Promise.all([
       getUnderlyingLiquidityAmount(market),
       getPrice(denom),
       getMarsPrice(),
     ])
 
     const assetDecimals = (ASSETS.find(byDenom(denom)) as Asset).decimals
-    const marsDecimals = 6,
-      priceFeedDecimals = 6
+    const marsDecimals = (ASSETS.find(bySymbol('MARS')) as Asset).decimals
 
-    const assetPrice = BN(assetPriceResponse).shiftedBy(assetDecimals - priceFeedDecimals)
     const marketLiquidityValue = BN(marketLiquidityAmount)
       .shiftedBy(-assetDecimals)
       .multipliedBy(assetPrice)

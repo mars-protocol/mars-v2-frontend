@@ -1,22 +1,26 @@
 import { getOracleQueryClient } from 'api/cosmwasm-client'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { BNCoin } from 'types/classes/BNCoin'
+import { PriceResponse } from 'types/generated/mars-oracle-osmosis/MarsOracleOsmosis.types'
+import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
+import iterateContractQuery from 'utils/iterateContractQuery'
 
 export default async function getOraclePrices(...assets: Asset[]): Promise<BNCoin[]> {
   try {
-    const baseDecimals = 6
+    if (!assets.length) return []
+
     const oracleQueryClient = await getOracleQueryClient()
+    const priceResults = await iterateContractQuery(oracleQueryClient.prices)
 
-    const priceQueries = assets.map((asset) =>
-      oracleQueryClient.price({
-        denom: asset.denom,
-      }),
-    )
-    const priceResults = await Promise.all(priceQueries)
+    return assets.map((asset) => {
+      const priceResponse = priceResults.find(byDenom(asset.denom)) as PriceResponse
+      const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
 
-    return priceResults.map(({ denom, price }, index) => {
-      const decimalDiff = assets[index].decimals - baseDecimals
-      return BNCoin.fromDenomAndBigNumber(denom, BN(price).shiftedBy(decimalDiff))
+      return BNCoin.fromDenomAndBigNumber(
+        asset.denom,
+        BN(priceResponse.price).shiftedBy(decimalDiff),
+      )
     })
   } catch (ex) {
     throw ex

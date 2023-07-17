@@ -33,8 +33,29 @@ if (!process.env.NEXT_PUBLIC_REST) {
 if (!process.env.NEXT_PUBLIC_APOLLO_APR) {
   throw 'NEXT_PUBLIC_APOLLO_APR is not defined'
 }
+if (!process.env.NEXT_PUBLIC_PARAMS) {
+  throw 'NEXT_PUBLIC_PARAMS is not defined'
+}
+if (!process.env.NEXT_PUBLIC_CANDLES_ENDPOINT) {
+  throw 'NEXT_PUBLIC_CANDLES_ENDPOINT is not defined'
+}
+if (!process.env.CHARTING_LIBRARY_USERNAME) {
+  throw 'CHARTING_LIBRARY_USERNAME is not defined'
+}
+if (!process.env.CHARTING_LIBRARY_ACCESS_TOKEN) {
+  throw 'CHARTING_LIBRARY_ACCESS_TOKEN is not defined'
+}
+if (!process.env.CHARTING_LIBRARY_REPOSITORY) {
+  throw 'CHARTING_LIBRARY_REPOSITORY is not defined'
+}
+if (!process.env.NEXT_PUBLIC_PYTH_ENDPOINT) {
+  throw 'NEXT_PUBLIC_PYTH_ENDPOINT is not defined'
+}
+if (!process.env.NEXT_PUBLIC_MAINNET_REST) {
+  throw 'NEXT_PUBLIC_MAINNET_REST is not defined'
+}
 if (!process.env.NEXT_PUBLIC_RPC) {
   throw 'NEXT_PUBLIC_RPC is not defined'
-} else {
-  console.log('✅ Required env variables set')
 }
+
+console.log('✅ Required env variables set')

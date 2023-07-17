@@ -7,7 +7,7 @@ import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import { BN } from 'utils/helpers'
 
 export default async function getVaults(): Promise<Vault[]> {
-  const vaultConfigs = await getVaultConfigs([])
+  const vaultConfigs = await getVaultConfigs()
   const $vaultUtilizations = getVaultUtilizations(vaultConfigs)
   const $aprs = getAprs()
   const vaultMetaDatas = ENV.NETWORK === 'testnet' ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
