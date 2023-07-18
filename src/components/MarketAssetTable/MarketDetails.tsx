@@ -63,9 +63,9 @@ export default function MarketDetails({ data, type }: Props) {
     [
       asset,
       displayCurrencySymbol,
+      convertAmount,
       getConversionRate,
       marketDepositAmount,
-      marketLiquidityAmount,
       marketLiquidationThreshold,
       marketMaxLtv,
       totalBorrowed,
@@ -90,7 +90,14 @@ export default function MarketDetails({ data, type }: Props) {
         title: 'Utilization Rate',
       },
     ],
-    [asset, displayCurrencySymbol, getConversionRate, marketDepositAmount, totalBorrowed],
+    [
+      asset,
+      displayCurrencySymbol,
+      convertAmount,
+      getConversionRate,
+      marketDepositAmount,
+      totalBorrowed,
+    ],
   )
 
   const details: Detail[] = useMemo(
