@@ -7,7 +7,7 @@ import Card from 'components/Card'
 import Divider from 'components/Divider'
 import { ArrowRight } from 'components/Icons'
 import Modal from 'components/Modal'
-import Select from 'components/Select'
+import Switch from 'components/Switch'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import TokenInputWithSlider from 'components/TokenInputWithSlider'
@@ -34,16 +34,12 @@ export default function BorrowModal() {
   const [percentage, setPercentage] = useState(0)
   const [amount, setAmount] = useState(BN(0))
   const [change, setChange] = useState<AccountChange | undefined>()
-  const [selectedAccount, setSelectedAccount] = useState(currentAccount)
   const [isConfirming, setIsConfirming] = useToggle()
+  const [borrowToWallet, setBorrowToWallet] = useToggle()
   const modal = useStore((s) => s.borrowModal)
   const borrow = useStore((s) => s.borrow)
   const repay = useStore((s) => s.repay)
   const asset = modal?.asset ?? ASSETS[0]
-  const accounts = useStore((s) => s.accounts)
-  const accountOptions = accounts?.map((account) => {
-    return { value: account.id, label: `Account ${account.id}` }
-  })
   const isRepay = modal?.isRepay ?? false
 
   function resetState() {
@@ -53,21 +49,22 @@ export default function BorrowModal() {
   }
 
   async function onConfirmClick() {
-    if (!modal?.asset) return
+    if (!modal?.asset || !currentAccount) return
     setIsConfirming(true)
     let result
     if (isRepay) {
       result = await repay({
         fee: hardcodedFee,
-        accountId: selectedAccount?.id ?? '0',
+        accountId: currentAccount.id,
         coin: BNCoin.fromDenomAndBigNumber(modal.asset.denom, amount),
         accountBalance: percentage === 100,
       })
     } else {
       result = await borrow({
         fee: hardcodedFee,
-        accountId: selectedAccount?.id ?? '0',
+        accountId: currentAccount.id,
         coin: { denom: modal.asset.denom, amount: amount.toString() },
+        withdraw: borrowToWallet,
       })
     }
 
@@ -94,10 +91,6 @@ export default function BorrowModal() {
   })
 
   const max = BN(isRepay ? getDebtAmount(modal) : modal?.marketData?.liquidity?.amount ?? '0')
-
-  useEffect(() => {
-    if (!selectedAccount) setSelectedAccount(currentAccount)
-  }, [selectedAccount, currentAccount])
 
   useEffect(() => {
     if (!modal?.asset) return
@@ -167,19 +160,17 @@ export default function BorrowModal() {
               maxText='Max'
             />
             <Divider className='my-6' />
-            <Text size='lg' className='pb-2'>
-              {isRepay ? 'Repay for' : 'Borrow to'}
-            </Text>
-            <div className='relative flex w-full'>
-              <Select
-                options={accountOptions ?? []}
-                title='Accounts'
-                defaultValue={selectedAccount?.id}
-                containerClassName='w-full'
-                onChange={(account) => {
-                  accounts && setSelectedAccount(accounts?.find((a) => a.id === account))
-                }}
-                className='w-full rounded-base border border-white/10 bg-white/5'
+            <div className='flex flex-1 flex-wrap'>
+              <Text className='mb-1 w-full'>Receive funds to Wallet</Text>
+              <Text size='xs' className='text-white/50'>
+                Your borrowed funds will directly go to your wallet
+              </Text>
+            </div>
+            <div className='flex flex-wrap items-center justify-end'>
+              <Switch
+                name='borrow-to-wallet'
+                checked={borrowToWallet}
+                onChange={setBorrowToWallet}
               />
             </div>
           </div>
@@ -192,7 +183,7 @@ export default function BorrowModal() {
             rightIcon={<ArrowRight />}
           />
         </Card>
-        <AccountSummary account={selectedAccount} change={change} />
+        <AccountSummary account={currentAccount} change={change} />
       </div>
     </Modal>
   )

@@ -42,11 +42,15 @@ export default function createBroadcastSlice(
 
   return {
     toast: null,
-    borrow: async (options: { fee: StdFee; accountId: string; coin: Coin }) => {
+    borrow: async (options: { fee: StdFee; accountId: string; coin: Coin; withdraw: boolean }) => {
+      const borrowAction: Action = { borrow: options.coin }
+      const withdrawAction: Action = { withdraw: options.coin }
+      const actions = options.withdraw ? [borrowAction, withdrawAction] : [borrowAction]
+
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
-          actions: [{ borrow: options.coin }],
+          actions,
         },
       }
 
@@ -54,7 +58,9 @@ export default function createBroadcastSlice(
 
       handleResponseMessages(
         response,
-        `Borrowed ${formatAmountWithSymbol(options.coin)} to Account ${options.accountId}`,
+        `Borrowed ${formatAmountWithSymbol(options.coin)} to ${
+          options.withdraw ? 'Wallet' : `Account ${options.accountId}`
+        }`,
       )
       return !!response.result
     },
