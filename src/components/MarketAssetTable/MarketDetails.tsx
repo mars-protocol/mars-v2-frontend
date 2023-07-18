@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { FormattedNumber } from 'components/FormattedNumber'
 import TitleAndSubCell from 'components/TitleAndSubCell'
@@ -21,6 +21,7 @@ export default function MarketDetails({ data, type }: Props) {
     getConversionRate,
     symbol: displayCurrencySymbol,
   } = useDisplayCurrencyPrice()
+
   const {
     asset,
     marketMaxLtv,
@@ -31,66 +32,70 @@ export default function MarketDetails({ data, type }: Props) {
 
   const totalBorrowed = marketDepositAmount.minus(marketLiquidityAmount)
 
-  const details: Detail[] = useMemo(
-    () =>
-      type === 'lend'
-        ? [
-            {
-              amount: convertAmount(asset, marketDepositAmount).toNumber(),
-              options: { abbreviated: true, suffix: ` ${displayCurrencySymbol}` },
-              title: 'Total Supplied',
-            },
-            {
-              amount: marketMaxLtv * 100,
-              options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
-              title: 'Max LTV',
-            },
-            {
-              amount: marketLiquidationThreshold * 100,
-              options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
-              title: 'Liquidation Threshold',
-            },
-            {
-              amount: getConversionRate(asset.denom).toNumber(),
-              options: { minDecimals: 2, maxDecimals: 2, suffix: ` ${displayCurrencySymbol}` },
-              title: 'Oracle Price',
-            },
-            {
-              amount: totalBorrowed.dividedBy(marketDepositAmount).multipliedBy(100).toNumber(),
-              options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
-              title: 'Utilization Rate',
-            },
-          ]
-        : [
-            {
-              amount: convertAmount(
-                asset,
-                marketDepositAmount.minus(marketLiquidityAmount),
-              ).toNumber(),
-              options: { abbreviated: true, suffix: ` ${displayCurrencySymbol}` },
-              title: 'Total Borrowed',
-            },
-            {
-              amount: getConversionRate(asset.denom).toNumber(),
-              options: { minDecimals: 2, maxDecimals: 2, suffix: ` ${displayCurrencySymbol}` },
-              title: 'Oracle Price',
-            },
-            {
-              amount: totalBorrowed.dividedBy(marketDepositAmount).multipliedBy(100).toNumber(),
-              options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
-              title: 'Utilization Rate',
-            },
-          ],
+  const getLendingMarketDetails = useCallback(
+    () => [
+      {
+        amount: convertAmount(asset, marketDepositAmount).toNumber(),
+        options: { abbreviated: true, suffix: ` ${displayCurrencySymbol}` },
+        title: 'Total Supplied',
+      },
+      {
+        amount: marketMaxLtv * 100,
+        options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
+        title: 'Max LTV',
+      },
+      {
+        amount: marketLiquidationThreshold * 100,
+        options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
+        title: 'Liquidation Threshold',
+      },
+      {
+        amount: getConversionRate(asset.denom).toNumber(),
+        options: { minDecimals: 2, maxDecimals: 2, suffix: ` ${displayCurrencySymbol}` },
+        title: 'Oracle Price',
+      },
+      {
+        amount: totalBorrowed.dividedBy(marketDepositAmount).multipliedBy(100).toNumber(),
+        options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
+        title: 'Utilization Rate',
+      },
+    ],
     [
       asset,
+      displayCurrencySymbol,
+      getConversionRate,
       marketDepositAmount,
+      marketLiquidityAmount,
       marketLiquidationThreshold,
       marketMaxLtv,
-      displayCurrencySymbol,
-      convertAmount,
-      getConversionRate,
       totalBorrowed,
     ],
+  )
+
+  const getBorrowMarketDetails = useCallback(
+    () => [
+      {
+        amount: convertAmount(asset, totalBorrowed).toNumber(),
+        options: { abbreviated: true, suffix: ` ${displayCurrencySymbol}` },
+        title: 'Total Borrowed',
+      },
+      {
+        amount: getConversionRate(asset.denom).toNumber(),
+        options: { minDecimals: 2, maxDecimals: 2, suffix: ` ${displayCurrencySymbol}` },
+        title: 'Oracle Price',
+      },
+      {
+        amount: totalBorrowed.dividedBy(marketDepositAmount).multipliedBy(100).toNumber(),
+        options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
+        title: 'Utilization Rate',
+      },
+    ],
+    [asset, displayCurrencySymbol, getConversionRate, marketDepositAmount, totalBorrowed],
+  )
+
+  const details: Detail[] = useMemo(
+    () => (type === 'lend' ? getLendingMarketDetails() : getBorrowMarketDetails()),
+    [type, getLendingMarketDetails, getBorrowMarketDetails],
   )
 
   return (

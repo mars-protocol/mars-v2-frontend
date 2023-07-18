@@ -126,7 +126,7 @@ export default function BorrowModal() {
       headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col'
     >
-      <div className='flex gap-3 px-6 py-4 border-b border-white/5 gradient-header'>
+      <div className='flex gap-3 border-b border-white/5 px-6 py-4 gradient-header'>
         <TitleAndSubCell
           title={formatPercent(modal?.marketData.borrowRate || '0')}
           sub={'Borrow rate'}
@@ -145,12 +145,12 @@ export default function BorrowModal() {
           sub={'Liquidity available'}
         />
       </div>
-      <div className='flex items-start flex-1 gap-6 p-6'>
+      <div className='flex flex-1 items-start gap-6 p-6'>
         <Card
-          className='flex flex-1 p-4 bg-white/5'
+          className='flex flex-1 bg-white/5 p-4'
           contentClassName='gap-6 flex flex-col justify-between h-full min-h-[380px]'
         >
-          <div className='flex flex-wrap w-full'>
+          <div className='flex w-full flex-wrap'>
             <TokenInputWithSlider
               asset={asset}
               onChange={setAmount}
@@ -160,8 +160,8 @@ export default function BorrowModal() {
               maxText='Max'
             />
             <Divider className='my-6' />
-            <div className='flex flex-wrap flex-1'>
-              <Text className='w-full mb-1'>Receive funds to Wallet</Text>
+            <div className='flex flex-1 flex-wrap'>
+              <Text className='mb-1 w-full'>Receive funds to Wallet</Text>
               <Text size='xs' className='text-white/50'>
                 Your borrowed funds will directly go to your wallet
               </Text>
