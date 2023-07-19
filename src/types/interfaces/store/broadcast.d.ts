@@ -12,7 +12,12 @@ interface BroadcastSlice {
     fee: StdFee
     funds?: Coin[]
   }) => Promise<BroadcastResult>
-  borrow: (options: { fee: StdFee; accountId: string; coin: Coin }) => Promise<boolean>
+  borrow: (options: {
+    fee: StdFee
+    accountId: string
+    coin: Coin
+    borrowToWallet: boolean
+  }) => Promise<boolean>
   createAccount: (options: { fee: StdFee }) => Promise<string | null>
   deleteAccount: (options: { fee: StdFee; accountId: string }) => Promise<boolean>
   deposit: (options: { fee: StdFee; accountId: string; coin: Coin }) => Promise<boolean>

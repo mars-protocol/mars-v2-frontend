@@ -6,6 +6,7 @@ import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
 
 interface Props {
   data: BorrowMarketTableData | LendingMarketTableData
+  type: 'borrow' | 'lend'
 }
 
 interface Detail {
@@ -14,12 +15,13 @@ interface Detail {
   title: string
 }
 
-export default function MarketDetails({ data }: Props) {
+export default function MarketDetails({ data, type }: Props) {
   const {
     convertAmount,
     getConversionRate,
     symbol: displayCurrencySymbol,
   } = useDisplayCurrencyPrice()
+
   const {
     asset,
     marketMaxLtv,
@@ -30,48 +32,73 @@ export default function MarketDetails({ data }: Props) {
 
   const totalBorrowed = marketDepositAmount.minus(marketLiquidityAmount)
 
-  const details: Detail[] = useMemo(
-    () => [
-      {
-        amount: convertAmount(asset, marketDepositAmount).toNumber(),
-        options: { abbreviated: true, suffix: ` ${displayCurrencySymbol}` },
-        title: 'Total Supplied',
-      },
-      {
-        amount: marketMaxLtv * 100,
-        options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
-        title: 'Max LTV',
-      },
-      {
-        amount: marketLiquidationThreshold * 100,
-        options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
-        title: 'Liquidation Threshold',
-      },
-      {
-        amount: getConversionRate(asset.denom).toNumber(),
-        options: { minDecimals: 2, maxDecimals: 2, suffix: ` ${displayCurrencySymbol}` },
-        title: 'Oracle Price',
-      },
-      {
-        amount: totalBorrowed.dividedBy(marketDepositAmount).multipliedBy(100).toNumber(),
-        options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
-        title: 'Utilization Rate',
-      },
-    ],
-    [
-      asset,
-      marketDepositAmount,
-      marketLiquidationThreshold,
-      marketMaxLtv,
-      displayCurrencySymbol,
-      convertAmount,
-      getConversionRate,
-      totalBorrowed,
-    ],
-  )
+  const details: Detail[] = useMemo(() => {
+    function getLendingMarketDetails() {
+      return [
+        {
+          amount: convertAmount(asset, marketDepositAmount).toNumber(),
+          options: { abbreviated: true, suffix: ` ${displayCurrencySymbol}` },
+          title: 'Total Supplied',
+        },
+        {
+          amount: marketMaxLtv * 100,
+          options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
+          title: 'Max LTV',
+        },
+        {
+          amount: marketLiquidationThreshold * 100,
+          options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
+          title: 'Liquidation Threshold',
+        },
+        {
+          amount: getConversionRate(asset.denom).toNumber(),
+          options: { minDecimals: 2, maxDecimals: 2, suffix: ` ${displayCurrencySymbol}` },
+          title: 'Oracle Price',
+        },
+        {
+          amount: totalBorrowed.dividedBy(marketDepositAmount).multipliedBy(100).toNumber(),
+          options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
+          title: 'Utilization Rate',
+        },
+      ]
+    }
+
+    function getBorrowMarketDetails() {
+      return [
+        {
+          amount: convertAmount(asset, totalBorrowed).toNumber(),
+          options: { abbreviated: true, suffix: ` ${displayCurrencySymbol}` },
+          title: 'Total Borrowed',
+        },
+        {
+          amount: getConversionRate(asset.denom).toNumber(),
+          options: { minDecimals: 2, maxDecimals: 2, suffix: ` ${displayCurrencySymbol}` },
+          title: 'Oracle Price',
+        },
+        {
+          amount: totalBorrowed.dividedBy(marketDepositAmount).multipliedBy(100).toNumber(),
+          options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
+          title: 'Utilization Rate',
+        },
+      ]
+    }
+
+    if (type === 'lend') return getLendingMarketDetails()
+    return getBorrowMarketDetails()
+  }, [
+    type,
+    asset,
+    marketDepositAmount,
+    marketMaxLtv,
+    marketLiquidationThreshold,
+    totalBorrowed,
+    displayCurrencySymbol,
+    convertAmount,
+    getConversionRate,
+  ])
 
   return (
-    <div className='flex flex-1 justify-center rounded-md bg-white bg-opacity-5'>
+    <div className='flex flex-1 justify-between rounded-md bg-white bg-opacity-5'>
       {details.map((detail, index) => (
         <TitleAndSubCell
           key={index}

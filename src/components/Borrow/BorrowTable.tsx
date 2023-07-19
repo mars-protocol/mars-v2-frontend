@@ -33,7 +33,7 @@ export default function BorrowTable(props: Props) {
           resetExpanded={table.resetExpanded}
           rowData={row}
           expandedActionButtons={<BorrowActionButtons data={row.original} />}
-          expandedDetails={<MarketDetails data={row.original} />}
+          expandedDetails={<MarketDetails data={row.original} type='borrow' />}
         />
       )
     },
