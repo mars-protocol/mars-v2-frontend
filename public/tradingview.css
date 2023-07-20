@@ -1,8 +1,11 @@
 :root {
   --tv-background: #220e1d;
-  --tv-menu-background: #31142a !important;
-  --tv-menu-text: rgba(255, 255, 255, 0.3) !important;
-  --tv-menu-text-hover: rgba(255, 255, 255, 1) !important;
+  --tv-form-background: #7f78e8;
+  --tv-button-background: linear-gradient(180deg, #7f78e8 0%, #926ac8 100%);
+  --tv-button-background-hover: linear-gradient(180deg, #926ac8 0%, #7f78e8 100%);
+  --tv-menu-background: #31142a;
+  --tv-menu-text: rgba(255, 255, 255, 0.3);
+  --tv-menu-text-hover: rgba(255, 255, 255, 1);
 }
 
 .theme-dark:root {
@@ -19,6 +22,9 @@
   --tv-color-toolbar-toggle-button-background-active: rgba(255, 255, 255, 0.2);
   --tv-color-toolbar-toggle-button-background-active-hover: rgba(255, 255, 255, 0.2);
   --tv-color-toolbar-divider-background: var(--tv-menu-text);
+  --ui-lib-button-default-color-content: #fff;
+  --ui-lib-button-default-color-border: var(--tv-form-background);
+  --ui-lib-button-default-color-bg: var(--tv-button-background);
 }
 
 /* Favorited menus */
@@ -36,8 +42,7 @@
 
 /* Floating menu */
 .floating-toolbar-react-widgets__button:hover,
-.button-reABrhVR:hover:before,
-.button-uO7HM85b.isInteractive-uO7HM85b:hover:before {
+[class^='button-']:hover:before {
   background: var(--tv-menu-background) !important;
   color: var(--tv-menu-text-hover) !important;
   border-color: var(--tv-menu-background) !important;
@@ -52,100 +57,254 @@ div[data-role='button']:hover,
 /* Indiator dialog list items */
 div[data-role="dialog-content"] div[data-role="list-item"]:hover,
 /* Series left sidebar */
-.active-a7Y2yl3G {
+[class^='active-'] {
   cursor: pointer;
 }
 
 /* General pop-up menus */
-div[data-name='popup-menu-container'] div:not(.swatch-pNRFZrPx, .opacitySliderGradient-uujjxY8O),
+div[data-name='popup-menu-container'] div:not([class^='swatch-'], [class^='opacitySliderGradient-']),
 /* Indicator dialog */
 div[data-name='indicators-dialog'] *,
 /* Layers dialog */
 div[data-name="object-tree-dialog"] * ,
 /* Layers dialog */
 div[data-name="series-properties-dialog"],
-/* Series left sidetabs */
-.tab-a7Y2yl3G:hover,
-.active-a7Y2yl3G,
 /* Checkbox */
-.check-bUw_gKIQ,
+[class^='close-'],
 /* Close buton series popup */
-.close-HS2PTQRJ:hover {
+[class^='close-']:hover {
   background: var(--tv-menu-background) !important;
   outline: white !important;
 }
 
-/* General toolbar popup list items */
-.item-RhC5uhZw,
-/* Emoji topbar items */
-.wrapper-rSoA6gh6 svg,
-.wrapper-rSoA6gh6.categories-TlKkLixs,
-/* Emoji items */
-.wrapper-yrezKVPX svg,
-/* Indiator dialog list items */
-div[data-role="dialog-content"] div[data-role="list-item"] span,
-/*  Layers dialog list item */
-.wrap-G4AKrzja span,
-/* Series proerties */
-div[data-name="series-properties-dialog"],
-/* Series left sidetabs */
-.tab-a7Y2yl3G ,
-/* Close buton series popup */
-.close-HS2PTQRJ {
-  color: var(--tv-menu-text) !important;
+/* Element Highlighting */
+[class^='highlight-'] {
+  border-color: transparent !important;
 }
 
-/* General toolbar popup list items */
-.item-RhC5uhZw:hover,
-/* Sub headers for inteval popup */
-.section-_8r4li9v:hover,
-/* Emoji picker categories */
-.wrapper-wawooJAf:hover,
-/* Emoji topbar items */
-.isActive-rSoA6gh6,
-.isActive-rSoA6gh6.categories-TlKkLixs,
-.wrapper-rSoA6gh6:hover svg,
-.wrapper-rSoA6gh6.categories-TlKkLixs:hover,
-/* Emoji items */
-.isActive-yrezKVPX,
-.wrapper-yrezKVPX:hover svg,
-/* Indiator dialog list items */
-div[data-role="dialog-content"] div[data-role="list-item"]:hover span,
-/*  Layers dialog list item */
-.wrap-G4AKrzja:hover span,
-/* Series left sidetabs */
-.tab-a7Y2yl3G:hover,
-/* Series left sidetabs */
-.active-a7Y2yl3G,
-/* Close buton series popup */
-.close-HS2PTQRJ:hover {
-  cursor: pointer !important;
+/* Element Highlighting */
+[class^='wrap-'] [class^='title-'],
+[class^='label-'] [class^='title-'] {
   color: var(--tv-menu-text-hover) !important;
 }
 
+/* Range Slider */
+[class^='opacitySliderGradient-'] {
+  background: linear-gradient(90deg, transparent, rgb(255, 160, 187)) !important;
+}
+
+[class^='opacitySlider-'] {
+  color: var(--tv-menu-text) !important;
+}
+
+[class^='rangeSliderMiddle-'] {
+  background-color: var(--tv-form-background) !important;
+}
+
+/* Devider Lines */
+[class^='content-'],
+[class^='container-'],
+[class^='footer-'] {
+  border-color: var(--tv-menu-text) !important;
+}
+
+/* General toolbar popup list items */
+[class^='item-'],
+/* Emoji topbar items */
+/* Emoji items */
+[class^='wrapper-'],
+[class^='categories-'],
+/* Indiator dialog list items */
+div[data-role="dialog-content"] div[data-role="list-item"] span,
+/*  Layers dialog list item */
+[class^='wrap-'],
+/* Series proerties */
+div[data-name="series-properties-dialog"],
+/* Series left sidetabs */
+[class^='tab-'],
+/* Close buton series popup */
+[class^='close-'] {
+  color: var(--tv-menu-text) !important;
+}
+/* General toolbar popup list items */
+[class^='item-']:hover,
+[class^='item-'][class*='interactive-'][class*='hovered-'],
+/* Sub headers for inteval popup */
+[class^='section-']:hover,
+/* Emoji topbar items */
+[class^='isActive-'],
+[class^='categories-'],
+[class^='categories-']:hover,
+/* Indiator dialog list items */
+div[data-role="dialog-content"] div[data-role="list-item"]:hover span,
+/*  Layers dialog list item */
+[class^='wrap-'] [class^='dropdown-']:hover span,
+[class^='wrap-'] [class^='dropdown-']:hover [class^='arrowIcon-'],
+[class^='menuItem-']:hover,
+/* Close buton series popup */
+[class^='close-']:hover {
+  cursor: pointer !important;
+  color: var(--tv-menu-text-hover) !important;
+  background-color: transparent !important;
+}
+
+[class^='scroll-wrap-']:before {
+  background-color: var(--tv-menu-text) !important;
+}
+
+[class^='underline-tabs-']:before {
+  background-color: transparent !important;
+}
+
+/* Series left sidetabs */
+[class^='tab-'][class*='active-'],
+[class^='tab-'][class*='active-'] svg,
+[class^='tab-']:hover,
+[class^='tab-'][class*='active-']:hover,
+[class^='tab-'][class*='active-']:hover svg {
+  background-color: transparent !important;
+  color: var(--tv-menu-text-hover) !important;
+  cursor: pointer !important;
+}
+
+/* Top info bar */
+[class^='legendMainSourceWrapper-'] [class^='item-'],
+[class^='legendMainSourceWrapper-'] [class^='item-']:hover {
+  color: transparent !important;
+}
+
+/* Menu Boxes */
+[class^='menuBox-'],
+[class^='dialog'] {
+  background: var(--tv-menu-background) !important;
+}
+
 /* Top and bottom scroll indicator for toolbar */
-.scrollBot-g7ay5OPA,
-.scrollTop-g7ay5OPA {
+[class^='scrollBot-'],
+[class^='scrollTop-'] {
   cursor: pointer;
   background: var(--tv-menu-background) !important;
 }
 
+/* Buttons for series popup */
+button,
+button:hover {
+  cursor: pointer !important;
+}
+
+[class^='button-'] {
+  background-color: transparent !important;
+  border-radius: 4px !important;
+}
+
+[class^='button-']:hover {
+  cursor: pointer !important;
+  background-color: transparent !important;
+}
+
+button[class^='button-'][class*='primary-'] {
+  border: none !important;
+  color: var(--tv-menu-text-hover) !important;
+  background: var(--tv-button-background) !important;
+}
+
+button[class^='button-'][class*='primary-']:hover {
+  color: var(--tv-menu-text-hover) !important;
+  background: var(--tv-button-background-hover) !important;
+}
+
+button[class^='button-'][class*='secondary-'] {
+  border: 1px solid var(--tv-menu-text) !important;
+  color: var(--tv-menu-text-hover) !important;
+  background: none !important;
+}
+
+button[class^='button-'][class*='secondary-']:hover {
+  border: 1px solid var(--tv-menu-text-hover) !important;
+  color: var(--tv-menu-text-hover) !important;
+  background: none !important;
+}
+
 /* Checkbox */
-.check-bUw_gKIQ {
+[class^='check-'] {
   border-color: var(--tv-menu-text) !important;
 }
 
-/* Buttons for series popup */
-.variant-secondary-OvB35Th_,
-.variant-primary-OvB35Th_ {
+[class^='checkbox-'] [class^='wrapper-'] [class^='input-'] + [class^='box-'] {
   border-color: var(--tv-menu-text) !important;
-  color: var(--tv-menu-text) !important;
-  cursor: pointer;
-  background: none !important;
 }
-.variant-secondary-OvB35Th_:hover,
-.variant-primary-OvB35Th_:hover {
-  border-color: var(--tv-menu-text-hover) !important;
+
+[class^='checkbox-'] [class^='wrapper-'] [class^='input-']:hover + [class^='box-'] {
+  border-color: var(--tv-form-background) !important;
+  cursor: pointer !important;
+}
+
+[class^='checkbox-'] [class^='wrapper-'] [class^='input-']:checked + [class^='box-'] {
+  border-color: var(--tv-form-background) !important;
+  background-color: var(--tv-form-background) !important;
+}
+
+[class^='checkbox-'] [class^='wrapper-'] [class^='input-']:disabled + [class^='box-'] {
+  opacity: 0.5 !important;
+  border-color: var(--tv-menu-text) !important;
+  background-color: transparent !important;
+}
+
+[class^='checkbox-'] [class^='wrapper-'] [class^='input-']:disabled + [class^='box-'] {
+  cursor: default !important;
+}
+
+[class^='checkbox-'] [class^='wrapper-'] [class^='input-']:checked:disabled + [class^='box-'] {
+  border-color: var(--tv-menu-text) !important;
+  background-color: transparent !important;
+}
+
+[class^='checkbox-'] [class^='wrapper-'] [class^='input-']:checked:disabled + [class^='box-'] svg {
+  color: var(--tv-menu-text) !important;
+  stroke: var(--tv-menu-text) !important;
+}
+
+[class^='checkbox-'] [class^='wrapper-'] [class^='input-']:checked + [class^='box-'] svg {
   color: var(--tv-menu-text-hover) !important;
-  background: none !important;
+  stroke: var(--tv-menu-text-hover) !important;
+}
+
+/* Input */
+[class^='container-'][class*='disabled-'] {
+  background-color: transparent !important;
+  opacity: 0.5 !important;
+}
+
+/* Select */
+[class^='container-'][class*='button-'] {
+  border: 1px solid var(--tv-menu-text) !important;
+}
+
+[class^='container-'][class*='button-'][class*='disabled-'] {
+  opacity: 0.5 !important;
+  border: 1px solid var(--tv-menu-text) !important;
+  background-color: transparent !important;
+}
+
+[class^='button-children-'] span {
+  color: var(--tv-menu-text-hover) !important;
+}
+
+/* Scrollbars */
+[class^='scrollWrap-']::-webkit-scrollbar,
+[class^='tabContent-']::-webkit-scrollbar {
+  height: 4px;
+  width: 4px;
+}
+
+[class^='scrollWrap-']::-webkit-scrollbar-thumb,
+[class^='tabContent-']::-webkit-scrollbar-thumb {
+  background-color: var(--tv-menu-text) !important;
+  border: transparent !important;
+  border-radius: 2px;
+}
+
+[class^='scrollWrap-']::-webkit-scrollbar-track,
+[class^='tabContent-']::-webkit-scrollbar-track {
+  border-radius: 2px;
 }
