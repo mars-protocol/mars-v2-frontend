@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
+import AccountCreateFirst from 'components/Account/AccountCreateFirst'
 import AccountList from 'components/Account/AccountList'
 import CreateAccount from 'components/Account/CreateAccount'
 import FundAccount from 'components/Account/FundAccount'
@@ -10,12 +11,13 @@ import { CircularProgress } from 'components/CircularProgress'
 import { Account, Plus, PlusCircled } from 'components/Icons'
 import Overlay from 'components/Overlay'
 import Text from 'components/Text'
+import WalletBridges from 'components/Wallet/WalletBridges'
+import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/constants'
-import { isNumber } from 'utils/parsers'
-import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
 import { BN } from 'utils/helpers'
+import { isNumber } from 'utils/parsers'
 
 const menuClasses = 'absolute isolate flex w-full flex-wrap scrollbar-hide'
 const ACCOUNT_MENU_BUTTON_ID = 'account-menu-button'
@@ -61,10 +63,11 @@ export default function AccountMenuContent(props: Props) {
   }, [address, createAccount, navigate, setIsCreating, setShowMenu])
 
   const handleCreateAccountClick = useCallback(() => {
-    setShowMenu(!showMenu)
-    if (!hasCreditAccounts && checkHasFunds()) {
-      performCreateAccount()
+    if(!checkHasFunds()) {
+      useStore.setState({focusComponent: <WalletBridges />}) 
+      return
     }
+    if(!hasCreditAccounts) useStore.setState({focusComponent: <AccountCreateFirst />})
   }, [checkHasFunds, hasCreditAccounts, performCreateAccount, setShowMenu, showMenu])
 
   useEffect(() => {
@@ -125,7 +128,7 @@ export default function AccountMenuContent(props: Props) {
               )}
             >
               {isAccountSelected && isLoadingAccount && (
-                <div className='flex h-full w-full items-center justify-center p-4'>
+                <div className='flex items-center justify-center w-full h-full p-4'>
                   <CircularProgress size={40} />
                 </div>
               )}
