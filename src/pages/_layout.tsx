@@ -7,13 +7,12 @@ import Footer from 'components/Footer'
 import DesktopHeader from 'components/Header/DesktopHeader'
 import ModalsContainer from 'components/Modals/ModalsContainer'
 import PageMetadata from 'components/PageMetadata'
-import TermsOfService from 'components/TermsOfService'
 import Toaster from 'components/Toaster'
 import useStore from 'store'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
-  const showTermsOfService = useStore((s) => s.showTermsOfService)
+  const focusMode = useStore((s) => s.focusMode)
   const isFullWidth = location.pathname.includes('trade') || location.pathname === '/'
 
   return (
@@ -29,7 +28,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         )}
       >
         <div className={classNames('mx-auto h-full w-full', !isFullWidth && 'max-w-content')}>
-          {showTermsOfService ? <TermsOfService /> : children}
+          {focusMode ? focusMode : children}
         </div>
         <AccountDetails />
       </main>

@@ -20,6 +20,7 @@ export const WalletConnectProvider: FC<Props> = ({ children }) => {
 
   return (
     <WalletManagerProvider
+      walletConnectProjectId={ENV.WALLET_CONNECT_ID}
       // TODO: handle chainIds via constants
       chainIds={[ChainInfoID.OsmosisTestnet, ChainInfoID.Osmosis1]}
       chainInfoOverrides={chainInfoOverrides}

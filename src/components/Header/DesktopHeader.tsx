@@ -17,10 +17,10 @@ export const menuTree: { page: Page; label: string }[] = [
 
 export default function DesktopHeader() {
   const address = useStore((s) => s.address)
-  const isFocusMode = useStore((s) => s.isFocusMode)
+  const focusMode = useStore((s) => s.focusMode)
 
   function handleCloseFocusMode() {
-    useStore.setState({ isFocusMode: false, showTermsOfService: false })
+    useStore.setState({ focusMode: null})
   }
 
   return (
@@ -34,11 +34,11 @@ export default function DesktopHeader() {
       <div
         className={classNames(
           'flex items-center justify-between py-3 pl-6 pr-4',
-          !isFocusMode && ' border-b border-white/20',
+          !focusMode && ' border-b border-white/20',
         )}
       >
         <DesktopNavigation />
-        {isFocusMode ? (
+        {focusMode ? (
           <EscButton onClick={handleCloseFocusMode} />
         ) : (
           <div className='flex gap-4'>

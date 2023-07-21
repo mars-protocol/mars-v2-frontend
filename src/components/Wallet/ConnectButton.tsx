@@ -4,6 +4,7 @@ import { ReactNode, useCallback } from 'react'
 import Button from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
 import { Wallet } from 'components/Icons'
+import TermsOfService from 'components/TermsOfService'
 import { TERMS_OF_SERVICE_KEY } from 'constants/localStore'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
@@ -19,10 +20,9 @@ export default function ConnectButton(props: Props) {
   const [hasAgreedToTerms] = useLocalStorage(TERMS_OF_SERVICE_KEY, false)
 
   const handleConnect = useCallback(() => {
-    if (!hasAgreedToTerms) {
-      useStore.setState({ showTermsOfService: true, isFocusMode: true })
-      return
-    }
+    const focusedComponent = hasAgreedToTerms ? null : <TermsOfService />
+    useStore.setState({ focusMode: focusedComponent })
+    if (!hasAgreedToTerms) return
     connect()
   }, [connect, hasAgreedToTerms])
 

@@ -15,9 +15,9 @@ interface BenefitsProps {
 
 function Benefits({ benefits }: BenefitsProps) {
   return (
-    <ul className='w-full list-none px-0 py-3'>
+    <ul className='w-full px-0 py-3 list-none'>
       {benefits.map((benefit, index) => (
-        <li className='relative my-6 flex h-6 w-full items-center px-0 pl-8' key={index}>
+        <li className='relative flex items-center w-full h-6 px-0 pl-8 my-6' key={index}>
           <div
             className={classNames(
               'absolute left-0 top-0 isolate h-6 w-6 rounded-full bg-white/10',
@@ -40,13 +40,13 @@ export default function TermsOfService() {
   const [_, setHasAgreedToTerms] = useLocalStorage(TERMS_OF_SERVICE_KEY, false)
 
   const handleAgreeTermsOfService = useCallback(() => {
-    useStore.setState({ showTermsOfService: false, isFocusMode: false })
+    useStore.setState({focusMode: null })
     setHasAgreedToTerms(true)
     connect()
   }, [connect, setHasAgreedToTerms])
 
   return (
-    <div className='relative flex h-full w-full items-center justify-center'>
+    <div className='relative flex items-center justify-center w-full h-full'>
       <div className='w-100'>
         <Text size='4xl' className='w-full pb-2'>
           Master the Red Planet
