@@ -15,13 +15,19 @@ import {
 } from 'utils/health_computer'
 import { convertAccountToPositions } from 'utils/accounts'
 import { VaultPositionValue } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import useStore from 'store'
 
 export default function useHealthComputer(account: Account) {
   const { data: prices } = usePrices()
   const { data: assetParams } = useAssetParams()
   const { data: vaultConfigs } = useVaultConfigs()
+  const baseCurrency = useStore((s) => s.baseCurrency)
 
   const positions = useMemo(() => convertAccountToPositions(account), [account])
+  const baseCurrencyPrice = useMemo(
+    () => prices.find((price) => price.denom === baseCurrency.denom)?.amount || 0,
+    [prices, baseCurrency.denom],
+  )
 
   const vaultPositionValues = useMemo(
     () =>
@@ -36,22 +42,27 @@ export default function useHealthComputer(account: Account) {
           vault_coin: {
             amount: '0', // Not used by healthcomputer
             denom: curr.denoms.vault,
-            value: curr.values.primary.plus(curr.values.secondary).integerValue().toString(),
+            value: curr.values.primary
+              .div(baseCurrencyPrice)
+              .plus(curr.values.secondary.div(baseCurrencyPrice))
+              .integerValue()
+              .toString(),
           },
         }
         return prev
       }, {} as { [key: string]: VaultPositionValue }),
-    [account.vaults, prices],
+    [account.vaults, prices, baseCurrencyPrice],
   )
 
-  const priceData = useMemo(
-    () =>
-      prices.reduce((prev, curr) => {
-        prev[curr.denom] = curr.amount
-        return prev
-      }, {} as { [key: string]: string }),
-    [prices],
-  )
+  const priceData = useMemo(() => {
+    const baseCurrencyPrice =
+      prices.find((price) => price.denom === baseCurrency.denom)?.amount || 0
+
+    return prices.reduce((prev, curr) => {
+      prev[curr.denom] = curr.amount.div(baseCurrencyPrice).decimalPlaces(18).toString()
+      return prev
+    }, {} as { [key: string]: string })
+  }, [prices, baseCurrency.denom])
 
   const denomsData = useMemo(
     () =>

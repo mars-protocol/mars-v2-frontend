@@ -1,15 +1,22 @@
-import { useParams } from 'react-router-dom'
-
 import { Gauge } from 'components/Gauge'
 import { Heart } from 'components/Icons'
 import Text from 'components/Text'
-import { isNumber } from 'utils/parsers'
+import useCurrentAccount from 'hooks/useCurrentAccount'
 
-export default function AccountDetails() {
-  const { accountId } = useParams()
-  const hasAccount = isNumber(accountId)
+interface Props {
+  account: Account
+}
 
-  return hasAccount ? (
+export default function AccountDetailsController() {
+  const account = useCurrentAccount()
+
+  if (!account) return null
+
+  return <AccountDetails account={account} />
+}
+
+function AccountDetails(props: Props) {
+  return (
     <div
       data-testid='account-details'
       className='w-16 rounded-base border border-white/20 bg-white/5 backdrop-blur-sticky'
@@ -40,5 +47,5 @@ export default function AccountDetails() {
         </Text>
       </div>
     </div>
-  ) : null
+  )
 }

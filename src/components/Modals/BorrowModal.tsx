@@ -105,7 +105,10 @@ function BorrowModal(props: Props) {
   })
 
   useEffect(() => {
-    if (isRepay) setMax(BN(getDebtAmount(modal)))
+    if (isRepay) {
+      setMax(BN(getDebtAmount(modal)))
+      return
+    }
 
     computeMaxBorrowAmount(asset.denom).then((maxBorrowAmount) => {
       setMax(BN(Math.min(maxBorrowAmount, modal?.marketData?.liquidity?.amount.toNumber() || 0)))
