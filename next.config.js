@@ -2,6 +2,13 @@
 
 const nextConfig = {
   reactStrictMode: true,
+  images: {
+    domains: [
+      'assets.leapwallet.io',
+      'raw.githubusercontent.com',
+      'xdefi-static.s3.eu-west-1.amazonaws.com',
+    ],
+  },
   async rewrites() {
     return [
       {

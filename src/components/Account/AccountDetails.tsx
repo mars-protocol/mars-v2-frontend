@@ -3,13 +3,15 @@ import { useParams } from 'react-router-dom'
 import { Gauge } from 'components/Gauge'
 import { Heart } from 'components/Icons'
 import Text from 'components/Text'
+import useStore from 'store'
 import { isNumber } from 'utils/parsers'
 
 export default function AccountDetails() {
+  const address = useStore((s) => s.address)
   const { accountId } = useParams()
   const hasAccount = isNumber(accountId)
 
-  return hasAccount ? (
+  return hasAccount && address ? (
     <div
       data-testid='account-details'
       className='w-16 rounded-base border border-white/20 bg-white/5 backdrop-blur-sticky'

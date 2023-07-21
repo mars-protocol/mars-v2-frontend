@@ -16,7 +16,8 @@
   },
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.31.0",
-    "@marsprotocol/wallet-connector": "^2.0.1",
+    "@delphi-labs/shuttle-react": "^3.3.0",
+    "@keplr-wallet/cosmos": "^0.12.16",
     "@sentry/nextjs": "^7.58.1",
     "@tanstack/react-table": "^8.9.3",
     "@tippyjs/react": "^4.2.6",
@@ -30,6 +31,7 @@
     "react-dom": "^18.2.0",
     "react-draggable": "^4.4.5",
     "react-helmet": "^6.1.0",
+    "react-qr-code": "^2.0.11",
     "react-router-dom": "^6.14.1",
     "react-spring": "^9.7.2",
     "react-toastify": "^9.1.3",

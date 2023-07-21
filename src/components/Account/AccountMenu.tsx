@@ -2,8 +2,8 @@ import { Suspense } from 'react'
 
 import AccountMenuContent from 'components/Account/AccountMenuContent'
 import Loading from 'components/Loading'
-import useStore from 'store'
 import useAccounts from 'hooks/useAccounts'
+import useStore from 'store'
 
 function Content() {
   const address = useStore((s) => s.address)

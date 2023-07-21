@@ -1,6 +1,6 @@
-import { MsgExecuteContract } from '@marsprotocol/wallet-connector'
 import { isMobile } from 'react-device-detect'
 import { GetState, SetState } from 'zustand'
+import { MsgExecuteContract } from '@delphi-labs/shuttle-react'
 
 import { ENV } from 'constants/env'
 import { Store } from 'store'

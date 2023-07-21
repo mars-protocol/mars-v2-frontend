@@ -9,9 +9,9 @@ export function resolvePositionResponses(responses: CreditManagerPosition[]): Ac
 export function resolvePositionResponse(response: CreditManagerPosition): Account {
   return {
     id: response.account_id,
-    debts: response.debts.map((debt) => new BNCoin(debt)),
-    lends: response.lends.map((lend) => new BNCoin(lend)),
-    deposits: response.deposits.map((deposit) => new BNCoin(deposit)),
+    debts: response.debts?.map((debt) => new BNCoin(debt)),
+    lends: response.lends?.map((lend) => new BNCoin(lend)),
+    deposits: response.deposits?.map((deposit) => new BNCoin(deposit)),
     vaults: response.vaults,
   }
 }

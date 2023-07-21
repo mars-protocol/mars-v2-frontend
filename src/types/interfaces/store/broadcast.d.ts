@@ -1,12 +1,12 @@
 const BNCoin = import('types/classes/BNCoin').BNCoin
 
 interface BroadcastResult {
-  result?: import('@marsprotocol/wallet-connector').TxBroadcastResult
+  result?: import('@delphi-labs/shuttle-react').TxBroadcastResult
   error?: string
 }
 
 interface BroadcastSlice {
-  toast: { message: string; isError?: boolean } | null
+  toast: { message: string; isError?: boolean; title?: string } | null
   executeMsg: (options: {
     msg: Record<string, unknown>
     fee: StdFee

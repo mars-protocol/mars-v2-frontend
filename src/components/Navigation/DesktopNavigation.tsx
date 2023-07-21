@@ -8,7 +8,7 @@ import { getRoute } from 'utils/route'
 
 export default function DesktopNavigation() {
   const { address, accountId } = useParams()
-  const focusMode = useStore((s) => s.focusMode)
+  const focusComponent = useStore((s) => s.focusComponent)
 
   function getIsActive(href: string) {
     return location.pathname.includes(href)
@@ -21,7 +21,7 @@ export default function DesktopNavigation() {
           <Logo className='text-white' />
         </span>
       </NavLink>
-      {!focusMode && (
+      {!focusComponent && (
         <div className='flex gap-8 px-6'>
           {menuTree.map((item, index) => (
             <NavLink

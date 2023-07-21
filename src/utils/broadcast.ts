@@ -1,7 +1,7 @@
-import { TxBroadcastResult } from '@marsprotocol/wallet-connector'
+import { BroadcastResult } from '@delphi-labs/shuttle-react'
 
 export function getSingleValueFromBroadcastResult(
-  response: TxBroadcastResult,
+  response: BroadcastResult,
   messageType: string,
   messageKey: string,
 ): string | null {
