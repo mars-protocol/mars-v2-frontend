@@ -24,13 +24,13 @@ export const WALLETS: WalletInfos = {
     name: 'Keplr Wallet',
     install: 'Install Keplr Wallet',
     installURL: 'https://www.keplr.app/download',
-    imageURL: '/wallets/keplr.png',
+    imageURL: '/images/wallets/keplr.png',
     supportedChains: [ChainInfoID.Osmosis1, ChainInfoID.OsmosisDevnet, ChainInfoID.OsmosisTestnet],
   },
   [WalletID.KeplrMobile]: {
     name: 'Keplr Wallet',
     walletConnect: 'Keplr WalletConnect',
-    imageURL: '/wallets/keplr.png',
+    imageURL: '/images/wallets/keplr.png',
     mobileImageURL:
       'https://raw.githubusercontent.com/mars-protocol/wallet-connector/main/src/components/ui/images/keplr-wallet-connect.png',
     supportedChains: [ChainInfoID.Osmosis1],
@@ -48,7 +48,7 @@ export const WALLETS: WalletInfos = {
     install: 'Install Station Wallet',
     installURL:
       'https://chrome.google.com/webstore/detail/station-wallet/aiifbnbfobpmeekipheeijimdpnlpgpp',
-    imageURL: '/wallets/station.png',
+    imageURL: '/images/wallets/station.png',
     supportedChains: [ChainInfoID.Osmosis1],
   },
   [WalletID.Xdefi]: {

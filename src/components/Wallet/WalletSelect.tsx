@@ -3,11 +3,14 @@ import classNames from 'classnames'
 import Image from 'next/image'
 import React, { useState } from 'react'
 import QRCode from 'react-qr-code'
+import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 
 import Button from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
-import { ChevronRight, Cross, ExternalLink } from 'components/Icons'
+import { ChevronLeft, ChevronRight } from 'components/Icons'
 import Text from 'components/Text'
+import WalletFetchBalancesAndAccounts from 'components/Wallet/WalletFetchBalancesAndAccounts'
+import WalletTutorial from 'components/Wallet/WalletTutorial'
 import { CHAINS } from 'constants/chains'
 import { ENV } from 'constants/env'
 import { WALLETS } from 'constants/wallets'
@@ -16,18 +19,21 @@ import useStore from 'store'
 import { WalletID } from 'types/enums/wallet'
 import { isAndroid, isIOS, isMobile } from 'utils/mobile'
 
+const currentChainId = ENV.CHAIN_ID
+const currentChain = CHAINS[currentChainId]
+
 const mapErrorMessages = (providerId: string, errorMessage: string) => {
   if (providerId === 'station') {
     if (errorMessage.match('Wallet not connected to the network with chainId')) {
-      return 'Your wallet is not connected to the correct network. Please switch your wallet to the network you selected on the UI'
+      return `Your wallet is not connected to the correct network. Please switch your wallet to the ${currentChain.name} network`
     }
   }
 
   return errorMessage
 }
-
 export default function WalletSelect() {
-  const { extensionProviders, mobileProviders, connect, mobileConnect } = useShuttle()
+  const { extensionProviders, mobileProviders, connect, mobileConnect, simulate, sign, broadcast } =
+    useShuttle()
   const [isConnecting, setIsConnecting] = useToggle(false)
   const [qrCodeUrl, setQRCodeUrl] = useState('')
 
@@ -36,15 +42,25 @@ export default function WalletSelect() {
     const sortValueB = b.initialized ? 0 : 1
     return sortValueA - sortValueB
   })
-  const currentChainId = ENV.CHAIN_ID
-  const currentChain = CHAINS[currentChainId]
 
   const handleConnectClick = async (extensionProviderId: string, chainId: string) => {
     setIsConnecting(true)
 
     try {
       const response = await connect({ extensionProviderId, chainId })
-      useStore.setState({ address: response.account.address, focusComponent: null })
+      const cosmClient = await CosmWasmClient.connect(response.network.rpc)
+      const walletClient: WalletClient = {
+        broadcast,
+        cosmWasmClient: cosmClient,
+        connectedWallet: response,
+        sign,
+        simulate,
+      }
+      useStore.setState({
+        client: walletClient,
+        address: response.account.address,
+        focusComponent: <WalletFetchBalancesAndAccounts />,
+      })
     } catch (error) {
       if (error instanceof Error) {
         useStore.setState({
@@ -118,27 +134,27 @@ export default function WalletSelect() {
       </Text>
       <div className='relative flex w-full flex-wrap'>
         {isConnecting && (
-          <div className='absolute top-3 flex w-full justify-center'>
+          <div className='absolute top-4 flex w-full justify-center'>
             <CircularProgress size={40} />
           </div>
         )}
         {qrCodeUrl && (
-          <div className='absolute top-3 flex w-full flex-col items-center justify-center gap-2 text-center'>
+          <div className='absolute top-4 flex w-full flex-col items-center justify-center gap-2 text-center'>
             <div className='mb-4 rounded-sm bg-white p-2'>
               <QRCode value={qrCodeUrl} />
             </div>
             <Button
               color='secondary'
-              leftIcon={<Cross />}
+              leftIcon={<ChevronLeft />}
               iconClassName='w-3'
               onClick={() => setQRCodeUrl('')}
-              text='Close'
+              text='Back'
             />
           </div>
-        )}{' '}
+        )}
         <div
           className={classNames(
-            'flex w-full flex-wrap items-start gap-3 pt-3',
+            'flex w-full flex-wrap items-start gap-3 pt-4',
             hideWalletList && 'pointer-events-none opacity-0',
           )}
         >
@@ -158,7 +174,7 @@ export default function WalletSelect() {
                               color='tertiary'
                               className='flex w-full px-4 py-3'
                               onClick={() => {
-                                document.location.href = WALLETS[walletId].installURL ?? '/'
+                                window.open(WALLETS[walletId].installURL ?? '/', '_blank')
                               }}
                             >
                               <Image
@@ -236,17 +252,7 @@ export default function WalletSelect() {
               </React.Fragment>
             )
           })}
-          <Text size='sm' className='w-full pt-3 text-center text-white/60'>
-            New with wallets?{' '}
-            <a
-              href='https://docs.marsprotocol.io/docs/learn/workstation/basics/basics-intro'
-              target='_blank'
-              className='leading-4 text-white hover:underline'
-            >
-              Learn more
-              <ExternalLink className='-mt-1 ml-1 inline w-3.5' />
-            </a>
-          </Text>
+          <WalletTutorial type='wallet' />
         </div>
       </div>
     </div>
