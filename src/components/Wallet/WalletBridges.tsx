@@ -3,10 +3,10 @@ import Image from 'next/image'
 import { useCallback } from 'react'
 
 import Button from 'components/Button'
+import FocusComponent from 'components/FocusedComponent'
 import { ChevronRight } from 'components/Icons'
 import Text from 'components/Text'
 import WalletSelect from 'components/Wallet/WalletSelect'
-import WalletTutorial from 'components/Wallet/WalletTutorial'
 import { BRIDGES } from 'constants/bridges'
 import { CHAINS } from 'constants/chains'
 import { ENV } from 'constants/env'
@@ -43,27 +43,24 @@ export default function WalletBridges() {
   }, [currentWallet, disconnectWallet])
 
   return (
-    <div className='min-h-[600px] w-100'>
-      <Text size='4xl' className='w-full pb-2 text-center'>
-        No supported assets
-      </Text>
-      <Text size='sm' className='h-14 w-full text-center text-white/60'>
-        {`Your connected wallet has no (supported) assets. To create your account, please connect a
-        different ${currentChain.name} address or bridge assets.`}
-      </Text>
-      <div className='flex w-full flex-wrap items-start gap-3 pb-6 pt-4'>
+    <FocusComponent
+      title='No supported assets'
+      copy={`Your connected wallet has no (supported) assets. To create your account, please connect a
+    different ${currentChain.name} address or bridge assets.`}
+      button={{
+        className: 'w-full mt-4',
+        text: 'Connect different wallet',
+        color: 'tertiary',
+        onClick: handleClick,
+        size: 'lg',
+      }}
+      docs='wallet'
+    >
+      <div className='flex w-full flex-wrap gap-3'>
         {BRIDGES.map((bridge) => (
           <Bridge key={bridge.name} {...bridge} />
         ))}
       </div>
-      <Button
-        className='w-full'
-        text='Connect different wallet'
-        color='tertiary'
-        onClick={handleClick}
-        size='lg'
-      />
-      <WalletTutorial type='wallet' />
-    </div>
+    </FocusComponent>
   )
 }

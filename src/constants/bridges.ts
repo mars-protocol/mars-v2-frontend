@@ -5,7 +5,7 @@ export const BRIDGES: Bridge[] = [
     image: '/images/bridges/gravity.png',
   },
   {
-    name: 'Satellite by Acelar',
+    name: 'Satellite by Axelar',
     url: 'https://satellite.money',
     image: '/images/bridges/satellite.png',
   },

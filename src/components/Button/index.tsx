@@ -20,27 +20,6 @@ import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { REDUCE_MOTION_KEY } from 'constants/localStore'
 import useLocalStorage from 'hooks/useLocalStorage'
 
-interface Props {
-  children?: string | ReactNode
-  className?: string
-  color?: 'primary' | 'secondary' | 'tertiary' | 'quaternary'
-  disabled?: boolean
-  id?: string
-  showProgressIndicator?: boolean
-  size?: 'xs' | 'sm' | 'md' | 'lg'
-  text?: string | ReactNode
-  variant?: 'solid' | 'transparent' | 'round' | 'rounded'
-  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
-  leftIcon?: ReactElement
-  rightIcon?: ReactElement
-  iconClassName?: string
-  hasSubmenu?: boolean
-  hasFocus?: boolean
-  dataTestId?: string
-  tabIndex?: number
-  textClassNames?: string
-}
-
 const Button = React.forwardRef(function Button(
   {
     children,
@@ -61,7 +40,7 @@ const Button = React.forwardRef(function Button(
     dataTestId,
     tabIndex = 0,
     textClassNames,
-  }: Props,
+  }: ButtonProps,
   ref,
 ) {
   const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)

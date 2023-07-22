@@ -1,0 +1,33 @@
+import Button from 'components/Button'
+import Text from 'components/Text'
+import DocsLink from 'components/DocsLink'
+
+interface Props {
+  title: string
+  copy: string
+  children?: React.ReactNode
+  button?: ButtonProps
+  docs?: 'wallet' | 'account' | 'terms'
+}
+
+export default function FocusComponent(props: Props) {
+  return (
+    <div className='min-h-[600px] w-100'>
+      <Text size='4xl' className='w-full pb-2 text-center'>
+        {props.title}
+      </Text>
+      <Text size='sm' className='min-h-14 w-full text-center text-white/60'>
+        {props.copy}
+      </Text>
+      {props.children && (
+        <div className='relative flex w-full flex-wrap justify-center pt-4'>{props.children}</div>
+      )}
+      {props.button && (
+        <div className='flex w-full justify-center'>
+          <Button {...props.button} />
+        </div>
+      )}
+      {props.docs && <DocsLink type={props.docs} />}
+    </div>
+  )
+}

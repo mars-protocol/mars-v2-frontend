@@ -2,7 +2,7 @@ import { Suspense, useMemo } from 'react'
 
 import AccountCreateFirst from 'components/Account/AccountCreateFirst'
 import { CircularProgress } from 'components/CircularProgress'
-import Text from 'components/Text'
+import FocusComponent from 'components/FocusedComponent'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccounts from 'hooks/useAccounts'
 import useWalletBalances from 'hooks/useWalletBalances'
@@ -19,17 +19,12 @@ interface WalletProps {
 
 function FetchLoading() {
   return (
-    <div className='min-h-[600px] w-100'>
-      <Text size='4xl' className='w-full pb-2 text-center'>
-        Fetching Wallet Data
-      </Text>
-      <Text size='sm' className='h-14 w-full text-center text-white/60'>
-        Please wait, while your wallet balances and accounts are beeing analyzed
-      </Text>
-      <div className='relative flex w-full flex-wrap justify-center pt-4'>
-        <CircularProgress size={40} />
-      </div>
-    </div>
+    <FocusComponent
+      title='Fetching Wallet Data'
+      copy='Please wait, while your wallet balances and accounts are beeing analyzed'
+    >
+      <CircularProgress size={40} />
+    </FocusComponent>
   )
 }
 
