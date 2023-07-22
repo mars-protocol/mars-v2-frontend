@@ -33,7 +33,7 @@ export default function AccountCreateFirst() {
         onClick: handleClick,
         size: 'lg',
       }}
-      tutorial='account'
+      docs='account'
     />
   )
 }
