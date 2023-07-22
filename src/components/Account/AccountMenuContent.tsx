@@ -63,12 +63,17 @@ export default function AccountMenuContent(props: Props) {
   }, [address, createAccount, navigate, setIsCreating, setShowMenu])
 
   const handleCreateAccountClick = useCallback(() => {
-    if(!checkHasFunds()) {
-      useStore.setState({focusComponent: <WalletBridges />}) 
+    if (!checkHasFunds()) {
+      useStore.setState({ focusComponent: <WalletBridges /> })
       return
     }
-    if(!hasCreditAccounts) useStore.setState({focusComponent: <AccountCreateFirst />})
-  }, [checkHasFunds, hasCreditAccounts, performCreateAccount, setShowMenu, showMenu])
+    if (!hasCreditAccounts) {
+      useStore.setState({ focusComponent: <AccountCreateFirst /> })
+      return
+    }
+
+    setShowMenu(!showMenu)
+  }, [checkHasFunds, hasCreditAccounts, setShowMenu, showMenu])
 
   useEffect(() => {
     useStore.setState({ accounts: props.accounts })
@@ -128,7 +133,7 @@ export default function AccountMenuContent(props: Props) {
               )}
             >
               {isAccountSelected && isLoadingAccount && (
-                <div className='flex items-center justify-center w-full h-full p-4'>
+                <div className='flex h-full w-full items-center justify-center p-4'>
                   <CircularProgress size={40} />
                 </div>
               )}

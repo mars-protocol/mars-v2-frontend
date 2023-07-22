@@ -33,13 +33,17 @@ export default function DesktopHeader() {
     >
       <div
         className={classNames(
-          'flex items-center justify-between py-3 pl-6 pr-4',
-          !focusComponent && ' border-b border-white/20',
+          'flex items-center justify-between px-4 py-4',
+          focusComponent ? 'relative isolate' : 'border-b border-white/20',
         )}
       >
         <DesktopNavigation />
         {focusComponent ? (
-          <EscButton onClick={handleCloseFocusMode} />
+          <div className='flex w-full justify-between'>
+            <div className='flex h-5 w-13' />
+            {address && <Wallet />}
+            <EscButton onClick={handleCloseFocusMode} />
+          </div>
         ) : (
           <div className='flex gap-4'>
             {address && <AccountMenu />}

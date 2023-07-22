@@ -24,7 +24,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         className={classNames(
           'lg:min-h-[calc(100vh-89px)]',
           'lg:mt-[65px]',
-          'align-items-center grid h-full min-h-[900px] grid-cols-[auto_min-content] place-items-start gap-6 p-6',
+          'h-full min-h-[900px] gap-6 p-6',
+          focusComponent
+            ? 'flex items-center justify-center'
+            : 'grid grid-cols-[auto_min-content] place-items-start',
         )}
       >
         <div className={classNames('mx-auto h-full w-full', !isFullWidth && 'max-w-content')}>

@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom'
+import classNames from 'classnames'
 
 import { menuTree } from 'components/Header/DesktopHeader'
 import { Logo } from 'components/Icons'
@@ -15,7 +16,11 @@ export default function DesktopNavigation() {
   }
 
   return (
-    <div className='flex flex-1 items-center'>
+    <div
+      className={classNames(
+        focusComponent ? 'absolute left-4 top-3 z-1 block' : 'flex flex-1 items-center',
+      )}
+    >
       <NavLink href={getRoute('trade', address, accountId)}>
         <span className='block h-10 w-10'>
           <Logo className='text-white' />

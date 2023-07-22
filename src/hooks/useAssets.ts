@@ -3,8 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { ASSETS } from 'constants/assets'
 import { FAVORITE_ASSETS_KEY } from 'constants/localStore'
 import { getEnabledMarketAssets } from 'utils/assets'
-
-import useLocalStorage from './useLocalStorage'
+import useLocalStorage from 'hooks/useLocalStorage'
 
 export default function useAssets() {
   const [assets, setAssets] = useState<Asset[]>(ASSETS)

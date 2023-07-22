@@ -29,6 +29,7 @@ export default function WalletConnectedButton() {
   const currentWallet = useCurrentWallet()
   const { disconnectWallet } = useShuttle()
   const address = useStore((s) => s.address)
+  const focusComponent = useStore((s) => s.focusComponent)
   const network = useStore((s) => s.client?.connectedWallet.network)
   const baseAsset = getBaseAsset()
   const { data: walletBalances, isLoading } = useWalletBalances(address)
@@ -106,7 +107,11 @@ export default function WalletConnectedButton() {
           )}
         </div>
       </Button>
-      <Overlay className='right-0 mt-2' show={showDetails} setShow={setShowDetails}>
+      <Overlay
+        className={classNames('mt-2', focusComponent ? '-left-[110px]' : 'right-0')}
+        show={showDetails}
+        setShow={setShowDetails}
+      >
         <div className='flex w-[440px] flex-wrap p-6'>
           <div className='flex-0 mb-4 flex w-full flex-nowrap items-start'>
             <div className='flex w-auto flex-1'>
