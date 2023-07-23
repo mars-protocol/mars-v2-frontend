@@ -2,12 +2,20 @@ import { render, screen } from '@testing-library/react'
 import * as rrd from 'react-router-dom'
 
 import AccountDetails from 'components/Account/AccountDetails'
+import useStore from 'store'
 
 jest.mock('react-router-dom')
 const mockedUseParams = rrd.useParams as jest.Mock
 
 describe('<AccountDetails />', () => {
+  beforeAll(() => {
+    useStore.setState({
+      address: 'walletAddress',
+    })
+  })
+
   afterAll(() => {
+    useStore.clearState()
     mockedUseParams.mockRestore()
   })
 
