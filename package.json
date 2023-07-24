@@ -52,7 +52,7 @@
     "babel-jest": "^29.5.0",
     "dotenv": "^16.3.1",
     "dotenv-cli": "^7.2.1",
-    "eslint": "8.43.0",
+    "eslint": "8.45.0",
     "eslint-config-next": "^13.4.4",
     "eslint-plugin-import": "^2.27.5",
     "identity-obj-proxy": "^3.0.0",
