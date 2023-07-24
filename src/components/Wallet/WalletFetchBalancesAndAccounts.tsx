@@ -12,11 +12,6 @@ import { getBaseAsset } from 'utils/assets'
 import { hardcodedFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
 
-interface WalletProps {
-  accounts: Account[]
-  balances: Coin[]
-}
-
 function FetchLoading() {
   return (
     <FocusComponent
