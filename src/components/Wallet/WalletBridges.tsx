@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { useCallback } from 'react'
 
 import Button from 'components/Button'
-import FocusComponent from 'components/FocusedComponent'
+import FullOverlayContent from 'components/FullOverlayContent'
 import { ChevronRight } from 'components/Icons'
 import Text from 'components/Text'
 import WalletSelect from 'components/Wallet/WalletSelect'
@@ -43,7 +43,7 @@ export default function WalletBridges() {
   }, [currentWallet, disconnectWallet])
 
   return (
-    <FocusComponent
+    <FullOverlayContent
       title='No supported assets'
       copy={`Your connected wallet has no (supported) assets. To create your account, please connect a
     different ${currentChain.name} address or bridge assets.`}
@@ -61,6 +61,6 @@ export default function WalletBridges() {
           <Bridge key={bridge.name} {...bridge} />
         ))}
       </div>
-    </FocusComponent>
+    </FullOverlayContent>
   )
 }

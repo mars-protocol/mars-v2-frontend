@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import FocusComponent from 'components/FocusedComponent'
+import FullOverlayContent from 'components/FullOverlayContent'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/constants'
@@ -22,7 +22,7 @@ export default function AccountCreateFirst() {
   }, [address, createAccount, navigate, setIsCreating])
 
   return (
-    <FocusComponent
+    <FullOverlayContent
       title='Mint your account'
       copy="We'll require you to authorise a transaction in your wallet in order to begin."
       button={{

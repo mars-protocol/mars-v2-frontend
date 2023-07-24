@@ -2,7 +2,7 @@ import { Suspense, useEffect, useMemo } from 'react'
 
 import AccountCreateFirst from 'components/Account/AccountCreateFirst'
 import { CircularProgress } from 'components/CircularProgress'
-import FocusComponent from 'components/FocusedComponent'
+import FullOverlayContent from 'components/FullOverlayContent'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccounts from 'hooks/useAccounts'
 import useWalletBalances from 'hooks/useWalletBalances'
@@ -14,12 +14,12 @@ import { BN } from 'utils/helpers'
 
 function FetchLoading() {
   return (
-    <FocusComponent
+    <FullOverlayContent
       title='Fetching Wallet Data'
       copy='Please wait, while your wallet balances and accounts are beeing analyzed'
     >
       <CircularProgress size={40} />
-    </FocusComponent>
+    </FullOverlayContent>
   )
 }
 

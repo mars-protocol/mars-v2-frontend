@@ -1,6 +1,6 @@
 import Button from 'components/Button'
-import Text from 'components/Text'
 import DocsLink from 'components/DocsLink'
+import Text from 'components/Text'
 
 interface Props {
   title: string
@@ -10,7 +10,7 @@ interface Props {
   docs?: 'wallet' | 'account' | 'terms'
 }
 
-export default function FocusComponent(props: Props) {
+export default function FullOverlayContent(props: Props) {
   return (
     <div className='min-h-[600px] w-100'>
       <Text size='4xl' className='w-full pb-2 text-center'>

@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { useCallback } from 'react'
 
-import FocusComponent from 'components/FocusedComponent'
+import FullOverlayContent from 'components/FullOverlayContent'
 import { Check } from 'components/Icons'
 import Text from 'components/Text'
 import WalletSelect from 'components/Wallet/WalletSelect'
@@ -44,7 +44,7 @@ export default function TermsOfService() {
   }, [setHasAgreedToTerms])
 
   return (
-    <FocusComponent
+    <FullOverlayContent
       title='Master the Red Planet'
       copy='Mars offers the easiest way to margin trade, lend & borrow and yield farm with leverage any whitelisted token'
       button={{
@@ -63,6 +63,6 @@ export default function TermsOfService() {
           'Earn interest on deposited tokens',
         ]}
       />
-    </FocusComponent>
+    </FullOverlayContent>
   )
 }

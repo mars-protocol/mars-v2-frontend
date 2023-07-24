@@ -6,7 +6,7 @@ import QRCode from 'react-qr-code'
 
 import Button from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
-import FocusComponent from 'components/FocusedComponent'
+import FullOverlayContent from 'components/FullOverlayContent'
 import { ChevronLeft, ChevronRight } from 'components/Icons'
 import Text from 'components/Text'
 import WalletFetchBalancesAndAccounts from 'components/Wallet/WalletFetchBalancesAndAccounts'
@@ -132,17 +132,17 @@ export default function WalletSelect() {
 
   if (isConnecting)
     return (
-      <FocusComponent
+      <FullOverlayContent
         title={'Connecting...'}
         copy={'Unlock your wallet and approve the connection'}
       >
         <CircularProgress size={40} />
-      </FocusComponent>
+      </FullOverlayContent>
     )
 
   if (qrCodeUrl)
     return (
-      <FocusComponent
+      <FullOverlayContent
         title={'Scan the QR Code'}
         copy={
           'Open your mobile wallet App and use the QR Scan function to connect via WalletConnect v2'
@@ -158,11 +158,11 @@ export default function WalletSelect() {
         <div className='mb-4 rounded-sm bg-white p-2'>
           <QRCode value={qrCodeUrl} />
         </div>
-      </FocusComponent>
+      </FullOverlayContent>
     )
 
   return (
-    <FocusComponent
+    <FullOverlayContent
       title={'Connect your wallet'}
       copy={`Deposit assets from your ${currentChain.name} address to your Mars credit account.`}
       docs='wallet'
@@ -224,6 +224,6 @@ export default function WalletSelect() {
           )
         })}
       </div>
-    </FocusComponent>
+    </FullOverlayContent>
   )
 }
