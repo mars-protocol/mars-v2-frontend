@@ -2,38 +2,16 @@ import { IS_TESTNET } from 'constants/env'
 import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { getNetCollateralValue } from 'utils/accounts'
 import { BN } from 'utils/helpers'
 import { getTokenPrice, getTokenValue } from 'utils/tokens'
+
+export function getVaultsMetaData() {
+  return IS_TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
+}
 
 export function getVaultMetaData(address: string) {
   const vaults = IS_TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
   return vaults.find((vault) => vault.address === address)
-}
-
-// This should be replaced when the calculation is made part of the Health Computer (MP-2877)
-export function calculateMaxBorrowAmounts(
-  account: Account,
-  marketAssets: Market[],
-  prices: BNCoin[],
-  denoms: string[],
-): BNCoin[] {
-  const maxAmounts: BNCoin[] = []
-  const collateralValue = getNetCollateralValue(account, marketAssets, prices)
-
-  for (const denom of denoms) {
-    const borrowAsset = marketAssets.find((asset) => asset.denom === denom)
-    const borrowAssetPrice = prices.find((price) => price.denom === denom)?.amount
-
-    if (!borrowAssetPrice || !borrowAsset) continue
-
-    const borrowValue = BN(1).minus(borrowAsset.maxLtv).multipliedBy(borrowAssetPrice)
-    const amount = collateralValue.dividedBy(borrowValue).decimalPlaces(0)
-
-    maxAmounts.push(new BNCoin({ denom, amount: amount.toString() }))
-  }
-
-  return maxAmounts
 }
 
 export function getVaultDepositCoinsAndValue(
@@ -68,7 +46,7 @@ export function getVaultDepositCoinsAndValue(
       denom: vault.denoms.secondary,
       amount: secondaryDepositAmount.toString(),
     }),
-    totalValue,
+    totalValue: totalValue.integerValue(),
   }
 }
 

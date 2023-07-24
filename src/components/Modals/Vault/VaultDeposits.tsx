@@ -15,35 +15,44 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getAmount } from 'utils/accounts'
 import { BN } from 'utils/helpers'
+import { findCoinByDenom } from 'utils/assets'
 
 interface Props {
-  primaryAmount: BigNumber
-  secondaryAmount: BigNumber
+  deposits: BNCoin[]
   primaryAsset: Asset
   secondaryAsset: Asset
   account: Account
   isCustomRatio: boolean
+  onChangeDeposits: (deposits: BNCoin[]) => void
   onChangeIsCustomRatio: (isCustomRatio: boolean) => void
-  onChangePrimaryAmount: (amount: BigNumber) => void
-  onChangeSecondaryAmount: (amount: BigNumber) => void
   toggleOpen: (index: number) => void
 }
 
 export default function VaultDeposit(props: Props) {
+  const { deposits, primaryAsset, secondaryAsset, account, onChangeDeposits } = props
   const baseCurrency = useStore((s) => s.baseCurrency)
+  const availablePrimaryAmount = getAmount(primaryAsset.denom, account.deposits)
+  const availableSecondaryAmount = getAmount(secondaryAsset.denom, account.deposits)
+  const primaryPrice = usePrice(primaryAsset.denom)
+  const secondaryPrice = usePrice(secondaryAsset.denom)
 
-  const availablePrimaryAmount = getAmount(props.primaryAsset.denom, props.account.deposits)
-  const availableSecondaryAmount = getAmount(props.secondaryAsset.denom, props.account.deposits)
-  const primaryPrice = usePrice(props.primaryAsset.denom)
-  const secondaryPrice = usePrice(props.secondaryAsset.denom)
+  const primaryCoin = useMemo(() => {
+    const amount = findCoinByDenom(primaryAsset.denom, deposits)?.amount.toString() || '0'
+    return new BNCoin({ denom: primaryAsset.denom, amount })
+  }, [deposits, primaryAsset.denom])
+
+  const secondaryCoin = useMemo(() => {
+    const amount = findCoinByDenom(secondaryAsset.denom, deposits)?.amount.toString() || '0'
+    return new BNCoin({ denom: secondaryAsset.denom, amount })
+  }, [deposits, secondaryAsset.denom])
 
   const primaryValue = useMemo(
-    () => props.primaryAmount.multipliedBy(primaryPrice),
-    [props.primaryAmount, primaryPrice],
+    () => primaryCoin.amount.multipliedBy(primaryPrice),
+    [primaryCoin, primaryPrice],
   )
   const secondaryValue = useMemo(
-    () => props.secondaryAmount.multipliedBy(secondaryPrice),
-    [props.secondaryAmount, secondaryPrice],
+    () => secondaryCoin.amount.multipliedBy(secondaryPrice),
+    [secondaryCoin, secondaryPrice],
   )
   const totalValue = useMemo(
     () => primaryValue.plus(secondaryValue),
@@ -71,7 +80,9 @@ export default function VaultDeposit(props: Props) {
   )
   const primaryMax = useMemo(
     () =>
-      props.isCustomRatio ? availablePrimaryAmount : maxAssetValueNonCustom.dividedBy(primaryPrice),
+      props.isCustomRatio
+        ? availablePrimaryAmount
+        : maxAssetValueNonCustom.dividedBy(primaryPrice).integerValue(),
     [props.isCustomRatio, availablePrimaryAmount, primaryPrice, maxAssetValueNonCustom],
   )
   const secondaryMax = useMemo(
@@ -92,8 +103,9 @@ export default function VaultDeposit(props: Props) {
   function handleSwitch() {
     const isCustomRatioNew = !props.isCustomRatio
     if (!isCustomRatioNew) {
-      props.onChangePrimaryAmount(BN(0))
-      props.onChangeSecondaryAmount(BN(0))
+      primaryCoin.amount = BN(0)
+      secondaryCoin.amount = BN(0)
+      onChangeDeposits([primaryCoin, secondaryCoin])
       setPercentage(0)
     }
     props.onChangeIsCustomRatio(isCustomRatioNew)
@@ -103,28 +115,33 @@ export default function VaultDeposit(props: Props) {
     if (amount.isGreaterThan(primaryMax)) {
       amount = primaryMax
     }
-    props.onChangePrimaryAmount(amount)
+    primaryCoin.amount = amount
     setPercentage(amount.dividedBy(primaryMax).multipliedBy(100).decimalPlaces(0).toNumber())
     if (!props.isCustomRatio) {
-      props.onChangeSecondaryAmount(secondaryMax.multipliedBy(amount.dividedBy(primaryMax)))
+      secondaryCoin.amount = secondaryMax.multipliedBy(amount.dividedBy(primaryMax)).integerValue()
     }
+
+    onChangeDeposits([primaryCoin, secondaryCoin])
   }
 
   function onChangeSecondaryDeposit(amount: BigNumber) {
     if (amount.isGreaterThan(secondaryMax)) {
       amount = secondaryMax
     }
-    props.onChangeSecondaryAmount(amount)
+    secondaryCoin.amount = amount
     setPercentage(amount.dividedBy(secondaryMax).multipliedBy(100).decimalPlaces(0).toNumber())
     if (!props.isCustomRatio) {
-      props.onChangePrimaryAmount(primaryMax.multipliedBy(amount.dividedBy(secondaryMax)))
+      primaryCoin.amount = primaryMax.multipliedBy(amount.dividedBy(secondaryMax)).integerValue()
     }
+
+    onChangeDeposits([primaryCoin, secondaryCoin])
   }
 
   function onChangeSlider(value: number) {
     setPercentage(value)
-    props.onChangePrimaryAmount(primaryMax.multipliedBy(value / 100))
-    props.onChangeSecondaryAmount(secondaryMax.multipliedBy(value / 100))
+    primaryCoin.amount = primaryMax.multipliedBy(value / 100).integerValue()
+    secondaryCoin.amount = secondaryMax.multipliedBy(value / 100).integerValue()
+    onChangeDeposits([primaryCoin, secondaryCoin])
   }
 
   function getWarningText(asset: Asset) {
@@ -137,7 +154,7 @@ export default function VaultDeposit(props: Props) {
         <div className='flex flex-col items-center justify-between gap-1 pb-[30px] pt-2'>
           <Gauge
             percentage={primaryValuePercentage}
-            tooltip={`${primaryValuePercentage}% of value is ${props.primaryAsset.symbol}`}
+            tooltip={`${primaryValuePercentage}% of value is ${primaryAsset.symbol}`}
             labelClassName='text-martian-red'
             diameter={32}
             strokeColor='#FF645F'
@@ -146,7 +163,7 @@ export default function VaultDeposit(props: Props) {
           <div className='h-full w-[1px] rounded-xl bg-white/10'></div>
           <Gauge
             percentage={secondaryValuePercentage}
-            tooltip={`${secondaryValuePercentage}% of value is ${props.secondaryAsset.symbol}`}
+            tooltip={`${secondaryValuePercentage}% of value is ${secondaryAsset.symbol}`}
             labelClassName='text-martian-red'
             diameter={32}
             strokeColor='#FF645F'
@@ -156,13 +173,11 @@ export default function VaultDeposit(props: Props) {
         <div className='flex h-full flex-1 flex-col justify-between gap-6'>
           <TokenInput
             onChange={onChangePrimaryDeposit}
-            amount={props.primaryAmount}
+            amount={primaryCoin.amount}
             max={availablePrimaryAmount}
             maxText='Balance'
-            asset={props.primaryAsset}
-            warning={
-              availablePrimaryAmount.isZero() ? getWarningText(props.primaryAsset) : undefined
-            }
+            asset={primaryAsset}
+            warning={availablePrimaryAmount.isZero() ? getWarningText(primaryAsset) : undefined}
             disabled={disableInput}
           />
           {!props.isCustomRatio && (
@@ -170,13 +185,11 @@ export default function VaultDeposit(props: Props) {
           )}
           <TokenInput
             onChange={onChangeSecondaryDeposit}
-            amount={props.secondaryAmount}
+            amount={secondaryCoin.amount}
             max={availableSecondaryAmount}
             maxText='Balance'
-            asset={props.secondaryAsset}
-            warning={
-              availableSecondaryAmount.isZero() ? getWarningText(props.secondaryAsset) : undefined
-            }
+            asset={secondaryAsset}
+            warning={availableSecondaryAmount.isZero() ? getWarningText(secondaryAsset) : undefined}
             disabled={disableInput}
           />
         </div>
@@ -205,7 +218,7 @@ export default function VaultDeposit(props: Props) {
           <Switch checked={props.isCustomRatio} onChange={handleSwitch} name='customRatio' />
         </div>
         <div className='flex justify-between'>
-          <Text className='text-white/50'>{`${props.primaryAsset.symbol}-${props.secondaryAsset.symbol} Deposit Value`}</Text>
+          <Text className='text-white/50'>{`${primaryAsset.symbol}-${secondaryAsset.symbol} Deposit Value`}</Text>
           <DisplayCurrency
             coin={new BNCoin({ denom: baseCurrency.denom, amount: totalValue.toString() })}
           />

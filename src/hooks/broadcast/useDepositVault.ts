@@ -21,7 +21,12 @@ interface Props {
   deposits: BNCoin[]
   borrowings: BNCoin[]
 }
-export default function useDepositVault(props: Props): { actions: Action[]; fee: StdFee } {
+export default function useDepositVault(props: Props): {
+  actions: Action[]
+  fee: StdFee
+  minLpToReceive: string
+  totalValue: BigNumber
+} {
   const [minLpToReceive, setMinLpToReceive] = useState<BigNumber>(BN(0))
   const { data: prices } = usePrices()
   const [slippage] = useLocalStorage<number>(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
@@ -74,7 +79,8 @@ export default function useDepositVault(props: Props): { actions: Action[]; fee:
   ])
 
   const enterVaultActions: Action[] = useMemo(() => {
-    if (primaryCoin.amount.isZero() || secondaryCoin.amount.isZero()) return []
+    if (primaryCoin.amount.isZero() || secondaryCoin.amount.isZero() || minLpToReceive.isZero())
+      return []
 
     return getEnterVaultActions(props.vault, primaryCoin, secondaryCoin, minLpToReceive)
   }, [props.vault, primaryCoin, secondaryCoin, minLpToReceive])
@@ -84,5 +90,10 @@ export default function useDepositVault(props: Props): { actions: Action[]; fee:
     [borrowActions, swapActions, enterVaultActions],
   )
 
-  return { actions, fee: hardcodedFee }
+  return {
+    actions,
+    fee: hardcodedFee,
+    minLpToReceive: minLpToReceive.toString(),
+    totalValue,
+  }
 }
