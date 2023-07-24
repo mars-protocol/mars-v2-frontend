@@ -15,6 +15,7 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getAmount } from 'utils/accounts'
 import { BN } from 'utils/helpers'
+import { findCoinByDenom } from 'utils/assets'
 
 interface Props {
   deposits: BNCoin[]
@@ -36,14 +37,12 @@ export default function VaultDeposit(props: Props) {
   const secondaryPrice = usePrice(secondaryAsset.denom)
 
   const primaryCoin = useMemo(() => {
-    const amount =
-      deposits.find((coin) => coin.denom === primaryAsset.denom)?.amount.toString() || '0'
+    const amount = findCoinByDenom(primaryAsset.denom, deposits)?.amount.toString() || '0'
     return new BNCoin({ denom: primaryAsset.denom, amount })
   }, [deposits, primaryAsset.denom])
 
   const secondaryCoin = useMemo(() => {
-    const amount =
-      deposits.find((coin) => coin.denom === secondaryAsset.denom)?.amount.toString() || '0'
+    const amount = findCoinByDenom(secondaryAsset.denom, deposits)?.amount.toString() || '0'
     return new BNCoin({ denom: secondaryAsset.denom, amount })
   }, [deposits, secondaryAsset.denom])
 

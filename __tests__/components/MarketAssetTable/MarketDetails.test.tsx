@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react'
 
-import LendingDetails from 'components/MarketAssetTable/MarketDetails'
+import MarketDetails from 'components/MarketAssetTable/MarketDetails'
 import { ASSETS } from 'constants/assets'
 import { BN } from 'utils/helpers'
 
@@ -31,7 +31,7 @@ describe('<LendingDetails />', () => {
   })
 
   it('should render', () => {
-    const { container } = render(<LendingDetails data={data} />)
+    const { container } = render(<MarketDetails type='lend' data={data} />)
     expect(container).toBeInTheDocument()
   })
 })

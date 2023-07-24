@@ -1,26 +1,23 @@
 import { render, screen } from '@testing-library/react'
-import * as rrd from 'react-router-dom'
 
+import useCurrentAccount from 'hooks/useCurrentAccount'
 import AccountDetails from 'components/Account/AccountDetails'
 
-jest.mock('react-router-dom')
-const mockedUseParams = rrd.useParams as jest.Mock
+jest.mock('hooks/useCurrentAccount', () => jest.fn(() => null))
+
+const mockedUseCurrentAccount = useCurrentAccount as jest.Mock
 
 describe('<AccountDetails />', () => {
-  afterAll(() => {
-    mockedUseParams.mockRestore()
-  })
-
-  it('renders account details WHEN accountId specified in the params', () => {
-    mockedUseParams.mockReturnValue({ accountId: 1 })
+  it('renders account details WHEN account is selected', () => {
+    mockedUseCurrentAccount.mockReturnValue({ id: 1 })
     render(<AccountDetails />)
 
     const container = screen.queryByTestId('account-details')
     expect(container).toBeInTheDocument()
   })
 
-  it('does not render WHEN accountId is NOT specified in the params', () => {
-    mockedUseParams.mockReturnValue({ accountId: null })
+  it('does not render WHEN account is NOT selected', () => {
+    mockedUseCurrentAccount.mockReturnValue(null)
     render(<AccountDetails />)
 
     const container = screen.queryByTestId('account-details')
