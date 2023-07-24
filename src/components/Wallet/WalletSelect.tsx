@@ -18,6 +18,12 @@ import useStore from 'store'
 import { WalletID } from 'types/enums/wallet'
 import { isAndroid, isIOS, isMobile } from 'utils/mobile'
 
+interface WalletOptionProps {
+  name: string
+  imageSrc: string
+  handleClick: () => void
+}
+
 const currentChainId = ENV.CHAIN_ID
 const currentChain = CHAINS[currentChainId]
 
@@ -30,17 +36,34 @@ const mapErrorMessages = (providerId: string, errorMessage: string) => {
 
   return errorMessage
 }
+
+function WalletOption(props: WalletOptionProps) {
+  return (
+    <Button
+      color='tertiary'
+      className='flex w-full !justify-start px-4 py-3'
+      onClick={props.handleClick}
+    >
+      <Image
+        className='rounded-full'
+        width={20}
+        height={20}
+        src={props.imageSrc}
+        alt={props.name}
+      />
+      <Text className='ml-2 flex-1 text-left'>{props.name}</Text>
+      <ChevronRight className='h-4 w-4' />
+    </Button>
+  )
+}
+
 export default function WalletSelect() {
   const { extensionProviders, mobileProviders, connect, mobileConnect, simulate, sign, broadcast } =
     useShuttle()
   const [isConnecting, setIsConnecting] = useToggle(false)
   const [qrCodeUrl, setQRCodeUrl] = useState('')
 
-  const sortedExtensionProviders = extensionProviders.sort((a, b) => {
-    const sortValueA = a.initialized ? 0 : 1
-    const sortValueB = b.initialized ? 0 : 1
-    return sortValueA - sortValueB
-  })
+  const sortedExtensionProviders = extensionProviders.sort((a, b) => +b - +a)
 
   const handleConnectClick = async (extensionProviderId: string, chainId: string) => {
     setIsConnecting(true)
@@ -156,49 +179,24 @@ export default function WalletSelect() {
                     .map((network) => {
                       if (!provider.initialized && !provider.initializing) {
                         return (
-                          <Button
+                          <WalletOption
                             key={`${walletId}-${network.chainId}`}
-                            color='tertiary'
-                            className='flex w-full px-4 py-3'
-                            onClick={() => {
+                            handleClick={() => {
                               window.open(WALLETS[walletId].installURL ?? '/', '_blank')
                             }}
-                          >
-                            <Image
-                              className='rounded-full'
-                              width={20}
-                              height={20}
-                              src={WALLETS[walletId].imageURL}
-                              alt={WALLETS[walletId].install ?? 'Install'}
-                            />
-                            <Text className='ml-2 flex-1 text-left'>
-                              {WALLETS[walletId].install}
-                            </Text>
-                            <ChevronRight className='h-4 w-4' />
-                          </Button>
+                            imageSrc={WALLETS[walletId].imageURL}
+                            name={WALLETS[walletId].install ?? 'Install Wallet'}
+                          />
                         )
                       }
 
                       return (
-                        <Button
+                        <WalletOption
                           key={`${walletId}-${network.chainId}`}
-                          color='tertiary'
-                          disabled={!provider.initialized}
-                          className='flex w-full !justify-start px-4 py-3'
-                          onClick={() => {
-                            handleConnectClick(walletId, network.chainId)
-                          }}
-                        >
-                          <Image
-                            className='rounded-full'
-                            width={20}
-                            height={20}
-                            src={WALLETS[walletId].imageURL}
-                            alt={WALLETS[walletId].name ?? 'Conenct Wallet'}
-                          />
-                          <Text className='ml-2 flex-1 text-left'>{WALLETS[walletId].name}</Text>
-                          <ChevronRight className='h-4 w-4' />
-                        </Button>
+                          handleClick={() => handleConnectClick(walletId, network.chainId)}
+                          imageSrc={WALLETS[walletId].imageURL}
+                          name={WALLETS[walletId].name ?? 'Conenct Wallet'}
+                        />
                       )
                     })}
                 </React.Fragment>
@@ -214,26 +212,12 @@ export default function WalletSelect() {
                 .filter((network) => network.chainId === currentChainId)
                 .map((network) => {
                   return (
-                    <Button
+                    <WalletOption
                       key={`${walletId}-${network.chainId}`}
-                      color='tertiary'
-                      className='flex w-full !justify-start px-4 py-3'
-                      onClick={() => {
-                        handleMobileConnectClick(walletId, network.chainId)
-                      }}
-                    >
-                      <Image
-                        className='rounded-full'
-                        width={20}
-                        height={20}
-                        src={WALLETS[walletId].mobileImageURL ?? '/'}
-                        alt={WALLETS[walletId].name ?? 'WalletConnect'}
-                      />
-                      <Text className='ml-2 flex-1 text-left'>
-                        {WALLETS[walletId].walletConnect}
-                      </Text>
-                      <ChevronRight className='h-4 w-4' />
-                    </Button>
+                      name={WALLETS[walletId].walletConnect ?? 'WalletConnect'}
+                      imageSrc={WALLETS[walletId].mobileImageURL ?? '/'}
+                      handleClick={() => handleMobileConnectClick(walletId, network.chainId)}
+                    />
                   )
                 })}
             </React.Fragment>

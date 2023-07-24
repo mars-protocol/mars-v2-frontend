@@ -1,14 +1,13 @@
 import classNames from 'classnames'
 import { useCallback } from 'react'
 
+import FocusComponent from 'components/FocusedComponent'
 import { Check } from 'components/Icons'
 import Text from 'components/Text'
 import WalletSelect from 'components/Wallet/WalletSelect'
 import { TERMS_OF_SERVICE_KEY } from 'constants/localStore'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
-
-import FocusComponent from './FocusedComponent'
 
 interface BenefitsProps {
   benefits: string[]
