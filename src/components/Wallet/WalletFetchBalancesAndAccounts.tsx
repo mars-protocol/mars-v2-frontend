@@ -1,4 +1,4 @@
-import { Suspense, useMemo } from 'react'
+import { Suspense, useEffect, useMemo } from 'react'
 
 import AccountCreateFirst from 'components/Account/AccountCreateFirst'
 import { CircularProgress } from 'components/CircularProgress'
@@ -28,15 +28,6 @@ function FetchLoading() {
   )
 }
 
-function Unmount(props: WalletProps) {
-  // Unmount the DOM first before removing the component via focusComponent
-  // to avoid 'cannot update a component while rendering a different component' error
-  setTimeout(() => {
-    useStore.setState({ accounts: props.accounts, balances: props.balances, focusComponent: null })
-  }, 50)
-  return null
-}
-
 function Content() {
   const address = useStore((s) => s.address)
   const { data: accounts } = useAccounts(address)
@@ -48,10 +39,19 @@ function Content() {
     [walletBalances, baseAsset],
   )
 
+  useEffect(() => {
+    if (
+      accounts.length !== 0 &&
+      BN(baseBalance).isGreaterThanOrEqualTo(hardcodedFee.amount[0].amount)
+    ) {
+      useStore.setState({ accounts: accounts, balances: walletBalances, focusComponent: null })
+    }
+  }, [accounts, walletBalances, baseBalance])
+
   if (isLoading) return <FetchLoading />
   if (BN(baseBalance).isLessThan(hardcodedFee.amount[0].amount)) return <WalletBridges />
   if (accounts.length === 0) return <AccountCreateFirst />
-  return <Unmount accounts={accounts} balances={walletBalances} />
+  return null
 }
 
 export default function WalletFetchBalancesAndAccounts() {
