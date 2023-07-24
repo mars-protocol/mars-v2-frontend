@@ -7,6 +7,7 @@ import DisplayCurrency from 'components/DisplayCurrency'
 import VaultBorrowings, { VaultBorrowingsProps } from 'components/Modals/Vault/VaultBorrowings'
 import { TESTNET_VAULTS_META_DATA } from 'constants/vaults'
 import { BNCoin } from 'types/classes/BNCoin'
+import { hardcodedFee } from 'utils/constants'
 
 jest.mock('hooks/usePrices', () =>
   jest.fn(() => ({
@@ -47,9 +48,7 @@ describe('<VaultBorrowings />', () => {
   const defaultProps: VaultBorrowingsProps = {
     primaryAsset: ASSETS[0],
     secondaryAsset: ASSETS[1],
-    primaryAmount: BN(0),
-    secondaryAmount: BN(0),
-    account: {
+    updatedAccount: {
       id: 'test',
       deposits: [],
       debts: [],
@@ -60,6 +59,8 @@ describe('<VaultBorrowings />', () => {
     borrowings: [],
     deposits: [],
     onChangeBorrowings: jest.fn(),
+    depositActions: [],
+    depositFee: hardcodedFee,
   }
 
   beforeAll(() => {

@@ -117,7 +117,7 @@ async function getVaultValuesAndAmounts(
     const lpTokensQuery = getLpTokensForVaultPosition(vault, vaultPosition)
     const amounts = flatVaultPositionAmount(vaultPosition.amount)
 
-    const [[primaryLpToken, secondaryLpToken], [primaryAsset, secondaryAsset]] = await Promise.all([
+    const [[primaryLpToken, secondaryLpToken], [primaryPrice, secondaryPrice]] = await Promise.all([
       lpTokensQuery,
       pricesQueries,
     ])
@@ -129,8 +129,8 @@ async function getVaultValuesAndAmounts(
         secondary: BN(secondaryLpToken.amount),
       },
       values: {
-        primary: BN(primaryLpToken.amount).multipliedBy(primaryAsset),
-        secondary: BN(secondaryLpToken.amount).multipliedBy(secondaryAsset),
+        primary: BN(primaryLpToken.amount).multipliedBy(primaryPrice),
+        secondary: BN(secondaryLpToken.amount).multipliedBy(secondaryPrice),
       },
     }
   } catch (ex) {

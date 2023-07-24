@@ -1,22 +1,29 @@
-import { useParams } from 'react-router-dom'
-
 import { Gauge } from 'components/Gauge'
 import { Heart } from 'components/Icons'
 import Text from 'components/Text'
+import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
-import { isNumber } from 'utils/parsers'
 
-export default function AccountDetails() {
+interface Props {
+  account: Account
+}
+
+export default function AccountDetailsController() {
+  const account = useCurrentAccount()
   const address = useStore((s) => s.address)
-  const { accountId } = useParams()
-  const hasAccount = isNumber(accountId)
 
-  return hasAccount && address ? (
+  if (!account || !address) return null
+
+  return <AccountDetails account={account} />
+}
+
+function AccountDetails(props: Props) {
+  return (
     <div
       data-testid='account-details'
-      className='w-16 rounded-base border border-white/20 bg-white/5 backdrop-blur-sticky'
+      className='w-16 border rounded-base border-white/20 bg-white/5 backdrop-blur-sticky'
     >
-      <div className='flex w-full flex-wrap justify-center py-4'>
+      <div className='flex flex-wrap justify-center w-full py-4'>
         <Gauge tooltip='Health Factor' percentage={20} icon={<Heart />} />
         <Text size='2xs' className='mb-0.5 mt-1 w-full text-center text-white/50'>
           Health
@@ -25,7 +32,7 @@ export default function AccountDetails() {
           89%
         </Text>
       </div>
-      <div className='w-full border border-x-0 border-white/20 py-4'>
+      <div className='w-full py-4 border border-x-0 border-white/20'>
         <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
           Leverage
         </Text>
@@ -42,5 +49,5 @@ export default function AccountDetails() {
         </Text>
       </div>
     </div>
-  ) : null
+  )
 }

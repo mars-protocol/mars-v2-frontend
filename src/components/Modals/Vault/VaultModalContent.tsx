@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import Accordion from 'components/Accordion'
 import AccountSummary from 'components/Account/AccountSummary'
@@ -8,9 +8,9 @@ import VaultBorrowingsSubTitle from 'components/Modals/Vault/VaultBorrowingsSubT
 import VaultDeposit from 'components/Modals/Vault/VaultDeposits'
 import VaultDepositSubTitle from 'components/Modals/Vault/VaultDepositsSubTitle'
 import useIsOpenArray from 'hooks/useIsOpenArray'
-import useUpdateAccount from 'hooks/useUpdateAccount'
-import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
+import useDepositVault from 'hooks/broadcast/useDepositVault'
+import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 
 interface Props {
   vault: Vault | DepositedVault
@@ -21,35 +21,30 @@ interface Props {
 }
 
 export default function VaultModalContent(props: Props) {
-  const { updatedAccount, onChangeBorrowings, borrowings } = useUpdateAccount(
-    props.account,
-    props.vault,
-  )
+  const { addDebt, removeDeposits, addedDebt, removedDeposits, updatedAccount, addVaultValues } =
+    useUpdatedAccount(props.account)
+
   const [isOpen, toggleOpen] = useIsOpenArray(2, false)
-  const [primaryAmount, setPrimaryAmount] = useState<BigNumber>(BN(0))
-  const [secondaryAmount, setSecondaryAmount] = useState<BigNumber>(BN(0))
   const [isCustomRatio, setIsCustomRatio] = useState(false)
 
-  const deposits: BNCoin[] = useMemo(() => {
-    const primaryBNCoin = new BNCoin({
-      denom: props.vault.denoms.primary,
-      amount: primaryAmount.toString(),
-    })
-    const secondaryBNCoin = new BNCoin({
-      denom: props.vault.denoms.secondary,
-      amount: secondaryAmount.toString(),
-    })
-    return [primaryBNCoin, secondaryBNCoin]
-  }, [primaryAmount, secondaryAmount, props.vault.denoms.primary, props.vault.denoms.secondary])
+  const {
+    actions: depositActions,
+    fee: depositFee,
+    totalValue,
+  } = useDepositVault({
+    vault: props.vault,
+    deposits: removedDeposits,
+    borrowings: addedDebt,
+  })
 
-  const onChangePrimaryAmount = useCallback(
-    (amount: BigNumber) => setPrimaryAmount(amount.decimalPlaces(0)),
-    [setPrimaryAmount],
-  )
-  const onChangeSecondaryAmount = useCallback(
-    (amount: BigNumber) => setSecondaryAmount(amount.decimalPlaces(0)),
-    [setSecondaryAmount],
-  )
+  useEffect(() => {
+    addVaultValues([
+      {
+        address: props.vault.address,
+        value: totalValue,
+      },
+    ])
+  }, [totalValue, addVaultValues, props.vault.address])
 
   const onChangeIsCustomRatio = useCallback(
     (isCustomRatio: boolean) => setIsCustomRatio(isCustomRatio),
@@ -64,8 +59,12 @@ export default function VaultModalContent(props: Props) {
 
     return (
       <VaultDepositSubTitle
-        primaryAmount={primaryAmount}
-        secondaryAmount={secondaryAmount}
+        primaryAmount={
+          removedDeposits.find((coin) => coin.denom === props.primaryAsset.denom)?.amount || BN(0)
+        }
+        secondaryAmount={
+          removedDeposits.find((coin) => coin.denom === props.secondaryAsset.denom)?.amount || BN(0)
+        }
         primaryAsset={props.primaryAsset}
         secondaryAsset={props.secondaryAsset}
       />
@@ -78,7 +77,7 @@ export default function VaultModalContent(props: Props) {
 
     if (isOpen[1]) return null
 
-    return <VaultBorrowingsSubTitle borrowings={borrowings} />
+    return <VaultBorrowingsSubTitle borrowings={addedDebt} />
   }
 
   return (
@@ -89,10 +88,8 @@ export default function VaultModalContent(props: Props) {
           {
             renderContent: () => (
               <VaultDeposit
-                primaryAmount={primaryAmount}
-                secondaryAmount={secondaryAmount}
-                onChangePrimaryAmount={onChangePrimaryAmount}
-                onChangeSecondaryAmount={onChangeSecondaryAmount}
+                deposits={removedDeposits}
+                onChangeDeposits={removeDeposits}
                 primaryAsset={props.primaryAsset}
                 secondaryAsset={props.secondaryAsset}
                 account={props.account}
@@ -109,15 +106,15 @@ export default function VaultModalContent(props: Props) {
           {
             renderContent: () => (
               <VaultBorrowings
-                account={updatedAccount}
-                borrowings={borrowings}
-                primaryAmount={primaryAmount}
-                secondaryAmount={secondaryAmount}
+                updatedAccount={updatedAccount}
+                borrowings={addedDebt}
+                deposits={removedDeposits}
                 primaryAsset={props.primaryAsset}
                 secondaryAsset={props.secondaryAsset}
-                onChangeBorrowings={onChangeBorrowings}
-                deposits={deposits}
+                onChangeBorrowings={addDebt}
                 vault={props.vault}
+                depositActions={depositActions}
+                depositFee={depositFee}
               />
             ),
             title: 'Borrow',

@@ -8,53 +8,35 @@ import { ArrowRight, ExclamationMarkCircled } from 'components/Icons'
 import Slider from 'components/Slider'
 import Text from 'components/Text'
 import TokenInput from 'components/TokenInput'
-import useDepositVault from 'hooks/broadcast/useDepositVault'
 import useMarketAssets from 'hooks/useMarketAssets'
-import usePrice from 'hooks/usePrice'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { findCoinByDenom, getAssetByDenom } from 'utils/assets'
 import { formatPercent } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import { calculateMaxBorrowAmounts } from 'utils/vaults'
+import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 
 export interface VaultBorrowingsProps {
-  account: Account
+  updatedAccount: Account
   borrowings: BNCoin[]
-  primaryAmount: BigNumber
-  secondaryAmount: BigNumber
+  deposits: BNCoin[]
   primaryAsset: Asset
   secondaryAsset: Asset
-  deposits: BNCoin[]
   vault: Vault
+  depositActions: Action[]
+  depositFee: StdFee
   onChangeBorrowings: (borrowings: BNCoin[]) => void
 }
 
 export default function VaultBorrowings(props: VaultBorrowingsProps) {
   const { data: marketAssets } = useMarketAssets()
   const { data: prices } = usePrices()
-  const primaryPrice = usePrice(props.primaryAsset.denom)
-  const secondaryPrice = usePrice(props.secondaryAsset.denom)
   const baseCurrency = useStore((s) => s.baseCurrency)
   const vaultModal = useStore((s) => s.vaultModal)
   const depositIntoVault = useStore((s) => s.depositIntoVault)
   const [isConfirming, setIsConfirming] = useState(false)
-
-  const { actions: depositActions, fee: depositFee } = useDepositVault({
-    vault: props.vault,
-    deposits: props.deposits,
-    borrowings: props.borrowings,
-  })
-
-  const primaryValue = useMemo(
-    () => props.primaryAmount.multipliedBy(primaryPrice),
-    [props.primaryAmount, primaryPrice],
-  )
-  const secondaryValue = useMemo(
-    () => props.secondaryAmount.multipliedBy(secondaryPrice),
-    [props.secondaryAmount, secondaryPrice],
-  )
+  const maxBorrowAmounts: BNCoin[] = []
 
   const borrowingValue = useMemo(() => {
     return props.borrowings.reduce((prev, curr) => {
@@ -65,10 +47,16 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
     }, BN(0) as BigNumber)
   }, [props.borrowings, prices])
 
-  const totalValue = useMemo(
-    () => primaryValue.plus(secondaryValue).plus(borrowingValue),
-    [primaryValue, secondaryValue, borrowingValue],
-  )
+  const totalValue = useMemo(() => {
+    const depositValue = props.deposits.reduce((prev, curr) => {
+      const price = prices.find((price) => price.denom === curr.denom)?.amount
+      if (!price) return prev
+      const value = curr.amount.multipliedBy(price)
+      return prev.plus(value)
+    }, BN(0) as BigNumber)
+
+    return depositValue.plus(borrowingValue)
+  }, [props.deposits, borrowingValue, prices])
 
   useEffect(() => {
     const selectedBorrowDenoms = vaultModal?.selectedBorrowDenoms || []
@@ -89,17 +77,6 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
     props.onChangeBorrowings(updatedBorrowings)
   }, [vaultModal, props])
 
-  const maxAmounts: BNCoin[] = useMemo(
-    () =>
-      calculateMaxBorrowAmounts(
-        props.account,
-        marketAssets,
-        prices,
-        props.borrowings.map((coin) => coin.denom),
-      ),
-    [props.borrowings, marketAssets, prices, props.account],
-  )
-
   const [percentage, setPercentage] = useState<number>(0)
 
   function onChangeSlider(value: number) {
@@ -107,7 +84,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
 
     const denom = props.borrowings[0].denom
     const currentAmount = props.borrowings[0].amount
-    const maxAmount = maxAmounts.find((coin) => coin.denom === denom)?.amount ?? BN(0)
+    const maxAmount = maxBorrowAmounts.find((coin) => coin.denom === denom)?.amount ?? BN(0)
     const newBorrowings: BNCoin[] = [
       new BNCoin({
         denom,
@@ -152,9 +129,9 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   async function onConfirm() {
     setIsConfirming(true)
     const isSuccess = await depositIntoVault({
-      fee: depositFee,
-      accountId: props.account.id,
-      actions: depositActions,
+      fee: props.depositFee,
+      accountId: props.updatedAccount.id,
+      actions: props.depositActions,
     })
     setIsConfirming(false)
     if (isSuccess) {
@@ -166,7 +143,9 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
     <div className='flex flex-1 flex-col gap-4 p-4'>
       {props.borrowings.map((coin) => {
         const asset = getAssetByDenom(coin.denom)
-        const maxAmount = maxAmounts.find((maxAmount) => maxAmount.denom === coin.denom)?.amount
+        const maxAmount = maxBorrowAmounts.find(
+          (maxAmount) => maxAmount.denom === coin.denom,
+        )?.amount
         if (!asset || !maxAmount)
           return <React.Fragment key={`input-${coin.denom}`}></React.Fragment>
         return (
@@ -222,7 +201,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
         text='Deposit'
         rightIcon={<ArrowRight />}
         showProgressIndicator={isConfirming}
-        disabled={!depositActions.length}
+        disabled={!props.depositActions.length}
       />
     </div>
   )

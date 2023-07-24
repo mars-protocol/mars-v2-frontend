@@ -10,6 +10,11 @@ module.exports = {
     '!<rootDir>/*.config.js',
     '!<rootDir>/coverage/**',
     '!<rootDir>/src/types/**',
+    '!<rootDir>/src/utils/charting_library/**',
+    '!<rootDir>/src/utils/datafeeds/**',
+    '!<rootDir>/public/charting_library/**',
+    '!<rootDir>/public/datafeeds/**',
+    '!<rootDir>/src/utils/health_computer/**',
   ],
   moduleNameMapper: {
     // Handle CSS imports (with CSS modules)

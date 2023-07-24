@@ -11,6 +11,7 @@ interface VaultMetaData {
     primary: string
     secondary: string
     lp: string
+    vault: string
   }
   symbols: {
     primary: string

@@ -3,14 +3,14 @@ interface Account extends AccountChange {
   deposits: BNCoin[]
   debts: BNCoin[]
   lends: BNCoin[]
-  vaults: import('types/generated/mars-mock-credit-manager/MarsMockCreditManager.types').ArrayOfVaultInfoResponse
+  vaults: DepositedVault[]
 }
 
 interface AccountChange {
   deposits?: BNCoin[]
   debts?: BNCoin[]
   lends?: BNCoin[]
-  vaults?: import('types/generated/mars-mock-credit-manager/MarsMockCreditManager.types').ArrayOfVaultInfoResponse
+  vaults?: DepositedVault[]
 }
 
 interface AccountBalanceRow {
