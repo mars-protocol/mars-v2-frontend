@@ -1,11 +1,11 @@
 import classNames from 'classnames'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import Button from 'components/Button'
 import { hardcodedFee } from 'utils/constants'
 import { formatAmountWithSymbol } from 'utils/formatters'
-import getRoutes from 'api/swap/routes'
 import { getAssetByDenom } from 'utils/assets'
+import useSwapRoute from 'hooks/useSwapRoute'
 
 interface Props {
   buyAsset: Asset
@@ -17,26 +17,17 @@ interface Props {
 
 export default function TradeSummary(props: Props) {
   const { containerClassName, buyAsset, sellAsset, buyAction, buyButtonDisabled } = props
-
-  const [routes, setRoutes] = useState('')
+  const { data: routes, isLoading: isRouteLoading } = useSwapRoute(sellAsset.denom, buyAsset.denom)
   const [isButtonBusy, setButtonBusy] = useState(false)
 
-  useEffect(() => {
-    ;(async function () {
-      setButtonBusy(true)
-      const routes = await getRoutes(sellAsset.denom, buyAsset.denom)
+  const parsedRoutes = useMemo(() => {
+    if (!routes.length) return '-'
 
-      if (!routes.length) {
-        setRoutes('')
-      } else {
-        const routeSymbols = routes.map((r) => getAssetByDenom(r.token_out_denom)?.symbol)
-        routeSymbols.unshift(sellAsset.symbol)
-        setRoutes(routeSymbols.join(' -> '))
-      }
+    const routeSymbols = routes.map((r) => getAssetByDenom(r.token_out_denom)?.symbol)
+    routeSymbols.unshift(sellAsset.symbol)
 
-      setButtonBusy(false)
-    })()
-  }, [buyAsset.denom, sellAsset.denom, sellAsset.symbol])
+    return routeSymbols.join(' -> ')
+  }, [routes, sellAsset.symbol])
 
   const handleBuyClick = useCallback(async () => {
     setButtonBusy(true)
@@ -45,7 +36,7 @@ export default function TradeSummary(props: Props) {
   }, [buyAction])
 
   const buttonText = useMemo(
-    () => (routes ? `Buy ${buyAsset.symbol}` : 'No route found'),
+    () => (routes.length ? `Buy ${buyAsset.symbol}` : 'No route found'),
     [buyAsset.symbol, routes],
   )
 
@@ -55,18 +46,16 @@ export default function TradeSummary(props: Props) {
         <span className={className.title}>Summary</span>
         <div className={className.infoLine}>
           <span className={className.infoLineLabel}>Fees</span>
-          <span className={className.infoLineText}>
-            {formatAmountWithSymbol(hardcodedFee.amount[0])}
-          </span>
+          <span>{formatAmountWithSymbol(hardcodedFee.amount[0])}</span>
         </div>
         <div className={className.infoLine}>
           <span className={className.infoLineLabel}>Route</span>
-          <span className={className.infoLineText}>{routes || '-'}</span>
+          <span>{parsedRoutes}</span>
         </div>
       </div>
       <Button
-        disabled={!routes || buyButtonDisabled}
-        showProgressIndicator={isButtonBusy}
+        disabled={routes.length === 0 || buyButtonDisabled}
+        showProgressIndicator={isButtonBusy || isRouteLoading}
         text={buttonText}
         onClick={handleBuyClick}
         size='md'
@@ -82,5 +71,4 @@ const className = {
   summaryWrapper: 'flex flex-1 flex-col m-3',
   infoLine: 'flex flex-1 flex-row text-xs text-white justify-between mb-1',
   infoLineLabel: 'opacity-40',
-  infoLineText: '',
 }
