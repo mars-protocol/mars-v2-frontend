@@ -5,6 +5,11 @@ import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
 
 jest.mock('hooks/useCurrentAccount', () => jest.fn(() => null))
+jest.mock('hooks/useHealthComputer', () =>
+  jest.fn(() => ({
+    health: 0,
+  })),
+)
 
 const mockedUseCurrentAccount = useCurrentAccount as jest.Mock
 
