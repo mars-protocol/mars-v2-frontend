@@ -44,4 +44,5 @@ export { default as SwapIcon } from 'components/Icons/SwapIcon.svg'
 export { default as TrashBin } from 'components/Icons/TrashBin.svg'
 export { default as VerticalThreeLine } from 'components/Icons/VerticalThreeLine.svg'
 export { default as Wallet } from 'components/Icons/Wallet.svg'
+export { default as InfoCircle } from 'components/Icons/InfoCircle.svg'
 // @endindex
