@@ -12,6 +12,7 @@ import useStore from 'store'
 export default function Toaster() {
   const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
   const toast = useStore((s) => s.toast)
+  const isError = toast?.isError
 
   if (toast) {
     const Msg = () => (
@@ -19,24 +20,22 @@ export default function Toaster() {
         className={classNames(
           'relative isolate m-0 flex w-full flex-wrap rounded-sm p-6 shadow-overlay backdrop-blur-lg',
           'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-sm before:p-[1px] before:border-glas',
-          toast.isError ? 'bg-error-bg/20' : 'bg-success-bg/20',
+          isError ? 'bg-error-bg/20' : 'bg-success-bg/20',
         )}
       >
         <div className='mb-4 flex w-full gap-2'>
-          <div
-            className={classNames('rounded-sm p-1.5', toast.isError ? 'bg-error' : 'bg-success')}
-          >
+          <div className={classNames('rounded-sm p-1.5', isError ? 'bg-error' : 'bg-success')}>
             <span className='block h-4 w-4 text-white'>
-              {toast.isError ? <CrossCircled /> : <CheckCircled />}
+              {isError ? <CrossCircled /> : <CheckCircled />}
             </span>
           </div>
           <Text
             className={classNames(
               'flex items-center font-bold',
-              toast.isError ? 'text-error' : 'text-success',
+              isError ? 'text-error' : 'text-success',
             )}
           >
-            {toast.isError ? 'Error' : 'Success'}
+            {toast.title ? toast.title : isError ? 'Error' : 'Success'}
           </Text>
         </div>
 
@@ -44,7 +43,7 @@ export default function Toaster() {
           {toast.message}
         </Text>
         <div className='absolute right-6 top-8 '>
-          <Cross className={classNames('h-2 w-2', toast.isError ? 'text-error' : 'text-success')} />
+          <Cross className={classNames('h-2 w-2', isError ? 'text-error' : 'text-success')} />
         </div>
       </div>
     )
@@ -53,7 +52,7 @@ export default function Toaster() {
       icon: false,
       draggable: false,
       closeOnClick: true,
-      progressClassName: classNames('h-[1px] bg-none', toast.isError ? 'bg-error' : 'bg-success'),
+      progressClassName: classNames('h-[1px] bg-none', isError ? 'bg-error' : 'bg-success'),
     })
 
     useStore.setState({ toast: null })

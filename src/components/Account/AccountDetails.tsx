@@ -2,6 +2,7 @@ import { Gauge } from 'components/Gauge'
 import { Heart } from 'components/Icons'
 import Text from 'components/Text'
 import useCurrentAccount from 'hooks/useCurrentAccount'
+import useStore from 'store'
 
 interface Props {
   account: Account
@@ -9,8 +10,9 @@ interface Props {
 
 export default function AccountDetailsController() {
   const account = useCurrentAccount()
+  const address = useStore((s) => s.address)
 
-  if (!account) return null
+  if (!account || !address) return null
 
   return <AccountDetails account={account} />
 }

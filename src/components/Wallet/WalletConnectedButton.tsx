@@ -1,9 +1,4 @@
-import {
-  ChainInfoID,
-  SimpleChainInfoList,
-  useWallet,
-  useWalletManager,
-} from '@marsprotocol/wallet-connector'
+import { useShuttle } from '@delphi-labs/shuttle-react'
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import { useCallback, useEffect, useState } from 'react'
@@ -15,22 +10,26 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import { Check, Copy, ExternalLink, Osmo } from 'components/Icons'
 import Overlay from 'components/Overlay'
 import Text from 'components/Text'
+import { CHAINS } from 'constants/chains'
 import { IS_TESTNET } from 'constants/env'
+import useCurrentWallet from 'hooks/useCurrentWallet'
 import useToggle from 'hooks/useToggle'
 import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
+import { ChainInfoID } from 'types/enums/wallet'
 import { getBaseAsset, getEnabledMarketAssets } from 'utils/assets'
 import { formatValue, truncate } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
-export default function ConnectedButton() {
+export default function WalletConnectedButton() {
   // ---------------
   // EXTERNAL HOOKS
   // ---------------
   const marketAssets = getEnabledMarketAssets()
-  const { disconnect } = useWallet()
-  const { disconnect: terminate } = useWalletManager()
+  const currentWallet = useCurrentWallet()
+  const { disconnectWallet } = useShuttle()
   const address = useStore((s) => s.address)
+  const focusComponent = useStore((s) => s.focusComponent)
   const network = useStore((s) => s.client?.connectedWallet.network)
   const baseAsset = getBaseAsset()
   const { data: walletBalances, isLoading } = useWalletBalances(address)
@@ -46,17 +45,17 @@ export default function ConnectedButton() {
   // ---------------
   // VARIABLES
   // ---------------
-  const explorerName = network && SimpleChainInfoList[network.chainId as ChainInfoID].explorerName
+  const explorerName = network && CHAINS[network.chainId as ChainInfoID].explorerName
 
   const viewOnFinder = useCallback(() => {
-    const explorerUrl = network && SimpleChainInfoList[network.chainId as ChainInfoID].explorer
+    const explorerUrl = network && CHAINS[network.chainId as ChainInfoID].explorer
 
     window.open(`${explorerUrl}/account/${address}`, '_blank')
   }, [network, address])
 
-  const disconnectWallet = () => {
-    disconnect()
-    terminate()
+  const onDisconnectWallet = () => {
+    if (!currentWallet) return
+    disconnectWallet(currentWallet)
     useStore.setState({ client: undefined, balances: [] })
   }
 
@@ -108,7 +107,11 @@ export default function ConnectedButton() {
           )}
         </div>
       </Button>
-      <Overlay className='right-0 mt-2' show={showDetails} setShow={setShowDetails}>
+      <Overlay
+        className={classNames('mt-2', focusComponent ? '-left-[110px]' : 'right-0')}
+        show={showDetails}
+        setShow={setShowDetails}
+      >
         <div className='flex w-[440px] flex-wrap p-6'>
           <div className='flex-0 mb-4 flex w-full flex-nowrap items-start'>
             <div className='flex w-auto flex-1'>
@@ -124,7 +127,7 @@ export default function ConnectedButton() {
               </div>
             </div>
             <div className='flex h-[31px] w-[116px] justify-end'>
-              <Button color='secondary' onClick={disconnectWallet} text='Disconnect' />
+              <Button color='secondary' onClick={onDisconnectWallet} text='Disconnect' />
             </div>
           </div>
           <div className='flex w-full flex-wrap'>

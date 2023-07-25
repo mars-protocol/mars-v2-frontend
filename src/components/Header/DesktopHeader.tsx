@@ -17,10 +17,10 @@ export const menuTree: { page: Page; label: string }[] = [
 
 export default function DesktopHeader() {
   const address = useStore((s) => s.address)
-  const isFocusMode = useStore((s) => s.isFocusMode)
+  const focusComponent = useStore((s) => s.focusComponent)
 
   function handleCloseFocusMode() {
-    useStore.setState({ isFocusMode: false, showTermsOfService: false })
+    useStore.setState({ focusComponent: null })
   }
 
   return (
@@ -33,13 +33,17 @@ export default function DesktopHeader() {
     >
       <div
         className={classNames(
-          'flex items-center justify-between py-3 pl-6 pr-4',
-          !isFocusMode && ' border-b border-white/20',
+          'flex items-center justify-between px-4 py-4',
+          focusComponent ? 'relative isolate' : 'border-b border-white/20',
         )}
       >
         <DesktopNavigation />
-        {isFocusMode ? (
-          <EscButton onClick={handleCloseFocusMode} />
+        {focusComponent ? (
+          <div className='flex w-full justify-between'>
+            <div className='flex h-5 w-13' />
+            {address && <Wallet />}
+            <EscButton onClick={handleCloseFocusMode} />
+          </div>
         ) : (
           <div className='flex gap-4'>
             {address && <AccountMenu />}

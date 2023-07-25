@@ -1,13 +1,24 @@
 import { render, screen } from '@testing-library/react'
 
-import useCurrentAccount from 'hooks/useCurrentAccount'
 import AccountDetails from 'components/Account/AccountDetails'
+import useCurrentAccount from 'hooks/useCurrentAccount'
+import useStore from 'store'
 
 jest.mock('hooks/useCurrentAccount', () => jest.fn(() => null))
 
 const mockedUseCurrentAccount = useCurrentAccount as jest.Mock
 
 describe('<AccountDetails />', () => {
+  beforeAll(() => {
+    useStore.setState({
+      address: 'walletAddress',
+    })
+  })
+
+  afterAll(() => {
+    useStore.clearState()
+  })
+
   it('renders account details WHEN account is selected', () => {
     mockedUseCurrentAccount.mockReturnValue({ id: 1 })
     render(<AccountDetails />)

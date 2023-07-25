@@ -7,8 +7,7 @@ import useMarketLiquidities from 'hooks/useMarketLiquidities'
 import { byDenom } from 'utils/array'
 import { getAssetByDenom } from 'utils/assets'
 import { BN } from 'utils/helpers'
-
-import useCurrentAccountDebts from './useCurrentAccountDebts'
+import useCurrentAccountDebts from 'hooks/useCurrentAccountDebts'
 
 export default function useBorrowMarketAssetsTableData(): {
   accountBorrowedAssets: BorrowMarketTableData[]

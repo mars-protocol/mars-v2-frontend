@@ -18,6 +18,7 @@ interface EnvironmentVariables {
   WALLETS: string[]
   PYTH_ENDPOINT: string
   MAINNET_REST_API: string
+  WALLET_CONNECT_ID: string
 }
 
 export const ENV: EnvironmentVariables = {
@@ -42,6 +43,7 @@ export const ENV: EnvironmentVariables = {
   WALLETS: process.env.NEXT_PUBLIC_WALLETS?.split(',') || [],
   PYTH_ENDPOINT: process.env.NEXT_PUBLIC_PYTH_ENDPOINT || '',
   MAINNET_REST_API: process.env.NEXT_PUBLIC_MAINNET_REST || '',
+  WALLET_CONNECT_ID: process.env.NEXT_PUBLIC_WALLET_CONNECT_ID || '',
 }
 
 export const VERCEL_BYPASS = process.env.NEXT_PUBLIC_BYPASS

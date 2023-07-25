@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react'
 
-import { Cross } from 'components/Icons'
 import Button from 'components/Button'
+import { Cross } from 'components/Icons'
 import Text from 'components/Text'
 
 interface Props {
@@ -34,7 +34,7 @@ export default function EscButton(props: Props) {
       leftIcon={<Cross />}
       iconClassName='w-3'
       color='tertiary'
-      className='h-3'
+      className='h-3 w-13'
       size='xs'
     >
       <Text size='2xs'>ESC</Text>

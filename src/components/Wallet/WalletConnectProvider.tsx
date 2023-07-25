@@ -1,54 +1,64 @@
-import { ChainInfoID, WalletManagerProvider } from '@marsprotocol/wallet-connector'
+import {
+  CosmostationExtensionProvider,
+  CosmostationMobileProvider,
+  KeplrExtensionProvider,
+  KeplrMobileProvider,
+  LeapCosmosExtensionProvider,
+  ShuttleProvider,
+  StationExtensionProvider,
+  WalletExtensionProvider,
+  WalletMobileProvider,
+  XDEFICosmosExtensionProvider,
+} from '@delphi-labs/shuttle-react'
 import { FC } from 'react'
 
-import Button from 'components/Button'
-import { CircularProgress } from 'components/CircularProgress'
-import { Cross } from 'components/Icons'
+import { CHAINS } from 'constants/chains'
 import { ENV } from 'constants/env'
+import { WALLETS } from 'constants/wallets'
+import { WalletID } from 'types/enums/wallet'
 
 type Props = {
   children?: React.ReactNode
 }
 
-export const WalletConnectProvider: FC<Props> = ({ children }) => {
-  const chainInfoOverrides = {
-    rpc: ENV.URL_RPC,
-    rest: ENV.URL_REST,
-    chainID: ENV.CHAIN_ID as ChainInfoID,
-  }
-  const enabledWallets: string[] = ENV.WALLETS
+function getSupportedChainsInfos(walletId: WalletID) {
+  return WALLETS[walletId].supportedChains.map((chain) => {
+    const chainInfo: ChainInfo = CHAINS[chain]
+    // Check if supported chain equals current chain
+    if (ENV.CHAIN_ID !== chainInfo.chainId) return chainInfo
+    // Override rpc and rest urls for the current chain if they are defined in .env
+    if (ENV.URL_RPC) chainInfo.rpc = ENV.URL_RPC
+    if (ENV.URL_REST) chainInfo.rest = ENV.URL_REST
+    return chainInfo
+  })
+}
 
+const mobileProviders: WalletMobileProvider[] = [
+  new KeplrMobileProvider({
+    networks: getSupportedChainsInfos(WalletID.KeplrMobile),
+  }),
+  new CosmostationMobileProvider({
+    networks: getSupportedChainsInfos(WalletID.CosmostationMobile),
+  }),
+]
+
+const extensionProviders: WalletExtensionProvider[] = [
+  new KeplrExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Keplr) }),
+  new StationExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Station) }),
+  new LeapCosmosExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Leap) }),
+  new CosmostationExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Cosmostation) }),
+  new XDEFICosmosExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Xdefi) }),
+]
+
+export const WalletConnectProvider: FC<Props> = ({ children }) => {
   return (
-    <WalletManagerProvider
-      // TODO: handle chainIds via constants
-      chainIds={[ChainInfoID.OsmosisTestnet, ChainInfoID.Osmosis1]}
-      chainInfoOverrides={chainInfoOverrides}
-      // closeIcon={<SVG.Close />}
-      defaultChainId={chainInfoOverrides.chainID}
-      enabledWallets={enabledWallets}
+    <ShuttleProvider
+      walletConnectProjectId={ENV.WALLET_CONNECT_ID}
+      mobileProviders={mobileProviders}
+      extensionProviders={extensionProviders}
       persistent
-      classNames={{
-        modalContent:
-          'relative z-50 w-[460px] max-w-full rounded-base border border-white/20 bg-white/5 p-6 pb-4 backdrop-blur-3xl flex flex-wrap focus-visible:outline-none',
-        modalOverlay:
-          'fixed inset-0 bg-black/60 w-full h-full z-40 flex items-center justify-center cursor-pointer m-0 backdrop-blur-sm',
-        modalHeader: 'text-lg text-white mb-4 flex-1',
-        modalCloseButton: 'inline-block',
-        walletList: 'w-full',
-        wallet:
-          'flex bg-transparent p-2 w-full rounded-sm cursor-pointer transition ease-in mb-2 hover:bg-primary',
-        walletImage: 'w-10 h-10',
-        walletName: 'w-full text-lg',
-        walletDescription: 'w-full text-xs text-white/60 break-all',
-      }}
-      closeIcon={<Button leftIcon={<Cross />} iconClassName='h-2 w-2' color='tertiary' />}
-      renderLoader={() => (
-        <div>
-          <CircularProgress size={30} />
-        </div>
-      )}
     >
       {children}
-    </WalletManagerProvider>
+    </ShuttleProvider>
   )
 }
