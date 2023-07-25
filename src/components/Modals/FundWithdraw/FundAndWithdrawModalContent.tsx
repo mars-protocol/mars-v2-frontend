@@ -59,19 +59,23 @@ export default function FundWithdrawModalContent(props: Props) {
       result = await deposit({
         fee: hardcodedFee,
         accountId: props.account.id,
-        coin: {
-          denom: currentAsset.denom,
-          amount: amount.toString(),
-        },
+        coins: [
+          {
+            denom: currentAsset.denom,
+            amount: amount.toString(),
+          },
+        ],
       })
     } else {
       result = await withdraw({
         fee: hardcodedFee,
         accountId: props.account.id,
-        coin: {
-          denom: currentAsset.denom,
-          amount: amount.toString(),
-        },
+        coins: [
+          {
+            denom: currentAsset.denom,
+            amount: amount.toString(),
+          },
+        ],
       })
     }
 

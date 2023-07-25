@@ -1,6 +1,6 @@
+import { MsgExecuteContract } from '@delphi-labs/shuttle-react'
 import { isMobile } from 'react-device-detect'
 import { GetState, SetState } from 'zustand'
-import { MsgExecuteContract } from '@delphi-labs/shuttle-react'
 
 import { ENV } from 'constants/env'
 import { Store } from 'store'
@@ -107,24 +107,20 @@ export default function createBroadcastSlice(
 
       return !!response.result
     },
-    deposit: async (options: { fee: StdFee; accountId: string; coin: Coin }) => {
+    deposit: async (options: { fee: StdFee; accountId: string; coins: Coin[] }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
-          actions: [
-            {
-              deposit: options.coin,
-            },
-          ],
+          actions: options.coins.map((coin) => ({
+            deposit: coin,
+          })),
         },
       }
 
-      const response = await get().executeMsg({ msg, fee: options.fee, funds: [options.coin] })
+      const response = await get().executeMsg({ msg, fee: options.fee, funds: options.coins })
 
-      handleResponseMessages(
-        response,
-        `Deposited ${formatAmountWithSymbol(options.coin)} to Account ${options.accountId}`,
-      )
+      const depositString = options.coins.map((coin) => formatAmountWithSymbol(coin)).join('and ')
+      handleResponseMessages(response, `Deposited ${depositString} to Account ${options.accountId}`)
       return !!response.result
     },
     unlock: async (options: {
@@ -199,23 +195,21 @@ export default function createBroadcastSlice(
       handleResponseMessages(response, `Deposited into vault`)
       return !!response.result
     },
-    withdraw: async (options: { fee: StdFee; accountId: string; coin: Coin }) => {
+    withdraw: async (options: { fee: StdFee; accountId: string; coins: Coin[] }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
-          actions: [
-            {
-              withdraw: options.coin,
-            },
-          ],
+          actions: options.coins.map((coin) => ({
+            withdraw: coin,
+          })),
         },
       }
 
       const response = await get().executeMsg({ msg, fee: options.fee })
-
+      const withdrawString = options.coins.map((coin) => formatAmountWithSymbol(coin)).join('and ')
       handleResponseMessages(
         response,
-        `Withdrew ${formatAmountWithSymbol(options.coin)} from Account ${options.accountId}`,
+        `Withdrew ${withdrawString} from Account ${options.accountId}`,
       )
       return !!response.result
     },

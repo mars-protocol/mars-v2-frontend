@@ -11,8 +11,9 @@ interface Props {
 export default function AccountDetailsController() {
   const account = useCurrentAccount()
   const address = useStore((s) => s.address)
+  const focusComponent = useStore((s) => s.focusComponent)
 
-  if (!account || !address) return null
+  if (!account || !address || focusComponent) return null
 
   return <AccountDetails account={account} />
 }

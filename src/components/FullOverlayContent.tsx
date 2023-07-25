@@ -1,3 +1,5 @@
+import classNames from 'classnames'
+
 import Button from 'components/Button'
 import DocsLink from 'components/DocsLink'
 import Text from 'components/Text'
@@ -5,14 +7,15 @@ import Text from 'components/Text'
 interface Props {
   title: string
   copy: string
+  className?: string
   children?: React.ReactNode
   button?: ButtonProps
-  docs?: 'wallet' | 'account' | 'terms'
+  docs?: DocLinkType
 }
 
 export default function FullOverlayContent(props: Props) {
   return (
-    <div className='min-h-[600px] w-100'>
+    <div className={classNames('min-h-[600px] w-100', props.className)}>
       <Text size='4xl' className='w-full pb-2 text-center'>
         {props.title}
       </Text>

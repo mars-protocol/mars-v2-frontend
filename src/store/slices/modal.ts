@@ -14,6 +14,7 @@ export default function createModalSlice(set: SetState<ModalSlice>, get: GetStat
     settingsModal: false,
     unlockModal: null,
     vaultModal: null,
+    walletAssetsModal: null,
     withdrawFromVaultsModal: null,
   }
 }

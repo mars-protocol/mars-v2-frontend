@@ -1,18 +1,19 @@
 import BigNumber from 'bignumber.js'
 
+import { BNCoin } from 'types/classes/BNCoin'
 import {
   Positions,
   VaultPosition,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { BN } from 'utils/helpers'
-import { BNCoin } from 'types/classes/BNCoin'
 
 export const calculateAccountBalance = (
   account: Account | AccountChange,
   prices: BNCoin[],
+  displayCurrency: string,
 ): BigNumber => {
-  const totalDepositValue = calculateAccountDeposits(account, prices)
-  const totalDebtValue = calculateAccountDebt(account, prices)
+  const totalDepositValue = calculateAccountDeposits(account, prices, displayCurrency)
+  const totalDebtValue = calculateAccountDebt(account, prices, displayCurrency)
 
   return totalDepositValue.minus(totalDebtValue)
 }
@@ -20,11 +21,14 @@ export const calculateAccountBalance = (
 export const calculateAccountDeposits = (
   account: Account | AccountChange,
   prices: BNCoin[],
+  displayCurrency: string,
 ): BigNumber => {
   if (!account.deposits) return BN(0)
   return account.deposits.reduce((acc, deposit) => {
     const price = prices.find((price) => price.denom === deposit.denom)?.amount ?? 0
-    const depositValue = BN(deposit.amount).multipliedBy(price)
+    const displayCurrencyPrice =
+      prices.find((price) => price.denom === displayCurrency)?.amount ?? 0
+    const depositValue = BN(deposit.amount).multipliedBy(price).dividedBy(displayCurrencyPrice)
     return acc.plus(depositValue)
   }, BN(0))
 }
@@ -32,12 +36,15 @@ export const calculateAccountDeposits = (
 export const calculateAccountDebt = (
   account: Account | AccountChange,
   prices: BNCoin[],
+  displayCurrency: string,
 ): BigNumber => {
   if (!account.debts) return BN(0)
   return account.debts.reduce((acc, debt) => {
     const price = prices.find((price) => price.denom === debt.denom)?.amount ?? 0
+    const displayCurrencyPrice =
+      prices.find((price) => price.denom === displayCurrency)?.amount ?? 0
     const debtAmount = BN(debt.amount)
-    const debtValue = debtAmount.multipliedBy(price)
+    const debtValue = debtAmount.multipliedBy(price).dividedBy(displayCurrencyPrice)
     return acc.plus(debtValue)
   }, BN(0))
 }
@@ -45,6 +52,7 @@ export const calculateAccountDebt = (
 export const calculateAccountPnL = (
   account: Account | AccountChange,
   prices: BNCoin[],
+  displayCurrency: string,
 ): BigNumber => {
   return BN(0)
 }
@@ -52,6 +60,7 @@ export const calculateAccountPnL = (
 export const calculateAccountApr = (
   account: Account | AccountChange,
   prices: BNCoin[],
+  displayCurrency: string,
 ): BigNumber => {
   return BN(0)
 }
@@ -59,6 +68,7 @@ export const calculateAccountApr = (
 export const calculateAccountBorrowRate = (
   account: Account | AccountChange,
   prices: BNCoin[],
+  displayCurrency: string,
 ): BigNumber => {
   return BN(0)
 }

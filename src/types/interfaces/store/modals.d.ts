@@ -8,9 +8,10 @@ interface ModalSlice {
   fundAndWithdrawModal: 'fund' | 'withdraw' | null
   lendAndReclaimModal: LendAndReclaimModalConfig | null
   settingsModal: boolean
-  vaultModal: VaultModal | null
-  withdrawFromVaultsModal: DepositedVault[] | null
   unlockModal: UnlockModal | null
+  vaultModal: VaultModal | null
+  walletAssetsModal: WalletAssetModal | null
+  withdrawFromVaultsModal: DepositedVault[] | null
 }
 
 interface AlertDialogButton {
@@ -51,4 +52,8 @@ interface AddVaultBorrowingsModal {
 
 interface UnlockModal {
   vault: DepositedVault
+}
+interface WalletAssetModal {
+  isOpen?: boolean
+  selectedDenoms: string[]
 }

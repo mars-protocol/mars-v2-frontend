@@ -1,4 +1,4 @@
-export { default as AddVaultBorrowAssetsModal } from 'components/Modals/AddVaultAssets/AddVaultBorrowAssetsModal'
+export { default as AddVaultBorrowAssetsModal } from 'components/Modals/AddVaultAssets'
 export { default as AlertDialogController } from 'components/Modals/AlertDialog'
 export { default as BorrowModal } from 'components/Modals/BorrowModal'
 export { default as FundAndWithdrawModal } from 'components/Modals/FundWithdraw'
@@ -6,4 +6,5 @@ export { default as LendAndReclaimModalController } from 'components/Modals/Lend
 export { default as SettingsModal } from 'components/Modals/Settings'
 export { default as UnlockModal } from 'components/Modals/Unlock'
 export { default as VaultModal } from 'components/Modals/Vault'
+export { default as WalletAssets } from 'components/Modals/WalletAssets'
 export { default as WithdrawFromVaultsModal } from 'components/Modals/WithdrawFromVaultsModal'

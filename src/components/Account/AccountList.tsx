@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import { useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
+import AccountFundFirst from 'components/Account/AccountFund'
 import AccountStats from 'components/Account/AccountStats'
 import Button from 'components/Button'
 import Card from 'components/Card'
@@ -9,16 +10,18 @@ import { ArrowCircledTopRight, ArrowDownLine, ArrowUpLine, TrashBin } from 'comp
 import Radio from 'components/Radio'
 import SwitchWithLabel from 'components/SwitchWithLabel'
 import Text from 'components/Text'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
+import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
+import useLocalStorage from 'hooks/useLocalStorage'
+import usePrices from 'hooks/usePrices'
 import useStore from 'store'
-import { calculateAccountDeposits } from 'utils/accounts'
+import { calculateAccountBalance, calculateAccountDeposits } from 'utils/accounts'
 import { hardcodedFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
-import usePrices from 'hooks/usePrices'
-import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
 
 interface Props {
-  setShowFundAccount: (showFundAccount: boolean) => void
   accounts: Account[]
 }
 
@@ -34,11 +37,14 @@ export default function AccountList(props: Props) {
   const { data: prices } = usePrices()
   const { autoLendEnabledAccountIds, toggleAutoLend } = useAutoLendEnabledAccountIds()
   const deleteAccount = useStore((s) => s.deleteAccount)
-
+  const [displayCurrency] = useLocalStorage<string>(
+    DISPLAY_CURRENCY_KEY,
+    DEFAULT_SETTINGS.displayCurrency,
+  )
   const accountSelected = !!accountId && !isNaN(Number(accountId))
   const selectedAccountDetails = props.accounts.find((account) => account.id === accountId)
   const selectedAccountBalance = selectedAccountDetails
-    ? calculateAccountDeposits(selectedAccountDetails, prices)
+    ? calculateAccountBalance(selectedAccountDetails, prices, displayCurrency)
     : BN(0)
 
   async function deleteAccountHandler() {
@@ -61,7 +67,7 @@ export default function AccountList(props: Props) {
   return (
     <div className='flex w-full flex-wrap p-4'>
       {props.accounts.map((account) => {
-        const positionBalance = calculateAccountDeposits(account, prices)
+        const positionBalance = calculateAccountDeposits(account, prices, displayCurrency)
         const isActive = accountId === account.id
         const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
 
@@ -103,6 +109,10 @@ export default function AccountList(props: Props) {
                       color='tertiary'
                       leftIcon={<ArrowUpLine />}
                       onClick={() => {
+                        if (positionBalance.isLessThanOrEqualTo(0)) {
+                          useStore.setState({ focusComponent: <AccountFundFirst /> })
+                          return
+                        }
                         useStore.setState({ fundAndWithdrawModal: 'fund' })
                       }}
                     />

@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 
-import AddVaultAssetTable from 'components/Modals/AddVaultAssets/AddVaultAssetTable'
+import AssetSelectTable from 'components/Modals/AssetsSelect/AssetSelectTable'
 import SearchBar from 'components/SearchBar'
 import Text from 'components/Text'
 import useMarketBorrowings from 'hooks/useMarketBorrowings'
@@ -89,7 +89,7 @@ export default function AddVaultAssetsModalContent(props: Props) {
             Leverage will be set at 50% for both assets by default
           </Text>
         </div>
-        <AddVaultAssetTable
+        <AssetSelectTable
           assets={poolAssets}
           onChangeSelected={onChangePoolDenoms}
           selectedDenoms={selectedPoolDenoms}
@@ -101,7 +101,7 @@ export default function AddVaultAssetsModalContent(props: Props) {
             these assets below.
           </Text>
         </div>
-        <AddVaultAssetTable
+        <AssetSelectTable
           assets={stableAssets}
           onChangeSelected={onChangeOtherDenoms}
           selectedDenoms={selectedOtherDenoms}

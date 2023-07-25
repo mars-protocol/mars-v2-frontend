@@ -12,10 +12,10 @@ import useMarketAssets from 'hooks/useMarketAssets'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
+import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { findCoinByDenom, getAssetByDenom } from 'utils/assets'
 import { formatPercent } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 
 export interface VaultBorrowingsProps {
   updatedAccount: Account

@@ -14,13 +14,12 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
+import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
-import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { convertToDisplayAmount, demagnify } from 'utils/formatters'
-import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import useLocalStorage from 'hooks/useLocalStorage'
 
 interface Props {
   data: Account
