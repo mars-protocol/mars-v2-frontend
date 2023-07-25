@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import usePrices from 'hooks/usePrices'
 import useAssetParams from 'hooks/useAssetParams'
@@ -16,6 +16,7 @@ import {
 import { convertAccountToPositions } from 'utils/accounts'
 import { VaultPositionValue } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import useStore from 'store'
+import { BorrowTarget } from 'types/enums/borrowTarget'
 
 export default function useHealthComputer(account: Account) {
   const { data: prices } = usePrices()
@@ -23,6 +24,7 @@ export default function useHealthComputer(account: Account) {
   const { data: vaultConfigs } = useVaultConfigs()
   const baseCurrency = useStore((s) => s.baseCurrency)
 
+  const [health, setHealth] = useState(0)
   const positions = useMemo(() => convertAccountToPositions(account), [account])
   const baseCurrencyPrice = useMemo(
     () => prices.find((price) => price.denom === baseCurrency.denom)?.amount || 0,
@@ -120,20 +122,19 @@ export default function useHealthComputer(account: Account) {
     }
   }, [priceData, denomsData, vaultConfigsData, vaultPositionValues, positions])
 
-  const computeHealth = useCallback(() => {
-    async function callComputeHealthWasmFn(): Promise<number> {
-      if (!healthComputer) return 0
-      return Number((await compute_health_js(healthComputer)).max_ltv_health_factor) || 0
+  useEffect(() => {
+    async function computeHealthWasm() {
+      if (!healthComputer) return
+      setHealth(Number((await compute_health_js(healthComputer)).max_ltv_health_factor) || 0)
     }
-
-    return callComputeHealthWasmFn()
+    computeHealthWasm()
   }, [healthComputer])
 
   const computeMaxBorrowAmount = useCallback(
-    (denom: string) => {
+    (denom: string, target: BorrowTarget) => {
       async function callMaxBorrowWasmFn(denom: string): Promise<number> {
         if (!healthComputer) return 0
-        return await max_borrow_estimate_js(healthComputer, denom)
+        return await max_borrow_estimate_js(healthComputer, denom, target)
       }
 
       return callMaxBorrowWasmFn(denom)
@@ -153,5 +154,5 @@ export default function useHealthComputer(account: Account) {
     [healthComputer],
   )
 
-  return { computeHealth, computeMaxBorrowAmount, computeMaxWithdrawAmount }
+  return { health, computeMaxBorrowAmount, computeMaxWithdrawAmount }
 }

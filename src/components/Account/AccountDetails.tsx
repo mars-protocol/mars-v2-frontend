@@ -2,7 +2,9 @@ import { Gauge } from 'components/Gauge'
 import { Heart } from 'components/Icons'
 import Text from 'components/Text'
 import useCurrentAccount from 'hooks/useCurrentAccount'
+import useHealthComputer from 'hooks/useHealthComputer'
 import useStore from 'store'
+import { formatHealth } from 'utils/formatters'
 
 interface Props {
   account: Account
@@ -19,6 +21,7 @@ export default function AccountDetailsController() {
 }
 
 function AccountDetails(props: Props) {
+  const { health } = useHealthComputer(props.account)
   return (
     <div
       data-testid='account-details'
@@ -30,7 +33,7 @@ function AccountDetails(props: Props) {
           Health
         </Text>
         <Text size='xs' className='w-full text-center'>
-          89%
+          {formatHealth(health)}
         </Text>
       </div>
       <div className='w-full border border-x-0 border-white/20 py-4'>

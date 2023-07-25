@@ -20,6 +20,7 @@ import { hardcodedFee } from 'utils/constants'
 import { formatPercent, formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import useHealthComputer from 'hooks/useHealthComputer'
+import { BorrowTarget } from 'types/enums/borrowTarget'
 
 function getDebtAmount(modal: BorrowModal | null) {
   return BN((modal?.marketData as BorrowMarketTableData)?.debt ?? 0).toString()
@@ -110,10 +111,13 @@ function BorrowModal(props: Props) {
       return
     }
 
-    computeMaxBorrowAmount(asset.denom).then((maxBorrowAmount) => {
+    computeMaxBorrowAmount(
+      asset.denom,
+      borrowToWallet ? BorrowTarget.Wallet : BorrowTarget.Deposit,
+    ).then((maxBorrowAmount) => {
       setMax(BN(Math.min(maxBorrowAmount, modal?.marketData?.liquidity?.amount.toNumber() || 0)))
     })
-  }, [isRepay, modal, asset.denom, computeMaxBorrowAmount])
+  }, [isRepay, modal, asset.denom, computeMaxBorrowAmount, borrowToWallet])
 
   useEffect(() => {
     if (!modal?.asset) return
