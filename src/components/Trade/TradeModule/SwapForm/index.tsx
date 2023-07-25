@@ -44,14 +44,10 @@ export default function SwapForm(props: Props) {
   )
 
   useEffect(() => {
-    ;(async function () {
-      const estimation = await estimateExactIn(
-        { denom: sellAsset.denom, amount: accountSellAssetDeposit },
-        buyAsset.denom,
-      )
-
-      setMaxBuyableAmountEstimation(estimation)
-    })()
+    estimateExactIn(
+      { denom: sellAsset.denom, amount: accountSellAssetDeposit },
+      buyAsset.denom,
+    ).then(setMaxBuyableAmountEstimation)
   }, [accountSellAssetDeposit, buyAsset.denom, sellAsset.denom])
 
   const [buyAssetValue, sellAssetValue] = useMemo(() => {
