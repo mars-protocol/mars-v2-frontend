@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { ChangeEvent, useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import NumberInput from 'components/NumberInput'
 import { formatValue } from 'utils/formatters'
@@ -34,6 +34,11 @@ export default function AssetAmountInput(props: Props) {
     setAmount(max)
   }, [max, setAmount])
 
+  const maxValue = useMemo(() => {
+    const val = max.shiftedBy(-asset.decimals)
+    return val.isGreaterThan(1) ? val.toFixed(2) : val.toPrecision(2)
+  }, [asset.decimals, max])
+
   return (
     <div className={classNames(className.container, containerClassName)}>
       <label>
@@ -53,7 +58,7 @@ export default function AssetAmountInput(props: Props) {
         <div className={className.footer}>
           <div className={className.maxButtonWrapper}>
             <span className={className.maxButtonLabel}>{maxButtonLabel}</span>
-            <span className={className.maxValue}>{max.shiftedBy(-asset.decimals).toFixed(2)}</span>
+            <span className={className.maxValue}>{maxValue}</span>
             <div className={className.maxButton} onClick={handleMaxClick}>
               MAX
             </div>

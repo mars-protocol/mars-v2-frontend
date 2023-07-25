@@ -18,7 +18,7 @@ export default function MarginToggle(props: Props) {
       <ConditionalWrapper
         condition={!!props.disabled}
         wrapper={(children) => (
-          <Tooltip type='info' content={<Text size='sm'>{'Margin is not supported yet.'}</Text>}>
+          <Tooltip type='info' content={<Text size='sm'>Margin is not supported yet.</Text>}>
             {children}
           </Tooltip>
         )}
