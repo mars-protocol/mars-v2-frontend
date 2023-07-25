@@ -27,7 +27,6 @@ export default function AccountFund() {
   const { accountId } = useParams()
   const { data: accounts } = useAccounts(address)
   const currentAccount = useCurrentAccount()
-  const createAccount = useStore((s) => s.createAccount)
   const [isFunding, setIsFunding] = useToggle(false)
   const [selectedAccount, setSelectedAccount] = useState<null | string>(null)
   const [fundingAssets, setFundingAssets] = useState<Coin[]>([])

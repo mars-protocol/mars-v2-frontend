@@ -1,9 +1,16 @@
+import DisplayCurrency from 'components/DisplayCurrency'
 import { Gauge } from 'components/Gauge'
 import { Heart } from 'components/Icons'
 import Text from 'components/Text'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useHealthComputer from 'hooks/useHealthComputer'
+import useLocalStorage from 'hooks/useLocalStorage'
+import usePrices from 'hooks/usePrices'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
+import { calculateAccountBalance } from 'utils/accounts'
 import { formatHealth } from 'utils/formatters'
 
 interface Props {
@@ -22,6 +29,14 @@ export default function AccountDetailsController() {
 
 function AccountDetails(props: Props) {
   const { health } = useHealthComputer(props.account)
+
+  const [displayCurrency] = useLocalStorage<string>(
+    DISPLAY_CURRENCY_KEY,
+    DEFAULT_SETTINGS.displayCurrency,
+  )
+  const { data: prices } = usePrices()
+  const accountBalance = calculateAccountBalance(props.account, prices, displayCurrency)
+  const coin = new BNCoin({ amount: accountBalance.toString(), denom: displayCurrency })
   return (
     <div
       data-testid='account-details'
@@ -48,9 +63,7 @@ function AccountDetails(props: Props) {
         <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
           Balance
         </Text>
-        <Text size='xs' className='w-full text-center'>
-          $300M
-        </Text>
+        <DisplayCurrency coin={coin} className='w-full text-center text-xs' />
       </div>
     </div>
   )

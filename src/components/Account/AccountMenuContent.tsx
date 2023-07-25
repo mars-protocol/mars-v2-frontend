@@ -55,8 +55,10 @@ export default function AccountMenuContent(props: Props) {
     const accountId = await createAccount({ fee: hardcodedFee })
     setIsCreating(false)
 
-    accountId && navigate(`/wallets/${address}/accounts/${accountId}/trade`)
-    useStore.setState({ focusComponent: <AccountFundFirst /> })
+    if (accountId) {
+      navigate(`/wallets/${address}/accounts/${accountId}/trade`)
+      useStore.setState({ focusComponent: <AccountFundFirst /> })
+    }
   }, [address, createAccount, navigate, setIsCreating, setShowMenu])
 
   const handleCreateAccountClick = useCallback(() => {
@@ -113,6 +115,7 @@ export default function AccountMenuContent(props: Props) {
             rightIcon={<Plus />}
             iconClassName='h-2.5 w-2.5'
             text='Create'
+            showProgressIndicator={isCreating}
             onClick={performCreateAccount}
           />
         </div>

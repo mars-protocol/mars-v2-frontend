@@ -18,7 +18,7 @@ export default function WalletAssetsModalContent(props: Props) {
     const assetsInWallet: Asset[] = []
     balances.forEach((balance) => {
       const asset = getAssetByDenom(balance.denom)
-      if (asset) assetsInWallet.push(asset)
+      if (asset && asset.isMarket) assetsInWallet.push(asset)
     })
 
     return assetsInWallet
