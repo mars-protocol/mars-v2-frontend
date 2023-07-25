@@ -123,6 +123,12 @@ export const formatValue = (amount: number | string, options?: FormatOptions): s
 
   return returnValue
 }
+export function formatHealth(health: number) {
+  return formatValue(health, {
+    minDecimals: 0,
+    maxDecimals: 2,
+  })
+}
 
 export function formatLeverage(leverage: number) {
   return formatValue(leverage, {
