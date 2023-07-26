@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 
 import Button from 'components/Button'
 import Modal from 'components/Modal'
@@ -16,10 +16,6 @@ export default function WalletAssetsModal() {
     })
   }
 
-  const updateSelectedDenoms = useCallback((denoms: string[]) => {
-    setSelectedDenoms(denoms)
-  }, [])
-
   if (!modal?.isOpen) return null
 
   return (
@@ -31,7 +27,7 @@ export default function WalletAssetsModal() {
     >
       <WalletAssetsModalContent
         defaultSelectedDenoms={modal.selectedDenoms}
-        onChangeDenoms={updateSelectedDenoms}
+        onChangeDenoms={setSelectedDenoms}
       />
       <div className='flex w-full p-4'>
         <Button className='w-full' onClick={onClose} color='tertiary' text='Select Assets' />

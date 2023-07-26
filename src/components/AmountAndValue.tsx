@@ -17,7 +17,7 @@ export default function AmountAndValue(props: Props) {
       />
       <DisplayCurrency
         className='justify-end text-xs text-white/50'
-        coin={new BNCoin({ amount: props.amount.toString(), denom: props.asset.denom })}
+        coin={BNCoin.fromDenomAndBigNumber(props.asset.denom, props.amount)}
       />
     </div>
   )
