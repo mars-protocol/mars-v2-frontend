@@ -6,15 +6,16 @@ import {
   Positions,
   VaultPosition,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 
 export const calculateAccountBalance = (
   account: Account | AccountChange,
   prices: BNCoin[],
-  displayCurrency: string,
+  displayCurrencyDenom: string,
 ): BigNumber => {
-  const totalDepositValue = calculateAccountDeposits(account, prices, displayCurrency)
-  const totalDebtValue = calculateAccountDebt(account, prices, displayCurrency)
+  const totalDepositValue = calculateAccountDeposits(account, prices, displayCurrencyDenom)
+  const totalDebtValue = calculateAccountDebt(account, prices, displayCurrencyDenom)
 
   return totalDepositValue.minus(totalDebtValue)
 }
@@ -22,13 +23,12 @@ export const calculateAccountBalance = (
 export const calculateAccountDeposits = (
   account: Account | AccountChange,
   prices: BNCoin[],
-  displayCurrency: string,
+  displayCurrencyDenom: string,
 ): BigNumber => {
   if (!account.deposits) return BN_ZERO
   return account.deposits.reduce((acc, deposit) => {
     const price = prices.find((price) => price.denom === deposit.denom)?.amount ?? 0
-    const displayCurrencyPrice =
-      prices.find((price) => price.denom === displayCurrency)?.amount ?? 0
+    const displayCurrencyPrice = prices.find(byDenom(displayCurrencyDenom))?.amount ?? 0
     const depositValue = BN(deposit.amount).multipliedBy(price).dividedBy(displayCurrencyPrice)
     return acc.plus(depositValue)
   }, BN_ZERO)
@@ -37,13 +37,12 @@ export const calculateAccountDeposits = (
 export const calculateAccountDebt = (
   account: Account | AccountChange,
   prices: BNCoin[],
-  displayCurrency: string,
+  displayCurrencyDenom: string,
 ): BigNumber => {
   if (!account.debts) return BN_ZERO
   return account.debts.reduce((acc, debt) => {
     const price = prices.find((price) => price.denom === debt.denom)?.amount ?? 0
-    const displayCurrencyPrice =
-      prices.find((price) => price.denom === displayCurrency)?.amount ?? 0
+    const displayCurrencyPrice = prices.find(byDenom(displayCurrencyDenom))?.amount ?? 0
     const debtAmount = BN(debt.amount)
     const debtValue = debtAmount.multipliedBy(price).dividedBy(displayCurrencyPrice)
     return acc.plus(debtValue)
@@ -53,7 +52,7 @@ export const calculateAccountDebt = (
 export const calculateAccountPnL = (
   account: Account | AccountChange,
   prices: BNCoin[],
-  displayCurrency: string,
+  displayCurrencyDenom: string,
 ): BigNumber => {
   return BN_ZERO
 }
@@ -61,7 +60,7 @@ export const calculateAccountPnL = (
 export const calculateAccountApr = (
   account: Account | AccountChange,
   prices: BNCoin[],
-  displayCurrency: string,
+  displayCurrencyDenom: string,
 ): BigNumber => {
   return BN_ZERO
 }
@@ -69,7 +68,7 @@ export const calculateAccountApr = (
 export const calculateAccountBorrowRate = (
   account: Account | AccountChange,
   prices: BNCoin[],
-  displayCurrency: string,
+  displayCurrencyDenom: string,
 ): BigNumber => {
   return BN_ZERO
 }
