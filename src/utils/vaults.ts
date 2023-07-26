@@ -1,8 +1,8 @@
 import { IS_TESTNET } from 'constants/env'
+import { BN_ZERO } from 'constants/math'
 import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { BN } from 'utils/helpers'
 import { getTokenPrice, getTokenValue } from 'utils/tokens'
 
 export function getVaultsMetaData() {
@@ -25,7 +25,7 @@ export function getVaultDepositCoinsAndValue(
     if (!price) return prev
 
     return prev.plus(bnCoin.amount.multipliedBy(price))
-  }, BN(0))
+  }, BN_ZERO)
 
   const halfValue = totalValue.dividedBy(2)
 

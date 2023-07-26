@@ -12,7 +12,7 @@ import MarketAssetTableRow from 'components/MarketAssetTable/MarketAssetTableRow
 import MarketDetails from 'components/MarketAssetTable/MarketDetails'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import { getEnabledMarketAssets } from 'utils/assets'
-import { BN } from 'utils/helpers'
+import { BN_ZERO } from 'constants/math'
 
 interface Props {
   title: string
@@ -72,7 +72,7 @@ export default function BorrowTable(props: Props) {
 
                 if (!asset) return null
 
-                return <AmountAndValue asset={asset} amount={borrowAsset?.debt ?? BN(0)} />
+                return <AmountAndValue asset={asset} amount={borrowAsset?.debt ?? BN_ZERO} />
               },
             },
           ]
@@ -108,7 +108,7 @@ export default function BorrowTable(props: Props) {
             return <Loading />
           }
 
-          return <AmountAndValue asset={asset} amount={liquidity.amount ?? BN(0)} />
+          return <AmountAndValue asset={asset} amount={liquidity.amount ?? BN_ZERO} />
         },
       },
       {

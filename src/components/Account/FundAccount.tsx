@@ -12,8 +12,8 @@ import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { getAmount } from 'utils/accounts'
 import { hardcodedFee } from 'utils/constants'
-import { BN } from 'utils/helpers'
 import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
+import { BN_ZERO } from 'constants/math'
 
 interface Props {
   setShowFundAccount: (show: boolean) => void
@@ -25,7 +25,7 @@ export default function FundAccount(props: Props) {
   const deposit = useStore((s) => s.deposit)
   const balances = useStore((s) => s.balances)
 
-  const [amount, setAmount] = useState(BN(0))
+  const [amount, setAmount] = useState(BN_ZERO)
   const [asset, setAsset] = useState<Asset>(ASSETS[0])
   const { autoLendEnabledAccountIds, toggleAutoLend } = useAutoLendEnabledAccountIds()
   const [isFunding, setIsFunding] = useToggle()

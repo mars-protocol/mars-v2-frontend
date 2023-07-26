@@ -11,7 +11,7 @@ import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { getAmount } from 'utils/accounts'
 import { hardcodedFee } from 'utils/constants'
-import { BN } from 'utils/helpers'
+import { BN_ZERO } from 'constants/math'
 
 interface Props {
   account: Account
@@ -25,21 +25,23 @@ export default function FundWithdrawModalContent(props: Props) {
   const balances = useStore((s) => s.balances)
   const [isConfirming, setIsConfirming] = useToggle()
   const [currentAsset, setCurrentAsset] = useState(baseCurrency)
-  const [amount, setAmount] = useState(BN(0))
+  const [amount, setAmount] = useState(BN_ZERO)
   const [change, setChange] = useState<AccountChange | undefined>()
 
   const max = props.isFunding
     ? getAmount(currentAsset.denom, balances ?? [])
     : props.account
     ? getAmount(currentAsset.denom, props.account.deposits)
-    : BN(0)
+    : BN_ZERO
 
   function onChangeAmount(val: BigNumber) {
     setAmount(val)
     setChange({
       deposits: [
         {
-          amount: props.isFunding ? BN(0).plus(amount).toString() : BN(0).minus(amount).toString(),
+          amount: props.isFunding
+            ? BN_ZERO.plus(amount).toString()
+            : BN_ZERO.minus(amount).toString(),
           denom: currentAsset.denom,
         },
       ],
@@ -48,7 +50,7 @@ export default function FundWithdrawModalContent(props: Props) {
 
   function resetState() {
     setCurrentAsset(baseCurrency)
-    setAmount(BN(0))
+    setAmount(BN_ZERO)
     setChange(undefined)
   }
 

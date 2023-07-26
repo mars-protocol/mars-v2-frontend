@@ -6,6 +6,7 @@ import {
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
+import { BN_ZERO } from 'constants/math'
 
 export const calculateAccountBalance = (
   account: Account | AccountChange,
@@ -21,46 +22,46 @@ export const calculateAccountDeposits = (
   account: Account | AccountChange,
   prices: BNCoin[],
 ): BigNumber => {
-  if (!account.deposits) return BN(0)
+  if (!account.deposits) return BN_ZERO
   return account.deposits.reduce((acc, deposit) => {
     const price = prices.find((price) => price.denom === deposit.denom)?.amount ?? 0
     const depositValue = BN(deposit.amount).multipliedBy(price)
     return acc.plus(depositValue)
-  }, BN(0))
+  }, BN_ZERO)
 }
 
 export const calculateAccountDebt = (
   account: Account | AccountChange,
   prices: BNCoin[],
 ): BigNumber => {
-  if (!account.debts) return BN(0)
+  if (!account.debts) return BN_ZERO
   return account.debts.reduce((acc, debt) => {
     const price = prices.find((price) => price.denom === debt.denom)?.amount ?? 0
     const debtAmount = BN(debt.amount)
     const debtValue = debtAmount.multipliedBy(price)
     return acc.plus(debtValue)
-  }, BN(0))
+  }, BN_ZERO)
 }
 
 export const calculateAccountPnL = (
   account: Account | AccountChange,
   prices: BNCoin[],
 ): BigNumber => {
-  return BN(0)
+  return BN_ZERO
 }
 
 export const calculateAccountApr = (
   account: Account | AccountChange,
   prices: BNCoin[],
 ): BigNumber => {
-  return BN(0)
+  return BN_ZERO
 }
 
 export const calculateAccountBorrowRate = (
   account: Account | AccountChange,
   prices: BNCoin[],
 ): BigNumber => {
-  return BN(0)
+  return BN_ZERO
 }
 
 export function getAmount(denom: string, coins: Coin[]): BigNumber {

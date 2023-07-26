@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import Divider from 'components/Divider'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { SLIPPAGE_KEY } from 'constants/localStore'
-import { ZERO } from 'constants/math'
+import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
@@ -31,15 +31,15 @@ export default function SwapForm(props: Props) {
   const { data: prices } = usePrices()
   const swap = useStore((s) => s.swap)
   const [isMarginChecked, setMarginChecked] = useState(false)
-  const [buyAssetAmount, setBuyAssetAmount] = useState(ZERO)
-  const [sellAssetAmount, setSellAssetAmount] = useState(ZERO)
+  const [buyAssetAmount, setBuyAssetAmount] = useState(BN_ZERO)
+  const [sellAssetAmount, setSellAssetAmount] = useState(BN_ZERO)
   const [slippage] = useLocalStorage(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
   const [focusedInput, setFocusedInput] = useState<'buy' | 'sell' | null>(null)
-  const [maxBuyableAmountEstimation, setMaxBuyableAmountEstimation] = useState(ZERO)
+  const [maxBuyableAmountEstimation, setMaxBuyableAmountEstimation] = useState(BN_ZERO)
   const [selectedOrderType, setSelectedOrderType] = useState<AvailableOrderType>('Market')
 
   const accountSellAssetDeposit = useMemo(
-    () => account?.deposits.find(byDenom(sellAsset.denom))?.amount || ZERO,
+    () => account?.deposits.find(byDenom(sellAsset.denom))?.amount || BN_ZERO,
     [account, sellAsset.denom],
   )
 
@@ -51,8 +51,8 @@ export default function SwapForm(props: Props) {
   }, [accountSellAssetDeposit, buyAsset.denom, sellAsset.denom])
 
   const [buyAssetValue, sellAssetValue] = useMemo(() => {
-    const buyAssetPrice = prices.find(byDenom(buyAsset.denom))?.amount ?? ZERO
-    const sellAssetPrice = prices.find(byDenom(sellAsset.denom))?.amount ?? ZERO
+    const buyAssetPrice = prices.find(byDenom(buyAsset.denom))?.amount ?? BN_ZERO
+    const sellAssetPrice = prices.find(byDenom(sellAsset.denom))?.amount ?? BN_ZERO
 
     return [
       buyAssetPrice.multipliedBy(buyAssetAmount.shiftedBy(-buyAsset.decimals)),
@@ -91,8 +91,8 @@ export default function SwapForm(props: Props) {
 
   useEffect(() => {
     setFocusedInput(null)
-    setBuyAssetAmount(ZERO)
-    setSellAssetAmount(ZERO)
+    setBuyAssetAmount(BN_ZERO)
+    setSellAssetAmount(BN_ZERO)
   }, [sellAsset.denom])
 
   useEffect(() => {
@@ -109,7 +109,7 @@ export default function SwapForm(props: Props) {
         slippage,
       })
       if (isSucceeded) {
-        setSellAssetAmount(ZERO)
+        setSellAssetAmount(BN_ZERO)
       }
     }
   }, [account?.id, buyAsset.denom, sellAsset.denom, sellAssetAmount, slippage, swap])

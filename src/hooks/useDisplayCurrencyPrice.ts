@@ -8,6 +8,7 @@ import usePrices from 'hooks/usePrices'
 import { byDenom } from 'utils/array'
 import { getDisplayCurrencies } from 'utils/assets'
 import { BN } from 'utils/helpers'
+import { BN_ZERO } from 'constants/math'
 
 function useDisplayCurrencyPrice() {
   const { data: prices } = usePrices()
@@ -32,14 +33,15 @@ function useDisplayCurrencyPrice() {
         return BN(assetPrice.amount).dividedBy(displayCurrencyPrice.amount)
       }
 
-      return BN(0)
+      return BN_ZERO
     },
     [prices, displayCurrency],
   )
 
   const convertAmount = useCallback(
     (asset: Asset, amount: string | number | BigNumber) =>
-      getConversionRate(asset.denom)?.multipliedBy(BN(amount).shiftedBy(-asset.decimals)) ?? BN(0),
+      getConversionRate(asset.denom)?.multipliedBy(BN(amount).shiftedBy(-asset.decimals)) ??
+      BN_ZERO,
     [getConversionRate],
   )
 

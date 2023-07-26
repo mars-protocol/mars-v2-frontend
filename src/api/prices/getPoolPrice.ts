@@ -3,6 +3,7 @@ import { byDenom, byTokenDenom, partition } from 'utils/array'
 import { BN } from 'utils/helpers'
 import getPrice from 'api/prices/getPrice'
 import { BNCoin } from 'types/classes/BNCoin'
+import { BN_ONE } from 'constants/math'
 
 interface PoolToken {
   denom: string
@@ -43,7 +44,7 @@ const calculateSpotPrice = (poolAssets: PoolAsset[], asset: Asset): [BigNumber, 
 
   const numerator = BN(assetIn.token.amount).dividedBy(assetIn.weight)
   const denominator = BN(assetOut.token.amount).dividedBy(assetOut.weight)
-  const spotPrice = BN(1).dividedBy(numerator.dividedBy(denominator))
+  const spotPrice = BN_ONE.dividedBy(numerator.dividedBy(denominator))
 
   return [spotPrice, assetOut]
 }

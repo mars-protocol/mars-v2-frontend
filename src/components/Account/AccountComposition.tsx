@@ -5,6 +5,7 @@ import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { ArrowRight } from 'components/Icons'
 import Text from 'components/Text'
+import { BN_ZERO } from 'constants/math'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -15,7 +16,6 @@ import {
   calculateAccountDeposits,
   calculateAccountPnL,
 } from 'utils/accounts'
-import { BN } from 'utils/helpers'
 
 interface Props {
   account: Account
@@ -34,15 +34,15 @@ interface ItemProps {
 export default function AccountComposition(props: Props) {
   const { data: prices } = usePrices()
   const balance = calculateAccountDeposits(props.account, prices)
-  const balanceChange = props.change ? calculateAccountDeposits(props.change, prices) : BN(0)
+  const balanceChange = props.change ? calculateAccountDeposits(props.change, prices) : BN_ZERO
   const debtBalance = calculateAccountDebt(props.account, prices)
-  const debtBalanceChange = props.change ? calculateAccountDebt(props.change, prices) : BN(0)
+  const debtBalanceChange = props.change ? calculateAccountDebt(props.change, prices) : BN_ZERO
   const pnL = calculateAccountPnL(props.account, prices)
-  const pnLChange = props.change ? calculateAccountPnL(props.change, prices) : BN(0)
+  const pnLChange = props.change ? calculateAccountPnL(props.change, prices) : BN_ZERO
   const apr = calculateAccountApr(props.account, prices)
-  const aprChange = props.change ? calculateAccountPnL(props.change, prices) : BN(0)
+  const aprChange = props.change ? calculateAccountPnL(props.change, prices) : BN_ZERO
   const borrowRate = calculateAccountBorrowRate(props.account, prices)
-  const borrowRateChange = props.change ? calculateAccountPnL(props.change, prices) : BN(0)
+  const borrowRateChange = props.change ? calculateAccountPnL(props.change, prices) : BN_ZERO
 
   return (
     <div className='w-full flex-wrap p-4'>
