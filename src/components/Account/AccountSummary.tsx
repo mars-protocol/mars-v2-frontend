@@ -29,7 +29,6 @@ export default function AccountSummary(props: Props) {
     DEFAULT_SETTINGS.displayCurrency,
   )
   const baseCurrency = useStore((s) => s.baseCurrency)
-
   const accountBalance = props.account
     ? calculateAccountDeposits(props.account, prices, displayCurrency)
     : BN_ZERO
