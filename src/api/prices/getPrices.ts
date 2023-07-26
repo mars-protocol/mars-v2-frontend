@@ -1,11 +1,12 @@
-import { getAssetsMustHavePriceInfo } from 'utils/assets'
-import { partition } from 'utils/array'
+import getOraclePrices from 'api/prices/getOraclePrices'
 import getPoolPrice from 'api/prices/getPoolPrice'
 import fetchPythPrices from 'api/prices/getPythPrices'
 import { BNCoin } from 'types/classes/BNCoin'
-import getOraclePrices from 'api/prices/getOraclePrices'
+import { partition } from 'utils/array'
+import { getAssetsMustHavePriceInfo } from 'utils/assets'
 
 export default async function getPrices(): Promise<BNCoin[]> {
+  const usdPrice = new BNCoin({ denom: 'usd', amount: '1' })
   try {
     const assetsToFetchPrices = getAssetsMustHavePriceInfo()
     const [assetsWithPythPriceFeedId, assetsWithOraclePrices, assetsWithPoolIds] =
@@ -19,7 +20,7 @@ export default async function getPrices(): Promise<BNCoin[]> {
     ).flat()
     const poolPrices = await requestPoolPrices(assetsWithPoolIds, pythAndOraclePrices)
 
-    return [...pythAndOraclePrices, ...poolPrices]
+    return [...pythAndOraclePrices, ...poolPrices, usdPrice]
   } catch (ex) {
     console.error(ex)
     throw ex

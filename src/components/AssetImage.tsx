@@ -7,6 +7,14 @@ interface Props {
 }
 
 export default function AssetImage(props: Props) {
+  if (!props.asset.logo)
+    return (
+      <div
+        className={props.className}
+        style={{ width: `${props.size}px`, height: `${props.size}px` }}
+      />
+    )
+
   return (
     <Image
       src={props.asset.logo}

@@ -5,18 +5,15 @@ import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { ArrowRight } from 'components/Icons'
 import Text from 'components/Text'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
 import { BN_ZERO } from 'constants/math'
-import useLocalStorage from 'hooks/useLocalStorage'
+import { ORACLE_DENOM } from 'constants/oracle'
 import usePrices from 'hooks/usePrices'
-import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import {
   calculateAccountApr,
   calculateAccountBorrowRate,
-  calculateAccountDebt,
-  calculateAccountDeposits,
+  calculateAccountDebtValue,
+  calculateAccountDepositsValue,
   calculateAccountPnL,
 } from 'utils/accounts'
 
@@ -36,30 +33,16 @@ interface ItemProps {
 
 export default function AccountComposition(props: Props) {
   const { data: prices } = usePrices()
-  const [displayCurrency] = useLocalStorage<string>(
-    DISPLAY_CURRENCY_KEY,
-    DEFAULT_SETTINGS.displayCurrency,
-  )
-  const balance = calculateAccountDeposits(props.account, prices, displayCurrency)
-  const balanceChange = props.change
-    ? calculateAccountDeposits(props.change, prices, displayCurrency)
-    : BN_ZERO
-  const debtBalance = calculateAccountDebt(props.account, prices, displayCurrency)
-  const debtBalanceChange = props.change
-    ? calculateAccountDebt(props.change, prices, displayCurrency)
-    : BN_ZERO
-  const pnL = calculateAccountPnL(props.account, prices, displayCurrency)
-  const pnLChange = props.change
-    ? calculateAccountPnL(props.change, prices, displayCurrency)
-    : BN_ZERO
-  const apr = calculateAccountApr(props.account, prices, displayCurrency)
-  const aprChange = props.change
-    ? calculateAccountPnL(props.change, prices, displayCurrency)
-    : BN_ZERO
-  const borrowRate = calculateAccountBorrowRate(props.account, prices, displayCurrency)
-  const borrowRateChange = props.change
-    ? calculateAccountPnL(props.change, prices, displayCurrency)
-    : BN_ZERO
+  const balance = calculateAccountDepositsValue(props.account, prices)
+  const balanceChange = props.change ? calculateAccountDepositsValue(props.change, prices) : BN_ZERO
+  const debtBalance = calculateAccountDebtValue(props.account, prices)
+  const debtBalanceChange = props.change ? calculateAccountDebtValue(props.change, prices) : BN_ZERO
+  const pnL = calculateAccountPnL(props.account, prices)
+  const pnLChange = props.change ? calculateAccountPnL(props.change, prices) : BN_ZERO
+  const apr = calculateAccountApr(props.account, prices)
+  const aprChange = props.change ? calculateAccountPnL(props.change, prices) : BN_ZERO
+  const borrowRate = calculateAccountBorrowRate(props.account, prices)
+  const borrowRateChange = props.change ? calculateAccountPnL(props.change, prices) : BN_ZERO
 
   return (
     <div className='w-full flex-wrap p-4'>
@@ -95,7 +78,6 @@ export default function AccountComposition(props: Props) {
 }
 
 function Item(props: ItemProps) {
-  const baseCurrency = useStore((s) => s.baseCurrency)
   const increase = props.isBadIncrease
     ? props.current.isGreaterThan(props.change)
     : props.current.isLessThan(props.change)
@@ -116,7 +98,7 @@ function Item(props: ItemProps) {
           />
         ) : (
           <DisplayCurrency
-            coin={new BNCoin({ amount: props.current.toString(), denom: baseCurrency.denom })}
+            coin={new BNCoin({ amount: props.current.toString(), denom: ORACLE_DENOM })}
             className='text-sm'
           />
         )}
@@ -134,7 +116,7 @@ function Item(props: ItemProps) {
               />
             ) : (
               <DisplayCurrency
-                coin={new BNCoin({ amount: props.change.toString(), denom: baseCurrency.denom })}
+                coin={new BNCoin({ amount: props.change.toString(), denom: ORACLE_DENOM })}
                 className={classNames('text-sm', increase ? 'text-profit' : 'text-loss')}
               />
             )}

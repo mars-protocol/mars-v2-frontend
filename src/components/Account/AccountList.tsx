@@ -17,7 +17,7 @@ import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
-import { calculateAccountBalance, calculateAccountDeposits } from 'utils/accounts'
+import { calculateAccountBalanceValue, calculateAccountDepositsValue } from 'utils/accounts'
 import { hardcodedFee } from 'utils/constants'
 import { getPage, getRoute } from 'utils/route'
 
@@ -37,14 +37,10 @@ export default function AccountList(props: Props) {
   const { data: prices } = usePrices()
   const { autoLendEnabledAccountIds, toggleAutoLend } = useAutoLendEnabledAccountIds()
   const deleteAccount = useStore((s) => s.deleteAccount)
-  const [displayCurrency] = useLocalStorage<string>(
-    DISPLAY_CURRENCY_KEY,
-    DEFAULT_SETTINGS.displayCurrency,
-  )
   const accountSelected = !!accountId && !isNaN(Number(accountId))
   const selectedAccountDetails = props.accounts.find((account) => account.id === accountId)
   const selectedAccountBalance = selectedAccountDetails
-    ? calculateAccountBalance(selectedAccountDetails, prices, displayCurrency)
+    ? calculateAccountBalanceValue(selectedAccountDetails, prices)
     : BN_ZERO
 
   async function deleteAccountHandler() {
@@ -67,7 +63,7 @@ export default function AccountList(props: Props) {
   return (
     <div className='flex w-full flex-wrap p-4'>
       {props.accounts.map((account) => {
-        const positionBalance = calculateAccountDeposits(account, prices, displayCurrency)
+        const positionBalance = calculateAccountDepositsValue(account, prices)
         const isActive = accountId === account.id
         const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
 

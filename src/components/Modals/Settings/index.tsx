@@ -18,12 +18,12 @@ import {
   REDUCE_MOTION_KEY,
   SLIPPAGE_KEY,
 } from 'constants/localStore'
+import { BN_ZERO } from 'constants/math'
 import useAlertDialog from 'hooks/useAlertDialog'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
-import { getAllAssets, getDisplayCurrencies } from 'utils/assets'
+import { getDisplayCurrencies, getEnabledMarketAssets } from 'utils/assets'
 import { BN } from 'utils/helpers'
-import { BN_ZERO } from 'constants/math'
 
 const slippages = [0.02, 0.03]
 
@@ -31,7 +31,7 @@ export default function SettingsModal() {
   const modal = useStore((s) => s.settingsModal)
   const { open: showResetDialog } = useAlertDialog()
   const displayCurrencies = getDisplayCurrencies()
-  const assets = getAllAssets()
+  const assets = getEnabledMarketAssets()
   const [customSlippage, setCustomSlippage] = useState<number>(0)
   const [inputRef, setInputRef] = useState<React.RefObject<HTMLInputElement>>()
   const [isCustom, setIsCustom] = useState(false)
@@ -58,9 +58,15 @@ export default function SettingsModal() {
       displayCurrencies.map((asset, index) => ({
         label: (
           <div className='flex w-full gap-2' key={index}>
-            <AssetImage asset={asset} size={16} />
+            {asset.denom === 'usd' ? (
+              <Text size='sm' className='h-4 w-4 text-center leading-4'>
+                {asset.symbol}
+              </Text>
+            ) : (
+              <AssetImage asset={asset} size={16} />
+            )}
             <Text size='sm' className='leading-4'>
-              {asset.symbol}
+              {asset.name}
             </Text>
           </div>
         ),

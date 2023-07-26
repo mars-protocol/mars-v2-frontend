@@ -11,7 +11,8 @@ interface Asset {
     | 'USDC.n'
     | 'WBTC.axl'
     | 'WETH.axl'
-    | 'gamm/pool/6'
+    | 'OSMO-USDC.n'
+    | '$'
   id:
     | 'OSMO'
     | 'ATOM'
@@ -21,7 +22,8 @@ interface Asset {
     | 'axlWBTC'
     | 'axlWETH'
     | 'nUSDC'
-    | 'gamm/pool/6'
+    | 'OSMO-USDC.n'
+    | 'USD'
   prefix?: string
   contract_addr?: string
   logo: string

@@ -105,14 +105,15 @@ export const AccountBalancesTable = (props: Props) => {
         accessorKey: 'size',
         header: 'Size',
         cell: ({ row }) => {
+          const amount = demagnify(
+            row.original.amount,
+            ASSETS.find((asset) => asset.denom === row.original.denom) ?? ASSETS[0],
+          )
           return (
             <FormattedNumber
               className='text-right text-xs'
-              amount={demagnify(
-                row.original.amount,
-                ASSETS.find((asset) => asset.denom === row.original.denom) ?? ASSETS[0],
-              )}
-              options={{ maxDecimals: 4 }}
+              amount={amount < 0.01 ? 0.01 : amount}
+              options={{ maxDecimals: 2, abbreviated: true, prefix: amount < 0.01 ? '< ' : '' }}
               animate
             />
           )

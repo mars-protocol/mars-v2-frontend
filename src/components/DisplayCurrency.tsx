@@ -29,18 +29,24 @@ export default function DisplayCurrency(props: Props) {
     [displayCurrency, displayCurrencies],
   )
 
+  const isUSD = displayCurrencyAsset.id === 'USD'
+  const prefix = isUSD
+    ? `${props.isApproximation ? '~ ' : ''}$`
+    : `${props.isApproximation ? '~ ' : ''}`
+  const suffix = isUSD
+    ? ''
+    : ` ${displayCurrencyAsset.symbol ? ` ${displayCurrencyAsset.symbol}` : ''}`
+
   return (
     <FormattedNumber
       className={props.className}
       amount={convertToDisplayAmount(props.coin, displayCurrency, prices).toNumber()}
       options={{
-        minDecimals: 0,
+        minDecimals: isUSD ? 2 : 0,
         maxDecimals: 2,
         abbreviated: true,
-        prefix: `${props.isApproximation ? '~ ' : ''}${
-          displayCurrencyAsset.prefix ? displayCurrencyAsset.prefix : ''
-        }`,
-        suffix: displayCurrencyAsset.symbol ? ` ${displayCurrencyAsset.symbol}` : '',
+        prefix,
+        suffix,
       }}
       animate
     />

@@ -6,15 +6,13 @@ import Card from 'components/Card'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { ArrowChartLineUp } from 'components/Icons'
 import Text from 'components/Text'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
 import { BN_ZERO } from 'constants/math'
+import { ORACLE_DENOM } from 'constants/oracle'
 import useIsOpenArray from 'hooks/useIsOpenArray'
-import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { calculateAccountDeposits } from 'utils/accounts'
+import { calculateAccountDepositsValue } from 'utils/accounts'
 
 interface Props {
   account?: Account
@@ -24,13 +22,8 @@ interface Props {
 export default function AccountSummary(props: Props) {
   const [isOpen, toggleOpen] = useIsOpenArray(2, true)
   const { data: prices } = usePrices()
-  const [displayCurrency] = useLocalStorage<string>(
-    DISPLAY_CURRENCY_KEY,
-    DEFAULT_SETTINGS.displayCurrency,
-  )
-  const baseCurrency = useStore((s) => s.baseCurrency)
   const accountBalance = props.account
-    ? calculateAccountDeposits(props.account, prices, displayCurrency)
+    ? calculateAccountDepositsValue(props.account, prices)
     : BN_ZERO
   if (!props.account) return null
 
@@ -39,7 +32,7 @@ export default function AccountSummary(props: Props) {
       <Card className='mb-4 h-min min-w-fit bg-white/10' contentClassName='flex'>
         <Item>
           <DisplayCurrency
-            coin={new BNCoin({ amount: accountBalance.toString(), denom: baseCurrency.denom })}
+            coin={new BNCoin({ amount: accountBalance.toString(), denom: ORACLE_DENOM })}
             className='text-sm'
           />
         </Item>

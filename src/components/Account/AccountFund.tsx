@@ -68,17 +68,22 @@ export default function AccountFund() {
     })
   }, [selectedDenoms])
 
-  useEffect(
-    () => {
-      const newFundingAssets = selectedDenoms.map((denom) => ({
-        denom,
-        amount: fundingAssets.find((asset) => asset.denom === denom)?.amount ?? '0',
-      }))
+  useEffect(() => {
+    const currentSelectedDenom = fundingAssets.map((asset) => asset.denom)
 
-      setFundingAssets(newFundingAssets)
-    }, // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedDenoms],
-  )
+    if (
+      selectedDenoms.every((denom) => currentSelectedDenom.includes(denom)) &&
+      selectedDenoms.length === currentSelectedDenom.length
+    )
+      return
+
+    const newFundingAssets = selectedDenoms.map((denom) => ({
+      denom,
+      amount: fundingAssets.find((asset) => asset.denom === denom)?.amount ?? '0',
+    }))
+
+    setFundingAssets(newFundingAssets)
+  }, [selectedDenoms, fundingAssets])
 
   const updateFundingAssets = useCallback(
     (amount: BigNumber, denom: string) => {
