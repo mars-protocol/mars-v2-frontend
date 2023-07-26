@@ -11,6 +11,7 @@ import Text from 'components/Text'
 import TokenInputWithSlider from 'components/TokenInputWithSlider'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
+import { BN_ZERO } from 'constants/math'
 
 interface Props {
   asset: Asset
@@ -38,7 +39,7 @@ export default function AssetAmountSelectActionModal(props: Props) {
     onChange,
     onAction,
   } = props
-  const [amount, setAmount] = useState(BN(0))
+  const [amount, setAmount] = useState(BN_ZERO)
   const maxAmount = BN(coinBalances.find(byDenom(asset.denom))?.amount ?? 0)
 
   const handleAmountChange = useCallback(

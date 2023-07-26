@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 import moment from 'moment'
 
+import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getEnabledMarketAssets } from 'utils/assets'
 import { BN } from 'utils/helpers'
@@ -179,7 +180,7 @@ export function convertToDisplayAmount(coin: BNCoin, displayCurrency: string, pr
   const asset = getEnabledMarketAssets().find((asset) => asset.denom === coin.denom)
   const displayPrice = prices.find((price) => price.denom === displayCurrency)
 
-  if (!price || !asset || !displayPrice) return BN(0)
+  if (!price || !asset || !displayPrice) return BN_ZERO
 
   return coin.amount
     .shiftedBy(-1 * asset.decimals)

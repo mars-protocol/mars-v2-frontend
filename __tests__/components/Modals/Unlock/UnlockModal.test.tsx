@@ -2,6 +2,7 @@ import { render } from '@testing-library/react'
 
 import Modal from 'components/Modal'
 import UnlockModal from 'components/Modals/Unlock'
+import { BN_ONE, BN_ZERO } from 'constants/math'
 import { TESTNET_VAULTS_META_DATA } from 'constants/vaults'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
@@ -18,20 +19,20 @@ const mockedDepositedVault: DepositedVault = {
     liq: 0.7,
   },
   amounts: {
-    primary: BN(1),
-    secondary: BN(1),
-    locked: BN(1),
-    unlocked: BN(1),
-    unlocking: BN(1),
+    primary: BN_ONE,
+    secondary: BN_ONE,
+    locked: BN_ONE,
+    unlocked: BN_ONE,
+    unlocking: BN_ONE,
   },
   values: {
-    primary: BN(0),
-    secondary: BN(0),
+    primary: BN_ZERO,
+    secondary: BN_ZERO,
   },
   cap: {
     denom: 'mock',
     max: BN(10),
-    used: BN(1),
+    used: BN_ONE,
   },
 }
 

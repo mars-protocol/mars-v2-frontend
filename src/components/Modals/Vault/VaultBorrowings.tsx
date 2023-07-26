@@ -14,8 +14,8 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { findCoinByDenom, getAssetByDenom } from 'utils/assets'
 import { formatPercent } from 'utils/formatters'
-import { BN } from 'utils/helpers'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { BN_ZERO } from 'constants/math'
 
 export interface VaultBorrowingsProps {
   updatedAccount: Account
@@ -44,7 +44,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
       if (!price) return prev
 
       return prev.plus(curr.amount.multipliedBy(price))
-    }, BN(0) as BigNumber)
+    }, BN_ZERO as BigNumber)
   }, [props.borrowings, prices])
 
   const totalValue = useMemo(() => {
@@ -53,7 +53,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
       if (!price) return prev
       const value = curr.amount.multipliedBy(price)
       return prev.plus(value)
-    }, BN(0) as BigNumber)
+    }, BN_ZERO as BigNumber)
 
     return depositValue.plus(borrowingValue)
   }, [props.deposits, borrowingValue, prices])
@@ -68,7 +68,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
     }
 
     const updatedBorrowings = selectedBorrowDenoms.map((denom) => {
-      const amount = findCoinByDenom(denom, props.borrowings)?.amount || BN(0)
+      const amount = findCoinByDenom(denom, props.borrowings)?.amount || BN_ZERO
       return new BNCoin({
         denom,
         amount: amount.toString(),
@@ -84,12 +84,13 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
 
     const denom = props.borrowings[0].denom
     const currentAmount = props.borrowings[0].amount
-    const maxAmount = maxBorrowAmounts.find((coin) => coin.denom === denom)?.amount ?? BN(0)
+    const maxAmount = maxBorrowAmounts.find((coin) => coin.denom === denom)?.amount ?? BN_ZERO
     const newBorrowings: BNCoin[] = [
       new BNCoin({
         denom,
         amount: (
-          maxAmount.plus(currentAmount).multipliedBy(value).dividedBy(100).decimalPlaces(0) || BN(0)
+          maxAmount.plus(currentAmount).multipliedBy(value).dividedBy(100).decimalPlaces(0) ||
+          BN_ZERO
         ).toString(),
       }),
     ]

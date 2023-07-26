@@ -8,9 +8,9 @@ import VaultBorrowingsSubTitle from 'components/Modals/Vault/VaultBorrowingsSubT
 import VaultDeposit from 'components/Modals/Vault/VaultDeposits'
 import VaultDepositSubTitle from 'components/Modals/Vault/VaultDepositsSubTitle'
 import useIsOpenArray from 'hooks/useIsOpenArray'
-import { BN } from 'utils/helpers'
 import useDepositVault from 'hooks/broadcast/useDepositVault'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
+import { BN_ZERO } from 'constants/math'
 
 interface Props {
   vault: Vault | DepositedVault
@@ -60,10 +60,11 @@ export default function VaultModalContent(props: Props) {
     return (
       <VaultDepositSubTitle
         primaryAmount={
-          removedDeposits.find((coin) => coin.denom === props.primaryAsset.denom)?.amount || BN(0)
+          removedDeposits.find((coin) => coin.denom === props.primaryAsset.denom)?.amount || BN_ZERO
         }
         secondaryAmount={
-          removedDeposits.find((coin) => coin.denom === props.secondaryAsset.denom)?.amount || BN(0)
+          removedDeposits.find((coin) => coin.denom === props.secondaryAsset.denom)?.amount ||
+          BN_ZERO
         }
         primaryAsset={props.primaryAsset}
         secondaryAsset={props.secondaryAsset}

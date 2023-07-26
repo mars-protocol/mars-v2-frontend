@@ -3,9 +3,9 @@ import DisplayCurrency from 'components/DisplayCurrency'
 import { StarFilled, StarOutlined } from 'components/Icons'
 import Text from 'components/Text'
 import { FAVORITE_ASSETS_KEY } from 'constants/localStore'
+import { BN_ONE } from 'constants/math'
 import useLocalStorage from 'hooks/useLocalStorage'
 import { BNCoin } from 'types/classes/BNCoin'
-import { BN } from 'utils/helpers'
 
 interface Props {
   asset: Asset
@@ -50,7 +50,7 @@ export default function AssetItem(props: Props) {
         <DisplayCurrency
           className='text-sm'
           coin={
-            new BNCoin({ denom: asset.denom, amount: BN(1).shiftedBy(asset.decimals).toString() })
+            new BNCoin({ denom: asset.denom, amount: BN_ONE.shiftedBy(asset.decimals).toString() })
           }
         />
       </button>

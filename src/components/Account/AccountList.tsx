@@ -12,10 +12,10 @@ import Text from 'components/Text'
 import useStore from 'store'
 import { calculateAccountDeposits } from 'utils/accounts'
 import { hardcodedFee } from 'utils/constants'
-import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
 import usePrices from 'hooks/usePrices'
 import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
+import { BN_ZERO } from 'constants/math'
 
 interface Props {
   setShowFundAccount: (showFundAccount: boolean) => void
@@ -39,7 +39,7 @@ export default function AccountList(props: Props) {
   const selectedAccountDetails = props.accounts.find((account) => account.id === accountId)
   const selectedAccountBalance = selectedAccountDetails
     ? calculateAccountDeposits(selectedAccountDetails, prices)
-    : BN(0)
+    : BN_ZERO
 
   async function deleteAccountHandler() {
     if (!accountSelected) return

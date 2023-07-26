@@ -15,11 +15,11 @@ import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { REDUCE_MOTION_KEY } from 'constants/localStore'
 import useLocalStorage from 'hooks/useLocalStorage'
 import { formatValue } from 'utils/formatters'
-import { BN } from 'utils/helpers'
+import { BN_ZERO } from 'constants/math'
 
 export const RiskChart = ({ data }: RiskChartProps) => {
   const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
-  const currentRisk = BN(0)
+  const currentRisk = BN_ZERO
 
   return (
     <div className='flex w-full flex-wrap overflow-hidden py-2'>

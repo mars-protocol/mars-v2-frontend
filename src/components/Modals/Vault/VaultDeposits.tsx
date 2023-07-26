@@ -16,6 +16,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { getAmount } from 'utils/accounts'
 import { BN } from 'utils/helpers'
 import { findCoinByDenom } from 'utils/assets'
+import { BN_ZERO } from 'constants/math'
 
 interface Props {
   deposits: BNCoin[]
@@ -103,8 +104,8 @@ export default function VaultDeposit(props: Props) {
   function handleSwitch() {
     const isCustomRatioNew = !props.isCustomRatio
     if (!isCustomRatioNew) {
-      primaryCoin.amount = BN(0)
-      secondaryCoin.amount = BN(0)
+      primaryCoin.amount = BN_ZERO
+      secondaryCoin.amount = BN_ZERO
       onChangeDeposits([primaryCoin, secondaryCoin])
       setPercentage(0)
     }

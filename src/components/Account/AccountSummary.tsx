@@ -6,12 +6,12 @@ import Card from 'components/Card'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { ArrowChartLineUp } from 'components/Icons'
 import Text from 'components/Text'
+import { BN_ZERO } from 'constants/math'
 import useIsOpenArray from 'hooks/useIsOpenArray'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountDeposits } from 'utils/accounts'
-import { BN } from 'utils/helpers'
 
 interface Props {
   account?: Account
@@ -22,7 +22,7 @@ export default function AccountSummary(props: Props) {
   const [isOpen, toggleOpen] = useIsOpenArray(2, true)
   const { data: prices } = usePrices()
   const baseCurrency = useStore((s) => s.baseCurrency)
-  const accountBalance = props.account ? calculateAccountDeposits(props.account, prices) : BN(0)
+  const accountBalance = props.account ? calculateAccountDeposits(props.account, prices) : BN_ZERO
   if (!props.account) return null
 
   return (

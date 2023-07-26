@@ -1,5 +1,5 @@
 import { getSwapperQueryClient } from 'api/cosmwasm-client'
-import { ZERO } from 'constants/math'
+import { BN_ZERO } from 'constants/math'
 import { BN } from 'utils/helpers'
 
 export default async function estimateExactIn(coinIn: Coin, denomOut: string) {
@@ -9,6 +9,6 @@ export default async function estimateExactIn(coinIn: Coin, denomOut: string) {
 
     return BN(estimatedAmount)
   } catch (ex) {
-    return ZERO
+    return BN_ZERO
   }
 }

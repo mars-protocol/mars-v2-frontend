@@ -1,5 +1,5 @@
 import { VaultStatus } from 'types/enums/vault'
-import { BN } from 'utils/helpers'
+import { BN_ZERO } from 'constants/math'
 
 export const VAULT_DEPOSIT_BUFFER = 0.999
 
@@ -92,15 +92,15 @@ export const VAULTS_META_DATA: VaultMetaData[] = [
 
 export const MOCK_DEPOSITED_VAULT_POSITION = {
   values: {
-    primary: BN(0),
-    secondary: BN(0),
+    primary: BN_ZERO,
+    secondary: BN_ZERO,
   },
   amounts: {
-    primary: BN(0),
-    secondary: BN(0),
-    locked: BN(0),
-    unlocked: BN(0),
-    unlocking: BN(0),
+    primary: BN_ZERO,
+    secondary: BN_ZERO,
+    locked: BN_ZERO,
+    unlocked: BN_ZERO,
+    unlocking: BN_ZERO,
   },
   status: VaultStatus.ACTIVE,
   apy: null,
@@ -110,7 +110,7 @@ export const MOCK_DEPOSITED_VAULT_POSITION = {
   },
   cap: {
     denom: '',
-    max: BN(0),
-    used: BN(0),
+    max: BN_ZERO,
+    used: BN_ZERO,
   },
 }
