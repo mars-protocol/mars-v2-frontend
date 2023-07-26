@@ -19,7 +19,7 @@ import useStore from 'store'
 import { ChainInfoID } from 'types/enums/wallet'
 import { getBaseAsset, getEnabledMarketAssets } from 'utils/assets'
 import { formatValue, truncate } from 'utils/formatters'
-import { BN } from 'utils/helpers'
+import { BN_ZERO } from 'constants/math'
 
 export default function WalletConnectedButton() {
   // ---------------
@@ -38,7 +38,7 @@ export default function WalletConnectedButton() {
   // LOCAL STATE
   // ---------------
   const [showDetails, setShowDetails] = useToggle()
-  const [walletAmount, setWalletAmount] = useState(BN(0))
+  const [walletAmount, setWalletAmount] = useState(BN_ZERO)
   const [isCopied, setCopied] = useClipboard(address || '', {
     successDuration: 1000 * 5,
   })

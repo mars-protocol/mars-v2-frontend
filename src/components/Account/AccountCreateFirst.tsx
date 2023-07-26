@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import AccountFundFirst from 'components/Account/AccountFund'
 import FullOverlayContent from 'components/FullOverlayContent'
@@ -7,9 +7,11 @@ import WalletSelect from 'components/Wallet/WalletSelect'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/constants'
+import { getPage, getRoute } from 'utils/route'
 
 export default function AccountCreateFirst() {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const address = useStore((s) => s.address)
   const createAccount = useStore((s) => s.createAccount)
   const [isCreating, setIsCreating] = useToggle(false)
@@ -23,7 +25,7 @@ export default function AccountCreateFirst() {
     const accountId = await createAccount({ fee: hardcodedFee })
     setIsCreating(false)
     if (accountId) {
-      navigate(`/wallets/${address}/accounts/${accountId}/trade`)
+      navigate(getRoute(getPage(pathname), address, accountId))
       useStore.setState({ focusComponent: <AccountFundFirst /> })
     }
   }, [address, createAccount, navigate, setIsCreating])

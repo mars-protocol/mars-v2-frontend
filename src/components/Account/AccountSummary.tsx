@@ -8,13 +8,13 @@ import { ArrowChartLineUp } from 'components/Icons'
 import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
+import { BN_ZERO } from 'constants/math'
 import useIsOpenArray from 'hooks/useIsOpenArray'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountDeposits } from 'utils/accounts'
-import { BN } from 'utils/helpers'
 
 interface Props {
   account?: Account
@@ -29,9 +29,10 @@ export default function AccountSummary(props: Props) {
     DEFAULT_SETTINGS.displayCurrency,
   )
   const baseCurrency = useStore((s) => s.baseCurrency)
+
   const accountBalance = props.account
     ? calculateAccountDeposits(props.account, prices, displayCurrency)
-    : BN(0)
+    : BN_ZERO
   if (!props.account) return null
 
   return (

@@ -9,6 +9,7 @@ import {
   VaultPositionAmount,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { BN } from 'utils/helpers'
+import { BN_ZERO } from 'constants/math'
 
 async function getUnlocksAtTimestamp(unlockingId: number, vaultAddress: string) {
   try {
@@ -49,9 +50,9 @@ function flatVaultPositionAmount(
   vaultPositionAmount: VaultPositionAmount,
 ): VaultPositionFlatAmounts {
   const amounts = {
-    locked: BN(0),
-    unlocking: BN(0),
-    unlocked: BN(0),
+    locked: BN_ZERO,
+    unlocking: BN_ZERO,
+    unlocked: BN_ZERO,
   }
 
   if ('locking' in vaultPositionAmount) {

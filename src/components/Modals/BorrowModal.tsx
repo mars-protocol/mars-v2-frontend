@@ -21,6 +21,7 @@ import { formatPercent, formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import useHealthComputer from 'hooks/useHealthComputer'
 import { BorrowTarget } from 'types/enums/borrowTarget'
+import { BN_ZERO } from 'constants/math'
 
 function getDebtAmount(modal: BorrowModal | null) {
   return BN((modal?.marketData as BorrowMarketTableData)?.debt ?? 0).toString()
@@ -44,7 +45,7 @@ export default function BorrowModalController() {
 
 function BorrowModal(props: Props) {
   const [percentage, setPercentage] = useState(0)
-  const [amount, setAmount] = useState(BN(0))
+  const [amount, setAmount] = useState(BN_ZERO)
   const [change, setChange] = useState<AccountChange | undefined>()
   const [isConfirming, setIsConfirming] = useToggle()
   const [borrowToWallet, setBorrowToWallet] = useToggle()
@@ -53,12 +54,12 @@ function BorrowModal(props: Props) {
   const repay = useStore((s) => s.repay)
   const asset = modal?.asset ?? ASSETS[0]
   const isRepay = modal?.isRepay ?? false
-  const [max, setMax] = useState(BN(0))
+  const [max, setMax] = useState(BN_ZERO)
 
   const { computeMaxBorrowAmount } = useHealthComputer(props.account)
 
   function resetState() {
-    setAmount(BN(0))
+    setAmount(BN_ZERO)
     setPercentage(0)
     setIsConfirming(false)
   }
@@ -125,13 +126,13 @@ function BorrowModal(props: Props) {
     setChange({
       deposits: [
         {
-          amount: isRepay ? BN(0).minus(amount).toString() : BN(0).plus(amount).toString(),
+          amount: isRepay ? BN_ZERO.minus(amount).toString() : BN_ZERO.plus(amount).toString(),
           denom: modal.asset.denom,
         },
       ],
       debts: [
         {
-          amount: isRepay ? BN(0).minus(amount).toString() : BN(0).plus(amount).toString(),
+          amount: isRepay ? BN_ZERO.minus(amount).toString() : BN_ZERO.plus(amount).toString(),
           denom: modal.asset.denom,
         },
       ],

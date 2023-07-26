@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js'
 
+import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import {
   Positions,
@@ -23,14 +24,14 @@ export const calculateAccountDeposits = (
   prices: BNCoin[],
   displayCurrency: string,
 ): BigNumber => {
-  if (!account.deposits) return BN(0)
+  if (!account.deposits) return BN_ZERO
   return account.deposits.reduce((acc, deposit) => {
     const price = prices.find((price) => price.denom === deposit.denom)?.amount ?? 0
     const displayCurrencyPrice =
       prices.find((price) => price.denom === displayCurrency)?.amount ?? 0
     const depositValue = BN(deposit.amount).multipliedBy(price).dividedBy(displayCurrencyPrice)
     return acc.plus(depositValue)
-  }, BN(0))
+  }, BN_ZERO)
 }
 
 export const calculateAccountDebt = (
@@ -38,7 +39,7 @@ export const calculateAccountDebt = (
   prices: BNCoin[],
   displayCurrency: string,
 ): BigNumber => {
-  if (!account.debts) return BN(0)
+  if (!account.debts) return BN_ZERO
   return account.debts.reduce((acc, debt) => {
     const price = prices.find((price) => price.denom === debt.denom)?.amount ?? 0
     const displayCurrencyPrice =
@@ -46,7 +47,7 @@ export const calculateAccountDebt = (
     const debtAmount = BN(debt.amount)
     const debtValue = debtAmount.multipliedBy(price).dividedBy(displayCurrencyPrice)
     return acc.plus(debtValue)
-  }, BN(0))
+  }, BN_ZERO)
 }
 
 export const calculateAccountPnL = (
@@ -54,7 +55,7 @@ export const calculateAccountPnL = (
   prices: BNCoin[],
   displayCurrency: string,
 ): BigNumber => {
-  return BN(0)
+  return BN_ZERO
 }
 
 export const calculateAccountApr = (
@@ -62,7 +63,7 @@ export const calculateAccountApr = (
   prices: BNCoin[],
   displayCurrency: string,
 ): BigNumber => {
-  return BN(0)
+  return BN_ZERO
 }
 
 export const calculateAccountBorrowRate = (
@@ -70,7 +71,7 @@ export const calculateAccountBorrowRate = (
   prices: BNCoin[],
   displayCurrency: string,
 ): BigNumber => {
-  return BN(0)
+  return BN_ZERO
 }
 
 export function getAmount(denom: string, coins: Coin[]): BigNumber {

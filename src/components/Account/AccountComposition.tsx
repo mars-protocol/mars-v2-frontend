@@ -7,6 +7,7 @@ import { ArrowRight } from 'components/Icons'
 import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
+import { BN_ZERO } from 'constants/math'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
@@ -18,7 +19,6 @@ import {
   calculateAccountDeposits,
   calculateAccountPnL,
 } from 'utils/accounts'
-import { BN } from 'utils/helpers'
 
 interface Props {
   account: Account
@@ -43,23 +43,23 @@ export default function AccountComposition(props: Props) {
   const balance = calculateAccountDeposits(props.account, prices, displayCurrency)
   const balanceChange = props.change
     ? calculateAccountDeposits(props.change, prices, displayCurrency)
-    : BN(0)
+    : BN_ZERO
   const debtBalance = calculateAccountDebt(props.account, prices, displayCurrency)
   const debtBalanceChange = props.change
     ? calculateAccountDebt(props.change, prices, displayCurrency)
-    : BN(0)
+    : BN_ZERO
   const pnL = calculateAccountPnL(props.account, prices, displayCurrency)
   const pnLChange = props.change
     ? calculateAccountPnL(props.change, prices, displayCurrency)
-    : BN(0)
+    : BN_ZERO
   const apr = calculateAccountApr(props.account, prices, displayCurrency)
   const aprChange = props.change
     ? calculateAccountPnL(props.change, prices, displayCurrency)
-    : BN(0)
+    : BN_ZERO
   const borrowRate = calculateAccountBorrowRate(props.account, prices, displayCurrency)
   const borrowRateChange = props.change
     ? calculateAccountPnL(props.change, prices, displayCurrency)
-    : BN(0)
+    : BN_ZERO
 
   return (
     <div className='w-full flex-wrap p-4'>

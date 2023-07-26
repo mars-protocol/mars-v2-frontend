@@ -9,7 +9,7 @@ import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import useDepositedVaults from 'hooks/useDepositedVaults'
 import useVaults from 'hooks/useVaults'
 import { VaultStatus } from 'types/enums/vault'
-import { BN } from 'utils/helpers'
+import { BN_ZERO } from 'constants/math'
 
 interface Props {
   type: 'available' | 'deposited'
@@ -79,8 +79,8 @@ function Fallback() {
     },
     cap: {
       denom: 'denom',
-      used: BN(0),
-      max: BN(0),
+      used: BN_ZERO,
+      max: BN_ZERO,
     },
   }))
 

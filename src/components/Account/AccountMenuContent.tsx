@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { useCallback, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import AccountCreateFirst from 'components/Account/AccountCreateFirst'
 import AccountList from 'components/Account/AccountList'
@@ -17,6 +17,7 @@ import { hardcodedFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
 import { isNumber } from 'utils/parsers'
 
+import { getPage, getRoute } from 'utils/route'
 import AccountFundFirst from './AccountFund'
 
 const menuClasses = 'absolute isolate flex w-full flex-wrap scrollbar-hide'
@@ -28,6 +29,7 @@ interface Props {
 
 export default function AccountMenuContent(props: Props) {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const { accountId, address } = useParams()
   const createAccount = useStore((s) => s.createAccount)
   const baseCurrency = useStore((s) => s.baseCurrency)
@@ -56,7 +58,7 @@ export default function AccountMenuContent(props: Props) {
     setIsCreating(false)
 
     if (accountId) {
-      navigate(`/wallets/${address}/accounts/${accountId}/trade`)
+      navigate(getRoute(getPage(pathname), address, accountId))
       useStore.setState({ focusComponent: <AccountFundFirst /> })
     }
   }, [address, createAccount, navigate, setIsCreating, setShowMenu])

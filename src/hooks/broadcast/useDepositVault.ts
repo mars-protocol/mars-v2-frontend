@@ -9,12 +9,12 @@ import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { hardcodedFee } from 'utils/constants'
-import { BN } from 'utils/helpers'
 import {
   getEnterVaultActions,
   getVaultDepositCoinsAndValue,
   getVaultSwapActions,
 } from 'utils/vaults'
+import { BN_ZERO } from 'constants/math'
 
 interface Props {
   vault: Vault
@@ -27,7 +27,7 @@ export default function useDepositVault(props: Props): {
   minLpToReceive: string
   totalValue: BigNumber
 } {
-  const [minLpToReceive, setMinLpToReceive] = useState<BigNumber>(BN(0))
+  const [minLpToReceive, setMinLpToReceive] = useState<BigNumber>(BN_ZERO)
   const { data: prices } = usePrices()
   const [slippage] = useLocalStorage<number>(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
 

@@ -5,7 +5,7 @@ import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatAmountWithSymbol } from 'utils/formatters'
-import { BN } from 'utils/helpers'
+import { BN_ZERO } from 'constants/math'
 
 interface Props {
   borrowings: BNCoin[]
@@ -17,7 +17,7 @@ export default function VaultDepositSubTitle(props: Props) {
 
   const [borrowingTexts, borrowingValue] = useMemo(() => {
     const texts: string[] = []
-    let borrowingValue = BN(0)
+    let borrowingValue = BN_ZERO
     props.borrowings.map((coin) => {
       const price = prices.find((p) => p.denom === coin.denom)?.amount
       if (!price || coin.amount.isZero()) return

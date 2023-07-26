@@ -12,13 +12,13 @@ import SwitchWithLabel from 'components/SwitchWithLabel'
 import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
+import { BN_ZERO } from 'constants/math'
 import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { calculateAccountBalance, calculateAccountDeposits } from 'utils/accounts'
 import { hardcodedFee } from 'utils/constants'
-import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
 
 interface Props {
@@ -45,13 +45,13 @@ export default function AccountList(props: Props) {
   const selectedAccountDetails = props.accounts.find((account) => account.id === accountId)
   const selectedAccountBalance = selectedAccountDetails
     ? calculateAccountBalance(selectedAccountDetails, prices, displayCurrency)
-    : BN(0)
+    : BN_ZERO
 
   async function deleteAccountHandler() {
     if (!accountSelected) return
     const isSuccess = await deleteAccount({ fee: hardcodedFee, accountId: accountId })
     if (isSuccess) {
-      navigate(`/wallets/${address}/accounts`)
+      navigate(getRoute(getPage(pathname), address))
     }
   }
 
@@ -65,7 +65,7 @@ export default function AccountList(props: Props) {
   if (!props.accounts?.length) return null
 
   return (
-    <div className='flex w-full flex-wrap p-4'>
+    <div className='flex flex-wrap w-full p-4'>
       {props.accounts.map((account) => {
         const positionBalance = calculateAccountDeposits(account, prices, displayCurrency)
         const isActive = accountId === account.id
@@ -99,7 +99,7 @@ export default function AccountList(props: Props) {
             >
               {isActive ? (
                 <>
-                  <div className='w-full border border-transparent border-b-white/20 p-4'>
+                  <div className='w-full p-4 border border-transparent border-b-white/20'>
                     <AccountStats balance={selectedAccountBalance} risk={75} health={85} />
                   </div>
                   <div className='grid grid-flow-row grid-cols-2 gap-4 p-4'>
@@ -140,7 +140,7 @@ export default function AccountList(props: Props) {
                       text='Transfer'
                       onClick={() => {}}
                     />
-                    <div className='col-span-2 border border-transparent border-t-white/10 pt-4'>
+                    <div className='col-span-2 pt-4 border border-transparent border-t-white/10'>
                       <SwitchWithLabel
                         name='isLending'
                         label='Lend assets to earn yield'

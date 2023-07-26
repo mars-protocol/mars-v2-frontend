@@ -23,6 +23,7 @@ import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 import { getAllAssets, getDisplayCurrencies } from 'utils/assets'
 import { BN } from 'utils/helpers'
+import { BN_ZERO } from 'constants/math'
 
 const slippages = [0.02, 0.03]
 
@@ -281,7 +282,7 @@ export default function SettingsModal() {
             onFocus={handleSlippageInputFocus}
             amount={BN(customSlippage).multipliedBy(100)}
             max={BN(10)}
-            min={BN(0)}
+            min={BN_ZERO}
             maxDecimals={1}
             maxLength={2}
             style={{ fontSize: 16 }}

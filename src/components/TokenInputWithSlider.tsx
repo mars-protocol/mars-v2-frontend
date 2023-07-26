@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Slider from 'components/Slider'
 import TokenInput from 'components/TokenInput'
 import { BN } from 'utils/helpers'
+import { BN_ZERO } from 'constants/math'
 
 interface Props {
   amount: BigNumber
@@ -39,7 +40,7 @@ export default function TokenInputWithSlider(props: Props) {
   function onChangeAsset(newAsset: Asset) {
     if (!props.onChangeAsset) return
     setPercentage(0)
-    setAmount(BN(0))
+    setAmount(BN_ZERO)
     props.onChangeAsset(newAsset)
   }
 
