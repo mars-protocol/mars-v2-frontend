@@ -1,9 +1,7 @@
 import classNames from 'classnames'
-import { useState } from 'react'
 
-import Divider from 'components/Divider'
-import RangeInput from 'components/RangeInput'
 import AssetSelector from 'components/Trade/TradeModule/AssetSelector'
+import SwapForm from 'components/Trade/TradeModule/SwapForm'
 
 interface Props {
   buyAsset: Asset
@@ -13,7 +11,7 @@ interface Props {
 }
 
 export default function TradeModule(props: Props) {
-  const [value, setValue] = useState(0)
+  const { buyAsset, sellAsset, onChangeBuyAsset, onChangeSellAsset } = props
 
   return (
     <div
@@ -24,19 +22,13 @@ export default function TradeModule(props: Props) {
       )}
     >
       <AssetSelector
-        buyAsset={props.buyAsset}
-        sellAsset={props.sellAsset}
-        onChangeBuyAsset={props.onChangeBuyAsset}
-        onChangeSellAsset={props.onChangeSellAsset}
+        buyAsset={buyAsset}
+        sellAsset={sellAsset}
+        onChangeBuyAsset={onChangeBuyAsset}
+        onChangeSellAsset={onChangeSellAsset}
       />
-      <Divider />
-      <RangeInput
-        max={4000}
-        marginThreshold={2222}
-        value={value}
-        onChange={setValue}
-        wrapperClassName='p-4'
-      />
+
+      <SwapForm buyAsset={buyAsset} sellAsset={sellAsset} />
     </div>
   )
 }

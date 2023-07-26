@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback } from 'react'
+import { ChangeEvent, useCallback, useMemo } from 'react'
 import classNames from 'classnames'
 
 import InputOverlay from 'components/RangeInput/InputOverlay'
@@ -17,7 +17,7 @@ function RangeInput(props: Props) {
 
   const handleOnChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      onChange(parseInt(event.target.value))
+      onChange(parseFloat(event.target.value))
     },
     [onChange],
   )
@@ -32,15 +32,20 @@ function RangeInput(props: Props) {
         <input
           className={className.input}
           type='range'
-          value={value}
+          value={value.toFixed(2)}
+          step={max / 100}
           max={max}
           onChange={handleOnChange}
         />
-        <InputOverlay max={max} marginThreshold={marginThreshold} value={value} />
+        <InputOverlay
+          max={max}
+          marginThreshold={marginThreshold}
+          value={parseFloat(value.toFixed(2))}
+        />
       </div>
       <div className={className.legendWrapper}>
         <span>0</span>
-        <span>{max}</span>
+        <span>{max.toFixed(2)}</span>
       </div>
     </div>
   )
