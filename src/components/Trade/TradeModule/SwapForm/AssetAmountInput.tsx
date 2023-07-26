@@ -15,19 +15,21 @@ interface Props {
   containerClassName?: string
   setAmount: (amount: BigNumber) => void
   onFocus?: () => void
+  onBlur?: () => void
 }
 
 export default function AssetAmountInput(props: Props) {
   const {
+    max,
     label,
     amount,
-    setAmount,
     asset,
-    containerClassName,
-    max,
-    maxButtonLabel,
-    onFocus,
+    setAmount,
     assetUSDValue,
+    maxButtonLabel,
+    containerClassName,
+    onFocus,
+    onBlur,
   } = props
 
   const handleMaxClick = useCallback(() => {
@@ -52,6 +54,7 @@ export default function AssetAmountInput(props: Props) {
             max={max}
             onChange={setAmount}
             onFocus={onFocus}
+            onBlur={onBlur}
           />
           <span>{asset.symbol}</span>
         </div>
