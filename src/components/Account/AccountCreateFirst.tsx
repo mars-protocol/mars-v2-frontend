@@ -28,7 +28,7 @@ export default function AccountCreateFirst() {
       navigate(getRoute(getPage(pathname), address, accountId))
       useStore.setState({ focusComponent: <AccountFundFirst /> })
     }
-  }, [address, createAccount, navigate, setIsCreating])
+  }, [createAccount, navigate, pathname, address, setIsCreating])
 
   return (
     <FullOverlayContent

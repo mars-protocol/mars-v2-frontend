@@ -1,4 +1,5 @@
 import { Suspense, useEffect, useMemo } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import AccountCreateFirst from 'components/Account/AccountCreateFirst'
 import { CircularProgress } from 'components/CircularProgress'
@@ -11,6 +12,7 @@ import { byDenom } from 'utils/array'
 import { getBaseAsset } from 'utils/assets'
 import { hardcodedFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
+import { getPage, getRoute } from 'utils/route'
 
 function FetchLoading() {
   return (
@@ -25,6 +27,8 @@ function FetchLoading() {
 
 function Content() {
   const address = useStore((s) => s.address)
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
   const { data: accounts } = useAccounts(address)
   const { data: walletBalances, isLoading } = useWalletBalances(address)
   const baseAsset = getBaseAsset()
@@ -39,9 +43,10 @@ function Content() {
       accounts.length !== 0 &&
       BN(baseBalance).isGreaterThanOrEqualTo(hardcodedFee.amount[0].amount)
     ) {
+      navigate(getRoute(getPage(pathname), address, accounts[0].id))
       useStore.setState({ accounts: accounts, balances: walletBalances, focusComponent: null })
     }
-  }, [accounts, walletBalances, baseBalance])
+  }, [accounts, baseBalance, navigate, pathname, address, walletBalances])
 
   if (isLoading) return <FetchLoading />
   if (BN(baseBalance).isLessThan(hardcodedFee.amount[0].amount)) return <WalletBridges />

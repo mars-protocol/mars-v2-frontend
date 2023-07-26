@@ -59,7 +59,7 @@ export default function AccountMenuContent(props: Props) {
       navigate(getRoute(getPage(pathname), address, accountId))
       useStore.setState({ focusComponent: <AccountFundFirst /> })
     }
-  }, [address, createAccount, navigate, setIsCreating, setShowMenu])
+  }, [createAccount, navigate, pathname, address, setShowMenu, setIsCreating])
 
   const handleCreateAccountClick = useCallback(() => {
     setShowMenu(!showMenu)
