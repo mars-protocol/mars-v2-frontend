@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useLocation, useParams } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 import AccountDetails from 'components/Account/AccountDetails'
 import Background from 'components/Background'

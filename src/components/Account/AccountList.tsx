@@ -65,7 +65,7 @@ export default function AccountList(props: Props) {
   if (!props.accounts?.length) return null
 
   return (
-    <div className='flex flex-wrap w-full p-4'>
+    <div className='flex w-full flex-wrap p-4'>
       {props.accounts.map((account) => {
         const positionBalance = calculateAccountDeposits(account, prices, displayCurrency)
         const isActive = accountId === account.id
@@ -99,7 +99,7 @@ export default function AccountList(props: Props) {
             >
               {isActive ? (
                 <>
-                  <div className='w-full p-4 border border-transparent border-b-white/20'>
+                  <div className='w-full border border-transparent border-b-white/20 p-4'>
                     <AccountStats balance={selectedAccountBalance} risk={75} health={85} />
                   </div>
                   <div className='grid grid-flow-row grid-cols-2 gap-4 p-4'>
@@ -140,7 +140,7 @@ export default function AccountList(props: Props) {
                       text='Transfer'
                       onClick={() => {}}
                     />
-                    <div className='col-span-2 pt-4 border border-transparent border-t-white/10'>
+                    <div className='col-span-2 border border-transparent border-t-white/10 pt-4'>
                       <SwitchWithLabel
                         name='isLending'
                         label='Lend assets to earn yield'

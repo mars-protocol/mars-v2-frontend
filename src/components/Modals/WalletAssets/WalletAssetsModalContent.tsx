@@ -3,6 +3,7 @@ import { useCallback, useMemo, useState } from 'react'
 import AssetSelectTable from 'components/Modals/AssetsSelect/AssetSelectTable'
 import SearchBar from 'components/SearchBar'
 import useStore from 'store'
+import { byDenom } from 'utils/array'
 import { getAssetByDenom } from 'utils/assets'
 
 interface Props {
@@ -33,33 +34,15 @@ export default function WalletAssetsModalContent(props: Props) {
     )
   }, [assets, searchString])
 
-  function onChangeSearchString(value: string) {
-    setSearchString(value)
-  }
-
-  const [assetsList] = useMemo(
-    () =>
-      filteredAssets.reduce(
-        (acc, asset) => {
-          acc[0].push(asset)
-          return acc
-        },
-        [[], []] as [Asset[], Asset[]],
-      ),
-    [filteredAssets],
-  )
-
   const currentSelectedDenom = useStore((s) => s.walletAssetsModal?.selectedDenoms)
   const [selectedDenoms, setSelectedDenoms] = useState<string[]>(
-    currentSelectedDenom?.filter((denom) =>
-      assetsList.map((asset) => asset.denom).includes(denom),
-    ) || [],
+    currentSelectedDenom?.filter((denom) => filteredAssets.findIndex(byDenom(denom))) || [],
   )
 
   const onChangeDenoms = useCallback(
     (denoms: string[]) => {
       setSelectedDenoms(denoms)
-      props.onChangeDenoms([...denoms])
+      props.onChangeDenoms(denoms)
     },
     [props],
   )
@@ -70,12 +53,12 @@ export default function WalletAssetsModalContent(props: Props) {
         <SearchBar
           value={searchString}
           placeholder={`Search for e.g. "ETH" or "Ethereum"`}
-          onChange={onChangeSearchString}
+          onChange={setSearchString}
         />
       </div>
       <div className='max-h-[446px] overflow-y-scroll scrollbar-hide'>
         <AssetSelectTable
-          assets={assetsList}
+          assets={filteredAssets}
           onChangeSelected={onChangeDenoms}
           selectedDenoms={selectedDenoms}
         />

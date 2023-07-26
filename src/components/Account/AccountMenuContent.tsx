@@ -3,6 +3,7 @@ import { useCallback, useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import AccountCreateFirst from 'components/Account/AccountCreateFirst'
+import AccountFundFirst from 'components/Account/AccountFund'
 import AccountList from 'components/Account/AccountList'
 import Button from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
@@ -16,10 +17,7 @@ import useStore from 'store'
 import { hardcodedFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
 import { isNumber } from 'utils/parsers'
-
 import { getPage, getRoute } from 'utils/route'
-import AccountFundFirst from './AccountFund'
-
 const menuClasses = 'absolute isolate flex w-full flex-wrap scrollbar-hide'
 const ACCOUNT_MENU_BUTTON_ID = 'account-menu-button'
 

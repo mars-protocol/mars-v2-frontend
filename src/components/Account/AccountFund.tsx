@@ -9,6 +9,7 @@ import SwitchWithLabel from 'components/SwitchWithLabel'
 import Text from 'components/Text'
 import TokenInputWithSlider from 'components/TokenInputWithSlider'
 import WalletBridges from 'components/Wallet/WalletBridges'
+import { BN_ZERO } from 'constants/math'
 import useAccounts from 'hooks/useAccounts'
 import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
 import useCurrentAccount from 'hooks/useCurrentAccount'
@@ -28,7 +29,7 @@ export default function AccountFund() {
   const { data: accounts } = useAccounts(address)
   const currentAccount = useCurrentAccount()
   const [isFunding, setIsFunding] = useToggle(false)
-  const [selectedAccount, setSelectedAccount] = useState<null | string>(null)
+  const [selectedAccountId, setSelectedAccountId] = useState<null | string>(null)
   const [fundingAssets, setFundingAssets] = useState<Coin[]>([])
   const { data: walletBalances } = useWalletBalances(address)
   const baseAsset = getBaseAsset()
@@ -94,18 +95,18 @@ export default function AccountFund() {
     if (BN(baseBalance).isLessThan(hardcodedFee.amount[0].amount)) {
       useStore.setState({ focusComponent: <WalletBridges /> })
     }
-  }, [accounts, walletBalances, baseBalance])
+  }, [baseBalance])
 
   useEffect(() => {
-    if (accounts && !selectedAccount && accountId)
-      setSelectedAccount(currentAccount?.id ?? accountId)
-  }, [accounts, selectedAccount, accountId, currentAccount])
+    if (accounts && !selectedAccountId && accountId)
+      setSelectedAccountId(currentAccount?.id ?? accountId)
+  }, [accounts, selectedAccountId, accountId, currentAccount])
 
-  if (!selectedAccount) return null
+  if (!selectedAccountId) return null
 
   return (
     <FullOverlayContent
-      title={`Fund Credit Account #${selectedAccount}`}
+      title={`Fund Credit Account #${selectedAccountId}`}
       copy='In order to start trading with this account, you need to deposit funds.'
       docs='fund'
     >
@@ -124,7 +125,7 @@ export default function AccountFund() {
               <TokenInputWithSlider
                 asset={asset}
                 onChange={(amount) => updateFundingAssets(amount, asset.denom)}
-                amount={BN(0)}
+                amount={BN_ZERO}
                 max={BN(balance)}
                 balances={walletBalances}
                 maxText='Max'
@@ -146,7 +147,7 @@ export default function AccountFund() {
             name='isLending'
             label='Lend assets to earn yield'
             value={isAutoLendEnabled}
-            onChange={() => toggleAutoLend(selectedAccount)}
+            onChange={() => toggleAutoLend(selectedAccountId)}
             tooltip={`Fund your account and lend assets effortlessly! By lending, you'll earn attractive interest (APY) without impacting your LTV. It's a win-win situation - don't miss out on this easy opportunity to grow your holdings!`}
           />
         </div>
