@@ -12,14 +12,14 @@ import Overlay from 'components/Overlay'
 import Text from 'components/Text'
 import { CHAINS } from 'constants/chains'
 import { IS_TESTNET } from 'constants/env'
+import { BN_ZERO } from 'constants/math'
 import useCurrentWallet from 'hooks/useCurrentWallet'
 import useToggle from 'hooks/useToggle'
 import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
 import { ChainInfoID } from 'types/enums/wallet'
 import { getBaseAsset, getEnabledMarketAssets } from 'utils/assets'
-import { formatValue, truncate } from 'utils/formatters'
-import { BN_ZERO } from 'constants/math'
+import { truncate } from 'utils/formatters'
 
 export default function WalletConnectedButton() {
   // ---------------
@@ -103,7 +103,11 @@ export default function WalletConnectedButton() {
           {isLoading ? (
             <CircularProgress size={12} />
           ) : (
-            `${formatValue(walletAmount.toString(), { suffix: ` ${baseAsset.symbol}` })}`
+            <FormattedNumber
+              amount={walletAmount.toNumber()}
+              options={{ suffix: ` ${baseAsset.symbol}` }}
+              animate
+            />
           )}
         </div>
       </Button>
