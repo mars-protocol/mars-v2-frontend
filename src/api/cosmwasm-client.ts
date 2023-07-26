@@ -8,6 +8,7 @@ import { MarsOracleOsmosisQueryClient } from 'types/generated/mars-oracle-osmosi
 import { MarsMockRedBankQueryClient } from 'types/generated/mars-mock-red-bank/MarsMockRedBank.client'
 import { MarsMockVaultQueryClient } from 'types/generated/mars-mock-vault/MarsMockVault.client'
 import { MarsParamsQueryClient } from 'types/generated/mars-params/MarsParams.client'
+import { MarsSwapperOsmosisQueryClient } from 'types/generated/mars-swapper-osmosis/MarsSwapperOsmosis.client'
 
 let _cosmWasmClient: CosmWasmClient
 let _accountNftQueryClient: MarsAccountNftQueryClient
@@ -16,6 +17,7 @@ let _oracleQueryClient: MarsOracleOsmosisQueryClient
 let _redBankQueryClient: MarsMockRedBankQueryClient
 let _paramsQueryClient: MarsParamsQueryClient
 let _incentivesQueryClient: MarsIncentivesQueryClient
+let _swapperOsmosisClient: MarsSwapperOsmosisQueryClient
 
 const getClient = async () => {
   try {
@@ -119,6 +121,19 @@ const getIncentivesQueryClient = async () => {
   }
 }
 
+const getSwapperQueryClient = async () => {
+  try {
+    if (!_swapperOsmosisClient) {
+      const client = await getClient()
+      _swapperOsmosisClient = new MarsSwapperOsmosisQueryClient(client, ENV.ADDRESS_SWAPPER)
+    }
+
+    return _swapperOsmosisClient
+  } catch (error) {
+    throw error
+  }
+}
+
 export {
   getClient,
   getAccountNftQueryClient,
@@ -128,4 +143,5 @@ export {
   getRedBankQueryClient,
   getVaultQueryClient,
   getIncentivesQueryClient,
+  getSwapperQueryClient,
 }

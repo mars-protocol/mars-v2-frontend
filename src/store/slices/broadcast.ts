@@ -13,6 +13,7 @@ import {
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import { formatAmountWithSymbol } from 'utils/formatters'
+import getTokenOutFromSwapResponse from 'utils/getTokenOutFromSwapResponse'
 
 export default function createBroadcastSlice(
   set: SetState<Store>,
@@ -316,6 +317,37 @@ export default function createBroadcastSlice(
         response,
         `Successfully withdrew ${formatAmountWithSymbol(options.coin.toCoin())}`,
       )
+      return !!response.result
+    },
+    swap: async (options: {
+      fee: StdFee
+      accountId: string
+      coinIn: BNCoin
+      denomOut: string
+      slippage: number
+    }) => {
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: [
+            {
+              swap_exact_in: {
+                coin_in: options.coinIn.toActionCoin(),
+                denom_out: options.denomOut,
+                slippage: options.slippage.toString(),
+              },
+            },
+          ],
+        },
+      }
+
+      const response = await get().executeMsg({ msg, fee: options.fee })
+      const coinOut = getTokenOutFromSwapResponse(response, options.denomOut)
+      const successMessage = `Swapped ${formatAmountWithSymbol(
+        options.coinIn.toCoin(),
+      )} for ${formatAmountWithSymbol(coinOut)}`
+
+      handleResponseMessages(response, successMessage)
       return !!response.result
     },
   }
