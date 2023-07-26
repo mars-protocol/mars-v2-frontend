@@ -60,7 +60,11 @@ export default function WalletBridges() {
   }, [currentWallet, disconnectWallet])
 
   useEffect(() => {
-    if (hasFunds) useStore.setState({ focusComponent: <WalletFetchBalancesAndAccounts /> })
+    if (hasFunds) {
+      useStore.setState({ focusComponent: <WalletFetchBalancesAndAccounts /> })
+      return
+    }
+
     if (BN(baseBalance).isGreaterThanOrEqualTo(hardcodedFee.amount[0].amount) && !isLoading)
       setHasFunds(true)
   }, [baseBalance, isLoading, hasFunds, setHasFunds])
