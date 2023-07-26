@@ -4,16 +4,17 @@ import classNames from 'classnames'
 import InputOverlay from 'components/RangeInput/InputOverlay'
 
 type Props = {
-  value: number
-  onChange: (value: number) => void
-  wrapperClassName?: string
-  disabled?: boolean
   max: number
+  value: number
+  disabled?: boolean
   marginThreshold?: number
+  wrapperClassName?: string
+  onChange: (value: number) => void
+  onBlur?: () => void
 }
 
 function RangeInput(props: Props) {
-  const { value, max, onChange, wrapperClassName, disabled, marginThreshold } = props
+  const { value, max, onChange, wrapperClassName, disabled, marginThreshold, onBlur } = props
 
   const handleOnChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -36,6 +37,7 @@ function RangeInput(props: Props) {
           step={max / 100}
           max={max}
           onChange={handleOnChange}
+          onBlur={onBlur}
         />
         <InputOverlay
           max={max}

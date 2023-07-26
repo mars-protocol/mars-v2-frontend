@@ -30,10 +30,11 @@ export default function SwapForm(props: Props) {
   const account = useCurrentAccount()
   const { data: prices } = usePrices()
   const swap = useStore((s) => s.swap)
+  const [slippage] = useLocalStorage(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
+
   const [isMarginChecked, setMarginChecked] = useState(false)
   const [buyAssetAmount, setBuyAssetAmount] = useState(BN_ZERO)
   const [sellAssetAmount, setSellAssetAmount] = useState(BN_ZERO)
-  const [slippage] = useLocalStorage(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
   const [focusedInput, setFocusedInput] = useState<'buy' | 'sell' | null>(null)
   const [maxBuyableAmountEstimation, setMaxBuyableAmountEstimation] = useState(BN_ZERO)
   const [selectedOrderType, setSelectedOrderType] = useState<AvailableOrderType>('Market')
@@ -42,13 +43,6 @@ export default function SwapForm(props: Props) {
     () => account?.deposits.find(byDenom(sellAsset.denom))?.amount || BN_ZERO,
     [account, sellAsset.denom],
   )
-
-  useEffect(() => {
-    estimateExactIn(
-      { denom: sellAsset.denom, amount: accountSellAssetDeposit },
-      buyAsset.denom,
-    ).then(setMaxBuyableAmountEstimation)
-  }, [accountSellAssetDeposit, buyAsset.denom, sellAsset.denom])
 
   const [buyAssetValue, sellAssetValue] = useMemo(() => {
     const buyAssetPrice = prices.find(byDenom(buyAsset.denom))?.amount ?? BN_ZERO
@@ -67,6 +61,19 @@ export default function SwapForm(props: Props) {
     buyAssetAmount,
     sellAssetAmount,
   ])
+
+  useEffect(() => {
+    setFocusedInput(null)
+    setBuyAssetAmount(BN_ZERO)
+    setSellAssetAmount(BN_ZERO)
+  }, [buyAsset.denom, sellAsset.denom])
+
+  useEffect(() => {
+    estimateExactIn(
+      { denom: sellAsset.denom, amount: accountSellAssetDeposit },
+      buyAsset.denom,
+    ).then(setMaxBuyableAmountEstimation)
+  }, [accountSellAssetDeposit, buyAsset.denom, sellAsset.denom])
 
   useEffect(() => {
     if (focusedInput === 'sell') {
@@ -89,16 +96,6 @@ export default function SwapForm(props: Props) {
     }
   }, [buyAsset.denom, buyAssetAmount, focusedInput, sellAsset.denom])
 
-  useEffect(() => {
-    setFocusedInput(null)
-    setBuyAssetAmount(BN_ZERO)
-    setSellAssetAmount(BN_ZERO)
-  }, [sellAsset.denom])
-
-  useEffect(() => {
-    setFocusedInput(null)
-  }, [buyAsset.denom])
-
   const handleBuyClick = useCallback(async () => {
     if (account?.id) {
       const isSucceeded = await swap({
@@ -110,9 +107,19 @@ export default function SwapForm(props: Props) {
       })
       if (isSucceeded) {
         setSellAssetAmount(BN_ZERO)
+        setBuyAssetAmount(BN_ZERO)
       }
     }
   }, [account?.id, buyAsset.denom, sellAsset.denom, sellAssetAmount, slippage, swap])
+
+  const dismissInputFocus = useCallback(() => setFocusedInput(null), [])
+  const handleRangeInputChange = useCallback(
+    (value: number) => {
+      setFocusedInput('sell')
+      setSellAssetAmount(BN(value).shiftedBy(sellAsset.decimals).integerValue())
+    },
+    [sellAsset.decimals],
+  )
 
   return (
     <>
@@ -131,16 +138,15 @@ export default function SwapForm(props: Props) {
         assetUSDValue={buyAssetValue}
         maxButtonLabel='Max Amount:'
         containerClassName='mx-3 my-6'
+        onBlur={dismissInputFocus}
         onFocus={() => setFocusedInput('buy')}
       />
 
       <RangeInput
         max={accountSellAssetDeposit.shiftedBy(-sellAsset.decimals).toNumber()}
         value={sellAssetAmount.shiftedBy(-sellAsset.decimals).toNumber()}
-        onChange={(value) => {
-          setFocusedInput('sell')
-          setSellAssetAmount(BN(value).shiftedBy(sellAsset.decimals).integerValue())
-        }}
+        onChange={handleRangeInputChange}
+        onBlur={dismissInputFocus}
         wrapperClassName='p-4'
       />
 
@@ -153,6 +159,7 @@ export default function SwapForm(props: Props) {
         asset={sellAsset}
         maxButtonLabel='Balance:'
         containerClassName='mx-3'
+        onBlur={dismissInputFocus}
         onFocus={() => setFocusedInput('sell')}
       />
 
