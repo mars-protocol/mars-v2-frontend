@@ -45,7 +45,7 @@ interface VaultValuesAndAmounts {
     secondary: BigNumber
     locked: BigNumber
     unlocked: BigNumber
-    unlocking: BigNumer
+    unlocking: BigNumber
   }
   values: {
     primary: BigNumber
