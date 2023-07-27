@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import { useCallback, useEffect, useState } from 'react'
 import useClipboard from 'react-use-clipboard'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import Button from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
@@ -20,6 +21,7 @@ import useStore from 'store'
 import { ChainInfoID } from 'types/enums/wallet'
 import { getBaseAsset, getEnabledMarketAssets } from 'utils/assets'
 import { truncate } from 'utils/formatters'
+import { getPage, getRoute } from 'utils/route'
 
 export default function WalletConnectedButton() {
   // ---------------
@@ -33,6 +35,8 @@ export default function WalletConnectedButton() {
   const network = useStore((s) => s.client?.connectedWallet.network)
   const baseAsset = getBaseAsset()
   const { data: walletBalances, isLoading } = useWalletBalances(address)
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
 
   // ---------------
   // LOCAL STATE
@@ -57,6 +61,7 @@ export default function WalletConnectedButton() {
     if (!currentWallet) return
     disconnectWallet(currentWallet)
     useStore.setState({ client: undefined, balances: [] })
+    navigate(getRoute(getPage(pathname)))
   }
 
   useEffect(() => {

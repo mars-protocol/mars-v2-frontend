@@ -10,11 +10,8 @@ import { ArrowCircledTopRight, ArrowDownLine, ArrowUpLine, TrashBin } from 'comp
 import Radio from 'components/Radio'
 import SwitchWithLabel from 'components/SwitchWithLabel'
 import Text from 'components/Text'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
 import { BN_ZERO } from 'constants/math'
 import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
-import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { calculateAccountBalanceValue, calculateAccountDepositsValue } from 'utils/accounts'
@@ -28,6 +25,7 @@ interface Props {
 const accountCardHeaderClasses = classNames(
   'flex w-full items-center justify-between bg-white/20 px-4 py-2.5 text-white/70',
   'border border-transparent border-b-white/20',
+  'group-hover/account:bg-white/30',
 )
 
 export default function AccountList(props: Props) {
@@ -72,14 +70,11 @@ export default function AccountList(props: Props) {
             <Card
               id={`account-${account.id}`}
               key={account.id}
-              className='w-full'
-              contentClassName='bg-white/10'
+              className={classNames('w-full', !isActive && 'group/account hover:cursor-pointer')}
+              contentClassName='bg-white/10 group-hover/account:bg-white/20'
               title={
                 <div
-                  className={classNames(
-                    accountCardHeaderClasses,
-                    !isActive && 'group hover:cursor-pointer',
-                  )}
+                  className={accountCardHeaderClasses}
                   role={!isActive ? 'button' : undefined}
                   onClick={() => {
                     if (isActive) return
@@ -89,7 +84,7 @@ export default function AccountList(props: Props) {
                   <Text size='xs' className='flex flex-1'>
                     Credit Account {account.id}
                   </Text>
-                  <Radio active={isActive} className='group-hover:opacity-100' />
+                  <Radio active={isActive} className='group-hover/account:opacity-100' />
                 </div>
               }
             >

@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 
-export function glowElement(enableAnimations: boolean) {
+export function glowElement(enableAnimations: boolean, className?: string) {
   return (
     <svg
       className={classNames(

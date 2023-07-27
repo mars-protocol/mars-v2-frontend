@@ -1,11 +1,11 @@
 import classNames from 'classnames'
 import { useCallback, useMemo, useState } from 'react'
 
-import Button from 'components/Button'
+import ActionButton from 'components/Button/ActionButton'
+import useSwapRoute from 'hooks/useSwapRoute'
+import { getAssetByDenom } from 'utils/assets'
 import { hardcodedFee } from 'utils/constants'
 import { formatAmountWithSymbol } from 'utils/formatters'
-import { getAssetByDenom } from 'utils/assets'
-import useSwapRoute from 'hooks/useSwapRoute'
 
 interface Props {
   buyAsset: Asset
@@ -53,12 +53,14 @@ export default function TradeSummary(props: Props) {
           <span>{parsedRoutes}</span>
         </div>
       </div>
-      <Button
+      <ActionButton
         disabled={routes.length === 0 || buyButtonDisabled}
         showProgressIndicator={isButtonBusy || isRouteLoading}
         text={buttonText}
         onClick={handleBuyClick}
         size='md'
+        color='primary'
+        className='w-full'
       />
     </div>
   )

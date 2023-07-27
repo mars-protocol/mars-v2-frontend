@@ -7,11 +7,11 @@ import { byDenom } from 'utils/array'
 import { getAssetByDenom } from 'utils/assets'
 
 interface Props {
-  defaultSelectedDenoms: string[]
   onChangeDenoms: (denoms: string[]) => void
 }
 
 export default function WalletAssetsModalContent(props: Props) {
+  const { onChangeDenoms } = props
   const [searchString, setSearchString] = useState<string>('')
   const balances = useStore((s) => s.balances)
 
@@ -39,12 +39,12 @@ export default function WalletAssetsModalContent(props: Props) {
     currentSelectedDenom?.filter((denom) => filteredAssets.findIndex(byDenom(denom))) || [],
   )
 
-  const onChangeDenoms = useCallback(
+  const onChangeSelect = useCallback(
     (denoms: string[]) => {
       setSelectedDenoms(denoms)
-      props.onChangeDenoms(denoms)
+      onChangeDenoms(denoms)
     },
-    [props.onChangeDenoms],
+    [onChangeDenoms],
   )
 
   return (
@@ -59,7 +59,7 @@ export default function WalletAssetsModalContent(props: Props) {
       <div className='max-h-[446px] overflow-y-scroll scrollbar-hide'>
         <AssetSelectTable
           assets={filteredAssets}
-          onChangeSelected={onChangeDenoms}
+          onChangeSelected={onChangeSelect}
           selectedDenoms={selectedDenoms}
         />
       </div>

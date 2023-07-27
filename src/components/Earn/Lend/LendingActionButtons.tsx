@@ -1,7 +1,9 @@
 import { useCallback } from 'react'
+import { useParams } from 'react-router-dom'
 
 import { ACCOUNT_MENU_BUTTON_ID } from 'components/Account/AccountMenuContent'
 import Button from 'components/Button'
+import ActionButton from 'components/Button/ActionButton'
 import { ArrowDownLine, ArrowUpLine, Enter } from 'components/Icons'
 import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
@@ -10,6 +12,7 @@ import useAlertDialog from 'hooks/useAlertDialog'
 import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
 import useCurrentAccountDeposits from 'hooks/useCurrentAccountDeposits'
 import useLendAndReclaimModal from 'hooks/useLendAndReclaimModal'
+import useStore from 'store'
 import { byDenom } from 'utils/array'
 
 interface Props {
@@ -26,6 +29,9 @@ export default function LendingActionButtons(props: Props) {
   const { open: showAlertDialog } = useAlertDialog()
   const { isAutoLendEnabledForCurrentAccount } = useAutoLendEnabledAccountIds()
   const assetDepositAmount = accountDeposits.find(byDenom(asset.denom))?.amount
+  const address = useStore((s) => s.address)
+  const { accountId } = useParams()
+  const hasNoDeposit = !!(!assetDepositAmount && address && accountId)
 
   const handleWithdraw = useCallback(() => {
     if (isAutoLendEnabledForCurrentAccount) {
@@ -64,7 +70,7 @@ export default function LendingActionButtons(props: Props) {
       )}
 
       <ConditionalWrapper
-        condition={!assetDepositAmount}
+        condition={hasNoDeposit}
         wrapper={(children) => (
           <Tooltip
             type='warning'
@@ -76,16 +82,15 @@ export default function LendingActionButtons(props: Props) {
           </Tooltip>
         )}
       >
-        <Button
+        <ActionButton
           leftIcon={<ArrowUpLine />}
           iconClassName={iconClassnames}
-          disabled={!assetDepositAmount}
+          disabled={hasNoDeposit}
           color='secondary'
           onClick={() => openLend(props.data)}
           className={buttonClassnames}
-        >
-          Lend
-        </Button>
+          text='Lend'
+        />
       </ConditionalWrapper>
     </div>
   )
