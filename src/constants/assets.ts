@@ -160,6 +160,6 @@ export const ASSETS: Asset[] = [
     isMarket: false,
     isDisplayCurrency: true,
     isStable: false,
-    forceFetchPrice: true,
+    forceFetchPrice: false,
   },
 ]
