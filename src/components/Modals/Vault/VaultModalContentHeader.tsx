@@ -6,6 +6,7 @@ import TitleAndSubCell from 'components/TitleAndSubCell'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import { BN } from 'utils/helpers'
 
 interface Props {
   vault: Vault | DepositedVault
@@ -14,7 +15,12 @@ interface Props {
 export default function VaultModalContentHeader({ vault }: Props) {
   const depositedValue = useMemo(() => {
     if ('values' in vault) {
-      return vault.values.primary.plus(vault.values.secondary).shiftedBy(-PRICE_ORACLE_DECIMALS)
+      const value = vault.values.primary
+        .plus(vault.values.secondary)
+        .shiftedBy(-PRICE_ORACLE_DECIMALS)
+      // To eliminate super small leftover amounts
+      // If value is smaller than 0.001 it's returning 0
+      return BN(value.toFixed(PRICE_ORACLE_DECIMALS / 2))
     } else {
       return BN_ZERO
     }
