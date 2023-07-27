@@ -18,8 +18,9 @@ export default function VaultModalContentHeader({ vault }: Props) {
       const value = vault.values.primary
         .plus(vault.values.secondary)
         .shiftedBy(-PRICE_ORACLE_DECIMALS)
+
       // To eliminate super small leftover amounts
-      // If value is smaller than 0.001 it's returning 0
+      // If USD value is smaller than 0.001 returns 0
       return BN(value.toFixed(PRICE_ORACLE_DECIMALS / 2))
     } else {
       return BN_ZERO
