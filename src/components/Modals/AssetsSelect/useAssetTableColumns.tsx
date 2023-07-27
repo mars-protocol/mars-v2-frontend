@@ -18,8 +18,7 @@ export default function useAssetTableColumns() {
         accessorKey: 'symbol',
         id: 'symbol',
         cell: ({ row }) => {
-          const asset = getAssetByDenom(row.original.asset.denom)
-          if (!asset) return null
+          const asset = getAssetByDenom(row.original.asset.denom) as Asset
           return (
             <div className='flex items-center'>
               <Checkbox checked={row.getIsSelected()} onChange={row.getToggleSelectedHandler()} />

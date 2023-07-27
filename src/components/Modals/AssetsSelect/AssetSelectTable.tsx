@@ -13,6 +13,7 @@ import { SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Text from 'components/Text'
 import useAssetTableColumns from 'components/Modals/AssetsSelect/useAssetTableColumns'
 import useStore from 'store'
+import { byDenom } from 'utils/array'
 
 interface Props {
   assets: Asset[] | BorrowAsset[]
@@ -36,7 +37,7 @@ export default function AssetSelectTable(props: Props) {
   const columns = useAssetTableColumns()
   const tableData: AssetTableRow[] = useMemo(() => {
     return props.assets.map((asset) => {
-      const balancesForAsset = balances.find((balance) => balance.denom === asset.denom)
+      const balancesForAsset = balances.find(byDenom(asset.denom))
       return {
         asset,
         balance: balancesForAsset?.amount ?? '0',

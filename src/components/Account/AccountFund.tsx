@@ -118,8 +118,7 @@ export default function AccountFund() {
       <Card className='w-full bg-white/5 p-6'>
         {!hasAssetSelected && <Text>Please select an asset.</Text>}
         {selectedDenoms.map((denom) => {
-          const asset = getAssetByDenom(denom)
-          if (!asset) return null
+          const asset = getAssetByDenom(denom) as Asset
 
           const balance = walletBalances.find(byDenom(asset.denom))?.amount ?? '0'
           return (

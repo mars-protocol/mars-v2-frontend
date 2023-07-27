@@ -10,7 +10,6 @@ import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useIsOpenArray from 'hooks/useIsOpenArray'
 import usePrices from 'hooks/usePrices'
-import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountDepositsValue } from 'utils/accounts'
 
@@ -32,7 +31,7 @@ export default function AccountSummary(props: Props) {
       <Card className='mb-4 h-min min-w-fit bg-white/10' contentClassName='flex'>
         <Item>
           <DisplayCurrency
-            coin={new BNCoin({ amount: accountBalance.toString(), denom: ORACLE_DENOM })}
+            coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalance)}
             className='text-sm'
           />
         </Item>

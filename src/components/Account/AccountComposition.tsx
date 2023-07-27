@@ -98,7 +98,7 @@ function Item(props: ItemProps) {
           />
         ) : (
           <DisplayCurrency
-            coin={new BNCoin({ amount: props.current.toString(), denom: ORACLE_DENOM })}
+            coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, props.current)}
             className='text-sm'
           />
         )}
@@ -116,7 +116,7 @@ function Item(props: ItemProps) {
               />
             ) : (
               <DisplayCurrency
-                coin={new BNCoin({ amount: props.change.toString(), denom: ORACLE_DENOM })}
+                coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, props.change)}
                 className={classNames('text-sm', increase ? 'text-profit' : 'text-loss')}
               />
             )}

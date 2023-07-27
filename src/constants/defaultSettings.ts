@@ -1,6 +1,5 @@
 import { ASSETS } from 'constants/assets'
-
-import { ORACLE_DENOM } from './oracle'
+import { ORACLE_DENOM } from 'constants/oracle'
 
 export const DEFAULT_SETTINGS: Settings = {
   reduceMotion: false,

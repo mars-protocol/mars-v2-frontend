@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import Button from 'components/Button'
 import Modal from 'components/Modal'
@@ -10,11 +10,11 @@ export default function WalletAssetsModal() {
   const modal = useStore((s) => s.walletAssetsModal)
   const [selectedDenoms, setSelectedDenoms] = useState<string[]>([])
 
-  function onClose() {
+  const onClose = useCallback(() => {
     useStore.setState({
       walletAssetsModal: { isOpen: false, selectedDenoms },
     })
-  }
+  }, [selectedDenoms])
 
   if (!modal?.isOpen) return null
 

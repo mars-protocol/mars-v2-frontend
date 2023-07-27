@@ -6,6 +6,7 @@ import Button from 'components/Button'
 import FullOverlayContent from 'components/FullOverlayContent'
 import { ChevronRight } from 'components/Icons'
 import Text from 'components/Text'
+import WalletFetchBalancesAndAccounts from 'components/Wallet/WalletFetchBalancesAndAccounts'
 import WalletSelect from 'components/Wallet/WalletSelect'
 import { BRIDGES } from 'constants/bridges'
 import { CHAINS } from 'constants/chains'
@@ -18,8 +19,6 @@ import { byDenom } from 'utils/array'
 import { getBaseAsset } from 'utils/assets'
 import { hardcodedFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
-
-import WalletFetchBalancesAndAccounts from './WalletFetchBalancesAndAccounts'
 
 const currentChainId = ENV.CHAIN_ID
 const currentChain = CHAINS[currentChainId]

@@ -15,7 +15,7 @@ export default function AccountStats(props: Props) {
   return (
     <div className='w-full flex-wrap'>
       <DisplayCurrency
-        coin={new BNCoin({ amount: props.balance.toString(), denom: ORACLE_DENOM })}
+        coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, props.balance)}
         className='w-full text-xl'
       />
       <div className='mt-1 flex w-full items-center'>

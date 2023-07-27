@@ -44,7 +44,7 @@ export default function WalletAssetsModalContent(props: Props) {
       setSelectedDenoms(denoms)
       props.onChangeDenoms(denoms)
     },
-    [props],
+    [props.onChangeDenoms],
   )
 
   return (

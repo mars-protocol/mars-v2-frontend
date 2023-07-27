@@ -19,7 +19,9 @@ import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
+import { getAssetByDenom } from 'utils/assets'
 import { convertToDisplayAmount, demagnify } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 interface Props {
   data: Account
@@ -107,13 +109,13 @@ export const AccountBalancesTable = (props: Props) => {
         cell: ({ row }) => {
           const amount = demagnify(
             row.original.amount,
-            ASSETS.find((asset) => asset.denom === row.original.denom) ?? ASSETS[0],
+            getAssetByDenom(row.original.denom) ?? ASSETS[0],
           )
           return (
             <FormattedNumber
               className='text-right text-xs'
-              amount={amount < 0.01 ? 0.01 : amount}
-              options={{ maxDecimals: 2, abbreviated: true, prefix: amount < 0.01 ? '< ' : '' }}
+              amount={Number(BN(amount).toPrecision(2))}
+              options={{ maxDecimals: 2, abbreviated: true }}
               animate
             />
           )

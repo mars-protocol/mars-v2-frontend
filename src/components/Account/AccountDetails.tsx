@@ -31,7 +31,7 @@ function AccountDetails(props: Props) {
   const { health } = useHealthComputer(props.account)
   const { data: prices } = usePrices()
   const accountBalanceValue = calculateAccountBalanceValue(props.account, prices)
-  const coin = new BNCoin({ amount: accountBalanceValue.toString(), denom: ORACLE_DENOM })
+  const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalanceValue)
   const healthFactor = BN(100).minus(formatHealth(health)).toNumber()
   return (
     <div
