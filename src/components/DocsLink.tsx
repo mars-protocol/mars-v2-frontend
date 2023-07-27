@@ -2,21 +2,27 @@ import { ExternalLink } from 'components/Icons'
 import Text from 'components/Text'
 
 interface Props {
-  type: 'wallet' | 'account' | 'terms'
+  type: DocLinkType
 }
 
 function getData(type: string) {
-  if (type === 'wallet')
-    return [
-      'New with wallets?',
-      'Learn more',
-      'https://docs.marsprotocol.io/docs/learn/workstation/basics/basics-intro',
-    ]
   if (type === 'account')
     return [
       'Why mint your account?',
       'Learn more',
       'https://docs.marsprotocol.io/docs/learn/workstation/rover/rover-intro',
+    ]
+  if (type === 'fund')
+    return [
+      'Why fund your account?',
+      'Learn more',
+      'https://docs.marsprotocol.io/docs/learn/workstation/rover/managing-credit-accounts',
+    ]
+  if (type === 'wallet')
+    return [
+      'New with wallets?',
+      'Learn more',
+      'https://docs.marsprotocol.io/docs/learn/workstation/basics/basics-intro',
     ]
   return [
     'By continuing you accept our',

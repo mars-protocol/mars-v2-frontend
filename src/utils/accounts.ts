@@ -1,43 +1,49 @@
 import BigNumber from 'bignumber.js'
 
+import { BN_ZERO } from 'constants/math'
+import { BNCoin } from 'types/classes/BNCoin'
 import {
   Positions,
   VaultPosition,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { getAssetByDenom } from 'utils/assets'
 import { BN } from 'utils/helpers'
-import { BNCoin } from 'types/classes/BNCoin'
-import { BN_ZERO } from 'constants/math'
 
-export const calculateAccountBalance = (
+export const calculateAccountBalanceValue = (
   account: Account | AccountChange,
   prices: BNCoin[],
 ): BigNumber => {
-  const totalDepositValue = calculateAccountDeposits(account, prices)
-  const totalDebtValue = calculateAccountDebt(account, prices)
+  const totalDepositValue = calculateAccountDepositsValue(account, prices)
+  const totalDebtValue = calculateAccountDebtValue(account, prices)
 
   return totalDepositValue.minus(totalDebtValue)
 }
 
-export const calculateAccountDeposits = (
+export const calculateAccountDepositsValue = (
   account: Account | AccountChange,
   prices: BNCoin[],
 ): BigNumber => {
   if (!account.deposits) return BN_ZERO
   return account.deposits.reduce((acc, deposit) => {
+    const asset = getAssetByDenom(deposit.denom)
+    if (!asset) return acc
     const price = prices.find((price) => price.denom === deposit.denom)?.amount ?? 0
-    const depositValue = BN(deposit.amount).multipliedBy(price)
+    const amount = BN(deposit.amount).shiftedBy(-asset.decimals)
+    const depositValue = amount.multipliedBy(price)
     return acc.plus(depositValue)
   }, BN_ZERO)
 }
 
-export const calculateAccountDebt = (
+export const calculateAccountDebtValue = (
   account: Account | AccountChange,
   prices: BNCoin[],
 ): BigNumber => {
   if (!account.debts) return BN_ZERO
   return account.debts.reduce((acc, debt) => {
+    const asset = getAssetByDenom(debt.denom)
+    if (!asset) return acc
     const price = prices.find((price) => price.denom === debt.denom)?.amount ?? 0
-    const debtAmount = BN(debt.amount)
+    const debtAmount = BN(debt.amount).shiftedBy(-asset.decimals)
     const debtValue = debtAmount.multipliedBy(price)
     return acc.plus(debtValue)
   }, BN_ZERO)

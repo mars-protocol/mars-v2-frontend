@@ -20,7 +20,7 @@ interface BroadcastSlice {
   }) => Promise<boolean>
   createAccount: (options: { fee: StdFee }) => Promise<string | null>
   deleteAccount: (options: { fee: StdFee; accountId: string }) => Promise<boolean>
-  deposit: (options: { fee: StdFee; accountId: string; coin: Coin }) => Promise<boolean>
+  deposit: (options: { fee: StdFee; accountId: string; coins: Coin[] }) => Promise<boolean>
   unlock: (options: {
     fee: StdFee
     accountId: string
@@ -37,7 +37,7 @@ interface BroadcastSlice {
     accountId: string
     actions: Action[]
   }) => Promise<boolean>
-  withdraw: (options: { fee: StdFee; accountId: string; coin: Coin }) => Promise<boolean>
+  withdraw: (options: { fee: StdFee; accountId: string; coins: Coin[] }) => Promise<boolean>
   lend: (options: {
     fee: StdFee
     accountId: string

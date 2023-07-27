@@ -10,31 +10,43 @@ import classNames from 'classnames'
 import { useEffect, useMemo, useState } from 'react'
 
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
-import useAddVaultAssetTableColumns from 'components/Modals/AddVaultAssets/useAddVaultAssetTableColumns'
 import Text from 'components/Text'
+import useAssetTableColumns from 'components/Modals/AssetsSelect/useAssetTableColumns'
+import useStore from 'store'
+import { byDenom } from 'utils/array'
 
 interface Props {
-  assets: BorrowAsset[]
+  assets: Asset[] | BorrowAsset[]
   selectedDenoms: string[]
   onChangeSelected: (denoms: string[]) => void
 }
 
-export default function AddVaultAssetTable(props: Props) {
+export default function AssetSelectTable(props: Props) {
   const defaultSelected = useMemo(() => {
-    return props.assets.reduce((acc, asset, index) => {
+    const assets = props.assets as BorrowAsset[]
+    return assets.reduce((acc, asset, index) => {
       if (props.selectedDenoms?.includes(asset.denom)) {
         acc[index] = true
       }
       return acc
     }, {} as { [key: number]: boolean })
   }, [props.selectedDenoms, props.assets])
-
   const [sorting, setSorting] = useState<SortingState>([{ id: 'symbol', desc: false }])
   const [selected, setSelected] = useState<RowSelectionState>(defaultSelected)
-  const columns = useAddVaultAssetTableColumns()
+  const balances = useStore((s) => s.balances)
+  const columns = useAssetTableColumns()
+  const tableData: AssetTableRow[] = useMemo(() => {
+    return props.assets.map((asset) => {
+      const balancesForAsset = balances.find(byDenom(asset.denom))
+      return {
+        asset,
+        balance: balancesForAsset?.amount ?? '0',
+      }
+    })
+  }, [balances, props.assets])
 
   const table = useReactTable({
-    data: props.assets,
+    data: tableData,
     columns,
     state: {
       sorting,

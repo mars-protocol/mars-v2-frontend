@@ -7,6 +7,7 @@ import {
   SettingsModal,
   UnlockModal,
   VaultModal,
+  WalletAssets,
   WithdrawFromVaultsModal,
 } from 'components/Modals'
 
@@ -21,6 +22,7 @@ export default function ModalsContainer() {
       <UnlockModal />
       <VaultModal />
       <WithdrawFromVaultsModal />
+      <WalletAssets />
       <AlertDialogController />
     </>
   )

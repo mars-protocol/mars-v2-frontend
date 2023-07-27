@@ -2,8 +2,9 @@ import BigNumber from 'bignumber.js'
 import moment from 'moment'
 
 import { BN_ZERO } from 'constants/math'
+import { ORACLE_DENOM } from 'constants/oracle'
 import { BNCoin } from 'types/classes/BNCoin'
-import { getEnabledMarketAssets } from 'utils/assets'
+import { getAllAssets, getEnabledMarketAssets } from 'utils/assets'
 import { BN } from 'utils/helpers'
 
 export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
@@ -177,15 +178,14 @@ export function demagnify(amount: number | string | BigNumber, asset: Asset | Ps
 
 export function convertToDisplayAmount(coin: BNCoin, displayCurrency: string, prices: BNCoin[]) {
   const price = prices.find((price) => price.denom === coin.denom)
-  const asset = getEnabledMarketAssets().find((asset) => asset.denom === coin.denom)
+  const asset = getAllAssets().find((asset) => asset.denom === coin.denom)
   const displayPrice = prices.find((price) => price.denom === displayCurrency)
 
-  if (!price || !asset || !displayPrice) return BN_ZERO
+  if (!price || !displayPrice || !asset) return BN_ZERO
 
-  return coin.amount
-    .shiftedBy(-1 * asset.decimals)
-    .multipliedBy(price.amount)
-    .dividedBy(displayPrice.amount)
+  const decimals = asset.denom === ORACLE_DENOM ? 0 : asset.decimals * -1
+
+  return coin.amount.shiftedBy(decimals).multipliedBy(price.amount).dividedBy(displayPrice.amount)
 }
 
 export function convertLiquidityRateToAPR(rate: number) {

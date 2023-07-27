@@ -38,15 +38,15 @@ export const FormattedNumber = React.memo(
       reduceMotion
     )
       return (
-        <span className={classNames('number', props.className)}>
+        <p className={classNames('number', props.className)}>
           {formatValue(props.amount.toString(), props.options)}
-        </span>
+        </p>
       )
 
     return (
-      <animated.span className={classNames('number', props.className)}>
+      <animated.p className={classNames('number', props.className)}>
         {springAmount.number.to((num) => formatValue(num, props.options))}
-      </animated.span>
+      </animated.p>
     )
   },
   (prevProps, nextProps) => prevProps.amount === nextProps.amount,

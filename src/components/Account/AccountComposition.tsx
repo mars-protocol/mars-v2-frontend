@@ -6,14 +6,14 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import { ArrowRight } from 'components/Icons'
 import Text from 'components/Text'
 import { BN_ZERO } from 'constants/math'
+import { ORACLE_DENOM } from 'constants/oracle'
 import usePrices from 'hooks/usePrices'
-import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import {
   calculateAccountApr,
   calculateAccountBorrowRate,
-  calculateAccountDebt,
-  calculateAccountDeposits,
+  calculateAccountDebtValue,
+  calculateAccountDepositsValue,
   calculateAccountPnL,
 } from 'utils/accounts'
 
@@ -33,10 +33,10 @@ interface ItemProps {
 
 export default function AccountComposition(props: Props) {
   const { data: prices } = usePrices()
-  const balance = calculateAccountDeposits(props.account, prices)
-  const balanceChange = props.change ? calculateAccountDeposits(props.change, prices) : BN_ZERO
-  const debtBalance = calculateAccountDebt(props.account, prices)
-  const debtBalanceChange = props.change ? calculateAccountDebt(props.change, prices) : BN_ZERO
+  const balance = calculateAccountDepositsValue(props.account, prices)
+  const balanceChange = props.change ? calculateAccountDepositsValue(props.change, prices) : BN_ZERO
+  const debtBalance = calculateAccountDebtValue(props.account, prices)
+  const debtBalanceChange = props.change ? calculateAccountDebtValue(props.change, prices) : BN_ZERO
   const pnL = calculateAccountPnL(props.account, prices)
   const pnLChange = props.change ? calculateAccountPnL(props.change, prices) : BN_ZERO
   const apr = calculateAccountApr(props.account, prices)
@@ -78,7 +78,6 @@ export default function AccountComposition(props: Props) {
 }
 
 function Item(props: ItemProps) {
-  const baseCurrency = useStore((s) => s.baseCurrency)
   const increase = props.isBadIncrease
     ? props.current.isGreaterThan(props.change)
     : props.current.isLessThan(props.change)
@@ -99,7 +98,7 @@ function Item(props: ItemProps) {
           />
         ) : (
           <DisplayCurrency
-            coin={new BNCoin({ amount: props.current.toString(), denom: baseCurrency.denom })}
+            coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, props.current)}
             className='text-sm'
           />
         )}
@@ -117,7 +116,7 @@ function Item(props: ItemProps) {
               />
             ) : (
               <DisplayCurrency
-                coin={new BNCoin({ amount: props.change.toString(), denom: baseCurrency.denom })}
+                coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, props.change)}
                 className={classNames('text-sm', increase ? 'text-profit' : 'text-loss')}
               />
             )}

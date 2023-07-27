@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react'
 
+import Button from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
 import Modal from 'components/Modal'
 import AddVaultAssetsModalContent from 'components/Modals/AddVaultAssets/AddVaultBorrowAssetsModalContent'
@@ -41,6 +42,9 @@ export default function AddVaultBorrowAssetsModal() {
       ) : (
         <CircularProgress />
       )}
+      <div className='flex w-full p-4'>
+        <Button className='w-full' onClick={onClose} color='tertiary' text='Select Assets' />
+      </div>
     </Modal>
   )
 }

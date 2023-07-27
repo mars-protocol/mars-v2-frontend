@@ -1,7 +1,6 @@
 import classNames from 'classnames'
 import { ReactElement, ReactNode } from 'react'
 
-import { FormattedNumber } from 'components/FormattedNumber'
 import { Tooltip } from 'components/Tooltip'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { REDUCE_MOTION_KEY } from 'constants/localStore'
@@ -87,12 +86,6 @@ export const Gauge = ({
             {icon}
           </div>
         )}
-        <FormattedNumber
-          className={classNames(labelClassName, 'text-2xs')}
-          amount={Math.round(percentage)}
-          options={{ maxDecimals: 0, minDecimals: 0 }}
-          animate
-        />
       </div>
     </Tooltip>
   )

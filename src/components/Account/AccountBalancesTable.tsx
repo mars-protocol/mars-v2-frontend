@@ -14,13 +14,14 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
-import usePrices from 'hooks/usePrices'
-import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
-import { convertToDisplayAmount, demagnify } from 'utils/formatters'
-import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
 import useLocalStorage from 'hooks/useLocalStorage'
+import usePrices from 'hooks/usePrices'
+import { BNCoin } from 'types/classes/BNCoin'
+import { getAssetByDenom } from 'utils/assets'
+import { convertToDisplayAmount, demagnify } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 interface Props {
   data: Account
@@ -106,14 +107,15 @@ export const AccountBalancesTable = (props: Props) => {
         accessorKey: 'size',
         header: 'Size',
         cell: ({ row }) => {
+          const amount = demagnify(
+            row.original.amount,
+            getAssetByDenom(row.original.denom) ?? ASSETS[0],
+          )
           return (
             <FormattedNumber
               className='text-right text-xs'
-              amount={demagnify(
-                row.original.amount,
-                ASSETS.find((asset) => asset.denom === row.original.denom) ?? ASSETS[0],
-              )}
-              options={{ maxDecimals: 4 }}
+              amount={Number(BN(amount).toPrecision(2))}
+              options={{ maxDecimals: 2, abbreviated: true }}
               animate
             />
           )
