@@ -72,15 +72,12 @@ export default function AccountList(props: Props) {
               key={account.id}
               className={classNames('w-full', !isActive && 'group/account hover:cursor-pointer')}
               contentClassName='bg-white/10 group-hover/account:bg-white/20'
+              onClick={() => {
+                if (isActive) return
+                navigate(getRoute(getPage(pathname), address, account.id))
+              }}
               title={
-                <div
-                  className={accountCardHeaderClasses}
-                  role={!isActive ? 'button' : undefined}
-                  onClick={() => {
-                    if (isActive) return
-                    navigate(getRoute(getPage(pathname), address, account.id))
-                  }}
-                >
+                <div className={accountCardHeaderClasses} role={!isActive ? 'button' : undefined}>
                   <Text size='xs' className='flex flex-1'>
                     Credit Account {account.id}
                   </Text>
