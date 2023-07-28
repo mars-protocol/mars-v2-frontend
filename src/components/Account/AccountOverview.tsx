@@ -44,7 +44,7 @@ function Content() {
           <AccountComposition account={account} />
           <Text className='mt-3 w-full bg-white/10 px-4 py-2 text-white/40'>Balances</Text>
           <AccountBalancesTable
-            data={account}
+            account={account}
             borrowingData={borrowAssetsData}
             lendingData={lendingAssetsData}
           />

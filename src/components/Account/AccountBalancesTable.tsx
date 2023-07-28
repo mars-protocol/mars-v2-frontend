@@ -25,7 +25,7 @@ import { BN } from 'utils/helpers'
 import { convertAprToApy } from 'utils/parsers'
 
 interface Props {
-  data: Account
+  account: Account
   lendingData: LendingMarketTableData[]
   borrowingData: BorrowMarketTableData[]
 }
@@ -63,9 +63,9 @@ export default function AccountBalancesTable(props: Props) {
 
   const [sorting, setSorting] = React.useState<SortingState>([])
   const balanceData = React.useMemo<AccountBalanceRow[]>(() => {
-    const accountDeposits = props.data?.deposits ?? []
-    const accountLends = props.data?.lends ?? []
-    const accountDebts = props.data?.debts ?? []
+    const accountDeposits = props.account?.deposits ?? []
+    const accountLends = props.account?.lends ?? []
+    const accountDebts = props.account?.debts ?? []
 
     const deposits = accountDeposits.map((deposit) => {
       const asset = ASSETS.find((asset) => asset.denom === deposit.denom) ?? ASSETS[0]
@@ -90,7 +90,7 @@ export default function AccountBalancesTable(props: Props) {
     })
 
     return [...deposits, ...lends, ...debts]
-  }, [displayCurrency, prices, props.data?.deposits, props.data?.lends])
+  }, [displayCurrency, prices, props.account, props.borrowingData, props.lendingData])
 
   const columns = React.useMemo<ColumnDef<AccountBalanceRow>[]>(
     () => [

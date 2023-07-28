@@ -1,5 +1,5 @@
 import Accordion from 'components/Accordion'
-import { AccountBalancesTable } from 'components/Account/AccountBalancesTable'
+import AccountBalancesTable from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
 import AccountHealth from 'components/Account/AccountHealth'
 import Card from 'components/Card'
@@ -8,7 +8,9 @@ import { ArrowChartLineUp } from 'components/Icons'
 import Text from 'components/Text'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
+import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useIsOpenArray from 'hooks/useIsOpenArray'
+import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountDepositsValue } from 'utils/accounts'
@@ -24,6 +26,12 @@ export default function AccountSummary(props: Props) {
   const accountBalance = props.account
     ? calculateAccountDepositsValue(props.account, prices)
     : BN_ZERO
+  const { availableAssets: borrowAvailableAssets, accountBorrowedAssets } =
+    useBorrowMarketAssetsTableData()
+  const { availableAssets: lendingAvailableAssets, accountLentAssets } =
+    useLendingMarketAssetsTableData()
+  const borrowAssetsData = [...borrowAvailableAssets, ...accountBorrowedAssets]
+  const lendingAssetsData = [...lendingAvailableAssets, ...accountLentAssets]
   if (!props.account) return null
 
   return (
@@ -60,7 +68,13 @@ export default function AccountSummary(props: Props) {
           {
             title: 'Balances',
             renderContent: () =>
-              props.account ? <AccountBalancesTable data={props.account} /> : null,
+              props.account ? (
+                <AccountBalancesTable
+                  account={props.account}
+                  borrowingData={borrowAssetsData}
+                  lendingData={lendingAssetsData}
+                />
+              ) : null,
             isOpen: isOpen[1],
             toggleOpen: (index: number) => toggleOpen(index),
             renderSubTitle: () => <></>,
