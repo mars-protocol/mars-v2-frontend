@@ -16,8 +16,6 @@ import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
-import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
-import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -28,6 +26,8 @@ import { convertAprToApy } from 'utils/parsers'
 
 interface Props {
   data: Account
+  lendingData: LendingMarketTableData[]
+  borrowingData: BorrowMarketTableData[]
 }
 
 function calculatePositionValues(
@@ -49,19 +49,18 @@ function calculatePositionValues(
       prices,
     ).toString(),
     denom,
-    amount,
+    amount: type === 'borrowing' ? amount.negated() : amount,
     apy,
   }
 }
 
-export const AccountBalancesTable = (props: Props) => {
+export default function AccountBalancesTable(props: Props) {
   const [displayCurrency] = useLocalStorage<string>(
     DISPLAY_CURRENCY_KEY,
     DEFAULT_SETTINGS.displayCurrency,
   )
   const { data: prices } = usePrices()
-  const { accountBorrowedAssets } = useBorrowMarketAssetsTableData()
-  const { accountLentAssets } = useLendingMarketAssetsTableData()
+
   const [sorting, setSorting] = React.useState<SortingState>([])
   const balanceData = React.useMemo<AccountBalanceRow[]>(() => {
     const accountDeposits = props.data?.deposits ?? []
@@ -77,7 +76,7 @@ export const AccountBalancesTable = (props: Props) => {
     const lends = accountLends.map((lending) => {
       const asset = ASSETS.find((asset) => asset.denom === lending.denom) ?? ASSETS[0]
       const apr = convertLiquidityRateToAPR(
-        accountLentAssets.find((market) => market.asset.denom === lending.denom)
+        props.lendingData.find((market) => market.asset.denom === lending.denom)
           ?.marketLiquidityRate ?? 0,
       )
       const apy = convertAprToApy(apr, 365)
@@ -86,9 +85,8 @@ export const AccountBalancesTable = (props: Props) => {
     const debts = accountDebts.map((debt) => {
       const asset = ASSETS.find((asset) => asset.denom === debt.denom) ?? ASSETS[0]
       const apy =
-        (accountBorrowedAssets.find((market) => market.asset.denom === debt.denom)?.borrowRate ??
-          0) * -100
-      return calculatePositionValues('borrowing', asset, prices, displayCurrency, debt, apy)
+        props.borrowingData.find((market) => market.asset.denom === debt.denom)?.borrowRate ?? 0
+      return calculatePositionValues('borrowing', asset, prices, displayCurrency, debt, apy * -100)
     })
 
     return [...deposits, ...lends, ...debts]
@@ -114,9 +112,10 @@ export const AccountBalancesTable = (props: Props) => {
         accessorKey: 'value',
         id: 'value',
         cell: ({ row }) => {
-          const amount =
-            row.original.type === 'borrowing' ? row.original.amount.negated() : row.original.amount
-          const coin = new BNCoin({ denom: row.original.denom, amount: amount.toString() })
+          const coin = new BNCoin({
+            denom: row.original.denom,
+            amount: row.original.amount.toString(),
+          })
           return <DisplayCurrency coin={coin} className='text-right text-xs' />
         },
       },
