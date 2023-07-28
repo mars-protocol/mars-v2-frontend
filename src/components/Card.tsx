@@ -7,6 +7,7 @@ interface Props {
   children: ReactNode
   className?: string
   contentClassName?: string
+  onClick?: () => void
   title?: string | ReactElement
   id?: string
 }
@@ -15,6 +16,7 @@ export default function Card(props: Props) {
   return (
     <section
       id={props.id}
+      onClick={props.onClick}
       className={classNames(
         props.className,
         'flex flex-col',

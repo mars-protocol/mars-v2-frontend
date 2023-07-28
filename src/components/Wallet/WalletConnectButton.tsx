@@ -11,6 +11,10 @@ import useStore from 'store'
 interface Props {
   textOverride?: string | ReactNode
   disabled?: boolean
+  className?: string
+  color?: ButtonProps['color']
+  variant?: ButtonProps['variant']
+  size?: ButtonProps['size']
 }
 
 export default function WalletConnectButton(props: Props) {
@@ -24,14 +28,15 @@ export default function WalletConnectButton(props: Props) {
   return (
     <div className='relative'>
       <Button
-        variant='solid'
-        color='tertiary'
+        variant={props.variant ?? 'solid'}
+        color={props.color ?? 'tertiary'}
+        size={props.size ?? 'sm'}
         disabled={props.disabled}
         onClick={handleClick}
         leftIcon={<Wallet />}
-      >
-        <span>{props.textOverride || 'Connect Wallet'}</span>
-      </Button>
+        className={props.className}
+        text={props.textOverride ?? 'Connect Wallet'}
+      />
     </div>
   )
 }

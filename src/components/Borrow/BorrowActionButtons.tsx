@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 
 import Button from 'components/Button'
+import ActionButton from 'components/Button/ActionButton'
 import { Plus, ReceiptCheck } from 'components/Icons'
 import useStore from 'store'
 import { getEnabledMarketAssets } from 'utils/assets'
@@ -28,7 +29,7 @@ export default function BorrowActionButtons(props: Props) {
 
   return (
     <div className='flex flex-row space-x-2'>
-      <Button
+      <ActionButton
         leftIcon={<Plus className='w-3' />}
         onClick={borrowHandler}
         color='secondary'

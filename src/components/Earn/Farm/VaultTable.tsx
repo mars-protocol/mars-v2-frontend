@@ -10,7 +10,7 @@ import {
 import classNames from 'classnames'
 import React from 'react'
 
-import Button from 'components/Button'
+import ActionButton from 'components/Button/ActionButton'
 import DisplayCurrency from 'components/DisplayCurrency'
 import VaultExpanded from 'components/Earn/Farm/VaultExpanded'
 import VaultLogo from 'components/Earn/Farm/VaultLogo'
@@ -205,9 +205,7 @@ export const VaultTable = (props: Props) => {
                   <ChevronDown />
                 </div>
               ) : (
-                <Button onClick={enterVaultHandler} color='tertiary'>
-                  Deposit
-                </Button>
+                <ActionButton onClick={enterVaultHandler} color='tertiary' text='Deposit' />
               )}
             </div>
           )

@@ -10,14 +10,10 @@ import { ArrowCircledTopRight, ArrowDownLine, ArrowUpLine, TrashBin } from 'comp
 import Radio from 'components/Radio'
 import SwitchWithLabel from 'components/SwitchWithLabel'
 import Text from 'components/Text'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
-import { BN_ZERO } from 'constants/math'
 import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
-import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
-import { calculateAccountBalanceValue, calculateAccountDepositsValue } from 'utils/accounts'
+import { calculateAccountDepositsValue } from 'utils/accounts'
 import { hardcodedFee } from 'utils/constants'
 import { getPage, getRoute } from 'utils/route'
 
@@ -28,6 +24,7 @@ interface Props {
 const accountCardHeaderClasses = classNames(
   'flex w-full items-center justify-between bg-white/20 px-4 py-2.5 text-white/70',
   'border border-transparent border-b-white/20',
+  'group-hover/account:bg-white/30',
 )
 
 export default function AccountList(props: Props) {
@@ -38,10 +35,6 @@ export default function AccountList(props: Props) {
   const { autoLendEnabledAccountIds, toggleAutoLend } = useAutoLendEnabledAccountIds()
   const deleteAccount = useStore((s) => s.deleteAccount)
   const accountSelected = !!accountId && !isNaN(Number(accountId))
-  const selectedAccountDetails = props.accounts.find((account) => account.id === accountId)
-  const selectedAccountBalance = selectedAccountDetails
-    ? calculateAccountBalanceValue(selectedAccountDetails, prices)
-    : BN_ZERO
 
   async function deleteAccountHandler() {
     if (!accountSelected) return
@@ -72,31 +65,25 @@ export default function AccountList(props: Props) {
             <Card
               id={`account-${account.id}`}
               key={account.id}
-              className='w-full'
-              contentClassName='bg-white/10'
+              className={classNames('w-full', !isActive && 'group/account hover:cursor-pointer')}
+              contentClassName='bg-white/10 group-hover/account:bg-white/20'
+              onClick={() => {
+                if (isActive) return
+                navigate(getRoute(getPage(pathname), address, account.id))
+              }}
               title={
-                <div
-                  className={classNames(
-                    accountCardHeaderClasses,
-                    !isActive && 'group hover:cursor-pointer',
-                  )}
-                  role={!isActive ? 'button' : undefined}
-                  onClick={() => {
-                    if (isActive) return
-                    navigate(getRoute(getPage(pathname), address, account.id))
-                  }}
-                >
+                <div className={accountCardHeaderClasses} role={!isActive ? 'button' : undefined}>
                   <Text size='xs' className='flex flex-1'>
                     Credit Account {account.id}
                   </Text>
-                  <Radio active={isActive} className='group-hover:opacity-100' />
+                  <Radio active={isActive} className='group-hover/account:opacity-100' />
                 </div>
               }
             >
               {isActive ? (
                 <>
                   <div className='w-full border border-transparent border-b-white/20 p-4'>
-                    <AccountStats balance={selectedAccountBalance} risk={75} health={85} />
+                    <AccountStats account={account} />
                   </div>
                   <div className='grid grid-flow-row grid-cols-2 gap-4 p-4'>
                     <Button
@@ -149,7 +136,7 @@ export default function AccountList(props: Props) {
                 </>
               ) : (
                 <div className='w-full p-4'>
-                  <AccountStats balance={positionBalance} risk={60} health={50} />
+                  <AccountStats account={account} />
                 </div>
               )}
             </Card>
