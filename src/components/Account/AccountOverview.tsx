@@ -1,17 +1,25 @@
 import classNames from 'classnames'
 import { Suspense } from 'react'
-import { useParams } from 'react-router-dom'
 
-import { AccountBalancesTable } from 'components/Account/AccountBalancesTable'
+import AccountBalancesTable from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
 import Card from 'components/Card'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
 import useAccounts from 'hooks/useAccounts'
+import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
+import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
+import useStore from 'store'
 
 function Content() {
-  const address = useParams().address || ''
+  const address = useStore((s) => s.address)
   const { data: account } = useAccounts(address)
+  const { availableAssets: borrowAvailableAssets, accountBorrowedAssets } =
+    useBorrowMarketAssetsTableData()
+  const { availableAssets: lendingAvailableAssets, accountLentAssets } =
+    useLendingMarketAssetsTableData()
+  const borrowAssetsData = [...borrowAvailableAssets, ...accountBorrowedAssets]
+  const lendingAssetsData = [...lendingAvailableAssets, ...accountLentAssets]
 
   if (!address) {
     return (
@@ -35,7 +43,11 @@ function Content() {
         <Card className='h-fit w-full bg-white/5' title={`Account ${account.id}`} key={index}>
           <AccountComposition account={account} />
           <Text className='mt-3 w-full bg-white/10 px-4 py-2 text-white/40'>Balances</Text>
-          <AccountBalancesTable data={account} />
+          <AccountBalancesTable
+            account={account}
+            borrowingData={borrowAssetsData}
+            lendingData={lendingAssetsData}
+          />
         </Card>
       ))}
     </div>
