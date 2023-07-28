@@ -83,7 +83,7 @@ export default function AccountBalancesTable(props: Props) {
       return calculatePositionValues('lending', asset, prices, displayCurrency, lending, apy)
     })
     const debts = accountDebts.map((debt) => {
-      const asset = ASSETS.find((asset) => asset.denom === debt.denom) ?? ASSETS[0]
+      const asset = ASSETS.find(byDenom(debt.denom)) ?? ASSETS[0]
       const apy =
         props.borrowingData.find((market) => market.asset.denom === debt.denom)?.borrowRate ?? 0
       return calculatePositionValues('borrowing', asset, prices, displayCurrency, debt, apy * -100)
