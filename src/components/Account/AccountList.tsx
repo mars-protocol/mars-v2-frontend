@@ -10,11 +10,10 @@ import { ArrowCircledTopRight, ArrowDownLine, ArrowUpLine, TrashBin } from 'comp
 import Radio from 'components/Radio'
 import SwitchWithLabel from 'components/SwitchWithLabel'
 import Text from 'components/Text'
-import { BN_ZERO } from 'constants/math'
 import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
-import { calculateAccountBalanceValue, calculateAccountDepositsValue } from 'utils/accounts'
+import { calculateAccountDepositsValue } from 'utils/accounts'
 import { hardcodedFee } from 'utils/constants'
 import { getPage, getRoute } from 'utils/route'
 
@@ -36,10 +35,6 @@ export default function AccountList(props: Props) {
   const { autoLendEnabledAccountIds, toggleAutoLend } = useAutoLendEnabledAccountIds()
   const deleteAccount = useStore((s) => s.deleteAccount)
   const accountSelected = !!accountId && !isNaN(Number(accountId))
-  const selectedAccountDetails = props.accounts.find((account) => account.id === accountId)
-  const selectedAccountBalance = selectedAccountDetails
-    ? calculateAccountBalanceValue(selectedAccountDetails, prices)
-    : BN_ZERO
 
   async function deleteAccountHandler() {
     if (!accountSelected) return
@@ -88,7 +83,7 @@ export default function AccountList(props: Props) {
               {isActive ? (
                 <>
                   <div className='w-full border border-transparent border-b-white/20 p-4'>
-                    <AccountStats balance={selectedAccountBalance} risk={75} health={85} />
+                    <AccountStats account={account} />
                   </div>
                   <div className='grid grid-flow-row grid-cols-2 gap-4 p-4'>
                     <Button
@@ -141,7 +136,7 @@ export default function AccountList(props: Props) {
                 </>
               ) : (
                 <div className='w-full p-4'>
-                  <AccountStats balance={positionBalance} risk={60} health={50} />
+                  <AccountStats account={account} />
                 </div>
               )}
             </Card>
