@@ -20,7 +20,7 @@ function DetailsHeader({ data }: Props) {
         <>
           <TitleAndSubCell
             title={
-              <>
+              <div className='flex flex-row'>
                 <FormattedNumber amount={assetApy.toNumber()} options={{ suffix: '%' }} animate />
                 <FormattedNumber
                   className='ml-2 text-xs'
@@ -28,7 +28,7 @@ function DetailsHeader({ data }: Props) {
                   options={{ suffix: '%/day' }}
                   animate
                 />
-              </>
+              </div>
             }
             sub={'APY'}
           />
