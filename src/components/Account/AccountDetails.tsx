@@ -50,14 +50,6 @@ function AccountDetails(props: Props) {
           animate
         />
       </div>
-      <div className='w-full border border-x-0 border-white/20 py-4'>
-        <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
-          Leverage
-        </Text>
-        <Text size='xs' className='w-full text-center'>
-          4.5x
-        </Text>
-      </div>
       <div className='w-full px-1 py-4'>
         <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
           Balance
