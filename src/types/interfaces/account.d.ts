@@ -17,7 +17,7 @@ interface AccountBalanceRow {
   type: string
   symbol: string
   denom: string
-  amount: string
+  amount: BigNumber
   value: string | number
   size: number
   apy: number
