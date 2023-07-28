@@ -8,9 +8,9 @@ import { Account, PlusCircled } from 'components/Icons'
 import WalletConnectButton from 'components/Wallet/WalletConnectButton'
 import useStore from 'store'
 
-interface Props extends ButtonProps {}
-
-export default function ActionButton(props: Props) {
+export default function ActionButton(props: ButtonProps) {
+  const { className, color, variant, size } = props
+  const defaultProps = { className, color, variant, size }
   const address = useStore((s) => s.address)
   const accounts = useStore((s) => s.accounts)
   const { accountId } = useParams()
@@ -19,40 +19,26 @@ export default function ActionButton(props: Props) {
     useStore.setState({ focusComponent: <AccountCreateFirst /> })
   }, [])
 
-  if (!address)
-    return (
-      <WalletConnectButton
-        className={props.className}
-        color={props.color}
-        variant={props.variant}
-        size={props.size}
-      />
-    )
+  if (!address) return <WalletConnectButton {...defaultProps} />
 
   if (accounts && accounts.length === 0)
     return (
       <Button
         onClick={handleCreateAccountClick}
         leftIcon={<PlusCircled />}
-        className={props.className}
-        color={props.color}
-        variant={props.variant}
-        size={props.size}
         text='Create Account'
+        {...defaultProps}
       />
     )
 
   if (!accountId)
     return (
       <Button
-        className={props.className}
-        color={props.color}
-        size={props.size}
         text='Select Account'
-        variant={props.variant}
         onClick={() => document.getElementById(ACCOUNT_MENU_BUTTON_ID)?.click()}
         leftIcon={<Account />}
         rightIcon={undefined}
+        {...defaultProps}
       />
     )
 
