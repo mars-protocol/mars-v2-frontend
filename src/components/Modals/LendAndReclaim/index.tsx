@@ -69,7 +69,7 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
       contentHeader={<DetailsHeader data={data} />}
       coinBalances={coinBalances}
       actionButtonText={actionText}
-      showLoaderInButton={isConfirming}
+      showProgressIndicator={isConfirming}
       accountSummaryChange={accountChange}
       title={`${actionText} ${asset.symbol}`}
       onClose={close}

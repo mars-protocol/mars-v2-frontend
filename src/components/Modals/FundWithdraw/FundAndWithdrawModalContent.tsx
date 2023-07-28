@@ -104,6 +104,7 @@ export default function FundWithdrawModalContent(props: Props) {
           accountId={!props.isFunding ? props.account.id : undefined}
           hasSelect
           maxText='Max'
+          disabled={isConfirming}
         />
         <Divider />
         <Button
