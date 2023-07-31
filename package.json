@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@svgr/webpack": "^8.0.1",
-    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
     "@types/debounce-promise": "^3.1.6",
     "@types/node": "^20.4.4",
