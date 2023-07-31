@@ -15,23 +15,27 @@ interface Props {
 export default function AssetSelector(props: Props) {
   const { buyAsset, sellAsset, onChangeBuyAsset, onChangeSellAsset } = props
   const [overlayState, setOverlayState] = useState<OverlayState>('closed')
-  const [cachedBuyAsset, setCachedBuyAsset] = useState<Asset>(props.buyAsset)
-  const [cachedSellAsset, setCachedSellAsset] = useState<Asset>(props.sellAsset)
 
   const handleSwapAssets = useCallback(() => {
     onChangeBuyAsset(sellAsset)
     onChangeSellAsset(buyAsset)
   }, [onChangeBuyAsset, onChangeSellAsset, sellAsset, buyAsset])
 
-  const handleChangeBuyAsset = useCallback((asset: Asset) => {
-    setCachedBuyAsset(asset)
-    setOverlayState('sell')
-  }, [])
+  const handleChangeBuyAsset = useCallback(
+    (asset: Asset) => {
+      onChangeBuyAsset(asset)
+      setOverlayState('sell')
+    },
+    [onChangeBuyAsset],
+  )
 
-  const handleChangeSellAsset = useCallback((asset: Asset) => {
-    setCachedSellAsset(asset)
-    setOverlayState('closed')
-  }, [])
+  const handleChangeSellAsset = useCallback(
+    (asset: Asset) => {
+      onChangeSellAsset(asset)
+      setOverlayState('closed')
+    },
+    [onChangeSellAsset],
+  )
 
   const handleChangeState = useCallback(
     (state: OverlayState) => {
@@ -42,10 +46,10 @@ export default function AssetSelector(props: Props) {
 
   useEffect(() => {
     if (overlayState === 'closed') {
-      onChangeBuyAsset(cachedBuyAsset)
-      onChangeSellAsset(cachedSellAsset)
+      onChangeBuyAsset(buyAsset)
+      onChangeSellAsset(sellAsset)
     }
-  }, [onChangeBuyAsset, onChangeSellAsset, overlayState, cachedBuyAsset, cachedSellAsset])
+  }, [onChangeBuyAsset, onChangeSellAsset, overlayState, buyAsset, sellAsset])
 
   return (
     <div className='grid-rows-auto relative grid grid-cols-[1fr_min-content_1fr] gap-y-2 bg-white/5 p-3'>
@@ -53,16 +57,16 @@ export default function AssetSelector(props: Props) {
       <Text size='sm' className='col-start-3'>
         Sell
       </Text>
-      <AssetButton onClick={() => setOverlayState('buy')} asset={props.buyAsset} />
+      <AssetButton onClick={() => setOverlayState('buy')} asset={buyAsset} />
       <button onClick={handleSwapAssets}>
         <SwapIcon className='mx-2 w-4 place-self-center' />
       </button>
-      <AssetButton onClick={() => setOverlayState('sell')} asset={props.sellAsset} />
+      <AssetButton onClick={() => setOverlayState('sell')} asset={sellAsset} />
       <AssetOverlay
         state={overlayState}
         onChangeState={handleChangeState}
-        buyAsset={cachedBuyAsset}
-        sellAsset={cachedSellAsset}
+        buyAsset={buyAsset}
+        sellAsset={sellAsset}
         onChangeBuyAsset={handleChangeBuyAsset}
         onChangeSellAsset={handleChangeSellAsset}
       />
