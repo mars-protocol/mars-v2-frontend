@@ -7,11 +7,7 @@ interface BroadcastResult {
 
 interface BroadcastSlice {
   toast: { message: string; isError?: boolean; title?: string } | null
-  executeMsg: (options: {
-    msg: Record<string, unknown>
-    fee: StdFee
-    funds?: Coin[]
-  }) => Promise<BroadcastResult>
+  executeMsg: (options: { messages: MsgExecuteContract[]; fee: StdFee }) => Promise<BroadcastResult>
   borrow: (options: {
     fee: StdFee
     accountId: string
@@ -50,6 +46,7 @@ interface BroadcastSlice {
     coin: BNCoin
     isMax?: boolean
   }) => Promise<boolean>
+  refundAndDeleteAccount: (options: { fee: StdFee; accountId: string }) => Promise<boolean>
   repay: (options: {
     fee: StdFee
     accountId: string

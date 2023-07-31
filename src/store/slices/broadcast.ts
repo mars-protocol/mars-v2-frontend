@@ -60,7 +60,19 @@ export default function createBroadcastSlice(
         },
       }
 
-      const response = await get().executeMsg({ msg, fee: options.fee })
+      const executionMessages = [
+        new MsgExecuteContract({
+          sender: get().address ?? '',
+          contract: ENV.ADDRESS_CREDIT_MANAGER,
+          msg,
+          funds: [],
+        }),
+      ]
+
+      const response = await get().executeMsg({
+        messages: executionMessages,
+        fee: options.fee,
+      })
 
       handleResponseMessages(
         response,
@@ -74,8 +86,20 @@ export default function createBroadcastSlice(
       const msg: CreditManagerExecuteMsg = {
         create_credit_account: 'default',
       }
-      set({ createAccountModal: true })
-      const response = await get().executeMsg({ msg, fee: options.fee })
+
+      const executionMessages = [
+        new MsgExecuteContract({
+          sender: get().address ?? '',
+          contract: ENV.ADDRESS_CREDIT_MANAGER,
+          msg,
+          funds: [],
+        }),
+      ]
+
+      const response = await get().executeMsg({
+        messages: executionMessages,
+        fee: options.fee,
+      })
 
       if (response.result) {
         set({ createAccountModal: false })
@@ -99,10 +123,59 @@ export default function createBroadcastSlice(
           token_id: options.accountId,
         },
       }
-      set({ deleteAccountModal: true })
-      const response = await get().executeMsg({ msg, fee: options.fee })
 
-      set({ deleteAccountModal: false })
+      const executionMessages = [
+        new MsgExecuteContract({
+          sender: get().address ?? '',
+          contract: ENV.ADDRESS_ACCOUNT_NFT,
+          msg,
+          funds: [],
+        }),
+      ]
+
+      const response = await get().executeMsg({
+        messages: executionMessages,
+        fee: options.fee,
+      })
+
+      handleResponseMessages(response, `Account ${options.accountId} deleted`)
+
+      return !!response.result
+    },
+    refundAndDeleteAccount: async (options: { fee: StdFee; accountId: string }) => {
+      const refundMessage: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: [{ refund_all_coin_balances: {} }],
+        },
+      }
+
+      const burnMessage: AccountNftExecuteMsg = {
+        burn: {
+          token_id: options.accountId,
+        },
+      }
+
+      const sender = get().address ?? ''
+      const executionMessages = [
+        new MsgExecuteContract({
+          sender,
+          contract: ENV.ADDRESS_CREDIT_MANAGER,
+          msg: refundMessage,
+          funds: [],
+        }),
+        new MsgExecuteContract({
+          sender,
+          contract: ENV.ADDRESS_ACCOUNT_NFT,
+          msg: burnMessage,
+          funds: [],
+        }),
+      ]
+
+      const response = await get().executeMsg({
+        messages: executionMessages,
+        fee: options.fee,
+      })
 
       handleResponseMessages(response, `Account ${options.accountId} deleted`)
 
@@ -118,7 +191,19 @@ export default function createBroadcastSlice(
         },
       }
 
-      const response = await get().executeMsg({ msg, fee: options.fee, funds: options.coins })
+      const executionMessages = [
+        new MsgExecuteContract({
+          sender: get().address ?? '',
+          contract: ENV.ADDRESS_CREDIT_MANAGER,
+          msg,
+          funds: options.coins,
+        }),
+      ]
+
+      const response = await get().executeMsg({
+        messages: executionMessages,
+        fee: options.fee,
+      })
 
       const depositString = options.coins.map((coin) => formatAmountWithSymbol(coin)).join('and ')
       handleResponseMessages(response, `Deposited ${depositString} to Account ${options.accountId}`)
@@ -144,10 +229,18 @@ export default function createBroadcastSlice(
         },
       }
 
+      const executionMessages = [
+        new MsgExecuteContract({
+          sender: get().address ?? '',
+          contract: ENV.ADDRESS_CREDIT_MANAGER,
+          msg,
+          funds: [],
+        }),
+      ]
+
       const response = await get().executeMsg({
-        msg,
+        messages: executionMessages,
         fee: options.fee,
-        funds: [],
       })
 
       handleResponseMessages(response, `Requested unlock for ${options.vault.name}`)
@@ -176,7 +269,20 @@ export default function createBroadcastSlice(
         },
       }
 
-      const response = await get().executeMsg({ msg, fee: options.fee })
+      const executionMessages = [
+        new MsgExecuteContract({
+          sender: get().address ?? '',
+          contract: ENV.ADDRESS_CREDIT_MANAGER,
+          msg,
+          funds: [],
+        }),
+      ]
+
+      const response = await get().executeMsg({
+        messages: executionMessages,
+        fee: options.fee,
+      })
+
       const vaultsString = options.vaults.length === 1 ? 'vault' : 'vaults'
       handleResponseMessages(
         response,
@@ -191,7 +297,20 @@ export default function createBroadcastSlice(
           actions: options.actions,
         },
       }
-      const response = await get().executeMsg({ msg, fee: options.fee })
+
+      const executionMessages = [
+        new MsgExecuteContract({
+          sender: get().address ?? '',
+          contract: ENV.ADDRESS_CREDIT_MANAGER,
+          msg,
+          funds: [],
+        }),
+      ]
+
+      const response = await get().executeMsg({
+        messages: executionMessages,
+        fee: options.fee,
+      })
 
       handleResponseMessages(response, `Deposited into vault`)
       return !!response.result
@@ -206,51 +325,26 @@ export default function createBroadcastSlice(
         },
       }
 
-      const response = await get().executeMsg({ msg, fee: options.fee })
+      const executionMessages = [
+        new MsgExecuteContract({
+          sender: get().address ?? '',
+          contract: ENV.ADDRESS_CREDIT_MANAGER,
+          msg,
+          funds: [],
+        }),
+      ]
+
+      const response = await get().executeMsg({
+        messages: executionMessages,
+        fee: options.fee,
+      })
+
       const withdrawString = options.coins.map((coin) => formatAmountWithSymbol(coin)).join('and ')
       handleResponseMessages(
         response,
         `Withdrew ${withdrawString} from Account ${options.accountId}`,
       )
       return !!response.result
-    },
-    executeMsg: async (options: {
-      fee: StdFee
-      msg: Record<string, unknown>
-      funds?: Coin[]
-    }): Promise<BroadcastResult> => {
-      const funds = options.funds ?? []
-
-      try {
-        const client = get().client
-        if (!client) return { error: 'no client detected' }
-
-        const broadcastOptions = {
-          messages: [
-            new MsgExecuteContract({
-              sender: client.connectedWallet.account.address,
-              contract: ENV.ADDRESS_CREDIT_MANAGER,
-              msg: options.msg,
-              funds,
-            }),
-          ],
-          feeAmount: options.fee.amount[0].amount,
-          gasLimit: options.fee.gas,
-          memo: undefined,
-          wallet: client.connectedWallet,
-          mobile: isMobile,
-        }
-
-        const result = await client.broadcast(broadcastOptions)
-
-        if (result.hash) {
-          return { result }
-        }
-        return { result: undefined, error: 'Transaction failed' }
-      } catch (e: unknown) {
-        const error = typeof e === 'string' ? e : 'Transaction failed'
-        return { result: undefined, error }
-      }
     },
     repay: async (options: {
       fee: StdFee
@@ -271,7 +365,19 @@ export default function createBroadcastSlice(
         },
       }
 
-      const response = await get().executeMsg({ msg, fee: options.fee, funds: [] })
+      const executionMessages = [
+        new MsgExecuteContract({
+          sender: get().address ?? '',
+          contract: ENV.ADDRESS_CREDIT_MANAGER,
+          msg,
+          funds: [],
+        }),
+      ]
+
+      const response = await get().executeMsg({
+        messages: executionMessages,
+        fee: options.fee,
+      })
 
       handleResponseMessages(
         response,
@@ -291,7 +397,19 @@ export default function createBroadcastSlice(
         },
       }
 
-      const response = await get().executeMsg({ msg, fee: options.fee })
+      const executionMessages = [
+        new MsgExecuteContract({
+          sender: get().address ?? '',
+          contract: ENV.ADDRESS_CREDIT_MANAGER,
+          msg,
+          funds: [],
+        }),
+      ]
+
+      const response = await get().executeMsg({
+        messages: executionMessages,
+        fee: options.fee,
+      })
 
       handleResponseMessages(
         response,
@@ -311,7 +429,19 @@ export default function createBroadcastSlice(
         },
       }
 
-      const response = await get().executeMsg({ msg, fee: options.fee })
+      const executionMessages = [
+        new MsgExecuteContract({
+          sender: get().address ?? '',
+          contract: ENV.ADDRESS_CREDIT_MANAGER,
+          msg,
+          funds: [],
+        }),
+      ]
+
+      const response = await get().executeMsg({
+        messages: executionMessages,
+        fee: options.fee,
+      })
 
       handleResponseMessages(
         response,
@@ -341,7 +471,20 @@ export default function createBroadcastSlice(
         },
       }
 
-      const response = await get().executeMsg({ msg, fee: options.fee })
+      const executionMessages = [
+        new MsgExecuteContract({
+          sender: get().address ?? '',
+          contract: ENV.ADDRESS_CREDIT_MANAGER,
+          msg,
+          funds: [],
+        }),
+      ]
+
+      const response = await get().executeMsg({
+        messages: executionMessages,
+        fee: options.fee,
+      })
+
       const coinOut = getTokenOutFromSwapResponse(response, options.denomOut)
       const successMessage = `Swapped ${formatAmountWithSymbol(
         options.coinIn.toCoin(),
@@ -349,6 +492,34 @@ export default function createBroadcastSlice(
 
       handleResponseMessages(response, successMessage)
       return !!response.result
+    },
+    executeMsg: async (options: {
+      messages: MsgExecuteContract[]
+      fee: StdFee
+    }): Promise<BroadcastResult> => {
+      try {
+        const client = get().client
+        if (!client) return { error: 'no client detected' }
+
+        const broadcastOptions = {
+          messages: options.messages,
+          feeAmount: options.fee.amount[0].amount,
+          gasLimit: options.fee.gas,
+          memo: undefined,
+          wallet: client.connectedWallet,
+          mobile: isMobile,
+        }
+
+        const result = await client.broadcast(broadcastOptions)
+
+        if (result.hash) {
+          return { result }
+        }
+        return { result: undefined, error: 'Transaction failed' }
+      } catch (e: unknown) {
+        const error = typeof e === 'string' ? e : 'Transaction failed'
+        return { result: undefined, error }
+      }
     },
   }
 }

@@ -58,7 +58,7 @@ export default function TermsOfService() {
     >
       <Benefits
         benefits={[
-          'Swap tokens with margin acress any whitelisted pair',
+          'Swap tokens with margin across any whitelisted pair',
           'Amplify your LP rewards with leveraged yield farming',
           'Earn interest on deposited tokens',
         ]}

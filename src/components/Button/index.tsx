@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { LegacyRef, ReactElement, ReactNode, useMemo } from 'react'
+import React, { LegacyRef, useMemo } from 'react'
 
 import {
   buttonBorderClasses,
@@ -22,6 +22,7 @@ import useLocalStorage from 'hooks/useLocalStorage'
 
 const Button = React.forwardRef(function Button(
   {
+    autoFocus,
     children,
     className = '',
     color = 'primary',
@@ -93,6 +94,7 @@ const Button = React.forwardRef(function Button(
       ref={ref as LegacyRef<HTMLButtonElement>}
       onClick={isDisabled ? () => {} : onClick}
       tabIndex={tabIndex}
+      autoFocus={autoFocus}
     >
       {showProgressIndicator ? (
         <CircularProgress size={circularProgressSize[size]} />

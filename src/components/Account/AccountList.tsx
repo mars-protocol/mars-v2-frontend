@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import AccountFundFirst from 'components/Account/AccountFund'
@@ -10,11 +10,11 @@ import { ArrowCircledTopRight, ArrowDownLine, ArrowUpLine, TrashBin } from 'comp
 import Radio from 'components/Radio'
 import SwitchWithLabel from 'components/SwitchWithLabel'
 import Text from 'components/Text'
+import useAccount from 'hooks/useAccount'
 import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { calculateAccountDepositsValue } from 'utils/accounts'
-import { hardcodedFee } from 'utils/constants'
 import { getPage, getRoute } from 'utils/route'
 
 interface Props {
@@ -33,16 +33,12 @@ export default function AccountList(props: Props) {
   const { accountId, address } = useParams()
   const { data: prices } = usePrices()
   const { autoLendEnabledAccountIds, toggleAutoLend } = useAutoLendEnabledAccountIds()
-  const deleteAccount = useStore((s) => s.deleteAccount)
-  const accountSelected = !!accountId && !isNaN(Number(accountId))
+  const { data: account } = useAccount(accountId)
 
-  async function deleteAccountHandler() {
-    if (!accountSelected) return
-    const isSuccess = await deleteAccount({ fee: hardcodedFee, accountId: accountId })
-    if (isSuccess) {
-      navigate(getRoute(getPage(pathname), address))
-    }
-  }
+  const deleteAccountHandler = useCallback(() => {
+    if (!account) return
+    useStore.setState({ accountDeleteModal: account })
+  }, [account])
 
   useEffect(() => {
     const element = document.getElementById(`account-${accountId}`)
@@ -69,6 +65,7 @@ export default function AccountList(props: Props) {
               contentClassName='bg-white/10 group-hover/account:bg-white/20'
               onClick={() => {
                 if (isActive) return
+                useStore.setState({ accountDeleteModal: null })
                 navigate(getRoute(getPage(pathname), address, account.id))
               }}
               title={

@@ -63,7 +63,7 @@ export default function AssetOverlay(props: Props) {
           value={searchString}
           onChange={onChangeSearch}
           placeholder='Search for e.g. "ETH" or "Ethereum"'
-          autofocus
+          autoFocus
         />
       </div>
       <Divider />

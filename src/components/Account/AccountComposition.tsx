@@ -56,7 +56,7 @@ export default function AccountComposition(props: Props) {
         className='pb-3'
       />
       <Item
-        title='Total Liabilities'
+        title='Total Debt'
         current={debtBalance}
         change={debtBalance.plus(debtBalanceChange)}
         className='pb-3'
