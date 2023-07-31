@@ -186,6 +186,7 @@ function BorrowModal(props: Props) {
               max={max}
               className='w-full'
               maxText='Max'
+              disabled={isConfirming}
             />
             <Divider className='my-6' />
             <div className='flex flex-1 flex-wrap'>
@@ -199,6 +200,7 @@ function BorrowModal(props: Props) {
                 name='borrow-to-wallet'
                 checked={borrowToWallet}
                 onChange={setBorrowToWallet}
+                disabled={isConfirming}
               />
             </div>
           </div>

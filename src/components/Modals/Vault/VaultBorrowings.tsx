@@ -158,10 +158,13 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
             maxText='Max Borrow'
             onChange={(amount) => updateAssets(coin.denom, amount)}
             onDelete={() => onDelete(coin.denom)}
+            disabled={isConfirming}
           />
         )
       })}
-      {props.borrowings.length === 1 && <Slider onChange={onChangeSlider} value={percentage} />}
+      {props.borrowings.length === 1 && (
+        <Slider onChange={onChangeSlider} value={percentage} disabled={isConfirming} />
+      )}
       {props.borrowings.length === 0 && (
         <div className='flex items-center gap-4 py-2'>
           <div className='w-4'>
@@ -173,7 +176,12 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
           </Text>
         </div>
       )}
-      <Button text='Select borrow assets +' color='tertiary' onClick={addAsset} />
+      <Button
+        text='Select borrow assets +'
+        color='tertiary'
+        onClick={addAsset}
+        disabled={isConfirming}
+      />
       <Divider />
       <div className='flex flex-col gap-2'>
         <div className='flex justify-between'>

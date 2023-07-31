@@ -38,6 +38,7 @@ export default function SwapForm(props: Props) {
   const [focusedInput, setFocusedInput] = useState<'buy' | 'sell' | null>(null)
   const [maxBuyableAmountEstimation, setMaxBuyableAmountEstimation] = useState(BN_ZERO)
   const [selectedOrderType, setSelectedOrderType] = useState<AvailableOrderType>('Market')
+  const [isTransactionExecuting, setTransactionExecuting] = useState(false)
 
   const accountSellAssetDeposit = useMemo(
     () => account?.deposits.find(byDenom(sellAsset.denom))?.amount || BN_ZERO,
@@ -98,6 +99,7 @@ export default function SwapForm(props: Props) {
 
   const handleBuyClick = useCallback(async () => {
     if (account?.id) {
+      setTransactionExecuting(true)
       const isSucceeded = await swap({
         fee: hardcodedFee,
         accountId: account.id,
@@ -109,6 +111,7 @@ export default function SwapForm(props: Props) {
         setSellAssetAmount(BN_ZERO)
         setBuyAssetAmount(BN_ZERO)
       }
+      setTransactionExecuting(false)
     }
   }, [account?.id, buyAsset.denom, sellAsset.denom, sellAssetAmount, slippage, swap])
 
@@ -140,14 +143,16 @@ export default function SwapForm(props: Props) {
         containerClassName='mx-3 my-6'
         onBlur={dismissInputFocus}
         onFocus={() => setFocusedInput('buy')}
+        disabled={isTransactionExecuting}
       />
 
       <RangeInput
-        max={accountSellAssetDeposit.shiftedBy(-sellAsset.decimals).toNumber()}
-        value={sellAssetAmount.shiftedBy(-sellAsset.decimals).toNumber()}
-        onChange={handleRangeInputChange}
-        onBlur={dismissInputFocus}
         wrapperClassName='p-4'
+        onBlur={dismissInputFocus}
+        disabled={isTransactionExecuting}
+        onChange={handleRangeInputChange}
+        value={sellAssetAmount.shiftedBy(-sellAsset.decimals).toNumber()}
+        max={accountSellAssetDeposit.shiftedBy(-sellAsset.decimals).toNumber()}
       />
 
       <AssetAmountInput
@@ -161,6 +166,7 @@ export default function SwapForm(props: Props) {
         containerClassName='mx-3'
         onBlur={dismissInputFocus}
         onFocus={() => setFocusedInput('sell')}
+        disabled={isTransactionExecuting}
       />
 
       <TradeSummary
@@ -169,6 +175,7 @@ export default function SwapForm(props: Props) {
         sellAsset={sellAsset}
         buyAction={handleBuyClick}
         buyButtonDisabled={sellAssetAmount.isZero()}
+        showProgressIndicator={isTransactionExecuting}
       />
     </>
   )

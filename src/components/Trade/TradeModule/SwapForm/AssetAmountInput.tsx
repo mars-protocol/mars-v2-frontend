@@ -9,6 +9,7 @@ interface Props {
   max: BigNumber
   asset: Asset
   amount: BigNumber
+  disabled: boolean
   maxButtonLabel: string
   assetUSDValue: BigNumber
   amountValueText?: string
@@ -24,6 +25,7 @@ export default function AssetAmountInput(props: Props) {
     label,
     amount,
     asset,
+    disabled,
     setAmount,
     assetUSDValue,
     maxButtonLabel,
@@ -52,6 +54,7 @@ export default function AssetAmountInput(props: Props) {
             className={className.input}
             maxDecimals={asset.decimals}
             max={max}
+            disabled={disabled}
             onChange={setAmount}
             onFocus={onFocus}
             onBlur={onBlur}

@@ -10,15 +10,22 @@ import { formatAmountWithSymbol } from 'utils/formatters'
 interface Props {
   buyAsset: Asset
   sellAsset: Asset
-  containerClassName?: string
   buyButtonDisabled: boolean
+  containerClassName?: string
+  showProgressIndicator: boolean
   buyAction: () => void
 }
 
 export default function TradeSummary(props: Props) {
-  const { containerClassName, buyAsset, sellAsset, buyAction, buyButtonDisabled } = props
+  const {
+    buyAsset,
+    sellAsset,
+    buyAction,
+    buyButtonDisabled,
+    containerClassName,
+    showProgressIndicator,
+  } = props
   const { data: routes, isLoading: isRouteLoading } = useSwapRoute(sellAsset.denom, buyAsset.denom)
-  const [isButtonBusy, setButtonBusy] = useState(false)
 
   const parsedRoutes = useMemo(() => {
     if (!routes.length) return '-'
@@ -28,12 +35,6 @@ export default function TradeSummary(props: Props) {
 
     return routeSymbols.join(' -> ')
   }, [routes, sellAsset.symbol])
-
-  const handleBuyClick = useCallback(async () => {
-    setButtonBusy(true)
-    await buyAction()
-    setButtonBusy(false)
-  }, [buyAction])
 
   const buttonText = useMemo(
     () => (routes.length ? `Buy ${buyAsset.symbol}` : 'No route found'),
@@ -55,9 +56,9 @@ export default function TradeSummary(props: Props) {
       </div>
       <ActionButton
         disabled={routes.length === 0 || buyButtonDisabled}
-        showProgressIndicator={isButtonBusy || isRouteLoading}
+        showProgressIndicator={showProgressIndicator || isRouteLoading}
         text={buttonText}
-        onClick={handleBuyClick}
+        onClick={buyAction}
         size='md'
         color='primary'
         className='w-full'
