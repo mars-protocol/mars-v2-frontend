@@ -149,7 +149,7 @@ export default function SwapForm(props: Props) {
       <RangeInput
         wrapperClassName='p-4'
         onBlur={dismissInputFocus}
-        disabled={isTransactionExecuting}
+        disabled={isTransactionExecuting || accountSellAssetDeposit.isZero()}
         onChange={handleRangeInputChange}
         value={sellAssetAmount.shiftedBy(-sellAsset.decimals).toNumber()}
         max={accountSellAssetDeposit.shiftedBy(-sellAsset.decimals).toNumber()}
