@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.31.0",
-    "@delphi-labs/shuttle-react": "^3.3.0",
+    "@delphi-labs/shuttle-react": "^3.6.0",
     "@keplr-wallet/cosmos": "^0.12.16",
     "@sentry/nextjs": "^7.60.0",
     "@tanstack/react-table": "^8.9.3",
