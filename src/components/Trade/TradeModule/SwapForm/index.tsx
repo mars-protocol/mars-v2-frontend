@@ -19,6 +19,7 @@ import { AvailableOrderType } from 'components/Trade/TradeModule/SwapForm/OrderT
 import TradeSummary from 'components/Trade/TradeModule/SwapForm/TradeSummary'
 import { BNCoin } from 'types/classes/BNCoin'
 import estimateExactIn from 'api/swap/estimateExactIn'
+import useHealthComputer from 'hooks/useHealthComputer'
 
 interface Props {
   buyAsset: Asset
@@ -31,6 +32,7 @@ export default function SwapForm(props: Props) {
   const { data: prices } = usePrices()
   const swap = useStore((s) => s.swap)
   const [slippage] = useLocalStorage(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
+  const { computeMaxSwapAmount } = useHealthComputer(account)
 
   const [isMarginChecked, setMarginChecked] = useState(false)
   const [buyAssetAmount, setBuyAssetAmount] = useState(BN_ZERO)
@@ -40,9 +42,9 @@ export default function SwapForm(props: Props) {
   const [selectedOrderType, setSelectedOrderType] = useState<AvailableOrderType>('Market')
   const [isTransactionExecuting, setTransactionExecuting] = useState(false)
 
-  const accountSellAssetDeposit = useMemo(
-    () => account?.deposits.find(byDenom(sellAsset.denom))?.amount || BN_ZERO,
-    [account, sellAsset.denom],
+  const maxSellAssetAmount = useMemo(
+    () => computeMaxSwapAmount(sellAsset.denom, buyAsset.denom, 'default'),
+    [computeMaxSwapAmount, sellAsset.denom, buyAsset.denom],
   )
 
   const [buyAssetValue, sellAssetValue] = useMemo(() => {
@@ -71,10 +73,10 @@ export default function SwapForm(props: Props) {
 
   useEffect(() => {
     estimateExactIn(
-      { denom: sellAsset.denom, amount: accountSellAssetDeposit },
+      { denom: sellAsset.denom, amount: maxSellAssetAmount.toString() },
       buyAsset.denom,
     ).then(setMaxBuyableAmountEstimation)
-  }, [accountSellAssetDeposit, buyAsset.denom, sellAsset.denom])
+  }, [maxSellAssetAmount, buyAsset.denom, sellAsset.denom])
 
   useEffect(() => {
     if (focusedInput === 'sell') {
@@ -149,15 +151,15 @@ export default function SwapForm(props: Props) {
       <RangeInput
         wrapperClassName='p-4'
         onBlur={dismissInputFocus}
-        disabled={isTransactionExecuting || accountSellAssetDeposit.isZero()}
+        disabled={isTransactionExecuting || maxSellAssetAmount.isZero()}
         onChange={handleRangeInputChange}
         value={sellAssetAmount.shiftedBy(-sellAsset.decimals).toNumber()}
-        max={accountSellAssetDeposit.shiftedBy(-sellAsset.decimals).toNumber()}
+        max={maxSellAssetAmount.shiftedBy(-sellAsset.decimals).toNumber()}
       />
 
       <AssetAmountInput
         label='Sell'
-        max={accountSellAssetDeposit}
+        max={maxSellAssetAmount}
         amount={sellAssetAmount}
         setAmount={setSellAssetAmount}
         assetUSDValue={sellAssetValue}

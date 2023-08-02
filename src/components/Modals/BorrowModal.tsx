@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import BigNumber from 'bignumber.js'
 
 import AccountSummary from 'components/Account/AccountSummary'
 import AssetImage from 'components/AssetImage'
@@ -20,7 +21,6 @@ import { hardcodedFee } from 'utils/constants'
 import { formatPercent, formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import useHealthComputer from 'hooks/useHealthComputer'
-import { BorrowTarget } from 'types/enums/borrowTarget'
 import { BN_ZERO } from 'constants/math'
 
 function getDebtAmount(modal: BorrowModal | null) {
@@ -112,12 +112,12 @@ function BorrowModal(props: Props) {
       return
     }
 
-    computeMaxBorrowAmount(
+    const maxBorrowAmount = computeMaxBorrowAmount(
       asset.denom,
-      borrowToWallet ? BorrowTarget.Wallet : BorrowTarget.Deposit,
-    ).then((maxBorrowAmount) => {
-      setMax(BN(Math.min(maxBorrowAmount, modal?.marketData?.liquidity?.amount.toNumber() || 0)))
-    })
+      borrowToWallet ? 'wallet' : 'deposit',
+    )
+
+    setMax(BigNumber.min(maxBorrowAmount, modal?.marketData?.liquidity?.amount || 0))
   }, [isRepay, modal, asset.denom, computeMaxBorrowAmount, borrowToWallet])
 
   useEffect(() => {
