@@ -10,8 +10,8 @@ import { ArrowCircledTopRight, ArrowDownLine, ArrowUpLine, TrashBin } from 'comp
 import Radio from 'components/Radio'
 import SwitchWithLabel from 'components/SwitchWithLabel'
 import Text from 'components/Text'
-import useAccount from 'hooks/useAccount'
 import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
+import useCurrentAccount from 'hooks/useCurrentAccount'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { calculateAccountDepositsValue } from 'utils/accounts'
@@ -30,10 +30,11 @@ const accountCardHeaderClasses = classNames(
 export default function AccountList(props: Props) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const { accountId, address } = useParams()
+  const { address } = useParams()
   const { data: prices } = usePrices()
   const { autoLendEnabledAccountIds, toggleAutoLend } = useAutoLendEnabledAccountIds()
-  const { data: account } = useAccount(accountId)
+  const account = useCurrentAccount()
+  const accountId = account?.id
 
   const deleteAccountHandler = useCallback(() => {
     if (!account) return
@@ -41,6 +42,7 @@ export default function AccountList(props: Props) {
   }, [account])
 
   useEffect(() => {
+    if (!accountId) return
     const element = document.getElementById(`account-${accountId}`)
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' })

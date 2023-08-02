@@ -15,6 +15,22 @@ import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import { formatAmountWithSymbol } from 'utils/formatters'
 import getTokenOutFromSwapResponse from 'utils/getTokenOutFromSwapResponse'
 
+function generateExecutionMessage(
+  sender: string | undefined,
+  contract: string,
+  msg: CreditManagerExecuteMsg | AccountNftExecuteMsg,
+  funds: Coin[],
+) {
+  if (!sender) return
+
+  return new MsgExecuteContract({
+    sender,
+    contract,
+    msg,
+    funds,
+  })
+}
+
 export default function createBroadcastSlice(
   set: SetState<Store>,
   get: GetState<Store>,
@@ -60,17 +76,8 @@ export default function createBroadcastSlice(
         },
       }
 
-      const executionMessages = [
-        new MsgExecuteContract({
-          sender: get().address ?? '',
-          contract: ENV.ADDRESS_CREDIT_MANAGER,
-          msg,
-          funds: [],
-        }),
-      ]
-
       const response = await get().executeMsg({
-        messages: executionMessages,
+        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
         fee: options.fee,
       })
 
@@ -87,17 +94,8 @@ export default function createBroadcastSlice(
         create_credit_account: 'default',
       }
 
-      const executionMessages = [
-        new MsgExecuteContract({
-          sender: get().address ?? '',
-          contract: ENV.ADDRESS_CREDIT_MANAGER,
-          msg,
-          funds: [],
-        }),
-      ]
-
       const response = await get().executeMsg({
-        messages: executionMessages,
+        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
         fee: options.fee,
       })
 
@@ -117,36 +115,7 @@ export default function createBroadcastSlice(
         return null
       }
     },
-    deleteAccount: async (options: { fee: StdFee; accountId: string }) => {
-      const msg: AccountNftExecuteMsg = {
-        burn: {
-          token_id: options.accountId,
-        },
-      }
-
-      const executionMessages = [
-        new MsgExecuteContract({
-          sender: get().address ?? '',
-          contract: ENV.ADDRESS_ACCOUNT_NFT,
-          msg,
-          funds: [],
-        }),
-      ]
-
-      const response = await get().executeMsg({
-        messages: executionMessages,
-        fee: options.fee,
-      })
-
-      handleResponseMessages(response, `Account ${options.accountId} deleted`)
-
-      return !!response.result
-    },
-    refundAndDeleteAccount: async (options: {
-      fee: StdFee
-      accountId: string
-      lends: BNCoin[]
-    }) => {
+    deleteAccount: async (options: { fee: StdFee; accountId: string; lends: BNCoin[] }) => {
       const reclaimMsg = options.lends.map((coin) => {
         return {
           reclaim: coin.toActionCoin(true),
@@ -166,24 +135,11 @@ export default function createBroadcastSlice(
         },
       }
 
-      const sender = get().address ?? ''
-      const executionMessages = [
-        new MsgExecuteContract({
-          sender,
-          contract: ENV.ADDRESS_CREDIT_MANAGER,
-          msg: refundMessage,
-          funds: [],
-        }),
-        new MsgExecuteContract({
-          sender,
-          contract: ENV.ADDRESS_ACCOUNT_NFT,
-          msg: burnMessage,
-          funds: [],
-        }),
-      ]
-
       const response = await get().executeMsg({
-        messages: executionMessages,
+        messages: [
+          generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, refundMessage, []),
+          generateExecutionMessage(get().address, ENV.ADDRESS_ACCOUNT_NFT, burnMessage, []),
+        ],
         fee: options.fee,
       })
 
@@ -201,17 +157,10 @@ export default function createBroadcastSlice(
         },
       }
 
-      const executionMessages = [
-        new MsgExecuteContract({
-          sender: get().address ?? '',
-          contract: ENV.ADDRESS_CREDIT_MANAGER,
-          msg,
-          funds: options.coins,
-        }),
-      ]
-
       const response = await get().executeMsg({
-        messages: executionMessages,
+        messages: [
+          generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, options.coins),
+        ],
         fee: options.fee,
       })
 
@@ -239,17 +188,8 @@ export default function createBroadcastSlice(
         },
       }
 
-      const executionMessages = [
-        new MsgExecuteContract({
-          sender: get().address ?? '',
-          contract: ENV.ADDRESS_CREDIT_MANAGER,
-          msg,
-          funds: [],
-        }),
-      ]
-
       const response = await get().executeMsg({
-        messages: executionMessages,
+        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
         fee: options.fee,
       })
 
@@ -279,17 +219,8 @@ export default function createBroadcastSlice(
         },
       }
 
-      const executionMessages = [
-        new MsgExecuteContract({
-          sender: get().address ?? '',
-          contract: ENV.ADDRESS_CREDIT_MANAGER,
-          msg,
-          funds: [],
-        }),
-      ]
-
       const response = await get().executeMsg({
-        messages: executionMessages,
+        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
         fee: options.fee,
       })
 
@@ -308,17 +239,8 @@ export default function createBroadcastSlice(
         },
       }
 
-      const executionMessages = [
-        new MsgExecuteContract({
-          sender: get().address ?? '',
-          contract: ENV.ADDRESS_CREDIT_MANAGER,
-          msg,
-          funds: [],
-        }),
-      ]
-
       const response = await get().executeMsg({
-        messages: executionMessages,
+        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
         fee: options.fee,
       })
 
@@ -335,17 +257,8 @@ export default function createBroadcastSlice(
         },
       }
 
-      const executionMessages = [
-        new MsgExecuteContract({
-          sender: get().address ?? '',
-          contract: ENV.ADDRESS_CREDIT_MANAGER,
-          msg,
-          funds: [],
-        }),
-      ]
-
       const response = await get().executeMsg({
-        messages: executionMessages,
+        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
         fee: options.fee,
       })
 
@@ -375,17 +288,8 @@ export default function createBroadcastSlice(
         },
       }
 
-      const executionMessages = [
-        new MsgExecuteContract({
-          sender: get().address ?? '',
-          contract: ENV.ADDRESS_CREDIT_MANAGER,
-          msg,
-          funds: [],
-        }),
-      ]
-
       const response = await get().executeMsg({
-        messages: executionMessages,
+        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
         fee: options.fee,
       })
 
@@ -407,17 +311,8 @@ export default function createBroadcastSlice(
         },
       }
 
-      const executionMessages = [
-        new MsgExecuteContract({
-          sender: get().address ?? '',
-          contract: ENV.ADDRESS_CREDIT_MANAGER,
-          msg,
-          funds: [],
-        }),
-      ]
-
       const response = await get().executeMsg({
-        messages: executionMessages,
+        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
         fee: options.fee,
       })
 
@@ -439,17 +334,8 @@ export default function createBroadcastSlice(
         },
       }
 
-      const executionMessages = [
-        new MsgExecuteContract({
-          sender: get().address ?? '',
-          contract: ENV.ADDRESS_CREDIT_MANAGER,
-          msg,
-          funds: [],
-        }),
-      ]
-
       const response = await get().executeMsg({
-        messages: executionMessages,
+        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
         fee: options.fee,
       })
 
@@ -481,17 +367,8 @@ export default function createBroadcastSlice(
         },
       }
 
-      const executionMessages = [
-        new MsgExecuteContract({
-          sender: get().address ?? '',
-          contract: ENV.ADDRESS_CREDIT_MANAGER,
-          msg,
-          funds: [],
-        }),
-      ]
-
       const response = await get().executeMsg({
-        messages: executionMessages,
+        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
         fee: options.fee,
       })
 

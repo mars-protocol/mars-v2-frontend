@@ -29,7 +29,6 @@ export default function AccountDeleteController() {
 function AccountDeleteModal(props: Props) {
   const modal = props.modal
   const deleteAccount = useStore((s) => s.deleteAccount)
-  const refundAndDeleteAccount = useStore((s) => s.refundAndDeleteAccount)
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { address } = useParams()
@@ -40,29 +39,16 @@ function AccountDeleteModal(props: Props) {
     useStore.setState({ accountDeleteModal: null })
   }, [])
 
-  const deleteAccountHandler = useCallback(
-    async (hasFunds: boolean) => {
-      setIsConfirming(true)
-      const options = { fee: hardcodedFee, accountId: modal.id, lends: modal.lends }
-      const isSuccess = hasFunds
-        ? await refundAndDeleteAccount(options)
-        : await deleteAccount(options)
-      setIsConfirming(false)
-      if (isSuccess) {
-        navigate(getRoute(getPage(pathname), address))
-        closeDeleteAccountModal()
-      }
-    },
-    [
-      modal,
-      deleteAccount,
-      navigate,
-      pathname,
-      address,
-      closeDeleteAccountModal,
-      refundAndDeleteAccount,
-    ],
-  )
+  const deleteAccountHandler = useCallback(async () => {
+    setIsConfirming(true)
+    const options = { fee: hardcodedFee, accountId: modal.id, lends: modal.lends }
+    const isSuccess = await deleteAccount(options)
+    setIsConfirming(false)
+    if (isSuccess) {
+      navigate(getRoute(getPage(pathname), address))
+      closeDeleteAccountModal()
+    }
+  }, [modal, deleteAccount, navigate, pathname, address, closeDeleteAccountModal])
 
   const depositsAndLends = useMemo(
     () => combineBNCoins([...modal.deposits, ...modal.lends]),
@@ -113,7 +99,7 @@ function AccountDeleteModal(props: Props) {
           text: 'Close Positions',
           icon: <ArrowRight />,
           isAsync: true,
-          onClick: () => deleteAccountHandler(false),
+          onClick: deleteAccountHandler,
         }}
       />
     )
@@ -147,7 +133,7 @@ function AccountDeleteModal(props: Props) {
       <div className='w-full px-4 pb-4'>
         <Button
           className='w-full'
-          onClick={() => deleteAccountHandler(true)}
+          onClick={deleteAccountHandler}
           text='Delete Account'
           rightIcon={<ArrowRight />}
           showProgressIndicator={isConfirming}

@@ -15,7 +15,7 @@ interface BroadcastSlice {
     borrowToWallet: boolean
   }) => Promise<boolean>
   createAccount: (options: { fee: StdFee }) => Promise<string | null>
-  deleteAccount: (options: { fee: StdFee; accountId: string }) => Promise<boolean>
+  deleteAccount: (options: { fee: StdFee; accountId: string; lends: BNCoin[] }) => Promise<boolean>
   deposit: (options: { fee: StdFee; accountId: string; coins: Coin[] }) => Promise<boolean>
   unlock: (options: {
     fee: StdFee
@@ -45,11 +45,6 @@ interface BroadcastSlice {
     accountId: string
     coin: BNCoin
     isMax?: boolean
-  }) => Promise<boolean>
-  refundAndDeleteAccount: (options: {
-    fee: StdFee
-    accountId: string
-    lends: BNCoin[]
   }) => Promise<boolean>
   repay: (options: {
     fee: StdFee
