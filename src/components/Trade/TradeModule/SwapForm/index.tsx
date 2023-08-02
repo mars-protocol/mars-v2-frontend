@@ -20,7 +20,6 @@ import TradeSummary from 'components/Trade/TradeModule/SwapForm/TradeSummary'
 import { BNCoin } from 'types/classes/BNCoin'
 import estimateExactIn from 'api/swap/estimateExactIn'
 import useHealthComputer from 'hooks/useHealthComputer'
-import useSwapEstimateExactIn from 'hooks/useSwapEstimateExactIn'
 
 interface Props {
   buyAsset: Asset
@@ -34,6 +33,7 @@ export default function SwapForm(props: Props) {
   const swap = useStore((s) => s.swap)
   const [slippage] = useLocalStorage(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
   const { computeMaxSwapAmount } = useHealthComputer(account)
+  const buyAmountEstimationTimeout = useRef<NodeJS.Timeout | undefined>(undefined)
 
   const [isMarginChecked, setMarginChecked] = useState(false)
   const [buyAssetAmount, setBuyAssetAmount] = useState(BN_ZERO)
@@ -80,10 +80,20 @@ export default function SwapForm(props: Props) {
 
   useEffect(() => {
     if (focusedInput.current === 'sell') {
-      estimateExactIn(
-        { denom: sellAsset.denom, amount: sellAssetAmount.toString() },
-        buyAsset.denom,
-      ).then(setBuyAssetAmount)
+      if (buyAmountEstimationTimeout.current) {
+        clearTimeout(buyAmountEstimationTimeout.current)
+      }
+
+      buyAmountEstimationTimeout.current = setTimeout(
+        () =>
+          estimateExactIn(
+            { denom: sellAsset.denom, amount: sellAssetAmount.toString() },
+            buyAsset.denom,
+          )
+            .then(setBuyAssetAmount)
+            .then(() => clearTimeout(buyAmountEstimationTimeout?.current)),
+        250,
+      )
     }
   }, [buyAsset.denom, focusedInput, sellAsset.denom, sellAssetAmount])
 
