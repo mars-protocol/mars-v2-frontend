@@ -120,8 +120,7 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
     setTimeout(() =>
       onResolve({
         ...defaultSymbolInfo,
-        currency_code: pairName.split(PAIR_SEPARATOR)[0],
-        original_currency_code: pairName.split(PAIR_SEPARATOR)[1],
+        name: pairName.split(PAIR_SEPARATOR)[0],
         full_name: pairName,
         description: pairName,
         ticker: pairName,

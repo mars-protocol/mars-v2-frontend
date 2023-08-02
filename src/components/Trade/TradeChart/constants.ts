@@ -27,14 +27,7 @@ export const overrides = {
   'linetooltrendline.linewidth': 2,
 }
 
-export const defaultSymbolInfo: LibrarySymbolInfo = {
-  currency_code: '',
-  original_currency_code: '',
-  full_name: '',
-  description: '',
-  ticker: '',
-  name: 'Osmosis',
-  exchange: 'Osmosis',
+export const defaultSymbolInfo = {
   listed_exchange: 'Osmosis',
   type: 'AMM',
   session: '24x7',

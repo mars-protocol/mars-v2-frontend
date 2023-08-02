@@ -9,52 +9,61 @@ import {
 import { VaultConfigBaseForString } from 'types/generated/mars-params/MarsParams.types'
 import useVaultConfigs from 'hooks/useVaultConfigs'
 import {
+  BorrowTarget,
   compute_health_js,
   max_borrow_estimate_js,
+  max_swap_estimate_js,
   max_withdraw_estimate_js,
+  SwapKind,
 } from 'utils/health_computer'
 import { convertAccountToPositions } from 'utils/accounts'
-import { VaultPositionValue } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import {
+  Positions,
+  VaultPositionValue,
+} from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import useStore from 'store'
-import { BorrowTarget } from 'types/enums/borrowTarget'
+import { BN_ZERO } from 'constants/math'
+import { BN } from 'utils/helpers'
 
-export default function useHealthComputer(account: Account) {
+export default function useHealthComputer(account?: Account) {
   const { data: prices } = usePrices()
   const { data: assetParams } = useAssetParams()
   const { data: vaultConfigs } = useVaultConfigs()
   const baseCurrency = useStore((s) => s.baseCurrency)
 
   const [health, setHealth] = useState(0)
-  const positions = useMemo(() => convertAccountToPositions(account), [account])
+  const positions: Positions | null = useMemo(() => {
+    if (!account) return null
+    return convertAccountToPositions(account)
+  }, [account])
   const baseCurrencyPrice = useMemo(
     () => prices.find((price) => price.denom === baseCurrency.denom)?.amount || 0,
     [prices, baseCurrency.denom],
   )
 
-  const vaultPositionValues = useMemo(
-    () =>
-      account.vaults.reduce((prev, curr) => {
-        const baseCoinPrice = prices.find((price) => price.denom === curr.denoms.lp)?.amount || 0
-        prev[curr.address] = {
-          base_coin: {
-            amount: '0', // Not used by healthcomputer
-            denom: curr.denoms.lp,
-            value: curr.amounts.unlocking.times(baseCoinPrice).integerValue().toString(),
-          },
-          vault_coin: {
-            amount: '0', // Not used by healthcomputer
-            denom: curr.denoms.vault,
-            value: curr.values.primary
-              .div(baseCurrencyPrice)
-              .plus(curr.values.secondary.div(baseCurrencyPrice))
-              .integerValue()
-              .toString(),
-          },
-        }
-        return prev
-      }, {} as { [key: string]: VaultPositionValue }),
-    [account.vaults, prices, baseCurrencyPrice],
-  )
+  const vaultPositionValues = useMemo(() => {
+    if (!account?.vaults) return null
+    return account.vaults.reduce((prev, curr) => {
+      const baseCoinPrice = prices.find((price) => price.denom === curr.denoms.lp)?.amount || 0
+      prev[curr.address] = {
+        base_coin: {
+          amount: '0', // Not used by healthcomputer
+          denom: curr.denoms.lp,
+          value: curr.amounts.unlocking.times(baseCoinPrice).integerValue().toString(),
+        },
+        vault_coin: {
+          amount: '0', // Not used by healthcomputer
+          denom: curr.denoms.vault,
+          value: curr.values.primary
+            .div(baseCurrencyPrice)
+            .plus(curr.values.secondary.div(baseCurrencyPrice))
+            .integerValue()
+            .toString(),
+        },
+      }
+      return prev
+    }, {} as { [key: string]: VaultPositionValue })
+  }, [account?.vaults, prices, baseCurrencyPrice])
 
   const priceData = useMemo(() => {
     const baseCurrencyPrice =
@@ -132,27 +141,31 @@ export default function useHealthComputer(account: Account) {
 
   const computeMaxBorrowAmount = useCallback(
     (denom: string, target: BorrowTarget) => {
-      async function callMaxBorrowWasmFn(denom: string): Promise<number> {
-        if (!healthComputer) return 0
-        return await max_borrow_estimate_js(healthComputer, denom, target)
-      }
-
-      return callMaxBorrowWasmFn(denom)
+      if (!healthComputer) return BN_ZERO
+      return BN(max_borrow_estimate_js(healthComputer, denom, target))
     },
     [healthComputer],
   )
 
   const computeMaxWithdrawAmount = useCallback(
     (denom: string) => {
-      async function callMaxWithdrawWasmFn(denom: string): Promise<number> {
-        if (!healthComputer) return 0
-        return await max_withdraw_estimate_js(healthComputer, denom)
-      }
-
-      return callMaxWithdrawWasmFn(denom)
+      if (!healthComputer) return BN_ZERO
+      return BN(max_withdraw_estimate_js(healthComputer, denom))
     },
     [healthComputer],
   )
 
-  return { health, computeMaxBorrowAmount, computeMaxWithdrawAmount }
+  const computeMaxSwapAmount = useCallback(
+    (from: string, to: string, kind: SwapKind) => {
+      if (!healthComputer) return BN_ZERO
+      try {
+        return BN(max_swap_estimate_js(healthComputer, from, to, kind))
+      } catch {
+        return BN_ZERO
+      }
+    },
+    [healthComputer],
+  )
+
+  return { health, computeMaxBorrowAmount, computeMaxWithdrawAmount, computeMaxSwapAmount }
 }
