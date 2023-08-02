@@ -46,7 +46,11 @@ interface BroadcastSlice {
     coin: BNCoin
     isMax?: boolean
   }) => Promise<boolean>
-  refundAndDeleteAccount: (options: { fee: StdFee; accountId: string }) => Promise<boolean>
+  refundAndDeleteAccount: (options: {
+    fee: StdFee
+    accountId: string
+    lends: BNCoin[]
+  }) => Promise<boolean>
   repay: (options: {
     fee: StdFee
     accountId: string

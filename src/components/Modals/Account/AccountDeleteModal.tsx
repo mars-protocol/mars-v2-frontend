@@ -1,42 +1,61 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
+import AssetImage from 'components/AssetImage'
+import Button from 'components/Button'
+import DisplayCurrency from 'components/DisplayCurrency'
+import { FormattedNumber } from 'components/FormattedNumber'
 import { ArrowRight, Enter, InfoCircle } from 'components/Icons'
+import Modal from 'components/Modal'
+import Text from 'components/Text'
 import useAlertDialog from 'hooks/useAlertDialog'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
+import { getAssetByDenom } from 'utils/assets'
 import { hardcodedFee } from 'utils/constants'
+import { demagnify } from 'utils/formatters'
+import { combineBNCoins } from 'utils/parsers'
 import { getPage, getRoute } from 'utils/route'
 
 export default function AccountDeleteModal() {
   const modal = useStore((s) => s.accountDeleteModal)
-  const { open: showAlertDialog, close: closeAlertDialog } = useAlertDialog()
+  const { open: showAlertDialog } = useAlertDialog()
   const deleteAccount = useStore((s) => s.deleteAccount)
   const refundAndDeleteAccount = useStore((s) => s.refundAndDeleteAccount)
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { address } = useParams()
   const { debts, deposits, lends, vaults, id: accountId } = modal || {}
-
-  const deleteAccountHandler = useCallback(
-    async (hasFunds: boolean) => {
-      if (!modal) return
-      const options = { fee: hardcodedFee, accountId: modal.id }
-      const isSuccess = hasFunds
-        ? await refundAndDeleteAccount(options)
-        : await deleteAccount(options)
-
-      if (isSuccess) {
-        navigate(getRoute(getPage(pathname), address))
-        closeDeleteAccountModal()
-      }
-    },
-    [modal, deleteAccount, navigate, pathname, address],
-  )
+  const [isConfirming, setIsConfirming] = useState(false)
 
   const closeDeleteAccountModal = useCallback(() => {
     useStore.setState({ accountDeleteModal: null })
   }, [])
 
+  const deleteAccountHandler = useCallback(
+    async (hasFunds: boolean) => {
+      if (!modal) return
+      setIsConfirming(true)
+      const options = { fee: hardcodedFee, accountId: modal.id, lends: modal.lends }
+      const isSuccess = hasFunds
+        ? await refundAndDeleteAccount(options)
+        : await deleteAccount(options)
+      setIsConfirming(false)
+      if (isSuccess) {
+        navigate(getRoute(getPage(pathname), address))
+        closeDeleteAccountModal()
+      }
+    },
+    [
+      modal,
+      deleteAccount,
+      navigate,
+      pathname,
+      address,
+      closeDeleteAccountModal,
+      refundAndDeleteAccount,
+    ],
+  )
   const deleteEmptyAccount = useCallback(
     () =>
       showAlertDialog({
@@ -57,7 +76,7 @@ export default function AccountDeleteModal() {
           onClick: closeDeleteAccountModal,
         },
       }),
-    [accountId, showAlertDialog, deleteAccountHandler],
+    [accountId, showAlertDialog, deleteAccountHandler, closeDeleteAccountModal],
   )
   const showOpenPositionAlert = useCallback(
     (type: 'debts' | 'vaults') => {
@@ -84,7 +103,6 @@ export default function AccountDeleteModal() {
               text: 'Repay Debts',
               icon: <ArrowRight />,
               onClick: () => {
-                console.log('CLOSE')
                 navigate(getRoute('borrow', address, accountId))
                 closeDeleteAccountModal()
               },
@@ -99,7 +117,7 @@ export default function AccountDeleteModal() {
             },
       })
     },
-    [showAlertDialog],
+    [showAlertDialog, closeDeleteAccountModal, navigate, address, accountId],
   )
 
   useEffect(() => {
@@ -117,10 +135,75 @@ export default function AccountDeleteModal() {
     if (deposits.length > 0 || lends.length > 0) return
 
     deleteEmptyAccount()
-  }, [modal, showAlertDialog, deleteAccountHandler])
+  }, [
+    debts,
+    vaults,
+    deposits,
+    lends,
+    showAlertDialog,
+    deleteAccountHandler,
+    deleteEmptyAccount,
+    showOpenPositionAlert,
+  ])
 
   if (!modal) return null
 
-  // TODO: implment modal for accounts with funds
-  return <div>MODAL</div>
+  const depositsAndLends = combineBNCoins([...modal.deposits, ...modal.lends])
+
+  return (
+    <Modal
+      onClose={closeDeleteAccountModal}
+      header={
+        <span className='flex items-center'>
+          <Text>{`Delete Account ${modal.id}`}</Text>
+        </span>
+      }
+      modalClassName='max-w-modal-sm'
+      headerClassName='gradient-header p-4 border-b-white/5 border-b'
+      contentClassName='w-full'
+    >
+      <div className='w-full border-b border-white/5 p-4 gradient-header'>
+        <Text className='text-white/50' size='xs'>
+          The following assets within your credit account will be sent to your wallet.
+        </Text>
+      </div>
+      <div className='max-h-100 flex w-full flex-col gap-4 overflow-y-scroll p-4 scrollbar-hide'>
+        {depositsAndLends.map((position, index) => {
+          const coin = BNCoin.fromDenomAndBigNumber(position.denom, position.amount)
+          const asset = getAssetByDenom(position.denom)
+
+          if (!asset) return null
+          return (
+            <div className='flex w-full items-center gap-4' key={index}>
+              <AssetImage asset={asset} size={32} />
+              <div className='flex flex-1 flex-wrap'>
+                <Text className='w-full'>{asset.symbol}</Text>
+                <Text size='sm' className='w-full text-white/50'>
+                  {asset.name}
+                </Text>
+              </div>
+              <div className='flex flex-wrap'>
+                <DisplayCurrency coin={coin} className='w-full text-right' />
+                <FormattedNumber
+                  amount={demagnify(coin.amount, asset)}
+                  className='w-full text-right text-sm text-white/50'
+                  options={{ suffix: ` ${asset.symbol}` }}
+                  animate
+                />
+              </div>
+            </div>
+          )
+        })}
+      </div>
+      <div className='w-full px-4 pb-4'>
+        <Button
+          className='w-full'
+          onClick={() => deleteAccountHandler(true)}
+          text='Delete Account'
+          rightIcon={<ArrowRight />}
+          showProgressIndicator={isConfirming}
+        />
+      </div>
+    </Modal>
+  )
 }

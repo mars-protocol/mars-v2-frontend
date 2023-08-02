@@ -142,11 +142,21 @@ export default function createBroadcastSlice(
 
       return !!response.result
     },
-    refundAndDeleteAccount: async (options: { fee: StdFee; accountId: string }) => {
+    refundAndDeleteAccount: async (options: {
+      fee: StdFee
+      accountId: string
+      lends: BNCoin[]
+    }) => {
+      const reclaimMsg = options.lends.map((coin) => {
+        return {
+          reclaim: coin.toActionCoin(true),
+        }
+      })
+
       const refundMessage: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
-          actions: [{ refund_all_coin_balances: {} }],
+          actions: [...reclaimMsg, { refund_all_coin_balances: {} }],
         },
       }
 
@@ -515,7 +525,11 @@ export default function createBroadcastSlice(
         if (result.hash) {
           return { result }
         }
-        return { result: undefined, error: 'Transaction failed' }
+
+        return {
+          result: undefined,
+          error: 'Transaction failed',
+        }
       } catch (e: unknown) {
         const error = typeof e === 'string' ? e : 'Transaction failed'
         return { result: undefined, error }
