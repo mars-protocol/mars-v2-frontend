@@ -16,6 +16,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { findCoinByDenom, getAssetByDenom } from 'utils/assets'
 import { formatPercent } from 'utils/formatters'
+import useHealthComputer from 'hooks/useHealthComputer'
 
 export interface VaultBorrowingsProps {
   updatedAccount: Account
@@ -36,7 +37,19 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   const vaultModal = useStore((s) => s.vaultModal)
   const depositIntoVault = useStore((s) => s.depositIntoVault)
   const [isConfirming, setIsConfirming] = useState(false)
-  const maxBorrowAmounts: BNCoin[] = []
+  const { computeMaxBorrowAmount } = useHealthComputer(props.updatedAccount)
+
+  const maxBorrowAmounts: BNCoin[] = useMemo(() => {
+    return props.borrowings.map((borrowing) => {
+      const maxAmount = computeMaxBorrowAmount(borrowing.denom, {
+        vault: { address: props.vault.address },
+      })
+      return new BNCoin({
+        denom: borrowing.denom,
+        amount: maxAmount.toString(),
+      })
+    })
+  }, [props.borrowings, computeMaxBorrowAmount, props.vault.address])
 
   const borrowingValue = useMemo(() => {
     return props.borrowings.reduce((prev, curr) => {
@@ -144,9 +157,8 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
     <div className='flex flex-1 flex-col gap-4 p-4'>
       {props.borrowings.map((coin) => {
         const asset = getAssetByDenom(coin.denom)
-        const maxAmount = maxBorrowAmounts.find(
-          (maxAmount) => maxAmount.denom === coin.denom,
-        )?.amount
+        const maxAmount = maxBorrowAmounts.find((maxAmount) => maxAmount.denom === coin.denom)
+          ?.amount
         if (!asset || !maxAmount)
           return <React.Fragment key={`input-${coin.denom}`}></React.Fragment>
         return (
