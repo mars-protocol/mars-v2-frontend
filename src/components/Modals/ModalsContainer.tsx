@@ -1,5 +1,5 @@
 import {
-  AccountDeleteModal,
+  AccountDeleteController,
   AddVaultBorrowAssetsModal,
   AlertDialogController,
   BorrowModal,
@@ -15,7 +15,7 @@ import {
 export default function ModalsContainer() {
   return (
     <>
-      <AccountDeleteModal />
+      <AccountDeleteController />
       <AddVaultBorrowAssetsModal />
       <BorrowModal />
       <FundAndWithdrawModal />
