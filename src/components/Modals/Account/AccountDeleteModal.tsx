@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
-import { Enter, InfoCircle } from 'components/Icons'
+import { ArrowRight, Enter, InfoCircle } from 'components/Icons'
 import useAlertDialog from 'hooks/useAlertDialog'
 import useStore from 'store'
 import { hardcodedFee } from 'utils/constants'
@@ -9,7 +9,7 @@ import { getPage, getRoute } from 'utils/route'
 
 export default function AccountDeleteModal() {
   const modal = useStore((s) => s.accountDeleteModal)
-  const { open: showAlertDialog } = useAlertDialog()
+  const { open: showAlertDialog, close: closeAlertDialog } = useAlertDialog()
   const deleteAccount = useStore((s) => s.deleteAccount)
   const refundAndDeleteAccount = useStore((s) => s.refundAndDeleteAccount)
   const navigate = useNavigate()
@@ -26,12 +26,16 @@ export default function AccountDeleteModal() {
         : await deleteAccount(options)
 
       if (isSuccess) {
-        useStore.setState({ accountDeleteModal: null })
         navigate(getRoute(getPage(pathname), address))
+        closeDeleteAccountModal()
       }
     },
     [modal, deleteAccount, navigate, pathname, address],
   )
+
+  const closeDeleteAccountModal = useCallback(() => {
+    useStore.setState({ accountDeleteModal: null })
+  }, [])
 
   const deleteEmptyAccount = useCallback(
     () =>
@@ -50,33 +54,51 @@ export default function AccountDeleteModal() {
           onClick: () => deleteAccountHandler(false),
         },
         negativeButton: {
-          onClick: () => useStore.setState({ accountDeleteModal: null }),
+          onClick: closeDeleteAccountModal,
         },
       }),
     [accountId, showAlertDialog, deleteAccountHandler],
   )
   const showOpenPositionAlert = useCallback(
-    (type: 'debts' | 'vaults') =>
-      showAlertDialog({
+    (type: 'debts' | 'vaults') => {
+      const hasDebts = type === 'debts'
+      return showAlertDialog({
         icon: (
           <div className='flex h-full w-full p-3'>
             <InfoCircle />
           </div>
         ),
-        title:
-          type === 'debts'
-            ? 'Repay your Debts to delete your account'
-            : 'Close your positions to delete your account',
-        description:
-          type === 'debts'
-            ? 'You must first repay all borrowings before deleting your account.'
-            : 'You must first close your farming positions before deleting your account.',
+        title: hasDebts
+          ? 'Repay your Debts to delete your account'
+          : 'Close your positions to delete your account',
+        description: hasDebts
+          ? 'You must first repay all borrowings before deleting your account.'
+          : 'You must first close your farming positions before deleting your account.',
         negativeButton: {
           text: 'Close',
           icon: <Enter />,
-          onClick: () => useStore.setState({ accountDeleteModal: null }),
+          onClick: closeDeleteAccountModal,
         },
-      }),
+        positiveButton: hasDebts
+          ? {
+              text: 'Repay Debts',
+              icon: <ArrowRight />,
+              onClick: () => {
+                console.log('CLOSE')
+                navigate(getRoute('borrow', address, accountId))
+                closeDeleteAccountModal()
+              },
+            }
+          : {
+              text: 'Close Positions',
+              icon: <ArrowRight />,
+              onClick: () => {
+                navigate(getRoute('farm', address, accountId))
+                closeDeleteAccountModal()
+              },
+            },
+      })
+    },
     [showAlertDialog],
   )
 
