@@ -27,6 +27,8 @@ jest.mock('hooks/broadcast/useDepositVault', () => jest.fn(() => ({ actions: [] 
 
 jest.mock('components/DisplayCurrency')
 
+jest.mock('hooks/useHealthComputer', () => jest.fn(() => ({ computeMaxBorrowAmount: () => {} })))
+
 const mockedDisplayCurrency = jest
   .mocked(DisplayCurrency)
   .mockImplementation(() => <div>Display currency</div>)
