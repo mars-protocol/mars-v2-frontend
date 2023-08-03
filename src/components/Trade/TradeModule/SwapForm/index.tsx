@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import Divider from 'components/Divider'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
@@ -33,19 +33,20 @@ export default function SwapForm(props: Props) {
   const swap = useStore((s) => s.swap)
   const [slippage] = useLocalStorage(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
   const { computeMaxSwapAmount } = useHealthComputer(account)
+  const buyAmountEstimationTimeout = useRef<NodeJS.Timeout | undefined>(undefined)
 
   const [isMarginChecked, setMarginChecked] = useState(false)
   const [buyAssetAmount, setBuyAssetAmount] = useState(BN_ZERO)
   const [sellAssetAmount, setSellAssetAmount] = useState(BN_ZERO)
-  const [focusedInput, setFocusedInput] = useState<'buy' | 'sell' | null>(null)
+  const focusedInput = useRef<'buy' | 'sell' | null>(null)
   const [maxBuyableAmountEstimation, setMaxBuyableAmountEstimation] = useState(BN_ZERO)
   const [selectedOrderType, setSelectedOrderType] = useState<AvailableOrderType>('Market')
   const [isTransactionExecuting, setTransactionExecuting] = useState(false)
 
-  const maxSellAssetAmount = useMemo(
-    () => computeMaxSwapAmount(sellAsset.denom, buyAsset.denom, 'default'),
-    [computeMaxSwapAmount, sellAsset.denom, buyAsset.denom],
-  )
+  const [maxSellAssetAmount, maxSellAssetAmountStr] = useMemo(() => {
+    const amount = computeMaxSwapAmount(sellAsset.denom, buyAsset.denom, 'default')
+    return [amount, amount.toString()]
+  }, [computeMaxSwapAmount, sellAsset.denom, buyAsset.denom])
 
   const [buyAssetValue, sellAssetValue] = useMemo(() => {
     const buyAssetPrice = prices.find(byDenom(buyAsset.denom))?.amount ?? BN_ZERO
@@ -66,29 +67,38 @@ export default function SwapForm(props: Props) {
   ])
 
   useEffect(() => {
-    setFocusedInput(null)
+    focusedInput.current = null
     setBuyAssetAmount(BN_ZERO)
     setSellAssetAmount(BN_ZERO)
   }, [buyAsset.denom, sellAsset.denom])
 
   useEffect(() => {
-    estimateExactIn(
-      { denom: sellAsset.denom, amount: maxSellAssetAmount.toString() },
-      buyAsset.denom,
-    ).then(setMaxBuyableAmountEstimation)
-  }, [maxSellAssetAmount, buyAsset.denom, sellAsset.denom])
+    estimateExactIn({ denom: sellAsset.denom, amount: maxSellAssetAmountStr }, buyAsset.denom).then(
+      setMaxBuyableAmountEstimation,
+    )
+  }, [maxSellAssetAmountStr, buyAsset.denom, sellAsset.denom])
 
   useEffect(() => {
-    if (focusedInput === 'sell') {
-      estimateExactIn(
-        { denom: sellAsset.denom, amount: sellAssetAmount.toString() },
-        buyAsset.denom,
-      ).then(setBuyAssetAmount)
+    if (focusedInput.current === 'sell') {
+      if (buyAmountEstimationTimeout.current) {
+        clearTimeout(buyAmountEstimationTimeout.current)
+      }
+
+      buyAmountEstimationTimeout.current = setTimeout(
+        () =>
+          estimateExactIn(
+            { denom: sellAsset.denom, amount: sellAssetAmount.toString() },
+            buyAsset.denom,
+          )
+            .then(setBuyAssetAmount)
+            .then(() => clearTimeout(buyAmountEstimationTimeout?.current)),
+        250,
+      )
     }
   }, [buyAsset.denom, focusedInput, sellAsset.denom, sellAssetAmount])
 
   useEffect(() => {
-    if (focusedInput === 'buy') {
+    if (focusedInput.current === 'buy') {
       estimateExactIn(
         {
           denom: buyAsset.denom,
@@ -117,10 +127,11 @@ export default function SwapForm(props: Props) {
     }
   }, [account?.id, buyAsset.denom, sellAsset.denom, sellAssetAmount, slippage, swap])
 
-  const dismissInputFocus = useCallback(() => setFocusedInput(null), [])
+  const dismissInputFocus = useCallback(() => (focusedInput.current = null), [])
+
   const handleRangeInputChange = useCallback(
     (value: number) => {
-      setFocusedInput('sell')
+      focusedInput.current = 'sell'
       setSellAssetAmount(BN(value).shiftedBy(sellAsset.decimals).integerValue())
     },
     [sellAsset.decimals],
@@ -144,7 +155,7 @@ export default function SwapForm(props: Props) {
         maxButtonLabel='Max Amount:'
         containerClassName='mx-3 my-6'
         onBlur={dismissInputFocus}
-        onFocus={() => setFocusedInput('buy')}
+        onFocus={() => (focusedInput.current = 'buy')}
         disabled={isTransactionExecuting}
       />
 
@@ -167,7 +178,7 @@ export default function SwapForm(props: Props) {
         maxButtonLabel='Balance:'
         containerClassName='mx-3'
         onBlur={dismissInputFocus}
-        onFocus={() => setFocusedInput('sell')}
+        onFocus={() => (focusedInput.current = 'sell')}
         disabled={isTransactionExecuting}
       />
 
