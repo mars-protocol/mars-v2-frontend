@@ -14,29 +14,25 @@ export default function Tab(props: Props) {
   const { address, accountId } = useParams()
 
   return (
-    <div className='mb-4 w-full'>
-      <div className='flex gap-2'>
-        <div className='relative'>
-          <NavLink
-            to={getRoute('farm', address, accountId)}
-            className={classNames(
-              !props.isFarm ? 'text-white/20' : underlineClasses,
-              'relative mr-8 text-xl',
-            )}
-          >
-            Farm
-          </NavLink>
-        </div>
-        <NavLink
-          to={getRoute('lend', address, accountId)}
-          className={classNames(
-            props.isFarm ? 'text-white/20' : underlineClasses,
-            'relative text-xl',
-          )}
-        >
-          Lend
-        </NavLink>
-      </div>
+    <div className='relative mb-4 w-full'>
+      <NavLink
+        to={getRoute('lend', address, accountId)}
+        className={classNames(
+          props.isFarm ? 'text-white/20' : underlineClasses,
+          'relative mr-8 text-xl ',
+        )}
+      >
+        Lend
+      </NavLink>
+      <NavLink
+        to={getRoute('farm', address, accountId)}
+        className={classNames(
+          !props.isFarm ? 'text-white/20' : underlineClasses,
+          'relative text-xl',
+        )}
+      >
+        Farm
+      </NavLink>
     </div>
   )
 }

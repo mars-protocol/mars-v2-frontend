@@ -1,13 +1,12 @@
 import classNames from 'classnames'
-import { ChangeEvent, LegacyRef } from 'react'
-import React from 'react'
+import React, { ChangeEvent, LegacyRef } from 'react'
 
 import { Search } from 'components/Icons'
 
 interface Props {
   value: string
   placeholder: string
-  autofocus?: boolean
+  autoFocus?: boolean
   onChange: (value: string) => void
 }
 
@@ -31,7 +30,7 @@ const SearchBar = (props: Props, ref: LegacyRef<HTMLDivElement>) => {
         className='h-full w-full bg-transparent text-xs placeholder-white/50 outline-none'
         placeholder={props.placeholder}
         onChange={(event) => onChange(event)}
-        autoFocus={props.autofocus}
+        autoFocus={props.autoFocus}
       />
     </div>
   )

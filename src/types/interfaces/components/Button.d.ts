@@ -1,4 +1,5 @@
 interface ButtonProps {
+  autoFocus?: boolean
   children?: string | ReactNode
   className?: string
   color?: 'primary' | 'secondary' | 'tertiary' | 'quaternary'

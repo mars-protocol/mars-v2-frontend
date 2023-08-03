@@ -33,11 +33,16 @@ export default function MarketDetails({ data, type }: Props) {
   const totalBorrowed = marketDepositAmount.minus(marketLiquidityAmount)
 
   const details: Detail[] = useMemo(() => {
+    const isDollar = displayCurrencySymbol === '$'
     function getLendingMarketDetails() {
       return [
         {
           amount: convertAmount(asset, marketDepositAmount).toNumber(),
-          options: { abbreviated: true, suffix: ` ${displayCurrencySymbol}` },
+          options: {
+            abbreviated: true,
+            suffix: isDollar ? undefined : ` ${displayCurrencySymbol}`,
+            prefix: isDollar ? '$' : undefined,
+          },
           title: 'Total Supplied',
         },
         {
@@ -52,7 +57,12 @@ export default function MarketDetails({ data, type }: Props) {
         },
         {
           amount: getConversionRate(asset.denom).toNumber(),
-          options: { minDecimals: 2, maxDecimals: 2, suffix: ` ${displayCurrencySymbol}` },
+          options: {
+            minDecimals: 2,
+            maxDecimals: 2,
+            suffix: isDollar ? undefined : ` ${displayCurrencySymbol}`,
+            prefix: isDollar ? '$' : undefined,
+          },
           title: 'Oracle Price',
         },
         {
@@ -67,12 +77,21 @@ export default function MarketDetails({ data, type }: Props) {
       return [
         {
           amount: convertAmount(asset, totalBorrowed).toNumber(),
-          options: { abbreviated: true, suffix: ` ${displayCurrencySymbol}` },
+          options: {
+            abbreviated: true,
+            suffix: isDollar ? undefined : ` ${displayCurrencySymbol}`,
+            prefix: isDollar ? '$' : undefined,
+          },
           title: 'Total Borrowed',
         },
         {
           amount: getConversionRate(asset.denom).toNumber(),
-          options: { minDecimals: 2, maxDecimals: 2, suffix: ` ${displayCurrencySymbol}` },
+          options: {
+            minDecimals: 2,
+            maxDecimals: 2,
+            suffix: isDollar ? undefined : ` ${displayCurrencySymbol}`,
+            prefix: isDollar ? '$' : undefined,
+          },
           title: 'Oracle Price',
         },
         {

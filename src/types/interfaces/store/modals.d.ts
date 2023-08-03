@@ -1,9 +1,9 @@
 interface ModalSlice {
+  accountDeleteModal: Account | null
   addVaultBorrowingsModal: AddVaultBorrowingsModal | null
   alertDialog: AlertDialogConfig | null
   borrowModal: BorrowModal | null
   createAccountModal: boolean
-  deleteAccountModal: boolean
   fundAccountModal: boolean
   fundAndWithdrawModal: 'fund' | 'withdraw' | null
   lendAndReclaimModal: LendAndReclaimModalConfig | null
@@ -17,6 +17,7 @@ interface ModalSlice {
 interface AlertDialogButton {
   text?: string
   icon?: JSX.Element
+  isAsync?: boolean
   onClick?: () => void
 }
 
@@ -25,19 +26,18 @@ interface AlertDialogConfig {
   title: JSX.Element | string
   description: JSX.Element | string
   negativeButton?: AlertDialogButton
-  positiveButton: AlertDialogButton
+  positiveButton?: AlertDialogButton
+}
+interface BorrowModal {
+  asset: Asset
+  marketData: BorrowMarketTableData
+  isRepay?: boolean
 }
 
 type LendAndReclaimModalAction = 'lend' | 'reclaim'
 interface LendAndReclaimModalConfig {
   data: LendingMarketTableData
   action: LendAndReclaimModalAction
-}
-
-interface BorrowModal {
-  asset: Asset
-  marketData: BorrowMarketTableData
-  isRepay?: boolean
 }
 
 interface VaultModal {

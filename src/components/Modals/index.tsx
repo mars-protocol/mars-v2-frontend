@@ -1,3 +1,4 @@
+export { default as AccountDeleteController } from 'components/Modals/Account/AccountDeleteModal'
 export { default as AddVaultBorrowAssetsModal } from 'components/Modals/AddVaultAssets'
 export { default as AlertDialogController } from 'components/Modals/AlertDialog'
 export { default as BorrowModal } from 'components/Modals/BorrowModal'
