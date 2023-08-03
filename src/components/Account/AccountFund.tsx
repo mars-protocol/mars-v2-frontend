@@ -16,6 +16,7 @@ import useCurrentAccount from 'hooks/useCurrentAccount'
 import useToggle from 'hooks/useToggle'
 import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { getAssetByDenom, getBaseAsset } from 'utils/assets'
 import { hardcodedFee } from 'utils/constants'
@@ -30,13 +31,14 @@ export default function AccountFund() {
   const currentAccount = useCurrentAccount()
   const [isFunding, setIsFunding] = useToggle(false)
   const [selectedAccountId, setSelectedAccountId] = useState<null | string>(null)
-  const [fundingAssets, setFundingAssets] = useState<Coin[]>([])
+  const [fundingAssets, setFundingAssets] = useState<BNCoin[]>([])
   const { data: walletBalances } = useWalletBalances(address)
   const baseAsset = getBaseAsset()
   const { autoLendEnabledAccountIds, toggleAutoLend } = useAutoLendEnabledAccountIds()
   const isAutoLendEnabled = autoLendEnabledAccountIds.includes(accountId ?? '0')
   const hasAssetSelected = fundingAssets.length > 0
-  const hasFundingAssets = fundingAssets.length > 0 && fundingAssets.every((a) => a.amount !== '0')
+  const hasFundingAssets =
+    fundingAssets.length > 0 && fundingAssets.every((a) => a.toCoin().amount !== '0')
 
   const baseBalance = useMemo(
     () => walletBalances.find(byDenom(baseAsset.denom))?.amount ?? '0',
@@ -77,10 +79,9 @@ export default function AccountFund() {
     )
       return
 
-    const newFundingAssets = selectedDenoms.map((denom) => ({
-      denom,
-      amount: fundingAssets.find((asset) => asset.denom === denom)?.amount ?? '0',
-    }))
+    const newFundingAssets = selectedDenoms.map((denom) =>
+      BNCoin.fromDenomAndBigNumber(denom, BN(fundingAssets.find(byDenom(denom))?.amount ?? '0')),
+    )
 
     setFundingAssets(newFundingAssets)
   }, [selectedDenoms, fundingAssets])
@@ -89,7 +90,7 @@ export default function AccountFund() {
     (amount: BigNumber, denom: string) => {
       const assetToUpdate = fundingAssets.find((asset) => asset.denom === denom)
       if (assetToUpdate) {
-        assetToUpdate.amount = amount.toString()
+        assetToUpdate.amount = amount
         setFundingAssets([...fundingAssets.filter((a) => a.denom !== denom), assetToUpdate])
       }
     },

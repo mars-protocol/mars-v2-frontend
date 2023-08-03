@@ -13,39 +13,26 @@ export const calculateAccountBalanceValue = (
   account: Account | AccountChange,
   prices: BNCoin[],
 ): BigNumber => {
-  const totalDepositValue = calculateAccountDepositsValue(account, prices)
-  const totalDebtValue = calculateAccountDebtValue(account, prices)
+  const totalDepositValue = calculateAccountValue('deposits', account, prices)
+  const totalLendsValue = calculateAccountValue('lends', account, prices)
+  const totalDebtValue = calculateAccountValue('debts', account, prices)
 
-  return totalDepositValue.minus(totalDebtValue)
+  return totalDepositValue.plus(totalLendsValue).minus(totalDebtValue)
 }
 
-export const calculateAccountDepositsValue = (
+export const calculateAccountValue = (
+  type: 'deposits' | 'lends' | 'debts',
   account: Account | AccountChange,
   prices: BNCoin[],
 ): BigNumber => {
-  if (!account.deposits) return BN_ZERO
-  return account.deposits.reduce((acc, deposit) => {
-    const asset = getAssetByDenom(deposit.denom)
+  if (!account[type]) return BN_ZERO
+  return account[type]?.reduce((acc, position) => {
+    const asset = getAssetByDenom(position.denom)
     if (!asset) return acc
-    const price = prices.find((price) => price.denom === deposit.denom)?.amount ?? 0
-    const amount = BN(deposit.amount).shiftedBy(-asset.decimals)
-    const depositValue = amount.multipliedBy(price)
-    return acc.plus(depositValue)
-  }, BN_ZERO)
-}
-
-export const calculateAccountDebtValue = (
-  account: Account | AccountChange,
-  prices: BNCoin[],
-): BigNumber => {
-  if (!account.debts) return BN_ZERO
-  return account.debts.reduce((acc, debt) => {
-    const asset = getAssetByDenom(debt.denom)
-    if (!asset) return acc
-    const price = prices.find((price) => price.denom === debt.denom)?.amount ?? 0
-    const debtAmount = BN(debt.amount).shiftedBy(-asset.decimals)
-    const debtValue = debtAmount.multipliedBy(price)
-    return acc.plus(debtValue)
+    const price = prices.find((price) => price.denom === position.denom)?.amount ?? 0
+    const amount = BN(position.amount).shiftedBy(-asset.decimals)
+    const positionValue = amount.multipliedBy(price)
+    return acc.plus(positionValue)
   }, BN_ZERO)
 }
 
@@ -105,7 +92,7 @@ export function convertAccountToPositions(account: Account): Positions {
               ],
             },
           },
-        }) as VaultPosition,
+        } as VaultPosition),
     ),
   }
 }
@@ -143,4 +130,16 @@ export function cloneAccount(account: Account): Account {
       },
     })),
   }
+}
+
+export function removeDepositFromAccount(account: Account, asset: Asset) {
+  const updatedAccount = { ...cloneAccount(account) }
+  const currentAssetIndex = updatedAccount.deposits.findIndex(
+    (deposit) => deposit.denom === asset.denom,
+  )
+
+  if (currentAssetIndex !== -1) {
+    updatedAccount.deposits.splice(currentAssetIndex, 1)
+  }
+  return updatedAccount
 }

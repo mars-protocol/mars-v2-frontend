@@ -13,7 +13,7 @@ import useIsOpenArray from 'hooks/useIsOpenArray'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
-import { calculateAccountDepositsValue } from 'utils/accounts'
+import { calculateAccountValue } from 'utils/accounts'
 
 interface Props {
   account?: Account
@@ -24,7 +24,7 @@ export default function AccountSummary(props: Props) {
   const [isOpen, toggleOpen] = useIsOpenArray(2, true)
   const { data: prices } = usePrices()
   const accountBalance = props.account
-    ? calculateAccountDepositsValue(props.account, prices)
+    ? calculateAccountValue('deposits', props.account, prices)
     : BN_ZERO
   const { availableAssets: borrowAvailableAssets, accountBorrowedAssets } =
     useBorrowMarketAssetsTableData()

@@ -13,9 +13,8 @@ import {
   calculateAccountApr,
   calculateAccountBalanceValue,
   calculateAccountBorrowRate,
-  calculateAccountDebtValue,
-  calculateAccountDepositsValue,
   calculateAccountPnL,
+  calculateAccountValue,
 } from 'utils/accounts'
 
 interface Props {
@@ -34,14 +33,24 @@ interface ItemProps {
 
 export default function AccountComposition(props: Props) {
   const { data: prices } = usePrices()
-  const balance = calculateAccountDepositsValue(props.account, prices)
-  const balanceChange = props.change ? calculateAccountDepositsValue(props.change, prices) : BN_ZERO
-  const debtBalance = calculateAccountDebtValue(props.account, prices)
-  const debtBalanceChange = props.change ? calculateAccountDebtValue(props.change, prices) : BN_ZERO
+  const depositsBalance = calculateAccountValue('deposits', props.account, prices)
+  const depositsBalanceChange = props.change
+    ? calculateAccountValue('deposits', props.change, prices)
+    : BN_ZERO
+  const lendsBalance = calculateAccountValue('lends', props.account, prices)
+  const lendsBalanceChange = props.change
+    ? calculateAccountValue('lends', props.change, prices)
+    : BN_ZERO
+  const debtBalance = calculateAccountValue('debts', props.account, prices)
+  const debtBalanceChange = props.change
+    ? calculateAccountValue('debts', props.change, prices)
+    : BN_ZERO
   const totalBalance = calculateAccountBalanceValue(props.account, prices)
   const totalBalanceChange = props.change
     ? calculateAccountBalanceValue(props.change, prices)
     : BN_ZERO
+  const balance = depositsBalance.plus(lendsBalance)
+  const balanceChange = depositsBalanceChange.plus(lendsBalanceChange)
   const apr = calculateAccountApr(props.account, prices)
   const aprChange = props.change ? calculateAccountPnL(props.change, prices) : BN_ZERO
   const borrowRate = calculateAccountBorrowRate(props.account, prices)

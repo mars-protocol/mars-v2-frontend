@@ -14,7 +14,7 @@ import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
-import { calculateAccountDepositsValue } from 'utils/accounts'
+import { calculateAccountValue } from 'utils/accounts'
 import { getPage, getRoute } from 'utils/route'
 
 interface Props {
@@ -54,7 +54,7 @@ export default function AccountList(props: Props) {
   return (
     <div className='flex w-full flex-wrap p-4'>
       {props.accounts.map((account) => {
-        const positionBalance = calculateAccountDepositsValue(account, prices)
+        const positionBalance = calculateAccountValue('deposits', account, prices)
         const isActive = accountId === account.id
         const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
 

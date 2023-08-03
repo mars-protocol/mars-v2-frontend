@@ -43,66 +43,57 @@ export default function useHealthComputer(account?: Account) {
 
   const vaultPositionValues = useMemo(() => {
     if (!account?.vaults) return null
-    return account.vaults.reduce(
-      (prev, curr) => {
-        const baseCoinPrice = prices.find((price) => price.denom === curr.denoms.lp)?.amount || 0
-        prev[curr.address] = {
-          base_coin: {
-            amount: '0', // Not used by healthcomputer
-            denom: curr.denoms.lp,
-            value: curr.amounts.unlocking.times(baseCoinPrice).integerValue().toString(),
-          },
-          vault_coin: {
-            amount: '0', // Not used by healthcomputer
-            denom: curr.denoms.vault,
-            value: curr.values.primary
-              .div(baseCurrencyPrice)
-              .plus(curr.values.secondary.div(baseCurrencyPrice))
-              .integerValue()
-              .toString(),
-          },
-        }
-        return prev
-      },
-      {} as { [key: string]: VaultPositionValue },
-    )
+    return account.vaults.reduce((prev, curr) => {
+      const baseCoinPrice = prices.find((price) => price.denom === curr.denoms.lp)?.amount || 0
+      prev[curr.address] = {
+        base_coin: {
+          amount: '0', // Not used by healthcomputer
+          denom: curr.denoms.lp,
+          value: curr.amounts.unlocking.times(baseCoinPrice).integerValue().toString(),
+        },
+        vault_coin: {
+          amount: '0', // Not used by healthcomputer
+          denom: curr.denoms.vault,
+          value: curr.values.primary
+            .div(baseCurrencyPrice)
+            .plus(curr.values.secondary.div(baseCurrencyPrice))
+            .integerValue()
+            .toString(),
+        },
+      }
+      return prev
+    }, {} as { [key: string]: VaultPositionValue })
   }, [account?.vaults, prices, baseCurrencyPrice])
 
   const priceData = useMemo(() => {
     const baseCurrencyPrice =
       prices.find((price) => price.denom === baseCurrency.denom)?.amount || 0
 
-    return prices.reduce(
-      (prev, curr) => {
-        prev[curr.denom] = curr.amount.div(baseCurrencyPrice).decimalPlaces(18).toString()
-        return prev
-      },
-      {} as { [key: string]: string },
-    )
+    return prices.reduce((prev, curr) => {
+      prev[curr.denom] = curr.amount.div(baseCurrencyPrice).decimalPlaces(18).toString()
+      return prev
+    }, {} as { [key: string]: string })
   }, [prices, baseCurrency.denom])
 
   const denomsData = useMemo(
     () =>
-      assetParams.reduce(
-        (prev, curr) => {
-          const params: AssetParamsBaseForAddr = {
-            ...curr,
-            // The following overrides are required as testnet is 'broken' and new contracts are not updated yet
-            // These overrides are not used by the healthcomputer internally, so they're not important anyways.
-            protocol_liquidation_fee: '1',
-            liquidation_bonus: {
-              max_lb: '1',
-              min_lb: '1',
-              slope: '1',
-              starting_lb: '1',
-            },
-          }
-          prev[params.denom] = params
+      assetParams.reduce((prev, curr) => {
+        const params: AssetParamsBaseForAddr = {
+          ...curr,
+          // The following overrides are required as testnet is 'broken' and new contracts are not updated yet
+          // These overrides are not used by the healthcomputer internally, so they're not important anyways.
+          protocol_liquidation_fee: '1',
+          liquidation_bonus: {
+            max_lb: '1',
+            min_lb: '1',
+            slope: '1',
+            starting_lb: '1',
+          },
+        }
+        prev[params.denom] = params
 
-          return prev
-        },
-        {} as { [key: string]: AssetParamsBaseForAddr },
-      ),
+        return prev
+      }, {} as { [key: string]: AssetParamsBaseForAddr }),
     [assetParams],
   )
 
@@ -112,13 +103,10 @@ export default function useHealthComputer(account?: Account) {
     const vaultPositionDenoms = positions.vaults.map((vault) => vault.vault.address)
     return vaultConfigs
       .filter((config) => vaultPositionDenoms.includes(config.addr))
-      .reduce(
-        (prev, curr) => {
-          prev[curr.addr] = curr
-          return prev
-        },
-        {} as { [key: string]: VaultConfigBaseForString },
-      )
+      .reduce((prev, curr) => {
+        prev[curr.addr] = curr
+        return prev
+      }, {} as { [key: string]: VaultConfigBaseForString })
   }, [vaultConfigs, positions])
 
   const healthComputer: HealthComputer | null = useMemo(() => {
