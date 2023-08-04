@@ -6,5 +6,6 @@ export default function usePrices() {
   return useSWR('prices', getPrices, {
     fallbackData: [],
     refreshInterval: 30000,
+    revalidateOnFocus: false,
   })
 }

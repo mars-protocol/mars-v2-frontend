@@ -6,5 +6,6 @@ export default function useMarketBorrowings() {
   return useSWR(`marketBorrowings`, getMarketBorrowings, {
     fallbackData: [],
     suspense: false,
+    revalidateOnFocus: false,
   })
 }
