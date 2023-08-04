@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
-import { BNCoin } from 'types/classes/BNCoin'
 import { addCoins, addValueToVaults, removeCoins } from 'hooks/useUpdatedAccount/functions'
+import { BNCoin } from 'types/classes/BNCoin'
 import { cloneAccount } from 'utils/accounts'
 
 export interface VaultValue {
@@ -17,12 +17,15 @@ export function useUpdatedAccount(account: Account) {
   const [removedDebt, removeDebt] = useState<BNCoin[]>([])
   const [addedVaultValues, addVaultValues] = useState<VaultValue[]>([])
 
-  function removeDepositByDenom(denom: string) {
-    const deposit = account.deposits.find((deposit) => deposit.denom === denom)
-    if (deposit) {
-      removeDeposits([...removedDeposits, deposit])
-    }
-  }
+  const removeDepositByDenom = useCallback(
+    (denom: string) => {
+      const deposit = account.deposits.find((deposit) => deposit.denom === denom)
+      if (deposit) {
+        removeDeposits([...removedDeposits, deposit])
+      }
+    },
+    [account, removedDeposits],
+  )
 
   useEffect(() => {
     async function updateAccount() {
