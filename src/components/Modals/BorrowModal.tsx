@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
+import { useEffect, useState } from 'react'
 
 import AccountSummary from 'components/Account/AccountSummary'
 import AssetImage from 'components/AssetImage'
@@ -11,17 +11,17 @@ import Modal from 'components/Modal'
 import Switch from 'components/Switch'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
-import TokenInputWithSlider from 'components/TokenInputWithSlider'
+import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
 import { ASSETS } from 'constants/assets'
+import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/useCurrentAccount'
+import useHealthComputer from 'hooks/useHealthComputer'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { hardcodedFee } from 'utils/constants'
 import { formatPercent, formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import useHealthComputer from 'hooks/useHealthComputer'
-import { BN_ZERO } from 'constants/math'
 
 function getDebtAmount(modal: BorrowModal | null) {
   return BN((modal?.marketData as BorrowMarketTableData)?.debt ?? 0).toString()

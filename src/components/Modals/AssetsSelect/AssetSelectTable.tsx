@@ -24,15 +24,12 @@ interface Props {
 export default function AssetSelectTable(props: Props) {
   const defaultSelected = useMemo(() => {
     const assets = props.assets as BorrowAsset[]
-    return assets.reduce(
-      (acc, asset, index) => {
-        if (props.selectedDenoms?.includes(asset.denom)) {
-          acc[index] = true
-        }
-        return acc
-      },
-      {} as { [key: number]: boolean },
-    )
+    return assets.reduce((acc, asset, index) => {
+      if (props.selectedDenoms?.includes(asset.denom)) {
+        acc[index] = true
+      }
+      return acc
+    }, {} as { [key: number]: boolean })
   }, [props.selectedDenoms, props.assets])
   const [sorting, setSorting] = useState<SortingState>([{ id: 'symbol', desc: false }])
   const [selected, setSelected] = useState<RowSelectionState>(defaultSelected)

@@ -4,7 +4,7 @@ import { ORACLE_DENOM } from 'constants/oracle'
 import useHealthComputer from 'hooks/useHealthComputer'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
-import { calculateAccountDepositsValue } from 'utils/accounts'
+import { calculateAccountValue } from 'utils/accounts'
 import { formatHealth } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
@@ -14,7 +14,7 @@ interface Props {
 
 export default function AccountStats(props: Props) {
   const { data: prices } = usePrices()
-  const positionBalance = calculateAccountDepositsValue(props.account, prices)
+  const positionBalance = calculateAccountValue('deposits', props.account, prices)
   const { health } = useHealthComputer(props.account)
   const healthFactor = BN(100).minus(formatHealth(health)).toNumber()
   return (

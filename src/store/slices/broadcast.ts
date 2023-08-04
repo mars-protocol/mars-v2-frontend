@@ -147,24 +147,26 @@ export default function createBroadcastSlice(
 
       return !!response.result
     },
-    deposit: async (options: { fee: StdFee; accountId: string; coins: Coin[] }) => {
+    deposit: async (options: { fee: StdFee; accountId: string; coins: BNCoin[] }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
           actions: options.coins.map((coin) => ({
-            deposit: coin,
+            deposit: coin.toCoin(),
           })),
         },
       }
 
+      const funds = options.coins.map((coin) => coin.toCoin())
+
       const response = await get().executeMsg({
-        messages: [
-          generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, options.coins),
-        ],
+        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, funds)],
         fee: options.fee,
       })
 
-      const depositString = options.coins.map((coin) => formatAmountWithSymbol(coin)).join('and ')
+      const depositString = options.coins
+        .map((coin) => formatAmountWithSymbol(coin.toCoin()))
+        .join('and ')
       handleResponseMessages(response, `Deposited ${depositString} to Account ${options.accountId}`)
       return !!response.result
     },
@@ -247,13 +249,23 @@ export default function createBroadcastSlice(
       handleResponseMessages(response, `Deposited into vault`)
       return !!response.result
     },
-    withdraw: async (options: { fee: StdFee; accountId: string; coins: Coin[] }) => {
+    withdraw: async (options: {
+      fee: StdFee
+      accountId: string
+      coins: BNCoin[]
+      borrow: BNCoin[]
+    }) => {
+      const withdrawActions = options.coins.map((coin) => ({
+        withdraw: coin.toCoin(),
+      }))
+      const borrowActions = options.borrow.map((coin) => ({
+        borrow: coin.toCoin(),
+      }))
+
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
-          actions: options.coins.map((coin) => ({
-            withdraw: coin,
-          })),
+          actions: [...borrowActions, ...withdrawActions],
         },
       }
 
@@ -262,7 +274,9 @@ export default function createBroadcastSlice(
         fee: options.fee,
       })
 
-      const withdrawString = options.coins.map((coin) => formatAmountWithSymbol(coin)).join('and ')
+      const withdrawString = options.coins
+        .map((coin) => formatAmountWithSymbol(coin.toCoin()))
+        .join('and ')
       handleResponseMessages(
         response,
         `Withdrew ${withdrawString} from Account ${options.accountId}`,

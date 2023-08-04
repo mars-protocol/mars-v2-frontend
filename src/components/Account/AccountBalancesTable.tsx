@@ -132,7 +132,7 @@ export default function AccountBalancesTable(props: Props) {
           return (
             <FormattedNumber
               className='text-right text-xs'
-              amount={Number(BN(amount).abs().toPrecision(2))}
+              amount={Number(BN(amount).abs())}
               options={{ maxDecimals: 2, abbreviated: true }}
               animate
             />

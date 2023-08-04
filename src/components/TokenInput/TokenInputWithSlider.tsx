@@ -1,10 +1,10 @@
 import BigNumber from 'bignumber.js'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Slider from 'components/Slider'
 import TokenInput from 'components/TokenInput'
-import { BN } from 'utils/helpers'
 import { BN_ZERO } from 'constants/math'
+import { BN } from 'utils/helpers'
 
 interface Props {
   amount: BigNumber
@@ -43,6 +43,13 @@ export default function TokenInputWithSlider(props: Props) {
     setAmount(BN_ZERO)
     props.onChangeAsset(newAsset)
   }
+
+  useEffect(() => {
+    const newAmount = props.amount.isLessThan(props.max) ? props.amount : props.max
+    const newPercentage = newAmount.dividedBy(props.max).multipliedBy(100).toNumber()
+    if (!amount.isEqualTo(newAmount)) setAmount(newAmount)
+    if (percentage !== newPercentage) setPercentage(newPercentage)
+  }, [props.max, props.amount, amount, percentage])
 
   return (
     <div className={props.className}>

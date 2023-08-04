@@ -75,9 +75,10 @@ export default function Option(props: Props) {
         <Text size='sm' className='col-span-2 text-white/50'>
           {formatValue(5, { maxDecimals: 2, minDecimals: 0, prefix: 'APY ', suffix: '%' })}
         </Text>
-        <Text size='sm' className='col-span-2 text-right text-white/50'>
-          <DisplayCurrency coin={new BNCoin({ denom: asset.denom, amount: balance })} />
-        </Text>
+        <DisplayCurrency
+          className='col-span-2 text-right text-sm text-white/50'
+          coin={new BNCoin({ denom: asset.denom, amount: balance })}
+        />
       </div>
     )
   }

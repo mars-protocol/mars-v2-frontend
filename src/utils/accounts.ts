@@ -13,39 +13,34 @@ export const calculateAccountBalanceValue = (
   account: Account | AccountChange,
   prices: BNCoin[],
 ): BigNumber => {
-  const totalDepositValue = calculateAccountDepositsValue(account, prices)
-  const totalDebtValue = calculateAccountDebtValue(account, prices)
+  const depositsValue = calculateAccountValue('deposits', account, prices)
+  const lendsValue = calculateAccountValue('lends', account, prices)
+  const debtsValue = calculateAccountValue('debts', account, prices)
 
-  return totalDepositValue.minus(totalDebtValue)
+  return depositsValue.plus(lendsValue).minus(debtsValue)
 }
 
-export const calculateAccountDepositsValue = (
+export const getAccountPositionValues = (account: Account | AccountChange, prices: BNCoin[]) => {
+  const deposits = calculateAccountValue('deposits', account, prices)
+  const lends = calculateAccountValue('lends', account, prices)
+  const debts = calculateAccountValue('debts', account, prices)
+
+  return [deposits, lends, debts]
+}
+
+export const calculateAccountValue = (
+  type: 'deposits' | 'lends' | 'debts',
   account: Account | AccountChange,
   prices: BNCoin[],
 ): BigNumber => {
-  if (!account.deposits) return BN_ZERO
-  return account.deposits.reduce((acc, deposit) => {
-    const asset = getAssetByDenom(deposit.denom)
+  if (!account[type]) return BN_ZERO
+  return account[type]?.reduce((acc, position) => {
+    const asset = getAssetByDenom(position.denom)
     if (!asset) return acc
-    const price = prices.find((price) => price.denom === deposit.denom)?.amount ?? 0
-    const amount = BN(deposit.amount).shiftedBy(-asset.decimals)
-    const depositValue = amount.multipliedBy(price)
-    return acc.plus(depositValue)
-  }, BN_ZERO)
-}
-
-export const calculateAccountDebtValue = (
-  account: Account | AccountChange,
-  prices: BNCoin[],
-): BigNumber => {
-  if (!account.debts) return BN_ZERO
-  return account.debts.reduce((acc, debt) => {
-    const asset = getAssetByDenom(debt.denom)
-    if (!asset) return acc
-    const price = prices.find((price) => price.denom === debt.denom)?.amount ?? 0
-    const debtAmount = BN(debt.amount).shiftedBy(-asset.decimals)
-    const debtValue = debtAmount.multipliedBy(price)
-    return acc.plus(debtValue)
+    const price = prices.find((price) => price.denom === position.denom)?.amount ?? 0
+    const amount = BN(position.amount).shiftedBy(-asset.decimals)
+    const positionValue = amount.multipliedBy(price)
+    return acc.plus(positionValue)
   }, BN_ZERO)
 }
 
@@ -105,7 +100,7 @@ export function convertAccountToPositions(account: Account): Positions {
               ],
             },
           },
-        }) as VaultPosition,
+        } as VaultPosition),
     ),
   }
 }
