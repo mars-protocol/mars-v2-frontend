@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 import Button from 'components/Button'
 import { ArrowRight } from 'components/Icons'
-import TokenInputWithSlider from 'components/TokenInputWithSlider'
+import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
 import { ASSETS } from 'constants/assets'
 import { BN_ZERO } from 'constants/math'
 import useToggle from 'hooks/useToggle'

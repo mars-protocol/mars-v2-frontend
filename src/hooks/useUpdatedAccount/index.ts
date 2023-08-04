@@ -17,6 +17,13 @@ export function useUpdatedAccount(account: Account) {
   const [removedDebt, removeDebt] = useState<BNCoin[]>([])
   const [addedVaultValues, addVaultValues] = useState<VaultValue[]>([])
 
+  function removeDepositByDenom(denom: string) {
+    const deposit = account.deposits.find((deposit) => deposit.denom === denom)
+    if (deposit) {
+      removeDeposits([...removedDeposits, deposit])
+    }
+  }
+
   useEffect(() => {
     async function updateAccount() {
       const accountCopy = cloneAccount(account)
@@ -35,6 +42,7 @@ export function useUpdatedAccount(account: Account) {
     updatedAccount,
     addDeposits,
     removeDeposits,
+    removeDepositByDenom,
     addDebt,
     removeDebt,
     addVaultValues,

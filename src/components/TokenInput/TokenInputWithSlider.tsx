@@ -46,8 +46,8 @@ export default function TokenInputWithSlider(props: Props) {
 
   useEffect(() => {
     const newAmount = props.amount.isLessThan(props.max) ? props.amount : props.max
-    const newPercentage = BN(newAmount).dividedBy(props.max).multipliedBy(100).toNumber()
-    if (amount !== newAmount) setAmount(newAmount)
+    const newPercentage = newAmount.dividedBy(props.max).multipliedBy(100).toNumber()
+    if (!amount.isEqualTo(newAmount)) setAmount(newAmount)
     if (percentage !== newPercentage) setPercentage(newPercentage)
   }, [props.max, props.amount, amount, percentage])
 

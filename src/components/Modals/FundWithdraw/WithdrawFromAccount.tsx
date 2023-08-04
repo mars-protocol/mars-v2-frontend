@@ -1,19 +1,19 @@
 import BigNumber from 'bignumber.js'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Button from 'components/Button'
 import Divider from 'components/Divider'
 import { ArrowRight } from 'components/Icons'
 import Switch from 'components/Switch'
 import Text from 'components/Text'
-import TokenInputWithSlider from 'components/TokenInputWithSlider'
+import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
 import { ASSETS } from 'constants/assets'
 import { BN_ZERO } from 'constants/math'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useToggle from 'hooks/useToggle'
+import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { removeDepositFromAccount } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { hardcodedFee } from 'utils/constants'
 
@@ -30,7 +30,7 @@ export default function WithdrawFromAccount(props: Props) {
   const [isConfirming, setIsConfirming] = useToggle()
   const [currentAsset, setCurrentAsset] = useState(defaultAsset)
   const [amount, setAmount] = useState(BN_ZERO)
-  const updatedAccount = removeDepositFromAccount(account, currentAsset)
+  const { updatedAccount, removeDepositByDenom } = useUpdatedAccount(account)
   const { computeMaxWithdrawAmount } = useHealthComputer(account)
   const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
   const maxWithdrawAmount = computeMaxWithdrawAmount(currentAsset.denom)
@@ -38,7 +38,7 @@ export default function WithdrawFromAccount(props: Props) {
     maxWithdrawAmount,
   )
   const isWithinBalance = amount.isLessThan(maxWithdrawAmount)
-  const depositAmount = isWithinBalance ? BN_ZERO.minus(amount) : BN_ZERO.minus(maxWithdrawAmount)
+  const depositAmount = BN_ZERO.minus(isWithinBalance ? amount : maxWithdrawAmount)
   const debtAmount = isWithinBalance ? BN_ZERO : amount.minus(maxWithdrawAmount)
   const max = withdrawWithBorrowing ? maxWithdrawWithBorrowAmount : maxWithdrawAmount
 
@@ -78,6 +78,10 @@ export default function WithdrawFromAccount(props: Props) {
       useStore.setState({ fundAndWithdrawModal: null })
     }
   }
+
+  useEffect(() => {
+    removeDepositByDenom(currentAsset.denom)
+  }, [currentAsset.denom, removeDepositByDenom])
 
   return (
     <>

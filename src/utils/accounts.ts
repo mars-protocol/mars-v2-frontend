@@ -13,11 +13,19 @@ export const calculateAccountBalanceValue = (
   account: Account | AccountChange,
   prices: BNCoin[],
 ): BigNumber => {
-  const totalDepositValue = calculateAccountValue('deposits', account, prices)
-  const totalLendsValue = calculateAccountValue('lends', account, prices)
-  const totalDebtValue = calculateAccountValue('debts', account, prices)
+  const depositsValue = calculateAccountValue('deposits', account, prices)
+  const lendsValue = calculateAccountValue('lends', account, prices)
+  const debtsValue = calculateAccountValue('debts', account, prices)
 
-  return totalDepositValue.plus(totalLendsValue).minus(totalDebtValue)
+  return depositsValue.plus(lendsValue).minus(debtsValue)
+}
+
+export const getAccountPositionValues = (account: Account | AccountChange, prices: BNCoin[]) => {
+  const deposits = calculateAccountValue('deposits', account, prices)
+  const lends = calculateAccountValue('lends', account, prices)
+  const debts = calculateAccountValue('debts', account, prices)
+
+  return [deposits, lends, debts]
 }
 
 export const calculateAccountValue = (
@@ -130,16 +138,4 @@ export function cloneAccount(account: Account): Account {
       },
     })),
   }
-}
-
-export function removeDepositFromAccount(account: Account, asset: Asset) {
-  const updatedAccount = { ...cloneAccount(account) }
-  const currentAssetIndex = updatedAccount.deposits.findIndex(
-    (deposit) => deposit.denom === asset.denom,
-  )
-
-  if (currentAssetIndex !== -1) {
-    updatedAccount.deposits.splice(currentAssetIndex, 1)
-  }
-  return updatedAccount
 }

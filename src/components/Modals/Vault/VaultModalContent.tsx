@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useState } from 'react'
 
 import Accordion from 'components/Accordion'
@@ -7,10 +6,10 @@ import VaultBorrowings from 'components/Modals/Vault/VaultBorrowings'
 import VaultBorrowingsSubTitle from 'components/Modals/Vault/VaultBorrowingsSubTitle'
 import VaultDeposit from 'components/Modals/Vault/VaultDeposits'
 import VaultDepositSubTitle from 'components/Modals/Vault/VaultDepositsSubTitle'
-import useIsOpenArray from 'hooks/useIsOpenArray'
-import useDepositVault from 'hooks/broadcast/useDepositVault'
-import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import { BN_ZERO } from 'constants/math'
+import useDepositVault from 'hooks/broadcast/useDepositVault'
+import useIsOpenArray from 'hooks/useIsOpenArray'
+import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 
 interface Props {
   vault: Vault | DepositedVault

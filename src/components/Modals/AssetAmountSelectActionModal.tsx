@@ -8,10 +8,10 @@ import Divider from 'components/Divider'
 import { ArrowRight } from 'components/Icons'
 import Modal from 'components/Modal'
 import Text from 'components/Text'
-import TokenInputWithSlider from 'components/TokenInputWithSlider'
+import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
+import { BN_ZERO } from 'constants/math'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
-import { BN_ZERO } from 'constants/math'
 
 interface Props {
   asset: Asset
