@@ -34,63 +34,54 @@ export default function WalletConnecting(props: Props) {
   const [isConnecting, setIsConnecting] = useToggle()
   const providerId = props.providerId ?? recentWallet?.providerId
   const isAutoConnect = props.autoConnect
-  useEffect(() => {
-    const handleConnect = async (extensionProviderId: string) => {
-      setIsConnecting(true)
 
-      try {
-        const provider = extensionProviders.find((p) => p.id === providerId)
-        const response =
-          isAutoConnect && provider
-            ? await provider.connect({ chainId: currentChainId })
-            : await connect({ extensionProviderId, chainId: currentChainId })
-        const cosmClient = await CosmWasmClient.connect(response.network.rpc)
-        const walletClient: WalletClient = {
-          broadcast,
-          cosmWasmClient: cosmClient,
-          connectedWallet: response,
-          sign,
-          simulate,
-        }
+  const handleConnect = async (extensionProviderId: string) => {
+    setIsConnecting(true)
+
+    try {
+      const provider = extensionProviders.find((p) => p.id === providerId)
+      const response =
+        isAutoConnect && provider
+          ? await provider.connect({ chainId: currentChainId })
+          : await connect({ extensionProviderId, chainId: currentChainId })
+      const cosmClient = await CosmWasmClient.connect(response.network.rpc)
+      const walletClient: WalletClient = {
+        broadcast,
+        cosmWasmClient: cosmClient,
+        connectedWallet: response,
+        sign,
+        simulate,
+      }
+      setIsConnecting(false)
+      useStore.setState({
+        client: walletClient,
+        address: response.account.address,
+        focusComponent: <WalletFetchBalancesAndAccounts />,
+      })
+    } catch (error) {
+      if (error instanceof Error) {
         setIsConnecting(false)
         useStore.setState({
-          client: walletClient,
-          address: response.account.address,
-          focusComponent: <WalletFetchBalancesAndAccounts />,
+          client: undefined,
+          address: undefined,
+          accounts: null,
+          focusComponent: (
+            <WalletSelect
+              error={{
+                title: 'Failed to connect to wallet',
+                message: mapErrorMessages(extensionProviderId, error.message),
+              }}
+            />
+          ),
         })
-      } catch (error) {
-        if (error instanceof Error) {
-          setIsConnecting(false)
-          useStore.setState({
-            client: undefined,
-            address: undefined,
-            accounts: null,
-            focusComponent: (
-              <WalletSelect
-                error={{
-                  title: 'Failed to connect to wallet',
-                  message: mapErrorMessages(extensionProviderId, error.message),
-                }}
-              />
-            ),
-          })
-        }
       }
     }
+  }
+
+  useEffect(() => {
     if (isConnecting || !providerId) return
     handleConnect(providerId)
-  }, [
-    isConnecting,
-    providerId,
-    props.autoConnect,
-    broadcast,
-    connect,
-    extensionProviders,
-    isAutoConnect,
-    setIsConnecting,
-    sign,
-    simulate,
-  ])
+  }, [isConnecting, providerId])
 
   return (
     <FullOverlayContent
