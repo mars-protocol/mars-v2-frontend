@@ -6,5 +6,6 @@ export default function useMarketDeposits() {
   return useSWR(`marketDeposits`, getMarketDeposits, {
     suspense: true,
     fallbackData: [],
+    revalidateOnFocus: false,
   })
 }

@@ -6,5 +6,6 @@ export default function useMarketAssets() {
   return useSWR(`marketAssets`, getMarkets, {
     suspense: true,
     fallbackData: [],
+    revalidateOnFocus: false,
   })
 }
