@@ -1,11 +1,12 @@
 import classNames from 'classnames'
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 import ActionButton from 'components/Button/ActionButton'
 import useSwapRoute from 'hooks/useSwapRoute'
 import { getAssetByDenom } from 'utils/assets'
 import { hardcodedFee } from 'utils/constants'
-import { formatAmountWithSymbol } from 'utils/formatters'
+import { formatAmountWithSymbol, formatPercent } from 'utils/formatters'
+import useMarketBorrowings from 'hooks/useMarketBorrowings'
 
 interface Props {
   buyAsset: Asset
@@ -13,6 +14,8 @@ interface Props {
   buyButtonDisabled: boolean
   containerClassName?: string
   showProgressIndicator: boolean
+  isMargin?: boolean
+  borrowAmount: BigNumber
   buyAction: () => void
 }
 
@@ -23,8 +26,16 @@ export default function TradeSummary(props: Props) {
     buyAction,
     buyButtonDisabled,
     containerClassName,
+    isMargin,
+    borrowAmount,
     showProgressIndicator,
   } = props
+  const { data: borrowAssets } = useMarketBorrowings()
+
+  const borrowAsset = useMemo(
+    () => borrowAssets.find((borrowAsset) => borrowAsset.denom == sellAsset.denom),
+    [borrowAssets, sellAsset.denom],
+  )
   const { data: routes, isLoading: isRouteLoading } = useSwapRoute(sellAsset.denom, buyAsset.denom)
 
   const parsedRoutes = useMemo(() => {
@@ -49,6 +60,24 @@ export default function TradeSummary(props: Props) {
           <span className={className.infoLineLabel}>Fees</span>
           <span>{formatAmountWithSymbol(hardcodedFee.amount[0])}</span>
         </div>
+        {isMargin && (
+          <>
+            <div className={className.infoLine}>
+              <span className={className.infoLineLabel}>Borrowing</span>
+              <span>
+                {formatAmountWithSymbol({
+                  denom: sellAsset.denom,
+                  amount: borrowAmount.toString(),
+                })}
+              </span>
+            </div>
+            <div className={className.infoLine}>
+              <span className={className.infoLineLabel}>Borrow rate</span>
+              <span>{formatPercent(borrowAsset?.borrowRate || 0)}</span>
+            </div>
+          </>
+        )}
+
         <div className={className.infoLine}>
           <span className={className.infoLineLabel}>Route</span>
           <span>{parsedRoutes}</span>

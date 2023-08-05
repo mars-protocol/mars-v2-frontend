@@ -100,7 +100,7 @@ export function convertAccountToPositions(account: Account): Positions {
               ],
             },
           },
-        } as VaultPosition),
+        }) as VaultPosition,
     ),
   }
 }

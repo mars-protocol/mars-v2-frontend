@@ -201,6 +201,12 @@ export default function SwapForm(props: Props) {
         buyAction={handleBuyClick}
         buyButtonDisabled={sellAssetAmount.isZero()}
         showProgressIndicator={isConfirming}
+        isMargin={isMarginChecked}
+        borrowAmount={
+          sellAssetAmount.isGreaterThan(marginThreshold)
+            ? sellAssetAmount.minus(marginThreshold)
+            : BN_ZERO
+        }
       />
     </>
   )
