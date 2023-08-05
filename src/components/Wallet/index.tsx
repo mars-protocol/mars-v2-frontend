@@ -21,7 +21,12 @@ export default function Wallet() {
       useStore.setState({ address: undefined, accounts: null, client: undefined })
       return
     }
-    if (client) return
+
+    if (client) {
+      if (currentWallet.account.address !== address)
+        useStore.setState({ address: currentWallet.account.address })
+      return
+    }
     useStore.setState({ focusComponent: <WalletConnecting autoConnect /> })
   }, [currentWallet, client])
 
