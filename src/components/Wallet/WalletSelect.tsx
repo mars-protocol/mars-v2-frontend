@@ -1,22 +1,28 @@
-import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { useShuttle } from '@delphi-labs/shuttle-react'
 import Image from 'next/image'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import QRCode from 'react-qr-code'
 
 import Button from 'components/Button'
-import { CircularProgress } from 'components/CircularProgress'
 import FullOverlayContent from 'components/FullOverlayContent'
 import { ChevronLeft, ChevronRight } from 'components/Icons'
 import Text from 'components/Text'
-import WalletFetchBalancesAndAccounts from 'components/Wallet/WalletFetchBalancesAndAccounts'
+import WalletConnecting from 'components/Wallet/WalletConnecting'
 import { CHAINS } from 'constants/chains'
 import { ENV } from 'constants/env'
 import { WALLETS } from 'constants/wallets'
-import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { WalletID } from 'types/enums/wallet'
 import { isAndroid, isIOS, isMobile } from 'utils/mobile'
+
+interface Props {
+  error?: ErrorObject
+}
+
+interface ErrorObject {
+  title: string
+  message: string
+}
 
 interface WalletOptionProps {
   name: string
@@ -26,16 +32,6 @@ interface WalletOptionProps {
 
 const currentChainId = ENV.CHAIN_ID
 const currentChain = CHAINS[currentChainId]
-
-const mapErrorMessages = (providerId: string, errorMessage: string) => {
-  if (providerId === 'station') {
-    if (errorMessage.match('Wallet not connected to the network with chainId')) {
-      return `Your wallet is not connected to the correct network. Please switch your wallet to the ${currentChain.name} network`
-    }
-  }
-
-  return errorMessage
-}
 
 function WalletOption(props: WalletOptionProps) {
   return (
@@ -57,44 +53,16 @@ function WalletOption(props: WalletOptionProps) {
   )
 }
 
-export default function WalletSelect() {
-  const { extensionProviders, mobileProviders, connect, mobileConnect, simulate, sign, broadcast } =
-    useShuttle()
-  const [isConnecting, setIsConnecting] = useToggle(false)
+export default function WalletSelect(props: Props) {
+  const { extensionProviders, mobileProviders, mobileConnect } = useShuttle()
   const [qrCodeUrl, setQRCodeUrl] = useState('')
-
+  const [error, setError] = useState(props.error)
   const sortedExtensionProviders = extensionProviders.sort((a, b) => +b - +a)
 
-  const handleConnectClick = async (extensionProviderId: string, chainId: string) => {
-    setIsConnecting(true)
-
-    try {
-      const response = await connect({ extensionProviderId, chainId })
-      const cosmClient = await CosmWasmClient.connect(response.network.rpc)
-      const walletClient: WalletClient = {
-        broadcast,
-        cosmWasmClient: cosmClient,
-        connectedWallet: response,
-        sign,
-        simulate,
-      }
-      useStore.setState({
-        client: walletClient,
-        address: response.account.address,
-        focusComponent: <WalletFetchBalancesAndAccounts />,
-      })
-    } catch (error) {
-      if (error instanceof Error) {
-        useStore.setState({
-          toast: {
-            isError: true,
-            title: 'Failed to connect to wallet',
-            message: mapErrorMessages(extensionProviderId, error.message),
-          },
-        })
-      }
-    }
-    setIsConnecting(false)
+  const handleConnectClick = (extensionProviderId: string) => {
+    useStore.setState({
+      focusComponent: <WalletConnecting providerId={extensionProviderId} />,
+    })
   }
 
   const handleMobileConnectClick = async (mobileProviderId: string, chainId: string) => {
@@ -112,33 +80,27 @@ export default function WalletSelect() {
         } else {
           window.location.href = urls.androidUrl
         }
-        setIsConnecting(true)
       } else {
         setQRCodeUrl(urls.qrCodeUrl)
-        setIsConnecting(false)
       }
     } catch (error) {
       if (error instanceof Error) {
-        useStore.setState({
-          toast: {
-            isError: true,
-            title: 'Failed to connect to wallet',
-            message: error.message,
-          },
-        })
+        setError({ title: 'Failed to connect to wallet', message: error.message })
       }
     }
   }
 
-  if (isConnecting)
-    return (
-      <FullOverlayContent
-        title={'Connecting...'}
-        copy={'Unlock your wallet and approve the connection'}
-      >
-        <CircularProgress size={40} />
-      </FullOverlayContent>
-    )
+  useEffect(() => {
+    if (error?.message && error?.title) {
+      useStore.setState({
+        toast: {
+          isError: true,
+          title: error.title,
+          message: error.message,
+        },
+      })
+    }
+  }, [error?.message, error?.title])
 
   if (qrCodeUrl)
     return (
@@ -193,7 +155,7 @@ export default function WalletSelect() {
                       return (
                         <WalletOption
                           key={`${walletId}-${network.chainId}`}
-                          handleClick={() => handleConnectClick(walletId, network.chainId)}
+                          handleClick={() => handleConnectClick(walletId)}
                           imageSrc={WALLETS[walletId].imageURL}
                           name={WALLETS[walletId].name ?? 'Conenct Wallet'}
                         />
