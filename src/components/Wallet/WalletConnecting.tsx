@@ -81,7 +81,7 @@ export default function WalletConnecting(props: Props) {
   useEffect(() => {
     if (isConnecting || !providerId) return
     handleConnect(providerId)
-  }, [isConnecting, providerId])
+  }, [isConnecting, providerId, handleConnect])
 
   return (
     <FullOverlayContent
