@@ -61,6 +61,7 @@ interface BroadcastSlice {
     fee: StdFee
     accountId: string
     coinIn: BNCoin
+    borrow: BNCoin
     denomOut: string
     slippage: number
   }) => Promise<boolean>

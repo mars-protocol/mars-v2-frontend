@@ -6,6 +6,5 @@ export default function useWalletBalances(address?: string) {
   return useSWR(`walletBalances${address}`, () => getWalletBalances(address || ''), {
     isPaused: () => !address,
     fallbackData: [],
-    revalidateOnFocus: false,
   })
 }

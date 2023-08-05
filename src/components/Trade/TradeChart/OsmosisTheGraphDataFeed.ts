@@ -202,8 +202,8 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
       body: JSON.stringify({ query }),
     })
       .then((res) => res.json())
-      .then((json: { data: { candles: BarQueryData[] } }) => {
-        return this.resolveBarData(json.data.candles, base)
+      .then((json: { data?: { candles: BarQueryData[] } }) => {
+        return this.resolveBarData(json.data?.candles || [], base)
       })
       .catch((err) => {
         if (this.debug) console.error(err)
