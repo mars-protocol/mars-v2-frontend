@@ -20,6 +20,7 @@ import TradeSummary from 'components/Trade/TradeModule/SwapForm/TradeSummary'
 import { BNCoin } from 'types/classes/BNCoin'
 import estimateExactIn from 'api/swap/estimateExactIn'
 import useHealthComputer from 'hooks/useHealthComputer'
+import useMarketBorrowings from 'hooks/useMarketBorrowings'
 
 interface Props {
   buyAsset: Asset
@@ -33,6 +34,7 @@ export default function SwapForm(props: Props) {
   const swap = useStore((s) => s.swap)
   const [slippage] = useLocalStorage(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
   const { computeMaxSwapAmount } = useHealthComputer(account)
+  const { data: borrowAssets } = useMarketBorrowings()
 
   const [isMarginChecked, setMarginChecked] = useState(false)
   const [buyAssetAmount, setBuyAssetAmount] = useState(BN_ZERO)
@@ -42,6 +44,11 @@ export default function SwapForm(props: Props) {
   const [isConfirming, setIsConfirming] = useState(false)
 
   const throttledEstimateExactIn = useMemo(() => asyncThrottle(estimateExactIn, 250), [])
+
+  const borrowAsset = useMemo(
+    () => borrowAssets.find((borrowAsset) => borrowAsset.denom == sellAsset.denom),
+    [borrowAssets, sellAsset.denom],
+  )
 
   const onChangeSellAmount = useCallback(
     (amount: BigNumber) => {
@@ -156,7 +163,12 @@ export default function SwapForm(props: Props) {
   return (
     <>
       <Divider />
-      <MarginToggle checked={isMarginChecked} onChange={setMarginChecked} />
+      <MarginToggle
+        checked={isMarginChecked}
+        onChange={setMarginChecked}
+        disabled={!borrowAsset?.isMarket}
+        borrowAssetSymbol={sellAsset.symbol}
+      />
       <Divider />
       <OrderTypeSelector selected={selectedOrderType} onChange={setSelectedOrderType} />
       <AssetAmountInput
@@ -198,6 +210,7 @@ export default function SwapForm(props: Props) {
         containerClassName='m-3 mt-10'
         buyAsset={buyAsset}
         sellAsset={sellAsset}
+        borrowRate={borrowAsset?.borrowRate}
         buyAction={handleBuyClick}
         buyButtonDisabled={sellAssetAmount.isZero()}
         showProgressIndicator={isConfirming}

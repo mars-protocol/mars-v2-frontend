@@ -6,11 +6,11 @@ import useSwapRoute from 'hooks/useSwapRoute'
 import { getAssetByDenom } from 'utils/assets'
 import { hardcodedFee } from 'utils/constants'
 import { formatAmountWithSymbol, formatPercent } from 'utils/formatters'
-import useMarketBorrowings from 'hooks/useMarketBorrowings'
 
 interface Props {
   buyAsset: Asset
   sellAsset: Asset
+  borrowRate?: number | null
   buyButtonDisabled: boolean
   containerClassName?: string
   showProgressIndicator: boolean
@@ -23,6 +23,7 @@ export default function TradeSummary(props: Props) {
   const {
     buyAsset,
     sellAsset,
+    borrowRate,
     buyAction,
     buyButtonDisabled,
     containerClassName,
@@ -30,12 +31,6 @@ export default function TradeSummary(props: Props) {
     borrowAmount,
     showProgressIndicator,
   } = props
-  const { data: borrowAssets } = useMarketBorrowings()
-
-  const borrowAsset = useMemo(
-    () => borrowAssets.find((borrowAsset) => borrowAsset.denom == sellAsset.denom),
-    [borrowAssets, sellAsset.denom],
-  )
   const { data: routes, isLoading: isRouteLoading } = useSwapRoute(sellAsset.denom, buyAsset.denom)
 
   const parsedRoutes = useMemo(() => {
@@ -73,7 +68,7 @@ export default function TradeSummary(props: Props) {
             </div>
             <div className={className.infoLine}>
               <span className={className.infoLineLabel}>Borrow rate</span>
-              <span>{formatPercent(borrowAsset?.borrowRate || 0)}</span>
+              <span>{formatPercent(borrowRate || 0)}</span>
             </div>
           </>
         )}

@@ -23,6 +23,8 @@ function RangeInput(props: Props) {
     [onChange],
   )
 
+  const markPosPercent = 100 / (max / (marginThreshold ?? 1))
+
   return (
     <div
       className={classNames(className.containerDefault, wrapperClassName, {
@@ -46,7 +48,7 @@ function RangeInput(props: Props) {
         />
       </div>
       <div className={className.legendWrapper}>
-        <span>0</span>
+        <span>{markPosPercent > 5 ? 0 : ''}</span>
         <span>{max.toFixed(2)}</span>
       </div>
     </div>
