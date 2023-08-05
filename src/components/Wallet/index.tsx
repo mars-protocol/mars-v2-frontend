@@ -1,10 +1,9 @@
-import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { useShuttle } from '@delphi-labs/shuttle-react'
 import { useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import WalletConnectButton from 'components/Wallet/WalletConnectButton'
 import WalletConnectedButton from 'components/Wallet/WalletConnectedButton'
+import WalletConnecting from 'components/Wallet/WalletConnecting'
 import useCurrentWallet from 'hooks/useCurrentWallet'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
@@ -14,39 +13,17 @@ export default function Wallet() {
   const { address: addressInUrl } = useParams()
   const { pathname } = useLocation()
   const currentWallet = useCurrentWallet()
-  const { simulate, sign, broadcast } = useShuttle()
   const address = useStore((s) => s.address)
   const client = useStore((s) => s.client)
 
-  // Set connection status
   useEffect(() => {
-    const isConnected = !!currentWallet
-    useStore.setState(
-      isConnected
-        ? {
-            address: currentWallet.account.address,
-          }
-        : { address: undefined, accounts: null, client: undefined },
-    )
-  }, [currentWallet])
-
-  // Set the client
-  useEffect(() => {
-    async function getCosmWasmClient() {
-      if (client || !currentWallet) return
-      const cosmClient = await CosmWasmClient.connect(currentWallet.network.rpc)
-      const walletClient: WalletClient = {
-        broadcast,
-        cosmWasmClient: cosmClient,
-        connectedWallet: currentWallet,
-        sign,
-        simulate,
-      }
-      useStore.setState({ client: walletClient })
+    if (!currentWallet) {
+      useStore.setState({ address: undefined, accounts: null, client: undefined })
+      return
     }
-
-    getCosmWasmClient()
-  }, [currentWallet, address, simulate, sign, broadcast, client])
+    if (client) return
+    useStore.setState({ focusComponent: <WalletConnecting autoConnect /> })
+  }, [currentWallet, client])
 
   // Redirect when switching wallets or on first connection
   useEffect(() => {

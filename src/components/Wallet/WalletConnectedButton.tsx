@@ -2,8 +2,8 @@ import { useShuttle } from '@delphi-labs/shuttle-react'
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import { useCallback, useEffect, useState } from 'react'
-import useClipboard from 'react-use-clipboard'
 import { useLocation, useNavigate } from 'react-router-dom'
+import useClipboard from 'react-use-clipboard'
 
 import Button from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
@@ -60,7 +60,7 @@ export default function WalletConnectedButton() {
   const onDisconnectWallet = () => {
     if (!currentWallet) return
     disconnectWallet(currentWallet)
-    useStore.setState({ client: undefined, balances: [] })
+    useStore.setState({ client: undefined, address: undefined, accounts: null, balances: [] })
     navigate(getRoute(getPage(pathname)))
   }
 
