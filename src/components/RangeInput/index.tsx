@@ -3,6 +3,8 @@ import classNames from 'classnames'
 
 import InputOverlay from 'components/RangeInput/InputOverlay'
 
+const LEFT_MARGIN = 5
+
 type Props = {
   max: number
   value: number
@@ -48,7 +50,7 @@ function RangeInput(props: Props) {
         />
       </div>
       <div className={className.legendWrapper}>
-        <span>{markPosPercent > 5 ? 0 : ''}</span>
+        <span>{markPosPercent > LEFT_MARGIN ? 0 : ''}</span>
         <span>{max.toFixed(2)}</span>
       </div>
     </div>

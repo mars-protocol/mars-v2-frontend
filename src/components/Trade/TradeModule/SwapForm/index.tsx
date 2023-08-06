@@ -8,7 +8,7 @@ import useCurrentAccount from 'hooks/useCurrentAccount'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
-import { byDenom } from 'utils/array'
+import { byDenom, byTokenDenom } from 'utils/array'
 import { hardcodedFee } from 'utils/constants'
 import RangeInput from 'components/RangeInput'
 import { asyncThrottle, BN } from 'utils/helpers'
@@ -46,7 +46,7 @@ export default function SwapForm(props: Props) {
   const throttledEstimateExactIn = useMemo(() => asyncThrottle(estimateExactIn, 250), [])
 
   const borrowAsset = useMemo(
-    () => borrowAssets.find((borrowAsset) => borrowAsset.denom == sellAsset.denom),
+    () => borrowAssets.find(byDenom(sellAsset.denom)),
     [borrowAssets, sellAsset.denom],
   )
 

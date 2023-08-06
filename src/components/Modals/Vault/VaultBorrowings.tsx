@@ -157,8 +157,9 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
     <div className='flex flex-1 flex-col gap-4 p-4'>
       {props.borrowings.map((coin) => {
         const asset = getAssetByDenom(coin.denom)
-        const maxAmount = maxBorrowAmounts.find((maxAmount) => maxAmount.denom === coin.denom)
-          ?.amount
+        const maxAmount = maxBorrowAmounts.find(
+          (maxAmount) => maxAmount.denom === coin.denom,
+        )?.amount
         if (!asset || !maxAmount)
           return <React.Fragment key={`input-${coin.denom}`}></React.Fragment>
         return (
