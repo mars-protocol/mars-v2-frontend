@@ -29,6 +29,7 @@ interface Props {
   account: Account
   lendingData: LendingMarketTableData[]
   borrowingData: BorrowMarketTableData[]
+  tableBodyClassName?: string
 }
 
 function calculatePositionValues(
@@ -215,7 +216,7 @@ export default function AccountBalancesTable(props: Props) {
           </tr>
         ))}
       </thead>
-      <tbody>
+      <tbody className={props.tableBodyClassName}>
         {table.getRowModel().rows.map((row) => {
           return (
             <tr key={row.id} className=' text-white/60'>
