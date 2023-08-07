@@ -1,18 +1,21 @@
 import classNames from 'classnames'
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 import ActionButton from 'components/Button/ActionButton'
 import useSwapRoute from 'hooks/useSwapRoute'
 import { getAssetByDenom } from 'utils/assets'
 import { hardcodedFee } from 'utils/constants'
-import { formatAmountWithSymbol } from 'utils/formatters'
+import { formatAmountWithSymbol, formatPercent } from 'utils/formatters'
 
 interface Props {
   buyAsset: Asset
   sellAsset: Asset
+  borrowRate?: number | null
   buyButtonDisabled: boolean
   containerClassName?: string
   showProgressIndicator: boolean
+  isMargin?: boolean
+  borrowAmount: BigNumber
   buyAction: () => void
 }
 
@@ -20,9 +23,12 @@ export default function TradeSummary(props: Props) {
   const {
     buyAsset,
     sellAsset,
+    borrowRate,
     buyAction,
     buyButtonDisabled,
     containerClassName,
+    isMargin,
+    borrowAmount,
     showProgressIndicator,
   } = props
   const { data: routes, isLoading: isRouteLoading } = useSwapRoute(sellAsset.denom, buyAsset.denom)
@@ -49,6 +55,24 @@ export default function TradeSummary(props: Props) {
           <span className={className.infoLineLabel}>Fees</span>
           <span>{formatAmountWithSymbol(hardcodedFee.amount[0])}</span>
         </div>
+        {isMargin && (
+          <>
+            <div className={className.infoLine}>
+              <span className={className.infoLineLabel}>Borrowing</span>
+              <span>
+                {formatAmountWithSymbol({
+                  denom: sellAsset.denom,
+                  amount: borrowAmount.toString(),
+                })}
+              </span>
+            </div>
+            <div className={className.infoLine}>
+              <span className={className.infoLineLabel}>Borrow rate</span>
+              <span>{formatPercent(borrowRate || 0)}</span>
+            </div>
+          </>
+        )}
+
         <div className={className.infoLine}>
           <span className={className.infoLineLabel}>Route</span>
           <span>{parsedRoutes}</span>

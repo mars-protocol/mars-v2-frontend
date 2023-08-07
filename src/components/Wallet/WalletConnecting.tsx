@@ -1,6 +1,6 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { useShuttle } from '@delphi-labs/shuttle-react'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 
 import { CircularProgress } from 'components/CircularProgress'
 import FullOverlayContent from 'components/FullOverlayContent'
@@ -35,48 +35,64 @@ export default function WalletConnecting(props: Props) {
   const providerId = props.providerId ?? recentWallet?.providerId
   const isAutoConnect = props.autoConnect
 
-  const handleConnect = async (extensionProviderId: string) => {
-    setIsConnecting(true)
+  const handleConnect = useCallback(
+    (extensionProviderId: string) => {
+      async function handleConnectAsync() {
+        setIsConnecting(true)
 
-    try {
-      const provider = extensionProviders.find((p) => p.id === providerId)
-      const response =
-        isAutoConnect && provider
-          ? await provider.connect({ chainId: currentChainId })
-          : await connect({ extensionProviderId, chainId: currentChainId })
-      const cosmClient = await CosmWasmClient.connect(response.network.rpc)
-      const walletClient: WalletClient = {
-        broadcast,
-        cosmWasmClient: cosmClient,
-        connectedWallet: response,
-        sign,
-        simulate,
+        try {
+          const provider = extensionProviders.find((p) => p.id === providerId)
+          const response =
+            isAutoConnect && provider
+              ? await provider.connect({ chainId: currentChainId })
+              : await connect({ extensionProviderId, chainId: currentChainId })
+          const cosmClient = await CosmWasmClient.connect(response.network.rpc)
+          const walletClient: WalletClient = {
+            broadcast,
+            cosmWasmClient: cosmClient,
+            connectedWallet: response,
+            sign,
+            simulate,
+          }
+          setIsConnecting(false)
+          useStore.setState({
+            client: walletClient,
+            address: response.account.address,
+            focusComponent: <WalletFetchBalancesAndAccounts />,
+          })
+        } catch (error) {
+          if (error instanceof Error) {
+            setIsConnecting(false)
+            useStore.setState({
+              client: undefined,
+              address: undefined,
+              accounts: null,
+              focusComponent: (
+                <WalletSelect
+                  error={{
+                    title: 'Failed to connect to wallet',
+                    message: mapErrorMessages(extensionProviderId, error.message),
+                  }}
+                />
+              ),
+            })
+          }
+        }
       }
-      setIsConnecting(false)
-      useStore.setState({
-        client: walletClient,
-        address: response.account.address,
-        focusComponent: <WalletFetchBalancesAndAccounts />,
-      })
-    } catch (error) {
-      if (error instanceof Error) {
-        setIsConnecting(false)
-        useStore.setState({
-          client: undefined,
-          address: undefined,
-          accounts: null,
-          focusComponent: (
-            <WalletSelect
-              error={{
-                title: 'Failed to connect to wallet',
-                message: mapErrorMessages(extensionProviderId, error.message),
-              }}
-            />
-          ),
-        })
-      }
-    }
-  }
+
+      handleConnectAsync()
+    },
+    [
+      broadcast,
+      connect,
+      extensionProviders,
+      isAutoConnect,
+      providerId,
+      setIsConnecting,
+      sign,
+      simulate,
+    ],
+  )
 
   useEffect(() => {
     if (isConnecting || !providerId) return

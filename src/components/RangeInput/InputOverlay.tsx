@@ -6,12 +6,13 @@ interface Props {
   max: number
 }
 
+const THUMB_WIDTH = 33
+
 function InputOverlay({ max, value, marginThreshold }: Props) {
-  // 33 is the thumb width
-  const thumbPosPercent = 100 / (max / value)
-  const thumbPadRight = (thumbPosPercent / 100) * 33
+  const thumbPosPercent = max === 0 ? 0 : 100 / (max / value)
+  const thumbPadRight = (thumbPosPercent / 100) * THUMB_WIDTH
   const markPosPercent = 100 / (max / (marginThreshold ?? 1))
-  const markPadRight = (markPosPercent / 100) * 33
+  const markPadRight = (markPosPercent / 100) * THUMB_WIDTH
   const hasPastMarginThreshold = marginThreshold ? value >= marginThreshold : undefined
 
   return (

@@ -363,6 +363,7 @@ export default function createBroadcastSlice(
       fee: StdFee
       accountId: string
       coinIn: BNCoin
+      borrow?: BNCoin
       denomOut: string
       slippage: number
     }) => {
@@ -370,6 +371,7 @@ export default function createBroadcastSlice(
         update_credit_account: {
           account_id: options.accountId,
           actions: [
+            ...(options.borrow ? [{ borrow: options.borrow.toCoin() }] : []),
             {
               swap_exact_in: {
                 coin_in: options.coinIn.toActionCoin(),
