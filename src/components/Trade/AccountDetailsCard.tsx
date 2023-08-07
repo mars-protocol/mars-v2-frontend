@@ -19,7 +19,7 @@ export default function AccountDetailsCard() {
     </div>
   )
 
-  if (account)
+  if (account && account.deposits.length)
     return (
       <Card className='h-fit' title={tabs}>
         <AccountBalancesTable
