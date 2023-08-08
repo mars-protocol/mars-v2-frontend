@@ -4,16 +4,17 @@ import AccountComposition from 'components/Account/AccountComposition'
 import AccountHealth from 'components/Account/AccountHealth'
 import Card from 'components/Card'
 import DisplayCurrency from 'components/DisplayCurrency'
-import { ArrowChartLineUp } from 'components/Icons'
-import Text from 'components/Text'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
+import useHealthComputer from 'hooks/useHealthComputer'
 import useIsOpenArray from 'hooks/useIsOpenArray'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountValue } from 'utils/accounts'
+import { formatHealth } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 interface Props {
   account?: Account
@@ -32,6 +33,9 @@ export default function AccountSummary(props: Props) {
     useLendingMarketAssetsTableData()
   const borrowAssetsData = [...borrowAvailableAssets, ...accountBorrowedAssets]
   const lendingAssetsData = [...lendingAvailableAssets, ...accountLentAssets]
+
+  const { health } = useHealthComputer(props.account)
+  const healthFactor = BN(100).minus(formatHealth(health)).toNumber()
   if (!props.account) return null
 
   return (
@@ -44,13 +48,7 @@ export default function AccountSummary(props: Props) {
           />
         </Item>
         <Item>
-          <span className='flex h-4 w-4 items-center'>
-            <ArrowChartLineUp />
-          </span>
-          <Text size='sm'>4.5x</Text>
-        </Item>
-        <Item>
-          <AccountHealth health={80} />
+          <AccountHealth health={healthFactor} />
         </Item>
       </Card>
       <Accordion
@@ -89,7 +87,7 @@ export default function AccountSummary(props: Props) {
 function Item(props: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className='flex flex-1 items-center justify-center gap-1 border-r border-r-white/10 px-2 py-2'
+      className='flex items-center justify-center flex-1 gap-1 px-2 py-2 border-r border-r-white/10'
       {...props}
     >
       {props.children}

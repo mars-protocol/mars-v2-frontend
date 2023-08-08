@@ -5,13 +5,12 @@ import Button from 'components/Button'
 import Card from 'components/Card'
 import FullOverlayContent from 'components/FullOverlayContent'
 import { Plus } from 'components/Icons'
-import SwitchWithLabel from 'components/SwitchWithLabel'
+import SwitchAutoLend from 'components/Switch/SwitchAutoLend'
 import Text from 'components/Text'
 import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import { BN_ZERO } from 'constants/math'
 import useAccounts from 'hooks/useAccounts'
-import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useToggle from 'hooks/useToggle'
 import useWalletBalances from 'hooks/useWalletBalances'
@@ -34,8 +33,6 @@ export default function AccountFund() {
   const [fundingAssets, setFundingAssets] = useState<BNCoin[]>([])
   const { data: walletBalances } = useWalletBalances(address)
   const baseAsset = getBaseAsset()
-  const { autoLendEnabledAccountIds, toggleAutoLend } = useAutoLendEnabledAccountIds()
-  const isAutoLendEnabled = autoLendEnabledAccountIds.includes(accountId ?? '0')
   const hasAssetSelected = fundingAssets.length > 0
   const hasFundingAssets =
     fundingAssets.length > 0 && fundingAssets.every((a) => a.toCoin().amount !== '0')
@@ -116,21 +113,21 @@ export default function AccountFund() {
       copy='In order to start trading with this account, you need to deposit funds.'
       docs='fund'
     >
-      <Card className='w-full bg-white/5 p-6'>
+      <Card className='w-full p-6 bg-white/5'>
         {!hasAssetSelected && <Text>Please select an asset.</Text>}
-        {selectedDenoms.map((denom) => {
-          const asset = getAssetByDenom(denom) as Asset
+        {fundingAssets.map((coin) => {
+          const asset = getAssetByDenom(coin.denom) as Asset
 
-          const balance = walletBalances.find(byDenom(asset.denom))?.amount ?? '0'
+          const balance = walletBalances.find(byDenom(coin.denom))?.amount ?? '0'
           return (
             <div
               key={asset.symbol}
-              className='w-full rounded-base border border-white/20 bg-white/5 p-4'
+              className='w-full p-4 border rounded-base border-white/20 bg-white/5'
             >
               <TokenInputWithSlider
                 asset={asset}
                 onChange={(amount) => updateFundingAssets(amount, asset.denom)}
-                amount={BN_ZERO}
+                amount={coin.amount ?? BN_ZERO}
                 max={BN(balance)}
                 balances={walletBalances}
                 maxText='Max'
@@ -140,24 +137,19 @@ export default function AccountFund() {
         })}
 
         <Button
-          className='mt-4 w-full'
+          className='w-full mt-4'
           text='Select assets'
           color='tertiary'
           rightIcon={<Plus />}
           iconClassName='w-3'
           onClick={handleSelectAssetsClick}
         />
-        <div className='mt-4 border border-transparent border-t-white/10 pt-4'>
-          <SwitchWithLabel
-            name='isLending'
-            label='Lend assets to earn yield'
-            value={isAutoLendEnabled}
-            onChange={() => toggleAutoLend(selectedAccountId)}
-            tooltip={`Fund your account and lend assets effortlessly! By lending, you'll earn attractive interest (APY) without impacting your LTV. It's a win-win situation - don't miss out on this easy opportunity to grow your holdings!`}
-          />
-        </div>
+        <SwitchAutoLend
+          className='pt-4 mt-4 border border-transparent border-t-white/10'
+          accountId={selectedAccountId}
+        />
         <Button
-          className='mt-4 w-full'
+          className='w-full mt-4'
           text='Fund account'
           color='tertiary'
           disabled={!hasFundingAssets}

@@ -10,13 +10,13 @@ import Slider from 'components/Slider'
 import Switch from 'components/Switch'
 import Text from 'components/Text'
 import TokenInput from 'components/TokenInput'
+import { BN_ZERO } from 'constants/math'
 import usePrice from 'hooks/usePrice'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getAmount } from 'utils/accounts'
-import { BN } from 'utils/helpers'
 import { findCoinByDenom } from 'utils/assets'
-import { BN_ZERO } from 'constants/math'
+import { BN } from 'utils/helpers'
 
 interface Props {
   deposits: BNCoin[]

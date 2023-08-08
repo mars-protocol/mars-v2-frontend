@@ -34,9 +34,9 @@ export default function WalletAssetsModalContent(props: Props) {
     )
   }, [assets, searchString])
 
-  const currentSelectedDenom = useStore((s) => s.walletAssetsModal?.selectedDenoms)
+  const currentSelectedDenom = useStore((s) => s.walletAssetsModal?.selectedDenoms ?? [])
   const [selectedDenoms, setSelectedDenoms] = useState<string[]>(
-    currentSelectedDenom?.filter((denom) => filteredAssets.findIndex(byDenom(denom))) || [],
+    currentSelectedDenom.filter((denom) => filteredAssets.findIndex(byDenom(denom)) || []),
   )
 
   const onChangeSelect = useCallback(
@@ -49,7 +49,7 @@ export default function WalletAssetsModalContent(props: Props) {
 
   return (
     <>
-      <div className='border-b border-white/5 bg-white/10 px-4 py-3'>
+      <div className='px-4 py-3 border-b border-white/5 bg-white/10'>
         <SearchBar
           value={searchString}
           placeholder={`Search for e.g. "ETH" or "Ethereum"`}
