@@ -16,7 +16,7 @@ export default function ActionButton(props: ButtonProps) {
   const { accountId } = useParams()
 
   const handleCreateAccountClick = useCallback(() => {
-    useStore.setState({ focusComponent: <AccountCreateFirst /> })
+    useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
   }, [])
 
   if (!address) return <WalletConnectButton {...defaultProps} />

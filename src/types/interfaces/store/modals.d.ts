@@ -6,6 +6,7 @@ interface ModalSlice {
   createAccountModal: boolean
   fundAccountModal: boolean
   fundAndWithdrawModal: 'fund' | 'withdraw' | null
+  getStartedModal: boolean
   lendAndReclaimModal: LendAndReclaimModalConfig | null
   settingsModal: boolean
   unlockModal: UnlockModal | null

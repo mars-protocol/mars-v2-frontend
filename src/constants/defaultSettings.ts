@@ -7,4 +7,5 @@ export const DEFAULT_SETTINGS: Settings = {
   preferredAsset: ASSETS[0].denom,
   displayCurrency: ORACLE_DENOM,
   slippage: 0.02,
+  tutorial: true,
 }

@@ -21,8 +21,8 @@ export default function WalletConnectButton(props: Props) {
   const [hasAgreedToTerms] = useLocalStorage(TERMS_OF_SERVICE_KEY, false)
 
   const handleClick = useCallback(() => {
-    const focusedComponent = hasAgreedToTerms ? <WalletSelect /> : <TermsOfService />
-    useStore.setState({ focusComponent: focusedComponent })
+    const component = hasAgreedToTerms ? <WalletSelect /> : <TermsOfService />
+    useStore.setState({ focusComponent: { component } })
   }, [hasAgreedToTerms])
 
   return (

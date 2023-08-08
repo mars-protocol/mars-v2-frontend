@@ -33,7 +33,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className={classNames('mx-auto h-full w-full', !isFullWidth && 'max-w-content')}>
           {focusComponent ? (
             <div className='relative flex h-full w-full items-center justify-center'>
-              {focusComponent}
+              {focusComponent.component}
             </div>
           ) : (
             children
