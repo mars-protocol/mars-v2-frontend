@@ -6,9 +6,10 @@ interface Props extends React.HTMLProps<HTMLAnchorElement> {
   className?: string
   color?: 'primary' | 'secondary' | 'tertiary' | 'quaternary'
   externalLink?: boolean
-  textSize?: 'small' | 'medium' | 'large'
+  textSize?: 'extraSmall' | 'small' | 'medium' | 'large'
   text?: string | ReactNode
   uppercase?: boolean
+  onClick?: () => void
 }
 
 const colorClasses = {
@@ -19,6 +20,7 @@ const colorClasses = {
   quaternary: 'hover:text-white active:text-white',
 }
 const textSizeClasses = {
+  extraSmall: 'text-xs',
   small: 'text-sm',
   medium: 'text-base',
   large: 'text-lg',
@@ -56,7 +58,7 @@ export const TextLink = React.forwardRef(function TextLink(
           ? (e) => {
               e.preventDefault()
               if (disabled) return
-              onClick
+              onClick()
             }
           : undefined
       }

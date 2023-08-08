@@ -47,8 +47,8 @@ function WalletOption(props: WalletOptionProps) {
         src={props.imageSrc}
         alt={props.name}
       />
-      <Text className='ml-2 flex-1 text-left'>{props.name}</Text>
-      <ChevronRight className='h-4 w-4' />
+      <Text className='flex-1 ml-2 text-left'>{props.name}</Text>
+      <ChevronRight className='w-4 h-4' />
     </Button>
   )
 }
@@ -61,7 +61,7 @@ export default function WalletSelect(props: Props) {
 
   const handleConnectClick = (extensionProviderId: string) => {
     useStore.setState({
-      focusComponent: <WalletConnecting providerId={extensionProviderId} />,
+      focusComponent: { component: <WalletConnecting providerId={extensionProviderId} /> },
     })
   }
 
@@ -117,7 +117,7 @@ export default function WalletSelect(props: Props) {
           text: 'Back',
         }}
       >
-        <div className='mb-4 rounded-sm bg-white p-2'>
+        <div className='p-2 mb-4 bg-white rounded-sm'>
           <QRCode value={qrCodeUrl} />
         </div>
       </FullOverlayContent>
@@ -129,7 +129,7 @@ export default function WalletSelect(props: Props) {
       copy={`Deposit assets from your ${currentChain.name} address to your Mars credit account.`}
       docs='wallet'
     >
-      <div className='flex w-full flex-wrap gap-3'>
+      <div className='flex flex-wrap w-full gap-3'>
         {!isMobile() && (
           <>
             {sortedExtensionProviders.map((provider) => {

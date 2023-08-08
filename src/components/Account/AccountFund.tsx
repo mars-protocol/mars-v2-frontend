@@ -96,7 +96,7 @@ export default function AccountFund() {
 
   useEffect(() => {
     if (BN(baseBalance).isLessThan(hardcodedFee.amount[0].amount)) {
-      useStore.setState({ focusComponent: <WalletBridges /> })
+      useStore.setState({ focusComponent: { component: <WalletBridges /> } })
     }
   }, [baseBalance])
 

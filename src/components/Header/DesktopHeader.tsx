@@ -20,6 +20,7 @@ export default function DesktopHeader() {
   const focusComponent = useStore((s) => s.focusComponent)
 
   function handleCloseFocusMode() {
+    if (focusComponent.onClose) focusComponent.onClose()
     useStore.setState({ focusComponent: null })
   }
 
@@ -39,7 +40,7 @@ export default function DesktopHeader() {
       >
         <DesktopNavigation />
         {focusComponent ? (
-          <div className='flex w-full justify-between'>
+          <div className='flex justify-between w-full'>
             <div className='flex h-5 w-13' />
             {address && <Wallet />}
             <EscButton onClick={handleCloseFocusMode} />

@@ -3,6 +3,7 @@ export { default as AddVaultBorrowAssetsModal } from 'components/Modals/AddVault
 export { default as AlertDialogController } from 'components/Modals/AlertDialog'
 export { default as BorrowModal } from 'components/Modals/BorrowModal'
 export { default as FundAndWithdrawModal } from 'components/Modals/FundWithdraw'
+export { default as GetStartedModal } from 'components/Modals/GetStartedModal'
 export { default as LendAndReclaimModalController } from 'components/Modals/LendAndReclaim'
 export { default as SettingsModal } from 'components/Modals/Settings'
 export { default as UnlockModal } from 'components/Modals/Unlock'

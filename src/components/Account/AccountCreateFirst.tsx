@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import AccountFundFirst from 'components/Account/AccountFund'
+import AccountFund from 'components/Account/AccountFund'
 import FullOverlayContent from 'components/FullOverlayContent'
 import WalletSelect from 'components/Wallet/WalletSelect'
 import useToggle from 'hooks/useToggle'
@@ -17,7 +17,7 @@ export default function AccountCreateFirst() {
   const [isCreating, setIsCreating] = useToggle(false)
 
   useEffect(() => {
-    if (!address) useStore.setState({ focusComponent: <WalletSelect /> })
+    if (!address) useStore.setState({ focusComponent: { component: <WalletSelect /> } })
   }, [address])
 
   const handleClick = useCallback(async () => {
@@ -26,7 +26,14 @@ export default function AccountCreateFirst() {
     setIsCreating(false)
     if (accountId) {
       navigate(getRoute(getPage(pathname), address, accountId))
-      useStore.setState({ focusComponent: <AccountFundFirst /> })
+      useStore.setState({
+        focusComponent: {
+          component: <AccountFund />,
+          onClose: () => {
+            useStore.setState({ getStartedModal: true })
+          },
+        },
+      })
     }
   }, [createAccount, navigate, pathname, address, setIsCreating])
 

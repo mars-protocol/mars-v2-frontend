@@ -15,9 +15,9 @@ interface BenefitsProps {
 
 function Benefits({ benefits }: BenefitsProps) {
   return (
-    <ul className='w-full list-none px-0'>
+    <ul className='w-full px-0 list-none'>
       {benefits.map((benefit, index) => (
-        <li className='relative mb-6 flex h-6 w-full items-center px-0 pl-8' key={index}>
+        <li className='relative flex items-center w-full h-6 px-0 pl-8 mb-6' key={index}>
           <div
             className={classNames(
               'absolute left-0 top-0 isolate h-6 w-6 rounded-full bg-white/10',
@@ -40,7 +40,7 @@ export default function TermsOfService() {
 
   const handleAgreeTermsOfService = useCallback(() => {
     setHasAgreedToTerms(true)
-    useStore.setState({ focusComponent: <WalletSelect /> })
+    useStore.setState({ focusComponent: { component: <WalletSelect /> } })
   }, [setHasAgreedToTerms])
 
   return (

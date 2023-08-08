@@ -1,34 +1,17 @@
 import { ExternalLink } from 'components/Icons'
 import Text from 'components/Text'
+import { TextLink } from 'components/TextLink'
+import { DocURL } from 'types/enums/docURL'
 
 interface Props {
   type: DocLinkType
 }
 
 function getData(type: string) {
-  if (type === 'account')
-    return [
-      'Why mint your account?',
-      'Learn more',
-      'https://docs.marsprotocol.io/docs/learn/workstation/rover/rover-intro',
-    ]
-  if (type === 'fund')
-    return [
-      'Why fund your account?',
-      'Learn more',
-      'https://docs.marsprotocol.io/docs/learn/workstation/rover/managing-credit-accounts',
-    ]
-  if (type === 'wallet')
-    return [
-      'New with wallets?',
-      'Learn more',
-      'https://docs.marsprotocol.io/docs/learn/workstation/basics/basics-intro',
-    ]
-  return [
-    'By continuing you accept our',
-    'terms of service',
-    'https://docs.marsprotocol.io/docs/overview/legal/terms-of-service',
-  ]
+  if (type === 'account') return ['Why mint your account?', 'Learn more', DocURL.ROVER_INTRO_URL]
+  if (type === 'fund') return ['Why fund your account?', 'Learn more', DocURL.MANAGE_ACCOUNT_URL]
+  if (type === 'wallet') return ['New with wallets?', 'Learn more', DocURL.WALLET_INTRO_URL]
+  return ['By continuing you accept our', 'terms of service', DocURL.TERMS_OF_SERVICE_URL]
 }
 
 export default function DocsLink(props: Props) {
@@ -37,10 +20,15 @@ export default function DocsLink(props: Props) {
   return (
     <Text size='sm' className='w-full pt-3 text-center text-white/60'>
       {`${intro} `}
-      <a href={url} target='_blank' className='leading-4 text-white hover:underline'>
+      <TextLink
+        href={url}
+        target='_blank'
+        className='leading-4 text-white hover:underline'
+        title={linkText}
+      >
         {linkText}
         <ExternalLink className='-mt-1 ml-1 inline w-3.5' />
-      </a>
+      </TextLink>
     </Text>
   )
 }

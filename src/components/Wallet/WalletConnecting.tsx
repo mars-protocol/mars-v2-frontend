@@ -58,7 +58,7 @@ export default function WalletConnecting(props: Props) {
           useStore.setState({
             client: walletClient,
             address: response.account.address,
-            focusComponent: <WalletFetchBalancesAndAccounts />,
+            focusComponent: { component: <WalletFetchBalancesAndAccounts /> },
           })
         } catch (error) {
           if (error instanceof Error) {
@@ -67,14 +67,16 @@ export default function WalletConnecting(props: Props) {
               client: undefined,
               address: undefined,
               accounts: null,
-              focusComponent: (
-                <WalletSelect
-                  error={{
-                    title: 'Failed to connect to wallet',
-                    message: mapErrorMessages(extensionProviderId, error.message),
-                  }}
-                />
-              ),
+              focusComponent: {
+                component: (
+                  <WalletSelect
+                    error={{
+                      title: 'Failed to connect to wallet',
+                      message: mapErrorMessages(extensionProviderId, error.message),
+                    }}
+                  />
+                ),
+              },
             })
           }
         }

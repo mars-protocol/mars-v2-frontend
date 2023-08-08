@@ -7,3 +7,8 @@ interface CommonSlice {
   selectedAccount: string | null
   focusComponent: ReactNode
 }
+
+interface FocusComponent {
+  component: ReactNode
+  onClose?: () => void
+}

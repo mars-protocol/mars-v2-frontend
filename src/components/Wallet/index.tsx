@@ -27,7 +27,7 @@ export default function Wallet() {
         useStore.setState({ address: currentWallet.account.address })
       return
     }
-    useStore.setState({ focusComponent: <WalletConnecting autoConnect /> })
+    useStore.setState({ focusComponent: { component: <WalletConnecting autoConnect /> } })
   }, [currentWallet, client, address])
 
   // Redirect when switching wallets or on first connection

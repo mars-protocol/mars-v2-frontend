@@ -9,6 +9,7 @@ export default function createModalSlice(set: SetState<ModalSlice>, get: GetStat
     createAccountModal: false,
     fundAccountModal: false,
     fundAndWithdrawModal: null,
+    getStartedModal: false,
     lendAndReclaimModal: null,
     resetStettingsModal: false,
     settingsModal: false,
