@@ -9,14 +9,15 @@ import Slider from 'components/Slider'
 import Text from 'components/Text'
 import TokenInput from 'components/TokenInput'
 import { BN_ZERO } from 'constants/math'
+import useHealthComputer from 'hooks/useHealthComputer'
 import useMarketAssets from 'hooks/useMarketAssets'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { byDenom } from 'utils/array'
 import { findCoinByDenom, getAssetByDenom } from 'utils/assets'
 import { formatPercent } from 'utils/formatters'
-import useHealthComputer from 'hooks/useHealthComputer'
 
 export interface VaultBorrowingsProps {
   updatedAccount: Account
@@ -154,11 +155,10 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   }
 
   return (
-    <div className='flex flex-1 flex-col gap-4 p-4'>
+    <div className='flex flex-col flex-1 gap-4 p-4'>
       {props.borrowings.map((coin) => {
         const asset = getAssetByDenom(coin.denom)
-        const maxAmount = maxBorrowAmounts.find((maxAmount) => maxAmount.denom === coin.denom)
-          ?.amount
+        const maxAmount = maxBorrowAmounts.find(byDenom(coin.denom))?.amount
         if (!asset || !maxAmount)
           return <React.Fragment key={`input-${coin.denom}`}></React.Fragment>
         return (

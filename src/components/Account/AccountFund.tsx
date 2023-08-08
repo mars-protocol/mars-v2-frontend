@@ -85,7 +85,7 @@ export default function AccountFund() {
 
   const updateFundingAssets = useCallback(
     (amount: BigNumber, denom: string) => {
-      const assetToUpdate = fundingAssets.find((asset) => asset.denom === denom)
+      const assetToUpdate = fundingAssets.find(byDenom(denom))
       if (assetToUpdate) {
         assetToUpdate.amount = amount
         setFundingAssets([...fundingAssets.filter((a) => a.denom !== denom), assetToUpdate])
