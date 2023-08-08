@@ -8,7 +8,6 @@ import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { hardcodedFee } from 'utils/constants'
 import {
   getEnterVaultActions,
   getVaultDepositCoinsAndValue,
@@ -23,7 +22,6 @@ interface Props {
 }
 export default function useDepositVault(props: Props): {
   actions: Action[]
-  fee: StdFee
   minLpToReceive: string
   totalValue: BigNumber
 } {
@@ -92,7 +90,6 @@ export default function useDepositVault(props: Props): {
 
   return {
     actions,
-    fee: hardcodedFee,
     minLpToReceive: minLpToReceive.toString(),
     totalValue,
   }

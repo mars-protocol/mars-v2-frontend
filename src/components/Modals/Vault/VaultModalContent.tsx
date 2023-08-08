@@ -26,11 +26,7 @@ export default function VaultModalContent(props: Props) {
   const [isOpen, toggleOpen] = useIsOpenArray(2, false)
   const [isCustomRatio, setIsCustomRatio] = useState(false)
 
-  const {
-    actions: depositActions,
-    fee: depositFee,
-    totalValue,
-  } = useDepositVault({
+  const { actions: depositActions, totalValue } = useDepositVault({
     vault: props.vault,
     deposits: removedDeposits,
     borrowings: addedDebt,
@@ -114,7 +110,6 @@ export default function VaultModalContent(props: Props) {
                 onChangeBorrowings={addDebt}
                 vault={props.vault}
                 depositActions={depositActions}
-                depositFee={depositFee}
               />
             ),
             title: 'Borrow',

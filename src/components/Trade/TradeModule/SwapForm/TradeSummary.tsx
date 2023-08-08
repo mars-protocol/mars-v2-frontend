@@ -4,7 +4,6 @@ import { useMemo } from 'react'
 import ActionButton from 'components/Button/ActionButton'
 import useSwapRoute from 'hooks/useSwapRoute'
 import { getAssetByDenom } from 'utils/assets'
-import { hardcodedFee } from 'utils/constants'
 import { formatAmountWithSymbol, formatPercent } from 'utils/formatters'
 
 interface Props {
@@ -16,6 +15,7 @@ interface Props {
   showProgressIndicator: boolean
   isMargin?: boolean
   borrowAmount: BigNumber
+  estimatedFee: StdFee
   buyAction: () => void
 }
 
@@ -29,6 +29,7 @@ export default function TradeSummary(props: Props) {
     containerClassName,
     isMargin,
     borrowAmount,
+    estimatedFee,
     showProgressIndicator,
   } = props
   const { data: routes, isLoading: isRouteLoading } = useSwapRoute(sellAsset.denom, buyAsset.denom)
@@ -53,7 +54,7 @@ export default function TradeSummary(props: Props) {
         <span className={className.title}>Summary</span>
         <div className={className.infoLine}>
           <span className={className.infoLineLabel}>Fees</span>
-          <span>{formatAmountWithSymbol(hardcodedFee.amount[0])}</span>
+          <span>{formatAmountWithSymbol(estimatedFee.amount[0])}</span>
         </div>
         {isMargin && (
           <>

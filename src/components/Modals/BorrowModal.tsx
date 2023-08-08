@@ -19,7 +19,6 @@ import useHealthComputer from 'hooks/useHealthComputer'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { hardcodedFee } from 'utils/constants'
 import { formatPercent, formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
@@ -70,14 +69,12 @@ function BorrowModal(props: Props) {
     let result
     if (isRepay) {
       result = await repay({
-        fee: hardcodedFee,
         accountId: props.account.id,
         coin: BNCoin.fromDenomAndBigNumber(modal.asset.denom, amount),
         accountBalance: percentage === 100,
       })
     } else {
       result = await borrow({
-        fee: hardcodedFee,
         accountId: props.account.id,
         coin: { denom: modal.asset.denom, amount: amount.toString() },
         borrowToWallet,

@@ -1,6 +1,4 @@
-// StdFee
-// TODO: decide some strategy to handle fees
-export const hardcodedFee = {
+export const defaultFee: StdFee = {
   amount: [
     {
       denom: 'uosmo',

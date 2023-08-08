@@ -13,8 +13,8 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { getAssetByDenom, getBaseAsset } from 'utils/assets'
-import { hardcodedFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
+import { defaultFee } from 'utils/constants'
 
 interface Props {
   account: Account
@@ -48,7 +48,6 @@ export default function FundAccount(props: Props) {
     setIsFunding(true)
     if (!accountId) return
     const result = await deposit({
-      fee: hardcodedFee,
       accountId,
       coins: fundingAssets,
     })
@@ -94,7 +93,7 @@ export default function FundAccount(props: Props) {
   )
 
   useEffect(() => {
-    if (BN(baseBalance).isLessThan(hardcodedFee.amount[0].amount)) {
+    if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) {
       useStore.setState({ focusComponent: <WalletBridges /> })
     }
   }, [baseBalance])

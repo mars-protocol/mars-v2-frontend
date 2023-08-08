@@ -2,7 +2,6 @@ import { useCallback, useState } from 'react'
 
 import useStore from 'store'
 import useToggle from 'hooks/useToggle'
-import { hardcodedFee } from 'utils/constants'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useLendAndReclaimModal from 'hooks/useLendAndReclaimModal'
 import DetailsHeader from 'components/Modals/LendAndReclaim/DetailsHeader'
@@ -50,7 +49,6 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
 
       const coin = BNCoin.fromDenomAndBigNumber(asset.denom, value)
       const options = {
-        fee: hardcodedFee,
         accountId: currentAccount.id,
         coin,
         isMax,

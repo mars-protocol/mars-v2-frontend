@@ -5,7 +5,6 @@ import Button from 'components/Button'
 import { ChevronRight } from 'components/Icons'
 import NotificationBanner from 'components/NotificationBanner'
 import useStore from 'store'
-import { hardcodedFee } from 'utils/constants'
 
 interface Props {
   vaults: DepositedVault[]
@@ -25,7 +24,6 @@ export default function VaultUnlockBanner(props: Props) {
     } else {
       setIsConfirming(true)
       await withdrawFromVaults({
-        fee: hardcodedFee,
         accountId: accountId,
         vaults: props.vaults,
       })

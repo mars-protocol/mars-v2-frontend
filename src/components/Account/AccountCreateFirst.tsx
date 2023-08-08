@@ -6,7 +6,6 @@ import FullOverlayContent from 'components/FullOverlayContent'
 import WalletSelect from 'components/Wallet/WalletSelect'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
-import { hardcodedFee } from 'utils/constants'
 import { getPage, getRoute } from 'utils/route'
 
 export default function AccountCreateFirst() {
@@ -22,7 +21,7 @@ export default function AccountCreateFirst() {
 
   const handleClick = useCallback(async () => {
     setIsCreating(true)
-    const accountId = await createAccount({ fee: hardcodedFee })
+    const accountId = await createAccount()
     setIsCreating(false)
     if (accountId) {
       navigate(getRoute(getPage(pathname), address, accountId))

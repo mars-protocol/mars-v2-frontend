@@ -27,7 +27,6 @@ export interface VaultBorrowingsProps {
   secondaryAsset: Asset
   vault: Vault
   depositActions: Action[]
-  depositFee: StdFee
   onChangeBorrowings: (borrowings: BNCoin[]) => void
 }
 
@@ -144,7 +143,6 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   async function onConfirm() {
     setIsConfirming(true)
     const isSuccess = await depositIntoVault({
-      fee: props.depositFee,
       accountId: props.updatedAccount.id,
       actions: props.depositActions,
     })

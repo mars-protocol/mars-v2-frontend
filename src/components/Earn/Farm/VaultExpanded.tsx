@@ -8,7 +8,6 @@ import { AccountArrowDown, LockLocked, LockUnlocked, Plus } from 'components/Ico
 import { Tooltip } from 'components/Tooltip'
 import useStore from 'store'
 import { VaultStatus } from 'types/enums/vault'
-import { hardcodedFee } from 'utils/constants'
 
 interface Props {
   row: Row<Vault | DepositedVault>
@@ -40,7 +39,6 @@ export default function VaultExpanded(props: Props) {
     const vaults = [props.row.original as DepositedVault]
     setIsConfirming(true)
     await withdrawFromVaults({
-      fee: hardcodedFee,
       accountId: accountId,
       vaults,
     })
