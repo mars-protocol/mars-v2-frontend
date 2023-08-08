@@ -8,9 +8,8 @@ import Button from 'components/Button'
 import Card from 'components/Card'
 import { ArrowCircledTopRight, ArrowDownLine, ArrowUpLine, TrashBin } from 'components/Icons'
 import Radio from 'components/Radio'
-import SwitchWithLabel from 'components/SwitchWithLabel'
+import SwitchAutoLend from 'components/Switch/SwitchAutoLend'
 import Text from 'components/Text'
-import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
@@ -32,7 +31,6 @@ export default function AccountList(props: Props) {
   const { pathname } = useLocation()
   const { address } = useParams()
   const { data: prices } = usePrices()
-  const { autoLendEnabledAccountIds, toggleAutoLend } = useAutoLendEnabledAccountIds()
   const account = useCurrentAccount()
   const accountId = account?.id
 
@@ -52,11 +50,10 @@ export default function AccountList(props: Props) {
   if (!props.accounts?.length) return null
 
   return (
-    <div className='flex w-full flex-wrap p-4'>
+    <div className='flex flex-wrap w-full p-4'>
       {props.accounts.map((account) => {
         const positionBalance = calculateAccountValue('deposits', account, prices)
         const isActive = accountId === account.id
-        const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
 
         return (
           <div key={account.id} id={`account-${account.id}`} className='w-full pt-4'>
@@ -81,7 +78,7 @@ export default function AccountList(props: Props) {
             >
               {isActive ? (
                 <>
-                  <div className='w-full border border-transparent border-b-white/20 p-4'>
+                  <div className='w-full p-4 border border-transparent border-b-white/20'>
                     <AccountStats account={account} />
                   </div>
                   <div className='grid grid-flow-row grid-cols-2 gap-4 p-4'>
@@ -122,15 +119,10 @@ export default function AccountList(props: Props) {
                       text='Transfer'
                       onClick={() => {}}
                     />
-                    <div className='col-span-2 border border-transparent border-t-white/10 pt-4'>
-                      <SwitchWithLabel
-                        name='isLending'
-                        label='Lend assets to earn yield'
-                        value={isAutoLendEnabled}
-                        onChange={() => toggleAutoLend(account.id)}
-                        tooltip={`Fund your account and lend assets effortlessly! By lending, you'll earn attractive interest (APY) without impacting your LTV. It's a win-win situation - don't miss out on this easy opportunity to grow your holdings!`}
-                      />
-                    </div>
+                    <SwitchAutoLend
+                      className='col-span-2 pt-4 border border-transparent border-t-white/10'
+                      accountId={account.id}
+                    />
                   </div>
                 </>
               ) : (
