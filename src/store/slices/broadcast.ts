@@ -80,7 +80,6 @@ export default function createBroadcastSlice(
 
       throw 'Simulation failed'
     } catch (ex) {
-      console.error('Can not estimate the fee:', ex)
       return defaultFee
     }
   }
