@@ -130,6 +130,7 @@ export default function AccountFund() {
                 max={BN(balance)}
                 balances={walletBalances}
                 maxText='Max'
+                disabled={isFunding}
               />
             </div>
           )
@@ -142,6 +143,7 @@ export default function AccountFund() {
           rightIcon={<Plus />}
           iconClassName='w-3'
           onClick={handleSelectAssetsClick}
+          disabled={isFunding}
         />
         <SwitchAutoLend
           className='pt-4 mt-4 border border-transparent border-t-white/10'

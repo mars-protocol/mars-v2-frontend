@@ -185,21 +185,25 @@ function BorrowModal(props: Props) {
               maxText='Max'
               disabled={isConfirming}
             />
-            <Divider className='my-6' />
-            <div className='flex flex-wrap flex-1'>
-              <Text className='w-full mb-1'>Receive funds to Wallet</Text>
-              <Text size='xs' className='text-white/50'>
-                Your borrowed funds will directly go to your wallet
-              </Text>
-            </div>
-            <div className='flex flex-wrap items-center justify-end'>
-              <Switch
-                name='borrow-to-wallet'
-                checked={borrowToWallet}
-                onChange={setBorrowToWallet}
-                disabled={isConfirming}
-              />
-            </div>
+            {!isRepay && (
+              <>
+                <Divider className='my-6' />
+                <div className='flex flex-wrap flex-1'>
+                  <Text className='w-full mb-1'>Receive funds to Wallet</Text>
+                  <Text size='xs' className='text-white/50'>
+                    Your borrowed funds will directly go to your wallet
+                  </Text>
+                </div>
+                <div className='flex flex-wrap items-center justify-end'>
+                  <Switch
+                    name='borrow-to-wallet'
+                    checked={borrowToWallet}
+                    onChange={setBorrowToWallet}
+                    disabled={isConfirming}
+                  />
+                </div>
+              </>
+            )}
           </div>
           <Button
             onClick={onConfirmClick}
