@@ -16,24 +16,36 @@ export const calculateAccountBalanceValue = (
   const depositsValue = calculateAccountValue('deposits', account, prices)
   const lendsValue = calculateAccountValue('lends', account, prices)
   const debtsValue = calculateAccountValue('debts', account, prices)
+  const vaultsValue = calculateAccountValue('vaults', account, prices)
 
-  return depositsValue.plus(lendsValue).minus(debtsValue)
+  return depositsValue.plus(lendsValue).plus(vaultsValue).minus(debtsValue)
 }
 
 export const getAccountPositionValues = (account: Account | AccountChange, prices: BNCoin[]) => {
   const deposits = calculateAccountValue('deposits', account, prices)
   const lends = calculateAccountValue('lends', account, prices)
   const debts = calculateAccountValue('debts', account, prices)
-
-  return [deposits, lends, debts]
+  const vaults = calculateAccountValue('vaults', account, prices)
+  return [deposits, lends, debts, vaults]
 }
 
 export const calculateAccountValue = (
-  type: 'deposits' | 'lends' | 'debts',
+  type: 'deposits' | 'lends' | 'debts' | 'vaults',
   account: Account | AccountChange,
   prices: BNCoin[],
 ): BigNumber => {
   if (!account[type]) return BN_ZERO
+
+  if (type === 'vaults') {
+    return (
+      account.vaults?.reduce(
+        (acc, vaultPosition) =>
+          acc.plus(vaultPosition.values.primary).plus(vaultPosition.values.secondary),
+        BN_ZERO,
+      ) || BN_ZERO
+    ).shiftedBy(-6)
+  }
+
   return account[type]?.reduce((acc, position) => {
     const asset = getAssetByDenom(position.denom)
     if (!asset) return acc
@@ -63,6 +75,11 @@ export const calculateAccountBorrowRate = (
   prices: BNCoin[],
 ): BigNumber => {
   return BN_ZERO
+}
+
+export function calculateAccountLeverage(account: Account, prices: BNCoin[]) {
+  const [deposits, lends, debts, vaults] = getAccountPositionValues(account, prices)
+  return debts.dividedBy(deposits.plus(lends).plus(vaults)).plus(1)
 }
 
 export function getAmount(denom: string, coins: Coin[]): BigNumber {

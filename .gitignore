@@ -44,3 +44,6 @@ next-env.d.ts
 .env.local.mainnet
 .env.production
 .env
+
+# IDE
+.idea
