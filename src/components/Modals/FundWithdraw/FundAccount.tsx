@@ -13,8 +13,8 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { getAssetByDenom, getBaseAsset } from 'utils/assets'
-import { BN } from 'utils/helpers'
 import { defaultFee } from 'utils/constants'
+import { BN } from 'utils/helpers'
 
 interface Props {
   account: Account
@@ -52,7 +52,7 @@ export default function FundAccount(props: Props) {
       coins: fundingAssets,
     })
     setIsFunding(false)
-    if (result) useStore.setState({ focusComponent: null, walletAssetsModal: null })
+    if (result) useStore.setState({ fundAndWithdrawModal: null, walletAssetsModal: null })
   }, [fundingAssets, accountId, setIsFunding, deposit])
 
   const handleSelectAssetsClick = useCallback(() => {
@@ -115,6 +115,7 @@ export default function FundAccount(props: Props) {
               max={BN(balance)}
               balances={walletBalances}
               maxText='Max'
+              disabled={isFunding}
               className='w-full mb-4'
             />
           )
@@ -126,6 +127,7 @@ export default function FundAccount(props: Props) {
           rightIcon={<Plus />}
           iconClassName='w-3'
           onClick={handleSelectAssetsClick}
+          disabled={isFunding}
         />
         <SwitchAutoLend
           className='pt-4 mt-4 border border-transparent border-t-white/10'
