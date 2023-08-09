@@ -39,7 +39,7 @@ function AccountDetails(props: Props) {
     <div
       data-testid='account-details'
       className={classNames(
-        'hidden first-line:w-16 rounded-base border border-white/20 bg-white/5 backdrop-blur-sticky',
+        'hidden w-16 rounded-base border border-white/20 bg-white/5 backdrop-blur-sticky',
         'md:block',
       )}
     >
