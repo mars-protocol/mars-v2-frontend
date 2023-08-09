@@ -14,7 +14,7 @@ import WalletBridges from 'components/Wallet/WalletBridges'
 import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
-import { hardcodedFee } from 'utils/constants'
+import { defaultFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
 import { isNumber } from 'utils/parsers'
 import { getPage, getRoute } from 'utils/route'
@@ -45,14 +45,14 @@ export default function AccountMenuContent(props: Props) {
   const checkHasFunds = useCallback(() => {
     return (
       transactionFeeCoinBalance &&
-      BN(transactionFeeCoinBalance.amount).isGreaterThan(hardcodedFee.amount[0].amount)
+      BN(transactionFeeCoinBalance.amount).isGreaterThan(defaultFee.amount[0].amount)
     )
   }, [transactionFeeCoinBalance])
 
   const performCreateAccount = useCallback(async () => {
     setShowMenu(true)
     setIsCreating(true)
-    const accountId = await createAccount({ fee: hardcodedFee })
+    const accountId = await createAccount()
     setIsCreating(false)
 
     if (accountId) {

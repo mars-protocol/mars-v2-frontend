@@ -17,7 +17,7 @@ import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { getBaseAsset } from 'utils/assets'
-import { hardcodedFee } from 'utils/constants'
+import { defaultFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
 
 const currentChainId = ENV.CHAIN_ID
@@ -64,7 +64,7 @@ export default function WalletBridges() {
       return
     }
 
-    if (BN(baseBalance).isGreaterThanOrEqualTo(hardcodedFee.amount[0].amount) && !isLoading)
+    if (BN(baseBalance).isGreaterThanOrEqualTo(defaultFee.amount[0].amount) && !isLoading)
       setHasFunds(true)
   }, [baseBalance, isLoading, hasFunds, setHasFunds])
 

@@ -11,7 +11,6 @@ import Text from 'components/Text'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getAssetByDenom } from 'utils/assets'
-import { hardcodedFee } from 'utils/constants'
 import { demagnify } from 'utils/formatters'
 
 export default function WithdrawFromVaultsModal() {
@@ -29,7 +28,6 @@ export default function WithdrawFromVaultsModal() {
     if (!accountId || !modal) return
     setIsConfirming(true)
     await withdrawFromVaults({
-      fee: hardcodedFee,
       accountId: accountId,
       vaults: modal,
     })

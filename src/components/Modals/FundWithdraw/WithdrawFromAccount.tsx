@@ -15,7 +15,6 @@ import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { hardcodedFee } from 'utils/constants'
 
 interface Props {
   account: Account
@@ -64,7 +63,6 @@ export default function WithdrawFromAccount(props: Props) {
   async function onConfirm() {
     setIsConfirming(true)
     const result = await withdraw({
-      fee: hardcodedFee,
       accountId: account.id,
       coins: [BNCoin.fromDenomAndBigNumber(currentAsset.denom, amount)],
       borrow: debtAmount.isZero()

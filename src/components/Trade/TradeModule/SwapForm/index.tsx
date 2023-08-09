@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import Divider from 'components/Divider'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
@@ -8,8 +8,8 @@ import useCurrentAccount from 'hooks/useCurrentAccount'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
-import { byDenom, byTokenDenom } from 'utils/array'
-import { hardcodedFee } from 'utils/constants'
+import { byDenom } from 'utils/array'
+import { defaultFee } from 'utils/constants'
 import RangeInput from 'components/RangeInput'
 import { asyncThrottle, BN } from 'utils/helpers'
 import AssetAmountInput from 'components/Trade/TradeModule/SwapForm/AssetAmountInput'
@@ -42,6 +42,7 @@ export default function SwapForm(props: Props) {
   const [maxBuyableAmountEstimation, setMaxBuyableAmountEstimation] = useState(BN_ZERO)
   const [selectedOrderType, setSelectedOrderType] = useState<AvailableOrderType>('Market')
   const [isConfirming, setIsConfirming] = useState(false)
+  const [estimatedFee, setEstimatedFee] = useState(defaultFee)
 
   const throttledEstimateExactIn = useMemo(() => asyncThrottle(estimateExactIn, 250), [])
 
@@ -124,41 +125,50 @@ export default function SwapForm(props: Props) {
     sellAssetAmount,
   ])
 
+  const swapTx = useMemo(() => {
+    const borrowCoin = sellAssetAmount.isGreaterThan(marginThreshold)
+      ? BNCoin.fromDenomAndBigNumber(sellAsset.denom, sellAssetAmount.minus(marginThreshold))
+      : undefined
+
+    return swap({
+      accountId: account?.id || '',
+      coinIn: BNCoin.fromDenomAndBigNumber(sellAsset.denom, sellAssetAmount.integerValue()),
+      borrow: borrowCoin,
+      denomOut: buyAsset.denom,
+      slippage,
+    })
+  }, [
+    account?.id,
+    buyAsset.denom,
+    marginThreshold,
+    sellAsset.denom,
+    sellAssetAmount,
+    slippage,
+    swap,
+  ])
+
   useEffect(() => {
     setBuyAssetAmount(BN_ZERO)
     setSellAssetAmount(BN_ZERO)
   }, [buyAsset.denom, sellAsset.denom])
 
+  useEffect(() => {
+    swapTx.estimateFee().then(setEstimatedFee)
+  }, [swapTx])
+
   const handleBuyClick = useCallback(async () => {
     if (account?.id) {
       setIsConfirming(true)
-      const borrowCoin = sellAssetAmount.isGreaterThan(marginThreshold)
-        ? BNCoin.fromDenomAndBigNumber(sellAsset.denom, sellAssetAmount.minus(marginThreshold))
-        : undefined
 
-      const isSucceeded = await swap({
-        fee: hardcodedFee,
-        accountId: account.id,
-        coinIn: BNCoin.fromDenomAndBigNumber(sellAsset.denom, sellAssetAmount.integerValue()),
-        borrow: borrowCoin,
-        denomOut: buyAsset.denom,
-        slippage,
-      })
+      const isSucceeded = await swapTx.execute()
+
       if (isSucceeded) {
         setSellAssetAmount(BN_ZERO)
         setBuyAssetAmount(BN_ZERO)
       }
       setIsConfirming(false)
     }
-  }, [
-    account?.id,
-    buyAsset.denom,
-    sellAsset.denom,
-    sellAssetAmount,
-    slippage,
-    swap,
-    marginThreshold,
-  ])
+  }, [account?.id, swapTx])
 
   return (
     <>
@@ -220,6 +230,7 @@ export default function SwapForm(props: Props) {
             ? sellAssetAmount.minus(marginThreshold)
             : BN_ZERO
         }
+        estimatedFee={estimatedFee}
       />
     </>
   )

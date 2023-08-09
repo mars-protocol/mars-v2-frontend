@@ -10,7 +10,7 @@ import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { getBaseAsset } from 'utils/assets'
-import { hardcodedFee } from 'utils/constants'
+import { defaultFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
 
@@ -41,7 +41,7 @@ function Content() {
   useEffect(() => {
     if (
       accounts.length !== 0 &&
-      BN(baseBalance).isGreaterThanOrEqualTo(hardcodedFee.amount[0].amount)
+      BN(baseBalance).isGreaterThanOrEqualTo(defaultFee.amount[0].amount)
     ) {
       navigate(getRoute(getPage(pathname), address, accounts[0].id))
       useStore.setState({ accounts: accounts, balances: walletBalances, focusComponent: null })
@@ -49,7 +49,7 @@ function Content() {
   }, [accounts, baseBalance, navigate, pathname, address, walletBalances])
 
   if (isLoading) return <FetchLoading />
-  if (BN(baseBalance).isLessThan(hardcodedFee.amount[0].amount)) return <WalletBridges />
+  if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) return <WalletBridges />
   if (accounts.length === 0) return <AccountCreateFirst />
   return null
 }
