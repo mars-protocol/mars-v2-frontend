@@ -15,18 +15,18 @@ interface Props {
 
 export default function FullOverlayContent(props: Props) {
   return (
-    <div className={classNames('min-h-[600px] w-100', props.className)}>
+    <div className={classNames('min-h-[600px] w-100 max-w-full', props.className)}>
       <Text size='4xl' className='w-full pb-2 text-center'>
         {props.title}
       </Text>
-      <Text size='sm' className='min-h-14 w-full text-center text-white/60'>
+      <Text size='sm' className='w-full text-center min-h-14 text-white/60'>
         {props.copy}
       </Text>
       {props.children && (
-        <div className='relative flex w-full flex-wrap justify-center pt-4'>{props.children}</div>
+        <div className='relative flex flex-wrap justify-center w-full pt-4'>{props.children}</div>
       )}
       {props.button && (
-        <div className='flex w-full justify-center'>
+        <div className='flex justify-center w-full'>
           <Button {...props.button} />
         </div>
       )}

@@ -1,3 +1,5 @@
+import classNames from 'classnames'
+
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { Gauge } from 'components/Gauge'
@@ -36,9 +38,12 @@ function AccountDetails(props: Props) {
   return (
     <div
       data-testid='account-details'
-      className='w-16 rounded-base border border-white/20 bg-white/5 backdrop-blur-sticky'
+      className={classNames(
+        'hidden first-line:w-16 rounded-base border border-white/20 bg-white/5 backdrop-blur-sticky',
+        'md:block',
+      )}
     >
-      <div className='flex w-full flex-wrap justify-center py-4'>
+      <div className='flex flex-wrap justify-center w-full py-4'>
         <Gauge tooltip='Health Factor' percentage={healthFactor} icon={<Heart />} />
         <Text size='2xs' className='mb-0.5 mt-1 w-full text-center text-white/50'>
           Health
@@ -50,11 +55,11 @@ function AccountDetails(props: Props) {
           animate
         />
       </div>
-      <div className='w-full border border-x-0 border-white/20 py-4'>
+      <div className='w-full py-4 border border-x-0 border-white/20'>
         <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
           Balance
         </Text>
-        <DisplayCurrency coin={coin} className='w-full truncate text-center text-2xs ' />
+        <DisplayCurrency coin={coin} className='w-full text-center truncate text-2xs ' />
       </div>
     </div>
   )
