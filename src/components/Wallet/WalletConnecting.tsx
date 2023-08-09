@@ -30,22 +30,19 @@ const mapErrorMessages = (providerId: string, errorMessage: string) => {
 }
 
 export default function WalletConnecting(props: Props) {
-  const { extensionProviders, recentWallet, connect, simulate, sign, broadcast } = useShuttle()
+  const { recentWallet, connect, simulate, sign, broadcast } = useShuttle()
   const [isConnecting, setIsConnecting] = useToggle()
   const providerId = props.providerId ?? recentWallet?.providerId
   const isAutoConnect = props.autoConnect
+  const client = useStore((s) => s.client)
 
   const handleConnect = useCallback(
     (extensionProviderId: string) => {
       async function handleConnectAsync() {
+        if (client || isConnecting) return
         setIsConnecting(true)
-
         try {
-          const provider = extensionProviders.find((p) => p.id === providerId)
-          const response =
-            isAutoConnect && provider
-              ? await provider.connect({ chainId: currentChainId })
-              : await connect({ extensionProviderId, chainId: currentChainId })
+          const response = await connect({ extensionProviderId, chainId: currentChainId })
           const cosmClient = await CosmWasmClient.connect(response.network.rpc)
           const walletClient: WalletClient = {
             broadcast,
@@ -61,8 +58,11 @@ export default function WalletConnecting(props: Props) {
             focusComponent: { component: <WalletFetchBalancesAndAccounts /> },
           })
         } catch (error) {
+          setIsConnecting(false)
+
+          if (isAutoConnect) return
+
           if (error instanceof Error) {
-            setIsConnecting(false)
             useStore.setState({
               client: undefined,
               address: undefined,
@@ -81,19 +81,15 @@ export default function WalletConnecting(props: Props) {
           }
         }
       }
-
-      handleConnectAsync()
+      setTimeout(
+        () => {
+          if (isConnecting) return
+          handleConnectAsync()
+        },
+        isAutoConnect ? 1000 : 0,
+      )
     },
-    [
-      broadcast,
-      connect,
-      extensionProviders,
-      isAutoConnect,
-      providerId,
-      setIsConnecting,
-      sign,
-      simulate,
-    ],
+    [broadcast, connect, client, isAutoConnect, isConnecting, setIsConnecting, sign, simulate],
   )
 
   useEffect(() => {

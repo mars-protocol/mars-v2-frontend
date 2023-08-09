@@ -12,10 +12,10 @@ import {
   ExecuteMsg as CreditManagerExecuteMsg,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
+import { defaultFee } from 'utils/constants'
 import { formatAmountWithSymbol } from 'utils/formatters'
 import getTokenOutFromSwapResponse from 'utils/getTokenOutFromSwapResponse'
 import { BN } from 'utils/helpers'
-import { defaultFee } from 'utils/constants'
 
 function generateExecutionMessage(
   sender: string | undefined = '',
@@ -56,8 +56,11 @@ export default function createBroadcastSlice(
       })
     }
   }
-
   const getEstimatedFee = async (messages: MsgExecuteContract[]) => {
+    if (!get().client) {
+      console.warn('Client not initialized')
+      return defaultFee
+    }
     try {
       const simulateResult = await get().client?.simulate({
         messages,
