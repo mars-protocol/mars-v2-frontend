@@ -3,7 +3,7 @@ import { useCallback, useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import AccountCreateFirst from 'components/Account/AccountCreateFirst'
-import AccountFundFirst from 'components/Account/AccountFund'
+import AccountFund from 'components/Account/AccountFund'
 import AccountList from 'components/Account/AccountList'
 import Button from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
@@ -57,18 +57,25 @@ export default function AccountMenuContent(props: Props) {
 
     if (accountId) {
       navigate(getRoute(getPage(pathname), address, accountId))
-      useStore.setState({ focusComponent: <AccountFundFirst /> })
+      useStore.setState({
+        focusComponent: {
+          component: <AccountFund />,
+          onClose: () => {
+            useStore.setState({ getStartedModal: true })
+          },
+        },
+      })
     }
   }, [createAccount, navigate, pathname, address, setShowMenu, setIsCreating])
 
   const handleCreateAccountClick = useCallback(() => {
     setShowMenu(!showMenu)
     if (!checkHasFunds() && !hasCreditAccounts) {
-      useStore.setState({ focusComponent: <WalletBridges /> })
+      useStore.setState({ focusComponent: { component: <WalletBridges /> } })
       return
     }
     if (!hasCreditAccounts) {
-      useStore.setState({ focusComponent: <AccountCreateFirst /> })
+      useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
       return
     }
   }, [checkHasFunds, hasCreditAccounts, setShowMenu, showMenu])
@@ -127,7 +134,7 @@ export default function AccountMenuContent(props: Props) {
           )}
         >
           {isAccountSelected && isLoadingAccount && (
-            <div className='flex h-full w-full items-center justify-center p-4'>
+            <div className='flex items-center justify-center w-full h-full p-4'>
               <CircularProgress size={40} />
             </div>
           )}

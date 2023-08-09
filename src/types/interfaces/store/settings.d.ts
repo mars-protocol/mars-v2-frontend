@@ -4,4 +4,5 @@ interface Settings {
   preferredAsset: string
   lendAssets: boolean
   slippage: number
+  tutorial: boolean
 }

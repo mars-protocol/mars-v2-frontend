@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { useCallback, useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
-import AccountFundFirst from 'components/Account/AccountFund'
+import AccountFund from 'components/Account/AccountFund'
 import AccountStats from 'components/Account/AccountStats'
 import Button from 'components/Button'
 import Card from 'components/Card'
@@ -89,7 +89,14 @@ export default function AccountList(props: Props) {
                       leftIcon={<ArrowUpLine />}
                       onClick={() => {
                         if (positionBalance.isLessThanOrEqualTo(0)) {
-                          useStore.setState({ focusComponent: <AccountFundFirst /> })
+                          useStore.setState({
+                            focusComponent: {
+                              component: <AccountFund />,
+                              onClose: () => {
+                                useStore.setState({ getStartedModal: true })
+                              },
+                            },
+                          })
                           return
                         }
                         useStore.setState({ fundAndWithdrawModal: 'fund' })

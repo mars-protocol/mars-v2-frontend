@@ -10,6 +10,7 @@ import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
 import NumberInput from 'components/NumberInput'
 import Select from 'components/Select'
 import Text from 'components/Text'
+import { TextLink } from 'components/TextLink'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import {
   DISPLAY_CURRENCY_KEY,
@@ -17,6 +18,7 @@ import {
   PREFERRED_ASSET_KEY,
   REDUCE_MOTION_KEY,
   SLIPPAGE_KEY,
+  TUTORIAL_KEY,
 } from 'constants/localStore'
 import { BN_ZERO } from 'constants/math'
 import useAlertDialog from 'hooks/useAlertDialog'
@@ -47,6 +49,7 @@ export default function SettingsModal() {
     REDUCE_MOTION_KEY,
     DEFAULT_SETTINGS.reduceMotion,
   )
+  const [tutorial, setTutorial] = useLocalStorage<boolean>(TUTORIAL_KEY, DEFAULT_SETTINGS.tutorial)
   const [lendAssets, setLendAssets] = useLocalStorage<boolean>(
     LEND_ASSETS_KEY,
     DEFAULT_SETTINGS.lendAssets,
@@ -59,7 +62,7 @@ export default function SettingsModal() {
         label: (
           <div className='flex w-full gap-2' key={index}>
             {asset.denom === 'usd' ? (
-              <Text size='sm' className='h-4 w-4 text-center leading-4'>
+              <Text size='sm' className='w-4 h-4 leading-4 text-center'>
                 {asset.symbol}
               </Text>
             ) : (
@@ -103,6 +106,13 @@ export default function SettingsModal() {
       setLendAssets(value)
     },
     [setLendAssets],
+  )
+
+  const handleTutorial = useCallback(
+    (value: boolean) => {
+      setTutorial(value)
+    },
+    [setTutorial],
   )
 
   const handlePreferredAsset = useCallback(
@@ -177,7 +187,7 @@ export default function SettingsModal() {
   const showResetModal = useCallback(() => {
     showResetDialog({
       icon: (
-        <div className='flex h-full w-full p-3'>
+        <div className='flex w-full h-full p-3'>
           <ArrowCircle />
         </div>
       ),
@@ -219,7 +229,7 @@ export default function SettingsModal() {
         name='lendAssets'
         value={lendAssets}
         label='Lend assets in credit account'
-        decsription='By turning this on you will automatically lend out all the assets you deposit into your credit account to earn yield.'
+        description='By turning this on you will automatically lend out all the assets you deposit into your credit account to earn yield.'
         withStatus
       />
       <SettingsSwitch
@@ -227,13 +237,36 @@ export default function SettingsModal() {
         name='reduceMotion'
         value={reduceMotion}
         label='Reduce Motion'
-        decsription='Turns off all animations inside the dApp. Turning animations off can increase the
+        description='Turns off all animations inside the dApp. Turning animations off can increase the
         overall performance on lower-end hardware.'
+        withStatus
+      />
+      <SettingsSwitch
+        onChange={handleTutorial}
+        name='tutoruial'
+        value={tutorial}
+        label='Tutorial'
+        description={
+          <Text size='xs' className='text-white/50'>
+            Show tutorial elements in the UI. Like the{' '}
+            <TextLink
+              title='Get Started Modal'
+              color='secondary'
+              textSize='extraSmall'
+              className='leading-4 text-white hover:underline'
+              onClick={() => {
+                useStore.setState({ settingsModal: false, getStartedModal: true })
+              }}
+            >
+              Get Started Modal.
+            </TextLink>
+          </Text>
+        }
         withStatus
       />
       <SettingsOptions
         label='Preferred asset'
-        decsription='By selecting a different asset you always have the trading pair or asset selector
+        description='By selecting a different asset you always have the trading pair or asset selector
         pre-filled with this asset.'
         className='pb-6'
       >
@@ -242,7 +275,7 @@ export default function SettingsModal() {
           options={preferredAssetsOptions}
           defaultValue={preferredAsset}
           onChange={handlePreferredAsset}
-          className='relative w-60 rounded-base border border-white/10'
+          className='relative border w-60 rounded-base border-white/10'
           containerClassName='justify-end mb-4'
         />
         <Select
@@ -250,13 +283,13 @@ export default function SettingsModal() {
           options={displayCurrenciesOptions}
           defaultValue={displayCurrency}
           onChange={handleDisplayCurrency}
-          className='relative w-60 rounded-base border border-white/10'
+          className='relative border w-60 rounded-base border-white/10'
           containerClassName='justify-end'
         />
       </SettingsOptions>
       <SettingsOptions
         label='Slippage tolerance'
-        decsription='Some vaults require token swaps. The transaction will fail if the price of the swap asset changes unfavourably by more than this percentage'
+        description='Some vaults require token swaps. The transaction will fail if the price of the swap asset changes unfavourably by more than this percentage'
         className='pb-21'
       >
         {slippages.map((value) => (
@@ -298,7 +331,7 @@ export default function SettingsModal() {
           %
         </Button>
       </SettingsOptions>
-      <div className='flex w-full justify-between'>
+      <div className='flex justify-between w-full'>
         <Button
           color='quaternary'
           variant='transparent'

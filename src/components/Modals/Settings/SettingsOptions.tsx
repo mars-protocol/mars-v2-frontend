@@ -5,7 +5,7 @@ import Text from 'components/Text'
 
 interface Props {
   label: string
-  decsription: string
+  description: string
   className?: string
   children: ReactNode | ReactNode[]
 }
@@ -23,7 +23,7 @@ export default function SettingsOptions(props: Props) {
           {props.label}
         </Text>
         <Text size='xs' className='text-white/50'>
-          {props.decsription}
+          {props.description}
         </Text>
       </div>
       <div className='flex w-60 flex-wrap justify-end'>{props.children}</div>

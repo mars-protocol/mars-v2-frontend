@@ -33,8 +33,8 @@ function Bridge({ name, url, image }: Bridge) {
       }}
     >
       <Image className='rounded-full' width={20} height={20} src={image} alt={name} />
-      <Text className='ml-2 flex-1 text-left'>{name}</Text>
-      <ChevronRight className='h-4 w-4' />
+      <Text className='flex-1 ml-2 text-left'>{name}</Text>
+      <ChevronRight className='w-4 h-4' />
     </Button>
   )
 }
@@ -55,12 +55,12 @@ export default function WalletBridges() {
   const handleClick = useCallback(() => {
     if (!currentWallet) return
     disconnectWallet(currentWallet)
-    useStore.setState({ focusComponent: <WalletSelect /> })
+    useStore.setState({ focusComponent: { component: <WalletSelect /> } })
   }, [currentWallet, disconnectWallet])
 
   useEffect(() => {
     if (hasFunds) {
-      useStore.setState({ focusComponent: <WalletFetchBalancesAndAccounts /> })
+      useStore.setState({ focusComponent: { component: <WalletFetchBalancesAndAccounts /> } })
       return
     }
 
@@ -82,13 +82,13 @@ export default function WalletBridges() {
       }}
       docs='wallet'
     >
-      <div className='flex w-full flex-wrap gap-3'>
+      <div className='flex flex-wrap w-full gap-3'>
         {BRIDGES.map((bridge) => (
           <Bridge key={bridge.name} {...bridge} />
         ))}
       </div>
       {IS_TESTNET && (
-        <div className='flex w-full flex-wrap gap-3'>
+        <div className='flex flex-wrap w-full gap-3'>
           <Text size='lg' className='mt-4 text-white'>
             Need Testnet Funds?
           </Text>
