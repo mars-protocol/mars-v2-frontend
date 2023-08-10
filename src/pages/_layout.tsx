@@ -15,12 +15,18 @@ import useStore from 'store'
 interface Props {
   focusComponent: FocusComponent | null
   children: React.ReactNode
+  fullWidth: boolean
 }
 
 function MainContent(props: Props) {
   if (isMobile) return <MobileSupport />
 
-  if (!props.focusComponent) return props.children
+  if (!props.focusComponent)
+    return (
+      <div className={classNames('mx-auto h-full w-full', !props.fullWidth && 'max-w-content')}>
+        {props.children}
+      </div>
+    )
 
   return (
     <div className='relative flex items-center justify-center w-full h-full'>
@@ -41,17 +47,20 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <DesktopHeader />
       <main
         className={classNames(
-          'lg:min-h-[calc(100vh-89px)]',
+          'lg:min-h-[calc(100vh-65px)]',
           'lg:mt-[65px]',
-          'h-full min-h-[900px] gap-6 p-6 w-full',
-          focusComponent
-            ? 'flex items-center justify-center'
+          'min-h-screen gap-6 p-6 w-full',
+          focusComponent || isMobile
+            ? 'flex justify-center'
             : 'grid grid-cols-[auto_min-content] place-items-start',
+          focusComponent && 'items-center',
+          isMobile && 'items-start',
         )}
       >
-        <div className={classNames('mx-auto h-full w-full', !isFullWidth && 'max-w-content')}>
-          <MainContent focusComponent={focusComponent}>{children}</MainContent>
-        </div>
+        <MainContent focusComponent={focusComponent} fullWidth={isFullWidth}>
+          {children}
+        </MainContent>
+
         <AccountDetails />
       </main>
       <Footer />

@@ -1,24 +1,32 @@
-import FullOverlayContent from 'components/FullOverlayContent'
+import Spline from '@splinetool/react-spline'
+
+import Button from 'components/Button'
 import Text from 'components/Text'
 
 export default function MobileSupport() {
   return (
-    <FullOverlayContent
-      className='relative mx-auto'
-      title='Mobile not supported!'
-      copy={`Mars v2.0 doesn't support mobile devices yet. Please come back later or use a desktop browser.`}
-      button={{
-        className: 'w-full mt-8',
-        text: 'Go to Mars v1.0',
-        color: 'tertiary',
-        onClick: () => window.open('https://app.marsprotocol.io', '_self'),
-        size: 'lg',
-      }}
-    >
-      <Text>
-        If you can&apos;t wait to use the Mars Protocol, you can access Mars v1.0 as it comes with
-        mobile support
-      </Text>
-    </FullOverlayContent>
+    <section className='relative flex items-start justify-center'>
+      <div className='w-[312px] flex flex-wrap justify-center'>
+        <Spline
+          style={{ height: '340px', width: '300px' }}
+          scene='https://prod.spline.design/kk5kXiGlaUIbEL0M/scene.splinecode'
+        />
+        <Text size='4xl' className='w-[288px] pb-2 text-center'>
+          Mars is not available on mobile
+        </Text>
+        <Text className='w-full text-center text-white/60'>
+          Mars doesn&apos;t support mobile devices yet, please visit us later or use a desktop
+        </Text>
+        <div className='flex justify-center w-full'>
+          <Button
+            className='w-2/3 mt-4'
+            text='Visit Mars v1.0'
+            color='tertiary'
+            size='lg'
+            onClick={() => window.open('https://app.marsprotocol.io', '_self')}
+          />
+        </div>
+      </div>
+    </section>
   )
 }
