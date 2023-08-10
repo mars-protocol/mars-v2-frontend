@@ -6,7 +6,7 @@ import AccountDetails from 'components/Account/AccountDetails'
 import Background from 'components/Background'
 import Footer from 'components/Footer'
 import DesktopHeader from 'components/Header/DesktopHeader'
-import MobileSupport from 'components/MobileSupport'
+import MobileNotSupported from 'components/MobileNotSupported'
 import ModalsContainer from 'components/Modals/ModalsContainer'
 import PageMetadata from 'components/PageMetadata'
 import Toaster from 'components/Toaster'
@@ -18,8 +18,8 @@ interface Props {
   fullWidth: boolean
 }
 
-function MainContent(props: Props) {
-  if (isMobile) return <MobileSupport />
+function PageContainer(props: Props) {
+  if (isMobile) return <MobileNotSupported />
 
   if (!props.focusComponent)
     return (
@@ -57,9 +57,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           isMobile && 'items-start',
         )}
       >
-        <MainContent focusComponent={focusComponent} fullWidth={isFullWidth}>
+        <PageContainer focusComponent={focusComponent} fullWidth={isFullWidth}>
           {children}
-        </MainContent>
+        </PageContainer>
 
         <AccountDetails />
       </main>

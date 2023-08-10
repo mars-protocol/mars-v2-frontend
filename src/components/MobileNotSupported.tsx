@@ -3,7 +3,7 @@ import Spline from '@splinetool/react-spline'
 import Button from 'components/Button'
 import Text from 'components/Text'
 
-export default function MobileSupport() {
+export default function MobileNotSupported() {
   return (
     <section className='relative flex items-start justify-center'>
       <div className='w-[312px] flex flex-wrap justify-center'>
