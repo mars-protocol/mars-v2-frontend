@@ -5,7 +5,7 @@ import { BN } from 'utils/helpers'
 import { SECONDS_IN_A_YEAR } from 'utils/constants'
 import getPrice from 'api/prices/getPrice'
 import { ASSETS } from 'constants/assets'
-import { byDenom, bySymbol } from 'utils/array'
+import { byDenom } from 'utils/array'
 
 export default async function calculateAssetIncentivesApy(
   denom: string,
@@ -22,7 +22,7 @@ export default async function calculateAssetIncentivesApy(
     ])
 
     const assetDecimals = (ASSETS.find(byDenom(denom)) as Asset).decimals
-    const baseDecimals = (ASSETS.find(bySymbol(assetIncentive.denom)) as Asset).decimals
+    const baseDecimals = (ASSETS.find(byDenom(assetIncentive.denom)) as Asset).decimals
 
     const marketLiquidityValue = BN(marketLiquidityAmount)
       .shiftedBy(-assetDecimals)
@@ -39,7 +39,6 @@ export default async function calculateAssetIncentivesApy(
 
     return incentivesApy
   } catch (ex) {
-    console.error(ex)
     return null
   }
 }

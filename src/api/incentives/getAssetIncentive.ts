@@ -12,9 +12,9 @@ export default async function getAssetIncentive(denom: string): Promise<ActiveEm
       throw 'Asset has no active incentive emission.'
     }
 
+    // TODO: handle multiple emissions https://delphilabs.atlassian.net/browse/MP-3237
     return activeEmissions[0]
   } catch (ex) {
-    console.error(ex)
     return null
   }
 }

@@ -22,40 +22,45 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { formatPercent, formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
-function getDebtAmount(modal: BorrowModal | null) {
-  return BN((modal?.marketData as BorrowMarketTableData)?.debt ?? 0).toString()
+function getDebtAmount(modal: BorrowModal) {
+  return BN((modal.marketData as BorrowMarketTableData)?.debt ?? 0).toString()
 }
 
-function getAssetLogo(modal: BorrowModal | null) {
-  if (!modal?.asset) return null
+function getAssetLogo(modal: BorrowModal) {
+  if (!modal.asset) return null
   return <AssetImage asset={modal.asset} size={24} />
 }
 
 interface Props {
   account: Account
+  modal: BorrowModal
 }
 
 export default function BorrowModalController() {
   const account = useCurrentAccount()
-  if (!account) return null
+  const modal = useStore((s) => s.borrowModal)
 
-  return <BorrowModal account={account} />
+  if (account && modal) {
+    return <BorrowModal account={account} modal={modal} />
+  }
+
+  return null
 }
 
 function BorrowModal(props: Props) {
+  const { modal, account } = props
   const [percentage, setPercentage] = useState(0)
   const [amount, setAmount] = useState(BN_ZERO)
   const [change, setChange] = useState<AccountChange | undefined>()
   const [isConfirming, setIsConfirming] = useToggle()
   const [borrowToWallet, setBorrowToWallet] = useToggle()
-  const modal = useStore((s) => s.borrowModal)
   const borrow = useStore((s) => s.borrow)
   const repay = useStore((s) => s.repay)
-  const asset = modal?.asset ?? ASSETS[0]
-  const isRepay = modal?.isRepay ?? false
+  const asset = modal.asset ?? ASSETS[0]
+  const isRepay = modal.isRepay ?? false
   const [max, setMax] = useState(BN_ZERO)
 
-  const { computeMaxBorrowAmount } = useHealthComputer(props.account)
+  const { computeMaxBorrowAmount } = useHealthComputer(account)
 
   function resetState() {
     setAmount(BN_ZERO)
@@ -64,18 +69,18 @@ function BorrowModal(props: Props) {
   }
 
   async function onConfirmClick() {
-    if (!modal?.asset) return
+    if (!modal.asset) return
     setIsConfirming(true)
     let result
     if (isRepay) {
       result = await repay({
-        accountId: props.account.id,
+        accountId: account.id,
         coin: BNCoin.fromDenomAndBigNumber(modal.asset.denom, amount),
         accountBalance: percentage === 100,
       })
     } else {
       result = await borrow({
-        accountId: props.account.id,
+        accountId: account.id,
         coin: { denom: modal.asset.denom, amount: amount.toString() },
         borrowToWallet,
       })
@@ -93,12 +98,12 @@ function BorrowModal(props: Props) {
     useStore.setState({ borrowModal: null })
   }
 
-  const liquidityAmountString = formatValue(modal?.marketData?.liquidity?.amount.toString() || 0, {
+  const liquidityAmountString = formatValue(modal.marketData?.liquidity?.amount.toString() || 0, {
     abbreviated: true,
     decimals: 6,
   })
 
-  const liquidityValueString = formatValue(modal?.marketData?.liquidity?.value.toString() || 0, {
+  const liquidityValueString = formatValue(modal.marketData?.liquidity?.value.toString() || 0, {
     abbreviated: true,
     decimals: 6,
   })
@@ -114,11 +119,11 @@ function BorrowModal(props: Props) {
       borrowToWallet ? 'wallet' : 'deposit',
     )
 
-    setMax(BigNumber.min(maxBorrowAmount, modal?.marketData?.liquidity?.amount || 0))
+    setMax(BigNumber.min(maxBorrowAmount, modal.marketData?.liquidity?.amount || 0))
   }, [isRepay, modal, asset.denom, computeMaxBorrowAmount, borrowToWallet])
 
   useEffect(() => {
-    if (!modal?.asset) return
+    if (!modal.asset) return
 
     setChange({
       deposits: [
@@ -134,7 +139,7 @@ function BorrowModal(props: Props) {
         },
       ],
     })
-  }, [amount, modal?.asset, props.account, isRepay])
+  }, [amount, modal.asset, account, isRepay])
 
   if (!modal) return null
   return (
@@ -153,7 +158,7 @@ function BorrowModal(props: Props) {
     >
       <div className='flex gap-3 px-6 py-4 border-b border-white/5 gradient-header'>
         <TitleAndSubCell
-          title={formatPercent(modal?.marketData.borrowRate || '0')}
+          title={formatPercent(modal.marketData.borrowRate || '0')}
           sub={'Borrow rate'}
         />
         <div className='h-100 w-[1px] bg-white/10'></div>
@@ -214,7 +219,7 @@ function BorrowModal(props: Props) {
             rightIcon={<ArrowRight />}
           />
         </Card>
-        <AccountSummary account={props.account} change={change} />
+        <AccountSummary account={account} change={change} />
       </div>
     </Modal>
   )
