@@ -20,7 +20,7 @@ export default function MobileSupport() {
         <div className='flex justify-center w-full'>
           <Button
             className='w-2/3 mt-4'
-            text='Visit Mars v1.0'
+            text='Visit Mars v1'
             color='tertiary'
             size='lg'
             onClick={() => window.open('https://app.marsprotocol.io', '_self')}
