@@ -1,4 +1,4 @@
-import { Market as RedBankMarket } from 'types/generated/mars-mock-red-bank/MarsMockRedBank.types'
+import { Market as RedBankMarket } from 'types/generated/mars-red-bank/MarsRedBank.types'
 
 export function resolveMarketResponses(responses: RedBankMarket[]): Market[] {
   return responses.map(resolveMarketResponse)

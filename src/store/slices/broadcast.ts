@@ -313,7 +313,7 @@ export default function createBroadcastSlice(
           account_id: options.accountId,
           actions: [
             {
-              lend: options.coin.toCoin(),
+              lend: options.coin.toActionCoin(options.isMax),
             },
           ],
         },

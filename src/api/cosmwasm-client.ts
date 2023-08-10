@@ -5,7 +5,7 @@ import { MarsAccountNftQueryClient } from 'types/generated/mars-account-nft/Mars
 import { MarsCreditManagerQueryClient } from 'types/generated/mars-credit-manager/MarsCreditManager.client'
 import { MarsIncentivesQueryClient } from 'types/generated/mars-incentives/MarsIncentives.client'
 import { MarsOracleOsmosisQueryClient } from 'types/generated/mars-oracle-osmosis/MarsOracleOsmosis.client'
-import { MarsMockRedBankQueryClient } from 'types/generated/mars-mock-red-bank/MarsMockRedBank.client'
+import { MarsRedBankQueryClient } from 'types/generated/mars-red-bank/MarsRedBank.client'
 import { MarsMockVaultQueryClient } from 'types/generated/mars-mock-vault/MarsMockVault.client'
 import { MarsParamsQueryClient } from 'types/generated/mars-params/MarsParams.client'
 import { MarsSwapperOsmosisQueryClient } from 'types/generated/mars-swapper-osmosis/MarsSwapperOsmosis.client'
@@ -14,7 +14,7 @@ let _cosmWasmClient: CosmWasmClient
 let _accountNftQueryClient: MarsAccountNftQueryClient
 let _creditManagerQueryClient: MarsCreditManagerQueryClient
 let _oracleQueryClient: MarsOracleOsmosisQueryClient
-let _redBankQueryClient: MarsMockRedBankQueryClient
+let _redBankQueryClient: MarsRedBankQueryClient
 let _paramsQueryClient: MarsParamsQueryClient
 let _incentivesQueryClient: MarsIncentivesQueryClient
 let _swapperOsmosisClient: MarsSwapperOsmosisQueryClient
@@ -90,7 +90,7 @@ const getRedBankQueryClient = async () => {
   try {
     if (!_redBankQueryClient) {
       const client = await getClient()
-      _redBankQueryClient = new MarsMockRedBankQueryClient(client, ENV.ADDRESS_RED_BANK)
+      _redBankQueryClient = new MarsRedBankQueryClient(client, ENV.ADDRESS_RED_BANK)
     }
 
     return _redBankQueryClient

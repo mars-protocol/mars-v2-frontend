@@ -4,7 +4,6 @@ import getUnderlyingLiquidityAmount from 'api/markets/getMarketUnderlyingLiquidi
 import { BN } from 'utils/helpers'
 import { SECONDS_IN_A_YEAR } from 'utils/constants'
 import getPrice from 'api/prices/getPrice'
-import getMarsPrice from 'api/prices/getMarsPrice'
 import { ASSETS } from 'constants/assets'
 import { byDenom, bySymbol } from 'utils/array'
 
@@ -16,24 +15,24 @@ export default async function calculateAssetIncentivesApy(
 
     if (!assetIncentive) return null
 
-    const [marketLiquidityAmount, assetPrice, marsPrice] = await Promise.all([
+    const [marketLiquidityAmount, assetPrice, baseAssetPrice] = await Promise.all([
       getUnderlyingLiquidityAmount(market),
       getPrice(denom),
-      getMarsPrice(),
+      getPrice(assetIncentive.denom),
     ])
 
     const assetDecimals = (ASSETS.find(byDenom(denom)) as Asset).decimals
-    const marsDecimals = (ASSETS.find(bySymbol('MARS')) as Asset).decimals
+    const baseDecimals = (ASSETS.find(bySymbol(assetIncentive.denom)) as Asset).decimals
 
     const marketLiquidityValue = BN(marketLiquidityAmount)
       .shiftedBy(-assetDecimals)
       .multipliedBy(assetPrice)
 
     const marketReturns = BN(market.liquidityRate).multipliedBy(marketLiquidityValue)
-    const annualEmission = BN(assetIncentive.emission_per_second)
+    const annualEmission = BN(assetIncentive.emission_rate)
       .multipliedBy(SECONDS_IN_A_YEAR)
-      .shiftedBy(-marsDecimals)
-      .multipliedBy(marsPrice)
+      .shiftedBy(-baseDecimals)
+      .multipliedBy(baseAssetPrice)
 
     const totalAnnualReturnsValue = annualEmission.plus(marketReturns)
     const incentivesApy = totalAnnualReturnsValue.dividedBy(marketLiquidityValue).multipliedBy(100)

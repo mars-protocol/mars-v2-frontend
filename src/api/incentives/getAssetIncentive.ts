@@ -1,25 +1,18 @@
-import moment from 'moment'
-
 import { getIncentivesQueryClient } from 'api/cosmwasm-client'
-import { AssetIncentiveResponse } from 'types/generated/mars-incentives/MarsIncentives.types'
+import { ActiveEmission } from 'types/generated/mars-incentives/MarsIncentives.types'
 
-export default async function getAssetIncentive(
-  denom: string,
-): Promise<AssetIncentiveResponse | null> {
+export default async function getAssetIncentive(denom: string): Promise<ActiveEmission | null> {
   try {
     const client = await getIncentivesQueryClient()
-    const assetIncentive = await client.assetIncentive({
-      denom,
+    const activeEmissions = await client.activeEmissions({
+      collateralDenom: denom,
     })
 
-    const { duration, start_time } = assetIncentive
-    const isValid = moment(start_time + duration).isBefore(moment.now())
-
-    if (!isValid) {
-      throw 'Asset incentive duration is end.'
+    if (activeEmissions.length === 0) {
+      throw 'Asset has no active incentive emission.'
     }
 
-    return assetIncentive
+    return activeEmissions[0]
   } catch (ex) {
     console.error(ex)
     return null

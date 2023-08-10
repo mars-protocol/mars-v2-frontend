@@ -5,32 +5,31 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
+import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { Coin, StdFee } from '@cosmjs/amino'
-
 import {
-  ArrayOfMarket,
-  ArrayOfUncollateralizedLoanLimitResponse,
-  ArrayOfUserCollateralResponse,
-  ArrayOfUserDebtResponse,
-  ConfigResponse,
-  CreateOrUpdateConfig,
   Decimal,
-  ExecuteMsg,
-  InitOrUpdateAssetParams,
   InstantiateMsg,
-  InterestRateModel,
-  Market,
+  CreateOrUpdateConfig,
+  ExecuteMsg,
   OwnerUpdate,
-  QueryMsg,
   Uint128,
+  InitOrUpdateAssetParams,
+  InterestRateModel,
+  QueryMsg,
+  ConfigResponse,
+  Market,
+  ArrayOfMarket,
   UncollateralizedLoanLimitResponse,
+  ArrayOfUncollateralizedLoanLimitResponse,
   UserCollateralResponse,
+  ArrayOfUserCollateralResponse,
   UserDebtResponse,
+  ArrayOfUserDebtResponse,
   UserHealthStatus,
   UserPositionResponse,
-} from './MarsMockRedBank.types'
-export interface MarsMockRedBankReadOnlyInterface {
+} from './MarsRedBank.types'
+export interface MarsRedBankReadOnlyInterface {
   contractAddress: string
   config: () => Promise<ConfigResponse>
   market: ({ denom }: { denom: string }) => Promise<Market>
@@ -101,7 +100,7 @@ export interface MarsMockRedBankReadOnlyInterface {
     denom: string
   }) => Promise<Uint128>
 }
-export class MarsMockRedBankQueryClient implements MarsMockRedBankReadOnlyInterface {
+export class MarsRedBankQueryClient implements MarsRedBankReadOnlyInterface {
   client: CosmWasmClient
   contractAddress: string
 
@@ -307,16 +306,10 @@ export class MarsMockRedBankQueryClient implements MarsMockRedBankReadOnlyInterf
     })
   }
 }
-export interface MarsMockRedBankInterface extends MarsMockRedBankReadOnlyInterface {
+export interface MarsRedBankInterface extends MarsRedBankReadOnlyInterface {
   contractAddress: string
   sender: string
   updateOwner: (
-    ownerUpdate: OwnerUpdate,
-    fee?: number | StdFee | 'auto',
-    memo?: string,
-    _funds?: Coin[],
-  ) => Promise<ExecuteResult>
-  updateEmergencyOwner: (
     ownerUpdate: OwnerUpdate,
     fee?: number | StdFee | 'auto',
     memo?: string,
@@ -445,10 +438,7 @@ export interface MarsMockRedBankInterface extends MarsMockRedBankReadOnlyInterfa
     _funds?: Coin[],
   ) => Promise<ExecuteResult>
 }
-export class MarsMockRedBankClient
-  extends MarsMockRedBankQueryClient
-  implements MarsMockRedBankInterface
-{
+export class MarsRedBankClient extends MarsRedBankQueryClient implements MarsRedBankInterface {
   client: SigningCosmWasmClient
   sender: string
   contractAddress: string
@@ -459,7 +449,6 @@ export class MarsMockRedBankClient
     this.sender = sender
     this.contractAddress = contractAddress
     this.updateOwner = this.updateOwner.bind(this)
-    this.updateEmergencyOwner = this.updateEmergencyOwner.bind(this)
     this.updateConfig = this.updateConfig.bind(this)
     this.initAsset = this.initAsset.bind(this)
     this.updateAsset = this.updateAsset.bind(this)
@@ -483,23 +472,6 @@ export class MarsMockRedBankClient
       this.contractAddress,
       {
         update_owner: ownerUpdate,
-      },
-      fee,
-      memo,
-      _funds,
-    )
-  }
-  updateEmergencyOwner = async (
-    ownerUpdate: OwnerUpdate,
-    fee: number | StdFee | 'auto' = 'auto',
-    memo?: string,
-    _funds?: Coin[],
-  ): Promise<ExecuteResult> => {
-    return await this.client.execute(
-      this.sender,
-      this.contractAddress,
-      {
-        update_emergency_owner: ownerUpdate,
       },
       fee,
       memo,

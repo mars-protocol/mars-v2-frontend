@@ -5,15 +5,18 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
+export type Decimal = string
 export interface InstantiateMsg {
-  [k: string]: unknown
+  config: CreateOrUpdateConfig
+  owner: string
+}
+export interface CreateOrUpdateConfig {
+  address_provider?: string | null
+  close_factor?: Decimal | null
 }
 export type ExecuteMsg =
   | {
       update_owner: OwnerUpdate
-    }
-  | {
-      update_emergency_owner: OwnerUpdate
     }
   | {
       update_config: {
@@ -85,12 +88,13 @@ export type OwnerUpdate =
   | 'clear_proposed'
   | 'accept_proposed'
   | 'abolish_owner_role'
-export type Decimal = string
+  | {
+      set_emergency_owner: {
+        emergency_owner: string
+      }
+    }
+  | 'clear_emergency_owner'
 export type Uint128 = string
-export interface CreateOrUpdateConfig {
-  address_provider?: string | null
-  close_factor?: Decimal | null
-}
 export interface InitOrUpdateAssetParams {
   borrow_enabled?: boolean | null
   deposit_cap?: Uint128 | null
@@ -195,7 +199,6 @@ export interface ConfigResponse {
   close_factor: Decimal
   emergency_owner?: string | null
   owner?: string | null
-  proposed_new_emergency_owner?: string | null
   proposed_new_owner?: string | null
 }
 export interface Market {

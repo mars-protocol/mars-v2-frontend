@@ -3,7 +3,7 @@ import { getRedBankQueryClient } from 'api/cosmwasm-client'
 import iterateContractQuery from 'utils/iterateContractQuery'
 import { byDenom } from 'utils/array'
 import { resolveMarketResponse } from 'utils/resolvers'
-import { Market as RedBankMarket } from 'types/generated/mars-mock-red-bank/MarsMockRedBank.types'
+import { Market as RedBankMarket } from 'types/generated/mars-red-bank/MarsRedBank.types'
 
 export default async function getMarkets(): Promise<Market[]> {
   try {
