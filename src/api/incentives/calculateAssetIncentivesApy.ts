@@ -39,6 +39,7 @@ export default async function calculateAssetIncentivesApy(
 
     return incentivesApy
   } catch (ex) {
+    console.error(ex)
     return null
   }
 }
