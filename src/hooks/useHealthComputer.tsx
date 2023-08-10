@@ -148,7 +148,8 @@ export default function useHealthComputer(account?: Account) {
       if (!healthComputer) return
       setHealth(Number((await compute_health_js(healthComputer)).max_ltv_health_factor) || 0)
     }
-    computeHealthWasm()
+    // TODO: Health computer throwing error. Should be aligned with new contracts: https://delphilabs.atlassian.net/browse/MP-3238
+    // computeHealthWasm()
   }, [healthComputer])
 
   const computeMaxBorrowAmount = useCallback(

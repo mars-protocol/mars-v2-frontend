@@ -1,12 +1,17 @@
 import { resolveMarketResponse } from 'utils/resolvers'
-import { getRedBankQueryClient } from 'api/cosmwasm-client'
+import { getParamsQueryClient, getRedBankQueryClient } from 'api/cosmwasm-client'
 
 export default async function getMarket(denom: string): Promise<Market> {
   try {
-    const client = await getRedBankQueryClient()
-    const market = await client.market({ denom })
+    const redbankClient = await getRedBankQueryClient()
+    const paramsClient = await getParamsQueryClient()
 
-    return resolveMarketResponse(market)
+    const [market, assetParams] = await Promise.all([
+      redbankClient.market({ denom }),
+      paramsClient.assetParams({ denom }),
+    ])
+
+    return resolveMarketResponse(market, assetParams)
   } catch (ex) {
     throw ex
   }

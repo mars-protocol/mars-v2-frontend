@@ -1,20 +1,20 @@
-import { Market as RedBankMarket } from 'types/generated/mars-mock-red-bank/MarsMockRedBank.types'
+import { Market as RedBankMarket } from 'types/generated/mars-red-bank/MarsRedBank.types'
+import { AssetParamsBaseForAddr as AssetParams } from 'types/generated/mars-params/MarsParams.types'
 
-export function resolveMarketResponses(responses: RedBankMarket[]): Market[] {
-  return responses.map(resolveMarketResponse)
-}
-
-export function resolveMarketResponse(response: RedBankMarket): Market {
+export function resolveMarketResponse(
+  marketResponse: RedBankMarket,
+  assetParamsResponse: AssetParams,
+): Market {
   return {
-    denom: response.denom,
-    borrowRate: Number(response.borrow_rate),
-    debtTotalScaled: response.debt_total_scaled,
-    collateralTotalScaled: response.collateral_total_scaled,
-    depositEnabled: response.deposit_enabled,
-    borrowEnabled: response.borrow_enabled,
-    depositCap: response.deposit_cap,
-    maxLtv: Number(response.max_loan_to_value),
-    liquidityRate: Number(response.liquidity_rate),
-    liquidationThreshold: Number(response.liquidation_threshold),
+    denom: marketResponse.denom,
+    borrowRate: Number(marketResponse.borrow_rate),
+    debtTotalScaled: marketResponse.debt_total_scaled,
+    collateralTotalScaled: marketResponse.collateral_total_scaled,
+    depositEnabled: assetParamsResponse.red_bank.deposit_enabled,
+    borrowEnabled: assetParamsResponse.red_bank.borrow_enabled,
+    depositCap: assetParamsResponse.deposit_cap,
+    maxLtv: Number(assetParamsResponse.max_loan_to_value),
+    liquidityRate: Number(marketResponse.liquidity_rate),
+    liquidationThreshold: Number(assetParamsResponse.liquidation_threshold),
   }
 }

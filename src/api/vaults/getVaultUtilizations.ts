@@ -1,6 +1,6 @@
 import { getCreditManagerQueryClient } from 'api/cosmwasm-client'
 import { ENV } from 'constants/env'
-import { VaultUtilizationResponse } from 'types/generated/mars-mock-credit-manager/MarsMockCreditManager.types'
+import { VaultUtilizationResponse } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { VaultConfigBaseForString } from 'types/generated/mars-params/MarsParams.types'
 
 export const getVaultUtilizations = async (
