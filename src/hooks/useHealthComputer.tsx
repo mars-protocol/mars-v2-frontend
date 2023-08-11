@@ -85,19 +85,7 @@ export default function useHealthComputer(account?: Account) {
     () =>
       assetParams.reduce(
         (prev, curr) => {
-          const params: AssetParamsBaseForAddr = {
-            ...curr,
-            // The following overrides are required as testnet is 'broken' and new contracts are not updated yet
-            // These overrides are not used by the healthcomputer internally, so they're not important anyways.
-            protocol_liquidation_fee: '1',
-            liquidation_bonus: {
-              max_lb: '1',
-              min_lb: '1',
-              slope: '1',
-              starting_lb: '1',
-            },
-          }
-          prev[params.denom] = params
+          prev[curr.denom] = curr
 
           return prev
         },
@@ -144,12 +132,8 @@ export default function useHealthComputer(account?: Account) {
   }, [priceData, denomsData, vaultConfigsData, vaultPositionValues, positions])
 
   useEffect(() => {
-    async function computeHealthWasm() {
-      if (!healthComputer) return
-      setHealth(Number((await compute_health_js(healthComputer)).max_ltv_health_factor) || 0)
-    }
-    // TODO: Health computer throwing error. Should be aligned with new contracts: https://delphilabs.atlassian.net/browse/MP-3238
-    // computeHealthWasm()
+    if (!healthComputer) return
+    setHealth(Number(compute_health_js(healthComputer).max_ltv_health_factor) || 0)
   }, [healthComputer])
 
   const computeMaxBorrowAmount = useCallback(
