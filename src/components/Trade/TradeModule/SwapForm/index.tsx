@@ -176,8 +176,8 @@ export default function SwapForm(props: Props) {
       denom: sellAsset.denom,
       amount: removeDepositAmount.toString(),
     })
-    const debtCoin = new BNCoin({ denom: sellAsset.denom, amount: addDebtAmount.toString() })
-    const addCoin = new BNCoin({ denom: buyAsset.denom, amount: buyAssetAmount.toString() })
+    const debtCoin = BNCoin.fromDenomAndBigNumber(sellAsset.denom, addDebtAmount)
+    const addCoin = BNCoin.fromDenomAndBigNumber(buyAsset.denom, buyAssetAmount)
 
     debouncedUpdateAccount(removeCoin, addCoin, debtCoin)
   }, [
