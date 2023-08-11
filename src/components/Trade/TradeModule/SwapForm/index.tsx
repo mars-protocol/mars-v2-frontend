@@ -172,10 +172,7 @@ export default function SwapForm(props: Props) {
     const addDebtAmount = sellAssetAmount.isGreaterThan(marginThreshold)
       ? sellAssetAmount.minus(marginThreshold)
       : BN_ZERO
-    const removeCoin = new BNCoin({
-      denom: sellAsset.denom,
-      amount: removeDepositAmount.toString(),
-    })
+    const removeCoin = BNCoin.fromDenomAndBigNumber(sellAsset.denom removeDepositAmount)
     const debtCoin = BNCoin.fromDenomAndBigNumber(sellAsset.denom, addDebtAmount)
     const addCoin = BNCoin.fromDenomAndBigNumber(buyAsset.denom, buyAssetAmount)
 
