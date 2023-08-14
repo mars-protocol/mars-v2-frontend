@@ -1,4 +1,5 @@
 import { VerticalThreeLine } from 'components/Icons'
+import { formatValue } from 'utils/formatters'
 
 interface Props {
   value: number
@@ -46,7 +47,7 @@ function InputOverlay({ max, value, marginThreshold }: Props) {
         className={className.inputThumbOverlay}
         style={{ left: `calc(${thumbPosPercent}% - ${thumbPadRight}px)` }}
       >
-        {value}
+        {formatValue(value, { maxDecimals: 2, abbreviated: true, rounded: true })}
       </div>
     </>
   )

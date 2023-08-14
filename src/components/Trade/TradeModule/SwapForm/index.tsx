@@ -150,11 +150,6 @@ export default function SwapForm(props: Props) {
     swap,
   ])
 
-  useEffect(() => {
-    setBuyAssetAmount(BN_ZERO)
-    setSellAssetAmount(BN_ZERO)
-  }, [buyAsset.denom, sellAsset.denom])
-
   const debouncedUpdateAccount = useMemo(
     () =>
       debounce((removeCoin: BNCoin, addCoin: BNCoin, debtCoin: BNCoin) => {
@@ -164,6 +159,14 @@ export default function SwapForm(props: Props) {
       }, 1000),
     [removeDeposits, addDeposits, addDebt],
   )
+
+  useEffect(() => {
+    setBuyAssetAmount(BN_ZERO)
+    setSellAssetAmount(BN_ZERO)
+    removeDeposits([])
+    addDeposits([])
+    addDebt([])
+  }, [buyAsset.denom, sellAsset.denom, removeDeposits, addDeposits, addDebt])
 
   useEffect(() => {
     const removeDepositAmount = sellAssetAmount.isGreaterThanOrEqualTo(marginThreshold)
