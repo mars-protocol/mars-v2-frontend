@@ -4,6 +4,7 @@ import BorrowPage from 'pages/BorrowPage'
 import CouncilPage from 'pages/CouncilPage'
 import FarmPage from 'pages/FarmPage'
 import LendPage from 'pages/LendPage'
+import MobilePage from 'pages/MobilePage'
 import PortfolioPage from 'pages/PortfolioPage'
 import TradePage from 'pages/TradePage'
 import Layout from 'pages/_layout'
@@ -24,6 +25,7 @@ export default function Routes() {
         <Route path='/borrow' element={<BorrowPage />} />
         <Route path='/portfolio' element={<PortfolioPage />} />
         <Route path='/council' element={<CouncilPage />} />
+        <Route path='/mobile' element={<MobilePage />} />
         <Route path='/' element={<TradePage />} />
         <Route path='/wallets/:address'>
           <Route path='accounts/:accountId'>

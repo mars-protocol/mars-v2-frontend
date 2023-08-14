@@ -6,7 +6,6 @@ import AccountDetails from 'components/Account/AccountDetails'
 import Background from 'components/Background'
 import Footer from 'components/Footer'
 import DesktopHeader from 'components/Header/DesktopHeader'
-import MobileNotSupported from 'components/MobileNotSupported'
 import ModalsContainer from 'components/Modals/ModalsContainer'
 import PageMetadata from 'components/PageMetadata'
 import Toaster from 'components/Toaster'
@@ -19,7 +18,7 @@ interface Props {
 }
 
 function PageContainer(props: Props) {
-  if (isMobile) return <MobileNotSupported />
+  if (isMobile) return props.children
 
   if (!props.focusComponent)
     return (
