@@ -29,7 +29,7 @@ export const TESTNET_VAULTS_META_DATA: VaultMetaData[] = [
     name: 'OSMO-USDC.axl',
     lockup: {
       duration: 7,
-      timeframe: 'day',
+      timeframe: 'days',
     },
     provider: 'Apollo',
     denoms: {
