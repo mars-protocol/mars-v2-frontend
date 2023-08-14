@@ -11,7 +11,7 @@ import { getAssetByDenom } from 'utils/assets'
 import { demagnify, formatPercent } from 'utils/formatters'
 
 export default function useAssetTableColumns() {
-  const columns = React.useMemo<ColumnDef<AssetTableRow>[]>(
+  return React.useMemo<ColumnDef<AssetTableRow>[]>(
     () => [
       {
         header: 'Asset',
@@ -38,20 +38,17 @@ export default function useAssetTableColumns() {
         header: (data) => {
           const tableData = data.table.options.data as AssetTableRow[]
           const assetData = tableData.length && (tableData[0].asset as BorrowAsset)
-          if (assetData && assetData.borrowRate) return 'Borrow Rate'
+          if (assetData && assetData.borrowRate !== null) return 'Borrow Rate'
           return 'Balance'
         },
         cell: ({ row }) => {
           const asset = row.original.asset as BorrowAsset
           const balance = row.original.balance
-          if (asset.borrowRate)
+          if (asset.borrowRate !== null)
             return (
-              <div className='flex items-center'>
-                <Text size='sm' className='mb-0.5 text-white'>
-                  {formatPercent(asset.borrowRate ?? 0)}
-                </Text>
-                <Text size='xs'>APY</Text>
-              </div>
+              <Text size='sm' className='mb-0.5 text-white'>
+                {formatPercent(asset.borrowRate ?? 0)}
+              </Text>
             )
           if (!balance) return null
           const coin = new BNCoin({ denom: row.original.asset.denom, amount: balance })
@@ -70,6 +67,4 @@ export default function useAssetTableColumns() {
     ],
     [],
   )
-
-  return columns
 }
