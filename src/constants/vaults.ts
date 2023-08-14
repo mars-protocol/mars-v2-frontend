@@ -5,8 +5,8 @@ export const VAULT_DEPOSIT_BUFFER = 0.999
 
 export const TESTNET_VAULTS_META_DATA: VaultMetaData[] = [
   {
-    address: 'osmo1q40xvrzpldwq5he4ftsf7zm2jf80tj373qaven38yqrvhex8r9rs8n94kv',
-    name: 'OSMO-USDC.n',
+    address: 'osmo1m45ap4rq4m2mfjkcqu9ks9mxmyx2hvx0cdca9sjmrg46q7lghzqqhxxup5',
+    name: 'OSMO-ATOM',
     lockup: {
       duration: 1,
       timeframe: 'day',
@@ -14,19 +14,19 @@ export const TESTNET_VAULTS_META_DATA: VaultMetaData[] = [
     provider: 'Apollo',
     denoms: {
       primary: 'uosmo',
-      secondary: 'ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4',
-      lp: 'gamm/pool/6',
-      vault: 'factory/osmo1q40xvrzpldwq5he4ftsf7zm2jf80tj373qaven38yqrvhex8r9rs8n94kv/cwVTT',
+      secondary: 'ibc/A8C2D23A1E6F95DA4E48BA349667E322BD7A6C996D8A4AAE8BA72E190F3D1477',
+      lp: 'gamm/pool/12',
+      vault: 'factory/osmo1m45ap4rq4m2mfjkcqu9ks9mxmyx2hvx0cdca9sjmrg46q7lghzqqhxxup5/cwVTT',
     },
     symbols: {
       primary: 'OSMO',
-      secondary: 'USDC.n',
+      secondary: 'ATOM',
     },
     isFeatured: true,
   },
   {
     address: 'osmo14lu7m4ganxs20258dazafrjfaulmfxruq9n0r0th90gs46jk3tuqwfkqwn',
-    name: 'OSMO-USDC.n',
+    name: 'OSMO-USDC.axl',
     lockup: {
       duration: 7,
       timeframe: 'days',
@@ -34,33 +34,13 @@ export const TESTNET_VAULTS_META_DATA: VaultMetaData[] = [
     provider: 'Apollo',
     denoms: {
       primary: 'uosmo',
-      secondary: 'ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4',
+      secondary: 'ibc/6F34E1BD664C36CE49ACC28E60D62559A5F96C4F9A6CCE4FC5A67B2852E24CFE',
       lp: 'gamm/pool/6',
       vault: 'factory/osmo14lu7m4ganxs20258dazafrjfaulmfxruq9n0r0th90gs46jk3tuqwfkqwn/cwVTT',
     },
     symbols: {
       primary: 'OSMO',
-      secondary: 'USDC.n',
-    },
-    isFeatured: true,
-  },
-  {
-    address: 'osmo1fmq9hw224fgz8lk48wyd0gfg028kvvzggt6c3zvnaqkw23x68cws5nd5em',
-    name: 'OSMO-USDC.n',
-    lockup: {
-      duration: 14,
-      timeframe: 'days',
-    },
-    provider: 'Apollo',
-    denoms: {
-      primary: 'uosmo',
-      secondary: 'ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4',
-      lp: 'gamm/pool/6',
-      vault: 'factory/osmo1fmq9hw224fgz8lk48wyd0gfg028kvvzggt6c3zvnaqkw23x68cws5nd5em/cwVTT',
-    },
-    symbols: {
-      primary: 'OSMO',
-      secondary: 'USDC.n',
+      secondary: 'USDC.axl',
     },
     isFeatured: true,
   },
