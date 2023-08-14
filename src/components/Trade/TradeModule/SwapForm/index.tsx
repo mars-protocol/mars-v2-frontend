@@ -1,3 +1,4 @@
+import debounce from 'lodash.debounce'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import Divider from 'components/Divider'
@@ -21,6 +22,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import estimateExactIn from 'api/swap/estimateExactIn'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useMarketBorrowings from 'hooks/useMarketBorrowings'
+import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 
 interface Props {
   buyAsset: Asset
@@ -45,6 +47,7 @@ export default function SwapForm(props: Props) {
   const [estimatedFee, setEstimatedFee] = useState(defaultFee)
 
   const throttledEstimateExactIn = useMemo(() => asyncThrottle(estimateExactIn, 250), [])
+  const { removeDeposits, addDeposits, addDebt } = useUpdatedAccount(account)
 
   const borrowAsset = useMemo(
     () => borrowAssets.find(byDenom(sellAsset.denom)),
@@ -151,6 +154,37 @@ export default function SwapForm(props: Props) {
     setBuyAssetAmount(BN_ZERO)
     setSellAssetAmount(BN_ZERO)
   }, [buyAsset.denom, sellAsset.denom])
+
+  const debouncedUpdateAccount = useMemo(
+    () =>
+      debounce((removeCoin: BNCoin, addCoin: BNCoin, debtCoin: BNCoin) => {
+        removeDeposits([removeCoin])
+        addDeposits([addCoin])
+        if (debtCoin.amount.isGreaterThan(BN_ZERO)) addDebt([debtCoin])
+      }, 1000),
+    [removeDeposits, addDeposits, addDebt],
+  )
+
+  useEffect(() => {
+    const removeDepositAmount = sellAssetAmount.isGreaterThanOrEqualTo(marginThreshold)
+      ? marginThreshold
+      : sellAssetAmount
+    const addDebtAmount = sellAssetAmount.isGreaterThan(marginThreshold)
+      ? sellAssetAmount.minus(marginThreshold)
+      : BN_ZERO
+    const removeCoin = BNCoin.fromDenomAndBigNumber(sellAsset.denom, removeDepositAmount)
+    const debtCoin = BNCoin.fromDenomAndBigNumber(sellAsset.denom, addDebtAmount)
+    const addCoin = BNCoin.fromDenomAndBigNumber(buyAsset.denom, buyAssetAmount)
+
+    debouncedUpdateAccount(removeCoin, addCoin, debtCoin)
+  }, [
+    sellAssetAmount,
+    buyAssetAmount,
+    marginThreshold,
+    buyAsset.denom,
+    sellAsset.denom,
+    debouncedUpdateAccount,
+  ])
 
   useEffect(() => {
     swapTx.estimateFee().then(setEstimatedFee)

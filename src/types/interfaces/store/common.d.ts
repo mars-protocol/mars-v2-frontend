@@ -5,6 +5,7 @@ interface CommonSlice {
   client?: WalletClient
   isOpen: boolean
   selectedAccount: string | null
+  updatedAccount?: Account
   focusComponent: FocusComponent | null
 }
 
