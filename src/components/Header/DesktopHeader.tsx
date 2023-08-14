@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import { isDesktop } from 'react-device-detect'
 
 import AccountMenu from 'components/Account/AccountMenu'
 import EscButton from 'components/Button/EscButton'
@@ -23,6 +24,8 @@ export default function DesktopHeader() {
     if (focusComponent && focusComponent.onClose) focusComponent.onClose()
     useStore.setState({ focusComponent: null })
   }
+
+  if (!isDesktop) return null
 
   return (
     <header
