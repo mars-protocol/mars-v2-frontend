@@ -18,6 +18,8 @@
     "@cosmjs/cosmwasm-stargate": "^0.31.0",
     "@delphi-labs/shuttle-react": "^3.7.0",
     "@keplr-wallet/cosmos": "^0.12.20",
+    "@splinetool/react-spline": "^2.2.1",
+    "@splinetool/runtime": "^0.9.414",
     "@sentry/nextjs": "^7.61.1",
     "@tanstack/react-table": "^8.9.3",
     "@tippyjs/react": "^4.2.6",

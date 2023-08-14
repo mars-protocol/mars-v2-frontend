@@ -21,7 +21,7 @@ export default function SettingsSwitch(props: Props) {
         props.className,
       )}
     >
-      <div className='flex flex-wrap w-100'>
+      <div className='flex flex-wrap max-w-full w-100'>
         <Text size='lg' className='w-full mb-2'>
           {props.label}
         </Text>

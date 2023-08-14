@@ -20,7 +20,7 @@ export default function DesktopHeader() {
   const focusComponent = useStore((s) => s.focusComponent)
 
   function handleCloseFocusMode() {
-    if (focusComponent.onClose) focusComponent.onClose()
+    if (focusComponent && focusComponent.onClose) focusComponent.onClose()
     useStore.setState({ focusComponent: null })
   }
 

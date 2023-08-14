@@ -5,7 +5,7 @@ interface CommonSlice {
   client?: WalletClient
   isOpen: boolean
   selectedAccount: string | null
-  focusComponent: ReactNode
+  focusComponent: FocusComponent | null
 }
 
 interface FocusComponent {
