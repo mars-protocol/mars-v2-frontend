@@ -41,7 +41,6 @@ export default function useHealthComputer(account?: Account) {
     [prices, baseCurrency.denom],
   )
 
-  console.log(assetParams)
 
   const vaultPositionValues = useMemo(() => {
     if (!account?.vaults) return null
