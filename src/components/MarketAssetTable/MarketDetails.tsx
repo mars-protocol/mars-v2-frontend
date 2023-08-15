@@ -34,6 +34,7 @@ export default function MarketDetails({ data, type }: Props) {
 
   const details: Detail[] = useMemo(() => {
     const isDollar = displayCurrencySymbol === '$'
+
     function getLendingMarketDetails() {
       return [
         {
@@ -53,7 +54,7 @@ export default function MarketDetails({ data, type }: Props) {
         {
           amount: marketLiquidationThreshold * 100,
           options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
-          title: 'Liquidation Threshold',
+          title: 'Liquidation LTV',
         },
         {
           amount: getConversionRate(asset.denom).toNumber(),
