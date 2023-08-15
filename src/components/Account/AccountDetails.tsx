@@ -58,7 +58,7 @@ function AccountDetails(props: Props) {
           <FormattedNumber
             className={'w-full text-center text-xs'}
             amount={health}
-            options={{ maxDecimals: 1, minDecimals: 0 }}
+            options={{ maxDecimals: 0, minDecimals: 0, suffix: '%' }}
             animate
           />
           {updatedHealth && health !== updatedHealth && (
@@ -70,7 +70,7 @@ function AccountDetails(props: Props) {
               <FormattedNumber
                 className={'w-full text-center text-xs'}
                 amount={updatedHealth}
-                options={{ maxDecimals: 1, minDecimals: 0 }}
+                options={{ maxDecimals: 0, minDecimals: 0, suffix: '%' }}
                 animate
               />
             </>

@@ -31,7 +31,7 @@ export default function useHealthComputer(account?: Account) {
   const { data: vaultConfigs } = useVaultConfigs()
   const baseCurrency = useStore((s) => s.baseCurrency)
 
-  const [health, setHealth] = useState(0)
+  const [healthFactor, setHealthFactor] = useState(0)
   const positions: Positions | null = useMemo(() => {
     if (!account) return null
     return convertAccountToPositions(account)
@@ -40,6 +40,7 @@ export default function useHealthComputer(account?: Account) {
     () => prices.find((price) => price.denom === baseCurrency.denom)?.amount || 0,
     [prices, baseCurrency.denom],
   )
+
 
   const vaultPositionValues = useMemo(() => {
     if (!account?.vaults) return null
@@ -133,7 +134,7 @@ export default function useHealthComputer(account?: Account) {
 
   useEffect(() => {
     if (!healthComputer) return
-    setHealth(Number(compute_health_js(healthComputer).max_ltv_health_factor) || 0)
+    setHealthFactor(Number(compute_health_js(healthComputer).max_ltv_health_factor) || 10)
   }, [healthComputer])
 
   const computeMaxBorrowAmount = useCallback(
@@ -164,5 +165,19 @@ export default function useHealthComputer(account?: Account) {
     [healthComputer],
   )
 
-  return { health, computeMaxBorrowAmount, computeMaxWithdrawAmount, computeMaxSwapAmount }
+  const health = useMemo(() => {
+    if (healthFactor > 10) return 100
+    if (healthFactor < 0) return 0
+    return BN(healthFactor * 10)
+      .integerValue()
+      .toNumber()
+  }, [healthFactor])
+
+  return {
+    health,
+    healthFactor,
+    computeMaxBorrowAmount,
+    computeMaxWithdrawAmount,
+    computeMaxSwapAmount,
+  }
 }

@@ -1,7 +1,6 @@
 import { Outlet, Route, Routes as RoutesWrapper } from 'react-router-dom'
 
 import BorrowPage from 'pages/BorrowPage'
-import CouncilPage from 'pages/CouncilPage'
 import FarmPage from 'pages/FarmPage'
 import LendPage from 'pages/LendPage'
 import MobilePage from 'pages/MobilePage'
@@ -24,7 +23,6 @@ export default function Routes() {
         <Route path='/lend' element={<LendPage />} />
         <Route path='/borrow' element={<BorrowPage />} />
         <Route path='/portfolio' element={<PortfolioPage />} />
-        <Route path='/council' element={<CouncilPage />} />
         <Route path='/mobile' element={<MobilePage />} />
         <Route path='/' element={<TradePage />} />
         <Route path='/wallets/:address'>
@@ -34,7 +32,6 @@ export default function Routes() {
             <Route path='lend' element={<LendPage />} />
             <Route path='borrow' element={<BorrowPage />} />
             <Route path='portfolio' element={<PortfolioPage />} />
-            <Route path='council' element={<CouncilPage />} />
             <Route path='' element={<TradePage />} />
           </Route>
           <Route path='trade' element={<TradePage />} />
@@ -42,7 +39,6 @@ export default function Routes() {
           <Route path='lend' element={<LendPage />} />
           <Route path='borrow' element={<BorrowPage />} />
           <Route path='portfolio' element={<PortfolioPage />} />
-          <Route path='council' element={<CouncilPage />} />
           <Route path='' element={<TradePage />} />
         </Route>
       </Route>

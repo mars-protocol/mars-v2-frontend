@@ -96,7 +96,7 @@ export default function SettingsModal() {
 
   const handleReduceMotion = useCallback(
     (value: boolean) => {
-      setReduceMotion(!value)
+      setReduceMotion(value)
     },
     [setReduceMotion],
   )
