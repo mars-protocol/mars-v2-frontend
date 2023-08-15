@@ -140,7 +140,9 @@ export default function useHealthComputer(account?: Account) {
   const computeMaxBorrowAmount = useCallback(
     (denom: string, target: BorrowTarget) => {
       if (!healthComputer) return BN_ZERO
-      return BN(max_borrow_estimate_js(healthComputer, denom, target)).times(1 - HEALTH_BUFFER)
+      return BN(max_borrow_estimate_js(healthComputer, denom, target))
+        .times(1 - HEALTH_BUFFER)
+        .integerValue()
     },
     [healthComputer],
   )
@@ -148,7 +150,9 @@ export default function useHealthComputer(account?: Account) {
   const computeMaxWithdrawAmount = useCallback(
     (denom: string) => {
       if (!healthComputer) return BN_ZERO
-      return BN(max_withdraw_estimate_js(healthComputer, denom)).times(1 - HEALTH_BUFFER)
+      return BN(max_withdraw_estimate_js(healthComputer, denom))
+        .times(1 - HEALTH_BUFFER)
+        .integerValue()
     },
     [healthComputer],
   )
@@ -157,7 +161,9 @@ export default function useHealthComputer(account?: Account) {
     (from: string, to: string, kind: SwapKind) => {
       if (!healthComputer) return BN_ZERO
       try {
-        return BN(max_swap_estimate_js(healthComputer, from, to, kind)).times(1 - HEALTH_BUFFER)
+        return BN(max_swap_estimate_js(healthComputer, from, to, kind))
+          .times(1 - HEALTH_BUFFER)
+          .integerValue()
       } catch {
         return BN_ZERO
       }

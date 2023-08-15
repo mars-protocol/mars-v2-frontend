@@ -61,7 +61,7 @@ function AccountDetails(props: Props) {
             options={{ maxDecimals: 0, minDecimals: 0, suffix: '%' }}
             animate
           />
-          {updatedHealth && health !== updatedHealth && (
+          {updatedHealth > 0 && health !== updatedHealth && (
             <>
               <ArrowRight
                 width={16}
