@@ -14,6 +14,7 @@ import {
 import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import { defaultFee } from 'utils/constants'
 import { formatAmountWithSymbol } from 'utils/formatters'
+import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import getTokenOutFromSwapResponse from 'utils/getTokenOutFromSwapResponse'
 import { BN } from 'utils/helpers'
 
@@ -174,6 +175,12 @@ export default function createBroadcastSlice(
             deposit: coin.toCoin(),
           })),
         },
+      }
+
+      if (checkAutoLendEnabled(options.accountId)) {
+        msg.update_credit_account.actions.push(
+          ...options.coins.map((coin) => ({ lend: coin.toActionCoin(true) })),
+        )
       }
 
       const funds = options.coins.map((coin) => coin.toCoin())
