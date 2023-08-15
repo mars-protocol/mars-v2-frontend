@@ -17,6 +17,7 @@ import { formatAmountWithSymbol } from 'utils/formatters'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import getTokenOutFromSwapResponse from 'utils/getTokenOutFromSwapResponse'
 import { BN } from 'utils/helpers'
+import { getAssetByDenom } from 'utils/assets'
 
 function generateExecutionMessage(
   sender: string | undefined = '',
@@ -179,7 +180,9 @@ export default function createBroadcastSlice(
 
       if (checkAutoLendEnabled(options.accountId)) {
         msg.update_credit_account.actions.push(
-          ...options.coins.map((coin) => ({ lend: coin.toActionCoin(true) })),
+          ...options.coins
+            .filter((coin) => getAssetByDenom(coin.denom)?.isAutoLendEnabled)
+            .map((coin) => ({ lend: coin.toActionCoin(true) })),
         )
       }
 
