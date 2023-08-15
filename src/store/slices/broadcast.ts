@@ -184,7 +184,7 @@ export default function createBroadcastSlice(
 
       const depositString = options.coins
         .map((coin) => formatAmountWithSymbol(coin.toCoin()))
-        .join('and ')
+        .join(' and ')
       handleResponseMessages(response, `Deposited ${depositString} to Account ${options.accountId}`)
       return !!response.result
     },
