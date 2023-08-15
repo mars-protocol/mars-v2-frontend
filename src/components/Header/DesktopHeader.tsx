@@ -13,7 +13,6 @@ export const menuTree: { page: Page; label: string }[] = [
   { page: 'lend', label: 'Earn' },
   { page: 'borrow', label: 'Borrow' },
   { page: 'portfolio', label: 'Portfolio' },
-  { page: 'council', label: 'Council' },
 ]
 
 export default function DesktopHeader() {
