@@ -24,11 +24,17 @@ export function useUpdatedAccount(account?: Account) {
     (denom: string) => {
       if (!account) return
       const deposit = account.deposits.find((deposit) => deposit.denom === denom)
+
       if (deposit) {
-        removeDeposits([...removedDeposits, deposit])
+        removeDeposits((prevRemovedDeposits) => {
+          return [
+            ...prevRemovedDeposits.filter((removedDeposit) => removedDeposit.denom !== denom),
+            deposit,
+          ]
+        })
       }
     },
-    [account, removedDeposits],
+    [account, removeDeposits],
   )
 
   useEffect(() => {

@@ -79,7 +79,8 @@ export const calculateAccountBorrowRate = (
 
 export function calculateAccountLeverage(account: Account, prices: BNCoin[]) {
   const [deposits, lends, debts, vaults] = getAccountPositionValues(account, prices)
-  return debts.dividedBy(deposits.plus(lends).plus(vaults)).plus(1)
+  const netValue = deposits.plus(lends).plus(vaults).minus(debts)
+  return debts.dividedBy(netValue).plus(1)
 }
 
 export function getAmount(denom: string, coins: Coin[]): BigNumber {
