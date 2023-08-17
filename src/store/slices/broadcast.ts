@@ -18,6 +18,7 @@ import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import getTokenOutFromSwapResponse from 'utils/getTokenOutFromSwapResponse'
 import { BN } from 'utils/helpers'
 import { getAssetByDenom } from 'utils/assets'
+import { BN_ZERO } from 'constants/math'
 
 function generateExecutionMessage(
   sender: string | undefined = '',
@@ -382,6 +383,15 @@ export default function createBroadcastSlice(
             },
           ],
         },
+      }
+
+      if (
+        checkAutoLendEnabled(options.accountId) &&
+        getAssetByDenom(options.denomOut)?.isAutoLendEnabled
+      ) {
+        msg.update_credit_account.actions.push({
+          lend: { denom: options.denomOut, amount: 'account_balance' },
+        })
       }
 
       const messages = [
