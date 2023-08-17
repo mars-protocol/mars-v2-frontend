@@ -394,6 +394,15 @@ export default function createBroadcastSlice(
         },
       }
 
+      if (
+        checkAutoLendEnabled(options.accountId) &&
+        getAssetByDenom(options.denomOut)?.isAutoLendEnabled
+      ) {
+        msg.update_credit_account.actions.push({
+          lend: { denom: options.denomOut, amount: 'account_balance' },
+        })
+      }
+
       const messages = [
         generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, []),
       ]
