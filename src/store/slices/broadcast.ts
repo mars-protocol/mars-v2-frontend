@@ -14,8 +14,10 @@ import {
 import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import { defaultFee } from 'utils/constants'
 import { formatAmountWithSymbol } from 'utils/formatters'
+import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import getTokenOutFromSwapResponse from 'utils/getTokenOutFromSwapResponse'
 import { BN } from 'utils/helpers'
+import { getAssetByDenom } from 'utils/assets'
 
 function generateExecutionMessage(
   sender: string | undefined = '',
@@ -176,6 +178,14 @@ export default function createBroadcastSlice(
         },
       }
 
+      if (checkAutoLendEnabled(options.accountId)) {
+        msg.update_credit_account.actions.push(
+          ...options.coins
+            .filter((coin) => getAssetByDenom(coin.denom)?.isAutoLendEnabled)
+            .map((coin) => ({ lend: coin.toActionCoin(true) })),
+        )
+      }
+
       const funds = options.coins.map((coin) => coin.toCoin())
 
       const response = await get().executeMsg({
@@ -184,7 +194,7 @@ export default function createBroadcastSlice(
 
       const depositString = options.coins
         .map((coin) => formatAmountWithSymbol(coin.toCoin()))
-        .join('and ')
+        .join(' and ')
       handleResponseMessages(response, `Deposited ${depositString} to Account ${options.accountId}`)
       return !!response.result
     },
