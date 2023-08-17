@@ -18,7 +18,6 @@ import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import getTokenOutFromSwapResponse from 'utils/getTokenOutFromSwapResponse'
 import { BN } from 'utils/helpers'
 import { getAssetByDenom } from 'utils/assets'
-import { BN_ZERO } from 'constants/math'
 
 function generateExecutionMessage(
   sender: string | undefined = '',
