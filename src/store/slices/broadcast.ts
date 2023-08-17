@@ -100,6 +100,16 @@ export default function createBroadcastSlice(
         },
       }
 
+      if (
+        !options.borrowToWallet &&
+        checkAutoLendEnabled(options.accountId) &&
+        getAssetByDenom(options.coin.denom)?.isAutoLendEnabled
+      ) {
+        msg.update_credit_account.actions.push({
+          lend: { denom: options.coin.denom, amount: 'account_balance' },
+        })
+      }
+
       const response = await get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
