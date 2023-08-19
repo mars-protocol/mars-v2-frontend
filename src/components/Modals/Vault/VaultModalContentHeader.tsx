@@ -39,12 +39,14 @@ export default function VaultModalContentHeader({ vault }: Props) {
                   options={{ suffix: '%', decimals: -2 }}
                   animate
                 />
+                (
                 <FormattedNumber
                   className='ml-2 text-xs'
                   amount={vault.apy / 365}
                   options={{ suffix: '%/day', decimals: -2 }}
                   animate
                 />
+                )
               </div>
             }
             sub={'Deposit APY'}

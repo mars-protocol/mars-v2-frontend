@@ -59,7 +59,7 @@ function VaultModal(props: Props) {
     <Modal
       onClose={onClose}
       header={
-        <span className='flex items-center px-4'>
+        <span className='flex items-center pr-4 py-1'>
           <VaultLogo vault={vault} />
           <Text className='pl-3 pr-2'>{vault.name}</Text>
           {unlockTime && (
