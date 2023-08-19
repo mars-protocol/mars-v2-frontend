@@ -134,15 +134,24 @@ export default function useHealthComputer(account?: Account) {
 
   useEffect(() => {
     if (!healthComputer) return
-    setHealthFactor(Number(compute_health_js(healthComputer).max_ltv_health_factor) || 10)
+    try {
+      setHealthFactor(Number(compute_health_js(healthComputer).max_ltv_health_factor) || 10)
+    } catch (err) {
+      console.error(err)
+    }
   }, [healthComputer])
 
   const computeMaxBorrowAmount = useCallback(
     (denom: string, target: BorrowTarget) => {
       if (!healthComputer) return BN_ZERO
-      return BN(max_borrow_estimate_js(healthComputer, denom, target))
-        .times(1 - HEALTH_BUFFER)
-        .integerValue()
+      try {
+        return BN(max_borrow_estimate_js(healthComputer, denom, target))
+          .times(1 - HEALTH_BUFFER)
+          .integerValue()
+      } catch (err) {
+        console.error(err)
+        return BN_ZERO
+      }
     },
     [healthComputer],
   )
@@ -150,9 +159,14 @@ export default function useHealthComputer(account?: Account) {
   const computeMaxWithdrawAmount = useCallback(
     (denom: string) => {
       if (!healthComputer) return BN_ZERO
-      return BN(max_withdraw_estimate_js(healthComputer, denom))
-        .times(1 - HEALTH_BUFFER)
-        .integerValue()
+      try {
+        return BN(max_withdraw_estimate_js(healthComputer, denom))
+          .times(1 - HEALTH_BUFFER)
+          .integerValue()
+      } catch (err) {
+        console.error(err)
+        return BN_ZERO
+      }
     },
     [healthComputer],
   )
