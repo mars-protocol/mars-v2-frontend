@@ -25,7 +25,7 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultStatus } from 'types/enums/vault'
 import { getAssetByDenom } from 'utils/assets'
-import { produceCountdown } from 'utils/formatters'
+import { formatPercent, produceCountdown } from 'utils/formatters'
 
 type Props = {
   data: Vault[] | DepositedVault[]
@@ -179,6 +179,20 @@ export const VaultTable = (props: Props) => {
         },
       },
       {
+        accessorKey: 'ltv.max',
+        header: 'Max LTV',
+        cell: ({ row }) => {
+          return <Text className='text-xs'>{formatPercent(row.original.ltv.max)}</Text>
+        },
+      },
+      {
+        accessorKey: 'ltv.liq',
+        header: 'Liq. LTV',
+        cell: ({ row }) => {
+          return <Text className='text-xs'>{formatPercent(row.original.ltv.liq)}</Text>
+        },
+      },
+      {
         accessorKey: 'details',
         enableSorting: false,
         header: (data) => {
@@ -188,6 +202,7 @@ export const VaultTable = (props: Props) => {
         },
         cell: ({ row }) => {
           const vault = row.original as DepositedVault
+
           function enterVaultHandler() {
             useStore.setState({
               vaultModal: {
@@ -230,7 +245,7 @@ export const VaultTable = (props: Props) => {
       <thead className='bg-black/20'>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header, index) => {
+            {headerGroup.headers.map((header) => {
               return (
                 <th
                   key={header.id}
