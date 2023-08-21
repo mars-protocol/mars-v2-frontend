@@ -8,11 +8,11 @@
 import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { Coin, StdFee } from '@cosmjs/amino'
 import {
-  Decimal,
   InstantiateMsg,
   CreateOrUpdateConfig,
   ExecuteMsg,
   OwnerUpdate,
+  Decimal,
   Uint128,
   InitOrUpdateAssetParams,
   InterestRateModel,
@@ -67,22 +67,39 @@ export interface MarsRedBankReadOnlyInterface {
     user: string
   }) => Promise<ArrayOfUserDebtResponse>
   userCollateral: ({
+    accountId,
     denom,
     user,
   }: {
+    accountId?: string
     denom: string
     user: string
   }) => Promise<UserCollateralResponse>
   userCollaterals: ({
+    accountId,
     limit,
     startAfter,
     user,
   }: {
+    accountId?: string
     limit?: number
     startAfter?: string
     user: string
   }) => Promise<ArrayOfUserCollateralResponse>
-  userPosition: ({ user }: { user: string }) => Promise<UserPositionResponse>
+  userPosition: ({
+    accountId,
+    user,
+  }: {
+    accountId?: string
+    user: string
+  }) => Promise<UserPositionResponse>
+  userPositionLiquidationPricing: ({
+    accountId,
+    user,
+  }: {
+    accountId?: string
+    user: string
+  }) => Promise<UserPositionResponse>
   scaledLiquidityAmount: ({ amount, denom }: { amount: Uint128; denom: string }) => Promise<Uint128>
   scaledDebtAmount: ({ amount, denom }: { amount: Uint128; denom: string }) => Promise<Uint128>
   underlyingLiquidityAmount: ({
@@ -117,6 +134,7 @@ export class MarsRedBankQueryClient implements MarsRedBankReadOnlyInterface {
     this.userCollateral = this.userCollateral.bind(this)
     this.userCollaterals = this.userCollaterals.bind(this)
     this.userPosition = this.userPosition.bind(this)
+    this.userPositionLiquidationPricing = this.userPositionLiquidationPricing.bind(this)
     this.scaledLiquidityAmount = this.scaledLiquidityAmount.bind(this)
     this.scaledDebtAmount = this.scaledDebtAmount.bind(this)
     this.underlyingLiquidityAmount = this.underlyingLiquidityAmount.bind(this)
@@ -212,39 +230,66 @@ export class MarsRedBankQueryClient implements MarsRedBankReadOnlyInterface {
     })
   }
   userCollateral = async ({
+    accountId,
     denom,
     user,
   }: {
+    accountId?: string
     denom: string
     user: string
   }): Promise<UserCollateralResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       user_collateral: {
+        account_id: accountId,
         denom,
         user,
       },
     })
   }
   userCollaterals = async ({
+    accountId,
     limit,
     startAfter,
     user,
   }: {
+    accountId?: string
     limit?: number
     startAfter?: string
     user: string
   }): Promise<ArrayOfUserCollateralResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       user_collaterals: {
+        account_id: accountId,
         limit,
         start_after: startAfter,
         user,
       },
     })
   }
-  userPosition = async ({ user }: { user: string }): Promise<UserPositionResponse> => {
+  userPosition = async ({
+    accountId,
+    user,
+  }: {
+    accountId?: string
+    user: string
+  }): Promise<UserPositionResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       user_position: {
+        account_id: accountId,
+        user,
+      },
+    })
+  }
+  userPositionLiquidationPricing = async ({
+    accountId,
+    user,
+  }: {
+    accountId?: string
+    user: string
+  }): Promise<UserPositionResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      user_position_liquidation_pricing: {
+        account_id: accountId,
         user,
       },
     })
@@ -365,9 +410,9 @@ export interface MarsRedBankInterface extends MarsRedBankReadOnlyInterface {
   ) => Promise<ExecuteResult>
   deposit: (
     {
-      onBehalfOf,
+      accountId,
     }: {
-      onBehalfOf?: string
+      accountId?: string
     },
     fee?: number | StdFee | 'auto',
     memo?: string,
@@ -375,10 +420,12 @@ export interface MarsRedBankInterface extends MarsRedBankReadOnlyInterface {
   ) => Promise<ExecuteResult>
   withdraw: (
     {
+      accountId,
       amount,
       denom,
       recipient,
     }: {
+      accountId?: string
       amount?: Uint128
       denom: string
       recipient?: string
@@ -584,9 +631,9 @@ export class MarsRedBankClient extends MarsRedBankQueryClient implements MarsRed
   }
   deposit = async (
     {
-      onBehalfOf,
+      accountId,
     }: {
-      onBehalfOf?: string
+      accountId?: string
     },
     fee: number | StdFee | 'auto' = 'auto',
     memo?: string,
@@ -597,7 +644,7 @@ export class MarsRedBankClient extends MarsRedBankQueryClient implements MarsRed
       this.contractAddress,
       {
         deposit: {
-          on_behalf_of: onBehalfOf,
+          account_id: accountId,
         },
       },
       fee,
@@ -607,10 +654,12 @@ export class MarsRedBankClient extends MarsRedBankQueryClient implements MarsRed
   }
   withdraw = async (
     {
+      accountId,
       amount,
       denom,
       recipient,
     }: {
+      accountId?: string
       amount?: Uint128
       denom: string
       recipient?: string
@@ -624,6 +673,7 @@ export class MarsRedBankClient extends MarsRedBankQueryClient implements MarsRed
       this.contractAddress,
       {
         withdraw: {
+          account_id: accountId,
           amount,
           denom,
           recipient,

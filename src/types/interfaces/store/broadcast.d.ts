@@ -11,20 +11,13 @@ interface ExecutableTx {
 }
 
 interface BroadcastSlice {
-  toast: { message: string; isError?: boolean; title?: string } | null
-  executeMsg: (options: { messages: MsgExecuteContract[] }) => Promise<BroadcastResult>
   borrow: (options: { accountId: string; coin: Coin; borrowToWallet: boolean }) => Promise<boolean>
+  claimRewards: (options: { accountId: string }) => ExecutableTx
   createAccount: () => Promise<string | null>
   deleteAccount: (options: { accountId: string; lends: BNCoin[] }) => Promise<boolean>
   deposit: (options: { accountId: string; coins: BNCoin[] }) => Promise<boolean>
-  unlock: (options: {
-    accountId: string
-    vault: DepositedVault
-    amount: string
-  }) => Promise<boolean>
-  withdrawFromVaults: (options: { accountId: string; vaults: DepositedVault[] }) => Promise<boolean>
   depositIntoVault: (options: { accountId: string; actions: Action[] }) => Promise<boolean>
-  withdraw: (options: { accountId: string; coins: BNCoin[]; borrow: BNCoin[] }) => Promise<boolean>
+  executeMsg: (options: { messages: MsgExecuteContract[] }) => Promise<BroadcastResult>
   lend: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
   reclaim: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
   repay: (options: {
@@ -39,4 +32,12 @@ interface BroadcastSlice {
     denomOut: string
     slippage: number
   }) => ExecutableTx
+  toast: { message: string; isError?: boolean; title?: string } | null
+  unlock: (options: {
+    accountId: string
+    vault: DepositedVault
+    amount: string
+  }) => Promise<boolean>
+  withdrawFromVaults: (options: { accountId: string; vaults: DepositedVault[] }) => Promise<boolean>
+  withdraw: (options: { accountId: string; coins: BNCoin[]; borrow: BNCoin[] }) => Promise<boolean>
 }

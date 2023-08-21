@@ -7,17 +7,17 @@
 
 export interface InstantiateMsg {
   base_denom: string
-  custom_init?: Empty | null
+  custom_init?: WasmOracleCustomInitParams | null
   owner: string
 }
-export interface Empty {
-  [k: string]: unknown
+export interface WasmOracleCustomInitParams {
+  astroport_factory: string
 }
 export type ExecuteMsg =
   | {
       set_price_source: {
         denom: string
-        price_source: OsmosisPriceSourceForString
+        price_source: WasmPriceSourceForString
       }
     }
   | {
@@ -34,50 +34,24 @@ export type ExecuteMsg =
       }
     }
   | {
-      custom: Empty
+      custom: WasmOracleCustomExecuteMsg
     }
-export type OsmosisPriceSourceForString =
+export type WasmPriceSourceForString =
   | {
       fixed: {
         price: Decimal
-        [k: string]: unknown
       }
     }
   | {
-      spot: {
-        pool_id: number
-        [k: string]: unknown
+      astroport_spot: {
+        pair_address: string
       }
     }
   | {
-      arithmetic_twap: {
-        downtime_detector?: DowntimeDetector | null
-        pool_id: number
+      astroport_twap: {
+        pair_address: string
+        tolerance: number
         window_size: number
-        [k: string]: unknown
-      }
-    }
-  | {
-      geometric_twap: {
-        downtime_detector?: DowntimeDetector | null
-        pool_id: number
-        window_size: number
-        [k: string]: unknown
-      }
-    }
-  | {
-      xyk_liquidity_token: {
-        pool_id: number
-        [k: string]: unknown
-      }
-    }
-  | {
-      staked_geometric_twap: {
-        downtime_detector?: DowntimeDetector | null
-        pool_id: number
-        transitive_denom: string
-        window_size: number
-        [k: string]: unknown
       }
     }
   | {
@@ -88,44 +62,9 @@ export type OsmosisPriceSourceForString =
         max_deviation: Decimal
         max_staleness: number
         price_feed_id: Identifier
-        [k: string]: unknown
-      }
-    }
-  | {
-      lsd: {
-        geometric_twap: GeometricTwap
-        redemption_rate: RedemptionRateForString
-        transitive_denom: string
-        [k: string]: unknown
       }
     }
 export type Decimal = string
-export type Downtime =
-  | 'duration30s'
-  | 'duration1m'
-  | 'duration2m'
-  | 'duration3m'
-  | 'duration4m'
-  | 'duration5m'
-  | 'duration10m'
-  | 'duration20m'
-  | 'duration30m'
-  | 'duration40m'
-  | 'duration50m'
-  | 'duration1h'
-  | 'duration15h'
-  | 'duration2h'
-  | 'duration25h'
-  | 'duration3h'
-  | 'duration4h'
-  | 'duration5h'
-  | 'duration6h'
-  | 'duration9h'
-  | 'duration12h'
-  | 'duration18h'
-  | 'duration24h'
-  | 'duration36h'
-  | 'duration48h'
 export type Identifier = string
 export type OwnerUpdate =
   | {
@@ -142,21 +81,10 @@ export type OwnerUpdate =
       }
     }
   | 'clear_emergency_owner'
-export interface DowntimeDetector {
-  downtime: Downtime
-  recovery: number
-  [k: string]: unknown
-}
-export interface GeometricTwap {
-  downtime_detector?: DowntimeDetector | null
-  pool_id: number
-  window_size: number
-  [k: string]: unknown
-}
-export interface RedemptionRateForString {
-  contract_addr: string
-  max_staleness: number
-  [k: string]: unknown
+export type WasmOracleCustomExecuteMsg = {
+  record_twap_snapshots: {
+    denoms: string[]
+  }
 }
 export type QueryMsg =
   | {

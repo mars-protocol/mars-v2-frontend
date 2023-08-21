@@ -16,7 +16,7 @@ export type ExecuteMsg =
       set_route: {
         denom_in: string
         denom_out: string
-        route: OsmosisRoute
+        route: AstroportRoute
       }
     }
   | {
@@ -48,13 +48,38 @@ export type OwnerUpdate =
       }
     }
   | 'clear_emergency_owner'
-export type OsmosisRoute = SwapAmountInRoute[]
+export type SwapOperation =
+  | {
+      native_swap: {
+        ask_denom: string
+        offer_denom: string
+      }
+    }
+  | {
+      astro_swap: {
+        ask_asset_info: AssetInfo
+        offer_asset_info: AssetInfo
+      }
+    }
+export type AssetInfo =
+  | {
+      token: {
+        contract_addr: Addr
+      }
+    }
+  | {
+      native_token: {
+        denom: string
+      }
+    }
+export type Addr = string
 export type Uint128 = string
 export type Decimal = string
-export type Addr = string
-export interface SwapAmountInRoute {
-  pool_id: number
-  token_out_denom: string
+export interface AstroportRoute {
+  factory: string
+  operations: SwapOperation[]
+  oracle: string
+  router: string
 }
 export interface Coin {
   amount: Uint128
