@@ -5,27 +5,28 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
+import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
+
 import {
-  InstantiateMsg,
-  ExecuteMsg,
-  Uint128,
-  Addr,
-  OwnerUpdate,
-  WhitelistEntry,
-  QueryMsg,
-  ArrayOfActiveEmission,
   ActiveEmission,
-  ConfigResponse,
-  ArrayOfEmissionResponse,
-  EmissionResponse,
-  Decimal,
-  IncentiveStateResponse,
-  ArrayOfIncentiveStateResponse,
+  Addr,
+  ArrayOfActiveEmission,
   ArrayOfCoin,
-  Coin,
+  ArrayOfEmissionResponse,
+  ArrayOfIncentiveStateResponse,
   ArrayOfWhitelistEntry,
+  Coin,
+  ConfigResponse,
+  Decimal,
+  EmissionResponse,
+  ExecuteMsg,
+  IncentiveStateResponse,
+  InstantiateMsg,
+  OwnerUpdate,
+  QueryMsg,
+  Uint128,
+  WhitelistEntry,
 } from './MarsIncentives.types'
 export interface MarsIncentivesReadOnlyInterface {
   contractAddress: string
@@ -72,11 +73,13 @@ export interface MarsIncentivesReadOnlyInterface {
     startAfterTimestamp?: number
   }) => Promise<ArrayOfEmissionResponse>
   userUnclaimedRewards: ({
+    accountId,
     limit,
     startAfterCollateralDenom,
     startAfterIncentiveDenom,
     user,
   }: {
+    accountId?: string
     limit?: number
     startAfterCollateralDenom?: string
     startAfterIncentiveDenom?: string
@@ -186,11 +189,13 @@ export class MarsIncentivesQueryClient implements MarsIncentivesReadOnlyInterfac
     })
   }
   userUnclaimedRewards = async ({
+    accountId,
     limit,
     startAfterCollateralDenom,
     startAfterIncentiveDenom,
     user,
   }: {
+    accountId?: string
     limit?: number
     startAfterCollateralDenom?: string
     startAfterIncentiveDenom?: string
@@ -198,6 +203,7 @@ export class MarsIncentivesQueryClient implements MarsIncentivesReadOnlyInterfac
   }): Promise<ArrayOfCoin> => {
     return this.client.queryContractSmart(this.contractAddress, {
       user_unclaimed_rewards: {
+        account_id: accountId,
         limit,
         start_after_collateral_denom: startAfterCollateralDenom,
         start_after_incentive_denom: startAfterIncentiveDenom,
@@ -246,11 +252,13 @@ export interface MarsIncentivesInterface extends MarsIncentivesReadOnlyInterface
   ) => Promise<ExecuteResult>
   balanceChange: (
     {
+      accountId,
       denom,
       totalAmountScaledBefore,
       userAddr,
       userAmountScaledBefore,
     }: {
+      accountId?: string
       denom: string
       totalAmountScaledBefore: Uint128
       userAddr: Addr
@@ -262,10 +270,12 @@ export interface MarsIncentivesInterface extends MarsIncentivesReadOnlyInterface
   ) => Promise<ExecuteResult>
   claimRewards: (
     {
+      accountId,
       limit,
       startAfterCollateralDenom,
       startAfterIncentiveDenom,
     }: {
+      accountId?: string
       limit?: number
       startAfterCollateralDenom?: string
       startAfterIncentiveDenom?: string
@@ -377,11 +387,13 @@ export class MarsIncentivesClient
   }
   balanceChange = async (
     {
+      accountId,
       denom,
       totalAmountScaledBefore,
       userAddr,
       userAmountScaledBefore,
     }: {
+      accountId?: string
       denom: string
       totalAmountScaledBefore: Uint128
       userAddr: Addr
@@ -396,6 +408,7 @@ export class MarsIncentivesClient
       this.contractAddress,
       {
         balance_change: {
+          account_id: accountId,
           denom,
           total_amount_scaled_before: totalAmountScaledBefore,
           user_addr: userAddr,
@@ -409,10 +422,12 @@ export class MarsIncentivesClient
   }
   claimRewards = async (
     {
+      accountId,
       limit,
       startAfterCollateralDenom,
       startAfterIncentiveDenom,
     }: {
+      accountId?: string
       limit?: number
       startAfterCollateralDenom?: string
       startAfterIncentiveDenom?: string
@@ -426,6 +441,7 @@ export class MarsIncentivesClient
       this.contractAddress,
       {
         claim_rewards: {
+          account_id: accountId,
           limit,
           start_after_collateral_denom: startAfterCollateralDenom,
           start_after_incentive_denom: startAfterIncentiveDenom,

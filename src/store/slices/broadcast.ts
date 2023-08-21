@@ -11,13 +11,13 @@ import {
   Action as CreditManagerAction,
   ExecuteMsg as CreditManagerExecuteMsg,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { getAssetByDenom } from 'utils/assets'
 import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
+import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import { defaultFee } from 'utils/constants'
 import { formatAmountWithSymbol } from 'utils/formatters'
-import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import getTokenOutFromSwapResponse from 'utils/getTokenOutFromSwapResponse'
 import { BN } from 'utils/helpers'
-import { getAssetByDenom } from 'utils/assets'
 
 function generateExecutionMessage(
   sender: string | undefined = '',
@@ -177,6 +177,36 @@ export default function createBroadcastSlice(
       handleResponseMessages(response, `Account ${options.accountId} deleted`)
 
       return !!response.result
+    },
+    claimRewards: (options: { accountId: string }) => {
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: [
+            {
+              claim_rewards: {},
+            },
+          ],
+        },
+      }
+
+      const messages = [
+        generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, []),
+      ]
+      const estimateFee = () => getEstimatedFee(messages)
+
+      const execute = async () => {
+        const response = await get().executeMsg({
+          messages,
+        })
+
+        const successMessage = `Claimed rewards for, ${options.accountId}`
+
+        handleResponseMessages(response, successMessage)
+        return !!response.result
+      }
+
+      return { estimateFee, execute }
     },
     deposit: async (options: { accountId: string; coins: BNCoin[] }) => {
       const msg: CreditManagerExecuteMsg = {

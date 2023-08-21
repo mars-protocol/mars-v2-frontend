@@ -19,7 +19,7 @@ export default function Overlay(props: Props) {
     <>
       <div
         className={classNames(
-          'max-w-screen absolute isolate z-50 rounded-sm shadow-overlay backdrop-blur-lg',
+          'max-w-screen absolute isolate z-50 rounded-base shadow-overlay backdrop-blur-lg',
           props.hasBackdropIsolation ? 'bg-body' : 'gradient-popover',
           'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
           props.className,
@@ -28,7 +28,7 @@ export default function Overlay(props: Props) {
         {props.children ? props.children : props.content}
       </div>
       <div
-        className='fixed left-0 top-0 z-40 block h-full w-full hover:cursor-pointer'
+        className='fixed top-0 left-0 z-40 block w-full h-full hover:cursor-pointer'
         onClick={onClickAway}
         role='button'
       />

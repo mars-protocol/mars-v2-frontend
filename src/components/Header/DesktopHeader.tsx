@@ -4,6 +4,7 @@ import { isDesktop } from 'react-device-detect'
 import AccountMenu from 'components/Account/AccountMenu'
 import EscButton from 'components/Button/EscButton'
 import DesktopNavigation from 'components/Navigation/DesktopNavigation'
+import RewardsCenter from 'components/RewardsCenter'
 import Settings from 'components/Settings'
 import Wallet from 'components/Wallet'
 import useStore from 'store'
@@ -50,6 +51,7 @@ export default function DesktopHeader() {
         ) : (
           <div className='flex gap-4'>
             {address && <AccountMenu />}
+            <RewardsCenter />
             <Wallet />
             <Settings />
           </div>
