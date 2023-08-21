@@ -55,19 +55,17 @@ export default function RewardsCenter() {
   const { data: prices } = usePrices()
   const { data: unclaimedRewards } = useUnclaimedRewards()
 
-  const calculateTotalRewards = () => {
+  const totalRewardsCoin = useMemo(() => {
     let total = 0
     unclaimedRewards.forEach((reward) => {
       total = total + convertToDisplayAmount(reward, displayCurrency, prices).toNumber()
     })
 
-    return total
-  }
-
-  const totalRewardsCoin = new BNCoin({
-    denom: displayCurrency,
-    amount: calculateTotalRewards().toString(),
-  })
+    return new BNCoin({
+      denom: displayCurrency,
+      amount: total.toString(),
+    })
+  }, [displayCurrency, prices, unclaimedRewards])
 
   const hasIncentives = unclaimedRewards.length > 0
 
