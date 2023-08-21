@@ -5,27 +5,28 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
+import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { Coin, StdFee } from '@cosmjs/amino'
+
 import {
-  InstantiateMsg,
-  CreateOrUpdateConfig,
-  ExecuteMsg,
-  OwnerUpdate,
-  Decimal,
-  Uint128,
-  InitOrUpdateAssetParams,
-  InterestRateModel,
-  QueryMsg,
-  ConfigResponse,
-  Market,
   ArrayOfMarket,
-  UncollateralizedLoanLimitResponse,
   ArrayOfUncollateralizedLoanLimitResponse,
-  UserCollateralResponse,
   ArrayOfUserCollateralResponse,
-  UserDebtResponse,
   ArrayOfUserDebtResponse,
+  ConfigResponse,
+  CreateOrUpdateConfig,
+  Decimal,
+  ExecuteMsg,
+  InitOrUpdateAssetParams,
+  InstantiateMsg,
+  InterestRateModel,
+  Market,
+  OwnerUpdate,
+  QueryMsg,
+  Uint128,
+  UncollateralizedLoanLimitResponse,
+  UserCollateralResponse,
+  UserDebtResponse,
   UserHealthStatus,
   UserPositionResponse,
 } from './MarsRedBank.types'

@@ -5,24 +5,25 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
+import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { Coin, StdFee } from '@cosmjs/amino'
+
 import {
-  InstantiateMsg,
-  WasmOracleCustomInitParams,
-  ExecuteMsg,
-  WasmPriceSourceForString,
-  Decimal,
-  Identifier,
-  OwnerUpdate,
-  WasmOracleCustomExecuteMsg,
-  QueryMsg,
   ActionKind,
+  ArrayOfPriceResponse,
+  ArrayOfPriceSourceResponseForString,
   ConfigResponse,
+  Decimal,
+  ExecuteMsg,
+  Identifier,
+  InstantiateMsg,
+  OwnerUpdate,
   PriceResponse,
   PriceSourceResponseForString,
-  ArrayOfPriceSourceResponseForString,
-  ArrayOfPriceResponse,
+  QueryMsg,
+  WasmOracleCustomExecuteMsg,
+  WasmOracleCustomInitParams,
+  WasmPriceSourceForString,
 } from './MarsOracleWasm.types'
 export interface MarsOracleWasmReadOnlyInterface {
   contractAddress: string

@@ -5,27 +5,28 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tanstack/react-query'
+import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
-import { StdFee, Coin } from '@cosmjs/amino'
+import { Coin, StdFee } from '@cosmjs/amino'
+
 import {
-  InstantiateMsg,
-  WasmOracleCustomInitParams,
-  ExecuteMsg,
-  WasmPriceSourceForString,
-  Decimal,
-  Identifier,
-  OwnerUpdate,
-  WasmOracleCustomExecuteMsg,
-  QueryMsg,
   ActionKind,
+  ArrayOfPriceResponse,
+  ArrayOfPriceSourceResponseForString,
   ConfigResponse,
+  Decimal,
+  ExecuteMsg,
+  Identifier,
+  InstantiateMsg,
+  OwnerUpdate,
   PriceResponse,
   PriceSourceResponseForString,
-  ArrayOfPriceSourceResponseForString,
-  ArrayOfPriceResponse,
+  QueryMsg,
+  WasmOracleCustomExecuteMsg,
+  WasmOracleCustomInitParams,
+  WasmPriceSourceForString,
 } from './MarsOracleWasm.types'
-import { MarsOracleWasmQueryClient, MarsOracleWasmClient } from './MarsOracleWasm.client'
+import { MarsOracleWasmClient, MarsOracleWasmQueryClient } from './MarsOracleWasm.client'
 export const marsOracleWasmQueryKeys = {
   contract: [
     {

@@ -5,21 +5,22 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
+import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { Coin, StdFee } from '@cosmjs/amino'
+
 import {
-  InstantiateMsg,
+  AccountKind,
+  ActionKind,
+  ConfigResponse,
+  Decimal,
   ExecuteMsg,
+  HealthState,
+  HealthValuesResponse,
+  InstantiateMsg,
+  OwnerResponse,
   OwnerUpdate,
   QueryMsg,
-  ActionKind,
-  AccountKind,
-  ConfigResponse,
-  OwnerResponse,
-  HealthState,
-  Decimal,
   Uint128,
-  HealthValuesResponse,
 } from './MarsRoverHealthTypes.types'
 export interface MarsRoverHealthTypesReadOnlyInterface {
   contractAddress: string

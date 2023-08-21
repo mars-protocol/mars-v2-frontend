@@ -5,30 +5,31 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tanstack/react-query'
+import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
+
 import {
-  InstantiateMsg,
-  ExecuteMsg,
-  Uint128,
-  Addr,
-  OwnerUpdate,
-  WhitelistEntry,
-  QueryMsg,
-  ArrayOfActiveEmission,
   ActiveEmission,
-  ConfigResponse,
-  ArrayOfEmissionResponse,
-  EmissionResponse,
-  Decimal,
-  IncentiveStateResponse,
-  ArrayOfIncentiveStateResponse,
+  Addr,
+  ArrayOfActiveEmission,
   ArrayOfCoin,
-  Coin,
+  ArrayOfEmissionResponse,
+  ArrayOfIncentiveStateResponse,
   ArrayOfWhitelistEntry,
+  Coin,
+  ConfigResponse,
+  Decimal,
+  EmissionResponse,
+  ExecuteMsg,
+  IncentiveStateResponse,
+  InstantiateMsg,
+  OwnerUpdate,
+  QueryMsg,
+  Uint128,
+  WhitelistEntry,
 } from './MarsIncentives.types'
-import { MarsIncentivesQueryClient, MarsIncentivesClient } from './MarsIncentives.client'
+import { MarsIncentivesClient, MarsIncentivesQueryClient } from './MarsIncentives.client'
 export const marsIncentivesQueryKeys = {
   contract: [
     {

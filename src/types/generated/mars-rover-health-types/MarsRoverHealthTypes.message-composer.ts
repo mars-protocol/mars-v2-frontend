@@ -9,19 +9,20 @@ import { Coin } from '@cosmjs/amino'
 import { MsgExecuteContractEncodeObject } from '@cosmjs/cosmwasm-stargate'
 import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
 import { toUtf8 } from '@cosmjs/encoding'
+
 import {
-  InstantiateMsg,
+  AccountKind,
+  ActionKind,
+  ConfigResponse,
+  Decimal,
   ExecuteMsg,
+  HealthState,
+  HealthValuesResponse,
+  InstantiateMsg,
+  OwnerResponse,
   OwnerUpdate,
   QueryMsg,
-  ActionKind,
-  AccountKind,
-  ConfigResponse,
-  OwnerResponse,
-  HealthState,
-  Decimal,
   Uint128,
-  HealthValuesResponse,
 } from './MarsRoverHealthTypes.types'
 export interface MarsRoverHealthTypesMessage {
   contractAddress: string

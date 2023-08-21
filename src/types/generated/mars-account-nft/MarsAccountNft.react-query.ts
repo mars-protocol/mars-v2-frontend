@@ -5,38 +5,39 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tanstack/react-query'
+import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
-import { StdFee, Coin } from '@cosmjs/amino'
+import { Coin, StdFee } from '@cosmjs/amino'
+
 import {
-  Uint128,
-  InstantiateMsg,
-  ExecuteMsg,
-  Binary,
-  Expiration,
-  Timestamp,
-  Uint64,
   Action,
-  NftConfigUpdates,
-  QueryMsg,
+  Addr,
   AllNftInfoResponseForEmpty,
-  OwnerOfResponse,
   Approval,
-  NftInfoResponseForEmpty,
-  Empty,
-  OperatorsResponse,
-  TokensResponse,
   ApprovalResponse,
   ApprovalsResponse,
-  NftConfigBaseForString,
+  Binary,
   ContractInfoResponse,
+  Empty,
+  ExecuteMsg,
+  Expiration,
+  InstantiateMsg,
   MinterResponse,
-  String,
+  NftConfigBaseForString,
+  NftConfigUpdates,
+  NftInfoResponseForEmpty,
   NumTokensResponse,
-  Addr,
+  OperatorsResponse,
+  OwnerOfResponse,
   OwnershipForAddr,
+  QueryMsg,
+  String,
+  Timestamp,
+  TokensResponse,
+  Uint128,
+  Uint64,
 } from './MarsAccountNft.types'
-import { MarsAccountNftQueryClient, MarsAccountNftClient } from './MarsAccountNft.client'
+import { MarsAccountNftClient, MarsAccountNftQueryClient } from './MarsAccountNft.client'
 export const marsAccountNftQueryKeys = {
   contract: [
     {

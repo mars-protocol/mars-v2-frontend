@@ -75,7 +75,7 @@ export default function RewardsCenter() {
     return claimRewards({
       accountId: accountId || '',
     })
-  }, [accountId])
+  }, [accountId, claimRewards])
 
   useEffect(() => {
     claimTx.estimateFee().then(setEstimatedFee)

@@ -5,35 +5,36 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
+import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { Coin, StdFee } from '@cosmjs/amino'
+
 import {
-  Uint128,
-  InstantiateMsg,
-  ExecuteMsg,
-  Binary,
-  Expiration,
-  Timestamp,
-  Uint64,
   Action,
-  NftConfigUpdates,
-  QueryMsg,
+  Addr,
   AllNftInfoResponseForEmpty,
-  OwnerOfResponse,
   Approval,
-  NftInfoResponseForEmpty,
-  Empty,
-  OperatorsResponse,
-  TokensResponse,
   ApprovalResponse,
   ApprovalsResponse,
-  NftConfigBaseForString,
+  Binary,
   ContractInfoResponse,
+  Empty,
+  ExecuteMsg,
+  Expiration,
+  InstantiateMsg,
   MinterResponse,
-  String,
+  NftConfigBaseForString,
+  NftConfigUpdates,
+  NftInfoResponseForEmpty,
   NumTokensResponse,
-  Addr,
+  OperatorsResponse,
+  OwnerOfResponse,
   OwnershipForAddr,
+  QueryMsg,
+  String,
+  Timestamp,
+  TokensResponse,
+  Uint128,
+  Uint64,
 } from './MarsAccountNft.types'
 export interface MarsAccountNftReadOnlyInterface {
   contractAddress: string
