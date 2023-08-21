@@ -84,17 +84,6 @@ export const marsRedBankQueryKeys = {
     [
       { ...marsRedBankQueryKeys.address(contractAddress)[0], method: 'user_position', args },
     ] as const,
-  userPositionLiquidationPricing: (
-    contractAddress: string | undefined,
-    args?: Record<string, unknown>,
-  ) =>
-    [
-      {
-        ...marsRedBankQueryKeys.address(contractAddress)[0],
-        method: 'user_position_liquidation_pricing',
-        args,
-      },
-    ] as const,
   scaledLiquidityAmount: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
     [
       {
@@ -232,34 +221,9 @@ export function useMarsRedBankScaledLiquidityAmountQuery<TData = Uint128>({
     { ...options, enabled: !!client && (options?.enabled != undefined ? options.enabled : true) },
   )
 }
-export interface MarsRedBankUserPositionLiquidationPricingQuery<TData>
-  extends MarsRedBankReactQuery<UserPositionResponse, TData> {
-  args: {
-    accountId?: string
-    user: string
-  }
-}
-export function useMarsRedBankUserPositionLiquidationPricingQuery<TData = UserPositionResponse>({
-  client,
-  args,
-  options,
-}: MarsRedBankUserPositionLiquidationPricingQuery<TData>) {
-  return useQuery<UserPositionResponse, Error, TData>(
-    marsRedBankQueryKeys.userPositionLiquidationPricing(client?.contractAddress, args),
-    () =>
-      client
-        ? client.userPositionLiquidationPricing({
-            accountId: args.accountId,
-            user: args.user,
-          })
-        : Promise.reject(new Error('Invalid client')),
-    { ...options, enabled: !!client && (options?.enabled != undefined ? options.enabled : true) },
-  )
-}
 export interface MarsRedBankUserPositionQuery<TData>
   extends MarsRedBankReactQuery<UserPositionResponse, TData> {
   args: {
-    accountId?: string
     user: string
   }
 }
@@ -273,7 +237,6 @@ export function useMarsRedBankUserPositionQuery<TData = UserPositionResponse>({
     () =>
       client
         ? client.userPosition({
-            accountId: args.accountId,
             user: args.user,
           })
         : Promise.reject(new Error('Invalid client')),
@@ -283,7 +246,6 @@ export function useMarsRedBankUserPositionQuery<TData = UserPositionResponse>({
 export interface MarsRedBankUserCollateralsQuery<TData>
   extends MarsRedBankReactQuery<ArrayOfUserCollateralResponse, TData> {
   args: {
-    accountId?: string
     limit?: number
     startAfter?: string
     user: string
@@ -299,7 +261,6 @@ export function useMarsRedBankUserCollateralsQuery<TData = ArrayOfUserCollateral
     () =>
       client
         ? client.userCollaterals({
-            accountId: args.accountId,
             limit: args.limit,
             startAfter: args.startAfter,
             user: args.user,
@@ -311,7 +272,6 @@ export function useMarsRedBankUserCollateralsQuery<TData = ArrayOfUserCollateral
 export interface MarsRedBankUserCollateralQuery<TData>
   extends MarsRedBankReactQuery<UserCollateralResponse, TData> {
   args: {
-    accountId?: string
     denom: string
     user: string
   }
@@ -326,7 +286,6 @@ export function useMarsRedBankUserCollateralQuery<TData = UserCollateralResponse
     () =>
       client
         ? client.userCollateral({
-            accountId: args.accountId,
             denom: args.denom,
             user: args.user,
           })
@@ -578,7 +537,6 @@ export function useMarsRedBankBorrowMutation(
 export interface MarsRedBankWithdrawMutation {
   client: MarsRedBankClient
   msg: {
-    accountId?: string
     amount?: Uint128
     denom: string
     recipient?: string
@@ -603,7 +561,7 @@ export function useMarsRedBankWithdrawMutation(
 export interface MarsRedBankDepositMutation {
   client: MarsRedBankClient
   msg: {
-    accountId?: string
+    onBehalfOf?: string
   }
   args?: {
     fee?: number | StdFee | 'auto'

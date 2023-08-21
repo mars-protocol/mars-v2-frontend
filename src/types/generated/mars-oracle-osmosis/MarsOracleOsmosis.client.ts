@@ -9,7 +9,6 @@ import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from '@cosmjs/co
 import { Coin, StdFee } from '@cosmjs/amino'
 
 import {
-  ActionKind,
   ArrayOfPriceResponse,
   ArrayOfPriceSourceResponseForString,
   ConfigResponse,
@@ -39,13 +38,11 @@ export interface MarsOracleOsmosisReadOnlyInterface {
     limit?: number
     startAfter?: string
   }) => Promise<ArrayOfPriceSourceResponseForString>
-  price: ({ denom, kind }: { denom: string; kind?: ActionKind }) => Promise<PriceResponse>
+  price: ({ denom }: { denom: string }) => Promise<PriceResponse>
   prices: ({
-    kind,
     limit,
     startAfter,
   }: {
-    kind?: ActionKind
     limit?: number
     startAfter?: string
   }) => Promise<ArrayOfPriceResponse>
@@ -90,26 +87,22 @@ export class MarsOracleOsmosisQueryClient implements MarsOracleOsmosisReadOnlyIn
       },
     })
   }
-  price = async ({ denom, kind }: { denom: string; kind?: ActionKind }): Promise<PriceResponse> => {
+  price = async ({ denom }: { denom: string }): Promise<PriceResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       price: {
         denom,
-        kind,
       },
     })
   }
   prices = async ({
-    kind,
     limit,
     startAfter,
   }: {
-    kind?: ActionKind
     limit?: number
     startAfter?: string
   }): Promise<ArrayOfPriceResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       prices: {
-        kind,
         limit,
         start_after: startAfter,
       },

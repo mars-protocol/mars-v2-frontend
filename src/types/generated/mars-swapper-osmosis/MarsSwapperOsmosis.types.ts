@@ -55,6 +55,7 @@ export type Addr = string
 export interface SwapAmountInRoute {
   pool_id: number
   token_out_denom: string
+  [k: string]: unknown
 }
 export interface Coin {
   amount: Uint128
