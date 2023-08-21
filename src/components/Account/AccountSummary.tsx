@@ -1,5 +1,3 @@
-import { useMemo } from 'react'
-
 import Accordion from 'components/Accordion'
 import AccountBalancesTable from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
@@ -17,6 +15,10 @@ import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableDa
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountBalanceValue, calculateAccountLeverage } from 'utils/accounts'
+import { calculateAccountLeverage, calculateAccountValue } from 'utils/accounts'
+import Text from 'components/Text'
+import { formatLeverage } from 'utils/formatters'
+import useHealthComputer from 'hooks/useHealthComputer'
 
 interface Props {
   account: Account
@@ -51,22 +53,17 @@ export default function AccountSummary(props: Props) {
   return (
     <div className='h-[546px] min-w-[345px] basis-[345px] overflow-y-scroll scrollbar-hide'>
       <Card className='mb-4 h-min min-w-fit bg-white/10' contentClassName='flex'>
-        <Item title='Networth'>
+        <Item label='Net worth'>
           <DisplayCurrency
             coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalance)}
-            className='text-xs'
+            className='text-sm'
           />
         </Item>
-        <Item title='Leverage'>
-          <FormattedNumber
-            className='text-xs'
-            amount={leverage.toNumber()}
-            options={{ minDecimals: 2, maxDecimals: 2, suffix: 'x' }}
-            animate
-          />
+        <Item label='Leverage'>
+          <Text size='sm'>{formatLeverage(leverage.toNumber())}</Text>
         </Item>
-        <Item title='Account Health'>
-          <AccountHealth health={health} />
+        <Item label='Health'>
+          <HealthBar health={health} />
         </Item>
       </Card>
       <Accordion
@@ -100,14 +97,15 @@ export default function AccountSummary(props: Props) {
   )
 }
 
-function Item(props: React.HTMLAttributes<HTMLDivElement>) {
+interface ItemProps extends HTMLAttributes<HTMLDivElement> {
+  label: string
+}
+
+function Item(props: ItemProps) {
   return (
-    <div
-      className='flex flex-wrap items-center gap-1 px-4 py-2 border-r border-r-white/10'
-      {...props}
-    >
-      <Text size='xs' className='w-full text-white/50'>
-        {props.title}
+    <div className='flex flex-col  justify-around px-3 py-1 border-r border-r-white/10' {...props}>
+      <Text size='2xs' className='text-white/50 whitespace-nowrap'>
+        {props.label}
       </Text>
       {props.children}
     </div>

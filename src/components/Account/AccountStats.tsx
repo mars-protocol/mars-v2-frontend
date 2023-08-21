@@ -1,3 +1,4 @@
+import HealthBar from 'components/Account/HealthBar'
 import { useMemo } from 'react'
 
 import AccountHealth from 'components/Account/AccountHealth'
@@ -45,16 +46,8 @@ export default function AccountStats(props: Props) {
         coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionBalance)}
         className='w-full text-xl'
       />
-      <div className='flex items-center justify-between w-full mt-1'>
-        <span className='flex flex-wrap'>
-          <ArrowChartLineUp className='w-4 mr-1' />
-          <FormattedNumber
-            className='text-xs text-white/70'
-            amount={apr.toNumber()}
-            options={{ prefix: 'APR: ', suffix: '%', minDecimals: 2, maxDecimals: 2 }}
-          />
-        </span>
-        <AccountHealth health={health} classNames='w-[140px]' hasLabel />
+      <div className='mt-1 flex w-full items-center'>
+        <HealthBar health={healthFactor} classNames='w-[140px]' hasLabel />
       </div>
     </div>
   )
