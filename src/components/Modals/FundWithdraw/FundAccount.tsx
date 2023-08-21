@@ -82,14 +82,16 @@ export default function FundAccount(props: Props) {
 
   const updateFundingAssets = useCallback(
     (amount: BigNumber, denom: string) => {
-      const assetToUpdate = fundingAssets.find(byDenom(denom))
-      if (assetToUpdate) {
-        assetToUpdate.amount = amount
-        setFundingAssets([...fundingAssets.filter((a) => a.denom !== denom), assetToUpdate])
-      }
-      setChange({ deposits: fundingAssets })
+      setFundingAssets((prevAssets) => {
+        const assetToUpdateIdx = prevAssets.findIndex(byDenom(denom))
+        if (assetToUpdateIdx > -1) {
+          prevAssets[assetToUpdateIdx].amount = amount
+        }
+        setChange({ deposits: prevAssets })
+        return prevAssets
+      })
     },
-    [fundingAssets, setChange],
+    [setChange],
   )
 
   useEffect(() => {
