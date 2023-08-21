@@ -5,42 +5,41 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from '@tanstack/react-query'
+import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tanstack/react-query'
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
-
 import {
+  Decimal,
+  InstantiateMsg,
+  ExecuteMsg,
+  OwnerUpdate,
+  AssetParamsUpdate,
+  HlsAssetTypeForString,
+  Uint128,
+  VaultConfigUpdate,
+  EmergencyUpdate,
+  CmEmergencyUpdate,
+  RedBankEmergencyUpdate,
+  AssetParamsBaseForString,
+  CmSettingsForString,
+  HlsParamsBaseForString,
+  LiquidationBonus,
+  RedBankSettings,
+  VaultConfigBaseForString,
+  Coin,
+  QueryMsg,
+  HlsAssetTypeForAddr,
   Addr,
   ArrayOfAssetParamsBaseForAddr,
-  ArrayOfVaultConfigBaseForAddr,
   AssetParamsBaseForAddr,
-  AssetParamsBaseForString,
-  AssetParamsUpdate,
-  CmEmergencyUpdate,
   CmSettingsForAddr,
-  CmSettingsForString,
-  Coin,
-  Decimal,
-  EmergencyUpdate,
-  ExecuteMsg,
-  HlsAssetTypeForAddr,
-  HlsAssetTypeForString,
   HlsParamsBaseForAddr,
-  HlsParamsBaseForString,
-  InstantiateMsg,
-  LiquidationBonus,
-  OwnerResponse,
-  OwnerUpdate,
-  QueryMsg,
-  RedBankEmergencyUpdate,
-  RedBankSettings,
-  TotalDepositResponse,
-  Uint128,
+  ArrayOfVaultConfigBaseForAddr,
   VaultConfigBaseForAddr,
-  VaultConfigBaseForString,
-  VaultConfigUpdate,
+  OwnerResponse,
+  TotalDepositResponse,
 } from './MarsParams.types'
-import { MarsParamsClient, MarsParamsQueryClient } from './MarsParams.client'
+import { MarsParamsQueryClient, MarsParamsClient } from './MarsParams.client'
 export const marsParamsQueryKeys = {
   contract: [
     {

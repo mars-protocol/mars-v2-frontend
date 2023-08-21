@@ -5,39 +5,38 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
+import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
-
 import {
+  Decimal,
+  InstantiateMsg,
+  ExecuteMsg,
+  OwnerUpdate,
+  AssetParamsUpdate,
+  HlsAssetTypeForString,
+  Uint128,
+  VaultConfigUpdate,
+  EmergencyUpdate,
+  CmEmergencyUpdate,
+  RedBankEmergencyUpdate,
+  AssetParamsBaseForString,
+  CmSettingsForString,
+  HlsParamsBaseForString,
+  LiquidationBonus,
+  RedBankSettings,
+  VaultConfigBaseForString,
+  Coin,
+  QueryMsg,
+  HlsAssetTypeForAddr,
   Addr,
   ArrayOfAssetParamsBaseForAddr,
-  ArrayOfVaultConfigBaseForAddr,
   AssetParamsBaseForAddr,
-  AssetParamsBaseForString,
-  AssetParamsUpdate,
-  CmEmergencyUpdate,
   CmSettingsForAddr,
-  CmSettingsForString,
-  Coin,
-  Decimal,
-  EmergencyUpdate,
-  ExecuteMsg,
-  HlsAssetTypeForAddr,
-  HlsAssetTypeForString,
   HlsParamsBaseForAddr,
-  HlsParamsBaseForString,
-  InstantiateMsg,
-  LiquidationBonus,
-  OwnerResponse,
-  OwnerUpdate,
-  QueryMsg,
-  RedBankEmergencyUpdate,
-  RedBankSettings,
-  TotalDepositResponse,
-  Uint128,
+  ArrayOfVaultConfigBaseForAddr,
   VaultConfigBaseForAddr,
-  VaultConfigBaseForString,
-  VaultConfigUpdate,
+  OwnerResponse,
+  TotalDepositResponse,
 } from './MarsParams.types'
 export interface MarsParamsReadOnlyInterface {
   contractAddress: string

@@ -5,25 +5,24 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
+import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
-
 import {
-  Addr,
-  ArrayOfRouteResponseForEmpty,
-  Coin,
-  Decimal,
-  Empty,
-  EstimateExactInSwapResponse,
-  ExecuteMsg,
   InstantiateMsg,
-  OsmosisRoute,
-  OwnerResponse,
+  ExecuteMsg,
   OwnerUpdate,
-  QueryMsg,
-  RouteResponseForEmpty,
-  SwapAmountInRoute,
+  OsmosisRoute,
   Uint128,
+  Decimal,
+  Addr,
+  SwapAmountInRoute,
+  Coin,
+  QueryMsg,
+  EstimateExactInSwapResponse,
+  OwnerResponse,
+  RouteResponseForEmpty,
+  Empty,
+  ArrayOfRouteResponseForEmpty,
 } from './MarsSwapperOsmosis.types'
 export interface MarsSwapperOsmosisReadOnlyInterface {
   contractAddress: string
