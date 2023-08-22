@@ -35,6 +35,7 @@ export const FormattedNumber = React.memo(
     if (
       (prevAmountRef.current === props.amount && props.amount === 0) ||
       !props.animate ||
+      prevAmountRef.current === 0 ||
       reduceMotion
     )
       return (
