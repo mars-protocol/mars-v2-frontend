@@ -118,7 +118,7 @@ export default function AccountBalancesTable(props: Props) {
             denom: row.original.denom,
             amount: row.original.amount.toString(),
           })
-          return <DisplayCurrency coin={coin} className='text-right text-xs' />
+          return <DisplayCurrency coin={coin} className='text-xs text-right' />
         },
       },
       {
@@ -132,7 +132,7 @@ export default function AccountBalancesTable(props: Props) {
           )
           return (
             <FormattedNumber
-              className='text-right text-xs'
+              className='text-xs text-right'
               amount={Number(BN(amount).abs())}
               options={{ maxDecimals: 2, abbreviated: true }}
               animate
@@ -145,6 +145,8 @@ export default function AccountBalancesTable(props: Props) {
         accessorKey: 'apy',
         header: 'APY',
         cell: ({ row }) => {
+          if (row.original.apy === 0)
+            return <span className='w-full text-xs text-center'>&ndash;</span>
           return (
             <FormattedNumber
               className='text-xs'
@@ -193,7 +195,7 @@ export default function AccountBalancesTable(props: Props) {
                       'align-center',
                     )}
                   >
-                    <span className='h-6 w-6 text-white'>
+                    <span className='w-6 h-6 text-white'>
                       {header.column.getCanSort()
                         ? {
                             asc: <SortAsc />,
