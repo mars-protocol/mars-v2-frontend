@@ -8,6 +8,7 @@ import {
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getAssetByDenom } from 'utils/assets'
 import { BN } from 'utils/helpers'
+import { convertApyToApr } from 'utils/parsers'
 
 export const calculateAccountBalanceValue = (
   account: Account | AccountChange,
@@ -34,7 +35,7 @@ export const calculateAccountValue = (
   account: Account | AccountChange,
   prices: BNCoin[],
 ): BigNumber => {
-  if (!account[type]) return BN_ZERO
+  if (!account[type] || !prices) return BN_ZERO
 
   if (type === 'vaults') {
     return (
@@ -56,18 +57,61 @@ export const calculateAccountValue = (
   }, BN_ZERO)
 }
 
-export const calculateAccountPnL = (
-  account: Account | AccountChange,
-  prices: BNCoin[],
-): BigNumber => {
-  return BN_ZERO
-}
-
 export const calculateAccountApr = (
   account: Account | AccountChange,
+  totalValue: BigNumber,
+  borrowAssetsData: BorrowMarketTableData[],
+  lendingAssetsData: LendingMarketTableData[],
   prices: BNCoin[],
 ): BigNumber => {
-  return BN_ZERO
+  const { vaults, lends, debts } = account
+
+  let totalLendsInterestValue = BN_ZERO
+  let totalVaultsInterestValue = BN_ZERO
+  let totalDeptsInterestValue = BN_ZERO
+
+  lends?.forEach((lend) => {
+    const asset = getAssetByDenom(lend.denom)
+    if (!asset) return BN_ZERO
+    const price = prices.find((price) => price.denom === lend.denom)?.amount ?? 0
+    const amount = BN(lend.amount).shiftedBy(-asset.decimals)
+    const apr =
+      lendingAssetsData.find((lendingAsset) => lendingAsset.asset.denom === lend.denom)
+        ?.marketLiquidityRate ?? 0
+    const positionInterest = amount.multipliedBy(price).multipliedBy(apr)
+    totalLendsInterestValue = totalLendsInterestValue.plus(positionInterest)
+  })
+
+  vaults?.forEach((vault) => {
+    const asset = getAssetByDenom(vault.denoms.lp)
+    if (!asset) return BN_ZERO
+    const price = prices.find((price) => price.denom === vault.denoms.lp)?.amount ?? 0
+    const amount = BN(vault.amounts.locked).shiftedBy(-asset.decimals)
+    const positionInterest = amount
+      .multipliedBy(price)
+      .multipliedBy(convertApyToApr(vault?.apy ?? 0, 365))
+    totalVaultsInterestValue = totalVaultsInterestValue.plus(positionInterest)
+  })
+
+  debts?.forEach((debt) => {
+    const asset = getAssetByDenom(debt.denom)
+    if (!asset) return BN_ZERO
+    const price = prices.find((price) => price.denom === debt.denom)?.amount ?? 0
+    const amount = BN(debt.amount).shiftedBy(-asset.decimals)
+    const apr =
+      borrowAssetsData.find((borrowAsset) => borrowAsset.asset.denom === debt.denom)
+        ?.marketLiquidityRate ?? 0
+    const positionInterest = amount.multipliedBy(price).multipliedBy(apr)
+    totalDeptsInterestValue = totalDeptsInterestValue.plus(positionInterest)
+  })
+
+  const totalPositiveInterestValue = totalLendsInterestValue
+    .plus(totalVaultsInterestValue)
+    .minus(totalDeptsInterestValue)
+
+  const totalApr = totalPositiveInterestValue.dividedBy(totalValue).times(100)
+
+  return totalApr
 }
 
 export const calculateAccountBorrowRate = (

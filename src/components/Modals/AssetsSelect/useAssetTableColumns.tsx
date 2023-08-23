@@ -38,13 +38,13 @@ export default function useAssetTableColumns() {
         header: (data) => {
           const tableData = data.table.options.data as AssetTableRow[]
           const assetData = tableData.length && (tableData[0].asset as BorrowAsset)
-          if (assetData && assetData.borrowRate !== null) return 'Borrow Rate'
+          if (assetData && assetData?.borrowRate) return 'Borrow Rate'
           return 'Balance'
         },
         cell: ({ row }) => {
           const asset = row.original.asset as BorrowAsset
           const balance = row.original.balance
-          if (asset.borrowRate !== null)
+          if (asset?.borrowRate)
             return (
               <Text size='sm' className='mb-0.5 text-white'>
                 {formatPercent(asset.borrowRate ?? 0)}

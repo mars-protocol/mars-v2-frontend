@@ -7,6 +7,7 @@ import Text from 'components/Text'
 import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import { BN_ZERO } from 'constants/math'
+import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
 import useToggle from 'hooks/useToggle'
 import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
@@ -34,6 +35,8 @@ export default function FundAccount(props: Props) {
   const hasAssetSelected = fundingAssets.length > 0
   const hasFundingAssets =
     fundingAssets.length > 0 && fundingAssets.every((a) => a.toCoin().amount !== '0')
+  const { autoLendEnabledAccountIds } = useAutoLendEnabledAccountIds()
+  const isAutoLendEnabled = autoLendEnabledAccountIds.includes(accountId)
 
   const baseBalance = useMemo(
     () => walletBalances.find(byDenom(baseAsset.denom))?.amount ?? '0',
@@ -60,6 +63,7 @@ export default function FundAccount(props: Props) {
       walletAssetsModal: {
         isOpen: true,
         selectedDenoms,
+        isBorrow: false,
       },
     })
   }, [selectedDenoms])
@@ -87,12 +91,16 @@ export default function FundAccount(props: Props) {
         if (assetToUpdateIdx > -1) {
           prevAssets[assetToUpdateIdx].amount = amount
         }
-        setChange({ deposits: prevAssets })
+        setChange(isAutoLendEnabled ? { lends: prevAssets } : { deposits: prevAssets })
         return prevAssets
       })
     },
-    [setChange],
+    [setChange, isAutoLendEnabled],
   )
+
+  useEffect(() => {
+    setChange(isAutoLendEnabled ? { lends: fundingAssets } : { deposits: fundingAssets })
+  }, [isAutoLendEnabled, fundingAssets, setChange])
 
   useEffect(() => {
     if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) {

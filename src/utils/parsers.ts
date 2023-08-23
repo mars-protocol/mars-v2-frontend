@@ -16,6 +16,12 @@ export const convertAprToApy = (apr: number, numberOfCompoundingPeriods: number)
   return ((1 + apr / 100 / numberOfCompoundingPeriods) ** numberOfCompoundingPeriods - 1) * 100
 }
 
+export const convertApyToApr = (apy: number, numberOfCompoundingPeriods: number): number => {
+  return (
+    (Math.pow(1 + apy / 100, numberOfCompoundingPeriods) - 1) * 100 * numberOfCompoundingPeriods
+  )
+}
+
 export const combineBNCoins = (coins: BNCoin[]): BNCoin[] => {
   const combinedMap: { [key: string]: number } = {}
 

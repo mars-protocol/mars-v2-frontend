@@ -67,7 +67,7 @@ export default function TokenInputWithSlider(props: Props) {
         accountId={props.accountId}
       />
       <Slider
-        value={percentage}
+        value={percentage || 0}
         onChange={(value) => onChangeSlider(value)}
         disabled={props.disabled}
       />

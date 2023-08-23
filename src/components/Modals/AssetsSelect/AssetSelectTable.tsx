@@ -10,8 +10,8 @@ import classNames from 'classnames'
 import { useEffect, useMemo, useState } from 'react'
 
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
-import Text from 'components/Text'
 import useAssetTableColumns from 'components/Modals/AssetsSelect/useAssetTableColumns'
+import Text from 'components/Text'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 
@@ -97,7 +97,7 @@ export default function AssetSelectTable(props: Props) {
                       'align-center',
                     )}
                   >
-                    <span className='h-6 w-6 text-white'>
+                    <span className='w-6 h-6 text-white'>
                       {header.column.getCanSort()
                         ? {
                             asc: <SortAsc />,
