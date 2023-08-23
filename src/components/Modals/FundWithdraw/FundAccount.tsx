@@ -91,7 +91,7 @@ export default function FundAccount(props: Props) {
         if (assetToUpdateIdx > -1) {
           prevAssets[assetToUpdateIdx].amount = amount
         }
-        setChange(isAutoLendEnabled ? { lends: prevAssets } : { deposits: prevAssets })
+        setChange({ [isAutoLendEnabled ? "lends" : "deposits"]: prevAssets })
         return prevAssets
       })
     },
