@@ -13,7 +13,7 @@ import Text from 'components/Text'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
-import { calculateAccountValue } from 'utils/accounts'
+import { calculateAccountBalanceValue } from 'utils/accounts'
 import { getPage, getRoute } from 'utils/route'
 
 interface Props {
@@ -52,7 +52,7 @@ export default function AccountList(props: Props) {
   return (
     <div className='flex flex-wrap w-full p-4'>
       {props.accounts.map((account) => {
-        const positionBalance = calculateAccountValue('deposits', account, prices)
+        const positionBalance = calculateAccountBalanceValue(account, prices)
         const isActive = accountId === account.id
 
         return (

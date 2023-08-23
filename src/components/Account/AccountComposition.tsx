@@ -8,13 +8,13 @@ import { ArrowRight } from 'components/Icons'
 import Text from 'components/Text'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
+import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
+import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import {
   calculateAccountApr,
   calculateAccountBalanceValue,
-  calculateAccountBorrowRate,
-  calculateAccountPnL,
   getAccountPositionValues,
 } from 'utils/accounts'
 
@@ -35,6 +35,18 @@ interface ItemProps {
 export default function AccountComposition(props: Props) {
   const { account, change } = props
   const { data: prices } = usePrices()
+  const { availableAssets: borrowAvailableAssets, accountBorrowedAssets } =
+    useBorrowMarketAssetsTableData()
+  const { availableAssets: lendingAvailableAssets, accountLentAssets } =
+    useLendingMarketAssetsTableData()
+  const borrowAssetsData = useMemo(
+    () => [...borrowAvailableAssets, ...accountBorrowedAssets],
+    [borrowAvailableAssets, accountBorrowedAssets],
+  )
+  const lendingAssetsData = useMemo(
+    () => [...lendingAvailableAssets, ...accountLentAssets],
+    [lendingAvailableAssets, accountLentAssets],
+  )
 
   const [depositsBalance, lendsBalance, debtsBalance] = useMemo(
     () => getAccountPositionValues(account, prices),
@@ -52,16 +64,28 @@ export default function AccountComposition(props: Props) {
     () => (change ? calculateAccountBalanceValue(change, prices) : BN_ZERO),
     [change, prices],
   )
-
   const balance = depositsBalance.plus(lendsBalance)
   const balanceChange = depositsBalanceChange.plus(lendsBalanceChange)
-  const apr = calculateAccountApr(account, prices)
-  const aprChange = change ? calculateAccountPnL(change, prices) : BN_ZERO
-  const borrowRate = calculateAccountBorrowRate(account, prices)
-  const borrowRateChange = change ? calculateAccountPnL(change, prices) : BN_ZERO
+  const apr = useMemo(
+    () => calculateAccountApr(account, totalBalance, borrowAssetsData, lendingAssetsData, prices),
+    [account, totalBalance, borrowAssetsData, lendingAssetsData, prices],
+  )
+  const aprChange = useMemo(
+    () =>
+      change
+        ? calculateAccountApr(
+            change,
+            totalBalance.plus(totalBalanceChange),
+            borrowAssetsData,
+            lendingAssetsData,
+            prices,
+          )
+        : BN_ZERO,
+    [change, totalBalance, totalBalanceChange, borrowAssetsData, lendingAssetsData, prices],
+  )
 
   return (
-    <div className='w-full flex-wrap p-4'>
+    <div className='flex-wrap w-full p-4'>
       <Item
         title='Total Position Value'
         current={balance}
@@ -79,16 +103,9 @@ export default function AccountComposition(props: Props) {
         title='Total Balance'
         current={totalBalance}
         change={totalBalance.plus(totalBalanceChange)}
-        className='border border-transparent border-y-white/20 py-3 font-bold'
+        className='py-3 font-bold border border-transparent border-y-white/20'
       />
       <Item title='APR' current={apr} change={apr.plus(aprChange)} className='py-3' isPercentage />
-      <Item
-        title='Borrow Rate'
-        current={borrowRate}
-        change={borrowRate.plus(borrowRateChange)}
-        isPercentage
-        isDecrease
-      />
     </div>
   )
 }
@@ -99,12 +116,12 @@ function Item(props: ItemProps) {
 
   return (
     <div className={classNames('flex w-full flex-nowrap', props.className)}>
-      <div className='flex flex-shrink items-center'>
+      <div className='flex items-center flex-shrink'>
         <Text size='sm' className='text-white/60'>
           {props.title}
         </Text>
       </div>
-      <div className='flex flex-1 items-center justify-end gap-2'>
+      <div className='flex items-center justify-end flex-1 gap-2'>
         {props.isPercentage ? (
           <FormattedNumber
             amount={current.toNumber()}

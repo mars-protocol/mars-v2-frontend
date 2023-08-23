@@ -7,13 +7,18 @@ import { Gauge } from 'components/Gauge'
 import { ArrowRight, Heart } from 'components/Icons'
 import Text from 'components/Text'
 import { ORACLE_DENOM } from 'constants/oracle'
+import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useHealthComputer from 'hooks/useHealthComputer'
+import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { calculateAccountBalanceValue, calculateAccountLeverage } from 'utils/accounts'
-import { formatLeverage } from 'utils/formatters'
+import {
+  calculateAccountApr,
+  calculateAccountBalanceValue,
+  calculateAccountLeverage,
+} from 'utils/accounts'
 
 export default function AccountDetailsController() {
   const account = useCurrentAccount()
@@ -34,22 +39,44 @@ function AccountDetails(props: Props) {
   const { health } = useHealthComputer(props.account)
   const { health: updatedHealth } = useHealthComputer(updatedAccount)
   const { data: prices } = usePrices()
-  const accountBalanceValue = calculateAccountBalanceValue(
-    updatedAccount ? updatedAccount : props.account,
-    prices,
+  const accountBalanceValue = useMemo(
+    () => calculateAccountBalanceValue(updatedAccount ? updatedAccount : props.account, prices),
+    [updatedAccount, props.account, prices],
   )
   const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalanceValue)
   const leverage = useMemo(
     () => calculateAccountLeverage(updatedAccount ? updatedAccount : props.account, prices),
     [props.account, updatedAccount, prices],
   )
-
+  const { availableAssets: borrowAvailableAssets, accountBorrowedAssets } =
+    useBorrowMarketAssetsTableData()
+  const { availableAssets: lendingAvailableAssets, accountLentAssets } =
+    useLendingMarketAssetsTableData()
+  const borrowAssetsData = useMemo(
+    () => [...borrowAvailableAssets, ...accountBorrowedAssets],
+    [borrowAvailableAssets, accountBorrowedAssets],
+  )
+  const lendingAssetsData = useMemo(
+    () => [...lendingAvailableAssets, ...accountLentAssets],
+    [lendingAvailableAssets, accountLentAssets],
+  )
+  const apr = useMemo(
+    () =>
+      calculateAccountApr(
+        props.account,
+        accountBalanceValue,
+        borrowAssetsData,
+        lendingAssetsData,
+        prices,
+      ),
+    [props.account, accountBalanceValue, borrowAssetsData, lendingAssetsData, prices],
+  )
   return (
     <div
       data-testid='account-details'
-      className='w-16 rounded-base border border-white/20 bg-white/5 backdrop-blur-sticky'
+      className='w-16 border rounded-base border-white/20 bg-white/5 backdrop-blur-sticky'
     >
-      <div className='flex w-full flex-wrap justify-center py-4'>
+      <div className='flex flex-wrap justify-center w-full py-4'>
         <Gauge tooltip='Health Factor' percentage={health} icon={<Heart />} />
         <Text size='2xs' className='mb-0.5 mt-1 w-full text-center text-white/50'>
           Health
@@ -77,19 +104,35 @@ function AccountDetails(props: Props) {
           )}
         </div>
       </div>
-      <div className='w-full border-t border-white/20 py-4'>
+      <div className='w-full py-4 border-t border-white/20'>
         <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
           Leverage
         </Text>
-        <Text size='xs' className='text-center'>
-          {formatLeverage(leverage.toNumber())}
+        <Text size='2xs' className='text-center'>
+          <FormattedNumber
+            className={'w-full text-center text-2xs'}
+            amount={leverage.toNumber()}
+            options={{ maxDecimals: 2, minDecimals: 2, suffix: 'x' }}
+            animate
+          />
         </Text>
       </div>
-      <div className='w-full border-t border-white/20 py-4'>
+      <div className='w-full py-4 border-t border-white/20'>
         <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
           Net worth
         </Text>
-        <DisplayCurrency coin={coin} className='w-full truncate text-center text-2xs ' />
+        <DisplayCurrency coin={coin} className='w-full text-center truncate text-2xs ' />
+      </div>
+      <div className='w-full py-4 border-t border-white/20'>
+        <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
+          APR
+        </Text>
+        <FormattedNumber
+          className={'w-full text-center text-2xs'}
+          amount={apr.toNumber()}
+          options={{ maxDecimals: 2, minDecimals: 2, suffix: '%' }}
+          animate
+        />
       </div>
     </div>
   )

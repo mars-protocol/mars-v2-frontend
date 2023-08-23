@@ -57,4 +57,5 @@ interface UnlockModal {
 interface WalletAssetModal {
   isOpen?: boolean
   selectedDenoms: string[]
+  isBorrow?: boolean
 }

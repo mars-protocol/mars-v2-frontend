@@ -1,4 +1,3 @@
-import { render } from '@testing-library/react'
 import classNames from 'classnames'
 
 import { ChevronDown, ChevronRight } from 'components/Icons'
@@ -38,7 +37,7 @@ export default function AccordionContent(props: Props) {
           </Text>
         </div>
         <div className='block pr-1 group-[[open]]:hidden'>
-          {isOpen ? <ChevronDown /> : <ChevronRight />}
+          {isOpen ? <ChevronDown className='h-1.5' /> : <ChevronRight className='w-1.5' />}
         </div>
       </div>
       {isOpen && <div className='bg-white/5 transition-[padding]'>{renderContent()}</div>}

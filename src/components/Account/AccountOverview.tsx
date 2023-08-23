@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { Suspense } from 'react'
+import { Suspense, useMemo } from 'react'
 
 import AccountBalancesTable from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
@@ -18,13 +18,19 @@ function Content() {
     useBorrowMarketAssetsTableData()
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
     useLendingMarketAssetsTableData()
-  const borrowAssetsData = [...borrowAvailableAssets, ...accountBorrowedAssets]
-  const lendingAssetsData = [...lendingAvailableAssets, ...accountLentAssets]
+  const borrowAssetsData = useMemo(
+    () => [...borrowAvailableAssets, ...accountBorrowedAssets],
+    [borrowAvailableAssets, accountBorrowedAssets],
+  )
+  const lendingAssetsData = useMemo(
+    () => [...lendingAvailableAssets, ...accountLentAssets],
+    [lendingAvailableAssets, accountLentAssets],
+  )
 
   if (!address) {
     return (
       <Card
-        className='h-fit w-full justify-center bg-white/5'
+        className='justify-center w-full h-fit bg-white/5'
         title='Portfolio'
         contentClassName='px-4 py-6'
       >
@@ -40,9 +46,9 @@ function Content() {
       className={classNames('grid w-full grid-cols-1 gap-4', 'md:grid-cols-2', 'lg:grid-cols-3')}
     >
       {account.map((account: Account, index: number) => (
-        <Card className='h-fit w-full bg-white/5' title={`Account ${account.id}`} key={index}>
+        <Card className='w-full h-fit bg-white/5' title={`Account ${account.id}`} key={index}>
           <AccountComposition account={account} />
-          <Text className='mt-3 w-full bg-white/10 px-4 py-2 text-white/40'>Balances</Text>
+          <Text className='w-full px-4 py-2 mt-3 bg-white/10 text-white/40'>Balances</Text>
           <AccountBalancesTable
             account={account}
             borrowingData={borrowAssetsData}
@@ -61,12 +67,12 @@ function Fallback() {
       className={classNames('grid w-full grid-cols-1 gap-4', 'md:grid-cols-2', 'lg:grid-cols-3')}
     >
       {Array.from({ length: cardCount }, (_, i) => (
-        <Card key={i} className='h-fit w-full bg-white/5' title='Account' contentClassName='py-6'>
+        <Card key={i} className='w-full h-fit bg-white/5' title='Account' contentClassName='py-6'>
           <div className='p-4'>
             <Loading className='h-4 w-50' />
           </div>
-          <Text className='mt-3 w-full bg-white/10 px-4 py-2 text-white/40'>Balances</Text>
-          <Loading className='h-4 w-full' />
+          <Text className='w-full px-4 py-2 mt-3 bg-white/10 text-white/40'>Balances</Text>
+          <Loading className='w-full h-4' />
         </Card>
       ))}
     </div>
