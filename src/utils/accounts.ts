@@ -64,6 +64,7 @@ export const calculateAccountApr = (
   lendingAssetsData: LendingMarketTableData[],
   prices: BNCoin[],
 ): BigNumber => {
+  if (totalValue.isZero()) return BN_ZERO
   const { vaults, lends, debts } = account
 
   let totalLendsInterestValue = BN_ZERO
