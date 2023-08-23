@@ -99,7 +99,7 @@ export default function FundAccount(props: Props) {
   )
 
   useEffect(() => {
-    setChange(isAutoLendEnabled ? { lends: fundingAssets } : { deposits: fundingAssets })
+    setChange({ [isAutoLendEnabled ? "lends" : "deposits"]: fundingAssets })
   }, [isAutoLendEnabled, fundingAssets, setChange])
 
   useEffect(() => {
