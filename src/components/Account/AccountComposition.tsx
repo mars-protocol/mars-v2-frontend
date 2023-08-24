@@ -85,7 +85,7 @@ export default function AccountComposition(props: Props) {
   )
 
   return (
-    <div className='flex-wrap w-full p-4'>
+    <div className='flex-wrap w-full p-4 pb-1'>
       <Item
         title='Total Position Value'
         current={balance}

@@ -48,7 +48,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         className={classNames(
           'lg:min-h-[calc(100vh-65px)]',
           'lg:mt-[65px]',
-          'min-h-screen gap-6 p-6 w-full',
+          'min-h-screen gap-6 p-6 w-full relative',
           focusComponent || isMobile
             ? 'flex justify-center'
             : 'grid grid-cols-[auto_min-content] place-items-start',

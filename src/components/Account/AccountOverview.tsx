@@ -48,7 +48,7 @@ function Content() {
       {account.map((account: Account, index: number) => (
         <Card className='w-full h-fit bg-white/5' title={`Account ${account.id}`} key={index}>
           <AccountComposition account={account} />
-          <Text className='w-full px-4 py-2 mt-3 bg-white/10 text-white/40'>Balances</Text>
+          <Text className='w-full px-4 py-2 bg-white/10 text-white/40'>Balances</Text>
           <AccountBalancesTable
             account={account}
             borrowingData={borrowAssetsData}

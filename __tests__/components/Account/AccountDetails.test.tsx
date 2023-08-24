@@ -10,6 +10,8 @@ jest.mock('hooks/useHealthComputer', () =>
     health: 0,
   })),
 )
+// AccountBalancesTable component has wallet provider dependency, so we mock it
+jest.mock('components/Account/AccountBalancesTable', () => jest.fn(() => null))
 
 const mockedUseCurrentAccount = useCurrentAccount as jest.Mock
 

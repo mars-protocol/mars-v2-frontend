@@ -1,10 +1,13 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
+import AccountBalancesTable from 'components/Account/AccountBalancesTable'
+import AccountComposition from 'components/Account/AccountComposition'
+import Card from 'components/Card'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { Gauge } from 'components/Gauge'
-import { ArrowRight, Heart } from 'components/Icons'
+import { ArrowRight, ChevronLeft, ChevronRight, Heart } from 'components/Icons'
 import Text from 'components/Text'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
@@ -12,6 +15,7 @@ import useCurrentAccount from 'hooks/useCurrentAccount'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import usePrices from 'hooks/usePrices'
+import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import {
@@ -35,18 +39,20 @@ interface Props {
 }
 
 function AccountDetails(props: Props) {
+  const { account } = props
   const updatedAccount = useStore((s) => s.updatedAccount)
-  const { health } = useHealthComputer(props.account)
+  const [isExpanded, setIsExpanded] = useToggle()
+  const { health } = useHealthComputer(account)
   const { health: updatedHealth } = useHealthComputer(updatedAccount)
   const { data: prices } = usePrices()
   const accountBalanceValue = useMemo(
-    () => calculateAccountBalanceValue(updatedAccount ? updatedAccount : props.account, prices),
-    [updatedAccount, props.account, prices],
+    () => calculateAccountBalanceValue(updatedAccount ? updatedAccount : account, prices),
+    [updatedAccount, account, prices],
   )
   const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalanceValue)
   const leverage = useMemo(
-    () => calculateAccountLeverage(updatedAccount ? updatedAccount : props.account, prices),
-    [props.account, updatedAccount, prices],
+    () => calculateAccountLeverage(updatedAccount ? updatedAccount : account, prices),
+    [account, updatedAccount, prices],
   )
   const { availableAssets: borrowAvailableAssets, accountBorrowedAssets } =
     useBorrowMarketAssetsTableData()
@@ -63,76 +69,110 @@ function AccountDetails(props: Props) {
   const apr = useMemo(
     () =>
       calculateAccountApr(
-        props.account,
+        account,
         accountBalanceValue,
         borrowAssetsData,
         lendingAssetsData,
         prices,
       ),
-    [props.account, accountBalanceValue, borrowAssetsData, lendingAssetsData, prices],
+    [account, accountBalanceValue, borrowAssetsData, lendingAssetsData, prices],
   )
   return (
     <div
       data-testid='account-details'
-      className='w-16 border rounded-base border-white/20 bg-white/5 backdrop-blur-sticky'
+      className={classNames(
+        isExpanded ? 'right-6' : '-right-80',
+        'w-100 flex items-start gap-6 absolute top-6',
+        'transition-all duration-300',
+      )}
     >
-      <div className='flex flex-wrap justify-center w-full py-4'>
-        <Gauge tooltip='Health Factor' percentage={health} icon={<Heart />} />
-        <Text size='2xs' className='mb-0.5 mt-1 w-full text-center text-white/50'>
-          Health
-        </Text>
-        <div className='flex'>
-          <FormattedNumber
-            className={'w-full text-center text-xs'}
-            amount={health}
-            options={{ maxDecimals: 0, minDecimals: 0, suffix: '%' }}
-            animate
-          />
-          {updatedHealth > 0 && health !== updatedHealth && (
-            <>
-              <ArrowRight
-                width={16}
-                className={classNames(health > updatedHealth ? 'text-loss' : 'text-success')}
-              />
-              <FormattedNumber
-                className={'w-full text-center text-xs'}
-                amount={updatedHealth}
-                options={{ maxDecimals: 0, minDecimals: 0, suffix: '%' }}
-                animate
-              />
-            </>
+      <div
+        className={classNames(
+          'flex flex-wrap w-16 group/details relative',
+          'border rounded-base border-white/20',
+          'bg-white/5 backdrop-blur-sticky transition-colors duration-300',
+          'hover:bg-white/20 hover:cursor-pointer ',
+        )}
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div
+          className={classNames(
+            'absolute block opacity-0 top-1/2 transition-[opacity]',
+            'group-hover/details:opacity-100 duration-300 delay-100',
+            isExpanded ? '-right-4' : '-right-3',
           )}
+        >
+          {isExpanded ? <ChevronRight className='w-2' /> : <ChevronLeft className='w-2' />}
         </div>
-      </div>
-      <div className='w-full py-4 border-t border-white/20'>
-        <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
-          Leverage
-        </Text>
-        <Text size='2xs' className='text-center'>
+        <div className='flex flex-wrap justify-center w-full py-4'>
+          <Gauge tooltip='Health Factor' percentage={health} icon={<Heart />} />
+          <Text size='2xs' className='mb-0.5 mt-1 w-full text-center text-white/50'>
+            Health
+          </Text>
+          <div className='flex'>
+            <FormattedNumber
+              className={'w-full text-center text-xs'}
+              amount={health}
+              options={{ maxDecimals: 0, minDecimals: 0, suffix: '%' }}
+              animate
+            />
+            {updatedHealth > 0 && health !== updatedHealth && (
+              <>
+                <ArrowRight
+                  width={16}
+                  className={classNames(health > updatedHealth ? 'text-loss' : 'text-success')}
+                />
+                <FormattedNumber
+                  className={'w-full text-center text-xs'}
+                  amount={updatedHealth}
+                  options={{ maxDecimals: 0, minDecimals: 0, suffix: '%' }}
+                  animate
+                />
+              </>
+            )}
+          </div>
+        </div>
+        <div className='w-full py-4 border-t border-white/20'>
+          <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
+            Leverage
+          </Text>
+          <Text size='2xs' className='text-center'>
+            <FormattedNumber
+              className={'w-full text-center text-2xs'}
+              amount={leverage.toNumber()}
+              options={{ maxDecimals: 2, minDecimals: 2, suffix: 'x' }}
+              animate
+            />
+          </Text>
+        </div>
+        <div className='w-full py-4 border-t border-white/20'>
+          <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
+            Net worth
+          </Text>
+          <DisplayCurrency coin={coin} className='w-full text-center truncate text-2xs ' />
+        </div>
+        <div className='w-full py-4 border-t border-white/20'>
+          <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
+            APR
+          </Text>
           <FormattedNumber
             className={'w-full text-center text-2xs'}
-            amount={leverage.toNumber()}
-            options={{ maxDecimals: 2, minDecimals: 2, suffix: 'x' }}
+            amount={apr.toNumber()}
+            options={{ maxDecimals: 2, minDecimals: 2, suffix: '%' }}
             animate
           />
-        </Text>
+        </div>
       </div>
-      <div className='w-full py-4 border-t border-white/20'>
-        <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
-          Net worth
-        </Text>
-        <DisplayCurrency coin={coin} className='w-full text-center truncate text-2xs ' />
-      </div>
-      <div className='w-full py-4 border-t border-white/20'>
-        <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
-          APR
-        </Text>
-        <FormattedNumber
-          className={'w-full text-center text-2xs'}
-          amount={apr.toNumber()}
-          options={{ maxDecimals: 2, minDecimals: 2, suffix: '%' }}
-          animate
-        />
+      <div className='flex w-80'>
+        <Card className='w-full bg-white/5' title={`Account ${account.id}`}>
+          <AccountComposition account={account} />
+          <Text className='w-full px-4 py-2 bg-white/10 text-white/40'>Balances</Text>
+          <AccountBalancesTable
+            account={account}
+            borrowingData={borrowAssetsData}
+            lendingData={lendingAssetsData}
+          />
+        </Card>
       </div>
     </div>
   )
