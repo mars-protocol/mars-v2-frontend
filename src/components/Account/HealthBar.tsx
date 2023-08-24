@@ -19,7 +19,6 @@ export default function HealthBar(props: Props) {
   }, [health])
 
   return (
-    // TODO: Update tooltip to new styling
     <Tooltip content={label} type='info'>
       <div className='flex flex-shrink gap-0.5 py-1'>
         <svg fill='none' xmlns='http://www.w3.org/2000/svg' width='25%' height='4'>

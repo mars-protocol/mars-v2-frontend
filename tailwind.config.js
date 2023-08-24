@@ -60,7 +60,7 @@ module.exports = {
         overlay: '0 2px 2px rgba(0, 0, 0, 0.14), 0 1px 5px rgba(0, 0, 0, 0.2)',
         button: '0px 1px 1px rgba(0, 0, 0, 0.14), 0px 1px 3px rgba(0, 0, 0, 0.2)',
         tooltip:
-          '0 3px 4px rgba(0, 0, 0, 0.14), 0 3px 3px rgba(0, 0, 0, 0.12), 0 1px 8px rgba(0, 0, 0, 0.2)',
+          '0 3px 4px rgba(0, 0, 0, 0.04), 0 3px 3px rgba(0, 0, 0, 0.04), 0 1px 8px rgba(0, 0, 0, 0.04)',
       },
       brightness: {
         30: '.3',
