@@ -79,14 +79,15 @@ export default function SwapForm(props: Props) {
 
   const handleRangeInputChange = useCallback(
     (value: number) => {
-      onChangeSellAmount(BN(value).shiftedBy(sellAsset.decimals).integerValue())
+      onChangeBuyAmount(BN(value).shiftedBy(buyAsset.decimals).integerValue())
     },
-    [sellAsset.decimals, onChangeSellAmount],
+    [onChangeBuyAmount, buyAsset.decimals],
   )
 
-  const [maxSellAmount, marginThreshold] = useMemo(() => {
+  const [maxSellAmount, sellSideMarginThreshold, marginRatio] = useMemo(() => {
     const maxAmount = computeMaxSwapAmount(sellAsset.denom, buyAsset.denom, 'default')
     const maxAmountOnMargin = computeMaxSwapAmount(sellAsset.denom, buyAsset.denom, 'margin')
+    const marginRatio = maxAmount.dividedBy(maxAmountOnMargin)
 
     estimateExactIn(
       {
@@ -96,11 +97,11 @@ export default function SwapForm(props: Props) {
       buyAsset.denom,
     ).then(setMaxBuyableAmountEstimation)
 
-    if (isMarginChecked) return [maxAmountOnMargin, maxAmount]
+    if (isMarginChecked) return [maxAmountOnMargin, maxAmount, marginRatio]
 
     if (sellAssetAmount.isGreaterThan(maxAmount)) onChangeSellAmount(maxAmount)
 
-    return [maxAmount, maxAmount]
+    return [maxAmount, maxAmount, marginRatio]
   }, [
     computeMaxSwapAmount,
     sellAsset.denom,
@@ -109,6 +110,10 @@ export default function SwapForm(props: Props) {
     onChangeSellAmount,
     sellAssetAmount,
   ])
+
+  const buySideMarginThreshold = useMemo(() => {
+    return maxBuyableAmountEstimation.multipliedBy(marginRatio)
+  }, [marginRatio, maxBuyableAmountEstimation])
 
   const [buyAssetValue, sellAssetValue] = useMemo(() => {
     const buyAssetPrice = prices.find(byDenom(buyAsset.denom))?.amount ?? BN_ZERO
@@ -129,8 +134,11 @@ export default function SwapForm(props: Props) {
   ])
 
   const swapTx = useMemo(() => {
-    const borrowCoin = sellAssetAmount.isGreaterThan(marginThreshold)
-      ? BNCoin.fromDenomAndBigNumber(sellAsset.denom, sellAssetAmount.minus(marginThreshold))
+    const borrowCoin = sellAssetAmount.isGreaterThan(sellSideMarginThreshold)
+      ? BNCoin.fromDenomAndBigNumber(
+          sellAsset.denom,
+          sellAssetAmount.minus(sellSideMarginThreshold),
+        )
       : undefined
 
     return swap({
@@ -143,7 +151,7 @@ export default function SwapForm(props: Props) {
   }, [
     account?.id,
     buyAsset.denom,
-    marginThreshold,
+    sellSideMarginThreshold,
     sellAsset.denom,
     sellAssetAmount,
     slippage,
@@ -169,11 +177,11 @@ export default function SwapForm(props: Props) {
   }, [buyAsset.denom, sellAsset.denom, removeDeposits, addDeposits, addDebt])
 
   useEffect(() => {
-    const removeDepositAmount = sellAssetAmount.isGreaterThanOrEqualTo(marginThreshold)
-      ? marginThreshold
+    const removeDepositAmount = sellAssetAmount.isGreaterThanOrEqualTo(sellSideMarginThreshold)
+      ? sellSideMarginThreshold
       : sellAssetAmount
-    const addDebtAmount = sellAssetAmount.isGreaterThan(marginThreshold)
-      ? sellAssetAmount.minus(marginThreshold)
+    const addDebtAmount = sellAssetAmount.isGreaterThan(sellSideMarginThreshold)
+      ? sellAssetAmount.minus(sellSideMarginThreshold)
       : BN_ZERO
     const removeCoin = BNCoin.fromDenomAndBigNumber(sellAsset.denom, removeDepositAmount)
     const debtCoin = BNCoin.fromDenomAndBigNumber(sellAsset.denom, addDebtAmount)
@@ -183,7 +191,7 @@ export default function SwapForm(props: Props) {
   }, [
     sellAssetAmount,
     buyAssetAmount,
-    marginThreshold,
+    sellSideMarginThreshold,
     buyAsset.denom,
     sellAsset.denom,
     debouncedUpdateAccount,
@@ -232,12 +240,14 @@ export default function SwapForm(props: Props) {
 
       <RangeInput
         wrapperClassName='p-4'
-        disabled={isConfirming || maxSellAmount.isZero()}
+        disabled={isConfirming || maxBuyableAmountEstimation.isZero()}
         onChange={handleRangeInputChange}
-        value={sellAssetAmount.shiftedBy(-sellAsset.decimals).toNumber()}
-        max={maxSellAmount.shiftedBy(-sellAsset.decimals).toNumber()}
+        value={buyAssetAmount.shiftedBy(-buyAsset.decimals).toNumber()}
+        max={maxBuyableAmountEstimation.shiftedBy(-buyAsset.decimals).toNumber()}
         marginThreshold={
-          isMarginChecked ? marginThreshold.shiftedBy(-sellAsset.decimals).toNumber() : undefined
+          isMarginChecked
+            ? buySideMarginThreshold.shiftedBy(-buyAsset.decimals).toNumber()
+            : undefined
         }
       />
 
@@ -263,8 +273,8 @@ export default function SwapForm(props: Props) {
         showProgressIndicator={isConfirming}
         isMargin={isMarginChecked}
         borrowAmount={
-          sellAssetAmount.isGreaterThan(marginThreshold)
-            ? sellAssetAmount.minus(marginThreshold)
+          sellAssetAmount.isGreaterThan(sellSideMarginThreshold)
+            ? sellAssetAmount.minus(sellSideMarginThreshold)
             : BN_ZERO
         }
         estimatedFee={estimatedFee}
