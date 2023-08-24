@@ -8,7 +8,10 @@ import {
 } from '@tanstack/react-table'
 import classNames from 'classnames'
 import React from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
+import AccountFund from 'components/Account/AccountFund'
+import Button from 'components/Button'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
@@ -16,14 +19,17 @@ import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
+import useCurrentAccount from 'hooks/useCurrentAccount'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { getAssetByDenom } from 'utils/assets'
 import { convertLiquidityRateToAPR, convertToDisplayAmount, demagnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { convertAprToApy } from 'utils/parsers'
+import { getPage, getRoute } from 'utils/route'
 
 interface Props {
   account: Account
@@ -62,7 +68,10 @@ export default function AccountBalancesTable(props: Props) {
     DEFAULT_SETTINGS.displayCurrency,
   )
   const { data: prices } = usePrices()
-
+  const currentAccount = useCurrentAccount()
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const address = useStore((s) => s.address)
   const [sorting, setSorting] = React.useState<SortingState>([])
   const balanceData = React.useMemo<AccountBalanceRow[]>(() => {
     const accountDeposits = props.account?.deposits ?? []
@@ -171,6 +180,30 @@ export default function AccountBalancesTable(props: Props) {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   })
+
+  if (balanceData.length === 0)
+    return (
+      <div className='w-full p-4'>
+        <Button
+          className='w-full'
+          text='Fund this Account'
+          color='tertiary'
+          onClick={() => {
+            if (currentAccount?.id !== props.account.id) {
+              navigate(getRoute(getPage(pathname), address, props.account.id))
+            }
+            useStore.setState({
+              focusComponent: {
+                component: <AccountFund />,
+                onClose: () => {
+                  useStore.setState({ getStartedModal: true })
+                },
+              },
+            })
+          }}
+        />
+      </div>
+    )
 
   return (
     <table className='w-full'>

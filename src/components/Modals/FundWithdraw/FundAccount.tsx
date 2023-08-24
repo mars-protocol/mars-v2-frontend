@@ -91,7 +91,7 @@ export default function FundAccount(props: Props) {
         if (assetToUpdateIdx > -1) {
           prevAssets[assetToUpdateIdx].amount = amount
         }
-        setChange({ [isAutoLendEnabled ? "lends" : "deposits"]: prevAssets })
+        setChange({ [isAutoLendEnabled ? 'lends' : 'deposits']: prevAssets })
         return prevAssets
       })
     },
@@ -99,7 +99,7 @@ export default function FundAccount(props: Props) {
   )
 
   useEffect(() => {
-    setChange({ [isAutoLendEnabled ? "lends" : "deposits"]: fundingAssets })
+    setChange({ [isAutoLendEnabled ? 'lends' : 'deposits']: fundingAssets })
   }, [isAutoLendEnabled, fundingAssets, setChange])
 
   useEffect(() => {
