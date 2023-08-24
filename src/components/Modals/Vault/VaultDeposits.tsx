@@ -14,7 +14,7 @@ import { BN_ZERO } from 'constants/math'
 import usePrice from 'hooks/usePrice'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { getAmount } from 'utils/accounts'
+import { accumulateAmounts, getAmount } from 'utils/accounts'
 import { findCoinByDenom } from 'utils/assets'
 import { BN } from 'utils/helpers'
 
@@ -32,8 +32,15 @@ interface Props {
 export default function VaultDeposit(props: Props) {
   const { deposits, primaryAsset, secondaryAsset, account, onChangeDeposits } = props
   const baseCurrency = useStore((s) => s.baseCurrency)
-  const availablePrimaryAmount = getAmount(primaryAsset.denom, account.deposits)
-  const availableSecondaryAmount = getAmount(secondaryAsset.denom, account.deposits)
+
+  const [availablePrimaryAmount, availableSecondaryAmount] = useMemo(
+    () => [
+      accumulateAmounts(primaryAsset.denom, [...account.deposits, ...account.lends]),
+      accumulateAmounts(secondaryAsset.denom, [...account.deposits, ...account.lends]),
+    ],
+    [account.deposits, account.lends, primaryAsset.denom, secondaryAsset.denom],
+  )
+
   const primaryPrice = usePrice(primaryAsset.denom)
   const secondaryPrice = usePrice(secondaryAsset.denom)
 

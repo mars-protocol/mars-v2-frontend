@@ -10,6 +10,8 @@ import { BN_ZERO } from 'constants/math'
 import useDepositVault from 'hooks/broadcast/useDepositVault'
 import useIsOpenArray from 'hooks/useIsOpenArray'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
+import { byDenom } from 'utils/array'
+import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   vault: Vault | DepositedVault
@@ -20,17 +22,57 @@ interface Props {
 }
 
 export default function VaultModalContent(props: Props) {
-  const { addDebt, removeDeposits, addedDebt, removedDeposits, updatedAccount, addVaultValues } =
-    useUpdatedAccount(props.account)
+  const {
+    addDebt,
+    removeDeposits,
+    addedDebt,
+    removedDeposits,
+    removedLends,
+    setRemovedLends,
+    updatedAccount,
+    addVaultValues,
+  } = useUpdatedAccount(props.account)
 
   const [isOpen, toggleOpen] = useIsOpenArray(2, false)
   const [isCustomRatio, setIsCustomRatio] = useState(false)
+  const [selectedCoins, setSelectedCoins] = useState<BNCoin[]>([])
 
   const { actions: depositActions, totalValue } = useDepositVault({
     vault: props.vault,
+    reclaims: removedLends,
     deposits: removedDeposits,
     borrowings: addedDebt,
   })
+
+  const handleDepositSelect = useCallback(
+    (selectedCoins: BNCoin[]) => {
+      const reclaims: BNCoin[] = []
+      const deposits: BNCoin[] = []
+
+      selectedCoins.forEach((selectedCoin) => {
+        const { denom, amount: selectedAmount } = selectedCoin
+        const accountDepositForSelectedCoin: BigNumber =
+          props.account.deposits.find(byDenom(denom))?.amount ?? BN_ZERO
+
+        if (selectedAmount.gt(accountDepositForSelectedCoin)) {
+          reclaims.push(
+            BNCoin.fromDenomAndBigNumber(
+              denom,
+              selectedAmount.minus(accountDepositForSelectedCoin),
+            ),
+          )
+          deposits.push(BNCoin.fromDenomAndBigNumber(denom, accountDepositForSelectedCoin))
+        } else {
+          deposits.push(selectedCoin)
+        }
+      })
+
+      setRemovedLends(reclaims)
+      removeDeposits(deposits)
+      setSelectedCoins(selectedCoins)
+    },
+    [props.account.deposits, removeDeposits, setRemovedLends],
+  )
 
   useEffect(() => {
     addVaultValues([
@@ -84,8 +126,8 @@ export default function VaultModalContent(props: Props) {
           {
             renderContent: () => (
               <VaultDeposit
-                deposits={removedDeposits}
-                onChangeDeposits={removeDeposits}
+                deposits={selectedCoins}
+                onChangeDeposits={handleDepositSelect}
                 primaryAsset={props.primaryAsset}
                 secondaryAsset={props.secondaryAsset}
                 account={props.account}

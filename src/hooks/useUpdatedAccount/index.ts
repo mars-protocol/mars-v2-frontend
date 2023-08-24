@@ -77,7 +77,9 @@ export function useUpdatedAccount(account?: Account) {
     addedDebt,
     removedDeposits,
     removedDebt,
+    addedLends,
     setAddedLends,
+    removedLends,
     setRemovedLends,
   }
 }
