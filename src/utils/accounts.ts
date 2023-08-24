@@ -132,6 +132,10 @@ export function getAmount(denom: string, coins: Coin[]): BigNumber {
   return BN(coins.find((asset) => asset.denom === denom)?.amount ?? 0)
 }
 
+export function accumulateAmounts(denom: string, coins: BNCoin[]): BigNumber {
+  return coins.reduce((acc, coin) => acc.plus(getAmount(denom, [coin.toCoin()])), BN_ZERO)
+}
+
 export function convertAccountToPositions(account: Account): Positions {
   return {
     account_id: account.id,

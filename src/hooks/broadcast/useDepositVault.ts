@@ -17,6 +17,7 @@ import { BN_ZERO } from 'constants/math'
 
 interface Props {
   vault: Vault
+  reclaims: BNCoin[]
   deposits: BNCoin[]
   borrowings: BNCoin[]
 }
@@ -44,6 +45,12 @@ export default function useDepositVault(props: Props): {
     () => getVaultDepositCoinsAndValue(props.vault, deposits, borrowings, prices),
     [deposits, borrowings, props.vault, prices],
   )
+
+  const reclaimActions: Action[] = useMemo(() => {
+    return props.reclaims.map((bnCoin) => ({
+      reclaim: bnCoin.toActionCoin(),
+    }))
+  }, [props.reclaims])
 
   const borrowActions: Action[] = useMemo(() => {
     return borrowings.map((bnCoin) => ({
@@ -84,8 +91,8 @@ export default function useDepositVault(props: Props): {
   }, [props.vault, primaryCoin, secondaryCoin, minLpToReceive])
 
   const actions = useMemo(
-    () => [...borrowActions, ...swapActions, ...enterVaultActions],
-    [borrowActions, swapActions, enterVaultActions],
+    () => [...reclaimActions, ...borrowActions, ...swapActions, ...enterVaultActions],
+    [reclaimActions, borrowActions, swapActions, enterVaultActions],
   )
 
   return {
