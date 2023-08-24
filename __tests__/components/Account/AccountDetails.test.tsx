@@ -10,6 +10,7 @@ jest.mock('hooks/useHealthComputer', () =>
     health: 0,
   })),
 )
+jest.mock('components/Account/AccountBalancesTable', () => jest.fn(() => null))
 
 const mockedUseCurrentAccount = useCurrentAccount as jest.Mock
 

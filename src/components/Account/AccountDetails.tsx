@@ -41,7 +41,7 @@ interface Props {
 function AccountDetails(props: Props) {
   const { account } = props
   const updatedAccount = useStore((s) => s.updatedAccount)
-  const [isExpanded, setIsExanded] = useToggle()
+  const [isExpanded, setIsExpanded] = useToggle()
   const { health } = useHealthComputer(account)
   const { health: updatedHealth } = useHealthComputer(updatedAccount)
   const { data: prices } = usePrices()
@@ -93,7 +93,7 @@ function AccountDetails(props: Props) {
           'bg-white/5 backdrop-blur-sticky transition-colors duration-300',
           'hover:bg-white/20 hover:cursor-pointer ',
         )}
-        onClick={() => setIsExanded(!isExpanded)}
+        onClick={() => setIsExpanded(!isExpanded)}
       >
         <div
           className={classNames(
