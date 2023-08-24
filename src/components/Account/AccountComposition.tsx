@@ -20,7 +20,7 @@ import {
 
 interface Props {
   account: Account
-  change?: AccountChange
+  updatedAccount?: Account
 }
 
 interface ItemProps {
@@ -33,7 +33,8 @@ interface ItemProps {
 }
 
 export default function AccountComposition(props: Props) {
-  const { account, change } = props
+  const { account, updatedAccount } = props
+  const isChange = !!updatedAccount
   const { data: prices } = usePrices()
   const { availableAssets: borrowAvailableAssets, accountBorrowedAssets } =
     useBorrowMarketAssetsTableData()
@@ -52,60 +53,67 @@ export default function AccountComposition(props: Props) {
     () => getAccountPositionValues(account, prices),
     [account, prices],
   )
-  const [depositsBalanceChange, lendsBalanceChange, debtsBalanceChange] = useMemo(
-    () => (change ? getAccountPositionValues(change, prices) : [BN_ZERO, BN_ZERO, BN_ZERO]),
-    [change, prices],
+  const positionValue = depositsBalance.plus(lendsBalance)
+
+  const [updatedDepositsBalance, updatedLendsBalance, updatedDebtsBalance] = useMemo(
+    () =>
+      updatedAccount
+        ? getAccountPositionValues(updatedAccount, prices)
+        : [BN_ZERO, BN_ZERO, BN_ZERO],
+    [updatedAccount, prices],
   )
+
+  const updatedPositionValue = updatedDepositsBalance.plus(updatedLendsBalance)
+
   const totalBalance = useMemo(
     () => calculateAccountBalanceValue(account, prices),
     [account, prices],
   )
-  const totalBalanceChange = useMemo(
-    () => (change ? calculateAccountBalanceValue(change, prices) : BN_ZERO),
-    [change, prices],
+  const updatedTotalBalance = useMemo(
+    () => (updatedAccount ? calculateAccountBalanceValue(updatedAccount, prices) : BN_ZERO),
+    [updatedAccount, prices],
   )
-  const balance = depositsBalance.plus(lendsBalance)
-  const balanceChange = depositsBalanceChange.plus(lendsBalanceChange)
+
   const apr = useMemo(
-    () => calculateAccountApr(account, totalBalance, borrowAssetsData, lendingAssetsData, prices),
-    [account, totalBalance, borrowAssetsData, lendingAssetsData, prices],
+    () => calculateAccountApr(account, borrowAssetsData, lendingAssetsData, prices),
+    [account, borrowAssetsData, lendingAssetsData, prices],
   )
-  const aprChange = useMemo(
+  const updatedApr = useMemo(
     () =>
-      change
-        ? calculateAccountApr(
-            change,
-            totalBalance.plus(totalBalanceChange),
-            borrowAssetsData,
-            lendingAssetsData,
-            prices,
-          )
+      updatedAccount
+        ? calculateAccountApr(updatedAccount, borrowAssetsData, lendingAssetsData, prices)
         : BN_ZERO,
-    [change, totalBalance, totalBalanceChange, borrowAssetsData, lendingAssetsData, prices],
+    [updatedAccount, borrowAssetsData, lendingAssetsData, prices],
   )
 
   return (
     <div className='flex-wrap w-full p-4 pb-1'>
       <Item
         title='Total Position Value'
-        current={balance}
-        change={balance.plus(balanceChange)}
+        current={positionValue}
+        change={isChange ? updatedPositionValue : positionValue}
         className='pb-3'
       />
       <Item
         title='Total Debt'
         current={debtsBalance}
-        change={debtsBalance.plus(debtsBalanceChange)}
+        change={isChange ? updatedDebtsBalance : debtsBalance}
         className='pb-3'
         isDecrease
       />
       <Item
         title='Total Balance'
         current={totalBalance}
-        change={totalBalance.plus(totalBalanceChange)}
+        change={isChange ? updatedTotalBalance : totalBalance}
         className='py-3 font-bold border border-transparent border-y-white/20'
       />
-      <Item title='APR' current={apr} change={apr.plus(aprChange)} className='py-3' isPercentage />
+      <Item
+        title='APR'
+        current={apr}
+        change={isChange ? updatedApr : apr}
+        className='py-3'
+        isPercentage
+      />
     </div>
   )
 }

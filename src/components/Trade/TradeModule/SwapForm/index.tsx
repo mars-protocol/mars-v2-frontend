@@ -47,7 +47,7 @@ export default function SwapForm(props: Props) {
   const [estimatedFee, setEstimatedFee] = useState(defaultFee)
 
   const throttledEstimateExactIn = useMemo(() => asyncThrottle(estimateExactIn, 250), [])
-  const { removeDeposits, addDeposits, addDebt } = useUpdatedAccount(account)
+  const { removeDeposits, addDeposits, addDebts } = useUpdatedAccount(account)
 
   const borrowAsset = useMemo(
     () => borrowAssets.find(byDenom(sellAsset.denom)),
@@ -163,9 +163,9 @@ export default function SwapForm(props: Props) {
       debounce((removeCoin: BNCoin, addCoin: BNCoin, debtCoin: BNCoin) => {
         removeDeposits([removeCoin])
         addDeposits([addCoin])
-        if (debtCoin.amount.isGreaterThan(BN_ZERO)) addDebt([debtCoin])
+        if (debtCoin.amount.isGreaterThan(BN_ZERO)) addDebts([debtCoin])
       }, 1000),
-    [removeDeposits, addDeposits, addDebt],
+    [removeDeposits, addDeposits, addDebts],
   )
 
   useEffect(() => {
@@ -173,8 +173,8 @@ export default function SwapForm(props: Props) {
     setSellAssetAmount(BN_ZERO)
     removeDeposits([])
     addDeposits([])
-    addDebt([])
-  }, [buyAsset.denom, sellAsset.denom, removeDeposits, addDeposits, addDebt])
+    addDebts([])
+  }, [buyAsset.denom, sellAsset.denom, removeDeposits, addDeposits, addDebts])
 
   useEffect(() => {
     const removeDepositAmount = sellAssetAmount.isGreaterThanOrEqualTo(sellSideMarginThreshold)

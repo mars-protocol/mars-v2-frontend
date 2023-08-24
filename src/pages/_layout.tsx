@@ -9,6 +9,7 @@ import DesktopHeader from 'components/Header/DesktopHeader'
 import ModalsContainer from 'components/Modals/ModalsContainer'
 import PageMetadata from 'components/PageMetadata'
 import Toaster from 'components/Toaster'
+import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
 
 interface Props {
@@ -38,6 +39,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
   const focusComponent = useStore((s) => s.focusComponent)
   const isFullWidth = location.pathname.includes('trade') || location.pathname === '/'
+  const account = useCurrentAccount()
 
   return (
     <>
@@ -49,6 +51,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           'lg:min-h-[calc(100vh-65px)]',
           'lg:mt-[65px]',
           'min-h-screen gap-6 p-6 w-full relative',
+          account && 'pr-18',
           focusComponent || isMobile
             ? 'flex justify-center'
             : 'grid grid-cols-[auto_min-content] place-items-start',

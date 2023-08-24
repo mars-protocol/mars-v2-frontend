@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import AccountSummary from 'components/Account/AccountSummary'
 import AssetImage from 'components/AssetImage'
@@ -12,11 +12,11 @@ import Switch from 'components/Switch'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
-import { ASSETS } from 'constants/assets'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useToggle from 'hooks/useToggle'
+import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatPercent, formatValue } from 'utils/formatters'
@@ -51,14 +51,15 @@ function BorrowModal(props: Props) {
   const { modal, account } = props
   const [percentage, setPercentage] = useState(0)
   const [amount, setAmount] = useState(BN_ZERO)
-  const [change, setChange] = useState<AccountChange | undefined>()
   const [isConfirming, setIsConfirming] = useToggle()
   const [borrowToWallet, setBorrowToWallet] = useToggle()
   const borrow = useStore((s) => s.borrow)
   const repay = useStore((s) => s.repay)
-  const asset = modal.asset ?? ASSETS[0]
+  const asset = modal.asset
   const isRepay = modal.isRepay ?? false
   const [max, setMax] = useState(BN_ZERO)
+  const { updatedAccount, addDeposits, addDebts, removeDebts, removeDeposits, addedDeposits } =
+    useUpdatedAccount(account)
 
   const { computeMaxBorrowAmount } = useHealthComputer(account)
 
@@ -69,19 +70,19 @@ function BorrowModal(props: Props) {
   }
 
   async function onConfirmClick() {
-    if (!modal.asset) return
+    if (!asset) return
     setIsConfirming(true)
     let result
     if (isRepay) {
       result = await repay({
         accountId: account.id,
-        coin: BNCoin.fromDenomAndBigNumber(modal.asset.denom, amount),
+        coin: BNCoin.fromDenomAndBigNumber(asset.denom, amount),
         accountBalance: percentage === 100,
       })
     } else {
       result = await borrow({
         accountId: account.id,
-        coin: { denom: modal.asset.denom, amount: amount.toString() },
+        coin: { denom: asset.denom, amount: amount.toString() },
         borrowToWallet,
       })
     }
@@ -108,6 +109,21 @@ function BorrowModal(props: Props) {
     decimals: 6,
   })
 
+  const handleChange = useCallback(
+    (newAmount: BigNumber) => {
+      const coin = BNCoin.fromDenomAndBigNumber(asset.denom, newAmount)
+      if (!amount.isEqualTo(newAmount)) setAmount(newAmount)
+      if (isRepay) {
+        removeDeposits([coin])
+        removeDebts([coin])
+      } else {
+        addDebts([coin])
+        if (!borrowToWallet) addDeposits([coin])
+      }
+    },
+    [asset, isRepay, borrowToWallet, addDebts, addDeposits, removeDebts, removeDeposits, amount],
+  )
+
   useEffect(() => {
     if (isRepay) {
       setMax(BN(getDebtAmount(modal)))
@@ -123,25 +139,19 @@ function BorrowModal(props: Props) {
   }, [isRepay, modal, asset.denom, computeMaxBorrowAmount, borrowToWallet])
 
   useEffect(() => {
-    if (!modal.asset) return
+    if (amount.isGreaterThan(max)) {
+      handleChange(max)
+      setAmount(max)
+    }
+  }, [amount, max, handleChange])
 
-    setChange({
-      deposits: [
-        {
-          amount: isRepay ? BN_ZERO.minus(amount).toString() : BN_ZERO.plus(amount).toString(),
-          denom: modal.asset.denom,
-        },
-      ],
-      debts: [
-        {
-          amount: isRepay ? BN_ZERO.minus(amount).toString() : BN_ZERO.plus(amount).toString(),
-          denom: modal.asset.denom,
-        },
-      ],
-    })
-  }, [amount, modal.asset, account, isRepay])
+  useEffect(() => {
+    if (borrowToWallet && addedDeposits[0].amount.isGreaterThan(0)) removeDeposits(addedDeposits)
+    if (!borrowToWallet && addedDeposits.length > 0 && !addedDeposits[0].amount.isEqualTo(amount))
+      handleChange(amount)
+  }, [borrowToWallet, addedDeposits, removeDeposits, amount, handleChange])
 
-  if (!modal) return null
+  if (!modal || !asset) return null
   return (
     <Modal
       onClose={onClose}
@@ -183,7 +193,7 @@ function BorrowModal(props: Props) {
           <div className='flex flex-wrap w-full'>
             <TokenInputWithSlider
               asset={asset}
-              onChange={setAmount}
+              onChange={handleChange}
               amount={amount}
               max={max}
               className='w-full'
@@ -219,7 +229,7 @@ function BorrowModal(props: Props) {
             rightIcon={<ArrowRight />}
           />
         </Card>
-        <AccountSummary account={account} change={change} />
+        <AccountSummary account={account} updatedAccount={updatedAccount} />
       </div>
     </Modal>
   )

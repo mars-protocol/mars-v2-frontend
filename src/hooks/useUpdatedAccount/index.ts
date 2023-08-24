@@ -16,10 +16,10 @@ export function useUpdatedAccount(account?: Account) {
   )
   const [addedDeposits, addDeposits] = useState<BNCoin[]>([])
   const [removedDeposits, removeDeposits] = useState<BNCoin[]>([])
-  const [addedDebt, addDebt] = useState<BNCoin[]>([])
-  const [removedDebt, removeDebt] = useState<BNCoin[]>([])
+  const [addedDebt, addDebts] = useState<BNCoin[]>([])
+  const [removedDebt, removeDebts] = useState<BNCoin[]>([])
   const [addedVaultValues, addVaultValues] = useState<VaultValue[]>([])
-  const [addedLends, setAddedLends] = useState<BNCoin[]>([])
+  const [addedLends, addLends] = useState<BNCoin[]>([])
   const [removedLends, setRemovedLends] = useState<BNCoin[]>([])
 
   const removeDepositByDenom = useCallback(
@@ -70,15 +70,15 @@ export function useUpdatedAccount(account?: Account) {
     addDeposits,
     removeDeposits,
     removeDepositByDenom,
-    addDebt,
-    removeDebt,
+    addDebts,
+    removeDebts,
     addVaultValues,
     addedDeposits,
     addedDebt,
     removedDeposits,
     removedDebt,
     addedLends,
-    setAddedLends,
+    addLends,
     removedLends,
     setRemovedLends,
   }

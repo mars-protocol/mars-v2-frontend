@@ -59,11 +59,11 @@ export const calculateAccountValue = (
 
 export const calculateAccountApr = (
   account: Account | AccountChange,
-  totalValue: BigNumber,
   borrowAssetsData: BorrowMarketTableData[],
   lendingAssetsData: LendingMarketTableData[],
   prices: BNCoin[],
 ): BigNumber => {
+  const totalValue = calculateAccountBalanceValue(account, prices)
   if (totalValue.isZero()) return BN_ZERO
   const { vaults, lends, debts } = account
 
@@ -74,6 +74,7 @@ export const calculateAccountApr = (
   lends?.forEach((lend) => {
     const asset = getAssetByDenom(lend.denom)
     if (!asset) return BN_ZERO
+
     const price = prices.find((price) => price.denom === lend.denom)?.amount ?? 0
     const amount = BN(lend.amount).shiftedBy(-asset.decimals)
     const apr =
@@ -106,12 +107,11 @@ export const calculateAccountApr = (
     totalDeptsInterestValue = totalDeptsInterestValue.plus(positionInterest)
   })
 
-  const totalPositiveInterestValue = totalLendsInterestValue
+  const totalInterstValue = totalLendsInterestValue
     .plus(totalVaultsInterestValue)
     .minus(totalDeptsInterestValue)
 
-  const totalApr = totalPositiveInterestValue.dividedBy(totalValue).times(100)
-
+  const totalApr = totalInterstValue.dividedBy(totalValue).times(100)
   return totalApr
 }
 

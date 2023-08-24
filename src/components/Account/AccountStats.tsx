@@ -36,15 +36,8 @@ export default function AccountStats(props: Props) {
     [lendingAvailableAssets, accountLentAssets],
   )
   const apr = useMemo(
-    () =>
-      calculateAccountApr(
-        props.account,
-        positionBalance,
-        borrowAssetsData,
-        lendingAssetsData,
-        prices,
-      ),
-    [props.account, positionBalance, borrowAssetsData, lendingAssetsData, prices],
+    () => calculateAccountApr(props.account, borrowAssetsData, lendingAssetsData, prices),
+    [props.account, borrowAssetsData, lendingAssetsData, prices],
   )
   return (
     <div className='flex-wrap w-full'>

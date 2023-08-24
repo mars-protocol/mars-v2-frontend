@@ -1,10 +1,10 @@
-import useCurrentAccount from 'hooks/useCurrentAccount'
 import AccountSummary from 'components/Account/AccountSummary'
+import useCurrentAccount from 'hooks/useCurrentAccount'
 
-function CurrentAccountSummary({ change }: { change?: AccountChange }) {
+function CurrentAccountSummary({ updatedAccount }: { updatedAccount?: Account }) {
   const account = useCurrentAccount()
-
-  return <AccountSummary account={account} change={change} />
+  if (!account) return
+  return <AccountSummary account={account} updatedAccount={updatedAccount} />
 }
 
 export default CurrentAccountSummary

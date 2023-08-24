@@ -20,7 +20,7 @@ interface Props {
   actionButtonText: string
   contentHeader?: JSX.Element
   showProgressIndicator: boolean
-  accountSummaryChange?: AccountChange
+  updatedAccount?: Account
   onClose: () => void
   onChange: (value: BigNumber) => void
   onAction: (value: BigNumber, isMax: boolean) => void
@@ -32,7 +32,7 @@ export default function AssetAmountSelectActionModal(props: Props) {
     title,
     coinBalances,
     actionButtonText,
-    accountSummaryChange,
+    updatedAccount,
     contentHeader = null,
     showProgressIndicator,
     onClose,
@@ -67,9 +67,9 @@ export default function AssetAmountSelectActionModal(props: Props) {
       contentClassName='flex flex-col min-h-[400px]'
     >
       {contentHeader}
-      <div className='flex flex-1 items-start gap-6 p-6'>
+      <div className='flex items-start flex-1 gap-6 p-6'>
         <Card
-          className='flex flex-1 bg-white/5 p-4'
+          className='flex flex-1 p-4 bg-white/5'
           contentClassName='gap-6 flex flex-col justify-between h-full'
         >
           <TokenInputWithSlider
@@ -91,7 +91,7 @@ export default function AssetAmountSelectActionModal(props: Props) {
             rightIcon={<ArrowRight />}
           />
         </Card>
-        <CurrentAccountSummary change={accountSummaryChange} />
+        <CurrentAccountSummary updatedAccount={updatedAccount} />
       </div>
     </Modal>
   )

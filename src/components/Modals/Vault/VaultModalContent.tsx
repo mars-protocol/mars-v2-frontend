@@ -10,8 +10,8 @@ import { BN_ZERO } from 'constants/math'
 import useDepositVault from 'hooks/broadcast/useDepositVault'
 import useIsOpenArray from 'hooks/useIsOpenArray'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
-import { byDenom } from 'utils/array'
 import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
 
 interface Props {
   vault: Vault | DepositedVault
@@ -23,7 +23,7 @@ interface Props {
 
 export default function VaultModalContent(props: Props) {
   const {
-    addDebt,
+    addDebts,
     removeDeposits,
     addedDebt,
     removedDeposits,
@@ -119,7 +119,7 @@ export default function VaultModalContent(props: Props) {
   }
 
   return (
-    <div className='flex flex-1 items-start gap-6 p-6'>
+    <div className='flex items-start flex-1 gap-6 p-6'>
       <Accordion
         className='h-[546px] overflow-y-scroll scrollbar-hide'
         items={[
@@ -149,7 +149,7 @@ export default function VaultModalContent(props: Props) {
                 deposits={removedDeposits}
                 primaryAsset={props.primaryAsset}
                 secondaryAsset={props.secondaryAsset}
-                onChangeBorrowings={addDebt}
+                onChangeBorrowings={addDebts}
                 vault={props.vault}
                 depositActions={depositActions}
               />

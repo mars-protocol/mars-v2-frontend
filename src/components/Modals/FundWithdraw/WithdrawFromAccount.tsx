@@ -18,18 +18,19 @@ import { byDenom } from 'utils/array'
 
 interface Props {
   account: Account
-  setChange: (change: AccountChange | undefined) => void
+  setUpdatedAccount: (updatedAccount: Account | undefined) => void
 }
 
 export default function WithdrawFromAccount(props: Props) {
-  const { account, setChange } = props
-  const defaultAsset = ASSETS.find(byDenom(account.deposits[0].denom)) ?? ASSETS[0]
+  const { account, setUpdatedAccount } = props
+  const defaultAsset =
+    ASSETS.find(byDenom(account.deposits[0]?.denom || account.lends[0]?.denom)) ?? ASSETS[0]
   const withdraw = useStore((s) => s.withdraw)
   const [withdrawWithBorrowing, setWithdrawWithBorrowing] = useToggle()
   const [isConfirming, setIsConfirming] = useToggle()
   const [currentAsset, setCurrentAsset] = useState(defaultAsset)
   const [amount, setAmount] = useState(BN_ZERO)
-  const { updatedAccount, removeDepositByDenom } = useUpdatedAccount(account)
+  const { updatedAccount, removeDepositByDenom, addDeposits, addDebts } = useUpdatedAccount(account)
   const { computeMaxWithdrawAmount } = useHealthComputer(account)
   const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
   const maxWithdrawAmount = computeMaxWithdrawAmount(currentAsset.denom)
@@ -43,21 +44,15 @@ export default function WithdrawFromAccount(props: Props) {
 
   function onChangeAmount(val: BigNumber) {
     setAmount(val)
-    setChange({
-      deposits: [
-        {
-          amount: depositAmount.toString(),
-          denom: currentAsset.denom,
-        },
-      ],
-      debts: [{ amount: debtAmount.toString(), denom: currentAsset.denom }],
-    })
+    addDeposits([BNCoin.fromDenomAndBigNumber(currentAsset.denom, depositAmount)])
+    addDebts([BNCoin.fromDenomAndBigNumber(currentAsset.denom, debtAmount)])
+    setUpdatedAccount(updatedAccount)
   }
 
   function resetState() {
     setCurrentAsset(defaultAsset)
     setAmount(BN_ZERO)
-    setChange(undefined)
+    setUpdatedAccount(undefined)
   }
 
   async function onConfirm() {
@@ -83,7 +78,7 @@ export default function WithdrawFromAccount(props: Props) {
 
   return (
     <>
-      <div className='flex w-full flex-wrap'>
+      <div className='flex flex-wrap w-full'>
         <TokenInputWithSlider
           asset={currentAsset}
           onChange={onChangeAmount}
@@ -98,9 +93,9 @@ export default function WithdrawFromAccount(props: Props) {
           disabled={isConfirming}
         />
         <Divider className='my-6' />
-        <div className='flex w-full flex-wrap'>
-          <div className='flex flex-1 flex-wrap'>
-            <Text className='mb-1 w-full'>Withdraw with borrowing</Text>
+        <div className='flex flex-wrap w-full'>
+          <div className='flex flex-wrap flex-1'>
+            <Text className='w-full mb-1'>Withdraw with borrowing</Text>
             <Text size='xs' className='text-white/50'>
               Borrow assets from your credit account to withdraw to your wallet
             </Text>

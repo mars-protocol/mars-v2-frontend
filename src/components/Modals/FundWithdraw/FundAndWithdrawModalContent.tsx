@@ -13,6 +13,7 @@ interface Props {
 export default function FundWithdrawModalContent(props: Props) {
   const { account, isFunding } = props
   const [change, setChange] = useState<AccountChange | undefined>()
+  const [updatedAccount, setUpdatedAccount] = useState<Account | undefined>()
 
   return (
     <div className='flex items-start flex-1 gap-6 p-6'>
@@ -21,12 +22,12 @@ export default function FundWithdrawModalContent(props: Props) {
         contentClassName='gap-6 flex flex-col justify-between h-full min-h-[380px]'
       >
         {isFunding ? (
-          <FundAccount account={account} setChange={setChange} />
+          <FundAccount account={account} setUpdatedAccount={setUpdatedAccount} />
         ) : (
-          <WithdrawFromAccount account={account} setChange={setChange} />
+          <WithdrawFromAccount account={account} setUpdatedAccount={setUpdatedAccount} />
         )}
       </Card>
-      <AccountSummary account={account} change={change} />
+      <AccountSummary account={account} updatedAccount={updatedAccount} />
     </div>
   )
 }
