@@ -102,7 +102,7 @@ export default function FundAccount(props: Props) {
     } else {
       addDeposits(fundingAssets)
     }
-  }, [isAutoLendEnabled, fundingAssets])
+  }, [isAutoLendEnabled, fundingAssets, addDeposits, addLends])
 
   useEffect(() => {
     if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) {
