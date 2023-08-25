@@ -71,32 +71,24 @@ export function addValueToVaults(
 }
 
 export function getDepositsAndLendsAfterCoinSpent(coin: BNCoin, account?: Account) {
-  if (!account)
-    return {
-      deposits: BNCoin.fromDenomAndBigNumber(coin.denom, BN_ZERO),
-      lends: BNCoin.fromDenomAndBigNumber(coin.denom, BN_ZERO),
-    }
+  const makeOutput = (depositsAmount: BigNumber, lendsAmount: BigNumber) => ({
+    deposits: BNCoin.fromDenomAndBigNumber(coin.denom, depositsAmount),
+    lends: BNCoin.fromDenomAndBigNumber(coin.denom, lendsAmount),
+  })
+
+  if (!account) return makeOutput(BN_ZERO, BN_ZERO)
+
   const accountDepositAmount = account.deposits.find(byDenom(coin.denom))?.amount ?? BN_ZERO
   const accountLendsAmount = account.lends.find(byDenom(coin.denom))?.amount ?? BN_ZERO
-
   const accountDepositAndLendAmount = accountDepositAmount.plus(accountLendsAmount)
 
   if (coin.amount.isLessThanOrEqualTo(accountDepositAmount)) {
-    return {
-      deposits: BNCoin.fromDenomAndBigNumber(coin.denom, coin.amount),
-      lends: BNCoin.fromDenomAndBigNumber(coin.denom, BN_ZERO),
-    }
+    return makeOutput(coin.amount, BN_ZERO)
   }
 
   if (coin.amount.isGreaterThanOrEqualTo(accountDepositAndLendAmount)) {
-    return {
-      deposits: BNCoin.fromDenomAndBigNumber(coin.denom, accountDepositAmount),
-      lends: BNCoin.fromDenomAndBigNumber(coin.denom, accountLendsAmount),
-    }
+    return makeOutput(accountDepositAmount, accountLendsAmount)
   }
 
-  return {
-    deposits: BNCoin.fromDenomAndBigNumber(coin.denom, accountDepositAmount),
-    lends: BNCoin.fromDenomAndBigNumber(coin.denom, coin.amount.minus(accountDepositAmount)),
-  }
+  return makeOutput(accountDepositAmount, coin.amount.minus(accountDepositAmount))
 }
