@@ -56,15 +56,15 @@ export default function AccountComposition(props: Props) {
   )
   const positionValue = depositsBalance.plus(lendsBalance)
 
-  const [updatedDepositsBalance, updatedLendsBalance, updatedDebtsBalance] = useMemo(
-    () =>
-      updatedAccount
-        ? getAccountPositionValues(updatedAccount, prices)
-        : [BN_ZERO, BN_ZERO, BN_ZERO],
-    [updatedAccount, prices],
-  )
+  const [updatedPositionValue, updatedDebtsBalance] = useMemo(() => {
+    const [updatedDepositsBalance, updatedLendsBalance, updatedDebtsBalance] = updatedAccount
+      ? getAccountPositionValues(updatedAccount, prices)
+      : [BN_ZERO, BN_ZERO, BN_ZERO]
+      
+    const updatedPositionValue = updatedDepositsBalance.plus(updatedLendsBalance)
 
-  const updatedPositionValue = updatedDepositsBalance.plus(updatedLendsBalance)
+    return [updatedPositionValue, updatedDebtsBalance]
+  }, [updatedAccount, prices])
 
   const totalBalance = useMemo(
     () => calculateAccountBalanceValue(account, prices),
