@@ -67,6 +67,7 @@ export function useUpdatedAccount(account?: Account) {
     (denom: string) => {
       if (!account) return
       const deposit = account.deposits.find((deposit) => deposit.denom === denom)
+      const lends = account.lends.find((lends) => lends.denom === denom)
 
       if (deposit) {
         removeDeposits((prevRemovedDeposits) => {
@@ -74,6 +75,12 @@ export function useUpdatedAccount(account?: Account) {
             ...prevRemovedDeposits.filter((removedDeposit) => removedDeposit.denom !== denom),
             deposit,
           ]
+        })
+      }
+
+      if (!deposit && lends) {
+        removeLends((prevRemovedLends) => {
+          return [...prevRemovedLends.filter((removedLends) => removedLends.denom !== denom), lends]
         })
       }
     },
@@ -156,5 +163,6 @@ export function useUpdatedAccount(account?: Account) {
     removedLends,
     simulateBorrow,
     simulateRepay,
+    calculateAvailableDepositAndLendAmounts,
   }
 }

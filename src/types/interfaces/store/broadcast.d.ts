@@ -24,6 +24,7 @@ interface BroadcastSlice {
     accountId: string
     coin: BNCoin
     accountBalance?: boolean
+    lends?: BNCoin
   }) => Promise<boolean>
   swap: (options: {
     accountId: string

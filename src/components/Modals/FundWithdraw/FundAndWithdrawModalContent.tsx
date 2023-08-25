@@ -13,9 +13,6 @@ interface Props {
 
 export default function FundWithdrawModalContent(props: Props) {
   const { account, isFunding } = props
-  const [change, setChange] = useState<AccountChange | undefined>()
-  const updatedAccount = useStore((s) => s.updatedAccount)
-
   return (
     <div className='flex items-start flex-1 gap-6 p-6'>
       <Card

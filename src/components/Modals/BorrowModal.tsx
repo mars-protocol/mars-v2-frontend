@@ -22,6 +22,7 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatPercent, formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+import { byDenom } from 'utils/array'
 
 function getDebtAmount(modal: BorrowModal) {
   return BN((modal.marketData as BorrowMarketTableData)?.debt ?? 0).toString()
@@ -59,7 +60,8 @@ function BorrowModal(props: Props) {
   const asset = modal.asset
   const isRepay = modal.isRepay ?? false
   const [max, setMax] = useState(BN_ZERO)
-  const { updatedAccount, simulateBorrow, simulateRepay } = useUpdatedAccount(account)
+  const { simulateBorrow, simulateRepay, calculateAvailableDepositAndLendAmounts } =
+    useUpdatedAccount(account)
 
   const { autoLendEnabledAccountIds } = useAutoLendEnabledAccountIds()
   const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
@@ -75,11 +77,15 @@ function BorrowModal(props: Props) {
     if (!asset) return
     setIsConfirming(true)
     let result
+    const { lends } = calculateAvailableDepositAndLendAmounts(
+      BNCoin.fromDenomAndBigNumber(asset.denom, amount),
+    )
     if (isRepay) {
       result = await repay({
         accountId: account.id,
         coin: BNCoin.fromDenomAndBigNumber(asset.denom, amount),
         accountBalance: percentage === 100,
+        lends,
       })
     } else {
       result = await borrow({

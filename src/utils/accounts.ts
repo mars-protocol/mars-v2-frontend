@@ -6,11 +6,10 @@ import {
   Positions,
   VaultPosition,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { byDenom } from 'utils/array'
 import { getAssetByDenom } from 'utils/assets'
 import { BN } from 'utils/helpers'
 import { convertApyToApr } from 'utils/parsers'
-
-import { byDenom } from './array'
 
 export const calculateAccountBalanceValue = (
   account: Account | AccountChange,

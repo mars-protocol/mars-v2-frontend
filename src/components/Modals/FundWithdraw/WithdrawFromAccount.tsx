@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import Button from 'components/Button'
 import Divider from 'components/Divider'
@@ -38,7 +38,7 @@ export default function WithdrawFromAccount(props: Props) {
     maxWithdrawAmount,
   )
   const isWithinBalance = amount.isLessThan(maxWithdrawAmount)
-  const withdrawAmount = BN_ZERO.minus(isWithinBalance ? amount : maxWithdrawAmount)
+  const withdrawAmount = isWithinBalance ? amount : maxWithdrawAmount
   const debtAmount = isWithinBalance ? BN_ZERO : amount.minus(maxWithdrawAmount)
   const max = withdrawWithBorrowing ? maxWithdrawWithBorrowAmount : maxWithdrawAmount
 
@@ -69,10 +69,6 @@ export default function WithdrawFromAccount(props: Props) {
       useStore.setState({ fundAndWithdrawModal: null })
     }
   }
-
-  useEffect(() => {
-    removeDepositByDenom(currentAsset.denom)
-  }, [currentAsset.denom, removeDepositByDenom])
 
   return (
     <>

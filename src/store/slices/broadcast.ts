@@ -333,17 +333,27 @@ export default function createBroadcastSlice(
       )
       return !!response.result
     },
-    repay: async (options: { accountId: string; coin: BNCoin; accountBalance?: boolean }) => {
+    repay: async (options: {
+      accountId: string
+      coin: BNCoin
+      accountBalance?: boolean
+      lends?: BNCoin
+    }) => {
+      const actions: Action[] = [
+        {
+          repay: {
+            coin: options.coin.toActionCoin(options.accountBalance),
+          },
+        },
+      ]
+
+      if (options.lends && options.lends.amount.isGreaterThan(0))
+        actions.unshift({ reclaim: options.lends.toActionCoin() })
+
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
-          actions: [
-            {
-              repay: {
-                coin: options.coin.toActionCoin(options.accountBalance),
-              },
-            },
-          ],
+          actions,
         },
       }
 
