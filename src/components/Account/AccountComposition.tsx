@@ -35,7 +35,7 @@ interface ItemProps {
 export default function AccountComposition(props: Props) {
   const updatedAccount = useStore((s) => s.updatedAccount)
   const { account } = props
-  const isChange = !!updatedAccount
+  const hasChanged = !!updatedAccount
   const { data: prices } = usePrices()
   const { availableAssets: borrowAvailableAssets, accountBorrowedAssets } =
     useBorrowMarketAssetsTableData()
@@ -50,18 +50,21 @@ export default function AccountComposition(props: Props) {
     [lendingAvailableAssets, accountLentAssets],
   )
 
-  const [depositsBalance, lendsBalance, debtsBalance] = useMemo(
+  const [depositsBalance, lendsBalance, debtsBalance, vaultsBalance] = useMemo(
     () => getAccountPositionValues(account, prices),
     [account, prices],
   )
-  const positionValue = depositsBalance.plus(lendsBalance)
+  const positionValue = depositsBalance.plus(lendsBalance).plus(vaultsBalance)
 
   const [updatedPositionValue, updatedDebtsBalance] = useMemo(() => {
-    const [updatedDepositsBalance, updatedLendsBalance, updatedDebtsBalance] = updatedAccount
-      ? getAccountPositionValues(updatedAccount, prices)
-      : [BN_ZERO, BN_ZERO, BN_ZERO]
-      
-    const updatedPositionValue = updatedDepositsBalance.plus(updatedLendsBalance)
+    const [updatedDepositsBalance, updatedLendsBalance, updatedDebtsBalance, updatedVaultsBalance] =
+      updatedAccount
+        ? getAccountPositionValues(updatedAccount, prices)
+        : [BN_ZERO, BN_ZERO, BN_ZERO]
+
+    const updatedPositionValue = updatedDepositsBalance
+      .plus(updatedLendsBalance)
+      .plus(updatedVaultsBalance)
 
     return [updatedPositionValue, updatedDebtsBalance]
   }, [updatedAccount, prices])
@@ -92,26 +95,26 @@ export default function AccountComposition(props: Props) {
       <Item
         title='Total Position Value'
         current={positionValue}
-        change={isChange ? updatedPositionValue : positionValue}
+        change={hasChanged ? updatedPositionValue : positionValue}
         className='pb-3'
       />
       <Item
         title='Total Debt'
         current={debtsBalance}
-        change={isChange ? updatedDebtsBalance : debtsBalance}
+        change={hasChanged ? updatedDebtsBalance : debtsBalance}
         className='pb-3'
         isDecrease
       />
       <Item
         title='Total Balance'
         current={totalBalance}
-        change={isChange ? updatedTotalBalance : totalBalance}
+        change={hasChanged ? updatedTotalBalance : totalBalance}
         className='py-3 font-bold border border-transparent border-y-white/20'
       />
       <Item
         title='APR'
         current={apr}
-        change={isChange ? updatedApr : apr}
+        change={hasChanged ? updatedApr : apr}
         className='py-3'
         isPercentage
       />

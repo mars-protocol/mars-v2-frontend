@@ -18,11 +18,11 @@ import useCurrentAccount from 'hooks/useCurrentAccount'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
+import { getDepositsAndLendsAfterCoinSpent } from 'hooks/useUpdatedAccount/functions'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatPercent, formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import { byDenom } from 'utils/array'
 
 function getDebtAmount(modal: BorrowModal) {
   return BN((modal.marketData as BorrowMarketTableData)?.debt ?? 0).toString()
@@ -60,8 +60,7 @@ function BorrowModal(props: Props) {
   const asset = modal.asset
   const isRepay = modal.isRepay ?? false
   const [max, setMax] = useState(BN_ZERO)
-  const { simulateBorrow, simulateRepay, calculateAvailableDepositAndLendAmounts } =
-    useUpdatedAccount(account)
+  const { simulateBorrow, simulateRepay } = useUpdatedAccount(account)
 
   const { autoLendEnabledAccountIds } = useAutoLendEnabledAccountIds()
   const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
@@ -77,8 +76,9 @@ function BorrowModal(props: Props) {
     if (!asset) return
     setIsConfirming(true)
     let result
-    const { lends } = calculateAvailableDepositAndLendAmounts(
+    const { lends } = getDepositsAndLendsAfterCoinSpent(
       BNCoin.fromDenomAndBigNumber(asset.denom, amount),
+      account,
     )
     if (isRepay) {
       result = await repay({
@@ -151,7 +151,7 @@ function BorrowModal(props: Props) {
     if (isRepay) return
     const coin = BNCoin.fromDenomAndBigNumber(asset.denom, amount.isGreaterThan(max) ? max : amount)
     const target = borrowToWallet ? 'wallet' : isAutoLendEnabled ? 'lend' : 'deposit'
-    simulateBorrow({ coin, target })
+    simulateBorrow(target, coin)
   }, [isRepay, borrowToWallet, isAutoLendEnabled, simulateBorrow, asset, amount, max])
 
   if (!modal || !asset) return null

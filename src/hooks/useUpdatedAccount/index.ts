@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import { BN_ZERO } from 'constants/math'
-import { addCoins, addValueToVaults, removeCoins } from 'hooks/useUpdatedAccount/functions'
+import {
+  addCoins,
+  addValueToVaults,
+  getDepositsAndLendsAfterCoinSpent,
+  removeCoins,
+} from 'hooks/useUpdatedAccount/functions'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { cloneAccount } from 'utils/accounts'
@@ -10,21 +14,6 @@ import { byDenom } from 'utils/array'
 export interface VaultValue {
   address: string
   value: BigNumber
-}
-
-interface BorrowProps {
-  target: 'wallet' | 'deposit' | 'lend'
-  coin: BNCoin
-}
-
-interface DepositProps {
-  target: 'deposit' | 'lend'
-  coins: BNCoin[]
-}
-
-interface LendingProps {
-  lending: boolean
-  coin: BNCoin
 }
 
 export function useUpdatedAccount(account?: Account) {
@@ -39,45 +28,11 @@ export function useUpdatedAccount(account?: Account) {
   const [addedLends, addLends] = useState<BNCoin[]>([])
   const [removedLends, removeLends] = useState<BNCoin[]>([])
 
-  const calculateAvailableDepositAndLendAmounts = useCallback(
-    (coin: BNCoin) => {
-      if (!account)
-        return {
-          deposits: BNCoin.fromDenomAndBigNumber(coin.denom, BN_ZERO),
-          lends: BNCoin.fromDenomAndBigNumber(coin.denom, BN_ZERO),
-        }
-      const availableDepositAmount = account.deposits.find(byDenom(coin.denom))?.amount ?? BN_ZERO
-      const availableLendAmount = account.lends.find(byDenom(coin.denom))?.amount ?? BN_ZERO
-
-      const availableAmount = availableDepositAmount.plus(availableLendAmount)
-
-      if (coin.amount.isLessThanOrEqualTo(availableDepositAmount)) {
-        return {
-          deposits: BNCoin.fromDenomAndBigNumber(coin.denom, coin.amount),
-          lends: BNCoin.fromDenomAndBigNumber(coin.denom, BN_ZERO),
-        }
-      }
-
-      if (coin.amount.isGreaterThanOrEqualTo(availableAmount)) {
-        return {
-          deposits: BNCoin.fromDenomAndBigNumber(coin.denom, availableDepositAmount),
-          lends: BNCoin.fromDenomAndBigNumber(coin.denom, availableLendAmount),
-        }
-      }
-
-      return {
-        deposits: BNCoin.fromDenomAndBigNumber(coin.denom, availableDepositAmount),
-        lends: BNCoin.fromDenomAndBigNumber(coin.denom, coin.amount.minus(availableDepositAmount)),
-      }
-    },
-    [account],
-  )
-
-  const removeDepositByDenom = useCallback(
+  const removeDepositAndLendsByDenom = useCallback(
     (denom: string) => {
       if (!account) return
-      const deposit = account.deposits.find((deposit) => deposit.denom === denom)
-      const lends = account.lends.find((lends) => lends.denom === denom)
+      const deposit = account.deposits.find(byDenom(denom))
+      const lend = account.lends.find(byDenom(denom))
 
       if (deposit) {
         removeDeposits((prevRemovedDeposits) => {
@@ -88,9 +43,9 @@ export function useUpdatedAccount(account?: Account) {
         })
       }
 
-      if (!deposit && lends) {
+      if (lend) {
         removeLends((prevRemovedLends) => {
-          return [...prevRemovedLends.filter((removedLends) => removedLends.denom !== denom), lends]
+          return [...prevRemovedLends.filter((removedLends) => removedLends.denom !== denom), lend]
         })
       }
     },
@@ -98,9 +53,8 @@ export function useUpdatedAccount(account?: Account) {
   )
 
   const simulateBorrow = useCallback(
-    (props: BorrowProps) => {
+    (target: 'wallet' | 'deposit' | 'lend', coin: BNCoin) => {
       if (!account) return
-      const { target, coin } = props
       resetAccount()
       addDebts([coin])
       if (target === 'deposit') addDeposits([coin])
@@ -110,12 +64,12 @@ export function useUpdatedAccount(account?: Account) {
   )
 
   const simulateLending = useCallback(
-    (props: LendingProps) => {
+    (isLendAction: boolean, coin: BNCoin) => {
       if (!account) return
-      const { lending, coin } = props
+
       resetAccount()
 
-      if (lending) {
+      if (isLendAction) {
         addLends([coin])
         removeDeposits([coin])
         return
@@ -131,17 +85,16 @@ export function useUpdatedAccount(account?: Account) {
     (coin: BNCoin) => {
       if (!account) return
       removeDebts([coin])
-      const { deposits, lends } = calculateAvailableDepositAndLendAmounts(coin)
+      const { deposits, lends } = getDepositsAndLendsAfterCoinSpent(coin, account)
       removeDeposits([deposits])
       removeLends([lends])
     },
-    [account, calculateAvailableDepositAndLendAmounts, removeDebts, removeDeposits, removeLends],
+    [account, removeDebts, removeDeposits, removeLends],
   )
 
   const simulateDeposits = useCallback(
-    (props: DepositProps) => {
+    (target: 'deposit' | 'lend', coins: BNCoin[]) => {
       if (!account) return
-      const { target, coins } = props
       resetAccount()
       if (target === 'deposit') addDeposits(coins)
       if (target === 'lend') addLends(coins)
@@ -188,7 +141,7 @@ export function useUpdatedAccount(account?: Account) {
     updatedAccount,
     addDeposits,
     removeDeposits,
-    removeDepositByDenom,
+    removeDepositAndLendsByDenom,
     addDebts,
     removeDebts,
     addLends,
@@ -204,6 +157,5 @@ export function useUpdatedAccount(account?: Account) {
     simulateDeposits,
     simulateLending,
     simulateRepay,
-    calculateAvailableDepositAndLendAmounts,
   }
 }

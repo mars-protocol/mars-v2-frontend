@@ -1,8 +1,10 @@
-import { BNCoin } from 'types/classes/BNCoin'
-import { BN } from 'utils/helpers'
-import { VaultValue } from 'hooks/useUpdatedAccount'
-import { getVaultMetaData } from 'utils/vaults'
+import { BN_ZERO } from 'constants/math'
 import { MOCK_DEPOSITED_VAULT_POSITION } from 'constants/vaults'
+import { VaultValue } from 'hooks/useUpdatedAccount'
+import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
+import { BN } from 'utils/helpers'
+import { getVaultMetaData } from 'utils/vaults'
 
 export function addCoins(additionalCoins: BNCoin[], currentCoins: BNCoin[]) {
   const currentDenoms = currentCoins.map((coin) => coin.denom)
@@ -66,4 +68,35 @@ export function addValueToVaults(
   })
 
   return vaults
+}
+
+export function getDepositsAndLendsAfterCoinSpent(coin: BNCoin, account?: Account) {
+  if (!account)
+    return {
+      deposits: BNCoin.fromDenomAndBigNumber(coin.denom, BN_ZERO),
+      lends: BNCoin.fromDenomAndBigNumber(coin.denom, BN_ZERO),
+    }
+  const accountDepositAmount = account.deposits.find(byDenom(coin.denom))?.amount ?? BN_ZERO
+  const accountLendsAmount = account.lends.find(byDenom(coin.denom))?.amount ?? BN_ZERO
+
+  const accountDepositAndLendAmount = accountDepositAmount.plus(accountLendsAmount)
+
+  if (coin.amount.isLessThanOrEqualTo(accountDepositAmount)) {
+    return {
+      deposits: BNCoin.fromDenomAndBigNumber(coin.denom, coin.amount),
+      lends: BNCoin.fromDenomAndBigNumber(coin.denom, BN_ZERO),
+    }
+  }
+
+  if (coin.amount.isGreaterThanOrEqualTo(accountDepositAndLendAmount)) {
+    return {
+      deposits: BNCoin.fromDenomAndBigNumber(coin.denom, accountDepositAmount),
+      lends: BNCoin.fromDenomAndBigNumber(coin.denom, accountLendsAmount),
+    }
+  }
+
+  return {
+    deposits: BNCoin.fromDenomAndBigNumber(coin.denom, accountDepositAmount),
+    lends: BNCoin.fromDenomAndBigNumber(coin.denom, coin.amount.minus(accountDepositAmount)),
+  }
 }

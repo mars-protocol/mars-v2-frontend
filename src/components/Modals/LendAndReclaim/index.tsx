@@ -40,7 +40,7 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
   const handleAmountChange = useCallback(
     (value: BigNumber) => {
       const coin = BNCoin.fromDenomAndBigNumber(asset.denom, value)
-      simulateLending({ lending: isLendAction, coin })
+      simulateLending(isLendAction, coin)
     },
     [asset.denom, isLendAction, simulateLending],
   )

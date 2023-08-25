@@ -97,7 +97,7 @@ export default function FundAccount(props: Props) {
   )
 
   useEffect(() => {
-    simulateDeposits({ coins: fundingAssets, target: isAutoLendEnabled ? 'lend' : 'deposit' })
+    simulateDeposits(isAutoLendEnabled ? 'lend' : 'deposit', fundingAssets)
   }, [isAutoLendEnabled, fundingAssets, simulateDeposits])
 
   useEffect(() => {

@@ -29,7 +29,7 @@ export default function WithdrawFromAccount(props: Props) {
   const [isConfirming, setIsConfirming] = useToggle()
   const [currentAsset, setCurrentAsset] = useState(defaultAsset)
   const [amount, setAmount] = useState(BN_ZERO)
-  const { updatedAccount, removeDepositByDenom, removeDeposits, addDebts } =
+  const { updatedAccount, removeDepositAndLendsByDenom, removeDeposits, addDebts } =
     useUpdatedAccount(account)
   const { computeMaxWithdrawAmount } = useHealthComputer(account)
   const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
