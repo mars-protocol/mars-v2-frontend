@@ -13,6 +13,7 @@ interface Asset {
     | 'WETH.axl'
     | 'OSMO-USDC.n'
     | '$'
+    | 'gamm/pool/12'
   id:
     | 'OSMO'
     | 'ATOM'
@@ -24,6 +25,7 @@ interface Asset {
     | 'nUSDC'
     | 'OSMO-USDC.n'
     | 'USD'
+    | 'gamm/pool/12'
   prefix?: string
   contract_addr?: string
   logo: string
