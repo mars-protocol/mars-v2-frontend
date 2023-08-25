@@ -11,6 +11,7 @@ import { ORACLE_DENOM } from 'constants/oracle'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import usePrices from 'hooks/usePrices'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import {
   calculateAccountApr,
@@ -20,7 +21,6 @@ import {
 
 interface Props {
   account: Account
-  updatedAccount?: Account
 }
 
 interface ItemProps {
@@ -33,7 +33,8 @@ interface ItemProps {
 }
 
 export default function AccountComposition(props: Props) {
-  const { account, updatedAccount } = props
+  const updatedAccount = useStore((s) => s.updatedAccount)
+  const { account } = props
   const isChange = !!updatedAccount
   const { data: prices } = usePrices()
   const { availableAssets: borrowAvailableAssets, accountBorrowedAssets } =

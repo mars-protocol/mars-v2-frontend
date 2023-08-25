@@ -20,7 +20,6 @@ interface Props {
   actionButtonText: string
   contentHeader?: JSX.Element
   showProgressIndicator: boolean
-  updatedAccount?: Account
   onClose: () => void
   onChange: (value: BigNumber) => void
   onAction: (value: BigNumber, isMax: boolean) => void
@@ -32,7 +31,6 @@ export default function AssetAmountSelectActionModal(props: Props) {
     title,
     coinBalances,
     actionButtonText,
-    updatedAccount,
     contentHeader = null,
     showProgressIndicator,
     onClose,
@@ -91,7 +89,7 @@ export default function AssetAmountSelectActionModal(props: Props) {
             rightIcon={<ArrowRight />}
           />
         </Card>
-        <CurrentAccountSummary updatedAccount={updatedAccount} />
+        <CurrentAccountSummary />
       </div>
     </Modal>
   )

@@ -144,7 +144,6 @@ export default function VaultModalContent(props: Props) {
           {
             renderContent: () => (
               <VaultBorrowings
-                updatedAccount={updatedAccount || props.account}
                 borrowings={addedDebt}
                 deposits={removedDeposits}
                 primaryAsset={props.primaryAsset}

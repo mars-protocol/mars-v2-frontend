@@ -141,7 +141,7 @@ function AccountDetails(props: Props) {
       </div>
       <div className='flex w-80 backdrop-blur-sticky'>
         <Card className='w-full bg-white/5' title={`Account ${account.id}`}>
-          <AccountComposition account={account} updatedAccount={updatedAccount} />
+          <AccountComposition account={account} />
           <Text className='w-full px-4 py-2 bg-white/10 text-white/40'>Balances</Text>
           <AccountBalancesTable
             account={account}

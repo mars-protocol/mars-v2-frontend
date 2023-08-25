@@ -226,7 +226,7 @@ function BorrowModal(props: Props) {
             rightIcon={<ArrowRight />}
           />
         </Card>
-        <AccountSummary account={account} updatedAccount={updatedAccount} />
+        <AccountSummary account={account} />
       </div>
     </Modal>
   )

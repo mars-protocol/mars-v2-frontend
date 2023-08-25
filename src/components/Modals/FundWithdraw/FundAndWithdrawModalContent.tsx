@@ -24,7 +24,7 @@ export default function FundWithdrawModalContent(props: Props) {
       >
         {isFunding ? <FundAccount account={account} /> : <WithdrawFromAccount account={account} />}
       </Card>
-      <AccountSummary account={account} updatedAccount={updatedAccount} />
+      <AccountSummary account={account} />
     </div>
   )
 }
