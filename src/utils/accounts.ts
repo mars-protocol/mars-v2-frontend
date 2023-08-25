@@ -9,6 +9,7 @@ import {
 import { getAssetByDenom } from 'utils/assets'
 import { BN } from 'utils/helpers'
 import { convertApyToApr } from 'utils/parsers'
+import { byDenom } from './array'
 
 export const calculateAccountBalanceValue = (
   account: Account | AccountChange,
@@ -58,7 +59,7 @@ export const calculateAccountValue = (
 }
 
 export const calculateAccountApr = (
-  account: Account | AccountChange,
+  account: Account,
   borrowAssetsData: BorrowMarketTableData[],
   lendingAssetsData: LendingMarketTableData[],
   prices: BNCoin[],
@@ -74,8 +75,7 @@ export const calculateAccountApr = (
   lends?.forEach((lend) => {
     const asset = getAssetByDenom(lend.denom)
     if (!asset) return BN_ZERO
-
-    const price = prices.find((price) => price.denom === lend.denom)?.amount ?? 0
+    const price = prices.find(byDenom(lend.denom))?.amount ?? 0
     const amount = BN(lend.amount).shiftedBy(-asset.decimals)
     const apr =
       lendingAssetsData.find((lendingAsset) => lendingAsset.asset.denom === lend.denom)
@@ -87,7 +87,7 @@ export const calculateAccountApr = (
   vaults?.forEach((vault) => {
     const asset = getAssetByDenom(vault.denoms.lp)
     if (!asset) return BN_ZERO
-    const price = prices.find((price) => price.denom === vault.denoms.lp)?.amount ?? 0
+    const price = prices.find(byDenom(vault.denoms.lp))?.amount ?? 0
     const amount = BN(vault.amounts.locked).shiftedBy(-asset.decimals)
     const positionInterest = amount
       .multipliedBy(price)
@@ -98,11 +98,11 @@ export const calculateAccountApr = (
   debts?.forEach((debt) => {
     const asset = getAssetByDenom(debt.denom)
     if (!asset) return BN_ZERO
-    const price = prices.find((price) => price.denom === debt.denom)?.amount ?? 0
+    const price = prices.find(byDenom(debt.denom))?.amount ?? 0
     const amount = BN(debt.amount).shiftedBy(-asset.decimals)
     const apr =
-      borrowAssetsData.find((borrowAsset) => borrowAsset.asset.denom === debt.denom)
-        ?.marketLiquidityRate ?? 0
+      borrowAssetsData.find((borrowAsset) => borrowAsset.asset.denom === debt.denom)?.borrowRate ??
+      0
     const positionInterest = amount.multipliedBy(price).multipliedBy(apr)
     totalDeptsInterestValue = totalDeptsInterestValue.plus(positionInterest)
   })
@@ -110,8 +110,8 @@ export const calculateAccountApr = (
   const totalInterstValue = totalLendsInterestValue
     .plus(totalVaultsInterestValue)
     .minus(totalDeptsInterestValue)
-
   const totalApr = totalInterstValue.dividedBy(totalValue).times(100)
+
   return totalApr
 }
 

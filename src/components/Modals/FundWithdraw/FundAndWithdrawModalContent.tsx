@@ -4,6 +4,7 @@ import AccountSummary from 'components/Account/AccountSummary'
 import Card from 'components/Card'
 import FundAccount from 'components/Modals/FundWithdraw/FundAccount'
 import WithdrawFromAccount from 'components/Modals/FundWithdraw/WithdrawFromAccount'
+import useStore from 'store'
 
 interface Props {
   account: Account
@@ -13,7 +14,7 @@ interface Props {
 export default function FundWithdrawModalContent(props: Props) {
   const { account, isFunding } = props
   const [change, setChange] = useState<AccountChange | undefined>()
-  const [updatedAccount, setUpdatedAccount] = useState<Account | undefined>()
+  const updatedAccount = useStore((s) => s.updatedAccount)
 
   return (
     <div className='flex items-start flex-1 gap-6 p-6'>
@@ -21,11 +22,7 @@ export default function FundWithdrawModalContent(props: Props) {
         className='flex flex-1 p-4 bg-white/5'
         contentClassName='gap-6 flex flex-col justify-between h-full min-h-[380px]'
       >
-        {isFunding ? (
-          <FundAccount account={account} setUpdatedAccount={setUpdatedAccount} />
-        ) : (
-          <WithdrawFromAccount account={account} setUpdatedAccount={setUpdatedAccount} />
-        )}
+        {isFunding ? <FundAccount account={account} /> : <WithdrawFromAccount account={account} />}
       </Card>
       <AccountSummary account={account} updatedAccount={updatedAccount} />
     </div>

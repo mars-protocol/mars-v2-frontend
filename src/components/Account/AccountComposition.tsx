@@ -143,7 +143,7 @@ function Item(props: ItemProps) {
             className='text-sm'
           />
         )}
-        {!current.isEqualTo(change) && (
+        {current.toFixed(2) !== change.toFixed(2) && (
           <>
             <span className={classNames('w-3', increase ? 'text-profit' : 'text-loss')}>
               <ArrowRight />

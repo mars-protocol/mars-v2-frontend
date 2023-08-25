@@ -20,11 +20,10 @@ import { BN } from 'utils/helpers'
 
 interface Props {
   account: Account
-  setUpdatedAccount: (updatedAccount: Account | undefined) => void
 }
 
 export default function FundAccount(props: Props) {
-  const { account, setUpdatedAccount } = props
+  const { account } = props
   const accountId = account.id
   const address = useStore((s) => s.address)
   const deposit = useStore((s) => s.deposit)
@@ -98,11 +97,10 @@ export default function FundAccount(props: Props) {
         } else {
           addDeposits(prevAssets)
         }
-        setUpdatedAccount(updatedAccount)
         return prevAssets
       })
     },
-    [addDeposits, addLends, isAutoLendEnabled, setUpdatedAccount, updatedAccount],
+    [addDeposits, addLends, isAutoLendEnabled],
   )
 
   useEffect(() => {
@@ -111,8 +109,7 @@ export default function FundAccount(props: Props) {
     } else {
       addDeposits(fundingAssets)
     }
-    setUpdatedAccount(updatedAccount)
-  }, [addDeposits, addLends, isAutoLendEnabled, fundingAssets, setUpdatedAccount, updatedAccount])
+  }, [addDeposits, addLends, isAutoLendEnabled, fundingAssets, updatedAccount])
 
   useEffect(() => {
     if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) {

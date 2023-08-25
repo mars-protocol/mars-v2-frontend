@@ -13,6 +13,7 @@ import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
+import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useToggle from 'hooks/useToggle'
@@ -58,9 +59,10 @@ function BorrowModal(props: Props) {
   const asset = modal.asset
   const isRepay = modal.isRepay ?? false
   const [max, setMax] = useState(BN_ZERO)
-  const { updatedAccount, addDeposits, addDebts, removeDebts, removeDeposits, addedDeposits } =
-    useUpdatedAccount(account)
+  const { updatedAccount, simulateBorrow, simulateRepay } = useUpdatedAccount(account)
 
+  const { autoLendEnabledAccountIds } = useAutoLendEnabledAccountIds()
+  const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
   const { computeMaxBorrowAmount } = useHealthComputer(account)
 
   function resetState() {
@@ -113,15 +115,9 @@ function BorrowModal(props: Props) {
     (newAmount: BigNumber) => {
       const coin = BNCoin.fromDenomAndBigNumber(asset.denom, newAmount)
       if (!amount.isEqualTo(newAmount)) setAmount(newAmount)
-      if (isRepay) {
-        removeDeposits([coin])
-        removeDebts([coin])
-      } else {
-        addDebts([coin])
-        if (!borrowToWallet) addDeposits([coin])
-      }
+      if (isRepay) simulateRepay(coin)
     },
-    [asset, isRepay, borrowToWallet, addDebts, addDeposits, removeDebts, removeDeposits, amount],
+    [asset, amount, isRepay, simulateRepay],
   )
 
   useEffect(() => {
@@ -146,10 +142,11 @@ function BorrowModal(props: Props) {
   }, [amount, max, handleChange])
 
   useEffect(() => {
-    if (borrowToWallet && addedDeposits[0].amount.isGreaterThan(0)) removeDeposits(addedDeposits)
-    if (!borrowToWallet && addedDeposits.length > 0 && !addedDeposits[0].amount.isEqualTo(amount))
-      handleChange(amount)
-  }, [borrowToWallet, addedDeposits, removeDeposits, amount, handleChange])
+    if (isRepay) return
+    const coin = BNCoin.fromDenomAndBigNumber(asset.denom, amount.isGreaterThan(max) ? max : amount)
+    const target = borrowToWallet ? 'wallet' : isAutoLendEnabled ? 'lend' : 'deposit'
+    simulateBorrow({ coin, target })
+  }, [isRepay, borrowToWallet, isAutoLendEnabled, simulateBorrow, asset, amount, max])
 
   if (!modal || !asset) return null
   return (

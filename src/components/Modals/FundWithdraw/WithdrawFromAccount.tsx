@@ -18,11 +18,10 @@ import { byDenom } from 'utils/array'
 
 interface Props {
   account: Account
-  setUpdatedAccount: (updatedAccount: Account | undefined) => void
 }
 
 export default function WithdrawFromAccount(props: Props) {
-  const { account, setUpdatedAccount } = props
+  const { account } = props
   const defaultAsset =
     ASSETS.find(byDenom(account.deposits[0]?.denom || account.lends[0]?.denom)) ?? ASSETS[0]
   const withdraw = useStore((s) => s.withdraw)
@@ -30,7 +29,8 @@ export default function WithdrawFromAccount(props: Props) {
   const [isConfirming, setIsConfirming] = useToggle()
   const [currentAsset, setCurrentAsset] = useState(defaultAsset)
   const [amount, setAmount] = useState(BN_ZERO)
-  const { updatedAccount, removeDepositByDenom, addDeposits, addDebts } = useUpdatedAccount(account)
+  const { updatedAccount, removeDepositByDenom, removeDeposits, addDebts } =
+    useUpdatedAccount(account)
   const { computeMaxWithdrawAmount } = useHealthComputer(account)
   const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
   const maxWithdrawAmount = computeMaxWithdrawAmount(currentAsset.denom)
@@ -38,21 +38,19 @@ export default function WithdrawFromAccount(props: Props) {
     maxWithdrawAmount,
   )
   const isWithinBalance = amount.isLessThan(maxWithdrawAmount)
-  const depositAmount = BN_ZERO.minus(isWithinBalance ? amount : maxWithdrawAmount)
+  const withdrawAmount = BN_ZERO.minus(isWithinBalance ? amount : maxWithdrawAmount)
   const debtAmount = isWithinBalance ? BN_ZERO : amount.minus(maxWithdrawAmount)
   const max = withdrawWithBorrowing ? maxWithdrawWithBorrowAmount : maxWithdrawAmount
 
   function onChangeAmount(val: BigNumber) {
     setAmount(val)
-    addDeposits([BNCoin.fromDenomAndBigNumber(currentAsset.denom, depositAmount)])
+    removeDeposits([BNCoin.fromDenomAndBigNumber(currentAsset.denom, withdrawAmount)])
     addDebts([BNCoin.fromDenomAndBigNumber(currentAsset.denom, debtAmount)])
-    setUpdatedAccount(updatedAccount)
   }
 
   function resetState() {
     setCurrentAsset(defaultAsset)
     setAmount(BN_ZERO)
-    setUpdatedAccount(undefined)
   }
 
   async function onConfirm() {
