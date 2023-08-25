@@ -130,4 +130,17 @@ export const ASSETS: Asset[] = [
     isStable: false,
     forceFetchPrice: false,
   },
+  {
+    symbol: 'gamm/pool/12',
+    name: 'gamm/pool/12',
+    id: 'gamm/pool/12',
+    denom: 'gamm/pool/12',
+    color: '',
+    logo: '',
+    decimals: 6,
+    isEnabled: false,
+    isMarket: false,
+    hasOraclePrice: true,
+    forceFetchPrice: true,
+  },
 ]

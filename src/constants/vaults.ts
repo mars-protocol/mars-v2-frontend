@@ -24,26 +24,6 @@ export const TESTNET_VAULTS_META_DATA: VaultMetaData[] = [
     },
     isFeatured: true,
   },
-  {
-    address: 'osmo14lu7m4ganxs20258dazafrjfaulmfxruq9n0r0th90gs46jk3tuqwfkqwn',
-    name: 'OSMO-USDC.axl',
-    lockup: {
-      duration: 7,
-      timeframe: 'days',
-    },
-    provider: 'Apollo',
-    denoms: {
-      primary: 'uosmo',
-      secondary: 'ibc/6F34E1BD664C36CE49ACC28E60D62559A5F96C4F9A6CCE4FC5A67B2852E24CFE',
-      lp: 'gamm/pool/6',
-      vault: 'factory/osmo14lu7m4ganxs20258dazafrjfaulmfxruq9n0r0th90gs46jk3tuqwfkqwn/cwVTT',
-    },
-    symbols: {
-      primary: 'OSMO',
-      secondary: 'USDC.axl',
-    },
-    isFeatured: true,
-  },
 ]
 
 export const VAULTS_META_DATA: VaultMetaData[] = [
