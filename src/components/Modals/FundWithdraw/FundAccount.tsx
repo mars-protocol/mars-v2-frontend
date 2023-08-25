@@ -37,7 +37,7 @@ export default function FundAccount(props: Props) {
     fundingAssets.length > 0 && fundingAssets.every((a) => a.toCoin().amount !== '0')
   const { autoLendEnabledAccountIds } = useAutoLendEnabledAccountIds()
   const isAutoLendEnabled = autoLendEnabledAccountIds.includes(accountId)
-  const { addDeposits, addLends } = useUpdatedAccount(account)
+  const { simulateDeposits } = useUpdatedAccount(account)
 
   const baseBalance = useMemo(
     () => walletBalances.find(byDenom(baseAsset.denom))?.amount ?? '0',
@@ -97,12 +97,8 @@ export default function FundAccount(props: Props) {
   )
 
   useEffect(() => {
-    if (isAutoLendEnabled) {
-      addLends(fundingAssets)
-    } else {
-      addDeposits(fundingAssets)
-    }
-  }, [isAutoLendEnabled, fundingAssets, addDeposits, addLends])
+    simulateDeposits({ coins: fundingAssets, target: isAutoLendEnabled ? 'lend' : 'deposit' })
+  }, [isAutoLendEnabled, fundingAssets, simulateDeposits])
 
   useEffect(() => {
     if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) {

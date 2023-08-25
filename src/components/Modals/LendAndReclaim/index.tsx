@@ -28,8 +28,7 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
   const reclaim = useStore((s) => s.reclaim)
   const { close } = useLendAndReclaimModal()
   const [isConfirming, setIsConfirming] = useToggle()
-  const { updatedAccount, addLends, removeLends, removeDeposits, addDeposits } =
-    useUpdatedAccount(currentAccount)
+  const { simulateLending } = useUpdatedAccount(currentAccount)
 
   const { data, action } = config
   const { asset } = data
@@ -41,15 +40,9 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
   const handleAmountChange = useCallback(
     (value: BigNumber) => {
       const coin = BNCoin.fromDenomAndBigNumber(asset.denom, value)
-      if (isLendAction) {
-        addLends([coin])
-        removeDeposits([coin])
-      } else {
-        addDeposits([coin])
-        removeLends([coin])
-      }
+      simulateLending({ lending: isLendAction, coin })
     },
-    [addDeposits, asset.denom, isLendAction, removeDeposits, addLends, removeLends],
+    [asset.denom, isLendAction, simulateLending],
   )
 
   const handleAction = useCallback(

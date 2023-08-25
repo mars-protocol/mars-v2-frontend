@@ -17,6 +17,16 @@ interface BorrowProps {
   coin: BNCoin
 }
 
+interface DepositProps {
+  target: 'deposit' | 'lend'
+  coins: BNCoin[]
+}
+
+interface LendingProps {
+  lending: boolean
+  coin: BNCoin
+}
+
 export function useUpdatedAccount(account?: Account) {
   const [updatedAccount, setUpdatedAccount] = useState<Account | undefined>(
     account ? cloneAccount(account) : undefined,
@@ -99,6 +109,24 @@ export function useUpdatedAccount(account?: Account) {
     [account, addDebts, addDeposits, addLends],
   )
 
+  const simulateLending = useCallback(
+    (props: LendingProps) => {
+      if (!account) return
+      const { lending, coin } = props
+      resetAccount()
+
+      if (lending) {
+        addLends([coin])
+        removeDeposits([coin])
+        return
+      }
+
+      removeLends([coin])
+      addDeposits([coin])
+    },
+    [account, addDeposits, addLends, removeDeposits, removeLends],
+  )
+
   const simulateRepay = useCallback(
     (coin: BNCoin) => {
       if (!account) return
@@ -108,6 +136,17 @@ export function useUpdatedAccount(account?: Account) {
       removeLends([lends])
     },
     [account, calculateAvailableDepositAndLendAmounts, removeDebts, removeDeposits, removeLends],
+  )
+
+  const simulateDeposits = useCallback(
+    (props: DepositProps) => {
+      if (!account) return
+      const { target, coins } = props
+      resetAccount()
+      if (target === 'deposit') addDeposits(coins)
+      if (target === 'lend') addLends(coins)
+    },
+    [account, addDeposits, addLends],
   )
 
   const resetAccount = () => {
@@ -162,6 +201,8 @@ export function useUpdatedAccount(account?: Account) {
     removedDebts,
     removedLends,
     simulateBorrow,
+    simulateDeposits,
+    simulateLending,
     simulateRepay,
     calculateAvailableDepositAndLendAmounts,
   }
