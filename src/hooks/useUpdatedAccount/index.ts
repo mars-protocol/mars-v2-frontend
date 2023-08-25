@@ -60,7 +60,7 @@ export function useUpdatedAccount(account?: Account) {
         lends: BNCoin.fromDenomAndBigNumber(coin.denom, coin.amount.minus(availableDepositAmount)),
       }
     },
-    [account, addedDeposits, addedLends, addedVaultValues, removedDeposits, removedLends],
+    [account],
   )
 
   const removeDepositByDenom = useCallback(
@@ -100,7 +100,7 @@ export function useUpdatedAccount(account?: Account) {
       removeDeposits([deposits])
       removeLends([lends])
     },
-    [account, addDebts, addDeposits, addLends],
+    [account, calculateAvailableDepositAndLendAmounts, removeDebts, removeDeposits, removeLends],
   )
 
   const resetAccount = () => {

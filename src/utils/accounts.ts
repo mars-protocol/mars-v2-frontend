@@ -9,6 +9,7 @@ import {
 import { getAssetByDenom } from 'utils/assets'
 import { BN } from 'utils/helpers'
 import { convertApyToApr } from 'utils/parsers'
+
 import { byDenom } from './array'
 
 export const calculateAccountBalanceValue = (

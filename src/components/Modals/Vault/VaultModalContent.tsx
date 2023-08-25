@@ -28,7 +28,7 @@ export default function VaultModalContent(props: Props) {
     addedDebt,
     removedDeposits,
     removedLends,
-    setRemovedLends,
+    removeLends,
     updatedAccount,
     addVaultValues,
   } = useUpdatedAccount(props.account)
@@ -67,11 +67,11 @@ export default function VaultModalContent(props: Props) {
         }
       })
 
-      setRemovedLends(reclaims)
+      removeLends(reclaims)
       removeDeposits(deposits)
       setSelectedCoins(selectedCoins)
     },
-    [props.account.deposits, removeDeposits, setRemovedLends],
+    [props.account.deposits, removeDeposits, removeLends],
   )
 
   useEffect(() => {

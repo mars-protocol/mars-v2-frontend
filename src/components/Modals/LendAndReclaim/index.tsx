@@ -28,7 +28,7 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
   const reclaim = useStore((s) => s.reclaim)
   const { close } = useLendAndReclaimModal()
   const [isConfirming, setIsConfirming] = useToggle()
-  const { updatedAccount, addLends, setRemovedLends, removeDeposits, addDeposits } =
+  const { updatedAccount, addLends, removeLends, removeDeposits, addDeposits } =
     useUpdatedAccount(currentAccount)
 
   const { data, action } = config
@@ -46,10 +46,10 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
         removeDeposits([coin])
       } else {
         addDeposits([coin])
-        setRemovedLends([coin])
+        removeLends([coin])
       }
     },
-    [addDeposits, asset.denom, isLendAction, removeDeposits, addLends, setRemovedLends],
+    [addDeposits, asset.denom, isLendAction, removeDeposits, addLends, removeLends],
   )
 
   const handleAction = useCallback(
