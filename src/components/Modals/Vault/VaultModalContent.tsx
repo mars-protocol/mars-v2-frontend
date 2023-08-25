@@ -25,7 +25,7 @@ export default function VaultModalContent(props: Props) {
   const {
     addDebts,
     removeDeposits,
-    addedDebt,
+    addedDebts,
     removedDeposits,
     removedLends,
     removeLends,
@@ -41,7 +41,7 @@ export default function VaultModalContent(props: Props) {
     vault: props.vault,
     reclaims: removedLends,
     deposits: removedDeposits,
-    borrowings: addedDebt,
+    borrowings: addedDebts,
   })
 
   const handleDepositSelect = useCallback(
@@ -115,7 +115,7 @@ export default function VaultModalContent(props: Props) {
 
     if (isOpen[1]) return null
 
-    return <VaultBorrowingsSubTitle borrowings={addedDebt} />
+    return <VaultBorrowingsSubTitle borrowings={addedDebts} />
   }
 
   return (
@@ -144,7 +144,7 @@ export default function VaultModalContent(props: Props) {
           {
             renderContent: () => (
               <VaultBorrowings
-                borrowings={addedDebt}
+                borrowings={addedDebts}
                 deposits={removedDeposits}
                 primaryAsset={props.primaryAsset}
                 secondaryAsset={props.secondaryAsset}

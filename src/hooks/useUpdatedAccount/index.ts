@@ -22,7 +22,7 @@ export function useUpdatedAccount(account?: Account) {
   )
   const [addedDeposits, addDeposits] = useState<BNCoin[]>([])
   const [removedDeposits, removeDeposits] = useState<BNCoin[]>([])
-  const [addedDebt, addDebts] = useState<BNCoin[]>([])
+  const [addedDebts, addDebts] = useState<BNCoin[]>([])
   const [removedDebts, removeDebts] = useState<BNCoin[]>([])
   const [addedVaultValues, addVaultValues] = useState<VaultValue[]>([])
   const [addedLends, addLends] = useState<BNCoin[]>([])
@@ -116,7 +116,7 @@ export function useUpdatedAccount(account?: Account) {
 
     const accountCopy = cloneAccount(account)
     accountCopy.deposits = addCoins(addedDeposits, [...accountCopy.deposits])
-    accountCopy.debts = addCoins(addedDebt, [...accountCopy.debts])
+    accountCopy.debts = addCoins(addedDebts, [...accountCopy.debts])
     accountCopy.vaults = addValueToVaults(addedVaultValues, [...accountCopy.vaults])
     accountCopy.deposits = removeCoins(removedDeposits, [...accountCopy.deposits])
     accountCopy.debts = removeCoins(removedDebts, [...accountCopy.debts])
@@ -128,7 +128,7 @@ export function useUpdatedAccount(account?: Account) {
     return () => useStore.setState({ updatedAccount: undefined })
   }, [
     account,
-    addedDebt,
+    addedDebts,
     removedDebts,
     addedDeposits,
     removedDeposits,
@@ -148,7 +148,7 @@ export function useUpdatedAccount(account?: Account) {
     removeLends,
     addVaultValues,
     addedDeposits,
-    addedDebt,
+    addedDebts,
     addedLends,
     removedDeposits,
     removedDebts,
