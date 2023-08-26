@@ -19,8 +19,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountBalanceValue, calculateAccountLeverage } from 'utils/accounts'
 
 interface Props {
-  account?: Account
-  change?: AccountChange
+  account: Account
 }
 
 export default function AccountSummary(props: Props) {
@@ -42,7 +41,6 @@ export default function AccountSummary(props: Props) {
     () => [...lendingAvailableAssets, ...accountLentAssets],
     [lendingAvailableAssets, accountLentAssets],
   )
-
   const { health } = useHealthComputer(props.account)
   const leverage = useMemo(
     () => (props.account ? calculateAccountLeverage(props.account, prices) : BN_ZERO),
@@ -76,9 +74,7 @@ export default function AccountSummary(props: Props) {
           {
             title: `Subaccount ${props.account.id} Composition`,
             renderContent: () =>
-              props.account ? (
-                <AccountComposition account={props.account} change={props.change} />
-              ) : null,
+              props.account ? <AccountComposition account={props.account} /> : null,
             isOpen: isOpen[0],
             toggleOpen: (index: number) => toggleOpen(index),
             renderSubTitle: () => <></>,

@@ -20,7 +20,6 @@ import { findCoinByDenom, getAssetByDenom } from 'utils/assets'
 import { formatPercent } from 'utils/formatters'
 
 export interface VaultBorrowingsProps {
-  updatedAccount: Account
   borrowings: BNCoin[]
   deposits: BNCoin[]
   primaryAsset: Asset
@@ -37,7 +36,8 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   const vaultModal = useStore((s) => s.vaultModal)
   const depositIntoVault = useStore((s) => s.depositIntoVault)
   const [isConfirming, setIsConfirming] = useState(false)
-  const { computeMaxBorrowAmount } = useHealthComputer(props.updatedAccount)
+  const updatedAccount = useStore((s) => s.updatedAccount)
+  const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
 
   const maxBorrowAmounts: BNCoin[] = useMemo(() => {
     return props.borrowings.map((borrowing) => {
@@ -141,9 +141,10 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   }
 
   async function onConfirm() {
+    if (!updatedAccount) return
     setIsConfirming(true)
     const isSuccess = await depositIntoVault({
-      accountId: props.updatedAccount.id,
+      accountId: updatedAccount.id,
       actions: props.depositActions,
     })
     setIsConfirming(false)

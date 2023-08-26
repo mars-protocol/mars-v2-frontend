@@ -18,6 +18,7 @@ import { getPage, getRoute } from 'utils/route'
 
 interface Props {
   accounts: Account[]
+  setShowMenu: (show: boolean) => void
 }
 
 const accountCardHeaderClasses = classNames(
@@ -27,6 +28,7 @@ const accountCardHeaderClasses = classNames(
 )
 
 export default function AccountList(props: Props) {
+  const { accounts, setShowMenu } = props
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { address } = useParams()
@@ -47,11 +49,11 @@ export default function AccountList(props: Props) {
     }
   }, [accountId])
 
-  if (!props.accounts?.length) return null
+  if (!accounts?.length) return null
 
   return (
     <div className='flex flex-wrap w-full p-4'>
-      {props.accounts.map((account) => {
+      {accounts.map((account) => {
         const positionBalance = calculateAccountBalanceValue(account, prices)
         const isActive = accountId === account.id
 
@@ -88,6 +90,7 @@ export default function AccountList(props: Props) {
                       color='tertiary'
                       leftIcon={<ArrowUpLine />}
                       onClick={() => {
+                        setShowMenu(false)
                         if (positionBalance.isLessThanOrEqualTo(0)) {
                           useStore.setState({
                             focusComponent: {
@@ -108,6 +111,7 @@ export default function AccountList(props: Props) {
                       leftIcon={<ArrowDownLine />}
                       text='Withdraw'
                       onClick={() => {
+                        setShowMenu(false)
                         useStore.setState({ fundAndWithdrawModal: 'withdraw' })
                       }}
                       disabled={positionBalance.isLessThanOrEqualTo(0)}
@@ -117,7 +121,10 @@ export default function AccountList(props: Props) {
                       color='tertiary'
                       leftIcon={<TrashBin />}
                       text='Delete'
-                      onClick={() => deleteAccountHandler()}
+                      onClick={() => {
+                        setShowMenu(false)
+                        deleteAccountHandler()
+                      }}
                     />
                     <Button
                       className='w-full'

@@ -11,6 +11,7 @@ import { ORACLE_DENOM } from 'constants/oracle'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import usePrices from 'hooks/usePrices'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import {
   calculateAccountApr,
@@ -20,7 +21,6 @@ import {
 
 interface Props {
   account: Account
-  change?: AccountChange
 }
 
 interface ItemProps {
@@ -33,7 +33,9 @@ interface ItemProps {
 }
 
 export default function AccountComposition(props: Props) {
-  const { account, change } = props
+  const updatedAccount = useStore((s) => s.updatedAccount)
+  const { account } = props
+  const hasChanged = !!updatedAccount
   const { data: prices } = usePrices()
   const { availableAssets: borrowAvailableAssets, accountBorrowedAssets } =
     useBorrowMarketAssetsTableData()
@@ -48,64 +50,74 @@ export default function AccountComposition(props: Props) {
     [lendingAvailableAssets, accountLentAssets],
   )
 
-  const [depositsBalance, lendsBalance, debtsBalance] = useMemo(
+  const [depositsBalance, lendsBalance, debtsBalance, vaultsBalance] = useMemo(
     () => getAccountPositionValues(account, prices),
     [account, prices],
   )
-  const [depositsBalanceChange, lendsBalanceChange, debtsBalanceChange] = useMemo(
-    () => (change ? getAccountPositionValues(change, prices) : [BN_ZERO, BN_ZERO, BN_ZERO]),
-    [change, prices],
-  )
+  const positionValue = depositsBalance.plus(lendsBalance).plus(vaultsBalance)
+
+  const [updatedPositionValue, updatedDebtsBalance] = useMemo(() => {
+    const [updatedDepositsBalance, updatedLendsBalance, updatedDebtsBalance, updatedVaultsBalance] =
+      updatedAccount
+        ? getAccountPositionValues(updatedAccount, prices)
+        : [BN_ZERO, BN_ZERO, BN_ZERO]
+
+    const updatedPositionValue = updatedDepositsBalance
+      .plus(updatedLendsBalance)
+      .plus(updatedVaultsBalance)
+
+    return [updatedPositionValue, updatedDebtsBalance]
+  }, [updatedAccount, prices])
+
   const totalBalance = useMemo(
     () => calculateAccountBalanceValue(account, prices),
     [account, prices],
   )
-  const totalBalanceChange = useMemo(
-    () => (change ? calculateAccountBalanceValue(change, prices) : BN_ZERO),
-    [change, prices],
+  const updatedTotalBalance = useMemo(
+    () => (updatedAccount ? calculateAccountBalanceValue(updatedAccount, prices) : BN_ZERO),
+    [updatedAccount, prices],
   )
-  const balance = depositsBalance.plus(lendsBalance)
-  const balanceChange = depositsBalanceChange.plus(lendsBalanceChange)
+
   const apr = useMemo(
-    () => calculateAccountApr(account, totalBalance, borrowAssetsData, lendingAssetsData, prices),
-    [account, totalBalance, borrowAssetsData, lendingAssetsData, prices],
+    () => calculateAccountApr(account, borrowAssetsData, lendingAssetsData, prices),
+    [account, borrowAssetsData, lendingAssetsData, prices],
   )
-  const aprChange = useMemo(
+  const updatedApr = useMemo(
     () =>
-      change
-        ? calculateAccountApr(
-            change,
-            totalBalance.plus(totalBalanceChange),
-            borrowAssetsData,
-            lendingAssetsData,
-            prices,
-          )
+      updatedAccount
+        ? calculateAccountApr(updatedAccount, borrowAssetsData, lendingAssetsData, prices)
         : BN_ZERO,
-    [change, totalBalance, totalBalanceChange, borrowAssetsData, lendingAssetsData, prices],
+    [updatedAccount, borrowAssetsData, lendingAssetsData, prices],
   )
 
   return (
     <div className='flex-wrap w-full p-4 pb-1'>
       <Item
         title='Total Position Value'
-        current={balance}
-        change={balance.plus(balanceChange)}
+        current={positionValue}
+        change={hasChanged ? updatedPositionValue : positionValue}
         className='pb-3'
       />
       <Item
         title='Total Debt'
         current={debtsBalance}
-        change={debtsBalance.plus(debtsBalanceChange)}
+        change={hasChanged ? updatedDebtsBalance : debtsBalance}
         className='pb-3'
         isDecrease
       />
       <Item
         title='Total Balance'
         current={totalBalance}
-        change={totalBalance.plus(totalBalanceChange)}
+        change={hasChanged ? updatedTotalBalance : totalBalance}
         className='py-3 font-bold border border-transparent border-y-white/20'
       />
-      <Item title='APR' current={apr} change={apr.plus(aprChange)} className='py-3' isPercentage />
+      <Item
+        title='APR'
+        current={apr}
+        change={hasChanged ? updatedApr : apr}
+        className='py-3'
+        isPercentage
+      />
     </div>
   )
 }
@@ -135,7 +147,7 @@ function Item(props: ItemProps) {
             className='text-sm'
           />
         )}
-        {!current.isEqualTo(change) && (
+        {current.toFixed(2) !== change.toFixed(2) && (
           <>
             <span className={classNames('w-3', increase ? 'text-profit' : 'text-loss')}>
               <ArrowRight />

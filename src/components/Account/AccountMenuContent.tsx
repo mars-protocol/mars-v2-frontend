@@ -138,7 +138,9 @@ export default function AccountMenuContent(props: Props) {
               <CircularProgress size={40} />
             </div>
           )}
-          {hasCreditAccounts && !isLoadingAccount && <AccountList accounts={props.accounts} />}
+          {hasCreditAccounts && !isLoadingAccount && (
+            <AccountList accounts={props.accounts} setShowMenu={setShowMenu} />
+          )}
         </div>
       </Overlay>
     </div>

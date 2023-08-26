@@ -10,8 +10,8 @@ import { BN_ZERO } from 'constants/math'
 import useDepositVault from 'hooks/broadcast/useDepositVault'
 import useIsOpenArray from 'hooks/useIsOpenArray'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
-import { byDenom } from 'utils/array'
 import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
 
 interface Props {
   vault: Vault | DepositedVault
@@ -23,12 +23,12 @@ interface Props {
 
 export default function VaultModalContent(props: Props) {
   const {
-    addDebt,
+    addDebts,
     removeDeposits,
-    addedDebt,
+    addedDebts,
     removedDeposits,
     removedLends,
-    setRemovedLends,
+    removeLends,
     updatedAccount,
     addVaultValues,
   } = useUpdatedAccount(props.account)
@@ -41,7 +41,7 @@ export default function VaultModalContent(props: Props) {
     vault: props.vault,
     reclaims: removedLends,
     deposits: removedDeposits,
-    borrowings: addedDebt,
+    borrowings: addedDebts,
   })
 
   const handleDepositSelect = useCallback(
@@ -67,11 +67,11 @@ export default function VaultModalContent(props: Props) {
         }
       })
 
-      setRemovedLends(reclaims)
+      removeLends(reclaims)
       removeDeposits(deposits)
       setSelectedCoins(selectedCoins)
     },
-    [props.account.deposits, removeDeposits, setRemovedLends],
+    [props.account.deposits, removeDeposits, removeLends],
   )
 
   useEffect(() => {
@@ -115,11 +115,11 @@ export default function VaultModalContent(props: Props) {
 
     if (isOpen[1]) return null
 
-    return <VaultBorrowingsSubTitle borrowings={addedDebt} />
+    return <VaultBorrowingsSubTitle borrowings={addedDebts} />
   }
 
   return (
-    <div className='flex flex-1 items-start gap-6 p-6'>
+    <div className='flex items-start flex-1 gap-6 p-6'>
       <Accordion
         className='h-[546px] overflow-y-scroll scrollbar-hide'
         items={[
@@ -144,12 +144,11 @@ export default function VaultModalContent(props: Props) {
           {
             renderContent: () => (
               <VaultBorrowings
-                updatedAccount={updatedAccount || props.account}
-                borrowings={addedDebt}
+                borrowings={addedDebts}
                 deposits={removedDeposits}
                 primaryAsset={props.primaryAsset}
                 secondaryAsset={props.secondaryAsset}
-                onChangeBorrowings={addDebt}
+                onChangeBorrowings={addDebts}
                 vault={props.vault}
                 depositActions={depositActions}
               />

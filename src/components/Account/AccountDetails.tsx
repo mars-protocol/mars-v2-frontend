@@ -7,7 +7,7 @@ import Card from 'components/Card'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { Gauge } from 'components/Gauge'
-import { ArrowRight, ChevronLeft, ChevronRight, Heart } from 'components/Icons'
+import { ChevronLeft, ChevronRight, Heart } from 'components/Icons'
 import Text from 'components/Text'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
@@ -43,7 +43,6 @@ function AccountDetails(props: Props) {
   const updatedAccount = useStore((s) => s.updatedAccount)
   const [isExpanded, setIsExpanded] = useToggle()
   const { health } = useHealthComputer(account)
-  const { health: updatedHealth } = useHealthComputer(updatedAccount)
   const { data: prices } = usePrices()
   const accountBalanceValue = useMemo(
     () => calculateAccountBalanceValue(updatedAccount ? updatedAccount : account, prices),
@@ -67,15 +66,8 @@ function AccountDetails(props: Props) {
     [lendingAvailableAssets, accountLentAssets],
   )
   const apr = useMemo(
-    () =>
-      calculateAccountApr(
-        account,
-        accountBalanceValue,
-        borrowAssetsData,
-        lendingAssetsData,
-        prices,
-      ),
-    [account, accountBalanceValue, borrowAssetsData, lendingAssetsData, prices],
+    () => calculateAccountApr(account, borrowAssetsData, lendingAssetsData, prices),
+    [account, borrowAssetsData, lendingAssetsData, prices],
   )
   return (
     <div
@@ -116,34 +108,18 @@ function AccountDetails(props: Props) {
               options={{ maxDecimals: 0, minDecimals: 0, suffix: '%' }}
               animate
             />
-            {updatedHealth > 0 && health !== updatedHealth && (
-              <>
-                <ArrowRight
-                  width={16}
-                  className={classNames(health > updatedHealth ? 'text-loss' : 'text-success')}
-                />
-                <FormattedNumber
-                  className={'w-full text-center text-xs'}
-                  amount={updatedHealth}
-                  options={{ maxDecimals: 0, minDecimals: 0, suffix: '%' }}
-                  animate
-                />
-              </>
-            )}
           </div>
         </div>
         <div className='w-full py-4 border-t border-white/20'>
           <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
             Leverage
           </Text>
-          <Text size='2xs' className='text-center'>
-            <FormattedNumber
-              className={'w-full text-center text-2xs'}
-              amount={leverage.toNumber()}
-              options={{ maxDecimals: 2, minDecimals: 2, suffix: 'x' }}
-              animate
-            />
-          </Text>
+          <FormattedNumber
+            className={'w-full text-center text-2xs'}
+            amount={leverage.toNumber()}
+            options={{ maxDecimals: 2, minDecimals: 2, suffix: 'x' }}
+            animate
+          />
         </div>
         <div className='w-full py-4 border-t border-white/20'>
           <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
@@ -163,7 +139,7 @@ function AccountDetails(props: Props) {
           />
         </div>
       </div>
-      <div className='flex w-80'>
+      <div className='flex w-80 backdrop-blur-sticky'>
         <Card className='w-full bg-white/5' title={`Account ${account.id}`}>
           <AccountComposition account={account} />
           <Text className='w-full px-4 py-2 bg-white/10 text-white/40'>Balances</Text>

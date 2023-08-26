@@ -1,9 +1,15 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import { addCoins, addValueToVaults, removeCoins } from 'hooks/useUpdatedAccount/functions'
+import {
+  addCoins,
+  addValueToVaults,
+  getDepositsAndLendsAfterCoinSpent,
+  removeCoins,
+} from 'hooks/useUpdatedAccount/functions'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { cloneAccount } from 'utils/accounts'
-import useStore from 'store'
+import { byDenom } from 'utils/array'
 
 export interface VaultValue {
   address: string
@@ -16,16 +22,17 @@ export function useUpdatedAccount(account?: Account) {
   )
   const [addedDeposits, addDeposits] = useState<BNCoin[]>([])
   const [removedDeposits, removeDeposits] = useState<BNCoin[]>([])
-  const [addedDebt, addDebt] = useState<BNCoin[]>([])
-  const [removedDebt, removeDebt] = useState<BNCoin[]>([])
+  const [addedDebts, addDebts] = useState<BNCoin[]>([])
+  const [removedDebts, removeDebts] = useState<BNCoin[]>([])
   const [addedVaultValues, addVaultValues] = useState<VaultValue[]>([])
-  const [addedLends, setAddedLends] = useState<BNCoin[]>([])
-  const [removedLends, setRemovedLends] = useState<BNCoin[]>([])
+  const [addedLends, addLends] = useState<BNCoin[]>([])
+  const [removedLends, removeLends] = useState<BNCoin[]>([])
 
-  const removeDepositByDenom = useCallback(
+  const removeDepositAndLendsByDenom = useCallback(
     (denom: string) => {
       if (!account) return
-      const deposit = account.deposits.find((deposit) => deposit.denom === denom)
+      const deposit = account.deposits.find(byDenom(denom))
+      const lend = account.lends.find(byDenom(denom))
 
       if (deposit) {
         removeDeposits((prevRemovedDeposits) => {
@@ -35,19 +42,84 @@ export function useUpdatedAccount(account?: Account) {
           ]
         })
       }
+
+      if (lend) {
+        removeLends((prevRemovedLends) => {
+          return [...prevRemovedLends.filter((removedLends) => removedLends.denom !== denom), lend]
+        })
+      }
     },
     [account, removeDeposits],
   )
 
+  const simulateBorrow = useCallback(
+    (target: 'wallet' | 'deposit' | 'lend', coin: BNCoin) => {
+      if (!account) return
+      resetAccount()
+      addDebts([coin])
+      if (target === 'deposit') addDeposits([coin])
+      if (target === 'lend') addLends([coin])
+    },
+    [account, addDebts, addDeposits, addLends],
+  )
+
+  const simulateLending = useCallback(
+    (isLendAction: boolean, coin: BNCoin) => {
+      if (!account) return
+
+      resetAccount()
+
+      if (isLendAction) {
+        addLends([coin])
+        removeDeposits([coin])
+        return
+      }
+
+      removeLends([coin])
+      addDeposits([coin])
+    },
+    [account, addDeposits, addLends, removeDeposits, removeLends],
+  )
+
+  const simulateRepay = useCallback(
+    (coin: BNCoin) => {
+      if (!account) return
+      removeDebts([coin])
+      const { deposits, lends } = getDepositsAndLendsAfterCoinSpent(coin, account)
+      removeDeposits([deposits])
+      removeLends([lends])
+    },
+    [account, removeDebts, removeDeposits, removeLends],
+  )
+
+  const simulateDeposits = useCallback(
+    (target: 'deposit' | 'lend', coins: BNCoin[]) => {
+      if (!account) return
+      resetAccount()
+      if (target === 'deposit') addDeposits(coins)
+      if (target === 'lend') addLends(coins)
+    },
+    [account, addDeposits, addLends],
+  )
+
+  const resetAccount = () => {
+    addDeposits([])
+    removeDeposits([])
+    addDebts([])
+    removeDebts([])
+    addVaultValues([])
+    addLends([])
+    removeLends([])
+  }
   useEffect(() => {
     if (!account) return
 
     const accountCopy = cloneAccount(account)
     accountCopy.deposits = addCoins(addedDeposits, [...accountCopy.deposits])
-    accountCopy.debts = addCoins(addedDebt, [...accountCopy.debts])
+    accountCopy.debts = addCoins(addedDebts, [...accountCopy.debts])
     accountCopy.vaults = addValueToVaults(addedVaultValues, [...accountCopy.vaults])
     accountCopy.deposits = removeCoins(removedDeposits, [...accountCopy.deposits])
-    accountCopy.debts = removeCoins(removedDebt, [...accountCopy.debts])
+    accountCopy.debts = removeCoins(removedDebts, [...accountCopy.debts])
     accountCopy.lends = addCoins(addedLends, [...accountCopy.lends])
     accountCopy.lends = removeCoins(removedLends, [...accountCopy.lends])
     setUpdatedAccount(accountCopy)
@@ -56,8 +128,8 @@ export function useUpdatedAccount(account?: Account) {
     return () => useStore.setState({ updatedAccount: undefined })
   }, [
     account,
-    addedDebt,
-    removedDebt,
+    addedDebts,
+    removedDebts,
     addedDeposits,
     removedDeposits,
     addedVaultValues,
@@ -69,17 +141,21 @@ export function useUpdatedAccount(account?: Account) {
     updatedAccount,
     addDeposits,
     removeDeposits,
-    removeDepositByDenom,
-    addDebt,
-    removeDebt,
+    removeDepositAndLendsByDenom,
+    addDebts,
+    removeDebts,
+    addLends,
+    removeLends,
     addVaultValues,
     addedDeposits,
-    addedDebt,
-    removedDeposits,
-    removedDebt,
+    addedDebts,
     addedLends,
-    setAddedLends,
+    removedDeposits,
+    removedDebts,
     removedLends,
-    setRemovedLends,
+    simulateBorrow,
+    simulateDeposits,
+    simulateLending,
+    simulateRepay,
   }
 }

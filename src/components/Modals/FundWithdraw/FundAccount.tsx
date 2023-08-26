@@ -9,6 +9,7 @@ import WalletBridges from 'components/Wallet/WalletBridges'
 import { BN_ZERO } from 'constants/math'
 import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
 import useToggle from 'hooks/useToggle'
+import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -19,11 +20,10 @@ import { BN } from 'utils/helpers'
 
 interface Props {
   account: Account
-  setChange: (change: AccountChange | undefined) => void
 }
 
 export default function FundAccount(props: Props) {
-  const { account, setChange } = props
+  const { account } = props
   const accountId = account.id
   const address = useStore((s) => s.address)
   const deposit = useStore((s) => s.deposit)
@@ -37,6 +37,7 @@ export default function FundAccount(props: Props) {
     fundingAssets.length > 0 && fundingAssets.every((a) => a.toCoin().amount !== '0')
   const { autoLendEnabledAccountIds } = useAutoLendEnabledAccountIds()
   const isAutoLendEnabled = autoLendEnabledAccountIds.includes(accountId)
+  const { simulateDeposits } = useUpdatedAccount(account)
 
   const baseBalance = useMemo(
     () => walletBalances.find(byDenom(baseAsset.denom))?.amount ?? '0',
@@ -86,21 +87,18 @@ export default function FundAccount(props: Props) {
 
   const updateFundingAssets = useCallback(
     (amount: BigNumber, denom: string) => {
-      setFundingAssets((prevAssets) => {
-        const assetToUpdateIdx = prevAssets.findIndex(byDenom(denom))
-        if (assetToUpdateIdx > -1) {
-          prevAssets[assetToUpdateIdx].amount = amount
-        }
-        setChange({ [isAutoLendEnabled ? 'lends' : 'deposits']: prevAssets })
-        return prevAssets
-      })
+      const assetToUpdate = fundingAssets.find(byDenom(denom))
+      if (assetToUpdate) {
+        assetToUpdate.amount = amount
+        setFundingAssets([...fundingAssets.filter((a) => a.denom !== denom), assetToUpdate])
+      }
     },
-    [setChange, isAutoLendEnabled],
+    [fundingAssets],
   )
 
   useEffect(() => {
-    setChange({ [isAutoLendEnabled ? 'lends' : 'deposits']: fundingAssets })
-  }, [isAutoLendEnabled, fundingAssets, setChange])
+    simulateDeposits(isAutoLendEnabled ? 'lend' : 'deposit', fundingAssets)
+  }, [isAutoLendEnabled, fundingAssets, simulateDeposits])
 
   useEffect(() => {
     if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) {
