@@ -9,58 +9,34 @@ interface Props {
   classNames?: string
 }
 
+function calculateHealth(health: number) {
+  const firstBarEnd = 43
+  const secondBarStart = 47
+  const secondBarEnd = 93
+  const thirdBarStart = 95
+  const thirdBarEnd = 184
+
+  if (health <= 10) return (firstBarEnd / 10) * health
+  if (health <= 30) return ((secondBarEnd - secondBarStart) / 20) * (health - 10) + secondBarStart
+  if (health <= 100) return ((thirdBarEnd - thirdBarStart) / 70) * (health - 30) + thirdBarStart
+}
+
 export default function HealthBar(props: Props) {
   const { health } = props
   const [color, label] = useHealthColorAndLabel(health, 'fill-')
+  const width = calculateHealth(health)
 
   return (
-    <Tooltip content={label} type='info'>
-      <div className={classNames('flex flex-shrink gap-0.5 py-1', props.classNames)}>
-        <svg fill='none' xmlns='http://www.w3.org/2000/svg' width='25%' height='4'>
-          <rect
-            width='100%'
-            height='4'
-            rx='2'
-            clipPath='inset(0px 1px 0px 0px)'
-            className='fill-white/10'
-          />
-          <rect
-            width={health > 10 ? '100%' : `${(health / 10) * 100}%`}
-            height='4'
-            rx='2'
-            clipPath='inset(0px 1px 0px 0px)'
-            className={color}
-          />
-        </svg>
-        <svg fill='none' xmlns='http://www.w3.org/2000/svg' width='25%' height='4'>
-          <rect
-            width='100%'
-            height='4'
-            className='fill-white/10'
-            clipPath='inset(0px 1px 0px 1px)'
-          />
-          <rect
-            width={health > 30 ? '100%' : health < 10 ? '0%' : `${((health - 10) / 20) * 100}%`}
-            height='4'
-            clipPath='inset(0px 1px 0px 1px)'
-            className={color}
-          />
-        </svg>
-        <svg fill='none' xmlns='http://www.w3.org/2000/svg' width='50%' height='4'>
-          <rect
-            width='100%'
-            height='4'
-            rx='2'
-            clipPath='inset(0px 0px 0px 1px)'
-            className='fill-white/10'
-          />
-          <rect
-            width={health > 30 ? `${((health - 30) / 70) * 100}%` : '0%'}
-            height='4'
-            rx='2'
-            clipPath={health > 99 ? 'inset(0px 0px 0px 1px)' : 'inset(0px 1px 0px 1px)'}
-            className={color}
-          />
+    <Tooltip content={label} type='info' className='flex items-center w-full'>
+      <div className={classNames('flex w-[184px] h-1', props.classNames)}>
+        <svg version='1.1' xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' viewBox='0 0 184 4'>
+          <mask id='healthBarMask'>
+            <path fill='#FFFFFF' d='M0,2c0-1.1,0.9-2,2-2h41.6v4H2C0.9,4,0,3.1,0,2z' />
+            <rect x='46' fill='#FFFFFF' width='47.2' height='4' />
+            <path fill='#FFFFFF' d='M95.5,0H182c1.1,0,2,0.9,2,2s-0.9,2-2,2H95.5V0z' />
+          </mask>
+          <rect className='fill-white/10' width='184' height='4' mask='url(#healthBarMask)' />
+          <rect className={color} width={width} height='4' mask='url(#healthBarMask)' />
         </svg>
       </div>
     </Tooltip>

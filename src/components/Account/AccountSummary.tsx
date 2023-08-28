@@ -1,8 +1,10 @@
 import { HTMLAttributes, useMemo } from 'react'
 
+import classNames from 'classnames'
 import Accordion from 'components/Accordion'
 import AccountBalancesTable from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
+import HealthBar from 'components/Account/HealthBar'
 import Card from 'components/Card'
 import DisplayCurrency from 'components/DisplayCurrency'
 import Text from 'components/Text'
@@ -16,7 +18,6 @@ import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountBalanceValue, calculateAccountLeverage } from 'utils/accounts'
 import { formatLeverage } from 'utils/formatters'
-import HealthBar from 'components/Account/HealthBar'
 
 interface Props {
   account: Account
@@ -49,18 +50,18 @@ export default function AccountSummary(props: Props) {
   if (!props.account) return null
 
   return (
-    <div className='h-[546px] min-w-[345px] basis-[345px] overflow-y-scroll scrollbar-hide'>
+    <div className='h-[546px] min-w-[370px] basis-[370px] overflow-y-scroll scrollbar-hide'>
       <Card className='mb-4 h-min min-w-fit bg-white/10' contentClassName='flex'>
-        <Item label='Net worth'>
+        <Item label='Net worth' classNames='flex-1'>
           <DisplayCurrency
             coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalance)}
             className='text-sm'
           />
         </Item>
-        <Item label='Leverage'>
+        <Item label='Leverage' classNames='flex-1'>
           <Text size='sm'>{formatLeverage(leverage.toNumber())}</Text>
         </Item>
-        <Item label='Health'>
+        <Item label='Account health'>
           <HealthBar health={health} />
         </Item>
       </Card>
@@ -97,15 +98,22 @@ export default function AccountSummary(props: Props) {
 
 interface ItemProps extends HTMLAttributes<HTMLDivElement> {
   label: string
+  classNames?: string
 }
 
 function Item(props: ItemProps) {
   return (
-    <div className='flex flex-col  justify-around px-3 py-1 border-r border-r-white/10' {...props}>
+    <div
+      className={classNames(
+        'flex flex-col justify-around px-3 py-1 border-r border-r-white/10',
+        props.classNames,
+      )}
+      {...props}
+    >
       <Text size='2xs' className='text-white/50 whitespace-nowrap'>
         {props.label}
       </Text>
-      {props.children}
+      <div className='flex h-4.5 w-full'>{props.children}</div>
     </div>
   )
 }
