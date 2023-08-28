@@ -15,7 +15,7 @@
     "install-charting-library": "dotenv -e .env.local node install_charting_library.js"
   },
   "dependencies": {
-    "@cosmjs/cosmwasm-stargate": "^0.31.0",
+    "@cosmjs/cosmwasm-stargate": "^0.31.1",
     "@delphi-labs/shuttle-react": "^3.7.0",
     "@keplr-wallet/cosmos": "^0.12.20",
     "@splinetool/react-spline": "^2.2.1",
