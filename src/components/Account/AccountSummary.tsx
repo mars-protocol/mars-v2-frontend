@@ -1,3 +1,5 @@
+import { HTMLAttributes, useMemo } from 'react'
+
 import Accordion from 'components/Accordion'
 import AccountBalancesTable from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
@@ -14,7 +16,6 @@ import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountBalanceValue, calculateAccountLeverage } from 'utils/accounts'
 import { formatLeverage } from 'utils/formatters'
-import { HTMLAttributes, useMemo } from 'react'
 import HealthBar from 'components/Account/HealthBar'
 
 interface Props {

@@ -1,6 +1,6 @@
-import HealthBar from 'components/Account/HealthBar'
 import { useMemo } from 'react'
 
+import HealthBar from 'components/Account/HealthBar'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
