@@ -32,6 +32,7 @@ interface BroadcastSlice {
     borrow: BNCoin
     denomOut: string
     slippage: number
+    isMax?: boolean
   }) => ExecutableTx
   toast: { message: string; isError?: boolean; title?: string } | null
   unlock: (options: {

@@ -417,6 +417,7 @@ export default function createBroadcastSlice(
       borrow?: BNCoin
       denomOut: string
       slippage: number
+      isMax?: boolean
     }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
@@ -425,7 +426,7 @@ export default function createBroadcastSlice(
             ...(options.borrow ? [{ borrow: options.borrow.toCoin() }] : []),
             {
               swap_exact_in: {
-                coin_in: options.coinIn.toActionCoin(),
+                coin_in: options.coinIn.toActionCoin(options.isMax),
                 denom_out: options.denomOut,
                 slippage: options.slippage.toString(),
               },
