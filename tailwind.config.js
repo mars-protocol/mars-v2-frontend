@@ -27,6 +27,11 @@ module.exports = {
     'text-4xl',
     'text-5xl-caps',
     'text-5xl',
+    'text-yellow-300',
+    'text-violet-500',
+    'fill-yellow-300',
+    'fill-violet-500',
+    'fill-martian-red',
     'w-2',
   ],
   theme: {

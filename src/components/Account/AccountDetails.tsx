@@ -6,8 +6,8 @@ import AccountComposition from 'components/Account/AccountComposition'
 import Card from 'components/Card'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
-import { Gauge } from 'components/Gauge'
-import { ChevronLeft, ChevronRight, Heart } from 'components/Icons'
+import { HealthGauge } from 'components/HealthGauge'
+import { ChevronLeft, ChevronRight } from 'components/Icons'
 import Text from 'components/Text'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
@@ -83,7 +83,7 @@ function AccountDetails(props: Props) {
           'flex flex-wrap w-16 group/details relative',
           'border rounded-base border-white/20',
           'bg-white/5 backdrop-blur-sticky transition-colors duration-300',
-          'hover:bg-white/20 hover:cursor-pointer ',
+          'hover:bg-white/10 hover:cursor-pointer ',
         )}
         onClick={() => setIsExpanded(!isExpanded)}
       >
@@ -97,18 +97,10 @@ function AccountDetails(props: Props) {
           {isExpanded ? <ChevronRight className='w-2' /> : <ChevronLeft className='w-2' />}
         </div>
         <div className='flex flex-wrap justify-center w-full py-4'>
-          <Gauge tooltip='Health Factor' percentage={health} icon={<Heart />} />
+          <HealthGauge health={health} />
           <Text size='2xs' className='mb-0.5 mt-1 w-full text-center text-white/50'>
-            Health
+            Account Health
           </Text>
-          <div className='flex'>
-            <FormattedNumber
-              className={'w-full text-center text-xs'}
-              amount={health}
-              options={{ maxDecimals: 0, minDecimals: 0, suffix: '%' }}
-              animate
-            />
-          </div>
         </div>
         <div className='w-full py-4 border-t border-white/20'>
           <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
