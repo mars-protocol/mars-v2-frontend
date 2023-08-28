@@ -1,10 +1,8 @@
 import Accordion from 'components/Accordion'
 import AccountBalancesTable from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
-import AccountHealth from 'components/Account/AccountHealth'
 import Card from 'components/Card'
 import DisplayCurrency from 'components/DisplayCurrency'
-import { FormattedNumber } from 'components/FormattedNumber'
 import Text from 'components/Text'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
@@ -15,10 +13,9 @@ import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableDa
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountBalanceValue, calculateAccountLeverage } from 'utils/accounts'
-import { calculateAccountLeverage, calculateAccountValue } from 'utils/accounts'
-import Text from 'components/Text'
 import { formatLeverage } from 'utils/formatters'
-import useHealthComputer from 'hooks/useHealthComputer'
+import { HTMLAttributes, useMemo } from 'react'
+import HealthBar from 'components/Account/HealthBar'
 
 interface Props {
   account: Account
