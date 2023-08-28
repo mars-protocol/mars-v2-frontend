@@ -1,7 +1,6 @@
 import classNames from 'classnames'
 
 import { Tooltip } from 'components/Tooltip'
-
 import useHealthColorAndLabel from 'hooks/useHealthColorAndLabel'
 
 interface Props {
