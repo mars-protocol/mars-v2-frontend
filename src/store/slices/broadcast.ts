@@ -11,7 +11,7 @@ import {
   Action as CreditManagerAction,
   ExecuteMsg as CreditManagerExecuteMsg,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { getAssetByDenom } from 'utils/assets'
+import { getAssetByDenom, getAssetBySymbol } from 'utils/assets'
 import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import { defaultFee } from 'utils/constants'
@@ -277,6 +277,19 @@ export default function createBroadcastSlice(
           account_id: options.accountId,
           actions,
         },
+      }
+
+      if (checkAutoLendEnabled(options.accountId)) {
+        for (const vault of options.vaults) {
+          for (const symbol of Object.values(vault.symbols)) {
+            const asset = getAssetBySymbol(symbol)
+            if (asset?.isAutoLendEnabled) {
+              msg.update_credit_account.actions.push({
+                lend: { denom: asset.denom, amount: 'account_balance' },
+              })
+            }
+          }
+        }
       }
 
       const response = await get().executeMsg({
