@@ -15,7 +15,6 @@ import {
   HealthComputer,
 } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 import { convertAccountToPositions } from 'utils/accounts'
-import { HEALTH_BUFFER } from 'utils/constants'
 import {
   BorrowTarget,
   compute_health_js,
@@ -146,8 +145,6 @@ export default function useHealthComputer(account?: Account) {
       if (!healthComputer) return BN_ZERO
       try {
         return BN(max_borrow_estimate_js(healthComputer, denom, target))
-          .times(1 - HEALTH_BUFFER)
-          .integerValue()
       } catch (err) {
         console.error(err)
         return BN_ZERO
@@ -161,8 +158,6 @@ export default function useHealthComputer(account?: Account) {
       if (!healthComputer) return BN_ZERO
       try {
         return BN(max_withdraw_estimate_js(healthComputer, denom))
-          .times(1 - HEALTH_BUFFER)
-          .integerValue()
       } catch (err) {
         console.error(err)
         return BN_ZERO
@@ -176,8 +171,6 @@ export default function useHealthComputer(account?: Account) {
       if (!healthComputer) return BN_ZERO
       try {
         return BN(max_swap_estimate_js(healthComputer, from, to, kind))
-          .times(1 - HEALTH_BUFFER)
-          .integerValue()
       } catch {
         return BN_ZERO
       }

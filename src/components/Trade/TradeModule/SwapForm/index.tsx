@@ -147,6 +147,7 @@ export default function SwapForm(props: Props) {
       borrow: borrowCoin,
       denomOut: buyAsset.denom,
       slippage,
+      isMax: sellAssetAmount.isEqualTo(maxSellAmount),
     })
   }, [
     account?.id,
@@ -156,6 +157,7 @@ export default function SwapForm(props: Props) {
     sellAssetAmount,
     slippage,
     swap,
+    maxSellAmount,
   ])
 
   const debouncedUpdateAccount = useMemo(
