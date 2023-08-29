@@ -29,8 +29,7 @@ export default function WithdrawFromAccount(props: Props) {
   const [isConfirming, setIsConfirming] = useToggle()
   const [currentAsset, setCurrentAsset] = useState(defaultAsset)
   const [amount, setAmount] = useState(BN_ZERO)
-  const { updatedAccount, removeDepositAndLendsByDenom, removeDeposits, addDebts } =
-    useUpdatedAccount(account)
+  const { updatedAccount, removeDeposits, removeLends, addDebts } = useUpdatedAccount(account)
   const { computeMaxWithdrawAmount } = useHealthComputer(account)
   const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
   const maxWithdrawAmount = computeMaxWithdrawAmount(currentAsset.denom)
@@ -42,10 +41,17 @@ export default function WithdrawFromAccount(props: Props) {
   const debtAmount = isWithinBalance ? BN_ZERO : amount.minus(maxWithdrawAmount)
   const max = withdrawWithBorrowing ? maxWithdrawWithBorrowAmount : maxWithdrawAmount
 
+  const accountDeposit = account.deposits.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO
+  const shouldReclaim =
+    amount.isGreaterThan(accountDeposit) && !withdrawWithBorrowing && currentAsset.isAutoLendEnabled
+  const reclaimAmount = shouldReclaim ? amount.minus(accountDeposit) : BN_ZERO
+  const isReclaimingMaxAmount = maxWithdrawAmount.isEqualTo(amount)
+
   function onChangeAmount(val: BigNumber) {
     setAmount(val)
     removeDeposits([BNCoin.fromDenomAndBigNumber(currentAsset.denom, withdrawAmount)])
     addDebts([BNCoin.fromDenomAndBigNumber(currentAsset.denom, debtAmount)])
+    removeLends([BNCoin.fromDenomAndBigNumber(currentAsset.denom, reclaimAmount)])
   }
 
   function resetState() {
@@ -55,12 +61,24 @@ export default function WithdrawFromAccount(props: Props) {
 
   async function onConfirm() {
     setIsConfirming(true)
+
+    const coins = [BNCoin.fromDenomAndBigNumber(currentAsset.denom, amount)]
+    const borrow = !debtAmount.isZero()
+      ? [BNCoin.fromDenomAndBigNumber(currentAsset.denom, debtAmount)]
+      : []
+    const reclaims = !reclaimAmount.isZero()
+      ? [
+          BNCoin.fromDenomAndBigNumber(currentAsset.denom, reclaimAmount).toActionCoin(
+            isReclaimingMaxAmount,
+          ),
+        ]
+      : []
+
     const result = await withdraw({
       accountId: account.id,
-      coins: [BNCoin.fromDenomAndBigNumber(currentAsset.denom, amount)],
-      borrow: debtAmount.isZero()
-        ? []
-        : [BNCoin.fromDenomAndBigNumber(currentAsset.denom, debtAmount)],
+      coins,
+      borrow,
+      reclaims,
     })
 
     setIsConfirming(false)
