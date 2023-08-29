@@ -2,6 +2,9 @@ import { useMemo } from 'react'
 
 import HealthBar from 'components/Account/HealthBar'
 import DisplayCurrency from 'components/DisplayCurrency'
+import { FormattedNumber } from 'components/FormattedNumber'
+import { ArrowChartLineUp, Heart } from 'components/Icons'
+import Text from 'components/Text'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useHealthComputer from 'hooks/useHealthComputer'
@@ -9,8 +12,6 @@ import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableDa
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountApr, calculateAccountBalanceValue } from 'utils/accounts'
-import { ArrowChartLineUp } from 'components/Icons'
-import { FormattedNumber } from 'components/FormattedNumber'
 
 interface Props {
   account: Account
@@ -40,20 +41,28 @@ export default function AccountStats(props: Props) {
     [props.account, borrowAssetsData, lendingAssetsData, prices],
   )
   return (
-    <div className='flex-wrap w-full'>
-      <span className='flex items-center'>
-        <DisplayCurrency
-          coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionBalance)}
-          className='w-full text-xl'
-        />
-        <ArrowChartLineUp className='w-4 mr-1' />
-        <FormattedNumber
-          className='text-xs text-white/70'
-          amount={apr.toNumber()}
-          options={{ prefix: 'APR: ', suffix: '%', minDecimals: 2, maxDecimals: 2 }}
-        />
-      </span>
-      <HealthBar health={health} classNames='mt-1' hasLabel />
+    <div className='flex flex-wrap w-full'>
+      <DisplayCurrency
+        coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionBalance)}
+        className='w-full text-xl'
+      />
+      <div className='flex items-center justify-between w-full mt-1'>
+        <div className='flex items-center'>
+          <ArrowChartLineUp className='w-4 mr-1' />
+          <FormattedNumber
+            className='text-xs text-white/70'
+            amount={apr.toNumber()}
+            options={{ prefix: 'APR: ', suffix: '%', minDecimals: 2, maxDecimals: 2 }}
+          />
+        </div>
+        <div className='flex items-center gap-1'>
+          <Heart className='w-4' />
+          <Text size='xs' className='mr-1 text-white/70'>
+            Health
+          </Text>
+          <HealthBar health={health} classNames='w-[92px] h-0.5' hasLabel />
+        </div>
+      </div>
     </div>
   )
 }

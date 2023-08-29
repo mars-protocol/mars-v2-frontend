@@ -62,7 +62,7 @@ export default function AccountSummary(props: Props) {
           <Text size='sm'>{formatLeverage(leverage.toNumber())}</Text>
         </Item>
         <Item label='Account health'>
-          <HealthBar health={health} />
+          <HealthBar health={health} classNames='w-[184px] h-1' />
         </Item>
       </Card>
       <Accordion
