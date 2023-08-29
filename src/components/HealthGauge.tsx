@@ -7,6 +7,7 @@ import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { REDUCE_MOTION_KEY } from 'constants/localStore'
 import useHealthColorAndLabel from 'hooks/useHealthColorAndLabel'
 import useLocalStorage from 'hooks/useLocalStorage'
+import { computeHealthGaugePercentage } from 'utils/accounts'
 
 interface Props {
   diameter?: number
@@ -15,23 +16,14 @@ interface Props {
 
 const RADIUS = 350
 const ROTATION = {
-  rotate: '-125deg',
+  rotate: '-126deg',
   transformOrigin: 'center',
 }
 
 export const HealthGauge = ({ diameter = 40, health = 0 }: Props) => {
   const [color, label] = useHealthColorAndLabel(health, 'text-')
   const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
-  const percentage = useMemo(
-    () =>
-      100 -
-      (health > 30
-        ? ((health - 30) / 70) * 50 + 50
-        : health > 10
-        ? ((health - 10) / 30) * 25 + 25
-        : (health / 10) * 25),
-    [health],
-  )
+  const percentage = useMemo(() => computeHealthGaugePercentage(health), [health])
 
   return (
     <Tooltip type='info' content={label}>
@@ -88,6 +80,7 @@ export const HealthGauge = ({ diameter = 40, health = 0 }: Props) => {
             pathLength={100}
             strokeDasharray={100}
             strokeDashoffset={percentage}
+            strokeLinecap='round'
             style={ROTATION}
             mask='url(#mask)'
             className={classNames(
