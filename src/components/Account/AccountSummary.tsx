@@ -51,7 +51,7 @@ export default function AccountSummary(props: Props) {
   )
   if (!props.account) return null
   return (
-    <div className='h-[546px] min-w-[370px] basis-[370px] overflow-y-scroll scrollbar-hide'>
+    <div className='h-[546px] min-w-92.5 basis-92.5 max-w-screen overflow-y-scroll scrollbar-hide'>
       <Card className='mb-4 h-min min-w-fit bg-white/10' contentClassName='flex'>
         <Item label='Net worth' classNames='flex-1'>
           <DisplayCurrency

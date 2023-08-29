@@ -176,6 +176,7 @@ module.exports = {
       },
       minWidth: {
         15: '60px',
+        92.5: '370px',
       },
       padding: {
         5.5: '22px',
@@ -191,6 +192,7 @@ module.exports = {
       },
       spacing: {
         35: '140px',
+        82.5: '330px',
       },
       transitionDuration: {
         3000: '3000ms',
@@ -210,6 +212,7 @@ module.exports = {
         35: '140px',
         50: '200px',
         60: '240px',
+        92.5: '370px',
         100: '400px',
         120: '480px',
       },
