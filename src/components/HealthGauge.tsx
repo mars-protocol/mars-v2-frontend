@@ -1,12 +1,12 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
+import { Heart } from 'components/Icons'
 import { Tooltip } from 'components/Tooltip'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { REDUCE_MOTION_KEY } from 'constants/localStore'
-import useLocalStorage from 'hooks/useLocalStorage'
-import { Heart } from 'components/Icons'
 import useHealthColorAndLabel from 'hooks/useHealthColorAndLabel'
+import useLocalStorage from 'hooks/useLocalStorage'
 
 interface Props {
   diameter?: number
@@ -41,7 +41,7 @@ export const HealthGauge = ({ diameter = 40, health = 0 }: Props) => {
           `w-${diameter / 4} h-${diameter / 4}`,
         )}
       >
-        <Heart className={color} width={20} />
+        <Heart className='text-white/50' width={20} />
         <svg
           version='1.1'
           xmlns='http://www.w3.org/2000/svg'
