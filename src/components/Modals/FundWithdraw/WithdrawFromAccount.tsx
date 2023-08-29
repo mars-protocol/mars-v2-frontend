@@ -109,7 +109,11 @@ export default function WithdrawFromAccount(props: Props) {
         <TokenInputWithSlider
           asset={currentAsset}
           onChange={onChangeAmount}
-          onChangeAsset={setCurrentAsset}
+          onChangeAsset={(asset) => {
+            setAmount(BN_ZERO)
+            setWithdrawWithBorrowing(false)
+            setCurrentAsset(asset)
+          }}
           amount={amount}
           max={max}
           className='w-full'
