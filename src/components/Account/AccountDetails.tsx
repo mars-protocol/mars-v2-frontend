@@ -48,6 +48,7 @@ function AccountDetails(props: Props) {
   const updatedAccount = useStore((s) => s.updatedAccount)
   const [isExpanded, setIsExpanded] = useToggle()
   const { health } = useHealthComputer(account)
+  const { health: updatedHealth } = useHealthComputer(updatedAccount ? updatedAccount : account)
   const { data: prices } = usePrices()
   const accountBalanceValue = useMemo(
     () => calculateAccountBalanceValue(updatedAccount ? updatedAccount : account, prices),
@@ -94,7 +95,7 @@ function AccountDetails(props: Props) {
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className='flex flex-wrap justify-center w-full py-4'>
-          <HealthGauge health={health} />
+          <HealthGauge health={health} updatedHealth={updatedHealth} />
           <Text size='2xs' className='mb-0.5 mt-1 w-full text-center text-white/50'>
             Account Health
           </Text>

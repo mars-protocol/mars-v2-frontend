@@ -45,6 +45,7 @@ export default function AccountSummary(props: Props) {
     [lendingAvailableAssets, accountLentAssets],
   )
   const { health } = useHealthComputer(props.account)
+  const { health: updatedHealth } = useHealthComputer(updatedAccount)
   const leverage = useMemo(
     () => (props.account ? calculateAccountLeverage(props.account, prices) : BN_ZERO),
     [props.account, prices],
@@ -53,17 +54,17 @@ export default function AccountSummary(props: Props) {
   return (
     <div className='h-[546px] min-w-92.5 basis-92.5 max-w-screen overflow-y-scroll scrollbar-hide'>
       <Card className='mb-4 h-min min-w-fit bg-white/10' contentClassName='flex'>
-        <Item label='Net worth' classNames='flex-1'>
+        <Item label='Net worth' classes='flex-1'>
           <DisplayCurrency
             coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalance)}
             className='text-sm'
           />
         </Item>
-        <Item label='Leverage' classNames='flex-1'>
+        <Item label='Leverage' classes='flex-1'>
           <Text size='sm'>{formatLeverage(leverage.toNumber())}</Text>
         </Item>
         <Item label='Account health'>
-          <HealthBar health={health} classNames='w-[184px] h-1' />
+          <HealthBar health={health} updatedHealth={updatedHealth} className='w-[184px] h-1' />
         </Item>
       </Card>
       <Accordion
@@ -99,7 +100,7 @@ export default function AccountSummary(props: Props) {
 
 interface ItemProps extends HTMLAttributes<HTMLDivElement> {
   label: string
-  classNames?: string
+  classes?: string
 }
 
 function Item(props: ItemProps) {
@@ -107,7 +108,7 @@ function Item(props: ItemProps) {
     <div
       className={classNames(
         'flex flex-col justify-around px-3 py-1 border-r border-r-white/10',
-        props.classNames,
+        props.classes,
       )}
       {...props}
     >

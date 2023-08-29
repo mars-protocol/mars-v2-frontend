@@ -82,7 +82,7 @@ module.exports = {
         error: '#F04438',
         'error-bg': '#FDA29B',
         green: '#039855',
-        grey: '#3a3c49',
+        grey: '#908e91',
         'grey-dark': '#1a1c25',
         'grey-highlight': '#4c4c4c',
         'grey-light': '#bfbfbf',
