@@ -108,19 +108,19 @@ function AccountDeleteModal(props: Props) {
       onClose={closeDeleteAccountModal}
       header={
         <span className='flex items-center'>
-          <Text>{`Delete Account ${modal.id}`}</Text>
+          <Text>{`Delete Credit Account ${modal.id}`}</Text>
         </span>
       }
       modalClassName='max-w-modal-sm'
       headerClassName='gradient-header p-4 border-b-white/5 border-b'
       contentClassName='w-full'
     >
-      <div className='w-full border-b border-white/5 p-4 gradient-header'>
+      <div className='w-full p-4 border-b border-white/5 gradient-header'>
         <Text className='text-white/50' size='sm'>
           The following assets within your credit account will be sent to your wallet.
         </Text>
       </div>
-      <div className='max-h-100 flex w-full flex-col gap-4 overflow-y-scroll p-4 scrollbar-hide'>
+      <div className='flex flex-col w-full gap-4 p-4 overflow-y-scroll max-h-100 scrollbar-hide'>
         {depositsAndLends.map((position, index) => {
           const coin = BNCoin.fromDenomAndBigNumber(position.denom, position.amount)
           const asset = getAssetByDenom(position.denom)

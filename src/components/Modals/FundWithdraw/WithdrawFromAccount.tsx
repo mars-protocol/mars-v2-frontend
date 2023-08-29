@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Button from 'components/Button'
 import Divider from 'components/Divider'
@@ -14,7 +14,9 @@ import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
+import { cloneAccount, getMergedBalances, removeDepostisAndLends } from 'utils/accounts'
 import { byDenom } from 'utils/array'
+import { getEnabledMarketAssets } from 'utils/assets'
 
 interface Props {
   account: Account
@@ -29,9 +31,12 @@ export default function WithdrawFromAccount(props: Props) {
   const [isConfirming, setIsConfirming] = useToggle()
   const [currentAsset, setCurrentAsset] = useState(defaultAsset)
   const [amount, setAmount] = useState(BN_ZERO)
-  const { updatedAccount, removeDeposits, removeLends, addDebts } = useUpdatedAccount(account)
+  const { simulateWithdraw } = useUpdatedAccount(account)
   const { computeMaxWithdrawAmount } = useHealthComputer(account)
-  const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
+  const accountClone = cloneAccount(account)
+  const borrowAccount = removeDepostisAndLends(accountClone, currentAsset.denom)
+  const { computeMaxBorrowAmount } = useHealthComputer(borrowAccount)
+  const balances = getMergedBalances(account, getEnabledMarketAssets())
   const maxWithdrawAmount = computeMaxWithdrawAmount(currentAsset.denom)
   const maxWithdrawWithBorrowAmount = computeMaxBorrowAmount(currentAsset.denom, 'wallet').plus(
     maxWithdrawAmount,
@@ -49,14 +54,12 @@ export default function WithdrawFromAccount(props: Props) {
 
   function onChangeAmount(val: BigNumber) {
     setAmount(val)
-    removeDeposits([BNCoin.fromDenomAndBigNumber(currentAsset.denom, withdrawAmount)])
-    addDebts([BNCoin.fromDenomAndBigNumber(currentAsset.denom, debtAmount)])
-    removeLends([BNCoin.fromDenomAndBigNumber(currentAsset.denom, reclaimAmount)])
   }
 
   function resetState() {
     setCurrentAsset(defaultAsset)
     setAmount(BN_ZERO)
+    onChangeAmount(BN_ZERO)
   }
 
   async function onConfirm() {
@@ -88,19 +91,35 @@ export default function WithdrawFromAccount(props: Props) {
     }
   }
 
+  useEffect(() => {
+    const coin = BNCoin.fromDenomAndBigNumber(currentAsset.denom, withdrawAmount.plus(debtAmount))
+    simulateWithdraw(withdrawWithBorrowing, coin)
+  }, [
+    amount,
+    withdrawWithBorrowing,
+    currentAsset.denom,
+    debtAmount,
+    simulateWithdraw,
+    withdrawAmount,
+  ])
+
   return (
     <>
       <div className='flex flex-wrap w-full'>
         <TokenInputWithSlider
           asset={currentAsset}
           onChange={onChangeAmount}
-          onChangeAsset={setCurrentAsset}
+          onChangeAsset={(asset) => {
+            setAmount(BN_ZERO)
+            setWithdrawWithBorrowing(false)
+            setCurrentAsset(asset)
+          }}
           amount={amount}
           max={max}
           className='w-full'
-          balances={account.deposits}
+          balances={balances}
           accountId={account.id}
-          hasSelect={account.deposits.length > 1}
+          hasSelect
           maxText='Max'
           disabled={isConfirming}
         />

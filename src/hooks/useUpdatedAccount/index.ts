@@ -55,7 +55,8 @@ export function useUpdatedAccount(account?: Account) {
   const simulateBorrow = useCallback(
     (target: 'wallet' | 'deposit' | 'lend', coin: BNCoin) => {
       if (!account) return
-      resetAccount()
+      removeDeposits([])
+      removeLends([])
       addDebts([coin])
       if (target === 'deposit') addDeposits([coin])
       if (target === 'lend') addLends([coin])
@@ -66,8 +67,6 @@ export function useUpdatedAccount(account?: Account) {
   const simulateLending = useCallback(
     (isLendAction: boolean, coin: BNCoin) => {
       if (!account) return
-
-      resetAccount()
 
       if (isLendAction) {
         addLends([coin])
@@ -84,8 +83,8 @@ export function useUpdatedAccount(account?: Account) {
   const simulateRepay = useCallback(
     (coin: BNCoin) => {
       if (!account) return
-      removeDebts([coin])
       const { deposits, lends } = getDepositsAndLendsAfterCoinSpent(coin, account)
+      removeDebts([coin])
       removeDeposits([deposits])
       removeLends([lends])
     },
@@ -95,22 +94,32 @@ export function useUpdatedAccount(account?: Account) {
   const simulateDeposits = useCallback(
     (target: 'deposit' | 'lend', coins: BNCoin[]) => {
       if (!account) return
-      resetAccount()
+      addDeposits([])
+      addLends([])
       if (target === 'deposit') addDeposits(coins)
       if (target === 'lend') addLends(coins)
     },
     [account, addDeposits, addLends],
   )
 
-  const resetAccount = () => {
-    addDeposits([])
-    removeDeposits([])
-    addDebts([])
-    removeDebts([])
-    addVaultValues([])
-    addLends([])
-    removeLends([])
-  }
+  const simulateWithdraw = useCallback(
+    (withdrawWithBorrowing: boolean, coin: BNCoin) => {
+      if (!account) return
+      removeDeposits([])
+      removeLends([])
+      addDebts([])
+
+      const { deposits, lends } = getDepositsAndLendsAfterCoinSpent(coin, account)
+      const totalBalance = deposits.amount.plus(lends.amount)
+      removeDeposits([deposits])
+      removeLends([lends])
+      if (withdrawWithBorrowing) {
+        addDebts([BNCoin.fromDenomAndBigNumber(coin.denom, coin.amount.minus(totalBalance))])
+      }
+    },
+    [account, removeDeposits, removeLends, addDebts],
+  )
+
   useEffect(() => {
     if (!account) return
 
@@ -157,5 +166,6 @@ export function useUpdatedAccount(account?: Account) {
     simulateDeposits,
     simulateLending,
     simulateRepay,
+    simulateWithdraw,
   }
 }

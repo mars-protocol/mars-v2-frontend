@@ -42,6 +42,8 @@ export default function AccountFund() {
     [walletBalances, baseAsset],
   )
 
+  const balances = walletBalances.map((coin) => new BNCoin(coin))
+
   const selectedDenoms = useMemo(() => {
     return walletAssetModal?.selectedDenoms ?? []
   }, [walletAssetModal?.selectedDenoms])
@@ -117,7 +119,7 @@ export default function AccountFund() {
         {fundingAssets.map((coin) => {
           const asset = getAssetByDenom(coin.denom) as Asset
 
-          const balance = walletBalances.find(byDenom(coin.denom))?.amount ?? '0'
+          const balance = balances.find(byDenom(coin.denom))?.amount ?? BN_ZERO
           return (
             <div
               key={asset.symbol}
@@ -127,8 +129,8 @@ export default function AccountFund() {
                 asset={asset}
                 onChange={(amount) => updateFundingAssets(amount, asset.denom)}
                 amount={coin.amount ?? BN_ZERO}
-                max={BN(balance)}
-                balances={walletBalances}
+                max={balance}
+                balances={balances}
                 maxText='Max'
                 disabled={isFunding}
               />

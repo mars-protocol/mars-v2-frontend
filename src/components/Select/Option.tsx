@@ -5,6 +5,7 @@ import DisplayCurrency from 'components/DisplayCurrency'
 import { ChevronDown, ChevronRight } from 'components/Icons'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
+import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatValue } from 'utils/formatters'
 
@@ -26,7 +27,7 @@ export default function Option(props: Props) {
 
   if (isCoin) {
     const asset = ASSETS.find((asset) => asset.denom === props.denom) ?? ASSETS[0]
-    const balance = props.amount ?? '0'
+    const balance = props.amount ?? BN_ZERO
 
     if (props.isDisplay) {
       return (
@@ -60,12 +61,12 @@ export default function Option(props: Props) {
         )}
         onClick={() => handleOnClick(asset.denom)}
       >
-        <div className='row-span-2 flex h-full items-center justify-center'>
+        <div className='flex items-center justify-center h-full row-span-2'>
           <AssetImage asset={asset} size={32} />
         </div>
         <Text className='col-span-2 pb-1'>{asset.symbol}</Text>
-        <Text size='sm' className='col-span-2 pb-1 text-right font-bold'>
-          {formatValue(balance, {
+        <Text size='sm' className='col-span-2 pb-1 font-bold text-right'>
+          {formatValue(balance.toString(), {
             decimals: asset.decimals,
             maxDecimals: 4,
             minDecimals: 0,
@@ -76,8 +77,8 @@ export default function Option(props: Props) {
           {formatValue(5, { maxDecimals: 2, minDecimals: 0, prefix: 'APY ', suffix: '%' })}
         </Text>
         <DisplayCurrency
-          className='col-span-2 text-right text-sm text-white/50'
-          coin={new BNCoin({ denom: asset.denom, amount: balance })}
+          className='col-span-2 text-sm text-right text-white/50'
+          coin={BNCoin.fromDenomAndBigNumber(asset.denom, balance)}
         />
       </div>
     )

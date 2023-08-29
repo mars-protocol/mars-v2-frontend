@@ -46,9 +46,13 @@ function Content() {
       className={classNames('grid w-full grid-cols-1 gap-4', 'md:grid-cols-2', 'lg:grid-cols-3')}
     >
       {account.map((account: Account, index: number) => (
-        <Card className='w-full h-fit bg-white/5' title={`Account ${account.id}`} key={index}>
+        <Card
+          className='w-full h-fit bg-white/5'
+          title={`Credit Account ${account.id}`}
+          key={index}
+        >
           <AccountComposition account={account} />
-          <Text className='w-full px-4 py-2 bg-white/10 text-white/40'>Balances</Text>
+          <Text className='w-full px-4 py-2 text-white bg-white/10'>Balances</Text>
           <AccountBalancesTable
             account={account}
             borrowingData={borrowAssetsData}
@@ -71,7 +75,7 @@ function Fallback() {
           <div className='p-4'>
             <Loading className='h-4 w-50' />
           </div>
-          <Text className='w-full px-4 py-2 mt-3 bg-white/10 text-white/40'>Balances</Text>
+          <Text className='w-full px-4 py-2 mt-3 text-white bg-white/10'>Balances</Text>
           <Loading className='w-full h-4' />
         </Card>
       ))}

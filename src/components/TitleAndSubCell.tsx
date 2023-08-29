@@ -11,7 +11,7 @@ interface Props {
 
 export default function TitleAndSubCell(props: Props) {
   return (
-    <div className={classNames('flex flex-col gap-[0.5]', props.containerClassName)}>
+    <div className={classNames('flex flex-col gap-0.5', props.containerClassName)}>
       <Text size='xs' className={props.className} tag='span'>
         {props.title}
       </Text>

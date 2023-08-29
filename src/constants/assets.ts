@@ -131,8 +131,8 @@ export const ASSETS: Asset[] = [
     forceFetchPrice: false,
   },
   {
-    symbol: 'gamm/pool/12',
-    name: 'gamm/pool/12',
+    symbol: 'OSMO-ATOM',
+    name: 'OSMO-ATOM LP',
     id: 'gamm/pool/12',
     denom: 'gamm/pool/12',
     color: '',

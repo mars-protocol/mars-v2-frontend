@@ -143,7 +143,7 @@ export default function AccountBalancesTable(props: Props) {
             <FormattedNumber
               className='text-xs text-right'
               amount={Number(BN(amount).abs())}
-              options={{ maxDecimals: 2, abbreviated: true }}
+              options={{ maxDecimals: 4, abbreviated: true }}
               animate
             />
           )
@@ -240,7 +240,7 @@ export default function AccountBalancesTable(props: Props) {
                     <Text
                       tag='span'
                       size='sm'
-                      className='flex items-center font-normal text-white/40'
+                      className='flex items-center font-normal text-white/70'
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
                     </Text>

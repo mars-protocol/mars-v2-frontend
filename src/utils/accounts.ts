@@ -205,6 +205,29 @@ export function cloneAccount(account: Account): Account {
   }
 }
 
+export function removeDepostisAndLends(account: Account, denom: string) {
+  const deposits = account.deposits.filter((deposit) => deposit.denom !== denom)
+  const lends = account.lends.filter((lend) => lend.denom !== denom)
+
+  deposits.push(BNCoin.fromDenomAndBigNumber(denom, BN_ZERO))
+  lends.push(BNCoin.fromDenomAndBigNumber(denom, BN_ZERO))
+
+  return {
+    ...account,
+    deposits,
+    lends,
+  }
+}
+
+export function getMergedBalances(account: Account, assets: Asset[]) {
+  const balances: BNCoin[] = []
+  assets.forEach((asset) => {
+    const balance = accumulateAmounts(asset.denom, [...account.deposits, ...account.lends])
+    balances.push(BNCoin.fromDenomAndBigNumber(asset.denom, balance))
+  })
+  return balances
+}
+
 export function computeHealthGaugePercentage(health: number) {
   const ATTENTION_CUTOFF = 10
   const HEALTHY_CUTOFF = 30

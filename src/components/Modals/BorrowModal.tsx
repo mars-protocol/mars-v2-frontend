@@ -5,7 +5,9 @@ import AccountSummary from 'components/Account/AccountSummary'
 import AssetImage from 'components/AssetImage'
 import Button from 'components/Button'
 import Card from 'components/Card'
+import DisplayCurrency from 'components/DisplayCurrency'
 import Divider from 'components/Divider'
+import { FormattedNumber } from 'components/FormattedNumber'
 import { ArrowRight } from 'components/Icons'
 import Modal from 'components/Modal'
 import Switch from 'components/Switch'
@@ -21,6 +23,7 @@ import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import { getDepositsAndLendsAfterCoinSpent } from 'hooks/useUpdatedAccount/functions'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
 import { formatPercent, formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
@@ -127,8 +130,14 @@ function BorrowModal(props: Props) {
   )
 
   useEffect(() => {
+    if (!account) return
     if (isRepay) {
-      setMax(BN(getDebtAmount(modal)))
+      const depositBalance = account.deposits.find(byDenom(asset.denom))?.amount ?? BN_ZERO
+      const lendBalance = account.lends.find(byDenom(asset.denom))?.amount ?? BN_ZERO
+      const maxBalance = depositBalance.plus(lendBalance)
+      const totalDebt = BN(getDebtAmount(modal))
+      const maxRepayAmount = BigNumber.min(maxBalance, totalDebt)
+      setMax(maxRepayAmount)
       return
     }
 
@@ -138,7 +147,7 @@ function BorrowModal(props: Props) {
     )
 
     setMax(BigNumber.min(maxBorrowAmount, modal.marketData?.liquidity?.amount || 0))
-  }, [isRepay, modal, asset.denom, computeMaxBorrowAmount, borrowToWallet])
+  }, [account, isRepay, modal, asset.denom, computeMaxBorrowAmount, borrowToWallet])
 
   useEffect(() => {
     if (amount.isGreaterThan(max)) {
@@ -174,19 +183,37 @@ function BorrowModal(props: Props) {
           title={formatPercent(modal.marketData.borrowRate || '0')}
           sub={'Borrow rate'}
         />
-        <div className='h-100 w-[1px] bg-white/10'></div>
+        <div className='h-100 w-[1px] bg-white/10' />
         <TitleAndSubCell
           title={formatValue(getDebtAmount(modal), {
-            abbreviated: true,
+            abbreviated: false,
             decimals: asset.decimals,
+            maxDecimals: asset.decimals,
           })}
           sub={'Borrowed'}
         />
-        <div className='h-100 w-[1px] bg-white/10'></div>
-        <TitleAndSubCell
-          title={`${liquidityAmountString} (${liquidityValueString})`}
-          sub={'Liquidity available'}
-        />
+        <div className='h-100 w-[1px] bg-white/10' />
+        <div className='flex flex-col gap-0.5'>
+          <div className='flex gap-2'>
+            <FormattedNumber
+              className='text-xs'
+              amount={modal.marketData?.liquidity?.amount.toNumber() ?? 0}
+              options={{ decimals: asset.decimals, abbreviated: true, suffix: ` ${asset.symbol}` }}
+              animate
+            />
+            <DisplayCurrency
+              className='text-xs'
+              coin={BNCoin.fromDenomAndBigNumber(
+                asset.denom,
+                modal.marketData?.liquidity?.amount ?? BN_ZERO,
+              )}
+              parantheses
+            />
+          </div>
+          <Text size='xs' className='text-white/50' tag='span'>
+            Liquidity available
+          </Text>
+        </div>
       </div>
       <div className='flex items-start flex-1 gap-6 p-6'>
         <Card

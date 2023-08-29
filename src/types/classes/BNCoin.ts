@@ -2,6 +2,9 @@ import { ActionCoin } from 'types/generated/mars-credit-manager/MarsCreditManage
 import { BN } from 'utils/helpers'
 
 export class BNCoin {
+  static fromDenom(denom: string, arg1: string): BNCoin {
+    throw new Error('Method not implemented.')
+  }
   public denom: string
   public amount: BigNumber
 

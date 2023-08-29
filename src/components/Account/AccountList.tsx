@@ -6,7 +6,7 @@ import AccountFund from 'components/Account/AccountFund'
 import AccountStats from 'components/Account/AccountStats'
 import Button from 'components/Button'
 import Card from 'components/Card'
-import { ArrowCircledTopRight, ArrowDownLine, ArrowUpLine, TrashBin } from 'components/Icons'
+import { ArrowDownLine, ArrowUpLine, TrashBin } from 'components/Icons'
 import Radio from 'components/Radio'
 import SwitchAutoLend from 'components/Switch/SwitchAutoLend'
 import Text from 'components/Text'
@@ -117,7 +117,7 @@ export default function AccountList(props: Props) {
                       disabled={positionBalance.isLessThanOrEqualTo(0)}
                     />
                     <Button
-                      className='w-full'
+                      className='w-full col-span-2'
                       color='tertiary'
                       leftIcon={<TrashBin />}
                       text='Delete'
@@ -125,13 +125,6 @@ export default function AccountList(props: Props) {
                         setShowMenu(false)
                         deleteAccountHandler()
                       }}
-                    />
-                    <Button
-                      className='w-full'
-                      color='tertiary'
-                      leftIcon={<ArrowCircledTopRight />}
-                      text='Transfer'
-                      onClick={() => {}}
                     />
                     <SwitchAutoLend
                       className='col-span-2 pt-4 border border-transparent border-t-white/10'

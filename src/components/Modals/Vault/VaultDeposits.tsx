@@ -178,7 +178,7 @@ export default function VaultDeposit(props: Props) {
             strokeWidth={3}
           />
         </div>
-        <div className='flex h-full flex-1 flex-col justify-between gap-6'>
+        <div className='flex flex-col justify-between flex-1 h-full gap-6'>
           <TokenInput
             onChange={onChangePrimaryDeposit}
             amount={primaryCoin.amount}

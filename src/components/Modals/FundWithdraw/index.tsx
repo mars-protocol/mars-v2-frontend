@@ -22,8 +22,8 @@ export default function FundAndWithdrawModal() {
         <span className='flex items-center gap-4 px-4'>
           <Text>
             {isFunding
-              ? `Fund Account ${currentAccount?.id ?? '0'}`
-              : `Withdraw from Account ${currentAccount?.id ?? '0'}`}
+              ? `Fund Credit Account ${currentAccount?.id ?? '0'}`
+              : `Withdraw from Credit Account ${currentAccount?.id ?? '0'}`}
           </Text>
         </span>
       }

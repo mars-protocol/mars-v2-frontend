@@ -50,12 +50,12 @@ export default function BorrowTable(props: Props) {
           const asset = row.original.asset
 
           return (
-            <div className='flex flex-1 items-center gap-3'>
+            <div className='flex items-center flex-1 gap-3'>
               <AssetImage asset={asset} size={32} />
               <TitleAndSubCell
                 title={asset.symbol}
                 sub={asset.name}
-                className='min-w-15 text-left'
+                className='text-left min-w-15'
               />
             </div>
           )
