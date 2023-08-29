@@ -9,3 +9,5 @@ export const defaultFee: StdFee = {
 }
 
 export const SECONDS_IN_A_YEAR = 31540000
+
+export const LTV_BUFFER = 0.01

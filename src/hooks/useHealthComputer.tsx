@@ -24,6 +24,7 @@ import {
   SwapKind,
 } from 'utils/health_computer'
 import { BN } from 'utils/helpers'
+import { LTV_BUFFER } from 'utils/constants'
 
 export default function useHealthComputer(account?: Account) {
   const { data: prices } = usePrices()
@@ -145,6 +146,8 @@ export default function useHealthComputer(account?: Account) {
       if (!healthComputer) return BN_ZERO
       try {
         return BN(max_borrow_estimate_js(healthComputer, denom, target))
+          .multipliedBy(1 - LTV_BUFFER)
+          .integerValue()
       } catch (err) {
         console.error(err)
         return BN_ZERO

@@ -1,4 +1,5 @@
 const BNCoin = import('types/classes/BNCoin').BNCoin
+const ActionCoin = import('types/generated').ActionCoin
 
 interface BroadcastResult {
   result?: import('@delphi-labs/shuttle-react').TxBroadcastResult
@@ -41,5 +42,10 @@ interface BroadcastSlice {
     amount: string
   }) => Promise<boolean>
   withdrawFromVaults: (options: { accountId: string; vaults: DepositedVault[] }) => Promise<boolean>
-  withdraw: (options: { accountId: string; coins: BNCoin[]; borrow: BNCoin[] }) => Promise<boolean>
+  withdraw: (options: {
+    accountId: string
+    coins: BNCoin[]
+    borrow: BNCoin[]
+    reclaims: ActionCoin[]
+  }) => Promise<boolean>
 }

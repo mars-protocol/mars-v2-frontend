@@ -8,6 +8,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { ExecuteMsg as AccountNftExecuteMsg } from 'types/generated/mars-account-nft/MarsAccountNft.types'
 import {
   Action,
+  ActionCoin,
   Action as CreditManagerAction,
   ExecuteMsg as CreditManagerExecuteMsg,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
@@ -318,7 +319,15 @@ export default function createBroadcastSlice(
       handleResponseMessages(response, `Deposited into vault`)
       return !!response.result
     },
-    withdraw: async (options: { accountId: string; coins: BNCoin[]; borrow: BNCoin[] }) => {
+    withdraw: async (options: {
+      accountId: string
+      coins: BNCoin[]
+      borrow: BNCoin[]
+      reclaims: ActionCoin[]
+    }) => {
+      const reclaimActions = options.reclaims.map((coin) => ({
+        reclaim: coin,
+      }))
       const withdrawActions = options.coins.map((coin) => ({
         withdraw: coin.toCoin(),
       }))
@@ -329,7 +338,7 @@ export default function createBroadcastSlice(
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
-          actions: [...borrowActions, ...withdrawActions],
+          actions: [...reclaimActions, ...borrowActions, ...withdrawActions],
         },
       }
 
