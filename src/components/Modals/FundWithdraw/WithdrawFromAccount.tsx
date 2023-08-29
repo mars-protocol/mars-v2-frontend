@@ -14,7 +14,7 @@ import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { cloneAccount, getMergedBalances, removeDepostisAndLends } from 'utils/accounts'
+import { cloneAccount, getMergedBalances, removeDepositsAndLends } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { getEnabledMarketAssets } from 'utils/assets'
 
@@ -34,7 +34,7 @@ export default function WithdrawFromAccount(props: Props) {
   const { simulateWithdraw } = useUpdatedAccount(account)
   const { computeMaxWithdrawAmount } = useHealthComputer(account)
   const accountClone = cloneAccount(account)
-  const borrowAccount = removeDepostisAndLends(accountClone, currentAsset.denom)
+  const borrowAccount = removeDepositsAndLends(accountClone, currentAsset.denom)
   const { computeMaxBorrowAmount } = useHealthComputer(borrowAccount)
   const balances = getMergedBalances(account, getEnabledMarketAssets())
   const maxWithdrawAmount = computeMaxWithdrawAmount(currentAsset.denom)
@@ -65,7 +65,12 @@ export default function WithdrawFromAccount(props: Props) {
   async function onConfirm() {
     setIsConfirming(true)
 
-    const coins = [BNCoin.fromDenomAndBigNumber(currentAsset.denom, amount)]
+    const coins = [
+      {
+        coin: BNCoin.fromDenomAndBigNumber(currentAsset.denom, amount),
+        isMax: max.isEqualTo(amount),
+      },
+    ]
     const borrow = !debtAmount.isZero()
       ? [BNCoin.fromDenomAndBigNumber(currentAsset.denom, debtAmount)]
       : []

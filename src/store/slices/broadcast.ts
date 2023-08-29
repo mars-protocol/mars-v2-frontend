@@ -89,9 +89,9 @@ export default function createBroadcastSlice(
 
   return {
     toast: null,
-    borrow: async (options: { accountId: string; coin: Coin; borrowToWallet: boolean }) => {
-      const borrowAction: Action = { borrow: options.coin }
-      const withdrawAction: Action = { withdraw: options.coin }
+    borrow: async (options: { accountId: string; coin: BNCoin; borrowToWallet: boolean }) => {
+      const borrowAction: Action = { borrow: options.coin.toCoin() }
+      const withdrawAction: Action = { withdraw: options.coin.toActionCoin() }
       const actions = options.borrowToWallet ? [borrowAction, withdrawAction] : [borrowAction]
 
       const msg: CreditManagerExecuteMsg = {
@@ -117,7 +117,7 @@ export default function createBroadcastSlice(
 
       handleResponseMessages(
         response,
-        `Borrowed ${formatAmountWithSymbol(options.coin)} to ${
+        `Borrowed ${formatAmountWithSymbol(options.coin.toCoin())} to ${
           options.borrowToWallet ? 'Wallet' : `Credit Account ${options.accountId}`
         }`,
       )
@@ -324,15 +324,15 @@ export default function createBroadcastSlice(
     },
     withdraw: async (options: {
       accountId: string
-      coins: BNCoin[]
+      coins: Array<{ coin: BNCoin; isMax?: boolean }>
       borrow: BNCoin[]
       reclaims: ActionCoin[]
     }) => {
       const reclaimActions = options.reclaims.map((coin) => ({
         reclaim: coin,
       }))
-      const withdrawActions = options.coins.map((coin) => ({
-        withdraw: coin.toCoin(),
+      const withdrawActions = options.coins.map(({ coin, isMax }) => ({
+        withdraw: coin.toActionCoin(isMax),
       }))
       const borrowActions = options.borrow.map((coin) => ({
         borrow: coin.toCoin(),
@@ -350,7 +350,7 @@ export default function createBroadcastSlice(
       })
 
       const withdrawString = options.coins
-        .map((coin) => formatAmountWithSymbol(coin.toCoin()))
+        .map(({ coin }) => formatAmountWithSymbol(coin.toCoin()))
         .join('and ')
       handleResponseMessages(
         response,

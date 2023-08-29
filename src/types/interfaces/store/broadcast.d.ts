@@ -12,7 +12,11 @@ interface ExecutableTx {
 }
 
 interface BroadcastSlice {
-  borrow: (options: { accountId: string; coin: Coin; borrowToWallet: boolean }) => Promise<boolean>
+  borrow: (options: {
+    accountId: string
+    coin: BNCoin
+    borrowToWallet: boolean
+  }) => Promise<boolean>
   claimRewards: (options: { accountId: string }) => ExecutableTx
   createAccount: () => Promise<string | null>
   deleteAccount: (options: { accountId: string; lends: BNCoin[] }) => Promise<boolean>
@@ -44,7 +48,7 @@ interface BroadcastSlice {
   withdrawFromVaults: (options: { accountId: string; vaults: DepositedVault[] }) => Promise<boolean>
   withdraw: (options: {
     accountId: string
-    coins: BNCoin[]
+    coins: Array<{ coin: BNCoin; isMax?: boolean }>
     borrow: BNCoin[]
     reclaims: ActionCoin[]
   }) => Promise<boolean>
