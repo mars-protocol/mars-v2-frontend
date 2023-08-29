@@ -7,8 +7,8 @@ import { glowElement } from 'components/Button/utils'
 import Card from 'components/Card'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
-import { Gauge } from 'components/Gauge'
-import { Cross, Heart, ThreeDots } from 'components/Icons'
+import { HealthGauge } from 'components/HealthGauge'
+import { Cross, ThreeDots } from 'components/Icons'
 import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { REDUCE_MOTION_KEY } from 'constants/localStore'
@@ -94,18 +94,10 @@ function AccountDetails(props: Props) {
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className='flex flex-wrap justify-center w-full py-4'>
-          <Gauge tooltip='Health Factor' percentage={health} icon={<Heart />} />
+          <HealthGauge health={health} />
           <Text size='2xs' className='mb-0.5 mt-1 w-full text-center text-white/50'>
-            Health
+            Account Health
           </Text>
-          <div className='flex'>
-            <FormattedNumber
-              className={'w-full text-center text-xs'}
-              amount={health}
-              options={{ maxDecimals: 0, minDecimals: 0, suffix: '%' }}
-              animate
-            />
-          </div>
         </div>
         <div className='w-full py-4 border-t border-white/20'>
           <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>

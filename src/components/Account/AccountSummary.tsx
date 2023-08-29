@@ -1,12 +1,12 @@
-import { useMemo } from 'react'
+import { HTMLAttributes, useMemo } from 'react'
 
+import classNames from 'classnames'
 import Accordion from 'components/Accordion'
 import AccountBalancesTable from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
-import AccountHealth from 'components/Account/AccountHealth'
+import HealthBar from 'components/Account/HealthBar'
 import Card from 'components/Card'
 import DisplayCurrency from 'components/DisplayCurrency'
-import { FormattedNumber } from 'components/FormattedNumber'
 import Text from 'components/Text'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
@@ -18,6 +18,7 @@ import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountBalanceValue, calculateAccountLeverage } from 'utils/accounts'
+import { formatLeverage } from 'utils/formatters'
 
 interface Props {
   account: Account
@@ -50,24 +51,19 @@ export default function AccountSummary(props: Props) {
   )
   if (!props.account) return null
   return (
-    <div className='h-[546px] min-w-[345px] basis-[345px] overflow-y-scroll scrollbar-hide'>
+    <div className='h-[546px] min-w-[370px] basis-[370px] overflow-y-scroll scrollbar-hide'>
       <Card className='mb-4 h-min min-w-fit bg-white/10' contentClassName='flex'>
-        <Item title='Networth'>
+        <Item label='Net worth' classNames='flex-1'>
           <DisplayCurrency
             coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalance)}
-            className='text-xs'
+            className='text-sm'
           />
         </Item>
-        <Item title='Leverage'>
-          <FormattedNumber
-            className='text-xs'
-            amount={leverage.toNumber()}
-            options={{ minDecimals: 2, maxDecimals: 2, suffix: 'x' }}
-            animate
-          />
+        <Item label='Leverage' classNames='flex-1'>
+          <Text size='sm'>{formatLeverage(leverage.toNumber())}</Text>
         </Item>
-        <Item title='Account Health'>
-          <AccountHealth health={health} />
+        <Item label='Account health'>
+          <HealthBar health={health} classNames='w-[184px] h-1' />
         </Item>
       </Card>
       <Accordion
@@ -101,16 +97,24 @@ export default function AccountSummary(props: Props) {
   )
 }
 
-function Item(props: React.HTMLAttributes<HTMLDivElement>) {
+interface ItemProps extends HTMLAttributes<HTMLDivElement> {
+  label: string
+  classNames?: string
+}
+
+function Item(props: ItemProps) {
   return (
     <div
-      className='flex flex-wrap items-center gap-1 px-4 py-2 border-r border-r-white/10'
+      className={classNames(
+        'flex flex-col justify-around px-3 py-1 border-r border-r-white/10',
+        props.classNames,
+      )}
       {...props}
     >
-      <Text size='xs' className='w-full text-white/50'>
-        {props.title}
+      <Text size='2xs' className='text-white/50 whitespace-nowrap'>
+        {props.label}
       </Text>
-      {props.children}
+      <div className='flex h-4.5 w-full'>{props.children}</div>
     </div>
   )
 }

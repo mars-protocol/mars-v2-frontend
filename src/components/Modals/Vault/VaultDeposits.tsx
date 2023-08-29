@@ -14,7 +14,7 @@ import { BN_ZERO } from 'constants/math'
 import usePrice from 'hooks/usePrice'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { accumulateAmounts, getAmount } from 'utils/accounts'
+import { accumulateAmounts } from 'utils/accounts'
 import { findCoinByDenom } from 'utils/assets'
 import { BN } from 'utils/helpers'
 

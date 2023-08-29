@@ -26,7 +26,11 @@ jest.mock('hooks/broadcast/useDepositVault', () => jest.fn(() => ({ actions: [] 
 
 jest.mock('components/DisplayCurrency')
 
-jest.mock('hooks/useHealthComputer', () => jest.fn(() => ({ computeMaxBorrowAmount: () => {} })))
+jest.mock('hooks/useHealthComputer', () =>
+  jest.fn(() => ({
+    computeMaxBorrowAmount: () => {},
+  })),
+)
 
 const mockedDisplayCurrency = jest
   .mocked(DisplayCurrency)
@@ -49,13 +53,6 @@ describe('<VaultBorrowings />', () => {
   const defaultProps: VaultBorrowingsProps = {
     primaryAsset: ASSETS[0],
     secondaryAsset: ASSETS[1],
-    updatedAccount: {
-      id: 'test',
-      deposits: [],
-      debts: [],
-      vaults: [],
-      lends: [],
-    },
     vault: mockedVault,
     borrowings: [],
     deposits: [],
