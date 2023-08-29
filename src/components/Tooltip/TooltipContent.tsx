@@ -33,6 +33,7 @@ export default function TooltipContent(props: Props) {
       {
         <div data-popper-arrow=''>
           <TooltipArrow
+            width={8}
             className={classNames(
               props.type === 'info' && 'text-white/20',
               props.type === 'warning' && 'text-warning',
