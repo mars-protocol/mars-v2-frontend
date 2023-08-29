@@ -274,3 +274,27 @@ export function getMergedBalances(account: Account, assets: Asset[]) {
   })
   return balances
 }
+
+export function computeHealthGaugePercentage(health: number) {
+  const ATTENTION_CUTOFF = 10
+  const HEALTHY_CUTOFF = 30
+  const HEALTHY_BAR_SIZE = 55
+  const UNHEALTHY_BAR_SIZE = 21
+  const GAP_SIZE = 3
+
+  if (health > HEALTHY_CUTOFF) {
+    const basePercentage = 100 - HEALTHY_BAR_SIZE
+    const additionalPercentage =
+      ((health - HEALTHY_CUTOFF) / (100 - HEALTHY_CUTOFF)) * HEALTHY_BAR_SIZE
+    return 100 - (basePercentage + additionalPercentage + GAP_SIZE)
+  }
+
+  if (health > ATTENTION_CUTOFF) {
+    const basePercentage = UNHEALTHY_BAR_SIZE
+    const additionalPercentage =
+      ((health - ATTENTION_CUTOFF) / (HEALTHY_CUTOFF - ATTENTION_CUTOFF)) * UNHEALTHY_BAR_SIZE
+    return 100 - (basePercentage + additionalPercentage + GAP_SIZE)
+  }
+
+  return 100 - (health / ATTENTION_CUTOFF) * UNHEALTHY_BAR_SIZE
+}
