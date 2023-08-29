@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 
-import Card from 'components/Card'
 import AccordionContent, { Item } from 'components/AccordionContent'
+import Card from 'components/Card'
 
 interface Props {
   items: Item[]
@@ -14,7 +14,7 @@ export default function Accordion(props: Props) {
     return (
       <Card className='w-full'>
         {props.items.map((item, index) => (
-          <AccordionContent key={item.title} item={item} index={index} />
+          <AccordionContent key={index} item={item} index={index} />
         ))}
       </Card>
     )
@@ -23,7 +23,7 @@ export default function Accordion(props: Props) {
   return (
     <div className={classNames('w-full', props.className)}>
       {props.items.map((item, index) => (
-        <Card key={item.title} className='mb-4'>
+        <Card key={index} className='mb-4'>
           <AccordionContent item={item} index={index} />
         </Card>
       ))}

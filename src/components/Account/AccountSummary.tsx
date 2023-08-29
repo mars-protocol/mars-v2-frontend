@@ -15,6 +15,7 @@ import useHealthComputer from 'hooks/useHealthComputer'
 import useIsOpenArray from 'hooks/useIsOpenArray'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import usePrices from 'hooks/usePrices'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountBalanceValue, calculateAccountLeverage } from 'utils/accounts'
 
@@ -25,6 +26,7 @@ interface Props {
 export default function AccountSummary(props: Props) {
   const [isOpen, toggleOpen] = useIsOpenArray(2, true)
   const { data: prices } = usePrices()
+  const updatedAccount = useStore((s) => s.updatedAccount)
   const accountBalance = useMemo(
     () => (props.account ? calculateAccountBalanceValue(props.account, prices) : BN_ZERO),
     [props.account, prices],
@@ -47,7 +49,6 @@ export default function AccountSummary(props: Props) {
     [props.account, prices],
   )
   if (!props.account) return null
-
   return (
     <div className='h-[546px] min-w-[345px] basis-[345px] overflow-y-scroll scrollbar-hide'>
       <Card className='mb-4 h-min min-w-fit bg-white/10' contentClassName='flex'>
@@ -72,7 +73,7 @@ export default function AccountSummary(props: Props) {
       <Accordion
         items={[
           {
-            title: `Subaccount ${props.account.id} Composition`,
+            title: `Credit Account ${props.account.id} Composition`,
             renderContent: () =>
               props.account ? <AccountComposition account={props.account} /> : null,
             isOpen: isOpen[0],
@@ -84,7 +85,7 @@ export default function AccountSummary(props: Props) {
             renderContent: () =>
               props.account ? (
                 <AccountBalancesTable
-                  account={props.account}
+                  account={updatedAccount ? updatedAccount : props.account}
                   borrowingData={borrowAssetsData}
                   lendingData={lendingAssetsData}
                 />

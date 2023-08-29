@@ -118,7 +118,7 @@ export default function createBroadcastSlice(
       handleResponseMessages(
         response,
         `Borrowed ${formatAmountWithSymbol(options.coin)} to ${
-          options.borrowToWallet ? 'Wallet' : `Account ${options.accountId}`
+          options.borrowToWallet ? 'Wallet' : `Credit Account ${options.accountId}`
         }`,
       )
       return !!response.result
@@ -135,7 +135,7 @@ export default function createBroadcastSlice(
       if (response.result) {
         set({ createAccountModal: false })
         const id = getSingleValueFromBroadcastResult(response.result, 'wasm', 'token_id')
-        set({ fundAccountModal: true, toast: { message: `Account ${id} created` } })
+        set({ fundAccountModal: true, toast: { message: `Credit Account ${id} created` } })
         return id
       } else {
         set({
@@ -175,7 +175,7 @@ export default function createBroadcastSlice(
         ],
       })
 
-      handleResponseMessages(response, `Account ${options.accountId} deleted`)
+      handleResponseMessages(response, `Credit Account ${options.accountId} deleted`)
 
       return !!response.result
     },
@@ -236,7 +236,10 @@ export default function createBroadcastSlice(
       const depositString = options.coins
         .map((coin) => formatAmountWithSymbol(coin.toCoin()))
         .join(' and ')
-      handleResponseMessages(response, `Deposited ${depositString} to Account ${options.accountId}`)
+      handleResponseMessages(
+        response,
+        `Deposited ${depositString} to Credit Credit Account ${options.accountId}`,
+      )
       return !!response.result
     },
     unlock: async (options: { accountId: string; vault: DepositedVault; amount: string }) => {
@@ -351,7 +354,7 @@ export default function createBroadcastSlice(
         .join('and ')
       handleResponseMessages(
         response,
-        `Withdrew ${withdrawString} from Account ${options.accountId}`,
+        `Withdrew ${withdrawString} from Credit Account ${options.accountId}`,
       )
       return !!response.result
     },
@@ -385,7 +388,9 @@ export default function createBroadcastSlice(
 
       handleResponseMessages(
         response,
-        `Repayed ${formatAmountWithSymbol(options.coin.toCoin())} to Account ${options.accountId}`,
+        `Repayed ${formatAmountWithSymbol(options.coin.toCoin())} to Credit Account ${
+          options.accountId
+        }`,
       )
       return !!response.result
     },

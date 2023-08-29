@@ -98,7 +98,7 @@ export default function AccountMenuContent(props: Props) {
       >
         {hasCreditAccounts
           ? isAccountSelected
-            ? `Account ${accountId}`
+            ? `Credit Account ${accountId}`
             : 'Select Account'
           : 'Create Account'}
       </Button>
@@ -114,7 +114,7 @@ export default function AccountMenuContent(props: Props) {
           )}
         >
           <Text size='lg' className='font-bold'>
-            Accounts
+            Credit Accounts
           </Text>
           <Button
             color='secondary'

@@ -21,7 +21,7 @@ interface Props {
   max: BigNumber
   onChange: (amount: BigNumber) => void
   accountId?: string
-  balances?: Coin[]
+  balances?: BNCoin[]
   className?: string
   disabled?: boolean
   hasSelect?: boolean
@@ -63,12 +63,12 @@ export default function TokenInput(props: Props) {
             options={props.balances}
             defaultValue={props.asset.denom}
             onChange={onChangeAsset}
-            title={props.accountId ? `Account ${props.accountId}` : 'Your Wallet'}
+            title={props.accountId ? `Credit Account ${props.accountId}` : 'Your Wallet'}
             className='h-full border-r border-white/20 bg-white/5'
             displayClassName='rounded-l-sm'
           />
         ) : (
-          <div className='flex min-w-fit items-center gap-2 border-r border-white/20 bg-white/5 p-3'>
+          <div className='flex items-center gap-2 p-3 border-r min-w-fit border-white/20 bg-white/5'>
             <AssetImage asset={props.asset} size={20} />
             <Text>{props.asset.symbol}</Text>
           </div>
@@ -80,7 +80,7 @@ export default function TokenInput(props: Props) {
           onChange={props.onChange}
           amount={props.amount}
           max={props.max}
-          className='flex-1 border-none p-3'
+          className='flex-1 p-3 border-none'
         />
         {props.onDelete && (
           <div role='button' className='grid items-center pr-2' onClick={props.onDelete}>
@@ -101,7 +101,7 @@ export default function TokenInput(props: Props) {
       </div>
 
       <div className='flex'>
-        <div className='flex flex-1 items-center'>
+        <div className='flex items-center flex-1'>
           {props.maxText && (
             <>
               <Text size='xs' className='mr-1 text-white' monospace>

@@ -3,17 +3,21 @@ import { useMemo } from 'react'
 
 import AccountBalancesTable from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
+import { glowElement } from 'components/Button/utils'
 import Card from 'components/Card'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { Gauge } from 'components/Gauge'
-import { ChevronLeft, ChevronRight, Heart } from 'components/Icons'
+import { Cross, Heart, ThreeDots } from 'components/Icons'
 import Text from 'components/Text'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { REDUCE_MOTION_KEY } from 'constants/localStore'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
+import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
@@ -40,6 +44,7 @@ interface Props {
 
 function AccountDetails(props: Props) {
   const { account } = props
+  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
   const updatedAccount = useStore((s) => s.updatedAccount)
   const [isExpanded, setIsExpanded] = useToggle()
   const { health } = useHealthComputer(account)
@@ -75,27 +80,19 @@ function AccountDetails(props: Props) {
       className={classNames(
         isExpanded ? 'right-6' : '-right-80',
         'w-100 flex items-start gap-6 absolute top-6',
-        'transition-all duration-300',
+        !reduceMotion && 'transition-all duration-300',
       )}
     >
       <div
         className={classNames(
-          'flex flex-wrap w-16 group/details relative',
+          'flex flex-wrap w-16 group relative',
           'border rounded-base border-white/20',
-          'bg-white/5 backdrop-blur-sticky transition-colors duration-300',
-          'hover:bg-white/20 hover:cursor-pointer ',
+          'bg-white/5 backdrop-blur-sticky',
+          !reduceMotion && 'transition-colors duration-300',
+          'hover:bg-white/10 hover:cursor-pointer ',
         )}
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <div
-          className={classNames(
-            'absolute block opacity-0 top-1/2 transition-[opacity]',
-            'group-hover/details:opacity-100 duration-300 delay-100',
-            isExpanded ? '-right-4' : '-right-3',
-          )}
-        >
-          {isExpanded ? <ChevronRight className='w-2' /> : <ChevronLeft className='w-2' />}
-        </div>
         <div className='flex flex-wrap justify-center w-full py-4'>
           <Gauge tooltip='Health Factor' percentage={health} icon={<Heart />} />
           <Text size='2xs' className='mb-0.5 mt-1 w-full text-center text-white/50'>
@@ -138,13 +135,25 @@ function AccountDetails(props: Props) {
             animate
           />
         </div>
+        <div
+          className={classNames(
+            'flex justify-center items-center w-full h-6 opacity-50',
+            !reduceMotion && 'transition-[opacity] duration-300',
+            'absolute -bottom-6',
+            'group-hover:opacity-100',
+          )}
+        >
+          {isExpanded ? <Cross className='w-2' /> : <ThreeDots className='h-1' />}
+        </div>
+
+        {glowElement(!reduceMotion)}
       </div>
       <div className='flex w-80 backdrop-blur-sticky'>
-        <Card className='w-full bg-white/5' title={`Account ${account.id}`}>
+        <Card className='w-full bg-white/5' title={`Credit Account ${account.id}`}>
           <AccountComposition account={account} />
-          <Text className='w-full px-4 py-2 bg-white/10 text-white/40'>Balances</Text>
+          <Text className='w-full px-4 py-2 text-white bg-white/10'>Balances</Text>
           <AccountBalancesTable
-            account={account}
+            account={updatedAccount ? updatedAccount : account}
             borrowingData={borrowAssetsData}
             lendingData={lendingAssetsData}
           />

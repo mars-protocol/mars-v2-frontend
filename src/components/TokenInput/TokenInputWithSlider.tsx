@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Slider from 'components/Slider'
 import TokenInput from 'components/TokenInput'
 import { BN_ZERO } from 'constants/math'
+import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
 interface Props {
@@ -12,7 +13,7 @@ interface Props {
   max: BigNumber
   onChange: (amount: BigNumber) => void
   accountId?: string
-  balances?: Coin[]
+  balances?: BNCoin[]
   className?: string
   disabled?: boolean
   hasSelect?: boolean
