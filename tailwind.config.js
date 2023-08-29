@@ -27,6 +27,11 @@ module.exports = {
     'text-4xl',
     'text-5xl-caps',
     'text-5xl',
+    'text-yellow-300',
+    'text-violet-500',
+    'fill-yellow-300',
+    'fill-violet-500',
+    'fill-martian-red',
     'w-2',
   ],
   theme: {
@@ -60,7 +65,7 @@ module.exports = {
         overlay: '0 2px 2px rgba(0, 0, 0, 0.14), 0 1px 5px rgba(0, 0, 0, 0.2)',
         button: '0px 1px 1px rgba(0, 0, 0, 0.14), 0px 1px 3px rgba(0, 0, 0, 0.2)',
         tooltip:
-          '0 3px 4px rgba(0, 0, 0, 0.14), 0 3px 3px rgba(0, 0, 0, 0.12), 0 1px 8px rgba(0, 0, 0, 0.2)',
+          '0 3px 4px rgba(0, 0, 0, 0.04), 0 3px 3px rgba(0, 0, 0, 0.04), 0 1px 8px rgba(0, 0, 0, 0.04)',
       },
       brightness: {
         30: '.3',
@@ -222,160 +227,161 @@ module.exports = {
         h2: { fontSize: '9px', lineHeight: '56px' },
         h3: { fontSize: '30px', lineHeight: '40px' },
         h4: { fontSize: '24px', lineHeight: '36px', fontWeight: theme('fontWeight.normal') },
-      }),
-        addUtilities({
-          '.blur-orb-primary': {
-            filter: 'blur(clamp(50px, 8vw, 100px))',
-          },
-          '.blur-orb-secondary': {
-            filter: 'blur(clamp(60px, 20vw, 140px))',
-          },
-          '.blur-orb-tertiary': {
-            filter: 'blur(clamp(60px, 10vw, 110px))',
-          },
-          '.border-glas': {
-            background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0))',
-            mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-            '-webkit-mask-composite': 'xor',
-            maskComposite: 'exclude',
-          },
-          '.glow-line': {
-            x: 0,
-            y: 0,
-            fill: 'transparent',
-            stroke: '#FFF',
-            strokeWidth: '0.5',
-            strokeDasharray: '20px 30px',
-          },
-          '.glow-hover': {
-            strokeDashoffset: '-80px',
-            transition: 'stroke-dashoffset 1000ms ease-in',
-          },
-          '.gradient-atom': {
-            background: 'linear-gradient(to bottom, #2e3148, #6f7390)',
-          },
-          '.gradient-axlusdc': {
-            background: 'linear-gradient(to bottom, #1f5c9e, #478edc)',
-          },
-          '.gradient-card': {
-            background:
-              'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))',
-          },
-          '.gradient-card-content': {
-            backgroundImage: 'linear-gradient(to right, transparent, rgba(255, 255, 255, 0.05))',
-          },
-          '.gradient-hatched': {
-            backgroundImage:
-              'linear-gradient(135deg,transparent 33.33%,#826d6b 33.33%,#826d6b 50%,transparent 50%,transparent 83.33%,#826d6b 83.33%,#826d6b 100%)',
-            backgroundSize: '5px 5px',
-          },
-          '.gradient-header': {
-            background:
-              'linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 50%)',
-          },
-          '.gradient-limit': {
-            background:
-              'linear-gradient(to right,#15bfa9 20.9%,#5e4bb1 49.68%,#382685 82.55%,#c83333 100%)',
-          },
-          '.gradient-mars': {
-            background: 'linear-gradient(to bottom, #a03b45, #c83333)',
-          },
-          '.gradient-osmo': {
-            background: 'linear-gradient(to bottom, #3a02e2, #e700ca)',
-          },
-          '.gradient-popover': {
-            background:
-              'linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))',
-          },
-          '.gradient-primary-to-secondary': {
-            background: 'linear-gradient(180deg, #7F78E8 0%, #926AC8 100%)',
-          },
-          '.gradient-secondary-to-primary': {
-            background: 'linear-gradient(180deg, #926AC8 100%, #7F78E8 0%)',
-          },
-          '.gradient-tooltip': {
-            background:
-              'linear-gradient(77.47deg, rgba(20, 24, 57, 0.9) 11.58%, rgba(34, 16, 57, 0.9) 93.89%)',
-          },
-          '.gradient-active-tab': {
-            background:
-              'linear-gradient(270deg, rgba(186, 8, 189, 0.764896) 0%, rgba(255, 160, 187, 0.88641) 23.77%, rgba(48, 29, 24, 0.26) 99.2%)',
-          },
-          '.number': {
-            whiteSpace: 'nowrap',
-            fontFeatureSettings: '"tnum" on',
-          },
-          '.text-3xs': { fontSize: '9px', lineHeight: '12px' },
-          '.text-3xs-caps': {
-            fontSize: '9px',
-            lineHeight: '12px',
-            textTransform: 'uppercase',
-            fontWeight: theme('fontWeight.semibold'),
-            letterSpacing: theme('letterSpacing.wide'),
-          },
-          '.text-2xs': { fontSize: '10px', lineHeight: '16px' },
-          '.text-2xs-caps': {
-            fontSize: '10px',
-            lineHeight: '16px',
-            textTransform: 'uppercase',
-            fontWeight: theme('fontWeight.semibold'),
-            letterSpacing: theme('letterSpacing.wide'),
-          },
-          '.text-xs-caps': {
-            fontSize: '12px',
-            lineHeight: '16px',
-            textTransform: 'uppercase',
-            fontWeight: theme('fontWeight.semibold'),
-            letterSpacing: theme('letterSpacing.wider'),
-          },
-          '.text-sm-caps': {
-            fontSize: '14px',
-            lineHeight: '20px',
-            textTransform: 'uppercase',
-            fontWeight: theme('fontWeight.semibold'),
-            letterSpacing: theme('letterSpacing.wider'),
-          },
-          '.text-base-caps': {
-            fontSize: '16px',
-            lineHeight: '20px',
-            textTransform: 'uppercase',
-            fontWeight: theme('fontWeight.semibold'),
-            letterSpacing: theme('letterSpacing.wider'),
-          },
-          '.text-lg-caps': {
-            fontSize: '17px',
-            lineHeight: '24px',
-            textTransform: 'uppercase',
-            fontWeight: theme('fontWeight.semibold'),
-            letterSpacing: theme('letterSpacing.wider'),
-          },
-          '.text-xl-caps': {
-            fontSize: '19px',
-            lineHeight: '28px',
-            textTransform: 'uppercase',
-            fontWeight: theme('fontWeight.light'),
-            letterSpacing: theme('letterSpacing.widest'),
-          },
-          '.text-2xl-caps': {
-            fontSize: '21px',
-            lineHeight: '32px',
-            textTransform: 'uppercase',
-            letterSpacing: theme('letterSpacing.wider'),
-          },
-          '.text-3xl-caps': {
-            fontSize: '24px',
-            lineHeight: '36px',
-            textTransform: 'uppercase',
-            letterSpacing: theme('letterSpacing.wider'),
-          },
-          '.text-4xl-caps': { fontSize: '30px', lineHeight: '40px', textTransform: 'uppercase' },
-          '.text-5xl-caps': {
-            fontSize: '39px',
-            lineHeight: '56px',
-            textTransform: 'uppercase',
-            letterSpacing: '9px',
-          },
-        })
+      })
+
+      addUtilities({
+        '.blur-orb-primary': {
+          filter: 'blur(clamp(50px, 8vw, 100px))',
+        },
+        '.blur-orb-secondary': {
+          filter: 'blur(clamp(60px, 20vw, 140px))',
+        },
+        '.blur-orb-tertiary': {
+          filter: 'blur(clamp(60px, 10vw, 110px))',
+        },
+        '.border-glas': {
+          background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0))',
+          mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+          '-webkit-mask-composite': 'xor',
+          maskComposite: 'exclude',
+        },
+        '.glow-line': {
+          x: 0,
+          y: 0,
+          fill: 'transparent',
+          stroke: '#FFF',
+          strokeWidth: '0.5',
+          strokeDasharray: '20px 30px',
+        },
+        '.glow-hover': {
+          strokeDashoffset: '-80px',
+          transition: 'stroke-dashoffset 1000ms ease-in',
+        },
+        '.gradient-atom': {
+          background: 'linear-gradient(to bottom, #2e3148, #6f7390)',
+        },
+        '.gradient-axlusdc': {
+          background: 'linear-gradient(to bottom, #1f5c9e, #478edc)',
+        },
+        '.gradient-card': {
+          background:
+            'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))',
+        },
+        '.gradient-card-content': {
+          backgroundImage: 'linear-gradient(to right, transparent, rgba(255, 255, 255, 0.05))',
+        },
+        '.gradient-hatched': {
+          backgroundImage:
+            'linear-gradient(135deg,transparent 33.33%,#826d6b 33.33%,#826d6b 50%,transparent 50%,transparent 83.33%,#826d6b 83.33%,#826d6b 100%)',
+          backgroundSize: '5px 5px',
+        },
+        '.gradient-header': {
+          background:
+            'linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 50%)',
+        },
+        '.gradient-limit': {
+          background:
+            'linear-gradient(to right,#15bfa9 20.9%,#5e4bb1 49.68%,#382685 82.55%,#c83333 100%)',
+        },
+        '.gradient-mars': {
+          background: 'linear-gradient(to bottom, #a03b45, #c83333)',
+        },
+        '.gradient-osmo': {
+          background: 'linear-gradient(to bottom, #3a02e2, #e700ca)',
+        },
+        '.gradient-popover': {
+          background:
+            'linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))',
+        },
+        '.gradient-primary-to-secondary': {
+          background: 'linear-gradient(180deg, #7F78E8 0%, #926AC8 100%)',
+        },
+        '.gradient-secondary-to-primary': {
+          background: 'linear-gradient(180deg, #926AC8 100%, #7F78E8 0%)',
+        },
+        '.gradient-tooltip': {
+          background:
+            'linear-gradient(77.47deg, rgba(20, 24, 57, 0.9) 11.58%, rgba(34, 16, 57, 0.9) 93.89%)',
+        },
+        '.gradient-active-tab': {
+          background:
+            'linear-gradient(270deg, rgba(186, 8, 189, 0.764896) 0%, rgba(255, 160, 187, 0.88641) 23.77%, rgba(48, 29, 24, 0.26) 99.2%)',
+        },
+        '.number': {
+          whiteSpace: 'nowrap',
+          fontFeatureSettings: '"tnum" on',
+        },
+        '.text-3xs': { fontSize: '9px', lineHeight: '12px' },
+        '.text-3xs-caps': {
+          fontSize: '9px',
+          lineHeight: '12px',
+          textTransform: 'uppercase',
+          fontWeight: theme('fontWeight.semibold'),
+          letterSpacing: theme('letterSpacing.wide'),
+        },
+        '.text-2xs': { fontSize: '10px', lineHeight: '16px' },
+        '.text-2xs-caps': {
+          fontSize: '10px',
+          lineHeight: '16px',
+          textTransform: 'uppercase',
+          fontWeight: theme('fontWeight.semibold'),
+          letterSpacing: theme('letterSpacing.wide'),
+        },
+        '.text-xs-caps': {
+          fontSize: '12px',
+          lineHeight: '16px',
+          textTransform: 'uppercase',
+          fontWeight: theme('fontWeight.semibold'),
+          letterSpacing: theme('letterSpacing.wider'),
+        },
+        '.text-sm-caps': {
+          fontSize: '14px',
+          lineHeight: '20px',
+          textTransform: 'uppercase',
+          fontWeight: theme('fontWeight.semibold'),
+          letterSpacing: theme('letterSpacing.wider'),
+        },
+        '.text-base-caps': {
+          fontSize: '16px',
+          lineHeight: '20px',
+          textTransform: 'uppercase',
+          fontWeight: theme('fontWeight.semibold'),
+          letterSpacing: theme('letterSpacing.wider'),
+        },
+        '.text-lg-caps': {
+          fontSize: '17px',
+          lineHeight: '24px',
+          textTransform: 'uppercase',
+          fontWeight: theme('fontWeight.semibold'),
+          letterSpacing: theme('letterSpacing.wider'),
+        },
+        '.text-xl-caps': {
+          fontSize: '19px',
+          lineHeight: '28px',
+          textTransform: 'uppercase',
+          fontWeight: theme('fontWeight.light'),
+          letterSpacing: theme('letterSpacing.widest'),
+        },
+        '.text-2xl-caps': {
+          fontSize: '21px',
+          lineHeight: '32px',
+          textTransform: 'uppercase',
+          letterSpacing: theme('letterSpacing.wider'),
+        },
+        '.text-3xl-caps': {
+          fontSize: '24px',
+          lineHeight: '36px',
+          textTransform: 'uppercase',
+          letterSpacing: theme('letterSpacing.wider'),
+        },
+        '.text-4xl-caps': { fontSize: '30px', lineHeight: '40px', textTransform: 'uppercase' },
+        '.text-5xl-caps': {
+          fontSize: '39px',
+          lineHeight: '56px',
+          textTransform: 'uppercase',
+          letterSpacing: '9px',
+        },
+      })
     }),
   ],
 }
