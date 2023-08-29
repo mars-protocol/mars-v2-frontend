@@ -56,8 +56,8 @@ export default function AccountStats(props: Props) {
           />
         </div>
         <div className='flex items-center gap-1'>
-          <Heart className='w-4' />
-          <Text size='xs' className='mr-1 text-white/70'>
+          <Heart className='w-3' />
+          <Text size='xs' className='w-auto mr-1 text-white/70'>
             Health
           </Text>
           <HealthBar health={health} classNames='w-[92px] h-0.5' hasLabel />
