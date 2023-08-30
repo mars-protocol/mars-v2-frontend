@@ -93,7 +93,7 @@ function BorrowModal(props: Props) {
     } else {
       result = await borrow({
         accountId: account.id,
-        coin: { denom: asset.denom, amount: amount.toString() },
+        coin: BNCoin.fromDenomAndBigNumber(asset.denom, amount),
         borrowToWallet,
       })
     }
