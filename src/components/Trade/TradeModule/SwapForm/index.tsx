@@ -1,28 +1,30 @@
 import debounce from 'lodash.debounce'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import estimateExactIn from 'api/swap/estimateExactIn'
 import Divider from 'components/Divider'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { SLIPPAGE_KEY } from 'constants/localStore'
-import { BN_ZERO } from 'constants/math'
-import useCurrentAccount from 'hooks/useCurrentAccount'
-import useLocalStorage from 'hooks/useLocalStorage'
-import usePrices from 'hooks/usePrices'
-import useStore from 'store'
-import { byDenom } from 'utils/array'
-import { defaultFee } from 'utils/constants'
 import RangeInput from 'components/RangeInput'
-import { asyncThrottle, BN } from 'utils/helpers'
 import AssetAmountInput from 'components/Trade/TradeModule/SwapForm/AssetAmountInput'
 import MarginToggle from 'components/Trade/TradeModule/SwapForm/MarginToggle'
 import OrderTypeSelector from 'components/Trade/TradeModule/SwapForm/OrderTypeSelector'
 import { AvailableOrderType } from 'components/Trade/TradeModule/SwapForm/OrderTypeSelector/types'
 import TradeSummary from 'components/Trade/TradeModule/SwapForm/TradeSummary'
-import { BNCoin } from 'types/classes/BNCoin'
-import estimateExactIn from 'api/swap/estimateExactIn'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { SLIPPAGE_KEY } from 'constants/localStore'
+import { BN_ZERO } from 'constants/math'
+import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
+import useCurrentAccount from 'hooks/useCurrentAccount'
 import useHealthComputer from 'hooks/useHealthComputer'
+import useLocalStorage from 'hooks/useLocalStorage'
 import useMarketBorrowings from 'hooks/useMarketBorrowings'
+import usePrices from 'hooks/usePrices'
+import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
+import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
+import { defaultFee } from 'utils/constants'
+import { asyncThrottle, BN } from 'utils/helpers'
 
 interface Props {
   buyAsset: Asset
@@ -38,16 +40,18 @@ export default function SwapForm(props: Props) {
   const { computeMaxSwapAmount } = useHealthComputer(account)
   const { data: borrowAssets } = useMarketBorrowings()
 
-  const [isMarginChecked, setMarginChecked] = useState(false)
+  const [isMarginChecked, setMarginChecked] = useToggle()
   const [buyAssetAmount, setBuyAssetAmount] = useState(BN_ZERO)
   const [sellAssetAmount, setSellAssetAmount] = useState(BN_ZERO)
   const [maxBuyableAmountEstimation, setMaxBuyableAmountEstimation] = useState(BN_ZERO)
   const [selectedOrderType, setSelectedOrderType] = useState<AvailableOrderType>('Market')
-  const [isConfirming, setIsConfirming] = useState(false)
+  const [isConfirming, setIsConfirming] = useToggle()
   const [estimatedFee, setEstimatedFee] = useState(defaultFee)
+  const { autoLendEnabledAccountIds } = useAutoLendEnabledAccountIds()
+  const isAutoLendEnabled = account ? autoLendEnabledAccountIds.includes(account.id) : false
 
   const throttledEstimateExactIn = useMemo(() => asyncThrottle(estimateExactIn, 250), [])
-  const { removeDeposits, addDeposits, addDebts } = useUpdatedAccount(account)
+  const { simulateTrade } = useUpdatedAccount(account)
 
   const borrowAsset = useMemo(
     () => borrowAssets.find(byDenom(sellAsset.denom)),
@@ -163,20 +167,21 @@ export default function SwapForm(props: Props) {
   const debouncedUpdateAccount = useMemo(
     () =>
       debounce((removeCoin: BNCoin, addCoin: BNCoin, debtCoin: BNCoin) => {
-        removeDeposits([removeCoin])
-        addDeposits([addCoin])
-        if (debtCoin.amount.isGreaterThan(BN_ZERO)) addDebts([debtCoin])
-      }, 1000),
-    [removeDeposits, addDeposits, addDebts],
+        simulateTrade(removeCoin, addCoin, debtCoin, isAutoLendEnabled ? 'lend' : 'deposit')
+      }, 100),
+    [simulateTrade, isAutoLendEnabled],
   )
 
   useEffect(() => {
     setBuyAssetAmount(BN_ZERO)
     setSellAssetAmount(BN_ZERO)
-    removeDeposits([])
-    addDeposits([])
-    addDebts([])
-  }, [buyAsset.denom, sellAsset.denom, removeDeposits, addDeposits, addDebts])
+    simulateTrade(
+      BNCoin.fromDenomAndBigNumber(buyAsset.denom, BN_ZERO),
+      BNCoin.fromDenomAndBigNumber(sellAsset.denom, BN_ZERO),
+      BNCoin.fromDenomAndBigNumber(sellAsset.denom, BN_ZERO),
+      isAutoLendEnabled ? 'lend' : 'deposit',
+    )
+  }, [buyAsset.denom, sellAsset.denom, simulateTrade, isAutoLendEnabled])
 
   useEffect(() => {
     const removeDepositAmount = sellAssetAmount.isGreaterThanOrEqualTo(sellSideMarginThreshold)
@@ -215,7 +220,7 @@ export default function SwapForm(props: Props) {
       }
       setIsConfirming(false)
     }
-  }, [account?.id, swapTx])
+  }, [account?.id, swapTx, setIsConfirming])
 
   return (
     <>
