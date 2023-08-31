@@ -1,10 +1,12 @@
 import classNames from 'classnames'
+import { useMemo } from 'react'
 
 import { Tooltip } from 'components/Tooltip'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { REDUCE_MOTION_KEY } from 'constants/localStore'
 import useHealthColorAndLabel from 'hooks/useHealthColorAndLabel'
 import useLocalStorage from 'hooks/useLocalStorage'
+import { getHealthIndicatorColors } from 'utils/healthIndicator'
 
 interface Props {
   health: number
@@ -33,14 +35,12 @@ export default function HealthBar(props: Props) {
   const updatedWidth = calculateHealth(updatedHealth ?? 0)
   const isUpdated = updatedWidth > 0 && updatedWidth !== width
   const isIncrease = isUpdated && updatedWidth > width
-  const [color, label] = useHealthColorAndLabel(health, 'fill-')
-  const [updatedColor, updatedLabel] = useHealthColorAndLabel(updatedHealth ?? 0, 'fill-')
-
-  let backgroundColor = color
-  if (isUpdated && isIncrease) backgroundColor = updatedColor
-  if (isUpdated && !isIncrease) backgroundColor = 'fill-grey'
-
-  const foreGroundColor = isIncrease ? 'fill-grey' : updatedColor
+  const [color, label] = useHealthColorAndLabel(health, 'fill')
+  const [updatedColor, updatedLabel] = useHealthColorAndLabel(updatedHealth ?? 0, 'fill')
+  const [backgroundColor, foreGroundColor] = useMemo(
+    () => getHealthIndicatorColors(color, updatedColor, 'fill', isUpdated, isIncrease),
+    [color, updatedColor, isUpdated, isIncrease],
+  )
 
   return (
     <Tooltip

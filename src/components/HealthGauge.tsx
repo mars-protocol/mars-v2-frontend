@@ -8,6 +8,7 @@ import { REDUCE_MOTION_KEY } from 'constants/localStore'
 import useHealthColorAndLabel from 'hooks/useHealthColorAndLabel'
 import useLocalStorage from 'hooks/useLocalStorage'
 import { computeHealthGaugePercentage } from 'utils/accounts'
+import { getHealthIndicatorColors } from 'utils/healthIndicator'
 
 interface Props {
   diameter?: number
@@ -22,23 +23,20 @@ const ROTATION = {
 }
 
 export const HealthGauge = ({ diameter = 40, health = 0, updatedHealth = 0 }: Props) => {
-  const [color, label] = useHealthColorAndLabel(health, 'text-')
-  const [updatedColor, updatedLabel] = useHealthColorAndLabel(updatedHealth ?? 0, 'text-')
+  const [color, label] = useHealthColorAndLabel(health, 'text')
+  const [updatedColor, updatedLabel] = useHealthColorAndLabel(updatedHealth ?? 0, 'text')
   const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
   const percentage = useMemo(() => computeHealthGaugePercentage(health), [health])
   const updatedPercentage = useMemo(
     () => computeHealthGaugePercentage(updatedHealth),
     [updatedHealth],
   )
-
   const isUpdated = updatedHealth !== 0 && updatedPercentage !== percentage
   const isIncrease = isUpdated && updatedPercentage < percentage
-
-  let backgroundColor = color
-  if (isUpdated && isIncrease) backgroundColor = updatedColor
-  if (isUpdated && !isIncrease) backgroundColor = 'text-grey'
-
-  const foreGroundColor = isIncrease ? 'text-grey' : updatedColor
+  const [backgroundColor, foreGroundColor] = useMemo(
+    () => getHealthIndicatorColors(color, updatedColor, 'text', isUpdated, isIncrease),
+    [color, updatedColor, isUpdated, isIncrease],
+  )
 
   return (
     <Tooltip type='info' content={isUpdated ? updatedLabel : label}>
