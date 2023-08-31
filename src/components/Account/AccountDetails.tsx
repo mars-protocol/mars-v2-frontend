@@ -48,7 +48,7 @@ function AccountDetails(props: Props) {
   const updatedAccount = useStore((s) => s.updatedAccount)
   const [isExpanded, setIsExpanded] = useToggle()
   const { health } = useHealthComputer(account)
-  const { health: updatedHealth } = useHealthComputer(updatedAccount ? updatedAccount : account)
+  const { health: updatedHealth } = useHealthComputer(updatedAccount || account)
   const { data: prices } = usePrices()
   const accountBalanceValue = useMemo(
     () => calculateAccountBalanceValue(updatedAccount ? updatedAccount : account, prices),
