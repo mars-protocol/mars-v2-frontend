@@ -1,6 +1,6 @@
 import { HTMLAttributes, useMemo } from 'react'
-
 import classNames from 'classnames'
+
 import Accordion from 'components/Accordion'
 import AccountBalancesTable from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
