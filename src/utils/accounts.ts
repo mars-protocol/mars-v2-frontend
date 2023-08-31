@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
-import { ASSETS } from 'constants/assets'
 
+import { ASSETS } from 'constants/assets'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import {
