@@ -12,6 +12,7 @@ interface Props {
   options?: FormatOptions
   className?: string
   animate?: boolean
+  parantheses?: boolean
 }
 
 export const FormattedNumber = React.memo(
@@ -39,13 +40,25 @@ export const FormattedNumber = React.memo(
       reduceMotion
     )
       return (
-        <p className={classNames('number', props.className)}>
+        <p
+          className={classNames(
+            'number',
+            props.parantheses && 'before:content-["("] after:content-[")"]',
+            props.className,
+          )}
+        >
           {formatValue(props.amount.toString(), props.options)}
         </p>
       )
 
     return (
-      <animated.p className={classNames('number', props.className)}>
+      <animated.p
+        className={classNames(
+          'number',
+          props.parantheses && 'before:content-["("] after:content-[")"]',
+          props.className,
+        )}
+      >
         {springAmount.number.to((num) => formatValue(num, props.options))}
       </animated.p>
     )

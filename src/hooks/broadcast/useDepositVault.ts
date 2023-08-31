@@ -38,11 +38,15 @@ export default function useDepositVault(props: Props): {
     () => props.deposits.filter((deposit) => deposit.amount.gt(0)),
     [props.deposits],
   )
+  const reclaims: BNCoin[] = useMemo(
+    () => props.reclaims.filter((reclaim) => reclaim.amount.gt(0)),
+    [props.reclaims],
+  )
 
   const debouncedGetMinLpToReceive = useMemo(() => debounce(getMinLpToReceive, 500), [])
 
   const { primaryCoin, secondaryCoin, totalValue } = useMemo(
-    () => getVaultDepositCoinsAndValue(props.vault, deposits, borrowings, prices),
+    () => getVaultDepositCoinsAndValue(props.vault, deposits, borrowings, reclaims, prices),
     [deposits, borrowings, props.vault, prices],
   )
 

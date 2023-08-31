@@ -2,19 +2,23 @@ import BigNumber from 'bignumber.js'
 import { useMemo, useState } from 'react'
 
 import Button from 'components/Button'
-import DisplayCurrency from 'components/DisplayCurrency'
 import Divider from 'components/Divider'
+import { FormattedNumber } from 'components/FormattedNumber'
 import { Gauge } from 'components/Gauge'
 import { ArrowRight, ExclamationMarkCircled } from 'components/Icons'
 import Slider from 'components/Slider'
 import Switch from 'components/Switch'
 import Text from 'components/Text'
 import TokenInput from 'components/TokenInput'
+import { ASSETS } from 'constants/assets'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
 import { BN_ZERO } from 'constants/math'
+import useLocalStorage from 'hooks/useLocalStorage'
 import usePrice from 'hooks/usePrice'
-import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { accumulateAmounts } from 'utils/accounts'
+import { byDenom } from 'utils/array'
 import { findCoinByDenom } from 'utils/assets'
 import { BN } from 'utils/helpers'
 
@@ -31,8 +35,11 @@ interface Props {
 
 export default function VaultDeposit(props: Props) {
   const { deposits, primaryAsset, secondaryAsset, account, onChangeDeposits } = props
-  const baseCurrency = useStore((s) => s.baseCurrency)
-
+  const [displayCurrency] = useLocalStorage<string>(
+    DISPLAY_CURRENCY_KEY,
+    DEFAULT_SETTINGS.displayCurrency,
+  )
+  const displayCurrencyAsset = ASSETS.find(byDenom(displayCurrency)) ?? ASSETS[0]
   const [availablePrimaryAmount, availableSecondaryAmount] = useMemo(
     () => [
       accumulateAmounts(primaryAsset.denom, [...account.deposits, ...account.lends]),
@@ -55,13 +62,14 @@ export default function VaultDeposit(props: Props) {
   }, [deposits, secondaryAsset.denom])
 
   const primaryValue = useMemo(
-    () => primaryCoin.amount.multipliedBy(primaryPrice),
+    () => primaryCoin.amount.shiftedBy(-secondaryAsset.decimals).multipliedBy(primaryPrice),
     [primaryCoin, primaryPrice],
   )
   const secondaryValue = useMemo(
-    () => secondaryCoin.amount.multipliedBy(secondaryPrice),
+    () => secondaryCoin.amount.shiftedBy(-secondaryAsset.decimals).multipliedBy(secondaryPrice),
     [secondaryCoin, secondaryPrice],
   )
+
   const totalValue = useMemo(
     () => primaryValue.plus(secondaryValue),
     [primaryValue, secondaryValue],
@@ -227,8 +235,16 @@ export default function VaultDeposit(props: Props) {
         </div>
         <div className='flex justify-between'>
           <Text className='text-white/50'>{`${primaryAsset.symbol}-${secondaryAsset.symbol} Deposit Value`}</Text>
-          <DisplayCurrency
-            coin={new BNCoin({ denom: baseCurrency.denom, amount: totalValue.toString() })}
+          <FormattedNumber
+            amount={totalValue.toNumber()}
+            options={{
+              maxDecimals: displayCurrencyAsset.decimals,
+              minDecimals: displayCurrency === 'usd' ? 2 : 0,
+              prefix: displayCurrency === 'usd' ? '$' : '',
+              suffix: displayCurrency !== 'usd' ? ` ${displayCurrencyAsset}` : '',
+              abbreviated: true,
+            }}
+            animate
           />
         </div>
         <Button

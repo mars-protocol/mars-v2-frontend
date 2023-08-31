@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js'
+import { ASSETS } from 'constants/assets'
 
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -85,13 +86,13 @@ export const calculateAccountApr = (
   })
 
   vaults?.forEach((vault) => {
-    const asset = getAssetByDenom(vault.denoms.lp)
-    if (!asset) return BN_ZERO
-    const price = prices.find(byDenom(vault.denoms.lp))?.amount ?? 0
-    const amount = BN(vault.amounts.locked).shiftedBy(-asset.decimals)
-    const positionInterest = amount
-      .multipliedBy(price)
-      .multipliedBy(convertApyToApr(vault?.apy ?? 0, 365))
+    const primaryAsset = ASSETS.find(byDenom(vault.denoms.primary)) ?? ASSETS[0]
+    const secondaryAsset = ASSETS.find(byDenom(vault.denoms.secondary)) ?? ASSETS[0]
+    const primaryValue = vault.values.primary.shiftedBy(-primaryAsset.decimals)
+    const secondaryValue = vault.values.primary.shiftedBy(-secondaryAsset.decimals)
+
+    const totalValue = primaryValue.plus(secondaryValue)
+    const positionInterest = totalValue.multipliedBy(convertApyToApr(vault?.apy ?? 0, 365))
     totalVaultsInterestValue = totalVaultsInterestValue.plus(positionInterest)
   })
 

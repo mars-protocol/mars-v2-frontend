@@ -11,7 +11,6 @@ import useDepositVault from 'hooks/broadcast/useDepositVault'
 import useIsOpenArray from 'hooks/useIsOpenArray'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import { BNCoin } from 'types/classes/BNCoin'
-import { byDenom } from 'utils/array'
 
 interface Props {
   vault: Vault | DepositedVault
@@ -24,13 +23,11 @@ interface Props {
 export default function VaultModalContent(props: Props) {
   const {
     addDebts,
-    removeDeposits,
     addedDebts,
     removedDeposits,
     removedLends,
-    removeLends,
-    updatedAccount,
-    addVaultValues,
+    simulateVaultAction,
+    simulateVaultDeposits,
   } = useUpdatedAccount(props.account)
 
   const [isOpen, toggleOpen] = useIsOpenArray(2, false)
@@ -46,42 +43,16 @@ export default function VaultModalContent(props: Props) {
 
   const handleDepositSelect = useCallback(
     (selectedCoins: BNCoin[]) => {
-      const reclaims: BNCoin[] = []
-      const deposits: BNCoin[] = []
-
-      selectedCoins.forEach((selectedCoin) => {
-        const { denom, amount: selectedAmount } = selectedCoin
-        const accountDepositForSelectedCoin: BigNumber =
-          props.account.deposits.find(byDenom(denom))?.amount ?? BN_ZERO
-
-        if (selectedAmount.gt(accountDepositForSelectedCoin)) {
-          reclaims.push(
-            BNCoin.fromDenomAndBigNumber(
-              denom,
-              selectedAmount.minus(accountDepositForSelectedCoin),
-            ),
-          )
-          deposits.push(BNCoin.fromDenomAndBigNumber(denom, accountDepositForSelectedCoin))
-        } else {
-          deposits.push(selectedCoin)
-        }
-      })
-
-      removeLends(reclaims)
-      removeDeposits(deposits)
+      simulateVaultDeposits(selectedCoins)
       setSelectedCoins(selectedCoins)
     },
-    [props.account.deposits, removeDeposits, removeLends],
+    [props.account.deposits, simulateVaultDeposits],
   )
 
   useEffect(() => {
-    addVaultValues([
-      {
-        address: props.vault.address,
-        value: totalValue,
-      },
-    ])
-  }, [totalValue, addVaultValues, props.vault.address])
+    const vaultValue = { address: props.vault.address, value: totalValue }
+    simulateVaultAction('add', vaultValue)
+  }, [totalValue, simulateVaultAction, props.vault.address])
 
   const onChangeIsCustomRatio = useCallback(
     (isCustomRatio: boolean) => setIsCustomRatio(isCustomRatio),

@@ -3,6 +3,7 @@ import { BN_ZERO } from 'constants/math'
 import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { byDenom } from 'utils/array'
 import { getTokenPrice, getTokenValue } from 'utils/tokens'
 
 export function getVaultsMetaData() {
@@ -18,10 +19,11 @@ export function getVaultDepositCoinsAndValue(
   vault: Vault,
   deposits: BNCoin[],
   borrowings: BNCoin[],
+  reclaims: BNCoin[],
   prices: BNCoin[],
 ) {
-  const totalValue = [...deposits, ...borrowings].reduce((prev, bnCoin) => {
-    const price = prices.find((coin) => coin.denom === bnCoin.denom)?.amount
+  const totalValue = [...deposits, ...borrowings, ...reclaims].reduce((prev, bnCoin) => {
+    const price = prices.find(byDenom(bnCoin.denom))?.amount
     if (!price) return prev
 
     return prev.plus(bnCoin.amount.multipliedBy(price))

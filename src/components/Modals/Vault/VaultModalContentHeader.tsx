@@ -28,7 +28,7 @@ export default function VaultModalContentHeader({ vault }: Props) {
   }, [vault])
 
   return (
-    <div className='flex gap-6 border-b border-white/5 px-6 py-4 gradient-header'>
+    <div className='flex gap-6 px-6 py-4 border-b border-white/5 gradient-header'>
       {vault.apy && (
         <>
           <TitleAndSubCell
@@ -39,14 +39,13 @@ export default function VaultModalContentHeader({ vault }: Props) {
                   options={{ suffix: '%', decimals: -2 }}
                   animate
                 />
-                (
                 <FormattedNumber
                   className='ml-2 text-xs'
                   amount={vault.apy / 365}
                   options={{ suffix: '%/day', decimals: -2 }}
+                  parantheses
                   animate
                 />
-                )
               </div>
             }
             sub={'Deposit APY'}

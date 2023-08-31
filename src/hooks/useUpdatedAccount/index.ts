@@ -141,6 +141,32 @@ export function useUpdatedAccount(account?: Account) {
     [account, addDebts, addDeposits, addLends, removeDeposits, removeLends],
   )
 
+  const simulateVaultDeposits = useCallback(
+    (coins: BNCoin[]) => {
+      if (!account) return
+      const totalDeposits: BNCoin[] = []
+      const totalLends: BNCoin[] = []
+
+      coins.forEach((coin) => {
+        const { deposits, lends } = getDepositsAndLendsAfterCoinSpent(coin, account)
+        totalDeposits.push(deposits)
+        totalLends.push(lends)
+      })
+
+      removeDeposits(totalDeposits)
+      removeLends(totalLends)
+    },
+    [addVaultValues],
+  )
+
+  const simulateVaultAction = useCallback(
+    (action: 'add' | 'edit', vaultPosition: { address: string; value: BigNumber }) => {
+      addVaultValues([])
+      if (action === 'add') addVaultValues([vaultPosition])
+    },
+    [addVaultValues],
+  )
+
   useEffect(() => {
     if (!account) return
 
@@ -188,6 +214,8 @@ export function useUpdatedAccount(account?: Account) {
     simulateLending,
     simulateRepay,
     simulateTrade,
+    simulateVaultAction,
+    simulateVaultDeposits,
     simulateWithdraw,
   }
 }
