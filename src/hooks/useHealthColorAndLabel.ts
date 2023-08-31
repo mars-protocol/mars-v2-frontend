@@ -2,5 +2,5 @@ export default function useHealthColorAndLabel(health: number, colorPrefix: 'fil
   if (health > 30) return [`${colorPrefix}-violet-500`, 'Healthy']
   if (health > 10) return [`${colorPrefix}-yellow-300`, 'Attention']
 
-  return [`${colorPrefix}martian-red`, 'Liquidation risk']
+  return [`${colorPrefix}-martian-red`, 'Liquidation risk']
 }
