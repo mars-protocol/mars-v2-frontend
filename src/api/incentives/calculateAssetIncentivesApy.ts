@@ -33,9 +33,7 @@ export default async function calculateAssetIncentivesApy(
     const annualEmission = totalActiveEmissionValue.multipliedBy(SECONDS_IN_A_YEAR)
 
     const totalAnnualReturnsValue = annualEmission.plus(marketReturns)
-    const incentivesApy = totalAnnualReturnsValue.dividedBy(marketLiquidityValue).multipliedBy(100)
-
-    return incentivesApy
+    return totalAnnualReturnsValue.dividedBy(marketLiquidityValue).multipliedBy(100)
   } catch (ex) {
     console.error(ex)
     return null

@@ -3,6 +3,8 @@ import classNames from 'classnames'
 import { ChevronDown } from 'components/Icons'
 import Text from 'components/Text'
 import AssetItem from 'components/Trade/TradeModule/AssetSelector/AssetItem'
+import useMarketAssets from 'hooks/useMarketAssets'
+import { byDenom } from 'utils/array'
 
 interface Props {
   type: 'buy' | 'sell'
@@ -13,6 +15,8 @@ interface Props {
 }
 
 export default function AssetList(props: Props) {
+  const { data: marketAssets } = useMarketAssets()
+
   return (
     <section>
       <button
@@ -34,6 +38,9 @@ export default function AssetList(props: Props) {
                 key={`${props.type}-${asset.symbol}`}
                 asset={asset}
                 onSelectAsset={props.onChangeAsset}
+                depositCap={
+                  props.type === 'buy' ? marketAssets?.find(byDenom(asset.denom))?.cap : undefined
+                }
               />
             ))}
           </ul>

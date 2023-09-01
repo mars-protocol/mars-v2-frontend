@@ -5,7 +5,7 @@ interface Market {
   collateralTotalScaled: string
   depositEnabled: boolean
   borrowEnabled: boolean
-  depositCap: string
+  cap: DepositCap
   maxLtv: number
   liquidityRate: number
   liquidationThreshold: number
