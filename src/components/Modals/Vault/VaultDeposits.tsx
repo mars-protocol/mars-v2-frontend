@@ -11,10 +11,7 @@ import Switch from 'components/Switch'
 import Text from 'components/Text'
 import TokenInput from 'components/TokenInput'
 import { ASSETS } from 'constants/assets'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
 import { BN_ZERO } from 'constants/math'
-import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { accumulateAmounts } from 'utils/accounts'
@@ -30,14 +27,12 @@ interface Props {
   onChangeDeposits: (deposits: BNCoin[]) => void
   onChangeIsCustomRatio: (isCustomRatio: boolean) => void
   toggleOpen: (index: number) => void
+  displayCurrency: string
 }
 
 export default function VaultDeposit(props: Props) {
-  const { deposits, primaryAsset, secondaryAsset, account, onChangeDeposits } = props
-  const [displayCurrency] = useLocalStorage<string>(
-    DISPLAY_CURRENCY_KEY,
-    DEFAULT_SETTINGS.displayCurrency,
-  )
+  const { deposits, primaryAsset, secondaryAsset, account, onChangeDeposits, displayCurrency } =
+    props
   const displayCurrencyAsset = ASSETS.find(byDenom(displayCurrency)) ?? ASSETS[0]
   const [availablePrimaryAmount, availableSecondaryAmount] = useMemo(
     () => [
@@ -72,7 +67,7 @@ export default function VaultDeposit(props: Props) {
 
   const totalValue = useMemo(
     () => getTotalValueFromBNCoins([primaryCoin, secondaryCoin], displayCurrency, prices),
-    [primaryValue, secondaryValue],
+    [primaryCoin, secondaryCoin, displayCurrency, prices],
   )
 
   const primaryValuePercentage = useMemo(() => {

@@ -156,7 +156,7 @@ export function useUpdatedAccount(account?: Account) {
       removeDeposits(totalDeposits)
       removeLends(totalLends)
     },
-    [addVaultValues],
+    [account, removeDeposits, removeLends],
   )
 
   const simulateVaultAction = useCallback(

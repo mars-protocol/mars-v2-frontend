@@ -14,14 +14,11 @@ interface Props {
   secondaryAmount: BigNumber
   primaryAsset: Asset
   secondaryAsset: Asset
+  displayCurrency: string
 }
 
 export default function VaultDepositSubTitle(props: Props) {
   const { data: prices } = usePrices()
-  const [displayCurrency] = useLocalStorage<string>(
-    DISPLAY_CURRENCY_KEY,
-    DEFAULT_SETTINGS.displayCurrency,
-  )
   const primaryText = formatAmountWithSymbol({
     denom: props.primaryAsset.denom,
     amount: props.primaryAmount.toString(),
@@ -36,7 +33,7 @@ export default function VaultDepositSubTitle(props: Props) {
       BNCoin.fromDenomAndBigNumber(props.primaryAsset.denom, props.primaryAmount),
       BNCoin.fromDenomAndBigNumber(props.secondaryAsset.denom, props.secondaryAmount),
     ],
-    displayCurrency,
+    props.displayCurrency,
     prices,
   )
 
@@ -51,7 +48,7 @@ export default function VaultDepositSubTitle(props: Props) {
       {(showPrimaryText || showSecondaryText) && (
         <DisplayCurrency
           className='before:content-["="] before:pr-1 ml-1 indent-10 inline'
-          coin={new BNCoin({ denom: displayCurrency, amount: positionValue.toString() })}
+          coin={new BNCoin({ denom: props.displayCurrency, amount: positionValue.toString() })}
         />
       )}
     </>

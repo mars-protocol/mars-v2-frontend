@@ -8,11 +8,8 @@ import { ArrowRight, ExclamationMarkCircled } from 'components/Icons'
 import Slider from 'components/Slider'
 import Text from 'components/Text'
 import TokenInput from 'components/TokenInput'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
 import { BN_ZERO } from 'constants/math'
 import useHealthComputer from 'hooks/useHealthComputer'
-import useLocalStorage from 'hooks/useLocalStorage'
 import useMarketAssets from 'hooks/useMarketAssets'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
@@ -31,15 +28,12 @@ export interface VaultBorrowingsProps {
   vault: Vault
   depositActions: Action[]
   onChangeBorrowings: (borrowings: BNCoin[]) => void
+  displayCurrency: string
 }
 
 export default function VaultBorrowings(props: VaultBorrowingsProps) {
   const { data: marketAssets } = useMarketAssets()
   const { data: prices } = usePrices()
-  const [displayCurrency] = useLocalStorage<string>(
-    DISPLAY_CURRENCY_KEY,
-    DEFAULT_SETTINGS.displayCurrency,
-  )
   const vaultModal = useStore((s) => s.vaultModal)
   const depositIntoVault = useStore((s) => s.depositIntoVault)
   const [isConfirming, setIsConfirming] = useState(false)
@@ -62,10 +56,10 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
     () =>
       getTotalValueFromBNCoins(
         mergeBNCoinArrays(props.deposits, props.borrowings),
-        displayCurrency,
+        props.displayCurrency,
         prices,
       ),
-    [props.borrowings, props.deposits, displayCurrency, prices],
+    [props.borrowings, props.deposits, props.displayCurrency, prices],
   )
 
   useEffect(() => {
@@ -195,7 +189,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
         <div className='flex justify-between'>
           <Text className='text-white/50'>{`${props.primaryAsset.symbol}-${props.secondaryAsset.symbol} Position Value`}</Text>
           <DisplayCurrency
-            coin={new BNCoin({ denom: displayCurrency, amount: totalValue.toString() })}
+            coin={new BNCoin({ denom: props.displayCurrency, amount: totalValue.toString() })}
           />
         </div>
         {props.borrowings.map((coin) => {

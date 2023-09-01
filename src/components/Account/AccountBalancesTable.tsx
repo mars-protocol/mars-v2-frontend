@@ -200,7 +200,7 @@ export default function AccountBalancesTable(props: Props) {
         },
       },
     ],
-    [],
+    [displayCurrency, displayCurrencyAsset],
   )
 
   const table = useReactTable({

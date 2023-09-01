@@ -6,6 +6,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getAssetByDenom } from 'utils/assets'
 import { getTokenPrice, getTokenValue } from 'utils/tokens'
+
 import { getTotalValueFromBNCoins, mergeBNCoinArrays } from './helpers'
 
 export function getVaultsMetaData() {

@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
-import { BN_ZERO } from 'constants/math'
 import throttle from 'lodash.throttle'
+
+import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { convertToDisplayAmount } from 'utils/formatters'
 

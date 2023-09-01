@@ -59,7 +59,7 @@ export default function useDepositVault(props: Props): {
         displayCurrency,
         prices,
       ),
-    [deposits, borrowings, props.vault, prices],
+    [reclaims, deposits, borrowings, props.vault, prices, displayCurrency],
   )
 
   const reclaimActions: Action[] = useMemo(() => {

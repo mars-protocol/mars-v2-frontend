@@ -6,9 +6,12 @@ import VaultBorrowings from 'components/Modals/Vault/VaultBorrowings'
 import VaultBorrowingsSubTitle from 'components/Modals/Vault/VaultBorrowingsSubTitle'
 import VaultDeposit from 'components/Modals/Vault/VaultDeposits'
 import VaultDepositSubTitle from 'components/Modals/Vault/VaultDepositsSubTitle'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
 import { BN_ZERO } from 'constants/math'
 import useDepositVault from 'hooks/broadcast/useDepositVault'
 import useIsOpenArray from 'hooks/useIsOpenArray'
+import useLocalStorage from 'hooks/useLocalStorage'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import { BNCoin } from 'types/classes/BNCoin'
 import { mergeBNCoinArrays } from 'utils/helpers'
@@ -30,7 +33,10 @@ export default function VaultModalContent(props: Props) {
     simulateVaultAction,
     simulateVaultDeposits,
   } = useUpdatedAccount(props.account)
-
+  const [displayCurrency] = useLocalStorage<string>(
+    DISPLAY_CURRENCY_KEY,
+    DEFAULT_SETTINGS.displayCurrency,
+  )
   const [isOpen, toggleOpen] = useIsOpenArray(2, false)
   const [isCustomRatio, setIsCustomRatio] = useState(false)
   const [selectedCoins, setSelectedCoins] = useState<BNCoin[]>([])
@@ -47,7 +53,7 @@ export default function VaultModalContent(props: Props) {
       simulateVaultDeposits(selectedCoins)
       setSelectedCoins(selectedCoins)
     },
-    [props.account.deposits, simulateVaultDeposits],
+    [simulateVaultDeposits],
   )
 
   useEffect(() => {
@@ -81,6 +87,7 @@ export default function VaultModalContent(props: Props) {
         }
         primaryAsset={props.primaryAsset}
         secondaryAsset={props.secondaryAsset}
+        displayCurrency={displayCurrency}
       />
     )
   }
@@ -91,7 +98,7 @@ export default function VaultModalContent(props: Props) {
 
     if (isOpen[1]) return null
 
-    return <VaultBorrowingsSubTitle borrowings={addedDebts} />
+    return <VaultBorrowingsSubTitle borrowings={addedDebts} displayCurrency={displayCurrency} />
   }
 
   return (
@@ -110,6 +117,7 @@ export default function VaultModalContent(props: Props) {
                 toggleOpen={toggleOpen}
                 isCustomRatio={isCustomRatio}
                 onChangeIsCustomRatio={onChangeIsCustomRatio}
+                displayCurrency={displayCurrency}
               />
             ),
             title: 'Deposit',
@@ -127,6 +135,7 @@ export default function VaultModalContent(props: Props) {
                 onChangeBorrowings={addDebts}
                 vault={props.vault}
                 depositActions={depositActions}
+                displayCurrency={displayCurrency}
               />
             ),
             title: 'Borrow',
