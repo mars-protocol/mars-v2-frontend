@@ -205,7 +205,7 @@ export function cloneAccount(account: Account): Account {
   }
 }
 
-export function removeDepostisAndLends(account: Account, denom: string) {
+export function removeDepositsAndLends(account: Account, denom: string) {
   const deposits = account.deposits.filter((deposit) => deposit.denom !== denom)
   const lends = account.lends.filter((lend) => lend.denom !== denom)
 

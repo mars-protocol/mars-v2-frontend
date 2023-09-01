@@ -96,19 +96,16 @@ export default function useHealthComputer(account?: Account) {
   )
 
   const vaultConfigsData = useMemo(() => {
-    if (!positions || !vaultConfigs.length) return null
+    if (!vaultConfigs.length) return null
 
-    const vaultPositionDenoms = positions.vaults.map((vault) => vault.vault.address)
-    return vaultConfigs
-      .filter((config) => vaultPositionDenoms.includes(config.addr))
-      .reduce(
-        (prev, curr) => {
-          prev[curr.addr] = curr
-          return prev
-        },
-        {} as { [key: string]: VaultConfigBaseForString },
-      )
-  }, [vaultConfigs, positions])
+    return vaultConfigs.reduce(
+      (prev, curr) => {
+        prev[curr.addr] = curr
+        return prev
+      },
+      {} as { [key: string]: VaultConfigBaseForString },
+    )
+  }, [vaultConfigs])
 
   const healthComputer: HealthComputer | null = useMemo(() => {
     if (

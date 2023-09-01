@@ -29,7 +29,7 @@ function InputOverlay({ max, value, marginThreshold }: Props) {
         {Array.from(Array(9).keys()).map((i) => (
           <div key={`mark-${i}`} className={className.mark} />
         ))}
-        {marginThreshold && (
+        {marginThreshold !== undefined && (
           <div
             key='margin-mark'
             className={className.marginMarkContainer}
