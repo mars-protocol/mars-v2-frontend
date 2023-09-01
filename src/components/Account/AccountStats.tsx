@@ -60,7 +60,7 @@ export default function AccountStats(props: Props) {
           <Text size='xs' className='w-auto mr-1 text-white/70'>
             Health
           </Text>
-          <HealthBar health={health} classNames='w-[92px] h-0.5' hasLabel />
+          <HealthBar health={health} className='w-[92px] h-0.5' hasLabel />
         </div>
       </div>
     </div>

@@ -5,9 +5,11 @@ import Card from 'components/Card'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
+import useStore from 'store'
 
 export default function AccountDetailsCard() {
   const account = useCurrentAccount()
+  const updatedAccount = useStore((s) => s.updatedAccount)
   const { availableAssets: borrowAvailableAssets, accountBorrowedAssets } =
     useBorrowMarketAssetsTableData()
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
@@ -27,11 +29,11 @@ export default function AccountDetailsCard() {
     </div>
   )
 
-  if (account && account.deposits.length)
+  if (account)
     return (
       <Card className='h-fit' title={tabs}>
         <AccountBalancesTable
-          account={account}
+          account={updatedAccount || account}
           borrowingData={borrowAssetsData}
           lendingData={lendingAssetsData}
           tableBodyClassName='gradient-card-content'
