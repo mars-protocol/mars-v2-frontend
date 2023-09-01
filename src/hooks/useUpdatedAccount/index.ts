@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 
+import { BN_ZERO } from 'constants/math'
 import {
   addCoins,
   addValueToVaults,
@@ -120,6 +121,26 @@ export function useUpdatedAccount(account?: Account) {
     [account, removeDeposits, removeLends, addDebts],
   )
 
+  const simulateTrade = useCallback(
+    (removeCoin: BNCoin, addCoin: BNCoin, debtCoin: BNCoin, target: 'deposit' | 'lend') => {
+      removeDeposits([])
+      removeLends([])
+      addDebts([])
+      addDeposits([])
+      addLends([])
+
+      const { deposits, lends } = getDepositsAndLendsAfterCoinSpent(removeCoin, account)
+
+      removeDeposits([deposits])
+      removeLends([lends])
+      if (target === 'deposit') addDeposits([addCoin])
+      if (target === 'lend') addLends([addCoin])
+
+      if (debtCoin.amount.isGreaterThan(BN_ZERO)) addDebts([debtCoin])
+    },
+    [account, addDebts, addDeposits, addLends, removeDeposits, removeLends],
+  )
+
   useEffect(() => {
     if (!account) return
 
@@ -166,6 +187,7 @@ export function useUpdatedAccount(account?: Account) {
     simulateDeposits,
     simulateLending,
     simulateRepay,
+    simulateTrade,
     simulateWithdraw,
   }
 }
