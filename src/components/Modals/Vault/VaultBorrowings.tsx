@@ -41,6 +41,16 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
   const [percentage, setPercentage] = useState<number>(0)
 
+  const calculateSliderPercentage = (maxBorrowAmounts: BNCoin[], borrowings: BNCoin[]) => {
+    if (borrowings.length === 1) {
+      const amount = borrowings[0].amount
+      if (amount.isZero()) return 0
+      const max = maxBorrowAmounts.find(byDenom(borrowings[0].denom))?.amount || BN_ZERO
+      return amount.times(100).dividedBy(max).toNumber()
+    }
+    return 0
+  }
+
   const maxBorrowAmounts: BNCoin[] = useMemo(() => {
     return props.borrowings.map((borrowing) => {
       const maxAmount = computeMaxBorrowAmount(borrowing.denom, {
@@ -71,19 +81,16 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
     ) {
       return
     }
-    if (selectedBorrowDenoms.length !== 1) setPercentage(0)
     const updatedBorrowings = selectedBorrowDenoms.map((denom) => {
       const amount = findCoinByDenom(denom, props.borrowings)?.amount || BN_ZERO
-      if (selectedBorrowDenoms.length === 1 && amount.isGreaterThan(BN_ZERO)) {
-        const maxAmount = maxBorrowAmounts.find(byDenom(denom))?.amount ?? BN_ZERO
-        setPercentage(amount.times(100).dividedBy(maxAmount).toNumber())
-      }
+
       return new BNCoin({
         denom,
         amount: amount.toString(),
       })
     })
     props.onChangeBorrowings(updatedBorrowings)
+    setPercentage(calculateSliderPercentage(maxBorrowAmounts, updatedBorrowings))
   }, [vaultModal, props, maxBorrowAmounts])
 
   function onChangeSlider(value: number) {
@@ -125,6 +132,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
         selectedBorrowDenoms: props.borrowings.map((coin) => coin.denom),
       },
     })
+    setPercentage(calculateSliderPercentage(maxBorrowAmounts, newBorrowings))
   }
 
   function addAsset() {
@@ -133,6 +141,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
         selectedDenoms: props.borrowings.map((coin) => coin.denom),
       },
     })
+    setPercentage(calculateSliderPercentage(maxBorrowAmounts, props.borrowings))
   }
 
   async function onConfirm() {
