@@ -1,10 +1,12 @@
+import { ASSETS } from 'constants/assets'
 import { IS_TESTNET } from 'constants/env'
 import { BN_ZERO } from 'constants/math'
 import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { byDenom } from 'utils/array'
+import { getAssetByDenom } from 'utils/assets'
 import { getTokenPrice, getTokenValue } from 'utils/tokens'
+import { getTotalValueFromBNCoins, mergeBNCoinArrays } from './helpers'
 
 export function getVaultsMetaData() {
   return IS_TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
@@ -20,23 +22,29 @@ export function getVaultDepositCoinsAndValue(
   deposits: BNCoin[],
   borrowings: BNCoin[],
   reclaims: BNCoin[],
+  displayCurrency: string,
   prices: BNCoin[],
 ) {
-  const totalValue = [...deposits, ...borrowings, ...reclaims].reduce((prev, bnCoin) => {
-    const price = prices.find(byDenom(bnCoin.denom))?.amount
-    if (!price) return prev
-
-    return prev.plus(bnCoin.amount.multipliedBy(price))
-  }, BN_ZERO)
-
+  const depositsAndReclaims = mergeBNCoinArrays(deposits, reclaims)
+  const borrowingsAndDepositsAndReclaims = mergeBNCoinArrays(borrowings, depositsAndReclaims)
+  const totalValue = getTotalValueFromBNCoins(
+    borrowingsAndDepositsAndReclaims,
+    displayCurrency,
+    prices,
+  )
   const halfValue = totalValue.dividedBy(2)
 
+  const primaryAsset = getAssetByDenom(vault.denoms.primary) ?? ASSETS[0]
+  const secondaryAsset = getAssetByDenom(vault.denoms.secondary) ?? ASSETS[0]
+
   const primaryDepositAmount = halfValue
-    .dividedBy(getTokenPrice(vault.denoms.primary, prices))
+    .dividedBy(getTokenPrice(primaryAsset.denom, prices))
+    .shiftedBy(primaryAsset.decimals)
     .integerValue()
 
   const secondaryDepositAmount = halfValue
-    .dividedBy(getTokenPrice(vault.denoms.secondary, prices))
+    .dividedBy(getTokenPrice(secondaryAsset.denom, prices))
+    .shiftedBy(secondaryAsset.decimals)
     .integerValue()
 
   return {
@@ -48,7 +56,7 @@ export function getVaultDepositCoinsAndValue(
       denom: vault.denoms.secondary,
       amount: secondaryDepositAmount.toString(),
     }),
-    totalValue: totalValue.integerValue(),
+    totalValue: totalValue,
   }
 }
 
@@ -117,12 +125,14 @@ export function getVaultSwapActions(
       value = value.minus(swapValue)
       amount = amount.minus(swapAmount)
       primaryLeftoverValue = primaryLeftoverValue.minus(swapValue)
-      swapActions.push(getSwapAction(bnCoin.denom, vault.denoms.primary, swapAmount, slippage))
+      if (swapAmount.isGreaterThan(BN_ZERO))
+        swapActions.push(getSwapAction(bnCoin.denom, vault.denoms.primary, swapAmount, slippage))
     }
 
     if (secondaryLeftoverValue.isGreaterThan(0)) {
       secondaryLeftoverValue = secondaryLeftoverValue.minus(value)
-      swapActions.push(getSwapAction(bnCoin.denom, vault.denoms.secondary, amount, slippage))
+      if (amount.isGreaterThan(BN_ZERO))
+        swapActions.push(getSwapAction(bnCoin.denom, vault.denoms.secondary, amount, slippage))
     }
   })
 

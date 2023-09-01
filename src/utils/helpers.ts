@@ -1,5 +1,8 @@
 import BigNumber from 'bignumber.js'
+import { BN_ZERO } from 'constants/math'
 import throttle from 'lodash.throttle'
+import { BNCoin } from 'types/classes/BNCoin'
+import { convertToDisplayAmount } from 'utils/formatters'
 
 BigNumber.config({ EXPONENTIAL_AT: 1e9 })
 export function BN(n: BigNumber.Value) {
@@ -22,4 +25,36 @@ export function asyncThrottle<F extends (...args: any[]) => Promise<any>>(func: 
     new Promise((resolve, reject) => {
       throttled(resolve, reject, args)
     }) as ReturnType<F>
+}
+
+export function mergeBNCoinArrays(array1: BNCoin[], array2: BNCoin[]) {
+  const merged: BNCoin[] = []
+
+  array1.forEach((coin) => {
+    merged.push(new BNCoin(coin.toCoin()))
+  })
+
+  array2.forEach((coin) => {
+    const index = merged.findIndex((i) => i.denom === coin.denom)
+    if (index === -1) {
+      merged.push(new BNCoin(coin.toCoin()))
+    } else {
+      merged[index].amount = merged[index].amount.plus(coin.amount)
+    }
+  })
+  return merged
+}
+
+export function getTotalValueFromBNCoins(
+  coins: BNCoin[],
+  displayCurrency: string,
+  prices: BNCoin[],
+): BigNumber {
+  let totalValue = BN_ZERO
+
+  coins.forEach((coin) => {
+    totalValue = totalValue.plus(convertToDisplayAmount(coin, displayCurrency, prices))
+  })
+
+  return totalValue
 }

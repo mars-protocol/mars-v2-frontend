@@ -64,12 +64,7 @@ function calculatePositionValues(
 
 function calculateVaultValues(vault: DepositedVault, apy: number) {
   const { name } = vault
-  const primaryAsset = ASSETS.find(byDenom(vault.denoms.primary)) ?? ASSETS[0]
-  const secondaryAsset = ASSETS.find(byDenom(vault.denoms.secondary)) ?? ASSETS[0]
-  const primaryValue = demagnify(vault.values.primary, primaryAsset)
-  const secondaryValue = demagnify(vault.values.secondary, secondaryAsset)
-
-  const totalValue = primaryValue + secondaryValue
+  const totalValue = vault.values.primary.plus(vault.values.secondary)
 
   return {
     type: 'vault',

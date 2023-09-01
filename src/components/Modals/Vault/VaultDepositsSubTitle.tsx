@@ -1,10 +1,13 @@
 import BigNumber from 'bignumber.js'
 
 import DisplayCurrency from 'components/DisplayCurrency'
-import usePrice from 'hooks/usePrice'
-import useStore from 'store'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
+import useLocalStorage from 'hooks/useLocalStorage'
+import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatAmountWithSymbol } from 'utils/formatters'
+import { getTotalValueFromBNCoins } from 'utils/helpers'
 
 interface Props {
   primaryAmount: BigNumber
@@ -14,9 +17,11 @@ interface Props {
 }
 
 export default function VaultDepositSubTitle(props: Props) {
-  const baseCurrency = useStore((s) => s.baseCurrency)
-  const primaryPrice = usePrice(props.primaryAsset.denom)
-  const secondaryPrice = usePrice(props.secondaryAsset.denom)
+  const { data: prices } = usePrices()
+  const [displayCurrency] = useLocalStorage<string>(
+    DISPLAY_CURRENCY_KEY,
+    DEFAULT_SETTINGS.displayCurrency,
+  )
   const primaryText = formatAmountWithSymbol({
     denom: props.primaryAsset.denom,
     amount: props.primaryAmount.toString(),
@@ -26,10 +31,14 @@ export default function VaultDepositSubTitle(props: Props) {
     amount: props.secondaryAmount.toString(),
   })
 
-  const positionValue = props.primaryAmount
-    .multipliedBy(primaryPrice)
-    .plus(props.secondaryAmount.multipliedBy(secondaryPrice))
-    .toNumber()
+  const positionValue = getTotalValueFromBNCoins(
+    [
+      BNCoin.fromDenomAndBigNumber(props.primaryAsset.denom, props.primaryAmount),
+      BNCoin.fromDenomAndBigNumber(props.secondaryAsset.denom, props.secondaryAmount),
+    ],
+    displayCurrency,
+    prices,
+  )
 
   const showPrimaryText = !props.primaryAmount.isZero()
   const showSecondaryText = !props.secondaryAmount.isZero()
@@ -40,12 +49,10 @@ export default function VaultDepositSubTitle(props: Props) {
       {showPrimaryText && showSecondaryText && ' + '}
       {showSecondaryText && secondaryText}
       {(showPrimaryText || showSecondaryText) && (
-        <>
-          {` = `}
-          <DisplayCurrency
-            coin={new BNCoin({ denom: baseCurrency.denom, amount: positionValue.toString() })}
-          />
-        </>
+        <DisplayCurrency
+          className='before:content-["="] before:pr-1 ml-1 indent-10 inline'
+          coin={new BNCoin({ denom: displayCurrency, amount: positionValue.toString() })}
+        />
       )}
     </>
   )

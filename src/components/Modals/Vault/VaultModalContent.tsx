@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import Accordion from 'components/Accordion'
 import AccountSummary from 'components/Account/AccountSummary'
@@ -11,6 +11,7 @@ import useDepositVault from 'hooks/broadcast/useDepositVault'
 import useIsOpenArray from 'hooks/useIsOpenArray'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import { BNCoin } from 'types/classes/BNCoin'
+import { mergeBNCoinArrays } from 'utils/helpers'
 
 interface Props {
   vault: Vault | DepositedVault
@@ -59,6 +60,11 @@ export default function VaultModalContent(props: Props) {
     [setIsCustomRatio],
   )
 
+  const deposits = useMemo(
+    () => mergeBNCoinArrays(removedDeposits, removedLends),
+    [removedDeposits, removedLends],
+  )
+
   function getDepositSubTitle() {
     if (isOpen[0] && props.isDeposited)
       return 'The amounts you enter below will be added to your current position.'
@@ -68,11 +74,10 @@ export default function VaultModalContent(props: Props) {
     return (
       <VaultDepositSubTitle
         primaryAmount={
-          removedDeposits.find((coin) => coin.denom === props.primaryAsset.denom)?.amount || BN_ZERO
+          deposits.find((coin) => coin.denom === props.primaryAsset.denom)?.amount || BN_ZERO
         }
         secondaryAmount={
-          removedDeposits.find((coin) => coin.denom === props.secondaryAsset.denom)?.amount ||
-          BN_ZERO
+          deposits.find((coin) => coin.denom === props.secondaryAsset.denom)?.amount || BN_ZERO
         }
         primaryAsset={props.primaryAsset}
         secondaryAsset={props.secondaryAsset}
@@ -116,7 +121,7 @@ export default function VaultModalContent(props: Props) {
             renderContent: () => (
               <VaultBorrowings
                 borrowings={addedDebts}
-                deposits={removedDeposits}
+                deposits={deposits}
                 primaryAsset={props.primaryAsset}
                 secondaryAsset={props.secondaryAsset}
                 onChangeBorrowings={addDebts}

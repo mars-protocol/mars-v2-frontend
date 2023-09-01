@@ -15,12 +15,11 @@ import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
 import { BN_ZERO } from 'constants/math'
 import useLocalStorage from 'hooks/useLocalStorage'
-import usePrice from 'hooks/usePrice'
+import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { accumulateAmounts } from 'utils/accounts'
 import { byDenom } from 'utils/array'
-import { findCoinByDenom } from 'utils/assets'
-import { BN } from 'utils/helpers'
+import { BN, getTotalValueFromBNCoins } from 'utils/helpers'
 
 interface Props {
   deposits: BNCoin[]
@@ -47,31 +46,32 @@ export default function VaultDeposit(props: Props) {
     ],
     [account.deposits, account.lends, primaryAsset.denom, secondaryAsset.denom],
   )
-
-  const primaryPrice = usePrice(primaryAsset.denom)
-  const secondaryPrice = usePrice(secondaryAsset.denom)
+  const { data: prices } = usePrices()
+  const primaryPrice = prices.find(byDenom(primaryAsset.denom))?.amount ?? BN_ZERO
+  const secondaryPrice = prices.find(byDenom(secondaryAsset.denom))?.amount ?? BN_ZERO
 
   const primaryCoin = useMemo(() => {
-    const amount = findCoinByDenom(primaryAsset.denom, deposits)?.amount.toString() || '0'
-    return new BNCoin({ denom: primaryAsset.denom, amount })
+    const amount = deposits.find(byDenom(primaryAsset.denom))?.amount ?? BN_ZERO
+    return new BNCoin({ denom: primaryAsset.denom, amount: amount.toString() })
   }, [deposits, primaryAsset.denom])
 
   const secondaryCoin = useMemo(() => {
-    const amount = findCoinByDenom(secondaryAsset.denom, deposits)?.amount.toString() || '0'
-    return new BNCoin({ denom: secondaryAsset.denom, amount })
+    const amount = deposits.find(byDenom(secondaryAsset.denom))?.amount ?? BN_ZERO
+    return new BNCoin({ denom: secondaryAsset.denom, amount: amount.toString() })
   }, [deposits, secondaryAsset.denom])
 
   const primaryValue = useMemo(
-    () => primaryCoin.amount.shiftedBy(-secondaryAsset.decimals).multipliedBy(primaryPrice),
-    [primaryCoin, primaryPrice],
+    () => getTotalValueFromBNCoins([primaryCoin], displayCurrency, prices),
+    [primaryCoin, displayCurrency, prices],
   )
+
   const secondaryValue = useMemo(
-    () => secondaryCoin.amount.shiftedBy(-secondaryAsset.decimals).multipliedBy(secondaryPrice),
-    [secondaryCoin, secondaryPrice],
+    () => getTotalValueFromBNCoins([secondaryCoin], displayCurrency, prices),
+    [secondaryCoin, displayCurrency, prices],
   )
 
   const totalValue = useMemo(
-    () => primaryValue.plus(secondaryValue),
+    () => getTotalValueFromBNCoins([primaryCoin, secondaryCoin], displayCurrency, prices),
     [primaryValue, secondaryValue],
   )
 

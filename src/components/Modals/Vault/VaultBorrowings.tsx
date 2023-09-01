@@ -8,8 +8,11 @@ import { ArrowRight, ExclamationMarkCircled } from 'components/Icons'
 import Slider from 'components/Slider'
 import Text from 'components/Text'
 import TokenInput from 'components/TokenInput'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
 import { BN_ZERO } from 'constants/math'
 import useHealthComputer from 'hooks/useHealthComputer'
+import useLocalStorage from 'hooks/useLocalStorage'
 import useMarketAssets from 'hooks/useMarketAssets'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
@@ -18,6 +21,7 @@ import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.ty
 import { byDenom } from 'utils/array'
 import { findCoinByDenom, getAssetByDenom } from 'utils/assets'
 import { formatPercent } from 'utils/formatters'
+import { getTotalValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
 
 export interface VaultBorrowingsProps {
   borrowings: BNCoin[]
@@ -32,7 +36,10 @@ export interface VaultBorrowingsProps {
 export default function VaultBorrowings(props: VaultBorrowingsProps) {
   const { data: marketAssets } = useMarketAssets()
   const { data: prices } = usePrices()
-  const baseCurrency = useStore((s) => s.baseCurrency)
+  const [displayCurrency] = useLocalStorage<string>(
+    DISPLAY_CURRENCY_KEY,
+    DEFAULT_SETTINGS.displayCurrency,
+  )
   const vaultModal = useStore((s) => s.vaultModal)
   const depositIntoVault = useStore((s) => s.depositIntoVault)
   const [isConfirming, setIsConfirming] = useState(false)
@@ -51,25 +58,15 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
     })
   }, [props.borrowings, computeMaxBorrowAmount, props.vault.address])
 
-  const borrowingValue = useMemo(() => {
-    return props.borrowings.reduce((prev, curr) => {
-      const price = prices.find((price) => price.denom === curr.denom)?.amount
-      if (!price) return prev
-
-      return prev.plus(curr.amount.multipliedBy(price))
-    }, BN_ZERO as BigNumber)
-  }, [props.borrowings, prices])
-
-  const totalValue = useMemo(() => {
-    const depositValue = props.deposits.reduce((prev, curr) => {
-      const price = prices.find((price) => price.denom === curr.denom)?.amount
-      if (!price) return prev
-      const value = curr.amount.multipliedBy(price)
-      return prev.plus(value)
-    }, BN_ZERO as BigNumber)
-
-    return depositValue.plus(borrowingValue)
-  }, [props.deposits, borrowingValue, prices])
+  const totalValue = useMemo(
+    () =>
+      getTotalValueFromBNCoins(
+        mergeBNCoinArrays(props.deposits, props.borrowings),
+        displayCurrency,
+        prices,
+      ),
+    [props.borrowings, props.deposits, displayCurrency, prices],
+  )
 
   useEffect(() => {
     const selectedBorrowDenoms = vaultModal?.selectedBorrowDenoms || []
@@ -198,7 +195,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
         <div className='flex justify-between'>
           <Text className='text-white/50'>{`${props.primaryAsset.symbol}-${props.secondaryAsset.symbol} Position Value`}</Text>
           <DisplayCurrency
-            coin={new BNCoin({ denom: baseCurrency.denom, amount: totalValue.toString() })}
+            coin={new BNCoin({ denom: displayCurrency, amount: totalValue.toString() })}
           />
         </div>
         {props.borrowings.map((coin) => {
