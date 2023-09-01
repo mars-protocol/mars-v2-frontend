@@ -48,10 +48,6 @@ interface PseudoAsset {
   symbol: string
 }
 
-interface OtherAsset extends Omit<Asset, 'symbol'> {
-  symbol: 'MARS'
-}
-
 interface BorrowAsset extends Asset {
   borrowRate: number | null
   liquidity: {
