@@ -63,7 +63,6 @@ export const MOCK_DEPOSITED_VAULT_POSITION = {
     unlocking: BN_ZERO,
   },
   status: VaultStatus.ACTIVE,
-  apy: null,
   ltv: {
     liq: 0,
     max: 0,

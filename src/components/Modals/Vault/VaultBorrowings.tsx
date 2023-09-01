@@ -39,6 +39,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   const [isConfirming, setIsConfirming] = useState(false)
   const updatedAccount = useStore((s) => s.updatedAccount)
   const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
+  const [percentage, setPercentage] = useState<number>(0)
 
   const maxBorrowAmounts: BNCoin[] = useMemo(() => {
     return props.borrowings.map((borrowing) => {
@@ -70,9 +71,13 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
     ) {
       return
     }
-
+    if (selectedBorrowDenoms.length !== 1) setPercentage(0)
     const updatedBorrowings = selectedBorrowDenoms.map((denom) => {
       const amount = findCoinByDenom(denom, props.borrowings)?.amount || BN_ZERO
+      if (selectedBorrowDenoms.length === 1 && amount.isGreaterThan(BN_ZERO)) {
+        const maxAmount = maxBorrowAmounts.find(byDenom(denom))?.amount ?? BN_ZERO
+        setPercentage(amount.times(100).dividedBy(maxAmount).toNumber())
+      }
       return new BNCoin({
         denom,
         amount: amount.toString(),
@@ -81,14 +86,12 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
     props.onChangeBorrowings(updatedBorrowings)
   }, [vaultModal, props])
 
-  const [percentage, setPercentage] = useState<number>(0)
-
   function onChangeSlider(value: number) {
     if (props.borrowings.length !== 1) return
 
     const denom = props.borrowings[0].denom
     const currentAmount = props.borrowings[0].amount
-    const maxAmount = maxBorrowAmounts.find((coin) => coin.denom === denom)?.amount ?? BN_ZERO
+    const maxAmount = maxBorrowAmounts.find(byDenom(denom))?.amount ?? BN_ZERO
     const newBorrowings: BNCoin[] = [
       new BNCoin({
         denom,
@@ -112,7 +115,8 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   function onDelete(denom: string) {
     const index = props.borrowings.findIndex((coin) => coin.denom === denom)
     props.borrowings.splice(index, 1)
-    props.onChangeBorrowings([...props.borrowings])
+    const newBorrowings = [...props.borrowings]
+    props.onChangeBorrowings(newBorrowings)
     if (!vaultModal) return
 
     useStore.setState({

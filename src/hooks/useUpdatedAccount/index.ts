@@ -7,6 +7,7 @@ import {
   getDepositsAndLendsAfterCoinSpent,
   removeCoins,
 } from 'hooks/useUpdatedAccount/functions'
+import useVaults from 'hooks/useVaults'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { cloneAccount } from 'utils/accounts'
@@ -18,6 +19,7 @@ export interface VaultValue {
 }
 
 export function useUpdatedAccount(account?: Account) {
+  const { data: availableVaults } = useVaults(false)
   const [updatedAccount, setUpdatedAccount] = useState<Account | undefined>(
     account ? cloneAccount(account) : undefined,
   )
@@ -173,7 +175,11 @@ export function useUpdatedAccount(account?: Account) {
     const accountCopy = cloneAccount(account)
     accountCopy.deposits = addCoins(addedDeposits, [...accountCopy.deposits])
     accountCopy.debts = addCoins(addedDebts, [...accountCopy.debts])
-    accountCopy.vaults = addValueToVaults(addedVaultValues, [...accountCopy.vaults])
+    accountCopy.vaults = addValueToVaults(
+      addedVaultValues,
+      [...accountCopy.vaults],
+      availableVaults ?? [],
+    )
     accountCopy.deposits = removeCoins(removedDeposits, [...accountCopy.deposits])
     accountCopy.debts = removeCoins(removedDebts, [...accountCopy.debts])
     accountCopy.lends = addCoins(addedLends, [...accountCopy.lends])
