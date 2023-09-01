@@ -50,12 +50,12 @@ function AccountDetails(props: Props) {
   const { health } = useHealthComputer(account)
   const { data: prices } = usePrices()
   const accountBalanceValue = useMemo(
-    () => calculateAccountBalanceValue(updatedAccount ? updatedAccount : account, prices),
+    () => calculateAccountBalanceValue(updatedAccount ?? account, prices),
     [updatedAccount, account, prices],
   )
   const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalanceValue)
   const leverage = useMemo(
-    () => calculateAccountLeverage(updatedAccount ? updatedAccount : account, prices),
+    () => calculateAccountLeverage(updatedAccount ?? account, prices),
     [account, updatedAccount, prices],
   )
   const { availableAssets: borrowAvailableAssets, accountBorrowedAssets } =
