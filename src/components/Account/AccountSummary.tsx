@@ -1,5 +1,5 @@
-import { HTMLAttributes, useMemo } from 'react'
 import classNames from 'classnames'
+import { HTMLAttributes, useMemo } from 'react'
 
 import Accordion from 'components/Accordion'
 import AccountBalancesTable from 'components/Account/AccountBalancesTable'
@@ -7,6 +7,7 @@ import AccountComposition from 'components/Account/AccountComposition'
 import HealthBar from 'components/Account/HealthBar'
 import Card from 'components/Card'
 import DisplayCurrency from 'components/DisplayCurrency'
+import { FormattedNumber } from 'components/FormattedNumber'
 import Text from 'components/Text'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
@@ -18,7 +19,6 @@ import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountBalanceValue, calculateAccountLeverage } from 'utils/accounts'
-import { formatLeverage } from 'utils/formatters'
 
 interface Props {
   account: Account
@@ -29,8 +29,11 @@ export default function AccountSummary(props: Props) {
   const { data: prices } = usePrices()
   const updatedAccount = useStore((s) => s.updatedAccount)
   const accountBalance = useMemo(
-    () => (props.account ? calculateAccountBalanceValue(props.account, prices) : BN_ZERO),
-    [props.account, prices],
+    () =>
+      props.account
+        ? calculateAccountBalanceValue(updatedAccount ?? props.account, prices)
+        : BN_ZERO,
+    [props.account, updatedAccount, prices],
   )
   const { availableAssets: borrowAvailableAssets, accountBorrowedAssets } =
     useBorrowMarketAssetsTableData()
@@ -47,8 +50,9 @@ export default function AccountSummary(props: Props) {
   const { health } = useHealthComputer(props.account)
   const { health: updatedHealth } = useHealthComputer(updatedAccount)
   const leverage = useMemo(
-    () => (props.account ? calculateAccountLeverage(props.account, prices) : BN_ZERO),
-    [props.account, prices],
+    () =>
+      props.account ? calculateAccountLeverage(updatedAccount ?? props.account, prices) : BN_ZERO,
+    [props.account, updatedAccount, prices],
   )
   if (!props.account) return null
   return (
@@ -61,7 +65,11 @@ export default function AccountSummary(props: Props) {
           />
         </Item>
         <Item label='Leverage' classes='flex-1'>
-          <Text size='sm'>{formatLeverage(leverage.toNumber())}</Text>
+          <FormattedNumber
+            className='text-sm'
+            amount={leverage.toNumber()}
+            options={{ minDecimals: 2, suffix: 'x' }}
+          />
         </Item>
         <Item label='Account health'>
           <HealthBar health={health} updatedHealth={updatedHealth} className='w-[184px] h-1' />
