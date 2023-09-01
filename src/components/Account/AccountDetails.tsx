@@ -48,6 +48,7 @@ function AccountDetails(props: Props) {
   const updatedAccount = useStore((s) => s.updatedAccount)
   const [isExpanded, setIsExpanded] = useToggle()
   const { health } = useHealthComputer(account)
+  const { health: updatedHealth } = useHealthComputer(updatedAccount || account)
   const { data: prices } = usePrices()
   const accountBalanceValue = useMemo(
     () => calculateAccountBalanceValue(updatedAccount ?? account, prices),
@@ -78,8 +79,8 @@ function AccountDetails(props: Props) {
     <div
       data-testid='account-details'
       className={classNames(
-        isExpanded ? 'right-6' : '-right-80',
-        'w-100 flex items-start gap-4 absolute top-6',
+        isExpanded ? 'right-4' : '-right-82.5',
+        'w-100 flex items-start gap-6 absolute top-6',
         !reduceMotion && 'transition-all duration-300',
       )}
     >
@@ -94,7 +95,7 @@ function AccountDetails(props: Props) {
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className='flex flex-wrap justify-center w-full py-4'>
-          <HealthGauge health={health} />
+          <HealthGauge health={health} updatedHealth={updatedHealth} />
           <Text size='2xs' className='mb-0.5 mt-1 w-full text-center text-white/50'>
             Account Health
           </Text>
@@ -140,7 +141,7 @@ function AccountDetails(props: Props) {
 
         {glowElement(!reduceMotion)}
       </div>
-      <div className='flex w-80 backdrop-blur-sticky'>
+      <div className='flex w-90 backdrop-blur-sticky'>
         <Card className='w-full bg-white/5' title={`Credit Account ${account.id}`}>
           <AccountComposition account={account} />
           <Text className='w-full px-4 py-2 text-white bg-white/10'>Balances</Text>
