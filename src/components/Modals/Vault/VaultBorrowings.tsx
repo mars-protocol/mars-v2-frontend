@@ -84,7 +84,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
       })
     })
     props.onChangeBorrowings(updatedBorrowings)
-  }, [vaultModal, props])
+  }, [vaultModal, props, maxBorrowAmounts])
 
   function onChangeSlider(value: number) {
     if (props.borrowings.length !== 1) return

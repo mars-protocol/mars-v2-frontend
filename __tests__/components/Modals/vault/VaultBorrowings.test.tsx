@@ -1,12 +1,12 @@
 import { render } from '@testing-library/react'
 
-import { ASSETS } from 'constants/assets'
-import { BN } from 'utils/helpers'
-import useStore from 'store'
 import DisplayCurrency from 'components/DisplayCurrency'
 import VaultBorrowings, { VaultBorrowingsProps } from 'components/Modals/Vault/VaultBorrowings'
+import { ASSETS } from 'constants/assets'
 import { TESTNET_VAULTS_META_DATA } from 'constants/vaults'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
+import { BN } from 'utils/helpers'
 
 jest.mock('hooks/usePrices', () =>
   jest.fn(() => ({
@@ -58,6 +58,7 @@ describe('<VaultBorrowings />', () => {
     deposits: [],
     onChangeBorrowings: jest.fn(),
     depositActions: [],
+    displayCurrency: 'uosmo',
   }
 
   beforeAll(() => {
