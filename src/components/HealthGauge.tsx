@@ -8,10 +8,12 @@ import { REDUCE_MOTION_KEY } from 'constants/localStore'
 import useHealthColorAndLabel from 'hooks/useHealthColorAndLabel'
 import useLocalStorage from 'hooks/useLocalStorage'
 import { computeHealthGaugePercentage } from 'utils/accounts'
+import { getHealthIndicatorColors } from 'utils/healthIndicator'
 
 interface Props {
   diameter?: number
   health: number
+  updatedHealth?: number
 }
 
 const RADIUS = 350
@@ -20,13 +22,24 @@ const ROTATION = {
   transformOrigin: 'center',
 }
 
-export const HealthGauge = ({ diameter = 40, health = 0 }: Props) => {
-  const [color, label] = useHealthColorAndLabel(health, 'text-')
+export const HealthGauge = ({ diameter = 40, health = 0, updatedHealth = 0 }: Props) => {
+  const [color, label] = useHealthColorAndLabel(health, 'text')
+  const [updatedColor, updatedLabel] = useHealthColorAndLabel(updatedHealth ?? 0, 'text')
   const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
   const percentage = useMemo(() => computeHealthGaugePercentage(health), [health])
+  const updatedPercentage = useMemo(
+    () => computeHealthGaugePercentage(updatedHealth),
+    [updatedHealth],
+  )
+  const isUpdated = updatedHealth !== 0 && updatedPercentage !== percentage
+  const isIncrease = isUpdated && updatedPercentage < percentage
+  const [backgroundColor, foreGroundColor] = useMemo(
+    () => getHealthIndicatorColors(color, updatedColor, 'text', isUpdated, isIncrease),
+    [color, updatedColor, isUpdated, isIncrease],
+  )
 
   return (
-    <Tooltip type='info' content={label}>
+    <Tooltip type='info' content={isUpdated ? updatedLabel : label}>
       <div
         className={classNames(
           'relative grid place-items-center',
@@ -79,16 +92,36 @@ export const HealthGauge = ({ diameter = 40, health = 0 }: Props) => {
             strokeWidth={64}
             pathLength={100}
             strokeDasharray={100}
-            strokeDashoffset={percentage}
+            strokeDashoffset={isUpdated && isIncrease ? updatedPercentage : percentage}
             strokeLinecap='round'
             style={ROTATION}
             mask='url(#mask)'
             className={classNames(
-              color,
+              backgroundColor,
               'stroke-current',
               !reduceMotion && 'transition-color transition-[stroke-dashoffset] duration-500',
             )}
           />
+          {isUpdated && (
+            <circle
+              r={316}
+              cx={RADIUS}
+              cy={RADIUS}
+              fill='transparent'
+              strokeWidth={64}
+              pathLength={100}
+              strokeDasharray={100}
+              strokeDashoffset={isUpdated && !isIncrease ? updatedPercentage : percentage}
+              strokeLinecap='round'
+              style={ROTATION}
+              mask='url(#mask)'
+              className={classNames(
+                foreGroundColor,
+                'stroke-current',
+                !reduceMotion && 'transition-color transition-[stroke-dashoffset] duration-500',
+              )}
+            />
+          )}
         </svg>
       </div>
     </Tooltip>

@@ -29,9 +29,11 @@ module.exports = {
     'text-5xl',
     'text-yellow-300',
     'text-violet-500',
+    'text-grey',
     'fill-yellow-300',
     'fill-violet-500',
     'fill-martian-red',
+    'fill-grey',
     'w-2',
   ],
   theme: {
@@ -82,7 +84,7 @@ module.exports = {
         error: '#F04438',
         'error-bg': '#FDA29B',
         green: '#039855',
-        grey: '#3a3c49',
+        grey: '#908e91',
         'grey-dark': '#1a1c25',
         'grey-highlight': '#4c4c4c',
         'grey-light': '#bfbfbf',
@@ -176,6 +178,7 @@ module.exports = {
       },
       minWidth: {
         15: '60px',
+        92.5: '370px',
       },
       padding: {
         5.5: '22px',
@@ -191,6 +194,7 @@ module.exports = {
       },
       spacing: {
         35: '140px',
+        82.5: '330px',
       },
       transitionDuration: {
         3000: '3000ms',
@@ -210,6 +214,7 @@ module.exports = {
         35: '140px',
         50: '200px',
         60: '240px',
+        92.5: '370px',
         100: '400px',
         120: '480px',
       },
