@@ -1,6 +1,8 @@
+import classNames from 'classnames'
 import { useMemo } from 'react'
 
 import DisplayCurrency from 'components/DisplayCurrency'
+import Text from 'components/Text'
 import { BN_ZERO } from 'constants/math'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -14,29 +16,42 @@ interface Props {
 export default function VaultBorrowingsSubTitle(props: Props) {
   const { data: prices } = usePrices()
 
-  const [borrowingTexts, borrowingValue] = useMemo(() => {
-    const texts: string[] = []
+  const borrowingValue = useMemo(() => {
     let borrowingValue = BN_ZERO
     props.borrowings.map((coin) => {
       const price = prices.find((p) => p.denom === coin.denom)?.amount
       if (!price || coin.amount.isZero()) return
       borrowingValue = convertToDisplayAmount(coin, props.displayCurrency, prices)
-      texts.push(
-        formatAmountWithSymbol({
-          denom: coin.denom,
-          amount: coin.amount.toString(),
-        }),
-      )
     })
-    return [texts, borrowingValue]
+    return borrowingValue
   }, [props.borrowings, prices, props.displayCurrency])
+
+  const borrowingTexts = useMemo(
+    () =>
+      props.borrowings.map((borrowing, index) => (
+        <Text
+          key={index}
+          size='xs'
+          className={classNames(
+            'inline mt-1 text-white/60',
+            index !== 0 && 'ml-1 before:pr-1 before:content-["+"]',
+          )}
+        >
+          {formatAmountWithSymbol(borrowing.toCoin())}
+        </Text>
+      )),
+    [props.borrowings],
+  )
 
   return (
     <>
-      {borrowingTexts.join(' + ')}
-      {borrowingTexts.length > 0 && (
+      {props.borrowings.length > 0 && borrowingTexts}
+      {props.borrowings.length > 0 && (
         <DisplayCurrency
-          className='before:content-["="] before:pr-1 ml-1 indent-10 inline'
+          className={classNames(
+            'text-xs mt-1 text-white/60 ml-1 inline',
+            'before:content-["="] before:pr-1',
+          )}
           coin={new BNCoin({ denom: props.displayCurrency, amount: borrowingValue.toString() })}
         />
       )}

@@ -6,6 +6,7 @@ import VaultBorrowings from 'components/Modals/Vault/VaultBorrowings'
 import VaultBorrowingsSubTitle from 'components/Modals/Vault/VaultBorrowingsSubTitle'
 import VaultDeposit from 'components/Modals/Vault/VaultDeposits'
 import VaultDepositSubTitle from 'components/Modals/Vault/VaultDepositsSubTitle'
+import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
 import { BN_ZERO } from 'constants/math'
@@ -73,7 +74,11 @@ export default function VaultModalContent(props: Props) {
 
   function getDepositSubTitle() {
     if (isOpen[0] && props.isDeposited)
-      return 'The amounts you enter below will be added to your current position.'
+      return (
+        <Text size='xs' className='mt-1 text-white/60'>
+          The amounts you enter below will be added to your current position.
+        </Text>
+      )
 
     if (isOpen[0]) return null
 
@@ -94,7 +99,11 @@ export default function VaultModalContent(props: Props) {
 
   function getBorrowingsSubTitle() {
     if (isOpen[1] && props.isDeposited)
-      return 'The amounts you enter below will be added to your current position.'
+      return (
+        <Text size='xs' className='mt-1 text-white/60'>
+          The amounts you enter below will be added to your current position.
+        </Text>
+      )
 
     if (isOpen[1]) return null
 
