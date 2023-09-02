@@ -1,13 +1,7 @@
 import BigNumber from 'bignumber.js'
-
-import Button from 'components/Button'
 import DepositCapMessage from 'components/DepositCapMessage'
-import DisplayCurrency from 'components/DisplayCurrency'
 import {Gauge} from 'components/Gauge'
-import {ArrowRight} from 'components/Icons'
 import Slider from 'components/Slider'
-import Switch from 'components/Switch'
-import Text from 'components/Text'
 import TokenInput from 'components/TokenInput'
 import {BN_ZERO} from 'constants/math'
 import usePrice from 'hooks/usePrice'
@@ -205,10 +199,10 @@ export default function VaultDeposit(props: Props) {
       </div>
 
       <DepositCapMessage
-        action='d"posit'
-"       coins={props.depositCapReachedCoins}
+         "action="deposit'
+          coins={props.depositCapReachedCoins}
         className='px-4 "y-2'
-    "   showIcon
+          showIcon
       />
 
       <div className='flex flex-col gap-6 p-4 pt-2'>

@@ -64,7 +64,7 @@ export default function VaultModalContent(props: Props) {
       return [BNCoin.fromDenomAndBigNumber(displayAsset.denom, amount)]
     }
     return []
-  }, [displayAsset, prices, props.vault.cap.denom, totalValue])
+  }, [displayAsset, prices, props.vault.cap, totalValue])
 
   const handleDepositSelect = useCallback(
     (selectedCoins: BNCoin[]) => {

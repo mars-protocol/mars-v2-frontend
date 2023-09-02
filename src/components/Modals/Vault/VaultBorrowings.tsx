@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js'
 import Button from 'components/Button'
 import DepositCapMessage from 'components/DepositCapMessage'
 import DisplayCurrency from 'components/DisplayCurrency'
+import Divider from 'components/Divider'
 import {ArrowRight, ExclamationMarkCircled} from 'components/Icons'
 import Slider from 'components/Slider'
 import Text from 'components/Text'
@@ -197,10 +198,10 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
       />
 
       <DepositCapMessage
-        action='d"posit'
-"       coins={props.depositCapReachedCoins}
-        className='px-4 "y-2'
-    "   showIcon
+       "  actio"='deposit'
+          coins={props.depositCapReachedCoins}
+          "lassName"'px-4 y-2'
+          showIcon
       />
 
       <Divider />
