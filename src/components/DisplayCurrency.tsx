@@ -1,5 +1,5 @@
-import { useMemo } from 'react'
 import classNames from 'classnames'
+import { useMemo } from 'react'
 
 import { FormattedNumber } from 'components/FormattedNumber'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
@@ -14,7 +14,7 @@ interface Props {
   coin: BNCoin
   className?: string
   isApproximation?: boolean
-  parantheses?: boolean
+  parentheses?: boolean
 }
 
 export default function DisplayCurrency(props: Props) {
@@ -43,7 +43,7 @@ export default function DisplayCurrency(props: Props) {
     <FormattedNumber
       className={classNames(
         props.className,
-        props.parantheses && 'before:content-["("] after:content-[")"]',
+        props.parentheses && 'before:content-["("] after:content-[")"]',
       )}
       amount={convertToDisplayAmount(props.coin, displayCurrency, prices).toNumber()}
       options={{

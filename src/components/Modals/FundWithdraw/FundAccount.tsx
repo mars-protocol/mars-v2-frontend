@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import Button from 'components/Button'
+import DepositCapMessage from 'components/DepositCapMessage'
 import { ArrowRight, Plus } from 'components/Icons'
 import SwitchAutoLend from 'components/Switch/SwitchAutoLend'
 import Text from 'components/Text'
@@ -8,6 +9,7 @@ import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import { BN_ZERO } from 'constants/math'
 import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
+import useMarketAssets from 'hooks/useMarketAssets'
 import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useWalletBalances from 'hooks/useWalletBalances'
@@ -16,6 +18,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { getAssetByDenom, getBaseAsset } from 'utils/assets'
 import { defaultFee } from 'utils/constants'
+import { getCapLeftWithBuffer } from 'utils/generic'
 import { BN } from 'utils/helpers'
 
 interface Props {
@@ -38,7 +41,7 @@ export default function FundAccount(props: Props) {
   const { autoLendEnabledAccountIds } = useAutoLendEnabledAccountIds()
   const isAutoLendEnabled = autoLendEnabledAccountIds.includes(accountId)
   const { simulateDeposits } = useUpdatedAccount(account)
-
+  const { data: marketAssets } = useMarketAssets()
   const baseBalance = useMemo(
     () => walletBalances.find(byDenom(baseAsset.denom))?.amount ?? '0',
     [walletBalances, baseAsset],
@@ -87,16 +90,15 @@ export default function FundAccount(props: Props) {
     setFundingAssets(newFundingAssets)
   }, [selectedDenoms, fundingAssets])
 
-  const updateFundingAssets = useCallback(
-    (amount: BigNumber, denom: string) => {
-      const assetToUpdate = fundingAssets.find(byDenom(denom))
-      if (assetToUpdate) {
-        assetToUpdate.amount = amount
-        setFundingAssets([...fundingAssets.filter((a) => a.denom !== denom), assetToUpdate])
-      }
-    },
-    [fundingAssets],
-  )
+  const updateFundingAssets = useCallback((amount: BigNumber, denom: string) => {
+    setFundingAssets((fundingAssets) => {
+      const updateIdx = fundingAssets.findIndex(byDenom(denom))
+      if (updateIdx === -1) return fundingAssets
+
+      fundingAssets[updateIdx].amount = amount
+      return [...fundingAssets]
+    })
+  }, [])
 
   useEffect(() => {
     simulateDeposits(isAutoLendEnabled ? 'lend' : 'deposit', fundingAssets)
@@ -107,6 +109,21 @@ export default function FundAccount(props: Props) {
       useStore.setState({ focusComponent: { component: <WalletBridges /> } })
     }
   }, [baseBalance])
+
+  const depositCapReachedCoins = useMemo(() => {
+    const depositCapReachedCoins: BNCoin[] = []
+    fundingAssets.forEach((asset) => {
+      const marketAsset = marketAssets.find(byDenom(asset.denom))
+      if (!marketAsset) return
+
+      const capLeft = getCapLeftWithBuffer(marketAsset.cap)
+
+      if (asset.amount.isLessThanOrEqualTo(capLeft)) return
+
+      depositCapReachedCoins.push(BNCoin.fromDenomAndBigNumber(asset.denom, capLeft))
+    })
+    return depositCapReachedCoins
+  }, [fundingAssets, marketAssets])
 
   return (
     <>
@@ -139,6 +156,12 @@ export default function FundAccount(props: Props) {
           onClick={handleSelectAssetsClick}
           disabled={isFunding}
         />
+        <DepositCapMessage
+          action='fund'
+          coins={depositCapReachedCoins}
+          className='pr-4 py-2 mt-4'
+          showIcon
+        />
         <SwitchAutoLend
           className='pt-4 mt-4 border border-transparent border-t-white/10'
           accountId={accountId}
@@ -148,7 +171,7 @@ export default function FundAccount(props: Props) {
         className='w-full mt-4'
         text='Fund account'
         rightIcon={<ArrowRight />}
-        disabled={!hasFundingAssets}
+        disabled={!hasFundingAssets || depositCapReachedCoins.length > 0}
         showProgressIndicator={isFunding}
         onClick={handleClick}
       />

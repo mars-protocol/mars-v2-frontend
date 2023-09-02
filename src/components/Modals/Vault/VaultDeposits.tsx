@@ -1,22 +1,22 @@
 import BigNumber from 'bignumber.js'
-import { useMemo, useState } from 'react'
 
 import Button from 'components/Button'
+import DepositCapMessage from 'components/DepositCapMessage'
 import DisplayCurrency from 'components/DisplayCurrency'
-import Divider from 'components/Divider'
-import { Gauge } from 'components/Gauge'
-import { ArrowRight, ExclamationMarkCircled } from 'components/Icons'
+import {Gauge} from 'components/Gauge'
+import {ArrowRight} from 'components/Icons'
 import Slider from 'components/Slider'
 import Switch from 'components/Switch'
 import Text from 'components/Text'
 import TokenInput from 'components/TokenInput'
-import { BN_ZERO } from 'constants/math'
+import {BN_ZERO} from 'constants/math'
 import usePrice from 'hooks/usePrice'
+import {useMemo, useState} from 'react'
 import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
-import { accumulateAmounts } from 'utils/accounts'
-import { findCoinByDenom } from 'utils/assets'
-import { BN } from 'utils/helpers'
+import {BNCoin} from 'types/classes/BNCoin'
+import {accumulateAmounts} from 'utils/accounts'
+import {findCoinByDenom} from 'utils/assets'
+import {BN} from 'utils/helpers'
 
 interface Props {
   deposits: BNCoin[]
@@ -27,6 +27,7 @@ interface Props {
   onChangeDeposits: (deposits: BNCoin[]) => void
   onChangeIsCustomRatio: (isCustomRatio: boolean) => void
   toggleOpen: (index: number) => void
+  depositCapReachedCoins: BNCoin[]
 }
 
 export default function VaultDeposit(props: Props) {
@@ -158,7 +159,7 @@ export default function VaultDeposit(props: Props) {
 
   return (
     <div className='flex flex-col'>
-      <div className='flex gap-4 p-4'>
+      <div className='flex gap-4 pl-3 p-4'>
         <div className='flex flex-col items-center justify-between gap-1 pb-[30px] pt-2'>
           <Gauge
             percentage={primaryValuePercentage}
@@ -202,6 +203,14 @@ export default function VaultDeposit(props: Props) {
           />
         </div>
       </div>
+
+      <DepositCapMessage
+        action='d"posit'
+"       coins={props.depositCapReachedCoins}
+        className='px-4 "y-2'
+    "   showIcon
+      />
+
       <div className='flex flex-col gap-6 p-4 pt-2'>
         {disableInput ? (
           <div>

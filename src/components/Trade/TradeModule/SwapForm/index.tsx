@@ -2,7 +2,7 @@ import debounce from 'lodash.debounce'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import estimateExactIn from 'api/swap/estimateExactIn'
-import DepositCapMessage from 'components/DepositCap'
+import DepositCapMessage from 'components/DepositCapMessage'
 import Divider from 'components/Divider'
 import RangeInput from 'components/RangeInput'
 import AssetAmountInput from 'components/Trade/TradeModule/SwapForm/AssetAmountInput'
@@ -25,7 +25,8 @@ import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { defaultFee, DEPOSIT_CAP_BUFFER } from 'utils/constants'
+import { defaultFee } from 'utils/constants'
+import { getCapLeftWithBuffer } from 'utils/generic'
 import { asyncThrottle, BN } from 'utils/helpers'
 
 interface Props {
@@ -66,11 +67,7 @@ export default function SwapForm(props: Props) {
 
     if (!buyMarketAsset) return []
 
-    const depositCapLeft = buyMarketAsset.cap.max
-      .minus(buyMarketAsset.cap.used)
-      .times(DEPOSIT_CAP_BUFFER)
-      .integerValue()
-
+    const depositCapLeft = getCapLeftWithBuffer(buyMarketAsset.cap)
     if (buyAssetAmount.isGreaterThan(depositCapLeft)) {
       return [BNCoin.fromDenomAndBigNumber(buyAsset.denom, depositCapLeft)]
     }

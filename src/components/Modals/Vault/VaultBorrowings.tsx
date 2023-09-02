@@ -1,23 +1,23 @@
 import BigNumber from 'bignumber.js'
-import React, { useEffect, useMemo, useState } from 'react'
 
 import Button from 'components/Button'
+import DepositCapMessage from 'components/DepositCapMessage'
 import DisplayCurrency from 'components/DisplayCurrency'
-import Divider from 'components/Divider'
-import { ArrowRight, ExclamationMarkCircled } from 'components/Icons'
+import {ArrowRight, ExclamationMarkCircled} from 'components/Icons'
 import Slider from 'components/Slider'
 import Text from 'components/Text'
 import TokenInput from 'components/TokenInput'
-import { BN_ZERO } from 'constants/math'
+import {BN_ZERO} from 'constants/math'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useMarketAssets from 'hooks/useMarketAssets'
 import usePrices from 'hooks/usePrices'
+import React, {useEffect, useMemo, useState} from 'react'
 import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
-import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { byDenom } from 'utils/array'
-import { findCoinByDenom, getAssetByDenom } from 'utils/assets'
-import { formatPercent } from 'utils/formatters'
+import {BNCoin} from 'types/classes/BNCoin'
+import {Action} from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import {byDenom} from 'utils/array'
+import {findCoinByDenom, getAssetByDenom} from 'utils/assets'
+import {formatPercent} from 'utils/formatters'
 
 export interface VaultBorrowingsProps {
   borrowings: BNCoin[]
@@ -27,6 +27,7 @@ export interface VaultBorrowingsProps {
   vault: Vault
   depositActions: Action[]
   onChangeBorrowings: (borrowings: BNCoin[]) => void
+  depositCapReachedCoins: BNCoin[]
 }
 
 export default function VaultBorrowings(props: VaultBorrowingsProps) {
@@ -187,12 +188,21 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
           </Text>
         </div>
       )}
+
       <Button
         text='Select borrow assets +'
         color='tertiary'
         onClick={addAsset}
         disabled={isConfirming}
       />
+
+      <DepositCapMessage
+        action='d"posit'
+"       coins={props.depositCapReachedCoins}
+        className='px-4 "y-2'
+    "   showIcon
+      />
+
       <Divider />
       <div className='flex flex-col gap-2'>
         <div className='flex justify-between'>
@@ -221,7 +231,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
         text='Deposit'
         rightIcon={<ArrowRight />}
         showProgressIndicator={isConfirming}
-        disabled={!props.depositActions.length}
+        disabled={!props.depositActions.length || props.depositCapReachedCoins.length > 0}
       />
     </div>
   )

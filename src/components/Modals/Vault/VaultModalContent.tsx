@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import Accordion from 'components/Accordion'
 import AccountSummary from 'components/Account/AccountSummary'
@@ -8,10 +8,14 @@ import VaultDeposit from 'components/Modals/Vault/VaultDeposits'
 import VaultDepositSubTitle from 'components/Modals/Vault/VaultDepositsSubTitle'
 import { BN_ZERO } from 'constants/math'
 import useDepositVault from 'hooks/broadcast/useDepositVault'
+import useDisplayAsset from 'hooks/useDisplayAsset'
 import useIsOpenArray from 'hooks/useIsOpenArray'
+import usePrices from 'hooks/usePrices'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
+import { convertToDisplayAmount, magnify } from 'utils/formatters'
+import { getCapLeftWithBuffer } from 'utils/generic'
 
 interface Props {
   vault: Vault | DepositedVault
@@ -29,20 +33,38 @@ export default function VaultModalContent(props: Props) {
     removedDeposits,
     removedLends,
     removeLends,
-    updatedAccount,
     addVaultValues,
   } = useUpdatedAccount(props.account)
 
+  const { data: prices } = usePrices()
   const [isOpen, toggleOpen] = useIsOpenArray(2, false)
   const [isCustomRatio, setIsCustomRatio] = useState(false)
   const [selectedCoins, setSelectedCoins] = useState<BNCoin[]>([])
-
+  const displayAsset = useDisplayAsset()
   const { actions: depositActions, totalValue } = useDepositVault({
     vault: props.vault,
     reclaims: removedLends,
     deposits: removedDeposits,
     borrowings: addedDebts,
   })
+
+  const depositCapReachedCoins = useMemo(() => {
+    const capLeft = getCapLeftWithBuffer(props.vault.cap)
+
+    if (totalValue.isGreaterThan(capLeft)) {
+      const amount = magnify(
+        convertToDisplayAmount(
+          BNCoin.fromDenomAndBigNumber(props.vault.cap.denom, capLeft),
+          displayAsset.denom,
+          prices,
+        ).toString(),
+        displayAsset,
+      )
+
+      return [BNCoin.fromDenomAndBigNumber(displayAsset.denom, amount)]
+    }
+    return []
+  }, [displayAsset, prices, props.vault.cap.denom, totalValue])
 
   const handleDepositSelect = useCallback(
     (selectedCoins: BNCoin[]) => {
@@ -134,6 +156,7 @@ export default function VaultModalContent(props: Props) {
                 toggleOpen={toggleOpen}
                 isCustomRatio={isCustomRatio}
                 onChangeIsCustomRatio={onChangeIsCustomRatio}
+                depositCapReachedCoins={depositCapReachedCoins}
               />
             ),
             title: 'Deposit',
@@ -151,6 +174,7 @@ export default function VaultModalContent(props: Props) {
                 onChangeBorrowings={addDebts}
                 vault={props.vault}
                 depositActions={depositActions}
+                depositCapReachedCoins={depositCapReachedCoins}
               />
             ),
             title: 'Borrow',
