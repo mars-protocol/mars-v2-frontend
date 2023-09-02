@@ -6,14 +6,14 @@ import DesktopNavigation from 'components/Navigation/DesktopNavigation'
 import RewardsCenter from 'components/RewardsCenter'
 import Settings from 'components/Settings'
 import Wallet from 'components/Wallet'
-import {isDesktop} from 'react-device-detect'
+import { isDesktop } from 'react-device-detect'
 import useStore from 'store'
 
 export const menuTree: { pages: Page[]; label: string }[] = [
-  {pages: ['trade'], label: 'Trade'},
-  {pages: ['lend', 'farm'], label: 'Earn'},
-  {pages: ['borrow'], label: 'Borrow'},
-  {pages: ['portfolio'], label: 'Portfolio},
+  { pages: ['trade'], label: 'Trade' },
+  { pages: ['lend', 'farm'], label: 'Earn' },
+  { pages: ['borrow'], label: 'Borrow' },
+  { pages: ['portfolio'], label: 'Portfolio' },
 ]
 
 export default function DesktopHeader() {
