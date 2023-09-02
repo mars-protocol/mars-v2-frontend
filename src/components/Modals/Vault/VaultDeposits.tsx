@@ -1,16 +1,22 @@
 import BigNumber from 'bignumber.js'
+import Button from 'components/Button'
 import DepositCapMessage from 'components/DepositCapMessage'
-import {Gauge} from 'components/Gauge'
+import DisplayCurrency from 'components/DisplayCurrency'
+import Divider from 'components/Divider'
+import { Gauge } from 'components/Gauge'
+import { ArrowRight, ExclamationMarkCircled } from 'components/Icons'
 import Slider from 'components/Slider'
+import Switch from 'components/Switch'
+import Text from 'components/Text'
 import TokenInput from 'components/TokenInput'
-import {BN_ZERO} from 'constants/math'
+import { BN_ZERO } from 'constants/math'
 import usePrice from 'hooks/usePrice'
-import {useMemo, useState} from 'react'
+import { useMemo, useState } from 'react'
 import useStore from 'store'
-import {BNCoin} from 'types/classes/BNCoin'
-import {accumulateAmounts} from 'utils/accounts'
-import {findCoinByDenom} from 'utils/assets'
-import {BN} from 'utils/helpers'
+import { BNCoin } from 'types/classes/BNCoin'
+import { accumulateAmounts } from 'utils/accounts'
+import { findCoinByDenom } from 'utils/assets'
+import { BN } from 'utils/helpers'
 
 interface Props {
   deposits: BNCoin[]
@@ -199,10 +205,10 @@ export default function VaultDeposit(props: Props) {
       </div>
 
       <DepositCapMessage
-         "action="deposit'
-          coins={props.depositCapReachedCoins}
+        action='deposit'
+        coins={props.depositCapReachedCoins}
         className='px-4 "y-2'
-          showIcon
+        showIcon
       />
 
       <div className='flex flex-col gap-6 p-4 pt-2'>
