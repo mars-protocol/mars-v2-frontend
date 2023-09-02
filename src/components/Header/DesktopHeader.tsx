@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import { isDesktop } from 'react-device-detect'
 
 import AccountMenu from 'components/Account/AccountMenu'
 import EscButton from 'components/Button/EscButton'
@@ -7,6 +6,7 @@ import DesktopNavigation from 'components/Navigation/DesktopNavigation'
 import RewardsCenter from 'components/RewardsCenter'
 import Settings from 'components/Settings'
 import Wallet from 'components/Wallet'
+import {isDesktop} from 'react-device-detect'
 import useStore from 'store'
 
 export const menuTree: { page: Page; label: string }[] = [
