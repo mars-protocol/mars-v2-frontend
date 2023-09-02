@@ -1,5 +1,4 @@
 import BigNumber from 'bignumber.js'
-import { useCallback, useEffect, useState } from 'react'
 
 import AccountSummary from 'components/Account/AccountSummary'
 import AssetImage from 'components/AssetImage'
@@ -21,6 +20,7 @@ import useHealthComputer from 'hooks/useHealthComputer'
 import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import { getDepositsAndLendsAfterCoinSpent } from 'hooks/useUpdatedAccount/functions'
+import { useCallback, useEffect, useState } from 'react'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
