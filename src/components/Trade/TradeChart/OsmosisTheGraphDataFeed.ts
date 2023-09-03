@@ -1,3 +1,6 @@
+import { defaultSymbolInfo } from 'components/Trade/TradeChart/constants'
+import { ENV } from 'constants/env'
+import { getAssetByDenom, getEnabledMarketAssets } from 'utils/assets'
 import {
   Bar,
   ErrorCallback,
@@ -9,10 +12,7 @@ import {
   ResolutionString,
   ResolveCallback,
 } from 'utils/charting_library'
-import { ENV } from 'constants/env'
-import { getAssetByDenom, getEnabledMarketAssets } from 'utils/assets'
 import { BN } from 'utils/helpers'
-import { defaultSymbolInfo } from 'components/Trade/TradeChart/constants'
 
 interface BarQueryData {
   close: string
@@ -50,7 +50,7 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
     this.baseDecimals = baseDecimals
     this.baseDenom = baseDenom
     const enabledMarketAssets = getEnabledMarketAssets()
-    this.enabledMarketAssetDenoms = enabledMarketAssets.map((asset) => asset.denom)
+    this.enabledMarketAssetDenoms = enabledMarketAssets.map((asset) => asset.mainnetDenom)
     this.supportedPools = enabledMarketAssets
       .map((asset) => asset.poolId?.toString())
       .filter((poolId) => typeof poolId === 'string') as string[]
