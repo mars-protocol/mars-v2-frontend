@@ -12,7 +12,7 @@ interface Props {
   options?: FormatOptions
   className?: string
   animate?: boolean
-  parantheses?: boolean
+  parentheses?: boolean
 }
 
 export const FormattedNumber = React.memo(
@@ -43,7 +43,7 @@ export const FormattedNumber = React.memo(
         <p
           className={classNames(
             'number',
-            props.parantheses && 'before:content-["("] after:content-[")"]',
+            props.parentheses && 'before:content-["("] after:content-[")"]',
             props.className,
           )}
         >
@@ -55,7 +55,7 @@ export const FormattedNumber = React.memo(
       <animated.p
         className={classNames(
           'number',
-          props.parantheses && 'before:content-["("] after:content-[")"]',
+          props.parentheses && 'before:content-["("] after:content-[")"]',
           props.className,
         )}
       >

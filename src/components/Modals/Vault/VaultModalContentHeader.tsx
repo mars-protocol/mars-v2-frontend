@@ -43,7 +43,7 @@ export default function VaultModalContentHeader({ vault }: Props) {
                   className='ml-2 text-xs'
                   amount={vault.apy / 365}
                   options={{ suffix: '%/day', decimals: -2 }}
-                  parantheses
+                  parentheses
                   animate
                 />
               </div>

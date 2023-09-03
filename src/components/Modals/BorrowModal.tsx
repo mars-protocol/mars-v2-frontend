@@ -207,7 +207,7 @@ function BorrowModal(props: Props) {
                 asset.denom,
                 modal.marketData?.liquidity?.amount ?? BN_ZERO,
               )}
-              parantheses
+              parentheses
             />
           </div>
           <Text size='xs' className='text-white/50' tag='span'>

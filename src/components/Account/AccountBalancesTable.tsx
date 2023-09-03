@@ -12,6 +12,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 import AccountFund from 'components/Account/AccountFund'
 import Button from 'components/Button'
+import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Text from 'components/Text'
@@ -36,6 +37,16 @@ interface Props {
   lendingData: LendingMarketTableData[]
   borrowingData: BorrowMarketTableData[]
   tableBodyClassName?: string
+}
+
+interface PositionValue {
+  type: 'deposits' | 'borrowing' | 'lending'
+  symbol: string
+  size: number
+  value: string
+  denom: string
+  amount: BigNumber
+  apy: number
 }
 
 function calculatePositionValues(
@@ -82,7 +93,6 @@ export default function AccountBalancesTable(props: Props) {
     DISPLAY_CURRENCY_KEY,
     DEFAULT_SETTINGS.displayCurrency,
   )
-  const displayCurrencyAsset = ASSETS.find(byDenom(displayCurrency)) ?? ASSETS[0]
   const { data: prices } = usePrices()
   const currentAccount = useCurrentAccount()
   const navigate = useNavigate()
@@ -95,10 +105,14 @@ export default function AccountBalancesTable(props: Props) {
     const accountDebts = props.account?.debts ?? []
     const accountVaults = props.account?.vaults ?? []
 
-    const deposits = accountDeposits.map((deposit) => {
-      const asset = ASSETS.find(byDenom(deposit.denom)) ?? ASSETS[0]
+    const deposits: PositionValue[] = []
+    accountDeposits.forEach((deposit) => {
+      const asset = ASSETS.find(byDenom(deposit.denom))
+      if (!asset) return
       const apy = 0
-      return calculatePositionValues('deposits', asset, prices, displayCurrency, deposit, apy)
+      deposits.push(
+        calculatePositionValues('deposits', asset, prices, displayCurrency, deposit, apy),
+      )
     })
 
     const lends = accountLends.map((lending) => {
@@ -145,20 +159,11 @@ export default function AccountBalancesTable(props: Props) {
         accessorKey: 'value',
         id: 'value',
         cell: ({ row }) => {
-          return (
-            <FormattedNumber
-              className='text-xs text-right'
-              amount={Number(BN(row.original.value))}
-              options={{
-                maxDecimals: displayCurrencyAsset.decimals,
-                minDecimals: displayCurrency === 'usd' ? 2 : 0,
-                prefix: displayCurrency === 'usd' ? '$' : '',
-                suffix: displayCurrency !== 'usd' ? ` ${displayCurrencyAsset}` : '',
-                abbreviated: true,
-              }}
-              animate
-            />
-          )
+          const coin = new BNCoin({
+            denom: displayCurrency,
+            amount: row.original.value.toString(),
+          })
+          return <DisplayCurrency coin={coin} className='text-xs text-right' />
         },
       },
       {
@@ -200,7 +205,7 @@ export default function AccountBalancesTable(props: Props) {
         },
       },
     ],
-    [displayCurrency, displayCurrencyAsset],
+    [displayCurrency],
   )
 
   const table = useReactTable({
