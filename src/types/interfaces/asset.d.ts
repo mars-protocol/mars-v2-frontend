@@ -2,6 +2,7 @@ interface Asset {
   color: string
   name: string
   denom: string
+  mainnetDenom: string
   symbol:
     | 'OSMO'
     | 'ATOM'
