@@ -15,6 +15,7 @@ import {
   HealthComputer,
 } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 import { convertAccountToPositions } from 'utils/accounts'
+import { LTV_BUFFER } from 'utils/constants'
 import {
   BorrowTarget,
   compute_health_js,
@@ -24,7 +25,6 @@ import {
   SwapKind,
 } from 'utils/health_computer'
 import { BN } from 'utils/helpers'
-import { LTV_BUFFER } from 'utils/constants'
 
 export default function useHealthComputer(account?: Account) {
   const { data: prices } = usePrices()

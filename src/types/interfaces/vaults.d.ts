@@ -26,11 +26,7 @@ interface VaultInfo {
     max: number
     liq: number
   }
-  cap: {
-    denom: string
-    used: BigNumber
-    max: BigNumber
-  }
+  cap: DepositCap
 }
 
 interface VaultConfig extends VaultMetaData, VaultInfo {}
@@ -73,4 +69,10 @@ interface VaultPositionFlatAmounts {
   locked: BigNumber
   unlocking: BigNumber
   unlocked: BigNumber
+}
+
+interface DepositCap {
+  denom: string
+  used: BigNumber
+  max: BigNumber
 }

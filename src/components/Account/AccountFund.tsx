@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import Button from 'components/Button'
 import Card from 'components/Card'
+import DepositCapMessage from 'components/DepositCapMessage'
 import FullOverlayContent from 'components/FullOverlayContent'
 import { Plus } from 'components/Icons'
 import SwitchAutoLend from 'components/Switch/SwitchAutoLend'
@@ -12,6 +13,7 @@ import WalletBridges from 'components/Wallet/WalletBridges'
 import { BN_ZERO } from 'constants/math'
 import useAccounts from 'hooks/useAccounts'
 import useCurrentAccount from 'hooks/useCurrentAccount'
+import useMarketAssets from 'hooks/useMarketAssets'
 import useToggle from 'hooks/useToggle'
 import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
@@ -19,6 +21,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { getAssetByDenom, getBaseAsset } from 'utils/assets'
 import { defaultFee } from 'utils/constants'
+import { getCapLeftWithBuffer } from 'utils/generic'
 import { BN } from 'utils/helpers'
 
 export default function AccountFund() {
@@ -36,6 +39,7 @@ export default function AccountFund() {
   const hasAssetSelected = fundingAssets.length > 0
   const hasFundingAssets =
     fundingAssets.length > 0 && fundingAssets.every((a) => a.toCoin().amount !== '0')
+  const { data: marketAssets } = useMarketAssets()
 
   const baseBalance = useMemo(
     () => walletBalances.find(byDenom(baseAsset.denom))?.amount ?? '0',
@@ -84,16 +88,15 @@ export default function AccountFund() {
     setFundingAssets(newFundingAssets)
   }, [selectedDenoms, fundingAssets])
 
-  const updateFundingAssets = useCallback(
-    (amount: BigNumber, denom: string) => {
-      const assetToUpdate = fundingAssets.find(byDenom(denom))
-      if (assetToUpdate) {
-        assetToUpdate.amount = amount
-        setFundingAssets([...fundingAssets.filter((a) => a.denom !== denom), assetToUpdate])
-      }
-    },
-    [fundingAssets],
-  )
+  const updateFundingAssets = useCallback((amount: BigNumber, denom: string) => {
+    setFundingAssets((fundingAssets) => {
+      const updateIdx = fundingAssets.findIndex(byDenom(denom))
+      if (updateIdx === -1) return fundingAssets
+
+      fundingAssets[updateIdx].amount = amount
+      return [...fundingAssets]
+    })
+  }, [])
 
   useEffect(() => {
     if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) {
@@ -105,6 +108,21 @@ export default function AccountFund() {
     if (accounts && !selectedAccountId && accountId)
       setSelectedAccountId(currentAccount?.id ?? accountId)
   }, [accounts, selectedAccountId, accountId, currentAccount])
+
+  const depositCapReachedCoins = useMemo(() => {
+    const depositCapReachedCoins: BNCoin[] = []
+    fundingAssets.forEach((asset) => {
+      const marketAsset = marketAssets.find(byDenom(asset.denom))
+      if (!marketAsset) return
+
+      const capLeft = getCapLeftWithBuffer(marketAsset.cap)
+
+      if (asset.amount.isLessThanOrEqualTo(capLeft)) return
+
+      depositCapReachedCoins.push(BNCoin.fromDenomAndBigNumber(asset.denom, capLeft))
+    })
+    return depositCapReachedCoins
+  }, [fundingAssets, marketAssets])
 
   if (!selectedAccountId) return null
 
@@ -147,6 +165,12 @@ export default function AccountFund() {
           onClick={handleSelectAssetsClick}
           disabled={isFunding}
         />
+        <DepositCapMessage
+          action='fund'
+          coins={depositCapReachedCoins}
+          className='pr-4 py-2 mt-4'
+          showIcon
+        />
         <SwitchAutoLend
           className='pt-4 mt-4 border border-transparent border-t-white/10'
           accountId={selectedAccountId}
@@ -155,7 +179,7 @@ export default function AccountFund() {
           className='w-full mt-4'
           text='Fund account'
           color='tertiary'
-          disabled={!hasFundingAssets}
+          disabled={!hasFundingAssets || depositCapReachedCoins.length > 0}
           showProgressIndicator={isFunding}
           onClick={handleClick}
           size='lg'
