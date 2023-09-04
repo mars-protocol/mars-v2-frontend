@@ -1,10 +1,9 @@
-import { Market as RedBankMarket } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import {
   AssetParamsBaseForAddr as AssetParams,
   TotalDepositResponse,
 } from 'types/generated/mars-params/MarsParams.types'
-
-import { BN } from './helpers'
+import { Market as RedBankMarket } from 'types/generated/mars-red-bank/MarsRedBank.types'
+import { BN } from 'utils/helpers'
 
 export function resolveMarketResponse(
   marketResponse: RedBankMarket,

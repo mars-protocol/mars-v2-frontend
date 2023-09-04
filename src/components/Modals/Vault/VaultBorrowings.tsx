@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import Button from 'components/Button'
 import DepositCapMessage from 'components/DepositCapMessage'
@@ -12,7 +13,6 @@ import { BN_ZERO } from 'constants/math'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useMarketAssets from 'hooks/useMarketAssets'
 import usePrices from 'hooks/usePrices'
-import React, { useEffect, useMemo, useState } from 'react'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'

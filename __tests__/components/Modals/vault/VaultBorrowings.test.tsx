@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react'
+
 import DisplayCurrency from 'components/DisplayCurrency'
 import VaultBorrowings, { VaultBorrowingsProps } from 'components/Modals/Vault/VaultBorrowings'
-
 import { ASSETS } from 'constants/assets'
 import { TESTNET_VAULTS_META_DATA } from 'constants/vaults'
 import useStore from 'store'

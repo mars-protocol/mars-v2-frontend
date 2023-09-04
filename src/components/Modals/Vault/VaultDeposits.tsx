@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js'
+
 import Button from 'components/Button'
 import DepositCapMessage from 'components/DepositCapMessage'
 import DisplayCurrency from 'components/DisplayCurrency'
