@@ -177,7 +177,6 @@ export default function useHealthComputer(account?: Account) {
     },
     [healthComputer],
   )
-  console.log(healthComputer)
   const health = useMemo(() => {
     if (healthFactor > 10) return 100
     if (healthFactor < 0) return 0

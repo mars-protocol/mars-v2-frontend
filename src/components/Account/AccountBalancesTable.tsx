@@ -32,6 +32,8 @@ import { BN } from 'utils/helpers'
 import { convertAprToApy } from 'utils/parsers'
 import { getPage, getRoute } from 'utils/route'
 
+import { ORACLE_DENOM } from '../../constants/oracle'
+
 interface Props {
   account: Account
   lendingData: LendingMarketTableData[]
@@ -153,7 +155,7 @@ export default function AccountBalancesTable(props: Props) {
         id: 'value',
         cell: ({ row }) => {
           const coin = new BNCoin({
-            denom: row.original.denom,
+            denom: ORACLE_DENOM,
             amount: row.original.value.toString(),
           })
           return <DisplayCurrency coin={coin} className='text-xs text-right' />

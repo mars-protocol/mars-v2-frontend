@@ -8,6 +8,10 @@ import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getDisplayCurrencies } from 'utils/assets'
+import { getCoinValue } from 'utils/formatters'
+import { BN } from 'utils/helpers'
+
+import { BN_ONE } from '../constants/math'
 
 interface Props {
   coin: BNCoin
@@ -39,12 +43,16 @@ export default function DisplayCurrency(props: Props) {
     : ` ${displayCurrencyAsset.symbol ? ` ${displayCurrencyAsset.symbol}` : ''}`
 
   const amount = useMemo(() => {
-    const coinPrice = prices.find((price) => price.denom === props.coin.denom)
-    const displayPrice = prices.find((price) => price.denom === displayCurrency)
+    const coinValue = getCoinValue(props.coin, prices)
+    const displayDecimals = displayCurrencyAsset.decimals
+    const displayPrice = getCoinValue(
+      BNCoin.fromDenomAndBigNumber(displayCurrency, BN(1).shiftedBy(displayDecimals)),
+      prices,
+    )
 
-    if (!coinPrice || !displayPrice) return 0
+    if (!coinValue || !displayPrice) return 0
 
-    return props.coin.amount.times(coinPrice.amount).dividedBy(displayPrice.amount).toNumber()
+    return coinValue.div(displayPrice).toNumber()
   }, [displayCurrency, prices, props.coin.amount, props.coin.denom])
 
   return (

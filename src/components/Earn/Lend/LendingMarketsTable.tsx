@@ -13,6 +13,10 @@ import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
 import { convertLiquidityRateToAPR, demagnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
+import { BN_ZERO } from '../../../constants/math'
+import { getEnabledMarketAssets } from '../../../utils/assets'
+import AmountAndValue from '../../AmountAndValue'
+
 interface Props {
   title: string
   data: LendingMarketTableData[]
@@ -22,6 +26,7 @@ export default function LendingMarketsTable(props: Props) {
   const { title, data } = props
   const { symbol: displayCurrencySymbol } = useDisplayCurrencyPrice()
   const shouldShowAccountDeposit = !!data[0]?.accountLentValue
+  const marketAssets = getEnabledMarketAssets()
 
   const rowRenderer = useCallback(
     (row: Row<LendingMarketTableData>, table: Table<LendingMarketTableData>) => {
@@ -66,14 +71,12 @@ export default function LendingMarketsTable(props: Props) {
               accessorKey: 'accountDepositValue',
               header: 'Deposited',
               cell: ({ row }) => {
-                const accountDepositValue = row.original.accountLentValue as BigNumber
+                const amount = row.original.accountLentAmount
 
                 return (
-                  <FormattedNumber
-                    className='text-xs'
-                    animate
-                    amount={accountDepositValue.toNumber()}
-                    options={{ suffix: ` ${displayCurrencySymbol}` }}
+                  <AmountAndValue
+                    asset={row.original.asset}
+                    amount={amount ? BN(amount) : BN_ZERO}
                   />
                 )
               },
