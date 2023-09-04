@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import Button from 'components/Button'
+import DepositCapMessage from 'components/DepositCapMessage'
 import DisplayCurrency from 'components/DisplayCurrency'
 import Divider from 'components/Divider'
 import { ArrowRight, ExclamationMarkCircled } from 'components/Icons'
@@ -29,6 +30,7 @@ export interface VaultBorrowingsProps {
   depositActions: Action[]
   onChangeBorrowings: (borrowings: BNCoin[]) => void
   displayCurrency: string
+  depositCapReachedCoins: BNCoin[]
 }
 
 export default function VaultBorrowings(props: VaultBorrowingsProps) {
@@ -191,12 +193,21 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
           </Text>
         </div>
       )}
+
       <Button
         text='Select borrow assets +'
         color='tertiary'
         onClick={addAsset}
         disabled={isConfirming}
       />
+
+      <DepositCapMessage
+        action='deposit'
+        coins={props.depositCapReachedCoins}
+        className='px-4 y-2'
+        showIcon
+      />
+
       <Divider />
       <div className='flex flex-col gap-2'>
         <div className='flex justify-between'>
@@ -225,7 +236,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
         text='Deposit'
         rightIcon={<ArrowRight />}
         showProgressIndicator={isConfirming}
-        disabled={!props.depositActions.length}
+        disabled={!props.depositActions.length || props.depositCapReachedCoins.length > 0}
       />
     </div>
   )

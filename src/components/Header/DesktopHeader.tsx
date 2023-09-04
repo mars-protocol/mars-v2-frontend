@@ -9,11 +9,11 @@ import Settings from 'components/Settings'
 import Wallet from 'components/Wallet'
 import useStore from 'store'
 
-export const menuTree: { page: Page; label: string }[] = [
-  { page: 'trade', label: 'Trade' },
-  { page: 'lend', label: 'Earn' },
-  { page: 'borrow', label: 'Borrow' },
-  { page: 'portfolio', label: 'Portfolio' },
+export const menuTree: { pages: Page[]; label: string }[] = [
+  { pages: ['trade'], label: 'Trade' },
+  { pages: ['lend', 'farm'], label: 'Earn' },
+  { pages: ['borrow'], label: 'Borrow' },
+  { pages: ['portfolio'], label: 'Portfolio' },
 ]
 
 export default function DesktopHeader() {

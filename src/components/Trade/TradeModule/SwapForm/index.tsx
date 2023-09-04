@@ -2,6 +2,7 @@ import debounce from 'lodash.debounce'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import estimateExactIn from 'api/swap/estimateExactIn'
+import DepositCapMessage from 'components/DepositCapMessage'
 import Divider from 'components/Divider'
 import RangeInput from 'components/RangeInput'
 import AssetAmountInput from 'components/Trade/TradeModule/SwapForm/AssetAmountInput'
@@ -16,6 +17,7 @@ import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useLocalStorage from 'hooks/useLocalStorage'
+import useMarketAssets from 'hooks/useMarketAssets'
 import useMarketBorrowings from 'hooks/useMarketBorrowings'
 import usePrices from 'hooks/usePrices'
 import useToggle from 'hooks/useToggle'
@@ -24,6 +26,7 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { defaultFee } from 'utils/constants'
+import { getCapLeftWithBuffer } from 'utils/generic'
 import { asyncThrottle, BN } from 'utils/helpers'
 
 interface Props {
@@ -39,6 +42,7 @@ export default function SwapForm(props: Props) {
   const [slippage] = useLocalStorage(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
   const { computeMaxSwapAmount } = useHealthComputer(account)
   const { data: borrowAssets } = useMarketBorrowings()
+  const { data: marketAssets } = useMarketAssets()
 
   const [isMarginChecked, setMarginChecked] = useToggle()
   const [buyAssetAmount, setBuyAssetAmount] = useState(BN_ZERO)
@@ -57,6 +61,19 @@ export default function SwapForm(props: Props) {
     () => borrowAssets.find(byDenom(sellAsset.denom)),
     [borrowAssets, sellAsset.denom],
   )
+
+  const depositCapReachedCoins: BNCoin[] = useMemo(() => {
+    const buyMarketAsset = marketAssets.find(byDenom(buyAsset.denom))
+
+    if (!buyMarketAsset) return []
+
+    const depositCapLeft = getCapLeftWithBuffer(buyMarketAsset.cap)
+    if (buyAssetAmount.isGreaterThan(depositCapLeft)) {
+      return [BNCoin.fromDenomAndBigNumber(buyAsset.denom, depositCapLeft)]
+    }
+
+    return []
+  }, [marketAssets, buyAsset.denom, buyAssetAmount])
 
   const onChangeSellAmount = useCallback(
     (amount: BigNumber) => {
@@ -233,59 +250,59 @@ export default function SwapForm(props: Props) {
       />
       <Divider />
       <OrderTypeSelector selected={selectedOrderType} onChange={setSelectedOrderType} />
-      <AssetAmountInput
-        label='Buy'
-        max={maxBuyableAmountEstimation}
-        amount={buyAssetAmount}
-        setAmount={onChangeBuyAmount}
-        asset={buyAsset}
-        assetUSDValue={buyAssetValue}
-        maxButtonLabel='Max Amount:'
-        containerClassName='mx-3 my-6'
-        disabled={isConfirming}
-      />
+      <div className='flex flex-col gap-6 px-3 mt-6'>
+        <AssetAmountInput
+          label='Buy'
+          max={maxBuyableAmountEstimation}
+          amount={buyAssetAmount}
+          setAmount={onChangeBuyAmount}
+          asset={buyAsset}
+          assetUSDValue={buyAssetValue}
+          maxButtonLabel='Max Amount:'
+          disabled={isConfirming}
+        />
 
-      <RangeInput
-        wrapperClassName='p-4'
-        disabled={isConfirming || maxBuyableAmountEstimation.isZero()}
-        onChange={handleRangeInputChange}
-        value={buyAssetAmount.shiftedBy(-buyAsset.decimals).toNumber()}
-        max={maxBuyableAmountEstimation.shiftedBy(-buyAsset.decimals).toNumber()}
-        marginThreshold={
-          isMarginChecked
-            ? buySideMarginThreshold.shiftedBy(-buyAsset.decimals).toNumber()
-            : undefined
-        }
-      />
+        <RangeInput
+          disabled={isConfirming || maxBuyableAmountEstimation.isZero()}
+          onChange={handleRangeInputChange}
+          value={buyAssetAmount.shiftedBy(-buyAsset.decimals).toNumber()}
+          max={maxBuyableAmountEstimation.shiftedBy(-buyAsset.decimals).toNumber()}
+          marginThreshold={
+            isMarginChecked
+              ? buySideMarginThreshold.shiftedBy(-buyAsset.decimals).toNumber()
+              : undefined
+          }
+        />
 
-      <AssetAmountInput
-        label='Sell'
-        max={maxSellAmount}
-        amount={sellAssetAmount}
-        setAmount={onChangeSellAmount}
-        assetUSDValue={sellAssetValue}
-        asset={sellAsset}
-        maxButtonLabel='Balance:'
-        containerClassName='mx-3'
-        disabled={isConfirming}
-      />
+        <DepositCapMessage action='buy' coins={depositCapReachedCoins} className='p-4 bg-white/5' />
 
-      <TradeSummary
-        containerClassName='m-3 mt-10'
-        buyAsset={buyAsset}
-        sellAsset={sellAsset}
-        borrowRate={borrowAsset?.borrowRate}
-        buyAction={handleBuyClick}
-        buyButtonDisabled={sellAssetAmount.isZero()}
-        showProgressIndicator={isConfirming}
-        isMargin={isMarginChecked}
-        borrowAmount={
-          sellAssetAmount.isGreaterThan(sellSideMarginThreshold)
-            ? sellAssetAmount.minus(sellSideMarginThreshold)
-            : BN_ZERO
-        }
-        estimatedFee={estimatedFee}
-      />
+        <AssetAmountInput
+          label='Sell'
+          max={maxSellAmount}
+          amount={sellAssetAmount}
+          setAmount={onChangeSellAmount}
+          assetUSDValue={sellAssetValue}
+          asset={sellAsset}
+          maxButtonLabel='Balance:'
+          disabled={isConfirming}
+        />
+
+        <TradeSummary
+          buyAsset={buyAsset}
+          sellAsset={sellAsset}
+          borrowRate={borrowAsset?.borrowRate}
+          buyAction={handleBuyClick}
+          buyButtonDisabled={sellAssetAmount.isZero() || depositCapReachedCoins.length > 0}
+          showProgressIndicator={isConfirming}
+          isMargin={isMarginChecked}
+          borrowAmount={
+            sellAssetAmount.isGreaterThan(sellSideMarginThreshold)
+              ? sellAssetAmount.minus(sellSideMarginThreshold)
+              : BN_ZERO
+          }
+          estimatedFee={estimatedFee}
+        />
+      </div>
     </>
   )
 }

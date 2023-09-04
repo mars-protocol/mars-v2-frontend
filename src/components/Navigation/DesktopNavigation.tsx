@@ -1,5 +1,5 @@
-import { useParams } from 'react-router-dom'
 import classNames from 'classnames'
+import { useParams } from 'react-router-dom'
 
 import { menuTree } from 'components/Header/DesktopHeader'
 import { Logo } from 'components/Icons'
@@ -11,8 +11,8 @@ export default function DesktopNavigation() {
   const { address, accountId } = useParams()
   const focusComponent = useStore((s) => s.focusComponent)
 
-  function getIsActive(href: string) {
-    return location.pathname.includes(href)
+  function getIsActive(pages: string[]) {
+    return pages.some((page) => location.pathname.includes(page))
   }
 
   return (
@@ -31,8 +31,8 @@ export default function DesktopNavigation() {
           {menuTree.map((item, index) => (
             <NavLink
               key={index}
-              href={getRoute(item.page, address, accountId)}
-              isActive={getIsActive(item.page)}
+              href={getRoute(item.pages[0], address, accountId)}
+              isActive={getIsActive(item.pages)}
             >
               {item.label}
             </NavLink>

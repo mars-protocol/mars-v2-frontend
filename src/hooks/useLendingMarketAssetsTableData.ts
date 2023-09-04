@@ -23,7 +23,7 @@ function useLendingMarketAssetsTableData(): {
     const accountLentAssets: LendingMarketTableData[] = [],
       availableAssets: LendingMarketTableData[] = []
 
-    markets.forEach(({ denom, depositCap, liquidityRate, liquidationThreshold, maxLtv }) => {
+    markets.forEach(({ denom, cap, liquidityRate, liquidationThreshold, maxLtv }) => {
       const asset = getAssetByDenom(denom) as Asset
       const marketDepositAmount = BN(marketDeposits.find(byDenom(denom))?.amount ?? 0)
       const marketLiquidityAmount = BN(marketLiquidities.find(byDenom(denom))?.amount ?? 0)
@@ -38,7 +38,7 @@ function useLendingMarketAssetsTableData(): {
         accountLentValue,
         accountLentAmount,
         marketLiquidityAmount,
-        marketDepositCap: BN(depositCap),
+        marketDepositCap: cap.max,
         marketLiquidityRate: liquidityRate,
         marketLiquidationThreshold: liquidationThreshold,
         marketMaxLtv: maxLtv,

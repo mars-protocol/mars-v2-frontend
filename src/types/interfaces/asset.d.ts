@@ -2,6 +2,7 @@ interface Asset {
   color: string
   name: string
   denom: string
+  mainnetDenom: string
   symbol:
     | 'OSMO'
     | 'ATOM'
@@ -46,10 +47,6 @@ interface Asset {
 interface PseudoAsset {
   decimals: number
   symbol: string
-}
-
-interface OtherAsset extends Omit<Asset, 'symbol'> {
-  symbol: 'MARS'
 }
 
 interface BorrowAsset extends Asset {

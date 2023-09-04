@@ -58,6 +58,7 @@ describe('<VaultBorrowings />', () => {
     deposits: [],
     onChangeBorrowings: jest.fn(),
     depositActions: [],
+    depositCapReachedCoins: [],
     displayCurrency: 'uosmo',
   }
 

@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
-import { useMemo, useState } from 'react'
 
 import Button from 'components/Button'
+import DepositCapMessage from 'components/DepositCapMessage'
 import Divider from 'components/Divider'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { Gauge } from 'components/Gauge'
@@ -13,6 +13,7 @@ import TokenInput from 'components/TokenInput'
 import { ASSETS } from 'constants/assets'
 import { BN_ZERO } from 'constants/math'
 import usePrices from 'hooks/usePrices'
+import { useMemo, useState } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { accumulateAmounts } from 'utils/accounts'
 import { byDenom } from 'utils/array'
@@ -28,6 +29,7 @@ interface Props {
   onChangeIsCustomRatio: (isCustomRatio: boolean) => void
   toggleOpen: (index: number) => void
   displayCurrency: string
+  depositCapReachedCoins: BNCoin[]
 }
 
 export default function VaultDeposit(props: Props) {
@@ -161,7 +163,7 @@ export default function VaultDeposit(props: Props) {
 
   return (
     <div className='flex flex-col'>
-      <div className='flex gap-4 p-4'>
+      <div className='flex gap-4 pl-3 p-4'>
         <div className='flex flex-col items-center justify-between gap-1 pb-[30px] pt-2'>
           <Gauge
             percentage={primaryValuePercentage}
@@ -205,6 +207,14 @@ export default function VaultDeposit(props: Props) {
           />
         </div>
       </div>
+
+      <DepositCapMessage
+        action='deposit'
+        coins={props.depositCapReachedCoins}
+        className='px-4 "y-2'
+        showIcon
+      />
+
       <div className='flex flex-col gap-6 p-4 pt-2'>
         {disableInput ? (
           <div>

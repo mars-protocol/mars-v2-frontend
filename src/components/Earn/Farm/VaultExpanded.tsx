@@ -107,7 +107,7 @@ export default function VaultExpanded(props: Props) {
         !isExpanded && props.row.toggleExpanded()
       }}
     >
-      <td colSpan={!status ? 5 : 6}>
+      <td colSpan={!status ? 7 : 8}>
         <div className='align-center flex justify-end gap-3 p-4'>
           {status && <DepositMoreButton />}
           {status === VaultStatus.ACTIVE && <UnlockButton />}

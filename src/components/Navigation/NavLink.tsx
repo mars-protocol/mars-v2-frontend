@@ -12,12 +12,10 @@ export const NavLink = (props: Props) => {
   return (
     <Link
       to={props.href}
-      className={({ isActive }) =>
-        classNames(
-          'text-sm font-semibold hover:text-white active:text-white',
-          isActive ? 'pointer-events-none text-white' : 'text-white/60',
-        )
-      }
+      className={classNames(
+        'text-sm font-semibold hover:text-white active:text-white',
+        props.isActive ? 'pointer-events-none text-white' : 'text-white/60',
+      )}
     >
       {props.children}
     </Link>
