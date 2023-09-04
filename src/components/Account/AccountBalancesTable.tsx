@@ -7,7 +7,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import classNames from 'classnames'
-import React from 'react'
+import { useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import AccountFund from 'components/Account/AccountFund'
@@ -54,8 +54,16 @@ function calculatePositionValues(
   prices: BNCoin[],
   position: BNCoin,
   apy: number,
+  prev: BNCoin,
 ) {
   const { amount, denom } = position
+  const hasChanged = !prev.amount.isEqualTo(amount)
+  const isIncrease = hasChanged && amount.isGreaterThan(prev.amount)
+  const isBorrowing = type === 'borrowing'
+
+  let change = hasChanged && 'profit'
+  if (hasChanged && ((isIncrease && isBorrowing) || (!isIncrease && !isBorrowing))) change = 'loss'
+
   return {
     type,
     symbol: asset.symbol,
@@ -64,12 +72,18 @@ function calculatePositionValues(
     denom,
     amount: type === 'borrowing' ? amount.negated() : amount,
     apy,
+    change,
   }
 }
 
-function calculateVaultValues(vault: DepositedVault, apy: number) {
+function calculateVaultValues(vault: DepositedVault, apy: number, prev: DepositedVault) {
   const { name } = vault
   const totalValue = vault.values.primary.plus(vault.values.secondary)
+  const prevTotalValue = prev.values.primary.plus(prev.values.secondary)
+  const hasChanged = !totalValue.isEqualTo(prevTotalValue)
+
+  let change = hasChanged && 'profit'
+  if (hasChanged && totalValue.isLessThan(prevTotalValue)) change = 'loss'
 
   return {
     type: 'vault',
@@ -79,54 +93,71 @@ function calculateVaultValues(vault: DepositedVault, apy: number) {
     denom: vault.denoms.lp,
     amount: BN_ZERO,
     apy,
+    change,
   }
 }
 
 export default function AccountBalancesTable(props: Props) {
+  const { account, lendingData, borrowingData, tableBodyClassName } = props
   const { data: prices } = usePrices()
   const currentAccount = useCurrentAccount()
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const address = useStore((s) => s.address)
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const balanceData = React.useMemo<AccountBalanceRow[]>(() => {
-    const accountDeposits = props.account?.deposits ?? []
-    const accountLends = props.account?.lends ?? []
-    const accountDebts = props.account?.debts ?? []
-    const accountVaults = props.account?.vaults ?? []
+  const [sorting, setSorting] = useState<SortingState>([])
+  const updatedAccount = useStore((s) => s.updatedAccount)
+
+  const balanceData = useMemo<AccountBalanceRow[]>(() => {
+    const usedAccount = updatedAccount ?? account
+    const accountDeposits = usedAccount?.deposits ?? []
+    const accountLends = usedAccount?.lends ?? []
+    const accountDebts = usedAccount?.debts ?? []
+    const accountVaults = usedAccount?.vaults ?? []
 
     const deposits: PositionValue[] = []
     accountDeposits.forEach((deposit) => {
       const asset = ASSETS.find(byDenom(deposit.denom))
       if (!asset) return
       const apy = 0
-      deposits.push(calculatePositionValues('deposits', asset, prices, deposit, apy))
+      const prevDeposit = updatedAccount
+        ? account?.deposits.find((position) => position.denom === deposit.denom) ?? deposit
+        : deposit
+      deposits.push(calculatePositionValues('deposits', asset, prices, deposit, apy, prevDeposit))
     })
 
     const lends = accountLends.map((lending) => {
       const asset = ASSETS.find(byDenom(lending.denom)) ?? ASSETS[0]
       const apr = convertLiquidityRateToAPR(
-        props.lendingData.find((market) => market.asset.denom === lending.denom)
-          ?.marketLiquidityRate ?? 0,
+        lendingData.find((market) => market.asset.denom === lending.denom)?.marketLiquidityRate ??
+          0,
       )
       const apy = convertAprToApy(apr, 365)
-      return calculatePositionValues('lending', asset, prices, lending, apy)
+      const prevLending = updatedAccount
+        ? account?.lends.find((position) => position.denom === lending.denom) ?? lending
+        : lending
+      return calculatePositionValues('lending', asset, prices, lending, apy, prevLending)
     })
 
     const vaults = accountVaults.map((vault) => {
       const apy = (vault.apy ?? 0) * 100
-      return calculateVaultValues(vault, apy)
+      const prevVault = updatedAccount
+        ? account?.vaults.find((position) => position.name === vault.name) ?? vault
+        : vault
+      return calculateVaultValues(vault, apy, prevVault)
     })
+
     const debts = accountDebts.map((debt) => {
       const asset = ASSETS.find(byDenom(debt.denom)) ?? ASSETS[0]
-      const apy =
-        props.borrowingData.find((market) => market.asset.denom === debt.denom)?.borrowRate ?? 0
-      return calculatePositionValues('borrowing', asset, prices, debt, apy * -100)
+      const apy = borrowingData.find((market) => market.asset.denom === debt.denom)?.borrowRate ?? 0
+      const prevDebt = updatedAccount
+        ? account?.debts.find((position) => position.denom === debt.denom) ?? debt
+        : debt
+      return calculatePositionValues('borrowing', asset, prices, debt, apy * -100, prevDebt)
     })
     return [...deposits, ...lends, ...vaults, ...debts]
-  }, [prices, props.account, props.borrowingData, props.lendingData])
+  }, [prices, account, updatedAccount, borrowingData, lendingData])
 
-  const columns = React.useMemo<ColumnDef<AccountBalanceRow>[]>(
+  const columns = useMemo<ColumnDef<AccountBalanceRow>[]>(
     () => [
       {
         header: 'Asset',
@@ -147,11 +178,17 @@ export default function AccountBalancesTable(props: Props) {
         accessorKey: 'value',
         id: 'value',
         cell: ({ row }) => {
+          const change = row.original.change
           const coin = new BNCoin({
             denom: ORACLE_DENOM,
             amount: row.original.value.toString(),
           })
-          return <DisplayCurrency coin={coin} className='text-xs text-right' />
+          return (
+            <DisplayCurrency
+              coin={coin}
+              className={classNames('text-xs text-right', change && `text-${change}`)}
+            />
+          )
         },
       },
       {
@@ -161,13 +198,14 @@ export default function AccountBalancesTable(props: Props) {
         cell: ({ row }) => {
           if (row.original.amount.isEqualTo(BN_ZERO))
             return <span className='w-full text-xs text-center'>&ndash;</span>
+          const change = row.original.change
           const amount = demagnify(
             row.original.amount,
             getAssetByDenom(row.original.denom) ?? ASSETS[0],
           )
           return (
             <FormattedNumber
-              className='text-xs text-right'
+              className={classNames('text-xs text-right', change && `text-${change}`)}
               amount={Number(BN(amount).abs())}
               options={{ maxDecimals: 4, abbreviated: true }}
               animate
@@ -184,7 +222,7 @@ export default function AccountBalancesTable(props: Props) {
             return <span className='w-full text-xs text-center'>&ndash;</span>
           return (
             <FormattedNumber
-              className='text-xs'
+              className={'text-xs'}
               amount={row.original.apy}
               options={{ maxDecimals: 2, minDecimals: 2, suffix: '%' }}
               animate
@@ -215,8 +253,8 @@ export default function AccountBalancesTable(props: Props) {
           text='Fund this Account'
           color='tertiary'
           onClick={() => {
-            if (currentAccount?.id !== props.account.id) {
-              navigate(getRoute(getPage(pathname), address, props.account.id))
+            if (currentAccount?.id !== account.id) {
+              navigate(getRoute(getPage(pathname), address, account.id))
             }
             useStore.setState({
               focusComponent: {
@@ -277,7 +315,7 @@ export default function AccountBalancesTable(props: Props) {
           </tr>
         ))}
       </thead>
-      <tbody className={props.tableBodyClassName}>
+      <tbody className={tableBodyClassName}>
         {table.getRowModel().rows.map((row) => {
           return (
             <tr key={row.id} className=' text-white/60'>

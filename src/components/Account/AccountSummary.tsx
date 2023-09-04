@@ -90,7 +90,7 @@ export default function AccountSummary(props: Props) {
             renderContent: () =>
               props.account ? (
                 <AccountBalancesTable
-                  account={updatedAccount ? updatedAccount : props.account}
+                  account={props.account}
                   borrowingData={borrowAssetsData}
                   lendingData={lendingAssetsData}
                 />

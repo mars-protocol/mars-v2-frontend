@@ -21,4 +21,5 @@ interface AccountBalanceRow {
   value: string | number
   size: number
   apy: number
+  change?: string | false
 }
