@@ -7,7 +7,8 @@ import Text from 'components/Text'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatAmountWithSymbol } from 'utils/formatters'
-import { getTotalValueFromBNCoins } from 'utils/helpers'
+import { getValueFromBNCoins } from 'utils/helpers'
+import { ORACLE_DENOM } from 'constants/oracle'
 
 interface Props {
   primaryAmount: BigNumber
@@ -43,12 +44,11 @@ export default function VaultDepositSubTitle(props: Props) {
     [props.secondaryAmount, props.secondaryAsset.denom],
   )
 
-  const positionValue = getTotalValueFromBNCoins(
+  const positionValue = getValueFromBNCoins(
     [
       BNCoin.fromDenomAndBigNumber(props.primaryAsset.denom, props.primaryAmount),
       BNCoin.fromDenomAndBigNumber(props.secondaryAsset.denom, props.secondaryAmount),
     ],
-    props.displayCurrency,
     prices,
   )
 
@@ -65,7 +65,7 @@ export default function VaultDepositSubTitle(props: Props) {
             'text-xs mt-1 text-white/60 ml-1 inline',
             'before:content-["="] before:pr-1',
           )}
-          coin={new BNCoin({ denom: props.displayCurrency, amount: positionValue.toString() })}
+          coin={new BNCoin({ denom: ORACLE_DENOM, amount: positionValue.toString() })}
         />
       )}
     </>

@@ -21,6 +21,7 @@ interface Props {
   deposits: BNCoin[]
   borrowings: BNCoin[]
 }
+
 export default function useDepositVault(props: Props): {
   actions: Action[]
   minLpToReceive: string
@@ -50,15 +51,7 @@ export default function useDepositVault(props: Props): {
   const debouncedGetMinLpToReceive = useMemo(() => debounce(getMinLpToReceive, 500), [])
 
   const { primaryCoin, secondaryCoin, totalValue } = useMemo(
-    () =>
-      getVaultDepositCoinsAndValue(
-        props.vault,
-        deposits,
-        borrowings,
-        reclaims,
-        displayCurrency,
-        prices,
-      ),
+    () => getVaultDepositCoinsAndValue(props.vault, deposits, borrowings, reclaims, prices),
     [reclaims, deposits, borrowings, props.vault, prices, displayCurrency],
   )
 

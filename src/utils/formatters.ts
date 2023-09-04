@@ -177,16 +177,14 @@ export function demagnify(amount: number | string | BigNumber, asset: Asset | Ps
   return value.isZero() ? 0 : value.shiftedBy(-1 * asset.decimals).toNumber()
 }
 
-export function convertToDisplayAmount(coin: BNCoin, displayCurrency: string, prices: BNCoin[]) {
-  const price = prices.find((price) => price.denom === coin.denom)
+export function getCoinValue(coin: BNCoin, prices: BNCoin[]) {
   const asset = getAllAssets().find((asset) => asset.denom === coin.denom)
-  const displayPrice = prices.find((price) => price.denom === displayCurrency)
+  const coinPrice = prices.find((price) => price.denom === coin.denom)
 
-  if (!price || !displayPrice || !asset) return BN_ZERO
+  if (!coinPrice || !asset) return BN_ZERO
 
   const decimals = asset.denom === ORACLE_DENOM ? 0 : asset.decimals * -1
-
-  return coin.amount.shiftedBy(decimals).multipliedBy(price.amount).dividedBy(displayPrice.amount)
+  return coin.amount.shiftedBy(decimals).multipliedBy(coinPrice.amount)
 }
 
 export function convertLiquidityRateToAPR(rate: number) {

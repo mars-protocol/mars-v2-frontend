@@ -7,7 +7,7 @@ import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.ty
 import { getAssetByDenom } from 'utils/assets'
 import { getTokenPrice, getTokenValue } from 'utils/tokens'
 
-import { getTotalValueFromBNCoins, mergeBNCoinArrays } from './helpers'
+import { getValueFromBNCoins, mergeBNCoinArrays } from './helpers'
 
 export function getVaultsMetaData() {
   return IS_TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
@@ -23,16 +23,11 @@ export function getVaultDepositCoinsAndValue(
   deposits: BNCoin[],
   borrowings: BNCoin[],
   reclaims: BNCoin[],
-  displayCurrency: string,
   prices: BNCoin[],
 ) {
   const depositsAndReclaims = mergeBNCoinArrays(deposits, reclaims)
   const borrowingsAndDepositsAndReclaims = mergeBNCoinArrays(borrowings, depositsAndReclaims)
-  const totalValue = getTotalValueFromBNCoins(
-    borrowingsAndDepositsAndReclaims,
-    displayCurrency,
-    prices,
-  )
+  const totalValue = getValueFromBNCoins(borrowingsAndDepositsAndReclaims, prices)
   const halfValue = totalValue.dividedBy(2)
 
   const primaryAsset = getAssetByDenom(vault.denoms.primary) ?? ASSETS[0]

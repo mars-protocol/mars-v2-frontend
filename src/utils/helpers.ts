@@ -3,9 +3,10 @@ import throttle from 'lodash.throttle'
 
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
-import { convertToDisplayAmount } from 'utils/formatters'
+import { getCoinValue } from 'utils/formatters'
 
 BigNumber.config({ EXPONENTIAL_AT: 1e9 })
+
 export function BN(n: BigNumber.Value) {
   return new BigNumber(n)
 }
@@ -46,15 +47,11 @@ export function mergeBNCoinArrays(array1: BNCoin[], array2: BNCoin[]) {
   return merged
 }
 
-export function getTotalValueFromBNCoins(
-  coins: BNCoin[],
-  displayCurrency: string,
-  prices: BNCoin[],
-): BigNumber {
+export function getValueFromBNCoins(coins: BNCoin[], prices: BNCoin[]): BigNumber {
   let totalValue = BN_ZERO
 
   coins.forEach((coin) => {
-    totalValue = totalValue.plus(convertToDisplayAmount(coin, displayCurrency, prices))
+    totalValue = totalValue.plus(getCoinValue(coin, prices))
   })
 
   return totalValue

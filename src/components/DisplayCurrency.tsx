@@ -8,7 +8,6 @@ import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getDisplayCurrencies } from 'utils/assets'
-import { convertToDisplayAmount } from 'utils/formatters'
 
 interface Props {
   coin: BNCoin
@@ -39,13 +38,22 @@ export default function DisplayCurrency(props: Props) {
     ? ''
     : ` ${displayCurrencyAsset.symbol ? ` ${displayCurrencyAsset.symbol}` : ''}`
 
+  const amount = useMemo(() => {
+    const coinPrice = prices.find((price) => price.denom === props.coin.denom)
+    const displayPrice = prices.find((price) => price.denom === displayCurrency)
+
+    if (!coinPrice || !displayPrice) return 0
+
+    return props.coin.amount.times(coinPrice.amount).dividedBy(displayPrice.amount).toNumber()
+  }, [displayCurrency, prices, props.coin.amount, props.coin.denom])
+
   return (
     <FormattedNumber
       className={classNames(
         props.className,
         props.parentheses && 'before:content-["("] after:content-[")"]',
       )}
-      amount={convertToDisplayAmount(props.coin, displayCurrency, prices).toNumber()}
+      amount={amount}
       options={{
         minDecimals: isUSD ? 2 : 0,
         maxDecimals: 2,

@@ -19,7 +19,8 @@ import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.ty
 import { byDenom } from 'utils/array'
 import { findCoinByDenom, getAssetByDenom } from 'utils/assets'
 import { formatPercent } from 'utils/formatters'
-import { getTotalValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
+import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
+import { ORACLE_DENOM } from 'constants/oracle'
 
 export interface VaultBorrowingsProps {
   borrowings: BNCoin[]
@@ -66,12 +67,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   }, [props.borrowings, computeMaxBorrowAmount, props.vault.address])
 
   const totalValue = useMemo(
-    () =>
-      getTotalValueFromBNCoins(
-        mergeBNCoinArrays(props.deposits, props.borrowings),
-        props.displayCurrency,
-        prices,
-      ),
+    () => getValueFromBNCoins(mergeBNCoinArrays(props.deposits, props.borrowings), prices),
     [props.borrowings, props.deposits, props.displayCurrency, prices],
   )
 
@@ -213,7 +209,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
         <div className='flex justify-between'>
           <Text className='text-white/50'>{`${props.primaryAsset.symbol}-${props.secondaryAsset.symbol} Position Value`}</Text>
           <DisplayCurrency
-            coin={new BNCoin({ denom: props.displayCurrency, amount: totalValue.toString() })}
+            coin={new BNCoin({ denom: ORACLE_DENOM, amount: totalValue.toString() })}
           />
         </div>
         {props.borrowings.map((coin) => {

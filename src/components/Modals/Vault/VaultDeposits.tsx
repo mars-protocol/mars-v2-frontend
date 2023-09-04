@@ -1,9 +1,10 @@
 import BigNumber from 'bignumber.js'
+import { useMemo, useState } from 'react'
 
+import DisplayCurrency from 'components/DisplayCurrency'
 import Button from 'components/Button'
 import DepositCapMessage from 'components/DepositCapMessage'
 import Divider from 'components/Divider'
-import { FormattedNumber } from 'components/FormattedNumber'
 import { Gauge } from 'components/Gauge'
 import { ArrowRight, ExclamationMarkCircled } from 'components/Icons'
 import Slider from 'components/Slider'
@@ -13,11 +14,11 @@ import TokenInput from 'components/TokenInput'
 import { ASSETS } from 'constants/assets'
 import { BN_ZERO } from 'constants/math'
 import usePrices from 'hooks/usePrices'
-import { useMemo, useState } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { accumulateAmounts } from 'utils/accounts'
 import { byDenom } from 'utils/array'
-import { BN, getTotalValueFromBNCoins } from 'utils/helpers'
+import { BN, getValueFromBNCoins } from 'utils/helpers'
+import { ORACLE_DENOM } from 'constants/oracle'
 
 interface Props {
   deposits: BNCoin[]
@@ -58,24 +59,20 @@ export default function VaultDeposit(props: Props) {
   }, [deposits, secondaryAsset.denom])
 
   const primaryValue = useMemo(
-    () => getTotalValueFromBNCoins([primaryCoin], displayCurrency, prices),
-    [primaryCoin, displayCurrency, prices],
-  )
-
-  const secondaryValue = useMemo(
-    () => getTotalValueFromBNCoins([secondaryCoin], displayCurrency, prices),
-    [secondaryCoin, displayCurrency, prices],
+    () => getValueFromBNCoins([primaryCoin], prices),
+    [primaryCoin, prices],
   )
 
   const totalValue = useMemo(
-    () => getTotalValueFromBNCoins([primaryCoin, secondaryCoin], displayCurrency, prices),
-    [primaryCoin, secondaryCoin, displayCurrency, prices],
+    () => getValueFromBNCoins([primaryCoin, secondaryCoin], prices),
+    [primaryCoin, secondaryCoin, prices],
   )
 
   const primaryValuePercentage = useMemo(() => {
     const value = primaryValue.dividedBy(totalValue).multipliedBy(100).decimalPlaces(2).toNumber()
     return isNaN(value) ? 50 : value
   }, [primaryValue, totalValue])
+
   const secondaryValuePercentage = useMemo(
     () => new BigNumber(100).minus(primaryValuePercentage).integerValue(2).toNumber() ?? 50,
     [primaryValuePercentage],
@@ -240,17 +237,7 @@ export default function VaultDeposit(props: Props) {
         </div>
         <div className='flex justify-between'>
           <Text className='text-white/50'>{`${primaryAsset.symbol}-${secondaryAsset.symbol} Deposit Value`}</Text>
-          <FormattedNumber
-            amount={totalValue.toNumber()}
-            options={{
-              maxDecimals: displayCurrencyAsset.decimals,
-              minDecimals: displayCurrency === 'usd' ? 2 : 0,
-              prefix: displayCurrency === 'usd' ? '$' : '',
-              suffix: displayCurrency !== 'usd' ? ` ${displayCurrencyAsset}` : '',
-              abbreviated: true,
-            }}
-            animate
-          />
+          <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, totalValue)} />
         </div>
         <Button
           onClick={() => props.toggleOpen(1)}

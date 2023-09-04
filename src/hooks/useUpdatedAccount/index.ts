@@ -12,6 +12,8 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { cloneAccount } from 'utils/accounts'
 import { byDenom } from 'utils/array'
+import { getValueFromBNCoins } from 'utils/helpers'
+import usePrices from 'hooks/usePrices'
 
 export interface VaultValue {
   address: string
@@ -20,6 +22,7 @@ export interface VaultValue {
 
 export function useUpdatedAccount(account?: Account) {
   const { data: availableVaults } = useVaults(false)
+  const { data: prices } = usePrices()
   const [updatedAccount, setUpdatedAccount] = useState<Account | undefined>(
     account ? cloneAccount(account) : undefined,
   )
@@ -143,9 +146,11 @@ export function useUpdatedAccount(account?: Account) {
     [account, addDebts, addDeposits, addLends, removeDeposits, removeLends],
   )
 
-  const simulateVaultDeposits = useCallback(
-    (coins: BNCoin[]) => {
+  const simulateVaultDeposit = useCallback(
+    (address: string, coins: BNCoin[]) => {
       if (!account) return
+
+      const value = getValueFromBNCoins(coins, prices)
       const totalDeposits: BNCoin[] = []
       const totalLends: BNCoin[] = []
 
@@ -155,18 +160,11 @@ export function useUpdatedAccount(account?: Account) {
         totalLends.push(lends)
       })
 
+      addVaultValues([{ address, value }])
       removeDeposits(totalDeposits)
       removeLends(totalLends)
     },
-    [account, removeDeposits, removeLends],
-  )
-
-  const simulateVaultAction = useCallback(
-    (action: 'add' | 'edit', vaultPosition: { address: string; value: BigNumber }) => {
-      addVaultValues([])
-      if (action === 'add') addVaultValues([vaultPosition])
-    },
-    [addVaultValues],
+    [account, prices],
   )
 
   useEffect(() => {
@@ -221,8 +219,7 @@ export function useUpdatedAccount(account?: Account) {
     simulateLending,
     simulateRepay,
     simulateTrade,
-    simulateVaultAction,
-    simulateVaultDeposits,
+    simulateVaultDeposit,
     simulateWithdraw,
   }
 }

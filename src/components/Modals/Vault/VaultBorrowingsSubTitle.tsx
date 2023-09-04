@@ -6,7 +6,8 @@ import Text from 'components/Text'
 import { BN_ZERO } from 'constants/math'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
-import { convertToDisplayAmount, formatAmountWithSymbol } from 'utils/formatters'
+import { formatAmountWithSymbol, getCoinValue } from 'utils/formatters'
+import { ORACLE_DENOM } from 'constants/oracle'
 
 interface Props {
   borrowings: BNCoin[]
@@ -21,7 +22,7 @@ export default function VaultBorrowingsSubTitle(props: Props) {
     props.borrowings.map((coin) => {
       const price = prices.find((p) => p.denom === coin.denom)?.amount
       if (!price || coin.amount.isZero()) return
-      borrowingValue = convertToDisplayAmount(coin, props.displayCurrency, prices)
+      borrowingValue = getCoinValue(coin, prices)
     })
     return borrowingValue
   }, [props.borrowings, prices, props.displayCurrency])
@@ -52,7 +53,7 @@ export default function VaultBorrowingsSubTitle(props: Props) {
             'text-xs mt-1 text-white/60 ml-1 inline',
             'before:content-["="] before:pr-1',
           )}
-          coin={new BNCoin({ denom: props.displayCurrency, amount: borrowingValue.toString() })}
+          coin={new BNCoin({ denom: ORACLE_DENOM, amount: borrowingValue.toString() })}
         />
       )}
     </>

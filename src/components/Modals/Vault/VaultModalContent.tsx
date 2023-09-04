@@ -17,9 +17,9 @@ import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import { BNCoin } from 'types/classes/BNCoin'
-import { mergeBNCoinArrays } from 'utils/helpers'
-import { convertToDisplayAmount, magnify } from 'utils/formatters'
+import { getCoinValue, magnify } from 'utils/formatters'
 import { getCapLeftWithBuffer } from 'utils/generic'
+import { mergeBNCoinArrays } from 'utils/helpers'
 
 interface Props {
   vault: Vault | DepositedVault
@@ -30,14 +30,8 @@ interface Props {
 }
 
 export default function VaultModalContent(props: Props) {
-  const {
-    addDebts,
-    addedDebts,
-    removedDeposits,
-    removedLends,
-    simulateVaultAction,
-    simulateVaultDeposits,
-  } = useUpdatedAccount(props.account)
+  const { addDebts, addedDebts, removedDeposits, removedLends, simulateVaultDeposit } =
+    useUpdatedAccount(props.account)
 
   const { data: prices } = usePrices()
   const [displayCurrency] = useLocalStorage<string>(
@@ -60,9 +54,8 @@ export default function VaultModalContent(props: Props) {
 
     if (totalValue.isGreaterThan(capLeft)) {
       const amount = magnify(
-        convertToDisplayAmount(
+        getCoinValue(
           BNCoin.fromDenomAndBigNumber(props.vault.cap.denom, capLeft),
-          displayAsset.denom,
           prices,
         ).toString(),
         displayAsset,
@@ -75,16 +68,11 @@ export default function VaultModalContent(props: Props) {
 
   const handleDepositSelect = useCallback(
     (selectedCoins: BNCoin[]) => {
-      simulateVaultDeposits(selectedCoins)
+      simulateVaultDeposit(props.vault.address, selectedCoins)
       setSelectedCoins(selectedCoins)
     },
-    [simulateVaultDeposits],
+    [props.vault.address, simulateVaultDeposit],
   )
-
-  useEffect(() => {
-    const vaultValue = { address: props.vault.address, value: totalValue }
-    simulateVaultAction('add', vaultValue)
-  }, [totalValue, simulateVaultAction, props.vault.address])
 
   const onChangeIsCustomRatio = useCallback(
     (isCustomRatio: boolean) => setIsCustomRatio(isCustomRatio),
