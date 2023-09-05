@@ -362,7 +362,7 @@ export default function createBroadcastSlice(
       accountId: string
       coin: BNCoin
       accountBalance?: boolean
-      lends?: BNCoin
+      lend?: BNCoin
     }) => {
       const actions: Action[] = [
         {
@@ -372,8 +372,8 @@ export default function createBroadcastSlice(
         },
       ]
 
-      if (options.lends && options.lends.amount.isGreaterThan(0))
-        actions.unshift({ reclaim: options.lends.toActionCoin() })
+      if (options.lend && options.lend.amount.isGreaterThan(0))
+        actions.unshift({ reclaim: options.lend.toActionCoin() })
 
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {

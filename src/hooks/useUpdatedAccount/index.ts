@@ -5,7 +5,7 @@ import usePrices from 'hooks/usePrices'
 import {
   addCoins,
   addValueToVaults,
-  getDepositAndLendsCoinToSpend,
+  getDepositAndLendCoinsToSpend,
   removeCoins,
 } from 'hooks/useUpdatedAccount/functions'
 import useVaults from 'hooks/useVaults'
@@ -89,10 +89,10 @@ export function useUpdatedAccount(account?: Account) {
   const simulateRepay = useCallback(
     (coin: BNCoin) => {
       if (!account) return
-      const { deposits, lends } = getDepositAndLendsCoinToSpend(coin, account)
+      const { deposit, lend } = getDepositAndLendCoinsToSpend(coin, account)
       removeDebts([coin])
-      removeDeposits([deposits])
-      removeLends([lends])
+      removeDeposits([deposit])
+      removeLends([lend])
     },
     [account, removeDebts, removeDeposits, removeLends],
   )
@@ -115,10 +115,10 @@ export function useUpdatedAccount(account?: Account) {
       removeLends([])
       addDebts([])
 
-      const { deposits, lends } = getDepositAndLendsCoinToSpend(coin, account)
-      const totalBalance = deposits.amount.plus(lends.amount)
-      removeDeposits([deposits])
-      removeLends([lends])
+      const { deposit, lend } = getDepositAndLendCoinsToSpend(coin, account)
+      const totalBalance = deposit.amount.plus(lend.amount)
+      removeDeposits([deposit])
+      removeLends([lend])
       if (withdrawWithBorrowing) {
         addDebts([BNCoin.fromDenomAndBigNumber(coin.denom, coin.amount.minus(totalBalance))])
       }
@@ -134,10 +134,10 @@ export function useUpdatedAccount(account?: Account) {
       addDeposits([])
       addLends([])
 
-      const { deposits, lends } = getDepositAndLendsCoinToSpend(removeCoin, account)
+      const { deposit, lend } = getDepositAndLendCoinsToSpend(removeCoin, account)
 
-      removeDeposits([deposits])
-      removeLends([lends])
+      removeDeposits([deposit])
+      removeLends([lend])
       if (target === 'deposit') addDeposits([addCoin])
       if (target === 'lend') addLends([addCoin])
 
@@ -155,9 +155,9 @@ export function useUpdatedAccount(account?: Account) {
       const totalLends: BNCoin[] = []
 
       coins.forEach((coin) => {
-        const { deposits, lends } = getDepositAndLendsCoinToSpend(coin, account)
-        totalDeposits.push(deposits)
-        totalLends.push(lends)
+        const { deposit, lend } = getDepositAndLendCoinsToSpend(coin, account)
+        totalDeposits.push(deposit)
+        totalLends.push(lend)
       })
 
       addVaultValues([{ address, value }])
