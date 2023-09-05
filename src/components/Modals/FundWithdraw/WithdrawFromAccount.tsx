@@ -14,7 +14,7 @@ import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { cloneAccount, getMergedBalances, removeDepositsAndLends } from 'utils/accounts'
+import { cloneAccount, getMergedBalancesForAsset, removeDepositsAndLends } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { getEnabledMarketAssets } from 'utils/assets'
 
@@ -36,7 +36,7 @@ export default function WithdrawFromAccount(props: Props) {
   const accountClone = cloneAccount(account)
   const borrowAccount = removeDepositsAndLends(accountClone, currentAsset.denom)
   const { computeMaxBorrowAmount } = useHealthComputer(borrowAccount)
-  const balances = getMergedBalances(account, getEnabledMarketAssets())
+  const balances = getMergedBalancesForAsset(account, getEnabledMarketAssets())
   const maxWithdrawAmount = computeMaxWithdrawAmount(currentAsset.denom)
   const maxWithdrawWithBorrowAmount = computeMaxBorrowAmount(currentAsset.denom, 'wallet').plus(
     maxWithdrawAmount,

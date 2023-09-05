@@ -73,8 +73,6 @@ export default function Slider(props: Props) {
     setShowTooltip(false)
   }
 
-  // draggable workaround - to solve node compatibility issues
-  // TODO: find a replacement for react-draggable
   const DraggableElement: any = Draggable
 
   return (

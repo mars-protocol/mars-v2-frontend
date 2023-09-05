@@ -1,16 +1,19 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import { BN_ZERO } from 'constants/math'
+import usePrices from 'hooks/usePrices'
 import {
   addCoins,
   addValueToVaults,
-  getDepositsAndLendsAfterCoinSpent,
+  getDepositAndLendCoinsToSpend,
   removeCoins,
 } from 'hooks/useUpdatedAccount/functions'
+import useVaults from 'hooks/useVaults'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { cloneAccount } from 'utils/accounts'
 import { byDenom } from 'utils/array'
+import { getValueFromBNCoins } from 'utils/helpers'
 
 export interface VaultValue {
   address: string
@@ -18,6 +21,8 @@ export interface VaultValue {
 }
 
 export function useUpdatedAccount(account?: Account) {
+  const { data: availableVaults } = useVaults(false)
+  const { data: prices } = usePrices()
   const [updatedAccount, setUpdatedAccount] = useState<Account | undefined>(
     account ? cloneAccount(account) : undefined,
   )
@@ -84,10 +89,10 @@ export function useUpdatedAccount(account?: Account) {
   const simulateRepay = useCallback(
     (coin: BNCoin) => {
       if (!account) return
-      const { deposits, lends } = getDepositsAndLendsAfterCoinSpent(coin, account)
+      const { deposit, lend } = getDepositAndLendCoinsToSpend(coin, account)
       removeDebts([coin])
-      removeDeposits([deposits])
-      removeLends([lends])
+      removeDeposits([deposit])
+      removeLends([lend])
     },
     [account, removeDebts, removeDeposits, removeLends],
   )
@@ -110,10 +115,10 @@ export function useUpdatedAccount(account?: Account) {
       removeLends([])
       addDebts([])
 
-      const { deposits, lends } = getDepositsAndLendsAfterCoinSpent(coin, account)
-      const totalBalance = deposits.amount.plus(lends.amount)
-      removeDeposits([deposits])
-      removeLends([lends])
+      const { deposit, lend } = getDepositAndLendCoinsToSpend(coin, account)
+      const totalBalance = deposit.amount.plus(lend.amount)
+      removeDeposits([deposit])
+      removeLends([lend])
       if (withdrawWithBorrowing) {
         addDebts([BNCoin.fromDenomAndBigNumber(coin.denom, coin.amount.minus(totalBalance))])
       }
@@ -129,10 +134,10 @@ export function useUpdatedAccount(account?: Account) {
       addDeposits([])
       addLends([])
 
-      const { deposits, lends } = getDepositsAndLendsAfterCoinSpent(removeCoin, account)
+      const { deposit, lend } = getDepositAndLendCoinsToSpend(removeCoin, account)
 
-      removeDeposits([deposits])
-      removeLends([lends])
+      removeDeposits([deposit])
+      removeLends([lend])
       if (target === 'deposit') addDeposits([addCoin])
       if (target === 'lend') addLends([addCoin])
 
@@ -141,13 +146,38 @@ export function useUpdatedAccount(account?: Account) {
     [account, addDebts, addDeposits, addLends, removeDeposits, removeLends],
   )
 
+  const simulateVaultDeposit = useCallback(
+    (address: string, coins: BNCoin[]) => {
+      if (!account) return
+
+      const value = getValueFromBNCoins(coins, prices)
+      const totalDeposits: BNCoin[] = []
+      const totalLends: BNCoin[] = []
+
+      coins.forEach((coin) => {
+        const { deposit, lend } = getDepositAndLendCoinsToSpend(coin, account)
+        totalDeposits.push(deposit)
+        totalLends.push(lend)
+      })
+
+      addVaultValues([{ address, value }])
+      removeDeposits(totalDeposits)
+      removeLends(totalLends)
+    },
+    [account, prices],
+  )
+
   useEffect(() => {
     if (!account) return
 
     const accountCopy = cloneAccount(account)
     accountCopy.deposits = addCoins(addedDeposits, [...accountCopy.deposits])
     accountCopy.debts = addCoins(addedDebts, [...accountCopy.debts])
-    accountCopy.vaults = addValueToVaults(addedVaultValues, [...accountCopy.vaults])
+    accountCopy.vaults = addValueToVaults(
+      addedVaultValues,
+      [...accountCopy.vaults],
+      availableVaults ?? [],
+    )
     accountCopy.deposits = removeCoins(removedDeposits, [...accountCopy.deposits])
     accountCopy.debts = removeCoins(removedDebts, [...accountCopy.debts])
     accountCopy.lends = addCoins(addedLends, [...accountCopy.lends])
@@ -165,6 +195,7 @@ export function useUpdatedAccount(account?: Account) {
     addedVaultValues,
     addedLends,
     removedLends,
+    availableVaults,
   ])
 
   return {
@@ -188,6 +219,7 @@ export function useUpdatedAccount(account?: Account) {
     simulateLending,
     simulateRepay,
     simulateTrade,
+    simulateVaultDeposit,
     simulateWithdraw,
   }
 }

@@ -9,9 +9,11 @@ import AssetListTable from 'components/MarketAssetTable'
 import MarketAssetTableRow from 'components/MarketAssetTable/MarketAssetTableRow'
 import MarketDetails from 'components/MarketAssetTable/MarketDetails'
 import TitleAndSubCell from 'components/TitleAndSubCell'
-import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
 import { convertLiquidityRateToAPR, demagnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+
+import { BN_ZERO } from '../../../constants/math'
+import AmountAndValue from '../../AmountAndValue'
 
 interface Props {
   title: string
@@ -20,7 +22,6 @@ interface Props {
 
 export default function LendingMarketsTable(props: Props) {
   const { title, data } = props
-  const { symbol: displayCurrencySymbol } = useDisplayCurrencyPrice()
   const shouldShowAccountDeposit = !!data[0]?.accountLentValue
 
   const rowRenderer = useCallback(
@@ -49,12 +50,12 @@ export default function LendingMarketsTable(props: Props) {
           const asset = row.original.asset
 
           return (
-            <div className='flex flex-1 items-center gap-3'>
+            <div className='flex items-center flex-1 gap-3'>
               <AssetImage asset={asset} size={32} />
               <TitleAndSubCell
                 title={asset.symbol}
                 sub={asset.name}
-                className='min-w-15 text-left'
+                className='text-left min-w-15'
               />
             </div>
           )
@@ -66,14 +67,12 @@ export default function LendingMarketsTable(props: Props) {
               accessorKey: 'accountDepositValue',
               header: 'Deposited',
               cell: ({ row }) => {
-                const accountDepositValue = row.original.accountLentValue as BigNumber
+                const amount = row.original.accountLentAmount
 
                 return (
-                  <FormattedNumber
-                    className='text-xs'
-                    animate
-                    amount={accountDepositValue.toNumber()}
-                    options={{ suffix: ` ${displayCurrencySymbol}` }}
+                  <AmountAndValue
+                    asset={row.original.asset}
+                    amount={amount ? BN(amount) : BN_ZERO}
                   />
                 )
               },
@@ -135,7 +134,7 @@ export default function LendingMarketsTable(props: Props) {
         ),
       },
     ],
-    [displayCurrencySymbol, shouldShowAccountDeposit],
+    [shouldShowAccountDeposit],
   )
 
   return <AssetListTable title={title} rowRenderer={rowRenderer} columns={columns} data={data} />

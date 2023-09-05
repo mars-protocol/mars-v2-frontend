@@ -32,9 +32,7 @@ export default function AccordionContent(props: Props) {
       >
         <div>
           <Text>{title}</Text>
-          <Text size='xs' className='mt-1 text-white/60'>
-            {renderSubTitle()}
-          </Text>
+          {renderSubTitle()}
         </div>
         <div className='block pr-1 group-[[open]]:hidden'>
           {isOpen ? <ChevronDown className='h-1.5' /> : <ChevronRight className='w-1.5' />}

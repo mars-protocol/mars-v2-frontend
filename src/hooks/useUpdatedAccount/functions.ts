@@ -40,6 +40,7 @@ export function removeCoins(coinsToRemove: BNCoin[], currentCoins: BNCoin[]) {
 export function addValueToVaults(
   vaultValues: VaultValue[],
   vaults: DepositedVault[],
+  availableVaults: Vault[],
 ): DepositedVault[] {
   const currentVaultAddresses = vaults.map((vault) => vault.address)
 
@@ -55,10 +56,12 @@ export function addValueToVaults(
       const vaultMetaData = getVaultMetaData(vaultValue.address)
 
       if (!vaultMetaData) return
+      const apy = availableVaults.find((vault) => vault.address === vaultValue.address)?.apy ?? null
 
       vaults.push({
         ...vaultMetaData,
         ...MOCK_DEPOSITED_VAULT_POSITION,
+        apy,
         values: {
           primary: halfValue,
           secondary: halfValue,
@@ -70,10 +73,10 @@ export function addValueToVaults(
   return vaults
 }
 
-export function getDepositsAndLendsAfterCoinSpent(coin: BNCoin, account?: Account) {
+export function getDepositAndLendCoinsToSpend(coin: BNCoin, account?: Account) {
   const makeOutput = (depositsAmount: BigNumber, lendsAmount: BigNumber) => ({
-    deposits: BNCoin.fromDenomAndBigNumber(coin.denom, depositsAmount),
-    lends: BNCoin.fromDenomAndBigNumber(coin.denom, lendsAmount),
+    deposit: BNCoin.fromDenomAndBigNumber(coin.denom, depositsAmount),
+    lend: BNCoin.fromDenomAndBigNumber(coin.denom, lendsAmount),
   })
 
   if (!account) return makeOutput(BN_ZERO, BN_ZERO)

@@ -5,11 +5,11 @@ import Card from 'components/Card'
 import { VaultTable } from 'components/Earn/Farm/VaultTable'
 import VaultUnlockBanner from 'components/Earn/Farm/VaultUnlockBanner'
 import { IS_TESTNET } from 'constants/env'
+import { BN_ZERO } from 'constants/math'
 import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import useDepositedVaults from 'hooks/useDepositedVaults'
 import useVaults from 'hooks/useVaults'
 import { VaultStatus } from 'types/enums/vault'
-import { BN_ZERO } from 'constants/math'
 
 interface Props {
   type: 'available' | 'deposited'
@@ -26,6 +26,7 @@ function Content(props: Props) {
   const { deposited, available } = useMemo(() => {
     return vaultsMetaData.reduce(
       (prev: { deposited: DepositedVault[]; available: Vault[] }, curr) => {
+        if (!vaults) return prev
         const vault = vaults.find((vault) => vault.address === curr.address)
         const depositedVault = depositedVaults?.find((vault) => vault.address === curr.address)
 
@@ -59,7 +60,7 @@ function Content(props: Props) {
     <>
       {!isAvailable && <VaultUnlockBanner vaults={unlockedVaults} />}
       <Card
-        className='h-fit w-full bg-white/5'
+        className='w-full h-fit bg-white/5'
         title={isAvailable ? 'Available vaults' : 'Deposited'}
       >
         <VaultTable data={vaultsToDisplay} />
@@ -85,7 +86,7 @@ function Fallback() {
   }))
 
   return (
-    <Card className='h-fit w-full bg-white/5' title='Available vaults'>
+    <Card className='w-full h-fit bg-white/5' title='Available vaults'>
       <VaultTable data={mockVaults} isLoading />
     </Card>
   )

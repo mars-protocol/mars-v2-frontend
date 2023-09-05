@@ -45,7 +45,7 @@ export const calculateAccountValue = (
           acc.plus(vaultPosition.values.primary).plus(vaultPosition.values.secondary),
         BN_ZERO,
       ) || BN_ZERO
-    ).shiftedBy(-6)
+    )
   }
 
   return account[type]?.reduce((acc, position) => {
@@ -85,13 +85,8 @@ export const calculateAccountApr = (
   })
 
   vaults?.forEach((vault) => {
-    const asset = getAssetByDenom(vault.denoms.lp)
-    if (!asset) return BN_ZERO
-    const price = prices.find(byDenom(vault.denoms.lp))?.amount ?? 0
-    const amount = BN(vault.amounts.locked).shiftedBy(-asset.decimals)
-    const positionInterest = amount
-      .multipliedBy(price)
-      .multipliedBy(convertApyToApr(vault?.apy ?? 0, 365))
+    const vaultValue = vault.values.primary.plus(vault.values.secondary)
+    const positionInterest = vaultValue.multipliedBy(convertApyToApr(vault?.apy ?? 0, 365))
     totalVaultsInterestValue = totalVaultsInterestValue.plus(positionInterest)
   })
 
@@ -219,7 +214,7 @@ export function removeDepositsAndLends(account: Account, denom: string) {
   }
 }
 
-export function getMergedBalances(account: Account, assets: Asset[]) {
+export function getMergedBalancesForAsset(account: Account, assets: Asset[]) {
   const balances: BNCoin[] = []
   assets.forEach((asset) => {
     const balance = accumulateAmounts(asset.denom, [...account.deposits, ...account.lends])

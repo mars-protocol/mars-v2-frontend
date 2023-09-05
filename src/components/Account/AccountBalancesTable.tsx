@@ -17,19 +17,19 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
+import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/useCurrentAccount'
-import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { getAssetByDenom } from 'utils/assets'
-import { convertLiquidityRateToAPR, convertToDisplayAmount, demagnify } from 'utils/formatters'
+import { convertLiquidityRateToAPR, demagnify, getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { convertAprToApy } from 'utils/parsers'
 import { getPage, getRoute } from 'utils/route'
+
+import { ORACLE_DENOM } from '../../constants/oracle'
 
 interface Props {
   account: Account
@@ -38,11 +38,20 @@ interface Props {
   tableBodyClassName?: string
 }
 
+interface PositionValue {
+  type: 'deposits' | 'borrowing' | 'lending'
+  symbol: string
+  size: number
+  value: string
+  denom: string
+  amount: BigNumber
+  apy: number
+}
+
 function calculatePositionValues(
   type: 'deposits' | 'borrowing' | 'lending',
   asset: Asset,
   prices: BNCoin[],
-  displayCurrencyDenom: string,
   position: BNCoin,
   apy: number,
 ) {
@@ -51,22 +60,29 @@ function calculatePositionValues(
     type,
     symbol: asset.symbol,
     size: demagnify(amount, asset),
-    value: convertToDisplayAmount(
-      BNCoin.fromDenomAndBigNumber(denom, amount),
-      displayCurrencyDenom,
-      prices,
-    ).toString(),
+    value: getCoinValue(BNCoin.fromDenomAndBigNumber(denom, amount), prices).toString(),
     denom,
     amount: type === 'borrowing' ? amount.negated() : amount,
     apy,
   }
 }
 
+function calculateVaultValues(vault: DepositedVault, apy: number) {
+  const { name } = vault
+  const totalValue = vault.values.primary.plus(vault.values.secondary)
+
+  return {
+    type: 'vault',
+    symbol: name,
+    size: 0,
+    value: totalValue.toString(),
+    denom: vault.denoms.lp,
+    amount: BN_ZERO,
+    apy,
+  }
+}
+
 export default function AccountBalancesTable(props: Props) {
-  const [displayCurrency] = useLocalStorage<string>(
-    DISPLAY_CURRENCY_KEY,
-    DEFAULT_SETTINGS.displayCurrency,
-  )
   const { data: prices } = usePrices()
   const currentAccount = useCurrentAccount()
   const navigate = useNavigate()
@@ -77,31 +93,38 @@ export default function AccountBalancesTable(props: Props) {
     const accountDeposits = props.account?.deposits ?? []
     const accountLends = props.account?.lends ?? []
     const accountDebts = props.account?.debts ?? []
+    const accountVaults = props.account?.vaults ?? []
 
-    const deposits = accountDeposits.map((deposit) => {
-      const asset = ASSETS.find((asset) => asset.denom === deposit.denom) ?? ASSETS[0]
+    const deposits: PositionValue[] = []
+    accountDeposits.forEach((deposit) => {
+      const asset = ASSETS.find(byDenom(deposit.denom))
+      if (!asset) return
       const apy = 0
-      return calculatePositionValues('deposits', asset, prices, displayCurrency, deposit, apy)
+      deposits.push(calculatePositionValues('deposits', asset, prices, deposit, apy))
     })
 
     const lends = accountLends.map((lending) => {
-      const asset = ASSETS.find((asset) => asset.denom === lending.denom) ?? ASSETS[0]
+      const asset = ASSETS.find(byDenom(lending.denom)) ?? ASSETS[0]
       const apr = convertLiquidityRateToAPR(
         props.lendingData.find((market) => market.asset.denom === lending.denom)
           ?.marketLiquidityRate ?? 0,
       )
       const apy = convertAprToApy(apr, 365)
-      return calculatePositionValues('lending', asset, prices, displayCurrency, lending, apy)
+      return calculatePositionValues('lending', asset, prices, lending, apy)
+    })
+
+    const vaults = accountVaults.map((vault) => {
+      const apy = (vault.apy ?? 0) * 100
+      return calculateVaultValues(vault, apy)
     })
     const debts = accountDebts.map((debt) => {
       const asset = ASSETS.find(byDenom(debt.denom)) ?? ASSETS[0]
       const apy =
         props.borrowingData.find((market) => market.asset.denom === debt.denom)?.borrowRate ?? 0
-      return calculatePositionValues('borrowing', asset, prices, displayCurrency, debt, apy * -100)
+      return calculatePositionValues('borrowing', asset, prices, debt, apy * -100)
     })
-
-    return [...deposits, ...lends, ...debts]
-  }, [displayCurrency, prices, props.account, props.borrowingData, props.lendingData])
+    return [...deposits, ...lends, ...vaults, ...debts]
+  }, [prices, props.account, props.borrowingData, props.lendingData])
 
   const columns = React.useMemo<ColumnDef<AccountBalanceRow>[]>(
     () => [
@@ -114,6 +137,7 @@ export default function AccountBalancesTable(props: Props) {
             <Text size='xs'>
               {row.original.symbol}
               {row.original.type === 'lending' && <span className='ml-1 text-profit'>(lent)</span>}
+              {row.original.type === 'vault' && <span className='ml-1 text-profit'>(farm)</span>}
             </Text>
           )
         },
@@ -124,8 +148,8 @@ export default function AccountBalancesTable(props: Props) {
         id: 'value',
         cell: ({ row }) => {
           const coin = new BNCoin({
-            denom: row.original.denom,
-            amount: row.original.amount.toString(),
+            denom: ORACLE_DENOM,
+            amount: row.original.value.toString(),
           })
           return <DisplayCurrency coin={coin} className='text-xs text-right' />
         },
@@ -135,6 +159,8 @@ export default function AccountBalancesTable(props: Props) {
         accessorKey: 'size',
         header: 'Size',
         cell: ({ row }) => {
+          if (row.original.amount.isEqualTo(BN_ZERO))
+            return <span className='w-full text-xs text-center'>&ndash;</span>
           const amount = demagnify(
             row.original.amount,
             getAssetByDenom(row.original.denom) ?? ASSETS[0],
@@ -154,7 +180,7 @@ export default function AccountBalancesTable(props: Props) {
         accessorKey: 'apy',
         header: 'APY',
         cell: ({ row }) => {
-          if (row.original.apy === 0)
+          if (row.original.type === 'deposit')
             return <span className='w-full text-xs text-center'>&ndash;</span>
           return (
             <FormattedNumber
@@ -210,7 +236,7 @@ export default function AccountBalancesTable(props: Props) {
       <thead className='border-b border-white/5'>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header, index) => {
+            {headerGroup.headers.map((header) => {
               return (
                 <th
                   key={header.id}
@@ -262,7 +288,7 @@ export default function AccountBalancesTable(props: Props) {
                   <td
                     key={cell.id}
                     className={classNames(
-                      cell.column.id === 'symbol' ? `border-l ${borderClass}` : 'pl-4 text-right',
+                      cell.column.id === 'symbol' ? `border-l ${borderClass}` : 'text-right',
                       'p-2',
                     )}
                   >

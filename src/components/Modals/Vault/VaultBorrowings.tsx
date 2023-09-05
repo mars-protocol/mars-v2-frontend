@@ -19,6 +19,8 @@ import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.ty
 import { byDenom } from 'utils/array'
 import { findCoinByDenom, getAssetByDenom } from 'utils/assets'
 import { formatPercent } from 'utils/formatters'
+import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
+import { ORACLE_DENOM } from 'constants/oracle'
 
 export interface VaultBorrowingsProps {
   borrowings: BNCoin[]
@@ -28,18 +30,29 @@ export interface VaultBorrowingsProps {
   vault: Vault
   depositActions: Action[]
   onChangeBorrowings: (borrowings: BNCoin[]) => void
+  displayCurrency: string
   depositCapReachedCoins: BNCoin[]
 }
 
 export default function VaultBorrowings(props: VaultBorrowingsProps) {
   const { data: marketAssets } = useMarketAssets()
   const { data: prices } = usePrices()
-  const baseCurrency = useStore((s) => s.baseCurrency)
   const vaultModal = useStore((s) => s.vaultModal)
   const depositIntoVault = useStore((s) => s.depositIntoVault)
   const [isConfirming, setIsConfirming] = useState(false)
   const updatedAccount = useStore((s) => s.updatedAccount)
   const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
+  const [percentage, setPercentage] = useState<number>(0)
+
+  const calculateSliderPercentage = (maxBorrowAmounts: BNCoin[], borrowings: BNCoin[]) => {
+    if (borrowings.length === 1) {
+      const amount = borrowings[0].amount
+      if (amount.isZero()) return 0
+      const max = maxBorrowAmounts.find(byDenom(borrowings[0].denom))?.amount || BN_ZERO
+      return amount.times(100).dividedBy(max).toNumber()
+    }
+    return 0
+  }
 
   const maxBorrowAmounts: BNCoin[] = useMemo(() => {
     return props.borrowings.map((borrowing) => {
@@ -53,25 +66,10 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
     })
   }, [props.borrowings, computeMaxBorrowAmount, props.vault.address])
 
-  const borrowingValue = useMemo(() => {
-    return props.borrowings.reduce((prev, curr) => {
-      const price = prices.find((price) => price.denom === curr.denom)?.amount
-      if (!price) return prev
-
-      return prev.plus(curr.amount.multipliedBy(price))
-    }, BN_ZERO as BigNumber)
-  }, [props.borrowings, prices])
-
-  const totalValue = useMemo(() => {
-    const depositValue = props.deposits.reduce((prev, curr) => {
-      const price = prices.find((price) => price.denom === curr.denom)?.amount
-      if (!price) return prev
-      const value = curr.amount.multipliedBy(price)
-      return prev.plus(value)
-    }, BN_ZERO as BigNumber)
-
-    return depositValue.plus(borrowingValue)
-  }, [props.deposits, borrowingValue, prices])
+  const totalValue = useMemo(
+    () => getValueFromBNCoins(mergeBNCoinArrays(props.deposits, props.borrowings), prices),
+    [props.borrowings, props.deposits, prices],
+  )
 
   useEffect(() => {
     const selectedBorrowDenoms = vaultModal?.selectedBorrowDenoms || []
@@ -81,25 +79,24 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
     ) {
       return
     }
-
     const updatedBorrowings = selectedBorrowDenoms.map((denom) => {
       const amount = findCoinByDenom(denom, props.borrowings)?.amount || BN_ZERO
+
       return new BNCoin({
         denom,
         amount: amount.toString(),
       })
     })
     props.onChangeBorrowings(updatedBorrowings)
-  }, [vaultModal, props])
-
-  const [percentage, setPercentage] = useState<number>(0)
+    setPercentage(calculateSliderPercentage(maxBorrowAmounts, updatedBorrowings))
+  }, [vaultModal, props, maxBorrowAmounts])
 
   function onChangeSlider(value: number) {
     if (props.borrowings.length !== 1) return
 
     const denom = props.borrowings[0].denom
     const currentAmount = props.borrowings[0].amount
-    const maxAmount = maxBorrowAmounts.find((coin) => coin.denom === denom)?.amount ?? BN_ZERO
+    const maxAmount = maxBorrowAmounts.find(byDenom(denom))?.amount ?? BN_ZERO
     const newBorrowings: BNCoin[] = [
       new BNCoin({
         denom,
@@ -123,7 +120,8 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   function onDelete(denom: string) {
     const index = props.borrowings.findIndex((coin) => coin.denom === denom)
     props.borrowings.splice(index, 1)
-    props.onChangeBorrowings([...props.borrowings])
+    const newBorrowings = [...props.borrowings]
+    props.onChangeBorrowings(newBorrowings)
     if (!vaultModal) return
 
     useStore.setState({
@@ -132,6 +130,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
         selectedBorrowDenoms: props.borrowings.map((coin) => coin.denom),
       },
     })
+    setPercentage(calculateSliderPercentage(maxBorrowAmounts, newBorrowings))
   }
 
   function addAsset() {
@@ -140,6 +139,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
         selectedDenoms: props.borrowings.map((coin) => coin.denom),
       },
     })
+    setPercentage(calculateSliderPercentage(maxBorrowAmounts, props.borrowings))
   }
 
   async function onConfirm() {
@@ -209,7 +209,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
         <div className='flex justify-between'>
           <Text className='text-white/50'>{`${props.primaryAsset.symbol}-${props.secondaryAsset.symbol} Position Value`}</Text>
           <DisplayCurrency
-            coin={new BNCoin({ denom: baseCurrency.denom, amount: totalValue.toString() })}
+            coin={new BNCoin({ denom: ORACLE_DENOM, amount: totalValue.toString() })}
           />
         </div>
         {props.borrowings.map((coin) => {

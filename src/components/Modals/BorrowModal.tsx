@@ -20,7 +20,7 @@ import useCurrentAccount from 'hooks/useCurrentAccount'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
-import { getDepositsAndLendsAfterCoinSpent } from 'hooks/useUpdatedAccount/functions'
+import { getDepositAndLendCoinsToSpend } from 'hooks/useUpdatedAccount/functions'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
@@ -77,7 +77,7 @@ function BorrowModal(props: Props) {
     if (!asset) return
     setIsConfirming(true)
     let result
-    const { lends } = getDepositsAndLendsAfterCoinSpent(
+    const { lend } = getDepositAndLendCoinsToSpend(
       BNCoin.fromDenomAndBigNumber(asset.denom, amount),
       account,
     )
@@ -85,8 +85,8 @@ function BorrowModal(props: Props) {
       result = await repay({
         accountId: account.id,
         coin: BNCoin.fromDenomAndBigNumber(asset.denom, amount),
-        accountBalance: max.isEqualTo(amount),
-        lends,
+        accountBalance: percentage === 100,
+        lend,
       })
     } else {
       result = await borrow({

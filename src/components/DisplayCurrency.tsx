@@ -8,7 +8,9 @@ import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getDisplayCurrencies } from 'utils/assets'
-import { convertToDisplayAmount } from 'utils/formatters'
+import { getCoinValue } from 'utils/formatters'
+import { BN } from 'utils/helpers'
+import { ORACLE_DENOM } from 'constants/oracle'
 
 interface Props {
   coin: BNCoin
@@ -39,13 +41,27 @@ export default function DisplayCurrency(props: Props) {
     ? ''
     : ` ${displayCurrencyAsset.symbol ? ` ${displayCurrencyAsset.symbol}` : ''}`
 
+  const amount = useMemo(() => {
+    const coinValue = getCoinValue(props.coin, prices)
+
+    if (displayCurrency === ORACLE_DENOM) return coinValue.toNumber()
+
+    const displayDecimals = displayCurrencyAsset.decimals
+    const displayPrice = getCoinValue(
+      BNCoin.fromDenomAndBigNumber(displayCurrency, BN(1).shiftedBy(displayDecimals)),
+      prices,
+    )
+
+    return coinValue.div(displayPrice).toNumber()
+  }, [displayCurrency, displayCurrencyAsset.decimals, prices, props.coin])
+
   return (
     <FormattedNumber
       className={classNames(
         props.className,
         props.parentheses && 'before:content-["("] after:content-[")"]',
       )}
-      amount={convertToDisplayAmount(props.coin, displayCurrency, prices).toNumber()}
+      amount={amount}
       options={{
         minDecimals: isUSD ? 2 : 0,
         maxDecimals: 2,

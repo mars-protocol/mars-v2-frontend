@@ -19,7 +19,9 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { defaultFee } from 'utils/constants'
-import { convertToDisplayAmount, formatAmountWithSymbol } from 'utils/formatters'
+import { formatAmountWithSymbol, getCoinValue } from 'utils/formatters'
+
+import { ORACLE_DENOM } from '../constants/oracle'
 
 const renderIncentives = (unclaimedRewards: BNCoin[]) => {
   if (unclaimedRewards.length === 0)
@@ -58,14 +60,14 @@ export default function RewardsCenter() {
   const totalRewardsCoin = useMemo(() => {
     let total = 0
     unclaimedRewards.forEach((reward) => {
-      total = total + convertToDisplayAmount(reward, displayCurrency, prices).toNumber()
+      total = total + getCoinValue(reward, prices).toNumber()
     })
 
     return new BNCoin({
-      denom: displayCurrency,
+      denom: ORACLE_DENOM,
       amount: total.toString(),
     })
-  }, [displayCurrency, prices, unclaimedRewards])
+  }, [prices, unclaimedRewards])
 
   const hasIncentives = unclaimedRewards.length > 0
 

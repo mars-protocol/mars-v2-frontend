@@ -6,7 +6,7 @@ import useVaults from 'hooks/useVaults'
 
 function Content() {
   const { data: vaults } = useVaults()
-
+  if (!vaults) return null
   const featuredVaults = vaults.filter((vault) => vault.isFeatured)
 
   if (!featuredVaults.length) return null
@@ -14,7 +14,7 @@ function Content() {
   return (
     <Card
       title='Featured vaults'
-      className='mb-4 h-fit w-full bg-white/5'
+      className='w-full mb-4 h-fit bg-white/5'
       contentClassName='grid grid-cols-3'
     >
       {featuredVaults.map((vault) => (

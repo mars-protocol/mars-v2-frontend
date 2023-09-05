@@ -133,7 +133,7 @@ export default function AssetSelectTable(props: Props) {
                   <td
                     key={cell.id}
                     className={classNames(
-                      cell.column.id === 'select' ? `` : 'pl-4 text-right',
+                      cell.column.id === 'select' ? `` : 'text-right',
                       'px-4 py-3',
                     )}
                   >
