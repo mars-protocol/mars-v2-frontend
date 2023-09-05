@@ -20,7 +20,6 @@ import { formatAmountWithSymbol } from 'utils/formatters'
 import getTokenOutFromSwapResponse from 'utils/getTokenOutFromSwapResponse'
 import { BN } from 'utils/helpers'
 
-
 function generateExecutionMessage(
   sender: string | undefined = '',
   contract: string,

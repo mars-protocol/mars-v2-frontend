@@ -11,13 +11,14 @@ import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import AccountFund from 'components/Account/AccountFund'
-import Button from 'components/Button'
+import ActionButton from 'components/Button/ActionButton'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
 import { BN_ZERO } from 'constants/math'
+import { ORACLE_DENOM } from 'constants/oracle'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
@@ -28,8 +29,6 @@ import { convertLiquidityRateToAPR, demagnify, getCoinValue } from 'utils/format
 import { BN } from 'utils/helpers'
 import { convertAprToApy } from 'utils/parsers'
 import { getPage, getRoute } from 'utils/route'
-
-import { ORACLE_DENOM } from '../../constants/oracle'
 
 interface Props {
   account: Account
@@ -210,7 +209,7 @@ export default function AccountBalancesTable(props: Props) {
   if (balanceData.length === 0)
     return (
       <div className='w-full p-4'>
-        <Button
+        <ActionButton
           className='w-full'
           text='Fund this Account'
           color='tertiary'

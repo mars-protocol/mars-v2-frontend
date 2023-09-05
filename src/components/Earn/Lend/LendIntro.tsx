@@ -1,0 +1,27 @@
+import ActionButton from 'components/Button/ActionButton'
+import { ArrowUpLine } from 'components/Icons'
+import Intro from 'components/Intro'
+import useStore from 'store'
+
+export default function LendIntro() {
+  return (
+    <Intro
+      text={
+        <>
+          By <span className='text-white'>Lending</span> your assets, you&apos;ll earn attractive
+          interest (APY) without impacting your LTV. It&apos;s a win-win situation - don&apos;t miss
+          out on this easy opportunity to grow your holdings!
+        </>
+      }
+    >
+      <ActionButton
+        text='Deposit assets'
+        color='secondary'
+        leftIcon={<ArrowUpLine />}
+        onClick={() => {
+          useStore.setState({ fundAndWithdrawModal: 'fund' })
+        }}
+      />
+    </Intro>
+  )
+}
