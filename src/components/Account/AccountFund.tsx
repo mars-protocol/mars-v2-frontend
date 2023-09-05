@@ -40,6 +40,7 @@ export default function AccountFund() {
   const hasFundingAssets =
     fundingAssets.length > 0 && fundingAssets.every((a) => a.toCoin().amount !== '0')
   const { data: marketAssets } = useMarketAssets()
+  const [isLending, toggleIsLending] = useToggle(false)
 
   const baseBalance = useMemo(
     () => walletBalances.find(byDenom(baseAsset.denom))?.amount ?? '0',
@@ -58,6 +59,7 @@ export default function AccountFund() {
     const result = await deposit({
       accountId,
       coins: fundingAssets,
+      lend: isLending,
     })
     setIsFunding(false)
     if (result) useStore.setState({ focusComponent: null, walletAssetsModal: null })
@@ -174,6 +176,8 @@ export default function AccountFund() {
         <SwitchAutoLend
           className='pt-4 mt-4 border border-transparent border-t-white/10'
           accountId={selectedAccountId}
+          value={isLending}
+          onChange={toggleIsLending}
         />
         <Button
           className='w-full mt-4'
