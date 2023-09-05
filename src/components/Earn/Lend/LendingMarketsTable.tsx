@@ -9,12 +9,10 @@ import AssetListTable from 'components/MarketAssetTable'
 import MarketAssetTableRow from 'components/MarketAssetTable/MarketAssetTableRow'
 import MarketDetails from 'components/MarketAssetTable/MarketDetails'
 import TitleAndSubCell from 'components/TitleAndSubCell'
-import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
 import { convertLiquidityRateToAPR, demagnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
 import { BN_ZERO } from '../../../constants/math'
-import { getEnabledMarketAssets } from '../../../utils/assets'
 import AmountAndValue from '../../AmountAndValue'
 
 interface Props {
@@ -24,9 +22,7 @@ interface Props {
 
 export default function LendingMarketsTable(props: Props) {
   const { title, data } = props
-  const { symbol: displayCurrencySymbol } = useDisplayCurrencyPrice()
   const shouldShowAccountDeposit = !!data[0]?.accountLentValue
-  const marketAssets = getEnabledMarketAssets()
 
   const rowRenderer = useCallback(
     (row: Row<LendingMarketTableData>, table: Table<LendingMarketTableData>) => {
@@ -54,12 +50,12 @@ export default function LendingMarketsTable(props: Props) {
           const asset = row.original.asset
 
           return (
-            <div className='flex flex-1 items-center gap-3'>
+            <div className='flex items-center flex-1 gap-3'>
               <AssetImage asset={asset} size={32} />
               <TitleAndSubCell
                 title={asset.symbol}
                 sub={asset.name}
-                className='min-w-15 text-left'
+                className='text-left min-w-15'
               />
             </div>
           )
@@ -138,7 +134,7 @@ export default function LendingMarketsTable(props: Props) {
         ),
       },
     ],
-    [displayCurrencySymbol, shouldShowAccountDeposit],
+    [shouldShowAccountDeposit],
   )
 
   return <AssetListTable title={title} rowRenderer={rowRenderer} columns={columns} data={data} />

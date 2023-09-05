@@ -17,11 +17,8 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/useCurrentAccount'
-import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -86,10 +83,6 @@ function calculateVaultValues(vault: DepositedVault, apy: number) {
 }
 
 export default function AccountBalancesTable(props: Props) {
-  const [displayCurrency] = useLocalStorage<string>(
-    DISPLAY_CURRENCY_KEY,
-    DEFAULT_SETTINGS.displayCurrency,
-  )
   const { data: prices } = usePrices()
   const currentAccount = useCurrentAccount()
   const navigate = useNavigate()

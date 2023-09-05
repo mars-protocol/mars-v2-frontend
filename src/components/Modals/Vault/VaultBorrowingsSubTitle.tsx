@@ -25,7 +25,7 @@ export default function VaultBorrowingsSubTitle(props: Props) {
       borrowingValue = getCoinValue(coin, prices)
     })
     return borrowingValue
-  }, [props.borrowings, prices, props.displayCurrency])
+  }, [props.borrowings, prices])
 
   const borrowingTexts = useMemo(
     () =>

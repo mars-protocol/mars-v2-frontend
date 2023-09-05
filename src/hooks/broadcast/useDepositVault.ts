@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react'
 
 import getMinLpToReceive from 'api/vaults/getMinLpToReceive'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { DISPLAY_CURRENCY_KEY, SLIPPAGE_KEY } from 'constants/localStore'
+import { SLIPPAGE_KEY } from 'constants/localStore'
 import { BN_ZERO } from 'constants/math'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
@@ -27,10 +27,6 @@ export default function useDepositVault(props: Props): {
   minLpToReceive: string
   totalValue: BigNumber
 } {
-  const [displayCurrency] = useLocalStorage<string>(
-    DISPLAY_CURRENCY_KEY,
-    DEFAULT_SETTINGS.displayCurrency,
-  )
   const [minLpToReceive, setMinLpToReceive] = useState<BigNumber>(BN_ZERO)
   const { data: prices } = usePrices()
   const [slippage] = useLocalStorage<number>(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
@@ -52,7 +48,7 @@ export default function useDepositVault(props: Props): {
 
   const { primaryCoin, secondaryCoin, totalValue } = useMemo(
     () => getVaultDepositCoinsAndValue(props.vault, deposits, borrowings, reclaims, prices),
-    [reclaims, deposits, borrowings, props.vault, prices, displayCurrency],
+    [reclaims, deposits, borrowings, props.vault, prices],
   )
 
   const reclaimActions: Action[] = useMemo(() => {
