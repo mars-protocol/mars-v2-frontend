@@ -22,6 +22,7 @@ import {
 } from 'constants/localStore'
 import { BN_ZERO } from 'constants/math'
 import useAlertDialog from 'hooks/useAlertDialog'
+import useAutoLend from 'hooks/useAutoLend'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 import { getDisplayCurrencies, getEnabledMarketAssets } from 'utils/assets'
@@ -34,6 +35,7 @@ export default function SettingsModal() {
   const { open: showResetDialog } = useAlertDialog()
   const displayCurrencies = getDisplayCurrencies()
   const assets = getEnabledMarketAssets()
+  const { setAutoLendOnAllAccounts } = useAutoLend()
   const [customSlippage, setCustomSlippage] = useState<number>(0)
   const [inputRef, setInputRef] = useState<React.RefObject<HTMLInputElement>>()
   const [isCustom, setIsCustom] = useState(false)
@@ -103,6 +105,7 @@ export default function SettingsModal() {
 
   const handleLendAssets = useCallback(
     (value: boolean) => {
+      setAutoLendOnAllAccounts(value)
       setLendAssets(value)
     },
     [setLendAssets],
@@ -228,8 +231,8 @@ export default function SettingsModal() {
         onChange={handleLendAssets}
         name='lendAssets'
         value={lendAssets}
-        label='Lend assets in credit account'
-        description='By turning this on you will automatically lend out all the assets you deposit into your credit account to earn yield.'
+        label='Lend assets in credit accounts'
+        description='By turning this on you will automatically lend out all the assets you deposit into your credit accounts to earn yield.'
         withStatus
       />
       <SettingsSwitch

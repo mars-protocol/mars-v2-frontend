@@ -11,7 +11,11 @@ import { Account, Plus, PlusCircled } from 'components/Icons'
 import Overlay from 'components/Overlay'
 import Text from 'components/Text'
 import WalletBridges from 'components/Wallet/WalletBridges'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { LEND_ASSETS_KEY } from 'constants/localStore'
+import useAutoLend from 'hooks/useAutoLend'
 import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
+import useLocalStorage from 'hooks/useLocalStorage'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { defaultFee } from 'utils/constants'
@@ -34,6 +38,8 @@ export default function AccountMenuContent(props: Props) {
   const [showMenu, setShowMenu] = useToggle()
   const [isCreating, setIsCreating] = useToggle()
   const transactionFeeCoinBalance = useCurrentWalletBalance(baseCurrency.denom)
+  const [lendAssets] = useLocalStorage<boolean>(LEND_ASSETS_KEY, DEFAULT_SETTINGS.lendAssets)
+  const { enableAutoLendAccountId } = useAutoLend()
 
   const hasCreditAccounts = !!props.accounts.length
   const isAccountSelected = isNumber(accountId)
@@ -57,6 +63,7 @@ export default function AccountMenuContent(props: Props) {
 
     if (accountId) {
       navigate(getRoute(getPage(pathname), address, accountId))
+      if (lendAssets) enableAutoLendAccountId(accountId)
       useStore.setState({
         focusComponent: {
           component: <AccountFund />,

@@ -15,7 +15,7 @@ import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
-import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
+import useAutoLend from 'hooks/useAutoLend'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useToggle from 'hooks/useToggle'
@@ -64,7 +64,7 @@ function BorrowModal(props: Props) {
   const [max, setMax] = useState(BN_ZERO)
   const { simulateBorrow, simulateRepay } = useUpdatedAccount(account)
 
-  const { autoLendEnabledAccountIds } = useAutoLendEnabledAccountIds()
+  const { autoLendEnabledAccountIds } = useAutoLend()
   const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
   const { computeMaxBorrowAmount } = useHealthComputer(account)
 
@@ -85,7 +85,7 @@ function BorrowModal(props: Props) {
       result = await repay({
         accountId: account.id,
         coin: BNCoin.fromDenomAndBigNumber(asset.denom, amount),
-        accountBalance: percentage === 100,
+        accountBalance: max.isEqualTo(amount),
         lend,
       })
     } else {
