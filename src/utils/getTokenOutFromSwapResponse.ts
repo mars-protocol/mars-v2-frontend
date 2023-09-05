@@ -3,7 +3,7 @@ export default function getTokenOutFromSwapResponse(
   denom: string,
 ): Coin {
   try {
-    if (response.result) {
+    if (response.result?.response.code === 0) {
       const rawLogs = JSON.parse(response.result.rawLogs)
       const events = rawLogs[0].events
       const tokenSwappedEvent = events.find((e: { type: string }) => e.type === 'token_swapped')
