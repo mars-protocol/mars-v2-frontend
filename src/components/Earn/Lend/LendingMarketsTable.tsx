@@ -1,6 +1,7 @@
 import { ColumnDef, Row, Table } from '@tanstack/react-table'
 import { useCallback, useMemo } from 'react'
 
+import AmountAndValue from 'components/AmountAndValue'
 import AssetImage from 'components/AssetImage'
 import LendingActionButtons from 'components/Earn/Lend/LendingActionButtons'
 import { FormattedNumber } from 'components/FormattedNumber'
@@ -9,11 +10,9 @@ import AssetListTable from 'components/MarketAssetTable'
 import MarketAssetTableRow from 'components/MarketAssetTable/MarketAssetTableRow'
 import MarketDetails from 'components/MarketAssetTable/MarketDetails'
 import TitleAndSubCell from 'components/TitleAndSubCell'
+import { BN_ZERO } from 'constants/math'
 import { convertLiquidityRateToAPR, demagnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-
-import { BN_ZERO } from '../../../constants/math'
-import AmountAndValue from '../../AmountAndValue'
 
 interface Props {
   title: string

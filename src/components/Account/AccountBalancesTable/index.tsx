@@ -13,7 +13,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { getAmountChangeColor } from 'components/Account/AccountBalancesTable/functions'
 import useAccountBalanceData from 'components/Account/AccountBalancesTable/useAccountBalanceData'
 import AccountFund from 'components/Account/AccountFund'
-import Button from 'components/Button'
+import ActionButton from 'components/Button/ActionButton'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
@@ -137,7 +137,7 @@ export default function Index(props: Props) {
   if (accountBalanceData.length === 0)
     return (
       <div className='w-full p-4'>
-        <Button
+        <ActionButton
           className='w-full'
           text='Fund this Account'
           color='tertiary'

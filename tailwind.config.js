@@ -47,7 +47,7 @@ module.exports = {
         sticky: '50px',
       },
       backgroundImage: {
-        account: 'url(/images/account.webp), url(/images/account.png)',
+        intro: 'url(/images/intro.webp), url(/images/intro.png)',
       },
       backgroundSize: {
         desktop: '100% auto',
@@ -136,6 +136,7 @@ module.exports = {
       height: {
         4.5: '18px',
         15: '60px',
+        55: '220px',
       },
       hueRotate: {
         '-82': '-82deg',
@@ -217,6 +218,7 @@ module.exports = {
         92.5: '370px',
         100: '400px',
         120: '480px',
+        140: '560px',
       },
       zIndex: {
         1: '1',

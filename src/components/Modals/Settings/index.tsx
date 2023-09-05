@@ -108,7 +108,7 @@ export default function SettingsModal() {
       setAutoLendOnAllAccounts(value)
       setLendAssets(value)
     },
-    [setLendAssets],
+    [setLendAssets, setAutoLendOnAllAccounts],
   )
 
   const handleTutorial = useCallback(
