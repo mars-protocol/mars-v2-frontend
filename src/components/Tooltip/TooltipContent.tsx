@@ -16,19 +16,13 @@ export default function TooltipContent(props: Props) {
     <div>
       <div
         className={classNames(
-          'flex max-w-[320px] flex-1 gap-2 rounded-sm py-0.5 px-2 text-sm shadow-tooltip backdrop-blur-lg',
+          'flex max-w-[320px] flex-1 gap-2 rounded-sm py-1 px-2 text-sm shadow-tooltip backdrop-blur-lg',
           props.type === 'info' && 'bg-white/20',
           props.type === 'warning' && 'bg-warning',
           props.type === 'error' && 'bg-error',
         )}
       >
-        {typeof props.content === 'string' ? (
-          <Text size='sm' className='font-semibold'>
-            {props.content}
-          </Text>
-        ) : (
-          props.content
-        )}
+        {typeof props.content === 'string' ? <Text size='xs'>{props.content}</Text> : props.content}
       </div>
       {
         <div data-popper-arrow=''>

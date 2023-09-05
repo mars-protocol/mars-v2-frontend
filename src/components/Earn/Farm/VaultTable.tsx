@@ -36,8 +36,6 @@ type Props = {
 export const VaultTable = (props: Props) => {
   const [sorting, setSorting] = React.useState<SortingState>([{ id: 'name', desc: true }])
 
-  const baseCurrency = useStore((s) => s.baseCurrency)
-
   const columns = React.useMemo<ColumnDef<Vault | DepositedVault>[]>(() => {
     return [
       {
@@ -266,7 +264,7 @@ export const VaultTable = (props: Props) => {
                       'align-center',
                     )}
                   >
-                    <span className='h-6 w-6 text-white'>
+                    <span className='w-6 h-6 text-white'>
                       {header.column.getCanSort()
                         ? {
                             asc: <SortAsc />,

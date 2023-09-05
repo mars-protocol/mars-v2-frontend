@@ -3,6 +3,7 @@ export enum DocURL {
   BORROW_LENDING_URL = 'https://docs.marsprotocol.io',
   COOKIE_POLICY_URL = 'https://docs.marsprotocol.io/mars-protocol/terms-of-service/mars-cookie-policy',
   CONCENTRATED_LIQUIDITY_URL = 'https://docs.marsprotocol.io',
+  DOCS_URL = 'https://docs.marsprotocol.io/',
   MANAGE_ACCOUNT_URL = 'https://docs.marsprotocol.io/docs/learn/workstation/rover/managing-credit-accounts',
   ROVER_INTRO_URL = 'https://docs.marsprotocol.io/docs/learn/workstation/rover/rover-intro',
   PRIVACY_POLICY_URL = 'https://docs.marsprotocol.io/mars-protocol/terms-of-service/mars-privacy-policy',

@@ -20,8 +20,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { defaultFee } from 'utils/constants'
 import { formatAmountWithSymbol, getCoinValue } from 'utils/formatters'
-
-import { ORACLE_DENOM } from '../constants/oracle'
+import { ORACLE_DENOM } from 'constants/oracle'
 
 const renderIncentives = (unclaimedRewards: BNCoin[]) => {
   if (unclaimedRewards.length === 0)
