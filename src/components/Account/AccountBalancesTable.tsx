@@ -222,7 +222,7 @@ export default function AccountBalancesTable(props: Props) {
             return <span className='w-full text-xs text-center'>&ndash;</span>
           return (
             <FormattedNumber
-              className={'text-xs'}
+              className='text-xs'
               amount={row.original.apy}
               options={{ maxDecimals: 2, minDecimals: 2, suffix: '%' }}
               animate
