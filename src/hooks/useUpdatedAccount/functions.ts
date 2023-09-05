@@ -73,7 +73,7 @@ export function addValueToVaults(
   return vaults
 }
 
-export function getDepositsAndLendsAfterCoinSpent(coin: BNCoin, account?: Account) {
+export function getDepositAndLendsCoinToSpend(coin: BNCoin, account?: Account) {
   const makeOutput = (depositsAmount: BigNumber, lendsAmount: BigNumber) => ({
     deposits: BNCoin.fromDenomAndBigNumber(coin.denom, depositsAmount),
     lends: BNCoin.fromDenomAndBigNumber(coin.denom, lendsAmount),

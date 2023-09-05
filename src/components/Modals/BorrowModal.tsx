@@ -20,7 +20,7 @@ import useCurrentAccount from 'hooks/useCurrentAccount'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
-import { getDepositsAndLendsAfterCoinSpent } from 'hooks/useUpdatedAccount/functions'
+import { getDepositAndLendsCoinToSpend } from 'hooks/useUpdatedAccount/functions'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
@@ -79,7 +79,7 @@ function BorrowModal(props: Props) {
     if (!asset) return
     setIsConfirming(true)
     let result
-    const { lends } = getDepositsAndLendsAfterCoinSpent(
+    const { lends } = getDepositAndLendsCoinToSpend(
       BNCoin.fromDenomAndBigNumber(asset.denom, amount),
       account,
     )

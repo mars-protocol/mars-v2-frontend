@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import { BN_ZERO } from 'constants/math'
+import usePrices from 'hooks/usePrices'
 import {
   addCoins,
   addValueToVaults,
-  getDepositsAndLendsAfterCoinSpent,
+  getDepositAndLendsCoinToSpend,
   removeCoins,
 } from 'hooks/useUpdatedAccount/functions'
 import useVaults from 'hooks/useVaults'
@@ -13,7 +14,6 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { cloneAccount } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { getValueFromBNCoins } from 'utils/helpers'
-import usePrices from 'hooks/usePrices'
 
 export interface VaultValue {
   address: string
@@ -89,7 +89,7 @@ export function useUpdatedAccount(account?: Account) {
   const simulateRepay = useCallback(
     (coin: BNCoin) => {
       if (!account) return
-      const { deposits, lends } = getDepositsAndLendsAfterCoinSpent(coin, account)
+      const { deposits, lends } = getDepositAndLendsCoinToSpend(coin, account)
       removeDebts([coin])
       removeDeposits([deposits])
       removeLends([lends])
@@ -115,7 +115,7 @@ export function useUpdatedAccount(account?: Account) {
       removeLends([])
       addDebts([])
 
-      const { deposits, lends } = getDepositsAndLendsAfterCoinSpent(coin, account)
+      const { deposits, lends } = getDepositAndLendsCoinToSpend(coin, account)
       const totalBalance = deposits.amount.plus(lends.amount)
       removeDeposits([deposits])
       removeLends([lends])
@@ -134,7 +134,7 @@ export function useUpdatedAccount(account?: Account) {
       addDeposits([])
       addLends([])
 
-      const { deposits, lends } = getDepositsAndLendsAfterCoinSpent(removeCoin, account)
+      const { deposits, lends } = getDepositAndLendsCoinToSpend(removeCoin, account)
 
       removeDeposits([deposits])
       removeLends([lends])
@@ -155,7 +155,7 @@ export function useUpdatedAccount(account?: Account) {
       const totalLends: BNCoin[] = []
 
       coins.forEach((coin) => {
-        const { deposits, lends } = getDepositsAndLendsAfterCoinSpent(coin, account)
+        const { deposits, lends } = getDepositAndLendsCoinToSpend(coin, account)
         totalDeposits.push(deposits)
         totalLends.push(lends)
       })

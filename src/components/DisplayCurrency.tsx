@@ -10,8 +10,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { getDisplayCurrencies } from 'utils/assets'
 import { getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-
-import { BN_ONE } from '../constants/math'
+import { ORACLE_DENOM } from 'constants/oracle'
 
 interface Props {
   coin: BNCoin
@@ -52,6 +51,7 @@ export default function DisplayCurrency(props: Props) {
 
     if (!coinValue || !displayPrice) return 0
 
+    if (displayCurrency === ORACLE_DENOM) return coinValue.toNumber()
     return coinValue.div(displayPrice).toNumber()
   }, [displayCurrency, prices, props.coin.amount, props.coin.denom])
 
