@@ -22,6 +22,7 @@ import { defaultFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
 import { isNumber } from 'utils/parsers'
 import { getPage, getRoute } from 'utils/route'
+
 const menuClasses = 'absolute isolate flex w-full flex-wrap scrollbar-hide'
 const ACCOUNT_MENU_BUTTON_ID = 'account-menu-button'
 
@@ -73,7 +74,16 @@ export default function AccountMenuContent(props: Props) {
         },
       })
     }
-  }, [createAccount, navigate, pathname, address, setShowMenu, setIsCreating])
+  }, [
+    setShowMenu,
+    setIsCreating,
+    createAccount,
+    navigate,
+    pathname,
+    address,
+    lendAssets,
+    enableAutoLendAccountId,
+  ])
 
   const handleCreateAccountClick = useCallback(() => {
     setShowMenu(!showMenu)

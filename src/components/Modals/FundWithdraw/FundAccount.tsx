@@ -38,7 +38,7 @@ export default function FundAccount(props: Props) {
   const hasAssetSelected = fundingAssets.length > 0
   const hasFundingAssets =
     fundingAssets.length > 0 && fundingAssets.every((a) => a.toCoin().amount !== '0')
-  const { autoLendEnabledAccountIds } = useAutoLendEnabledAccountIds()
+  const { autoLendEnabledAccountIds } = useAutoLend()
   const [isLending, toggleIsLending] = useToggle(false)
   const { simulateDeposits } = useUpdatedAccount(account)
   const { data: marketAssets } = useMarketAssets()

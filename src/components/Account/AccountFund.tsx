@@ -63,7 +63,7 @@ export default function AccountFund() {
     })
     setIsFunding(false)
     if (result) useStore.setState({ focusComponent: null, walletAssetsModal: null })
-  }, [fundingAssets, accountId, setIsFunding, deposit])
+  }, [setIsFunding, accountId, deposit, fundingAssets, isLending])
 
   const handleSelectAssetsClick = useCallback(() => {
     useStore.setState({
