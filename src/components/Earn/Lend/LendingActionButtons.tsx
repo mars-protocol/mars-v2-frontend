@@ -9,7 +9,7 @@ import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
 import useAlertDialog from 'hooks/useAlertDialog'
-import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
+import useAutoLend from 'hooks/useAutoLend'
 import useCurrentAccountDeposits from 'hooks/useCurrentAccountDeposits'
 import useLendAndReclaimModal from 'hooks/useLendAndReclaimModal'
 import useStore from 'store'
@@ -27,7 +27,7 @@ export default function LendingActionButtons(props: Props) {
   const accountDeposits = useCurrentAccountDeposits()
   const { openLend, openReclaim } = useLendAndReclaimModal()
   const { open: showAlertDialog } = useAlertDialog()
-  const { isAutoLendEnabledForCurrentAccount } = useAutoLendEnabledAccountIds()
+  const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const assetDepositAmount = accountDeposits.find(byDenom(asset.denom))?.amount
   const address = useStore((s) => s.address)
   const { accountId } = useParams()
