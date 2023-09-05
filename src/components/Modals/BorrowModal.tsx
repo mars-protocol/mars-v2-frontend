@@ -54,7 +54,6 @@ export default function BorrowModalController() {
 
 function BorrowModal(props: Props) {
   const { modal, account } = props
-  const [percentage, setPercentage] = useState(0)
   const [amount, setAmount] = useState(BN_ZERO)
   const [isConfirming, setIsConfirming] = useToggle()
   const [borrowToWallet, setBorrowToWallet] = useToggle()
@@ -71,7 +70,6 @@ function BorrowModal(props: Props) {
 
   function resetState() {
     setAmount(BN_ZERO)
-    setPercentage(0)
     setIsConfirming(false)
   }
 
@@ -109,16 +107,6 @@ function BorrowModal(props: Props) {
     resetState()
     useStore.setState({ borrowModal: null })
   }
-
-  const liquidityAmountString = formatValue(modal.marketData?.liquidity?.amount.toString() || 0, {
-    abbreviated: true,
-    decimals: 6,
-  })
-
-  const liquidityValueString = formatValue(modal.marketData?.liquidity?.value.toString() || 0, {
-    abbreviated: true,
-    decimals: 6,
-  })
 
   const handleChange = useCallback(
     (newAmount: BigNumber) => {
