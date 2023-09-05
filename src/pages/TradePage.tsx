@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
+import AccountDetailsCard from 'components/Trade/AccountDetailsCard'
 import TradeChart from 'components/Trade/TradeChart'
 import TradeModule from 'components/Trade/TradeModule'
 import { getEnabledMarketAssets } from 'utils/assets'
-import AccountDetailsCard from 'components/Trade/AccountDetailsCard'
 
 export default function TradePage() {
   const enabledMarketAssets = getEnabledMarketAssets()
@@ -19,6 +19,7 @@ export default function TradePage() {
         onChangeSellAsset={setSellAsset}
       />
       <TradeChart buyAsset={buyAsset} sellAsset={sellAsset} />
+      <div />
       <AccountDetailsCard />
     </div>
   )

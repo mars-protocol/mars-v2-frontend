@@ -13,7 +13,7 @@ import TradeSummary from 'components/Trade/TradeModule/SwapForm/TradeSummary'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { SLIPPAGE_KEY } from 'constants/localStore'
 import { BN_ZERO } from 'constants/math'
-import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
+import useAutoLend from 'hooks/useAutoLend'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useLocalStorage from 'hooks/useLocalStorage'
@@ -51,7 +51,7 @@ export default function SwapForm(props: Props) {
   const [selectedOrderType, setSelectedOrderType] = useState<AvailableOrderType>('Market')
   const [isConfirming, setIsConfirming] = useToggle()
   const [estimatedFee, setEstimatedFee] = useState(defaultFee)
-  const { autoLendEnabledAccountIds } = useAutoLendEnabledAccountIds()
+  const { autoLendEnabledAccountIds } = useAutoLend()
   const isAutoLendEnabled = account ? autoLendEnabledAccountIds.includes(account.id) : false
 
   const throttledEstimateExactIn = useMemo(() => asyncThrottle(estimateExactIn, 250), [])

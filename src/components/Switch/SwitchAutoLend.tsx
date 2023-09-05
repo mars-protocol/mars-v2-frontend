@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 
 import SwitchWithLabel from 'components/Switch/SwitchWithLabel'
-import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
+import useAutoLend from 'hooks/useAutoLend'
 
 interface Props {
   accountId: string
@@ -10,7 +10,7 @@ interface Props {
 
 export default function SwitchAutoLend(props: Props) {
   const { accountId, className } = props
-  const { autoLendEnabledAccountIds, toggleAutoLend } = useAutoLendEnabledAccountIds()
+  const { autoLendEnabledAccountIds, toggleAutoLend } = useAutoLend()
   const isAutoLendEnabled = autoLendEnabledAccountIds.includes(accountId)
 
   return (

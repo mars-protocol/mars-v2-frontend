@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import Button from 'components/Button'
 import DepositCapMessage from 'components/DepositCapMessage'
@@ -8,7 +8,7 @@ import Text from 'components/Text'
 import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import { BN_ZERO } from 'constants/math'
-import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
+import useAutoLend from 'hooks/useAutoLend'
 import useMarketAssets from 'hooks/useMarketAssets'
 import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
@@ -38,7 +38,7 @@ export default function FundAccount(props: Props) {
   const hasAssetSelected = fundingAssets.length > 0
   const hasFundingAssets =
     fundingAssets.length > 0 && fundingAssets.every((a) => a.toCoin().amount !== '0')
-  const { autoLendEnabledAccountIds } = useAutoLendEnabledAccountIds()
+  const { autoLendEnabledAccountIds } = useAutoLend()
   const isAutoLendEnabled = autoLendEnabledAccountIds.includes(accountId)
   const { simulateDeposits } = useUpdatedAccount(account)
   const { data: marketAssets } = useMarketAssets()
