@@ -3,13 +3,15 @@ import moment from 'moment'
 import { getClient, getCreditManagerQueryClient, getVaultQueryClient } from 'api/cosmwasm-client'
 import getPrice from 'api/prices/getPrice'
 import getVaults from 'api/vaults/getVaults'
+import { BN_ZERO } from 'constants/math'
+import { BNCoin } from 'types/classes/BNCoin'
 import { VaultStatus } from 'types/enums/vault'
 import {
   VaultPosition,
   VaultPositionAmount,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import { BN_ZERO } from 'constants/math'
 
 async function getUnlocksAtTimestamp(unlockingId: number, vaultAddress: string) {
   try {
@@ -130,8 +132,12 @@ async function getVaultValuesAndAmounts(
         secondary: BN(secondaryLpToken.amount),
       },
       values: {
-        primary: BN(primaryLpToken.amount).multipliedBy(primaryPrice),
-        secondary: BN(secondaryLpToken.amount).multipliedBy(secondaryPrice),
+        primary: getCoinValue(new BNCoin(primaryLpToken), [
+          BNCoin.fromDenomAndBigNumber(primaryLpToken.denom, primaryPrice),
+        ]),
+        secondary: getCoinValue(new BNCoin(secondaryLpToken), [
+          BNCoin.fromDenomAndBigNumber(secondaryLpToken.denom, secondaryPrice),
+        ]),
       },
     }
   } catch (ex) {

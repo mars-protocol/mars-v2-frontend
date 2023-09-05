@@ -109,7 +109,6 @@ export const VaultTable = (props: Props) => {
                 const vault = row.original as DepositedVault
                 const positionValue = vault.values.primary.plus(vault.values.secondary)
                 const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionValue)
-                console.log()
                 return <DisplayCurrency coin={coin} className='text-xs' />
               },
             },
@@ -231,7 +230,7 @@ export const VaultTable = (props: Props) => {
         },
       },
     ]
-  }, [baseCurrency.denom, props.data, props.isLoading])
+  }, [props.data, props.isLoading])
 
   const table = useReactTable({
     data: props.data,
