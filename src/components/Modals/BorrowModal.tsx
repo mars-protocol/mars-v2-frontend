@@ -85,7 +85,7 @@ function BorrowModal(props: Props) {
       result = await repay({
         accountId: account.id,
         coin: BNCoin.fromDenomAndBigNumber(asset.denom, amount),
-        accountBalance: percentage === 100,
+        accountBalance: max.isEqualTo(amount),
         lend,
       })
     } else {
