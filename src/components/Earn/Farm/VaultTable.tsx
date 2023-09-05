@@ -20,6 +20,7 @@ import { ChevronDown, SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
+import { ORACLE_DENOM } from 'constants/oracle'
 import { VAULT_DEPOSIT_BUFFER } from 'constants/vaults'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -107,7 +108,7 @@ export const VaultTable = (props: Props) => {
               cell: ({ row }: { row: Row<DepositedVault | Vault> }) => {
                 const vault = row.original as DepositedVault
                 const positionValue = vault.values.primary.plus(vault.values.secondary)
-                const coin = BNCoin.fromDenomAndBigNumber(baseCurrency.denom, positionValue)
+                const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionValue)
                 return <DisplayCurrency coin={coin} className='text-xs' />
               },
             },
@@ -229,7 +230,7 @@ export const VaultTable = (props: Props) => {
         },
       },
     ]
-  }, [baseCurrency.denom, props.data, props.isLoading])
+  }, [props.data, props.isLoading])
 
   const table = useReactTable({
     data: props.data,
