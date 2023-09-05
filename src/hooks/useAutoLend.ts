@@ -1,5 +1,4 @@
 import { AUTO_LEND_ENABLED_ACCOUNT_IDS_KEY } from 'constants/localStore'
-import useAccounts from 'hooks/useAccounts'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
@@ -11,8 +10,7 @@ export default function useAutoLend(): {
   setAutoLendOnAllAccounts: (lendAssets: boolean) => void
   enableAutoLendAccountId: (accountId: string) => void
 } {
-  const address = useStore((s) => s.address)
-  const { data: accounts } = useAccounts(address)
+  const accounts = useStore((s) => s.accounts)
   const currentAccount = useCurrentAccount()
   const [autoLendEnabledAccountIds, setAutoLendEnabledAccountIds] = useLocalStorage<string[]>(
     AUTO_LEND_ENABLED_ACCOUNT_IDS_KEY,
@@ -34,7 +32,7 @@ export default function useAutoLend(): {
     : false
 
   const setAutoLendOnAllAccounts = (lendAssets: boolean) => {
-    const allAccountIds = accounts.map((account) => account.id)
+    const allAccountIds = accounts ? accounts.map((account) => account.id) : []
     setAutoLendEnabledAccountIds(lendAssets ? allAccountIds : [])
   }
 
