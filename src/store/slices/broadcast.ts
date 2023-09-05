@@ -20,6 +20,7 @@ import { formatAmountWithSymbol } from 'utils/formatters'
 import getTokenOutFromSwapResponse from 'utils/getTokenOutFromSwapResponse'
 import { BN } from 'utils/helpers'
 
+
 function generateExecutionMessage(
   sender: string | undefined = '',
   contract: string,
@@ -209,7 +210,7 @@ export default function createBroadcastSlice(
 
       return { estimateFee, execute }
     },
-    deposit: async (options: { accountId: string; coins: BNCoin[] }) => {
+    deposit: async (options: { accountId: string; coins: BNCoin[]; lend: boolean }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
@@ -219,11 +220,11 @@ export default function createBroadcastSlice(
         },
       }
 
-      if (checkAutoLendEnabled(options.accountId)) {
+      if (options.lend) {
         msg.update_credit_account.actions.push(
           ...options.coins
             .filter((coin) => getAssetByDenom(coin.denom)?.isAutoLendEnabled)
-            .map((coin) => ({ lend: coin.toActionCoin(true) })),
+            .map((coin) => ({ lend: coin.toActionCoin(options.lend) })),
         )
       }
 
@@ -238,7 +239,9 @@ export default function createBroadcastSlice(
         .join(' and ')
       handleResponseMessages(
         response,
-        `Deposited ${depositString} to Credit Credit Account ${options.accountId}`,
+        `Deposited ${options.lend ? 'and lent ' : ''}${depositString} to Credit Credit Account ${
+          options.accountId
+        }`,
       )
       return !!response.result
     },

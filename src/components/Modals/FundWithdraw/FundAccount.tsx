@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import Button from 'components/Button'
 import DepositCapMessage from 'components/DepositCapMessage'
@@ -8,7 +8,7 @@ import Text from 'components/Text'
 import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import { BN_ZERO } from 'constants/math'
-import useAutoLendEnabledAccountIds from 'hooks/useAutoLendEnabledAccountIds'
+import useAutoLend from 'hooks/useAutoLend'
 import useMarketAssets from 'hooks/useMarketAssets'
 import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
@@ -38,8 +38,8 @@ export default function FundAccount(props: Props) {
   const hasAssetSelected = fundingAssets.length > 0
   const hasFundingAssets =
     fundingAssets.length > 0 && fundingAssets.every((a) => a.toCoin().amount !== '0')
-  const { autoLendEnabledAccountIds } = useAutoLendEnabledAccountIds()
-  const isAutoLendEnabled = autoLendEnabledAccountIds.includes(accountId)
+  const { autoLendEnabledAccountIds } = useAutoLend()
+  const [isLending, toggleIsLending] = useToggle(false)
   const { simulateDeposits } = useUpdatedAccount(account)
   const { data: marketAssets } = useMarketAssets()
   const baseBalance = useMemo(
@@ -59,10 +59,11 @@ export default function FundAccount(props: Props) {
     const result = await deposit({
       accountId,
       coins: fundingAssets,
+      lend: isLending,
     })
     setIsFunding(false)
     if (result) useStore.setState({ fundAndWithdrawModal: null, walletAssetsModal: null })
-  }, [fundingAssets, accountId, setIsFunding, deposit])
+  }, [setIsFunding, accountId, deposit, fundingAssets, isLending])
 
   const handleSelectAssetsClick = useCallback(() => {
     useStore.setState({
@@ -73,6 +74,10 @@ export default function FundAccount(props: Props) {
       },
     })
   }, [selectedDenoms])
+
+  useEffect(() => {
+    toggleIsLending(autoLendEnabledAccountIds.includes(accountId))
+  }, [accountId, autoLendEnabledAccountIds, toggleIsLending])
 
   useEffect(() => {
     const currentSelectedDenom = fundingAssets.map((asset) => asset.denom)
@@ -101,8 +106,8 @@ export default function FundAccount(props: Props) {
   }, [])
 
   useEffect(() => {
-    simulateDeposits(isAutoLendEnabled ? 'lend' : 'deposit', fundingAssets)
-  }, [isAutoLendEnabled, fundingAssets, simulateDeposits])
+    simulateDeposits(isLending ? 'lend' : 'deposit', fundingAssets)
+  }, [isLending, fundingAssets, simulateDeposits])
 
   useEffect(() => {
     if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) {
@@ -165,6 +170,8 @@ export default function FundAccount(props: Props) {
         <SwitchAutoLend
           className='pt-4 mt-4 border border-transparent border-t-white/10'
           accountId={accountId}
+          onChange={toggleIsLending}
+          value={isLending}
         />
       </div>
       <Button

@@ -245,7 +245,8 @@ module.exports = {
           filter: 'blur(clamp(60px, 10vw, 110px))',
         },
         '.border-glas': {
-          background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0))',
+          background:
+            'linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05))',
           mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
           '-webkit-mask-composite': 'xor',
           maskComposite: 'exclude',

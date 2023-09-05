@@ -5,9 +5,9 @@ import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getAssetByDenom } from 'utils/assets'
-import { getTokenPrice, getTokenValue } from 'utils/tokens'
-
-import { getValueFromBNCoins, mergeBNCoinArrays } from './helpers'
+import { getCoinValue } from 'utils/formatters'
+import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
+import { getTokenPrice } from 'utils/tokens'
 
 export function getVaultsMetaData() {
   return IS_TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
@@ -88,7 +88,7 @@ export function getVaultSwapActions(
   )
 
   primaryCoins.forEach((bnCoin) => {
-    let value = getTokenValue(bnCoin, prices)
+    let value = getCoinValue(bnCoin, prices)
     if (value.isLessThanOrEqualTo(primaryLeftoverValue)) {
       primaryLeftoverValue = primaryLeftoverValue.minus(value)
     } else {
@@ -99,7 +99,7 @@ export function getVaultSwapActions(
   })
 
   secondaryCoins.forEach((bnCoin) => {
-    let value = getTokenValue(bnCoin, prices)
+    let value = getCoinValue(bnCoin, prices)
     if (value.isLessThanOrEqualTo(secondaryLeftoverValue)) {
       secondaryLeftoverValue = secondaryLeftoverValue.minus(value)
     } else {
@@ -110,7 +110,7 @@ export function getVaultSwapActions(
   })
 
   otherCoins.forEach((bnCoin) => {
-    let value = getTokenValue(bnCoin, prices)
+    let value = getCoinValue(bnCoin, prices)
     let amount = bnCoin.amount
 
     if (primaryLeftoverValue.isGreaterThan(0)) {

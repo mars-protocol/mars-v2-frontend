@@ -11,13 +11,18 @@ import { Account, Plus, PlusCircled } from 'components/Icons'
 import Overlay from 'components/Overlay'
 import Text from 'components/Text'
 import WalletBridges from 'components/Wallet/WalletBridges'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { LEND_ASSETS_KEY } from 'constants/localStore'
+import useAutoLend from 'hooks/useAutoLend'
 import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
+import useLocalStorage from 'hooks/useLocalStorage'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { defaultFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
 import { isNumber } from 'utils/parsers'
 import { getPage, getRoute } from 'utils/route'
+
 const menuClasses = 'absolute isolate flex w-full flex-wrap scrollbar-hide'
 const ACCOUNT_MENU_BUTTON_ID = 'account-menu-button'
 
@@ -34,6 +39,8 @@ export default function AccountMenuContent(props: Props) {
   const [showMenu, setShowMenu] = useToggle()
   const [isCreating, setIsCreating] = useToggle()
   const transactionFeeCoinBalance = useCurrentWalletBalance(baseCurrency.denom)
+  const [lendAssets] = useLocalStorage<boolean>(LEND_ASSETS_KEY, DEFAULT_SETTINGS.lendAssets)
+  const { enableAutoLendAccountId } = useAutoLend()
 
   const hasCreditAccounts = !!props.accounts.length
   const isAccountSelected = isNumber(accountId)
@@ -57,6 +64,7 @@ export default function AccountMenuContent(props: Props) {
 
     if (accountId) {
       navigate(getRoute(getPage(pathname), address, accountId))
+      if (lendAssets) enableAutoLendAccountId(accountId)
       useStore.setState({
         focusComponent: {
           component: <AccountFund />,
@@ -66,7 +74,16 @@ export default function AccountMenuContent(props: Props) {
         },
       })
     }
-  }, [createAccount, navigate, pathname, address, setShowMenu, setIsCreating])
+  }, [
+    setShowMenu,
+    setIsCreating,
+    createAccount,
+    navigate,
+    pathname,
+    address,
+    lendAssets,
+    enableAutoLendAccountId,
+  ])
 
   const handleCreateAccountClick = useCallback(() => {
     setShowMenu(!showMenu)

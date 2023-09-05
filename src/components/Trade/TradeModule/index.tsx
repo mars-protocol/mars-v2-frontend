@@ -18,7 +18,7 @@ export default function TradeModule(props: Props) {
       className={classNames(
         'relative isolate max-w-full overflow-hidden rounded-base',
         'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
-        'row-span-2 h-full',
+        'h-full',
       )}
     >
       <AssetSelector
