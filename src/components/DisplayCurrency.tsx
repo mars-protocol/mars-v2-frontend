@@ -43,17 +43,17 @@ export default function DisplayCurrency(props: Props) {
 
   const amount = useMemo(() => {
     const coinValue = getCoinValue(props.coin, prices)
+
+    if (displayCurrency === ORACLE_DENOM) return coinValue.toNumber()
+
     const displayDecimals = displayCurrencyAsset.decimals
     const displayPrice = getCoinValue(
       BNCoin.fromDenomAndBigNumber(displayCurrency, BN(1).shiftedBy(displayDecimals)),
       prices,
     )
 
-    if (!coinValue || !displayPrice) return 0
-
-    if (displayCurrency === ORACLE_DENOM) return coinValue.toNumber()
     return coinValue.div(displayPrice).toNumber()
-  }, [displayCurrency, prices, props.coin.amount, props.coin.denom])
+  }, [displayCurrency, displayCurrencyAsset.decimals, prices, props.coin])
 
   return (
     <FormattedNumber

@@ -81,7 +81,7 @@ describe('<VaultBorrowings />', () => {
   it('should render DisplayCurrency correctly', () => {
     expect(mockedDisplayCurrency).toHaveBeenCalledTimes(1)
     expect(mockedDisplayCurrency).toHaveBeenCalledWith(
-      { coin: new BNCoin({ denom: 'uosmo', amount: '0' }) },
+      { coin: new BNCoin({ denom: 'usd', amount: '0' }) },
       expect.anything(),
     )
   })
