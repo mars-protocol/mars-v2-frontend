@@ -11,8 +11,7 @@ export function getAssetAccountBalanceRow(
   prev?: BNCoin,
 ): AccountBalanceRow {
   const { amount, denom } = position
-  const isNew = !prev
-  const amountChange = isNew ? position.amount : position.amount.minus(prev.amount)
+  const amountChange = !prev ? position.amount : position.amount.minus(prev.amount)
 
   return {
     type,
@@ -32,11 +31,10 @@ export function getVaultAccountBalanceRow(
   prev?: DepositedVault,
 ): AccountBalanceRow {
   const { name } = vault
-  const isNew = !prev
   const previous = prev || vault
   const totalValue = vault.values.primary.plus(vault.values.secondary)
   const prevTotalValue = previous.values.primary.plus(previous.values.secondary)
-  const amountChange = isNew ? totalValue : totalValue.minus(prevTotalValue)
+  const amountChange = !prev ? totalValue : totalValue.minus(prevTotalValue)
 
   return {
     type: 'vault',
