@@ -20,6 +20,7 @@ import { formatAmountWithSymbol } from 'utils/formatters'
 import getTokenOutFromSwapResponse from 'utils/getTokenOutFromSwapResponse'
 import { BN } from 'utils/helpers'
 
+
 function generateExecutionMessage(
   sender: string | undefined = '',
   contract: string,
@@ -414,7 +415,7 @@ export default function createBroadcastSlice(
 
       handleResponseMessages(
         response,
-        `Successfully deposited ${formatAmountWithSymbol(options.coin.toCoin())}`,
+        `Successfully lent ${formatAmountWithSymbol(options.coin.toCoin())}`,
       )
       return !!response.result
     },
@@ -443,6 +444,7 @@ export default function createBroadcastSlice(
     swap: (options: {
       accountId: string
       coinIn: BNCoin
+      reclaim?: BNCoin
       borrow?: BNCoin
       denomOut: string
       slippage: number
@@ -452,6 +454,7 @@ export default function createBroadcastSlice(
         update_credit_account: {
           account_id: options.accountId,
           actions: [
+            ...(options.reclaim ? [{ reclaim: options.reclaim.toActionCoin() }] : []),
             ...(options.borrow ? [{ borrow: options.borrow.toCoin() }] : []),
             {
               swap_exact_in: {

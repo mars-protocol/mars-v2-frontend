@@ -55,7 +55,7 @@ export default function SwapForm(props: Props) {
   const isAutoLendEnabled = account ? autoLendEnabledAccountIds.includes(account.id) : false
 
   const throttledEstimateExactIn = useMemo(() => asyncThrottle(estimateExactIn, 250), [])
-  const { simulateTrade } = useUpdatedAccount(account)
+  const { simulateTrade, removedLends } = useUpdatedAccount(account)
 
   const borrowAsset = useMemo(
     () => borrowAssets.find(byDenom(sellAsset.denom)),
@@ -165,6 +165,7 @@ export default function SwapForm(props: Props) {
     return swap({
       accountId: account?.id || '',
       coinIn: BNCoin.fromDenomAndBigNumber(sellAsset.denom, sellAssetAmount.integerValue()),
+      reclaim: removedLends[0],
       borrow: borrowCoin,
       denomOut: buyAsset.denom,
       slippage,
