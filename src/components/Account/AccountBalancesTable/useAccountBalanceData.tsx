@@ -35,7 +35,7 @@ export default function useAccountBalanceData(props: Props) {
       if (!asset) return
       const apy = 0
       const prevDeposit = updatedAccount
-        ? account?.deposits.find((position) => position.denom === deposit.denom) ?? deposit
+        ? account?.deposits.find((position) => position.denom === deposit.denom)
         : deposit
       deposits.push(getAssetAccountBalanceRow('deposits', asset, prices, deposit, apy, prevDeposit))
     })
@@ -48,7 +48,7 @@ export default function useAccountBalanceData(props: Props) {
       )
       const apy = convertAprToApy(apr, 365)
       const prevLending = updatedAccount
-        ? account?.lends.find((position) => position.denom === lending.denom) ?? lending
+        ? account?.lends.find((position) => position.denom === lending.denom)
         : lending
       return getAssetAccountBalanceRow('lending', asset, prices, lending, apy, prevLending)
     })
@@ -56,7 +56,7 @@ export default function useAccountBalanceData(props: Props) {
     const vaults = accountVaults.map((vault) => {
       const apy = (vault.apy ?? 0) * 100
       const prevVault = updatedAccount
-        ? account?.vaults.find((position) => position.name === vault.name) ?? vault
+        ? account?.vaults.find((position) => position.name === vault.name)
         : vault
       return getVaultAccountBalanceRow(vault, apy, prevVault)
     })
@@ -65,7 +65,7 @@ export default function useAccountBalanceData(props: Props) {
       const asset = ASSETS.find(byDenom(debt.denom)) ?? ASSETS[0]
       const apy = borrowingData.find((market) => market.asset.denom === debt.denom)?.borrowRate ?? 0
       const prevDebt = updatedAccount
-        ? account?.debts.find((position) => position.denom === debt.denom) ?? debt
+        ? account?.debts.find((position) => position.denom === debt.denom)
         : debt
       return getAssetAccountBalanceRow('borrowing', asset, prices, debt, apy * -100, prevDebt)
     })
