@@ -1,7 +1,5 @@
-import { BroadcastResult } from '@delphi-labs/shuttle-react'
-
 export function getSingleValueFromBroadcastResult(
-  response: BroadcastResult,
+  response: BroadcastResult['result'],
   messageType: string,
   messageKey: string,
 ): string | null {
@@ -13,4 +11,11 @@ export function getSingleValueFromBroadcastResult(
 
   if (!value) return null
   return value
+}
+
+export function generateErrorMessage(result: BroadcastResult, errorMessage?: string) {
+  const error = result.error ? result.error : result.result?.rawLogs
+  if (errorMessage) return errorMessage
+  if (error === 'Transaction failed') return 'Transaction rejected by user'
+  return `Transaction failed: ${error}`
 }

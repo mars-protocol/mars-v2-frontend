@@ -51,7 +51,7 @@ export default function DesktopHeader() {
         ) : (
           <div className='flex gap-4'>
             {address && <AccountMenu />}
-            <RewardsCenter />
+            {address && <RewardsCenter />}
             <Wallet />
             <Settings />
           </div>
