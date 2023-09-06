@@ -19,11 +19,7 @@ interface BroadcastSlice {
   }) => Promise<boolean>
   claimRewards: (options: { accountId: string }) => ExecutableTx
   createAccount: () => Promise<string | null>
-  deleteAccount: (options: {
-    accountId: string
-    deposits: BNCoin[]
-    lends: BNCoin[]
-  }) => Promise<boolean>
+  deleteAccount: (options: { accountId: string; lends: BNCoin[] }) => Promise<boolean>
   deposit: (options: { accountId: string; coins: BNCoin[]; lend: boolean }) => Promise<boolean>
   depositIntoVault: (options: { accountId: string; actions: Action[] }) => Promise<boolean>
   executeMsg: (options: { messages: MsgExecuteContract[] }) => Promise<BroadcastResult>

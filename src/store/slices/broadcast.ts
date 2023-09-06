@@ -153,12 +153,7 @@ export default function createBroadcastSlice(
         return null
       }
     },
-    deleteAccount: async (options: { accountId: string; deposits: BNCoin[]; lends: BNCoin[] }) => {
-      const withdrawMsg = options.deposits.map((coin) => {
-        return {
-          withdraw: coin.toActionCoin(true),
-        }
-      })
+    deleteAccount: async (options: { accountId: string; lends: BNCoin[] }) => {
       const reclaimMsg = options.lends.map((coin) => {
         return {
           reclaim: coin.toActionCoin(true),
@@ -168,9 +163,10 @@ export default function createBroadcastSlice(
       const refundMessage: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
-          actions: [...withdrawMsg, ...reclaimMsg],
+          actions: [...reclaimMsg, { refund_all_coin_balances: {} }],
         },
       }
+
       const burnMessage: AccountNftExecuteMsg = {
         burn: {
           token_id: options.accountId,

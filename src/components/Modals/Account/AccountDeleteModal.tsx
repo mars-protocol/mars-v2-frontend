@@ -40,7 +40,7 @@ function AccountDeleteModal(props: Props) {
 
   const deleteAccountHandler = useCallback(async () => {
     setIsConfirming(true)
-    const options = { accountId: modal.id, deposits: modal.deposits, lends: modal.lends }
+    const options = { accountId: modal.id, lends: modal.lends }
     const isSuccess = await deleteAccount(options)
     setIsConfirming(false)
     if (isSuccess) {
