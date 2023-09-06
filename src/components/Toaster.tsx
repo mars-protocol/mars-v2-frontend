@@ -45,18 +45,20 @@ export default function Toaster() {
         <Text size='sm' className='font-bold text-white'>
           {toast.message}
         </Text>
-        <TextLink
-          href={`${EXPLORER_TX_URL}${toast.hash}`}
-          target='_blank'
-          className={classNames(
-            'leading-4 underline mt-4 hover:no-underline hover:text-white',
-            isError ? 'text-error' : 'text-success',
-          )}
-          title={`View on ${EXPLORER_NAME}`}
-        >
-          {`View on ${EXPLORER_NAME}`}
-          <ExternalLink className='-mt-0.5 ml-2 inline w-3.5' />
-        </TextLink>
+        {toast.hash && (
+          <TextLink
+            href={`${EXPLORER_TX_URL}${toast.hash}`}
+            target='_blank'
+            className={classNames(
+              'leading-4 underline mt-4 hover:no-underline hover:text-white',
+              isError ? 'text-error' : 'text-success',
+            )}
+            title={`View on ${EXPLORER_NAME}`}
+          >
+            {`View on ${EXPLORER_NAME}`}
+            <ExternalLink className='-mt-0.5 ml-2 inline w-3.5' />
+          </TextLink>
+        )}
         <div className='absolute right-6 top-8 '>
           <Cross className={classNames('h-2 w-2', isError ? 'text-error' : 'text-success')} />
         </div>

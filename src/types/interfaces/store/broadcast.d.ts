@@ -40,7 +40,7 @@ interface BroadcastSlice {
     slippage: number
     isMax?: boolean
   }) => ExecutableTx
-  toast: { message: string; isError?: boolean; title?: string; hash: string } | null
+  toast: { message: string; isError?: boolean; title?: string; hash?: string } | null
   unlock: (options: {
     accountId: string
     vault: DepositedVault
