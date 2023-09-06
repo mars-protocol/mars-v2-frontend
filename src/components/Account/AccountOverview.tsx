@@ -1,19 +1,27 @@
 import classNames from 'classnames'
-import { Suspense, useMemo } from 'react'
+import { Suspense, useCallback, useMemo } from 'react'
 
 import AccountBalancesTable from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
+import AccountCreateFirst from 'components/Account/AccountCreateFirst'
+import Button from 'components/Button'
 import Card from 'components/Card'
+import { PlusCircled } from 'components/Icons'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
-import useAccounts from 'hooks/useAccounts'
+import WalletBridges from 'components/Wallet/WalletBridges'
+import WalletConnectButton from 'components/Wallet/WalletConnectButton'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
+import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import useStore from 'store'
+import { defaultFee } from 'utils/constants'
+import { BN } from 'utils/helpers'
 
 function Content() {
   const address = useStore((s) => s.address)
-  const { data: account } = useAccounts(address)
+  const accounts = useStore((s) => s.accounts)
+  const baseCurrency = useStore((s) => s.baseCurrency)
   const { availableAssets: borrowAvailableAssets, accountBorrowedAssets } =
     useBorrowMarketAssetsTableData()
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
@@ -26,26 +34,64 @@ function Content() {
     () => [...lendingAvailableAssets, ...accountLentAssets],
     [lendingAvailableAssets, accountLentAssets],
   )
+  const transactionFeeCoinBalance = useCurrentWalletBalance(baseCurrency.denom)
 
-  if (!address) {
+  const checkHasFunds = useCallback(() => {
+    return (
+      transactionFeeCoinBalance &&
+      BN(transactionFeeCoinBalance.amount).isGreaterThan(defaultFee.amount[0].amount)
+    )
+  }, [transactionFeeCoinBalance])
+
+  const handleCreateAccountClick = useCallback(() => {
+    if (!checkHasFunds()) {
+      useStore.setState({ focusComponent: { component: <WalletBridges /> } })
+      return
+    }
+
+    useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
+  }, [checkHasFunds])
+
+  if (!address)
     return (
       <Card
-        className='justify-center w-full h-fit bg-white/5'
+        className='w-full h-fit bg-white/5'
         title='Portfolio'
-        contentClassName='px-4 py-6'
+        contentClassName='px-4 py-6 flex justify-center flex-wrap'
       >
         <Text size='sm' className='w-full text-center'>
-          You need to be connected to view the porfolio page
+          You need to be connected to view the porfolio page.
         </Text>
+        <WalletConnectButton className='mt-4' />
       </Card>
     )
-  }
+
+  if (!accounts || accounts.length === 0)
+    return (
+      <Card
+        className='w-full h-fit bg-white/5'
+        title='Portfolio'
+        contentClassName='px-4 py-6 flex justify-center flex-wrap'
+      >
+        <Text size='sm' className='w-full text-center'>
+          You need to create an Account first.
+        </Text>
+        <Button
+          className='mt-4'
+          onClick={handleCreateAccountClick}
+          leftIcon={<PlusCircled />}
+          color='primary'
+        >
+          Create Account
+        </Button>
+      </Card>
+    )
 
   return (
     <div
       className={classNames('grid w-full grid-cols-1 gap-4', 'md:grid-cols-2', 'lg:grid-cols-3')}
     >
-      {account.map((account: Account, index: number) => (
+      {accounts.map((account: Account, index: number) => (
         <Card
           className='w-full h-fit bg-white/5'
           title={`Credit Account ${account.id}`}
