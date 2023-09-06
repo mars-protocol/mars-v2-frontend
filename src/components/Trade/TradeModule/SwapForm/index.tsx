@@ -172,6 +172,7 @@ export default function SwapForm(props: Props) {
       isMax: sellAssetAmount.isEqualTo(maxSellAmount),
     })
   }, [
+    removedLends,
     account?.id,
     buyAsset.denom,
     sellSideMarginThreshold,
