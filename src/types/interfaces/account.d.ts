@@ -14,11 +14,12 @@ interface AccountChange {
 }
 
 interface AccountBalanceRow {
-  type: string
-  symbol: string
-  denom: string
   amount: BigNumber
-  value: string | number
-  size: number
   apy: number
+  denom: string
+  size: number
+  symbol: string
+  type: 'deposits' | 'borrowing' | 'lending' | 'vault'
+  value: string
+  amountChange: BigNumber
 }

@@ -146,7 +146,7 @@ function AccountDetails(props: Props) {
           <AccountComposition account={account} />
           <Text className='w-full px-4 py-2 text-white bg-white/10'>Balances</Text>
           <AccountBalancesTable
-            account={updatedAccount ? updatedAccount : account}
+            account={account}
             borrowingData={borrowAssetsData}
             lendingData={lendingAssetsData}
           />
