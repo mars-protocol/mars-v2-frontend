@@ -136,8 +136,9 @@ export function useUpdatedAccount(account?: Account) {
 
       const { deposit, lend } = getDepositAndLendCoinsToSpend(removeCoin, account)
 
-      removeDeposits([deposit])
-      removeLends([lend])
+      if (!deposit.amount.isZero()) removeDeposits([deposit])
+      if (!lend.amount.isZero()) removeLends([lend])
+
       if (target === 'deposit') addDeposits([addCoin])
       if (target === 'lend') addLends([addCoin])
 

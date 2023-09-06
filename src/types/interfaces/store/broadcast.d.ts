@@ -34,7 +34,8 @@ interface BroadcastSlice {
   swap: (options: {
     accountId: string
     coinIn: BNCoin
-    borrow: BNCoin
+    reclaim?: BNCoin
+    borrow?: BNCoin
     denomOut: string
     slippage: number
     isMax?: boolean
