@@ -146,8 +146,11 @@ export default function createBroadcastSlice(
         set({
           createAccountModal: false,
           toast: {
-            message: response.error ?? `Transaction failed: ${response.error}`,
-            hash: response.result.hash,
+            message:
+              response.error && response.error !== 'Transaction failed'
+                ? `Transaction failed: ${response.error}`
+                : 'Transaction rejected by user',
+            hash: response.result?.hash ?? undefined,
             isError: true,
           },
         })
