@@ -13,7 +13,7 @@ import {
   ExecuteMsg as CreditManagerExecuteMsg,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getAssetByDenom, getAssetBySymbol } from 'utils/assets'
-import { getSingleValueFromBroadcastResult } from 'utils/broadcast'
+import { generateErrorMessage, getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import { defaultFee } from 'utils/constants'
 import { formatAmountWithSymbol } from 'utils/formatters'
@@ -51,12 +51,11 @@ export default function createBroadcastSlice(
         },
       })
     } else {
-      const error = response.error ? response.error : response.result?.rawLogs
       set({
         toast: {
-          message: errorMessage ?? `Transaction failed: ${error}`,
+          message: generateErrorMessage(response, errorMessage),
           isError: true,
-          hash: response.result.hash,
+          hash: response.result?.hash,
         },
       })
     }
@@ -134,7 +133,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
 
-      if (response.result) {
+      if (response.result && !response.error) {
         set({ createAccountModal: false })
         const id = getSingleValueFromBroadcastResult(response.result, 'wasm', 'token_id')
         set({
@@ -146,11 +145,8 @@ export default function createBroadcastSlice(
         set({
           createAccountModal: false,
           toast: {
-            message:
-              response.error && response.error !== 'Transaction failed'
-                ? `Transaction failed: ${response.error}`
-                : 'Transaction rejected by user',
-            hash: response.result?.hash ?? undefined,
+            message: generateErrorMessage(response),
+            hash: response?.result?.hash,
             isError: true,
           },
         })
