@@ -1,8 +1,8 @@
 import classNames from 'classnames'
+import AccountFund from 'components/Account/AccountFund/AccountFund'
 import { useCallback, useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
-import AccountFund from 'components/Account/AccountFund'
 import AccountStats from 'components/Account/AccountStats'
 import Button from 'components/Button'
 import Card from 'components/Card'

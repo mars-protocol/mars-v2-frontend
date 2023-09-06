@@ -1,10 +1,7 @@
-import { useState } from 'react'
-
 import AccountSummary from 'components/Account/AccountSummary'
 import Card from 'components/Card'
 import FundAccount from 'components/Modals/FundWithdraw/FundAccount'
 import WithdrawFromAccount from 'components/Modals/FundWithdraw/WithdrawFromAccount'
-import useStore from 'store'
 
 interface Props {
   account: Account

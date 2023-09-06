@@ -1,9 +1,9 @@
 import classNames from 'classnames'
+import AccountFund from 'components/Account/AccountFund/AccountFund'
 import { useCallback, useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import AccountCreateFirst from 'components/Account/AccountCreateFirst'
-import AccountFund from 'components/Account/AccountFund'
 import AccountList from 'components/Account/AccountList'
 import Button from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
