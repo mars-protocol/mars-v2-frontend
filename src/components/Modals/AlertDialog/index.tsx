@@ -7,7 +7,6 @@ import Modal from 'components/Modal'
 import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
 import Text from 'components/Text'
 import useAlertDialog from 'hooks/useAlertDialog'
-import { useState } from 'react'
 
 export default function AlertDialogController() {
   const { config, close } = useAlertDialog()
@@ -25,7 +24,6 @@ interface Props {
 function AlertDialog(props: Props) {
   const { title, icon, description, negativeButton, positiveButton } = props.config
   const [isConfirming, setIsConfirming] = useState(false)
-
   const handleButtonClick = (button?: AlertDialogButton) => {
     button?.onClick && button.onClick()
     props.close()
