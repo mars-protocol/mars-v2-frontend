@@ -3,9 +3,8 @@ import { ReactNode, useEffect, useRef } from 'react'
 
 import EscButton from 'components/Button/EscButton'
 import Card from 'components/Card'
+import TransactionLoader from 'components/TransactionLoader'
 import useStore from 'store'
-
-import TransactionLoader from './TransactionLoader'
 
 interface Props {
   header: string | ReactNode
