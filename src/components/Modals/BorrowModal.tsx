@@ -55,7 +55,7 @@ export default function BorrowModalController() {
 function BorrowModal(props: Props) {
   const { modal, account } = props
   const [amount, setAmount] = useState(BN_ZERO)
-  const [isConfirming, setIsConfirming] = useToggle()
+  const pendingTransaction = useStore((s) => s.pendingTransaction)
   const [borrowToWallet, setBorrowToWallet] = useToggle()
   const borrow = useStore((s) => s.borrow)
   const repay = useStore((s) => s.repay)
@@ -70,12 +70,11 @@ function BorrowModal(props: Props) {
 
   function resetState() {
     setAmount(BN_ZERO)
-    setIsConfirming(false)
   }
 
   async function onConfirmClick() {
     if (!asset) return
-    setIsConfirming(true)
+    useStore.setState({ pendingTransaction: true })
     let result
     const { lend } = getDepositAndLendCoinsToSpend(
       BNCoin.fromDenomAndBigNumber(asset.denom, amount),
@@ -96,7 +95,6 @@ function BorrowModal(props: Props) {
       })
     }
 
-    setIsConfirming(false)
     if (result) {
       resetState()
       useStore.setState({ borrowModal: null })
@@ -216,7 +214,7 @@ function BorrowModal(props: Props) {
               max={max}
               className='w-full'
               maxText='Max'
-              disabled={isConfirming}
+              disabled={pendingTransaction}
             />
             {!isRepay && (
               <>
@@ -232,7 +230,7 @@ function BorrowModal(props: Props) {
                     name='borrow-to-wallet'
                     checked={borrowToWallet}
                     onChange={setBorrowToWallet}
-                    disabled={isConfirming}
+                    disabled={pendingTransaction}
                   />
                 </div>
               </>
@@ -241,7 +239,7 @@ function BorrowModal(props: Props) {
           <Button
             onClick={onConfirmClick}
             className='w-full'
-            showProgressIndicator={isConfirming}
+            showProgressIndicator={pendingTransaction}
             disabled={amount.isZero()}
             text={isRepay ? 'Repay' : 'Borrow'}
             rightIcon={<ArrowRight />}

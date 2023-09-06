@@ -35,7 +35,7 @@ export const Tooltip = (props: Props) => {
         <span
           className={classNames(
             props.underline &&
-              'border-b-1 cursor-pointer border border-x-0 border-t-0 border-dashed border-white/50 hover:border-transparent',
+              'border-b-1 hover:cursor-pointer border border-x-0 border-t-0 border-dashed border-white/50 hover:border-transparent',
             !reduceMotion && 'transition-all',
             props.className,
           )}
@@ -45,7 +45,7 @@ export const Tooltip = (props: Props) => {
       ) : (
         <span
           className={classNames(
-            'inline-block w-[18px] cursor-pointer opacity-40 hover:opacity-80',
+            'inline-block w-[18px] hover:cursor-pointer opacity-40 hover:opacity-80',
             props.className,
           )}
         >

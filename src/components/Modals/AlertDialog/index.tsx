@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import classNames from 'classnames'
 
 import Button from 'components/Button'
@@ -7,6 +6,7 @@ import Modal from 'components/Modal'
 import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
 import Text from 'components/Text'
 import useAlertDialog from 'hooks/useAlertDialog'
+import useStore from 'store'
 
 export default function AlertDialogController() {
   const { config, close } = useAlertDialog()
@@ -24,7 +24,7 @@ interface Props {
 function AlertDialog(props: Props) {
   const { title, icon, description, negativeButton, positiveButton } = props.config
 
-  const [isConfirming, setIsConfirming] = useState(false)
+  const pendingTransaction = useStore((s) => s.pendingTransaction)
 
   const handleButtonClick = (button?: AlertDialogButton) => {
     button?.onClick && button.onClick()
@@ -33,9 +33,8 @@ function AlertDialog(props: Props) {
 
   async function handleAsyncButtonClick(button?: AlertDialogButton) {
     if (!button?.onClick) return
-    setIsConfirming(true)
+    useStore.setState({ pendingTransaction: true })
     await button.onClick()
-    setIsConfirming(false)
     props.close()
   }
 
@@ -43,7 +42,7 @@ function AlertDialog(props: Props) {
     <Modal
       onClose={props.close}
       header={
-        <div className='grid h-12 w-12 place-items-center rounded-sm bg-white/5'>
+        <div className='grid w-12 h-12 rounded-sm place-items-center bg-white/5'>
           {icon ?? <ExclamationMarkCircled width={18} />}
         </div>
       }
@@ -63,7 +62,7 @@ function AlertDialog(props: Props) {
             color='tertiary'
             className='px-6'
             rightIcon={positiveButton.icon ?? <YesIcon />}
-            showProgressIndicator={isConfirming}
+            showProgressIndicator={pendingTransaction}
             onClick={() =>
               positiveButton.isAsync
                 ? handleAsyncButtonClick(positiveButton)
@@ -76,7 +75,7 @@ function AlertDialog(props: Props) {
           color='secondary'
           className='px-6'
           rightIcon={negativeButton?.icon ?? <NoIcon />}
-          disabled={isConfirming}
+          disabled={pendingTransaction}
           tabIndex={1}
           onClick={() => handleButtonClick(negativeButton)}
         />

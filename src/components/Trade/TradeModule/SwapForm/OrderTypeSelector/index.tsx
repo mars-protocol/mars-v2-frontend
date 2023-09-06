@@ -47,7 +47,7 @@ export default function OrderTypeSelector(props: Props) {
 
 const className = {
   wrapper: 'flex flex-1 flex-row px-3 pt-4',
-  tab: 'mr-4 pb-2 cursor-pointer select-none flex flex-row',
+  tab: 'mr-4 pb-2 hover:cursor-pointer select-none flex flex-row',
   selectedTab: 'border-b-2 border-pink border-solid',
   disabledTab: 'opacity-20 pointer-events-none',
   infoCircle: 'w-4 h-4 ml-2 mt-1',

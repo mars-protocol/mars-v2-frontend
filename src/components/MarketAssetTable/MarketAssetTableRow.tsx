@@ -47,7 +47,7 @@ function AssetListTableRow<TData>(props: Props<TData>) {
       <tr
         key={props.rowData.id}
         className={classNames(
-          'cursor-pointer transition-colors',
+          'hover:cursor-pointer transition-colors',
 
           props.rowData.getIsExpanded() ? 'bg-black/20' : 'bg-white/0 hover:bg-white/5',
         )}

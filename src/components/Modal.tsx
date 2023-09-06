@@ -3,6 +3,9 @@ import { ReactNode, useEffect, useRef } from 'react'
 
 import EscButton from 'components/Button/EscButton'
 import Card from 'components/Card'
+import useStore from 'store'
+
+import TransactionLoader from './TransactionLoader'
 
 interface Props {
   header: string | ReactNode
@@ -19,9 +22,11 @@ interface Props {
 export default function Modal(props: Props) {
   const ref: React.RefObject<HTMLDialogElement> = useRef(null)
   const modalClassName = props.modalClassName ?? 'max-w-modal'
+  const pendingTransaction = useStore((s) => s.pendingTransaction)
 
   function onClose() {
     ref.current?.close()
+    useStore.setState({ pendingTransaction: false })
     props.onClose()
   }
 
@@ -54,7 +59,7 @@ export default function Modal(props: Props) {
     >
       <Card
         className={classNames(
-          'relative flex max-w-full flex-1 bg-white/5 backdrop-blur-3xl',
+          'flex max-w-full flex-1 bg-white/5 backdrop-blur-3xl',
           props.className,
         )}
       >
@@ -63,8 +68,12 @@ export default function Modal(props: Props) {
           {!props.hideCloseBtn && <EscButton onClick={props.onClose} />}
         </div>
         <div
-          className={classNames(props.contentClassName, 'flex-1 overflow-y-scroll scrollbar-hide')}
+          className={classNames(
+            props.contentClassName,
+            'flex-1 overflow-y-scroll scrollbar-hide relative',
+          )}
         >
+          {pendingTransaction && <TransactionLoader />}
           {props.children ? props.children : props.content}
         </div>
       </Card>

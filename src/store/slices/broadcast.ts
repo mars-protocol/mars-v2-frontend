@@ -43,6 +43,7 @@ export default function createBroadcastSlice(
     successMessage: string,
     errorMessage?: string,
   ) => {
+    set({ pendingTransaction: false })
     if (response.result?.response.code === 0) {
       set({
         toast: {
@@ -90,6 +91,7 @@ export default function createBroadcastSlice(
 
   return {
     toast: null,
+    pendingTransaction: false,
     borrow: async (options: { accountId: string; coin: BNCoin; borrowToWallet: boolean }) => {
       const borrowAction: Action = { borrow: options.coin.toCoin() }
       const withdrawAction: Action = { withdraw: options.coin.toActionCoin() }

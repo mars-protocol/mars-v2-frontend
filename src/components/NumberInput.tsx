@@ -155,7 +155,7 @@ export default function NumberInput(props: Props) {
       onBlur={props.onBlur}
       disabled={props.disabled}
       className={classNames(
-        'w-full cursor-pointer appearance-none border-none bg-transparent text-right outline-none',
+        'w-full hover:cursor-pointer appearance-none border-none bg-transparent text-right outline-none',
         props.className,
       )}
       style={props.style}

@@ -31,7 +31,7 @@ export default function FundAccount(props: Props) {
   const address = useStore((s) => s.address)
   const deposit = useStore((s) => s.deposit)
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
-  const [isFunding, setIsFunding] = useToggle(false)
+  const pendingTransaction = useStore((s) => s.pendingTransaction)
   const [fundingAssets, setFundingAssets] = useState<BNCoin[]>([])
   const { data: walletBalances } = useWalletBalances(address)
   const baseAsset = getBaseAsset()
@@ -54,16 +54,15 @@ export default function FundAccount(props: Props) {
   }, [walletAssetModal?.selectedDenoms])
 
   const handleClick = useCallback(async () => {
-    setIsFunding(true)
+    useStore.setState({ pendingTransaction: true })
     if (!accountId) return
     const result = await deposit({
       accountId,
       coins: fundingAssets,
       lend: isLending,
     })
-    setIsFunding(false)
     if (result) useStore.setState({ fundAndWithdrawModal: null, walletAssetsModal: null })
-  }, [setIsFunding, accountId, deposit, fundingAssets, isLending])
+  }, [accountId, deposit, fundingAssets, isLending])
 
   const handleSelectAssetsClick = useCallback(() => {
     useStore.setState({
@@ -147,7 +146,7 @@ export default function FundAccount(props: Props) {
               max={balance}
               balances={balances}
               maxText='Max'
-              disabled={isFunding}
+              disabled={pendingTransaction}
               className='w-full mb-4'
             />
           )
@@ -159,12 +158,12 @@ export default function FundAccount(props: Props) {
           rightIcon={<Plus />}
           iconClassName='w-3'
           onClick={handleSelectAssetsClick}
-          disabled={isFunding}
+          disabled={pendingTransaction}
         />
         <DepositCapMessage
           action='fund'
           coins={depositCapReachedCoins}
-          className='pr-4 py-2 mt-4'
+          className='py-2 pr-4 mt-4'
           showIcon
         />
         <SwitchAutoLend
@@ -179,7 +178,7 @@ export default function FundAccount(props: Props) {
         text='Fund account'
         rightIcon={<ArrowRight />}
         disabled={!hasFundingAssets || depositCapReachedCoins.length > 0}
-        showProgressIndicator={isFunding}
+        showProgressIndicator={pendingTransaction}
         onClick={handleClick}
       />
     </>

@@ -90,9 +90,9 @@ export default function Slider(props: Props) {
         value={props.value}
         onChange={handleSliderClick}
         onMouseDown={handleShowTooltip}
-        className='absolute z-2 w-full cursor-pointer appearance-none bg-transparent [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:appearance-none'
+        className='absolute z-2 w-full hover:cursor-pointer appearance-none bg-transparent [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:appearance-none'
       />
-      <div className='absolute flex w-full items-center gap-1'>
+      <div className='absolute flex items-center w-full gap-1'>
         <Mark
           onClick={props.onChange}
           value={0}
@@ -142,12 +142,12 @@ export default function Slider(props: Props) {
           <div ref={nodeRef} className='absolute z-20 leading-3'>
             <div
               className={
-                'z-20 h-3 w-3 rotate-45 cursor-pointer rounded-xs border-[2px] border-white bg-martian-red'
+                'z-20 h-3 w-3 rotate-45 hover:cursor-pointer rounded-xs border-[2px] border-white bg-martian-red'
               }
             />
             {(showTooltip || isDragging) && (
               <div className='absolute -top-8 left-1/2 -translate-x-1/2 rounded-xs bg-martian-red px-2 py-[2px] text-xs'>
-                <OverlayMark className='absolute -bottom-2 left-1/2 -z-1 h-2 -translate-x-1/2 text-martian-red' />
+                <OverlayMark className='absolute h-2 -translate-x-1/2 -bottom-2 left-1/2 -z-1 text-martian-red' />
                 {props.value.toFixed(0)}%
               </div>
             )}
@@ -193,9 +193,9 @@ function Track(props: TrackProps) {
   }
 
   return (
-    <div className='relative h-1 flex-1 overflow-hidden rounded-sm bg-transparent'>
-      <div className='absolute z-1 h-3 bg-martian-red ' style={{ width: `${percentage}%` }} />
-      <div className='absolute h-3 w-full bg-white/20' />
+    <div className='relative flex-1 h-1 overflow-hidden bg-transparent rounded-sm'>
+      <div className='absolute h-3 z-1 bg-martian-red ' style={{ width: `${percentage}%` }} />
+      <div className='absolute w-full h-3 bg-white/20' />
     </div>
   )
 }

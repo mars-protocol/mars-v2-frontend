@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import AssetBalanceRow from 'components/AssetBalanceRow'
@@ -28,21 +28,20 @@ export default function AccountDeleteController() {
 function AccountDeleteModal(props: Props) {
   const modal = props.modal
   const deleteAccount = useStore((s) => s.deleteAccount)
+  const pendingTransaction = useStore((s) => s.pendingTransaction)
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { address } = useParams()
   const { debts, vaults, id: accountId } = modal || {}
-  const [isConfirming, setIsConfirming] = useState(false)
 
   const closeDeleteAccountModal = useCallback(() => {
     useStore.setState({ accountDeleteModal: null })
   }, [])
 
   const deleteAccountHandler = useCallback(async () => {
-    setIsConfirming(true)
+    useStore.setState({ pendingTransaction: true })
     const options = { accountId: modal.id, lends: modal.lends }
     const isSuccess = await deleteAccount(options)
-    setIsConfirming(false)
     if (isSuccess) {
       navigate(getRoute(getPage(pathname), address))
       closeDeleteAccountModal()
@@ -135,7 +134,7 @@ function AccountDeleteModal(props: Props) {
           onClick={deleteAccountHandler}
           text='Delete Account'
           rightIcon={<ArrowRight />}
-          showProgressIndicator={isConfirming}
+          showProgressIndicator={pendingTransaction}
         />
       </div>
     </Modal>

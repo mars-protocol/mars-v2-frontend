@@ -1,5 +1,5 @@
-import { ChangeEvent, useCallback } from 'react'
 import classNames from 'classnames'
+import { ChangeEvent, useCallback } from 'react'
 
 import InputOverlay from 'components/RangeInput/InputOverlay'
 
@@ -60,7 +60,7 @@ const className = {
   legendWrapper: 'flex w-full justify-between text-xs text-opacity-50 text-white font-bold',
   inputWrapper: 'relative h-[30px]',
   input: `
-    relative w-full appearance-none bg-transparent cursor-pointer
+    relative w-full appearance-none bg-transparent hover:cursor-pointer
   
     [&::-webkit-slider-runnable-track]:bg-white
     [&::-webkit-slider-runnable-track]:bg-opacity-20

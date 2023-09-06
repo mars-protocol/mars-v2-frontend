@@ -86,7 +86,7 @@ export default function AssetSelectTable(props: Props) {
                   onClick={header.column.getToggleSortingHandler()}
                   className={classNames(
                     'p-2',
-                    header.column.getCanSort() && 'cursor-pointer',
+                    header.column.getCanSort() && 'hover:cursor-pointer',
                     header.id === 'symbol' ? 'text-left' : 'text-right',
                   )}
                 >
@@ -125,7 +125,7 @@ export default function AssetSelectTable(props: Props) {
           return (
             <tr
               key={row.id}
-              className='cursor-pointer text-white/60'
+              className='hover:cursor-pointer text-white/60'
               onClick={() => row.toggleSelected()}
             >
               {row.getVisibleCells().map((cell) => {

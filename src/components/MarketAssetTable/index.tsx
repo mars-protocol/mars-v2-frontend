@@ -55,7 +55,7 @@ function AssetListTable<TData>(props: Props<TData>) {
                     onClick={header.column.getToggleSortingHandler()}
                     className={classNames(
                       'px-4 py-3',
-                      header.column.getCanSort() && 'cursor-pointer',
+                      header.column.getCanSort() && 'hover:cursor-pointer',
                       header.id === 'symbol' ? 'text-left' : 'text-right',
                       {
                         'w-32': header.id === 'manage',

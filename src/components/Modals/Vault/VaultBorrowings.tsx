@@ -10,6 +10,7 @@ import Slider from 'components/Slider'
 import Text from 'components/Text'
 import TokenInput from 'components/TokenInput'
 import { BN_ZERO } from 'constants/math'
+import { ORACLE_DENOM } from 'constants/oracle'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useMarketAssets from 'hooks/useMarketAssets'
 import usePrices from 'hooks/usePrices'
@@ -20,7 +21,6 @@ import { byDenom } from 'utils/array'
 import { findCoinByDenom, getAssetByDenom } from 'utils/assets'
 import { formatPercent } from 'utils/formatters'
 import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
-import { ORACLE_DENOM } from 'constants/oracle'
 
 export interface VaultBorrowingsProps {
   borrowings: BNCoin[]
@@ -39,7 +39,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   const { data: prices } = usePrices()
   const vaultModal = useStore((s) => s.vaultModal)
   const depositIntoVault = useStore((s) => s.depositIntoVault)
-  const [isConfirming, setIsConfirming] = useState(false)
+  const pendingTransaction = useStore((s) => s.pendingTransaction)
   const updatedAccount = useStore((s) => s.updatedAccount)
   const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
   const [percentage, setPercentage] = useState<number>(0)
@@ -144,12 +144,11 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
 
   async function onConfirm() {
     if (!updatedAccount) return
-    setIsConfirming(true)
+    useStore.setState({ pendingTransaction: true })
     const isSuccess = await depositIntoVault({
       accountId: updatedAccount.id,
       actions: props.depositActions,
     })
-    setIsConfirming(false)
     if (isSuccess) {
       useStore.setState({ vaultModal: null })
     }
@@ -171,12 +170,12 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
             maxText='Max Borrow'
             onChange={(amount) => updateAssets(coin.denom, amount)}
             onDelete={() => onDelete(coin.denom)}
-            disabled={isConfirming}
+            disabled={pendingTransaction}
           />
         )
       })}
       {props.borrowings.length === 1 && (
-        <Slider onChange={onChangeSlider} value={percentage} disabled={isConfirming} />
+        <Slider onChange={onChangeSlider} value={percentage} disabled={pendingTransaction} />
       )}
       {props.borrowings.length === 0 && (
         <div className='flex items-center gap-4 py-2'>
@@ -194,7 +193,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
         text='Select borrow assets +'
         color='tertiary'
         onClick={addAsset}
-        disabled={isConfirming}
+        disabled={pendingTransaction}
       />
 
       <DepositCapMessage
@@ -231,7 +230,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
         color='primary'
         text='Deposit'
         rightIcon={<ArrowRight />}
-        showProgressIndicator={isConfirming}
+        showProgressIndicator={pendingTransaction}
         disabled={!props.depositActions.length || props.depositCapReachedCoins.length > 0}
       />
     </div>
