@@ -26,17 +26,15 @@ export default function WalletConnectButton(props: Props) {
   }, [hasAgreedToTerms])
 
   return (
-    <div className='relative'>
-      <Button
-        variant={props.variant ?? 'solid'}
-        color={props.color ?? 'tertiary'}
-        size={props.size ?? 'sm'}
-        disabled={props.disabled}
-        onClick={handleClick}
-        leftIcon={<Wallet />}
-        className={props.className}
-        text={props.textOverride ?? 'Connect Wallet'}
-      />
-    </div>
+    <Button
+      variant={props.variant ?? 'solid'}
+      color={props.color ?? 'tertiary'}
+      size={props.size ?? 'sm'}
+      disabled={props.disabled}
+      onClick={handleClick}
+      leftIcon={<Wallet />}
+      className={props.className}
+      text={props.textOverride ?? 'Connect Wallet'}
+    />
   )
 }
