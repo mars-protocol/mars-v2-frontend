@@ -1,7 +1,7 @@
-import AccountFund from 'components/Account/AccountFund/AccountFund'
 import { useCallback, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+import AccountFund from 'components/Account/AccountFund/AccountFundFullPage'
 import FullOverlayContent from 'components/FullOverlayContent'
 import WalletSelect from 'components/Wallet/WalletSelect'
 import useToggle from 'hooks/useToggle'
