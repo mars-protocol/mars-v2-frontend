@@ -20,7 +20,6 @@ import { formatAmountWithSymbol } from 'utils/formatters'
 import getTokenOutFromSwapResponse from 'utils/getTokenOutFromSwapResponse'
 import { BN } from 'utils/helpers'
 
-
 function generateExecutionMessage(
   sender: string | undefined = '',
   contract: string,
@@ -48,6 +47,7 @@ export default function createBroadcastSlice(
       set({
         toast: {
           message: successMessage,
+          hash: response.result.hash,
         },
       })
     } else {
@@ -56,6 +56,7 @@ export default function createBroadcastSlice(
         toast: {
           message: errorMessage ?? `Transaction failed: ${error}`,
           isError: true,
+          hash: response.result.hash,
         },
       })
     }
@@ -136,13 +137,17 @@ export default function createBroadcastSlice(
       if (response.result) {
         set({ createAccountModal: false })
         const id = getSingleValueFromBroadcastResult(response.result, 'wasm', 'token_id')
-        set({ fundAccountModal: true, toast: { message: `Credit Account ${id} created` } })
+        set({
+          fundAccountModal: true,
+          toast: { message: `Credit Account ${id} created`, hash: response.result.hash },
+        })
         return id
       } else {
         set({
           createAccountModal: false,
           toast: {
             message: response.error ?? `Transaction failed: ${response.error}`,
+            hash: response.result.hash,
             isError: true,
           },
         })
