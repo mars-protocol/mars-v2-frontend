@@ -67,7 +67,7 @@ export default function AccountSummary(props: Props) {
         <Item label='Leverage' classes='flex-1'>
           <FormattedNumber
             className='text-sm'
-            amount={leverage.toNumber()}
+            amount={isNaN(leverage.toNumber()) ? 0 : leverage.toNumber()}
             options={{ minDecimals: 2, suffix: 'x' }}
           />
         </Item>

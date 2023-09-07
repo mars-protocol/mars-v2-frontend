@@ -39,7 +39,7 @@ function AccountDeleteModal(props: Props) {
   }, [])
 
   const deleteAccountHandler = useCallback(async () => {
-    useStore.setState({ pendingTransaction: true })
+    if (depositsAndLends.length > 0) useStore.setState({ pendingTransaction: true })
     const options = { accountId: modal.id, lends: modal.lends }
     const isSuccess = await deleteAccount(options)
     if (isSuccess) {

@@ -6,7 +6,7 @@ import Modal from 'components/Modal'
 import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
 import Text from 'components/Text'
 import useAlertDialog from 'hooks/useAlertDialog'
-import useStore from 'store'
+import { useState } from 'react'
 
 export default function AlertDialogController() {
   const { config, close } = useAlertDialog()
@@ -23,8 +23,7 @@ interface Props {
 
 function AlertDialog(props: Props) {
   const { title, icon, description, negativeButton, positiveButton } = props.config
-
-  const pendingTransaction = useStore((s) => s.pendingTransaction)
+  const [isConfirming, setIsConfirming] = useState(false)
 
   const handleButtonClick = (button?: AlertDialogButton) => {
     button?.onClick && button.onClick()
@@ -33,8 +32,9 @@ function AlertDialog(props: Props) {
 
   async function handleAsyncButtonClick(button?: AlertDialogButton) {
     if (!button?.onClick) return
-    useStore.setState({ pendingTransaction: true })
+    setIsConfirming(true)
     await button.onClick()
+    setIsConfirming(false)
     props.close()
   }
 
@@ -62,7 +62,7 @@ function AlertDialog(props: Props) {
             color='tertiary'
             className='px-6'
             rightIcon={positiveButton.icon ?? <YesIcon />}
-            showProgressIndicator={pendingTransaction}
+            showProgressIndicator={isConfirming}
             onClick={() =>
               positiveButton.isAsync
                 ? handleAsyncButtonClick(positiveButton)
@@ -75,7 +75,7 @@ function AlertDialog(props: Props) {
           color='secondary'
           className='px-6'
           rightIcon={negativeButton?.icon ?? <NoIcon />}
-          disabled={pendingTransaction}
+          disabled={isConfirming}
           tabIndex={1}
           onClick={() => handleButtonClick(negativeButton)}
         />

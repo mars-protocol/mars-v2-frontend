@@ -106,7 +106,7 @@ function AccountDetails(props: Props) {
           </Text>
           <FormattedNumber
             className={'w-full text-center text-2xs'}
-            amount={leverage.toNumber()}
+            amount={isNaN(leverage.toNumber()) ? 0 : leverage.toNumber()}
             options={{ maxDecimals: 2, minDecimals: 2, suffix: 'x' }}
             animate
           />

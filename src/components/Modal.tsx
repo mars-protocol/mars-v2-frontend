@@ -40,6 +40,7 @@ export default function Modal(props: Props) {
     return () => {
       dialog?.removeAttribute('open')
       dialog?.close()
+      useStore.setState({ pendingTransaction: false })
       document.body.classList.remove('h-screen', 'overflow-hidden')
     }
   }, [])
