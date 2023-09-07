@@ -35,6 +35,7 @@ export interface VaultBorrowingsProps {
 }
 
 export default function VaultBorrowings(props: VaultBorrowingsProps) {
+  const { borrowings, onChangeBorrowings } = props
   const { data: marketAssets } = useMarketAssets()
   const { data: prices } = usePrices()
   const vaultModal = useStore((s) => s.vaultModal)
@@ -74,22 +75,22 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   useEffect(() => {
     const selectedBorrowDenoms = vaultModal?.selectedBorrowDenoms || []
     if (
-      props.borrowings.length === selectedBorrowDenoms.length &&
-      props.borrowings.every((coin) => selectedBorrowDenoms.includes(coin.denom))
+      borrowings.length === selectedBorrowDenoms.length &&
+      borrowings.every((coin) => selectedBorrowDenoms.includes(coin.denom))
     ) {
       return
     }
     const updatedBorrowings = selectedBorrowDenoms.map((denom) => {
-      const amount = findCoinByDenom(denom, props.borrowings)?.amount || BN_ZERO
+      const amount = findCoinByDenom(denom, borrowings)?.amount || BN_ZERO
 
       return new BNCoin({
         denom,
         amount: amount.toString(),
       })
     })
-    props.onChangeBorrowings(updatedBorrowings)
     setPercentage(calculateSliderPercentage(maxBorrowAmounts, updatedBorrowings))
-  }, [vaultModal, props, maxBorrowAmounts])
+    onChangeBorrowings(updatedBorrowings)
+  }, [vaultModal, maxBorrowAmounts, borrowings, onChangeBorrowings])
 
   function onChangeSlider(value: number) {
     if (props.borrowings.length !== 1) return
