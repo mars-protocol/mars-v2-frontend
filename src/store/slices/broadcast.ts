@@ -20,6 +20,7 @@ import { formatAmountWithSymbol } from 'utils/formatters'
 import getTokenOutFromSwapResponse from 'utils/getTokenOutFromSwapResponse'
 import { BN } from 'utils/helpers'
 
+
 function generateExecutionMessage(
   sender: string | undefined = '',
   contract: string,
@@ -62,7 +63,6 @@ export default function createBroadcastSlice(
   }
   const getEstimatedFee = async (messages: MsgExecuteContract[]) => {
     if (!get().client) {
-      console.warn('Client not initialized')
       return defaultFee
     }
     try {
