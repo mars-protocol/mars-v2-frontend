@@ -186,8 +186,8 @@ export default function AccountFundContent(props: Props) {
         <SwitchAutoLend
           className='pt-4 mt-4 border border-transparent border-t-white/10'
           accountId={props.accountId}
-          value={isLending}
-          onChange={toggleIsLending}
+          value={!props.isFullPage ? isLending : undefined}
+          onChange={!props.isFullPage ? toggleIsLending : undefined}
         />
       </div>
       <Button
