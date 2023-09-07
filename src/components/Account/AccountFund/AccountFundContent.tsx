@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import Button from 'components/Button'
 import DepositCapMessage from 'components/DepositCapMessage'
@@ -32,8 +32,7 @@ interface Props {
 export default function AccountFundContent(props: Props) {
   const deposit = useStore((s) => s.deposit)
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
-
-  const [isFunding, setIsFunding] = useToggle(false)
+  const pendingTransaction = useStore((s) => s.pendingTransaction)
   const [fundingAssets, setFundingAssets] = useState<BNCoin[]>([])
   const { data: marketAssets } = useMarketAssets()
   const { data: walletBalances } = useWalletBalances(props.address)
@@ -68,21 +67,20 @@ export default function AccountFundContent(props: Props) {
   }, [selectedDenoms])
 
   const handleClick = useCallback(async () => {
-    setIsFunding(true)
+    useStore.setState({ pendingTransaction: true })
     if (!props.accountId) return
     const result = await deposit({
       accountId: props.accountId,
       coins: fundingAssets,
       lend: isLending,
     })
-    setIsFunding(false)
     if (result)
       useStore.setState({
         fundAndWithdrawModal: null,
         walletAssetsModal: null,
         focusComponent: null,
       })
-  }, [setIsFunding, props.accountId, deposit, fundingAssets, isLending])
+  }, [props.accountId, deposit, fundingAssets, isLending])
 
   useEffect(() => {
     if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) {
@@ -162,7 +160,7 @@ export default function AccountFundContent(props: Props) {
                 max={balance}
                 balances={balances}
                 maxText='Max'
-                disabled={isFunding}
+                disabled={pendingTransaction}
               />
             </div>
           )
@@ -175,12 +173,12 @@ export default function AccountFundContent(props: Props) {
           rightIcon={<Plus />}
           iconClassName='w-3'
           onClick={handleSelectAssetsClick}
-          disabled={isFunding}
+          disabled={pendingTransaction}
         />
         <DepositCapMessage
           action='fund'
           coins={depositCapReachedCoins}
-          className='pr-4 py-2 mt-4'
+          className='py-2 pr-4 mt-4'
           showIcon
         />
         <SwitchAutoLend
@@ -194,7 +192,7 @@ export default function AccountFundContent(props: Props) {
         className='w-full mt-4'
         text='Fund account'
         disabled={!hasFundingAssets || depositCapReachedCoins.length > 0}
-        showProgressIndicator={isFunding}
+        showProgressIndicator={pendingTransaction}
         onClick={handleClick}
         color={props.isFullPage ? 'tertiary' : undefined}
         size={props.isFullPage ? 'lg' : undefined}
