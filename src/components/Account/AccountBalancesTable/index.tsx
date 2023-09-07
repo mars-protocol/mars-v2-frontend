@@ -19,7 +19,6 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
-import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
@@ -85,8 +84,8 @@ export default function Index(props: Props) {
         accessorKey: 'size',
         header: 'Size',
         cell: ({ row }) => {
-          if (row.original.amount.isEqualTo(BN_ZERO))
-            return <span className='w-full text-xs text-center'>&ndash;</span>
+          if (row.original.type === 'vault')
+            return <p className='text-xs text-right number'>&ndash;</p>
           const color = getAmountChangeColor(row.original.type, row.original.amountChange)
           const amount = demagnify(
             row.original.amount,

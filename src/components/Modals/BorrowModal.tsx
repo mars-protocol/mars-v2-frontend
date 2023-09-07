@@ -65,6 +65,7 @@ function BorrowModal(props: Props) {
   const { simulateBorrow, simulateRepay } = useUpdatedAccount(account)
 
   const { autoLendEnabledAccountIds } = useAutoLend()
+  const apr = modal.marketData?.borrowRate ?? '0'
   const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
   const { computeMaxBorrowAmount } = useHealthComputer(account)
 
@@ -112,7 +113,13 @@ function BorrowModal(props: Props) {
     (newAmount: BigNumber) => {
       const coin = BNCoin.fromDenomAndBigNumber(asset.denom, newAmount)
       if (!amount.isEqualTo(newAmount)) setAmount(newAmount)
-      if (isRepay) simulateRepay(coin)
+      if (isRepay) {
+        const totalDebt = BN(getDebtAmount(modal))
+        const repayCoin = coin.amount.isGreaterThan(totalDebt)
+          ? BNCoin.fromDenomAndBigNumber(asset.denom, totalDebt)
+          : coin
+        simulateRepay(repayCoin)
+      }
     },
     [asset, amount, isRepay, simulateRepay],
   )
@@ -124,7 +131,10 @@ function BorrowModal(props: Props) {
       const lendBalance = account.lends.find(byDenom(asset.denom))?.amount ?? BN_ZERO
       const maxBalance = depositBalance.plus(lendBalance)
       const totalDebt = BN(getDebtAmount(modal))
-      const maxRepayAmount = BigNumber.min(maxBalance, totalDebt)
+      const maxRepayAmount = BigNumber.min(
+        maxBalance,
+        totalDebt.times(1 + Number(apr) / 365 / 24).integerValue(),
+      )
       setMax(maxRepayAmount)
       return
     }

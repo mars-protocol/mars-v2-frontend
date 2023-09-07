@@ -28,8 +28,8 @@ export const FormattedNumber = React.memo(
     }, [props.amount])
 
     const springAmount = useSpring({
-      number: props.amount,
-      from: { number: prevAmountRef.current },
+      number: isNaN(props.amount) ? 0 : props.amount,
+      from: { number: isNaN(prevAmountRef.current) ? 0 : prevAmountRef.current },
       config: { duration: 1000 },
     })
 
