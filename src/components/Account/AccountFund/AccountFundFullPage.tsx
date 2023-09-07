@@ -21,7 +21,7 @@ export default function AccountFundFullPage() {
       setSelectedAccountId(currentAccount?.id ?? accountId)
   }, [accounts, selectedAccountId, accountId, currentAccount])
 
-  if (!selectedAccountId || !currentAccount || !address) return null
+  if (!selectedAccountId || !address) return null
 
   return (
     <FullOverlayContent

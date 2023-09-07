@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import AccountFund from 'components/Account/AccountFund/AccountFundFullPage'
+import AccountFundFullPage from 'components/Account/AccountFund/AccountFundFullPage'
 import FullOverlayContent from 'components/FullOverlayContent'
 import WalletSelect from 'components/Wallet/WalletSelect'
 import useToggle from 'hooks/useToggle'
@@ -27,7 +27,7 @@ export default function AccountCreateFirst() {
       navigate(getRoute(getPage(pathname), address, accountId))
       useStore.setState({
         focusComponent: {
-          component: <AccountFund />,
+          component: <AccountFundFullPage />,
           onClose: () => {
             useStore.setState({ getStartedModal: true })
           },

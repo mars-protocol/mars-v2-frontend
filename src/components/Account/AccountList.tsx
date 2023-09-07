@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { useCallback, useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
-import AccountFund from 'components/Account/AccountFund/AccountFundFullPage'
+import AccountFundFullPage from 'components/Account/AccountFund/AccountFundFullPage'
 import AccountStats from 'components/Account/AccountStats'
 import Button from 'components/Button'
 import Card from 'components/Card'
@@ -94,7 +94,7 @@ export default function AccountList(props: Props) {
                         if (positionBalance.isLessThanOrEqualTo(0)) {
                           useStore.setState({
                             focusComponent: {
-                              component: <AccountFund />,
+                              component: <AccountFundFullPage />,
                               onClose: () => {
                                 useStore.setState({ getStartedModal: true })
                               },

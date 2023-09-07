@@ -23,7 +23,7 @@ import { getCapLeftWithBuffer } from 'utils/generic'
 import { BN } from 'utils/helpers'
 
 interface Props {
-  account: Account
+  account?: Account
   address: string
   accountId: string
   isFullPage?: boolean
@@ -76,7 +76,12 @@ export default function AccountFundContent(props: Props) {
       lend: isLending,
     })
     setIsFunding(false)
-    if (result) useStore.setState({ fundAndWithdrawModal: null, walletAssetsModal: null })
+    if (result)
+      useStore.setState({
+        fundAndWithdrawModal: null,
+        walletAssetsModal: null,
+        focusComponent: null,
+      })
   }, [setIsFunding, props.accountId, deposit, fundingAssets, isLending])
 
   useEffect(() => {

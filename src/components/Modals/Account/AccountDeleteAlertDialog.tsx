@@ -24,7 +24,7 @@ export default function AccoundDeleteAlertDialog(props: Props) {
       title,
       description,
       negativeButton: {
-        text: 'Close',
+        text: 'Cancel',
         icon: <Enter />,
         onClick: closeHandler,
       },
