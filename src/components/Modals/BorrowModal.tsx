@@ -14,7 +14,6 @@ import Switch from 'components/Switch'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
-import { REPAY_OVERPAY_BUFFER } from 'constants/buffers'
 import { BN_ZERO } from 'constants/math'
 import useAutoLend from 'hooks/useAutoLend'
 import useCurrentAccount from 'hooks/useCurrentAccount'
@@ -66,6 +65,7 @@ function BorrowModal(props: Props) {
   const { simulateBorrow, simulateRepay } = useUpdatedAccount(account)
 
   const { autoLendEnabledAccountIds } = useAutoLend()
+  const apr = modal.marketData?.borrowRate ?? '0'
   const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
   const { computeMaxBorrowAmount } = useHealthComputer(account)
 
@@ -133,7 +133,7 @@ function BorrowModal(props: Props) {
       const totalDebt = BN(getDebtAmount(modal))
       const maxRepayAmount = BigNumber.min(
         maxBalance,
-        totalDebt.times(REPAY_OVERPAY_BUFFER).integerValue(),
+        totalDebt.times(1 + Number(apr) / 365 / 24).integerValue(),
       )
       setMax(maxRepayAmount)
       return
