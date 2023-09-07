@@ -72,10 +72,13 @@ export default function Index(props: Props) {
         accessorKey: 'value',
         id: 'value',
         cell: ({ row }) => {
+          const amount = BN(row.original.value).isLessThanOrEqualTo(BN_ZERO)
+            ? '0'
+            : row.original.value.toString()
           const color = getAmountChangeColor(row.original.type, row.original.amountChange)
           const coin = new BNCoin({
             denom: ORACLE_DENOM,
-            amount: row.original.value.toString(),
+            amount,
           })
           return <DisplayCurrency coin={coin} className={classNames('text-xs text-right', color)} />
         },
@@ -85,13 +88,12 @@ export default function Index(props: Props) {
         accessorKey: 'size',
         header: 'Size',
         cell: ({ row }) => {
-          if (row.original.amount.isEqualTo(BN_ZERO))
-            return <span className='w-full text-xs text-center'>&ndash;</span>
+          if (row.original.type === 'vault')
+            return <p className='text-xs text-right number'>&ndash;</p>
           const color = getAmountChangeColor(row.original.type, row.original.amountChange)
-          const amount = demagnify(
-            row.original.amount,
-            getAssetByDenom(row.original.denom) ?? ASSETS[0],
-          )
+          const amount = BN(row.original.value).isLessThanOrEqualTo(BN_ZERO)
+            ? BN_ZERO
+            : demagnify(row.original.amount, getAssetByDenom(row.original.denom) ?? ASSETS[0])
           return (
             <FormattedNumber
               className={classNames('text-xs text-right', color)}

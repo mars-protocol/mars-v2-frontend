@@ -14,6 +14,7 @@ import Switch from 'components/Switch'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
+import { REPAY_OVERPAY_BUFFER } from 'constants/buffers'
 import { BN_ZERO } from 'constants/math'
 import useAutoLend from 'hooks/useAutoLend'
 import useCurrentAccount from 'hooks/useCurrentAccount'
@@ -112,7 +113,13 @@ function BorrowModal(props: Props) {
     (newAmount: BigNumber) => {
       const coin = BNCoin.fromDenomAndBigNumber(asset.denom, newAmount)
       if (!amount.isEqualTo(newAmount)) setAmount(newAmount)
-      if (isRepay) simulateRepay(coin)
+      if (isRepay) {
+        const totalDebt = BN(getDebtAmount(modal))
+        const repayCoin = coin.amount.isGreaterThan(totalDebt)
+          ? BNCoin.fromDenomAndBigNumber(asset.denom, totalDebt)
+          : coin
+        simulateRepay(repayCoin)
+      }
     },
     [asset, amount, isRepay, simulateRepay],
   )
@@ -124,7 +131,10 @@ function BorrowModal(props: Props) {
       const lendBalance = account.lends.find(byDenom(asset.denom))?.amount ?? BN_ZERO
       const maxBalance = depositBalance.plus(lendBalance)
       const totalDebt = BN(getDebtAmount(modal))
-      const maxRepayAmount = BigNumber.min(maxBalance, totalDebt)
+      const maxRepayAmount = BigNumber.min(
+        maxBalance,
+        totalDebt.times(REPAY_OVERPAY_BUFFER).integerValue(),
+      )
       setMax(maxRepayAmount)
       return
     }
