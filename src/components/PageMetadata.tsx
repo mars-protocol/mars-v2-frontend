@@ -1,8 +1,10 @@
-import { useLocation } from 'react-router-dom'
-import { Helmet } from 'react-helmet'
 import { useMemo } from 'react'
+import { Helmet, HelmetProvider } from 'react-helmet-async'
+import { useLocation } from 'react-router-dom'
 
 import PAGE_METADATA from 'constants/pageMetadata'
+
+const helmetContext = {}
 
 function PageMetadata() {
   const location = useLocation()
@@ -13,12 +15,14 @@ function PageMetadata() {
   }, [location])
 
   return (
-    <Helmet>
-      <title>{metadata.title}</title>
-      <meta content={metadata.title} property='og:title' />
-      <meta name='description' content={metadata.description} property='og:description' />
-      <meta name='keywords' content={metadata.keywords} property='og:keywords' />
-    </Helmet>
+    <HelmetProvider context={helmetContext}>
+      <Helmet>
+        <title>{metadata.title}</title>
+        <meta content={metadata.title} property='og:title' />
+        <meta name='description' content={metadata.description} property='og:description' />
+        <meta name='keywords' content={metadata.keywords} property='og:keywords' />
+      </Helmet>
+    </HelmetProvider>
   )
 }
 

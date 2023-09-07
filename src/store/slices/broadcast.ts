@@ -63,7 +63,6 @@ export default function createBroadcastSlice(
   }
   const getEstimatedFee = async (messages: MsgExecuteContract[]) => {
     if (!get().client) {
-      console.warn('Client not initialized')
       return defaultFee
     }
     try {
