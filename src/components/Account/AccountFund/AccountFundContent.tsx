@@ -81,7 +81,6 @@ export default function AccountFundContent(props: Props) {
         focusComponent: null,
       })
   }, [props.accountId, deposit, fundingAssets, isLending])
-
   useEffect(() => {
     if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) {
       useStore.setState({ focusComponent: { component: <WalletBridges /> } })
