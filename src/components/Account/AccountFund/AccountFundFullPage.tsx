@@ -26,7 +26,7 @@ export default function AccountFundFullPage() {
   return (
     <FullOverlayContent
       title={`Fund Credit Account #${selectedAccountId}`}
-      copy='In order to start trading with this account, you need to deposit funds.'
+      copy='In order to start using this account, you need to deposit funds.'
       docs='fund'
     >
       <Card className='w-full p-6 bg-white/5'>
