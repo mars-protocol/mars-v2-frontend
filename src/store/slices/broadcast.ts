@@ -20,6 +20,7 @@ import { formatAmountWithSymbol } from 'utils/formatters'
 import getTokenOutFromSwapResponse from 'utils/getTokenOutFromSwapResponse'
 import { BN } from 'utils/helpers'
 
+
 function generateExecutionMessage(
   sender: string | undefined = '',
   contract: string,
@@ -245,7 +246,7 @@ export default function createBroadcastSlice(
         .join(' and ')
       handleResponseMessages(
         response,
-        `Deposited ${options.lend ? 'and lent ' : ''}${depositString} to Credit Credit Account ${
+        `Deposited ${options.lend ? 'and lent ' : ''}${depositString} to Credit Account ${
           options.accountId
         }`,
       )

@@ -94,7 +94,7 @@ function AccountDeleteModal(props: Props) {
         description='Deleting your credit account is irreversible.'
         closeHandler={closeDeleteAccountModal}
         positiveButton={{
-          text: 'Close Positions',
+          text: 'Delete Account',
           icon: <ArrowRight />,
           isAsync: true,
           onClick: deleteAccountHandler,

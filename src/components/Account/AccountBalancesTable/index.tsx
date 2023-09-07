@@ -12,7 +12,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 import { getAmountChangeColor } from 'components/Account/AccountBalancesTable/functions'
 import useAccountBalanceData from 'components/Account/AccountBalancesTable/useAccountBalanceData'
-import AccountFund from 'components/Account/AccountFund'
+import AccountFundFullPage from 'components/Account/AccountFund/AccountFundFullPage'
 import ActionButton from 'components/Button/ActionButton'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
@@ -147,7 +147,7 @@ export default function Index(props: Props) {
             }
             useStore.setState({
               focusComponent: {
-                component: <AccountFund />,
+                component: <AccountFundFullPage />,
                 onClose: () => {
                   useStore.setState({ getStartedModal: true })
                 },
