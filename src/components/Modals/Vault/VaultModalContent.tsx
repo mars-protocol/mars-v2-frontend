@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import Accordion from 'components/Accordion'
 import AccountSummary from 'components/Account/AccountSummary'
@@ -30,8 +30,9 @@ interface Props {
 }
 
 export default function VaultModalContent(props: Props) {
-  const { addDebts, addedDebts, removedDeposits, removedLends, simulateVaultDeposit } =
-    useUpdatedAccount(props.account)
+  const { addedDebts, removedDeposits, removedLends, simulateVaultDeposit } = useUpdatedAccount(
+    props.account,
+  )
 
   const { data: prices } = usePrices()
   const [displayCurrency] = useLocalStorage<string>(
@@ -40,7 +41,8 @@ export default function VaultModalContent(props: Props) {
   )
   const [isOpen, toggleOpen] = useIsOpenArray(2, false)
   const [isCustomRatio, setIsCustomRatio] = useState(false)
-  const [selectedCoins, setSelectedCoins] = useState<BNCoin[]>([])
+  const [depositCoins, setDepositCoins] = useState<BNCoin[]>([])
+  const [borrowCoins, setBorrowCoins] = useState<BNCoin[]>([])
   const displayAsset = useDisplayAsset()
   const { actions: depositActions, totalValue } = useDepositVault({
     vault: props.vault,
@@ -66,14 +68,6 @@ export default function VaultModalContent(props: Props) {
     return []
   }, [displayAsset, prices, props.vault.cap, totalValue])
 
-  const handleDepositSelect = useCallback(
-    (selectedCoins: BNCoin[]) => {
-      simulateVaultDeposit(props.vault.address, selectedCoins)
-      setSelectedCoins(selectedCoins)
-    },
-    [props.vault.address, simulateVaultDeposit],
-  )
-
   const onChangeIsCustomRatio = useCallback(
     (isCustomRatio: boolean) => setIsCustomRatio(isCustomRatio),
     [setIsCustomRatio],
@@ -82,6 +76,22 @@ export default function VaultModalContent(props: Props) {
   const deposits = useMemo(
     () => mergeBNCoinArrays(removedDeposits, removedLends),
     [removedDeposits, removedLends],
+  )
+
+  const onChangeDeposits = useCallback(
+    (coins: BNCoin[]) => {
+      setDepositCoins(coins)
+      simulateVaultDeposit(props.vault.address, coins, borrowCoins)
+    },
+    [borrowCoins, props.vault.address, simulateVaultDeposit],
+  )
+
+  const onChangeBorrowings = useCallback(
+    (coins: BNCoin[]) => {
+      setBorrowCoins(coins)
+      simulateVaultDeposit(props.vault.address, depositCoins, coins)
+    },
+    [depositCoins, props.vault.address, simulateVaultDeposit],
   )
 
   function getDepositSubTitle() {
@@ -130,8 +140,8 @@ export default function VaultModalContent(props: Props) {
           {
             renderContent: () => (
               <VaultDeposit
-                deposits={selectedCoins}
-                onChangeDeposits={handleDepositSelect}
+                deposits={depositCoins}
+                onChangeDeposits={onChangeDeposits}
                 primaryAsset={props.primaryAsset}
                 secondaryAsset={props.secondaryAsset}
                 account={props.account}
@@ -150,11 +160,11 @@ export default function VaultModalContent(props: Props) {
           {
             renderContent: () => (
               <VaultBorrowings
-                borrowings={addedDebts}
+                borrowings={borrowCoins}
                 deposits={deposits}
                 primaryAsset={props.primaryAsset}
                 secondaryAsset={props.secondaryAsset}
-                onChangeBorrowings={addDebts}
+                onChangeBorrowings={onChangeBorrowings}
                 vault={props.vault}
                 depositActions={depositActions}
                 depositCapReachedCoins={depositCapReachedCoins}

@@ -148,10 +148,9 @@ export function useUpdatedAccount(account?: Account) {
   )
 
   const simulateVaultDeposit = useCallback(
-    (address: string, coins: BNCoin[]) => {
+    (address: string, coins: BNCoin[], borrowCoins: BNCoin[]) => {
       if (!account) return
 
-      const value = getValueFromBNCoins(coins, prices)
       const totalDeposits: BNCoin[] = []
       const totalLends: BNCoin[] = []
 
@@ -161,9 +160,12 @@ export function useUpdatedAccount(account?: Account) {
         totalLends.push(lend)
       })
 
-      addVaultValues([{ address, value }])
       removeDeposits(totalDeposits)
       removeLends(totalLends)
+      addDebts(borrowCoins)
+
+      const value = getValueFromBNCoins([...coins, ...borrowCoins], prices)
+      addVaultValues([{ address, value }])
     },
     [account, prices],
   )
