@@ -4,6 +4,7 @@ import moment from 'moment'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
 import { getAllAssets, getEnabledMarketAssets } from 'utils/assets'
 import { BN } from 'utils/helpers'
 
@@ -167,24 +168,34 @@ export const convertPercentage = (percent: number) => {
   return Number(formatValue(percentage, { minDecimals: 0, maxDecimals: 0 }))
 }
 
-export function magnify(value: number | string, asset: Asset | PseudoAsset) {
-  const amount = BN(value)
-  return amount.isZero() ? amount : BN(value).shiftedBy(asset.decimals)
+export function magnify(amount: number | string, asset: Asset | PseudoAsset) {
+  const _amount = BN(amount)
+  return _amount.isZero() ? _amount : _amount.shiftedBy(asset.decimals)
 }
 
 export function demagnify(amount: number | string | BigNumber, asset: Asset | PseudoAsset) {
-  const value = BN(amount)
-  return value.isZero() ? 0 : value.shiftedBy(-1 * asset.decimals).toNumber()
+  const _amount = BN(amount)
+  return _amount.isZero() ? 0 : _amount.shiftedBy(-1 * asset.decimals).toNumber()
 }
 
 export function getCoinValue(coin: BNCoin, prices: BNCoin[]) {
-  const asset = getAllAssets().find((asset) => asset.denom === coin.denom)
-  const coinPrice = prices.find((price) => price.denom === coin.denom)
+  const asset = getAllAssets().find(byDenom(coin.denom))
+  const coinPrice = prices.find(byDenom(coin.denom))
 
   if (!coinPrice || !asset) return BN_ZERO
 
   const decimals = asset.denom === ORACLE_DENOM ? 0 : asset.decimals * -1
   return coin.amount.shiftedBy(decimals).multipliedBy(coinPrice.amount)
+}
+
+export function getCoinAmount(denom: string, value: BigNumber, prices: BNCoin[]) {
+  const asset = getAllAssets().find(byDenom(denom))
+  const coinPrice = prices.find(byDenom(denom))
+
+  if (!coinPrice || !asset) return BN_ZERO
+
+  const decimals = asset.denom === ORACLE_DENOM ? 0 : asset.decimals
+  return value.dividedBy(coinPrice.amount).shiftedBy(decimals).integerValue()
 }
 
 export function convertLiquidityRateToAPR(rate: number) {

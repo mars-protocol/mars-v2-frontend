@@ -5,7 +5,7 @@ import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getAssetByDenom } from 'utils/assets'
-import { getCoinValue } from 'utils/formatters'
+import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
 import { getTokenPrice } from 'utils/tokens'
 
@@ -67,8 +67,8 @@ export function getVaultSwapActions(
   const swapActions: Action[] = []
   const coins = [...deposits, ...borrowings]
 
-  let primaryLeftoverValue = totalValue.dividedBy(2).integerValue()
-  let secondaryLeftoverValue = totalValue.dividedBy(2).integerValue()
+  let primaryLeftoverValue = totalValue.dividedBy(2)
+  let secondaryLeftoverValue = totalValue.dividedBy(2)
 
   const [primaryCoins, secondaryCoins, otherCoins] = coins.reduce(
     (prev, bnCoin) => {
@@ -94,7 +94,9 @@ export function getVaultSwapActions(
     } else {
       value = value.minus(primaryLeftoverValue)
       primaryLeftoverValue = primaryLeftoverValue.minus(primaryLeftoverValue)
-      otherCoins.push(new BNCoin({ denom: bnCoin.denom, amount: value.toString() }))
+      otherCoins.push(
+        BNCoin.fromDenomAndBigNumber(bnCoin.denom, getCoinAmount(bnCoin.denom, value, prices)),
+      )
     }
   })
 
@@ -105,7 +107,9 @@ export function getVaultSwapActions(
     } else {
       value = value.minus(secondaryLeftoverValue)
       secondaryLeftoverValue = secondaryLeftoverValue.minus(secondaryLeftoverValue)
-      otherCoins.push(new BNCoin({ denom: bnCoin.denom, amount: value.toString() }))
+      otherCoins.push(
+        BNCoin.fromDenomAndBigNumber(bnCoin.denom, getCoinAmount(bnCoin.denom, value, prices)),
+      )
     }
   })
 
