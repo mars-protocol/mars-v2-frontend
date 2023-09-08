@@ -5,7 +5,7 @@ import useAlertDialog from 'hooks/useAlertDialog'
 
 interface Props {
   title: string
-  description: string
+  description: string | JSX.Element
   closeHandler: () => void
   positiveButton: AlertDialogButton
 }
