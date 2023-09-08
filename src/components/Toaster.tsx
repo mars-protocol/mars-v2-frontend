@@ -1,7 +1,7 @@
 import classNames from 'classnames'
+import { ReactNode } from 'react'
 import { toast as createToast, Slide, ToastContainer } from 'react-toastify'
 import { mutate } from 'swr'
-import { ReactNode } from 'react'
 
 import { CheckCircled, Cross, CrossCircled, ExternalLink } from 'components/Icons'
 import Text from 'components/Text'
@@ -14,28 +14,24 @@ import useStore from 'store'
 import { formatAmountWithSymbol } from 'utils/formatters'
 
 function generateToastContent(content: ToastSuccess['content']): ReactNode {
-  return (
-    <div className='flex flex-wrap w-full'>
-      {content.map((item, index) => (
+  return content.map((item, index) => (
+    <div className='flex flex-wrap w-full' key={index}>
+      {item.coins.length > 0 && (
         <>
-          {item.coins.length > 0 && (
-            <>
-              <Text size='sm' key={index} className='w-full mb-1 text-white'>
-                {item.text}
-              </Text>
-              <ul className='flex flex-wrap w-full gap-1 p-1 pl-4 list-disc'>
-                {item.coins.map((coin) => (
-                  <li className='w-full p-0 text-sm text-white' key={coin.denom}>
-                    {formatAmountWithSymbol(coin.toCoin())}
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
+          <Text size='sm' className='w-full mb-1 text-white'>
+            {item.text}
+          </Text>
+          <ul className='flex flex-wrap w-full gap-1 p-1 pl-4 list-disc'>
+            {item.coins.map((coin) => (
+              <li className='w-full p-0 text-sm text-white' key={coin.denom}>
+                {formatAmountWithSymbol(coin.toCoin())}
+              </li>
+            ))}
+          </ul>
         </>
-      ))}
+      )}
     </div>
-  )
+  ))
 }
 
 export default function Toaster() {
