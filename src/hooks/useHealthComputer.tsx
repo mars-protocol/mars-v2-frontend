@@ -4,7 +4,6 @@ import { BN_ZERO } from 'constants/math'
 import useAssetParams from 'hooks/useAssetParams'
 import usePrices from 'hooks/usePrices'
 import useVaultConfigs from 'hooks/useVaultConfigs'
-import useStore from 'store'
 import {
   Positions,
   VaultPositionValue,
@@ -26,21 +25,21 @@ import {
 } from 'utils/health_computer'
 import { BN } from 'utils/helpers'
 
+// Pyth returns prices with up to 32 decimals. Javascript only supports 18 decimals. So we need to scale by 14 t
+// Pyth returns prices with up to 32 decimals. Javascript only supports 18 decimals. So we need to scale by 14 t
+// avoid "too many decimals" errors.
+const VALUE_SCALE_FACTOR = 14
+
 export default function useHealthComputer(account?: Account) {
   const { data: prices } = usePrices()
   const { data: assetParams } = useAssetParams()
   const { data: vaultConfigs } = useVaultConfigs()
-  const baseCurrency = useStore((s) => s.baseCurrency)
 
   const [healthFactor, setHealthFactor] = useState(0)
   const positions: Positions | null = useMemo(() => {
     if (!account) return null
     return convertAccountToPositions(account)
   }, [account])
-  const baseCurrencyPrice = useMemo(
-    () => prices.find((price) => price.denom === baseCurrency.denom)?.amount || 0,
-    [prices, baseCurrency.denom],
-  )
 
   const vaultPositionValues = useMemo(() => {
     if (!account?.vaults) return null
@@ -57,8 +56,8 @@ export default function useHealthComputer(account?: Account) {
             amount: '0', // Not used by healthcomputer
             denom: curr.denoms.vault,
             value: curr.values.primary
-              .div(baseCurrencyPrice)
-              .plus(curr.values.secondary.div(baseCurrencyPrice))
+              .plus(curr.values.secondary)
+              .shiftedBy(VALUE_SCALE_FACTOR + 6) // Need to scale additional 6 to correct for uusd values
               .integerValue()
               .toString(),
           },
@@ -67,20 +66,17 @@ export default function useHealthComputer(account?: Account) {
       },
       {} as { [key: string]: VaultPositionValue },
     )
-  }, [account?.vaults, prices, baseCurrencyPrice])
+  }, [account?.vaults, prices])
 
   const priceData = useMemo(() => {
-    const baseCurrencyPrice =
-      prices.find((price) => price.denom === baseCurrency.denom)?.amount || 0
-
     return prices.reduce(
       (prev, curr) => {
-        prev[curr.denom] = curr.amount.div(baseCurrencyPrice).decimalPlaces(18).toString()
+        prev[curr.denom] = curr.amount.shiftedBy(VALUE_SCALE_FACTOR).toString()
         return prev
       },
       {} as { [key: string]: string },
     )
-  }, [prices, baseCurrency.denom])
+  }, [prices])
 
   const denomsData = useMemo(
     () =>
