@@ -1,6 +1,5 @@
 import {
   ChartingLibraryFeatureset,
-  LibrarySymbolInfo,
   ResolutionString,
   SeriesFormat,
   Timezone,

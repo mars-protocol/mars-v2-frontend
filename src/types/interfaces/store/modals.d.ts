@@ -19,7 +19,7 @@ interface AlertDialogButton {
   text?: string
   icon?: JSX.Element
   isAsync?: boolean
-  onClick?: () => void
+  onClick?: () => Promise<void> | void
 }
 
 interface AlertDialogConfig {
@@ -29,6 +29,7 @@ interface AlertDialogConfig {
   negativeButton?: AlertDialogButton
   positiveButton?: AlertDialogButton
 }
+
 interface BorrowModal {
   asset: Asset
   marketData: BorrowMarketTableData
@@ -36,6 +37,7 @@ interface BorrowModal {
 }
 
 type LendAndReclaimModalAction = 'lend' | 'reclaim'
+
 interface LendAndReclaimModalConfig {
   data: LendingMarketTableData
   action: LendAndReclaimModalAction
@@ -54,6 +56,7 @@ interface AddVaultBorrowingsModal {
 interface UnlockModal {
   vault: DepositedVault
 }
+
 interface WalletAssetModal {
   isOpen?: boolean
   selectedDenoms: string[]
