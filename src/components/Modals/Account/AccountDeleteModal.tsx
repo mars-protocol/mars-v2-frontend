@@ -2,10 +2,8 @@ import { useCallback, useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import AssetBalanceRow from 'components/AssetBalanceRow'
-import Button from 'components/Button'
 import { ArrowRight } from 'components/Icons'
-import Modal from 'components/Modal'
-import AccoundDeleteAlertDialog from 'components/Modals/Account/AccountDeleteAlertDialog'
+import AccountDeleteAlertDialog from 'components/Modals/Account/AccountDeleteAlertDialog'
 import Text from 'components/Text'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -55,7 +53,7 @@ function AccountDeleteModal(props: Props) {
 
   if (debts.length > 0)
     return (
-      <AccoundDeleteAlertDialog
+      <AccountDeleteAlertDialog
         title='Repay your Debts to delete your account'
         description='You must repay all borrowings before deleting your account.'
         closeHandler={closeDeleteAccountModal}
@@ -72,7 +70,7 @@ function AccountDeleteModal(props: Props) {
 
   if (vaults.length > 0)
     return (
-      <AccoundDeleteAlertDialog
+      <AccountDeleteAlertDialog
         title='Close your positions to delete your account'
         description='You must first close your farming positions before deleting your account.'
         closeHandler={closeDeleteAccountModal}
@@ -89,7 +87,7 @@ function AccountDeleteModal(props: Props) {
 
   if (depositsAndLends.length === 0)
     return (
-      <AccoundDeleteAlertDialog
+      <AccountDeleteAlertDialog
         title={`Delete Credit Account ${accountId}`}
         description='Deleting your credit account is irreversible.'
         closeHandler={closeDeleteAccountModal}
@@ -103,40 +101,30 @@ function AccountDeleteModal(props: Props) {
     )
 
   return (
-    <Modal
-      onClose={closeDeleteAccountModal}
-      header={
-        <span className='flex items-center'>
-          <Text>{`Delete Credit Account ${modal.id}`}</Text>
-        </span>
+    <AccountDeleteAlertDialog
+      title={`Delete Credit Account ${accountId}`}
+      description={
+        <>
+          <Text className='text-white/50' size='sm'>
+            The following assets within your credit account will be sent to your wallet.
+          </Text>
+          <div className='flex flex-col w-full gap-4 py-4 overflow-y-scroll max-h-100 scrollbar-hide'>
+            {depositsAndLends.map((position, index) => {
+              const coin = BNCoin.fromDenomAndBigNumber(position.denom, position.amount)
+              const asset = getAssetByDenom(position.denom)
+              if (!asset) return null
+              return <AssetBalanceRow key={index} asset={asset} coin={coin} />
+            })}
+          </div>
+        </>
       }
-      modalClassName='max-w-modal-sm'
-      headerClassName='gradient-header p-4 border-b-white/5 border-b'
-      contentClassName='w-full'
-    >
-      <div className='w-full p-4 border-b border-white/5 gradient-header'>
-        <Text className='text-white/50' size='sm'>
-          The following assets within your credit account will be sent to your wallet.
-        </Text>
-      </div>
-      <div className='flex flex-col w-full gap-4 p-4 overflow-y-scroll max-h-100 scrollbar-hide'>
-        {depositsAndLends.map((position, index) => {
-          const coin = BNCoin.fromDenomAndBigNumber(position.denom, position.amount)
-          const asset = getAssetByDenom(position.denom)
-
-          if (!asset) return null
-          return <AssetBalanceRow key={index} asset={asset} coin={coin} />
-        })}
-      </div>
-      <div className='w-full px-4 pb-4'>
-        <Button
-          className='w-full'
-          onClick={deleteAccountHandler}
-          text='Delete Account'
-          rightIcon={<ArrowRight />}
-          showProgressIndicator={pendingTransaction}
-        />
-      </div>
-    </Modal>
+      closeHandler={closeDeleteAccountModal}
+      positiveButton={{
+        text: 'Delete Account',
+        icon: <ArrowRight />,
+        isAsync: true,
+        onClick: deleteAccountHandler,
+      }}
+    />
   )
 }
