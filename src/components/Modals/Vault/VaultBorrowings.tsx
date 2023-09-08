@@ -163,6 +163,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
         const maxAmount = maxBorrowAmounts.find(byDenom(coin.denom))?.amount
         if (!asset || !maxAmount)
           return <React.Fragment key={`input-${coin.denom}`}></React.Fragment>
+        console.log(maxAmount.toString(), coin.amount.toString())
         return (
           <TokenInput
             key={`input-${coin.denom}`}
@@ -237,4 +238,222 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
       />
     </div>
   )
+}
+
+const test = {
+  denoms_data: {
+    params: {
+      'gamm/pool/12': {
+        denom: 'gamm/pool/12',
+        credit_manager: {
+          whitelisted: true,
+          hls: null,
+        },
+        red_bank: {
+          deposit_enabled: false,
+          borrow_enabled: false,
+        },
+        max_loan_to_value: '0.68',
+        liquidation_threshold: '0.7',
+        liquidation_bonus: {
+          starting_lb: '0',
+          slope: '2',
+          min_lb: '0',
+          max_lb: '0.05',
+        },
+        protocol_liquidation_fee: '0.5',
+        deposit_cap: '100000000000',
+      },
+      'gamm/pool/5': {
+        denom: 'gamm/pool/5',
+        credit_manager: {
+          whitelisted: true,
+          hls: null,
+        },
+        red_bank: {
+          deposit_enabled: false,
+          borrow_enabled: false,
+        },
+        max_loan_to_value: '0.68',
+        liquidation_threshold: '0.7',
+        liquidation_bonus: {
+          starting_lb: '0',
+          slope: '2',
+          min_lb: '0',
+          max_lb: '0.05',
+        },
+        protocol_liquidation_fee: '0.5',
+        deposit_cap: '100000000000',
+      },
+      'ibc/6F34E1BD664C36CE49ACC28E60D62559A5F96C4F9A6CCE4FC5A67B2852E24CFE': {
+        denom: 'ibc/6F34E1BD664C36CE49ACC28E60D62559A5F96C4F9A6CCE4FC5A67B2852E24CFE',
+        credit_manager: {
+          whitelisted: true,
+          hls: null,
+        },
+        red_bank: {
+          deposit_enabled: true,
+          borrow_enabled: true,
+        },
+        max_loan_to_value: '0.74',
+        liquidation_threshold: '0.75',
+        liquidation_bonus: {
+          starting_lb: '0',
+          slope: '2',
+          min_lb: '0',
+          max_lb: '0.05',
+        },
+        protocol_liquidation_fee: '0.5',
+        deposit_cap: '500000000000',
+      },
+      'ibc/A8C2D23A1E6F95DA4E48BA349667E322BD7A6C996D8A4AAE8BA72E190F3D1477': {
+        denom: 'ibc/A8C2D23A1E6F95DA4E48BA349667E322BD7A6C996D8A4AAE8BA72E190F3D1477',
+        credit_manager: {
+          whitelisted: true,
+          hls: null,
+        },
+        red_bank: {
+          deposit_enabled: true,
+          borrow_enabled: true,
+        },
+        max_loan_to_value: '0.68',
+        liquidation_threshold: '0.7',
+        liquidation_bonus: {
+          starting_lb: '0',
+          slope: '2',
+          min_lb: '0',
+          max_lb: '0.05',
+        },
+        protocol_liquidation_fee: '0.5',
+        deposit_cap: '100000000000',
+      },
+      uosmo: {
+        denom: 'uosmo',
+        credit_manager: {
+          whitelisted: true,
+          hls: null,
+        },
+        red_bank: {
+          deposit_enabled: true,
+          borrow_enabled: true,
+        },
+        max_loan_to_value: '0.59',
+        liquidation_threshold: '0.61',
+        liquidation_bonus: {
+          starting_lb: '0',
+          slope: '2',
+          min_lb: '0',
+          max_lb: '0.05',
+        },
+        protocol_liquidation_fee: '0.5',
+        deposit_cap: '2500000000000',
+      },
+    },
+    prices: {
+      uosmo: '1',
+      'ibc/A8C2D23A1E6F95DA4E48BA349667E322BD7A6C996D8A4AAE8BA72E190F3D1477':
+        '19.480264458595555194',
+      'ibc/6F34E1BD664C36CE49ACC28E60D62559A5F96C4F9A6CCE4FC5A67B2852E24CFE':
+        '2.854889405664957035',
+      'gamm/pool/12': '0.000000036047204057',
+      'ibc/DB9D326CF53EA07610C394D714D78F8BB4DC7E312D4213193791A9046BF45E20':
+        '0.092316214369641844',
+      usd: '2.854555651018239983',
+    },
+  },
+  vaults_data: {
+    vault_configs: {
+      osmo1l3q4mrhkzjyernjhg8lz2t52ddw589y5qc0z7y8y28h6y5wcl46sg9n28j: {
+        addr: 'osmo1l3q4mrhkzjyernjhg8lz2t52ddw589y5qc0z7y8y28h6y5wcl46sg9n28j',
+        deposit_cap: {
+          denom: 'ibc/6F34E1BD664C36CE49ACC28E60D62559A5F96C4F9A6CCE4FC5A67B2852E24CFE',
+          amount: '1000000000',
+        },
+        max_loan_to_value: '0.63',
+        liquidation_threshold: '0.65',
+        whitelisted: true,
+        hls: null,
+      },
+      osmo1m45ap4rq4m2mfjkcqu9ks9mxmyx2hvx0cdca9sjmrg46q7lghzqqhxxup5: {
+        addr: 'osmo1m45ap4rq4m2mfjkcqu9ks9mxmyx2hvx0cdca9sjmrg46q7lghzqqhxxup5',
+        deposit_cap: {
+          denom: 'ibc/6F34E1BD664C36CE49ACC28E60D62559A5F96C4F9A6CCE4FC5A67B2852E24CFE',
+          amount: '1000000000',
+        },
+        max_loan_to_value: '0.63',
+        liquidation_threshold: '0.65',
+        whitelisted: true,
+        hls: null,
+      },
+    },
+    vault_values: {
+      osmo1m45ap4rq4m2mfjkcqu9ks9mxmyx2hvx0cdca9sjmrg46q7lghzqqhxxup5: {
+        base_coin: {
+          amount: '0',
+          denom: 'gamm/pool/12',
+          value: '0',
+        },
+        vault_coin: {
+          amount: '0',
+          denom: 'factory/osmo1m45ap4rq4m2mfjkcqu9ks9mxmyx2hvx0cdca9sjmrg46q7lghzqqhxxup5/cwVTT',
+          value: '76413951',
+        },
+      },
+    },
+  },
+  positions: {
+    account_id: '10',
+    debts: [
+      {
+        shares: '0',
+        amount: '12005754',
+        denom: 'ibc/A8C2D23A1E6F95DA4E48BA349667E322BD7A6C996D8A4AAE8BA72E190F3D1477',
+      },
+      {
+        shares: '0',
+        amount: '124526466',
+        denom: 'uosmo',
+      },
+    ],
+    deposits: [],
+    lends: [
+      {
+        shares: '0',
+        amount: '63984431',
+        denom: 'ibc/6F34E1BD664C36CE49ACC28E60D62559A5F96C4F9A6CCE4FC5A67B2852E24CFE',
+      },
+      {
+        shares: '0',
+        amount: '13189447',
+        denom: 'ibc/A8C2D23A1E6F95DA4E48BA349667E322BD7A6C996D8A4AAE8BA72E190F3D1477',
+      },
+      {
+        shares: '0',
+        amount: '437848746',
+        denom: 'uosmo',
+      },
+    ],
+    vaults: [
+      {
+        vault: {
+          address: 'osmo1m45ap4rq4m2mfjkcqu9ks9mxmyx2hvx0cdca9sjmrg46q7lghzqqhxxup5',
+        },
+        amount: {
+          locking: {
+            locked: '643571354784389000000',
+            unlocking: [
+              {
+                id: 0,
+                coin: {
+                  amount: '0',
+                  denom: 'gamm/pool/12',
+                },
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+  kind: 'default',
 }

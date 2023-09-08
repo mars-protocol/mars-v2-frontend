@@ -29,13 +29,11 @@ export const combineBNCoins = (coins: BNCoin[]): BNCoin[] => {
     }
   })
 
-  const combinedArray: BNCoin[] = Object.keys(combinedMap).map(
-    (denom) =>
-      new BNCoin({
-        denom,
-        amount: BN(combinedMap[denom]).toString(),
-      }),
+  return Object.keys(combinedMap).map(
+      (denom) =>
+          new BNCoin({
+            denom,
+            amount: BN(combinedMap[denom]).toString(),
+          }),
   )
-
-  return combinedArray
 }
