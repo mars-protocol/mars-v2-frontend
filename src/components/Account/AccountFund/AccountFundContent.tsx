@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import Button from 'components/Button'
 import DepositCapMessage from 'components/DepositCapMessage'
@@ -180,7 +180,7 @@ export default function AccountFundContent(props: Props) {
         <DepositCapMessage
           action='fund'
           coins={depositCapReachedCoins}
-          className='pr-4 py-2 mt-4'
+          className='py-2 pr-4 mt-4'
           showIcon
         />
         <SwitchAutoLend
