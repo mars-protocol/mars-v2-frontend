@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import AccountFundContent from 'components/Account/AccountFund/AccountFundContent'
@@ -16,9 +16,11 @@ export default function AccountFundFullPage() {
   const currentAccount = useCurrentAccount()
   const [selectedAccountId, setSelectedAccountId] = useState<null | string>(null)
 
+  console.log('selectedAccountId', selectedAccountId)
+  console.log('accountId', accountId)
   useEffect(() => {
-    if (accounts && !selectedAccountId && accountId)
-      setSelectedAccountId(currentAccount?.id ?? accountId)
+    if (accounts && !selectedAccountId && accountId) setSelectedAccountId(accountId)
+    if (accountId && selectedAccountId !== accountId) setSelectedAccountId(accountId)
   }, [accounts, selectedAccountId, accountId, currentAccount])
 
   if (!selectedAccountId || !address) return null

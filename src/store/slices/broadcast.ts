@@ -1,6 +1,7 @@
 import { MsgExecuteContract } from '@delphi-labs/shuttle-react'
 import { isMobile } from 'react-device-detect'
 import { GetState, SetState } from 'zustand'
+import moment from 'moment'
 
 import { ENV } from 'constants/env'
 import { Store } from 'store'
@@ -78,6 +79,8 @@ export default function createBroadcastSlice(
       isError: false,
       hash: response?.result?.hash,
       content: [],
+      timestamp: moment().unix(),
+      address: get().address ?? '',
     }
 
     if (message) {
@@ -90,40 +93,40 @@ export default function createBroadcastSlice(
 
     switch (action) {
       case 'borrow':
-        const borrowCoin = changes.debts ? changes.debts[0] : []
+        const borrowCoin = changes.debts ? [changes.debts[0].toCoin()] : []
         const action = lend ? 'Borrowed and lend' : 'Borrowed'
         toast.content.push({
-          coins: [borrowCoin],
+          coins: borrowCoin,
           text: target === 'wallet' ? 'Borrowed to wallet' : action,
         })
         break
 
       case 'withdraw':
         toast.content.push({
-          coins: changes.deposits ?? [],
+          coins: changes.deposits?.map((deposit) => deposit.toCoin()) ?? [],
           text: target === 'wallet' ? 'Withdrew to Wallet' : 'Withdrew from lend',
         })
         break
 
       case 'deposit':
         toast.content.push({
-          coins: changes.deposits ?? [],
+          coins: changes.deposits?.map((deposit) => deposit.toCoin()) ?? [],
           text: lend ? 'Deposited and lent' : 'Deposited',
         })
         break
 
       case 'lend':
-        const lendCoin = changes.lends ? changes.lends[0] : []
+        const lendCoin = changes.lends ? [changes.lends[0].toCoin()] : []
         toast.content.push({
-          coins: [lendCoin],
+          coins: lendCoin,
           text: 'Lent',
         })
         break
 
       case 'repay':
-        const repayCoin = changes.deposits ? changes.deposits[0] : []
+        const repayCoin = changes.deposits ? [changes.deposits[0].toCoin()] : []
         toast.content.push({
-          coins: [repayCoin],
+          coins: repayCoin,
           text: 'Repayed',
         })
         break
@@ -131,11 +134,11 @@ export default function createBroadcastSlice(
       case 'vault':
         toast.message = 'Created a Vault Position'
         toast.content.push({
-          coins: changes.debts ?? [],
+          coins: changes.debts?.map((debt) => debt.toCoin()) ?? [],
           text: 'Borrowed for the Vault Position',
         })
         toast.content.push({
-          coins: changes.deposits ?? [],
+          coins: changes.deposits?.map((deposit) => deposit.toCoin()) ?? [],
           text: 'Withdrew for the Vault Position',
         })
     }

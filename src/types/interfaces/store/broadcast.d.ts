@@ -18,14 +18,21 @@ type ToastResponse = {
 
 interface ToastSuccess {
   accountId?: string
-  content: { coins: BNCoin[]; text: string }[]
+  content: { coins: Coin[]; text: string }[]
   isError: false
   message?: string
+  timestamp: number
+  address: string
+  hash: string
 }
 
 interface ToastError {
   message: string
   isError: true
+}
+
+interface ToastStore {
+  recent: ToastSuccess[]
 }
 
 interface BroadcastSlice {

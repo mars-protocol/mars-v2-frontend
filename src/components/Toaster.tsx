@@ -10,10 +10,11 @@ import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { EXPLORER_NAME, EXPLORER_TX_URL } from 'constants/explorer'
 import { REDUCE_MOTION_KEY } from 'constants/localStore'
 import useLocalStorage from 'hooks/useLocalStorage'
+import useTransactionStore from 'hooks/useTransactionStore'
 import useStore from 'store'
 import { formatAmountWithSymbol } from 'utils/formatters'
 
-function generateToastContent(content: ToastSuccess['content']): ReactNode {
+export function generateToastContent(content: ToastSuccess['content']): ReactNode {
   return content.map((item, index) => (
     <div className='flex flex-wrap w-full' key={index}>
       {item.coins.length > 0 && (
@@ -24,7 +25,7 @@ function generateToastContent(content: ToastSuccess['content']): ReactNode {
           <ul className='flex flex-wrap w-full gap-1 p-1 pl-4 list-disc'>
             {item.coins.map((coin) => (
               <li className='w-full p-0 text-sm text-white' key={coin.denom}>
-                {formatAmountWithSymbol(coin.toCoin())}
+                {formatAmountWithSymbol(coin)}
               </li>
             ))}
           </ul>
@@ -38,8 +39,10 @@ export default function Toaster() {
   const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
   const toast = useStore((s) => s.toast)
   const isError = toast?.isError
+  const { addTransaction } = useTransactionStore()
 
   if (toast) {
+    if (!isError) addTransaction(toast)
     const Msg = () => (
       <div
         className={classNames(
@@ -67,7 +70,7 @@ export default function Toaster() {
           <Text className='mb-1 font-bold text-white'>{`Credit Account ${toast.accountId}`}</Text>
         )}
         {toast.message && (
-          <Text size='sm' className='font-bold text-white'>
+          <Text size='sm' className='text-white'>
             {toast.message}
           </Text>
         )}

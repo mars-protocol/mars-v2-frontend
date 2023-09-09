@@ -11,6 +11,7 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import { Check, Copy, ExternalLink, Osmo } from 'components/Icons'
 import Overlay from 'components/Overlay'
 import Text from 'components/Text'
+import RecentTransactions from 'components/Wallet/RecentTransactions'
 import { CHAINS } from 'constants/chains'
 import { IS_TESTNET } from 'constants/env'
 import { BN_ZERO } from 'constants/math'
@@ -171,6 +172,7 @@ export default function WalletConnectedButton() {
             </div>
           </div>
         </div>
+        <RecentTransactions />
       </Overlay>
     </div>
   )
