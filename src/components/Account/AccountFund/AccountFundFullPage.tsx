@@ -16,8 +16,6 @@ export default function AccountFundFullPage() {
   const currentAccount = useCurrentAccount()
   const [selectedAccountId, setSelectedAccountId] = useState<null | string>(null)
 
-  console.log('selectedAccountId', selectedAccountId)
-  console.log('accountId', accountId)
   useEffect(() => {
     if (accounts && !selectedAccountId && accountId) setSelectedAccountId(accountId)
     if (accountId && selectedAccountId !== accountId) setSelectedAccountId(accountId)
