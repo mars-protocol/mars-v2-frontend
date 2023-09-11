@@ -63,7 +63,7 @@ function BorrowModal(props: Props) {
   const isRepay = modal.isRepay ?? false
   const [max, setMax] = useState(BN_ZERO)
   const { simulateBorrow, simulateRepay } = useUpdatedAccount(account)
-
+  const totalDebt = BN(getDebtAmount(modal))
   const { autoLendEnabledAccountIds } = useAutoLend()
   const apr = modal.marketData?.borrowRate ?? '0'
   const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
@@ -84,7 +84,7 @@ function BorrowModal(props: Props) {
       result = await repay({
         accountId: account.id,
         coin: BNCoin.fromDenomAndBigNumber(asset.denom, amount),
-        accountBalance: max.isEqualTo(amount),
+        accountBalance: totalDebt.times(1 + Number(apr) / 365 / 24).isEqualTo(amount),
         lend,
       })
     } else {
@@ -111,7 +111,6 @@ function BorrowModal(props: Props) {
       const coin = BNCoin.fromDenomAndBigNumber(asset.denom, newAmount)
       if (!amount.isEqualTo(newAmount)) setAmount(newAmount)
       if (isRepay) {
-        const totalDebt = BN(getDebtAmount(modal))
         const repayCoin = coin.amount.isGreaterThan(totalDebt)
           ? BNCoin.fromDenomAndBigNumber(asset.denom, totalDebt)
           : coin
