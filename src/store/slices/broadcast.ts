@@ -179,6 +179,7 @@ export default function createBroadcastSlice(
 
   return {
     toast: null,
+    showTxLoader: false,
     borrow: async (options: { accountId: string; coin: BNCoin; borrowToWallet: boolean }) => {
       const borrowAction: Action = { borrow: options.coin.toCoin() }
       const withdrawAction: Action = { withdraw: options.coin.toActionCoin() }
@@ -200,7 +201,6 @@ export default function createBroadcastSlice(
           lend: { denom: options.coin.denom, amount: 'account_balance' },
         })
       }
-
       const response = await get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
@@ -638,7 +638,7 @@ export default function createBroadcastSlice(
       try {
         const client = get().client
         if (!client) return { error: 'no client detected' }
-
+        set({ showTxLoader: true })
         const fee = await getEstimatedFee(options.messages)
         const broadcastOptions = {
           messages: options.messages,
@@ -650,7 +650,7 @@ export default function createBroadcastSlice(
         }
 
         const result = await client.broadcast(broadcastOptions)
-
+        set({ showTxLoader: false })
         if (result.hash) {
           return { result }
         }

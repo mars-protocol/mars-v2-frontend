@@ -3,6 +3,8 @@ import { ReactNode, useEffect, useRef } from 'react'
 
 import EscButton from 'components/Button/EscButton'
 import Card from 'components/Card'
+import TransactionLoader from 'components/TransactionLoader'
+import useStore from 'store'
 
 interface Props {
   header: string | ReactNode
@@ -14,14 +16,17 @@ interface Props {
   contentClassName?: string
   modalClassName?: string
   onClose: () => void
+  hideTxLoader?: boolean
 }
 
 export default function Modal(props: Props) {
   const ref: React.RefObject<HTMLDialogElement> = useRef(null)
   const modalClassName = props.modalClassName ?? 'max-w-modal'
+  const showTxLoader = useStore((s) => s.showTxLoader)
 
   function onClose() {
     ref.current?.close()
+    useStore.setState({ showTxLoader: false })
     props.onClose()
   }
 
@@ -36,6 +41,7 @@ export default function Modal(props: Props) {
     return () => {
       dialog?.removeAttribute('open')
       dialog?.close()
+      useStore.setState({ showTxLoader: false })
       document.body.classList.remove('h-screen', 'overflow-hidden')
     }
   }, [])
@@ -54,7 +60,7 @@ export default function Modal(props: Props) {
     >
       <Card
         className={classNames(
-          'relative flex max-w-full flex-1 bg-white/5 backdrop-blur-3xl',
+          'flex max-w-full flex-1 bg-white/5 backdrop-blur-3xl',
           props.className,
         )}
       >
@@ -63,8 +69,12 @@ export default function Modal(props: Props) {
           {!props.hideCloseBtn && <EscButton onClick={props.onClose} />}
         </div>
         <div
-          className={classNames(props.contentClassName, 'flex-1 overflow-y-scroll scrollbar-hide')}
+          className={classNames(
+            props.contentClassName,
+            'flex-1 overflow-y-scroll scrollbar-hide relative',
+          )}
         >
+          {showTxLoader && !props.hideTxLoader && <TransactionLoader />}
           {props.children ? props.children : props.content}
         </div>
       </Card>

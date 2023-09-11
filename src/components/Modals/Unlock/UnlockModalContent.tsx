@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import Button from 'components/Button'
@@ -13,12 +12,11 @@ interface Props {
 
 export default function UnlockModalContent(props: Props) {
   const unlock = useStore((s) => s.unlock)
-  const [isWating, setIsConfirming] = useState(false)
+  const showTxLoader = useStore((s) => s.showTxLoader)
   const { accountId } = useParams()
 
   async function onConfirm() {
     if (!accountId) return
-    setIsConfirming(true)
     await unlock({
       accountId: accountId,
       vault: props.depositedVault,
@@ -33,14 +31,14 @@ export default function UnlockModalContent(props: Props) {
       <Text className='mt-2 text-white/60'>
         {`Are you sure you want to unlock this position? The unlocking period will take ${props.depositedVault.lockup.duration} ${props.depositedVault.lockup.timeframe}.`}
       </Text>
-      <div className='mt-10 flex flex-row-reverse justify-between'>
+      <div className='flex flex-row-reverse justify-between mt-10'>
         <Button
           text='Yes'
           color='tertiary'
           className='px-6'
           rightIcon={<YesIcon />}
           onClick={onConfirm}
-          showProgressIndicator={isWating}
+          showProgressIndicator={showTxLoader}
         />
         <Button
           text='No'
@@ -49,7 +47,7 @@ export default function UnlockModalContent(props: Props) {
           rightIcon={<NoIcon />}
           tabIndex={1}
           onClick={props.onClose}
-          disabled={isWating}
+          disabled={showTxLoader}
         />
       </div>
     </>

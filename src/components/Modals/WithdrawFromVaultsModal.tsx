@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import Button from 'components/Button'
@@ -16,7 +15,7 @@ import { demagnify } from 'utils/formatters'
 export default function WithdrawFromVaultsModal() {
   const modal = useStore((s) => s.withdrawFromVaultsModal)
   const { accountId } = useParams()
-  const [isConfirming, setIsConfirming] = useState(false)
+  const showTxLoader = useStore((s) => s.showTxLoader)
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
   const baseCurrency = useStore((s) => s.baseCurrency)
 
@@ -26,12 +25,10 @@ export default function WithdrawFromVaultsModal() {
 
   async function withdrawHandler() {
     if (!accountId || !modal) return
-    setIsConfirming(true)
     await withdrawFromVaults({
       accountId: accountId,
       vaults: modal,
     })
-    setIsConfirming(false)
     onClose()
   }
 
@@ -50,7 +47,7 @@ export default function WithdrawFromVaultsModal() {
       contentClassName='p-4'
     >
       {modal ? (
-        <div className='flex w-full flex-wrap gap-4'>
+        <div className='flex flex-wrap w-full gap-4'>
           {modal.map((vault) => {
             const positionValue = vault.values.primary.plus(vault.values.secondary)
             const coin = BNCoin.fromDenomAndBigNumber(baseCurrency.denom, positionValue)
@@ -61,7 +58,7 @@ export default function WithdrawFromVaultsModal() {
             return (
               <div className='flex items-center gap-4' key={vault.unlockId}>
                 <VaultLogo vault={vault} />
-                <div className='flex flex-1 flex-wrap'>
+                <div className='flex flex-wrap flex-1'>
                   <Text className='w-full'>{vault.name}</Text>
                   <Text size='sm' className='w-full text-white/50'>
                     Unlocked
@@ -71,13 +68,13 @@ export default function WithdrawFromVaultsModal() {
                   <DisplayCurrency coin={coin} className='w-full text-right' />
                   <FormattedNumber
                     amount={demagnify(vault.amounts.primary, primaryAsset)}
-                    className='w-full text-right text-sm text-white/50'
+                    className='w-full text-sm text-right text-white/50'
                     options={{ suffix: ` ${vault.symbols.primary}` }}
                     animate
                   />
                   <FormattedNumber
                     amount={demagnify(vault.amounts.secondary, secondaryAsset)}
-                    className='w-full text-right text-sm text-white/50'
+                    className='w-full text-sm text-right text-white/50'
                     options={{ suffix: ` ${vault.symbols.secondary}` }}
                     animate
                   />
@@ -86,9 +83,9 @@ export default function WithdrawFromVaultsModal() {
             )
           })}
           <Button
-            showProgressIndicator={isConfirming}
+            showProgressIndicator={showTxLoader}
             onClick={withdrawHandler}
-            className='mt-4 w-full'
+            className='w-full mt-4'
             text='Withdraw from all'
           />
         </div>

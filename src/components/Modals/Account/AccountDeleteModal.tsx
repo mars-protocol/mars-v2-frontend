@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import AssetBalanceRow from 'components/AssetBalanceRow'
@@ -30,17 +30,14 @@ function AccountDeleteModal(props: Props) {
   const { pathname } = useLocation()
   const { address } = useParams()
   const { debts, vaults, id: accountId } = modal || {}
-  const [isConfirming, setIsConfirming] = useState(false)
 
   const closeDeleteAccountModal = useCallback(() => {
     useStore.setState({ accountDeleteModal: null })
   }, [])
 
   const deleteAccountHandler = useCallback(async () => {
-    setIsConfirming(true)
     const options = { accountId: modal.id, lends: modal.lends }
     const isSuccess = await deleteAccount(options)
-    setIsConfirming(false)
     if (isSuccess) {
       navigate(getRoute(getPage(pathname), address))
       closeDeleteAccountModal()
@@ -113,7 +110,6 @@ function AccountDeleteModal(props: Props) {
             {depositsAndLends.map((position, index) => {
               const coin = BNCoin.fromDenomAndBigNumber(position.denom, position.amount)
               const asset = getAssetByDenom(position.denom)
-
               if (!asset) return null
               return <AssetBalanceRow key={index} asset={asset} coin={coin} />
             })}

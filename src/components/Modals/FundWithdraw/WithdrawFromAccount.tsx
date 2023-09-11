@@ -28,7 +28,7 @@ export default function WithdrawFromAccount(props: Props) {
     ASSETS.find(byDenom(account.deposits[0]?.denom || account.lends[0]?.denom)) ?? ASSETS[0]
   const withdraw = useStore((s) => s.withdraw)
   const [withdrawWithBorrowing, setWithdrawWithBorrowing] = useToggle()
-  const [isConfirming, setIsConfirming] = useToggle()
+  const showTxLoader = useStore((s) => s.showTxLoader)
   const [currentAsset, setCurrentAsset] = useState(defaultAsset)
   const [amount, setAmount] = useState(BN_ZERO)
   const { simulateWithdraw } = useUpdatedAccount(account)
@@ -63,8 +63,6 @@ export default function WithdrawFromAccount(props: Props) {
   }
 
   async function onConfirm() {
-    setIsConfirming(true)
-
     const coins = [
       {
         coin: BNCoin.fromDenomAndBigNumber(currentAsset.denom, amount),
@@ -89,7 +87,6 @@ export default function WithdrawFromAccount(props: Props) {
       reclaims,
     })
 
-    setIsConfirming(false)
     if (result) {
       resetState()
       useStore.setState({ fundAndWithdrawModal: null })
@@ -126,7 +123,7 @@ export default function WithdrawFromAccount(props: Props) {
           accountId={account.id}
           hasSelect
           maxText='Max'
-          disabled={isConfirming}
+          disabled={showTxLoader}
         />
         <Divider className='my-6' />
         <div className='flex flex-wrap w-full'>
@@ -141,14 +138,14 @@ export default function WithdrawFromAccount(props: Props) {
               name='borrow-to-wallet'
               checked={withdrawWithBorrowing}
               onChange={setWithdrawWithBorrowing}
-              disabled={isConfirming}
+              disabled={showTxLoader}
             />
           </div>
         </div>
       </div>
       <Button
         onClick={onConfirm}
-        showProgressIndicator={isConfirming}
+        showProgressIndicator={showTxLoader}
         className='w-full'
         text={'Withdraw'}
         rightIcon={<ArrowRight />}

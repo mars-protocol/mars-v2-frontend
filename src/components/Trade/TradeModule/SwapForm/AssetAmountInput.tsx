@@ -88,6 +88,6 @@ const className = {
   maxButtonLabel: 'font-bold text-xs',
   maxValue: 'font-bold text-xs text-white text-opacity-60 mx-1',
   maxButton:
-    'cursor-pointer select-none bg-white bg-opacity-20 text-2xs !leading-3 font-bold py-0.5 px-1.5 rounded',
+    'hover:cursor-pointer select-none bg-white bg-opacity-20 text-2xs !leading-3 font-bold py-0.5 px-1.5 rounded',
   assetValue: 'text-xs text-white text-opacity-60 mt-2',
 }

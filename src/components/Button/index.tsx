@@ -64,8 +64,9 @@ const Button = React.forwardRef(function Button(
 
     return classNames(
       'relative z-1 flex items-center',
-      'cursor-pointer appearance-none break-normal outline-none',
+      'appearance-none break-normal outline-none',
       'text-white transition-all',
+      'hover:cursor-pointer',
       !reduceMotion && 'transition-color',
       buttonClasses,
       buttonVariantClasses[variant],

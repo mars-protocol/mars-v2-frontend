@@ -23,9 +23,7 @@ interface Props {
 
 function AlertDialog(props: Props) {
   const { title, icon, description, negativeButton, positiveButton } = props.config
-
   const [isConfirming, setIsConfirming] = useState(false)
-
   const handleButtonClick = (button?: AlertDialogButton) => {
     button?.onClick && button.onClick()
     props.close()
@@ -42,8 +40,9 @@ function AlertDialog(props: Props) {
   return (
     <Modal
       onClose={props.close}
+      hideTxLoader
       header={
-        <div className='grid h-12 w-12 place-items-center rounded-sm bg-white/5'>
+        <div className='grid w-12 h-12 rounded-sm place-items-center bg-white/5'>
           {icon ?? <ExclamationMarkCircled width={18} />}
         </div>
       }

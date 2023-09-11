@@ -55,7 +55,7 @@ export default function BorrowModalController() {
 function BorrowModal(props: Props) {
   const { modal, account } = props
   const [amount, setAmount] = useState(BN_ZERO)
-  const [isConfirming, setIsConfirming] = useToggle()
+  const showTxLoader = useStore((s) => s.showTxLoader)
   const [borrowToWallet, setBorrowToWallet] = useToggle()
   const borrow = useStore((s) => s.borrow)
   const repay = useStore((s) => s.repay)
@@ -71,12 +71,10 @@ function BorrowModal(props: Props) {
 
   function resetState() {
     setAmount(BN_ZERO)
-    setIsConfirming(false)
   }
 
   async function onConfirmClick() {
     if (!asset) return
-    setIsConfirming(true)
     let result
     const { lend } = getDepositAndLendCoinsToSpend(
       BNCoin.fromDenomAndBigNumber(asset.denom, amount),
@@ -97,7 +95,6 @@ function BorrowModal(props: Props) {
       })
     }
 
-    setIsConfirming(false)
     if (result) {
       resetState()
       useStore.setState({ borrowModal: null })
@@ -226,7 +223,7 @@ function BorrowModal(props: Props) {
               max={max}
               className='w-full'
               maxText='Max'
-              disabled={isConfirming}
+              disabled={showTxLoader}
             />
             {!isRepay && (
               <>
@@ -242,7 +239,7 @@ function BorrowModal(props: Props) {
                     name='borrow-to-wallet'
                     checked={borrowToWallet}
                     onChange={setBorrowToWallet}
-                    disabled={isConfirming}
+                    disabled={showTxLoader}
                   />
                 </div>
               </>
@@ -251,7 +248,7 @@ function BorrowModal(props: Props) {
           <Button
             onClick={onConfirmClick}
             className='w-full'
-            showProgressIndicator={isConfirming}
+            showProgressIndicator={showTxLoader}
             disabled={amount.isZero()}
             text={isRepay ? 'Repay' : 'Borrow'}
             rightIcon={<ArrowRight />}

@@ -169,7 +169,7 @@ export default function Index(props: Props) {
                   onClick={header.column.getToggleSortingHandler()}
                   className={classNames(
                     'p-2',
-                    header.column.getCanSort() && 'cursor-pointer',
+                    header.column.getCanSort() && 'hover:cursor-pointer',
                     header.id === 'symbol' ? 'text-left' : 'text-right',
                   )}
                 >

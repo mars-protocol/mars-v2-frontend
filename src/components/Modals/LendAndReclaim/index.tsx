@@ -4,7 +4,6 @@ import AssetAmountSelectActionModal from 'components/Modals/AssetAmountSelectAct
 import DetailsHeader from 'components/Modals/LendAndReclaim/DetailsHeader'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useLendAndReclaimModal from 'hooks/useLendAndReclaimModal'
-import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -27,7 +26,7 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
   const lend = useStore((s) => s.lend)
   const reclaim = useStore((s) => s.reclaim)
   const { close } = useLendAndReclaimModal()
-  const [isConfirming, setIsConfirming] = useToggle()
+  const showTxLoader = useStore((s) => s.showTxLoader)
   const { simulateLending } = useUpdatedAccount(currentAccount)
 
   const { data, action } = config
@@ -47,8 +46,6 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
 
   const handleAction = useCallback(
     async (value: BigNumber, isMax: boolean) => {
-      setIsConfirming(true)
-
       const coin = BNCoin.fromDenomAndBigNumber(asset.denom, value)
       const options = {
         accountId: currentAccount.id,
@@ -56,20 +53,17 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
         isMax,
       }
       await (isLendAction ? lend : reclaim)(options)
-
-      setIsConfirming(false)
       close()
     },
-    [asset.denom, close, currentAccount.id, isLendAction, lend, reclaim, setIsConfirming],
+    [asset.denom, close, currentAccount.id, isLendAction, lend, reclaim],
   )
-
   return (
     <AssetAmountSelectActionModal
       asset={asset}
       contentHeader={<DetailsHeader data={data} />}
       coinBalances={coinBalances}
       actionButtonText={actionText}
-      showProgressIndicator={isConfirming}
+      showProgressIndicator={showTxLoader}
       title={`${actionText} ${asset.symbol}`}
       onClose={close}
       onAction={handleAction}

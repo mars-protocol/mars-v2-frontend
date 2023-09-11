@@ -36,11 +36,11 @@ export default function AccountFundContent(props: Props) {
   const deposit = useStore((s) => s.deposit)
   const accounts = useStore((s) => s.accounts)
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
+  const showTxLoader = useStore((s) => s.showTxLoader)
   const [lendAssets, setLendAssets] = useLocalStorage<boolean>(
     LEND_ASSETS_KEY,
     DEFAULT_SETTINGS.lendAssets,
   )
-  const [isFunding, setIsFunding] = useToggle(false)
   const [fundingAssets, setFundingAssets] = useState<BNCoin[]>([])
   const { data: marketAssets } = useMarketAssets()
   const { data: walletBalances } = useWalletBalances(props.address)
@@ -75,21 +75,19 @@ export default function AccountFundContent(props: Props) {
   }, [selectedDenoms])
 
   const handleClick = useCallback(async () => {
-    setIsFunding(true)
     if (!props.accountId) return
     const result = await deposit({
       accountId: props.accountId,
       coins: fundingAssets,
       lend: isLending,
     })
-    setIsFunding(false)
     if (result)
       useStore.setState({
         fundAndWithdrawModal: null,
         walletAssetsModal: null,
         focusComponent: null,
       })
-  }, [setIsFunding, props.accountId, deposit, fundingAssets, isLending])
+  }, [props.accountId, deposit, fundingAssets, isLending])
 
   useEffect(() => {
     if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) {
@@ -173,7 +171,7 @@ export default function AccountFundContent(props: Props) {
                 max={balance}
                 balances={balances}
                 maxText='Max'
-                disabled={isFunding}
+                disabled={showTxLoader}
               />
             </div>
           )
@@ -186,7 +184,7 @@ export default function AccountFundContent(props: Props) {
           rightIcon={<Plus />}
           iconClassName='w-3'
           onClick={handleSelectAssetsClick}
-          disabled={isFunding}
+          disabled={showTxLoader}
         />
         <DepositCapMessage
           action='fund'
@@ -205,7 +203,7 @@ export default function AccountFundContent(props: Props) {
         className='w-full mt-4'
         text='Fund account'
         disabled={!hasFundingAssets || depositCapReachedCoins.length > 0}
-        showProgressIndicator={isFunding}
+        showProgressIndicator={showTxLoader}
         onClick={handleClick}
         color={props.isFullPage ? 'tertiary' : undefined}
         size={props.isFullPage ? 'lg' : undefined}

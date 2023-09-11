@@ -42,6 +42,8 @@ module.exports = {
         fadein: 'fadein 1s ease-in-out forwards',
         glow: 'glow 1000ms ease-in-out forwards',
         progress: 'spin 1200ms cubic-bezier(0.5, 0, 0.5, 1) infinite',
+        loaderFade: 'fadein 2s ease-in-out forwards',
+        loaderGlow: 'vector 3s ease-in-out forwards',
       },
       backdropBlur: {
         sticky: '50px',
@@ -155,6 +157,12 @@ module.exports = {
           '0%': { opacity: 0 },
           '33%': { opacity: 1 },
           '66%': { opacity: 1 },
+          '100%': { opacity: 0 },
+        },
+        vector: {
+          '0%': { opacity: 0 },
+          '33%': { opacity: 0.3 },
+          '66%': { opacity: 0.6 },
           '100%': { opacity: 0 },
         },
       },
@@ -390,6 +398,20 @@ module.exports = {
           letterSpacing: '9px',
         },
       })
+    }),
+    plugin(({ matchUtilities, theme }) => {
+      matchUtilities(
+        {
+          'animate-delay': (value) => {
+            return {
+              'animation-delay': value,
+            }
+          },
+        },
+        {
+          values: theme('transitionDelay'),
+        },
+      )
     }),
   ],
 }

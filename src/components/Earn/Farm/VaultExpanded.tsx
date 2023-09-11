@@ -100,7 +100,7 @@ export default function VaultExpanded(props: Props) {
   return (
     <tr
       key={props.row.id}
-      className='transition-colors cursor-pointer bg-black/20'
+      className='hover:cursor-pointer bg-black/20 transition-colors'
       onClick={(e) => {
         e.preventDefault()
         const isExpanded = props.row.getIsExpanded()

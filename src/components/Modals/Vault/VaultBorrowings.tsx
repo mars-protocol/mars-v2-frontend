@@ -40,7 +40,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   const { data: prices } = usePrices()
   const vaultModal = useStore((s) => s.vaultModal)
   const depositIntoVault = useStore((s) => s.depositIntoVault)
-  const [isConfirming, setIsConfirming] = useState(false)
+  const showTxLoader = useStore((s) => s.showTxLoader)
   const updatedAccount = useStore((s) => s.updatedAccount)
   const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
   const [percentage, setPercentage] = useState<number>(0)
@@ -145,7 +145,6 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
 
   async function onConfirm() {
     if (!updatedAccount || !vaultModal) return
-    setIsConfirming(true)
     const isSuccess = await depositIntoVault({
       accountId: updatedAccount.id,
       actions: props.depositActions,
@@ -153,7 +152,6 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
       borrowings: props.borrowings,
       isCreate: vaultModal.isCreate,
     })
-    setIsConfirming(false)
     if (isSuccess) {
       useStore.setState({ vaultModal: null })
     }
@@ -175,12 +173,12 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
             maxText='Max Borrow'
             onChange={(amount) => updateAssets(coin.denom, amount)}
             onDelete={() => onDelete(coin.denom)}
-            disabled={isConfirming}
+            disabled={showTxLoader}
           />
         )
       })}
       {props.borrowings.length === 1 && (
-        <Slider onChange={onChangeSlider} value={percentage} disabled={isConfirming} />
+        <Slider onChange={onChangeSlider} value={percentage} disabled={showTxLoader} />
       )}
       {props.borrowings.length === 0 && (
         <div className='flex items-center gap-4 py-2'>
@@ -198,7 +196,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
         text='Select borrow assets +'
         color='tertiary'
         onClick={addAsset}
-        disabled={isConfirming}
+        disabled={showTxLoader}
       />
 
       <DepositCapMessage
@@ -235,7 +233,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
         color='primary'
         text='Deposit'
         rightIcon={<ArrowRight />}
-        showProgressIndicator={isConfirming}
+        showProgressIndicator={showTxLoader}
         disabled={!props.depositActions.length || props.depositCapReachedCoins.length > 0}
       />
     </div>

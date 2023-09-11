@@ -83,4 +83,5 @@ interface BroadcastSlice {
     borrow: BNCoin[]
     reclaims: ActionCoin[]
   }) => Promise<boolean>
+  showTxLoader: boolean
 }

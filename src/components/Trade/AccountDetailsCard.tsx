@@ -42,5 +42,5 @@ export default function AccountDetailsCard() {
 
 const className = {
   tabWrapper: 'flex w-full items-center bg-white/10 pt-4 pl-4 font-semibold',
-  tab: 'mr-4 pb-3 cursor-pointer select-none flex flex-row border-b-2 border-pink border-solid',
+  tab: 'mr-4 pb-3 hover:cursor-pointer select-none flex flex-row border-b-2 border-pink border-solid',
 }
