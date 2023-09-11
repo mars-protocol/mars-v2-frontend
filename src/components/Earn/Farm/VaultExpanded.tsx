@@ -26,6 +26,7 @@ export default function VaultExpanded(props: Props) {
         vault: props.row.original,
         isDeposited: true,
         selectedBorrowDenoms: [props.row.original.denoms.secondary],
+        isCreate: false,
       },
     })
   }
@@ -108,7 +109,7 @@ export default function VaultExpanded(props: Props) {
       }}
     >
       <td colSpan={!status ? 7 : 8}>
-        <div className='align-center flex justify-end gap-3 p-4'>
+        <div className='flex justify-end gap-3 p-4 align-center'>
           {status && <DepositMoreButton />}
           {status === VaultStatus.ACTIVE && <UnlockButton />}
           {status === VaultStatus.UNLOCKING && <UnlockingButton />}

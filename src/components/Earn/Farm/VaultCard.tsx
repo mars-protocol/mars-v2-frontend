@@ -1,4 +1,4 @@
-import Button from 'components/Button'
+import ActionButton from 'components/Button/ActionButton'
 import VaultLogo from 'components/Earn/Farm/VaultLogo'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
@@ -23,13 +23,14 @@ export default function VaultCard(props: Props) {
       vaultModal: {
         vault: props.vault,
         selectedBorrowDenoms: [props.vault.denoms.secondary],
+        isCreate: true,
       },
     })
   }
 
   return (
     <div className='border-r-[1px] border-r-white/10 p-4'>
-      <div className='align-center mb-8 flex justify-between'>
+      <div className='flex justify-between mb-8 align-center'>
         <div>
           <Text size='xs' className='mb-2 text-white/60'>
             {props.subtitle}
@@ -45,7 +46,7 @@ export default function VaultCard(props: Props) {
         </div>
         <VaultLogo vault={props.vault} />
       </div>
-      <div className='mb-6 flex justify-between'>
+      <div className='flex justify-between mb-6'>
         <TitleAndSubCell
           className='text-xs'
           title={props.vault.apy ? formatPercent(props.vault.apy, 2) : '-'}
@@ -73,14 +74,7 @@ export default function VaultCard(props: Props) {
           sub={'Depo. Cap'}
         />
       </div>
-      <Button
-        color='secondary'
-        onClick={openVaultModal}
-        className='w-full'
-        disabled={!currentAccount}
-      >
-        {currentAccount ? 'Deposit' : 'Select Account'}
-      </Button>
+      <ActionButton onClick={openVaultModal} color='secondary' text='Deposit' className='w-full' />
     </div>
   )
 }

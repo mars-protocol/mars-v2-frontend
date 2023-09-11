@@ -50,6 +50,7 @@ interface BroadcastSlice {
     actions: Action[]
     deposits: BNCoin[]
     borrowings: BNCoin[]
+    isCreate: boolean
   }) => Promise<boolean>
   executeMsg: (options: { messages: MsgExecuteContract[] }) => Promise<BroadcastResult>
   lend: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>

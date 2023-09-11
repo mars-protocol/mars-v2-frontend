@@ -150,6 +150,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
       actions: props.depositActions,
       deposits: props.deposits,
       borrowings: props.borrowings,
+      isCreate: vaultModal.isCreate,
     })
     if (isSuccess) {
       useStore.setState({ vaultModal: null })

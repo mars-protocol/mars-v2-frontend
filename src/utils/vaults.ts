@@ -119,9 +119,8 @@ export function getVaultSwapActions(
 
     if (primaryLeftoverValue.isGreaterThan(0)) {
       const swapValue = value.isLessThan(primaryLeftoverValue) ? value : primaryLeftoverValue
-      const swapAmount = swapValue
-        .dividedBy(prices.find((coin) => coin.denom === bnCoin.denom)?.amount || 1)
-        .integerValue()
+      const swapAmount = getCoinAmount(bnCoin.denom, swapValue, prices)
+
       value = value.minus(swapValue)
       amount = amount.minus(swapAmount)
       primaryLeftoverValue = primaryLeftoverValue.minus(swapValue)
