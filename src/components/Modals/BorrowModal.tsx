@@ -26,6 +26,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { formatPercent, formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+import {getDebtAmountWithInterest} from 'utils/tokens'
 
 function getDebtAmount(modal: BorrowModal) {
   return BN((modal.marketData as BorrowMarketTableData)?.debt ?? 0).toString()
@@ -63,11 +64,12 @@ function BorrowModal(props: Props) {
   const isRepay = modal.isRepay ?? false
   const [max, setMax] = useState(BN_ZERO)
   const { simulateBorrow, simulateRepay } = useUpdatedAccount(account)
-
   const { autoLendEnabledAccountIds } = useAutoLend()
   const apr = modal.marketData?.borrowRate ?? '0'
   const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
   const { computeMaxBorrowAmount } = useHealthComputer(account)
+  const totalDebt = BN(getDebtAmount(modal))
+  const totalDebtRepayAmount = getDebtAmountWithInterest(totalDebt, Number(apr))
 
   function resetState() {
     setAmount(BN_ZERO)
@@ -84,7 +86,7 @@ function BorrowModal(props: Props) {
       result = await repay({
         accountId: account.id,
         coin: BNCoin.fromDenomAndBigNumber(asset.denom, amount),
-        accountBalance: max.isEqualTo(amount),
+        accountBalance: amount.isEqualTo(totalDebtRepayAmount),
         lend,
       })
     } else {
@@ -111,14 +113,13 @@ function BorrowModal(props: Props) {
       const coin = BNCoin.fromDenomAndBigNumber(asset.denom, newAmount)
       if (!amount.isEqualTo(newAmount)) setAmount(newAmount)
       if (isRepay) {
-        const totalDebt = BN(getDebtAmount(modal))
         const repayCoin = coin.amount.isGreaterThan(totalDebt)
           ? BNCoin.fromDenomAndBigNumber(asset.denom, totalDebt)
           : coin
         simulateRepay(repayCoin)
       }
     },
-    [asset, amount, isRepay, simulateRepay, modal],
+    [asset, amount, isRepay, simulateRepay, modal, totalDebt, totalDebtRepayAmount],
   )
 
   useEffect(() => {
@@ -127,11 +128,7 @@ function BorrowModal(props: Props) {
       const depositBalance = account.deposits.find(byDenom(asset.denom))?.amount ?? BN_ZERO
       const lendBalance = account.lends.find(byDenom(asset.denom))?.amount ?? BN_ZERO
       const maxBalance = depositBalance.plus(lendBalance)
-      const totalDebt = BN(getDebtAmount(modal))
-      const maxRepayAmount = BigNumber.min(
-        maxBalance,
-        totalDebt.times(1 + Number(apr) / 365 / 24).integerValue(),
-      )
+      const maxRepayAmount = BigNumber.min(maxBalance, totalDebtRepayAmount)
       setMax(maxRepayAmount)
       return
     }
@@ -142,7 +139,16 @@ function BorrowModal(props: Props) {
     )
 
     setMax(BigNumber.min(maxBorrowAmount, modal.marketData?.liquidity?.amount || 0))
-  }, [account, isRepay, modal, asset.denom, computeMaxBorrowAmount, borrowToWallet, apr])
+  }, [
+    account,
+    isRepay,
+    modal,
+    asset.denom,
+    computeMaxBorrowAmount,
+    borrowToWallet,
+    apr,
+    totalDebtRepayAmount,
+  ])
 
   useEffect(() => {
     if (amount.isGreaterThan(max)) {

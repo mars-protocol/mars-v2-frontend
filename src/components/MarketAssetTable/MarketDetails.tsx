@@ -107,6 +107,7 @@ export default function MarketDetails({ data, type }: Props) {
     if (type === 'lend') return getLendingMarketDetails()
     return getBorrowMarketDetails()
   }, [
+    data,
     type,
     asset,
     marketDepositAmount,
@@ -119,7 +120,7 @@ export default function MarketDetails({ data, type }: Props) {
   ])
 
   return (
-    <div className='flex flex-1 justify-between rounded-md bg-white bg-opacity-5'>
+    <div className='flex justify-between flex-1 bg-white rounded-md bg-opacity-5'>
       {details.map((detail, index) => (
         <TitleAndSubCell
           key={index}
@@ -127,7 +128,7 @@ export default function MarketDetails({ data, type }: Props) {
           containerClassName='m-5 ml-10 mr-10 space-y-1'
           title={
             <FormattedNumber
-              className='text-center text-xs'
+              className='text-xs text-center'
               amount={detail.amount}
               options={detail.options}
               animate

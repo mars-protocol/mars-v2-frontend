@@ -20,3 +20,7 @@ export function getTokenPrice(denom: string, prices: BNCoin[]): BigNumber {
   const price = prices.find((price) => price.denom === denom)?.amount || '0'
   return BN(price)
 }
+
+export function getDebtAmountWithInterest(debt: BigNumber, apr: number) {
+  return debt.times(1 + apr / 365 / 24).integerValue()
+}
