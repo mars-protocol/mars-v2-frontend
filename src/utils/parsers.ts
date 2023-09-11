@@ -1,15 +1,12 @@
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
+
 export function isNumber(value: unknown) {
   if (typeof value === 'string' && value !== '') {
     return !isNaN(Number(value))
   }
 
-  if (typeof value === 'number') {
-    return true
-  }
-
-  return false
+  return typeof value === 'number'
 }
 
 export const convertAprToApy = (apr: number, numberOfCompoundingPeriods: number): number => {
@@ -32,13 +29,11 @@ export const combineBNCoins = (coins: BNCoin[]): BNCoin[] => {
     }
   })
 
-  const combinedArray: BNCoin[] = Object.keys(combinedMap).map(
+  return Object.keys(combinedMap).map(
     (denom) =>
       new BNCoin({
         denom,
         amount: BN(combinedMap[denom]).toString(),
       }),
   )
-
-  return combinedArray
 }

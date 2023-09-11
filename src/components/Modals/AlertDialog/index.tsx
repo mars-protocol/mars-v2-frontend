@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import classNames from 'classnames'
+import { useState } from 'react'
 
 import Button from 'components/Button'
 import { ExclamationMarkCircled } from 'components/Icons'
@@ -60,7 +60,7 @@ function AlertDialog(props: Props) {
         {positiveButton && (
           <Button
             text={positiveButton.text ?? 'Yes'}
-            color='tertiary'
+            color='primary'
             className='px-6'
             rightIcon={positiveButton.icon ?? <YesIcon />}
             showProgressIndicator={isConfirming}
