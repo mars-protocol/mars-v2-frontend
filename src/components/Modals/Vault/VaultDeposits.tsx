@@ -1,9 +1,9 @@
 import BigNumber from 'bignumber.js'
 import { useMemo, useState } from 'react'
 
-import DisplayCurrency from 'components/DisplayCurrency'
 import Button from 'components/Button'
 import DepositCapMessage from 'components/DepositCapMessage'
+import DisplayCurrency from 'components/DisplayCurrency'
 import Divider from 'components/Divider'
 import { Gauge } from 'components/Gauge'
 import { ArrowRight, ExclamationMarkCircled } from 'components/Icons'
@@ -11,14 +11,13 @@ import Slider from 'components/Slider'
 import Switch from 'components/Switch'
 import Text from 'components/Text'
 import TokenInput from 'components/TokenInput'
-import { ASSETS } from 'constants/assets'
 import { BN_ZERO } from 'constants/math'
+import { ORACLE_DENOM } from 'constants/oracle'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { accumulateAmounts } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { BN, getValueFromBNCoins } from 'utils/helpers'
-import { ORACLE_DENOM } from 'constants/oracle'
 
 interface Props {
   deposits: BNCoin[]
@@ -36,7 +35,6 @@ interface Props {
 export default function VaultDeposit(props: Props) {
   const { deposits, primaryAsset, secondaryAsset, account, onChangeDeposits, displayCurrency } =
     props
-  const displayCurrencyAsset = ASSETS.find(byDenom(displayCurrency)) ?? ASSETS[0]
   const [availablePrimaryAmount, availableSecondaryAmount] = useMemo(
     () => [
       accumulateAmounts(primaryAsset.denom, [...account.deposits, ...account.lends]),
@@ -160,7 +158,7 @@ export default function VaultDeposit(props: Props) {
 
   return (
     <div className='flex flex-col'>
-      <div className='flex gap-4 pl-3 p-4'>
+      <div className='flex gap-4 p-4 pl-3'>
         <div className='flex flex-col items-center justify-between gap-1 pb-[30px] pt-2'>
           <Gauge
             percentage={primaryValuePercentage}

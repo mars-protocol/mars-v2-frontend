@@ -1,6 +1,7 @@
 {
   "extends": "next/core-web-vitals",
   "rules": {
+    "linebreak-style": ["warn", "unix"],
     "sort-imports": [
       "warn",
       {

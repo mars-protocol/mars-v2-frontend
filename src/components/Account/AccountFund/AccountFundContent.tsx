@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import Button from 'components/Button'
 import DepositCapMessage from 'components/DepositCapMessage'
@@ -8,8 +8,11 @@ import SwitchAutoLend from 'components/Switch/SwitchAutoLend'
 import Text from 'components/Text'
 import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
 import WalletBridges from 'components/Wallet/WalletBridges'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { LEND_ASSETS_KEY } from 'constants/localStore'
 import { BN_ZERO } from 'constants/math'
 import useAutoLend from 'hooks/useAutoLend'
+import useLocalStorage from 'hooks/useLocalStorage'
 import useMarketAssets from 'hooks/useMarketAssets'
 import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
@@ -31,8 +34,12 @@ interface Props {
 
 export default function AccountFundContent(props: Props) {
   const deposit = useStore((s) => s.deposit)
+  const accounts = useStore((s) => s.accounts)
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
-
+  const [lendAssets, setLendAssets] = useLocalStorage<boolean>(
+    LEND_ASSETS_KEY,
+    DEFAULT_SETTINGS.lendAssets,
+  )
   const [isFunding, setIsFunding] = useToggle(false)
   const [fundingAssets, setFundingAssets] = useState<BNCoin[]>([])
   const { data: marketAssets } = useMarketAssets()
@@ -124,6 +131,10 @@ export default function AccountFundContent(props: Props) {
     toggleIsLending(autoLendEnabledAccountIds.includes(props.accountId))
   }, [props.accountId, autoLendEnabledAccountIds, toggleIsLending])
 
+  useEffect(() => {
+    if (accounts?.length === 1 && isLending && !lendAssets) setLendAssets(true)
+  }, [isLending, accounts, lendAssets, setLendAssets])
+
   const depositCapReachedCoins = useMemo(() => {
     const depositCapReachedCoins: BNCoin[] = []
     fundingAssets.forEach((asset) => {
@@ -180,7 +191,7 @@ export default function AccountFundContent(props: Props) {
         <DepositCapMessage
           action='fund'
           coins={depositCapReachedCoins}
-          className='pr-4 py-2 mt-4'
+          className='py-2 pr-4 mt-4'
           showIcon
         />
         <SwitchAutoLend
