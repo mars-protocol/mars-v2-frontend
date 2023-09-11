@@ -26,7 +26,6 @@ export default function AccountDeleteController() {
 function AccountDeleteModal(props: Props) {
   const modal = props.modal
   const deleteAccount = useStore((s) => s.deleteAccount)
-  const pendingTransaction = useStore((s) => s.pendingTransaction)
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { address } = useParams()
@@ -37,7 +36,6 @@ function AccountDeleteModal(props: Props) {
   }, [])
 
   const deleteAccountHandler = useCallback(async () => {
-    if (depositsAndLends.length > 0) useStore.setState({ pendingTransaction: true })
     const options = { accountId: modal.id, lends: modal.lends }
     const isSuccess = await deleteAccount(options)
     if (isSuccess) {
