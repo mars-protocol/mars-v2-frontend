@@ -26,7 +26,7 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
   const lend = useStore((s) => s.lend)
   const reclaim = useStore((s) => s.reclaim)
   const { close } = useLendAndReclaimModal()
-  const pendingTransaction = useStore((s) => s.pendingTransaction)
+  const showTxLoader = useStore((s) => s.showTxLoader)
   const { simulateLending } = useUpdatedAccount(currentAccount)
 
   const { data, action } = config
@@ -63,7 +63,7 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
       contentHeader={<DetailsHeader data={data} />}
       coinBalances={coinBalances}
       actionButtonText={actionText}
-      showProgressIndicator={pendingTransaction}
+      showProgressIndicator={showTxLoader}
       title={`${actionText} ${asset.symbol}`}
       onClose={close}
       onAction={handleAction}

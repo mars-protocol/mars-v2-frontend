@@ -40,6 +40,7 @@ function AlertDialog(props: Props) {
   return (
     <Modal
       onClose={props.close}
+      hideTxLoader
       header={
         <div className='grid w-12 h-12 rounded-sm place-items-center bg-white/5'>
           {icon ?? <ExclamationMarkCircled width={18} />}

@@ -16,16 +16,17 @@ interface Props {
   contentClassName?: string
   modalClassName?: string
   onClose: () => void
+  hideTxLoader?: boolean
 }
 
 export default function Modal(props: Props) {
   const ref: React.RefObject<HTMLDialogElement> = useRef(null)
   const modalClassName = props.modalClassName ?? 'max-w-modal'
-  const pendingTransaction = useStore((s) => s.pendingTransaction)
+  const showTxLoader = useStore((s) => s.showTxLoader)
 
   function onClose() {
     ref.current?.close()
-    useStore.setState({ pendingTransaction: false })
+    useStore.setState({ showTxLoader: false })
     props.onClose()
   }
 
@@ -40,7 +41,7 @@ export default function Modal(props: Props) {
     return () => {
       dialog?.removeAttribute('open')
       dialog?.close()
-      useStore.setState({ pendingTransaction: false })
+      useStore.setState({ showTxLoader: false })
       document.body.classList.remove('h-screen', 'overflow-hidden')
     }
   }, [])
@@ -73,7 +74,7 @@ export default function Modal(props: Props) {
             'flex-1 overflow-y-scroll scrollbar-hide relative',
           )}
         >
-          {pendingTransaction && <TransactionLoader />}
+          {showTxLoader && !props.hideTxLoader && <TransactionLoader />}
           {props.children ? props.children : props.content}
         </div>
       </Card>

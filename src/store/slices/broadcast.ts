@@ -63,7 +63,6 @@ export default function createBroadcastSlice(
   const handleResponseMessages = (props: HandleResponse) => {
     const { accountId, response, action, lend, changes, target, message } = props
 
-    set({ pendingTransaction: false })
     if (response.error || response.result?.response.code !== 0) {
       set({
         toast: {
@@ -177,7 +176,7 @@ export default function createBroadcastSlice(
 
   return {
     toast: null,
-    pendingTransaction: false,
+    showTxLoader: false,
     borrow: async (options: { accountId: string; coin: BNCoin; borrowToWallet: boolean }) => {
       const borrowAction: Action = { borrow: options.coin.toCoin() }
       const withdrawAction: Action = { withdraw: options.coin.toActionCoin() }
@@ -199,7 +198,6 @@ export default function createBroadcastSlice(
           lend: { denom: options.coin.denom, amount: 'account_balance' },
         })
       }
-      set({ pendingTransaction: true })
       const response = await get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
@@ -333,7 +331,6 @@ export default function createBroadcastSlice(
 
       const funds = options.coins.map((coin) => coin.toCoin())
 
-      set({ pendingTransaction: true })
       const response = await get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, funds)],
       })
@@ -433,7 +430,6 @@ export default function createBroadcastSlice(
         },
       }
 
-      set({ pendingTransaction: true })
       const response = await get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
@@ -470,7 +466,6 @@ export default function createBroadcastSlice(
         },
       }
 
-      set({ pendingTransaction: true })
       const response = await get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
@@ -509,7 +504,6 @@ export default function createBroadcastSlice(
         },
       }
 
-      set({ pendingTransaction: true })
       const response = await get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
@@ -535,7 +529,6 @@ export default function createBroadcastSlice(
         },
       }
 
-      set({ pendingTransaction: true })
       const response = await get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
@@ -561,7 +554,6 @@ export default function createBroadcastSlice(
         },
       }
 
-      set({ pendingTransaction: true })
       const response = await get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
@@ -642,7 +634,7 @@ export default function createBroadcastSlice(
       try {
         const client = get().client
         if (!client) return { error: 'no client detected' }
-
+        set({ showTxLoader: true })
         const fee = await getEstimatedFee(options.messages)
         const broadcastOptions = {
           messages: options.messages,
@@ -654,7 +646,7 @@ export default function createBroadcastSlice(
         }
 
         const result = await client.broadcast(broadcastOptions)
-
+        set({ showTxLoader: false })
         if (result.hash) {
           return { result }
         }

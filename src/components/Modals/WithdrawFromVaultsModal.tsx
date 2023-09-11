@@ -15,7 +15,7 @@ import { demagnify } from 'utils/formatters'
 export default function WithdrawFromVaultsModal() {
   const modal = useStore((s) => s.withdrawFromVaultsModal)
   const { accountId } = useParams()
-  const pendingTransaction = useStore((s) => s.pendingTransaction)
+  const showTxLoader = useStore((s) => s.showTxLoader)
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
   const baseCurrency = useStore((s) => s.baseCurrency)
 
@@ -83,7 +83,7 @@ export default function WithdrawFromVaultsModal() {
             )
           })}
           <Button
-            showProgressIndicator={pendingTransaction}
+            showProgressIndicator={showTxLoader}
             onClick={withdrawHandler}
             className='w-full mt-4'
             text='Withdraw from all'

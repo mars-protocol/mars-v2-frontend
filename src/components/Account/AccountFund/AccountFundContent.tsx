@@ -36,7 +36,7 @@ export default function AccountFundContent(props: Props) {
   const deposit = useStore((s) => s.deposit)
   const accounts = useStore((s) => s.accounts)
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
-  const pendingTransaction = useStore((s) => s.pendingTransaction)
+  const showTxLoader = useStore((s) => s.showTxLoader)
   const [lendAssets, setLendAssets] = useLocalStorage<boolean>(
     LEND_ASSETS_KEY,
     DEFAULT_SETTINGS.lendAssets,
@@ -171,7 +171,7 @@ export default function AccountFundContent(props: Props) {
                 max={balance}
                 balances={balances}
                 maxText='Max'
-                disabled={pendingTransaction}
+                disabled={showTxLoader}
               />
             </div>
           )
@@ -184,7 +184,7 @@ export default function AccountFundContent(props: Props) {
           rightIcon={<Plus />}
           iconClassName='w-3'
           onClick={handleSelectAssetsClick}
-          disabled={pendingTransaction}
+          disabled={showTxLoader}
         />
         <DepositCapMessage
           action='fund'
@@ -203,7 +203,7 @@ export default function AccountFundContent(props: Props) {
         className='w-full mt-4'
         text='Fund account'
         disabled={!hasFundingAssets || depositCapReachedCoins.length > 0}
-        showProgressIndicator={pendingTransaction}
+        showProgressIndicator={showTxLoader}
         onClick={handleClick}
         color={props.isFullPage ? 'tertiary' : undefined}
         size={props.isFullPage ? 'lg' : undefined}

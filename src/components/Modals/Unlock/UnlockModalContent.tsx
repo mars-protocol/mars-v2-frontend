@@ -12,7 +12,7 @@ interface Props {
 
 export default function UnlockModalContent(props: Props) {
   const unlock = useStore((s) => s.unlock)
-  const pendingTransaction = useStore((s) => s.pendingTransaction)
+  const showTxLoader = useStore((s) => s.showTxLoader)
   const { accountId } = useParams()
 
   async function onConfirm() {
@@ -38,7 +38,7 @@ export default function UnlockModalContent(props: Props) {
           className='px-6'
           rightIcon={<YesIcon />}
           onClick={onConfirm}
-          showProgressIndicator={pendingTransaction}
+          showProgressIndicator={showTxLoader}
         />
         <Button
           text='No'
@@ -47,7 +47,7 @@ export default function UnlockModalContent(props: Props) {
           rightIcon={<NoIcon />}
           tabIndex={1}
           onClick={props.onClose}
-          disabled={pendingTransaction}
+          disabled={showTxLoader}
         />
       </div>
     </>

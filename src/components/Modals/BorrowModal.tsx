@@ -55,7 +55,7 @@ export default function BorrowModalController() {
 function BorrowModal(props: Props) {
   const { modal, account } = props
   const [amount, setAmount] = useState(BN_ZERO)
-  const pendingTransaction = useStore((s) => s.pendingTransaction)
+  const showTxLoader = useStore((s) => s.showTxLoader)
   const [borrowToWallet, setBorrowToWallet] = useToggle()
   const borrow = useStore((s) => s.borrow)
   const repay = useStore((s) => s.repay)
@@ -223,7 +223,7 @@ function BorrowModal(props: Props) {
               max={max}
               className='w-full'
               maxText='Max'
-              disabled={pendingTransaction}
+              disabled={showTxLoader}
             />
             {!isRepay && (
               <>
@@ -239,7 +239,7 @@ function BorrowModal(props: Props) {
                     name='borrow-to-wallet'
                     checked={borrowToWallet}
                     onChange={setBorrowToWallet}
-                    disabled={pendingTransaction}
+                    disabled={showTxLoader}
                   />
                 </div>
               </>
@@ -248,7 +248,7 @@ function BorrowModal(props: Props) {
           <Button
             onClick={onConfirmClick}
             className='w-full'
-            showProgressIndicator={pendingTransaction}
+            showProgressIndicator={showTxLoader}
             disabled={amount.isZero()}
             text={isRepay ? 'Repay' : 'Borrow'}
             rightIcon={<ArrowRight />}
