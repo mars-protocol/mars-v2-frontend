@@ -12,7 +12,7 @@ interface Props {
 
 export default function UnlockModalContent(props: Props) {
   const unlock = useStore((s) => s.unlock)
-   => s.pendingTransaction)
+  const pendingTransaction = useStore((s) => s.pendingTransaction)
   const { accountId } = useParams()
 
   async function onConfirm() {
