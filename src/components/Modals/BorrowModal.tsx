@@ -118,7 +118,7 @@ function BorrowModal(props: Props) {
         simulateRepay(repayCoin)
       }
     },
-    [asset, amount, isRepay, simulateRepay, modal, totalDebt],
+    [asset, amount, isRepay, simulateRepay, modal, totalDebt, totalDebtRepayAmount],
   )
 
   useEffect(() => {
