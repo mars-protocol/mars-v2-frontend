@@ -1,7 +1,7 @@
 import { getCreditManagerQueryClient } from 'api/cosmwasm-client'
 import getDepositedVaults from 'api/vaults/getDepositedVaults'
-import { Positions } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { BNCoin } from 'types/classes/BNCoin'
+import { Positions } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 
 export default async function getAccount(accountId: string): Promise<Account> {
   const creditManagerQueryClient = await getCreditManagerQueryClient()

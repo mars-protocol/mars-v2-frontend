@@ -52,10 +52,10 @@ export default function useDepositVault(props: Props): {
   )
 
   const reclaimActions: Action[] = useMemo(() => {
-    return props.reclaims.map((bnCoin) => ({
+    return reclaims.map((bnCoin) => ({
       reclaim: bnCoin.toActionCoin(),
     }))
-  }, [props.reclaims])
+  }, [reclaims])
 
   const borrowActions: Action[] = useMemo(() => {
     return borrowings.map((bnCoin) => ({
