@@ -52,7 +52,11 @@ function AlertDialog(props: Props) {
       hideCloseBtn
     >
       <Text size='xl'>{title}</Text>
-      <Text className='mt-2 text-white/60'>{description}</Text>
+      {typeof description === 'string' ? (
+        <Text className='mt-2 text-white/60'>{description}</Text>
+      ) : (
+        description
+      )}
       <div
         className={classNames('mt-10 flex justify-between', positiveButton && 'flex-row-reverse')}
       >

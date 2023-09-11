@@ -10,14 +10,14 @@ interface Props {
   positiveButton: AlertDialogButton
 }
 
-export default function AccoundDeleteAlertDialog(props: Props) {
+export default function AccountDeleteAlertDialog(props: Props) {
   const { open: showAlertDialog } = useAlertDialog()
   const { title, description, closeHandler, positiveButton } = props
 
   useEffect(() => {
     showAlertDialog({
       icon: (
-        <div className='flex h-full w-full p-3'>
+        <div className='flex w-full h-full p-3'>
           <InfoCircle />
         </div>
       ),

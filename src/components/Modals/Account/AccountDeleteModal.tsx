@@ -103,7 +103,7 @@ function AccountDeleteModal(props: Props) {
       title={`Delete Credit Account ${accountId}`}
       description={
         <>
-          <Text className='text-white/50' size='sm'>
+          <Text className='mt-2 text-white/50' size='sm'>
             The following assets within your credit account will be sent to your wallet.
           </Text>
           <div className='flex flex-col w-full gap-4 py-4 overflow-y-scroll max-h-100 scrollbar-hide'>
