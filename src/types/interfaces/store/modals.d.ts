@@ -47,6 +47,7 @@ interface VaultModal {
   vault: Vault | DepositedVault
   isDeposited?: boolean
   selectedBorrowDenoms: string[]
+  isCreate: boolean
 }
 
 interface AddVaultBorrowingsModal {

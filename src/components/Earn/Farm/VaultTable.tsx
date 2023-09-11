@@ -209,6 +209,7 @@ export const VaultTable = (props: Props) => {
               vaultModal: {
                 vault,
                 selectedBorrowDenoms: [vault.denoms.secondary],
+                isCreate: true,
               },
             })
           }

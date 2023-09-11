@@ -144,13 +144,14 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   }
 
   async function onConfirm() {
-    if (!updatedAccount) return
+    if (!updatedAccount || !vaultModal) return
     setIsConfirming(true)
     const isSuccess = await depositIntoVault({
       accountId: updatedAccount.id,
       actions: props.depositActions,
       deposits: props.deposits,
       borrowings: props.borrowings,
+      isCreate: vaultModal.isCreate,
     })
     setIsConfirming(false)
     if (isSuccess) {
