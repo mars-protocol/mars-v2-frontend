@@ -15,10 +15,11 @@ export default function UnlockModal() {
     <Modal
       onClose={onClose}
       header={
-        <div className='grid h-12 w-12 place-items-center rounded-sm bg-white/5'>
+        <div className='grid w-12 h-12 rounded-sm place-items-center bg-white/5'>
           <LockUnlocked width={18} />
         </div>
       }
+      hideTxLoader
       modalClassName='max-w-modal-sm'
       headerClassName='p-8'
       contentClassName='px-8 pb-8'
