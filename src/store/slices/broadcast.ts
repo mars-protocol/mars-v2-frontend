@@ -29,6 +29,7 @@ interface HandleResponse {
     | 'borrow'
     | 'repay'
     | 'vault'
+    | 'vaultCreate'
     | 'lend'
     | 'create'
     | 'delete'
@@ -94,10 +95,10 @@ export default function createBroadcastSlice(
     switch (action) {
       case 'borrow':
         const borrowCoin = changes.debts ? [changes.debts[0].toCoin()] : []
-        const action = lend ? 'Borrowed and lend' : 'Borrowed'
+        const borrowAction = lend ? 'Borrowed and lend' : 'Borrowed'
         toast.content.push({
           coins: borrowCoin,
-          text: target === 'wallet' ? 'Borrowed to wallet' : action,
+          text: target === 'wallet' ? 'Borrowed to wallet' : borrowAction,
         })
         break
 
@@ -132,7 +133,9 @@ export default function createBroadcastSlice(
         break
 
       case 'vault':
-        toast.message = 'Add to Vault Position'
+      case 'vaultCreate':
+        toast.message =
+          action === 'vaultCreate' ? 'Created a Vault Position' : 'Add to Vault Position'
         toast.content.push({
           coins: changes.debts?.map((debt) => debt.toCoin()) ?? [],
           text: 'Borrowed for the Vault Position',
@@ -422,6 +425,7 @@ export default function createBroadcastSlice(
       actions: Action[]
       deposits: BNCoin[]
       borrowings: BNCoin[]
+      isCreate: boolean
     }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
@@ -436,7 +440,7 @@ export default function createBroadcastSlice(
 
       handleResponseMessages({
         response,
-        action: 'vault',
+        action: options.isCreate ? 'vaultCreate' : 'vault',
         accountId: options.accountId,
         changes: { deposits: options.deposits, debts: options.borrowings },
       })

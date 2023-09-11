@@ -13,6 +13,7 @@ import useLocalStorage from 'hooks/useLocalStorage'
 import useTransactionStore from 'hooks/useTransactionStore'
 import useStore from 'store'
 import { formatAmountWithSymbol } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 export function generateToastContent(content: ToastSuccess['content']): ReactNode {
   return content.map((item, index) => (
@@ -23,11 +24,13 @@ export function generateToastContent(content: ToastSuccess['content']): ReactNod
             {item.text}
           </Text>
           <ul className='flex flex-wrap w-full gap-1 p-1 pl-4 list-disc'>
-            {item.coins.map((coin) => (
-              <li className='w-full p-0 text-sm text-white' key={coin.denom}>
-                {formatAmountWithSymbol(coin)}
-              </li>
-            ))}
+            {item.coins.map((coin) =>
+              BN(coin.amount).isZero() ? null : (
+                <li className='w-full p-0 text-sm text-white' key={coin.denom}>
+                  {formatAmountWithSymbol(coin)}
+                </li>
+              ),
+            )}
           </ul>
         </>
       )}
@@ -70,7 +73,7 @@ export default function Toaster() {
           <Text className='mb-1 font-bold text-white'>{`Credit Account ${toast.accountId}`}</Text>
         )}
         {toast.message && (
-          <Text size='sm' className='text-white'>
+          <Text size='sm' className='w-full mb-1 text-white'>
             {toast.message}
           </Text>
         )}
