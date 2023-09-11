@@ -26,6 +26,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { formatPercent, formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+import {getDebtAmountWithInterest} from 'utils/tokens'
 
 function getDebtAmount(modal: BorrowModal) {
   return BN((modal.marketData as BorrowMarketTableData)?.debt ?? 0).toString()
@@ -68,7 +69,7 @@ function BorrowModal(props: Props) {
   const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
   const { computeMaxBorrowAmount } = useHealthComputer(account)
   const totalDebt = BN(getDebtAmount(modal))
-  const totalDebtRepayAmount = totalDebt.times(1 + Number(apr) / 365 / 24).integerValue()
+  const totalDebtRepayAmount = getDebtAmountWithInterest(totalDebt, Number(apr))
 
   function resetState() {
     setAmount(BN_ZERO)
