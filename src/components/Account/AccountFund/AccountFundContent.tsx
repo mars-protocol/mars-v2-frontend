@@ -44,8 +44,8 @@ export default function AccountFundContent(props: Props) {
   const [fundingAssets, setFundingAssets] = useState<BNCoin[]>([])
   const { data: marketAssets } = useMarketAssets()
   const { data: walletBalances } = useWalletBalances(props.address)
-  const { autoLendEnabledAccountIds } = useAutoLend()
-  const [isLending, toggleIsLending] = useToggle(false)
+  const { autoLendEnabledAccountIds, enableAutoLendAccountId } = useAutoLend()
+  const [isLending, toggleIsLending] = useToggle(lendAssets)
   const { simulateDeposits } = useUpdatedAccount(props.account)
 
   const baseAsset = getBaseAsset()
@@ -126,11 +126,19 @@ export default function AccountFundContent(props: Props) {
   }, [])
 
   useEffect(() => {
-    toggleIsLending(autoLendEnabledAccountIds.includes(props.accountId))
-  }, [props.accountId, autoLendEnabledAccountIds, toggleIsLending])
+    const autoLendEnabled = autoLendEnabledAccountIds.includes(props.accountId)
+    if (lendAssets && !autoLendEnabled) enableAutoLendAccountId(props.accountId)
+    toggleIsLending(autoLendEnabled)
+  }, [
+    props.accountId,
+    autoLendEnabledAccountIds,
+    toggleIsLending,
+    lendAssets,
+    enableAutoLendAccountId,
+  ])
 
   useEffect(() => {
-    if (accounts?.length === 1 && isLending && !lendAssets) setLendAssets(true)
+    if (accounts?.length === 1 && isLending) setLendAssets(true)
   }, [isLending, accounts, lendAssets, setLendAssets])
 
   const depositCapReachedCoins = useMemo(() => {

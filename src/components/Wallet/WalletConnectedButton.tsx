@@ -111,7 +111,7 @@ export default function WalletConnectedButton() {
           ) : (
             <FormattedNumber
               amount={walletAmount.toNumber()}
-              options={{ suffix: ` ${baseAsset.symbol}` }}
+              options={{ suffix: ` ${baseAsset.symbol}`, abbreviated: true }}
               animate
             />
           )}
