@@ -149,6 +149,8 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
     const isSuccess = await depositIntoVault({
       accountId: updatedAccount.id,
       actions: props.depositActions,
+      deposits: props.deposits,
+      borrowings: props.borrowings,
     })
     if (isSuccess) {
       useStore.setState({ vaultModal: null })

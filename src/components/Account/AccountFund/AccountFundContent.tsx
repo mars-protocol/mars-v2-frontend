@@ -8,8 +8,11 @@ import SwitchAutoLend from 'components/Switch/SwitchAutoLend'
 import Text from 'components/Text'
 import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
 import WalletBridges from 'components/Wallet/WalletBridges'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { LEND_ASSETS_KEY } from 'constants/localStore'
 import { BN_ZERO } from 'constants/math'
 import useAutoLend from 'hooks/useAutoLend'
+import useLocalStorage from 'hooks/useLocalStorage'
 import useMarketAssets from 'hooks/useMarketAssets'
 import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
@@ -31,8 +34,13 @@ interface Props {
 
 export default function AccountFundContent(props: Props) {
   const deposit = useStore((s) => s.deposit)
+  const accounts = useStore((s) => s.accounts)
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
   const pendingTransaction = useStore((s) => s.pendingTransaction)
+  const [lendAssets, setLendAssets] = useLocalStorage<boolean>(
+    LEND_ASSETS_KEY,
+    DEFAULT_SETTINGS.lendAssets,
+  )
   const [fundingAssets, setFundingAssets] = useState<BNCoin[]>([])
   const { data: marketAssets } = useMarketAssets()
   const { data: walletBalances } = useWalletBalances(props.address)
@@ -120,6 +128,10 @@ export default function AccountFundContent(props: Props) {
   useEffect(() => {
     toggleIsLending(autoLendEnabledAccountIds.includes(props.accountId))
   }, [props.accountId, autoLendEnabledAccountIds, toggleIsLending])
+
+  useEffect(() => {
+    if (accounts?.length === 1 && isLending && !lendAssets) setLendAssets(true)
+  }, [isLending, accounts, lendAssets, setLendAssets])
 
   const depositCapReachedCoins = useMemo(() => {
     const depositCapReachedCoins: BNCoin[] = []

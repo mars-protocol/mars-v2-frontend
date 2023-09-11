@@ -11,6 +11,30 @@ interface ExecutableTx {
   estimateFee: () => Promise<StdFee>
 }
 
+type ToastResponse = {
+  hash?: string
+  title?: string
+} & (ToastSuccess | ToastError)
+
+interface ToastSuccess {
+  accountId?: string
+  content: { coins: Coin[]; text: string }[]
+  isError: false
+  message?: string
+  timestamp: number
+  address: string
+  hash: string
+}
+
+interface ToastError {
+  message: string
+  isError: true
+}
+
+interface ToastStore {
+  recent: ToastSuccess[]
+}
+
 interface BroadcastSlice {
   borrow: (options: {
     accountId: string
@@ -21,7 +45,12 @@ interface BroadcastSlice {
   createAccount: () => Promise<string | null>
   deleteAccount: (options: { accountId: string; lends: BNCoin[] }) => Promise<boolean>
   deposit: (options: { accountId: string; coins: BNCoin[]; lend: boolean }) => Promise<boolean>
-  depositIntoVault: (options: { accountId: string; actions: Action[] }) => Promise<boolean>
+  depositIntoVault: (options: {
+    accountId: string
+    actions: Action[]
+    deposits: BNCoin[]
+    borrowings: BNCoin[]
+  }) => Promise<boolean>
   executeMsg: (options: { messages: MsgExecuteContract[] }) => Promise<BroadcastResult>
   lend: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
   reclaim: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
@@ -40,7 +69,7 @@ interface BroadcastSlice {
     slippage: number
     isMax?: boolean
   }) => ExecutableTx
-  toast: { message: string; isError?: boolean; title?: string; hash?: string } | null
+  toast: ToastResponse | null
   unlock: (options: {
     accountId: string
     vault: DepositedVault

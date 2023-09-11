@@ -40,6 +40,7 @@ export default function useAutoLend(): {
     const setOfAccountIds = new Set(autoLendEnabledAccountIds)
 
     if (!setOfAccountIds.has(accountId)) setOfAccountIds.add(accountId)
+    setAutoLendEnabledAccountIds(Array.from(setOfAccountIds))
   }
 
   return {

@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 import moment from 'moment'
 
+import { ASSETS } from 'constants/assets'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -149,12 +150,12 @@ export function formatPercent(percent: number | string, minDecimals?: number) {
 }
 
 export function formatAmountWithSymbol(coin: Coin) {
-  const marketAssets = getEnabledMarketAssets()
-
-  const asset = marketAssets.find((asset) => asset.denom === coin.denom)
+  const asset = ASSETS.find((asset) => asset.denom === coin.denom)
 
   return formatValue(coin.amount, {
     decimals: asset?.decimals,
+    maxDecimals: asset?.decimals,
+    minDecimals: 0,
     suffix: ` ${asset?.symbol}`,
     abbreviated: true,
     rounded: true,

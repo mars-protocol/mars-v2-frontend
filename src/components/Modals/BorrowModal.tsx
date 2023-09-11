@@ -119,7 +119,7 @@ function BorrowModal(props: Props) {
         simulateRepay(repayCoin)
       }
     },
-    [asset, amount, isRepay, simulateRepay],
+    [asset, amount, isRepay, simulateRepay, modal],
   )
 
   useEffect(() => {
@@ -143,7 +143,7 @@ function BorrowModal(props: Props) {
     )
 
     setMax(BigNumber.min(maxBorrowAmount, modal.marketData?.liquidity?.amount || 0))
-  }, [account, isRepay, modal, asset.denom, computeMaxBorrowAmount, borrowToWallet])
+  }, [account, isRepay, modal, asset.denom, computeMaxBorrowAmount, borrowToWallet, apr])
 
   useEffect(() => {
     if (amount.isGreaterThan(max)) {
