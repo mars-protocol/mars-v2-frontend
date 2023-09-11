@@ -63,11 +63,12 @@ function BorrowModal(props: Props) {
   const isRepay = modal.isRepay ?? false
   const [max, setMax] = useState(BN_ZERO)
   const { simulateBorrow, simulateRepay } = useUpdatedAccount(account)
-  const totalDebt = BN(getDebtAmount(modal))
   const { autoLendEnabledAccountIds } = useAutoLend()
   const apr = modal.marketData?.borrowRate ?? '0'
   const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
   const { computeMaxBorrowAmount } = useHealthComputer(account)
+  const totalDebt = BN(getDebtAmount(modal))
+  const totalDebtRepayAmount = totalDebt.times(1 + Number(apr) / 365 / 24).integerValue()
 
   function resetState() {
     setAmount(BN_ZERO)
@@ -84,7 +85,7 @@ function BorrowModal(props: Props) {
       result = await repay({
         accountId: account.id,
         coin: BNCoin.fromDenomAndBigNumber(asset.denom, amount),
-        accountBalance: totalDebt.times(1 + Number(apr) / 365 / 24).isEqualTo(amount),
+        accountBalance: amount.isEqualTo(totalDebtRepayAmount),
         lend,
       })
     } else {
@@ -117,7 +118,7 @@ function BorrowModal(props: Props) {
         simulateRepay(repayCoin)
       }
     },
-    [asset, amount, isRepay, simulateRepay, modal],
+    [asset, amount, isRepay, simulateRepay, modal, totalDebt],
   )
 
   useEffect(() => {
@@ -126,11 +127,7 @@ function BorrowModal(props: Props) {
       const depositBalance = account.deposits.find(byDenom(asset.denom))?.amount ?? BN_ZERO
       const lendBalance = account.lends.find(byDenom(asset.denom))?.amount ?? BN_ZERO
       const maxBalance = depositBalance.plus(lendBalance)
-      const totalDebt = BN(getDebtAmount(modal))
-      const maxRepayAmount = BigNumber.min(
-        maxBalance,
-        totalDebt.times(1 + Number(apr) / 365 / 24).integerValue(),
-      )
+      const maxRepayAmount = BigNumber.min(maxBalance, totalDebtRepayAmount)
       setMax(maxRepayAmount)
       return
     }
@@ -141,7 +138,16 @@ function BorrowModal(props: Props) {
     )
 
     setMax(BigNumber.min(maxBorrowAmount, modal.marketData?.liquidity?.amount || 0))
-  }, [account, isRepay, modal, asset.denom, computeMaxBorrowAmount, borrowToWallet, apr])
+  }, [
+    account,
+    isRepay,
+    modal,
+    asset.denom,
+    computeMaxBorrowAmount,
+    borrowToWallet,
+    apr,
+    totalDebtRepayAmount,
+  ])
 
   useEffect(() => {
     if (amount.isGreaterThan(max)) {
