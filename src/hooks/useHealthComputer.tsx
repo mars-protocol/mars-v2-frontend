@@ -26,7 +26,6 @@ import {
 import { BN } from 'utils/helpers'
 
 // Pyth returns prices with up to 32 decimals. Javascript only supports 18 decimals. So we need to scale by 14 t
-// Pyth returns prices with up to 32 decimals. Javascript only supports 18 decimals. So we need to scale by 14 t
 // avoid "too many decimals" errors.
 const VALUE_SCALE_FACTOR = 14
 
