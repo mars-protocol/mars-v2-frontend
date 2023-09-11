@@ -1,7 +1,7 @@
 import { MsgExecuteContract } from '@delphi-labs/shuttle-react'
+import moment from 'moment'
 import { isMobile } from 'react-device-detect'
 import { GetState, SetState } from 'zustand'
-import moment from 'moment'
 
 import { ENV } from 'constants/env'
 import { Store } from 'store'
@@ -132,7 +132,7 @@ export default function createBroadcastSlice(
         break
 
       case 'vault':
-        toast.message = 'Created a Vault Position'
+        toast.message = 'Add to Vault Position'
         toast.content.push({
           coins: changes.debts?.map((debt) => debt.toCoin()) ?? [],
           text: 'Borrowed for the Vault Position',
