@@ -34,7 +34,7 @@ function AlertDialog(props: Props) {
   async function handleAsyncButtonClick(button?: AlertDialogButton) {
     if (!button?.onClick) return
     setIsConfirming(true)
-    button.onClick()
+    await button.onClick()
     setIsConfirming(false)
     props.close()
   }

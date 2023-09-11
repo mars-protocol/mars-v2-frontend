@@ -1,4 +1,5 @@
 import { defaultSymbolInfo } from 'components/Trade/TradeChart/constants'
+import { ASSETS } from 'constants/assets'
 import { ENV } from 'constants/env'
 import { getAssetByDenom, getEnabledMarketAssets } from 'utils/assets'
 import {
@@ -69,6 +70,14 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
     this.pairs = Array.from(pairs)
   }
 
+  getDescription(pairName: string) {
+    const denom1 = pairName.split(PAIR_SEPARATOR)[0]
+    const denom2 = pairName.split(PAIR_SEPARATOR)[1]
+    const asset1 = ASSETS.find((asset) => asset.mainnetDenom === denom1)
+    const asset2 = ASSETS.find((asset) => asset.mainnetDenom === denom2)
+    return `${asset1?.symbol}/${asset2?.symbol}`
+  }
+
   async getPairsWithData() {
     const query = `
       {
@@ -120,10 +129,10 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
     setTimeout(() =>
       onResolve({
         ...defaultSymbolInfo,
-        name: pairName.split(PAIR_SEPARATOR)[0],
+        name: this.getDescription(pairName),
         full_name: pairName,
-        description: pairName,
-        ticker: pairName,
+        description: this.getDescription(pairName),
+        ticker: this.getDescription(pairName),
         exchange: this.exchangeName,
         listed_exchange: this.exchangeName,
         supported_resolutions: this.supportedResolutions,
