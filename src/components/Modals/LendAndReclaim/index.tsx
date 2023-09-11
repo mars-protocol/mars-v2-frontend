@@ -46,8 +46,6 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
 
   const handleAction = useCallback(
     async (value: BigNumber, isMax: boolean) => {
-      useStore.setState({ pendingTransaction: true })
-
       const coin = BNCoin.fromDenomAndBigNumber(asset.denom, value)
       const options = {
         accountId: currentAccount.id,

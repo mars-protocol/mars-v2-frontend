@@ -12,12 +12,11 @@ interface Props {
 
 export default function UnlockModalContent(props: Props) {
   const unlock = useStore((s) => s.unlock)
-  const pendingTransaction = useStore((s) => s.pendingTransaction)
+   => s.pendingTransaction)
   const { accountId } = useParams()
 
   async function onConfirm() {
     if (!accountId) return
-    useStore.setState({ pendingTransaction: true })
     await unlock({
       accountId: accountId,
       vault: props.depositedVault,

@@ -145,7 +145,6 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
 
   async function onConfirm() {
     if (!updatedAccount) return
-    useStore.setState({ pendingTransaction: true })
     const isSuccess = await depositIntoVault({
       accountId: updatedAccount.id,
       actions: props.depositActions,

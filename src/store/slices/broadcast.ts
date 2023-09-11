@@ -199,7 +199,7 @@ export default function createBroadcastSlice(
           lend: { denom: options.coin.denom, amount: 'account_balance' },
         })
       }
-
+      set({ pendingTransaction: true })
       const response = await get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
@@ -333,6 +333,7 @@ export default function createBroadcastSlice(
 
       const funds = options.coins.map((coin) => coin.toCoin())
 
+      set({ pendingTransaction: true })
       const response = await get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, funds)],
       })
@@ -432,6 +433,7 @@ export default function createBroadcastSlice(
         },
       }
 
+      set({ pendingTransaction: true })
       const response = await get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
@@ -468,6 +470,7 @@ export default function createBroadcastSlice(
         },
       }
 
+      set({ pendingTransaction: true })
       const response = await get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
@@ -506,6 +509,7 @@ export default function createBroadcastSlice(
         },
       }
 
+      set({ pendingTransaction: true })
       const response = await get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
@@ -531,6 +535,7 @@ export default function createBroadcastSlice(
         },
       }
 
+      set({ pendingTransaction: true })
       const response = await get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
@@ -556,6 +561,7 @@ export default function createBroadcastSlice(
         },
       }
 
+      set({ pendingTransaction: true })
       const response = await get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })

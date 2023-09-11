@@ -63,8 +63,6 @@ export default function WithdrawFromAccount(props: Props) {
   }
 
   async function onConfirm() {
-    useStore.setState({ pendingTransaction: true })
-
     const coins = [
       {
         coin: BNCoin.fromDenomAndBigNumber(currentAsset.denom, amount),

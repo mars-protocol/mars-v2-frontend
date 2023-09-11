@@ -75,7 +75,6 @@ export default function AccountFundContent(props: Props) {
   }, [selectedDenoms])
 
   const handleClick = useCallback(async () => {
-    useStore.setState({ pendingTransaction: true })
     if (!props.accountId) return
     const result = await deposit({
       accountId: props.accountId,

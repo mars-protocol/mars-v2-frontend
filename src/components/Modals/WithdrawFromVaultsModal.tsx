@@ -25,7 +25,6 @@ export default function WithdrawFromVaultsModal() {
 
   async function withdrawHandler() {
     if (!accountId || !modal) return
-    useStore.setState({ pendingTransaction: true })
     await withdrawFromVaults({
       accountId: accountId,
       vaults: modal,

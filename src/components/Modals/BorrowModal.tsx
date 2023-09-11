@@ -75,7 +75,6 @@ function BorrowModal(props: Props) {
 
   async function onConfirmClick() {
     if (!asset) return
-    useStore.setState({ pendingTransaction: true })
     let result
     const { lend } = getDepositAndLendCoinsToSpend(
       BNCoin.fromDenomAndBigNumber(asset.denom, amount),
