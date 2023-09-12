@@ -3,7 +3,7 @@ import { IS_TESTNET } from 'constants/env'
 import { BN_ZERO } from 'constants/math'
 import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import { BNCoin } from 'types/classes/BNCoin'
-import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { Action, Uint128 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getAssetByDenom } from 'utils/assets'
 import { VAULT_DEPOSIT_BUFFER } from 'utils/constants'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
@@ -187,3 +187,21 @@ function getSwapAction(denomIn: string, denomOut: string, amount: BigNumber, sli
     },
   }
 }
+
+export function getVaultDepositCoinsFromActions(actions: Action[]) {
+  const provideLiquidityAction = actions.find((action) =>
+    Object.keys(action).includes('provide_liquidity'),
+  ) as ProvideLiquidityAction | undefined
+
+  if (!provideLiquidityAction) return []
+
+  const actionsCoins = provideLiquidityAction.provide_liquidity.coins_in
+
+  return actionsCoins.map((actionCoin) => {
+    return new BNCoin({
+      denom: actionCoin.denom,
+      amount: (actionCoin.amount as { exact: Uint128 }).exact,
+    })
+  })
+}
+
