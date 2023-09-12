@@ -1,4 +1,5 @@
 type BigNumber = import('bignumber.js').BigNumber
+
 interface VaultMetaData {
   address: string
   name: string
@@ -50,6 +51,7 @@ interface VaultValuesAndAmounts {
 }
 
 type VaultStatus = 'active' | 'unlocking' | 'unlocked'
+
 interface DepositedVault extends Vault, VaultValuesAndAmounts {
   status: VaultStatus
   unlockId?: number
@@ -75,4 +77,13 @@ interface DepositCap {
   denom: string
   used: BigNumber
   max: BigNumber
+}
+
+interface ProvideLiquidityAction {
+  provide_liquidity: {
+    account_id: string
+    coins_in: import('../generated/mars-credit-manager/MarsCreditManager.types').ActionCoin[]
+    lp_token_out: string
+    minimum_receive: import('../generated/mars-credit-manager/MarsCreditManager.types').Uint128
+  }
 }

@@ -20,28 +20,7 @@ import { defaultFee } from 'utils/constants'
 import { formatAmountWithSymbol } from 'utils/formatters'
 import getTokenOutFromSwapResponse from 'utils/getTokenOutFromSwapResponse'
 import { BN } from 'utils/helpers'
-
-interface HandleResponse {
-  response: BroadcastResult
-  action:
-    | 'deposit'
-    | 'withdraw'
-    | 'borrow'
-    | 'repay'
-    | 'vault'
-    | 'vaultCreate'
-    | 'lend'
-    | 'create'
-    | 'delete'
-    | 'claim'
-    | 'unlock'
-    | 'swap'
-  lend?: boolean
-  accountId?: string
-  changes?: { debts?: BNCoin[]; deposits?: BNCoin[]; lends?: BNCoin[] }
-  target?: 'wallet' | 'account'
-  message?: string
-}
+import { getVaultDepositCoinsFromActions } from 'utils/vaults'
 
 function generateExecutionMessage(
   sender: string | undefined = '',
@@ -61,7 +40,7 @@ export default function createBroadcastSlice(
   set: SetState<Store>,
   get: GetState<Store>,
 ): BroadcastSlice {
-  const handleResponseMessages = (props: HandleResponse) => {
+  const handleResponseMessages = (props: HandleResponseProps) => {
     const { accountId, response, action, lend, changes, target, message } = props
 
     if (response.error || response.result?.response.code !== 0) {
@@ -95,7 +74,7 @@ export default function createBroadcastSlice(
     switch (action) {
       case 'borrow':
         const borrowCoin = changes.debts ? [changes.debts[0].toCoin()] : []
-        const borrowAction = lend ? 'Borrowed and lend' : 'Borrowed'
+        const borrowAction = lend ? 'Borrowed and lent' : 'Borrowed'
         toast.content.push({
           coins: borrowCoin,
           text: target === 'wallet' ? 'Borrowed to wallet' : borrowAction,
@@ -105,7 +84,7 @@ export default function createBroadcastSlice(
       case 'withdraw':
         toast.content.push({
           coins: changes.deposits?.map((deposit) => deposit.toCoin()) ?? [],
-          text: target === 'wallet' ? 'Withdrew to Wallet' : 'Withdrew from lend',
+          text: target === 'wallet' ? 'Withdrew to Wallet' : 'Reclaimed from lends',
         })
         break
 
@@ -128,21 +107,15 @@ export default function createBroadcastSlice(
         const repayCoin = changes.deposits ? [changes.deposits[0].toCoin()] : []
         toast.content.push({
           coins: repayCoin,
-          text: 'Repayed',
+          text: 'Repaid',
         })
         break
 
       case 'vault':
       case 'vaultCreate':
-        toast.message =
-          action === 'vaultCreate' ? 'Created a Vault Position' : 'Add to Vault Position'
         toast.content.push({
-          coins: changes.debts?.map((debt) => debt.toCoin()) ?? [],
-          text: 'Borrowed for the Vault Position',
-        })
-        toast.content.push({
-          coins: changes.deposits?.map((deposit) => deposit.toCoin()) ?? [],
-          text: 'Withdrew for the Vault Position',
+          coins: changes.deposits?.map((debt) => debt.toCoin()) ?? [],
+          text: action === 'vaultCreate' ? 'Created a Vault Position' : 'Added to Vault Position',
         })
     }
 
@@ -438,11 +411,13 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
 
+      const depositedCoins = getVaultDepositCoinsFromActions(options.actions)
+
       handleResponseMessages({
         response,
         action: options.isCreate ? 'vaultCreate' : 'vault',
         accountId: options.accountId,
-        changes: { deposits: options.deposits, debts: options.borrowings },
+        changes: { deposits: depositedCoins },
       })
 
       return !!response.result
