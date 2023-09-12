@@ -6,7 +6,7 @@ import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { getAllAssets, getEnabledMarketAssets } from 'utils/assets'
+import { getAllAssets } from 'utils/assets'
 import { BN } from 'utils/helpers'
 
 export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
@@ -160,6 +160,10 @@ export function formatAmountWithSymbol(coin: Coin) {
     abbreviated: true,
     rounded: true,
   })
+}
+
+export function formatAmountToPrecision(amount: number | string, decimals: number) {
+  return Number(BN(amount).toPrecision(decimals))
 }
 
 export const convertPercentage = (percent: number) => {
