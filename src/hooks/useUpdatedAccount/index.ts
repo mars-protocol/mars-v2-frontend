@@ -61,8 +61,8 @@ export function useUpdatedAccount(account?: Account) {
   const simulateBorrow = useCallback(
     (target: 'wallet' | 'deposit' | 'lend', coin: BNCoin) => {
       if (!account) return
-      removeDeposits([])
-      removeLends([])
+      addDeposits([])
+      addLends([])
       addDebts([coin])
       if (target === 'deposit') addDeposits([coin])
       if (target === 'lend') addLends([coin])

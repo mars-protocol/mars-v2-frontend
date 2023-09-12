@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import AccountSummary from 'components/Account/AccountSummary'
 import AssetImage from 'components/AssetImage'
@@ -26,7 +26,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { formatPercent, formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import {getDebtAmountWithInterest} from 'utils/tokens'
+import { getDebtAmountWithInterest } from 'utils/tokens'
 
 function getDebtAmount(modal: BorrowModal) {
   return BN((modal.marketData as BorrowMarketTableData)?.debt ?? 0).toString()
@@ -69,7 +69,11 @@ function BorrowModal(props: Props) {
   const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
   const { computeMaxBorrowAmount } = useHealthComputer(account)
   const totalDebt = BN(getDebtAmount(modal))
-  const totalDebtRepayAmount = getDebtAmountWithInterest(totalDebt, Number(apr))
+
+  const totalDebtRepayAmount = useMemo(
+    () => getDebtAmountWithInterest(totalDebt, Number(apr)),
+    [totalDebt, apr],
+  )
 
   function resetState() {
     setAmount(BN_ZERO)
@@ -112,15 +116,33 @@ function BorrowModal(props: Props) {
     (newAmount: BigNumber) => {
       const coin = BNCoin.fromDenomAndBigNumber(asset.denom, newAmount)
       if (!amount.isEqualTo(newAmount)) setAmount(newAmount)
-      if (isRepay) {
-        const repayCoin = coin.amount.isGreaterThan(totalDebt)
-          ? BNCoin.fromDenomAndBigNumber(asset.denom, totalDebt)
-          : coin
-        simulateRepay(repayCoin)
-      }
+      if (!isRepay) return
+      const repayCoin = coin.amount.isGreaterThan(totalDebt)
+        ? BNCoin.fromDenomAndBigNumber(asset.denom, totalDebt)
+        : coin
+      simulateRepay(repayCoin)
     },
-    [asset, amount, isRepay, simulateRepay, modal, totalDebt, totalDebtRepayAmount],
+    [amount, asset.denom, isRepay, simulateRepay, totalDebt],
   )
+
+  const maxBorrowAmount = useMemo(
+    () =>
+      isRepay
+        ? BN_ZERO
+        : computeMaxBorrowAmount(asset.denom, borrowToWallet ? 'wallet' : 'deposit'),
+    [asset.denom, borrowToWallet, computeMaxBorrowAmount, isRepay],
+  )
+
+  const maxBorrow = useMemo(
+    () =>
+      isRepay ? BN_ZERO : BigNumber.min(maxBorrowAmount, modal.marketData?.liquidity?.amount || 0),
+    [isRepay, maxBorrowAmount, modal.marketData?.liquidity?.amount],
+  )
+
+  useEffect(() => {
+    if (!account || isRepay) return
+    if (maxBorrow !== max) setMax(maxBorrow)
+  }, [account, isRepay, maxBorrow, max])
 
   useEffect(() => {
     if (!account) return
@@ -132,23 +154,7 @@ function BorrowModal(props: Props) {
       setMax(maxRepayAmount)
       return
     }
-
-    const maxBorrowAmount = computeMaxBorrowAmount(
-      asset.denom,
-      borrowToWallet ? 'wallet' : 'deposit',
-    )
-
-    setMax(BigNumber.min(maxBorrowAmount, modal.marketData?.liquidity?.amount || 0))
-  }, [
-    account,
-    isRepay,
-    modal,
-    asset.denom,
-    computeMaxBorrowAmount,
-    borrowToWallet,
-    apr,
-    totalDebtRepayAmount,
-  ])
+  }, [account, asset.denom, isRepay, totalDebtRepayAmount])
 
   useEffect(() => {
     if (amount.isGreaterThan(max)) {
