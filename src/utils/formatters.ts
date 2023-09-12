@@ -162,7 +162,7 @@ export function formatAmountWithSymbol(coin: Coin) {
   })
 }
 
-export function formatAmountToPrecission(amount: number | string, decimals: number) {
+export function formatAmountToPrecision(amount: number | string, decimals: number) {
   return Number(BN(amount).toPrecision(decimals))
 }
 
