@@ -34,7 +34,7 @@ export default function AssetItem(props: Props) {
     <li className='border-b border-white/10 hover:bg-black/10'>
       <button
         onClick={() => props.onSelectAsset(asset)}
-        className='flex w-full items-center justify-between gap-2 p-4'
+        className='flex items-center justify-between w-full gap-2 p-4'
       >
         <div className='flex items-center gap-2'>
           <div onClick={handleToggleFavorite}>
@@ -42,19 +42,19 @@ export default function AssetItem(props: Props) {
           </div>
           <AssetImage asset={asset} size={24} />
           <div className='flex-col'>
-            <div className='flex gap-1'>
-              <Text size='sm' className='text-left'>
+            <div className='flex gap-1 flex-nowrap max-w-[185px]'>
+              <Text size='sm' className='h-5 leading-5 text-left truncate '>
                 {asset.name}
               </Text>
-              <div className='rounded-sm bg-white/20 px-[6px] py-[2px]'>
+              <div className='rounded-sm bg-white/20 px-[6px] py-[2px] h-5 leading-5 '>
                 <Text size='xs'>{asset.symbol}</Text>
               </div>
             </div>
             {props.depositCap && (
               <div className='flex gap-1'>
-                <span className='text-left text-white/60 text-xs'>Cap Left: </span>
+                <span className='text-xs text-left text-white/60'>Cap Left: </span>
                 <DisplayCurrency
-                  className='text-left text-white/60 text-xs'
+                  className='text-xs text-left text-white/60'
                   coin={BNCoin.fromDenomAndBigNumber(props.depositCap.denom, props.depositCap.max)}
                 />
               </div>
