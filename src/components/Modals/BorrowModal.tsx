@@ -125,19 +125,13 @@ function BorrowModal(props: Props) {
     [amount, asset.denom, isRepay, simulateRepay, totalDebt],
   )
 
-  const maxBorrowAmount = useMemo(
-    () =>
-      isRepay
-        ? BN_ZERO
-        : computeMaxBorrowAmount(asset.denom, borrowToWallet ? 'wallet' : 'deposit'),
-    [asset.denom, borrowToWallet, computeMaxBorrowAmount, isRepay],
-  )
+  const maxBorrow = useMemo(() => {
+    const maxBorrowAmount = isRepay
+      ? BN_ZERO
+      : computeMaxBorrowAmount(asset.denom, borrowToWallet ? 'wallet' : 'deposit')
 
-  const maxBorrow = useMemo(
-    () =>
-      isRepay ? BN_ZERO : BigNumber.min(maxBorrowAmount, modal.marketData?.liquidity?.amount || 0),
-    [isRepay, maxBorrowAmount, modal.marketData?.liquidity?.amount],
-  )
+    return BigNumber.min(maxBorrowAmount, modal.marketData?.liquidity?.amount || 0)
+  }, [asset.denom, borrowToWallet, computeMaxBorrowAmount, isRepay, modal.marketData])
 
   useEffect(() => {
     if (!account || isRepay) return

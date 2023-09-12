@@ -24,8 +24,7 @@ import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getAssetByDenom } from 'utils/assets'
-import { demagnify } from 'utils/formatters'
-import { BN } from 'utils/helpers'
+import { demagnify, formatAmountToPrecission } from 'utils/formatters'
 import { getPage, getRoute } from 'utils/route'
 
 interface Props {
@@ -95,7 +94,7 @@ export default function Index(props: Props) {
           return (
             <FormattedNumber
               className={classNames('text-xs text-right', color)}
-              amount={Number(BN(amount).abs().toPrecision(baseCurrency.decimals))}
+              amount={formatAmountToPrecission(amount, baseCurrency.decimals)}
               options={{ maxDecimals: baseCurrency.decimals, minDecimals: 0, abbreviated: true }}
               animate
             />
