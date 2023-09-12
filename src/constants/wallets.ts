@@ -18,7 +18,7 @@ export const WALLETS: WalletInfos = {
       'https://raw.githubusercontent.com/mars-protocol/wallet-connector/main/src/components/ui/images/cosmostation-wallet-extension.png',
     mobileImageURL:
       'https://raw.githubusercontent.com/mars-protocol/wallet-connector/main/src/components/ui/images/cosmostation-wallet-connect.png',
-    supportedChains: [ChainInfoID.Osmosis1, ChainInfoID.OsmosisTestnet],
+    supportedChains: [ChainInfoID.Osmosis1, ChainInfoID.OsmosisDevnet, ChainInfoID.OsmosisTestnet],
   },
   [WalletID.Keplr]: {
     name: 'Keplr Wallet',
@@ -41,7 +41,7 @@ export const WALLETS: WalletInfos = {
     installURL:
       'https://chrome.google.com/webstore/detail/leap-cosmos-wallet/fcfcfllfndlomdhbehjjcoimbgofdncg',
     imageURL: 'https://assets.leapwallet.io/logos/leap-cosmos-logo.png',
-    supportedChains: [ChainInfoID.Osmosis1, ChainInfoID.OsmosisTestnet],
+    supportedChains: [ChainInfoID.Osmosis1, ChainInfoID.OsmosisDevnet, ChainInfoID.OsmosisTestnet],
   },
   [WalletID.Station]: {
     name: 'Station Wallet',
