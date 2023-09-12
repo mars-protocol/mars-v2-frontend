@@ -36,7 +36,6 @@ export const ASSETS: Asset[] = [
     isMarket: true,
     isDisplayCurrency: true,
     isAutoLendEnabled: true,
-    poolId: 1,
     pythPriceFeedId: 'b00b60f88b03a6a625a8d1c048c3f66653edf217439983d037e7222c4e612819',
   },
   {
@@ -45,10 +44,9 @@ export const ASSETS: Asset[] = [
     id: 'stATOM',
     denom: 'ibc/C140AFD542AE77BD7DCC83F13FDD8C5E5BB8C4929785E6EC2F4C636F98F17901',
     mainnetDenom: 'ibc/C140AFD542AE77BD7DCC83F13FDD8C5E5BB8C4929785E6EC2F4C636F98F17901',
-    color: '#9f1ab9',
+    color: '#e50571',
     logo: '/images/tokens/statom.svg',
     decimals: 6,
-    poolId: 803,
     hasOraclePrice: !IS_TESTNET,
     isEnabled: !IS_TESTNET,
     isMarket: !IS_TESTNET,
@@ -69,7 +67,6 @@ export const ASSETS: Asset[] = [
     isMarket: !IS_TESTNET,
     isDisplayCurrency: !IS_TESTNET,
     isAutoLendEnabled: true,
-    poolId: 712,
     pythPriceFeedId: 'e62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43',
   },
   {
@@ -86,7 +83,6 @@ export const ASSETS: Asset[] = [
     isMarket: !IS_TESTNET,
     isDisplayCurrency: !IS_TESTNET,
     isAutoLendEnabled: true,
-    poolId: 704,
     pythPriceFeedId: 'ff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace',
   },
   {
@@ -97,7 +93,7 @@ export const ASSETS: Asset[] = [
       ? 'ibc/DB9D326CF53EA07610C394D714D78F8BB4DC7E312D4213193791A9046BF45E20'
       : MARS_MAINNET_DENOM,
     mainnetDenom: MARS_MAINNET_DENOM,
-    color: '#dd5b65',
+    color: '#a03b45',
     logo: '/images/tokens/mars.svg',
     decimals: 6,
     poolId: 907,
@@ -123,7 +119,6 @@ export const ASSETS: Asset[] = [
     isDisplayCurrency: true,
     isStable: true,
     isAutoLendEnabled: true,
-    poolId: 678,
     pythPriceFeedId: 'eaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a',
   },
   {
