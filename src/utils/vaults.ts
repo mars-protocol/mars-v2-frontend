@@ -5,6 +5,7 @@ import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action, Uint128 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getAssetByDenom } from 'utils/assets'
+import { VAULT_DEPOSIT_BUFFER } from 'utils/constants'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
 import { getTokenPrice } from 'utils/tokens'
@@ -27,7 +28,12 @@ export function getVaultDepositCoinsAndValue(
 ) {
   const depositsAndReclaims = mergeBNCoinArrays(deposits, reclaims)
   const borrowingsAndDepositsAndReclaims = mergeBNCoinArrays(borrowings, depositsAndReclaims)
-  const totalValue = getValueFromBNCoins(borrowingsAndDepositsAndReclaims, prices)
+
+  // The BUFFER is to account for rounding errors. Otherwise, it might happen we try to deposit more value
+  // into the vaults than there are funds available.
+  const totalValue = getValueFromBNCoins(borrowingsAndDepositsAndReclaims, prices).times(
+    VAULT_DEPOSIT_BUFFER,
+  )
   const halfValue = totalValue.dividedBy(2)
 
   const primaryAsset = getAssetByDenom(vault.denoms.primary) ?? ASSETS[0]
@@ -198,3 +204,4 @@ export function getVaultDepositCoinsFromActions(actions: Action[]) {
     })
   })
 }
+
