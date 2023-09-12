@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 
 import AccountBalancesTable from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
+import AccountDetailsLeverage from 'components/Account/AccountDetails/AccountDetailsLeverage'
 import { glowElement } from 'components/Button/utils'
 import Card from 'components/Card'
 import DisplayCurrency from 'components/DisplayCurrency'
@@ -55,10 +56,15 @@ function AccountDetails(props: Props) {
     [updatedAccount, account, prices],
   )
   const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalanceValue)
-  const leverage = useMemo(
-    () => calculateAccountLeverage(updatedAccount ?? account, prices),
-    [account, updatedAccount, prices],
-  )
+  const leverage = useMemo(() => calculateAccountLeverage(account, prices), [account, prices])
+  const updatedLeverage = useMemo(() => {
+    if (!updatedAccount) return null
+    const updatedLeverage = calculateAccountLeverage(updatedAccount, prices)
+
+    if (updatedLeverage.eq(leverage)) return null
+    return updatedLeverage
+  }, [updatedAccount, prices, leverage])
+
   const { availableAssets: borrowAvailableAssets, accountBorrowedAssets } =
     useBorrowMarketAssetsTableData()
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
@@ -75,6 +81,7 @@ function AccountDetails(props: Props) {
     () => calculateAccountApr(account, borrowAssetsData, lendingAssetsData, prices),
     [account, borrowAssetsData, lendingAssetsData, prices],
   )
+
   return (
     <div
       data-testid='account-details'
@@ -104,12 +111,7 @@ function AccountDetails(props: Props) {
           <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
             Leverage
           </Text>
-          <FormattedNumber
-            className={'w-full text-center text-2xs'}
-            amount={isNaN(leverage.toNumber()) ? 0 : leverage.toNumber()}
-            options={{ maxDecimals: 2, minDecimals: 2, suffix: 'x' }}
-            animate
-          />
+          <AccountDetailsLeverage leverage={leverage} updatedLeverage={updatedLeverage} />
         </div>
         <div className='w-full py-4 border-t border-white/20'>
           <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
