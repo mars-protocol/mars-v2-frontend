@@ -16,7 +16,6 @@ export default async function getOraclePrices(...assets: Asset[]): Promise<BNCoi
     return assets.map((asset) => {
       const priceResponse = priceResults.find(byDenom(asset.denom)) as PriceResponse
       const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
-
       return BNCoin.fromDenomAndBigNumber(
         asset.denom,
         BN(priceResponse.price).shiftedBy(decimalDiff),
