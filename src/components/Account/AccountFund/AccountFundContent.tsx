@@ -44,10 +44,10 @@ export default function AccountFundContent(props: Props) {
   const [fundingAssets, setFundingAssets] = useState<BNCoin[]>([])
   const { data: marketAssets } = useMarketAssets()
   const { data: walletBalances } = useWalletBalances(props.address)
-  const { autoLendEnabledAccountIds, enableAutoLendAccountId } = useAutoLend()
+  const { autoLendEnabledAccountIds } = useAutoLend()
   const [isLending, toggleIsLending] = useToggle(lendAssets)
   const { simulateDeposits } = useUpdatedAccount(props.account)
-
+  const autoLendEnabled = autoLendEnabledAccountIds.includes(props.accountId)
   const baseAsset = getBaseAsset()
 
   const hasAssetSelected = fundingAssets.length > 0
@@ -126,16 +126,8 @@ export default function AccountFundContent(props: Props) {
   }, [])
 
   useEffect(() => {
-    const autoLendEnabled = autoLendEnabledAccountIds.includes(props.accountId)
-    if (lendAssets && !autoLendEnabled) enableAutoLendAccountId(props.accountId)
     toggleIsLending(autoLendEnabled)
-  }, [
-    props.accountId,
-    autoLendEnabledAccountIds,
-    toggleIsLending,
-    lendAssets,
-    enableAutoLendAccountId,
-  ])
+  }, [autoLendEnabled, toggleIsLending])
 
   useEffect(() => {
     if (accounts?.length === 1 && isLending) setLendAssets(true)
