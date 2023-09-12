@@ -35,6 +35,28 @@ interface ToastStore {
   recent: ToastSuccess[]
 }
 
+interface HandleResponseProps {
+  response: BroadcastResult
+  action:
+    | 'deposit'
+    | 'withdraw'
+    | 'borrow'
+    | 'repay'
+    | 'vault'
+    | 'vaultCreate'
+    | 'lend'
+    | 'create'
+    | 'delete'
+    | 'claim'
+    | 'unlock'
+    | 'swap'
+  lend?: boolean
+  accountId?: string
+  changes?: { debts?: BNCoin[]; deposits?: BNCoin[]; lends?: BNCoin[] }
+  target?: 'wallet' | 'account'
+  message?: string
+}
+
 interface BroadcastSlice {
   borrow: (options: {
     accountId: string
