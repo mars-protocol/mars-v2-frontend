@@ -26,7 +26,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { formatPercent, formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import {getDebtAmountWithInterest} from 'utils/tokens'
+import { getDebtAmountWithInterest } from 'utils/tokens'
 
 function getDebtAmount(modal: BorrowModal) {
   return BN((modal.marketData as BorrowMarketTableData)?.debt ?? 0).toString()
