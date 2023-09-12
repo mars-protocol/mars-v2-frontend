@@ -24,8 +24,7 @@ import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getAssetByDenom } from 'utils/assets'
-import { demagnify } from 'utils/formatters'
-import { BN } from 'utils/helpers'
+import { demagnify, formatAmountToPrecision } from 'utils/formatters'
 import { getPage, getRoute } from 'utils/route'
 
 interface Props {
@@ -41,6 +40,7 @@ export default function Index(props: Props) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const address = useStore((s) => s.address)
+  const baseCurrency = useStore((s) => s.baseCurrency)
   const [sorting, setSorting] = useState<SortingState>([])
   const updatedAccount = useStore((s) => s.updatedAccount)
   const accountBalanceData = useAccountBalanceData({
@@ -94,8 +94,8 @@ export default function Index(props: Props) {
           return (
             <FormattedNumber
               className={classNames('text-xs text-right', color)}
-              amount={Number(BN(amount).abs())}
-              options={{ maxDecimals: 4, abbreviated: true }}
+              amount={formatAmountToPrecision(amount, baseCurrency.decimals)}
+              options={{ maxDecimals: baseCurrency.decimals, minDecimals: 0, abbreviated: true }}
               animate
             />
           )
@@ -119,7 +119,7 @@ export default function Index(props: Props) {
         },
       },
     ],
-    [],
+    [baseCurrency.decimals],
   )
 
   const table = useReactTable({
