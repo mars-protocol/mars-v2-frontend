@@ -53,6 +53,7 @@ export const ASSETS: Asset[] = [
     isEnabled: !IS_TESTNET,
     isMarket: !IS_TESTNET,
     isDisplayCurrency: !IS_TESTNET,
+    isAutoLendEnabled: true,
   },
   {
     symbol: 'WBTC.axl',
@@ -138,7 +139,7 @@ export const ASSETS: Asset[] = [
     isEnabled: !IS_TESTNET,
     isMarket: !IS_TESTNET,
     isDisplayCurrency: !IS_TESTNET,
-    isAutoLendEnabled: false,
+    isAutoLendEnabled: true,
     pythPriceFeedId: '60144b1d5c9e9851732ad1d9760e3485ef80be39b984f6bf60f82b28a2b7f126',
   },
   {
