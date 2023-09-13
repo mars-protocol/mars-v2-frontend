@@ -87,7 +87,7 @@ function AccountDetails(props: Props) {
       data-testid='account-details'
       className={classNames(
         isExpanded ? 'right-5' : '-right-80',
-        'w-100 flex items-start gap-6 absolute top-6',
+        'w-100 flex items-start gap-4 absolute top-6',
         !reduceMotion && 'transition-all duration-300',
       )}
     >
