@@ -9,8 +9,8 @@ export default function LendIntro() {
       text={
         <>
           By <span className='text-white'>Lending</span> your assets, you&apos;ll earn attractive
-          interest (APY) without impacting your LTV. It&apos;s a win-win situation - don&apos;t miss
-          out on this easy opportunity to grow your holdings!
+          interest (APY) without impacting your loan to value (LTV). It&apos;s a win-win situation -
+          don&apos;t miss out on this easy opportunity to grow your holdings!
         </>
       }
     >

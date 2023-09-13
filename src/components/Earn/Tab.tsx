@@ -14,11 +14,11 @@ export default function Tab(props: Props) {
   const { address, accountId } = useParams()
 
   return (
-    <div className='relative mb-4 w-full'>
+    <div className='relative w-full mb-4'>
       <NavLink
         to={getRoute('lend', address, accountId)}
         className={classNames(
-          props.isFarm ? 'text-white/20' : underlineClasses,
+          props.isFarm ? 'text-white/40' : underlineClasses,
           'relative mr-8 text-xl ',
         )}
       >
@@ -27,7 +27,7 @@ export default function Tab(props: Props) {
       <NavLink
         to={getRoute('farm', address, accountId)}
         className={classNames(
-          !props.isFarm ? 'text-white/20' : underlineClasses,
+          !props.isFarm ? 'text-white/40' : underlineClasses,
           'relative text-xl',
         )}
       >

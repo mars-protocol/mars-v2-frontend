@@ -86,14 +86,14 @@ function AccountDetails(props: Props) {
     <div
       data-testid='account-details'
       className={classNames(
-        isExpanded ? 'right-4' : '-right-82.5',
-        'w-100 flex items-start gap-6 absolute top-6',
+        isExpanded ? 'right-5' : '-right-80',
+        'w-100 flex items-start gap-4 absolute top-6',
         !reduceMotion && 'transition-all duration-300',
       )}
     >
       <div
         className={classNames(
-          'flex flex-wrap w-16 group relative',
+          'flex flex-wrap min-w-16 w-16 group relative',
           'border rounded-base border-white/20',
           'bg-white/5 backdrop-blur-sticky',
           !reduceMotion && 'transition-colors duration-300',
@@ -114,7 +114,7 @@ function AccountDetails(props: Props) {
           <AccountDetailsLeverage leverage={leverage} updatedLeverage={updatedLeverage} />
         </div>
         <div className='w-full py-4 border-t border-white/20'>
-          <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
+          <Text size='2xs' className='mb-0.5 w-full text-center text-white/50 whitespace-nowrap'>
             Net worth
           </Text>
           <DisplayCurrency coin={coin} className='w-full text-center truncate text-2xs ' />
