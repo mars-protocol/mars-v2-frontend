@@ -87,7 +87,7 @@ export default function WalletBridges() {
           <Bridge key={bridge.name} {...bridge} />
         ))}
       </div>
-      {IS_TESTNET && (
+      {ENV.NETWORK !== 'mainnet' && (
         <div className='flex flex-wrap w-full gap-3'>
           <Text size='lg' className='mt-4 text-white'>
             Need Testnet Funds?
@@ -95,7 +95,11 @@ export default function WalletBridges() {
           <Bridge
             key='osmosis-faucet'
             name='Osmosis Testnet Faucet'
-            url='https://faucet.osmotest5.osmosis.zone/'
+            url={
+              IS_TESTNET
+                ? 'https://faucet.osmotest5.osmosis.zone/'
+                : 'https://faucet.devnet.osmosis.zone/'
+            }
             image='/images/tokens/osmo.svg'
           />
         </div>

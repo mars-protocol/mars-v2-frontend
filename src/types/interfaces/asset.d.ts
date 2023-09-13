@@ -8,6 +8,7 @@ interface Asset {
     | 'ATOM'
     | 'MARS'
     | 'stATOM'
+    | 'AXL'
     | 'USDC.axl'
     | 'USDC.n'
     | 'WBTC.axl'
@@ -15,11 +16,16 @@ interface Asset {
     | 'OSMO-USDC.n'
     | '$'
     | 'OSMO-ATOM'
+    | 'OSMO-USDC.axl'
+    | 'OSMO-WETH.axl'
+    | 'OSMO-WBTC.axl'
+    | 'stATOM-ATOM'
   id:
     | 'OSMO'
     | 'ATOM'
     | 'MARS'
     | 'stATOM'
+    | 'AXL'
     | 'axlUSDC'
     | 'axlWBTC'
     | 'axlWETH'
@@ -27,6 +33,11 @@ interface Asset {
     | 'OSMO-USDC.n'
     | 'USD'
     | 'gamm/pool/12'
+    | 'gamm/pool/1'
+    | 'gamm/pool/678'
+    | 'gamm/pool/704'
+    | 'gamm/pool/712'
+    | 'gamm/pool/803'
   prefix?: string
   contract_addr?: string
   logo: string

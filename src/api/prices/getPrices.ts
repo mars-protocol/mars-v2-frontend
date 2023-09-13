@@ -19,7 +19,6 @@ export default async function getPrices(): Promise<BNCoin[]> {
       ])
     ).flat()
     const poolPrices = await requestPoolPrices(assetsWithPoolIds, pythAndOraclePrices)
-
     return [...pythAndOraclePrices, ...poolPrices, usdPrice]
   } catch (ex) {
     console.error(ex)

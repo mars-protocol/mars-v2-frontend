@@ -13,7 +13,7 @@ import Overlay from 'components/Overlay'
 import Text from 'components/Text'
 import RecentTransactions from 'components/Wallet/RecentTransactions'
 import { CHAINS } from 'constants/chains'
-import { IS_TESTNET } from 'constants/env'
+import { ENV } from 'constants/env'
 import { BN_ZERO } from 'constants/math'
 import useCurrentWallet from 'hooks/useCurrentWallet'
 import useToggle from 'hooks/useToggle'
@@ -80,7 +80,7 @@ export default function WalletConnectedButton() {
 
   return (
     <div className={'relative'}>
-      {IS_TESTNET && (
+      {ENV.NETWORK !== 'mainnet' && (
         <Text
           className='absolute -right-2 -top-2.5 z-10 rounded-sm p-0.5 px-2 gradient-primary-to-secondary'
           size='3xs'
