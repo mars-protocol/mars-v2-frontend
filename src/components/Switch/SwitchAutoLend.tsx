@@ -28,7 +28,7 @@ export default function SwitchAutoLend(props: Props) {
         label='Lend assets to earn yield'
         value={props.value !== undefined ? props.value : isAutoLendEnabled}
         onChange={handleToggle}
-        tooltip={`Fund your account and lend assets effortlessly! By lending, you'll earn attractive interest (APY) without impacting your LTV. It's a win-win situation - don't miss out on this easy opportunity to grow your holdings!`}
+        tooltip={`Fund your account and lend assets effortlessly! By lending, you'll earn attractive interest (APY) without impacting your loan to value (LTV). It's a win-win situation - don't miss out on this easy opportunity to grow your holdings!`}
       />
     </div>
   )
