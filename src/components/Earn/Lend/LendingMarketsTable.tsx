@@ -82,6 +82,10 @@ export default function LendingMarketsTable(props: Props) {
         accessorKey: 'marketLiquidityRate',
         header: 'APR',
         cell: ({ row }) => {
+          if (!row.original.borrowEnabled) {
+            return 'Not borrowable'
+          }
+
           return (
             <FormattedNumber
               amount={convertLiquidityRateToAPR(row.original.marketLiquidityRate)}
