@@ -2,10 +2,12 @@ import { useMemo } from 'react'
 
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { SLIPPAGE_KEY } from 'constants/localStore'
+import useAutoLend from 'hooks/useAutoLend'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { getDenomsFromBNCoins } from 'utils/tokens'
 import {
   getEnterVaultActions,
   getVaultDepositCoinsAndValue,
@@ -25,7 +27,7 @@ export default function useDepositVault(props: Props): {
 } {
   const { data: prices } = usePrices()
   const [slippage] = useLocalStorage<number>(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
-
+  const { isAutoLendEnabledForCurrentAccount: isAutoLend } = useAutoLend()
   const borrowings: BNCoin[] = useMemo(
     () => props.borrowings.filter((borrowing) => borrowing.amount.gt(0)),
     [props.borrowings],
@@ -67,10 +69,30 @@ export default function useDepositVault(props: Props): {
     return getEnterVaultActions(props.vault, primaryCoin, secondaryCoin, slippage)
   }, [props.vault, primaryCoin, secondaryCoin, slippage])
 
-  const actions = useMemo(
-    () => [...reclaimActions, ...borrowActions, ...swapActions, ...enterVaultActions],
-    [reclaimActions, borrowActions, swapActions, enterVaultActions],
-  )
+  const lendActions: Action[] = useMemo(() => {
+    if (!isAutoLend) return []
+
+    const denoms = Array.from(
+      new Set(getDenomsFromBNCoins([...props.reclaims, ...props.deposits, ...props.borrowings])),
+    )
+
+    return denoms.map((denom) => ({
+      lend: {
+        denom,
+        amount: 'account_balance',
+      },
+    }))
+  }, [isAutoLend, props.borrowings, props.deposits, props.reclaims])
+
+  const actions = useMemo(() => {
+    return [
+      ...reclaimActions,
+      ...borrowActions,
+      ...swapActions,
+      ...enterVaultActions,
+      ...lendActions,
+    ]
+  }, [reclaimActions, borrowActions, swapActions, enterVaultActions, lendActions])
 
   return {
     actions,

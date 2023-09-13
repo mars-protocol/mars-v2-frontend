@@ -24,3 +24,7 @@ export function getTokenPrice(denom: string, prices: BNCoin[]): BigNumber {
 export function getDebtAmountWithInterest(debt: BigNumber, apr: number) {
   return debt.times(1 + apr / 365 / 24).integerValue()
 }
+
+export function getDenomsFromBNCoins(coins: BNCoin[]) {
+  return coins.map((coin) => coin.denom)
+}
