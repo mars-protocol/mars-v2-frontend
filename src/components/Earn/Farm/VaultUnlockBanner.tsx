@@ -4,6 +4,9 @@ import { useParams } from 'react-router-dom'
 import Button from 'components/Button'
 import { ChevronRight } from 'components/Icons'
 import NotificationBanner from 'components/NotificationBanner'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { SLIPPAGE_KEY } from 'constants/localStore'
+import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 
 interface Props {
@@ -14,6 +17,7 @@ export default function VaultUnlockBanner(props: Props) {
   const { accountId } = useParams()
   const [isConfirming, setIsConfirming] = useState(false)
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
+  const [slippage] = useLocalStorage<number>(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
 
   async function handleWithdraw() {
     if (!accountId) return
@@ -26,6 +30,7 @@ export default function VaultUnlockBanner(props: Props) {
       await withdrawFromVaults({
         accountId: accountId,
         vaults: props.vaults,
+        slippage,
       })
       setIsConfirming(false)
     }

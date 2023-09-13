@@ -349,16 +349,27 @@ export default function createBroadcastSlice(
       return !!response.result
     },
 
-    withdrawFromVaults: async (options: { accountId: string; vaults: DepositedVault[] }) => {
+    withdrawFromVaults: async (options: {
+      accountId: string
+      vaults: DepositedVault[]
+      slippage: number
+    }) => {
       const actions: CreditManagerAction[] = []
       options.vaults.forEach((vault) => {
-        if (vault.unlockId)
+        if (vault.unlockId) {
           actions.push({
             exit_vault_unlocked: {
               id: vault.unlockId,
               vault: { address: vault.address },
             },
           })
+          actions.push({
+            withdraw_liquidity: {
+              lp_token: { denom: vault.denoms.lp, amount: 'account_balance' },
+              slippage: options.slippage.toString(),
+            },
+          })
+        }
       })
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
