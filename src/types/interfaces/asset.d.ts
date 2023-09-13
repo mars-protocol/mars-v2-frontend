@@ -86,6 +86,7 @@ interface LendingMarketTableData extends MarketTableData {
   marketDepositCap: BigNumber
   accountLentAmount?: string
   accountLentValue?: BigNumber
+  borrowEnabled: boolean
 }
 
 interface MarketTableData {

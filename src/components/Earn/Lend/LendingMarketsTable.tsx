@@ -9,6 +9,7 @@ import { ChevronDown, ChevronUp } from 'components/Icons'
 import AssetListTable from 'components/MarketAssetTable'
 import MarketAssetTableRow from 'components/MarketAssetTable/MarketAssetTableRow'
 import MarketDetails from 'components/MarketAssetTable/MarketDetails'
+import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import { BN_ZERO } from 'constants/math'
 import { convertLiquidityRateToAPR } from 'utils/formatters'
@@ -82,6 +83,10 @@ export default function LendingMarketsTable(props: Props) {
         accessorKey: 'marketLiquidityRate',
         header: 'APR',
         cell: ({ row }) => {
+          if (!row.original.borrowEnabled) {
+            return <Text>-</Text>
+          }
+
           return (
             <FormattedNumber
               amount={convertLiquidityRateToAPR(row.original.marketLiquidityRate)}
