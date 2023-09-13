@@ -11,7 +11,7 @@ import MarketAssetTableRow from 'components/MarketAssetTable/MarketAssetTableRow
 import MarketDetails from 'components/MarketAssetTable/MarketDetails'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import { BN_ZERO } from 'constants/math'
-import { convertLiquidityRateToAPR, demagnify } from 'utils/formatters'
+import { convertLiquidityRateToAPR } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
 interface Props {
@@ -97,9 +97,7 @@ export default function LendingMarketsTable(props: Props) {
         header: 'Depo. Cap',
         cell: ({ row }) => {
           const { marketDepositCap, marketDepositAmount, asset } = row.original
-          const remainingCap = row.original.marketDepositCap.minus(
-            demagnify(marketDepositAmount, asset),
-          )
+          const remainingCap = row.original.marketDepositCap.minus(marketDepositAmount)
 
           return (
             <TitleAndSubCell
