@@ -98,7 +98,11 @@ interface BroadcastSlice {
     vault: DepositedVault
     amount: string
   }) => Promise<boolean>
-  withdrawFromVaults: (options: { accountId: string; vaults: DepositedVault[] }) => Promise<boolean>
+  withdrawFromVaults: (options: {
+    accountId: string
+    vaults: DepositedVault[]
+    slippage: number
+  }) => Promise<boolean>
   withdraw: (options: {
     accountId: string
     coins: Array<{ coin: BNCoin; isMax?: boolean }>

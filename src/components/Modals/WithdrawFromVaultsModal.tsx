@@ -7,6 +7,9 @@ import VaultLogo from 'components/Earn/Farm/VaultLogo'
 import { FormattedNumber } from 'components/FormattedNumber'
 import Modal from 'components/Modal'
 import Text from 'components/Text'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { SLIPPAGE_KEY } from 'constants/localStore'
+import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getAssetByDenom } from 'utils/assets'
@@ -18,6 +21,7 @@ export default function WithdrawFromVaultsModal() {
   const showTxLoader = useStore((s) => s.showTxLoader)
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
   const baseCurrency = useStore((s) => s.baseCurrency)
+  const [slippage] = useLocalStorage<number>(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
 
   function onClose() {
     useStore.setState({ withdrawFromVaultsModal: null })
@@ -28,6 +32,7 @@ export default function WithdrawFromVaultsModal() {
     await withdrawFromVaults({
       accountId: accountId,
       vaults: modal,
+      slippage,
     })
     onClose()
   }

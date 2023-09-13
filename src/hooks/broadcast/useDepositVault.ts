@@ -7,6 +7,7 @@ import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { getLendEnabledAssets } from 'utils/assets'
 import { getDenomsFromBNCoins } from 'utils/tokens'
 import {
   getEnterVaultActions,
@@ -75,8 +76,11 @@ export default function useDepositVault(props: Props): {
     const denoms = Array.from(
       new Set(getDenomsFromBNCoins([...props.reclaims, ...props.deposits, ...props.borrowings])),
     )
+    const denomsForLend = getLendEnabledAssets()
+      .filter((asset) => denoms.includes(asset.denom))
+      .map((asset) => asset.denom)
 
-    return denoms.map((denom) => ({
+    return denomsForLend.map((denom) => ({
       lend: {
         denom,
         amount: 'account_balance',
