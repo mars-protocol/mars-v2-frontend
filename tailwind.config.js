@@ -187,6 +187,7 @@ module.exports = {
       },
       minWidth: {
         15: '60px',
+        16: '64px',
         92.5: '370px',
       },
       padding: {
@@ -202,8 +203,9 @@ module.exports = {
         '2xl': '1920px',
       },
       spacing: {
+        24: '96px',
         35: '140px',
-        82.5: '330px',
+        80: '320px',
       },
       transitionDuration: {
         3000: '3000ms',
