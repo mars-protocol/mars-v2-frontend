@@ -51,7 +51,7 @@ export const WALLETS: WalletInfos = {
     install: 'Install MetaMask',
     installURL: 'https://metamask.io/download/',
     imageURL: '/images/wallets/leap-snap.png',
-    supportedChains: [ChainInfoID.Osmosis1],
+    supportedChains: [ChainInfoID.Osmosis1, ChainInfoID.OsmosisDevnet],
   },
   [WalletID.Station]: {
     name: 'Station Wallet',

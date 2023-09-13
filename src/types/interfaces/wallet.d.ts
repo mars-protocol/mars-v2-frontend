@@ -16,7 +16,6 @@ type Network = import('@delphi-labs/shuttle-react').Network
 interface ChainInfo extends Network {
   explorer: string
   explorerName: string
-  alternativeBIP44s: BIP44[]
 }
 
 interface WalletClient {
