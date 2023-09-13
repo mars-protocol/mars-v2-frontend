@@ -10,10 +10,6 @@ export const CHAINS: ChainInfos = {
     explorerName: 'Mintscan',
     chainId: ChainInfoID.Osmosis1,
     name: 'Osmosis',
-    bip44: {
-      coinType: 118,
-    },
-    alternativeBIP44s: [{ coinType: 330 }],
     gasPrice: '0.025uosmo',
     bech32Config: Bech32Address.defaultBech32Config('osmo'),
     defaultCurrency: {
@@ -36,10 +32,6 @@ export const CHAINS: ChainInfos = {
     explorerName: 'Mintscan',
     chainId: ChainInfoID.OsmosisDevnet,
     name: 'Osmosis Devnet',
-    bip44: {
-      coinType: 118,
-    },
-    alternativeBIP44s: [{ coinType: 330 }],
     gasPrice: '0.025uosmo',
     bech32Config: Bech32Address.defaultBech32Config('osmo'),
     defaultCurrency: {
@@ -62,10 +54,6 @@ export const CHAINS: ChainInfos = {
     explorerName: 'Mintscan',
     chainId: ChainInfoID.OsmosisTestnet,
     name: 'Osmosis Testnet',
-    bip44: {
-      coinType: 118,
-    },
-    alternativeBIP44s: [{ coinType: 330 }],
     gasPrice: '0.025uosmo',
     bech32Config: Bech32Address.defaultBech32Config('osmo'),
     defaultCurrency: {
