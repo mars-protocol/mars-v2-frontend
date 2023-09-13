@@ -1461,21 +1461,21 @@
   resolved "https://registry.yarnpkg.com/@cosmjs/utils/-/utils-0.31.1.tgz#e6055cd7d722fa72df9cbd0d39cd1f7a9ac80483"
   integrity sha512-n4Se1wu4GnKwztQHNFfJvUeWcpvx3o8cWhSbNs9JQShEuB3nv3R5lqFBtDCgHZF/emFQAP+ZjF8bTfCs9UBGhA==
 
-"@delphi-labs/shuttle-react@^3.8.0":
-  version "3.8.0"
-  resolved "https://registry.yarnpkg.com/@delphi-labs/shuttle-react/-/shuttle-react-3.8.0.tgz#8919cf101e19849dd5fe94652ed62661d14c01e7"
-  integrity sha512-dYv7HWRFkGfJXiAG9JjvtPZ3LKeeSykS2yZ+WXZJQnCjRKXaRLVdZNVuclKchiSbfrVssymN9aplmFycEAK4Qg==
+"@delphi-labs/shuttle-react@^3.9.0":
+  version "3.9.0"
+  resolved "https://registry.yarnpkg.com/@delphi-labs/shuttle-react/-/shuttle-react-3.9.0.tgz#fac4a8c8358ba3f52dddc27bb75e086793f7c06a"
+  integrity sha512-L6A2WfBV/qHvsKwF0cDC7NbZ0BNDvOUGdJSuXKEqhjmp92aSTcpfktCj5UIHLDhK64Q9ovaxR0WUosetiFrgUA==
   dependencies:
-    "@delphi-labs/shuttle" "3.8.0"
+    "@delphi-labs/shuttle" "3.9.0"
     tslib "^2.6.0"
     tsup "^7.1.0"
     use-local-storage-state "^18.3.3"
     zustand "^4.3.8"
 
-"@delphi-labs/shuttle@3.8.0":
-  version "3.8.0"
-  resolved "https://registry.yarnpkg.com/@delphi-labs/shuttle/-/shuttle-3.8.0.tgz#5c7ee1a02affea667aaa7302afb84986c23cfc66"
-  integrity sha512-eEgk2zYQkv55SV+UNtVhPDl5Oe3AUST0bYlU7v/g/YlLoSLjxOuAbJrBtS+j7SsVAlmEi+2MD5R10bJ0w8GYLw==
+"@delphi-labs/shuttle@3.9.0":
+  version "3.9.0"
+  resolved "https://registry.yarnpkg.com/@delphi-labs/shuttle/-/shuttle-3.9.0.tgz#7a39adeeb55d44cb19c3b395c570827b6d052d30"
+  integrity sha512-cO55tSE9ejM0y+txhYIZfkIzOQdpbkid/ZMhhbA/+OEjnefUAVX4o1El2uH0bRIYElJwWum5mqyjxtIRceZEHQ==
   dependencies:
     "@cosmjs/amino" "^0.31.0"
     "@cosmjs/cosmwasm-stargate" "^0.31.0"

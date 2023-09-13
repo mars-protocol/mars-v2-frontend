@@ -28,6 +28,7 @@ interface WalletOptionProps {
   name: string
   imageSrc: string
   handleClick: () => void
+  showLoader?: boolean
 }
 
 const currentChainId = ENV.CHAIN_ID
@@ -37,8 +38,9 @@ function WalletOption(props: WalletOptionProps) {
   return (
     <Button
       color='tertiary'
-      className='flex w-full !justify-start px-4 py-3'
+      className='flex w-full !justify-start px-4 py-3 h-11'
       onClick={props.handleClick}
+      showProgressIndicator={props.showLoader}
     >
       <Image
         className='rounded-full'
@@ -57,15 +59,22 @@ export default function WalletSelect(props: Props) {
   const { extensionProviders, mobileProviders, mobileConnect } = useShuttle()
   const [qrCodeUrl, setQRCodeUrl] = useState('')
   const [error, setError] = useState(props.error)
+  const [isLoading, setIsLoading] = useState<string | boolean>(false)
   const sortedExtensionProviders = extensionProviders.sort((a, b) => +b - +a)
 
   const handleConnectClick = (extensionProviderId: string) => {
     useStore.setState({
-      focusComponent: { component: <WalletConnecting providerId={extensionProviderId} /> },
+      focusComponent: {
+        component: <WalletConnecting providerId={extensionProviderId} />,
+        onClose: () => {
+          useStore.setState({ focusComponent: null })
+        },
+      },
     })
   }
 
   const handleMobileConnectClick = async (mobileProviderId: string, chainId: string) => {
+    setIsLoading(mobileProviderId)
     try {
       const urls = await mobileConnect({
         mobileProviderId,
@@ -88,6 +97,7 @@ export default function WalletSelect(props: Props) {
         setError({ title: 'Failed to connect to wallet', message: error.message })
       }
     }
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -179,6 +189,7 @@ export default function WalletSelect(props: Props) {
                       name={WALLETS[walletId].walletConnect ?? 'WalletConnect'}
                       imageSrc={WALLETS[walletId].mobileImageURL ?? '/'}
                       handleClick={() => handleMobileConnectClick(walletId, network.chainId)}
+                      showLoader={isLoading === walletId}
                     />
                   )
                 })}

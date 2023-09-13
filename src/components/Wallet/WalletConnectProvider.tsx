@@ -4,6 +4,8 @@ import {
   KeplrExtensionProvider,
   KeplrMobileProvider,
   LeapCosmosExtensionProvider,
+  LeapCosmosMobileProvider,
+  LeapMetamaskCosmosSnapExtensionProvider,
   ShuttleProvider,
   StationExtensionProvider,
   WalletExtensionProvider,
@@ -37,6 +39,9 @@ const mobileProviders: WalletMobileProvider[] = [
   new KeplrMobileProvider({
     networks: getSupportedChainsInfos(WalletID.KeplrMobile),
   }),
+  new LeapCosmosMobileProvider({
+    networks: getSupportedChainsInfos(WalletID.LeapMobile),
+  }),
   new CosmostationMobileProvider({
     networks: getSupportedChainsInfos(WalletID.CosmostationMobile),
   }),
@@ -44,10 +49,13 @@ const mobileProviders: WalletMobileProvider[] = [
 
 const extensionProviders: WalletExtensionProvider[] = [
   new KeplrExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Keplr) }),
-  new StationExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Station) }),
   new LeapCosmosExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Leap) }),
+  new LeapMetamaskCosmosSnapExtensionProvider({
+    networks: getSupportedChainsInfos(WalletID.LeapSnap),
+  }),
   new CosmostationExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Cosmostation) }),
   new XDEFICosmosExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Xdefi) }),
+  new StationExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Station) }),
 ]
 
 export const WalletConnectProvider: FC<Props> = ({ children }) => {

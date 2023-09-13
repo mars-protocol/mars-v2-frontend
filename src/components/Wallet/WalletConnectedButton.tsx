@@ -23,6 +23,7 @@ import { ChainInfoID } from 'types/enums/wallet'
 import { getBaseAsset, getEnabledMarketAssets } from 'utils/assets'
 import { truncate } from 'utils/formatters'
 import { getPage, getRoute } from 'utils/route'
+import WalletSelect from './WalletSelect'
 
 export default function WalletConnectedButton() {
   // ---------------
@@ -62,6 +63,15 @@ export default function WalletConnectedButton() {
     if (!currentWallet) return
     disconnectWallet(currentWallet)
     useStore.setState({ client: undefined, address: undefined, accounts: null, balances: [] })
+    if (focusComponent)
+      useStore.setState({
+        focusComponent: {
+          component: <WalletSelect />,
+          onClose: () => {
+            useStore.setState({ focusComponent: null })
+          },
+        },
+      })
     navigate(getRoute(getPage(pathname)))
   }
 
