@@ -50,11 +50,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         className={classNames(
           'lg:min-h-[calc(100vh-65px)]',
           'lg:mt-[65px]',
-          'min-h-screen gap-6 p-6 w-full relative',
-          account && 'pr-18',
-          focusComponent || isMobile
-            ? 'flex justify-center'
-            : 'grid grid-cols-[auto_min-content] place-items-start',
+          'min-h-screen gap-6 px-4 py-6 w-full relative',
+          'flex',
+          account && 'pr-24',
+          'justify-center',
           focusComponent && 'items-center',
           isMobile && 'items-start',
         )}
