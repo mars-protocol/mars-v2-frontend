@@ -148,7 +148,7 @@ export function getEnterVaultActions(
   vault: Vault,
   primaryCoin: BNCoin,
   secondaryCoin: BNCoin,
-  minLpToReceive: BigNumber,
+  slippage: number,
 ): Action[] {
   return [
     {
@@ -156,7 +156,7 @@ export function getEnterVaultActions(
         // Smart Contact demands that secondary coin is first
         coins_in: [secondaryCoin.toActionCoin(), primaryCoin.toActionCoin()],
         lp_token_out: vault.denoms.lp,
-        minimum_receive: minLpToReceive.toString(),
+        slippage: slippage.toString(),
       },
     },
     {
@@ -204,4 +204,3 @@ export function getVaultDepositCoinsFromActions(actions: Action[]) {
     })
   })
 }
-

@@ -1,10 +1,7 @@
-import debounce from 'debounce-promise'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
-import getMinLpToReceive from 'api/vaults/getMinLpToReceive'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { SLIPPAGE_KEY } from 'constants/localStore'
-import { BN_ZERO } from 'constants/math'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -24,10 +21,8 @@ interface Props {
 
 export default function useDepositVault(props: Props): {
   actions: Action[]
-  minLpToReceive: string
   totalValue: BigNumber
 } {
-  const [minLpToReceive, setMinLpToReceive] = useState<BigNumber>(BN_ZERO)
   const { data: prices } = usePrices()
   const [slippage] = useLocalStorage<number>(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
 
@@ -43,8 +38,6 @@ export default function useDepositVault(props: Props): {
     () => props.reclaims.filter((reclaim) => reclaim.amount.gt(0)),
     [props.reclaims],
   )
-
-  const debouncedGetMinLpToReceive = useMemo(() => debounce(getMinLpToReceive, 500), [])
 
   const { primaryCoin, secondaryCoin, totalValue } = useMemo(
     () => getVaultDepositCoinsAndValue(props.vault, deposits, borrowings, reclaims, prices),
@@ -68,32 +61,11 @@ export default function useDepositVault(props: Props): {
     [totalValue, prices, props.vault, deposits, borrowings, slippage],
   )
 
-  useMemo(async () => {
-    if (primaryCoin.amount.isZero() || secondaryCoin.amount.isZero()) return
-
-    const lpAmount = await debouncedGetMinLpToReceive(
-      [secondaryCoin.toCoin(), primaryCoin.toCoin()],
-      props.vault.denoms.lp,
-      slippage,
-    )
-
-    if (!lpAmount || lpAmount.isEqualTo(minLpToReceive)) return
-    setMinLpToReceive(lpAmount)
-  }, [
-    primaryCoin,
-    secondaryCoin,
-    props.vault.denoms.lp,
-    debouncedGetMinLpToReceive,
-    minLpToReceive,
-    slippage,
-  ])
-
   const enterVaultActions: Action[] = useMemo(() => {
-    if (primaryCoin.amount.isZero() || secondaryCoin.amount.isZero() || minLpToReceive.isZero())
-      return []
+    if (primaryCoin.amount.isZero() || secondaryCoin.amount.isZero()) return []
 
-    return getEnterVaultActions(props.vault, primaryCoin, secondaryCoin, minLpToReceive)
-  }, [props.vault, primaryCoin, secondaryCoin, minLpToReceive])
+    return getEnterVaultActions(props.vault, primaryCoin, secondaryCoin, slippage)
+  }, [props.vault, primaryCoin, secondaryCoin, slippage])
 
   const actions = useMemo(
     () => [...reclaimActions, ...borrowActions, ...swapActions, ...enterVaultActions],
@@ -102,7 +74,6 @@ export default function useDepositVault(props: Props): {
 
   return {
     actions,
-    minLpToReceive: minLpToReceive.toString(),
     totalValue,
   }
 }
