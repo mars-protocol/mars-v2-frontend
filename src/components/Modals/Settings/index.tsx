@@ -251,9 +251,9 @@ export default function SettingsModal() {
         label='Tutorial'
         description={
           <Text size='xs' className='text-white/50'>
-            Show tutorial elements in the UI. Like the{' '}
+            Show tutorial elements in the UI. Like the page info boxes or{' '}
             <TextLink
-              title='Get Started Modal'
+              title='Get Started'
               color='secondary'
               textSize='extraSmall'
               className='leading-4 text-white hover:underline'
@@ -261,7 +261,7 @@ export default function SettingsModal() {
                 useStore.setState({ settingsModal: false, getStartedModal: true })
               }}
             >
-              Get Started Modal.
+              Get Started.
             </TextLink>
           </Text>
         }
