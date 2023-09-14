@@ -137,7 +137,7 @@ export default function Index(props: Props) {
         },
       },
     ],
-    [],
+    [baseCurrency.decimals],
   )
 
   const table = useReactTable({
