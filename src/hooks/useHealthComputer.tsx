@@ -14,6 +14,7 @@ import {
   HealthComputer,
 } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 import { convertAccountToPositions } from 'utils/accounts'
+import { getAssetByDenom } from 'utils/assets'
 import { LTV_BUFFER } from 'utils/constants'
 import {
   BorrowTarget,
@@ -70,7 +71,13 @@ export default function useHealthComputer(account?: Account) {
   const priceData = useMemo(() => {
     return prices.reduce(
       (prev, curr) => {
-        prev[curr.denom] = curr.amount.shiftedBy(VALUE_SCALE_FACTOR).toString()
+        const decimals = getAssetByDenom(curr.denom)?.decimals || 6
+
+        // The HealthComputer needs prices expressed per 1 amount. So we need to correct here for any additional decimals.
+        prev[curr.denom] = curr.amount
+          .shiftedBy(VALUE_SCALE_FACTOR)
+          .shiftedBy(-decimals + 6)
+          .toString()
         return prev
       },
       {} as { [key: string]: string },
