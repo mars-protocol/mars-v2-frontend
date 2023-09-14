@@ -23,6 +23,7 @@ import { ChainInfoID } from 'types/enums/wallet'
 import { getBaseAsset, getEnabledMarketAssets } from 'utils/assets'
 import { truncate } from 'utils/formatters'
 import { getPage, getRoute } from 'utils/route'
+
 import WalletSelect from './WalletSelect'
 
 export default function WalletConnectedButton() {
