@@ -189,18 +189,22 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
     const query = `
         {
             candles(
-                first: ${this.batchSize},
+            first: ${this.batchSize},
+            orderBy: "timestamp",
+            orderDirection: "desc",
                 where: {
-                interval: "${interval}",
-                quote: "${quote}",
-                base: "${base}"
-            }) {
-                timestamp
-                open
-                high
-                low
-                close
-                volume
+                  interval: "${interval}",
+                  quote: "${quote}",
+                  base: "${base}"
+                  poolId_in: ${JSON.stringify(this.supportedPools)}
+                  }
+                ) {
+                    timestamp
+                    open
+                    high
+                    low
+                    close
+                    volume
             }
         }
     `
@@ -212,7 +216,7 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
     })
       .then((res) => res.json())
       .then((json: { data?: { candles: BarQueryData[] } }) => {
-        return this.resolveBarData(json.data?.candles || [], base)
+        return this.resolveBarData(json.data?.candles.reverse() || [], base, quote)
       })
       .catch((err) => {
         if (this.debug) console.error(err)
@@ -220,9 +224,10 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
       })
   }
 
-  resolveBarData(bars: BarQueryData[], base: string) {
-    const assetDecimals = getAssetByDenom(base)?.decimals || 6
-    const additionalDecimals = assetDecimals - this.baseDecimals
+  resolveBarData(bars: BarQueryData[], toDenom: string, fromDenom: string) {
+    const toDecimals = getAssetByDenom(toDenom)?.decimals || 6
+    const fromDecimals = getAssetByDenom(fromDenom)?.decimals || 6
+    const additionalDecimals = toDecimals - fromDecimals
 
     return bars.map((bar) => ({
       time: BN(bar.timestamp).multipliedBy(1000).toNumber(),
