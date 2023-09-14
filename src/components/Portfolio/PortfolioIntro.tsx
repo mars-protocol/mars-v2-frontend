@@ -7,6 +7,8 @@ export default function PortfolioIntro() {
   const { address } = useParams()
   const walletAddress = useStore((s) => s.address)
 
+  if (!address && !walletAddress) return null
+
   return (
     <Intro
       text={
