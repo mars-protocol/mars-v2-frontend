@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import { Suspense, useCallback, useMemo } from 'react'
+import { useParams } from 'react-router-dom'
 
 import AccountBalancesTable from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
@@ -11,6 +12,7 @@ import Loading from 'components/Loading'
 import Text from 'components/Text'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import WalletConnectButton from 'components/Wallet/WalletConnectButton'
+import useAccounts from 'hooks/useAccounts'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
@@ -18,9 +20,25 @@ import useStore from 'store'
 import { defaultFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
 
+function ConnectInfo() {
+  return (
+    <Card
+      className='w-full h-fit bg-white/5'
+      title='Portfolio'
+      contentClassName='px-4 py-6 flex justify-center flex-wrap'
+    >
+      <Text size='sm' className='w-full text-center'>
+        You need to be connected to view the porfolio page.
+      </Text>
+      <WalletConnectButton className='mt-4' />
+    </Card>
+  )
+}
+
 function Content() {
-  const address = useStore((s) => s.address)
-  const accounts = useStore((s) => s.accounts)
+  const { address } = useParams()
+  const { data: accounts } = useAccounts(address ?? '')
+  const walletAddress = useStore((s) => s.address)
   const baseCurrency = useStore((s) => s.baseCurrency)
   const { availableAssets: borrowAvailableAssets, accountBorrowedAssets } =
     useBorrowMarketAssetsTableData()
@@ -52,19 +70,7 @@ function Content() {
     useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
   }, [checkHasFunds])
 
-  if (!address)
-    return (
-      <Card
-        className='w-full h-fit bg-white/5'
-        title='Portfolio'
-        contentClassName='px-4 py-6 flex justify-center flex-wrap'
-      >
-        <Text size='sm' className='w-full text-center'>
-          You need to be connected to view the porfolio page.
-        </Text>
-        <WalletConnectButton className='mt-4' />
-      </Card>
-    )
+  if (!walletAddress && !address) return <ConnectInfo />
 
   if (!accounts || accounts.length === 0)
     return (
@@ -111,7 +117,9 @@ function Content() {
 }
 
 function Fallback() {
+  const { address } = useParams()
   const cardCount = 3
+  if (!address) return <ConnectInfo />
   return (
     <div
       className={classNames('grid w-full grid-cols-1 gap-4', 'md:grid-cols-2', 'lg:grid-cols-3')}
