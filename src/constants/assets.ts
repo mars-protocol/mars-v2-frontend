@@ -37,6 +37,7 @@ export const ASSETS: Asset[] = [
     isDisplayCurrency: true,
     isAutoLendEnabled: true,
     pythPriceFeedId: 'b00b60f88b03a6a625a8d1c048c3f66653edf217439983d037e7222c4e612819',
+    poolId: 1,
   },
   {
     symbol: 'stATOM',
@@ -52,6 +53,7 @@ export const ASSETS: Asset[] = [
     isMarket: !IS_TESTNET,
     isDisplayCurrency: !IS_TESTNET,
     isAutoLendEnabled: true,
+    poolId: 803,
   },
   {
     symbol: 'WBTC.axl',
@@ -68,6 +70,7 @@ export const ASSETS: Asset[] = [
     isDisplayCurrency: !IS_TESTNET,
     isAutoLendEnabled: true,
     pythPriceFeedId: 'e62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43',
+    poolId: 712,
   },
   {
     symbol: 'WETH.axl',
@@ -84,6 +87,7 @@ export const ASSETS: Asset[] = [
     isDisplayCurrency: !IS_TESTNET,
     isAutoLendEnabled: true,
     pythPriceFeedId: 'ff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace',
+    poolId: 704,
   },
   {
     symbol: 'MARS',
@@ -120,6 +124,7 @@ export const ASSETS: Asset[] = [
     isStable: true,
     isAutoLendEnabled: true,
     pythPriceFeedId: 'eaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a',
+    poolId: 678,
   },
   {
     symbol: 'AXL',
@@ -136,6 +141,7 @@ export const ASSETS: Asset[] = [
     isDisplayCurrency: !IS_TESTNET,
     isAutoLendEnabled: true,
     pythPriceFeedId: '60144b1d5c9e9851732ad1d9760e3485ef80be39b984f6bf60f82b28a2b7f126',
+    poolId: 812,
   },
   {
     symbol: '$',
