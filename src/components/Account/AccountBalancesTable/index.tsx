@@ -95,7 +95,6 @@ export default function Index(props: Props) {
             row.original.amount,
             getAssetByDenom(row.original.denom) ?? ASSETS[0],
           )
-
           if (amount >= 0.01)
             return (
               <FormattedNumber
@@ -106,11 +105,15 @@ export default function Index(props: Props) {
               />
             )
 
+          const formattedAmount = formatAmountToPrecision(amount, 1)
           return (
             <FormattedNumber
               className={className}
-              amount={formatAmountToPrecision(amount, 1)}
-              options={{ maxDecimals: asset.decimals, minDecimals: 0 }}
+              amount={formattedAmount}
+              options={{
+                maxDecimals: baseCurrency.decimals,
+                minDecimals: 0,
+              }}
               animate
             />
           )
@@ -231,6 +234,7 @@ export default function Index(props: Props) {
                     className={classNames(
                       cell.column.id === 'symbol' ? `border-l ${borderClass}` : 'text-right',
                       'p-2',
+                      cell.column.id === 'size' && 'min-w-20 pl-0',
                     )}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
