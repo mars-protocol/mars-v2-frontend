@@ -12,6 +12,7 @@ import Loading from 'components/Loading'
 import Text from 'components/Text'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import WalletConnectButton from 'components/Wallet/WalletConnectButton'
+import { EMPTY_WALLET } from 'constants/wallets'
 import useAccounts from 'hooks/useAccounts'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
@@ -37,7 +38,7 @@ function ConnectInfo() {
 
 function Content() {
   const { address } = useParams()
-  const { data: accounts } = useAccounts(address ?? '')
+  const { data: accounts } = useAccounts(address ?? EMPTY_WALLET)
   const walletAddress = useStore((s) => s.address)
   const baseCurrency = useStore((s) => s.baseCurrency)
   const { availableAssets: borrowAvailableAssets, accountBorrowedAssets } =
