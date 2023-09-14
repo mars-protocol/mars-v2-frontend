@@ -84,18 +84,36 @@ export default function Index(props: Props) {
         accessorKey: 'size',
         header: 'Size',
         cell: ({ row }) => {
-          if (row.original.type === 'vault')
+          const asset = getAssetByDenom(row.original.denom)
+
+          if (row.original.type === 'vault' || !asset)
             return <p className='text-xs text-right number'>&ndash;</p>
+
           const color = getAmountChangeColor(row.original.type, row.original.amountChange)
+          const className = classNames('text-xs text-right', color)
           const amount = demagnify(
             row.original.amount,
             getAssetByDenom(row.original.denom) ?? ASSETS[0],
           )
+          if (amount >= 0.01)
+            return (
+              <FormattedNumber
+                className={className}
+                amount={amount}
+                options={{ abbreviated: true }}
+                animate
+              />
+            )
+
+          const formattedAmount = formatAmountToPrecision(amount, 1)
           return (
             <FormattedNumber
-              className={classNames('text-xs text-right', color)}
-              amount={formatAmountToPrecision(amount, baseCurrency.decimals)}
-              options={{ maxDecimals: baseCurrency.decimals, minDecimals: 0, abbreviated: true }}
+              className={className}
+              amount={formattedAmount}
+              options={{
+                maxDecimals: baseCurrency.decimals,
+                minDecimals: 0,
+              }}
               animate
             />
           )
@@ -216,6 +234,7 @@ export default function Index(props: Props) {
                     className={classNames(
                       cell.column.id === 'symbol' ? `border-l ${borderClass}` : 'text-right',
                       'p-2',
+                      cell.column.id === 'size' && 'min-w-20 pl-0',
                     )}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

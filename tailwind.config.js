@@ -188,6 +188,7 @@ module.exports = {
       minWidth: {
         15: '60px',
         16: '64px',
+        20: '80px',
         92.5: '370px',
       },
       padding: {
