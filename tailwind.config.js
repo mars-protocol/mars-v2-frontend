@@ -208,6 +208,7 @@ module.exports = {
         24: '96px',
         35: '140px',
         80: '320px',
+        90.5: '362px',
       },
       transitionDuration: {
         3000: '3000ms',
