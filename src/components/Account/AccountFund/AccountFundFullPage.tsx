@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 
 import AccountFundContent from 'components/Account/AccountFund/AccountFundContent'
 import Card from 'components/Card'
+import { CircularProgress } from 'components/CircularProgress'
 import FullOverlayContent from 'components/FullOverlayContent'
 import useAccounts from 'hooks/useAccounts'
 import useCurrentAccount from 'hooks/useCurrentAccount'
@@ -12,7 +13,7 @@ export default function AccountFundFullPage() {
   const address = useStore((s) => s.address)
   const { accountId } = useParams()
 
-  const { data: accounts } = useAccounts(address)
+  const { data: accounts, isLoading } = useAccounts(address)
   const currentAccount = useCurrentAccount()
   const [selectedAccountId, setSelectedAccountId] = useState<null | string>(null)
 
@@ -29,14 +30,18 @@ export default function AccountFundFullPage() {
       copy='In order to start using this account, you need to deposit funds.'
       docs='fund'
     >
-      <Card className='w-full p-6 bg-white/5'>
-        <AccountFundContent
-          account={currentAccount}
-          address={address}
-          accountId={selectedAccountId}
-          isFullPage
-        />
-      </Card>
+      {isLoading ? (
+        <CircularProgress size={40} />
+      ) : (
+        <Card className='w-full p-6 bg-white/5'>
+          <AccountFundContent
+            account={currentAccount}
+            address={address}
+            accountId={selectedAccountId}
+            isFullPage
+          />
+        </Card>
+      )}
     </FullOverlayContent>
   )
 }

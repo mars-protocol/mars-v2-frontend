@@ -29,8 +29,8 @@ function Content() {
   const address = useStore((s) => s.address)
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const { data: accounts } = useAccounts(address)
-  const { data: walletBalances, isLoading } = useWalletBalances(address)
+  const { data: accounts, isLoading: isLoadingAccounts } = useAccounts(address)
+  const { data: walletBalances, isLoading: isLoadingBalances } = useWalletBalances(address)
   const baseAsset = getBaseAsset()
 
   const baseBalance = useMemo(
@@ -48,7 +48,7 @@ function Content() {
     }
   }, [accounts, baseBalance, navigate, pathname, address, walletBalances])
 
-  if (isLoading) return <FetchLoading />
+  if (isLoadingAccounts || isLoadingBalances) return <FetchLoading />
   if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) return <WalletBridges />
   if (accounts.length === 0) return <AccountCreateFirst />
   return null
