@@ -57,6 +57,8 @@ export default function useHealthComputer(account?: Account) {
             denom: curr.denoms.vault,
             value: curr.values.primary
               .plus(curr.values.secondary)
+              .plus(curr.values.unlocking)
+              .plus(curr.values.unlocked)
               .shiftedBy(VALUE_SCALE_FACTOR + 6) // Need to scale additional 6 to correct for uusd values
               .integerValue()
               .toString(),

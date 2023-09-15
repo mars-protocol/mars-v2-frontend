@@ -40,11 +40,9 @@ export const calculateAccountValue = (
 
   if (type === 'vaults') {
     return (
-      account.vaults?.reduce(
-        (acc, vaultPosition) =>
-          acc.plus(vaultPosition.values.primary).plus(vaultPosition.values.secondary),
-        BN_ZERO,
-      ) || BN_ZERO
+      account.vaults?.reduce((acc, vaultPosition) => {
+        return acc.plus(vaultPosition.values.primary).plus(vaultPosition.values.secondary)
+      }, BN_ZERO) || BN_ZERO
     )
   }
 
@@ -85,8 +83,8 @@ export const calculateAccountApr = (
   })
 
   vaults?.forEach((vault) => {
-    const vaultValue = vault.values.primary.plus(vault.values.secondary)
-    const positionInterest = vaultValue.multipliedBy(convertApyToApr(vault?.apy ?? 0, 365))
+    const lockedValue = vault.values.primary.plus(vault.values.secondary)
+    const positionInterest = lockedValue.multipliedBy(convertApyToApr(vault?.apy ?? 0, 365))
     totalVaultsInterestValue = totalVaultsInterestValue.plus(positionInterest)
   })
 
@@ -106,13 +104,6 @@ export const calculateAccountApr = (
     .plus(totalVaultsInterestValue)
     .minus(totalDebtInterestValue)
   return totalInterstValue.dividedBy(totalValue).times(100)
-}
-
-export const calculateAccountBorrowRate = (
-  account: Account | AccountChange,
-  prices: BNCoin[],
-): BigNumber => {
-  return BN_ZERO
 }
 
 export function calculateAccountLeverage(account: Account, prices: BNCoin[]) {
@@ -195,6 +186,8 @@ export function cloneAccount(account: Account): Account {
       values: {
         primary: BN(vault.values.primary),
         secondary: BN(vault.values.secondary),
+        unlocking: BN(vault.values.unlocking),
+        unlocked: BN(vault.values.unlocked),
       },
     })),
   }
