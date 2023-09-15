@@ -41,7 +41,11 @@ export const calculateAccountValue = (
   if (type === 'vaults') {
     return (
       account.vaults?.reduce((acc, vaultPosition) => {
-        return acc.plus(vaultPosition.values.primary).plus(vaultPosition.values.secondary)
+        return acc
+          .plus(vaultPosition.values.primary)
+          .plus(vaultPosition.values.secondary)
+          .plus(vaultPosition.values.unlocking)
+          .plus(vaultPosition.values.unlocked)
       }, BN_ZERO) || BN_ZERO
     )
   }
