@@ -11,6 +11,20 @@ interface ExecutableTx {
   estimateFee: () => Promise<StdFee>
 }
 
+interface ToastObject {
+  response: Promise<BroadcastResult>
+  options: HandleResponseProps
+  swapOptions?: {
+    coinIn: BNCoin
+    denomOut: string
+  }
+}
+
+interface ToastPending {
+  id: number
+  promise: Promise<BroadcastResult>
+}
+
 type ToastResponse = {
   hash?: string
   title?: string
@@ -36,7 +50,7 @@ interface ToastStore {
 }
 
 interface HandleResponseProps {
-  response: BroadcastResult
+  response?: BroadcastResult
   action:
     | 'deposit'
     | 'withdraw'
@@ -83,6 +97,7 @@ interface BroadcastSlice {
     accountBalance?: boolean
     lend?: BNCoin
   }) => Promise<boolean>
+  setToast: (toast: ToastObject) => void
   swap: (options: {
     accountId: string
     coinIn: BNCoin
@@ -92,7 +107,7 @@ interface BroadcastSlice {
     slippage: number
     isMax?: boolean
   }) => ExecutableTx
-  toast: ToastResponse | null
+  toast: ToastResponse | ToastPending | null
   unlock: (options: {
     accountId: string
     vault: DepositedVault
@@ -109,5 +124,5 @@ interface BroadcastSlice {
     borrow: BNCoin[]
     reclaims: ActionCoin[]
   }) => Promise<boolean>
-  showTxLoader: boolean
+  broadcastInitialized: boolean
 }

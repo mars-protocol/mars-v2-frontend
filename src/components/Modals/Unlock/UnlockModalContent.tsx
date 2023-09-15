@@ -12,12 +12,12 @@ interface Props {
 
 export default function UnlockModalContent(props: Props) {
   const unlock = useStore((s) => s.unlock)
-  const showTxLoader = useStore((s) => s.showTxLoader)
+  const broadcastInitialized = useStore((s) => s.broadcastInitialized)
   const { accountId } = useParams()
 
-  async function onConfirm() {
+  function onConfirm() {
     if (!accountId) return
-    await unlock({
+    unlock({
       accountId: accountId,
       vault: props.depositedVault,
       amount: props.depositedVault.amounts.locked.toString(),
@@ -38,7 +38,7 @@ export default function UnlockModalContent(props: Props) {
           className='px-6'
           rightIcon={<YesIcon />}
           onClick={onConfirm}
-          showProgressIndicator={showTxLoader}
+          showProgressIndicator={broadcastInitialized}
         />
         <Button
           text='No'
@@ -47,7 +47,7 @@ export default function UnlockModalContent(props: Props) {
           rightIcon={<NoIcon />}
           tabIndex={1}
           onClick={props.onClose}
-          disabled={showTxLoader}
+          disabled={broadcastInitialized}
         />
       </div>
     </>

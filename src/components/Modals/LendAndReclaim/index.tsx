@@ -26,7 +26,7 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
   const lend = useStore((s) => s.lend)
   const reclaim = useStore((s) => s.reclaim)
   const { close } = useLendAndReclaimModal()
-  const showTxLoader = useStore((s) => s.showTxLoader)
+  const broadcastInitialized = useStore((s) => s.broadcastInitialized)
   const { simulateLending } = useUpdatedAccount(currentAccount)
 
   const { data, action } = config
@@ -45,14 +45,18 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
   )
 
   const handleAction = useCallback(
-    async (value: BigNumber, isMax: boolean) => {
+    (value: BigNumber, isMax: boolean) => {
       const coin = BNCoin.fromDenomAndBigNumber(asset.denom, value)
       const options = {
         accountId: currentAccount.id,
         coin,
         isMax,
       }
-      await (isLendAction ? lend : reclaim)(options)
+      if (isLendAction) {
+        lend(options)
+      } else {
+        reclaim(options)
+      }
       close()
     },
     [asset.denom, close, currentAccount.id, isLendAction, lend, reclaim],
@@ -63,7 +67,7 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
       contentHeader={<DetailsHeader data={data} />}
       coinBalances={coinBalances}
       actionButtonText={actionText}
-      showProgressIndicator={showTxLoader}
+      showProgressIndicator={broadcastInitialized}
       title={`${actionText} ${asset.symbol}`}
       onClose={close}
       onAction={handleAction}

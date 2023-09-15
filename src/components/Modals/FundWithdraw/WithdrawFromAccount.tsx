@@ -28,7 +28,7 @@ export default function WithdrawFromAccount(props: Props) {
     ASSETS.find(byDenom(account.deposits[0]?.denom || account.lends[0]?.denom)) ?? ASSETS[0]
   const withdraw = useStore((s) => s.withdraw)
   const [withdrawWithBorrowing, setWithdrawWithBorrowing] = useToggle()
-  const showTxLoader = useStore((s) => s.showTxLoader)
+  const broadcastInitialized = useStore((s) => s.broadcastInitialized)
   const [currentAsset, setCurrentAsset] = useState(defaultAsset)
   const [amount, setAmount] = useState(BN_ZERO)
   const { simulateWithdraw } = useUpdatedAccount(account)
@@ -62,7 +62,7 @@ export default function WithdrawFromAccount(props: Props) {
     onChangeAmount(BN_ZERO)
   }
 
-  async function onConfirm() {
+  function onConfirm() {
     const coins = [
       {
         coin: BNCoin.fromDenomAndBigNumber(currentAsset.denom, amount),
@@ -80,17 +80,15 @@ export default function WithdrawFromAccount(props: Props) {
         ]
       : []
 
-    const result = await withdraw({
+    withdraw({
       accountId: account.id,
       coins,
       borrow,
       reclaims,
     })
 
-    if (result) {
-      resetState()
-      useStore.setState({ fundAndWithdrawModal: null })
-    }
+    resetState()
+    useStore.setState({ fundAndWithdrawModal: null })
   }
 
   useEffect(() => {
@@ -123,7 +121,7 @@ export default function WithdrawFromAccount(props: Props) {
           accountId={account.id}
           hasSelect
           maxText='Max'
-          disabled={showTxLoader}
+          disabled={broadcastInitialized}
         />
         <Divider className='my-6' />
         <div className='flex flex-wrap w-full'>
@@ -138,14 +136,14 @@ export default function WithdrawFromAccount(props: Props) {
               name='borrow-to-wallet'
               checked={withdrawWithBorrowing}
               onChange={setWithdrawWithBorrowing}
-              disabled={showTxLoader}
+              disabled={broadcastInitialized}
             />
           </div>
         </div>
       </div>
       <Button
         onClick={onConfirm}
-        showProgressIndicator={showTxLoader}
+        showProgressIndicator={broadcastInitialized}
         className='w-full'
         text={'Withdraw'}
         rightIcon={<ArrowRight />}

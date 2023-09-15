@@ -56,7 +56,7 @@ export default function BorrowModalController() {
 function BorrowModal(props: Props) {
   const { modal, account } = props
   const [amount, setAmount] = useState(BN_ZERO)
-  const showTxLoader = useStore((s) => s.showTxLoader)
+  const broadcastInitialized = useStore((s) => s.broadcastInitialized)
   const [borrowToWallet, setBorrowToWallet] = useToggle()
   const borrow = useStore((s) => s.borrow)
   const repay = useStore((s) => s.repay)
@@ -79,32 +79,29 @@ function BorrowModal(props: Props) {
     setAmount(BN_ZERO)
   }
 
-  async function onConfirmClick() {
+  function onConfirmClick() {
     if (!asset) return
-    let result
     const { lend } = getDepositAndLendCoinsToSpend(
       BNCoin.fromDenomAndBigNumber(asset.denom, amount),
       account,
     )
     if (isRepay) {
-      result = await repay({
+      repay({
         accountId: account.id,
         coin: BNCoin.fromDenomAndBigNumber(asset.denom, amount),
         accountBalance: amount.isEqualTo(totalDebtRepayAmount),
         lend,
       })
     } else {
-      result = await borrow({
+      borrow({
         accountId: account.id,
         coin: BNCoin.fromDenomAndBigNumber(asset.denom, amount),
         borrowToWallet,
       })
     }
 
-    if (result) {
-      resetState()
-      useStore.setState({ borrowModal: null })
-    }
+    resetState()
+    useStore.setState({ borrowModal: null })
   }
 
   function onClose() {
@@ -229,7 +226,7 @@ function BorrowModal(props: Props) {
               max={max}
               className='w-full'
               maxText='Max'
-              disabled={showTxLoader}
+              disabled={broadcastInitialized}
             />
             {!isRepay && (
               <>
@@ -245,7 +242,7 @@ function BorrowModal(props: Props) {
                     name='borrow-to-wallet'
                     checked={borrowToWallet}
                     onChange={setBorrowToWallet}
-                    disabled={showTxLoader}
+                    disabled={broadcastInitialized}
                   />
                 </div>
               </>
@@ -254,7 +251,7 @@ function BorrowModal(props: Props) {
           <Button
             onClick={onConfirmClick}
             className='w-full'
-            showProgressIndicator={showTxLoader}
+            showProgressIndicator={broadcastInitialized}
             disabled={amount.isZero()}
             text={isRepay ? 'Repay' : 'Borrow'}
             rightIcon={<ArrowRight />}

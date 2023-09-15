@@ -23,17 +23,8 @@ interface Props {
 
 function AlertDialog(props: Props) {
   const { title, icon, description, negativeButton, positiveButton } = props.config
-  const [isConfirming, setIsConfirming] = useState(false)
   const handleButtonClick = (button?: AlertDialogButton) => {
     button?.onClick && button.onClick()
-    props.close()
-  }
-
-  async function handleAsyncButtonClick(button?: AlertDialogButton) {
-    if (!button?.onClick) return
-    setIsConfirming(true)
-    await button.onClick()
-    setIsConfirming(false)
     props.close()
   }
 
@@ -66,12 +57,7 @@ function AlertDialog(props: Props) {
             color='primary'
             className='px-6'
             rightIcon={positiveButton.icon ?? <YesIcon />}
-            showProgressIndicator={isConfirming}
-            onClick={() =>
-              positiveButton.isAsync
-                ? handleAsyncButtonClick(positiveButton)
-                : handleButtonClick(positiveButton)
-            }
+            onClick={() => handleButtonClick(positiveButton)}
           />
         )}
         <Button
@@ -79,7 +65,6 @@ function AlertDialog(props: Props) {
           color='secondary'
           className='px-6'
           rightIcon={negativeButton?.icon ?? <NoIcon />}
-          disabled={isConfirming}
           tabIndex={1}
           onClick={() => handleButtonClick(negativeButton)}
         />

@@ -18,7 +18,7 @@ import { demagnify } from 'utils/formatters'
 export default function WithdrawFromVaultsModal() {
   const modal = useStore((s) => s.withdrawFromVaultsModal)
   const { accountId } = useParams()
-  const showTxLoader = useStore((s) => s.showTxLoader)
+  const broadcastInitialized = useStore((s) => s.broadcastInitialized)
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
   const baseCurrency = useStore((s) => s.baseCurrency)
   const [slippage] = useLocalStorage<number>(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
@@ -27,9 +27,9 @@ export default function WithdrawFromVaultsModal() {
     useStore.setState({ withdrawFromVaultsModal: null })
   }
 
-  async function withdrawHandler() {
+  function withdrawHandler() {
     if (!accountId || !modal) return
-    await withdrawFromVaults({
+    withdrawFromVaults({
       accountId: accountId,
       vaults: modal,
       slippage,
@@ -88,7 +88,7 @@ export default function WithdrawFromVaultsModal() {
             )
           })}
           <Button
-            showProgressIndicator={showTxLoader}
+            showProgressIndicator={broadcastInitialized}
             onClick={withdrawHandler}
             className='w-full mt-4'
             text='Withdraw from all'

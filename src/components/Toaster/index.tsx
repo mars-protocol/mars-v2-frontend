@@ -3,6 +3,7 @@ import { ReactNode } from 'react'
 import { toast as createToast, Slide, ToastContainer } from 'react-toastify'
 import { mutate } from 'swr'
 
+import { CircularProgress } from 'components/CircularProgress'
 import { CheckCircled, Cross, CrossCircled, ExternalLink } from 'components/Icons'
 import Text from 'components/Text'
 import { TextLink } from 'components/TextLink'
@@ -14,6 +15,15 @@ import useTransactionStore from 'hooks/useTransactionStore'
 import useStore from 'store'
 import { formatAmountWithSymbol } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+
+const toastBodyClasses = classNames(
+  'relative isolate m-0 flex w-full flex-wrap rounded-sm p-4 shadow-overlay backdrop-blur-lg',
+  'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-sm before:p-[1px] before:border-glas',
+)
+
+function isPromise(object: any): object is ToastPending {
+  return 'promise' in object
+}
 
 export function generateToastContent(content: ToastSuccess['content']): ReactNode {
   return content.map((item, index) => (
@@ -41,18 +51,43 @@ export function generateToastContent(content: ToastSuccess['content']): ReactNod
 export default function Toaster() {
   const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
   const toast = useStore((s) => s.toast)
-  const isError = toast?.isError
   const { addTransaction } = useTransactionStore()
 
-  if (toast) {
+  const handlePending = (toast: ToastPending) => {
+    const Content = () => (
+      <div className={classNames(toastBodyClasses, 'bg-info-bg/20')}>
+        <div className='flex items-center w-full gap-2 mb-2'>
+          <div className='rounded-sm p-1.5 pt-1 bg-info w-7 h-7'>
+            <CircularProgress size={16} />
+          </div>
+          <Text className='flex items-center font-bold text-info'>Pending Transaction</Text>
+        </div>
+        <Text size='sm' className='w-full text-white'>
+          Approve the transaction
+          <br />
+          and wait for its confirmation.
+        </Text>
+      </div>
+    )
+
+    const pendingToast = createToast(Content, {
+      toastId: toast.id,
+      icon: false,
+      draggable: false,
+      closeOnClick: false,
+      hideProgressBar: true,
+      autoClose: false,
+    })
+
+    toast.promise.then(() => createToast.dismiss(pendingToast))
+  }
+
+  const handleResponse = (toast: ToastResponse) => {
+    const isError = toast?.isError
     if (!isError) addTransaction(toast)
     const Msg = () => (
       <div
-        className={classNames(
-          'relative isolate m-0 flex w-full flex-wrap rounded-sm p-6 shadow-overlay backdrop-blur-lg',
-          'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-sm before:p-[1px] before:border-glas',
-          isError ? 'bg-error-bg/20' : 'bg-success-bg/20',
-        )}
+        className={classNames(toastBodyClasses, isError ? 'bg-error-bg/20' : 'bg-success-bg/20')}
       >
         <div className='flex w-full gap-2 mb-4'>
           <div className={classNames('rounded-sm p-1.5', isError ? 'bg-error' : 'bg-success')}>
@@ -94,7 +129,7 @@ export default function Toaster() {
             </TextLink>
           </div>
         )}
-        <div className='absolute right-6 top-8 '>
+        <div className='absolute right-4 top-4 '>
           <Cross className={classNames('h-2 w-2', isError ? 'text-error' : 'text-success')} />
         </div>
       </div>
@@ -104,6 +139,7 @@ export default function Toaster() {
       icon: false,
       draggable: false,
       closeOnClick: true,
+      autoClose: 5000,
       progressClassName: classNames('h-[1px] bg-none', isError ? 'bg-error' : 'bg-success'),
     })
 
@@ -111,13 +147,20 @@ export default function Toaster() {
     mutate(() => true)
   }
 
+  if (toast) {
+    if (isPromise(toast)) {
+      handlePending(toast)
+    } else {
+      handleResponse(toast)
+    }
+  }
+
   return (
     <ToastContainer
-      autoClose={5000}
       closeButton={false}
       position='top-right'
       newestOnTop
-      closeOnClick
+      closeOnClick={false}
       transition={reduceMotion ? undefined : Slide}
       className='p-0'
       toastClassName='top-[73px] z-20 m-0 mb-4 flex w-full bg-transparent p-0'
