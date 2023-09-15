@@ -43,8 +43,9 @@ export default function useDepositVault(props: Props): {
   )
 
   const { primaryCoin, secondaryCoin, totalValue } = useMemo(
-    () => getVaultDepositCoinsAndValue(props.vault, deposits, borrowings, reclaims, prices),
-    [reclaims, deposits, borrowings, props.vault, prices],
+    () =>
+      getVaultDepositCoinsAndValue(props.vault, deposits, borrowings, reclaims, prices, slippage),
+    [props.vault, deposits, borrowings, reclaims, prices, slippage],
   )
 
   const reclaimActions: Action[] = useMemo(() => {
