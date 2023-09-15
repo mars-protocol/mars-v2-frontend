@@ -9,7 +9,10 @@ import DesktopHeader from 'components/Header/DesktopHeader'
 import ModalsContainer from 'components/Modals/ModalsContainer'
 import PageMetadata from 'components/PageMetadata'
 import Toaster from 'components/Toaster'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { REDUCE_MOTION_KEY } from 'constants/localStore'
 import useCurrentAccount from 'hooks/useCurrentAccount'
+import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 
 interface Props {
@@ -38,6 +41,8 @@ function PageContainer(props: Props) {
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
   const focusComponent = useStore((s) => s.focusComponent)
+  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
+  const accountDetailsExpanded = useStore((s) => s.accountDetailsExpanded)
   const isFullWidth = location.pathname.includes('trade') || location.pathname === '/'
   const account = useCurrentAccount()
 
@@ -52,7 +57,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           'lg:mt-[65px]',
           'min-h-screen gap-6 px-4 py-6 w-full relative',
           'flex',
-          account && 'pr-24',
+          isFullWidth && account && (accountDetailsExpanded ? 'pr-110.5' : 'pr-24'),
+          !reduceMotion && 'transition-all duration-300',
           'justify-center',
           focusComponent && 'items-center',
           isMobile && 'items-start',

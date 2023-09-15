@@ -20,7 +20,6 @@ import useHealthComputer from 'hooks/useHealthComputer'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
-import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import {
@@ -47,7 +46,7 @@ function AccountDetails(props: Props) {
   const { account } = props
   const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
   const updatedAccount = useStore((s) => s.updatedAccount)
-  const [isExpanded, setIsExpanded] = useToggle()
+  const accountDetailsExpanded = useStore((s) => s.accountDetailsExpanded)
   const { health } = useHealthComputer(account)
   const { health: updatedHealth } = useHealthComputer(updatedAccount || account)
   const { data: prices } = usePrices()
@@ -86,7 +85,7 @@ function AccountDetails(props: Props) {
     <div
       data-testid='account-details'
       className={classNames(
-        isExpanded ? 'right-5' : '-right-80',
+        accountDetailsExpanded ? 'right-6.5' : '-right-80',
         'w-100 flex items-start gap-4 absolute top-6',
         !reduceMotion && 'transition-all duration-300',
       )}
@@ -99,7 +98,7 @@ function AccountDetails(props: Props) {
           !reduceMotion && 'transition-colors duration-300',
           'hover:bg-white/10 hover:cursor-pointer ',
         )}
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={() => useStore.setState({ accountDetailsExpanded: !accountDetailsExpanded })}
       >
         <div className='flex flex-wrap justify-center w-full py-4'>
           <HealthGauge health={health} updatedHealth={updatedHealth} />
@@ -138,7 +137,7 @@ function AccountDetails(props: Props) {
             'group-hover:opacity-100',
           )}
         >
-          {isExpanded ? <Cross className='w-2' /> : <ThreeDots className='h-1' />}
+          {accountDetailsExpanded ? <Cross className='w-2' /> : <ThreeDots className='h-1' />}
         </div>
 
         {glowElement(!reduceMotion)}

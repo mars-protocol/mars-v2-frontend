@@ -7,6 +7,7 @@ interface CommonSlice {
   selectedAccount: string | null
   updatedAccount?: Account
   focusComponent: FocusComponent | null
+  accountDetailsExpanded: boolean
 }
 
 interface FocusComponent {

@@ -204,9 +204,11 @@ module.exports = {
         '2xl': '1920px',
       },
       spacing: {
+        6.5: '26px',
         24: '96px',
         35: '140px',
         80: '320px',
+        110.5: '442px',
       },
       transitionDuration: {
         3000: '3000ms',
