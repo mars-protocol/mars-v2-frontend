@@ -5,7 +5,7 @@ import getAccounts from 'api/wallets/getAccounts'
 export default function useAccounts(address?: string) {
   return useSWR(`accounts${address}`, () => getAccounts(address || ''), {
     suspense: true,
-    isPaused: () => !address,
+    fallbackData: [],
     revalidateOnFocus: false,
   })
 }

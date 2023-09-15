@@ -7,7 +7,8 @@ import useStore from 'store'
 
 function Content() {
   const address = useStore((s) => s.address)
-  const { data: accounts } = useAccounts(address)
+  const { data: accounts, isLoading } = useAccounts(address)
+  if (isLoading) return <Loading className='h-8 w-35' />
   if (!accounts) return null
   return <AccountMenuContent accounts={accounts} />
 }

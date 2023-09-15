@@ -1,7 +1,5 @@
 import { ChainInfoID, WalletID } from 'types/enums/wallet'
 
-export const EMPTY_WALLET = 'osmo1un9vye2mlk0cxhe59x264n3r0h8rsr2wuj2x25'
-
 export const WALLETS: WalletInfos = {
   [WalletID.Cosmostation]: {
     name: 'Cosmostation Wallet',
