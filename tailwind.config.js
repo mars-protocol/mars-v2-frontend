@@ -139,6 +139,7 @@ module.exports = {
         4.5: '18px',
         15: '60px',
         55: '220px',
+        70: '280px',
       },
       hueRotate: {
         '-82': '-82deg',

@@ -12,7 +12,6 @@ interface Props {
 
 export default function UnlockModalContent(props: Props) {
   const unlock = useStore((s) => s.unlock)
-  const broadcastInitialized = useStore((s) => s.broadcastInitialized)
   const { accountId } = useParams()
 
   function onConfirm() {
@@ -38,7 +37,6 @@ export default function UnlockModalContent(props: Props) {
           className='px-6'
           rightIcon={<YesIcon />}
           onClick={onConfirm}
-          showProgressIndicator={broadcastInitialized}
         />
         <Button
           text='No'
@@ -47,7 +45,6 @@ export default function UnlockModalContent(props: Props) {
           rightIcon={<NoIcon />}
           tabIndex={1}
           onClick={props.onClose}
-          disabled={broadcastInitialized}
         />
       </div>
     </>

@@ -26,7 +26,6 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
   const lend = useStore((s) => s.lend)
   const reclaim = useStore((s) => s.reclaim)
   const { close } = useLendAndReclaimModal()
-  const broadcastInitialized = useStore((s) => s.broadcastInitialized)
   const { simulateLending } = useUpdatedAccount(currentAccount)
 
   const { data, action } = config
@@ -67,7 +66,6 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
       contentHeader={<DetailsHeader data={data} />}
       coinBalances={coinBalances}
       actionButtonText={actionText}
-      showProgressIndicator={broadcastInitialized}
       title={`${actionText} ${asset.symbol}`}
       onClose={close}
       onAction={handleAction}

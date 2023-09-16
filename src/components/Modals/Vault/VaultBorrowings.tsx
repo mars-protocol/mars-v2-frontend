@@ -40,7 +40,6 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   const { data: prices } = usePrices()
   const vaultModal = useStore((s) => s.vaultModal)
   const depositIntoVault = useStore((s) => s.depositIntoVault)
-  const broadcastInitialized = useStore((s) => s.broadcastInitialized)
   const updatedAccount = useStore((s) => s.updatedAccount)
   const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
   const [percentage, setPercentage] = useState<number>(0)
@@ -171,13 +170,10 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
             maxText='Max Borrow'
             onChange={(amount) => updateAssets(coin.denom, amount)}
             onDelete={() => onDelete(coin.denom)}
-            disabled={broadcastInitialized}
           />
         )
       })}
-      {props.borrowings.length === 1 && (
-        <Slider onChange={onChangeSlider} value={percentage} disabled={broadcastInitialized} />
-      )}
+      {props.borrowings.length === 1 && <Slider onChange={onChangeSlider} value={percentage} />}
       {props.borrowings.length === 0 && (
         <div className='flex items-center gap-4 py-2'>
           <div className='w-4'>
@@ -190,12 +186,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
         </div>
       )}
 
-      <Button
-        text='Select borrow assets +'
-        color='tertiary'
-        onClick={addAsset}
-        disabled={broadcastInitialized}
-      />
+      <Button text='Select borrow assets +' color='tertiary' onClick={addAsset} />
 
       <DepositCapMessage
         action='deposit'
@@ -231,7 +222,6 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
         color='primary'
         text='Deposit'
         rightIcon={<ArrowRight />}
-        showProgressIndicator={broadcastInitialized}
         disabled={!props.depositActions.length || props.depositCapReachedCoins.length > 0}
       />
     </div>

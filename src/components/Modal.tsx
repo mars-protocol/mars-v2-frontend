@@ -24,7 +24,6 @@ export default function Modal(props: Props) {
 
   function onClose() {
     ref.current?.close()
-    useStore.setState({ broadcastInitialized: false })
     props.onClose()
   }
 
@@ -39,7 +38,6 @@ export default function Modal(props: Props) {
     return () => {
       dialog?.removeAttribute('open')
       dialog?.close()
-      useStore.setState({ broadcastInitialized: false })
       document.body.classList.remove('h-screen', 'overflow-hidden')
     }
   }, [])

@@ -6,8 +6,11 @@ import { ChevronDown, ChevronRight } from 'components/Icons'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
 import { BN_ZERO } from 'constants/math'
+import useMarketAssets from 'hooks/useMarketAssets'
 import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
 import { formatValue } from 'utils/formatters'
+import { convertAprToApy } from 'utils/parsers'
 
 interface Props extends SelectOption {
   isSelected?: boolean
@@ -19,6 +22,7 @@ interface Props extends SelectOption {
 
 export default function Option(props: Props) {
   const isCoin = !!props.denom
+  const { data: marketAssets } = useMarketAssets()
 
   function handleOnClick(value: string | undefined) {
     if (!props.onClick || !value) return
@@ -28,6 +32,7 @@ export default function Option(props: Props) {
   if (isCoin) {
     const asset = ASSETS.find((asset) => asset.denom === props.denom) ?? ASSETS[0]
     const balance = props.amount ?? BN_ZERO
+    const marketAsset = marketAssets.find(byDenom(asset.denom))
 
     if (props.isDisplay) {
       return (
@@ -74,7 +79,12 @@ export default function Option(props: Props) {
           })}
         </Text>
         <Text size='sm' className='col-span-2 text-white/50'>
-          {formatValue(5, { maxDecimals: 2, minDecimals: 0, prefix: 'APY ', suffix: '%' })}
+          {formatValue(convertAprToApy((marketAsset?.borrowRate ?? 0) * 100, 365), {
+            maxDecimals: 2,
+            minDecimals: 0,
+            prefix: 'APY ',
+            suffix: '%',
+          })}
         </Text>
         <DisplayCurrency
           className='col-span-2 text-sm text-right text-white/50'

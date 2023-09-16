@@ -19,7 +19,6 @@ interface Props {
   coinBalances: Coin[]
   actionButtonText: string
   contentHeader?: JSX.Element
-  showProgressIndicator: boolean
   onClose: () => void
   onChange: (value: BigNumber) => void
   onAction: (value: BigNumber, isMax: boolean) => void
@@ -32,7 +31,6 @@ export default function AssetAmountSelectActionModal(props: Props) {
     coinBalances,
     actionButtonText,
     contentHeader = null,
-    showProgressIndicator,
     onClose,
     onChange,
     onAction,
@@ -77,12 +75,10 @@ export default function AssetAmountSelectActionModal(props: Props) {
             max={maxAmount}
             hasSelect
             maxText='Max'
-            disabled={showProgressIndicator}
           />
           <Divider />
           <Button
             onClick={handleActionClick}
-            showProgressIndicator={showProgressIndicator}
             disabled={!amount.toNumber()}
             className='w-full'
             text={actionButtonText}

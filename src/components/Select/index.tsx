@@ -104,18 +104,24 @@ export default function Select(props: Props) {
                 {props.title}
               </Text>
             )}
-            {props.options.map((option: SelectOption, index: number) => (
-              <Option
-                key={index}
-                {...option}
-                isSelected={
-                  option?.value
-                    ? option?.value === selected?.value
-                    : option?.denom === selected?.denom
-                }
-                onClick={handleChange}
-              />
-            ))}
+            <div className='w-full overflow-y-scroll h-70 scrollbar-hide'>
+              {props.options
+                .sort((a, b) =>
+                  (a.amount?.toNumber() ?? 0) > (b.amount?.toNumber() ?? 0) ? -1 : 1,
+                )
+                .map((option: SelectOption, index: number) => (
+                  <Option
+                    key={index}
+                    {...option}
+                    isSelected={
+                      option?.value
+                        ? option?.value === selected?.value
+                        : option?.denom === selected?.denom
+                    }
+                    onClick={handleChange}
+                  />
+                ))}
+            </div>
           </div>
         </Overlay>
       </div>

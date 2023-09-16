@@ -18,7 +18,6 @@ import { demagnify } from 'utils/formatters'
 export default function WithdrawFromVaultsModal() {
   const modal = useStore((s) => s.withdrawFromVaultsModal)
   const { accountId } = useParams()
-  const broadcastInitialized = useStore((s) => s.broadcastInitialized)
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
   const baseCurrency = useStore((s) => s.baseCurrency)
   const [slippage] = useLocalStorage<number>(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
@@ -87,12 +86,7 @@ export default function WithdrawFromVaultsModal() {
               </div>
             )
           })}
-          <Button
-            showProgressIndicator={broadcastInitialized}
-            onClick={withdrawHandler}
-            className='w-full mt-4'
-            text='Withdraw from all'
-          />
+          <Button onClick={withdrawHandler} className='w-full mt-4' text='Withdraw from all' />
         </div>
       ) : (
         <CircularProgress />

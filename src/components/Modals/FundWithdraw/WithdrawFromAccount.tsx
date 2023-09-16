@@ -28,7 +28,6 @@ export default function WithdrawFromAccount(props: Props) {
     ASSETS.find(byDenom(account.deposits[0]?.denom || account.lends[0]?.denom)) ?? ASSETS[0]
   const withdraw = useStore((s) => s.withdraw)
   const [withdrawWithBorrowing, setWithdrawWithBorrowing] = useToggle()
-  const broadcastInitialized = useStore((s) => s.broadcastInitialized)
   const [currentAsset, setCurrentAsset] = useState(defaultAsset)
   const [amount, setAmount] = useState(BN_ZERO)
   const { simulateWithdraw } = useUpdatedAccount(account)
@@ -56,12 +55,6 @@ export default function WithdrawFromAccount(props: Props) {
     setAmount(val)
   }
 
-  function resetState() {
-    setCurrentAsset(defaultAsset)
-    setAmount(BN_ZERO)
-    onChangeAmount(BN_ZERO)
-  }
-
   function onConfirm() {
     const coins = [
       {
@@ -86,8 +79,6 @@ export default function WithdrawFromAccount(props: Props) {
       borrow,
       reclaims,
     })
-
-    resetState()
     useStore.setState({ fundAndWithdrawModal: null })
   }
 
@@ -121,7 +112,6 @@ export default function WithdrawFromAccount(props: Props) {
           accountId={account.id}
           hasSelect
           maxText='Max'
-          disabled={broadcastInitialized}
         />
         <Divider className='my-6' />
         <div className='flex flex-wrap w-full'>
@@ -136,18 +126,11 @@ export default function WithdrawFromAccount(props: Props) {
               name='borrow-to-wallet'
               checked={withdrawWithBorrowing}
               onChange={setWithdrawWithBorrowing}
-              disabled={broadcastInitialized}
             />
           </div>
         </div>
       </div>
-      <Button
-        onClick={onConfirm}
-        showProgressIndicator={broadcastInitialized}
-        className='w-full'
-        text={'Withdraw'}
-        rightIcon={<ArrowRight />}
-      />
+      <Button onClick={onConfirm} className='w-full' text={'Withdraw'} rightIcon={<ArrowRight />} />
     </>
   )
 }

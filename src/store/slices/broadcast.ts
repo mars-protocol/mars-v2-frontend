@@ -153,7 +153,6 @@ export default function createBroadcastSlice(
 
   return {
     toast: null,
-    broadcastInitialized: false,
     borrow: async (options: { accountId: string; coin: BNCoin; borrowToWallet: boolean }) => {
       const borrowAction: Action = { borrow: options.coin.toCoin() }
       const withdrawAction: Action = { withdraw: options.coin.toActionCoin() }
@@ -673,7 +672,6 @@ export default function createBroadcastSlice(
       try {
         const client = get().client
         if (!client) return { error: 'no client detected' }
-        set({ broadcastInitialized: true })
         const fee = await getEstimatedFee(options.messages)
         const broadcastOptions = {
           messages: options.messages,
@@ -684,7 +682,6 @@ export default function createBroadcastSlice(
           mobile: isMobile,
         }
         const result = await client.broadcast(broadcastOptions)
-        set({ broadcastInitialized: false })
         if (result.hash) {
           return { result }
         }
