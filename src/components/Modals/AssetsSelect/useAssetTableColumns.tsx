@@ -1,7 +1,8 @@
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
-import AssetImage from 'components/AssetImage'
+import AssetImage from 'components/Asset/AssetImage'
+import AssetRate from 'components/Asset/AssetRate'
 import Checkbox from 'components/Checkbox'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
@@ -19,6 +20,7 @@ export default function useAssetTableColumns() {
         id: 'symbol',
         cell: ({ row }) => {
           const asset = getAssetByDenom(row.original.asset.denom) as Asset
+          const market = row.original.market
           return (
             <div className='flex items-center'>
               <Checkbox checked={row.getIsSelected()} onChange={row.getToggleSelectedHandler()} />
@@ -27,7 +29,18 @@ export default function useAssetTableColumns() {
                 <Text size='sm' className='mb-0.5 text-white'>
                   {asset.symbol}
                 </Text>
-                <Text size='xs'>{asset.name}</Text>
+                {market ? (
+                  <AssetRate
+                    apr={market.borrowRate * 100}
+                    isEnabled={market.borrowEnabled}
+                    className='text-xs'
+                    type='apy'
+                    orientation='rtl'
+                    suffix
+                  />
+                ) : (
+                  <Text size='xs'>{asset.name}</Text>
+                )}
               </div>
             </div>
           )

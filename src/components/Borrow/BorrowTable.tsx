@@ -2,7 +2,7 @@ import { ColumnDef, Row, Table } from '@tanstack/react-table'
 import { useCallback, useMemo } from 'react'
 
 import AmountAndValue from 'components/AmountAndValue'
-import AssetImage from 'components/AssetImage'
+import AssetImage from 'components/Asset/AssetImage'
 import BorrowActionButtons from 'components/Borrow/BorrowActionButtons'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { ChevronDown, ChevronUp } from 'components/Icons'
@@ -11,8 +11,8 @@ import AssetListTable from 'components/MarketAssetTable'
 import MarketAssetTableRow from 'components/MarketAssetTable/MarketAssetTableRow'
 import MarketDetails from 'components/MarketAssetTable/MarketDetails'
 import TitleAndSubCell from 'components/TitleAndSubCell'
-import { getEnabledMarketAssets } from 'utils/assets'
 import { BN_ZERO } from 'constants/math'
+import { getEnabledMarketAssets } from 'utils/assets'
 
 interface Props {
   title: string

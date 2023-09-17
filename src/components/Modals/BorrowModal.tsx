@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import AccountSummary from 'components/Account/AccountSummary'
-import AssetImage from 'components/AssetImage'
+import AssetImage from 'components/Asset/AssetImage'
 import Button from 'components/Button'
 import Card from 'components/Card'
 import DisplayCurrency from 'components/DisplayCurrency'

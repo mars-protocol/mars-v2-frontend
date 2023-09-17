@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 
-import AssetImage from 'components/AssetImage'
+import AssetImage from 'components/Asset/AssetImage'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { ChevronDown, ChevronRight } from 'components/Icons'
 import Text from 'components/Text'

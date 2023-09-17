@@ -14,6 +14,7 @@ import useAssetTableColumns from 'components/Modals/AssetsSelect/useAssetTableCo
 import Text from 'components/Text'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
+import useMarketAssets from 'hooks/useMarketAssets'
 
 interface Props {
   assets: Asset[] | BorrowAsset[]
@@ -22,6 +23,7 @@ interface Props {
 }
 
 export default function AssetSelectTable(props: Props) {
+  const { data: markets } = useMarketAssets()
   const defaultSelected = useMemo(() => {
     const assets = props.assets as BorrowAsset[]
     return assets.reduce(
@@ -44,6 +46,7 @@ export default function AssetSelectTable(props: Props) {
       return {
         asset,
         balance: balancesForAsset?.amount ?? '0',
+        market: markets.find((market) => market.denom === asset.denom),
       }
     })
   }, [balances, props.assets])
