@@ -10,6 +10,7 @@ import Text from 'components/Text'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getAssetByDenom } from 'utils/assets'
 import { demagnify, formatPercent } from 'utils/formatters'
+import { convertAprToApy } from 'utils/parsers'
 
 function showBorrowRate(data: AssetTableRow[]) {
   const assetData = data.length && (data[0].asset as BorrowAsset)
@@ -38,7 +39,7 @@ export default function useAssetTableColumns() {
                 </Text>
                 {showRate && market ? (
                   <AssetRate
-                    apr={market.borrowRate * 100}
+                    rate={convertAprToApy(market.borrowRate * 100, 365)}
                     isEnabled={market.borrowEnabled}
                     className='text-xs'
                     type='apy'

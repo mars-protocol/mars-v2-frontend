@@ -85,7 +85,7 @@ export default function LendingMarketsTable(props: Props) {
         cell: ({ row }) => {
           return (
             <AssetRate
-              apr={convertLiquidityRateToAPR(row.original.marketLiquidityRate)}
+              rate={convertLiquidityRateToAPR(row.original.marketLiquidityRate)}
               isEnabled={row.original.borrowEnabled}
               className='justify-end text-xs'
               type='apr'

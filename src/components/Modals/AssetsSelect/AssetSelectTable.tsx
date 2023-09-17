@@ -12,9 +12,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
 import useAssetTableColumns from 'components/Modals/AssetsSelect/useAssetTableColumns'
 import Text from 'components/Text'
+import useMarketAssets from 'hooks/useMarketAssets'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
-import useMarketAssets from 'hooks/useMarketAssets'
 
 interface Props {
   assets: Asset[] | BorrowAsset[]
@@ -49,7 +49,7 @@ export default function AssetSelectTable(props: Props) {
         market: markets.find((market) => market.denom === asset.denom),
       }
     })
-  }, [balances, props.assets])
+  }, [balances, props.assets, markets])
 
   const table = useReactTable({
     data: tableData,

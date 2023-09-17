@@ -1,12 +1,12 @@
 import classNames from 'classnames'
 
 import { FormattedNumber } from 'components/FormattedNumber'
+import { InfoCircle } from 'components/Icons'
 import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
-import { convertAprToApy } from 'utils/parsers'
 
 interface Props {
-  apr: number
+  rate: number
   isEnabled: boolean
   type: 'apy' | 'apr'
   orientation: 'ltr' | 'rtl'
@@ -24,14 +24,14 @@ function RateTooltip(props: TooltipProps) {
       content='This asset cannot be borrowed, and thus does not currently generate yield when lending.'
       type='info'
       className={props.orientation === 'ltr' ? 'mr-1' : 'ml-1'}
-    />
+    >
+      <InfoCircle className='w-4 h-4' />
+    </Tooltip>
   )
 }
 
 export default function AssetRate(props: Props) {
-  const { apr, isEnabled, type, orientation, className } = props
-
-  const rate = type === 'apy' ? convertAprToApy(apr, 365) : apr
+  const { rate, isEnabled, type, orientation, className } = props
   const suffix = type === 'apy' ? 'APY' : 'APR'
 
   if (!isEnabled)
