@@ -48,10 +48,6 @@ export default function RewardsCenter() {
   const [isConfirming, setIsConfirming] = useState(false)
   const [estimatedFee, setEstimatedFee] = useState(defaultFee)
   const [showRewardsCenter, setShowRewardsCenter] = useToggle()
-  const [displayCurrency] = useLocalStorage<string>(
-    DISPLAY_CURRENCY_KEY,
-    DEFAULT_SETTINGS.displayCurrency,
-  )
   const claimRewards = useStore((s) => s.claimRewards)
   const { data: prices } = usePrices()
   const { data: unclaimedRewards } = useUnclaimedRewards()

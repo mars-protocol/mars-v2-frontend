@@ -11,6 +11,11 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { getAssetByDenom } from 'utils/assets'
 import { demagnify, formatPercent } from 'utils/formatters'
 
+function showBorrowRate(data: AssetTableRow[]) {
+  const assetData = data.length && (data[0].asset as BorrowAsset)
+  return !!(assetData && assetData?.borrowRate)
+}
+
 export default function useAssetTableColumns() {
   return React.useMemo<ColumnDef<AssetTableRow>[]>(
     () => [
@@ -21,6 +26,8 @@ export default function useAssetTableColumns() {
         cell: ({ row }) => {
           const asset = getAssetByDenom(row.original.asset.denom) as Asset
           const market = row.original.market
+          const borrowAsset = row.original.asset as BorrowAsset
+          const showRate = !borrowAsset?.borrowRate
           return (
             <div className='flex items-center'>
               <Checkbox checked={row.getIsSelected()} onChange={row.getToggleSelectedHandler()} />
@@ -29,7 +36,7 @@ export default function useAssetTableColumns() {
                 <Text size='sm' className='mb-0.5 text-white'>
                   {asset.symbol}
                 </Text>
-                {market ? (
+                {showRate && market ? (
                   <AssetRate
                     apr={market.borrowRate * 100}
                     isEnabled={market.borrowEnabled}
@@ -50,8 +57,7 @@ export default function useAssetTableColumns() {
         id: 'details',
         header: (data) => {
           const tableData = data.table.options.data as AssetTableRow[]
-          const assetData = tableData.length && (tableData[0].asset as BorrowAsset)
-          if (assetData && assetData?.borrowRate) return 'Borrow Rate'
+          if (showBorrowRate(tableData)) return 'Borrow Rate'
           return 'Balance'
         },
         cell: ({ row }) => {
