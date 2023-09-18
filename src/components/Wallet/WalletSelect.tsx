@@ -2,6 +2,7 @@ import { useShuttle } from '@delphi-labs/shuttle-react'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import QRCode from 'react-qr-code'
+import moment from 'moment'
 
 import Button from 'components/Button'
 import FullOverlayContent from 'components/FullOverlayContent'
@@ -104,6 +105,7 @@ export default function WalletSelect(props: Props) {
     if (error?.message && error?.title) {
       useStore.setState({
         toast: {
+          id: moment.now(),
           isError: true,
           title: error.title,
           message: error.message,

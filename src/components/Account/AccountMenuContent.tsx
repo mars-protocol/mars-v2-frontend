@@ -57,7 +57,7 @@ export default function AccountMenuContent(props: Props) {
   }, [transactionFeeCoinBalance])
 
   const performCreateAccount = useCallback(async () => {
-    setShowMenu(true)
+    setShowMenu(false)
     setIsCreating(true)
     const accountId = await createAccount()
     setIsCreating(false)

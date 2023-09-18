@@ -12,6 +12,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
 import useAssetTableColumns from 'components/Modals/AssetsSelect/useAssetTableColumns'
 import Text from 'components/Text'
+import useMarketAssets from 'hooks/useMarketAssets'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 
@@ -22,6 +23,7 @@ interface Props {
 }
 
 export default function AssetSelectTable(props: Props) {
+  const { data: markets } = useMarketAssets()
   const defaultSelected = useMemo(() => {
     const assets = props.assets as BorrowAsset[]
     return assets.reduce(
@@ -44,9 +46,10 @@ export default function AssetSelectTable(props: Props) {
       return {
         asset,
         balance: balancesForAsset?.amount ?? '0',
+        market: markets.find((market) => market.denom === asset.denom),
       }
     })
-  }, [balances, props.assets])
+  }, [balances, props.assets, markets])
 
   const table = useReactTable({
     data: tableData,
@@ -79,7 +82,7 @@ export default function AssetSelectTable(props: Props) {
       <thead className='border-b border-white/5'>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header, index) => {
+            {headerGroup.headers.map((header) => {
               return (
                 <th
                   key={header.id}

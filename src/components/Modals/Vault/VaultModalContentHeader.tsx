@@ -17,6 +17,8 @@ export default function VaultModalContentHeader({ vault }: Props) {
     if ('values' in vault) {
       const value = vault.values.primary
         .plus(vault.values.secondary)
+        .plus(vault.values.unlocked)
+        .plus(vault.values.unlocking)
         .shiftedBy(-PRICE_ORACLE_DECIMALS)
 
       // To eliminate super small leftover amounts

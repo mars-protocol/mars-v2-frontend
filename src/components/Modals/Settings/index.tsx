@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { useCallback, useMemo, useState } from 'react'
 
-import AssetImage from 'components/AssetImage'
+import AssetImage from 'components/Asset/AssetImage'
 import Button from 'components/Button'
 import { ArrowCircle, Enter } from 'components/Icons'
 import Modal from 'components/Modal'

@@ -41,11 +41,13 @@ export default function createBroadcastSlice(
   get: GetState<Store>,
 ): BroadcastSlice {
   const handleResponseMessages = (props: HandleResponseProps) => {
-    const { accountId, response, action, lend, changes, target, message } = props
+    const { id, accountId, response, action, lend, changes, target, message } = props
+    if (!response) return
 
     if (response.error || response.result?.response.code !== 0) {
       set({
         toast: {
+          id,
           message: generateErrorMessage(response),
           isError: true,
           hash: response.result?.hash,
@@ -55,6 +57,7 @@ export default function createBroadcastSlice(
     }
 
     const toast: ToastResponse = {
+      id,
       accountId: accountId,
       isError: false,
       hash: response?.result?.hash,
@@ -152,7 +155,6 @@ export default function createBroadcastSlice(
 
   return {
     toast: null,
-    showTxLoader: false,
     borrow: async (options: { accountId: string; coin: BNCoin; borrowToWallet: boolean }) => {
       const borrowAction: Action = { borrow: options.coin.toCoin() }
       const withdrawAction: Action = { withdraw: options.coin.toActionCoin() }
@@ -174,48 +176,45 @@ export default function createBroadcastSlice(
           lend: { denom: options.coin.denom, amount: 'account_balance' },
         })
       }
-      const response = await get().executeMsg({
+      const response = get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
 
-      handleResponseMessages({
+      get().setToast({
         response,
-        action: 'borrow',
-        lend: checkAutoLendEnabled(options.accountId),
-        target: options.borrowToWallet ? 'wallet' : 'account',
-        accountId: options.accountId,
-        changes: { debts: [options.coin] },
+        options: {
+          action: 'borrow',
+          lend: checkAutoLendEnabled(options.accountId),
+          target: options.borrowToWallet ? 'wallet' : 'account',
+          accountId: options.accountId,
+          changes: { debts: [options.coin] },
+        },
       })
 
-      return !!response.result
+      return response.then((response) => !!response.result)
     },
     createAccount: async () => {
       const msg: CreditManagerExecuteMsg = {
         create_credit_account: 'default',
       }
 
-      const response = await get().executeMsg({
+      const response = get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
 
-      set({ createAccountModal: false })
-      const id = response.result
-        ? getSingleValueFromBroadcastResult(response.result, 'wasm', 'token_id')
-        : null
-
-      handleResponseMessages({
+      get().setToast({
         response,
-        action: 'create',
-        accountId: id ?? undefined,
-        message: id ? `Created the Credit Account` : undefined,
+        options: {
+          action: 'create',
+          message: `Created the Credit Account`,
+        },
       })
 
-      if (id)
-        set({
-          fundAccountModal: true,
-        })
-
-      return id
+      return response.then((response) =>
+        response.result
+          ? getSingleValueFromBroadcastResult(response.result, 'wasm', 'token_id')
+          : null,
+      )
     },
     deleteAccount: async (options: { accountId: string; lends: BNCoin[] }) => {
       const reclaimMsg = options.lends.map((coin) => {
@@ -237,21 +236,23 @@ export default function createBroadcastSlice(
         },
       }
 
-      const response = await get().executeMsg({
+      const response = get().executeMsg({
         messages: [
           generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, refundMessage, []),
           generateExecutionMessage(get().address, ENV.ADDRESS_ACCOUNT_NFT, burnMessage, []),
         ],
       })
 
-      handleResponseMessages({
+      get().setToast({
         response,
-        action: 'delete',
-        accountId: options.accountId,
-        message: `Deleted the Credit Account`,
+        options: {
+          action: 'delete',
+          accountId: options.accountId,
+          message: `Deleted the Credit Account`,
+        },
       })
 
-      return !!response.result
+      return response.then((response) => !!response.result)
     },
     claimRewards: (options: { accountId: string }) => {
       const msg: CreditManagerExecuteMsg = {
@@ -271,18 +272,20 @@ export default function createBroadcastSlice(
       const estimateFee = () => getEstimatedFee(messages)
 
       const execute = async () => {
-        const response = await get().executeMsg({
+        const response = get().executeMsg({
           messages,
         })
 
-        handleResponseMessages({
+        get().setToast({
           response,
-          action: 'create',
-          accountId: options.accountId,
-          message: `Claimed rewards`,
+          options: {
+            action: 'claim',
+            accountId: options.accountId,
+            message: `Claimed rewards`,
+          },
         })
 
-        return !!response.result
+        return response.then((response) => !!response.result)
       }
 
       return { estimateFee, execute }
@@ -307,19 +310,21 @@ export default function createBroadcastSlice(
 
       const funds = options.coins.map((coin) => coin.toCoin())
 
-      const response = await get().executeMsg({
+      const response = get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, funds)],
       })
 
-      handleResponseMessages({
+      get().setToast({
         response,
-        action: 'deposit',
-        lend: options.lend,
-        accountId: options.accountId,
-        changes: { deposits: options.coins },
+        options: {
+          action: 'deposit',
+          lend: options.lend,
+          accountId: options.accountId,
+          changes: { deposits: options.coins },
+        },
       })
 
-      return !!response.result
+      return response.then((response) => !!response.result)
     },
     unlock: async (options: { accountId: string; vault: DepositedVault; amount: string }) => {
       const msg: CreditManagerExecuteMsg = {
@@ -336,17 +341,20 @@ export default function createBroadcastSlice(
         },
       }
 
-      const response = await get().executeMsg({
+      const response = get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
 
-      handleResponseMessages({
+      get().setToast({
         response,
-        action: 'unlock',
-        accountId: options.accountId,
-        message: `Requested unlock for ${options.vault.name}`,
+        options: {
+          action: 'unlock',
+          accountId: options.accountId,
+          message: `Requested unlock for ${options.vault.name}`,
+        },
       })
-      return !!response.result
+
+      return response.then((response) => !!response.result)
     },
 
     withdrawFromVaults: async (options: {
@@ -391,18 +399,22 @@ export default function createBroadcastSlice(
         }
       }
 
-      const response = await get().executeMsg({
+      const response = get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
 
       const vaultsString = options.vaults.length === 1 ? 'vault' : 'vaults'
-      handleResponseMessages({
+
+      get().setToast({
         response,
-        action: 'withdraw',
-        accountId: options.accountId,
-        message: `Withdrew ${options.vaults.length} unlocked ${vaultsString} to the account`,
+        options: {
+          action: 'withdraw',
+          accountId: options.accountId,
+          message: `Withdrew ${options.vaults.length} unlocked ${vaultsString} to the account`,
+        },
       })
-      return !!response.result
+
+      return response.then((response) => !!response.result)
     },
     depositIntoVault: async (options: {
       accountId: string
@@ -418,20 +430,22 @@ export default function createBroadcastSlice(
         },
       }
 
-      const response = await get().executeMsg({
+      const response = get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
 
       const depositedCoins = getVaultDepositCoinsFromActions(options.actions)
 
-      handleResponseMessages({
+      get().setToast({
         response,
-        action: options.isCreate ? 'vaultCreate' : 'vault',
-        accountId: options.accountId,
-        changes: { deposits: depositedCoins },
+        options: {
+          action: options.isCreate ? 'vaultCreate' : 'vault',
+          accountId: options.accountId,
+          changes: { deposits: depositedCoins },
+        },
       })
 
-      return !!response.result
+      return response.then((response) => !!response.result)
     },
     withdraw: async (options: {
       accountId: string
@@ -456,19 +470,21 @@ export default function createBroadcastSlice(
         },
       }
 
-      const response = await get().executeMsg({
+      const response = get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
 
-      handleResponseMessages({
+      get().setToast({
         response,
-        action: 'withdraw',
-        target: 'wallet',
-        accountId: options.accountId,
-        changes: { deposits: options.coins.map((coin) => coin.coin) },
+        options: {
+          action: 'withdraw',
+          target: 'wallet',
+          accountId: options.accountId,
+          changes: { deposits: options.coins.map((coin) => coin.coin) },
+        },
       })
 
-      return !!response.result
+      return response.then((response) => !!response.result)
     },
     repay: async (options: {
       accountId: string
@@ -494,18 +510,20 @@ export default function createBroadcastSlice(
         },
       }
 
-      const response = await get().executeMsg({
+      const response = get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
 
-      handleResponseMessages({
+      get().setToast({
         response,
-        action: 'repay',
-        accountId: options.accountId,
-        changes: { deposits: [options.coin] },
+        options: {
+          action: 'repay',
+          accountId: options.accountId,
+          changes: { deposits: [options.coin] },
+        },
       })
 
-      return !!response.result
+      return response.then((response) => !!response.result)
     },
     lend: async (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => {
       const msg: CreditManagerExecuteMsg = {
@@ -519,18 +537,20 @@ export default function createBroadcastSlice(
         },
       }
 
-      const response = await get().executeMsg({
+      const response = get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
 
-      handleResponseMessages({
+      get().setToast({
         response,
-        action: 'lend',
-        accountId: options.accountId,
-        changes: { lends: [options.coin] },
+        options: {
+          action: 'lend',
+          accountId: options.accountId,
+          changes: { lends: [options.coin] },
+        },
       })
 
-      return !!response.result
+      return response.then((response) => !!response.result)
     },
     reclaim: async (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => {
       const msg: CreditManagerExecuteMsg = {
@@ -544,19 +564,21 @@ export default function createBroadcastSlice(
         },
       }
 
-      const response = await get().executeMsg({
+      const response = get().executeMsg({
         messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
       })
 
-      handleResponseMessages({
+      get().setToast({
         response,
-        action: 'withdraw',
-        target: 'account',
-        accountId: options.accountId,
-        changes: { deposits: [options.coin] },
+        options: {
+          action: 'withdraw',
+          target: 'account',
+          accountId: options.accountId,
+          changes: { deposits: [options.coin] },
+        },
       })
 
-      return !!response.result
+      return response.then((response) => !!response.result)
     },
     swap: (options: {
       accountId: string
@@ -600,31 +622,60 @@ export default function createBroadcastSlice(
       const estimateFee = () => getEstimatedFee(messages)
 
       const execute = async () => {
-        const response = await get().executeMsg({
+        const response = get().executeMsg({
           messages,
         })
 
-        const coinOut = getTokenOutFromSwapResponse(response, options.denomOut)
-        const successMessage = `Swapped ${formatAmountWithSymbol(
-          options.coinIn.toCoin(),
-        )} for ${formatAmountWithSymbol(coinOut)}`
+        const swapOptions = { denomOut: options.denomOut, coinIn: options.coinIn }
 
-        handleResponseMessages({
+        get().setToast({
           response,
-          action: 'swap',
-          message: successMessage,
-          accountId: options.accountId,
+          options: {
+            action: 'swap',
+            accountId: options.accountId,
+          },
+          swapOptions,
         })
-        return !!response.result
+
+        return response.then((response) => !!response.result)
       }
 
       return { estimateFee, execute }
+    },
+    setToast: (toast: ToastObject) => {
+      const id = moment().unix()
+      set({
+        toast: {
+          id,
+          promise: toast.response,
+        },
+      })
+
+      toast.response.then((response) => {
+        if (toast.options.action === 'create') {
+          toast.options.accountId =
+            getSingleValueFromBroadcastResult(response.result, 'wasm', 'token_id') ?? undefined
+        }
+
+        if (toast.options.action === 'swap' && toast.swapOptions) {
+          const coinOut = getTokenOutFromSwapResponse(response, toast.swapOptions.denomOut)
+          const successMessage = `Swapped ${formatAmountWithSymbol(
+            toast.swapOptions.coinIn.toCoin(),
+          )} for ${formatAmountWithSymbol(coinOut)}`
+          toast.options.message = successMessage
+        }
+
+        handleResponseMessages({
+          id,
+          response,
+          ...toast.options,
+        })
+      })
     },
     executeMsg: async (options: { messages: MsgExecuteContract[] }): Promise<BroadcastResult> => {
       try {
         const client = get().client
         if (!client) return { error: 'no client detected' }
-        set({ showTxLoader: true })
         const fee = await getEstimatedFee(options.messages)
         const broadcastOptions = {
           messages: options.messages,
@@ -634,9 +685,7 @@ export default function createBroadcastSlice(
           wallet: client.connectedWallet,
           mobile: isMobile,
         }
-
         const result = await client.broadcast(broadcastOptions)
-        set({ showTxLoader: false })
         if (result.hash) {
           return { result }
         }

@@ -11,6 +11,6 @@ interface CommonSlice {
 }
 
 interface FocusComponent {
-  component: ReactNode
+  component: import('react').JSX.Element | null
   onClose?: () => void
 }

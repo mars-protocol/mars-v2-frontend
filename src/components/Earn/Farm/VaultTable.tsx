@@ -105,7 +105,10 @@ export const VaultTable = (props: Props) => {
               header: 'Pos. Value',
               cell: ({ row }: { row: Row<DepositedVault | Vault> }) => {
                 const vault = row.original as DepositedVault
-                const positionValue = vault.values.primary.plus(vault.values.secondary)
+                const positionValue = vault.values.primary
+                  .plus(vault.values.secondary)
+                  .plus(vault.values.unlocking)
+                  .plus(vault.values.unlocked)
                 const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionValue)
                 return <DisplayCurrency coin={coin} className='text-xs' />
               },

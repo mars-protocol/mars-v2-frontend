@@ -76,10 +76,7 @@ async function getLpTokensForVaultPosition(
     const vaultQueryClient = await getVaultQueryClient(vault.address)
     const creditManagerQueryClient = await getCreditManagerQueryClient()
     const amounts = flatVaultPositionAmount(vaultPosition.amount)
-    const totalAmount = BN(amounts.locked)
-      .plus(BN(amounts.unlocked))
-      .plus(BN(amounts.unlocking))
-      .toString()
+    const totalAmount = amounts.locked.plus(amounts.unlocked).plus(amounts.unlocking).toString()
 
     const lpAmount = await vaultQueryClient.previewRedeem({
       amount: totalAmount,
@@ -115,15 +112,14 @@ async function getVaultValuesAndAmounts(
     const pricesQueries = Promise.all([
       getPrice(vault.denoms.primary),
       getPrice(vault.denoms.secondary),
+      getPrice(vault.denoms.lp),
     ])
 
     const lpTokensQuery = getLpTokensForVaultPosition(vault, vaultPosition)
     const amounts = flatVaultPositionAmount(vaultPosition.amount)
 
-    const [[primaryLpToken, secondaryLpToken], [primaryPrice, secondaryPrice]] = await Promise.all([
-      lpTokensQuery,
-      pricesQueries,
-    ])
+    const [[primaryLpToken, secondaryLpToken], [primaryPrice, secondaryPrice, lpPrice]] =
+      await Promise.all([lpTokensQuery, pricesQueries])
 
     return {
       amounts: {
@@ -137,6 +133,12 @@ async function getVaultValuesAndAmounts(
         ]),
         secondary: getCoinValue(new BNCoin(secondaryLpToken), [
           BNCoin.fromDenomAndBigNumber(secondaryLpToken.denom, secondaryPrice),
+        ]),
+        unlocking: getCoinValue(BNCoin.fromDenomAndBigNumber(vault.denoms.lp, amounts.unlocking), [
+          BNCoin.fromDenomAndBigNumber(vault.denoms.lp, lpPrice),
+        ]),
+        unlocked: getCoinValue(BNCoin.fromDenomAndBigNumber(vault.denoms.lp, amounts.unlocked), [
+          BNCoin.fromDenomAndBigNumber(vault.denoms.lp, lpPrice),
         ]),
       },
     }

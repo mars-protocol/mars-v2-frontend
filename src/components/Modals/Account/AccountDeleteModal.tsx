@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
-import AssetBalanceRow from 'components/AssetBalanceRow'
+import AssetBalanceRow from 'components/Asset/AssetBalanceRow'
 import { ArrowRight } from 'components/Icons'
 import AccountDeleteAlertDialog from 'components/Modals/Account/AccountDeleteAlertDialog'
 import Text from 'components/Text'
@@ -35,13 +35,11 @@ function AccountDeleteModal(props: Props) {
     useStore.setState({ accountDeleteModal: null })
   }, [])
 
-  const deleteAccountHandler = useCallback(async () => {
+  const deleteAccountHandler = useCallback(() => {
     const options = { accountId: modal.id, lends: modal.lends }
-    const isSuccess = await deleteAccount(options)
-    if (isSuccess) {
-      navigate(getRoute(getPage(pathname), address))
-      closeDeleteAccountModal()
-    }
+    deleteAccount(options)
+    navigate(getRoute(getPage(pathname), address))
+    closeDeleteAccountModal()
   }, [modal, deleteAccount, navigate, pathname, address, closeDeleteAccountModal])
 
   const depositsAndLends = useMemo(
@@ -92,7 +90,6 @@ function AccountDeleteModal(props: Props) {
         positiveButton={{
           text: 'Delete Account',
           icon: <ArrowRight />,
-          isAsync: true,
           onClick: deleteAccountHandler,
         }}
       />
@@ -120,7 +117,6 @@ function AccountDeleteModal(props: Props) {
       positiveButton={{
         text: 'Delete Account',
         icon: <ArrowRight />,
-        isAsync: true,
         onClick: deleteAccountHandler,
       }}
     />

@@ -24,6 +24,7 @@ export default function WalletAssetsModal() {
       onClose={onClose}
       modalClassName='max-w-modal-xs'
       headerClassName='bg-white/10 border-b-white/5 border-b items-center p-4'
+      dialogId='wallet-assets-modal'
     >
       <WalletAssetsModalContent onChangeDenoms={setSelectedDenoms} />
       <div className='flex w-full p-4'>
