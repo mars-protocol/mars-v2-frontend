@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 
 import CurrentAccountSummary from 'components/Account/CurrentAccountSummary'
-import AssetImage from 'components/AssetImage'
+import AssetImage from 'components/Asset/AssetImage'
 import Button from 'components/Button'
 import Card from 'components/Card'
 import Divider from 'components/Divider'

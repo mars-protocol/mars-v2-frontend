@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
-import AssetBalanceRow from 'components/AssetBalanceRow'
+import AssetBalanceRow from 'components/Asset/AssetBalanceRow'
 import { ArrowRight } from 'components/Icons'
 import AccountDeleteAlertDialog from 'components/Modals/Account/AccountDeleteAlertDialog'
 import Text from 'components/Text'

@@ -17,6 +17,7 @@ interface Props {
   modalClassName?: string
   onClose: () => void
   hideTxLoader?: boolean
+  dialogId?: string
 }
 
 export default function Modal(props: Props) {
@@ -57,6 +58,7 @@ export default function Modal(props: Props) {
         'backdrop:bg-black/50 backdrop:backdrop-blur-sm',
         modalClassName,
       )}
+      id={props.dialogId ? props.dialogId : 'modal'}
     >
       <Card
         className={classNames(

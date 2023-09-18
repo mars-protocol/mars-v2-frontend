@@ -1,4 +1,4 @@
-import AssetImage from 'components/AssetImage'
+import AssetImage from 'components/Asset/AssetImage'
 import Button from 'components/Button'
 
 interface Props {

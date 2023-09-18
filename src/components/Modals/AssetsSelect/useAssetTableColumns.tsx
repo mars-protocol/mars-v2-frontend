@@ -1,7 +1,8 @@
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
-import AssetImage from 'components/AssetImage'
+import AssetImage from 'components/Asset/AssetImage'
+import AssetRate from 'components/Asset/AssetRate'
 import Checkbox from 'components/Checkbox'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
@@ -9,6 +10,12 @@ import Text from 'components/Text'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getAssetByDenom } from 'utils/assets'
 import { demagnify, formatPercent } from 'utils/formatters'
+import { convertAprToApy } from 'utils/parsers'
+
+function showBorrowRate(data: AssetTableRow[]) {
+  const assetData = data.length && (data[0].asset as BorrowAsset)
+  return !!(assetData && assetData?.borrowRate)
+}
 
 export default function useAssetTableColumns() {
   return React.useMemo<ColumnDef<AssetTableRow>[]>(
@@ -19,6 +26,9 @@ export default function useAssetTableColumns() {
         id: 'symbol',
         cell: ({ row }) => {
           const asset = getAssetByDenom(row.original.asset.denom) as Asset
+          const market = row.original.market
+          const borrowAsset = row.original.asset as BorrowAsset
+          const showRate = !borrowAsset?.borrowRate
           return (
             <div className='flex items-center'>
               <Checkbox checked={row.getIsSelected()} onChange={row.getToggleSelectedHandler()} />
@@ -27,7 +37,18 @@ export default function useAssetTableColumns() {
                 <Text size='sm' className='mb-0.5 text-white'>
                   {asset.symbol}
                 </Text>
-                <Text size='xs'>{asset.name}</Text>
+                {showRate && market ? (
+                  <AssetRate
+                    rate={convertAprToApy(market.borrowRate * 100, 365)}
+                    isEnabled={market.borrowEnabled}
+                    className='text-xs'
+                    type='apy'
+                    orientation='rtl'
+                    suffix
+                  />
+                ) : (
+                  <Text size='xs'>{asset.name}</Text>
+                )}
               </div>
             </div>
           )
@@ -37,8 +58,7 @@ export default function useAssetTableColumns() {
         id: 'details',
         header: (data) => {
           const tableData = data.table.options.data as AssetTableRow[]
-          const assetData = tableData.length && (tableData[0].asset as BorrowAsset)
-          if (assetData && assetData?.borrowRate) return 'Borrow Rate'
+          if (showBorrowRate(tableData)) return 'Borrow Rate'
           return 'Balance'
         },
         cell: ({ row }) => {

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import AssetBalanceRow from 'components/AssetBalanceRow'
+import AssetBalanceRow from 'components/Asset/AssetBalanceRow'
 import Button from 'components/Button'
 import DisplayCurrency from 'components/DisplayCurrency'
 import Divider from 'components/Divider'
@@ -10,6 +10,7 @@ import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
+import { ORACLE_DENOM } from 'constants/oracle'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
@@ -20,7 +21,6 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { defaultFee } from 'utils/constants'
 import { formatAmountWithSymbol, getCoinValue } from 'utils/formatters'
-import { ORACLE_DENOM } from 'constants/oracle'
 
 const renderIncentives = (unclaimedRewards: BNCoin[]) => {
   if (unclaimedRewards.length === 0)
@@ -48,10 +48,6 @@ export default function RewardsCenter() {
   const [isConfirming, setIsConfirming] = useState(false)
   const [estimatedFee, setEstimatedFee] = useState(defaultFee)
   const [showRewardsCenter, setShowRewardsCenter] = useToggle()
-  const [displayCurrency] = useLocalStorage<string>(
-    DISPLAY_CURRENCY_KEY,
-    DEFAULT_SETTINGS.displayCurrency,
-  )
   const claimRewards = useStore((s) => s.claimRewards)
   const { data: prices } = usePrices()
   const { data: unclaimedRewards } = useUnclaimedRewards()

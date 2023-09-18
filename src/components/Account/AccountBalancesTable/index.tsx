@@ -13,6 +13,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { getAmountChangeColor } from 'components/Account/AccountBalancesTable/functions'
 import useAccountBalanceData from 'components/Account/AccountBalancesTable/useAccountBalanceData'
 import AccountFundFullPage from 'components/Account/AccountFund/AccountFundFullPage'
+import AssetRate from 'components/Asset/AssetRate'
 import ActionButton from 'components/Button/ActionButton'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
@@ -21,8 +22,10 @@ import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useCurrentAccount from 'hooks/useCurrentAccount'
+import useMarketAssets from 'hooks/useMarketAssets'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
 import { getAssetByDenom } from 'utils/assets'
 import { demagnify, formatAmountToPrecision } from 'utils/formatters'
 import { getPage, getRoute } from 'utils/route'
@@ -36,6 +39,7 @@ interface Props {
 
 export default function Index(props: Props) {
   const { account, lendingData, borrowingData, tableBodyClassName } = props
+  const { data: markets } = useMarketAssets()
   const currentAccount = useCurrentAccount()
   const navigate = useNavigate()
   const { pathname } = useLocation()
@@ -126,18 +130,20 @@ export default function Index(props: Props) {
         cell: ({ row }) => {
           if (row.original.type === 'deposits')
             return <span className='w-full text-xs text-center'>&ndash;</span>
+          const isEnabled = markets.find(byDenom(row.original.denom))?.borrowEnabled ?? false
           return (
-            <FormattedNumber
-              className='text-xs'
-              amount={row.original.apy}
-              options={{ maxDecimals: 2, minDecimals: 2, suffix: '%' }}
-              animate
+            <AssetRate
+              className='justify-end text-xs'
+              rate={row.original.apy}
+              isEnabled={row.original.type !== 'lending' || isEnabled}
+              type='apy'
+              orientation='ltr'
             />
           )
         },
       },
     ],
-    [baseCurrency.decimals],
+    [baseCurrency.decimals, markets],
   )
 
   const table = useReactTable({
