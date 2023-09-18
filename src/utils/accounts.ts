@@ -181,17 +181,17 @@ export function cloneAccount(account: Account): Account {
     vaults: account.vaults.map((vault) => ({
       ...vault,
       amounts: {
-        locked: BN(vault.amounts.locked),
-        unlocking: BN(vault.amounts.unlocking),
-        unlocked: BN(vault.amounts.unlocked),
-        primary: BN(vault.amounts.primary),
-        secondary: BN(vault.amounts.secondary),
+        locked: vault.amounts.locked,
+        unlocking: vault.amounts.unlocking,
+        unlocked: vault.amounts.unlocked,
+        primary: vault.amounts.primary,
+        secondary: vault.amounts.secondary,
       },
       values: {
-        primary: BN(vault.values.primary),
-        secondary: BN(vault.values.secondary),
-        unlocking: BN(vault.values.unlocking),
-        unlocked: BN(vault.values.unlocked),
+        primary: vault.values.primary,
+        secondary: vault.values.secondary,
+        unlocking: vault.values.unlocking,
+        unlocked: vault.values.unlocked,
       },
     })),
   }
