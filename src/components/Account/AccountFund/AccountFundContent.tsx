@@ -96,7 +96,7 @@ export default function AccountFundContent(props: Props) {
       deposit(depositObject)
       useStore.setState({ fundAndWithdrawModal: null, walletAssetsModal: null })
     }
-  }, [props.accountId, deposit, fundingAssets, isLending])
+  }, [props.accountId, deposit, fundingAssets, isLending, props.isFullPage])
 
   useEffect(() => {
     if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) {

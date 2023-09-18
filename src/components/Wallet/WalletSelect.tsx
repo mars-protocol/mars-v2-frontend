@@ -11,6 +11,7 @@ import WalletConnecting from 'components/Wallet/WalletConnecting'
 import { CHAINS } from 'constants/chains'
 import { ENV } from 'constants/env'
 import { WALLETS } from 'constants/wallets'
+import moment from 'moment'
 import useStore from 'store'
 import { WalletID } from 'types/enums/wallet'
 import { isAndroid, isIOS, isMobile } from 'utils/mobile'
@@ -104,6 +105,7 @@ export default function WalletSelect(props: Props) {
     if (error?.message && error?.title) {
       useStore.setState({
         toast: {
+          id: moment.now(),
           isError: true,
           title: error.title,
           message: error.message,
