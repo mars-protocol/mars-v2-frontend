@@ -180,7 +180,6 @@ export function useUpdatedAccount(account?: Account) {
       addedVaultValues,
       [...accountCopy.vaults],
       availableVaults ?? [],
-      prices,
     )
     accountCopy.deposits = removeCoins(removedDeposits, [...accountCopy.deposits])
     accountCopy.debts = removeCoins(removedDebts, [...accountCopy.debts])

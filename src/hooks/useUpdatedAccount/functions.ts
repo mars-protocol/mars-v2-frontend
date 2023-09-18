@@ -1,11 +1,8 @@
-import { kMaxLength } from 'buffer'
-
 import { BN_ZERO } from 'constants/math'
 import { MOCK_DEPOSITED_VAULT_POSITION } from 'constants/vaults'
 import { VaultValue } from 'hooks/useUpdatedAccount'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { getVaultMetaData } from 'utils/vaults'
 
@@ -44,7 +41,6 @@ export function addValueToVaults(
   vaultValues: VaultValue[],
   vaults: DepositedVault[],
   availableVaults: Vault[],
-  prices: BNCoin[],
 ): DepositedVault[] {
   const currentVaultAddresses = vaults.map((vault) => vault.address)
   vaultValues.forEach((vaultValue) => {
@@ -53,18 +49,8 @@ export function addValueToVaults(
 
     if (currentVaultAddresses.includes(vaultValue.address)) {
       const index = currentVaultAddresses.indexOf(vaultValue.address)
-      const vault = vaults[index]
-      const lpPrice = prices.find((price) => price.denom === vault.denoms.lp)?.amount ?? BN_ZERO
-      vault.values.primary = BN(vault.values.primary).plus(halfValue)
-      vault.values.secondary = BN(vault.values.secondary).plus(halfValue)
-      vault.values.unlocking = getCoinValue(
-        BNCoin.fromDenomAndBigNumber(vault.denoms.lp, vault.amounts.unlocking),
-        [BNCoin.fromDenomAndBigNumber(vault.denoms.lp, lpPrice)],
-      )
-      vault.values.unlocked = getCoinValue(
-        BNCoin.fromDenomAndBigNumber(vault.denoms.lp, vault.amounts.unlocked),
-        [BNCoin.fromDenomAndBigNumber(vault.denoms.lp, lpPrice)],
-      )
+      vaults[index].values.primary = BN(vaults[index].values.primary).plus(halfValue)
+      vaults[index].values.secondary = BN(vaults[index].values.secondary).plus(halfValue)
     } else {
       const vaultMetaData = getVaultMetaData(vaultValue.address)
 
