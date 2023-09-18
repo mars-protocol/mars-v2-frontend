@@ -43,7 +43,6 @@ export function addValueToVaults(
   availableVaults: Vault[],
 ): DepositedVault[] {
   const currentVaultAddresses = vaults.map((vault) => vault.address)
-
   vaultValues.forEach((vaultValue) => {
     if (vaultValue.value.isZero()) return
     const halfValue = vaultValue.value.div(2)
@@ -65,6 +64,8 @@ export function addValueToVaults(
         values: {
           primary: halfValue,
           secondary: halfValue,
+          unlocked: BN_ZERO,
+          unlocking: BN_ZERO,
         },
       })
     }

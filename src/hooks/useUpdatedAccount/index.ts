@@ -199,6 +199,7 @@ export function useUpdatedAccount(account?: Account) {
     addedLends,
     removedLends,
     availableVaults,
+    prices,
   ])
 
   return {

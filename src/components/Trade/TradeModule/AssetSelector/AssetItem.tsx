@@ -1,4 +1,4 @@
-import AssetImage from 'components/AssetImage'
+import AssetImage from 'components/Asset/AssetImage'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { StarFilled, StarOutlined } from 'components/Icons'
 import Text from 'components/Text'

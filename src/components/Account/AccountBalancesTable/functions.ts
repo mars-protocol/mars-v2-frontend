@@ -32,9 +32,17 @@ export function getVaultAccountBalanceRow(
 ): AccountBalanceRow {
   const { name } = vault
   const previous = prev || vault
-  const totalValue = vault.values.primary.plus(vault.values.secondary)
-  const prevTotalValue = previous.values.primary.plus(previous.values.secondary)
+  const totalLockedValue = vault.values.primary.plus(vault.values.secondary)
+  const totalValue = totalLockedValue.plus(vault.values.unlocked).plus(vault.values.unlocking)
+  const prevTotalValue = previous.values.primary
+    .plus(previous.values.secondary)
+    .plus(previous.values.unlocked)
+    .plus(previous.values.unlocking)
   const amountChange = !prev ? totalValue : totalValue.minus(prevTotalValue)
+
+  if (totalLockedValue.isLessThan(totalValue)) {
+    apy = totalLockedValue.dividedBy(totalValue).times(apy).toNumber()
+  }
 
   return {
     type: 'vault',

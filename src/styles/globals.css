@@ -42,3 +42,18 @@
     appearance: none;
   }
 }
+
+.Toastify__toast {
+  transition-property: background-color;
+  transition-duration: 1500ms;
+  transition-timing-function: ease-in-out;
+  background-color: #fedb7c33;
+}
+
+.Toastify__toast--success {
+  background: #6ce9a633;
+}
+
+.Toastify__toast--error {
+  background-color: #fda29b33 !important;
+}

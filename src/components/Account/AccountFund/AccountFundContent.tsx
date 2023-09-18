@@ -36,7 +36,7 @@ export default function AccountFundContent(props: Props) {
   const deposit = useStore((s) => s.deposit)
   const accounts = useStore((s) => s.accounts)
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
-  const showTxLoader = useStore((s) => s.showTxLoader)
+  const [isConfirming, setIsConfirming] = useState(false)
   const [lendAssets, setLendAssets] = useLocalStorage<boolean>(
     LEND_ASSETS_KEY,
     DEFAULT_SETTINGS.lendAssets,
@@ -76,18 +76,27 @@ export default function AccountFundContent(props: Props) {
 
   const handleClick = useCallback(async () => {
     if (!props.accountId) return
-    const result = await deposit({
+
+    const depositObject = {
       accountId: props.accountId,
       coins: fundingAssets,
       lend: isLending,
-    })
-    if (result)
-      useStore.setState({
-        fundAndWithdrawModal: null,
-        walletAssetsModal: null,
-        focusComponent: null,
-      })
-  }, [props.accountId, deposit, fundingAssets, isLending])
+    }
+
+    if (props.isFullPage) {
+      setIsConfirming(true)
+      const result = await deposit(depositObject)
+      setIsConfirming(false)
+      if (result)
+        useStore.setState({
+          walletAssetsModal: null,
+          focusComponent: null,
+        })
+    } else {
+      deposit(depositObject)
+      useStore.setState({ fundAndWithdrawModal: null, walletAssetsModal: null })
+    }
+  }, [props.accountId, deposit, fundingAssets, isLending, props.isFullPage])
 
   useEffect(() => {
     if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) {
@@ -171,7 +180,7 @@ export default function AccountFundContent(props: Props) {
                 max={balance}
                 balances={balances}
                 maxText='Max'
-                disabled={showTxLoader}
+                disabled={isConfirming}
               />
             </div>
           )
@@ -184,7 +193,7 @@ export default function AccountFundContent(props: Props) {
           rightIcon={<Plus />}
           iconClassName='w-3'
           onClick={handleSelectAssetsClick}
-          disabled={showTxLoader}
+          disabled={isConfirming}
         />
         <DepositCapMessage
           action='fund'
@@ -203,7 +212,7 @@ export default function AccountFundContent(props: Props) {
         className='w-full mt-4'
         text='Fund account'
         disabled={!hasFundingAssets || depositCapReachedCoins.length > 0}
-        showProgressIndicator={showTxLoader}
+        showProgressIndicator={isConfirming}
         onClick={handleClick}
         color={props.isFullPage ? 'tertiary' : undefined}
         size={props.isFullPage ? 'lg' : undefined}

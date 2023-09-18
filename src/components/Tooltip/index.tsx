@@ -23,9 +23,12 @@ export type TooltipType = 'info' | 'warning' | 'error'
 export const Tooltip = (props: Props) => {
   const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
 
+  const isInWalletAssetModal = document.getElementById('wallet-assets-modal')
+  const isInModal = document.getElementById('modal')
+
   return (
     <Tippy
-      appendTo={() => document.querySelector('dialog[open]') ?? document.body}
+      appendTo={() => isInWalletAssetModal ?? isInModal ?? document.body}
       interactive={props.interactive}
       animation={false}
       delay={[props.delay ?? 0, 0]}

@@ -39,6 +39,8 @@ module.exports = {
   theme: {
     extend: {
       animation: {
+        check: 'check 1.5s ease-in-out forwards',
+        circle: 'circle 1.5s ease-in-out forwards',
         fadein: 'fadein 1s ease-in-out forwards',
         glow: 'glow 1000ms ease-in-out forwards',
         progress: 'spin 1200ms cubic-bezier(0.5, 0, 0.5, 1) infinite',
@@ -139,11 +141,28 @@ module.exports = {
         4.5: '18px',
         15: '60px',
         55: '220px',
+        70: '280px',
       },
       hueRotate: {
         '-82': '-82deg',
       },
       keyframes: {
+        check: {
+          '0%': {
+            strokeDashoffset: -100,
+          },
+          '100%': {
+            strokeDashoffset: 900,
+          },
+        },
+        circle: {
+          '0%': {
+            strokeDashoffset: 1000,
+          },
+          '100%': {
+            strokeDashoffset: 0,
+          },
+        },
         fadein: {
           '0%': { opacity: 0 },
           '100%': { opacity: 1 },
@@ -178,6 +197,7 @@ module.exports = {
         8: '32px',
         10: '40px',
         14: '56px',
+        30.5: '122px',
       },
       maxWidth: {
         content: '1024px',

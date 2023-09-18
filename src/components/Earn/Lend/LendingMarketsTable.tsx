@@ -2,14 +2,14 @@ import { ColumnDef, Row, Table } from '@tanstack/react-table'
 import { useCallback, useMemo } from 'react'
 
 import AmountAndValue from 'components/AmountAndValue'
-import AssetImage from 'components/AssetImage'
+import AssetImage from 'components/Asset/AssetImage'
+import AssetRate from 'components/Asset/AssetRate'
 import LendingActionButtons from 'components/Earn/Lend/LendingActionButtons'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { ChevronDown, ChevronUp } from 'components/Icons'
 import AssetListTable from 'components/MarketAssetTable'
 import MarketAssetTableRow from 'components/MarketAssetTable/MarketAssetTableRow'
 import MarketDetails from 'components/MarketAssetTable/MarketDetails'
-import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import { BN_ZERO } from 'constants/math'
 import { convertLiquidityRateToAPR } from 'utils/formatters'
@@ -83,16 +83,13 @@ export default function LendingMarketsTable(props: Props) {
         accessorKey: 'marketLiquidityRate',
         header: 'APR',
         cell: ({ row }) => {
-          if (!row.original.borrowEnabled) {
-            return <Text>-</Text>
-          }
-
           return (
-            <FormattedNumber
-              amount={convertLiquidityRateToAPR(row.original.marketLiquidityRate)}
-              options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
-              className='text-xs'
-              animate
+            <AssetRate
+              rate={convertLiquidityRateToAPR(row.original.marketLiquidityRate)}
+              isEnabled={row.original.borrowEnabled}
+              className='justify-end text-xs'
+              type='apr'
+              orientation='ltr'
             />
           )
         },

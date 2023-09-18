@@ -1,4 +1,4 @@
-import AssetImage from 'components/AssetImage'
+import AssetImage from 'components/Asset/AssetImage'
 import { getAssetByDenom } from 'utils/assets'
 
 interface Props {

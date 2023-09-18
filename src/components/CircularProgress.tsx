@@ -1,6 +1,5 @@
 import classNames from 'classnames'
 
-import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { REDUCE_MOTION_KEY } from 'constants/localStore'
 import useLocalStorage from 'hooks/useLocalStorage'
@@ -25,9 +24,12 @@ export const CircularProgress = ({ color = '#FFFFFF', size = 20, className }: Pr
         className={classNames('flex items-center', loaderClasses)}
         style={{ width: `${size}px`, height: `${size}px` }}
       >
-        <Text className='text-center' uppercase size='lg'>
+        <p
+          className='w-full text-center'
+          style={{ fontSize: `${size}px`, lineHeight: `${size}px`, color: `${color}` }}
+        >
           ...
-        </Text>
+        </p>
       </div>
     )
 
