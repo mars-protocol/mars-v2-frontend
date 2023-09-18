@@ -1,5 +1,5 @@
-import getWalletAccountIds from 'api/wallets/getAccountIds'
 import getAccount from 'api/accounts/getAccount'
+import getWalletAccountIds from 'api/wallets/getAccountIds'
 
 export default async function getAccounts(address: string): Promise<Account[]> {
   const accountIds: string[] = await getWalletAccountIds(address)

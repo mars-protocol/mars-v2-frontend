@@ -1,9 +1,7 @@
 import classNames from 'classnames'
-import { Suspense, useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 
-import AccountBalancesTable from 'components/Account/AccountBalancesTable'
-import AccountComposition from 'components/Account/AccountComposition'
 import AccountCreateFirst from 'components/Account/AccountCreateFirst'
 import Button from 'components/Button'
 import Card from 'components/Card'
@@ -12,13 +10,14 @@ import Loading from 'components/Loading'
 import Text from 'components/Text'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import WalletConnectButton from 'components/Wallet/WalletConnectButton'
+import useAccountIds from 'hooks/useAccountIds'
 import useAccounts from 'hooks/useAccounts'
-import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
-import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import useStore from 'store'
 import { defaultFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
+
+import PortfolioCard from './PortfolioCard'
 
 function ConnectInfo() {
   return (
@@ -35,23 +34,13 @@ function ConnectInfo() {
   )
 }
 
-function Content() {
+export default function Content() {
   const { address: urlAddress } = useParams()
   const { data: accounts, isLoading } = useAccounts(urlAddress ?? '')
   const walletAddress = useStore((s) => s.address)
+  const { data: accountIds } = useAccountIds(urlAddress || '')
+
   const baseCurrency = useStore((s) => s.baseCurrency)
-  const { availableAssets: borrowAvailableAssets, accountBorrowedAssets } =
-    useBorrowMarketAssetsTableData()
-  const { availableAssets: lendingAvailableAssets, accountLentAssets } =
-    useLendingMarketAssetsTableData()
-  const borrowAssetsData = useMemo(
-    () => [...borrowAvailableAssets, ...accountBorrowedAssets],
-    [borrowAvailableAssets, accountBorrowedAssets],
-  )
-  const lendingAssetsData = useMemo(
-    () => [...lendingAvailableAssets, ...accountLentAssets],
-    [lendingAvailableAssets, accountLentAssets],
-  )
   const transactionFeeCoinBalance = useCurrentWalletBalance(baseCurrency.denom)
 
   const checkHasFunds = useCallback(() => {
@@ -70,7 +59,7 @@ function Content() {
     useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
   }, [checkHasFunds])
 
-  if (isLoading) return <Fallback />
+  if (isLoading) return <Fallback count={accountIds?.length || 3} />
 
   if (!walletAddress && !urlAddress) return <ConnectInfo />
 
@@ -97,36 +86,27 @@ function Content() {
 
   return (
     <div
-      className={classNames('grid w-full grid-cols-1 gap-4', 'md:grid-cols-2', 'lg:grid-cols-3')}
+      className={classNames(
+        'grid w-full grid-cols-1 gap-4 p-4',
+        'md:grid-cols-2',
+        'lg:grid-cols-3',
+      )}
     >
       {accounts.map((account: Account, index: number) => (
-        <Card
-          className='w-full h-fit bg-white/5'
-          title={`Credit Account ${account.id}`}
-          key={index}
-        >
-          <AccountComposition account={account} />
-          <Text className='w-full px-4 py-2 text-white bg-white/10'>Balances</Text>
-          <AccountBalancesTable
-            account={account}
-            borrowingData={borrowAssetsData}
-            lendingData={lendingAssetsData}
-          />
-        </Card>
+        <PortfolioCard key={account.id} account={account} />
       ))}
     </div>
   )
 }
 
-function Fallback() {
+function Fallback({ count = 3 }: { count: number }) {
   const { address } = useParams()
-  const cardCount = 3
   if (!address) return <ConnectInfo />
   return (
     <div
       className={classNames('grid w-full grid-cols-1 gap-4', 'md:grid-cols-2', 'lg:grid-cols-3')}
     >
-      {Array.from({ length: cardCount }, (_, i) => (
+      {Array.from({ length: count }, (_, i) => (
         <Card key={i} className='w-full h-fit bg-white/5' title='Account' contentClassName='py-6'>
           <div className='p-4'>
             <Loading className='h-4 w-50' />
@@ -136,13 +116,5 @@ function Fallback() {
         </Card>
       ))}
     </div>
-  )
-}
-
-export default function AccountOverview() {
-  return (
-    <Suspense fallback={<Fallback />}>
-      <Content />
-    </Suspense>
   )
 }

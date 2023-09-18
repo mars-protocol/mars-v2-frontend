@@ -1,5 +1,4 @@
 import { useCallback } from 'react'
-import { useParams } from 'react-router-dom'
 
 import { ACCOUNT_MENU_BUTTON_ID } from 'components/Account/AccountMenuContent'
 import Button from 'components/Button'
@@ -8,6 +7,7 @@ import { ArrowDownLine, ArrowUpLine, Enter } from 'components/Icons'
 import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
+import useAccountId from 'hooks/useAccountId'
 import useAlertDialog from 'hooks/useAlertDialog'
 import useAutoLend from 'hooks/useAutoLend'
 import useCurrentAccountDeposits from 'hooks/useCurrentAccountDeposits'
@@ -30,7 +30,7 @@ export default function LendingActionButtons(props: Props) {
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const assetDepositAmount = accountDeposits.find(byDenom(asset.denom))?.amount
   const address = useStore((s) => s.address)
-  const { accountId } = useParams()
+  const accountId = useAccountId()
   const hasNoDeposit = !!(!assetDepositAmount && address && accountId)
 
   const handleWithdraw = useCallback(() => {

@@ -5,7 +5,7 @@ import AccountCreateFirst from 'components/Account/AccountCreateFirst'
 import { CircularProgress } from 'components/CircularProgress'
 import FullOverlayContent from 'components/FullOverlayContent'
 import WalletBridges from 'components/Wallet/WalletBridges'
-import useAccounts from 'hooks/useAccounts'
+import useAccountIds from 'hooks/useAccountIds'
 import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
@@ -29,7 +29,7 @@ function Content() {
   const address = useStore((s) => s.address)
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const { data: accounts, isLoading: isLoadingAccounts } = useAccounts(address)
+  const { data: accountIds, isLoading: isLoadingAccounts } = useAccountIds(address || '')
   const { data: walletBalances, isLoading: isLoadingBalances } = useWalletBalances(address)
   const baseAsset = getBaseAsset()
 
@@ -40,17 +40,17 @@ function Content() {
 
   useEffect(() => {
     if (
-      accounts.length !== 0 &&
+      accountIds.length !== 0 &&
       BN(baseBalance).isGreaterThanOrEqualTo(defaultFee.amount[0].amount)
     ) {
-      navigate(getRoute(getPage(pathname), address, accounts[0].id))
-      useStore.setState({ accounts: accounts, balances: walletBalances, focusComponent: null })
+      navigate(getRoute(getPage(pathname), address, accountIds[0]))
+      useStore.setState({ balances: walletBalances, focusComponent: null })
     }
-  }, [accounts, baseBalance, navigate, pathname, address, walletBalances])
+  }, [accountIds, baseBalance, navigate, pathname, address, walletBalances])
 
   if (isLoadingAccounts || isLoadingBalances) return <FetchLoading />
   if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) return <WalletBridges />
-  if (accounts.length === 0) return <AccountCreateFirst />
+  if (accountIds.length === 0) return <AccountCreateFirst />
   return null
 }
 

@@ -1,26 +1,34 @@
-export function getRoute(page: Page, address?: string, accountId?: string) {
+export function getRoute(page: Page, address?: string, accountId?: string | null) {
   let nextUrl = ''
 
   if (address) {
     nextUrl += `/wallets/${address}`
-
-    if (accountId) {
-      nextUrl += `/accounts/${accountId}`
-    }
   }
 
-  return (nextUrl += `/${page}`)
+  nextUrl += `/${page}`
+
+  let url = new URL(nextUrl, 'https://app.marsprotocol.io')
+
+  if (accountId) {
+    url.searchParams.append('accountId', accountId)
+  }
+
+  return url.pathname + url.search
 }
 
-export function getPage(pathname: string) {
-  const pages: Page[] = ['trade', 'borrow', 'farm', 'lend', 'portfolio', 'council']
-  const lastSegment = pathname.split('/').pop() as Page
+export function getPage(pathname: string): Page {
+  const pages: Page[] = ['trade', 'borrow', 'farm', 'lend', 'portfolio']
+  const segments = pathname.split('/')
 
-  if (!lastSegment) return 'trade'
+  const page = segments.find((segment) => pages.includes(segment as Page))
 
-  if (pages.includes(lastSegment)) {
-    return lastSegment
+  if (page) {
+    if (page === 'portfolio') {
+      const path = pathname.split('portfolio')[1]
+      return (page + path) as Page
+    }
+    return page as Page
   }
 
-  return 'trade'
+  return 'trade' as Page
 }
