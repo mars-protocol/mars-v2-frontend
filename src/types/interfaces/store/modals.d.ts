@@ -3,8 +3,6 @@ interface ModalSlice {
   addVaultBorrowingsModal: AddVaultBorrowingsModal | null
   alertDialog: AlertDialogConfig | null
   borrowModal: BorrowModal | null
-  createAccountModal: boolean
-  fundAccountModal: boolean
   fundAndWithdrawModal: 'fund' | 'withdraw' | null
   getStartedModal: boolean
   lendAndReclaimModal: LendAndReclaimModalConfig | null

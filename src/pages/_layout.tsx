@@ -8,12 +8,12 @@ import Footer from 'components/Footer'
 import DesktopHeader from 'components/Header/DesktopHeader'
 import ModalsContainer from 'components/Modals/ModalsContainer'
 import PageMetadata from 'components/PageMetadata'
-import Toaster from 'components/Toaster'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { REDUCE_MOTION_KEY } from 'constants/localStore'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
+import Toaster from 'components/Toaster'
 
 interface Props {
   focusComponent: FocusComponent | null
