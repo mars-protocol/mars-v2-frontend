@@ -76,10 +76,7 @@ async function getLpTokensForVaultPosition(
     const vaultQueryClient = await getVaultQueryClient(vault.address)
     const creditManagerQueryClient = await getCreditManagerQueryClient()
     const amounts = flatVaultPositionAmount(vaultPosition.amount)
-    const totalAmount = BN(amounts.locked)
-      .plus(BN(amounts.unlocked))
-      .plus(BN(amounts.unlocking))
-      .toString()
+    const totalAmount = amounts.locked.plus(amounts.unlocked).plus(amounts.unlocking).toString()
 
     const lpAmount = await vaultQueryClient.previewRedeem({
       amount: totalAmount,
