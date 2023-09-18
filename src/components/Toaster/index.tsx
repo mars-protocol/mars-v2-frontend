@@ -5,7 +5,7 @@ import { mutate } from 'swr'
 
 import { CheckMark } from 'components/CheckMark'
 import { CircularProgress } from 'components/CircularProgress'
-import { Cross, CrossCircled, ExternalLink, Search } from 'components/Icons'
+import { ChevronDown, Cross, CrossCircled, ExternalLink } from 'components/Icons'
 import Text from 'components/Text'
 import { TextLink } from 'components/TextLink'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
@@ -112,15 +112,15 @@ export default function Toaster() {
             {isError ? (toast.title ? toast.title : 'Error') : 'Success'}
           </Text>
         </div>
-        <Text size='sm' className='w-full mb-1 text-white'>
+        <Text size='sm' className='w-full mb-2 text-white'>
           {showDetailElement ? generalMessage : toast.message}
         </Text>
         {showDetailElement && (
           <Text
             size='sm'
-            className='flex items-center w-auto pb-0.5 text-white border-b border-white border-dashed group-hover/transaction:opacity-0'
+            className='flex items-center w-auto pb-0.5 text-white border-b border-white/40 border-dashed group-hover/transaction:opacity-0'
           >
-            <Search className='w-3 h-3 mr-1' />
+            <ChevronDown className='w-3 mr-1' />
             Transaction Details
           </Text>
         )}
@@ -172,7 +172,7 @@ export default function Toaster() {
         icon: false,
         draggable: false,
         closeOnClick: true,
-        autoClose: 500000,
+        autoClose: 5000,
         progressClassName: classNames('h-[1px] bg-none', isError ? 'bg-error' : 'bg-success'),
         hideProgressBar: false,
       })
@@ -184,7 +184,7 @@ export default function Toaster() {
         icon: false,
         draggable: false,
         closeOnClick: true,
-        autoClose: 500000,
+        autoClose: 5000,
         progressClassName: classNames('h-[1px] bg-none', isError ? 'bg-error' : 'bg-success'),
       })
     }
