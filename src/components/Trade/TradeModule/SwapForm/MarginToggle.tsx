@@ -1,4 +1,3 @@
-import { InfoCircle } from 'components/Icons'
 import Switch from 'components/Switch'
 import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
@@ -13,7 +12,7 @@ interface Props {
 
 export default function MarginToggle(props: Props) {
   return (
-    <div className='flex flex-1 flex-row justify-between bg-white/5 px-4 py-2'>
+    <div className='flex flex-row justify-between flex-1 px-4 py-2 bg-white/5'>
       <Text size='sm'>Margin</Text>
 
       <ConditionalWrapper
@@ -34,9 +33,6 @@ export default function MarginToggle(props: Props) {
       >
         <div className='flex flex-row'>
           <Switch {...props} name='margin' />
-          {props.disabled && (
-            <InfoCircle width={16} height={16} className='ml-2 mt-0.5 opacity-20' />
-          )}
         </div>
       </ConditionalWrapper>
     </div>

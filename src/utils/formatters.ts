@@ -45,6 +45,7 @@ export const formatValue = (amount: number | string, options?: FormatOptions): s
   let numberOfZeroDecimals: number | null = null
   const minDecimals = options?.minDecimals ?? 2
   const maxDecimals = options?.maxDecimals ?? 2
+  let enforcedDecimals = maxDecimals
   const thousandSeparator = options?.thousandSeparator ?? true
 
   if (typeof amount === 'string') {
@@ -94,21 +95,25 @@ export const formatValue = (amount: number | string, options?: FormatOptions): s
     }
   }
 
+  if (amountSuffix === 'B' || amountSuffix === 'M' || amountSuffix === 'K') {
+    enforcedDecimals = 2
+  }
+
   if (thousandSeparator) {
     convertedAmount = BN(convertedAmount).toNumber().toLocaleString('en', {
       useGrouping: true,
       minimumFractionDigits: minDecimals,
-      maximumFractionDigits: maxDecimals,
+      maximumFractionDigits: enforcedDecimals,
     })
   }
 
   let returnValue = ''
 
   if (numberOfZeroDecimals) {
-    if (numberOfZeroDecimals < maxDecimals) {
+    if (numberOfZeroDecimals < enforcedDecimals) {
       returnValue = Number(returnValue).toFixed(numberOfZeroDecimals)
     } else {
-      returnValue = Number(returnValue).toFixed(maxDecimals)
+      returnValue = Number(returnValue).toFixed(enforcedDecimals)
     }
   }
 

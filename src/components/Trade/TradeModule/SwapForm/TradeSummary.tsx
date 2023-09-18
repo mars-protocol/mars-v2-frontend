@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import { useMemo } from 'react'
 
 import ActionButton from 'components/Button/ActionButton'
+import { FormattedNumber } from 'components/FormattedNumber'
 import useSwapRoute from 'hooks/useSwapRoute'
 import { getAssetByDenom } from 'utils/assets'
 import { formatAmountWithSymbol, formatPercent } from 'utils/formatters'
@@ -60,12 +61,18 @@ export default function TradeSummary(props: Props) {
           <>
             <div className={className.infoLine}>
               <span className={className.infoLineLabel}>Borrowing</span>
-              <span>
-                {formatAmountWithSymbol({
-                  denom: sellAsset.denom,
-                  amount: borrowAmount.toString(),
-                })}
-              </span>
+              <FormattedNumber
+                amount={borrowAmount.toNumber()}
+                options={{
+                  decimals: sellAsset.decimals,
+                  maxDecimals: sellAsset.decimals,
+                  minDecimals: 0,
+                  suffix: ` ${sellAsset.symbol}`,
+                  abbreviated: true,
+                  rounded: true,
+                }}
+                animate
+              />
             </div>
             <div className={className.infoLine}>
               <span className={className.infoLineLabel}>Borrow rate</span>
