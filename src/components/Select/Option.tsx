@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 
 import AssetImage from 'components/Asset/AssetImage'
+import AssetRate from 'components/Asset/AssetRate'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { ChevronDown, ChevronRight } from 'components/Icons'
 import Text from 'components/Text'
@@ -78,14 +79,14 @@ export default function Option(props: Props) {
             rounded: true,
           })}
         </Text>
-        <Text size='sm' className='col-span-2 text-white/50'>
-          {formatValue(convertAprToApy((marketAsset?.borrowRate ?? 0) * 100, 365), {
-            maxDecimals: 2,
-            minDecimals: 0,
-            prefix: 'APY ',
-            suffix: '%',
-          })}
-        </Text>
+        <AssetRate
+          rate={convertAprToApy((marketAsset?.borrowRate ?? 0) * 100, 365)}
+          isEnabled={marketAsset?.borrowEnabled ?? false}
+          className='col-span-2 text-white/50'
+          type='apy'
+          orientation='rtl'
+          suffix
+        />
         <DisplayCurrency
           className='col-span-2 text-sm text-right text-white/50'
           coin={BNCoin.fromDenomAndBigNumber(asset.denom, balance)}
