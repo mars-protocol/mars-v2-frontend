@@ -70,7 +70,7 @@ export default function Toaster() {
       </div>
     )
 
-    const pendingToast = createToast(Content, {
+    createToast(Content, {
       toastId: toast.id,
       icon: false,
       draggable: false,
@@ -78,8 +78,6 @@ export default function Toaster() {
       hideProgressBar: true,
       autoClose: false,
     })
-
-    toast.promise.then(() => createToast.dismiss(pendingToast))
   }
 
   const handleResponse = (toast: ToastResponse) => {
@@ -135,12 +133,14 @@ export default function Toaster() {
       </div>
     )
 
-    createToast(Msg, {
+    createToast.update(toast.id, {
+      render: Msg,
       icon: false,
       draggable: false,
       closeOnClick: true,
       autoClose: 5000,
       progressClassName: classNames('h-[1px] bg-none', isError ? 'bg-error' : 'bg-success'),
+      hideProgressBar: false,
     })
 
     useStore.setState({ toast: null })

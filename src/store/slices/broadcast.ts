@@ -41,12 +41,13 @@ export default function createBroadcastSlice(
   get: GetState<Store>,
 ): BroadcastSlice {
   const handleResponseMessages = (props: HandleResponseProps) => {
-    const { accountId, response, action, lend, changes, target, message } = props
+    const { id, accountId, response, action, lend, changes, target, message } = props
     if (!response) return
 
     if (response.error || response.result?.response.code !== 0) {
       set({
         toast: {
+          id,
           message: generateErrorMessage(response),
           isError: true,
           hash: response.result?.hash,
@@ -56,6 +57,7 @@ export default function createBroadcastSlice(
     }
 
     const toast: ToastResponse = {
+      id,
       accountId: accountId,
       isError: false,
       hash: response?.result?.hash,
@@ -641,9 +643,10 @@ export default function createBroadcastSlice(
       return { estimateFee, execute }
     },
     setToast: (toast: ToastObject) => {
+      const id = moment().unix()
       set({
         toast: {
-          id: moment().unix(),
+          id,
           promise: toast.response,
         },
       })
@@ -663,6 +666,7 @@ export default function createBroadcastSlice(
         }
 
         handleResponseMessages({
+          id,
           response,
           ...toast.options,
         })

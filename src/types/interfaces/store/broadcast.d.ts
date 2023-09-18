@@ -11,9 +11,13 @@ interface ExecutableTx {
   estimateFee: () => Promise<StdFee>
 }
 
+interface ToastObjectOptions extends HandleResponseProps {
+  id?: number
+}
+
 interface ToastObject {
   response: Promise<BroadcastResult>
-  options: HandleResponseProps
+  options: ToastObjectOptions
   swapOptions?: {
     coinIn: BNCoin
     denomOut: string
@@ -26,6 +30,7 @@ interface ToastPending {
 }
 
 type ToastResponse = {
+  id: number
   hash?: string
   title?: string
 } & (ToastSuccess | ToastError)
@@ -50,6 +55,7 @@ interface ToastStore {
 }
 
 interface HandleResponseProps {
+  id: number
   response?: BroadcastResult
   action:
     | 'deposit'
