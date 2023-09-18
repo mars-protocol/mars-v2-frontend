@@ -134,6 +134,8 @@ export const MOCK_DEPOSITED_VAULT_POSITION = {
   values: {
     primary: BN_ZERO,
     secondary: BN_ZERO,
+    unlocked: BN_ZERO,
+    unlocking: BN_ZERO,
   },
   amounts: {
     primary: BN_ZERO,

@@ -40,11 +40,13 @@ export const calculateAccountValue = (
 
   if (type === 'vaults') {
     return (
-      account.vaults?.reduce(
-        (acc, vaultPosition) =>
-          acc.plus(vaultPosition.values.primary).plus(vaultPosition.values.secondary),
-        BN_ZERO,
-      ) || BN_ZERO
+      account.vaults?.reduce((acc, vaultPosition) => {
+        return acc
+          .plus(vaultPosition.values.primary)
+          .plus(vaultPosition.values.secondary)
+          .plus(vaultPosition.values.unlocking)
+          .plus(vaultPosition.values.unlocked)
+      }, BN_ZERO) || BN_ZERO
     )
   }
 
@@ -85,8 +87,8 @@ export const calculateAccountApr = (
   })
 
   vaults?.forEach((vault) => {
-    const vaultValue = vault.values.primary.plus(vault.values.secondary)
-    const positionInterest = vaultValue.multipliedBy(convertApyToApr(vault?.apy ?? 0, 365))
+    const lockedValue = vault.values.primary.plus(vault.values.secondary)
+    const positionInterest = lockedValue.multipliedBy(convertApyToApr(vault?.apy ?? 0, 365))
     totalVaultsInterestValue = totalVaultsInterestValue.plus(positionInterest)
   })
 
@@ -106,13 +108,6 @@ export const calculateAccountApr = (
     .plus(totalVaultsInterestValue)
     .minus(totalDebtInterestValue)
   return totalInterstValue.dividedBy(totalValue).times(100)
-}
-
-export const calculateAccountBorrowRate = (
-  account: Account | AccountChange,
-  prices: BNCoin[],
-): BigNumber => {
-  return BN_ZERO
 }
 
 export function calculateAccountLeverage(account: Account, prices: BNCoin[]) {
@@ -186,15 +181,17 @@ export function cloneAccount(account: Account): Account {
     vaults: account.vaults.map((vault) => ({
       ...vault,
       amounts: {
-        locked: BN(vault.amounts.locked),
-        unlocking: BN(vault.amounts.unlocking),
-        unlocked: BN(vault.amounts.unlocked),
-        primary: BN(vault.amounts.primary),
-        secondary: BN(vault.amounts.secondary),
+        locked: vault.amounts.locked,
+        unlocking: vault.amounts.unlocking,
+        unlocked: vault.amounts.unlocked,
+        primary: vault.amounts.primary,
+        secondary: vault.amounts.secondary,
       },
       values: {
-        primary: BN(vault.values.primary),
-        secondary: BN(vault.values.secondary),
+        primary: vault.values.primary,
+        secondary: vault.values.secondary,
+        unlocking: vault.values.unlocking,
+        unlocked: vault.values.unlocked,
       },
     })),
   }
