@@ -201,7 +201,7 @@ export default function SwapForm(props: Props) {
       BNCoin.fromDenomAndBigNumber(sellAsset.denom, BN_ZERO),
       isAutoLendEnabled ? 'lend' : 'deposit',
     )
-  }, [buyAsset.denom, sellAsset.denom, simulateTrade, isAutoLendEnabled])
+  }, [buyAsset.denom, sellAsset.denom, simulateTrade, isAutoLendEnabled, setMarginChecked])
 
   useEffect(() => {
     const removeDepositAmount = sellAssetAmount.isGreaterThanOrEqualTo(sellSideMarginThreshold)

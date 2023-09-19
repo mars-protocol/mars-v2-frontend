@@ -148,7 +148,6 @@ export default function VaultModalContent(props: Props) {
                 toggleOpen={toggleOpen}
                 isCustomRatio={isCustomRatio}
                 onChangeIsCustomRatio={onChangeIsCustomRatio}
-                displayCurrency={displayCurrency}
                 depositCapReachedCoins={depositCapReachedCoins}
               />
             ),
