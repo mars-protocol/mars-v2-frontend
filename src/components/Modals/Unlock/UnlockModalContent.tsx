@@ -1,8 +1,7 @@
-import { useParams } from 'react-router-dom'
-
 import Button from 'components/Button'
 import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
 import Text from 'components/Text'
+import useAccountId from 'hooks/useAccountId'
 import useStore from 'store'
 
 interface Props {
@@ -12,7 +11,7 @@ interface Props {
 
 export default function UnlockModalContent(props: Props) {
   const unlock = useStore((s) => s.unlock)
-  const { accountId } = useParams()
+  const accountId = useAccountId()
 
   function onConfirm() {
     if (!accountId) return

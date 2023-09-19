@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
 
 import Button from 'components/Button'
 import { ChevronRight } from 'components/Icons'
 import NotificationBanner from 'components/NotificationBanner'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { SLIPPAGE_KEY } from 'constants/localStore'
+import useAccountId from 'hooks/useAccountId'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 
@@ -14,7 +14,7 @@ interface Props {
 }
 
 export default function VaultUnlockBanner(props: Props) {
-  const { accountId } = useParams()
+  const accountId = useAccountId()
   const [isConfirming, setIsConfirming] = useState(false)
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
   const [slippage] = useLocalStorage<number>(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)

@@ -12,6 +12,7 @@ import { BN } from 'utils/helpers'
 function useLendingMarketAssetsTableData(): {
   accountLentAssets: LendingMarketTableData[]
   availableAssets: LendingMarketTableData[]
+  allAssets: LendingMarketTableData[]
 } {
   const markets = useDepositEnabledMarkets()
   const accountLentAmounts = useCurrentAccountLends()
@@ -52,7 +53,11 @@ function useLendingMarketAssetsTableData(): {
       },
     )
 
-    return { accountLentAssets, availableAssets }
+    return {
+      accountLentAssets,
+      availableAssets,
+      allAssets: [...accountLentAssets, ...availableAssets],
+    }
   }, [markets, marketDeposits, marketLiquidities, accountLentAmounts, convertAmount])
 }
 

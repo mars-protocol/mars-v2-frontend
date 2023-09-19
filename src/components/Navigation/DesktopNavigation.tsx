@@ -4,11 +4,14 @@ import { useParams } from 'react-router-dom'
 import { menuTree } from 'components/Header/DesktopHeader'
 import { Logo } from 'components/Icons'
 import { NavLink } from 'components/Navigation/NavLink'
+import useAccountId from 'hooks/useAccountId'
 import useStore from 'store'
 import { getRoute } from 'utils/route'
 
 export default function DesktopNavigation() {
-  const { address, accountId } = useParams()
+  const { address } = useParams()
+  const accountId = useAccountId()
+
   const focusComponent = useStore((s) => s.focusComponent)
 
   function getIsActive(pages: string[]) {

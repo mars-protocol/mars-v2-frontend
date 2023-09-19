@@ -1,6 +1,7 @@
 import { getAccountNftQueryClient } from 'api/cosmwasm-client'
 
-export default async function getAccountIds(address: string): Promise<string[]> {
+export default async function getAccountIds(address?: string): Promise<string[]> {
+  if (!address) return []
   const accountNftQueryClient = await getAccountNftQueryClient()
 
   const data = await accountNftQueryClient.tokens({ owner: address })

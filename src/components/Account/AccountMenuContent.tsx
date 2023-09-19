@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useCallback, useEffect } from 'react'
+import { useCallback } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import AccountCreateFirst from 'components/Account/AccountCreateFirst'
@@ -13,6 +13,7 @@ import Text from 'components/Text'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LEND_ASSETS_KEY } from 'constants/localStore'
+import useAccountId from 'hooks/useAccountId'
 import useAutoLend from 'hooks/useAutoLend'
 import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
 import useLocalStorage from 'hooks/useLocalStorage'
@@ -33,7 +34,9 @@ interface Props {
 export default function AccountMenuContent(props: Props) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const { accountId, address } = useParams()
+  const { address } = useParams()
+  const accountId = useAccountId()
+
   const createAccount = useStore((s) => s.createAccount)
   const baseCurrency = useStore((s) => s.baseCurrency)
   const [showMenu, setShowMenu] = useToggle()
@@ -96,10 +99,6 @@ export default function AccountMenuContent(props: Props) {
       return
     }
   }, [checkHasFunds, hasCreditAccounts, setShowMenu, showMenu])
-
-  useEffect(() => {
-    useStore.setState({ accounts: props.accounts })
-  }, [props.accounts])
 
   if (!address) return null
 

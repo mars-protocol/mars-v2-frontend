@@ -48,7 +48,7 @@ export default function HealthBar(props: Props) {
       type='info'
       className='flex items-center w-full'
     >
-      <div className={classNames('flex max-w-[184px] max-h-1', props.className)}>
+      <div className={classNames('flex w-full', props.className)}>
         <svg version='1.1' xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' viewBox='0 0 184 4'>
           <mask id='healthBarMask'>
             <path fill='#FFFFFF' d='M0,2c0-1.1,0.9-2,2-2h41.6v4H2C0.9,4,0,3.1,0,2z' />

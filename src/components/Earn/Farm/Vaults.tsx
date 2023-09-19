@@ -1,5 +1,4 @@
 import { Suspense, useMemo } from 'react'
-import { useParams } from 'react-router-dom'
 
 import Card from 'components/Card'
 import { VaultTable } from 'components/Earn/Farm/VaultTable'
@@ -7,6 +6,7 @@ import VaultUnlockBanner from 'components/Earn/Farm/VaultUnlockBanner'
 import { IS_TESTNET } from 'constants/env'
 import { BN_ZERO } from 'constants/math'
 import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
+import useAccountId from 'hooks/useAccountId'
 import useDepositedVaults from 'hooks/useDepositedVaults'
 import useVaults from 'hooks/useVaults'
 import { VaultStatus } from 'types/enums/vault'
@@ -16,7 +16,7 @@ interface Props {
 }
 
 function Content(props: Props) {
-  const { accountId } = useParams()
+  const accountId = useAccountId()
   const { data: vaults } = useVaults()
   const { data: depositedVaults } = useDepositedVaults(accountId || '')
   const isAvailable = props.type === 'available'

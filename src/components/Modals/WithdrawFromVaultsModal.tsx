@@ -1,5 +1,3 @@
-import { useParams } from 'react-router-dom'
-
 import Button from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
 import DisplayCurrency from 'components/DisplayCurrency'
@@ -9,6 +7,7 @@ import Modal from 'components/Modal'
 import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { SLIPPAGE_KEY } from 'constants/localStore'
+import useAccountId from 'hooks/useAccountId'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -17,7 +16,7 @@ import { demagnify } from 'utils/formatters'
 
 export default function WithdrawFromVaultsModal() {
   const modal = useStore((s) => s.withdrawFromVaultsModal)
-  const { accountId } = useParams()
+  const accountId = useAccountId()
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
   const baseCurrency = useStore((s) => s.baseCurrency)
   const [slippage] = useLocalStorage<number>(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)

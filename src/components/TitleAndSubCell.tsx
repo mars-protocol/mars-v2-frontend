@@ -15,7 +15,7 @@ export default function TitleAndSubCell(props: Props) {
       <Text size='xs' className={props.className} tag='span'>
         {props.title}
       </Text>
-      <Text size='xs' className={classNames('text-white/50', props.className)} tag='span'>
+      <Text size='xs' className={classNames('text-white/40', props.className)} tag='span'>
         {props.sub}
       </Text>
     </div>
