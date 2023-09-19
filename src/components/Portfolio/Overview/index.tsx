@@ -65,16 +65,15 @@ export default function Content() {
   }
 
   return (
-    <div
-      className={classNames(
-        'grid w-full grid-cols-1 gap-4 p-4',
-        'md:grid-cols-2',
-        'lg:grid-cols-3',
-      )}
-    >
-      {accountIds.map((accountId: string, index: number) => {
-        return <PortfolioCard key={accountId} accountId={accountId} />
-      })}
-    </div>
+    <Card contentClassName='p-6 pt-4'>
+      <Text className='mb-6 text-white/30'>Credit Accounts</Text>
+      <div
+        className={classNames('grid w-full grid-cols-1 gap-4', 'md:grid-cols-2', 'lg:grid-cols-3')}
+      >
+        {accountIds.map((accountId: string, index: number) => {
+          return <PortfolioCard key={accountId} accountId={accountId} />
+        })}
+      </div>
+    </Card>
   )
 }

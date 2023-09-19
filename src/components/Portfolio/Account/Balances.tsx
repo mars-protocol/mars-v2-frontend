@@ -15,12 +15,10 @@ interface Props {
 function Content(props: Props) {
   const { data: account } = useAccount(props.accountId, true)
 
-  const { availableAssets: borrowAvailableAssets, accountBorrowedAssets } =
-    useBorrowMarketAssetsTableData()
-  const { availableAssets: lendingAvailableAssets, accountLentAssets } =
-    useLendingMarketAssetsTableData()
+  const { allAssets: borrowAssets } = useBorrowMarketAssetsTableData()
+  const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
 
-  if (!account || !borrowAvailableAssets.length || !lendingAvailableAssets.length) {
+  if (!account || !borrowAssets.length || !lendingAssets.length) {
     return <Skeleton />
   }
 
@@ -28,8 +26,8 @@ function Content(props: Props) {
     <Skeleton>
       <AccountBalancesTable
         account={account}
-        borrowingData={borrowAvailableAssets}
-        lendingData={lendingAvailableAssets}
+        borrowingData={borrowAssets}
+        lendingData={lendingAssets}
       />
     </Skeleton>
   )

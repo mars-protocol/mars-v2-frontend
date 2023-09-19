@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
 
 import AccountFundContent from 'components/Account/AccountFund/AccountFundContent'
 import Card from 'components/Card'
 import { CircularProgress } from 'components/CircularProgress'
 import FullOverlayContent from 'components/FullOverlayContent'
+import useAccountId from 'hooks/useAccountId'
 import useAccounts from 'hooks/useAccounts'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
 
 export default function AccountFundFullPage() {
   const address = useStore((s) => s.address)
-  const { accountId } = useParams()
+  const accountId = useAccountId()
 
   const { data: accounts, isLoading } = useAccounts(address)
   const currentAccount = useCurrentAccount()

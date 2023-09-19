@@ -54,7 +54,7 @@ export default function AccountComposition(props: Props) {
     () => getAccountPositionValues(account, prices),
     [account, prices],
   )
-  const positionValue = depositsBalance.plus(lendsBalance).plus(vaultsBalance)
+  const totalBalance = depositsBalance.plus(lendsBalance).plus(vaultsBalance)
 
   const [updatedPositionValue, updatedDebtsBalance] = useMemo(() => {
     const [updatedDepositsBalance, updatedLendsBalance, updatedDebtsBalance, updatedVaultsBalance] =
@@ -69,10 +69,7 @@ export default function AccountComposition(props: Props) {
     return [updatedPositionValue, updatedDebtsBalance]
   }, [updatedAccount, prices])
 
-  const totalBalance = useMemo(
-    () => calculateAccountBalanceValue(account, prices),
-    [account, prices],
-  )
+  const netWorth = useMemo(() => calculateAccountBalanceValue(account, prices), [account, prices])
   const updatedTotalBalance = useMemo(
     () => (updatedAccount ? calculateAccountBalanceValue(updatedAccount, prices) : BN_ZERO),
     [updatedAccount, prices],
@@ -93,9 +90,9 @@ export default function AccountComposition(props: Props) {
   return (
     <div className='flex-wrap w-full p-4 pb-1'>
       <Item
-        title='Total Position Value'
-        current={positionValue}
-        change={hasChanged ? updatedPositionValue : positionValue}
+        title='Total Balance'
+        current={totalBalance}
+        change={hasChanged ? updatedPositionValue : totalBalance}
         className='pb-3'
       />
       <Item
@@ -106,9 +103,9 @@ export default function AccountComposition(props: Props) {
         isDecrease
       />
       <Item
-        title='Total Balance'
-        current={totalBalance}
-        change={hasChanged ? updatedTotalBalance : totalBalance}
+        title='Net worth'
+        current={netWorth}
+        change={hasChanged ? updatedTotalBalance : netWorth}
         className='py-3 font-bold border border-transparent border-y-white/20'
       />
       <Item

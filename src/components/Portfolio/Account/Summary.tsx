@@ -29,18 +29,17 @@ function Content(props: Props) {
   const { data: account } = useAccount(props.accountId, true)
   const { data: prices } = usePrices()
   const { health } = useHealthComputer(account)
-  const { availableAssets: borrowAvailableAssets, accountBorrowedAssets } =
-    useBorrowMarketAssetsTableData()
-  const { availableAssets: lendingAvailableAssets, accountLentAssets } =
-    useLendingMarketAssetsTableData()
+  const { allAssets: borrowAssets } = useBorrowMarketAssetsTableData()
+  const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
 
   const stats = useMemo(() => {
-    if (!account || !borrowAvailableAssets.length || !lendingAvailableAssets.length) return STATS
+    if (!account || !borrowAssets.length || !lendingAssets.length) return STATS
 
     const [deposits, lends, debts, vaults] = getAccountPositionValues(account, prices)
-    const positionValue = deposits.plus(lends).plus(debts).plus(vaults)
-    const apr = calculateAccountApr(account, borrowAvailableAssets, lendingAvailableAssets, prices)
+    const positionValue = deposits.plus(lends).plus(vaults)
+    const apr = calculateAccountApr(account, borrowAssets, lendingAssets, prices)
     const leverage = calculateAccountLeverage(account, prices)
+
     return [
       {
         title: (
@@ -62,17 +61,16 @@ function Content(props: Props) {
       },
       {
         title: (
-          <FormattedNumber className='text-xl' amount={apr.toNumber()} options={{ suffix: '%' }} />
+          <DisplayCurrency
+            className='text-xl'
+            coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionValue.minus(debts))}
+          />
         ),
         sub: STATS[2].sub,
       },
       {
         title: (
-          <FormattedNumber
-            className='text-xl'
-            amount={deposits.toNumber()}
-            options={{ suffix: '%' }}
-          />
+          <FormattedNumber className='text-xl' amount={apr.toNumber()} options={{ suffix: '%' }} />
         ),
         sub: STATS[3].sub,
       },
@@ -87,7 +85,7 @@ function Content(props: Props) {
         sub: STATS[4].sub,
       },
     ]
-  }, [account, borrowAvailableAssets, lendingAvailableAssets, prices])
+  }, [account, borrowAssets, lendingAssets, prices])
 
   return <Skeleton stats={stats} health={health} {...props} />
 }
@@ -131,9 +129,9 @@ function Skeleton(props: SkeletonProps) {
 }
 
 const STATS = [
-  { title: null, sub: 'Total Pos.Value' },
-  { title: null, sub: 'Liabilities' },
+  { title: null, sub: 'Total Balance' },
+  { title: null, sub: 'Total Debt' },
+  { title: null, sub: 'Net Worth' },
   { title: null, sub: 'APR' },
-  { title: null, sub: 'Borrow Rate' },
   { title: null, sub: 'Account Leverage' },
 ]

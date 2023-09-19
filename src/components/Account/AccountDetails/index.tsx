@@ -107,16 +107,19 @@ function AccountDetails(props: Props) {
           </Text>
         </div>
         <div className='w-full py-4 border-t border-white/20'>
-          <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
-            Leverage
-          </Text>
-          <AccountDetailsLeverage leverage={leverage} updatedLeverage={updatedLeverage} />
-        </div>
-        <div className='w-full py-4 border-t border-white/20'>
           <Text size='2xs' className='mb-0.5 w-full text-center text-white/50 whitespace-nowrap'>
             Net worth
           </Text>
           <DisplayCurrency coin={coin} className='w-full text-center truncate text-2xs ' />
+        </div>
+        <div className='w-full py-4 border-t border-white/20'>
+          <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
+            Leverage
+          </Text>
+          <AccountDetailsLeverage
+            leverage={leverage.toNumber() || 1}
+            updatedLeverage={updatedLeverage?.toNumber() || null}
+          />
         </div>
         <div className='w-full py-4 border-t border-white/20'>
           <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>

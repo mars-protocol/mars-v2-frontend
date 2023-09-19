@@ -17,7 +17,7 @@ export default function PortfolioAccountPageHeader(props: Props) {
   return (
     <div className='flex gap-2 items-center pt-4 pb-8 border-b border-white/20'>
       <NavLink to={getRoute('portfolio', address, selectedAccountId)}>
-        <Text className='text-white/60'>Portfolio</Text>
+        <Text className='text-white/40'>Portfolio</Text>
       </NavLink>
       <ArrowRight className='h-3 text-white/60' />
       <Text tag='span'>Credit Account {props.accountId}</Text>

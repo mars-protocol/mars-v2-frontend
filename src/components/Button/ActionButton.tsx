@@ -5,6 +5,7 @@ import { ACCOUNT_MENU_BUTTON_ID } from 'components/Account/AccountMenuContent'
 import Button from 'components/Button'
 import { Account, PlusCircled } from 'components/Icons'
 import WalletConnectButton from 'components/Wallet/WalletConnectButton'
+import useAccountId from 'hooks/useAccountId'
 import useAccountIds from 'hooks/useAccountIds'
 import useStore from 'store'
 
@@ -14,6 +15,7 @@ export default function ActionButton(props: ButtonProps) {
   const address = useStore((s) => s.address)
 
   const { data: accountIds } = useAccountIds(address || '')
+  const selectedAccountId = useAccountId()
 
   const handleCreateAccountClick = useCallback(() => {
     useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
@@ -21,7 +23,7 @@ export default function ActionButton(props: ButtonProps) {
 
   if (!address) return <WalletConnectButton {...defaultProps} />
 
-  if (accountIds && accountIds.length === 0) {
+  if (accountIds.length === 0) {
     return (
       <Button
         onClick={handleCreateAccountClick}
@@ -32,7 +34,7 @@ export default function ActionButton(props: ButtonProps) {
     )
   }
 
-  if (!accountIds) {
+  if (!selectedAccountId) {
     return (
       <Button
         text='Select Account'

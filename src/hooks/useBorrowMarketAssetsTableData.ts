@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 
+import useCurrentAccountDebts from 'hooks/useCurrentAccountDebts'
 import useDepositEnabledMarkets from 'hooks/useDepositEnabledMarkets'
 import useMarketBorrowings from 'hooks/useMarketBorrowings'
 import useMarketDeposits from 'hooks/useMarketDeposits'
@@ -7,11 +8,11 @@ import useMarketLiquidities from 'hooks/useMarketLiquidities'
 import { byDenom } from 'utils/array'
 import { getAssetByDenom } from 'utils/assets'
 import { BN } from 'utils/helpers'
-import useCurrentAccountDebts from 'hooks/useCurrentAccountDebts'
 
 export default function useBorrowMarketAssetsTableData(): {
   accountBorrowedAssets: BorrowMarketTableData[]
   availableAssets: BorrowMarketTableData[]
+  allAssets: BorrowMarketTableData[]
 } {
   const markets = useDepositEnabledMarkets()
   const accountDebts = useCurrentAccountDebts()
@@ -45,6 +46,10 @@ export default function useBorrowMarketAssetsTableData(): {
       ;(borrowMarketAsset.debt ? accountBorrowedAssets : availableAssets).push(borrowMarketAsset)
     })
 
-    return { accountBorrowedAssets, availableAssets }
+    return {
+      accountBorrowedAssets,
+      availableAssets,
+      allAssets: [...accountBorrowedAssets, ...availableAssets],
+    }
   }, [accountDebts, borrowData, markets, marketDeposits, marketLiquidities])
 }
