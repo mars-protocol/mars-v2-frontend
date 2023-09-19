@@ -28,13 +28,11 @@ interface Props {
   onChangeDeposits: (deposits: BNCoin[]) => void
   onChangeIsCustomRatio: (isCustomRatio: boolean) => void
   toggleOpen: (index: number) => void
-  displayCurrency: string
   depositCapReachedCoins: BNCoin[]
 }
 
 export default function VaultDeposit(props: Props) {
-  const { deposits, primaryAsset, secondaryAsset, account, onChangeDeposits, displayCurrency } =
-    props
+  const { deposits, primaryAsset, secondaryAsset, account, onChangeDeposits } = props
   const [availablePrimaryAmount, availableSecondaryAmount] = useMemo(
     () => [
       accumulateAmounts(primaryAsset.denom, [...account.deposits, ...account.lends]),
@@ -80,26 +78,55 @@ export default function VaultDeposit(props: Props) {
     () =>
       BN(
         Math.min(
-          availablePrimaryAmount.multipliedBy(primaryPrice).toNumber(),
-          availableSecondaryAmount.multipliedBy(secondaryPrice).toNumber(),
+          availablePrimaryAmount
+            .shiftedBy(-primaryAsset.decimals)
+            .multipliedBy(primaryPrice)
+            .toNumber(),
+          availableSecondaryAmount
+            .shiftedBy(-secondaryAsset.decimals)
+            .multipliedBy(secondaryPrice)
+            .toNumber(),
         ),
       ),
-    [availablePrimaryAmount, primaryPrice, availableSecondaryAmount, secondaryPrice],
+    [
+      availablePrimaryAmount,
+      availableSecondaryAmount,
+      primaryAsset,
+      primaryPrice,
+      secondaryAsset,
+      secondaryPrice,
+    ],
   )
   const primaryMax = useMemo(
     () =>
       props.isCustomRatio
         ? availablePrimaryAmount
-        : maxAssetValueNonCustom.dividedBy(primaryPrice).integerValue(),
-    [props.isCustomRatio, availablePrimaryAmount, primaryPrice, maxAssetValueNonCustom],
+        : maxAssetValueNonCustom
+            .dividedBy(primaryPrice)
+            .shiftedBy(primaryAsset.decimals)
+            .integerValue(),
+    [
+      props.isCustomRatio,
+      availablePrimaryAmount,
+      primaryPrice,
+      primaryAsset,
+      maxAssetValueNonCustom,
+    ],
   )
-  const secondaryMax = useMemo(
-    () =>
-      props.isCustomRatio
-        ? availableSecondaryAmount
-        : maxAssetValueNonCustom.dividedBy(secondaryPrice).decimalPlaces(0),
-    [props.isCustomRatio, availableSecondaryAmount, secondaryPrice, maxAssetValueNonCustom],
-  )
+  const secondaryMax = useMemo(() => {
+    return props.isCustomRatio
+      ? availableSecondaryAmount
+      : maxAssetValueNonCustom
+          .dividedBy(secondaryPrice)
+          .shiftedBy(secondaryAsset.decimals)
+          .integerValue()
+  }, [
+    props.isCustomRatio,
+    availableSecondaryAmount,
+    secondaryPrice,
+    secondaryAsset,
+    maxAssetValueNonCustom,
+  ])
 
   const [percentage, setPercentage] = useState(
     primaryValue.dividedBy(maxAssetValueNonCustom).multipliedBy(100).decimalPlaces(0).toNumber() ||
