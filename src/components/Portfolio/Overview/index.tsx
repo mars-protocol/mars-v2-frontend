@@ -6,39 +6,20 @@ import AccountCreateFirst from 'components/Account/AccountCreateFirst'
 import Button from 'components/Button'
 import Card from 'components/Card'
 import { PlusCircled } from 'components/Icons'
-import Loading from 'components/Loading'
+import PortfolioCard from 'components/Portfolio/Card'
+import ConnectInfo from 'components/Portfolio/Overview/ConnectInfo'
 import Text from 'components/Text'
 import WalletBridges from 'components/Wallet/WalletBridges'
-import WalletConnectButton from 'components/Wallet/WalletConnectButton'
 import useAccountIds from 'hooks/useAccountIds'
-import useAccounts from 'hooks/useAccounts'
 import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
 import useStore from 'store'
 import { defaultFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
 
-import PortfolioCard from './PortfolioCard'
-
-function ConnectInfo() {
-  return (
-    <Card
-      className='w-full h-fit bg-white/5'
-      title='Portfolio'
-      contentClassName='px-4 py-6 flex justify-center flex-wrap'
-    >
-      <Text size='sm' className='w-full text-center'>
-        You need to be connected to view the porfolio page.
-      </Text>
-      <WalletConnectButton className='mt-4' />
-    </Card>
-  )
-}
-
 export default function Content() {
   const { address: urlAddress } = useParams()
-  const { data: accounts, isLoading } = useAccounts(urlAddress ?? '')
   const walletAddress = useStore((s) => s.address)
-  const { data: accountIds } = useAccountIds(urlAddress || '')
+  const { data: accountIds, isLoading } = useAccountIds(urlAddress)
 
   const baseCurrency = useStore((s) => s.baseCurrency)
   const transactionFeeCoinBalance = useCurrentWalletBalance(baseCurrency.denom)
@@ -59,11 +40,9 @@ export default function Content() {
     useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
   }, [checkHasFunds])
 
-  if (isLoading) return <Fallback count={accountIds?.length || 3} />
-
   if (!walletAddress && !urlAddress) return <ConnectInfo />
 
-  if (!accounts || accounts.length === 0)
+  if (!isLoading && accountIds?.length === 0) {
     return (
       <Card
         className='w-full h-fit bg-white/5'
@@ -83,6 +62,7 @@ export default function Content() {
         </Button>
       </Card>
     )
+  }
 
   return (
     <div
@@ -92,29 +72,9 @@ export default function Content() {
         'lg:grid-cols-3',
       )}
     >
-      {accounts.map((account: Account, index: number) => (
-        <PortfolioCard key={account.id} account={account} />
-      ))}
-    </div>
-  )
-}
-
-function Fallback({ count = 3 }: { count: number }) {
-  const { address } = useParams()
-  if (!address) return <ConnectInfo />
-  return (
-    <div
-      className={classNames('grid w-full grid-cols-1 gap-4', 'md:grid-cols-2', 'lg:grid-cols-3')}
-    >
-      {Array.from({ length: count }, (_, i) => (
-        <Card key={i} className='w-full h-fit bg-white/5' title='Account' contentClassName='py-6'>
-          <div className='p-4'>
-            <Loading className='h-4 w-50' />
-          </div>
-          <Text className='w-full px-4 py-2 mt-3 text-white bg-white/10'>Balances</Text>
-          <Loading className='w-full h-4' />
-        </Card>
-      ))}
+      {accountIds.map((accountId: string, index: number) => {
+        return <PortfolioCard key={accountId} accountId={accountId} />
+      })}
     </div>
   )
 }

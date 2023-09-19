@@ -115,7 +115,7 @@ function Skeleton(props: SkeletonProps) {
           <HealthBar health={props.health} className='h-full' />
         </div>
       </div>
-      <div className='grid grid-cols-5 gap-4'>
+      <div className='grid grid-cols-2 gap-4 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3'>
         {props.stats.map((stat) => (
           <Card key={stat.sub} className='p-6 bg-white/5 flex-grow-1 text-center'>
             <TitleAndSubCell

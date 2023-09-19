@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useCallback, useEffect } from 'react'
+import { useCallback } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import AccountCreateFirst from 'components/Account/AccountCreateFirst'
@@ -99,10 +99,6 @@ export default function AccountMenuContent(props: Props) {
       return
     }
   }, [checkHasFunds, hasCreditAccounts, setShowMenu, showMenu])
-
-  useEffect(() => {
-    useStore.setState({ accounts: props.accounts })
-  }, [props.accounts])
 
   if (!address) return null
 

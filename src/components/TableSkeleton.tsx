@@ -14,36 +14,38 @@ export default function TableSkeleton(props: Props) {
   return (
     <table className='w-full'>
       <thead className='border-b border-white/5'>
-        {props.labels.map((label, index) => {
-          return (
-            <th
-              key={label}
-              className={classNames('p-3', index === props.labels.length - 1 && 'pr-4')}
-            >
-              <div
-                className={classNames(
-                  'flex',
-                  index === 0 ? 'justify-start' : 'justify-end',
-                  'align-center',
-                )}
+        <tr>
+          {props.labels.map((label, index) => {
+            return (
+              <th
+                key={label}
+                className={classNames('p-3', index === props.labels.length - 1 && 'pr-4')}
               >
-                <span className='w-6 h-6 text-white'>
-                  <SortNone />
-                </span>
-                <Text
-                  tag='span'
-                  size='sm'
+                <div
                   className={classNames(
-                    'flex  font-normal text-white/70 items-center',
-                    index !== 0 && 'justify-end',
+                    'flex',
+                    index === 0 ? 'justify-start' : 'justify-end',
+                    'align-center',
                   )}
                 >
-                  {label}
-                </Text>
-              </div>
-            </th>
-          )
-        })}
+                  <span className='w-6 h-6 text-white'>
+                    <SortNone />
+                  </span>
+                  <Text
+                    tag='span'
+                    size='sm'
+                    className={classNames(
+                      'flex  font-normal text-white/70 items-center',
+                      index !== 0 && 'justify-end',
+                    )}
+                  >
+                    {label}
+                  </Text>
+                </div>
+              </th>
+            )
+          })}
+        </tr>
       </thead>
       <tbody>
         {Array(props.rowCount)

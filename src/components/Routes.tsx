@@ -1,4 +1,4 @@
-import { Outlet, Route, Routes as RoutesWrapper } from 'react-router-dom'
+import { Navigate, Outlet, Route, Routes as RoutesWrapper } from 'react-router-dom'
 
 import Layout from 'pages/_layout'
 import BorrowPage from 'pages/BorrowPage'
@@ -37,6 +37,7 @@ export default function Routes() {
           </Route>
           <Route path='' element={<TradePage />} />
         </Route>
+        <Route path='*' element={<Navigate to='/' />} />
       </Route>
     </RoutesWrapper>
   )
