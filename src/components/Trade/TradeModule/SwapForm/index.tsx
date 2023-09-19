@@ -194,6 +194,7 @@ export default function SwapForm(props: Props) {
   useEffect(() => {
     setBuyAssetAmount(BN_ZERO)
     setSellAssetAmount(BN_ZERO)
+    setMarginChecked(false)
     simulateTrade(
       BNCoin.fromDenomAndBigNumber(buyAsset.denom, BN_ZERO),
       BNCoin.fromDenomAndBigNumber(sellAsset.denom, BN_ZERO),
