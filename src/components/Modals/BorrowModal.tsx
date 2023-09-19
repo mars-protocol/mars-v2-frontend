@@ -69,10 +69,23 @@ function BorrowModal(props: Props) {
   const { computeMaxBorrowAmount } = useHealthComputer(account)
   const totalDebt = BN(getDebtAmount(modal))
 
+  const [depositBalance, lendBalance] = useMemo(
+    () => [
+      account.deposits.find(byDenom(asset.denom))?.amount ?? BN_ZERO,
+      account.lends.find(byDenom(asset.denom))?.amount ?? BN_ZERO,
+    ],
+    [account, asset.denom],
+  )
+
   const totalDebtRepayAmount = useMemo(
     () => getDebtAmountWithInterest(totalDebt, Number(apr)),
     [totalDebt, apr],
   )
+
+  const maxRepayAmount = useMemo(() => {
+    const maxBalance = depositBalance.plus(lendBalance)
+    return isRepay ? BigNumber.min(maxBalance, totalDebtRepayAmount) : BN_ZERO
+  }, [depositBalance, lendBalance, isRepay, totalDebtRepayAmount])
 
   function resetState() {
     setAmount(BN_ZERO)
@@ -135,22 +148,15 @@ function BorrowModal(props: Props) {
   }, [account, isRepay, maxBorrow, max])
 
   useEffect(() => {
-    if (!account) return
-    if (isRepay) {
-      const depositBalance = account.deposits.find(byDenom(asset.denom))?.amount ?? BN_ZERO
-      const lendBalance = account.lends.find(byDenom(asset.denom))?.amount ?? BN_ZERO
-      const maxBalance = depositBalance.plus(lendBalance)
-      const maxRepayAmount = BigNumber.min(maxBalance, totalDebtRepayAmount)
-      setMax(maxRepayAmount)
-      return
-    }
-  }, [account, asset.denom, isRepay, totalDebtRepayAmount])
+    if (!isRepay) return
+    if (maxRepayAmount.isEqualTo(max)) return
+    setMax(maxRepayAmount)
+  }, [isRepay, max, maxRepayAmount])
 
   useEffect(() => {
-    if (amount.isGreaterThan(max)) {
-      handleChange(max)
-      setAmount(max)
-    }
+    if (amount.isLessThanOrEqualTo(max)) return
+    handleChange(max)
+    setAmount(max)
   }, [amount, max, handleChange])
 
   useEffect(() => {
@@ -223,6 +229,7 @@ function BorrowModal(props: Props) {
               onChange={handleChange}
               amount={amount}
               max={max}
+              disabled={max.isZero()}
               className='w-full'
               maxText='Max'
             />
