@@ -177,7 +177,7 @@ export default function SettingsModal() {
     handleDisplayCurrency(DEFAULT_SETTINGS.displayCurrency)
     handlePreferredAsset(DEFAULT_SETTINGS.preferredAsset)
     handleSlippage(DEFAULT_SETTINGS.slippage)
-    handleReduceMotion(!DEFAULT_SETTINGS.reduceMotion)
+    handleReduceMotion(DEFAULT_SETTINGS.reduceMotion)
     handleLendAssets(DEFAULT_SETTINGS.lendAssets)
   }, [
     handleDisplayCurrency,
