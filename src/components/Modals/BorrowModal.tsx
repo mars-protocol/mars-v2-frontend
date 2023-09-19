@@ -8,7 +8,7 @@ import Card from 'components/Card'
 import DisplayCurrency from 'components/DisplayCurrency'
 import Divider from 'components/Divider'
 import { FormattedNumber } from 'components/FormattedNumber'
-import { ArrowRight } from 'components/Icons'
+import { ArrowRight, InfoCircle } from 'components/Icons'
 import Modal from 'components/Modal'
 import Switch from 'components/Switch'
 import Text from 'components/Text'
@@ -28,6 +28,11 @@ import { formatPercent, formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { getDebtAmountWithInterest } from 'utils/tokens'
 
+interface Props {
+  account: Account
+  modal: BorrowModal
+}
+
 function getDebtAmount(modal: BorrowModal) {
   return BN((modal.marketData as BorrowMarketTableData)?.debt ?? 0).toString()
 }
@@ -37,9 +42,21 @@ function getAssetLogo(modal: BorrowModal) {
   return <AssetImage asset={modal.asset} size={24} />
 }
 
-interface Props {
-  account: Account
-  modal: BorrowModal
+function RepayNotAvailable(props: { asset: Asset }) {
+  return (
+    <Card className='mt-6'>
+      <div className='flex items-start p-4'>
+        <InfoCircle width={26} className='mr-2' />
+        <div className='flex flex-col gap-1'>
+          <Text size='sm'>Repay not available</Text>
+          <Text
+            size='xs'
+            className='text-white/40'
+          >{`Unfortunately you don't have any ${props.asset.symbol} in your Credit Account to repay the debt.`}</Text>
+        </div>
+      </div>
+    </Card>
+  )
 }
 
 export default function BorrowModalController() {
@@ -144,7 +161,8 @@ function BorrowModal(props: Props) {
 
   useEffect(() => {
     if (!account || isRepay) return
-    if (maxBorrow !== max) setMax(maxBorrow)
+    if (maxBorrow.isEqualTo(max)) return
+    setMax(maxBorrow)
   }, [account, isRepay, maxBorrow, max])
 
   useEffect(() => {
@@ -233,6 +251,7 @@ function BorrowModal(props: Props) {
               className='w-full'
               maxText='Max'
             />
+            {isRepay && maxRepayAmount.isZero() && <RepayNotAvailable asset={asset} />}
             {!isRepay && (
               <>
                 <Divider className='my-6' />
