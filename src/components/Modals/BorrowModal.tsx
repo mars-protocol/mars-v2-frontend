@@ -48,7 +48,7 @@ function RepayNotAvailable(props: { asset: Asset }) {
       <div className='flex items-start p-4'>
         <InfoCircle width={26} className='mr-2' />
         <div className='flex flex-col gap-1'>
-          <Text size='sm'>Repay not available</Text>
+          <Text size='sm'>No funds for repay</Text>
           <Text
             size='xs'
             className='text-white/40'
