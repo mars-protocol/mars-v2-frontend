@@ -10,6 +10,7 @@ import useLocalStorage from 'hooks/useLocalStorage'
 interface Props {
   text: string | ReactNode
   children?: ReactNode
+  bg: 'borrow' | 'lend' | 'farm' | 'portfolio'
 }
 
 export default function Intro(props: Props) {
@@ -18,7 +19,7 @@ export default function Intro(props: Props) {
   if (!tutorial) return null
   return (
     <Card
-      className='relative w-full p-8 mb-6 bg-cover bg-intro h-55'
+      className={`relative w-full p-8 mb-6 bg-cover bg-intro-${props.bg} h-55`}
       contentClassName='flex rjustify-between w-full h-full flex-col justify-between'
     >
       <Tooltip
