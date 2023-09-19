@@ -52,7 +52,7 @@ export const ASSETS: Asset[] = [
     isEnabled: !IS_TESTNET,
     isMarket: !IS_TESTNET,
     isDisplayCurrency: !IS_TESTNET,
-    isAutoLendEnabled: true,
+    isAutoLendEnabled: false,
     poolId: 803,
   },
   {
@@ -139,7 +139,7 @@ export const ASSETS: Asset[] = [
     isEnabled: !IS_TESTNET,
     isMarket: !IS_TESTNET,
     isDisplayCurrency: !IS_TESTNET,
-    isAutoLendEnabled: true,
+    isAutoLendEnabled: false,
     pythPriceFeedId: '60144b1d5c9e9851732ad1d9760e3485ef80be39b984f6bf60f82b28a2b7f126',
     poolId: 812,
   },
