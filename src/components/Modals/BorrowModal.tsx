@@ -8,7 +8,7 @@ import Card from 'components/Card'
 import DisplayCurrency from 'components/DisplayCurrency'
 import Divider from 'components/Divider'
 import { FormattedNumber } from 'components/FormattedNumber'
-import { ArrowRight } from 'components/Icons'
+import { ArrowRight, InfoCircle } from 'components/Icons'
 import Modal from 'components/Modal'
 import Switch from 'components/Switch'
 import Text from 'components/Text'
@@ -28,6 +28,11 @@ import { formatPercent, formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { getDebtAmountWithInterest } from 'utils/tokens'
 
+interface Props {
+  account: Account
+  modal: BorrowModal
+}
+
 function getDebtAmount(modal: BorrowModal) {
   return BN((modal.marketData as BorrowMarketTableData)?.debt ?? 0).toString()
 }
@@ -37,9 +42,21 @@ function getAssetLogo(modal: BorrowModal) {
   return <AssetImage asset={modal.asset} size={24} />
 }
 
-interface Props {
-  account: Account
-  modal: BorrowModal
+function RepayNotAvailable(props: { asset: Asset }) {
+  return (
+    <Card className='mt-6'>
+      <div className='flex items-start p-4'>
+        <InfoCircle width={26} className='mr-2' />
+        <div className='flex flex-col gap-1'>
+          <Text size='sm'>No funds for repay</Text>
+          <Text
+            size='xs'
+            className='text-white/40'
+          >{`Unfortunately you don't have any ${props.asset.symbol} in your Credit Account to repay the debt.`}</Text>
+        </div>
+      </div>
+    </Card>
+  )
 }
 
 export default function BorrowModalController() {
@@ -69,10 +86,23 @@ function BorrowModal(props: Props) {
   const { computeMaxBorrowAmount } = useHealthComputer(account)
   const totalDebt = BN(getDebtAmount(modal))
 
+  const [depositBalance, lendBalance] = useMemo(
+    () => [
+      account.deposits.find(byDenom(asset.denom))?.amount ?? BN_ZERO,
+      account.lends.find(byDenom(asset.denom))?.amount ?? BN_ZERO,
+    ],
+    [account, asset.denom],
+  )
+
   const totalDebtRepayAmount = useMemo(
     () => getDebtAmountWithInterest(totalDebt, Number(apr)),
     [totalDebt, apr],
   )
+
+  const maxRepayAmount = useMemo(() => {
+    const maxBalance = depositBalance.plus(lendBalance)
+    return isRepay ? BigNumber.min(maxBalance, totalDebtRepayAmount) : BN_ZERO
+  }, [depositBalance, lendBalance, isRepay, totalDebtRepayAmount])
 
   function resetState() {
     setAmount(BN_ZERO)
@@ -131,26 +161,20 @@ function BorrowModal(props: Props) {
 
   useEffect(() => {
     if (!account || isRepay) return
-    if (maxBorrow !== max) setMax(maxBorrow)
+    if (maxBorrow.isEqualTo(max)) return
+    setMax(maxBorrow)
   }, [account, isRepay, maxBorrow, max])
 
   useEffect(() => {
-    if (!account) return
-    if (isRepay) {
-      const depositBalance = account.deposits.find(byDenom(asset.denom))?.amount ?? BN_ZERO
-      const lendBalance = account.lends.find(byDenom(asset.denom))?.amount ?? BN_ZERO
-      const maxBalance = depositBalance.plus(lendBalance)
-      const maxRepayAmount = BigNumber.min(maxBalance, totalDebtRepayAmount)
-      setMax(maxRepayAmount)
-      return
-    }
-  }, [account, asset.denom, isRepay, totalDebtRepayAmount])
+    if (!isRepay) return
+    if (maxRepayAmount.isEqualTo(max)) return
+    setMax(maxRepayAmount)
+  }, [isRepay, max, maxRepayAmount])
 
   useEffect(() => {
-    if (amount.isGreaterThan(max)) {
-      handleChange(max)
-      setAmount(max)
-    }
+    if (amount.isLessThanOrEqualTo(max)) return
+    handleChange(max)
+    setAmount(max)
   }, [amount, max, handleChange])
 
   useEffect(() => {
@@ -223,9 +247,11 @@ function BorrowModal(props: Props) {
               onChange={handleChange}
               amount={amount}
               max={max}
+              disabled={max.isZero()}
               className='w-full'
               maxText='Max'
             />
+            {isRepay && maxRepayAmount.isZero() && <RepayNotAvailable asset={asset} />}
             {!isRepay && (
               <>
                 <Divider className='my-6' />

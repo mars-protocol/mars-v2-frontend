@@ -128,32 +128,34 @@ export default function Slider(props: Props) {
           disabled={props.disabled}
         />
       </div>
-      <div onMouseEnter={handleShowTooltip} onMouseLeave={handleHideTooltip}>
-        <DraggableElement
-          nodeRef={nodeRef}
-          axis='x'
-          grid={[sliderRect.width / 100, 0]}
-          bounds={{ left: 0, right: sliderRect.width }}
-          positionOffset={{ x: (props.value / 100) * -12, y: 0 }}
-          onDrag={handleDrag}
-          onStop={() => setIsDragging(false)}
-          position={{ x: (sliderRect.width / 100) * props.value, y: 0 }}
-        >
-          <div ref={nodeRef} className='absolute z-20 leading-3'>
-            <div
-              className={
-                'z-20 h-3 w-3 rotate-45 hover:cursor-pointer rounded-xs border-[2px] border-white bg-martian-red'
-              }
-            />
-            {(showTooltip || isDragging) && (
-              <div className='absolute -top-8 left-1/2 -translate-x-1/2 rounded-xs bg-martian-red px-2 py-[2px] text-xs'>
-                <OverlayMark className='absolute h-2 -translate-x-1/2 -bottom-2 left-1/2 -z-1 text-martian-red' />
-                {props.value.toFixed(0)}%
-              </div>
-            )}
-          </div>
-        </DraggableElement>
-      </div>
+      {!props.disabled && (
+        <div onMouseEnter={handleShowTooltip} onMouseLeave={handleHideTooltip}>
+          <DraggableElement
+            nodeRef={nodeRef}
+            axis='x'
+            grid={[sliderRect.width / 100, 0]}
+            bounds={{ left: 0, right: sliderRect.width }}
+            positionOffset={{ x: (props.value / 100) * -12, y: 0 }}
+            onDrag={handleDrag}
+            onStop={() => setIsDragging(false)}
+            position={{ x: (sliderRect.width / 100) * props.value, y: 0 }}
+          >
+            <div ref={nodeRef} className='absolute z-20 leading-3'>
+              <div
+                className={
+                  'z-20 h-3 w-3 rotate-45 hover:cursor-pointer rounded-xs border-[2px] border-white bg-martian-red'
+                }
+              />
+              {(showTooltip || isDragging) && (
+                <div className='absolute -top-8 left-1/2 -translate-x-1/2 rounded-xs bg-martian-red px-2 py-[2px] text-xs'>
+                  <OverlayMark className='absolute h-2 -translate-x-1/2 -bottom-2 left-1/2 -z-1 text-martian-red' />
+                  {props.value.toFixed(0)}%
+                </div>
+              )}
+            </div>
+          </DraggableElement>
+        </div>
+      )}
     </div>
   )
 }
@@ -170,7 +172,9 @@ function Mark(props: MarkProps) {
     <button
       onClick={() => props.onClick(props.value)}
       className={`z-20 h-3 w-3 rotate-45 rounded-xs border-[1px] border-white/20 hover:border-[2px] hover:border-white ${
-        props.sliderValue >= props.value ? 'bg-martian-red hover:border-white' : 'bg-grey-medium'
+        props.sliderValue >= props.value && !props.disabled
+          ? 'bg-martian-red hover:border-white'
+          : 'bg-grey-medium'
       }`}
       disabled={props.disabled}
     ></button>
