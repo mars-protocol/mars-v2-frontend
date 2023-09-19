@@ -8,12 +8,12 @@ import useAccountId from 'hooks/useAccountId'
 import { getRoute } from 'utils/route'
 
 export default function PortfolioAccountPage() {
-  const accountId = useAccountId()
-  const { address } = useParams()
+  const selectedAccountId = useAccountId()
+  const { address, accountId } = useParams()
   const navigate = useNavigate()
 
   if (!accountId) {
-    navigate(getRoute('portfolio', address, accountId))
+    navigate(getRoute('portfolio', address, selectedAccountId))
     return null
   }
 
