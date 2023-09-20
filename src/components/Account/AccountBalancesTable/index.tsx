@@ -20,6 +20,7 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
+import { MAX_AMOUNT_DECIMALS, MIN_AMOUNT } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useMarketAssets from 'hooks/useMarketAssets'
@@ -104,19 +105,19 @@ export default function Index(props: Props) {
               <FormattedNumber
                 className={className}
                 amount={amount}
-                options={{ abbreviated: true, maxDecimals: baseCurrency.decimals }}
+                options={{ abbreviated: true, maxDecimals: MAX_AMOUNT_DECIMALS }}
                 animate
               />
             )
 
-          const formattedAmount = formatAmountToPrecision(amount, baseCurrency.decimals)
+          const formattedAmount = formatAmountToPrecision(amount, MAX_AMOUNT_DECIMALS)
           return (
             <FormattedNumber
               className={className}
-              smallerThanThreshold={formattedAmount < 0.000001}
-              amount={formattedAmount < 0.000001 ? 0.000001 : formattedAmount}
+              smallerThanThreshold={formattedAmount < MIN_AMOUNT}
+              amount={formattedAmount < MIN_AMOUNT ? MIN_AMOUNT : formattedAmount}
               options={{
-                maxDecimals: baseCurrency.decimals,
+                maxDecimals: MAX_AMOUNT_DECIMALS,
                 minDecimals: 0,
               }}
               animate

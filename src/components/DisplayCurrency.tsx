@@ -4,13 +4,13 @@ import { useMemo } from 'react'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
+import { ORACLE_DENOM } from 'constants/oracle'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getDisplayCurrencies } from 'utils/assets'
 import { getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import { ORACLE_DENOM } from 'constants/oracle'
 
 interface Props {
   coin: BNCoin
@@ -34,12 +34,6 @@ export default function DisplayCurrency(props: Props) {
   )
 
   const isUSD = displayCurrencyAsset.id === 'USD'
-  const prefix = isUSD
-    ? `${props.isApproximation ? '~ ' : ''}$`
-    : `${props.isApproximation ? '~ ' : ''}`
-  const suffix = isUSD
-    ? ''
-    : ` ${displayCurrencyAsset.symbol ? ` ${displayCurrencyAsset.symbol}` : ''}`
 
   const amount = useMemo(() => {
     const coinValue = getCoinValue(props.coin, prices)
@@ -55,13 +49,23 @@ export default function DisplayCurrency(props: Props) {
     return coinValue.div(displayPrice).toNumber()
   }, [displayCurrency, displayCurrencyAsset.decimals, prices, props.coin])
 
+  const isLessThanACent = isUSD && amount < 0.01 && amount > 0
+  const smallerThanPrefix = isLessThanACent ? '< ' : ''
+
+  const prefix = isUSD
+    ? `${props.isApproximation ? '~ ' : smallerThanPrefix}$`
+    : `${props.isApproximation ? '~ ' : ''}`
+  const suffix = isUSD
+    ? ''
+    : ` ${displayCurrencyAsset.symbol ? ` ${displayCurrencyAsset.symbol}` : ''}`
+
   return (
     <FormattedNumber
       className={classNames(
         props.className,
         props.parentheses && 'before:content-["("] after:content-[")"]',
       )}
-      amount={amount}
+      amount={isLessThanACent ? 0.01 : amount}
       options={{
         minDecimals: isUSD ? 2 : 0,
         maxDecimals: 2,
