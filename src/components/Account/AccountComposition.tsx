@@ -137,7 +137,7 @@ function Item(props: ItemProps) {
             options={{
               suffix: '%',
               minDecimals: 2,
-              maxDecimals: current.abs().isLessThan(0.1) ? 6 : 2,
+              maxDecimals: current.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,
             }}
             className='text-sm'
             animate
