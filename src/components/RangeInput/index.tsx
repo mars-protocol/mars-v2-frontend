@@ -29,13 +29,21 @@ function RangeInput(props: Props) {
 
   return (
     <div
-      className={classNames(className.containerDefault, wrapperClassName, {
-        [className.disabled]: disabled,
-      })}
+      className={classNames(
+        'relative min-h-3 w-full transition-opacity',
+        wrapperClassName,
+        disabled && 'pointer-events-none opacity-50',
+      )}
     >
-      <div className={className.inputWrapper}>
+      <div className='relative h-[30px]'>
         <input
-          className={className.input}
+          className={classNames(
+            'relative w-full appearance-none bg-transparent hover:cursor-pointer',
+            '[&::-webkit-slider-runnable-track]:bg-white [&::-webkit-slider-runnable-track]:bg-opacity-20 [&::-webkit-slider-runnable-track]:h-[9px] [&::-webkit-slider-runnable-track]:rounded-lg',
+            '[&::-moz-range-track]:bg-white [&::-moz-range-track]:bg-opacity-20 [&::-moz-range-track]:h-1 [&::-moz-range-track]:pb-[5px] [&::-moz-range-track]:rounded-lg',
+            '[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:-mt-1 [&::-webkit-slider-thumb]:w-[33px] [&::-webkit-slider-thumb]:h-4',
+            '[&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:opacity-0 [&::-moz-range-thumb]:w-[33px] [&::-moz-range-thumb]:h-4',
+          )}
           type='range'
           value={value.toFixed(2)}
           step={max / 101}
@@ -46,43 +54,12 @@ function RangeInput(props: Props) {
         />
         <InputOverlay max={max} marginThreshold={marginThreshold} value={value} />
       </div>
-      <div className={className.legendWrapper}>
+      <div className={'flex w-full justify-between text-xs text-opacity-50 text-white font-bold'}>
         <span>{markPosPercent > LEFT_MARGIN ? 0 : ''}</span>
         <span>{max.toFixed(2)}</span>
       </div>
     </div>
   )
-}
-
-const className = {
-  containerDefault: 'relative min-h-3 w-full transition-opacity',
-  disabled: 'pointer-events-none opacity-50',
-  legendWrapper: 'flex w-full justify-between text-xs text-opacity-50 text-white font-bold',
-  inputWrapper: 'relative h-[30px]',
-  input: `
-    relative w-full appearance-none bg-transparent hover:cursor-pointer
-  
-    [&::-webkit-slider-runnable-track]:bg-white
-    [&::-webkit-slider-runnable-track]:bg-opacity-20
-    [&::-webkit-slider-runnable-track]:h-[9px]
-    [&::-webkit-slider-runnable-track]:rounded-lg
-
-    [&::-moz-range-track]:bg-white
-    [&::-moz-range-track]:bg-opacity-20
-    [&::-moz-range-track]:h-1
-    [&::-moz-range-track]:pb-[5px]
-    [&::-moz-range-track]:rounded-lg
-  
-    [&::-webkit-slider-thumb]:appearance-none
-    [&::-webkit-slider-thumb]:-mt-1
-    [&::-webkit-slider-thumb]:w-[33px]
-    [&::-webkit-slider-thumb]:h-4
-
-    [&::-moz-range-thumb]:appearance-none
-    [&::-moz-range-thumb]:opacity-0
-    [&::-moz-range-thumb]:w-[33px]
-    [&::-moz-range-thumb]:h-4
-  `,
 }
 
 export default RangeInput

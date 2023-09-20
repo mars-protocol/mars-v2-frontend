@@ -22,8 +22,10 @@ export default function AccountDetailsCard() {
   )
 
   const tabs = (
-    <div className={className.tabWrapper}>
-      <div className={className.tab}>Balances</div>
+    <div className='flex items-center w-full pt-4 pl-4 font-semibold bg-white/10'>
+      <div className='flex flex-row pb-3 mr-4 border-b-2 border-solid select-none hover:cursor-pointer border-pink'>
+        Balances
+      </div>
     </div>
   )
 
@@ -38,9 +40,4 @@ export default function AccountDetailsCard() {
         />
       </Card>
     )
-}
-
-const className = {
-  tabWrapper: 'flex w-full items-center bg-white/10 pt-4 pl-4 font-semibold',
-  tab: 'mr-4 pb-3 hover:cursor-pointer select-none flex flex-row border-b-2 border-pink border-solid',
 }

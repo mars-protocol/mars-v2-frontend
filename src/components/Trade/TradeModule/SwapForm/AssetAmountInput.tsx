@@ -1,8 +1,8 @@
-import classNames from 'classnames'
 import { useCallback, useMemo } from 'react'
 
+import DisplayCurrency from 'components/DisplayCurrency'
 import NumberInput from 'components/NumberInput'
-import { formatValue } from 'utils/formatters'
+import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   label?: string
@@ -11,7 +11,6 @@ interface Props {
   amount: BigNumber
   disabled: boolean
   maxButtonLabel: string
-  assetUSDValue: BigNumber
   amountValueText?: string
   containerClassName?: string
   setAmount: (amount: BigNumber) => void
@@ -27,7 +26,6 @@ export default function AssetAmountInput(props: Props) {
     asset,
     disabled,
     setAmount,
-    assetUSDValue,
     maxButtonLabel,
     containerClassName,
     onFocus,
@@ -44,14 +42,14 @@ export default function AssetAmountInput(props: Props) {
   }, [asset.decimals, max])
 
   return (
-    <div className={classNames(className.container, containerClassName)}>
+    <div className={containerClassName}>
       <label>
         {label}
-        <div className={className.inputWrapper}>
+        <div className='flex flex-1 flex-row py-3 border-[1px] border-white border-opacity-20 rounded bg-white bg-opacity-5 pl-3 pr-2 mt-2'>
           <NumberInput
             asset={asset}
             amount={amount}
-            className={className.input}
+            className='border-none bg-transparent outline-none flex-1 !text-left'
             maxDecimals={asset.decimals}
             max={max}
             disabled={disabled}
@@ -61,33 +59,22 @@ export default function AssetAmountInput(props: Props) {
           />
           <span>{asset.symbol}</span>
         </div>
-        <div className={className.footer}>
-          <div className={className.maxButtonWrapper}>
-            <span className={className.maxButtonLabel}>{maxButtonLabel}</span>
-            <span className={className.maxValue}>{maxValue}</span>
-            <div className={className.maxButton} onClick={handleMaxClick}>
+        <div className='flex flex-row flex-1'>
+          <div className='flex flex-row flex-1 mt-2'>
+            <span className='text-xs font-bold'>{maxButtonLabel}</span>
+            <span className='mx-1 text-xs font-bold text-white text-opacity-60'>{maxValue}</span>
+            <div
+              className='hover:cursor-pointer select-none bg-white bg-opacity-20 text-2xs !leading-3 font-bold py-0.5 px-1.5 rounded'
+              onClick={handleMaxClick}
+            >
               MAX
             </div>
           </div>
-          <div className={className.assetValue}>
-            {formatValue(assetUSDValue.toString(), { prefix: '~ $', minDecimals: 2 })}
+          <div className='mt-2 text-xs text-white text-opacity-60'>
+            <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(asset.denom, amount)} />
           </div>
         </div>
       </label>
     </div>
   )
-}
-
-const className = {
-  container: '',
-  inputWrapper:
-    'flex flex-1 flex-row py-3 border-[1px] border-white border-opacity-20 rounded bg-white bg-opacity-5 pl-3 pr-2 mt-2',
-  input: 'border-none bg-transparent outline-none flex-1 !text-left',
-  footer: 'flex flex-1 flex-row',
-  maxButtonWrapper: 'flex flex-1 flex-row mt-2',
-  maxButtonLabel: 'font-bold text-xs',
-  maxValue: 'font-bold text-xs text-white text-opacity-60 mx-1',
-  maxButton:
-    'hover:cursor-pointer select-none bg-white bg-opacity-20 text-2xs !leading-3 font-bold py-0.5 px-1.5 rounded',
-  assetValue: 'text-xs text-white text-opacity-60 mt-2',
 }

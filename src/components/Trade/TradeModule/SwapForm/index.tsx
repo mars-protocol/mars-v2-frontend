@@ -27,7 +27,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { defaultFee } from 'utils/constants'
 import { getCapLeftWithBuffer } from 'utils/generic'
-import { BN, asyncThrottle } from 'utils/helpers'
+import { asyncThrottle, BN } from 'utils/helpers'
 
 interface Props {
   buyAsset: Asset
@@ -138,24 +138,6 @@ export default function SwapForm(props: Props) {
     return maxBuyableAmountEstimation.multipliedBy(marginRatio)
   }, [marginRatio, maxBuyableAmountEstimation])
 
-  const [buyAssetValue, sellAssetValue] = useMemo(() => {
-    const buyAssetPrice = prices.find(byDenom(buyAsset.denom))?.amount ?? BN_ZERO
-    const sellAssetPrice = prices.find(byDenom(sellAsset.denom))?.amount ?? BN_ZERO
-
-    return [
-      buyAssetPrice.multipliedBy(buyAssetAmount.shiftedBy(-buyAsset.decimals)),
-      sellAssetPrice.multipliedBy(sellAssetAmount.shiftedBy(-sellAsset.decimals)),
-    ]
-  }, [
-    prices,
-    buyAsset.denom,
-    buyAsset.decimals,
-    sellAsset.denom,
-    sellAsset.decimals,
-    buyAssetAmount,
-    sellAssetAmount,
-  ])
-
   const swapTx = useMemo(() => {
     const borrowCoin = sellAssetAmount.isGreaterThan(sellSideMarginThreshold)
       ? BNCoin.fromDenomAndBigNumber(
@@ -262,7 +244,6 @@ export default function SwapForm(props: Props) {
           amount={buyAssetAmount}
           setAmount={onChangeBuyAmount}
           asset={buyAsset}
-          assetUSDValue={buyAssetValue}
           maxButtonLabel='Max Amount:'
           disabled={isConfirming}
         />
@@ -286,7 +267,6 @@ export default function SwapForm(props: Props) {
           max={maxSellAmount}
           amount={sellAssetAmount}
           setAmount={onChangeSellAmount}
-          assetUSDValue={sellAssetValue}
           asset={sellAsset}
           maxButtonLabel='Balance:'
           disabled={isConfirming}
