@@ -61,8 +61,8 @@ export default function useDepositVault(props: Props): {
   }, [borrowings])
 
   const swapActions: Action[] = useMemo(
-    () => getVaultSwapActions(props.vault, deposits, borrowings, prices, slippage, totalValue),
-    [totalValue, prices, props.vault, deposits, borrowings, slippage],
+    () => getVaultSwapActions(props.vault, deposits, reclaims, borrowings, prices, slippage),
+    [props.vault, deposits, reclaims, borrowings, prices, slippage],
   )
 
   const enterVaultActions: Action[] = useMemo(() => {

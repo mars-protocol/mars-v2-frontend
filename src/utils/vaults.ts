@@ -5,6 +5,7 @@ import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action, Uint128 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getAssetByDenom } from 'utils/assets'
+import { VAULT_DEPOSIT_BUFFER } from 'utils/constants'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
 import { getTokenPrice } from 'utils/tokens'
@@ -39,14 +40,17 @@ export function getVaultDepositCoinsAndValue(
   const primaryAsset = getAssetByDenom(vault.denoms.primary) ?? ASSETS[0]
   const secondaryAsset = getAssetByDenom(vault.denoms.secondary) ?? ASSETS[0]
 
+  // The buffer is needed as sometimes the pools are a bit skew, or because of other inaccuracies in the messages
   const primaryDepositAmount = halfValue
     .dividedBy(getTokenPrice(primaryAsset.denom, prices))
     .shiftedBy(primaryAsset.decimals)
+    .times(VAULT_DEPOSIT_BUFFER)
     .integerValue()
 
   const secondaryDepositAmount = halfValue
     .dividedBy(getTokenPrice(secondaryAsset.denom, prices))
     .shiftedBy(secondaryAsset.decimals)
+    .times(VAULT_DEPOSIT_BUFFER)
     .integerValue()
 
   return {
@@ -65,16 +69,18 @@ export function getVaultDepositCoinsAndValue(
 export function getVaultSwapActions(
   vault: Vault,
   deposits: BNCoin[],
+  reclaims: BNCoin[],
   borrowings: BNCoin[],
   prices: BNCoin[],
   slippage: number,
-  totalValue: BigNumber,
 ): Action[] {
   const swapActions: Action[] = []
-  const coins = [...deposits, ...borrowings]
+  const coins = [...deposits, ...borrowings, ...reclaims]
 
-  let primaryLeftoverValue = totalValue.dividedBy(2)
-  let secondaryLeftoverValue = totalValue.dividedBy(2)
+  const value = getValueFromBNCoins(coins, prices)
+
+  let primaryLeftoverValue = value.dividedBy(2)
+  let secondaryLeftoverValue = value.dividedBy(2)
 
   const [primaryCoins, secondaryCoins, otherCoins] = coins.reduce(
     (prev, bnCoin) => {

@@ -15,6 +15,10 @@ import { cloneAccount } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { getValueFromBNCoins } from 'utils/helpers'
 
+import { DEFAULT_SETTINGS } from '../../constants/defaultSettings'
+import { SLIPPAGE_KEY } from '../../constants/localStore'
+import useLocalStorage from '../useLocalStorage'
+
 export interface VaultValue {
   address: string
   value: BigNumber
@@ -26,6 +30,7 @@ export function useUpdatedAccount(account?: Account) {
   const [updatedAccount, setUpdatedAccount] = useState<Account | undefined>(
     account ? cloneAccount(account) : undefined,
   )
+  const [slippage] = useLocalStorage<number>(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
   const [addedDeposits, addDeposits] = useState<BNCoin[]>([])
   const [removedDeposits, removeDeposits] = useState<BNCoin[]>([])
   const [addedDebts, addDebts] = useState<BNCoin[]>([])
@@ -164,10 +169,11 @@ export function useUpdatedAccount(account?: Account) {
       removeLends(totalLends)
       addDebts(borrowCoins)
 
-      const value = getValueFromBNCoins([...coins, ...borrowCoins], prices)
+      // Value has to be adjusted for slippage
+      const value = getValueFromBNCoins([...coins, ...borrowCoins], prices).times(1 - slippage)
       addVaultValues([{ address, value }])
     },
-    [account, prices],
+    [account, prices, slippage],
   )
 
   useEffect(() => {

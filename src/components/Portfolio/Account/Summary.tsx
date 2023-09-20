@@ -8,7 +8,6 @@ import { Heart } from 'components/Icons'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
-import { MAX_AMOUNT_DECIMALS } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAccount from 'hooks/useAccount'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
@@ -74,7 +73,11 @@ function Content(props: Props) {
           <FormattedNumber
             className='text-xl'
             amount={apr.toNumber()}
-            options={{ suffix: '%', maxDecimals: MAX_AMOUNT_DECIMALS, minDecimals: 2 }}
+            options={{
+              suffix: '%',
+              maxDecimals: apr.abs().isLessThan(0.1) ? 6 : 2,
+              minDecimals: 2,
+            }}
           />
         ),
         sub: STATS[3].sub,

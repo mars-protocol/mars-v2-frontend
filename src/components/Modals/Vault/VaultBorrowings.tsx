@@ -23,6 +23,7 @@ import { formatPercent } from 'utils/formatters'
 import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
 
 export interface VaultBorrowingsProps {
+  account: Account
   borrowings: BNCoin[]
   deposits: BNCoin[]
   primaryAsset: Asset
@@ -41,7 +42,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   const vaultModal = useStore((s) => s.vaultModal)
   const depositIntoVault = useStore((s) => s.depositIntoVault)
   const updatedAccount = useStore((s) => s.updatedAccount)
-  const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
+  const { computeMaxBorrowAmount } = useHealthComputer(props.account)
   const [percentage, setPercentage] = useState<number>(0)
 
   const calculateSliderPercentage = (maxBorrowAmounts: BNCoin[], borrowings: BNCoin[]) => {
@@ -54,7 +55,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
     return 0
   }
 
-  const maxBorrowAmounts: BNCoin[] = useMemo(() => {
+  const maxBorrowAmountsRaw: BNCoin[] = useMemo(() => {
     return props.borrowings.map((borrowing) => {
       const maxAmount = computeMaxBorrowAmount(borrowing.denom, {
         vault: { address: props.vault.address },
@@ -65,6 +66,23 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
       })
     })
   }, [props.borrowings, computeMaxBorrowAmount, props.vault.address])
+
+  const maxBorrowAmounts = useMemo(() => {
+    const borrowPowerLeft = props.borrowings.reduce((capLeft, borrowing) => {
+      const maxAmount = maxBorrowAmountsRaw.find((amount) => amount.denom === borrowing.denom)
+
+      if (!maxAmount) return capLeft
+      capLeft -= borrowing.amount.dividedBy(maxAmount.amount).toNumber()
+      return capLeft
+    }, 1)
+
+    return maxBorrowAmountsRaw.map((maxAmount) => {
+      return new BNCoin({
+        denom: maxAmount.denom,
+        amount: maxAmount.amount.times(borrowPowerLeft).integerValue().toString(),
+      })
+    })
+  }, [maxBorrowAmountsRaw, props.borrowings])
 
   const totalValue = useMemo(
     () => getValueFromBNCoins(mergeBNCoinArrays(props.deposits, props.borrowings), prices),
