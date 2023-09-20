@@ -159,7 +159,7 @@ function Item(props: ItemProps) {
                 options={{
                   suffix: '%',
                   minDecimals: 2,
-                  maxDecimals: change.abs().isLessThan(0.1) ? 6 : 2,
+                  maxDecimals: change.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,
                 }}
                 className={classNames('text-sm', increase ? 'text-profit' : 'text-loss')}
                 animate
