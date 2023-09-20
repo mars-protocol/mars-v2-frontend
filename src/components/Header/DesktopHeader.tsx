@@ -7,7 +7,7 @@ import DesktopNavigation from 'components/Navigation/DesktopNavigation'
 import RewardsCenter from 'components/RewardsCenter'
 import Settings from 'components/Settings'
 import Wallet from 'components/Wallet'
-import useCurrentAccount from 'hooks/useCurrentAccount'
+import useAccountId from 'hooks/useAccountId'
 import useStore from 'store'
 
 export const menuTree: { pages: Page[]; label: string }[] = [
@@ -20,7 +20,7 @@ export const menuTree: { pages: Page[]; label: string }[] = [
 export default function DesktopHeader() {
   const address = useStore((s) => s.address)
   const focusComponent = useStore((s) => s.focusComponent)
-  const currentAccount = useCurrentAccount()
+  const accountId = useAccountId()
 
   function handleCloseFocusMode() {
     if (focusComponent && focusComponent.onClose) focusComponent.onClose()
@@ -52,7 +52,7 @@ export default function DesktopHeader() {
           </div>
         ) : (
           <div className='flex gap-4'>
-            {currentAccount && <RewardsCenter />}
+            {accountId && <RewardsCenter />}
             {address && <AccountMenu />}
             <Wallet />
             <Settings />

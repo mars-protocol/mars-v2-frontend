@@ -8,11 +8,8 @@ import { Logo } from 'components/Icons'
 import Overlay from 'components/Overlay'
 import Text from 'components/Text'
 import { ASSETS } from 'constants/assets'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
 import { ORACLE_DENOM } from 'constants/oracle'
-import useCurrentAccount from 'hooks/useCurrentAccount'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useAccountId from 'hooks/useAccountId'
 import usePrices from 'hooks/usePrices'
 import useToggle from 'hooks/useToggle'
 import useUnclaimedRewards from 'hooks/useUnclaimedRewards'
@@ -43,8 +40,7 @@ const renderIncentives = (unclaimedRewards: BNCoin[]) => {
 }
 
 export default function RewardsCenter() {
-  const account = useCurrentAccount()
-  const accountId = account?.id
+  const accountId = useAccountId()
   const [isConfirming, setIsConfirming] = useState(false)
   const [estimatedFee, setEstimatedFee] = useState(defaultFee)
   const [showRewardsCenter, setShowRewardsCenter] = useToggle()
