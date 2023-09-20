@@ -99,21 +99,22 @@ export default function Index(props: Props) {
             row.original.amount,
             getAssetByDenom(row.original.denom) ?? ASSETS[0],
           )
-          if (amount >= 0.01)
+          if (amount >= 1)
             return (
               <FormattedNumber
                 className={className}
                 amount={amount}
-                options={{ abbreviated: true }}
+                options={{ abbreviated: true, maxDecimals: baseCurrency.decimals }}
                 animate
               />
             )
 
-          const formattedAmount = formatAmountToPrecision(amount, 1)
+          const formattedAmount = formatAmountToPrecision(amount, baseCurrency.decimals)
           return (
             <FormattedNumber
               className={className}
-              amount={formattedAmount}
+              smallerThanThreshold={formattedAmount < 0.000001}
+              amount={formattedAmount < 0.000001 ? 0.000001 : formattedAmount}
               options={{
                 maxDecimals: baseCurrency.decimals,
                 minDecimals: 0,

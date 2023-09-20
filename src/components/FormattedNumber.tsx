@@ -13,6 +13,7 @@ interface Props {
   className?: string
   animate?: boolean
   parentheses?: boolean
+  smallerThanThreshold?: boolean
 }
 
 export const FormattedNumber = React.memo(
@@ -22,6 +23,15 @@ export const FormattedNumber = React.memo(
       DEFAULT_SETTINGS.reduceMotion,
     )
     const prevAmountRef = useRef<number>(0)
+
+    let { options, smallerThanThreshold } = props
+
+    if (smallerThanThreshold) {
+      if (!options) options = { prefix: '> ' }
+      if (options.prefix && options.prefix.substring(0, 1) !== '>')
+        options.prefix = `> ${options.prefix}`
+      else options.prefix = '> '
+    }
 
     useEffect(() => {
       if (prevAmountRef.current !== props.amount) prevAmountRef.current = props.amount
@@ -47,7 +57,7 @@ export const FormattedNumber = React.memo(
             props.className,
           )}
         >
-          {formatValue(props.amount.toString(), props.options)}
+          {formatValue(props.amount.toString(), options)}
         </p>
       )
 
