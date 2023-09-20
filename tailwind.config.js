@@ -34,6 +34,10 @@ module.exports = {
     'fill-violet-500',
     'fill-martian-red',
     'fill-grey',
+    'bg-intro-borrow',
+    'bg-intro-lend',
+    'bg-intro-farm',
+    'bg-intro-portfolio',
     'w-2',
   ],
   theme: {
@@ -51,7 +55,10 @@ module.exports = {
         sticky: '50px',
       },
       backgroundImage: {
-        intro: 'url(/images/intro.webp), url(/images/intro.png)',
+        'intro-borrow': 'url(/images/intro/bg2.webp), url(/images/intro/bg2.png)',
+        'intro-lend': 'url(/images/intro/bg4.webp), url(/images/intro/bg4.png)',
+        'intro-farm': 'url(/images/intro/bg6.webp), url(/images/intro/bg6.png)',
+        'intro-portfolio': 'url(/images/intro/bg8.webp), url(/images/intro/bg8.png)',
       },
       backgroundSize: {
         desktop: '100% auto',

@@ -23,6 +23,7 @@ export default function PortfolioIntro() {
           </>
         )
       }
+      bg='portfolio'
     ></Intro>
   )
 }

@@ -12,6 +12,7 @@ export default function FarmIntro() {
           farmer. Riches and ruins lie ahead.
         </>
       }
+      bg='farm'
     >
       <Button
         text='Read more about Mars'

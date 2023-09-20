@@ -9,6 +9,7 @@ export default function BorrowIntro() {
           have an eye on your Account Health. Once it reaches zero, you&apos;ll be liquidated.
         </>
       }
+      bg='borrow'
     ></Intro>
   )
 }

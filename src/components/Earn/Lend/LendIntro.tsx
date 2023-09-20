@@ -13,6 +13,7 @@ export default function LendIntro() {
           don&apos;t miss out on this easy opportunity to grow your holdings!
         </>
       }
+      bg='lend'
     >
       <ActionButton
         text='Deposit assets'
