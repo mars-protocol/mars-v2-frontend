@@ -6,7 +6,7 @@ import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { ArrowRight } from 'components/Icons'
 import Text from 'components/Text'
-import { BN_ZERO } from 'constants/math'
+import { BN_ZERO, MAX_AMOUNT_DECIMALS } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
@@ -134,7 +134,7 @@ function Item(props: ItemProps) {
         {props.isPercentage ? (
           <FormattedNumber
             amount={current.toNumber()}
-            options={{ suffix: '%', minDecimals: 2, maxDecimals: 2 }}
+            options={{ suffix: '%', minDecimals: 2, maxDecimals: MAX_AMOUNT_DECIMALS }}
             className='text-sm'
             animate
           />
@@ -152,7 +152,7 @@ function Item(props: ItemProps) {
             {props.isPercentage ? (
               <FormattedNumber
                 amount={change.toNumber()}
-                options={{ suffix: '%', minDecimals: 2, maxDecimals: 2 }}
+                options={{ suffix: '%', minDecimals: 2, maxDecimals: MAX_AMOUNT_DECIMALS }}
                 className={classNames('text-sm', increase ? 'text-profit' : 'text-loss')}
                 animate
               />

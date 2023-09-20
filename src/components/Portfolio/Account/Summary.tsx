@@ -8,6 +8,7 @@ import { Heart } from 'components/Icons'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
+import { MAX_AMOUNT_DECIMALS } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAccount from 'hooks/useAccount'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
@@ -70,7 +71,11 @@ function Content(props: Props) {
       },
       {
         title: (
-          <FormattedNumber className='text-xl' amount={apr.toNumber()} options={{ suffix: '%' }} />
+          <FormattedNumber
+            className='text-xl'
+            amount={apr.toNumber()}
+            options={{ suffix: '%', maxDecimals: MAX_AMOUNT_DECIMALS, minDecimals: 2 }}
+          />
         ),
         sub: STATS[3].sub,
       },
@@ -105,7 +110,7 @@ interface SkeletonProps extends Props {
 
 function Skeleton(props: SkeletonProps) {
   return (
-    <div className='flex flex-col py-8 gap-8'>
+    <div className='flex flex-col gap-8 py-8'>
       <div className='flex justify-between'>
         <Text size='2xl'>Credit Account {props.accountId}</Text>
         <div className='flex gap-1 max-w-[300px] flex-grow'>
@@ -115,7 +120,7 @@ function Skeleton(props: SkeletonProps) {
       </div>
       <div className='grid grid-cols-2 gap-4 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3'>
         {props.stats.map((stat) => (
-          <Card key={stat.sub} className='p-6 bg-white/5 flex-grow-1 text-center'>
+          <Card key={stat.sub} className='p-6 text-center bg-white/5 flex-grow-1'>
             <TitleAndSubCell
               title={stat.title || <Loading className='w-20 h-6 mx-auto mb-2' />}
               sub={stat.sub}
