@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import useAccountId from 'hooks/useAccountId'
 import { NavLink, useParams } from 'react-router-dom'
 
 import { getRoute } from 'utils/route'
@@ -11,7 +12,8 @@ interface Props {
 }
 
 export default function Tab(props: Props) {
-  const { address, accountId } = useParams()
+  const accountId = useAccountId()
+  const { address } = useParams()
 
   return (
     <div className='relative w-full mb-4'>
