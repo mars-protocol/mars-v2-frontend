@@ -134,7 +134,11 @@ function Item(props: ItemProps) {
         {props.isPercentage ? (
           <FormattedNumber
             amount={current.toNumber()}
-            options={{ suffix: '%', minDecimals: 2, maxDecimals: MAX_AMOUNT_DECIMALS }}
+            options={{
+              suffix: '%',
+              minDecimals: 2,
+              maxDecimals: current.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,
+            }}
             className='text-sm'
             animate
           />
@@ -152,7 +156,11 @@ function Item(props: ItemProps) {
             {props.isPercentage ? (
               <FormattedNumber
                 amount={change.toNumber()}
-                options={{ suffix: '%', minDecimals: 2, maxDecimals: MAX_AMOUNT_DECIMALS }}
+                options={{
+                  suffix: '%',
+                  minDecimals: 2,
+                  maxDecimals: change.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,
+                }}
                 className={classNames('text-sm', increase ? 'text-profit' : 'text-loss')}
                 animate
               />

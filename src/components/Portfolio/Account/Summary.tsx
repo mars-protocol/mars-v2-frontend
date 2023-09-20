@@ -74,7 +74,11 @@ function Content(props: Props) {
           <FormattedNumber
             className='text-xl'
             amount={apr.toNumber()}
-            options={{ suffix: '%', maxDecimals: MAX_AMOUNT_DECIMALS, minDecimals: 2 }}
+            options={{
+              suffix: '%',
+              maxDecimals: apr.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,
+              minDecimals: 2,
+            }}
           />
         ),
         sub: STATS[3].sub,
