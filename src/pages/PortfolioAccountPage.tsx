@@ -18,7 +18,7 @@ export default function PortfolioAccountPage() {
   }
 
   return (
-    <div>
+    <div className='flex flex-wrap w-full gap-6'>
       <BreadCrumbs accountId={accountId} />
       <Summary accountId={accountId} />
       <Balances accountId={accountId} />

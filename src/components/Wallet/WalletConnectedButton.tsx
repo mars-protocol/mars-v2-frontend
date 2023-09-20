@@ -148,34 +148,33 @@ export default function WalletConnectedButton() {
               </div>
             </div>
             <div className='flex h-[31px] w-[116px] justify-end'>
-              <Button color='secondary' onClick={onDisconnectWallet} text='Disconnect' />
+              <Button color='tertiary' onClick={onDisconnectWallet} text='Disconnect' />
             </div>
           </div>
-          <div className='flex flex-wrap w-full'>
-            <Text uppercase className='mb-1 break-all /80'>
-              {'Your Address'}
-            </Text>
+          <div className='flex flex-wrap w-full gap-2'>
+            <Text size='lg'>{'Your Address'}</Text>
 
-            <Text size='sm' className={classNames('mb-1 hidden break-all font-bold', 'md:block')}>
+            <Text size='sm' className={classNames('hidden break-all text-white/60', 'md:block')}>
               {address}
             </Text>
-            <Text size='sm' className={classNames('mb-1 break-all font-bold', 'md:hidden')}>
+            <Text
+              size='sm'
+              className={classNames('break-all font-bold text-white/60', 'md:hidden')}
+            >
               {truncate(address, [14, 14])}
             </Text>
-            <div className='flex w-full pt-1'>
+            <div className='flex w-full gap-6 pt-2'>
               <Button
                 leftIcon={isCopied ? <Check /> : <Copy />}
-                variant='transparent'
-                className='flex w-auto py-2 mr-10'
-                color='quaternary'
+                className='flex w-auto'
+                color='secondary'
                 onClick={setCopied}
                 text={isCopied ? 'Copied' : 'Copy Address'}
               />
               <Button
                 leftIcon={<ExternalLink />}
-                variant='transparent'
-                className='flex w-auto py-2'
-                color='quaternary'
+                className='flex w-auto'
+                color='secondary'
                 onClick={viewOnFinder}
               >
                 <Text size='sm'>View on {explorerName}</Text>

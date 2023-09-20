@@ -4,7 +4,7 @@ import Tab from 'components/Earn/Tab'
 
 export default function FarmPage() {
   return (
-    <div className='flex flex-wrap w-full gap-4'>
+    <div className='flex flex-wrap w-full gap-6'>
       <Tab isFarm />
       <FarmIntro />
       <DepositedVaults />

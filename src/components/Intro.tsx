@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
 
 import Card from 'components/Card'
+import { GridGlobe, GridHole, GridLandscape, GridTire } from 'components/Icons'
 import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
@@ -13,15 +14,31 @@ interface Props {
   bg: 'borrow' | 'lend' | 'farm' | 'portfolio'
 }
 
+function IntroBackground(props: { bg: Props['bg'] }) {
+  switch (props.bg) {
+    case 'borrow':
+      return <GridHole className='h-55' />
+    case 'lend':
+      return <GridTire className='h-55' />
+    case 'farm':
+      return <GridLandscape className='h-55' />
+    default:
+      return <GridGlobe className='h-50' />
+  }
+}
+
 export default function Intro(props: Props) {
   const [tutorial] = useLocalStorage<boolean>(TUTORIAL_KEY, DEFAULT_SETTINGS.tutorial)
 
   if (!tutorial) return null
   return (
     <Card
-      className={`relative w-full p-8 mb-6 bg-cover bg-intro-${props.bg} h-55`}
-      contentClassName='flex rjustify-between w-full h-full flex-col justify-between'
+      className={`relative w-full p-8 bg-intro bg-cover h-55`}
+      contentClassName='flex w-full h-full flex-col justify-between'
     >
+      <div className='absolute inset-0 flex items-end justify-end w-full h-full text-white opacity-5'>
+        <IntroBackground bg={props.bg} />
+      </div>
       <Tooltip
         className='absolute top-4 right-4'
         type='info'

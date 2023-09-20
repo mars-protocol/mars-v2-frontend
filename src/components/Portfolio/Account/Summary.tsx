@@ -114,7 +114,7 @@ interface SkeletonProps extends Props {
 
 function Skeleton(props: SkeletonProps) {
   return (
-    <div className='flex flex-col gap-8 py-8'>
+    <div className='flex flex-col w-full gap-8'>
       <div className='flex justify-between'>
         <Text size='2xl'>Credit Account {props.accountId}</Text>
         <div className='flex gap-1 max-w-[300px] flex-grow'>

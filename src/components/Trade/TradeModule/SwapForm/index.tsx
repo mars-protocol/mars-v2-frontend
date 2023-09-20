@@ -19,7 +19,6 @@ import useHealthComputer from 'hooks/useHealthComputer'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useMarketAssets from 'hooks/useMarketAssets'
 import useMarketBorrowings from 'hooks/useMarketBorrowings'
-import usePrices from 'hooks/usePrices'
 import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useStore from 'store'
@@ -27,7 +26,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { defaultFee } from 'utils/constants'
 import { getCapLeftWithBuffer } from 'utils/generic'
-import { asyncThrottle, BN } from 'utils/helpers'
+import { BN, asyncThrottle } from 'utils/helpers'
 
 interface Props {
   buyAsset: Asset
@@ -37,7 +36,6 @@ interface Props {
 export default function SwapForm(props: Props) {
   const { buyAsset, sellAsset } = props
   const account = useCurrentAccount()
-  const { data: prices } = usePrices()
   const swap = useStore((s) => s.swap)
   const [slippage] = useLocalStorage(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
   const { computeMaxSwapAmount } = useHealthComputer(account)

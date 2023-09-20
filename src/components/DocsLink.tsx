@@ -23,11 +23,11 @@ export default function DocsLink(props: Props) {
       <TextLink
         href={url}
         target='_blank'
-        className='leading-4 text-white hover:underline'
+        className='ml-1 leading-4 text-white hover:underline'
         title={linkText}
       >
         {linkText}
-        <ExternalLink className='-mt-1 ml-1 inline w-3.5' />
+        <ExternalLink className='ml-1 inline w-3.5' />
       </TextLink>
     </Text>
   )

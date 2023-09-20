@@ -1,4 +1,3 @@
-import React from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 
 import { ArrowRight } from 'components/Icons'
@@ -15,11 +14,11 @@ export default function PortfolioAccountPageHeader(props: Props) {
   const selectedAccountId = useAccountId()
 
   return (
-    <div className='flex gap-2 items-center pt-4 pb-8 border-b border-white/20'>
+    <div className='flex items-center w-full gap-2 pt-2 pb-6 border-b border-white/20'>
       <NavLink to={getRoute('portfolio', address, selectedAccountId)}>
         <Text className='text-white/40'>Portfolio</Text>
       </NavLink>
-      <ArrowRight className='h-3 text-white/60' />
+      <ArrowRight className='h-3 text-white/60 ' />
       <Text tag='span'>Credit Account {props.accountId}</Text>
     </div>
   )
