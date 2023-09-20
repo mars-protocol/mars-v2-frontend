@@ -75,7 +75,7 @@ function Content(props: Props) {
             amount={apr.toNumber()}
             options={{
               suffix: '%',
-              maxDecimals: apr.abs().isLessThan(0.1) ? 6 : 2,
+              maxDecimals: apr.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,
               minDecimals: 2,
             }}
           />
