@@ -1,6 +1,6 @@
 import { ENV } from 'constants/env'
 
-import { NETWORK } from '../types/enums/network'
+import { NETWORK } from 'types/enums/network'
 
 export const MARS_MAINNET_DENOM =
   'ibc/573FCD90FACEE750F55A8864EF7D38265F07E5A9273FA0E8DAFD39951332B580'
