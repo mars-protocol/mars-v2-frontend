@@ -38,6 +38,7 @@ export default function RecentTransactions() {
                 return (
                   <Card
                     className={classNames(
+                      'gradient-card-content',
                       hash &&
                         'transitions-color duration-300 hover:cursor-pointer hover:bg-white/5',
                     )}

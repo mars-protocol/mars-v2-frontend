@@ -21,17 +21,9 @@ export default function AccountDetailsCard() {
     [lendingAvailableAssets, accountLentAssets],
   )
 
-  const tabs = (
-    <div className='flex items-center w-full pt-4 pl-4 font-semibold bg-white/10'>
-      <div className='flex flex-row pb-3 mr-4 border-b-2 border-solid select-none hover:cursor-pointer border-pink'>
-        Balances
-      </div>
-    </div>
-  )
-
   if (account)
     return (
-      <Card className='h-fit' title={tabs}>
+      <Card className='h-fit' title='Balances'>
         <AccountBalancesTable
           account={account}
           borrowingData={borrowAssetsData}

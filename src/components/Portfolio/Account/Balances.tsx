@@ -47,11 +47,9 @@ interface SkeletonProps {
 
 function Skeleton(props: SkeletonProps) {
   return (
-    <div>
-      <Text size='2xl' className='mb-8'>
-        Balances
-      </Text>
-      <Card className='mb-4 h-fit w-full bg-white/5'>
+    <div className='flex flex-wrap w-full gap-4'>
+      <Text size='2xl'>Balances</Text>
+      <Card className='w-full bg-white/5'>
         {props.children ? (
           props.children
         ) : (

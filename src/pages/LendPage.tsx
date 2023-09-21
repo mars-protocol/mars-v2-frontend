@@ -6,7 +6,7 @@ import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableDa
 export default function LendPage() {
   const { accountLentAssets, availableAssets } = useLendingMarketAssetsTableData()
   return (
-    <div className='flex flex-wrap w-full gap-4'>
+    <div className='flex flex-wrap w-full gap-6'>
       <Tab />
       <LendIntro />
       <LendingMarketsTable data={accountLentAssets} title='Lent Assets' />

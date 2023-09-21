@@ -9,7 +9,7 @@ import Card from 'components/Card'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { HealthGauge } from 'components/HealthGauge'
-import { Cross, ThreeDots } from 'components/Icons'
+import { ThreeDots } from 'components/Icons'
 import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { REDUCE_MOTION_KEY } from 'constants/localStore'
@@ -140,7 +140,7 @@ function AccountDetails(props: Props) {
             'group-hover:opacity-100',
           )}
         >
-          {accountDetailsExpanded ? <Cross className='w-2' /> : <ThreeDots className='h-1' />}
+          {!accountDetailsExpanded && <ThreeDots className='h-1' />}
         </div>
 
         {glowElement(!reduceMotion)}

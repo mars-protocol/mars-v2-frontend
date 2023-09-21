@@ -16,7 +16,7 @@ export default function Tab(props: Props) {
   const { address } = useParams()
 
   return (
-    <div className='relative w-full mb-4'>
+    <div className='relative w-full'>
       <NavLink
         to={getRoute('lend', address, accountId)}
         className={classNames(
