@@ -46,7 +46,7 @@ export default function TermsOfService() {
   return (
     <FullOverlayContent
       title='Master the Red Planet'
-      copy='Mars offers the easiest way to margin trade, lend & borrow and yield farm with leverage any whitelisted token'
+      copy='Mars offers the easiest way to margin trade, lend, borrow and yield farm with leverage any whitelisted token'
       button={{
         className: 'w-full mt-4',
         text: 'Agree & continue',
