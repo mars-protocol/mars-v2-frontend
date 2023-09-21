@@ -1,16 +1,18 @@
-import { convertAprToApy } from 'utils/parsers'
 import getAprs from 'api/vaults/getVaultAprs'
 import { getVaultConfigs } from 'api/vaults/getVaultConfigs'
 import { getVaultUtilizations } from 'api/vaults/getVaultUtilizations'
 import { ENV } from 'constants/env'
 import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
+import { NETWORK } from 'types/enums/network'
 import { BN } from 'utils/helpers'
+import { convertAprToApy } from 'utils/parsers'
 
 export default async function getVaults(): Promise<Vault[]> {
   const vaultConfigs = await getVaultConfigs()
   const $vaultUtilizations = getVaultUtilizations(vaultConfigs)
   const $aprs = getAprs()
-  const vaultMetaDatas = ENV.NETWORK === 'testnet' ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
+  const vaultMetaDatas =
+    ENV.NETWORK === NETWORK.TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
 
   const vaults: Vault[] = []
   await Promise.all([$vaultUtilizations, $aprs]).then(([vaultUtilizations, aprs]) => {

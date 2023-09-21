@@ -19,6 +19,7 @@ import useCurrentWallet from 'hooks/useCurrentWallet'
 import useToggle from 'hooks/useToggle'
 import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
+import { NETWORK } from 'types/enums/network'
 import { ChainInfoID } from 'types/enums/wallet'
 import { getBaseAsset, getEnabledMarketAssets } from 'utils/assets'
 import { truncate } from 'utils/formatters'
@@ -91,7 +92,7 @@ export default function WalletConnectedButton() {
 
   return (
     <div className={'relative'}>
-      {ENV.NETWORK !== 'mainnet' && (
+      {ENV.NETWORK !== NETWORK.MAINNET && (
         <Text
           className='absolute -right-2 -top-2.5 z-10 rounded-sm p-0.5 px-2 gradient-primary-to-secondary'
           size='3xs'

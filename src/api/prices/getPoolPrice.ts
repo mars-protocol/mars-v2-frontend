@@ -1,9 +1,9 @@
+import getPrice from 'api/prices/getPrice'
 import { ENV } from 'constants/env'
+import { BN_ONE } from 'constants/math'
+import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom, byTokenDenom, partition } from 'utils/array'
 import { BN } from 'utils/helpers'
-import getPrice from 'api/prices/getPrice'
-import { BNCoin } from 'types/classes/BNCoin'
-import { BN_ONE } from 'constants/math'
 
 interface PoolToken {
   denom: string
@@ -33,9 +33,8 @@ export default async function getPoolPrice(
 }
 
 const getAssetRate = async (asset: Asset) => {
-  const url = `${ENV.MAINNET_REST_API}osmosis/gamm/v1beta1/pools/${asset.poolId}`
+  const url = `${ENV.URL_REST}osmosis/gamm/v1beta1/pools/${asset.poolId}`
   const response = await fetch(url).then((res) => res.json())
-
   return calculateSpotPrice(response.pool.pool_assets, asset)
 }
 
@@ -44,7 +43,9 @@ const calculateSpotPrice = (poolAssets: PoolAsset[], asset: Asset): [BigNumber, 
 
   const numerator = BN(assetIn.token.amount).dividedBy(assetIn.weight)
   const denominator = BN(assetOut.token.amount).dividedBy(assetOut.weight)
-  const spotPrice = BN_ONE.dividedBy(numerator.dividedBy(denominator))
+
+  const additionalDecimals = asset.decimals - 6
+  const spotPrice = BN_ONE.dividedBy(numerator.dividedBy(denominator)).shiftedBy(additionalDecimals)
 
   return [spotPrice, assetOut]
 }

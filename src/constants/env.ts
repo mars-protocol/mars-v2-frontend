@@ -49,5 +49,3 @@ export const ENV: EnvironmentVariables = {
 export const VERCEL_BYPASS = process.env.NEXT_PUBLIC_BYPASS
   ? `?x-vercel-protection-bypass=${process.env.NEXT_PUBLIC_BYPASS}`
   : ''
-
-export const IS_TESTNET = ENV.NETWORK === 'testnet'

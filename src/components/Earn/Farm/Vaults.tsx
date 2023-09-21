@@ -3,12 +3,13 @@ import { Suspense, useMemo } from 'react'
 import Card from 'components/Card'
 import { VaultTable } from 'components/Earn/Farm/VaultTable'
 import VaultUnlockBanner from 'components/Earn/Farm/VaultUnlockBanner'
-import { IS_TESTNET } from 'constants/env'
+import { ENV } from 'constants/env'
 import { BN_ZERO } from 'constants/math'
 import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import useAccountId from 'hooks/useAccountId'
 import useDepositedVaults from 'hooks/useDepositedVaults'
 import useVaults from 'hooks/useVaults'
+import { NETWORK } from 'types/enums/network'
 import { VaultStatus } from 'types/enums/vault'
 
 interface Props {
@@ -21,7 +22,8 @@ function Content(props: Props) {
   const { data: depositedVaults } = useDepositedVaults(accountId || '')
   const isAvailable = props.type === 'available'
 
-  const vaultsMetaData = IS_TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
+  const vaultsMetaData =
+    ENV.NETWORK === NETWORK.TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
 
   const { deposited, available } = useMemo(() => {
     return vaultsMetaData.reduce(
@@ -70,7 +72,7 @@ function Content(props: Props) {
 }
 
 function Fallback() {
-  const vaults = IS_TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
+  const vaults = ENV.NETWORK === NETWORK.TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
   const mockVaults: Vault[] = vaults.map((vault) => ({
     ...vault,
     apy: null,

@@ -1,8 +1,9 @@
 import { ASSETS } from 'constants/assets'
-import { IS_TESTNET } from 'constants/env'
+import { ENV } from 'constants/env'
 import { BN_ZERO } from 'constants/math'
 import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import { BNCoin } from 'types/classes/BNCoin'
+import { NETWORK } from 'types/enums/network'
 import { Action, Uint128 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getAssetByDenom } from 'utils/assets'
 import { VAULT_DEPOSIT_BUFFER } from 'utils/constants'
@@ -11,11 +12,11 @@ import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
 import { getTokenPrice } from 'utils/tokens'
 
 export function getVaultsMetaData() {
-  return IS_TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
+  return ENV.NETWORK === NETWORK.TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
 }
 
 export function getVaultMetaData(address: string) {
-  const vaults = IS_TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
+  const vaults = ENV.NETWORK === NETWORK.TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
   return vaults.find((vault) => vault.address === address)
 }
 
