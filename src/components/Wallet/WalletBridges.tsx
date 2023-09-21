@@ -10,11 +10,12 @@ import WalletFetchBalancesAndAccounts from 'components/Wallet/WalletFetchBalance
 import WalletSelect from 'components/Wallet/WalletSelect'
 import { BRIDGES } from 'constants/bridges'
 import { CHAINS } from 'constants/chains'
-import { ENV, IS_TESTNET } from 'constants/env'
+import { ENV } from 'constants/env'
 import useCurrentWallet from 'hooks/useCurrentWallet'
 import useToggle from 'hooks/useToggle'
 import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
+import { NETWORK } from 'types/enums/network'
 import { byDenom } from 'utils/array'
 import { getBaseAsset } from 'utils/assets'
 import { defaultFee } from 'utils/constants'
@@ -87,7 +88,7 @@ export default function WalletBridges() {
           <Bridge key={bridge.name} {...bridge} />
         ))}
       </div>
-      {ENV.NETWORK !== 'mainnet' && (
+      {ENV.NETWORK !== NETWORK.MAINNET && (
         <div className='flex flex-wrap w-full gap-3'>
           <Text size='lg' className='mt-4 text-white'>
             Need Testnet Funds?
@@ -96,7 +97,7 @@ export default function WalletBridges() {
             key='osmosis-faucet'
             name='Osmosis Testnet Faucet'
             url={
-              IS_TESTNET
+              ENV.NETWORK === NETWORK.TESTNET
                 ? 'https://faucet.osmotest5.osmosis.zone/'
                 : 'https://faucet.devnet.osmosis.zone/'
             }

@@ -1,4 +1,6 @@
-import { IS_TESTNET } from 'constants/env'
+import { ENV } from 'constants/env'
+
+import { NETWORK } from 'types/enums/network'
 
 export const MARS_MAINNET_DENOM =
   'ibc/573FCD90FACEE750F55A8864EF7D38265F07E5A9273FA0E8DAFD39951332B580'
@@ -24,9 +26,10 @@ export const ASSETS: Asset[] = [
     symbol: 'ATOM',
     name: 'Atom',
     id: 'ATOM',
-    denom: IS_TESTNET
-      ? 'ibc/A8C2D23A1E6F95DA4E48BA349667E322BD7A6C996D8A4AAE8BA72E190F3D1477'
-      : 'ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2',
+    denom:
+      ENV.NETWORK === NETWORK.TESTNET
+        ? 'ibc/A8C2D23A1E6F95DA4E48BA349667E322BD7A6C996D8A4AAE8BA72E190F3D1477'
+        : 'ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2',
     mainnetDenom: 'ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2',
     color: '#6f7390',
     logo: '/images/tokens/atom.svg',
@@ -48,10 +51,10 @@ export const ASSETS: Asset[] = [
     color: '#e50571',
     logo: '/images/tokens/statom.svg',
     decimals: 6,
-    hasOraclePrice: !IS_TESTNET,
-    isEnabled: !IS_TESTNET,
-    isMarket: !IS_TESTNET,
-    isDisplayCurrency: !IS_TESTNET,
+    hasOraclePrice: ENV.NETWORK !== NETWORK.TESTNET,
+    isEnabled: ENV.NETWORK !== NETWORK.TESTNET,
+    isMarket: ENV.NETWORK !== NETWORK.TESTNET,
+    isDisplayCurrency: ENV.NETWORK !== NETWORK.TESTNET,
     isAutoLendEnabled: false,
     poolId: 803,
   },
@@ -65,9 +68,9 @@ export const ASSETS: Asset[] = [
     logo: '/images/tokens/axlwbtc.svg',
     decimals: 8,
     hasOraclePrice: true,
-    isEnabled: !IS_TESTNET,
-    isMarket: !IS_TESTNET,
-    isDisplayCurrency: !IS_TESTNET,
+    isEnabled: ENV.NETWORK !== NETWORK.TESTNET,
+    isMarket: ENV.NETWORK !== NETWORK.TESTNET,
+    isDisplayCurrency: ENV.NETWORK !== NETWORK.TESTNET,
     isAutoLendEnabled: true,
     pythPriceFeedId: 'e62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43',
     poolId: 712,
@@ -82,9 +85,9 @@ export const ASSETS: Asset[] = [
     logo: '/images/tokens/axlweth.svg',
     decimals: 18,
     hasOraclePrice: true,
-    isEnabled: !IS_TESTNET,
-    isMarket: !IS_TESTNET,
-    isDisplayCurrency: !IS_TESTNET,
+    isEnabled: ENV.NETWORK !== NETWORK.TESTNET,
+    isMarket: ENV.NETWORK !== NETWORK.TESTNET,
+    isDisplayCurrency: ENV.NETWORK !== NETWORK.TESTNET,
     isAutoLendEnabled: true,
     pythPriceFeedId: 'ff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace',
     poolId: 704,
@@ -93,9 +96,10 @@ export const ASSETS: Asset[] = [
     symbol: 'MARS',
     name: 'Mars',
     id: 'MARS',
-    denom: IS_TESTNET
-      ? 'ibc/DB9D326CF53EA07610C394D714D78F8BB4DC7E312D4213193791A9046BF45E20'
-      : MARS_MAINNET_DENOM,
+    denom:
+      ENV.NETWORK === NETWORK.TESTNET
+        ? 'ibc/DB9D326CF53EA07610C394D714D78F8BB4DC7E312D4213193791A9046BF45E20'
+        : MARS_MAINNET_DENOM,
     mainnetDenom: MARS_MAINNET_DENOM,
     color: '#a03b45',
     logo: '/images/tokens/mars.svg',
@@ -110,9 +114,10 @@ export const ASSETS: Asset[] = [
     symbol: 'USDC.axl',
     name: 'Axelar USDC',
     id: 'axlUSDC',
-    denom: IS_TESTNET
-      ? 'ibc/6F34E1BD664C36CE49ACC28E60D62559A5F96C4F9A6CCE4FC5A67B2852E24CFE'
-      : 'ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858',
+    denom:
+      ENV.NETWORK === NETWORK.TESTNET
+        ? 'ibc/6F34E1BD664C36CE49ACC28E60D62559A5F96C4F9A6CCE4FC5A67B2852E24CFE'
+        : 'ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858',
     mainnetDenom: 'ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858',
     color: '#478edc',
     logo: '/images/tokens/axlusdc.svg',
@@ -136,9 +141,9 @@ export const ASSETS: Asset[] = [
     logo: '/images/tokens/axl.svg',
     decimals: 6,
     hasOraclePrice: true,
-    isEnabled: !IS_TESTNET,
-    isMarket: !IS_TESTNET,
-    isDisplayCurrency: !IS_TESTNET,
+    isEnabled: ENV.NETWORK !== NETWORK.TESTNET,
+    isMarket: ENV.NETWORK !== NETWORK.TESTNET,
+    isDisplayCurrency: ENV.NETWORK !== NETWORK.TESTNET,
     isAutoLendEnabled: false,
     pythPriceFeedId: '60144b1d5c9e9851732ad1d9760e3485ef80be39b984f6bf60f82b28a2b7f126',
     poolId: 812,
@@ -162,9 +167,9 @@ export const ASSETS: Asset[] = [
   {
     symbol: 'OSMO-ATOM',
     name: 'OSMO-ATOM LP',
-    id: IS_TESTNET ? 'gamm/pool/12' : 'gamm/pool/1',
-    denom: IS_TESTNET ? 'gamm/pool/12' : 'gamm/pool/1',
-    mainnetDenom: IS_TESTNET ? 'gamm/pool/12' : 'gamm/pool/1',
+    id: ENV.NETWORK === NETWORK.TESTNET ? 'gamm/pool/12' : 'gamm/pool/1',
+    denom: ENV.NETWORK === NETWORK.TESTNET ? 'gamm/pool/12' : 'gamm/pool/1',
+    mainnetDenom: ENV.NETWORK === NETWORK.TESTNET ? 'gamm/pool/12' : 'gamm/pool/1',
     color: '',
     logo: '',
     decimals: 6,
@@ -184,8 +189,8 @@ export const ASSETS: Asset[] = [
     decimals: 6,
     isEnabled: false,
     isMarket: false,
-    hasOraclePrice: !IS_TESTNET,
-    forceFetchPrice: !IS_TESTNET,
+    hasOraclePrice: ENV.NETWORK !== NETWORK.TESTNET,
+    forceFetchPrice: ENV.NETWORK !== NETWORK.TESTNET,
   },
   {
     symbol: 'OSMO-WETH.axl',
@@ -198,8 +203,8 @@ export const ASSETS: Asset[] = [
     decimals: 6,
     isEnabled: false,
     isMarket: false,
-    hasOraclePrice: !IS_TESTNET,
-    forceFetchPrice: !IS_TESTNET,
+    hasOraclePrice: ENV.NETWORK !== NETWORK.TESTNET,
+    forceFetchPrice: ENV.NETWORK !== NETWORK.TESTNET,
   },
   {
     symbol: 'OSMO-WBTC.axl',
@@ -212,8 +217,8 @@ export const ASSETS: Asset[] = [
     decimals: 6,
     isEnabled: false,
     isMarket: false,
-    hasOraclePrice: !IS_TESTNET,
-    forceFetchPrice: !IS_TESTNET,
+    hasOraclePrice: ENV.NETWORK !== NETWORK.TESTNET,
+    forceFetchPrice: ENV.NETWORK !== NETWORK.TESTNET,
   },
   {
     symbol: 'stATOM-ATOM',
@@ -226,7 +231,7 @@ export const ASSETS: Asset[] = [
     decimals: 6,
     isEnabled: false,
     isMarket: false,
-    hasOraclePrice: !IS_TESTNET,
-    forceFetchPrice: !IS_TESTNET,
+    hasOraclePrice: ENV.NETWORK !== NETWORK.TESTNET,
+    forceFetchPrice: ENV.NETWORK !== NETWORK.TESTNET,
   },
 ]
