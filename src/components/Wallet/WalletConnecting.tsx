@@ -1,6 +1,6 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { useShuttle } from '@delphi-labs/shuttle-react'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 
 import { CircularProgress } from 'components/CircularProgress'
 import FullOverlayContent from 'components/FullOverlayContent'
@@ -30,11 +30,17 @@ const mapErrorMessages = (providerId: string, errorMessage: string) => {
 }
 
 export default function WalletConnecting(props: Props) {
-  const { recentWallet, connect, simulate, sign, broadcast } = useShuttle()
+  const { recentWallet, connect, simulate, sign, broadcast, mobileProviders, extensionProviders } =
+    useShuttle()
+  const providers = useMemo(
+    () => [...mobileProviders, ...extensionProviders],
+    [mobileProviders, extensionProviders],
+  )
   const [isConnecting, setIsConnecting] = useToggle()
   const providerId = props.providerId ?? recentWallet?.providerId
   const isAutoConnect = props.autoConnect
   const client = useStore((s) => s.client)
+  const address = useStore((s) => s.address)
 
   const handleConnect = useCallback(
     (extensionProviderId: string) => {
@@ -64,9 +70,7 @@ export default function WalletConnecting(props: Props) {
           })
         } catch (error) {
           setIsConnecting(false)
-
           if (isAutoConnect) return
-
           if (error instanceof Error) {
             useStore.setState({
               client: undefined,
@@ -86,21 +90,22 @@ export default function WalletConnecting(props: Props) {
           }
         }
       }
-      setTimeout(
-        () => {
-          if (isConnecting) return
-          handleConnectAsync()
-        },
-        isAutoConnect ? 1000 : 0,
-      )
+      if (!isConnecting) handleConnectAsync()
     },
     [broadcast, connect, client, isAutoConnect, isConnecting, setIsConnecting, sign, simulate],
   )
 
   useEffect(() => {
-    if (isConnecting || !providerId) return
-    handleConnect(providerId)
-  }, [isConnecting, providerId, handleConnect])
+    const provider = providers.find((p) => p.id === providerId)
+    if (
+      !provider ||
+      !provider.initialized ||
+      isConnecting ||
+      (recentWallet && recentWallet.account.address === address)
+    )
+      return
+    handleConnect(provider.id)
+  }, [handleConnect, isConnecting, providerId, providers, recentWallet, address])
 
   return (
     <FullOverlayContent

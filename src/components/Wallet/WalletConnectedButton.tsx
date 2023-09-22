@@ -65,7 +65,8 @@ export default function WalletConnectedButton() {
     if (!currentWallet) return
     disconnectWallet(currentWallet)
     useStore.setState({ client: undefined, address: undefined, accounts: null, balances: [] })
-    if (focusComponent)
+
+    if (focusComponent) {
       useStore.setState({
         focusComponent: {
           component: <WalletSelect />,
@@ -74,6 +75,8 @@ export default function WalletConnectedButton() {
           },
         },
       })
+    }
+
     navigate(getRoute(getPage(pathname)))
   }
 
