@@ -10,7 +10,7 @@ export default async function getAccounts(address?: string): Promise<Account[]> 
   const accounts = await Promise.all($accounts).then((accounts) => accounts)
 
   if (accounts) {
-    return accounts
+    return accounts.sort((a, b) => Number(a.id) - Number(b.id))
   }
 
   return new Promise((_, reject) => reject('No data'))
