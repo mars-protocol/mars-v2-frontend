@@ -11,6 +11,8 @@ export function getRoute(page: Page, address?: string, accountId?: string | null
 
   if (accountId) {
     url.searchParams.append('accountId', accountId)
+  } else {
+    url.searchParams.delete('accountId')
   }
 
   return url.pathname + url.search
