@@ -7,7 +7,7 @@ export default async function getAccountIds(address?: string): Promise<string[]>
   const data = await accountNftQueryClient.tokens({ owner: address })
 
   if (data.tokens) {
-    return data.tokens
+    return data.tokens.sort((a, b) => Number(a) - Number(b))
   }
 
   return new Promise((_, reject) => reject('No data'))
