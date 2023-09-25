@@ -4,6 +4,7 @@ import { useCallback, useMemo } from 'react'
 import AccountBalancesTable from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
 import AccountDetailsLeverage from 'components/Account/AccountDetails/AccountDetailsLeverage'
+import Skeleton from 'components/Account/AccountDetails/Skeleton'
 import EscButton from 'components/Button/EscButton'
 import { glowElement } from 'components/Button/utils'
 import Card from 'components/Card'
@@ -15,6 +16,8 @@ import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { REDUCE_MOTION_KEY } from 'constants/localStore'
 import { ORACLE_DENOM } from 'constants/oracle'
+import useAccountId from 'hooks/useAccountId'
+import useAccounts from 'hooks/useAccounts'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useHealthComputer from 'hooks/useHealthComputer'
@@ -30,9 +33,13 @@ import {
 } from 'utils/accounts'
 
 export default function AccountDetailsController() {
-  const account = useCurrentAccount()
   const address = useStore((s) => s.address)
+  const { isLoading } = useAccounts(address)
+  const accountId = useAccountId()
+  const account = useCurrentAccount()
   const focusComponent = useStore((s) => s.focusComponent)
+
+  if (isLoading && accountId && !focusComponent) return <Skeleton />
 
   if (!account || !address || focusComponent) return null
 
