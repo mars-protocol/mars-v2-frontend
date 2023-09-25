@@ -1,9 +1,11 @@
 import classNames from 'classnames'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import AccountBalancesTable from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
 import AccountDetailsLeverage from 'components/Account/AccountDetails/AccountDetailsLeverage'
+import Skeleton from 'components/Account/AccountDetails/Skeleton'
+import EscButton from 'components/Button/EscButton'
 import { glowElement } from 'components/Button/utils'
 import Card from 'components/Card'
 import DisplayCurrency from 'components/DisplayCurrency'
@@ -14,6 +16,8 @@ import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { REDUCE_MOTION_KEY } from 'constants/localStore'
 import { ORACLE_DENOM } from 'constants/oracle'
+import useAccountId from 'hooks/useAccountId'
+import useAccounts from 'hooks/useAccounts'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useHealthComputer from 'hooks/useHealthComputer'
@@ -29,11 +33,15 @@ import {
 } from 'utils/accounts'
 
 export default function AccountDetailsController() {
-  const account = useCurrentAccount()
   const address = useStore((s) => s.address)
+  const { isLoading } = useAccounts(address)
+  const accountId = useAccountId()
+  const account = useCurrentAccount()
   const focusComponent = useStore((s) => s.focusComponent)
 
-  if (!account || !address || focusComponent) return null
+  if (!address || focusComponent) return null
+
+  if ((isLoading && accountId && !focusComponent) || !account) return <Skeleton />
 
   return <AccountDetails account={account} />
 }
@@ -80,6 +88,19 @@ function AccountDetails(props: Props) {
     () => calculateAccountApr(account, borrowAssetsData, lendingAssetsData, prices),
     [account, borrowAssetsData, lendingAssetsData, prices],
   )
+
+  function AccountDetailsHeader() {
+    const onClose = useCallback(() => useStore.setState({ accountDetailsExpanded: false }), [])
+
+    return (
+      <div className='flex items-center justify-between w-full p-4 bg-white/10 '>
+        <Text size='lg' className='flex items-center flex-grow font-semibold'>
+          {`Credit Account ${account.id}`}
+        </Text>
+        <EscButton onClick={onClose} hideText className='w-6 h-6' />
+      </div>
+    )
+  }
 
   return (
     <div
@@ -146,7 +167,7 @@ function AccountDetails(props: Props) {
         {glowElement(!reduceMotion)}
       </div>
       <div className='flex w-90 backdrop-blur-sticky'>
-        <Card className='w-full bg-white/5' title={`Credit Account ${account.id}`}>
+        <Card className='w-full bg-white/5' title={<AccountDetailsHeader />}>
           <AccountComposition account={account} />
           <Text className='w-full px-4 py-2 text-white bg-white/10'>Balances</Text>
           <AccountBalancesTable

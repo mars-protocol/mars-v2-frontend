@@ -84,7 +84,7 @@ export default function useDepositVault(props: Props): {
         amount: 'account_balance',
       },
     }))
-  }, [isAutoLend, props.borrowings, props.deposits, props.reclaims])
+  }, [isAutoLend, props.vault.denoms.primary, props.vault.denoms.secondary])
 
   const actions = useMemo(() => {
     return [

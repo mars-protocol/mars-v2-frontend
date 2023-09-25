@@ -38,8 +38,10 @@ export const HealthGauge = ({ diameter = 40, health = 0, updatedHealth = 0 }: Pr
     [color, updatedColor, isUpdated, isIncrease],
   )
 
+  const tooltipContent = health === 0 ? 'loading...' : isUpdated ? updatedLabel : label
+
   return (
-    <Tooltip type='info' content={isUpdated ? updatedLabel : label}>
+    <Tooltip type='info' content={tooltipContent}>
       <div
         className={classNames(
           'relative grid place-items-center',

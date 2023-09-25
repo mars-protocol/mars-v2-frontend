@@ -8,4 +8,5 @@ export const DEFAULT_SETTINGS: Settings = {
   displayCurrency: ORACLE_DENOM,
   slippage: 0.02,
   tutorial: true,
+  migrationBanner: true,
 }

@@ -28,6 +28,8 @@ const mockedDepositedVault: DepositedVault = {
   values: {
     primary: BN_ZERO,
     secondary: BN_ZERO,
+    unlocked: BN_ZERO,
+    unlocking: BN_ZERO,
   },
   cap: {
     denom: 'mock',
