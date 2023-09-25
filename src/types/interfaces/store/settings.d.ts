@@ -5,4 +5,5 @@ interface Settings {
   lendAssets: boolean
   slippage: number
   tutorial: boolean
+  migrationBanner: boolean
 }

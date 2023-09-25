@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { SLIPPAGE_KEY } from 'constants/localStore'
 import { BN_ZERO } from 'constants/math'
+import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import {
   addCoins,
@@ -14,10 +17,6 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { cloneAccount } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { getValueFromBNCoins } from 'utils/helpers'
-
-import { DEFAULT_SETTINGS } from '../../constants/defaultSettings'
-import { SLIPPAGE_KEY } from '../../constants/localStore'
-import useLocalStorage from '../useLocalStorage'
 
 export interface VaultValue {
   address: string

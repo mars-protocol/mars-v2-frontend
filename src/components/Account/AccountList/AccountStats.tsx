@@ -1,5 +1,7 @@
 import { useCallback, useMemo } from 'react'
 
+import AccountFundFullPage from 'components/Account/AccountFund/AccountFundFullPage'
+import Skeleton from 'components/Account/AccountList/Skeleton'
 import Button from 'components/Button'
 import { ArrowDownLine, ArrowUpLine, TrashBin } from 'components/Icons'
 import SwitchAutoLend from 'components/Switch/SwitchAutoLend'
@@ -10,10 +12,6 @@ import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableDa
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { calculateAccountApr, calculateAccountBalanceValue } from 'utils/accounts'
-
-import Skeleton from './Skeleton'
-
-import AccountFundFullPage from '../AccountFund/AccountFundFullPage'
 
 interface Props {
   accountId: string

@@ -4,8 +4,6 @@ import { ReactNode } from 'react'
 import { TooltipArrow } from 'components/Icons'
 import Text from 'components/Text'
 
-import { TooltipType } from '.'
-
 interface Props {
   content: ReactNode | string
   type: TooltipType

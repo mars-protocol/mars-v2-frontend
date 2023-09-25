@@ -18,8 +18,6 @@ interface Props {
   underline?: boolean
 }
 
-export type TooltipType = 'info' | 'warning' | 'error'
-
 export const Tooltip = (props: Props) => {
   const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
 

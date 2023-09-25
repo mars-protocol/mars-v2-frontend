@@ -12,6 +12,7 @@ import { Check, Copy, ExternalLink, Osmo } from 'components/Icons'
 import Overlay from 'components/Overlay'
 import Text from 'components/Text'
 import RecentTransactions from 'components/Wallet/RecentTransactions'
+import WalletSelect from 'components/Wallet/WalletSelect'
 import { CHAINS } from 'constants/chains'
 import { ENV } from 'constants/env'
 import { BN_ZERO } from 'constants/math'
@@ -24,8 +25,6 @@ import { ChainInfoID } from 'types/enums/wallet'
 import { getBaseAsset, getEnabledMarketAssets } from 'utils/assets'
 import { truncate } from 'utils/formatters'
 import { getPage, getRoute } from 'utils/route'
-
-import WalletSelect from './WalletSelect'
 
 export default function WalletConnectedButton() {
   // ---------------
