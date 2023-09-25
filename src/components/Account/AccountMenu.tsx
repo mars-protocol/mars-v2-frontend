@@ -2,15 +2,15 @@ import { Suspense } from 'react'
 
 import AccountMenuContent from 'components/Account/AccountMenuContent'
 import Loading from 'components/Loading'
-import useAccounts from 'hooks/useAccounts'
+import useAccountIds from 'hooks/useAccountIds'
 import useStore from 'store'
 
 function Content() {
   const address = useStore((s) => s.address)
-  const { data: accounts, isLoading } = useAccounts(address)
+  const { data: accountIds, isLoading } = useAccountIds(address)
   if (isLoading) return <Loading className='h-8 w-35' />
-  if (!accounts) return null
-  return <AccountMenuContent accounts={accounts} />
+  if (!accountIds) return null
+  return <AccountMenuContent />
 }
 
 export default function AccountMenu() {

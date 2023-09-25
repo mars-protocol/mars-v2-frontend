@@ -6,7 +6,6 @@ import AccountCreateFirst from 'components/Account/AccountCreateFirst'
 import AccountFund from 'components/Account/AccountFund/AccountFundFullPage'
 import AccountList from 'components/Account/AccountList'
 import Button from 'components/Button'
-import { CircularProgress } from 'components/CircularProgress'
 import { Account, Plus, PlusCircled } from 'components/Icons'
 import Overlay from 'components/Overlay'
 import Text from 'components/Text'
@@ -14,6 +13,7 @@ import WalletBridges from 'components/Wallet/WalletBridges'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LEND_ASSETS_KEY } from 'constants/localStore'
 import useAccountId from 'hooks/useAccountId'
+import useAccountIds from 'hooks/useAccountIds'
 import useAutoLend from 'hooks/useAutoLend'
 import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
 import useLocalStorage from 'hooks/useLocalStorage'
@@ -27,14 +27,11 @@ import { getPage, getRoute } from 'utils/route'
 const menuClasses = 'absolute isolate flex w-full flex-wrap scrollbar-hide'
 const ACCOUNT_MENU_BUTTON_ID = 'account-menu-button'
 
-interface Props {
-  accounts: Account[]
-}
-
-export default function AccountMenuContent(props: Props) {
+export default function AccountMenuContent() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { address } = useParams()
+  const { data: accountIds } = useAccountIds(address)
   const accountId = useAccountId()
 
   const createAccount = useStore((s) => s.createAccount)
@@ -45,12 +42,8 @@ export default function AccountMenuContent(props: Props) {
   const [lendAssets] = useLocalStorage<boolean>(LEND_ASSETS_KEY, DEFAULT_SETTINGS.lendAssets)
   const { enableAutoLendAccountId } = useAutoLend()
 
-  const hasCreditAccounts = !!props.accounts.length
+  const hasCreditAccounts = !!accountIds.length
   const isAccountSelected = isNumber(accountId)
-
-  const selectedAccountDetails = props.accounts.find((account) => account.id === accountId)
-
-  const isLoadingAccount = isAccountSelected && selectedAccountDetails?.id !== accountId
 
   const checkHasFunds = useCallback(() => {
     return (
@@ -149,14 +142,7 @@ export default function AccountMenuContent(props: Props) {
             'top-[54px] h-[calc(100%-54px)] items-start',
           )}
         >
-          {isAccountSelected && isLoadingAccount && (
-            <div className='flex items-center justify-center w-full h-full p-4'>
-              <CircularProgress size={40} />
-            </div>
-          )}
-          {hasCreditAccounts && !isLoadingAccount && (
-            <AccountList accounts={props.accounts} setShowMenu={setShowMenu} />
-          )}
+          {hasCreditAccounts && <AccountList setShowMenu={setShowMenu} />}
         </div>
       </Overlay>
     </div>
