@@ -1,9 +1,10 @@
 import classNames from 'classnames'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import AccountBalancesTable from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
 import AccountDetailsLeverage from 'components/Account/AccountDetails/AccountDetailsLeverage'
+import EscButton from 'components/Button/EscButton'
 import { glowElement } from 'components/Button/utils'
 import Card from 'components/Card'
 import DisplayCurrency from 'components/DisplayCurrency'
@@ -81,6 +82,19 @@ function AccountDetails(props: Props) {
     [account, borrowAssetsData, lendingAssetsData, prices],
   )
 
+  function AccountDetailsHeader() {
+    const onClose = useCallback(() => useStore.setState({ accountDetailsExpanded: false }), [])
+
+    return (
+      <div className='flex items-center justify-between w-full p-4 bg-white/10 '>
+        <Text size='lg' className='flex items-center flex-grow font-semibold'>
+          {`Credit Account ${account.id}`}
+        </Text>
+        <EscButton onClick={onClose} hideText className='w-6 h-6' />
+      </div>
+    )
+  }
+
   return (
     <div
       data-testid='account-details'
@@ -146,7 +160,7 @@ function AccountDetails(props: Props) {
         {glowElement(!reduceMotion)}
       </div>
       <div className='flex w-90 backdrop-blur-sticky'>
-        <Card className='w-full bg-white/5' title={`Credit Account ${account.id}`}>
+        <Card className='w-full bg-white/5' title={<AccountDetailsHeader />}>
           <AccountComposition account={account} />
           <Text className='w-full px-4 py-2 text-white bg-white/10'>Balances</Text>
           <AccountBalancesTable

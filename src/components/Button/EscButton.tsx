@@ -6,6 +6,8 @@ import Text from 'components/Text'
 
 interface Props {
   enableKeyPress?: boolean
+  hideText?: boolean
+  className?: string
   onClick: () => void
 }
 
@@ -34,10 +36,10 @@ export default function EscButton(props: Props) {
       leftIcon={<Cross />}
       iconClassName='w-3'
       color='tertiary'
-      className='h-3 w-13'
+      className={props.className ? props.className : 'h-3 w-13'}
       size='xs'
     >
-      <Text size='2xs'>ESC</Text>
+      {!props.hideText && <Text size='2xs'>ESC</Text>}
     </Button>
   )
 }
