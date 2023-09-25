@@ -13,6 +13,7 @@ const data: LendingMarketTableData = {
   marketLiquidityRate: 0.017,
   marketLiquidationThreshold: 0.61,
   marketMaxLtv: 0.59,
+  borrowEnabled: true,
 }
 
 jest.mock('hooks/useDisplayCurrencyPrice', () => () => {

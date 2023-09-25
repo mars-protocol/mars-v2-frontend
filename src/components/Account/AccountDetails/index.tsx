@@ -39,9 +39,9 @@ export default function AccountDetailsController() {
   const account = useCurrentAccount()
   const focusComponent = useStore((s) => s.focusComponent)
 
-  if (isLoading && accountId && !focusComponent) return <Skeleton />
+  if (!address || focusComponent) return null
 
-  if (!account || !address || focusComponent) return null
+  if ((isLoading && accountId && !focusComponent) || !account) return <Skeleton />
 
   return <AccountDetails account={account} />
 }
