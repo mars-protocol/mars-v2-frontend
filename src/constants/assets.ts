@@ -1,5 +1,4 @@
 import { ENV } from 'constants/env'
-
 import { NETWORK } from 'types/enums/network'
 
 export const MARS_MAINNET_DENOM =
