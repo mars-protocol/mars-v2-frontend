@@ -40,7 +40,7 @@ export default function Skeleton(props: Props) {
           )}
         </div>
         <div className='flex items-center gap-1'>
-          <Heart className='w-3' />
+          <Heart className='w-4' />
           <Text size='xs' className='w-auto mr-1 text-white/70'>
             Health
           </Text>
