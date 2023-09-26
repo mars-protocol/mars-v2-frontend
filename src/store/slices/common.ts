@@ -9,5 +9,7 @@ export default function createCommonSlice(set: SetState<CommonSlice>, get: GetSt
     selectedAccount: null,
     focusComponent: null,
     accountDetailsExpanded: false,
+    migrationBanner: true,
+    tutorial: true,
   }
 }

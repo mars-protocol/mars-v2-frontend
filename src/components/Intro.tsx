@@ -4,9 +4,7 @@ import Card from 'components/Card'
 import { GridGlobe, GridHole, GridLandscape, GridTire } from 'components/Icons'
 import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { TUTORIAL_KEY } from 'constants/localStore'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useStore from 'store'
 
 interface Props {
   text: string | ReactNode
@@ -28,9 +26,8 @@ function IntroBackground(props: { bg: Props['bg'] }) {
 }
 
 export default function Intro(props: Props) {
-  const [tutorial] = useLocalStorage<boolean>(TUTORIAL_KEY, DEFAULT_SETTINGS.tutorial)
-
-  if (!tutorial) return null
+  const showTutorial = useStore((s) => s.tutorial)
+  if (!showTutorial) return null
   return (
     <Card
       className={`relative w-full p-8 bg-intro bg-cover h-55`}

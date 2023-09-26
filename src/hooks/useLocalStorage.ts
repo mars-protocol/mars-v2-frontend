@@ -1,9 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import useStore from 'store'
+
 export default function useLocalStorage<T>(key: string, defaultValue: T): [T, (value: T) => void] {
   const keyRef = useRef(key)
   const defaultValueRef = useRef(defaultValue)
   const [value, _setValue] = useState(defaultValueRef.current)
+
+  const updateValue = useCallback((value: T) => {
+    useStore.setState({ [keyRef.current]: value })
+    _setValue(value)
+  }, [])
 
   useEffect(() => {
     const savedItem = localStorage.getItem(keyRef.current)
@@ -12,13 +19,13 @@ export default function useLocalStorage<T>(key: string, defaultValue: T): [T, (v
       localStorage.setItem(keyRef.current, JSON.stringify(defaultValueRef.current))
     }
 
-    _setValue(savedItem ? JSON.parse(savedItem) : defaultValueRef.current)
+    updateValue(savedItem ? JSON.parse(savedItem) : defaultValueRef.current)
 
     function handler(e: StorageEvent) {
       if (e.key !== keyRef.current) return
 
       const item = localStorage.getItem(keyRef.current)
-      _setValue(JSON.parse(item ?? JSON.stringify(defaultValueRef.current)))
+      updateValue(JSON.parse(item ?? JSON.stringify(defaultValueRef.current)))
     }
 
     window.addEventListener('storage', handler)
@@ -30,7 +37,7 @@ export default function useLocalStorage<T>(key: string, defaultValue: T): [T, (v
 
   const setValue = useCallback((value: T) => {
     try {
-      _setValue(value)
+      updateValue(value)
 
       localStorage.setItem(keyRef.current, JSON.stringify(value))
       if (typeof window !== 'undefined') {
