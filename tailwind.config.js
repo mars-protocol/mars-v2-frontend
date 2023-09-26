@@ -142,7 +142,6 @@ module.exports = {
         15: '60px',
         50: '200px',
         55: '220px',
-        70: '280px',
       },
       hueRotate: {
         '-82': '-82deg',
@@ -191,6 +190,9 @@ module.exports = {
         wide: '2px',
         wider: '3px',
         widest: '5px',
+      },
+      maxHeight: {
+        70: '280px',
       },
       minHeight: {
         3: '12px',
