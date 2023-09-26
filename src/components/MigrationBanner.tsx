@@ -5,14 +5,17 @@ import { TextLink } from 'components/TextLink'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { MIGRATION_BANNER_KEY } from 'constants/localStore'
 import useLocalStorage from 'hooks/useLocalStorage'
+import useStore from 'store'
 
 export default function MigrationBanner() {
-  const [migrationBanner, setMigrationBanner] = useLocalStorage<boolean>(
+  const [_, setMigrationBanner] = useLocalStorage<boolean>(
     MIGRATION_BANNER_KEY,
     DEFAULT_SETTINGS.migrationBanner,
   )
 
-  if (!migrationBanner) return null
+  const showMigrationBanner = useStore((s) => s.migrationBanner)
+
+  if (!showMigrationBanner) return null
   return (
     <Card
       className='relative w-full bg-info-bg/20 text-info'

@@ -8,6 +8,8 @@ interface CommonSlice {
   updatedAccount?: Account
   focusComponent: FocusComponent | null
   accountDetailsExpanded: boolean
+  migrationBanner: boolean
+  tutorial: boolean
 }
 
 interface FocusComponent {
