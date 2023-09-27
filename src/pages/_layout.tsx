@@ -1,12 +1,12 @@
 import classNames from 'classnames'
 import { isMobile } from 'react-device-detect'
 import { useLocation } from 'react-router-dom'
+import { Suspense } from 'react'
 
 import AccountDetails from 'components/Account/AccountDetails'
 import Background from 'components/Background'
 import Footer from 'components/Footer'
 import DesktopHeader from 'components/Header/DesktopHeader'
-import MigrationBanner from 'components/MigrationBanner'
 import ModalsContainer from 'components/Modals/ModalsContainer'
 import PageMetadata from 'components/PageMetadata'
 import Toaster from 'components/Toaster'
@@ -65,10 +65,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           isMobile && 'items-start',
         )}
       >
-        <PageContainer focusComponent={focusComponent} fullWidth={isFullWidth}>
-          {children}
-        </PageContainer>
-
+        <Suspense>
+          <PageContainer focusComponent={focusComponent} fullWidth={isFullWidth}>
+            {children}
+          </PageContainer>
+        </Suspense>
         <AccountDetails />
       </main>
       <Footer />
