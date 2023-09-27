@@ -104,7 +104,7 @@ export default function Select(props: Props) {
                 {props.title}
               </Text>
             )}
-            <div className='w-full overflow-y-scroll h-70 scrollbar-hide'>
+            <div className='w-full overflow-y-scroll max-h-70 scrollbar-hide'>
               {props.options
                 .sort((a, b) =>
                   (a.amount?.toNumber() ?? 0) > (b.amount?.toNumber() ?? 0) ? -1 : 1,
