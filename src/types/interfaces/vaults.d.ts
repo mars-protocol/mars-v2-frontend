@@ -89,3 +89,24 @@ interface ProvideLiquidityAction {
     minimum_receive: import('../generated/mars-credit-manager/MarsCreditManager.types').Uint128
   }
 }
+
+interface AprResponse {
+  vaults: AprVault[]
+}
+
+interface AprVault {
+  chain: string
+  address: string
+  apr: AprBreakdown
+}
+
+interface AprBreakdown {
+  start_timestamp: number
+  end_timestamp: number
+  period_diff: number
+  start_vault_token_price: number
+  end_vault_token_price: number
+  period_yield: number
+  period_daily_return: number
+  projected_apr: number
+}

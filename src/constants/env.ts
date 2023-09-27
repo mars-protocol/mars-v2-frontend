@@ -14,7 +14,7 @@ interface EnvironmentVariables {
   URL_REST: string
   URL_RPC: string
   URL_API: string
-  URL_APOLLO_APR: string
+  URL_VAULT_APR: string
   WALLETS: string[]
   PYTH_ENDPOINT: string
   MAINNET_REST_API: string
@@ -39,7 +39,7 @@ export const ENV: EnvironmentVariables = {
   URL_API: process.env.NEXT_PUBLIC_VERCEL_URL
     ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api`
     : process.env.NEXT_PUBLIC_API || '',
-  URL_APOLLO_APR: process.env.NEXT_PUBLIC_APOLLO_APR || '',
+  URL_VAULT_APR: process.env.NEXT_PUBLIC_VAULT_APR || '',
   WALLETS: process.env.NEXT_PUBLIC_WALLETS?.split(',') || [],
   PYTH_ENDPOINT: process.env.NEXT_PUBLIC_PYTH_ENDPOINT || '',
   MAINNET_REST_API: process.env.NEXT_PUBLIC_MAINNET_REST || '',

@@ -123,7 +123,7 @@ export const VaultTable = (props: Props) => {
           if (vault.apy === null) return <Loading />
           return (
             <FormattedNumber
-              amount={(vault.apy ?? 0) * 100}
+              amount={vault.apy ?? 0}
               options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
               className='text-xs'
               animate
