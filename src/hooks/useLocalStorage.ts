@@ -33,7 +33,7 @@ export default function useLocalStorage<T>(key: string, defaultValue: T): [T, (v
     return () => {
       window.removeEventListener('storage', handler)
     }
-  }, [])
+  }, [updateValue])
 
   const setValue = useCallback((value: T) => {
     try {
