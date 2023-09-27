@@ -35,18 +35,21 @@ export default function useLocalStorage<T>(key: string, defaultValue: T): [T, (v
     }
   }, [updateValue])
 
-  const setValue = useCallback((value: T) => {
-    try {
-      updateValue(value)
+  const setValue = useCallback(
+    (value: T) => {
+      try {
+        updateValue(value)
 
-      localStorage.setItem(keyRef.current, JSON.stringify(value))
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new StorageEvent('storage', { key: keyRef.current }))
+        localStorage.setItem(keyRef.current, JSON.stringify(value))
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new StorageEvent('storage', { key: keyRef.current }))
+        }
+      } catch (e) {
+        console.error(e)
       }
-    } catch (e) {
-      console.error(e)
-    }
-  }, [])
+    },
+    [updateValue],
+  )
 
   return [value, setValue]
 }
