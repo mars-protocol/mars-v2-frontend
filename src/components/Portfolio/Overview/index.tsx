@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useCallback } from 'react'
+import React, { useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 
 import AccountCreateFirst from 'components/Account/AccountCreateFirst'
@@ -16,7 +16,7 @@ import useStore from 'store'
 import { defaultFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
 
-export default function Content() {
+export default function AccountSummary() {
   const { address: urlAddress } = useParams()
   const walletAddress = useStore((s) => s.address)
   const { data: accountIds, isLoading } = useAccountIds(urlAddress)
@@ -65,12 +65,17 @@ export default function Content() {
   }
 
   return (
-    <div
-      className={classNames('grid w-full grid-cols-1 gap-6', 'md:grid-cols-2', 'lg:grid-cols-3')}
-    >
-      {accountIds.map((accountId: string, index: number) => {
-        return <PortfolioCard key={accountId} accountId={accountId} />
-      })}
+    <div className='w-full mt-4'>
+      <Text size='2xl' className='mb-8'>
+        Credit Accounts
+      </Text>
+      <div
+        className={classNames('grid w-full grid-cols-1 gap-6', 'md:grid-cols-2', 'lg:grid-cols-3')}
+      >
+        {accountIds.map((accountId: string, index: number) => {
+          return <PortfolioCard key={accountId} accountId={accountId} />
+        })}
+      </div>
     </div>
   )
 }

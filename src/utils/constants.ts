@@ -14,3 +14,11 @@ export const LTV_BUFFER = 0.99
 
 export const DEPOSIT_CAP_BUFFER = 0.999
 export const VAULT_DEPOSIT_BUFFER = 0.999
+
+export const DEFAULT_PORTFOLIO_STATS = [
+  { title: null, sub: 'Total Balance' },
+  { title: null, sub: 'Total Debt' },
+  { title: null, sub: 'Net Worth' },
+  { title: null, sub: 'APR' },
+  { title: null, sub: 'Account Leverage' },
+]
