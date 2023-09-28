@@ -56,11 +56,13 @@ export function addValueToVaults(
 
       if (!vaultMetaData) return
       const apy = availableVaults.find((vault) => vault.address === vaultValue.address)?.apy ?? null
+      const apr = availableVaults.find((vault) => vault.address === vaultValue.address)?.apr ?? null
 
       vaults.push({
         ...vaultMetaData,
         ...MOCK_DEPOSITED_VAULT_POSITION,
         apy,
+        apr,
         values: {
           primary: halfValue,
           secondary: halfValue,
