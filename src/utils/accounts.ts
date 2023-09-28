@@ -9,7 +9,6 @@ import {
 import { byDenom } from 'utils/array'
 import { getAssetByDenom } from 'utils/assets'
 import { BN } from 'utils/helpers'
-import { convertApyToApr } from 'utils/parsers'
 
 export const calculateAccountBalanceValue = (
   account: Account | AccountChange,
@@ -88,7 +87,7 @@ export const calculateAccountApr = (
 
   vaults?.forEach((vault) => {
     const lockedValue = vault.values.primary.plus(vault.values.secondary)
-    const positionInterest = lockedValue.multipliedBy(convertApyToApr(vault?.apy ?? 0, 365))
+    const positionInterest = lockedValue.multipliedBy(vault?.apr ?? 0)
     totalVaultsInterestValue = totalVaultsInterestValue.plus(positionInterest)
   })
 
