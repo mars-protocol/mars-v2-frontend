@@ -1,3 +1,4 @@
+import { cacheFn, poolPriceCache } from 'api/cache'
 import getPrice from 'api/prices/getPrice'
 import { ENV } from 'constants/env'
 import { BN_ONE } from 'constants/math'
@@ -34,7 +35,12 @@ export default async function getPoolPrice(
 
 const getAssetRate = async (asset: Asset) => {
   const url = `${ENV.URL_REST}osmosis/gamm/v1beta1/pools/${asset.poolId}`
-  const response = await fetch(url).then((res) => res.json())
+  const response = await cacheFn(
+    () => fetch(url).then((res) => res.json()),
+    poolPriceCache,
+    (asset.poolId || 0).toString(),
+    60,
+  )
   return calculateSpotPrice(response.pool.pool_assets, asset)
 }
 

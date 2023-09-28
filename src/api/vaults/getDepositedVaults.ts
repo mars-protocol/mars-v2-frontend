@@ -1,5 +1,12 @@
 import moment from 'moment'
 
+import {
+  cacheFn,
+  estimateWithdrawCache,
+  positionsCache,
+  previewRedeemCache,
+  unlockPositionsCache,
+} from 'api/cache'
 import { getClient, getCreditManagerQueryClient, getVaultQueryClient } from 'api/cosmwasm-client'
 import getPrice from 'api/prices/getPrice'
 import getVaults from 'api/vaults/getVaults'
@@ -7,6 +14,7 @@ import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultStatus } from 'types/enums/vault'
 import {
+  Positions,
   VaultPosition,
   VaultPositionAmount,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
@@ -17,9 +25,15 @@ async function getUnlocksAtTimestamp(unlockingId: number, vaultAddress: string) 
   try {
     const client = await getClient()
 
-    const vaultExtension = (await client.queryContractSmart(vaultAddress, {
-      vault_extension: { lockup: { unlocking_position: { lockup_id: unlockingId } } },
-    })) as VaultExtensionResponse
+    const vaultExtension = (await cacheFn(
+      () =>
+        client.queryContractSmart(vaultAddress, {
+          vault_extension: { lockup: { unlocking_position: { lockup_id: unlockingId } } },
+        }),
+      unlockPositionsCache,
+      `unlockPositions/${vaultAddress}`,
+      60,
+    )) as VaultExtensionResponse
 
     return Number(vaultExtension.release_at.at_time) / 1e6
   } catch (ex) {
@@ -78,16 +92,28 @@ async function getLpTokensForVaultPosition(
     const amounts = flatVaultPositionAmount(vaultPosition.amount)
     const totalAmount = amounts.locked.plus(amounts.unlocked).plus(amounts.unlocking).toString()
 
-    const lpAmount = await vaultQueryClient.previewRedeem({
-      amount: totalAmount,
-    })
+    const lpAmount = await cacheFn(
+      () =>
+        vaultQueryClient.previewRedeem({
+          amount: totalAmount,
+        }),
+      previewRedeemCache,
+      'previewRedeem/vaults/${vault.address}/amount/${totalAmount}',
+      60,
+    )
 
-    const lpTokens = await creditManagerQueryClient.estimateWithdrawLiquidity({
-      lpToken: {
-        amount: lpAmount,
-        denom: vault.denoms.lp,
-      },
-    })
+    const lpTokens = await cacheFn(
+      () =>
+        creditManagerQueryClient.estimateWithdrawLiquidity({
+          lpToken: {
+            amount: lpAmount,
+            denom: vault.denoms.lp,
+          },
+        }),
+      estimateWithdrawCache,
+      `lpToken/${vault.denoms.lp}/amount/${lpAmount}`,
+      60,
+    )
 
     const primaryLpToken = lpTokens.find((t) => t.denom === vault.denoms.primary) ?? {
       amount: '0',
@@ -147,14 +173,26 @@ async function getVaultValuesAndAmounts(
   }
 }
 
-async function getDepositedVaults(accountId: string): Promise<DepositedVault[]> {
+async function getDepositedVaults(
+  accountId: string,
+  positions?: Positions,
+): Promise<DepositedVault[]> {
   try {
     const creditManagerQueryClient = await getCreditManagerQueryClient()
-    const positionsQuery = creditManagerQueryClient.positions({ accountId })
 
-    const [positions, allVaults] = await Promise.all([positionsQuery, getVaults()])
+    if (!positions)
+      positions = await cacheFn(
+        () => creditManagerQueryClient.positions({ accountId }),
+        positionsCache,
+        accountId,
+      )
+
+    if (!positions.vaults.length) return []
+
+    const [allVaults] = await Promise.all([getVaults()])
 
     const depositedVaults = positions.vaults.map(async (vaultPosition) => {
+      console.log('executing queries')
       const vault = allVaults.find((v) => v.address === vaultPosition.vault.address)
 
       if (!vault) {

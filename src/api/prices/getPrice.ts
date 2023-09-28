@@ -1,12 +1,17 @@
+import { cacheFn, priceCache } from 'api/cache'
 import { getOracleQueryClient } from 'api/cosmwasm-client'
-import { ASSETS } from 'constants/assets'
-import { byDenom } from 'utils/array'
-import getPythPrice from 'api/prices/getPythPrices'
 import getPoolPrice from 'api/prices/getPoolPrice'
-import { BN } from 'utils/helpers'
+import getPythPrice from 'api/prices/getPythPrices'
+import { ASSETS } from 'constants/assets'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import { byDenom } from 'utils/array'
+import { BN } from 'utils/helpers'
 
 export default async function getPrice(denom: string): Promise<BigNumber> {
+  return cacheFn(() => fetchPrice(denom), priceCache, denom, 60)
+}
+
+async function fetchPrice(denom: string) {
   try {
     const asset = ASSETS.find(byDenom(denom)) as Asset
 

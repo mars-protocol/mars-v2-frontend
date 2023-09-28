@@ -1,3 +1,4 @@
+import { cacheFn, emissionsCache } from 'api/cache'
 import { getIncentivesQueryClient } from 'api/cosmwasm-client'
 import getPrice from 'api/prices/getPrice'
 import { ASSETS } from 'constants/assets'
@@ -10,9 +11,15 @@ export default async function getTotalActiveEmissionValue(
 ): Promise<BigNumber | null> {
   try {
     const client = await getIncentivesQueryClient()
-    const activeEmissions = await client.activeEmissions({
-      collateralDenom: denom,
-    })
+    const activeEmissions = await cacheFn(
+      () =>
+        client.activeEmissions({
+          collateralDenom: denom,
+        }),
+      emissionsCache,
+      denom,
+      60,
+    )
 
     if (activeEmissions.length === 0) {
       throw 'Asset has no active incentive emission.'
