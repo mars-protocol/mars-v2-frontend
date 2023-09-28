@@ -31,7 +31,7 @@ async function getUnlocksAtTimestamp(unlockingId: number, vaultAddress: string) 
           vault_extension: { lockup: { unlocking_position: { lockup_id: unlockingId } } },
         }),
       unlockPositionsCache,
-      `unlockPositions/${vaultAddress}`,
+      `unlockPositions/${vaultAddress}.id/${unlockingId}`,
       60,
     )) as VaultExtensionResponse
 
@@ -98,7 +98,7 @@ async function getLpTokensForVaultPosition(
           amount: totalAmount,
         }),
       previewRedeemCache,
-      'previewRedeem/vaults/${vault.address}/amount/${totalAmount}',
+      `previewRedeem/vaults/${vault.address}/amount/${totalAmount}`,
       60,
     )
 
@@ -192,7 +192,6 @@ async function getDepositedVaults(
     const [allVaults] = await Promise.all([getVaults()])
 
     const depositedVaults = positions.vaults.map(async (vaultPosition) => {
-      console.log('executing queries')
       const vault = allVaults.find((v) => v.address === vaultPosition.vault.address)
 
       if (!vault) {
