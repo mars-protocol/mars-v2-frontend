@@ -31,30 +31,22 @@ export default function VaultModalContentHeader({ vault }: Props) {
 
   return (
     <div className='flex gap-6 px-6 py-4 border-b border-white/5 gradient-header'>
-      {vault.apy && (
-        <>
-          <TitleAndSubCell
-            title={
-              <div className='flex flex-row'>
-                <FormattedNumber
-                  amount={vault.apy}
-                  options={{ suffix: '%', decimals: -2 }}
-                  animate
-                />
-                <FormattedNumber
-                  className='ml-2 text-xs'
-                  amount={vault.apy / 365}
-                  options={{ suffix: '%/day', decimals: -2 }}
-                  parentheses
-                  animate
-                />
-              </div>
-            }
-            sub={'Deposit APY'}
-          />
-          <div className='h-100 w-[1px] bg-white/10'></div>
-        </>
-      )}
+      <TitleAndSubCell
+        title={
+          <div className='flex flex-row'>
+            <FormattedNumber amount={vault?.apy ?? 0} options={{ suffix: '%' }} animate />
+            <FormattedNumber
+              className='ml-2 text-xs'
+              amount={vault?.apy ?? 0 / 365}
+              options={{ suffix: '%/day' }}
+              parentheses
+              animate
+            />
+          </div>
+        }
+        sub={'Deposit APY'}
+      />
+      <div className='h-100 w-[1px] bg-white/10'></div>
       {!depositedValue.isZero() && (
         <>
           <TitleAndSubCell

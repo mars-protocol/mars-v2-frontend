@@ -30,8 +30,8 @@ if (!process.env.NEXT_PUBLIC_GQL) {
 if (!process.env.NEXT_PUBLIC_REST) {
   throw 'NEXT_PUBLIC_REST is not defined'
 }
-if (!process.env.NEXT_PUBLIC_APOLLO_APR) {
-  throw 'NEXT_PUBLIC_APOLLO_APR is not defined'
+if (!process.env.NEXT_PUBLIC_VAULT_APR) {
+  throw 'NEXT_PUBLIC_VAULT_APR is not defined'
 }
 if (!process.env.NEXT_PUBLIC_PARAMS) {
   throw 'NEXT_PUBLIC_PARAMS is not defined'
