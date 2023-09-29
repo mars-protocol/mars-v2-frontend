@@ -10,7 +10,7 @@ export default async function getAccount(accountId: string): Promise<Account> {
   const accountPosition: Positions = await cacheFn(
     () => creditManagerQueryClient.positions({ accountId }),
     positionsCache,
-    accountId,
+    `account/${accountId}`,
   )
 
   const depositedVaults = await getDepositedVaults(accountId, accountPosition)

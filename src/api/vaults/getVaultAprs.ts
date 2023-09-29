@@ -10,7 +10,6 @@ export default async function getAprs() {
 
       return data.vaults.map((aprData) => {
         const finalApr = aprData.apr.projected_apr * 100
-
         return { address: aprData.address, apr: finalApr } as Apr
       })
     }

@@ -5,7 +5,7 @@ export default async function getUnderlyingLiquidityAmount(market: Market): Prom
   return cacheFn(
     () => fetchUnderlyingLiquidityAmount(market),
     underlyingLiquidityAmountCache,
-    `denoms/${market.denom}/amount/${market.collateralTotalScaled}`,
+    `underlyingLiquidity/${market.denom}/amount/${market.collateralTotalScaled}`,
     60,
   )
 }

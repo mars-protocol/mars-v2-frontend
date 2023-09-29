@@ -15,7 +15,7 @@ export default async function getOraclePrices(...assets: Asset[]): Promise<BNCoi
     const priceResults = await cacheFn(
       () => iterateContractQuery(oracleQueryClient.prices),
       oraclePriceCache,
-      'oraclePriceCache',
+      'oraclePrices',
       60,
     )
 

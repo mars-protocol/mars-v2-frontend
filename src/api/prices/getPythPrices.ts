@@ -12,7 +12,7 @@ export default async function fetchPythPrices(...priceFeedIds: string[]) {
       () => fetch(pricesUrl).then((res) => res.json()),
       pythPriceCache,
       'pythPrices',
-      60,
+      30,
     )
 
     return pythResponse.map(({ price }) => BN(price.price).shiftedBy(price.expo))

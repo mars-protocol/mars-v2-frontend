@@ -16,7 +16,7 @@ export default async function getUnclaimedRewards(
           limit: 100,
         }),
       unclaimedRewardsCache,
-      accountId,
+      `inctives/${accountId}`,
       60,
     )
 

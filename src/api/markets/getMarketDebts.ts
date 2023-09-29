@@ -16,7 +16,7 @@ export default async function getMarketDebts(): Promise<BNCoin[]> {
             amountScaled: asset.debtTotalScaled,
           }),
         underlyingDebtCache,
-        `denoms/${asset.denom}/amount/${asset.debtTotalScaled}`,
+        `marketDebts/${asset.denom}/amount/${asset.debtTotalScaled}`,
         60,
       ),
     )

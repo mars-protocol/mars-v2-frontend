@@ -38,7 +38,7 @@ const getAssetRate = async (asset: Asset) => {
   const response = await cacheFn(
     () => fetch(url).then((res) => res.json()),
     poolPriceCache,
-    (asset.poolId || 0).toString(),
+    `poolPrices/${(asset.poolId || 0).toString()}`,
     60,
   )
   return calculateSpotPrice(response.pool.pool_assets, asset)

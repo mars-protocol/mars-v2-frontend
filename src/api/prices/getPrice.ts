@@ -8,7 +8,7 @@ import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 
 export default async function getPrice(denom: string): Promise<BigNumber> {
-  return cacheFn(() => fetchPrice(denom), priceCache, denom, 60)
+  return cacheFn(() => fetchPrice(denom), priceCache, `price/${denom}`, 60)
 }
 
 async function fetchPrice(denom: string) {

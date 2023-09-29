@@ -184,7 +184,7 @@ async function getDepositedVaults(
       positions = await cacheFn(
         () => creditManagerQueryClient.positions({ accountId }),
         positionsCache,
-        accountId,
+        `depositedVaults/${accountId}`,
       )
 
     if (!positions.vaults.length) return []

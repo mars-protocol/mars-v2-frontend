@@ -17,7 +17,7 @@ export default async function getTotalActiveEmissionValue(
           collateralDenom: denom,
         }),
       emissionsCache,
-      denom,
+      `emission/${denom}`,
       60,
     )
 

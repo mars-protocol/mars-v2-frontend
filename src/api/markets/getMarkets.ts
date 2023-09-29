@@ -20,7 +20,7 @@ export default async function getMarkets(): Promise<Market[]> {
       cacheFn(
         () => paramsClient.totalDeposit({ denom: asset.denom }),
         totalDepositCache,
-        asset.denom,
+        `enabledMarkets/${asset.denom}`,
         60,
       ),
     )

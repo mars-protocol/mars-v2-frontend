@@ -13,7 +13,7 @@ export async function getVaultTokenFromLp(
         client.previewDeposit({ amount: lpAmount }).then((amount) => ({ vaultAddress, amount })),
       previewDepositCache,
       `vaults/${vaultAddress}/amounts/${lpAmount}`,
-      60,
+      30,
     )
   } catch (ex) {
     throw ex
