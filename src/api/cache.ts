@@ -40,7 +40,8 @@ export async function cacheFn<T>(
 }
 
 export const positionsCache: Cache<Positions> = new Map()
-export const aprsCache: Cache<Response> = new Map()
+export const aprsCacheResponse: Cache<Response> = new Map()
+export const aprsCache: Cache<AprResponse> = new Map()
 export const vaultConfigsCache: Cache<VaultConfigBaseForAddr[]> = new Map()
 export const vaultUtilizationCache: Cache<VaultUtilizationResponse> = new Map()
 export const unlockPositionsCache: Cache<VaultExtensionResponse> = new Map()
