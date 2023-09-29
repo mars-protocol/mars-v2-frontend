@@ -11,7 +11,7 @@ export default async function fetchPythPrices(...priceFeedIds: string[]) {
     const pythResponse: PythPriceData[] = await cacheFn(
       () => fetch(pricesUrl).then((res) => res.json()),
       pythPriceCache,
-      'pythPrices',
+      `pythPrices/${priceFeedIds.flat().join('-')}`,
       30,
     )
 

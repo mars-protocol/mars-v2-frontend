@@ -131,7 +131,7 @@ export default function Index(props: Props) {
         header: 'APY',
         cell: ({ row }) => {
           if (row.original.type === 'deposits')
-            return <span className='w-full text-xs text-center'>&ndash;</span>
+            return <p className='w-full text-xs text-right number'>&ndash;</p>
           const isEnabled = markets.find(byDenom(row.original.denom))?.borrowEnabled ?? false
           return (
             <AssetRate
