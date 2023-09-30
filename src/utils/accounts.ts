@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 
 import { BN_ZERO } from 'constants/math'
+import { ORACLE_DENOM } from 'constants/oracle'
 import { BNCoin } from 'types/classes/BNCoin'
 import {
   Positions,
@@ -248,4 +249,24 @@ export function computeHealthGaugePercentage(health: number) {
   }
 
   return 100 - (health / ATTENTION_CUTOFF) * UNHEALTHY_BAR_SIZE
+}
+
+export function getAccountSummaryStats(
+  account: Account,
+  prices: BNCoin[],
+  borrowAssets: BorrowMarketTableData[],
+  lendingAssets: LendingMarketTableData[],
+) {
+  const [deposits, lends, debts, vaults] = getAccountPositionValues(account, prices)
+  const positionValue = deposits.plus(lends).plus(vaults)
+  const apr = calculateAccountApr(account, borrowAssets, lendingAssets, prices)
+  const leverage = calculateAccountLeverage(account, prices)
+
+  return {
+    positionValue: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionValue),
+    debts: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, debts),
+    netWorth: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionValue.minus(debts)),
+    apr,
+    leverage,
+  }
 }

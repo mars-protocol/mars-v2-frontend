@@ -1,33 +1,47 @@
-import React, { Suspense, useMemo } from 'react'
+import React, { useMemo } from 'react'
+import { useParams } from 'react-router-dom'
 
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
-import Skeleton from 'components/Portfolio/SummarySkeleton'
+import SummarySkeleton from 'components/Portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
-import useAccount from 'hooks/useAccount'
+import useAccounts from 'hooks/useAccounts'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
-import useHealthComputer from 'hooks/useHealthComputer'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import usePrices from 'hooks/usePrices'
+import useStore from 'store'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 
-interface Props {
-  accountId: string
-}
-
-function Content(props: Props) {
-  const { data: account } = useAccount(props.accountId, true)
+export default function PortfolioSummary() {
+  const { address: urlAddress } = useParams()
+  const walletAddress = useStore((s) => s.address)
   const { data: prices } = usePrices()
-  const { health } = useHealthComputer(account)
   const { allAssets: borrowAssets } = useBorrowMarketAssetsTableData()
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
+  const { data: accounts } = useAccounts(urlAddress || walletAddress)
 
   const stats = useMemo(() => {
-    if (!account || !borrowAssets.length || !lendingAssets.length) return DEFAULT_PORTFOLIO_STATS
+    if (!accounts?.length) return
+    const combinedAccount = accounts.reduce(
+      (combinedAccount, account) => {
+        combinedAccount.debts = combinedAccount.debts.concat(account.debts)
+        combinedAccount.deposits = combinedAccount.deposits.concat(account.deposits)
+        combinedAccount.lends = combinedAccount.lends.concat(account.lends)
+        combinedAccount.vaults = combinedAccount.vaults.concat(account.vaults)
+        return combinedAccount
+      },
+      {
+        id: '1',
+        deposits: [],
+        lends: [],
+        debts: [],
+        vaults: [],
+      } as Account,
+    )
 
     const { positionValue, debts, netWorth, apr, leverage } = getAccountSummaryStats(
-      account,
+      combinedAccount,
       prices,
       borrowAssets,
       lendingAssets,
@@ -58,7 +72,7 @@ function Content(props: Props) {
             }}
           />
         ),
-        sub: DEFAULT_PORTFOLIO_STATS[3].sub,
+        sub: 'Combined APR',
       },
       {
         title: (
@@ -68,18 +82,12 @@ function Content(props: Props) {
             options={{ suffix: 'x' }}
           />
         ),
-        sub: DEFAULT_PORTFOLIO_STATS[4].sub,
+        sub: 'Combined leverage',
       },
     ]
-  }, [account, borrowAssets, lendingAssets, prices])
+  }, [accounts, borrowAssets, lendingAssets, prices])
 
-  return <Skeleton stats={stats} health={health} title={`Credit account ${props.accountId}`} />
-}
+  if (!walletAddress && !urlAddress) return null
 
-export default function Summary(props: Props) {
-  return (
-    <Suspense fallback={<Skeleton health={0} title={`Credit account ${props.accountId}`} />}>
-      <Content {...props} />
-    </Suspense>
-  )
+  return <SummarySkeleton title='Portfolio Summary' stats={stats} />
 }
