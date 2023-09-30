@@ -52,7 +52,7 @@ export default function useAccountBalanceData(props: Props) {
     })
 
     const vaults = accountVaults.map((vault) => {
-      const apy = (vault.apy ?? 0) * 100
+      const apy = vault.apy ?? 0
       const prevVault = updatedAccount
         ? account?.vaults.find((position) => position.name === vault.name)
         : vault

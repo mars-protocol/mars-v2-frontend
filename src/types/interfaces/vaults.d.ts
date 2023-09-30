@@ -34,6 +34,7 @@ interface VaultConfig extends VaultMetaData, VaultInfo {}
 
 interface Vault extends VaultConfig {
   apy: number | null
+  apr: number | null
 }
 
 interface VaultValuesAndAmounts {

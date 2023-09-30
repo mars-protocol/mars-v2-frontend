@@ -76,6 +76,7 @@ function Fallback() {
   const mockVaults: Vault[] = vaults.map((vault) => ({
     ...vault,
     apy: null,
+    apr: null,
     ltv: {
       max: 0,
       liq: 0,

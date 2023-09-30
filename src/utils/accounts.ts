@@ -9,7 +9,8 @@ import {
 import { byDenom } from 'utils/array'
 import { getAssetByDenom } from 'utils/assets'
 import { BN } from 'utils/helpers'
-import { convertApyToApr } from 'utils/parsers'
+
+import { convertApyToApr } from './parsers'
 
 export const calculateAccountBalanceValue = (
   account: Account | AccountChange,
@@ -66,7 +67,11 @@ export const calculateAccountApr = (
   lendingAssetsData: LendingMarketTableData[],
   prices: BNCoin[],
 ): BigNumber => {
-  const totalValue = calculateAccountBalanceValue(account, prices)
+  const depositValue = calculateAccountValue('deposits', account, prices)
+  const lendsValue = calculateAccountValue('lends', account, prices)
+  const vaultsValue = calculateAccountValue('vaults', account, prices)
+  const totalValue = depositValue.plus(lendsValue).plus(vaultsValue)
+
   if (totalValue.isZero()) return BN_ZERO
   const { vaults, lends, debts } = account
 
@@ -88,7 +93,7 @@ export const calculateAccountApr = (
 
   vaults?.forEach((vault) => {
     const lockedValue = vault.values.primary.plus(vault.values.secondary)
-    const positionInterest = lockedValue.multipliedBy(convertApyToApr(vault?.apy ?? 0, 365))
+    const positionInterest = lockedValue.multipliedBy(vault?.apr ?? 0)
     totalVaultsInterestValue = totalVaultsInterestValue.plus(positionInterest)
   })
 
@@ -97,16 +102,17 @@ export const calculateAccountApr = (
     if (!asset) return BN_ZERO
     const price = prices.find(byDenom(debt.denom))?.amount ?? 0
     const amount = BN(debt.amount).shiftedBy(-asset.decimals)
-    const apr =
+    const apy =
       borrowAssetsData.find((borrowAsset) => borrowAsset.asset.denom === debt.denom)?.borrowRate ??
       0
-    const positionInterest = amount.multipliedBy(price).multipliedBy(apr)
+    const positionInterest = amount.multipliedBy(price).multipliedBy(convertApyToApr(apy, 365))
     totalDebtInterestValue = totalDebtInterestValue.plus(positionInterest)
   })
 
   const totalInterstValue = totalLendsInterestValue
     .plus(totalVaultsInterestValue)
     .minus(totalDebtInterestValue)
+
   return totalInterstValue.dividedBy(totalValue).times(100)
 }
 

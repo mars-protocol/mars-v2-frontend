@@ -36,6 +36,7 @@ export default async function getVaults(): Promise<Vault[]> {
           ),
         },
         apy: apr ? convertAprToApy(apr.apr, 365) : null,
+        apr: apr ? apr.apr / 100 : null,
         ltv: {
           max: Number(vaultConfig.max_loan_to_value),
           liq: Number(vaultConfig.liquidation_threshold),
