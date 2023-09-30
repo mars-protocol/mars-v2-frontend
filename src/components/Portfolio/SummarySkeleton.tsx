@@ -1,13 +1,12 @@
 import React from 'react'
 
+import HealthBar from 'components/Account/HealthBar'
+import Card from 'components/Card'
+import { Heart } from 'components/Icons'
+import Loading from 'components/Loading'
+import Text from 'components/Text'
+import TitleAndSubCell from 'components/TitleAndSubCell'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
-
-import HealthBar from '../Account/HealthBar'
-import Card from '../Card'
-import { Heart } from '../Icons'
-import Loading from '../Loading'
-import Text from '../Text'
-import TitleAndSubCell from '../TitleAndSubCell'
 
 interface Props {
   stats?: { title: React.ReactNode | null; sub: string }[]
