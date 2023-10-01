@@ -111,3 +111,8 @@ interface AprBreakdown {
   period_daily_return: number
   projected_apr: number
 }
+
+interface Apr {
+  address: string
+  apr: number
+}

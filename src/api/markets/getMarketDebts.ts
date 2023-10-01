@@ -1,5 +1,6 @@
-import getMarkets from 'api/markets/getMarkets'
+import { cacheFn, underlyingDebtCache } from 'api/cache'
 import { getRedBankQueryClient } from 'api/cosmwasm-client'
+import getMarkets from 'api/markets/getMarkets'
 import { BNCoin } from 'types/classes/BNCoin'
 
 export default async function getMarketDebts(): Promise<BNCoin[]> {
@@ -8,10 +9,16 @@ export default async function getMarketDebts(): Promise<BNCoin[]> {
     const redBankQueryClient = await getRedBankQueryClient()
 
     const debtQueries = markets.map((asset) =>
-      redBankQueryClient.underlyingDebtAmount({
-        denom: asset.denom,
-        amountScaled: asset.debtTotalScaled,
-      }),
+      cacheFn(
+        () =>
+          redBankQueryClient.underlyingDebtAmount({
+            denom: asset.denom,
+            amountScaled: asset.debtTotalScaled,
+          }),
+        underlyingDebtCache,
+        `marketDebts/${asset.denom}/amount/${asset.debtTotalScaled}`,
+        60,
+      ),
     )
     const debtsResults = await Promise.all(debtQueries)
 

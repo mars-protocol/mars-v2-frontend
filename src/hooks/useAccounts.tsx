@@ -3,6 +3,7 @@ import useSWR from 'swr'
 import getAccounts from 'api/wallets/getAccounts'
 import useStore from 'store'
 
+// TODO: Remove this hook
 export default function useAccounts(address?: string) {
   return useSWR(`accounts${address}`, () => getAccounts(address), {
     suspense: true,

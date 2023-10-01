@@ -1,3 +1,4 @@
+import { cacheFn, unclaimedRewardsCache } from 'api/cache'
 import { getIncentivesQueryClient } from 'api/cosmwasm-client'
 import { BNCoin } from 'types/classes/BNCoin'
 
@@ -7,11 +8,17 @@ export default async function getUnclaimedRewards(
 ): Promise<BNCoin[]> {
   try {
     const client = await getIncentivesQueryClient()
-    const unclaimedRewards = await client.userUnclaimedRewards({
-      user,
-      accountId,
-      limit: 100,
-    })
+    const unclaimedRewards = await cacheFn(
+      () =>
+        client.userUnclaimedRewards({
+          user,
+          accountId,
+          limit: 100,
+        }),
+      unclaimedRewardsCache,
+      `incentives/${accountId}`,
+      60,
+    )
 
     if (unclaimedRewards.length === 0) return []
 

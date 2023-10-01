@@ -1,3 +1,4 @@
+import { cacheFn, oraclePriceCache } from 'api/cache'
 import { getOracleQueryClient } from 'api/cosmwasm-client'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -11,7 +12,12 @@ export default async function getOraclePrices(...assets: Asset[]): Promise<BNCoi
     if (!assets.length) return []
 
     const oracleQueryClient = await getOracleQueryClient()
-    const priceResults = await iterateContractQuery(oracleQueryClient.prices)
+    const priceResults = await cacheFn(
+      () => iterateContractQuery(oracleQueryClient.prices),
+      oraclePriceCache,
+      'oraclePrices',
+      60,
+    )
 
     return assets.map((asset) => {
       const priceResponse = priceResults.find(byDenom(asset.denom)) as PriceResponse
