@@ -9,7 +9,7 @@ export default function Skeleton() {
         <div className='flex flex-wrap justify-center w-full py-4'>
           <HealthGauge health={0} />
           <Text size='2xs' className='mb-0.5 mt-1 w-full text-center text-white/50'>
-            Account Health
+            Health
           </Text>
         </div>
         <div className='flex flex-wrap justify-center w-full py-4 border-t border-white/20'>
