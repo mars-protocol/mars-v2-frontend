@@ -25,6 +25,7 @@ export default function AssetItem(props: Props) {
   )
   const amount = demagnify(props.balances.find(byDenom(asset.denom))?.amount ?? BN_ZERO, asset)
   const formattedAmount = formatAmountToPrecision(amount, MAX_AMOUNT_DECIMALS)
+  const lowAmount = formattedAmount === 0 ? 0 : Math.max(formattedAmount, MIN_AMOUNT)
 
   function handleToggleFavorite(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     event.stopPropagation()
@@ -70,13 +71,7 @@ export default function AssetItem(props: Props) {
                   <FormattedNumber
                     className='text-xs text-left text-white/80'
                     smallerThanThreshold={formattedAmount !== 0 && formattedAmount < MIN_AMOUNT}
-                    amount={
-                      formattedAmount === 0
-                        ? 0
-                        : formattedAmount < MIN_AMOUNT
-                        ? MIN_AMOUNT
-                        : formattedAmount
-                    }
+                    amount={lowAmount}
                     options={{
                       maxDecimals: MAX_AMOUNT_DECIMALS,
                       minDecimals: 0,
