@@ -11,6 +11,7 @@ interface ModalSlice {
   vaultModal: VaultModal | null
   walletAssetsModal: WalletAssetModal | null
   withdrawFromVaultsModal: DepositedVault[] | null
+  assetOverlayState: OverlayState
 }
 
 interface AlertDialogButton {

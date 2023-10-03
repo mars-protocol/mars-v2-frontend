@@ -26,7 +26,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { defaultFee } from 'utils/constants'
 import { getCapLeftWithBuffer } from 'utils/generic'
-import { BN, asyncThrottle } from 'utils/helpers'
+import { asyncThrottle, BN } from 'utils/helpers'
 
 interface Props {
   buyAsset: Asset

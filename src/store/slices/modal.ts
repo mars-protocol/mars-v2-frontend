@@ -15,5 +15,6 @@ export default function createModalSlice(set: SetState<ModalSlice>, get: GetStat
     vaultModal: null,
     walletAssetsModal: null,
     withdrawFromVaultsModal: null,
+    assetOverlayState: 'closed',
   }
 }
