@@ -6,7 +6,7 @@ export default function BorrowIntro() {
       text={
         <>
           <span className='text-white'>Borrow</span> assets, against your collateral. But always
-          have an eye on your Account Health. Once it reaches zero, you&apos;ll be liquidated.
+          have an eye on your Health. Once it reaches zero, you&apos;ll be liquidated.
         </>
       }
       bg='borrow'

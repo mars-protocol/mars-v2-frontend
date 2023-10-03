@@ -125,7 +125,7 @@ function AccountDetails(props: Props) {
         <div className='flex flex-wrap justify-center w-full py-4'>
           <HealthGauge health={health} updatedHealth={updatedHealth} />
           <Text size='2xs' className='mb-0.5 mt-1 w-full text-center text-white/50'>
-            Account Health
+            Health
           </Text>
         </div>
         <div className='w-full py-4 border-t border-white/20'>
