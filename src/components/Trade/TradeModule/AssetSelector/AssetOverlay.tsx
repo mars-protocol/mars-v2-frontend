@@ -7,7 +7,6 @@ import SearchBar from 'components/SearchBar'
 import Text from 'components/Text'
 import AssetList from 'components/Trade/TradeModule/AssetSelector/AssetList'
 import useFilteredAssets from 'hooks/useFilteredAssets'
-import useStore from 'store'
 
 interface Props {
   state: OverlayState
