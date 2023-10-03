@@ -58,17 +58,17 @@ export default function AssetItem(props: Props) {
             </div>
             {props.balances.length > 0 && (
               <div className='flex gap-1'>
-                <span className='text-xs text-left text-white/60'>Balance: </span>
+                <span className='text-xs text-left text-white/80'>Balance: </span>
                 {amount >= 1 ? (
                   <FormattedNumber
-                    className='text-xs text-left text-white/60'
+                    className='text-xs text-left text-white/80'
                     amount={amount}
                     options={{ abbreviated: true, maxDecimals: MAX_AMOUNT_DECIMALS }}
                     animate
                   />
                 ) : (
                   <FormattedNumber
-                    className='text-xs text-left text-white/60'
+                    className='text-xs text-left text-white/80'
                     smallerThanThreshold={formattedAmount !== 0 && formattedAmount < MIN_AMOUNT}
                     amount={
                       formattedAmount === 0
