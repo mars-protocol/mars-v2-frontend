@@ -31,10 +31,10 @@ const renderIncentives = (unclaimedRewards: BNCoin[]) => {
     const asset = ASSETS.find(byDenom(reward.denom))
     if (!asset) return null
     return (
-      <>
+      <div className='w-full' key={index}>
         {index !== 0 && <Divider />}
         <AssetBalanceRow key={reward.denom} coin={reward} asset={asset} />
-      </>
+      </div>
     )
   })
 }
@@ -109,7 +109,7 @@ export default function RewardsCenter() {
               <>
                 <Button
                   variant='solid'
-                  color='secondary'
+                  color='tertiary'
                   className='w-full py-2'
                   showProgressIndicator={isConfirming}
                   text={'Claim total account rewards'}
