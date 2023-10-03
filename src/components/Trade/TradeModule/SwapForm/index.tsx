@@ -174,10 +174,13 @@ export default function SwapForm(props: Props) {
     [simulateTrade, isAutoLendEnabled],
   )
 
-  const handleMarginToggleChange = useCallback((isMargin: boolean) => {
-    if (isBorrowEnabled) useStore.setState({ useMargin: isMargin })
-    setMarginChecked(isBorrowEnabled ? isMargin : false)
-  }, [])
+  const handleMarginToggleChange = useCallback(
+    (isMargin: boolean) => {
+      if (isBorrowEnabled) useStore.setState({ useMargin: isMargin })
+      setMarginChecked(isBorrowEnabled ? isMargin : false)
+    },
+    [isBorrowEnabled, setMarginChecked],
+  )
 
   useEffect(() => {
     setBuyAssetAmount(BN_ZERO)
@@ -190,12 +193,13 @@ export default function SwapForm(props: Props) {
       isAutoLendEnabled ? 'lend' : 'deposit',
     )
   }, [
+    isBorrowEnabled,
+    useMargin,
     buyAsset.denom,
     sellAsset.denom,
-    simulateTrade,
     isAutoLendEnabled,
+    simulateTrade,
     setMarginChecked,
-    marketAssets,
   ])
 
   useEffect(() => {

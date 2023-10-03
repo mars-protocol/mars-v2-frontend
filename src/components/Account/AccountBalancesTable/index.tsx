@@ -115,7 +115,13 @@ export default function Index(props: Props) {
             <FormattedNumber
               className={className}
               smallerThanThreshold={formattedAmount < MIN_AMOUNT}
-              amount={formattedAmount < MIN_AMOUNT ? MIN_AMOUNT : formattedAmount}
+              amount={
+                formattedAmount === 0
+                  ? 0
+                  : formattedAmount < MIN_AMOUNT
+                  ? MIN_AMOUNT
+                  : formattedAmount
+              }
               options={{
                 maxDecimals: MAX_AMOUNT_DECIMALS,
                 minDecimals: 0,
