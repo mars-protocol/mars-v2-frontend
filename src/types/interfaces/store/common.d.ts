@@ -10,6 +10,7 @@ interface CommonSlice {
   accountDetailsExpanded: boolean
   migrationBanner: boolean
   tutorial: boolean
+  useMargin: boolean
 }
 
 interface FocusComponent {

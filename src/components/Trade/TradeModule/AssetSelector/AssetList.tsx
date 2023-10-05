@@ -3,8 +3,12 @@ import classNames from 'classnames'
 import { ChevronDown } from 'components/Icons'
 import Text from 'components/Text'
 import AssetItem from 'components/Trade/TradeModule/AssetSelector/AssetItem'
+import useCurrentAccount from 'hooks/useCurrentAccount'
 import useMarketAssets from 'hooks/useMarketAssets'
+import { useMemo } from 'react'
+import { getMergedBalancesForAsset } from 'utils/accounts'
 import { byDenom } from 'utils/array'
+import { getEnabledMarketAssets } from 'utils/assets'
 
 interface Props {
   type: 'buy' | 'sell'
@@ -15,12 +19,17 @@ interface Props {
 }
 
 export default function AssetList(props: Props) {
+  const account = useCurrentAccount()
   const { data: marketAssets } = useMarketAssets()
+  const balances = useMemo(() => {
+    if (!account) return []
+    return getMergedBalancesForAsset(account, getEnabledMarketAssets())
+  }, [account])
 
   return (
     <section>
       <button
-        className='flex w-full items-center justify-between bg-black/20 p-4'
+        className='flex items-center justify-between w-full p-4 bg-black/20'
         onClick={props.toggleOpen}
       >
         <Text>{props.type === 'buy' ? 'Buy asset' : 'Sell asset'}</Text>
@@ -35,6 +44,7 @@ export default function AssetList(props: Props) {
           <ul>
             {props.assets.map((asset) => (
               <AssetItem
+                balances={balances}
                 key={`${props.type}-${asset.symbol}`}
                 asset={asset}
                 onSelectAsset={props.onChangeAsset}

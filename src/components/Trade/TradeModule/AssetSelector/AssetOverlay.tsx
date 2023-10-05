@@ -8,8 +8,6 @@ import Text from 'components/Text'
 import AssetList from 'components/Trade/TradeModule/AssetSelector/AssetList'
 import useFilteredAssets from 'hooks/useFilteredAssets'
 
-export type OverlayState = 'buy' | 'sell' | 'closed'
-
 interface Props {
   state: OverlayState
   buyAsset: Asset
@@ -21,7 +19,6 @@ interface Props {
 
 export default function AssetOverlay(props: Props) {
   const { assets, searchString, onChangeSearch } = useFilteredAssets()
-
   const handleClose = useCallback(() => props.onChangeState('closed'), [props])
 
   const handleToggle = useCallback(
@@ -51,8 +48,8 @@ export default function AssetOverlay(props: Props) {
   }
 
   return (
-    <Overlay className='w-full' show={props.state !== 'closed'} setShow={handleClose}>
-      <div className='flex justify-between overflow-hidden p-4'>
+    <Overlay className='inset-0 w-full' show={props.state !== 'closed'} setShow={handleClose}>
+      <div className='flex justify-between p-4 overflow-hidden'>
         <Text>Select asset</Text>
         <EscButton onClick={handleClose} enableKeyPress />
       </div>

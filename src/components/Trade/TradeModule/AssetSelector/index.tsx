@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 
 import { SwapIcon } from 'components/Icons'
 import Text from 'components/Text'
 import AssetButton from 'components/Trade/TradeModule/AssetSelector/AssetButton'
-import AssetOverlay, { OverlayState } from 'components/Trade/TradeModule/AssetSelector/AssetOverlay'
+import AssetOverlay from 'components/Trade/TradeModule/AssetSelector/AssetOverlay'
+import useStore from 'store'
 
 interface Props {
   buyAsset: Asset
@@ -14,7 +15,7 @@ interface Props {
 
 export default function AssetSelector(props: Props) {
   const { buyAsset, sellAsset, onChangeBuyAsset, onChangeSellAsset } = props
-  const [overlayState, setOverlayState] = useState<OverlayState>('closed')
+  const assetOverlayState = useStore((s) => s.assetOverlayState)
 
   const handleSwapAssets = useCallback(() => {
     onChangeBuyAsset(sellAsset)
@@ -24,7 +25,7 @@ export default function AssetSelector(props: Props) {
   const handleChangeBuyAsset = useCallback(
     (asset: Asset) => {
       onChangeBuyAsset(asset)
-      setOverlayState('sell')
+      useStore.setState({ assetOverlayState: 'sell' })
     },
     [onChangeBuyAsset],
   )
@@ -32,38 +33,41 @@ export default function AssetSelector(props: Props) {
   const handleChangeSellAsset = useCallback(
     (asset: Asset) => {
       onChangeSellAsset(asset)
-      setOverlayState('closed')
+      useStore.setState({ assetOverlayState: 'closed' })
     },
     [onChangeSellAsset],
   )
 
-  const handleChangeState = useCallback(
-    (state: OverlayState) => {
-      setOverlayState(state)
-    },
-    [setOverlayState],
-  )
+  const handleChangeState = useCallback((state: OverlayState) => {
+    useStore.setState({ assetOverlayState: state })
+  }, [])
 
   useEffect(() => {
-    if (overlayState === 'closed') {
+    if (assetOverlayState === 'closed') {
       onChangeBuyAsset(buyAsset)
       onChangeSellAsset(sellAsset)
     }
-  }, [onChangeBuyAsset, onChangeSellAsset, overlayState, buyAsset, sellAsset])
+  }, [onChangeBuyAsset, onChangeSellAsset, assetOverlayState, buyAsset, sellAsset])
 
   return (
-    <div className='grid-rows-auto relative grid grid-cols-[1fr_min-content_1fr] gap-y-2 bg-white/5 p-3'>
+    <div className='grid-rows-auto grid grid-cols-[1fr_min-content_1fr] gap-y-2 bg-white/5 p-3'>
       <Text size='sm'>Buy</Text>
       <Text size='sm' className='col-start-3'>
         Sell
       </Text>
-      <AssetButton onClick={() => setOverlayState('buy')} asset={buyAsset} />
+      <AssetButton
+        onClick={() => useStore.setState({ assetOverlayState: 'buy' })}
+        asset={buyAsset}
+      />
       <button onClick={handleSwapAssets}>
-        <SwapIcon className='mx-2 w-4 place-self-center' />
+        <SwapIcon className='w-4 mx-2 place-self-center' />
       </button>
-      <AssetButton onClick={() => setOverlayState('sell')} asset={sellAsset} />
+      <AssetButton
+        onClick={() => useStore.setState({ assetOverlayState: 'sell' })}
+        asset={sellAsset}
+      />
       <AssetOverlay
-        state={overlayState}
+        state={assetOverlayState}
         onChangeState={handleChangeState}
         buyAsset={buyAsset}
         sellAsset={sellAsset}

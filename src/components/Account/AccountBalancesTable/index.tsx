@@ -111,11 +111,12 @@ export default function Index(props: Props) {
             )
 
           const formattedAmount = formatAmountToPrecision(amount, MAX_AMOUNT_DECIMALS)
+          const lowAmount = formattedAmount === 0 ? 0 : Math.max(formattedAmount, MIN_AMOUNT)
           return (
             <FormattedNumber
               className={className}
-              smallerThanThreshold={formattedAmount < MIN_AMOUNT}
-              amount={formattedAmount < MIN_AMOUNT ? MIN_AMOUNT : formattedAmount}
+              smallerThanThreshold={formattedAmount !== 0 && formattedAmount < MIN_AMOUNT}
+              amount={lowAmount}
               options={{
                 maxDecimals: MAX_AMOUNT_DECIMALS,
                 minDecimals: 0,

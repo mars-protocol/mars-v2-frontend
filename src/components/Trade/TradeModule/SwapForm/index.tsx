@@ -35,14 +35,15 @@ interface Props {
 
 export default function SwapForm(props: Props) {
   const { buyAsset, sellAsset } = props
+  const useMargin = useStore((s) => s.useMargin)
   const account = useCurrentAccount()
   const swap = useStore((s) => s.swap)
   const [slippage] = useLocalStorage(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
   const { computeMaxSwapAmount } = useHealthComputer(account)
   const { data: borrowAssets } = useMarketBorrowings()
   const { data: marketAssets } = useMarketAssets()
-
-  const [isMarginChecked, setMarginChecked] = useToggle()
+  const isBorrowEnabled = !!marketAssets.find(byDenom(sellAsset.denom))?.borrowEnabled
+  const [isMarginChecked, setMarginChecked] = useToggle(isBorrowEnabled ? useMargin : false)
   const [buyAssetAmount, setBuyAssetAmount] = useState(BN_ZERO)
   const [sellAssetAmount, setSellAssetAmount] = useState(BN_ZERO)
   const [maxBuyableAmountEstimation, setMaxBuyableAmountEstimation] = useState(BN_ZERO)
@@ -173,17 +174,33 @@ export default function SwapForm(props: Props) {
     [simulateTrade, isAutoLendEnabled],
   )
 
+  const handleMarginToggleChange = useCallback(
+    (isMargin: boolean) => {
+      if (isBorrowEnabled) useStore.setState({ useMargin: isMargin })
+      setMarginChecked(isBorrowEnabled ? isMargin : false)
+    },
+    [isBorrowEnabled, setMarginChecked],
+  )
+
   useEffect(() => {
     setBuyAssetAmount(BN_ZERO)
     setSellAssetAmount(BN_ZERO)
-    setMarginChecked(false)
+    setMarginChecked(isBorrowEnabled ? useMargin : false)
     simulateTrade(
       BNCoin.fromDenomAndBigNumber(buyAsset.denom, BN_ZERO),
       BNCoin.fromDenomAndBigNumber(sellAsset.denom, BN_ZERO),
       BNCoin.fromDenomAndBigNumber(sellAsset.denom, BN_ZERO),
       isAutoLendEnabled ? 'lend' : 'deposit',
     )
-  }, [buyAsset.denom, sellAsset.denom, simulateTrade, isAutoLendEnabled, setMarginChecked])
+  }, [
+    isBorrowEnabled,
+    useMargin,
+    buyAsset.denom,
+    sellAsset.denom,
+    isAutoLendEnabled,
+    simulateTrade,
+    setMarginChecked,
+  ])
 
   useEffect(() => {
     const removeDepositAmount = sellAssetAmount.isGreaterThanOrEqualTo(sellSideMarginThreshold)
@@ -229,7 +246,7 @@ export default function SwapForm(props: Props) {
       <Divider />
       <MarginToggle
         checked={isMarginChecked}
-        onChange={setMarginChecked}
+        onChange={handleMarginToggleChange}
         disabled={!borrowAsset?.isMarket}
         borrowAssetSymbol={sellAsset.symbol}
       />

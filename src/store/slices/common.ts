@@ -11,5 +11,6 @@ export default function createCommonSlice(set: SetState<CommonSlice>, get: GetSt
     accountDetailsExpanded: false,
     migrationBanner: true,
     tutorial: true,
+    useMargin: true,
   }
 }

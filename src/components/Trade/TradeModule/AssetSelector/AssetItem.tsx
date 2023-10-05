@@ -1,16 +1,20 @@
 import AssetImage from 'components/Asset/AssetImage'
 import DisplayCurrency from 'components/DisplayCurrency'
+import { FormattedNumber } from 'components/FormattedNumber'
 import { StarFilled, StarOutlined } from 'components/Icons'
 import Text from 'components/Text'
 import { FAVORITE_ASSETS_KEY } from 'constants/localStore'
-import { BN_ONE } from 'constants/math'
+import { BN_ONE, BN_ZERO, MAX_AMOUNT_DECIMALS, MIN_AMOUNT } from 'constants/math'
 import useLocalStorage from 'hooks/useLocalStorage'
 import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
+import { demagnify, formatAmountToPrecision } from 'utils/formatters'
 
 interface Props {
   asset: Asset
   onSelectAsset: (asset: Asset) => void
   depositCap?: DepositCap
+  balances: BNCoin[]
 }
 
 export default function AssetItem(props: Props) {
@@ -19,6 +23,9 @@ export default function AssetItem(props: Props) {
     FAVORITE_ASSETS_KEY,
     [],
   )
+  const amount = demagnify(props.balances.find(byDenom(asset.denom))?.amount ?? BN_ZERO, asset)
+  const formattedAmount = formatAmountToPrecision(amount, MAX_AMOUNT_DECIMALS)
+  const lowAmount = formattedAmount === 0 ? 0 : Math.max(formattedAmount, MIN_AMOUNT)
 
   function handleToggleFavorite(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     event.stopPropagation()
@@ -50,6 +57,30 @@ export default function AssetItem(props: Props) {
                 <Text size='xs'>{asset.symbol}</Text>
               </div>
             </div>
+            {props.balances.length > 0 && (
+              <div className='flex gap-1'>
+                <span className='text-xs text-left text-white/80'>Balance: </span>
+                {amount >= 1 ? (
+                  <FormattedNumber
+                    className='text-xs text-left text-white/80'
+                    amount={amount}
+                    options={{ abbreviated: true, maxDecimals: MAX_AMOUNT_DECIMALS }}
+                    animate
+                  />
+                ) : (
+                  <FormattedNumber
+                    className='text-xs text-left text-white/80'
+                    smallerThanThreshold={formattedAmount !== 0 && formattedAmount < MIN_AMOUNT}
+                    amount={lowAmount}
+                    options={{
+                      maxDecimals: MAX_AMOUNT_DECIMALS,
+                      minDecimals: 0,
+                    }}
+                    animate
+                  />
+                )}
+              </div>
+            )}
             {props.depositCap && (
               <div className='flex gap-1'>
                 <span className='text-xs text-left text-white/60'>Cap Left: </span>
