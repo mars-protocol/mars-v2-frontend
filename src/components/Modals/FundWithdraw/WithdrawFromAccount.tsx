@@ -118,7 +118,7 @@ export default function WithdrawFromAccount(props: Props) {
           <div className='flex flex-wrap flex-1'>
             <Text className='w-full mb-1'>Withdraw with borrowing</Text>
             <Text size='xs' className='text-white/50'>
-              Borrow assets from your credit account to withdraw to your wallet
+              Borrow assets from your Credit Account to withdraw to your wallet
             </Text>
           </div>
           <div className='flex flex-wrap items-center justify-end'>

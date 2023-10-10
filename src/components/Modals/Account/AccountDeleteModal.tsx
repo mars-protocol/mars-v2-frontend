@@ -85,7 +85,7 @@ function AccountDeleteModal(props: Props) {
     return (
       <AccountDeleteAlertDialog
         title={`Delete Credit Account ${accountId}`}
-        description='Deleting your credit account is irreversible.'
+        description='Deleting your Credit Account is irreversible.'
         closeHandler={closeDeleteAccountModal}
         positiveButton={{
           text: 'Delete Account',
@@ -101,7 +101,7 @@ function AccountDeleteModal(props: Props) {
       description={
         <>
           <Text className='mt-2 text-white/50' size='sm'>
-            The following assets within your credit account will be sent to your wallet.
+            The following assets within your Credit Account will be sent to your wallet.
           </Text>
           <div className='flex flex-col w-full gap-4 py-4 overflow-y-scroll max-h-100 scrollbar-hide'>
             {depositsAndLends.map((position, index) => {
