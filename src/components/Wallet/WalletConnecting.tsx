@@ -52,6 +52,7 @@ export default function WalletConnecting(props: Props) {
       async function handleConnectAsync() {
         if (client || isConnecting) return
         setIsConnecting(true)
+        clearTimer()
         try {
           const response = await connect({ extensionProviderId, chainId: currentChainId })
           const cosmClient = await CosmWasmClient.connect(response.network.rpc)
@@ -107,6 +108,10 @@ export default function WalletConnecting(props: Props) {
     [refTimer, handleConnect],
   )
 
+  const clearTimer = useCallback(() => {
+    if (refTimer.current !== null) window.clearTimeout(refTimer.current)
+  }, [refTimer])
+
   useEffect(() => {
     const provider = providers.find((p) => p.id === providerId)
     if (
@@ -121,11 +126,7 @@ export default function WalletConnecting(props: Props) {
 
     handleConnect(provider.id)
 
-    return () => {
-      if (refTimer.current !== null) {
-        window.clearTimeout(refTimer.current)
-      }
-    }
+    return () => clearTimer()
   }, [
     handleConnect,
     isConnecting,
