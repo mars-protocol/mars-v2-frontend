@@ -47,6 +47,10 @@ export default function WalletConnecting(props: Props) {
   const client = useStore((s) => s.client)
   const address = useStore((s) => s.address)
 
+  const clearTimer = useCallback(() => {
+    if (refTimer.current !== null) window.clearTimeout(refTimer.current)
+  }, [refTimer])
+
   const handleConnect = useCallback(
     (extensionProviderId: string) => {
       async function handleConnectAsync() {
@@ -97,7 +101,7 @@ export default function WalletConnecting(props: Props) {
       }
       if (!isConnecting) handleConnectAsync()
     },
-    [broadcast, connect, client, isConnecting, setIsConnecting, sign, simulate],
+    [broadcast, connect, client, isConnecting, setIsConnecting, sign, simulate, clearTimer],
   )
 
   const startTimer = useCallback(
@@ -107,10 +111,6 @@ export default function WalletConnecting(props: Props) {
     },
     [refTimer, handleConnect],
   )
-
-  const clearTimer = useCallback(() => {
-    if (refTimer.current !== null) window.clearTimeout(refTimer.current)
-  }, [refTimer])
 
   useEffect(() => {
     const provider = providers.find((p) => p.id === providerId)
@@ -136,6 +136,7 @@ export default function WalletConnecting(props: Props) {
     address,
     isAutoConnect,
     startTimer,
+    clearTimer,
   ])
 
   return (

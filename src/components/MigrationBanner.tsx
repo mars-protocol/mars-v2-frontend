@@ -6,6 +6,7 @@ import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { MIGRATION_BANNER_KEY } from 'constants/localStore'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
+import { DocURL } from 'types/enums/docURL'
 
 export default function MigrationBanner() {
   const [_, setMigrationBanner] = useLocalStorage<boolean>(
@@ -27,7 +28,7 @@ export default function MigrationBanner() {
       <Text className='flex flex-grow' size='sm'>
         If you have funds on{' '}
         <TextLink
-          href='https://v1.marsprotocol.io'
+          href={DocURL.V1_URL}
           externalLink
           className='mx-1 text-white no-underline hover:underline'
         >
