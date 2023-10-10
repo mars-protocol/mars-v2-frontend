@@ -1,6 +1,10 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { useShuttle } from '@delphi-labs/shuttle-react'
-import { useCallback, useEffect, useMemo } from 'react'
+import {
+  useShuttle,
+  WalletExtensionProvider,
+  WalletMobileProvider,
+} from '@delphi-labs/shuttle-react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 
 import { CircularProgress } from 'components/CircularProgress'
 import FullOverlayContent from 'components/FullOverlayContent'
@@ -38,6 +42,7 @@ export default function WalletConnecting(props: Props) {
   )
   const [isConnecting, setIsConnecting] = useToggle()
   const providerId = props.providerId ?? recentWallet?.providerId
+  const refTimer = useRef<number | null>(null)
   const isAutoConnect = props.autoConnect
   const client = useStore((s) => s.client)
   const address = useStore((s) => s.address)
@@ -94,6 +99,14 @@ export default function WalletConnecting(props: Props) {
     [broadcast, connect, client, isConnecting, setIsConnecting, sign, simulate],
   )
 
+  const startTimer = useCallback(
+    (provider?: WalletMobileProvider | WalletExtensionProvider) => {
+      if (refTimer.current !== null || !window) return
+      refTimer.current = window.setTimeout(() => handleConnect(provider?.id ?? ''), 3000)
+    },
+    [refTimer, handleConnect],
+  )
+
   useEffect(() => {
     const provider = providers.find((p) => p.id === providerId)
     if (
@@ -101,10 +114,28 @@ export default function WalletConnecting(props: Props) {
       !provider.initialized ||
       isConnecting ||
       (recentWallet && recentWallet.account.address === address)
-    )
+    ) {
+      if (isAutoConnect) startTimer(provider)
       return
+    }
+
     handleConnect(provider.id)
-  }, [handleConnect, isConnecting, providerId, providers, recentWallet, address])
+
+    return () => {
+      if (refTimer.current !== null) {
+        window.clearTimeout(refTimer.current)
+      }
+    }
+  }, [
+    handleConnect,
+    isConnecting,
+    providerId,
+    providers,
+    recentWallet,
+    address,
+    isAutoConnect,
+    startTimer,
+  ])
 
   return (
     <FullOverlayContent
