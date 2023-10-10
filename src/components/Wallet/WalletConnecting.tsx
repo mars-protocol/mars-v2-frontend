@@ -70,7 +70,6 @@ export default function WalletConnecting(props: Props) {
           })
         } catch (error) {
           setIsConnecting(false)
-          if (isAutoConnect) return
           if (error instanceof Error) {
             useStore.setState({
               client: undefined,
@@ -92,7 +91,7 @@ export default function WalletConnecting(props: Props) {
       }
       if (!isConnecting) handleConnectAsync()
     },
-    [broadcast, connect, client, isAutoConnect, isConnecting, setIsConnecting, sign, simulate],
+    [broadcast, connect, client, isConnecting, setIsConnecting, sign, simulate],
   )
 
   useEffect(() => {

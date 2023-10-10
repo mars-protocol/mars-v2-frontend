@@ -1,3 +1,4 @@
+import { useShuttle } from '@delphi-labs/shuttle-react'
 import { useEffect } from 'react'
 
 import WalletConnectButton from 'components/Wallet/WalletConnectButton'
@@ -7,6 +8,7 @@ import useCurrentWallet from 'hooks/useCurrentWallet'
 import useStore from 'store'
 
 export default function Wallet() {
+  const { disconnectWallet } = useShuttle()
   const currentWallet = useCurrentWallet()
   const address = useStore((s) => s.address)
   const focusComponent = useStore((s) => s.focusComponent)
@@ -19,9 +21,19 @@ export default function Wallet() {
       client: undefined,
       focusComponent: {
         component: <WalletConnecting autoConnect />,
+        onClose: () => {
+          disconnectWallet(currentWallet)
+          useStore.setState({
+            client: undefined,
+            address: undefined,
+            accounts: null,
+            balances: [],
+            focusComponent: null,
+          })
+        },
       },
     })
-  }, [currentWallet, address, focusComponent])
+  }, [currentWallet, address, focusComponent, disconnectWallet])
 
   return address ? <WalletConnectedButton /> : <WalletConnectButton />
 }
