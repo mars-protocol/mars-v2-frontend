@@ -1,3 +1,20 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "linebreak-style": ["warn", "unix"],
+    "sort-imports": [
+      "warn",
+      {
+        "ignoreCase": true,
+        "ignoreDeclarationSort": true
+      }
+    ],
+    "import/order": [
+      "warn",
+      {
+        "newlines-between": "always",
+        "groups": ["external", "builtin", "internal", "sibling", "parent", "index"]
+      }
+    ]
+  }
 }
