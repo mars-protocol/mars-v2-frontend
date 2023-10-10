@@ -27,7 +27,7 @@ export default function MigrationBanner() {
       <Text className='flex flex-grow' size='sm'>
         If you have funds on{' '}
         <TextLink
-          href='https://osmosis.marsprotocol.io'
+          href='https://v1.marsprotocol.io'
           externalLink
           className='mx-1 text-white no-underline hover:underline'
         >

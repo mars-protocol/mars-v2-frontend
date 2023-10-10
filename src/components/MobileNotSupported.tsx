@@ -23,7 +23,7 @@ export default function MobileNotSupported() {
             text='Visit Mars v1'
             color='tertiary'
             size='lg'
-            onClick={() => window.open('https://app.marsprotocol.io', '_self')}
+            onClick={() => window.open('https://v1.marsprotocol.io', '_self')}
           />
         </div>
       </div>
