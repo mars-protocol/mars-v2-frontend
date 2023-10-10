@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 
-import { ChevronRight, Compass, Flag, HandCoins, Luggage } from 'components/Icons'
+import { ChevronRight, Compass, HandCoins, Luggage } from 'components/Icons'
 import Modal from 'components/Modal'
 import Text from 'components/Text'
 import useStore from 'store'
@@ -69,12 +69,6 @@ export default function GetStartedModal() {
         description='Learn how to margin trade, stop-loss trade and operate our advanced trading module.'
         link={DocURL.ADVANCED_TRADING_URL}
         icon={<Luggage className='w-5 opacity-50 group-hover/item:opacity-100' />}
-      />
-      <TutorialItem
-        title='Concentrated Liquidity'
-        description='Understand how to maximise your profits using concentrated liquidity'
-        link={DocURL.CONCENTRATED_LIQUIDITY_URL}
-        icon={<Flag className='w-5 opacity-50 group-hover/item:opacity-100' />}
       />
       <TutorialItem
         title='Borrowing & Lending'
