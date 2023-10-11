@@ -103,7 +103,7 @@ export default function WalletConnecting(props: Props) {
   const startTimer = useCallback(
     (provider?: WalletMobileProvider | WalletExtensionProvider) => {
       if (refTimer.current !== null || !window) return
-      refTimer.current = window.setTimeout(() => handleConnect(provider?.id ?? ''), 3000)
+      refTimer.current = window.setTimeout(() => handleConnect(provider?.id ?? ''), 5000)
     },
     [refTimer, handleConnect],
   )
