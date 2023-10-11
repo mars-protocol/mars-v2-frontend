@@ -68,7 +68,7 @@ export default function MarketDetails({ data, type }: Props) {
           title: 'Oracle Price',
         },
         {
-          amount: totalBorrowed.dividedBy(depositCap).multipliedBy(100).toNumber(),
+          amount: totalBorrowed.dividedBy(marketDepositAmount).multipliedBy(100).toNumber(),
           options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
           title: 'Utilization Rate',
         },
