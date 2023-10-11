@@ -90,7 +90,7 @@ export default function TokenInput(props: Props) {
         {props.warning && (
           <div className='grid items-center px-2'>
             <Tooltip
-              content={`You don't have any ${props.asset.symbol}. Please first deposit ${props.asset.symbol} into your credit account before.`}
+              content={`You don't have any ${props.asset.symbol}. Please first deposit ${props.asset.symbol} into your Credit Account before.`}
               type='info'
               interactive
             >

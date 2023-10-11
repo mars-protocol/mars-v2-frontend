@@ -2,6 +2,7 @@ import Spline from '@splinetool/react-spline'
 
 import Button from 'components/Button'
 import Text from 'components/Text'
+import { DocURL } from 'types/enums/docURL'
 
 export default function MobileNotSupported() {
   return (
@@ -23,7 +24,7 @@ export default function MobileNotSupported() {
             text='Visit Mars v1'
             color='tertiary'
             size='lg'
-            onClick={() => window.open('https://app.marsprotocol.io', '_self')}
+            onClick={() => window.open(DocURL.V1_URL, '_self')}
           />
         </div>
       </div>

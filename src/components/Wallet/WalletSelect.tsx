@@ -138,7 +138,7 @@ export default function WalletSelect(props: Props) {
   return (
     <FullOverlayContent
       title={'Connect your wallet'}
-      copy={`Deposit assets from your ${currentChain.name} address to your Mars credit account.`}
+      copy={`Deposit assets from your ${currentChain.name} address to your Mars Credit Account.`}
       docs='wallet'
     >
       <div className='flex flex-wrap w-full gap-3'>

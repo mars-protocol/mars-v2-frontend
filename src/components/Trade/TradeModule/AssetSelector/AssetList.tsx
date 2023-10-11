@@ -1,11 +1,11 @@
 import classNames from 'classnames'
+import { useMemo } from 'react'
 
 import { ChevronDown } from 'components/Icons'
 import Text from 'components/Text'
 import AssetItem from 'components/Trade/TradeModule/AssetSelector/AssetItem'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useMarketAssets from 'hooks/useMarketAssets'
-import { useMemo } from 'react'
 import { getMergedBalancesForAsset } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { getEnabledMarketAssets } from 'utils/assets'
