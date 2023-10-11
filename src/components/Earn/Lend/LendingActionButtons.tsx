@@ -75,7 +75,7 @@ export default function LendingActionButtons(props: Props) {
           <Tooltip
             type='warning'
             content={
-              <Text size='sm'>{`You don’t have any ${asset.symbol}. Please first deposit ${asset.symbol} into your credit account before lending.`}</Text>
+              <Text size='sm'>{`You don’t have any ${asset.symbol}. Please first deposit ${asset.symbol} into your Credit Account before lending.`}</Text>
             }
           >
             {children}

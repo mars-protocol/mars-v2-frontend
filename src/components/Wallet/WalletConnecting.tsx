@@ -1,6 +1,10 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { useShuttle } from '@delphi-labs/shuttle-react'
-import { useCallback, useEffect, useMemo } from 'react'
+import {
+  useShuttle,
+  WalletExtensionProvider,
+  WalletMobileProvider,
+} from '@delphi-labs/shuttle-react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 
 import { CircularProgress } from 'components/CircularProgress'
 import FullOverlayContent from 'components/FullOverlayContent'
@@ -38,15 +42,21 @@ export default function WalletConnecting(props: Props) {
   )
   const [isConnecting, setIsConnecting] = useToggle()
   const providerId = props.providerId ?? recentWallet?.providerId
+  const refTimer = useRef<number | null>(null)
   const isAutoConnect = props.autoConnect
   const client = useStore((s) => s.client)
   const address = useStore((s) => s.address)
+
+  const clearTimer = useCallback(() => {
+    if (refTimer.current !== null) window.clearTimeout(refTimer.current)
+  }, [refTimer])
 
   const handleConnect = useCallback(
     (extensionProviderId: string) => {
       async function handleConnectAsync() {
         if (client || isConnecting) return
         setIsConnecting(true)
+        clearTimer()
         try {
           const response = await connect({ extensionProviderId, chainId: currentChainId })
           const cosmClient = await CosmWasmClient.connect(response.network.rpc)
@@ -70,7 +80,6 @@ export default function WalletConnecting(props: Props) {
           })
         } catch (error) {
           setIsConnecting(false)
-          if (isAutoConnect) return
           if (error instanceof Error) {
             useStore.setState({
               client: undefined,
@@ -92,7 +101,15 @@ export default function WalletConnecting(props: Props) {
       }
       if (!isConnecting) handleConnectAsync()
     },
-    [broadcast, connect, client, isAutoConnect, isConnecting, setIsConnecting, sign, simulate],
+    [broadcast, connect, client, isConnecting, setIsConnecting, sign, simulate, clearTimer],
+  )
+
+  const startTimer = useCallback(
+    (provider?: WalletMobileProvider | WalletExtensionProvider) => {
+      if (refTimer.current !== null || !window) return
+      refTimer.current = window.setTimeout(() => handleConnect(provider?.id ?? ''), 5000)
+    },
+    [refTimer, handleConnect],
   )
 
   useEffect(() => {
@@ -102,10 +119,25 @@ export default function WalletConnecting(props: Props) {
       !provider.initialized ||
       isConnecting ||
       (recentWallet && recentWallet.account.address === address)
-    )
+    ) {
+      if (isAutoConnect) startTimer(provider)
       return
+    }
+
     handleConnect(provider.id)
-  }, [handleConnect, isConnecting, providerId, providers, recentWallet, address])
+
+    return () => clearTimer()
+  }, [
+    handleConnect,
+    isConnecting,
+    providerId,
+    providers,
+    recentWallet,
+    address,
+    isAutoConnect,
+    startTimer,
+    clearTimer,
+  ])
 
   return (
     <FullOverlayContent

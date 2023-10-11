@@ -17,7 +17,7 @@ export default function Skeleton(props: Props) {
   return (
     <Card className='p-4 bg-white/5'>
       <div className='flex items-center justify-between'>
-        <Text>Credit account {props.accountId}</Text>
+        <Text>Credit Account {props.accountId}</Text>
         <Text size='xs' className='text-white/60'>
           {props.isCurrent && '(current)'}
         </Text>

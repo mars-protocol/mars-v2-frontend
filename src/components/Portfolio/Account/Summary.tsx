@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo } from 'react'
+import { Suspense, useMemo } from 'react'
 
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
@@ -73,12 +73,12 @@ function Content(props: Props) {
     ]
   }, [account, borrowAssets, lendingAssets, prices])
 
-  return <Skeleton stats={stats} health={health} title={`Credit account ${props.accountId}`} />
+  return <Skeleton stats={stats} health={health} title={`Credit Account ${props.accountId}`} />
 }
 
 export default function Summary(props: Props) {
   return (
-    <Suspense fallback={<Skeleton health={0} title={`Credit account ${props.accountId}`} />}>
+    <Suspense fallback={<Skeleton health={0} title={`Credit Account ${props.accountId}`} />}>
       <Content {...props} />
     </Suspense>
   )

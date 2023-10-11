@@ -4,8 +4,8 @@ import { ChainInfoID } from 'types/enums/wallet'
 
 export const CHAINS: ChainInfos = {
   [ChainInfoID.Osmosis1]: {
-    rpc: 'https://rpc-osmosis.blockapsis.com',
-    rest: 'https://lcd-osmosis.blockapsis.com',
+    rpc: 'https://rpc.osmosis.zone',
+    rest: 'https://lcd.osmosis.zone',
     explorer: 'https://www.mintscan.io/osmosis',
     explorerName: 'Mintscan',
     chainId: ChainInfoID.Osmosis1,

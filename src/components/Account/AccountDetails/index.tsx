@@ -87,7 +87,7 @@ function AccountDetails(props: Props) {
   const apr = useMemo(
     () =>
       calculateAccountApr(updatedAccount ?? account, borrowAssetsData, lendingAssetsData, prices),
-    [account, borrowAssetsData, lendingAssetsData, prices],
+    [account, borrowAssetsData, lendingAssetsData, prices, updatedAccount],
   )
 
   function AccountDetailsHeader() {

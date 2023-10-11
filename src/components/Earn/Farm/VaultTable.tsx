@@ -189,14 +189,6 @@ export const VaultTable = (props: Props) => {
         },
       },
       {
-        accessorKey: 'ltv.liq',
-        header: 'Liq. LTV',
-        cell: ({ row }) => {
-          if (props.isLoading) return <Loading />
-          return <Text className='text-xs'>{formatPercent(row.original.ltv.liq)}</Text>
-        },
-      },
-      {
         accessorKey: 'details',
         enableSorting: false,
         header: (data) => {

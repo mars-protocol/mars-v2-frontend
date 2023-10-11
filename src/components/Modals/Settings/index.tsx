@@ -231,8 +231,8 @@ export default function SettingsModal() {
         onChange={handleLendAssets}
         name='lendAssets'
         value={lendAssets}
-        label='Lend assets in credit accounts'
-        description='By turning this on you will automatically lend out all the assets you deposit into your credit accounts to earn yield.'
+        label='Lend assets in Credit Accounts'
+        description='By turning this on you will automatically lend out all the assets you deposit into your Credit Accounts to earn yield.'
         withStatus
       />
       <SettingsSwitch
