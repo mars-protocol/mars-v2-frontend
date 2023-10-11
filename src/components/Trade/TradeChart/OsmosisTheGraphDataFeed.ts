@@ -34,7 +34,7 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
   baseDenom: string = 'uosmo'
   batchSize = 1000
   enabledMarketAssetDenoms: string[] = []
-  pairs: string[] = []
+  pairs: { baseAsset: string; quoteAsset: string }[] = []
   pairsWithData: string[] = []
   intervals: { [key: string]: string } = {
     '15': '15m',
@@ -55,19 +55,6 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
     this.supportedPools = enabledMarketAssets
       .map((asset) => asset.poolId?.toString())
       .filter((poolId) => typeof poolId === 'string') as string[]
-    this.getAllPairs()
-  }
-
-  getAllPairs() {
-    const assets = getEnabledMarketAssets()
-    const pairs: Set<string> = new Set()
-    assets.forEach((asset1) => {
-      assets.forEach((asset2) => {
-        if (asset1.symbol === asset2.symbol) return
-        pairs.add(`${asset1.denom}${PAIR_SEPARATOR}${asset2.denom}`)
-      })
-    })
-    this.pairs = Array.from(pairs)
   }
 
   getDescription(pairName: string) {
@@ -102,6 +89,7 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
     })
       .then((res) => res.json())
       .then((json) => {
+        this.pairs = json.data.pairs
         this.pairsWithData = json.data.pairs.map(
           (pair: { baseAsset: string; quoteAsset: string }) => {
             return `${pair.baseAsset}${PAIR_SEPARATOR}${pair.quoteAsset}`
@@ -150,14 +138,35 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
 
     let pair1 = symbolInfo.full_name
     let pair2: string = ''
+    let pair3: string = ''
 
     if (!this.pairsWithData.includes(pair1)) {
-      if (this.debug) console.log('Pair does not have data, need to combine with 2nd pair')
+      if (this.debug) console.log('Pair does not have data, need to combine with other pairs')
 
       const [buyAssetDenom, sellAssetDenom] = pair1.split(PAIR_SEPARATOR)
 
-      pair1 = `${buyAssetDenom}${PAIR_SEPARATOR}${this.baseDenom}`
-      pair2 = `${this.baseDenom}${PAIR_SEPARATOR}${sellAssetDenom}`
+      const pair1Pools = this.pairs.filter((pair) => pair.baseAsset === buyAssetDenom)
+      const pair2Pools = this.pairs.filter((pair) => pair.quoteAsset === sellAssetDenom)
+
+      const matchedPools = pair1Pools.filter((pool) => {
+        const asset = pool.quoteAsset
+        return !!pair2Pools.find((pool) => pool.baseAsset === asset)
+      })
+
+      if (matchedPools.length) {
+        pair1 = `${buyAssetDenom}${PAIR_SEPARATOR}${matchedPools[0].quoteAsset}`
+        pair2 = `${matchedPools[0].quoteAsset}${PAIR_SEPARATOR}${sellAssetDenom}`
+      } else {
+        const middlePair = this.pairs.filter(
+          (pair) =>
+            pair1Pools.map((pairs) => pairs.quoteAsset).includes(pair.baseAsset) &&
+            pair2Pools.map((pairs) => pairs.baseAsset).includes(pair.quoteAsset),
+        )
+
+        pair1 = `${buyAssetDenom}${PAIR_SEPARATOR}${middlePair[0].baseAsset}`
+        pair2 = `${middlePair[0].baseAsset}${PAIR_SEPARATOR}${middlePair[0].quoteAsset}`
+        pair3 = `${middlePair[0].quoteAsset}${PAIR_SEPARATOR}${sellAssetDenom}`
+      }
     }
 
     const pair1Bars = this.queryBarData(
@@ -176,13 +185,28 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
       )
     }
 
-    await Promise.all([pair1Bars, pair2Bars]).then(([pair1Bars, pair2Bars]) => {
-      let bars = pair1Bars
-      if (pair2Bars) {
-        bars = this.combineBars(pair1Bars, pair2Bars)
-      }
-      onResult(bars)
-    })
+    let pair3Bars: Promise<Bar[]> | null = null
+
+    if (pair3) {
+      pair3Bars = this.queryBarData(
+        pair3.split(PAIR_SEPARATOR)[0],
+        pair3.split(PAIR_SEPARATOR)[1],
+        interval,
+      )
+    }
+
+    await Promise.all([pair1Bars, pair2Bars, pair3Bars]).then(
+      ([pair1Bars, pair2Bars, pair3Bars]) => {
+        let bars = pair1Bars
+        if (pair2Bars) {
+          bars = this.combineBars(pair1Bars, pair2Bars)
+        }
+        if (pair3Bars) {
+          bars = this.combineBars(bars, pair3Bars)
+        }
+        onResult(bars)
+      },
+    )
   }
 
   async queryBarData(quote: string, base: string, interval: string): Promise<Bar[]> {
