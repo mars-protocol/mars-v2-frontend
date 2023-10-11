@@ -1,5 +1,6 @@
 import {
   ChartingLibraryFeatureset,
+  LibrarySymbolInfo,
   ResolutionString,
   SeriesFormat,
   Timezone,
@@ -26,7 +27,7 @@ export const overrides = {
   'linetooltrendline.linewidth': 2,
 }
 
-export const defaultSymbolInfo = {
+export const defaultSymbolInfo: Partial<LibrarySymbolInfo> = {
   listed_exchange: 'Osmosis',
   type: 'AMM',
   session: '24x7',
@@ -35,7 +36,7 @@ export const defaultSymbolInfo = {
   timezone: 'Etc/UTC' as Timezone,
   has_intraday: true,
   has_daily: true,
-  has_weekly_and_monthly: true,
+  has_weekly_and_monthly: false,
   format: 'price' as SeriesFormat,
   supported_resolutions: ['15'] as ResolutionString[],
 }
