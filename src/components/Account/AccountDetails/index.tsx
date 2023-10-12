@@ -35,11 +35,11 @@ import {
 export default function AccountDetailsController() {
   const address = useStore((s) => s.address)
   const { data: accounts, isLoading } = useAccounts(address)
-  const accountId = useAccountId() ?? 0
+  const accountId = useAccountId()
   const account = useCurrentAccount()
 
   const focusComponent = useStore((s) => s.focusComponent)
-  const accountIds = accounts.map((account) => account.id)
+  const accountIds = accounts?.map((account) => account.id) ?? []
   const isOwnAccount = accountId && accountIds.includes(accountId)
 
   if (!address || focusComponent || !isOwnAccount) return null

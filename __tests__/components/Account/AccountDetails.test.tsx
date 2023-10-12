@@ -14,15 +14,23 @@ jest.mock('hooks/useHealthComputer', () =>
 jest.mock('components/Account/AccountBalancesTable', () => jest.fn(() => null))
 
 const mockedUseCurrentAccount = useCurrentAccount as jest.Mock
-const mockedAccount = { id: '1', deposits: [], lends: [], debts: [], vaults: [] }
+const mockedAccounts = [
+  { id: '1', deposits: [], lends: [], debts: [], vaults: [] },
+  { id: '2', deposits: [], lends: [], debts: [], vaults: [] },
+]
 jest.mock('hooks/useAccountId', () => jest.fn(() => '1'))
-jest.mock('hooks/useAccounts', () => jest.fn(() => [mockedAccount]))
+jest.mock('hooks/useAccounts', () =>
+  jest.fn(() => ({
+    data: mockedAccounts,
+  })),
+)
+jest.mock('hooks/useCurrentAccount', () => jest.fn(() => mockedAccounts[0]))
 
 describe('<AccountDetails />', () => {
   beforeAll(() => {
     useStore.setState({
       address: 'walletAddress',
-      accounts: [mockedAccount],
+      accounts: mockedAccounts,
     })
   })
 
@@ -31,7 +39,7 @@ describe('<AccountDetails />', () => {
   })
 
   it('renders account details WHEN account is selected', () => {
-    mockedUseCurrentAccount.mockReturnValue(mockedAccount)
+    mockedUseCurrentAccount.mockReturnValue(mockedAccounts)
     render(<AccountDetails />)
 
     const container = screen.queryByTestId('account-details')
