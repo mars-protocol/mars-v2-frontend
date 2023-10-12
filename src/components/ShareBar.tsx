@@ -4,6 +4,7 @@ import { Chain, Check, Twitter } from 'components/Icons'
 import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
+import { useParams } from 'next/navigation'
 import { useLocation } from 'react-router-dom'
 import useClipboard from 'react-use-clipboard'
 import { DocURL } from 'types/enums/docURL'
@@ -13,13 +14,14 @@ interface Props {
 }
 
 export default function ShareBar(props: Props) {
+  const { address } = useParams()
   const { pathname } = useLocation()
   const currentUrl = `https://${location.host}${pathname}`
   const [isCopied, setCopied] = useClipboard(currentUrl, {
     successDuration: 1000 * 5,
   })
 
-  if (!window) return null
+  if (!window || !address) return null
   return (
     <div className='flex justify-end w-full gap-4'>
       <ConditionalWrapper
