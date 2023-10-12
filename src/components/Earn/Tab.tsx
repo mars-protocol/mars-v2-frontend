@@ -8,7 +8,8 @@ const underlineClasses =
   'relative before:absolute before:h-[2px] before:-bottom-1 before:left-0 before:right-0 before:gradient-active-tab'
 
 interface Props {
-  isFarm?: boolean
+  tabs: Tab[]
+  activeTabIdx: number
 }
 
 export default function Tab(props: Props) {
@@ -17,24 +18,18 @@ export default function Tab(props: Props) {
 
   return (
     <div className='relative w-full'>
-      <NavLink
-        to={getRoute('lend', address, accountId)}
-        className={classNames(
-          props.isFarm ? 'text-white/40' : underlineClasses,
-          'relative mr-8 text-xl ',
-        )}
-      >
-        Lend
-      </NavLink>
-      <NavLink
-        to={getRoute('farm', address, accountId)}
-        className={classNames(
-          !props.isFarm ? 'text-white/40' : underlineClasses,
-          'relative text-xl',
-        )}
-      >
-        Farm
-      </NavLink>
+      {props.tabs.map((tab, index) => (
+        <NavLink
+          key={tab.page}
+          to={getRoute(tab.page, address, accountId)}
+          className={classNames(
+            props.activeTabIdx === index ? underlineClasses : 'text-white/40',
+            'relative mr-8 text-xl ',
+          )}
+        >
+          {tab.name}
+        </NavLink>
+      ))}
     </div>
   )
 }
