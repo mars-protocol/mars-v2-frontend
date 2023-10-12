@@ -22,3 +22,5 @@ export const DEFAULT_PORTFOLIO_STATS = [
   { title: null, sub: 'APR' },
   { title: null, sub: 'Account Leverage' },
 ]
+
+export const ENABLE_HLS = false

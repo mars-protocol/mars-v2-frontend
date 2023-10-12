@@ -14,7 +14,8 @@ export default function DesktopNavigation() {
   const focusComponent = useStore((s) => s.focusComponent)
 
   function getIsActive(pages: string[]) {
-    return pages.some((page) => location.pathname.includes(page))
+    const segments = location.pathname.split('/')
+    return pages.some((page) => segments.includes(page))
   }
 
   return (
