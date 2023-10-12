@@ -224,7 +224,8 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
         }
 
         const filler = Array.from({ length: this.batchSize - bars.length }).map((_, index) => ({
-          time: (bars[0]?.time || new Date().getTime()) - index * this.minutesPerInterval[resolution],
+          time:
+            (bars[0]?.time || new Date().getTime()) - index * this.minutesPerInterval[resolution],
           close: 0,
           open: 0,
           high: 0,

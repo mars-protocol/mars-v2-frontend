@@ -1,10 +1,11 @@
 import { Suspense, useEffect, useMemo } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import AccountCreateFirst from 'components/Account/AccountCreateFirst'
 import { CircularProgress } from 'components/CircularProgress'
 import FullOverlayContent from 'components/FullOverlayContent'
 import WalletBridges from 'components/Wallet/WalletBridges'
+import useAccountId from 'hooks/useAccountId'
 import useAccountIds from 'hooks/useAccountIds'
 import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
@@ -27,8 +28,10 @@ function FetchLoading() {
 
 function Content() {
   const address = useStore((s) => s.address)
+  const { address: urlAddress } = useParams()
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const accountId = useAccountId()
   const { data: accountIds, isLoading: isLoadingAccounts } = useAccountIds(address || '')
   const { data: walletBalances, isLoading: isLoadingBalances } = useWalletBalances(address)
   const baseAsset = getBaseAsset()
@@ -39,14 +42,21 @@ function Content() {
   )
 
   useEffect(() => {
+    const page = getPage(pathname)
+    if (page === 'portfolio' && urlAddress) {
+      navigate(getRoute(page, urlAddress as string, accountId))
+      useStore.setState({ balances: walletBalances, focusComponent: null })
+      return
+    }
+
     if (
       accountIds.length !== 0 &&
       BN(baseBalance).isGreaterThanOrEqualTo(defaultFee.amount[0].amount)
     ) {
-      navigate(getRoute(getPage(pathname), address, accountIds[0]))
+      navigate(getRoute(page, address, accountIds[0]))
       useStore.setState({ balances: walletBalances, focusComponent: null })
     }
-  }, [accountIds, baseBalance, navigate, pathname, address, walletBalances])
+  }, [accountIds, baseBalance, navigate, pathname, address, walletBalances, urlAddress, accountId])
 
   if (isLoadingAccounts || isLoadingBalances) return <FetchLoading />
   if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) return <WalletBridges />
