@@ -9,12 +9,14 @@ import Settings from 'components/Settings'
 import Wallet from 'components/Wallet'
 import useAccountId from 'hooks/useAccountId'
 import useStore from 'store'
+import { ENABLE_HLS } from 'utils/constants'
 
 export const menuTree: { pages: Page[]; label: string }[] = [
   { pages: ['trade'], label: 'Trade' },
   { pages: ['lend', 'farm'], label: 'Earn' },
   { pages: ['borrow'], label: 'Borrow' },
   { pages: ['portfolio'], label: 'Portfolio' },
+  ...(ENABLE_HLS ? [{ pages: ['hls-farm', 'hls-staking'] as Page[], label: 'High Leverage' }] : []),
 ]
 
 export default function DesktopHeader() {

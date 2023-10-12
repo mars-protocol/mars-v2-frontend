@@ -3,6 +3,8 @@ import { Navigate, Outlet, Route, Routes as RoutesWrapper } from 'react-router-d
 import Layout from 'pages/_layout'
 import BorrowPage from 'pages/BorrowPage'
 import FarmPage from 'pages/FarmPage'
+import HLSFarmPage from 'pages/HLSFarmPage'
+import HLSStakingPage from 'pages/HLSStakingPage'
 import LendPage from 'pages/LendPage'
 import MobilePage from 'pages/MobilePage'
 import PortfolioAccountPage from 'pages/PortfolioAccountPage'
@@ -25,6 +27,8 @@ export default function Routes() {
         <Route path='/borrow' element={<BorrowPage />} />
         <Route path='/portfolio' element={<PortfolioPage />} />
         <Route path='/mobile' element={<MobilePage />} />
+        <Route path='/hls-staking' element={<HLSStakingPage />} />
+        <Route path='/hls-farm' element={<HLSFarmPage />} />
         <Route path='/' element={<TradePage />} />
         <Route path='/wallets/:address'>
           <Route path='trade' element={<TradePage />} />
@@ -35,6 +39,8 @@ export default function Routes() {
           <Route path='portfolio/:accountId'>
             <Route path='' element={<PortfolioAccountPage />} />
           </Route>
+          <Route path='hls-staking' element={<HLSStakingPage />} />
+          <Route path='hls-farm' element={<HLSFarmPage />} />
           <Route path='' element={<TradePage />} />
         </Route>
         <Route path='*' element={<Navigate to='/' />} />
