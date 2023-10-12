@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { useEffect } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import AccountStats from 'components/Account/AccountList/AccountStats'
 import Card from 'components/Card'
@@ -26,7 +26,7 @@ export default function AccountList(props: Props) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const currentAccountId = useAccountId()
-  const { address } = useParams()
+  const address = useStore((s) => s.address)
   const { data: accountIds } = useAccountIds(address)
 
   useEffect(() => {
