@@ -5,8 +5,8 @@ export default async function getAccountIds(
   address?: string,
   previousResults?: string[],
 ): Promise<string[]> {
+  if (!address) return []
   try {
-    if (!address) return []
     const accountNftQueryClient = await getAccountNftQueryClient()
 
     const lastItem = previousResults && previousResults.at(-1)
