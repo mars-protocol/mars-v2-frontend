@@ -1,11 +1,12 @@
 import classNames from 'classnames'
+import { useLocation, useParams } from 'react-router-dom'
+import useClipboard from 'react-use-clipboard'
+
 import Button from 'components/Button'
 import { Chain, Check, Twitter } from 'components/Icons'
 import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
-import { useLocation, useParams } from 'react-router-dom'
-import useClipboard from 'react-use-clipboard'
 import { DocURL } from 'types/enums/docURL'
 
 interface Props {
