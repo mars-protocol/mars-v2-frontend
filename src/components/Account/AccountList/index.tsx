@@ -37,7 +37,7 @@ export default function AccountList(props: Props) {
     }
   }, [currentAccountId])
 
-  if (!accountIds?.length) return null
+  if (!accountIds || !accountIds.length) return null
 
   return (
     <div className='flex flex-wrap w-full p-4'>

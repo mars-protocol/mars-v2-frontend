@@ -48,6 +48,7 @@ function Content() {
     }
 
     if (
+      accountIds &&
       accountIds.length !== 0 &&
       BN(baseBalance).isGreaterThanOrEqualTo(defaultFee.amount[0].amount)
     ) {
@@ -58,7 +59,7 @@ function Content() {
 
   if (isLoadingAccounts || isLoadingBalances) return <FetchLoading />
   if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) return <WalletBridges />
-  if (accountIds.length === 0) return <AccountCreateFirst />
+  if (accountIds && accountIds.length === 0) return <AccountCreateFirst />
   return null
 }
 

@@ -23,7 +23,7 @@ export default function ActionButton(props: ButtonProps) {
 
   if (!address) return <WalletConnectButton {...defaultProps} />
 
-  if (accountIds.length === 0) {
+  if (accountIds && accountIds.length === 0) {
     return (
       <Button
         onClick={handleCreateAccountClick}
