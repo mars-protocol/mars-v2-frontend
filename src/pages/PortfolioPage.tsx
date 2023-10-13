@@ -2,6 +2,7 @@ import MigrationBanner from 'components/MigrationBanner'
 import AccountOverview from 'components/Portfolio/Overview'
 import PortfolioSummary from 'components/Portfolio/Overview/Summary'
 import PortfolioIntro from 'components/Portfolio/PortfolioIntro'
+import ShareBar from 'components/ShareBar'
 
 export default function PortfolioPage() {
   return (
@@ -10,6 +11,7 @@ export default function PortfolioPage() {
       <PortfolioIntro />
       <PortfolioSummary />
       <AccountOverview />
+      <ShareBar text='Have a look at this @mars_protocol portfolio!' />
     </div>
   )
 }

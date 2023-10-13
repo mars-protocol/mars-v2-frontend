@@ -10,4 +10,5 @@ export enum DocURL {
   TRADING_INTRO_URL = 'https://docs.marsprotocol.io/docs/learn/tutorials/trading/trading-intro',
   V1_URL = 'https://v1.marsprotocol.io',
   WALLET_INTRO_URL = 'https://docs.marsprotocol.io/docs/learn/tutorials/basics/connecting-your-wallet',
+  X_SHARE_URL = 'https://x.com/intent/tweet',
 }

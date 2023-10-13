@@ -1,5 +1,5 @@
 import { Suspense, useEffect, useMemo } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import AccountCreateFirst from 'components/Account/AccountCreateFirst'
 import { CircularProgress } from 'components/CircularProgress'
@@ -27,6 +27,7 @@ function FetchLoading() {
 
 function Content() {
   const address = useStore((s) => s.address)
+  const { address: urlAddress } = useParams()
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { data: accountIds, isLoading: isLoadingAccounts } = useAccountIds(address || '')
@@ -39,18 +40,26 @@ function Content() {
   )
 
   useEffect(() => {
+    const page = getPage(pathname)
+    if (page === 'portfolio' && urlAddress && urlAddress !== address) {
+      navigate(getRoute(page, urlAddress as string))
+      useStore.setState({ balances: walletBalances, focusComponent: null })
+      return
+    }
+
     if (
+      accountIds &&
       accountIds.length !== 0 &&
       BN(baseBalance).isGreaterThanOrEqualTo(defaultFee.amount[0].amount)
     ) {
-      navigate(getRoute(getPage(pathname), address, accountIds[0]))
+      navigate(getRoute(page, address, accountIds[0]))
       useStore.setState({ balances: walletBalances, focusComponent: null })
     }
-  }, [accountIds, baseBalance, navigate, pathname, address, walletBalances])
+  }, [accountIds, baseBalance, navigate, pathname, address, walletBalances, urlAddress])
 
   if (isLoadingAccounts || isLoadingBalances) return <FetchLoading />
   if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) return <WalletBridges />
-  if (accountIds.length === 0) return <AccountCreateFirst />
+  if (accountIds && accountIds.length === 0) return <AccountCreateFirst />
   return null
 }
 
