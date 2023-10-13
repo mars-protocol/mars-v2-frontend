@@ -24,6 +24,11 @@ jest.mock('hooks/useAccounts', () =>
     data: mockedAccounts,
   })),
 )
+jest.mock('hooks/useAccountIds', () =>
+  jest.fn(() => ({
+    data: ['1', '2'],
+  })),
+)
 jest.mock('hooks/useCurrentAccount', () => jest.fn(() => mockedAccounts[0]))
 
 describe('<AccountDetails />', () => {

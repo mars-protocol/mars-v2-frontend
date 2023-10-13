@@ -42,8 +42,9 @@ export default function AccountMenuContent() {
   const [lendAssets] = useLocalStorage<boolean>(LEND_ASSETS_KEY, DEFAULT_SETTINGS.lendAssets)
   const { enableAutoLendAccountId } = useAutoLend()
 
-  const hasCreditAccounts = !!accountIds.length
-  const isAccountSelected = accountId && isNumber(accountId) && accountIds.includes(accountId)
+  const hasCreditAccounts = !!accountIds?.length
+  const isAccountSelected =
+    hasCreditAccounts && accountId && isNumber(accountId) && accountIds.includes(accountId)
 
   const checkHasFunds = useCallback(() => {
     return (
