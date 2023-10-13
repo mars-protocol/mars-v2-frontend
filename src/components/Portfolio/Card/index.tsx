@@ -1,6 +1,6 @@
 import classNames from 'classnames'
-import React, { ReactNode, useMemo } from 'react'
-import { NavLink } from 'react-router-dom'
+import { ReactNode, useMemo } from 'react'
+import { NavLink, useParams } from 'react-router-dom'
 
 import { FormattedNumber } from 'components/FormattedNumber'
 import Loading from 'components/Loading'
@@ -30,6 +30,7 @@ interface Props {
 export default function PortfolioCard(props: Props) {
   const { data: account } = useAccount(props.accountId)
   const { health } = useHealthComputer(account)
+  const { address: urlAddress } = useParams()
   const { data: prices } = usePrices()
   const currentAccountId = useAccountId()
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
@@ -91,7 +92,7 @@ export default function PortfolioCard(props: Props) {
 
   return (
     <NavLink
-      to={getRoute(`portfolio/${props.accountId}` as Page, address, currentAccountId)}
+      to={getRoute(`portfolio/${props.accountId}` as Page, urlAddress, currentAccountId)}
       className={classNames('w-full hover:bg-white/5', !reduceMotion && 'transition-all')}
     >
       <Skeleton

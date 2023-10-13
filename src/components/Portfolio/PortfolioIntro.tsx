@@ -4,17 +4,18 @@ import Intro from 'components/Intro'
 import useStore from 'store'
 
 export default function PortfolioIntro() {
-  const { address } = useParams()
-  const walletAddress = useStore((s) => s.address)
+  const { address: urlAddress } = useParams()
+  const address = useStore((s) => s.address)
+  const isCurrentWalllet = !urlAddress || urlAddress === address
 
   return (
     <Intro
       text={
-        address && !walletAddress ? (
+        !isCurrentWalllet ? (
           <>
             This is the <span className='text-white'>Portfolio</span> of the address{' '}
-            <span className='text-white'>{address}</span>. You can see all Credit Accounts of this
-            address, but you can&apos;t interact with them.
+            <span className='text-white'>{urlAddress}</span>. You can see all Credit Accounts of
+            this address, but you can&apos;t interact with them.
           </>
         ) : (
           <>

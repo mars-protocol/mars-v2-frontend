@@ -42,7 +42,7 @@ export default function AccountSummary() {
 
   if (!walletAddress && !urlAddress) return <ConnectInfo />
 
-  if (!isLoading && accountIds?.length === 0) {
+  if (!isLoading && accountIds && accountIds.length === 0) {
     return (
       <Card
         className='w-full h-fit bg-white/5'
@@ -72,7 +72,7 @@ export default function AccountSummary() {
       <div
         className={classNames('grid w-full grid-cols-1 gap-6', 'md:grid-cols-2', 'lg:grid-cols-3')}
       >
-        {accountIds.map((accountId: string, index: number) => {
+        {accountIds?.map((accountId: string, index: number) => {
           return <PortfolioCard key={accountId} accountId={accountId} />
         })}
       </div>
