@@ -97,3 +97,17 @@ interface MarketTableData {
   marketLiquidityAmount: BigNumber
   marketLiquidationThreshold: number
 }
+
+interface HLSStrategy extends HLSStrategyNoCap {
+  depositCap: DepositCap
+}
+
+interface HLSStrategyNoCap {
+  maxLTV: number
+  maxLeverage: number
+  apy: number | null
+  denoms: {
+    deposit: string
+    borrow: string
+  }
+}

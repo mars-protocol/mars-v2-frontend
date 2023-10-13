@@ -56,3 +56,7 @@ export function getValueFromBNCoins(coins: BNCoin[], prices: BNCoin[]): BigNumbe
 
   return totalValue
 }
+
+export function getLeverageFromLTV(ltv: number) {
+  return +(1 / (1 - ltv)).toPrecision(2)
+}
