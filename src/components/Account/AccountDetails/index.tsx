@@ -17,6 +17,7 @@ import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { REDUCE_MOTION_KEY } from 'constants/localStore'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAccountId from 'hooks/useAccountId'
+import useAccountIds from 'hooks/useAccountIds'
 import useAccounts from 'hooks/useAccounts'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useCurrentAccount from 'hooks/useCurrentAccount'
@@ -34,12 +35,15 @@ import {
 
 export default function AccountDetailsController() {
   const address = useStore((s) => s.address)
-  const { isLoading } = useAccounts(address)
+  const { data: accounts, isLoading } = useAccounts(address)
+  const { data: accountIds } = useAccountIds(address, false)
   const accountId = useAccountId()
   const account = useCurrentAccount()
-  const focusComponent = useStore((s) => s.focusComponent)
 
-  if (!address || focusComponent) return null
+  const focusComponent = useStore((s) => s.focusComponent)
+  const isOwnAccount = accountId && accountIds?.includes(accountId)
+
+  if (!address || focusComponent || !isOwnAccount) return null
 
   if ((isLoading && accountId && !focusComponent) || !account) return <Skeleton />
 

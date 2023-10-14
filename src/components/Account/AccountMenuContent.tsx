@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { useCallback } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import AccountCreateFirst from 'components/Account/AccountCreateFirst'
 import AccountFund from 'components/Account/AccountFund/AccountFundFullPage'
@@ -30,7 +30,7 @@ const ACCOUNT_MENU_BUTTON_ID = 'account-menu-button'
 export default function AccountMenuContent() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const { address } = useParams()
+  const address = useStore((s) => s.address)
   const { data: accountIds } = useAccountIds(address)
   const accountId = useAccountId()
 
@@ -42,8 +42,9 @@ export default function AccountMenuContent() {
   const [lendAssets] = useLocalStorage<boolean>(LEND_ASSETS_KEY, DEFAULT_SETTINGS.lendAssets)
   const { enableAutoLendAccountId } = useAutoLend()
 
-  const hasCreditAccounts = !!accountIds.length
-  const isAccountSelected = isNumber(accountId)
+  const hasCreditAccounts = !!accountIds?.length
+  const isAccountSelected =
+    hasCreditAccounts && accountId && isNumber(accountId) && accountIds.includes(accountId)
 
   const checkHasFunds = useCallback(() => {
     return (

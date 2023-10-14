@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import { useParams } from 'react-router-dom'
 
 import { menuTree } from 'components/Header/DesktopHeader'
 import { Logo } from 'components/Icons'
@@ -9,13 +8,14 @@ import useStore from 'store'
 import { getRoute } from 'utils/route'
 
 export default function DesktopNavigation() {
-  const { address } = useParams()
+  const address = useStore((s) => s.address)
   const accountId = useAccountId()
 
   const focusComponent = useStore((s) => s.focusComponent)
 
   function getIsActive(pages: string[]) {
-    return pages.some((page) => location.pathname.includes(page))
+    const segments = location.pathname.split('/')
+    return pages.some((page) => segments.includes(page))
   }
 
   return (
@@ -25,7 +25,7 @@ export default function DesktopNavigation() {
       )}
     >
       <NavLink href={getRoute('trade', address, accountId)}>
-        <span className='block h-10 w-10'>
+        <span className='block w-10 h-10'>
           <Logo className='text-white' />
         </span>
       </NavLink>

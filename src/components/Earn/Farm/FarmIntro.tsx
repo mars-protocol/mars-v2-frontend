@@ -28,7 +28,7 @@ export default function FarmIntro() {
         leftIcon={<PlusSquared />}
         onClick={(e) => {
           e.preventDefault()
-          window.open(DocURL.ROVER_INTRO_URL, '_blank')
+          window.open(DocURL.FARM_INTRO_URL, '_blank')
         }}
         color='secondary'
       />
