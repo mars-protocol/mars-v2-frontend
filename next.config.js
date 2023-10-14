@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
-  productionBrowserSourceMaps: true,
   reactStrictMode: true,
   images: {
     domains: [
@@ -23,6 +22,31 @@ const nextConfig = {
         ],
         permanent: true,
         destination: '/mobile',
+      },
+    ]
+  },
+  async headers() {
+    return [
+      {
+        source: '/(.*)?', // Matches all pages
+        headers: [
+          {
+            key: 'Referrer-Policy',
+            value: 'origin-when-cross-origin',
+          },
+          {
+            key: 'Pragma',
+            value: 'no-cache',
+          },
+          {
+            key: 'Expires',
+            value: new Date().toString(),
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+        ],
       },
     ]
   },
