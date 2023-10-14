@@ -28,7 +28,7 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/(.*)?', // Matches all pages
+        source: '/(.*)?',
         headers: [
           {
             key: 'Referrer-Policy',
