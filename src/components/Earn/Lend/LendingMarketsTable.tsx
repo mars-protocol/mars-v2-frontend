@@ -99,7 +99,9 @@ export default function LendingMarketsTable(props: Props) {
         header: 'Depo. Cap',
         cell: ({ row }) => {
           const { marketDepositCap, marketDepositAmount, asset } = row.original
-          const remainingCap = row.original.marketDepositCap.minus(marketDepositAmount)
+          const percent = marketDepositAmount
+            .dividedBy(row.original.marketDepositCap)
+            .multipliedBy(100)
 
           return (
             <TitleAndSubCell
@@ -113,8 +115,8 @@ export default function LendingMarketsTable(props: Props) {
               }
               sub={
                 <FormattedNumber
-                  amount={remainingCap.toNumber()}
-                  options={{ abbreviated: true, decimals: asset.decimals, suffix: ` left` }}
+                  amount={percent.toNumber()}
+                  options={{ minDecimals: 2, maxDecimals: 2, suffix: '% Filled' }}
                   animate
                 />
               }
