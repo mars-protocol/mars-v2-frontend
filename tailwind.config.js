@@ -29,11 +29,11 @@ module.exports = {
     'text-5xl',
     'text-yellow-300',
     'text-violet-500',
-    'text-grey',
+    'text-grey-light',
     'fill-yellow-300',
     'fill-violet-500',
     'fill-martian-red',
-    'fill-grey',
+    'fill-grey-light',
     'w-2',
   ],
   theme: {

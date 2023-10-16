@@ -7,9 +7,9 @@ export function getHealthIndicatorColors(
 ): [backgroundColor: string, foregroundColor: string] {
   let backgroundColor = color
   if (isUpdated && isIncrease) backgroundColor = updatedColor
-  if (isUpdated && !isIncrease) backgroundColor = `${colorPrefix}-grey`
+  if (isUpdated && !isIncrease) backgroundColor = `${colorPrefix}-grey-light`
 
-  const foreGroundColor = isIncrease ? `${colorPrefix}-grey` : updatedColor
+  const foreGroundColor = isIncrease ? `${colorPrefix}-grey-light` : updatedColor
 
   return [backgroundColor, foreGroundColor]
 }
