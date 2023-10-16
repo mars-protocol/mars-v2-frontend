@@ -3026,10 +3026,10 @@
     lodash.debounce "^4.0.8"
     react-merge-refs "^2.0.1"
 
-"@splinetool/runtime@^0.9.477":
-  version "0.9.477"
-  resolved "https://registry.yarnpkg.com/@splinetool/runtime/-/runtime-0.9.477.tgz#62ce32197cb4671bc522638addf94baf539eddec"
-  integrity sha512-zb2+zh1uPH4h3EbVYJmoiC9iuD1FmQJGCzifPQICpQ9VSKVk/4wDLgaoCTXqME/kbx5XERkGh+kmOAGTBkOsxQ==
+"@splinetool/runtime@^0.9.482":
+  version "0.9.482"
+  resolved "https://registry.yarnpkg.com/@splinetool/runtime/-/runtime-0.9.482.tgz#482557d3b7392704b000c19a3b580f0fb84b350a"
+  integrity sha512-AqLBmaACtF0gi1Xdt4ts+BMZKlnpgytoLUpa30dzer1s15Fy0Q1sU5v0BEpG29JN0DLEEdCTG3LCfNAg/jWtiQ==
   dependencies:
     on-change "^4.0.0"
     semver-compare "^1.0.0"
