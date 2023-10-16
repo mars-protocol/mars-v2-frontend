@@ -20,7 +20,7 @@
     "@keplr-wallet/cosmos": "^0.12.32",
     "@sentry/nextjs": "^7.73.0",
     "@splinetool/react-spline": "^2.2.6",
-    "@splinetool/runtime": "^0.9.477",
+    "@splinetool/runtime": "^0.9.482",
     "@tanstack/react-table": "^8.10.6",
     "@tippyjs/react": "^4.2.6",
     "bignumber.js": "^9.1.2",
