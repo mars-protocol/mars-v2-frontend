@@ -116,7 +116,7 @@ export default function LendingMarketsTable(props: Props) {
               sub={
                 <FormattedNumber
                   amount={percent.toNumber()}
-                  options={{ minDecimals: 2, maxDecimals: 2, suffix: '% Filled' }}
+                  options={{ minDecimals: 2, maxDecimals: 2, suffix: '% used' }}
                   animate
                 />
               }
