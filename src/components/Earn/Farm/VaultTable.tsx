@@ -171,7 +171,7 @@ export const VaultTable = (props: Props) => {
               sub={
                 <FormattedNumber
                   amount={percent.toNumber()}
-                  options={{ minDecimals: 2, maxDecimals: 2, suffix: '% Filled' }}
+                  options={{ minDecimals: 2, maxDecimals: 2, suffix: '% used' }}
                   className='text-xs'
                   animate
                 />
