@@ -20,13 +20,14 @@ import { ChevronDown, SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
+import { BN_ONE } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import { VAULT_DEPOSIT_BUFFER } from 'constants/vaults'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultStatus } from 'types/enums/vault'
 import { getAssetByDenom } from 'utils/assets'
-import { formatPercent, produceCountdown } from 'utils/formatters'
+import { produceCountdown } from 'utils/formatters'
 
 type Props = {
   data: Vault[] | DepositedVault[]
@@ -180,11 +181,18 @@ export const VaultTable = (props: Props) => {
         },
       },
       {
-        accessorKey: 'ltv.max',
-        header: 'Max LTV',
+        accessorKey: 'leverage.max',
+        header: 'Max. Leverage',
         cell: ({ row }) => {
           if (props.isLoading) return <Loading />
-          return <Text className='text-xs'>{formatPercent(row.original.ltv.max)}</Text>
+          const maxLeverage = BN_ONE.dividedBy(1 - row.original.ltv.max).toNumber()
+          return (
+            <FormattedNumber
+              amount={maxLeverage}
+              options={{ minDecimals: 2, suffix: 'x' }}
+              className='text-xs'
+            />
+          )
         },
       },
       {
