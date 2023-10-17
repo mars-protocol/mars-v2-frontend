@@ -4,7 +4,7 @@ import React, { useCallback } from 'react'
 
 import useDepositedColumns from 'components/Borrow/Table/Columns/useDepositedColumns'
 import Card from 'components/Card'
-import MarketDetails from 'components/MarketAssetTable/MarketDetails'
+import MarketDetails from 'components/MarketDetails'
 import Table from 'components/Table'
 
 type Props = {
