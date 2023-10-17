@@ -1,13 +1,15 @@
 import { ColumnDef, Row } from '@tanstack/react-table'
 import React, { useMemo } from 'react'
 
-import Apy from 'components/Earn/Farm/Table/Columns/Apy'
-import DepositCap from 'components/Earn/Farm/Table/Columns/DepositCap'
-import Details from 'components/Earn/Farm/Table/Columns/Details'
-import MaxLTV from 'components/Earn/Farm/Table/Columns/MaxLTV'
-import Name from 'components/Earn/Farm/Table/Columns/Name'
-import PositionValue from 'components/Earn/Farm/Table/Columns/PositionValue'
-import TVL from 'components/Earn/Farm/Table/Columns/TVL'
+import Apy, { APY_META } from 'components/Earn/Farm/Table/Columns/Apy'
+import DepositCap, { DEPOSIT_CAP_META } from 'components/Earn/Farm/Table/Columns/DepositCap'
+import Details, { DETAILS_META } from 'components/Earn/Farm/Table/Columns/Details'
+import MaxLTV, { LTV_MAX_META } from 'components/Earn/Farm/Table/Columns/MaxLTV'
+import Name, { NAME_META } from 'components/Earn/Farm/Table/Columns/Name'
+import PositionValue, {
+  POSITION_VALUE_META,
+} from 'components/Earn/Farm/Table/Columns/PositionValue'
+import TVL, { TVL_META } from 'components/Earn/Farm/Table/Columns/TVL'
 
 interface Props {
   isLoading: boolean
@@ -17,46 +19,39 @@ export default function useDepositedColumns(props: Props) {
   return useMemo<ColumnDef<DepositedVault>[]>(() => {
     return [
       {
-        header: 'Vault',
-        accessorKey: 'name',
+        ...NAME_META,
         cell: ({ row }) => <Name vault={row.original as DepositedVault} />,
       },
       {
-        header: 'Pos. Value',
+        ...POSITION_VALUE_META,
         cell: ({ row }: { row: Row<DepositedVault> }) => (
           <PositionValue vault={row.original as DepositedVault} isLoading={props.isLoading} />
         ),
       },
       {
-        accessorKey: 'apy',
-        header: 'APY',
+        ...APY_META,
         cell: ({ row }) => <Apy vault={row.original as DepositedVault} />,
       },
       {
-        accessorKey: 'tvl',
-        header: 'TVL',
+        ...TVL_META,
         cell: ({ row }) => (
           <TVL vault={row.original as DepositedVault} isLoading={props.isLoading} />
         ),
       },
       {
-        accessorKey: 'cap',
-        header: 'Deposit Cap',
+        ...DEPOSIT_CAP_META,
         cell: ({ row }) => (
           <DepositCap vault={row.original as DepositedVault} isLoading={props.isLoading} />
         ),
       },
       {
-        accessorKey: 'ltv.max',
-        header: 'Max LTV',
+        ...LTV_MAX_META,
         cell: ({ row }) => (
           <MaxLTV vault={row.original as DepositedVault} isLoading={props.isLoading} />
         ),
       },
       {
-        accessorKey: 'details',
-        enableSorting: false,
-        header: 'Details',
+        ...DETAILS_META,
         cell: ({ row }) => <Details isLoading={props.isLoading} isExpanded={row.getIsExpanded()} />,
       },
     ]

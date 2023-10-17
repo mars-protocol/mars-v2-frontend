@@ -4,6 +4,8 @@ import React from 'react'
 import { ChevronDown } from 'components/Icons'
 import Loading from 'components/Loading'
 
+export const DETAILS_META = { accessorKey: 'details', enableSorting: false, header: 'Deposit' }
+
 interface Props {
   isLoading: boolean
   isExpanded: boolean

@@ -1,12 +1,14 @@
 import { ColumnDef } from '@tanstack/react-table'
 import React, { useMemo } from 'react'
 
-import Apy from 'components/Earn/Farm/Table/Columns/Apy'
+import Apy, { APY_META } from 'components/Earn/Farm/Table/Columns/Apy'
 import { Deposit } from 'components/Earn/Farm/Table/Columns/Deposit'
-import DepositCap from 'components/Earn/Farm/Table/Columns/DepositCap'
-import MaxLTV from 'components/Earn/Farm/Table/Columns/MaxLTV'
-import Name from 'components/Earn/Farm/Table/Columns/Name'
-import TVL from 'components/Earn/Farm/Table/Columns/TVL'
+import DepositCap, { DEPOSIT_CAP_META } from 'components/Earn/Farm/Table/Columns/DepositCap'
+import MaxLTV, { LTV_MAX_META } from 'components/Earn/Farm/Table/Columns/MaxLTV'
+import Name, { NAME_META } from 'components/Earn/Farm/Table/Columns/Name'
+import TVL, { TVL_META } from 'components/Earn/Farm/Table/Columns/TVL'
+
+import { DETAILS_META } from './Details'
 
 interface Props {
   isLoading: boolean
@@ -16,34 +18,27 @@ export default function useAvailableColumns(props: Props) {
   return useMemo<ColumnDef<Vault | DepositedVault>[]>(() => {
     return [
       {
-        header: 'Vault',
-        accessorKey: 'name',
+        ...NAME_META,
         cell: ({ row }) => <Name vault={row.original as Vault} />,
       },
       {
-        accessorKey: 'apy',
-        header: 'APY',
+        ...APY_META,
         cell: ({ row }) => <Apy vault={row.original as Vault} />,
       },
       {
-        accessorKey: 'tvl',
-        header: 'TVL',
+        ...TVL_META,
         cell: ({ row }) => <TVL vault={row.original as Vault} isLoading={props.isLoading} />,
       },
       {
-        accessorKey: 'cap',
-        header: 'Deposit Cap',
+        ...DEPOSIT_CAP_META,
         cell: ({ row }) => <DepositCap vault={row.original as Vault} isLoading={props.isLoading} />,
       },
       {
-        accessorKey: 'ltv.max',
-        header: 'Max LTV',
+        ...LTV_MAX_META,
         cell: ({ row }) => <MaxLTV vault={row.original as Vault} isLoading={props.isLoading} />,
       },
       {
-        accessorKey: 'details',
-        enableSorting: false,
-        header: 'Deposit',
+        ...DETAILS_META,
         cell: ({ row }) => <Deposit vault={row.original as Vault} isLoading={props.isLoading} />,
       },
     ]

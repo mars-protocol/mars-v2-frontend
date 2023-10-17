@@ -3,6 +3,8 @@ import React from 'react'
 import { FormattedNumber } from 'components/FormattedNumber'
 import Loading from 'components/Loading'
 
+export const APY_META = { accessorKey: 'apy', header: 'APY' }
+
 interface Props {
   vault: Vault | DepositedVault
 }

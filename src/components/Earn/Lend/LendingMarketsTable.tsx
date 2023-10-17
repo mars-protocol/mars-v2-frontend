@@ -33,7 +33,7 @@ export default function LendingMarketsTable(props: Props) {
           resetExpanded={table.resetExpanded}
           rowData={row}
           expandedActionButtons={<LendingActionButtons data={row.original} />}
-          expandedDetails={<MarketDetails data={row.original} type='lend' />}
+          expandedDetails={<MarketDetails row={row} type='lend' />}
         />
       )
     },

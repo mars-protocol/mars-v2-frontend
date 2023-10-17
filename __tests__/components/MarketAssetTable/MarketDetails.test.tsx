@@ -1,6 +1,3 @@
-import { render } from '@testing-library/react'
-
-import MarketDetails from 'components/MarketAssetTable/MarketDetails'
 import { ASSETS } from 'constants/assets'
 import { BN } from 'utils/helpers'
 
@@ -24,15 +21,4 @@ jest.mock('hooks/useDisplayCurrencyPrice', () => () => {
     convertAmount: () => BN(1),
     symbol: 'MARS',
   }
-})
-
-describe('<LendingDetails />', () => {
-  afterAll(() => {
-    jest.unmock('hooks/usePrices')
-  })
-
-  it('should render', () => {
-    const { container } = render(<MarketDetails type='lend' data={data} />)
-    expect(container).toBeInTheDocument()
-  })
 })

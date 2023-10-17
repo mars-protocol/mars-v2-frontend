@@ -50,6 +50,7 @@ interface Asset {
   isStable?: boolean
   isFavorite?: boolean
   isAutoLendEnabled?: boolean
+  isBorrowEnabled?: boolean
   pythPriceFeedId?: string
   forceFetchPrice?: boolean
   testnetDenom?: string
