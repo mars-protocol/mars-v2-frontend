@@ -111,3 +111,7 @@ interface HLSStrategyNoCap {
     borrow: string
   }
 }
+
+interface DepositedHLSStrategy extends HLSStrategy {
+  depositedAmount: BigNumber
+}
