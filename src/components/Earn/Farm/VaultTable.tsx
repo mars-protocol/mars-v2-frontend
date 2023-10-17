@@ -154,7 +154,6 @@ export const VaultTable = (props: Props) => {
           const percent = vault.cap.used
             .dividedBy(vault.cap.max.multipliedBy(VAULT_DEPOSIT_BUFFER))
             .multipliedBy(100)
-            .integerValue()
 
           const decimals = getAssetByDenom(vault.cap.denom)?.decimals ?? 6
 
