@@ -71,9 +71,10 @@ export default function WalletBridges() {
 
   return (
     <FullOverlayContent
-      title='No supported assets'
-      copy={`Your connected wallet has no (supported) assets. To create your account, please connect a
-    different ${currentChain.name} address or bridge assets.`}
+      title='Assets required'
+      copy={`To get started, you'll need at least a small amount of ${
+        currentChain.defaultCurrency?.coinDenom ?? 'the current chains gas token'
+      } to cover transaction fees on Mars. Fund your account or bridge some in from another chain.`}
       button={{
         className: 'w-full mt-4',
         text: 'Connect different wallet',
