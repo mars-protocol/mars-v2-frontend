@@ -13,12 +13,12 @@ import useStore from 'store'
 import { VaultStatus } from 'types/enums/vault'
 
 interface Props {
-  row: Row<Vault | DepositedVault>
+  row: Row<DepositedVault>
   resetExpanded: (defaultState?: boolean | undefined) => void
 }
 
 export default function VaultExpanded(props: Props) {
-  const vault = props.row.original as DepositedVault
+  const vault = props.row.original
   const accountId = useAccountId()
   const [isConfirming, setIsConfirming] = useState(false)
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
