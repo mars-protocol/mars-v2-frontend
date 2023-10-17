@@ -16,7 +16,7 @@ export default function Details(props: Props) {
     <div className='flex items-center justify-end'>
       <div className={classNames('w-4', props.isExpanded && 'rotate-180')}>
         <ChevronDown />
-      </div>{' '}
+      </div>
     </div>
   )
 }

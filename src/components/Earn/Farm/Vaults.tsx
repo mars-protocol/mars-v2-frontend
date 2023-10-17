@@ -55,7 +55,7 @@ function Content() {
       {deposited.length && (
         <DepositedVaultsTable data={deposited as DepositedVault[]} isLoading={false} />
       )}
-      <AvailableVaultsTable data={available as Vault[]} isLoading={false} />
+      {available.length && <AvailableVaultsTable data={available as Vault[]} isLoading={false} />}
     </>
   )
 }
