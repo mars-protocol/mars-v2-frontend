@@ -1,5 +1,5 @@
 import { Row } from '@tanstack/react-table'
-import { Table as TanStackTable } from '@tanstack/table-core/build/lib/types'
+import { Table as TanstackTable } from '@tanstack/table-core/build/lib/types'
 import React, { useCallback } from 'react'
 
 import useAvailableColumns from 'components/Borrow/Table/Columns/useAvailableColumns'
@@ -16,10 +16,12 @@ export default function AvailableBorrowingsTable(props: Props) {
   const columns = useAvailableColumns({ isLoading: props.isLoading })
 
   const renderExpanded = useCallback(
-    (
-      row: Row<BorrowMarketTableData | LendingMarketTableData>,
-      table: TanStackTable<BorrowMarketTableData>,
-    ) => <MarketDetails row={row} type='borrow' />,
+    (row: Row<BorrowMarketTableData>, _: TanstackTable<BorrowMarketTableData>) => (
+      <MarketDetails
+        row={row as Row<BorrowMarketTableData | LendingMarketTableData>}
+        type='borrow'
+      />
+    ),
     [],
   )
 

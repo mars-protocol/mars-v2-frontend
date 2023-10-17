@@ -28,6 +28,7 @@ export default function useDepositedColumns(props: Props) {
         ...APR_META,
         cell: ({ row }) => (
           <Apr
+            isLoading={props.isLoading}
             borrowEnabled={row.original.borrowEnabled}
             marketLiquidityRate={row.original.marketLiquidityRate}
           />
@@ -35,7 +36,7 @@ export default function useDepositedColumns(props: Props) {
       },
       {
         ...DEPOSIT_CAP_META,
-        cell: ({ row }) => <DepositCap data={row.original} />,
+        cell: ({ row }) => <DepositCap isLoading={props.isLoading} data={row.original} />,
       },
       {
         ...MANAGE_META,

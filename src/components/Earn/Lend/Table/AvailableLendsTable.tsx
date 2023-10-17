@@ -1,5 +1,4 @@
 import { Row } from '@tanstack/react-table'
-import { Table as TanStackTable } from '@tanstack/table-core/build/lib/types'
 import React, { useCallback } from 'react'
 
 import Card from 'components/Card'
@@ -18,9 +17,7 @@ export default function AvailableLendsTable(props: Props) {
   const columns = useAvailableColumns({ isLoading: props.isLoading })
 
   const renderExpanded = useCallback(
-    (row: Row<LendingMarketTableData>, table: TanStackTable<LendingMarketTableData>) => (
-      <MarketDetails row={row} type='lend' />
-    ),
+    (row: Row<LendingMarketTableData>) => <MarketDetails row={row} type='lend' />,
     [],
   )
 
