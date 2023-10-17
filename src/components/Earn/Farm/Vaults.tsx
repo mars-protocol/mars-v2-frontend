@@ -1,7 +1,7 @@
 import { Suspense, useMemo } from 'react'
 
-import Card from 'components/Card'
-import { VaultTable } from 'components/Earn/Farm/VaultTable'
+import AvailableVaultsTable from 'components/Earn/Farm/Table/AvailableVaultsTable'
+import DepositedVaultsTable from 'components/Earn/Farm/Table/DepositedVaultsTable'
 import VaultUnlockBanner from 'components/Earn/Farm/VaultUnlockBanner'
 import { ENV } from 'constants/env'
 import { BN_ZERO } from 'constants/math'
@@ -12,15 +12,10 @@ import useVaults from 'hooks/useVaults'
 import { NETWORK } from 'types/enums/network'
 import { VaultStatus } from 'types/enums/vault'
 
-interface Props {
-  type: 'available' | 'deposited'
-}
-
-function Content(props: Props) {
+function Content() {
   const accountId = useAccountId()
   const { data: vaults } = useVaults()
   const { data: depositedVaults } = useDepositedVaults(accountId || '')
-  const isAvailable = props.type === 'available'
 
   const vaultsMetaData =
     ENV.NETWORK === NETWORK.TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
@@ -44,13 +39,9 @@ function Content(props: Props) {
     )
   }, [vaults, depositedVaults, vaultsMetaData])
 
-  const vaultsToDisplay = isAvailable ? available : deposited
-
-  if (!vaultsToDisplay.length) return null
-
   const unlockedVaults: DepositedVault[] = []
 
-  if (!isAvailable && depositedVaults?.length > 0) {
+  if (depositedVaults?.length > 0) {
     depositedVaults.forEach((vault) => {
       if (vault.status === VaultStatus.UNLOCKED) {
         unlockedVaults.push(vault)
@@ -60,13 +51,11 @@ function Content(props: Props) {
 
   return (
     <>
-      {!isAvailable && <VaultUnlockBanner vaults={unlockedVaults} />}
-      <Card
-        className='w-full h-fit bg-white/5'
-        title={isAvailable ? 'Available vaults' : 'Deposited'}
-      >
-        <VaultTable data={vaultsToDisplay} />
-      </Card>
+      <VaultUnlockBanner vaults={unlockedVaults} />
+      {deposited.length && (
+        <DepositedVaultsTable data={deposited as DepositedVault[]} isLoading={false} />
+      )}
+      {available.length && <AvailableVaultsTable data={available as Vault[]} isLoading={false} />}
     </>
   )
 }
@@ -88,25 +77,13 @@ function Fallback() {
     },
   }))
 
-  return (
-    <Card className='w-full h-fit bg-white/5' title='Available vaults'>
-      <VaultTable data={mockVaults} isLoading />
-    </Card>
-  )
+  return <AvailableVaultsTable data={mockVaults} isLoading />
 }
 
-export function AvailableVaults() {
+export default function Vaults() {
   return (
     <Suspense fallback={<Fallback />}>
-      <Content type='available' />
-    </Suspense>
-  )
-}
-
-export function DepositedVaults() {
-  return (
-    <Suspense fallback={null}>
-      <Content type='deposited' />
+      <Content />
     </Suspense>
   )
 }
