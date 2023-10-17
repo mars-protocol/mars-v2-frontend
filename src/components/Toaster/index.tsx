@@ -209,7 +209,7 @@ export default function Toaster() {
       closeOnClick={false}
       transition={reduceMotion ? undefined : Slide}
       bodyClassName='p-0 m-0 -z-1'
-      className='mt-[73px]'
+      className='mt-[81px] p-0'
     />
   )
 }
