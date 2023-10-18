@@ -33,12 +33,12 @@ export default function LendingActionButtons(props: Props) {
   const accountId = useAccountId()
   const hasNoDeposit = !!(!assetDepositAmount && address && accountId)
 
-  const handleWithdraw = useCallback(() => {
+  const handleUnlend = useCallback(() => {
     if (isAutoLendEnabledForCurrentAccount) {
       showAlertDialog({
         title: 'Disable Automatically Lend Assets',
         description:
-          "Your auto-lend feature is currently enabled. To recover your funds, please confirm if you'd like to disable this feature in order to continue.",
+          "Your auto-lend feature is currently enabled. To unlend your funds, please confirm if you'd like to disable this feature in order to continue.",
         positiveButton: {
           onClick: () => document.getElementById(ACCOUNT_MENU_BUTTON_ID)?.click(),
           text: 'Continue to Account Settings',
@@ -62,10 +62,10 @@ export default function LendingActionButtons(props: Props) {
           leftIcon={<ArrowDownLine />}
           iconClassName={iconClassnames}
           color='secondary'
-          onClick={handleWithdraw}
+          onClick={handleUnlend}
           className={buttonClassnames}
         >
-          Withdraw
+          Unlend
         </Button>
       )}
 

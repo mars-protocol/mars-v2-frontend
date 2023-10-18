@@ -32,7 +32,7 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
   const { asset } = data
 
   const isLendAction = action === 'lend'
-  const actionText = isLendAction ? 'Lend' : 'Withdraw'
+  const actionText = isLendAction ? 'Lend' : 'Unlend'
   const coinBalances = currentAccount[isLendAction ? 'deposits' : 'lends'] ?? []
 
   const handleAmountChange = useCallback(
