@@ -5,8 +5,7 @@ import useDepositedColumns from 'components/Borrow/Table/Columns/useDepositedCol
 import MarketDetails from 'components/MarketDetails'
 import Table from 'components/Table'
 import ActionButtonRow from 'components/Table/ActionButtonRow'
-
-import BorrowActionButtons from '../BorrowActionButtons'
+import BorrowActionButtons from 'components/Borrow/BorrowActionButtons'
 
 type Props = {
   data: BorrowMarketTableData[]
