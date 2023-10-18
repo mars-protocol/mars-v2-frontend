@@ -2,7 +2,6 @@ import { Row } from '@tanstack/react-table'
 import { Table as TanStackTable } from '@tanstack/table-core/build/lib/types'
 import React, { useCallback } from 'react'
 
-import Card from 'components/Card'
 import useDepositedColumns from 'components/Earn/Farm/Table/Columns/useDepositedColumns'
 import VaultExpanded from 'components/Earn/Farm/VaultExpanded'
 import Table from 'components/Table'
@@ -23,13 +22,12 @@ export default function DepositedVaultsTable(props: Props) {
   )
 
   return (
-    <Card className='w-full h-fit bg-white/5' title={'Deposited vaults'}>
-      <Table
-        columns={columns}
-        data={props.data}
-        initialSorting={[{ id: 'name', desc: true }]}
-        renderExpanded={renderExpanded}
-      />
-    </Card>
+    <Table
+      title='Deposited Vaults'
+      columns={columns}
+      data={props.data}
+      initialSorting={[{ id: 'name', desc: true }]}
+      renderExpanded={renderExpanded}
+    />
   )
 }

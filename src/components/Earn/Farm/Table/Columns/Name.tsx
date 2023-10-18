@@ -7,7 +7,7 @@ import TitleAndSubCell from 'components/TitleAndSubCell'
 import { VaultStatus } from 'types/enums/vault'
 import { produceCountdown } from 'utils/formatters'
 
-export const NAME_META = { header: 'Vault', accessorKey: 'name' }
+export const NAME_META = { id: 'name', header: 'Vault', accessorKey: 'name' }
 interface Props {
   vault: Vault | DepositedVault
 }
