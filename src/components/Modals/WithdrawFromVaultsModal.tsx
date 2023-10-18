@@ -88,7 +88,9 @@ export default function WithdrawFromVaultsModal() {
           <Button onClick={withdrawHandler} className='w-full mt-4' text='Withdraw from all' />
         </div>
       ) : (
-        <CircularProgress />
+        <div className='flex items-center justify-center w-full h-[380px]'>
+          <CircularProgress />
+        </div>
       )}
     </Modal>
   )

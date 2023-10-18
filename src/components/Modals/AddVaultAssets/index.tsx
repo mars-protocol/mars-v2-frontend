@@ -40,7 +40,9 @@ export default function AddVaultBorrowAssetsModal() {
           onChangeBorrowDenoms={updateSelectedDenoms}
         />
       ) : (
-        <CircularProgress />
+        <div className='flex items-center justify-center w-full h-[380px]'>
+          <CircularProgress />
+        </div>
       )}
       <div className='flex w-full p-4'>
         <Button className='w-full' onClick={onClose} color='tertiary' text='Select Assets' />
