@@ -1,10 +1,8 @@
-import React from 'react'
-
 import AssetRate from 'components/Asset/AssetRate'
 import Loading from 'components/Loading'
-import { convertLiquidityRateToAPR } from 'utils/formatters'
+import { convertAprToApy } from 'utils/parsers'
 
-export const APR_META = { accessorKey: 'marketLiquidityRate', header: 'APR' }
+export const APY_META = { accessorKey: 'marketLiquidityRate', header: 'APY' }
 
 interface Props {
   marketLiquidityRate: number
@@ -16,10 +14,10 @@ export default function Apr(props: Props) {
 
   return (
     <AssetRate
-      rate={convertLiquidityRateToAPR(props.marketLiquidityRate)}
+      rate={convertAprToApy((props.marketLiquidityRate ?? 0) * 100, 365)}
       isEnabled={props.borrowEnabled}
       className='justify-end text-xs'
-      type='apr'
+      type='apy'
       orientation='ltr'
     />
   )

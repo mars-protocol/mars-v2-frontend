@@ -12,7 +12,7 @@ interface Props {
 export default function TableSkeleton(props: Props) {
   return (
     <table className='w-full'>
-      <thead className='border-b border-white/5'>
+      <thead className='border-b border-white/10'>
         <tr>
           {props.labels.map((label, index) => {
             return (

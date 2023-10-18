@@ -15,9 +15,9 @@ export default function Row<T>(props: Props<T>) {
       <tr
         key={props.row.id}
         className={classNames(
-          'group/row border-t border-white/5 transition-colors',
+          'group/row transition-bg',
           props.renderExpanded && 'hover:cursor-pointer',
-          props.row.getIsExpanded() ? 'is-expanded bg-black/20' : 'border-b hover:bg-white/5',
+          props.row.getIsExpanded() ? 'is-expanded bg-black/20' : 'hover:bg-white/5',
         )}
         onClick={(e) => {
           e.preventDefault()

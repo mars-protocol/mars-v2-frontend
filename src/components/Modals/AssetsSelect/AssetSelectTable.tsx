@@ -80,7 +80,7 @@ export default function AssetSelectTable(props: Props) {
 
   return (
     <table className='w-full'>
-      <thead className='border-b border-white/5'>
+      <thead className='border-b border-white/10'>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
             {headerGroup.headers.map((header) => {

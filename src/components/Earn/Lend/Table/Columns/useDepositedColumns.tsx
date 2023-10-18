@@ -1,7 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import Apr, { APR_META } from 'components/Earn/Lend/Table/Columns/Apr'
+import Apy, { APY_META } from 'components/Earn/Lend/Table/Columns/Apy'
 import DepositCap, { DEPOSIT_CAP_META } from 'components/Earn/Lend/Table/Columns/DepositCap'
 import DepositValue, { DEPOSIT_VALUE_META } from 'components/Earn/Lend/Table/Columns/DepositValue'
 import Manage, { MANAGE_META } from 'components/Earn/Lend/Table/Columns/Manage'
@@ -25,9 +25,9 @@ export default function useDepositedColumns(props: Props) {
         ),
       },
       {
-        ...APR_META,
+        ...APY_META,
         cell: ({ row }) => (
-          <Apr
+          <Apy
             isLoading={props.isLoading}
             borrowEnabled={row.original.borrowEnabled}
             marketLiquidityRate={row.original.marketLiquidityRate}

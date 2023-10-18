@@ -1,10 +1,12 @@
 import { Row } from '@tanstack/react-table'
 import { Table as TanstackTable } from '@tanstack/table-core/build/lib/types'
-import React, { useCallback } from 'react'
+import { useCallback } from 'react'
 
+import BorrowActionButtons from 'components/Borrow/BorrowActionButtons'
 import useAvailableColumns from 'components/Borrow/Table/Columns/useAvailableColumns'
 import MarketDetails from 'components/MarketDetails'
 import Table from 'components/Table'
+import ActionButtonRow from 'components/Table/ActionButtonRow'
 
 type Props = {
   data: BorrowMarketTableData[]
@@ -15,12 +17,17 @@ export default function AvailableBorrowingsTable(props: Props) {
   const columns = useAvailableColumns({ isLoading: props.isLoading })
 
   const renderExpanded = useCallback(
-    (row: Row<BorrowMarketTableData>, _: TanstackTable<BorrowMarketTableData>) => (
-      <MarketDetails
-        row={row as Row<BorrowMarketTableData | LendingMarketTableData>}
-        type='borrow'
-      />
-    ),
+    (row: Row<BorrowMarketTableData>, _: TanstackTable<BorrowMarketTableData>) => {
+      const currentRow = row as Row<BorrowMarketTableData>
+      return (
+        <>
+          <ActionButtonRow row={currentRow}>
+            <BorrowActionButtons data={row.original} />
+          </ActionButtonRow>
+          <MarketDetails row={currentRow} type='borrow' />
+        </>
+      )
+    },
     [],
   )
 
