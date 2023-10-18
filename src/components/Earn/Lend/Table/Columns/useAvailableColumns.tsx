@@ -36,5 +36,5 @@ export default function useAvailableColumns(props: Props) {
         cell: ({ row }) => <Manage isExpanded={row.getIsExpanded()} />,
       },
     ]
-  }, [])
+  }, [props.isLoading])
 }

@@ -43,5 +43,5 @@ export default function useDepositedColumns(props: Props) {
         cell: ({ row }) => <Manage isExpanded={row.getIsExpanded()} />,
       },
     ]
-  }, [])
+  }, [props.isLoading])
 }

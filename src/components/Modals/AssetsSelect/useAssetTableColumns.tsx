@@ -88,6 +88,6 @@ export default function useAssetTableColumns(isBorrow: boolean) {
         },
       },
     ],
-    [],
+    [isBorrow],
   )
 }
