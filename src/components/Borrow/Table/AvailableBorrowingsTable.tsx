@@ -3,7 +3,6 @@ import { Table as TanstackTable } from '@tanstack/table-core/build/lib/types'
 import React, { useCallback } from 'react'
 
 import useAvailableColumns from 'components/Borrow/Table/Columns/useAvailableColumns'
-import Card from 'components/Card'
 import MarketDetails from 'components/MarketDetails'
 import Table from 'components/Table'
 
@@ -28,13 +27,12 @@ export default function AvailableBorrowingsTable(props: Props) {
   if (!props.data.length) return null
 
   return (
-    <Card className='w-full h-fit bg-white/5' title={'Available to Borrow'}>
-      <Table
-        columns={columns}
-        data={props.data}
-        initialSorting={[{ id: 'asset.name', desc: true }]}
-        renderExpanded={renderExpanded}
-      />
-    </Card>
+    <Table
+      title='Available to Borrow'
+      columns={columns}
+      data={props.data}
+      initialSorting={[{ id: 'asset.name', desc: true }]}
+      renderExpanded={renderExpanded}
+    />
   )
 }
