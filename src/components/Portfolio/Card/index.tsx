@@ -34,7 +34,8 @@ export default function PortfolioCard(props: Props) {
   const { data: prices } = usePrices()
   const currentAccountId = useAccountId()
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
-  const { allAssets: borrowAssets } = useBorrowMarketAssetsTableData()
+  const { data } = useBorrowMarketAssetsTableData(false)
+  const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
   const address = useStore((s) => s.address)
 

@@ -1,3 +1,4 @@
+import { Row } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
 import { FormattedNumber } from 'components/FormattedNumber'
@@ -5,7 +6,7 @@ import TitleAndSubCell from 'components/TitleAndSubCell'
 import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
 
 interface Props {
-  data: BorrowMarketTableData | LendingMarketTableData
+  row: Row<BorrowMarketTableData | LendingMarketTableData>
   type: 'borrow' | 'lend'
 }
 
@@ -15,7 +16,7 @@ interface Detail {
   title: string
 }
 
-export default function MarketDetails({ data, type }: Props) {
+export default function MarketDetails({ row, type }: Props) {
   const {
     convertAmount,
     getConversionRate,
@@ -28,7 +29,7 @@ export default function MarketDetails({ data, type }: Props) {
     marketDepositAmount,
     marketLiquidityAmount,
     marketLiquidationThreshold,
-  } = data
+  } = row.original
 
   const totalBorrowed = marketDepositAmount.minus(marketLiquidityAmount)
 
@@ -36,7 +37,6 @@ export default function MarketDetails({ data, type }: Props) {
     const isDollar = displayCurrencySymbol === '$'
 
     function getLendingMarketDetails() {
-      const depositCap = (data as LendingMarketTableData).marketDepositCap
       return [
         {
           amount: convertAmount(asset, marketDepositAmount).toNumber(),
@@ -107,7 +107,6 @@ export default function MarketDetails({ data, type }: Props) {
     if (type === 'lend') return getLendingMarketDetails()
     return getBorrowMarketDetails()
   }, [
-    data,
     type,
     asset,
     marketDepositAmount,
@@ -120,23 +119,27 @@ export default function MarketDetails({ data, type }: Props) {
   ])
 
   return (
-    <div className='flex justify-between flex-1 bg-white rounded-md bg-opacity-5'>
-      {details.map((detail, index) => (
-        <TitleAndSubCell
-          key={index}
-          className='text-center'
-          containerClassName='m-5 ml-10 mr-10 space-y-1'
-          title={
-            <FormattedNumber
-              className='text-xs text-center'
-              amount={detail.amount}
-              options={detail.options}
-              animate
+    <tr>
+      <td colSpan={row.getAllCells().length}>
+        <div className='flex justify-between flex-1 bg-white rounded-md bg-opacity-5'>
+          {details.map((detail, index) => (
+            <TitleAndSubCell
+              key={index}
+              className='text-center'
+              containerClassName='m-5 ml-10 mr-10 space-y-1'
+              title={
+                <FormattedNumber
+                  className='text-xs text-center'
+                  amount={detail.amount}
+                  options={detail.options}
+                  animate
+                />
+              }
+              sub={detail.title}
             />
-          }
-          sub={detail.title}
-        />
-      ))}
-    </div>
+          ))}
+        </div>
+      </td>
+    </tr>
   )
 }

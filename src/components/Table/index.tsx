@@ -3,26 +3,26 @@ import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
-  Row,
   SortingState,
+  Row as TanstackRow,
+  Table as TanstackTable,
   useReactTable,
 } from '@tanstack/react-table'
 import classNames from 'classnames'
 import React from 'react'
 
-import VaultExpanded from 'components/Earn/Farm/VaultExpanded'
-import { VaultRow } from 'components/Earn/Farm/VaultRow'
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
+import Row from 'components/Table/Row'
+import Text from 'components/Text'
 
-import Text from '../Text'
-
-interface Props {
-  columns: ColumnDef<any>[]
-  data: unknown[]
+interface Props<T> {
+  columns: ColumnDef<T>[]
+  data: T[]
   initialSorting: SortingState
+  renderExpanded?: (row: TanstackRow<T>, table: TanstackTable<T>) => JSX.Element
 }
 
-export default function Table(props: Props) {
+export default function Table<T>(props: Props<T>) {
   const [sorting, setSorting] = React.useState<SortingState>(props.initialSorting)
 
   const table = useReactTable({
@@ -83,48 +83,10 @@ export default function Table(props: Props) {
         ))}
       </thead>
       <tbody>
-        {table.getRowModel().rows.map((row) => {
-          if (row.getIsExpanded()) {
-            return (
-              <React.Fragment key={`${row.id}_subrow`}>
-                {getExpandedRowModel('farm', row, table.resetExpanded)}
-              </React.Fragment>
-            )
-          }
-
-          return getRowModel('farm', row, table.resetExpanded)
-        })}
+        {table.getRowModel().rows.map((row) => (
+          <Row key={row.id} row={row} table={table} renderExpanded={props.renderExpanded} />
+        ))}
       </tbody>
     </table>
-  )
-}
-
-function getExpandedRowModel(
-  type: 'farm',
-  row: unknown,
-  resetExpanded: (defaultState?: boolean | undefined) => void,
-) {
-  switch (type) {
-    case 'farm':
-      return (
-        <>
-          <VaultRow row={row as Row<Vault>} resetExpanded={resetExpanded} />
-          <VaultExpanded row={row as Row<Vault>} resetExpanded={resetExpanded} />
-        </>
-      )
-  }
-}
-
-function getRowModel(
-  type: 'farm',
-  row: Row<unknown>,
-  resetExpanded: (defaultState?: boolean | undefined) => void,
-) {
-  return (
-    <VaultRow
-      key={(row as Row<Vault>).original.address}
-      row={row as Row<Vault>}
-      resetExpanded={resetExpanded}
-    />
   )
 }

@@ -4,6 +4,10 @@ import DisplayCurrency from 'components/DisplayCurrency'
 import { ORACLE_DENOM } from 'constants/oracle'
 import { BNCoin } from 'types/classes/BNCoin'
 
+export const POSITION_VALUE_META = {
+  header: 'Pos. Value',
+}
+
 interface Props {
   vault: DepositedVault
   isLoading: boolean

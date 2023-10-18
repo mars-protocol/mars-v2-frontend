@@ -76,14 +76,12 @@ function AccountDetails(props: Props) {
     return updatedLeverage
   }, [updatedAccount, prices, leverage])
 
-  const { availableAssets: borrowAvailableAssets, accountBorrowedAssets } =
-    useBorrowMarketAssetsTableData()
+  const { data } = useBorrowMarketAssetsTableData(false)
+  const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
+
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
     useLendingMarketAssetsTableData()
-  const borrowAssetsData = useMemo(
-    () => [...borrowAvailableAssets, ...accountBorrowedAssets],
-    [borrowAvailableAssets, accountBorrowedAssets],
-  )
+
   const lendingAssetsData = useMemo(
     () => [...lendingAvailableAssets, ...accountLentAssets],
     [lendingAvailableAssets, accountLentAssets],

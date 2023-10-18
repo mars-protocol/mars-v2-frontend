@@ -6,6 +6,8 @@ import TitleAndSubCell from 'components/TitleAndSubCell'
 import { VAULT_DEPOSIT_BUFFER } from 'constants/vaults'
 import { getAssetByDenom } from 'utils/assets'
 
+export const DEPOSIT_CAP_META = { accessorKey: 'cap', header: 'Deposit Cap' }
+
 interface Props {
   vault: Vault | DepositedVault
   isLoading: boolean

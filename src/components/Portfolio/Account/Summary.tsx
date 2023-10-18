@@ -20,7 +20,8 @@ function Content(props: Props) {
   const { data: account } = useAccount(props.accountId, true)
   const { data: prices } = usePrices()
   const { health } = useHealthComputer(account)
-  const { allAssets: borrowAssets } = useBorrowMarketAssetsTableData()
+  const { data } = useBorrowMarketAssetsTableData(false)
+  const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
 
   const stats = useMemo(() => {

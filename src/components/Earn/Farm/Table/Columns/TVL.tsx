@@ -4,6 +4,8 @@ import DisplayCurrency from 'components/DisplayCurrency'
 import Loading from 'components/Loading'
 import { BNCoin } from 'types/classes/BNCoin'
 
+export const TVL_META = { accessorKey: 'tvl', header: 'TVL' }
+
 interface Props {
   vault: Vault | DepositedVault
   isLoading: boolean

@@ -35,3 +35,7 @@ export function findCoinByDenom(denom: string, coins: BigNumberCoin[]) {
 export function getLendEnabledAssets() {
   return ASSETS.filter((asset) => asset.isAutoLendEnabled)
 }
+
+export function getBorrowEnabledAssets() {
+  return ASSETS.filter((asset) => asset.isBorrowEnabled)
+}
