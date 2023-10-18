@@ -13,7 +13,6 @@ interface EnvironmentVariables {
   URL_GQL: string
   URL_REST: string
   URL_RPC: string
-  URL_API: string
   URL_VAULT_APR: string
   WALLETS: string[]
   PYTH_ENDPOINT: string
@@ -36,16 +35,9 @@ export const ENV: EnvironmentVariables = {
   URL_GQL: process.env.NEXT_PUBLIC_GQL || '',
   URL_REST: process.env.NEXT_PUBLIC_REST || '',
   URL_RPC: process.env.NEXT_PUBLIC_RPC || '',
-  URL_API: process.env.NEXT_PUBLIC_VERCEL_URL
-    ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api`
-    : process.env.NEXT_PUBLIC_API || '',
   URL_VAULT_APR: process.env.NEXT_PUBLIC_VAULT_APR || '',
   WALLETS: process.env.NEXT_PUBLIC_WALLETS?.split(',') || [],
   PYTH_ENDPOINT: process.env.NEXT_PUBLIC_PYTH_ENDPOINT || '',
   MAINNET_REST_API: process.env.NEXT_PUBLIC_MAINNET_REST || '',
   WALLET_CONNECT_ID: process.env.NEXT_PUBLIC_WALLET_CONNECT_ID || '',
 }
-
-export const VERCEL_BYPASS = process.env.NEXT_PUBLIC_BYPASS
-  ? `?x-vercel-protection-bypass=${process.env.NEXT_PUBLIC_BYPASS}`
-  : ''

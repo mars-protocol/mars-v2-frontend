@@ -45,7 +45,6 @@ export default function Index(props: Props) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const address = useStore((s) => s.address)
-  const baseCurrency = useStore((s) => s.baseCurrency)
   const [sorting, setSorting] = useState<SortingState>([])
   const updatedAccount = useStore((s) => s.updatedAccount)
   const accountBalanceData = useAccountBalanceData({

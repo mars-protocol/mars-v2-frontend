@@ -17,7 +17,7 @@ function showBorrowRate(data: AssetTableRow[]) {
   return !!(assetData && assetData?.borrowRate)
 }
 
-export default function useAssetTableColumns() {
+export default function useAssetTableColumns(isBorrow: boolean) {
   return React.useMemo<ColumnDef<AssetTableRow>[]>(
     () => [
       {
@@ -29,6 +29,9 @@ export default function useAssetTableColumns() {
           const market = row.original.market
           const borrowAsset = row.original.asset as BorrowAsset
           const showRate = !borrowAsset?.borrowRate
+          const rate = isBorrow ? market?.borrowRate : market?.liquidityRate
+          const apy = convertAprToApy((rate ?? 0) * 100, 365)
+
           return (
             <div className='flex items-center'>
               <Checkbox checked={row.getIsSelected()} onChange={row.getToggleSelectedHandler()} />
@@ -39,7 +42,7 @@ export default function useAssetTableColumns() {
                 </Text>
                 {showRate && market ? (
                   <AssetRate
-                    rate={convertAprToApy(market.borrowRate * 100, 365)}
+                    rate={apy}
                     isEnabled={market.borrowEnabled}
                     className='text-xs'
                     type='apy'

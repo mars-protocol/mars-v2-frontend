@@ -34,6 +34,7 @@ export default function WalletAssetsModalContent(props: Props) {
     )
   }, [assets, searchString])
 
+  const isBorrow = useStore((s) => s.walletAssetsModal?.isBorrow ?? false)
   const currentSelectedDenom = useStore((s) => s.walletAssetsModal?.selectedDenoms ?? [])
   const [selectedDenoms, setSelectedDenoms] = useState<string[]>(
     currentSelectedDenom.filter((denom) => filteredAssets.findIndex(byDenom(denom)) || []),
@@ -58,6 +59,7 @@ export default function WalletAssetsModalContent(props: Props) {
       </div>
       <div className='max-h-[446px] overflow-y-scroll scrollbar-hide'>
         <AssetSelectTable
+          isBorrow={isBorrow}
           assets={filteredAssets}
           onChangeSelected={onChangeSelect}
           selectedDenoms={selectedDenoms}

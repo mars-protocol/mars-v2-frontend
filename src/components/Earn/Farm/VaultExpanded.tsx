@@ -105,7 +105,7 @@ export default function VaultExpanded(props: Props) {
   return (
     <tr
       key={props.row.id}
-      className='hover:cursor-pointer bg-black/20 transition-colors'
+      className='transition-colors hover:cursor-pointer bg-black/20'
       onClick={(e) => {
         e.preventDefault()
         const isExpanded = props.row.getIsExpanded()
@@ -113,7 +113,7 @@ export default function VaultExpanded(props: Props) {
         !isExpanded && props.row.toggleExpanded()
       }}
     >
-      <td colSpan={props.row.getAllCells().length}>
+      <td colSpan={props.row.getAllCells().length} className='p-0'>
         <div className='flex justify-end gap-3 p-4 align-center'>
           {status && <DepositMoreButton />}
           {status === VaultStatus.ACTIVE && <UnlockButton />}

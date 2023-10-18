@@ -12,9 +12,9 @@ export const VaultRow = (props: AssetRowProps) => {
     <tr
       key={props.row.id}
       className={classNames(
-        'bg-white/3 group/row border-b border-t border-white/5 transition-colors hover:bg-white/5',
+        'group/row border-t border-white/5 transition-colors hover:bg-white/5',
         vault.status && 'hover:cursor-pointer',
-        props.row.getIsExpanded() && 'is-expanded',
+        props.row.getIsExpanded() ? 'is-expanded bg-black/20' : 'border-b',
       )}
       onClick={(e) => {
         e.preventDefault()

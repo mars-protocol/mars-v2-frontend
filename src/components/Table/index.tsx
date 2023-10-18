@@ -52,13 +52,15 @@ export default function Table<T>(props: Props<T>) {
                     className={classNames(
                       'px-4 py-3',
                       header.column.getCanSort() && 'hover:cursor-pointer',
-                      header.id === 'symbol' ? 'text-left' : 'text-right',
+                      header.id === 'symbol' || header.id === 'name' ? 'text-left' : 'text-right',
                     )}
                   >
                     <div
                       className={classNames(
                         'flex',
-                        header.id === 'name' ? 'justify-start' : 'justify-end',
+                        header.id === 'symbol' || header.id === 'name'
+                          ? 'justify-start'
+                          : 'justify-end',
                         'align-center',
                       )}
                     >

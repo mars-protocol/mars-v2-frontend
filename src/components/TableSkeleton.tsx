@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import React from 'react'
 
 import { SortNone } from 'components/Icons'
 import Loading from 'components/Loading'
@@ -58,7 +57,7 @@ export default function TableSkeleton(props: Props) {
                     <td
                       key={`${index}-${index2}`}
                       className={classNames(
-                        index === 0 && 'justify-end',
+                        index !== 0 && 'justify-end',
                         index2 === 0 && 'pl-4',
                         index2 === props.labels.length - 1 && 'pr-4',
                         'p-2 text-right',

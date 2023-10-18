@@ -20,6 +20,7 @@ interface Props {
   assets: Asset[] | BorrowAsset[]
   selectedDenoms: string[]
   onChangeSelected: (denoms: string[]) => void
+  isBorrow: boolean
 }
 
 export default function AssetSelectTable(props: Props) {
@@ -39,7 +40,7 @@ export default function AssetSelectTable(props: Props) {
   const [sorting, setSorting] = useState<SortingState>([{ id: 'symbol', desc: false }])
   const [selected, setSelected] = useState<RowSelectionState>(defaultSelected)
   const balances = useStore((s) => s.balances)
-  const columns = useAssetTableColumns()
+  const columns = useAssetTableColumns(props.isBorrow)
   const tableData: AssetTableRow[] = useMemo(() => {
     return props.assets.map((asset) => {
       const balancesForAsset = balances.find(byDenom(asset.denom))
