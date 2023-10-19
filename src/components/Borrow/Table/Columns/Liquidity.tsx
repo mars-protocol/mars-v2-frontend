@@ -1,11 +1,13 @@
-import React from 'react'
-
 import AmountAndValue from 'components/AmountAndValue'
 import Loading from 'components/Loading'
 import { BN_ZERO } from 'constants/math'
 import { getEnabledMarketAssets } from 'utils/assets'
 
-export const LIQUIDITY_META = { accessorKey: 'asset.name', header: 'Asset', id: 'symbol' }
+export const LIQUIDITY_META = {
+  accessorKey: 'liquidity',
+  header: 'Liquidity Available',
+  id: 'liquidity',
+}
 interface Props {
   data: BorrowMarketTableData
 }

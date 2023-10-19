@@ -1,16 +1,12 @@
 import { ColumnDef } from '@tanstack/react-table'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import BorrowRate, { BORROW_RATE_META } from 'components/Borrow/Table/Columns/BorrowRate'
 import Liquidity, { LIQUIDITY_META } from 'components/Borrow/Table/Columns/Liquidity'
 import Manage, { MANAGE_META } from 'components/Borrow/Table/Columns/Manage'
 import Name, { NAME_META } from 'components/Borrow/Table/Columns/Name'
 
-interface Props {
-  isLoading: boolean
-}
-
-export default function useAvailableColumns(props: Props) {
+export default function useAvailableColumns() {
   return useMemo<ColumnDef<BorrowMarketTableData>[]>(() => {
     return [
       {

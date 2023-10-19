@@ -1,5 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import BorrowRate, { BORROW_RATE_META } from 'components/Borrow/Table/Columns/BorrowRate'
 import Debt, { DEBT_META } from 'components/Borrow/Table/Columns/Debt'
@@ -7,11 +7,7 @@ import Liquidity, { LIQUIDITY_META } from 'components/Borrow/Table/Columns/Liqui
 import Manage, { MANAGE_META } from 'components/Borrow/Table/Columns/Manage'
 import Name, { NAME_META } from 'components/Borrow/Table/Columns/Name'
 
-interface Props {
-  isLoading: boolean
-}
-
-export default function useDepositedColumns(props: Props) {
+export default function useDepositedColumns() {
   return useMemo<ColumnDef<BorrowMarketTableData>[]>(() => {
     return [
       {
