@@ -120,8 +120,8 @@ export default function MarketDetails({ row, type }: Props) {
 
   return (
     <tr>
-      <td colSpan={row.getAllCells().length}>
-        <div className='flex justify-between flex-1 bg-white rounded-md bg-opacity-5'>
+      <td colSpan={row.getAllCells().length} className='p-4 border-b bg-black/20 border-white/10'>
+        <div className='flex justify-between flex-1 rounded-md bg-white/5'>
           {details.map((detail, index) => (
             <TitleAndSubCell
               key={index}

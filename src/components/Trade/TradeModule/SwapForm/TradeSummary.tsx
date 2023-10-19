@@ -55,7 +55,7 @@ export default function TradeSummary(props: Props) {
     <div
       className={classNames(
         containerClassName,
-        'flex flex-1 flex-col bg-white bg-opacity-5 rounded border-[1px] border-white border-opacity-20',
+        'flex flex-1 flex-col bg-white bg-opacity-5 rounded border-[1px] border-white/20',
       )}
     >
       <div className='flex flex-col flex-1 m-3'>

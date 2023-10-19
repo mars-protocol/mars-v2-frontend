@@ -33,7 +33,9 @@ export default function FundAndWithdrawModal() {
       {modal && currentAccount ? (
         <FundWithdrawModalContent account={currentAccount} isFunding={isFunding} />
       ) : (
-        <CircularProgress />
+        <div className='flex items-center justify-center w-full h-[380px]'>
+          <CircularProgress />
+        </div>
       )}
     </Modal>
   )
