@@ -241,6 +241,11 @@ export default function SwapForm(props: Props) {
     }
   }, [account?.id, swapTx, setIsConfirming])
 
+  useEffect(() => {
+    if (sellAssetAmount.isEqualTo(maxSellAmount) || buyAssetAmount.isZero()) return
+    if (buyAssetAmount.isEqualTo(maxBuyableAmountEstimation)) setSellAssetAmount(maxSellAmount)
+  }, [sellAssetAmount, maxSellAmount, buyAssetAmount, maxBuyableAmountEstimation])
+
   return (
     <>
       <Divider />
