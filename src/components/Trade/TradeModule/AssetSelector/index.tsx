@@ -4,6 +4,9 @@ import { SwapIcon } from 'components/Icons'
 import Text from 'components/Text'
 import AssetButton from 'components/Trade/TradeModule/AssetSelector/AssetButton'
 import AssetOverlay from 'components/Trade/TradeModule/AssetSelector/AssetOverlay'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { LAST_TRADING_PAIR_KEY } from 'constants/localStore'
+import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 
 interface Props {
@@ -14,6 +17,10 @@ interface Props {
 }
 
 export default function AssetSelector(props: Props) {
+  const [lastTradingPair, setLastTradingPair] = useLocalStorage<string[]>(
+    LAST_TRADING_PAIR_KEY,
+    DEFAULT_SETTINGS.lastTradingPair,
+  )
   const { buyAsset, sellAsset, onChangeBuyAsset, onChangeSellAsset } = props
   const assetOverlayState = useStore((s) => s.assetOverlayState)
 
@@ -46,8 +53,16 @@ export default function AssetSelector(props: Props) {
     if (assetOverlayState === 'closed') {
       onChangeBuyAsset(buyAsset)
       onChangeSellAsset(sellAsset)
+      setLastTradingPair([buyAsset.denom, sellAsset.denom])
     }
-  }, [onChangeBuyAsset, onChangeSellAsset, assetOverlayState, buyAsset, sellAsset])
+  }, [
+    onChangeBuyAsset,
+    onChangeSellAsset,
+    assetOverlayState,
+    buyAsset,
+    sellAsset,
+    setLastTradingPair,
+  ])
 
   return (
     <div className='grid-rows-auto grid grid-cols-[1fr_min-content_1fr] gap-y-2 bg-white/5 p-3'>

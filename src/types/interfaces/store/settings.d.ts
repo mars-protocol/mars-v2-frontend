@@ -1,7 +1,7 @@
 interface Settings {
   displayCurrency: string
   reduceMotion: boolean
-  preferredAsset: string
+  lastTradingPair: string[]
   lendAssets: boolean
   slippage: number
   tutorial: boolean
