@@ -66,13 +66,13 @@ export const TVChartContainer = (props: Props) => {
         'mainSeriesProperties.candleStyle.wickUpColor': '#3DAE9A',
         'mainSeriesProperties.candleStyle.wickDownColor': '#AE3D3D',
         'mainSeriesProperties.candleStyle.barColorsOnPrevClose': false,
-        'scalesProperties.textColor': 'rgba(255, 255, 255, 0.3)',
-        'paneProperties.legendProperties.showSeriesTitle': false,
+        'scalesProperties.textColor': 'rgba(255, 255, 255, 0.7)',
+        'paneProperties.legendProperties.showSeriesTitle': true,
         'paneProperties.legendProperties.showVolume': false,
         'paneProperties.legendProperties.showStudyValues': false,
         'paneProperties.legendProperties.showStudyTitles': false,
         'scalesProperties.axisHighlightColor': '#381730',
-        'linetooltrendline.color': 'rgba( 21, 153, 128, 1)',
+        'linetooltrendline.color': '#3DAE9A',
         'linetooltrendline.linewidth': 10,
       },
       overrides,
@@ -105,7 +105,10 @@ export const TVChartContainer = (props: Props) => {
   }, [props.buyAsset.mainnetDenom, props.sellAsset.mainnetDenom])
 
   return (
-    <Card title='Trading Chart' contentClassName='px-0.5 pb-0.5 h-full'>
+    <Card
+      title={`Trading Chart - ${props.buyAsset.symbol}/${props.sellAsset.symbol}`}
+      contentClassName='px-0.5 pb-0.5 h-full'
+    >
       <div ref={chartContainerRef} className='h-full' />
     </Card>
   )
