@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { HTMLAttributes, useMemo } from 'react'
+import { HTMLAttributes, useEffect, useMemo } from 'react'
 
 import Accordion from 'components/Accordion'
 import AccountBalancesTable from 'components/Account/AccountBalancesTable'
@@ -17,6 +17,7 @@ import useHealthComputer from 'hooks/useHealthComputer'
 import useIsOpenArray from 'hooks/useIsOpenArray'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import usePrices from 'hooks/usePrices'
+import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountBalanceValue, calculateAccountLeverage } from 'utils/accounts'
@@ -28,6 +29,7 @@ interface Props {
 export default function AccountSummary(props: Props) {
   const [isOpen, toggleOpen] = useIsOpenArray(2, true)
   const { data: prices } = usePrices()
+  const [hasAutoToggled, setHasAutoToggled] = useToggle()
   const updatedAccount = useStore((s) => s.updatedAccount)
   const accountBalance = useMemo(
     () =>
@@ -58,6 +60,12 @@ export default function AccountSummary(props: Props) {
     if (updatedLeverage.eq(leverage)) return null
     return updatedLeverage
   }, [updatedAccount, prices, leverage])
+
+  useEffect(() => {
+    if (isOpen[1] || !updatedLeverage || hasAutoToggled) return
+    setHasAutoToggled(true)
+    toggleOpen(1)
+  }, [updatedLeverage, isOpen, toggleOpen, hasAutoToggled])
 
   if (!props.account) return null
   return (
