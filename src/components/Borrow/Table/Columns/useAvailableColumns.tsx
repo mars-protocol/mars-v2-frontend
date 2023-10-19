@@ -2,7 +2,10 @@ import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
 import BorrowRate, { BORROW_RATE_META } from 'components/Borrow/Table/Columns/BorrowRate'
-import Liquidity, { LIQUIDITY_META } from 'components/Borrow/Table/Columns/Liquidity'
+import Liquidity, {
+  LIQUIDITY_META,
+  liquiditySortingFn,
+} from 'components/Borrow/Table/Columns/Liquidity'
 import Manage, { MANAGE_META } from 'components/Borrow/Table/Columns/Manage'
 import Name, { NAME_META } from 'components/Borrow/Table/Columns/Name'
 
@@ -20,6 +23,7 @@ export default function useAvailableColumns() {
       {
         ...LIQUIDITY_META,
         cell: ({ row }) => <Liquidity data={row.original} />,
+        sortingFn: liquiditySortingFn,
       },
       {
         ...MANAGE_META,

@@ -2,8 +2,14 @@ import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
 import Apy, { APY_META } from 'components/Earn/Lend/Table/Columns/Apy'
-import DepositCap, { DEPOSIT_CAP_META } from 'components/Earn/Lend/Table/Columns/DepositCap'
-import DepositValue, { DEPOSIT_VALUE_META } from 'components/Earn/Lend/Table/Columns/DepositValue'
+import DepositCap, {
+  DEPOSIT_CAP_META,
+  marketDepositCapSortingFn,
+} from 'components/Earn/Lend/Table/Columns/DepositCap'
+import DepositValue, {
+  DEPOSIT_VALUE_META,
+  depositedSortingFn,
+} from 'components/Earn/Lend/Table/Columns/DepositValue'
 import Manage, { MANAGE_META } from 'components/Earn/Lend/Table/Columns/Manage'
 import Name, { NAME_META } from 'components/Earn/Lend/Table/Columns/Name'
 
@@ -23,6 +29,7 @@ export default function useDepositedColumns(props: Props) {
         cell: ({ row }) => (
           <DepositValue asset={row.original.asset} lentAmount={row.original.accountLentAmount} />
         ),
+        sortingFn: depositedSortingFn,
       },
       {
         ...APY_META,
@@ -37,6 +44,7 @@ export default function useDepositedColumns(props: Props) {
       {
         ...DEPOSIT_CAP_META,
         cell: ({ row }) => <DepositCap isLoading={props.isLoading} data={row.original} />,
+        sortingFn: marketDepositCapSortingFn,
       },
       {
         ...MANAGE_META,
