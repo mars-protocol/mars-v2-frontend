@@ -136,6 +136,28 @@ export const ASSETS: Asset[] = [
     poolId: 678,
   },
   {
+    symbol: 'USDC.n',
+    name: 'Noble USDC',
+    id: 'nUSDC',
+    denom:
+      ENV.NETWORK === NETWORK.TESTNET
+        ? 'ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4'
+        : 'ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4',
+    mainnetDenom: 'ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4',
+    color: '#478edc',
+    logo: '/images/tokens/nusdc.svg',
+    decimals: 6,
+    hasOraclePrice: true,
+    isEnabled: true,
+    isMarket: true,
+    isDisplayCurrency: true,
+    isStable: true,
+    isBorrowEnabled: true,
+    isAutoLendEnabled: true,
+    pythPriceFeedId: 'eaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a',
+    poolId: 1221,
+  },
+  {
     symbol: 'AXL',
     name: 'Axelar',
     id: 'AXL',
