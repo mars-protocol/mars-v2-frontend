@@ -136,16 +136,16 @@ export const ASSETS: Asset[] = [
     poolId: 678,
   },
   {
-    symbol: 'USDC.n',
-    name: 'Noble USDC',
-    id: 'nUSDC',
+    symbol: 'USDC',
+    name: 'USDC',
+    id: 'USDC',
     denom:
       ENV.NETWORK === NETWORK.TESTNET
         ? 'ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4'
         : 'ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4',
     mainnetDenom: 'ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4',
     color: '#478edc',
-    logo: '/images/tokens/nusdc.svg',
+    logo: '/images/tokens/usdc.svg',
     decimals: 6,
     hasOraclePrice: true,
     isEnabled: true,
