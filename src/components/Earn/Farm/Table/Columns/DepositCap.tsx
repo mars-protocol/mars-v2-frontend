@@ -13,7 +13,10 @@ interface Props {
   isLoading: boolean
 }
 
-export const depositCapSortingFn = (a: Row<Vault>, b: Row<Vault>): number => {
+export const depositCapSortingFn = (
+  a: Row<Vault> | Row<DepositedVault>,
+  b: Row<Vault> | Row<DepositedVault>,
+): number => {
   const depositCapA = a.original.cap.max
   const depositCapB = b.original.cap.max
   return depositCapA.minus(depositCapB).toNumber()
