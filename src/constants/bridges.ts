@@ -14,4 +14,9 @@ export const BRIDGES: Bridge[] = [
     url: 'https://satellite.money',
     image: '/images/bridges/satellite.png',
   },
+  {
+    name: 'Squidrouter',
+    url: 'https://app.squidrouter.com/',
+    image: '/images/bridges/squid.png',
+  },
 ]
