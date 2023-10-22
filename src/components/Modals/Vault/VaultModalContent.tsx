@@ -33,7 +33,7 @@ export default function VaultModalContent(props: Props) {
   const { addedDebts, removedDeposits, removedLends, simulateVaultDeposit } = useUpdatedAccount(
     props.account,
   )
-
+  const [openElement, setOpenElement] = useState<number | undefined>()
   const { data: prices } = usePrices()
   const [displayCurrency] = useLocalStorage<string>(
     DISPLAY_CURRENCY_KEY,
@@ -80,18 +80,20 @@ export default function VaultModalContent(props: Props) {
 
   const onChangeDeposits = useCallback(
     (coins: BNCoin[]) => {
+      if (!openElement) setOpenElement(1)
       setDepositCoins(coins)
       simulateVaultDeposit(props.vault.address, coins, borrowCoins)
     },
-    [borrowCoins, props.vault.address, simulateVaultDeposit],
+    [borrowCoins, props.vault.address, simulateVaultDeposit, openElement],
   )
 
   const onChangeBorrowings = useCallback(
     (coins: BNCoin[]) => {
+      if (!openElement) setOpenElement(1)
       setBorrowCoins(coins)
       simulateVaultDeposit(props.vault.address, depositCoins, coins)
     },
-    [depositCoins, props.vault.address, simulateVaultDeposit],
+    [depositCoins, props.vault.address, simulateVaultDeposit, openElement],
   )
 
   function getDepositSubTitle() {
@@ -179,7 +181,7 @@ export default function VaultModalContent(props: Props) {
         ]}
       />
 
-      <AccountSummary account={props.account} />
+      <AccountSummary account={props.account} openElement={openElement} />
     </div>
   )
 }

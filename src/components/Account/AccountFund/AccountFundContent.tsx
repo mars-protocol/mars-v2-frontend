@@ -29,10 +29,12 @@ interface Props {
   account?: Account
   address: string
   accountId: string
+  handleChange: () => void
   isFullPage?: boolean
 }
 
 export default function AccountFundContent(props: Props) {
+  const { handleChange, address, accountId, isFullPage } = props
   const deposit = useStore((s) => s.deposit)
   const accounts = useStore((s) => s.accounts)
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
@@ -43,11 +45,11 @@ export default function AccountFundContent(props: Props) {
   )
   const [fundingAssets, setFundingAssets] = useState<BNCoin[]>([])
   const { data: marketAssets } = useMarketAssets()
-  const { data: walletBalances } = useWalletBalances(props.address)
+  const { data: walletBalances } = useWalletBalances(address)
   const { autoLendEnabledAccountIds } = useAutoLend()
   const [isLending, toggleIsLending] = useToggle(lendAssets)
   const { simulateDeposits } = useUpdatedAccount(props.account)
-  const autoLendEnabled = autoLendEnabledAccountIds.includes(props.accountId)
+  const autoLendEnabled = autoLendEnabledAccountIds.includes(accountId)
   const baseAsset = getBaseAsset()
 
   const hasAssetSelected = fundingAssets.length > 0
@@ -75,15 +77,15 @@ export default function AccountFundContent(props: Props) {
   }, [selectedDenoms])
 
   const handleClick = useCallback(async () => {
-    if (!props.accountId) return
+    if (!accountId) return
 
     const depositObject = {
-      accountId: props.accountId,
+      accountId: accountId,
       coins: fundingAssets,
       lend: isLending,
     }
 
-    if (props.isFullPage) {
+    if (isFullPage) {
       setIsConfirming(true)
       const result = await deposit(depositObject)
       setIsConfirming(false)
@@ -96,7 +98,7 @@ export default function AccountFundContent(props: Props) {
       deposit(depositObject)
       useStore.setState({ fundAndWithdrawModal: null, walletAssetsModal: null })
     }
-  }, [props.accountId, deposit, fundingAssets, isLending, props.isFullPage])
+  }, [accountId, deposit, fundingAssets, isLending, isFullPage])
 
   useEffect(() => {
     if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) {
@@ -124,15 +126,19 @@ export default function AccountFundContent(props: Props) {
     setFundingAssets(newFundingAssets)
   }, [selectedDenoms, fundingAssets])
 
-  const updateFundingAssets = useCallback((amount: BigNumber, denom: string) => {
-    setFundingAssets((fundingAssets) => {
-      const updateIdx = fundingAssets.findIndex(byDenom(denom))
-      if (updateIdx === -1) return fundingAssets
+  const updateFundingAssets = useCallback(
+    (amount: BigNumber, denom: string) => {
+      handleChange()
+      setFundingAssets((fundingAssets) => {
+        const updateIdx = fundingAssets.findIndex(byDenom(denom))
+        if (updateIdx === -1) return fundingAssets
 
-      fundingAssets[updateIdx].amount = amount
-      return [...fundingAssets]
-    })
-  }, [])
+        fundingAssets[updateIdx].amount = amount
+        return [...fundingAssets]
+      })
+    },
+    [handleChange],
+  )
 
   useEffect(() => {
     toggleIsLending(autoLendEnabled)
@@ -170,7 +176,7 @@ export default function AccountFundContent(props: Props) {
               key={asset.symbol}
               className={classNames(
                 'w-full mb-4',
-                props.isFullPage && 'w-full p-4 border rounded-base border-white/20 bg-white/5',
+                isFullPage && 'w-full p-4 border rounded-base border-white/20 bg-white/5',
               )}
             >
               <TokenInputWithSlider
@@ -203,9 +209,9 @@ export default function AccountFundContent(props: Props) {
         />
         <SwitchAutoLend
           className='pt-4 mt-4 border border-transparent border-t-white/10'
-          accountId={props.accountId}
-          value={!props.isFullPage ? isLending : undefined}
-          onChange={!props.isFullPage ? toggleIsLending : undefined}
+          accountId={accountId}
+          value={!isFullPage ? isLending : undefined}
+          onChange={!isFullPage ? toggleIsLending : undefined}
         />
       </div>
       <Button
@@ -214,9 +220,9 @@ export default function AccountFundContent(props: Props) {
         disabled={!hasFundingAssets || depositCapReachedCoins.length > 0}
         showProgressIndicator={isConfirming}
         onClick={handleClick}
-        color={props.isFullPage ? 'tertiary' : undefined}
-        size={props.isFullPage ? 'lg' : undefined}
-        rightIcon={props.isFullPage ? undefined : <ArrowRight />}
+        color={isFullPage ? 'tertiary' : undefined}
+        size={isFullPage ? 'lg' : undefined}
+        rightIcon={isFullPage ? undefined : <ArrowRight />}
       />
     </>
   )

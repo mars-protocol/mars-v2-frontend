@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 
-import CurrentAccountSummary from 'components/Account/CurrentAccountSummary'
+import AccountSummary from 'components/Account/AccountSummary'
 import AssetImage from 'components/Asset/AssetImage'
 import Button from 'components/Button'
 import Card from 'components/Card'
@@ -10,6 +10,7 @@ import Modal from 'components/Modal'
 import Text from 'components/Text'
 import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
+import useCurrentAccount from 'hooks/useCurrentAccount'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 
@@ -36,14 +37,16 @@ export default function AssetAmountSelectActionModal(props: Props) {
     onAction,
   } = props
   const [amount, setAmount] = useState(BN_ZERO)
+  const [openElement, setOpenElement] = useState<number | undefined>()
   const maxAmount = BN(coinBalances.find(byDenom(asset.denom))?.amount ?? 0)
-
+  const account = useCurrentAccount()
   const handleAmountChange = useCallback(
     (value: BigNumber) => {
+      if (!openElement) setOpenElement(1)
       setAmount(value)
       onChange(value)
     },
-    [onChange],
+    [onChange, openElement],
   )
 
   const handleActionClick = useCallback(() => {
@@ -85,7 +88,7 @@ export default function AssetAmountSelectActionModal(props: Props) {
             rightIcon={<ArrowRight />}
           />
         </Card>
-        <CurrentAccountSummary />
+        {account && <AccountSummary account={account} openElement={openElement} />}
       </div>
     </Modal>
   )

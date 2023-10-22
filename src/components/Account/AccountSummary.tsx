@@ -17,26 +17,23 @@ import useHealthComputer from 'hooks/useHealthComputer'
 import useIsOpenArray from 'hooks/useIsOpenArray'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import usePrices from 'hooks/usePrices'
-import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountBalanceValue, calculateAccountLeverage } from 'utils/accounts'
 
 interface Props {
   account: Account
+  openElement?: number
 }
 
 export default function AccountSummary(props: Props) {
+  const { openElement, account } = props
   const [isOpen, toggleOpen] = useIsOpenArray(2, true)
   const { data: prices } = usePrices()
-  const [hasAutoToggled, setHasAutoToggled] = useToggle()
   const updatedAccount = useStore((s) => s.updatedAccount)
   const accountBalance = useMemo(
-    () =>
-      props.account
-        ? calculateAccountBalanceValue(updatedAccount ?? props.account, prices)
-        : BN_ZERO,
-    [props.account, updatedAccount, prices],
+    () => (account ? calculateAccountBalanceValue(updatedAccount ?? account, prices) : BN_ZERO),
+    [account, updatedAccount, prices],
   )
   const { data } = useBorrowMarketAssetsTableData(false)
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
@@ -47,11 +44,11 @@ export default function AccountSummary(props: Props) {
     () => [...lendingAvailableAssets, ...accountLentAssets],
     [lendingAvailableAssets, accountLentAssets],
   )
-  const { health } = useHealthComputer(props.account)
+  const { health } = useHealthComputer(account)
   const { health: updatedHealth } = useHealthComputer(updatedAccount)
   const leverage = useMemo(
-    () => (props.account ? calculateAccountLeverage(props.account, prices) : BN_ZERO),
-    [props.account, prices],
+    () => (account ? calculateAccountLeverage(account, prices) : BN_ZERO),
+    [account, prices],
   )
   const updatedLeverage = useMemo(() => {
     if (!updatedAccount) return null
@@ -62,12 +59,11 @@ export default function AccountSummary(props: Props) {
   }, [updatedAccount, prices, leverage])
 
   useEffect(() => {
-    if (isOpen[1] || !updatedLeverage || hasAutoToggled) return
-    setHasAutoToggled(true)
-    toggleOpen(1)
-  }, [updatedLeverage, isOpen, toggleOpen, hasAutoToggled])
+    if (!openElement || isOpen[openElement]) return
+    toggleOpen(openElement)
+  }, [openElement, isOpen, toggleOpen])
 
-  if (!props.account) return null
+  if (!account) return null
   return (
     <div className='h-[546px] min-w-92.5 basis-92.5 max-w-screen overflow-y-scroll scrollbar-hide'>
       <Card className='mb-4 h-min min-w-fit bg-white/10' contentClassName='flex'>
@@ -111,9 +107,8 @@ export default function AccountSummary(props: Props) {
       <Accordion
         items={[
           {
-            title: `Credit Account ${props.account.id} Composition`,
-            renderContent: () =>
-              props.account ? <AccountComposition account={props.account} /> : null,
+            title: `Credit Account ${account.id} Composition`,
+            renderContent: () => (account ? <AccountComposition account={account} /> : null),
             isOpen: isOpen[0],
             toggleOpen: (index: number) => toggleOpen(index),
             renderSubTitle: () => <></>,
@@ -121,9 +116,9 @@ export default function AccountSummary(props: Props) {
           {
             title: 'Balances',
             renderContent: () =>
-              props.account ? (
+              account ? (
                 <AccountBalancesTable
-                  account={props.account}
+                  account={account}
                   borrowingData={borrowAssetsData}
                   lendingData={lendingAssetsData}
                 />

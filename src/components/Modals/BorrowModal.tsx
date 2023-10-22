@@ -72,6 +72,7 @@ export default function BorrowModalController() {
 
 function BorrowModal(props: Props) {
   const { modal, account } = props
+  const [openElement, setOpenElement] = useState<number | undefined>()
   const [amount, setAmount] = useState(BN_ZERO)
   const [borrowToWallet, setBorrowToWallet] = useToggle()
   const borrow = useStore((s) => s.borrow)
@@ -140,6 +141,7 @@ function BorrowModal(props: Props) {
 
   const handleChange = useCallback(
     (newAmount: BigNumber) => {
+      if (!openElement) setOpenElement(1)
       const coin = BNCoin.fromDenomAndBigNumber(asset.denom, newAmount)
       if (!amount.isEqualTo(newAmount)) setAmount(newAmount)
       if (!isRepay) return
@@ -148,7 +150,7 @@ function BorrowModal(props: Props) {
         : coin
       simulateRepay(repayCoin)
     },
-    [amount, asset.denom, isRepay, simulateRepay, totalDebt],
+    [amount, asset.denom, isRepay, simulateRepay, totalDebt, openElement],
   )
 
   const maxBorrow = useMemo(() => {
@@ -279,7 +281,7 @@ function BorrowModal(props: Props) {
             rightIcon={<ArrowRight />}
           />
         </Card>
-        <AccountSummary account={account} />
+        <AccountSummary account={account} openElement={openElement} />
       </div>
     </Modal>
   )

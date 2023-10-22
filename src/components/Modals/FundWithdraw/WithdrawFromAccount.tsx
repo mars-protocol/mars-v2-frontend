@@ -20,10 +20,11 @@ import { getEnabledMarketAssets } from 'utils/assets'
 
 interface Props {
   account: Account
+  handleChange: () => void
 }
 
 export default function WithdrawFromAccount(props: Props) {
-  const { account } = props
+  const { account, handleChange } = props
   const defaultAsset =
     ASSETS.find(byDenom(account.deposits[0]?.denom || account.lends[0]?.denom)) ?? ASSETS[0]
   const withdraw = useStore((s) => s.withdraw)
@@ -52,6 +53,7 @@ export default function WithdrawFromAccount(props: Props) {
   const isReclaimingMaxAmount = maxWithdrawAmount.isEqualTo(amount)
 
   function onChangeAmount(val: BigNumber) {
+    handleChange()
     setAmount(val)
   }
 
