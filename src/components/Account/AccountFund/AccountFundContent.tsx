@@ -29,7 +29,7 @@ interface Props {
   account?: Account
   address: string
   accountId: string
-  handleChange: () => void
+  handleChange?: () => void
   isFullPage?: boolean
 }
 
@@ -128,7 +128,7 @@ export default function AccountFundContent(props: Props) {
 
   const updateFundingAssets = useCallback(
     (amount: BigNumber, denom: string) => {
-      handleChange()
+      if (handleChange) handleChange()
       setFundingAssets((fundingAssets) => {
         const updateIdx = fundingAssets.findIndex(byDenom(denom))
         if (updateIdx === -1) return fundingAssets
