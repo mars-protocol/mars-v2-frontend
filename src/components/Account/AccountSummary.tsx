@@ -17,6 +17,7 @@ import useHealthComputer from 'hooks/useHealthComputer'
 import useIsOpenArray from 'hooks/useIsOpenArray'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import usePrices from 'hooks/usePrices'
+import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountBalanceValue, calculateAccountLeverage } from 'utils/accounts'
@@ -28,6 +29,7 @@ interface Props {
 
 export default function AccountSummary(props: Props) {
   const { openElement, account } = props
+  const [hasToggled, setHasToggled] = useToggle()
   const [isOpen, toggleOpen] = useIsOpenArray(2, true)
   const { data: prices } = usePrices()
   const updatedAccount = useStore((s) => s.updatedAccount)
@@ -59,9 +61,10 @@ export default function AccountSummary(props: Props) {
   }, [updatedAccount, prices, leverage])
 
   useEffect(() => {
-    if (!openElement || isOpen[openElement]) return
+    if (!openElement || isOpen[openElement] || hasToggled) return
     toggleOpen(openElement)
-  }, [openElement, isOpen, toggleOpen])
+    setHasToggled(true)
+  }, [openElement, isOpen, toggleOpen, hasToggled, setHasToggled])
 
   if (!account) return null
   return (
