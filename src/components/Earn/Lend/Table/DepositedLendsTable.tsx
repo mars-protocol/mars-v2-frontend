@@ -35,7 +35,7 @@ export default function DepositedLendsTable(props: Props) {
       title='Lent Assets'
       columns={columns}
       data={props.data}
-      initialSorting={[{ id: NAME_META.id, desc: true }]}
+      initialSorting={[{ id: NAME_META.id, desc: false }]}
       renderExpanded={renderExpanded}
     />
   )

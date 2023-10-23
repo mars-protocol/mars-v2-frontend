@@ -13,7 +13,7 @@ export default function Row<T>(props: Props<T>) {
   return (
     <>
       <tr
-        key={props.row.id}
+        key={`${props.row.id}-row`}
         className={classNames(
           'group/row transition-bg',
           props.renderExpanded && 'hover:cursor-pointer',

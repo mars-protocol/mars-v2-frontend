@@ -1,4 +1,4 @@
-import React from 'react'
+import { Row } from '@tanstack/react-table'
 
 import { FormattedNumber } from 'components/FormattedNumber'
 import Loading from 'components/Loading'
@@ -11,6 +11,15 @@ export const DEPOSIT_CAP_META = { accessorKey: 'cap', header: 'Deposit Cap' }
 interface Props {
   vault: Vault | DepositedVault
   isLoading: boolean
+}
+
+export const depositCapSortingFn = (
+  a: Row<Vault> | Row<DepositedVault>,
+  b: Row<Vault> | Row<DepositedVault>,
+): number => {
+  const depositCapA = a.original.cap.max
+  const depositCapB = b.original.cap.max
+  return depositCapA.minus(depositCapB).toNumber()
 }
 
 export default function DepositCap(props: Props) {

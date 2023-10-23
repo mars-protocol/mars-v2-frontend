@@ -1,9 +1,7 @@
-import React from 'react'
-
 import AssetImage from 'components/Asset/AssetImage'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 
-export const NAME_META = { accessorKey: 'asset.name', header: 'Asset', id: 'symbol' }
+export const NAME_META = { accessorKey: 'asset.symbol', header: 'Asset', id: 'symbol' }
 interface Props {
   asset: Asset
 }

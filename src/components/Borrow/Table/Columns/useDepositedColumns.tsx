@@ -1,17 +1,16 @@
 import { ColumnDef } from '@tanstack/react-table'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import BorrowRate, { BORROW_RATE_META } from 'components/Borrow/Table/Columns/BorrowRate'
-import Debt, { DEBT_META } from 'components/Borrow/Table/Columns/Debt'
-import Liquidity, { LIQUIDITY_META } from 'components/Borrow/Table/Columns/Liquidity'
+import Debt, { DEBT_META, debtSortingFn } from 'components/Borrow/Table/Columns/Debt'
+import Liquidity, {
+  LIQUIDITY_META,
+  liquiditySortingFn,
+} from 'components/Borrow/Table/Columns/Liquidity'
 import Manage, { MANAGE_META } from 'components/Borrow/Table/Columns/Manage'
 import Name, { NAME_META } from 'components/Borrow/Table/Columns/Name'
 
-interface Props {
-  isLoading: boolean
-}
-
-export default function useDepositedColumns(props: Props) {
+export default function useDepositedColumns() {
   return useMemo<ColumnDef<BorrowMarketTableData>[]>(() => {
     return [
       {
@@ -21,6 +20,7 @@ export default function useDepositedColumns(props: Props) {
       {
         ...DEBT_META,
         cell: ({ row }) => <Debt data={row.original} />,
+        sortingFn: debtSortingFn,
       },
       {
         ...BORROW_RATE_META,
@@ -29,6 +29,7 @@ export default function useDepositedColumns(props: Props) {
       {
         ...LIQUIDITY_META,
         cell: ({ row }) => <Liquidity data={row.original} />,
+        sortingFn: liquiditySortingFn,
       },
       {
         ...MANAGE_META,

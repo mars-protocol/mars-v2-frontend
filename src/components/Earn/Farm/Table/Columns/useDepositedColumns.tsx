@@ -1,8 +1,11 @@
 import { ColumnDef, Row } from '@tanstack/react-table'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import Apy, { APY_META } from 'components/Earn/Farm/Table/Columns/Apy'
-import DepositCap, { DEPOSIT_CAP_META } from 'components/Earn/Farm/Table/Columns/DepositCap'
+import DepositCap, {
+  DEPOSIT_CAP_META,
+  depositCapSortingFn,
+} from 'components/Earn/Farm/Table/Columns/DepositCap'
 import Details, { DETAILS_META } from 'components/Earn/Farm/Table/Columns/Details'
 import MaxLTV, { LTV_MAX_META } from 'components/Earn/Farm/Table/Columns/MaxLTV'
 import Name, { NAME_META } from 'components/Earn/Farm/Table/Columns/Name'
@@ -43,6 +46,7 @@ export default function useDepositedColumns(props: Props) {
         cell: ({ row }) => (
           <DepositCap vault={row.original as DepositedVault} isLoading={props.isLoading} />
         ),
+        sortingFn: depositCapSortingFn,
       },
       {
         ...LTV_MAX_META,
