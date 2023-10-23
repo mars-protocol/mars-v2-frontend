@@ -1,10 +1,28 @@
-import React from 'react'
+import { Row } from '@tanstack/react-table'
 
 import { FormattedNumber } from 'components/FormattedNumber'
 import Loading from 'components/Loading'
 import TitleAndSubCell from 'components/TitleAndSubCell'
+import { demagnify } from 'utils/formatters'
 
-export const DEPOSIT_CAP_META = { accessorKey: 'marketDepositCap', header: 'Depo. Cap' }
+export const DEPOSIT_CAP_META = {
+  accessorKey: 'marketDepositCap',
+  header: 'Depo. Cap',
+  id: 'marketDepositCap',
+}
+
+export const marketDepositCapSortingFn = (
+  a: Row<LendingMarketTableData>,
+  b: Row<LendingMarketTableData>,
+): number => {
+  const assetA = a.original.asset
+  const assetB = b.original.asset
+  if (!a.original.marketDepositCap || !b.original.marketDepositCap) return 0
+
+  const marketDepositCapA = demagnify(a.original.marketDepositCap, assetA)
+  const marketDepositCapB = demagnify(b.original.marketDepositCap, assetB)
+  return marketDepositCapA - marketDepositCapB
+}
 
 interface Props {
   isLoading: boolean

@@ -1,9 +1,12 @@
 import { ColumnDef } from '@tanstack/react-table'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import Apy, { APY_META } from 'components/Earn/Farm/Table/Columns/Apy'
 import { Deposit } from 'components/Earn/Farm/Table/Columns/Deposit'
-import DepositCap, { DEPOSIT_CAP_META } from 'components/Earn/Farm/Table/Columns/DepositCap'
+import DepositCap, {
+  DEPOSIT_CAP_META,
+  depositCapSortingFn,
+} from 'components/Earn/Farm/Table/Columns/DepositCap'
 import MaxLTV, { LTV_MAX_META } from 'components/Earn/Farm/Table/Columns/MaxLTV'
 import Name, { NAME_META } from 'components/Earn/Farm/Table/Columns/Name'
 import TVL, { TVL_META } from 'components/Earn/Farm/Table/Columns/TVL'
@@ -32,6 +35,7 @@ export default function useAvailableColumns(props: Props) {
       {
         ...DEPOSIT_CAP_META,
         cell: ({ row }) => <DepositCap vault={row.original as Vault} isLoading={props.isLoading} />,
+        sortingFn: depositCapSortingFn,
       },
       {
         ...LTV_MAX_META,

@@ -1,11 +1,12 @@
 import { Row } from '@tanstack/react-table'
 import { useCallback } from 'react'
 
+import BorrowActionButtons from 'components/Borrow/BorrowActionButtons'
+import { NAME_META } from 'components/Borrow/Table/Columns/Name'
 import useDepositedColumns from 'components/Borrow/Table/Columns/useDepositedColumns'
 import MarketDetails from 'components/MarketDetails'
 import Table from 'components/Table'
 import ActionButtonRow from 'components/Table/ActionButtonRow'
-import BorrowActionButtons from 'components/Borrow/BorrowActionButtons'
 
 type Props = {
   data: BorrowMarketTableData[]
@@ -13,7 +14,7 @@ type Props = {
 }
 
 export default function DepositedBorrowingsTable(props: Props) {
-  const columns = useDepositedColumns({ isLoading: props.isLoading })
+  const columns = useDepositedColumns()
 
   const renderExpanded = useCallback((row: Row<BorrowMarketTableData>) => {
     const currentRow = row as Row<BorrowMarketTableData>
@@ -34,7 +35,7 @@ export default function DepositedBorrowingsTable(props: Props) {
       title='Borrowed Assets'
       columns={columns}
       data={props.data}
-      initialSorting={[{ id: 'asset.name', desc: true }]}
+      initialSorting={[{ id: NAME_META.id, desc: false }]}
       renderExpanded={renderExpanded}
     />
   )
