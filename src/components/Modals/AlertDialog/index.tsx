@@ -1,12 +1,12 @@
 import classNames from 'classnames'
-import { useState } from 'react'
 
 import Button from 'components/Button'
-import { ExclamationMarkCircled } from 'components/Icons'
+import Checkbox from 'components/Checkbox'
 import Modal from 'components/Modal'
 import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
 import Text from 'components/Text'
 import useAlertDialog from 'hooks/useAlertDialog'
+import useToggle from 'hooks/useToggle'
 
 export default function AlertDialogController() {
   const { config, close } = useAlertDialog()
@@ -22,10 +22,18 @@ interface Props {
 }
 
 function AlertDialog(props: Props) {
-  const { title, icon, description, negativeButton, positiveButton } = props.config
+  const { title, icon, content, negativeButton, positiveButton, checkbox } = props.config
+
+  const [toggle, handleToggle] = useToggle()
+
   const handleButtonClick = (button?: AlertDialogButton) => {
     button?.onClick && button.onClick()
     props.close()
+  }
+
+  function handleCheckboxClick() {
+    handleToggle()
+    checkbox?.onClick(!toggle)
   }
 
   return (
@@ -33,8 +41,13 @@ function AlertDialog(props: Props) {
       onClose={props.close}
       hideTxLoader
       header={
-        <div className='grid w-12 h-12 rounded-sm place-items-center bg-white/5'>
-          {icon ?? <ExclamationMarkCircled width={18} />}
+        <div className='flex flex-col'>
+          {icon && (
+            <div className='grid w-12 h-12 rounded-sm place-items-center bg-white/5 mb-4'>
+              {icon}
+            </div>
+          )}
+          <Text size='2xl'>{title}</Text>
         </div>
       }
       modalClassName='max-w-modal-sm'
@@ -42,24 +55,28 @@ function AlertDialog(props: Props) {
       contentClassName='px-8 pb-8'
       hideCloseBtn
     >
-      <Text size='xl'>{title}</Text>
-      {typeof description === 'string' ? (
-        <Text className='mt-2 text-white/60'>{description}</Text>
+      {typeof content === 'string' ? (
+        <Text className='mt-2 text-white/60'>{content}</Text>
       ) : (
-        description
+        content
       )}
       <div
         className={classNames('mt-10 flex justify-between', positiveButton && 'flex-row-reverse')}
       >
-        {positiveButton && (
-          <Button
-            text={positiveButton.text ?? 'Yes'}
-            color='primary'
-            className='px-6'
-            rightIcon={positiveButton.icon ?? <YesIcon />}
-            onClick={() => handleButtonClick(positiveButton)}
-          />
-        )}
+        <div className='flex flex-row-reverse gap-4'>
+          {positiveButton && (
+            <Button
+              text={positiveButton.text ?? 'Yes'}
+              color='tertiary'
+              className='px-6'
+              rightIcon={positiveButton.icon ?? <YesIcon />}
+              onClick={() => handleButtonClick(positiveButton)}
+            />
+          )}
+          {checkbox && (
+            <Checkbox checked={toggle} onChange={handleCheckboxClick} text={checkbox.text} />
+          )}
+        </div>
         <Button
           text={negativeButton?.text ?? 'No'}
           color='secondary'

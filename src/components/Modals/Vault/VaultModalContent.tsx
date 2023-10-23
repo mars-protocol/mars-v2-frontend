@@ -8,7 +8,7 @@ import VaultDeposit from 'components/Modals/Vault/VaultDeposits'
 import VaultDepositSubTitle from 'components/Modals/Vault/VaultDepositsSubTitle'
 import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useDepositVault from 'hooks/broadcast/useDepositVault'
 import useDisplayAsset from 'hooks/useDisplayAsset'
@@ -36,7 +36,7 @@ export default function VaultModalContent(props: Props) {
 
   const { data: prices } = usePrices()
   const [displayCurrency] = useLocalStorage<string>(
-    DISPLAY_CURRENCY_KEY,
+    LocalStorageKeys.DISPLAY_CURRENCY,
     DEFAULT_SETTINGS.displayCurrency,
   )
   const [isOpen, toggleOpen] = useIsOpenArray(2, false)

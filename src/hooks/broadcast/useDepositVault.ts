@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { SLIPPAGE_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAutoLend from 'hooks/useAutoLend'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
@@ -26,7 +26,7 @@ export default function useDepositVault(props: Props): {
   totalValue: BigNumber
 } {
   const { data: prices } = usePrices()
-  const [slippage] = useLocalStorage<number>(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
+  const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
   const { isAutoLendEnabledForCurrentAccount: isAutoLend } = useAutoLend()
   const borrowings: BNCoin[] = useMemo(
     () => props.borrowings.filter((borrowing) => borrowing.amount.gt(0)),

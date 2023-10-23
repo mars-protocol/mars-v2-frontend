@@ -11,7 +11,7 @@ import OrderTypeSelector from 'components/Trade/TradeModule/SwapForm/OrderTypeSe
 import { AvailableOrderType } from 'components/Trade/TradeModule/SwapForm/OrderTypeSelector/types'
 import TradeSummary from 'components/Trade/TradeModule/SwapForm/TradeSummary'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { SLIPPAGE_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO, MARGIN_TRADE_BUFFER } from 'constants/math'
 import useAutoLend from 'hooks/useAutoLend'
 import useCurrentAccount from 'hooks/useCurrentAccount'
@@ -38,7 +38,7 @@ export default function SwapForm(props: Props) {
   const useMargin = useStore((s) => s.useMargin)
   const account = useCurrentAccount()
   const swap = useStore((s) => s.swap)
-  const [slippage] = useLocalStorage(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
+  const [slippage] = useLocalStorage(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
   const { computeMaxSwapAmount } = useHealthComputer(account)
   const { data: borrowAssets } = useMarketBorrowings()
   const { data: marketAssets } = useMarketAssets()

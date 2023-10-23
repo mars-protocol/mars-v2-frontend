@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import AssetBalanceRow from 'components/Asset/AssetBalanceRow'
-import { ArrowRight } from 'components/Icons'
+import { ArrowRight, ExclamationMarkCircled } from 'components/Icons'
 import AccountDeleteAlertDialog from 'components/Modals/Account/AccountDeleteAlertDialog'
 import Text from 'components/Text'
 import useStore from 'store'
@@ -51,7 +51,8 @@ function AccountDeleteModal(props: Props) {
     return (
       <AccountDeleteAlertDialog
         title='Repay your Debts to delete your account'
-        description='You must repay all borrowings before deleting your account.'
+        icon={<ExclamationMarkCircled width={18} />}
+        content='You must repay all borrowings before deleting your account.'
         closeHandler={closeDeleteAccountModal}
         positiveButton={{
           text: 'Repay Debts',
@@ -68,7 +69,7 @@ function AccountDeleteModal(props: Props) {
     return (
       <AccountDeleteAlertDialog
         title='Close your positions to delete your account'
-        description='You must first close your farming positions before deleting your account.'
+        content='You must first close your farming positions before deleting your account.'
         closeHandler={closeDeleteAccountModal}
         positiveButton={{
           text: 'Close Positions',
@@ -85,7 +86,7 @@ function AccountDeleteModal(props: Props) {
     return (
       <AccountDeleteAlertDialog
         title={`Delete Credit Account ${accountId}`}
-        description='Deleting your Credit Account is irreversible.'
+        content='Deleting your Credit Account is irreversible.'
         closeHandler={closeDeleteAccountModal}
         positiveButton={{
           text: 'Delete Account',
@@ -98,7 +99,7 @@ function AccountDeleteModal(props: Props) {
   return (
     <AccountDeleteAlertDialog
       title={`Delete Credit Account ${accountId}`}
-      description={
+      content={
         <>
           <Text className='mt-2 text-white/50' size='sm'>
             The following assets within your Credit Account will be sent to your wallet.

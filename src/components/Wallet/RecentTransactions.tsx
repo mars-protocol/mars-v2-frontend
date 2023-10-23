@@ -7,15 +7,18 @@ import Text from 'components/Text'
 import { TextLink } from 'components/TextLink'
 import { generateToastContent } from 'components/Toaster'
 import { EXPLORER_TX_URL } from 'constants/explorer'
-import { TRANSACTIONS_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 
 export default function RecentTransactions() {
   const address = useStore((s) => s.address)
-  const [transactions, setTransactions] = useLocalStorage<ToastStore>(TRANSACTIONS_KEY, {
-    recent: [],
-  })
+  const [transactions, setTransactions] = useLocalStorage<ToastStore>(
+    LocalStorageKeys.TRANSACTIONS,
+    {
+      recent: [],
+    },
+  )
   const recentTransactions = transactions.recent
     .filter((tx) => tx.address === address)
     .sort((a, b) => (a.timestamp > b.timestamp ? -1 : 1))

@@ -2,16 +2,17 @@ interface ModalSlice {
   accountDeleteModal: Account | null
   addVaultBorrowingsModal: AddVaultBorrowingsModal | null
   alertDialog: AlertDialogConfig | null
+  assetOverlayState: OverlayState
   borrowModal: BorrowModal | null
   fundAndWithdrawModal: 'fund' | 'withdraw' | null
   getStartedModal: boolean
+  hlsInformationModal: boolean | null
   lendAndReclaimModal: LendAndReclaimModalConfig | null
   settingsModal: boolean
   unlockModal: UnlockModal | null
   vaultModal: VaultModal | null
   walletAssetsModal: WalletAssetModal | null
   withdrawFromVaultsModal: DepositedVault[] | null
-  assetOverlayState: OverlayState
 }
 
 interface AlertDialogButton {
@@ -23,10 +24,14 @@ interface AlertDialogButton {
 
 interface AlertDialogConfig {
   icon?: JSX.Element
-  title: JSX.Element | string
-  description: JSX.Element | string
+  checkbox?: {
+    text: string
+    onClick: (isChecked: boolean) => void
+  }
+  content: JSX.Element | string
   negativeButton?: AlertDialogButton
   positiveButton?: AlertDialogButton
+  title: string
 }
 
 interface BorrowModal {

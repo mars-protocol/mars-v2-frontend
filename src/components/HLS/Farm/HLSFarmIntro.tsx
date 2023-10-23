@@ -11,7 +11,7 @@ export default function HlsFarmIntro() {
       bg='farm'
       text={
         <>
-          <span className='text-white'>Leverage farming</span> is a strategy where users borrow
+          <span className='text-white'>Leveraged farming</span> is a strategy where users borrow
           funds to increase their yield farming position, aiming to earn more in rewards than the
           cost of the borrowed assets.
         </>

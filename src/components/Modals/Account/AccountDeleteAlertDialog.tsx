@@ -4,25 +4,22 @@ import { Enter, InfoCircle } from 'components/Icons'
 import useAlertDialog from 'hooks/useAlertDialog'
 
 interface Props {
+  content: string | JSX.Element
   title: string
-  description: string | JSX.Element
+  icon?: JSX.Element
   closeHandler: () => void
   positiveButton: AlertDialogButton
 }
 
 export default function AccountDeleteAlertDialog(props: Props) {
   const { open: showAlertDialog } = useAlertDialog()
-  const { title, description, closeHandler, positiveButton } = props
+  const { title, content, closeHandler, positiveButton } = props
 
   useEffect(() => {
     showAlertDialog({
-      icon: (
-        <div className='flex w-full h-full p-3'>
-          <InfoCircle />
-        </div>
-      ),
+      icon: <InfoCircle />,
       title,
-      description,
+      content,
       negativeButton: {
         text: 'Cancel',
         icon: <Enter />,
@@ -30,7 +27,7 @@ export default function AccountDeleteAlertDialog(props: Props) {
       },
       positiveButton,
     })
-  }, [showAlertDialog, title, description, closeHandler, positiveButton])
+  }, [showAlertDialog, closeHandler, positiveButton, title, content])
 
   return null
 }

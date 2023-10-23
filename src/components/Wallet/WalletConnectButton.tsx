@@ -4,7 +4,7 @@ import Button from 'components/Button'
 import { Wallet } from 'components/Icons'
 import TermsOfService from 'components/TermsOfService'
 import WalletSelect from 'components/Wallet/WalletSelect'
-import { TERMS_OF_SERVICE_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 
@@ -18,7 +18,7 @@ interface Props {
 }
 
 export default function WalletConnectButton(props: Props) {
-  const [hasAgreedToTerms] = useLocalStorage(TERMS_OF_SERVICE_KEY, false)
+  const [hasAgreedToTerms] = useLocalStorage(LocalStorageKeys.TERMS_OF_SERVICE, false)
 
   const handleClick = useCallback(() => {
     const component = hasAgreedToTerms ? <WalletSelect /> : <TermsOfService />

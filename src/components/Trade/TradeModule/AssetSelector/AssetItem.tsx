@@ -3,7 +3,7 @@ import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { StarFilled, StarOutlined } from 'components/Icons'
 import Text from 'components/Text'
-import { FAVORITE_ASSETS_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ONE, BN_ZERO, MAX_AMOUNT_DECIMALS, MIN_AMOUNT } from 'constants/math'
 import useLocalStorage from 'hooks/useLocalStorage'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -20,7 +20,7 @@ interface Props {
 export default function AssetItem(props: Props) {
   const asset = props.asset
   const [favoriteAssetsDenoms, setFavoriteAssetsDenoms] = useLocalStorage<string[]>(
-    FAVORITE_ASSETS_KEY,
+    LocalStorageKeys.FAVORITE_ASSETS,
     [],
   )
   const amount = demagnify(props.balances.find(byDenom(asset.denom))?.amount ?? BN_ZERO, asset)

@@ -11,7 +11,7 @@ import Overlay from 'components/Overlay'
 import Text from 'components/Text'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { LEND_ASSETS_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAccountId from 'hooks/useAccountId'
 import useAccountIds from 'hooks/useAccountIds'
 import useAutoLend from 'hooks/useAutoLend'
@@ -39,7 +39,10 @@ export default function AccountMenuContent() {
   const [showMenu, setShowMenu] = useToggle()
   const [isCreating, setIsCreating] = useToggle()
   const transactionFeeCoinBalance = useCurrentWalletBalance(baseCurrency.denom)
-  const [lendAssets] = useLocalStorage<boolean>(LEND_ASSETS_KEY, DEFAULT_SETTINGS.lendAssets)
+  const [lendAssets] = useLocalStorage<boolean>(
+    LocalStorageKeys.LEND_ASSETS,
+    DEFAULT_SETTINGS.lendAssets,
+  )
   const { enableAutoLendAccountId } = useAutoLend()
 
   const hasCreditAccounts = !!accountIds?.length
