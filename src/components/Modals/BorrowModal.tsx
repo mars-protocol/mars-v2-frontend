@@ -24,7 +24,7 @@ import { getDepositAndLendCoinsToSpend } from 'hooks/useUpdatedAccount/functions
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { formatPercent, formatValue } from 'utils/formatters'
+import { formatPercent } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { getDebtAmountWithInterest } from 'utils/tokens'
 
@@ -204,15 +204,32 @@ function BorrowModal(props: Props) {
           title={formatPercent(modal.marketData.borrowRate || '0')}
           sub={'Borrow rate'}
         />
-        <div className='h-100 w-[1px] bg-white/10' />
-        <TitleAndSubCell
-          title={formatValue(getDebtAmount(modal), {
-            abbreviated: false,
-            decimals: asset.decimals,
-            maxDecimals: asset.decimals,
-          })}
-          sub={'Borrowed'}
-        />
+        {totalDebt.isGreaterThan(0) && (
+          <>
+            <div className='h-100 w-[1px] bg-white/10' />
+            <div className='flex flex-col gap-0.5'>
+              <div className='flex gap-2'>
+                <FormattedNumber
+                  className='text-xs'
+                  amount={totalDebt.toNumber()}
+                  options={{
+                    decimals: asset.decimals,
+                    abbreviated: false,
+                    suffix: ` ${asset.symbol}`,
+                  }}
+                />
+                <DisplayCurrency
+                  className='text-xs'
+                  coin={BNCoin.fromDenomAndBigNumber(asset.denom, totalDebt)}
+                  parentheses
+                />
+              </div>
+              <Text size='xs' className='text-white/50' tag='span'>
+                Borrowed
+              </Text>
+            </div>
+          </>
+        )}
         <div className='h-100 w-[1px] bg-white/10' />
         <div className='flex flex-col gap-0.5'>
           <div className='flex gap-2'>
