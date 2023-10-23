@@ -1,7 +1,7 @@
 import classNames from 'classnames'
+import { Suspense } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useLocation } from 'react-router-dom'
-import { Suspense } from 'react'
 
 import AccountDetails from 'components/Account/AccountDetails'
 import Background from 'components/Background'
@@ -11,7 +11,7 @@ import ModalsContainer from 'components/Modals/ModalsContainer'
 import PageMetadata from 'components/PageMetadata'
 import Toaster from 'components/Toaster'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { REDUCE_MOTION_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAccountId from 'hooks/useAccountId'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
@@ -42,7 +42,10 @@ function PageContainer(props: Props) {
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
   const focusComponent = useStore((s) => s.focusComponent)
-  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
+  const [reduceMotion] = useLocalStorage<boolean>(
+    LocalStorageKeys.REDUCE_MOTION,
+    DEFAULT_SETTINGS.reduceMotion,
+  )
   const accountDetailsExpanded = useStore((s) => s.accountDetailsExpanded)
   const isFullWidth = location.pathname.includes('trade') || location.pathname === '/'
   const accountId = useAccountId()

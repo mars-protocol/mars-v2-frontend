@@ -3,7 +3,7 @@ import { useCallback } from 'react'
 import { ACCOUNT_MENU_BUTTON_ID } from 'components/Account/AccountMenuContent'
 import Button from 'components/Button'
 import ActionButton from 'components/Button/ActionButton'
-import { ArrowDownLine, ArrowUpLine, Enter } from 'components/Icons'
+import { ArrowDownLine, ArrowUpLine, Enter, ExclamationMarkCircled } from 'components/Icons'
 import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
@@ -36,8 +36,9 @@ export default function LendingActionButtons(props: Props) {
   const handleUnlend = useCallback(() => {
     if (isAutoLendEnabledForCurrentAccount) {
       showAlertDialog({
+        icon: <ExclamationMarkCircled width={18} />,
         title: 'Disable Automatically Lend Assets',
-        description:
+        content:
           "Your auto-lend feature is currently enabled. To unlend your funds, please confirm if you'd like to disable this feature in order to continue.",
         positiveButton: {
           onClick: () => document.getElementById(ACCOUNT_MENU_BUTTON_ID)?.click(),

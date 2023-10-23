@@ -1,12 +1,12 @@
 import { ASSETS } from 'constants/assets'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/useLocalStorage'
 import { byDenom } from 'utils/array'
 
 export default function useDisplayAsset() {
   const [displayCurrency] = useLocalStorage<string>(
-    DISPLAY_CURRENCY_KEY,
+    LocalStorageKeys.DISPLAY_CURRENCY,
     DEFAULT_SETTINGS.displayCurrency,
   )
 

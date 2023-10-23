@@ -3,14 +3,14 @@ import { Cross, ExclamationMarkCircled } from 'components/Icons'
 import Text from 'components/Text'
 import { TextLink } from 'components/TextLink'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { MIGRATION_BANNER_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 import { DocURL } from 'types/enums/docURL'
 
 export default function MigrationBanner() {
   const [_, setMigrationBanner] = useLocalStorage<boolean>(
-    MIGRATION_BANNER_KEY,
+    LocalStorageKeys.MIGRATION_BANNER,
     DEFAULT_SETTINGS.migrationBanner,
   )
 

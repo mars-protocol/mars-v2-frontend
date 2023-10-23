@@ -6,7 +6,7 @@ import Button from 'components/Button'
 import { AccountArrowDown, LockLocked, LockUnlocked, Plus } from 'components/Icons'
 import { Tooltip } from 'components/Tooltip'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { SLIPPAGE_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAccountId from 'hooks/useAccountId'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
@@ -22,7 +22,7 @@ export default function VaultExpanded(props: Props) {
   const accountId = useAccountId()
   const [isConfirming, setIsConfirming] = useState(false)
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
-  const [slippage] = useLocalStorage<number>(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
+  const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
 
   function depositMoreHandler() {
     useStore.setState({

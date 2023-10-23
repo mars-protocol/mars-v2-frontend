@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 
 import { FormattedNumber } from 'components/FormattedNumber'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { DISPLAY_CURRENCY_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
@@ -22,7 +22,7 @@ interface Props {
 export default function DisplayCurrency(props: Props) {
   const displayCurrencies = getDisplayCurrencies()
   const [displayCurrency] = useLocalStorage<string>(
-    DISPLAY_CURRENCY_KEY,
+    LocalStorageKeys.DISPLAY_CURRENCY,
     DEFAULT_SETTINGS.displayCurrency,
   )
   const { data: prices } = usePrices()

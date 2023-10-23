@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react'
 import { animated, useSpring } from 'react-spring'
 
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { REDUCE_MOTION_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/useLocalStorage'
 import { formatValue } from 'utils/formatters'
 
@@ -19,7 +19,7 @@ interface Props {
 export const FormattedNumber = React.memo(
   (props: Props) => {
     const [reduceMotion] = useLocalStorage<boolean>(
-      REDUCE_MOTION_KEY,
+      LocalStorageKeys.REDUCE_MOTION,
       DEFAULT_SETTINGS.reduceMotion,
     )
     const prevAmountRef = useRef<number>(0)

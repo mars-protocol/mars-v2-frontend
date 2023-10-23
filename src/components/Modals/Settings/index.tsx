@@ -12,14 +12,7 @@ import Select from 'components/Select'
 import Text from 'components/Text'
 import { TextLink } from 'components/TextLink'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import {
-  DISPLAY_CURRENCY_KEY,
-  LEND_ASSETS_KEY,
-  PREFERRED_ASSET_KEY,
-  REDUCE_MOTION_KEY,
-  SLIPPAGE_KEY,
-  TUTORIAL_KEY,
-} from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useAlertDialog from 'hooks/useAlertDialog'
 import useAutoLend from 'hooks/useAutoLend'
@@ -40,23 +33,29 @@ export default function SettingsModal() {
   const [inputRef, setInputRef] = useState<React.RefObject<HTMLInputElement>>()
   const [isCustom, setIsCustom] = useState(false)
   const [displayCurrency, setDisplayCurrency] = useLocalStorage<string>(
-    DISPLAY_CURRENCY_KEY,
+    LocalStorageKeys.DISPLAY_CURRENCY,
     DEFAULT_SETTINGS.displayCurrency,
   )
   const [preferredAsset, setPreferredAsset] = useLocalStorage<string>(
-    PREFERRED_ASSET_KEY,
+    LocalStorageKeys.PREFERRED_ASSET,
     DEFAULT_SETTINGS.preferredAsset,
   )
   const [reduceMotion, setReduceMotion] = useLocalStorage<boolean>(
-    REDUCE_MOTION_KEY,
+    LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
   )
-  const [tutorial, setTutorial] = useLocalStorage<boolean>(TUTORIAL_KEY, DEFAULT_SETTINGS.tutorial)
+  const [tutorial, setTutorial] = useLocalStorage<boolean>(
+    LocalStorageKeys.TUTORIAL,
+    DEFAULT_SETTINGS.tutorial,
+  )
   const [lendAssets, setLendAssets] = useLocalStorage<boolean>(
-    LEND_ASSETS_KEY,
+    LocalStorageKeys.LEND_ASSETS,
     DEFAULT_SETTINGS.lendAssets,
   )
-  const [slippage, setSlippage] = useLocalStorage<number>(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
+  const [slippage, setSlippage] = useLocalStorage<number>(
+    LocalStorageKeys.SLIPPAGE,
+    DEFAULT_SETTINGS.slippage,
+  )
 
   const displayCurrenciesOptions = useMemo(
     () =>
@@ -195,7 +194,7 @@ export default function SettingsModal() {
         </div>
       ),
       title: 'Are you sure you want to restore to default?',
-      description:
+      content:
         'Once you reset to default settings you can’t revert it, and will result in the permanent loss of your current settings',
       positiveButton: {
         text: 'Yes',

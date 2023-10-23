@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 
 import { Tooltip } from 'components/Tooltip'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { REDUCE_MOTION_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useHealthColorAndLabel from 'hooks/useHealthColorAndLabel'
 import useLocalStorage from 'hooks/useLocalStorage'
 import { getHealthIndicatorColors } from 'utils/healthIndicator'
@@ -30,7 +30,10 @@ function calculateHealth(health: number): number {
 
 export default function HealthBar(props: Props) {
   const { health, updatedHealth } = props
-  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
+  const [reduceMotion] = useLocalStorage<boolean>(
+    LocalStorageKeys.REDUCE_MOTION,
+    DEFAULT_SETTINGS.reduceMotion,
+  )
   const width = calculateHealth(health)
   const updatedWidth = calculateHealth(updatedHealth ?? 0)
   const isUpdated = updatedWidth > 0 && updatedWidth !== width
