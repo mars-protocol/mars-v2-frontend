@@ -1,4 +1,5 @@
 export enum LocalStorageKeys {
+  ACCOUNT_SUMMARY_TABS = 'accountSummaryTabs',
   PREFERRED_ASSET = 'favouriteAsset',
   DISPLAY_CURRENCY = 'displayCurrency',
   REDUCE_MOTION = 'reduceMotion',

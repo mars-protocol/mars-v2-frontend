@@ -20,14 +20,13 @@ export default function AccordionContent(props: Props) {
   const { title, renderContent, isOpen, renderSubTitle, toggleOpen } = props.item
 
   return (
-    <div key={title} className='group border-b-white/10 [&:not(:last-child)]:border-b'>
+    <div key={title} className='border-b border-collapse group border-white/20 last:border-b-0'>
       <div
         onClick={() => toggleOpen(props.index)}
         className={classNames(
-          'mb-0 flex hover:cursor-pointer items-center justify-between border-t border-white/10 bg-white/10 p-4 text-white',
-          'group-[&:first-child]:border-t-0 group-[[open]]:border-b',
+          'mb-0 flex hover:cursor-pointer items-center justify-between bg-white/10 p-4 text-white border-b border-transparent',
           '[&::marker]:hidden [&::marker]:content-[""]',
-          isOpen && 'border-b [&:first-child]:border-t-0',
+          isOpen && 'border-white/20',
         )}
       >
         <div>
