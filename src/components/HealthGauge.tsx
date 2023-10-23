@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { Heart } from 'components/Icons'
 import { Tooltip } from 'components/Tooltip'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { REDUCE_MOTION_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useHealthColorAndLabel from 'hooks/useHealthColorAndLabel'
 import useLocalStorage from 'hooks/useLocalStorage'
 import { computeHealthGaugePercentage } from 'utils/accounts'
@@ -25,7 +25,10 @@ const ROTATION = {
 export const HealthGauge = ({ diameter = 40, health = 0, updatedHealth = 0 }: Props) => {
   const [color, label] = useHealthColorAndLabel(health, 'text')
   const [updatedColor, updatedLabel] = useHealthColorAndLabel(updatedHealth ?? 0, 'text')
-  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
+  const [reduceMotion] = useLocalStorage<boolean>(
+    LocalStorageKeys.REDUCE_MOTION,
+    DEFAULT_SETTINGS.reduceMotion,
+  )
   const percentage = useMemo(() => computeHealthGaugePercentage(health), [health])
   const updatedPercentage = useMemo(
     () => computeHealthGaugePercentage(updatedHealth),

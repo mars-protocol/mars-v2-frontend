@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { SLIPPAGE_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
@@ -29,7 +29,7 @@ export function useUpdatedAccount(account?: Account) {
   const [updatedAccount, setUpdatedAccount] = useState<Account | undefined>(
     account ? cloneAccount(account) : undefined,
   )
-  const [slippage] = useLocalStorage<number>(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
+  const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
   const [addedDeposits, addDeposits] = useState<BNCoin[]>([])
   const [removedDeposits, removeDeposits] = useState<BNCoin[]>([])
   const [addedDebts, addDebts] = useState<BNCoin[]>([])

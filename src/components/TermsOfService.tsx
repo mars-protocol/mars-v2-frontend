@@ -5,7 +5,7 @@ import FullOverlayContent from 'components/FullOverlayContent'
 import { Check } from 'components/Icons'
 import Text from 'components/Text'
 import WalletSelect from 'components/Wallet/WalletSelect'
-import { TERMS_OF_SERVICE_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 
@@ -36,7 +36,7 @@ function Benefits({ benefits }: BenefitsProps) {
 }
 
 export default function TermsOfService() {
-  const [_, setHasAgreedToTerms] = useLocalStorage(TERMS_OF_SERVICE_KEY, false)
+  const [_, setHasAgreedToTerms] = useLocalStorage(LocalStorageKeys.TERMS_OF_SERVICE, false)
 
   const handleAgreeTermsOfService = useCallback(() => {
     setHasAgreedToTerms(true)

@@ -5,7 +5,7 @@ import { ReactNode } from 'react'
 import { Questionmark } from 'components/Icons'
 import TooltipContent from 'components/Tooltip/TooltipContent'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { REDUCE_MOTION_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/useLocalStorage'
 
 interface Props {
@@ -19,7 +19,10 @@ interface Props {
 }
 
 export const Tooltip = (props: Props) => {
-  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
+  const [reduceMotion] = useLocalStorage<boolean>(
+    LocalStorageKeys.REDUCE_MOTION,
+    DEFAULT_SETTINGS.reduceMotion,
+  )
 
   const isInWalletAssetModal = document.getElementById('wallet-assets-modal')
   const isInModal = document.getElementById('modal')

@@ -2,7 +2,7 @@ import classNames from 'classnames'
 
 import { CheckCircled } from 'components/Icons'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { REDUCE_MOTION_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/useLocalStorage'
 
 interface Props {
@@ -12,7 +12,10 @@ interface Props {
 }
 
 export const CheckMark = ({ color = '#FFFFFF', size = 20, className }: Props) => {
-  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
+  const [reduceMotion] = useLocalStorage<boolean>(
+    LocalStorageKeys.REDUCE_MOTION,
+    DEFAULT_SETTINGS.reduceMotion,
+  )
   const classes = classNames('inline-block relative', className)
 
   if (reduceMotion)
