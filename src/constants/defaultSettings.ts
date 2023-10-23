@@ -4,6 +4,7 @@ import { getEnabledMarketAssets } from 'utils/assets'
 const enabledMarketAssets = getEnabledMarketAssets()
 
 export const DEFAULT_SETTINGS: Settings = {
+  accountSummaryTabs: [true, true],
   reduceMotion: false,
   lendAssets: true,
   lastTradingPair: [enabledMarketAssets[0].denom, enabledMarketAssets[1].denom],
