@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { HTMLAttributes, useMemo } from 'react'
+import { HTMLAttributes, useCallback, useMemo } from 'react'
 
 import Accordion from 'components/Accordion'
 import AccountBalancesTable from 'components/Account/AccountBalancesTable'
@@ -10,12 +10,14 @@ import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { ArrowRight } from 'components/Icons'
 import Text from 'components/Text'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useHealthComputer from 'hooks/useHealthComputer'
-import useIsOpenArray from 'hooks/useIsOpenArray'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
+import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -26,7 +28,10 @@ interface Props {
 }
 
 export default function AccountSummary(props: Props) {
-  const [isOpen, toggleOpen] = useIsOpenArray(2, true)
+  const [accountSummaryTabs, setAccountSummaryTabs] = useLocalStorage<boolean[]>(
+    LocalStorageKeys.ACCOUNT_SUMMARY_TABS,
+    DEFAULT_SETTINGS.accountSummaryTabs,
+  )
   const { data: prices } = usePrices()
   const updatedAccount = useStore((s) => s.updatedAccount)
   const accountBalance = useMemo(
@@ -58,6 +63,13 @@ export default function AccountSummary(props: Props) {
     if (updatedLeverage.eq(leverage)) return null
     return updatedLeverage
   }, [updatedAccount, prices, leverage])
+
+  const handleToggle = useCallback(
+    (index: number) => {
+      setAccountSummaryTabs(accountSummaryTabs.map((tab, i) => (i === index ? !tab : tab)))
+    },
+    [accountSummaryTabs, setAccountSummaryTabs],
+  )
 
   if (!props.account) return null
   return (
@@ -106,8 +118,8 @@ export default function AccountSummary(props: Props) {
             title: `Credit Account ${props.account.id} Composition`,
             renderContent: () =>
               props.account ? <AccountComposition account={props.account} /> : null,
-            isOpen: isOpen[0],
-            toggleOpen: (index: number) => toggleOpen(index),
+            isOpen: accountSummaryTabs[0],
+            toggleOpen: (index: number) => handleToggle(index),
             renderSubTitle: () => <></>,
           },
           {
@@ -120,8 +132,8 @@ export default function AccountSummary(props: Props) {
                   lendingData={lendingAssetsData}
                 />
               ) : null,
-            isOpen: isOpen[1],
-            toggleOpen: (index: number) => toggleOpen(index),
+            isOpen: accountSummaryTabs[1],
+            toggleOpen: (index: number) => handleToggle(index),
             renderSubTitle: () => <></>,
           },
         ]}
