@@ -12,7 +12,6 @@ import Select from 'components/Select'
 import Text from 'components/Text'
 import { TextLink } from 'components/TextLink'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useAlertDialog from 'hooks/useAlertDialog'

@@ -2,7 +2,7 @@ interface Settings {
   accountSummaryTabs: boolean[]
   displayCurrency: string
   reduceMotion: boolean
-  lastTradingPair: string[]
+  tradingPair: string[]
   lendAssets: boolean
   slippage: number
   tutorial: boolean

@@ -106,7 +106,7 @@ export const TVChartContainer = (props: Props) => {
 
   return (
     <Card
-      title={`Trading Chart - ${props.buyAsset.symbol}/${props.sellAsset.symbol}`}
+      title={`Trading Chart - ${props.sellAsset.symbol}/${props.buyAsset.symbol}`}
       contentClassName='px-0.5 pb-0.5 h-full'
     >
       <div ref={chartContainerRef} className='h-full' />
