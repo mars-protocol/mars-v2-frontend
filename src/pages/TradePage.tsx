@@ -12,7 +12,7 @@ import { byDenom } from 'utils/array'
 import { getEnabledMarketAssets } from 'utils/assets'
 
 export default function TradePage() {
-  const [tradingPair] = useLocalStorage<string[]>(
+  const [tradingPair] = useLocalStorage<Settings['tradingPair']>(
     LocalStorageKeys.TRADING_PAIR,
     DEFAULT_SETTINGS.tradingPair,
   )
@@ -20,11 +20,11 @@ export default function TradePage() {
   const assetOverlayState = useStore((s) => s.assetOverlayState)
 
   const buyAsset = useMemo(
-    () => enabledMarketAssets.find(byDenom(tradingPair[0])) ?? enabledMarketAssets[0],
+    () => enabledMarketAssets.find(byDenom(tradingPair.buy)) ?? enabledMarketAssets[0],
     [tradingPair, enabledMarketAssets],
   )
   const sellAsset = useMemo(
-    () => enabledMarketAssets.find(byDenom(tradingPair[1])) ?? enabledMarketAssets[1],
+    () => enabledMarketAssets.find(byDenom(tradingPair.sell)) ?? enabledMarketAssets[1],
     [tradingPair, enabledMarketAssets],
   )
 

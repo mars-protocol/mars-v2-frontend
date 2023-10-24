@@ -15,21 +15,20 @@ interface Props {
 }
 
 export default function AssetSelector(props: Props) {
-  const [tradingPair, setTradingPair] = useLocalStorage<string[]>(
+  const [tradingPair, setTradingPair] = useLocalStorage<Settings['tradingPair']>(
     LocalStorageKeys.TRADING_PAIR,
     DEFAULT_SETTINGS.tradingPair,
   )
   const { buyAsset, sellAsset } = props
-  console.log(buyAsset, sellAsset)
   const assetOverlayState = useStore((s) => s.assetOverlayState)
 
   const handleSwapAssets = useCallback(() => {
-    setTradingPair([sellAsset.denom, buyAsset.denom])
+    setTradingPair({ buy: sellAsset.denom, sell: buyAsset.denom })
   }, [setTradingPair, sellAsset, buyAsset])
 
   const handleChangeBuyAsset = useCallback(
     (asset: Asset) => {
-      setTradingPair([asset.denom, sellAsset.denom])
+      setTradingPair({ buy: asset.denom, sell: sellAsset.denom })
       useStore.setState({ assetOverlayState: 'sell' })
     },
     [setTradingPair, sellAsset],
@@ -37,7 +36,7 @@ export default function AssetSelector(props: Props) {
 
   const handleChangeSellAsset = useCallback(
     (asset: Asset) => {
-      setTradingPair([buyAsset.denom, asset.denom])
+      setTradingPair({ buy: buyAsset.denom, sell: asset.denom })
       useStore.setState({ assetOverlayState: 'closed' })
     },
     [setTradingPair, buyAsset],

@@ -7,7 +7,7 @@ export const DEFAULT_SETTINGS: Settings = {
   accountSummaryTabs: [true, true],
   reduceMotion: false,
   lendAssets: true,
-  tradingPair: [enabledMarketAssets[0].denom, enabledMarketAssets[1].denom],
+  tradingPair: { buy: enabledMarketAssets[0].denom, sell: enabledMarketAssets[1].denom },
   displayCurrency: ORACLE_DENOM,
   slippage: 0.02,
   tutorial: true,
