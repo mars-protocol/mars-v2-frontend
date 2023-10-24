@@ -24,7 +24,7 @@ export const TVChartContainer = (props: Props) => {
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
   const widgetRef = useRef<IChartingLibraryWidget>()
   const defaultSymbol = useRef<string>(
-    `${props.buyAsset.mainnetDenom}${PAIR_SEPARATOR}${props.sellAsset.mainnetDenom}`,
+    `${props.sellAsset.mainnetDenom}${PAIR_SEPARATOR}${props.buyAsset.mainnetDenom}`,
   )
   const baseCurrency = useStore((s) => s.baseCurrency)
   const dataFeed = useMemo(
