@@ -18,7 +18,7 @@ import useAlertDialog from 'hooks/useAlertDialog'
 import useAutoLend from 'hooks/useAutoLend'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
-import { getDisplayCurrencies, getEnabledMarketAssets } from 'utils/assets'
+import { getDisplayCurrencies } from 'utils/assets'
 import { BN } from 'utils/helpers'
 
 const slippages = [0.02, 0.03]
@@ -27,7 +27,6 @@ export default function SettingsModal() {
   const modal = useStore((s) => s.settingsModal)
   const { open: showResetDialog } = useAlertDialog()
   const displayCurrencies = getDisplayCurrencies()
-  const assets = getEnabledMarketAssets()
   const { setAutoLendOnAllAccounts } = useAutoLend()
   const [customSlippage, setCustomSlippage] = useState<number>(0)
   const [inputRef, setInputRef] = useState<React.RefObject<HTMLInputElement>>()
@@ -35,10 +34,6 @@ export default function SettingsModal() {
   const [displayCurrency, setDisplayCurrency] = useLocalStorage<string>(
     LocalStorageKeys.DISPLAY_CURRENCY,
     DEFAULT_SETTINGS.displayCurrency,
-  )
-  const [preferredAsset, setPreferredAsset] = useLocalStorage<string>(
-    LocalStorageKeys.PREFERRED_ASSET,
-    DEFAULT_SETTINGS.preferredAsset,
   )
   const [reduceMotion, setReduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
@@ -79,22 +74,6 @@ export default function SettingsModal() {
     [displayCurrencies],
   )
 
-  const preferredAssetsOptions = useMemo(
-    () =>
-      assets.map((asset, index) => ({
-        label: [
-          <div className='flex w-full gap-2' key={index}>
-            <AssetImage asset={asset} size={16} />
-            <Text size='sm' className='leading-4'>
-              {asset.symbol}
-            </Text>
-          </div>,
-        ],
-        value: asset.denom,
-      })),
-    [assets],
-  )
-
   const handleReduceMotion = useCallback(
     (value: boolean) => {
       setReduceMotion(value)
@@ -115,13 +94,6 @@ export default function SettingsModal() {
       setTutorial(value)
     },
     [setTutorial],
-  )
-
-  const handlePreferredAsset = useCallback(
-    (value: string) => {
-      setPreferredAsset(value)
-    },
-    [setPreferredAsset],
   )
 
   const handleDisplayCurrency = useCallback(
@@ -174,17 +146,10 @@ export default function SettingsModal() {
 
   const handleResetSettings = useCallback(() => {
     handleDisplayCurrency(DEFAULT_SETTINGS.displayCurrency)
-    handlePreferredAsset(DEFAULT_SETTINGS.preferredAsset)
     handleSlippage(DEFAULT_SETTINGS.slippage)
     handleReduceMotion(DEFAULT_SETTINGS.reduceMotion)
     handleLendAssets(DEFAULT_SETTINGS.lendAssets)
-  }, [
-    handleDisplayCurrency,
-    handleReduceMotion,
-    handleLendAssets,
-    handlePreferredAsset,
-    handleSlippage,
-  ])
+  }, [handleDisplayCurrency, handleReduceMotion, handleLendAssets, handleSlippage])
 
   const showResetModal = useCallback(() => {
     showResetDialog({
@@ -267,21 +232,11 @@ export default function SettingsModal() {
         withStatus
       />
       <SettingsOptions
-        label='Preferred asset'
-        description='By selecting a different asset you always have the trading pair or asset selector
-        pre-filled with this asset.'
+        label='Display Currency'
+        description='Convert all values to the selected asset/currency.'
         className='pb-6'
       >
         <Select
-          label='Global'
-          options={preferredAssetsOptions}
-          defaultValue={preferredAsset}
-          onChange={handlePreferredAsset}
-          className='relative border w-60 rounded-base border-white/10'
-          containerClassName='justify-end mb-4'
-        />
-        <Select
-          label='Display Currency'
           options={displayCurrenciesOptions}
           defaultValue={displayCurrency}
           onChange={handleDisplayCurrency}

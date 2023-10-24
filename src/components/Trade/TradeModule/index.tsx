@@ -6,12 +6,10 @@ import SwapForm from 'components/Trade/TradeModule/SwapForm'
 interface Props {
   buyAsset: Asset
   sellAsset: Asset
-  onChangeBuyAsset: (asset: Asset) => void
-  onChangeSellAsset: (asset: Asset) => void
 }
 
 export default function TradeModule(props: Props) {
-  const { buyAsset, sellAsset, onChangeBuyAsset, onChangeSellAsset } = props
+  const { buyAsset, sellAsset } = props
 
   return (
     <div
@@ -21,13 +19,7 @@ export default function TradeModule(props: Props) {
         'h-full',
       )}
     >
-      <AssetSelector
-        buyAsset={buyAsset}
-        sellAsset={sellAsset}
-        onChangeBuyAsset={onChangeBuyAsset}
-        onChangeSellAsset={onChangeSellAsset}
-      />
-
+      <AssetSelector buyAsset={buyAsset} sellAsset={sellAsset} />
       <SwapForm buyAsset={buyAsset} sellAsset={sellAsset} />
     </div>
   )

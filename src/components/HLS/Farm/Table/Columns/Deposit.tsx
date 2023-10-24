@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { useCallback } from 'react'
+import { useCallback } from 'react'
 
 import ActionButton from 'components/Button/ActionButton'
 import { Enter } from 'components/Icons'
@@ -31,7 +31,7 @@ export default function Deposit(props: Props) {
     openAlertDialog({
       title: 'Understanding HLS Positions',
       content: (
-        <div className='flex flex-col gap-8 pb-8 pt-2 pr-10'>
+        <div className='flex flex-col gap-8 pt-2 pb-8 pr-10'>
           {INFO_ITEMS.map((item) => (
             <div key={item.title} className='grid grid-cols-[min-content,auto]'>
               <span
@@ -44,7 +44,7 @@ export default function Deposit(props: Props) {
               </span>
               <span className='flex flex-col'>
                 <Text>{item.title}</Text>
-                <Text className='text-white/60 text-sm'>{item.description}</Text>
+                <Text className='text-sm text-white/60'>{item.description}</Text>
               </span>
             </div>
           ))}

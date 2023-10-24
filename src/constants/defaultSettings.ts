@@ -1,11 +1,13 @@
-import { ASSETS } from 'constants/assets'
 import { ORACLE_DENOM } from 'constants/oracle'
+import { getEnabledMarketAssets } from 'utils/assets'
+
+const enabledMarketAssets = getEnabledMarketAssets()
 
 export const DEFAULT_SETTINGS: Settings = {
   accountSummaryTabs: [true, true],
   reduceMotion: false,
   lendAssets: true,
-  preferredAsset: ASSETS[0].denom,
+  tradingPair: { buy: enabledMarketAssets[0].denom, sell: enabledMarketAssets[1].denom },
   displayCurrency: ORACLE_DENOM,
   slippage: 0.02,
   tutorial: true,
