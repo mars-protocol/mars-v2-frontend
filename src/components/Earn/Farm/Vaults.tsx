@@ -52,10 +52,12 @@ function Content() {
   return (
     <>
       <VaultUnlockBanner vaults={unlockedVaults} />
-      {deposited.length && (
+      {deposited.length > 0 && (
         <DepositedVaultsTable data={deposited as DepositedVault[]} isLoading={false} />
       )}
-      {available.length && <AvailableVaultsTable data={available as Vault[]} isLoading={false} />}
+      {available.length > 0 && (
+        <AvailableVaultsTable data={available as Vault[]} isLoading={false} />
+      )}
     </>
   )
 }
