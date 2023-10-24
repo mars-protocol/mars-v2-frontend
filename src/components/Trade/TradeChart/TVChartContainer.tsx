@@ -105,10 +105,7 @@ export const TVChartContainer = (props: Props) => {
   }, [props.buyAsset.mainnetDenom, props.sellAsset.mainnetDenom])
 
   return (
-    <Card
-      title={`Trading Chart - ${props.sellAsset.symbol}/${props.buyAsset.symbol}`}
-      contentClassName='px-0.5 pb-0.5 h-full'
-    >
+    <Card title='Trading Chart' contentClassName='px-0.5 pb-0.5 h-full'>
       <div ref={chartContainerRef} className='h-full' />
     </Card>
   )
