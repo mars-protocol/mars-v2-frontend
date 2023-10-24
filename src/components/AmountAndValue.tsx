@@ -11,11 +11,14 @@ interface Props {
 
 export default function AmountAndValue(props: Props) {
   const amount = demagnify(props.amount.toString(), props.asset)
+  const isZero = amount === 0
+  const isBelowMinAmount = amount < MIN_AMOUNT
+  const displayAmount = isBelowMinAmount ? MIN_AMOUNT : amount
   return (
     <div className='flex flex-col gap-[0.5] text-xs'>
       <FormattedNumber
-        amount={amount < MIN_AMOUNT ? MIN_AMOUNT : amount}
-        smallerThanThreshold={amount < MIN_AMOUNT}
+        amount={isZero ? 0 : displayAmount}
+        smallerThanThreshold={!isZero && isBelowMinAmount}
         options={{ abbreviated: true, maxDecimals: MAX_AMOUNT_DECIMALS }}
         animate
       />
