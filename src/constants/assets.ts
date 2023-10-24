@@ -137,7 +137,7 @@ export const ASSETS: Asset[] = [
   },
   {
     symbol: 'USDC',
-    name: 'USDC',
+    name: 'Noble',
     id: 'USDC',
     denom:
       ENV.NETWORK === NETWORK.TESTNET
