@@ -3,7 +3,7 @@ import { ReactElement, ReactNode } from 'react'
 
 import { Tooltip } from 'components/Tooltip'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { REDUCE_MOTION_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/useLocalStorage'
 
 interface Props {
@@ -27,7 +27,10 @@ export const Gauge = ({
   icon,
   labelClassName,
 }: Props) => {
-  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
+  const [reduceMotion] = useLocalStorage<boolean>(
+    LocalStorageKeys.REDUCE_MOTION,
+    DEFAULT_SETTINGS.reduceMotion,
+  )
   const radius = 16
   const percentageValue = percentage > 100 ? 100 : percentage < 0 ? 0 : percentage
   const circlePercent = 100 - percentageValue

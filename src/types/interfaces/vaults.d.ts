@@ -33,6 +33,11 @@ interface VaultInfo {
 interface VaultConfig extends VaultMetaData, VaultInfo {}
 
 interface Vault extends VaultConfig {
+  hls?: {
+    maxLTV: number
+    maxLeverage: number
+    borrowDenom: string
+  }
   apy: number | null
   apr: number | null
 }

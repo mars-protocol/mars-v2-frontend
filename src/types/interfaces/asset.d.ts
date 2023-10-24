@@ -10,7 +10,7 @@ interface Asset {
     | 'stATOM'
     | 'AXL'
     | 'USDC.axl'
-    | 'USDC.n'
+    | 'USDC'
     | 'WBTC.axl'
     | 'WETH.axl'
     | 'OSMO-USDC.n'
@@ -29,7 +29,7 @@ interface Asset {
     | 'axlUSDC'
     | 'axlWBTC'
     | 'axlWETH'
-    | 'nUSDC'
+    | 'USDC'
     | 'OSMO-USDC.n'
     | 'USD'
     | 'gamm/pool/12'
@@ -50,6 +50,7 @@ interface Asset {
   isStable?: boolean
   isFavorite?: boolean
   isAutoLendEnabled?: boolean
+  isBorrowEnabled?: boolean
   pythPriceFeedId?: string
   forceFetchPrice?: boolean
   testnetDenom?: string
@@ -96,4 +97,22 @@ interface MarketTableData {
   marketLiquidityRate: number
   marketLiquidityAmount: BigNumber
   marketLiquidationThreshold: number
+}
+
+interface HLSStrategy extends HLSStrategyNoCap {
+  depositCap: DepositCap
+}
+
+interface HLSStrategyNoCap {
+  maxLTV: number
+  maxLeverage: number
+  apy: number | null
+  denoms: {
+    deposit: string
+    borrow: string
+  }
+}
+
+interface DepositedHLSStrategy extends HLSStrategy {
+  depositedAmount: BigNumber
 }

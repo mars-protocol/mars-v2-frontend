@@ -75,7 +75,7 @@ export default function AddVaultAssetsModalContent(props: Props) {
 
   return (
     <>
-      <div className='border-b border-white/5 bg-white/10 px-4 py-3'>
+      <div className='px-4 py-3 border-b border-white/5 bg-white/10'>
         <SearchBar
           value={searchString}
           placeholder={`Search for e.g. "ETH" or "Ethereum"`}
@@ -90,6 +90,7 @@ export default function AddVaultAssetsModalContent(props: Props) {
           </Text>
         </div>
         <AssetSelectTable
+          isBorrow={true}
           assets={poolAssets}
           onChangeSelected={onChangePoolDenoms}
           selectedDenoms={selectedPoolDenoms}
@@ -102,6 +103,7 @@ export default function AddVaultAssetsModalContent(props: Props) {
           </Text>
         </div>
         <AssetSelectTable
+          isBorrow={true}
           assets={stableAssets}
           onChangeSelected={onChangeOtherDenoms}
           selectedDenoms={selectedOtherDenoms}

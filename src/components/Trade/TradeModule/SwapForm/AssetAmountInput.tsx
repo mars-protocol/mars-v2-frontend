@@ -45,7 +45,7 @@ export default function AssetAmountInput(props: Props) {
     <div className={containerClassName}>
       <label>
         {label}
-        <div className='flex flex-1 flex-row py-3 border-[1px] border-white border-opacity-20 rounded bg-white bg-opacity-5 pl-3 pr-2 mt-2'>
+        <div className='flex flex-1 flex-row py-3 border-[1px] border-white/20 rounded bg-white bg-opacity-5 pl-3 pr-2 mt-2'>
           <NumberInput
             asset={asset}
             amount={amount}

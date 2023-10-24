@@ -61,9 +61,15 @@ export default function WalletConnectedButton() {
   }, [network, address])
 
   const onDisconnectWallet = () => {
-    if (!currentWallet) return
-    disconnectWallet(currentWallet)
-    useStore.setState({ client: undefined, address: undefined, accounts: null, balances: [] })
+    if (currentWallet) disconnectWallet(currentWallet)
+
+    useStore.setState({
+      client: undefined,
+      address: undefined,
+      accounts: null,
+      balances: [],
+      focusComponent: null,
+    })
 
     if (focusComponent) {
       useStore.setState({

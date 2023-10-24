@@ -87,7 +87,7 @@ export default function createBroadcastSlice(
       case 'withdraw':
         toast.content.push({
           coins: changes.deposits?.map((deposit) => deposit.toCoin()) ?? [],
-          text: target === 'wallet' ? 'Withdrew to Wallet' : 'Reclaimed from lends',
+          text: target === 'wallet' ? 'Withdrew to Wallet' : 'Unlent',
         })
         break
 

@@ -71,9 +71,11 @@ export const calculateAccountApr = (
   const depositValue = calculateAccountValue('deposits', account, prices)
   const lendsValue = calculateAccountValue('lends', account, prices)
   const vaultsValue = calculateAccountValue('vaults', account, prices)
+  const debtsValue = calculateAccountValue('debts', account, prices)
   const totalValue = depositValue.plus(lendsValue).plus(vaultsValue)
+  const totalNetValue = totalValue.minus(debtsValue)
 
-  if (totalValue.isZero()) return BN_ZERO
+  if (totalNetValue.isLessThanOrEqualTo(0)) return BN_ZERO
   const { vaults, lends, debts } = account
 
   let totalLendsInterestValue = BN_ZERO
@@ -114,7 +116,7 @@ export const calculateAccountApr = (
     .plus(totalVaultsInterestValue)
     .minus(totalDebtInterestValue)
 
-  return totalInterstValue.dividedBy(totalValue).times(100)
+  return totalInterstValue.dividedBy(totalNetValue).times(100)
 }
 
 export function calculateAccountLeverage(account: Account, prices: BNCoin[]) {

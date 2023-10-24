@@ -3,9 +3,9 @@ import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
-  Row,
   SortingState,
-  Table,
+  Row as TanstackRow,
+  Table as TanstackTable,
   useReactTable,
 } from '@tanstack/react-table'
 import classNames from 'classnames'
@@ -13,23 +13,23 @@ import React from 'react'
 
 import Card from 'components/Card'
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
+import Row from 'components/Table/Row'
 import Text from 'components/Text'
 
-interface Props<TData> {
+interface Props<T> {
   title: string
-  data: TData[]
-  columns: ColumnDef<TData>[]
-  sorting?: SortingState
-  rowRenderer: (row: Row<TData>, table: Table<TData>) => JSX.Element
+  columns: ColumnDef<T>[]
+  data: T[]
+  initialSorting: SortingState
+  renderExpanded?: (row: TanstackRow<T>, table: TanstackTable<T>) => JSX.Element
 }
 
-function AssetListTable<TData>(props: Props<TData>) {
-  const { title, data, columns } = props
-  const [sorting, setSorting] = React.useState<SortingState>(props.sorting ?? [])
+export default function Table<T>(props: Props<T>) {
+  const [sorting, setSorting] = React.useState<SortingState>(props.initialSorting)
 
   const table = useReactTable({
-    data,
-    columns,
+    data: props.data,
+    columns: props.columns,
     state: {
       sorting,
     },
@@ -38,14 +38,10 @@ function AssetListTable<TData>(props: Props<TData>) {
     getSortedRowModel: getSortedRowModel(),
   })
 
-  const _rowRenderer = (row: Row<TData>) => props.rowRenderer(row, table)
-
-  if (!data.length) return null
-
   return (
-    <Card className='mb-4 h-fit w-full bg-white/5' title={title}>
+    <Card className='w-full h-fit bg-white/5' title={props.title}>
       <table className='w-full'>
-        <thead className='border-b border-white border-opacity-10 bg-black/20'>
+        <thead className='bg-black/20'>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
@@ -56,21 +52,19 @@ function AssetListTable<TData>(props: Props<TData>) {
                     className={classNames(
                       'px-4 py-3',
                       header.column.getCanSort() && 'hover:cursor-pointer',
-                      header.id === 'symbol' ? 'text-left' : 'text-right',
-                      {
-                        'w-32': header.id === 'manage',
-                        'w-48': header.id === 'depositCap',
-                      },
+                      header.id === 'symbol' || header.id === 'name' ? 'text-left' : 'text-right',
                     )}
                   >
                     <div
                       className={classNames(
                         'flex',
-                        header.id === 'symbol' ? 'justify-start' : 'justify-end',
+                        header.id === 'symbol' || header.id === 'name'
+                          ? 'justify-start'
+                          : 'justify-end',
                         'align-center',
                       )}
                     >
-                      <span className='h-6 w-6 text-white'>
+                      <span className='w-6 h-6 text-white'>
                         {header.column.getCanSort()
                           ? {
                               asc: <SortAsc />,
@@ -93,10 +87,12 @@ function AssetListTable<TData>(props: Props<TData>) {
             </tr>
           ))}
         </thead>
-        <tbody>{table.getRowModel().rows.map(_rowRenderer)}</tbody>
+        <tbody>
+          {table.getRowModel().rows.map((row) => (
+            <Row key={row.id} row={row} table={table} renderExpanded={props.renderExpanded} />
+          ))}
+        </tbody>
       </table>
     </Card>
   )
 }
-
-export default AssetListTable

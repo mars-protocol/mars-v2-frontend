@@ -6,23 +6,23 @@ import Button from 'components/Button'
 import { AccountArrowDown, LockLocked, LockUnlocked, Plus } from 'components/Icons'
 import { Tooltip } from 'components/Tooltip'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { SLIPPAGE_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAccountId from 'hooks/useAccountId'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 import { VaultStatus } from 'types/enums/vault'
 
 interface Props {
-  row: Row<Vault | DepositedVault>
+  row: Row<DepositedVault>
   resetExpanded: (defaultState?: boolean | undefined) => void
 }
 
 export default function VaultExpanded(props: Props) {
-  const vault = props.row.original as DepositedVault
+  const vault = props.row.original
   const accountId = useAccountId()
   const [isConfirming, setIsConfirming] = useState(false)
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
-  const [slippage] = useLocalStorage<number>(SLIPPAGE_KEY, DEFAULT_SETTINGS.slippage)
+  const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
 
   function depositMoreHandler() {
     useStore.setState({
@@ -105,7 +105,7 @@ export default function VaultExpanded(props: Props) {
   return (
     <tr
       key={props.row.id}
-      className='hover:cursor-pointer bg-black/20 transition-colors'
+      className='transition-colors hover:cursor-pointer bg-black/20'
       onClick={(e) => {
         e.preventDefault()
         const isExpanded = props.row.getIsExpanded()
@@ -113,7 +113,7 @@ export default function VaultExpanded(props: Props) {
         !isExpanded && props.row.toggleExpanded()
       }}
     >
-      <td colSpan={!status ? 7 : 8}>
+      <td colSpan={props.row.getAllCells().length} className='p-0'>
         <div className='flex justify-end gap-3 p-4 align-center'>
           {status && <DepositMoreButton />}
           {status === VaultStatus.ACTIVE && <UnlockButton />}

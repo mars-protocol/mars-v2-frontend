@@ -14,6 +14,7 @@ const mockedDepositedVault: DepositedVault = {
   ...TESTNET_VAULTS_META_DATA[0],
   status: 'active',
   apy: 1,
+  apr: null,
   ltv: {
     max: 0.65,
     liq: 0.7,

@@ -6,7 +6,7 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import Loading from 'components/Loading'
 import Skeleton from 'components/Portfolio/Card/Skeleton'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { REDUCE_MOTION_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useAccount from 'hooks/useAccount'
 import useAccountId from 'hooks/useAccountId'
@@ -34,8 +34,12 @@ export default function PortfolioCard(props: Props) {
   const { data: prices } = usePrices()
   const currentAccountId = useAccountId()
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
-  const { allAssets: borrowAssets } = useBorrowMarketAssetsTableData()
-  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
+  const { data } = useBorrowMarketAssetsTableData(false)
+  const borrowAssets = useMemo(() => data?.allAssets || [], [data])
+  const [reduceMotion] = useLocalStorage<boolean>(
+    LocalStorageKeys.REDUCE_MOTION,
+    DEFAULT_SETTINGS.reduceMotion,
+  )
   const address = useStore((s) => s.address)
 
   const [deposits, lends, debts, vaults] = useMemo(() => {

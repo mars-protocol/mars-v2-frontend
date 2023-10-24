@@ -45,7 +45,6 @@ export default function Index(props: Props) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const address = useStore((s) => s.address)
-  const baseCurrency = useStore((s) => s.baseCurrency)
   const [sorting, setSorting] = useState<SortingState>([])
   const updatedAccount = useStore((s) => s.updatedAccount)
   const accountBalanceData = useAccountBalanceData({
@@ -65,6 +64,7 @@ export default function Index(props: Props) {
           return (
             <Text size='xs'>
               {row.original.symbol}
+              {row.original.type === 'borrowing' && <span className='ml-1 text-loss'>(debt)</span>}
               {row.original.type === 'lending' && <span className='ml-1 text-profit'>(lent)</span>}
               {row.original.type === 'vault' && <span className='ml-1 text-profit'>(farm)</span>}
             </Text>
@@ -186,7 +186,7 @@ export default function Index(props: Props) {
 
   return (
     <table className='w-full'>
-      <thead className='border-b border-white/5'>
+      <thead className='border-b border-white/10'>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
             {headerGroup.headers.map((header) => {

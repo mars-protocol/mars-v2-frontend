@@ -1,6 +1,5 @@
 import { render } from '@testing-library/react'
 
-import { TooltipType } from 'components/Tooltip'
 import TooltipContent from 'components/Tooltip/TooltipContent'
 
 describe('<Tooltip />', () => {

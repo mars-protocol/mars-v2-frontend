@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, useMemo } from 'react'
 
 import AccountBalancesTable from 'components/Account/AccountBalancesTable'
 import Card from 'components/Card'
@@ -15,7 +15,8 @@ interface Props {
 function Content(props: Props) {
   const { data: account } = useAccount(props.accountId, true)
 
-  const { allAssets: borrowAssets } = useBorrowMarketAssetsTableData()
+  const { data } = useBorrowMarketAssetsTableData(false)
+  const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
 
   if (!account || !borrowAssets.length || !lendingAssets.length) {

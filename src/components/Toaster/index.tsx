@@ -10,7 +10,7 @@ import Text from 'components/Text'
 import { TextLink } from 'components/TextLink'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { EXPLORER_NAME, EXPLORER_TX_URL } from 'constants/explorer'
-import { REDUCE_MOTION_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useTransactionStore from 'hooks/useTransactionStore'
 import useStore from 'store'
@@ -52,7 +52,10 @@ export function generateToastContent(content: ToastSuccess['content']): ReactNod
 }
 
 export default function Toaster() {
-  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
+  const [reduceMotion] = useLocalStorage<boolean>(
+    LocalStorageKeys.REDUCE_MOTION,
+    DEFAULT_SETTINGS.reduceMotion,
+  )
   const toast = useStore((s) => s.toast)
   const { addTransaction } = useTransactionStore()
 
@@ -209,7 +212,7 @@ export default function Toaster() {
       closeOnClick={false}
       transition={reduceMotion ? undefined : Slide}
       bodyClassName='p-0 m-0 -z-1'
-      className='mt-[73px]'
+      className='mt-[81px] p-0'
     />
   )
 }

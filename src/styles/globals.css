@@ -57,3 +57,7 @@
 .Toastify__toast--error {
   background-color: #fda29b33 !important;
 }
+
+table tr:last-child td {
+  border-bottom-width: 0;
+}

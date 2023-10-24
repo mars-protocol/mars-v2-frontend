@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { Heart } from 'components/Icons'
 import { Tooltip } from 'components/Tooltip'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { REDUCE_MOTION_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useHealthColorAndLabel from 'hooks/useHealthColorAndLabel'
 import useLocalStorage from 'hooks/useLocalStorage'
 import { computeHealthGaugePercentage } from 'utils/accounts'
@@ -25,7 +25,10 @@ const ROTATION = {
 export const HealthGauge = ({ diameter = 40, health = 0, updatedHealth = 0 }: Props) => {
   const [color, label] = useHealthColorAndLabel(health, 'text')
   const [updatedColor, updatedLabel] = useHealthColorAndLabel(updatedHealth ?? 0, 'text')
-  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
+  const [reduceMotion] = useLocalStorage<boolean>(
+    LocalStorageKeys.REDUCE_MOTION,
+    DEFAULT_SETTINGS.reduceMotion,
+  )
   const percentage = useMemo(() => computeHealthGaugePercentage(health), [health])
   const updatedPercentage = useMemo(
     () => computeHealthGaugePercentage(updatedHealth),
@@ -77,6 +80,140 @@ export const HealthGauge = ({ diameter = 40, health = 0, updatedHealth = 0 }: Pr
               />
             </g>
           </mask>
+          <mask id='backgroundMask'>
+            <g>
+              <path
+                fill='white'
+                d='M137.1,538.3c-5.8-6.5-11.3-13.3-16.5-20.4l-57.8,31.9c7.4,10.5,15.3,20.7,23.8,30.3L137.1,538.3z'
+              />
+              <path
+                fill='white'
+                d='M179.4,577.1c-8.1-6-15.8-12.4-23.1-19.2L105.5,600c10.3,10,21.3,19.5,32.9,28.3L179.4,577.1z'
+              />
+              <path
+                fill='white'
+                d='M79.5,437.5c-5.6-17.2-24.1-26.6-41.3-21.1c-7.9,2.6-14.3,8-18.2,14.8c-4.5,7.7-5.8,17.2-2.8,26.5c0.3,1,0.6,1.9,1,2.9
+		l62.7-19.4C80.3,440,79.9,438.7,79.5,437.5z'
+              />
+              <path
+                fill='white'
+                d='M105.6,495.1c-5.4-9.2-10.4-18.7-14.8-28.5l-63,19.5c5.9,14.1,12.8,27.7,20.4,40.7L105.6,495.1z'
+              />
+              <path
+                fill='white'
+                d='M223.5,604.3c-7.3-3.6-14.5-7.6-21.5-11.9L160.8,644c10.4,6.7,21.1,12.8,32,18.3L223.5,604.3z'
+              />
+              <path
+                fill='white'
+                d='M275.6,624c-9.2-2.5-18.2-5.4-27.1-8.8l-30.8,58.4c13,5.3,26.2,9.8,39.8,13.5L275.6,624z'
+              />
+              <path
+                fill='white'
+                d='M352.5,633.9l-6.1,65.4c1.1,0,2.1,0,3.2,0c18.1,0,32.8-14.7,32.8-32.8C382.4,649.4,369.3,635.4,352.5,633.9z'
+              />
+              <path
+                fill='white'
+                d='M325.3,632.7c-7.7-0.6-15.4-1.6-22.9-2.9l-18.3,63.4c11.6,2.2,23.3,3.8,35.1,4.8L325.3,632.7z'
+              />
+              <path
+                fill='white'
+                d='M519.5,577.5c-5.8,4.3-11.8,8.4-17.9,12.3l31.7,57.4c9.7-6,19.1-12.4,28.1-19.3L519.5,577.5z'
+              />
+              <path
+                fill='white'
+                d='M559.1,541.7c-5.9,6.5-12.1,12.6-18.5,18.4l41.9,50.5c9.8-8.8,19.1-18.1,27.9-28L559.1,541.7z'
+              />
+              <path
+                fill='white'
+                d='M477.9,603.2c-7.8,3.9-15.9,7.5-24.1,10.8l19.4,62.7c12.5-4.7,24.7-10.1,36.4-16.1L477.9,603.2z'
+              />
+              <path
+                fill='white'
+                d='M589,502.6c-3,4.7-6.2,9.4-9.5,14c-1,1.4-2,2.7-3,4.1l51.2,40.9c1.6-2.1,3.3-4.3,4.9-6.5c5.2-7.1,10-14.4,14.6-21.7
+		L589,502.6z'
+              />
+              <path
+                fill='white'
+                d='M666.6,316.8c-18.1,0-32.8,14.7-32.8,32.8c0,10.1-0.5,20-1.6,29.9l65.3,6.1c1.2-11.9,1.8-23.9,1.8-36
+		C699.4,331.4,684.7,316.7,666.6,316.8z'
+              />
+              <path
+                fill='white'
+                d='M428.4,624.4c-3.8,2.7-6.9,6.2-9.2,10.2c-4.5,7.8-5.7,17.4-2.8,26.4c4.4,13.6,16.8,22.3,30.3,22.6L428.4,624.4z'
+              />
+              <path
+                fill='white'
+                d='M613.8,454.5c-3.3,8.3-7,16.5-11.1,24.5l58,30.6c6.2-12,11.7-24.3,16.4-36.9L613.8,454.5z'
+              />
+              <path
+                fill='white'
+                d='M628.1,406.5c-1.5,7.5-3.3,14.9-5.5,22.2l63.1,18.2c3.3-11.3,5.9-22.7,8-34.3L628.1,406.5z'
+              />
+              <path
+                fill='white'
+                d='M458.8,87.2c10.3,4.3,20.3,9.2,30.1,14.7l30.6-58c-13.7-7.6-27.9-14.3-42.4-20L458.8,87.2z'
+              />
+              <path
+                fill='white'
+                d='M512,116.4c7.5,5.3,14.8,10.9,21.8,16.8l40.9-51.2c-10.1-8.5-20.8-16.5-31.9-23.9L512,116.4z'
+              />
+              <path
+                fill='white'
+                d='M343.4,65.5c11.6-0.3,23.1,0.2,34.6,1.4L384,1.6c-15.9-1.6-31.9-2.1-48-1.4L343.4,65.5z'
+              />
+              <path
+                fill='white'
+                d='M574.3,175.6l50.5-41.9c-9.2-11.8-19.2-22.9-29.9-33.4l-41.2,51.6C561,159.4,567.9,167.3,574.3,175.6z'
+              />
+              <path
+                fill='white'
+                d='M32.7,382.2c16.6,0,30.2-12.2,32.5-28.1L0,348c0,0.5,0,0.9,0,1.4C0,367.6,14.7,382.2,32.7,382.2z'
+              />
+              <path
+                fill='white'
+                d='M590,198c4.6,7.3,8.8,14.7,12.8,22.4l57.4-31.7c-5.9-11.3-12.3-22.3-19.4-32.9L590,198z'
+              />
+              <path
+                fill='white'
+                d='M619.8,261.7c5.6,17.2,24.1,26.6,41.3,21.1c17.2-5.6,26.6-24.1,21.1-41.3c-3.1-9.5-6.6-18.9-10.5-28L614,245.4
+		C616.1,250.8,618.1,256.2,619.8,261.7z'
+              />
+              <path
+                fill='white'
+                d='M404.9,70.8c9.5,1.9,18.9,4.3,28.1,7.1L451.2,15C438,11,424.6,7.8,411,5.3L404.9,70.8z'
+              />
+              <path
+                fill='white'
+                d='M286.5,72.5c6.2-1.4,12.4-2.6,18.7-3.6c3.6-0.6,7.3-1.1,10.9-1.5l-7.3-65.1c-4.6,0.5-9.2,1.2-13.8,1.9
+		c-9.4,1.5-18.7,3.4-27.8,5.6L286.5,72.5z'
+              />
+              <path
+                fill='white'
+                d='M66.5,326.8c0.8-9.8,2.1-19.4,3.8-29L7.1,279.6c-2.8,13.6-4.8,27.3-6,41.1L66.5,326.8z'
+              />
+              <path
+                fill='white'
+                d='M132.5,166.2c0.4-0.4,0.7-0.9,1.1-1.3c7.4-8.6,15.2-16.7,23.5-24.3l-41.8-50.4c-11.1,10-21.6,20.8-31.4,32.2
+		c-0.8,1-1.6,2-2.5,3L132.5,166.2z'
+              />
+              <path
+                fill='white'
+                d='M100.1,213.6c4.8-8.8,10.1-17.4,15.8-25.7L64.8,147c-6.4,9-12.3,18.2-17.8,27.7c-1.6,2.8-3.1,5.6-4.7,8.4L100.1,213.6z'
+              />
+              <path
+                fill='white'
+                d='M195.5,35.8l31.7,57.4c10.7-5.1,21.8-9.6,33.1-13.3l-19.3-62.6C225.4,22.4,210.2,28.6,195.5,35.8z'
+              />
+              <path
+                fill='white'
+                d='M76.5,271.2c3.2-11.2,7.1-22.3,11.7-33l-58-30.6c-6.6,14.8-12.1,30-16.6,45.5L76.5,271.2z'
+              />
+              <path
+                fill='white'
+                d='M178,123.1c8.1-6.1,16.5-11.8,25.2-17.1l-31.7-57.3c-12.2,7.3-24.1,15.3-35.4,24L178,123.1z'
+              />
+            </g>
+          </mask>
           <circle
             r={RADIUS}
             cx={RADIUS}
@@ -97,7 +234,7 @@ export const HealthGauge = ({ diameter = 40, health = 0, updatedHealth = 0 }: Pr
             strokeDashoffset={isUpdated && isIncrease ? updatedPercentage : percentage}
             strokeLinecap='round'
             style={ROTATION}
-            mask='url(#mask)'
+            mask={isUpdated ? 'url(#backgroundMask)' : 'url(#mask)'}
             className={classNames(
               backgroundColor,
               'stroke-current',

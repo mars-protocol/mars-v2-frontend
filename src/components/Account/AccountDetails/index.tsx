@@ -14,7 +14,7 @@ import { HealthGauge } from 'components/HealthGauge'
 import { ThreeDots } from 'components/Icons'
 import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { REDUCE_MOTION_KEY } from 'constants/localStore'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAccountId from 'hooks/useAccountId'
 import useAccountIds from 'hooks/useAccountIds'
@@ -56,7 +56,10 @@ interface Props {
 
 function AccountDetails(props: Props) {
   const { account } = props
-  const [reduceMotion] = useLocalStorage<boolean>(REDUCE_MOTION_KEY, DEFAULT_SETTINGS.reduceMotion)
+  const [reduceMotion] = useLocalStorage<boolean>(
+    LocalStorageKeys.REDUCE_MOTION,
+    DEFAULT_SETTINGS.reduceMotion,
+  )
   const updatedAccount = useStore((s) => s.updatedAccount)
   const accountDetailsExpanded = useStore((s) => s.accountDetailsExpanded)
   const { health } = useHealthComputer(account)
@@ -76,14 +79,12 @@ function AccountDetails(props: Props) {
     return updatedLeverage
   }, [updatedAccount, prices, leverage])
 
-  const { availableAssets: borrowAvailableAssets, accountBorrowedAssets } =
-    useBorrowMarketAssetsTableData()
+  const { data } = useBorrowMarketAssetsTableData(false)
+  const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
+
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
     useLendingMarketAssetsTableData()
-  const borrowAssetsData = useMemo(
-    () => [...borrowAvailableAssets, ...accountBorrowedAssets],
-    [borrowAvailableAssets, accountBorrowedAssets],
-  )
+
   const lendingAssetsData = useMemo(
     () => [...lendingAvailableAssets, ...accountLentAssets],
     [lendingAvailableAssets, accountLentAssets],

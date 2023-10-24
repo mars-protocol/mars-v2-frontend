@@ -1,53 +1,50 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback } from 'react'
 
 import { SwapIcon } from 'components/Icons'
 import Text from 'components/Text'
 import AssetButton from 'components/Trade/TradeModule/AssetSelector/AssetButton'
 import AssetOverlay from 'components/Trade/TradeModule/AssetSelector/AssetOverlay'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 
 interface Props {
   buyAsset: Asset
   sellAsset: Asset
-  onChangeBuyAsset: (asset: Asset) => void
-  onChangeSellAsset: (asset: Asset) => void
 }
 
 export default function AssetSelector(props: Props) {
-  const { buyAsset, sellAsset, onChangeBuyAsset, onChangeSellAsset } = props
+  const [tradingPair, setTradingPair] = useLocalStorage<Settings['tradingPair']>(
+    LocalStorageKeys.TRADING_PAIR,
+    DEFAULT_SETTINGS.tradingPair,
+  )
+  const { buyAsset, sellAsset } = props
   const assetOverlayState = useStore((s) => s.assetOverlayState)
 
   const handleSwapAssets = useCallback(() => {
-    onChangeBuyAsset(sellAsset)
-    onChangeSellAsset(buyAsset)
-  }, [onChangeBuyAsset, onChangeSellAsset, sellAsset, buyAsset])
+    setTradingPair({ buy: sellAsset.denom, sell: buyAsset.denom })
+  }, [setTradingPair, sellAsset, buyAsset])
 
   const handleChangeBuyAsset = useCallback(
     (asset: Asset) => {
-      onChangeBuyAsset(asset)
+      setTradingPair({ buy: asset.denom, sell: sellAsset.denom })
       useStore.setState({ assetOverlayState: 'sell' })
     },
-    [onChangeBuyAsset],
+    [setTradingPair, sellAsset],
   )
 
   const handleChangeSellAsset = useCallback(
     (asset: Asset) => {
-      onChangeSellAsset(asset)
+      setTradingPair({ buy: buyAsset.denom, sell: asset.denom })
       useStore.setState({ assetOverlayState: 'closed' })
     },
-    [onChangeSellAsset],
+    [setTradingPair, buyAsset],
   )
 
   const handleChangeState = useCallback((state: OverlayState) => {
     useStore.setState({ assetOverlayState: state })
   }, [])
-
-  useEffect(() => {
-    if (assetOverlayState === 'closed') {
-      onChangeBuyAsset(buyAsset)
-      onChangeSellAsset(sellAsset)
-    }
-  }, [onChangeBuyAsset, onChangeSellAsset, assetOverlayState, buyAsset, sellAsset])
 
   return (
     <div className='grid-rows-auto grid grid-cols-[1fr_min-content_1fr] gap-y-2 bg-white/5 p-3'>

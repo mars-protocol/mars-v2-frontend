@@ -11,11 +11,10 @@ export default function Wallet() {
   const { disconnectWallet } = useShuttle()
   const currentWallet = useCurrentWallet()
   const address = useStore((s) => s.address)
-  const focusComponent = useStore((s) => s.focusComponent)
 
   useEffect(() => {
     if (!currentWallet) return
-    if (currentWallet.account.address === address || focusComponent) return
+    if (currentWallet.account.address === address) return
     useStore.setState({
       address: undefined,
       client: undefined,
@@ -33,7 +32,7 @@ export default function Wallet() {
         },
       },
     })
-  }, [currentWallet, address, focusComponent, disconnectWallet])
+  }, [currentWallet, address, disconnectWallet])
 
   return address ? <WalletConnectedButton /> : <WalletConnectButton />
 }
