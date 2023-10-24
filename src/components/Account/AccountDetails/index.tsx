@@ -112,8 +112,8 @@ function AccountDetails(props: Props) {
     <div
       data-testid='account-details'
       className={classNames(
-        accountDetailsExpanded ? 'right-6.5' : '-right-80',
-        'w-100 flex items-start gap-4 absolute top-6',
+        accountDetailsExpanded ? 'right-4' : '-right-90',
+        'w-110 flex items-start gap-4 absolute top-6',
         !reduceMotion && 'transition-all duration-300',
       )}
     >
@@ -173,7 +173,7 @@ function AccountDetails(props: Props) {
         {glowElement(!reduceMotion)}
       </div>
       <div className='flex w-90 backdrop-blur-sticky'>
-        <Card className='w-full bg-white/5' title={<AccountDetailsHeader />}>
+        <Card className='w-90 bg-white/5' title={<AccountDetailsHeader />}>
           <AccountComposition account={account} />
           <Text className='w-full px-4 py-2 text-white bg-white/10'>Balances</Text>
           <AccountBalancesTable

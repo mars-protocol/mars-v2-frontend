@@ -61,7 +61,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           'lg:mt-[73px]',
           'min-h-screen gap-6 px-4 py-6 w-full relative',
           'flex',
-          isFullWidth && accountId && (accountDetailsExpanded ? 'pr-110.5' : 'pr-24'),
+          isFullWidth && accountId && (accountDetailsExpanded ? 'pr-118' : 'pr-24'),
           !reduceMotion && isFullWidth && 'transition-all duration-300',
           'justify-center',
           focusComponent && 'items-center',
