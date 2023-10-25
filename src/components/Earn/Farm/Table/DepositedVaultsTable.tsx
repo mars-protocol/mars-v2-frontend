@@ -28,6 +28,7 @@ export default function DepositedVaultsTable(props: Props) {
       data={props.data}
       initialSorting={[{ id: 'name', desc: true }]}
       renderExpanded={renderExpanded}
+      isCard
     />
   )
 }

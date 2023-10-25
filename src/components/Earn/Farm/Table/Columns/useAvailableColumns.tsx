@@ -10,8 +10,7 @@ import DepositCap, {
 import MaxLTV, { LTV_MAX_META } from 'components/Earn/Farm/Table/Columns/MaxLTV'
 import Name, { NAME_META } from 'components/Earn/Farm/Table/Columns/Name'
 import TVL, { TVL_META } from 'components/Earn/Farm/Table/Columns/TVL'
-
-import { DETAILS_META } from './Details'
+import { DETAILS_META } from 'components/Earn/Farm/Table/Columns/Details'
 
 interface Props {
   isLoading: boolean

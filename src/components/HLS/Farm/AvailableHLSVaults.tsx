@@ -1,14 +1,13 @@
 import { Suspense, useMemo } from 'react'
 
 import { NAME_META } from 'components/Earn/Farm/Table/Columns/Name'
+import useAvailableColumns from 'components/Earn/Farm/Table/Columns/useAvailableColumns'
 import Table from 'components/Table'
 import { ENV } from 'constants/env'
 import { BN_ZERO } from 'constants/math'
 import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import useVaults from 'hooks/useVaults'
 import { NETWORK } from 'types/enums/network'
-
-import useAvailableColumns from './Table/Columns/useAvailableColumns'
 
 const title = 'Available HLS Vaults'
 
@@ -23,6 +22,7 @@ function Content() {
       columns={columns}
       data={hlsVaults}
       initialSorting={[{ id: NAME_META.id, desc: true }]}
+      isCard
     />
   )
 }
@@ -59,6 +59,7 @@ function Fallback() {
       columns={columns}
       data={mockVaults}
       initialSorting={[{ id: NAME_META.id, desc: true }]}
+      isCard
     />
   )
 }

@@ -7,6 +7,12 @@ interface Props<T> {
   renderExpanded?: (row: TanstackRow<T>, table: TanstackTable<T>) => JSX.Element
   rowClassName?: string
   rowClickHandler?: () => void
+  spacingClassName?: string
+  isBalancesTable?: boolean
+}
+
+function getBorderColor(row: AccountBalanceRow) {
+  return row.type === 'borrowing' ? 'border-loss' : 'border-profit'
 }
 
 export default function Row<T>(props: Props<T>) {
@@ -27,8 +33,20 @@ export default function Row<T>(props: Props<T>) {
         }}
       >
         {props.row.getVisibleCells().map((cell) => {
+          const isSymbolOrName = cell.column.id === 'symbol' || cell.column.id === 'name'
+          const borderClasses =
+            props.isBalancesTable && isSymbolOrName
+              ? classNames('border-l', getBorderColor(cell.row.original as AccountBalanceRow))
+              : ''
           return (
-            <td key={cell.id} className={'p-4 text-right'}>
+            <td
+              key={cell.id}
+              className={classNames(
+                isSymbolOrName ? 'text-left' : 'text-right',
+                props.spacingClassName ?? 'p-4',
+                borderClasses,
+              )}
+            >
               {flexRender(cell.column.columnDef.cell, cell.getContext())}
             </td>
           )
