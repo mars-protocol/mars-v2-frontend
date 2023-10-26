@@ -180,6 +180,7 @@ function AccountDetails(props: Props) {
             account={account}
             borrowingData={borrowAssetsData}
             lendingData={lendingAssetsData}
+            hideCard
           />
         </Card>
       </div>

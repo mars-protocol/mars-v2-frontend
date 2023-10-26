@@ -29,6 +29,7 @@ function Content(props: Props) {
         account={account}
         borrowingData={borrowAssets}
         lendingData={lendingAssets}
+        hideCard
       />
     </Skeleton>
   )
