@@ -5,6 +5,7 @@ import AccountCreateFirst from 'components/Account/AccountCreateFirst'
 import { CircularProgress } from 'components/CircularProgress'
 import FullOverlayContent from 'components/FullOverlayContent'
 import WalletBridges from 'components/Wallet/WalletBridges'
+import useAccountId from 'hooks/useAccountId'
 import useAccountIds from 'hooks/useAccountIds'
 import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
@@ -28,6 +29,7 @@ function FetchLoading() {
 function Content() {
   const address = useStore((s) => s.address)
   const { address: urlAddress } = useParams()
+  const urlAccountId = useAccountId()
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { data: accountIds, isLoading: isLoadingAccounts } = useAccountIds(address || '')
@@ -52,7 +54,7 @@ function Content() {
       accountIds.length !== 0 &&
       BN(baseBalance).isGreaterThanOrEqualTo(defaultFee.amount[0].amount)
     ) {
-      navigate(getRoute(page, address, accountIds[0]))
+      navigate(getRoute(page, address, urlAccountId ?? accountIds[0]))
       useStore.setState({ balances: walletBalances, focusComponent: null })
     }
   }, [accountIds, baseBalance, navigate, pathname, address, walletBalances, urlAddress])
