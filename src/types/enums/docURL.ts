@@ -1,6 +1,7 @@
 export enum DocURL {
   ADVANCED_TRADING_URL = 'https://docs.marsprotocol.io/docs/learn/mars-v2/trade/margin',
   BORROW_LENDING_URL = 'https://docs.marsprotocol.io/docs/learn/mars-v2/borrow',
+  CHANGE_LOG_URL = 'https://docs.marsprotocol.io/docs/overview/changelog',
   COOKIE_POLICY_URL = 'https://docs.marsprotocol.io/docs/overview/legal/cookie-policy',
   DOCS_URL = 'https://docs.marsprotocol.io/',
   FARM_INTRO_URL = 'https://docs.marsprotocol.io/docs/learn/tutorials/farming/farming-intro',
