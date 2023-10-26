@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 
 import AccountBalancesTable from 'components/Account/AccountBalancesTable'
-import Card from 'components/Card'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
@@ -19,13 +18,11 @@ export default function AccountDetailsCard() {
 
   if (account)
     return (
-      <Card className='h-fit' title='Balances'>
-        <AccountBalancesTable
-          account={account}
-          borrowingData={borrowAssetsData}
-          lendingData={lendingAssetsData}
-          tableBodyClassName='gradient-card-content'
-        />
-      </Card>
+      <AccountBalancesTable
+        account={account}
+        borrowingData={borrowAssetsData}
+        lendingData={lendingAssetsData}
+        tableBodyClassName='gradient-card-content'
+      />
     )
 }
