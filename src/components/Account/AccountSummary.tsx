@@ -130,7 +130,7 @@ export default function AccountSummary(props: Props) {
                   account={props.account}
                   borrowingData={borrowAssetsData}
                   lendingData={lendingAssetsData}
-                  isCard={false}
+                  hideCard
                 />
               ) : null,
             isOpen: accountSummaryTabs[1],

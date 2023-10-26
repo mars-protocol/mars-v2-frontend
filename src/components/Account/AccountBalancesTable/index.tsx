@@ -16,12 +16,12 @@ interface Props {
   account: Account
   lendingData: LendingMarketTableData[]
   borrowingData: BorrowMarketTableData[]
-  isCard: boolean
+  hideCard?: boolean
   tableBodyClassName?: string
 }
 
 export default function AccountBalancesTable(props: Props) {
-  const { account, lendingData, borrowingData, tableBodyClassName, isCard } = props
+  const { account, lendingData, borrowingData, tableBodyClassName, hideCard } = props
   const currentAccount = useCurrentAccount()
   const navigate = useNavigate()
   const { pathname } = useLocation()
@@ -39,7 +39,7 @@ export default function AccountBalancesTable(props: Props) {
   if (accountBalanceData.length === 0)
     return (
       <ConditionalWrapper
-        condition={isCard}
+        condition={!hideCard}
         wrapper={(children) => (
           <Card className='w-full' title='Balances'>
             {children}
@@ -78,7 +78,7 @@ export default function AccountBalancesTable(props: Props) {
       tableBodyClassName={classNames(tableBodyClassName, 'text-white/60')}
       initialSorting={[]}
       spacingClassName='p-2'
-      isCard={isCard}
+      hideCard={hideCard}
     />
   )
 }

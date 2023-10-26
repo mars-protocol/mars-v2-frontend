@@ -22,7 +22,6 @@ function Content() {
       columns={columns}
       data={hlsVaults}
       initialSorting={[{ id: NAME_META.id, desc: true }]}
-      isCard
     />
   )
 }
@@ -59,7 +58,6 @@ function Fallback() {
       columns={columns}
       data={mockVaults}
       initialSorting={[{ id: NAME_META.id, desc: true }]}
-      isCard
     />
   )
 }

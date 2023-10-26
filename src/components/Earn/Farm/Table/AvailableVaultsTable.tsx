@@ -17,7 +17,6 @@ export default function AvailableVaultsTable(props: Props) {
       columns={columns}
       data={props.data}
       initialSorting={[{ id: 'name', desc: true }]}
-      isCard
     />
   )
 }

@@ -37,7 +37,6 @@ export default function DepositedBorrowingsTable(props: Props) {
       data={props.data}
       initialSorting={[{ id: NAME_META.id, desc: false }]}
       renderExpanded={renderExpanded}
-      isCard
     />
   )
 }

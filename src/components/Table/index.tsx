@@ -26,7 +26,7 @@ interface Props<T> {
   tableBodyClassName?: string
   spacingClassName?: string
   isBalancesTable?: boolean
-  isCard: boolean
+  hideCard?: boolean
 }
 
 export default function Table<T>(props: Props<T>) {
@@ -45,7 +45,7 @@ export default function Table<T>(props: Props<T>) {
 
   return (
     <ConditionalWrapper
-      condition={props.isCard}
+      condition={!props.hideCard}
       wrapper={(children) => (
         <Card
           className={classNames('w-full', !props.isBalancesTable && 'h-fit bg-white/5')}

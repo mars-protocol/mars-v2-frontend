@@ -41,7 +41,6 @@ export default function AvailableBorrowingsTable(props: Props) {
       data={props.data}
       initialSorting={[{ id: NAME_META.id, desc: false }]}
       renderExpanded={renderExpanded}
-      isCard
     />
   )
 }
