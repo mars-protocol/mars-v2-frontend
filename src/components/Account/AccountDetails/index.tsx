@@ -5,12 +5,12 @@ import AccountBalancesTable from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
 import AccountDetailsLeverage from 'components/Account/AccountDetails/AccountDetailsLeverage'
 import Skeleton from 'components/Account/AccountDetails/Skeleton'
+import { HealthGauge } from 'components/Account/HealthGauge'
 import EscButton from 'components/Button/EscButton'
 import { glowElement } from 'components/Button/utils'
 import Card from 'components/Card'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
-import { HealthGauge } from 'components/HealthGauge'
 import { ThreeDots } from 'components/Icons'
 import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
@@ -62,8 +62,10 @@ function AccountDetails(props: Props) {
   )
   const updatedAccount = useStore((s) => s.updatedAccount)
   const accountDetailsExpanded = useStore((s) => s.accountDetailsExpanded)
-  const { health } = useHealthComputer(account)
-  const { health: updatedHealth } = useHealthComputer(updatedAccount || account)
+  const { health, healthFactor } = useHealthComputer(account)
+  const { health: updatedHealth, healthFactor: updatedHealthFactor } = useHealthComputer(
+    updatedAccount || account,
+  )
   const { data: prices } = usePrices()
   const accountBalanceValue = useMemo(
     () => calculateAccountBalanceValue(updatedAccount ?? account, prices),
@@ -128,7 +130,12 @@ function AccountDetails(props: Props) {
         onClick={() => useStore.setState({ accountDetailsExpanded: !accountDetailsExpanded })}
       >
         <div className='flex flex-wrap justify-center w-full py-4'>
-          <HealthGauge health={health} updatedHealth={updatedHealth} />
+          <HealthGauge
+            health={health}
+            updatedHealth={updatedHealth}
+            healthFactor={healthFactor}
+            updatedHealthFactor={updatedHealthFactor}
+          />
           <Text size='2xs' className='mb-0.5 mt-1 w-full text-center text-white/50'>
             Health
           </Text>

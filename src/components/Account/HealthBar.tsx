@@ -1,16 +1,19 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
+import HealthTooltip from 'components/Account/HealthTooltip'
 import { Tooltip } from 'components/Tooltip'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useHealthColorAndLabel from 'hooks/useHealthColorAndLabel'
+import useHealthColor from 'hooks/useHealthColor'
 import useLocalStorage from 'hooks/useLocalStorage'
 import { getHealthIndicatorColors } from 'utils/healthIndicator'
 
 interface Props {
   health: number
+  healthFactor: number
   updatedHealth?: number
+  updatedHealthFactor?: number
   hasLabel?: boolean
   className?: string
 }
@@ -28,8 +31,13 @@ function calculateHealth(health: number): number {
   return ((thirdBarEnd - thirdBarStart) / 70) * (health - 30) + thirdBarStart
 }
 
-export default function HealthBar(props: Props) {
-  const { health, updatedHealth } = props
+export default function HealthBar({
+  health = 0,
+  updatedHealth = 0,
+  healthFactor = 0,
+  updatedHealthFactor = 0,
+  className,
+}: Props) {
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
@@ -38,8 +46,8 @@ export default function HealthBar(props: Props) {
   const updatedWidth = calculateHealth(updatedHealth ?? 0)
   const isUpdated = updatedWidth > 0 && updatedWidth !== width
   const isIncrease = isUpdated && updatedWidth > width
-  const [color, label] = useHealthColorAndLabel(health, 'fill')
-  const [updatedColor, updatedLabel] = useHealthColorAndLabel(updatedHealth ?? 0, 'fill')
+  const color = useHealthColor(health, 'fill')
+  const updatedColor = useHealthColor(updatedHealth ?? 0, 'fill')
   const [backgroundColor, foreGroundColor] = useMemo(
     () => getHealthIndicatorColors(color, updatedColor, 'fill', isUpdated, isIncrease),
     [color, updatedColor, isUpdated, isIncrease],
@@ -47,11 +55,16 @@ export default function HealthBar(props: Props) {
 
   return (
     <Tooltip
-      content={isUpdated ? updatedLabel : label}
+      content={
+        <HealthTooltip
+          health={isUpdated ? updatedHealth : health}
+          healthFactor={isUpdated ? updatedHealthFactor : healthFactor}
+        />
+      }
       type='info'
       className='flex items-center w-full'
     >
-      <div className={classNames('flex w-full', props.className)}>
+      <div className={classNames('flex w-full', className)}>
         <svg version='1.1' xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' viewBox='0 0 184 4'>
           <mask id='healthBarMask'>
             <path fill='#FFFFFF' d='M0,2c0-1.1,0.9-2,2-2h41.6v4H2C0.9,4,0,3.1,0,2z' />

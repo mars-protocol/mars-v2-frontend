@@ -9,6 +9,7 @@ import TitleAndSubCell from 'components/TitleAndSubCell'
 interface Props {
   stats: { title: React.ReactNode; sub: string }[]
   health: number
+  healthFactor: number
   accountId: string
   isCurrent?: boolean
 }
@@ -29,7 +30,7 @@ export default function Skeleton(props: Props) {
       </div>
       <div className='flex gap-1 mt-6'>
         <Heart width={20} />
-        <HealthBar health={props.health} />
+        <HealthBar health={props.health} healthFactor={props.healthFactor} />
       </div>
     </Card>
   )

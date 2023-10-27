@@ -1,11 +1,12 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
-import { Heart } from 'components/Icons'
+import HealthTooltip from 'components/Account/HealthTooltip'
+import { ExclamationMarkCircled, Heart } from 'components/Icons'
 import { Tooltip } from 'components/Tooltip'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useHealthColorAndLabel from 'hooks/useHealthColorAndLabel'
+import useHealthColorAndLabel from 'hooks/useHealthColor'
 import useLocalStorage from 'hooks/useLocalStorage'
 import { computeHealthGaugePercentage } from 'utils/accounts'
 import { getHealthIndicatorColors } from 'utils/healthIndicator'
@@ -13,6 +14,8 @@ import { getHealthIndicatorColors } from 'utils/healthIndicator'
 interface Props {
   diameter?: number
   health: number
+  healthFactor: number
+  updatedHealthFactor?: number
   updatedHealth?: number
 }
 
@@ -22,9 +25,15 @@ const ROTATION = {
   transformOrigin: 'center',
 }
 
-export const HealthGauge = ({ diameter = 40, health = 0, updatedHealth = 0 }: Props) => {
-  const [color, label] = useHealthColorAndLabel(health, 'text')
-  const [updatedColor, updatedLabel] = useHealthColorAndLabel(updatedHealth ?? 0, 'text')
+export const HealthGauge = ({
+  diameter = 40,
+  health = 0,
+  updatedHealth = 0,
+  healthFactor = 0,
+  updatedHealthFactor = 0,
+}: Props) => {
+  const color = useHealthColorAndLabel(health, 'text')
+  const updatedColor = useHealthColorAndLabel(updatedHealth ?? 0, 'text')
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
@@ -34,24 +43,46 @@ export const HealthGauge = ({ diameter = 40, health = 0, updatedHealth = 0 }: Pr
     () => computeHealthGaugePercentage(updatedHealth),
     [updatedHealth],
   )
-  const isUpdated = updatedHealth !== 0 && updatedPercentage !== percentage
+  const isUpdated = updatedHealthFactor !== 0 && updatedPercentage !== percentage
   const isIncrease = isUpdated && updatedPercentage < percentage
   const [backgroundColor, foreGroundColor] = useMemo(
     () => getHealthIndicatorColors(color, updatedColor, 'text', isUpdated, isIncrease),
     [color, updatedColor, isUpdated, isIncrease],
   )
 
-  const tooltipContent = health === 0 ? 'loading...' : isUpdated ? updatedLabel : label
+  const currentHealth = useMemo(
+    () => (isUpdated ? updatedHealth : health),
+    [isUpdated, updatedHealth, health],
+  )
 
+  const isLoading = healthFactor === 0
   return (
-    <Tooltip type='info' content={tooltipContent}>
+    <Tooltip
+      type='info'
+      content={
+        <HealthTooltip
+          health={isUpdated ? updatedHealth : health}
+          healthFactor={isUpdated ? updatedHealthFactor : healthFactor}
+        />
+      }
+    >
       <div
         className={classNames(
           'relative grid place-items-center',
           `w-${diameter / 4} h-${diameter / 4}`,
         )}
       >
-        <Heart className='text-white/50' width={20} />
+        {!isLoading && currentHealth === 0 ? (
+          <ExclamationMarkCircled className='text-loss animate-pulse' width={20} />
+        ) : (
+          <Heart
+            className={classNames(
+              !isLoading && currentHealth <= 5 ? 'text-loss' : 'text-white/60',
+              (isLoading || currentHealth <= 5) && 'animate-pulse',
+            )}
+            width={20}
+          />
+        )}
         <svg
           version='1.1'
           xmlns='http://www.w3.org/2000/svg'

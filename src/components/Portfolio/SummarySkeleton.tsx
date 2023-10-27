@@ -11,6 +11,7 @@ import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 interface Props {
   stats?: { title: React.ReactNode | null; sub: string }[]
   health?: number
+  healthFactor?: number
   title: string
 }
 
@@ -20,10 +21,10 @@ export default function SummarySkeleton(props: Props) {
     <div className='flex flex-col w-full gap-8'>
       <div className='flex justify-between'>
         <Text size='2xl'>{props.title}</Text>
-        {props.health !== undefined && (
+        {props.health !== undefined && props.healthFactor !== undefined && (
           <div className='flex gap-1 max-w-[300px] flex-grow'>
             <Heart width={20} />
-            <HealthBar health={props.health} className='h-full' />
+            <HealthBar health={props.health} healthFactor={props.healthFactor} className='h-full' />
           </div>
         )}
       </div>

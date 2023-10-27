@@ -9,12 +9,13 @@ import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   health: number
+  healthFactor: number
   positionBalance: BigNumber | null
   apr: BigNumber | null
 }
 
 export default function Skeleton(props: Props) {
-  const { positionBalance, apr, health } = props
+  const { positionBalance, apr, health, healthFactor } = props
   return (
     <div className='flex flex-wrap w-full'>
       {positionBalance ? (
@@ -44,7 +45,12 @@ export default function Skeleton(props: Props) {
           <Text size='xs' className='w-auto mr-1 text-white/70'>
             Health
           </Text>
-          <HealthBar health={health} className='w-[92px] h-0.5' hasLabel />
+          <HealthBar
+            health={health}
+            healthFactor={healthFactor}
+            className='w-[92px] h-0.5'
+            hasLabel
+          />
         </div>
       </div>
     </div>

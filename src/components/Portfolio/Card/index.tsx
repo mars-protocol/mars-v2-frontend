@@ -15,7 +15,6 @@ import useHealthComputer from 'hooks/useHealthComputer'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
-import useStore from 'store'
 import {
   calculateAccountApr,
   calculateAccountLeverage,
@@ -29,7 +28,7 @@ interface Props {
 
 export default function PortfolioCard(props: Props) {
   const { data: account } = useAccount(props.accountId)
-  const { health } = useHealthComputer(account)
+  const { health, healthFactor } = useHealthComputer(account)
   const { address: urlAddress } = useParams()
   const { data: prices } = usePrices()
   const currentAccountId = useAccountId()
@@ -40,7 +39,6 @@ export default function PortfolioCard(props: Props) {
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
   )
-  const address = useStore((s) => s.address)
 
   const [deposits, lends, debts, vaults] = useMemo(() => {
     if (!prices.length || !account) return Array(4).fill(BN_ZERO)
@@ -91,7 +89,14 @@ export default function PortfolioCard(props: Props) {
   }, [account, prices.length, deposits, lends, vaults, debts, leverage, apr])
 
   if (!account) {
-    return <Skeleton stats={stats} health={health} accountId={props.accountId} />
+    return (
+      <Skeleton
+        stats={stats}
+        health={health}
+        healthFactor={healthFactor}
+        accountId={props.accountId}
+      />
+    )
   }
 
   return (
@@ -102,6 +107,7 @@ export default function PortfolioCard(props: Props) {
       <Skeleton
         stats={stats}
         health={health}
+        healthFactor={healthFactor}
         accountId={props.accountId}
         isCurrent={props.accountId === currentAccountId}
       />

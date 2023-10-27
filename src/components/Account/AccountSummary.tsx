@@ -50,8 +50,9 @@ export default function AccountSummary(props: Props) {
     () => [...lendingAvailableAssets, ...accountLentAssets],
     [lendingAvailableAssets, accountLentAssets],
   )
-  const { health } = useHealthComputer(props.account)
-  const { health: updatedHealth } = useHealthComputer(updatedAccount)
+  const { health, healthFactor } = useHealthComputer(props.account)
+  const { health: updatedHealth, healthFactor: updatedHealthFactor } =
+    useHealthComputer(updatedAccount)
   const leverage = useMemo(
     () => (props.account ? calculateAccountLeverage(props.account, prices) : BN_ZERO),
     [props.account, prices],
@@ -109,7 +110,13 @@ export default function AccountSummary(props: Props) {
           )}
         </Item>
         <Item label='Account health'>
-          <HealthBar health={health} updatedHealth={updatedHealth} className='h-1' />
+          <HealthBar
+            health={health}
+            healthFactor={healthFactor}
+            updatedHealth={updatedHealth}
+            updatedHealthFactor={updatedHealthFactor}
+            className='h-1'
+          />
         </Item>
       </Card>
       <Accordion
