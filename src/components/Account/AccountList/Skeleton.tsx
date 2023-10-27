@@ -1,9 +1,8 @@
-import classNames from 'classnames'
-
-import HealthBar from 'components/Account/HealthBar'
+import HealthBar from 'components/Account/Health/HealthBar'
+import HealthIcon from 'components/Account/Health/HealthIcon'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
-import { ArrowChartLineUp, Heart } from 'components/Icons'
+import { ArrowChartLineUp } from 'components/Icons'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
 import { ORACLE_DENOM } from 'constants/oracle'
@@ -43,13 +42,7 @@ export default function Skeleton(props: Props) {
           )}
         </div>
         <div className='flex items-center gap-1'>
-          <Heart
-            className={classNames(
-              health <= 5 ? 'text-loss' : 'text-white',
-              health <= 5 && 'animate-pulse',
-              'w-4',
-            )}
-          />
+          <HealthIcon isLoading={props.healthFactor === 0} health={props.health} className='w-4' />
           <Text size='xs' className='w-auto mr-1 text-white/70'>
             Health
           </Text>

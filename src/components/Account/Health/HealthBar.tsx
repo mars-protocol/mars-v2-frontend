@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
-import HealthTooltip from 'components/Account/HealthTooltip'
+import HealthTooltip from 'components/Account/Health/HealthTooltip'
 import { Tooltip } from 'components/Tooltip'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'

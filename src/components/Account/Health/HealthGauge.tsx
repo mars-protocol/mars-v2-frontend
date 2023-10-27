@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
-import HealthTooltip from 'components/Account/HealthTooltip'
-import { ExclamationMarkCircled, Heart } from 'components/Icons'
+import HealthIcon from 'components/Account/Health/HealthIcon'
+import HealthTooltip from 'components/Account/Health/HealthTooltip'
 import { Tooltip } from 'components/Tooltip'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
@@ -72,17 +72,12 @@ export const HealthGauge = ({
           `w-${diameter / 4} h-${diameter / 4}`,
         )}
       >
-        {!isLoading && currentHealth === 0 ? (
-          <ExclamationMarkCircled className='text-loss animate-pulse' width={20} />
-        ) : (
-          <Heart
-            className={classNames(
-              !isLoading && currentHealth <= 5 ? 'text-loss' : 'text-white/60',
-              (isLoading || currentHealth <= 5) && 'animate-pulse',
-            )}
-            width={20}
-          />
-        )}
+        <HealthIcon
+          isLoading={healthFactor === 0}
+          health={currentHealth}
+          className='w-5'
+          colorClass='text-white/60'
+        />
         <svg
           version='1.1'
           xmlns='http://www.w3.org/2000/svg'

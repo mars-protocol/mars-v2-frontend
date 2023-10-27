@@ -1,4 +1,4 @@
-import { HealthGauge } from 'components/Account/HealthGauge'
+import { HealthGauge } from 'components/Account/Health/HealthGauge'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
 
