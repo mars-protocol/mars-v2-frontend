@@ -1,7 +1,6 @@
+import { cacheFn, pythPriceCache } from 'api/cache'
 import { ENV } from 'constants/env'
 import { BN } from 'utils/helpers'
-
-import { cacheFn, pythPriceCache } from '../cache'
 
 export default async function fetchPythPrices(...priceFeedIds: string[]) {
   try {
