@@ -182,7 +182,9 @@ export default function useHealthComputer(account?: Account) {
     [healthComputer],
   )
   const health = useMemo(() => {
-    const convertedHealth = BN(Math.log(healthFactor) / Math.log(1.01))
+    const convertedHealth = BN(Math.log(healthFactor))
+      .dividedBy(Math.log(3.5))
+      .multipliedBy(100)
       .integerValue()
       .toNumber()
 
