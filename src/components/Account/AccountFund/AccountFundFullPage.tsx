@@ -13,7 +13,7 @@ export default function AccountFundFullPage() {
   const address = useStore((s) => s.address)
   const accountId = useAccountId()
 
-  const { data: accounts, isLoading } = useAccounts(address)
+  const { data: accounts, isLoading } = useAccounts('default', address)
   const currentAccount = useCurrentAccount()
   const [selectedAccountId, setSelectedAccountId] = useState<null | string>(null)
 

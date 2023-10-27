@@ -28,7 +28,7 @@ interface Props {
 }
 
 export default function PortfolioCard(props: Props) {
-  const { data: account } = useAccount(props.accountId)
+  const { data: account } = useAccount('default', props.accountId)
   const { health } = useHealthComputer(account)
   const { address: urlAddress } = useParams()
   const { data: prices } = usePrices()

@@ -17,7 +17,7 @@ interface Props {
 }
 
 function Content(props: Props) {
-  const { data: account } = useAccount(props.accountId, true)
+  const { data: account } = useAccount('default', props.accountId, true)
   const { data: prices } = usePrices()
   const { health } = useHealthComputer(account)
   const { data } = useBorrowMarketAssetsTableData(false)

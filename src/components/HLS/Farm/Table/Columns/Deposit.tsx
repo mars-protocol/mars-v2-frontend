@@ -8,6 +8,7 @@ import Text from 'components/Text'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAlertDialog from 'hooks/useAlertDialog'
 import useLocalStorage from 'hooks/useLocalStorage'
+import useStore from 'store'
 
 export const DEPOSIT_META = { accessorKey: 'deposit', header: 'Deposit' }
 
@@ -26,8 +27,12 @@ export default function Deposit(props: Props) {
 
   const { open: openAlertDialog, close } = useAlertDialog()
 
-  const showHlsInfoModal = useCallback(() => {
-    if (!showHlsInfo) return
+  const enterVaultHandler = useCallback(() => {
+    if (!showHlsInfo) {
+      openHlsModal()
+      return
+    }
+
     openAlertDialog({
       title: 'Understanding HLS Positions',
       content: (
@@ -53,7 +58,7 @@ export default function Deposit(props: Props) {
       positiveButton: {
         text: 'Continue',
         icon: <Enter />,
-        onClick: enterVaultHandler,
+        onClick: openHlsModal,
       },
       negativeButton: {
         text: 'Cancel',
@@ -67,11 +72,10 @@ export default function Deposit(props: Props) {
         onClick: (isChecked: boolean) => setShowHlsInfo(!isChecked),
       },
     })
-  }, [close, enterVaultHandler, openAlertDialog, setShowHlsInfo, showHlsInfo])
+  }, [close, openAlertDialog, setShowHlsInfo, showHlsInfo])
 
-  function enterVaultHandler() {
-    showHlsInfoModal()
-    return
+  function openHlsModal() {
+    useStore.setState({ hlsModal: { vault } })
   }
 
   if (props.isLoading) return <Loading />

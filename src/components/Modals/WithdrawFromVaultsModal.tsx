@@ -1,7 +1,7 @@
 import Button from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
 import DisplayCurrency from 'components/DisplayCurrency'
-import VaultLogo from 'components/Earn/Farm/VaultLogo'
+import DoubleLogo from 'components/DoubleLogo'
 import { FormattedNumber } from 'components/FormattedNumber'
 import Modal from 'components/Modal'
 import Text from 'components/Text'
@@ -60,7 +60,10 @@ export default function WithdrawFromVaultsModal() {
             if (!primaryAsset || !secondaryAsset) return null
             return (
               <div className='flex items-center gap-4' key={vault.unlockId}>
-                <VaultLogo vault={vault} />
+                <DoubleLogo
+                  primaryDenom={vault.denoms.primary}
+                  secondaryDenom={vault.denoms.secondary}
+                />
                 <div className='flex flex-wrap flex-1'>
                   <Text className='w-full'>{vault.name}</Text>
                   <Text size='sm' className='w-full text-white/50'>

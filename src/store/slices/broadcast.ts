@@ -13,6 +13,7 @@ import {
   Action as CreditManagerAction,
   ExecuteMsg as CreditManagerExecuteMsg,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHealthTypes.types'
 import { getAssetByDenom, getAssetBySymbol } from 'utils/assets'
 import { generateErrorMessage, getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
@@ -193,9 +194,9 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
-    createAccount: async () => {
+    createAccount: async (accountKind: AccountKind) => {
       const msg: CreditManagerExecuteMsg = {
-        create_credit_account: 'default',
+        create_credit_account: accountKind,
       }
 
       const response = get().executeMsg({

@@ -7,6 +7,7 @@ import { demagnify } from 'utils/formatters'
 interface Props {
   asset: Asset
   amount: BigNumber
+  isApproximation?: boolean
 }
 
 export default function AmountAndValue(props: Props) {
@@ -15,7 +16,7 @@ export default function AmountAndValue(props: Props) {
   const isBelowMinAmount = amount < MIN_AMOUNT
   const displayAmount = isBelowMinAmount ? MIN_AMOUNT : amount
   return (
-    <div className='flex flex-col gap-[0.5] text-xs'>
+    <div className='flex flex-col gap-[0.5] text-xs text-right'>
       <FormattedNumber
         amount={isZero ? 0 : displayAmount}
         smallerThanThreshold={!isZero && isBelowMinAmount}
@@ -25,6 +26,7 @@ export default function AmountAndValue(props: Props) {
       <DisplayCurrency
         className='justify-end text-xs text-white/50'
         coin={BNCoin.fromDenomAndBigNumber(props.asset.denom, props.amount)}
+        isApproximation={props.isApproximation}
       />
     </div>
   )

@@ -21,7 +21,7 @@ export default function AccountCreateFirst() {
 
   const handleClick = useCallback(async () => {
     setIsCreating(true)
-    const accountId = await createAccount()
+    const accountId = await createAccount('default')
     setIsCreating(false)
     if (accountId) {
       navigate(getRoute(getPage(pathname), address, accountId))
