@@ -57,7 +57,16 @@ function Content() {
       navigate(getRoute(page, address, urlAccountId ?? accountIds[0]))
       useStore.setState({ balances: walletBalances, focusComponent: null })
     }
-  }, [accountIds, baseBalance, navigate, pathname, address, walletBalances, urlAddress])
+  }, [
+    accountIds,
+    baseBalance,
+    navigate,
+    pathname,
+    address,
+    walletBalances,
+    urlAddress,
+    urlAccountId,
+  ])
 
   if (isLoadingAccounts || isLoadingBalances) return <FetchLoading />
   if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) return <WalletBridges />

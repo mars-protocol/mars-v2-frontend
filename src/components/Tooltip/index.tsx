@@ -16,6 +16,7 @@ interface Props {
   delay?: number
   interactive?: boolean
   underline?: boolean
+  hideArrow?: boolean
 }
 
 export const Tooltip = (props: Props) => {
@@ -33,7 +34,9 @@ export const Tooltip = (props: Props) => {
       interactive={props.interactive}
       animation={false}
       delay={[props.delay ?? 0, 0]}
-      render={() => <TooltipContent type={props.type} content={props.content} />}
+      render={() => (
+        <TooltipContent hideArrow={props.hideArrow} type={props.type} content={props.content} />
+      )}
     >
       {props.children ? (
         <span

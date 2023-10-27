@@ -1,5 +1,6 @@
 import useSWR from 'swr'
 
+import useBorrowEnabledMarkets from 'hooks/useBorrowEnabledMarkets'
 import useCurrentAccountDebts from 'hooks/useCurrentAccountDebts'
 import useMarketBorrowings from 'hooks/useMarketBorrowings'
 import useMarketDeposits from 'hooks/useMarketDeposits'
@@ -7,8 +8,6 @@ import useMarketLiquidities from 'hooks/useMarketLiquidities'
 import { byDenom } from 'utils/array'
 import { getAssetByDenom } from 'utils/assets'
 import { BN } from 'utils/helpers'
-
-import useBorrowEnabledMarkets from './useBorrowEnabledMarkets'
 
 export default function useBorrowMarketAssetsTableData(suspense = true) {
   const markets = useBorrowEnabledMarkets()

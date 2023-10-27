@@ -27,7 +27,7 @@ export default function AccountStats(props: Props) {
     () => (!account ? null : calculateAccountBalanceValue(account, prices)),
     [account, prices],
   )
-  const { health } = useHealthComputer(account)
+  const { health, healthFactor } = useHealthComputer(account)
   const { data } = useBorrowMarketAssetsTableData(false)
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
@@ -49,7 +49,12 @@ export default function AccountStats(props: Props) {
 
   return (
     <div className='w-full p-4'>
-      <Skeleton health={!account ? 0 : health} positionBalance={positionBalance} apr={apr} />
+      <Skeleton
+        health={health ?? 0}
+        healthFactor={healthFactor ?? 0}
+        positionBalance={positionBalance}
+        apr={apr}
+      />
       {isActive && setShowMenu && (
         <div className='grid grid-flow-row grid-cols-2 gap-4 pt-4'>
           <Button
