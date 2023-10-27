@@ -2,7 +2,6 @@ import classNames from 'classnames'
 import { useMemo } from 'react'
 
 import HealthTooltip from 'components/Account/Health/HealthTooltip'
-import { Tooltip } from 'components/Tooltip'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useHealthColor from 'hooks/useHealthColor'
@@ -54,15 +53,9 @@ export default function HealthBar({
   )
 
   return (
-    <Tooltip
-      content={
-        <HealthTooltip
-          health={isUpdated ? updatedHealth : health}
-          healthFactor={isUpdated ? updatedHealthFactor : healthFactor}
-        />
-      }
-      type='info'
-      className='flex items-center w-full'
+    <HealthTooltip
+      health={isUpdated ? updatedHealth : health}
+      healthFactor={isUpdated ? updatedHealthFactor : healthFactor}
     >
       <div className={classNames('flex w-full', className)}>
         <svg version='1.1' xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' viewBox='0 0 184 4'>
@@ -132,6 +125,6 @@ export default function HealthBar({
           )}
         </svg>
       </div>
-    </Tooltip>
+    </HealthTooltip>
   )
 }

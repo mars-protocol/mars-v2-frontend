@@ -1,17 +1,17 @@
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 
 import { CircularProgress } from 'components/CircularProgress'
 import Text from 'components/Text'
+import { Tooltip } from 'components/Tooltip'
 import { BN } from 'utils/helpers'
 
 interface Props {
   health: number
   healthFactor: number
+  children: React.ReactNode
 }
 
-export default function HealthTooltip(props: Props) {
-  const { health, healthFactor } = props
-
+function HealthTooltipContent({ health, healthFactor }: { health: number; healthFactor: number }) {
   const healthStatus = useMemo(() => {
     if (health > 30) return 'Healthy'
     if (health > 10) return 'Attention'
@@ -42,15 +42,30 @@ export default function HealthTooltip(props: Props) {
         Health Factor: {BN(healthFactor).toPrecision(4)}
       </Text>
       {health > 0 && health <= 10 && (
-        <Text size='2xs' className='text-center text-info'>
+        <Text size='2xs' className='mt-2 text-center text-info'>
           A small price movement can cause your account to be become liquidatable!
         </Text>
       )}
       {health === 0 && (
-        <Text size='2xs' className='text-center text-martian-red'>
+        <Text size='2xs' className='mt-2 text-center text-martian-red'>
           Your account is unhealthy and can be liquidated!
         </Text>
       )}
     </div>
+  )
+}
+
+export default function HealthTooltip(props: Props) {
+  const { health, healthFactor, children } = props
+
+  return (
+    <Tooltip
+      type='info'
+      hideArrow={health <= 10}
+      className='flex items-center w-full'
+      content={<HealthTooltipContent health={health} healthFactor={healthFactor} />}
+    >
+      {children}
+    </Tooltip>
   )
 }

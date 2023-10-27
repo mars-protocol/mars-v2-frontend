@@ -7,6 +7,7 @@ import Text from 'components/Text'
 interface Props {
   content: ReactNode | string
   type: TooltipType
+  hideArrow?: boolean
 }
 
 export default function TooltipContent(props: Props) {
@@ -22,7 +23,7 @@ export default function TooltipContent(props: Props) {
       >
         {typeof props.content === 'string' ? <Text size='xs'>{props.content}</Text> : props.content}
       </div>
-      {
+      {!props.hideArrow && (
         <div data-popper-arrow=''>
           <TooltipArrow
             width={8}
@@ -33,7 +34,7 @@ export default function TooltipContent(props: Props) {
             )}
           />
         </div>
-      }
+      )}
     </div>
   )
 }
