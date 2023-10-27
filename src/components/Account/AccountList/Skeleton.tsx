@@ -1,3 +1,5 @@
+import classNames from 'classnames'
+
 import HealthBar from 'components/Account/HealthBar'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
@@ -41,7 +43,13 @@ export default function Skeleton(props: Props) {
           )}
         </div>
         <div className='flex items-center gap-1'>
-          <Heart className='w-4' />
+          <Heart
+            className={classNames(
+              health <= 5 ? 'text-loss' : 'text-white',
+              health <= 5 && 'animate-pulse',
+              'w-4',
+            )}
+          />
           <Text size='xs' className='w-auto mr-1 text-white/70'>
             Health
           </Text>
