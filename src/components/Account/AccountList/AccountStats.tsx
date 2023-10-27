@@ -50,8 +50,8 @@ export default function AccountStats(props: Props) {
   return (
     <div className='w-full p-4'>
       <Skeleton
-        health={!account ? 0 : health}
-        healthFactor={!account ? 0 : healthFactor}
+        health={health ?? 0}
+        healthFactor={healthFactor ?? 0}
         positionBalance={positionBalance}
         apr={apr}
       />

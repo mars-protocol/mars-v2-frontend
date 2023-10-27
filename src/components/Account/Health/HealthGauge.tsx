@@ -55,7 +55,6 @@ export const HealthGauge = ({
     [isUpdated, updatedHealth, health],
   )
 
-  const isLoading = healthFactor === 0
   return (
     <Tooltip
       type='info'
