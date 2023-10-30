@@ -189,7 +189,8 @@ export default function useHealthComputer(account?: Account) {
       .toNumber()
 
     if (convertedHealth > 100) return 100
-    if (convertedHealth < 0) return 0
+    if (convertedHealth === 0 && healthFactor > 1) return 1
+    if (convertedHealth < 0) return
     return convertedHealth
   }, [healthFactor])
 
