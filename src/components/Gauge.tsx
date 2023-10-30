@@ -25,7 +25,6 @@ export const Gauge = ({
   percentage = 0,
   tooltip,
   icon,
-  labelClassName,
 }: Props) => {
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
@@ -48,7 +47,7 @@ export const Gauge = ({
           width={diameter}
           height={diameter}
           style={{ transform: 'rotate(-90deg)' }}
-          className='absolute left-0 top-0'
+          className='absolute top-0 left-0'
         >
           {!strokeColor && (
             <linearGradient id='gradient'>
