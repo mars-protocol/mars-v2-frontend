@@ -16,6 +16,8 @@ function getBorderColor(row: AccountBalanceRow) {
 }
 
 export default function Row<T>(props: Props<T>) {
+  const canExpand = !!props.renderExpanded
+
   return (
     <>
       <tr
@@ -23,7 +25,7 @@ export default function Row<T>(props: Props<T>) {
         className={classNames(
           'group/row transition-bg',
           props.renderExpanded && 'hover:cursor-pointer',
-          props.row.getIsExpanded() ? 'is-expanded bg-black/20' : 'hover:bg-white/5',
+          canExpand && props.row.getIsExpanded() ? 'is-expanded bg-black/20' : 'hover:bg-white/5',
         )}
         onClick={(e) => {
           e.preventDefault()

@@ -1,7 +1,8 @@
-import HealthBar from 'components/Account/HealthBar'
+import HealthBar from 'components/Account/Health/HealthBar'
+import HealthIcon from 'components/Account/Health/HealthIcon'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
-import { ArrowChartLineUp, Heart } from 'components/Icons'
+import { ArrowChartLineUp } from 'components/Icons'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
 import { ORACLE_DENOM } from 'constants/oracle'
@@ -9,12 +10,13 @@ import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   health: number
+  healthFactor: number
   positionBalance: BigNumber | null
   apr: BigNumber | null
 }
 
 export default function Skeleton(props: Props) {
-  const { positionBalance, apr, health } = props
+  const { positionBalance, apr, health, healthFactor } = props
   return (
     <div className='flex flex-wrap w-full'>
       {positionBalance ? (
@@ -40,11 +42,16 @@ export default function Skeleton(props: Props) {
           )}
         </div>
         <div className='flex items-center gap-1'>
-          <Heart className='w-4' />
+          <HealthIcon isLoading={props.healthFactor === 0} health={props.health} className='w-4' />
           <Text size='xs' className='w-auto mr-1 text-white/70'>
             Health
           </Text>
-          <HealthBar health={health} className='w-[92px] h-0.5' hasLabel />
+          <HealthBar
+            health={health}
+            healthFactor={healthFactor}
+            className='w-[92px] h-0.5'
+            hasLabel
+          />
         </div>
       </div>
     </div>

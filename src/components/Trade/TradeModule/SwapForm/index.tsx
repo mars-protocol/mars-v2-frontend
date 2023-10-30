@@ -52,6 +52,7 @@ export default function SwapForm(props: Props) {
   const [estimatedFee, setEstimatedFee] = useState(defaultFee)
   const { autoLendEnabledAccountIds } = useAutoLend()
   const isAutoLendEnabled = account ? autoLendEnabledAccountIds.includes(account.id) : false
+  const modal = useStore<string | null>((s) => s.fundAndWithdrawModal)
 
   const throttledEstimateExactIn = useMemo(() => asyncThrottle(estimateExactIn, 250), [])
   const { simulateTrade, removedLends } = useUpdatedAccount(account)
@@ -210,7 +211,8 @@ export default function SwapForm(props: Props) {
       ? sellAssetAmount.minus(sellSideMarginThreshold)
       : BN_ZERO
 
-    if (removeDepositAmount.isZero() && addDebtAmount.isZero() && buyAssetAmount.isZero()) return
+    if (removeDepositAmount.isZero() && addDebtAmount.isZero() && buyAssetAmount.isZero() && modal)
+      return
     const removeCoin = BNCoin.fromDenomAndBigNumber(sellAsset.denom, removeDepositAmount)
     const debtCoin = BNCoin.fromDenomAndBigNumber(sellAsset.denom, addDebtAmount)
     const addCoin = BNCoin.fromDenomAndBigNumber(buyAsset.denom, buyAssetAmount)
@@ -223,6 +225,7 @@ export default function SwapForm(props: Props) {
     buyAsset.denom,
     sellAsset.denom,
     debouncedUpdateAccount,
+    modal,
   ])
 
   useEffect(() => {

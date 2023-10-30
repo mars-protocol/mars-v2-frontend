@@ -1,8 +1,8 @@
 import React from 'react'
 
-import HealthBar from 'components/Account/HealthBar'
+import HealthBar from 'components/Account/Health/HealthBar'
+import HealthIcon from 'components/Account/Health/HealthIcon'
 import Card from 'components/Card'
-import { Heart } from 'components/Icons'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
@@ -11,19 +11,22 @@ import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 interface Props {
   stats?: { title: React.ReactNode | null; sub: string }[]
   health?: number
+  healthFactor?: number
   title: string
 }
 
 export default function SummarySkeleton(props: Props) {
+  const { health, healthFactor, title } = props
   const stats = props.stats || DEFAULT_PORTFOLIO_STATS
+
   return (
     <div className='flex flex-col w-full gap-8'>
       <div className='flex justify-between'>
-        <Text size='2xl'>{props.title}</Text>
-        {props.health !== undefined && (
+        <Text size='2xl'>{title}</Text>
+        {health !== undefined && healthFactor !== undefined && (
           <div className='flex gap-1 max-w-[300px] flex-grow'>
-            <Heart width={20} />
-            <HealthBar health={props.health} className='h-full' />
+            <HealthIcon isLoading={healthFactor === 0} health={health} className='w-5' />
+            <HealthBar health={health} healthFactor={healthFactor} className='h-full' />
           </div>
         )}
       </div>
