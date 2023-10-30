@@ -205,6 +205,7 @@ module.exports = {
       maxWidth: {
         content: '1024px',
         modal: '895px',
+        'modal-md': '556px',
         'modal-sm': '526px',
         'modal-xs': '442px',
       },
@@ -326,6 +327,9 @@ module.exports = {
         '.gradient-header': {
           background:
             'linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 50%)',
+        },
+        '.gradient-hls': {
+          background: 'linear-gradient(180deg, #FE625D 0%, #FB9562 50%)',
         },
         '.gradient-limit': {
           background:

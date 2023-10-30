@@ -84,7 +84,9 @@ interface BroadcastSlice {
     borrowToWallet: boolean
   }) => Promise<boolean>
   claimRewards: (options: { accountId: string }) => ExecutableTx
-  createAccount: () => Promise<string | null>
+  createAccount: (
+    accountKind: import('types/generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind,
+  ) => Promise<string | null>
   deleteAccount: (options: { accountId: string; lends: BNCoin[] }) => Promise<boolean>
   deposit: (options: { accountId: string; coins: BNCoin[]; lend: boolean }) => Promise<boolean>
   depositIntoVault: (options: {

@@ -4,6 +4,7 @@ interface Account extends AccountChange {
   debts: BNCoin[]
   lends: BNCoin[]
   vaults: DepositedVault[]
+  kind: AccountKind
 }
 
 interface AccountChange {
@@ -22,4 +23,9 @@ interface AccountBalanceRow {
   type: 'deposits' | 'borrowing' | 'lending' | 'vault'
   value: string
   amountChange: BigNumber
+}
+
+interface AccountIdAndKind {
+  id: string
+  kind: AccountKind
 }

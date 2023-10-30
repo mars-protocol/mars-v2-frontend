@@ -2,12 +2,13 @@ import AssetImage from 'components/Asset/AssetImage'
 import { getAssetByDenom } from 'utils/assets'
 
 interface Props {
-  vault: VaultMetaData
+  primaryDenom: string
+  secondaryDenom: string
 }
 
-export default function VaultLogo(props: Props) {
-  const primaryAsset = getAssetByDenom(props.vault.denoms.primary)
-  const secondaryAsset = getAssetByDenom(props.vault.denoms.secondary)
+export default function DoubleLogo(props: Props) {
+  const primaryAsset = getAssetByDenom(props.primaryDenom)
+  const secondaryAsset = getAssetByDenom(props.secondaryDenom)
 
   if (!primaryAsset || !secondaryAsset) return null
 

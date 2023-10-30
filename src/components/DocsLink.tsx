@@ -1,3 +1,5 @@
+import classNames from 'classnames'
+
 import { ExternalLink } from 'components/Icons'
 import Text from 'components/Text'
 import { TextLink } from 'components/TextLink'
@@ -5,6 +7,7 @@ import { DocURL } from 'types/enums/docURL'
 
 interface Props {
   type: DocLinkType
+  className?: string
 }
 
 function getData(type: string) {
@@ -18,12 +21,15 @@ export default function DocsLink(props: Props) {
   const [intro, linkText, url] = getData(props.type)
 
   return (
-    <Text size='sm' className='w-full pt-3 text-center text-white/60'>
+    <Text
+      size='sm'
+      className={classNames('w-full pt-3 text-center text-white/60', props.className)}
+    >
       {`${intro} `}
       <TextLink
         href={url}
         target='_blank'
-        className='ml-1 leading-4 text-white hover:underline'
+        className={classNames('ml-1 leading-4 text-white hover:underline', props.className)}
         title={linkText}
       >
         {linkText}

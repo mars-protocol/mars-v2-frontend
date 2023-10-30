@@ -10,6 +10,7 @@ import {
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { VaultConfigBaseForString } from 'types/generated/mars-params/MarsParams.types'
 import {
+  AccountKind,
   AssetParamsBaseForAddr,
   HealthComputer,
 } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
@@ -24,7 +25,7 @@ import {
   max_withdraw_estimate_js,
   SwapKind,
 } from 'utils/health_computer'
-import { BN } from 'utils/helpers'
+import { BN } from 'utils/helpers' // Pyth returns prices with up to 32 decimals. Javascript only supports 18 decimals. So we need to scale by 14 t
 
 // Pyth returns prices with up to 32 decimals. Javascript only supports 18 decimals. So we need to scale by 14 t
 // avoid "too many decimals" errors.
@@ -129,7 +130,7 @@ export default function useHealthComputer(account?: Account) {
         vault_values: vaultPositionValues,
       },
       positions: positions,
-      kind: 'default',
+      kind: 'default' as AccountKind,
     }
   }, [priceData, denomsData, vaultConfigsData, vaultPositionValues, positions])
 

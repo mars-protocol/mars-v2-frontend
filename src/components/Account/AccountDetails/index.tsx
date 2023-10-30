@@ -35,7 +35,7 @@ import {
 
 export default function AccountDetailsController() {
   const address = useStore((s) => s.address)
-  const { data: accounts, isLoading } = useAccounts(address)
+  const { data: accounts, isLoading } = useAccounts('default', address)
   const { data: accountIds } = useAccountIds(address, false)
   const accountId = useAccountId()
   const account = useCurrentAccount()
@@ -121,7 +121,7 @@ function AccountDetails(props: Props) {
     >
       <div
         className={classNames(
-          'flex flex-wrap min-w-16 w-16 group relative',
+          'flex flex-wrap min-w-16 w-16 group/accountdetail relative',
           'border rounded-base border-white/20',
           'bg-white/5 backdrop-blur-sticky',
           !reduceMotion && 'transition-colors duration-300',
@@ -171,7 +171,7 @@ function AccountDetails(props: Props) {
             'flex justify-center items-center w-full h-6 opacity-50',
             !reduceMotion && 'transition-[opacity] duration-300',
             'absolute -bottom-6',
-            'group-hover:opacity-100',
+            'group-hover/accountdetail:opacity-100',
           )}
         >
           {!accountDetailsExpanded && <ThreeDots className='h-1' />}

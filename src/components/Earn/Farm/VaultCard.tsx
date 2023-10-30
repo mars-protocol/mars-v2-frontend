@@ -1,5 +1,5 @@
 import ActionButton from 'components/Button/ActionButton'
-import VaultLogo from 'components/Earn/Farm/VaultLogo'
+import DoubleLogo from 'components/DoubleLogo'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import useCurrentAccount from 'hooks/useCurrentAccount'
@@ -44,7 +44,10 @@ export default function VaultCard(props: Props) {
             )}
           </span>
         </div>
-        <VaultLogo vault={props.vault} />
+        <DoubleLogo
+          primaryDenom={props.vault.denoms.primary}
+          secondaryDenom={props.vault.denoms.secondary}
+        />
       </div>
       <div className='flex justify-between mb-6'>
         <TitleAndSubCell

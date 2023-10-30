@@ -1,16 +1,16 @@
-import { useCallback, useMemo } from 'react'
 import moment from 'moment'
+import { useCallback, useMemo } from 'react'
 
-import VaultLogo from 'components/Earn/Farm/VaultLogo'
+import DoubleLogo from 'components/DoubleLogo'
+import { InfoCircle } from 'components/Icons'
 import Modal from 'components/Modal'
 import VaultModalContent from 'components/Modals/Vault/VaultModalContent'
+import VaultModalContentHeader from 'components/Modals/Vault/VaultModalContentHeader'
 import Text from 'components/Text'
+import { Tooltip } from 'components/Tooltip'
 import { ASSETS } from 'constants/assets'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
-import VaultModalContentHeader from 'components/Modals/Vault/VaultModalContentHeader'
-import { InfoCircle } from 'components/Icons'
-import { Tooltip } from 'components/Tooltip'
 
 export default function VaultModalController() {
   const currentAccount = useCurrentAccount()
@@ -60,7 +60,7 @@ function VaultModal(props: Props) {
       onClose={onClose}
       header={
         <span className='flex items-center pr-4 py-1'>
-          <VaultLogo vault={vault} />
+          <DoubleLogo primaryDenom={vault.denoms.primary} secondaryDenom={vault.denoms.secondary} />
           <Text className='pl-3 pr-2'>{vault.name}</Text>
           {unlockTime && (
             <Tooltip

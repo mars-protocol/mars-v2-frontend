@@ -171,6 +171,7 @@ export function convertAccountToPositions(account: Account): Positions {
 export function cloneAccount(account: Account): Account {
   return {
     id: account.id,
+    kind: account.kind,
     debts: account.debts.map(
       (debt) =>
         new BNCoin({

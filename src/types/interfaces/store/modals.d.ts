@@ -3,6 +3,7 @@ interface ModalSlice {
   addVaultBorrowingsModal: AddVaultBorrowingsModal | null
   alertDialog: AlertDialogConfig | null
   assetOverlayState: OverlayState
+  hlsModal: HlsModal | null
   borrowModal: BorrowModal | null
   fundAndWithdrawModal: 'fund' | 'withdraw' | null
   getStartedModal: boolean
@@ -66,4 +67,8 @@ interface WalletAssetModal {
   isOpen?: boolean
   selectedDenoms: string[]
   isBorrow?: boolean
+}
+
+interface HlsModal {
+  vault: Vault
 }

@@ -59,7 +59,7 @@ export default function AccountMenuContent() {
   const performCreateAccount = useCallback(async () => {
     setShowMenu(false)
     setIsCreating(true)
-    const accountId = await createAccount()
+    const accountId = await createAccount('default')
     setIsCreating(false)
 
     if (accountId) {

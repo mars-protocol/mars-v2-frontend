@@ -21,7 +21,7 @@ interface Props {
 
 export default function AccountStats(props: Props) {
   const { accountId, isActive, setShowMenu } = props
-  const { data: account } = useAccount(accountId)
+  const { data: account } = useAccount('default', accountId)
   const { data: prices } = usePrices()
   const positionBalance = useMemo(
     () => (!account ? null : calculateAccountBalanceValue(account, prices)),
