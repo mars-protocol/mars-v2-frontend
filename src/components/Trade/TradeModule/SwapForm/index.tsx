@@ -2,6 +2,7 @@ import debounce from 'lodash.debounce'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import estimateExactIn from 'api/swap/estimateExactIn'
+import AvailableLiquidityMessage from 'components/AvailableLiquidityMessage'
 import DepositCapMessage from 'components/DepositCapMessage'
 import Divider from 'components/Divider'
 import RangeInput from 'components/RangeInput'
@@ -251,6 +252,19 @@ export default function SwapForm(props: Props) {
     if (buyAssetAmount.isEqualTo(maxBuyableAmountEstimation)) setSellAssetAmount(maxSellAmount)
   }, [sellAssetAmount, maxSellAmount, buyAssetAmount, maxBuyableAmountEstimation])
 
+  const borrowAmount = useMemo(
+    () =>
+      sellAssetAmount.isGreaterThan(sellSideMarginThreshold)
+        ? sellAssetAmount.minus(sellSideMarginThreshold)
+        : BN_ZERO,
+    [sellAssetAmount, sellSideMarginThreshold],
+  )
+
+  const availableLiquidity = useMemo(
+    () => borrowAsset?.liquidity?.amount ?? BN_ZERO,
+    [borrowAsset?.liquidity?.amount],
+  )
+
   return (
     <>
       <Divider />
@@ -287,6 +301,13 @@ export default function SwapForm(props: Props) {
 
         <DepositCapMessage action='buy' coins={depositCapReachedCoins} className='p-4 bg-white/5' />
 
+        {borrowAsset && borrowAmount.isGreaterThanOrEqualTo(availableLiquidity) && (
+          <AvailableLiquidityMessage
+            availableLiquidity={borrowAsset?.liquidity?.amount ?? BN_ZERO}
+            asset={borrowAsset}
+          />
+        )}
+
         <AssetAmountInput
           label='Sell'
           max={maxSellAmount}
@@ -302,14 +323,14 @@ export default function SwapForm(props: Props) {
           sellAsset={sellAsset}
           borrowRate={borrowAsset?.borrowRate}
           buyAction={handleBuyClick}
-          buyButtonDisabled={sellAssetAmount.isZero() || depositCapReachedCoins.length > 0}
+          buyButtonDisabled={
+            sellAssetAmount.isZero() ||
+            depositCapReachedCoins.length > 0 ||
+            borrowAmount.isGreaterThanOrEqualTo(availableLiquidity)
+          }
           showProgressIndicator={isConfirming}
           isMargin={isMarginChecked}
-          borrowAmount={
-            sellAssetAmount.isGreaterThan(sellSideMarginThreshold)
-              ? sellAssetAmount.minus(sellSideMarginThreshold)
-              : BN_ZERO
-          }
+          borrowAmount={borrowAmount}
           estimatedFee={estimatedFee}
         />
       </div>
