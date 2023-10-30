@@ -27,6 +27,8 @@ export default function Deposit(props: Props) {
 
   const { open: openAlertDialog, close } = useAlertDialog()
 
+  const openHlsModal = useCallback(() => useStore.setState({ hlsModal: { vault } }), [vault])
+
   const enterVaultHandler = useCallback(() => {
     if (!showHlsInfo) {
       openHlsModal()
@@ -72,11 +74,7 @@ export default function Deposit(props: Props) {
         onClick: (isChecked: boolean) => setShowHlsInfo(!isChecked),
       },
     })
-  }, [close, openAlertDialog, setShowHlsInfo, showHlsInfo])
-
-  function openHlsModal() {
-    useStore.setState({ hlsModal: { vault } })
-  }
+  }, [close, openAlertDialog, openHlsModal, setShowHlsInfo, showHlsInfo])
 
   if (props.isLoading) return <Loading />
 

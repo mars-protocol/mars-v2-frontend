@@ -1,7 +1,7 @@
 import { Suspense, useMemo } from 'react'
 
-import { NAME_META } from 'components/Earn/Farm/Table/Columns/Name'
-import useAvailableColumns from 'components/Earn/Farm/Table/Columns/useAvailableColumns'
+import { NAME_META } from 'components/HLS/Farm/Table/Columns/Name'
+import useAvailableColumns from 'components/HLS/Farm/Table/Columns/useAvailableColumns'
 import Table from 'components/Table'
 import { ENV } from 'constants/env'
 import { BN_ZERO } from 'constants/math'
