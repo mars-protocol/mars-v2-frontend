@@ -16,7 +16,7 @@ export default function AprBreakdown(props: Props) {
           <FormattedNumber
             amount={item.amount}
             className='text-sm'
-            options={{ suffix: '%', maxDecimals: 2, minDecimals: 0 }}
+            options={{ suffix: '%', maxDecimals: 2, minDecimals: 2 }}
           />
         </div>
       ))}

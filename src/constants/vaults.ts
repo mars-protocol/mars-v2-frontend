@@ -87,6 +87,7 @@ export const VAULTS_META_DATA: VaultMetaData[] = [
       secondary: 'ATOM',
     },
     isFeatured: false,
+    isHls: true,
   },
   {
     address: 'osmo185gqewrlde8vrqw7j8lpad67v8jfrx9u7770k9q87tqqecctp5tq50wt2c',

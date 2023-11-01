@@ -19,6 +19,7 @@ interface VaultMetaData {
     secondary: string
   }
   isFeatured?: boolean
+  isHls?: boolean
 }
 
 interface VaultInfo {

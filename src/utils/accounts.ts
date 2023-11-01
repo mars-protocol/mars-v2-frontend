@@ -272,3 +272,12 @@ export function getAccountSummaryStats(
     leverage,
   }
 }
+
+export function isAccountEmpty(account: Account) {
+  return (
+    account.vaults.length === 0 &&
+    account.lends.length === 0 &&
+    account.debts.length === 0 &&
+    account.deposits.length === 0
+  )
+}

@@ -3,10 +3,11 @@ import { useMemo, useState } from 'react'
 import { BN_ZERO } from 'constants/math'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
-import { getValueFromBNCoins } from 'utils/helpers'
+import { getCoinValue } from 'utils/formatters'
 
 interface Props {
-  vault: Vault
+  borrowDenom: string
+  collateralDenom: string
 }
 export default function useDepositHlsVault(props: Props) {
   const { data: prices } = usePrices()
@@ -14,17 +15,21 @@ export default function useDepositHlsVault(props: Props) {
   const [depositAmount, setDepositAmount] = useState<BigNumber>(BN_ZERO)
   const [borrowAmount, setBorrowAmount] = useState<BigNumber>(BN_ZERO)
 
-  const positionValue = useMemo(() => {
-    if (!prices.length) return BN_ZERO
-
-    return getValueFromBNCoins(
-      [
-        BNCoin.fromDenomAndBigNumber(props.vault.denoms.primary, depositAmount),
-        BNCoin.fromDenomAndBigNumber(props.vault.denoms.secondary, borrowAmount),
-      ],
+  const { positionValue, leverage } = useMemo(() => {
+    const collateralValue = getCoinValue(
+      BNCoin.fromDenomAndBigNumber(props.collateralDenom, depositAmount),
       prices,
     )
-  }, [prices, depositAmount, borrowAmount])
+    const borrowValue = getCoinValue(
+      BNCoin.fromDenomAndBigNumber(props.borrowDenom, borrowAmount),
+      prices,
+    )
+
+    return {
+      positionValue: collateralValue.plus(borrowValue),
+      leverage: borrowValue.dividedBy(collateralValue).plus(1).toNumber() || 1,
+    }
+  }, [borrowAmount, depositAmount, prices, props.collateralDenom, props.borrowDenom])
 
   return {
     setDepositAmount,
@@ -32,5 +37,6 @@ export default function useDepositHlsVault(props: Props) {
     setBorrowAmount,
     borrowAmount,
     positionValue,
+    leverage,
   }
 }
