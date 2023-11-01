@@ -10,3 +10,7 @@ interface PythConfidenceData {
   price: string
   publish_time: number
 }
+
+interface PythUpdateExecuteMsg {
+  update_price_feeds: { data: string[] }
+}

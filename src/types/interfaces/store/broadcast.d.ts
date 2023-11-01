@@ -70,6 +70,7 @@ interface HandleResponseProps {
     | 'claim'
     | 'unlock'
     | 'swap'
+    | 'oracle'
   lend?: boolean
   accountId?: string
   changes?: { debts?: BNCoin[]; deposits?: BNCoin[]; lends?: BNCoin[] }
@@ -121,6 +122,7 @@ interface BroadcastSlice {
     vault: DepositedVault
     amount: string
   }) => Promise<boolean>
+  updateOracle: (pricesData: string[]) => Promise<boolean>
   withdrawFromVaults: (options: {
     accountId: string
     vaults: DepositedVault[]
