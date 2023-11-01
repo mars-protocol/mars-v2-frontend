@@ -21,7 +21,7 @@ export default function OracleResyncButton() {
       <Button
         leftIcon={<ExclamationMarkCircled className='w-4' />}
         text='Resync Oracle'
-        className='!text-warning !border-warning hover:bg-warning/20 active:bg-warning/20 focus:bg-warning/20 animate-pulse'
+        className='!text-warning !border-warning hover:bg-warning/20 active:bg-warning/20 focus:bg-warning/20'
         color='secondary'
         onClick={updatePythOracle}
       />
