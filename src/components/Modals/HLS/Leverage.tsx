@@ -6,7 +6,6 @@ import LeverageSummary from 'components/Modals/HLS/LeverageSummary'
 import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
 
 interface Props {
-  account?: Account
   amount: BigNumber
   asset: Asset
   max: BigNumber

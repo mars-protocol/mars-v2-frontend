@@ -3,7 +3,7 @@ import React from 'react'
 import { FormattedNumber } from 'components/FormattedNumber'
 import Loading from 'components/Loading'
 
-export const LTV_MAX_META = { accessorKey: 'ltv.max', header: 'Max LTV' }
+export const LTV_MAX_META = { accessorKey: 'maxLTV', header: 'Max LTV' }
 
 interface Props {
   strategy: HLSStrategy

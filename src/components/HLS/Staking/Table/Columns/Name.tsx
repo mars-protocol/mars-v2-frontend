@@ -5,7 +5,7 @@ import Loading from 'components/Loading'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import { getAssetByDenom } from 'utils/assets'
 
-export const NAME_META = { id: 'name', header: 'Vault', accessorKey: 'name' }
+export const NAME_META = { id: 'name', header: 'Vault', accessorKey: 'denoms.deposit' }
 interface Props {
   strategy: HLSStrategy
 }
