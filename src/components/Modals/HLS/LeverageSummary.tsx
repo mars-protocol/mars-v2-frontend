@@ -29,11 +29,15 @@ export default function LeverageSummary(props: Props) {
   }, [props.asset.symbol])
 
   return (
-    <div className='grid grid-cols-2'>
+    <div className='grid grid-cols-2 gap-2'>
       {items.map((item) => (
         <React.Fragment key={item.title}>
-          <Text className='text-white/60'>{item.title}</Text>
-          <FormattedNumber className='place-self-end' amount={item.amount} options={item.options} />
+          <Text className='text-white/60 text-xs'>{item.title}</Text>
+          <FormattedNumber
+            className='place-self-end text-xs'
+            amount={item.amount}
+            options={item.options}
+          />
         </React.Fragment>
       ))}
     </div>

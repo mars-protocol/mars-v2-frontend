@@ -96,6 +96,7 @@ interface BroadcastSlice {
     deposits: BNCoin[]
     borrowings: BNCoin[]
     isCreate: boolean
+    kind: import('types/generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind
   }) => Promise<boolean>
   executeMsg: (options: { messages: MsgExecuteContract[] }) => Promise<BroadcastResult>
   lend: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>

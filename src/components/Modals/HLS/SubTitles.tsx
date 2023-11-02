@@ -3,7 +3,7 @@ import React from 'react'
 import DisplayCurrency from 'components/DisplayCurrency'
 import Text from 'components/Text'
 import { BNCoin } from 'types/classes/BNCoin'
-import { formatAmountWithSymbol } from 'utils/formatters'
+import { formatAmountWithSymbol, formatLeverage } from 'utils/formatters'
 
 interface SubTitleProps {
   text: string
@@ -46,7 +46,7 @@ export function LeverageSubTitle(props: LeveragedSubTitleProps) {
 
   return (
     <>
-      <SubTitle text={`${props.leverage}x • Total Position Value `} />
+      <SubTitle text={`${formatLeverage(props.leverage)} • Total Position Value `} />
       <DisplayCurrency
         coin={BNCoin.fromDenomAndBigNumber('usd', props.positionValue)}
         className='text-white/60 text-xs inline'

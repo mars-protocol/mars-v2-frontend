@@ -10,7 +10,6 @@ import {
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { VaultConfigBaseForString } from 'types/generated/mars-params/MarsParams.types'
 import {
-  AccountKind,
   AssetParamsBaseForAddr,
   HealthComputer,
 } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
@@ -114,6 +113,7 @@ export default function useHealthComputer(account?: Account) {
 
   const healthComputer: HealthComputer | null = useMemo(() => {
     if (
+      !account ||
       !positions ||
       !vaultPositionValues ||
       !vaultConfigsData ||
@@ -130,9 +130,9 @@ export default function useHealthComputer(account?: Account) {
         vault_values: vaultPositionValues,
       },
       positions: positions,
-      kind: 'default' as AccountKind,
+      kind: account.kind,
     }
-  }, [priceData, denomsData, vaultConfigsData, vaultPositionValues, positions])
+  }, [account, positions, vaultPositionValues, vaultConfigsData, denomsData, priceData])
 
   useEffect(() => {
     if (!healthComputer) return

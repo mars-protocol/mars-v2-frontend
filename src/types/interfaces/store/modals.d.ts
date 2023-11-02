@@ -70,5 +70,6 @@ interface WalletAssetModal {
 }
 
 interface HlsModal {
-  vault: Vault
+  strategy?: HLSStrategy
+  vault?: Vault
 }

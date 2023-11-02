@@ -21,6 +21,7 @@ export default function Leverage(props: Props) {
         asset={props.asset}
         max={props.max}
         onChange={props.onChangeAmount}
+        maxText='Max borrow'
       />
       <LeverageSummary asset={props.asset} />
       <Button onClick={props.onClickBtn} text='Continue' rightIcon={<ArrowRight />} />

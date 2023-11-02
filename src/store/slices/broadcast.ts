@@ -423,6 +423,7 @@ export default function createBroadcastSlice(
       deposits: BNCoin[]
       borrowings: BNCoin[]
       isCreate: boolean
+      kind: AccountKind
     }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
@@ -432,7 +433,14 @@ export default function createBroadcastSlice(
       }
 
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
+        messages: [
+          generateExecutionMessage(
+            get().address,
+            ENV.ADDRESS_CREDIT_MANAGER,
+            msg,
+            options.kind === 'default' ? [] : options.deposits.map((coin) => coin.toCoin()),
+          ),
+        ],
       })
 
       const depositedCoins = getVaultDepositCoinsFromActions(options.actions)

@@ -1,7 +1,7 @@
 import { Suspense, useMemo } from 'react'
 
-import { NAME_META } from 'components/Earn/Farm/Table/Columns/Name'
-import useAvailableColumns from 'components/Earn/Farm/Table/Columns/useAvailableColumns'
+import { NAME_META } from 'components/HLS/Farm/Table/Columns/Name'
+import useAvailableColumns from 'components/HLS/Farm/Table/Columns/useAvailableColumns'
 import Table from 'components/Table'
 import { ENV } from 'constants/env'
 import { BN_ZERO } from 'constants/math'
@@ -38,20 +38,22 @@ function Fallback() {
   const columns = useAvailableColumns({ isLoading: true })
 
   const vaults = ENV.NETWORK === NETWORK.TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
-  const mockVaults: Vault[] = vaults.map((vault) => ({
-    ...vault,
-    apy: null,
-    apr: null,
-    ltv: {
-      max: 0,
-      liq: 0,
-    },
-    cap: {
-      denom: 'denom',
-      used: BN_ZERO,
-      max: BN_ZERO,
-    },
-  }))
+  const mockVaults: Vault[] = vaults
+    .filter((v) => v.isHls)
+    .map((vault) => ({
+      ...vault,
+      apy: null,
+      apr: null,
+      ltv: {
+        max: 0,
+        liq: 0,
+      },
+      cap: {
+        denom: 'denom',
+        used: BN_ZERO,
+        max: BN_ZERO,
+      },
+    }))
   return (
     <Table
       title={title}
