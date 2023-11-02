@@ -106,7 +106,7 @@ export const TVChartContainer = (props: Props) => {
 
   return (
     <Card title='Trading Chart' contentClassName='px-0.5 pb-0.5 h-full'>
-      <div ref={chartContainerRef} className='h-full rounded-b-sm' />
+      <div ref={chartContainerRef} className='h-full overflow-hidden rounded-b-base' />
     </Card>
   )
 }

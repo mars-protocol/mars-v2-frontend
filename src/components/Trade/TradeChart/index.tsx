@@ -31,7 +31,7 @@ export default function TradeChart(props: Props) {
         <TVChartContainer buyAsset={props.buyAsset} sellAsset={props.sellAsset} />
       ) : (
         <Card title='Trading Chart' contentClassName='px-0.5 pb-0.5 h-full'>
-          <div className='flex items-center justify-center w-full h-full rounded-b-sm bg-chart'>
+          <div className='flex items-center justify-center w-full h-full rounded-b-base bg-chart'>
             <CircularProgress size={60} className='opacity-50' />
           </div>
         </Card>
