@@ -71,6 +71,7 @@ interface HandleResponseProps {
     | 'unlock'
     | 'swap'
     | 'oracle'
+    | 'hls-staking'
   lend?: boolean
   accountId?: string
   changes?: { debts?: BNCoin[]; deposits?: BNCoin[]; lends?: BNCoin[] }
@@ -79,6 +80,12 @@ interface HandleResponseProps {
 }
 
 interface BroadcastSlice {
+  addToStakingStrategy: (options: {
+    accountId: string
+    actions: Action[]
+    depositCoin: BNCoin
+    borrowCoin: BNCoin
+  }) => Promise<boolean>
   borrow: (options: {
     accountId: string
     coin: BNCoin

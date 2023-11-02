@@ -79,7 +79,7 @@ export default function useAccordionItems(props: Props) {
         toggleOpen: props.toggleIsOpen,
       },
       ...[
-        props.hlsAccounts.length > 2
+        props.emptyHlsAccounts.length > 0
           ? {
               title: 'Select HLS Account',
               renderContent: () => (
