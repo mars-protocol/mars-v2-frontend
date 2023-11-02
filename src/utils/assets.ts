@@ -43,3 +43,7 @@ export function getLendEnabledAssets() {
 export function getBorrowEnabledAssets() {
   return ASSETS.filter((asset) => asset.isBorrowEnabled)
 }
+
+export function getStakingAssets() {
+  return ASSETS.filter((asset) => asset.isStaking)
+}

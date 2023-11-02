@@ -1,8 +1,9 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import useDepositHlsVault from 'hooks/useDepositHlsVault'
+import useHealthComputer from 'hooks/useHealthComputer'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
-import { BN } from 'utils/helpers'
+import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   borrowAsset: Asset
@@ -27,15 +28,22 @@ export default function useVaultController(props: Props) {
 
   const actions = []
 
-  const { updatedAccount, simulateVaultDeposit } = useUpdatedAccount(selectedAccount)
+  const { updatedAccount, addDeposits } = useUpdatedAccount(selectedAccount)
+  const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
 
-  const execute = () => null
+  const maxBorrowAmount = useMemo(() => {
+    // TODO: Perhaps we need a specific target for this -> target = swap
+    return computeMaxBorrowAmount(props.borrowAsset.denom, 'deposit')
+  }, [computeMaxBorrowAmount, props.borrowAsset.denom])
+
+  const execute = useCallback(() => {}, [])
 
   const onChangeCollateral = useCallback(
     (amount: BigNumber) => {
       setDepositAmount(amount)
+      addDeposits([BNCoin.fromDenomAndBigNumber(collateralAsset.denom, amount)])
     },
-    [setDepositAmount],
+    [addDeposits, collateralAsset.denom, setDepositAmount],
   )
 
   const onChangeDebt = useCallback(
@@ -50,7 +58,7 @@ export default function useVaultController(props: Props) {
     depositAmount,
     execute,
     leverage,
-    maxBorrowAmount: BN(0),
+    maxBorrowAmount,
     onChangeCollateral,
     onChangeDebt,
     positionValue,

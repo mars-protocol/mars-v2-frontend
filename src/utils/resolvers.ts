@@ -13,7 +13,7 @@ export function resolveMarketResponse(
 ): Market {
   return {
     denom: marketResponse.denom,
-    borrowRate: Number(marketResponse.borrow_rate),
+    borrowRate: Number(marketResponse.borrow_rate) * 100,
     debtTotalScaled: marketResponse.debt_total_scaled,
     collateralTotalScaled: marketResponse.collateral_total_scaled,
     depositEnabled: assetParamsResponse.red_bank.deposit_enabled,
@@ -24,7 +24,7 @@ export function resolveMarketResponse(
       max: BN(assetParamsResponse.deposit_cap),
     },
     maxLtv: Number(assetParamsResponse.max_loan_to_value),
-    liquidityRate: Number(marketResponse.liquidity_rate),
+    liquidityRate: Number(marketResponse.liquidity_rate) * 100,
     liquidationThreshold: Number(assetParamsResponse.liquidation_threshold),
   }
 }
@@ -60,8 +60,8 @@ export function resolveHLSStrategies(
         maxLeverage: getLeverageFromLTV(+asset.credit_manager.hls!.max_loan_to_value),
         maxLTV: +asset.credit_manager.hls!.max_loan_to_value,
         denoms: {
-          deposit: correlatedDenom,
-          borrow: asset.denom,
+          deposit: asset.denom,
+          borrow: correlatedDenom,
         },
       }),
     )

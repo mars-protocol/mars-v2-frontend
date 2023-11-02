@@ -65,6 +65,7 @@ export default function useAccordionItems(props: Props) {
             onChangeAmount={props.onChangeDebt}
             onClickBtn={() => props.toggleIsOpen(2)}
             max={props.maxBorrowAmount}
+            positionValue={props.positionValue}
           />
         ),
         renderSubTitle: () => (

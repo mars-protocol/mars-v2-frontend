@@ -2,14 +2,19 @@ import React, { useMemo } from 'react'
 
 import { FormattedNumber } from 'components/FormattedNumber'
 import Text from 'components/Text'
+import useBorrowAsset from 'hooks/useBorrowAsset'
 
 interface Props {
   asset: Asset
+  positionValue: BigNumber
 }
 
 export default function LeverageSummary(props: Props) {
+  const borrowAsset = useBorrowAsset(props.asset.denom)
+
   const items: { title: string; amount: number; options: FormatOptions }[] = useMemo(() => {
     return [
+      // TODO: Get APY numbers
       {
         title: 'APY',
         amount: 0,
@@ -17,16 +22,16 @@ export default function LeverageSummary(props: Props) {
       },
       {
         title: `Borrow APR ${props.asset.symbol}`,
-        amount: 0,
-        options: { suffix: '%', minDecimals: 1, maxDecimals: 1 },
+        amount: borrowAsset?.borrowRate || 0,
+        options: { suffix: '%', minDecimals: 2, maxDecimals: 2 },
       },
       {
         title: 'Total Position Size',
-        amount: 0,
+        amount: props.positionValue.toNumber(),
         options: { prefix: '$' },
       },
     ]
-  }, [props.asset.symbol])
+  }, [borrowAsset?.borrowRate, props.asset.symbol, props.positionValue])
 
   return (
     <div className='grid grid-cols-2 gap-2'>

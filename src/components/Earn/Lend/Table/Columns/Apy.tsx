@@ -14,7 +14,7 @@ export default function Apr(props: Props) {
 
   return (
     <AssetRate
-      rate={convertAprToApy((props.marketLiquidityRate ?? 0) * 100, 365)}
+      rate={convertAprToApy(props.marketLiquidityRate ?? 0, 365)}
       isEnabled={props.borrowEnabled}
       className='justify-end text-xs'
       type='apy'
