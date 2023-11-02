@@ -60,7 +60,6 @@ export default function useAccordionItems(props: Props) {
         title: 'Leverage',
         renderContent: () => (
           <Leverage
-            account={props.updatedAccount}
             amount={props.borrowAmount}
             asset={props.borrowAsset}
             onChangeAmount={props.onChangeDebt}
