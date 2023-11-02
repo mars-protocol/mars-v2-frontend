@@ -34,7 +34,11 @@ export default function useAssetTableColumns(isBorrow: boolean) {
 
           return (
             <div className='flex items-center'>
-              <Checkbox checked={row.getIsSelected()} onChange={row.getToggleSelectedHandler()} />
+              <Checkbox
+                name={`asset-${asset.id.toLowerCase()}`}
+                checked={row.getIsSelected()}
+                onChange={row.getToggleSelectedHandler()}
+              />
               <AssetImage asset={asset} size={24} className='ml-4' />
               <div className='ml-2 text-left'>
                 <Text size='sm' className='mb-0.5 text-white'>
