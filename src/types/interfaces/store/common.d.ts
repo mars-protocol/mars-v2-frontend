@@ -12,6 +12,7 @@ interface CommonSlice {
   migrationBanner: boolean
   tutorial: boolean
   useMargin: boolean
+  isOracleStale: boolean
 }
 
 interface FocusComponent {

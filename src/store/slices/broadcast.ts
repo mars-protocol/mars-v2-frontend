@@ -14,7 +14,7 @@ import {
   ExecuteMsg as CreditManagerExecuteMsg,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHealthTypes.types'
-import { getAssetByDenom, getAssetBySymbol } from 'utils/assets'
+import { getAssetByDenom, getAssetBySymbol, getPythAssets } from 'utils/assets'
 import { generateErrorMessage, getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import { defaultFee } from 'utils/constants'
@@ -26,7 +26,7 @@ import { getVaultDepositCoinsFromActions } from 'utils/vaults'
 function generateExecutionMessage(
   sender: string | undefined = '',
   contract: string,
-  msg: CreditManagerExecuteMsg | AccountNftExecuteMsg,
+  msg: CreditManagerExecuteMsg | AccountNftExecuteMsg | PythUpdateExecuteMsg,
   funds: Coin[],
 ) {
   return new MsgExecuteContract({
@@ -642,6 +642,27 @@ export default function createBroadcastSlice(
       }
 
       return { estimateFee, execute }
+    },
+    updateOracle: async (pricesData: string[]) => {
+      const msg: PythUpdateExecuteMsg = { update_price_feeds: { data: pricesData } }
+      const pythAssets = getPythAssets()
+      const response = get().executeMsg({
+        messages: [
+          generateExecutionMessage(get().address, ENV.ADDRESS_PYTH, msg, [
+            { denom: get().baseCurrency.denom, amount: String(pythAssets.length) },
+          ]),
+        ],
+      })
+
+      get().setToast({
+        response,
+        options: {
+          action: 'oracle',
+          message: 'Oracle updated successfully!',
+        },
+      })
+
+      return response.then((response) => !!response.result)
     },
     setToast: (toast: ToastObject) => {
       const id = moment().unix()

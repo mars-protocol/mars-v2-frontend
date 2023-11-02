@@ -89,7 +89,7 @@ export default function Toaster() {
 
   const handleResponse = (toast: ToastResponse, details?: boolean) => {
     const isError = toast?.isError
-    if (!isError) addTransaction(toast)
+    if (!isError && toast.accountId) addTransaction(toast)
     const generalMessage = isError ? 'Transaction failed!' : 'Transaction completed successfully!'
     const showDetailElement = !!(!details && toast.hash)
     const Msg = () => (
