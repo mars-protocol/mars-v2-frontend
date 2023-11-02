@@ -13,7 +13,8 @@ interface Props {
 }
 
 export default function TradeChart(props: Props) {
-  const [isScriptReady, setIsScriptReady] = useState(true)
+  const [isScriptReady, setIsScriptReady] = useState(false)
+
   return (
     <>
       <Script
