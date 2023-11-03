@@ -11,17 +11,14 @@ import useIsOpenArray from 'hooks/useIsOpenArray'
 import useVault from 'hooks/useVault'
 import useStore from 'store'
 import { isAccountEmpty } from 'utils/accounts'
-import { getAssetByDenom } from 'utils/assets'
 
 interface Props {
-  borrowDenom: string
-  collateralDenom: string
+  borrowAsset: Asset
+  collateralAsset: Asset
   vaultAddress: string | null
 }
 
 export default function Controller(props: Props) {
-  const collateralAsset = getAssetByDenom(props.collateralDenom)
-  const borrowAsset = getAssetByDenom(props.borrowDenom)
   const [selectedAccount, setSelectedAccount] = useState<Account>(EMPTY_ACCOUNT_HLS)
   const [isOpen, toggleIsOpen] = useIsOpenArray(4, false)
   const address = useStore((s) => s.address)
@@ -30,18 +27,16 @@ export default function Controller(props: Props) {
     () => hlsAccounts.filter((account) => isAccountEmpty(account)),
     [hlsAccounts],
   )
-  const walletCollateralAsset = useCurrentWalletBalance(props.collateralDenom)
+  const walletCollateralAsset = useCurrentWalletBalance(props.collateralAsset.denom)
   const vault = useVault(props.vaultAddress || '')
-
-  if (!collateralAsset || !borrowAsset) return null
 
   if (vault)
     return (
       <Vault
         walletCollateralAsset={walletCollateralAsset}
         vault={vault}
-        collateralAsset={collateralAsset}
-        borrowAsset={borrowAsset}
+        collateralAsset={props.collateralAsset}
+        borrowAsset={props.borrowAsset}
         emptyHlsAccounts={emptyHlsAccounts}
         hlsAccounts={hlsAccounts}
         isOpen={isOpen}
@@ -54,8 +49,8 @@ export default function Controller(props: Props) {
   return (
     <StakingContent
       walletCollateralAsset={walletCollateralAsset}
-      collateralAsset={collateralAsset}
-      borrowAsset={borrowAsset}
+      collateralAsset={props.collateralAsset}
+      borrowAsset={props.borrowAsset}
       emptyHlsAccounts={emptyHlsAccounts}
       hlsAccounts={hlsAccounts}
       isOpen={isOpen}

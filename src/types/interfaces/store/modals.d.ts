@@ -4,6 +4,7 @@ interface ModalSlice {
   alertDialog: AlertDialogConfig | null
   assetOverlayState: OverlayState
   hlsModal: HlsModal | null
+  hlsManageModal: HlsManageModal | null
   borrowModal: BorrowModal | null
   fundAndWithdrawModal: 'fund' | 'withdraw' | null
   getStartedModal: boolean
@@ -72,4 +73,11 @@ interface WalletAssetModal {
 interface HlsModal {
   strategy?: HLSStrategy
   vault?: Vault
+}
+
+interface HlsManageModal {
+  staking: {
+    strategy: HLSStrategy
+    action: 'deposit' | 'withdraw' | 'repay'
+  }
 }

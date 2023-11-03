@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 
 import Button from 'components/Button'
 import ActionButton from 'components/Button/ActionButton'
-import { Plus, ReceiptCheck } from 'components/Icons'
+import { HandCoins, Plus } from 'components/Icons'
 import useStore from 'store'
 import { getEnabledMarketAssets } from 'utils/assets'
 
@@ -37,7 +37,7 @@ export default function BorrowActionButtons(props: Props) {
         className='min-w-40 text-center'
       />
       {debt && (
-        <Button color='tertiary' leftIcon={<ReceiptCheck />} text='Repay' onClick={repayHandler} />
+        <Button color='tertiary' leftIcon={<HandCoins />} text='Repay' onClick={repayHandler} />
       )}
     </div>
   )
