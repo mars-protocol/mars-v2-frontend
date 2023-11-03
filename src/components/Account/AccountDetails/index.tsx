@@ -35,7 +35,6 @@ import {
 } from 'utils/accounts'
 
 export default function AccountDetailsController() {
-  const location = useLocation()
   const address = useStore((s) => s.address)
   const { data: accounts, isLoading } = useAccounts('default', address)
   const { data: accountIds } = useAccountIds(address, false)
@@ -57,6 +56,7 @@ interface Props {
 
 function AccountDetails(props: Props) {
   const { account } = props
+  const location = useLocation()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,

@@ -4,6 +4,12 @@ import AccountDetails from 'components/Account/AccountDetails'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
 
+jest.mock('react-router', () => ({
+  ...(jest.requireActual('react-router') as {}),
+  useLocation: jest.fn().mockImplementation(() => {
+    return { pathname: '/testroute' }
+  }),
+}))
 jest.mock('hooks/useCurrentAccount', () => jest.fn(() => null))
 jest.mock('hooks/useHealthComputer', () =>
   jest.fn(() => ({
