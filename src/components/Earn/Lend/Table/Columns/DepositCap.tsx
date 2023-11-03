@@ -7,7 +7,7 @@ import { demagnify } from 'utils/formatters'
 
 export const DEPOSIT_CAP_META = {
   accessorKey: 'marketDepositCap',
-  header: 'Depo. Cap',
+  header: 'Deposit Cap',
   id: 'marketDepositCap',
 }
 

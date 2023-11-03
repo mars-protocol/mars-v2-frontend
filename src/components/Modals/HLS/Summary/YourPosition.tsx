@@ -48,6 +48,14 @@ export default function YourPosition(props: Props) {
           className='text-white/60 place-self-end text-xs'
         />
       </div>
+      <div className='flex justify-between mb-2'>
+        <Text className='text-white/60 text-xs'>Leverage</Text>
+        <FormattedNumber
+          amount={props.leverage}
+          options={{ suffix: 'x' }}
+          className='text-white/60 place-self-end text-xs'
+        />
+      </div>
       <div className='flex justify-between'>
         <Text className='text-xs group/apytooltip' tag='span'>
           <Tooltip

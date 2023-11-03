@@ -11,6 +11,7 @@ interface Props {
   max: BigNumber
   onChangeAmount: (amount: BigNumber) => void
   onClickBtn: () => void
+  positionValue: BigNumber
 }
 
 export default function Leverage(props: Props) {
@@ -23,7 +24,7 @@ export default function Leverage(props: Props) {
         onChange={props.onChangeAmount}
         maxText='Max borrow'
       />
-      <LeverageSummary asset={props.asset} />
+      <LeverageSummary asset={props.asset} positionValue={props.positionValue} />
       <Button onClick={props.onClickBtn} text='Continue' rightIcon={<ArrowRight />} />
     </div>
   )

@@ -80,7 +80,7 @@ export default function Option(props: Props) {
           })}
         </Text>
         <AssetRate
-          rate={convertAprToApy((marketAsset?.borrowRate ?? 0) * 100, 365)}
+          rate={convertAprToApy(marketAsset?.borrowRate ?? 0, 365)}
           isEnabled={marketAsset?.borrowEnabled ?? false}
           className='col-span-2 text-white/50'
           type='apy'

@@ -79,10 +79,10 @@ export default function Table<T>(props: Props<T>) {
                         'align-center',
                       )}
                     >
-                      <span className='w-6 h-6 text-white'>
+                      <span className='w-5 h-5 text-white'>
                         {header.column.getCanSort()
                           ? {
-                              asc: <SortAsc />,
+                              asc: <SortAsc size={16} />,
                               desc: <SortDesc />,
                               false: <SortNone />,
                             }[header.column.getIsSorted() as string] ?? null
@@ -90,8 +90,8 @@ export default function Table<T>(props: Props<T>) {
                       </span>
                       <Text
                         tag='span'
-                        size='sm'
-                        className='flex items-center font-normal text-white/70'
+                        size='xs'
+                        className='flex items-center font-normal text-white/60'
                       >
                         {flexRender(header.column.columnDef.header, header.getContext())}
                       </Text>

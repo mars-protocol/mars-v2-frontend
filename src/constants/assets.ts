@@ -58,6 +58,7 @@ export const ASSETS: Asset[] = [
     isDisplayCurrency: ENV.NETWORK !== NETWORK.TESTNET,
     isAutoLendEnabled: false,
     poolId: 803,
+    isStaking: true,
   },
   {
     symbol: 'WBTC.axl',

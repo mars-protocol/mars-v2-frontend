@@ -13,7 +13,7 @@ interface Props {
 }
 
 function Content(props: Props) {
-  const { data: account } = useAccount('high_levered_strategy', props.accountId, true)
+  const { data: account } = useAccount(props.accountId, true)
 
   const { data } = useBorrowMarketAssetsTableData(false)
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])

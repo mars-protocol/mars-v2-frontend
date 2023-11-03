@@ -91,5 +91,5 @@ export default function PortfolioSummary() {
 
   if (!walletAddress && !urlAddress) return null
 
-  return <SummarySkeleton title='Portfolio Summary' stats={stats} />
+  return <SummarySkeleton title='Portfolio Summary' stats={stats} accountId='' />
 }

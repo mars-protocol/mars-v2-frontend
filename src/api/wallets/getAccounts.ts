@@ -8,7 +8,7 @@ export default async function getAccounts(kind: AccountKind, address?: string): 
 
   const $accounts = accountIdsAndKinds
     .filter((a) => a.kind === kind)
-    .map((account) => getAccount(account))
+    .map((account) => getAccount(account.id))
 
   const accounts = await Promise.all($accounts).then((accounts) => accounts)
 

@@ -45,7 +45,7 @@ export default function Row<T>(props: Props<T>) {
               key={cell.id}
               className={classNames(
                 isSymbolOrName ? 'text-left' : 'text-right',
-                props.spacingClassName ?? 'p-4',
+                props.spacingClassName ?? 'px-3 py-4',
                 borderClasses,
               )}
             >

@@ -17,7 +17,7 @@ export default function BorrowRate(props: Props) {
   return (
     <FormattedNumber
       className='justify-end text-xs'
-      amount={props.borrowRate * 100}
+      amount={props.borrowRate}
       options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
       animate
     />

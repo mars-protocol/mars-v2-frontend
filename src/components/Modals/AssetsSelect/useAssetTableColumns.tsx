@@ -30,7 +30,7 @@ export default function useAssetTableColumns(isBorrow: boolean) {
           const borrowAsset = row.original.asset as BorrowAsset
           const showRate = !borrowAsset?.borrowRate
           const rate = isBorrow ? market?.borrowRate : market?.liquidityRate
-          const apy = convertAprToApy((rate ?? 0) * 100, 365)
+          const apy = convertAprToApy(rate ?? 0, 365)
 
           return (
             <div className='flex items-center'>

@@ -148,7 +148,7 @@ export function formatLeverage(leverage: number) {
 }
 
 export function formatPercent(percent: number | string, minDecimals?: number) {
-  return formatValue(+percent * 100, {
+  return formatValue(+percent, {
     minDecimals: minDecimals ?? 0,
     suffix: '%',
   })
@@ -209,6 +209,5 @@ export function getCoinAmount(denom: string, value: BigNumber, prices: BNCoin[])
 }
 
 export function convertLiquidityRateToAPR(rate: number) {
-  const rateMulHundred = rate * 100
-  return rateMulHundred >= 0.01 ? rateMulHundred : 0.0
+  return rate >= 0.01 ? rate : 0.0
 }

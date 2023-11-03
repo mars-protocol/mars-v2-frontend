@@ -29,3 +29,13 @@ interface AccountIdAndKind {
   id: string
   kind: AccountKind
 }
+
+interface HLSAccountWithStrategy extends Account {
+  leverage: number
+  strategy: HLSStrategy
+  values: {
+    net: BigNumber
+    debt: BigNumber
+    total: BigNumber
+  }
+}

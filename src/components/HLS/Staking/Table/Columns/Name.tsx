@@ -5,7 +5,7 @@ import Loading from 'components/Loading'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import { getAssetByDenom } from 'utils/assets'
 
-export const NAME_META = { id: 'name', header: 'Vault', accessorKey: 'denoms.deposit' }
+export const NAME_META = { id: 'name', header: 'Strategy', accessorKey: 'strategy.denoms.deposit' }
 interface Props {
   strategy: HLSStrategy
 }
@@ -21,8 +21,8 @@ export default function Name(props: Props) {
       {depositAsset && borrowAsset ? (
         <TitleAndSubCell
           className='ml-2 mr-2 text-left'
-          title={`${depositAsset.symbol}/${borrowAsset.symbol}`}
-          sub='Staking'
+          title={`${depositAsset.symbol} - ${borrowAsset.symbol}`}
+          sub='Via MARS'
         />
       ) : (
         <Loading />

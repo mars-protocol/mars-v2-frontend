@@ -65,6 +65,7 @@ export default function useAccordionItems(props: Props) {
             onChangeAmount={props.onChangeDebt}
             onClickBtn={() => props.toggleIsOpen(2)}
             max={props.maxBorrowAmount}
+            positionValue={props.positionValue}
           />
         ),
         renderSubTitle: () => (
@@ -78,7 +79,7 @@ export default function useAccordionItems(props: Props) {
         toggleOpen: props.toggleIsOpen,
       },
       ...[
-        props.hlsAccounts.length > 2
+        props.emptyHlsAccounts.length > 0
           ? {
               title: 'Select HLS Account',
               renderContent: () => (

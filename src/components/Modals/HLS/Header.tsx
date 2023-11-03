@@ -1,6 +1,7 @@
 import React from 'react'
 
 import DoubleLogo from 'components/DoubleLogo'
+import HLSTag from 'components/HLS/HLSTag'
 import Text from 'components/Text'
 import { getAssetByDenom } from 'utils/assets'
 
@@ -19,9 +20,7 @@ export default function Header(props: Props) {
     <div className='flex items-center gap-2'>
       <DoubleLogo primaryDenom={props.primaryDenom} secondaryDenom={props.secondaryDenom} />
       <Text>{`${primaryAsset.symbol} - ${secondaryAsset.symbol}`}</Text>
-      <Text className='rounded-sm gradient-hls px-2 font-bold py-0.5' size='xs'>
-        HLS
-      </Text>
+      <HLSTag />
     </div>
   )
 }

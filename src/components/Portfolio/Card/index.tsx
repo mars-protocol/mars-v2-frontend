@@ -27,7 +27,7 @@ interface Props {
 }
 
 export default function PortfolioCard(props: Props) {
-  const { data: account } = useAccount('default', props.accountId)
+  const { data: account } = useAccount(props.accountId)
   const { health, healthFactor } = useHealthComputer(account)
   const { address: urlAddress } = useParams()
   const { data: prices } = usePrices()
@@ -110,6 +110,7 @@ export default function PortfolioCard(props: Props) {
         healthFactor={healthFactor}
         accountId={props.accountId}
         isCurrent={props.accountId === currentAccountId}
+        isHls={account.kind === 'high_levered_strategy'}
       />
     </NavLink>
   )

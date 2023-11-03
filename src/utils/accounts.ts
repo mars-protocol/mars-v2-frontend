@@ -89,13 +89,13 @@ export const calculateAccountApr = (
     const apr =
       lendingAssetsData.find((lendingAsset) => lendingAsset.asset.denom === lend.denom)
         ?.marketLiquidityRate ?? 0
-    const positionInterest = amount.multipliedBy(price).multipliedBy(apr)
+    const positionInterest = amount.multipliedBy(price).multipliedBy(apr).dividedBy(100)
     totalLendsInterestValue = totalLendsInterestValue.plus(positionInterest)
   })
 
   vaults?.forEach((vault) => {
     const lockedValue = vault.values.primary.plus(vault.values.secondary)
-    const positionInterest = lockedValue.multipliedBy(vault?.apr ?? 0)
+    const positionInterest = lockedValue.multipliedBy(vault?.apr ?? 0).dividedBy(100)
     totalVaultsInterestValue = totalVaultsInterestValue.plus(positionInterest)
   })
 
@@ -107,15 +107,19 @@ export const calculateAccountApr = (
     const apy =
       borrowAssetsData.find((borrowAsset) => borrowAsset.asset.denom === debt.denom)?.borrowRate ??
       0
-    const positionInterest = amount.multipliedBy(price).multipliedBy(convertApyToApr(apy, 365))
+    const positionInterest = amount
+      .multipliedBy(price)
+      .multipliedBy(convertApyToApr(apy, 365))
+      .dividedBy(100)
+
     totalDebtInterestValue = totalDebtInterestValue.plus(positionInterest)
   })
 
-  const totalInterstValue = totalLendsInterestValue
+  const totalInterestValue = totalLendsInterestValue
     .plus(totalVaultsInterestValue)
     .minus(totalDebtInterestValue)
 
-  return totalInterstValue.dividedBy(totalNetValue).times(100)
+  return totalInterestValue.dividedBy(totalNetValue).times(100)
 }
 
 export function calculateAccountLeverage(account: Account, prices: BNCoin[]) {
