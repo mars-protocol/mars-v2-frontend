@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import classnames from 'classnames'
 import { useMemo } from 'react'
 
 import HealthIcon from 'components/Account/Health/HealthIcon'
@@ -70,7 +69,7 @@ export default function HealthBar({
           <HealthIcon
             health={health}
             isLoading={healthFactor === 0}
-            className={classnames('mr-2', iconClassName)}
+            className={classNames('mr-2', iconClassName)}
             colorClass='text-white'
           />
         )}
@@ -83,50 +82,49 @@ export default function HealthBar({
             viewBox={`0 0 184 ${height}`}
           >
             <mask id='healthBarMask'>
-              <rect x='0' fill='#FFFFFF' width='35' height={height} />
-              <rect x='37.8' fill='#FFFFFF' width='35' height={height} />
-              <rect x='75.6' fill='#FFFFFF' width='108.4' height={height} />
+              <rect fill='#FFFFFF' x='46' width='47' height={height} />
+              <rect fill='#FFFFFF' width='43.6' height={height} />
+              <rect fill='#FFFFFF' x='95.5' width='88.5' height={height} />
             </mask>
             <mask id='backgroundHealthBarMask'>
-              <rect x='62.1' fill='white' width='2.4' height={height} />
-              <rect x='48' fill='white' width='2' height={height} />
-              <rect x='57.3' fill='white' width='2.4' height={height} />
-              <rect x='52.5' fill='white' width='2.4' height={height} />
-              <rect x='66.9' fill='white' width='2.4' height={height} />
-              <rect x='86.1' fill='white' width='2.4' height={height} />
-              <rect x='81.3' fill='white' width='2.4' height={height} />
-              <rect x='71.7' fill='white' width='2.4' height={height} />
-              <rect x='90.9' fill='white' width='2.1' height={height} />
-              <rect x='76.5' fill='white' width='2.4' height={height} />
-              <rect x='119.2' fill='white' width='2.4' height={height} />
-              <rect x='143.2' fill='white' width='2.4' height={height} />
-              <rect x='138.4' fill='white' width='2.4' height={height} />
-              <rect x='133.6' fill='white' width='2.4' height={height} />
-              <rect x='124' fill='white' width='2.4' height={height} />
-              <rect x='100' fill='white' width='2.4' height={height} />
-              <rect x='104.8' fill='white' width='2.4' height={height} />
-              <rect x='109.6' fill='white' width='2.4' height={height} />
-              <rect x='114.4' fill='white' width='2.4' height={height} />
-              <rect x='128.8' fill='white' width='2.4' height={height} />
-              <rect x='172' fill='white' width='2.4' height={height} />
-              <rect x='176.8' fill='white' width='2.4' height={height} />
-              <rect x='95.5' fill='white' width='2.1' height={height} />
-              <path fill='white' d='M182,0h-0.4v4h0.4c1.1,0,2-0.9,2-2S183.1,0,182,0z' />
-              <rect x='162.4' fill='white' width='2.4' height={height} />
-              <rect x='152.8' fill='white' width='2.4' height={height} />
-              <rect x='157.6' fill='white' width='2.4' height={height} />
-              <rect x='167.2' fill='white' width='2.4' height={height} />
-              <rect x='148' fill='white' width='2.4' height={height} />
-              <rect x='17.2' fill='white' width='2.4' height={height} />
-              <rect x='12.4' fill='white' width='2.4' height={height} />
-              <rect x='3.1' fill='white' width='2.1' height={height} />
-              <rect x='7.6' fill='white' width='2.4' height={height} />
-              <rect x='22' fill='white' width='2.4' height={height} />
-              <rect x='41.2' fill='white' width='2.4' height={height} />
-              <rect x='36.4' fill='white' width='2.4' height={height} />
-              <rect x='26.8' fill='white' width='2.4' height={height} />
-              <path fill='white' d='M0.7,0.5C0.3,0.9,0,1.4,0,2s0.3,1.1,0.7,1.5V0.5z' />
-              <rect x='31.6' fill='white' width='2.4' height={height} />
+              <rect fill='#FFFFFF' x='0' y='0' width='6.4' height='{height}' />
+              <rect fill='#FFFFFF' x='8.9' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='13.7' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='18.5' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='23.3' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='28.1' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='32.9' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='37.7' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='42.5' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='47.3' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='52.1' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='56.9' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='61.7' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='66.5' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='71.3' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='76.1' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='80.9' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='85.7' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='90.5' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='95.3' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='100.1' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='104.9' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='109.7' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='114.5' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='119.2' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='124' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='128.8' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='133.6' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='138.4' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='143.2' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='148' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='152.8' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='157.6' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='162.4' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='167.2' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='172' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='176.8' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='181.6' y='0' width='2.4' height='{height}' />
             </mask>
             <rect
               className='fill-white/10'
