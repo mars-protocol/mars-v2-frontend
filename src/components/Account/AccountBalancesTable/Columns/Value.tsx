@@ -24,12 +24,17 @@ export const valueSortingFn = (a: Row<AccountBalanceRow>, b: Row<AccountBalanceR
 export default function Value(props: Props) {
   const { amountChange, type, value } = props
   const color = getAmountChangeColor(type, amountChange)
+  const allowZero = !amountChange.isZero()
   const coin = new BNCoin({
     denom: ORACLE_DENOM,
     amount: value,
   })
 
   return (
-    <DisplayCurrency coin={coin} className={classNames('text-xs text-right', color)} showZero />
+    <DisplayCurrency
+      coin={coin}
+      className={classNames('text-xs text-right', color)}
+      showZero={!allowZero}
+    />
   )
 }

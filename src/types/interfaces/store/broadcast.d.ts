@@ -123,6 +123,7 @@ interface BroadcastSlice {
     denomOut: string
     slippage: number
     isMax?: boolean
+    repay: boolean
   }) => ExecutableTx
   toast: ToastResponse | ToastPending | null
   unlock: (options: {
