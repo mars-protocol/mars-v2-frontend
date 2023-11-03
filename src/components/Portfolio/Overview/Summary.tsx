@@ -20,7 +20,7 @@ export default function PortfolioSummary() {
   const { data } = useBorrowMarketAssetsTableData(false)
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
-  const { data: accounts } = useAccounts(urlAddress || walletAddress)
+  const { data: accounts } = useAccounts('default', urlAddress || walletAddress)
 
   const stats = useMemo(() => {
     if (!accounts?.length) return
@@ -38,6 +38,7 @@ export default function PortfolioSummary() {
         lends: [],
         debts: [],
         vaults: [],
+        kind: 'default',
       } as Account,
     )
 
@@ -90,5 +91,5 @@ export default function PortfolioSummary() {
 
   if (!walletAddress && !urlAddress) return null
 
-  return <SummarySkeleton title='Portfolio Summary' stats={stats} />
+  return <SummarySkeleton title='Portfolio Summary' stats={stats} accountId='' />
 }

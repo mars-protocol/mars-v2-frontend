@@ -43,7 +43,7 @@ function AlertDialog(props: Props) {
       header={
         <div className='flex flex-col'>
           {icon && (
-            <div className='grid w-12 h-12 rounded-sm place-items-center bg-white/5 mb-4'>
+            <div className='grid w-12 h-12 mb-4 rounded-sm place-items-center bg-white/5'>
               {icon}
             </div>
           )}
@@ -74,7 +74,12 @@ function AlertDialog(props: Props) {
             />
           )}
           {checkbox && (
-            <Checkbox checked={toggle} onChange={handleCheckboxClick} text={checkbox.text} />
+            <Checkbox
+              name='aleart-toggle'
+              checked={toggle}
+              onChange={handleCheckboxClick}
+              text={checkbox.text}
+            />
           )}
         </div>
         <Button

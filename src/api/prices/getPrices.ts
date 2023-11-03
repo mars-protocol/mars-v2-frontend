@@ -2,6 +2,7 @@ import getOraclePrices from 'api/prices/getOraclePrices'
 import getPoolPrice from 'api/prices/getPoolPrice'
 import fetchPythPrices from 'api/prices/getPythPrices'
 import { ENV } from 'constants/env'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { NETWORK } from 'types/enums/network'
 import { partition } from 'utils/array'
@@ -22,9 +23,16 @@ export default async function getPrices(): Promise<BNCoin[]> {
     ).flat()
     const poolPrices = await requestPoolPrices(assetsWithPoolIds, pythAndOraclePrices)
 
+    useStore.setState({ isOracleStale: false })
+
     return [...pythAndOraclePrices, ...poolPrices, usdPrice]
   } catch (ex) {
     console.error(ex)
+    let message = 'Unknown Error'
+    if (ex instanceof Error) message = ex.message
+    if (message.includes('price publish time is too old'))
+      useStore.setState({ isOracleStale: true })
+
     throw ex
   }
 }

@@ -1,25 +1,27 @@
-import { getAccountNftQueryClient } from 'api/cosmwasm-client'
+import { getCreditManagerQueryClient } from 'api/cosmwasm-client'
 import { ITEM_LIMIT_PER_QUERY } from 'constants/query'
 
 export default async function getAccountIds(
   address?: string,
-  previousResults?: string[],
-): Promise<string[]> {
+  previousResults?: AccountIdAndKind[],
+): Promise<AccountIdAndKind[]> {
   if (!address) return []
   try {
-    const accountNftQueryClient = await getAccountNftQueryClient()
+    const client = await getCreditManagerQueryClient()
 
     const lastItem = previousResults && previousResults.at(-1)
-    const results = await accountNftQueryClient.tokens({
-      limit: ITEM_LIMIT_PER_QUERY,
-      startAfter: lastItem,
-      owner: address,
-    })
+    const accounts = (
+      await client.accounts({
+        limit: ITEM_LIMIT_PER_QUERY,
+        startAfter: lastItem?.id,
+        owner: address,
+      })
+    ).map((account) => ({ id: account.id, kind: account.kind }) as AccountIdAndKind)
 
-    const accumulated = (previousResults ?? []).concat(results.tokens)
+    const accumulated = (previousResults ?? []).concat(accounts)
 
-    if (results.tokens.length < ITEM_LIMIT_PER_QUERY) {
-      return accumulated.sort((a, b) => parseInt(a) - parseInt(b))
+    if (accounts.length < ITEM_LIMIT_PER_QUERY) {
+      return accumulated.sort((a, b) => parseInt(a.id) - parseInt(b.id))
     }
 
     return await getAccountIds(address, accumulated)

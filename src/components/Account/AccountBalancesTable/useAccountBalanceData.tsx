@@ -65,7 +65,7 @@ export default function useAccountBalanceData(props: Props) {
       const prevDebt = updatedAccount
         ? account?.debts.find((position) => position.denom === debt.denom)
         : debt
-      return getAssetAccountBalanceRow('borrowing', asset, prices, debt, apy * -100, prevDebt)
+      return getAssetAccountBalanceRow('borrowing', asset, prices, debt, apy, prevDebt)
     })
     return [...deposits, ...lends, ...vaults, ...debts]
   }, [prices, account, updatedAccount, borrowingData, lendingData])

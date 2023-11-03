@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
+import HealthIcon from 'components/Account/Health/HealthIcon'
 import HealthTooltip from 'components/Account/Health/HealthTooltip'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
@@ -9,12 +10,15 @@ import useLocalStorage from 'hooks/useLocalStorage'
 import { getHealthIndicatorColors } from 'utils/healthIndicator'
 
 interface Props {
+  className?: string
+  hasLabel?: boolean
   health: number
   healthFactor: number
+  height?: string
+  iconClassName?: string
   updatedHealth?: number
   updatedHealthFactor?: number
-  hasLabel?: boolean
-  className?: string
+  showIcon?: boolean
 }
 
 function calculateHealth(health: number): number {
@@ -36,6 +40,9 @@ export default function HealthBar({
   healthFactor = 0,
   updatedHealthFactor = 0,
   className,
+  height = '4',
+  iconClassName = 'w-5',
+  showIcon = false,
 }: Props) {
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
@@ -57,74 +64,97 @@ export default function HealthBar({
       health={isUpdated ? updatedHealth : health}
       healthFactor={isUpdated ? updatedHealthFactor : healthFactor}
     >
-      <div className={classNames('flex w-full', className)}>
-        <svg version='1.1' xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' viewBox='0 0 184 4'>
-          <mask id='healthBarMask'>
-            <path fill='#FFFFFF' d='M0,2c0-1.1,0.9-2,2-2h41.6v4H2C0.9,4,0,3.1,0,2z' />
-            <rect x='46' fill='#FFFFFF' width='47' height='4' />
-            <path fill='#FFFFFF' d='M95.5,0H182c1.1,0,2,0.9,2,2s-0.9,2-2,2H95.5V0z' />
-          </mask>
-          <mask id='backgroundHealthBarMask'>
-            <rect x='62.1' fill='white' width='2.4' height='4' />
-            <rect x='48' fill='white' width='2' height='4' />
-            <rect x='57.3' fill='white' width='2.4' height='4' />
-            <rect x='52.5' fill='white' width='2.4' height='4' />
-            <rect x='66.9' fill='white' width='2.4' height='4' />
-            <rect x='86.1' fill='white' width='2.4' height='4' />
-            <rect x='81.3' fill='white' width='2.4' height='4' />
-            <rect x='71.7' fill='white' width='2.4' height='4' />
-            <rect x='90.9' fill='white' width='2.1' height='4' />
-            <rect x='76.5' fill='white' width='2.4' height='4' />
-            <rect x='119.2' fill='white' width='2.4' height='4' />
-            <rect x='143.2' fill='white' width='2.4' height='4' />
-            <rect x='138.4' fill='white' width='2.4' height='4' />
-            <rect x='133.6' fill='white' width='2.4' height='4' />
-            <rect x='124' fill='white' width='2.4' height='4' />
-            <rect x='100' fill='white' width='2.4' height='4' />
-            <rect x='104.8' fill='white' width='2.4' height='4' />
-            <rect x='109.6' fill='white' width='2.4' height='4' />
-            <rect x='114.4' fill='white' width='2.4' height='4' />
-            <rect x='128.8' fill='white' width='2.4' height='4' />
-            <rect x='172' fill='white' width='2.4' height='4' />
-            <rect x='176.8' fill='white' width='2.4' height='4' />
-            <rect x='95.5' fill='white' width='2.1' height='4' />
-            <path fill='white' d='M182,0h-0.4v4h0.4c1.1,0,2-0.9,2-2S183.1,0,182,0z' />
-            <rect x='162.4' fill='white' width='2.4' height='4' />
-            <rect x='152.8' fill='white' width='2.4' height='4' />
-            <rect x='157.6' fill='white' width='2.4' height='4' />
-            <rect x='167.2' fill='white' width='2.4' height='4' />
-            <rect x='148' fill='white' width='2.4' height='4' />
-            <rect x='17.2' fill='white' width='2.4' height='4' />
-            <rect x='12.4' fill='white' width='2.4' height='4' />
-            <rect x='3.1' fill='white' width='2.1' height='4' />
-            <rect x='7.6' fill='white' width='2.4' height='4' />
-            <rect x='22' fill='white' width='2.4' height='4' />
-            <rect x='41.2' fill='white' width='2.4' height='4' />
-            <rect x='36.4' fill='white' width='2.4' height='4' />
-            <rect x='26.8' fill='white' width='2.4' height='4' />
-            <path fill='white' d='M0.7,0.5C0.3,0.9,0,1.4,0,2s0.3,1.1,0.7,1.5V0.5z' />
-            <rect x='31.6' fill='white' width='2.4' height='4' />
-          </mask>
-          <rect className='fill-white/10' width='184' height='4' mask='url(#healthBarMask)' />
-          <rect
-            className={classNames(backgroundColor, !reduceMotion && 'transition-all duration-500')}
-            width={isUpdated && isIncrease ? updatedWidth : width}
-            height='4'
-            mask={isUpdated ? 'url(#backgroundHealthBarMask)' : 'url(#healthBarMask)'}
+      <>
+        {showIcon && (
+          <HealthIcon
+            health={health}
+            isLoading={healthFactor === 0}
+            className={classNames('mr-2', iconClassName)}
+            colorClass='text-white'
           />
-          {isUpdated && (
+        )}
+        <div className={classNames('flex w-full', 'rounded-full overflow-hidden', className)}>
+          <svg
+            version='1.1'
+            xmlns='http://www.w3.org/2000/svg'
+            x='0px'
+            y='0px'
+            viewBox={`0 0 184 ${height}`}
+          >
+            <mask id='healthBarMask'>
+              <rect fill='#FFFFFF' x='46' width='47' height={height} />
+              <rect fill='#FFFFFF' width='43.6' height={height} />
+              <rect fill='#FFFFFF' x='95.5' width='88.5' height={height} />
+            </mask>
+            <mask id='backgroundHealthBarMask'>
+              <rect fill='#FFFFFF' x='0' y='0' width='6.4' height='{height}' />
+              <rect fill='#FFFFFF' x='8.9' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='13.7' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='18.5' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='23.3' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='28.1' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='32.9' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='37.7' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='42.5' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='47.3' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='52.1' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='56.9' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='61.7' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='66.5' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='71.3' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='76.1' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='80.9' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='85.7' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='90.5' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='95.3' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='100.1' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='104.9' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='109.7' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='114.5' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='119.2' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='124' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='128.8' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='133.6' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='138.4' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='143.2' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='148' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='152.8' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='157.6' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='162.4' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='167.2' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='172' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='176.8' y='0' width='2.4' height='{height}' />
+              <rect fill='#FFFFFF' x='181.6' y='0' width='2.4' height='{height}' />
+            </mask>
             <rect
-              className={classNames(
-                foreGroundColor,
-                !reduceMotion && 'transition-all duration-500',
-              )}
-              width={isUpdated && !isIncrease ? updatedWidth : width}
-              height='4'
+              className='fill-white/10'
+              width='184'
+              height={height}
               mask='url(#healthBarMask)'
             />
-          )}
-        </svg>
-      </div>
+            <rect
+              className={classNames(
+                backgroundColor,
+                !reduceMotion && 'transition-all duration-500',
+              )}
+              width={isUpdated && isIncrease ? updatedWidth : width}
+              height={height}
+              mask={isUpdated ? 'url(#backgroundHealthBarMask)' : 'url(#healthBarMask)'}
+            />
+            {isUpdated && (
+              <rect
+                className={classNames(
+                  foreGroundColor,
+                  !reduceMotion && 'transition-all duration-500',
+                )}
+                width={isUpdated && !isIncrease ? updatedWidth : width}
+                height={height}
+                mask='url(#healthBarMask)'
+              />
+            )}
+          </svg>
+        </div>
+      </>
     </HealthTooltip>
   )
 }

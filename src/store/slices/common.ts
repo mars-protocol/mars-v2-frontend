@@ -5,6 +5,7 @@ export default function createCommonSlice(set: SetState<CommonSlice>, get: GetSt
     accounts: null,
     balances: [],
     creditAccounts: null,
+    hlsAccounts: null,
     isOpen: true,
     selectedAccount: null,
     focusComponent: null,
@@ -12,5 +13,6 @@ export default function createCommonSlice(set: SetState<CommonSlice>, get: GetSt
     migrationBanner: true,
     tutorial: true,
     useMargin: true,
+    isOracleStale: false,
   }
 }

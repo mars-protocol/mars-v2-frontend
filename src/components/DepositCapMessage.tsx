@@ -19,8 +19,8 @@ export default function DepositCapMessage(props: Props) {
   return (
     <div className={classNames('flex items-start', props.className)}>
       {props.showIcon && <InfoCircle width={26} className='mr-5' />}
-      <div className='flex-col gap-2 flex'>
-        <Text size='sm'>Deposit Cap Reached</Text>
+      <div className='flex flex-col gap-2'>
+        <Text size='sm'>Deposit Cap Reached!</Text>
         <Text size='xs' className='text-white/40'>{`Unfortunately you're not able to ${
           props.action
         } more than the following amount${props.coins.length > 1 ? 's' : ''}:`}</Text>
@@ -39,7 +39,7 @@ export default function DepositCapMessage(props: Props) {
                   decimals: asset.decimals,
                   suffix: ` ${asset.symbol}`,
                 }}
-                className='text-white/60 text-xs'
+                className='text-xs text-white/60'
               />
             </div>
           )

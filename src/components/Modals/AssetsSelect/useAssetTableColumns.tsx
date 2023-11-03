@@ -30,11 +30,15 @@ export default function useAssetTableColumns(isBorrow: boolean) {
           const borrowAsset = row.original.asset as BorrowAsset
           const showRate = !borrowAsset?.borrowRate
           const rate = isBorrow ? market?.borrowRate : market?.liquidityRate
-          const apy = convertAprToApy((rate ?? 0) * 100, 365)
+          const apy = convertAprToApy(rate ?? 0, 365)
 
           return (
             <div className='flex items-center'>
-              <Checkbox checked={row.getIsSelected()} onChange={row.getToggleSelectedHandler()} />
+              <Checkbox
+                name={`asset-${asset.id.toLowerCase()}`}
+                checked={row.getIsSelected()}
+                onChange={row.getToggleSelectedHandler()}
+              />
               <AssetImage asset={asset} size={24} className='ml-4' />
               <div className='ml-2 text-left'>
                 <Text size='sm' className='mb-0.5 text-white'>

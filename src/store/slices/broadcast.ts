@@ -1,9 +1,11 @@
 import { MsgExecuteContract } from '@delphi-labs/shuttle-react'
+import BigNumber from 'bignumber.js'
 import moment from 'moment'
 import { isMobile } from 'react-device-detect'
 import { GetState, SetState } from 'zustand'
 
 import { ENV } from 'constants/env'
+import { BN_ZERO } from 'constants/math'
 import { Store } from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { ExecuteMsg as AccountNftExecuteMsg } from 'types/generated/mars-account-nft/MarsAccountNft.types'
@@ -13,7 +15,8 @@ import {
   Action as CreditManagerAction,
   ExecuteMsg as CreditManagerExecuteMsg,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { getAssetByDenom, getAssetBySymbol } from 'utils/assets'
+import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHealthTypes.types'
+import { getAssetByDenom, getAssetBySymbol, getPythAssets } from 'utils/assets'
 import { generateErrorMessage, getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import { defaultFee } from 'utils/constants'
@@ -25,7 +28,7 @@ import { getVaultDepositCoinsFromActions } from 'utils/vaults'
 function generateExecutionMessage(
   sender: string | undefined = '',
   contract: string,
-  msg: CreditManagerExecuteMsg | AccountNftExecuteMsg,
+  msg: CreditManagerExecuteMsg | AccountNftExecuteMsg | PythUpdateExecuteMsg,
   funds: Coin[],
 ) {
   return new MsgExecuteContract({
@@ -120,6 +123,7 @@ export default function createBroadcastSlice(
           coins: changes.deposits?.map((debt) => debt.toCoin()) ?? [],
           text: action === 'vaultCreate' ? 'Created a Vault Position' : 'Added to Vault Position',
         })
+        break
     }
 
     set({ toast })
@@ -155,6 +159,41 @@ export default function createBroadcastSlice(
 
   return {
     toast: null,
+    addToStakingStrategy: async (options: {
+      accountId: string
+      actions: Action[]
+      depositCoin: BNCoin
+      borrowCoin: BNCoin
+    }) => {
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: options.actions,
+        },
+      }
+
+      const response = get().executeMsg({
+        messages: [
+          generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [
+            options.depositCoin.toCoin(),
+          ]),
+        ],
+      })
+
+      const swapOptions = { denomOut: options.depositCoin.denom, coinIn: options.borrowCoin }
+
+      get().setToast({
+        response,
+        options: {
+          action: 'hls-staking',
+          accountId: options.accountId,
+          changes: { deposits: [options.depositCoin], debts: [options.borrowCoin] },
+        },
+        swapOptions,
+      })
+
+      return response.then((response) => !!response.result)
+    },
     borrow: async (options: { accountId: string; coin: BNCoin; borrowToWallet: boolean }) => {
       const borrowAction: Action = { borrow: options.coin.toCoin() }
       const withdrawAction: Action = { withdraw: options.coin.toActionCoin() }
@@ -193,9 +232,9 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
-    createAccount: async () => {
+    createAccount: async (accountKind: AccountKind) => {
       const msg: CreditManagerExecuteMsg = {
-        create_credit_account: 'default',
+        create_credit_account: accountKind,
       }
 
       const response = get().executeMsg({
@@ -422,6 +461,7 @@ export default function createBroadcastSlice(
       deposits: BNCoin[]
       borrowings: BNCoin[]
       isCreate: boolean
+      kind: AccountKind
     }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
@@ -431,7 +471,14 @@ export default function createBroadcastSlice(
       }
 
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
+        messages: [
+          generateExecutionMessage(
+            get().address,
+            ENV.ADDRESS_CREDIT_MANAGER,
+            msg,
+            options.kind === 'default' ? [] : options.deposits.map((coin) => coin.toCoin()),
+          ),
+        ],
       })
 
       const depositedCoins = getVaultDepositCoinsFromActions(options.actions)
@@ -642,6 +689,27 @@ export default function createBroadcastSlice(
 
       return { estimateFee, execute }
     },
+    updateOracle: async (pricesData: string[]) => {
+      const msg: PythUpdateExecuteMsg = { update_price_feeds: { data: pricesData } }
+      const pythAssets = getPythAssets()
+      const response = get().executeMsg({
+        messages: [
+          generateExecutionMessage(get().address, ENV.ADDRESS_PYTH, msg, [
+            { denom: get().baseCurrency.denom, amount: String(pythAssets.length) },
+          ]),
+        ],
+      })
+
+      get().setToast({
+        response,
+        options: {
+          action: 'oracle',
+          message: 'Oracle updated successfully!',
+        },
+      })
+
+      return response.then((response) => !!response.result)
+    },
     setToast: (toast: ToastObject) => {
       const id = moment().unix()
       set({
@@ -657,12 +725,23 @@ export default function createBroadcastSlice(
             getSingleValueFromBroadcastResult(response.result, 'wasm', 'token_id') ?? undefined
         }
 
-        if (toast.options.action === 'swap' && toast.swapOptions) {
+        if (toast.swapOptions) {
           const coinOut = getTokenOutFromSwapResponse(response, toast.swapOptions.denomOut)
-          const successMessage = `Swapped ${formatAmountWithSymbol(
-            toast.swapOptions.coinIn.toCoin(),
-          )} for ${formatAmountWithSymbol(coinOut)}`
-          toast.options.message = successMessage
+
+          if (toast.options.action === 'swap') {
+            toast.options.message = `Swapped ${formatAmountWithSymbol(
+              toast.swapOptions.coinIn.toCoin(),
+            )} for ${formatAmountWithSymbol(coinOut)}`
+          }
+
+          if (toast.options.action === 'hls-staking') {
+            const depositAmount: BigNumber = toast.options.changes?.deposits?.length
+              ? toast.options.changes.deposits[0].amount
+              : BN_ZERO
+
+            coinOut.amount = depositAmount.plus(coinOut.amount).toFixed(0)
+            toast.options.message = `Added ${formatAmountWithSymbol(coinOut)}`
+          }
         }
 
         handleResponseMessages({

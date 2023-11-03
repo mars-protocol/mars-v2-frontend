@@ -8,16 +8,18 @@ import Text from 'components/Text'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAlertDialog from 'hooks/useAlertDialog'
 import useLocalStorage from 'hooks/useLocalStorage'
+import useStore from 'store'
 
 export const DEPOSIT_META = { accessorKey: 'deposit', header: 'Deposit' }
 
 interface Props {
-  vault: Vault
   isLoading: boolean
+  strategy?: HLSStrategy
+  vault?: Vault
 }
 
 export default function Deposit(props: Props) {
-  const { vault } = props
+  const { strategy, vault } = props
 
   const [showHlsInfo, setShowHlsInfo] = useLocalStorage<boolean>(
     LocalStorageKeys.HLS_INFORMATION,
@@ -26,8 +28,17 @@ export default function Deposit(props: Props) {
 
   const { open: openAlertDialog, close } = useAlertDialog()
 
-  const showHlsInfoModal = useCallback(() => {
-    if (!showHlsInfo) return
+  const openHlsModal = useCallback(
+    () => useStore.setState({ hlsModal: { strategy, vault } }),
+    [strategy, vault],
+  )
+
+  const handleOnClick = useCallback(() => {
+    if (!showHlsInfo) {
+      openHlsModal()
+      return
+    }
+
     openAlertDialog({
       title: 'Understanding HLS Positions',
       content: (
@@ -53,7 +64,7 @@ export default function Deposit(props: Props) {
       positiveButton: {
         text: 'Continue',
         icon: <Enter />,
-        onClick: enterVaultHandler,
+        onClick: openHlsModal,
       },
       negativeButton: {
         text: 'Cancel',
@@ -67,18 +78,13 @@ export default function Deposit(props: Props) {
         onClick: (isChecked: boolean) => setShowHlsInfo(!isChecked),
       },
     })
-  }, [close, enterVaultHandler, openAlertDialog, setShowHlsInfo, showHlsInfo])
-
-  function enterVaultHandler() {
-    showHlsInfoModal()
-    return
-  }
+  }, [close, openAlertDialog, openHlsModal, setShowHlsInfo, showHlsInfo])
 
   if (props.isLoading) return <Loading />
 
   return (
     <div className='flex items-center justify-end'>
-      <ActionButton onClick={enterVaultHandler} color='tertiary' text='Deposit' />
+      <ActionButton onClick={handleOnClick} color='tertiary' text='Deposit' />
     </div>
   )
 }

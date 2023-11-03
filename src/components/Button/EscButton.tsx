@@ -2,7 +2,6 @@ import { useCallback, useEffect } from 'react'
 
 import Button from 'components/Button'
 import { Cross } from 'components/Icons'
-import Text from 'components/Text'
 
 interface Props {
   enableKeyPress?: boolean
@@ -33,13 +32,11 @@ export default function EscButton(props: Props) {
   return (
     <Button
       onClick={props.onClick}
-      leftIcon={<Cross />}
+      leftIcon={<Cross size={16} />}
       iconClassName='w-3'
       color='tertiary'
-      className={props.className ? props.className : 'h-3 w-13'}
+      className={props.className ? props.className : 'h-8 w-8'}
       size='xs'
-    >
-      {!props.hideText && <Text size='2xs'>ESC</Text>}
-    </Button>
+    />
   )
 }

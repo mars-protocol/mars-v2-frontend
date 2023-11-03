@@ -14,8 +14,8 @@ export const convertAprToApy = (apr: number, numberOfCompoundingPeriods: number)
 }
 
 export const convertApyToApr = (apy: number, numberOfCompoundingPeriods: number): number => {
-  const periodicRate = (1 + apy) ** (1 / numberOfCompoundingPeriods) - 1
-  return periodicRate * numberOfCompoundingPeriods
+  const periodicRate = (1 + apy / 100) ** (1 / numberOfCompoundingPeriods) - 1
+  return periodicRate * numberOfCompoundingPeriods * 100
 }
 
 export const combineBNCoins = (coins: BNCoin[]): BNCoin[] => {

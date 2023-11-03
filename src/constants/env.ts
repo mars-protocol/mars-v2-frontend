@@ -4,6 +4,7 @@ interface EnvironmentVariables {
   ADDRESS_INCENTIVES: string
   ADDRESS_ORACLE: string
   ADDRESS_PARAMS: string
+  ADDRESS_PYTH: string
   ADDRESS_RED_BANK: string
   ADDRESS_SWAPPER: string
   ADDRESS_ZAPPER: string
@@ -26,6 +27,7 @@ export const ENV: EnvironmentVariables = {
   ADDRESS_INCENTIVES: process.env.NEXT_PUBLIC_INCENTIVES || '',
   ADDRESS_ORACLE: process.env.NEXT_PUBLIC_ORACLE || '',
   ADDRESS_PARAMS: process.env.NEXT_PUBLIC_PARAMS || '',
+  ADDRESS_PYTH: process.env.NEXT_PUBLIC_PYTH || '',
   ADDRESS_RED_BANK: process.env.NEXT_PUBLIC_RED_BANK || '',
   ADDRESS_SWAPPER: process.env.NEXT_PUBLIC_SWAPPER || '',
   ADDRESS_ZAPPER: process.env.NEXT_PUBLIC_ZAPPER || '',

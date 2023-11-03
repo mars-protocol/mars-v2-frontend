@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import React from 'react'
 
-import VaultLogo from 'components/Earn/Farm/VaultLogo'
+import DoubleLogo from 'components/DoubleLogo'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import { VaultStatus } from 'types/enums/vault'
@@ -28,7 +28,7 @@ export default function Name(props: Props) {
 
   return (
     <div className='flex'>
-      <VaultLogo vault={vault} />
+      <DoubleLogo primaryDenom={vault.denoms.primary} secondaryDenom={vault.denoms.secondary} />
       <TitleAndSubCell
         className='ml-2 mr-2 text-left'
         title={`${vault.name}${unlockDuration}`}

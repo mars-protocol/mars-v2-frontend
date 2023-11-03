@@ -80,6 +80,7 @@ function Content(props: Props) {
       health={health}
       healthFactor={healthFactor}
       title={`Credit Account ${props.accountId}`}
+      accountId={props.accountId}
     />
   )
 }
@@ -88,7 +89,12 @@ export default function Summary(props: Props) {
   return (
     <Suspense
       fallback={
-        <Skeleton health={0} healthFactor={0} title={`Credit Account ${props.accountId}`} />
+        <Skeleton
+          health={0}
+          healthFactor={0}
+          title={`Credit Account ${props.accountId}`}
+          accountId={props.accountId}
+        />
       }
     >
       <Content {...props} />

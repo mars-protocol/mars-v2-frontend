@@ -6,7 +6,7 @@ import useAutoLend from 'hooks/useAutoLend'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
-import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { AccountKind, Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getLendEnabledAssets } from 'utils/assets'
 import {
   getEnterVaultActions,
@@ -19,6 +19,7 @@ interface Props {
   reclaims: BNCoin[]
   deposits: BNCoin[]
   borrowings: BNCoin[]
+  kind: AccountKind
 }
 
 export default function useDepositVault(props: Props): {
@@ -47,6 +48,14 @@ export default function useDepositVault(props: Props): {
     [props.vault, deposits, borrowings, reclaims, prices, slippage],
   )
 
+  const depositActions: Action[] = useMemo(() => {
+    if (props.kind === 'default') return []
+
+    return deposits.map((bnCoin) => ({
+      deposit: bnCoin.toCoin(),
+    }))
+  }, [deposits, props.kind])
+
   const reclaimActions: Action[] = useMemo(() => {
     return reclaims.map((bnCoin) => ({
       reclaim: bnCoin.toActionCoin(),
@@ -71,7 +80,7 @@ export default function useDepositVault(props: Props): {
   }, [props.vault, primaryCoin, secondaryCoin, slippage])
 
   const lendActions: Action[] = useMemo(() => {
-    if (!isAutoLend) return []
+    if (!isAutoLend || props.kind === 'high_levered_strategy') return []
 
     const denoms = [props.vault.denoms.primary, props.vault.denoms.secondary]
     const denomsForLend = getLendEnabledAssets()
@@ -84,17 +93,37 @@ export default function useDepositVault(props: Props): {
         amount: 'account_balance',
       },
     }))
-  }, [isAutoLend, props.vault.denoms.primary, props.vault.denoms.secondary])
+  }, [isAutoLend, props.kind, props.vault.denoms.primary, props.vault.denoms.secondary])
+
+  const refundActions: Action[] = useMemo(() => {
+    if (props.kind === 'default') return []
+
+    return [
+      {
+        refund_all_coin_balances: {},
+      },
+    ]
+  }, [props.kind])
 
   const actions = useMemo(() => {
     return [
+      ...depositActions,
       ...reclaimActions,
       ...borrowActions,
       ...swapActions,
       ...enterVaultActions,
       ...lendActions,
+      ...refundActions,
     ]
-  }, [reclaimActions, borrowActions, swapActions, enterVaultActions, lendActions])
+  }, [
+    depositActions,
+    reclaimActions,
+    borrowActions,
+    swapActions,
+    enterVaultActions,
+    lendActions,
+    refundActions,
+  ])
 
   return {
     actions,

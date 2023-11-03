@@ -3,9 +3,11 @@ import React from 'react'
 import HealthBar from 'components/Account/Health/HealthBar'
 import HealthIcon from 'components/Account/Health/HealthIcon'
 import Card from 'components/Card'
+import HLSTag from 'components/HLS/HLSTag'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
+import useAccount from 'hooks/useAccount'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 
 interface Props {
@@ -13,16 +15,21 @@ interface Props {
   health?: number
   healthFactor?: number
   title: string
+  accountId: string
 }
 
 export default function SummarySkeleton(props: Props) {
   const { health, healthFactor, title } = props
   const stats = props.stats || DEFAULT_PORTFOLIO_STATS
+  const { data: account } = useAccount(props.accountId, false)
 
   return (
     <div className='flex flex-col w-full gap-8'>
       <div className='flex justify-between'>
-        <Text size='2xl'>{title}</Text>
+        <div className='flex items-center'>
+          <Text size='2xl'>{title}</Text>
+          {account?.kind === 'high_levered_strategy' && <HLSTag />}
+        </div>
         {health !== undefined && healthFactor !== undefined && (
           <div className='flex gap-1 max-w-[300px] flex-grow'>
             <HealthIcon isLoading={healthFactor === 0} health={health} className='w-5' />

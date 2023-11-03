@@ -6,6 +6,7 @@ export default function createModalSlice(set: SetState<ModalSlice>, get: GetStat
     addVaultBorrowingsModal: null,
     alertDialog: null,
     assetOverlayState: 'closed' as OverlayState,
+    hlsModal: null,
     borrowModal: null,
     fundAndWithdrawModal: null,
     getStartedModal: false,

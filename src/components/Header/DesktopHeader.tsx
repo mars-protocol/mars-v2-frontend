@@ -3,6 +3,7 @@ import { isDesktop } from 'react-device-detect'
 
 import AccountMenu from 'components/Account/AccountMenu'
 import EscButton from 'components/Button/EscButton'
+import OracleResyncButton from 'components/Header/OracleResyncButton'
 import DesktopNavigation from 'components/Navigation/DesktopNavigation'
 import RewardsCenter from 'components/RewardsCenter'
 import Settings from 'components/Settings'
@@ -22,6 +23,7 @@ export const menuTree: { pages: Page[]; label: string }[] = [
 export default function DesktopHeader() {
   const address = useStore((s) => s.address)
   const focusComponent = useStore((s) => s.focusComponent)
+  const isOracleStale = useStore((s) => s.isOracleStale)
   const accountId = useAccountId()
 
   function handleCloseFocusMode() {
@@ -46,6 +48,7 @@ export default function DesktopHeader() {
         )}
       >
         <DesktopNavigation />
+
         {focusComponent ? (
           <div className='flex justify-between w-full'>
             <div className='flex h-5 w-13' />
@@ -54,6 +57,7 @@ export default function DesktopHeader() {
           </div>
         ) : (
           <div className='flex gap-4'>
+            {isOracleStale && <OracleResyncButton />}
             {accountId && <RewardsCenter />}
             {address && <AccountMenu />}
             <Wallet />

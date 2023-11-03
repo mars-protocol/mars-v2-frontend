@@ -24,7 +24,7 @@ import {
   max_withdraw_estimate_js,
   SwapKind,
 } from 'utils/health_computer'
-import { BN } from 'utils/helpers'
+import { BN } from 'utils/helpers' // Pyth returns prices with up to 32 decimals. Javascript only supports 18 decimals. So we need to scale by 14 t
 
 // Pyth returns prices with up to 32 decimals. Javascript only supports 18 decimals. So we need to scale by 14 t
 // avoid "too many decimals" errors.
@@ -113,6 +113,7 @@ export default function useHealthComputer(account?: Account) {
 
   const healthComputer: HealthComputer | null = useMemo(() => {
     if (
+      !account ||
       !positions ||
       !vaultPositionValues ||
       !vaultConfigsData ||
@@ -129,9 +130,9 @@ export default function useHealthComputer(account?: Account) {
         vault_values: vaultPositionValues,
       },
       positions: positions,
-      kind: 'default',
+      kind: account.kind,
     }
-  }, [priceData, denomsData, vaultConfigsData, vaultPositionValues, positions])
+  }, [account, positions, vaultPositionValues, vaultConfigsData, denomsData, priceData])
 
   useEffect(() => {
     if (!healthComputer) return

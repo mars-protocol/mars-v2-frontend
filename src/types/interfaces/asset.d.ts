@@ -54,6 +54,7 @@ interface Asset {
   pythPriceFeedId?: string
   forceFetchPrice?: boolean
   testnetDenom?: string
+  isStaking?: boolean
 }
 
 interface PseudoAsset {

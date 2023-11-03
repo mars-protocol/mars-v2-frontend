@@ -85,6 +85,7 @@ module.exports = {
         axlusdc: '#478edc',
         body: '#0D0012',
         'body-dark': '#141621',
+        chart: '#220e1d',
         error: '#F04438',
         'error-bg': '#FDA29B',
         green: '#039855',
@@ -205,6 +206,7 @@ module.exports = {
       maxWidth: {
         content: '1024px',
         modal: '895px',
+        'modal-md': '556px',
         'modal-sm': '526px',
         'modal-xs': '442px',
       },
@@ -326,6 +328,9 @@ module.exports = {
         '.gradient-header': {
           background:
             'linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 50%)',
+        },
+        '.gradient-hls': {
+          background: 'linear-gradient(180deg, #FE625D 0%, #FB9562 50%)',
         },
         '.gradient-limit': {
           background:

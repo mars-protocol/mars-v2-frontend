@@ -110,6 +110,7 @@ export default function PortfolioCard(props: Props) {
         healthFactor={healthFactor}
         accountId={props.accountId}
         isCurrent={props.accountId === currentAccountId}
+        isHls={account.kind === 'high_levered_strategy'}
       />
     </NavLink>
   )

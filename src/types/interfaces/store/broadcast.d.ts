@@ -70,6 +70,8 @@ interface HandleResponseProps {
     | 'claim'
     | 'unlock'
     | 'swap'
+    | 'oracle'
+    | 'hls-staking'
   lend?: boolean
   accountId?: string
   changes?: { debts?: BNCoin[]; deposits?: BNCoin[]; lends?: BNCoin[] }
@@ -78,13 +80,21 @@ interface HandleResponseProps {
 }
 
 interface BroadcastSlice {
+  addToStakingStrategy: (options: {
+    accountId: string
+    actions: Action[]
+    depositCoin: BNCoin
+    borrowCoin: BNCoin
+  }) => Promise<boolean>
   borrow: (options: {
     accountId: string
     coin: BNCoin
     borrowToWallet: boolean
   }) => Promise<boolean>
   claimRewards: (options: { accountId: string }) => ExecutableTx
-  createAccount: () => Promise<string | null>
+  createAccount: (
+    accountKind: import('types/generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind,
+  ) => Promise<string | null>
   deleteAccount: (options: { accountId: string; lends: BNCoin[] }) => Promise<boolean>
   deposit: (options: { accountId: string; coins: BNCoin[]; lend: boolean }) => Promise<boolean>
   depositIntoVault: (options: {
@@ -93,6 +103,7 @@ interface BroadcastSlice {
     deposits: BNCoin[]
     borrowings: BNCoin[]
     isCreate: boolean
+    kind: import('types/generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind
   }) => Promise<boolean>
   executeMsg: (options: { messages: MsgExecuteContract[] }) => Promise<BroadcastResult>
   lend: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
@@ -119,6 +130,7 @@ interface BroadcastSlice {
     vault: DepositedVault
     amount: string
   }) => Promise<boolean>
+  updateOracle: (pricesData: string[]) => Promise<boolean>
   withdrawFromVaults: (options: {
     accountId: string
     vaults: DepositedVault[]

@@ -17,6 +17,7 @@ interface Props {
   className?: string
   isApproximation?: boolean
   parentheses?: boolean
+  showZero?: boolean
 }
 
 export default function DisplayCurrency(props: Props) {
@@ -49,7 +50,7 @@ export default function DisplayCurrency(props: Props) {
     return coinValue.div(displayPrice).toNumber()
   }, [displayCurrency, displayCurrencyAsset.decimals, prices, props.coin])
 
-  const isLessThanACent = isUSD && amount < 0.01 && amount > 0
+  const isLessThanACent = (isUSD && amount < 0.01 && amount > 0) || (amount === 0 && props.showZero)
   const smallerThanPrefix = isLessThanACent ? '< ' : ''
 
   const prefix = isUSD

@@ -4,6 +4,12 @@ import AccountDetails from 'components/Account/AccountDetails'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
 
+jest.mock('react-router', () => ({
+  ...(jest.requireActual('react-router') as {}),
+  useLocation: jest.fn().mockImplementation(() => {
+    return { pathname: '/testroute' }
+  }),
+}))
 jest.mock('hooks/useCurrentAccount', () => jest.fn(() => null))
 jest.mock('hooks/useHealthComputer', () =>
   jest.fn(() => ({
@@ -14,9 +20,9 @@ jest.mock('hooks/useHealthComputer', () =>
 jest.mock('components/Account/AccountBalancesTable', () => jest.fn(() => null))
 
 const mockedUseCurrentAccount = useCurrentAccount as jest.Mock
-const mockedAccounts = [
-  { id: '1', deposits: [], lends: [], debts: [], vaults: [] },
-  { id: '2', deposits: [], lends: [], debts: [], vaults: [] },
+const mockedAccounts: Account[] = [
+  { id: '1', deposits: [], lends: [], debts: [], vaults: [], kind: 'default' },
+  { id: '2', deposits: [], lends: [], debts: [], vaults: [], kind: 'default' },
 ]
 jest.mock('hooks/useAccountId', () => jest.fn(() => '1'))
 jest.mock('hooks/useAccounts', () =>

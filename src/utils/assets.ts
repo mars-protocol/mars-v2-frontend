@@ -16,6 +16,10 @@ export function getAssetsMustHavePriceInfo(): Asset[] {
   return ASSETS.filter((asset) => (asset.isEnabled && asset.isMarket) || asset.forceFetchPrice)
 }
 
+export function getPythAssets(): Asset[] {
+  return ASSETS.filter((asset) => !!asset.pythPriceFeedId)
+}
+
 export function getBaseAsset() {
   return ASSETS.find((asset) => asset.denom === 'uosmo')!
 }
@@ -38,4 +42,8 @@ export function getLendEnabledAssets() {
 
 export function getBorrowEnabledAssets() {
   return ASSETS.filter((asset) => asset.isBorrowEnabled)
+}
+
+export function getStakingAssets() {
+  return ASSETS.filter((asset) => asset.isStaking)
 }
