@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import { useCallback, useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
 
 import AccountBalancesTable from 'components/Account/AccountBalancesTable'
 import AccountComposition from 'components/Account/AccountComposition'
@@ -34,12 +35,12 @@ import {
 } from 'utils/accounts'
 
 export default function AccountDetailsController() {
+  const location = useLocation()
   const address = useStore((s) => s.address)
   const { data: accounts, isLoading } = useAccounts('default', address)
   const { data: accountIds } = useAccountIds(address, false)
   const accountId = useAccountId()
   const account = useCurrentAccount()
-
   const focusComponent = useStore((s) => s.focusComponent)
   const isOwnAccount = accountId && accountIds?.includes(accountId)
 
@@ -96,6 +97,10 @@ function AccountDetails(props: Props) {
       calculateAccountApr(updatedAccount ?? account, borrowAssetsData, lendingAssetsData, prices),
     [account, borrowAssetsData, lendingAssetsData, prices, updatedAccount],
   )
+  const isFullWidth = useMemo(
+    () => location.pathname.includes('trade') || location.pathname === '/',
+    [location.pathname],
+  )
 
   function AccountDetailsHeader() {
     const onClose = useCallback(() => useStore.setState({ accountDetailsExpanded: false }), [])
@@ -111,86 +116,94 @@ function AccountDetails(props: Props) {
   }
 
   return (
-    <div
-      data-testid='account-details'
-      className={classNames(
-        accountDetailsExpanded ? 'right-4' : '-right-90',
-        'w-110 flex items-start gap-4 absolute top-6',
-        !reduceMotion && 'transition-all duration-300',
+    <>
+      {!isFullWidth && accountDetailsExpanded && (
+        <div
+          className='absolute w-full h-full hover:cursor-pointer z-1'
+          onClick={() => useStore.setState({ accountDetailsExpanded: false })}
+        />
       )}
-    >
       <div
+        data-testid='account-details'
         className={classNames(
-          'flex flex-wrap min-w-16 w-16 group/accountdetail relative',
-          'border rounded-base border-white/20',
-          'bg-white/5 backdrop-blur-sticky',
-          !reduceMotion && 'transition-colors duration-300',
-          'hover:bg-white/10 hover:cursor-pointer ',
+          accountDetailsExpanded ? 'right-4' : '-right-90',
+          'w-110 flex items-start gap-4 absolute top-6',
+          !reduceMotion && 'transition-all duration-300',
         )}
-        onClick={() => useStore.setState({ accountDetailsExpanded: !accountDetailsExpanded })}
       >
-        <div className='flex flex-wrap justify-center w-full py-4'>
-          <HealthGauge
-            health={health}
-            updatedHealth={updatedHealth}
-            healthFactor={healthFactor}
-            updatedHealthFactor={updatedHealthFactor}
-          />
-          <Text size='2xs' className='mb-0.5 mt-1 w-full text-center text-white/50'>
-            Health
-          </Text>
-        </div>
-        <div className='w-full py-4 border-t border-white/20'>
-          <Text size='2xs' className='mb-0.5 w-full text-center text-white/50 whitespace-nowrap'>
-            Net worth
-          </Text>
-          <DisplayCurrency coin={coin} className='w-full text-center truncate text-2xs ' />
-        </div>
-        <div className='w-full py-4 border-t border-white/20'>
-          <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
-            Leverage
-          </Text>
-          <AccountDetailsLeverage
-            leverage={leverage.toNumber() || 1}
-            updatedLeverage={updatedLeverage?.toNumber() || null}
-          />
-        </div>
-        <div className='w-full py-4 border-t border-white/20'>
-          <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
-            APR
-          </Text>
-          <FormattedNumber
-            className={'w-full text-center text-2xs'}
-            amount={apr.toNumber()}
-            options={{ maxDecimals: 2, minDecimals: 2, suffix: '%' }}
-            animate
-          />
-        </div>
         <div
           className={classNames(
-            'flex justify-center items-center w-full h-6 opacity-50',
-            !reduceMotion && 'transition-[opacity] duration-300',
-            'absolute -bottom-6',
-            'group-hover/accountdetail:opacity-100',
+            'flex flex-wrap min-w-16 w-16 group/accountdetail relative',
+            'border rounded-base border-white/20',
+            'bg-white/5 backdrop-blur-sticky z-2',
+            !reduceMotion && 'transition-colors duration-300',
+            'hover:bg-white/10 hover:cursor-pointer ',
           )}
+          onClick={() => useStore.setState({ accountDetailsExpanded: !accountDetailsExpanded })}
         >
-          {!accountDetailsExpanded && <ThreeDots className='h-1' />}
-        </div>
+          <div className='flex flex-wrap justify-center w-full py-4'>
+            <HealthGauge
+              health={health}
+              updatedHealth={updatedHealth}
+              healthFactor={healthFactor}
+              updatedHealthFactor={updatedHealthFactor}
+            />
+            <Text size='2xs' className='mb-0.5 mt-1 w-full text-center text-white/50'>
+              Health
+            </Text>
+          </div>
+          <div className='w-full py-4 border-t border-white/20'>
+            <Text size='2xs' className='mb-0.5 w-full text-center text-white/50 whitespace-nowrap'>
+              Net worth
+            </Text>
+            <DisplayCurrency coin={coin} className='w-full text-center truncate text-2xs ' />
+          </div>
+          <div className='w-full py-4 border-t border-white/20'>
+            <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
+              Leverage
+            </Text>
+            <AccountDetailsLeverage
+              leverage={leverage.toNumber() || 1}
+              updatedLeverage={updatedLeverage?.toNumber() || null}
+            />
+          </div>
+          <div className='w-full py-4 border-t border-white/20'>
+            <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
+              APR
+            </Text>
+            <FormattedNumber
+              className={'w-full text-center text-2xs'}
+              amount={apr.toNumber()}
+              options={{ maxDecimals: 2, minDecimals: 2, suffix: '%' }}
+              animate
+            />
+          </div>
+          <div
+            className={classNames(
+              'flex justify-center items-center w-full h-6 opacity-50',
+              !reduceMotion && 'transition-[opacity] duration-300',
+              'absolute -bottom-6',
+              'group-hover/accountdetail:opacity-100',
+            )}
+          >
+            {!accountDetailsExpanded && <ThreeDots className='h-1' />}
+          </div>
 
-        {glowElement(!reduceMotion)}
+          {glowElement(!reduceMotion)}
+        </div>
+        <div className='flex w-90 backdrop-blur-sticky z-2'>
+          <Card className='w-90 bg-white/5' title={<AccountDetailsHeader />}>
+            <AccountComposition account={account} />
+            <Text className='w-full px-4 py-2 text-white bg-white/10'>Balances</Text>
+            <AccountBalancesTable
+              account={account}
+              borrowingData={borrowAssetsData}
+              lendingData={lendingAssetsData}
+              hideCard
+            />
+          </Card>
+        </div>
       </div>
-      <div className='flex w-90 backdrop-blur-sticky'>
-        <Card className='w-90 bg-white/5' title={<AccountDetailsHeader />}>
-          <AccountComposition account={account} />
-          <Text className='w-full px-4 py-2 text-white bg-white/10'>Balances</Text>
-          <AccountBalancesTable
-            account={account}
-            borrowingData={borrowAssetsData}
-            lendingData={lendingAssetsData}
-            hideCard
-          />
-        </Card>
-      </div>
-    </div>
+    </>
   )
 }
