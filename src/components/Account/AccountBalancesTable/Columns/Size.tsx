@@ -32,6 +32,7 @@ export default function Size(props: Props) {
 
   const color = getAmountChangeColor(type, amountChange)
   const className = classNames('text-xs text-right', color)
+  const allowZero = !amountChange.isZero()
 
   if (size >= 1)
     return (
@@ -44,11 +45,12 @@ export default function Size(props: Props) {
     )
 
   const formattedAmount = formatAmountToPrecision(size, MAX_AMOUNT_DECIMALS)
-  const lowAmount = formattedAmount === 0 ? MIN_AMOUNT : Math.max(formattedAmount, MIN_AMOUNT)
+  const minimumAmount = allowZero ? 0 : MIN_AMOUNT
+  const lowAmount = formattedAmount === 0 ? minimumAmount : Math.max(formattedAmount, MIN_AMOUNT)
   return (
     <FormattedNumber
       className={className}
-      smallerThanThreshold={formattedAmount < MIN_AMOUNT}
+      smallerThanThreshold={!allowZero && formattedAmount < MIN_AMOUNT}
       amount={lowAmount}
       options={{
         maxDecimals: MAX_AMOUNT_DECIMALS,

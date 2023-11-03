@@ -30,6 +30,8 @@ import { defaultFee } from 'utils/constants'
 import { getCapLeftWithBuffer } from 'utils/generic'
 import { asyncThrottle, BN } from 'utils/helpers'
 
+import AutoRepayToggle from './AutoRepayToggle'
+
 interface Props {
   buyAsset: Asset
   sellAsset: Asset
@@ -38,6 +40,7 @@ interface Props {
 export default function SwapForm(props: Props) {
   const { buyAsset, sellAsset } = props
   const useMargin = useStore((s) => s.useMargin)
+  const useAutoRepay = useStore((s) => s.useAutoRepay)
   const account = useCurrentAccount()
   const swap = useStore((s) => s.swap)
   const [slippage] = useLocalStorage(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
@@ -46,7 +49,9 @@ export default function SwapForm(props: Props) {
   const { data: marketAssets } = useMarketAssets()
   const { data: route, isLoading: isRouteLoading } = useSwapRoute(sellAsset.denom, buyAsset.denom)
   const isBorrowEnabled = !!marketAssets.find(byDenom(sellAsset.denom))?.borrowEnabled
+  const isRepayable = account?.debts.find(byDenom(buyAsset.denom))
   const [isMarginChecked, setMarginChecked] = useToggle(isBorrowEnabled ? useMargin : false)
+  const [isAutoRepayChecked, setAutoRepayChecked] = useToggle(isRepayable ? useAutoRepay : false)
   const [buyAssetAmount, setBuyAssetAmount] = useState(BN_ZERO)
   const [sellAssetAmount, setSellAssetAmount] = useState(BN_ZERO)
   const [maxBuyableAmountEstimation, setMaxBuyableAmountEstimation] = useState(BN_ZERO)
@@ -157,6 +162,7 @@ export default function SwapForm(props: Props) {
       denomOut: buyAsset.denom,
       slippage,
       isMax: sellAssetAmount.isEqualTo(maxSellAmount),
+      repay: isAutoRepayChecked,
     })
   }, [
     removedLends,
@@ -173,9 +179,15 @@ export default function SwapForm(props: Props) {
   const debouncedUpdateAccount = useMemo(
     () =>
       debounce((removeCoin: BNCoin, addCoin: BNCoin, debtCoin: BNCoin) => {
-        simulateTrade(removeCoin, addCoin, debtCoin, isAutoLendEnabled ? 'lend' : 'deposit')
+        simulateTrade(
+          removeCoin,
+          addCoin,
+          debtCoin,
+          isAutoLendEnabled ? 'lend' : 'deposit',
+          isAutoRepayChecked,
+        )
       }, 100),
-    [simulateTrade, isAutoLendEnabled],
+    [simulateTrade, isAutoLendEnabled, isAutoRepayChecked],
   )
 
   const handleMarginToggleChange = useCallback(
@@ -184,6 +196,13 @@ export default function SwapForm(props: Props) {
       setMarginChecked(isBorrowEnabled ? isMargin : false)
     },
     [isBorrowEnabled, setMarginChecked],
+  )
+  const handleAutoRepayToggleChange = useCallback(
+    (isAutoRepay: boolean) => {
+      useStore.setState({ useAutoRepay: isAutoRepay })
+      setAutoRepayChecked(isAutoRepay)
+    },
+    [setAutoRepayChecked],
   )
 
   useEffect(() => {
@@ -195,6 +214,7 @@ export default function SwapForm(props: Props) {
       BNCoin.fromDenomAndBigNumber(sellAsset.denom, BN_ZERO),
       BNCoin.fromDenomAndBigNumber(sellAsset.denom, BN_ZERO),
       isAutoLendEnabled ? 'lend' : 'deposit',
+      isAutoRepayChecked,
     )
   }, [
     isBorrowEnabled,
@@ -202,6 +222,7 @@ export default function SwapForm(props: Props) {
     buyAsset.denom,
     sellAsset.denom,
     isAutoLendEnabled,
+    isAutoRepayChecked,
     simulateTrade,
     setMarginChecked,
   ])
@@ -286,6 +307,15 @@ export default function SwapForm(props: Props) {
         borrowAssetSymbol={sellAsset.symbol}
       />
       <Divider />
+
+      {isRepayable && (
+        <AutoRepayToggle
+          checked={isAutoRepayChecked}
+          onChange={handleAutoRepayToggleChange}
+          buyAssetSymbol={buyAsset.symbol}
+        />
+      )}
+      <Divider />
       <OrderTypeSelector selected={selectedOrderType} onChange={setSelectedOrderType} />
       <div className='flex flex-col gap-6 px-3 mt-6'>
         <AssetAmountInput
@@ -318,7 +348,6 @@ export default function SwapForm(props: Props) {
             asset={borrowAsset}
           />
         )}
-
         <AssetAmountInput
           label='Sell'
           max={maxSellAmount}
