@@ -28,8 +28,6 @@ export default function TradePage() {
     [tradingPair, enabledMarketAssets],
   )
 
-  if (!tradingPair) return null
-
   return (
     <div className='flex flex-col w-full h-full gap-4'>
       <MigrationBanner />
