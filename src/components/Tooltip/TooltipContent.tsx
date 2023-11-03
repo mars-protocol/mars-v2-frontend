@@ -8,6 +8,7 @@ interface Props {
   content: ReactNode | string
   type: TooltipType
   hideArrow?: boolean
+  className?: string
 }
 
 export default function TooltipContent(props: Props) {
@@ -19,6 +20,7 @@ export default function TooltipContent(props: Props) {
           props.type === 'info' && 'bg-white/20',
           props.type === 'warning' && 'bg-warning',
           props.type === 'error' && 'bg-error',
+          props.className,
         )}
       >
         {typeof props.content === 'string' ? <Text size='xs'>{props.content}</Text> : props.content}
