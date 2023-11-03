@@ -10,7 +10,7 @@ export default function OracleResyncButton() {
   const { data: pricesData } = usePricesData()
   const updateOracle = useStore((s) => s.updateOracle)
 
-  const updatePythOracle = useCallback(() => updateOracle(pricesData), [pricesData])
+  const updatePythOracle = useCallback(() => updateOracle(pricesData), [pricesData, updateOracle])
 
   return (
     <Tooltip

@@ -97,10 +97,7 @@ function AccountDetails(props: Props) {
       calculateAccountApr(updatedAccount ?? account, borrowAssetsData, lendingAssetsData, prices),
     [account, borrowAssetsData, lendingAssetsData, prices, updatedAccount],
   )
-  const isFullWidth = useMemo(
-    () => location.pathname.includes('trade') || location.pathname === '/',
-    [location.pathname],
-  )
+  const isFullWidth = location.pathname.includes('trade') || location.pathname === '/'
 
   function AccountDetailsHeader() {
     const onClose = useCallback(() => useStore.setState({ accountDetailsExpanded: false }), [])
