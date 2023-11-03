@@ -74,7 +74,7 @@ export default function VaultCard(props: Props) {
             abbreviated: true,
             decimals: getAssetByDenom(props.vault.cap.denom)?.decimals,
           })}
-          sub={'Depo. Cap'}
+          sub={'Deposit Cap'}
         />
       </div>
       <ActionButton onClick={openVaultModal} color='secondary' text='Deposit' className='w-full' />

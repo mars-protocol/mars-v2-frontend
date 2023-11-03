@@ -6,7 +6,7 @@ import Table from 'components/Table'
 import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import { getEnabledMarketAssets } from 'utils/assets'
 
-const title = 'Available HLS Staking'
+const title = 'Available Strategies'
 
 function Content() {
   const assets = getEnabledMarketAssets()

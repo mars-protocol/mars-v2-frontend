@@ -17,7 +17,7 @@ interface Props {
 }
 
 function Content(props: Props) {
-  const { data: account } = useAccount('default', props.accountId, true)
+  const { data: account } = useAccount(props.accountId, true)
   const { data: prices } = usePrices()
   const { health, healthFactor } = useHealthComputer(account)
   const { data } = useBorrowMarketAssetsTableData(false)
@@ -80,6 +80,7 @@ function Content(props: Props) {
       health={health}
       healthFactor={healthFactor}
       title={`Credit Account ${props.accountId}`}
+      accountId={props.accountId}
     />
   )
 }
@@ -88,7 +89,12 @@ export default function Summary(props: Props) {
   return (
     <Suspense
       fallback={
-        <Skeleton health={0} healthFactor={0} title={`Credit Account ${props.accountId}`} />
+        <Skeleton
+          health={0}
+          healthFactor={0}
+          title={`Credit Account ${props.accountId}`}
+          accountId={props.accountId}
+        />
       }
     >
       <Content {...props} />

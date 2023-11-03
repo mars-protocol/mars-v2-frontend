@@ -16,7 +16,7 @@ export default function HealthIcon(props: Props) {
   return (
     <>
       {!isLoading && health === 0 ? (
-        <ExclamationMarkCircled className='w-5 text-loss animate-pulse' />
+        <ExclamationMarkCircled className={classNames('w-5 text-loss animate-pulse', className)} />
       ) : (
         <Heart
           className={classNames(
