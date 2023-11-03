@@ -48,6 +48,7 @@ export default function Size(props: Props) {
   return (
     <FormattedNumber
       className={className}
+      smallerThanThreshold={formattedAmount < MIN_AMOUNT}
       amount={lowAmount}
       options={{
         maxDecimals: MAX_AMOUNT_DECIMALS,
