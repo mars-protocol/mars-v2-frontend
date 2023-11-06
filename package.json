@@ -50,7 +50,7 @@
     "recharts": "^2.9.0",
     "swr": "^2.2.4",
     "tailwind-scrollbar-hide": "^1.1.7",
-    "zustand": "^4.4.3"
+    "zustand": "^4.4.6"
   },
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",
