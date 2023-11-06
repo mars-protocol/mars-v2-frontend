@@ -1,9 +1,9 @@
 import React, { useMemo, useState } from 'react'
 
 import Accordion from 'components/Accordion'
-import useStakingController from 'components/Modals/HLS/Content//useStakingController'
-import useVaultController from 'components/Modals/HLS/Content//useVaultController'
-import useAccordionItems from 'components/Modals/HLS/Content/useAccordionItems'
+import useStakingController from 'components/Modals/HLS/Deposit//useStakingController'
+import useVaultController from 'components/Modals/HLS/Deposit//useVaultController'
+import useAccordionItems from 'components/Modals/HLS/Deposit/useAccordionItems'
 import { EMPTY_ACCOUNT_HLS } from 'constants/accounts'
 import useAccounts from 'hooks/useAccounts'
 import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'

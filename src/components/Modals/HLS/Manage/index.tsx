@@ -1,40 +1,65 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 
-import Modal from 'components/Modal'
 import Header from 'components/Modals/HLS/Header'
+import Deposit from 'components/Modals/HLS/Manage/Deposit'
+import Repay from 'components/Modals/HLS/Manage/Repay'
+import Withdraw from 'components/Modals/HLS/Manage/Withdraw'
+import ModalContentWithSummary from 'components/Modals/ModalContentWithSummary'
+import useAccount from 'hooks/useAccount'
 import useStore from 'store'
 import { getAssetByDenom } from 'utils/assets'
 
 export default function HlsManageModalController() {
   const modal = useStore((s) => s.hlsManageModal)
-
+  const { data: account } = useAccount(modal?.accountId)
   const collateralAsset = getAssetByDenom(modal?.staking.strategy.denoms.deposit || '')
   const borrowAsset = getAssetByDenom(modal?.staking.strategy.denoms.borrow || '')
 
-  if (!modal || !collateralAsset || !borrowAsset) return null
+  if (!modal || !collateralAsset || !borrowAsset || !account) return null
 
-  return <HlsModal collateralAsset={collateralAsset} borrowAsset={borrowAsset} />
+  return (
+    <HlsModal
+      account={account}
+      action={modal.staking.action}
+      collateralAsset={collateralAsset}
+      borrowAsset={borrowAsset}
+    />
+  )
 }
 
 interface Props {
+  account: Account
+  action: HlsStakingManageAction
   borrowAsset: Asset
   collateralAsset: Asset
 }
 
 function HlsModal(props: Props) {
+  const updatedAccount = useStore((s) => s.updatedAccount)
   function handleClose() {
     useStore.setState({ hlsManageModal: null })
   }
 
+  const ContentComponent = useCallback(() => {
+    if (props.action === 'deposit') return <Deposit {...props} />
+    if (props.action === 'withdraw') return <Withdraw {...props} />
+    if (props.action === 'repay') return <Repay {...props} />
+    return null
+  }, [props])
+
   return (
-    <Modal
-      header={<Header primaryAsset={props.collateralAsset} secondaryAsset={props.borrowAsset} />}
-      headerClassName='gradient-header pl-2 pr-2.5 py-3 border-b-white/5 border-b'
-      contentClassName='flex flex-col p-6'
-      modalClassName='max-w-modal-md'
+    <ModalContentWithSummary
+      account={props.account}
+      header={
+        <Header
+          action={props.action}
+          primaryAsset={props.collateralAsset}
+          secondaryAsset={props.borrowAsset}
+        />
+      }
       onClose={handleClose}
-    >
-      Some kind of text here
-    </Modal>
+      content={<ContentComponent />}
+      isContentCard={props.action !== 'deposit'}
+    />
   )
 }

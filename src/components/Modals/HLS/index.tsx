@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Modal from 'components/Modal'
-import Content from 'components/Modals/HLS/Content'
+import Content from 'components/Modals/HLS/Deposit'
 import Header from 'components/Modals/HLS/Header'
 import useStore from 'store'
 import { getAssetByDenom } from 'utils/assets'

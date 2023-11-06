@@ -1,11 +1,15 @@
 import React, { useMemo } from 'react'
 
-import CreateAccount from 'components/Modals/HLS/CreateAccount'
-import Leverage from 'components/Modals/HLS/Leverage'
-import ProvideCollateral from 'components/Modals/HLS/ProvideCollateral'
-import SelectAccount from 'components/Modals/HLS/SelectAccount'
-import { CollateralSubTitle, LeverageSubTitle, SubTitle } from 'components/Modals/HLS/SubTitles'
-import Summary from 'components/Modals/HLS/Summary'
+import CreateAccount from 'components/Modals/HLS/Deposit/CreateAccount'
+import Leverage from 'components/Modals/HLS/Deposit/Leverage'
+import ProvideCollateral from 'components/Modals/HLS/Deposit/ProvideCollateral'
+import SelectAccount from 'components/Modals/HLS/Deposit/SelectAccount'
+import {
+  CollateralSubTitle,
+  LeverageSubTitle,
+  SubTitle,
+} from 'components/Modals/HLS/Deposit/SubTitles'
+import Summary from 'components/Modals/HLS/Deposit/Summary'
 import { BN } from 'utils/helpers'
 
 interface Props {

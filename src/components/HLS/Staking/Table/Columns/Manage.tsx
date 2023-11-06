@@ -14,9 +14,12 @@ export default function Manage(props: Props) {
   const openModal = useCallback(
     (action: 'deposit' | 'withdraw' | 'repay') =>
       useStore.setState({
-        hlsManageModal: { staking: { strategy: props.account.strategy, action } },
+        hlsManageModal: {
+          accountId: props.account.id,
+          staking: { strategy: props.account.strategy, action },
+        },
       }),
-    [props.account.strategy],
+    [props.account.id, props.account.strategy],
   )
 
   const ITEMS: DropDownItem[] = useMemo(

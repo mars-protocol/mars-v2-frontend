@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react'
 
-import { FormattedNumber } from 'components/FormattedNumber'
-import Text from 'components/Text'
+import SummaryItems from 'components/SummaryItems'
 import useBorrowAsset from 'hooks/useBorrowAsset'
 
 interface Props {
@@ -12,7 +11,7 @@ interface Props {
 export default function LeverageSummary(props: Props) {
   const borrowAsset = useBorrowAsset(props.asset.denom)
 
-  const items: { title: string; amount: number; options: FormatOptions }[] = useMemo(() => {
+  const items: SummaryItem[] = useMemo(() => {
     return [
       // TODO: Get APY numbers
       {
@@ -33,18 +32,5 @@ export default function LeverageSummary(props: Props) {
     ]
   }, [borrowAsset?.borrowRate, props.asset.symbol, props.positionValue])
 
-  return (
-    <div className='grid grid-cols-2 gap-2'>
-      {items.map((item) => (
-        <React.Fragment key={item.title}>
-          <Text className='text-white/60 text-xs'>{item.title}</Text>
-          <FormattedNumber
-            className='place-self-end text-xs'
-            amount={item.amount}
-            options={item.options}
-          />
-        </React.Fragment>
-      ))}
-    </div>
-  )
+  return <SummaryItems items={items} />
 }
