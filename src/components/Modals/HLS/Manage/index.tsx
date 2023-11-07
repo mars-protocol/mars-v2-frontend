@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react'
 
 import Header from 'components/Modals/HLS/Header'
+import ChangeLeverage from 'components/Modals/HLS/Manage/ChangeLeverage'
 import Deposit from 'components/Modals/HLS/Manage/Deposit'
 import Repay from 'components/Modals/HLS/Manage/Repay'
 import Withdraw from 'components/Modals/HLS/Manage/Withdraw'
@@ -41,10 +42,18 @@ function HlsModal(props: Props) {
   }
 
   const ContentComponent = useCallback(() => {
-    if (props.action === 'deposit') return <Deposit {...props} />
-    if (props.action === 'withdraw') return <Withdraw {...props} />
-    if (props.action === 'repay') return <Repay {...props} />
-    return null
+    switch (props.action) {
+      case 'deposit':
+        return <Deposit {...props} />
+      case 'withdraw':
+        return <Withdraw {...props} />
+      case 'repay':
+        return <Repay {...props} />
+      case 'leverage':
+        return <ChangeLeverage {...props} />
+      default:
+        return null
+    }
   }, [props])
 
   return (
@@ -59,7 +68,7 @@ function HlsModal(props: Props) {
       }
       onClose={handleClose}
       content={<ContentComponent />}
-      isContentCard={props.action !== 'deposit'}
+      isContentCard
     />
   )
 }

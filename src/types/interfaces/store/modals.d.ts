@@ -83,4 +83,4 @@ interface HlsManageModal {
   }
 }
 
-type HlsStakingManageAction = 'deposit' | 'withdraw' | 'repay'
+type HlsStakingManageAction = 'deposit' | 'withdraw' | 'repay' | 'leverage'

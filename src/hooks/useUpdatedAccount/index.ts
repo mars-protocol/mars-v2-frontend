@@ -16,6 +16,7 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { cloneAccount } from 'utils/accounts'
 import { byDenom } from 'utils/array'
+import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { getValueFromBNCoins } from 'utils/helpers'
 
 export interface VaultValue {
@@ -37,6 +38,7 @@ export function useUpdatedAccount(account?: Account) {
   const [addedVaultValues, addVaultValues] = useState<VaultValue[]>([])
   const [addedLends, addLends] = useState<BNCoin[]>([])
   const [removedLends, removeLends] = useState<BNCoin[]>([])
+  const [addedTrades, addTrades] = useState<BNCoin[]>([])
 
   const removeDepositAndLendsByDenom = useCallback(
     (denom: string) => {
@@ -151,6 +153,18 @@ export function useUpdatedAccount(account?: Account) {
     [account, addDebts, addDeposits, addLends, removeDeposits, removeLends],
   )
 
+  const simulateHlsStakingDeposit = useCallback(
+    (depositCoin: BNCoin, borrowCoin: BNCoin) => {
+      addDeposits([depositCoin])
+      addDebts([borrowCoin])
+      const additionalDebtValue = getCoinValue(borrowCoin, prices)
+
+      const tradeOutputAmount = getCoinAmount(depositCoin.denom, additionalDebtValue, prices)
+      addTrades([BNCoin.fromDenomAndBigNumber(depositCoin.denom, tradeOutputAmount)])
+    },
+    [prices],
+  )
+
   const simulateVaultDeposit = useCallback(
     (address: string, coins: BNCoin[], borrowCoins: BNCoin[]) => {
       if (!account) return
@@ -179,7 +193,7 @@ export function useUpdatedAccount(account?: Account) {
     if (!account) return
 
     const accountCopy = cloneAccount(account)
-    accountCopy.deposits = addCoins(addedDeposits, [...accountCopy.deposits])
+    accountCopy.deposits = addCoins([...addedDeposits, ...addedTrades], [...accountCopy.deposits])
     accountCopy.debts = addCoins(addedDebts, [...accountCopy.debts])
     accountCopy.vaults = addValueToVaults(
       addedVaultValues,
@@ -205,6 +219,7 @@ export function useUpdatedAccount(account?: Account) {
     removedLends,
     availableVaults,
     prices,
+    addedTrades,
   ])
 
   return {
@@ -225,6 +240,7 @@ export function useUpdatedAccount(account?: Account) {
     removedLends,
     simulateBorrow,
     simulateDeposits,
+    simulateHlsStakingDeposit,
     simulateLending,
     simulateRepay,
     simulateTrade,
