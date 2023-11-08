@@ -13,6 +13,7 @@ import {
   ResolveCallback,
 } from 'utils/charting_library'
 import { BN } from 'utils/helpers'
+import { devideByPotentiallyZero } from 'utils/math'
 
 interface BarQueryData {
   s: string
@@ -83,6 +84,7 @@ export class PythDataFeed implements IDatafeedChartApi {
         listed_exchange: this.exchangeName,
         supported_resolutions: this.supportedResolutions,
         base_name: [this.getDescription(pairName)],
+        pricescale: this.getPriceScale(pairName),
       } as LibrarySymbolInfo
       onResolve(info)
     })
@@ -179,15 +181,13 @@ export class PythDataFeed implements IDatafeedChartApi {
     pair1Bars.forEach((pair1Bar, index) => {
       const pair2Bar = pair2Bars[index]
 
-      if (pair2Bar) {
-        bars.push({
-          time: pair1Bar.time,
-          open: pair1Bar.open * (1 / pair2Bar.open),
-          close: pair1Bar.close * (1 / pair2Bar.close),
-          high: pair1Bar.high * (1 / pair2Bar.high),
-          low: pair1Bar.low * (1 / pair2Bar.low),
-        })
-      }
+      bars.push({
+        time: pair1Bar.time,
+        open: devideByPotentiallyZero(pair1Bar.open, pair2Bar.open),
+        close: devideByPotentiallyZero(pair1Bar.close, pair2Bar.close),
+        high: devideByPotentiallyZero(pair1Bar.high, pair2Bar.high),
+        low: devideByPotentiallyZero(pair1Bar.low, pair2Bar.low),
+      })
     })
     return bars
   }
@@ -200,6 +200,16 @@ export class PythDataFeed implements IDatafeedChartApi {
     const asset1 = ASSETS.find((asset) => asset.symbol === symbol1)
     const asset2 = ASSETS.find((asset) => asset.symbol === symbol2)
     return `${asset1?.denom}${PAIR_SEPARATOR}${asset2?.denom}`
+  }
+
+  getPriceScale(name: string) {
+    console.log(name)
+    const denoms = name.split(PAIR_SEPARATOR)
+    const asset2 = ASSETS.find((asset) => asset.mainnetDenom === denoms[1])
+    const decimalsOut = asset2?.decimals ?? 6
+    return BN(1)
+      .shiftedBy(decimalsOut > 8 ? 8 : decimalsOut)
+      .toNumber()
   }
 
   getPythFeedIds(name: string) {
