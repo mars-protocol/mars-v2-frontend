@@ -61,7 +61,6 @@ export const ASSETS: Asset[] = [
     isAutoLendEnabled: false,
     poolId: 803,
     isStaking: true,
-    pythHistoryFeedId: 'Crypto.ATOM/USD',
   },
   {
     symbol: 'WBTC.axl',
