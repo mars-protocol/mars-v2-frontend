@@ -182,10 +182,10 @@ export class PythDataFeed implements IDatafeedChartApi {
       if (pair2Bar) {
         bars.push({
           time: pair1Bar.time,
-          open: pair1Bar.open * pair2Bar.open,
-          close: pair1Bar.close * pair2Bar.close,
-          high: pair1Bar.high * pair2Bar.high,
-          low: pair1Bar.low * pair2Bar.low,
+          open: pair1Bar.open * (1 / pair2Bar.open),
+          close: pair1Bar.close * (1 / pair2Bar.close),
+          high: pair1Bar.high * (1 / pair2Bar.high),
+          low: pair1Bar.low * (1 / pair2Bar.low),
         })
       }
     })
