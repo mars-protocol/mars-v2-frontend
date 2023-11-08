@@ -203,7 +203,6 @@ export class PythDataFeed implements IDatafeedChartApi {
   }
 
   getPriceScale(name: string) {
-    console.log(name)
     const denoms = name.split(PAIR_SEPARATOR)
     const asset2 = ASSETS.find((asset) => asset.mainnetDenom === denoms[1])
     const decimalsOut = asset2?.decimals ?? 6

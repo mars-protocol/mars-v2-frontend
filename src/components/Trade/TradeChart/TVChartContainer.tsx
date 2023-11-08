@@ -3,7 +3,6 @@ import { useEffect, useMemo, useRef } from 'react'
 import Card from 'components/Card'
 import { PAIR_SEPARATOR } from 'components/Trade/TradeChart/OsmosisTheGraphDataFeed'
 import { disabledFeatures, enabledFeatures, overrides } from 'components/Trade/TradeChart/constants'
-import useStore from 'store'
 import {
   ChartingLibraryWidgetOptions,
   IChartingLibraryWidget,
@@ -25,8 +24,7 @@ export const TVChartContainer = (props: Props) => {
   const defaultSymbol = useRef<string>(
     `${props.sellAsset.mainnetDenom}${PAIR_SEPARATOR}${props.buyAsset.mainnetDenom}`,
   )
-  const baseCurrency = useStore((s) => s.baseCurrency)
-  const dataFeed = useMemo(() => new PythDataFeed(false), [baseCurrency])
+  const dataFeed = useMemo(() => new PythDataFeed(false), [])
 
   useEffect(() => {
     const widgetOptions: ChartingLibraryWidgetOptions = {
