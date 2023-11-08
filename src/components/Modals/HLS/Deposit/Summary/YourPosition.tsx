@@ -63,8 +63,10 @@ export default function YourPosition(props: Props) {
             type='info'
             className='items-center flex gap-2 group-hover/apytooltip:text-white text-white/60 cursor-pointer'
           >
-            <span className='mt-0.5'>Net APY</span>{' '}
-            <InfoCircle className='w-4 h-4 text-white/40  inline group-hover/apytooltip:text-white transition-all' />
+            <>
+              <span className='mt-0.5'>Net APY</span>{' '}
+              <InfoCircle className='w-4 h-4 text-white/40  inline group-hover/apytooltip:text-white transition-all' />
+            </>
           </Tooltip>
         </Text>
         <FormattedNumber
