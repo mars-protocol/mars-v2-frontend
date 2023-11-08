@@ -27,6 +27,8 @@ export default function Manage(props: Props) {
 
   const closeHlsStakingPosition = useStore((s) => s.closeHlsStakingPosition)
 
+  const hasNoDebt = useMemo(() => props.account.debts.length === 0, [props.account.debts.length])
+
   const ITEMS: DropDownItem[] = useMemo(
     () => [
       {
@@ -39,11 +41,15 @@ export default function Manage(props: Props) {
         text: 'Deposit more',
         onClick: () => openModal('deposit'),
       },
-      {
-        icon: <HandCoins width={16} />,
-        text: 'Repay',
-        onClick: () => openModal('repay'),
-      },
+      ...(hasNoDebt
+        ? []
+        : [
+            {
+              icon: <HandCoins width={16} />,
+              text: 'Repay',
+              onClick: () => openModal('repay'),
+            },
+          ]),
       {
         icon: <ArrowDownLine width={16} />,
         text: 'Withdraw',

@@ -2,6 +2,7 @@ import Button from 'components/Button'
 import { ChevronDown } from 'components/Icons'
 import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
+import useToggle from 'hooks/useToggle'
 
 interface Props extends ButtonProps {
   items: DropDownItem[]
@@ -9,6 +10,7 @@ interface Props extends ButtonProps {
 }
 
 export default function DropDownButton(props: Props) {
+  const [isOpen, toggleIsOpen] = useToggle(false)
   return (
     <Tooltip
       content={<DropDown {...props} />}
@@ -17,8 +19,15 @@ export default function DropDownButton(props: Props) {
       contentClassName='!bg-white/10 border border-white/20 backdrop-blur-xl !p-0'
       interactive
       hideArrow
+      visible={isOpen}
+      onClickOutside={() => toggleIsOpen(false)}
     >
-      <Button rightIcon={<ChevronDown />} iconClassName='w-3 h-3' {...props} />
+      <Button
+        onClick={() => toggleIsOpen()}
+        rightIcon={<ChevronDown />}
+        iconClassName='w-3 h-3'
+        {...props}
+      />
     </Tooltip>
   )
 }

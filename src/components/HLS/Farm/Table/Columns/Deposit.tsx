@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { useCallback } from 'react'
 
 import ActionButton from 'components/Button/ActionButton'
-import { Enter } from 'components/Icons'
+import { Circle, Enter, TrashBin, Wallet } from 'components/Icons'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
@@ -91,18 +91,18 @@ export default function Deposit(props: Props) {
 
 const INFO_ITEMS = [
   {
-    icon: <Enter width={16} height={16} />,
+    icon: <Circle />,
     title: 'One account, one position',
     description:
       'A minted HLS account can only have a single position tied to it, in order to limit risk.',
   },
   {
-    icon: <Enter />,
+    icon: <Wallet />,
     title: 'Funded from your wallet',
     description: 'To fund your HLS position, funds will have to come directly from your wallet.',
   },
   {
-    icon: <Enter />,
+    icon: <TrashBin />,
     title: 'Accounts are reusable',
     description:
       'If you exited a position from a minted account, this account can be reused for a new position.',
