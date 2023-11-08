@@ -3,8 +3,8 @@ import React, { useMemo } from 'react'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { InfoCircle } from 'components/Icons'
-import AprBreakdown from 'components/Modals/HLS/Summary/ApyBreakdown'
-import Container from 'components/Modals/HLS/Summary/Container'
+import AprBreakdown from 'components/Modals/HLS/Deposit/Summary/ApyBreakdown'
+import Container from 'components/Modals/HLS/Deposit/Summary/Container'
 import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -63,8 +63,10 @@ export default function YourPosition(props: Props) {
             type='info'
             className='items-center flex gap-2 group-hover/apytooltip:text-white text-white/60 cursor-pointer'
           >
-            <span className='mt-0.5'>Net APY</span>{' '}
-            <InfoCircle className='w-4 h-4 text-white/40  inline group-hover/apytooltip:text-white transition-all' />
+            <>
+              <span className='mt-0.5'>Net APY</span>{' '}
+              <InfoCircle className='w-4 h-4 text-white/40  inline group-hover/apytooltip:text-white transition-all' />
+            </>
           </Tooltip>
         </Text>
         <FormattedNumber

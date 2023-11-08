@@ -2,8 +2,8 @@ import React from 'react'
 
 import Button from 'components/Button'
 import { ArrowRight } from 'components/Icons'
-import AssetSummary from 'components/Modals/HLS/Summary/AssetSummary'
-import YourPosition from 'components/Modals/HLS/Summary/YourPosition'
+import AssetSummary from 'components/Modals/HLS/Deposit/Summary/AssetSummary'
+import YourPosition from 'components/Modals/HLS/Deposit/Summary/YourPosition'
 import useBorrowAsset from 'hooks/useBorrowAsset'
 import { BNCoin } from 'types/classes/BNCoin'
 

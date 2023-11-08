@@ -13,13 +13,9 @@ interface Props {
 export default function Checkbox(props: Props) {
   return (
     <>
-      <label
-        className='flex items-center gap-2 border-white cursor-pointer'
-        htmlFor={`${props.name}-id}`}
-      >
+      <label className='flex items-center gap-2 border-white cursor-pointer'>
         <input
           onChange={() => props.onChange(props.checked)}
-          id={`${props.name}-id`}
           name={props.name}
           checked={props.checked}
           type='checkbox'

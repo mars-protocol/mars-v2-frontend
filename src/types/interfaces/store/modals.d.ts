@@ -76,8 +76,11 @@ interface HlsModal {
 }
 
 interface HlsManageModal {
+  accountId: string
   staking: {
     strategy: HLSStrategy
-    action: 'deposit' | 'withdraw' | 'repay'
+    action: HlsStakingManageAction
   }
 }
+
+type HlsStakingManageAction = 'deposit' | 'withdraw' | 'repay' | 'leverage'

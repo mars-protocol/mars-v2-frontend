@@ -4,7 +4,7 @@ import { ReactNode, useEffect, useRef } from 'react'
 import EscButton from 'components/Button/EscButton'
 import Card from 'components/Card'
 
-interface Props {
+export interface ModalProps {
   header: string | ReactNode
   headerClassName?: string
   hideCloseBtn?: boolean
@@ -18,7 +18,7 @@ interface Props {
   dialogId?: string
 }
 
-export default function Modal(props: Props) {
+export default function Modal(props: ModalProps) {
   const ref: React.RefObject<HTMLDialogElement> = useRef(null)
   const modalClassName = props.modalClassName ?? 'max-w-modal'
 

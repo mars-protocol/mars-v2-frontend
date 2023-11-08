@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo } from 'react'
 
 import DropDownButton from 'components/Button/DropDownButton'
-import { ArrowDownLine, HandCoins, Plus } from 'components/Icons'
+import { ArrowDownLine, Cross, HandCoins, Plus, Scale } from 'components/Icons'
+import useCloseHlsStakingPosition from 'hooks/HLS/useClosePositionActions'
 import useStore from 'store'
 
 export const MANAGE_META = { id: 'manage' }
@@ -12,32 +13,55 @@ interface Props {
 
 export default function Manage(props: Props) {
   const openModal = useCallback(
-    (action: 'deposit' | 'withdraw' | 'repay') =>
+    (action: HlsStakingManageAction) =>
       useStore.setState({
-        hlsManageModal: { staking: { strategy: props.account.strategy, action } },
+        hlsManageModal: {
+          accountId: props.account.id,
+          staking: { strategy: props.account.strategy, action },
+        },
       }),
-    [props.account.strategy],
+    [props.account.id, props.account.strategy],
   )
+
+  const actions = useCloseHlsStakingPosition({ account: props.account })
+
+  const closeHlsStakingPosition = useStore((s) => s.closeHlsStakingPosition)
+
+  const hasNoDebt = useMemo(() => props.account.debts.length === 0, [props.account.debts.length])
 
   const ITEMS: DropDownItem[] = useMemo(
     () => [
+      {
+        icon: <Scale width={16} />,
+        text: 'Change leverage',
+        onClick: () => openModal('leverage'),
+      },
       {
         icon: <Plus width={16} />,
         text: 'Deposit more',
         onClick: () => openModal('deposit'),
       },
+      ...(hasNoDebt
+        ? []
+        : [
+            {
+              icon: <HandCoins width={16} />,
+              text: 'Repay',
+              onClick: () => openModal('repay'),
+            },
+          ]),
       {
-        icon: <HandCoins />,
-        text: 'Repay',
-        onClick: () => openModal('repay'),
-      },
-      {
-        icon: <ArrowDownLine />,
+        icon: <ArrowDownLine width={16} />,
         text: 'Withdraw',
         onClick: () => openModal('withdraw'),
       },
+      {
+        icon: <Cross width={14} />,
+        text: 'Close Position',
+        onClick: () => closeHlsStakingPosition({ accountId: props.account.id, actions }),
+      },
     ],
-    [openModal],
+    [actions, closeHlsStakingPosition, openModal, props.account.id],
   )
 
   return <DropDownButton items={ITEMS} text='Manage' color='tertiary' />
