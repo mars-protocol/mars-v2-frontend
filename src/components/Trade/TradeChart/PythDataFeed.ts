@@ -32,7 +32,7 @@ export class PythDataFeed implements IDatafeedChartApi {
   debug = false
   enabledMarketAssetDenoms: string[] = []
   batchSize = 1000
-
+  exchangeName = 'Osmosis'
   minutesPerInterval: { [key: string]: number } = {
     '1': 1,
     '5': 5,
@@ -80,6 +80,8 @@ export class PythDataFeed implements IDatafeedChartApi {
         full_name: this.getDescription(pairName),
         description: this.getDescription(pairName),
         ticker: this.getDescription(pairName),
+        exchange: this.exchangeName,
+        listed_exchange: this.exchangeName,
         supported_resolutions: this.supportedResolutions,
         base_name: [this.getDescription(pairName)],
       } as LibrarySymbolInfo
@@ -146,7 +148,7 @@ export class PythDataFeed implements IDatafeedChartApi {
 
   resolveBarData(data: BarQueryData) {
     return data['t'].map((timestamp, index) => ({
-      time: timestamp,
+      time: timestamp * 1000,
       close: data['c'][index],
       open: data['o'][index],
       high: data['h'][index],
