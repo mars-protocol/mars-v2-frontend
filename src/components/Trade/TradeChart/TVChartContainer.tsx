@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef } from 'react'
 
 import Card from 'components/Card'
-import { PAIR_SEPARATOR } from 'components/Trade/TradeChart/DataFeed'
+import { DataFeed, PAIR_SEPARATOR } from 'components/Trade/TradeChart/DataFeed'
 import { disabledFeatures, enabledFeatures, overrides } from 'components/Trade/TradeChart/constants'
+import useStore from 'store'
 import {
   ChartingLibraryWidgetOptions,
   IChartingLibraryWidget,
@@ -10,9 +11,6 @@ import {
   Timezone,
   widget,
 } from 'utils/charting_library'
-import useStore from 'store'
-
-import { DataFeed } from './DataFeed'
 
 interface Props {
   buyAsset: Asset
