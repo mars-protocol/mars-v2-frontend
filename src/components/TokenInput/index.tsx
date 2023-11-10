@@ -54,7 +54,7 @@ export default function TokenInput(props: Props) {
       <div
         data-testid='token-input-wrapper'
         className={classNames(
-          'relative isolate z-40 box-content flex h-11 w-full rounded-sm border bg-white/5',
+          'relative isolate z-20 box-content flex h-11 w-full rounded-sm border bg-white/5',
           props.warning ? 'border-warning' : 'border-white/20',
         )}
       >
