@@ -1,6 +1,8 @@
 import { defaultSymbolInfo } from 'components/Trade/TradeChart/constants'
 import { ASSETS } from 'constants/assets'
 import { ENV } from 'constants/env'
+import { MILLISECONDS_PER_MINUTE } from 'constants/math'
+import { byDenom } from 'utils/array'
 import { getAssetByDenom, getEnabledMarketAssets } from 'utils/assets'
 import {
   Bar,
@@ -14,8 +16,19 @@ import {
   ResolveCallback,
 } from 'utils/charting_library'
 import { BN } from 'utils/helpers'
+import { devideByPotentiallyZero } from 'utils/math'
 
-interface BarQueryData {
+interface PythBarQueryData {
+  s: string
+  t: number[]
+  o: number[]
+  h: number[]
+  l: number[]
+  c: number[]
+  v: number[]
+}
+
+interface TheGraphBarQueryData {
   close: string
   high: string
   low: string
@@ -26,41 +39,40 @@ interface BarQueryData {
 
 export const PAIR_SEPARATOR = '<>'
 
-export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
-  candlesEndpoint = ENV.CANDLES_ENDPOINT
+export class DataFeed implements IDatafeedChartApi {
+  candlesEndpoint = ENV.CANDLES_ENDPOINT_PYTH
+  candlesEndpointTheGraph = ENV.CANDLES_ENDPOINT_THE_GRAPH
   debug = false
-  exchangeName = 'Osmosis'
+  enabledMarketAssetDenoms: string[] = []
+  batchSize = 1000
   baseDecimals: number = 6
   baseDenom: string = 'uosmo'
-  batchSize = 1000
-  enabledMarketAssetDenoms: string[] = []
-  pairs: { baseAsset: string; quoteAsset: string }[] = []
-  pairsWithData: string[] = []
-  intervals: { [key: string]: string } = {
+  intervalsTheGraph: { [key: string]: string } = {
     '15': '15m',
     '30': '30m',
     '60': '1h',
     '240': '4h',
     '1D': '1d',
   }
-  minutesPerInterval: { [key: string]: number } = {
-    '15': 15,
-    '30': 30,
-    '60': 60,
-    '240': 60 * 4,
-    '1D': 60 * 24,
+  millisecondsPerInterval: { [key: string]: number } = {
+    '15': MILLISECONDS_PER_MINUTE * 15,
+    '30': MILLISECONDS_PER_MINUTE * 30,
+    '60': MILLISECONDS_PER_MINUTE * 60,
+    '240': MILLISECONDS_PER_MINUTE * 240,
+    '1D': MILLISECONDS_PER_MINUTE * 1440,
   }
-
+  pairs: { baseAsset: string; quoteAsset: string }[] = []
+  pairsWithData: string[] = []
   supportedPools: string[] = []
-  supportedResolutions = ['15', '30', '60', '4h', 'D'] as ResolutionString[]
+  supportedResolutions = ['15', '30', '60', '240', 'D'] as ResolutionString[]
 
   constructor(debug = false, baseDecimals: number, baseDenom: string) {
-    if (debug) console.log('Start TheGraph charting library datafeed')
+    if (debug) console.log('Start charting library datafeed')
     this.debug = debug
     this.baseDecimals = baseDecimals
     this.baseDenom = baseDenom
     const enabledMarketAssets = getEnabledMarketAssets()
-    this.enabledMarketAssetDenoms = enabledMarketAssets.map((asset) => asset.mainnetDenom)
+    this.enabledMarketAssetDenoms = enabledMarketAssets.map((asset) => asset.denom)
     this.supportedPools = enabledMarketAssets
       .map((asset) => asset.poolId?.toString())
       .filter((poolId) => typeof poolId === 'string') as string[]
@@ -69,8 +81,8 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
   getDescription(pairName: string) {
     const denom1 = pairName.split(PAIR_SEPARATOR)[0]
     const denom2 = pairName.split(PAIR_SEPARATOR)[1]
-    const asset1 = ASSETS.find((asset) => asset.mainnetDenom === denom1)
-    const asset2 = ASSETS.find((asset) => asset.mainnetDenom === denom2)
+    const asset1 = ASSETS.find(byDenom(denom1))
+    const asset2 = ASSETS.find(byDenom(denom2))
     return `${asset1?.symbol}/${asset2?.symbol}`
   }
 
@@ -91,7 +103,7 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
         }
       }`
 
-    return fetch(this.candlesEndpoint, {
+    return fetch(this.candlesEndpointTheGraph, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query }),
@@ -131,10 +143,11 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
         full_name: this.getDescription(pairName),
         description: this.getDescription(pairName),
         ticker: this.getDescription(pairName),
-        exchange: this.exchangeName,
-        listed_exchange: this.exchangeName,
+        exchange: this.getExchangeName(pairName),
+        listed_exchange: this.getExchangeName(pairName),
         supported_resolutions: this.supportedResolutions,
         base_name: [this.getDescription(pairName)],
+        pricescale: this.getPriceScale(pairName),
       } as LibrarySymbolInfo
       onResolve(info)
     })
@@ -146,11 +159,45 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
     periodParams: PeriodParams,
     onResult: HistoryCallback,
   ): Promise<void> {
-    const interval = this.intervals[resolution]
+    try {
+      let bars = [] as Bar[]
+      const pythFeedIds = this.getPythFeedIds(symbolInfo.full_name)
+      const now = new Date().getTime()
+      const to = BN(now).dividedBy(1000).integerValue().toNumber()
+      const from = BN(now)
+        .minus(this.batchSize * this.millisecondsPerInterval[resolution])
+        .dividedBy(1000)
+        .integerValue()
+        .toNumber()
+      const pythFeedId1 = pythFeedIds[0]
+      const pythFeedId2 = pythFeedIds[1]
 
+      if (pythFeedId1 && pythFeedId2) {
+        const asset1Bars = this.queryBarData(pythFeedId1, resolution, from, to)
+        const asset2Bars = this.queryBarData(pythFeedId2, resolution, from, to)
+
+        await Promise.all([asset1Bars, asset2Bars]).then(([asset1Bars, asset2Bars]) => {
+          bars = this.combineBars(asset1Bars, asset2Bars)
+          onResult(bars)
+        })
+      } else {
+        await this.getBarsFromTheGraph(symbolInfo, resolution, to).then((bars) => onResult(bars))
+      }
+    } catch (error) {
+      console.error(error)
+      return onResult([], { noData: true })
+    }
+  }
+
+  async getBarsFromTheGraph(
+    symbolInfo: LibrarySymbolInfo,
+    resolution: ResolutionString,
+    to: number,
+  ) {
     let pair1 = this.getPairName(symbolInfo.full_name)
     let pair2: string = ''
     let pair3: string = ''
+    let theGraphBars = [] as Bar[]
 
     if (!this.pairsWithData.includes(pair1)) {
       if (this.debug) console.log('Pair does not have data, need to combine with other pairs')
@@ -181,29 +228,32 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
       }
     }
 
-    const pair1Bars = this.queryBarData(
+    const pair1Bars = this.queryBarDataTheGraph(
       pair1.split(PAIR_SEPARATOR)[0],
       pair1.split(PAIR_SEPARATOR)[1],
-      interval,
+      resolution,
+      to,
     )
 
     let pair2Bars: Promise<Bar[]> | null = null
 
     if (pair2) {
-      pair2Bars = this.queryBarData(
+      pair2Bars = this.queryBarDataTheGraph(
         pair2.split(PAIR_SEPARATOR)[0],
         pair2.split(PAIR_SEPARATOR)[1],
-        interval,
+        resolution,
+        to,
       )
     }
 
     let pair3Bars: Promise<Bar[]> | null = null
 
     if (pair3) {
-      pair3Bars = this.queryBarData(
+      pair3Bars = this.queryBarDataTheGraph(
         pair3.split(PAIR_SEPARATOR)[0],
         pair3.split(PAIR_SEPARATOR)[1],
-        interval,
+        resolution,
+        to,
       )
     }
 
@@ -212,7 +262,6 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
         let bars = pair1Bars
 
         if (!bars.length) {
-          onResult([], { noData: true })
           return
         }
 
@@ -225,20 +274,55 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
 
         const filler = Array.from({ length: this.batchSize - bars.length }).map((_, index) => ({
           time:
-            (bars[0]?.time || new Date().getTime()) - index * this.minutesPerInterval[resolution],
+            (bars[0]?.time || new Date().getTime()) -
+            (index * this.millisecondsPerInterval[resolution]) / 1000,
           close: 0,
           open: 0,
           high: 0,
           low: 0,
           volume: 0,
         }))
-
-        onResult([...filler, ...bars])
+        theGraphBars = [...filler, ...bars]
       },
     )
+
+    return theGraphBars
   }
 
-  async queryBarData(quote: string, base: string, interval: string): Promise<Bar[]> {
+  async queryBarData(
+    feedSymbol: string,
+    resolution: ResolutionString,
+    from: PeriodParams['from'],
+    to: PeriodParams['to'],
+  ): Promise<Bar[]> {
+    const URI = new URL('/v1/shims/tradingview/history', this.candlesEndpoint)
+    const params = new URLSearchParams(URI.search)
+
+    params.append('to', to.toString())
+    params.append('from', from.toString())
+    params.append('resolution', resolution)
+    params.append('symbol', feedSymbol)
+    URI.search = params.toString()
+
+    return fetch(URI)
+      .then((res) => res.json())
+      .then((json) => {
+        return this.resolveBarData(json, resolution, to)
+      })
+      .catch((err) => {
+        if (this.debug) console.error(err)
+        throw err
+      })
+  }
+
+  async queryBarDataTheGraph(
+    quote: string,
+    base: string,
+    resolution: ResolutionString,
+    to: PeriodParams['to'],
+  ): Promise<Bar[]> {
+    const interval = this.intervalsTheGraph[resolution]
+
     const query = `
         {
             candles(
@@ -262,14 +346,20 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
         }
     `
 
-    return fetch(this.candlesEndpoint, {
+    return fetch(this.candlesEndpointTheGraph, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query }),
     })
       .then((res) => res.json())
-      .then((json: { data?: { candles: BarQueryData[] } }) => {
-        return this.resolveBarData(json.data?.candles.reverse() || [], base, quote)
+      .then((json: { data?: { candles: TheGraphBarQueryData[] } }) => {
+        return this.resolveBarDataTheGraph(
+          json.data?.candles.reverse() || [],
+          base,
+          quote,
+          resolution,
+          to,
+        )
       })
       .catch((err) => {
         if (this.debug) console.error(err)
@@ -277,12 +367,35 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
       })
   }
 
-  resolveBarData(bars: BarQueryData[], toDenom: string, fromDenom: string) {
+  resolveBarData(data: PythBarQueryData, resolution: ResolutionString, to: number) {
+    let barData = [] as Bar[]
+
+    if (data['s'] === 'ok') {
+      barData = data['t'].map((timestamp, index) => ({
+        time: timestamp * 1000,
+        close: data['c'][index],
+        open: data['o'][index],
+        high: data['h'][index],
+        low: data['l'][index],
+      }))
+    }
+
+    return this.fillBarData(barData, resolution, to)
+  }
+
+  resolveBarDataTheGraph(
+    bars: TheGraphBarQueryData[],
+    toDenom: string,
+    fromDenom: string,
+    resolution: ResolutionString,
+    to: number,
+  ) {
+    let barData = [] as Bar[]
     const toDecimals = getAssetByDenom(toDenom)?.decimals || 6
     const fromDecimals = getAssetByDenom(fromDenom)?.decimals || 6
     const additionalDecimals = toDecimals - fromDecimals
 
-    return bars.map((bar) => ({
+    barData = bars.map((bar) => ({
       time: BN(bar.timestamp).multipliedBy(1000).toNumber(),
       close: BN(bar.close).shiftedBy(additionalDecimals).toNumber(),
       open: BN(bar.open).shiftedBy(additionalDecimals).toNumber(),
@@ -290,23 +403,40 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
       low: BN(bar.low).shiftedBy(additionalDecimals).toNumber(),
       volume: BN(bar.volume).shiftedBy(additionalDecimals).toNumber(),
     }))
+
+    return this.fillBarData(barData, resolution, to)
+  }
+
+  fillBarData(barData: Bar[], resolution: ResolutionString, to: number) {
+    if (barData.length < this.batchSize) {
+      const filler = Array.from({ length: this.batchSize - barData.length }).map((_, index) => ({
+        time: (barData[0]?.time || to) - index * this.millisecondsPerInterval[resolution],
+        close: 0,
+        open: 0,
+        high: 0,
+        low: 0,
+        volume: 0,
+      }))
+
+      barData = [...filler, ...barData]
+    }
+
+    return barData.length > this.batchSize ? barData.slice(0, this.batchSize) : barData
   }
 
   combineBars(pair1Bars: Bar[], pair2Bars: Bar[]): Bar[] {
     const bars: Bar[] = []
 
-    pair1Bars.forEach((pair1Bar) => {
-      const pair2Bar = pair2Bars.find((pair2Bar) => pair2Bar.time == pair1Bar.time)
+    pair1Bars.forEach((pair1Bar, index) => {
+      const pair2Bar = pair2Bars[index]
 
-      if (pair2Bar) {
-        bars.push({
-          time: pair1Bar.time,
-          open: pair1Bar.open * pair2Bar.open,
-          close: pair1Bar.close * pair2Bar.close,
-          high: pair1Bar.high * pair2Bar.high,
-          low: pair1Bar.low * pair2Bar.low,
-        })
-      }
+      bars.push({
+        time: pair1Bar.time,
+        open: devideByPotentiallyZero(pair1Bar.open, pair2Bar.open),
+        close: devideByPotentiallyZero(pair1Bar.close, pair2Bar.close),
+        high: devideByPotentiallyZero(pair1Bar.high, pair2Bar.high),
+        low: devideByPotentiallyZero(pair1Bar.low, pair2Bar.low),
+      })
     })
     return bars
   }
@@ -319,6 +449,32 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
     const asset1 = ASSETS.find((asset) => asset.symbol === symbol1)
     const asset2 = ASSETS.find((asset) => asset.symbol === symbol2)
     return `${asset1?.denom}${PAIR_SEPARATOR}${asset2?.denom}`
+  }
+
+  getPriceScale(name: string) {
+    const denoms = name.split(PAIR_SEPARATOR)
+    const asset2 = ASSETS.find(byDenom(denoms[1]))
+    const decimalsOut = asset2?.decimals ?? 6
+    return BN(1)
+      .shiftedBy(decimalsOut > 8 ? 8 : decimalsOut)
+      .toNumber()
+  }
+
+  getExchangeName(name: string) {
+    const denoms = name.split(PAIR_SEPARATOR)
+    const pythFeedId1 = ASSETS.find(byDenom(denoms[0]))?.pythHistoryFeedId
+    const pythFeedId2 = ASSETS.find(byDenom(denoms[1]))?.pythHistoryFeedId
+    if (!pythFeedId1 || !pythFeedId2) return 'Osmosis'
+    return 'Pyth Oracle'
+  }
+
+  getPythFeedIds(name: string) {
+    if (name.includes(PAIR_SEPARATOR)) return []
+    const [symbol1, symbol2] = name.split('/')
+    const feedId1 = ASSETS.find((asset) => asset.symbol === symbol1)?.pythHistoryFeedId
+    const feedId2 = ASSETS.find((asset) => asset.symbol === symbol2)?.pythHistoryFeedId
+
+    return [feedId1, feedId2]
   }
 
   searchSymbols(): void {

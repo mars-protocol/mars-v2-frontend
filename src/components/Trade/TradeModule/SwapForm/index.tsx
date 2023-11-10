@@ -20,6 +20,7 @@ import useHealthComputer from 'hooks/useHealthComputer'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useMarketAssets from 'hooks/useMarketAssets'
 import useMarketBorrowings from 'hooks/useMarketBorrowings'
+import useSwapRoute from 'hooks/useSwapRoute'
 import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useStore from 'store'
@@ -43,6 +44,7 @@ export default function SwapForm(props: Props) {
   const { computeMaxSwapAmount } = useHealthComputer(account)
   const { data: borrowAssets } = useMarketBorrowings()
   const { data: marketAssets } = useMarketAssets()
+  const { data: route, isLoading: isRouteLoading } = useSwapRoute(sellAsset.denom, buyAsset.denom)
   const isBorrowEnabled = !!marketAssets.find(byDenom(sellAsset.denom))?.borrowEnabled
   const [isMarginChecked, setMarginChecked] = useToggle(isBorrowEnabled ? useMargin : false)
   const [buyAssetAmount, setBuyAssetAmount] = useState(BN_ZERO)
@@ -265,6 +267,14 @@ export default function SwapForm(props: Props) {
     [borrowAsset?.liquidity?.amount],
   )
 
+  const isSwapDisabled = useMemo(
+    () =>
+      sellAssetAmount.isZero() ||
+      depositCapReachedCoins.length > 0 ||
+      borrowAmount.isGreaterThanOrEqualTo(availableLiquidity),
+    [sellAssetAmount, depositCapReachedCoins, borrowAmount, availableLiquidity],
+  )
+
   return (
     <>
       <Divider />
@@ -323,15 +333,12 @@ export default function SwapForm(props: Props) {
           sellAsset={sellAsset}
           borrowRate={borrowAsset?.borrowRate}
           buyAction={handleBuyClick}
-          buyButtonDisabled={
-            sellAssetAmount.isZero() ||
-            depositCapReachedCoins.length > 0 ||
-            borrowAmount.isGreaterThanOrEqualTo(availableLiquidity)
-          }
-          showProgressIndicator={isConfirming}
+          buyButtonDisabled={isSwapDisabled || route.length === 0}
+          showProgressIndicator={isConfirming || isRouteLoading}
           isMargin={isMarginChecked}
           borrowAmount={borrowAmount}
           estimatedFee={estimatedFee}
+          route={route}
         />
       </div>
     </>

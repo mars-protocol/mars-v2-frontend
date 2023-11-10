@@ -1,13 +1,10 @@
-import { ASSETS, MARS_MAINNET_DENOM } from 'constants/assets'
-import { bySymbol } from 'utils/array'
 import getPoolPrice from 'api/prices/getPoolPrice'
+import { ASSETS } from 'constants/assets'
+import { bySymbol } from 'utils/array'
 
 async function getMarsPrice() {
-  const marsAsset = {
-    ...(ASSETS.find(bySymbol('MARS')) as Asset),
-    denom: MARS_MAINNET_DENOM,
-  }
-
+  const marsAsset = ASSETS.find(bySymbol('MARS'))
+  if (!marsAsset) return 0
   return await getPoolPrice(marsAsset)
 }
 

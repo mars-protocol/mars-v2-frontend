@@ -2,13 +2,14 @@ interface Asset {
   color: string
   name: string
   denom: string
-  mainnetDenom: string
   symbol:
     | 'OSMO'
     | 'ATOM'
     | 'MARS'
     | 'stATOM'
+    | 'stOSMO'
     | 'AXL'
+    | 'TIA'
     | 'USDC.axl'
     | 'USDC'
     | 'WBTC.axl'
@@ -25,7 +26,9 @@ interface Asset {
     | 'ATOM'
     | 'MARS'
     | 'stATOM'
+    | 'stOSMO'
     | 'AXL'
+    | 'TIA'
     | 'axlUSDC'
     | 'axlWBTC'
     | 'axlWETH'
@@ -52,6 +55,7 @@ interface Asset {
   isAutoLendEnabled?: boolean
   isBorrowEnabled?: boolean
   pythPriceFeedId?: string
+  pythHistoryFeedId?: string
   forceFetchPrice?: boolean
   testnetDenom?: string
   isStaking?: boolean
