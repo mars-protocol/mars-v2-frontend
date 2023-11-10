@@ -1,11 +1,8 @@
 import { useEffect, useMemo, useRef } from 'react'
 
 import Card from 'components/Card'
+import { DataFeed, PAIR_SEPARATOR } from 'components/Trade/TradeChart/DataFeed'
 import { disabledFeatures, enabledFeatures, overrides } from 'components/Trade/TradeChart/constants'
-import {
-  OsmosisTheGraphDataFeed,
-  PAIR_SEPARATOR,
-} from 'components/Trade/TradeChart/OsmosisTheGraphDataFeed'
 import useStore from 'store'
 import {
   ChartingLibraryWidgetOptions,
@@ -28,7 +25,7 @@ export const TVChartContainer = (props: Props) => {
   )
   const baseCurrency = useStore((s) => s.baseCurrency)
   const dataFeed = useMemo(
-    () => new OsmosisTheGraphDataFeed(false, baseCurrency.decimals, baseCurrency.denom),
+    () => new DataFeed(false, baseCurrency.decimals, baseCurrency.denom),
     [baseCurrency],
   )
 

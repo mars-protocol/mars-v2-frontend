@@ -28,7 +28,7 @@ export const overrides = {
 }
 
 export const defaultSymbolInfo: Partial<LibrarySymbolInfo> = {
-  listed_exchange: 'Osmosis',
+  listed_exchange: 'Pyth Oracle',
   type: 'AMM',
   session: '24x7',
   minmov: 1,

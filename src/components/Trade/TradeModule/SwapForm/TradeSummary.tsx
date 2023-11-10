@@ -3,7 +3,6 @@ import { useMemo } from 'react'
 
 import ActionButton from 'components/Button/ActionButton'
 import { FormattedNumber } from 'components/FormattedNumber'
-import useSwapRoute from 'hooks/useSwapRoute'
 import { getAssetByDenom } from 'utils/assets'
 import { formatAmountWithSymbol, formatPercent } from 'utils/formatters'
 
@@ -18,7 +17,9 @@ interface Props {
   borrowAmount: BigNumber
   estimatedFee: StdFee
   buyAction: () => void
+  route: Route[]
 }
+const infoLineClasses = 'flex flex-row justify-between flex-1 mb-1 text-xs text-white'
 
 export default function TradeSummary(props: Props) {
   const {
@@ -32,24 +33,22 @@ export default function TradeSummary(props: Props) {
     borrowAmount,
     estimatedFee,
     showProgressIndicator,
+    route,
   } = props
-  const { data: routes, isLoading: isRouteLoading } = useSwapRoute(sellAsset.denom, buyAsset.denom)
 
   const parsedRoutes = useMemo(() => {
-    if (!routes.length) return '-'
+    if (!route.length) return '-'
 
-    const routeSymbols = routes.map((r) => getAssetByDenom(r.token_out_denom)?.symbol)
+    const routeSymbols = route.map((r) => getAssetByDenom(r.token_out_denom)?.symbol)
     routeSymbols.unshift(sellAsset.symbol)
 
     return routeSymbols.join(' -> ')
-  }, [routes, sellAsset.symbol])
+  }, [route, sellAsset.symbol])
 
   const buttonText = useMemo(
-    () => (routes.length ? `Buy ${buyAsset.symbol}` : 'No route found'),
-    [buyAsset.symbol, routes],
+    () => (route.length ? `Buy ${buyAsset.symbol}` : 'No route found'),
+    [buyAsset.symbol, route],
   )
-
-  const infoLineClasses = 'flex flex-row justify-between flex-1 mb-1 text-xs text-white'
 
   return (
     <div
@@ -94,8 +93,8 @@ export default function TradeSummary(props: Props) {
         </div>
       </div>
       <ActionButton
-        disabled={routes.length === 0 || buyButtonDisabled}
-        showProgressIndicator={showProgressIndicator || isRouteLoading}
+        disabled={buyButtonDisabled}
+        showProgressIndicator={showProgressIndicator}
         text={buttonText}
         onClick={buyAction}
         size='md'
