@@ -24,7 +24,7 @@ export const TVChartContainer = (props: Props) => {
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
   const widgetRef = useRef<IChartingLibraryWidget>()
   const defaultSymbol = useRef<string>(
-    `${props.sellAsset.mainnetDenom}${PAIR_SEPARATOR}${props.buyAsset.mainnetDenom}`,
+    `${props.sellAsset.denom}${PAIR_SEPARATOR}${props.buyAsset.denom}`,
   )
   const baseCurrency = useStore((s) => s.baseCurrency)
   const dataFeed = useMemo(
@@ -97,12 +97,12 @@ export const TVChartContainer = (props: Props) => {
   useEffect(() => {
     if (widgetRef?.current) {
       widgetRef.current.setSymbol(
-        `${props.sellAsset.mainnetDenom}${PAIR_SEPARATOR}${props.buyAsset.mainnetDenom}`,
+        `${props.sellAsset.denom}${PAIR_SEPARATOR}${props.buyAsset.denom}`,
         widgetRef.current.chart().resolution() || ('1h' as ResolutionString),
         () => {},
       )
     }
-  }, [props.buyAsset.mainnetDenom, props.sellAsset.mainnetDenom])
+  }, [props.buyAsset.denom, props.sellAsset.denom])
 
   return (
     <Card title='Trading Chart' contentClassName='px-0.5 pb-0.5 h-full'>

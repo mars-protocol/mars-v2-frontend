@@ -41,7 +41,21 @@ const getAssetRate = async (asset: Asset) => {
     `poolPrices/${(asset.poolId || 0).toString()}`,
     60,
   )
-  return calculateSpotPrice(response.pool.pool_assets, asset)
+  const pool = response.pool
+  const poolAssets: PoolAsset[] = pool.scaling_factor_controller
+    ? [
+        {
+          token: pool.pool_liquidity[0],
+          weight: 1,
+        },
+        {
+          token: pool.pool_liquidity[1],
+          weight: 1,
+        },
+      ]
+    : pool.pool_assets
+
+  return calculateSpotPrice(poolAssets, asset)
 }
 
 const calculateSpotPrice = (poolAssets: PoolAsset[], asset: Asset): [BigNumber, PoolAsset] => {

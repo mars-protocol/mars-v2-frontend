@@ -1,6 +1,7 @@
 import { defaultSymbolInfo } from 'components/Trade/TradeChart/constants'
 import { ASSETS } from 'constants/assets'
 import { ENV } from 'constants/env'
+import { byDenom } from 'utils/array'
 import { getAssetByDenom, getEnabledMarketAssets } from 'utils/assets'
 import {
   Bar,
@@ -60,7 +61,7 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
     this.baseDecimals = baseDecimals
     this.baseDenom = baseDenom
     const enabledMarketAssets = getEnabledMarketAssets()
-    this.enabledMarketAssetDenoms = enabledMarketAssets.map((asset) => asset.mainnetDenom)
+    this.enabledMarketAssetDenoms = enabledMarketAssets.map((asset) => asset.denom)
     this.supportedPools = enabledMarketAssets
       .map((asset) => asset.poolId?.toString())
       .filter((poolId) => typeof poolId === 'string') as string[]
@@ -69,8 +70,8 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
   getDescription(pairName: string) {
     const denom1 = pairName.split(PAIR_SEPARATOR)[0]
     const denom2 = pairName.split(PAIR_SEPARATOR)[1]
-    const asset1 = ASSETS.find((asset) => asset.mainnetDenom === denom1)
-    const asset2 = ASSETS.find((asset) => asset.mainnetDenom === denom2)
+    const asset1 = ASSETS.find(byDenom(denom1))
+    const asset2 = ASSETS.find(byDenom(denom2))
     return `${asset1?.symbol}/${asset2?.symbol}`
   }
 
@@ -146,96 +147,101 @@ export class OsmosisTheGraphDataFeed implements IDatafeedChartApi {
     periodParams: PeriodParams,
     onResult: HistoryCallback,
   ): Promise<void> {
-    const interval = this.intervals[resolution]
+    try {
+      const interval = this.intervals[resolution]
 
-    let pair1 = this.getPairName(symbolInfo.full_name)
-    let pair2: string = ''
-    let pair3: string = ''
+      let pair1 = this.getPairName(symbolInfo.full_name)
+      let pair2: string = ''
+      let pair3: string = ''
 
-    if (!this.pairsWithData.includes(pair1)) {
-      if (this.debug) console.log('Pair does not have data, need to combine with other pairs')
+      if (!this.pairsWithData.includes(pair1)) {
+        if (this.debug) console.log('Pair does not have data, need to combine with other pairs')
 
-      const [buyAssetDenom, sellAssetDenom] = pair1.split(PAIR_SEPARATOR)
+        const [buyAssetDenom, sellAssetDenom] = pair1.split(PAIR_SEPARATOR)
 
-      const pair1Pools = this.pairs.filter((pair) => pair.baseAsset === buyAssetDenom)
-      const pair2Pools = this.pairs.filter((pair) => pair.quoteAsset === sellAssetDenom)
+        const pair1Pools = this.pairs.filter((pair) => pair.baseAsset === buyAssetDenom)
+        const pair2Pools = this.pairs.filter((pair) => pair.quoteAsset === sellAssetDenom)
 
-      const matchedPools = pair1Pools.filter((pool) => {
-        const asset = pool.quoteAsset
-        return !!pair2Pools.find((pool) => pool.baseAsset === asset)
-      })
+        const matchedPools = pair1Pools.filter((pool) => {
+          const asset = pool.quoteAsset
+          return !!pair2Pools.find((pool) => pool.baseAsset === asset)
+        })
 
-      if (matchedPools.length) {
-        pair1 = `${buyAssetDenom}${PAIR_SEPARATOR}${matchedPools[0].quoteAsset}`
-        pair2 = `${matchedPools[0].quoteAsset}${PAIR_SEPARATOR}${sellAssetDenom}`
-      } else {
-        const middlePair = this.pairs.filter(
-          (pair) =>
-            pair1Pools.map((pairs) => pairs.quoteAsset).includes(pair.baseAsset) &&
-            pair2Pools.map((pairs) => pairs.baseAsset).includes(pair.quoteAsset),
-        )
+        if (matchedPools.length) {
+          pair1 = `${buyAssetDenom}${PAIR_SEPARATOR}${matchedPools[0].quoteAsset}`
+          pair2 = `${matchedPools[0].quoteAsset}${PAIR_SEPARATOR}${sellAssetDenom}`
+        } else {
+          const middlePair = this.pairs.filter(
+            (pair) =>
+              pair1Pools.map((pairs) => pairs.quoteAsset).includes(pair.baseAsset) &&
+              pair2Pools.map((pairs) => pairs.baseAsset).includes(pair.quoteAsset),
+          )
 
-        pair1 = `${buyAssetDenom}${PAIR_SEPARATOR}${middlePair[0].baseAsset}`
-        pair2 = `${middlePair[0].baseAsset}${PAIR_SEPARATOR}${middlePair[0].quoteAsset}`
-        pair3 = `${middlePair[0].quoteAsset}${PAIR_SEPARATOR}${sellAssetDenom}`
+          pair1 = `${buyAssetDenom}${PAIR_SEPARATOR}${middlePair[0].baseAsset}`
+          pair2 = `${middlePair[0].baseAsset}${PAIR_SEPARATOR}${middlePair[0].quoteAsset}`
+          pair3 = `${middlePair[0].quoteAsset}${PAIR_SEPARATOR}${sellAssetDenom}`
+        }
       }
-    }
 
-    const pair1Bars = this.queryBarData(
-      pair1.split(PAIR_SEPARATOR)[0],
-      pair1.split(PAIR_SEPARATOR)[1],
-      interval,
-    )
-
-    let pair2Bars: Promise<Bar[]> | null = null
-
-    if (pair2) {
-      pair2Bars = this.queryBarData(
-        pair2.split(PAIR_SEPARATOR)[0],
-        pair2.split(PAIR_SEPARATOR)[1],
+      const pair1Bars = this.queryBarData(
+        pair1.split(PAIR_SEPARATOR)[0],
+        pair1.split(PAIR_SEPARATOR)[1],
         interval,
       )
-    }
 
-    let pair3Bars: Promise<Bar[]> | null = null
+      let pair2Bars: Promise<Bar[]> | null = null
 
-    if (pair3) {
-      pair3Bars = this.queryBarData(
-        pair3.split(PAIR_SEPARATOR)[0],
-        pair3.split(PAIR_SEPARATOR)[1],
-        interval,
+      if (pair2) {
+        pair2Bars = this.queryBarData(
+          pair2.split(PAIR_SEPARATOR)[0],
+          pair2.split(PAIR_SEPARATOR)[1],
+          interval,
+        )
+      }
+
+      let pair3Bars: Promise<Bar[]> | null = null
+
+      if (pair3) {
+        pair3Bars = this.queryBarData(
+          pair3.split(PAIR_SEPARATOR)[0],
+          pair3.split(PAIR_SEPARATOR)[1],
+          interval,
+        )
+      }
+
+      await Promise.all([pair1Bars, pair2Bars, pair3Bars]).then(
+        ([pair1Bars, pair2Bars, pair3Bars]) => {
+          let bars = pair1Bars
+
+          if (!bars.length) {
+            onResult([], { noData: true })
+            return
+          }
+
+          if (pair2Bars) {
+            bars = this.combineBars(pair1Bars, pair2Bars)
+          }
+          if (pair3Bars) {
+            bars = this.combineBars(bars, pair3Bars)
+          }
+
+          const filler = Array.from({ length: this.batchSize - bars.length }).map((_, index) => ({
+            time:
+              (bars[0]?.time || new Date().getTime()) - index * this.minutesPerInterval[resolution],
+            close: 0,
+            open: 0,
+            high: 0,
+            low: 0,
+            volume: 0,
+          }))
+
+          onResult([...filler, ...bars])
+        },
       )
+    } catch (error) {
+      console.error(error)
+      return onResult([], { noData: true })
     }
-
-    await Promise.all([pair1Bars, pair2Bars, pair3Bars]).then(
-      ([pair1Bars, pair2Bars, pair3Bars]) => {
-        let bars = pair1Bars
-
-        if (!bars.length) {
-          onResult([], { noData: true })
-          return
-        }
-
-        if (pair2Bars) {
-          bars = this.combineBars(pair1Bars, pair2Bars)
-        }
-        if (pair3Bars) {
-          bars = this.combineBars(bars, pair3Bars)
-        }
-
-        const filler = Array.from({ length: this.batchSize - bars.length }).map((_, index) => ({
-          time:
-            (bars[0]?.time || new Date().getTime()) - index * this.minutesPerInterval[resolution],
-          close: 0,
-          open: 0,
-          high: 0,
-          low: 0,
-          volume: 0,
-        }))
-
-        onResult([...filler, ...bars])
-      },
-    )
   }
 
   async queryBarData(quote: string, base: string, interval: string): Promise<Bar[]> {

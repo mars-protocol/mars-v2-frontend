@@ -39,7 +39,7 @@ export default function TradePage() {
       </div>
       {assetOverlayState !== 'closed' && (
         <div
-          className='fixed top-0 left-0 z-40 block w-full h-full hover:cursor-pointer'
+          className='fixed top-0 left-0 z-20 block w-full h-full hover:cursor-pointer'
           onClick={() => useStore.setState({ assetOverlayState: 'closed' })}
           role='button'
         />
