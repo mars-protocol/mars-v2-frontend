@@ -130,8 +130,8 @@ export class DataFeed implements IDatafeedChartApi {
 
     setTimeout(async () => {
       await this.getPairsWithData()
-      callback(configurationData)
     })
+    callback(configurationData)
   }
 
   resolveSymbol(pairName: string, onResolve: ResolveCallback, onError: ErrorCallback) {
