@@ -108,7 +108,7 @@ export class PythDataFeed implements IDatafeedChartApi {
     const pythFeedId1 = pythFeedIds[0]
     const pythFeedId2 = pythFeedIds[1]
 
-    if (!pythFeedId1 || !pythFeedId2) return onResult([])
+    if (!pythFeedId1 || !pythFeedId2) return onResult([], { noData: true })
 
     const asset1Bars = this.queryBarData(pythFeedId1, resolution, from, to)
     const asset2Bars = this.queryBarData(pythFeedId2, resolution, from, to)
