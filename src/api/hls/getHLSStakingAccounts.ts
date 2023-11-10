@@ -13,12 +13,10 @@ export default async function getHLSStakingAccounts(
   const hlsAccountsWithStrategy: HLSAccountWithStrategy[] = []
 
   activeAccounts.forEach((account) => {
-    if (account.deposits.length === 0 || account.debts.length === 0) return
+    if (account.deposits.length === 0) return
 
     const strategy = hlsStrategies.find(
-      (strategy) =>
-        strategy.denoms.deposit === account.deposits.at(0).denom &&
-        strategy.denoms.borrow === account.debts.at(0).denom,
+      (strategy) => strategy.denoms.deposit === account.deposits.at(0).denom,
     )
 
     if (!strategy) return

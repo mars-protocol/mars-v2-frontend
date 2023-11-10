@@ -75,7 +75,7 @@ function AlertDialog(props: Props) {
           )}
           {checkbox && (
             <Checkbox
-              name='aleart-toggle'
+              name='hls-info-toggle'
               checked={toggle}
               onChange={handleCheckboxClick}
               text={checkbox.text}

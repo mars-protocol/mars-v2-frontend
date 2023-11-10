@@ -92,6 +92,10 @@ interface BroadcastSlice {
     borrowToWallet: boolean
   }) => Promise<boolean>
   claimRewards: (options: { accountId: string }) => ExecutableTx
+  closeHlsStakingPosition: (options: {
+    accountId: string
+    actions: Action[]
+  }) => Promise<string | null>
   createAccount: (
     accountKind: import('types/generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind,
   ) => Promise<string | null>
@@ -113,6 +117,7 @@ interface BroadcastSlice {
     coin: BNCoin
     accountBalance?: boolean
     lend?: BNCoin
+    fromWallet?: boolean
   }) => Promise<boolean>
   setToast: (toast: ToastObject) => void
   swap: (options: {

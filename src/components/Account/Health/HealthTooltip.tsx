@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { ReactElement, useMemo } from 'react'
 
 import { CircularProgress } from 'components/CircularProgress'
 import Text from 'components/Text'
@@ -8,7 +8,7 @@ import { BN } from 'utils/helpers'
 interface Props {
   health: number
   healthFactor: number
-  children: React.ReactNode
+  children: ReactElement
 }
 
 function HealthTooltipContent({ health, healthFactor }: { health: number; healthFactor: number }) {

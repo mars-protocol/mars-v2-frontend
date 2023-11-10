@@ -3,23 +3,22 @@ import React from 'react'
 import DoubleLogo from 'components/DoubleLogo'
 import HLSTag from 'components/HLS/HLSTag'
 import Text from 'components/Text'
-import { getAssetByDenom } from 'utils/assets'
 
 interface Props {
-  primaryDenom: string
-  secondaryDenom: string
+  primaryAsset: Asset
+  secondaryAsset: Asset
+  action?: HlsStakingManageAction
 }
 
 export default function Header(props: Props) {
-  const primaryAsset = getAssetByDenom(props.primaryDenom)
-  const secondaryAsset = getAssetByDenom(props.secondaryDenom)
-
-  if (!primaryAsset || !secondaryAsset) return null
-
   return (
     <div className='flex items-center gap-2'>
-      <DoubleLogo primaryDenom={props.primaryDenom} secondaryDenom={props.secondaryDenom} />
-      <Text>{`${primaryAsset.symbol} - ${secondaryAsset.symbol}`}</Text>
+      <DoubleLogo
+        primaryDenom={props.primaryAsset.denom}
+        secondaryDenom={props.secondaryAsset.denom}
+      />
+      <Text>{`${props.primaryAsset.symbol}/${props.secondaryAsset.symbol}`}</Text>
+      {props.action && <Text className='capitalize'> - {props.action}</Text>}
       <HLSTag />
     </div>
   )

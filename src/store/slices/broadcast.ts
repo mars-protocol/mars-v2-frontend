@@ -232,6 +232,32 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
+    closeHlsStakingPosition: async (options: { accountId: string; actions: Action[] }) => {
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: options.actions,
+        },
+      }
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
+      })
+
+      get().setToast({
+        response,
+        options: {
+          action: 'deposit',
+          message: `Exited HLS strategy`,
+        },
+      })
+
+      const response_1 = await response
+      return response_1.result
+        ? getSingleValueFromBroadcastResult(response_1.result, 'wasm', 'token_id')
+        : null
+    },
+
     createAccount: async (accountKind: AccountKind) => {
       const msg: CreditManagerExecuteMsg = {
         create_credit_account: accountKind,
@@ -538,8 +564,10 @@ export default function createBroadcastSlice(
       coin: BNCoin
       accountBalance?: boolean
       lend?: BNCoin
+      fromWallet?: boolean
     }) => {
       const actions: Action[] = [
+        ...(options.fromWallet ? [{ deposit: options.coin.toCoin() }] : []),
         {
           repay: {
             coin: options.coin.toActionCoin(options.accountBalance),
@@ -558,7 +586,14 @@ export default function createBroadcastSlice(
       }
 
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
+        messages: [
+          generateExecutionMessage(
+            get().address,
+            ENV.ADDRESS_CREDIT_MANAGER,
+            msg,
+            options.fromWallet ? [options.coin.toCoin()] : [],
+          ),
+        ],
       })
 
       get().setToast({

@@ -3,7 +3,7 @@ import React from 'react'
 import AmountAndValue from 'components/AmountAndValue'
 import AssetImage from 'components/Asset/AssetImage'
 import { FormattedNumber } from 'components/FormattedNumber'
-import Container from 'components/Modals/HLS/Summary/Container'
+import Container from 'components/Modals/HLS/Deposit/Summary/Container'
 import Text from 'components/Text'
 
 interface Props {

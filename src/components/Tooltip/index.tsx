@@ -1,4 +1,4 @@
-import Tippy from '@tippyjs/react'
+import Tippy, { TippyProps } from '@tippyjs/react'
 import classNames from 'classnames'
 import { ReactNode } from 'react'
 
@@ -8,10 +8,9 @@ import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/useLocalStorage'
 
-interface Props {
+interface Props extends TippyProps {
   content: ReactNode | string
   type: TooltipType
-  children?: ReactNode | string
   className?: string
   delay?: number
   interactive?: boolean
@@ -45,6 +44,7 @@ export const Tooltip = (props: Props) => {
           className={props.contentClassName}
         />
       )}
+      {...props}
     >
       {props.children ? (
         <span

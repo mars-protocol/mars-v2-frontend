@@ -2,7 +2,7 @@ import React from 'react'
 
 import Button from 'components/Button'
 import { ArrowRight } from 'components/Icons'
-import LeverageSummary from 'components/Modals/HLS/LeverageSummary'
+import LeverageSummary from 'components/Modals/HLS/Deposit/LeverageSummary'
 import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
 
 interface Props {
