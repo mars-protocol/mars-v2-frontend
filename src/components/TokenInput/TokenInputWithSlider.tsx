@@ -19,6 +19,10 @@ interface Props {
   hasSelect?: boolean
   maxText?: string
   onChangeAsset?: (asset: Asset) => void
+  leverage: {
+    current: number
+    max: number
+  }
 }
 
 export default function TokenInputWithSlider(props: Props) {
@@ -71,6 +75,7 @@ export default function TokenInputWithSlider(props: Props) {
         value={percentage || 0}
         onChange={(value) => onChangeSlider(value)}
         disabled={props.disabled}
+        leverage={props.leverage}
       />
     </div>
   )

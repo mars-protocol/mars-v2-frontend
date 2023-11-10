@@ -20,7 +20,7 @@ export default function HlsManageModalController() {
 
   return (
     <HlsModal
-      account={account}
+      account={{ ...account, strategy: modal.staking.strategy } as HLSAccountWithStrategy}
       action={modal.staking.action}
       collateralAsset={collateralAsset}
       borrowAsset={borrowAsset}
@@ -29,7 +29,7 @@ export default function HlsManageModalController() {
 }
 
 interface Props {
-  account: Account
+  account: HLSAccountWithStrategy
   action: HlsStakingManageAction
   borrowAsset: Asset
   collateralAsset: Asset

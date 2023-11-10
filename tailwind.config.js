@@ -88,6 +88,7 @@ module.exports = {
         chart: '#220e1d',
         error: '#F04438',
         'error-bg': '#FDA29B',
+        fuchsia: '#B7439F',
         green: '#039855',
         grey: '#908e91',
         'grey-dark': '#1a1c25',
@@ -352,6 +353,18 @@ module.exports = {
         '.gradient-secondary-to-primary': {
           background: 'linear-gradient(180deg, #926AC8 100%, #7F78E8 0%)',
         },
+        '.gradient-slider-1': {
+          background: 'linear-gradient(to right, #8D7F85, #B78796)',
+        },
+        '.gradient-slider-2': {
+          background: 'linear-gradient(to right, #C08899, #E08AA6)',
+        },
+        '.gradient-slider-3': {
+          background: 'linear-gradient(to right, #D97FA4, #B84A9C)',
+        },
+        '.gradient-slider-4': {
+          background: 'linear-gradient(to right, #961293, #B3419B)',
+        },
         '.gradient-tooltip': {
           background:
             'linear-gradient(77.47deg, rgba(20, 24, 57, 0.9) 11.58%, rgba(34, 16, 57, 0.9) 93.89%)',
@@ -363,6 +376,9 @@ module.exports = {
         '.number': {
           whiteSpace: 'nowrap',
           fontFeatureSettings: '"tnum" on',
+        },
+        '.slider-mask': {
+          mask: 'linear-gradient(#fff 0 0)',
         },
         '.text-3xs': { fontSize: '9px', lineHeight: '12px' },
         '.text-3xs-caps': {

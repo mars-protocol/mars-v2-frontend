@@ -17,7 +17,7 @@ export const menuTree: { pages: Page[]; label: string }[] = [
   { pages: ['lend', 'farm'], label: 'Earn' },
   { pages: ['borrow'], label: 'Borrow' },
   { pages: ['portfolio'], label: 'Portfolio' },
-  ...(ENABLE_HLS ? [{ pages: ['hls-farm', 'hls-staking'] as Page[], label: 'High Leverage' }] : []),
+  ...(ENABLE_HLS ? [{ pages: ['hls-staking'] as Page[], label: 'High Leverage' }] : []),
 ]
 
 export default function DesktopHeader() {
