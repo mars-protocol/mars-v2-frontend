@@ -52,7 +52,7 @@ function DropDownItem(props: DropDownItem) {
       onClick={props.onClick}
       className=' px-4 py-3 flex gap-2 items-center hover:bg-white/5 w-full [&:not(:last-child)]:border-b border-white/10'
     >
-      <div className='h-5 w-5 flex justify-center'>{props.icon}</div>
+      <div className='flex justify-center w-5 h-5'>{props.icon}</div>
       <Text size='sm'>{props.text}</Text>
     </button>
   )
