@@ -1,10 +1,5 @@
 import { getSwapperQueryClient } from 'api/cosmwasm-client'
 
-interface Route {
-  pool_id: string
-  token_out_denom: string
-}
-
 export default async function getSwapRoute(denomIn: string, denomOut: string): Promise<Route[]> {
   try {
     const swapperClient = await getSwapperQueryClient()

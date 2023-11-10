@@ -14,6 +14,7 @@ export const ASSETS: Asset[] = [
     isDisplayCurrency: true,
     isAutoLendEnabled: true,
     pythPriceFeedId: '5867f5683c757393a0670ef0f701490950fe93fdb006d181c8265a831ac0c5c6',
+    pythHistoryFeedId: 'Crypto.OSMO/USD',
   },
   {
     symbol: 'ATOM',
@@ -31,6 +32,7 @@ export const ASSETS: Asset[] = [
     isBorrowEnabled: true,
     pythPriceFeedId: 'b00b60f88b03a6a625a8d1c048c3f66653edf217439983d037e7222c4e612819',
     poolId: 1,
+    pythHistoryFeedId: 'Crypto.ATOM/USD',
   },
   {
     symbol: 'stATOM',
@@ -79,6 +81,7 @@ export const ASSETS: Asset[] = [
     isAutoLendEnabled: true,
     isBorrowEnabled: true,
     pythPriceFeedId: 'e62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43',
+    pythHistoryFeedId: 'Crypto.BTC/USD',
     poolId: 712,
   },
   {
@@ -96,6 +99,7 @@ export const ASSETS: Asset[] = [
     isAutoLendEnabled: true,
     isBorrowEnabled: true,
     pythPriceFeedId: 'ff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace',
+    pythHistoryFeedId: 'Crypto.ETH/USD',
     poolId: 704,
   },
   {
@@ -128,6 +132,7 @@ export const ASSETS: Asset[] = [
     isBorrowEnabled: true,
     isAutoLendEnabled: true,
     pythPriceFeedId: 'eaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a',
+    pythHistoryFeedId: 'Crypto.USDC/USD',
     poolId: 678,
   },
   {
@@ -147,6 +152,7 @@ export const ASSETS: Asset[] = [
     isAutoLendEnabled: true,
     pythPriceFeedId: 'eaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a',
     poolId: 1221,
+    pythHistoryFeedId: 'Crypto.USDC/USD',
   },
   {
     symbol: 'AXL',
@@ -162,6 +168,7 @@ export const ASSETS: Asset[] = [
     isDisplayCurrency: true,
     isAutoLendEnabled: false,
     pythPriceFeedId: '60144b1d5c9e9851732ad1d9760e3485ef80be39b984f6bf60f82b28a2b7f126',
+    pythHistoryFeedId: 'Crypto.AXL/USD',
     poolId: 812,
   },
   {
@@ -180,6 +187,7 @@ export const ASSETS: Asset[] = [
     isBorrowEnabled: true,
     pythPriceFeedId: '09f7c1d7dfbb7df2b8fe3d3d87ee94a2259d212da4f30c1f0540d066dfa44723',
     poolId: 1249,
+    pythHistoryFeedId: 'Crypto.TIA/USD',
   },
   {
     symbol: '$',

@@ -55,6 +55,7 @@ interface Asset {
   isAutoLendEnabled?: boolean
   isBorrowEnabled?: boolean
   pythPriceFeedId?: string
+  pythHistoryFeedId?: string
   forceFetchPrice?: boolean
   testnetDenom?: string
   isStaking?: boolean
