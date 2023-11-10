@@ -19,7 +19,7 @@ interface Props {
   hasSelect?: boolean
   maxText?: string
   onChangeAsset?: (asset: Asset) => void
-  leverage: {
+  leverage?: {
     current: number
     max: number
   }

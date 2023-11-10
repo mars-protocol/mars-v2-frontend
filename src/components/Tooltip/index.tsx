@@ -44,7 +44,8 @@ export const Tooltip = (props: Props) => {
           className={props.contentClassName}
         />
       )}
-      {...props}
+      onClickOutside={props.onClickOutside}
+      visible={props.visible}
     >
       {props.children ? (
         <span
