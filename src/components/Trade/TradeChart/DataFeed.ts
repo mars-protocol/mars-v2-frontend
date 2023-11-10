@@ -1,6 +1,7 @@
 import { defaultSymbolInfo } from 'components/Trade/TradeChart/constants'
 import { ASSETS } from 'constants/assets'
 import { ENV } from 'constants/env'
+import { MILLISECONDS_PER_MINUTE } from 'constants/math'
 import { byDenom } from 'utils/array'
 import { getAssetByDenom, getEnabledMarketAssets } from 'utils/assets'
 import {
@@ -27,7 +28,7 @@ interface PythBarQueryData {
   v: number[]
 }
 
-interface BarQueryDataTheGraph {
+interface TheGraphBarQueryData {
   close: string
   high: string
   low: string
@@ -37,18 +38,16 @@ interface BarQueryDataTheGraph {
 }
 
 export const PAIR_SEPARATOR = '<>'
-const MILLISECONDS_PER_MINUTE = 60000
 
 export class DataFeed implements IDatafeedChartApi {
-  candlesEndpoint = 'https://benchmarks.pyth.network'
-  candlesEndpointTheGraph = ENV.CANDLES_ENDPOINT
+  candlesEndpoint = ENV.CANDLES_ENDPOINT_PYTH
+  candlesEndpointTheGraph = ENV.CANDLES_ENDPOINT_THE_GRAPH
   debug = false
   enabledMarketAssetDenoms: string[] = []
   batchSize = 1000
   baseDecimals: number = 6
   baseDenom: string = 'uosmo'
-  exchangeName = 'Pyth Oracle'
-  intervals: { [key: string]: string } = {
+  intervalsTheGraph: { [key: string]: string } = {
     '15': '15m',
     '30': '30m',
     '60': '1h',
@@ -73,7 +72,7 @@ export class DataFeed implements IDatafeedChartApi {
     this.baseDecimals = baseDecimals
     this.baseDenom = baseDenom
     const enabledMarketAssets = getEnabledMarketAssets()
-    this.enabledMarketAssetDenoms = enabledMarketAssets.map((asset) => asset.mainnetDenom)
+    this.enabledMarketAssetDenoms = enabledMarketAssets.map((asset) => asset.denom)
     this.supportedPools = enabledMarketAssets
       .map((asset) => asset.poolId?.toString())
       .filter((poolId) => typeof poolId === 'string') as string[]
@@ -144,8 +143,8 @@ export class DataFeed implements IDatafeedChartApi {
         full_name: this.getDescription(pairName),
         description: this.getDescription(pairName),
         ticker: this.getDescription(pairName),
-        exchange: this.exchangeName,
-        listed_exchange: this.exchangeName,
+        exchange: this.getExchangeName(pairName),
+        listed_exchange: this.getExchangeName(pairName),
         supported_resolutions: this.supportedResolutions,
         base_name: [this.getDescription(pairName)],
         pricescale: this.getPriceScale(pairName),
@@ -160,126 +159,134 @@ export class DataFeed implements IDatafeedChartApi {
     periodParams: PeriodParams,
     onResult: HistoryCallback,
   ): Promise<void> {
-    const pythFeedIds = this.getPythFeedIds(symbolInfo.full_name)
-    const now = new Date().getTime()
-    const to = BN(now).dividedBy(1000).integerValue().toNumber()
-    const from = BN(now)
-      .minus(this.batchSize * this.millisecondsPerInterval[resolution])
-      .dividedBy(1000)
-      .integerValue()
-      .toNumber()
+    try {
+      let bars = [] as Bar[]
+      const pythFeedIds = this.getPythFeedIds(symbolInfo.full_name)
+      const now = new Date().getTime()
+      const to = BN(now).dividedBy(1000).integerValue().toNumber()
+      const from = BN(now)
+        .minus(this.batchSize * this.millisecondsPerInterval[resolution])
+        .dividedBy(1000)
+        .integerValue()
+        .toNumber()
+      const pythFeedId1 = pythFeedIds[0]
+      const pythFeedId2 = pythFeedIds[1]
 
-    const pythFeedId1 = pythFeedIds[0]
-    const pythFeedId2 = pythFeedIds[1]
+      if (pythFeedId1 && pythFeedId2) {
+        const asset1Bars = this.queryBarData(pythFeedId1, resolution, from, to)
+        const asset2Bars = this.queryBarData(pythFeedId2, resolution, from, to)
 
-    if (!pythFeedId1 || !pythFeedId2) {
-      try {
-        let pair1 = this.getPairName(symbolInfo.full_name)
-        let pair2: string = ''
-        let pair3: string = ''
-
-        if (!this.pairsWithData.includes(pair1)) {
-          if (this.debug) console.log('Pair does not have data, need to combine with other pairs')
-
-          const [buyAssetDenom, sellAssetDenom] = pair1.split(PAIR_SEPARATOR)
-
-          const pair1Pools = this.pairs.filter((pair) => pair.baseAsset === buyAssetDenom)
-          const pair2Pools = this.pairs.filter((pair) => pair.quoteAsset === sellAssetDenom)
-
-          const matchedPools = pair1Pools.filter((pool) => {
-            const asset = pool.quoteAsset
-            return !!pair2Pools.find((pool) => pool.baseAsset === asset)
-          })
-
-          if (matchedPools.length) {
-            pair1 = `${buyAssetDenom}${PAIR_SEPARATOR}${matchedPools[0].quoteAsset}`
-            pair2 = `${matchedPools[0].quoteAsset}${PAIR_SEPARATOR}${sellAssetDenom}`
-          } else {
-            const middlePair = this.pairs.filter(
-              (pair) =>
-                pair1Pools.map((pairs) => pairs.quoteAsset).includes(pair.baseAsset) &&
-                pair2Pools.map((pairs) => pairs.baseAsset).includes(pair.quoteAsset),
-            )
-
-            pair1 = `${buyAssetDenom}${PAIR_SEPARATOR}${middlePair[0].baseAsset}`
-            pair2 = `${middlePair[0].baseAsset}${PAIR_SEPARATOR}${middlePair[0].quoteAsset}`
-            pair3 = `${middlePair[0].quoteAsset}${PAIR_SEPARATOR}${sellAssetDenom}`
-          }
-        }
-
-        const pair1Bars = this.queryBarDataTheGraph(
-          pair1.split(PAIR_SEPARATOR)[0],
-          pair1.split(PAIR_SEPARATOR)[1],
-          resolution,
-          to,
-        )
-
-        let pair2Bars: Promise<Bar[]> | null = null
-
-        if (pair2) {
-          pair2Bars = this.queryBarDataTheGraph(
-            pair2.split(PAIR_SEPARATOR)[0],
-            pair2.split(PAIR_SEPARATOR)[1],
-            resolution,
-            to,
-          )
-        }
-
-        let pair3Bars: Promise<Bar[]> | null = null
-
-        if (pair3) {
-          pair3Bars = this.queryBarDataTheGraph(
-            pair3.split(PAIR_SEPARATOR)[0],
-            pair3.split(PAIR_SEPARATOR)[1],
-            resolution,
-            to,
-          )
-        }
-
-        await Promise.all([pair1Bars, pair2Bars, pair3Bars]).then(
-          ([pair1Bars, pair2Bars, pair3Bars]) => {
-            let bars = pair1Bars
-
-            if (!bars.length) {
-              onResult([], { noData: true })
-              return
-            }
-
-            if (pair2Bars) {
-              bars = this.combineBars(pair1Bars, pair2Bars)
-            }
-            if (pair3Bars) {
-              bars = this.combineBars(bars, pair3Bars)
-            }
-
-            const filler = Array.from({ length: this.batchSize - bars.length }).map((_, index) => ({
-              time:
-                (bars[0]?.time || new Date().getTime()) -
-                (index * this.millisecondsPerInterval[resolution]) / 1000,
-              close: 0,
-              open: 0,
-              high: 0,
-              low: 0,
-              volume: 0,
-            }))
-
-            onResult([...filler, ...bars])
-          },
-        )
-      } catch (error) {
-        console.error(error)
-        return onResult([], { noData: true })
+        await Promise.all([asset1Bars, asset2Bars]).then(([asset1Bars, asset2Bars]) => {
+          bars = this.combineBars(asset1Bars, asset2Bars)
+          onResult(bars)
+        })
+      } else {
+        await this.getBarsFromTheGraph(symbolInfo, resolution, to).then((bars) => onResult(bars))
       }
-    } else {
-      const asset1Bars = this.queryBarData(pythFeedId1, resolution, from, to)
-      const asset2Bars = this.queryBarData(pythFeedId2, resolution, from, to)
-
-      await Promise.all([asset1Bars, asset2Bars]).then(([asset1Bars, asset2Bars]) => {
-        const bars = this.combineBars(asset1Bars, asset2Bars)
-
-        onResult(bars)
-      })
+    } catch (error) {
+      console.error(error)
+      return onResult([], { noData: true })
     }
+  }
+
+  async getBarsFromTheGraph(
+    symbolInfo: LibrarySymbolInfo,
+    resolution: ResolutionString,
+    to: number,
+  ) {
+    let pair1 = this.getPairName(symbolInfo.full_name)
+    let pair2: string = ''
+    let pair3: string = ''
+    let theGraphBars = [] as Bar[]
+
+    if (!this.pairsWithData.includes(pair1)) {
+      if (this.debug) console.log('Pair does not have data, need to combine with other pairs')
+
+      const [buyAssetDenom, sellAssetDenom] = pair1.split(PAIR_SEPARATOR)
+
+      const pair1Pools = this.pairs.filter((pair) => pair.baseAsset === buyAssetDenom)
+      const pair2Pools = this.pairs.filter((pair) => pair.quoteAsset === sellAssetDenom)
+
+      const matchedPools = pair1Pools.filter((pool) => {
+        const asset = pool.quoteAsset
+        return !!pair2Pools.find((pool) => pool.baseAsset === asset)
+      })
+
+      if (matchedPools.length) {
+        pair1 = `${buyAssetDenom}${PAIR_SEPARATOR}${matchedPools[0].quoteAsset}`
+        pair2 = `${matchedPools[0].quoteAsset}${PAIR_SEPARATOR}${sellAssetDenom}`
+      } else {
+        const middlePair = this.pairs.filter(
+          (pair) =>
+            pair1Pools.map((pairs) => pairs.quoteAsset).includes(pair.baseAsset) &&
+            pair2Pools.map((pairs) => pairs.baseAsset).includes(pair.quoteAsset),
+        )
+
+        pair1 = `${buyAssetDenom}${PAIR_SEPARATOR}${middlePair[0].baseAsset}`
+        pair2 = `${middlePair[0].baseAsset}${PAIR_SEPARATOR}${middlePair[0].quoteAsset}`
+        pair3 = `${middlePair[0].quoteAsset}${PAIR_SEPARATOR}${sellAssetDenom}`
+      }
+    }
+
+    const pair1Bars = this.queryBarDataTheGraph(
+      pair1.split(PAIR_SEPARATOR)[0],
+      pair1.split(PAIR_SEPARATOR)[1],
+      resolution,
+      to,
+    )
+
+    let pair2Bars: Promise<Bar[]> | null = null
+
+    if (pair2) {
+      pair2Bars = this.queryBarDataTheGraph(
+        pair2.split(PAIR_SEPARATOR)[0],
+        pair2.split(PAIR_SEPARATOR)[1],
+        resolution,
+        to,
+      )
+    }
+
+    let pair3Bars: Promise<Bar[]> | null = null
+
+    if (pair3) {
+      pair3Bars = this.queryBarDataTheGraph(
+        pair3.split(PAIR_SEPARATOR)[0],
+        pair3.split(PAIR_SEPARATOR)[1],
+        resolution,
+        to,
+      )
+    }
+
+    await Promise.all([pair1Bars, pair2Bars, pair3Bars]).then(
+      ([pair1Bars, pair2Bars, pair3Bars]) => {
+        let bars = pair1Bars
+
+        if (!bars.length) {
+          return
+        }
+
+        if (pair2Bars) {
+          bars = this.combineBars(pair1Bars, pair2Bars)
+        }
+        if (pair3Bars) {
+          bars = this.combineBars(bars, pair3Bars)
+        }
+
+        const filler = Array.from({ length: this.batchSize - bars.length }).map((_, index) => ({
+          time:
+            (bars[0]?.time || new Date().getTime()) -
+            (index * this.millisecondsPerInterval[resolution]) / 1000,
+          close: 0,
+          open: 0,
+          high: 0,
+          low: 0,
+          volume: 0,
+        }))
+        theGraphBars = [...filler, ...bars]
+      },
+    )
+
+    return theGraphBars
   }
 
   async queryBarData(
@@ -314,7 +321,7 @@ export class DataFeed implements IDatafeedChartApi {
     resolution: ResolutionString,
     to: PeriodParams['to'],
   ): Promise<Bar[]> {
-    const interval = this.intervals[resolution]
+    const interval = this.intervalsTheGraph[resolution]
 
     const query = `
         {
@@ -345,7 +352,7 @@ export class DataFeed implements IDatafeedChartApi {
       body: JSON.stringify({ query }),
     })
       .then((res) => res.json())
-      .then((json: { data?: { candles: BarQueryDataTheGraph[] } }) => {
+      .then((json: { data?: { candles: TheGraphBarQueryData[] } }) => {
         return this.resolveBarDataTheGraph(
           json.data?.candles.reverse() || [],
           base,
@@ -377,7 +384,7 @@ export class DataFeed implements IDatafeedChartApi {
   }
 
   resolveBarDataTheGraph(
-    bars: BarQueryDataTheGraph[],
+    bars: TheGraphBarQueryData[],
     toDenom: string,
     fromDenom: string,
     resolution: ResolutionString,
@@ -446,11 +453,19 @@ export class DataFeed implements IDatafeedChartApi {
 
   getPriceScale(name: string) {
     const denoms = name.split(PAIR_SEPARATOR)
-    const asset2 = ASSETS.find((asset) => asset.mainnetDenom === denoms[1])
+    const asset2 = ASSETS.find(byDenom(denoms[1]))
     const decimalsOut = asset2?.decimals ?? 6
     return BN(1)
       .shiftedBy(decimalsOut > 8 ? 8 : decimalsOut)
       .toNumber()
+  }
+
+  getExchangeName(name: string) {
+    const denoms = name.split(PAIR_SEPARATOR)
+    const pythFeedId1 = ASSETS.find(byDenom(denoms[0]))?.pythHistoryFeedId
+    const pythFeedId2 = ASSETS.find(byDenom(denoms[1]))?.pythHistoryFeedId
+    if (!pythFeedId1 || !pythFeedId2) return 'Osmosis'
+    return 'Pyth Oracle'
   }
 
   getPythFeedIds(name: string) {
