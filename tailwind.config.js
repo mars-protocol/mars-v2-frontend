@@ -52,6 +52,7 @@ module.exports = {
       },
       backgroundImage: {
         intro: 'url(/images/bg-intro.webp), url(/images/bg-intro.png)',
+        'intro-hls': 'url(/images/bg-intro-hls.webp), url(/images/bg-intro-hls.png)',
       },
       backgroundSize: {
         desktop: '100% auto',
@@ -105,9 +106,9 @@ module.exports = {
         'martian-red': '#FF645F',
         osmo: '#9f1ab9',
         'orb-primary': '#b12f25',
-        'orb-primary-hls': '#FE625D',
+        'orb-primary-hls': '#FF645F',
         'orb-secondary': '#530781',
-        'orb-secondary-hls': '#FF645F',
+        'orb-secondary-hls': '#a03b45',
         'orb-tertiary': '#ff00c7',
         'orb-tertiary-hls': '#FB9562',
         profit: '#41a4a9',
@@ -146,6 +147,7 @@ module.exports = {
       height: {
         4.5: '18px',
         15: '60px',
+        45: '180px',
         50: '200px',
         55: '220px',
       },
@@ -288,7 +290,7 @@ module.exports = {
           filter: 'blur(clamp(50px, 8vw, 30px))',
         },
         '.blur-orb-secondary': {
-          filter: 'blur(clamp(60px, 20vw, 260px))',
+          filter: 'blur(clamp(60px, 20vw, 160px))',
         },
         '.blur-orb-tertiary': {
           filter: 'blur(clamp(60px, 10vw, 150px))',

@@ -1,5 +1,3 @@
-import React from 'react'
-
 import Button from 'components/Button'
 import { PlusSquared } from 'components/Icons'
 import Intro from 'components/Intro'
@@ -8,7 +6,7 @@ import { DocURL } from 'types/enums/docURL'
 export default function HLSStakingIntro() {
   return (
     <Intro
-      bg='borrow'
+      bg='hls-staking'
       text={
         <>
           <span className='text-white'>Leverage staking</span> is a strategy where users borrow

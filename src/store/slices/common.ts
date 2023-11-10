@@ -14,5 +14,6 @@ export default function createCommonSlice(set: SetState<CommonSlice>, get: GetSt
     tutorial: true,
     useMargin: true,
     isOracleStale: false,
+    isHLS: false,
   }
 }

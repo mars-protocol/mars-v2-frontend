@@ -1,9 +1,11 @@
 import classNames from 'classnames'
 import { useLocation } from 'react-router-dom'
+import { useEffect, useMemo } from 'react'
 
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/useLocalStorage'
+import useStore from 'store'
 import { getPage } from 'utils/route'
 
 export default function Background() {
@@ -13,7 +15,11 @@ export default function Background() {
   )
   const { pathname } = useLocation()
   const page = getPage(pathname)
-  const isHLS = page.split('-')[0] === 'hls'
+  const isHLS = useMemo(() => page.split('-')[0] === 'hls', [page])
+
+  useEffect(() => {
+    useStore.setState({ isHLS })
+  }, [isHLS])
 
   return (
     <div
@@ -45,11 +51,10 @@ export default function Background() {
           'h-[40vw] w-[40vw]',
           'min-h-[400px] min-w-[400px]',
           'max-h-[1000px] max-w-[1000px]',
-          'bottom-[-10vw] right-[-8vw]',
+          'bottom-[-20vw] right-[-10vw]',
           'blur-orb-secondary',
           isHLS ? ' bg-orb-secondary-hls' : 'bg-orb-secondary',
           'translate-x-0 translate-y-0  rounded-full opacity-30',
-          !reduceMotion && 'animate-[float_150s_ease-in-out_infinite_1s]',
           !reduceMotion && 'transition-bg duration-1000 delay-300',
         )}
       />
