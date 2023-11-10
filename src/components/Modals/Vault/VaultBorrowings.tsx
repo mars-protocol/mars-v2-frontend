@@ -6,7 +6,7 @@ import DepositCapMessage from 'components/DepositCapMessage'
 import DisplayCurrency from 'components/DisplayCurrency'
 import Divider from 'components/Divider'
 import { ArrowRight, ExclamationMarkCircled } from 'components/Icons'
-import Slider from 'components/Slider'
+import Index from 'components/Slider'
 import Text from 'components/Text'
 import TokenInput from 'components/TokenInput'
 import { BN_ZERO } from 'constants/math'
@@ -192,7 +192,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
           />
         )
       })}
-      {props.borrowings.length === 1 && <Slider onChange={onChangeSlider} value={percentage} />}
+      {props.borrowings.length === 1 && <Index onChange={onChangeSlider} value={percentage} />}
       {props.borrowings.length === 0 && (
         <div className='flex items-center gap-4 py-2'>
           <div className='w-4'>

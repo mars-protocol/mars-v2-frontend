@@ -28,7 +28,12 @@ export default function HlsModalController() {
     )
   if (modal?.strategy)
     return (
-      <HlsModal primaryAsset={primaryAsset} secondaryAsset={secondaryAsset} vaultAddress={null} />
+      <HlsModal
+        primaryAsset={primaryAsset}
+        secondaryAsset={secondaryAsset}
+        strategy={modal.strategy}
+        vaultAddress={null}
+      />
     )
 
   return null
@@ -37,6 +42,7 @@ export default function HlsModalController() {
 interface Props {
   primaryAsset: Asset
   secondaryAsset: Asset
+  strategy?: HLSStrategy
   vaultAddress: string | null
 }
 
@@ -57,6 +63,7 @@ function HlsModal(props: Props) {
         collateralAsset={props.primaryAsset}
         borrowAsset={props.secondaryAsset}
         vaultAddress={props.vaultAddress}
+        strategy={props.strategy}
       />
     </Modal>
   )

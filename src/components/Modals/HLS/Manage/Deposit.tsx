@@ -88,7 +88,7 @@ export default function Deposit(props: Props) {
   const actions = useDepositActions({ depositCoin, borrowCoin })
 
   const currentDebt: BigNumber = useMemo(
-    () => props.account.debts.find(byDenom(props.borrowAsset.denom)).amount || BN_ZERO,
+    () => props.account.debts.find(byDenom(props.borrowAsset.denom))?.amount || BN_ZERO,
     [props.account.debts, props.borrowAsset.denom],
   )
 

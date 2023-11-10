@@ -91,11 +91,9 @@ interface BroadcastSlice {
     coin: BNCoin
     borrowToWallet: boolean
   }) => Promise<boolean>
+  changeHlsStakingLeverage: (options: { accountId: string; actions: Action[] }) => Promise<boolean>
   claimRewards: (options: { accountId: string }) => ExecutableTx
-  closeHlsStakingPosition: (options: {
-    accountId: string
-    actions: Action[]
-  }) => Promise<string | null>
+  closeHlsStakingPosition: (options: { accountId: string; actions: Action[] }) => Promise<boolean>
   createAccount: (
     accountKind: import('types/generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind,
   ) => Promise<string | null>

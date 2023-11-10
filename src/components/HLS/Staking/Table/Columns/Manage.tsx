@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 
 import DropDownButton from 'components/Button/DropDownButton'
 import { ArrowDownLine, Cross, HandCoins, Plus, Scale } from 'components/Icons'
@@ -61,7 +61,7 @@ export default function Manage(props: Props) {
         onClick: () => closeHlsStakingPosition({ accountId: props.account.id, actions }),
       },
     ],
-    [actions, closeHlsStakingPosition, openModal, props.account.id, hasNoDebt],
+    [actions, closeHlsStakingPosition, hasNoDebt, openModal, props.account.id],
   )
 
   return <DropDownButton items={ITEMS} text='Manage' color='tertiary' />
