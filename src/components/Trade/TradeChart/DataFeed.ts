@@ -432,10 +432,10 @@ export class DataFeed implements IDatafeedChartApi {
 
       bars.push({
         time: pair1Bar.time,
-        open: devideByPotentiallyZero(pair1Bar.open, pair2Bar.open),
-        close: devideByPotentiallyZero(pair1Bar.close, pair2Bar.close),
-        high: devideByPotentiallyZero(pair1Bar.high, pair2Bar.high),
-        low: devideByPotentiallyZero(pair1Bar.low, pair2Bar.low),
+        open: devideByPotentiallyZero(pair2Bar.open, pair1Bar.open),
+        close: devideByPotentiallyZero(pair2Bar.close, pair1Bar.close),
+        high: devideByPotentiallyZero(pair2Bar.high, pair1Bar.high),
+        low: devideByPotentiallyZero(pair2Bar.low, pair1Bar.low),
       })
     })
     return bars
