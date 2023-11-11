@@ -271,8 +271,9 @@ export default function SwapForm(props: Props) {
     () =>
       sellAssetAmount.isZero() ||
       depositCapReachedCoins.length > 0 ||
-      borrowAmount.isGreaterThanOrEqualTo(availableLiquidity),
-    [sellAssetAmount, depositCapReachedCoins, borrowAmount, availableLiquidity],
+      borrowAmount.isGreaterThan(availableLiquidity) ||
+      route.length === 0,
+    [sellAssetAmount, depositCapReachedCoins, borrowAmount, availableLiquidity, route],
   )
 
   return (
@@ -333,7 +334,7 @@ export default function SwapForm(props: Props) {
           sellAsset={sellAsset}
           borrowRate={borrowAsset?.borrowRate}
           buyAction={handleBuyClick}
-          buyButtonDisabled={isSwapDisabled || route.length === 0}
+          buyButtonDisabled={isSwapDisabled}
           showProgressIndicator={isConfirming || isRouteLoading}
           isMargin={isMarginChecked}
           borrowAmount={borrowAmount}

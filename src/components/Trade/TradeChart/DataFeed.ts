@@ -83,7 +83,7 @@ export class DataFeed implements IDatafeedChartApi {
     const denom2 = pairName.split(PAIR_SEPARATOR)[1]
     const asset1 = ASSETS.find(byDenom(denom1))
     const asset2 = ASSETS.find(byDenom(denom2))
-    return `${asset1?.symbol}/${asset2?.symbol}`
+    return `${asset2?.symbol}/${asset1?.symbol}`
   }
 
   async getPairsWithData() {
