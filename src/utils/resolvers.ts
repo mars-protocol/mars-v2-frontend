@@ -5,6 +5,7 @@ import {
 } from 'types/generated/mars-params/MarsParams.types'
 import { Market as RedBankMarket } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { BN, getLeverageFromLTV } from 'utils/helpers'
+import { convertAprToApy } from 'utils/parsers'
 
 export function resolveMarketResponse(
   marketResponse: RedBankMarket,
@@ -13,7 +14,7 @@ export function resolveMarketResponse(
 ): Market {
   return {
     denom: marketResponse.denom,
-    borrowRate: Number(marketResponse.borrow_rate) * 100,
+    borrowRate: convertAprToApy(Number(marketResponse.borrow_rate), 365) * 100,
     debtTotalScaled: marketResponse.debt_total_scaled,
     collateralTotalScaled: marketResponse.collateral_total_scaled,
     depositEnabled: assetParamsResponse.red_bank.deposit_enabled,

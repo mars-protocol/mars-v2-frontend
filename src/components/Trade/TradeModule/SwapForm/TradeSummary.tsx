@@ -81,7 +81,7 @@ export default function TradeSummary(props: Props) {
               />
             </div>
             <div className={infoLineClasses}>
-              <span className='opacity-40'>Borrow rate</span>
+              <span className='opacity-40'>Borrow Rate APY</span>
               <span>{formatPercent(borrowRate || 0)}</span>
             </div>
           </>

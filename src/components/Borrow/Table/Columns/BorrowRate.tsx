@@ -1,9 +1,7 @@
-import React from 'react'
-
 import { FormattedNumber } from 'components/FormattedNumber'
 import Loading from 'components/Loading'
 
-export const BORROW_RATE_META = { accessorKey: 'borrowRate', header: 'Borrow Rate' }
+export const BORROW_RATE_META = { accessorKey: 'borrowRate', header: 'Borrow Rate APY' }
 
 interface Props {
   borrowRate: number | null
