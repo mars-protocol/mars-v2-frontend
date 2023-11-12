@@ -36,8 +36,11 @@ if (!process.env.NEXT_PUBLIC_VAULT_APR) {
 if (!process.env.NEXT_PUBLIC_PARAMS) {
   throw 'NEXT_PUBLIC_PARAMS is not defined'
 }
-if (!process.env.NEXT_PUBLIC_CANDLES_ENDPOINT) {
-  throw 'NEXT_PUBLIC_CANDLES_ENDPOINT is not defined'
+if (!process.env.NEXT_PUBLIC_CANDLES_ENDPOINT_PYTH) {
+  throw 'NEXT_PUBLIC_CANDLES_ENDPOINT_PYTH is not defined'
+}
+if (!process.env.NEXT_PUBLIC_CANDLES_ENDPOINT_THE_GRAPH) {
+  throw 'NEXT_PUBLIC_CANDLES_ENDPOINT_THE_GRAPH is not defined'
 }
 if (!process.env.CHARTING_LIBRARY_USERNAME) {
   throw 'CHARTING_LIBRARY_USERNAME is not defined'

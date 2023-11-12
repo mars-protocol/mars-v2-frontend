@@ -41,6 +41,7 @@ export function useUpdatedAccount(account?: Account) {
   const [removedLends, removeLends] = useState<BNCoin[]>([])
   const [addedTrades, addTrades] = useState<BNCoin[]>([])
   const [leverage, setLeverage] = useState<number>(0)
+
   const removeDepositAndLendsByDenom = useCallback(
     (denom: string) => {
       if (!account) return
