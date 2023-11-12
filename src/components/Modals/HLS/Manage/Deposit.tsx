@@ -185,7 +185,7 @@ export default function Deposit(props: Props) {
           maxText='In Wallet'
         />
         <Divider className='my-6' />
-        <div className='flex flex-wrap flex-1 items-center justify-between'>
+        <div className='flex flex-wrap items-center justify-between flex-1'>
           <div>
             <Text className='w-full mb-1'>Keep leverage</Text>
             <Text size='xs' className='text-white/50'>
