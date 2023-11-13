@@ -7,6 +7,7 @@ import DepositCapMessage from 'components/DepositCapMessage'
 import Divider from 'components/Divider'
 import RangeInput from 'components/RangeInput'
 import AssetAmountInput from 'components/Trade/TradeModule/SwapForm/AssetAmountInput'
+import AutoRepayToggle from 'components/Trade/TradeModule/SwapForm/AutoRepayToggle'
 import MarginToggle from 'components/Trade/TradeModule/SwapForm/MarginToggle'
 import OrderTypeSelector from 'components/Trade/TradeModule/SwapForm/OrderTypeSelector'
 import { AvailableOrderType } from 'components/Trade/TradeModule/SwapForm/OrderTypeSelector/types'
@@ -29,8 +30,6 @@ import { byDenom } from 'utils/array'
 import { defaultFee } from 'utils/constants'
 import { getCapLeftWithBuffer } from 'utils/generic'
 import { asyncThrottle, BN } from 'utils/helpers'
-
-import AutoRepayToggle from './AutoRepayToggle'
 
 interface Props {
   buyAsset: Asset
