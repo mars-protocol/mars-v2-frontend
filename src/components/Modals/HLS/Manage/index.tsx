@@ -60,6 +60,7 @@ function HlsModal(props: Props) {
   return (
     <ModalContentWithSummary
       account={props.account}
+      isHls
       header={
         <Header
           action={props.action}

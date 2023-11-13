@@ -7,6 +7,7 @@ import SummarySkeleton from 'components/Portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
 import useAccounts from 'hooks/useAccounts'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
+import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
@@ -21,6 +22,7 @@ export default function PortfolioSummary() {
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const { data: accounts } = useAccounts('default', urlAddress || walletAddress)
+  const { data: hlsStrategies } = useHLSStakingAssets()
 
   const stats = useMemo(() => {
     if (!accounts?.length) return
@@ -47,6 +49,7 @@ export default function PortfolioSummary() {
       prices,
       borrowAssets,
       lendingAssets,
+      hlsStrategies,
     )
 
     return [

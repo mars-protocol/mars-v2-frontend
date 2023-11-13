@@ -8,6 +8,7 @@ import useStore from 'store'
 
 interface Props extends ModalProps {
   account: Account
+  isHls?: boolean
   isContentCard?: boolean
 }
 
@@ -32,7 +33,7 @@ export default function ModalContentWithSummary(props: Props) {
       ) : (
         props.content
       )}
-      <AccountSummary account={updatedAccount || props.account} />
+      <AccountSummary account={updatedAccount || props.account} isHls={props.isHls} />
     </Modal>
   )
 }

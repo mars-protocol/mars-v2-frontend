@@ -12,6 +12,7 @@ import useAccount from 'hooks/useAccount'
 import useAccountId from 'hooks/useAccountId'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useHealthComputer from 'hooks/useHealthComputer'
+import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
@@ -34,6 +35,8 @@ export default function PortfolioCard(props: Props) {
   const currentAccountId = useAccountId()
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const { data } = useBorrowMarketAssetsTableData(false)
+  const { data: hlsStrategies } = useHLSStakingAssets()
+
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
@@ -52,7 +55,14 @@ export default function PortfolioCard(props: Props) {
 
   const apr = useMemo(() => {
     if (!lendingAssets.length || !borrowAssets.length || !prices.length || !account) return null
-    return calculateAccountApr(account, borrowAssets, lendingAssets, prices)
+    return calculateAccountApr(
+      account,
+      borrowAssets,
+      lendingAssets,
+      prices,
+      hlsStrategies,
+      account.kind === 'high_levered_strategy',
+    )
   }, [lendingAssets, borrowAssets, prices, account])
 
   const stats: { title: ReactNode; sub: string }[] = useMemo(() => {

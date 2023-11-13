@@ -5,6 +5,7 @@ import {
   getVaultAccountBalanceRow,
 } from 'components/Account/AccountBalancesTable/functions'
 import { ASSETS } from 'constants/assets'
+import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import usePrices from 'hooks/usePrices'
 import { byDenom } from 'utils/array'
 import { convertLiquidityRateToAPR } from 'utils/formatters'
@@ -12,6 +13,7 @@ import { convertAprToApy } from 'utils/parsers'
 
 interface Props {
   account: Account
+  isHls?: boolean
   updatedAccount?: Account
   lendingData: LendingMarketTableData[]
   borrowingData: BorrowMarketTableData[]
@@ -20,6 +22,7 @@ interface Props {
 export default function useAccountBalanceData(props: Props) {
   const { account, updatedAccount, lendingData, borrowingData } = props
 
+  const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: prices } = usePrices()
 
   return useMemo<AccountBalanceRow[]>(() => {
@@ -33,7 +36,9 @@ export default function useAccountBalanceData(props: Props) {
     accountDeposits.forEach((deposit) => {
       const asset = ASSETS.find(byDenom(deposit.denom))
       if (!asset) return
-      const apy = 0
+      const apy = props.isHls
+        ? hlsStrategies.find((strategy) => strategy.denoms.deposit === asset.denom)?.apy ?? 0
+        : 0
       const prevDeposit = updatedAccount ? account?.deposits.find(byDenom(deposit.denom)) : deposit
       deposits.push(getAssetAccountBalanceRow('deposits', asset, prices, deposit, apy, prevDeposit))
     })

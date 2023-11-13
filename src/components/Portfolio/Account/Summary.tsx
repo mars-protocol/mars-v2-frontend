@@ -7,6 +7,7 @@ import { MAX_AMOUNT_DECIMALS } from 'constants/math'
 import useAccount from 'hooks/useAccount'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useHealthComputer from 'hooks/useHealthComputer'
+import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import usePrices from 'hooks/usePrices'
 import { getAccountSummaryStats } from 'utils/accounts'
@@ -23,6 +24,7 @@ function Content(props: Props) {
   const { data } = useBorrowMarketAssetsTableData(false)
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
+  const { data: hlsStrategies } = useHLSStakingAssets()
 
   const stats = useMemo(() => {
     if (!account || !borrowAssets.length || !lendingAssets.length) return DEFAULT_PORTFOLIO_STATS
@@ -32,6 +34,8 @@ function Content(props: Props) {
       prices,
       borrowAssets,
       lendingAssets,
+      hlsStrategies,
+      account.kind === 'high_levered_strategy',
     )
 
     return [

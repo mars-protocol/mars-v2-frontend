@@ -8,6 +8,7 @@ import SwitchAutoLend from 'components/Switch/SwitchAutoLend'
 import useAccount from 'hooks/useAccount'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useHealthComputer from 'hooks/useHealthComputer'
+import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
@@ -23,6 +24,8 @@ export default function AccountStats(props: Props) {
   const { accountId, isActive, setShowMenu } = props
   const { data: account } = useAccount(accountId)
   const { data: prices } = usePrices()
+  const { data: hlsStrategies } = useHLSStakingAssets()
+
   const positionBalance = useMemo(
     () => (!account ? null : calculateAccountBalanceValue(account, prices)),
     [account, prices],
@@ -38,7 +41,16 @@ export default function AccountStats(props: Props) {
   )
   const apr = useMemo(
     () =>
-      !account ? null : calculateAccountApr(account, borrowAssetsData, lendingAssetsData, prices),
+      !account
+        ? null
+        : calculateAccountApr(
+            account,
+            borrowAssetsData,
+            lendingAssetsData,
+            prices,
+            hlsStrategies,
+            account.kind === 'high_levered_strategy',
+          ),
     [account, borrowAssetsData, lendingAssetsData, prices],
   )
 

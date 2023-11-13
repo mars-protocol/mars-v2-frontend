@@ -13,7 +13,7 @@ interface Props {
 export default function Apr(props: Props) {
   const { markets, type, denom, apy } = props
 
-  if (type === 'deposits') return <p className='w-full text-xs text-right number'>&ndash;</p>
+  if (apy === 0) return <p className='w-full text-xs text-right number'>&ndash;</p>
   const isEnabled = markets.find(byDenom(denom))?.borrowEnabled ?? false
 
   return (
