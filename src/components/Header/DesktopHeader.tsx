@@ -24,6 +24,7 @@ export default function DesktopHeader() {
   const address = useStore((s) => s.address)
   const focusComponent = useStore((s) => s.focusComponent)
   const isOracleStale = useStore((s) => s.isOracleStale)
+  const isHLS = useStore((s) => s.isHLS)
   const accountId = useAccountId()
 
   function handleCloseFocusMode() {
@@ -59,7 +60,7 @@ export default function DesktopHeader() {
           <div className='flex gap-4'>
             {isOracleStale && <OracleResyncButton />}
             {accountId && <RewardsCenter />}
-            {address && <AccountMenu />}
+            {address && !isHLS && <AccountMenu />}
             <Wallet />
             <Settings />
           </div>

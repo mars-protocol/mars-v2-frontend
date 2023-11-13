@@ -13,6 +13,7 @@ interface CommonSlice {
   tutorial: boolean
   useMargin: boolean
   isOracleStale: boolean
+  isHLS: boolean
 }
 
 interface FocusComponent {

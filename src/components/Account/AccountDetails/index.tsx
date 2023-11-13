@@ -36,6 +36,7 @@ import {
 
 export default function AccountDetailsController() {
   const address = useStore((s) => s.address)
+  const isHLS = useStore((s) => s.isHLS)
   const { data: accounts, isLoading } = useAccounts('default', address)
   const { data: accountIds } = useAccountIds(address, false)
   const accountId = useAccountId()
@@ -43,7 +44,7 @@ export default function AccountDetailsController() {
   const focusComponent = useStore((s) => s.focusComponent)
   const isOwnAccount = accountId && accountIds?.includes(accountId)
 
-  if (!address || focusComponent || !isOwnAccount) return null
+  if (!address || focusComponent || !isOwnAccount || isHLS) return null
 
   if ((isLoading && accountId && !focusComponent) || !account) return <Skeleton />
 
