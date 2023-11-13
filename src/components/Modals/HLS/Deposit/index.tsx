@@ -16,6 +16,7 @@ interface Props {
   borrowAsset: Asset
   collateralAsset: Asset
   vaultAddress: string | null
+  strategy?: HLSStrategy
 }
 
 export default function Controller(props: Props) {
@@ -46,19 +47,24 @@ export default function Controller(props: Props) {
       />
     )
 
-  return (
-    <StakingContent
-      walletCollateralAsset={walletCollateralAsset}
-      collateralAsset={props.collateralAsset}
-      borrowAsset={props.borrowAsset}
-      emptyHlsAccounts={emptyHlsAccounts}
-      hlsAccounts={hlsAccounts}
-      isOpen={isOpen}
-      selectedAccount={selectedAccount}
-      setSelectedAccount={setSelectedAccount}
-      toggleIsOpen={toggleIsOpen}
-    />
-  )
+  if (props.strategy) {
+    return (
+      <StakingContent
+        walletCollateralAsset={walletCollateralAsset}
+        collateralAsset={props.collateralAsset}
+        borrowAsset={props.borrowAsset}
+        emptyHlsAccounts={emptyHlsAccounts}
+        hlsAccounts={hlsAccounts}
+        isOpen={isOpen}
+        selectedAccount={selectedAccount}
+        setSelectedAccount={setSelectedAccount}
+        toggleIsOpen={toggleIsOpen}
+        strategy={props.strategy}
+      />
+    )
+  }
+
+  return null
 }
 
 interface ContentProps {
@@ -120,7 +126,11 @@ function Vault(props: VaultContentProps) {
   return <Accordion className='h-[546px] overflow-y-scroll scrollbar-hide' items={items} />
 }
 
-function StakingContent(props: ContentProps) {
+interface StakingContentProps extends ContentProps {
+  strategy: HLSStrategy
+}
+
+function StakingContent(props: StakingContentProps) {
   const {
     depositAmount,
     onChangeCollateral,
@@ -152,10 +162,11 @@ function StakingContent(props: ContentProps) {
     positionValue,
     selectedAccount: props.selectedAccount,
     setSelectedAccount: props.setSelectedAccount,
+    strategy: props.strategy,
     toggleIsOpen: props.toggleIsOpen,
     updatedAccount,
     maxBorrowAmount,
-    apy: 0, // TODO: Implement APY
+    apy: props.strategy.apy || 0, // TODO: Implement APY
     walletCollateralAsset: props.walletCollateralAsset,
   })
 

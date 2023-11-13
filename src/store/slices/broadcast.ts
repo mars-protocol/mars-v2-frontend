@@ -232,6 +232,28 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
+    changeHlsStakingLeverage: async (options: { accountId: string; actions: Action[] }) => {
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: options.actions,
+        },
+      }
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
+      })
+
+      get().setToast({
+        response,
+        options: {
+          action: 'deposit',
+          message: `Changed Leverage`,
+        },
+      })
+
+      return response.then((response) => !!response.result)
+    },
     closeHlsStakingPosition: async (options: { accountId: string; actions: Action[] }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
@@ -252,10 +274,7 @@ export default function createBroadcastSlice(
         },
       })
 
-      const response_1 = await response
-      return response_1.result
-        ? getSingleValueFromBroadcastResult(response_1.result, 'wasm', 'token_id')
-        : null
+      return response.then((response) => !!response.result)
     },
 
     createAccount: async (accountKind: AccountKind) => {

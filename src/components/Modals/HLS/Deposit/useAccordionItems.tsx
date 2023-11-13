@@ -29,6 +29,7 @@ interface Props {
   positionValue: BigNumber
   selectedAccount: Account | null
   setSelectedAccount: (account: Account) => void
+  strategy?: HLSStrategy
   toggleIsOpen: (index: number) => void
   updatedAccount: Account | undefined
   walletCollateralAsset: Coin | undefined
@@ -64,12 +65,14 @@ export default function useAccordionItems(props: Props) {
         title: 'Leverage',
         renderContent: () => (
           <Leverage
+            leverage={props.leverage}
             amount={props.borrowAmount}
             asset={props.borrowAsset}
             onChangeAmount={props.onChangeDebt}
             onClickBtn={() => props.toggleIsOpen(2)}
             max={props.maxBorrowAmount}
             positionValue={props.positionValue}
+            maxLeverage={props.strategy?.maxLeverage || 1}
           />
         ),
         renderSubTitle: () => (

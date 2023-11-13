@@ -14,7 +14,7 @@ import {
 import useVaults from 'hooks/useVaults'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { cloneAccount } from 'utils/accounts'
+import { calculateAccountLeverage, cloneAccount } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { getValueFromBNCoins } from 'utils/helpers'
@@ -30,6 +30,7 @@ export function useUpdatedAccount(account?: Account) {
   const [updatedAccount, setUpdatedAccount] = useState<Account | undefined>(
     account ? cloneAccount(account) : undefined,
   )
+
   const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
   const [addedDeposits, addDeposits] = useState<BNCoin[]>([])
   const [removedDeposits, removeDeposits] = useState<BNCoin[]>([])
@@ -39,6 +40,7 @@ export function useUpdatedAccount(account?: Account) {
   const [addedLends, addLends] = useState<BNCoin[]>([])
   const [removedLends, removeLends] = useState<BNCoin[]>([])
   const [addedTrades, addTrades] = useState<BNCoin[]>([])
+  const [leverage, setLeverage] = useState<number>(0)
 
   const removeDepositAndLendsByDenom = useCallback(
     (denom: string) => {
@@ -165,6 +167,16 @@ export function useUpdatedAccount(account?: Account) {
     [prices],
   )
 
+  const simulateHlsStakingWithdraw = useCallback(
+    (collateralDenom: string, debtDenom: string, repayAmount: BigNumber) => {
+      const repayValue = getCoinValue(BNCoin.fromDenomAndBigNumber(debtDenom, repayAmount), prices)
+      const removeDepositAmount = getCoinAmount(collateralDenom, repayValue, prices)
+      removeDeposits([BNCoin.fromDenomAndBigNumber(collateralDenom, removeDepositAmount)])
+      removeDebts([BNCoin.fromDenomAndBigNumber(debtDenom, repayAmount)])
+    },
+    [prices],
+  )
+
   const simulateVaultDeposit = useCallback(
     (address: string, coins: BNCoin[], borrowCoins: BNCoin[]) => {
       if (!account) return
@@ -205,6 +217,7 @@ export function useUpdatedAccount(account?: Account) {
     accountCopy.lends = addCoins(addedLends, [...accountCopy.lends])
     accountCopy.lends = removeCoins(removedLends, [...accountCopy.lends])
     setUpdatedAccount(accountCopy)
+    setLeverage(calculateAccountLeverage(accountCopy, prices).toNumber())
     useStore.setState({ updatedAccount: accountCopy })
 
     return () => useStore.setState({ updatedAccount: undefined })
@@ -235,12 +248,14 @@ export function useUpdatedAccount(account?: Account) {
     addedDeposits,
     addedDebts,
     addedLends,
+    leverage,
     removedDeposits,
     removedDebts,
     removedLends,
     simulateBorrow,
     simulateDeposits,
     simulateHlsStakingDeposit,
+    simulateHlsStakingWithdraw,
     simulateLending,
     simulateRepay,
     simulateTrade,

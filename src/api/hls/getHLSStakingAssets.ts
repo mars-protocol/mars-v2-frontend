@@ -26,6 +26,7 @@ export default async function getHLSStakingAssets() {
           used: BN(depositCap.amount),
           max: BN(depositCap.cap),
         },
+        apy: 18, // TODO: Actually implement the APY here!
       } as HLSStrategy
     })
   })

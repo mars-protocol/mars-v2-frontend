@@ -23,8 +23,6 @@ export default function useStakingController(props: Props) {
     setBorrowAmount,
     borrowAmount,
     positionValue,
-    borrowCoin,
-    depositCoin,
     actions,
   } = useDepositHlsVault({
     collateralDenom: collateralAsset.denom,
@@ -40,6 +38,7 @@ export default function useStakingController(props: Props) {
   }, [computeMaxBorrowAmount, props.borrowAsset.denom])
 
   const execute = useCallback(() => {
+    useStore.setState({ hlsModal: null })
     addToStakingStrategy({
       actions,
       accountId: selectedAccount.id,

@@ -12,20 +12,28 @@ interface Props {
   onChangeAmount: (amount: BigNumber) => void
   onClickBtn: () => void
   positionValue: BigNumber
+  leverage: number
+  maxLeverage: number
 }
 
 export default function Leverage(props: Props) {
   return (
-    <div className='p-4 flex-col gap-6 flex'>
+    <div className='flex-col gap-6 flex justify-between h-full p-4'>
       <TokenInputWithSlider
         amount={props.amount}
         asset={props.asset}
         max={props.max}
         onChange={props.onChangeAmount}
         maxText='Max borrow'
+        leverage={{
+          current: props.leverage,
+          max: props.maxLeverage,
+        }}
       />
-      <LeverageSummary asset={props.asset} positionValue={props.positionValue} />
-      <Button onClick={props.onClickBtn} text='Continue' rightIcon={<ArrowRight />} />
+      <div className='flex flex-col gap-6'>
+        <LeverageSummary asset={props.asset} positionValue={props.positionValue} />
+        <Button onClick={props.onClickBtn} text='Continue' rightIcon={<ArrowRight />} />
+      </div>
     </div>
   )
 }
