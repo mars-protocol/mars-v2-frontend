@@ -13,7 +13,7 @@ import useStore from 'store'
 import { isAccountEmpty } from 'utils/accounts'
 
 interface Props {
-  borrowAsset: Asset
+  borrowAsset: BorrowAsset
   collateralAsset: Asset
   vaultAddress: string | null
   strategy?: HLSStrategy
@@ -68,7 +68,7 @@ export default function Controller(props: Props) {
 }
 
 interface ContentProps {
-  borrowAsset: Asset
+  borrowAsset: BorrowAsset
   collateralAsset: Asset
   emptyHlsAccounts: Account[]
   hlsAccounts: Account[]

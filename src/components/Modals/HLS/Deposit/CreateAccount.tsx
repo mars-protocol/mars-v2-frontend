@@ -26,8 +26,7 @@ export default function CreateAccount() {
   return (
     <div className='p-4 flex-col flex'>
       <Text size='sm' className='text-white/50 mb-4 mt-2'>
-        Creating a HLS position mandates the creation of a, single-use HLS account. This account is
-        deleted once you close your position.
+        Depositing into a HLS strategy mandates the creation of a HLS credit account.
       </Text>
       <Button
         onClick={handleBtnClick}

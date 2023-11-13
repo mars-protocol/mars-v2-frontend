@@ -15,11 +15,12 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { getAccountPositionValues } from 'utils/accounts'
 import { getHlsStakingChangeLevActions } from 'utils/actions'
 import { byDenom } from 'utils/array'
+import { getLeveragedApy } from 'utils/math'
 
 interface Props {
   account: HLSAccountWithStrategy
   action: HlsStakingManageAction
-  borrowAsset: Asset
+  borrowAsset: BorrowAsset
   collateralAsset: Asset
 }
 
@@ -98,6 +99,11 @@ export default function ChangeLeverage(props: Props) {
     slippage,
   ])
 
+  const apy = useMemo(() => {
+    if (!props.borrowAsset.borrowRate || !props.account.strategy.apy) return 0
+    return getLeveragedApy(props.account.strategy.apy, props.borrowAsset.borrowRate, leverage)
+  }, [leverage, props.account.strategy.apy, props.borrowAsset.borrowRate])
+
   return (
     <>
       <TokenInputWithSlider
@@ -112,7 +118,7 @@ export default function ChangeLeverage(props: Props) {
         }}
       />
       <div className='flex flex-col gap-6'>
-        <LeverageSummary asset={props.borrowAsset} positionValue={positionValue} />
+        <LeverageSummary asset={props.borrowAsset} positionValue={positionValue} apy={apy} />
         <Button onClick={handleOnClick} text='Confirm' />
       </div>
     </>

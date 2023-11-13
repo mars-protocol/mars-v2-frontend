@@ -15,7 +15,7 @@ import { BN } from 'utils/helpers'
 interface Props {
   apy: number
   borrowAmount: BigNumber
-  borrowAsset: Asset
+  borrowAsset: BorrowAsset
   collateralAsset: Asset
   depositAmount: BigNumber
   emptyHlsAccounts: Account[]
@@ -73,6 +73,7 @@ export default function useAccordionItems(props: Props) {
             max={props.maxBorrowAmount}
             positionValue={props.positionValue}
             maxLeverage={props.strategy?.maxLeverage || 1}
+            baseApy={props.strategy?.apy || 0}
           />
         ),
         renderSubTitle: () => (

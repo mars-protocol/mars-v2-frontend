@@ -7,6 +7,7 @@ import Repay from 'components/Modals/HLS/Manage/Repay'
 import Withdraw from 'components/Modals/HLS/Manage/Withdraw'
 import ModalContentWithSummary from 'components/Modals/ModalContentWithSummary'
 import useAccount from 'hooks/useAccount'
+import useBorrowAsset from 'hooks/useBorrowAsset'
 import useStore from 'store'
 import { getAssetByDenom } from 'utils/assets'
 
@@ -14,7 +15,7 @@ export default function HlsManageModalController() {
   const modal = useStore((s) => s.hlsManageModal)
   const { data: account } = useAccount(modal?.accountId)
   const collateralAsset = getAssetByDenom(modal?.staking.strategy.denoms.deposit || '')
-  const borrowAsset = getAssetByDenom(modal?.staking.strategy.denoms.borrow || '')
+  const borrowAsset = useBorrowAsset(modal?.staking.strategy.denoms.borrow || '')
 
   if (!modal || !collateralAsset || !borrowAsset || !account) return null
 
@@ -31,7 +32,7 @@ export default function HlsManageModalController() {
 interface Props {
   account: HLSAccountWithStrategy
   action: HlsStakingManageAction
-  borrowAsset: Asset
+  borrowAsset: BorrowAsset
   collateralAsset: Asset
 }
 
