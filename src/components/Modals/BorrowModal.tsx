@@ -202,7 +202,7 @@ function BorrowModal(props: Props) {
       <div className='flex gap-3 px-6 py-4 border-b border-white/5 gradient-header'>
         <TitleAndSubCell
           title={formatPercent(modal.marketData.borrowRate || '0')}
-          sub={'Borrow rate'}
+          sub={'Borrow Rate APY'}
         />
         {totalDebt.isGreaterThan(0) && (
           <>
