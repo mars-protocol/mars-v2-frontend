@@ -10,6 +10,7 @@ import useStore from 'store'
 interface Props extends ModalProps {
   account?: Account
   isContentCard?: boolean
+  subHeader?: React.ReactNode
 }
 
 function modalContent(content: React.ReactNode, isContentCard?: boolean, account?: Account) {
@@ -23,7 +24,7 @@ function modalContent(content: React.ReactNode, isContentCard?: boolean, account
   if (isContentCard)
     return (
       <Card
-        className={classNames('flex p-4 bg-white/5', 'lg:w-[448px]')}
+        className='flex p-4 bg-white/5 lg:w-112'
         contentClassName='gap-6 flex flex-col justify-between h-full min-h-[380px]'
       >
         {content}
@@ -44,6 +45,7 @@ export default function ModalContentWithSummary(props: Props) {
       )}
       contentClassName={classNames('flex items-start flex-1 gap-6 p-6', props.contentClassName)}
     >
+      {props.subHeader && props.subHeader}
       {modalContent(props.content, props.isContentCard, props.account)}
       {props.account && <AccountSummary account={updatedAccount || props.account} />}
     </Modal>
