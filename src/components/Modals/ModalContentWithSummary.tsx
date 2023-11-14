@@ -3,12 +3,34 @@ import React from 'react'
 
 import AccountSummary from 'components/Account/AccountSummary'
 import Card from 'components/Card'
+import { CircularProgress } from 'components/CircularProgress'
 import Modal, { ModalProps } from 'components/Modal'
 import useStore from 'store'
 
 interface Props extends ModalProps {
-  account: Account
+  account?: Account
   isContentCard?: boolean
+}
+
+function modalContent(content: React.ReactNode, isContentCard?: boolean, account?: Account) {
+  if (!account)
+    return (
+      <div className='flex items-center justify-center w-full h-[380px]'>
+        <CircularProgress />
+      </div>
+    )
+
+  if (isContentCard)
+    return (
+      <Card
+        className={classNames('flex p-4 bg-white/5', 'lg:w-[448px]')}
+        contentClassName='gap-6 flex flex-col justify-between h-full min-h-[380px]'
+      >
+        {content}
+      </Card>
+    )
+
+  return content
 }
 
 export default function ModalContentWithSummary(props: Props) {
@@ -22,17 +44,8 @@ export default function ModalContentWithSummary(props: Props) {
       )}
       contentClassName={classNames('flex items-start flex-1 gap-6 p-6', props.contentClassName)}
     >
-      {props.isContentCard ? (
-        <Card
-          className='flex flex-1 p-4 bg-white/5'
-          contentClassName='gap-6 flex flex-col justify-between h-full min-h-[380px]'
-        >
-          {props.content}
-        </Card>
-      ) : (
-        props.content
-      )}
-      <AccountSummary account={updatedAccount || props.account} />
+      {modalContent(props.content, props.isContentCard, props.account)}
+      {props.account && <AccountSummary account={updatedAccount || props.account} />}
     </Modal>
   )
 }
