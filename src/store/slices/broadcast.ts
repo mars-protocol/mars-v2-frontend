@@ -839,9 +839,10 @@ export default function createBroadcastSlice(
           result: undefined,
           error: 'Transaction failed',
         }
-      } catch (e: unknown) {
-        const error = typeof e === 'string' ? e : 'Transaction failed'
-        return { result: undefined, error }
+      } catch (error) {
+        const e = error as { message: string }
+        console.log(e)
+        return { result: undefined, error: e.message }
       }
     },
   }
