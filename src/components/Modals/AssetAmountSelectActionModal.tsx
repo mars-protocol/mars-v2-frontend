@@ -75,6 +75,7 @@ export default function AssetAmountSelectActionModal(props: Props) {
             max={maxAmount}
             hasSelect
             maxText='Max'
+            warningMessages={[]}
           />
           <Divider />
           <Button

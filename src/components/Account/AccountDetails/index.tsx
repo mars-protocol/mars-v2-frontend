@@ -106,7 +106,7 @@ function AccountDetails(props: Props) {
         hlsStrategies,
         account.kind === 'high_levered_strategy',
       ),
-    [account, borrowAssetsData, lendingAssetsData, prices, updatedAccount],
+    [account, borrowAssetsData, hlsStrategies, lendingAssetsData, prices, updatedAccount],
   )
   const isFullWidth = location.pathname.includes('trade') || location.pathname === '/'
 

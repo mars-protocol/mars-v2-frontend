@@ -5,11 +5,11 @@ import AssetImage from 'components/Asset/AssetImage'
 import Button from 'components/Button'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
-import { ExclamationMarkTriangle, TrashBin } from 'components/Icons'
+import { TrashBin } from 'components/Icons'
 import NumberInput from 'components/NumberInput'
 import Select from 'components/Select'
 import Text from 'components/Text'
-import { Tooltip } from 'components/Tooltip'
+import WarningMessages from 'components/WarningMessages'
 import { ASSETS } from 'constants/assets'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -26,9 +26,9 @@ interface Props {
   disabled?: boolean
   hasSelect?: boolean
   maxText?: string
-  warning?: string
   onChangeAsset?: (asset: Asset) => void
   onDelete?: () => void
+  warningMessages: string[]
 }
 
 export default function TokenInput(props: Props) {
@@ -55,7 +55,7 @@ export default function TokenInput(props: Props) {
         data-testid='token-input-wrapper'
         className={classNames(
           'relative isolate z-20 box-content flex h-11 w-full rounded-sm border bg-white/5',
-          props.warning ? 'border-warning' : 'border-white/20',
+          props.warningMessages.length ? 'border-warning' : 'border-white/20',
         )}
       >
         {props.hasSelect && props.balances ? (
@@ -87,17 +87,7 @@ export default function TokenInput(props: Props) {
             <TrashBin width={16} />
           </div>
         )}
-        {props.warning && (
-          <div className='grid items-center px-2'>
-            <Tooltip
-              content={`You don't have any ${props.asset.symbol}. Please first deposit ${props.asset.symbol} into your Credit Account before.`}
-              type='info'
-              interactive
-            >
-              <ExclamationMarkTriangle className='text-warning' />
-            </Tooltip>
-          </div>
-        )}
+        <WarningMessages messages={props.warningMessages} />
       </div>
 
       <div className='flex'>

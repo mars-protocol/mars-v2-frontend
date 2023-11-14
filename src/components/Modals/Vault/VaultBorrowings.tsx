@@ -189,6 +189,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
             maxText='Max Borrow'
             onChange={(amount) => updateAssets(coin.denom, amount)}
             onDelete={() => onDelete(coin.denom)}
+            warningMessages={[]}
           />
         )
       })}

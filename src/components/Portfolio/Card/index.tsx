@@ -63,7 +63,7 @@ export default function PortfolioCard(props: Props) {
       hlsStrategies,
       account.kind === 'high_levered_strategy',
     )
-  }, [lendingAssets, borrowAssets, prices, account])
+  }, [lendingAssets, borrowAssets, prices, account, hlsStrategies])
 
   const stats: { title: ReactNode; sub: string }[] = useMemo(() => {
     const isLoaded = account && prices.length && apr !== null

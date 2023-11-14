@@ -51,7 +51,7 @@ export default function AccountStats(props: Props) {
             hlsStrategies,
             account.kind === 'high_levered_strategy',
           ),
-    [account, borrowAssetsData, lendingAssetsData, prices],
+    [account, borrowAssetsData, hlsStrategies, lendingAssetsData, prices],
   )
 
   const deleteAccountHandler = useCallback(() => {

@@ -16,6 +16,7 @@ interface Props {
   leverage: number
   maxLeverage: number
   baseApy: number
+  warningMessages: string[]
 }
 
 export default function Leverage(props: Props) {
@@ -25,7 +26,7 @@ export default function Leverage(props: Props) {
   }, [props.asset.borrowRate, props.baseApy, props.leverage])
 
   return (
-    <div className='flex-col gap-6 flex justify-between h-full p-4'>
+    <div id='item-1' className='flex-col gap-6 flex justify-between h-full p-4'>
       <TokenInputWithSlider
         amount={props.amount}
         asset={props.asset}
@@ -36,6 +37,7 @@ export default function Leverage(props: Props) {
           current: props.leverage,
           max: props.maxLeverage,
         }}
+        warningMessages={props.warningMessages}
       />
       <div className='flex flex-col gap-6'>
         <LeverageSummary asset={props.asset} positionValue={props.positionValue} apy={apy} />

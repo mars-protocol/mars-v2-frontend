@@ -267,6 +267,7 @@ function BorrowModal(props: Props) {
               disabled={max.isZero()}
               className='w-full'
               maxText='Max'
+              warningMessages={[]}
             />
             {isRepay && maxRepayAmount.isZero() && <RepayNotAvailable asset={asset} />}
             {!isRepay && (

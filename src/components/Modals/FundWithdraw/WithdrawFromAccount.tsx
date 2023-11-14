@@ -112,6 +112,7 @@ export default function WithdrawFromAccount(props: Props) {
           accountId={account.id}
           hasSelect
           maxText='Max'
+          warningMessages={[]}
         />
         <Divider className='my-6' />
         <div className='flex flex-wrap w-full'>

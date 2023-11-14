@@ -166,7 +166,7 @@ function StakingContent(props: StakingContentProps) {
     toggleIsOpen: props.toggleIsOpen,
     updatedAccount,
     maxBorrowAmount,
-    apy: props.strategy.apy || 0, // TODO: Implement APY
+    apy: props.strategy.apy || 0,
     walletCollateralAsset: props.walletCollateralAsset,
   })
 

@@ -73,5 +73,5 @@ export default function useAccountBalanceData(props: Props) {
       return getAssetAccountBalanceRow('borrowing', asset, prices, debt, apy, prevDebt)
     })
     return [...deposits, ...lends, ...vaults, ...debts]
-  }, [prices, account, updatedAccount, borrowingData, lendingData])
+  }, [updatedAccount, account, props.isHls, hlsStrategies, prices, lendingData, borrowingData])
 }

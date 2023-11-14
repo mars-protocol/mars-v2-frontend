@@ -76,7 +76,7 @@ function Content(props: Props) {
         sub: DEFAULT_PORTFOLIO_STATS[4].sub,
       },
     ]
-  }, [account, borrowAssets, lendingAssets, prices])
+  }, [account, borrowAssets, hlsStrategies, lendingAssets, prices])
 
   return (
     <Skeleton
