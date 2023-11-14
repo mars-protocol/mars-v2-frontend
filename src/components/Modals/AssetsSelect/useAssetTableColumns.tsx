@@ -38,6 +38,7 @@ export default function useAssetTableColumns(isBorrow: boolean) {
                 name={`asset-${asset.id.toLowerCase()}`}
                 checked={row.getIsSelected()}
                 onChange={row.getToggleSelectedHandler()}
+                noMouseEvents
               />
               <AssetImage asset={asset} size={24} className='ml-4' />
               <div className='ml-2 text-left'>
