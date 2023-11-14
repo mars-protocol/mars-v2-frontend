@@ -136,7 +136,7 @@ export default function VaultModalContent(props: Props) {
   return (
     <div className='flex items-start flex-1 gap-6 p-6'>
       <Accordion
-        className='h-[546px] overflow-y-scroll scrollbar-hide'
+        className='h-[546px] overflow-y-scroll scrollbar-hide flex-1'
         items={[
           {
             renderContent: () => (

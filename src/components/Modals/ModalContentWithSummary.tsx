@@ -24,7 +24,7 @@ function modalContent(content: React.ReactNode, isContentCard?: boolean, account
   if (isContentCard)
     return (
       <Card
-        className='flex p-4 bg-white/5 lg:w-112'
+        className='flex flex-1 p-4 bg-white/5'
         contentClassName='gap-6 flex flex-col justify-between h-full min-h-[380px]'
       >
         {content}
