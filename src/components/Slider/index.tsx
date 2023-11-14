@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { ChangeEvent, useRef, useState } from 'react'
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
 
 import { OverlayMark } from 'components/Icons'
@@ -98,6 +98,17 @@ export default function Slider(props: Props) {
 
   const DraggableElement: any = Draggable
 
+  const [positionOffset, position] = useMemo(() => {
+    return [
+      { x: (props.value / 100) * -12, y: 0 },
+      { x: (sliderRect.width / 100) * props.value, y: -2 },
+    ]
+  }, [props.value, sliderRect.width])
+
+  useEffect(() => {
+    handleSliderRect()
+  }, [])
+
   return (
     <div>
       <div
@@ -164,10 +175,10 @@ export default function Slider(props: Props) {
               axis='x'
               grid={[sliderRect.width / 100, 0]}
               bounds={{ left: 0, right: sliderRect.width }}
-              positionOffset={{ x: (props.value / 100) * -12, y: 0 }}
+              positionOffset={positionOffset}
               onDrag={handleDrag}
               onStop={() => setIsDragging(false)}
-              position={{ x: (sliderRect.width / 100) * props.value, y: -2 }}
+              position={position}
             >
               <div ref={nodeRef} className='absolute z-20 leading-3'>
                 <div
@@ -202,7 +213,7 @@ export default function Slider(props: Props) {
         )}
       </div>
       {props.leverage && (
-        <div className='pt-2 flex justify-between'>
+        <div className='flex justify-between pt-2'>
           <LeverageLabel
             leverage={1}
             decimals={0}
