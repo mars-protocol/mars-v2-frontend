@@ -48,7 +48,7 @@ export default function SwapForm(props: Props) {
   const { data: marketAssets } = useMarketAssets()
   const { data: route, isLoading: isRouteLoading } = useSwapRoute(sellAsset.denom, buyAsset.denom)
   const isBorrowEnabled = !!marketAssets.find(byDenom(sellAsset.denom))?.borrowEnabled
-  const isRepayable = account?.debts.find(byDenom(buyAsset.denom))
+  const isRepayable = !!account?.debts.find(byDenom(buyAsset.denom))
   const [isMarginChecked, setMarginChecked] = useToggle(isBorrowEnabled ? useMargin : false)
   const [isAutoRepayChecked, setAutoRepayChecked] = useToggle(isRepayable ? useAutoRepay : false)
   const [buyAssetAmount, setBuyAssetAmount] = useState(BN_ZERO)
@@ -198,16 +198,17 @@ export default function SwapForm(props: Props) {
   )
   const handleAutoRepayToggleChange = useCallback(
     (isAutoRepay: boolean) => {
-      useStore.setState({ useAutoRepay: isAutoRepay })
+      if (isRepayable) useStore.setState({ useAutoRepay: isAutoRepay })
       setAutoRepayChecked(isAutoRepay)
     },
-    [setAutoRepayChecked],
+    [isRepayable, setAutoRepayChecked],
   )
 
   useEffect(() => {
     setBuyAssetAmount(BN_ZERO)
     setSellAssetAmount(BN_ZERO)
     setMarginChecked(isBorrowEnabled ? useMargin : false)
+    setAutoRepayChecked(isRepayable ? useAutoRepay : false)
     simulateTrade(
       BNCoin.fromDenomAndBigNumber(buyAsset.denom, BN_ZERO),
       BNCoin.fromDenomAndBigNumber(sellAsset.denom, BN_ZERO),
@@ -217,6 +218,7 @@ export default function SwapForm(props: Props) {
     )
   }, [
     isBorrowEnabled,
+    isRepayable,
     useMargin,
     buyAsset.denom,
     sellAsset.denom,
@@ -224,6 +226,7 @@ export default function SwapForm(props: Props) {
     isAutoRepayChecked,
     simulateTrade,
     setMarginChecked,
+    setAutoRepayChecked,
   ])
 
   useEffect(() => {
