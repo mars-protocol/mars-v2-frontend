@@ -8,19 +8,27 @@ interface Props {
   onChange: (checked: boolean) => void
   name: string
   text?: string
+  noMouseEvents?: boolean
 }
 
 export default function Checkbox(props: Props) {
   return (
     <>
-      <label className='flex items-center gap-2 border-white cursor-pointer'>
-        <input
-          onChange={() => props.onChange(props.checked)}
-          name={props.name}
-          checked={props.checked}
-          type='checkbox'
-          className='absolute w-0 h-0 opacity-0'
-        />
+      <input
+        onChange={() => props.onChange(props.checked)}
+        id={`checkbox-${props.name}`}
+        name={props.name}
+        checked={props.checked}
+        type='checkbox'
+        className={classNames('peer hidden')}
+      />
+      <label
+        className={classNames(
+          'flex items-center gap-2 border-white cursor-pointer',
+          props.noMouseEvents && 'pointer-events-none',
+        )}
+        htmlFor={`checkbox-${props.name}`}
+      >
         <div
           className={classNames(
             'h-5 w-5 rounded-sm p-0.5',
