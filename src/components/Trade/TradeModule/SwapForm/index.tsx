@@ -173,6 +173,7 @@ export default function SwapForm(props: Props) {
     slippage,
     swap,
     maxSellAmount,
+    isAutoRepayChecked,
   ])
 
   const debouncedUpdateAccount = useMemo(
@@ -220,6 +221,7 @@ export default function SwapForm(props: Props) {
     isBorrowEnabled,
     isRepayable,
     useMargin,
+    useAutoRepay,
     buyAsset.denom,
     sellAsset.denom,
     isAutoLendEnabled,
