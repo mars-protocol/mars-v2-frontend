@@ -2,8 +2,8 @@ import dynamic from 'next/dynamic'
 import Script from 'next/script'
 import { useState } from 'react'
 
-import { CircularProgress } from 'components/CircularProgress'
 import Card from 'components/Card'
+import { CircularProgress } from 'components/CircularProgress'
 
 const TVChartContainer = dynamic(
   () => import('components/Trade/TradeChart/TVChartContainer').then((mod) => mod.TVChartContainer),
@@ -24,6 +24,9 @@ export default function TradeChart(props: Props) {
         src='/datafeeds/udf/dist/bundle.js'
         strategy='lazyOnload'
         onReady={() => {
+          setIsScriptReady(true)
+        }}
+        onLoad={() => {
           setIsScriptReady(true)
         }}
       />

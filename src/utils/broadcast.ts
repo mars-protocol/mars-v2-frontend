@@ -16,6 +16,6 @@ export function getSingleValueFromBroadcastResult(
 export function generateErrorMessage(result: BroadcastResult, errorMessage?: string) {
   const error = result.error ? result.error : result.result?.rawLogs
   if (errorMessage) return errorMessage
-  if (error === 'Transaction failed') return 'Transaction rejected by user'
+  if (error === 'Transaction failed: Request rejected') return 'Transaction rejected by user'
   return `Transaction failed: ${error}`
 }
