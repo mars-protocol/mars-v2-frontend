@@ -12,6 +12,7 @@ interface CommonSlice {
   migrationBanner: boolean
   tutorial: boolean
   useMargin: boolean
+  useAutoRepay: boolean
   isOracleStale: boolean
   isHLS: boolean
 }

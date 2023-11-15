@@ -689,6 +689,7 @@ export default function createBroadcastSlice(
       denomOut: string
       slippage: number
       isMax?: boolean
+      repay: boolean
     }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
@@ -703,6 +704,17 @@ export default function createBroadcastSlice(
                 slippage: options.slippage.toString(),
               },
             },
+            ...(options.repay
+              ? [
+                  {
+                    repay: {
+                      coin: BNCoin.fromDenomAndBigNumber(options.denomOut, BN_ZERO).toActionCoin(
+                        true,
+                      ),
+                    },
+                  },
+                ]
+              : []),
           ],
         },
       }
@@ -827,9 +839,10 @@ export default function createBroadcastSlice(
           result: undefined,
           error: 'Transaction failed',
         }
-      } catch (e: unknown) {
-        const error = typeof e === 'string' ? e : 'Transaction failed'
-        return { result: undefined, error }
+      } catch (error) {
+        const e = error as { message: string }
+        console.log(e)
+        return { result: undefined, error: e.message }
       }
     },
   }

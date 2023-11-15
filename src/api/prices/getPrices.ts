@@ -1,10 +1,8 @@
 import getOraclePrices from 'api/prices/getOraclePrices'
 import getPoolPrice from 'api/prices/getPoolPrice'
 import fetchPythPrices from 'api/prices/getPythPrices'
-import { ENV } from 'constants/env'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { NETWORK } from 'types/enums/network'
 import { partition } from 'utils/array'
 import { getAssetsMustHavePriceInfo } from 'utils/assets'
 
@@ -59,13 +57,13 @@ function separateAssetsByPriceSources(assets: Asset[]) {
   // Only fetch Pyth prices for mainnet
   const [assetsWithPythPriceFeedId, assetsWithoutPythPriceFeedId] = partition(
     assets,
-    (asset) => !!asset.pythPriceFeedId && ENV.NETWORK === NETWORK.MAINNET,
+    (asset) => !!asset.pythPriceFeedId,
   )
 
   // Don't get oracle price if it's not mainnet and there is a poolId
   const [assetsWithOraclePrice, assetsWithoutOraclePrice] = partition(
     assetsWithoutPythPriceFeedId,
-    (asset) => (asset.hasOraclePrice && ENV.NETWORK === NETWORK.MAINNET) || !asset.poolId,
+    (asset) => asset.hasOraclePrice || !asset.poolId,
   )
   const assetsWithPoolId = assetsWithoutOraclePrice.filter((asset) => !!asset.poolId)
 
