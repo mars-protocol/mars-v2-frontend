@@ -1,6 +1,7 @@
 import { getParamsQueryClient } from 'api/cosmwasm-client'
+import getStakingAprs from 'api/hls/getAprs'
 import getAssetParams from 'api/params/getAssetParams'
-import { getStakingAssets } from 'utils/assets'
+import { getAssetByDenom, getStakingAssets } from 'utils/assets'
 import { BN } from 'utils/helpers'
 import { resolveHLSStrategies } from 'utils/resolvers'
 
@@ -17,8 +18,11 @@ export default async function getHLSStakingAssets() {
     client.totalDeposit({ denom: strategy.denoms.deposit }),
   )
 
+  const aprs = await getStakingAprs()
+
   return Promise.all(depositCaps$).then((depositCaps) => {
     return depositCaps.map((depositCap, index) => {
+      const borrowSymbol = getAssetByDenom(strategies[index].denoms.borrow)?.symbol
       return {
         ...strategies[index],
         depositCap: {
@@ -26,7 +30,7 @@ export default async function getHLSStakingAssets() {
           used: BN(depositCap.amount),
           max: BN(depositCap.cap),
         },
-        apy: 18, // TODO: Actually implement the APY here!
+        apy: (aprs.find((stakingApr) => stakingApr.denom === borrowSymbol)?.strideYield || 0) * 100,
       } as HLSStrategy
     })
   })
