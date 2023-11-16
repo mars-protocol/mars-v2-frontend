@@ -10,6 +10,7 @@ import MobilePage from 'pages/MobilePage'
 import PortfolioAccountPage from 'pages/PortfolioAccountPage'
 import PortfolioPage from 'pages/PortfolioPage'
 import TradePage from 'pages/TradePage'
+import { ENABLE_HLS } from 'utils/constants'
 
 export default function Routes() {
   return (
@@ -27,8 +28,8 @@ export default function Routes() {
         <Route path='/borrow' element={<BorrowPage />} />
         <Route path='/portfolio' element={<PortfolioPage />} />
         <Route path='/mobile' element={<MobilePage />} />
-        <Route path='/hls-staking' element={<HLSStakingPage />} />
-        <Route path='/hls-farm' element={<HLSFarmPage />} />
+        {ENABLE_HLS && <Route path='/hls-staking' element={<HLSStakingPage />} />}
+        {ENABLE_HLS && <Route path='/hls-farm' element={<HLSFarmPage />} />}
         <Route path='/' element={<TradePage />} />
         <Route path='/wallets/:address'>
           <Route path='trade' element={<TradePage />} />
@@ -36,8 +37,8 @@ export default function Routes() {
           <Route path='lend' element={<LendPage />} />
           <Route path='borrow' element={<BorrowPage />} />
           <Route path='portfolio' element={<PortfolioPage />} />
-          <Route path='hls-staking' element={<HLSStakingPage />} />
-          <Route path='hls-farm' element={<HLSFarmPage />} />
+          {ENABLE_HLS && <Route path='/hls-staking' element={<HLSStakingPage />} />}
+          {ENABLE_HLS && <Route path='/hls-farm' element={<HLSFarmPage />} />}
           <Route path='portfolio/:accountId'>
             <Route path='' element={<PortfolioAccountPage />} />
           </Route>
