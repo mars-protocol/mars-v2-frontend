@@ -8,7 +8,7 @@ export default function HLSFarmPage() {
   return (
     <div className='flex flex-wrap w-full gap-6'>
       <MigrationBanner />
-      <Tab tabs={HLS_TABS} activeTabIdx={0} />
+      <Tab tabs={HLS_TABS} activeTabIdx={1} />
       <HlsFarmIntro />
       <AvailableHLSVaults />
     </div>
