@@ -14,6 +14,7 @@ import { getPage, getRoute } from 'utils/route'
 
 interface Props {
   account: Account
+  isHls?: boolean
   lendingData: LendingMarketTableData[]
   borrowingData: BorrowMarketTableData[]
   hideCard?: boolean
@@ -32,6 +33,7 @@ export default function AccountBalancesTable(props: Props) {
     updatedAccount,
     lendingData,
     borrowingData,
+    isHls: props.isHls,
   })
 
   const columns = useAccountBalancesColumns()
@@ -72,13 +74,13 @@ export default function AccountBalancesTable(props: Props) {
   return (
     <Table
       title='Balances'
-      isBalancesTable={true}
       columns={columns}
       data={accountBalanceData}
       tableBodyClassName={classNames(tableBodyClassName, 'text-white/60')}
       initialSorting={[]}
       spacingClassName='p-2'
       hideCard={hideCard}
+      isBalancesTable
     />
   )
 }

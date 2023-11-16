@@ -16,6 +16,7 @@ interface Props {
   leverage: number
   onClickBtn: () => void
   positionValue: BigNumber
+  disabled: boolean
 }
 
 export default function Summary(props: Props) {
@@ -24,7 +25,7 @@ export default function Summary(props: Props) {
   if (!borrowAsset) return null
 
   return (
-    <div className='p-4 flex flex-col gap-4'>
+    <div id='item-3' className='p-4 flex flex-col gap-4'>
       <AssetSummary asset={props.collateralAsset} amount={props.depositAmount} />
       <AssetSummary asset={borrowAsset} amount={props.borrowAmount} isBorrow />
       <YourPosition
@@ -38,6 +39,7 @@ export default function Summary(props: Props) {
         text='Approve Funding Transaction'
         rightIcon={<ArrowRight />}
         className='mt-1'
+        disabled={props.disabled}
       />
     </div>
   )

@@ -18,7 +18,7 @@ interface Props {
 
 export default function YourPosition(props: Props) {
   const netApy = useMemo(
-    () => props.baseApy * props.leverage - props.borrowRate,
+    () => props.baseApy * props.leverage - props.borrowRate * (props.leverage - 1),
     [props.baseApy, props.borrowRate, props.leverage],
   )
   const apyItems = useMemo(
@@ -33,7 +33,7 @@ export default function YourPosition(props: Props) {
       },
       {
         title: 'Borrow Rate',
-        amount: props.borrowRate,
+        amount: props.borrowRate * (props.leverage - 1),
       },
     ],
     [props.baseApy, props.borrowRate, props.leverage],

@@ -66,6 +66,8 @@ export const calculateAccountApr = (
   borrowAssetsData: BorrowMarketTableData[],
   lendingAssetsData: LendingMarketTableData[],
   prices: BNCoin[],
+  hlsStrategies: HLSStrategy[],
+  isHls?: boolean,
 ): BigNumber => {
   const depositValue = calculateAccountValue('deposits', account, prices)
   const lendsValue = calculateAccountValue('lends', account, prices)
@@ -75,11 +77,30 @@ export const calculateAccountApr = (
   const totalNetValue = totalValue.minus(debtsValue)
 
   if (totalNetValue.isLessThanOrEqualTo(0)) return BN_ZERO
-  const { vaults, lends, debts } = account
+  const { vaults, lends, debts, deposits } = account
 
+  let totalDepositsInterestValue = BN_ZERO
   let totalLendsInterestValue = BN_ZERO
   let totalVaultsInterestValue = BN_ZERO
   let totalDebtInterestValue = BN_ZERO
+
+  if (isHls) {
+    deposits?.forEach((deposit) => {
+      const asset = getAssetByDenom(deposit.denom)
+      if (!asset) return BN_ZERO
+      const price = prices.find(byDenom(deposit.denom))?.amount ?? 0
+      const amount = BN(deposit.amount).shiftedBy(-asset.decimals)
+      const apy =
+        hlsStrategies.find((strategy) => strategy.denoms.deposit === deposit.denom)?.apy || 0
+
+      const positionInterest = amount
+        .multipliedBy(price)
+        .multipliedBy(convertApyToApr(apy, 365))
+        .dividedBy(100)
+
+      totalDepositsInterestValue = totalDepositsInterestValue.plus(positionInterest)
+    })
+  }
 
   lends?.forEach((lend) => {
     const asset = getAssetByDenom(lend.denom)
@@ -118,6 +139,7 @@ export const calculateAccountApr = (
   const totalInterestValue = totalLendsInterestValue
     .plus(totalVaultsInterestValue)
     .minus(totalDebtInterestValue)
+    .plus(totalDepositsInterestValue)
 
   return totalInterestValue.dividedBy(totalNetValue).times(100)
 }
@@ -262,10 +284,19 @@ export function getAccountSummaryStats(
   prices: BNCoin[],
   borrowAssets: BorrowMarketTableData[],
   lendingAssets: LendingMarketTableData[],
+  hlsStrategies: HLSStrategy[],
+  isHls?: boolean,
 ) {
   const [deposits, lends, debts, vaults] = getAccountPositionValues(account, prices)
   const positionValue = deposits.plus(lends).plus(vaults)
-  const apr = calculateAccountApr(account, borrowAssets, lendingAssets, prices)
+  const apr = calculateAccountApr(
+    account,
+    borrowAssets,
+    lendingAssets,
+    prices,
+    hlsStrategies,
+    isHls,
+  )
   const leverage = calculateAccountLeverage(account, prices)
 
   return {

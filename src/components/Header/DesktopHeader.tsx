@@ -16,14 +16,15 @@ export const menuTree: { pages: Page[]; label: string }[] = [
   { pages: ['trade'], label: 'Trade' },
   { pages: ['lend', 'farm'], label: 'Earn' },
   { pages: ['borrow'], label: 'Borrow' },
-  { pages: ['portfolio'], label: 'Portfolio' },
   ...(ENABLE_HLS ? [{ pages: ['hls-staking'] as Page[], label: 'High Leverage' }] : []),
+  { pages: ['portfolio'], label: 'Portfolio' },
 ]
 
 export default function DesktopHeader() {
   const address = useStore((s) => s.address)
   const focusComponent = useStore((s) => s.focusComponent)
   const isOracleStale = useStore((s) => s.isOracleStale)
+  const isHLS = useStore((s) => s.isHLS)
   const accountId = useAccountId()
 
   function handleCloseFocusMode() {
@@ -59,7 +60,7 @@ export default function DesktopHeader() {
           <div className='flex gap-4'>
             {isOracleStale && <OracleResyncButton />}
             {accountId && <RewardsCenter />}
-            {address && <AccountMenu />}
+            {address && !isHLS && <AccountMenu />}
             <Wallet />
             <Settings />
           </div>

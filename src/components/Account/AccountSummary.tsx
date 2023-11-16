@@ -25,6 +25,7 @@ import { calculateAccountBalanceValue, calculateAccountLeverage } from 'utils/ac
 
 interface Props {
   account: Account
+  isHls?: boolean
 }
 
 export default function AccountSummary(props: Props) {
@@ -124,7 +125,9 @@ export default function AccountSummary(props: Props) {
           {
             title: `Credit Account ${props.account.id} Composition`,
             renderContent: () =>
-              props.account ? <AccountComposition account={props.account} /> : null,
+              props.account ? (
+                <AccountComposition account={props.account} isHls={props.isHls} />
+              ) : null,
             isOpen: accountSummaryTabs[0],
             toggleOpen: (index: number) => handleToggle(index),
             renderSubTitle: () => <></>,
@@ -138,6 +141,7 @@ export default function AccountSummary(props: Props) {
                   borrowingData={borrowAssetsData}
                   lendingData={lendingAssetsData}
                   hideCard
+                  isHls={props.isHls}
                 />
               ) : null,
             isOpen: accountSummaryTabs[1],

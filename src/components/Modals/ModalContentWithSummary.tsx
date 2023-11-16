@@ -8,6 +8,7 @@ import Modal, { ModalProps } from 'components/Modal'
 import useStore from 'store'
 
 interface Props extends ModalProps {
+  isHls?: boolean
   account?: Account
   isContentCard?: boolean
   subHeader?: React.ReactNode
@@ -47,7 +48,9 @@ export default function ModalContentWithSummary(props: Props) {
     >
       {props.subHeader && props.subHeader}
       {modalContent(props.content, props.isContentCard, props.account)}
-      {props.account && <AccountSummary account={updatedAccount || props.account} />}
+      {props.account && (
+        <AccountSummary account={updatedAccount || props.account} isHls={props.isHls} />
+      )}
     </Modal>
   )
 }

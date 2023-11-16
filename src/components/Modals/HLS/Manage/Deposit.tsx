@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import React, { useCallback, useEffect, useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 
 import Button from 'components/Button'
 import Divider from 'components/Divider'
@@ -21,18 +21,25 @@ import { calculateAccountLeverage } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+import {
+  getDepositCapMessage,
+  getHealthFactorMessage,
+  getLiquidityMessage,
+  getNoBalanceMessage,
+} from 'utils/messages'
 
 interface Props {
-  account: Account
+  account: HLSAccountWithStrategy
   action: HlsStakingManageAction
-  borrowAsset: Asset
+  borrowAsset: BorrowAsset
   collateralAsset: Asset
 }
 
 export default function Deposit(props: Props) {
-  const { addedDeposits, addedDebts, updatedAccount, simulateHlsStakingDeposit } =
+  const { addedDeposits, addedDebts, updatedAccount, addedTrades, simulateHlsStakingDeposit } =
     useUpdatedAccount(props.account)
   const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
+
   const { data: prices } = usePrices()
   const [keepLeverage, toggleKeepLeverage] = useToggle(true)
   const collateralAssetAmountInWallet = BN(
@@ -55,6 +62,11 @@ export default function Deposit(props: Props) {
     [addedDeposits, props.collateralAsset.denom],
   )
 
+  const addedDepositFromSwap = useMemo(
+    () => addedTrades.find(byDenom(props.collateralAsset.denom))?.amount || BN_ZERO,
+    [addedTrades, props.collateralAsset.denom],
+  )
+
   const borrowCoin = useMemo(
     () =>
       BNCoin.fromDenomAndBigNumber(
@@ -64,25 +76,54 @@ export default function Deposit(props: Props) {
     [addedDebts, props.borrowAsset.denom],
   )
 
+  const warningMessages = useMemo(() => {
+    let messages: string[] = []
+    const capLeft = props.account.strategy.depositCap.max.minus(
+      props.account.strategy.depositCap.used,
+    )
+
+    if (capLeft.isLessThan(depositCoin.amount.plus(addedDepositFromSwap))) {
+      messages.push(getDepositCapMessage(props.collateralAsset.denom, capLeft, 'deposit'))
+    }
+
+    if (collateralAssetAmountInWallet.isZero()) {
+      messages.push(getNoBalanceMessage(props.collateralAsset.symbol))
+    }
+
+    return messages
+  }, [
+    addedDepositFromSwap,
+    collateralAssetAmountInWallet,
+    depositCoin.amount,
+    props.account.strategy.depositCap.max,
+    props.account.strategy.depositCap.used,
+    props.collateralAsset.denom,
+    props.collateralAsset.symbol,
+  ])
+
   const maxBorrowAmount = useMemo(
-    () => computeMaxBorrowAmount(props.collateralAsset.denom, 'deposit'),
-    [computeMaxBorrowAmount, props.collateralAsset.denom],
+    () => computeMaxBorrowAmount(props.borrowAsset.denom, 'deposit'),
+    [computeMaxBorrowAmount, props.borrowAsset.denom],
   )
 
-  useEffect(() => {
+  const borrowWarningMessages = useMemo(() => {
+    let messages: string[] = []
     if (borrowCoin.amount.isGreaterThan(maxBorrowAmount)) {
-      simulateHlsStakingDeposit(
-        BNCoin.fromDenomAndBigNumber(props.collateralAsset.denom, depositCoin.amount),
-        BNCoin.fromDenomAndBigNumber(props.borrowAsset.denom, maxBorrowAmount),
-      )
+      messages.push(getHealthFactorMessage(props.borrowAsset.denom, maxBorrowAmount, 'borrow'))
     }
+
+    const borrowLiquidity = props.borrowAsset.liquidity?.amount || BN_ZERO
+
+    if (borrowCoin.amount.isGreaterThan(borrowLiquidity)) {
+      messages.push(getLiquidityMessage(props.borrowAsset.denom, borrowLiquidity))
+    }
+
+    return messages
   }, [
     borrowCoin.amount,
-    depositCoin.amount,
     maxBorrowAmount,
     props.borrowAsset.denom,
-    props.collateralAsset.denom,
-    simulateHlsStakingDeposit,
+    props.borrowAsset.liquidity?.amount,
   ])
 
   const actions = useDepositActions({ depositCoin, borrowCoin })
@@ -146,6 +187,7 @@ export default function Deposit(props: Props) {
             {
               title: 'Additional Borrow Amount',
               amount: borrowCoin.amount.toNumber(),
+              warningMessages: borrowWarningMessages,
               options: {
                 suffix: ` ${props.borrowAsset.symbol}`,
                 abbreviated: true,
@@ -167,6 +209,7 @@ export default function Deposit(props: Props) {
     [
       borrowCoin.amount,
       borrowRate,
+      borrowWarningMessages,
       currentDebt,
       keepLeverage,
       props.borrowAsset.decimals,
@@ -183,6 +226,7 @@ export default function Deposit(props: Props) {
           max={collateralAssetAmountInWallet}
           onChange={handleOnChange}
           maxText='In Wallet'
+          warningMessages={warningMessages}
         />
         <Divider className='my-6' />
         <div className='flex flex-wrap items-center justify-between flex-1'>
@@ -197,7 +241,15 @@ export default function Deposit(props: Props) {
       </div>
       <div className='flex flex-col gap-4'>
         <SummaryItems items={items} />
-        <Button onClick={handleDeposit} text='Deposit' disabled={depositCoin.amount.isZero()} />
+        <Button
+          onClick={handleDeposit}
+          text='Deposit'
+          disabled={
+            depositCoin.amount.isZero() ||
+            !!warningMessages.length ||
+            !!borrowWarningMessages.length
+          }
+        />
       </div>
     </>
   )

@@ -270,6 +270,7 @@ export function useUpdatedAccount(account?: Account) {
     addedDeposits,
     addedDebts,
     addedLends,
+    addedTrades,
     leverage,
     removedDeposits,
     removedDebts,

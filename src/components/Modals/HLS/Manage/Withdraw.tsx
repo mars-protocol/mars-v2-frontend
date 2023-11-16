@@ -8,6 +8,7 @@ import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
+import { getHealthFactorMessage } from 'utils/messages'
 
 interface Props {
   account: Account
@@ -47,16 +48,30 @@ export default function Withdraw(props: Props) {
     })
   }, [props.account.id, removedDeposit, withdraw])
 
+  const withdrawAmount = useMemo(() => removedDeposit?.amount || BN_ZERO, [removedDeposit?.amount])
+
+  const warningMessages = useMemo(() => {
+    if (maxWithdrawAmount.isLessThan(withdrawAmount) || maxWithdrawAmount.isZero()) {
+      return [getHealthFactorMessage(props.collateralAsset.denom, maxWithdrawAmount, 'withdraw')]
+    }
+    return []
+  }, [maxWithdrawAmount, props.collateralAsset.denom, withdrawAmount])
+
   return (
     <>
       <TokenInputWithSlider
-        amount={removedDeposit?.amount || BN_ZERO}
+        amount={withdrawAmount}
         asset={props.collateralAsset}
         max={maxWithdrawAmount}
         onChange={handleChange}
         maxText='Available'
+        warningMessages={warningMessages}
       />
-      <Button onClick={onClick} text='Withdraw' disabled={removedDeposit?.amount?.isZero()} />
+      <Button
+        onClick={onClick}
+        text='Withdraw'
+        disabled={withdrawAmount.isZero() || warningMessages.length !== 0}
+      />
     </>
   )
 }

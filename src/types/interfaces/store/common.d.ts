@@ -14,6 +14,7 @@ interface CommonSlice {
   useMargin: boolean
   useAutoRepay: boolean
   isOracleStale: boolean
+  isHLS: boolean
 }
 
 interface FocusComponent {

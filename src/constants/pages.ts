@@ -4,6 +4,6 @@ export const EARN_TABS: Tab[] = [
 ]
 
 export const HLS_TABS: Tab[] = [
-  { page: 'hls-farm', name: 'Farm' },
   { page: 'hls-staking', name: 'Staking' },
+  { page: 'hls-farm', name: 'Farm' },
 ]
