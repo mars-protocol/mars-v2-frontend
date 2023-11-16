@@ -141,6 +141,7 @@ module.exports = {
       },
       height: {
         4.5: '18px',
+        9: '36px',
         15: '60px',
         50: '200px',
         55: '220px',

@@ -320,7 +320,9 @@ export default function SwapForm(props: Props) {
         />
       )}
       <Divider />
-      <OrderTypeSelector selected={selectedOrderType} onChange={setSelectedOrderType} />
+      <div className='px-3'>
+        <OrderTypeSelector selected={selectedOrderType} onChange={setSelectedOrderType} />
+      </div>
       <div className='flex flex-col gap-6 px-3 mt-6'>
         <AssetAmountInput
           label='Buy'

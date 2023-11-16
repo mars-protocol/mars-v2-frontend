@@ -47,7 +47,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     DEFAULT_SETTINGS.reduceMotion,
   )
   const accountDetailsExpanded = useStore((s) => s.accountDetailsExpanded)
-  const isFullWidth = location.pathname.includes('trade') || location.pathname === '/'
+  const isFullWidth =
+    location.pathname.includes('trade') ||
+    location.pathname === '/' ||
+    location.pathname.includes('perps')
   const accountId = useAccountId()
 
   return (
