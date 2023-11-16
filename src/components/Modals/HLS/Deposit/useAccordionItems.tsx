@@ -15,7 +15,12 @@ import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import { getDepositCapMessage, getHealthFactorMessage, getLiquidityMessage } from 'utils/messages'
+import {
+  getDepositCapMessage,
+  getHealthFactorMessage,
+  getLiquidityMessage,
+  getNoBalanceMessage,
+} from 'utils/messages'
 
 interface Props {
   apy: number
@@ -62,12 +67,23 @@ export default function useAccordionItems(props: Props) {
   }, [prices, props.borrowAmount, props.borrowAsset.denom, props.collateralAsset])
 
   const collateralWarningMessages = useMemo(() => {
-    if (props.depositAmount.isGreaterThan(depositCapLeft)) {
-      return [getDepositCapMessage(props.collateralAsset.denom, depositCapLeft, 'deposit')]
+    const messages: string[] = []
+    if (!props.walletCollateralAsset?.amount) {
+      messages.push(getNoBalanceMessage(props.collateralAsset.symbol))
     }
 
-    return []
-  }, [depositCapLeft, props.collateralAsset.denom, props.depositAmount])
+    if (props.depositAmount.isGreaterThan(depositCapLeft)) {
+      messages.push(getDepositCapMessage(props.collateralAsset.denom, depositCapLeft, 'deposit'))
+    }
+
+    return messages
+  }, [
+    depositCapLeft,
+    props.collateralAsset.denom,
+    props.collateralAsset.symbol,
+    props.depositAmount,
+    props.walletCollateralAsset?.amount,
+  ])
 
   const borrowWarningMessages = useMemo(() => {
     const messages: string[] = []

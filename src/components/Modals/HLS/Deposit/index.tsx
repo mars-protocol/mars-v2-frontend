@@ -24,10 +24,15 @@ export default function Controller(props: Props) {
   const [isOpen, toggleIsOpen] = useIsOpenArray(4, false)
   const address = useStore((s) => s.address)
   const { data: hlsAccounts } = useAccounts('high_levered_strategy', address)
-  const emptyHlsAccounts = useMemo(
-    () => hlsAccounts.filter((account) => isAccountEmpty(account)),
-    [hlsAccounts],
-  )
+  const emptyHlsAccounts = useMemo(() => {
+    const emptyAccounts = hlsAccounts.filter((account) => isAccountEmpty(account))
+
+    if (emptyAccounts.length > 0 && selectedAccount.id === 'default') {
+      setSelectedAccount(emptyAccounts[0])
+    }
+
+    return emptyAccounts
+  }, [hlsAccounts, selectedAccount])
   const walletCollateralAsset = useCurrentWalletBalance(props.collateralAsset.denom)
   const vault = useVault(props.vaultAddress || '')
 

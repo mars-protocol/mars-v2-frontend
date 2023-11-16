@@ -1,5 +1,5 @@
 export const EMPTY_ACCOUNT: Account = {
-  id: '',
+  id: 'default',
   kind: 'default',
   debts: [],
   deposits: [],
