@@ -19,7 +19,7 @@ export function getRoute(page: Page, address?: string, accountId?: string | null
 }
 
 export function getPage(pathname: string): Page {
-  const pages: Page[] = ['trade', 'borrow', 'farm', 'lend', 'portfolio']
+  const pages: Page[] = ['trade', 'perps', 'borrow', 'farm', 'lend', 'portfolio']
   const segments = pathname.split('/')
 
   const page = segments.find((segment) => pages.includes(segment as Page))

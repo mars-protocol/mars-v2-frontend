@@ -10,10 +10,11 @@ import Settings from 'components/Settings'
 import Wallet from 'components/Wallet'
 import useAccountId from 'hooks/useAccountId'
 import useStore from 'store'
-import { ENABLE_HLS } from 'utils/constants'
+import { ENABLE_HLS, ENABLE_PERPS } from 'utils/constants'
 
 export const menuTree: { pages: Page[]; label: string }[] = [
   { pages: ['trade'], label: 'Trade' },
+  ...(ENABLE_PERPS ? [{ pages: ['perps'] as Page[], label: 'Perps' }] : []),
   { pages: ['lend', 'farm'], label: 'Earn' },
   { pages: ['borrow'], label: 'Borrow' },
   { pages: ['portfolio'], label: 'Portfolio' },
