@@ -37,8 +37,8 @@ export default function Routes() {
           <Route path='lend' element={<LendPage />} />
           <Route path='borrow' element={<BorrowPage />} />
           <Route path='portfolio' element={<PortfolioPage />} />
-          {ENABLE_HLS && <Route path='/hls-staking' element={<HLSStakingPage />} />}
-          {ENABLE_HLS && <Route path='/hls-farm' element={<HLSFarmPage />} />}
+          {ENABLE_HLS && <Route path='hls-staking' element={<HLSStakingPage />} />}
+          {ENABLE_HLS && <Route path='hls-farm' element={<HLSFarmPage />} />}
           <Route path='portfolio/:accountId'>
             <Route path='' element={<PortfolioAccountPage />} />
           </Route>
