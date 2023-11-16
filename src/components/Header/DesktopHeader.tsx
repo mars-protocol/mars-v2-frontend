@@ -10,14 +10,17 @@ import Settings from 'components/Settings'
 import Wallet from 'components/Wallet'
 import useAccountId from 'hooks/useAccountId'
 import useStore from 'store'
+import { WalletID } from 'types/enums/wallet'
 import { ENABLE_HLS } from 'utils/constants'
+import { getGovernanceUrl } from 'utils/helpers'
 
-export const menuTree: { pages: Page[]; label: string }[] = [
+export const menuTree = (walletId: WalletID): MenuTreeEntry[] => [
   { pages: ['trade'], label: 'Trade' },
   { pages: ['lend', 'farm'], label: 'Earn' },
   { pages: ['borrow'], label: 'Borrow' },
   ...(ENABLE_HLS ? [{ pages: ['hls-staking'] as Page[], label: 'High Leverage' }] : []),
   { pages: ['portfolio'], label: 'Portfolio' },
+  { pages: ['governance'], label: 'Governance', externalUrl: getGovernanceUrl(walletId) },
 ]
 
 export default function DesktopHeader() {
@@ -37,9 +40,8 @@ export default function DesktopHeader() {
   return (
     <header
       className={classNames(
-        'fixed left-0 top-0 z-50 hidden w-full',
+        'fixed left-0 top-0 z-50 w-full',
         'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:h-full before:w-full before:rounded-sm before:backdrop-blur-sticky',
-        'lg:block',
       )}
     >
       <div
