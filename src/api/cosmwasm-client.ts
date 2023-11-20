@@ -1,13 +1,14 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 
 import { ENV } from 'constants/env'
+import { ICNSQueryClient } from 'types/classes/ICNSClient.client'
 import { MarsAccountNftQueryClient } from 'types/generated/mars-account-nft/MarsAccountNft.client'
 import { MarsCreditManagerQueryClient } from 'types/generated/mars-credit-manager/MarsCreditManager.client'
 import { MarsIncentivesQueryClient } from 'types/generated/mars-incentives/MarsIncentives.client'
-import { MarsOracleOsmosisQueryClient } from 'types/generated/mars-oracle-osmosis/MarsOracleOsmosis.client'
-import { MarsRedBankQueryClient } from 'types/generated/mars-red-bank/MarsRedBank.client'
 import { MarsMockVaultQueryClient } from 'types/generated/mars-mock-vault/MarsMockVault.client'
+import { MarsOracleOsmosisQueryClient } from 'types/generated/mars-oracle-osmosis/MarsOracleOsmosis.client'
 import { MarsParamsQueryClient } from 'types/generated/mars-params/MarsParams.client'
+import { MarsRedBankQueryClient } from 'types/generated/mars-red-bank/MarsRedBank.client'
 import { MarsSwapperOsmosisQueryClient } from 'types/generated/mars-swapper-osmosis/MarsSwapperOsmosis.client'
 
 let _cosmWasmClient: CosmWasmClient
@@ -18,6 +19,7 @@ let _redBankQueryClient: MarsRedBankQueryClient
 let _paramsQueryClient: MarsParamsQueryClient
 let _incentivesQueryClient: MarsIncentivesQueryClient
 let _swapperOsmosisClient: MarsSwapperOsmosisQueryClient
+let _ICNSQueryClient: ICNSQueryClient
 
 const getClient = async () => {
   try {
@@ -134,14 +136,28 @@ const getSwapperQueryClient = async () => {
   }
 }
 
+const getICNSQueryClient = async () => {
+  try {
+    if (!_ICNSQueryClient) {
+      const client = await getClient()
+      _ICNSQueryClient = new ICNSQueryClient(client)
+    }
+
+    return _ICNSQueryClient
+  } catch (error) {
+    throw error
+  }
+}
+
 export {
-  getClient,
   getAccountNftQueryClient,
+  getClient,
   getCreditManagerQueryClient,
-  getParamsQueryClient,
-  getOracleQueryClient,
-  getRedBankQueryClient,
-  getVaultQueryClient,
+  getICNSQueryClient,
   getIncentivesQueryClient,
+  getOracleQueryClient,
+  getParamsQueryClient,
+  getRedBankQueryClient,
   getSwapperQueryClient,
+  getVaultQueryClient,
 }
