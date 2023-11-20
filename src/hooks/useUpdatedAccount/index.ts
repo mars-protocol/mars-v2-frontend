@@ -16,6 +16,7 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountLeverage, cloneAccount } from 'utils/accounts'
 import { byDenom } from 'utils/array'
+import { SWAP_FEE_BUFFER } from 'utils/constants'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { getValueFromBNCoins } from 'utils/helpers'
 
@@ -184,6 +185,8 @@ export function useUpdatedAccount(account?: Account) {
       const additionalDebtValue = getCoinValue(borrowCoin, prices)
 
       const tradeOutputAmount = getCoinAmount(depositCoin.denom, additionalDebtValue, prices)
+        .times(1 - SWAP_FEE_BUFFER)
+        .integerValue()
       addTrades([BNCoin.fromDenomAndBigNumber(depositCoin.denom, tradeOutputAmount)])
     },
     [prices],
@@ -193,6 +196,8 @@ export function useUpdatedAccount(account?: Account) {
     (collateralDenom: string, debtDenom: string, repayAmount: BigNumber) => {
       const repayValue = getCoinValue(BNCoin.fromDenomAndBigNumber(debtDenom, repayAmount), prices)
       const removeDepositAmount = getCoinAmount(collateralDenom, repayValue, prices)
+        .times(1 + slippage)
+        .integerValue()
       removeDeposits([BNCoin.fromDenomAndBigNumber(collateralDenom, removeDepositAmount)])
       removeDebts([BNCoin.fromDenomAndBigNumber(debtDenom, repayAmount)])
     },

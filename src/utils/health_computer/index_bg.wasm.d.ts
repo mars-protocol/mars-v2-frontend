@@ -12,6 +12,7 @@ export function max_swap_estimate_js(
   e: number,
   f: number,
   g: number,
+  h: number,
 ): void
 export function allocate(a: number): number
 export function deallocate(a: number): void

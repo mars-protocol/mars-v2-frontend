@@ -15,6 +15,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { getAccountPositionValues } from 'utils/accounts'
 import { getHlsStakingChangeLevActions } from 'utils/actions'
 import { byDenom } from 'utils/array'
+import { SWAP_FEE_BUFFER } from 'utils/constants'
 import { getLeveragedApy } from 'utils/math'
 import { getDepositCapMessage, getHealthFactorMessage, getLiquidityMessage } from 'utils/messages'
 
@@ -45,8 +46,13 @@ export default function ChangeLeverage(props: Props) {
 
   const [currentDebt, setAmount] = useState(previousDebt)
   const maxBorrowAmount = useMemo(() => {
-    return computeMaxBorrowAmount(props.borrowAsset.denom, 'deposit').plus(previousDebt)
-  }, [computeMaxBorrowAmount, previousDebt, props.borrowAsset.denom])
+    return computeMaxBorrowAmount(props.borrowAsset.denom, {
+      swap: {
+        denom_out: props.collateralAsset.denom,
+        slippage: SWAP_FEE_BUFFER.toString(),
+      },
+    }).plus(previousDebt)
+  }, [computeMaxBorrowAmount, previousDebt, props.borrowAsset.denom, props.collateralAsset.denom])
 
   const onChangeAmount = useCallback(
     (currentDebt: BigNumber) => {
