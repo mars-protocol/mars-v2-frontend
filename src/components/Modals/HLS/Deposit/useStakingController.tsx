@@ -2,9 +2,12 @@ import { useCallback, useMemo } from 'react'
 
 import useDepositHlsVault from 'hooks/useDepositHlsVault'
 import useHealthComputer from 'hooks/useHealthComputer'
+import useSwapValueLoss from 'hooks/useSwapValueLoss'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
+import { SWAP_FEE_BUFFER } from 'utils/constants'
+import { BN } from 'utils/helpers'
 
 interface Props {
   borrowAsset: Asset
@@ -16,6 +19,10 @@ export default function useStakingController(props: Props) {
   const { collateralAsset, borrowAsset, selectedAccount } = props
   const addToStakingStrategy = useStore((s) => s.addToStakingStrategy)
 
+  const { data: swapValueLoss } = useSwapValueLoss(
+    props.borrowAsset.denom,
+    props.collateralAsset.denom,
+  )
   const {
     leverage,
     setDepositAmount,
@@ -33,9 +40,13 @@ export default function useStakingController(props: Props) {
   const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
 
   const maxBorrowAmount = useMemo(() => {
-    // TODO: Perhaps we need a specific target for this -> target = swap
-    return computeMaxBorrowAmount(props.borrowAsset.denom, 'deposit')
-  }, [computeMaxBorrowAmount, props.borrowAsset.denom])
+    return computeMaxBorrowAmount(props.borrowAsset.denom, {
+      swap: {
+        denom_out: props.collateralAsset.denom,
+        slippage: BN(swapValueLoss).plus(SWAP_FEE_BUFFER).toString(),
+      },
+    })
+  }, [computeMaxBorrowAmount, props.borrowAsset.denom, props.collateralAsset.denom, swapValueLoss])
 
   const execute = useCallback(() => {
     useStore.setState({ hlsModal: null })

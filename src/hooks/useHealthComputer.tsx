@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useAssetParams from 'hooks/useAssetParams'
+import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import useVaultConfigs from 'hooks/useVaultConfigs'
 import {
@@ -15,7 +18,6 @@ import {
 } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 import { convertAccountToPositions } from 'utils/accounts'
 import { getAssetByDenom } from 'utils/assets'
-import { LTV_BUFFER } from 'utils/constants'
 import {
   BorrowTarget,
   compute_health_js,
@@ -24,7 +26,9 @@ import {
   max_withdraw_estimate_js,
   SwapKind,
 } from 'utils/health_computer'
-import { BN } from 'utils/helpers' // Pyth returns prices with up to 32 decimals. Javascript only supports 18 decimals. So we need to scale by 14 t
+import { BN } from 'utils/helpers'
+
+import { SWAP_FEE_BUFFER } from '../utils/constants'
 
 // Pyth returns prices with up to 32 decimals. Javascript only supports 18 decimals. So we need to scale by 14 t
 // avoid "too many decimals" errors.
@@ -34,6 +38,7 @@ export default function useHealthComputer(account?: Account) {
   const { data: prices } = usePrices()
   const { data: assetParams } = useAssetParams()
   const { data: vaultConfigs } = useVaultConfigs()
+  const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
 
   const [healthFactor, setHealthFactor] = useState(0)
   const positions: Positions | null = useMemo(() => {
@@ -147,9 +152,7 @@ export default function useHealthComputer(account?: Account) {
     (denom: string, target: BorrowTarget) => {
       if (!healthComputer) return BN_ZERO
       try {
-        return BN(max_borrow_estimate_js(healthComputer, denom, target))
-          .multipliedBy(LTV_BUFFER)
-          .integerValue()
+        return BN(max_borrow_estimate_js(healthComputer, denom, target)).integerValue()
       } catch (err) {
         console.error(err)
         return BN_ZERO
@@ -175,12 +178,20 @@ export default function useHealthComputer(account?: Account) {
     (from: string, to: string, kind: SwapKind) => {
       if (!healthComputer) return BN_ZERO
       try {
-        return BN(max_swap_estimate_js(healthComputer, from, to, kind))
+        return BN(
+          max_swap_estimate_js(
+            healthComputer,
+            from,
+            to,
+            kind,
+            BN(slippage).plus(SWAP_FEE_BUFFER).toString(),
+          ),
+        )
       } catch {
         return BN_ZERO
       }
     },
-    [healthComputer],
+    [healthComputer, slippage],
   )
   const health = useMemo(() => {
     const convertedHealth = BN(Math.log(healthFactor))

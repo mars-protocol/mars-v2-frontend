@@ -5,9 +5,12 @@ import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
+import useSwapValueLoss from 'hooks/useSwapValueLoss'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getCoinValue } from 'utils/formatters'
+
+import { SWAP_FEE_BUFFER } from '../utils/constants'
 
 interface Props {
   borrowDenom: string
@@ -16,6 +19,8 @@ interface Props {
 export default function useDepositHlsVault(props: Props) {
   const { data: prices } = usePrices()
   const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
+
+  const { data: valueLossPercentage } = useSwapValueLoss(props.borrowDenom, props.collateralDenom)
 
   const [depositAmount, setDepositAmount] = useState<BigNumber>(BN_ZERO)
   const [borrowAmount, setBorrowAmount] = useState<BigNumber>(BN_ZERO)
@@ -42,9 +47,24 @@ export default function useDepositHlsVault(props: Props) {
 
     return {
       positionValue: collateralValue.plus(borrowValue),
-      leverage: borrowValue.dividedBy(collateralValue).plus(1).toNumber() || 1,
+      leverage:
+        borrowValue
+          .dividedBy(
+            collateralValue
+              .plus(borrowValue.times(1 - valueLossPercentage - SWAP_FEE_BUFFER))
+              .minus(borrowValue),
+          )
+          .plus(1)
+          .toNumber() || 1,
     }
-  }, [borrowAmount, depositAmount, prices, props.collateralDenom, props.borrowDenom])
+  }, [
+    props.collateralDenom,
+    props.borrowDenom,
+    depositAmount,
+    prices,
+    borrowAmount,
+    valueLossPercentage,
+  ])
 
   const actions: Action[] = useMemo(
     () => [
