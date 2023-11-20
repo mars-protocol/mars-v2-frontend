@@ -18,6 +18,7 @@ import {
 } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 import { convertAccountToPositions } from 'utils/accounts'
 import { getAssetByDenom } from 'utils/assets'
+import { SWAP_FEE_BUFFER } from 'utils/constants'
 import {
   BorrowTarget,
   compute_health_js,
@@ -27,8 +28,6 @@ import {
   SwapKind,
 } from 'utils/health_computer'
 import { BN } from 'utils/helpers'
-
-import { SWAP_FEE_BUFFER } from '../utils/constants'
 
 // Pyth returns prices with up to 32 decimals. Javascript only supports 18 decimals. So we need to scale by 14 t
 // avoid "too many decimals" errors.

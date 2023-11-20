@@ -8,9 +8,8 @@ import usePrices from 'hooks/usePrices'
 import useSwapValueLoss from 'hooks/useSwapValueLoss'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { SWAP_FEE_BUFFER } from 'utils/constants'
 import { getCoinValue } from 'utils/formatters'
-
-import { SWAP_FEE_BUFFER } from '../utils/constants'
 
 interface Props {
   borrowDenom: string
