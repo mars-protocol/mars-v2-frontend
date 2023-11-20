@@ -7,3 +7,4 @@ type Page =
   | 'portfolio/{accountId}'
   | 'hls-farm'
   | 'hls-staking'
+  | 'governance'

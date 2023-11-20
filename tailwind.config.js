@@ -35,6 +35,18 @@ module.exports = {
     'fill-martian-red',
     'fill-grey-light',
     'w-2',
+    '@nav-0/navigation:inline-block',
+    '@nav-1/navigation:inline-block',
+    '@nav-2/navigation:inline-block',
+    '@nav-3/navigation:inline-block',
+    '@nav-4/navigation:inline-block',
+    '@nav-5/navigation:inline-block',
+    '@nav-0/navigation:hidden',
+    '@nav-1/navigation:hidden',
+    '@nav-2/navigation:hidden',
+    '@nav-3/navigation:hidden',
+    '@nav-4/navigation:hidden',
+    '@nav-5/navigation:hidden',
   ],
   theme: {
     extend: {
@@ -121,6 +133,14 @@ module.exports = {
         'warning-bg': '#FEC84B',
         white: '#FFF',
         pink: '#de587f',
+      },
+      containers: {
+        'nav-0': '100px',
+        'nav-1': '160px',
+        'nav-2': '250px',
+        'nav-3': '400px',
+        'nav-4': '500px',
+        'nav-5': '600px',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
@@ -278,6 +298,7 @@ module.exports = {
   },
   plugins: [
     require('tailwind-scrollbar-hide'),
+    require('@tailwindcss/container-queries'),
     plugin(function ({ addBase, addUtilities, theme }) {
       addBase({
         h1: { fontSize: '61px', lineHeight: '80px', fontWeight: theme('fontWeight.light') },
