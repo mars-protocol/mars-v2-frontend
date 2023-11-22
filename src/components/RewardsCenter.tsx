@@ -81,6 +81,8 @@ export default function RewardsCenter() {
     }
   }, [accountId, claimTx])
 
+  if (totalRewardsCoin.amount.isZero()) return null
+
   return (
     <div className={'relative'}>
       <Button

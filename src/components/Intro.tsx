@@ -32,13 +32,13 @@ function IntroBackground(props: { bg: Props['bg'] }) {
 
 export default function Intro(props: Props) {
   const showTutorial = useStore((s) => s.tutorial)
-  const isHLS = useStore((s) => s.isHLS)
+  const currentAppSection = useStore((s) => s.currentAppSection)
   if (!showTutorial) return null
   return (
     <Card
       className={classNames(
         'relative w-full p-8 bg-cover h-55',
-        isHLS ? 'bg-intro-hls' : 'bg-intro',
+        currentAppSection === 'hls' ? 'bg-intro-hls' : 'bg-intro',
       )}
       contentClassName='flex w-full h-full flex-col justify-between'
     >

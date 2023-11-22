@@ -8,3 +8,7 @@ type Page =
   | 'hls-farm'
   | 'hls-staking'
   | 'governance'
+  | 'stats'
+  | 'stats-farm'
+  | 'stats-lend-borrow'
+  | 'stats-accounts'
