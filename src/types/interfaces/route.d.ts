@@ -11,4 +11,4 @@ type Page =
   | 'stats'
   | 'stats-farm'
   | 'stats-lend-borrow'
-  | 'stats-accounts'
+  | 'stats-additional'

@@ -19,6 +19,11 @@ export const DEFAULT_PORTFOLIO_STATS = [
   { title: null, sub: 'APR' },
   { title: null, sub: 'Account Leverage' },
 ]
+export const DEFAULT_ADDITIONAL_STATS = [
+  { head: 'Total TVL', title: null, sub: 'Last Observed on 28 Jan 2023' },
+  { head: 'Total Credit Accounts', title: null, sub: '494 new credit accounts this week' },
+  { head: 'Total Fees Generated', title: null, sub: 'Includes liquidation, swap and borrow fees' },
+]
 
 export const ENABLE_HLS = true
 export const ENABLE_PERPS = false

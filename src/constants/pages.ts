@@ -12,5 +12,5 @@ export const STATS_TABS: Tab[] = [
   { page: 'stats', name: 'Trading' },
   { page: 'stats-farm', name: 'Farm' },
   { page: 'stats-lend-borrow', name: 'Lend & Borrow' },
-  { page: 'stats-accounts', name: 'Accounts' },
+  { page: 'stats-additional', name: 'Additional' },
 ]

@@ -2,7 +2,7 @@ import { useLocation } from 'react-router-dom'
 
 import Tab from 'components/Earn/Tab'
 import MigrationBanner from 'components/MigrationBanner'
-import StatsAccounts from 'components/Stats/StatsAccounts'
+import StatsAccounts from 'components/Stats/StatsAdditional'
 import StatsFarm from 'components/Stats/StatsFarm'
 import StatsLendAndBorrow from 'components/Stats/StatsLendAndBorrow'
 import StatsTrading from 'components/Stats/StatsTrading'
@@ -15,7 +15,7 @@ function getStatsComponent(page: Page) {
       return <StatsFarm />
     case 'stats-lend-borrow':
       return <StatsLendAndBorrow />
-    case 'stats-accounts':
+    case 'stats-additional':
       return <StatsAccounts />
     default:
       return <StatsTrading />
@@ -28,9 +28,9 @@ export default function StatsPage() {
   const activeIndex = STATS_TABS.findIndex((tab) => tab.page === page)
 
   return (
-    <div className='flex flex-wrap w-full gap-6'>
+    <div className='flex flex-wrap w-full'>
       <MigrationBanner />
-      <Tab tabs={STATS_TABS} activeTabIdx={activeIndex === -1 ? 0 : activeIndex} />
+      <Tab tabs={STATS_TABS} activeTabIdx={activeIndex === -1 ? 0 : activeIndex} className='mb-8' />
       {getStatsComponent(page)}
     </div>
   )

@@ -30,7 +30,7 @@ export function getPage(pathname: string): Page {
     'stats',
     'stats-farm',
     'stats-lend-borrow',
-    'stats-accounts',
+    'stats-additional',
   ]
   const segments = pathname.split('/')
 

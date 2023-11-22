@@ -10,6 +10,7 @@ const underlineClasses =
 interface Props {
   tabs: Tab[]
   activeTabIdx: number
+  className?: string
 }
 
 export default function Tab(props: Props) {
@@ -17,7 +18,7 @@ export default function Tab(props: Props) {
   const { address } = useParams()
 
   return (
-    <div className='relative w-full'>
+    <div className={classNames(props.className, 'relative w-full')}>
       {props.tabs.map((tab, index) => (
         <NavLink
           key={tab.page}

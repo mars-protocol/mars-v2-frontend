@@ -34,7 +34,7 @@ export default function Routes() {
         <Route path='/stats' element={<StatsPage />} />
         <Route path='/stats-farm' element={<StatsPage />} />
         <Route path='/stats-lend-borrow' element={<StatsPage />} />
-        <Route path='/stats-accounts' element={<StatsPage />} />
+        <Route path='/stats-additional' element={<StatsPage />} />
         <Route path='/' element={<TradePage />} />
         <Route path='/wallets/:address'>
           <Route path='trade' element={<TradePage />} />
@@ -47,7 +47,7 @@ export default function Routes() {
           <Route path='stats' element={<StatsPage />} />
           <Route path='stats-farm' element={<StatsPage />} />
           <Route path='stats-lend-borrow' element={<StatsPage />} />
-          <Route path='stats-accounts' element={<StatsPage />} />
+          <Route path='stats-additional' element={<StatsPage />} />
           <Route path='portfolio/:accountId'>
             <Route path='' element={<PortfolioAccountPage />} />
           </Route>
