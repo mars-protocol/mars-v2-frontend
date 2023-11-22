@@ -126,7 +126,7 @@ module.exports = {
         'orb-primary-stats': '#597DFC',
         'orb-secondary': '#530781',
         'orb-secondary-hls': '#a03b45',
-        'orb-secondary-stats': '#FF00C7',
+        'orb-secondary-stats': '#00144e',
         'orb-tertiary': '#FF00C7',
         'orb-tertiary-hls': '#FB9562',
         'orb-tertiary-stats': '#6677FF',
