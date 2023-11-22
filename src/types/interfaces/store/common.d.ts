@@ -18,7 +18,7 @@ interface CommonSlice {
   useMargin: boolean
   useAutoRepay: boolean
   isOracleStale: boolean
-  currentAppSection: 'app' | 'hls' | 'stats'
+  currentAppSection: string
 }
 
 interface FocusComponent {
