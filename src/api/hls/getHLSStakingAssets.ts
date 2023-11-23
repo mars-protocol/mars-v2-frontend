@@ -7,12 +7,15 @@ import { resolveHLSStrategies } from 'utils/resolvers'
 
 export default async function getHLSStakingAssets() {
   const stakingAssetDenoms = getStakingAssets().map((asset) => asset.denom)
+  console.log('stakingAssetDenoms', stakingAssetDenoms)
   const assetParams = await getAssetParams()
+  console.log('assetParams', assetParams)
   const HLSAssets = assetParams
     .filter((asset) => stakingAssetDenoms.includes(asset.denom))
     .filter((asset) => asset.credit_manager.hls)
+  console.log('HLSAssets', HLSAssets)
   const strategies = resolveHLSStrategies('coin', HLSAssets)
-
+  console.log('strategies', strategies)
   const client = await getParamsQueryClient()
   const depositCaps$ = strategies.map((strategy) =>
     client.totalDeposit({ denom: strategy.denoms.deposit }),
