@@ -32,6 +32,7 @@ export default function DepositCap(props: Props) {
   if (props.isLoading) return <Loading />
   const { cap, asset } = props.data
   const percent = cap.used.dividedBy(cap.max).multipliedBy(100)
+  const depositCapUsed = Math.min(percent.toNumber(), 100)
 
   return (
     <TitleAndSubCell
@@ -45,7 +46,7 @@ export default function DepositCap(props: Props) {
       }
       sub={
         <FormattedNumber
-          amount={percent.toNumber()}
+          amount={depositCapUsed}
           options={{ minDecimals: 2, maxDecimals: 2, suffix: '% used' }}
           animate
         />
