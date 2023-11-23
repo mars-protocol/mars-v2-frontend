@@ -59,7 +59,7 @@ function useLendingMarketAssetsTableData(): {
       availableAssets,
       allAssets: [...accountLentAssets, ...availableAssets],
     }
-  }, [markets, marketLiquidities, accountLentAmounts, convertAmount])
+  }, [markets, marketLiquidities, accountLentAmounts, marketDeposits, convertAmount])
 }
 
 export default useLendingMarketAssetsTableData

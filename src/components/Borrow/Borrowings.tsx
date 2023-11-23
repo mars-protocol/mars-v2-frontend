@@ -1,5 +1,3 @@
-import React from 'react'
-
 import AvailableBorrowingsTable from 'components/Borrow/Table/AvailableBorrowingsTable'
 import DepositedBorrowingsTable from 'components/Borrow/Table/DepositedBorrowingsTable'
 import { BN_ZERO } from 'constants/math'
@@ -31,6 +29,11 @@ function Fallback() {
     marketLiquidityRate: 0,
     marketLiquidityAmount: BN_ZERO,
     marketLiquidationThreshold: 0,
+    cap: {
+      max: BN_ZERO,
+      used: BN_ZERO,
+      denom: asset.denom,
+    },
   }))
 
   return <AvailableBorrowingsTable data={data} isLoading />

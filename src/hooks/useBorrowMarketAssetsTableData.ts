@@ -1,5 +1,6 @@
 import useSWR from 'swr'
 
+import { BN_ZERO } from 'constants/math'
 import useBorrowEnabledMarkets from 'hooks/useBorrowEnabledMarkets'
 import useCurrentAccountDebts from 'hooks/useCurrentAccountDebts'
 import useMarketBorrowings from 'hooks/useMarketBorrowings'
@@ -44,6 +45,11 @@ export default function useBorrowMarketAssetsTableData(suspense = true) {
           marketLiquidityRate: liquidityRate,
           marketLiquidationThreshold: liquidationThreshold,
           marketMaxLtv: maxLtv,
+          cap: {
+            denom: borrow.denom,
+            max: BN_ZERO,
+            used: BN_ZERO,
+          },
         }
         ;(borrowMarketAsset.debt ? accountBorrowedAssets : availableAssets).push(borrowMarketAsset)
       })
