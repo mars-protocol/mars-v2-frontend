@@ -136,8 +136,8 @@ module.exports = {
       },
       containers: {
         'nav-0': '100px',
-        'nav-1': '160px',
-        'nav-2': '250px',
+        'nav-1': '185px',
+        'nav-2': '270px',
         'nav-3': '400px',
         'nav-4': '500px',
         'nav-5': '600px',
