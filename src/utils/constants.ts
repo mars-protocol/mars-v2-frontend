@@ -22,3 +22,4 @@ export const DEFAULT_PORTFOLIO_STATS = [
 
 export const ENABLE_HLS = false
 export const ENABLE_PERPS = false
+export const ENABLE_AUTO_REPAY = false
