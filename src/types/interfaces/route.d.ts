@@ -1,5 +1,6 @@
 type Page =
   | 'trade'
+  | 'perps'
   | 'borrow'
   | 'farm'
   | 'lend'
