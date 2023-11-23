@@ -101,6 +101,7 @@ interface LendingMarketTableData extends MarketTableData {
   accountLentAmount?: string
   accountLentValue?: BigNumber
   borrowEnabled: boolean
+  cap: DepositCap
 }
 
 interface MarketTableData {
@@ -110,7 +111,6 @@ interface MarketTableData {
   marketLiquidityRate: number
   marketLiquidityAmount: BigNumber
   marketLiquidationThreshold: number
-  cap: DepositCap
 }
 
 interface HLSStrategy extends HLSStrategyNoCap {

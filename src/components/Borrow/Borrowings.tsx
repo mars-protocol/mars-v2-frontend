@@ -29,11 +29,6 @@ function Fallback() {
     marketLiquidityRate: 0,
     marketLiquidityAmount: BN_ZERO,
     marketLiquidationThreshold: 0,
-    cap: {
-      max: BN_ZERO,
-      used: BN_ZERO,
-      denom: asset.denom,
-    },
   }))
 
   return <AvailableBorrowingsTable data={data} isLoading />
