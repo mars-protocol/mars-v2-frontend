@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react'
+import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
 
 import { OverlayMark } from 'components/Icons'
@@ -34,7 +34,7 @@ export default function Slider(props: Props) {
   const nodeRef = useRef(null)
   const [isDragging, setIsDragging] = useToggle()
 
-  function handleSliderRect() {
+  const handleSliderRect = useCallback(() => {
     const leftCap = ref.current?.getBoundingClientRect().left ?? 0
     const rightCap = ref.current?.getBoundingClientRect().right ?? 0
     const newSliderWidth = ref.current?.getBoundingClientRect().width ?? 0
@@ -50,7 +50,7 @@ export default function Slider(props: Props) {
         width: newSliderWidth,
       })
     }
-  }
+  }, [sliderRect.left, sliderRect.right, sliderRect.width])
 
   function handleDrag(e: any) {
     if (!isDragging) {
@@ -107,7 +107,7 @@ export default function Slider(props: Props) {
 
   useEffect(() => {
     handleSliderRect()
-  }, [])
+  }, [handleSliderRect])
 
   return (
     <div>

@@ -6,6 +6,7 @@ import useBorrowAsset from 'hooks/useBorrowAsset'
 interface Props {
   asset: Asset
   positionValue: BigNumber
+  apy: number
 }
 
 export default function LeverageSummary(props: Props) {
@@ -13,11 +14,10 @@ export default function LeverageSummary(props: Props) {
 
   const items: SummaryItem[] = useMemo(() => {
     return [
-      // TODO: Get APY numbers
       {
         title: 'APY',
-        amount: 0,
-        options: { suffix: '%', minDecimals: 1, maxDecimals: 1 },
+        amount: props.apy,
+        options: { suffix: '%', minDecimals: 2, maxDecimals: 2 },
       },
       {
         title: `Borrow APR ${props.asset.symbol}`,
@@ -30,7 +30,7 @@ export default function LeverageSummary(props: Props) {
         options: { prefix: '$' },
       },
     ]
-  }, [borrowAsset?.borrowRate, props.asset.symbol, props.positionValue])
+  }, [borrowAsset?.borrowRate, props.apy, props.asset.symbol, props.positionValue])
 
   return <SummaryItems items={items} />
 }

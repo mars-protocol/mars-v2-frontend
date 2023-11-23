@@ -3,6 +3,7 @@ import React from 'react'
 import Modal from 'components/Modal'
 import Content from 'components/Modals/HLS/Deposit'
 import Header from 'components/Modals/HLS/Header'
+import useBorrowAsset from 'hooks/useBorrowAsset'
 import useStore from 'store'
 import { getAssetByDenom } from 'utils/assets'
 
@@ -12,9 +13,8 @@ export default function HlsModalController() {
   const primaryAsset = getAssetByDenom(
     modal?.vault?.denoms.primary || modal?.strategy?.denoms.deposit || '',
   )
-  const secondaryAsset = getAssetByDenom(
-    modal?.vault?.denoms.secondary || modal?.strategy?.denoms.borrow || '',
-  )
+
+  const secondaryAsset = useBorrowAsset(modal?.strategy?.denoms.borrow || '')
 
   if (!primaryAsset || !secondaryAsset) return null
 
@@ -41,7 +41,7 @@ export default function HlsModalController() {
 
 interface Props {
   primaryAsset: Asset
-  secondaryAsset: Asset
+  secondaryAsset: BorrowAsset
   strategy?: HLSStrategy
   vaultAddress: string | null
 }

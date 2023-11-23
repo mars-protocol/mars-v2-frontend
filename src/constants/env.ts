@@ -19,6 +19,7 @@ interface EnvironmentVariables {
   PYTH_ENDPOINT: string
   MAINNET_REST_API: string
   WALLET_CONNECT_ID: string
+  STRIDE_APRS: string
 }
 
 export const ENV: EnvironmentVariables = {
@@ -42,4 +43,5 @@ export const ENV: EnvironmentVariables = {
   PYTH_ENDPOINT: process.env.NEXT_PUBLIC_PYTH_ENDPOINT || '',
   MAINNET_REST_API: process.env.NEXT_PUBLIC_MAINNET_REST || '',
   WALLET_CONNECT_ID: process.env.NEXT_PUBLIC_WALLET_CONNECT_ID || '',
+  STRIDE_APRS: process.env.NEXT_PUBLIC_STRIDE_APRS || '',
 }

@@ -157,6 +157,9 @@ export function getEnterVaultActions(
   secondaryCoin: BNCoin,
   slippage: number,
 ): Action[] {
+  primaryCoin.amount = primaryCoin.amount.times(0.8).integerValue()
+  secondaryCoin.amount = secondaryCoin.amount.times(0.8).integerValue()
+
   return [
     {
       provide_liquidity: {

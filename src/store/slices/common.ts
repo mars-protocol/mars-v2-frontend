@@ -15,5 +15,6 @@ export default function createCommonSlice(set: SetState<CommonSlice>, get: GetSt
     useMargin: true,
     useAutoRepay: true,
     isOracleStale: false,
+    isHLS: false,
   }
 }

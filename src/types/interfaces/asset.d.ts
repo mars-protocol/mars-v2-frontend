@@ -125,3 +125,14 @@ interface HLSStrategyNoCap {
 interface DepositedHLSStrategy extends HLSStrategy {
   depositedAmount: BigNumber
 }
+
+interface StakingApr {
+  chainId: string
+  currentYield: number
+  denom: string
+  fees: number
+  name: string
+  strideYield: number
+  unbondingDelay: number
+  unbondingPeriod: number
+}

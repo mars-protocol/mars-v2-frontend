@@ -42,17 +42,11 @@ export default function useVaultController(props: Props) {
   const { updatedAccount, simulateVaultDeposit } = useUpdatedAccount(selectedAccount)
   const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
 
-  const maxBorrowAmount = useMemo(
-    // TODO: Check that the amount is actually the HLS amount
-    // TODO: Add check for market liquidity
-    // TODO: Add check for deposit cap
-    () => {
-      return computeMaxBorrowAmount(props.borrowAsset.denom, {
-        vault: { address: props.vault?.address },
-      }).plus(borrowAmount)
-    },
-    [borrowAmount, computeMaxBorrowAmount, props.borrowAsset.denom, props.vault?.address],
-  )
+  const maxBorrowAmount = useMemo(() => {
+    return computeMaxBorrowAmount(props.borrowAsset.denom, {
+      vault: { address: props.vault?.address },
+    }).plus(borrowAmount)
+  }, [borrowAmount, computeMaxBorrowAmount, props.borrowAsset.denom, props.vault?.address])
 
   const execute = useCallback(() => {
     depositIntoVault({

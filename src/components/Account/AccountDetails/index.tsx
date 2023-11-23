@@ -23,6 +23,7 @@ import useAccounts from 'hooks/useAccounts'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useHealthComputer from 'hooks/useHealthComputer'
+import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
@@ -36,14 +37,16 @@ import {
 
 export default function AccountDetailsController() {
   const address = useStore((s) => s.address)
+  const isHLS = useStore((s) => s.isHLS)
   const { data: accounts, isLoading } = useAccounts('default', address)
   const { data: accountIds } = useAccountIds(address, false)
   const accountId = useAccountId()
+
   const account = useCurrentAccount()
   const focusComponent = useStore((s) => s.focusComponent)
   const isOwnAccount = accountId && accountIds?.includes(accountId)
 
-  if (!address || focusComponent || !isOwnAccount) return null
+  if (!address || focusComponent || !isOwnAccount || isHLS) return null
 
   if ((isLoading && accountId && !focusComponent) || !account) return <Skeleton />
 
@@ -57,6 +60,7 @@ interface Props {
 function AccountDetails(props: Props) {
   const { account } = props
   const location = useLocation()
+  const { data: hlsStrategies } = useHLSStakingAssets()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
@@ -94,8 +98,15 @@ function AccountDetails(props: Props) {
   )
   const apr = useMemo(
     () =>
-      calculateAccountApr(updatedAccount ?? account, borrowAssetsData, lendingAssetsData, prices),
-    [account, borrowAssetsData, lendingAssetsData, prices, updatedAccount],
+      calculateAccountApr(
+        updatedAccount ?? account,
+        borrowAssetsData,
+        lendingAssetsData,
+        prices,
+        hlsStrategies,
+        account.kind === 'high_levered_strategy',
+      ),
+    [account, borrowAssetsData, hlsStrategies, lendingAssetsData, prices, updatedAccount],
   )
   const isFullWidth = location.pathname.includes('trade') || location.pathname === '/'
 

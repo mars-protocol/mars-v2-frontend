@@ -18,6 +18,11 @@ interface ChainInfo extends Network {
   explorerName: string
 }
 
+interface ICNSResult {
+  names: string[]
+  primary_name: string
+}
+
 interface WalletClient {
   sign: (options: {
     messages: import('@delphi-labs/shuttle-react').TransactionMsg<any>[]

@@ -14,7 +14,7 @@ import { AvailableOrderType } from 'components/Trade/TradeModule/SwapForm/OrderT
 import TradeSummary from 'components/Trade/TradeModule/SwapForm/TradeSummary'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import { BN_ZERO, MARGIN_TRADE_BUFFER } from 'constants/math'
+import { BN_ZERO } from 'constants/math'
 import useAutoLend from 'hooks/useAutoLend'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useHealthComputer from 'hooks/useHealthComputer'
@@ -114,9 +114,11 @@ export default function SwapForm(props: Props) {
 
   const [maxSellAmount, sellSideMarginThreshold, marginRatio] = useMemo(() => {
     const maxAmount = computeMaxSwapAmount(sellAsset.denom, buyAsset.denom, 'default')
-    const maxAmountOnMargin = computeMaxSwapAmount(sellAsset.denom, buyAsset.denom, 'margin')
-      .multipliedBy(MARGIN_TRADE_BUFFER)
-      .integerValue()
+    const maxAmountOnMargin = computeMaxSwapAmount(
+      sellAsset.denom,
+      buyAsset.denom,
+      'margin',
+    ).integerValue()
     const marginRatio = maxAmount.dividedBy(maxAmountOnMargin)
 
     estimateExactIn(

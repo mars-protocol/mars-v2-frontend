@@ -181,6 +181,7 @@ export default function AccountFundContent(props: Props) {
                 balances={balances}
                 maxText='Max'
                 disabled={isConfirming}
+                warningMessages={[]}
               />
             </div>
           )
