@@ -27,7 +27,7 @@ import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { defaultFee } from 'utils/constants'
+import { defaultFee, ENABLE_AUTO_REPAY } from 'utils/constants'
 import { getCapLeftWithBuffer } from 'utils/generic'
 import { asyncThrottle, BN } from 'utils/helpers'
 
@@ -50,7 +50,9 @@ export default function SwapForm(props: Props) {
   const isBorrowEnabled = !!marketAssets.find(byDenom(sellAsset.denom))?.borrowEnabled
   const isRepayable = !!account?.debts.find(byDenom(buyAsset.denom))
   const [isMarginChecked, setMarginChecked] = useToggle(isBorrowEnabled ? useMargin : false)
-  const [isAutoRepayChecked, setAutoRepayChecked] = useToggle(isRepayable ? useAutoRepay : false)
+  const [isAutoRepayChecked, setAutoRepayChecked] = useToggle(
+    isRepayable && ENABLE_AUTO_REPAY ? useAutoRepay : false,
+  )
   const [buyAssetAmount, setBuyAssetAmount] = useState(BN_ZERO)
   const [sellAssetAmount, setSellAssetAmount] = useState(BN_ZERO)
   const [maxBuyableAmountEstimation, setMaxBuyableAmountEstimation] = useState(BN_ZERO)
@@ -319,7 +321,7 @@ export default function SwapForm(props: Props) {
       />
       <Divider />
 
-      {isRepayable && (
+      {isRepayable && ENABLE_AUTO_REPAY && (
         <AutoRepayToggle
           checked={isAutoRepayChecked}
           onChange={handleAutoRepayToggleChange}
