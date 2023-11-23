@@ -1,24 +1,38 @@
 import classNames from 'classnames'
-import { useMemo } from 'react'
+import debounce from 'lodash.debounce'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import ActionButton from 'components/Button/ActionButton'
+import DisplayCurrency from 'components/DisplayCurrency'
+import Divider from 'components/Divider'
 import { FormattedNumber } from 'components/FormattedNumber'
+import Loading from 'components/Loading'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useLocalStorage from 'hooks/useLocalStorage'
+import usePrice from 'hooks/usePrice'
+import useSwapFee from 'hooks/useSwapFee'
+import { BNCoin } from 'types/classes/BNCoin'
 import { getAssetByDenom } from 'utils/assets'
 import { formatAmountWithSymbol, formatPercent } from 'utils/formatters'
 
 interface Props {
-  buyAsset: Asset
-  sellAsset: Asset
+  borrowAmount: BigNumber
   borrowRate?: number | null
+  buyAction: () => void
+  buyAmount: BigNumber
+  buyAsset: Asset
   buyButtonDisabled: boolean
   containerClassName?: string
-  showProgressIndicator: boolean
-  isMargin?: boolean
-  borrowAmount: BigNumber
   estimatedFee: StdFee
-  buyAction: () => void
+  isMargin?: boolean
+  liquidationPrice: number | null
   route: Route[]
+  sellAmount: BigNumber
+  sellAsset: Asset
+  showProgressIndicator: boolean
 }
+
 const infoLineClasses = 'flex flex-row justify-between flex-1 mb-1 text-xs text-white'
 
 export default function TradeSummary(props: Props) {
@@ -34,7 +48,34 @@ export default function TradeSummary(props: Props) {
     estimatedFee,
     showProgressIndicator,
     route,
+    sellAmount,
+    buyAmount,
   } = props
+  const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
+
+  const sellAssetPrice = usePrice(sellAsset.denom)
+  const swapFee = useSwapFee(route.map((r) => r.pool_id))
+  const [liquidationPrice, setLiquidationPrice] = useState<number | null>(null)
+  const [isUpdatingLiquidationPrice, setIsUpdatingLiquidationPrice] = useState(false)
+  const debouncedSetLiqPrice = useMemo(
+    () => debounce(setLiquidationPrice, 1000, { leading: false }),
+    [],
+  )
+
+  const minReceive = useMemo(() => {
+    return buyAmount.times(1 - swapFee).times(1 - slippage)
+  }, [buyAmount, slippage, swapFee])
+
+  useEffect(() => {
+    setIsUpdatingLiquidationPrice(true)
+    debouncedSetLiqPrice(props.liquidationPrice)
+  }, [debouncedSetLiqPrice, props.liquidationPrice])
+
+  useEffect(() => setIsUpdatingLiquidationPrice(false), [liquidationPrice])
+
+  const swapFeeValue = useMemo(() => {
+    return sellAssetPrice.times(swapFee).times(sellAmount)
+  }, [sellAmount, sellAssetPrice, swapFee])
 
   const parsedRoutes = useMemo(() => {
     if (!route.length) return '-'
@@ -59,14 +100,9 @@ export default function TradeSummary(props: Props) {
     >
       <div className='flex flex-col flex-1 m-3'>
         <span className='mb-2 text-xs font-bold'>Summary</span>
-        <div className={infoLineClasses}>
-          <span className='opacity-40'>Fees</span>
-          <span>{formatAmountWithSymbol(estimatedFee.amount[0])}</span>
-        </div>
         {isMargin && (
           <>
-            <div className={infoLineClasses}>
-              <span className='opacity-40'>Borrowing</span>
+            <SummaryLine label='Borrowing'>
               <FormattedNumber
                 amount={borrowAmount.toNumber()}
                 options={{
@@ -79,18 +115,48 @@ export default function TradeSummary(props: Props) {
                 }}
                 animate
               />
-            </div>
-            <div className={infoLineClasses}>
-              <span className='opacity-40'>Borrow Rate APY</span>
+            </SummaryLine>
+            <SummaryLine label='Borrow Rate APY'>
               <span>{formatPercent(borrowRate || 0)}</span>
-            </div>
+            </SummaryLine>
+            <Divider className='my-2' />
           </>
         )}
-
-        <div className={infoLineClasses}>
-          <span className='opacity-40'>Route</span>
-          <span>{parsedRoutes}</span>
-        </div>
+        {props.liquidationPrice !== null && (
+          <>
+            <SummaryLine label='Liquidation Price'>
+              <div className='flex'>
+                <span>{props.buyAsset.symbol} = $</span>{' '}
+                {isUpdatingLiquidationPrice ? (
+                  <div className='w-10'>
+                    <Loading className='' />
+                  </div>
+                ) : (
+                  <FormattedNumber
+                    className='inline'
+                    amount={liquidationPrice ?? 0}
+                    options={{ abbreviated: true }}
+                  />
+                )}
+              </div>
+            </SummaryLine>{' '}
+            <Divider className='my-2' />
+          </>
+        )}
+        <SummaryLine label={`Swap fees (${(swapFee || 0.002) * 100}%)`}>
+          <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(sellAsset.denom, swapFeeValue)} />
+        </SummaryLine>
+        <SummaryLine label='Transaction fees'>
+          <span>{formatAmountWithSymbol(estimatedFee.amount[0])}</span>
+        </SummaryLine>
+        <SummaryLine label={`Min receive (${slippage * 100}% slippage)`}>
+          <FormattedNumber
+            amount={minReceive.toNumber()}
+            options={{ decimals: buyAsset.decimals, suffix: ` ${buyAsset.symbol}`, maxDecimals: 6 }}
+          />
+        </SummaryLine>
+        <Divider className='my-2' />
+        <SummaryLine label='Route'>{parsedRoutes}</SummaryLine>
       </div>
       <ActionButton
         disabled={buyButtonDisabled}
@@ -101,6 +167,19 @@ export default function TradeSummary(props: Props) {
         color='primary'
         className='w-full'
       />
+    </div>
+  )
+}
+
+interface SummaryLineProps {
+  children: React.ReactNode
+  label: string
+}
+function SummaryLine(props: SummaryLineProps) {
+  return (
+    <div className={infoLineClasses}>
+      <span className='opacity-40'>{props.label}</span>
+      <span>{props.children}</span>
     </div>
   )
 }

@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useAssetParams from 'hooks/useAssetParams'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
@@ -22,6 +23,7 @@ import { SWAP_FEE_BUFFER } from 'utils/constants'
 import {
   BorrowTarget,
   compute_health_js,
+  liquidation_price_js,
   max_borrow_estimate_js,
   max_swap_estimate_js,
   max_withdraw_estimate_js,
@@ -192,6 +194,25 @@ export default function useHealthComputer(account?: Account) {
     },
     [healthComputer, slippage],
   )
+
+  const computeLiquidationPrice = useCallback(
+    (denom: string) => {
+      if (!healthComputer) return null
+      try {
+        const asset = getAssetByDenom(denom)
+        if (!asset) return null
+        const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
+        return BN(liquidation_price_js(healthComputer, denom))
+          .shiftedBy(-VALUE_SCALE_FACTOR)
+          .shiftedBy(decimalDiff)
+          .toNumber()
+      } catch (e) {
+        return null
+      }
+    },
+    [healthComputer],
+  )
+
   const health = useMemo(() => {
     const convertedHealth = BN(Math.log(healthFactor))
       .dividedBy(Math.log(3.5))
@@ -211,5 +232,6 @@ export default function useHealthComputer(account?: Account) {
     computeMaxBorrowAmount,
     computeMaxWithdrawAmount,
     computeMaxSwapAmount,
+    computeLiquidationPrice,
   }
 }

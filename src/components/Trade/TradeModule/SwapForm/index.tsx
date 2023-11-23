@@ -60,9 +60,9 @@ export default function SwapForm(props: Props) {
   const { autoLendEnabledAccountIds } = useAutoLend()
   const isAutoLendEnabled = account ? autoLendEnabledAccountIds.includes(account.id) : false
   const modal = useStore<string | null>((s) => s.fundAndWithdrawModal)
-
+  const { simulateTrade, removedLends, updatedAccount } = useUpdatedAccount(account)
   const throttledEstimateExactIn = useMemo(() => asyncThrottle(estimateExactIn, 250), [])
-  const { simulateTrade, removedLends } = useUpdatedAccount(account)
+  const { computeLiquidationPrice } = useHealthComputer(updatedAccount)
 
   const borrowAsset = useMemo(
     () => borrowAssets.find(byDenom(sellAsset.denom)),
@@ -205,6 +205,11 @@ export default function SwapForm(props: Props) {
       setAutoRepayChecked(isAutoRepay)
     },
     [isRepayable, setAutoRepayChecked],
+  )
+
+  const liquidationPrice = useMemo(
+    () => computeLiquidationPrice(props.buyAsset.denom),
+    [computeLiquidationPrice, props.buyAsset.denom],
   )
 
   useEffect(() => {
@@ -375,6 +380,9 @@ export default function SwapForm(props: Props) {
           borrowAmount={borrowAmount}
           estimatedFee={estimatedFee}
           route={route}
+          liquidationPrice={liquidationPrice}
+          sellAmount={sellAssetAmount}
+          buyAmount={buyAssetAmount}
         />
       </div>
     </>
