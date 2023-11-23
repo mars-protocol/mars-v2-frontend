@@ -110,6 +110,7 @@ interface MarketTableData {
   marketLiquidityRate: number
   marketLiquidityAmount: BigNumber
   marketLiquidationThreshold: number
+  cap: DepositCap
 }
 
 interface HLSStrategy extends HLSStrategyNoCap {

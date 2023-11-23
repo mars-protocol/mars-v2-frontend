@@ -30,15 +30,15 @@ interface Props {
 }
 export default function DepositCap(props: Props) {
   if (props.isLoading) return <Loading />
-  const { marketDepositCap, marketDepositAmount, asset } = props.data
-  const percent = marketDepositAmount.dividedBy(marketDepositCap).multipliedBy(100)
+  const { cap, asset } = props.data
+  const percent = cap.used.dividedBy(cap.max).multipliedBy(100)
 
   return (
     <TitleAndSubCell
       className='text-xs'
       title={
         <FormattedNumber
-          amount={marketDepositCap.toNumber()}
+          amount={cap.max.toNumber()}
           options={{ abbreviated: true, decimals: asset.decimals }}
           animate
         />
