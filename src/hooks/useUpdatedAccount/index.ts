@@ -201,7 +201,7 @@ export function useUpdatedAccount(account?: Account) {
       removeDeposits([BNCoin.fromDenomAndBigNumber(collateralDenom, removeDepositAmount)])
       removeDebts([BNCoin.fromDenomAndBigNumber(debtDenom, repayAmount)])
     },
-    [prices],
+    [prices, slippage],
   )
 
   const simulateVaultDeposit = useCallback(

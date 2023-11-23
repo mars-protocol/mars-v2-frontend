@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef } from 'react'
 
 import Card from 'components/Card'
-import { DataFeed, PAIR_SEPARATOR } from 'components/Trade/TradeChart/DataFeed'
 import { disabledFeatures, enabledFeatures, overrides } from 'components/Trade/TradeChart/constants'
+import { DataFeed, PAIR_SEPARATOR } from 'components/Trade/TradeChart/DataFeed'
 import useStore from 'store'
 import {
   ChartingLibraryWidgetOptions,
@@ -102,7 +102,7 @@ export const TVChartContainer = (props: Props) => {
   }, [props.buyAsset.denom, props.sellAsset.denom])
 
   return (
-    <Card title='Trading Chart' contentClassName='px-0.5 pb-0.5 h-full'>
+    <Card title='Trading Chart' contentClassName='px-0.5 pb-0.5 h-full' className='h-full'>
       <div ref={chartContainerRef} className='h-full overflow-hidden rounded-b-base' />
     </Card>
   )
