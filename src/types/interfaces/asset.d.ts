@@ -3,8 +3,10 @@ interface Asset {
   name: string
   denom: string
   symbol:
+    | 'AKT'
     | 'ATOM'
     | 'AXL'
+    | 'DYDX'
     | 'INJ'
     | 'MARS'
     | 'OSMO'
@@ -24,8 +26,10 @@ interface Asset {
     | 'stATOM-ATOM'
     | '$'
   id:
+    | 'AKT'
     | 'ATOM'
     | 'AXL'
+    | 'DYDX'
     | 'INJ'
     | 'axlUSDC'
     | 'axlWBTC'

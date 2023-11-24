@@ -16,7 +16,7 @@ export default function OrderTypeSelector(props: Props) {
   const { selected, onChange } = props
 
   return (
-    <div className='flex flex-row flex-1 px-3 pt-4'>
+    <div className='flex flex-row pt-4'>
       {ORDER_TYPE_TABS.map((tab) => {
         const isSelected = tab.type === selected
         const classes = classNames(

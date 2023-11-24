@@ -31,7 +31,9 @@ export default function DesktopNavigation() {
   return (
     <div
       className={classNames(
-        focusComponent ? 'absolute left-4 top-3 z-1 block' : 'flex flex-1 items-center',
+        focusComponent
+          ? 'absolute left-4 top-3 z-1 block'
+          : 'flex flex-1 items-center relative z-50',
       )}
     >
       <NavLink href={getRoute('trade', address, accountId)}>
@@ -63,38 +65,45 @@ export default function DesktopNavigation() {
               text='More'
               className='!text-base !p-0 !min-h-0'
             />
-            <div
-              className={classNames(
-                showMenu ? 'flex' : 'hidden',
-                'absolute left-0 top-[calc(100%+4px)]',
-              )}
-            >
-              <ul
-                className={classNames(
-                  'py-4 list-none flex flex-wrap gap-2 bg-white/10 backdrop-blur-lg',
-                  'relative isolate max-w-full overflow-hidden rounded-sm',
-                  'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-sm before:p-[1px] before:border-glas',
-                )}
-              >
-                {menu.map((item, index) => (
-                  <li className={`@nav-${index}/navigation:hidden block w-full m-0`} key={index}>
-                    <NavLink
-                      href={
-                        item.externalUrl
-                          ? item.externalUrl
-                          : getRoute(item.pages[0], address, accountId)
-                      }
-                      onClick={() => setShowMenu(false)}
-                      isActive={getIsActive(item.pages)}
-                      className='w-full px-4 whitespace-nowrap'
-                      target={item.externalUrl ? '_blank' : undefined}
-                    >
-                      {item.label}
-                    </NavLink>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {showMenu && (
+              <>
+                <div className='absolute left-0 top-[calc(100%+4px)] z-50'>
+                  <ul
+                    className={classNames(
+                      'py-4 list-none flex flex-wrap gap-2 bg-white/10 backdrop-blur-lg',
+                      'relative isolate max-w-full overflow-hidden rounded-sm',
+                      'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-sm before:p-[1px] before:border-glas',
+                    )}
+                  >
+                    {menu.map((item, index) => (
+                      <li
+                        className={`@nav-${index}/navigation:hidden block w-full m-0`}
+                        key={index}
+                      >
+                        <NavLink
+                          href={
+                            item.externalUrl
+                              ? item.externalUrl
+                              : getRoute(item.pages[0], address, accountId)
+                          }
+                          onClick={() => setShowMenu(false)}
+                          isActive={getIsActive(item.pages)}
+                          className='w-full px-4 whitespace-nowrap'
+                          target={item.externalUrl ? '_blank' : undefined}
+                        >
+                          {item.label}
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div
+                  className='fixed -top-6 -left-[55px] z-40 w-screen h-screen hover:cursor-pointer'
+                  onClick={() => setShowMenu(false)}
+                  role='button'
+                />
+              </>
+            )}
           </div>
         </div>
       )}

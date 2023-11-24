@@ -21,6 +21,7 @@ export function getRoute(page: Page, address?: string, accountId?: string | null
 export function getPage(pathname: string): Page {
   const pages: Page[] = [
     'trade',
+    'perps',
     'borrow',
     'farm',
     'lend',

@@ -27,3 +27,4 @@ export const DEFAULT_ADDITIONAL_STATS = [
 
 export const ENABLE_HLS = true
 export const ENABLE_PERPS = false
+export const ENABLE_AUTO_REPAY = false
