@@ -61,3 +61,9 @@
 table tr:last-child td {
   border-bottom-width: 0;
 }
+
+.recharts-dot {
+  stroke: theme('colors.body');
+  fill: theme('colors.martian-red');
+  r: 5px;
+}

@@ -1,4 +1,4 @@
-import { BN } from './helpers'
+import { BN } from 'utils/helpers'
 
 export const devideByPotentiallyZero = (numerator: number, denominator: number): number => {
   if (denominator === 0) return 0
