@@ -22,13 +22,18 @@ function Fallback() {
   const assets = getBorrowEnabledAssets()
   const data: BorrowMarketTableData[] = assets.map((asset) => ({
     asset,
-    borrowRate: null,
+    apy: {
+      borrow: 0,
+      deposit: 0,
+    },
+    ltv: {
+      max: 0,
+      liq: 0,
+    },
     liquidity: null,
-    marketMaxLtv: 0,
     marketDepositAmount: BN_ZERO,
     marketLiquidityRate: 0,
     marketLiquidityAmount: BN_ZERO,
-    marketLiquidationThreshold: 0,
   }))
 
   return <AvailableBorrowingsTable data={data} isLoading />

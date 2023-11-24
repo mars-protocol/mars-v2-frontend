@@ -24,35 +24,31 @@ function useLendingMarketAssetsTableData(): {
     const accountLentAssets: LendingMarketTableData[] = [],
       availableAssets: LendingMarketTableData[] = []
 
-    markets.forEach(
-      ({ denom, cap, liquidityRate, liquidationThreshold, maxLtv, borrowEnabled }) => {
-        const asset = getAssetByDenom(denom) as Asset
-        const marketDepositAmount = BN(marketDeposits.find(byDenom(denom))?.amount ?? 0)
-        const marketLiquidityAmount = BN(marketLiquidities.find(byDenom(denom))?.amount ?? 0)
-        const accountLentAmount = accountLentAmounts.find(byDenom(denom))?.amount
-        const accountLentValue = accountLentAmount
-          ? convertAmount(asset, accountLentAmount)
-          : undefined
+    markets.forEach(({ denom, cap, ltv, apy, borrowEnabled }) => {
+      const asset = getAssetByDenom(denom) as Asset
+      const marketDepositAmount = BN(marketDeposits.find(byDenom(denom))?.amount ?? 0)
+      const marketLiquidityAmount = BN(marketLiquidities.find(byDenom(denom))?.amount ?? 0)
+      const accountLentAmount = accountLentAmounts.find(byDenom(denom))?.amount
+      const accountLentValue = accountLentAmount
+        ? convertAmount(asset, accountLentAmount)
+        : undefined
 
-        const lendingMarketAsset: LendingMarketTableData = {
-          asset,
-          marketDepositAmount,
-          accountLentValue,
-          accountLentAmount,
-          marketLiquidityAmount,
-          marketDepositCap: cap.max,
-          marketLiquidityRate: liquidityRate,
-          marketLiquidationThreshold: liquidationThreshold,
-          marketMaxLtv: maxLtv,
-          borrowEnabled,
-          cap,
-        }
+      const lendingMarketAsset: LendingMarketTableData = {
+        asset,
+        marketDepositAmount,
+        accountLentValue,
+        accountLentAmount,
+        marketLiquidityAmount,
+        apy,
+        ltv,
+        borrowEnabled,
+        cap,
+      }
 
-        ;(lendingMarketAsset.accountLentValue ? accountLentAssets : availableAssets).push(
-          lendingMarketAsset,
-        )
-      },
-    )
+      ;(lendingMarketAsset.accountLentValue ? accountLentAssets : availableAssets).push(
+        lendingMarketAsset,
+      )
+    })
 
     return {
       accountLentAssets,

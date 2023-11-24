@@ -10,7 +10,6 @@ import Text from 'components/Text'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getAssetByDenom } from 'utils/assets'
 import { demagnify, formatPercent } from 'utils/formatters'
-import { convertAprToApy } from 'utils/parsers'
 
 function showBorrowRate(data: AssetTableRow[]) {
   const assetData = data.length && (data[0].asset as BorrowAsset)
@@ -29,8 +28,7 @@ export default function useAssetTableColumns(isBorrow: boolean) {
           const market = row.original.market
           const borrowAsset = row.original.asset as BorrowAsset
           const showRate = !borrowAsset?.borrowRate
-          const rate = isBorrow ? market?.borrowRate : market?.liquidityRate
-          const apy = convertAprToApy(rate ?? 0, 365)
+          const apy = isBorrow ? market?.apy.borrow : market?.apy.deposit
 
           return (
             <div className='flex items-center'>
@@ -47,7 +45,7 @@ export default function useAssetTableColumns(isBorrow: boolean) {
                 </Text>
                 {showRate && market ? (
                   <AssetRate
-                    rate={apy}
+                    rate={apy ?? 0}
                     isEnabled={market.borrowEnabled}
                     className='text-xs'
                     type='apy'

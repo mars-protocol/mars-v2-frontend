@@ -17,10 +17,10 @@ export const marketDepositCapSortingFn = (
 ): number => {
   const assetA = a.original.asset
   const assetB = b.original.asset
-  if (!a.original.marketDepositCap || !b.original.marketDepositCap) return 0
+  if (!a.original.cap.max || !b.original.cap.max) return 0
 
-  const marketDepositCapA = demagnify(a.original.marketDepositCap, assetA)
-  const marketDepositCapB = demagnify(b.original.marketDepositCap, assetB)
+  const marketDepositCapA = demagnify(a.original.cap.max, assetA)
+  const marketDepositCapB = demagnify(b.original.cap.max, assetB)
   return marketDepositCapA - marketDepositCapB
 }
 
