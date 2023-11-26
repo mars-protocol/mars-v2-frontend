@@ -39,8 +39,6 @@ export default function WithdrawFromVaultsModal() {
 
   if (!modal) return null
 
-  console.log(modal)
-
   return (
     <Modal
       onClose={onClose}
