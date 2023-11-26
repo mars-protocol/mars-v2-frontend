@@ -107,10 +107,15 @@ export const calculateAccountApr = (
     if (!asset) return BN_ZERO
     const price = prices.find(byDenom(lend.denom))?.amount ?? 0
     const amount = BN(lend.amount).shiftedBy(-asset.decimals)
-    const apr =
-      lendingAssetsData.find((lendingAsset) => lendingAsset.asset.denom === lend.denom)
-        ?.marketLiquidityRate ?? 0
-    const positionInterest = amount.multipliedBy(price).multipliedBy(apr).dividedBy(100)
+    const apy = lendingAssetsData.find((lendingAsset) => lendingAsset.asset.denom === lend.denom)
+      ?.apy.deposit
+
+    if (!apy) return
+
+    const positionInterest = amount
+      .multipliedBy(price)
+      .multipliedBy(convertApyToApr(apy, 365))
+      .dividedBy(100)
     totalLendsInterestValue = totalLendsInterestValue.plus(positionInterest)
   })
 
@@ -125,9 +130,11 @@ export const calculateAccountApr = (
     if (!asset) return BN_ZERO
     const price = prices.find(byDenom(debt.denom))?.amount ?? 0
     const amount = BN(debt.amount).shiftedBy(-asset.decimals)
-    const apy =
-      borrowAssetsData.find((borrowAsset) => borrowAsset.asset.denom === debt.denom)?.borrowRate ??
-      0
+    const apy = borrowAssetsData.find((borrowAsset) => borrowAsset.asset.denom === debt.denom)?.apy
+      .borrow
+
+    if (!apy) return
+
     const positionInterest = amount
       .multipliedBy(price)
       .multipliedBy(convertApyToApr(apy, 365))

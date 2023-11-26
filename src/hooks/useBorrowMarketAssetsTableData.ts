@@ -26,7 +26,7 @@ export default function useBorrowMarketAssetsTableData(suspense = true) {
       const accountBorrowedAssets: BorrowMarketTableData[] = [],
         availableAssets: BorrowMarketTableData[] = []
 
-      markets.forEach(({ denom, liquidityRate, liquidationThreshold, maxLtv }) => {
+      markets.forEach(({ denom, apy, ltv }) => {
         const asset = getAssetByDenom(denom) as Asset
         const borrow = borrowData.find((borrow) => borrow.denom === denom)
         const marketDepositAmount = BN(marketDeposits.find(byDenom(denom))?.amount ?? 0)
@@ -41,9 +41,8 @@ export default function useBorrowMarketAssetsTableData(suspense = true) {
           debt: debt?.amount,
           marketDepositAmount,
           marketLiquidityAmount,
-          marketLiquidityRate: liquidityRate,
-          marketLiquidationThreshold: liquidationThreshold,
-          marketMaxLtv: maxLtv,
+          apy,
+          ltv,
         }
         ;(borrowMarketAsset.debt ? accountBorrowedAssets : availableAssets).push(borrowMarketAsset)
       })

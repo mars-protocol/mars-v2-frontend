@@ -14,7 +14,10 @@ export function resolveMarketResponse(
 ): Market {
   return {
     denom: marketResponse.denom,
-    borrowRate: convertAprToApy(Number(marketResponse.borrow_rate), 365) * 100,
+    apy: {
+      borrow: convertAprToApy(Number(marketResponse.borrow_rate), 365) * 100,
+      deposit: convertAprToApy(Number(marketResponse.liquidity_rate), 365) * 100,
+    },
     debtTotalScaled: marketResponse.debt_total_scaled,
     collateralTotalScaled: marketResponse.collateral_total_scaled,
     depositEnabled: assetParamsResponse.red_bank.deposit_enabled,
@@ -24,9 +27,10 @@ export function resolveMarketResponse(
       used: BN(assetCapResponse.amount),
       max: BN(assetParamsResponse.deposit_cap),
     },
-    maxLtv: Number(assetParamsResponse.max_loan_to_value),
-    liquidityRate: Number(marketResponse.liquidity_rate) * 100,
-    liquidationThreshold: Number(assetParamsResponse.liquidation_threshold),
+    ltv: {
+      max: Number(assetParamsResponse.max_loan_to_value),
+      liq: Number(assetParamsResponse.liquidation_threshold),
+    },
   }
 }
 

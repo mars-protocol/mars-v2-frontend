@@ -1,11 +1,10 @@
 import AssetRate from 'components/Asset/AssetRate'
 import Loading from 'components/Loading'
-import { convertAprToApy } from 'utils/parsers'
 
-export const APY_META = { accessorKey: 'marketLiquidityRate', header: 'APY' }
+export const APY_META = { accessorKey: 'apy.deposit', header: 'APY' }
 
 interface Props {
-  marketLiquidityRate: number
+  apy: number
   borrowEnabled: boolean
   isLoading: boolean
 }
@@ -14,7 +13,7 @@ export default function Apr(props: Props) {
 
   return (
     <AssetRate
-      rate={convertAprToApy(props.marketLiquidityRate ?? 0, 365)}
+      rate={props.apy ?? 0}
       isEnabled={props.borrowEnabled}
       className='justify-end text-xs'
       type='apy'

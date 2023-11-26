@@ -10,7 +10,7 @@ interface Props {
 }
 
 function DetailsHeader({ data }: Props) {
-  const { asset, marketDepositCap, accountLentAmount } = data
+  const { asset, cap, accountLentAmount } = data
   const { data: assetApy } = useAssetIncentivesApy(asset.denom)
   const balanceInWallet = useCurrentWalletBalance(asset.denom)
 
@@ -59,9 +59,7 @@ function DetailsHeader({ data }: Props) {
       )}
       <TitleAndSubCell
         title={
-          <DisplayCurrency
-            coin={new BNCoin({ denom: asset.denom, amount: marketDepositCap.toString() })}
-          />
+          <DisplayCurrency coin={new BNCoin({ denom: asset.denom, amount: cap.max.toString() })} />
         }
         sub={'Deposit Cap'}
       />
