@@ -11,7 +11,6 @@ import useMarketAssets from 'hooks/useMarketAssets'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { formatValue } from 'utils/formatters'
-import { convertAprToApy } from 'utils/parsers'
 
 interface Props extends SelectOption {
   isSelected?: boolean
@@ -80,7 +79,7 @@ export default function Option(props: Props) {
           })}
         </Text>
         <AssetRate
-          rate={convertAprToApy(marketAsset?.borrowRate ?? 0, 365)}
+          rate={marketAsset?.apy.borrow ?? 0}
           isEnabled={marketAsset?.borrowEnabled ?? false}
           className='col-span-2 text-white/50'
           type='apy'

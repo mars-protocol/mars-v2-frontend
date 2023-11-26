@@ -18,7 +18,7 @@ export default function useAvailableColumns() {
       },
       {
         ...BORROW_RATE_META,
-        cell: ({ row }) => <BorrowRate borrowRate={row.original.borrowRate} />,
+        cell: ({ row }) => <BorrowRate borrowRate={row.original.apy.borrow} />,
       },
       {
         ...LIQUIDITY_META,

@@ -17,10 +17,10 @@ export const marketDepositCapSortingFn = (
 ): number => {
   const assetA = a.original.asset
   const assetB = b.original.asset
-  if (!a.original.marketDepositCap || !b.original.marketDepositCap) return 0
+  if (!a.original.cap.max || !b.original.cap.max) return 0
 
-  const marketDepositCapA = demagnify(a.original.marketDepositCap, assetA)
-  const marketDepositCapB = demagnify(b.original.marketDepositCap, assetB)
+  const marketDepositCapA = demagnify(a.original.cap.max, assetA)
+  const marketDepositCapB = demagnify(b.original.cap.max, assetB)
   return marketDepositCapA - marketDepositCapB
 }
 
@@ -30,22 +30,23 @@ interface Props {
 }
 export default function DepositCap(props: Props) {
   if (props.isLoading) return <Loading />
-  const { marketDepositCap, marketDepositAmount, asset } = props.data
-  const percent = marketDepositAmount.dividedBy(marketDepositCap).multipliedBy(100)
+  const { cap, asset } = props.data
+  const percent = cap.used.dividedBy(cap.max).multipliedBy(100)
+  const depositCapUsed = Math.min(percent.toNumber(), 100)
 
   return (
     <TitleAndSubCell
       className='text-xs'
       title={
         <FormattedNumber
-          amount={marketDepositCap.toNumber()}
+          amount={cap.max.toNumber()}
           options={{ abbreviated: true, decimals: asset.decimals }}
           animate
         />
       }
       sub={
         <FormattedNumber
-          amount={percent.toNumber()}
+          amount={depositCapUsed}
           options={{ minDecimals: 2, maxDecimals: 2, suffix: '% used' }}
           animate
         />
