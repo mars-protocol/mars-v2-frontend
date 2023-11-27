@@ -37,6 +37,12 @@ export function max_swap_estimate_js(
   kind: SwapKind,
   slippage: Slippage,
 ): string
+/**
+ * @param {HealthComputer} c
+ * @param {string} denom
+ * @returns {string}
+ */
+export function liquidation_price_js(c: HealthComputer, denom: string): string
 export interface HealthComputer {
   kind: AccountKind
   positions: Positions
@@ -82,9 +88,9 @@ export interface InitOutput {
     g: number,
     h: number,
   ) => void
+  readonly liquidation_price_js: (a: number, b: number, c: number, d: number) => void
   readonly allocate: (a: number) => number
   readonly deallocate: (a: number) => void
-  readonly requires_stargate: () => void
   readonly requires_iterator: () => void
   readonly interface_version_8: () => void
   readonly __wbindgen_malloc: (a: number, b: number) => number

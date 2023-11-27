@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js'
 import useSWR from 'swr'
 
 import estimateExactIn from 'api/swap/estimateExactIn'
@@ -7,26 +6,25 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { SWAP_FEE_BUFFER } from 'utils/constants'
 import { BN } from 'utils/helpers'
 
-const amountIn = 1000_000_000
-
-export default function useSwapValueLoss(denomIn: string, denomOut: string) {
+export default function useSwapValueLoss(
+  denomIn: string,
+  denomOut: string,
+  amount: number = 1_000_000,
+) {
   const denomInPrice = usePrice(denomIn)
   const denomOutPrice = usePrice(denomOut)
 
   return useSWR(
-    `swapValueLoss/${denomIn}/${denomOut}`,
+    `swapValueLoss/${denomIn}/${denomOut}/${amount}`,
     async () => {
-      const valueIn = denomInPrice.times(amountIn)
+      const valueIn = denomInPrice.times(amount)
       const amountOut = await estimateExactIn(
-        BNCoin.fromDenomAndBigNumber(denomIn, BN(amountIn)).toCoin(),
+        BNCoin.fromDenomAndBigNumber(denomIn, BN(amount)).toCoin(),
         denomOut,
       )
       const valueOut = denomOutPrice.times(amountOut)
 
-      return BigNumber.max(
-        valueIn.minus(valueOut).dividedBy(valueIn).decimalPlaces(6),
-        0,
-      ).toNumber()
+      return valueIn.minus(valueOut).dividedBy(valueIn).decimalPlaces(6).toNumber()
     },
     {
       fallbackData: SWAP_FEE_BUFFER,
