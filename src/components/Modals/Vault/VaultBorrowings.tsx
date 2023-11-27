@@ -189,6 +189,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
             maxText='Max Borrow'
             onChange={(amount) => updateAssets(coin.denom, amount)}
             onDelete={() => onDelete(coin.denom)}
+            warningMessages={[]}
           />
         )
       })}
@@ -224,7 +225,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
         </div>
         {props.borrowings.map((coin) => {
           const asset = getAssetByDenom(coin.denom)
-          const borrowRate = marketAssets?.find((market) => market.denom === coin.denom)?.borrowRate
+          const borrowRate = marketAssets?.find((market) => market.denom === coin.denom)?.apy.borrow
 
           if (!asset || !borrowRate)
             return <React.Fragment key={`borrow-rate-${coin.denom}`}></React.Fragment>

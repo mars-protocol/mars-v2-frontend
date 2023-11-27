@@ -10,20 +10,25 @@ import Settings from 'components/Settings'
 import Wallet from 'components/Wallet'
 import useAccountId from 'hooks/useAccountId'
 import useStore from 'store'
-import { ENABLE_HLS } from 'utils/constants'
+import { ENABLE_HLS, ENABLE_PERPS } from 'utils/constants'
+import { WalletID } from 'types/enums/wallet'
+import { getGovernanceUrl } from 'utils/helpers'
 
-export const menuTree: { pages: Page[]; label: string }[] = [
+export const menuTree = (walletId: WalletID): MenuTreeEntry[] => [
   { pages: ['trade'], label: 'Trade' },
+  ...(ENABLE_PERPS ? [{ pages: ['perps'] as Page[], label: 'Perps' }] : []),
   { pages: ['lend', 'farm'], label: 'Earn' },
   { pages: ['borrow'], label: 'Borrow' },
-  { pages: ['portfolio'], label: 'Portfolio' },
   ...(ENABLE_HLS ? [{ pages: ['hls-staking'] as Page[], label: 'High Leverage' }] : []),
+  { pages: ['portfolio'], label: 'Portfolio' },
+  { pages: ['governance'], label: 'Governance', externalUrl: getGovernanceUrl(walletId) },
 ]
 
 export default function DesktopHeader() {
   const address = useStore((s) => s.address)
   const focusComponent = useStore((s) => s.focusComponent)
   const isOracleStale = useStore((s) => s.isOracleStale)
+  const isHLS = useStore((s) => s.isHLS)
   const accountId = useAccountId()
 
   function handleCloseFocusMode() {
@@ -36,9 +41,8 @@ export default function DesktopHeader() {
   return (
     <header
       className={classNames(
-        'fixed left-0 top-0 z-50 hidden w-full',
+        'fixed left-0 top-0 z-50 w-full',
         'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:h-full before:w-full before:rounded-sm before:backdrop-blur-sticky',
-        'lg:block',
       )}
     >
       <div
@@ -59,7 +63,7 @@ export default function DesktopHeader() {
           <div className='flex gap-4'>
             {isOracleStale && <OracleResyncButton />}
             {accountId && <RewardsCenter />}
-            {address && <AccountMenu />}
+            {address && !isHLS && <AccountMenu />}
             <Wallet />
             <Settings />
           </div>

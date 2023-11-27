@@ -23,13 +23,7 @@ export default function MarketDetails({ row, type }: Props) {
     symbol: displayCurrencySymbol,
   } = useDisplayCurrencyPrice()
 
-  const {
-    asset,
-    marketMaxLtv,
-    marketDepositAmount,
-    marketLiquidityAmount,
-    marketLiquidationThreshold,
-  } = row.original
+  const { asset, ltv, marketDepositAmount, marketLiquidityAmount } = row.original
 
   const totalBorrowed = marketDepositAmount.minus(marketLiquidityAmount)
 
@@ -48,12 +42,12 @@ export default function MarketDetails({ row, type }: Props) {
           title: 'Total Supplied',
         },
         {
-          amount: marketMaxLtv * 100,
+          amount: ltv.max * 100,
           options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
           title: 'Max LTV',
         },
         {
-          amount: marketLiquidationThreshold * 100,
+          amount: ltv.liq * 100,
           options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
           title: 'Liquidation LTV',
         },
@@ -68,7 +62,9 @@ export default function MarketDetails({ row, type }: Props) {
           title: 'Oracle Price',
         },
         {
-          amount: totalBorrowed.dividedBy(marketDepositAmount).multipliedBy(100).toNumber(),
+          amount: totalBorrowed.isZero()
+            ? 0
+            : totalBorrowed.dividedBy(marketDepositAmount).multipliedBy(100).toNumber(),
           options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
           title: 'Utilization Rate',
         },
@@ -97,7 +93,9 @@ export default function MarketDetails({ row, type }: Props) {
           title: 'Oracle Price',
         },
         {
-          amount: totalBorrowed.dividedBy(marketDepositAmount).multipliedBy(100).toNumber(),
+          amount: totalBorrowed.isZero()
+            ? 0
+            : totalBorrowed.dividedBy(marketDepositAmount).multipliedBy(100).toNumber(),
           options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
           title: 'Utilization Rate',
         },
@@ -110,8 +108,7 @@ export default function MarketDetails({ row, type }: Props) {
     type,
     asset,
     marketDepositAmount,
-    marketMaxLtv,
-    marketLiquidationThreshold,
+    ltv,
     totalBorrowed,
     displayCurrencySymbol,
     convertAmount,

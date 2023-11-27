@@ -35,6 +35,18 @@ module.exports = {
     'fill-martian-red',
     'fill-grey-light',
     'w-2',
+    '@nav-0/navigation:inline-block',
+    '@nav-1/navigation:inline-block',
+    '@nav-2/navigation:inline-block',
+    '@nav-3/navigation:inline-block',
+    '@nav-4/navigation:inline-block',
+    '@nav-5/navigation:inline-block',
+    '@nav-0/navigation:hidden',
+    '@nav-1/navigation:hidden',
+    '@nav-2/navigation:hidden',
+    '@nav-3/navigation:hidden',
+    '@nav-4/navigation:hidden',
+    '@nav-5/navigation:hidden',
   ],
   theme: {
     extend: {
@@ -52,6 +64,7 @@ module.exports = {
       },
       backgroundImage: {
         intro: 'url(/images/bg-intro.webp), url(/images/bg-intro.png)',
+        'intro-hls': 'url(/images/bg-intro-hls.webp), url(/images/bg-intro-hls.png)',
       },
       backgroundSize: {
         desktop: '100% auto',
@@ -84,6 +97,7 @@ module.exports = {
         atom: '#6f7390',
         axlusdc: '#478edc',
         body: '#0D0012',
+        'body-hls': '#090000',
         'body-dark': '#141621',
         chart: '#220e1d',
         error: '#F04438',
@@ -104,8 +118,11 @@ module.exports = {
         'martian-red': '#FF645F',
         osmo: '#9f1ab9',
         'orb-primary': '#b12f25',
+        'orb-primary-hls': '#FF645F',
         'orb-secondary': '#530781',
+        'orb-secondary-hls': '#a03b45',
         'orb-tertiary': '#ff00c7',
+        'orb-tertiary-hls': '#FB9562',
         profit: '#41a4a9',
         primary: '#FF625E',
         secondary: '#FB9562',
@@ -116,6 +133,14 @@ module.exports = {
         'warning-bg': '#FEC84B',
         white: '#FFF',
         pink: '#de587f',
+      },
+      containers: {
+        'nav-0': '100px',
+        'nav-1': '185px',
+        'nav-2': '270px',
+        'nav-3': '400px',
+        'nav-4': '500px',
+        'nav-5': '600px',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
@@ -141,7 +166,9 @@ module.exports = {
       },
       height: {
         4.5: '18px',
+        9: '36px',
         15: '60px',
+        45: '180px',
         50: '200px',
         55: '220px',
       },
@@ -272,6 +299,7 @@ module.exports = {
   },
   plugins: [
     require('tailwind-scrollbar-hide'),
+    require('@tailwindcss/container-queries'),
     plugin(function ({ addBase, addUtilities, theme }) {
       addBase({
         h1: { fontSize: '61px', lineHeight: '80px', fontWeight: theme('fontWeight.light') },
@@ -282,13 +310,13 @@ module.exports = {
 
       addUtilities({
         '.blur-orb-primary': {
-          filter: 'blur(clamp(50px, 8vw, 100px))',
+          filter: 'blur(clamp(50px, 8vw, 30px))',
         },
         '.blur-orb-secondary': {
-          filter: 'blur(clamp(60px, 20vw, 140px))',
+          filter: 'blur(clamp(60px, 20vw, 160px))',
         },
         '.blur-orb-tertiary': {
-          filter: 'blur(clamp(60px, 10vw, 110px))',
+          filter: 'blur(clamp(60px, 10vw, 150px))',
         },
         '.border-glas': {
           background:

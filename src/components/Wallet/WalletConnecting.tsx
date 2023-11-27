@@ -84,6 +84,7 @@ export default function WalletConnecting(props: Props) {
             useStore.setState({
               client: undefined,
               address: undefined,
+              userDomain: undefined,
               accounts: null,
               focusComponent: {
                 component: (

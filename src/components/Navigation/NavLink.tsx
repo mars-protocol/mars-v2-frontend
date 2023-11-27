@@ -6,16 +6,22 @@ interface Props {
   href: string
   children: string | ReactNode
   isActive?: boolean
+  className?: string
+  onClick?: () => void
+  target?: string
 }
 
 export const NavLink = (props: Props) => {
   return (
     <Link
       to={props.href}
+      onClick={props.onClick ? props.onClick : undefined}
       className={classNames(
-        'text-sm font-semibold hover:text-white active:text-white',
+        props.className,
+        'font-semibold hover:text-white active:text-white',
         props.isActive ? 'pointer-events-none text-white' : 'text-white/60',
       )}
+      target={props.target}
     >
       {props.children}
     </Link>

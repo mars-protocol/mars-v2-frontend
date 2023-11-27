@@ -5,13 +5,13 @@ import {
   getVaultAccountBalanceRow,
 } from 'components/Account/AccountBalancesTable/functions'
 import { ASSETS } from 'constants/assets'
+import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import usePrices from 'hooks/usePrices'
 import { byDenom } from 'utils/array'
-import { convertLiquidityRateToAPR } from 'utils/formatters'
-import { convertAprToApy } from 'utils/parsers'
 
 interface Props {
   account: Account
+  isHls?: boolean
   updatedAccount?: Account
   lendingData: LendingMarketTableData[]
   borrowingData: BorrowMarketTableData[]
@@ -20,6 +20,7 @@ interface Props {
 export default function useAccountBalanceData(props: Props) {
   const { account, updatedAccount, lendingData, borrowingData } = props
 
+  const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: prices } = usePrices()
 
   return useMemo<AccountBalanceRow[]>(() => {
@@ -33,18 +34,18 @@ export default function useAccountBalanceData(props: Props) {
     accountDeposits.forEach((deposit) => {
       const asset = ASSETS.find(byDenom(deposit.denom))
       if (!asset) return
-      const apy = 0
+      const apy = props.isHls
+        ? hlsStrategies.find((strategy) => strategy.denoms.deposit === asset.denom)?.apy ?? 0
+        : 0
       const prevDeposit = updatedAccount ? account?.deposits.find(byDenom(deposit.denom)) : deposit
       deposits.push(getAssetAccountBalanceRow('deposits', asset, prices, deposit, apy, prevDeposit))
     })
 
     const lends = accountLends.map((lending) => {
       const asset = ASSETS.find(byDenom(lending.denom)) ?? ASSETS[0]
-      const apr = convertLiquidityRateToAPR(
-        lendingData.find((market) => market.asset.denom === lending.denom)?.marketLiquidityRate ??
-          0,
-      )
-      const apy = convertAprToApy(apr, 365)
+      const apy =
+        lendingData.find((market) => market.asset.denom === lending.denom)?.apy.deposit ?? 0
+
       const prevLending = updatedAccount
         ? account?.lends.find((position) => position.denom === lending.denom)
         : lending
@@ -61,12 +62,12 @@ export default function useAccountBalanceData(props: Props) {
 
     const debts = accountDebts.map((debt) => {
       const asset = ASSETS.find(byDenom(debt.denom)) ?? ASSETS[0]
-      const apy = borrowingData.find((market) => market.asset.denom === debt.denom)?.borrowRate ?? 0
+      const apy = borrowingData.find((market) => market.asset.denom === debt.denom)?.apy.borrow ?? 0
       const prevDebt = updatedAccount
         ? account?.debts.find((position) => position.denom === debt.denom)
         : debt
       return getAssetAccountBalanceRow('borrowing', asset, prices, debt, apy, prevDebt)
     })
     return [...deposits, ...lends, ...vaults, ...debts]
-  }, [prices, account, updatedAccount, borrowingData, lendingData])
+  }, [updatedAccount, account, props.isHls, hlsStrategies, prices, lendingData, borrowingData])
 }

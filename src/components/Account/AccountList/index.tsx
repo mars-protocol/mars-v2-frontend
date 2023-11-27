@@ -27,7 +27,7 @@ export default function AccountList(props: Props) {
   const { pathname } = useLocation()
   const currentAccountId = useAccountId()
   const address = useStore((s) => s.address)
-  const { data: accountIds } = useAccountIds(address)
+  const { data: accountIds } = useAccountIds(address, true, true)
 
   useEffect(() => {
     if (!currentAccountId) return

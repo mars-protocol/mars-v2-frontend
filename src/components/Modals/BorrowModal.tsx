@@ -81,7 +81,7 @@ function BorrowModal(props: Props) {
   const [max, setMax] = useState(BN_ZERO)
   const { simulateBorrow, simulateRepay } = useUpdatedAccount(account)
   const { autoLendEnabledAccountIds } = useAutoLend()
-  const apr = modal.marketData?.borrowRate ?? '0'
+  const apy = modal.marketData.apy.borrow
   const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
   const { computeMaxBorrowAmount } = useHealthComputer(account)
   const totalDebt = BN(getDebtAmount(modal))
@@ -95,8 +95,8 @@ function BorrowModal(props: Props) {
   )
 
   const totalDebtRepayAmount = useMemo(
-    () => getDebtAmountWithInterest(totalDebt, Number(apr)),
-    [totalDebt, apr],
+    () => getDebtAmountWithInterest(totalDebt, apy),
+    [totalDebt, apy],
   )
 
   const maxRepayAmount = useMemo(() => {
@@ -201,7 +201,7 @@ function BorrowModal(props: Props) {
     >
       <div className='flex gap-3 px-6 py-4 border-b border-white/5 gradient-header'>
         <TitleAndSubCell
-          title={formatPercent(modal.marketData.borrowRate || '0')}
+          title={formatPercent(modal.marketData.apy.borrow)}
           sub={'Borrow Rate APY'}
         />
         {totalDebt.isGreaterThan(0) && (
@@ -267,6 +267,7 @@ function BorrowModal(props: Props) {
               disabled={max.isZero()}
               className='w-full'
               maxText='Max'
+              warningMessages={[]}
             />
             {isRepay && maxRepayAmount.isZero() && <RepayNotAvailable asset={asset} />}
             {!isRepay && (

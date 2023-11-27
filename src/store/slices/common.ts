@@ -13,6 +13,8 @@ export default function createCommonSlice(set: SetState<CommonSlice>, get: GetSt
     migrationBanner: true,
     tutorial: true,
     useMargin: true,
+    useAutoRepay: true,
     isOracleStale: false,
+    isHLS: false,
   }
 }

@@ -11,7 +11,6 @@ import WalletBridges from 'components/Wallet/WalletBridges'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
-import useAutoLend from 'hooks/useAutoLend'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useMarketAssets from 'hooks/useMarketAssets'
 import useToggle from 'hooks/useToggle'
@@ -34,20 +33,17 @@ interface Props {
 
 export default function AccountFundContent(props: Props) {
   const deposit = useStore((s) => s.deposit)
-  const accounts = useStore((s) => s.accounts)
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
   const [isConfirming, setIsConfirming] = useState(false)
-  const [lendAssets, setLendAssets] = useLocalStorage<boolean>(
+  const [lendAssets] = useLocalStorage<boolean>(
     LocalStorageKeys.LEND_ASSETS,
     DEFAULT_SETTINGS.lendAssets,
   )
   const [fundingAssets, setFundingAssets] = useState<BNCoin[]>([])
   const { data: marketAssets } = useMarketAssets()
   const { data: walletBalances } = useWalletBalances(props.address)
-  const { autoLendEnabledAccountIds } = useAutoLend()
   const [isLending, toggleIsLending] = useToggle(lendAssets)
   const { simulateDeposits } = useUpdatedAccount(props.account)
-  const autoLendEnabled = autoLendEnabledAccountIds.includes(props.accountId)
   const baseAsset = getBaseAsset()
 
   const hasAssetSelected = fundingAssets.length > 0
@@ -134,14 +130,6 @@ export default function AccountFundContent(props: Props) {
     })
   }, [])
 
-  useEffect(() => {
-    toggleIsLending(autoLendEnabled)
-  }, [autoLendEnabled, toggleIsLending])
-
-  useEffect(() => {
-    if (accounts?.length === 1 && isLending) setLendAssets(true)
-  }, [isLending, accounts, lendAssets, setLendAssets])
-
   const depositCapReachedCoins = useMemo(() => {
     const depositCapReachedCoins: BNCoin[] = []
     fundingAssets.forEach((asset) => {
@@ -181,6 +169,7 @@ export default function AccountFundContent(props: Props) {
                 balances={balances}
                 maxText='Max'
                 disabled={isConfirming}
+                warningMessages={[]}
               />
             </div>
           )
@@ -204,8 +193,6 @@ export default function AccountFundContent(props: Props) {
         <SwitchAutoLend
           className='pt-4 mt-4 border border-transparent border-t-white/10'
           accountId={props.accountId}
-          value={!props.isFullPage ? isLending : undefined}
-          onChange={!props.isFullPage ? toggleIsLending : undefined}
         />
       </div>
       <Button

@@ -11,6 +11,7 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
+import { getNoBalanceMessage } from 'utils/messages'
 
 interface Props {
   account: Account
@@ -80,18 +81,30 @@ export default function Repay(props: Props) {
     [props.borrowAsset.denom, removeDebts],
   )
 
+  const warningMessages = useMemo(() => {
+    if (borrowAssetAmountInWallet.isZero()) {
+      return [getNoBalanceMessage(props.borrowAsset.symbol)]
+    }
+    return []
+  }, [borrowAssetAmountInWallet, props.borrowAsset.symbol])
+
   return (
     <>
       <TokenInputWithSlider
-        amount={removedDebts.find(byDenom(props.borrowAsset.denom))?.amount || BN_ZERO}
+        amount={repayAmount}
         asset={props.borrowAsset}
         max={maxRepayAmount}
         onChange={handleOnChange}
         maxText='In Wallet'
+        warningMessages={warningMessages}
       />
       <div className='flex flex-col gap-4'>
         <SummaryItems items={items} />
-        <Button onClick={handleRepay} text='Repay' />
+        <Button
+          onClick={handleRepay}
+          text='Repay'
+          disabled={warningMessages.length !== 0 || repayAmount.isZero()}
+        />
       </div>
     </>
   )

@@ -60,5 +60,8 @@ if (!process.env.NEXT_PUBLIC_MAINNET_REST) {
 if (!process.env.NEXT_PUBLIC_RPC) {
   throw 'NEXT_PUBLIC_RPC is not defined'
 }
+if (!process.env.NEXT_PUBLIC_STRIDE_APRS) {
+  throw 'NEXT_PUBLIC_STRIDE_APRS is not defined'
+}
 
 console.log('✅ Required env variables set')

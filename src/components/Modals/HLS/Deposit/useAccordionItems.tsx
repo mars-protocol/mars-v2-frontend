@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 
 import CreateAccount from 'components/Modals/HLS/Deposit/CreateAccount'
 import Leverage from 'components/Modals/HLS/Deposit/Leverage'
@@ -7,15 +7,25 @@ import SelectAccount from 'components/Modals/HLS/Deposit/SelectAccount'
 import {
   CollateralSubTitle,
   LeverageSubTitle,
-  SubTitle,
+  SelectAccountSubTitle,
 } from 'components/Modals/HLS/Deposit/SubTitles'
 import Summary from 'components/Modals/HLS/Deposit/Summary'
+import { BN_ZERO } from 'constants/math'
+import usePrices from 'hooks/usePrices'
+import { BNCoin } from 'types/classes/BNCoin'
+import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+import {
+  getDepositCapMessage,
+  getHealthFactorMessage,
+  getLiquidityMessage,
+  getNoBalanceMessage,
+} from 'utils/messages'
 
 interface Props {
   apy: number
   borrowAmount: BigNumber
-  borrowAsset: Asset
+  borrowAsset: BorrowAsset
   collateralAsset: Asset
   depositAmount: BigNumber
   emptyHlsAccounts: Account[]
@@ -36,6 +46,80 @@ interface Props {
 }
 
 export default function useAccordionItems(props: Props) {
+  const { data: prices } = usePrices()
+
+  const depositCapLeft = useMemo(() => {
+    if (!props.strategy) return BN_ZERO
+    return props.strategy?.depositCap.max.minus(props.strategy.depositCap.used)
+  }, [props.strategy])
+
+  const borrowLiquidity = useMemo(
+    () => props.borrowAsset.liquidity?.amount || BN_ZERO,
+    [props.borrowAsset.liquidity?.amount],
+  )
+
+  const additionalDepositFromSwap = useMemo(() => {
+    const value = getCoinValue(
+      BNCoin.fromDenomAndBigNumber(props.borrowAsset.denom, props.borrowAmount),
+      prices,
+    )
+    return getCoinAmount(props.collateralAsset.denom, value, prices)
+  }, [prices, props.borrowAmount, props.borrowAsset.denom, props.collateralAsset])
+
+  const collateralWarningMessages = useMemo(() => {
+    const messages: string[] = []
+    if (!props.walletCollateralAsset?.amount) {
+      messages.push(getNoBalanceMessage(props.collateralAsset.symbol))
+    }
+
+    if (props.depositAmount.isGreaterThan(depositCapLeft)) {
+      messages.push(getDepositCapMessage(props.collateralAsset.denom, depositCapLeft, 'deposit'))
+    }
+
+    return messages
+  }, [
+    depositCapLeft,
+    props.collateralAsset.denom,
+    props.collateralAsset.symbol,
+    props.depositAmount,
+    props.walletCollateralAsset?.amount,
+  ])
+
+  const borrowWarningMessages = useMemo(() => {
+    const messages: string[] = []
+
+    if (props.borrowAmount.isGreaterThan(props.maxBorrowAmount)) {
+      messages.push(
+        getHealthFactorMessage(props.borrowAsset.denom, props.maxBorrowAmount, 'borrow'),
+      )
+    }
+
+    if (props.borrowAmount.isGreaterThan(borrowLiquidity)) {
+      messages.push(getLiquidityMessage(props.borrowAsset.denom, borrowLiquidity))
+    }
+
+    if (additionalDepositFromSwap.plus(props.depositAmount).isGreaterThan(props.maxBorrowAmount)) {
+      messages.push(getDepositCapMessage(props.borrowAsset.denom, depositCapLeft, 'borrow'))
+    }
+
+    return messages
+  }, [
+    additionalDepositFromSwap,
+    borrowLiquidity,
+    depositCapLeft,
+    props.borrowAmount,
+    props.borrowAsset.denom,
+    props.depositAmount,
+    props.maxBorrowAmount,
+  ])
+
+  useEffect(() => {
+    const element = document.getElementById(`item-${props.isOpen.findIndex((v) => v)}`)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [props.isOpen])
+
   return useMemo(() => {
     return [
       {
@@ -46,8 +130,9 @@ export default function useAccordionItems(props: Props) {
             onChangeAmount={props.onChangeCollateral}
             asset={props.collateralAsset}
             onClickBtn={() => props.toggleIsOpen(1)}
-            // TODO: Add check for deposit cap
             max={BN(props.walletCollateralAsset?.amount || 0)}
+            depositCapLeft={depositCapLeft}
+            warningMessages={collateralWarningMessages}
           />
         ),
         renderSubTitle: () => (
@@ -55,6 +140,7 @@ export default function useAccordionItems(props: Props) {
             isOpen={props.isOpen[0]}
             amount={props.depositAmount}
             denom={props.collateralAsset.denom}
+            warningMessages={collateralWarningMessages}
           />
         ),
         isOpen: props.isOpen[0],
@@ -73,6 +159,8 @@ export default function useAccordionItems(props: Props) {
             max={props.maxBorrowAmount}
             positionValue={props.positionValue}
             maxLeverage={props.strategy?.maxLeverage || 1}
+            baseApy={props.strategy?.apy || 0}
+            warningMessages={borrowWarningMessages}
           />
         ),
         renderSubTitle: () => (
@@ -80,6 +168,7 @@ export default function useAccordionItems(props: Props) {
             leverage={props.leverage}
             isOpen={props.isOpen[1]}
             positionValue={props.positionValue}
+            warningMessages={borrowWarningMessages}
           />
         ),
         isOpen: props.isOpen[1],
@@ -97,17 +186,28 @@ export default function useAccordionItems(props: Props) {
                   onClickBtn={() => props.toggleIsOpen(3)}
                 />
               ),
-              renderSubTitle: () =>
-                props.selectedAccount && !props.isOpen[2] ? (
-                  <SubTitle text={`Account ${props.selectedAccount.id}`} />
-                ) : null,
+              renderSubTitle: () => (
+                <SelectAccountSubTitle
+                  isOpen={props.isOpen[2]}
+                  isSummaryOpen={props.isOpen[3] || props.isOpen.every((i) => !i)}
+                  selectedAccountId={props.selectedAccount?.id}
+                  type='select'
+                />
+              ),
               isOpen: props.isOpen[2],
               toggleOpen: props.toggleIsOpen,
             }
           : {
               title: 'Create HLS Account',
               renderContent: () => <CreateAccount />,
-              renderSubTitle: () => null,
+              renderSubTitle: () => (
+                <SelectAccountSubTitle
+                  isOpen={props.isOpen[2]}
+                  isSummaryOpen={props.isOpen[3] || props.isOpen.every((i) => !i)}
+                  selectedAccountId={props.selectedAccount?.id}
+                  type='create'
+                />
+              ),
               isOpen: props.isOpen[2],
               toggleOpen: props.toggleIsOpen,
             },
@@ -124,6 +224,12 @@ export default function useAccordionItems(props: Props) {
             borrowAsset={props.borrowAsset}
             apy={props.apy}
             onClickBtn={props.execute}
+            disabled={
+              collateralWarningMessages.length > 0 ||
+              borrowWarningMessages.length > 0 ||
+              props.depositAmount.isZero() ||
+              !props.selectedAccount
+            }
           />
         ),
         renderSubTitle: () => null,
@@ -131,5 +237,5 @@ export default function useAccordionItems(props: Props) {
         toggleOpen: props.toggleIsOpen,
       },
     ]
-  }, [props])
+  }, [borrowWarningMessages, collateralWarningMessages, depositCapLeft, props])
 }

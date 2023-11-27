@@ -4,6 +4,7 @@ import classNames from 'classnames'
 import { useCallback, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useClipboard from 'react-use-clipboard'
+import { resolvePrimaryDomainByAddress } from 'ibc-domains-sdk'
 
 import Button from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
@@ -17,6 +18,7 @@ import { CHAINS } from 'constants/chains'
 import { ENV } from 'constants/env'
 import { BN_ZERO } from 'constants/math'
 import useCurrentWallet from 'hooks/useCurrentWallet'
+import useICNSDomain from 'hooks/useICNSDomain'
 import useToggle from 'hooks/useToggle'
 import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
@@ -34,10 +36,12 @@ export default function WalletConnectedButton() {
   const currentWallet = useCurrentWallet()
   const { disconnectWallet } = useShuttle()
   const address = useStore((s) => s.address)
+  const userDomain = useStore((s) => s.userDomain)
   const focusComponent = useStore((s) => s.focusComponent)
   const network = useStore((s) => s.client?.connectedWallet.network)
   const baseAsset = getBaseAsset()
   const { data: walletBalances, isLoading } = useWalletBalances(address)
+  const { data: icnsData, isLoading: isLoadingICNS } = useICNSDomain(address)
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
@@ -66,6 +70,7 @@ export default function WalletConnectedButton() {
     useStore.setState({
       client: undefined,
       address: undefined,
+      userDomain: undefined,
       accounts: null,
       balances: [],
       focusComponent: null,
@@ -84,6 +89,29 @@ export default function WalletConnectedButton() {
 
     navigate(getRoute(getPage(pathname)))
   }
+
+  useEffect(() => {
+    const fetchIBCDomain = async () => {
+      if (!address || isLoadingICNS) return
+      resolvePrimaryDomainByAddress(address).then((result) => {
+        if (result.isOk()) {
+          const userDomain = result.value as CommonSlice['userDomain']
+          useStore.setState({ userDomain })
+        } else {
+          useStore.setState({ userDomain: undefined })
+        }
+      })
+    }
+
+    if (icnsData?.primary_name) {
+      const userDomain = icnsData.primary_name
+      useStore.setState({
+        userDomain: { domain: userDomain.split('.')[0], domain_full: userDomain },
+      })
+    } else {
+      fetchIBCDomain()
+    }
+  }, [icnsData?.primary_name, isLoadingICNS, address])
 
   useEffect(() => {
     const newAmount = BigNumber(
@@ -119,7 +147,7 @@ export default function WalletConnectedButton() {
         }}
         hasFocus={showDetails}
       >
-        <span>{truncate(address, [2, 4])}</span>
+        <span>{userDomain?.domain ? userDomain.domain : truncate(address, [2, 4])}</span>
         <div
           className={classNames(
             'relative ml-2 flex h-full items-center pl-2 number',
@@ -161,7 +189,9 @@ export default function WalletConnectedButton() {
             </div>
           </div>
           <div className='flex flex-wrap w-full gap-2'>
-            <Text size='lg'>{'Your Address'}</Text>
+            <Text size='lg'>
+              {userDomain?.domain_full ? userDomain.domain_full : 'Your Address'}
+            </Text>
 
             <Text size='sm' className={classNames('hidden break-all text-white/60', 'md:block')}>
               {address}

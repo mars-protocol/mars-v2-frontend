@@ -8,7 +8,7 @@ import { DocURL } from 'types/enums/docURL'
 export default function HlsFarmIntro() {
   return (
     <Intro
-      bg='farm'
+      bg='hls-farm'
       text={
         <>
           <span className='text-white'>Leveraged farming</span> is a strategy where users borrow

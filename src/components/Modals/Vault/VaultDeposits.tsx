@@ -212,7 +212,7 @@ export default function VaultDeposit(props: Props) {
             max={availablePrimaryAmount}
             maxText='Balance'
             asset={primaryAsset}
-            warning={availablePrimaryAmount.isZero() ? getWarningText(primaryAsset) : undefined}
+            warningMessages={availablePrimaryAmount.isZero() ? [getWarningText(primaryAsset)] : []}
             disabled={disableInput}
           />
           {!props.isCustomRatio && (
@@ -224,8 +224,10 @@ export default function VaultDeposit(props: Props) {
             max={availableSecondaryAmount}
             maxText='Balance'
             asset={secondaryAsset}
-            warning={availableSecondaryAmount.isZero() ? getWarningText(secondaryAsset) : undefined}
             disabled={disableInput}
+            warningMessages={
+              availableSecondaryAmount.isZero() ? [getWarningText(secondaryAsset)] : []
+            }
           />
         </div>
       </div>

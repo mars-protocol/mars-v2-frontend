@@ -689,6 +689,7 @@ export default function createBroadcastSlice(
       denomOut: string
       slippage: number
       isMax?: boolean
+      repay: boolean
     }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
@@ -703,6 +704,17 @@ export default function createBroadcastSlice(
                 slippage: options.slippage.toString(),
               },
             },
+            ...(options.repay
+              ? [
+                  {
+                    repay: {
+                      coin: BNCoin.fromDenomAndBigNumber(options.denomOut, BN_ZERO).toActionCoin(
+                        true,
+                      ),
+                    },
+                  },
+                ]
+              : []),
           ],
         },
       }

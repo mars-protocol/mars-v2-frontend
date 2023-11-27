@@ -3,8 +3,10 @@ interface Asset {
   name: string
   denom: string
   symbol:
+    | 'AKT'
     | 'ATOM'
     | 'AXL'
+    | 'DYDX'
     | 'INJ'
     | 'MARS'
     | 'OSMO'
@@ -24,8 +26,10 @@ interface Asset {
     | 'stATOM-ATOM'
     | '$'
   id:
+    | 'AKT'
     | 'ATOM'
     | 'AXL'
+    | 'DYDX'
     | 'INJ'
     | 'axlUSDC'
     | 'axlWBTC'
@@ -84,7 +88,6 @@ interface BigNumberCoin {
 }
 
 interface BorrowMarketTableData extends MarketTableData {
-  borrowRate: number | null
   liquidity: {
     amount: BigNumber
     value: BigNumber
@@ -93,19 +96,24 @@ interface BorrowMarketTableData extends MarketTableData {
 }
 
 interface LendingMarketTableData extends MarketTableData {
-  marketDepositCap: BigNumber
   accountLentAmount?: string
   accountLentValue?: BigNumber
   borrowEnabled: boolean
+  cap: DepositCap
 }
 
 interface MarketTableData {
   asset: Asset
-  marketMaxLtv: number
   marketDepositAmount: BigNumber
-  marketLiquidityRate: number
   marketLiquidityAmount: BigNumber
-  marketLiquidationThreshold: number
+  apy: {
+    borrow: number
+    deposit: number
+  }
+  ltv: {
+    max: number
+    liq: number
+  }
 }
 
 interface HLSStrategy extends HLSStrategyNoCap {
@@ -124,4 +132,15 @@ interface HLSStrategyNoCap {
 
 interface DepositedHLSStrategy extends HLSStrategy {
   depositedAmount: BigNumber
+}
+
+interface StakingApr {
+  chainId: string
+  currentYield: number
+  denom: string
+  fees: number
+  name: string
+  strideYield: number
+  unbondingDelay: number
+  unbondingPeriod: number
 }

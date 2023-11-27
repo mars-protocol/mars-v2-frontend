@@ -1,7 +1,8 @@
+import classNames from 'classnames'
 import { ReactNode } from 'react'
 
 import Card from 'components/Card'
-import { GridGlobe, GridHole, GridLandscape, GridTire } from 'components/Icons'
+import { GridGlobe, GridHole, GridLandscape, GridPlanet, GridTire, GridWeb } from 'components/Icons'
 import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
 import useStore from 'store'
@@ -9,31 +10,39 @@ import useStore from 'store'
 interface Props {
   text: string | ReactNode
   children?: ReactNode
-  bg: 'borrow' | 'lend' | 'farm' | 'portfolio'
+  bg: 'borrow' | 'lend' | 'farm' | 'portfolio' | 'hls-farm' | 'hls-staking'
 }
 
 function IntroBackground(props: { bg: Props['bg'] }) {
   switch (props.bg) {
     case 'borrow':
-      return <GridHole className='h-55' />
+      return <GridHole className='h-55 opacity-5' />
     case 'lend':
-      return <GridTire className='h-55' />
+      return <GridTire className='h-55 opacity-5' />
     case 'farm':
-      return <GridLandscape className='h-55' />
+      return <GridLandscape className='h-55 opacity-5' />
+    case 'hls-farm':
+      return <GridWeb className='h-45 opacity-5' />
+    case 'hls-staking':
+      return <GridPlanet className='h-55 opacity-10' />
     default:
-      return <GridGlobe className='h-50' />
+      return <GridGlobe className='h-50 opacity-5' />
   }
 }
 
 export default function Intro(props: Props) {
   const showTutorial = useStore((s) => s.tutorial)
+  const isHLS = useStore((s) => s.isHLS)
   if (!showTutorial) return null
   return (
     <Card
-      className={`relative w-full p-8 bg-intro bg-cover h-55`}
+      className={classNames(
+        'relative w-full p-8 bg-cover h-55',
+        isHLS ? 'bg-intro-hls' : 'bg-intro',
+      )}
       contentClassName='flex w-full h-full flex-col justify-between'
     >
-      <div className='absolute inset-0 flex items-end justify-end w-full h-full text-white opacity-5'>
+      <div className='absolute inset-0 flex items-end justify-end w-full h-full text-white'>
         <IntroBackground bg={props.bg} />
       </div>
       <Tooltip

@@ -9,6 +9,7 @@ import Text from 'components/Text'
 import { BN_ZERO, MAX_AMOUNT_DECIMALS } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
+import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
@@ -21,6 +22,7 @@ import {
 
 interface Props {
   account: Account
+  isHls?: boolean
 }
 
 interface ItemProps {
@@ -37,6 +39,7 @@ export default function AccountComposition(props: Props) {
   const { account } = props
   const hasChanged = !!updatedAccount
   const { data: prices } = usePrices()
+  const { data: hlsStrategies } = useHLSStakingAssets()
   const { data } = useBorrowMarketAssetsTableData(false)
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
@@ -72,15 +75,30 @@ export default function AccountComposition(props: Props) {
   )
 
   const apr = useMemo(
-    () => calculateAccountApr(account, borrowAssetsData, lendingAssetsData, prices),
-    [account, borrowAssetsData, lendingAssetsData, prices],
+    () =>
+      calculateAccountApr(
+        account,
+        borrowAssetsData,
+        lendingAssetsData,
+        prices,
+        hlsStrategies,
+        props.isHls,
+      ),
+    [account, borrowAssetsData, hlsStrategies, lendingAssetsData, prices, props.isHls],
   )
   const updatedApr = useMemo(
     () =>
       updatedAccount
-        ? calculateAccountApr(updatedAccount, borrowAssetsData, lendingAssetsData, prices)
+        ? calculateAccountApr(
+            updatedAccount,
+            borrowAssetsData,
+            lendingAssetsData,
+            prices,
+            hlsStrategies,
+            props.isHls,
+          )
         : BN_ZERO,
-    [updatedAccount, borrowAssetsData, lendingAssetsData, prices],
+    [updatedAccount, borrowAssetsData, lendingAssetsData, prices, hlsStrategies, props.isHls],
   )
 
   return (

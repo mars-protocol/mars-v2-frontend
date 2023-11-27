@@ -1,5 +1,6 @@
 type Page =
   | 'trade'
+  | 'perps'
   | 'borrow'
   | 'farm'
   | 'lend'
@@ -7,3 +8,4 @@ type Page =
   | 'portfolio/{accountId}'
   | 'hls-farm'
   | 'hls-staking'
+  | 'governance'

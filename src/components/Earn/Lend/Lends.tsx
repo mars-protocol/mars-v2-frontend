@@ -1,5 +1,3 @@
-import React from 'react'
-
 import AvailableLendsTable from 'components/Earn/Lend/Table/AvailableLendsTable'
 import DepositedLendsTable from 'components/Earn/Lend/Table/DepositedLendsTable'
 import { BN_ZERO } from 'constants/math'
@@ -26,11 +24,21 @@ function Fallback() {
     asset,
     marketDepositCap: BN_ZERO,
     borrowEnabled: false,
-    marketMaxLtv: 0,
     marketDepositAmount: BN_ZERO,
-    marketLiquidityRate: 0,
     marketLiquidityAmount: BN_ZERO,
-    marketLiquidationThreshold: 0,
+    cap: {
+      max: BN_ZERO,
+      used: BN_ZERO,
+      denom: asset.denom,
+    },
+    apy: {
+      borrow: 0,
+      deposit: 0,
+    },
+    ltv: {
+      max: 0,
+      liq: 0,
+    },
   }))
 
   return <AvailableLendsTable data={data} isLoading />

@@ -130,8 +130,8 @@ export class DataFeed implements IDatafeedChartApi {
 
     setTimeout(async () => {
       await this.getPairsWithData()
-      callback(configurationData)
     })
+    callback(configurationData)
   }
 
   resolveSymbol(pairName: string, onResolve: ResolveCallback, onError: ErrorCallback) {
@@ -181,7 +181,8 @@ export class DataFeed implements IDatafeedChartApi {
           onResult(bars)
         })
       } else {
-        await this.getBarsFromTheGraph(symbolInfo, resolution, to).then((bars) => onResult(bars))
+        //await this.getBarsFromTheGraph(symbolInfo, resolution, to).then((bars) => onResult(bars))
+        onResult([], { noData: true })
       }
     } catch (error) {
       console.error(error)
@@ -464,7 +465,7 @@ export class DataFeed implements IDatafeedChartApi {
     const denoms = name.split(PAIR_SEPARATOR)
     const pythFeedId1 = ASSETS.find(byDenom(denoms[0]))?.pythHistoryFeedId
     const pythFeedId2 = ASSETS.find(byDenom(denoms[1]))?.pythHistoryFeedId
-    if (!pythFeedId1 || !pythFeedId2) return 'Osmosis'
+    //if (!pythFeedId1 || !pythFeedId2) return 'Osmosis'
     return 'Pyth Oracle'
   }
 

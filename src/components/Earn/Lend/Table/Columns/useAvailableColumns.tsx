@@ -26,7 +26,7 @@ export default function useAvailableColumns(props: Props) {
           <Apy
             isLoading={props.isLoading}
             borrowEnabled={row.original.borrowEnabled}
-            marketLiquidityRate={row.original.marketLiquidityRate}
+            apy={row.original.apy.deposit}
           />
         ),
       },

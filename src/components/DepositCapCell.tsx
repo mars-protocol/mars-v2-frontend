@@ -12,7 +12,7 @@ export default function DepositCapCell(props: Props) {
     .dividedBy(props.depositCap.max.multipliedBy(VAULT_DEPOSIT_BUFFER))
     .multipliedBy(100)
     .integerValue()
-
+  const depositCapUsed = Math.min(percent.toNumber(), 100)
   const decimals = getAssetByDenom(props.depositCap.denom)?.decimals ?? 6
 
   return (
@@ -27,7 +27,7 @@ export default function DepositCapCell(props: Props) {
       }
       sub={
         <FormattedNumber
-          amount={percent.toNumber()}
+          amount={depositCapUsed}
           options={{ minDecimals: 2, maxDecimals: 2, suffix: '% Filled' }}
           className='text-xs'
           animate

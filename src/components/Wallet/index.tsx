@@ -17,6 +17,7 @@ export default function Wallet() {
     if (currentWallet.account.address === address) return
     useStore.setState({
       address: undefined,
+      userDomain: undefined,
       client: undefined,
       focusComponent: {
         component: <WalletConnecting autoConnect />,
@@ -25,6 +26,7 @@ export default function Wallet() {
           useStore.setState({
             client: undefined,
             address: undefined,
+            userDomain: undefined,
             accounts: null,
             balances: [],
             focusComponent: null,

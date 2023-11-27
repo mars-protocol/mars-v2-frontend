@@ -16,6 +16,7 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountLeverage, cloneAccount } from 'utils/accounts'
 import { byDenom } from 'utils/array'
+import { SWAP_FEE_BUFFER } from 'utils/constants'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { getValueFromBNCoins } from 'utils/helpers'
 
@@ -135,7 +136,13 @@ export function useUpdatedAccount(account?: Account) {
   )
 
   const simulateTrade = useCallback(
-    (removeCoin: BNCoin, addCoin: BNCoin, debtCoin: BNCoin, target: 'deposit' | 'lend') => {
+    (
+      removeCoin: BNCoin,
+      addCoin: BNCoin,
+      debtCoin: BNCoin,
+      target: 'deposit' | 'lend',
+      repay: boolean,
+    ) => {
       removeDeposits([])
       removeLends([])
       addDebts([])
@@ -143,13 +150,29 @@ export function useUpdatedAccount(account?: Account) {
       addLends([])
 
       const { deposit, lend } = getDepositAndLendCoinsToSpend(removeCoin, account)
+      const currentDebtCoin = account?.debts.find(byDenom(addCoin.denom))
+      let usedAmountForDebt = BN_ZERO
 
       if (!deposit.amount.isZero()) removeDeposits([deposit])
       if (!lend.amount.isZero()) removeLends([lend])
 
-      if (target === 'deposit') addDeposits([addCoin])
-      if (target === 'lend') addLends([addCoin])
+      if (repay && currentDebtCoin) {
+        if (currentDebtCoin.amount.isGreaterThanOrEqualTo(addCoin.amount)) {
+          removeDebts([addCoin])
+          usedAmountForDebt = addCoin.amount
+        } else {
+          removeDebts([currentDebtCoin])
+          usedAmountForDebt = currentDebtCoin.amount
+        }
+      }
 
+      const remainingAddCoin = BNCoin.fromDenomAndBigNumber(
+        addCoin.denom,
+        addCoin.amount.minus(usedAmountForDebt),
+      )
+
+      if (target === 'deposit') addDeposits(repay ? [remainingAddCoin] : [addCoin])
+      if (target === 'lend') addLends(repay ? [remainingAddCoin] : [addCoin])
       if (debtCoin.amount.isGreaterThan(BN_ZERO)) addDebts([debtCoin])
     },
     [account, addDebts, addDeposits, addLends, removeDeposits, removeLends],
@@ -162,6 +185,8 @@ export function useUpdatedAccount(account?: Account) {
       const additionalDebtValue = getCoinValue(borrowCoin, prices)
 
       const tradeOutputAmount = getCoinAmount(depositCoin.denom, additionalDebtValue, prices)
+        .times(1 - SWAP_FEE_BUFFER)
+        .integerValue()
       addTrades([BNCoin.fromDenomAndBigNumber(depositCoin.denom, tradeOutputAmount)])
     },
     [prices],
@@ -171,10 +196,12 @@ export function useUpdatedAccount(account?: Account) {
     (collateralDenom: string, debtDenom: string, repayAmount: BigNumber) => {
       const repayValue = getCoinValue(BNCoin.fromDenomAndBigNumber(debtDenom, repayAmount), prices)
       const removeDepositAmount = getCoinAmount(collateralDenom, repayValue, prices)
+        .times(1 + slippage)
+        .integerValue()
       removeDeposits([BNCoin.fromDenomAndBigNumber(collateralDenom, removeDepositAmount)])
       removeDebts([BNCoin.fromDenomAndBigNumber(debtDenom, repayAmount)])
     },
-    [prices],
+    [prices, slippage],
   )
 
   const simulateVaultDeposit = useCallback(
@@ -248,6 +275,7 @@ export function useUpdatedAccount(account?: Account) {
     addedDeposits,
     addedDebts,
     addedLends,
+    addedTrades,
     leverage,
     removedDeposits,
     removedDebts,

@@ -1,11 +1,11 @@
-import getMarket from 'api/markets/getMarket'
 import getTotalActiveEmissionValue from 'api/incentives/getTotalActiveEmissionValue'
+import getMarket from 'api/markets/getMarket'
 import getUnderlyingLiquidityAmount from 'api/markets/getMarketUnderlyingLiquidityAmount'
-import { BN } from 'utils/helpers'
-import { SECONDS_IN_A_YEAR } from 'utils/constants'
 import getPrice from 'api/prices/getPrice'
 import { ASSETS } from 'constants/assets'
 import { byDenom } from 'utils/array'
+import { SECONDS_IN_A_YEAR } from 'utils/constants'
+import { BN } from 'utils/helpers'
 
 export default async function calculateAssetIncentivesApy(
   denom: string,
@@ -29,7 +29,7 @@ export default async function calculateAssetIncentivesApy(
       .shiftedBy(-assetDecimals)
       .multipliedBy(assetPrice)
 
-    const marketReturns = BN(market.liquidityRate).multipliedBy(marketLiquidityValue)
+    const marketReturns = BN(market.apy.deposit).multipliedBy(marketLiquidityValue)
     const annualEmission = totalActiveEmissionValue.multipliedBy(SECONDS_IN_A_YEAR)
 
     const totalAnnualReturnsValue = annualEmission.plus(marketReturns)

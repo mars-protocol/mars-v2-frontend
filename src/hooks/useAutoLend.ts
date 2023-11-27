@@ -5,7 +5,8 @@ import useStore from 'store'
 
 export default function useAutoLend(): {
   autoLendEnabledAccountIds: string[]
-  toggleAutoLend: (accountId: string) => void
+  enableAutoLend: (accountId: string) => void
+  disableAutoLend: (accountId: string) => void
   isAutoLendEnabledForCurrentAccount: boolean
   setAutoLendOnAllAccounts: (lendAssets: boolean) => void
   enableAutoLendAccountId: (accountId: string) => void
@@ -17,13 +18,15 @@ export default function useAutoLend(): {
     [],
   )
 
-  const toggleAutoLend = (accountId: string) => {
+  const enableAutoLend = (accountId: string) => {
     const setOfAccountIds = new Set(autoLendEnabledAccountIds)
+    setOfAccountIds.add(accountId)
+    setAutoLendEnabledAccountIds(Array.from(setOfAccountIds))
+  }
 
-    setOfAccountIds.has(accountId)
-      ? setOfAccountIds.delete(accountId)
-      : setOfAccountIds.add(accountId)
-
+  const disableAutoLend = (accountId: string) => {
+    const setOfAccountIds = new Set(autoLendEnabledAccountIds)
+    setOfAccountIds.delete(accountId)
     setAutoLendEnabledAccountIds(Array.from(setOfAccountIds))
   }
 
@@ -45,7 +48,8 @@ export default function useAutoLend(): {
 
   return {
     autoLendEnabledAccountIds,
-    toggleAutoLend,
+    enableAutoLend,
+    disableAutoLend,
     isAutoLendEnabledForCurrentAccount,
     setAutoLendOnAllAccounts,
     enableAutoLendAccountId,

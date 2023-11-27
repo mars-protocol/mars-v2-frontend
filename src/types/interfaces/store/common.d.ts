@@ -1,6 +1,10 @@
 interface CommonSlice {
   accounts: Account[] | null
   address?: string
+  userDomain?: {
+    domain: string
+    domain_full: string
+  }
   balances: Coin[]
   hlsAccounts: Account[] | null
   client?: WalletClient
@@ -12,7 +16,9 @@ interface CommonSlice {
   migrationBanner: boolean
   tutorial: boolean
   useMargin: boolean
+  useAutoRepay: boolean
   isOracleStale: boolean
+  isHLS: boolean
 }
 
 interface FocusComponent {
