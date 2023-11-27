@@ -46,6 +46,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
   )
+
   const accountDetailsExpanded = useStore((s) => s.accountDetailsExpanded)
   const isFullWidth =
     location.pathname.includes('trade') ||
@@ -64,7 +65,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           'lg:mt-[73px]',
           'flex',
           'min-h-screen gap-6 px-4 py-6 w-full relative',
-          isFullWidth && accountId && (accountDetailsExpanded ? 'pr-118' : 'pr-24'),
+          !focusComponent &&
+            isFullWidth &&
+            accountId &&
+            (accountDetailsExpanded ? 'pr-118' : 'pr-24'),
           !reduceMotion && isFullWidth && 'transition-all duration-300',
           'justify-center',
           focusComponent && 'items-center',
