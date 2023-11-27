@@ -3,6 +3,7 @@ import debounce from 'lodash.debounce'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import ActionButton from 'components/Button/ActionButton'
+import { CircularProgress } from 'components/CircularProgress'
 import DisplayCurrency from 'components/DisplayCurrency'
 import Divider from 'components/Divider'
 import { FormattedNumber } from 'components/FormattedNumber'
@@ -121,6 +122,24 @@ export default function TradeSummary(props: Props) {
             <Divider className='my-2' />
           </>
         )}
+        <>
+          <SummaryLine label='Liquidation Price'>
+            <div className='flex h-2'>
+              {isUpdatingLiquidationPrice ? (
+                <CircularProgress className='opacity-50' />
+              ) : liquidationPrice === null || liquidationPrice === 0 ? (
+                '-'
+              ) : (
+                <FormattedNumber
+                  className='inline'
+                  amount={liquidationPrice}
+                  options={{ abbreviated: true, prefix: `${props.buyAsset.symbol} = $ ` }}
+                />
+              )}
+            </div>
+          </SummaryLine>
+          <Divider className='my-2' />
+        </>
         <SummaryLine label={`Swap fees (${(swapFee || 0.002) * 100}%)`}>
           <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(sellAsset.denom, swapFeeValue)} />
         </SummaryLine>
