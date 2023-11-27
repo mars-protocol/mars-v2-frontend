@@ -2,7 +2,6 @@ import classNames from 'classnames'
 import { useEffect } from 'react'
 
 import SwitchWithLabel from 'components/Switch/SwitchWithLabel'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAutoLend from 'hooks/useAutoLend'
 import useLocalStorage from 'hooks/useLocalStorage'
@@ -16,9 +15,9 @@ export default function SwitchAutoLend(props: Props) {
   const { accountId, className } = props
   const { autoLendEnabledAccountIds, disableAutoLend, enableAutoLend } = useAutoLend()
   const isAutoLendEnabled = autoLendEnabledAccountIds.includes(accountId)
-  const [lendAssets, setLendAssets] = useLocalStorage<boolean>(
+  const [lendAssets, setLendAssets] = useLocalStorage<boolean | null>(
     LocalStorageKeys.LEND_ASSETS,
-    DEFAULT_SETTINGS.lendAssets,
+    null,
   )
 
   useEffect(() => {
