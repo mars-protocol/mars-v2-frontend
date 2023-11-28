@@ -56,15 +56,17 @@ export default function useHealthComputer(account?: Account) {
           base_coin: {
             amount: '0', // Not used by healthcomputer
             denom: curr.denoms.lp,
-            value: curr.amounts.unlocking.times(baseCoinPrice).integerValue().toString(),
+            value: curr.amounts.unlocking
+              .plus(curr.amounts.unlocked)
+              .times(baseCoinPrice)
+              .integerValue()
+              .toString(),
           },
           vault_coin: {
             amount: '0', // Not used by healthcomputer
             denom: curr.denoms.vault,
             value: curr.values.primary
               .plus(curr.values.secondary)
-              .plus(curr.values.unlocking)
-              .plus(curr.values.unlocked)
               .shiftedBy(VALUE_SCALE_FACTOR + 6) // Need to scale additional 6 to correct for uusd values
               .integerValue()
               .toString(),
