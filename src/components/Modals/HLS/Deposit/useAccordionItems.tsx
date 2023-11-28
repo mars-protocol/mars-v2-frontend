@@ -19,7 +19,7 @@ import {
   getDepositCapMessage,
   getHealthFactorMessage,
   getLiquidityMessage,
-  getNoBalanceMessage,
+  getNoBalanceInWalletMessage,
 } from 'utils/messages'
 
 interface Props {
@@ -69,7 +69,7 @@ export default function useAccordionItems(props: Props) {
   const collateralWarningMessages = useMemo(() => {
     const messages: string[] = []
     if (!props.walletCollateralAsset?.amount) {
-      messages.push(getNoBalanceMessage(props.collateralAsset.symbol))
+      messages.push(getNoBalanceInWalletMessage(props.collateralAsset.symbol))
     }
 
     if (props.depositAmount.isGreaterThan(depositCapLeft)) {
