@@ -11,7 +11,7 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
-import { getNoBalanceMessage } from 'utils/messages'
+import { getNoBalanceInWalletMessage } from 'utils/messages'
 
 interface Props {
   account: Account
@@ -83,7 +83,7 @@ export default function Repay(props: Props) {
 
   const warningMessages = useMemo(() => {
     if (borrowAssetAmountInWallet.isZero()) {
-      return [getNoBalanceMessage(props.borrowAsset.symbol)]
+      return [getNoBalanceInWalletMessage(props.borrowAsset.symbol)]
     }
     return []
   }, [borrowAssetAmountInWallet, props.borrowAsset.symbol])

@@ -25,7 +25,7 @@ import {
   getDepositCapMessage,
   getHealthFactorMessage,
   getLiquidityMessage,
-  getNoBalanceMessage,
+  getNoBalanceInWalletMessage,
 } from 'utils/messages'
 
 interface Props {
@@ -87,7 +87,7 @@ export default function Deposit(props: Props) {
     }
 
     if (collateralAssetAmountInWallet.isZero()) {
-      messages.push(getNoBalanceMessage(props.collateralAsset.symbol))
+      messages.push(getNoBalanceInWalletMessage(props.collateralAsset.symbol))
     }
 
     return messages

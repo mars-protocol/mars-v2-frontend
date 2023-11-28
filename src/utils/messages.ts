@@ -4,6 +4,10 @@ export function getNoBalanceMessage(symbol: string) {
   return `You don't have an ${symbol} balance in your account.`
 }
 
+export function getNoBalanceInWalletMessage(symbol: string) {
+  return `You don't have any ${symbol} in your wallet.`
+}
+
 export function getDepositCapMessage(
   denom: string,
   amount: BigNumber,
@@ -30,5 +34,5 @@ export function getHealthFactorMessage(
   return `You cannot ${action} more than ${formatAmountWithSymbol({
     denom,
     amount: amount.toString(),
-  })}, as it will result in a health factor lower than 1.`
+  })}, as it will likely result in a health factor lower than 1.`
 }
