@@ -34,5 +34,5 @@ export function getHealthFactorMessage(
   return `You cannot ${action} more than ${formatAmountWithSymbol({
     denom,
     amount: amount.toString(),
-  })}, as it will result in a health factor lower than 1.`
+  })}, as it will likely result in a health factor lower than 1.`
 }
