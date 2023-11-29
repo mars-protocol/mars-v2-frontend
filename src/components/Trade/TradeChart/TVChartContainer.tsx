@@ -1,9 +1,17 @@
 import { useEffect, useMemo, useRef } from 'react'
 
 import Card from 'components/Card'
-import { disabledFeatures, enabledFeatures, overrides } from 'components/Trade/TradeChart/constants'
+import DisplayCurrency from 'components/DisplayCurrency'
+import { FormattedNumber } from 'components/FormattedNumber'
+import Loading from 'components/Loading'
+import Text from 'components/Text'
 import { DataFeed, PAIR_SEPARATOR } from 'components/Trade/TradeChart/DataFeed'
+import { disabledFeatures, enabledFeatures, overrides } from 'components/Trade/TradeChart/constants'
+import { BN_ONE, BN_ZERO } from 'constants/math'
+import usePrices from 'hooks/usePrices'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
 import {
   ChartingLibraryWidgetOptions,
   IChartingLibraryWidget,
@@ -11,6 +19,7 @@ import {
   Timezone,
   widget,
 } from 'utils/charting_library'
+import { magnify } from 'utils/formatters'
 
 interface Props {
   buyAsset: Asset
@@ -28,6 +37,10 @@ export const TVChartContainer = (props: Props) => {
     () => new DataFeed(false, baseCurrency.decimals, baseCurrency.denom),
     [baseCurrency],
   )
+  const { data: prices, isLoading } = usePrices()
+  const priceBuyAsset = prices.find(byDenom(props.buyAsset.denom))?.amount ?? BN_ZERO
+  const priceSellAsset = prices.find(byDenom(props.sellAsset.denom))?.amount ?? BN_ONE
+  const ratio = priceBuyAsset.dividedBy(priceSellAsset)
 
   useEffect(() => {
     const widgetOptions: ChartingLibraryWidgetOptions = {
@@ -102,7 +115,45 @@ export const TVChartContainer = (props: Props) => {
   }, [props.buyAsset.denom, props.sellAsset.denom])
 
   return (
-    <Card title='Trading Chart' contentClassName='px-0.5 pb-0.5 h-full' className='h-full'>
+    <Card
+      title={
+        <div className='flex items-center w-full bg-white/10'>
+          <Text size='lg' className='flex items-center flex-1 p-4 font-semibold'>
+            Trading Chart
+          </Text>
+          {priceBuyAsset.isZero() || isLoading ? (
+            <Loading className='h-4 mr-4 w-60' />
+          ) : (
+            <div className='flex items-center gap-1 p-4'>
+              <Text size='sm'>1 {props.buyAsset.symbol}</Text>
+              <FormattedNumber
+                className='text-sm'
+                amount={Number(ratio.toPrecision(4))}
+                options={{
+                  prefix: '= ',
+                  suffix: ` ${props.sellAsset.symbol}`,
+                  abbreviated: false,
+                  maxDecimals: props.sellAsset.decimals,
+                }}
+              />
+              <DisplayCurrency
+                parentheses
+                abbreviated={false}
+                className='justify-end pl-2 text-sm text-white/50'
+                coin={
+                  new BNCoin({
+                    denom: props.buyAsset.denom,
+                    amount: magnify(1, props.buyAsset).toString(),
+                  })
+                }
+              />
+            </div>
+          )}
+        </div>
+      }
+      contentClassName='px-0.5 pb-0.5 h-full'
+      className='h-full'
+    >
       <div ref={chartContainerRef} className='h-full overflow-hidden rounded-b-base' />
     </Card>
   )
