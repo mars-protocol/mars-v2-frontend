@@ -83,8 +83,8 @@ export const ASSETS: Asset[] = [
     isDisplayCurrency: true,
     isAutoLendEnabled: true,
     isBorrowEnabled: true,
-    pythPriceFeedId: 'e62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43',
-    pythHistoryFeedId: 'Crypto.BTC/USD',
+    pythPriceFeedId: 'c9d8b075a5c69303365ae23633d4e085199bf5c520a3b90fed1322a0342ffc33',
+    pythHistoryFeedId: 'Crypto.WBTC/USD',
     poolId: 712,
   },
   {
