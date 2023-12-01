@@ -11,6 +11,7 @@ export const LIQUIDITY_META = {
   accessorKey: 'liquidity',
   header: 'Liquidity Available',
   id: 'liquidity',
+  meta: { className: 'w-40' },
 }
 
 export const liquiditySortingFn = (

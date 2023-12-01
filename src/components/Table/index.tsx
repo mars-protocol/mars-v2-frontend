@@ -16,7 +16,6 @@ import { SortAsc, SortDesc, SortNone } from 'components/Icons'
 import Row from 'components/Table/Row'
 import Text from 'components/Text'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
-import { getCellClasses } from 'utils/table'
 
 interface Props<T> {
   title: string
@@ -69,7 +68,7 @@ export default function Table<T>(props: Props<T>) {
                       props.spacingClassName ?? 'px-4 py-3',
                       header.column.getCanSort() && 'hover:cursor-pointer',
                       header.id === 'symbol' || header.id === 'name' ? 'text-left' : 'text-right',
-                      getCellClasses(header.id),
+                      header.column.columnDef.meta?.className,
                     )}
                   >
                     <div

@@ -1,8 +1,6 @@
 import { Cell, flexRender, Row as TanstackRow, Table as TanstackTable } from '@tanstack/react-table'
 import classNames from 'classnames'
 
-import { getCellClasses } from 'utils/table'
-
 interface Props<T> {
   row: TanstackRow<T>
   table: TanstackTable<T>
@@ -20,7 +18,6 @@ function getBorderColor(row: AccountBalanceRow) {
 
 export default function Row<T>(props: Props<T>) {
   const canExpand = !!props.renderExpanded
-
   return (
     <>
       <tr
@@ -50,7 +47,7 @@ export default function Row<T>(props: Props<T>) {
                 isSymbolOrName ? 'text-left' : 'text-right',
                 props.spacingClassName ?? 'px-3 py-4',
                 borderClasses,
-                getCellClasses(cell.id),
+                cell.column.columnDef.meta?.className,
               )}
             >
               {flexRender(cell.column.columnDef.cell, cell.getContext())}
