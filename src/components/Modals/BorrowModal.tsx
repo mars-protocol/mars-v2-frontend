@@ -21,6 +21,7 @@ import useHealthComputer from 'hooks/useHealthComputer'
 import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import { getDepositAndLendCoinsToSpend } from 'hooks/useUpdatedAccount/functions'
+import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
@@ -42,17 +43,18 @@ function getAssetLogo(modal: BorrowModal) {
   return <AssetImage asset={modal.asset} size={24} />
 }
 
-function RepayNotAvailable(props: { asset: Asset }) {
+function RepayNotAvailable(props: { asset: Asset; repayFromWallet: boolean }) {
   return (
     <Card className='mt-6'>
       <div className='flex items-start p-4'>
-        <InfoCircle width={26} className='mr-2' />
-        <div className='flex flex-col gap-1'>
+        <InfoCircle className='w-6 mr-2 flex-0' />
+        <div className='flex flex-col flex-1 gap-1'>
           <Text size='sm'>No funds for repay</Text>
-          <Text
-            size='xs'
-            className='text-white/40'
-          >{`Unfortunately you don't have any ${props.asset.symbol} in your Credit Account to repay the debt.`}</Text>
+          <Text size='xs' className='text-white/40'>{`Unfortunately you don't have any ${
+            props.asset.symbol
+          } in your ${
+            props.repayFromWallet ? 'Wallet' : 'Credit Account'
+          } to repay the debt.`}</Text>
         </div>
       </div>
     </Card>
@@ -74,6 +76,9 @@ function BorrowModal(props: Props) {
   const { modal, account } = props
   const [amount, setAmount] = useState(BN_ZERO)
   const [borrowToWallet, setBorrowToWallet] = useToggle()
+  const [repayFromWallet, setRepayFromWallet] = useToggle()
+  const walletAddress = useStore((s) => s.address)
+  const { data: walletBalances } = useWalletBalances(walletAddress)
   const borrow = useStore((s) => s.borrow)
   const repay = useStore((s) => s.repay)
   const asset = modal.asset
@@ -100,9 +105,18 @@ function BorrowModal(props: Props) {
   )
 
   const maxRepayAmount = useMemo(() => {
+    if (repayFromWallet) return BN(walletBalances.find(byDenom(asset.denom))?.amount ?? 0)
     const maxBalance = depositBalance.plus(lendBalance)
     return isRepay ? BigNumber.min(maxBalance, totalDebtRepayAmount) : BN_ZERO
-  }, [depositBalance, lendBalance, isRepay, totalDebtRepayAmount])
+  }, [
+    depositBalance,
+    lendBalance,
+    isRepay,
+    totalDebtRepayAmount,
+    walletBalances,
+    asset.denom,
+    repayFromWallet,
+  ])
 
   function resetState() {
     setAmount(BN_ZERO)
@@ -119,7 +133,8 @@ function BorrowModal(props: Props) {
         accountId: account.id,
         coin: BNCoin.fromDenomAndBigNumber(asset.denom, amount),
         accountBalance: amount.isEqualTo(totalDebtRepayAmount),
-        lend,
+        lend: repayFromWallet ? BNCoin.fromDenomAndBigNumber(asset.denom, BN_ZERO) : lend,
+        fromWallet: repayFromWallet,
       })
     } else {
       borrow({
@@ -146,9 +161,9 @@ function BorrowModal(props: Props) {
       const repayCoin = coin.amount.isGreaterThan(totalDebt)
         ? BNCoin.fromDenomAndBigNumber(asset.denom, totalDebt)
         : coin
-      simulateRepay(repayCoin)
+      simulateRepay(repayCoin, repayFromWallet)
     },
-    [amount, asset.denom, isRepay, simulateRepay, totalDebt],
+    [amount, asset.denom, isRepay, simulateRepay, totalDebt, repayFromWallet],
   )
 
   const maxBorrow = useMemo(() => {
@@ -269,8 +284,27 @@ function BorrowModal(props: Props) {
               maxText='Max'
               warningMessages={[]}
             />
-            {isRepay && maxRepayAmount.isZero() && <RepayNotAvailable asset={asset} />}
-            {!isRepay && (
+            {isRepay && maxRepayAmount.isZero() && (
+              <RepayNotAvailable asset={asset} repayFromWallet={repayFromWallet} />
+            )}
+            {isRepay ? (
+              <>
+                <Divider className='my-6' />
+                <div className='flex flex-wrap flex-1'>
+                  <Text className='w-full mb-1'>Repay from Wallet</Text>
+                  <Text size='xs' className='text-white/50'>
+                    Repay your debt directly from your wallet
+                  </Text>
+                </div>
+                <div className='flex flex-wrap items-center justify-end'>
+                  <Switch
+                    name='borrow-to-wallet'
+                    checked={repayFromWallet}
+                    onChange={setRepayFromWallet}
+                  />
+                </div>
+              </>
+            ) : (
               <>
                 <Divider className='my-6' />
                 <div className='flex flex-wrap flex-1'>

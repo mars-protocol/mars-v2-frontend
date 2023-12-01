@@ -96,12 +96,12 @@ export function useUpdatedAccount(account?: Account) {
   )
 
   const simulateRepay = useCallback(
-    (coin: BNCoin) => {
+    (coin: BNCoin, repayFromWallet: boolean) => {
       if (!account) return
       const { deposit, lend } = getDepositAndLendCoinsToSpend(coin, account)
       removeDebts([coin])
-      removeDeposits([deposit])
-      removeLends([lend])
+      removeDeposits(repayFromWallet ? [] : [deposit])
+      removeLends(repayFromWallet ? [] : [lend])
     },
     [account, removeDebts, removeDeposits, removeLends],
   )
