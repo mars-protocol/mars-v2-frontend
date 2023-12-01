@@ -18,7 +18,7 @@ interface Props {
   isApproximation?: boolean
   parentheses?: boolean
   showZero?: boolean
-  abbreviated?: boolean
+  options?: FormatOptions
 }
 
 export default function DisplayCurrency(props: Props) {
@@ -71,9 +71,10 @@ export default function DisplayCurrency(props: Props) {
       options={{
         minDecimals: isUSD ? 2 : 0,
         maxDecimals: 2,
-        abbreviated: props.abbreviated ?? true,
+        abbreviated: true,
         prefix,
         suffix,
+        ...props.options,
       }}
       animate
     />

@@ -146,7 +146,7 @@ export const TVChartContainer = (props: Props) => {
               />
               <DisplayCurrency
                 parentheses
-                abbreviated={false}
+                options={{ abbreviated: false }}
                 className='justify-end pl-2 text-sm text-white/50'
                 coin={
                   new BNCoin({
