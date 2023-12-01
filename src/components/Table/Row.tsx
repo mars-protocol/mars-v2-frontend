@@ -1,4 +1,4 @@
-import { Cell, flexRender, Row as TanstackRow, Table as TanstackTable } from '@tanstack/react-table'
+import { flexRender, Row as TanstackRow, Table as TanstackTable } from '@tanstack/react-table'
 import classNames from 'classnames'
 
 interface Props<T> {
@@ -34,7 +34,7 @@ export default function Row<T>(props: Props<T>) {
           !isExpanded && props.row.toggleExpanded()
         }}
       >
-        {props.row.getVisibleCells().map((cell: Cell<T, unknown>) => {
+        {props.row.getVisibleCells().map((cell) => {
           const isSymbolOrName = cell.column.id === 'symbol' || cell.column.id === 'name'
           const borderClasses =
             props.isBalancesTable && isSymbolOrName
