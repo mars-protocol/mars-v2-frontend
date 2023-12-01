@@ -216,8 +216,9 @@ export default function useHealthComputer(account?: Account) {
   )
 
   const health = useMemo(() => {
+    const slope = account?.kind === 'high_levered_strategy' ? 1.2 : 3.5
     const convertedHealth = BN(Math.log(healthFactor))
-      .dividedBy(Math.log(3.5))
+      .dividedBy(Math.log(slope))
       .multipliedBy(100)
       .integerValue()
       .toNumber()
