@@ -1,15 +1,11 @@
 import { ColumnDef } from '@tanstack/react-table'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import Account, { ACCOUNT_META } from 'components/HLS/Staking/Table/Columns/Account'
 import ActiveApy, {
   ACTIVE_APY_META,
   activeApySortingFn,
 } from 'components/HLS/Staking/Table/Columns/ActiveApy'
-import DebtValue, {
-  DEBT_VAL_META,
-  debtValueSorting,
-} from 'components/HLS/Staking/Table/Columns/DebtValue'
 import DepositCap, {
   CAP_META,
   depositCapSortingFn,
@@ -58,11 +54,6 @@ export default function useDepositedColumns(props: Props) {
         ...NET_VAL_META,
         cell: ({ row }) => <NetValue account={row.original} />,
         sortingFn: netValueSorting,
-      },
-      {
-        ...DEBT_VAL_META,
-        cell: ({ row }) => <DebtValue account={row.original} />,
-        sortingFn: debtValueSorting,
       },
       {
         ...CAP_META,
