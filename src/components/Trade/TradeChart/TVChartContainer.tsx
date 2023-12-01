@@ -160,7 +160,7 @@ export const TVChartContainer = (props: Props) => {
         </div>
       }
       contentClassName='px-0.5 pb-0.5 h-full'
-      className='h-full'
+      className='min-h-[55vh]'
     >
       <div ref={chartContainerRef} className='h-full overflow-hidden rounded-b-base' />
     </Card>
