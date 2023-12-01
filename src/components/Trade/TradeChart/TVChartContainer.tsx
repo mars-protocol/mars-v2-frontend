@@ -38,9 +38,17 @@ export const TVChartContainer = (props: Props) => {
     [baseCurrency],
   )
   const { data: prices, isLoading } = usePrices()
-  const priceBuyAsset = prices.find(byDenom(props.buyAsset.denom))?.amount ?? BN_ZERO
-  const priceSellAsset = prices.find(byDenom(props.sellAsset.denom))?.amount ?? BN_ONE
-  const ratio = priceBuyAsset.dividedBy(priceSellAsset)
+  const [priceBuyAsset, priceSellAsset] = useMemo(
+    () => [
+      prices.find(byDenom(props.buyAsset.denom))?.amount ?? BN_ZERO,
+      prices.find(byDenom(props.sellAsset.denom))?.amount ?? BN_ONE,
+    ],
+    [prices, props.buyAsset.denom, props.sellAsset.denom],
+  )
+  const ratio = useMemo(
+    () => priceBuyAsset.dividedBy(priceSellAsset),
+    [priceBuyAsset, priceSellAsset],
+  )
 
   useEffect(() => {
     const widgetOptions: ChartingLibraryWidgetOptions = {
