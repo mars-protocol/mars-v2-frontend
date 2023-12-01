@@ -31,7 +31,7 @@ export default function AccountMenuContent() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const address = useStore((s) => s.address)
-  const { data: accountIds } = useAccountIds(address)
+  const { data: accountIds } = useAccountIds(address, true, true)
   const accountId = useAccountId()
 
   const createAccount = useStore((s) => s.createAccount)

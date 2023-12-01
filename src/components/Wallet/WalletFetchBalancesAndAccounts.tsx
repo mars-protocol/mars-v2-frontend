@@ -32,7 +32,11 @@ function Content() {
   const urlAccountId = useAccountId()
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const { data: accountIds, isLoading: isLoadingAccounts } = useAccountIds(address || '')
+  const { data: accountIds, isLoading: isLoadingAccounts } = useAccountIds(
+    address || '',
+    true,
+    true,
+  )
   const { data: walletBalances, isLoading: isLoadingBalances } = useWalletBalances(address)
   const baseAsset = getBaseAsset()
 
@@ -54,7 +58,9 @@ function Content() {
       accountIds.length !== 0 &&
       BN(baseBalance).isGreaterThanOrEqualTo(defaultFee.amount[0].amount)
     ) {
-      navigate(getRoute(page, address, urlAccountId ?? accountIds[0]))
+      const currentAccountIsHLS = urlAccountId && !accountIds.includes(urlAccountId)
+      const currentAccount = currentAccountIsHLS || !urlAccountId ? accountIds[0] : urlAccountId
+      navigate(getRoute(page, address, currentAccount))
       useStore.setState({ balances: walletBalances, focusComponent: null })
     }
   }, [
