@@ -105,8 +105,9 @@ function BorrowModal(props: Props) {
   )
 
   const maxRepayAmount = useMemo(() => {
-    if (repayFromWallet) return BN(walletBalances.find(byDenom(asset.denom))?.amount ?? 0)
-    const maxBalance = depositBalance.plus(lendBalance)
+    const maxBalance = repayFromWallet
+      ? BN(walletBalances.find(byDenom(asset.denom))?.amount ?? 0)
+      : depositBalance.plus(lendBalance)
     return isRepay ? BigNumber.min(maxBalance, totalDebtRepayAmount) : BN_ZERO
   }, [
     depositBalance,
