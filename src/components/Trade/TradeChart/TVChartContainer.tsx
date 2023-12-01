@@ -7,7 +7,7 @@ import Loading from 'components/Loading'
 import Text from 'components/Text'
 import { DataFeed, PAIR_SEPARATOR } from 'components/Trade/TradeChart/DataFeed'
 import { disabledFeatures, enabledFeatures, overrides } from 'components/Trade/TradeChart/constants'
-import { BN_ONE, BN_ZERO } from 'constants/math'
+import { BN_ZERO } from 'constants/math'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -38,17 +38,13 @@ export const TVChartContainer = (props: Props) => {
     [baseCurrency],
   )
   const { data: prices, isLoading } = usePrices()
-  const [priceBuyAsset, priceSellAsset] = useMemo(
-    () => [
-      prices.find(byDenom(props.buyAsset.denom))?.amount ?? BN_ZERO,
-      prices.find(byDenom(props.sellAsset.denom))?.amount ?? BN_ONE,
-    ],
-    [prices, props.buyAsset.denom, props.sellAsset.denom],
-  )
-  const ratio = useMemo(
-    () => priceBuyAsset.dividedBy(priceSellAsset),
-    [priceBuyAsset, priceSellAsset],
-  )
+  const ratio = useMemo(() => {
+    const priceBuyAsset = prices.find(byDenom(props.buyAsset.denom))?.amount
+    const priceSellAsset = prices.find(byDenom(props.sellAsset.denom))?.amount
+
+    if (!priceBuyAsset || !priceSellAsset) return BN_ZERO
+    return priceBuyAsset.dividedBy(priceSellAsset)
+  }, [prices, props.buyAsset.denom, props.sellAsset.denom])
 
   useEffect(() => {
     const widgetOptions: ChartingLibraryWidgetOptions = {
@@ -129,7 +125,7 @@ export const TVChartContainer = (props: Props) => {
           <Text size='lg' className='flex items-center flex-1 p-4 font-semibold'>
             Trading Chart
           </Text>
-          {priceBuyAsset.isZero() || isLoading ? (
+          {ratio.isZero() || isLoading ? (
             <Loading className='h-4 mr-4 w-60' />
           ) : (
             <div className='flex items-center gap-1 p-4'>
