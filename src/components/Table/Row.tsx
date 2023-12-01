@@ -1,5 +1,7 @@
-import { flexRender, Row as TanstackRow, Table as TanstackTable } from '@tanstack/react-table'
+import { Cell, flexRender, Row as TanstackRow, Table as TanstackTable } from '@tanstack/react-table'
 import classNames from 'classnames'
+
+import { getCellClasses } from 'utils/table'
 
 interface Props<T> {
   row: TanstackRow<T>
@@ -9,6 +11,7 @@ interface Props<T> {
   rowClickHandler?: () => void
   spacingClassName?: string
   isBalancesTable?: boolean
+  className?: string
 }
 
 function getBorderColor(row: AccountBalanceRow) {
@@ -34,7 +37,7 @@ export default function Row<T>(props: Props<T>) {
           !isExpanded && props.row.toggleExpanded()
         }}
       >
-        {props.row.getVisibleCells().map((cell) => {
+        {props.row.getVisibleCells().map((cell: Cell<T, unknown>) => {
           const isSymbolOrName = cell.column.id === 'symbol' || cell.column.id === 'name'
           const borderClasses =
             props.isBalancesTable && isSymbolOrName
@@ -47,6 +50,7 @@ export default function Row<T>(props: Props<T>) {
                 isSymbolOrName ? 'text-left' : 'text-right',
                 props.spacingClassName ?? 'px-3 py-4',
                 borderClasses,
+                getCellClasses(cell.id),
               )}
             >
               {flexRender(cell.column.columnDef.cell, cell.getContext())}
