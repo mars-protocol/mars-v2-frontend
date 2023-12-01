@@ -128,7 +128,7 @@ export const TVChartContainer = (props: Props) => {
               <Text size='sm'>1 {props.buyAsset.symbol}</Text>
               <FormattedNumber
                 className='text-sm'
-                amount={Number(ratio.toPrecision(4))}
+                amount={Number(ratio.toPrecision(6))}
                 options={{
                   prefix: '= ',
                   suffix: ` ${props.sellAsset.symbol}`,
