@@ -187,7 +187,7 @@ export default function SwapForm(props: Props) {
           removeCoin,
           addCoin,
           debtCoin,
-          isAutoLendEnabled ? 'lend' : 'deposit',
+          isAutoLendEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
           isAutoRepayChecked,
         )
       }, 100),
