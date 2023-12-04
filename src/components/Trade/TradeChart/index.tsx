@@ -4,6 +4,8 @@ import { useState } from 'react'
 
 import Card from 'components/Card'
 import { CircularProgress } from 'components/CircularProgress'
+import Loading from 'components/Loading'
+import Text from 'components/Text'
 
 const TVChartContainer = dynamic(
   () => import('components/Trade/TradeChart/TVChartContainer').then((mod) => mod.TVChartContainer),
@@ -33,7 +35,18 @@ export default function TradeChart(props: Props) {
       {isScriptReady ? (
         <TVChartContainer buyAsset={props.buyAsset} sellAsset={props.sellAsset} />
       ) : (
-        <Card title='Trading Chart' contentClassName='px-0.5 pb-0.5 h-full'>
+        <Card
+          title={
+            <div className='flex items-center w-full bg-white/10'>
+              <Text size='lg' className='flex items-center flex-1 p-4 font-semibold'>
+                Trading Chart
+              </Text>
+              <Loading className='h-4 mr-4 w-60' />
+            </div>
+          }
+          contentClassName='px-0.5 pb-0.5 h-full'
+          className='min-h-[55vh]'
+        >
           <div className='flex items-center justify-center w-full h-full rounded-b-base bg-chart'>
             <CircularProgress size={60} className='opacity-50' />
           </div>

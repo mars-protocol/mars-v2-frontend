@@ -7,11 +7,14 @@ import { CircularProgress } from 'components/CircularProgress'
 import DisplayCurrency from 'components/DisplayCurrency'
 import Divider from 'components/Divider'
 import { FormattedNumber } from 'components/FormattedNumber'
+import { ChevronDown } from 'components/Icons'
+import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrice from 'hooks/usePrice'
 import useSwapFee from 'hooks/useSwapFee'
+import useToggle from 'hooks/useToggle'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getAssetByDenom } from 'utils/assets'
 import { formatAmountWithSymbol, formatPercent } from 'utils/formatters'
@@ -55,6 +58,7 @@ export default function TradeSummary(props: Props) {
 
   const sellAssetPrice = usePrice(sellAsset.denom)
   const swapFee = useSwapFee(route.map((r) => r.pool_id))
+  const [showSummary, setShowSummary] = useToggle()
   const [liquidationPrice, setLiquidationPrice] = useState<number | null>(null)
   const [isUpdatingLiquidationPrice, setIsUpdatingLiquidationPrice] = useState(false)
   const debouncedSetLiqPrice = useMemo(
@@ -99,7 +103,22 @@ export default function TradeSummary(props: Props) {
       )}
     >
       <div className='flex flex-col flex-1 m-3'>
-        <span className='mb-2 text-xs font-bold'>Summary</span>
+        <SummaryLine label='Liquidation Price'>
+          <div className='flex h-2'>
+            {isUpdatingLiquidationPrice ? (
+              <CircularProgress className='opacity-50' />
+            ) : liquidationPrice === null || liquidationPrice === 0 ? (
+              '-'
+            ) : (
+              <FormattedNumber
+                className='inline'
+                amount={liquidationPrice}
+                options={{ abbreviated: true, prefix: `${props.buyAsset.symbol} = $ ` }}
+              />
+            )}
+          </div>
+        </SummaryLine>
+        <Divider className='my-2' />
         {isMargin && (
           <>
             <SummaryLine label='Borrowing'>
@@ -122,38 +141,45 @@ export default function TradeSummary(props: Props) {
             <Divider className='my-2' />
           </>
         )}
-        <>
-          <SummaryLine label='Liquidation Price'>
-            <div className='flex h-2'>
-              {isUpdatingLiquidationPrice ? (
-                <CircularProgress className='opacity-50' />
-              ) : liquidationPrice === null || liquidationPrice === 0 ? (
-                '-'
-              ) : (
-                <FormattedNumber
-                  className='inline'
-                  amount={liquidationPrice}
-                  options={{ abbreviated: true, prefix: `${props.buyAsset.symbol} = $ ` }}
-                />
-              )}
-            </div>
-          </SummaryLine>
-          <Divider className='my-2' />
-        </>
-        <SummaryLine label={`Swap fees (${(swapFee || 0.002) * 100}%)`}>
-          <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(sellAsset.denom, swapFeeValue)} />
-        </SummaryLine>
-        <SummaryLine label='Transaction fees'>
-          <span>{formatAmountWithSymbol(estimatedFee.amount[0])}</span>
-        </SummaryLine>
-        <SummaryLine label={`Min receive (${slippage * 100}% slippage)`}>
-          <FormattedNumber
-            amount={minReceive.toNumber()}
-            options={{ decimals: buyAsset.decimals, suffix: ` ${buyAsset.symbol}`, maxDecimals: 6 }}
-          />
-        </SummaryLine>
-        <Divider className='my-2' />
-        <SummaryLine label='Route'>{parsedRoutes}</SummaryLine>
+        <div
+          className='relative w-full pr-4 hover:pointer'
+          role='button'
+          onClick={() => setShowSummary(!showSummary)}
+        >
+          <Text size='xs' className='font-bold'>
+            Summary
+          </Text>
+          <div
+            className={classNames(
+              'absolute right-0 w-3 text-center top-1',
+              showSummary && 'rotate-180',
+            )}
+          >
+            <ChevronDown />
+          </div>
+        </div>
+        {showSummary && (
+          <>
+            <SummaryLine label={`Swap fees (${(swapFee || 0.002) * 100}%)`} className='mt-2'>
+              <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(sellAsset.denom, swapFeeValue)} />
+            </SummaryLine>
+            <SummaryLine label='Transaction fees'>
+              <span>{formatAmountWithSymbol(estimatedFee.amount[0])}</span>
+            </SummaryLine>
+            <SummaryLine label={`Min receive (${slippage * 100}% slippage)`}>
+              <FormattedNumber
+                amount={minReceive.toNumber()}
+                options={{
+                  decimals: buyAsset.decimals,
+                  suffix: ` ${buyAsset.symbol}`,
+                  maxDecimals: 6,
+                }}
+              />
+            </SummaryLine>
+            <Divider className='my-2' />
+            <SummaryLine label='Route'>{parsedRoutes}</SummaryLine>
+          </>
+        )}
       </div>
       <ActionButton
         disabled={buyButtonDisabled}
@@ -171,10 +197,11 @@ export default function TradeSummary(props: Props) {
 interface SummaryLineProps {
   children: React.ReactNode
   label: string
+  className?: string
 }
 function SummaryLine(props: SummaryLineProps) {
   return (
-    <div className={infoLineClasses}>
+    <div className={classNames(infoLineClasses, props.className)}>
       <span className='opacity-40'>{props.label}</span>
       <span>{props.children}</span>
     </div>

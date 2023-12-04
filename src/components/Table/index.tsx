@@ -68,6 +68,7 @@ export default function Table<T>(props: Props<T>) {
                       props.spacingClassName ?? 'px-4 py-3',
                       header.column.getCanSort() && 'hover:cursor-pointer',
                       header.id === 'symbol' || header.id === 'name' ? 'text-left' : 'text-right',
+                      header.column.columnDef.meta?.className,
                     )}
                   >
                     <div

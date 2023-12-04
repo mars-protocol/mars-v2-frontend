@@ -34,7 +34,6 @@ export default function TradePage() {
       <div className='grid h-full w-full grid-cols-[346px_auto] gap-4'>
         <TradeModule buyAsset={buyAsset} sellAsset={sellAsset} />
         <TradeChart buyAsset={buyAsset} sellAsset={sellAsset} />
-        <div />
         <AccountDetailsCard />
       </div>
       {assetOverlayState !== 'closed' && (

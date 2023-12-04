@@ -1,8 +1,13 @@
-import React from 'react'
-
 import { ChevronDown, ChevronUp } from 'components/Icons'
 
-export const MANAGE_META = { accessorKey: 'manage', enableSorting: false, header: 'Manage' }
+export const MANAGE_META = {
+  accessorKey: 'manage',
+  enableSorting: false,
+  header: 'Manage',
+  meta: {
+    className: 'w-30',
+  },
+}
 
 interface Props {
   isExpanded: boolean

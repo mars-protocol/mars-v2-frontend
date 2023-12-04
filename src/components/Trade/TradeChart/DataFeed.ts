@@ -55,6 +55,8 @@ export class DataFeed implements IDatafeedChartApi {
     '1D': '1d',
   }
   millisecondsPerInterval: { [key: string]: number } = {
+    '1': MILLISECONDS_PER_MINUTE * 1,
+    '5': MILLISECONDS_PER_MINUTE * 5,
     '15': MILLISECONDS_PER_MINUTE * 15,
     '30': MILLISECONDS_PER_MINUTE * 30,
     '60': MILLISECONDS_PER_MINUTE * 60,
@@ -64,7 +66,7 @@ export class DataFeed implements IDatafeedChartApi {
   pairs: { baseAsset: string; quoteAsset: string }[] = []
   pairsWithData: string[] = []
   supportedPools: string[] = []
-  supportedResolutions = ['15', '30', '60', '240', 'D'] as ResolutionString[]
+  supportedResolutions = ['1', '5', '15', '30', '60', '240', 'D'] as ResolutionString[]
 
   constructor(debug = false, baseDecimals: number, baseDenom: string) {
     if (debug) console.log('Start charting library datafeed')
@@ -78,12 +80,11 @@ export class DataFeed implements IDatafeedChartApi {
       .filter((poolId) => typeof poolId === 'string') as string[]
   }
 
-  getDescription(pairName: string) {
-    const denom1 = pairName.split(PAIR_SEPARATOR)[0]
-    const denom2 = pairName.split(PAIR_SEPARATOR)[1]
+  getDescription(pairName: string, inverted: boolean) {
+    const [denom1, denom2] = pairName.split(PAIR_SEPARATOR)
     const asset1 = ASSETS.find(byDenom(denom1))
     const asset2 = ASSETS.find(byDenom(denom2))
-    return `${asset2?.symbol}/${asset1?.symbol}`
+    return inverted ? `${asset2?.symbol}/${asset1?.symbol}` : `${asset1?.symbol}/${asset2?.symbol}`
   }
 
   async getPairsWithData() {
@@ -111,9 +112,10 @@ export class DataFeed implements IDatafeedChartApi {
       .then((res) => res.json())
       .then((json) => {
         this.pairs = json.data.pairs
+
         this.pairsWithData = json.data.pairs.map(
           (pair: { baseAsset: string; quoteAsset: string }) => {
-            return `${pair.baseAsset}${PAIR_SEPARATOR}${pair.quoteAsset}`
+            return `${pair.quoteAsset}${PAIR_SEPARATOR}${pair.baseAsset}`
           },
         )
       })
@@ -139,14 +141,14 @@ export class DataFeed implements IDatafeedChartApi {
     setTimeout(() => {
       const info: LibrarySymbolInfo = {
         ...defaultSymbolInfo,
-        name: this.getDescription(pairName),
-        full_name: this.getDescription(pairName),
-        description: this.getDescription(pairName),
-        ticker: this.getDescription(pairName),
+        name: this.getDescription(pairName, false),
+        full_name: this.getDescription(pairName, true),
+        description: this.getDescription(pairName, true),
+        ticker: this.getDescription(pairName, false),
         exchange: this.getExchangeName(pairName),
         listed_exchange: this.getExchangeName(pairName),
         supported_resolutions: this.supportedResolutions,
-        base_name: [this.getDescription(pairName)],
+        base_name: [this.getDescription(pairName, false)],
         pricescale: this.getPriceScale(pairName),
       } as LibrarySymbolInfo
       onResolve(info)
@@ -470,7 +472,13 @@ export class DataFeed implements IDatafeedChartApi {
   }
 
   getPythFeedIds(name: string) {
-    if (name.includes(PAIR_SEPARATOR)) return []
+    if (name.includes(PAIR_SEPARATOR)) {
+      const [denom1, denom2] = name.split(PAIR_SEPARATOR)
+      const denomFeedId1 = ASSETS.find((asset) => asset.denom === denom1)?.pythHistoryFeedId
+      const denomFeedId2 = ASSETS.find((asset) => asset.denom === denom2)?.pythHistoryFeedId
+      return [denomFeedId1, denomFeedId2]
+    }
+
     const [symbol1, symbol2] = name.split('/')
     const feedId1 = ASSETS.find((asset) => asset.symbol === symbol1)?.pythHistoryFeedId
     const feedId2 = ASSETS.find((asset) => asset.symbol === symbol2)?.pythHistoryFeedId

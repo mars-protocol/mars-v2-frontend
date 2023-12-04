@@ -187,7 +187,7 @@ export default function SwapForm(props: Props) {
           removeCoin,
           addCoin,
           debtCoin,
-          isAutoLendEnabled ? 'lend' : 'deposit',
+          isAutoLendEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
           isAutoRepayChecked,
         )
       }, 100),
@@ -223,7 +223,7 @@ export default function SwapForm(props: Props) {
       BNCoin.fromDenomAndBigNumber(buyAsset.denom, BN_ZERO),
       BNCoin.fromDenomAndBigNumber(sellAsset.denom, BN_ZERO),
       BNCoin.fromDenomAndBigNumber(sellAsset.denom, BN_ZERO),
-      isAutoLendEnabled ? 'lend' : 'deposit',
+      isAutoLendEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
       isAutoRepayChecked,
     )
   }, [

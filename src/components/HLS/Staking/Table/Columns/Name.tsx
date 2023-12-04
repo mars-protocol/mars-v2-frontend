@@ -1,5 +1,3 @@
-import React from 'react'
-
 import DoubleLogo from 'components/DoubleLogo'
 import Loading from 'components/Loading'
 import TitleAndSubCell from 'components/TitleAndSubCell'
@@ -22,7 +20,7 @@ export default function Name(props: Props) {
         <TitleAndSubCell
           className='ml-2 mr-2 text-left'
           title={`${depositAsset.symbol} - ${borrowAsset.symbol}`}
-          sub='Via MARS'
+          sub='Via Mars Protocol'
         />
       ) : (
         <Loading />
