@@ -6,6 +6,7 @@ import ApyRange, {
   APY_RANGE_META,
   apyRangeSortingFn,
 } from 'components/HLS/Staking/Table/Columns/ApyRange'
+import DepositCap, { CAP_META } from 'components/HLS/Staking/Table/Columns/DepositCap'
 import MaxLeverage, { MAX_LEV_META } from 'components/HLS/Staking/Table/Columns/MaxLeverage'
 import MaxLTV, { LTV_MAX_META } from 'components/HLS/Staking/Table/Columns/MaxLTV'
 import Name, { NAME_META } from 'components/HLS/Staking/Table/Columns/Name'
@@ -30,6 +31,10 @@ export default function useAvailableColumns(props: Props) {
         cell: ({ row }) => (
           <MaxLTV strategy={row.original as HLSStrategy} isLoading={props.isLoading} />
         ),
+      },
+      {
+        ...CAP_META,
+        cell: ({ row }) => <DepositCap depositCap={row.original.depositCap} />,
       },
       {
         ...APY_RANGE_META,

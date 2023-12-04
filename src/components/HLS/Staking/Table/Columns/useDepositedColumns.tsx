@@ -57,7 +57,7 @@ export default function useDepositedColumns(props: Props) {
       },
       {
         ...CAP_META,
-        cell: ({ row }) => <DepositCap account={row.original} />,
+        cell: ({ row }) => <DepositCap depositCap={row.original.strategy.depositCap} />,
         sortingFn: depositCapSortingFn,
       },
       {
