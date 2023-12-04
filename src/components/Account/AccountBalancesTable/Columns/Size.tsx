@@ -6,7 +6,7 @@ import { FormattedNumber } from 'components/FormattedNumber'
 import { MAX_AMOUNT_DECIMALS, MIN_AMOUNT } from 'constants/math'
 import { formatAmountToPrecision } from 'utils/formatters'
 
-export const SIZE_META = { accessorKey: 'size', header: 'Size' }
+export const SIZE_META = { accessorKey: 'size', header: 'Size', meta: { className: 'w-40' } }
 
 interface Props {
   size: number

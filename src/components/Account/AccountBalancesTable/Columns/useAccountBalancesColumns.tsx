@@ -95,5 +95,5 @@ export default function useAccountBalancesColumns(showLiquidationPrice?: boolean
         ),
       },
     ]
-  }, [computeLiquidationPrice, markets])
+  }, [computeLiquidationPrice, markets, showLiquidationPrice])
 }
