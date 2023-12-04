@@ -210,7 +210,7 @@ export default function SwapForm(props: Props) {
   )
 
   const liquidationPrice = useMemo(
-    () => computeLiquidationPrice(props.buyAsset.denom),
+    () => computeLiquidationPrice(props.buyAsset.denom, 'asset'),
     [computeLiquidationPrice, props.buyAsset.denom],
   )
 
