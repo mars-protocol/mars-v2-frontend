@@ -9,6 +9,7 @@ interface Props<T> {
   rowClickHandler?: () => void
   spacingClassName?: string
   isBalancesTable?: boolean
+  className?: string
 }
 
 function getBorderColor(row: AccountBalanceRow) {
@@ -17,7 +18,6 @@ function getBorderColor(row: AccountBalanceRow) {
 
 export default function Row<T>(props: Props<T>) {
   const canExpand = !!props.renderExpanded
-
   return (
     <>
       <tr
@@ -47,6 +47,7 @@ export default function Row<T>(props: Props<T>) {
                 isSymbolOrName ? 'text-left' : 'text-right',
                 props.spacingClassName ?? 'px-3 py-4',
                 borderClasses,
+                cell.column.columnDef.meta?.className,
               )}
             >
               {flexRender(cell.column.columnDef.cell, cell.getContext())}

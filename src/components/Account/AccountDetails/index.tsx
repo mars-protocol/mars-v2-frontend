@@ -39,7 +39,7 @@ export default function AccountDetailsController() {
   const address = useStore((s) => s.address)
   const isHLS = useStore((s) => s.isHLS)
   const { data: accounts, isLoading } = useAccounts('default', address)
-  const { data: accountIds } = useAccountIds(address, false)
+  const { data: accountIds } = useAccountIds(address, false, true)
   const accountId = useAccountId()
 
   const account = useCurrentAccount()

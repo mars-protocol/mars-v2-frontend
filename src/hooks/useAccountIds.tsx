@@ -4,7 +4,7 @@ import getAccountIds from 'api/wallets/getAccountIds'
 
 export default function useAccountIdsAndKinds(address?: string, suspense = true, noHls = false) {
   return useSWR(
-    `wallets/${address}/account-ids`,
+    `wallets/${address}/account-ids${noHls && '-without-hls'}`,
     () =>
       getAccountIds(address).then((accountIdsAndKinds) => {
         if (noHls) {

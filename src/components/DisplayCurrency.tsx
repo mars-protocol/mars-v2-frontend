@@ -18,6 +18,7 @@ interface Props {
   isApproximation?: boolean
   parentheses?: boolean
   showZero?: boolean
+  options?: FormatOptions
 }
 
 export default function DisplayCurrency(props: Props) {
@@ -73,6 +74,7 @@ export default function DisplayCurrency(props: Props) {
         abbreviated: true,
         prefix,
         suffix,
+        ...props.options,
       }}
       animate
     />
