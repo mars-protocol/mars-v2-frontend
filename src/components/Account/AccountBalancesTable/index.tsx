@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import useAccountBalancesColumns from 'components/Account/AccountBalancesTable/Columns/useAccountBalancesColumns'
 import useAccountBalanceData from 'components/Account/AccountBalancesTable/useAccountBalanceData'
@@ -22,6 +22,7 @@ interface Props {
 }
 
 export default function AccountBalancesTable(props: Props) {
+  const [searchParams] = useSearchParams()
   const { account, lendingData, borrowingData, tableBodyClassName, hideCard } = props
   const currentAccount = useCurrentAccount()
   const navigate = useNavigate()
@@ -55,7 +56,7 @@ export default function AccountBalancesTable(props: Props) {
             color='tertiary'
             onClick={() => {
               if (currentAccount?.id !== account.id) {
-                navigate(getRoute(getPage(pathname), address, account.id))
+                navigate(getRoute(getPage(pathname), searchParams, address, account.id))
               }
               useStore.setState({
                 focusComponent: {

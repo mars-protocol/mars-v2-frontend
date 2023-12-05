@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { NavLink, useParams } from 'react-router-dom'
+import { NavLink, useParams, useSearchParams } from 'react-router-dom'
 
 import useAccountId from 'hooks/useAccountId'
 import { getRoute } from 'utils/route'
@@ -15,13 +15,14 @@ interface Props {
 export default function Tab(props: Props) {
   const accountId = useAccountId()
   const { address } = useParams()
+  const [searchParams] = useSearchParams()
 
   return (
     <div className='relative w-full'>
       {props.tabs.map((tab, index) => (
         <NavLink
           key={tab.page}
-          to={getRoute(tab.page, address, accountId)}
+          to={getRoute(tab.page, searchParams, address, accountId)}
           className={classNames(
             props.activeTabIdx === index ? underlineClasses : 'text-white/40',
             'relative mr-8 text-xl ',

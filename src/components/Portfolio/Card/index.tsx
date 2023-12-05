@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { ReactNode, useMemo } from 'react'
-import { NavLink, useParams } from 'react-router-dom'
+import { NavLink, useParams, useSearchParams } from 'react-router-dom'
 
 import { FormattedNumber } from 'components/FormattedNumber'
 import Loading from 'components/Loading'
@@ -36,6 +36,7 @@ export default function PortfolioCard(props: Props) {
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const { data } = useBorrowMarketAssetsTableData(false)
   const { data: hlsStrategies } = useHLSStakingAssets()
+  const [searchParams] = useSearchParams()
 
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const [reduceMotion] = useLocalStorage<boolean>(
@@ -111,7 +112,12 @@ export default function PortfolioCard(props: Props) {
 
   return (
     <NavLink
-      to={getRoute(`portfolio/${props.accountId}` as Page, urlAddress, currentAccountId)}
+      to={getRoute(
+        `portfolio/${props.accountId}` as Page,
+        searchParams,
+        urlAddress,
+        currentAccountId,
+      )}
       className={classNames('w-full hover:bg-white/5', !reduceMotion && 'transition-all')}
     >
       <Skeleton

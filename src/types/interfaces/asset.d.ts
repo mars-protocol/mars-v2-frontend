@@ -144,3 +144,12 @@ interface StakingApr {
   unbondingDelay: number
   unbondingPeriod: number
 }
+
+interface PerpsMarket {
+  asset: Asset
+  fundingRate: BigNumber
+  openInterest: {
+    long: BigNumber
+    short: BigNumber
+  }
+}
