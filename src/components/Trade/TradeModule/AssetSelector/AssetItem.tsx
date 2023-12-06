@@ -1,4 +1,5 @@
 import AssetImage from 'components/Asset/AssetImage'
+import AssetSymbol from 'components/Asset/AssetSymbol'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { StarFilled, StarOutlined } from 'components/Icons'
@@ -53,9 +54,7 @@ export default function AssetItem(props: Props) {
               <Text size='sm' className='h-5 leading-5 text-left truncate '>
                 {asset.name}
               </Text>
-              <div className='rounded-sm bg-white/20 px-[6px] py-[2px] h-5 leading-5 '>
-                <Text size='xs'>{asset.symbol}</Text>
-              </div>
+              <AssetSymbol symbol={asset.symbol} />
             </div>
             {props.balances.length > 0 && (
               <div className='flex gap-1'>

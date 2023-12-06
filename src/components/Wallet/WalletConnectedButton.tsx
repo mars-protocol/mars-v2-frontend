@@ -1,10 +1,10 @@
 import { useShuttle } from '@delphi-labs/shuttle-react'
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
-import { useCallback, useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import useClipboard from 'react-use-clipboard'
 import { resolvePrimaryDomainByAddress } from 'ibc-domains-sdk'
+import { useCallback, useEffect, useState } from 'react'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import useClipboard from 'react-use-clipboard'
 
 import Button from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
@@ -44,6 +44,7 @@ export default function WalletConnectedButton() {
   const { data: icnsData, isLoading: isLoadingICNS } = useICNSDomain(address)
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const [searchParams] = useSearchParams()
 
   // ---------------
   // LOCAL STATE
@@ -87,7 +88,7 @@ export default function WalletConnectedButton() {
       })
     }
 
-    navigate(getRoute(getPage(pathname)))
+    navigate(getRoute(getPage(pathname), searchParams))
   }
 
   useEffect(() => {

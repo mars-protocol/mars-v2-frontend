@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { useCallback } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import AccountCreateFirst from 'components/Account/AccountCreateFirst'
 import AccountFund from 'components/Account/AccountFund/AccountFundFullPage'
@@ -33,6 +33,7 @@ export default function AccountMenuContent() {
   const address = useStore((s) => s.address)
   const { data: accountIds } = useAccountIds(address, true, true)
   const accountId = useAccountId()
+  const [searchParams] = useSearchParams()
 
   const createAccount = useStore((s) => s.createAccount)
   const baseCurrency = useStore((s) => s.baseCurrency)
@@ -63,7 +64,7 @@ export default function AccountMenuContent() {
     setIsCreating(false)
 
     if (accountId) {
-      navigate(getRoute(getPage(pathname), address, accountId))
+      navigate(getRoute(getPage(pathname), searchParams, address, accountId))
       if (lendAssets) enableAutoLendAccountId(accountId)
       useStore.setState({
         focusComponent: {
@@ -80,6 +81,7 @@ export default function AccountMenuContent() {
     createAccount,
     navigate,
     pathname,
+    searchParams,
     address,
     lendAssets,
     enableAutoLendAccountId,

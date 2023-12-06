@@ -1,6 +1,7 @@
 import { useShuttle } from '@delphi-labs/shuttle-react'
 import classNames from 'classnames'
 import { useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 import Button from 'components/Button'
 import { menuTree } from 'components/Header/DesktopHeader'
@@ -18,7 +19,7 @@ export default function DesktopNavigation() {
   const walletId = (recentWallet?.providerId as WalletID) ?? WalletID.Keplr
   const address = useStore((s) => s.address)
   const accountId = useAccountId()
-
+  const [searchParams] = useSearchParams()
   const focusComponent = useStore((s) => s.focusComponent)
 
   const menu = useMemo(() => menuTree(walletId), [walletId])
@@ -36,7 +37,7 @@ export default function DesktopNavigation() {
           : 'flex flex-1 items-center relative z-50',
       )}
     >
-      <NavLink href={getRoute('trade', address, accountId)}>
+      <NavLink href={getRoute('trade', searchParams, address, accountId)}>
         <span className='block w-10 h-10'>
           <Logo className='text-white' />
         </span>
@@ -47,7 +48,9 @@ export default function DesktopNavigation() {
             <NavLink
               key={index}
               href={
-                item.externalUrl ? item.externalUrl : getRoute(item.pages[0], address, accountId)
+                item.externalUrl
+                  ? item.externalUrl
+                  : getRoute(item.pages[0], searchParams, address, accountId)
               }
               isActive={getIsActive(item.pages)}
               className={`@nav-${index}/navigation:inline-block hidden whitespace-nowrap`}
@@ -84,7 +87,7 @@ export default function DesktopNavigation() {
                           href={
                             item.externalUrl
                               ? item.externalUrl
-                              : getRoute(item.pages[0], address, accountId)
+                              : getRoute(item.pages[0], searchParams, address, accountId)
                           }
                           onClick={() => setShowMenu(false)}
                           isActive={getIsActive(item.pages)}
