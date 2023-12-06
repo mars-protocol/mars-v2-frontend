@@ -42,6 +42,7 @@ function PageContainer(props: Props) {
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
   const focusComponent = useStore((s) => s.focusComponent)
+  const address = useStore((s) => s.address)
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
@@ -66,6 +67,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           'flex',
           'min-h-screen gap-6 px-4 py-6 w-full relative',
           !focusComponent &&
+            address &&
             isFullWidth &&
             accountId &&
             (accountDetailsExpanded ? 'pr-118' : 'pr-24'),
