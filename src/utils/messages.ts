@@ -1,4 +1,4 @@
-import { formatAmountWithSymbol } from './formatters'
+import { formatAmountWithSymbol } from 'utils/formatters'
 
 export function getNoBalanceMessage(symbol: string) {
   return `You don't have an ${symbol} balance in your account.`

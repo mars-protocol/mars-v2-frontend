@@ -17,11 +17,14 @@ import useHealthComputer from 'hooks/useHealthComputer'
 import useMarketAssets from 'hooks/useMarketAssets'
 import useStore from 'store'
 
-export default function useAccountBalancesColumns(showLiquidationPrice?: boolean) {
+export default function useAccountBalancesColumns(
+  account: Account,
+  showLiquidationPrice?: boolean,
+) {
   const { data: markets } = useMarketAssets()
   const updatedAccount = useStore((s) => s.updatedAccount)
 
-  const { computeLiquidationPrice } = useHealthComputer(updatedAccount)
+  const { computeLiquidationPrice } = useHealthComputer(updatedAccount ?? account)
 
   return useMemo<ColumnDef<AccountBalanceRow>[]>(() => {
     return [

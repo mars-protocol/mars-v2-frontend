@@ -44,7 +44,7 @@ export default function AccountBalancesTable(props: Props) {
     isHls: props.isHls,
   })
 
-  const columns = useAccountBalancesColumns(showLiquidationPrice)
+  const columns = useAccountBalancesColumns(account, showLiquidationPrice)
 
   if (accountBalanceData.length === 0)
     return (
