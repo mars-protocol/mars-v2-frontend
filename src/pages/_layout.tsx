@@ -62,7 +62,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <DesktopHeader />
       <main
         className={classNames(
-          'lg:min-h-[calc(100vh-73px)]',
+          'lg:min-h-[calc(100dvh-73px)]',
           'lg:mt-[73px]',
           'flex',
           'min-h-screen gap-6 px-4 py-6 w-full relative',
