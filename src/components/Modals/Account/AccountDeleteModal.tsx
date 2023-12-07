@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import AssetBalanceRow from 'components/Asset/AssetBalanceRow'
 import { ArrowRight, ExclamationMarkCircled } from 'components/Icons'
@@ -30,6 +30,7 @@ function AccountDeleteModal(props: Props) {
   const { pathname } = useLocation()
   const { address } = useParams()
   const { debts, vaults, id: accountId } = modal || {}
+  const [searchParams] = useSearchParams()
 
   const closeDeleteAccountModal = useCallback(() => {
     useStore.setState({ accountDeleteModal: null })
@@ -38,9 +39,18 @@ function AccountDeleteModal(props: Props) {
   const deleteAccountHandler = useCallback(() => {
     const options = { accountId: modal.id, lends: modal.lends }
     deleteAccount(options)
-    navigate(getRoute(getPage(pathname), address))
+    navigate(getRoute(getPage(pathname), searchParams, address))
     closeDeleteAccountModal()
-  }, [modal, deleteAccount, navigate, pathname, address, closeDeleteAccountModal])
+  }, [
+    modal.id,
+    modal.lends,
+    deleteAccount,
+    navigate,
+    pathname,
+    searchParams,
+    address,
+    closeDeleteAccountModal,
+  ])
 
   const depositsAndLends = useMemo(
     () => combineBNCoins([...modal.deposits, ...modal.lends]),
@@ -58,7 +68,7 @@ function AccountDeleteModal(props: Props) {
           text: 'Repay Debts',
           icon: <ArrowRight />,
           onClick: () => {
-            navigate(getRoute('borrow', address, accountId))
+            navigate(getRoute('borrow', searchParams, address, accountId))
             closeDeleteAccountModal()
           },
         }}
@@ -75,7 +85,7 @@ function AccountDeleteModal(props: Props) {
           text: 'Close Positions',
           icon: <ArrowRight />,
           onClick: () => {
-            navigate(getRoute('farm', address, accountId))
+            navigate(getRoute('farm', searchParams, address, accountId))
             closeDeleteAccountModal()
           },
         }}

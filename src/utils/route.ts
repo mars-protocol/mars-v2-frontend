@@ -1,4 +1,9 @@
-export function getRoute(page: Page, address?: string, accountId?: string | null) {
+export function getRoute(
+  page: Page,
+  searchParams: URLSearchParams,
+  address?: string,
+  accountId?: string | null,
+) {
   let nextUrl = ''
 
   if (address) {
@@ -9,10 +14,13 @@ export function getRoute(page: Page, address?: string, accountId?: string | null
 
   let url = new URL(nextUrl, 'https://app.marsprotocol.io')
 
+  Array.from(searchParams?.entries() || []).map(([key, value]) =>
+    url.searchParams.append(key, value),
+  )
+
   if (accountId) {
-    url.searchParams.append('accountId', accountId)
-  } else {
     url.searchParams.delete('accountId')
+    url.searchParams.append('accountId', accountId)
   }
 
   return url.pathname + url.search

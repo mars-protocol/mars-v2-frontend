@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import MigrationBanner from 'components/MigrationBanner'
 import Balances from 'components/Portfolio/Account/Balances'
@@ -12,9 +12,10 @@ export default function PortfolioAccountPage() {
   const selectedAccountId = useAccountId()
   const { address, accountId } = useParams()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
   if (!accountId) {
-    navigate(getRoute('portfolio', address, selectedAccountId))
+    navigate(getRoute('portfolio', searchParams, address, selectedAccountId))
     return null
   }
 

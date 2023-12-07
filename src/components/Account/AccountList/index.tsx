@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { useEffect } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import AccountStats from 'components/Account/AccountList/AccountStats'
 import Card from 'components/Card'
@@ -28,6 +28,7 @@ export default function AccountList(props: Props) {
   const currentAccountId = useAccountId()
   const address = useStore((s) => s.address)
   const { data: accountIds } = useAccountIds(address, true, true)
+  const [searchParams] = useSearchParams()
 
   useEffect(() => {
     if (!currentAccountId) return
@@ -54,7 +55,7 @@ export default function AccountList(props: Props) {
               onClick={() => {
                 if (isActive) return
                 useStore.setState({ accountDeleteModal: null })
-                navigate(getRoute(getPage(pathname), address, accountId))
+                navigate(getRoute(getPage(pathname), searchParams, address, accountId))
               }}
               title={
                 <div className={accountCardHeaderClasses} role={!isActive ? 'button' : undefined}>

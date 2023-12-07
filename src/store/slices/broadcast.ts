@@ -721,7 +721,8 @@ export default function createBroadcastSlice(
 
       if (
         checkAutoLendEnabled(options.accountId) &&
-        getAssetByDenom(options.denomOut)?.isAutoLendEnabled
+        getAssetByDenom(options.denomOut)?.isAutoLendEnabled &&
+        !options.repay
       ) {
         msg.update_credit_account.actions.push({
           lend: { denom: options.denomOut, amount: 'account_balance' },
