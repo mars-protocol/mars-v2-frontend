@@ -31,7 +31,7 @@ export default function TradePage() {
   return (
     <div className='flex flex-col w-full h-full gap-4'>
       <MigrationBanner />
-      <div className='grid h-full w-full grid-cols-[auto_346px] gap-4'>
+      <div className='grid w-full grid-cols-[auto_346px] gap-4'>
         <TradeChart buyAsset={buyAsset} sellAsset={sellAsset} />
         <TradeModule buyAsset={buyAsset} sellAsset={sellAsset} />
         <AccountDetailsCard />

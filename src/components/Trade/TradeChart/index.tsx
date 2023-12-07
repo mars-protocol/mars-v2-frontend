@@ -45,7 +45,7 @@ export default function TradeChart(props: Props) {
             </div>
           }
           contentClassName='px-0.5 pb-0.5 h-full'
-          className='min-h-[55dvh]'
+          className='h-[70dvh] max-h-[980px] min-h-[560px]'
         >
           <div className='flex items-center justify-center w-full h-full rounded-b-base bg-chart'>
             <CircularProgress size={60} className='opacity-50' />
