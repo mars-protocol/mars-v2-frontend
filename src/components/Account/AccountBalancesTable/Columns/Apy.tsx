@@ -1,7 +1,7 @@
 import AssetRate from 'components/Asset/AssetRate'
 import { byDenom } from 'utils/array'
 
-export const APY_META = { accessorKey: 'apy', header: 'APY' }
+export const APY_META = { accessorKey: 'apy', header: 'APY', meta: { className: 'w-30' } }
 
 interface Props {
   apy: number

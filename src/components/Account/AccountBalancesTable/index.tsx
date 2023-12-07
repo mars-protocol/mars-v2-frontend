@@ -19,11 +19,19 @@ interface Props {
   borrowingData: BorrowMarketTableData[]
   hideCard?: boolean
   tableBodyClassName?: string
+  showLiquidationPrice?: boolean
 }
 
 export default function AccountBalancesTable(props: Props) {
   const [searchParams] = useSearchParams()
-  const { account, lendingData, borrowingData, tableBodyClassName, hideCard } = props
+  const {
+    account,
+    lendingData,
+    borrowingData,
+    tableBodyClassName,
+    hideCard,
+    showLiquidationPrice,
+  } = props
   const currentAccount = useCurrentAccount()
   const navigate = useNavigate()
   const { pathname } = useLocation()
@@ -37,7 +45,7 @@ export default function AccountBalancesTable(props: Props) {
     isHls: props.isHls,
   })
 
-  const columns = useAccountBalancesColumns()
+  const columns = useAccountBalancesColumns(account, showLiquidationPrice)
 
   if (accountBalanceData.length === 0)
     return (

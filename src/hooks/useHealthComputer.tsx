@@ -24,6 +24,7 @@ import {
   BorrowTarget,
   compute_health_js,
   liquidation_price_js,
+  LiquidationPriceKind,
   max_borrow_estimate_js,
   max_swap_estimate_js,
   max_withdraw_estimate_js,
@@ -198,13 +199,13 @@ export default function useHealthComputer(account?: Account) {
   )
 
   const computeLiquidationPrice = useCallback(
-    (denom: string) => {
+    (denom: string, kind: LiquidationPriceKind) => {
       if (!healthComputer) return null
       try {
         const asset = getAssetByDenom(denom)
         if (!asset) return null
         const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
-        return BN(liquidation_price_js(healthComputer, denom))
+        return BN(liquidation_price_js(healthComputer, denom, kind))
           .shiftedBy(-VALUE_SCALE_FACTOR)
           .shiftedBy(decimalDiff)
           .toNumber()
