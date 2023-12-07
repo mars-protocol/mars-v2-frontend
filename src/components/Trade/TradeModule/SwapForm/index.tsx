@@ -6,6 +6,7 @@ import AvailableLiquidityMessage from 'components/AvailableLiquidityMessage'
 import DepositCapMessage from 'components/DepositCapMessage'
 import Divider from 'components/Divider'
 import RangeInput from 'components/RangeInput'
+import AssetSelector from 'components/Trade/TradeModule/AssetSelector'
 import AssetAmountInput from 'components/Trade/TradeModule/SwapForm/AssetAmountInput'
 import AutoRepayToggle from 'components/Trade/TradeModule/SwapForm/AutoRepayToggle'
 import MarginToggle from 'components/Trade/TradeModule/SwapForm/MarginToggle'
@@ -312,67 +313,74 @@ export default function SwapForm(props: Props) {
 
   return (
     <>
-      <Divider />
-      <MarginToggle
-        checked={isMarginChecked}
-        onChange={handleMarginToggleChange}
-        disabled={!borrowAsset?.isMarket}
-        borrowAssetSymbol={sellAsset.symbol}
-      />
-      <Divider />
-
-      {isRepayable && ENABLE_AUTO_REPAY && (
-        <AutoRepayToggle
-          checked={isAutoRepayChecked}
-          onChange={handleAutoRepayToggleChange}
-          buyAssetSymbol={buyAsset.symbol}
+      <div className='flex flex-wrap w-full'>
+        <AssetSelector buyAsset={buyAsset} sellAsset={sellAsset} />
+        <Divider />
+        <MarginToggle
+          checked={isMarginChecked}
+          onChange={handleMarginToggleChange}
+          disabled={!borrowAsset?.isMarket}
+          borrowAssetSymbol={sellAsset.symbol}
         />
-      )}
-      <Divider />
-      <div className='px-3'>
-        <OrderTypeSelector selected={selectedOrderType} onChange={setSelectedOrderType} />
-      </div>
-      <div className='flex flex-col gap-6 px-3 mt-6'>
-        <AssetAmountInput
-          label='Buy'
-          max={maxBuyableAmountEstimation}
-          amount={buyAssetAmount}
-          setAmount={onChangeBuyAmount}
-          asset={buyAsset}
-          maxButtonLabel='Max Amount:'
-          disabled={isConfirming}
-        />
+        <Divider />
 
-        <RangeInput
-          disabled={isConfirming || maxBuyableAmountEstimation.isZero()}
-          onChange={handleRangeInputChange}
-          value={buyAssetAmount.shiftedBy(-buyAsset.decimals).toNumber()}
-          max={maxBuyableAmountEstimation.shiftedBy(-buyAsset.decimals).toNumber()}
-          marginThreshold={
-            isMarginChecked
-              ? buySideMarginThreshold.shiftedBy(-buyAsset.decimals).toNumber()
-              : undefined
-          }
-        />
-
-        <DepositCapMessage action='buy' coins={depositCapReachedCoins} className='p-4 bg-white/5' />
-
-        {borrowAsset && borrowAmount.isGreaterThanOrEqualTo(availableLiquidity) && (
-          <AvailableLiquidityMessage
-            availableLiquidity={borrowAsset?.liquidity?.amount ?? BN_ZERO}
-            asset={borrowAsset}
+        {isRepayable && ENABLE_AUTO_REPAY && (
+          <AutoRepayToggle
+            checked={isAutoRepayChecked}
+            onChange={handleAutoRepayToggleChange}
+            buyAssetSymbol={buyAsset.symbol}
           />
         )}
-        <AssetAmountInput
-          label='Sell'
-          max={maxSellAmount}
-          amount={sellAssetAmount}
-          setAmount={onChangeSellAmount}
-          asset={sellAsset}
-          maxButtonLabel='Balance:'
-          disabled={isConfirming}
-        />
+        <div className='px-3'>
+          <OrderTypeSelector selected={selectedOrderType} onChange={setSelectedOrderType} />
+        </div>
+        <div className='flex flex-col w-full gap-6 px-3 mt-6'>
+          <AssetAmountInput
+            label='Buy'
+            max={maxBuyableAmountEstimation}
+            amount={buyAssetAmount}
+            setAmount={onChangeBuyAmount}
+            asset={buyAsset}
+            maxButtonLabel='Max Amount:'
+            disabled={isConfirming}
+          />
 
+          <RangeInput
+            disabled={isConfirming || maxBuyableAmountEstimation.isZero()}
+            onChange={handleRangeInputChange}
+            value={buyAssetAmount.shiftedBy(-buyAsset.decimals).toNumber()}
+            max={maxBuyableAmountEstimation.shiftedBy(-buyAsset.decimals).toNumber()}
+            marginThreshold={
+              isMarginChecked
+                ? buySideMarginThreshold.shiftedBy(-buyAsset.decimals).toNumber()
+                : undefined
+            }
+          />
+
+          <DepositCapMessage
+            action='buy'
+            coins={depositCapReachedCoins}
+            className='p-4 bg-white/5'
+          />
+
+          {borrowAsset && borrowAmount.isGreaterThanOrEqualTo(availableLiquidity) && (
+            <AvailableLiquidityMessage
+              availableLiquidity={borrowAsset?.liquidity?.amount ?? BN_ZERO}
+              asset={borrowAsset}
+            />
+          )}
+          <AssetAmountInput
+            label='Sell'
+            max={maxSellAmount}
+            amount={sellAssetAmount}
+            setAmount={onChangeSellAmount}
+            asset={sellAsset}
+            maxButtonLabel='Balance:'
+            disabled={isConfirming}
+          />
+        </div>
+      </div>
+      <div className='flex w-full px-3 pt-6'>
         <TradeSummary
           buyAsset={buyAsset}
           sellAsset={sellAsset}

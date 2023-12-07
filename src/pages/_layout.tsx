@@ -27,7 +27,12 @@ function PageContainer(props: Props) {
 
   if (!props.focusComponent)
     return (
-      <div className={classNames('mx-auto h-full w-full', !props.fullWidth && 'max-w-content')}>
+      <div
+        className={classNames(
+          'mx-auto flex items-start w-full',
+          !props.fullWidth && 'max-w-content',
+        )}
+      >
         {props.children}
       </div>
     )

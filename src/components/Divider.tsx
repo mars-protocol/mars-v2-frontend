@@ -6,8 +6,13 @@ interface Props {
 }
 
 export default function Divider(props: Props) {
-  if (props.orientation === 'vertical') {
-    return <div className={classNames(props.className, 'h-full w-[1px] bg-white/10')}></div>
-  }
-  return <div className={classNames('h-[1px] w-full bg-white/10', props.className)}></div>
+  return (
+    <div
+      className={classNames(
+        props.orientation === 'vertical' ? 'h-full w-[1px]' : 'h-[1px] w-full',
+        props.className,
+        'bg-white/10',
+      )}
+    ></div>
+  )
 }
