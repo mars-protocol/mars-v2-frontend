@@ -4,9 +4,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import estimateExactIn from 'api/swap/estimateExactIn'
 import AvailableLiquidityMessage from 'components/AvailableLiquidityMessage'
 import DepositCapMessage from 'components/DepositCapMessage'
+import { DirectionSelect } from 'components/DirectionSelect'
 import Divider from 'components/Divider'
 import RangeInput from 'components/RangeInput'
-import AssetSelector from 'components/Trade/TradeModule/AssetSelector'
+import Text from 'components/Text'
+import AssetSelectorAdvanced from 'components/Trade/TradeModule/AssetSelector/AssetSelectorAdvanced'
 import AssetAmountInput from 'components/Trade/TradeModule/SwapForm/AssetAmountInput'
 import AutoRepayToggle from 'components/Trade/TradeModule/SwapForm/AutoRepayToggle'
 import MarginToggle from 'components/Trade/TradeModule/SwapForm/MarginToggle'
@@ -29,16 +31,18 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { defaultFee, ENABLE_AUTO_REPAY } from 'utils/constants'
+import { formatValue } from 'utils/formatters'
 import { getCapLeftWithBuffer } from 'utils/generic'
 import { asyncThrottle, BN } from 'utils/helpers'
 
 interface Props {
   buyAsset: Asset
   sellAsset: Asset
+  isAdvanced: boolean
 }
 
 export default function SwapForm(props: Props) {
-  const { buyAsset, sellAsset } = props
+  const { buyAsset, sellAsset, isAdvanced } = props
   const useMargin = useStore((s) => s.useMargin)
   const useAutoRepay = useStore((s) => s.useAutoRepay)
   const account = useCurrentAccount()
@@ -57,6 +61,7 @@ export default function SwapForm(props: Props) {
   const [buyAssetAmount, setBuyAssetAmount] = useState(BN_ZERO)
   const [sellAssetAmount, setSellAssetAmount] = useState(BN_ZERO)
   const [maxBuyableAmountEstimation, setMaxBuyableAmountEstimation] = useState(BN_ZERO)
+  const [orderDirection, setOrderDirection] = useState<OrderDirection>('buy')
   const [selectedOrderType, setSelectedOrderType] = useState<AvailableOrderType>('Market')
   const [isConfirming, setIsConfirming] = useToggle()
   const [estimatedFee, setEstimatedFee] = useState(defaultFee)
@@ -311,10 +316,53 @@ export default function SwapForm(props: Props) {
     [sellAssetAmount, depositCapReachedCoins, borrowAmount, availableLiquidity, route],
   )
 
+  const [
+    simpleMaxAmount,
+    simpleInputAmount,
+    simpleReceiveAmount,
+    simpleOnChangeAmount,
+    simpleInputAsset,
+    simpleReceiveAsset,
+  ] = useMemo(() => {
+    if (orderDirection === 'buy')
+      return [
+        maxSellAmount,
+        sellAssetAmount,
+        buyAssetAmount,
+        onChangeSellAmount,
+        sellAsset,
+        buyAsset,
+      ]
+
+    return [
+      maxBuyableAmountEstimation,
+      buyAssetAmount,
+      sellAssetAmount,
+      onChangeBuyAmount,
+      buyAsset,
+      sellAsset,
+    ]
+  }, [
+    maxSellAmount,
+    sellAssetAmount,
+    buyAssetAmount,
+    onChangeSellAmount,
+    buyAsset,
+    sellAsset,
+    orderDirection,
+    maxBuyableAmountEstimation,
+    onChangeBuyAmount,
+  ])
+
+  useEffect(() => {
+    onChangeBuyAmount(BN_ZERO)
+    onChangeSellAmount(BN_ZERO)
+  }, [orderDirection, onChangeBuyAmount, onChangeSellAmount])
+
   return (
     <>
       <div className='flex flex-wrap w-full'>
-        <AssetSelector buyAsset={buyAsset} sellAsset={sellAsset} />
+        {isAdvanced && <AssetSelectorAdvanced buyAsset={buyAsset} sellAsset={sellAsset} />}
         <Divider />
         <MarginToggle
           checked={isMarginChecked}
@@ -323,7 +371,6 @@ export default function SwapForm(props: Props) {
           borrowAssetSymbol={sellAsset.symbol}
         />
         <Divider />
-
         {isRepayable && ENABLE_AUTO_REPAY && (
           <AutoRepayToggle
             checked={isAutoRepayChecked}
@@ -335,16 +382,35 @@ export default function SwapForm(props: Props) {
           <OrderTypeSelector selected={selectedOrderType} onChange={setSelectedOrderType} />
         </div>
         <div className='flex flex-col w-full gap-6 px-3 mt-6'>
-          <AssetAmountInput
-            label='Buy'
-            max={maxBuyableAmountEstimation}
-            amount={buyAssetAmount}
-            setAmount={onChangeBuyAmount}
-            asset={buyAsset}
-            maxButtonLabel='Max Amount:'
-            disabled={isConfirming}
-          />
+          {isAdvanced ? (
+            <AssetAmountInput
+              label='Buy'
+              max={maxBuyableAmountEstimation}
+              amount={buyAssetAmount}
+              setAmount={onChangeBuyAmount}
+              asset={buyAsset}
+              maxButtonLabel='Max Amount:'
+              disabled={isConfirming}
+            />
+          ) : (
+            <>
+              <DirectionSelect
+                direction={orderDirection}
+                onChangeDirection={setOrderDirection}
+                asset={buyAsset}
+              />
+              <AssetAmountInput
+                max={simpleMaxAmount}
+                amount={simpleInputAmount}
+                setAmount={simpleOnChangeAmount}
+                asset={simpleInputAsset}
+                maxButtonLabel='Balance:'
+                disabled={isConfirming}
+              />
+            </>
+          )}
 
+          {!isAdvanced && <Divider />}
           <RangeInput
             disabled={isConfirming || maxBuyableAmountEstimation.isZero()}
             onChange={handleRangeInputChange}
@@ -356,7 +422,6 @@ export default function SwapForm(props: Props) {
                 : undefined
             }
           />
-
           <DepositCapMessage
             action='buy'
             coins={depositCapReachedCoins}
@@ -369,15 +434,33 @@ export default function SwapForm(props: Props) {
               asset={borrowAsset}
             />
           )}
-          <AssetAmountInput
-            label='Sell'
-            max={maxSellAmount}
-            amount={sellAssetAmount}
-            setAmount={onChangeSellAmount}
-            asset={sellAsset}
-            maxButtonLabel='Balance:'
-            disabled={isConfirming}
-          />
+          {isAdvanced ? (
+            <AssetAmountInput
+              label='Sell'
+              max={maxSellAmount}
+              amount={sellAssetAmount}
+              setAmount={onChangeSellAmount}
+              asset={sellAsset}
+              maxButtonLabel='Balance:'
+              disabled={isConfirming}
+            />
+          ) : (
+            <>
+              <Divider />
+              <div className='flex justify-between w-full'>
+                <Text size='sm'>You receive</Text>
+                <Text size='sm'>
+                  {formatValue(simpleReceiveAmount.toNumber(), {
+                    decimals: simpleReceiveAsset.decimals,
+                    abbreviated: false,
+                    suffix: ` ${simpleReceiveAsset.symbol}`,
+                    minDecimals: 0,
+                    maxDecimals: simpleReceiveAsset.decimals,
+                  })}
+                </Text>
+              </div>
+            </>
+          )}
         </div>
       </div>
       <div className='flex w-full px-3 pt-6'>

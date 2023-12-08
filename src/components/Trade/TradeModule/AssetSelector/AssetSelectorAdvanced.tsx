@@ -14,32 +14,31 @@ interface Props {
   sellAsset: Asset
 }
 
-export default function AssetSelector(props: Props) {
-  const [tradingPair, setTradingPair] = useLocalStorage<Settings['tradingPair']>(
-    LocalStorageKeys.TRADING_PAIR,
-    DEFAULT_SETTINGS.tradingPair,
-  )
+export default function AssetSelectorAdvanced(props: Props) {
+  const [tradingPairAdvanced, settradingPairAdvanced] = useLocalStorage<
+    Settings['tradingPairAdvanced']
+  >(LocalStorageKeys.TRADING_PAIR_ADVANCED, DEFAULT_SETTINGS.tradingPairAdvanced)
   const { buyAsset, sellAsset } = props
   const assetOverlayState = useStore((s) => s.assetOverlayState)
 
   const handleSwapAssets = useCallback(() => {
-    setTradingPair({ buy: sellAsset.denom, sell: buyAsset.denom })
-  }, [setTradingPair, sellAsset, buyAsset])
+    settradingPairAdvanced({ buy: sellAsset.denom, sell: buyAsset.denom })
+  }, [settradingPairAdvanced, sellAsset, buyAsset])
 
   const handleChangeBuyAsset = useCallback(
     (asset: Asset) => {
-      setTradingPair({ buy: asset.denom, sell: sellAsset.denom })
+      settradingPairAdvanced({ buy: asset.denom, sell: sellAsset.denom })
       useStore.setState({ assetOverlayState: 'sell' })
     },
-    [setTradingPair, sellAsset],
+    [settradingPairAdvanced, sellAsset],
   )
 
   const handleChangeSellAsset = useCallback(
     (asset: Asset) => {
-      setTradingPair({ buy: buyAsset.denom, sell: asset.denom })
+      settradingPairAdvanced({ buy: buyAsset.denom, sell: asset.denom })
       useStore.setState({ assetOverlayState: 'closed' })
     },
-    [setTradingPair, buyAsset],
+    [settradingPairAdvanced, buyAsset],
   )
 
   const handleChangeState = useCallback((state: OverlayState) => {
@@ -47,7 +46,7 @@ export default function AssetSelector(props: Props) {
   }, [])
 
   return (
-    <div className='grid-rows-auto grid grid-cols-[1fr_min-content_1fr] gap-y-2 bg-white/5 p-3'>
+    <div className='grid-rows-auto grid grid-cols-[1fr_min-content_1fr] gap-y-2 bg-white/5 p-3 w-full'>
       <Text size='sm'>Buy</Text>
       <Text size='sm' className='col-start-3'>
         Sell

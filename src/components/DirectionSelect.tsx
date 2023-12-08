@@ -5,29 +5,35 @@ import Text from 'components/Text'
 interface Props {
   direction: OrderDirection
   onChangeDirection: (direction: OrderDirection) => void
+  asset?: Asset
 }
 
-export function SelectLongShort(props: Props) {
+export function DirectionSelect(props: Props) {
+  const hasAsset = props.asset
+  const directions: OrderDirection[] = hasAsset ? ['buy', 'sell'] : ['long', 'short']
   return (
-    <div className='flex bg-black/20 rounded-sm'>
+    <div className='flex rounded-sm bg-black/20'>
       <Direction
-        onClick={() => props.onChangeDirection('long')}
-        direction='long'
-        isActive={props.direction === 'long'}
+        onClick={() => props.onChangeDirection(directions[0])}
+        direction={directions[0]}
+        isActive={props.direction === directions[0]}
+        asset={props.asset}
       />
       <Direction
-        onClick={() => props.onChangeDirection('short')}
-        direction='short'
-        isActive={props.direction === 'short'}
+        onClick={() => props.onChangeDirection(directions[1])}
+        direction={directions[1]}
+        isActive={props.direction === directions[1]}
+        asset={props.asset}
       />
     </div>
   )
 }
 
 interface DirectionProps {
-  direction: 'long' | 'short'
+  direction: 'long' | 'short' | 'buy' | 'sell'
   isActive: boolean
   onClick: () => void
+  asset?: Asset
 }
 function Direction(props: DirectionProps) {
   return (
@@ -45,7 +51,7 @@ function Direction(props: DirectionProps) {
           props.isActive ? directionColors[props.direction] : 'text-white/20',
         )}
       >
-        {props.direction}
+        {props.asset ? `${props.direction} ${props.asset.symbol}` : props.direction}
       </Text>
     </button>
   )
@@ -54,9 +60,13 @@ function Direction(props: DirectionProps) {
 const directionColors = {
   long: 'text-success',
   short: 'text-error',
+  buy: 'text-success',
+  sell: 'text-error',
 }
 
 const borderColors = {
   long: 'border-success',
   short: 'border-error',
+  buy: 'border-success',
+  sell: 'border-error',
 }

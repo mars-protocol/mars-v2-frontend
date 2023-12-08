@@ -2,10 +2,10 @@ import { useState } from 'react'
 
 import Button from 'components/Button'
 import Card from 'components/Card'
+import { DirectionSelect } from 'components/DirectionSelect'
 import { ChevronDown } from 'components/Icons'
 import { LeverageButtons } from 'components/Perps/Module/LeverageButtons'
 import { Or } from 'components/Perps/Module/Or'
-import { SelectLongShort } from 'components/Perps/Module/SelectLongShort'
 import RangeInput from 'components/RangeInput'
 import { Spacer } from 'components/Spacer'
 import Text from 'components/Text'
@@ -23,7 +23,7 @@ export function PerpsModule() {
     <Card
       contentClassName='px-4 gap-5 flex flex-col'
       title={
-        <div className='flex justify-between bg-white/10 py-4 pl-4 pr-2 items-center'>
+        <div className='flex items-center justify-between py-4 pl-4 pr-2 bg-white/10'>
           <Text>
             ETH<span className='text-white/60'>/USD</span>
           </Text>
@@ -35,7 +35,7 @@ export function PerpsModule() {
       className='mb-4'
     >
       <OrderTypeSelector selected={selectedOrderType} onChange={setSelectedOrderType} />
-      <SelectLongShort
+      <DirectionSelect
         direction={selectedOrderDirection}
         onChangeDirection={setSelectedOrderDirection}
       />

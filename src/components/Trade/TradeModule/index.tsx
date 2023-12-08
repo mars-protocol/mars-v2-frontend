@@ -5,11 +5,11 @@ import SwapForm from 'components/Trade/TradeModule/SwapForm'
 interface Props {
   buyAsset: Asset
   sellAsset: Asset
+  isAdvanced: boolean
 }
 
 export default function TradeModule(props: Props) {
-  const { buyAsset, sellAsset } = props
-
+  const { buyAsset, sellAsset, isAdvanced } = props
   return (
     <div className='row-span-2'>
       <div
@@ -19,7 +19,7 @@ export default function TradeModule(props: Props) {
           'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
         )}
       >
-        <SwapForm buyAsset={buyAsset} sellAsset={sellAsset} />
+        <SwapForm buyAsset={buyAsset} sellAsset={sellAsset} isAdvanced={isAdvanced} />
       </div>
     </div>
   )
