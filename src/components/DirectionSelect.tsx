@@ -47,7 +47,7 @@ function Direction(props: DirectionProps) {
     >
       <Text
         className={classNames(
-          'text-center capitalize',
+          'text-center first-letter:uppercase',
           props.isActive ? directionColors[props.direction] : 'text-white/20',
         )}
       >

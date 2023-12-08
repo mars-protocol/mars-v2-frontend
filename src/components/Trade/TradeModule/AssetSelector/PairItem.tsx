@@ -55,8 +55,8 @@ export default function PairItem(props: Props) {
           <AssetImage asset={assetPair.buy} size={24} />
           <div className='flex-col'>
             <div className='flex gap-1 flex-nowrap max-w-[185px]'>
-              <Text size='sm' className='h-5 leading-5 text-left truncate '>
-                {assetPair.buy.symbol}/{assetPair.sell.symbol}
+              <Text size='sm' className='h-5 leading-5 text-left text-white/60'>
+                <span className='text-white'>{assetPair.buy.symbol}</span>/{assetPair.sell.symbol}
               </Text>
             </div>
             {props.balances.length > 0 && (

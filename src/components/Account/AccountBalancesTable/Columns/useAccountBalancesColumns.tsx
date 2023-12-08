@@ -81,6 +81,7 @@ export default function useAccountBalancesColumns(
                   computeLiquidationPrice={computeLiquidationPrice}
                   type={row.original.type}
                   amount={row.original.amount.toNumber()}
+                  account={updatedAccount ?? account}
                 />
               ),
             },
@@ -98,5 +99,5 @@ export default function useAccountBalancesColumns(
         ),
       },
     ]
-  }, [computeLiquidationPrice, markets, showLiquidationPrice])
+  }, [computeLiquidationPrice, markets, showLiquidationPrice, account, updatedAccount])
 }

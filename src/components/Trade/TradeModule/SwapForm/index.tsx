@@ -337,7 +337,7 @@ export default function SwapForm(props: Props) {
         {isAdvanced ? (
           <AssetSelectorSingle buyAsset={outputAsset} sellAsset={inputAsset} />
         ) : (
-          <AssetSelectorPair buyAsset={outputAsset} sellAsset={inputAsset} />
+          <AssetSelectorPair buyAsset={buyAsset} sellAsset={sellAsset} />
         )}
         <Divider />
         <MarginToggle

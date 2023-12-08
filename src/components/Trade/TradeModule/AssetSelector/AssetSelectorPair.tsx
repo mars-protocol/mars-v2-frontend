@@ -35,11 +35,10 @@ export default function AssetSelectorPair(props: Props) {
   }, [])
 
   return (
-    <div className='flex items-center justify-between w-full p-3'>
+    <div className='flex items-center justify-between w-full p-3 bg-white/5'>
       <Text size='sm' className='text-white/60'>
         <span className='text-white'>{buyAsset.symbol}</span>/{sellAsset.symbol}
       </Text>
-
       <Button
         onClick={() => useStore.setState({ assetOverlayState: 'pair' })}
         text='all markets'
