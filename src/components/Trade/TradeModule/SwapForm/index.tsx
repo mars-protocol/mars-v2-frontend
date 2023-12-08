@@ -221,57 +221,6 @@ export default function SwapForm(props: Props) {
   )
 
   useEffect(() => {
-    setBuyAssetAmount(BN_ZERO)
-    setSellAssetAmount(BN_ZERO)
-    setMarginChecked(isBorrowEnabled ? useMargin : false)
-    setAutoRepayChecked(isRepayable ? useAutoRepay : false)
-    simulateTrade(
-      BNCoin.fromDenomAndBigNumber(buyAsset.denom, BN_ZERO),
-      BNCoin.fromDenomAndBigNumber(sellAsset.denom, BN_ZERO),
-      BNCoin.fromDenomAndBigNumber(sellAsset.denom, BN_ZERO),
-      isAutoLendEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
-      isAutoRepayChecked,
-    )
-  }, [
-    isBorrowEnabled,
-    isRepayable,
-    useMargin,
-    useAutoRepay,
-    buyAsset.denom,
-    sellAsset.denom,
-    isAutoLendEnabled,
-    isAutoRepayChecked,
-    simulateTrade,
-    setMarginChecked,
-    setAutoRepayChecked,
-  ])
-
-  useEffect(() => {
-    const removeDepositAmount = sellAssetAmount.isGreaterThanOrEqualTo(sellSideMarginThreshold)
-      ? sellSideMarginThreshold
-      : sellAssetAmount
-    const addDebtAmount = sellAssetAmount.isGreaterThan(sellSideMarginThreshold)
-      ? sellAssetAmount.minus(sellSideMarginThreshold)
-      : BN_ZERO
-
-    if (removeDepositAmount.isZero() && addDebtAmount.isZero() && buyAssetAmount.isZero() && modal)
-      return
-    const removeCoin = BNCoin.fromDenomAndBigNumber(sellAsset.denom, removeDepositAmount)
-    const debtCoin = BNCoin.fromDenomAndBigNumber(sellAsset.denom, addDebtAmount)
-    const addCoin = BNCoin.fromDenomAndBigNumber(buyAsset.denom, buyAssetAmount)
-
-    debouncedUpdateAccount(removeCoin, addCoin, debtCoin)
-  }, [
-    sellAssetAmount,
-    buyAssetAmount,
-    sellSideMarginThreshold,
-    buyAsset.denom,
-    sellAsset.denom,
-    debouncedUpdateAccount,
-    modal,
-  ])
-
-  useEffect(() => {
     swapTx.estimateFee().then(setEstimatedFee)
   }, [swapTx])
 
@@ -319,10 +268,10 @@ export default function SwapForm(props: Props) {
   const [
     simpleMaxAmount,
     simpleInputAmount,
-    simpleReceiveAmount,
+    simpleOutputAmount,
     simpleOnChangeAmount,
     simpleInputAsset,
-    simpleReceiveAsset,
+    simpleOutputAsset,
   ] = useMemo(() => {
     if (orderDirection === 'buy')
       return [
@@ -358,6 +307,73 @@ export default function SwapForm(props: Props) {
     onChangeBuyAmount(BN_ZERO)
     onChangeSellAmount(BN_ZERO)
   }, [orderDirection, onChangeBuyAmount, onChangeSellAmount])
+
+  useEffect(() => {
+    const assetOutDenom = isAdvanced ? sellAsset.denom : simpleInputAsset.denom
+    const assetInDenom = isAdvanced ? buyAsset.denom : simpleOutputAsset.denom
+
+    setBuyAssetAmount(BN_ZERO)
+    setSellAssetAmount(BN_ZERO)
+    setMarginChecked(isBorrowEnabled ? useMargin : false)
+    setAutoRepayChecked(isRepayable ? useAutoRepay : false)
+    simulateTrade(
+      BNCoin.fromDenomAndBigNumber(assetInDenom, BN_ZERO),
+      BNCoin.fromDenomAndBigNumber(assetOutDenom, BN_ZERO),
+      BNCoin.fromDenomAndBigNumber(assetOutDenom, BN_ZERO),
+      isAutoLendEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
+      isAutoRepayChecked,
+    )
+  }, [
+    isBorrowEnabled,
+    isRepayable,
+    useMargin,
+    useAutoRepay,
+    buyAsset.denom,
+    sellAsset.denom,
+    simpleInputAsset.denom,
+    simpleOutputAsset.denom,
+    isAutoLendEnabled,
+    isAutoRepayChecked,
+    simulateTrade,
+    setMarginChecked,
+    setAutoRepayChecked,
+    isAdvanced,
+  ])
+
+  useEffect(() => {
+    const amountOut = isAdvanced ? sellAssetAmount : simpleInputAmount
+    const amountIn = isAdvanced ? sellAssetAmount : simpleOutputAmount
+    const assetOutDenom = isAdvanced ? sellAsset.denom : simpleInputAsset.denom
+    const assetInDenom = isAdvanced ? buyAsset.denom : simpleOutputAsset.denom
+
+    const removeDepositAmount = amountOut.isGreaterThanOrEqualTo(sellSideMarginThreshold)
+      ? sellSideMarginThreshold
+      : amountOut
+    const addDebtAmount = amountOut.isGreaterThan(sellSideMarginThreshold)
+      ? amountOut.minus(sellSideMarginThreshold)
+      : BN_ZERO
+
+    if (removeDepositAmount.isZero() && addDebtAmount.isZero() && buyAssetAmount.isZero() && modal)
+      return
+    const removeCoin = BNCoin.fromDenomAndBigNumber(assetOutDenom, removeDepositAmount)
+    const debtCoin = BNCoin.fromDenomAndBigNumber(assetOutDenom, addDebtAmount)
+    const addCoin = BNCoin.fromDenomAndBigNumber(assetInDenom, amountIn)
+
+    debouncedUpdateAccount(removeCoin, addCoin, debtCoin)
+  }, [
+    sellAssetAmount,
+    buyAssetAmount,
+    sellSideMarginThreshold,
+    buyAsset.denom,
+    sellAsset.denom,
+    debouncedUpdateAccount,
+    modal,
+    isAdvanced,
+    simpleOutputAmount,
+    simpleInputAmount,
+    simpleOutputAsset.denom,
+    simpleInputAsset.denom,
+  ])
 
   return (
     <>
@@ -450,12 +466,12 @@ export default function SwapForm(props: Props) {
               <div className='flex justify-between w-full'>
                 <Text size='sm'>You receive</Text>
                 <Text size='sm'>
-                  {formatValue(simpleReceiveAmount.toNumber(), {
-                    decimals: simpleReceiveAsset.decimals,
+                  {formatValue(simpleOutputAmount.toNumber(), {
+                    decimals: simpleOutputAsset.decimals,
                     abbreviated: false,
-                    suffix: ` ${simpleReceiveAsset.symbol}`,
+                    suffix: ` ${simpleOutputAsset.symbol}`,
                     minDecimals: 0,
-                    maxDecimals: simpleReceiveAsset.decimals,
+                    maxDecimals: simpleOutputAsset.decimals,
                   })}
                 </Text>
               </div>
