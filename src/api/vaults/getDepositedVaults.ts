@@ -62,7 +62,7 @@ async function getVaultPositionStatusAndUnlockIdAndUnlockTime(
   }
 }
 
-function flatVaultPositionAmount(
+export function flatVaultPositionAmount(
   vaultPositionAmount: VaultPositionAmount,
 ): VaultPositionFlatAmounts {
   const amounts = {
@@ -82,7 +82,7 @@ function flatVaultPositionAmount(
   return amounts
 }
 
-async function getLpTokensForVaultPosition(
+export async function getLpTokensForVaultPosition(
   vault: Vault,
   vaultPosition: VaultPosition,
 ): Promise<Coin[]> {
