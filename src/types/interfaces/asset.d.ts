@@ -69,6 +69,11 @@ interface Asset {
   isStaking?: boolean
 }
 
+interface AssetPair {
+  buy: Asset
+  sell: Asset
+}
+
 interface PseudoAsset {
   decimals: number
   symbol: string

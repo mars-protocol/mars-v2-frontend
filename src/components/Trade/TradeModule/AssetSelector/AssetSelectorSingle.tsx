@@ -14,7 +14,7 @@ interface Props {
   sellAsset: Asset
 }
 
-export default function AssetSelectorAdvanced(props: Props) {
+export default function AssetSelectorSingle(props: Props) {
   const [tradingPairAdvanced, settradingPairAdvanced] = useLocalStorage<
     Settings['tradingPairAdvanced']
   >(LocalStorageKeys.TRADING_PAIR_ADVANCED, DEFAULT_SETTINGS.tradingPairAdvanced)

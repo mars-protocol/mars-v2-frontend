@@ -1,1 +1,1 @@
-type OverlayState = 'buy' | 'sell' | 'closed'
+type OverlayState = 'buy' | 'sell' | 'pair' | 'closed'
