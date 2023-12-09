@@ -3,15 +3,13 @@ import { useMemo } from 'react'
 import Text from 'components/Text'
 import PairItem from 'components/Trade/TradeModule/AssetSelector/PairItem'
 import { ASSETS } from 'constants/assets'
-import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useMarketAssets from 'hooks/useMarketAssets'
 import useMarketDeposits from 'hooks/useMarketDeposits'
 import usePrices from 'hooks/usePrices'
 import { getMergedBalancesForAsset } from 'utils/accounts'
 import { byDenom } from 'utils/array'
-import { getEnabledMarketAssets } from 'utils/assets'
-import { demagnify } from 'utils/formatters'
+import { getEnabledMarketAssets, sortAssetsOrPairs } from 'utils/assets'
 
 interface Props {
   assets: Asset[]
@@ -44,31 +42,10 @@ export default function PairsList(props: Props) {
     return tradingPairs
   }, [props.stables, props.assets])
 
-  const sortedPairs = useMemo(() => {
-    if (prices.length === 0 || marketDeposits.length === 0) return pairs
-
-    return pairs.sort((a, b) => {
-      const aDenom = a.buy.denom
-      const bDenom = b.buy.denom
-      const aBalance = balances?.find(byDenom(aDenom))?.amount ?? BN_ZERO
-      const aPrice = prices?.find(byDenom(aDenom))?.amount ?? BN_ZERO
-      const bBalance = balances?.find(byDenom(bDenom))?.amount ?? BN_ZERO
-      const bPrice = prices?.find(byDenom(bDenom))?.amount ?? BN_ZERO
-
-      const aValue = demagnify(aBalance, a.buy) * aPrice.toNumber()
-      const bValue = demagnify(bBalance, b.buy) * bPrice.toNumber()
-      if (aValue > 0 || bValue > 0) return bValue - aValue
-      if (aDenom === baseDenom) return -1
-      if (bDenom === baseDenom) return 1
-
-      const aMarketDeposit = marketDeposits?.find(byDenom(aDenom))?.amount ?? BN_ZERO
-      const bMarketDeposit = marketDeposits?.find(byDenom(bDenom))?.amount ?? BN_ZERO
-      const aMarketValue = demagnify(aMarketDeposit, a.buy) * aPrice.toNumber()
-      const bMarketValue = demagnify(bMarketDeposit, b.buy) * bPrice.toNumber()
-
-      return bMarketValue - aMarketValue
-    })
-  }, [balances, prices, pairs, marketDeposits])
+  const sortedPairs = useMemo(
+    () => sortAssetsOrPairs(pairs, balances, prices, marketDeposits, baseDenom) as AssetPair[],
+    [balances, prices, pairs, marketDeposits],
+  )
 
   return (
     <section>

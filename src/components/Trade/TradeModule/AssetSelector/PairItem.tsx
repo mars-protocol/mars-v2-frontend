@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+
 import AssetImage from 'components/Asset/AssetImage'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
@@ -42,6 +44,13 @@ export default function PairItem(props: Props) {
     )
   }
 
+  const capLeft = useMemo(() => {
+    if (!props.depositCap) return 0
+    const percent = props.depositCap.used.dividedBy(props.depositCap.max).multipliedBy(100)
+    const depositCapLeft = 100 - Math.min(percent.toNumber(), 100)
+    return depositCapLeft
+  }, [props.depositCap])
+
   return (
     <li className='border-b border-white/10 hover:bg-black/10'>
       <button
@@ -83,12 +92,16 @@ export default function PairItem(props: Props) {
                 )}
               </div>
             )}
-            {props.depositCap && (
+            {props.depositCap && capLeft <= 15 && (
               <div className='flex gap-1'>
                 <span className='text-xs text-left text-white/60'>Cap Left: </span>
                 <DisplayCurrency
-                  className='text-xs text-left text-white/60'
-                  coin={BNCoin.fromDenomAndBigNumber(props.depositCap.denom, props.depositCap.max)}
+                  className='text-xs text-left text-info/60'
+                  coin={BNCoin.fromDenomAndBigNumber(
+                    props.depositCap.denom,
+                    props.depositCap.max.minus(props.depositCap.used),
+                  )}
+                  options={{ suffix: ` (${capLeft.toFixed(2)}%)` }}
                 />
               </div>
             )}

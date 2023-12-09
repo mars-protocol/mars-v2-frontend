@@ -4,11 +4,14 @@ import { useMemo } from 'react'
 import { ChevronDown } from 'components/Icons'
 import Text from 'components/Text'
 import AssetItem from 'components/Trade/TradeModule/AssetSelector/AssetItem'
+import { ASSETS } from 'constants/assets'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useMarketAssets from 'hooks/useMarketAssets'
+import useMarketDeposits from 'hooks/useMarketDeposits'
+import usePrices from 'hooks/usePrices'
 import { getMergedBalancesForAsset } from 'utils/accounts'
 import { byDenom } from 'utils/array'
-import { getEnabledMarketAssets } from 'utils/assets'
+import { getEnabledMarketAssets, sortAssetsOrPairs } from 'utils/assets'
 
 interface Props {
   type: 'buy' | 'sell'
@@ -18,38 +21,48 @@ interface Props {
   onChangeAsset: (asset: Asset) => void
 }
 
+const baseDenom = ASSETS[0].denom
+
 export default function AssetList(props: Props) {
+  const { assets, type, isOpen, toggleOpen, onChangeAsset } = props
   const account = useCurrentAccount()
   const { data: marketAssets } = useMarketAssets()
+  const { data: marketDeposits } = useMarketDeposits()
+  const { data: prices } = usePrices()
   const balances = useMemo(() => {
     if (!account) return []
     return getMergedBalancesForAsset(account, getEnabledMarketAssets())
   }, [account])
 
+  const sortedAssets = useMemo(
+    () => sortAssetsOrPairs(assets, balances, prices, marketDeposits, baseDenom) as Asset[],
+    [balances, prices, assets, marketDeposits],
+  )
+
   return (
     <section>
       <button
         className='flex items-center justify-between w-full p-4 bg-black/20'
-        onClick={props.toggleOpen}
+        onClick={toggleOpen}
       >
-        <Text>{props.type === 'buy' ? 'Buy asset' : 'Sell asset'}</Text>
-        <ChevronDown className={classNames(props.isOpen && '-rotate-180', 'w-4')} />
+        <Text>{type === 'buy' ? 'Buy asset' : 'Sell asset'}</Text>
+        <ChevronDown className={classNames(isOpen && '-rotate-180', 'w-4')} />
       </button>
-      {props.isOpen &&
-        (props.assets.length === 0 ? (
+      {isOpen &&
+        (sortedAssets.length === 0 ? (
           <Text size='xs' className='p-4'>
             No available assets found
           </Text>
         ) : (
           <ul>
-            {props.assets.map((asset) => (
+            {sortedAssets.map((asset) => (
               <AssetItem
                 balances={balances}
-                key={`${props.type}-${asset.symbol}`}
+                key={`${type}-${asset.symbol}`}
                 asset={asset}
-                onSelectAsset={props.onChangeAsset}
+                onSelectAsset={onChangeAsset}
                 depositCap={
-                  props.type === 'buy' ? marketAssets?.find(byDenom(asset.denom))?.cap : undefined
+                  type === 'buy' ? marketAssets?.find(byDenom(asset.denom))?.cap : undefined
                 }
               />
             ))}
