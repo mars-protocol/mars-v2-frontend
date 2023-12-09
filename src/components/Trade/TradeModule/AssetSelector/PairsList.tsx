@@ -43,7 +43,7 @@ export default function PairsList(props: Props) {
   }, [props.stables, props.assets])
 
   const sortedPairs = useMemo(
-    () => sortAssetsOrPairs(pairs, balances, prices, marketDeposits, baseDenom) as AssetPair[],
+    () => sortAssetsOrPairs(pairs, prices, marketDeposits, balances, baseDenom) as AssetPair[],
     [balances, prices, pairs, marketDeposits],
   )
 

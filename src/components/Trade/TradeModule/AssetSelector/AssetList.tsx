@@ -35,7 +35,7 @@ export default function AssetList(props: Props) {
   }, [account])
 
   const sortedAssets = useMemo(
-    () => sortAssetsOrPairs(assets, balances, prices, marketDeposits, baseDenom) as Asset[],
+    () => sortAssetsOrPairs(assets, prices, marketDeposits, balances, baseDenom) as Asset[],
     [balances, prices, assets, marketDeposits],
   )
 
