@@ -454,6 +454,8 @@ export default function SwapForm(props: Props) {
           liquidationPrice={liquidationPrice}
           sellAmount={inputAssetAmount}
           buyAmount={outputAssetAmount}
+          isAdvanced={isAdvanced}
+          direction={orderDirection}
         />
       </div>
     </>
