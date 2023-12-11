@@ -27,10 +27,8 @@ export default function SwitchAutoLend(props: Props) {
       return
     }
 
-    if (isAutoLendEnabled) {
-      setIsAutoLendEnabled(false)
-      disableAutoLend(accountId)
-    }
+    setIsAutoLendEnabled(false)
+    disableAutoLend(accountId)
   }, [
     accountId,
     disableAutoLend,
