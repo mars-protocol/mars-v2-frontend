@@ -64,7 +64,7 @@ export default function AssetSelectorItem(props: Props) {
             <div className='flex gap-1 flex-nowrap max-w-[185px]'>
               {sellAsset ? (
                 <Text size='sm' className='h-5 leading-5 text-left text-white/60'>
-                  <span className='text-white'>{asset.symbol}</span>/{sellAsset.symbol}{' '}
+                  <span className='text-white'>{asset.symbol}</span>/{sellAsset.symbol}
                 </Text>
               ) : (
                 <>
