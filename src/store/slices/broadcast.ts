@@ -586,7 +586,6 @@ export default function createBroadcastSlice(
       fromWallet?: boolean
     }) => {
       const actions: Action[] = [
-        ...(options.fromWallet ? [{ deposit: options.coin.toCoin() }] : []),
         {
           repay: {
             coin: options.coin.toActionCoin(options.accountBalance),
@@ -597,12 +596,18 @@ export default function createBroadcastSlice(
       if (options.lend && options.lend.amount.isGreaterThan(0))
         actions.unshift({ reclaim: options.lend.toActionCoin() })
 
-      const msg: CreditManagerExecuteMsg = {
-        update_credit_account: {
-          account_id: options.accountId,
-          actions,
-        },
-      }
+      const msg: CreditManagerExecuteMsg = options.fromWallet
+        ? {
+            repay_from_wallet: {
+              account_id: options.accountId,
+            },
+          }
+        : {
+            update_credit_account: {
+              account_id: options.accountId,
+              actions,
+            },
+          }
 
       const response = get().executeMsg({
         messages: [

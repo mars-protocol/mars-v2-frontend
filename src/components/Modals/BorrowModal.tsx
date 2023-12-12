@@ -18,6 +18,7 @@ import { BN_ZERO } from 'constants/math'
 import useAutoLend from 'hooks/useAutoLend'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useHealthComputer from 'hooks/useHealthComputer'
+import useMarketAssets from 'hooks/useMarketAssets'
 import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import { getDepositAndLendCoinsToSpend } from 'hooks/useUpdatedAccount/functions'
@@ -90,6 +91,7 @@ function BorrowModal(props: Props) {
   const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
   const { computeMaxBorrowAmount } = useHealthComputer(account)
   const totalDebt = BN(getDebtAmount(modal))
+  const { data: marketAssets } = useMarketAssets()
 
   const [depositBalance, lendBalance] = useMemo(
     () => [
@@ -104,11 +106,22 @@ function BorrowModal(props: Props) {
     [totalDebt, apy],
   )
 
+  const overpayExeedsCap = useMemo(() => {
+    const marketAsset = marketAssets.find(byDenom(asset.denom))
+    if (!marketAsset) return
+    const overpayAmount = totalDebtRepayAmount.minus(totalDebt)
+    const marketCapAfterOverpay = marketAsset.cap.used.plus(overpayAmount)
+
+    return marketAsset.cap.max.isLessThanOrEqualTo(marketCapAfterOverpay)
+  }, [marketAssets, asset.denom])
+
   const maxRepayAmount = useMemo(() => {
     const maxBalance = repayFromWallet
       ? BN(walletBalances.find(byDenom(asset.denom))?.amount ?? 0)
       : depositBalance.plus(lendBalance)
-    return isRepay ? BigNumber.min(maxBalance, totalDebtRepayAmount) : BN_ZERO
+    return isRepay
+      ? BigNumber.min(maxBalance, overpayExeedsCap ? totalDebt : totalDebtRepayAmount)
+      : BN_ZERO
   }, [
     depositBalance,
     lendBalance,
