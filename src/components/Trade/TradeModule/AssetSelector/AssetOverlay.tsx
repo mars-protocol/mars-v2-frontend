@@ -66,7 +66,7 @@ export default function AssetOverlay(props: Props) {
   const stableAssets = useMemo(() => allAssets.filter((asset) => asset.isStable), [allAssets])
   const handleClose = useCallback(() => props.onChangeState('closed'), [props])
   const handleToggle = useCallback(() => props.onChangeState(props.state), [props])
-  const [selectedStables, setSelectedStables] = useState<Asset[]>(stableAssets)
+  const [selectedStables, setSelectedStables] = useState<Asset[]>([stableAssets[0]])
 
   const buyAssets = useMemo(
     () =>
