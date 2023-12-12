@@ -62,7 +62,7 @@ export default function PairsList(props: Props) {
                 key={`${assetPair.buy.symbol}-${assetPair.sell.symbol}`}
                 onSelect={props.onChangeAssetPair}
                 depositCap={marketAssets?.find(byDenom(assetPair.buy.denom))?.cap}
-                buyAsset={assetPair.buy}
+                asset={assetPair.buy}
                 sellAsset={assetPair.sell}
               />
             ))}

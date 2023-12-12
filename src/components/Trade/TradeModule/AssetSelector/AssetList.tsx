@@ -63,7 +63,7 @@ export default function AssetList(props: Props) {
                 depositCap={
                   type === 'buy' ? marketAssets?.find(byDenom(asset.denom))?.cap : undefined
                 }
-                buyAsset={asset}
+                asset={asset}
               />
             ))}
           </ul>

@@ -14,19 +14,16 @@ import { byDenom } from 'utils/array'
 import { demagnify, formatAmountToPrecision } from 'utils/formatters'
 
 interface Props {
-  buyAsset: Asset
+  asset: Asset
   sellAsset?: Asset
   balances: BNCoin[]
   onSelect: (selected: Asset | AssetPair) => void
   depositCap?: DepositCap
 }
 export default function AssetSelectorItem(props: Props) {
-  const { buyAsset, sellAsset, balances, onSelect, depositCap } = props
+  const { asset, sellAsset, balances, onSelect, depositCap } = props
 
-  const amount = demagnify(
-    props.balances.find(byDenom(buyAsset.denom))?.amount ?? BN_ZERO,
-    buyAsset,
-  )
+  const amount = demagnify(props.balances.find(byDenom(asset.denom))?.amount ?? BN_ZERO, asset)
 
   const [favoriteAssetsDenoms, setFavoriteAssetsDenoms] = useLocalStorage<string[]>(
     LocalStorageKeys.FAVORITE_ASSETS,
@@ -36,11 +33,11 @@ export default function AssetSelectorItem(props: Props) {
   function handleToggleFavorite(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     event.stopPropagation()
 
-    if (!favoriteAssetsDenoms.includes(buyAsset.denom)) {
-      setFavoriteAssetsDenoms([...favoriteAssetsDenoms, buyAsset.denom])
+    if (!favoriteAssetsDenoms.includes(asset.denom)) {
+      setFavoriteAssetsDenoms([...favoriteAssetsDenoms, asset.denom])
       return
     }
-    setFavoriteAssetsDenoms(favoriteAssetsDenoms.filter((item: string) => item !== buyAsset.denom))
+    setFavoriteAssetsDenoms(favoriteAssetsDenoms.filter((item: string) => item !== asset.denom))
   }
   const formattedAmount = formatAmountToPrecision(amount, MAX_AMOUNT_DECIMALS)
   const lowAmount = formattedAmount === 0 ? 0 : Math.max(formattedAmount, MIN_AMOUNT)
@@ -55,26 +52,26 @@ export default function AssetSelectorItem(props: Props) {
   return (
     <li className='border-b border-white/10 hover:bg-black/10'>
       <button
-        onClick={() => onSelect(sellAsset ? { buy: buyAsset, sell: sellAsset } : buyAsset)}
+        onClick={() => onSelect(sellAsset ? { buy: asset, sell: sellAsset } : asset)}
         className='flex items-center justify-between w-full gap-2 p-4'
       >
         <div className='flex items-center gap-2'>
           <div onClick={handleToggleFavorite}>
-            {buyAsset.isFavorite ? <StarFilled width={16} /> : <StarOutlined width={16} />}
+            {asset.isFavorite ? <StarFilled width={16} /> : <StarOutlined width={16} />}
           </div>
-          <AssetImage asset={buyAsset} size={24} />
+          <AssetImage asset={asset} size={24} />
           <div className='flex-col'>
             <div className='flex gap-1 flex-nowrap max-w-[185px]'>
               {sellAsset ? (
                 <Text size='sm' className='h-5 leading-5 text-left text-white/60'>
-                  <span className='text-white'>{buyAsset.symbol}</span>/{sellAsset.symbol}{' '}
+                  <span className='text-white'>{asset.symbol}</span>/{sellAsset.symbol}{' '}
                 </Text>
               ) : (
                 <>
                   <Text size='sm' className='h-5 leading-5 text-left truncate '>
-                    {buyAsset.name}
+                    {asset.name}
                   </Text>
-                  <AssetSymbol symbol={buyAsset.symbol} />
+                  <AssetSymbol symbol={asset.symbol} />
                 </>
               )}
             </div>
@@ -121,8 +118,8 @@ export default function AssetSelectorItem(props: Props) {
           className='text-sm'
           coin={
             new BNCoin({
-              denom: buyAsset.denom,
-              amount: BN_ONE.shiftedBy(buyAsset.decimals).toString(),
+              denom: asset.denom,
+              amount: BN_ONE.shiftedBy(asset.decimals).toString(),
             })
           }
         />
