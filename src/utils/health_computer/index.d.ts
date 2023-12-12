@@ -40,9 +40,14 @@ export function max_swap_estimate_js(
 /**
  * @param {HealthComputer} c
  * @param {string} denom
+ * @param {LiquidationPriceKind} kind
  * @returns {string}
  */
-export function liquidation_price_js(c: HealthComputer, denom: string): string
+export function liquidation_price_js(
+  c: HealthComputer,
+  denom: string,
+  kind: LiquidationPriceKind,
+): string
 export interface HealthComputer {
   kind: AccountKind
   positions: Positions
@@ -60,6 +65,8 @@ export interface HealthValuesResponse {
   liquidatable: boolean
   above_max_ltv: boolean
 }
+
+export type LiquidationPriceKind = 'asset' | 'debt'
 
 export type Slippage = Decimal
 
@@ -88,7 +95,7 @@ export interface InitOutput {
     g: number,
     h: number,
   ) => void
-  readonly liquidation_price_js: (a: number, b: number, c: number, d: number) => void
+  readonly liquidation_price_js: (a: number, b: number, c: number, d: number, e: number) => void
   readonly allocate: (a: number) => number
   readonly deallocate: (a: number) => void
   readonly requires_iterator: () => void

@@ -27,7 +27,12 @@ function PageContainer(props: Props) {
 
   if (!props.focusComponent)
     return (
-      <div className={classNames('mx-auto h-full w-full', !props.fullWidth && 'max-w-content')}>
+      <div
+        className={classNames(
+          'mx-auto flex items-start w-full',
+          !props.fullWidth && 'max-w-content',
+        )}
+      >
         {props.children}
       </div>
     )
@@ -42,6 +47,7 @@ function PageContainer(props: Props) {
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
   const focusComponent = useStore((s) => s.focusComponent)
+  const address = useStore((s) => s.address)
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
@@ -61,11 +67,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <DesktopHeader />
       <main
         className={classNames(
-          'lg:min-h-[calc(100vh-73px)]',
+          'lg:min-h-[calc(100dvh-73px)]',
           'lg:mt-[73px]',
           'flex',
           'min-h-screen gap-6 px-4 py-6 w-full relative',
           !focusComponent &&
+            address &&
             isFullWidth &&
             accountId &&
             (accountDetailsExpanded ? 'pr-118' : 'pr-24'),

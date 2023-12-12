@@ -1,19 +1,52 @@
 import React, { useMemo } from 'react'
 
+import AssetSymbol from 'components/Asset/AssetSymbol'
 import Card from 'components/Card'
+import DisplayCurrency from 'components/DisplayCurrency'
 import Divider from 'components/Divider'
+import { FormattedNumber } from 'components/FormattedNumber'
+import Loading from 'components/Loading'
 import Text from 'components/Text'
+import usePerpsMarket from 'hooks/perps/usePerpsMarket'
+import usePrice from 'hooks/usePrice'
+import { BNCoin } from 'types/classes/BNCoin'
 
 export function PerpsInfo() {
+  const { data: market } = usePerpsMarket()
+  const assetPrice = usePrice(market?.asset.denom || '')
+
   const items = useMemo(
     () => [
-      <Text key='item1'>$6,735</Text>,
-      <InfoItem key='item2' label='Label' item={<Text size='sm'>Value</Text>} />,
-      <InfoItem key='item3' label='Label' item={<Text size='sm'>Value</Text>} />,
-      <InfoItem key='item4' label='Label' item={<Text size='sm'>Value</Text>} />,
-      <InfoItem key='item5' label='Label' item={<Text size='sm'>Value</Text>} />,
+      ...(!assetPrice.isZero()
+        ? [<DisplayCurrency key='price' coin={BNCoin.fromDenomAndBigNumber('usd', assetPrice)} />]
+        : [<Loading key='price' className='w-14 h-4' />]),
+      <InfoItem
+        key='openInterestLong'
+        label='Open Interest (L)'
+        item={<InterestItem market={market} type='long' />}
+      />,
+      <InfoItem
+        key='openInterestShort'
+        label='Open Interest (S)'
+        item={<InterestItem market={market} type='short' />}
+      />,
+      <InfoItem
+        key='fundingRate'
+        label='Funding rate'
+        item={
+          market ? (
+            <FormattedNumber
+              className='text-sm inline'
+              amount={market.fundingRate.toNumber()}
+              options={{ minDecimals: 6, maxDecimals: 6, suffix: '%' }}
+            />
+          ) : (
+            <Loading />
+          )
+        }
+      />,
     ],
-    [],
+    [assetPrice, market],
   )
 
   return (
@@ -42,6 +75,25 @@ function InfoItem(props: InfoItemProps) {
         {props.label}
       </Text>
       {props.item}
+    </div>
+  )
+}
+
+interface InterestItemProps {
+  market: PerpsMarket | null
+  type: 'long' | 'short'
+}
+function InterestItem(props: InterestItemProps) {
+  if (!props.market) return <Loading />
+
+  return (
+    <div className='flex gap-1 items-center'>
+      <FormattedNumber
+        className='text-sm inline'
+        amount={props.market.openInterest[props.type].toNumber()}
+        options={{ decimals: props.market.asset.decimals }}
+      />
+      <AssetSymbol symbol={props.market.asset.symbol} />
     </div>
   )
 }

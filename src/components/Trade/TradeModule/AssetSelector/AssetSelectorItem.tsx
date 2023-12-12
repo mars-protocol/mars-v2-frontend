@@ -15,20 +15,20 @@ import { demagnify, formatAmountToPrecision } from 'utils/formatters'
 
 interface Props {
   asset: Asset
-  onSelectAsset: (asset: Asset) => void
-  depositCap?: DepositCap
+  sellAsset?: Asset
   balances: BNCoin[]
+  onSelect: (selected: Asset | AssetPair) => void
+  depositCap?: DepositCap
 }
+export default function AssetSelectorItem(props: Props) {
+  const { asset, sellAsset, balances, onSelect, depositCap } = props
 
-export default function AssetItem(props: Props) {
-  const asset = props.asset
+  const amount = demagnify(props.balances.find(byDenom(asset.denom))?.amount ?? BN_ZERO, asset)
+
   const [favoriteAssetsDenoms, setFavoriteAssetsDenoms] = useLocalStorage<string[]>(
     LocalStorageKeys.FAVORITE_ASSETS,
     [],
   )
-  const amount = demagnify(props.balances.find(byDenom(asset.denom))?.amount ?? BN_ZERO, asset)
-  const formattedAmount = formatAmountToPrecision(amount, MAX_AMOUNT_DECIMALS)
-  const lowAmount = formattedAmount === 0 ? 0 : Math.max(formattedAmount, MIN_AMOUNT)
 
   function handleToggleFavorite(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     event.stopPropagation()
@@ -39,6 +39,8 @@ export default function AssetItem(props: Props) {
     }
     setFavoriteAssetsDenoms(favoriteAssetsDenoms.filter((item: string) => item !== asset.denom))
   }
+  const formattedAmount = formatAmountToPrecision(amount, MAX_AMOUNT_DECIMALS)
+  const lowAmount = formattedAmount === 0 ? 0 : Math.max(formattedAmount, MIN_AMOUNT)
 
   const capLeft = useMemo(() => {
     if (!props.depositCap) return 0
@@ -50,7 +52,7 @@ export default function AssetItem(props: Props) {
   return (
     <li className='border-b border-white/10 hover:bg-black/10'>
       <button
-        onClick={() => props.onSelectAsset(asset)}
+        onClick={() => onSelect(sellAsset ? { buy: asset, sell: sellAsset } : asset)}
         className='flex items-center justify-between w-full gap-2 p-4'
       >
         <div className='flex items-center gap-2'>
@@ -60,12 +62,20 @@ export default function AssetItem(props: Props) {
           <AssetImage asset={asset} size={24} />
           <div className='flex-col'>
             <div className='flex gap-1 flex-nowrap max-w-[185px]'>
-              <Text size='sm' className='h-5 leading-5 text-left truncate '>
-                {asset.name}
-              </Text>
-              <AssetSymbol symbol={asset.symbol} />
+              {sellAsset ? (
+                <Text size='sm' className='h-5 leading-5 text-left text-white/60'>
+                  <span className='text-white'>{asset.symbol}</span>/{sellAsset.symbol}
+                </Text>
+              ) : (
+                <>
+                  <Text size='sm' className='h-5 leading-5 text-left truncate '>
+                    {asset.name}
+                  </Text>
+                  <AssetSymbol symbol={asset.symbol} />
+                </>
+              )}
             </div>
-            {props.balances.length > 0 && (
+            {balances.length > 0 && (
               <div className='flex gap-1'>
                 <span className='text-xs text-left text-white/80'>Balance: </span>
                 {amount >= 1 ? (
@@ -89,14 +99,14 @@ export default function AssetItem(props: Props) {
                 )}
               </div>
             )}
-            {props.depositCap && capLeft <= 15 && (
+            {depositCap && capLeft <= 15 && (
               <div className='flex gap-1'>
                 <span className='text-xs text-left text-white/60'>Cap Left: </span>
                 <DisplayCurrency
                   className='text-xs text-left text-info/60'
                   coin={BNCoin.fromDenomAndBigNumber(
-                    props.depositCap.denom,
-                    props.depositCap.max.minus(props.depositCap.used),
+                    depositCap.denom,
+                    depositCap.max.minus(depositCap.used),
                   )}
                   options={{ suffix: ` (${capLeft.toFixed(2)}%)` }}
                 />
@@ -107,7 +117,10 @@ export default function AssetItem(props: Props) {
         <DisplayCurrency
           className='text-sm'
           coin={
-            new BNCoin({ denom: asset.denom, amount: BN_ONE.shiftedBy(asset.decimals).toString() })
+            new BNCoin({
+              denom: asset.denom,
+              amount: BN_ONE.shiftedBy(asset.decimals).toString(),
+            })
           }
         />
       </button>

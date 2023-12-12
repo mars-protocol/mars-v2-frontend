@@ -1,8 +1,7 @@
-import classNames from 'classnames'
 import { useMemo } from 'react'
 
-import { ChevronDown } from 'components/Icons'
 import Text from 'components/Text'
+import AssetSelectorItem from 'components/Trade/TradeModule/AssetSelector/AssetSelectorItem'
 import { ASSETS } from 'constants/assets'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useMarketAssets from 'hooks/useMarketAssets'
@@ -11,20 +10,18 @@ import usePrices from 'hooks/usePrices'
 import { getMergedBalancesForAsset } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { getEnabledMarketAssets, sortAssetsOrPairs } from 'utils/assets'
-import AssetSelectorItem from 'components/Trade/TradeModule/AssetSelector/AssetSelectorItem'
 
 interface Props {
-  type: 'buy' | 'sell'
   assets: Asset[]
+  stables: Asset[]
   isOpen: boolean
   toggleOpen: () => void
-  onChangeAsset: (asset: Asset | AssetPair) => void
+  onChangeAssetPair: (assetPair: AssetPair | Asset) => void
 }
 
 const baseDenom = ASSETS[0].denom
 
-export default function AssetList(props: Props) {
-  const { assets, type, isOpen, toggleOpen, onChangeAsset } = props
+export default function PairsList(props: Props) {
   const account = useCurrentAccount()
   const { data: marketAssets } = useMarketAssets()
   const { data: marketDeposits } = useMarketDeposits()
@@ -34,36 +31,39 @@ export default function AssetList(props: Props) {
     return getMergedBalancesForAsset(account, getEnabledMarketAssets())
   }, [account])
 
-  const sortedAssets = useMemo(
-    () => sortAssetsOrPairs(assets, prices, marketDeposits, balances, baseDenom) as Asset[],
-    [balances, prices, assets, marketDeposits],
+  const pairs = useMemo(() => {
+    const tradingPairs: AssetPair[] = []
+    props.stables.forEach((stable) => {
+      props.assets.forEach((buyAsset) => {
+        if (buyAsset.denom === stable.denom) return
+        tradingPairs.push({ buy: buyAsset, sell: stable })
+      })
+    })
+    return tradingPairs
+  }, [props.stables, props.assets])
+
+  const sortedPairs = useMemo(
+    () => sortAssetsOrPairs(pairs, prices, marketDeposits, balances, baseDenom) as AssetPair[],
+    [balances, prices, pairs, marketDeposits],
   )
 
   return (
     <section>
-      <button
-        className='flex items-center justify-between w-full p-4 bg-black/20'
-        onClick={toggleOpen}
-      >
-        <Text>{type === 'buy' ? 'Buy asset' : 'Sell asset'}</Text>
-        <ChevronDown className={classNames(isOpen && '-rotate-180', 'w-4')} />
-      </button>
-      {isOpen &&
-        (sortedAssets.length === 0 ? (
+      {props.isOpen &&
+        (props.assets.length === 0 ? (
           <Text size='xs' className='p-4'>
             No available assets found
           </Text>
         ) : (
           <ul>
-            {sortedAssets.map((asset) => (
+            {sortedPairs.map((assetPair) => (
               <AssetSelectorItem
                 balances={balances}
-                key={`${type}-${asset.symbol}`}
-                onSelect={props.onChangeAsset}
-                depositCap={
-                  type === 'buy' ? marketAssets?.find(byDenom(asset.denom))?.cap : undefined
-                }
-                asset={asset}
+                key={`${assetPair.buy.symbol}-${assetPair.sell.symbol}`}
+                onSelect={props.onChangeAssetPair}
+                depositCap={marketAssets?.find(byDenom(assetPair.buy.denom))?.cap}
+                asset={assetPair.buy}
+                sellAsset={assetPair.sell}
               />
             ))}
           </ul>

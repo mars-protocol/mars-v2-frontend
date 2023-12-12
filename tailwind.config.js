@@ -4,6 +4,8 @@ const plugin = require('tailwindcss/plugin')
 module.exports = {
   content: ['./src/pages/**/*.{js,ts,jsx,tsx}', './src/components/**/*.{js,ts,jsx,tsx}'],
   safelist: [
+    'border-error',
+    'border-success',
     'h-2',
     'text-3xs',
     'text-3xs-caps',
@@ -41,12 +43,14 @@ module.exports = {
     '@nav-3/navigation:inline-block',
     '@nav-4/navigation:inline-block',
     '@nav-5/navigation:inline-block',
+    '@nav-6/navigation:inline-block',
     '@nav-0/navigation:hidden',
     '@nav-1/navigation:hidden',
     '@nav-2/navigation:hidden',
     '@nav-3/navigation:hidden',
     '@nav-4/navigation:hidden',
     '@nav-5/navigation:hidden',
+    '@nav-6/navigation:hidden',
   ],
   theme: {
     extend: {
@@ -141,6 +145,7 @@ module.exports = {
         'nav-3': '400px',
         'nav-4': '500px',
         'nav-5': '600px',
+        'nav-6': '650px',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

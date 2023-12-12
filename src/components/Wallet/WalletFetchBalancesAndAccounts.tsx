@@ -1,5 +1,5 @@
 import { Suspense, useEffect, useMemo } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import AccountCreateFirst from 'components/Account/AccountCreateFirst'
 import { CircularProgress } from 'components/CircularProgress'
@@ -28,6 +28,8 @@ function FetchLoading() {
 
 function Content() {
   const address = useStore((s) => s.address)
+  const [searchParams] = useSearchParams()
+
   const { address: urlAddress } = useParams()
   const urlAccountId = useAccountId()
   const navigate = useNavigate()
@@ -48,7 +50,7 @@ function Content() {
   useEffect(() => {
     const page = getPage(pathname)
     if (page === 'portfolio' && urlAddress && urlAddress !== address) {
-      navigate(getRoute(page, urlAddress as string))
+      navigate(getRoute(page, searchParams, urlAddress as string))
       useStore.setState({ balances: walletBalances, focusComponent: null })
       return
     }
@@ -60,7 +62,7 @@ function Content() {
     ) {
       const currentAccountIsHLS = urlAccountId && !accountIds.includes(urlAccountId)
       const currentAccount = currentAccountIsHLS || !urlAccountId ? accountIds[0] : urlAccountId
-      navigate(getRoute(page, address, currentAccount))
+      navigate(getRoute(page, searchParams, address, currentAccount))
       useStore.setState({ balances: walletBalances, focusComponent: null })
     }
   }, [
@@ -72,6 +74,7 @@ function Content() {
     walletBalances,
     urlAddress,
     urlAccountId,
+    searchParams,
   ])
 
   if (isLoadingAccounts || isLoadingBalances) return <FetchLoading />

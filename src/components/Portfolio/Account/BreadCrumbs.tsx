@@ -1,4 +1,4 @@
-import { NavLink, useParams } from 'react-router-dom'
+import { NavLink, useParams, useSearchParams } from 'react-router-dom'
 
 import { ArrowRight } from 'components/Icons'
 import Text from 'components/Text'
@@ -12,10 +12,11 @@ interface Props {
 export default function PortfolioAccountPageHeader(props: Props) {
   const { address } = useParams()
   const selectedAccountId = useAccountId()
+  const [searchParams] = useSearchParams()
 
   return (
     <div className='flex items-center w-full gap-2 pt-2 pb-6 border-b border-white/20'>
-      <NavLink to={getRoute('portfolio', address, selectedAccountId)}>
+      <NavLink to={getRoute('portfolio', searchParams, address, selectedAccountId)}>
         <Text className='text-white/40'>Portfolio</Text>
       </NavLink>
       <ArrowRight className='h-3 text-white/60 ' />

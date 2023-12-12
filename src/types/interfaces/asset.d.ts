@@ -69,6 +69,11 @@ interface Asset {
   isStaking?: boolean
 }
 
+interface AssetPair {
+  buy: Asset
+  sell: Asset
+}
+
 interface PseudoAsset {
   decimals: number
   symbol: string
@@ -143,4 +148,13 @@ interface StakingApr {
   strideYield: number
   unbondingDelay: number
   unbondingPeriod: number
+}
+
+interface PerpsMarket {
+  asset: Asset
+  fundingRate: BigNumber
+  openInterest: {
+    long: BigNumber
+    short: BigNumber
+  }
 }

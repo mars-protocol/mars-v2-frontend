@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import AccountFundFullPage from 'components/Account/AccountFund/AccountFundFullPage'
 import FullOverlayContent from 'components/FullOverlayContent'
@@ -14,6 +14,7 @@ export default function AccountCreateFirst() {
   const address = useStore((s) => s.address)
   const createAccount = useStore((s) => s.createAccount)
   const [isCreating, setIsCreating] = useToggle(false)
+  const [searchParams] = useSearchParams()
 
   useEffect(() => {
     if (!address) useStore.setState({ focusComponent: { component: <WalletSelect /> } })
@@ -24,7 +25,7 @@ export default function AccountCreateFirst() {
     const accountId = await createAccount('default')
     setIsCreating(false)
     if (accountId) {
-      navigate(getRoute(getPage(pathname), address, accountId))
+      navigate(getRoute(getPage(pathname), searchParams, address, accountId))
       useStore.setState({
         focusComponent: {
           component: <AccountFundFullPage />,
@@ -34,7 +35,7 @@ export default function AccountCreateFirst() {
         },
       })
     }
-  }, [createAccount, navigate, pathname, address, setIsCreating])
+  }, [setIsCreating, createAccount, navigate, pathname, searchParams, address])
 
   return (
     <FullOverlayContent

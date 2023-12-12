@@ -15,9 +15,9 @@ export const depositCapSortingFn = (
 }
 
 interface Props {
-  account: HLSAccountWithStrategy
+  depositCap: DepositCap
 }
 
-export default function Name(props: Props) {
-  return <DepositCapCell depositCap={props.account.strategy.depositCap} />
+export default function DepositCap(props: Props) {
+  return <DepositCapCell depositCap={props.depositCap} />
 }

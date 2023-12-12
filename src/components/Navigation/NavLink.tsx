@@ -1,27 +1,41 @@
 import classNames from 'classnames'
 import { ReactNode } from 'react'
-import { NavLink as Link } from 'react-router-dom'
+import { NavLink as Link, useSearchParams } from 'react-router-dom'
+
+import { getIsActive } from 'components/Navigation/DesktopNavigation'
+import useAccountId from 'hooks/useAccountId'
+import useStore from 'store'
+import { getRoute } from 'utils/route'
 
 interface Props {
-  href: string
   children: string | ReactNode
-  isActive?: boolean
+  item: MenuTreeEntry
+  isHome?: boolean
   className?: string
   onClick?: () => void
-  target?: string
 }
 
 export const NavLink = (props: Props) => {
+  const [searchParams] = useSearchParams()
+  const address = useStore((s) => s.address)
+  const { isHome, item, className, onClick } = props
+  const accountId = useAccountId()
+
+  const itemLink = item.externalUrl
+    ? item.externalUrl
+    : getRoute(item.pages[0], searchParams, address, accountId)
+  const link = isHome ? getRoute('trade', searchParams, address, accountId) : itemLink
+
   return (
     <Link
-      to={props.href}
-      onClick={props.onClick ? props.onClick : undefined}
+      to={link}
+      onClick={onClick ? onClick : undefined}
       className={classNames(
-        props.className,
+        className,
         'font-semibold hover:text-white active:text-white',
-        props.isActive ? 'pointer-events-none text-white' : 'text-white/60',
+        getIsActive(item.pages) ? 'pointer-events-none text-white' : 'text-white/60',
       )}
-      target={props.target}
+      target={item.externalUrl ? '_blank' : undefined}
     >
       {props.children}
     </Link>

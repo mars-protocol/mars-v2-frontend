@@ -18,11 +18,14 @@ export default function AccountDetailsCard() {
 
   if (account)
     return (
-      <AccountBalancesTable
-        account={account}
-        borrowingData={borrowAssetsData}
-        lendingData={lendingAssetsData}
-        tableBodyClassName='gradient-card-content'
-      />
+      <div className='w-full'>
+        <AccountBalancesTable
+          account={account}
+          borrowingData={borrowAssetsData}
+          lendingData={lendingAssetsData}
+          tableBodyClassName='gradient-card-content'
+          showLiquidationPrice
+        />
+      </div>
     )
 }

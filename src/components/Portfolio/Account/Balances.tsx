@@ -29,6 +29,7 @@ function Content(props: Props) {
         account={account}
         borrowingData={borrowAssets}
         lendingData={lendingAssets}
+        showLiquidationPrice
         hideCard
       />
     </Skeleton>
@@ -55,7 +56,10 @@ function Skeleton(props: SkeletonProps) {
         {props.children ? (
           props.children
         ) : (
-          <TableSkeleton labels={['Asset', 'Value', 'Size', 'APY']} rowCount={3} />
+          <TableSkeleton
+            labels={['Asset', 'Value', 'Size', 'Price', 'Liquidation Price', 'APY']}
+            rowCount={3}
+          />
         )}
       </Card>
     </div>

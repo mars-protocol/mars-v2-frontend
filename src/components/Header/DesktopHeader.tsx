@@ -4,18 +4,36 @@ import { isDesktop } from 'react-device-detect'
 import AccountMenu from 'components/Account/AccountMenu'
 import EscButton from 'components/Button/EscButton'
 import OracleResyncButton from 'components/Header/OracleResyncButton'
+import { Coins, CoinsSwap } from 'components/Icons'
 import DesktopNavigation from 'components/Navigation/DesktopNavigation'
 import RewardsCenter from 'components/RewardsCenter'
 import Settings from 'components/Settings'
 import Wallet from 'components/Wallet'
 import useAccountId from 'hooks/useAccountId'
 import useStore from 'store'
-import { ENABLE_HLS, ENABLE_PERPS } from 'utils/constants'
 import { WalletID } from 'types/enums/wallet'
+import { ENABLE_HLS, ENABLE_PERPS } from 'utils/constants'
 import { getGovernanceUrl } from 'utils/helpers'
 
 export const menuTree = (walletId: WalletID): MenuTreeEntry[] => [
-  { pages: ['trade'], label: 'Trade' },
+  {
+    pages: ['trade', 'trade-advanced'],
+    label: 'Trade',
+    submenu: [
+      {
+        page: 'trade',
+        label: 'Spot',
+        subtitle: 'Trade assets against stables',
+        icon: <Coins className='w-6 h-6' />,
+      },
+      {
+        page: 'trade-advanced',
+        label: 'Spot Advanced',
+        subtitle: 'Trade any assets',
+        icon: <CoinsSwap className='w-6 h-6' />,
+      },
+    ],
+  },
   ...(ENABLE_PERPS ? [{ pages: ['perps'] as Page[], label: 'Perps' }] : []),
   { pages: ['lend', 'farm'], label: 'Earn' },
   { pages: ['borrow'], label: 'Borrow' },

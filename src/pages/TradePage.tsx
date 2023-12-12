@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
 
 import MigrationBanner from 'components/MigrationBanner'
 import AccountDetailsCard from 'components/Trade/AccountDetailsCard'
@@ -10,30 +11,45 @@ import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { getEnabledMarketAssets } from 'utils/assets'
+import { getPage } from 'utils/route'
 
 export default function TradePage() {
-  const [tradingPair] = useLocalStorage<Settings['tradingPair']>(
-    LocalStorageKeys.TRADING_PAIR,
-    DEFAULT_SETTINGS.tradingPair,
+  const { pathname } = useLocation()
+  const page = getPage(pathname)
+  const isAdvanced = useMemo(() => page === 'trade-advanced', [page])
+
+  const [tradingPairAdvanced] = useLocalStorage<Settings['tradingPairAdvanced']>(
+    LocalStorageKeys.TRADING_PAIR_ADVANCED,
+    DEFAULT_SETTINGS.tradingPairAdvanced,
   )
+  const [tradingPairSimple] = useLocalStorage<Settings['tradingPairSimple']>(
+    LocalStorageKeys.TRADING_PAIR_SIMPLE,
+    DEFAULT_SETTINGS.tradingPairSimple,
+  )
+
   const enabledMarketAssets = getEnabledMarketAssets()
   const assetOverlayState = useStore((s) => s.assetOverlayState)
 
   const buyAsset = useMemo(
-    () => enabledMarketAssets.find(byDenom(tradingPair.buy)) ?? enabledMarketAssets[0],
-    [tradingPair, enabledMarketAssets],
+    () =>
+      enabledMarketAssets.find(
+        byDenom(isAdvanced ? tradingPairAdvanced.buy : tradingPairSimple.buy),
+      ) ?? enabledMarketAssets[0],
+    [tradingPairAdvanced, tradingPairSimple, enabledMarketAssets, isAdvanced],
   )
   const sellAsset = useMemo(
-    () => enabledMarketAssets.find(byDenom(tradingPair.sell)) ?? enabledMarketAssets[1],
-    [tradingPair, enabledMarketAssets],
+    () =>
+      enabledMarketAssets.find(
+        byDenom(isAdvanced ? tradingPairAdvanced.sell : tradingPairSimple.sell),
+      ) ?? enabledMarketAssets[1],
+    [tradingPairAdvanced, tradingPairSimple, enabledMarketAssets, isAdvanced],
   )
-
   return (
     <div className='flex flex-col w-full h-full gap-4'>
       <MigrationBanner />
-      <div className='grid h-full w-full grid-cols-[346px_auto] gap-4'>
-        <TradeModule buyAsset={buyAsset} sellAsset={sellAsset} />
+      <div className='grid w-full grid-cols-[auto_346px] gap-4'>
         <TradeChart buyAsset={buyAsset} sellAsset={sellAsset} />
+        <TradeModule buyAsset={buyAsset} sellAsset={sellAsset} isAdvanced={isAdvanced} />
         <AccountDetailsCard />
       </div>
       {assetOverlayState !== 'closed' && (

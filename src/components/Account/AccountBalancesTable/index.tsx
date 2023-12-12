@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import useAccountBalancesColumns from 'components/Account/AccountBalancesTable/Columns/useAccountBalancesColumns'
 import useAccountBalanceData from 'components/Account/AccountBalancesTable/useAccountBalanceData'
@@ -19,10 +19,19 @@ interface Props {
   borrowingData: BorrowMarketTableData[]
   hideCard?: boolean
   tableBodyClassName?: string
+  showLiquidationPrice?: boolean
 }
 
 export default function AccountBalancesTable(props: Props) {
-  const { account, lendingData, borrowingData, tableBodyClassName, hideCard } = props
+  const [searchParams] = useSearchParams()
+  const {
+    account,
+    lendingData,
+    borrowingData,
+    tableBodyClassName,
+    hideCard,
+    showLiquidationPrice,
+  } = props
   const currentAccount = useCurrentAccount()
   const navigate = useNavigate()
   const { pathname } = useLocation()
@@ -36,7 +45,7 @@ export default function AccountBalancesTable(props: Props) {
     isHls: props.isHls,
   })
 
-  const columns = useAccountBalancesColumns()
+  const columns = useAccountBalancesColumns(account, showLiquidationPrice)
 
   if (accountBalanceData.length === 0)
     return (
@@ -55,7 +64,7 @@ export default function AccountBalancesTable(props: Props) {
             color='tertiary'
             onClick={() => {
               if (currentAccount?.id !== account.id) {
-                navigate(getRoute(getPage(pathname), address, account.id))
+                navigate(getRoute(getPage(pathname), searchParams, address, account.id))
               }
               useStore.setState({
                 focusComponent: {

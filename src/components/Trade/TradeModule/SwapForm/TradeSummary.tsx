@@ -1,6 +1,5 @@
 import classNames from 'classnames'
-import debounce from 'lodash.debounce'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 
 import ActionButton from 'components/Button/ActionButton'
 import { CircularProgress } from 'components/CircularProgress'
@@ -11,6 +10,7 @@ import { ChevronDown } from 'components/Icons'
 import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useLiquidationPrice from 'hooks/useLiquidationPrice'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrice from 'hooks/usePrice'
 import useSwapFee from 'hooks/useSwapFee'
@@ -34,6 +34,8 @@ interface Props {
   sellAmount: BigNumber
   sellAsset: Asset
   showProgressIndicator: boolean
+  isAdvanced?: boolean
+  direction?: OrderDirection
 }
 
 const infoLineClasses = 'flex flex-row justify-between flex-1 mb-1 text-xs text-white'
@@ -53,29 +55,21 @@ export default function TradeSummary(props: Props) {
     route,
     sellAmount,
     buyAmount,
+    isAdvanced,
+    direction,
   } = props
   const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
 
   const sellAssetPrice = usePrice(sellAsset.denom)
   const swapFee = useSwapFee(route.map((r) => r.pool_id))
   const [showSummary, setShowSummary] = useToggle()
-  const [liquidationPrice, setLiquidationPrice] = useState<number | null>(null)
-  const [isUpdatingLiquidationPrice, setIsUpdatingLiquidationPrice] = useState(false)
-  const debouncedSetLiqPrice = useMemo(
-    () => debounce(setLiquidationPrice, 1000, { leading: false }),
-    [],
+  const { liquidationPrice, isUpdatingLiquidationPrice } = useLiquidationPrice(
+    props.liquidationPrice,
   )
 
   const minReceive = useMemo(() => {
     return buyAmount.times(1 - swapFee).times(1 - slippage)
   }, [buyAmount, slippage, swapFee])
-
-  useEffect(() => {
-    setIsUpdatingLiquidationPrice(true)
-    debouncedSetLiqPrice(props.liquidationPrice)
-  }, [debouncedSetLiqPrice, props.liquidationPrice])
-
-  useEffect(() => setIsUpdatingLiquidationPrice(false), [liquidationPrice])
 
   const swapFeeValue = useMemo(() => {
     return sellAssetPrice.times(swapFee).times(sellAmount)
@@ -90,10 +84,10 @@ export default function TradeSummary(props: Props) {
     return routeSymbols.join(' -> ')
   }, [route, sellAsset.symbol])
 
-  const buttonText = useMemo(
-    () => (route.length ? `Buy ${buyAsset.symbol}` : 'No route found'),
-    [buyAsset.symbol, route],
-  )
+  const buttonText = useMemo(() => {
+    if (!isAdvanced && direction === 'sell') return `Sell ${sellAsset.symbol}`
+    return route.length ? `Buy ${buyAsset.symbol}` : 'No route found'
+  }, [buyAsset.symbol, route, sellAsset.symbol, isAdvanced, direction])
 
   return (
     <div
