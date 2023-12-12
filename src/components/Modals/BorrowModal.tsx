@@ -93,14 +93,6 @@ function BorrowModal(props: Props) {
   const totalDebt = BN(getDebtAmount(modal))
   const { data: marketAssets } = useMarketAssets()
 
-  const capReached = useMemo(() => {
-    const marketAsset = marketAssets.find(byDenom(asset.denom))
-    if (!marketAsset) return
-
-    const capPercentage = marketAsset.cap.used.dividedBy(marketAsset.cap.max).multipliedBy(100)
-    return capPercentage.isGreaterThanOrEqualTo(99.5)
-  }, [marketAssets, asset.denom])
-
   const [depositBalance, lendBalance] = useMemo(
     () => [
       account.deposits.find(byDenom(asset.denom))?.amount ?? BN_ZERO,
@@ -110,15 +102,26 @@ function BorrowModal(props: Props) {
   )
 
   const totalDebtRepayAmount = useMemo(
-    () => (capReached ? totalDebt : getDebtAmountWithInterest(totalDebt, apy)),
+    () => getDebtAmountWithInterest(totalDebt, apy),
     [totalDebt, apy],
   )
+
+  const overpayExeedsCap = useMemo(() => {
+    const marketAsset = marketAssets.find(byDenom(asset.denom))
+    if (!marketAsset) return
+    const overpayAmount = totalDebtRepayAmount.minus(totalDebt)
+    const marketCapAfterOverpay = marketAsset.cap.used.plus(overpayAmount)
+
+    return marketAsset.cap.max.isLessThanOrEqualTo(marketCapAfterOverpay)
+  }, [marketAssets, asset.denom])
 
   const maxRepayAmount = useMemo(() => {
     const maxBalance = repayFromWallet
       ? BN(walletBalances.find(byDenom(asset.denom))?.amount ?? 0)
       : depositBalance.plus(lendBalance)
-    return isRepay ? BigNumber.min(maxBalance, totalDebtRepayAmount) : BN_ZERO
+    return isRepay
+      ? BigNumber.min(maxBalance, overpayExeedsCap ? totalDebt : totalDebtRepayAmount)
+      : BN_ZERO
   }, [
     depositBalance,
     lendBalance,
