@@ -113,7 +113,7 @@ function BorrowModal(props: Props) {
     const marketCapAfterOverpay = marketAsset.cap.used.plus(overpayAmount)
 
     return marketAsset.cap.max.isLessThanOrEqualTo(marketCapAfterOverpay)
-  }, [marketAssets, asset.denom])
+  }, [marketAssets, asset.denom, totalDebt, totalDebtRepayAmount])
 
   const maxRepayAmount = useMemo(() => {
     const maxBalance = repayFromWallet
@@ -127,6 +127,8 @@ function BorrowModal(props: Props) {
     lendBalance,
     isRepay,
     totalDebtRepayAmount,
+    overpayExeedsCap,
+    totalDebt,
     walletBalances,
     asset.denom,
     repayFromWallet,
