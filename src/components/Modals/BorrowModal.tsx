@@ -18,6 +18,7 @@ import { BN_ZERO } from 'constants/math'
 import useAutoLend from 'hooks/useAutoLend'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useHealthComputer from 'hooks/useHealthComputer'
+import useMarketAssets from 'hooks/useMarketAssets'
 import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import { getDepositAndLendCoinsToSpend } from 'hooks/useUpdatedAccount/functions'
@@ -90,6 +91,15 @@ function BorrowModal(props: Props) {
   const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
   const { computeMaxBorrowAmount } = useHealthComputer(account)
   const totalDebt = BN(getDebtAmount(modal))
+  const { data: marketAssets } = useMarketAssets()
+
+  const capReached = useMemo(() => {
+    const marketAsset = marketAssets.find(byDenom(asset.denom))
+    if (!marketAsset) return
+
+    const capPercentage = marketAsset.cap.used.dividedBy(marketAsset.cap.max).multipliedBy(100)
+    return capPercentage.isGreaterThanOrEqualTo(99.5)
+  }, [marketAssets, asset.denom])
 
   const [depositBalance, lendBalance] = useMemo(
     () => [
@@ -100,7 +110,7 @@ function BorrowModal(props: Props) {
   )
 
   const totalDebtRepayAmount = useMemo(
-    () => getDebtAmountWithInterest(totalDebt, apy),
+    () => (capReached ? totalDebt : getDebtAmountWithInterest(totalDebt, apy)),
     [totalDebt, apy],
   )
 

@@ -35,8 +35,8 @@ export default function DepositCapMessage(props: Props) {
               <FormattedNumber
                 amount={coin.amount.toNumber()}
                 options={{
-                  abbreviated: true,
                   decimals: asset.decimals,
+                  maxDecimals: asset.decimals,
                   suffix: ` ${asset.symbol}`,
                 }}
                 className='text-xs text-white/60'
