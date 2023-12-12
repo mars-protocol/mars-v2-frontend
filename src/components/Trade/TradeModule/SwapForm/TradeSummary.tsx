@@ -34,6 +34,8 @@ interface Props {
   sellAmount: BigNumber
   sellAsset: Asset
   showProgressIndicator: boolean
+  isAdvanced?: boolean
+  direction?: OrderDirection
 }
 
 const infoLineClasses = 'flex flex-row justify-between flex-1 mb-1 text-xs text-white'
@@ -53,6 +55,8 @@ export default function TradeSummary(props: Props) {
     route,
     sellAmount,
     buyAmount,
+    isAdvanced,
+    direction,
   } = props
   const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
 
@@ -80,10 +84,10 @@ export default function TradeSummary(props: Props) {
     return routeSymbols.join(' -> ')
   }, [route, sellAsset.symbol])
 
-  const buttonText = useMemo(
-    () => (route.length ? `Buy ${buyAsset.symbol}` : 'No route found'),
-    [buyAsset.symbol, route],
-  )
+  const buttonText = useMemo(() => {
+    if (!isAdvanced && direction === 'sell') return `Sell ${sellAsset.symbol}`
+    return route.length ? `Buy ${buyAsset.symbol}` : 'No route found'
+  }, [buyAsset.symbol, route, sellAsset.symbol, isAdvanced, direction])
 
   return (
     <div

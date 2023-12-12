@@ -1,33 +1,28 @@
 import { useShuttle } from '@delphi-labs/shuttle-react'
 import classNames from 'classnames'
 import { useMemo } from 'react'
-import { useSearchParams } from 'react-router-dom'
 
 import Button from 'components/Button'
 import { menuTree } from 'components/Header/DesktopHeader'
 import { ChevronDown, Logo } from 'components/Icons'
 import { NavLink } from 'components/Navigation/NavLink'
-import useAccountId from 'hooks/useAccountId'
+import { NavMenu } from 'components/Navigation/NavMenu'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { WalletID } from 'types/enums/wallet'
-import { getRoute } from 'utils/route'
+
+export function getIsActive(pages: string[]) {
+  const segments = location.pathname.split('/')
+  return pages.some((page) => segments.includes(page))
+}
 
 export default function DesktopNavigation() {
   const [showMenu, setShowMenu] = useToggle()
   const { recentWallet } = useShuttle()
   const walletId = (recentWallet?.providerId as WalletID) ?? WalletID.Keplr
-  const address = useStore((s) => s.address)
-  const accountId = useAccountId()
-  const [searchParams] = useSearchParams()
   const focusComponent = useStore((s) => s.focusComponent)
 
   const menu = useMemo(() => menuTree(walletId), [walletId])
-
-  function getIsActive(pages: string[]) {
-    const segments = location.pathname.split('/')
-    return pages.some((page) => segments.includes(page))
-  }
 
   return (
     <div
@@ -37,31 +32,29 @@ export default function DesktopNavigation() {
           : 'flex flex-1 items-center relative z-50',
       )}
     >
-      <NavLink href={getRoute('trade', searchParams, address, accountId)}>
+      <NavLink isHome item={menu[0]}>
         <span className='block w-10 h-10'>
           <Logo className='text-white' />
         </span>
       </NavLink>
       {!focusComponent && (
-        <div className='flex gap-8 px-6 @container/navigation relative flex-1'>
-          {menu.map((item, index) => (
-            <NavLink
-              key={index}
-              href={
-                item.externalUrl
-                  ? item.externalUrl
-                  : getRoute(item.pages[0], searchParams, address, accountId)
-              }
-              isActive={getIsActive(item.pages)}
-              className={`@nav-${index}/navigation:inline-block hidden whitespace-nowrap`}
-              target={item.externalUrl ? '_blank' : undefined}
-            >
-              {item.label}
-            </NavLink>
-          ))}
+        <div className='flex gap-8 px-6 h-6 @container/navigation relative flex-1'>
+          {menu.map((item, index) =>
+            item.submenu ? (
+              <NavMenu key={index} item={item} />
+            ) : (
+              <NavLink
+                key={index}
+                item={item}
+                className={`@nav-${index}/navigation:inline-block hidden whitespace-nowrap`}
+              >
+                {item.label}
+              </NavLink>
+            ),
+          )}
           <div className={`@nav-${menu.length - 1}/navigation:hidden flex items-center relative`}>
             <Button
-              leftIcon={<ChevronDown />}
+              leftIcon={<ChevronDown className='w-3' />}
               color='quaternary'
               variant='transparent'
               onClick={() => setShowMenu(!showMenu)}
@@ -84,15 +77,9 @@ export default function DesktopNavigation() {
                         key={index}
                       >
                         <NavLink
-                          href={
-                            item.externalUrl
-                              ? item.externalUrl
-                              : getRoute(item.pages[0], searchParams, address, accountId)
-                          }
+                          item={item}
                           onClick={() => setShowMenu(false)}
-                          isActive={getIsActive(item.pages)}
                           className='w-full px-4 whitespace-nowrap'
-                          target={item.externalUrl ? '_blank' : undefined}
                         >
                           {item.label}
                         </NavLink>

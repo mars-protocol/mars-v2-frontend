@@ -1,1 +1,1 @@
-type OrderDirection = 'long' | 'short'
+type OrderDirection = 'long' | 'short' | 'buy' | 'sell'

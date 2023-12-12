@@ -12,7 +12,7 @@ interface Props {
 
 export default function MarginToggle(props: Props) {
   return (
-    <div className='flex flex-row justify-between flex-1 px-4 py-2 bg-white/5'>
+    <div className='flex justify-between w-full px-4 py-2 bg-white/5'>
       <Text size='sm'>Margin</Text>
 
       <ConditionalWrapper

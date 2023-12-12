@@ -11,8 +11,7 @@ import PerpsPage from 'pages/PerpsPage'
 import PortfolioAccountPage from 'pages/PortfolioAccountPage'
 import PortfolioPage from 'pages/PortfolioPage'
 import TradePage from 'pages/TradePage'
-import { ENABLE_PERPS } from 'utils/constants'
-import { ENABLE_HLS } from 'utils/constants'
+import { ENABLE_HLS, ENABLE_PERPS } from 'utils/constants'
 
 export default function Routes() {
   return (
@@ -25,6 +24,7 @@ export default function Routes() {
         }
       >
         <Route path='/trade' element={<TradePage />} />
+        <Route path='/trade-advanced' element={<TradePage />} />
         {ENABLE_PERPS && <Route path='/perps' element={<PerpsPage />} />}
         <Route path='/farm' element={<FarmPage />} />
         <Route path='/lend' element={<LendPage />} />
@@ -36,6 +36,7 @@ export default function Routes() {
         <Route path='/' element={<TradePage />} />
         <Route path='/wallets/:address'>
           <Route path='trade' element={<TradePage />} />
+          <Route path='trade-advanced' element={<TradePage />} />
           {ENABLE_PERPS && <Route path='perps' element={<PerpsPage />} />}
           <Route path='farm' element={<FarmPage />} />
           <Route path='lend' element={<LendPage />} />
