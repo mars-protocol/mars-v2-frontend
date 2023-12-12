@@ -12,6 +12,7 @@ import useLocalStorage from 'hooks/useLocalStorage'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { demagnify, formatAmountToPrecision } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 interface Props {
   asset: Asset
@@ -106,9 +107,9 @@ export default function AssetSelectorItem(props: Props) {
                   className='text-xs text-left text-info/60'
                   coin={BNCoin.fromDenomAndBigNumber(
                     depositCap.denom,
-                    depositCap.max.minus(depositCap.used),
+                    BN(Math.max(depositCap.max.minus(depositCap.used).toNumber(), 0)),
                   )}
-                  options={{ suffix: ` (${capLeft.toFixed(2)}%)` }}
+                  options={{ suffix: ` (${Math.max(capLeft, 0).toFixed(2)}%)` }}
                 />
               </div>
             )}
