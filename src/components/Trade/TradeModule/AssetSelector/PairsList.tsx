@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import Text from 'components/Text'
-import PairItem from 'components/Trade/TradeModule/AssetSelector/PairItem'
+import AssetSelectorItem from 'components/Trade/TradeModule/AssetSelector/AssetSelectorItem'
 import { ASSETS } from 'constants/assets'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useMarketAssets from 'hooks/useMarketAssets'
@@ -16,7 +16,7 @@ interface Props {
   stables: Asset[]
   isOpen: boolean
   toggleOpen: () => void
-  onChangeAssetPair: (assetPair: AssetPair) => void
+  onChangeAssetPair: (assetPair: AssetPair | Asset) => void
 }
 
 const baseDenom = ASSETS[0].denom
@@ -57,12 +57,13 @@ export default function PairsList(props: Props) {
         ) : (
           <ul>
             {sortedPairs.map((assetPair) => (
-              <PairItem
+              <AssetSelectorItem
                 balances={balances}
                 key={`${assetPair.buy.symbol}-${assetPair.sell.symbol}`}
-                assetPair={assetPair}
-                onSelectAssetPair={props.onChangeAssetPair}
+                onSelect={props.onChangeAssetPair}
                 depositCap={marketAssets?.find(byDenom(assetPair.buy.denom))?.cap}
+                buyAsset={assetPair.buy}
+                sellAsset={assetPair.sell}
               />
             ))}
           </ul>

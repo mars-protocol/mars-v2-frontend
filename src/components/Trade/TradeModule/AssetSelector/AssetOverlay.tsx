@@ -79,22 +79,25 @@ export default function AssetOverlay(props: Props) {
     [assets, props.buyAsset],
   )
 
-  function onChangeBuyAsset(asset: Asset) {
+  function onChangeBuyAsset(asset: AssetPair | Asset) {
+    const selectedAsset = asset as Asset
     if (!props.onChangeBuyAsset) return
-    props.onChangeBuyAsset(asset)
+    props.onChangeBuyAsset(selectedAsset)
     props.onChangeState('sell')
     onChangeSearch('')
   }
 
-  function onChangeSellAsset(asset: Asset) {
+  function onChangeSellAsset(asset: AssetPair | Asset) {
+    const selectedAsset = asset as Asset
     if (!props.onChangeSellAsset) return
-    props.onChangeSellAsset(asset)
+    props.onChangeSellAsset(selectedAsset)
     onChangeSearch('')
   }
 
-  function onChangeAssetPair(assetPair: AssetPair) {
+  function onChangeAssetPair(assetPair: AssetPair | Asset) {
+    const selectedPair = assetPair as AssetPair
     if (!props.onChangeTradingPair) return
-    props.onChangeTradingPair({ buy: assetPair.buy.denom, sell: assetPair.sell.denom })
+    props.onChangeTradingPair({ buy: selectedPair.buy.denom, sell: selectedPair.sell.denom })
     props.onChangeState('closed')
     onChangeSearch('')
   }

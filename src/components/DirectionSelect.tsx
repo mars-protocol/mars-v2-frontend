@@ -36,37 +36,24 @@ interface DirectionProps {
   asset?: Asset
 }
 function Direction(props: DirectionProps) {
+  const classString = props.direction === 'long' || props.direction === 'buy' ? 'success' : 'error'
   return (
     <button
       className={classNames(
         'px-4 py-3 rounded-sm flex-1',
-        borderColors[props.direction],
         props.isActive && 'border bg-white/10',
+        `border-${classString}`,
       )}
       onClick={props.onClick}
     >
       <Text
         className={classNames(
           'text-center first-letter:uppercase',
-          props.isActive ? directionColors[props.direction] : 'text-white/20',
+          props.isActive ? `text-${classString}` : 'text-white/20',
         )}
       >
         {props.asset ? `${props.direction} ${props.asset.symbol}` : props.direction}
       </Text>
     </button>
   )
-}
-
-const directionColors = {
-  long: 'text-success',
-  short: 'text-error',
-  buy: 'text-success',
-  sell: 'text-error',
-}
-
-const borderColors = {
-  long: 'border-success',
-  short: 'border-error',
-  buy: 'border-success',
-  sell: 'border-error',
 }

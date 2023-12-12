@@ -3,7 +3,6 @@ import { useMemo } from 'react'
 
 import { ChevronDown } from 'components/Icons'
 import Text from 'components/Text'
-import AssetItem from 'components/Trade/TradeModule/AssetSelector/AssetItem'
 import { ASSETS } from 'constants/assets'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useMarketAssets from 'hooks/useMarketAssets'
@@ -12,13 +11,14 @@ import usePrices from 'hooks/usePrices'
 import { getMergedBalancesForAsset } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { getEnabledMarketAssets, sortAssetsOrPairs } from 'utils/assets'
+import AssetSelectorItem from 'components/Trade/TradeModule/AssetSelector/AssetSelectorItem'
 
 interface Props {
   type: 'buy' | 'sell'
   assets: Asset[]
   isOpen: boolean
   toggleOpen: () => void
-  onChangeAsset: (asset: Asset) => void
+  onChangeAsset: (asset: Asset | AssetPair) => void
 }
 
 const baseDenom = ASSETS[0].denom
@@ -56,14 +56,14 @@ export default function AssetList(props: Props) {
         ) : (
           <ul>
             {sortedAssets.map((asset) => (
-              <AssetItem
+              <AssetSelectorItem
                 balances={balances}
                 key={`${type}-${asset.symbol}`}
-                asset={asset}
-                onSelectAsset={onChangeAsset}
+                onSelect={props.onChangeAsset}
                 depositCap={
                   type === 'buy' ? marketAssets?.find(byDenom(asset.denom))?.cap : undefined
                 }
+                buyAsset={asset}
               />
             ))}
           </ul>

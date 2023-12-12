@@ -33,7 +33,6 @@ export default function SwitchAutoLend(props: Props) {
     accountId,
     disableAutoLend,
     enableAutoLend,
-    isAutoLendEnabled,
     isAutoLendEnabledForAccount,
     setIsAutoLendEnabled,
   ])

@@ -8,6 +8,7 @@ import { DirectionSelect } from 'components/DirectionSelect'
 import Divider from 'components/Divider'
 import RangeInput from 'components/RangeInput'
 import Text from 'components/Text'
+import AssetSelectorPair from 'components/Trade/TradeModule/AssetSelector/AssetSelectorPair'
 import AssetSelectorSingle from 'components/Trade/TradeModule/AssetSelector/AssetSelectorSingle'
 import AssetAmountInput from 'components/Trade/TradeModule/SwapForm/AssetAmountInput'
 import AutoRepayToggle from 'components/Trade/TradeModule/SwapForm/AutoRepayToggle'
@@ -34,8 +35,6 @@ import { defaultFee, ENABLE_AUTO_REPAY } from 'utils/constants'
 import { formatValue } from 'utils/formatters'
 import { getCapLeftWithBuffer } from 'utils/generic'
 import { asyncThrottle, BN } from 'utils/helpers'
-
-import AssetSelectorPair from '../AssetSelector/AssetSelectorPair'
 
 interface Props {
   buyAsset: Asset

@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 
 import AssetImage from 'components/Asset/AssetImage'
+import AssetSymbol from 'components/Asset/AssetSymbol'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { StarFilled, StarOutlined } from 'components/Icons'
@@ -13,36 +14,36 @@ import { byDenom } from 'utils/array'
 import { demagnify, formatAmountToPrecision } from 'utils/formatters'
 
 interface Props {
-  assetPair: AssetPair
-  onSelectAssetPair: (assetPair: AssetPair) => void
-  depositCap?: DepositCap
+  buyAsset: Asset
+  sellAsset?: Asset
   balances: BNCoin[]
+  onSelect: (selected: Asset | AssetPair) => void
+  depositCap?: DepositCap
 }
+export default function AssetSelectorItem(props: Props) {
+  const { buyAsset, sellAsset, balances, onSelect, depositCap } = props
 
-export default function PairItem(props: Props) {
-  const assetPair = props.assetPair
+  const amount = demagnify(
+    props.balances.find(byDenom(buyAsset.denom))?.amount ?? BN_ZERO,
+    buyAsset,
+  )
+
   const [favoriteAssetsDenoms, setFavoriteAssetsDenoms] = useLocalStorage<string[]>(
     LocalStorageKeys.FAVORITE_ASSETS,
     [],
   )
-  const amount = demagnify(
-    props.balances.find(byDenom(assetPair.buy.denom))?.amount ?? BN_ZERO,
-    assetPair.buy,
-  )
-  const formattedAmount = formatAmountToPrecision(amount, MAX_AMOUNT_DECIMALS)
-  const lowAmount = formattedAmount === 0 ? 0 : Math.max(formattedAmount, MIN_AMOUNT)
 
   function handleToggleFavorite(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     event.stopPropagation()
 
-    if (!favoriteAssetsDenoms.includes(assetPair.buy.denom)) {
-      setFavoriteAssetsDenoms([...favoriteAssetsDenoms, assetPair.buy.denom])
+    if (!favoriteAssetsDenoms.includes(buyAsset.denom)) {
+      setFavoriteAssetsDenoms([...favoriteAssetsDenoms, buyAsset.denom])
       return
     }
-    setFavoriteAssetsDenoms(
-      favoriteAssetsDenoms.filter((item: string) => item !== assetPair.buy.denom),
-    )
+    setFavoriteAssetsDenoms(favoriteAssetsDenoms.filter((item: string) => item !== buyAsset.denom))
   }
+  const formattedAmount = formatAmountToPrecision(amount, MAX_AMOUNT_DECIMALS)
+  const lowAmount = formattedAmount === 0 ? 0 : Math.max(formattedAmount, MIN_AMOUNT)
 
   const capLeft = useMemo(() => {
     if (!props.depositCap) return 0
@@ -54,21 +55,30 @@ export default function PairItem(props: Props) {
   return (
     <li className='border-b border-white/10 hover:bg-black/10'>
       <button
-        onClick={() => props.onSelectAssetPair(assetPair)}
+        onClick={() => onSelect(sellAsset ? { buy: buyAsset, sell: sellAsset } : buyAsset)}
         className='flex items-center justify-between w-full gap-2 p-4'
       >
         <div className='flex items-center gap-2'>
           <div onClick={handleToggleFavorite}>
-            {assetPair.buy.isFavorite ? <StarFilled width={16} /> : <StarOutlined width={16} />}
+            {buyAsset.isFavorite ? <StarFilled width={16} /> : <StarOutlined width={16} />}
           </div>
-          <AssetImage asset={assetPair.buy} size={24} />
+          <AssetImage asset={buyAsset} size={24} />
           <div className='flex-col'>
             <div className='flex gap-1 flex-nowrap max-w-[185px]'>
-              <Text size='sm' className='h-5 leading-5 text-left text-white/60'>
-                <span className='text-white'>{assetPair.buy.symbol}</span>/{assetPair.sell.symbol}
-              </Text>
+              {sellAsset ? (
+                <Text size='sm' className='h-5 leading-5 text-left text-white/60'>
+                  <span className='text-white'>{buyAsset.symbol}</span>/{sellAsset.symbol}{' '}
+                </Text>
+              ) : (
+                <>
+                  <Text size='sm' className='h-5 leading-5 text-left truncate '>
+                    {buyAsset.name}
+                  </Text>
+                  <AssetSymbol symbol={buyAsset.symbol} />
+                </>
+              )}
             </div>
-            {props.balances.length > 0 && (
+            {balances.length > 0 && (
               <div className='flex gap-1'>
                 <span className='text-xs text-left text-white/80'>Balance: </span>
                 {amount >= 1 ? (
@@ -92,14 +102,14 @@ export default function PairItem(props: Props) {
                 )}
               </div>
             )}
-            {props.depositCap && capLeft <= 15 && (
+            {depositCap && capLeft <= 15 && (
               <div className='flex gap-1'>
                 <span className='text-xs text-left text-white/60'>Cap Left: </span>
                 <DisplayCurrency
                   className='text-xs text-left text-info/60'
                   coin={BNCoin.fromDenomAndBigNumber(
-                    props.depositCap.denom,
-                    props.depositCap.max.minus(props.depositCap.used),
+                    depositCap.denom,
+                    depositCap.max.minus(depositCap.used),
                   )}
                   options={{ suffix: ` (${capLeft.toFixed(2)}%)` }}
                 />
@@ -111,8 +121,8 @@ export default function PairItem(props: Props) {
           className='text-sm'
           coin={
             new BNCoin({
-              denom: assetPair.buy.denom,
-              amount: BN_ONE.shiftedBy(assetPair.buy.decimals).toString(),
+              denom: buyAsset.denom,
+              amount: BN_ONE.shiftedBy(buyAsset.decimals).toString(),
             })
           }
         />
