@@ -10,3 +10,4 @@ type Page =
   | 'hls-farm'
   | 'hls-staking'
   | 'governance'
+  | 'execute'

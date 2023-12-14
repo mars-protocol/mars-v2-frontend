@@ -28,6 +28,7 @@ export function getRoute(
 
 export function getPage(pathname: string): Page {
   const pages: Page[] = [
+    'execute',
     'trade',
     'trade-advanced',
     'perps',

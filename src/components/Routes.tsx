@@ -2,6 +2,7 @@ import { Navigate, Outlet, Route, Routes as RoutesWrapper } from 'react-router-d
 
 import Layout from 'pages/_layout'
 import BorrowPage from 'pages/BorrowPage'
+import ExecuteMessagePage from 'pages/ExecuteMessagePage'
 import FarmPage from 'pages/FarmPage'
 import HLSFarmPage from 'pages/HLSFarmPage'
 import HLSStakingPage from 'pages/HLSStakingPage'
@@ -35,6 +36,7 @@ export default function Routes() {
         {ENABLE_HLS && <Route path='/hls-farm' element={<HLSFarmPage />} />}
         <Route path='/' element={<TradePage />} />
         <Route path='/wallets/:address'>
+          <Route path='execute' element={<ExecuteMessagePage />} />
           <Route path='trade' element={<TradePage />} />
           <Route path='trade-advanced' element={<TradePage />} />
           {ENABLE_PERPS && <Route path='perps' element={<PerpsPage />} />}
