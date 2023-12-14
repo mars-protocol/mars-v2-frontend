@@ -33,7 +33,7 @@ export default function DepositCapMessage(props: Props) {
             <div key={coin.denom} className='flex gap-1'>
               <Text size='xs'>Cap Left:</Text>
               <FormattedNumber
-                amount={coin.amount.toNumber()}
+                amount={Math.max(coin.amount.toNumber(), 0)}
                 options={{
                   decimals: asset.decimals,
                   maxDecimals: asset.decimals,

@@ -35,18 +35,21 @@ export default function AssetSelectorPair(props: Props) {
   }, [])
 
   return (
-    <div className='flex items-center justify-between w-full p-3 bg-white/5'>
-      <Text size='sm' className='text-white/60'>
-        <span className='text-white'>{buyAsset.symbol}</span>/{sellAsset.symbol}
-      </Text>
+    <>
       <Button
-        onClick={() => useStore.setState({ assetOverlayState: 'pair' })}
-        text='all markets'
         color='quaternary'
         variant='transparent'
-        className='pr-0'
-        rightIcon={<ChevronDown className='w-3 h-3' />}
-      />
+        onClick={() => useStore.setState({ assetOverlayState: 'pair' })}
+        className='flex items-center justify-between w-full py-5 bg-white/5'
+      >
+        <Text size='sm' className='text-white/60'>
+          <span className='text-white'>{buyAsset.symbol}</span>/{sellAsset.symbol}
+        </Text>
+        <div className='flex items-center gap-2'>
+          <Text>All markets</Text>
+          <ChevronDown className='w-3 h-3' />
+        </div>
+      </Button>
       <AssetOverlay
         state={assetOverlayState}
         onChangeState={handleChangeState}
@@ -54,6 +57,6 @@ export default function AssetSelectorPair(props: Props) {
         sellAsset={sellAsset}
         onChangeTradingPair={onChangeTradingPair}
       />
-    </div>
+    </>
   )
 }
