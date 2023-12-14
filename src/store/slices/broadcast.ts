@@ -14,6 +14,7 @@ import {
   ActionCoin,
   Action as CreditManagerAction,
   ExecuteMsg as CreditManagerExecuteMsg,
+  ExecuteMsg,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHealthTypes.types'
 import { getAssetByDenom, getAssetBySymbol, getPythAssets } from 'utils/assets'
@@ -184,6 +185,7 @@ export default function createBroadcastSlice(
 
       get().setToast({
         response,
+
         options: {
           action: 'hls-staking',
           accountId: options.accountId,
@@ -193,6 +195,18 @@ export default function createBroadcastSlice(
       })
 
       return response.then((response) => !!response.result)
+    },
+    execute: async (contract: string, msg: ExecuteMsg, funds: Coin[]) => {
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, contract, msg, funds)],
+      })
+
+      get().setToast({
+        response,
+        options: { action: 'deposit', message: `Executed message` },
+      })
+
+      return response
     },
     borrow: async (options: { accountId: string; coin: BNCoin; borrowToWallet: boolean }) => {
       const borrowAction: Action = { borrow: options.coin.toCoin() }
