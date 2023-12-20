@@ -24,7 +24,6 @@ export default function AssetSelectorPair(props: Props) {
 
   const onChangeTradingPair = useCallback(
     (tradingPair: TradingPair) => {
-      console.log(tradingPair.buy, tradingPair.sell)
       setTradingPairSimple(tradingPair)
     },
     [setTradingPairSimple],
