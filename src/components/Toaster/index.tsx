@@ -30,21 +30,26 @@ function isPromise(object?: any): object is ToastPending {
 
 export function generateToastContent(content: ToastSuccess['content']): ReactNode {
   return content.map((item, index) => (
-    <div className='flex flex-wrap w-full' key={index}>
-      {item.coins.length > 0 && (
+    <div className='flex flex-wrap w-full mb-1' key={index}>
+      {item.text && (
         <>
           <Text size='sm' className='w-full mb-1 text-white'>
             {item.text}
           </Text>
-          <ul className='flex flex-wrap w-full gap-1 p-1 pl-4 list-disc'>
-            {item.coins.map((coin) =>
-              BN(coin.amount).isZero() ? null : (
-                <li className='w-full p-0 text-sm text-white' key={coin.denom}>
-                  {formatAmountWithSymbol(coin)}
-                </li>
-              ),
-            )}
-          </ul>
+          {item.coins.length > 0 && (
+            <ul className='flex flex-wrap w-full gap-1 p-1 pl-4 list-disc'>
+              {item.coins.map((coin, index) => {
+                let prefix = ''
+                if (item.text === 'Swapped') prefix = index === 0 ? 'from ' : 'to '
+
+                return BN(coin.amount).isZero() ? null : (
+                  <li className='w-full p-0 text-sm text-white' key={coin.denom}>
+                    {`${prefix}${formatAmountWithSymbol(coin)}`}
+                  </li>
+                )
+              })}
+            </ul>
+          )}
         </>
       )}
     </div>

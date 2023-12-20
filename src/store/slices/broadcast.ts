@@ -118,6 +118,33 @@ export default function createBroadcastSlice(
         })
         break
 
+      case 'swap':
+        if (changes.debts) {
+          toast.content.push({
+            coins: [changes.debts[0].toCoin()],
+            text: 'Borrowed',
+          })
+        }
+        if (changes.reclaims) {
+          toast.content.push({
+            coins: [changes.reclaims[0].toCoin()],
+            text: 'Unlent',
+          })
+        }
+        if (changes.swap) {
+          toast.content.push({
+            coins: [changes.swap.from, changes.swap.to],
+            text: 'Swapped',
+          })
+        }
+        if (changes.repays) {
+          toast.content.push({
+            coins: [changes.repays[0].toCoin()],
+            text: 'Repaid',
+          })
+        }
+        break
+
       case 'vault':
       case 'vaultCreate':
         toast.content.push({
@@ -766,6 +793,11 @@ export default function createBroadcastSlice(
           options: {
             action: 'swap',
             accountId: options.accountId,
+            changes: {
+              reclaims: options.reclaim ? [options.reclaim] : undefined,
+              debts: options.borrow ? [options.borrow] : undefined,
+            },
+            repay: options.repay,
           },
           swapOptions,
         })
@@ -815,9 +847,12 @@ export default function createBroadcastSlice(
           const coinOut = getTokenOutFromSwapResponse(response, toast.swapOptions.denomOut)
 
           if (toast.options.action === 'swap') {
-            toast.options.message = `Swapped ${formatAmountWithSymbol(
-              toast.swapOptions.coinIn.toCoin(),
-            )} for ${formatAmountWithSymbol(coinOut)}`
+            if (!toast.options.changes) toast.options.changes = {}
+            toast.options.changes.swap = {
+              from: toast.swapOptions.coinIn.toCoin(),
+              to: getTokenOutFromSwapResponse(response, toast.swapOptions.denomOut),
+            }
+            if (toast.options.repay) toast.options.changes.repays = [BNCoin.fromCoin(coinOut)]
           }
 
           if (toast.options.action === 'hls-staking') {
