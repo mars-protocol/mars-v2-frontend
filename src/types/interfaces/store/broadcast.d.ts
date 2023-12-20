@@ -79,12 +79,12 @@ interface HandleResponseProps {
     debts?: BNCoin[]
     deposits?: BNCoin[]
     lends?: BNCoin[]
+    reclaims?: BNCoin[]
+    repays?: BNCoin[]
     swap?: { from: Coin; to: Coin }
   }
   target?: 'wallet' | 'account'
   message?: string
-  reclaim?: BNCoin
-  borrow?: BNCoin
   repay?: boolean
 }
 
