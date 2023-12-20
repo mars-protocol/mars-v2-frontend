@@ -6,7 +6,6 @@ import Divider from 'components/Divider'
 import Text from 'components/Text'
 import { TextLink } from 'components/TextLink'
 import { generateToastContent } from 'components/Toaster'
-import { EXPLORER_TX_URL } from 'constants/explorer'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
@@ -19,6 +18,7 @@ export default function RecentTransactions() {
       recent: [],
     },
   )
+  const chainConfig = useStore((s) => s.chainConfig)
   const recentTransactions = transactions.recent
     .filter((tx) => tx.address === address)
     .sort((a, b) => (a.timestamp > b.timestamp ? -1 : 1))
@@ -47,7 +47,7 @@ export default function RecentTransactions() {
                     )}
                     contentClassName='p-4'
                     onClick={() => {
-                      if (hash) window.open(`${EXPLORER_TX_URL}${hash}`, '_blank')
+                      if (hash) window.open(`${chainConfig.endpoints.explorer}${hash}`, '_blank')
                     }}
                     key={hash}
                   >
@@ -62,7 +62,7 @@ export default function RecentTransactions() {
                         {message}
                       </Text>
                     )}
-                    {content?.length > 0 && generateToastContent(content)}
+                    {content?.length > 0 && generateToastContent(content, chainConfig.assets)}
                   </Card>
                 )
               })}

@@ -8,8 +8,8 @@ import SearchBar from 'components/SearchBar'
 import Text from 'components/Text'
 import AssetList from 'components/Trade/TradeModule/AssetSelector/AssetList'
 import PairsList from 'components/Trade/TradeModule/AssetSelector/PairsList'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import useFilteredAssets from 'hooks/useFilteredAssets'
-import { getAllAssets } from 'utils/assets'
 
 interface Props {
   state: OverlayState
@@ -62,7 +62,7 @@ function StablesFilter(props: StablesFilterProps) {
 export default function AssetOverlay(props: Props) {
   const isPairSelector = !!props.onChangeTradingPair
   const { assets, searchString, onChangeSearch } = useFilteredAssets()
-  const allAssets = getAllAssets()
+  const allAssets = useAllAssets()
   const stableAssets = useMemo(() => allAssets.filter((asset) => asset.isStable), [allAssets])
   const handleClose = useCallback(() => props.onChangeState('closed'), [props])
   const handleToggle = useCallback(() => props.onChangeState(props.state), [props])

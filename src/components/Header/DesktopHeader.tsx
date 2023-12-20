@@ -3,6 +3,7 @@ import { isDesktop } from 'react-device-detect'
 
 import AccountMenu from 'components/Account/AccountMenu'
 import EscButton from 'components/Button/EscButton'
+import ChainSelect from 'components/Header/ChainSelect'
 import OracleResyncButton from 'components/Header/OracleResyncButton'
 import { Coins, CoinsSwap } from 'components/Icons'
 import DesktopNavigation from 'components/Navigation/DesktopNavigation'
@@ -81,6 +82,7 @@ export default function DesktopHeader() {
           <div className='flex gap-4'>
             {isOracleStale && <OracleResyncButton />}
             {accountId && <RewardsCenter />}
+            <ChainSelect />
             {address && !isHLS && <AccountMenu />}
             <Wallet />
             <Settings />

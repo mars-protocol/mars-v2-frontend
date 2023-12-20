@@ -2,7 +2,8 @@ import { fireEvent, render } from '@testing-library/react'
 import BigNumber from 'bignumber.js'
 
 import TokenInput from 'components/TokenInput'
-import { ASSETS } from 'constants/assets'
+
+import OSMO from '../../src/configs/assets/OSMO'
 
 jest.mock('components/DisplayCurrency', () => {
   return {
@@ -13,7 +14,7 @@ jest.mock('components/DisplayCurrency', () => {
 })
 
 describe('<TokenInput />', () => {
-  const asset = ASSETS[0]
+  const asset = OSMO
   const defaultProps = {
     amount: new BigNumber(1),
     asset,

@@ -1,7 +1,7 @@
 import { FormattedNumber } from 'components/FormattedNumber'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import { VAULT_DEPOSIT_BUFFER } from 'constants/vaults'
-import { getAssetByDenom } from 'utils/assets'
+import useAsset from 'hooks/assets/useAsset'
 
 interface Props {
   depositCap: DepositCap
@@ -13,7 +13,7 @@ export default function DepositCapCell(props: Props) {
     .multipliedBy(100)
     .integerValue()
   const depositCapUsed = Math.min(percent.toNumber(), 100)
-  const decimals = getAssetByDenom(props.depositCap.denom)?.decimals ?? 6
+  const decimals = useAsset(props.depositCap.denom)?.decimals ?? 6
 
   return (
     <TitleAndSubCell

@@ -3,8 +3,8 @@ import { useCallback } from 'react'
 import Button from 'components/Button'
 import ActionButton from 'components/Button/ActionButton'
 import { HandCoins, Plus } from 'components/Icons'
+import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
 import useStore from 'store'
-import { getEnabledMarketAssets } from 'utils/assets'
 
 interface Props {
   data: BorrowMarketTableData
@@ -12,7 +12,7 @@ interface Props {
 
 export default function BorrowActionButtons(props: Props) {
   const { asset, debt } = props.data
-  const marketAssets = getEnabledMarketAssets()
+  const marketAssets = useMarketEnabledAssets()
   const currentAsset = marketAssets.find((a) => a.denom === asset.denom)
 
   const borrowHandler = useCallback(() => {

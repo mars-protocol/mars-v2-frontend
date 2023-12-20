@@ -2,14 +2,15 @@ import { useMemo } from 'react'
 
 import Text from 'components/Text'
 import AssetSelectorItem from 'components/Trade/TradeModule/AssetSelector/AssetSelectorItem'
-import { ASSETS } from 'constants/assets'
+import useBaseAsset from 'hooks/assets/useBasetAsset'
+import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useMarketAssets from 'hooks/useMarketAssets'
 import useMarketDeposits from 'hooks/useMarketDeposits'
 import usePrices from 'hooks/usePrices'
 import { getMergedBalancesForAsset } from 'utils/accounts'
 import { byDenom } from 'utils/array'
-import { getEnabledMarketAssets, sortAssetsOrPairs } from 'utils/assets'
+import { sortAssetsOrPairs } from 'utils/assets'
 
 interface Props {
   assets: Asset[]
@@ -19,17 +20,17 @@ interface Props {
   onChangeAssetPair: (assetPair: AssetPair | Asset) => void
 }
 
-const baseDenom = ASSETS[0].denom
-
 export default function PairsList(props: Props) {
   const account = useCurrentAccount()
   const { data: marketAssets } = useMarketAssets()
   const { data: marketDeposits } = useMarketDeposits()
   const { data: prices } = usePrices()
+  const baseDenom = useBaseAsset().denom
+  const marketEnabledAssets = useMarketEnabledAssets()
   const balances = useMemo(() => {
     if (!account) return []
-    return getMergedBalancesForAsset(account, getEnabledMarketAssets())
-  }, [account])
+    return getMergedBalancesForAsset(account, marketEnabledAssets)
+  }, [account, marketEnabledAssets])
 
   const pairs = useMemo(() => {
     const tradingPairs: AssetPair[] = []
@@ -44,7 +45,7 @@ export default function PairsList(props: Props) {
 
   const sortedPairs = useMemo(
     () => sortAssetsOrPairs(pairs, prices, marketDeposits, balances, baseDenom) as AssetPair[],
-    [balances, prices, pairs, marketDeposits],
+    [pairs, prices, marketDeposits, balances, baseDenom],
   )
 
   return (

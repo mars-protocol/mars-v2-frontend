@@ -10,13 +10,14 @@ import { ChevronDown } from 'components/Icons'
 import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import useLiquidationPrice from 'hooks/useLiquidationPrice'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrice from 'hooks/usePrice'
 import useSwapFee from 'hooks/useSwapFee'
 import useToggle from 'hooks/useToggle'
 import { BNCoin } from 'types/classes/BNCoin'
-import { getAssetByDenom } from 'utils/assets'
+import { byDenom } from 'utils/array'
 import { formatAmountWithSymbol, formatPercent } from 'utils/formatters'
 
 interface Props {
@@ -59,7 +60,7 @@ export default function TradeSummary(props: Props) {
     direction,
   } = props
   const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
-
+  const assets = useAllAssets()
   const sellAssetPrice = usePrice(sellAsset.denom)
   const swapFee = useSwapFee(route.map((r) => r.pool_id))
   const [showSummary, setShowSummary] = useToggle()
@@ -78,11 +79,11 @@ export default function TradeSummary(props: Props) {
   const parsedRoutes = useMemo(() => {
     if (!route.length) return '-'
 
-    const routeSymbols = route.map((r) => getAssetByDenom(r.token_out_denom)?.symbol)
+    const routeSymbols = route.map((r) => assets.find(byDenom(r.token_out_denom))?.symbol)
     routeSymbols.unshift(sellAsset.symbol)
 
     return routeSymbols.join(' -> ')
-  }, [route, sellAsset.symbol])
+  }, [assets, route, sellAsset.symbol])
 
   const buttonText = useMemo(() => {
     if (!isAdvanced && direction === 'sell') return `Sell ${sellAsset.symbol}`
@@ -158,7 +159,7 @@ export default function TradeSummary(props: Props) {
               <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(sellAsset.denom, swapFeeValue)} />
             </SummaryLine>
             <SummaryLine label='Transaction fees'>
-              <span>{formatAmountWithSymbol(estimatedFee.amount[0])}</span>
+              <span>{formatAmountWithSymbol(estimatedFee.amount[0], assets)}</span>
             </SummaryLine>
             <SummaryLine label={`Min receive (${slippage * 100}% slippage)`}>
               <FormattedNumber

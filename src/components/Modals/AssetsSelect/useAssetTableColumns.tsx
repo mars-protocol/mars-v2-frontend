@@ -8,7 +8,6 @@ import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import Text from 'components/Text'
 import { BNCoin } from 'types/classes/BNCoin'
-import { getAssetByDenom } from 'utils/assets'
 import { demagnify, formatPercent } from 'utils/formatters'
 
 function showBorrowRate(data: AssetTableRow[]) {
@@ -24,7 +23,6 @@ export default function useAssetTableColumns(isBorrow: boolean) {
         accessorKey: 'symbol',
         id: 'symbol',
         cell: ({ row }) => {
-          const asset = getAssetByDenom(row.original.asset.denom) as Asset
           const market = row.original.market
           const borrowAsset = row.original.asset as BorrowAsset
           const showRate = !borrowAsset?.borrowRate
@@ -33,15 +31,15 @@ export default function useAssetTableColumns(isBorrow: boolean) {
           return (
             <div className='flex items-center'>
               <Checkbox
-                name={`asset-${asset.id.toLowerCase()}`}
+                name={`asset-${borrowAsset.id.toLowerCase()}`}
                 checked={row.getIsSelected()}
                 onChange={row.getToggleSelectedHandler()}
                 noMouseEvents
               />
-              <AssetImage asset={asset} size={24} className='ml-4' />
+              <AssetImage asset={borrowAsset} size={24} className='ml-4' />
               <div className='ml-2 text-left'>
                 <Text size='sm' className='mb-0.5 text-white'>
-                  {asset.symbol}
+                  {borrowAsset.symbol}
                 </Text>
                 {showRate && market ? (
                   <AssetRate
@@ -53,7 +51,7 @@ export default function useAssetTableColumns(isBorrow: boolean) {
                     suffix
                   />
                 ) : (
-                  <Text size='xs'>{asset.name}</Text>
+                  <Text size='xs'>{borrowAsset.name}</Text>
                 )}
               </div>
             </div>

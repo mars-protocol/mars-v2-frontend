@@ -3,11 +3,9 @@ import { Suspense, useMemo } from 'react'
 import { NAME_META } from 'components/HLS/Farm/Table/Columns/Name'
 import useAvailableColumns from 'components/HLS/Farm/Table/Columns/useAvailableColumns'
 import Table from 'components/Table'
-import { ENV } from 'constants/env'
 import { BN_ZERO } from 'constants/math'
-import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import useVaults from 'hooks/useVaults'
-import { NETWORK } from 'types/enums/network'
+import useStore from 'store'
 
 const title = 'Available HLS Vaults'
 
@@ -36,8 +34,7 @@ export default function AvailableHlsVaults() {
 
 function Fallback() {
   const columns = useAvailableColumns({ isLoading: true })
-
-  const vaults = ENV.NETWORK === NETWORK.TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
+  const vaults = useStore((s) => s.chainConfig.vaults)
   const mockVaults: Vault[] = vaults
     .filter((v) => v.isHls)
     .map((vault) => ({

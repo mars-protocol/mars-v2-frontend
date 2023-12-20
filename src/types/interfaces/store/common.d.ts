@@ -1,6 +1,7 @@
 interface CommonSlice {
   accounts: Account[] | null
   address?: string
+  chainConfig: ChainConfig
   userDomain?: {
     domain: string
     domain_full: string

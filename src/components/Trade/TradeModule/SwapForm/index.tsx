@@ -20,6 +20,7 @@ import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useAutoLend from 'hooks/useAutoLend'
+import useChainConfig from 'hooks/useChainConfig'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useLocalStorage from 'hooks/useLocalStorage'
@@ -80,6 +81,7 @@ export default function SwapForm(props: Props) {
   const { simulateTrade, removedLends, updatedAccount } = useUpdatedAccount(account)
   const throttledEstimateExactIn = useMemo(() => asyncThrottle(estimateExactIn, 250), [])
   const { computeLiquidationPrice } = useHealthComputer(updatedAccount)
+  const chainConfig = useChainConfig()
 
   const depositCapReachedCoins: BNCoin[] = useMemo(() => {
     const outputMarketAsset = marketAssets.find(byDenom(outputAsset.denom))
@@ -98,9 +100,9 @@ export default function SwapForm(props: Props) {
     (amount: BigNumber) => {
       setInputAssetAmount(amount)
       const swapTo = { denom: inputAsset.denom, amount: amount.toString() }
-      throttledEstimateExactIn(swapTo, outputAsset.denom).then(setOutputAssetAmount)
+      throttledEstimateExactIn(chainConfig, swapTo, outputAsset.denom).then(setOutputAssetAmount)
     },
-    [inputAsset.denom, throttledEstimateExactIn, outputAsset.denom],
+    [inputAsset.denom, throttledEstimateExactIn, chainConfig, outputAsset.denom],
   )
 
   const onChangeOutputAmount = useCallback(
@@ -110,9 +112,9 @@ export default function SwapForm(props: Props) {
         denom: outputAsset.denom,
         amount: amount.toString(),
       }
-      throttledEstimateExactIn(swapFrom, inputAsset.denom).then(setInputAssetAmount)
+      throttledEstimateExactIn(chainConfig, swapFrom, inputAsset.denom).then(setInputAssetAmount)
     },
-    [outputAsset.denom, throttledEstimateExactIn, inputAsset.denom],
+    [outputAsset.denom, throttledEstimateExactIn, chainConfig, inputAsset.denom],
   )
 
   const handleRangeInputChange = useCallback(
@@ -132,6 +134,7 @@ export default function SwapForm(props: Props) {
     const marginRatio = maxAmount.dividedBy(maxAmountOnMargin)
 
     estimateExactIn(
+      chainConfig,
       {
         denom: inputAsset.denom,
         amount: (isMarginChecked ? maxAmountOnMargin : maxAmount).toString(),

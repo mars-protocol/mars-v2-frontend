@@ -5,6 +5,7 @@ import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import SummarySkeleton from 'components/Portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import useAccounts from 'hooks/useAccounts'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
@@ -23,7 +24,7 @@ export default function PortfolioSummary() {
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const { data: accounts } = useAccounts('default', urlAddress || walletAddress)
   const { data: hlsStrategies } = useHLSStakingAssets()
-
+  const assets = useAllAssets()
   const stats = useMemo(() => {
     if (!accounts?.length) return
     const combinedAccount = accounts.reduce(
@@ -50,6 +51,7 @@ export default function PortfolioSummary() {
       borrowAssets,
       lendingAssets,
       hlsStrategies,
+      assets,
     )
 
     return [
@@ -90,7 +92,7 @@ export default function PortfolioSummary() {
         sub: 'Combined leverage',
       },
     ]
-  }, [accounts, borrowAssets, hlsStrategies, lendingAssets, prices])
+  }, [accounts, assets, borrowAssets, hlsStrategies, lendingAssets, prices])
 
   if (!walletAddress && !urlAddress) return null
 

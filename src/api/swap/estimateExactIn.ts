@@ -2,9 +2,13 @@ import { getSwapperQueryClient } from 'api/cosmwasm-client'
 import { BN_ZERO } from 'constants/math'
 import { BN } from 'utils/helpers'
 
-export default async function estimateExactIn(coinIn: Coin, denomOut: string) {
+export default async function estimateExactIn(
+  chainConfig: ChainConfig,
+  coinIn: Coin,
+  denomOut: string,
+) {
   try {
-    const swapperClient = await getSwapperQueryClient()
+    const swapperClient = await getSwapperQueryClient(chainConfig.endpoints.rpc)
     const estimatedAmount = (await swapperClient.estimateExactInSwap({ coinIn, denomOut })).amount
 
     return BN(estimatedAmount)

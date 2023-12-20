@@ -1,6 +1,6 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 
-import { ENV } from 'constants/env'
+import useStore from 'store'
 import { ICNSQueryClient } from 'types/classes/ICNSClient.client'
 import { MarsAccountNftQueryClient } from 'types/generated/mars-account-nft/MarsAccountNft.client'
 import { MarsCreditManagerQueryClient } from 'types/generated/mars-credit-manager/MarsCreditManager.client'
@@ -11,7 +11,7 @@ import { MarsParamsQueryClient } from 'types/generated/mars-params/MarsParams.cl
 import { MarsRedBankQueryClient } from 'types/generated/mars-red-bank/MarsRedBank.client'
 import { MarsSwapperOsmosisQueryClient } from 'types/generated/mars-swapper-osmosis/MarsSwapperOsmosis.client'
 
-let _cosmWasmClient: CosmWasmClient
+let _cosmWasmClient: Map<string, CosmWasmClient> = new Map()
 let _accountNftQueryClient: MarsAccountNftQueryClient
 let _creditManagerQueryClient: MarsCreditManagerQueryClient
 let _oracleQueryClient: MarsOracleOsmosisQueryClient
@@ -21,23 +21,28 @@ let _incentivesQueryClient: MarsIncentivesQueryClient
 let _swapperOsmosisClient: MarsSwapperOsmosisQueryClient
 let _ICNSQueryClient: ICNSQueryClient
 
-const getClient = async () => {
+const getClient = async (rpc: string) => {
   try {
-    if (!_cosmWasmClient) {
-      _cosmWasmClient = await CosmWasmClient.connect(ENV.URL_RPC)
+    if (!_cosmWasmClient.get(rpc)) {
+      const client = await CosmWasmClient.connect(rpc)
+      _cosmWasmClient.set(rpc, client)
     }
 
-    return _cosmWasmClient
+    return _cosmWasmClient.get(rpc)!
   } catch (error) {
     throw error
   }
 }
 
-const getAccountNftQueryClient = async () => {
+const getAccountNftQueryClient = async (rpc: string) => {
   try {
     if (!_accountNftQueryClient) {
-      const client = await getClient()
-      _accountNftQueryClient = new MarsAccountNftQueryClient(client, ENV.ADDRESS_ACCOUNT_NFT)
+      const client = await getClient(rpc)
+      _accountNftQueryClient = new MarsAccountNftQueryClient(
+        client,
+        // TODO: Replace with chainConfig
+        useStore.getState().chainConfig.contracts.accountNft,
+      )
     }
 
     return _accountNftQueryClient
@@ -46,13 +51,13 @@ const getAccountNftQueryClient = async () => {
   }
 }
 
-const getCreditManagerQueryClient = async () => {
+const getCreditManagerQueryClient = async (rpc: string) => {
   try {
     if (!_creditManagerQueryClient) {
-      const client = await getClient()
+      const client = await getClient(rpc)
       _creditManagerQueryClient = new MarsCreditManagerQueryClient(
         client,
-        ENV.ADDRESS_CREDIT_MANAGER,
+        useStore.getState().chainConfig.contracts.creditManager,
       )
     }
 
@@ -62,11 +67,14 @@ const getCreditManagerQueryClient = async () => {
   }
 }
 
-const getParamsQueryClient = async () => {
+const getParamsQueryClient = async (rpc: string) => {
   try {
     if (!_paramsQueryClient) {
-      const client = await getClient()
-      _paramsQueryClient = new MarsParamsQueryClient(client, ENV.ADDRESS_PARAMS)
+      const client = await getClient(rpc)
+      _paramsQueryClient = new MarsParamsQueryClient(
+        client,
+        useStore.getState().chainConfig.contracts.params,
+      )
     }
 
     return _paramsQueryClient
@@ -75,11 +83,14 @@ const getParamsQueryClient = async () => {
   }
 }
 
-const getOracleQueryClient = async () => {
+const getOracleQueryClient = async (rpc: string) => {
   try {
     if (!_oracleQueryClient) {
-      const client = await getClient()
-      _oracleQueryClient = new MarsOracleOsmosisQueryClient(client, ENV.ADDRESS_ORACLE)
+      const client = await getClient(rpc)
+      _oracleQueryClient = new MarsOracleOsmosisQueryClient(
+        client,
+        useStore.getState().chainConfig.contracts.oracle,
+      )
     }
 
     return _oracleQueryClient
@@ -88,11 +99,14 @@ const getOracleQueryClient = async () => {
   }
 }
 
-const getRedBankQueryClient = async () => {
+const getRedBankQueryClient = async (rpc: string) => {
   try {
     if (!_redBankQueryClient) {
-      const client = await getClient()
-      _redBankQueryClient = new MarsRedBankQueryClient(client, ENV.ADDRESS_RED_BANK)
+      const client = await getClient(rpc)
+      _redBankQueryClient = new MarsRedBankQueryClient(
+        client,
+        useStore.getState().chainConfig.contracts.redBank,
+      )
     }
 
     return _redBankQueryClient
@@ -101,20 +115,23 @@ const getRedBankQueryClient = async () => {
   }
 }
 
-const getVaultQueryClient = async (address: string) => {
+const getVaultQueryClient = async (rpc: string, address: string) => {
   try {
-    const client = await getClient()
+    const client = await getClient(rpc)
     return new MarsMockVaultQueryClient(client, address)
   } catch (error) {
     throw error
   }
 }
 
-const getIncentivesQueryClient = async () => {
+const getIncentivesQueryClient = async (rpc: string) => {
   try {
     if (!_incentivesQueryClient) {
-      const client = await getClient()
-      _incentivesQueryClient = new MarsIncentivesQueryClient(client, ENV.ADDRESS_INCENTIVES)
+      const client = await getClient(rpc)
+      _incentivesQueryClient = new MarsIncentivesQueryClient(
+        client,
+        useStore.getState().chainConfig.contracts.incentives,
+      )
     }
 
     return _incentivesQueryClient
@@ -123,11 +140,14 @@ const getIncentivesQueryClient = async () => {
   }
 }
 
-const getSwapperQueryClient = async () => {
+const getSwapperQueryClient = async (rpc: string) => {
   try {
     if (!_swapperOsmosisClient) {
-      const client = await getClient()
-      _swapperOsmosisClient = new MarsSwapperOsmosisQueryClient(client, ENV.ADDRESS_SWAPPER)
+      const client = await getClient(rpc)
+      _swapperOsmosisClient = new MarsSwapperOsmosisQueryClient(
+        client,
+        useStore.getState().chainConfig.contracts.swapper,
+      )
     }
 
     return _swapperOsmosisClient
@@ -136,10 +156,10 @@ const getSwapperQueryClient = async () => {
   }
 }
 
-const getICNSQueryClient = async () => {
+const getICNSQueryClient = async (rpc: string) => {
   try {
     if (!_ICNSQueryClient) {
-      const client = await getClient()
+      const client = await getClient(rpc)
       _ICNSQueryClient = new ICNSQueryClient(client)
     }
 

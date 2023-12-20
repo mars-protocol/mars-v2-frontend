@@ -1,15 +1,16 @@
 import { useSearchParams } from 'react-router-dom'
 import useSWR from 'swr'
 
-import { ASSETS } from 'constants/assets'
-import { getAssetBySymbol } from 'utils/assets'
+import useAsset from 'hooks/assets/useAsset'
+import useBaseAsset from 'hooks/assets/useBasetAsset'
 import { BN } from 'utils/helpers'
 
 export default function usePerpsMarket() {
   const [searchParams] = useSearchParams()
-  const perpsMarket = searchParams.get('perpsMarket') || ASSETS[0].symbol
+  const baseAsset = useBaseAsset()
+  const perpsMarket = searchParams.get('perpsMarket') || baseAsset.symbol
 
-  const asset = getAssetBySymbol(perpsMarket)
+  const asset = useAsset(perpsMarket)
 
   return useSWR(
     `perpsMarket/${perpsMarket}`,

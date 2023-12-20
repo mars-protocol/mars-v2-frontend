@@ -21,9 +21,13 @@ import {
 import { getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
-async function getUnlocksAtTimestamp(unlockingId: number, vaultAddress: string) {
+async function getUnlocksAtTimestamp(
+  chainConfig: ChainConfig,
+  unlockingId: number,
+  vaultAddress: string,
+) {
   try {
-    const client = await getClient()
+    const client = await getClient(chainConfig.endpoints.rpc)
 
     const vaultExtension = (await cacheFn(
       () =>
@@ -42,6 +46,7 @@ async function getUnlocksAtTimestamp(unlockingId: number, vaultAddress: string) 
 }
 
 async function getVaultPositionStatusAndUnlockIdAndUnlockTime(
+  chainConfig: ChainConfig,
   vaultPosition: VaultPosition,
 ): Promise<[VaultStatus, number | undefined, number | undefined]> {
   const amount = vaultPosition.amount
@@ -50,7 +55,11 @@ async function getVaultPositionStatusAndUnlockIdAndUnlockTime(
 
   if (amount.locking.unlocking.length) {
     const unlockId = amount.locking.unlocking[0].id
-    const unlocksAtTimestamp = await getUnlocksAtTimestamp(unlockId, vaultPosition.vault.address)
+    const unlocksAtTimestamp = await getUnlocksAtTimestamp(
+      chainConfig,
+      unlockId,
+      vaultPosition.vault.address,
+    )
 
     if (moment(unlocksAtTimestamp).isBefore(new Date())) {
       return [VaultStatus.UNLOCKED, unlockId, unlocksAtTimestamp]
@@ -83,12 +92,13 @@ export function flatVaultPositionAmount(
 }
 
 export async function getLpTokensForVaultPosition(
+  chainConfig: ChainConfig,
   vault: Vault,
   vaultPosition: VaultPosition,
 ): Promise<Coin[]> {
   try {
-    const vaultQueryClient = await getVaultQueryClient(vault.address)
-    const creditManagerQueryClient = await getCreditManagerQueryClient()
+    const vaultQueryClient = await getVaultQueryClient(chainConfig.endpoints.rpc, vault.address)
+    const creditManagerQueryClient = await getCreditManagerQueryClient(chainConfig.endpoints.rpc)
     const amounts = flatVaultPositionAmount(vaultPosition.amount)
     const totalAmount = amounts.locked.plus(amounts.unlocked).plus(amounts.unlocking).toString()
 
@@ -133,15 +143,16 @@ export async function getLpTokensForVaultPosition(
 async function getVaultValuesAndAmounts(
   vault: Vault,
   vaultPosition: VaultPosition,
+  chainConfig: ChainConfig,
 ): Promise<VaultValuesAndAmounts> {
   try {
     const pricesQueries = Promise.all([
-      getPrice(vault.denoms.primary),
-      getPrice(vault.denoms.secondary),
-      getPrice(vault.denoms.lp),
+      getPrice(chainConfig, vault.denoms.primary),
+      getPrice(chainConfig, vault.denoms.secondary),
+      getPrice(chainConfig, vault.denoms.lp),
     ])
 
-    const lpTokensQuery = getLpTokensForVaultPosition(vault, vaultPosition)
+    const lpTokensQuery = getLpTokensForVaultPosition(chainConfig, vault, vaultPosition)
     const amounts = flatVaultPositionAmount(vaultPosition.amount)
 
     const [[primaryLpToken, secondaryLpToken], [primaryPrice, secondaryPrice, lpPrice]] =
@@ -154,18 +165,26 @@ async function getVaultValuesAndAmounts(
         secondary: BN(secondaryLpToken.amount),
       },
       values: {
-        primary: getCoinValue(new BNCoin(primaryLpToken), [
-          BNCoin.fromDenomAndBigNumber(primaryLpToken.denom, primaryPrice),
-        ]),
-        secondary: getCoinValue(new BNCoin(secondaryLpToken), [
-          BNCoin.fromDenomAndBigNumber(secondaryLpToken.denom, secondaryPrice),
-        ]),
-        unlocking: getCoinValue(BNCoin.fromDenomAndBigNumber(vault.denoms.lp, amounts.unlocking), [
-          BNCoin.fromDenomAndBigNumber(vault.denoms.lp, lpPrice),
-        ]),
-        unlocked: getCoinValue(BNCoin.fromDenomAndBigNumber(vault.denoms.lp, amounts.unlocked), [
-          BNCoin.fromDenomAndBigNumber(vault.denoms.lp, lpPrice),
-        ]),
+        primary: getCoinValue(
+          new BNCoin(primaryLpToken),
+          [BNCoin.fromDenomAndBigNumber(primaryLpToken.denom, primaryPrice)],
+          chainConfig.assets,
+        ),
+        secondary: getCoinValue(
+          new BNCoin(secondaryLpToken),
+          [BNCoin.fromDenomAndBigNumber(secondaryLpToken.denom, secondaryPrice)],
+          chainConfig.assets,
+        ),
+        unlocking: getCoinValue(
+          BNCoin.fromDenomAndBigNumber(vault.denoms.lp, amounts.unlocking),
+          [BNCoin.fromDenomAndBigNumber(vault.denoms.lp, lpPrice)],
+          chainConfig.assets,
+        ),
+        unlocked: getCoinValue(
+          BNCoin.fromDenomAndBigNumber(vault.denoms.lp, amounts.unlocked),
+          [BNCoin.fromDenomAndBigNumber(vault.denoms.lp, lpPrice)],
+          chainConfig.assets,
+        ),
       },
     }
   } catch (ex) {
@@ -175,10 +194,11 @@ async function getVaultValuesAndAmounts(
 
 async function getDepositedVaults(
   accountId: string,
+  chainConfig: ChainConfig,
   positions?: Positions,
 ): Promise<DepositedVault[]> {
   try {
-    const creditManagerQueryClient = await getCreditManagerQueryClient()
+    const creditManagerQueryClient = await getCreditManagerQueryClient(chainConfig.endpoints.rpc)
 
     if (!positions)
       positions = await cacheFn(
@@ -189,7 +209,7 @@ async function getDepositedVaults(
 
     if (!positions.vaults.length) return []
 
-    const [allVaults] = await Promise.all([getVaults()])
+    const [allVaults] = await Promise.all([getVaults(chainConfig)])
 
     const depositedVaults = positions.vaults.map(async (vaultPosition) => {
       const vault = allVaults.find((v) => v.address === vaultPosition.vault.address)
@@ -199,8 +219,8 @@ async function getDepositedVaults(
       }
 
       const [[status, unlockId, unlocksAt], valuesAndAmounts] = await Promise.all([
-        getVaultPositionStatusAndUnlockIdAndUnlockTime(vaultPosition),
-        getVaultValuesAndAmounts(vault, vaultPosition),
+        getVaultPositionStatusAndUnlockIdAndUnlockTime(chainConfig, vaultPosition),
+        getVaultValuesAndAmounts(vault, vaultPosition, chainConfig),
       ])
 
       return {

@@ -3,14 +3,14 @@ import React from 'react'
 import Modal from 'components/Modal'
 import Content from 'components/Modals/HLS/Deposit'
 import Header from 'components/Modals/HLS/Header'
+import useAsset from 'hooks/assets/useAsset'
 import useBorrowAsset from 'hooks/useBorrowAsset'
 import useStore from 'store'
-import { getAssetByDenom } from 'utils/assets'
 
 export default function HlsModalController() {
   const modal = useStore((s) => s.hlsModal)
 
-  const primaryAsset = getAssetByDenom(
+  const primaryAsset = useAsset(
     modal?.vault?.denoms.primary || modal?.strategy?.denoms.deposit || '',
   )
 

@@ -10,8 +10,6 @@ import { CircularProgress } from 'components/CircularProgress'
 import FullOverlayContent from 'components/FullOverlayContent'
 import WalletSelect from 'components/Wallet//WalletSelect'
 import WalletFetchBalancesAndAccounts from 'components/Wallet/WalletFetchBalancesAndAccounts'
-import { CHAINS } from 'constants/chains'
-import { ENV } from 'constants/env'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 
@@ -20,13 +18,10 @@ interface Props {
   providerId?: string
 }
 
-const currentChainId = ENV.CHAIN_ID
-const currentChain = CHAINS[currentChainId]
-
-const mapErrorMessages = (providerId: string, errorMessage: string) => {
+const mapErrorMessages = (providerId: string, errorMessage: string, name: string) => {
   if (providerId === 'station') {
     if (errorMessage.match('Wallet not connected to the network with chainId')) {
-      return `Your wallet is not connected to the correct network. Please switch your wallet to the ${currentChain.name} network`
+      return `Your wallet is not connected to the correct network. Please switch your wallet to the ${name} network`
     }
   }
 
@@ -40,6 +35,8 @@ export default function WalletConnecting(props: Props) {
     () => [...mobileProviders, ...extensionProviders],
     [mobileProviders, extensionProviders],
   )
+  const chainConfig = useStore((s) => s.chainConfig)
+
   const [isConnecting, setIsConnecting] = useToggle()
   const providerId = props.providerId ?? recentWallet?.providerId
   const refTimer = useRef<number | null>(null)
@@ -58,7 +55,7 @@ export default function WalletConnecting(props: Props) {
         setIsConnecting(true)
         clearTimer()
         try {
-          const response = await connect({ extensionProviderId, chainId: currentChainId })
+          const response = await connect({ extensionProviderId, chainId: chainConfig.id })
           const cosmClient = await CosmWasmClient.connect(response.network.rpc)
           const walletClient: WalletClient = {
             broadcast,
@@ -91,7 +88,11 @@ export default function WalletConnecting(props: Props) {
                   <WalletSelect
                     error={{
                       title: 'Failed to connect to wallet',
-                      message: mapErrorMessages(extensionProviderId, error.message),
+                      message: mapErrorMessages(
+                        extensionProviderId,
+                        error.message,
+                        chainConfig.name,
+                      ),
                     }}
                   />
                 ),
@@ -102,7 +103,18 @@ export default function WalletConnecting(props: Props) {
       }
       if (!isConnecting) handleConnectAsync()
     },
-    [broadcast, connect, client, isConnecting, setIsConnecting, sign, simulate, clearTimer],
+    [
+      isConnecting,
+      client,
+      setIsConnecting,
+      clearTimer,
+      connect,
+      chainConfig.id,
+      chainConfig.name,
+      broadcast,
+      sign,
+      simulate,
+    ],
   )
 
   const startTimer = useCallback(

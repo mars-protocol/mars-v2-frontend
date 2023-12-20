@@ -3,8 +3,7 @@ import { Row } from '@tanstack/react-table'
 import AmountAndValue from 'components/AmountAndValue'
 import Loading from 'components/Loading'
 import { BN_ZERO } from 'constants/math'
-import { byDenom } from 'utils/array'
-import { getEnabledMarketAssets } from 'utils/assets'
+import useAsset from 'hooks/assets/useAsset'
 import { demagnify } from 'utils/formatters'
 
 export const LIQUIDITY_META = {
@@ -32,8 +31,7 @@ interface Props {
 
 export default function Liquidity(props: Props) {
   const { liquidity, asset: borrowAsset } = props.data
-  const marketAssets = getEnabledMarketAssets()
-  const asset = marketAssets.find(byDenom(borrowAsset.denom))
+  const asset = useAsset(borrowAsset.denom)
 
   if (!asset) return null
 

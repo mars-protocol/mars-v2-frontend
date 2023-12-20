@@ -2,12 +2,13 @@ import { useMemo } from 'react'
 
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useAllAssets from 'hooks/assets/useAllAssets'
+import useLendEnabledAssets from 'hooks/assets/useLendEnabledAssets'
 import useAutoLend from 'hooks/useAutoLend'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { AccountKind, Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { getLendEnabledAssets } from 'utils/assets'
 import {
   getEnterVaultActions,
   getVaultDepositCoinsAndValue,
@@ -26,6 +27,8 @@ export default function useDepositVault(props: Props): {
   actions: Action[]
   totalValue: BigNumber
 } {
+  const lendEnabledAssets = useLendEnabledAssets()
+  const assets = useAllAssets()
   const { data: prices } = usePrices()
   const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
   const { isAutoLendEnabledForCurrentAccount: isAutoLend } = useAutoLend()
@@ -44,8 +47,16 @@ export default function useDepositVault(props: Props): {
 
   const { primaryCoin, secondaryCoin, totalValue } = useMemo(
     () =>
-      getVaultDepositCoinsAndValue(props.vault, deposits, borrowings, reclaims, prices, slippage),
-    [props.vault, deposits, borrowings, reclaims, prices, slippage],
+      getVaultDepositCoinsAndValue(
+        props.vault,
+        deposits,
+        borrowings,
+        reclaims,
+        prices,
+        slippage,
+        assets,
+      ),
+    [props.vault, deposits, borrowings, reclaims, prices, slippage, assets],
   )
 
   const depositActions: Action[] = useMemo(() => {
@@ -69,8 +80,9 @@ export default function useDepositVault(props: Props): {
   }, [borrowings])
 
   const swapActions: Action[] = useMemo(
-    () => getVaultSwapActions(props.vault, deposits, reclaims, borrowings, prices, slippage),
-    [props.vault, deposits, reclaims, borrowings, prices, slippage],
+    () =>
+      getVaultSwapActions(props.vault, deposits, reclaims, borrowings, prices, assets, slippage),
+    [props.vault, deposits, reclaims, borrowings, prices, assets, slippage],
   )
 
   const enterVaultActions: Action[] = useMemo(() => {
@@ -83,7 +95,7 @@ export default function useDepositVault(props: Props): {
     if (!isAutoLend || props.kind === 'high_levered_strategy') return []
 
     const denoms = [props.vault.denoms.primary, props.vault.denoms.secondary]
-    const denomsForLend = getLendEnabledAssets()
+    const denomsForLend = lendEnabledAssets
       .filter((asset) => denoms.includes(asset.denom))
       .map((asset) => asset.denom)
 
@@ -93,7 +105,13 @@ export default function useDepositVault(props: Props): {
         amount: 'account_balance',
       },
     }))
-  }, [isAutoLend, props.kind, props.vault.denoms.primary, props.vault.denoms.secondary])
+  }, [
+    isAutoLend,
+    lendEnabledAssets,
+    props.kind,
+    props.vault.denoms.primary,
+    props.vault.denoms.secondary,
+  ])
 
   const refundActions: Action[] = useMemo(() => {
     if (props.kind === 'default') return []

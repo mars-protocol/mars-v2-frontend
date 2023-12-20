@@ -14,9 +14,10 @@ import Overlay from 'components/Overlay'
 import Text from 'components/Text'
 import RecentTransactions from 'components/Wallet/RecentTransactions'
 import WalletSelect from 'components/Wallet/WalletSelect'
-import { CHAINS } from 'constants/chains'
-import { ENV } from 'constants/env'
+import chains from 'configs/chains'
 import { BN_ZERO } from 'constants/math'
+import useBaseAsset from 'hooks/assets/useBasetAsset'
+import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
 import useCurrentWallet from 'hooks/useCurrentWallet'
 import useICNSDomain from 'hooks/useICNSDomain'
 import useToggle from 'hooks/useToggle'
@@ -24,7 +25,6 @@ import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
 import { NETWORK } from 'types/enums/network'
 import { ChainInfoID } from 'types/enums/wallet'
-import { getBaseAsset, getEnabledMarketAssets } from 'utils/assets'
 import { truncate } from 'utils/formatters'
 import { getPage, getRoute } from 'utils/route'
 
@@ -32,14 +32,16 @@ export default function WalletConnectedButton() {
   // ---------------
   // EXTERNAL HOOKS
   // ---------------
-  const marketAssets = getEnabledMarketAssets()
+
+  const marketAssets = useMarketEnabledAssets()
   const currentWallet = useCurrentWallet()
   const { disconnectWallet } = useShuttle()
   const address = useStore((s) => s.address)
   const userDomain = useStore((s) => s.userDomain)
   const focusComponent = useStore((s) => s.focusComponent)
   const network = useStore((s) => s.client?.connectedWallet.network)
-  const baseAsset = getBaseAsset()
+  const chainConfig = useStore((s) => s.chainConfig)
+  const baseAsset = useBaseAsset()
   const { data: walletBalances, isLoading } = useWalletBalances(address)
   const { data: icnsData, isLoading: isLoadingICNS } = useICNSDomain(address)
   const navigate = useNavigate()
@@ -57,10 +59,10 @@ export default function WalletConnectedButton() {
   // ---------------
   // VARIABLES
   // ---------------
-  const explorerName = network && CHAINS[network.chainId as ChainInfoID].explorerName
+  const explorerName = network && chains[network.chainId as ChainInfoID].explorerName
 
   const viewOnFinder = useCallback(() => {
-    const explorerUrl = network && CHAINS[network.chainId as ChainInfoID].explorer
+    const explorerUrl = network && chains[network.chainId as ChainInfoID].endpoints.explorer
 
     window.open(`${explorerUrl}/account/${address}`, '_blank')
   }, [network, address])
@@ -128,14 +130,14 @@ export default function WalletConnectedButton() {
   }, [walletBalances, baseAsset.denom, baseAsset.decimals, marketAssets, walletAmount])
 
   return (
-    <div className={'relative'}>
-      {ENV.NETWORK !== NETWORK.MAINNET && (
+    <div className='relative'>
+      {chainConfig.network !== NETWORK.MAINNET && (
         <Text
           className='absolute -right-2 -top-2.5 z-10 rounded-sm p-0.5 px-2 gradient-primary-to-secondary'
           size='3xs'
           uppercase
         >
-          {network?.chainId}
+          {chainConfig.id}
         </Text>
       )}
 

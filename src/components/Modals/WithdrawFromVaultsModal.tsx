@@ -8,13 +8,13 @@ import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { ORACLE_DENOM } from 'constants/oracle'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import useAccountId from 'hooks/useAccountId'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { getAssetByDenom } from 'utils/assets'
 
 export default function WithdrawFromVaultsModal() {
   const modal = useStore((s) => s.withdrawFromVaultsModal)
@@ -22,6 +22,7 @@ export default function WithdrawFromVaultsModal() {
   const { data: prices } = usePrices()
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
   const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
+  const assets = useAllAssets()
 
   function onClose() {
     useStore.setState({ withdrawFromVaultsModal: null })
@@ -56,8 +57,8 @@ export default function WithdrawFromVaultsModal() {
           {modal.map((vault) => {
             const positionValue = vault.values.unlocking
             const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionValue)
-            const primaryAsset = getAssetByDenom(vault.denoms.primary)
-            const secondaryAsset = getAssetByDenom(vault.denoms.secondary)
+            const primaryAsset = assets.find(byDenom(vault.denoms.primary))
+            const secondaryAsset = assets.find(byDenom(vault.denoms.secondary))
 
             if (!primaryAsset || !secondaryAsset) return null
             const primaryAssetPrice = prices.find(byDenom(primaryAsset.denom))?.amount ?? 1

@@ -8,6 +8,7 @@ import { ArrowRight } from 'components/Icons'
 import Text from 'components/Text'
 import { BN_ZERO, MAX_AMOUNT_DECIMALS } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
@@ -40,6 +41,7 @@ export default function AccountComposition(props: Props) {
   const hasChanged = !!updatedAccount
   const { data: prices } = usePrices()
   const { data: hlsStrategies } = useHLSStakingAssets()
+  const assets = useAllAssets()
   const { data } = useBorrowMarketAssetsTableData(false)
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
@@ -50,15 +52,15 @@ export default function AccountComposition(props: Props) {
   )
 
   const [depositsBalance, lendsBalance, debtsBalance, vaultsBalance] = useMemo(
-    () => getAccountPositionValues(account, prices),
-    [account, prices],
+    () => getAccountPositionValues(account, prices, assets),
+    [account, assets, prices],
   )
   const totalBalance = depositsBalance.plus(lendsBalance).plus(vaultsBalance)
 
   const [updatedPositionValue, updatedDebtsBalance] = useMemo(() => {
     const [updatedDepositsBalance, updatedLendsBalance, updatedDebtsBalance, updatedVaultsBalance] =
       updatedAccount
-        ? getAccountPositionValues(updatedAccount, prices)
+        ? getAccountPositionValues(updatedAccount, prices, assets)
         : [BN_ZERO, BN_ZERO, BN_ZERO]
 
     const updatedPositionValue = updatedDepositsBalance
@@ -66,12 +68,15 @@ export default function AccountComposition(props: Props) {
       .plus(updatedVaultsBalance)
 
     return [updatedPositionValue, updatedDebtsBalance]
-  }, [updatedAccount, prices])
+  }, [updatedAccount, prices, assets])
 
-  const netWorth = useMemo(() => calculateAccountBalanceValue(account, prices), [account, prices])
+  const netWorth = useMemo(
+    () => calculateAccountBalanceValue(account, prices, assets),
+    [account, assets, prices],
+  )
   const updatedTotalBalance = useMemo(
-    () => (updatedAccount ? calculateAccountBalanceValue(updatedAccount, prices) : BN_ZERO),
-    [updatedAccount, prices],
+    () => (updatedAccount ? calculateAccountBalanceValue(updatedAccount, prices, assets) : BN_ZERO),
+    [updatedAccount, prices, assets],
   )
 
   const apr = useMemo(
@@ -82,9 +87,10 @@ export default function AccountComposition(props: Props) {
         lendingAssetsData,
         prices,
         hlsStrategies,
+        assets,
         props.isHls,
       ),
-    [account, borrowAssetsData, hlsStrategies, lendingAssetsData, prices, props.isHls],
+    [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, prices, props.isHls],
   )
   const updatedApr = useMemo(
     () =>
@@ -95,10 +101,19 @@ export default function AccountComposition(props: Props) {
             lendingAssetsData,
             prices,
             hlsStrategies,
+            assets,
             props.isHls,
           )
         : BN_ZERO,
-    [updatedAccount, borrowAssetsData, lendingAssetsData, prices, hlsStrategies, props.isHls],
+    [
+      updatedAccount,
+      borrowAssetsData,
+      lendingAssetsData,
+      prices,
+      hlsStrategies,
+      assets,
+      props.isHls,
+    ],
   )
 
   return (

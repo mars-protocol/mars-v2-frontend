@@ -7,8 +7,9 @@ import { ArrowRight } from 'components/Icons'
 import Switch from 'components/Switch'
 import Text from 'components/Text'
 import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
-import { ASSETS } from 'constants/assets'
 import { BN_ZERO } from 'constants/math'
+import useAllAssets from 'hooks/assets/useAllAssets'
+import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
@@ -16,7 +17,6 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { cloneAccount, getMergedBalancesForAsset, removeDepositsAndLends } from 'utils/accounts'
 import { byDenom } from 'utils/array'
-import { getEnabledMarketAssets } from 'utils/assets'
 
 interface Props {
   account: Account
@@ -24,8 +24,9 @@ interface Props {
 
 export default function WithdrawFromAccount(props: Props) {
   const { account } = props
+  const assets = useAllAssets()
   const defaultAsset =
-    ASSETS.find(byDenom(account.deposits[0]?.denom || account.lends[0]?.denom)) ?? ASSETS[0]
+    assets.find(byDenom(account.deposits[0]?.denom || account.lends[0]?.denom)) ?? assets[0]
   const withdraw = useStore((s) => s.withdraw)
   const [withdrawWithBorrowing, setWithdrawWithBorrowing] = useToggle()
   const [currentAsset, setCurrentAsset] = useState(defaultAsset)
@@ -35,7 +36,8 @@ export default function WithdrawFromAccount(props: Props) {
   const accountClone = cloneAccount(account)
   const borrowAccount = removeDepositsAndLends(accountClone, currentAsset.denom)
   const { computeMaxBorrowAmount } = useHealthComputer(borrowAccount)
-  const balances = getMergedBalancesForAsset(account, getEnabledMarketAssets())
+  const marketEnabledAssets = useMarketEnabledAssets()
+  const balances = getMergedBalancesForAsset(account, marketEnabledAssets)
   const maxWithdrawAmount = computeMaxWithdrawAmount(currentAsset.denom)
   const maxWithdrawWithBorrowAmount = computeMaxBorrowAmount(currentAsset.denom, 'wallet').plus(
     maxWithdrawAmount,

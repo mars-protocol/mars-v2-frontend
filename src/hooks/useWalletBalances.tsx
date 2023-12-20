@@ -1,9 +1,12 @@
 import useSWR from 'swr'
 
 import getWalletBalances from 'api/wallets/getWalletBalances'
+import useChainConfig from 'hooks/useChainConfig'
 
 export default function useWalletBalances(address?: string) {
-  return useSWR(`walletBalances${address}`, () => getWalletBalances(address || ''), {
+  const chainConfig = useChainConfig()
+
+  return useSWR(`walletBalances${address}`, () => getWalletBalances(chainConfig, address || ''), {
     isPaused: () => !address,
     fallbackData: [],
   })

@@ -9,20 +9,14 @@ import Text from 'components/Text'
 import WalletFetchBalancesAndAccounts from 'components/Wallet/WalletFetchBalancesAndAccounts'
 import WalletSelect from 'components/Wallet/WalletSelect'
 import { BRIDGES } from 'constants/bridges'
-import { CHAINS } from 'constants/chains'
-import { ENV } from 'constants/env'
+import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useCurrentWallet from 'hooks/useCurrentWallet'
 import useToggle from 'hooks/useToggle'
 import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
-import { NETWORK } from 'types/enums/network'
 import { byDenom } from 'utils/array'
-import { getBaseAsset } from 'utils/assets'
 import { defaultFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
-
-const currentChainId = ENV.CHAIN_ID
-const currentChain = CHAINS[currentChainId]
 
 function Bridge({ name, url, image }: Bridge) {
   return (
@@ -41,11 +35,13 @@ function Bridge({ name, url, image }: Bridge) {
 }
 
 export default function WalletBridges() {
+  const chainConfig = useStore((s) => s.chainConfig)
+
   const address = useStore((s) => s.address)
   const currentWallet = useCurrentWallet()
   const { disconnectWallet } = useShuttle()
   const { data: walletBalances, isLoading } = useWalletBalances(address)
-  const baseAsset = getBaseAsset()
+  const baseAsset = useBaseAsset()
   const [hasFunds, setHasFunds] = useToggle(false)
 
   const baseBalance = useMemo(
@@ -71,9 +67,9 @@ export default function WalletBridges() {
 
   return (
     <FullOverlayContent
-      title={`${currentChain.defaultCurrency?.coinDenom ?? 'Gas token'} required!`}
+      title={`${chainConfig.defaultCurrency?.coinDenom ?? 'Gas token'} required!`}
       copy={`To get started, you'll need at least a small amount of ${
-        currentChain.defaultCurrency?.coinDenom ?? 'the current chains gas token'
+        chainConfig.defaultCurrency?.coinDenom ?? 'the current chains gas token'
       } to cover transaction fees on Mars. Fund your wallet or bridge some in from another chain.`}
       button={{
         className: 'w-full mt-4',
@@ -89,23 +85,6 @@ export default function WalletBridges() {
           <Bridge key={bridge.name} {...bridge} />
         ))}
       </div>
-      {ENV.NETWORK !== NETWORK.MAINNET && (
-        <div className='flex flex-wrap w-full gap-3'>
-          <Text size='lg' className='mt-4 text-white'>
-            Need Testnet Funds?
-          </Text>
-          <Bridge
-            key='osmosis-faucet'
-            name='Osmosis Testnet Faucet'
-            url={
-              ENV.NETWORK === NETWORK.TESTNET
-                ? 'https://faucet.osmotest5.osmosis.zone/'
-                : 'https://faucet.devnet.osmosis.zone/'
-            }
-            image='/images/tokens/osmo.svg'
-          />
-        </div>
-      )}
     </FullOverlayContent>
   )
 }

@@ -1,16 +1,16 @@
 import { cacheFn, emissionsCache } from 'api/cache'
 import { getIncentivesQueryClient } from 'api/cosmwasm-client'
 import getPrice from 'api/prices/getPrice'
-import { ASSETS } from 'constants/assets'
 import { BN_ZERO } from 'constants/math'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 
 export default async function getTotalActiveEmissionValue(
+  chainConfig: ChainConfig,
   denom: string,
 ): Promise<BigNumber | null> {
   try {
-    const client = await getIncentivesQueryClient()
+    const client = await getIncentivesQueryClient(chainConfig.endpoints.rpc)
     const activeEmissions = await cacheFn(
       () =>
         client.activeEmissions({
@@ -26,12 +26,12 @@ export default async function getTotalActiveEmissionValue(
     }
 
     const prices = await Promise.all(
-      activeEmissions.map((activeEmission) => getPrice(activeEmission.denom)),
+      activeEmissions.map((activeEmission) => getPrice(chainConfig, activeEmission.denom)),
     )
 
     return activeEmissions.reduce((accumulation, current, index) => {
       const price = prices[index]
-      const decimals = ASSETS.find(byDenom(current.denom))?.decimals as number
+      const decimals = chainConfig.assets.find(byDenom(current.denom))?.decimals as number
       const emissionValue = BN(current.emission_rate).shiftedBy(-decimals).multipliedBy(price)
 
       return accumulation.plus(emissionValue)

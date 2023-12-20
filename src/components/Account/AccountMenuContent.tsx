@@ -12,6 +12,7 @@ import Text from 'components/Text'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useAccountId from 'hooks/useAccountId'
 import useAccountIds from 'hooks/useAccountIds'
 import useAutoLend from 'hooks/useAutoLend'
@@ -36,10 +37,10 @@ export default function AccountMenuContent() {
   const [searchParams] = useSearchParams()
 
   const createAccount = useStore((s) => s.createAccount)
-  const baseCurrency = useStore((s) => s.baseCurrency)
+  const baseAsset = useBaseAsset()
   const [showMenu, setShowMenu] = useToggle()
   const [isCreating, setIsCreating] = useToggle()
-  const transactionFeeCoinBalance = useCurrentWalletBalance(baseCurrency.denom)
+  const transactionFeeCoinBalance = useCurrentWalletBalance(baseAsset.denom)
   const [lendAssets] = useLocalStorage<boolean>(
     LocalStorageKeys.LEND_ASSETS,
     DEFAULT_SETTINGS.lendAssets,

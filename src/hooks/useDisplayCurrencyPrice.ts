@@ -3,15 +3,15 @@ import { useCallback, useMemo } from 'react'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
+import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
 import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import { byDenom } from 'utils/array'
-import { getDisplayCurrencies } from 'utils/assets'
 import { BN } from 'utils/helpers'
 
 function useDisplayCurrencyPrice() {
   const { data: prices } = usePrices()
-  const displayCurrencies = getDisplayCurrencies()
+  const displayCurrencies = useDisplayCurrencyAssets()
   const [displayCurrency] = useLocalStorage<string>(
     LocalStorageKeys.DISPLAY_CURRENCY,
     DEFAULT_SETTINGS.displayCurrency,

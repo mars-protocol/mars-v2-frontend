@@ -10,6 +10,7 @@ import PortfolioCard from 'components/Portfolio/Card'
 import ConnectInfo from 'components/Portfolio/Overview/ConnectInfo'
 import Text from 'components/Text'
 import WalletBridges from 'components/Wallet/WalletBridges'
+import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useAccountIds from 'hooks/useAccountIds'
 import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
 import useStore from 'store'
@@ -21,8 +22,8 @@ export default function AccountSummary() {
   const walletAddress = useStore((s) => s.address)
   const { data: accountIds, isLoading } = useAccountIds(urlAddress)
 
-  const baseCurrency = useStore((s) => s.baseCurrency)
-  const transactionFeeCoinBalance = useCurrentWalletBalance(baseCurrency.denom)
+  const baseAsset = useBaseAsset()
+  const transactionFeeCoinBalance = useCurrentWalletBalance(baseAsset.denom)
 
   const checkHasFunds = useCallback(() => {
     return (

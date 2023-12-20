@@ -5,8 +5,8 @@ import AssetRate from 'components/Asset/AssetRate'
 import DisplayCurrency from 'components/DisplayCurrency'
 import { ChevronDown, ChevronRight } from 'components/Icons'
 import Text from 'components/Text'
-import { ASSETS } from 'constants/assets'
 import { BN_ZERO } from 'constants/math'
+import useAsset from 'hooks/assets/useAsset'
 import useMarketAssets from 'hooks/useMarketAssets'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
@@ -23,6 +23,7 @@ interface Props extends SelectOption {
 export default function Option(props: Props) {
   const isCoin = !!props.denom
   const { data: marketAssets } = useMarketAssets()
+  const asset = useAsset(props.denom || '')
 
   function handleOnClick(value: string | undefined) {
     if (!props.onClick || !value) return
@@ -30,9 +31,10 @@ export default function Option(props: Props) {
   }
 
   if (isCoin) {
-    const asset = ASSETS.find((asset) => asset.denom === props.denom) ?? ASSETS[0]
     const balance = props.amount ?? BN_ZERO
-    const marketAsset = marketAssets.find(byDenom(asset.denom))
+    const marketAsset = marketAssets.find(byDenom(props.denom || ''))
+
+    if (!asset || !marketAsset) return null
 
     if (props.isDisplay) {
       return (

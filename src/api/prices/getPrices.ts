@@ -4,22 +4,25 @@ import fetchPythPrices from 'api/prices/getPythPrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { partition } from 'utils/array'
-import { getAssetsMustHavePriceInfo } from 'utils/assets'
 
-export default async function getPrices(): Promise<BNCoin[]> {
+export default async function getPrices(chainConfig: ChainConfig): Promise<BNCoin[]> {
   const usdPrice = new BNCoin({ denom: 'usd', amount: '1' })
   try {
-    const assetsToFetchPrices = getAssetsMustHavePriceInfo()
+    const assetsToFetchPrices = useStore
+      .getState()
+      .chainConfig.assets.filter(
+        (asset) => (asset.isEnabled && asset.isMarket) || asset.forceFetchPrice,
+      )
     const [assetsWithPythPriceFeedId, assetsWithOraclePrices, assetsWithPoolIds] =
       separateAssetsByPriceSources(assetsToFetchPrices)
 
     const pythAndOraclePrices = (
       await Promise.all([
-        requestPythPrices(assetsWithPythPriceFeedId),
-        getOraclePrices(...assetsWithOraclePrices),
+        requestPythPrices(chainConfig, assetsWithPythPriceFeedId),
+        getOraclePrices(chainConfig, assetsWithOraclePrices),
       ])
     ).flat()
-    const poolPrices = await requestPoolPrices(assetsWithPoolIds, pythAndOraclePrices)
+    const poolPrices = await requestPoolPrices(chainConfig, assetsWithPoolIds, pythAndOraclePrices)
 
     useStore.setState({ isOracleStale: false })
 
@@ -35,15 +38,19 @@ export default async function getPrices(): Promise<BNCoin[]> {
   }
 }
 
-async function requestPythPrices(assets: Asset[]): Promise<BNCoin[]> {
+async function requestPythPrices(chainConfig: ChainConfig, assets: Asset[]): Promise<BNCoin[]> {
   if (!assets.length) return []
 
   const priceFeedIds = assets.map((a) => a.pythPriceFeedId) as string[]
-  return await fetchPythPrices(...priceFeedIds).then(mapResponseToBnCoin(assets))
+  return await fetchPythPrices(chainConfig, priceFeedIds).then(mapResponseToBnCoin(assets))
 }
 
-async function requestPoolPrices(assets: Asset[], lookupPrices: BNCoin[]): Promise<BNCoin[]> {
-  const requests = assets.map((asset) => getPoolPrice(asset, lookupPrices))
+async function requestPoolPrices(
+  chainConfig: ChainConfig,
+  assets: Asset[],
+  lookupPrices: BNCoin[],
+): Promise<BNCoin[]> {
+  const requests = assets.map((asset) => getPoolPrice(chainConfig, asset, lookupPrices))
 
   return await Promise.all(requests).then(mapResponseToBnCoin(assets))
 }

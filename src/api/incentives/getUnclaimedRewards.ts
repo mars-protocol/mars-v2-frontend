@@ -1,17 +1,19 @@
 import { cacheFn, unclaimedRewardsCache } from 'api/cache'
 import { getIncentivesQueryClient } from 'api/cosmwasm-client'
-import { ENV } from 'constants/env'
 import { BNCoin } from 'types/classes/BNCoin'
 import iterateContractQuery from 'utils/iterateContractQuery'
 
-export default async function getUnclaimedRewards(accountId: string): Promise<BNCoin[]> {
+export default async function getUnclaimedRewards(
+  chainConfig: ChainConfig,
+  accountId: string,
+): Promise<BNCoin[]> {
   try {
-    const client = await getIncentivesQueryClient()
+    const client = await getIncentivesQueryClient(chainConfig.endpoints.rpc)
     const unclaimedRewards = await cacheFn(
       () =>
         iterateContractQuery(() =>
           client.userUnclaimedRewards({
-            user: ENV.ADDRESS_CREDIT_MANAGER,
+            user: chainConfig.contracts.creditManager,
             accountId,
           }),
         ),

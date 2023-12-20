@@ -1,9 +1,12 @@
 import useSWR from 'swr'
 
 import getPrices from 'api/prices/getPrices'
+import useChainConfig from 'hooks/useChainConfig'
 
 export default function usePrices() {
-  return useSWR('prices', getPrices, {
+  const chainConfig = useChainConfig()
+
+  return useSWR('prices', () => getPrices(chainConfig), {
     fallbackData: [],
     refreshInterval: 30_000,
     revalidateOnFocus: false,

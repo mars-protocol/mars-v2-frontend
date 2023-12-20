@@ -1,9 +1,8 @@
 import { cacheFn, pythPriceCache } from 'api/cache'
-import { ENV } from 'constants/env'
 
-export default async function fetchPythPriceData(...priceFeedIds: string[]) {
+export default async function fetchPythPriceData(chainConfig: ChainConfig, priceFeedIds: string[]) {
   try {
-    const pricesUrl = new URL(`${ENV.PYTH_ENDPOINT}/latest_vaas`)
+    const pricesUrl = new URL(`${chainConfig.endpoints.pyth}/latest_vaas`)
     priceFeedIds.forEach((id) => pricesUrl.searchParams.append('ids[]', id))
 
     const pythDataResponse: string[] = await cacheFn(

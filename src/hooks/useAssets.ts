@@ -1,16 +1,15 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import { ASSETS } from 'constants/assets'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
 import useLocalStorage from 'hooks/useLocalStorage'
-import { getEnabledMarketAssets } from 'utils/assets'
 
 export default function useAssets() {
-  const [assets, setAssets] = useState<Asset[]>(ASSETS)
+  const marketEnabledAssets = useMarketEnabledAssets()
+  const [assets, setAssets] = useState<Asset[]>(marketEnabledAssets)
   const [favoriteAssetsDenoms] = useLocalStorage<string[]>(LocalStorageKeys.FAVORITE_ASSETS, [])
-
   const getFavoriteAssets = useCallback(() => {
-    const assets = getEnabledMarketAssets()
+    const assets = marketEnabledAssets
       .map((asset) => ({
         ...asset,
         isFavorite: favoriteAssetsDenoms.includes(asset.denom),
@@ -18,7 +17,7 @@ export default function useAssets() {
       .sort((a, b) => +b.isFavorite - +a.isFavorite)
 
     setAssets(assets)
-  }, [favoriteAssetsDenoms])
+  }, [favoriteAssetsDenoms, marketEnabledAssets])
 
   useEffect(() => {
     getFavoriteAssets()

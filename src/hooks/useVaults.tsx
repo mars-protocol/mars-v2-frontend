@@ -1,9 +1,12 @@
 import useSWR from 'swr'
 
 import getVaults from 'api/vaults/getVaults'
+import useChainConfig from 'hooks/useChainConfig'
 
 export default function useVaults(suspense: boolean = true, address?: string) {
-  return useSWR(`vaults${address}`, () => getVaults(), {
+  const chainConfig = useChainConfig()
+
+  return useSWR(`vaults${address}`, () => getVaults(chainConfig), {
     suspense,
     revalidateOnFocus: false,
   })

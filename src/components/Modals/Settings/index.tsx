@@ -14,11 +14,11 @@ import { TextLink } from 'components/TextLink'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
+import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
 import useAlertDialog from 'hooks/useAlertDialog'
 import useAutoLend from 'hooks/useAutoLend'
 import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
-import { getDisplayCurrencies } from 'utils/assets'
 import { BN } from 'utils/helpers'
 
 const slippages = [0.02, 0.03]
@@ -26,7 +26,7 @@ const slippages = [0.02, 0.03]
 export default function SettingsModal() {
   const modal = useStore((s) => s.settingsModal)
   const { open: showResetDialog } = useAlertDialog()
-  const displayCurrencies = getDisplayCurrencies()
+  const displayCurrencies = useDisplayCurrencyAssets()
   const { setAutoLendOnAllAccounts } = useAutoLend()
   const [customSlippage, setCustomSlippage] = useState<number>(0)
   const [inputRef, setInputRef] = useState<React.RefObject<HTMLInputElement>>()

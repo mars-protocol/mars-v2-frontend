@@ -1,19 +1,21 @@
 import getMarketLiquidities from 'api/markets/getMarketLiquidities'
 import getMarkets from 'api/markets/getMarkets'
 import getPrices from 'api/prices/getPrices'
-import { getEnabledMarketAssets } from 'utils/assets'
 import { BN } from 'utils/helpers'
 
-export default async function getMarketBorrowings(): Promise<BorrowAsset[]> {
-  const liquidities = await getMarketLiquidities()
-  const enabledAssets = getEnabledMarketAssets()
-  const borrowEnabledMarkets = (await getMarkets()).filter((market: Market) => market.borrowEnabled)
-  const prices = await getPrices()
+export default async function getMarketBorrowings(
+  chainConfig: ChainConfig,
+): Promise<BorrowAsset[]> {
+  const liquidities = await getMarketLiquidities(chainConfig)
+  const borrowEnabledMarkets = (await getMarkets(chainConfig)).filter(
+    (market: Market) => market.borrowEnabled,
+  )
+  const prices = await getPrices(chainConfig)
 
   const borrow: BorrowAsset[] = borrowEnabledMarkets.map((market) => {
     const price = prices.find((coin) => coin.denom === market.denom)?.amount ?? '1'
     const amount = liquidities.find((coin) => coin.denom === market.denom)?.amount ?? '0'
-    const asset = enabledAssets.find((asset) => asset.denom === market.denom)!
+    const asset = chainConfig.assets.find((asset) => asset.denom === market.denom)!
 
     return {
       ...asset,

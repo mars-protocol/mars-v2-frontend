@@ -7,8 +7,8 @@ import Divider from 'components/Divider'
 import { Logo } from 'components/Icons'
 import Overlay from 'components/Overlay'
 import Text from 'components/Text'
-import { ASSETS } from 'constants/assets'
 import { ORACLE_DENOM } from 'constants/oracle'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import useAccountId from 'hooks/useAccountId'
 import usePrices from 'hooks/usePrices'
 import useToggle from 'hooks/useToggle'
@@ -19,7 +19,7 @@ import { byDenom } from 'utils/array'
 import { defaultFee } from 'utils/constants'
 import { formatAmountWithSymbol, getCoinValue } from 'utils/formatters'
 
-const renderIncentives = (unclaimedRewards: BNCoin[]) => {
+const renderIncentives = (assets: Asset[], unclaimedRewards: BNCoin[]) => {
   if (unclaimedRewards.length === 0)
     return (
       <Text className='w-full px-4 text-center' size='sm'>
@@ -28,7 +28,7 @@ const renderIncentives = (unclaimedRewards: BNCoin[]) => {
     )
 
   return unclaimedRewards.map((reward, index) => {
-    const asset = ASSETS.find(byDenom(reward.denom))
+    const asset = assets.find(byDenom(reward.denom))
     if (!asset) return null
     return (
       <div className='w-full' key={index}>
@@ -47,18 +47,18 @@ export default function RewardsCenter() {
   const claimRewards = useStore((s) => s.claimRewards)
   const { data: prices } = usePrices()
   const { data: unclaimedRewards } = useUnclaimedRewards()
-
+  const assets = useAllAssets()
   const totalRewardsCoin = useMemo(() => {
     let total = 0
     unclaimedRewards.forEach((reward) => {
-      total = total + getCoinValue(reward, prices).toNumber()
+      total = total + getCoinValue(reward, prices, assets).toNumber()
     })
 
     return new BNCoin({
       denom: ORACLE_DENOM,
       amount: total.toString(),
     })
-  }, [prices, unclaimedRewards])
+  }, [assets, prices, unclaimedRewards])
 
   const hasIncentives = unclaimedRewards.length > 0
 
@@ -103,7 +103,7 @@ export default function RewardsCenter() {
           </Text>
           <div className='w-full p-4'>
             <div className='flex flex-wrap w-full gap-4 pb-4'>
-              {renderIncentives(unclaimedRewards)}
+              {renderIncentives(assets, unclaimedRewards)}
             </div>
             {hasIncentives && (
               <>
@@ -116,7 +116,7 @@ export default function RewardsCenter() {
                   onClick={handleClaim}
                 />
                 <Text className='w-full py-4 text-center text-white/50' size='sm'>
-                  Tx Fee: {formatAmountWithSymbol(estimatedFee.amount[0])}
+                  Tx Fee: {formatAmountWithSymbol(estimatedFee.amount[0], assets)}
                 </Text>
               </>
             )}

@@ -17,6 +17,7 @@ import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { ORACLE_DENOM } from 'constants/oracle'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import useAccountId from 'hooks/useAccountId'
 import useAccountIds from 'hooks/useAccountIds'
 import useAccounts from 'hooks/useAccounts'
@@ -72,15 +73,19 @@ function AccountDetails(props: Props) {
     updatedAccount || account,
   )
   const { data: prices } = usePrices()
+  const assets = useAllAssets()
   const accountBalanceValue = useMemo(
-    () => calculateAccountBalanceValue(updatedAccount ?? account, prices),
-    [updatedAccount, account, prices],
+    () => calculateAccountBalanceValue(updatedAccount ?? account, prices, assets),
+    [updatedAccount, account, prices, assets],
   )
   const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalanceValue)
-  const leverage = useMemo(() => calculateAccountLeverage(account, prices), [account, prices])
+  const leverage = useMemo(
+    () => calculateAccountLeverage(account, prices, assets),
+    [account, assets, prices],
+  )
   const updatedLeverage = useMemo(() => {
     if (!updatedAccount) return null
-    const updatedLeverage = calculateAccountLeverage(updatedAccount, prices)
+    const updatedLeverage = calculateAccountLeverage(updatedAccount, prices, assets)
 
     if (updatedLeverage.eq(leverage)) return null
     return updatedLeverage
@@ -104,9 +109,10 @@ function AccountDetails(props: Props) {
         lendingAssetsData,
         prices,
         hlsStrategies,
+        assets,
         account.kind === 'high_levered_strategy',
       ),
-    [account, borrowAssetsData, hlsStrategies, lendingAssetsData, prices, updatedAccount],
+    [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, prices, updatedAccount],
   )
   const isFullWidth = location.pathname.includes('trade') || location.pathname === '/'
 

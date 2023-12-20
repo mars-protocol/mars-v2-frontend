@@ -4,7 +4,6 @@ import moment from 'moment'
 import { isMobile } from 'react-device-detect'
 import { GetState, SetState } from 'zustand'
 
-import { ENV } from 'constants/env'
 import { BN_ZERO } from 'constants/math'
 import { Store } from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -17,7 +16,7 @@ import {
   ExecuteMsg,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHealthTypes.types'
-import { getAssetByDenom, getAssetBySymbol, getPythAssets } from 'utils/assets'
+import { byDenom, bySymbol } from 'utils/array'
 import { generateErrorMessage, getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import { defaultFee } from 'utils/constants'
@@ -173,11 +172,11 @@ export default function createBroadcastSlice(
         },
       }
 
+      const cmContract = get().chainConfig.contracts.creditManager
+
       const response = get().executeMsg({
         messages: [
-          generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [
-            options.depositCoin.toCoin(),
-          ]),
+          generateExecutionMessage(get().address, cmContract, msg, [options.depositCoin.toCoin()]),
         ],
       })
 
@@ -223,14 +222,16 @@ export default function createBroadcastSlice(
       if (
         !options.borrowToWallet &&
         checkAutoLendEnabled(options.accountId) &&
-        getAssetByDenom(options.coin.denom)?.isAutoLendEnabled
+        get().chainConfig.assets.find(byDenom(options.coin.denom))?.isAutoLendEnabled
       ) {
         msg.update_credit_account.actions.push({
           lend: { denom: options.coin.denom, amount: 'account_balance' },
         })
       }
+      const cmContract = get().chainConfig.contracts.creditManager
+
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
       get().setToast({
@@ -253,9 +254,10 @@ export default function createBroadcastSlice(
           actions: options.actions,
         },
       }
+      const cmContract = get().chainConfig.contracts.creditManager
 
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
       get().setToast({
@@ -275,9 +277,10 @@ export default function createBroadcastSlice(
           actions: options.actions,
         },
       }
+      const cmContract = get().chainConfig.contracts.creditManager
 
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
       get().setToast({
@@ -295,9 +298,10 @@ export default function createBroadcastSlice(
       const msg: CreditManagerExecuteMsg = {
         create_credit_account: accountKind,
       }
+      const cmContract = get().chainConfig.contracts.creditManager
 
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
       get().setToast({
@@ -333,11 +337,13 @@ export default function createBroadcastSlice(
           token_id: options.accountId,
         },
       }
+      const cmContract = get().chainConfig.contracts.creditManager
+      const nftContract = get().chainConfig.contracts.accountNft
 
       const response = get().executeMsg({
         messages: [
-          generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, refundMessage, []),
-          generateExecutionMessage(get().address, ENV.ADDRESS_ACCOUNT_NFT, burnMessage, []),
+          generateExecutionMessage(get().address, cmContract, refundMessage, []),
+          generateExecutionMessage(get().address, nftContract, burnMessage, []),
         ],
       })
 
@@ -363,10 +369,9 @@ export default function createBroadcastSlice(
           ],
         },
       }
+      const cmContract = get().chainConfig.contracts.creditManager
 
-      const messages = [
-        generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, []),
-      ]
+      const messages = [generateExecutionMessage(get().address, cmContract, msg, [])]
       const estimateFee = () => getEstimatedFee(messages)
 
       const execute = async () => {
@@ -401,15 +406,16 @@ export default function createBroadcastSlice(
       if (options.lend) {
         msg.update_credit_account.actions.push(
           ...options.coins
-            .filter((coin) => getAssetByDenom(coin.denom)?.isAutoLendEnabled)
+            .filter((coin) => get().chainConfig.assets.find(byDenom(coin.denom))?.isAutoLendEnabled)
             .map((coin) => ({ lend: coin.toActionCoin(options.lend) })),
         )
       }
 
       const funds = options.coins.map((coin) => coin.toCoin())
+      const cmContract = get().chainConfig.contracts.creditManager
 
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, funds)],
+        messages: [generateExecutionMessage(get().address, cmContract, msg, funds)],
       })
 
       get().setToast({
@@ -438,9 +444,10 @@ export default function createBroadcastSlice(
           ],
         },
       }
+      const cmContract = get().chainConfig.contracts.creditManager
 
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
       get().setToast({
@@ -487,7 +494,7 @@ export default function createBroadcastSlice(
       if (checkAutoLendEnabled(options.accountId)) {
         for (const vault of options.vaults) {
           for (const symbol of Object.values(vault.symbols)) {
-            const asset = getAssetBySymbol(symbol)
+            const asset = get().chainConfig.assets.find(bySymbol(symbol))
             if (asset?.isAutoLendEnabled) {
               msg.update_credit_account.actions.push({
                 lend: { denom: asset.denom, amount: 'account_balance' },
@@ -496,9 +503,10 @@ export default function createBroadcastSlice(
           }
         }
       }
+      const cmContract = get().chainConfig.contracts.creditManager
 
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
       const vaultsString = options.vaults.length === 1 ? 'vault' : 'vaults'
@@ -528,12 +536,13 @@ export default function createBroadcastSlice(
           actions: options.actions,
         },
       }
+      const cmContract = get().chainConfig.contracts.creditManager
 
       const response = get().executeMsg({
         messages: [
           generateExecutionMessage(
             get().address,
-            ENV.ADDRESS_CREDIT_MANAGER,
+            cmContract,
             msg,
             options.kind === 'default' ? [] : options.deposits.map((coin) => coin.toCoin()),
           ),
@@ -568,6 +577,7 @@ export default function createBroadcastSlice(
       const borrowActions = options.borrow.map((coin) => ({
         borrow: coin.toCoin(),
       }))
+      const cmContract = get().chainConfig.contracts.creditManager
 
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
@@ -577,7 +587,7 @@ export default function createBroadcastSlice(
       }
 
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
       get().setToast({
@@ -622,12 +632,13 @@ export default function createBroadcastSlice(
               actions,
             },
           }
+      const cmContract = get().chainConfig.contracts.creditManager
 
       const response = get().executeMsg({
         messages: [
           generateExecutionMessage(
             get().address,
-            ENV.ADDRESS_CREDIT_MANAGER,
+            cmContract,
             msg,
             options.fromWallet ? [options.coin.toCoin()] : [],
           ),
@@ -656,9 +667,10 @@ export default function createBroadcastSlice(
           ],
         },
       }
+      const cmContract = get().chainConfig.contracts.creditManager
 
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
       get().setToast({
@@ -683,9 +695,10 @@ export default function createBroadcastSlice(
           ],
         },
       }
+      const cmContract = get().chainConfig.contracts.creditManager
 
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, [])],
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
       get().setToast({
@@ -740,17 +753,16 @@ export default function createBroadcastSlice(
 
       if (
         checkAutoLendEnabled(options.accountId) &&
-        getAssetByDenom(options.denomOut)?.isAutoLendEnabled &&
+        get().chainConfig.assets.find(byDenom(options.denomOut))?.isAutoLendEnabled &&
         !options.repay
       ) {
         msg.update_credit_account.actions.push({
           lend: { denom: options.denomOut, amount: 'account_balance' },
         })
       }
+      const cmContract = get().chainConfig.contracts.creditManager
 
-      const messages = [
-        generateExecutionMessage(get().address, ENV.ADDRESS_CREDIT_MANAGER, msg, []),
-      ]
+      const messages = [generateExecutionMessage(get().address, cmContract, msg, [])]
 
       const estimateFee = () => getEstimatedFee(messages)
 
@@ -777,11 +789,12 @@ export default function createBroadcastSlice(
     },
     updateOracle: async (pricesData: string[]) => {
       const msg: PythUpdateExecuteMsg = { update_price_feeds: { data: pricesData } }
-      const pythAssets = getPythAssets()
+      const pythAssets = get().chainConfig.assets.filter((asset) => !!asset.pythPriceFeedId)
+      const pythContract = get().chainConfig.contracts.pyth
       const response = get().executeMsg({
         messages: [
-          generateExecutionMessage(get().address, ENV.ADDRESS_PYTH, msg, [
-            { denom: get().baseCurrency.denom, amount: String(pythAssets.length) },
+          generateExecutionMessage(get().address, pythContract, msg, [
+            { denom: get().chainConfig.assets[0].denom, amount: String(pythAssets.length) },
           ]),
         ],
       })
@@ -817,7 +830,8 @@ export default function createBroadcastSlice(
           if (toast.options.action === 'swap') {
             toast.options.message = `Swapped ${formatAmountWithSymbol(
               toast.swapOptions.coinIn.toCoin(),
-            )} for ${formatAmountWithSymbol(coinOut)}`
+              get().chainConfig.assets,
+            )} for ${formatAmountWithSymbol(coinOut, get().chainConfig.assets)}`
           }
 
           if (toast.options.action === 'hls-staking') {
@@ -826,7 +840,10 @@ export default function createBroadcastSlice(
               : BN_ZERO
 
             coinOut.amount = depositAmount.plus(coinOut.amount).toFixed(0)
-            toast.options.message = `Added ${formatAmountWithSymbol(coinOut)}`
+            toast.options.message = `Added ${formatAmountWithSymbol(
+              coinOut,
+              get().chainConfig.assets,
+            )}`
           }
         }
 

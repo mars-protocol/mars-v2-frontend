@@ -1,0 +1,19 @@
+const USDT: AssetMetaData = {
+  symbol: 'USDT',
+  id: 'USDT',
+  name: 'Tether',
+  color: '#50af95',
+  logo: '/images/tokens/usdt.svg',
+  decimals: 6,
+  hasOraclePrice: true,
+  isEnabled: true,
+  isMarket: true,
+  isDisplayCurrency: true,
+  isStable: true,
+  isAutoLendEnabled: true,
+  isBorrowEnabled: true,
+  pythPriceFeedId: '2b89b9dc8fdf9f34709a5b106b472f0f39bb6ca9ce04b0fd7f2e971688e2e53b',
+  pythHistoryFeedId: 'Crypto.USDT/USD',
+}
+
+export default USDT

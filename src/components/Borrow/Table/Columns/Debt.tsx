@@ -2,8 +2,8 @@ import { Row } from '@tanstack/react-table'
 
 import AmountAndValue from 'components/AmountAndValue'
 import { BN_ZERO } from 'constants/math'
+import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
 import { byDenom } from 'utils/array'
-import { getEnabledMarketAssets } from 'utils/assets'
 
 export const DEBT_META = {
   accessorKey: 'debt',
@@ -33,7 +33,7 @@ interface Props {
 }
 
 export default function Debt(props: Props) {
-  const marketAssets = getEnabledMarketAssets()
+  const marketAssets = useMarketEnabledAssets()
   const asset = marketAssets.find(byDenom(props.data.asset.denom))
 
   if (!asset) return null

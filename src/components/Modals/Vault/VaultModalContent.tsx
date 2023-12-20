@@ -10,6 +10,7 @@ import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import useDepositVault from 'hooks/broadcast/useDepositVault'
 import useDisplayAsset from 'hooks/useDisplayAsset'
 import useIsOpenArray from 'hooks/useIsOpenArray'
@@ -33,6 +34,7 @@ export default function VaultModalContent(props: Props) {
   const { addedDebts, removedDeposits, removedLends, simulateVaultDeposit } = useUpdatedAccount(
     props.account,
   )
+  const assets = useAllAssets()
 
   const { data: prices } = usePrices()
   const [displayCurrency] = useLocalStorage<string>(
@@ -60,6 +62,7 @@ export default function VaultModalContent(props: Props) {
         getCoinValue(
           BNCoin.fromDenomAndBigNumber(props.vault.cap.denom, capLeft),
           prices,
+          assets,
         ).toString(),
         displayAsset,
       )
@@ -67,7 +70,7 @@ export default function VaultModalContent(props: Props) {
       return [BNCoin.fromDenomAndBigNumber(displayAsset.denom, amount)]
     }
     return []
-  }, [displayAsset, prices, props.vault.cap, totalValue])
+  }, [assets, displayAsset, prices, props.vault.cap, totalValue])
 
   const onChangeIsCustomRatio = useCallback(
     (isCustomRatio: boolean) => setIsCustomRatio(isCustomRatio),

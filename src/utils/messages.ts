@@ -12,27 +12,38 @@ export function getDepositCapMessage(
   denom: string,
   amount: BigNumber,
   action: 'deposit' | 'borrow',
+  assets: Asset[],
 ) {
-  return `You cannot ${action} more than ${formatAmountWithSymbol({
-    denom,
-    amount: amount.toString(),
-  })} due to the deposit cap on this asset being reached in the protocol.`
+  return `You cannot ${action} more than ${formatAmountWithSymbol(
+    {
+      denom,
+      amount: amount.toString(),
+    },
+    assets,
+  )} due to the deposit cap on this asset being reached in the protocol.`
 }
 
-export function getLiquidityMessage(denom: string, amount: BigNumber) {
-  return `You cannot borrow more than ${formatAmountWithSymbol({
-    denom,
-    amount: amount.toString(),
-  })} due to the available market liquidity.`
+export function getLiquidityMessage(denom: string, amount: BigNumber, assets: Asset[]) {
+  return `You cannot borrow more than ${formatAmountWithSymbol(
+    {
+      denom,
+      amount: amount.toString(),
+    },
+    assets,
+  )} due to the available market liquidity.`
 }
 
 export function getHealthFactorMessage(
   denom: string,
   amount: BigNumber,
   action: 'borrow' | 'withdraw',
+  assets: Asset[],
 ) {
-  return `You cannot ${action} more than ${formatAmountWithSymbol({
-    denom,
-    amount: amount.toString(),
-  })}, as it will likely result in a health factor lower than 1.`
+  return `You cannot ${action} more than ${formatAmountWithSymbol(
+    {
+      denom,
+      amount: amount.toString(),
+    },
+    assets,
+  )}, as it will likely result in a health factor lower than 1.`
 }

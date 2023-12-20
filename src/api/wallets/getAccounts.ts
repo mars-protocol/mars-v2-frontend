@@ -2,13 +2,17 @@ import getAccount from 'api/accounts/getAccount'
 import getWalletAccountIds from 'api/wallets/getAccountIds'
 import { AccountKind } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 
-export default async function getAccounts(kind: AccountKind, address?: string): Promise<Account[]> {
+export default async function getAccounts(
+  kind: AccountKind,
+  chainConfig: ChainConfig,
+  address?: string,
+): Promise<Account[]> {
   if (!address) return new Promise((_, reject) => reject('No address'))
-  const accountIdsAndKinds = await getWalletAccountIds(address)
+  const accountIdsAndKinds = await getWalletAccountIds(chainConfig, address)
 
   const $accounts = accountIdsAndKinds
     .filter((a) => a.kind === kind)
-    .map((account) => getAccount(account.id))
+    .map((account) => getAccount(chainConfig, account.id))
 
   const accounts = await Promise.all($accounts).then((accounts) => accounts)
 
