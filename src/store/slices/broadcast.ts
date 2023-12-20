@@ -118,6 +118,37 @@ export default function createBroadcastSlice(
         })
         break
 
+      case 'swap':
+        const swapBorrowCoin = changes.debts ? [changes.debts[0].toCoin()] : undefined
+        const swapUnlendCoin = changes.deposits ? [changes.deposits[0].toCoin()] : undefined
+        const swapRepayCoin = changes.lends ? [changes.lends[0].toCoin()] : undefined
+
+        if (swapBorrowCoin) {
+          toast.content.push({
+            coins: swapBorrowCoin,
+            text: 'Borrowed',
+          })
+        }
+        if (swapUnlendCoin) {
+          toast.content.push({
+            coins: swapUnlendCoin,
+            text: 'Unlent',
+          })
+        }
+        if (changes.swap) {
+          toast.content.push({
+            coins: [changes.swap.from, changes.swap.to],
+            text: 'Swapped',
+          })
+        }
+        if (swapRepayCoin) {
+          toast.content.push({
+            coins: swapRepayCoin,
+            text: 'Repaid',
+          })
+        }
+        break
+
       case 'vault':
       case 'vaultCreate':
         toast.content.push({
@@ -766,6 +797,9 @@ export default function createBroadcastSlice(
           options: {
             action: 'swap',
             accountId: options.accountId,
+            reclaim: options.reclaim,
+            borrow: options.borrow,
+            repay: options.repay,
           },
           swapOptions,
         })
@@ -815,9 +849,14 @@ export default function createBroadcastSlice(
           const coinOut = getTokenOutFromSwapResponse(response, toast.swapOptions.denomOut)
 
           if (toast.options.action === 'swap') {
-            toast.options.message = `Swapped ${formatAmountWithSymbol(
-              toast.swapOptions.coinIn.toCoin(),
-            )} for ${formatAmountWithSymbol(coinOut)}`
+            toast.options.changes = {}
+            toast.options.changes.swap = {
+              from: toast.swapOptions.coinIn.toCoin(),
+              to: getTokenOutFromSwapResponse(response, toast.swapOptions.denomOut),
+            }
+            if (toast.options.borrow) toast.options.changes.debts = [toast.options.borrow]
+            if (toast.options.reclaim) toast.options.changes.deposits = [toast.options.reclaim]
+            if (toast.options.repay) toast.options.changes.lends = [BNCoin.fromCoin(coinOut)]
           }
 
           if (toast.options.action === 'hls-staking') {
