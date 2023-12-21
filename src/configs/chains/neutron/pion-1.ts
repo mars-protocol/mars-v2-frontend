@@ -15,7 +15,7 @@ const Pion1: ChainConfig = {
     USDollar,
   ],
   id: ChainInfoID.Pion1,
-  name: 'Neutron Devnet',
+  name: 'Neutron Testnet',
   contracts: {
     redBank: 'neutron1s5scv6rgy4fnxvdgwk30jwnzrm5wwleg9q7aw36fp4quwmrwcupss6y8r9',
     incentives: 'neutron1fkkatnyqf4hfgxf75qdqargn77p2vn4xu4pautrd4665aut4wmfs0xqce9',
@@ -40,7 +40,7 @@ const Pion1: ChainConfig = {
       stride: 'https://edge.stride.zone/api/stake-stats',
     },
   },
-  network: 'devnet',
+  network: 'testnet',
   vaults: [],
   explorerName: 'Mintscan',
   bech32Config: Bech32Address.defaultBech32Config('neutron'),
