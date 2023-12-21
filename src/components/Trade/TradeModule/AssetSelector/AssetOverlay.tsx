@@ -79,28 +79,37 @@ export default function AssetOverlay(props: Props) {
     [assets, props.buyAsset],
   )
 
-  function onChangeBuyAsset(asset: AssetPair | Asset) {
-    const selectedAsset = asset as Asset
-    if (!props.onChangeBuyAsset) return
-    props.onChangeBuyAsset(selectedAsset)
-    props.onChangeState('sell')
-    onChangeSearch('')
-  }
+  const onChangeBuyAsset = useCallback(
+    (asset: AssetPair | Asset) => {
+      const selectedAsset = asset as Asset
+      if (!props.onChangeBuyAsset) return
+      props.onChangeBuyAsset(selectedAsset)
+      props.onChangeState('sell')
+      onChangeSearch('')
+    },
+    [onChangeSearch, props],
+  )
 
-  function onChangeSellAsset(asset: AssetPair | Asset) {
-    const selectedAsset = asset as Asset
-    if (!props.onChangeSellAsset) return
-    props.onChangeSellAsset(selectedAsset)
-    onChangeSearch('')
-  }
+  const onChangeSellAsset = useCallback(
+    (asset: AssetPair | Asset) => {
+      const selectedAsset = asset as Asset
+      if (!props.onChangeSellAsset) return
+      props.onChangeSellAsset(selectedAsset)
+      onChangeSearch('')
+    },
+    [onChangeSearch, props],
+  )
 
-  function onChangeAssetPair(assetPair: AssetPair | Asset) {
-    const selectedPair = assetPair as AssetPair
-    if (!props.onChangeTradingPair) return
-    props.onChangeTradingPair({ buy: selectedPair.buy.denom, sell: selectedPair.sell.denom })
-    props.onChangeState('closed')
-    onChangeSearch('')
-  }
+  const onChangeAssetPair = useCallback(
+    (assetPair: AssetPair | Asset) => {
+      const selectedPair = assetPair as AssetPair
+      if (!props.onChangeTradingPair) return
+      props.onChangeTradingPair({ buy: selectedPair.buy.denom, sell: selectedPair.sell.denom })
+      props.onChangeState('closed')
+      onChangeSearch('')
+    },
+    [onChangeSearch, props],
+  )
 
   return (
     <Overlay

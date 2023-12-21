@@ -1,12 +1,12 @@
 import { GetState, SetState } from 'zustand'
 
-import Osmosis1 from 'configs/chains/osmosis/osmosis-1'
+import Pion1 from 'configs/chains/neutron/pion-1'
 
 export default function createCommonSlice(set: SetState<CommonSlice>, get: GetState<CommonSlice>) {
   return {
     accounts: null,
     balances: [],
-    chainConfig: Osmosis1,
+    chainConfig: Pion1,
     creditAccounts: null,
     hlsAccounts: null,
     isOpen: true,

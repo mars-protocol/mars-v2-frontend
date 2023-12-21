@@ -151,9 +151,10 @@ export default function SwapForm(props: Props) {
     computeMaxSwapAmount,
     inputAsset.denom,
     outputAsset.denom,
+    chainConfig,
     isMarginChecked,
-    onChangeInputAmount,
     inputAssetAmount,
+    onChangeInputAmount,
   ])
 
   const outputSideMarginThreshold = useMemo(() => {
