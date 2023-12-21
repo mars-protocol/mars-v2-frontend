@@ -153,6 +153,9 @@ const Osmosis1: ChainConfig = {
   name: 'Osmosis',
   network: NETWORK.MAINNET,
   vaults: VAULTS_META_DATA,
+  hls: true,
+  perps: false,
+  farm: true,
 }
 
 export default Osmosis1

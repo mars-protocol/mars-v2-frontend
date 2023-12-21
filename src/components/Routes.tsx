@@ -12,9 +12,10 @@ import PerpsPage from 'pages/PerpsPage'
 import PortfolioAccountPage from 'pages/PortfolioAccountPage'
 import PortfolioPage from 'pages/PortfolioPage'
 import TradePage from 'pages/TradePage'
-import { ENABLE_HLS, ENABLE_PERPS } from 'utils/constants'
+import useStore from 'store'
 
 export default function Routes() {
+  const chainConfig = useStore((s) => s.chainConfig)
   return (
     <RoutesWrapper>
       <Route
@@ -26,26 +27,26 @@ export default function Routes() {
       >
         <Route path='/trade' element={<TradePage />} />
         <Route path='/trade-advanced' element={<TradePage />} />
-        {ENABLE_PERPS && <Route path='/perps' element={<PerpsPage />} />}
-        <Route path='/farm' element={<FarmPage />} />
+        {chainConfig.perps && <Route path='/perps' element={<PerpsPage />} />}
+        {chainConfig.farm && <Route path='/farm' element={<FarmPage />} />}
         <Route path='/lend' element={<LendPage />} />
         <Route path='/borrow' element={<BorrowPage />} />
         <Route path='/portfolio' element={<PortfolioPage />} />
         <Route path='/mobile' element={<MobilePage />} />
-        {ENABLE_HLS && <Route path='/hls-staking' element={<HLSStakingPage />} />}
-        {ENABLE_HLS && <Route path='/hls-farm' element={<HLSFarmPage />} />}
+        {chainConfig.hls && <Route path='/hls-staking' element={<HLSStakingPage />} />}
+        {chainConfig.hls && <Route path='/hls-farm' element={<HLSFarmPage />} />}
         <Route path='/' element={<TradePage />} />
         <Route path='/wallets/:address'>
           <Route path='execute' element={<ExecuteMessagePage />} />
           <Route path='trade' element={<TradePage />} />
           <Route path='trade-advanced' element={<TradePage />} />
-          {ENABLE_PERPS && <Route path='perps' element={<PerpsPage />} />}
-          <Route path='farm' element={<FarmPage />} />
+          {chainConfig.perps && <Route path='perps' element={<PerpsPage />} />}
+          {chainConfig.farm && <Route path='farm' element={<FarmPage />} />}
           <Route path='lend' element={<LendPage />} />
           <Route path='borrow' element={<BorrowPage />} />
           <Route path='portfolio' element={<PortfolioPage />} />
-          {ENABLE_HLS && <Route path='hls-staking' element={<HLSStakingPage />} />}
-          {ENABLE_HLS && <Route path='hls-farm' element={<HLSFarmPage />} />}
+          {chainConfig.hls && <Route path='hls-staking' element={<HLSStakingPage />} />}
+          {chainConfig.hls && <Route path='hls-farm' element={<HLSFarmPage />} />}
           <Route path='portfolio/:accountId'>
             <Route path='' element={<PortfolioAccountPage />} />
           </Route>

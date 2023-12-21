@@ -13,10 +13,9 @@ import Wallet from 'components/Wallet'
 import useAccountId from 'hooks/useAccountId'
 import useStore from 'store'
 import { WalletID } from 'types/enums/wallet'
-import { ENABLE_HLS, ENABLE_PERPS } from 'utils/constants'
 import { getGovernanceUrl } from 'utils/helpers'
 
-export const menuTree = (walletId: WalletID): MenuTreeEntry[] => [
+export const menuTree = (walletId: WalletID, chainConfig: ChainConfig): MenuTreeEntry[] => [
   {
     pages: ['trade', 'trade-advanced'],
     label: 'Trade',
@@ -35,10 +34,10 @@ export const menuTree = (walletId: WalletID): MenuTreeEntry[] => [
       },
     ],
   },
-  ...(ENABLE_PERPS ? [{ pages: ['perps'] as Page[], label: 'Perps' }] : []),
-  { pages: ['lend', 'farm'], label: 'Earn' },
+  ...(chainConfig.perps ? [{ pages: ['perps'] as Page[], label: 'Perps' }] : []),
+  { pages: chainConfig.farm ? ['lend', 'farm'] : ['lend'], label: 'Earn' },
   { pages: ['borrow'], label: 'Borrow' },
-  ...(ENABLE_HLS ? [{ pages: ['hls-staking'] as Page[], label: 'High Leverage' }] : []),
+  ...(chainConfig.hls ? [{ pages: ['hls-staking'] as Page[], label: 'High Leverage' }] : []),
   { pages: ['portfolio'], label: 'Portfolio' },
   { pages: ['governance'], label: 'Governance', externalUrl: getGovernanceUrl(walletId) },
 ]

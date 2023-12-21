@@ -89,7 +89,7 @@ function AccountDetails(props: Props) {
 
     if (updatedLeverage.eq(leverage)) return null
     return updatedLeverage
-  }, [updatedAccount, prices, leverage])
+  }, [updatedAccount, prices, leverage, assets])
 
   const { data } = useBorrowMarketAssetsTableData(false)
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])

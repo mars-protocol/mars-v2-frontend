@@ -52,7 +52,7 @@ export default function Deposit(props: Props) {
 
   const currentLeverage = useMemo(
     () => calculateAccountLeverage(props.account, prices, assets).toNumber(),
-    [prices, props.account],
+    [prices, props.account, assets],
   )
 
   const depositCoin = useMemo(
@@ -101,6 +101,7 @@ export default function Deposit(props: Props) {
     props.account.strategy.depositCap.used,
     props.collateralAsset.denom,
     props.collateralAsset.symbol,
+    assets,
   ])
 
   const maxBorrowAmount = useMemo(
@@ -174,6 +175,7 @@ export default function Deposit(props: Props) {
       props.borrowAsset.denom,
       props.collateralAsset.denom,
       simulateHlsStakingDeposit,
+      assets,
     ],
   )
 

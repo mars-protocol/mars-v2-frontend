@@ -42,4 +42,7 @@ interface ChainConfig {
   name: string
   network: 'mainnet' | 'devnet'
   vaults: VaultMetaData[]
+  hls: boolean
+  perps: boolean
+  farm: boolean
 }

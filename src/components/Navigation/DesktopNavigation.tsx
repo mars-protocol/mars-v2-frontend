@@ -19,10 +19,11 @@ export function getIsActive(pages: string[]) {
 export default function DesktopNavigation() {
   const [showMenu, setShowMenu] = useToggle()
   const { recentWallet } = useShuttle()
+  const chainConfig = useStore((s) => s.chainConfig)
   const walletId = (recentWallet?.providerId as WalletID) ?? WalletID.Keplr
   const focusComponent = useStore((s) => s.focusComponent)
 
-  const menu = useMemo(() => menuTree(walletId), [walletId])
+  const menu = useMemo(() => menuTree(walletId, chainConfig), [walletId, chainConfig])
 
   return (
     <div

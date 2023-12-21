@@ -42,7 +42,7 @@ export default function AccountSummary(props: Props) {
       props.account
         ? calculateAccountBalanceValue(updatedAccount ?? props.account, prices, assets)
         : BN_ZERO,
-    [props.account, updatedAccount, prices],
+    [props.account, updatedAccount, prices, assets],
   )
   const { data } = useBorrowMarketAssetsTableData(false)
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
