@@ -11,8 +11,8 @@ import { resolveMarketResponse } from 'utils/resolvers'
 
 export default async function getMarkets(chainConfig: ChainConfig): Promise<Market[]> {
   try {
-    const redBankClient = await getRedBankQueryClient(chainConfig.endpoints.rpc)
-    const paramsClient = await getParamsQueryClient(chainConfig.endpoints.rpc)
+    const redBankClient = await getRedBankQueryClient(chainConfig)
+    const paramsClient = await getParamsQueryClient(chainConfig)
 
     const marketAssets = chainConfig.assets.filter((asset) => asset.isMarket)
 

@@ -8,7 +8,7 @@ export default async function getICNS(
   // TODO: Make this also work for different chains?
   if (!address || chainConfig.id !== ChainInfoID.Osmosis1) return
   try {
-    const icnsQueryClient = await getICNSQueryClient(chainConfig.endpoints.rpc)
+    const icnsQueryClient = await getICNSQueryClient(chainConfig)
     return icnsQueryClient.primaryName({ address })
   } catch (ex) {
     throw ex

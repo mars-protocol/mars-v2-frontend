@@ -22,7 +22,7 @@ async function fetchPrice(chainConfig: ChainConfig, denom: string) {
     }
 
     if (asset.hasOraclePrice) {
-      const oracleQueryClient = await getOracleQueryClient(chainConfig.endpoints.rpc)
+      const oracleQueryClient = await getOracleQueryClient(chainConfig)
       const priceResponse = await oracleQueryClient.price({ denom: asset.denom })
       const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
 

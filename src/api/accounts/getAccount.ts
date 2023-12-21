@@ -10,7 +10,7 @@ export default async function getAccount(
 ): Promise<Account> {
   if (!accountId) return new Promise((_, reject) => reject('No account ID found'))
 
-  const creditManagerQueryClient = await getCreditManagerQueryClient(chainConfig.endpoints.rpc)
+  const creditManagerQueryClient = await getCreditManagerQueryClient(chainConfig)
 
   const accountPosition: Positions = await cacheFn(
     () => creditManagerQueryClient.positions({ accountId: accountId }),

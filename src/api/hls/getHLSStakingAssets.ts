@@ -14,7 +14,7 @@ export default async function getHLSStakingAssets(chainConfig: ChainConfig) {
     .filter((asset) => stakingAssetDenoms.includes(asset.denom))
     .filter((asset) => asset.credit_manager.hls)
   const strategies = resolveHLSStrategies('coin', HLSAssets)
-  const client = await getParamsQueryClient(chainConfig.endpoints.rpc)
+  const client = await getParamsQueryClient(chainConfig)
   const depositCaps$ = strategies.map((strategy) =>
     client.totalDeposit({ denom: strategy.denoms.deposit }),
   )

@@ -27,7 +27,7 @@ async function getUnlocksAtTimestamp(
   vaultAddress: string,
 ) {
   try {
-    const client = await getClient(chainConfig.endpoints.rpc)
+    const client = await getClient(chainConfig)
 
     const vaultExtension = (await cacheFn(
       () =>
@@ -97,8 +97,8 @@ export async function getLpTokensForVaultPosition(
   vaultPosition: VaultPosition,
 ): Promise<Coin[]> {
   try {
-    const vaultQueryClient = await getVaultQueryClient(chainConfig.endpoints.rpc, vault.address)
-    const creditManagerQueryClient = await getCreditManagerQueryClient(chainConfig.endpoints.rpc)
+    const vaultQueryClient = await getVaultQueryClient(chainConfig, vault.address)
+    const creditManagerQueryClient = await getCreditManagerQueryClient(chainConfig)
     const amounts = flatVaultPositionAmount(vaultPosition.amount)
     const totalAmount = amounts.locked.plus(amounts.unlocked).plus(amounts.unlocking).toString()
 
@@ -198,7 +198,7 @@ async function getDepositedVaults(
   positions?: Positions,
 ): Promise<DepositedVault[]> {
   try {
-    const creditManagerQueryClient = await getCreditManagerQueryClient(chainConfig.endpoints.rpc)
+    const creditManagerQueryClient = await getCreditManagerQueryClient(chainConfig)
 
     if (!positions)
       positions = await cacheFn(

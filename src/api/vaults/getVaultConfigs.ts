@@ -7,7 +7,7 @@ export const getVaultConfigs = async (
   chainConfig: ChainConfig,
 ): Promise<VaultConfigBaseForAddr[]> => {
   try {
-    const paramsQueryClient = await getParamsQueryClient(chainConfig.endpoints.rpc)
+    const paramsQueryClient = await getParamsQueryClient(chainConfig)
     return await cacheFn(
       () => iterateContractQuery(paramsQueryClient.allVaultConfigs, 'addr'),
       vaultConfigsCache,

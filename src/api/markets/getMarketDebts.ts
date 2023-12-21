@@ -6,7 +6,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 export default async function getMarketDebts(chainConfig: ChainConfig): Promise<BNCoin[]> {
   try {
     const markets: Market[] = await getMarkets(chainConfig)
-    const redBankQueryClient = await getRedBankQueryClient(chainConfig.endpoints.rpc)
+    const redBankQueryClient = await getRedBankQueryClient(chainConfig)
 
     const debtQueries = markets.map((asset) =>
       cacheFn(

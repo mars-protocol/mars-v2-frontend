@@ -8,7 +8,7 @@ export default async function getAccountIds(
 ): Promise<AccountIdAndKind[]> {
   if (!address) return []
   try {
-    const client = await getCreditManagerQueryClient(chainConfig.endpoints.rpc)
+    const client = await getCreditManagerQueryClient(chainConfig)
 
     const lastItem = previousResults && previousResults.at(-1)
     const accounts = (
