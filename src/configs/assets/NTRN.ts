@@ -10,6 +10,7 @@ const NTRN: AssetMetaData = {
   isEnabled: true,
   isMarket: true,
   isBorrowEnabled: true,
+  isAutoLendEnabled: true,
 }
 
 export default NTRN
