@@ -6,6 +6,7 @@ import Card from 'components/Card'
 import { CircularProgress } from 'components/CircularProgress'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
+import useStore from 'store'
 
 const TVChartContainer = dynamic(
   () => import('components/Trade/TradeChart/TVChartContainer').then((mod) => mod.TVChartContainer),

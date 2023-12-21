@@ -38,9 +38,9 @@ interface TheGraphBarQueryData {
 export const PAIR_SEPARATOR = '<>'
 
 export class DataFeed implements IDatafeedChartApi {
+  candlesEndpoint: string
+  candlesEndpointTheGraph: string
   assets: Asset[]
-  candlesEndpoint = ENV.CANDLES_ENDPOINT_PYTH
-  candlesEndpointTheGraph = ENV.CANDLES_ENDPOINT_THE_GRAPH
   debug = false
   enabledMarketAssetDenoms: string[] = []
   batchSize = 1000
@@ -67,8 +67,16 @@ export class DataFeed implements IDatafeedChartApi {
   supportedPools: string[] = []
   supportedResolutions = ['1', '5', '15', '30', '60', '240', 'D'] as ResolutionString[]
 
-  constructor(debug = false, assets: Asset[], baseDecimals: number, baseDenom: string) {
+  constructor(
+    debug = false,
+    assets: Asset[],
+    baseDecimals: number,
+    baseDenom: string,
+    chainConfig: ChainConfig,
+  ) {
     if (debug) console.log('Start charting library datafeed')
+    this.candlesEndpoint = chainConfig.endpoints.pythCandles
+    this.candlesEndpointTheGraph = chainConfig.endpoints.graphCandles ?? ''
     this.assets = assets
     this.debug = debug
     this.baseDecimals = baseDecimals

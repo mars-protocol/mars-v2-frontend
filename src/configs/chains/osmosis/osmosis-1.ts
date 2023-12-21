@@ -136,6 +136,8 @@ const Osmosis1: ChainConfig = {
       ENV.OSMOSIS1_REST || 'https://osmosis-node.marsprotocol.io/GGSFGSFGFG34/osmosis-lcd-front/',
     swap: 'https://app.osmosis.zone',
     pyth: 'https://hermes.pyth.network/api',
+    pythCandles: 'https://benchmarks.pyth.network',
+    graphCandles: 'https://osmosis-candles.marsprotocol.io',
     explorer: 'https://www.mintscan.io/osmosis/transactions/',
     pools:
       ENV.OSMOSIS1_REST ||

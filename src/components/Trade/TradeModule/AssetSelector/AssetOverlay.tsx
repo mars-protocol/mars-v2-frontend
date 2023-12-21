@@ -33,14 +33,7 @@ function StablesFilter(props: StablesFilterProps) {
   return (
     <>
       <Divider />
-      <div className='flex items-center w-full py-2 justify-evenly'>
-        <Button
-          onClick={() => onFilter(stables)}
-          text='All'
-          color={isAllSelected ? 'secondary' : 'quaternary'}
-          variant='transparent'
-          className={isAllSelected ? '!text-white !bg-white/10 border-white' : ''}
-        />
+      <div className='flex items-center w-full gap-2 p-2'>
         {stables.map((stable) => {
           const isCurrent = !isAllSelected && selectedStables[0].denom === stable.denom
           return (

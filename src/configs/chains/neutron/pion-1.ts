@@ -32,6 +32,7 @@ const Pion1: ChainConfig = {
     rpc: ENV.PION1_RPC || 'https://rpc-palvus.pion-1.ntrn.tech/',
     swap: 'https://testnet-neutron.astroport.fi/swap',
     pyth: 'https://hermes.pyth.network/api',
+    pythCandles: 'https://benchmarks.pyth.network',
     pools: '', //TODO: Implement this
     explorer: 'https://testnet.mintscan.io/neutron-testnet',
     aprs: {

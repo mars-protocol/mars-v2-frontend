@@ -28,6 +28,8 @@ interface ChainConfig {
     rpc: string
     swap: string
     pyth: string
+    pythCandles: string
+    graphCandles?: string
     explorer: string
     pools: string
     aprs: {
