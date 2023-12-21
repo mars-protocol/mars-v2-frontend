@@ -82,9 +82,9 @@ export default function DesktopHeader() {
           <div className='flex gap-4'>
             {isOracleStale && <OracleResyncButton />}
             {accountId && <RewardsCenter />}
-            <ChainSelect />
             {address && !isHLS && <AccountMenu />}
             <Wallet />
+            <ChainSelect />
             <Settings />
           </div>
         )}

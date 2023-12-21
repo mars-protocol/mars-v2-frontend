@@ -9,7 +9,7 @@ import useClipboard from 'react-use-clipboard'
 import Button from 'components/Button'
 import { CircularProgress } from 'components/CircularProgress'
 import { FormattedNumber } from 'components/FormattedNumber'
-import { Check, Copy, ExternalLink, Osmo } from 'components/Icons'
+import { Check, Copy, ExternalLink, Wallet } from 'components/Icons'
 import Overlay from 'components/Overlay'
 import Text from 'components/Text'
 import RecentTransactions from 'components/Wallet/RecentTransactions'
@@ -143,8 +143,8 @@ export default function WalletConnectedButton() {
 
       <Button
         variant='solid'
+        leftIcon={<Wallet />}
         color='tertiary'
-        leftIcon={<Osmo />}
         onClick={() => {
           setShowDetails(!showDetails)
         }}

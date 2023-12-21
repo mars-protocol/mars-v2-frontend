@@ -38,7 +38,7 @@ interface ChainConfig {
   explorerName: string
   features: ('ibc-transfer' | 'ibc-go')[]
   gasPrice: string
-  id: string
+  id: import('types/enums/wallet').ChainInfoID
   name: string
   network: 'mainnet' | 'devnet'
   vaults: VaultMetaData[]
