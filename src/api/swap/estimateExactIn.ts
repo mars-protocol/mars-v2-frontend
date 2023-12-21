@@ -8,7 +8,7 @@ export default async function estimateExactIn(
   denomOut: string,
 ) {
   try {
-    const swapperClient = await getSwapperQueryClient(chainConfig.endpoints.rpc)
+    const swapperClient = await getSwapperQueryClient(chainConfig)
     const estimatedAmount = (await swapperClient.estimateExactInSwap({ coinIn, denomOut })).amount
 
     return BN(estimatedAmount)

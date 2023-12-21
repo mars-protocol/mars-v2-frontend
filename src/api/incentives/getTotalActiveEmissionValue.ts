@@ -10,7 +10,7 @@ export default async function getTotalActiveEmissionValue(
   denom: string,
 ): Promise<BigNumber | null> {
   try {
-    const client = await getIncentivesQueryClient(chainConfig.endpoints.rpc)
+    const client = await getIncentivesQueryClient(chainConfig)
     const activeEmissions = await cacheFn(
       () =>
         client.activeEmissions({

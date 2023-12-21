@@ -8,8 +8,8 @@ export default async function getMarket(chainConfig: ChainConfig, denom: string)
 
 async function fetchMarket(chainConfig: ChainConfig, denom: string) {
   try {
-    const redBankClient = await getRedBankQueryClient(chainConfig.endpoints.rpc)
-    const paramsClient = await getParamsQueryClient(chainConfig.endpoints.rpc)
+    const redBankClient = await getRedBankQueryClient(chainConfig)
+    const paramsClient = await getParamsQueryClient(chainConfig)
 
     const [market, assetParams, assetCap] = await Promise.all([
       redBankClient.market({ denom }),

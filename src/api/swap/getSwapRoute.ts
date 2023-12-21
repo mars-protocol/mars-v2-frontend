@@ -6,7 +6,7 @@ export default async function getSwapRoute(
   denomOut: string,
 ): Promise<Route[]> {
   try {
-    const swapperClient = await getSwapperQueryClient(chainConfig.endpoints.rpc)
+    const swapperClient = await getSwapperQueryClient(chainConfig)
     const routes = await swapperClient.route({
       denomIn,
       denomOut,

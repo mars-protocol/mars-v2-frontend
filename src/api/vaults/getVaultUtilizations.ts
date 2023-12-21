@@ -7,7 +7,7 @@ export const getVaultUtilizations = async (
   chainConfig: ChainConfig,
   vaultConfigs: VaultConfigBaseForString[],
 ): Promise<VaultUtilizationResponse[]> => {
-  const creditManagerQueryClient = await getCreditManagerQueryClient(chainConfig.endpoints.rpc)
+  const creditManagerQueryClient = await getCreditManagerQueryClient(chainConfig)
   try {
     const vaultUtilizations$ = vaultConfigs.map((vaultConfig) => {
       return cacheFn(

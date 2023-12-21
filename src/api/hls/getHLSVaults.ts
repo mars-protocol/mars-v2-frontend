@@ -6,7 +6,7 @@ import { resolveHLSStrategies } from 'utils/resolvers'
 
 export default async function getHLSVaults(chainConfig: ChainConfig) {
   const assetParams = await getAssetParams(chainConfig)
-  const client = await getCreditManagerQueryClient(chainConfig.endpoints.rpc)
+  const client = await getCreditManagerQueryClient(chainConfig)
   const vaultConfigs = await getVaultConfigs(chainConfig)
   const HLSAssets = assetParams.filter((asset) => asset.credit_manager.hls)
   const strategies = resolveHLSStrategies('vault', HLSAssets)

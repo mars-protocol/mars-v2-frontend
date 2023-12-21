@@ -8,7 +8,7 @@ export default async function getUnclaimedRewards(
   accountId: string,
 ): Promise<BNCoin[]> {
   try {
-    const client = await getIncentivesQueryClient(chainConfig.endpoints.rpc)
+    const client = await getIncentivesQueryClient(chainConfig)
     const unclaimedRewards = await cacheFn(
       () =>
         iterateContractQuery(() =>

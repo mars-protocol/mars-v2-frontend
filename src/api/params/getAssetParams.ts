@@ -9,7 +9,7 @@ export default async function getAssetParams(
   try {
     return await cacheFn(
       async () => {
-        const paramsQueryClient = await getParamsQueryClient(chainConfig.endpoints.rpc)
+        const paramsQueryClient = await getParamsQueryClient(chainConfig)
         return iterateContractQuery(paramsQueryClient.allAssetParams)
       },
       assetParamsCache,

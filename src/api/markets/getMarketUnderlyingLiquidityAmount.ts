@@ -15,7 +15,7 @@ export default async function getUnderlyingLiquidityAmount(
 
 async function fetchUnderlyingLiquidityAmount(chainConfig: ChainConfig, market: Market) {
   try {
-    const client = await getRedBankQueryClient(chainConfig.endpoints.rpc)
+    const client = await getRedBankQueryClient(chainConfig)
     return await client.underlyingLiquidityAmount({
       denom: market.denom,
       amountScaled: market.collateralTotalScaled,

@@ -14,7 +14,7 @@ export default async function getOraclePrices(
   try {
     if (!assets.length) return []
 
-    const oracleQueryClient = await getOracleQueryClient(chainConfig.endpoints.rpc)
+    const oracleQueryClient = await getOracleQueryClient(chainConfig)
     const priceResults = await cacheFn(
       () => iterateContractQuery(oracleQueryClient.prices),
       oraclePriceCache,
