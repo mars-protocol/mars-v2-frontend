@@ -111,7 +111,7 @@ export default function useHealthComputer(account?: Account) {
   )
 
   const vaultConfigsData = useMemo(() => {
-    if (!vaultConfigs.length) return null
+    if (!vaultConfigs.length) return {}
 
     return vaultConfigs.reduce(
       (prev, curr) => {
