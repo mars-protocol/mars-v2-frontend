@@ -42,7 +42,7 @@ export default function DesktopNavigation() {
         <div className='flex gap-8 px-6 h-6 @container/navigation relative flex-1'>
           {menu.map((item, index) =>
             item.submenu ? (
-              <NavMenu key={index} item={item} />
+              <NavMenu key={index} item={item} index={index} />
             ) : (
               <NavLink
                 key={index}

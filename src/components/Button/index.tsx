@@ -33,6 +33,7 @@ const Button = React.forwardRef(function Button(
     text,
     variant = 'solid',
     onClick,
+    onMouseOver,
     leftIcon,
     rightIcon,
     iconClassName,
@@ -97,6 +98,7 @@ const Button = React.forwardRef(function Button(
       id={id}
       ref={ref as LegacyRef<HTMLButtonElement>}
       onClick={isDisabled ? () => {} : onClick}
+      onMouseOver={isDisabled ? () => {} : onMouseOver}
       tabIndex={tabIndex}
       autoFocus={autoFocus}
     >
