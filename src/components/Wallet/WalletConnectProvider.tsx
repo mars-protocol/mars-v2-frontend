@@ -12,11 +12,12 @@ import {
   WalletMobileProvider,
   XDEFICosmosExtensionProvider,
 } from '@delphi-labs/shuttle-react'
-import { FC, useCallback, useMemo } from 'react'
+import { FC, useCallback, useEffect, useMemo } from 'react'
 
 import chains from 'configs/chains'
 import { ENV } from 'constants/env'
 import { WALLETS } from 'constants/wallets'
+import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useStore from 'store'
 import { WalletID } from 'types/enums/wallet'
 
@@ -26,6 +27,7 @@ type Props = {
 
 export const WalletConnectProvider: FC<Props> = ({ children }) => {
   const chainConfig = useStore((s) => s.chainConfig)
+  const [chainId] = useCurrentChainId()
 
   const getSupportedChainsInfos = useCallback(
     (walletId: WalletID) =>
@@ -81,6 +83,14 @@ export const WalletConnectProvider: FC<Props> = ({ children }) => {
     ],
     [getSupportedChainsInfos],
   )
+
+  useEffect(() => {
+    if (chainId && chainConfig && chainId !== chainConfig.id) {
+      useStore.setState({ chainConfig: chains[chainId] })
+    }
+  }, [chainConfig, chainId])
+
+  if (chainConfig.id !== chainId) return null
 
   return (
     <ShuttleProvider

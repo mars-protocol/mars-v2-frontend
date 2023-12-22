@@ -7,21 +7,16 @@ import ChainLogo from 'components/Chain/ChainLogo'
 import Overlay from 'components/Overlay'
 import Text from 'components/Text'
 import chains from 'configs/chains'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useChainConfig from 'hooks/useChainConfig'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
-import { ChainInfoID } from 'types/enums/wallet'
 
 export default function ChainSelect() {
   const [showMenu, setShowMenu] = useToggle()
   const chainConfig = useChainConfig()
   const { mutate } = useSWRConfig()
-  const [currentChainId, setCurrentChainId] = useLocalStorage<ChainInfoID>(
-    LocalStorageKeys.CURRENT_CHAIN_ID,
-    chainConfig.id,
-  )
+  const [currentChainId, setCurrentChainId] = useCurrentChainId()
 
   const selectChain = useCallback(async (chainConfig: ChainConfig) => {
     useStore.setState({ chainConfig: chainConfig })
