@@ -20,7 +20,7 @@ export default function Wallet() {
       userDomain: undefined,
       client: undefined,
       focusComponent: {
-        component: <WalletConnecting autoConnect />,
+        component: <WalletConnecting />,
         onClose: () => {
           disconnectWallet(currentWallet)
           useStore.setState({

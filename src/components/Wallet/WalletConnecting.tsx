@@ -1,10 +1,6 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import {
-  useShuttle,
-  WalletExtensionProvider,
-  WalletMobileProvider,
-} from '@delphi-labs/shuttle-react'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useShuttle } from '@delphi-labs/shuttle-react'
+import { useCallback, useEffect, useMemo } from 'react'
 
 import { CircularProgress } from 'components/CircularProgress'
 import FullOverlayContent from 'components/FullOverlayContent'
@@ -12,11 +8,11 @@ import WalletSelect from 'components/Wallet//WalletSelect'
 import WalletFetchBalancesAndAccounts from 'components/Wallet/WalletFetchBalancesAndAccounts'
 import chains from 'configs/chains'
 import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
+import useCurrentWallet from 'hooks/useCurrentWallet'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 
 interface Props {
-  autoConnect?: boolean
   providerId?: string
 }
 
@@ -31,31 +27,25 @@ const mapErrorMessages = (providerId: string, errorMessage: string, name: string
 }
 
 export default function WalletConnecting(props: Props) {
-  const { recentWallet, connect, simulate, sign, broadcast, mobileProviders, extensionProviders } =
+  const { connect, mobileConnect, simulate, sign, broadcast, mobileProviders, extensionProviders } =
     useShuttle()
   const providers = useMemo(
     () => [...mobileProviders, ...extensionProviders],
     [mobileProviders, extensionProviders],
   )
   const [chainId] = useCurrentChainId()
-
+  const chainConfig = useStore((s) => s.chainConfig)
   const [isConnecting, setIsConnecting] = useToggle()
+  const recentWallet = useCurrentWallet()
   const providerId = props.providerId ?? recentWallet?.providerId
-  const refTimer = useRef<number | null>(null)
-  const isAutoConnect = props.autoConnect
   const client = useStore((s) => s.client)
   const address = useStore((s) => s.address)
-
-  const clearTimer = useCallback(() => {
-    if (refTimer.current !== null) window.clearTimeout(refTimer.current)
-  }, [refTimer])
 
   const handleConnect = useCallback(
     (extensionProviderId: string) => {
       async function handleConnectAsync() {
         if (client || isConnecting) return
         setIsConnecting(true)
-        clearTimer()
         try {
           const response = await connect({ extensionProviderId, chainId: chainId })
           const cosmClient = await CosmWasmClient.connect(response.network.rpc)
@@ -70,6 +60,7 @@ export default function WalletConnecting(props: Props) {
           useStore.setState({
             client: walletClient,
             address: response.account.address,
+            chainConfig: chains[chainId],
             focusComponent: {
               component: <WalletFetchBalancesAndAccounts />,
               onClose: () => {
@@ -105,43 +96,103 @@ export default function WalletConnecting(props: Props) {
       }
       if (!isConnecting) handleConnectAsync()
     },
+    [isConnecting, client, setIsConnecting, connect, chains, chainId, broadcast, sign, simulate],
+  )
+
+  const handleMobileConnect = useCallback(
+    (mobileProviderId: string) => {
+      async function handleMobileConnectAsync() {
+        if (client || isConnecting || !recentWallet) return
+        setIsConnecting(true)
+        try {
+          await mobileConnect({ mobileProviderId, chainId: chainId })
+          const cosmClient = await CosmWasmClient.connect(chainConfig.endpoints.rpc)
+          const walletClient: WalletClient = {
+            broadcast,
+            cosmWasmClient: cosmClient,
+            connectedWallet: recentWallet,
+            sign,
+            simulate,
+          }
+          setIsConnecting(false)
+          useStore.setState({
+            client: walletClient,
+            address: recentWallet.account.address,
+            userDomain: undefined,
+            chainConfig: chains[chainId],
+          })
+        } catch (error) {
+          setIsConnecting(false)
+          if (error instanceof Error) {
+            useStore.setState({
+              client: undefined,
+              address: undefined,
+              userDomain: undefined,
+              accounts: null,
+              focusComponent: {
+                component: (
+                  <WalletSelect
+                    error={{
+                      title: 'Failed to connect to wallet',
+                      message: mapErrorMessages(
+                        mobileProviderId,
+                        error.message,
+                        chains[chainId].name,
+                      ),
+                    }}
+                  />
+                ),
+              },
+            })
+          }
+        }
+      }
+      if (!isConnecting) handleMobileConnectAsync()
+    },
     [
-      isConnecting,
+      mobileConnect,
       client,
-      setIsConnecting,
-      clearTimer,
-      connect,
-      chains,
-      chainId,
-      broadcast,
+      isConnecting,
+      recentWallet,
       sign,
       simulate,
+      chainId,
+      broadcast,
+      chainConfig.endpoints.rpc,
     ],
   )
 
-  const startTimer = useCallback(
-    (provider?: WalletMobileProvider | WalletExtensionProvider) => {
-      if (refTimer.current !== null || !window) return
-      refTimer.current = window.setTimeout(() => handleConnect(provider?.id ?? ''), 5000)
-    },
-    [refTimer, handleConnect],
-  )
-
   useEffect(() => {
+    console.log('WalletConnecting', providerId, isConnecting, recentWallet, address)
+
+    if (!providerId) {
+      useStore.setState({
+        client: undefined,
+        address: undefined,
+        userDomain: undefined,
+        accounts: null,
+      })
+      return
+    }
     const provider = providers.find((p) => p.id === providerId)
     if (
       !provider ||
-      !provider.initialized ||
+      provider.initializing ||
       isConnecting ||
       (recentWallet && recentWallet.account.address === address)
     ) {
-      if (isAutoConnect) startTimer(provider)
       return
     }
 
-    handleConnect(provider.id)
+    const isMobileProvider = provider.id.split('-')[0] === 'mobile'
+    if (isMobileProvider) {
+      handleMobileConnect(provider.id)
+      return
+    }
 
-    return () => clearTimer()
+    console.log(recentWallet)
+    console.log('handleConnect', provider.id, provider?.initializing, provider?.initialized)
+    handleConnect(provider.id)
   }, [
     handleConnect,
     isConnecting,
@@ -149,9 +200,7 @@ export default function WalletConnecting(props: Props) {
     providers,
     recentWallet,
     address,
-    isAutoConnect,
-    startTimer,
-    clearTimer,
+    handleMobileConnect,
   ])
 
   return (
