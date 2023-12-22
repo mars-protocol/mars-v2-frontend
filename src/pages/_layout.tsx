@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useLocation } from 'react-router-dom'
 
@@ -10,8 +10,10 @@ import DesktopHeader from 'components/Header/DesktopHeader'
 import ModalsContainer from 'components/Modals/ModalsContainer'
 import PageMetadata from 'components/PageMetadata'
 import Toaster from 'components/Toaster'
+import chains from 'configs/chains'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useAccountId from 'hooks/useAccountId'
 import useStore from 'store'
@@ -48,17 +50,25 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
   const focusComponent = useStore((s) => s.focusComponent)
   const address = useStore((s) => s.address)
+  const [chainId] = useCurrentChainId()
+  const chainConfig = useStore((s) => s.chainConfig)
+
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
   )
-
   const accountDetailsExpanded = useStore((s) => s.accountDetailsExpanded)
   const isFullWidth =
     location.pathname.includes('trade') ||
     location.pathname === '/' ||
     location.pathname.includes('perps')
   const accountId = useAccountId()
+
+  useEffect(() => {
+    if (chainId && chainConfig && chainId !== chainConfig.id) {
+      useStore.setState({ chainConfig: chains[chainId] })
+    }
+  }, [chainConfig, chainId])
 
   return (
     <>

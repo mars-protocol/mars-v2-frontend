@@ -13,4 +13,5 @@ export enum LocalStorageKeys {
   TRANSACTIONS = 'transactions',
   MIGRATION_BANNER = 'migrationBanner',
   HLS_INFORMATION = 'hlsInformation',
+  CURRENT_CHAIN_ID = 'currentChainId',
 }

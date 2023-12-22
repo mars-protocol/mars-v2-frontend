@@ -8,7 +8,7 @@ export const WALLETS: WalletInfos = {
       'https://chrome.google.com/webstore/detail/cosmostation-wallet/fpkhgmpbidmiogeglndfbkegfdlnajnf',
     imageURL: '/images/wallets/cosmostation.png',
 
-    supportedChains: [ChainInfoID.Osmosis1, ChainInfoID.OsmosisDevnet],
+    supportedChains: [ChainInfoID.Osmosis1, ChainInfoID.OsmosisDevnet, ChainInfoID.Pion1],
   },
   [WalletID.CosmostationMobile]: {
     name: 'Cosmostation Wallet',
@@ -37,7 +37,7 @@ export const WALLETS: WalletInfos = {
     installURL:
       'https://chrome.google.com/webstore/detail/leap-cosmos-wallet/fcfcfllfndlomdhbehjjcoimbgofdncg',
     imageURL: '/images/wallets/leap.png',
-    supportedChains: [ChainInfoID.Osmosis1, ChainInfoID.OsmosisDevnet],
+    supportedChains: [ChainInfoID.Osmosis1, ChainInfoID.OsmosisDevnet, ChainInfoID.Pion1],
   },
   [WalletID.LeapMobile]: {
     name: 'Leap Wallet',
@@ -51,7 +51,7 @@ export const WALLETS: WalletInfos = {
     install: 'Install MetaMask',
     installURL: 'https://metamask.io/download/',
     imageURL: '/images/wallets/leap-snap.png',
-    supportedChains: [ChainInfoID.Osmosis1, ChainInfoID.OsmosisDevnet],
+    supportedChains: [ChainInfoID.Osmosis1, ChainInfoID.OsmosisDevnet, ChainInfoID.Pion1],
   },
   [WalletID.Station]: {
     name: 'Station Wallet',
@@ -67,5 +67,12 @@ export const WALLETS: WalletInfos = {
     installURL: 'https://go.xdefi.io/mars',
     imageURL: '/images/wallets/xdefi.png',
     supportedChains: [ChainInfoID.Osmosis1],
+  },
+  [WalletID.Vectis]: {
+    name: 'Vectis Wallet',
+    install: 'Install Vectis Wallet',
+    installURL: 'https://chrome.google.com/webstore/detail/vectis/cgkaddoglojnmfiblgmlinfaijcdpfjm',
+    imageURL: '/images/wallets/vectis.png',
+    supportedChains: [ChainInfoID.Pion1],
   },
 }

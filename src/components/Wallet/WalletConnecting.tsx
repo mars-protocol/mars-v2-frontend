@@ -10,6 +10,8 @@ import { CircularProgress } from 'components/CircularProgress'
 import FullOverlayContent from 'components/FullOverlayContent'
 import WalletSelect from 'components/Wallet//WalletSelect'
 import WalletFetchBalancesAndAccounts from 'components/Wallet/WalletFetchBalancesAndAccounts'
+import chains from 'configs/chains'
+import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 
@@ -35,7 +37,7 @@ export default function WalletConnecting(props: Props) {
     () => [...mobileProviders, ...extensionProviders],
     [mobileProviders, extensionProviders],
   )
-  const chainConfig = useStore((s) => s.chainConfig)
+  const [chainId] = useCurrentChainId()
 
   const [isConnecting, setIsConnecting] = useToggle()
   const providerId = props.providerId ?? recentWallet?.providerId
@@ -55,7 +57,7 @@ export default function WalletConnecting(props: Props) {
         setIsConnecting(true)
         clearTimer()
         try {
-          const response = await connect({ extensionProviderId, chainId: chainConfig.id })
+          const response = await connect({ extensionProviderId, chainId: chainId })
           const cosmClient = await CosmWasmClient.connect(response.network.rpc)
           const walletClient: WalletClient = {
             broadcast,
@@ -91,7 +93,7 @@ export default function WalletConnecting(props: Props) {
                       message: mapErrorMessages(
                         extensionProviderId,
                         error.message,
-                        chainConfig.name,
+                        chains[chainId].name,
                       ),
                     }}
                   />
@@ -109,8 +111,8 @@ export default function WalletConnecting(props: Props) {
       setIsConnecting,
       clearTimer,
       connect,
-      chainConfig.id,
-      chainConfig.name,
+      chains,
+      chainId,
       broadcast,
       sign,
       simulate,
