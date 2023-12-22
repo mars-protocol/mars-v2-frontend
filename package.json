@@ -5,10 +5,8 @@
   "scripts": {
     "build": "yarn validate-env && next build",
     "dev": "next dev",
-    "test": "jest",
-    "test:cov": "jest --coverage",
     "lint": "eslint ./src/ && yarn prettier-check",
-    "format": "eslint ./src/ ./__tests__/ --fix && prettier --write ./src/ ./__tests__/",
+    "format": "eslint ./src/ --fix && prettier --write ./src/ ",
     "prettier-check": "prettier --ignore-path .gitignore --check ./src/",
     "start": "next start",
     "validate-env": "node ./validate-env",
@@ -17,8 +15,8 @@
   },
   "lint-staged": {
     "*.ts*": [
-      "eslint ./src/ ./__tests__/ --fix",
-      "prettier --write ./src/ ./__tests__/"
+      "eslint ./src/ --fix",
+      "prettier --write ./src/"
     ]
   },
   "dependencies": {
@@ -57,7 +55,6 @@
   },
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",
-    "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
     "@types/debounce-promise": "^3.1.9",
     "@types/lodash.debounce": "^4.0.9",
@@ -67,7 +64,6 @@
     "@types/react-dom": "18.2.15",
     "@types/react-helmet": "^6.1.11",
     "autoprefixer": "^10.4.16",
-    "babel-jest": "^29.7.0",
     "dotenv": "^16.3.1",
     "dotenv-cli": "^7.3.0",
     "eslint": "^8.54.0",
@@ -75,8 +71,6 @@
     "eslint-plugin-import": "^2.29.0",
     "husky": "^8.0.3",
     "identity-obj-proxy": "^3.0.0",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0",
     "lint-staged": "^15.2.0",
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.5.6",
