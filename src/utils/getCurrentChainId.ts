@@ -27,7 +27,7 @@ export const getCurrentChainId = () => {
 
   const localStorageChainId = localStorage.getItem(LocalStorageKeys.CURRENT_CHAIN_ID)
   if (localStorageChainId !== null) {
-    if (chains[chainId]) chainId = JSON.parse(localStorageChainId)
+    if (chains[chainId]) chainId = localStorageChainId as ChainInfoID
   }
 
   return chainId

@@ -18,6 +18,7 @@ import chains from 'configs/chains'
 import { ENV } from 'constants/env'
 import { WALLETS } from 'constants/wallets'
 import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
+import useChainConfig from 'hooks/useChainConfig'
 import useStore from 'store'
 import { WalletID } from 'types/enums/wallet'
 
@@ -26,7 +27,7 @@ type Props = {
 }
 
 export const WalletConnectProvider: FC<Props> = ({ children }) => {
-  const chainConfig = useStore((s) => s.chainConfig)
+  const chainConfig = useChainConfig()
   const [chainId] = useCurrentChainId()
 
   const getSupportedChainsInfos = useCallback(

@@ -16,12 +16,15 @@ export default function ChainSelect() {
   const [showMenu, setShowMenu] = useToggle()
   const chainConfig = useChainConfig()
   const { mutate } = useSWRConfig()
-  const [currentChainId, setCurrentChainId] = useCurrentChainId()
+  const [_, setCurrentChainId] = useCurrentChainId()
 
-  const selectChain = useCallback(async (chainConfig: ChainConfig) => {
-    useStore.setState({ chainConfig: chainConfig })
-    setCurrentChainId(chainConfig.id)
-  }, [])
+  const selectChain = useCallback(
+    async (chainConfig: ChainConfig) => {
+      useStore.setState({ chainConfig: chainConfig })
+      setCurrentChainId(chainConfig.id)
+    },
+    [setCurrentChainId],
+  )
 
   useEffect(() => {
     mutate((key) => true)

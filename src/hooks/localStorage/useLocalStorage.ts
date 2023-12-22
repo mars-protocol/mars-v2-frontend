@@ -15,17 +15,28 @@ export default function useLocalStorage<T>(key: string, defaultValue: T): [T, (v
   useEffect(() => {
     const savedItem = localStorage.getItem(keyRef.current)
 
+    const isString = typeof defaultValueRef.current === 'string'
     if (!savedItem) {
-      localStorage.setItem(keyRef.current, JSON.stringify(defaultValueRef.current))
+      localStorage.setItem(
+        keyRef.current,
+        isString ? (defaultValueRef.current as string) : JSON.stringify(defaultValueRef.current),
+      )
     }
 
-    updateValue(savedItem ? JSON.parse(savedItem) : defaultValueRef.current)
+    updateValue(
+      savedItem ? (isString ? savedItem : JSON.parse(savedItem)) : defaultValueRef.current,
+    )
 
     function handler(e: StorageEvent) {
       if (e.key !== keyRef.current) return
 
       const item = localStorage.getItem(keyRef.current)
-      updateValue(JSON.parse(item ?? JSON.stringify(defaultValueRef.current)))
+
+      if (isString) {
+        updateValue((item as T) ?? (defaultValueRef.current as T))
+      } else {
+        updateValue(JSON.parse(item ?? JSON.stringify(defaultValueRef.current)))
+      }
     }
 
     window.addEventListener('storage', handler)
@@ -40,7 +51,10 @@ export default function useLocalStorage<T>(key: string, defaultValue: T): [T, (v
       try {
         updateValue(value)
 
-        localStorage.setItem(keyRef.current, JSON.stringify(value))
+        localStorage.setItem(
+          keyRef.current,
+          typeof value === 'string' ? (value as string) : JSON.stringify(value),
+        )
         if (typeof window !== 'undefined') {
           window.dispatchEvent(new StorageEvent('storage', { key: keyRef.current }))
         }

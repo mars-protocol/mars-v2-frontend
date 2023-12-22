@@ -8,6 +8,7 @@ import WalletSelect from 'components/Wallet//WalletSelect'
 import WalletFetchBalancesAndAccounts from 'components/Wallet/WalletFetchBalancesAndAccounts'
 import chains from 'configs/chains'
 import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
+import useChainConfig from 'hooks/useChainConfig'
 import useCurrentWallet from 'hooks/useCurrentWallet'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
@@ -34,7 +35,7 @@ export default function WalletConnecting(props: Props) {
     [mobileProviders, extensionProviders],
   )
   const [chainId] = useCurrentChainId()
-  const chainConfig = useStore((s) => s.chainConfig)
+  const chainConfig = useChainConfig()
   const [isConnecting, setIsConnecting] = useToggle()
   const recentWallet = useCurrentWallet()
   const providerId = props.providerId ?? recentWallet?.providerId
@@ -96,7 +97,7 @@ export default function WalletConnecting(props: Props) {
       }
       if (!isConnecting) handleConnectAsync()
     },
-    [isConnecting, client, setIsConnecting, connect, chains, chainId, broadcast, sign, simulate],
+    [isConnecting, client, setIsConnecting, connect, chainId, broadcast, sign, simulate],
   )
 
   const handleMobileConnect = useCallback(
@@ -150,15 +151,16 @@ export default function WalletConnecting(props: Props) {
       if (!isConnecting) handleMobileConnectAsync()
     },
     [
-      mobileConnect,
-      client,
       isConnecting,
+      client,
       recentWallet,
+      setIsConnecting,
+      mobileConnect,
+      chainId,
+      chainConfig.endpoints.rpc,
+      broadcast,
       sign,
       simulate,
-      chainId,
-      broadcast,
-      chainConfig.endpoints.rpc,
     ],
   )
 
