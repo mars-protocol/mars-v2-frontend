@@ -163,8 +163,6 @@ export default function WalletConnecting(props: Props) {
   )
 
   useEffect(() => {
-    console.log('WalletConnecting', providerId, isConnecting, recentWallet, address)
-
     if (!providerId) {
       useStore.setState({
         client: undefined,
@@ -178,6 +176,7 @@ export default function WalletConnecting(props: Props) {
     if (
       !provider ||
       provider.initializing ||
+      !provider.initialized ||
       isConnecting ||
       (recentWallet && recentWallet.account.address === address)
     ) {
@@ -189,9 +188,6 @@ export default function WalletConnecting(props: Props) {
       handleMobileConnect(provider.id)
       return
     }
-
-    console.log(recentWallet)
-    console.log('handleConnect', provider.id, provider?.initializing, provider?.initialized)
     handleConnect(provider.id)
   }, [
     handleConnect,
