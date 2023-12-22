@@ -74,7 +74,12 @@ export default function DesktopHeader() {
         {focusComponent ? (
           <div className='flex justify-between w-full'>
             <div className='flex h-5 w-13' />
-            {address && <Wallet />}
+            {address && (
+              <div className='flex gap-4'>
+                <Wallet />
+                <ChainSelect />
+              </div>
+            )}
             <EscButton onClick={handleCloseFocusMode} />
           </div>
         ) : (
