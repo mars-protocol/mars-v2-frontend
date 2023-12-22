@@ -2,12 +2,10 @@ import classNames from 'classnames'
 import { useMemo } from 'react'
 
 import { FormattedNumber } from 'components/FormattedNumber'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getCoinValue } from 'utils/formatters'
@@ -25,10 +23,7 @@ interface Props {
 export default function DisplayCurrency(props: Props) {
   const displayCurrencies = useDisplayCurrencyAssets()
   const assets = useAllAssets()
-  const [displayCurrency] = useLocalStorage<string>(
-    LocalStorageKeys.DISPLAY_CURRENCY,
-    DEFAULT_SETTINGS.displayCurrency,
-  )
+  const [displayCurrency] = useDisplayCurrency()
   const { data: prices } = usePrices()
 
   const displayCurrencyAsset = useMemo(

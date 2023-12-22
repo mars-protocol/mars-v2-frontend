@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {

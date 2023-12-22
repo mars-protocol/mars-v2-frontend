@@ -8,11 +8,9 @@ import { ArrowRight, Plus } from 'components/Icons'
 import SwitchAutoLend from 'components/Switch/SwitchAutoLend'
 import Text from 'components/Text'
 import WalletBridges from 'components/Wallet/WalletBridges'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import useMarketAssets from 'hooks/useMarketAssets'
 import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
@@ -35,14 +33,11 @@ export default function AccountFundContent(props: Props) {
   const deposit = useStore((s) => s.deposit)
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
   const [isConfirming, setIsConfirming] = useState(false)
-  const [lendAssets] = useLocalStorage<boolean>(
-    LocalStorageKeys.LEND_ASSETS,
-    DEFAULT_SETTINGS.lendAssets,
-  )
+  const [enableAutoLendGlobal] = useEnableAutoLendGlobal()
   const [fundingAssets, setFundingAssets] = useState<BNCoin[]>([])
   const { data: marketAssets } = useMarketAssets()
   const { data: walletBalances } = useWalletBalances(props.address)
-  const [isLending, toggleIsLending] = useToggle(lendAssets)
+  const [isLending, toggleIsLending] = useToggle(enableAutoLendGlobal)
   const { simulateDeposits } = useUpdatedAccount(props.account)
   const baseAsset = useBaseAsset()
 

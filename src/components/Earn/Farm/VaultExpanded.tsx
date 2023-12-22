@@ -7,8 +7,8 @@ import { AccountArrowDown, LockLocked, LockUnlocked, Plus } from 'components/Ico
 import { Tooltip } from 'components/Tooltip'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useAccountId from 'hooks/useAccountId'
-import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 import { VaultStatus } from 'types/enums/vault'
 

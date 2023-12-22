@@ -6,7 +6,8 @@ import Text from 'components/Text'
 import AssetOverlay from 'components/Trade/TradeModule/AssetSelector/AssetOverlay'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useChainConfig from 'hooks/useChainConfig'
 import useStore from 'store'
 
 interface Props {
@@ -15,8 +16,9 @@ interface Props {
 }
 
 export default function AssetSelectorPair(props: Props) {
+  const chainConfig = useChainConfig()
   const [tradingPairSimple, setTradingPairSimple] = useLocalStorage<Settings['tradingPairSimple']>(
-    LocalStorageKeys.TRADING_PAIR_SIMPLE,
+    chainConfig.id + '/' + LocalStorageKeys.TRADING_PAIR_SIMPLE,
     DEFAULT_SETTINGS.tradingPairSimple,
   )
   const { buyAsset, sellAsset } = props

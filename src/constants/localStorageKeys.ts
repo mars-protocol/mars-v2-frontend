@@ -5,7 +5,7 @@ export enum LocalStorageKeys {
   DISPLAY_CURRENCY = 'displayCurrency',
   REDUCE_MOTION = 'reduceMotion',
   FAVORITE_ASSETS = 'favoriteAssets',
-  LEND_ASSETS = 'lendAssets',
+  ENABLE_AUTO_LEND_GLOBAL = 'enableAutoLendGlobal',
   AUTO_LEND_ENABLED_ACCOUNT_IDS = 'autoLendEnabledAccountIds',
   SLIPPAGE = 'slippage',
   TERMS_OF_SERVICE = 'termsOfService',

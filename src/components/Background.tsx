@@ -1,10 +1,10 @@
 import classNames from 'classnames'
-import { useLocation } from 'react-router-dom'
 import { useEffect, useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
 
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { getPage } from 'utils/route'
 

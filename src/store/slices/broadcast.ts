@@ -221,7 +221,7 @@ export default function createBroadcastSlice(
 
       if (
         !options.borrowToWallet &&
-        checkAutoLendEnabled(options.accountId) &&
+        checkAutoLendEnabled(options.accountId, get().chainConfig.id) &&
         get().chainConfig.assets.find(byDenom(options.coin.denom))?.isAutoLendEnabled
       ) {
         msg.update_credit_account.actions.push({
@@ -238,7 +238,7 @@ export default function createBroadcastSlice(
         response,
         options: {
           action: 'borrow',
-          lend: checkAutoLendEnabled(options.accountId),
+          lend: checkAutoLendEnabled(options.accountId, get().chainConfig.id),
           target: options.borrowToWallet ? 'wallet' : 'account',
           accountId: options.accountId,
           changes: { debts: [options.coin] },
@@ -491,7 +491,7 @@ export default function createBroadcastSlice(
         },
       }
 
-      if (checkAutoLendEnabled(options.accountId)) {
+      if (checkAutoLendEnabled(options.accountId, get().chainConfig.id)) {
         for (const vault of options.vaults) {
           for (const symbol of Object.values(vault.symbols)) {
             const asset = get().chainConfig.assets.find(bySymbol(symbol))
@@ -752,7 +752,7 @@ export default function createBroadcastSlice(
       }
 
       if (
-        checkAutoLendEnabled(options.accountId) &&
+        checkAutoLendEnabled(options.accountId, get().chainConfig.id) &&
         get().chainConfig.assets.find(byDenom(options.denomOut))?.isAutoLendEnabled &&
         !options.repay
       ) {

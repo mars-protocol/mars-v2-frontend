@@ -18,7 +18,7 @@ import { CircularProgress } from 'components/CircularProgress'
 import { ChevronDown } from 'components/Icons'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 
 const Button = React.forwardRef(function Button(
   {

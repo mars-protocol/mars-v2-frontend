@@ -2,10 +2,8 @@ import classNames from 'classnames'
 import { useCallback } from 'react'
 
 import SwitchWithLabel from 'components/Switch/SwitchWithLabel'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import useAutoLend from 'hooks/useAutoLend'
-import useLocalStorage from 'hooks/useLocalStorage'
 
 interface Props {
   accountId: string
@@ -16,10 +14,7 @@ export default function SwitchAutoLend(props: Props) {
   const { accountId, className } = props
   const { autoLendEnabledAccountIds, disableAutoLend, enableAutoLend } = useAutoLend()
   const isAutoLendEnabledForAccount = autoLendEnabledAccountIds.includes(accountId)
-  const [isAutoLendEnabled, setIsAutoLendEnabled] = useLocalStorage<boolean>(
-    LocalStorageKeys.LEND_ASSETS,
-    DEFAULT_SETTINGS.lendAssets,
-  )
+  const [isAutoLendEnabled, setIsAutoLendEnabled] = useEnableAutoLendGlobal()
 
   const handleToggle = useCallback(() => {
     if (!isAutoLendEnabledForAccount) {

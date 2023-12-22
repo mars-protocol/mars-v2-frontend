@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { CheckCircled } from 'components/Icons'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 
 interface Props {
   color?: string

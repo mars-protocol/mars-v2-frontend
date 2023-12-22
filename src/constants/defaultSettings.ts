@@ -9,7 +9,7 @@ const enabledMarketAssets = useStore
 export const DEFAULT_SETTINGS: Settings = {
   accountSummaryTabs: [true, true],
   reduceMotion: false,
-  lendAssets: true,
+  enableAutoLendGlobal: true,
   tradingPairSimple: {
     buy: enabledMarketAssets[0].denom,
     sell: enabledMarketAssets[1].denom,

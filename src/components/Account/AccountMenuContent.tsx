@@ -10,14 +10,12 @@ import { Account, Plus, PlusCircled } from 'components/Icons'
 import Overlay from 'components/Overlay'
 import Text from 'components/Text'
 import WalletBridges from 'components/Wallet/WalletBridges'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
+import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import useAccountId from 'hooks/useAccountId'
 import useAccountIds from 'hooks/useAccountIds'
 import useAutoLend from 'hooks/useAutoLend'
 import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
-import useLocalStorage from 'hooks/useLocalStorage'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { defaultFee } from 'utils/constants'
@@ -41,10 +39,7 @@ export default function AccountMenuContent() {
   const [showMenu, setShowMenu] = useToggle()
   const [isCreating, setIsCreating] = useToggle()
   const transactionFeeCoinBalance = useCurrentWalletBalance(baseAsset.denom)
-  const [lendAssets] = useLocalStorage<boolean>(
-    LocalStorageKeys.LEND_ASSETS,
-    DEFAULT_SETTINGS.lendAssets,
-  )
+  const [enableAutoLendGlobal] = useEnableAutoLendGlobal()
   const { enableAutoLendAccountId } = useAutoLend()
 
   const hasCreditAccounts = !!accountIds?.length
@@ -66,7 +61,7 @@ export default function AccountMenuContent() {
 
     if (accountId) {
       navigate(getRoute(getPage(pathname), searchParams, address, accountId))
-      if (lendAssets) enableAutoLendAccountId(accountId)
+      if (enableAutoLendGlobal) enableAutoLendAccountId(accountId)
       useStore.setState({
         focusComponent: {
           component: <AccountFund />,
@@ -84,7 +79,7 @@ export default function AccountMenuContent() {
     pathname,
     searchParams,
     address,
-    lendAssets,
+    enableAutoLendGlobal,
     enableAutoLendAccountId,
   ])
 

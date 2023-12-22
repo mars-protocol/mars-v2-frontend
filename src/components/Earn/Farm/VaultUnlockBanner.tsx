@@ -5,8 +5,8 @@ import { ChevronRight } from 'components/Icons'
 import NotificationBanner from 'components/NotificationBanner'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useAccountId from 'hooks/useAccountId'
-import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 
 interface Props {

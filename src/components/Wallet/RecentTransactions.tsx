@@ -6,18 +6,12 @@ import Divider from 'components/Divider'
 import Text from 'components/Text'
 import { TextLink } from 'components/TextLink'
 import { generateToastContent } from 'components/Toaster'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useTransactions from 'hooks/localStorage/useTransactions'
 import useStore from 'store'
 
 export default function RecentTransactions() {
   const address = useStore((s) => s.address)
-  const [transactions, setTransactions] = useLocalStorage<ToastStore>(
-    LocalStorageKeys.TRANSACTIONS,
-    {
-      recent: [],
-    },
-  )
+  const [transactions, setTransactions] = useTransactions()
   const chainConfig = useStore((s) => s.chainConfig)
   const recentTransactions = transactions.recent
     .filter((tx) => tx.address === address)

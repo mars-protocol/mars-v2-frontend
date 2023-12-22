@@ -15,9 +15,11 @@ import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
+import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
+import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useAlertDialog from 'hooks/useAlertDialog'
 import useAutoLend from 'hooks/useAutoLend'
-import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
 
@@ -31,10 +33,8 @@ export default function SettingsModal() {
   const [customSlippage, setCustomSlippage] = useState<number>(0)
   const [inputRef, setInputRef] = useState<React.RefObject<HTMLInputElement>>()
   const [isCustom, setIsCustom] = useState(false)
-  const [displayCurrency, setDisplayCurrency] = useLocalStorage<string>(
-    LocalStorageKeys.DISPLAY_CURRENCY,
-    DEFAULT_SETTINGS.displayCurrency,
-  )
+
+  const [displayCurrency, setDisplayCurrency] = useDisplayCurrency()
   const [reduceMotion, setReduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
@@ -43,10 +43,7 @@ export default function SettingsModal() {
     LocalStorageKeys.TUTORIAL,
     DEFAULT_SETTINGS.tutorial,
   )
-  const [lendAssets, setLendAssets] = useLocalStorage<boolean>(
-    LocalStorageKeys.LEND_ASSETS,
-    DEFAULT_SETTINGS.lendAssets,
-  )
+  const [enableAutoLendGlobal, setLendAssets] = useEnableAutoLendGlobal()
   const [slippage, setSlippage] = useLocalStorage<number>(
     LocalStorageKeys.SLIPPAGE,
     DEFAULT_SETTINGS.slippage,
@@ -148,7 +145,7 @@ export default function SettingsModal() {
     handleDisplayCurrency(DEFAULT_SETTINGS.displayCurrency)
     handleSlippage(DEFAULT_SETTINGS.slippage)
     handleReduceMotion(DEFAULT_SETTINGS.reduceMotion)
-    handleLendAssets(DEFAULT_SETTINGS.lendAssets)
+    handleLendAssets(DEFAULT_SETTINGS.enableAutoLendGlobal)
   }, [handleDisplayCurrency, handleReduceMotion, handleLendAssets, handleSlippage])
 
   const showResetModal = useCallback(() => {
@@ -193,8 +190,8 @@ export default function SettingsModal() {
     >
       <SettingsSwitch
         onChange={handleLendAssets}
-        name='lendAssets'
-        value={lendAssets}
+        name='enableAutoLendGlobal'
+        value={enableAutoLendGlobal}
         label='Lend assets in Credit Accounts'
         description='By turning this on you will automatically lend out all the assets you deposit into your Credit Accounts to earn yield.'
         withStatus
