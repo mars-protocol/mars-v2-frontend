@@ -6,6 +6,7 @@ import Card from 'components/Card'
 import { CircularProgress } from 'components/CircularProgress'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
+import PoweredByPyth from 'components/Trade/TradeChart/PoweredByPyth'
 
 const TVChartContainer = dynamic(
   () => import('components/Trade/TradeChart/TVChartContainer').then((mod) => mod.TVChartContainer),
@@ -47,9 +48,10 @@ export default function TradeChart(props: Props) {
           contentClassName='px-0.5 pb-0.5 h-full'
           className='h-[70dvh] max-h-[980px] min-h-[560px]'
         >
-          <div className='flex items-center justify-center w-full h-full rounded-b-base bg-chart'>
+          <div className='flex items-center justify-center w-full h-[calc(100%-32px)] rounded-b-base bg-chart'>
             <CircularProgress size={60} className='opacity-50' />
           </div>
+          <PoweredByPyth />
         </Card>
       )}
     </>

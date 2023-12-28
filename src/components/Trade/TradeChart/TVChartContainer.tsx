@@ -5,8 +5,9 @@ import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
-import { disabledFeatures, enabledFeatures, overrides } from 'components/Trade/TradeChart/constants'
 import { DataFeed, PAIR_SEPARATOR } from 'components/Trade/TradeChart/DataFeed'
+import PoweredByPyth from 'components/Trade/TradeChart/PoweredByPyth'
+import { disabledFeatures, enabledFeatures, overrides } from 'components/Trade/TradeChart/constants'
 import { BN_ZERO } from 'constants/math'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
@@ -155,10 +156,11 @@ export const TVChartContainer = (props: Props) => {
           )}
         </div>
       }
-      contentClassName='px-0.5 pb-0.5 h-full'
+      contentClassName='px-0.5 pb-0.5 h-full bg-chart'
       className='h-[70dvh] max-h-[980px] min-h-[560px]'
     >
-      <div ref={chartContainerRef} className='h-full overflow-hidden rounded-b-base' />
+      <div ref={chartContainerRef} className='h-[calc(100%-32px)] overflow-hidden' />
+      <PoweredByPyth />
     </Card>
   )
 }
