@@ -5,7 +5,7 @@ import useChainConfig from 'hooks/useChainConfig'
 
 export default function useAssetParams() {
   const chainConfig = useChainConfig()
-  return useSWR('assetParams', () => getAssetParams(chainConfig), {
+  return useSWR(`chains/${chainConfig.id}/assets/params`, () => getAssetParams(chainConfig), {
     fallbackData: [],
     revalidateOnFocus: false,
   })

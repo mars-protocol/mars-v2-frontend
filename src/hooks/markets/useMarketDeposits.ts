@@ -5,7 +5,7 @@ import useChainConfig from 'hooks/useChainConfig'
 
 export default function useMarketDeposits() {
   const chainConfig = useChainConfig()
-  return useSWR(`marketDeposits`, () => getMarketDeposits(chainConfig), {
+  return useSWR(`chains/${chainConfig.id}/markets/deposits`, () => getMarketDeposits(chainConfig), {
     suspense: true,
     fallbackData: [],
     revalidateOnFocus: false,

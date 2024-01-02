@@ -5,9 +5,10 @@ import useChainConfig from 'hooks/useChainConfig'
 
 export default function useMarketAssets() {
   const chainConfig = useChainConfig()
-  return useSWR(`marketAssets`, () => getMarkets(chainConfig), {
+  return useSWR(`chains/${chainConfig.id}/markets`, () => getMarkets(chainConfig), {
     suspense: true,
     fallbackData: [],
     revalidateOnFocus: false,
+    keepPreviousData: false,
   })
 }

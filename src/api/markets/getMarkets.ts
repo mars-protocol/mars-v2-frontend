@@ -22,7 +22,7 @@ export default async function getMarkets(chainConfig: ChainConfig): Promise<Mark
         cacheFn(
           () => paramsClient.totalDeposit({ denom: asset.denom }),
           totalDepositCache,
-          `enabledMarkets/${asset.denom}`,
+          `chains/${chainConfig.id}/enabledMarkets/${asset.denom}`,
           60,
         ),
       )
@@ -30,11 +30,16 @@ export default async function getMarkets(chainConfig: ChainConfig): Promise<Mark
     const caps = await Promise.all(capQueries)
 
     const [markets, assetParams, assetCaps] = await Promise.all([
-      cacheFn(() => iterateContractQuery(redBankClient.markets), marketsCache, 'markets', 60),
+      cacheFn(
+        () => iterateContractQuery(redBankClient.markets),
+        marketsCache,
+        `chains/${chainConfig.id}/markets`,
+        60,
+      ),
       cacheFn(
         async () => await iterateContractQuery(paramsClient.allAssetParams),
         allParamsCache,
-        'params',
+        `chains/${chainConfig.id}/params`,
         60,
       ),
       Promise.all(capQueries),

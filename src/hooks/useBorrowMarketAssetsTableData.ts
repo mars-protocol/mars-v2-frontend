@@ -1,11 +1,11 @@
 import useSWR from 'swr'
 
 import useAllAssets from 'hooks/assets/useAllAssets'
+import useMarketBorrowings from 'hooks/markets/useMarketBorrowings'
+import useMarketDeposits from 'hooks/markets/useMarketDeposits'
+import useMarketLiquidities from 'hooks/markets/useMarketLiquidities'
 import useBorrowEnabledMarkets from 'hooks/useBorrowEnabledMarkets'
 import useCurrentAccountDebts from 'hooks/useCurrentAccountDebts'
-import useMarketBorrowings from 'hooks/useMarketBorrowings'
-import useMarketDeposits from 'hooks/useMarketDeposits'
-import useMarketLiquidities from 'hooks/useMarketLiquidities'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 

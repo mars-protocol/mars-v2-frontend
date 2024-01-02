@@ -6,7 +6,7 @@ import useChainConfig from 'hooks/useChainConfig'
 export default function useAssetIncentivesApy(denom: string) {
   const chainConfig = useChainConfig()
   return useSWR(
-    `assetIncentiveApy-${denom}`,
+    `chains/${chainConfig.id}/assets/${denom}/incentives`,
     () => calculateAssetIncentivesApy(chainConfig, denom),
     {
       revalidateOnFocus: false,

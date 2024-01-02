@@ -12,7 +12,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { SortAsc, SortDesc, SortNone } from 'components/Icons'
 import useAssetTableColumns from 'components/Modals/AssetsSelect/useAssetTableColumns'
 import Text from 'components/Text'
-import useMarketAssets from 'hooks/useMarketAssets'
+import useMarketAssets from 'hooks/markets/useMarketAssets'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 

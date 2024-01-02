@@ -140,9 +140,9 @@ const Osmosis1: ChainConfig = {
     graphCandles: 'https://osmosis-candles.marsprotocol.io',
     explorer: 'https://www.mintscan.io/osmosis/transactions/',
     pools:
-      ENV.OSMOSIS1_REST ||
-      'https://osmosis-node.marsprotocol.io/GGSFGSFGFG34/osmosis-lcd-front/' +
-        'osmosis/gamm/v1beta1/pools/POOL_ID',
+      (ENV.OSMOSIS1_REST ||
+        'https://osmosis-node.marsprotocol.io/GGSFGSFGFG34/osmosis-lcd-front/') +
+      'osmosis/gamm/v1beta1/pools/POOL_ID',
     aprs: {
       vaults: 'https://api.marsprotocol.io/v1/vaults/osmosis',
       stride: 'https://edge.stride.zone/api/stake-stats',

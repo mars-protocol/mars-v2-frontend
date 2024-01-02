@@ -6,7 +6,7 @@ import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import useAssetParams from 'hooks/useAssetParams'
+import useAssetParams from 'hooks/params/useAssetParams'
 import usePrices from 'hooks/usePrices'
 import useVaultConfigs from 'hooks/useVaultConfigs'
 import {

@@ -10,7 +10,7 @@ export default function useUserUnclaimedRewards() {
   const chainConfig = useChainConfig()
 
   return useSWR(
-    `userUnclaimedRewards-${accountId}`,
+    `chains/${chainConfig.id}/accounts/${accountId}/unclaimed-rewards`,
     () => getUnclaimedRewards(chainConfig, accountId ?? ''),
     {
       fallbackData: [] as BNCoin[],

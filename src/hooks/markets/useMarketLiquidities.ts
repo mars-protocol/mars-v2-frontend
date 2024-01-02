@@ -5,9 +5,13 @@ import useChainConfig from 'hooks/useChainConfig'
 
 export default function useMarketLiquidities() {
   const chainConfig = useChainConfig()
-  return useSWR(`marketLiquidities`, () => getMarketLiquidities(chainConfig), {
-    suspense: true,
-    fallbackData: [],
-    revalidateOnFocus: false,
-  })
+  return useSWR(
+    `chains/${chainConfig.id}/markets/liquidities`,
+    () => getMarketLiquidities(chainConfig),
+    {
+      suspense: true,
+      fallbackData: [],
+      revalidateOnFocus: false,
+    },
+  )
 }

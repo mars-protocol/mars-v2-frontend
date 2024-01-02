@@ -1,14 +1,17 @@
+import { useShuttle } from '@delphi-labs/shuttle-react'
 import classNames from 'classnames'
-import { useCallback, useEffect } from 'react'
+import { useCallback } from 'react'
 import { useSWRConfig } from 'swr'
 
 import Button from 'components/Button'
 import ChainLogo from 'components/Chain/ChainLogo'
 import Overlay from 'components/Overlay'
 import Text from 'components/Text'
+import WalletSelect from 'components/Wallet/WalletSelect'
 import chains from 'configs/chains'
 import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useChainConfig from 'hooks/useChainConfig'
+import useCurrentWallet from 'hooks/useCurrentWallet'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 
@@ -16,19 +19,21 @@ export default function ChainSelect() {
   const [showMenu, setShowMenu] = useToggle()
   const chainConfig = useChainConfig()
   const { mutate } = useSWRConfig()
+  const { disconnectWallet } = useShuttle()
+  const currentWallet = useCurrentWallet()
+
   const [_, setCurrentChainId] = useCurrentChainId()
 
   const selectChain = useCallback(
     async (chainConfig: ChainConfig) => {
       useStore.setState({ chainConfig: chainConfig })
       setCurrentChainId(chainConfig.id)
+      mutate((key) => true)
+      if (currentWallet) disconnectWallet(currentWallet)
+      useStore.setState({ focusComponent: { component: <WalletSelect /> } })
     },
-    [setCurrentChainId],
+    [currentWallet, disconnectWallet, mutate, setCurrentChainId],
   )
-
-  useEffect(() => {
-    mutate((key) => true)
-  }, [chainConfig, mutate])
 
   return (
     <div className='relative'>

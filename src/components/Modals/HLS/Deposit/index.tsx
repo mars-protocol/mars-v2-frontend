@@ -5,7 +5,7 @@ import useStakingController from 'components/Modals/HLS/Deposit//useStakingContr
 import useVaultController from 'components/Modals/HLS/Deposit//useVaultController'
 import useAccordionItems from 'components/Modals/HLS/Deposit/useAccordionItems'
 import { EMPTY_ACCOUNT_HLS } from 'constants/accounts'
-import useAccounts from 'hooks/useAccounts'
+import useAccounts from 'hooks/accounts/useAccounts'
 import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
 import useIsOpenArray from 'hooks/useIsOpenArray'
 import useVault from 'hooks/useVault'

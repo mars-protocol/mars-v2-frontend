@@ -5,9 +5,13 @@ import useChainConfig from 'hooks/useChainConfig'
 
 export default function useMarketBorrowings() {
   const chainConfig = useChainConfig()
-  return useSWR(`marketBorrowings`, () => getMarketBorrowings(chainConfig), {
-    fallbackData: [],
-    suspense: false,
-    revalidateOnFocus: false,
-  })
+  return useSWR(
+    `chains/${chainConfig.id}/markets/borrowings`,
+    () => getMarketBorrowings(chainConfig),
+    {
+      fallbackData: [],
+      suspense: false,
+      revalidateOnFocus: false,
+    },
+  )
 }

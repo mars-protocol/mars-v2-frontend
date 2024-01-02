@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react'
 import AssetSelectTable from 'components/Modals/AssetsSelect/AssetSelectTable'
 import SearchBar from 'components/SearchBar'
 import Text from 'components/Text'
-import useMarketBorrowings from 'hooks/useMarketBorrowings'
+import useMarketBorrowings from 'hooks/markets/useMarketBorrowings'
 import useStore from 'store'
 
 interface Props {

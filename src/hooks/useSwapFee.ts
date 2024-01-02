@@ -8,8 +8,10 @@ const STANDARD_SWAP_FEE = 0.002
 
 export default function useSwapFee(poolIds: string[]) {
   const chainConfig = useChainConfig()
-  const { data: pools } = useSWR(`swapFees/${poolIds.join(',')}`, () =>
-    getSwapFees(chainConfig, poolIds),
+  const { data: pools } = useSWR(
+    `chains/${chainConfig.id}/swapFees/${poolIds.join(',')}`,
+    () => getSwapFees(chainConfig, poolIds),
+    {},
   )
 
   if (!pools?.length) return STANDARD_SWAP_FEE

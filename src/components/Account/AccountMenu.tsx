@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 
 import AccountMenuContent from 'components/Account/AccountMenuContent'
 import Loading from 'components/Loading'
-import useAccountIds from 'hooks/useAccountIds'
+import useAccountIds from 'hooks/accounts/useAccountIds'
 import useStore from 'store'
 
 function Content() {

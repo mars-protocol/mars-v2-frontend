@@ -6,7 +6,7 @@ import useChainConfig from 'hooks/useChainConfig'
 export default function useAccountIdsAndKinds(address?: string, suspense = true, noHls = false) {
   const chainConfig = useChainConfig()
   return useSWR(
-    `wallets/${address}/account-ids${noHls && '-without-hls'}`,
+    `chains/${chainConfig.id}/wallets/${address}/account-ids${noHls && '-without-hls'}`,
     () =>
       getAccountIds(chainConfig, address).then((accountIdsAndKinds) => {
         if (noHls) {

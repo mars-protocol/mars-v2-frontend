@@ -6,7 +6,7 @@ import useChainConfig from 'hooks/useChainConfig'
 export default function useDepositedVaults(accountId: string) {
   const chainConfig = useChainConfig()
   return useSWR(
-    `depositedVaultsByAccount-${accountId}`,
+    `chains/${chainConfig.id}/vaults/${accountId}/deposited`,
     () => getDepositedVaults(accountId, chainConfig),
     {
       suspense: true,

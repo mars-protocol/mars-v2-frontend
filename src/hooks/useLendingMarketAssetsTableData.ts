@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
 
 import useAllAssets from 'hooks/assets/useAllAssets'
+import useMarketDeposits from 'hooks/markets/useMarketDeposits'
+import useMarketLiquidities from 'hooks/markets/useMarketLiquidities'
 import useCurrentAccountLends from 'hooks/useCurrentAccountLends'
 import useDepositEnabledMarkets from 'hooks/useDepositEnabledMarkets'
 import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
-import useMarketDeposits from 'hooks/useMarketDeposits'
-import useMarketLiquidities from 'hooks/useMarketLiquidities'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 

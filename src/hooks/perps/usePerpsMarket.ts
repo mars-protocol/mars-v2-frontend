@@ -3,9 +3,11 @@ import useSWR from 'swr'
 
 import useAsset from 'hooks/assets/useAsset'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
+import useChainConfig from 'hooks/useChainConfig'
 import { BN } from 'utils/helpers'
 
 export default function usePerpsMarket() {
+  const chainConfig = useChainConfig()
   const [searchParams] = useSearchParams()
   const baseAsset = useBaseAsset()
   const perpsMarket = searchParams.get('perpsMarket') || baseAsset.symbol
@@ -13,7 +15,7 @@ export default function usePerpsMarket() {
   const asset = useAsset(perpsMarket)
 
   return useSWR(
-    `perpsMarket/${perpsMarket}`,
+    `chains/${chainConfig.id}/perpsMarket/${perpsMarket}`,
     async () => {
       await delay(3000)
       if (!asset) return null

@@ -5,7 +5,7 @@ import useChainConfig from 'hooks/useChainConfig'
 
 export default function useVaultConfigs() {
   const chainConfig = useChainConfig()
-  return useSWR('vaultConfigs', () => getVaultConfigs(chainConfig), {
+  return useSWR(`chains/${chainConfig.id}/vaultConfigs`, () => getVaultConfigs(chainConfig), {
     fallbackData: [],
     revalidateOnFocus: false,
   })
