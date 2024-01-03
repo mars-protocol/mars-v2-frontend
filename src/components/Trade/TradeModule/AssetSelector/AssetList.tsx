@@ -15,7 +15,7 @@ import { byDenom } from 'utils/array'
 import { sortAssetsOrPairs } from 'utils/assets'
 
 interface Props {
-  type: 'buy' | 'sell'
+  type: 'buy' | 'sell' | 'perps'
   assets: Asset[]
   isOpen: boolean
   toggleOpen: () => void
@@ -42,13 +42,15 @@ export default function AssetList(props: Props) {
 
   return (
     <section>
-      <button
-        className='flex items-center justify-between w-full p-4 bg-black/20'
-        onClick={toggleOpen}
-      >
-        <Text>{type === 'buy' ? 'Buy asset' : 'Sell asset'}</Text>
-        <ChevronDown className={classNames(isOpen && '-rotate-180', 'w-4')} />
-      </button>
+      {type !== 'perps' && (
+        <button
+          className='flex items-center justify-between w-full p-4 bg-black/20'
+          onClick={toggleOpen}
+        >
+          <Text>{type === 'buy' ? 'Buy asset' : 'Sell asset'}</Text>
+          <ChevronDown className={classNames(isOpen && '-rotate-180', 'w-4')} />
+        </button>
+      )}
       {isOpen &&
         (sortedAssets.length === 0 ? (
           <Text size='xs' className='p-4'>

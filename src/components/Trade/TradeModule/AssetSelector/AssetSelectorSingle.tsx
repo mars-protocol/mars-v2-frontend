@@ -6,6 +6,7 @@ import AssetButton from 'components/Trade/TradeModule/AssetSelector/AssetButton'
 import AssetOverlay from 'components/Trade/TradeModule/AssetSelector/AssetOverlay'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 
@@ -20,6 +21,7 @@ export default function AssetSelectorSingle(props: Props) {
   >(LocalStorageKeys.TRADING_PAIR_ADVANCED, DEFAULT_SETTINGS.tradingPairAdvanced)
   const { buyAsset, sellAsset } = props
   const assetOverlayState = useStore((s) => s.assetOverlayState)
+  const allAssets = useMarketEnabledAssets()
 
   const handleSwapAssets = useCallback(() => {
     settradingPairAdvanced({ buy: sellAsset.denom, sell: buyAsset.denom })
@@ -69,6 +71,8 @@ export default function AssetSelectorSingle(props: Props) {
         sellAsset={sellAsset}
         onChangeBuyAsset={handleChangeBuyAsset}
         onChangeSellAsset={handleChangeSellAsset}
+        buyAssets={allAssets}
+        type='single'
       />
     </div>
   )

@@ -9,7 +9,7 @@ interface ChainConfig {
     params: string
     creditManager: string
     accountNft: string
-    perps?: string
+    perps: string
     pyth: string
   }
   defaultCurrency: {
@@ -47,4 +47,15 @@ interface ChainConfig {
   hls: boolean
   perps: boolean
   farm: boolean
+}
+
+interface ContractClients {
+  accountNft: import('types/generated/mars-account-nft/MarsAccountNft.client').MarsAccountNftQueryClient
+  creditManager: import('types/generated/mars-credit-manager/MarsCreditManager.client').MarsCreditManagerQueryClient
+  incentives: import('types/generated/mars-incentives/MarsIncentives.client').MarsIncentivesQueryClient
+  oracle: import('types/generated/mars-oracle-osmosis/MarsOracleOsmosis.client').MarsOracleOsmosisQueryClient
+  params: import('types/generated/mars-params/MarsParams.client').MarsParamsQueryClient
+  perps: import('types/generated/mars-perps/MarsPerps.client').MarsPerpsQueryClient
+  redBank: import('types/generated/mars-red-bank/MarsRedBank.client').MarsRedBankQueryClient
+  swapper: import('types/generated/mars-swapper-osmosis/MarsSwapperOsmosis.client').MarsSwapperOsmosisQueryClient
 }

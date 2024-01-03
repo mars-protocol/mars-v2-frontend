@@ -19,4 +19,5 @@ export const DEFAULT_SETTINGS: Settings = {
   slippage: 0.02,
   tutorial: true,
   migrationBanner: true,
+  perpsAsset: '',
 }

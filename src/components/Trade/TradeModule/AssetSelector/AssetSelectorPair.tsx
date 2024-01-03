@@ -13,17 +13,17 @@ import useStore from 'store'
 interface Props {
   buyAsset: Asset
   sellAsset: Asset
+  assets: Asset[]
 }
 
 export default function AssetSelectorPair(props: Props) {
   const chainConfig = useChainConfig()
-  const [tradingPairSimple, setTradingPairSimple] = useLocalStorage<Settings['tradingPairSimple']>(
+  const [_, setTradingPairSimple] = useLocalStorage<Settings['tradingPairSimple']>(
     chainConfig.id + '/' + LocalStorageKeys.TRADING_PAIR_SIMPLE,
     DEFAULT_SETTINGS.tradingPairSimple,
   )
   const { buyAsset, sellAsset } = props
   const assetOverlayState = useStore((s) => s.assetOverlayState)
-
   const onChangeTradingPair = useCallback(
     (tradingPair: TradingPair) => {
       setTradingPairSimple(tradingPair)
@@ -57,6 +57,8 @@ export default function AssetSelectorPair(props: Props) {
         buyAsset={buyAsset}
         sellAsset={sellAsset}
         onChangeTradingPair={onChangeTradingPair}
+        buyAssets={props.assets}
+        type='pair'
       />
     </>
   )
