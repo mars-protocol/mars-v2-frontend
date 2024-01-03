@@ -16,6 +16,9 @@ export class BNCoin {
   static fromDenomAndBigNumber(denom: string, amount: BigNumber) {
     return new BNCoin({ denom, amount: amount.toString() })
   }
+  static fromCoin(coin: Coin) {
+    return new BNCoin({ denom: coin.denom, amount: coin.amount.toString() })
+  }
 
   toCoin(): Coin {
     return {

@@ -18,6 +18,7 @@ interface ToastObjectOptions extends HandleResponseProps {
 interface ToastObject {
   response: Promise<BroadcastResult>
   options: ToastObjectOptions
+
   swapOptions?: {
     coinIn: BNCoin
     denomOut: string
@@ -74,9 +75,17 @@ interface HandleResponseProps {
     | 'hls-staking'
   lend?: boolean
   accountId?: string
-  changes?: { debts?: BNCoin[]; deposits?: BNCoin[]; lends?: BNCoin[] }
+  changes?: {
+    debts?: BNCoin[]
+    deposits?: BNCoin[]
+    lends?: BNCoin[]
+    reclaims?: BNCoin[]
+    repays?: BNCoin[]
+    swap?: { from: Coin; to: Coin }
+  }
   target?: 'wallet' | 'account'
   message?: string
+  repay?: boolean
 }
 
 interface BroadcastSlice {
