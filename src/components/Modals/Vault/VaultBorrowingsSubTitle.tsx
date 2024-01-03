@@ -4,10 +4,11 @@ import { useMemo } from 'react'
 import DisplayCurrency from 'components/DisplayCurrency'
 import Text from 'components/Text'
 import { BN_ZERO } from 'constants/math'
+import { ORACLE_DENOM } from 'constants/oracle'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatAmountWithSymbol, getCoinValue } from 'utils/formatters'
-import { ORACLE_DENOM } from 'constants/oracle'
 
 interface Props {
   borrowings: BNCoin[]
@@ -16,16 +17,16 @@ interface Props {
 
 export default function VaultBorrowingsSubTitle(props: Props) {
   const { data: prices } = usePrices()
-
+  const assets = useAllAssets()
   const borrowingValue = useMemo(() => {
     let borrowingValue = BN_ZERO
     props.borrowings.map((coin) => {
       const price = prices.find((p) => p.denom === coin.denom)?.amount
       if (!price || coin.amount.isZero()) return
-      borrowingValue = getCoinValue(coin, prices)
+      borrowingValue = getCoinValue(coin, prices, assets)
     })
     return borrowingValue
-  }, [props.borrowings, prices])
+  }, [props.borrowings, prices, assets])
 
   const borrowingTexts = useMemo(
     () =>
@@ -38,10 +39,10 @@ export default function VaultBorrowingsSubTitle(props: Props) {
             index !== 0 && 'ml-1 before:pr-1 before:content-["+"]',
           )}
         >
-          {formatAmountWithSymbol(borrowing.toCoin())}
+          {formatAmountWithSymbol(borrowing.toCoin(), assets)}
         </Text>
       )),
-    [props.borrowings],
+    [assets, props.borrowings],
   )
 
   return (

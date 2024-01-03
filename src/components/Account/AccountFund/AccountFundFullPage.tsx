@@ -4,8 +4,8 @@ import AccountFundContent from 'components/Account/AccountFund/AccountFundConten
 import Card from 'components/Card'
 import { CircularProgress } from 'components/CircularProgress'
 import FullOverlayContent from 'components/FullOverlayContent'
+import useAccounts from 'hooks/accounts/useAccounts'
 import useAccountId from 'hooks/useAccountId'
-import useAccounts from 'hooks/useAccounts'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
 

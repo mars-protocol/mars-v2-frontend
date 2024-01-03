@@ -4,7 +4,7 @@ import Text from 'components/Text'
 import { TextLink } from 'components/TextLink'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { DocURL } from 'types/enums/docURL'
 

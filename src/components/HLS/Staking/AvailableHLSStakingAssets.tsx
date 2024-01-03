@@ -4,12 +4,10 @@ import { NAME_META } from 'components/HLS/Farm/Table/Columns/Name'
 import useAvailableColumns from 'components/HLS/Staking/Table/Columns/useAvailableColumns'
 import Table from 'components/Table'
 import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
-import { getEnabledMarketAssets } from 'utils/assets'
 
 const title = 'Available Strategies'
 
 function Content() {
-  const assets = getEnabledMarketAssets()
   const { data: hlsStrategies } = useHLSStakingAssets()
   const columns = useAvailableColumns({ isLoading: false })
 

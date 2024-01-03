@@ -4,7 +4,6 @@ import { VaultValue } from 'hooks/useUpdatedAccount'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
-import { getVaultMetaData } from 'utils/vaults'
 
 export function addCoins(additionalCoins: BNCoin[], currentCoins: BNCoin[]) {
   const currentDenoms = currentCoins.map((coin) => coin.denom)
@@ -52,14 +51,14 @@ export function addValueToVaults(
       vaults[index].values.primary = BN(vaults[index].values.primary).plus(halfValue)
       vaults[index].values.secondary = BN(vaults[index].values.secondary).plus(halfValue)
     } else {
-      const vaultMetaData = getVaultMetaData(vaultValue.address)
+      const vault = vaults.find((vault) => vault.address)
 
-      if (!vaultMetaData) return
+      if (!vault) return
       const apy = availableVaults.find((vault) => vault.address === vaultValue.address)?.apy ?? null
       const apr = availableVaults.find((vault) => vault.address === vaultValue.address)?.apr ?? null
 
       vaults.push({
-        ...vaultMetaData,
+        ...vault,
         ...MOCK_DEPOSITED_VAULT_POSITION,
         apy,
         apr,

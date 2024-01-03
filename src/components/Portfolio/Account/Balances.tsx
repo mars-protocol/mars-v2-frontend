@@ -4,7 +4,7 @@ import AccountBalancesTable from 'components/Account/AccountBalancesTable'
 import Card from 'components/Card'
 import TableSkeleton from 'components/TableSkeleton'
 import Text from 'components/Text'
-import useAccount from 'hooks/useAccount'
+import useAccount from 'hooks/accounts/useAccount'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 

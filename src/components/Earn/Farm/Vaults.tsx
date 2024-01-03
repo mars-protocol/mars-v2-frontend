@@ -3,13 +3,11 @@ import { Suspense, useMemo } from 'react'
 import AvailableVaultsTable from 'components/Earn/Farm/Table/AvailableVaultsTable'
 import DepositedVaultsTable from 'components/Earn/Farm/Table/DepositedVaultsTable'
 import VaultUnlockBanner from 'components/Earn/Farm/VaultUnlockBanner'
-import { ENV } from 'constants/env'
 import { BN_ZERO } from 'constants/math'
-import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
 import useAccountId from 'hooks/useAccountId'
 import useDepositedVaults from 'hooks/useDepositedVaults'
 import useVaults from 'hooks/useVaults'
-import { NETWORK } from 'types/enums/network'
+import useStore from 'store'
 import { VaultStatus } from 'types/enums/vault'
 
 function Content() {
@@ -17,11 +15,10 @@ function Content() {
   const { data: vaults } = useVaults()
   const { data: depositedVaults } = useDepositedVaults(accountId || '')
 
-  const vaultsMetaData =
-    ENV.NETWORK === NETWORK.TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
+  const vaultMetaData = useStore((s) => s.chainConfig.vaults)
 
   const { deposited, available } = useMemo(() => {
-    return vaultsMetaData.reduce(
+    return vaultMetaData.reduce(
       (prev: { deposited: DepositedVault[]; available: Vault[] }, curr) => {
         if (!vaults) return prev
         const vault = vaults.find((vault) => vault.address === curr.address)
@@ -37,7 +34,7 @@ function Content() {
       },
       { deposited: [], available: [] },
     )
-  }, [vaults, depositedVaults, vaultsMetaData])
+  }, [vaults, depositedVaults, vaultMetaData])
 
   const unlockedVaults: DepositedVault[] = []
 
@@ -63,7 +60,7 @@ function Content() {
 }
 
 function Fallback() {
-  const vaults = ENV.NETWORK === NETWORK.TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
+  const vaults = useStore((s) => s.chainConfig.vaults)
   const mockVaults: Vault[] = vaults.map((vault) => ({
     ...vault,
     apy: null,

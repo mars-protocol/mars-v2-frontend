@@ -5,12 +5,12 @@ import AccountCreateFirst from 'components/Account/AccountCreateFirst'
 import { CircularProgress } from 'components/CircularProgress'
 import FullOverlayContent from 'components/FullOverlayContent'
 import WalletBridges from 'components/Wallet/WalletBridges'
+import useAccountIds from 'hooks/accounts/useAccountIds'
+import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useAccountId from 'hooks/useAccountId'
-import useAccountIds from 'hooks/useAccountIds'
 import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
-import { getBaseAsset } from 'utils/assets'
 import { defaultFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
@@ -19,7 +19,7 @@ function FetchLoading() {
   return (
     <FullOverlayContent
       title='Fetching Wallet Data'
-      copy='Please wait, while your wallet balances and accounts are beeing analyzed'
+      copy='Please wait, while your wallet balances and accounts are being analyzed'
     >
       <CircularProgress size={40} />
     </FullOverlayContent>
@@ -40,7 +40,7 @@ function Content() {
     true,
   )
   const { data: walletBalances, isLoading: isLoadingBalances } = useWalletBalances(address)
-  const baseAsset = getBaseAsset()
+  const baseAsset = useBaseAsset()
 
   const baseBalance = useMemo(
     () => walletBalances.find(byDenom(baseAsset.denom))?.amount ?? '0',

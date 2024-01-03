@@ -10,8 +10,8 @@ import NumberInput from 'components/NumberInput'
 import Select from 'components/Select'
 import Text from 'components/Text'
 import WarningMessages from 'components/WarningMessages'
-import { ASSETS } from 'constants/assets'
-import useStore from 'store'
+import useAllAssets from 'hooks/assets/useAllAssets'
+import useBaseAsset from 'hooks/assets/useBasetAsset'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
@@ -32,15 +32,15 @@ interface Props {
 }
 
 export default function TokenInput(props: Props) {
-  const baseCurrency = useStore((s) => s.baseCurrency)
-
+  const baseAsset = useBaseAsset()
+  const assets = useAllAssets()
   function onMaxBtnClick() {
     props.onChange(BN(props.max))
   }
 
   function onChangeAsset(denom: string) {
     if (!props.onChangeAsset) return
-    const newAsset = ASSETS.find((asset) => asset.denom === denom) ?? baseCurrency
+    const newAsset = assets.find((asset) => asset.denom === denom) ?? baseAsset
     props.onChangeAsset(newAsset)
   }
 

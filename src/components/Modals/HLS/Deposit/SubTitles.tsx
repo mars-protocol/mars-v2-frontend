@@ -5,6 +5,7 @@ import DisplayCurrency from 'components/DisplayCurrency'
 import { ExclamationMarkTriangle } from 'components/Icons'
 import Text from 'components/Text'
 import WarningMessages from 'components/WarningMessages'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatAmountWithSymbol, formatLeverage } from 'utils/formatters'
 
@@ -33,6 +34,7 @@ interface CollateralSubTitleProps {
 }
 
 export function CollateralSubTitle(props: CollateralSubTitleProps) {
+  const assets = useAllAssets()
   if (props.isOpen) return null
 
   if (!props.isOpen && props.amount.isZero()) {
@@ -50,10 +52,13 @@ export function CollateralSubTitle(props: CollateralSubTitleProps) {
     <div className='flex items-center gap-1'>
       <WarningMessages messages={props.warningMessages} />
       <SubTitle
-        text={formatAmountWithSymbol({
-          denom: props.denom,
-          amount: props.amount.toString(),
-        })}
+        text={formatAmountWithSymbol(
+          {
+            denom: props.denom,
+            amount: props.amount.toString(),
+          },
+          assets,
+        )}
         color={props.warningMessages.length > 0 ? 'text-warning' : ''}
       />
     </div>

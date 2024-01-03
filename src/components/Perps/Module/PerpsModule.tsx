@@ -12,13 +12,14 @@ import Text from 'components/Text'
 import AssetAmountInput from 'components/Trade/TradeModule/SwapForm/AssetAmountInput'
 import OrderTypeSelector from 'components/Trade/TradeModule/SwapForm/OrderTypeSelector'
 import { AvailableOrderType } from 'components/Trade/TradeModule/SwapForm/OrderTypeSelector/types'
-import { ASSETS } from 'constants/assets'
 import { BN_ZERO } from 'constants/math'
+import useBaseAsset from 'hooks/assets/useBasetAsset'
 
 export function PerpsModule() {
   const [selectedOrderType, setSelectedOrderType] = useState<AvailableOrderType>('Market')
   const [selectedOrderDirection, setSelectedOrderDirection] = useState<OrderDirection>('long')
 
+  const baseAsset = useBaseAsset()
   return (
     <Card
       contentClassName='px-4 gap-5 flex flex-col'
@@ -44,7 +45,7 @@ export function PerpsModule() {
         max={BN_ZERO}
         amount={BN_ZERO}
         setAmount={() => {}}
-        asset={ASSETS[0]}
+        asset={baseAsset}
         maxButtonLabel='Max:'
         disabled={false}
       />

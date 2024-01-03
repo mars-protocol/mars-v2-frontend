@@ -49,11 +49,11 @@ export function mergeBNCoinArrays(array1: BNCoin[], array2: BNCoin[]) {
   return merged
 }
 
-export function getValueFromBNCoins(coins: BNCoin[], prices: BNCoin[]): BigNumber {
+export function getValueFromBNCoins(coins: BNCoin[], prices: BNCoin[], assets: Asset[]): BigNumber {
   let totalValue = BN_ZERO
 
   coins.forEach((coin) => {
-    totalValue = totalValue.plus(getCoinValue(coin, prices))
+    totalValue = totalValue.plus(getCoinValue(coin, prices, assets))
   })
 
   return totalValue

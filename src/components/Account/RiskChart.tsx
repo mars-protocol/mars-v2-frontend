@@ -14,7 +14,7 @@ import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import { formatValue } from 'utils/formatters'
 
 export const RiskChart = ({ data }: RiskChartProps) => {

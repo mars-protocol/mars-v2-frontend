@@ -1,28 +1,29 @@
 import { getParamsQueryClient } from 'api/cosmwasm-client'
 import getStakingAprs from 'api/hls/getAprs'
 import getAssetParams from 'api/params/getAssetParams'
-import { getAssetByDenom, getStakingAssets } from 'utils/assets'
+import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 import { resolveHLSStrategies } from 'utils/resolvers'
 
-export default async function getHLSStakingAssets() {
-  const stakingAssetDenoms = getStakingAssets().map((asset) => asset.denom)
-  const assetParams = await getAssetParams()
+export default async function getHLSStakingAssets(chainConfig: ChainConfig) {
+  const stakingAssetDenoms = chainConfig.assets
+    .filter((asset) => asset.isStaking)
+    .map((asset) => asset.denom)
+  const assetParams = await getAssetParams(chainConfig)
   const HLSAssets = assetParams
     .filter((asset) => stakingAssetDenoms.includes(asset.denom))
     .filter((asset) => asset.credit_manager.hls)
   const strategies = resolveHLSStrategies('coin', HLSAssets)
-
-  const client = await getParamsQueryClient()
+  const client = await getParamsQueryClient(chainConfig)
   const depositCaps$ = strategies.map((strategy) =>
     client.totalDeposit({ denom: strategy.denoms.deposit }),
   )
 
-  const aprs = await getStakingAprs()
+  const aprs = await getStakingAprs(chainConfig.endpoints.aprs.stride)
 
   return Promise.all(depositCaps$).then((depositCaps) => {
     return depositCaps.map((depositCap, index) => {
-      const borrowSymbol = getAssetByDenom(strategies[index].denoms.borrow)?.symbol
+      const borrowSymbol = chainConfig.assets.find(byDenom(strategies[index].denoms.borrow))?.symbol
       return {
         ...strategies[index],
         depositCap: {

@@ -4,6 +4,7 @@ import React, { useMemo } from 'react'
 import { FormattedNumber } from 'components/FormattedNumber'
 import Loading from 'components/Loading'
 import TitleAndSubCell from 'components/TitleAndSubCell'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import useBorrowAsset from 'hooks/useBorrowAsset'
 import usePrices from 'hooks/usePrices'
 import { calculateAccountLeverage } from 'utils/accounts'
@@ -25,11 +26,12 @@ interface Props {
 
 export default function ActiveAPY(props: Props) {
   const { data: prices } = usePrices()
+  const assets = useAllAssets()
   const borrowRate = useBorrowAsset(props.account.strategy.denoms.borrow)?.borrowRate
 
   const leverage = useMemo(
-    () => calculateAccountLeverage(props.account, prices),
-    [prices, props.account],
+    () => calculateAccountLeverage(props.account, prices, assets),
+    [assets, prices, props.account],
   )
 
   const leveragedApy = useMemo(() => {

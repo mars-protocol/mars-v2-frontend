@@ -3,15 +3,16 @@ import { useMemo } from 'react'
 
 import { ChevronDown } from 'components/Icons'
 import Text from 'components/Text'
-import { ASSETS } from 'constants/assets'
+import AssetSelectorItem from 'components/Trade/TradeModule/AssetSelector/AssetSelectorItem'
+import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
+import useMarketAssets from 'hooks/markets/useMarketAssets'
+import useMarketDeposits from 'hooks/markets/useMarketDeposits'
 import useCurrentAccount from 'hooks/useCurrentAccount'
-import useMarketAssets from 'hooks/useMarketAssets'
-import useMarketDeposits from 'hooks/useMarketDeposits'
 import usePrices from 'hooks/usePrices'
+import useStore from 'store'
 import { getMergedBalancesForAsset } from 'utils/accounts'
 import { byDenom } from 'utils/array'
-import { getEnabledMarketAssets, sortAssetsOrPairs } from 'utils/assets'
-import AssetSelectorItem from 'components/Trade/TradeModule/AssetSelector/AssetSelectorItem'
+import { sortAssetsOrPairs } from 'utils/assets'
 
 interface Props {
   type: 'buy' | 'sell'
@@ -21,22 +22,22 @@ interface Props {
   onChangeAsset: (asset: Asset | AssetPair) => void
 }
 
-const baseDenom = ASSETS[0].denom
-
 export default function AssetList(props: Props) {
+  const baseDenom = useStore((s) => s.chainConfig.assets[0].denom)
   const { assets, type, isOpen, toggleOpen, onChangeAsset } = props
   const account = useCurrentAccount()
   const { data: marketAssets } = useMarketAssets()
   const { data: marketDeposits } = useMarketDeposits()
   const { data: prices } = usePrices()
+  const marketEnabledAssets = useMarketEnabledAssets()
   const balances = useMemo(() => {
     if (!account) return []
-    return getMergedBalancesForAsset(account, getEnabledMarketAssets())
-  }, [account])
+    return getMergedBalancesForAsset(account, marketEnabledAssets)
+  }, [account, marketEnabledAssets])
 
   const sortedAssets = useMemo(
     () => sortAssetsOrPairs(assets, prices, marketDeposits, balances, baseDenom) as Asset[],
-    [balances, prices, assets, marketDeposits],
+    [assets, prices, marketDeposits, balances, baseDenom],
   )
 
   return (

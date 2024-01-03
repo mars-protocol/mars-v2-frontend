@@ -11,14 +11,15 @@ import Text from 'components/Text'
 import TokenInput from 'components/TokenInput'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
+import useAllAssets from 'hooks/assets/useAllAssets'
+import useMarketAssets from 'hooks/markets/useMarketAssets'
 import useHealthComputer from 'hooks/useHealthComputer'
-import useMarketAssets from 'hooks/useMarketAssets'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { byDenom } from 'utils/array'
-import { findCoinByDenom, getAssetByDenom } from 'utils/assets'
+import { findCoinByDenom } from 'utils/assets'
 import { formatPercent } from 'utils/formatters'
 import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
 
@@ -36,6 +37,7 @@ export interface VaultBorrowingsProps {
 }
 
 export default function VaultBorrowings(props: VaultBorrowingsProps) {
+  const assets = useAllAssets()
   const { borrowings, onChangeBorrowings } = props
   const { data: marketAssets } = useMarketAssets()
   const { data: prices } = usePrices()
@@ -85,8 +87,8 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   }, [maxBorrowAmountsRaw, props.borrowings])
 
   const totalValue = useMemo(
-    () => getValueFromBNCoins(mergeBNCoinArrays(props.deposits, props.borrowings), prices),
-    [props.borrowings, props.deposits, prices],
+    () => getValueFromBNCoins(mergeBNCoinArrays(props.deposits, props.borrowings), prices, assets),
+    [props.deposits, props.borrowings, prices, assets],
   )
 
   useEffect(() => {
@@ -176,7 +178,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   return (
     <div className='flex flex-col flex-1 gap-4 p-4'>
       {props.borrowings.map((coin) => {
-        const asset = getAssetByDenom(coin.denom)
+        const asset = assets.find(byDenom(coin.denom))
         const maxAmount = maxBorrowAmounts.find(byDenom(coin.denom))?.amount
         if (!asset || !maxAmount)
           return <React.Fragment key={`input-${coin.denom}`}></React.Fragment>
@@ -224,7 +226,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
           />
         </div>
         {props.borrowings.map((coin) => {
-          const asset = getAssetByDenom(coin.denom)
+          const asset = assets.find(byDenom(coin.denom))
           const borrowRate = marketAssets?.find((market) => market.denom === coin.denom)?.apy.borrow
 
           if (!asset || !borrowRate)

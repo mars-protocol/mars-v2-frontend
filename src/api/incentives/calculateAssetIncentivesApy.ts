@@ -2,28 +2,28 @@ import getTotalActiveEmissionValue from 'api/incentives/getTotalActiveEmissionVa
 import getMarket from 'api/markets/getMarket'
 import getUnderlyingLiquidityAmount from 'api/markets/getMarketUnderlyingLiquidityAmount'
 import getPrice from 'api/prices/getPrice'
-import { ASSETS } from 'constants/assets'
 import { byDenom } from 'utils/array'
 import { SECONDS_IN_A_YEAR } from 'utils/constants'
 import { BN } from 'utils/helpers'
 
 export default async function calculateAssetIncentivesApy(
+  chainConfig: ChainConfig,
   denom: string,
 ): Promise<BigNumber | null> {
   try {
     const [totalActiveEmissionValue, market] = await Promise.all([
-      getTotalActiveEmissionValue(denom),
-      getMarket(denom),
+      getTotalActiveEmissionValue(chainConfig, denom),
+      getMarket(chainConfig, denom),
     ])
 
     if (!totalActiveEmissionValue) return null
 
     const [marketLiquidityAmount, assetPrice] = await Promise.all([
-      getUnderlyingLiquidityAmount(market),
-      getPrice(denom),
+      getUnderlyingLiquidityAmount(chainConfig, market),
+      getPrice(chainConfig, denom),
     ])
 
-    const assetDecimals = (ASSETS.find(byDenom(denom)) as Asset).decimals
+    const assetDecimals = (chainConfig.assets.find(byDenom(denom)) as Asset).decimals
 
     const marketLiquidityValue = BN(marketLiquidityAmount)
       .shiftedBy(-assetDecimals)

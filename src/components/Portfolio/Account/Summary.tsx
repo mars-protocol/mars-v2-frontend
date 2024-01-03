@@ -4,7 +4,8 @@ import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import Skeleton from 'components/Portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
-import useAccount from 'hooks/useAccount'
+import useAccount from 'hooks/accounts/useAccount'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
@@ -25,7 +26,7 @@ function Content(props: Props) {
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const { data: hlsStrategies } = useHLSStakingAssets()
-
+  const assets = useAllAssets()
   const stats = useMemo(() => {
     if (!account || !borrowAssets.length || !lendingAssets.length) return DEFAULT_PORTFOLIO_STATS
 
@@ -35,6 +36,7 @@ function Content(props: Props) {
       borrowAssets,
       lendingAssets,
       hlsStrategies,
+      assets,
       account.kind === 'high_levered_strategy',
     )
 
@@ -76,7 +78,7 @@ function Content(props: Props) {
         sub: DEFAULT_PORTFOLIO_STATS[4].sub,
       },
     ]
-  }, [account, borrowAssets, hlsStrategies, lendingAssets, prices])
+  }, [account, assets, borrowAssets, hlsStrategies, lendingAssets, prices])
 
   return (
     <Skeleton

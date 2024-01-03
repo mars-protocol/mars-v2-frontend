@@ -4,7 +4,7 @@ import { ReactElement, ReactNode } from 'react'
 import { Tooltip } from 'components/Tooltip'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 
 interface Props {
   tooltip: string | ReactNode

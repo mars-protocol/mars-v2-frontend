@@ -1,7 +1,7 @@
 import DoubleLogo from 'components/DoubleLogo'
 import Loading from 'components/Loading'
 import TitleAndSubCell from 'components/TitleAndSubCell'
-import { getAssetByDenom } from 'utils/assets'
+import useAsset from 'hooks/assets/useAsset'
 
 export const NAME_META = { id: 'name', header: 'Strategy' }
 interface Props {
@@ -10,8 +10,8 @@ interface Props {
 
 export default function Name(props: Props) {
   const { strategy } = props
-  const depositAsset = getAssetByDenom(props.strategy.denoms.deposit)
-  const borrowAsset = getAssetByDenom(props.strategy.denoms.borrow)
+  const depositAsset = useAsset(props.strategy.denoms.deposit)
+  const borrowAsset = useAsset(props.strategy.denoms.borrow)
 
   return (
     <div className='flex'>

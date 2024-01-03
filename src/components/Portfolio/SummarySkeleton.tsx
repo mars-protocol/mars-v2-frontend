@@ -7,7 +7,7 @@ import HLSTag from 'components/HLS/HLSTag'
 import Loading from 'components/Loading'
 import Text from 'components/Text'
 import TitleAndSubCell from 'components/TitleAndSubCell'
-import useAccount from 'hooks/useAccount'
+import useAccount from 'hooks/accounts/useAccount'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 
 interface Props {

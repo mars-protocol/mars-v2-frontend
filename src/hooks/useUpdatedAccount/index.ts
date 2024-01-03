@@ -3,7 +3,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useAllAssets from 'hooks/assets/useAllAssets'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import {
   addCoins,
@@ -28,6 +29,7 @@ export interface VaultValue {
 export function useUpdatedAccount(account?: Account) {
   const { data: availableVaults } = useVaults(false)
   const { data: prices } = usePrices()
+  const assets = useAllAssets()
   const [updatedAccount, setUpdatedAccount] = useState<Account | undefined>(
     account ? cloneAccount(account) : undefined,
   )
@@ -182,26 +184,35 @@ export function useUpdatedAccount(account?: Account) {
     (depositCoin: BNCoin, borrowCoin: BNCoin) => {
       addDeposits([depositCoin])
       addDebts([borrowCoin])
-      const additionalDebtValue = getCoinValue(borrowCoin, prices)
+      const additionalDebtValue = getCoinValue(borrowCoin, prices, assets)
 
-      const tradeOutputAmount = getCoinAmount(depositCoin.denom, additionalDebtValue, prices)
+      const tradeOutputAmount = getCoinAmount(
+        depositCoin.denom,
+        additionalDebtValue,
+        prices,
+        assets,
+      )
         .times(1 - SWAP_FEE_BUFFER)
         .integerValue()
       addTrades([BNCoin.fromDenomAndBigNumber(depositCoin.denom, tradeOutputAmount)])
     },
-    [prices],
+    [assets, prices],
   )
 
   const simulateHlsStakingWithdraw = useCallback(
     (collateralDenom: string, debtDenom: string, repayAmount: BigNumber) => {
-      const repayValue = getCoinValue(BNCoin.fromDenomAndBigNumber(debtDenom, repayAmount), prices)
-      const removeDepositAmount = getCoinAmount(collateralDenom, repayValue, prices)
+      const repayValue = getCoinValue(
+        BNCoin.fromDenomAndBigNumber(debtDenom, repayAmount),
+        prices,
+        assets,
+      )
+      const removeDepositAmount = getCoinAmount(collateralDenom, repayValue, prices, assets)
         .times(1 + slippage)
         .integerValue()
       removeDeposits([BNCoin.fromDenomAndBigNumber(collateralDenom, removeDepositAmount)])
       removeDebts([BNCoin.fromDenomAndBigNumber(debtDenom, repayAmount)])
     },
-    [prices, slippage],
+    [assets, prices, slippage],
   )
 
   const simulateVaultDeposit = useCallback(
@@ -222,10 +233,12 @@ export function useUpdatedAccount(account?: Account) {
       addDebts(borrowCoins)
 
       // Value has to be adjusted for slippage
-      const value = getValueFromBNCoins([...coins, ...borrowCoins], prices).times(1 - slippage)
+      const value = getValueFromBNCoins([...coins, ...borrowCoins], prices, assets).times(
+        1 - slippage,
+      )
       addVaultValues([{ address, value }])
     },
-    [account, prices, slippage],
+    [account, assets, prices, slippage],
   )
 
   useEffect(() => {
@@ -244,7 +257,7 @@ export function useUpdatedAccount(account?: Account) {
     accountCopy.lends = addCoins(addedLends, [...accountCopy.lends])
     accountCopy.lends = removeCoins(removedLends, [...accountCopy.lends])
     setUpdatedAccount(accountCopy)
-    setLeverage(calculateAccountLeverage(accountCopy, prices).toNumber())
+    setLeverage(calculateAccountLeverage(accountCopy, prices, assets).toNumber())
     useStore.setState({ updatedAccount: accountCopy })
 
     return () => useStore.setState({ updatedAccount: undefined })
@@ -260,6 +273,7 @@ export function useUpdatedAccount(account?: Account) {
     availableVaults,
     prices,
     addedTrades,
+    assets,
   ])
 
   return {

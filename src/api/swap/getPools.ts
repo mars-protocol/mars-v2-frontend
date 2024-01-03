@@ -1,8 +1,10 @@
-import { ENV } from 'constants/env'
-
-const url = `${ENV.URL_REST}osmosis/gamm/v1beta1/pools/`
-export default async function getPools(poolIds: string[]): Promise<Pool[]> {
-  const promises = poolIds.map((poolId) => fetch(url + poolId))
+export default async function getPools(
+  chainConfig: ChainConfig,
+  poolIds: string[],
+): Promise<Pool[]> {
+  const promises = poolIds.map((poolId) =>
+    fetch(chainConfig.endpoints.pools.replace('POOL_ID', poolId)),
+  )
 
   const responses = await Promise.all(promises)
 

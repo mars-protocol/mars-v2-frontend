@@ -2,14 +2,14 @@ import { cacheFn, marketCache } from 'api/cache'
 import { getParamsQueryClient, getRedBankQueryClient } from 'api/cosmwasm-client'
 import { resolveMarketResponse } from 'utils/resolvers'
 
-export default async function getMarket(denom: string): Promise<Market> {
-  return cacheFn(() => fetchMarket(denom), marketCache, denom, 60)
+export default async function getMarket(chainConfig: ChainConfig, denom: string): Promise<Market> {
+  return cacheFn(() => fetchMarket(chainConfig, denom), marketCache, denom, 60)
 }
 
-async function fetchMarket(denom: string) {
+async function fetchMarket(chainConfig: ChainConfig, denom: string) {
   try {
-    const redBankClient = await getRedBankQueryClient()
-    const paramsClient = await getParamsQueryClient()
+    const redBankClient = await getRedBankQueryClient(chainConfig)
+    const paramsClient = await getParamsQueryClient(chainConfig)
 
     const [market, assetParams, assetCap] = await Promise.all([
       redBankClient.market({ denom }),

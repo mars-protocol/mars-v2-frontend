@@ -13,8 +13,8 @@ import Value, {
   VALUE_META,
   valueSortingFn,
 } from 'components/Account/AccountBalancesTable/Columns/Value'
+import useMarketAssets from 'hooks/markets/useMarketAssets'
 import useHealthComputer from 'hooks/useHealthComputer'
-import useMarketAssets from 'hooks/useMarketAssets'
 import useStore from 'store'
 
 export default function useAccountBalancesColumns(

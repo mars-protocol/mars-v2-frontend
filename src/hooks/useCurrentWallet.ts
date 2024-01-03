@@ -1,11 +1,11 @@
 import { useShuttle } from '@delphi-labs/shuttle-react'
 import { useMemo } from 'react'
 
-import { ENV } from 'constants/env'
+import { getCurrentChainId } from 'utils/getCurrentChainId'
 
 export default function useCurrentWallet() {
   const { wallets } = useShuttle()
-  const chainId = ENV.CHAIN_ID
+  const chainId = getCurrentChainId()
 
   return useMemo(() => {
     return wallets.find((wallet) => wallet.network.chainId === chainId)

@@ -9,6 +9,8 @@ import { DataFeed, PAIR_SEPARATOR } from 'components/Trade/TradeChart/DataFeed'
 import PoweredByPyth from 'components/Trade/TradeChart/PoweredByPyth'
 import { disabledFeatures, enabledFeatures, overrides } from 'components/Trade/TradeChart/constants'
 import { BN_ZERO } from 'constants/math'
+import useAllAssets from 'hooks/assets/useAllAssets'
+import useBaseAsset from 'hooks/assets/useBasetAsset'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -33,10 +35,12 @@ export const TVChartContainer = (props: Props) => {
   const defaultSymbol = useRef<string>(
     `${props.sellAsset.denom}${PAIR_SEPARATOR}${props.buyAsset.denom}`,
   )
-  const baseCurrency = useStore((s) => s.baseCurrency)
+  const chainConfig = useStore((s) => s.chainConfig)
+  const baseAsset = useBaseAsset()
+  const assets = useAllAssets()
   const dataFeed = useMemo(
-    () => new DataFeed(false, baseCurrency.decimals, baseCurrency.denom),
-    [baseCurrency],
+    () => new DataFeed(false, assets, baseAsset.decimals, baseAsset.denom, chainConfig),
+    [assets, baseAsset.decimals, baseAsset.denom, chainConfig],
   )
   const { data: prices, isLoading } = usePrices()
   const ratio = useMemo(() => {

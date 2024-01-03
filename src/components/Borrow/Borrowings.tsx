@@ -1,8 +1,8 @@
 import AvailableBorrowingsTable from 'components/Borrow/Table/AvailableBorrowingsTable'
 import DepositedBorrowingsTable from 'components/Borrow/Table/DepositedBorrowingsTable'
 import { BN_ZERO } from 'constants/math'
+import useBorrowEnabledAssets from 'hooks/assets/useBorrowEnabledAssets'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
-import { getBorrowEnabledAssets } from 'utils/assets'
 
 export default function Borrowings() {
   const { data } = useBorrowMarketAssetsTableData()
@@ -19,7 +19,7 @@ export default function Borrowings() {
 }
 
 function Fallback() {
-  const assets = getBorrowEnabledAssets()
+  const assets = useBorrowEnabledAssets()
   const data: BorrowMarketTableData[] = assets.map((asset) => ({
     asset,
     apy: {

@@ -4,7 +4,8 @@ import { useMemo } from 'react'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useAllAssets from 'hooks/assets/useAllAssets'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import useSwapValueLoss from 'hooks/useSwapValueLoss'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -22,7 +23,7 @@ export default function UseClosePositionActions(props: Props): Action[] {
   const collateralDenom = props.account.strategy.denoms.deposit
   const borrowDenom = props.account.strategy.denoms.borrow
   const { data: swapValueLoss } = useSwapValueLoss(collateralDenom, borrowDenom)
-
+  const assets = useAllAssets()
   const debtAmount: BigNumber = useMemo(
     () =>
       props.account.debts.find((debt) => debt.denom === props.account.strategy.denoms.borrow)
@@ -39,14 +40,27 @@ export default function UseClosePositionActions(props: Props): Action[] {
   )
 
   const swapInAmount = useMemo(() => {
-    const targetValue = getCoinValue(BNCoin.fromDenomAndBigNumber(borrowDenom, debtAmount), prices)
+    const targetValue = getCoinValue(
+      BNCoin.fromDenomAndBigNumber(borrowDenom, debtAmount),
+      prices,
+      assets,
+    )
     return BigNumber.max(
-      getCoinAmount(collateralDenom, targetValue, prices)
+      getCoinAmount(collateralDenom, targetValue, prices, assets)
         .times(1 + slippage + SWAP_FEE_BUFFER + swapValueLoss)
         .integerValue(),
       collateralAmount,
     )
-  }, [borrowDenom, debtAmount, prices, slippage, swapValueLoss, collateralDenom, collateralAmount])
+  }, [
+    borrowDenom,
+    debtAmount,
+    prices,
+    assets,
+    collateralDenom,
+    slippage,
+    swapValueLoss,
+    collateralAmount,
+  ])
 
   return useMemo<Action[]>(
     () => [

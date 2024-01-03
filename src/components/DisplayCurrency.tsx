@@ -2,13 +2,12 @@ import classNames from 'classnames'
 import { useMemo } from 'react'
 
 import { FormattedNumber } from 'components/FormattedNumber'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { ORACLE_DENOM } from 'constants/oracle'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useAllAssets from 'hooks/assets/useAllAssets'
+import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
+import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
-import { getDisplayCurrencies } from 'utils/assets'
 import { getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
@@ -22,11 +21,9 @@ interface Props {
 }
 
 export default function DisplayCurrency(props: Props) {
-  const displayCurrencies = getDisplayCurrencies()
-  const [displayCurrency] = useLocalStorage<string>(
-    LocalStorageKeys.DISPLAY_CURRENCY,
-    DEFAULT_SETTINGS.displayCurrency,
-  )
+  const displayCurrencies = useDisplayCurrencyAssets()
+  const assets = useAllAssets()
+  const [displayCurrency] = useDisplayCurrency()
   const { data: prices } = usePrices()
 
   const displayCurrencyAsset = useMemo(
@@ -38,7 +35,7 @@ export default function DisplayCurrency(props: Props) {
   const isUSD = displayCurrencyAsset.id === 'USD'
 
   const amount = useMemo(() => {
-    const coinValue = getCoinValue(props.coin, prices)
+    const coinValue = getCoinValue(props.coin, prices, assets)
 
     if (displayCurrency === ORACLE_DENOM) return coinValue.toNumber()
 
@@ -46,10 +43,11 @@ export default function DisplayCurrency(props: Props) {
     const displayPrice = getCoinValue(
       BNCoin.fromDenomAndBigNumber(displayCurrency, BN(1).shiftedBy(displayDecimals)),
       prices,
+      assets,
     )
 
     return coinValue.div(displayPrice).toNumber()
-  }, [displayCurrency, displayCurrencyAsset.decimals, prices, props.coin])
+  }, [assets, displayCurrency, displayCurrencyAsset.decimals, prices, props.coin])
 
   const isLessThanACent = (isUSD && amount < 0.01 && amount > 0) || (amount === 0 && props.showZero)
   const smallerThanPrefix = isLessThanACent ? '< ' : ''

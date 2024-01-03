@@ -7,13 +7,12 @@ import VaultBorrowingsSubTitle from 'components/Modals/Vault/VaultBorrowingsSubT
 import VaultDeposit from 'components/Modals/Vault/VaultDeposits'
 import VaultDepositSubTitle from 'components/Modals/Vault/VaultDepositsSubTitle'
 import Text from 'components/Text'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import useDepositVault from 'hooks/broadcast/useDepositVault'
+import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import useDisplayAsset from 'hooks/useDisplayAsset'
 import useIsOpenArray from 'hooks/useIsOpenArray'
-import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -33,12 +32,10 @@ export default function VaultModalContent(props: Props) {
   const { addedDebts, removedDeposits, removedLends, simulateVaultDeposit } = useUpdatedAccount(
     props.account,
   )
+  const assets = useAllAssets()
 
   const { data: prices } = usePrices()
-  const [displayCurrency] = useLocalStorage<string>(
-    LocalStorageKeys.DISPLAY_CURRENCY,
-    DEFAULT_SETTINGS.displayCurrency,
-  )
+  const [displayCurrency] = useDisplayCurrency()
   const [isOpen, toggleOpen] = useIsOpenArray(2, false)
   const [isCustomRatio, setIsCustomRatio] = useState(false)
   const [depositCoins, setDepositCoins] = useState<BNCoin[]>([])
@@ -60,6 +57,7 @@ export default function VaultModalContent(props: Props) {
         getCoinValue(
           BNCoin.fromDenomAndBigNumber(props.vault.cap.denom, capLeft),
           prices,
+          assets,
         ).toString(),
         displayAsset,
       )
@@ -67,7 +65,7 @@ export default function VaultModalContent(props: Props) {
       return [BNCoin.fromDenomAndBigNumber(displayAsset.denom, amount)]
     }
     return []
-  }, [displayAsset, prices, props.vault.cap, totalValue])
+  }, [assets, displayAsset, prices, props.vault.cap, totalValue])
 
   const onChangeIsCustomRatio = useCallback(
     (isCustomRatio: boolean) => setIsCustomRatio(isCustomRatio),

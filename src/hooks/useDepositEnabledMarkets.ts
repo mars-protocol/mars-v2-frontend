@@ -1,4 +1,4 @@
-import useMarketAssets from 'hooks/useMarketAssets'
+import useMarketAssets from 'hooks/markets/useMarketAssets'
 
 export default function useDepositEnabledMarkets() {
   const { data: markets } = useMarketAssets()

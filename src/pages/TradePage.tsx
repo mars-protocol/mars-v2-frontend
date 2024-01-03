@@ -7,27 +7,29 @@ import TradeChart from 'components/Trade/TradeChart'
 import TradeModule from 'components/Trade/TradeModule'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useChainConfig from 'hooks/useChainConfig'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
-import { getEnabledMarketAssets } from 'utils/assets'
 import { getPage } from 'utils/route'
 
 export default function TradePage() {
   const { pathname } = useLocation()
+  const chainConfig = useChainConfig()
   const page = getPage(pathname)
   const isAdvanced = useMemo(() => page === 'trade-advanced', [page])
 
   const [tradingPairAdvanced] = useLocalStorage<Settings['tradingPairAdvanced']>(
-    LocalStorageKeys.TRADING_PAIR_ADVANCED,
+    chainConfig.id + '/' + LocalStorageKeys.TRADING_PAIR_ADVANCED,
     DEFAULT_SETTINGS.tradingPairAdvanced,
   )
   const [tradingPairSimple] = useLocalStorage<Settings['tradingPairSimple']>(
-    LocalStorageKeys.TRADING_PAIR_SIMPLE,
+    chainConfig.id + '/' + LocalStorageKeys.TRADING_PAIR_SIMPLE,
     DEFAULT_SETTINGS.tradingPairSimple,
   )
 
-  const enabledMarketAssets = getEnabledMarketAssets()
+  const enabledMarketAssets = useMarketEnabledAssets()
   const assetOverlayState = useStore((s) => s.assetOverlayState)
 
   const buyAsset = useMemo(

@@ -8,8 +8,8 @@ import SearchBar from 'components/SearchBar'
 import Text from 'components/Text'
 import AssetList from 'components/Trade/TradeModule/AssetSelector/AssetList'
 import PairsList from 'components/Trade/TradeModule/AssetSelector/PairsList'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import useFilteredAssets from 'hooks/useFilteredAssets'
-import { getAllAssets } from 'utils/assets'
 
 interface Props {
   state: OverlayState
@@ -33,14 +33,7 @@ function StablesFilter(props: StablesFilterProps) {
   return (
     <>
       <Divider />
-      <div className='flex items-center w-full py-2 justify-evenly'>
-        <Button
-          onClick={() => onFilter(stables)}
-          text='All'
-          color={isAllSelected ? 'secondary' : 'quaternary'}
-          variant='transparent'
-          className={isAllSelected ? '!text-white !bg-white/10 border-white' : ''}
-        />
+      <div className='flex items-center w-full gap-2 p-2'>
         {stables.map((stable) => {
           const isCurrent = !isAllSelected && selectedStables[0].denom === stable.denom
           return (
@@ -62,7 +55,7 @@ function StablesFilter(props: StablesFilterProps) {
 export default function AssetOverlay(props: Props) {
   const isPairSelector = !!props.onChangeTradingPair
   const { assets, searchString, onChangeSearch } = useFilteredAssets()
-  const allAssets = getAllAssets()
+  const allAssets = useAllAssets()
   const stableAssets = useMemo(() => allAssets.filter((asset) => asset.isStable), [allAssets])
   const handleClose = useCallback(() => props.onChangeState('closed'), [props])
   const handleToggle = useCallback(() => props.onChangeState(props.state), [props])
@@ -79,28 +72,37 @@ export default function AssetOverlay(props: Props) {
     [assets, props.buyAsset],
   )
 
-  function onChangeBuyAsset(asset: AssetPair | Asset) {
-    const selectedAsset = asset as Asset
-    if (!props.onChangeBuyAsset) return
-    props.onChangeBuyAsset(selectedAsset)
-    props.onChangeState('sell')
-    onChangeSearch('')
-  }
+  const onChangeBuyAsset = useCallback(
+    (asset: AssetPair | Asset) => {
+      const selectedAsset = asset as Asset
+      if (!props.onChangeBuyAsset) return
+      props.onChangeBuyAsset(selectedAsset)
+      props.onChangeState('sell')
+      onChangeSearch('')
+    },
+    [onChangeSearch, props],
+  )
 
-  function onChangeSellAsset(asset: AssetPair | Asset) {
-    const selectedAsset = asset as Asset
-    if (!props.onChangeSellAsset) return
-    props.onChangeSellAsset(selectedAsset)
-    onChangeSearch('')
-  }
+  const onChangeSellAsset = useCallback(
+    (asset: AssetPair | Asset) => {
+      const selectedAsset = asset as Asset
+      if (!props.onChangeSellAsset) return
+      props.onChangeSellAsset(selectedAsset)
+      onChangeSearch('')
+    },
+    [onChangeSearch, props],
+  )
 
-  function onChangeAssetPair(assetPair: AssetPair | Asset) {
-    const selectedPair = assetPair as AssetPair
-    if (!props.onChangeTradingPair) return
-    props.onChangeTradingPair({ buy: selectedPair.buy.denom, sell: selectedPair.sell.denom })
-    props.onChangeState('closed')
-    onChangeSearch('')
-  }
+  const onChangeAssetPair = useCallback(
+    (assetPair: AssetPair | Asset) => {
+      const selectedPair = assetPair as AssetPair
+      if (!props.onChangeTradingPair) return
+      props.onChangeTradingPair({ buy: selectedPair.buy.denom, sell: selectedPair.sell.denom })
+      props.onChangeState('closed')
+      onChangeSearch('')
+    },
+    [onChangeSearch, props],
+  )
 
   return (
     <Overlay

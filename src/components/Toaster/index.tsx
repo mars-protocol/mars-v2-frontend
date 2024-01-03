@@ -9,9 +9,8 @@ import { ChevronDown, Cross, CrossCircled, ExternalLink } from 'components/Icons
 import Text from 'components/Text'
 import { TextLink } from 'components/TextLink'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { EXPLORER_NAME, EXPLORER_TX_URL } from 'constants/explorer'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useTransactionStore from 'hooks/useTransactionStore'
 import useStore from 'store'
 import { formatAmountWithSymbol } from 'utils/formatters'
@@ -28,7 +27,7 @@ function isPromise(object?: any): object is ToastPending {
   return 'promise' in object
 }
 
-export function generateToastContent(content: ToastSuccess['content']): ReactNode {
+export function generateToastContent(content: ToastSuccess['content'], assets: Asset[]): ReactNode {
   return content.map((item, index) => (
     <div className='flex flex-wrap w-full mb-1' key={index}>
       {item.text && (
@@ -36,6 +35,7 @@ export function generateToastContent(content: ToastSuccess['content']): ReactNod
           <Text size='sm' className='w-full mb-1 text-white'>
             {item.text}
           </Text>
+
           {item.coins.length > 0 && (
             <ul className='flex flex-wrap w-full gap-1 p-1 pl-4 list-disc'>
               {item.coins.map((coin, index) => {
@@ -44,7 +44,7 @@ export function generateToastContent(content: ToastSuccess['content']): ReactNod
 
                 return BN(coin.amount).isZero() ? null : (
                   <li className='w-full p-0 text-sm text-white' key={coin.denom}>
-                    {`${prefix}${formatAmountWithSymbol(coin)}`}
+                    {`${prefix}${formatAmountWithSymbol(coin, assets)}`}
                   </li>
                 )
               })}
@@ -61,6 +61,8 @@ export default function Toaster() {
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
   )
+  const chainConfig = useStore((s) => s.chainConfig)
+
   const toast = useStore((s) => s.toast)
   const { addTransaction } = useTransactionStore()
 
@@ -146,19 +148,21 @@ export default function Toaster() {
               {toast.message}
             </Text>
           )}
-          {!isError && toast.content?.length > 0 && generateToastContent(toast.content)}
+          {!isError &&
+            toast.content?.length > 0 &&
+            generateToastContent(toast.content, chainConfig.assets)}
           {toast.hash && (
             <div className='w-full'>
               <TextLink
-                href={`${EXPLORER_TX_URL}${toast.hash}`}
+                href={`${chainConfig.endpoints.explorer}${toast.hash}`}
                 target='_blank'
                 className={classNames(
                   'leading-4 underline mt-4 hover:no-underline hover:text-white',
                   isError ? 'text-error' : 'text-success',
                 )}
-                title={`View on ${EXPLORER_NAME}`}
+                title={`View on ${chainConfig.explorerName}`}
               >
-                {`View on ${EXPLORER_NAME}`}
+                {`View on ${chainConfig.explorerName}`}
                 <ExternalLink className='-mt-0.5 ml-2 inline w-3.5' />
               </TextLink>
             </div>

@@ -1,55 +1,10 @@
-import { ASSETS } from 'constants/assets'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { demagnify } from 'utils/formatters'
 
-export function getAssetByDenom(denom: string): Asset | undefined {
-  return ASSETS.find((asset) => asset.denom === denom)
-}
-
-export function getAssetBySymbol(symbol: string) {
-  return ASSETS.find((asset) => asset.symbol === symbol)
-}
-
-export function getEnabledMarketAssets(): Asset[] {
-  return ASSETS.filter((asset) => asset.isEnabled && asset.isMarket)
-}
-
-export function getAssetsMustHavePriceInfo(): Asset[] {
-  return ASSETS.filter((asset) => (asset.isEnabled && asset.isMarket) || asset.forceFetchPrice)
-}
-
-export function getPythAssets(): Asset[] {
-  return ASSETS.filter((asset) => !!asset.pythPriceFeedId)
-}
-
-export function getBaseAsset() {
-  return ASSETS.find((asset) => asset.denom === 'uosmo')!
-}
-
-export function getDisplayCurrencies() {
-  return ASSETS.filter((asset) => asset.isDisplayCurrency)
-}
-
-export function getAllAssets(): Asset[] {
-  return ASSETS
-}
-
 export function findCoinByDenom(denom: string, coins: BigNumberCoin[]) {
   return coins.find((coin) => coin.denom === denom)
-}
-
-export function getLendEnabledAssets() {
-  return ASSETS.filter((asset) => asset.isAutoLendEnabled)
-}
-
-export function getBorrowEnabledAssets() {
-  return ASSETS.filter((asset) => asset.isBorrowEnabled)
-}
-
-export function getStakingAssets() {
-  return ASSETS.filter((asset) => asset.isStaking)
 }
 
 function isAssetPair(assetPair: Asset | AssetPair): assetPair is AssetPair {

@@ -8,15 +8,16 @@ import VaultModalContent from 'components/Modals/Vault/VaultModalContent'
 import VaultModalContentHeader from 'components/Modals/Vault/VaultModalContentHeader'
 import Text from 'components/Text'
 import { Tooltip } from 'components/Tooltip'
-import { ASSETS } from 'constants/assets'
+import useAsset from 'hooks/assets/useAsset'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
 
 export default function VaultModalController() {
   const currentAccount = useCurrentAccount()
   const modal = useStore((s) => s.vaultModal)
-  const primaryAsset = ASSETS.find((asset) => asset.denom === modal?.vault.denoms.primary)
-  const secondaryAsset = ASSETS.find((asset) => asset.denom === modal?.vault.denoms.secondary)
+
+  const primaryAsset = useAsset(modal?.vault.denoms.primary || '')
+  const secondaryAsset = useAsset(modal?.vault.denoms.secondary || '')
 
   if (!modal || !currentAccount || !primaryAsset || !secondaryAsset) return null
 

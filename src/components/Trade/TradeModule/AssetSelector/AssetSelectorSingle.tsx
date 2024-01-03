@@ -6,7 +6,7 @@ import AssetButton from 'components/Trade/TradeModule/AssetSelector/AssetButton'
 import AssetOverlay from 'components/Trade/TradeModule/AssetSelector/AssetOverlay'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 
 interface Props {

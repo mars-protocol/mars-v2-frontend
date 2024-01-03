@@ -14,10 +14,11 @@ import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
+import useAllAssets from 'hooks/assets/useAllAssets'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
-import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -34,13 +35,14 @@ export default function AccountSummary(props: Props) {
     DEFAULT_SETTINGS.accountSummaryTabs,
   )
   const { data: prices } = usePrices()
+  const assets = useAllAssets()
   const updatedAccount = useStore((s) => s.updatedAccount)
   const accountBalance = useMemo(
     () =>
       props.account
-        ? calculateAccountBalanceValue(updatedAccount ?? props.account, prices)
+        ? calculateAccountBalanceValue(updatedAccount ?? props.account, prices, assets)
         : BN_ZERO,
-    [props.account, updatedAccount, prices],
+    [props.account, updatedAccount, prices, assets],
   )
   const { data } = useBorrowMarketAssetsTableData(false)
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
@@ -55,16 +57,16 @@ export default function AccountSummary(props: Props) {
   const { health: updatedHealth, healthFactor: updatedHealthFactor } =
     useHealthComputer(updatedAccount)
   const leverage = useMemo(
-    () => (props.account ? calculateAccountLeverage(props.account, prices) : BN_ZERO),
-    [props.account, prices],
+    () => (props.account ? calculateAccountLeverage(props.account, prices, assets) : BN_ZERO),
+    [props.account, prices, assets],
   )
   const updatedLeverage = useMemo(() => {
     if (!updatedAccount) return null
-    const updatedLeverage = calculateAccountLeverage(updatedAccount, prices)
+    const updatedLeverage = calculateAccountLeverage(updatedAccount, prices, assets)
 
     if (updatedLeverage.eq(leverage)) return null
     return updatedLeverage
-  }, [updatedAccount, prices, leverage])
+  }, [updatedAccount, prices, assets, leverage])
 
   const handleToggle = useCallback(
     (index: number) => {

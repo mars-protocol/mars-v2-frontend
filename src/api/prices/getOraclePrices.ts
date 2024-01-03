@@ -7,11 +7,14 @@ import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 import iterateContractQuery from 'utils/iterateContractQuery'
 
-export default async function getOraclePrices(...assets: Asset[]): Promise<BNCoin[]> {
+export default async function getOraclePrices(
+  chainConfig: ChainConfig,
+  assets: Asset[],
+): Promise<BNCoin[]> {
   try {
     if (!assets.length) return []
 
-    const oracleQueryClient = await getOracleQueryClient()
+    const oracleQueryClient = await getOracleQueryClient(chainConfig)
     const priceResults = await cacheFn(
       () => iterateContractQuery(oracleQueryClient.prices),
       oraclePriceCache,

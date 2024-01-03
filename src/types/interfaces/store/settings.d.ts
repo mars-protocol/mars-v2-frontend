@@ -4,7 +4,7 @@ interface Settings {
   reduceMotion: boolean
   tradingPairSimple: TradingPair
   tradingPairAdvanced: TradingPair
-  lendAssets: boolean
+  enableAutoLendGlobal: boolean
   slippage: number
   tutorial: boolean
   migrationBanner: boolean

@@ -6,9 +6,8 @@ import DisplayCurrency from 'components/DisplayCurrency'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { StarFilled, StarOutlined } from 'components/Icons'
 import Text from 'components/Text'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ONE, BN_ZERO, MAX_AMOUNT_DECIMALS, MIN_AMOUNT } from 'constants/math'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useFavoriteAssets from 'hooks/localStorage/useFavoriteAssets'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { demagnify, formatAmountToPrecision } from 'utils/formatters'
@@ -22,10 +21,7 @@ interface Props {
 
 export default function AssetItem(props: Props) {
   const asset = props.asset
-  const [favoriteAssetsDenoms, setFavoriteAssetsDenoms] = useLocalStorage<string[]>(
-    LocalStorageKeys.FAVORITE_ASSETS,
-    [],
-  )
+  const [favoriteAssetsDenoms, setFavoriteAssetsDenoms] = useFavoriteAssets()
   const amount = demagnify(props.balances.find(byDenom(asset.denom))?.amount ?? BN_ZERO, asset)
   const formattedAmount = formatAmountToPrecision(amount, MAX_AMOUNT_DECIMALS)
   const lowAmount = formattedAmount === 0 ? 0 : Math.max(formattedAmount, MIN_AMOUNT)

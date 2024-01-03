@@ -1,9 +1,12 @@
 import useSWR from 'swr'
 
 import getICNS from 'api/wallets/getICNS'
+import useChainConfig from 'hooks/useChainConfig'
 
 export default function useICNSDomain(address?: string) {
-  return useSWR(`ICNS-${address}`, () => getICNS(address), {
+  const chainConfig = useChainConfig()
+
+  return useSWR(`ICNS-${address}`, () => getICNS(chainConfig, address), {
     revalidateOnFocus: false,
   })
 }

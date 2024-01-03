@@ -6,36 +6,46 @@ import {
 } from 'types/generated/mars-params/MarsParams.types'
 import { Market as RedBankMarket } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { byDenom } from 'utils/array'
-import { getEnabledMarketAssets } from 'utils/assets'
 import iterateContractQuery from 'utils/iterateContractQuery'
 import { resolveMarketResponse } from 'utils/resolvers'
 
-export default async function getMarkets(): Promise<Market[]> {
+export default async function getMarkets(chainConfig: ChainConfig): Promise<Market[]> {
   try {
-    const redBankClient = await getRedBankQueryClient()
-    const paramsClient = await getParamsQueryClient()
+    const redBankClient = await getRedBankQueryClient(chainConfig)
+    const paramsClient = await getParamsQueryClient(chainConfig)
 
-    const enabledAssets = getEnabledMarketAssets()
-    const capQueries = enabledAssets.map((asset) =>
+    const marketAssets = chainConfig.assets.filter((asset) => asset.isMarket)
+
+    const capQueries = marketAssets
+      .filter((asset) => asset.isMarket)
+      .map((asset) =>
+        cacheFn(
+          () => paramsClient.totalDeposit({ denom: asset.denom }),
+          totalDepositCache,
+          `chains/${chainConfig.id}/enabledMarkets/${asset.denom}`,
+          60,
+        ),
+      )
+
+    const caps = await Promise.all(capQueries)
+
+    const [markets, assetParams, assetCaps] = await Promise.all([
       cacheFn(
-        () => paramsClient.totalDeposit({ denom: asset.denom }),
-        totalDepositCache,
-        `enabledMarkets/${asset.denom}`,
+        () => iterateContractQuery(redBankClient.markets),
+        marketsCache,
+        `chains/${chainConfig.id}/markets`,
         60,
       ),
-    )
-    const [markets, assetParams, assetCaps] = await Promise.all([
-      cacheFn(() => iterateContractQuery(redBankClient.markets), marketsCache, 'markets', 60),
       cacheFn(
         async () => await iterateContractQuery(paramsClient.allAssetParams),
         allParamsCache,
-        'params',
+        `chains/${chainConfig.id}/params`,
         60,
       ),
       Promise.all(capQueries),
     ])
 
-    return enabledAssets.map((asset) =>
+    return marketAssets.map((asset) =>
       resolveMarketResponse(
         markets.find(byDenom(asset.denom)) as RedBankMarket,
         assetParams.find(byDenom(asset.denom)) as AssetParams,
@@ -43,6 +53,7 @@ export default async function getMarkets(): Promise<Market[]> {
       ),
     )
   } catch (ex) {
+    console.log(ex)
     throw ex
   }
 }

@@ -1,5 +1,5 @@
 import AssetImage from 'components/Asset/AssetImage'
-import { getAssetByDenom } from 'utils/assets'
+import useAsset from 'hooks/assets/useAsset'
 
 interface Props {
   primaryDenom: string
@@ -7,8 +7,8 @@ interface Props {
 }
 
 export default function DoubleLogo(props: Props) {
-  const primaryAsset = getAssetByDenom(props.primaryDenom)
-  const secondaryAsset = getAssetByDenom(props.secondaryDenom)
+  const primaryAsset = useAsset(props.primaryDenom)
+  const secondaryAsset = useAsset(props.secondaryDenom)
 
   if (!primaryAsset || !secondaryAsset) return null
 

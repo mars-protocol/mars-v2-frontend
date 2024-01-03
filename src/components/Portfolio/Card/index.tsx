@@ -8,13 +8,14 @@ import Skeleton from 'components/Portfolio/Card/Skeleton'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
-import useAccount from 'hooks/useAccount'
+import useAccount from 'hooks/accounts/useAccount'
+import useAllAssets from 'hooks/assets/useAllAssets'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useAccountId from 'hooks/useAccountId'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
-import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import {
   calculateAccountApr,
@@ -37,7 +38,7 @@ export default function PortfolioCard(props: Props) {
   const { data } = useBorrowMarketAssetsTableData(false)
   const { data: hlsStrategies } = useHLSStakingAssets()
   const [searchParams] = useSearchParams()
-
+  const assets = useAllAssets()
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
@@ -46,13 +47,13 @@ export default function PortfolioCard(props: Props) {
 
   const [deposits, lends, debts, vaults] = useMemo(() => {
     if (!prices.length || !account) return Array(4).fill(BN_ZERO)
-    return getAccountPositionValues(account, prices)
-  }, [prices, account])
+    return getAccountPositionValues(account, prices, assets)
+  }, [prices, account, assets])
 
   const leverage = useMemo(() => {
     if (!prices.length || !account) return BN_ZERO
-    return calculateAccountLeverage(account, prices)
-  }, [account, prices])
+    return calculateAccountLeverage(account, prices, assets)
+  }, [account, assets, prices])
 
   const apr = useMemo(() => {
     if (!lendingAssets.length || !borrowAssets.length || !prices.length || !account) return null
@@ -62,9 +63,10 @@ export default function PortfolioCard(props: Props) {
       lendingAssets,
       prices,
       hlsStrategies,
+      assets,
       account.kind === 'high_levered_strategy',
     )
-  }, [lendingAssets, borrowAssets, prices, account, hlsStrategies])
+  }, [lendingAssets, borrowAssets, prices, account, hlsStrategies, assets])
 
   const stats: { title: ReactNode; sub: string }[] = useMemo(() => {
     const isLoaded = account && prices.length && apr !== null

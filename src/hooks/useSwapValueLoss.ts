@@ -1,6 +1,7 @@
 import useSWR from 'swr'
 
 import estimateExactIn from 'api/swap/estimateExactIn'
+import useChainConfig from 'hooks/useChainConfig'
 import usePrice from 'hooks/usePrice'
 import { BNCoin } from 'types/classes/BNCoin'
 import { SWAP_FEE_BUFFER } from 'utils/constants'
@@ -13,12 +14,14 @@ export default function useSwapValueLoss(
 ) {
   const denomInPrice = usePrice(denomIn)
   const denomOutPrice = usePrice(denomOut)
+  const chainConfig = useChainConfig()
 
   return useSWR(
     `swapValueLoss/${denomIn}/${denomOut}/${amount}`,
     async () => {
       const valueIn = denomInPrice.times(amount)
       const amountOut = await estimateExactIn(
+        chainConfig,
         BNCoin.fromDenomAndBigNumber(denomIn, BN(amount)).toCoin(),
         denomOut,
       )

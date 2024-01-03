@@ -13,6 +13,7 @@ interface Props {
   isHome?: boolean
   className?: string
   onClick?: () => void
+  onMouseOver?: () => void
 }
 
 export const NavLink = (props: Props) => {
@@ -32,7 +33,7 @@ export const NavLink = (props: Props) => {
       onClick={onClick ? onClick : undefined}
       className={classNames(
         className,
-        'font-semibold hover:text-white active:text-white',
+        'font-semibold hover:text-white active:text-white group-hover/submenuitem:text-white',
         getIsActive(item.pages) ? 'pointer-events-none text-white' : 'text-white/60',
       )}
       target={item.externalUrl ? '_blank' : undefined}

@@ -3,15 +3,13 @@ import { devtools } from 'zustand/middleware'
 
 import createBroadcastSlice from 'store/slices/broadcast'
 import createCommonSlice from 'store/slices/common'
-import createCurrencySlice from 'store/slices/currency'
 import createModalSlice from 'store/slices/modal'
 
-export interface Store extends CommonSlice, BroadcastSlice, CurrencySlice, ModalSlice {}
+export interface Store extends CommonSlice, BroadcastSlice, ModalSlice {}
 
 const store = (set: SetState<any>, get: GetState<any>) => ({
   ...createCommonSlice(set, get),
   ...createBroadcastSlice(set, get),
-  ...createCurrencySlice(set, get),
   ...createModalSlice(set, get),
 })
 

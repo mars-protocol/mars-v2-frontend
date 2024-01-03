@@ -2,9 +2,9 @@ import { useCallback, useMemo, useState } from 'react'
 
 import AssetSelectTable from 'components/Modals/AssetsSelect/AssetSelectTable'
 import SearchBar from 'components/SearchBar'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
-import { getAssetByDenom } from 'utils/assets'
 
 interface Props {
   onChangeDenoms: (denoms: string[]) => void
@@ -14,25 +14,26 @@ export default function WalletAssetsModalContent(props: Props) {
   const { onChangeDenoms } = props
   const [searchString, setSearchString] = useState<string>('')
   const balances = useStore((s) => s.balances)
+  const assets = useAllAssets()
 
-  const assets = useMemo(() => {
-    const assetsInWallet: Asset[] = []
+  const assetsInWallet = useMemo(() => {
+    const assetsInWalletInWallet: Asset[] = []
     balances.forEach((balance) => {
-      const asset = getAssetByDenom(balance.denom)
-      if (asset && asset.isMarket) assetsInWallet.push(asset)
+      const asset = assets.find(byDenom(balance.denom))
+      if (asset && asset.isMarket) assetsInWalletInWallet.push(asset)
     })
 
-    return assetsInWallet
-  }, [balances])
+    return assetsInWalletInWallet
+  }, [assets, balances])
 
   const filteredAssets: Asset[] = useMemo(() => {
-    return assets.filter(
+    return assetsInWallet.filter(
       (asset) =>
         asset.name.toLowerCase().includes(searchString.toLowerCase()) ||
         asset.denom.toLowerCase().includes(searchString.toLowerCase()) ||
         asset.symbol.toLowerCase().includes(searchString.toLowerCase()),
     )
-  }, [assets, searchString])
+  }, [assetsInWallet, searchString])
 
   const isBorrow = useStore((s) => s.walletAssetsModal?.isBorrow ?? false)
   const currentSelectedDenom = useStore((s) => s.walletAssetsModal?.selectedDenoms ?? [])

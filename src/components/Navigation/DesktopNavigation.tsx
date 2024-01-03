@@ -19,10 +19,11 @@ export function getIsActive(pages: string[]) {
 export default function DesktopNavigation() {
   const [showMenu, setShowMenu] = useToggle()
   const { recentWallet } = useShuttle()
+  const chainConfig = useStore((s) => s.chainConfig)
   const walletId = (recentWallet?.providerId as WalletID) ?? WalletID.Keplr
   const focusComponent = useStore((s) => s.focusComponent)
 
-  const menu = useMemo(() => menuTree(walletId), [walletId])
+  const menu = useMemo(() => menuTree(walletId, chainConfig), [walletId, chainConfig])
 
   return (
     <div
@@ -41,7 +42,7 @@ export default function DesktopNavigation() {
         <div className='flex gap-8 px-6 h-6 @container/navigation relative flex-1'>
           {menu.map((item, index) =>
             item.submenu ? (
-              <NavMenu key={index} item={item} />
+              <NavMenu key={index} item={item} index={index} />
             ) : (
               <NavLink
                 key={index}

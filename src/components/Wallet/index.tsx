@@ -13,26 +13,27 @@ export default function Wallet() {
   const address = useStore((s) => s.address)
 
   useEffect(() => {
-    if (!currentWallet) return
-    if (currentWallet.account.address === address) return
+    if (address) return
     useStore.setState({
       address: undefined,
       userDomain: undefined,
       client: undefined,
-      focusComponent: {
-        component: <WalletConnecting autoConnect />,
-        onClose: () => {
-          disconnectWallet(currentWallet)
-          useStore.setState({
-            client: undefined,
-            address: undefined,
-            userDomain: undefined,
-            accounts: null,
-            balances: [],
-            focusComponent: null,
-          })
-        },
-      },
+      focusComponent: currentWallet
+        ? {
+            component: <WalletConnecting />,
+            onClose: () => {
+              disconnectWallet(currentWallet)
+              useStore.setState({
+                client: undefined,
+                address: undefined,
+                userDomain: undefined,
+                accounts: null,
+                balances: [],
+                focusComponent: null,
+              })
+            },
+          }
+        : null,
     })
   }, [currentWallet, address, disconnectWallet])
 

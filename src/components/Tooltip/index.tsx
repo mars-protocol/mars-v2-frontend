@@ -6,7 +6,7 @@ import { Questionmark } from 'components/Icons'
 import TooltipContent from 'components/Tooltip/TooltipContent'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 
 interface Props extends TippyProps {
   content: ReactNode | string

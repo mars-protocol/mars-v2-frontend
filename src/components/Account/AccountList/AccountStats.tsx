@@ -5,7 +5,8 @@ import Skeleton from 'components/Account/AccountList/Skeleton'
 import Button from 'components/Button'
 import { ArrowDownLine, ArrowUpLine, TrashBin } from 'components/Icons'
 import SwitchAutoLend from 'components/Switch/SwitchAutoLend'
-import useAccount from 'hooks/useAccount'
+import useAccount from 'hooks/accounts/useAccount'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
@@ -22,13 +23,14 @@ interface Props {
 
 export default function AccountStats(props: Props) {
   const { accountId, isActive, setShowMenu } = props
+  const assets = useAllAssets()
   const { data: account } = useAccount(accountId)
   const { data: prices } = usePrices()
   const { data: hlsStrategies } = useHLSStakingAssets()
 
   const positionBalance = useMemo(
-    () => (!account ? null : calculateAccountBalanceValue(account, prices)),
-    [account, prices],
+    () => (!account ? null : calculateAccountBalanceValue(account, prices, assets)),
+    [account, assets, prices],
   )
   const { health, healthFactor } = useHealthComputer(account)
   const { data } = useBorrowMarketAssetsTableData(false)
@@ -49,9 +51,10 @@ export default function AccountStats(props: Props) {
             lendingAssetsData,
             prices,
             hlsStrategies,
+            assets,
             account.kind === 'high_levered_strategy',
           ),
-    [account, borrowAssetsData, hlsStrategies, lendingAssetsData, prices],
+    [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, prices],
   )
 
   const deleteAccountHandler = useCallback(() => {

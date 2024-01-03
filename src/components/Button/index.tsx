@@ -18,7 +18,7 @@ import { CircularProgress } from 'components/CircularProgress'
 import { ChevronDown } from 'components/Icons'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 
 const Button = React.forwardRef(function Button(
   {
@@ -33,6 +33,7 @@ const Button = React.forwardRef(function Button(
     text,
     variant = 'solid',
     onClick,
+    onMouseOver,
     leftIcon,
     rightIcon,
     iconClassName,
@@ -97,6 +98,7 @@ const Button = React.forwardRef(function Button(
       id={id}
       ref={ref as LegacyRef<HTMLButtonElement>}
       onClick={isDisabled ? () => {} : onClick}
+      onMouseOver={isDisabled ? () => {} : onMouseOver}
       tabIndex={tabIndex}
       autoFocus={autoFocus}
     >

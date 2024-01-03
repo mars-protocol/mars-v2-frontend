@@ -4,8 +4,9 @@ import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
-import useAssetParams from 'hooks/useAssetParams'
-import useLocalStorage from 'hooks/useLocalStorage'
+import useAllAssets from 'hooks/assets/useAllAssets'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useAssetParams from 'hooks/params/useAssetParams'
 import usePrices from 'hooks/usePrices'
 import useVaultConfigs from 'hooks/useVaultConfigs'
 import {
@@ -18,7 +19,7 @@ import {
   HealthComputer,
 } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 import { convertAccountToPositions } from 'utils/accounts'
-import { getAssetByDenom } from 'utils/assets'
+import { byDenom } from 'utils/array'
 import { SWAP_FEE_BUFFER } from 'utils/constants'
 import {
   BorrowTarget,
@@ -37,6 +38,7 @@ import { BN } from 'utils/helpers'
 const VALUE_SCALE_FACTOR = 14
 
 export default function useHealthComputer(account?: Account) {
+  const assets = useAllAssets()
   const { data: prices } = usePrices()
   const { data: assetParams } = useAssetParams()
   const { data: vaultConfigs } = useVaultConfigs()
@@ -82,7 +84,7 @@ export default function useHealthComputer(account?: Account) {
   const priceData = useMemo(() => {
     return prices.reduce(
       (prev, curr) => {
-        const decimals = getAssetByDenom(curr.denom)?.decimals || 6
+        const decimals = assets.find(byDenom(curr.denom))?.decimals || 6
 
         // The HealthComputer needs prices expressed per 1 amount. So we need to correct here for any additional decimals.
         prev[curr.denom] = curr.amount
@@ -93,7 +95,7 @@ export default function useHealthComputer(account?: Account) {
       },
       {} as { [key: string]: string },
     )
-  }, [prices])
+  }, [assets, prices])
 
   const denomsData = useMemo(
     () =>
@@ -109,7 +111,7 @@ export default function useHealthComputer(account?: Account) {
   )
 
   const vaultConfigsData = useMemo(() => {
-    if (!vaultConfigs.length) return null
+    if (!vaultConfigs.length) return {}
 
     return vaultConfigs.reduce(
       (prev, curr) => {
@@ -202,7 +204,7 @@ export default function useHealthComputer(account?: Account) {
     (denom: string, kind: LiquidationPriceKind) => {
       if (!healthComputer) return null
       try {
-        const asset = getAssetByDenom(denom)
+        const asset = assets.find(byDenom(denom))
         if (!asset) return null
         const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
         return BN(liquidation_price_js(healthComputer, denom, kind))
@@ -213,7 +215,7 @@ export default function useHealthComputer(account?: Account) {
         return null
       }
     },
-    [healthComputer],
+    [assets, healthComputer],
   )
 
   const health = useMemo(() => {

@@ -1,18 +1,18 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
+import ActionButton from 'components/Button/ActionButton'
 import Text from 'components/Text'
 import WarningMessages from 'components/WarningMessages'
-import { ENV } from 'constants/env'
+import useChainConfig from 'hooks/useChainConfig'
 import useStore from 'store'
-
-import ActionButton from '../components/Button/ActionButton'
 
 export default function ExecuteMessagePage() {
   const [searchParams] = useSearchParams()
+  const chainConfig = useChainConfig()
 
   const [contract, setContract] = useState<string>(
-    searchParams.get('contract') ?? ENV.ADDRESS_CREDIT_MANAGER,
+    searchParams.get('contract') ?? chainConfig.contracts.creditManager,
   )
   const [message, setMessage] = useState<string>(atob(searchParams.get('msg') ?? ''))
   const [funds, setFunds] = useState<string>(atob(searchParams.get('funds') ?? ''))

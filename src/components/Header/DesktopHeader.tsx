@@ -3,6 +3,7 @@ import { isDesktop } from 'react-device-detect'
 
 import AccountMenu from 'components/Account/AccountMenu'
 import EscButton from 'components/Button/EscButton'
+import ChainSelect from 'components/Header/ChainSelect'
 import OracleResyncButton from 'components/Header/OracleResyncButton'
 import { Coins, CoinsSwap } from 'components/Icons'
 import DesktopNavigation from 'components/Navigation/DesktopNavigation'
@@ -12,10 +13,9 @@ import Wallet from 'components/Wallet'
 import useAccountId from 'hooks/useAccountId'
 import useStore from 'store'
 import { WalletID } from 'types/enums/wallet'
-import { ENABLE_HLS, ENABLE_PERPS } from 'utils/constants'
 import { getGovernanceUrl } from 'utils/helpers'
 
-export const menuTree = (walletId: WalletID): MenuTreeEntry[] => [
+export const menuTree = (walletId: WalletID, chainConfig: ChainConfig): MenuTreeEntry[] => [
   {
     pages: ['trade', 'trade-advanced'],
     label: 'Trade',
@@ -34,10 +34,10 @@ export const menuTree = (walletId: WalletID): MenuTreeEntry[] => [
       },
     ],
   },
-  ...(ENABLE_PERPS ? [{ pages: ['perps'] as Page[], label: 'Perps' }] : []),
-  { pages: ['lend', 'farm'], label: 'Earn' },
+  ...(chainConfig.perps ? [{ pages: ['perps'] as Page[], label: 'Perps' }] : []),
+  { pages: chainConfig.farm ? ['lend', 'farm'] : ['lend'], label: 'Earn' },
   { pages: ['borrow'], label: 'Borrow' },
-  ...(ENABLE_HLS ? [{ pages: ['hls-staking'] as Page[], label: 'High Leverage' }] : []),
+  ...(chainConfig.hls ? [{ pages: ['hls-staking'] as Page[], label: 'High Leverage' }] : []),
   { pages: ['portfolio'], label: 'Portfolio' },
   { pages: ['governance'], label: 'Governance', externalUrl: getGovernanceUrl(walletId) },
 ]
@@ -74,7 +74,12 @@ export default function DesktopHeader() {
         {focusComponent ? (
           <div className='flex justify-between w-full'>
             <div className='flex h-5 w-13' />
-            {address && <Wallet />}
+            {address && (
+              <div className='flex gap-4'>
+                <Wallet />
+                <ChainSelect />
+              </div>
+            )}
             <EscButton onClick={handleCloseFocusMode} />
           </div>
         ) : (
@@ -83,6 +88,7 @@ export default function DesktopHeader() {
             {accountId && <RewardsCenter />}
             {address && !isHLS && <AccountMenu />}
             <Wallet />
+            <ChainSelect />
             <Settings />
           </div>
         )}

@@ -1,12 +1,10 @@
 import BigNumber from 'bignumber.js'
 import moment from 'moment'
 
-import { ASSETS } from 'constants/assets'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { getAllAssets } from 'utils/assets'
 import { BN } from 'utils/helpers'
 
 export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
@@ -154,8 +152,8 @@ export function formatPercent(percent: number | string, minDecimals?: number) {
   })
 }
 
-export function formatAmountWithSymbol(coin: Coin) {
-  const asset = ASSETS.find((asset) => asset.denom === coin.denom)
+export function formatAmountWithSymbol(coin: Coin, assets: Asset[]) {
+  const asset = assets.find((asset) => asset.denom === coin.denom)
 
   return formatValue(coin.amount, {
     decimals: asset?.decimals,
@@ -188,8 +186,8 @@ export function demagnify(amount: number | string | BigNumber, asset: Asset | Ps
   return _amount.isZero() ? 0 : _amount.shiftedBy(-1 * asset.decimals).toNumber()
 }
 
-export function getCoinValue(coin: BNCoin, prices: BNCoin[]) {
-  const asset = getAllAssets().find(byDenom(coin.denom))
+export function getCoinValue(coin: BNCoin, prices: BNCoin[], assets: Asset[]) {
+  const asset = assets.find(byDenom(coin.denom))
   const coinPrice = prices.find(byDenom(coin.denom))
 
   if (!coinPrice || !asset) return BN_ZERO
@@ -198,8 +196,8 @@ export function getCoinValue(coin: BNCoin, prices: BNCoin[]) {
   return coin.amount.shiftedBy(decimals).multipliedBy(coinPrice.amount)
 }
 
-export function getCoinAmount(denom: string, value: BigNumber, prices: BNCoin[]) {
-  const asset = getAllAssets().find(byDenom(denom))
+export function getCoinAmount(denom: string, value: BigNumber, prices: BNCoin[], assets: Asset[]) {
+  const asset = assets.find(byDenom(denom))
   const coinPrice = prices.find(byDenom(denom))
 
   if (!coinPrice || !asset) return BN_ZERO

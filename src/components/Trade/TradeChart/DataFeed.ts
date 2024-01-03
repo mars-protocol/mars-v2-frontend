@@ -1,9 +1,7 @@
 import { defaultSymbolInfo } from 'components/Trade/TradeChart/constants'
-import { ASSETS } from 'constants/assets'
 import { ENV } from 'constants/env'
 import { MILLISECONDS_PER_MINUTE } from 'constants/math'
 import { byDenom } from 'utils/array'
-import { getAssetByDenom, getEnabledMarketAssets } from 'utils/assets'
 import {
   Bar,
   ErrorCallback,
@@ -40,8 +38,9 @@ interface TheGraphBarQueryData {
 export const PAIR_SEPARATOR = '<>'
 
 export class DataFeed implements IDatafeedChartApi {
-  candlesEndpoint = ENV.CANDLES_ENDPOINT_PYTH
-  candlesEndpointTheGraph = ENV.CANDLES_ENDPOINT_THE_GRAPH
+  candlesEndpoint: string
+  candlesEndpointTheGraph: string
+  assets: Asset[]
   debug = false
   enabledMarketAssetDenoms: string[] = []
   batchSize = 1000
@@ -68,12 +67,21 @@ export class DataFeed implements IDatafeedChartApi {
   supportedPools: string[] = []
   supportedResolutions = ['1', '5', '15', '30', '60', '240', 'D'] as ResolutionString[]
 
-  constructor(debug = false, baseDecimals: number, baseDenom: string) {
+  constructor(
+    debug = false,
+    assets: Asset[],
+    baseDecimals: number,
+    baseDenom: string,
+    chainConfig: ChainConfig,
+  ) {
     if (debug) console.log('Start charting library datafeed')
+    this.candlesEndpoint = chainConfig.endpoints.pythCandles
+    this.candlesEndpointTheGraph = chainConfig.endpoints.graphCandles ?? ''
+    this.assets = assets
     this.debug = debug
     this.baseDecimals = baseDecimals
     this.baseDenom = baseDenom
-    const enabledMarketAssets = getEnabledMarketAssets()
+    const enabledMarketAssets = assets.filter((asset) => asset.isEnabled && asset.isMarket)
     this.enabledMarketAssetDenoms = enabledMarketAssets.map((asset) => asset.denom)
     this.supportedPools = enabledMarketAssets
       .map((asset) => asset.poolId?.toString())
@@ -82,8 +90,8 @@ export class DataFeed implements IDatafeedChartApi {
 
   getDescription(pairName: string, inverted: boolean) {
     const [denom1, denom2] = pairName.split(PAIR_SEPARATOR)
-    const asset1 = ASSETS.find(byDenom(denom1))
-    const asset2 = ASSETS.find(byDenom(denom2))
+    const asset1 = this.assets.find(byDenom(denom1))
+    const asset2 = this.assets.find(byDenom(denom2))
     return inverted ? `${asset2?.symbol}/${asset1?.symbol}` : `${asset1?.symbol}/${asset2?.symbol}`
   }
 
@@ -394,8 +402,8 @@ export class DataFeed implements IDatafeedChartApi {
     to: number,
   ) {
     let barData = [] as Bar[]
-    const toDecimals = getAssetByDenom(toDenom)?.decimals || 6
-    const fromDecimals = getAssetByDenom(fromDenom)?.decimals || 6
+    const toDecimals = this.assets.find(byDenom(toDenom))?.decimals || 6
+    const fromDecimals = this.assets.find(byDenom(fromDenom))?.decimals || 6
     const additionalDecimals = toDecimals - fromDecimals
 
     barData = bars.map((bar) => ({
@@ -449,14 +457,14 @@ export class DataFeed implements IDatafeedChartApi {
 
     const [symbol1, symbol2] = name.split('/')
 
-    const asset1 = ASSETS.find((asset) => asset.symbol === symbol1)
-    const asset2 = ASSETS.find((asset) => asset.symbol === symbol2)
+    const asset1 = this.assets.find((asset) => asset.symbol === symbol1)
+    const asset2 = this.assets.find((asset) => asset.symbol === symbol2)
     return `${asset1?.denom}${PAIR_SEPARATOR}${asset2?.denom}`
   }
 
   getPriceScale(name: string) {
     const denoms = name.split(PAIR_SEPARATOR)
-    const asset2 = ASSETS.find(byDenom(denoms[1]))
+    const asset2 = this.assets.find(byDenom(denoms[1]))
     const decimalsOut = asset2?.decimals ?? 6
     return BN(1)
       .shiftedBy(decimalsOut > 8 ? 8 : decimalsOut)
@@ -465,8 +473,8 @@ export class DataFeed implements IDatafeedChartApi {
 
   getExchangeName(name: string) {
     const denoms = name.split(PAIR_SEPARATOR)
-    const pythFeedId1 = ASSETS.find(byDenom(denoms[0]))?.pythHistoryFeedId
-    const pythFeedId2 = ASSETS.find(byDenom(denoms[1]))?.pythHistoryFeedId
+    const pythFeedId1 = this.assets.find(byDenom(denoms[0]))?.pythHistoryFeedId
+    const pythFeedId2 = this.assets.find(byDenom(denoms[1]))?.pythHistoryFeedId
     //if (!pythFeedId1 || !pythFeedId2) return 'Osmosis'
     return 'Pyth Oracle'
   }
@@ -474,14 +482,14 @@ export class DataFeed implements IDatafeedChartApi {
   getPythFeedIds(name: string) {
     if (name.includes(PAIR_SEPARATOR)) {
       const [denom1, denom2] = name.split(PAIR_SEPARATOR)
-      const denomFeedId1 = ASSETS.find((asset) => asset.denom === denom1)?.pythHistoryFeedId
-      const denomFeedId2 = ASSETS.find((asset) => asset.denom === denom2)?.pythHistoryFeedId
+      const denomFeedId1 = this.assets.find((asset) => asset.denom === denom1)?.pythHistoryFeedId
+      const denomFeedId2 = this.assets.find((asset) => asset.denom === denom2)?.pythHistoryFeedId
       return [denomFeedId1, denomFeedId2]
     }
 
     const [symbol1, symbol2] = name.split('/')
-    const feedId1 = ASSETS.find((asset) => asset.symbol === symbol1)?.pythHistoryFeedId
-    const feedId2 = ASSETS.find((asset) => asset.symbol === symbol2)?.pythHistoryFeedId
+    const feedId1 = this.assets.find((asset) => asset.symbol === symbol1)?.pythHistoryFeedId
+    const feedId2 = this.assets.find((asset) => asset.symbol === symbol2)?.pythHistoryFeedId
 
     return [feedId1, feedId2]
   }

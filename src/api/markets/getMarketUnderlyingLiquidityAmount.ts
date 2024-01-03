@@ -1,18 +1,21 @@
 import { cacheFn, underlyingLiquidityAmountCache } from 'api/cache'
 import { getRedBankQueryClient } from 'api/cosmwasm-client'
 
-export default async function getUnderlyingLiquidityAmount(market: Market): Promise<string> {
+export default async function getUnderlyingLiquidityAmount(
+  chainConfig: ChainConfig,
+  market: Market,
+): Promise<string> {
   return cacheFn(
-    () => fetchUnderlyingLiquidityAmount(market),
+    () => fetchUnderlyingLiquidityAmount(chainConfig, market),
     underlyingLiquidityAmountCache,
     `underlyingLiquidity/${market.denom}/amount/${market.collateralTotalScaled}`,
     60,
   )
 }
 
-async function fetchUnderlyingLiquidityAmount(market: Market) {
+async function fetchUnderlyingLiquidityAmount(chainConfig: ChainConfig, market: Market) {
   try {
-    const client = await getRedBankQueryClient()
+    const client = await getRedBankQueryClient(chainConfig)
     return await client.underlyingLiquidityAmount({
       denom: market.denom,
       amountScaled: market.collateralTotalScaled,

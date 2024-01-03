@@ -1,25 +1,23 @@
 import classNames from 'classnames'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import AccountFundRow from 'components/Account/AccountFund/AccountFundRow'
 import Button from 'components/Button'
 import DepositCapMessage from 'components/DepositCapMessage'
 import { ArrowRight, Plus } from 'components/Icons'
 import SwitchAutoLend from 'components/Switch/SwitchAutoLend'
 import Text from 'components/Text'
-import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
 import WalletBridges from 'components/Wallet/WalletBridges'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
-import useLocalStorage from 'hooks/useLocalStorage'
-import useMarketAssets from 'hooks/useMarketAssets'
+import useBaseAsset from 'hooks/assets/useBasetAsset'
+import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
+import useMarketAssets from 'hooks/markets/useMarketAssets'
 import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { getAssetByDenom, getBaseAsset } from 'utils/assets'
 import { defaultFee } from 'utils/constants'
 import { getCapLeftWithBuffer } from 'utils/generic'
 import { BN } from 'utils/helpers'
@@ -35,16 +33,13 @@ export default function AccountFundContent(props: Props) {
   const deposit = useStore((s) => s.deposit)
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
   const [isConfirming, setIsConfirming] = useState(false)
-  const [lendAssets] = useLocalStorage<boolean>(
-    LocalStorageKeys.LEND_ASSETS,
-    DEFAULT_SETTINGS.lendAssets,
-  )
+  const [enableAutoLendGlobal] = useEnableAutoLendGlobal()
   const [fundingAssets, setFundingAssets] = useState<BNCoin[]>([])
   const { data: marketAssets } = useMarketAssets()
   const { data: walletBalances } = useWalletBalances(props.address)
-  const [isLending, toggleIsLending] = useToggle(lendAssets)
+  const [isLending, toggleIsLending] = useToggle(enableAutoLendGlobal)
   const { simulateDeposits } = useUpdatedAccount(props.account)
-  const baseAsset = getBaseAsset()
+  const baseAsset = useBaseAsset()
 
   const hasAssetSelected = fundingAssets.length > 0
   const hasFundingAssets =
@@ -150,26 +145,20 @@ export default function AccountFundContent(props: Props) {
       <div>
         {!hasAssetSelected && <Text>Please select an asset.</Text>}
         {fundingAssets.map((coin) => {
-          const asset = getAssetByDenom(coin.denom) as Asset
-
-          const balance = balances.find(byDenom(coin.denom))?.amount ?? BN_ZERO
           return (
             <div
-              key={asset.symbol}
+              key={coin.denom}
               className={classNames(
                 'w-full mb-4',
                 props.isFullPage && 'w-full p-4 border rounded-base border-white/20 bg-white/5',
               )}
             >
-              <TokenInputWithSlider
-                asset={asset}
-                onChange={(amount) => updateFundingAssets(amount, asset.denom)}
-                amount={coin.amount ?? BN_ZERO}
-                max={balance}
+              <AccountFundRow
+                denom={coin.denom}
                 balances={balances}
-                maxText='Max'
-                disabled={isConfirming}
-                warningMessages={[]}
+                amount={coin.amount ?? BN_ZERO}
+                isConfirming={isConfirming}
+                updateFundingAssets={updateFundingAssets}
               />
             </div>
           )

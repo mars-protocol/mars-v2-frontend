@@ -28,7 +28,7 @@ export default function Overlay(props: Props) {
         {props.children ? props.children : props.content}
       </div>
       <div
-        className='fixed top-0 left-0 z-40 block w-full h-full hover:cursor-pointer'
+        className='fixed inset-0 z-40 block w-full h-full hover:cursor-pointer'
         onClick={onClickAway}
         role='button'
       />
