@@ -8,94 +8,86 @@ import {
   LeapMetamaskCosmosSnapExtensionProvider,
   ShuttleProvider,
   StationExtensionProvider,
+  VectisCosmosExtensionProvider,
   WalletExtensionProvider,
   WalletMobileProvider,
   XDEFICosmosExtensionProvider,
 } from '@delphi-labs/shuttle-react'
-import { FC, useCallback, useEffect, useMemo } from 'react'
+import { FC } from 'react'
 
 import chains from 'configs/chains'
-import { ENV } from 'constants/env'
 import { WALLETS } from 'constants/wallets'
-import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
-import useChainConfig from 'hooks/useChainConfig'
-import useStore from 'store'
-import { WalletID } from 'types/enums/wallet'
+import { ChainInfoID, WalletID } from 'types/enums/wallet'
 
 type Props = {
   children?: React.ReactNode
 }
 
+function mapChainConfigToChainInfo(chainConfig: ChainConfig): ChainInfo {
+  const chainInfo: ChainInfo = {
+    rpc: chainConfig.endpoints.rpc,
+    rest: chainConfig.endpoints.rest,
+    explorer: chainConfig.endpoints.explorer,
+    explorerName: chainConfig.explorerName,
+    chainId: chainConfig.id,
+    name: chainConfig.name,
+    gasPrice: chainConfig.gasPrice,
+    bech32Config: chainConfig.bech32Config,
+    defaultCurrency: chainConfig.defaultCurrency,
+    features: ['ibc-transfer', 'ibc-go'],
+  }
+
+  switch (chainConfig.id) {
+    case ChainInfoID.Osmosis1:
+      chainInfo.rpc = process.env.NEXT_PUBLIC_OSMOSIS_RPC ?? chainInfo.rpc
+      chainInfo.rest = process.env.NEXT_PUBLIC_OSMOSIS_REST ?? chainInfo.rpc
+      break
+
+    case ChainInfoID.Pion1:
+      chainInfo.rpc = process.env.NEXT_PUBLIC_NEUTRON_TEST_RPC ?? chainInfo.rpc
+      chainInfo.rest = process.env.NEXT_PUBLIC_NEUTRON_TEST_REST ?? chainInfo.rpc
+      break
+  }
+
+  return chainInfo
+}
+
+function getSupportedChainsInfos(walletId: WalletID) {
+  return WALLETS[walletId].supportedChains.map((chain) => {
+    const chainInfo = mapChainConfigToChainInfo(chains[chain])
+
+    return chainInfo
+  })
+}
+
+const mobileProviders: WalletMobileProvider[] = [
+  new KeplrMobileProvider({
+    networks: getSupportedChainsInfos(WalletID.KeplrMobile),
+  }),
+  new LeapCosmosMobileProvider({
+    networks: getSupportedChainsInfos(WalletID.LeapMobile),
+  }),
+  new CosmostationMobileProvider({
+    networks: getSupportedChainsInfos(WalletID.CosmostationMobile),
+  }),
+]
+
+const extensionProviders: WalletExtensionProvider[] = [
+  new KeplrExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Keplr) }),
+  new LeapCosmosExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Leap) }),
+  new LeapMetamaskCosmosSnapExtensionProvider({
+    networks: getSupportedChainsInfos(WalletID.LeapSnap),
+  }),
+  new CosmostationExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Cosmostation) }),
+  new XDEFICosmosExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Xdefi) }),
+  new StationExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Station) }),
+  new VectisCosmosExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Vectis) }),
+]
+
 export const WalletConnectProvider: FC<Props> = ({ children }) => {
-  const chainConfig = useChainConfig()
-  const [chainId] = useCurrentChainId()
-
-  const getSupportedChainsInfos = useCallback(
-    (walletId: WalletID) =>
-      WALLETS[walletId].supportedChains
-        .map((chain) => {
-          const chainInfo = chains[chain]
-          // Check if supported chain equals current chain
-          if (chainConfig.id !== chainInfo.id) return chainInfo
-          // Override rpc and rest urls for the current chain if they are defined in .env
-          if (chainConfig.endpoints.rpc) chainInfo.endpoints.rpc = chainConfig.endpoints.rpc
-          if (chainConfig.endpoints.rest) chainInfo.endpoints.rest = chainConfig.endpoints.rest
-          return chainInfo
-        })
-        .map(
-          (chainConfig) =>
-            ({
-              ...chainConfig,
-              chainId: chainConfig.id,
-              rpc: chainConfig.endpoints.rpc,
-              rest: chainConfig.endpoints.rest,
-            }) as Network,
-        ),
-    [chainConfig],
-  )
-
-  const mobileProviders: WalletMobileProvider[] = useMemo(
-    () => [
-      new KeplrMobileProvider({
-        networks: getSupportedChainsInfos(WalletID.KeplrMobile),
-      }),
-      new LeapCosmosMobileProvider({
-        networks: getSupportedChainsInfos(WalletID.LeapMobile),
-      }),
-      new CosmostationMobileProvider({
-        networks: getSupportedChainsInfos(WalletID.CosmostationMobile),
-      }),
-    ],
-    [getSupportedChainsInfos],
-  )
-
-  const extensionProviders: WalletExtensionProvider[] = useMemo(
-    () => [
-      new KeplrExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Keplr) }),
-      new LeapCosmosExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Leap) }),
-      new LeapMetamaskCosmosSnapExtensionProvider({
-        networks: getSupportedChainsInfos(WalletID.LeapSnap),
-      }),
-      new CosmostationExtensionProvider({
-        networks: getSupportedChainsInfos(WalletID.Cosmostation),
-      }),
-      new XDEFICosmosExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Xdefi) }),
-      new StationExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Station) }),
-    ],
-    [getSupportedChainsInfos],
-  )
-
-  useEffect(() => {
-    if (chainId && chainConfig && chainId !== chainConfig.id) {
-      useStore.setState({ chainConfig: chains[chainId] })
-    }
-  }, [chainConfig, chainId])
-
-  if (chainConfig.id !== chainId) return null
-
   return (
     <ShuttleProvider
-      walletConnectProjectId={ENV.WALLET_CONNECT_ID}
+      walletConnectProjectId={process.env.NEXT_PUBLIC_WALLET_CONNECT_ID}
       mobileProviders={mobileProviders}
       extensionProviders={extensionProviders}
       persistent

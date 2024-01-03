@@ -1,5 +1,8 @@
-import useStore from 'store'
+import chains from 'configs/chains'
+import { getCurrentChainId } from 'utils/getCurrentChainId'
 
 export default function useChainConfig() {
-  return useStore((s) => s.chainConfig)
+  const chainId = getCurrentChainId()
+
+  return chains[chainId]
 }

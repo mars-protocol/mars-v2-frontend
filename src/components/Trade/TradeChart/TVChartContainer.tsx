@@ -39,7 +39,7 @@ export const TVChartContainer = (props: Props) => {
   const assets = useAllAssets()
   const dataFeed = useMemo(
     () => new DataFeed(false, assets, baseAsset.decimals, baseAsset.denom, chainConfig),
-    [assets, baseAsset.decimals, baseAsset.denom],
+    [assets, baseAsset.decimals, baseAsset.denom, chainConfig],
   )
   const { data: prices, isLoading } = usePrices()
   const ratio = useMemo(() => {

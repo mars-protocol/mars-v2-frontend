@@ -1,38 +1,45 @@
-import { useShuttle } from '@delphi-labs/shuttle-react'
 import classNames from 'classnames'
 import { useCallback } from 'react'
 import { useSWRConfig } from 'swr'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import Button from 'components/Button'
 import ChainLogo from 'components/Chain/ChainLogo'
 import Overlay from 'components/Overlay'
 import Text from 'components/Text'
-import WalletSelect from 'components/Wallet/WalletSelect'
 import chains from 'configs/chains'
 import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useChainConfig from 'hooks/useChainConfig'
-import useCurrentWallet from 'hooks/useCurrentWallet'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
+import { getPage, getRoute } from 'utils/route'
 
 export default function ChainSelect() {
   const [showMenu, setShowMenu] = useToggle()
   const chainConfig = useChainConfig()
   const { mutate } = useSWRConfig()
-  const { disconnectWallet } = useShuttle()
-  const currentWallet = useCurrentWallet()
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const [searchParams] = useSearchParams()
 
   const [_, setCurrentChainId] = useCurrentChainId()
 
   const selectChain = useCallback(
     async (chainConfig: ChainConfig) => {
-      useStore.setState({ chainConfig: chainConfig })
+      setShowMenu(false)
       setCurrentChainId(chainConfig.id)
-      mutate((key) => true)
-      if (currentWallet) disconnectWallet(currentWallet)
-      useStore.setState({ focusComponent: { component: <WalletSelect /> } })
+      mutate(() => true)
+      useStore.setState({
+        chainConfig,
+        client: undefined,
+        address: undefined,
+        userDomain: undefined,
+        accounts: null,
+        balances: [],
+      })
+      navigate(getRoute(getPage(pathname), searchParams))
     },
-    [currentWallet, disconnectWallet, mutate, setCurrentChainId],
+    [setCurrentChainId, setShowMenu, mutate, navigate, pathname, searchParams],
   )
 
   return (

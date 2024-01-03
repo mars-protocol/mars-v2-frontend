@@ -6,8 +6,6 @@ import { CircularProgress } from 'components/CircularProgress'
 import FullOverlayContent from 'components/FullOverlayContent'
 import WalletSelect from 'components/Wallet//WalletSelect'
 import WalletFetchBalancesAndAccounts from 'components/Wallet/WalletFetchBalancesAndAccounts'
-import chains from 'configs/chains'
-import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useChainConfig from 'hooks/useChainConfig'
 import useCurrentWallet from 'hooks/useCurrentWallet'
 import useToggle from 'hooks/useToggle'
@@ -34,13 +32,11 @@ export default function WalletConnecting(props: Props) {
     () => [...mobileProviders, ...extensionProviders],
     [mobileProviders, extensionProviders],
   )
-  const [chainId] = useCurrentChainId()
   const chainConfig = useChainConfig()
   const [isConnecting, setIsConnecting] = useToggle()
   const recentWallet = useCurrentWallet()
   const providerId = props.providerId ?? recentWallet?.providerId
   const client = useStore((s) => s.client)
-  const address = useStore((s) => s.address)
 
   const handleConnect = useCallback(
     (extensionProviderId: string) => {
@@ -48,8 +44,8 @@ export default function WalletConnecting(props: Props) {
         if (client || isConnecting) return
         setIsConnecting(true)
         try {
-          const response = await connect({ extensionProviderId, chainId: chainId })
-          const cosmClient = await CosmWasmClient.connect(response.network.rpc)
+          const response = await connect({ extensionProviderId, chainId: chainConfig.id })
+          const cosmClient = await CosmWasmClient.connect(chainConfig.endpoints.rpc)
           const walletClient: WalletClient = {
             broadcast,
             cosmWasmClient: cosmClient,
@@ -61,7 +57,7 @@ export default function WalletConnecting(props: Props) {
           useStore.setState({
             client: walletClient,
             address: response.account.address,
-            chainConfig: chains[chainId],
+            chainConfig: chainConfig,
             focusComponent: {
               component: <WalletFetchBalancesAndAccounts />,
               onClose: () => {
@@ -85,7 +81,7 @@ export default function WalletConnecting(props: Props) {
                       message: mapErrorMessages(
                         extensionProviderId,
                         error.message,
-                        chains[chainId].name,
+                        chainConfig.name,
                       ),
                     }}
                   />
@@ -97,16 +93,40 @@ export default function WalletConnecting(props: Props) {
       }
       if (!isConnecting) handleConnectAsync()
     },
-    [isConnecting, client, setIsConnecting, connect, chainId, broadcast, sign, simulate],
+    [
+      isConnecting,
+      client,
+      setIsConnecting,
+      connect,
+      chainConfig.id,
+      chainConfig.endpoints.rpc,
+      chainConfig.name,
+      broadcast,
+      sign,
+      simulate,
+      recentWallet,
+    ],
   )
 
   const handleMobileConnect = useCallback(
     (mobileProviderId: string) => {
       async function handleMobileConnectAsync() {
-        if (client || isConnecting || !recentWallet) return
+        if (!recentWallet) {
+          useStore.setState({
+            client: undefined,
+            address: undefined,
+            userDomain: undefined,
+            accounts: null,
+            focusComponent: {
+              component: <WalletSelect />,
+            },
+          })
+          return
+        }
+        if (client || isConnecting) return
         setIsConnecting(true)
         try {
-          await mobileConnect({ mobileProviderId, chainId: chainId })
+          await mobileConnect({ mobileProviderId, chainId: chainConfig.id })
           const cosmClient = await CosmWasmClient.connect(chainConfig.endpoints.rpc)
           const walletClient: WalletClient = {
             broadcast,
@@ -120,7 +140,7 @@ export default function WalletConnecting(props: Props) {
             client: walletClient,
             address: recentWallet.account.address,
             userDomain: undefined,
-            chainConfig: chains[chainId],
+            chainConfig: chainConfig,
           })
         } catch (error) {
           setIsConnecting(false)
@@ -135,11 +155,7 @@ export default function WalletConnecting(props: Props) {
                   <WalletSelect
                     error={{
                       title: 'Failed to connect to wallet',
-                      message: mapErrorMessages(
-                        mobileProviderId,
-                        error.message,
-                        chains[chainId].name,
-                      ),
+                      message: mapErrorMessages(mobileProviderId, error.message, chainConfig.name),
                     }}
                   />
                 ),
@@ -156,8 +172,9 @@ export default function WalletConnecting(props: Props) {
       recentWallet,
       setIsConnecting,
       mobileConnect,
-      chainId,
+      chainConfig.id,
       chainConfig.endpoints.rpc,
+      chainConfig.name,
       broadcast,
       sign,
       simulate,
@@ -171,17 +188,15 @@ export default function WalletConnecting(props: Props) {
         address: undefined,
         userDomain: undefined,
         accounts: null,
+        focusComponent: {
+          component: <WalletSelect />,
+        },
       })
       return
     }
     const provider = providers.find((p) => p.id === providerId)
-    if (
-      !provider ||
-      provider.initializing ||
-      !provider.initialized ||
-      isConnecting ||
-      (recentWallet && recentWallet.account.address === address)
-    ) {
+
+    if (!provider || provider.initializing || !provider.initialized || isConnecting) {
       return
     }
 
@@ -191,15 +206,7 @@ export default function WalletConnecting(props: Props) {
       return
     }
     handleConnect(provider.id)
-  }, [
-    handleConnect,
-    isConnecting,
-    providerId,
-    providers,
-    recentWallet,
-    address,
-    handleMobileConnect,
-  ])
+  }, [handleConnect, isConnecting, providerId, providers, handleMobileConnect])
 
   return (
     <FullOverlayContent
