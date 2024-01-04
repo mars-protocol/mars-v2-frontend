@@ -3,10 +3,7 @@ import BigNumber from 'bignumber.js'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import { BNCoin } from 'types/classes/BNCoin'
-import {
-  Positions,
-  VaultPosition,
-} from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { VaultPosition } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 import { convertApyToApr } from 'utils/parsers'
@@ -171,7 +168,8 @@ export function accumulateAmounts(denom: string, coins: BNCoin[]): BigNumber {
   return coins.reduce((acc, coin) => acc.plus(getAmount(denom, [coin.toCoin()])), BN_ZERO)
 }
 
-export function convertAccountToPositions(account: Account): Positions {
+// TODO: 📈 Add correct type mapping
+export function convertAccountToPositions(account: Account): PositionsWithoutPerps {
   return {
     account_id: account.id,
     debts: account.debts.map((debt) => ({

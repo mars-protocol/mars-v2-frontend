@@ -9,10 +9,7 @@ import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useAssetParams from 'hooks/params/useAssetParams'
 import usePrices from 'hooks/usePrices'
 import useVaultConfigs from 'hooks/useVaultConfigs'
-import {
-  Positions,
-  VaultPositionValue,
-} from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { VaultPositionValue } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { VaultConfigBaseForString } from 'types/generated/mars-params/MarsParams.types'
 import {
   AssetParamsBaseForAddr,
@@ -45,7 +42,7 @@ export default function useHealthComputer(account?: Account) {
   const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
 
   const [healthFactor, setHealthFactor] = useState(0)
-  const positions: Positions | null = useMemo(() => {
+  const positions: PositionsWithoutPerps | null = useMemo(() => {
     if (!account) return null
     return convertAccountToPositions(account)
   }, [account])
