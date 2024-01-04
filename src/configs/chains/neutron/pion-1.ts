@@ -4,7 +4,7 @@ import ATOM from 'configs/assets/ATOM'
 import NTRN from 'configs/assets/NTRN'
 import USDCaxl from 'configs/assets/USDC.axl'
 import USDollar from 'configs/assets/USDollar'
-import { ENV } from 'constants/env'
+import { NETWORK } from 'types/enums/network'
 import { ChainInfoID } from 'types/enums/wallet'
 
 const Pion1: ChainConfig = {
@@ -32,8 +32,8 @@ const Pion1: ChainConfig = {
     pyth: 'neutron15ldst8t80982akgr8w8ekcytejzkmfpgdkeq4xgtge48qs7435jqp87u3t',
   },
   endpoints: {
-    rest: ENV.PION1_REST || 'https://rest-palvus.pion-1.ntrn.tech/',
-    rpc: ENV.PION1_RPC || 'https://rpc-palvus.pion-1.ntrn.tech/',
+    rest: 'https://rest-palvus.pion-1.ntrn.tech/',
+    rpc: 'https://rpc-palvus.pion-1.ntrn.tech/',
     swap: 'https://testnet-neutron.astroport.fi/swap',
     pyth: 'https://hermes.pyth.network/api',
     pythCandles: 'https://benchmarks.pyth.network',
@@ -44,7 +44,7 @@ const Pion1: ChainConfig = {
       stride: 'https://edge.stride.zone/api/stake-stats',
     },
   },
-  network: 'testnet',
+  network: NETWORK.TESTNET,
   vaults: [],
   explorerName: 'Mintscan',
   bech32Config: Bech32Address.defaultBech32Config('neutron'),

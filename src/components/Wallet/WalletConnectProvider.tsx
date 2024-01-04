@@ -43,6 +43,11 @@ function mapChainConfigToChainInfo(chainConfig: ChainConfig): ChainInfo {
       chainInfo.rest = process.env.NEXT_PUBLIC_OSMOSIS_REST ?? chainInfo.rpc
       break
 
+    case ChainInfoID.OsmosisDevnet:
+      chainInfo.rpc = process.env.NEXT_PUBLIC_OSMOSIS_TEST_RPC ?? chainInfo.rpc
+      chainInfo.rest = process.env.NEXT_PUBLIC_OSMOSIS_TEST_REST ?? chainInfo.rpc
+      break
+
     case ChainInfoID.Pion1:
       chainInfo.rpc = process.env.NEXT_PUBLIC_NEUTRON_TEST_RPC ?? chainInfo.rpc
       chainInfo.rest = process.env.NEXT_PUBLIC_NEUTRON_TEST_REST ?? chainInfo.rpc

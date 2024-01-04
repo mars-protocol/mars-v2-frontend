@@ -1,11 +1,12 @@
 import { ChainInfoID } from 'types/enums/wallet'
+import { NETWORK } from 'types/enums/network'
 
 import Osmosis1 from './osmosis-1'
 
 const Devnet: ChainConfig = {
   ...Osmosis1,
   id: ChainInfoID.OsmosisDevnet,
-  network: 'devnet',
+  network: NETWORK.TESTNET,
   name: 'Osmosis Devnet',
   endpoints: {
     ...Osmosis1.endpoints,

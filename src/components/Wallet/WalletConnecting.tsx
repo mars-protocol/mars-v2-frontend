@@ -93,19 +93,7 @@ export default function WalletConnecting(props: Props) {
       }
       if (!isConnecting) handleConnectAsync()
     },
-    [
-      isConnecting,
-      client,
-      setIsConnecting,
-      connect,
-      chainConfig.id,
-      chainConfig.endpoints.rpc,
-      chainConfig.name,
-      broadcast,
-      sign,
-      simulate,
-      recentWallet,
-    ],
+    [isConnecting, client, setIsConnecting, connect, chainConfig, broadcast, sign, simulate],
   )
 
   const handleMobileConnect = useCallback(
@@ -172,9 +160,7 @@ export default function WalletConnecting(props: Props) {
       recentWallet,
       setIsConnecting,
       mobileConnect,
-      chainConfig.id,
-      chainConfig.endpoints.rpc,
-      chainConfig.name,
+      chainConfig,
       broadcast,
       sign,
       simulate,

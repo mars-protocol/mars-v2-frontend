@@ -1,7 +1,7 @@
 import classNames from 'classnames'
-import { useCallback } from 'react'
-import { useSWRConfig } from 'swr'
+import { useCallback, useMemo } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useSWRConfig } from 'swr'
 
 import Button from 'components/Button'
 import ChainLogo from 'components/Chain/ChainLogo'
@@ -12,6 +12,7 @@ import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useChainConfig from 'hooks/useChainConfig'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
+import { NETWORK } from 'types/enums/network'
 import { getPage, getRoute } from 'utils/route'
 
 export default function ChainSelect() {
@@ -42,14 +43,23 @@ export default function ChainSelect() {
     [setCurrentChainId, setShowMenu, mutate, navigate, pathname, searchParams],
   )
 
+  const currentChains = useMemo(() => {
+    const currentNetworkType = process.env.NEXT_PUBLIC_NETWORK ?? NETWORK.TESTNET
+
+    return Object.entries(chains).filter(([_, chain]) => chain.network === currentNetworkType)
+  }, [])
+
   return (
     <div className='relative'>
       <Button
         leftIcon={<ChainLogo chainID={chainConfig.id} className='w-4' />}
         iconClassName='w-5 h-5'
         color='tertiary'
-        onClick={() => setShowMenu()}
-        className='!p-0 w-8 flex items-center justify-center'
+        onClick={currentChains.length > 1 ? () => setShowMenu() : undefined}
+        className={classNames(
+          '!p-0 w-8 flex items-center justify-center',
+          currentChains.length === 1 && 'pointer-events-none',
+        )}
       ></Button>
       <Overlay show={showMenu} setShow={setShowMenu} className='right-0 w-[180px] mt-2'>
         <div
@@ -63,7 +73,7 @@ export default function ChainSelect() {
           </Text>
         </div>
         <ul className='w-full px-4 py-3 list-none'>
-          {Object.entries(chains).map(([name, chain]) => (
+          {currentChains.map(([name, chain]) => (
             <li
               className={classNames(
                 'w-full py-2 flex gap-3 group/chain text-white',
