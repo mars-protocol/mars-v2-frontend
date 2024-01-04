@@ -118,6 +118,7 @@ const Osmosis1: ChainConfig = {
     swapper: 'osmo1wee0z8c7tcawyl647eapqs4a88q8jpa7ddy6nn2nrs7t47p2zhxswetwla',
     params: 'osmo1nlmdxt9ctql2jr47qd4fpgzg84cjswxyw6q99u4y4u4q6c2f5ksq7ysent',
     pyth: 'osmo13ge29x4e2s63a8ytz2px8gurtyznmue4a69n5275692v3qn3ks8q7cwck7',
+    perps: '',
   },
   defaultCurrency: {
     coinDenom: 'OSMO',

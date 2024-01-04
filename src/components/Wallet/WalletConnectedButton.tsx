@@ -36,7 +36,7 @@ export default function WalletConnectedButton() {
   const marketAssets = useMarketEnabledAssets()
   const currentWallet = useCurrentWallet()
   const { disconnectWallet } = useShuttle()
-  const address = useStore((s) => s.address)
+  const address = currentWallet?.account.address
   const userDomain = useStore((s) => s.userDomain)
   const focusComponent = useStore((s) => s.focusComponent)
   const network = useStore((s) => s.client?.connectedWallet.network)

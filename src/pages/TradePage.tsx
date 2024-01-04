@@ -31,7 +31,6 @@ export default function TradePage() {
 
   const enabledMarketAssets = useMarketEnabledAssets()
   const assetOverlayState = useStore((s) => s.assetOverlayState)
-
   const buyAsset = useMemo(
     () =>
       enabledMarketAssets.find(

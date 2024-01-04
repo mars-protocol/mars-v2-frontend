@@ -84,7 +84,7 @@ export default function DesktopHeader() {
           </div>
         ) : (
           <div className='flex gap-4'>
-            {isOracleStale && <OracleResyncButton />}
+            {address && isOracleStale && <OracleResyncButton />}
             {accountId && <RewardsCenter />}
             {address && !isHLS && <AccountMenu />}
             <Wallet />

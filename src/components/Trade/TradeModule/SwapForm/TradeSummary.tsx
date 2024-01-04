@@ -62,7 +62,8 @@ export default function TradeSummary(props: Props) {
   const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
   const assets = useAllAssets()
   const sellAssetPrice = usePrice(sellAsset.denom)
-  const swapFee = useSwapFee(route.map((r) => r.pool_id))
+  // FIXME: Swap fee needs to be chainagnostic!
+  const swapFee = useSwapFee([])
   const [showSummary, setShowSummary] = useToggle()
   const { liquidationPrice, isUpdatingLiquidationPrice } = useLiquidationPrice(
     props.liquidationPrice,
