@@ -41,7 +41,7 @@ export type UnlockingPositions = VaultUnlockingPosition[]
 export interface HealthComputer {
   denoms_data: DenomsData
   kind: AccountKind
-  positions: Positions
+  positions: PositionsWithoutPerps
   vaults_data: VaultsData
 }
 export interface DenomsData {
