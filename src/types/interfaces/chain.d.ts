@@ -42,7 +42,7 @@ interface ChainConfig {
   gasPrice: string
   id: import('types/enums/wallet').ChainInfoID
   name: string
-  network: 'mainnet' | 'devnet' | 'testnet'
+  network: 'mainnet' | 'testnet'
   vaults: VaultMetaData[]
   hls: boolean
   perps: boolean

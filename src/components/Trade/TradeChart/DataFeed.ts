@@ -1,5 +1,4 @@
 import { defaultSymbolInfo } from 'components/Trade/TradeChart/constants'
-import { ENV } from 'constants/env'
 import { MILLISECONDS_PER_MINUTE } from 'constants/math'
 import { byDenom } from 'utils/array'
 import {

@@ -21,7 +21,6 @@ import USDollar from 'configs/assets/USDollar'
 import USDT from 'configs/assets/USDT'
 import WBTCaxl from 'configs/assets/WBTC.axl'
 import WETHaxl from 'configs/assets/WETH.xal'
-import { ENV } from 'constants/env'
 import { VAULTS_META_DATA } from 'constants/vaults'
 import { NETWORK } from 'types/enums/network'
 import { ChainInfoID } from 'types/enums/wallet'
@@ -132,16 +131,15 @@ const Osmosis1: ChainConfig = {
     },
   },
   endpoints: {
-    rpc: ENV.OSMOSIS1_RPC || 'https://osmosis-node.marsprotocol.io/GGSFGSFGFG34/osmosis-rpc-front/',
-    rest:
-      ENV.OSMOSIS1_REST || 'https://osmosis-node.marsprotocol.io/GGSFGSFGFG34/osmosis-lcd-front/',
+    rpc: 'https://osmosis-node.marsprotocol.io/GGSFGSFGFG34/osmosis-rpc-front/',
+    rest: 'https://osmosis-node.marsprotocol.io/GGSFGSFGFG34/osmosis-lcd-front/',
     swap: 'https://app.osmosis.zone',
     pyth: 'https://hermes.pyth.network/api',
     pythCandles: 'https://benchmarks.pyth.network',
     graphCandles: 'https://osmosis-candles.marsprotocol.io',
     explorer: 'https://www.mintscan.io/osmosis/transactions/',
     pools:
-      (ENV.OSMOSIS1_REST ||
+      (process.env.NEXT_PUBLIC_OSMOSIS_REST ||
         'https://osmosis-node.marsprotocol.io/GGSFGSFGFG34/osmosis-lcd-front/') +
       'osmosis/gamm/v1beta1/pools/POOL_ID',
     aprs: {
