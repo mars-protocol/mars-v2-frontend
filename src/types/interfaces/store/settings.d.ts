@@ -4,6 +4,7 @@ interface Settings {
   reduceMotion: boolean
   tradingPairSimple: TradingPair
   tradingPairAdvanced: TradingPair
+  perpsAsset: string
   enableAutoLendGlobal: boolean
   slippage: number
   tutorial: boolean

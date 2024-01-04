@@ -1,21 +1,17 @@
 import { useCallback, useMemo, useState } from 'react'
 
-import useAssets from 'hooks/useAssets'
-
-export default function useFilteredAssets() {
+export default function useFilteredAssets(assets: Asset[]) {
   const [searchString, setSearchString] = useState('')
 
-  const allAssets = useAssets()
-
-  const assets = useMemo(
+  const filteredAssets = useMemo(
     () =>
-      allAssets.filter(
+      assets.filter(
         (asset) =>
           asset.denom.toLocaleLowerCase().includes(searchString.toLowerCase()) ||
           asset.symbol.toLocaleLowerCase().includes(searchString.toLowerCase()) ||
           asset.name.toLocaleLowerCase().includes(searchString.toLowerCase()),
       ),
-    [searchString, allAssets],
+    [searchString, assets],
   )
 
   const onChangeSearch = useCallback(
@@ -25,5 +21,5 @@ export default function useFilteredAssets() {
     [setSearchString],
   )
 
-  return { assets, searchString, onChangeSearch }
+  return { assets: filteredAssets, searchString, onChangeSearch }
 }

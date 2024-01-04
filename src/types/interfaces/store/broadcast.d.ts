@@ -18,7 +18,6 @@ interface ToastObjectOptions extends HandleResponseProps {
 interface ToastObject {
   response: Promise<BroadcastResult>
   options: ToastObjectOptions
-
   swapOptions?: {
     coinIn: BNCoin
     denomOut: string

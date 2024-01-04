@@ -1,7 +1,8 @@
 import { ORACLE_DENOM } from 'constants/oracle'
 import useStore from 'store'
 
-// TODO: This does not work -> Needs to be inside a hook. Does not retrigger when changed
+// This does not retrigger when chains are switched. Assets might not be present on the new chain, but
+// This scenario is still caught.
 const enabledMarketAssets = useStore
   .getState()
   .chainConfig.assets.filter((asset) => asset.isEnabled && asset.isMarket)
@@ -19,4 +20,5 @@ export const DEFAULT_SETTINGS: Settings = {
   slippage: 0.02,
   tutorial: true,
   migrationBanner: true,
+  perpsAsset: '',
 }

@@ -9,9 +9,13 @@ import { ChainInfoID } from 'types/enums/wallet'
 
 const Pion1: ChainConfig = {
   assets: [
-    { ...NTRN, denom: 'untrn' },
+    { ...NTRN, denom: 'untrn', isPerpsEnabled: true },
     { ...USDCaxl, denom: 'ibc/F91EA2C0A23697A1048E08C2F787E3A58AC6F706A1CD2257A504925158CFC0F3' },
-    { ...ATOM, denom: 'ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9' },
+    {
+      ...ATOM,
+      denom: 'ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9',
+      isPerpsEnabled: true,
+    },
     USDollar,
   ],
   id: ChainInfoID.Pion1,
@@ -33,7 +37,7 @@ const Pion1: ChainConfig = {
     swap: 'https://testnet-neutron.astroport.fi/swap',
     pyth: 'https://hermes.pyth.network/api',
     pythCandles: 'https://benchmarks.pyth.network',
-    pools: '', //TODO: Implement this
+    pools: '', //TODO: ⛓️ Implement this
     explorer: 'https://testnet.mintscan.io/neutron-testnet',
     aprs: {
       vaults: 'https://api.marsprotocol.io/v1/vaults/neutron',
@@ -58,7 +62,7 @@ const Pion1: ChainConfig = {
   features: ['ibc-transfer', 'ibc-go'],
   gasPrice: '0.025untrn',
   hls: false,
-  perps: false,
+  perps: true,
   farm: false,
 }
 

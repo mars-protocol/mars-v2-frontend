@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
 
-import Button from 'components/Button'
 import EscButton from 'components/Button/EscButton'
 import Divider from 'components/Divider'
 import Overlay from 'components/Overlay'
@@ -11,50 +10,22 @@ import PairsList from 'components/Trade/TradeModule/AssetSelector/PairsList'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useFilteredAssets from 'hooks/useFilteredAssets'
 
+import StablesFilter from './StablesFilter'
+
 interface Props {
   state: OverlayState
   buyAsset: Asset
   sellAsset: Asset
+  buyAssets: Asset[]
   onChangeBuyAsset?: (asset: Asset) => void
   onChangeSellAsset?: (asset: Asset) => void
   onChangeTradingPair?: (tradingPair: TradingPair) => void
   onChangeState: (state: OverlayState) => void
-}
-
-interface StablesFilterProps {
-  stables: Asset[]
-  selectedStables: Asset[]
-  onFilter: (stables: Asset[]) => void
-}
-
-function StablesFilter(props: StablesFilterProps) {
-  const { stables, selectedStables, onFilter } = props
-  const isAllSelected = selectedStables.length > 1
-  return (
-    <>
-      <Divider />
-      <div className='flex items-center w-full gap-2 p-2'>
-        {stables.map((stable) => {
-          const isCurrent = !isAllSelected && selectedStables[0].denom === stable.denom
-          return (
-            <Button
-              key={stable.symbol}
-              onClick={() => onFilter([stable])}
-              text={stable.symbol}
-              color={isCurrent ? 'secondary' : 'quaternary'}
-              variant='transparent'
-              className={isCurrent ? '!text-white !bg-white/10 border-white' : ''}
-            />
-          )
-        })}
-      </div>
-    </>
-  )
+  type: 'pair' | 'single' | 'perps'
 }
 
 export default function AssetOverlay(props: Props) {
-  const isPairSelector = !!props.onChangeTradingPair
-  const { assets, searchString, onChangeSearch } = useFilteredAssets()
+  const { assets, searchString, onChangeSearch } = useFilteredAssets(props.buyAssets)
   const allAssets = useAllAssets()
   const stableAssets = useMemo(() => allAssets.filter((asset) => asset.isStable), [allAssets])
   const handleClose = useCallback(() => props.onChangeState('closed'), [props])
@@ -63,8 +34,10 @@ export default function AssetOverlay(props: Props) {
 
   const buyAssets = useMemo(
     () =>
-      isPairSelector ? assets : assets.filter((asset) => asset.denom !== props.sellAsset.denom),
-    [assets, props.sellAsset, isPairSelector],
+      props.type === 'pair'
+        ? assets
+        : assets.filter((asset) => asset.denom !== props.sellAsset.denom),
+    [assets, props.sellAsset, props.type],
   )
 
   const sellAssets = useMemo(
@@ -111,10 +84,10 @@ export default function AssetOverlay(props: Props) {
       setShow={handleClose}
     >
       <div className='flex justify-between p-4 overflow-hidden'>
-        <Text>{isPairSelector ? 'Select a market' : 'Select asset'}</Text>
+        <Text>{props.type !== 'single' ? 'Select a market' : 'Select asset'}</Text>
         <EscButton onClick={handleClose} enableKeyPress />
       </div>
-      {isPairSelector && (
+      {props.type === 'pair' && (
         <StablesFilter
           stables={stableAssets}
           selectedStables={selectedStables}
@@ -132,7 +105,17 @@ export default function AssetOverlay(props: Props) {
         />
       </div>
       <Divider />
-      {isPairSelector ? (
+      {props.type === 'perps' && (
+        <AssetList
+          assets={props.buyAssets}
+          type='perps'
+          onChangeAsset={onChangeBuyAsset}
+          isOpen
+          toggleOpen={() => {}}
+        />
+      )}
+
+      {props.type === 'pair' && (
         <PairsList
           assets={buyAssets}
           stables={selectedStables}
@@ -140,7 +123,9 @@ export default function AssetOverlay(props: Props) {
           toggleOpen={handleToggle}
           onChangeAssetPair={onChangeAssetPair}
         />
-      ) : (
+      )}
+
+      {props.type === 'single' && (
         <>
           <AssetList
             type='buy'

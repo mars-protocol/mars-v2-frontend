@@ -5,6 +5,7 @@ export const EMPTY_ACCOUNT: Account = {
   deposits: [],
   lends: [],
   vaults: [],
+  perps: [],
 }
 
 export const EMPTY_ACCOUNT_HLS: Account = {

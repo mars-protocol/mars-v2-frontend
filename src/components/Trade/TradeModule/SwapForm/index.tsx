@@ -19,6 +19,7 @@ import TradeSummary from 'components/Trade/TradeModule/SwapForm/TradeSummary'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
+import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useMarketAssets from 'hooks/markets/useMarketAssets'
 import useMarketBorrowings from 'hooks/markets/useMarketBorrowings'
@@ -82,6 +83,7 @@ export default function SwapForm(props: Props) {
   const throttledEstimateExactIn = useMemo(() => asyncThrottle(estimateExactIn, 250), [])
   const { computeLiquidationPrice } = useHealthComputer(updatedAccount)
   const chainConfig = useChainConfig()
+  const assets = useMarketEnabledAssets()
 
   const depositCapReachedCoins: BNCoin[] = useMemo(() => {
     const outputMarketAsset = marketAssets.find(byDenom(outputAsset.denom))
@@ -340,7 +342,7 @@ export default function SwapForm(props: Props) {
         {isAdvanced ? (
           <AssetSelectorSingle buyAsset={outputAsset} sellAsset={inputAsset} />
         ) : (
-          <AssetSelectorPair buyAsset={buyAsset} sellAsset={sellAsset} />
+          <AssetSelectorPair buyAsset={buyAsset} sellAsset={sellAsset} assets={assets} />
         )}
         <Divider />
         <MarginToggle

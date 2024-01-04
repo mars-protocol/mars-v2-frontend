@@ -6,7 +6,9 @@ import AssetButton from 'components/Trade/TradeModule/AssetSelector/AssetButton'
 import AssetOverlay from 'components/Trade/TradeModule/AssetSelector/AssetOverlay'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useChainConfig from 'hooks/useChainConfig'
 import useStore from 'store'
 
 interface Props {
@@ -15,30 +17,33 @@ interface Props {
 }
 
 export default function AssetSelectorSingle(props: Props) {
-  const [tradingPairAdvanced, settradingPairAdvanced] = useLocalStorage<
-    Settings['tradingPairAdvanced']
-  >(LocalStorageKeys.TRADING_PAIR_ADVANCED, DEFAULT_SETTINGS.tradingPairAdvanced)
+  const chainConfig = useChainConfig()
+  const [_, setTradingPairAdvanced] = useLocalStorage<Settings['tradingPairAdvanced']>(
+    chainConfig.id + '/' + LocalStorageKeys.TRADING_PAIR_ADVANCED,
+    DEFAULT_SETTINGS.tradingPairAdvanced,
+  )
   const { buyAsset, sellAsset } = props
   const assetOverlayState = useStore((s) => s.assetOverlayState)
+  const allAssets = useMarketEnabledAssets()
 
   const handleSwapAssets = useCallback(() => {
-    settradingPairAdvanced({ buy: sellAsset.denom, sell: buyAsset.denom })
-  }, [settradingPairAdvanced, sellAsset, buyAsset])
+    setTradingPairAdvanced({ buy: sellAsset.denom, sell: buyAsset.denom })
+  }, [setTradingPairAdvanced, sellAsset, buyAsset])
 
   const handleChangeBuyAsset = useCallback(
     (asset: Asset) => {
-      settradingPairAdvanced({ buy: asset.denom, sell: sellAsset.denom })
+      setTradingPairAdvanced({ buy: asset.denom, sell: sellAsset.denom })
       useStore.setState({ assetOverlayState: 'sell' })
     },
-    [settradingPairAdvanced, sellAsset],
+    [setTradingPairAdvanced, sellAsset],
   )
 
   const handleChangeSellAsset = useCallback(
     (asset: Asset) => {
-      settradingPairAdvanced({ buy: buyAsset.denom, sell: asset.denom })
+      setTradingPairAdvanced({ buy: buyAsset.denom, sell: asset.denom })
       useStore.setState({ assetOverlayState: 'closed' })
     },
-    [settradingPairAdvanced, buyAsset],
+    [setTradingPairAdvanced, buyAsset],
   )
 
   const handleChangeState = useCallback((state: OverlayState) => {
@@ -69,6 +74,8 @@ export default function AssetSelectorSingle(props: Props) {
         sellAsset={sellAsset}
         onChangeBuyAsset={handleChangeBuyAsset}
         onChangeSellAsset={handleChangeSellAsset}
+        buyAssets={allAssets}
+        type='single'
       />
     </div>
   )

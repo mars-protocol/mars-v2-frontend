@@ -1,8 +1,8 @@
 import React from 'react'
 import { BrowserRouter } from 'react-router-dom'
 
-import { WalletConnectProvider } from 'components/Wallet/WalletConnectProvider'
 import Routes from 'components/Routes'
+import { WalletConnectProvider } from 'components/Wallet/WalletConnectProvider'
 
 export default function Router() {
   return (

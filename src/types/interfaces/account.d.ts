@@ -4,6 +4,7 @@ interface Account extends AccountChange {
   debts: BNCoin[]
   lends: BNCoin[]
   vaults: DepositedVault[]
+  perps: PerpPosition[]
   kind: AccountKind
 }
 

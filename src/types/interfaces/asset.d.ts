@@ -1,6 +1,7 @@
 interface Asset extends AssetMetaData {
   denom: string
   poolId?: number
+  isPerpsEnabled?: boolean
 }
 
 interface AssetMetaData {
