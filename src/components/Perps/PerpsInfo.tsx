@@ -15,8 +15,10 @@ export function PerpsInfo() {
   const { data: market } = usePerpsMarket()
   const assetPrice = usePrice(market?.asset.denom || '')
 
-  const items = useMemo(
-    () => [
+  const items = useMemo(() => {
+    if (!market) return []
+
+    return [
       ...(!assetPrice.isZero()
         ? [<DisplayCurrency key='price' coin={BNCoin.fromDenomAndBigNumber('usd', assetPrice)} />]
         : [<Loading key='price' className='w-14 h-4' />]),
@@ -45,9 +47,8 @@ export function PerpsInfo() {
           )
         }
       />,
-    ],
-    [assetPrice, market],
-  )
+    ]
+  }, [assetPrice, market])
 
   return (
     <Card contentClassName='bg-white/10 py-3.5 px-4'>

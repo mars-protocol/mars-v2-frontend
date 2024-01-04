@@ -29,6 +29,7 @@ export default async function getAccount(
       lends: accountPosition.lends.map((lend) => new BNCoin(lend)),
       deposits: accountPosition.deposits.map((deposit) => new BNCoin(deposit)),
       vaults: depositedVaults,
+      perps: accountPosition.perps,
       kind: accountKind,
     }
   }

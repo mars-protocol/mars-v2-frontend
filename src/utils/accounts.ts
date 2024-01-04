@@ -185,6 +185,8 @@ export function convertAccountToPositions(account: Account): Positions {
       amount: lend.amount.toString(),
       denom: lend.denom,
     })),
+    // TODO: 📈 Add correct type mapping
+    perps: account.perps,
     vaults: account.vaults.map(
       (vault) =>
         ({
@@ -242,6 +244,8 @@ export function cloneAccount(account: Account): Account {
         unlocked: vault.values.unlocked,
       },
     })),
+    // TODO: 📈Add correct type mapping
+    perps: account.perps,
   }
 }
 
