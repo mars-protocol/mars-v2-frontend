@@ -132,14 +132,17 @@ export default function useHealthComputer(account?: Account) {
       return null
 
     return {
-      denoms_data: { params: denomsData, prices: priceData },
+      kind: account.kind,
       vaults_data: {
         vault_configs: vaultConfigsData,
         vault_values: vaultPositionValues,
       },
+      denoms_data: {
+        params: denomsData,
+        prices: priceData,
+      },
       positions: positions,
-      kind: account.kind,
-    }
+    } as HealthComputer
   }, [account, positions, vaultPositionValues, vaultConfigsData, denomsData, priceData])
 
   useEffect(() => {

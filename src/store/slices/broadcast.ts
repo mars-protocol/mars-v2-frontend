@@ -117,6 +117,19 @@ export default function createBroadcastSlice(
         })
         break
 
+      case 'open-perp':
+        toast.content.push({
+          coins: changes.deposits?.map((deposit) => deposit.toCoin()) ?? [],
+          text: 'Opened perp position',
+        })
+        break
+      case 'close-perp':
+        toast.content.push({
+          coins: changes.deposits?.map((deposit) => deposit.toCoin()) ?? [],
+          text: 'Closed perp position',
+        })
+        break
+
       case 'swap':
         if (changes.debts) {
           toast.content.push({
@@ -915,6 +928,66 @@ export default function createBroadcastSlice(
         console.log(e)
         return { result: undefined, error: e.message }
       }
+    },
+    openPerpPosition: async (options: { accountId: string; coin: BNCoin }) => {
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: [
+            {
+              open_perp: options.coin.toSignedCoin(),
+            },
+          ],
+        },
+      }
+
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+      })
+
+      get().setToast({
+        response,
+        options: {
+          action: 'open-perp',
+          target: 'account',
+          accountId: options.accountId,
+          changes: { deposits: [options.coin] },
+        },
+      })
+
+      return response.then((response) => !!response.result)
+    },
+    closePerpPosition: async (options: { accountId: string; denom: string }) => {
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: [
+            {
+              close_perp: { denom: options.denom },
+            },
+          ],
+        },
+      }
+
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+      })
+
+      get().setToast({
+        response,
+        options: {
+          action: 'close-perp',
+          target: 'account',
+          accountId: options.accountId,
+          changes: { deposits: [] },
+        },
+      })
+
+      return response.then((response) => !!response.result)
     },
   }
 }

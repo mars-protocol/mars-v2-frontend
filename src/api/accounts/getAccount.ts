@@ -3,6 +3,7 @@ import { getCreditManagerQueryClient } from 'api/cosmwasm-client'
 import getDepositedVaults from 'api/vaults/getDepositedVaults'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Positions } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { resolvePerpsPositions } from 'utils/resolvers'
 
 export default async function getAccount(
   chainConfig: ChainConfig,
@@ -29,7 +30,7 @@ export default async function getAccount(
       lends: accountPosition.lends.map((lend) => new BNCoin(lend)),
       deposits: accountPosition.deposits.map((deposit) => new BNCoin(deposit)),
       vaults: depositedVaults,
-      perps: accountPosition.perps,
+      perps: resolvePerpsPositions(accountPosition.perps),
       kind: accountKind,
     }
   }
