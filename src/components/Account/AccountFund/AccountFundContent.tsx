@@ -10,9 +10,8 @@ import Text from 'components/Text'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import { BN_ZERO } from 'constants/math'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
-import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import useMarketAssets from 'hooks/markets/useMarketAssets'
-import useToggle from 'hooks/useToggle'
+import useAutoLend from 'hooks/useAutoLend'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
@@ -33,11 +32,11 @@ export default function AccountFundContent(props: Props) {
   const deposit = useStore((s) => s.deposit)
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
   const [isConfirming, setIsConfirming] = useState(false)
-  const [enableAutoLendGlobal] = useEnableAutoLendGlobal()
+  const { autoLendEnabledAccountIds } = useAutoLend()
+  const isLending = autoLendEnabledAccountIds.includes(props.accountId)
   const [fundingAssets, setFundingAssets] = useState<BNCoin[]>([])
   const { data: marketAssets } = useMarketAssets()
   const { data: walletBalances } = useWalletBalances(props.address)
-  const [isLending, toggleIsLending] = useToggle(enableAutoLendGlobal)
   const { simulateDeposits } = useUpdatedAccount(props.account)
   const baseAsset = useBaseAsset()
 
