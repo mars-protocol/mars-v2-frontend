@@ -50,8 +50,10 @@ export default function WithdrawFromAccount(props: Props) {
   const accountDeposit = account.deposits.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO
   const accountLent = account.lends.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO
   const shouldReclaim = amount.isGreaterThan(accountDeposit) && !accountLent.isZero()
-  const isReclaimingMaxAmount = accountLent.isLessThanOrEqualTo(amount)
-  const reclaimAmount = isReclaimingMaxAmount ? amount : accountLent.minus(amount)
+  const isReclaimingMaxAmount = accountLent.isLessThanOrEqualTo(amount.minus(accountDeposit))
+  const reclaimAmount = isReclaimingMaxAmount
+    ? amount
+    : accountLent.minus(amount).minus(accountDeposit)
 
   function onChangeAmount(val: BigNumber) {
     setAmount(val)
