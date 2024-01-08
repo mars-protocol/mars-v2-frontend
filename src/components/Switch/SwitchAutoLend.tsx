@@ -14,7 +14,7 @@ export default function SwitchAutoLend(props: Props) {
   const { accountId, className } = props
   const { autoLendEnabledAccountIds, disableAutoLend, enableAutoLend } = useAutoLend()
   const isAutoLendEnabledForAccount = autoLendEnabledAccountIds.includes(accountId)
-  const [isAutoLendEnabled, setIsAutoLendEnabled] = useEnableAutoLendGlobal()
+  const [_, setIsAutoLendEnabled] = useEnableAutoLendGlobal()
 
   const handleToggle = useCallback(() => {
     if (!isAutoLendEnabledForAccount) {
