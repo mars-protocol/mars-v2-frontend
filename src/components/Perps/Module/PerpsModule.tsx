@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import Button from 'components/Button'
 import Card from 'components/Card'
@@ -15,12 +15,26 @@ import { AvailableOrderType } from 'components/Trade/TradeModule/SwapForm/OrderT
 import { BN_ZERO } from 'constants/math'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
+import useCurrentAccount from 'hooks/useCurrentAccount'
+import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
+import { BN } from 'utils/helpers'
 
 export function PerpsModule() {
   const [selectedOrderType, setSelectedOrderType] = useState<AvailableOrderType>('Market')
   const [selectedOrderDirection, setSelectedOrderDirection] = useState<OrderDirection>('long')
   const baseAsset = useBaseAsset()
   const { perpsAsset } = usePerpsAsset()
+  const openPerpPosition = useStore((s) => s.openPerpPosition)
+  const currentAccount = useCurrentAccount()
+
+  const onConfirm = useCallback(async () => {
+    if (!currentAccount) return
+    await openPerpPosition({
+      accountId: currentAccount.id,
+      coin: BNCoin.fromDenomAndBigNumber(perpsAsset.denom, BN(1000)),
+    })
+  }, [currentAccount, openPerpPosition, perpsAsset.denom])
 
   if (!perpsAsset) return null
 
@@ -50,7 +64,7 @@ export function PerpsModule() {
       <RangeInput max={0} value={0} onChange={() => {}} />
       <LeverageButtons />
       <Spacer />
-      <Button>{selectedOrderDirection} ETH</Button>
+      <Button onClick={onConfirm}>{selectedOrderDirection} ETH</Button>
     </Card>
   )
 }

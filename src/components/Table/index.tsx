@@ -80,7 +80,7 @@ export default function Table<T>(props: Props<T>) {
                         'align-center',
                       )}
                     >
-                      <span className='w-5 h-5 text-white'>
+                      <span className='w-5 h-5 text-white my-auto'>
                         {header.column.getCanSort()
                           ? {
                               asc: <SortAsc size={16} />,
