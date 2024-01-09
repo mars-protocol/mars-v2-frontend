@@ -1,8 +1,6 @@
 const BNCoin = import('types/classes/BNCoin').BNCoin
 
-type OrderDirection = PerpsType | ('buy' | 'sell')
-
-type PerpsType = 'long' | 'short'
+type TradeDirection = 'long' | 'short'
 
 // TODO: 📈Remove this type when healthcomputer is implemented
 type PositionsWithoutPerps = Omit<
@@ -13,7 +11,6 @@ type PositionsWithoutPerps = Omit<
 type PerpsPosition = {
   denom: string
   baseDenom: string
-  type: PerpsType
+  tradeDirection: TradeDirection
   size: BigNumber
-  // closingFee: BNCoin
 }

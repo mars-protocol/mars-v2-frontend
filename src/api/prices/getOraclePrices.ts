@@ -1,5 +1,6 @@
 import { cacheFn, oraclePriceCache } from 'api/cache'
 import { getOracleQueryClient } from 'api/cosmwasm-client'
+import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { BNCoin } from 'types/classes/BNCoin'
 import { PriceResponse } from 'types/generated/mars-oracle-osmosis/MarsOracleOsmosis.types'
@@ -27,7 +28,7 @@ export default async function getOraclePrices(
       const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
       return BNCoin.fromDenomAndBigNumber(
         asset.denom,
-        BN(priceResponse.price).shiftedBy(decimalDiff),
+        BN(priceResponse?.price ?? BN_ZERO).shiftedBy(decimalDiff),
       )
     })
   } catch (ex) {
