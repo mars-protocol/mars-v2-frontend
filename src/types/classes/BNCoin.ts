@@ -37,4 +37,11 @@ export class BNCoin {
           },
     }
   }
+
+  toSignedCoin(): any {
+    return {
+      denom: this.denom,
+      size: this.amount.toString(),
+    }
+  }
 }

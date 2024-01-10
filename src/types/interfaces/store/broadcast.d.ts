@@ -72,6 +72,8 @@ interface HandleResponseProps {
     | 'swap'
     | 'oracle'
     | 'hls-staking'
+    | 'open-perp'
+    | 'close-perp'
   lend?: boolean
   accountId?: string
   changes?: {
@@ -118,6 +120,8 @@ interface BroadcastSlice {
   execute: (contract: string, msg: ExecuteMsg, funds: Coin[]) => Promise<BroadcastResult>
   executeMsg: (options: { messages: MsgExecuteContract[] }) => Promise<BroadcastResult>
   lend: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
+  closePerpPosition: (options: { accountId: string; denom: string }) => Promise<boolean>
+  openPerpPosition: (options: { accountId: string; coin: BNCoin }) => Promise<boolean>
   reclaim: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
   repay: (options: {
     accountId: string

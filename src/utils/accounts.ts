@@ -183,8 +183,6 @@ export function convertAccountToPositions(account: Account): PositionsWithoutPer
       amount: lend.amount.toString(),
       denom: lend.denom,
     })),
-    // TODO: 📈 Add correct type mapping
-    perps: account.perps,
     vaults: account.vaults.map(
       (vault) =>
         ({
@@ -332,4 +330,9 @@ export function isAccountEmpty(account: Account) {
     account.debts.length === 0 &&
     account.deposits.length === 0
   )
+}
+
+export function getAccountNetValue(account: Account, prices: BNCoin[], assets: Asset[]) {
+  const [deposits, lends, debts, vaults] = getAccountPositionValues(account, prices, assets)
+  return deposits.plus(lends).plus(vaults).minus(debts)
 }

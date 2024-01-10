@@ -7,6 +7,7 @@ import DisplayCurrency from 'components/DisplayCurrency'
 import Divider from 'components/Divider'
 import { FormattedNumber } from 'components/FormattedNumber'
 import { ChevronDown } from 'components/Icons'
+import SummaryLine from 'components/SummaryLine'
 import Text from 'components/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
@@ -36,10 +37,8 @@ interface Props {
   sellAsset: Asset
   showProgressIndicator: boolean
   isAdvanced?: boolean
-  direction?: OrderDirection
+  direction?: TradeDirection
 }
-
-const infoLineClasses = 'flex flex-row justify-between flex-1 mb-1 text-xs text-white'
 
 export default function TradeSummary(props: Props) {
   const {
@@ -87,7 +86,7 @@ export default function TradeSummary(props: Props) {
   }, [assets, route, sellAsset.symbol])
 
   const buttonText = useMemo(() => {
-    if (!isAdvanced && direction === 'sell') return `Sell ${sellAsset.symbol}`
+    if (!isAdvanced && direction === 'short') return `Sell ${sellAsset.symbol}`
     return route.length ? `Buy ${buyAsset.symbol}` : 'No route found'
   }, [buyAsset.symbol, route, sellAsset.symbol, isAdvanced, direction])
 
@@ -186,20 +185,6 @@ export default function TradeSummary(props: Props) {
         color='primary'
         className='w-full'
       />
-    </div>
-  )
-}
-
-interface SummaryLineProps {
-  children: React.ReactNode
-  label: string
-  className?: string
-}
-function SummaryLine(props: SummaryLineProps) {
-  return (
-    <div className={classNames(infoLineClasses, props.className)}>
-      <span className='opacity-40'>{props.label}</span>
-      <span>{props.children}</span>
     </div>
   )
 }

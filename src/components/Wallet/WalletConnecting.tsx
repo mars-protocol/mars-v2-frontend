@@ -72,7 +72,6 @@ export default function WalletConnecting(props: Props) {
               client: undefined,
               address: undefined,
               userDomain: undefined,
-              accounts: null,
               focusComponent: {
                 component: (
                   <WalletSelect
@@ -104,7 +103,6 @@ export default function WalletConnecting(props: Props) {
             client: undefined,
             address: undefined,
             userDomain: undefined,
-            accounts: null,
             focusComponent: {
               component: <WalletSelect />,
             },
@@ -137,7 +135,6 @@ export default function WalletConnecting(props: Props) {
               client: undefined,
               address: undefined,
               userDomain: undefined,
-              accounts: null,
               focusComponent: {
                 component: (
                   <WalletSelect
@@ -173,7 +170,6 @@ export default function WalletConnecting(props: Props) {
         client: undefined,
         address: undefined,
         userDomain: undefined,
-        accounts: null,
         focusComponent: {
           component: <WalletSelect />,
         },

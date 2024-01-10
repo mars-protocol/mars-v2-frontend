@@ -1,9 +1,9 @@
+import useAccounts from 'hooks/accounts/useAccounts'
 import useAccountId from 'hooks/useAccountId'
-import useStore from 'store'
 
 export default function useCurrentAccount(): Account | undefined {
   const accountId = useAccountId()
+  const { data: accounts } = useAccounts('default', undefined, false)
 
-  const accounts = useStore((s) => s.accounts)
   return accounts?.find((account) => account.id === accountId)
 }
