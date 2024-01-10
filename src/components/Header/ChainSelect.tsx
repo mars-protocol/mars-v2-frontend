@@ -35,7 +35,6 @@ export default function ChainSelect() {
         client: undefined,
         address: undefined,
         userDomain: undefined,
-        accounts: null,
         balances: [],
       })
       navigate(getRoute(getPage(pathname), searchParams))

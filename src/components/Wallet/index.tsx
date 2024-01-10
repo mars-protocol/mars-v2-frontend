@@ -27,7 +27,6 @@ export default function Wallet() {
                 client: undefined,
                 address: undefined,
                 userDomain: undefined,
-                accounts: null,
                 balances: [],
                 focusComponent: null,
               })

@@ -1,5 +1,5 @@
-import AccountDetailsCard from 'components/Trade/AccountDetailsCard'
+import PerpsBalancesTable from './BalancesTable'
 
 export function PerpsPositions() {
-  return <AccountDetailsCard />
+  return <PerpsBalancesTable />
 }
