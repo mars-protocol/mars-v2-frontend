@@ -45,3 +45,14 @@ export function sortAssetsOrPairs(
     return bMarketValue - aMarketValue
   })
 }
+
+export function getAllAssetsWithPythId(chains: { [key: string]: ChainConfig }) {
+  return Object.entries(chains)
+    .map(([_, chainConfig]) => chainConfig.assets)
+    .flatMap((assets) => assets)
+    .filter(
+      (item, index, array) =>
+        index === array.findIndex((foundItem) => foundItem['denom'] === item['denom']),
+    )
+    .filter((asset) => asset.pythPriceFeedId)
+}
