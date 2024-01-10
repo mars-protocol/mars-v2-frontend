@@ -19,7 +19,7 @@ export default async function getOraclePrices(
     const priceResults = await cacheFn(
       () => iterateContractQuery(oracleQueryClient.prices),
       oraclePriceCache,
-      'oraclePrices',
+      `${chainConfig.id}/oraclePrices`,
       60,
     )
 

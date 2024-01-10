@@ -38,7 +38,7 @@ const getAssetRate = async (chainConfig: ChainConfig, asset: Asset) => {
   const response = await cacheFn(
     () => fetch(url).then((res) => res.json()),
     poolPriceCache,
-    `poolPrices/${(asset.poolId || 0).toString()}`,
+    `${chainConfig.id}/poolPrices/${(asset.poolId || 0).toString()}`,
     60,
   )
   const pool = response.pool
