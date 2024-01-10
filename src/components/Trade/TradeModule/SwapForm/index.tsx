@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import estimateExactIn from 'api/swap/estimateExactIn'
 import AvailableLiquidityMessage from 'components/AvailableLiquidityMessage'
 import DepositCapMessage from 'components/DepositCapMessage'
-import { DirectionSelect } from 'components/DirectionSelect'
 import Divider from 'components/Divider'
 import RangeInput from 'components/RangeInput'
 import Text from 'components/Text'
@@ -16,6 +15,7 @@ import MarginToggle from 'components/Trade/TradeModule/SwapForm/MarginToggle'
 import OrderTypeSelector from 'components/Trade/TradeModule/SwapForm/OrderTypeSelector'
 import { AvailableOrderType } from 'components/Trade/TradeModule/SwapForm/OrderTypeSelector/types'
 import TradeSummary from 'components/Trade/TradeModule/SwapForm/TradeSummary'
+import { TradeDirectionSelector } from 'components/TradeDirectionSelector'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
@@ -52,14 +52,15 @@ export default function SwapForm(props: Props) {
   const swap = useStore((s) => s.swap)
   const [slippage] = useLocalStorage(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
   const { computeMaxSwapAmount } = useHealthComputer(account)
-  const [orderDirection, setOrderDirection] = useState<OrderDirection>('buy')
+  const [tradeDirection, setTradeDirection] = useState<TradeDirection>('long')
   const { data: borrowAssets } = useMarketBorrowings()
   const { data: marketAssets } = useMarketAssets()
+
   const [inputAsset, outputAsset] = useMemo(() => {
     if (isAdvanced) return [sellAsset, buyAsset]
-    if (orderDirection === 'buy') return [sellAsset, buyAsset]
+    if (tradeDirection === 'long') return [sellAsset, buyAsset]
     return [buyAsset, sellAsset]
-  }, [buyAsset, sellAsset, orderDirection, isAdvanced])
+  }, [buyAsset, sellAsset, tradeDirection, isAdvanced])
   const { data: route, isLoading: isRouteLoading } = useSwapRoute(
     inputAsset.denom,
     outputAsset.denom,
@@ -246,7 +247,7 @@ export default function SwapForm(props: Props) {
   useEffect(() => {
     onChangeOutputAmount(BN_ZERO)
     onChangeInputAmount(BN_ZERO)
-  }, [orderDirection, onChangeOutputAmount, onChangeInputAmount])
+  }, [tradeDirection, onChangeOutputAmount, onChangeInputAmount])
 
   useEffect(() => {
     setOutputAssetAmount(BN_ZERO)
@@ -375,9 +376,9 @@ export default function SwapForm(props: Props) {
             />
           ) : (
             <>
-              <DirectionSelect
-                direction={orderDirection}
-                onChangeDirection={setOrderDirection}
+              <TradeDirectionSelector
+                direction={tradeDirection}
+                onChangeDirection={setTradeDirection}
                 asset={buyAsset}
               />
               <AssetAmountInput
@@ -460,7 +461,7 @@ export default function SwapForm(props: Props) {
           sellAmount={inputAssetAmount}
           buyAmount={outputAssetAmount}
           isAdvanced={isAdvanced}
-          direction={orderDirection}
+          direction={tradeDirection}
         />
       </div>
     </>

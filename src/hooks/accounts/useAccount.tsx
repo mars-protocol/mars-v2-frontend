@@ -7,7 +7,7 @@ export default function useAccount(accountId?: string, suspense?: boolean) {
   const chainConfig = useChainConfig()
 
   return useSWR(
-    `chains/${chainConfig.id}/accounts/${accountId}`,
+    accountId && `chains/${chainConfig.id}/accounts/${accountId}`,
     () => getAccount(chainConfig, accountId),
     {
       suspense: suspense,

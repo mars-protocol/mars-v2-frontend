@@ -18,6 +18,7 @@ interface Props {
   parentheses?: boolean
   showZero?: boolean
   options?: FormatOptions
+  isProfitOrLoss?: boolean
 }
 
 export default function DisplayCurrency(props: Props) {
@@ -34,10 +35,10 @@ export default function DisplayCurrency(props: Props) {
 
   const isUSD = displayCurrencyAsset.id === 'USD'
 
-  const amount = useMemo(() => {
+  const [amount, absoluteAmount] = useMemo(() => {
     const coinValue = getCoinValue(props.coin, prices, assets)
 
-    if (displayCurrency === ORACLE_DENOM) return coinValue.toNumber()
+    if (displayCurrency === ORACLE_DENOM) return [coinValue.toNumber(), coinValue.abs().toNumber()]
 
     const displayDecimals = displayCurrencyAsset.decimals
     const displayPrice = getCoinValue(
@@ -46,10 +47,14 @@ export default function DisplayCurrency(props: Props) {
       assets,
     )
 
-    return coinValue.div(displayPrice).toNumber()
+    const amount = coinValue.div(displayPrice).toNumber()
+
+    return [amount, Math.abs(amount)]
   }, [assets, displayCurrency, displayCurrencyAsset.decimals, prices, props.coin])
 
-  const isLessThanACent = (isUSD && amount < 0.01 && amount > 0) || (amount === 0 && props.showZero)
+  const isLessThanACent =
+    (isUSD && absoluteAmount < 0.01 && absoluteAmount > 0) ||
+    (absoluteAmount === 0 && props.showZero)
   const smallerThanPrefix = isLessThanACent ? '< ' : ''
 
   const prefix = isUSD
@@ -64,8 +69,10 @@ export default function DisplayCurrency(props: Props) {
       className={classNames(
         props.className,
         props.parentheses && 'before:content-["("] after:content-[")"]',
+        props.isProfitOrLoss && (amount < 0 ? 'text-error' : amount === 0 ? '' : 'text-success'),
+        props.isProfitOrLoss && amount < 0 && 'before:content-["-"]',
       )}
-      amount={isLessThanACent ? 0.01 : amount}
+      amount={isLessThanACent ? 0.01 : absoluteAmount}
       options={{
         minDecimals: isUSD ? 2 : 0,
         maxDecimals: 2,

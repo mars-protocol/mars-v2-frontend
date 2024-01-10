@@ -48,10 +48,12 @@ export default function WithdrawFromAccount(props: Props) {
   const max = withdrawWithBorrowing ? maxWithdrawWithBorrowAmount : maxWithdrawAmount
 
   const accountDeposit = account.deposits.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO
-  const shouldReclaim =
-    amount.isGreaterThan(accountDeposit) && !withdrawWithBorrowing && currentAsset.isAutoLendEnabled
-  const reclaimAmount = shouldReclaim ? amount.minus(accountDeposit) : BN_ZERO
-  const isReclaimingMaxAmount = maxWithdrawAmount.isEqualTo(amount)
+  const accountLent = account.lends.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO
+  const shouldReclaim = amount.isGreaterThan(accountDeposit) && !accountLent.isZero()
+  const isReclaimingMaxAmount = accountLent.isLessThanOrEqualTo(amount.minus(accountDeposit))
+  const reclaimAmount = isReclaimingMaxAmount
+    ? amount
+    : accountLent.minus(amount).minus(accountDeposit)
 
   function onChangeAmount(val: BigNumber) {
     setAmount(val)
@@ -67,13 +69,14 @@ export default function WithdrawFromAccount(props: Props) {
     const borrow = !debtAmount.isZero()
       ? [BNCoin.fromDenomAndBigNumber(currentAsset.denom, debtAmount)]
       : []
-    const reclaims = !reclaimAmount.isZero()
-      ? [
-          BNCoin.fromDenomAndBigNumber(currentAsset.denom, reclaimAmount).toActionCoin(
-            isReclaimingMaxAmount,
-          ),
-        ]
-      : []
+    const reclaims =
+      shouldReclaim && !reclaimAmount.isZero()
+        ? [
+            BNCoin.fromDenomAndBigNumber(currentAsset.denom, reclaimAmount).toActionCoin(
+              isReclaimingMaxAmount,
+            ),
+          ]
+        : []
 
     withdraw({
       accountId: account.id,
