@@ -15,7 +15,6 @@ export default async function getAccounts(
     .map((account) => getAccount(chainConfig, account.id))
 
   const accounts = await Promise.all($accounts).then((accounts) => accounts)
-
   if (accounts) {
     return accounts.sort((a, b) => Number(a.id) - Number(b.id))
   }
