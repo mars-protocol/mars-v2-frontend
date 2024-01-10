@@ -18,17 +18,12 @@ export default async function fetchPythPrices(priceFeedIds: string[], assets: As
     const mappedPriceData = [] as BNCoin[]
 
     assets.forEach((asset) => {
-      pythResponse.forEach((pythPrice) => {
-        if (pythPrice.id === asset.pythPriceFeedId) {
-          mappedPriceData.push(
-            BNCoin.fromDenomAndBigNumber(
-              asset.denom,
-              BN(pythPrice.price.price).shiftedBy(pythPrice.price.expo),
-            ),
-          )
-          return
-        }
-      })
+      const price = pythResponse.find((pythPrice) => asset.pythPriceFeedId === pythPrice.id)?.price
+      if (price)
+        mappedPriceData.push(
+          BNCoin.fromDenomAndBigNumber(asset.denom, BN(price.price).shiftedBy(price.expo)),
+        )
+      return
     })
 
     return mappedPriceData
