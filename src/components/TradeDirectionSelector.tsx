@@ -1,28 +1,27 @@
 import classNames from 'classnames'
+import { useMemo } from 'react'
 
 import Text from 'components/Text'
 
 interface Props {
-  direction: OrderDirection
-  onChangeDirection: (direction: OrderDirection) => void
+  direction: TradeDirection
+  onChangeDirection: (direction: TradeDirection) => void
   asset?: Asset
 }
 
-export function DirectionSelect(props: Props) {
-  const hasAsset = props.asset
-  const directions: OrderDirection[] = hasAsset ? ['buy', 'sell'] : ['long', 'short']
+export function TradeDirectionSelector(props: Props) {
   return (
     <div className='flex rounded-sm bg-black/20'>
       <Direction
-        onClick={() => props.onChangeDirection(directions[0])}
-        direction={directions[0]}
-        isActive={props.direction === directions[0]}
+        onClick={() => props.onChangeDirection('long')}
+        direction={'long'}
+        isActive={props.direction === 'long'}
         asset={props.asset}
       />
       <Direction
-        onClick={() => props.onChangeDirection(directions[1])}
-        direction={directions[1]}
-        isActive={props.direction === directions[1]}
+        onClick={() => props.onChangeDirection('short')}
+        direction={'short'}
+        isActive={props.direction === 'short'}
         asset={props.asset}
       />
     </div>
@@ -30,13 +29,22 @@ export function DirectionSelect(props: Props) {
 }
 
 interface DirectionProps {
-  direction: 'long' | 'short' | 'buy' | 'sell'
+  direction: TradeDirection
   isActive: boolean
   onClick: () => void
   asset?: Asset
 }
 function Direction(props: DirectionProps) {
-  const classString = props.direction === 'long' || props.direction === 'buy' ? 'success' : 'error'
+  const classString = props.direction === 'long' ? 'success' : 'error'
+
+  const label = useMemo(() => {
+    if (props.asset) {
+      return props.direction === 'long' ? `Buy ${props.asset.symbol}` : `Sell ${props.asset.symbol}`
+    } else {
+      return props.direction === 'long' ? 'Long' : 'Short'
+    }
+  }, [props.asset, props.direction])
+
   return (
     <button
       className={classNames(
@@ -52,7 +60,7 @@ function Direction(props: DirectionProps) {
           props.isActive ? `text-${classString}` : 'text-white/20',
         )}
       >
-        {props.asset ? `${props.direction} ${props.asset.symbol}` : props.direction}
+        {label}
       </Text>
     </button>
   )

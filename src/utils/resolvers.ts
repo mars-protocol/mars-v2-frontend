@@ -82,8 +82,8 @@ export function resolvePerpsPositions(perpPositions: Positions['perps']): PerpsP
     return {
       denom: position.denom,
       baseDenom: position.base_denom,
-      size: BN(position.size as any),
-      type: BN(position.size as any).isNegative() ? 'short' : 'long',
+      size: BN(position.size as any).abs(),
+      tradeDirection: BN(position.size as any).isNegative() ? 'short' : 'long',
       closingFee: BNCoin.fromCoin(position.pnl.coins.closing_fee),
       pnl: getPnlCoin(position.pnl.coins.pnl, position.base_denom),
       entryPrice: BN(position.entry_price),
@@ -94,7 +94,9 @@ export function resolvePerpsPositions(perpPositions: Positions['perps']): PerpsP
 function getPnlCoin(pnl: PnL, denom: string): BNCoin {
   let amount = BN_ZERO
 
-  if ('loss' in (pnl as { loss: Coin })) {
+  if (pnl === 'break_even') return BNCoin.fromDenomAndBigNumber(denom, amount)
+
+  if ('loss' in (pnl as any)) {
     amount = BN((pnl as any).loss.amount).times(-1)
   } else if ('profit' in (pnl as { profit: Coin })) {
     amount = BN((pnl as any).profit.amount)

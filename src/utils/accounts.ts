@@ -331,3 +331,8 @@ export function isAccountEmpty(account: Account) {
     account.deposits.length === 0
   )
 }
+
+export function getAccountNetValue(account: Account, prices: BNCoin[], assets: Asset[]) {
+  const [deposits, lends, debts, vaults] = getAccountPositionValues(account, prices, assets)
+  return deposits.plus(lends).plus(vaults).minus(debts)
+}

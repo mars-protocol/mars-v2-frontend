@@ -74,7 +74,6 @@ export default function WalletConnectedButton() {
       client: undefined,
       address: undefined,
       userDomain: undefined,
-      accounts: null,
       balances: [],
       focusComponent: null,
     })

@@ -120,7 +120,7 @@ export default function createBroadcastSlice(
       case 'open-perp':
         toast.content.push({
           coins: changes.deposits?.map((deposit) => deposit.toCoin()) ?? [],
-          text: 'Opened perp position',
+          text: 'Market order executed',
         })
         break
       case 'close-perp':
