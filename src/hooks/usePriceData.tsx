@@ -7,7 +7,7 @@ import useStore from 'store'
 export default function usePricesData() {
   const assets = useStore((s) => s.chainConfig.assets)
   const chainConfig = useChainConfig()
-  return useSWR(`chains/${chainConfig.id}/pricesData`, () => getPricesData(chainConfig, assets), {
+  return useSWR(`chains/${chainConfig.id}/pricesData`, () => getPricesData(assets), {
     fallbackData: [],
     refreshInterval: 30_000,
     revalidateOnFocus: false,

@@ -78,6 +78,7 @@ export function resolveHLSStrategies(
 }
 
 export function resolvePerpsPositions(perpPositions: Positions['perps']): PerpsPosition[] {
+  if (!perpPositions) return []
   return perpPositions.map((position) => {
     return {
       denom: position.denom,

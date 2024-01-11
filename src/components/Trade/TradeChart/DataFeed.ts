@@ -1,5 +1,6 @@
 import { defaultSymbolInfo } from 'components/Trade/TradeChart/constants'
 import { MILLISECONDS_PER_MINUTE } from 'constants/math'
+import { pythEndpoints } from 'constants/pyth'
 import { byDenom } from 'utils/array'
 import {
   Bar,
@@ -74,7 +75,7 @@ export class DataFeed implements IDatafeedChartApi {
     chainConfig: ChainConfig,
   ) {
     if (debug) console.log('Start charting library datafeed')
-    this.candlesEndpoint = chainConfig.endpoints.pythCandles
+    this.candlesEndpoint = pythEndpoints.candles
     this.candlesEndpointTheGraph = chainConfig.endpoints.graphCandles ?? ''
     this.assets = assets
     this.debug = debug

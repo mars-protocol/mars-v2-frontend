@@ -11,7 +11,7 @@ export const getVaultConfigs = async (
     return await cacheFn(
       () => iterateContractQuery(paramsQueryClient.allVaultConfigs, 'addr'),
       vaultConfigsCache,
-      'vaultConfigs',
+      `${chainConfig.id}/vaultConfigs`,
       600,
     )
   } catch (ex) {
