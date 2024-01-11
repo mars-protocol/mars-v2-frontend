@@ -21,3 +21,4 @@ export const DEFAULT_PORTFOLIO_STATS = [
 ]
 
 export const ENABLE_AUTO_REPAY = true
+export const STANDARD_SWAP_FEE = 0.002

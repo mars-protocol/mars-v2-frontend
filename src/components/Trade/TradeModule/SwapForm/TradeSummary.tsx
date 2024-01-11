@@ -62,7 +62,7 @@ export default function TradeSummary(props: Props) {
   const assets = useAllAssets()
   const sellAssetPrice = usePrice(sellAsset.denom)
   // FIXME: ⛓️ Swap fee needs to be chainagnostic!
-  const swapFee = useSwapFee([])
+  const swapFee = useSwapFee(route.map((route) => route.pool_id))
   const [showSummary, setShowSummary] = useToggle()
   const { liquidationPrice, isUpdatingLiquidationPrice } = useLiquidationPrice(
     props.liquidationPrice,
