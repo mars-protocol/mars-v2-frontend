@@ -1,41 +1,31 @@
 import { defaultSymbolInfo } from 'components/Trade/TradeChart/constants'
+import { subscribeOnStream, unsubscribeFromStream } from 'components/Trade/TradeChart/streaming'
 import { MILLISECONDS_PER_MINUTE } from 'constants/math'
 import { pythEndpoints } from 'constants/pyth'
 import { byDenom } from 'utils/array'
 import {
   Bar,
+  DOMCallback,
   ErrorCallback,
+  GetMarksCallback,
   HistoryCallback,
   IDatafeedChartApi,
   LibrarySymbolInfo,
+  Mark,
   OnReadyCallback,
   PeriodParams,
   ResolutionString,
   ResolveCallback,
+  ServerTimeCallback,
+  SubscribeBarsCallback,
+  TimescaleMark,
 } from 'utils/charting_library'
 import { BN } from 'utils/helpers'
 import { devideByPotentiallyZero } from 'utils/math'
 
-interface PythBarQueryData {
-  s: string
-  t: number[]
-  o: number[]
-  h: number[]
-  l: number[]
-  c: number[]
-  v: number[]
-}
-
-interface TheGraphBarQueryData {
-  close: string
-  high: string
-  low: string
-  open: string
-  timestamp: string
-  volume: string
-}
-
 export const PAIR_SEPARATOR = '<>'
+
+const lastBarsCache = new Map()
 
 export class DataFeed implements IDatafeedChartApi {
   candlesEndpoint: string
@@ -87,12 +77,54 @@ export class DataFeed implements IDatafeedChartApi {
       .map((asset) => asset.poolId?.toString())
       .filter((poolId) => typeof poolId === 'string') as string[]
   }
+  getMarks?(
+    symbolInfo: LibrarySymbolInfo,
+    from: number,
+    to: number,
+    onDataCallback: GetMarksCallback<Mark>,
+    resolution: ResolutionString,
+  ): void {
+    throw new Error('Method not implemented.')
+  }
+  getTimescaleMarks?(
+    symbolInfo: LibrarySymbolInfo,
+    from: number,
+    to: number,
+    onDataCallback: GetMarksCallback<TimescaleMark>,
+    resolution: ResolutionString,
+  ): void {
+    throw new Error('Method not implemented.')
+  }
+  getServerTime?(callback: ServerTimeCallback): void {
+    return callback(new Date().getTime())
+  }
+  subscribeDepth?(symbol: string, callback: DOMCallback): string {
+    throw new Error('Method not implemented.')
+  }
+  unsubscribeDepth?(subscriberUID: string): void {
+    throw new Error('Method not implemented.')
+  }
+  getVolumeProfileResolutionForPeriod?(
+    currentResolution: ResolutionString,
+    from: number,
+    to: number,
+    symbolInfo: LibrarySymbolInfo,
+  ): ResolutionString {
+    throw new Error('Method not implemented.')
+  }
 
   getDescription(pairName: string, inverted: boolean) {
     const [denom1, denom2] = pairName.split(PAIR_SEPARATOR)
     const asset1 = this.assets.find(byDenom(denom1))
     const asset2 = this.assets.find(byDenom(denom2))
     return inverted ? `${asset2?.symbol}/${asset1?.symbol}` : `${asset1?.symbol}/${asset2?.symbol}`
+  }
+
+  getTicker(pairName: string) {
+    const [denom1, denom2] = pairName.split(PAIR_SEPARATOR)
+    const asset1 = this.assets.find(byDenom(denom1))
+    const asset2 = this.assets.find(byDenom(denom2))
+    return asset2?.pythHistoryFeedId ?? asset1?.pythHistoryFeedId
   }
 
   async getPairsWithData() {
@@ -149,7 +181,7 @@ export class DataFeed implements IDatafeedChartApi {
     setTimeout(() => {
       const info: LibrarySymbolInfo = {
         ...defaultSymbolInfo,
-        name: this.getDescription(pairName, false),
+        name: this.getTicker(pairName),
         full_name: this.getDescription(pairName, true),
         description: this.getDescription(pairName, true),
         ticker: this.getDescription(pairName, false),
@@ -498,11 +530,24 @@ export class DataFeed implements IDatafeedChartApi {
     // Don't allow to search for symbols
   }
 
-  subscribeBars(): void {
-    // TheGraph doesn't support websockets yet
+  subscribeBars(
+    symbolInfo: LibrarySymbolInfo,
+    resolution: ResolutionString,
+    onTick: SubscribeBarsCallback,
+    subscriberUID: string,
+    onResetCacheNeededCallback: () => void,
+  ): void {
+    subscribeOnStream(
+      symbolInfo,
+      resolution,
+      onTick,
+      subscriberUID,
+      onResetCacheNeededCallback,
+      lastBarsCache.get(symbolInfo.ticker),
+    )
   }
 
-  unsubscribeBars(listenerGuid: string): void {
-    // TheGraph doesn't support websockets yet
+  unsubscribeBars(subscriberUID: string) {
+    unsubscribeFromStream(subscriberUID)
   }
 }

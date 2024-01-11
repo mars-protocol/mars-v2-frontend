@@ -134,7 +134,6 @@ const Osmosis1: ChainConfig = {
     rpc: 'https://osmosis-node.marsprotocol.io/GGSFGSFGFG34/osmosis-rpc-front/',
     rest: 'https://osmosis-node.marsprotocol.io/GGSFGSFGFG34/osmosis-lcd-front/',
     swap: 'https://app.osmosis.zone',
-    graphCandles: 'https://osmosis-candles.marsprotocol.io',
     explorer: 'https://www.mintscan.io/osmosis/transactions/',
     pools:
       (process.env.NEXT_PUBLIC_OSMOSIS_REST ||
