@@ -10,12 +10,15 @@ export default async function fetchPythPrices(priceFeedIds: string[], assets: As
     headers.set('Method', 'GET')
     headers.set('Content-Type', 'application/json')
     if (!!process.env.NEXT_PUBLIC_PYTH_CREDENTIALS) {
-      headers.set('Authorization', `Basic ${btoa(process.env.NEXT_PUBLIC_PYTH_CREDENTIALS)}`)
+      headers.set('Authorization', `Basic ${process.env.NEXT_PUBLIC_PYTH_CREDENTIALS}`)
     }
     priceFeedIds.forEach((id) => pricesUrl.searchParams.append('ids[]', id))
 
     const pythResponse: PythPriceData[] = await cacheFn(
-      () => fetch(pricesUrl, { headers }).then((res) => res.json()),
+      () =>
+        fetch(pricesUrl, { mode: 'no-cors', credentials: 'include', headers }).then((res) =>
+          res.json(),
+        ),
       pythPriceCache,
       `pythPrices/${priceFeedIds.flat().join('-')}`,
       30,
