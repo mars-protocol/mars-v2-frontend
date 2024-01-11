@@ -13,7 +13,7 @@ export default async function getAssetParams(
         return iterateContractQuery(paramsQueryClient.allAssetParams)
       },
       assetParamsCache,
-      'assetParams',
+      `${chainConfig.id}/assetParams`,
       600,
     )
   } catch (ex) {

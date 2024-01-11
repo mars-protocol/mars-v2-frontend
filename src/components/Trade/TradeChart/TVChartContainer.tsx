@@ -160,7 +160,7 @@ export const TVChartContainer = (props: Props) => {
           )}
         </div>
       }
-      contentClassName='px-0.5 pb-0.5 h-full bg-chart'
+      contentClassName='px-0.5 pb-0.5 h-full bg-chart w-[calc(100%-2px)] ml-[1px]'
       className='h-[70dvh] max-h-[980px] min-h-[560px]'
     >
       <div ref={chartContainerRef} className='h-[calc(100%-32px)] overflow-hidden' />

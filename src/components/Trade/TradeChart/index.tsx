@@ -45,7 +45,7 @@ export default function TradeChart(props: Props) {
               <Loading className='h-4 mr-4 w-60' />
             </div>
           }
-          contentClassName='px-0.5 pb-0.5 h-full'
+          contentClassName='px-0.5 pb-0.5 h-full bg-chart w-[calc(100%-2px)] ml-[1px]'
           className='h-[70dvh] max-h-[980px] min-h-[560px]'
         >
           <div className='flex items-center justify-center w-full h-[calc(100%-32px)] rounded-b-base bg-chart'>

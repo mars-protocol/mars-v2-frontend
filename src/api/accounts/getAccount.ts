@@ -16,7 +16,7 @@ export default async function getAccount(
   const accountPosition: Positions = await cacheFn(
     () => creditManagerQueryClient.positions({ accountId: accountId }),
     positionsCache,
-    `account/${accountId}`,
+    `${chainConfig.id}/account/${accountId}`,
   )
 
   const accountKind = await creditManagerQueryClient.accountKind({ accountId: accountId })
