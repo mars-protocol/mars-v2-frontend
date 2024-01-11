@@ -1,17 +1,18 @@
+import { pythEndpoints } from 'constants/pyth'
 import {
   LibrarySymbolInfo,
   ResolutionString,
   SubscribeBarsCallback,
 } from 'utils/charting_library/charting_library'
 
-const streamingUrl = 'https://benchmarks.pyth.network/v1/shims/tradingview/streaming'
+const streamingUrl = `${pythEndpoints.candles}/streaming`
 const channelToSubscription = new Map()
 
 function handleStreamingData(data: StreamData) {
   const { id, p, t } = data
 
   const tradePrice = p
-  const tradeTime = t * 1000
+  const tradeTime = t * 1000 // Multiplying by 1000 to get milliseconds
 
   const channelString = id
   const subscriptionItem = channelToSubscription.get(channelString)
@@ -21,17 +22,6 @@ function handleStreamingData(data: StreamData) {
   }
 
   const lastDailyBar = subscriptionItem.lastDailyBar
-
-  if (!lastDailyBar) {
-    subscriptionItem.lastDailyBar = {
-      time: tradeTime,
-      open: tradePrice,
-      high: tradePrice,
-      low: tradePrice,
-      close: tradePrice,
-    }
-  }
-
   const nextDailyBarTime = getNextDailyBarTime(lastDailyBar.time)
 
   let bar: Bar
@@ -70,11 +60,10 @@ function startStreaming(retries = 3, delay = 3000) {
           .read()
           .then(({ value, done }) => {
             if (done) {
-              // console.error('[stream] Streaming ended.')
+              // console.error('Streaming ended.')
               return
             }
 
-            // Assuming the streaming data is separated by line breaks
             const dataStrings = new TextDecoder().decode(value).split('\n')
             dataStrings.forEach((dataString) => {
               const trimmedDataString = dataString.trim()
@@ -90,10 +79,10 @@ function startStreaming(retries = 3, delay = 3000) {
               }
             })
 
-            streamData() // Continue processing the stream
+            streamData()
           })
           .catch((error) => {
-            // console.error('[stream] Error reading from stream:', error)
+            // console.error('Error reading from stream:', error)
             attemptReconnect(retries, delay)
           })
       }
@@ -101,23 +90,22 @@ function startStreaming(retries = 3, delay = 3000) {
       streamData()
     })
     .catch((error) => {
-      // console.error('[stream] Error fetching from the streaming endpoint:', error)
+      // console.error('Error fetching from the streaming endpoint:', error)
     })
   function attemptReconnect(retriesLeft: number, delay: number) {
     if (retriesLeft > 0) {
-      // console.log(`[stream] Attempting to reconnect in ${delay}ms...`)
       setTimeout(() => {
         startStreaming(retriesLeft - 1, delay)
       }, delay)
     } else {
-      // console.error('[stream] Maximum reconnection attempts reached.')
+      // console.error('Maximum reconnection attempts reached.')
     }
   }
 }
 
 function getNextDailyBarTime(barTime: number) {
   const date = new Date(barTime * 1000)
-  date.setDate(date.getDate() + 1000)
+  date.setDate(date.getDate() + 1)
   return date.getTime() / 1000
 }
 
@@ -129,7 +117,7 @@ export function subscribeOnStream(
   onResetCacheNeededCallback: () => void,
   lastDailyBar: Bar,
 ) {
-  const channelString = symbolInfo.name
+  const channelString = symbolInfo.ticker
   const handler = {
     id: subscriberUID,
     callback: onRealtimeCallback,

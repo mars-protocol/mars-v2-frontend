@@ -12,7 +12,7 @@ const INJ: AssetMetaData = {
   isAutoLendEnabled: true,
   isBorrowEnabled: true,
   pythPriceFeedId: '7a5bc1d2b56ad029048cd63964b3ad2776eadf812edc1a43a31406cb54bff592',
-  pythHistoryFeedId: 'Crypto.INJ/USD',
+  pythFeedName: 'INJUSD',
 }
 
 export default INJ

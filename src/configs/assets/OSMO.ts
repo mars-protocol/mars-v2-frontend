@@ -12,7 +12,7 @@ const OSMO: AssetMetaData = {
   isDisplayCurrency: true,
   isAutoLendEnabled: true,
   pythPriceFeedId: '5867f5683c757393a0670ef0f701490950fe93fdb006d181c8265a831ac0c5c6',
-  pythHistoryFeedId: 'Crypto.OSMO/USD',
+  pythFeedName: 'OSMOUSD',
 }
 
 export default OSMO

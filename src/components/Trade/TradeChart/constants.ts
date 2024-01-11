@@ -1,7 +1,6 @@
 import {
   ChartingLibraryFeatureset,
   LibrarySymbolInfo,
-  ResolutionString,
   SeriesFormat,
   Timezone,
 } from 'utils/charting_library/charting_library'
@@ -20,6 +19,7 @@ export const enabledFeatures: ChartingLibraryFeatureset[] = [
   'timezone_menu',
   'header_settings',
   'use_localstorage_for_settings',
+  'chart_zoom',
 ]
 
 export const overrides = {
@@ -38,5 +38,4 @@ export const defaultSymbolInfo: Partial<LibrarySymbolInfo> = {
   has_daily: true,
   has_weekly_and_monthly: false,
   format: 'price' as SeriesFormat,
-  supported_resolutions: ['15'] as ResolutionString[],
 }
