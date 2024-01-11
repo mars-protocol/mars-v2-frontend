@@ -1,6 +1,7 @@
 import { aprsCache, aprsCacheResponse, cacheFn } from 'api/cache'
 
 export default async function getAprs(chainConfig: ChainConfig) {
+  if (!chainConfig.farm) return []
   try {
     const response = await cacheFn(
       () => fetch(chainConfig.endpoints.aprs.vaults),

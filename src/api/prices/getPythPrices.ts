@@ -9,25 +9,27 @@ export default async function fetchPythPrices(priceFeedIds: string[], assets: As
     const headers = new Headers()
     headers.set('Method', 'GET')
     headers.set('Content-Type', 'application/json')
+    headers.set('Accept-Encoding', 'br')
     if (!!process.env.NEXT_PUBLIC_PYTH_CREDENTIALS) {
-      headers.set('Authorization', `Basic ${process.env.NEXT_PUBLIC_PYTH_CREDENTIALS}`)
+      headers.set('Authorization', `Basic ${btoa(process.env.NEXT_PUBLIC_PYTH_CREDENTIALS)}`)
     }
     priceFeedIds.forEach((id) => pricesUrl.searchParams.append('ids[]', id))
 
     const pythResponse: PythPriceData[] = await cacheFn(
       () =>
-        fetch(pricesUrl, { mode: 'no-cors', credentials: 'include', headers }).then((res) =>
-          res.json(),
-        ),
+        fetch(pricesUrl, { credentials: 'include', headers })
+          .then((res) => res as any)
+          .catch((err) => console.log(err)),
       pythPriceCache,
       `pythPrices/${priceFeedIds.flat().join('-')}`,
       30,
     )
 
     const mappedPriceData = [] as BNCoin[]
-
+    console.log('pythResponse', pythResponse)
     assets.forEach((asset) => {
       const price = pythResponse.find((pythPrice) => asset.pythPriceFeedId === pythPrice.id)?.price
+      console.log('price', price)
       if (price)
         mappedPriceData.push(
           BNCoin.fromDenomAndBigNumber(asset.denom, BN(price.price).shiftedBy(price.expo)),
