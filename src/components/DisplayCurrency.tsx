@@ -66,8 +66,6 @@ export default function DisplayCurrency(props: Props) {
     ? ''
     : ` ${displayCurrencyAsset.symbol ? ` ${displayCurrencyAsset.symbol}` : ''}`
 
-  console.log(isLessThanACent, absoluteAmount)
-
   return (
     <FormattedNumber
       className={classNames(
