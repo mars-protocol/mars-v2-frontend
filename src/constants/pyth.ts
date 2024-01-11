@@ -1,4 +1,4 @@
 export const pythEndpoints = {
-  api: 'https://hermes.pyth.network/api',
+  api: process.env.NEXT_PUBLIC_PYTH_API,
   candles: 'https://benchmarks.pyth.network',
 }
