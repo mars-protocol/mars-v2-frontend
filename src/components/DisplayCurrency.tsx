@@ -52,10 +52,12 @@ export default function DisplayCurrency(props: Props) {
     return [amount, Math.abs(amount)]
   }, [assets, displayCurrency, displayCurrencyAsset.decimals, prices, props.coin])
 
-  const isLessThanACent =
-    (isUSD && absoluteAmount < 0.01 && absoluteAmount > 0) ||
-    (absoluteAmount === 0 && props.showZero)
-  const smallerThanPrefix = isLessThanACent ? '< ' : ''
+  const isLessThanACent = useMemo(
+    () => isUSD && absoluteAmount < 0.01 && absoluteAmount > 0,
+    [absoluteAmount, isUSD],
+  )
+
+  const smallerThanPrefix = isLessThanACent && !props.showZero ? '< ' : ''
 
   const prefix = isUSD
     ? `${props.isApproximation ? '~ ' : smallerThanPrefix}$`
@@ -63,6 +65,8 @@ export default function DisplayCurrency(props: Props) {
   const suffix = isUSD
     ? ''
     : ` ${displayCurrencyAsset.symbol ? ` ${displayCurrencyAsset.symbol}` : ''}`
+
+  console.log(isLessThanACent, absoluteAmount)
 
   return (
     <FormattedNumber

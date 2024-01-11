@@ -16,10 +16,7 @@ export default async function fetchPythPrices(priceFeedIds: string[], assets: As
     priceFeedIds.forEach((id) => pricesUrl.searchParams.append('ids[]', id))
 
     const pythResponse: PythPriceData[] = await cacheFn(
-      () =>
-        fetch(pricesUrl, { credentials: 'include', headers })
-          .then((res) => res as any)
-          .catch((err) => console.log(err)),
+      () => fetch(pricesUrl, { credentials: 'include', headers }).then((res) => res as any),
       pythPriceCache,
       `pythPrices/${priceFeedIds.flat().join('-')}`,
       30,
