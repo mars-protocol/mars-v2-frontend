@@ -117,21 +117,26 @@ export const datafeed = {
     onError: ErrorCallback,
     extension?: SymbolResolveExtension,
   ) => {
-    fetch(`${pythEndpoints.candles}/symbols?symbol=${symbolName}`).then((response) => {
-      response
-        .json()
-        .then((symbolInfo) => {
-          if (symbolInfo.errmsg) {
-            symbolInfo.description = symbolName
-          } else {
-            symbolInfo.description = symbolInfo.ticker.split('Crypto.')[1]
-          }
-          onResolve(symbolInfo)
-        })
-        .catch((error) => {
-          console.error(error)
-          return
-        })
-    })
+    try {
+      fetch(`${pythEndpoints.candles}/symbols?symbol=${symbolName}`).then((response) => {
+        response
+          .json()
+          .then((symbolInfo) => {
+            if (symbolInfo.errmsg) {
+              symbolInfo.description = symbolName
+            } else {
+              symbolInfo.description = symbolInfo.ticker.split('Crypto.')[1]
+            }
+            onResolve(symbolInfo)
+          })
+          .catch((error) => {
+            console.error(error)
+            return
+          })
+      })
+    } catch (error) {
+      console.error(error)
+      return
+    }
   },
 }
