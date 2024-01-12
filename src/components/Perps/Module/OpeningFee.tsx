@@ -12,7 +12,7 @@ type Props = {
 export default function OpeningFee(props: Props) {
   const { data: openingFee, isLoading } = useOpeningFee(props.denom, props.amount)
 
-  if (isLoading) return <CircularProgress />
+  if (isLoading) return <CircularProgress className='h-full' size={12} />
   if (props.amount.isZero() || !openingFee) return '-'
 
   return <DisplayCurrency coin={openingFee} />
