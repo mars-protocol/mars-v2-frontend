@@ -14,7 +14,7 @@ export default function TradeDirection(props: Props) {
     <Text
       size='xs'
       className={classNames(
-        'capitalize  px-1 py-0.5 rounded-sm inline',
+        'capitalize px-1 py-0.5 rounded-sm inline-block',
         tradeDirection === 'short' && 'text-error bg-error/20',
         tradeDirection === 'long' && 'text-success bg-success/20',
       )}

@@ -9,12 +9,13 @@ import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tan
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
 import {
+  Decimal,
   Uint128,
   OracleBaseForString,
+  ParamsBaseForString,
   InstantiateMsg,
   ExecuteMsg,
   OwnerUpdate,
-  Decimal,
   SignedDecimal,
   QueryMsg,
   ConfigForString,
@@ -23,13 +24,17 @@ import {
   ArrayOfDenomStateResponse,
   DepositResponse,
   ArrayOfDepositResponse,
+  TradingFee,
+  Coin,
   OwnerResponse,
   PerpDenomState,
-  PnlValues,
+  DenomPnlValues,
   PnL,
   PositionResponse,
   PerpPosition,
-  Coin,
+  PositionPnl,
+  PnlCoins,
+  PnlValues,
   ArrayOfPositionResponse,
   PositionsByAccountResponse,
   ArrayOfUnlockState,
@@ -75,6 +80,8 @@ export const marsPerpsQueryKeys = {
     ] as const,
   totalPnl: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
     [{ ...marsPerpsQueryKeys.address(contractAddress)[0], method: 'total_pnl', args }] as const,
+  openingFee: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
+    [{ ...marsPerpsQueryKeys.address(contractAddress)[0], method: 'opening_fee', args }] as const,
 }
 export interface MarsPerpsReactQuery<TResponse, TData = TResponse> {
   client: MarsPerpsQueryClient | undefined
@@ -84,6 +91,29 @@ export interface MarsPerpsReactQuery<TResponse, TData = TResponse> {
   > & {
     initialData?: undefined
   }
+}
+export interface MarsPerpsOpeningFeeQuery<TData> extends MarsPerpsReactQuery<TradingFee, TData> {
+  args: {
+    denom: string
+    size: SignedDecimal
+  }
+}
+export function useMarsPerpsOpeningFeeQuery<TData = TradingFee>({
+  client,
+  args,
+  options,
+}: MarsPerpsOpeningFeeQuery<TData>) {
+  return useQuery<TradingFee, Error, TData>(
+    marsPerpsQueryKeys.openingFee(client?.contractAddress, args),
+    () =>
+      client
+        ? client.openingFee({
+            denom: args.denom,
+            size: args.size,
+          })
+        : Promise.reject(new Error('Invalid client')),
+    { ...options, enabled: !!client && (options?.enabled != undefined ? options.enabled : true) },
+  )
 }
 export interface MarsPerpsTotalPnlQuery<TData> extends MarsPerpsReactQuery<SignedDecimal, TData> {}
 export function useMarsPerpsTotalPnlQuery<TData = SignedDecimal>({

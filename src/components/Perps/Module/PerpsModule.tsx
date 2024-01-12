@@ -20,6 +20,7 @@ export function PerpsModule() {
   const [selectedOrderType, setSelectedOrderType] = useState<AvailableOrderType>('Market')
   const [tradeDirection, setTradeDirection] = useState<TradeDirection>('long')
   const { perpsAsset } = usePerpsAsset()
+  const [leverage, setLeverage] = useState<number>(1)
 
   const [amount, setAmount] = useState<BigNumber>(BN_ZERO)
 
@@ -48,7 +49,12 @@ export function PerpsModule() {
       <RangeInput max={0} value={0} onChange={() => {}} />
       <LeverageButtons />
       <Spacer />
-      <PerpsSummary amount={amount} tradeDirection={tradeDirection} asset={perpsAsset} />
+      <PerpsSummary
+        amount={amount}
+        tradeDirection={tradeDirection}
+        asset={perpsAsset}
+        leverage={leverage}
+      />
     </Card>
   )
 }
