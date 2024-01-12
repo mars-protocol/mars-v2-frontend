@@ -11,15 +11,20 @@ export default function usePerpsMarket() {
   const { perpsAsset } = usePerpsAsset()
   const clients = useClients()
 
-  return useSWR(clients && perpsAsset && `chains/${chainConfig.id}/perps/${perpsAsset.denom}`, () =>
-    getPerpsMarket(clients!, perpsAsset!),
+  return useSWR(
+    clients && perpsAsset && `chains/${chainConfig.id}/perps/${perpsAsset.denom}`,
+    () => getPerpsMarket(clients!, perpsAsset!),
+    {
+      refreshInterval: 1000,
+      dedupingInterval: 1000,
+    },
   )
 }
 
 async function getPerpsMarket(clients: ContractClients, asset: Asset) {
   const denomState = await clients.perps.perpDenomState({ denom: asset.denom })
   return {
-    fundingRate: BN(denomState.rate.abs),
+    fundingRate: BN(denomState.rate as any),
     asset: asset,
     openInterest: {
       long: BN_ZERO,
