@@ -36,6 +36,8 @@ export function PerpsInfo() {
     ]
   }, [assetPrice, market])
 
+  if (!market) return null
+
   return (
     <Card contentClassName='bg-white/10 py-3.5 px-4'>
       <div className='flex gap-4 items-center'>

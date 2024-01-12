@@ -6,13 +6,14 @@ const infoLineClasses = 'flex flex-row justify-between flex-1 mb-1 text-xs text-
 interface SummaryLineProps {
   children: React.ReactNode
   className?: string
+  contentClassName?: string
   label: string
 }
 export default function SummaryLine(props: SummaryLineProps) {
   return (
     <div className={classNames(infoLineClasses, props.className)}>
       <span className='opacity-40'>{props.label}</span>
-      <span>{props.children}</span>
+      <span className={props.contentClassName}>{props.children}</span>
     </div>
   )
 }

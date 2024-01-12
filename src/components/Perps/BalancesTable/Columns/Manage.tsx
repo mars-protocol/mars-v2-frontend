@@ -1,10 +1,13 @@
 import React, { useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 import DropDownButton from 'components/Button/DropDownButton'
 import { Cross, Edit } from 'components/Icons'
 import { PerpPositionRow } from 'components/Perps/BalancesTable/usePerpsBalancesData'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
+import { SearchParams } from 'types/enums/searchParams'
+import { getSearchParamsObject } from 'utils/route'
 
 export const MANAGE_META = { id: 'manage', header: 'Manage' }
 
@@ -14,6 +17,7 @@ interface Props {
 
 export default function Manage(props: Props) {
   const currentAccount = useCurrentAccount()
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const closePerpPosition = useStore((s) => s.closePerpPosition)
   const ITEMS: DropDownItem[] = useMemo(
@@ -21,7 +25,14 @@ export default function Manage(props: Props) {
       {
         icon: <Edit />,
         text: 'Edit Position Size',
-        onClick: () => {},
+        onClick: () => {
+          const params = getSearchParamsObject(searchParams)
+          setSearchParams({
+            ...params,
+            [SearchParams.PERPS_MARKET]: props.perpPosition.asset.denom,
+            [SearchParams.PERPS_MANAGE]: 'true',
+          })
+        },
       },
       {
         icon: <Cross width={16} />,
@@ -35,7 +46,13 @@ export default function Manage(props: Props) {
         },
       },
     ],
-    [closePerpPosition, currentAccount, props.perpPosition.asset.denom],
+    [
+      closePerpPosition,
+      currentAccount,
+      props.perpPosition.asset.denom,
+      searchParams,
+      setSearchParams,
+    ],
   )
 
   return (

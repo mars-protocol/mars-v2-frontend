@@ -8,12 +8,13 @@
 import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
 import {
+  Decimal,
   Uint128,
   OracleBaseForString,
+  ParamsBaseForString,
   InstantiateMsg,
   ExecuteMsg,
   OwnerUpdate,
-  Decimal,
   SignedDecimal,
   QueryMsg,
   ConfigForString,
@@ -22,13 +23,17 @@ import {
   ArrayOfDenomStateResponse,
   DepositResponse,
   ArrayOfDepositResponse,
+  TradingFee,
+  Coin,
   OwnerResponse,
   PerpDenomState,
-  PnlValues,
+  DenomPnlValues,
   PnL,
   PositionResponse,
   PerpPosition,
-  Coin,
+  PositionPnl,
+  PnlCoins,
+  PnlValues,
   ArrayOfPositionResponse,
   PositionsByAccountResponse,
   ArrayOfUnlockState,
@@ -74,6 +79,7 @@ export interface MarsPerpsReadOnlyInterface {
   }) => Promise<ArrayOfPositionResponse>
   positionsByAccount: ({ accountId }: { accountId: string }) => Promise<PositionsByAccountResponse>
   totalPnl: () => Promise<SignedDecimal>
+  openingFee: ({ denom, size }: { denom: string; size: SignedDecimal }) => Promise<TradingFee>
 }
 export class MarsPerpsQueryClient implements MarsPerpsReadOnlyInterface {
   client: CosmWasmClient
@@ -95,6 +101,7 @@ export class MarsPerpsQueryClient implements MarsPerpsReadOnlyInterface {
     this.positions = this.positions.bind(this)
     this.positionsByAccount = this.positionsByAccount.bind(this)
     this.totalPnl = this.totalPnl.bind(this)
+    this.openingFee = this.openingFee.bind(this)
   }
 
   owner = async (): Promise<OwnerResponse> => {
@@ -210,6 +217,20 @@ export class MarsPerpsQueryClient implements MarsPerpsReadOnlyInterface {
   totalPnl = async (): Promise<SignedDecimal> => {
     return this.client.queryContractSmart(this.contractAddress, {
       total_pnl: {},
+    })
+  }
+  openingFee = async ({
+    denom,
+    size,
+  }: {
+    denom: string
+    size: SignedDecimal
+  }): Promise<TradingFee> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      opening_fee: {
+        denom,
+        size,
+      },
     })
   }
 }

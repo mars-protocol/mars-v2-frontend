@@ -1,3 +1,5 @@
+import { SearchParams } from 'types/enums/searchParams'
+
 export function getRoute(
   page: Page,
   searchParams: URLSearchParams,
@@ -19,8 +21,8 @@ export function getRoute(
   )
 
   if (accountId) {
-    url.searchParams.delete('accountId')
-    url.searchParams.append('accountId', accountId)
+    url.searchParams.delete(SearchParams.ACCOUNT_ID)
+    url.searchParams.append(SearchParams.ACCOUNT_ID, accountId)
   }
 
   return url.pathname + url.search
@@ -52,4 +54,12 @@ export function getPage(pathname: string): Page {
   }
 
   return 'trade' as Page
+}
+
+export function getSearchParamsObject(searchParams: URLSearchParams) {
+  const params: { [key: string]: string } = {}
+
+  Array.from(searchParams?.entries() || []).forEach(([key, value]) => (params[key] = value))
+
+  return params
 }
