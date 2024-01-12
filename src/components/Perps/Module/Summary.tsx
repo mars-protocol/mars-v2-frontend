@@ -5,6 +5,7 @@ import AssetAmount from 'components/Asset/AssetAmount'
 import ActionButton from 'components/Button/ActionButton'
 import { ArrowRight } from 'components/Icons'
 import TradeDirection from 'components/Perps/BalancesTable/Columns/TradeDirection'
+import OpeningFee from 'components/Perps/Module/OpeningFee'
 import SummaryLine from 'components/SummaryLine'
 import Text from 'components/Text'
 import useCurrentAccount from 'hooks/useCurrentAccount'
@@ -53,7 +54,9 @@ export default function PerpsSummary(props: Props) {
           Summary
         </Text>
         <SummaryLine label='Expected Price'>-</SummaryLine>
-        <SummaryLine label='Fees'>-</SummaryLine>
+        <SummaryLine label='Fees'>
+          <OpeningFee denom={props.asset.denom} amount={props.amount} />
+        </SummaryLine>
         <SummaryLine label='Total'>-</SummaryLine>
       </div>
       <ActionButton onClick={onConfirm} disabled={disabled} className='w-full py-2.5'>
