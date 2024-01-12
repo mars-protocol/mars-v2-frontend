@@ -11,7 +11,7 @@ const NTRN: AssetMetaData = {
   isMarket: true,
   isBorrowEnabled: true,
   isAutoLendEnabled: true,
-  pythHistoryFeedId: 'Crypto.NTRN/USD',
+  pythFeedName: 'NTRNUSD',
 }
 
 export default NTRN

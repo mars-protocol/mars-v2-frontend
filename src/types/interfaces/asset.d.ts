@@ -21,7 +21,7 @@ interface AssetMetaData {
   logo: string
   name: string
   prefix?: string
-  pythHistoryFeedId?: string
+  pythFeedName?: string
   pythPriceFeedId?: string
   symbol: string
   testnetDenom?: string
