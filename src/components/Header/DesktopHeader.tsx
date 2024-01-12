@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import { isDesktop } from 'react-device-detect'
+import { useMemo } from 'react'
 
 import AccountMenu from 'components/Account/AccountMenu'
 import EscButton from 'components/Button/EscButton'
@@ -54,6 +55,8 @@ export default function DesktopHeader() {
     useStore.setState({ focusComponent: null })
   }
 
+  const showStaleOracle = useMemo(() => isOracleStale && address, [isOracleStale, address])
+
   if (!isDesktop) return null
 
   return (
@@ -84,7 +87,7 @@ export default function DesktopHeader() {
           </div>
         ) : (
           <div className='flex gap-4'>
-            {address && isOracleStale && <OracleResyncButton />}
+            {showStaleOracle && <OracleResyncButton />}
             {accountId && <RewardsCenter />}
             {address && !isHLS && <AccountMenu />}
             <Wallet />

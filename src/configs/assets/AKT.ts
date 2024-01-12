@@ -12,7 +12,7 @@ const AKT: AssetMetaData = {
   isAutoLendEnabled: true,
   isBorrowEnabled: true,
   pythPriceFeedId: '4ea5bb4d2f5900cc2e97ba534240950740b4d3b89fe712a94a7304fd2fd92702',
-  pythHistoryFeedId: 'Crypto.AKT/USD',
+  pythFeedName: 'AKTUSD',
 }
 
 export default AKT

@@ -13,7 +13,7 @@ const ATOM: AssetMetaData = {
   isAutoLendEnabled: true,
   isBorrowEnabled: true,
   pythPriceFeedId: 'b00b60f88b03a6a625a8d1c048c3f66653edf217439983d037e7222c4e612819',
-  pythHistoryFeedId: 'Crypto.ATOM/USD',
+  pythFeedName: 'ATOMUSD',
 }
 
 export default ATOM

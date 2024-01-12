@@ -27,7 +27,6 @@ interface ChainConfig {
     rest: string
     rpc: string
     swap: string
-    graphCandles?: string
     explorer: string
     pools: string
     aprs: {
