@@ -50,6 +50,9 @@ export default function TradeChart(props: Props) {
         theme: 'dark',
         overrides: {
           'paneProperties.background': '#220E1D',
+          'paneProperties.backgroundType': 'solid',
+          'paneProperties.backgroundGradientStartColor': '#220E1D',
+          'paneProperties.backgroundGradientEndColor': '#220E1D',
           'linetooltrendline.linecolor': 'rgba(255, 255, 255, 0.8)',
           'linetooltrendline.linewidth': 2,
         },
