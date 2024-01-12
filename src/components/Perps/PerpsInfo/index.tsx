@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react'
 
-import AssetSymbol from 'components/Asset/AssetSymbol'
 import Card from 'components/Card'
 import DisplayCurrency from 'components/DisplayCurrency'
 import Divider from 'components/Divider'
-import { FormattedNumber } from 'components/FormattedNumber'
 import Loading from 'components/Loading'
+import FundingRate from 'components/Perps/PerpsInfo/FundingRate'
+import InterestItem from 'components/Perps/PerpsInfo/InterestItem'
 import Text from 'components/Text'
 import usePerpsMarket from 'hooks/perps/usePerpsMarket'
 import usePrice from 'hooks/usePrice'
@@ -25,28 +25,14 @@ export function PerpsInfo() {
       <InfoItem
         key='openInterestLong'
         label='Open Interest (L)'
-        item={<InterestItem market={market} type='long' />}
+        item={<InterestItem type='long' />}
       />,
       <InfoItem
         key='openInterestShort'
         label='Open Interest (S)'
-        item={<InterestItem market={market} type='short' />}
+        item={<InterestItem type='short' />}
       />,
-      <InfoItem
-        key='fundingRate'
-        label='Funding rate'
-        item={
-          market ? (
-            <FormattedNumber
-              className='text-sm inline'
-              amount={market.fundingRate.toNumber()}
-              options={{ minDecimals: 6, maxDecimals: 6, suffix: '%' }}
-            />
-          ) : (
-            <Loading />
-          )
-        }
-      />,
+      <InfoItem key='fundingRate' label='Funding rate' item={<FundingRate />} />,
     ]
   }, [assetPrice, market])
 
@@ -78,25 +64,6 @@ function InfoItem(props: InfoItemProps) {
         {props.label}
       </Text>
       {props.item}
-    </div>
-  )
-}
-
-interface InterestItemProps {
-  market: PerpsMarket | null
-  type: 'long' | 'short'
-}
-function InterestItem(props: InterestItemProps) {
-  if (!props.market) return <Loading />
-
-  return (
-    <div className='flex gap-1 items-center'>
-      <FormattedNumber
-        className='text-sm inline'
-        amount={props.market.openInterest[props.type].toNumber()}
-        options={{ decimals: props.market.asset.decimals }}
-      />
-      <AssetSymbol symbol={props.market.asset.symbol} />
     </div>
   )
 }
