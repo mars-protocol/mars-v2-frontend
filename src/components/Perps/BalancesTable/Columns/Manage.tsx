@@ -46,7 +46,13 @@ export default function Manage(props: Props) {
         },
       },
     ],
-    [closePerpPosition, currentAccount, props.perpPosition.asset.denom],
+    [
+      closePerpPosition,
+      currentAccount,
+      props.perpPosition.asset.denom,
+      searchParams,
+      setSearchParams,
+    ],
   )
 
   return (
