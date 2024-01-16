@@ -1,3 +1,5 @@
+import classNames from 'classnames'
+
 import { FormattedNumber } from 'components/FormattedNumber'
 import TitleAndSubCell from 'components/TitleAndSubCell'
 import { VAULT_DEPOSIT_BUFFER } from 'constants/vaults'
@@ -29,8 +31,10 @@ export default function DepositCapCell(props: Props) {
         <FormattedNumber
           amount={depositCapUsed}
           options={{ minDecimals: 2, maxDecimals: 2, suffix: '% Filled' }}
-          className='text-xs'
-          animate
+          className={classNames(
+            'text-xs',
+            depositCapUsed >= 100 ? 'text-loss/60' : depositCapUsed > 90 ? 'text-info/60' : '',
+          )}
         />
       }
     />

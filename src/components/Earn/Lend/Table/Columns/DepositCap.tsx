@@ -1,4 +1,5 @@
 import { Row } from '@tanstack/react-table'
+import classNames from 'classnames'
 
 import { FormattedNumber } from 'components/FormattedNumber'
 import Loading from 'components/Loading'
@@ -50,6 +51,9 @@ export default function DepositCap(props: Props) {
           amount={depositCapUsed}
           options={{ minDecimals: 2, maxDecimals: 2, suffix: '% used' }}
           animate
+          className={classNames(
+            depositCapUsed >= 100 ? 'text-loss/60' : depositCapUsed > 90 ? 'text-info/60' : '',
+          )}
         />
       }
     />
