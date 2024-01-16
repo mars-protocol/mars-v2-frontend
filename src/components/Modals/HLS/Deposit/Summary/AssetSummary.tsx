@@ -1,10 +1,10 @@
 import React from 'react'
 
-import AmountAndValue from 'components/AmountAndValue'
-import AssetImage from 'components/Asset/AssetImage'
-import { FormattedNumber } from 'components/FormattedNumber'
+import AmountAndValue from 'components/common/AmountAndValue'
+import AssetImage from 'components/common/assets/AssetImage'
+import { FormattedNumber } from 'components/common/FormattedNumber'
 import Container from 'components/Modals/HLS/Deposit/Summary/Container'
-import Text from 'components/Text'
+import Text from 'components/common/Text'
 
 interface Props {
   amount: BigNumber

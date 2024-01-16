@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react'
 
-import Accordion from 'components/Accordion'
+import Accordion from 'components/common/Accordion'
 import useStakingController from 'components/Modals/HLS/Deposit//useStakingController'
 import useVaultController from 'components/Modals/HLS/Deposit//useVaultController'
 import useAccordionItems from 'components/Modals/HLS/Deposit/useAccordionItems'

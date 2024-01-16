@@ -1,10 +1,10 @@
 import classNames from 'classnames'
 import React from 'react'
 
-import AccountSummary from 'components/Account/AccountSummary'
-import Card from 'components/Card'
-import { CircularProgress } from 'components/CircularProgress'
-import Modal, { ModalProps } from 'components/Modal'
+import AccountSummary from 'components/account/AccountSummary'
+import Card from 'components/common/Card'
+import { CircularProgress } from 'components/common/CircularProgress'
+import Modal, { ModalProps } from 'components/Modals/Modal'
 import useStore from 'store'
 
 interface Props extends ModalProps {

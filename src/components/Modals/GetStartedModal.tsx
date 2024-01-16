@@ -1,8 +1,8 @@
 import { useCallback } from 'react'
 
-import { ChevronRight, Compass, HandCoins, Luggage } from 'components/Icons'
-import Modal from 'components/Modal'
-import Text from 'components/Text'
+import { ChevronRight, Compass, HandCoins, Luggage } from 'components/common/Icons'
+import Modal from 'components/Modals/Modal'
+import Text from 'components/common/Text'
 import useStore from 'store'
 import { DocURL } from 'types/enums/docURL'
 

@@ -399,6 +399,16 @@ module.exports = {
         '.gradient-slider-4': {
           background: 'linear-gradient(to right, #961293, #B3419B)',
         },
+        '.gradient-slider-pink': {
+          background:
+            'linear-gradient(270deg, rgba(255, 97, 141, 0.89) 0%, rgba(66, 58, 70, 0.05) 100%)',
+        },
+        '.gradient-slider-green': {
+          background: 'linear-gradient(270deg, #61FF71E2 0%, #423A460D 100%)',
+        },
+        '.gradient-slider-red': {
+          background: 'linear-gradient(270deg, #F04438E2 0%, #423A460D 100%)',
+        },
         '.gradient-tooltip': {
           background:
             'linear-gradient(77.47deg, rgba(20, 24, 57, 0.9) 11.58%, rgba(34, 16, 57, 0.9) 93.89%)',

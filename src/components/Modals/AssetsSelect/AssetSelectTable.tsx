@@ -9,9 +9,9 @@ import {
 import classNames from 'classnames'
 import { useEffect, useMemo, useState } from 'react'
 
-import { SortAsc, SortDesc, SortNone } from 'components/Icons'
+import { SortAsc, SortDesc, SortNone } from 'components/common/Icons'
 import useAssetTableColumns from 'components/Modals/AssetsSelect/useAssetTableColumns'
-import Text from 'components/Text'
+import Text from 'components/common/Text'
 import useMarketAssets from 'hooks/markets/useMarketAssets'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
