@@ -1,6 +1,6 @@
-import Borrowings from 'components/Borrow/Borrowings'
-import BorrowIntro from 'components/Borrow/BorrowIntro'
-import MigrationBanner from 'components/MigrationBanner'
+import Borrowings from 'components/borrow/Borrowings'
+import BorrowIntro from 'components/borrow/BorrowIntro'
+import MigrationBanner from 'components/common/MigrationBanner'
 
 export default function BorrowPage() {
   return (

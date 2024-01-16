@@ -1,5 +1,5 @@
-import { LockUnlocked } from 'components/Icons'
-import Modal from 'components/Modal'
+import { LockUnlocked } from 'components/common/Icons'
+import Modal from 'components/Modals/Modal'
 import UnlockModalContent from 'components/Modals/Unlock/UnlockModalContent'
 import useStore from 'store'
 

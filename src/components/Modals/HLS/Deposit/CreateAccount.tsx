@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { mutate } from 'swr'
 
-import Button from 'components/Button'
-import DocsLink from 'components/DocsLink'
-import { ArrowRight } from 'components/Icons'
-import Text from 'components/Text'
+import Button from 'components/common/Button'
+import DocsLink from 'components/common/DocsLink'
+import { ArrowRight } from 'components/common/Icons'
+import Text from 'components/common/Text'
 import useStore from 'store'
 
 export default function CreateAccount() {

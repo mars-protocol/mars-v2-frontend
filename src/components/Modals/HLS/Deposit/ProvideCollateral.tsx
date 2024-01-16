@@ -1,8 +1,8 @@
 import React from 'react'
 
-import Button from 'components/Button'
-import { ArrowRight } from 'components/Icons'
-import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
+import Button from 'components/common/Button'
+import { ArrowRight } from 'components/common/Icons'
+import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 
 interface Props {
   amount: BigNumber

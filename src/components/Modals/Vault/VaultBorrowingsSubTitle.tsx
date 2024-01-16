@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
-import DisplayCurrency from 'components/DisplayCurrency'
-import Text from 'components/Text'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAllAssets from 'hooks/assets/useAllAssets'

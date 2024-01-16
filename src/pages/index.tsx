@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter } from 'react-router-dom'
 
-import Routes from 'components/Routes'
+import Routes from 'components/header/navigation/Routes'
 import { WalletConnectProvider } from 'components/Wallet/WalletConnectProvider'
 
 export default function Router() {

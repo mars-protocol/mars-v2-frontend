@@ -1,7 +1,7 @@
 import { AppProps } from 'next/app'
 import { useEffect, useState } from 'react'
 
-import DefaultPageHead from 'components/DefaultPageHead'
+import DefaultPageHead from 'components/common/DefaultPageHead'
 import init from 'utils/health_computer'
 
 import 'react-toastify/dist/ReactToastify.min.css'

@@ -1,7 +1,7 @@
-import LendIntro from 'components/Earn/Lend/LendIntro'
-import Lends from 'components/Earn/Lend/Lends'
-import Tab from 'components/Earn/Tab'
-import MigrationBanner from 'components/MigrationBanner'
+import LendIntro from 'components/earn/lend/LendIntro'
+import Lends from 'components/earn/lend/Lends'
+import Tab from 'components/earn/Tab'
+import MigrationBanner from 'components/common/MigrationBanner'
 import { EARN_TABS } from 'constants/pages'
 import useStore from 'store'
 

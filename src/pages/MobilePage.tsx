@@ -1,4 +1,4 @@
-import MobileNotSupported from 'components/MobileNotSupported'
+import MobileNotSupported from 'components/common/MobileNotSupported'
 
 export default function MobilePage() {
   return <MobileNotSupported />

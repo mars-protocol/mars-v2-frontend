@@ -1,10 +1,10 @@
 import { useSearchParams } from 'react-router-dom'
 
-import { PerpsManageModule } from 'components/Perps/Module/PerpsManageModule'
-import { PerpsModule } from 'components/Perps/Module/PerpsModule'
-import { PerpsChart } from 'components/Perps/PerpsChart'
-import { PerpsInfo } from 'components/Perps/PerpsInfo'
-import { PerpsPositions } from 'components/Perps/PerpsPositions'
+import { PerpsManageModule } from 'components/perps/Module/PerpsManageModule'
+import { PerpsModule } from 'components/perps/Module/PerpsModule'
+import { PerpsChart } from 'components/perps/PerpsChart'
+import { PerpsInfo } from 'components/perps/PerpsInfo'
+import { PerpsPositions } from 'components/perps/PerpsPositions'
 import { SearchParams } from 'types/enums/searchParams'
 
 export default function PerpsPage() {

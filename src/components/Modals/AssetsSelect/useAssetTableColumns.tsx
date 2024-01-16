@@ -1,12 +1,12 @@
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
-import AssetImage from 'components/Asset/AssetImage'
-import AssetRate from 'components/Asset/AssetRate'
-import Checkbox from 'components/Checkbox'
-import DisplayCurrency from 'components/DisplayCurrency'
-import { FormattedNumber } from 'components/FormattedNumber'
-import Text from 'components/Text'
+import AssetImage from 'components/common/assets/AssetImage'
+import AssetRate from 'components/common/assets/AssetRate'
+import Checkbox from 'components/common/Checkbox'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import Text from 'components/common/Text'
 import { BNCoin } from 'types/classes/BNCoin'
 import { demagnify, formatPercent } from 'utils/formatters'
 

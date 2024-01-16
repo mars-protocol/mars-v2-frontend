@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-import ActionButton from 'components/Button/ActionButton'
-import Text from 'components/Text'
-import WarningMessages from 'components/WarningMessages'
+import ActionButton from 'components/common/Button/ActionButton'
+import Text from 'components/common/Text'
+import WarningMessages from 'components/common/WarningMessages'
 import useChainConfig from 'hooks/useChainConfig'
 import useStore from 'store'
 

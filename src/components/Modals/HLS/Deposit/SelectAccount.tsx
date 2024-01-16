@@ -1,9 +1,9 @@
 import classNames from 'classnames'
 import React from 'react'
 
-import Button from 'components/Button'
-import { ArrowRight } from 'components/Icons'
-import Radio from 'components/Radio'
+import Button from 'components/common/Button'
+import { ArrowRight } from 'components/common/Icons'
+import Radio from 'components/common/Radio'
 
 interface Props {
   hlsAccounts: Account[]

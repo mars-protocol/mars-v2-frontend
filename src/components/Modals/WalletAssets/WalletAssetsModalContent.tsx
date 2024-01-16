@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 
 import AssetSelectTable from 'components/Modals/AssetsSelect/AssetSelectTable'
-import SearchBar from 'components/SearchBar'
+import SearchBar from 'components/common/SearchBar'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useStore from 'store'
 import { byDenom } from 'utils/array'

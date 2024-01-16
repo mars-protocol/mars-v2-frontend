@@ -1,10 +1,10 @@
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
-import MigrationBanner from 'components/MigrationBanner'
-import Balances from 'components/Portfolio/Account/Balances'
-import BreadCrumbs from 'components/Portfolio/Account/BreadCrumbs'
-import Summary from 'components/Portfolio/Account/Summary'
-import ShareBar from 'components/ShareBar'
+import MigrationBanner from 'components/common/MigrationBanner'
+import Balances from 'components/portfolio/Account/Balances'
+import BreadCrumbs from 'components/portfolio/Account/BreadCrumbs'
+import Summary from 'components/portfolio/Account/Summary'
+import ShareBar from 'components/common/ShareBar'
 import useAccountId from 'hooks/useAccountId'
 import { getRoute } from 'utils/route'
 
