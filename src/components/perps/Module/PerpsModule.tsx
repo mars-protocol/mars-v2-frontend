@@ -1,17 +1,17 @@
 import { useState } from 'react'
 
 import Card from 'components/common/Card'
+import LeverageSlider from 'components/common/LeverageSlider'
+import { Spacer } from 'components/common/Spacer'
+import Text from 'components/common/Text'
+import { TradeDirectionSelector } from 'components/common/TradeDirectionSelector'
 import { LeverageButtons } from 'components/perps/Module/LeverageButtons'
 import { Or } from 'components/perps/Module/Or'
 import PerpsSummary from 'components/perps/Module/Summary'
-import RangeInput from 'components/common/RangeInput'
-import { Spacer } from 'components/common/Spacer'
-import Text from 'components/common/Text'
 import AssetSelectorPerps from 'components/trade/TradeModule/AssetSelector/AssetSelectorPerps'
 import AssetAmountInput from 'components/trade/TradeModule/SwapForm/AssetAmountInput'
 import OrderTypeSelector from 'components/trade/TradeModule/SwapForm/OrderTypeSelector'
 import { AvailableOrderType } from 'components/trade/TradeModule/SwapForm/OrderTypeSelector/types'
-import { TradeDirectionSelector } from 'components/common/TradeDirectionSelector'
 import { BN_ZERO } from 'constants/math'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import { BN } from 'utils/helpers'
@@ -46,7 +46,7 @@ export function PerpsModule() {
       />
       <Or />
       <Text size='sm'>Position Leverage</Text>
-      <RangeInput max={0} value={0} onChange={() => {}} />
+      <LeverageSlider max={10} value={leverage} onChange={setLeverage} type={tradeDirection} />
       <LeverageButtons />
       <Spacer />
       <PerpsSummary

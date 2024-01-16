@@ -2,15 +2,15 @@ import classNames from 'classnames'
 import { useState } from 'react'
 
 import { Cross } from 'components/common/Icons'
+import LeverageSlider from 'components/common/LeverageSlider'
+import { Spacer } from 'components/common/Spacer'
+import Text from 'components/common/Text'
+import { TradeDirectionSelector } from 'components/common/TradeDirectionSelector'
 import { LeverageButtons } from 'components/perps/Module/LeverageButtons'
 import { Or } from 'components/perps/Module/Or'
 import usePerpsManageModule from 'components/perps/Module/PerpsManageModule/usePerpsManageModule'
 import PerpsSummary from 'components/perps/Module/Summary'
-import RangeInput from 'components/common/RangeInput'
-import { Spacer } from 'components/common/Spacer'
-import Text from 'components/common/Text'
 import AssetAmountInput from 'components/trade/TradeModule/SwapForm/AssetAmountInput'
-import { TradeDirectionSelector } from 'components/common/TradeDirectionSelector'
 import { BN } from 'utils/helpers'
 
 export function PerpsManageModule() {
@@ -56,7 +56,7 @@ export function PerpsManageModule() {
       />
       <Or />
       <Text size='sm'>Position Leverage</Text>
-      <RangeInput max={0} value={0} onChange={() => {}} />
+      <LeverageSlider max={0} value={0} onChange={() => {}} type={tradeDirection || 'long'} />
       <LeverageButtons />
       <Spacer />
       <PerpsSummary

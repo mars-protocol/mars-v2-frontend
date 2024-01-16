@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { ChangeEvent, useCallback } from 'react'
 
-import InputOverlay from 'components/common/RangeInput/InputOverlay'
+import InputOverlay from 'components/common/LeverageSlider/InputOverlay'
 
 const LEFT_MARGIN = 5
 
@@ -13,10 +13,12 @@ type Props = {
   wrapperClassName?: string
   onChange: (value: number) => void
   onBlur?: () => void
+  type: LeverageSliderType
 }
 
-function RangeInput(props: Props) {
-  const { value, max, onChange, wrapperClassName, disabled, marginThreshold, onBlur } = props
+export type LeverageSliderType = 'margin' | 'long' | 'short'
+function LeverageSlider(props: Props) {
+  const { value, max, onChange, wrapperClassName, disabled, marginThreshold, onBlur, type } = props
 
   const handleOnChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +54,7 @@ function RangeInput(props: Props) {
           onChange={handleOnChange}
           onBlur={onBlur}
         />
-        <InputOverlay max={max} marginThreshold={marginThreshold} value={value} />
+        <InputOverlay max={max} marginThreshold={marginThreshold} value={value} type={type} />
       </div>
       <div className={'flex w-full justify-between text-xs text-opacity-50 text-white font-bold'}>
         <span>{markPosPercent > LEFT_MARGIN ? 0 : ''}</span>
@@ -62,4 +64,4 @@ function RangeInput(props: Props) {
   )
 }
 
-export default RangeInput
+export default LeverageSlider

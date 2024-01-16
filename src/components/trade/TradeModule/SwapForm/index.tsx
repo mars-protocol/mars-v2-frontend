@@ -5,8 +5,9 @@ import estimateExactIn from 'api/swap/estimateExactIn'
 import AvailableLiquidityMessage from 'components/common/AvailableLiquidityMessage'
 import DepositCapMessage from 'components/common/DepositCapMessage'
 import Divider from 'components/common/Divider'
-import RangeInput from 'components/common/RangeInput'
+import LeverageSlider from 'components/common/LeverageSlider'
 import Text from 'components/common/Text'
+import { TradeDirectionSelector } from 'components/common/TradeDirectionSelector'
 import AssetSelectorPair from 'components/trade/TradeModule/AssetSelector/AssetSelectorPair'
 import AssetSelectorSingle from 'components/trade/TradeModule/AssetSelector/AssetSelectorSingle'
 import AssetAmountInput from 'components/trade/TradeModule/SwapForm/AssetAmountInput'
@@ -15,7 +16,6 @@ import MarginToggle from 'components/trade/TradeModule/SwapForm/MarginToggle'
 import OrderTypeSelector from 'components/trade/TradeModule/SwapForm/OrderTypeSelector'
 import { AvailableOrderType } from 'components/trade/TradeModule/SwapForm/OrderTypeSelector/types'
 import TradeSummary from 'components/trade/TradeModule/SwapForm/TradeSummary'
-import { TradeDirectionSelector } from 'components/common/TradeDirectionSelector'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
@@ -393,11 +393,12 @@ export default function SwapForm(props: Props) {
           )}
 
           {!isAdvanced && <Divider />}
-          <RangeInput
+          <LeverageSlider
             disabled={isConfirming || maxOutputAmountEstimation.isZero()}
             onChange={handleRangeInputChange}
             value={outputAssetAmount.shiftedBy(-outputAsset.decimals).toNumber()}
             max={maxOutputAmountEstimation.shiftedBy(-outputAsset.decimals).toNumber()}
+            type='margin'
             marginThreshold={
               isMarginChecked
                 ? outputSideMarginThreshold.shiftedBy(-outputAsset.decimals).toNumber()

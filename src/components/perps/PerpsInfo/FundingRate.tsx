@@ -31,9 +31,9 @@ export default function FundingRate() {
   if (!market) return '-'
 
   return (
-    <div className='flex gap-1'>
+    <div className='flex gap-1 items-center'>
       <FormattedNumber
-        className='text-sm inline'
+        className='text-xs inline'
         amount={fundingRate.toNumber()}
         options={{ minDecimals: 6, maxDecimals: 6, suffix: '%' }}
       />
@@ -49,7 +49,7 @@ export default function FundingRate() {
                     setInterval(key as Interval)
                     toggleShow(false)
                   }}
-                  className='w-full text-left px-4 py-2 flex gap-2 items-center hover:bg-white/5 [&:not(:last-child)]:border-b border-white/10'
+                  className='w-full text-center px-3 py-1.5 flex gap-2 items-center hover:bg-white/5 text-[10px]'
                 >
                   {key}
                 </button>
