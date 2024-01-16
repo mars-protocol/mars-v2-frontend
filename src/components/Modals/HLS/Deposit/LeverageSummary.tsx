@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 
-import SummaryItems from 'components/SummaryItems'
+import SummaryItems from 'components/common/SummaryItems'
 import useBorrowAsset from 'hooks/useBorrowAsset'
 
 interface Props {

@@ -1,0 +1,46 @@
+import { Row } from '@tanstack/react-table'
+import { Table as TanstackTable } from '@tanstack/table-core/build/lib/types'
+import { useCallback } from 'react'
+
+import BorrowActionButtons from 'components/borrow/BorrowActionButtons'
+import { NAME_META } from 'components/borrow/Table/Columns/Name'
+import useAvailableColumns from 'components/borrow/Table/Columns/useAvailableColumns'
+import MarketDetails from 'components/common/MarketDetails'
+import Table from 'components/common/Table'
+import ActionButtonRow from 'components/common/Table/ActionButtonRow'
+
+type Props = {
+  data: BorrowMarketTableData[]
+  isLoading: boolean
+}
+
+export default function AvailableBorrowingsTable(props: Props) {
+  const columns = useAvailableColumns()
+
+  const renderExpanded = useCallback(
+    (row: Row<BorrowMarketTableData>, _: TanstackTable<BorrowMarketTableData>) => {
+      const currentRow = row as Row<BorrowMarketTableData>
+      return (
+        <>
+          <ActionButtonRow row={currentRow}>
+            <BorrowActionButtons data={row.original} />
+          </ActionButtonRow>
+          <MarketDetails row={currentRow} type='borrow' />
+        </>
+      )
+    },
+    [],
+  )
+
+  if (!props.data.length) return null
+
+  return (
+    <Table
+      title='Available to Borrow'
+      columns={columns}
+      data={props.data}
+      initialSorting={[{ id: NAME_META.id, desc: false }]}
+      renderExpanded={renderExpanded}
+    />
+  )
+}

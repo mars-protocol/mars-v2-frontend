@@ -1,6 +1,6 @@
-import Button from 'components/Button'
+import Button from 'components/common/Button'
 import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
-import Text from 'components/Text'
+import Text from 'components/common/Text'
 import useAccountId from 'hooks/useAccountId'
 import useStore from 'store'
 

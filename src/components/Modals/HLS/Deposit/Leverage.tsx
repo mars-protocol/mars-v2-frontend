@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react'
 
-import Button from 'components/Button'
-import { ArrowRight } from 'components/Icons'
+import Button from 'components/common/Button'
+import { ArrowRight } from 'components/common/Icons'
 import LeverageSummary from 'components/Modals/HLS/Deposit/LeverageSummary'
-import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
+import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { getLeveragedApy } from 'utils/math'
 
 interface Props {

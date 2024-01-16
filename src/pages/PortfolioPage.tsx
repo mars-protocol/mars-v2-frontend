@@ -1,8 +1,8 @@
-import MigrationBanner from 'components/MigrationBanner'
-import AccountOverview from 'components/Portfolio/Overview'
-import PortfolioSummary from 'components/Portfolio/Overview/Summary'
-import PortfolioIntro from 'components/Portfolio/PortfolioIntro'
-import ShareBar from 'components/ShareBar'
+import MigrationBanner from 'components/common/MigrationBanner'
+import AccountOverview from 'components/portfolio/Overview'
+import PortfolioSummary from 'components/portfolio/Overview/Summary'
+import PortfolioIntro from 'components/portfolio/PortfolioIntro'
+import ShareBar from 'components/common/ShareBar'
 
 export default function PortfolioPage() {
   return (

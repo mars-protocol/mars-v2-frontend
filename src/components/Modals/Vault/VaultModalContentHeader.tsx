@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 
-import DisplayCurrency from 'components/DisplayCurrency'
-import { FormattedNumber } from 'components/FormattedNumber'
-import TitleAndSubCell from 'components/TitleAndSubCell'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { BNCoin } from 'types/classes/BNCoin'
