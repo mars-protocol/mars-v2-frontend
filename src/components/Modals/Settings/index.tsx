@@ -212,8 +212,8 @@ export default function SettingsModal() {
         onChange={handleUpdateOracle}
         name='updateOracle'
         value={updateOracle}
-        label='Update Pyth Oracle on Transactions'
-        description='By turning this on you will automatically update the Pyth Oracle on every transaction. This will increase the accuracy of the prices shown in the UI. Turn this setting off, if you are using a Ledger hardware wallet and encounter errors on executing transactions.'
+        label='Update Pyth Oracles on transactions'
+        description={`When this setting is on, your Mars transactions will automatically trigger an update of Pyth's price oracles. This increases the accuracy of the prices shown in the UI. In some instances, this could cause your transactions to fail when using a Ledger hardware wallet. If you encounter transaction failures with Ledger, please turn this setting off.`}
         withStatus
       />
       <SettingsSwitch
