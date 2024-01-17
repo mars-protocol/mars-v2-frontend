@@ -9,13 +9,14 @@ export default async function fetchPythPrices(priceFeedIds: string[], assets: As
     priceFeedIds.forEach((id) => pricesUrl.searchParams.append('ids[]', id))
 
     const pythResponse: PythPriceData[] = await cacheFn(
-      () => fetch(pricesUrl).then((res) => res as any),
+      () => fetch(pricesUrl).then((res) => res.json()),
       pythPriceCache,
       `pythPrices/${priceFeedIds.flat().join('-')}`,
       30,
     )
 
     const mappedPriceData = [] as BNCoin[]
+
     assets.forEach((asset) => {
       const price = pythResponse.find((pythPrice) => asset.pythPriceFeedId === pythPrice.id)?.price
       if (price)
