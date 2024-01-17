@@ -903,8 +903,10 @@ export default function createBroadcastSlice(
     }): Promise<BroadcastResult> => {
       try {
         const client = get().client
-        if (!client) return { error: 'no client detected' }
-        if (checkPythUpdateEnabled() || options.isPythUpdate) {
+        const isLedger = client?.connectedWallet?.account.isLedger
+        if (!client)
+          return { result: undefined, error: 'No client detected. Please reconnect your wallet.' }
+        if ((checkPythUpdateEnabled() || options.isPythUpdate) && !isLedger) {
           const pythUpdateMsg = await get().getPythVaas()
           options.messages.unshift(pythUpdateMsg)
         }
