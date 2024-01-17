@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react'
 
-import DisplayCurrency from 'components/DisplayCurrency'
-import { FormattedNumber } from 'components/FormattedNumber'
-import { InfoCircle } from 'components/Icons'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { InfoCircle } from 'components/common/Icons'
 import AprBreakdown from 'components/Modals/HLS/Deposit/Summary/ApyBreakdown'
 import Container from 'components/Modals/HLS/Deposit/Summary/Container'
-import Text from 'components/Text'
-import { Tooltip } from 'components/Tooltip'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
 import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {

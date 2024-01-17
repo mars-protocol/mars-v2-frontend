@@ -1,10 +1,10 @@
 import { useCallback, useState } from 'react'
 
-import Button from 'components/Button'
-import { CircularProgress } from 'components/CircularProgress'
-import Modal from 'components/Modal'
+import Button from 'components/common/Button'
+import { CircularProgress } from 'components/common/CircularProgress'
+import Modal from 'components/Modals/Modal'
 import AddVaultAssetsModalContent from 'components/Modals/AddVaultAssets/AddVaultBorrowAssetsModalContent'
-import Text from 'components/Text'
+import Text from 'components/common/Text'
 import useStore from 'store'
 
 export default function AddVaultBorrowAssetsModal() {

@@ -27,7 +27,7 @@ export default async function getPrices(chainConfig: ChainConfig): Promise<BNCoi
     const oraclePrices = await getOraclePrices(chainConfig, assetsWithOraclePrices)
     const poolPrices = await requestPoolPrices(chainConfig, assetsWithPoolIds, pythAndOraclePrices)
 
-    useStore.setState({ isOracleStale: false })
+    if (oraclePrices) useStore.setState({ isOracleStale: false })
 
     return [...pythAndOraclePrices, ...oraclePrices, ...poolPrices, usdPrice]
   } catch (ex) {

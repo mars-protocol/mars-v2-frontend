@@ -1,10 +1,10 @@
 import classNames from 'classnames'
 
-import Button from 'components/Button'
-import Checkbox from 'components/Checkbox'
-import Modal from 'components/Modal'
+import Button from 'components/common/Button'
+import Checkbox from 'components/common/Checkbox'
+import Modal from 'components/Modals/Modal'
 import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
-import Text from 'components/Text'
+import Text from 'components/common/Text'
 import useAlertDialog from 'hooks/useAlertDialog'
 import useToggle from 'hooks/useToggle'
 

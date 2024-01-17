@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react'
 
-import Button from 'components/Button'
-import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
+import Button from 'components/common/Button'
+import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useHealthComputer from 'hooks/useHealthComputer'

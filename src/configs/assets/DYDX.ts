@@ -12,7 +12,7 @@ const DYDX: AssetMetaData = {
   isAutoLendEnabled: true,
   isBorrowEnabled: true,
   pythPriceFeedId: '6489800bb8974169adfe35937bf6736507097d13c190d760c557108c7e93a81b',
-  pythHistoryFeedId: 'Crypto.DYDX/USD',
+  pythFeedName: 'DYDXUSD',
 }
 
 export default DYDX

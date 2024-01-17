@@ -5,14 +5,20 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
+export type Decimal = string
 export type Uint128 = string
 export type OracleBaseForString = string
+export type ParamsBaseForString = string
 export interface InstantiateMsg {
   base_denom: string
+  closing_fee_rate: Decimal
   cooldown_period: number
   credit_manager: string
-  min_position_value: Uint128
+  max_position_in_base_denom?: Uint128 | null
+  min_position_in_base_denom: Uint128
+  opening_fee_rate: Decimal
   oracle: OracleBaseForString
+  params: ParamsBaseForString
 }
 export type ExecuteMsg =
   | {
@@ -74,7 +80,6 @@ export type OwnerUpdate =
       }
     }
   | 'clear_emergency_owner'
-export type Decimal = string
 export interface SignedDecimal {
   abs: Decimal
   negative: boolean
@@ -142,12 +147,22 @@ export type QueryMsg =
   | {
       total_pnl: {}
     }
+  | {
+      opening_fee: {
+        denom: string
+        size: SignedDecimal
+      }
+    }
 export interface ConfigForString {
   base_denom: string
+  closing_fee_rate: Decimal
   cooldown_period: number
   credit_manager: string
-  min_position_value: Uint128
+  max_position_in_base_denom?: Uint128 | null
+  min_position_in_base_denom: Uint128
+  opening_fee_rate: Decimal
   oracle: OracleBaseForString
+  params: ParamsBaseForString
 }
 export interface DenomStateResponse {
   denom: string
@@ -155,14 +170,11 @@ export interface DenomStateResponse {
   funding: Funding
   last_updated: number
   total_cost_base: SignedDecimal
-  total_size: SignedDecimal
 }
 export interface Funding {
-  accumulated_size_weighted_by_index: SignedDecimal
-  constant_factor: SignedDecimal
-  index: SignedDecimal
+  last_funding_accrued_per_unit_in_base_denom: SignedDecimal
+  last_funding_rate: SignedDecimal
   max_funding_velocity: Decimal
-  rate: SignedDecimal
   skew_scale: Decimal
 }
 export type ArrayOfDenomStateResponse = DenomStateResponse[]
@@ -172,6 +184,15 @@ export interface DepositResponse {
   shares: Uint128
 }
 export type ArrayOfDepositResponse = DepositResponse[]
+export interface TradingFee {
+  fee: Coin
+  rate: Decimal
+}
+export interface Coin {
+  amount: Uint128
+  denom: string
+  [k: string]: unknown
+}
 export interface OwnerResponse {
   abolished: boolean
   emergency_owner?: string | null
@@ -180,19 +201,17 @@ export interface OwnerResponse {
   proposed?: string | null
 }
 export interface PerpDenomState {
-  constant_factor: SignedDecimal
   denom: string
   enabled: boolean
-  index: SignedDecimal
-  pnl_values: PnlValues
+  pnl_values: DenomPnlValues
   rate: SignedDecimal
-  total_cost_base: SignedDecimal
-  total_size: SignedDecimal
+  total_entry_cost: SignedDecimal
+  total_entry_funding: SignedDecimal
 }
-export interface PnlValues {
+export interface DenomPnlValues {
   accrued_funding: SignedDecimal
   pnl: SignedDecimal
-  unrealized_pnl: SignedDecimal
+  price_pnl: SignedDecimal
 }
 export type PnL =
   | 'break_even'
@@ -212,14 +231,22 @@ export interface PerpPosition {
   current_price: Decimal
   denom: string
   entry_price: Decimal
-  pnl: PnL
+  pnl: PositionPnl
   size: SignedDecimal
-  unrealised_funding_accrued: SignedDecimal
 }
-export interface Coin {
-  amount: Uint128
-  denom: string
-  [k: string]: unknown
+export interface PositionPnl {
+  coins: PnlCoins
+  values: PnlValues
+}
+export interface PnlCoins {
+  closing_fee: Coin
+  pnl: PnL
+}
+export interface PnlValues {
+  accrued_funding: SignedDecimal
+  closing_fee: SignedDecimal
+  pnl: SignedDecimal
+  price_pnl: SignedDecimal
 }
 export type ArrayOfPositionResponse = PositionResponse[]
 export interface PositionsByAccountResponse {

@@ -1,7 +1,7 @@
-import FarmIntro from 'components/Earn/Farm/FarmIntro'
-import Vaults from 'components/Earn/Farm/Vaults'
-import Tab from 'components/Earn/Tab'
-import MigrationBanner from 'components/MigrationBanner'
+import FarmIntro from 'components/earn/farm/FarmIntro'
+import Vaults from 'components/earn/farm/Vaults'
+import Tab from 'components/earn/Tab'
+import MigrationBanner from 'components/common/MigrationBanner'
 import { EARN_TABS } from 'constants/pages'
 
 export default function FarmPage() {

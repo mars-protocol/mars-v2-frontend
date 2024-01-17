@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react'
 
-import Button from 'components/Button'
+import Button from 'components/common/Button'
 import LeverageSummary from 'components/Modals/HLS/Deposit/LeverageSummary'
-import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
+import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'

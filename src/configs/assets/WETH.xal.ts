@@ -12,7 +12,7 @@ const WETHaxl: AssetMetaData = {
   isAutoLendEnabled: true,
   isBorrowEnabled: true,
   pythPriceFeedId: 'ff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace',
-  pythHistoryFeedId: 'Crypto.ETH/USD',
+  pythFeedName: 'ETHUSD',
 }
 
 export default WETHaxl

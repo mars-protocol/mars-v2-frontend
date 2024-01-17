@@ -1,11 +1,11 @@
 import classNames from 'classnames'
 import moment from 'moment'
 
-import Card from 'components/Card'
-import Divider from 'components/Divider'
-import Text from 'components/Text'
-import { TextLink } from 'components/TextLink'
-import { generateToastContent } from 'components/Toaster'
+import Card from 'components/common/Card'
+import Divider from 'components/common/Divider'
+import Text from 'components/common/Text'
+import { TextLink } from 'components/common/TextLink'
+import { generateToastContent } from 'components/common/Toaster'
 import useTransactions from 'hooks/localStorage/useTransactions'
 import useStore from 'store'
 

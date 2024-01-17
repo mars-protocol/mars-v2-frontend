@@ -1,6 +1,6 @@
 import React from 'react'
 
-import Modal from 'components/Modal'
+import Modal from 'components/Modals/Modal'
 import Content from 'components/Modals/HLS/Deposit'
 import Header from 'components/Modals/HLS/Header'
 import useAsset from 'hooks/assets/useAsset'

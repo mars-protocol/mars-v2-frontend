@@ -12,7 +12,7 @@ const TIA: AssetMetaData = {
   isAutoLendEnabled: true,
   isBorrowEnabled: true,
   pythPriceFeedId: '09f7c1d7dfbb7df2b8fe3d3d87ee94a2259d212da4f30c1f0540d066dfa44723',
-  pythHistoryFeedId: 'Crypto.TIA/USD',
+  pythFeedName: 'TIAUSD',
 }
 
 export default TIA

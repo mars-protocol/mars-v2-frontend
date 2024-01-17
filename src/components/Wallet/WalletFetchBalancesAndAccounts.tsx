@@ -1,9 +1,9 @@
 import { Suspense, useEffect, useMemo } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
-import AccountCreateFirst from 'components/Account/AccountCreateFirst'
-import { CircularProgress } from 'components/CircularProgress'
-import FullOverlayContent from 'components/FullOverlayContent'
+import AccountCreateFirst from 'components/account/AccountCreateFirst'
+import { CircularProgress } from 'components/common/CircularProgress'
+import FullOverlayContent from 'components/common/FullOverlayContent'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
