@@ -12,8 +12,5 @@ if (!process.env.CHARTING_LIBRARY_REPOSITORY) {
 if (!process.env.NEXT_PUBLIC_WALLET_CONNECT_ID) {
   throw 'NEXT_PUBLIC_WALLET_CONNECT_ID is not defined'
 }
-if (!process.env.NEXT_PUBLIC_PYTH_API) {
-  throw 'NEXT_PUBLIC_PYTH_API is not defined'
-}
 
 console.log('✅ Required env variables set')

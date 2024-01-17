@@ -4,6 +4,7 @@ import moment from 'moment'
 import { isMobile } from 'react-device-detect'
 import { GetState, SetState } from 'zustand'
 
+import fetchPythPriceData from 'api/prices/getPythPriceData'
 import { BN_ZERO } from 'constants/math'
 import { Store } from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -19,6 +20,7 @@ import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHe
 import { byDenom, bySymbol } from 'utils/array'
 import { generateErrorMessage, getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
+import checkPythUpdateEnabled from 'utils/checkPythUpdateEnabled'
 import { defaultFee } from 'utils/constants'
 import { formatAmountWithSymbol } from 'utils/formatters'
 import getTokenOutFromSwapResponse from 'utils/getTokenOutFromSwapResponse'
@@ -832,16 +834,10 @@ export default function createBroadcastSlice(
 
       return { estimateFee, execute }
     },
-    updateOracle: async (pricesData: string[]) => {
-      const msg: PythUpdateExecuteMsg = { update_price_feeds: { data: pricesData } }
-      const pythAssets = get().chainConfig.assets.filter((asset) => !!asset.pythPriceFeedId)
-      const pythContract = get().chainConfig.contracts.pyth
+    updateOracle: async () => {
       const response = get().executeMsg({
-        messages: [
-          generateExecutionMessage(get().address, pythContract, msg, [
-            { denom: get().chainConfig.assets[0].denom, amount: String(pythAssets.length) },
-          ]),
-        ],
+        messages: [],
+        isPythUpdate: true,
       })
 
       get().setToast({
@@ -901,10 +897,17 @@ export default function createBroadcastSlice(
         })
       })
     },
-    executeMsg: async (options: { messages: MsgExecuteContract[] }): Promise<BroadcastResult> => {
+    executeMsg: async (options: {
+      messages: MsgExecuteContract[]
+      isPythUpdate?: boolean
+    }): Promise<BroadcastResult> => {
       try {
         const client = get().client
         if (!client) return { error: 'no client detected' }
+        if (checkPythUpdateEnabled() || options.isPythUpdate) {
+          const pythUpdateMsg = await get().getPythVaas()
+          options.messages.unshift(pythUpdateMsg)
+        }
         const fee = await getEstimatedFee(options.messages)
         const broadcastOptions = {
           messages: options.messages,
@@ -988,6 +991,19 @@ export default function createBroadcastSlice(
       })
 
       return response.then((response) => !!response.result)
+    },
+    getPythVaas: async () => {
+      const priceFeedIds = get()
+        .chainConfig.assets.filter((asset) => !!asset.pythPriceFeedId)
+        .map((asset) => asset.pythPriceFeedId as string)
+      const pricesData = await fetchPythPriceData(priceFeedIds)
+      const msg: PythUpdateExecuteMsg = { update_price_feeds: { data: pricesData } }
+      const pythAssets = get().chainConfig.assets.filter((asset) => !!asset.pythPriceFeedId)
+      const pythContract = get().chainConfig.contracts.pyth
+
+      return generateExecutionMessage(get().address, pythContract, msg, [
+        { denom: get().chainConfig.assets[0].denom, amount: String(pythAssets.length) },
+      ])
     },
   }
 }
