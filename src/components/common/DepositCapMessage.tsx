@@ -38,6 +38,7 @@ interface AmountMessageProps {
 function AmountMessage(props: AmountMessageProps) {
   const asset = useAsset(props.coin.denom)
   if (!asset) return null
+  console.log(props.coin.amount.toNumber())
 
   return (
     <div key={props.coin.denom} className='flex gap-1'>
@@ -46,6 +47,7 @@ function AmountMessage(props: AmountMessageProps) {
         amount={Math.max(0, props.coin.amount.toNumber())}
         options={{
           decimals: asset.decimals,
+          maxDecimals: asset.decimals,
           suffix: ` ${asset.symbol}`,
         }}
         className='text-xs text-white/60'
