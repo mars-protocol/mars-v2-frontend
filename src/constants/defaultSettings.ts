@@ -21,4 +21,5 @@ export const DEFAULT_SETTINGS: Settings = {
   tutorial: true,
   migrationBanner: true,
   perpsAsset: '',
+  updateOracle: true,
 }

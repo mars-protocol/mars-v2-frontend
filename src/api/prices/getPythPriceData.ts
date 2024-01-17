@@ -1,7 +1,7 @@
 import { cacheFn, pythPriceCache } from 'api/cache'
 import { pythEndpoints } from 'constants/pyth'
 
-export default async function fetchPythPriceData(priceFeedIds: string[]) {
+export default async function getPythPriceData(priceFeedIds: string[]) {
   try {
     const pricesUrl = new URL(`${pythEndpoints.api}/latest_vaas`)
     priceFeedIds.forEach((id) => pricesUrl.searchParams.append('ids[]', id))

@@ -4,7 +4,7 @@ import moment from 'moment'
 import { isMobile } from 'react-device-detect'
 import { GetState, SetState } from 'zustand'
 
-import fetchPythPriceData from 'api/prices/getPythPriceData'
+import getPythPriceData from 'api/prices/getPythPriceData'
 import { BN_ZERO } from 'constants/math'
 import { Store } from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -996,7 +996,7 @@ export default function createBroadcastSlice(
       const priceFeedIds = get()
         .chainConfig.assets.filter((asset) => !!asset.pythPriceFeedId)
         .map((asset) => asset.pythPriceFeedId as string)
-      const pricesData = await fetchPythPriceData(priceFeedIds)
+      const pricesData = await getPythPriceData(priceFeedIds)
       const msg: PythUpdateExecuteMsg = { update_price_feeds: { data: pricesData } }
       const pythAssets = get().chainConfig.assets.filter((asset) => !!asset.pythPriceFeedId)
       const pythContract = get().chainConfig.contracts.pyth
