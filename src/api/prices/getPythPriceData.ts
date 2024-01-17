@@ -14,6 +14,7 @@ export default async function fetchPythPriceData(priceFeedIds: string[]) {
     )
     return pythDataResponse
   } catch (ex) {
-    throw ex
+    console.log(ex)
+    return []
   }
 }
