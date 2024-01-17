@@ -1,9 +1,9 @@
+import Modal from 'components/Modals/Modal'
 import Button from 'components/common/Button'
 import { CircularProgress } from 'components/common/CircularProgress'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import DoubleLogo from 'components/common/DoubleLogo'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import Modal from 'components/Modals/Modal'
 import Text from 'components/common/Text'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
@@ -73,17 +73,19 @@ export default function WithdrawFromVaultsModal() {
                   primaryDenom={vault.denoms.primary}
                   secondaryDenom={vault.denoms.secondary}
                 />
-                <div className='flex flex-wrap flex-1'>
-                  <Text className='w-full'>{vault.name}</Text>
-                  <Text size='sm' className='w-full text-white/50'>
+                <div className='flex flex-wrap flex-grow'>
+                  <Text size='sm' className='w-full'>
+                    {vault.name}
+                  </Text>
+                  <Text size='xs' className='w-full text-white/50'>
                     Unlocked
                   </Text>
                 </div>
-                <div className='flex flex-wrap'>
-                  <DisplayCurrency coin={coin} className='w-full text-right' />
+                <div className='flex flex-wrap flex-shrink max-w-1/2'>
+                  <DisplayCurrency coin={coin} className='w-full text-sm text-right' />
                   <FormattedNumber
                     amount={Number(primaryAssetAmount.toPrecision(4))}
-                    className='w-full text-sm text-right text-white/50'
+                    className='w-full text-xs text-right text-white/50'
                     options={{
                       suffix: ` ${vault.symbols.primary}`,
                       maxDecimals: primaryAsset.decimals,
@@ -92,7 +94,7 @@ export default function WithdrawFromVaultsModal() {
                   />
                   <FormattedNumber
                     amount={Number(secondaryAssetAmount.toPrecision(4))}
-                    className='w-full text-sm text-right text-white/50'
+                    className='w-full text-xs text-right text-white/50'
                     options={{
                       suffix: ` ${vault.symbols.secondary}`,
                       maxDecimals: secondaryAsset.decimals,
