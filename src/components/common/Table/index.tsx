@@ -3,6 +3,8 @@ import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
+  OnChangeFn,
+  RowSelectionState,
   SortingState,
   Row as TanstackRow,
   Table as TanstackTable,
@@ -27,6 +29,8 @@ interface Props<T> {
   spacingClassName?: string
   isBalancesTable?: boolean
   hideCard?: boolean
+  setRowSelection?: OnChangeFn<RowSelectionState>
+  selectedRows?: RowSelectionState
 }
 
 export default function Table<T>(props: Props<T>) {
@@ -37,7 +41,10 @@ export default function Table<T>(props: Props<T>) {
     columns: props.columns,
     state: {
       sorting,
+      rowSelection: props.selectedRows,
     },
+    enableRowSelection: true,
+    onRowSelectionChange: props.setRowSelection,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -80,7 +87,7 @@ export default function Table<T>(props: Props<T>) {
                         'align-center',
                       )}
                     >
-                      <span className='w-5 h-5 text-white my-auto'>
+                      <span className='w-5 h-5 my-auto text-white'>
                         {header.column.getCanSort()
                           ? {
                               asc: <SortAsc size={16} />,
@@ -112,6 +119,7 @@ export default function Table<T>(props: Props<T>) {
               renderExpanded={props.renderExpanded}
               spacingClassName={props.spacingClassName}
               isBalancesTable={props.isBalancesTable}
+              isSelectable={!!props.setRowSelection}
             />
           ))}
         </tbody>

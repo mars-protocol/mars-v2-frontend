@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 
-import AssetSelectTable from 'components/Modals/AssetsSelect/AssetSelectTable'
+import AssetsSelect from 'components/Modals/AssetsSelect'
 import SearchBar from 'components/common/SearchBar'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useStore from 'store'
@@ -59,8 +59,7 @@ export default function WalletAssetsModalContent(props: Props) {
         />
       </div>
       <div className='max-h-[446px] overflow-y-scroll scrollbar-hide'>
-        <AssetSelectTable
-          isBorrow={isBorrow}
+        <AssetsSelect
           assets={filteredAssets}
           onChangeSelected={onChangeSelect}
           selectedDenoms={selectedDenoms}

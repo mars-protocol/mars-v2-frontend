@@ -6,10 +6,10 @@ interface Props<T> {
   table: TanstackTable<T>
   renderExpanded?: (row: TanstackRow<T>, table: TanstackTable<T>) => JSX.Element
   rowClassName?: string
-  rowClickHandler?: () => void
   spacingClassName?: string
   isBalancesTable?: boolean
   className?: string
+  isSelectable?: boolean
 }
 
 function getBorderColor(row: AccountBalanceRow) {
@@ -24,14 +24,19 @@ export default function Row<T>(props: Props<T>) {
         key={`${props.row.id}-row`}
         className={classNames(
           'group/row transition-bg',
-          props.renderExpanded && 'hover:cursor-pointer',
+          (props.renderExpanded || props.isSelectable) && 'hover:cursor-pointer',
           canExpand && props.row.getIsExpanded() ? 'is-expanded bg-black/20' : 'hover:bg-white/5',
         )}
         onClick={(e) => {
           e.preventDefault()
-          const isExpanded = props.row.getIsExpanded()
-          props.table.resetExpanded()
-          !isExpanded && props.row.toggleExpanded()
+          if (props.isSelectable) {
+            props.row.toggleSelected()
+          }
+          if (canExpand) {
+            const isExpanded = props.row.getIsExpanded()
+            props.table.resetExpanded()
+            !isExpanded && props.row.toggleExpanded()
+          }
         }}
       >
         {props.row.getVisibleCells().map((cell) => {
