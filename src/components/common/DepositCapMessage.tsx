@@ -38,7 +38,6 @@ interface AmountMessageProps {
 function AmountMessage(props: AmountMessageProps) {
   const asset = useAsset(props.coin.denom)
   if (!asset) return null
-  console.log(props.coin.amount.toNumber())
 
   return (
     <div key={props.coin.denom} className='flex gap-1'>

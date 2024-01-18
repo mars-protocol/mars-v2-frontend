@@ -41,7 +41,6 @@ export default function useAccountBalancesColumns(
             type={row.original.type}
           />
         ),
-
         sortingFn: valueSortingFn,
       },
       {

@@ -165,7 +165,7 @@ export default function AccountFundContent(props: Props) {
 
         <Button
           className='w-full mt-4'
-          text='Select assets'
+          text='Select Assets'
           color='tertiary'
           rightIcon={<Plus />}
           iconClassName='w-3'

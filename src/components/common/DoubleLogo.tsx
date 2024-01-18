@@ -1,3 +1,5 @@
+import classNames from 'classnames'
+
 import AssetImage from 'components/common/assets/AssetImage'
 import useAsset from 'hooks/assets/useAsset'
 
@@ -18,7 +20,7 @@ export default function DoubleLogo(props: Props) {
         <AssetImage asset={primaryAsset} size={24} />
       </div>
       <div className='absolute'>
-        <AssetImage asset={secondaryAsset} size={16} className='ml-5 mt-5' />
+        <AssetImage asset={secondaryAsset} size={16} className='mt-5 ml-5' />
       </div>
     </div>
   )
