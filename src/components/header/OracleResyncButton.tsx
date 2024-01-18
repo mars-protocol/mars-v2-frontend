@@ -3,14 +3,11 @@ import { useCallback } from 'react'
 import Button from 'components/common/Button'
 import { ExclamationMarkCircled } from 'components/common/Icons'
 import { Tooltip } from 'components/common/Tooltip'
-import usePricesData from 'hooks/usePriceData'
 import useStore from 'store'
 
 export default function OracleResyncButton() {
-  const { data: pricesData } = usePricesData()
   const updateOracle = useStore((s) => s.updateOracle)
-
-  const updatePythOracle = useCallback(() => updateOracle(pricesData), [pricesData, updateOracle])
+  const updatePythOracle = useCallback(() => updateOracle(), [])
 
   return (
     <Tooltip

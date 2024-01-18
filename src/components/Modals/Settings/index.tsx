@@ -1,16 +1,16 @@
 import classNames from 'classnames'
 import { useCallback, useMemo, useState } from 'react'
 
-import AssetImage from 'components/common/assets/AssetImage'
-import Button from 'components/common/Button'
-import { ArrowCircle, Enter } from 'components/common/Icons'
 import Modal from 'components/Modals/Modal'
 import SettingsOptions from 'components/Modals/Settings/SettingsOptions'
 import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
+import Button from 'components/common/Button'
+import { ArrowCircle, Enter } from 'components/common/Icons'
 import NumberInput from 'components/common/NumberInput'
 import Select from 'components/common/Select'
 import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
+import AssetImage from 'components/common/assets/AssetImage'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
@@ -47,6 +47,10 @@ export default function SettingsModal() {
   const [slippage, setSlippage] = useLocalStorage<number>(
     LocalStorageKeys.SLIPPAGE,
     DEFAULT_SETTINGS.slippage,
+  )
+  const [updateOracle, setUpdateOracle] = useLocalStorage<boolean>(
+    LocalStorageKeys.UPDATE_ORACLE,
+    DEFAULT_SETTINGS.updateOracle,
   )
 
   const displayCurrenciesOptions = useMemo(
@@ -148,6 +152,13 @@ export default function SettingsModal() {
     handleLendAssets(DEFAULT_SETTINGS.enableAutoLendGlobal)
   }, [handleDisplayCurrency, handleReduceMotion, handleLendAssets, handleSlippage])
 
+  const handleUpdateOracle = useCallback(
+    (value: boolean) => {
+      setUpdateOracle(value)
+    },
+    [setUpdateOracle],
+  )
+
   const showResetModal = useCallback(() => {
     showResetDialog({
       icon: (
@@ -194,6 +205,15 @@ export default function SettingsModal() {
         value={enableAutoLendGlobal}
         label='Lend assets in Credit Accounts'
         description='By turning this on you will automatically lend out all the assets you deposit into your Credit Accounts to earn yield.'
+        withStatus
+      />
+
+      <SettingsSwitch
+        onChange={handleUpdateOracle}
+        name='updateOracle'
+        value={updateOracle}
+        label='Update Pyth Oracles on transactions'
+        description={`When this setting is on, your Mars transactions will automatically trigger an update of Pyth's price oracles. This increases the accuracy of the prices shown in the UI. In some instances, this could cause your transactions to fail when using a Ledger hardware wallet. If you encounter transaction failures with Ledger, please turn this setting off.`}
         withStatus
       />
       <SettingsSwitch

@@ -9,4 +9,5 @@ interface Settings {
   slippage: number
   tutorial: boolean
   migrationBanner: boolean
+  updateOracle: boolean
 }

@@ -15,4 +15,5 @@ export enum LocalStorageKeys {
   HLS_INFORMATION = 'hlsInformation',
   CURRENT_CHAIN_ID = 'currentChainId',
   PERPS_ASSET = 'perpsAsset',
+  UPDATE_ORACLE = 'updateOracle',
 }
