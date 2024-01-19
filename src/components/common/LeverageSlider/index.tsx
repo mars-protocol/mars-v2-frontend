@@ -6,6 +6,7 @@ import InputOverlay from 'components/common/LeverageSlider/InputOverlay'
 const LEFT_MARGIN = 5
 
 type Props = {
+  min?: number
   max: number
   value: number
   disabled?: boolean
@@ -19,6 +20,7 @@ type Props = {
 export type LeverageSliderType = 'margin' | 'long' | 'short'
 function LeverageSlider(props: Props) {
   const { value, max, onChange, wrapperClassName, disabled, marginThreshold, onBlur, type } = props
+  const min = props.min ?? 0
 
   const handleOnChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -28,7 +30,6 @@ function LeverageSlider(props: Props) {
   )
 
   const markPosPercent = 100 / (max / (marginThreshold ?? 1))
-
   return (
     <div
       className={classNames(
@@ -49,16 +50,22 @@ function LeverageSlider(props: Props) {
           type='range'
           value={value.toFixed(2)}
           step={max / 101}
-          min={0}
+          min={min}
           max={max}
           onChange={handleOnChange}
           onBlur={onBlur}
         />
-        <InputOverlay max={max} marginThreshold={marginThreshold} value={value} type={type} />
+        <InputOverlay
+          max={max}
+          marginThreshold={marginThreshold}
+          value={value}
+          type={type}
+          min={min}
+        />
       </div>
       <div className={'flex w-full justify-between text-xs text-opacity-50 text-white font-bold'}>
-        <span>{markPosPercent > LEFT_MARGIN ? 0 : ''}</span>
-        <span>{max.toFixed(2)}</span>
+        <span>{markPosPercent > LEFT_MARGIN ? min : ''}</span>
+        <span>{max.toFixed(type !== 'margin' ? 0 : 2)}</span>
       </div>
     </div>
   )
