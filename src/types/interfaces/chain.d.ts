@@ -29,6 +29,7 @@ interface ChainConfig {
     swap: string
     explorer: string
     pools: string
+    routes: string
     aprs: {
       vaults: string
       stride: string

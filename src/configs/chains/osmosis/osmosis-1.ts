@@ -135,6 +135,7 @@ const Osmosis1: ChainConfig = {
     rest: 'https://osmosis-node.marsprotocol.io/GGSFGSFGFG34/osmosis-lcd-front/',
     swap: 'https://app.osmosis.zone',
     explorer: 'https://www.mintscan.io/osmosis/transactions/',
+    routes: 'https://sqs.osmosis.zone/router',
     pools:
       (process.env.NEXT_PUBLIC_OSMOSIS_REST ||
         'https://osmosis-node.marsprotocol.io/GGSFGSFGFG34/osmosis-lcd-front/') +

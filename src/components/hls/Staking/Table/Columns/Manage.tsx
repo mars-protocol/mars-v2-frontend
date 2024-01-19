@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react'
 
 import DropDownButton from 'components/common/Button/DropDownButton'
 import { ArrowDownLine, Cross, HandCoins, Plus, Scale } from 'components/common/Icons'
-import useCloseHlsStakingPosition from 'hooks/HLS/useClosePositionActions'
+import useCloseHlsStakingPosition from 'hooks/hls/useClosePositionActions'
 import useStore from 'store'
 
 export const MANAGE_META = { id: 'manage' }
