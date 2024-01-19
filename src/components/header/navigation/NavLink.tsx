@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import { ReactNode } from 'react'
 import { NavLink as Link, useSearchParams } from 'react-router-dom'
 
+import { ExternalLink } from 'components/common/Icons'
 import { getIsActive } from 'components/header/navigation/DesktopNavigation'
 import useAccountId from 'hooks/useAccountId'
 import useStore from 'store'
@@ -38,7 +39,10 @@ export const NavLink = (props: Props) => {
       )}
       target={item.externalUrl ? '_blank' : undefined}
     >
-      {props.children}
+      <>
+        {props.children}
+        {item.externalUrl && <ExternalLink className='inline-block w-4 ml-1 mb-0.5' />}
+      </>
     </Link>
   )
 }

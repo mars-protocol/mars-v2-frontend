@@ -7,7 +7,7 @@ import useStore from 'store'
 
 export default function OracleResyncButton() {
   const updateOracle = useStore((s) => s.updateOracle)
-  const updatePythOracle = useCallback(() => updateOracle(), [])
+  const updatePythOracle = useCallback(() => updateOracle(), [updateOracle])
 
   return (
     <Tooltip
