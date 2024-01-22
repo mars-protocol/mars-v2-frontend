@@ -70,7 +70,7 @@ export default function Row<T>(props: Props<T>) {
               className={classNames(
                 isSymbolOrName ? 'text-left' : 'text-right',
                 props.spacingClassName ?? 'px-3 py-4',
-                isSymbolOrName && 'border-l',
+                (isBalancesTable || isPerpsTable) && isSymbolOrName && 'border-l',
                 isBalancesTable && getBalanceBorderColor(cell.row.original as AccountBalanceRow),
                 isPerpsTable && getPerpBorderColor(cell.row.original as AccountPerpRow),
                 cell.column.columnDef.meta?.className,
