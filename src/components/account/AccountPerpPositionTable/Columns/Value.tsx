@@ -30,10 +30,6 @@ export default function Value(props: Props) {
   })
 
   return (
-    <DisplayCurrency
-      coin={coin}
-      className={classNames('text-xs text-right', color)}
-      showZero={true}
-    />
+    <DisplayCurrency coin={coin} className={classNames('text-xs text-right', color)} showZero />
   )
 }
