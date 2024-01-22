@@ -1,10 +1,11 @@
 import classNames from 'classnames'
 import { HTMLAttributes, useCallback, useMemo } from 'react'
 
-import Accordion from 'components/common/Accordion'
 import AccountBalancesTable from 'components/account/AccountBalancesTable'
 import AccountComposition from 'components/account/AccountComposition'
+import AccountPerpPositionTable from 'components/account/AccountPerpPositionTable'
 import HealthBar from 'components/account/Health/HealthBar'
+import Accordion from 'components/common/Accordion'
 import Card from 'components/common/Card'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
@@ -147,6 +148,16 @@ export default function AccountSummary(props: Props) {
                 />
               ) : null,
             isOpen: accountSummaryTabs[1],
+            toggleOpen: (index: number) => handleToggle(index),
+            renderSubTitle: () => <></>,
+          },
+          {
+            title: 'Perp Positions',
+            renderContent: () =>
+              props.account && props.account.perps.length > 0 ? (
+                <AccountPerpPositionTable account={props.account} hideCard />
+              ) : null,
+            isOpen: accountSummaryTabs[2] ?? false,
             toggleOpen: (index: number) => handleToggle(index),
             renderSubTitle: () => <></>,
           },

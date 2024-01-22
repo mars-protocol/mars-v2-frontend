@@ -118,7 +118,6 @@ export default function Table<T>(props: Props<T>) {
               table={table}
               renderExpanded={props.renderExpanded}
               spacingClassName={props.spacingClassName}
-              isBalancesTable={props.isBalancesTable}
               isSelectable={!!props.setRowSelection}
             />
           ))}

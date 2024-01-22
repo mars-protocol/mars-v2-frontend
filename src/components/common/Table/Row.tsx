@@ -7,17 +7,33 @@ interface Props<T> {
   renderExpanded?: (row: TanstackRow<T>, table: TanstackTable<T>) => JSX.Element
   rowClassName?: string
   spacingClassName?: string
-  isBalancesTable?: boolean
   className?: string
   isSelectable?: boolean
 }
 
-function getBorderColor(row: AccountBalanceRow) {
+function isAccountBalanceRow(object?: any): object is AccountBalanceRow {
+  if (!object) return false
+  return 'type' in object
+}
+
+function isAccountPerpRow(object?: any): object is AccountPerpRow {
+  if (!object) return false
+  return 'tradeDirection' in object
+}
+
+function getBalanceBorderColor(row: AccountBalanceRow) {
   return row.type === 'borrowing' ? 'border-loss' : 'border-profit'
+}
+function getPerpBorderColor(row: AccountPerpRow) {
+  return row.tradeDirection === 'short' ? 'border-loss' : 'border-profit'
 }
 
 export default function Row<T>(props: Props<T>) {
   const canExpand = !!props.renderExpanded
+
+  const isBalancesTable = isAccountBalanceRow(props.row.original)
+  const isPerpsTable = isAccountPerpRow(props.row.original)
+
   return (
     <>
       <tr
@@ -42,8 +58,11 @@ export default function Row<T>(props: Props<T>) {
         {props.row.getVisibleCells().map((cell) => {
           const isSymbolOrName = cell.column.id === 'symbol' || cell.column.id === 'name'
           const borderClasses =
-            props.isBalancesTable && isSymbolOrName
-              ? classNames('border-l', getBorderColor(cell.row.original as AccountBalanceRow))
+            isBalancesTable && isSymbolOrName
+              ? classNames(
+                  'border-l',
+                  getBalanceBorderColor(cell.row.original as AccountBalanceRow),
+                )
               : ''
           return (
             <td
@@ -51,7 +70,9 @@ export default function Row<T>(props: Props<T>) {
               className={classNames(
                 isSymbolOrName ? 'text-left' : 'text-right',
                 props.spacingClassName ?? 'px-3 py-4',
-                borderClasses,
+                isSymbolOrName && 'border-l',
+                isBalancesTable && getBalanceBorderColor(cell.row.original as AccountBalanceRow),
+                isPerpsTable && getPerpBorderColor(cell.row.original as AccountPerpRow),
                 cell.column.columnDef.meta?.className,
               )}
             >

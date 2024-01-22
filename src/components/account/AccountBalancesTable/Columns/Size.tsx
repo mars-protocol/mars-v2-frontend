@@ -12,7 +12,7 @@ interface Props {
   size: number
   amountChange: BigNumber
   denom: string
-  type: 'deposits' | 'borrowing' | 'lending' | 'vault'
+  type: AccountType
 }
 
 export const sizeSortingFn = (a: Row<AccountBalanceRow>, b: Row<AccountBalanceRow>): number => {

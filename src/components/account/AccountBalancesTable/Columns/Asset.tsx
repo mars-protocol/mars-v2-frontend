@@ -3,11 +3,8 @@ export const ASSET_META = { accessorKey: 'symbol', header: 'Asset', id: 'symbol'
 
 interface Props {
   symbol: string
-  type: 'deposits' | 'borrowing' | 'lending' | 'vault'
+  type: AccountType
 }
-
-export const borderColor = (type: Props['type']): string =>
-  type === 'borrowing' ? 'border-loss' : 'border-profit'
 
 export default function Asset(props: Props) {
   const { symbol, type } = props

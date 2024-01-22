@@ -1,17 +1,19 @@
+type AccountType = 'deposits' | 'borrowing' | 'lending' | 'vault' | 'perp'
+
 interface Account extends AccountChange {
   id: string
-  deposits: BNCoin[]
-  debts: BNCoin[]
-  lends: BNCoin[]
+  deposits: import('types/classes/BNCoin').BNCoin[]
+  debts: import('types/classes/BNCoin').BNCoin[]
+  lends: import('types/classes/BNCoin').BNCoin[]
   vaults: DepositedVault[]
   perps: PerpPosition[]
   kind: AccountKind
 }
 
 interface AccountChange {
-  deposits?: BNCoin[]
-  debts?: BNCoin[]
-  lends?: BNCoin[]
+  deposits?: import('types/classes/BNCoin').BNCoin[]
+  debts?: import('types/classes/BNCoin').BNCoin[]
+  lends?: import('types/classes/BNCoin').BNCoin[]
   vaults?: DepositedVault[]
 }
 
@@ -21,9 +23,19 @@ interface AccountBalanceRow {
   denom: string
   size: number
   symbol: string
-  type: 'deposits' | 'borrowing' | 'lending' | 'vault'
+  type: AccountType
   value: string
   amountChange: BigNumber
+}
+
+interface AccountPerpRow {
+  size: BigNumber
+  denom: string
+  symbol: string
+  value: string
+  sizeChange: BigNumber
+  pnl: import('types/classes/BNCoin').BNCoin
+  tradeDirection: TradeDirection
 }
 
 interface AccountIdAndKind {

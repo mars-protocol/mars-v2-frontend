@@ -59,12 +59,16 @@ export default function DisplayCurrency(props: Props) {
 
   const smallerThanPrefix = isLessThanACent && !props.showZero ? '< ' : ''
 
-  const prefix = isUSD
+  let prefix = isUSD
     ? `${props.isApproximation ? '~ ' : smallerThanPrefix}$`
     : `${props.isApproximation ? '~ ' : ''}`
   const suffix = isUSD
     ? ''
     : ` ${displayCurrencyAsset.symbol ? ` ${displayCurrencyAsset.symbol}` : ''}`
+
+  if (props.options?.prefix && props.options?.prefix !== '$') {
+    prefix = `${props.options.prefix}${prefix}`
+  }
 
   return (
     <FormattedNumber
@@ -79,9 +83,9 @@ export default function DisplayCurrency(props: Props) {
         minDecimals: isUSD ? 2 : 0,
         maxDecimals: 2,
         abbreviated: true,
-        prefix,
         suffix,
         ...props.options,
+        prefix,
       }}
       animate
     />

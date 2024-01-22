@@ -7,7 +7,7 @@ interface Props {
   apy: number
   markets: Market[]
   denom: string
-  type: 'deposits' | 'borrowing' | 'lending' | 'vault'
+  type: AccountType
 }
 
 export default function Apr(props: Props) {

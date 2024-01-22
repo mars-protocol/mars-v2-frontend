@@ -1,5 +1,3 @@
-const BNCoin = import('types/classes/BNCoin').BNCoin
-
 type TradeDirection = 'long' | 'short'
 
 // TODO: 📈Remove this type when healthcomputer is implemented
@@ -13,4 +11,6 @@ type PerpsPosition = {
   baseDenom: string
   tradeDirection: TradeDirection
   size: BigNumber
+  closingFee: import('types/classes/BNCoin').BNCoin
+  pnl: import('types/classes/BNCoin').BNCoin
 }

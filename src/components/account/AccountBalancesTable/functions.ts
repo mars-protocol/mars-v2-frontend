@@ -57,10 +57,8 @@ export function getVaultAccountBalanceRow(
   }
 }
 
-export function getAmountChangeColor(
-  type: 'deposits' | 'borrowing' | 'lending' | 'vault',
-  amount: BigNumber,
-) {
+export function getAmountChangeColor(type: AccountType, amount: BigNumber) {
+  if (type === 'perp') return ''
   if (type === 'borrowing') {
     if (amount.isGreaterThan(0)) return 'text-loss'
     if (amount.isLessThan(0)) return 'text-profit'

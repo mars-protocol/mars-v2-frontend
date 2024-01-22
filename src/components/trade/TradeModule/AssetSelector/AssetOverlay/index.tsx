@@ -6,11 +6,10 @@ import Overlay from 'components/common/Overlay'
 import SearchBar from 'components/common/SearchBar'
 import Text from 'components/common/Text'
 import AssetList from 'components/trade/TradeModule/AssetSelector/AssetList'
+import StablesFilter from 'components/trade/TradeModule/AssetSelector/AssetOverlay/StablesFilter'
 import PairsList from 'components/trade/TradeModule/AssetSelector/PairsList'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useFilteredAssets from 'hooks/useFilteredAssets'
-
-import StablesFilter from './StablesFilter'
 
 interface Props {
   state: OverlayState
