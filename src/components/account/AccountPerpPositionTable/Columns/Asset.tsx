@@ -6,7 +6,9 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirection'
+import { BN_ZERO } from 'constants/math'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
+import { BNCoin } from 'types/classes/BNCoin'
 import { demagnify } from 'utils/formatters'
 export const ASSET_META = { accessorKey: 'symbol', header: 'Asset', id: 'symbol' }
 
@@ -43,7 +45,14 @@ function TooltipContent(props: Props) {
       <LabelAndValue label='Size'>
         <Text size='sm'>{demagnify(row.size, asset)}</Text>
       </LabelAndValue>
-      <LabelAndValue label='Total PnL'>
+      <LabelAndValue label='Realized PnL'>
+        <DisplayCurrency
+          className='text-sm text-right number'
+          coin={BNCoin.fromDenomAndBigNumber('usd', BN_ZERO)}
+          showZero
+        />
+      </LabelAndValue>
+      <LabelAndValue label='Unrealized PnL'>
         <DisplayCurrency
           className={classNames(
             'text-sm text-right number',
