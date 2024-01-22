@@ -46,7 +46,13 @@ export function PerpsModule() {
       />
       <Or />
       <Text size='sm'>Position Leverage</Text>
-      <LeverageSlider max={10} value={leverage} onChange={setLeverage} type={tradeDirection} />
+      <LeverageSlider
+        min={1}
+        max={10}
+        value={leverage}
+        onChange={setLeverage}
+        type={tradeDirection}
+      />
       <LeverageButtons />
       <Spacer />
       <PerpsSummary

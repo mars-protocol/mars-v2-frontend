@@ -9,17 +9,19 @@ interface Props {
   marginThreshold?: number
   max: number
   type: LeverageSliderType
+  min: number
 }
 
 const THUMB_WIDTH = 33
 
-function InputOverlay({ max, value, marginThreshold, type }: Props) {
-  const thumbPosPercent = max === 0 ? 0 : 100 / (max / value)
+function InputOverlay({ max, value, marginThreshold, type, min }: Props) {
+  const thumbPosPercent = max === 0 ? 0 : 100 / ((max - min) / (value - min))
   const thumbPadRight = (thumbPosPercent / 100) * THUMB_WIDTH
   const markPosPercent = 100 / (max / (marginThreshold ?? 1))
   const markPadRight = (markPosPercent / 100) * THUMB_WIDTH
   const hasPastMarginThreshold = marginThreshold ? value >= marginThreshold : undefined
 
+  console.log(max, value)
   return (
     <>
       <div
@@ -63,7 +65,8 @@ function InputOverlay({ max, value, marginThreshold, type }: Props) {
         style={{ left: `calc(${thumbPosPercent}% - ${thumbPadRight}px)` }}
       >
         {formatValue(value, {
-          maxDecimals: 2,
+          minDecimals: type !== 'margin' ? 1 : 2,
+          maxDecimals: type !== 'margin' ? 1 : 2,
           abbreviated: true,
           rounded: true,
           suffix: type !== 'margin' ? 'x' : '',
