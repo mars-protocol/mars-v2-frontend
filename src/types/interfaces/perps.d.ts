@@ -13,4 +13,5 @@ type PerpsPosition = {
   size: BigNumber
   closingFee: BNCoin
   pnl: BNCoin
+  entryPrice: BigNumber
 }

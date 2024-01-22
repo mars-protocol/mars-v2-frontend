@@ -8,16 +8,13 @@ export function getAssetAccountPerpRow(
   assets: Asset[],
   prev?: BNCoin,
 ): AccountPerpRow {
-  const { size, denom, pnl, tradeDirection } = position
+  const { size, denom } = position
   const sizeChange = !prev ? position.size : position.size.minus(prev.amount)
 
   return {
     symbol: asset.symbol,
     value: getCoinValue(BNCoin.fromDenomAndBigNumber(denom, size), prices, assets).toString(),
-    denom,
-    size,
-    pnl,
     sizeChange,
-    tradeDirection,
+    ...position,
   }
 }

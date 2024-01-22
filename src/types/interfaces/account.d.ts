@@ -28,14 +28,11 @@ interface AccountBalanceRow {
   amountChange: BigNumber
 }
 
-interface AccountPerpRow {
+interface AccountPerpRow extends PerpsPosition {
   size: BigNumber
-  denom: string
   symbol: string
   value: string
   sizeChange: BigNumber
-  pnl: BNCoin
-  tradeDirection: TradeDirection
 }
 
 interface AccountIdAndKind {

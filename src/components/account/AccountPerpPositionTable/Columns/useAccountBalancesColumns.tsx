@@ -20,9 +20,7 @@ export default function useAccountPerpsColumns(account: Account, showLiquidation
     return [
       {
         ...ASSET_META,
-        cell: ({ row }) => (
-          <Asset tradeDirection={row.original.tradeDirection} symbol={row.original.symbol} />
-        ),
+        cell: ({ row }) => <Asset row={row.original} />,
       },
       {
         ...VALUE_META,
