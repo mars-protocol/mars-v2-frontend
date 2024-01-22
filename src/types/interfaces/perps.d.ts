@@ -11,6 +11,6 @@ type PerpsPosition = {
   baseDenom: string
   tradeDirection: TradeDirection
   size: BigNumber
-  closingFee: import('types/classes/BNCoin').BNCoin
-  pnl: import('types/classes/BNCoin').BNCoin
+  closingFee: BNCoin
+  pnl: BNCoin
 }

@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 
+import { BN_ZERO } from 'constants/math'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useMarketDeposits from 'hooks/markets/useMarketDeposits'
 import useMarketLiquidities from 'hooks/markets/useMarketLiquidities'
@@ -29,7 +30,7 @@ function useLendingMarketAssetsTableData(): {
       const asset = assets.find(byDenom(denom)) as Asset
       const marketDepositAmount = BN(marketDeposits.find(byDenom(denom))?.amount ?? 0)
       const marketLiquidityAmount = BN(marketLiquidities.find(byDenom(denom))?.amount ?? 0)
-      const accountLentAmount = accountLentAmounts.find(byDenom(denom))?.amount
+      const accountLentAmount = accountLentAmounts.find(byDenom(denom))?.amount ?? BN_ZERO
       const accountLentValue = accountLentAmount
         ? convertAmount(asset, accountLentAmount)
         : undefined

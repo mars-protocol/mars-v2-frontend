@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import Button from 'components/common/Button'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
@@ -42,6 +42,7 @@ export default function Withdraw(props: Props) {
 
   const onClick = useCallback(() => {
     useStore.setState({ hlsManageModal: null })
+    if (!removedDeposit) return
     withdraw({
       accountId: props.account.id,
       coins: [{ coin: removedDeposit }],

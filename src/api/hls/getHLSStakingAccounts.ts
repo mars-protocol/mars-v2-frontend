@@ -17,7 +17,7 @@ export default async function getHLSStakingAccounts(
     if (account.deposits.length === 0) return
 
     const strategy = hlsStrategies.find(
-      (strategy) => strategy.denoms.deposit === account.deposits.at(0).denom,
+      (strategy) => strategy.denoms.deposit === account.deposits[0].denom,
     )
 
     if (!strategy) return
