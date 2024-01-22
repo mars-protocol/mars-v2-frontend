@@ -73,7 +73,7 @@ export default function Asset(props: Props) {
   return (
     <Tooltip content={<TooltipContent row={row} />} type='info'>
       <Text size='xs' className='flex items-center gap-1 no-wrap group/asset hover:cursor-help'>
-        <span className='pb-[1px] border-b border-white/40 border-dashed group-hover/asset:border-transparent'>
+        <span className='pb-[1px] border-b border-white/20 border-dashed group-hover/asset:border-transparent'>
           {row.symbol}
         </span>
         <TradeDirection tradeDirection={row.tradeDirection} />
