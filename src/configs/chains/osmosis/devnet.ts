@@ -1,5 +1,5 @@
-import { ChainInfoID } from 'types/enums/wallet'
 import { NETWORK } from 'types/enums/network'
+import { ChainInfoID } from 'types/enums/wallet'
 
 import Osmosis1 from './osmosis-1'
 

@@ -32,6 +32,7 @@ const Pion1: ChainConfig = {
     pyth: 'neutron15ldst8t80982akgr8w8ekcytejzkmfpgdkeq4xgtge48qs7435jqp87u3t',
   },
   endpoints: {
+    routes: 'https://app.astroport.fi/api/routes',
     rest: 'https://rest-palvus.pion-1.ntrn.tech/',
     rpc: 'https://rpc-palvus.pion-1.ntrn.tech/',
     swap: 'https://testnet-neutron.astroport.fi/swap',
