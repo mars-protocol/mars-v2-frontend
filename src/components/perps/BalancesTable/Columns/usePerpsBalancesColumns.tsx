@@ -10,7 +10,6 @@ import Size, { SIZE_META } from 'components/perps/BalancesTable/Columns/Size'
 import TradeDirection, {
   PERP_TYPE_META,
 } from 'components/perps/BalancesTable/Columns/TradeDirection'
-import { PerpPositionRow } from 'components/perps/BalancesTable/usePerpsBalancesData'
 
 export default function usePerpsBalancesTable() {
   return useMemo<ColumnDef<PerpPositionRow>[]>(() => {
@@ -25,7 +24,7 @@ export default function usePerpsBalancesTable() {
       },
       {
         ...SIZE_META,
-        cell: ({ row }) => <Size size={row.original.size} asset={row.original.asset} />,
+        cell: ({ row }) => <Size amount={row.original.amount} asset={row.original.asset} />,
       },
       {
         ...LEVERAGE_META,

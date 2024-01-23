@@ -1,4 +1,7 @@
-interface Account extends AccountChange {
+type PositionType = 'deposit' | 'borrow' | 'lend' | 'vault' | 'perp'
+type TableType = 'balances' | 'perps'
+
+interface Account {
   id: string
   deposits: BNCoin[]
   debts: BNCoin[]
@@ -8,7 +11,7 @@ interface Account extends AccountChange {
   kind: AccountKind
 }
 
-interface AccountChange {
+interface AccountChange extends Account {
   deposits?: BNCoin[]
   debts?: BNCoin[]
   lends?: BNCoin[]
@@ -21,7 +24,14 @@ interface AccountBalanceRow {
   denom: string
   size: number
   symbol: string
-  type: 'deposits' | 'borrowing' | 'lending' | 'vault'
+  type: PositionType
+  value: string
+  amountChange: BigNumber
+}
+
+interface AccountPerpRow extends PerpsPosition {
+  amount: BigNumber
+  symbol: string
   value: string
   amountChange: BigNumber
 }

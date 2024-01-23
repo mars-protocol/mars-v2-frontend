@@ -6,6 +6,7 @@ import AccountBalancesTable from 'components/account/AccountBalancesTable'
 import AccountComposition from 'components/account/AccountComposition'
 import AccountDetailsLeverage from 'components/account/AccountDetails/AccountDetailsLeverage'
 import Skeleton from 'components/account/AccountDetails/Skeleton'
+import AccountPerpPositionTable from 'components/account/AccountPerpPositionTable'
 import { HealthGauge } from 'components/account/Health/HealthGauge'
 import EscButton from 'components/common/Button/EscButton'
 import { glowElement } from 'components/common/Button/utils'
@@ -24,8 +25,8 @@ import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useAccountId from 'hooks/useAccountId'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useCurrentAccount from 'hooks/useCurrentAccount'
-import useHealthComputer from 'hooks/useHealthComputer'
 import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
+import useHealthComputer from 'hooks/useHealthComputer'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
@@ -114,7 +115,10 @@ function AccountDetails(props: Props) {
       ),
     [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, prices, updatedAccount],
   )
-  const isFullWidth = location.pathname.includes('trade') || location.pathname === '/'
+  const isFullWidth =
+    location.pathname.includes('trade') ||
+    location.pathname === '/' ||
+    location.pathname.includes('perps')
 
   function AccountDetailsHeader() {
     const onClose = useCallback(() => useStore.setState({ accountDetailsExpanded: false }), [])
@@ -215,6 +219,12 @@ function AccountDetails(props: Props) {
               lendingData={lendingAssetsData}
               hideCard
             />
+            {account.perps.length > 0 && (
+              <>
+                <Text className='w-full px-4 py-2 text-white bg-white/10'>Perp Positions</Text>
+                <AccountPerpPositionTable account={account} hideCard />
+              </>
+            )}
           </Card>
         </div>
       </div>

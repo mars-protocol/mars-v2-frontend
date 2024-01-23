@@ -53,14 +53,16 @@ export const calculateAccountValue = (
     )
   }
 
-  return account[type]?.reduce((acc, position) => {
-    const asset = assets.find(byDenom(position.denom))
-    if (!asset) return acc
-    const price = prices.find((price) => price.denom === position.denom)?.amount ?? 0
-    const amount = BN(position.amount).shiftedBy(-asset.decimals)
-    const positionValue = amount.multipliedBy(price)
-    return acc.plus(positionValue)
-  }, BN_ZERO)
+  return (
+    account[type]?.reduce((acc, position) => {
+      const asset = assets.find(byDenom(position.denom))
+      if (!asset) return acc
+      const price = prices.find((price) => price.denom === position.denom)?.amount ?? 0
+      const amount = BN(position.amount).shiftedBy(-asset.decimals)
+      const positionValue = amount.multipliedBy(price)
+      return acc.plus(positionValue)
+    }, BN_ZERO) ?? BN_ZERO
+  )
 }
 
 export const calculateAccountApr = (

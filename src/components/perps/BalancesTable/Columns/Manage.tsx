@@ -1,9 +1,8 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 import DropDownButton from 'components/common/Button/DropDownButton'
 import { Cross, Edit } from 'components/common/Icons'
-import { PerpPositionRow } from 'components/perps/BalancesTable/usePerpsBalancesData'
 import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
 import { SearchParams } from 'types/enums/searchParams'

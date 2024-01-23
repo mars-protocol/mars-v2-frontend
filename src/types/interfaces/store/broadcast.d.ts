@@ -1,6 +1,3 @@
-const BNCoin = import('types/classes/BNCoin').BNCoin
-const ActionCoin = import('types/generated').ActionCoin
-
 interface BroadcastResult {
   result?: import('@delphi-labs/shuttle-react').BroadcastResult
   error?: string

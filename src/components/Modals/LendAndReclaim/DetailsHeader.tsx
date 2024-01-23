@@ -15,7 +15,7 @@ function DetailsHeader({ data }: Props) {
   const balanceInWallet = useCurrentWalletBalance(asset.denom)
 
   return (
-    <div className='flex gap-6 border-b border-white/5 px-6 py-4 gradient-header'>
+    <div className='flex gap-6 px-6 py-4 border-b border-white/5 gradient-header'>
       {assetApy && (
         <>
           <TitleAndSubCell
@@ -40,7 +40,7 @@ function DetailsHeader({ data }: Props) {
           <TitleAndSubCell
             title={
               <DisplayCurrency
-                coin={new BNCoin({ denom: asset.denom, amount: accountLentAmount })}
+                coin={new BNCoin({ denom: asset.denom, amount: accountLentAmount.toString() })}
               />
             }
             sub={'Deposited'}
