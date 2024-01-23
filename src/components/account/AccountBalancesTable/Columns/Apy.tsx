@@ -7,7 +7,7 @@ interface Props {
   apy: number
   markets: Market[]
   denom: string
-  type: AccountType
+  type: PositionType
 }
 
 export default function Apr(props: Props) {

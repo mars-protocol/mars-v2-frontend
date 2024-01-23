@@ -13,11 +13,7 @@ interface Props {
 function Content(props: Props) {
   const { data: account } = useAccount(props.accountId, true)
 
-  if (!account) {
-    return <Skeleton />
-  }
-
-  if (account.perps.length === 0) return null
+  if (!account || account.perps.length === 0) return null
 
   return (
     <Skeleton>

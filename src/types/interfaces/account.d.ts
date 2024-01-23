@@ -1,4 +1,4 @@
-type AccountType = 'deposits' | 'borrowing' | 'lending' | 'vault' | 'perp'
+type PositionType = 'deposits' | 'borrowing' | 'lending' | 'vault' | 'perp'
 
 interface Account {
   id: string
@@ -23,16 +23,16 @@ interface AccountBalanceRow {
   denom: string
   size: number
   symbol: string
-  type: AccountType
+  type: PositionType
   value: string
   amountChange: BigNumber
 }
 
 interface AccountPerpRow extends PerpsPosition {
-  size: BigNumber
+  amount: BigNumber
   symbol: string
   value: string
-  sizeChange: BigNumber
+  amountChange: BigNumber
 }
 
 interface AccountIdAndKind {

@@ -8,7 +8,7 @@ export const PRICE_META = { id: 'price', header: 'Price', meta: { className: 'w-
 interface Props {
   amount: number
   denom: string
-  type: AccountType
+  type: PositionType
 }
 
 export default function Price(props: Props) {

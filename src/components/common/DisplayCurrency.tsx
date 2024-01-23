@@ -22,6 +22,7 @@ interface Props {
 }
 
 export default function DisplayCurrency(props: Props) {
+  const { coin, className, isApproximation, parentheses, showZero, options, isProfitOrLoss } = props
   const displayCurrencies = useDisplayCurrencyAssets()
   const assets = useAllAssets()
   const [displayCurrency] = useDisplayCurrency()
@@ -36,7 +37,7 @@ export default function DisplayCurrency(props: Props) {
   const isUSD = displayCurrencyAsset.id === 'USD'
 
   const [amount, absoluteAmount] = useMemo(() => {
-    const coinValue = getCoinValue(props.coin, prices, assets)
+    const coinValue = getCoinValue(coin, prices, assets)
 
     if (displayCurrency === ORACLE_DENOM) return [coinValue.toNumber(), coinValue.abs().toNumber()]
 
@@ -50,33 +51,34 @@ export default function DisplayCurrency(props: Props) {
     const amount = coinValue.div(displayPrice).toNumber()
 
     return [amount, Math.abs(amount)]
-  }, [assets, displayCurrency, displayCurrencyAsset.decimals, prices, props.coin])
+  }, [assets, displayCurrency, displayCurrencyAsset.decimals, prices, coin])
 
   const isLessThanACent = useMemo(
     () => isUSD && absoluteAmount < 0.01 && absoluteAmount > 0,
     [absoluteAmount, isUSD],
   )
 
-  const smallerThanPrefix = isLessThanACent && !props.showZero ? '< ' : ''
+  const prefix = useMemo(() => {
+    const optionsPrefix = options?.prefix && options?.prefix !== '$' ? options.prefix : ''
+    const approximationPrefix = isApproximation ? '~ ' : ''
+    const smallerThanPrefix = isLessThanACent && !showZero ? '< ' : ''
 
-  let prefix = isUSD
-    ? `${props.isApproximation ? '~ ' : smallerThanPrefix}$`
-    : `${props.isApproximation ? '~ ' : ''}`
+    return isUSD
+      ? `${approximationPrefix}${smallerThanPrefix}${optionsPrefix}$`
+      : `${approximationPrefix}${smallerThanPrefix}${optionsPrefix}`
+  }, [isUSD, isApproximation, options?.prefix, showZero])
+
   const suffix = isUSD
     ? ''
     : ` ${displayCurrencyAsset.symbol ? ` ${displayCurrencyAsset.symbol}` : ''}`
 
-  if (props.options?.prefix && props.options?.prefix !== '$') {
-    prefix = `${props.options.prefix}${prefix}`
-  }
-
   return (
     <FormattedNumber
       className={classNames(
-        props.className,
-        props.parentheses && 'before:content-["("] after:content-[")"]',
-        props.isProfitOrLoss && (amount < 0 ? 'text-error' : amount === 0 ? '' : 'text-success'),
-        props.isProfitOrLoss && amount < 0 && 'before:content-["-"]',
+        className,
+        parentheses && 'before:content-["("] after:content-[")"]',
+        isProfitOrLoss && (amount < 0 ? 'text-error' : amount === 0 ? '' : 'text-success'),
+        isProfitOrLoss && amount < 0 && 'before:content-["-"]',
       )}
       amount={isLessThanACent ? 0.01 : absoluteAmount}
       options={{
@@ -84,7 +86,7 @@ export default function DisplayCurrency(props: Props) {
         maxDecimals: 2,
         abbreviated: true,
         suffix,
-        ...props.options,
+        ...options,
         prefix,
       }}
       animate

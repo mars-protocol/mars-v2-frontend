@@ -10,9 +10,9 @@ import { BN } from 'utils/helpers'
 export const VALUE_META = { accessorKey: 'value', header: 'Value' }
 
 interface Props {
-  sizeChange: BigNumber
+  amountChange: BigNumber
   value: string
-  type: AccountType | 'perp'
+  type: PositionType
 }
 
 export const valueSortingFn = (a: Row<AccountPerpRow>, b: Row<AccountPerpRow>): number => {
@@ -22,8 +22,8 @@ export const valueSortingFn = (a: Row<AccountPerpRow>, b: Row<AccountPerpRow>): 
 }
 
 export default function Value(props: Props) {
-  const { sizeChange, type, value } = props
-  const color = getAmountChangeColor(type, sizeChange)
+  const { amountChange, type, value } = props
+  const color = getAmountChangeColor(type, amountChange)
   const coin = new BNCoin({
     denom: ORACLE_DENOM,
     amount: value,

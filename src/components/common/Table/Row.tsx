@@ -9,16 +9,8 @@ interface Props<T> {
   spacingClassName?: string
   className?: string
   isSelectable?: boolean
-}
-
-function isAccountBalanceRow(object?: any): object is AccountBalanceRow {
-  if (!object) return false
-  return 'type' in object
-}
-
-function isAccountPerpRow(object?: any): object is AccountPerpRow {
-  if (!object) return false
-  return 'tradeDirection' in object
+  isBalancesTable?: boolean
+  isPerpsTable?: boolean
 }
 
 function getBalanceBorderColor(row: AccountBalanceRow) {
@@ -29,47 +21,46 @@ function getPerpBorderColor(row: AccountPerpRow) {
 }
 
 export default function Row<T>(props: Props<T>) {
-  const canExpand = !!props.renderExpanded
-
-  const isBalancesTable = isAccountBalanceRow(props.row.original)
-  const isPerpsTable = isAccountPerpRow(props.row.original)
+  const {
+    renderExpanded,
+    table,
+    row,
+    isBalancesTable,
+    isPerpsTable,
+    spacingClassName,
+    isSelectable,
+  } = props
+  const canExpand = !!renderExpanded
 
   return (
     <>
       <tr
-        key={`${props.row.id}-row`}
+        key={`${row.id}-row`}
         className={classNames(
           'group/row transition-bg',
-          (props.renderExpanded || props.isSelectable) && 'hover:cursor-pointer',
-          canExpand && props.row.getIsExpanded() ? 'is-expanded bg-black/20' : 'hover:bg-white/5',
+          (renderExpanded || isSelectable) && 'hover:cursor-pointer',
+          canExpand && row.getIsExpanded() ? 'is-expanded bg-black/20' : 'hover:bg-white/5',
         )}
         onClick={(e) => {
           e.preventDefault()
-          if (props.isSelectable) {
-            props.row.toggleSelected()
+          if (isSelectable) {
+            row.toggleSelected()
           }
           if (canExpand) {
-            const isExpanded = props.row.getIsExpanded()
-            props.table.resetExpanded()
-            !isExpanded && props.row.toggleExpanded()
+            const isExpanded = row.getIsExpanded()
+            table.resetExpanded()
+            !isExpanded && row.toggleExpanded()
           }
         }}
       >
-        {props.row.getVisibleCells().map((cell) => {
+        {row.getVisibleCells().map((cell) => {
           const isSymbolOrName = cell.column.id === 'symbol' || cell.column.id === 'name'
-          const borderClasses =
-            isBalancesTable && isSymbolOrName
-              ? classNames(
-                  'border-l',
-                  getBalanceBorderColor(cell.row.original as AccountBalanceRow),
-                )
-              : ''
           return (
             <td
               key={cell.id}
               className={classNames(
                 isSymbolOrName ? 'text-left' : 'text-right',
-                props.spacingClassName ?? 'px-3 py-4',
+                spacingClassName ?? 'px-3 py-4',
                 (isBalancesTable || isPerpsTable) && isSymbolOrName && 'border-l',
                 isBalancesTable && getBalanceBorderColor(cell.row.original as AccountBalanceRow),
                 isPerpsTable && getPerpBorderColor(cell.row.original as AccountPerpRow),
@@ -81,9 +72,7 @@ export default function Row<T>(props: Props<T>) {
           )
         })}
       </tr>
-      {props.row.getIsExpanded() &&
-        props.renderExpanded &&
-        props.renderExpanded(props.row, props.table)}
+      {row.getIsExpanded() && renderExpanded && renderExpanded(row, table)}
     </>
   )
 }

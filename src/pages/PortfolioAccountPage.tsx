@@ -7,9 +7,11 @@ import BreadCrumbs from 'components/portfolio/Account/BreadCrumbs'
 import PerpPositions from 'components/portfolio/Account/PerpPositions'
 import Summary from 'components/portfolio/Account/Summary'
 import useAccountId from 'hooks/useAccountId'
+import useStore from 'store'
 import { getRoute } from 'utils/route'
 
 export default function PortfolioAccountPage() {
+  const chainConfig = useStore((s) => s.chainConfig)
   const selectedAccountId = useAccountId()
   const { address, accountId } = useParams()
   const navigate = useNavigate()
@@ -26,7 +28,7 @@ export default function PortfolioAccountPage() {
       <BreadCrumbs accountId={accountId} />
       <Summary accountId={accountId} />
       <Balances accountId={accountId} />
-      <PerpPositions accountId={accountId} />
+      {chainConfig.perps && <PerpPositions accountId={accountId} />}
       <ShareBar text={`Have a look at Credit Account ${accountId} on @mars_protocol!`} />
     </div>
   )

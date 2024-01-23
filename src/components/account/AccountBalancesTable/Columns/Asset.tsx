@@ -3,7 +3,7 @@ export const ASSET_META = { accessorKey: 'symbol', header: 'Asset', id: 'symbol'
 
 interface Props {
   symbol: string
-  type: AccountType
+  type: PositionType
 }
 
 export default function Asset(props: Props) {

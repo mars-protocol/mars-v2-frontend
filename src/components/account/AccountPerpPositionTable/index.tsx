@@ -31,6 +31,7 @@ export default function AccountPerpPositionTable(props: Props) {
       initialSorting={[]}
       spacingClassName='p-2'
       hideCard={hideCard}
+      isPerpsTable
     />
   )
 }

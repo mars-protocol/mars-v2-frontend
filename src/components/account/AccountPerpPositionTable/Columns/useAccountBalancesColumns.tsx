@@ -25,7 +25,7 @@ export default function useAccountPerpsColumns(account: Account, showLiquidation
       {
         ...VALUE_META,
         cell: ({ row }) => (
-          <Value sizeChange={row.original.sizeChange} value={row.original.value} type='perp' />
+          <Value amountChange={row.original.amountChange} value={row.original.value} type='perp' />
         ),
         sortingFn: valueSortingFn,
       },

@@ -20,7 +20,7 @@ interface Props {
   amount: number
   computeLiquidationPrice: (denom: string, kind: LiquidationPriceKind) => number | null
   denom: string
-  type: AccountType
+  type: PositionType
   account: Account
 }
 

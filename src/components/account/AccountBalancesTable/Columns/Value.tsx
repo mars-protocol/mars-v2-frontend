@@ -12,7 +12,7 @@ export const VALUE_META = { accessorKey: 'value', header: 'Value' }
 interface Props {
   amountChange: BigNumber
   value: string
-  type: AccountType
+  type: PositionType
 }
 
 export const valueSortingFn = (a: Row<AccountBalanceRow>, b: Row<AccountBalanceRow>): number => {

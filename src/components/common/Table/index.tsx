@@ -28,6 +28,7 @@ interface Props<T> {
   tableBodyClassName?: string
   spacingClassName?: string
   isBalancesTable?: boolean
+  isPerpsTable?: boolean
   hideCard?: boolean
   setRowSelection?: OnChangeFn<RowSelectionState>
   selectedRows?: RowSelectionState
@@ -119,6 +120,8 @@ export default function Table<T>(props: Props<T>) {
               renderExpanded={props.renderExpanded}
               spacingClassName={props.spacingClassName}
               isSelectable={!!props.setRowSelection}
+              isBalancesTable={props.isBalancesTable}
+              isPerpsTable={props.isPerpsTable}
             />
           ))}
         </tbody>
