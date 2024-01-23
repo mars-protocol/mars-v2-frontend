@@ -3,7 +3,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { demagnify, getCoinValue } from 'utils/formatters'
 
 export function getAssetAccountBalanceRow(
-  type: 'deposits' | 'borrow' | 'lend',
+  type: 'deposit' | 'borrow' | 'lend',
   asset: Asset,
   prices: BNCoin[],
   assets: Asset[],

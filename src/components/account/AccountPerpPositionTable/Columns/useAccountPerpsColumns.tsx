@@ -31,6 +31,7 @@ export default function useAccountPerpsColumns(account: Account, showLiquidation
       },
       {
         ...LIQ_META,
+        header: 'Liq. Price',
         enableSorting: false,
         cell: ({ row }) => (
           <LiqPrice

@@ -38,7 +38,7 @@ export default function useAccountBalanceData(props: Props) {
         : 0
       const prevDeposit = updatedAccount ? account?.deposits.find(byDenom(deposit.denom)) : deposit
       deposits.push(
-        getAssetAccountBalanceRow('deposits', asset, prices, assets, deposit, apy, prevDeposit),
+        getAssetAccountBalanceRow('deposit', asset, prices, assets, deposit, apy, prevDeposit),
       )
     })
 

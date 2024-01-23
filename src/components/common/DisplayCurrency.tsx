@@ -59,14 +59,20 @@ export default function DisplayCurrency(props: Props) {
   )
 
   const prefix = useMemo(() => {
-    const optionsPrefix = options?.prefix && options?.prefix !== '$' ? options.prefix : ''
+    const positiveOrNegativePrefix = isProfitOrLoss
+      ? amount > 0
+        ? '+'
+        : amount < 0
+        ? '-'
+        : ''
+      : ''
     const approximationPrefix = isApproximation ? '~ ' : ''
     const smallerThanPrefix = isLessThanACent && !showZero ? '< ' : ''
 
     return isUSD
-      ? `${approximationPrefix}${smallerThanPrefix}${optionsPrefix}$`
-      : `${approximationPrefix}${smallerThanPrefix}${optionsPrefix}`
-  }, [isUSD, isApproximation, options?.prefix, showZero])
+      ? `${approximationPrefix}${smallerThanPrefix}${positiveOrNegativePrefix}$`
+      : `${approximationPrefix}${smallerThanPrefix}${positiveOrNegativePrefix}`
+  }, [isUSD, isApproximation, showZero, isProfitOrLoss, amount, isLessThanACent])
 
   const suffix = isUSD
     ? ''
@@ -77,8 +83,8 @@ export default function DisplayCurrency(props: Props) {
       className={classNames(
         className,
         parentheses && 'before:content-["("] after:content-[")"]',
-        isProfitOrLoss && (amount < 0 ? 'text-error' : amount === 0 ? '' : 'text-success'),
-        isProfitOrLoss && amount < 0 && 'before:content-["-"]',
+        isProfitOrLoss && amount < 0 && 'text-loss',
+        isProfitOrLoss && amount > 0 && 'text-profit',
       )}
       amount={isLessThanACent ? 0.01 : absoluteAmount}
       options={{

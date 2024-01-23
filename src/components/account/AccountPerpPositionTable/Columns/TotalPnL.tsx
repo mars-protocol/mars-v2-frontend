@@ -1,5 +1,3 @@
-import classNames from 'classnames'
-
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { BNCoin } from 'types/classes/BNCoin'
 
@@ -11,18 +9,13 @@ interface Props {
 
 export default function TotalPnL(props: Props) {
   const { pnl } = props
-  const isNegative = pnl.amount.isLessThan(0)
-  const isPositive = pnl.amount.isGreaterThan(0)
 
   return (
     <DisplayCurrency
-      className={classNames(
-        'text-xs text-right number',
-        isNegative && 'text-loss',
-        isPositive && 'text-profit',
-      )}
+      className='text-xs text-right number'
       coin={pnl}
-      options={{ abbreviated: false, prefix: isPositive ? '+' : isNegative ? '-' : '' }}
+      options={{ abbreviated: false }}
+      isProfitOrLoss
       showZero
     />
   )

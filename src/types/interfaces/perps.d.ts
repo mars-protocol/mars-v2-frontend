@@ -6,7 +6,7 @@ type PositionsWithoutPerps = Omit<
   'perps'
 >
 
-type PerpsPosition = {
+interface PerpsPosition {
   denom: string
   baseDenom: string
   tradeDirection: TradeDirection
@@ -14,4 +14,10 @@ type PerpsPosition = {
   closingFee: BNCoin
   pnl: BNCoin
   entryPrice: BigNumber
+}
+
+interface PerpPositionRow extends PerpsPosition {
+  asset: Asset
+  liquidationPrice: BigNumber
+  leverage: number
 }

@@ -1,4 +1,3 @@
-import classNames from 'classnames'
 import { ReactNode } from 'react'
 
 import DisplayCurrency from 'components/common/DisplayCurrency'
@@ -33,8 +32,6 @@ function TooltipContent(props: Props) {
   const { row } = props
   const assets = usePerpsEnabledAssets()
   const asset = assets.find((asset) => asset.symbol === row.symbol)
-  const isPositive = row.pnl.amount.isGreaterThan(0)
-  const isNegative = row.pnl.amount.isLessThan(0)
   if (!asset) return null
 
   return (
@@ -43,7 +40,7 @@ function TooltipContent(props: Props) {
         <FormattedNumber amount={row.entryPrice.toNumber()} options={{ prefix: '$' }} />
       </LabelAndValue>
       <LabelAndValue label='Size'>
-        <Text size='sm'>{demagnify(row.size, asset)}</Text>
+        <Text size='sm'>{demagnify(row.amount, asset)}</Text>
       </LabelAndValue>
       <LabelAndValue label='Realized PnL'>
         <DisplayCurrency
@@ -53,16 +50,7 @@ function TooltipContent(props: Props) {
         />
       </LabelAndValue>
       <LabelAndValue label='Unrealized PnL'>
-        <DisplayCurrency
-          className={classNames(
-            'text-sm text-right number',
-            isNegative && 'text-loss',
-            isPositive && 'text-profit',
-          )}
-          coin={row.pnl}
-          options={{ abbreviated: false, prefix: isPositive ? '+' : isNegative ? '-' : '' }}
-          showZero
-        />
+        <DisplayCurrency coin={row.pnl} options={{ abbreviated: false }} showZero isProfitOrLoss />
       </LabelAndValue>
     </div>
   )
