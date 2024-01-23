@@ -47,9 +47,11 @@ function useLendingMarketAssetsTableData(): {
         cap,
       }
 
-      ;(lendingMarketAsset.accountLentValue ? accountLentAssets : availableAssets).push(
-        lendingMarketAsset,
-      )
+      if (lendingMarketAsset.accountLentAmount?.isZero()) {
+        availableAssets.push(lendingMarketAsset)
+      } else {
+        accountLentAssets.push(lendingMarketAsset)
+      }
     })
 
     return {
