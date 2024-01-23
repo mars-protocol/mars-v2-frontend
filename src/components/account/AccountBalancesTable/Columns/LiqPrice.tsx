@@ -31,7 +31,7 @@ export default function LiqPrice(props: Props) {
 
   const liqPrice = useMemo(() => {
     if (type === 'vault' || amount === 0) return 0
-    return computeLiquidationPrice(denom, type === 'borrowing' ? 'debt' : 'asset')
+    return computeLiquidationPrice(denom, type === 'borrow' ? 'debt' : 'asset')
   }, [amount, computeLiquidationPrice, denom, type])
 
   const { liquidationPrice } = useLiquidationPrice(liqPrice)

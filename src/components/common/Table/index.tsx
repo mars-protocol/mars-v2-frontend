@@ -27,8 +27,7 @@ interface Props<T> {
   renderExpanded?: (row: TanstackRow<T>, table: TanstackTable<T>) => JSX.Element
   tableBodyClassName?: string
   spacingClassName?: string
-  isBalancesTable?: boolean
-  isPerpsTable?: boolean
+  type?: TableType
   hideCard?: boolean
   setRowSelection?: OnChangeFn<RowSelectionState>
   selectedRows?: RowSelectionState
@@ -56,7 +55,7 @@ export default function Table<T>(props: Props<T>) {
       condition={!props.hideCard}
       wrapper={(children) => (
         <Card
-          className={classNames('w-full', !props.isBalancesTable && 'h-fit bg-white/5')}
+          className={classNames('w-full', props.type !== 'balances' && 'h-fit bg-white/5')}
           title={props.title}
         >
           {children}
@@ -120,8 +119,7 @@ export default function Table<T>(props: Props<T>) {
               renderExpanded={props.renderExpanded}
               spacingClassName={props.spacingClassName}
               isSelectable={!!props.setRowSelection}
-              isBalancesTable={props.isBalancesTable}
-              isPerpsTable={props.isPerpsTable}
+              type={props.type}
             />
           ))}
         </tbody>

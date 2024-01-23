@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 
-import useAccountPerpsColumns from 'components/account/AccountPerpPositionTable/Columns/useAccountBalancesColumns'
+import useAccountPerpsColumns from 'components/account/AccountPerpPositionTable/Columns/useAccountPerpsColumns'
 import useAccountPerpData from 'components/account/AccountPerpPositionTable/useAccountPerpData'
 import Table from 'components/common/Table'
 import useStore from 'store'
@@ -31,7 +31,7 @@ export default function AccountPerpPositionTable(props: Props) {
       initialSorting={[]}
       spacingClassName='p-2'
       hideCard={hideCard}
-      isPerpsTable
+      type='perps'
     />
   )
 }

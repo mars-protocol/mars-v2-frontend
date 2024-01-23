@@ -3,7 +3,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { demagnify, getCoinValue } from 'utils/formatters'
 
 export function getAssetAccountBalanceRow(
-  type: 'deposits' | 'borrowing' | 'lending',
+  type: 'deposits' | 'borrow' | 'lend',
   asset: Asset,
   prices: BNCoin[],
   assets: Asset[],
@@ -59,7 +59,7 @@ export function getVaultAccountBalanceRow(
 
 export function getAmountChangeColor(type: PositionType, amount: BigNumber) {
   if (type === 'perp') return ''
-  if (type === 'borrowing') {
+  if (type === 'borrow') {
     if (amount.isGreaterThan(0)) return 'text-loss'
     if (amount.isLessThan(0)) return 'text-profit'
   }

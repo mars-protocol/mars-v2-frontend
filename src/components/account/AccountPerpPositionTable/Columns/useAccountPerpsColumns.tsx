@@ -1,13 +1,13 @@
-import { ColumnDef, Row } from '@tanstack/react-table'
+import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import Asset, { ASSET_META } from 'components/account/AccountPerpPositionTable/Columns/Asset'
-import LiqPrice, { LIQ_META } from 'components/account/AccountPerpPositionTable/Columns/LiqPrice'
-import TotalPnL, { PNL_META } from 'components/account/AccountPerpPositionTable/Columns/TotalPnL'
+import LiqPrice, { LIQ_META } from 'components/account/AccountBalancesTable/Columns/LiqPrice'
 import Value, {
   VALUE_META,
-  valueSortingFn,
-} from 'components/account/AccountPerpPositionTable/Columns/Value'
+  valuePerpSortingFn,
+} from 'components/account/AccountBalancesTable/Columns/Value'
+import Asset, { ASSET_META } from 'components/account/AccountPerpPositionTable/Columns/Asset'
+import TotalPnL, { PNL_META } from 'components/account/AccountPerpPositionTable/Columns/TotalPnL'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useStore from 'store'
 
@@ -27,15 +27,17 @@ export default function useAccountPerpsColumns(account: Account, showLiquidation
         cell: ({ row }) => (
           <Value amountChange={row.original.amountChange} value={row.original.value} type='perp' />
         ),
-        sortingFn: valueSortingFn,
+        sortingFn: valuePerpSortingFn,
       },
       {
         ...LIQ_META,
         enableSorting: false,
-        cell: ({ row }: { row: Row<AccountPerpRow> }) => (
+        cell: ({ row }) => (
           <LiqPrice
             denom={row.original.denom}
             computeLiquidationPrice={computeLiquidationPrice}
+            type='perp'
+            amount={row.original.amount.toNumber()}
             account={updatedAccount ?? account}
           />
         ),

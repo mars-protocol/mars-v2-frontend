@@ -89,7 +89,7 @@ export default function AccountBalancesTable(props: Props) {
       initialSorting={[]}
       spacingClassName='p-2'
       hideCard={hideCard}
-      isBalancesTable
+      type='balances'
     />
   )
 }

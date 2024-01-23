@@ -11,8 +11,8 @@ export default function Asset(props: Props) {
   return (
     <Text size='xs'>
       {symbol}
-      {type === 'borrowing' && <span className='ml-1 text-loss'>(debt)</span>}
-      {type === 'lending' && <span className='ml-1 text-profit'>(lent)</span>}
+      {type === 'borrow' && <span className='ml-1 text-loss'>(debt)</span>}
+      {type === 'lend' && <span className='ml-1 text-profit'>(lent)</span>}
       {type === 'vault' && <span className='ml-1 text-profit'>(farm)</span>}
     </Text>
   )

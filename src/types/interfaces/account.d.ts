@@ -1,4 +1,5 @@
-type PositionType = 'deposits' | 'borrowing' | 'lending' | 'vault' | 'perp'
+type PositionType = 'deposit' | 'borrow' | 'lend' | 'vault' | 'perp'
+type TableType = 'balances' | 'perps'
 
 interface Account {
   id: string

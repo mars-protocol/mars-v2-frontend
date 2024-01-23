@@ -15,7 +15,16 @@ interface Props {
   type: PositionType
 }
 
-export const valueSortingFn = (a: Row<AccountBalanceRow>, b: Row<AccountBalanceRow>): number => {
+export const valueBalancesSortingFn = (
+  a: Row<AccountBalanceRow>,
+  b: Row<AccountBalanceRow>,
+): number => {
+  const valueA = BN(a.original.value)
+  const valueB = BN(b.original.value)
+  return valueA.minus(valueB).toNumber()
+}
+
+export const valuePerpSortingFn = (a: Row<AccountPerpRow>, b: Row<AccountPerpRow>): number => {
   const valueA = BN(a.original.value)
   const valueB = BN(b.original.value)
   return valueA.minus(valueB).toNumber()

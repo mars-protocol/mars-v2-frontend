@@ -9,27 +9,21 @@ interface Props<T> {
   spacingClassName?: string
   className?: string
   isSelectable?: boolean
-  isBalancesTable?: boolean
-  isPerpsTable?: boolean
+  type?: TableType
 }
 
-function getBalanceBorderColor(row: AccountBalanceRow) {
-  return row.type === 'borrowing' ? 'border-loss' : 'border-profit'
-}
-function getPerpBorderColor(row: AccountPerpRow) {
-  return row.tradeDirection === 'short' ? 'border-loss' : 'border-profit'
+function getBorderColor(type: TableType, row: AccountBalanceRow | AccountPerpRow) {
+  if (type === 'balances') {
+    const balancesRow = row as AccountBalanceRow
+    return balancesRow.type === 'borrow' ? 'border-loss' : 'border-profit'
+  }
+
+  const perpRow = row as AccountPerpRow
+  return perpRow.tradeDirection === 'short' ? 'border-loss' : 'border-profit'
 }
 
 export default function Row<T>(props: Props<T>) {
-  const {
-    renderExpanded,
-    table,
-    row,
-    isBalancesTable,
-    isPerpsTable,
-    spacingClassName,
-    isSelectable,
-  } = props
+  const { renderExpanded, table, row, type, spacingClassName, isSelectable } = props
   const canExpand = !!renderExpanded
 
   return (
@@ -61,9 +55,8 @@ export default function Row<T>(props: Props<T>) {
               className={classNames(
                 isSymbolOrName ? 'text-left' : 'text-right',
                 spacingClassName ?? 'px-3 py-4',
-                (isBalancesTable || isPerpsTable) && isSymbolOrName && 'border-l',
-                isBalancesTable && getBalanceBorderColor(cell.row.original as AccountBalanceRow),
-                isPerpsTable && getPerpBorderColor(cell.row.original as AccountPerpRow),
+                type && isSymbolOrName && 'border-l',
+                type && getBorderColor(type, cell.row.original as any),
                 cell.column.columnDef.meta?.className,
               )}
             >
