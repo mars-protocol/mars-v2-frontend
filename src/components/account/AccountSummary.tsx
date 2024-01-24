@@ -77,44 +77,55 @@ export default function AccountSummary(props: Props) {
     [accountSummaryTabs, setAccountSummaryTabs],
   )
 
-  const items = [
-    {
-      title: `Credit Account ${props.account.id} Composition`,
-      renderContent: () =>
-        props.account ? <AccountComposition account={props.account} isHls={props.isHls} /> : null,
-      isOpen: accountSummaryTabs[0],
-      toggleOpen: (index: number) => handleToggle(index),
-      renderSubTitle: () => <></>,
-    },
-    {
-      title: 'Balances',
-      renderContent: () =>
-        props.account ? (
-          <AccountBalancesTable
-            account={props.account}
-            borrowingData={borrowAssetsData}
-            lendingData={lendingAssetsData}
-            hideCard
-            isHls={props.isHls}
-          />
-        ) : null,
-      isOpen: accountSummaryTabs[1],
-      toggleOpen: (index: number) => handleToggle(index),
-      renderSubTitle: () => <></>,
-    },
-  ]
+  const items = useMemo(() => {
+    const itemsArray = [
+      {
+        title: `Credit Account ${props.account.id} Composition`,
+        renderContent: () =>
+          props.account ? <AccountComposition account={props.account} isHls={props.isHls} /> : null,
+        isOpen: accountSummaryTabs[0],
+        toggleOpen: (index: number) => handleToggle(index),
+        renderSubTitle: () => <></>,
+      },
+      {
+        title: 'Balances',
+        renderContent: () =>
+          props.account ? (
+            <AccountBalancesTable
+              account={props.account}
+              borrowingData={borrowAssetsData}
+              lendingData={lendingAssetsData}
+              hideCard
+              isHls={props.isHls}
+            />
+          ) : null,
+        isOpen: accountSummaryTabs[1],
+        toggleOpen: (index: number) => handleToggle(index),
+        renderSubTitle: () => <></>,
+      },
+    ]
+    if (chainConfig.perps)
+      itemsArray.push({
+        title: 'Perp Positions',
+        renderContent: () =>
+          props.account && props.account.perps.length > 0 ? (
+            <AccountPerpPositionTable account={props.account} hideCard />
+          ) : null,
+        isOpen: accountSummaryTabs[2] ?? false,
+        toggleOpen: (index: number) => handleToggle(index),
+        renderSubTitle: () => <></>,
+      })
 
-  if (chainConfig.perps)
-    items.push({
-      title: 'Perp Positions',
-      renderContent: () =>
-        props.account && props.account.perps.length > 0 ? (
-          <AccountPerpPositionTable account={props.account} hideCard />
-        ) : null,
-      isOpen: accountSummaryTabs[2] ?? false,
-      toggleOpen: (index: number) => handleToggle(index),
-      renderSubTitle: () => <></>,
-    })
+    return itemsArray
+  }, [
+    props.account,
+    borrowAssetsData,
+    lendingAssetsData,
+    props.isHls,
+    chainConfig.perps,
+    handleToggle,
+    accountSummaryTabs,
+  ])
 
   if (!props.account) return null
   return (
