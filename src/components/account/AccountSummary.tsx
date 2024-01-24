@@ -38,6 +38,7 @@ export default function AccountSummary(props: Props) {
   const { data: prices } = usePrices()
   const assets = useAllAssets()
   const updatedAccount = useStore((s) => s.updatedAccount)
+  const chainConfig = useStore((s) => s.chainConfig)
   const accountBalance = useMemo(
     () =>
       props.account
@@ -75,6 +76,45 @@ export default function AccountSummary(props: Props) {
     },
     [accountSummaryTabs, setAccountSummaryTabs],
   )
+
+  const items = [
+    {
+      title: `Credit Account ${props.account.id} Composition`,
+      renderContent: () =>
+        props.account ? <AccountComposition account={props.account} isHls={props.isHls} /> : null,
+      isOpen: accountSummaryTabs[0],
+      toggleOpen: (index: number) => handleToggle(index),
+      renderSubTitle: () => <></>,
+    },
+    {
+      title: 'Balances',
+      renderContent: () =>
+        props.account ? (
+          <AccountBalancesTable
+            account={props.account}
+            borrowingData={borrowAssetsData}
+            lendingData={lendingAssetsData}
+            hideCard
+            isHls={props.isHls}
+          />
+        ) : null,
+      isOpen: accountSummaryTabs[1],
+      toggleOpen: (index: number) => handleToggle(index),
+      renderSubTitle: () => <></>,
+    },
+  ]
+
+  if (chainConfig.perps)
+    items.push({
+      title: 'Perp Positions',
+      renderContent: () =>
+        props.account && props.account.perps.length > 0 ? (
+          <AccountPerpPositionTable account={props.account} hideCard />
+        ) : null,
+      isOpen: accountSummaryTabs[2] ?? false,
+      toggleOpen: (index: number) => handleToggle(index),
+      renderSubTitle: () => <></>,
+    })
 
   if (!props.account) return null
   return (
@@ -123,47 +163,7 @@ export default function AccountSummary(props: Props) {
           />
         </Item>
       </Card>
-      <Accordion
-        items={[
-          {
-            title: `Credit Account ${props.account.id} Composition`,
-            renderContent: () =>
-              props.account ? (
-                <AccountComposition account={props.account} isHls={props.isHls} />
-              ) : null,
-            isOpen: accountSummaryTabs[0],
-            toggleOpen: (index: number) => handleToggle(index),
-            renderSubTitle: () => <></>,
-          },
-          {
-            title: 'Balances',
-            renderContent: () =>
-              props.account ? (
-                <AccountBalancesTable
-                  account={props.account}
-                  borrowingData={borrowAssetsData}
-                  lendingData={lendingAssetsData}
-                  hideCard
-                  isHls={props.isHls}
-                />
-              ) : null,
-            isOpen: accountSummaryTabs[1],
-            toggleOpen: (index: number) => handleToggle(index),
-            renderSubTitle: () => <></>,
-          },
-          {
-            title: 'Perp Positions',
-            renderContent: () =>
-              props.account && props.account.perps.length > 0 ? (
-                <AccountPerpPositionTable account={props.account} hideCard />
-              ) : null,
-            isOpen: accountSummaryTabs[2] ?? false,
-            toggleOpen: (index: number) => handleToggle(index),
-            renderSubTitle: () => <></>,
-          },
-        ]}
-        allowMultipleOpen
-      />
+      <Accordion items={items} allowMultipleOpen />
     </div>
   )
 }
