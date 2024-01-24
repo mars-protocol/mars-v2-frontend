@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 
 import AssetAmountSelectActionModal from 'components/Modals/AssetAmountSelectActionModal'
 import DetailsHeader from 'components/Modals/LendAndReclaim/DetailsHeader'
-import useCurrentAccount from 'hooks/useCurrentAccount'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useLendAndReclaimModal from 'hooks/useLendAndReclaimModal'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useStore from 'store'

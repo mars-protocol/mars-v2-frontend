@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import useCurrentAccount from 'hooks/useCurrentAccount'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { byDenom } from 'utils/array'
 
 export default function usePerpPosition(denom: string): PerpsPosition | undefined {

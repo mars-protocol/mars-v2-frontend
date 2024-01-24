@@ -1,5 +1,5 @@
 import AccountSummary from 'components/account/AccountSummary'
-import useCurrentAccount from 'hooks/useCurrentAccount'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 
 function CurrentAccountSummary() {
   const account = useCurrentAccount()

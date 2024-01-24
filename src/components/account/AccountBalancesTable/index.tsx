@@ -8,7 +8,7 @@ import ActionButton from 'components/common/Button/ActionButton'
 import Card from 'components/common/Card'
 import Table from 'components/common/Table'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
-import useCurrentAccount from 'hooks/useCurrentAccount'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
 

@@ -33,7 +33,7 @@ export default function AccountStats(props: Props) {
     [account, assets, prices],
   )
   const { health, healthFactor } = useHealthComputer(account)
-  const { data } = useBorrowMarketAssetsTableData(false)
+  const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
     useLendingMarketAssetsTableData()

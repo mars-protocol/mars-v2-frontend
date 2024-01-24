@@ -45,7 +45,7 @@ export default function AccountSummary(props: Props) {
         : BN_ZERO,
     [props.account, updatedAccount, prices, assets],
   )
-  const { data } = useBorrowMarketAssetsTableData(false)
+  const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
     useLendingMarketAssetsTableData()

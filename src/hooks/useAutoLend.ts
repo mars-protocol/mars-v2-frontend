@@ -1,6 +1,6 @@
 import useAccounts from 'hooks/accounts/useAccounts'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAutoLendEnabledAccountIds from 'hooks/localStorage/useAutoLendEnabledAccountIds'
-import useCurrentAccount from 'hooks/useCurrentAccount'
 
 export default function useAutoLend(): {
   autoLendEnabledAccountIds: string[]

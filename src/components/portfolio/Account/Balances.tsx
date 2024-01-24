@@ -15,7 +15,7 @@ interface Props {
 function Content(props: Props) {
   const { data: account } = useAccount(props.accountId, true)
 
-  const { data } = useBorrowMarketAssetsTableData(false)
+  const data = useBorrowMarketAssetsTableData()
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
 
