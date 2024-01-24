@@ -21,7 +21,6 @@ function InputOverlay({ max, value, marginThreshold, type, min }: Props) {
   const markPadRight = (markPosPercent / 100) * THUMB_WIDTH
   const hasPastMarginThreshold = marginThreshold ? value >= marginThreshold : undefined
 
-  console.log(max, value)
   return (
     <>
       <div
