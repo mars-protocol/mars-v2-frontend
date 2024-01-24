@@ -1,14 +1,17 @@
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import MigrationBanner from 'components/common/MigrationBanner'
+import ShareBar from 'components/common/ShareBar'
 import Balances from 'components/portfolio/Account/Balances'
 import BreadCrumbs from 'components/portfolio/Account/BreadCrumbs'
+import PerpPositions from 'components/portfolio/Account/PerpPositions'
 import Summary from 'components/portfolio/Account/Summary'
-import ShareBar from 'components/common/ShareBar'
 import useAccountId from 'hooks/useAccountId'
+import useStore from 'store'
 import { getRoute } from 'utils/route'
 
 export default function PortfolioAccountPage() {
+  const chainConfig = useStore((s) => s.chainConfig)
   const selectedAccountId = useAccountId()
   const { address, accountId } = useParams()
   const navigate = useNavigate()
@@ -25,6 +28,7 @@ export default function PortfolioAccountPage() {
       <BreadCrumbs accountId={accountId} />
       <Summary accountId={accountId} />
       <Balances accountId={accountId} />
+      {chainConfig.perps && <PerpPositions accountId={accountId} />}
       <ShareBar text={`Have a look at Credit Account ${accountId} on @mars_protocol!`} />
     </div>
   )

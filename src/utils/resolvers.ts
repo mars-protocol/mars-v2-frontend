@@ -83,7 +83,7 @@ export function resolvePerpsPositions(perpPositions: Positions['perps']): PerpsP
     return {
       denom: position.denom,
       baseDenom: position.base_denom,
-      size: BN(position.size as any).abs(),
+      amount: BN(position.size as any).abs(),
       tradeDirection: BN(position.size as any).isNegative() ? 'short' : 'long',
       closingFee: BNCoin.fromCoin(position.pnl.coins.closing_fee),
       pnl: getPnlCoin(position.pnl.coins.pnl, position.base_denom),

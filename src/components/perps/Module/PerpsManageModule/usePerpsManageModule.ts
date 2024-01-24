@@ -35,7 +35,7 @@ export default function usePerpsManageModule(amount: BigNumber | null) {
     })
   }, [searchParams, setSearchParams])
 
-  const previousAmount = useMemo(() => perpPosition?.size ?? BN_ZERO, [perpPosition?.size])
+  const previousAmount = useMemo(() => perpPosition?.amount ?? BN_ZERO, [perpPosition?.amount])
   const previousTradeDirection = useMemo(
     () => perpPosition?.tradeDirection || 'long',
     [perpPosition?.tradeDirection],

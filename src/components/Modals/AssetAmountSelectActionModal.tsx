@@ -1,22 +1,23 @@
 import { useCallback, useState } from 'react'
 
+import Modal from 'components/Modals/Modal'
 import CurrentAccountSummary from 'components/account/CurrentAccountSummary'
-import AssetImage from 'components/common/assets/AssetImage'
 import Button from 'components/common/Button'
 import Card from 'components/common/Card'
 import Divider from 'components/common/Divider'
 import { ArrowRight } from 'components/common/Icons'
-import Modal from 'components/Modals/Modal'
 import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
+import AssetImage from 'components/common/assets/AssetImage'
 import { BN_ZERO } from 'constants/math'
+import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 
 interface Props {
   asset: Asset
   title: string
-  coinBalances: Coin[]
+  coinBalances: BNCoin[]
   actionButtonText: string
   contentHeader?: JSX.Element
   onClose: () => void

@@ -1,6 +1,3 @@
-const BNCoin = import('types/classes/BNCoin').BNCoin
-const ActionCoin = import('types/generated').ActionCoin
-
 interface BroadcastResult {
   result?: import('@delphi-labs/shuttle-react').BroadcastResult
   error?: string
@@ -18,6 +15,7 @@ interface ToastObjectOptions extends HandleResponseProps {
 interface ToastObject {
   response: Promise<BroadcastResult>
   options: ToastObjectOptions
+
   swapOptions?: {
     coinIn: BNCoin
     denomOut: string

@@ -7,7 +7,7 @@ interface Props {
   apy: number
   markets: Market[]
   denom: string
-  type: 'deposits' | 'borrowing' | 'lending' | 'vault'
+  type: PositionType
 }
 
 export default function Apr(props: Props) {
@@ -20,7 +20,7 @@ export default function Apr(props: Props) {
     <AssetRate
       className='justify-end text-xs'
       rate={apy}
-      isEnabled={type !== 'lending' || isEnabled}
+      isEnabled={type !== 'lend' || isEnabled}
       type='apy'
       orientation='ltr'
     />

@@ -19,7 +19,7 @@ export const SIZE_META = {
 }
 
 type Props = {
-  size: BigNumber
+  amount: BigNumber
   asset: Asset
 }
 
@@ -27,8 +27,8 @@ export default function Size(props: Props) {
   const price = usePrice(props.asset.denom)
 
   const amount = useMemo(
-    () => demagnify(props.size.toString(), props.asset),
-    [props.asset, props.size],
+    () => demagnify(props.amount.toString(), props.asset),
+    [props.asset, props.amount],
   )
   const value = useMemo(() => price.times(amount).toNumber(), [amount, price])
   return (

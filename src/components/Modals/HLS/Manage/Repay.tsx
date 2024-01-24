@@ -28,7 +28,7 @@ export default function Repay(props: Props) {
   const repay = useStore((s) => s.repay)
 
   const currentDebt: BigNumber = useMemo(
-    () => props.account.debts.find(byDenom(props.borrowAsset.denom)).amount || BN_ZERO,
+    () => props.account.debts.find(byDenom(props.borrowAsset.denom))?.amount || BN_ZERO,
     [props.account.debts, props.borrowAsset.denom],
   )
 

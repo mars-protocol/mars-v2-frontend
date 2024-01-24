@@ -20,13 +20,10 @@ export const depositedSortingFn = (
 
 interface Props {
   asset: Asset
-  lentAmount?: string
+  lentAmount?: BigNumber
 }
 export default function DepositValue(props: Props) {
   return (
-    <AmountAndValue
-      asset={props.asset}
-      amount={props.lentAmount ? BN(props.lentAmount) : BN_ZERO}
-    />
+    <AmountAndValue asset={props.asset} amount={props.lentAmount ? props.lentAmount : BN_ZERO} />
   )
 }

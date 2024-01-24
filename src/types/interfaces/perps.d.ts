@@ -1,5 +1,3 @@
-const BNCoin = import('types/classes/BNCoin').BNCoin
-
 type TradeDirection = 'long' | 'short'
 
 // TODO: 📈Remove this type when healthcomputer is implemented
@@ -8,9 +6,18 @@ type PositionsWithoutPerps = Omit<
   'perps'
 >
 
-type PerpsPosition = {
+interface PerpsPosition {
   denom: string
   baseDenom: string
   tradeDirection: TradeDirection
-  size: BigNumber
+  amount: BigNumber
+  closingFee: BNCoin
+  pnl: BNCoin
+  entryPrice: BigNumber
+}
+
+interface PerpPositionRow extends PerpsPosition {
+  asset: Asset
+  liquidationPrice: BigNumber
+  leverage: number
 }

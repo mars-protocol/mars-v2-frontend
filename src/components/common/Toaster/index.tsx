@@ -35,7 +35,6 @@ export function generateToastContent(content: ToastSuccess['content'], assets: A
           <Text size='sm' className='w-full mb-1 text-white'>
             {item.text}
           </Text>
-
           {item.coins.length > 0 && (
             <ul className='flex flex-wrap w-full gap-1 p-1 pl-4 list-disc'>
               {item.coins.map((coin, index) => {

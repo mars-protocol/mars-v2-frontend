@@ -12,10 +12,19 @@ export const VALUE_META = { accessorKey: 'value', header: 'Value' }
 interface Props {
   amountChange: BigNumber
   value: string
-  type: 'deposits' | 'borrowing' | 'lending' | 'vault'
+  type: PositionType
 }
 
-export const valueSortingFn = (a: Row<AccountBalanceRow>, b: Row<AccountBalanceRow>): number => {
+export const valueBalancesSortingFn = (
+  a: Row<AccountBalanceRow>,
+  b: Row<AccountBalanceRow>,
+): number => {
+  const valueA = BN(a.original.value)
+  const valueB = BN(b.original.value)
+  return valueA.minus(valueB).toNumber()
+}
+
+export const valuePerpSortingFn = (a: Row<AccountPerpRow>, b: Row<AccountPerpRow>): number => {
   const valueA = BN(a.original.value)
   const valueB = BN(b.original.value)
   return valueA.minus(valueB).toNumber()
@@ -30,10 +39,6 @@ export default function Value(props: Props) {
   })
 
   return (
-    <DisplayCurrency
-      coin={coin}
-      className={classNames('text-xs text-right', color)}
-      showZero={true}
-    />
+    <DisplayCurrency coin={coin} className={classNames('text-xs text-right', color)} showZero />
   )
 }

@@ -22,7 +22,7 @@ export default function PnL(props: Props) {
       type='info'
       underline
     >
-      <DisplayCurrency className='inline text-xs' coin={props.pnl} isProfitOrLoss />
+      <DisplayCurrency className='inline text-xs' coin={props.pnl} isProfitOrLoss showZero />
     </Tooltip>
   )
 }
@@ -34,13 +34,18 @@ type PnLTooltipProps = {
 
 function PnLTooltip(props: PnLTooltipProps) {
   return (
-    <div className='flex flex-col gap-2 w-full'>
+    <div className='flex flex-col w-full gap-2'>
       {[props.realized, props.unrealized].map((coin, i) => (
-        <div key={i} className='flex w-full text-white/60 space-between items-center gap-8'>
-          <Text className='mr-auto' size='sm'>
+        <div key={i} className='flex items-center w-full gap-8 space-between'>
+          <Text className='mr-auto text-white/60' size='sm'>
             {i === 0 ? 'Realized' : 'Unrealized'} PnL
           </Text>
-          <DisplayCurrency coin={coin} className='self-end text-end' isProfitOrLoss />
+          <DisplayCurrency
+            coin={coin}
+            className='self-end text-sm text-end'
+            isProfitOrLoss
+            showZero
+          />
         </div>
       ))}
     </div>

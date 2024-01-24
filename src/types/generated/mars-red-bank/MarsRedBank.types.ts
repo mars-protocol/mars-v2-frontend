@@ -264,7 +264,7 @@ export interface UserDebtResponse {
 }
 export type ArrayOfUserDebtResponse = UserDebtResponse[]
 export type UserHealthStatus =
-  | 'not_borrowing'
+  | 'not_borrow'
   | {
       borrowing: {
         liq_threshold_hf: Decimal

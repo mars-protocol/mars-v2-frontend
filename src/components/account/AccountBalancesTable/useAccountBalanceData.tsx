@@ -38,7 +38,7 @@ export default function useAccountBalanceData(props: Props) {
         : 0
       const prevDeposit = updatedAccount ? account?.deposits.find(byDenom(deposit.denom)) : deposit
       deposits.push(
-        getAssetAccountBalanceRow('deposits', asset, prices, assets, deposit, apy, prevDeposit),
+        getAssetAccountBalanceRow('deposit', asset, prices, assets, deposit, apy, prevDeposit),
       )
     })
 
@@ -50,7 +50,7 @@ export default function useAccountBalanceData(props: Props) {
       const prevLending = updatedAccount
         ? account?.lends.find((position) => position.denom === lending.denom)
         : lending
-      return getAssetAccountBalanceRow('lending', asset, prices, assets, lending, apy, prevLending)
+      return getAssetAccountBalanceRow('lend', asset, prices, assets, lending, apy, prevLending)
     })
 
     const vaults = accountVaults.map((vault) => {
@@ -67,7 +67,7 @@ export default function useAccountBalanceData(props: Props) {
       const prevDebt = updatedAccount
         ? account?.debts.find((position) => position.denom === debt.denom)
         : debt
-      return getAssetAccountBalanceRow('borrowing', asset, prices, assets, debt, apy, prevDebt)
+      return getAssetAccountBalanceRow('borrow', asset, prices, assets, debt, apy, prevDebt)
     })
     return [...deposits, ...lends, ...vaults, ...debts]
   }, [

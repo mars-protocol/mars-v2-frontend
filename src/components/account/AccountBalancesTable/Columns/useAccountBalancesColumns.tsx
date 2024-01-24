@@ -11,7 +11,7 @@ import Size, {
 } from 'components/account/AccountBalancesTable/Columns/Size'
 import Value, {
   VALUE_META,
-  valueSortingFn,
+  valueBalancesSortingFn,
 } from 'components/account/AccountBalancesTable/Columns/Value'
 import useMarketAssets from 'hooks/markets/useMarketAssets'
 import useHealthComputer from 'hooks/useHealthComputer'
@@ -41,7 +41,7 @@ export default function useAccountBalancesColumns(
             type={row.original.type}
           />
         ),
-        sortingFn: valueSortingFn,
+        sortingFn: valueBalancesSortingFn,
       },
       {
         ...SIZE_META,
