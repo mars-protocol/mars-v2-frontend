@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 
 import { BN_ZERO } from 'constants/math'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
-import useCurrentAccount from 'hooks/useCurrentAccount'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getAccountNetValue } from 'utils/accounts'

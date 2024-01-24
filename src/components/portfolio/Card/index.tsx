@@ -35,7 +35,7 @@ export default function PortfolioCard(props: Props) {
   const { data: prices } = usePrices()
   const currentAccountId = useAccountId()
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
-  const { data } = useBorrowMarketAssetsTableData(false)
+  const data = useBorrowMarketAssetsTableData()
   const { data: hlsStrategies } = useHLSStakingAssets()
   const [searchParams] = useSearchParams()
   const assets = useAllAssets()

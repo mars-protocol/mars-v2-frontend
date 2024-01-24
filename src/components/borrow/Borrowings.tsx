@@ -5,7 +5,7 @@ import useBorrowEnabledAssets from 'hooks/assets/useBorrowEnabledAssets'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 
 export default function Borrowings() {
-  const { data } = useBorrowMarketAssetsTableData()
+  const data = useBorrowMarketAssetsTableData()
 
   if (!data?.allAssets?.length) {
     return <Fallback />

@@ -42,7 +42,7 @@ export default function AccountComposition(props: Props) {
   const { data: prices } = usePrices()
   const { data: hlsStrategies } = useHLSStakingAssets()
   const assets = useAllAssets()
-  const { data } = useBorrowMarketAssetsTableData(false)
+  const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
     useLendingMarketAssetsTableData()

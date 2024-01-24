@@ -1,10 +1,10 @@
 import classNames from 'classnames'
 import { HTMLAttributes, useCallback, useMemo } from 'react'
 
-import Accordion from 'components/common/Accordion'
 import AccountBalancesTable from 'components/account/AccountBalancesTable'
 import AccountComposition from 'components/account/AccountComposition'
 import HealthBar from 'components/account/Health/HealthBar'
+import Accordion from 'components/common/Accordion'
 import Card from 'components/common/Card'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
@@ -44,7 +44,7 @@ export default function AccountSummary(props: Props) {
         : BN_ZERO,
     [props.account, updatedAccount, prices, assets],
   )
-  const { data } = useBorrowMarketAssetsTableData(false)
+  const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
     useLendingMarketAssetsTableData()

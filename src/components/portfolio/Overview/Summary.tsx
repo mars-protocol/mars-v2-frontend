@@ -19,7 +19,7 @@ export default function PortfolioSummary() {
   const { address: urlAddress } = useParams()
   const walletAddress = useStore((s) => s.address)
   const { data: prices } = usePrices()
-  const { data } = useBorrowMarketAssetsTableData(false)
+  const data = useBorrowMarketAssetsTableData()
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const { data: accounts } = useAccounts('default', urlAddress || walletAddress)

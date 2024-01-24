@@ -3,13 +3,13 @@ import { useCallback, useMemo } from 'react'
 
 import DoubleLogo from 'components/common/DoubleLogo'
 import { InfoCircle } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
 import Modal from 'components/Modals/Modal'
 import VaultModalContent from 'components/Modals/Vault/VaultModalContent'
 import VaultModalContentHeader from 'components/Modals/Vault/VaultModalContentHeader'
-import Text from 'components/common/Text'
-import { Tooltip } from 'components/common/Tooltip'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAsset from 'hooks/assets/useAsset'
-import useCurrentAccount from 'hooks/useCurrentAccount'
 import useStore from 'store'
 
 export default function VaultModalController() {

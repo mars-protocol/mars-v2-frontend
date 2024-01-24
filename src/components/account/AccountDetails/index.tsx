@@ -19,11 +19,11 @@ import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useAccounts from 'hooks/accounts/useAccounts'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useAccountId from 'hooks/useAccountId'
 import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
-import useCurrentAccount from 'hooks/useCurrentAccount'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
@@ -91,7 +91,7 @@ function AccountDetails(props: Props) {
     return updatedLeverage
   }, [updatedAccount, prices, leverage, assets])
 
-  const { data } = useBorrowMarketAssetsTableData(false)
+  const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
 
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
