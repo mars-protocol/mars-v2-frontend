@@ -1,16 +1,14 @@
 import { useShuttle } from '@delphi-labs/shuttle-react'
+import moment from 'moment'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import QRCode from 'react-qr-code'
-import moment from 'moment'
 
-import Button from 'components/Button'
-import FullOverlayContent from 'components/FullOverlayContent'
-import { ChevronLeft, ChevronRight } from 'components/Icons'
-import Text from 'components/Text'
+import Button from 'components/common/Button'
+import FullOverlayContent from 'components/common/FullOverlayContent'
+import { ChevronLeft, ChevronRight } from 'components/common/Icons'
+import Text from 'components/common/Text'
 import WalletConnecting from 'components/Wallet/WalletConnecting'
-import { CHAINS } from 'constants/chains'
-import { ENV } from 'constants/env'
 import { WALLETS } from 'constants/wallets'
 import useStore from 'store'
 import { WalletID } from 'types/enums/wallet'
@@ -31,9 +29,6 @@ interface WalletOptionProps {
   handleClick: () => void
   showLoader?: boolean
 }
-
-const currentChainId = ENV.CHAIN_ID
-const currentChain = CHAINS[currentChainId]
 
 function WalletOption(props: WalletOptionProps) {
   return (
@@ -57,6 +52,7 @@ function WalletOption(props: WalletOptionProps) {
 }
 
 export default function WalletSelect(props: Props) {
+  const chainConfig = useStore((s) => s.chainConfig)
   const { extensionProviders, mobileProviders, mobileConnect } = useShuttle()
   const [qrCodeUrl, setQRCodeUrl] = useState('')
   const [error, setError] = useState(props.error)
@@ -138,7 +134,7 @@ export default function WalletSelect(props: Props) {
   return (
     <FullOverlayContent
       title={'Connect your wallet'}
-      copy={`Deposit assets from your ${currentChain.name} address to your Mars Credit Account.`}
+      copy={`Deposit assets from your ${chainConfig.name} address to your Mars Credit Account.`}
       docs='wallet'
     >
       <div className='flex flex-wrap w-full gap-3'>
@@ -149,7 +145,7 @@ export default function WalletSelect(props: Props) {
               return (
                 <React.Fragment key={walletId}>
                   {Array.from(provider.networks.values())
-                    .filter((network) => network.chainId === currentChainId)
+                    .filter((network) => network.chainId === chainConfig.id)
                     .map((network) => {
                       if (!provider.initialized && !provider.initializing) {
                         return (
@@ -169,7 +165,7 @@ export default function WalletSelect(props: Props) {
                           key={`${walletId}-${network.chainId}`}
                           handleClick={() => handleConnectClick(walletId)}
                           imageSrc={WALLETS[walletId].imageURL}
-                          name={WALLETS[walletId].name ?? 'Conenct Wallet'}
+                          name={WALLETS[walletId].name ?? 'Connect Wallet'}
                         />
                       )
                     })}
@@ -183,7 +179,7 @@ export default function WalletSelect(props: Props) {
           return (
             <React.Fragment key={walletId}>
               {Array.from(provider.networks.values())
-                .filter((network) => network.chainId === currentChainId)
+                .filter((network) => network.chainId === chainConfig.id)
                 .map((network) => {
                   return (
                     <WalletOption

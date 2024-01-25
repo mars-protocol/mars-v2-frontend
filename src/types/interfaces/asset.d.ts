@@ -1,72 +1,30 @@
-interface Asset {
-  color: string
-  name: string
+interface Asset extends AssetMetaData {
   denom: string
-  symbol:
-    | 'AKT'
-    | 'ATOM'
-    | 'AXL'
-    | 'DYDX'
-    | 'INJ'
-    | 'MARS'
-    | 'OSMO'
-    | 'stATOM'
-    | 'stOSMO'
-    | 'TIA'
-    | 'USDC.axl'
-    | 'USDC'
-    | 'USDT'
-    | 'WBTC.axl'
-    | 'WETH.axl'
-    | 'OSMO-USDC.n'
-    | 'OSMO-ATOM'
-    | 'OSMO-USDC.axl'
-    | 'OSMO-WETH.axl'
-    | 'OSMO-WBTC.axl'
-    | 'stATOM-ATOM'
-    | '$'
-  id:
-    | 'AKT'
-    | 'ATOM'
-    | 'AXL'
-    | 'DYDX'
-    | 'INJ'
-    | 'axlUSDC'
-    | 'axlWBTC'
-    | 'axlWETH'
-    | 'MARS'
-    | 'OSMO'
-    | 'stATOM'
-    | 'stOSMO'
-    | 'TIA'
-    | 'USD'
-    | 'USDC'
-    | 'USDT'
-    | 'OSMO-USDC.n'
-    | 'gamm/pool/12'
-    | 'gamm/pool/1'
-    | 'gamm/pool/678'
-    | 'gamm/pool/704'
-    | 'gamm/pool/712'
-    | 'gamm/pool/803'
-  prefix?: string
-  contract_addr?: string
-  logo: string
-  decimals: number
-  hasOraclePrice: boolean
   poolId?: number
-  isEnabled: boolean
-  isMarket: boolean
-  isDisplayCurrency?: boolean
-  isStable?: boolean
-  isFavorite?: boolean
+  isPerpsEnabled?: boolean
+}
+
+interface AssetMetaData {
+  color: string
+  decimals: number
+  forceFetchPrice?: boolean
+  hasOraclePrice: boolean
+  id: string
   isAutoLendEnabled?: boolean
   isBorrowEnabled?: boolean
-  pythPriceFeedId?: string
-  pythHistoryFeedId?: string
-  forceFetchPrice?: boolean
-  testnetDenom?: string
+  isDisplayCurrency?: boolean
+  isEnabled: boolean
+  isFavorite?: boolean
+  isMarket: boolean
+  isStable?: boolean
   isStaking?: boolean
+  logo: string
+  name: string
+  prefix?: string
+  pythFeedName?: string
+  pythPriceFeedId?: string
+  symbol: string
+  testnetDenom?: string
 }
 
 interface AssetPair {
@@ -101,7 +59,7 @@ interface BorrowMarketTableData extends MarketTableData {
 }
 
 interface LendingMarketTableData extends MarketTableData {
-  accountLentAmount?: string
+  accountLentAmount?: BigNumber
   accountLentValue?: BigNumber
   borrowEnabled: boolean
   cap: DepositCap

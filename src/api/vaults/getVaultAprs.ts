@@ -1,17 +1,22 @@
 import { aprsCache, aprsCacheResponse, cacheFn } from 'api/cache'
-import { ENV } from 'constants/env'
 
-export default async function getAprs() {
+export default async function getAprs(chainConfig: ChainConfig) {
+  if (!chainConfig.farm) return []
   try {
     const response = await cacheFn(
-      () => fetch(ENV.URL_VAULT_APR),
+      () => fetch(chainConfig.endpoints.aprs.vaults),
       aprsCacheResponse,
-      'aprsResponse',
+      `${chainConfig.id}/aprsResponse`,
       60,
     )
 
     if (response.ok) {
-      const data: AprResponse = await cacheFn(() => response.json(), aprsCache, 'aprs', 60)
+      const data: AprResponse = await cacheFn(
+        () => response.json(),
+        aprsCache,
+        `${chainConfig.id}/aprs`,
+        60,
+      )
 
       return data.vaults.map((aprData) => {
         const finalApr = aprData.apr.projected_apr * 100

@@ -1,9 +1,9 @@
 import BigNumber from 'bignumber.js'
 import { useCallback, useMemo } from 'react'
 
-import Button from 'components/Button'
-import SummaryItems from 'components/SummaryItems'
-import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
+import Button from 'components/common/Button'
+import SummaryItems from 'components/common/SummaryItems'
+import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
 import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
@@ -28,7 +28,7 @@ export default function Repay(props: Props) {
   const repay = useStore((s) => s.repay)
 
   const currentDebt: BigNumber = useMemo(
-    () => props.account.debts.find(byDenom(props.borrowAsset.denom)).amount || BN_ZERO,
+    () => props.account.debts.find(byDenom(props.borrowAsset.denom))?.amount || BN_ZERO,
     [props.account.debts, props.borrowAsset.denom],
   )
 

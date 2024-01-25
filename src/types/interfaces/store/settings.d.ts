@@ -4,8 +4,10 @@ interface Settings {
   reduceMotion: boolean
   tradingPairSimple: TradingPair
   tradingPairAdvanced: TradingPair
-  lendAssets: boolean
+  perpsAsset: string
+  enableAutoLendGlobal: boolean
   slippage: number
   tutorial: boolean
   migrationBanner: boolean
+  updateOracle: boolean
 }

@@ -1,36 +1,34 @@
-import { useSearchParams } from 'react-router-dom'
 import useSWR from 'swr'
 
-import { ASSETS } from 'constants/assets'
-import { getAssetBySymbol } from 'utils/assets'
+import { BN_ZERO } from 'constants/math'
+import usePerpsAsset from 'hooks/perps/usePerpsAsset'
+import useChainConfig from 'hooks/useChainConfig'
+import useClients from 'hooks/useClients'
 import { BN } from 'utils/helpers'
 
 export default function usePerpsMarket() {
-  const [searchParams] = useSearchParams()
-  const perpsMarket = searchParams.get('perpsMarket') || ASSETS[0].symbol
-
-  const asset = getAssetBySymbol(perpsMarket)
+  const chainConfig = useChainConfig()
+  const { perpsAsset } = usePerpsAsset()
+  const clients = useClients()
 
   return useSWR(
-    `perpsMarket/${perpsMarket}`,
-    async () => {
-      await delay(3000)
-      if (!asset) return null
-      return {
-        asset,
-        fundingRate: BN(0.001432),
-        openInterest: {
-          long: BN(92901203),
-          short: BN(129891203),
-        },
-      } as PerpsMarket
-    },
+    clients && perpsAsset && `chains/${chainConfig.id}/perps/${perpsAsset.denom}`,
+    () => getPerpsMarket(clients!, perpsAsset!),
     {
-      fallbackData: null,
+      refreshInterval: 1000,
+      dedupingInterval: 1000,
     },
   )
 }
 
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
+async function getPerpsMarket(clients: ContractClients, asset: Asset) {
+  const denomState = await clients.perps.perpDenomState({ denom: asset.denom })
+  return {
+    fundingRate: BN(denomState.rate as any),
+    asset: asset,
+    openInterest: {
+      long: BN_ZERO,
+      short: BN_ZERO,
+    },
+  } as PerpsMarket
 }

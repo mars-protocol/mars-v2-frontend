@@ -1,18 +1,19 @@
 import BigNumber from 'bignumber.js'
 import { useMemo, useState } from 'react'
 
-import Button from 'components/Button'
-import DepositCapMessage from 'components/DepositCapMessage'
-import DisplayCurrency from 'components/DisplayCurrency'
-import Divider from 'components/Divider'
-import { Gauge } from 'components/Gauge'
-import { ArrowRight, ExclamationMarkCircled } from 'components/Icons'
-import Slider from 'components/Slider'
-import Switch from 'components/Switch'
-import Text from 'components/Text'
-import TokenInput from 'components/TokenInput'
+import Button from 'components/common/Button'
+import DepositCapMessage from 'components/common/DepositCapMessage'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import Divider from 'components/common/Divider'
+import { Gauge } from 'components/common/Gauge'
+import { ArrowRight, ExclamationMarkCircled } from 'components/common/Icons'
+import Slider from 'components/common/Slider'
+import Switch from 'components/common/Switch'
+import Text from 'components/common/Text'
+import TokenInput from 'components/common/TokenInput'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { accumulateAmounts } from 'utils/accounts'
@@ -41,6 +42,7 @@ export default function VaultDeposit(props: Props) {
     [account.deposits, account.lends, primaryAsset.denom, secondaryAsset.denom],
   )
   const { data: prices } = usePrices()
+  const assets = useAllAssets()
   const primaryPrice = prices.find(byDenom(primaryAsset.denom))?.amount ?? BN_ZERO
   const secondaryPrice = prices.find(byDenom(secondaryAsset.denom))?.amount ?? BN_ZERO
 
@@ -55,13 +57,13 @@ export default function VaultDeposit(props: Props) {
   }, [deposits, secondaryAsset.denom])
 
   const primaryValue = useMemo(
-    () => getValueFromBNCoins([primaryCoin], prices),
-    [primaryCoin, prices],
+    () => getValueFromBNCoins([primaryCoin], prices, assets),
+    [primaryCoin, prices, assets],
   )
 
   const totalValue = useMemo(
-    () => getValueFromBNCoins([primaryCoin, secondaryCoin], prices),
-    [primaryCoin, secondaryCoin, prices],
+    () => getValueFromBNCoins([primaryCoin, secondaryCoin], prices, assets),
+    [primaryCoin, secondaryCoin, prices, assets],
   )
 
   const primaryValuePercentage = useMemo(() => {

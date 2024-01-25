@@ -1,8 +1,8 @@
 import React from 'react'
 
-import DoubleLogo from 'components/DoubleLogo'
-import HLSTag from 'components/HLS/HLSTag'
-import Text from 'components/Text'
+import DoubleLogo from 'components/common/DoubleLogo'
+import HLSTag from 'components/hls/HLSTag'
+import Text from 'components/common/Text'
 
 interface Props {
   primaryAsset: Asset

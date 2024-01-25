@@ -1,3 +1,6 @@
+import { BN_ZERO } from 'constants/math'
+import { BNCoin } from 'types/classes/BNCoin'
+import { PnL, Positions } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import {
   AssetParamsBaseForAddr as AssetParams,
   AssetParamsBaseForAddr,
@@ -72,4 +75,33 @@ export function resolveHLSStrategies(
     )
   })
   return HLSStakingStrategies
+}
+
+export function resolvePerpsPositions(perpPositions: Positions['perps']): PerpsPosition[] {
+  if (!perpPositions) return []
+  return perpPositions.map((position) => {
+    return {
+      denom: position.denom,
+      baseDenom: position.base_denom,
+      amount: BN(position.size as any).abs(),
+      tradeDirection: BN(position.size as any).isNegative() ? 'short' : 'long',
+      closingFee: BNCoin.fromCoin(position.pnl.coins.closing_fee),
+      pnl: getPnlCoin(position.pnl.coins.pnl, position.base_denom),
+      entryPrice: BN(position.entry_price),
+    }
+  })
+}
+
+function getPnlCoin(pnl: PnL, denom: string): BNCoin {
+  let amount = BN_ZERO
+
+  if (pnl === 'break_even') return BNCoin.fromDenomAndBigNumber(denom, amount)
+
+  if ('loss' in (pnl as any)) {
+    amount = BN((pnl as any).loss.amount).times(-1)
+  } else if ('profit' in (pnl as { profit: Coin })) {
+    amount = BN((pnl as any).profit.amount)
+  }
+
+  return BNCoin.fromDenomAndBigNumber(denom, amount)
 }

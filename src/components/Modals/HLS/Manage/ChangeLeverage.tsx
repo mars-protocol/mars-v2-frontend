@@ -1,13 +1,14 @@
 import React, { useCallback, useMemo, useState } from 'react'
 
-import Button from 'components/Button'
+import Button from 'components/common/Button'
 import LeverageSummary from 'components/Modals/HLS/Deposit/LeverageSummary'
-import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
+import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
+import useAllAssets from 'hooks/assets/useAllAssets'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useHealthComputer from 'hooks/useHealthComputer'
-import useLocalStorage from 'hooks/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useStore from 'store'
@@ -28,6 +29,7 @@ interface Props {
 
 export default function ChangeLeverage(props: Props) {
   const { data: prices } = usePrices()
+  const assets = useAllAssets()
   const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
   const {
     updatedAccount,
@@ -83,10 +85,11 @@ export default function ChangeLeverage(props: Props) {
     const [deposits, lends, debts, vaults] = getAccountPositionValues(
       updatedAccount || props.account,
       prices,
+      assets,
     )
 
     return deposits.plus(lends).plus(debts).plus(vaults)
-  }, [prices, props.account, updatedAccount])
+  }, [assets, prices, props.account, updatedAccount])
 
   const handleOnClick = useCallback(() => {
     useStore.setState({ hlsManageModal: null })
@@ -98,17 +101,19 @@ export default function ChangeLeverage(props: Props) {
       props.borrowAsset.denom,
       slippage,
       prices,
+      assets,
     )
     changeHlsStakingLeverage({ accountId: props.account.id, actions })
   }, [
     currentDebt,
-    changeHlsStakingLeverage,
     previousDebt,
-    prices,
-    props.account.id,
-    props.borrowAsset.denom,
     props.collateralAsset.denom,
+    props.borrowAsset.denom,
+    props.account.id,
     slippage,
+    prices,
+    assets,
+    changeHlsStakingLeverage,
   ])
 
   const addedDepositAmount = useMemo(
@@ -132,20 +137,25 @@ export default function ChangeLeverage(props: Props) {
     const borrowLiquidity = props.borrowAsset.liquidity?.amount || BN_ZERO
 
     if (borrowLiquidity.isLessThan(currentDebt.minus(previousDebt))) {
-      messages.push(getLiquidityMessage(props.borrowAsset.denom, borrowLiquidity))
+      messages.push(getLiquidityMessage(props.borrowAsset.denom, borrowLiquidity, assets))
     }
 
     if (maxBorrowAmount.isLessThan(currentDebt)) {
-      messages.push(getHealthFactorMessage(props.borrowAsset.denom, maxBorrowAmount, 'borrow'))
+      messages.push(
+        getHealthFactorMessage(props.borrowAsset.denom, maxBorrowAmount, 'borrow', assets),
+      )
     }
 
     if (addedDepositAmount.isGreaterThan(depositCapLeft)) {
-      messages.push(getDepositCapMessage(props.collateralAsset.denom, depositCapLeft, 'borrow'))
+      messages.push(
+        getDepositCapMessage(props.collateralAsset.denom, depositCapLeft, 'borrow', assets),
+      )
     }
 
     return messages
   }, [
     addedDepositAmount,
+    assets,
     currentDebt,
     depositCapLeft,
     maxBorrowAmount,

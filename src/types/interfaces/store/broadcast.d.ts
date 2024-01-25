@@ -1,6 +1,3 @@
-const BNCoin = import('types/classes/BNCoin').BNCoin
-const ActionCoin = import('types/generated').ActionCoin
-
 interface BroadcastResult {
   result?: import('@delphi-labs/shuttle-react').BroadcastResult
   error?: string
@@ -73,6 +70,8 @@ interface HandleResponseProps {
     | 'swap'
     | 'oracle'
     | 'hls-staking'
+    | 'open-perp'
+    | 'close-perp'
   lend?: boolean
   accountId?: string
   changes?: {
@@ -117,8 +116,13 @@ interface BroadcastSlice {
     kind: import('types/generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind
   }) => Promise<boolean>
   execute: (contract: string, msg: ExecuteMsg, funds: Coin[]) => Promise<BroadcastResult>
-  executeMsg: (options: { messages: MsgExecuteContract[] }) => Promise<BroadcastResult>
+  executeMsg: (options: {
+    messages: MsgExecuteContract[]
+    isPythUpdate?: boolean
+  }) => Promise<BroadcastResult>
   lend: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
+  closePerpPosition: (options: { accountId: string; denom: string }) => Promise<boolean>
+  openPerpPosition: (options: { accountId: string; coin: BNCoin }) => Promise<boolean>
   reclaim: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
   repay: (options: {
     accountId: string
@@ -144,7 +148,8 @@ interface BroadcastSlice {
     vault: DepositedVault
     amount: string
   }) => Promise<boolean>
-  updateOracle: (pricesData: string[]) => Promise<boolean>
+  updateOracle: () => Promise<boolean>
+  getPythVaas: () => Promise<import('@delphi-labs/shuttle-react').MsgExecuteContract>
   withdrawFromVaults: (options: {
     accountId: string
     vaults: DepositedVault[]

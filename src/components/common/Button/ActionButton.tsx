@@ -1,0 +1,50 @@
+import { useCallback } from 'react'
+
+import AccountCreateFirst from 'components/account/AccountCreateFirst'
+import { ACCOUNT_MENU_BUTTON_ID } from 'components/account/AccountMenuContent'
+import Button from 'components/common/Button/index'
+import { Account, PlusCircled } from 'components/common/Icons'
+import WalletConnectButton from 'components/Wallet/WalletConnectButton'
+import useAccountIds from 'hooks/accounts/useAccountIds'
+import useAccountId from 'hooks/useAccountId'
+import useStore from 'store'
+
+export default function ActionButton(props: ButtonProps) {
+  const { className, color, variant, size } = props
+  const defaultProps = { className, color, variant, size }
+  const address = useStore((s) => s.address)
+
+  const { data: accountIds } = useAccountIds(address || '')
+  const selectedAccountId = useAccountId()
+
+  const handleCreateAccountClick = useCallback(() => {
+    useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
+  }, [])
+
+  if (!address) return <WalletConnectButton {...defaultProps} />
+
+  if (accountIds && accountIds.length === 0) {
+    return (
+      <Button
+        onClick={handleCreateAccountClick}
+        leftIcon={<PlusCircled />}
+        text='Create Account'
+        {...defaultProps}
+      />
+    )
+  }
+
+  if (!selectedAccountId) {
+    return (
+      <Button
+        text='Select Account'
+        onClick={() => document.getElementById(ACCOUNT_MENU_BUTTON_ID)?.click()}
+        leftIcon={<Account />}
+        rightIcon={undefined}
+        {...defaultProps}
+      />
+    )
+  }
+
+  return <Button {...props} />
+}

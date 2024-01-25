@@ -1,3 +1,0 @@
-interface CurrencySlice {
-  baseCurrency: Asset
-}

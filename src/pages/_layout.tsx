@@ -3,17 +3,17 @@ import { Suspense } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useLocation } from 'react-router-dom'
 
-import AccountDetails from 'components/Account/AccountDetails'
-import Background from 'components/Background'
-import Footer from 'components/Footer'
-import DesktopHeader from 'components/Header/DesktopHeader'
+import AccountDetails from 'components/account/AccountDetails'
+import Background from 'components/common/Background'
+import Footer from 'components/common/Footer'
+import DesktopHeader from 'components/header/DesktopHeader'
 import ModalsContainer from 'components/Modals/ModalsContainer'
-import PageMetadata from 'components/PageMetadata'
-import Toaster from 'components/Toaster'
+import PageMetadata from 'components/common/PageMetadata'
+import Toaster from 'components/common/Toaster'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useAccountId from 'hooks/useAccountId'
-import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
 
 interface Props {
@@ -48,11 +48,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
   const focusComponent = useStore((s) => s.focusComponent)
   const address = useStore((s) => s.address)
+
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
   )
-
   const accountDetailsExpanded = useStore((s) => s.accountDetailsExpanded)
   const isFullWidth =
     location.pathname.includes('trade') ||

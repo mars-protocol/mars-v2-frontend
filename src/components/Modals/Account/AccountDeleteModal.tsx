@@ -1,13 +1,14 @@
 import { useCallback, useMemo } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
-import AssetBalanceRow from 'components/Asset/AssetBalanceRow'
-import { ArrowRight, ExclamationMarkCircled } from 'components/Icons'
+import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
+import { ArrowRight, ExclamationMarkCircled } from 'components/common/Icons'
 import AccountDeleteAlertDialog from 'components/Modals/Account/AccountDeleteAlertDialog'
-import Text from 'components/Text'
+import Text from 'components/common/Text'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { getAssetByDenom } from 'utils/assets'
+import { byDenom } from 'utils/array'
 import { combineBNCoins } from 'utils/parsers'
 import { getPage, getRoute } from 'utils/route'
 
@@ -31,7 +32,7 @@ function AccountDeleteModal(props: Props) {
   const { address } = useParams()
   const { debts, vaults, id: accountId } = modal || {}
   const [searchParams] = useSearchParams()
-
+  const assets = useAllAssets()
   const closeDeleteAccountModal = useCallback(() => {
     useStore.setState({ accountDeleteModal: null })
   }, [])
@@ -117,7 +118,7 @@ function AccountDeleteModal(props: Props) {
           <div className='flex flex-col w-full gap-4 py-4 overflow-y-scroll max-h-100 scrollbar-hide'>
             {depositsAndLends.map((position, index) => {
               const coin = BNCoin.fromDenomAndBigNumber(position.denom, position.amount)
-              const asset = getAssetByDenom(position.denom)
+              const asset = assets.find(byDenom(position.denom))
               if (!asset) return null
               return <AssetBalanceRow key={index} asset={asset} coin={coin} />
             })}

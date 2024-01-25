@@ -1,22 +1,23 @@
 import moment from 'moment'
 import { useCallback, useMemo } from 'react'
 
-import DoubleLogo from 'components/DoubleLogo'
-import { InfoCircle } from 'components/Icons'
-import Modal from 'components/Modal'
+import DoubleLogo from 'components/common/DoubleLogo'
+import { InfoCircle } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
+import Modal from 'components/Modals/Modal'
 import VaultModalContent from 'components/Modals/Vault/VaultModalContent'
 import VaultModalContentHeader from 'components/Modals/Vault/VaultModalContentHeader'
-import Text from 'components/Text'
-import { Tooltip } from 'components/Tooltip'
-import { ASSETS } from 'constants/assets'
-import useCurrentAccount from 'hooks/useCurrentAccount'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useAsset from 'hooks/assets/useAsset'
 import useStore from 'store'
 
 export default function VaultModalController() {
   const currentAccount = useCurrentAccount()
   const modal = useStore((s) => s.vaultModal)
-  const primaryAsset = ASSETS.find((asset) => asset.denom === modal?.vault.denoms.primary)
-  const secondaryAsset = ASSETS.find((asset) => asset.denom === modal?.vault.denoms.secondary)
+
+  const primaryAsset = useAsset(modal?.vault.denoms.primary || '')
+  const secondaryAsset = useAsset(modal?.vault.denoms.secondary || '')
 
   if (!modal || !currentAccount || !primaryAsset || !secondaryAsset) return null
 

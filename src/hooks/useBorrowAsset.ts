@@ -1,4 +1,4 @@
-import useMarketBorrowings from 'hooks/useMarketBorrowings'
+import useMarketBorrowings from 'hooks/markets/useMarketBorrowings'
 import { byDenom } from 'utils/array'
 
 export default function useBorrowAsset(denom: string) {

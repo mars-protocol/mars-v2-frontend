@@ -40,6 +40,16 @@
   cursor: pointer;
 }
 
+.layout__area--center {
+  background: var(--tv-background) !important;
+}
+
+.chart-widget.chart-widget--themed-dark.chart-widget__top--themed-dark.chart-widget__bottom--themed-dark
+  > table
+  canvas {
+  background: transparent !important;
+}
+
 /* Floating menu */
 .floating-toolbar-react-widgets__button:hover,
 [class^='button-']:hover:before {

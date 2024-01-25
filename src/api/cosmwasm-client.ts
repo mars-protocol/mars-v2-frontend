@@ -1,6 +1,5 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 
-import { ENV } from 'constants/env'
 import { ICNSQueryClient } from 'types/classes/ICNSClient.client'
 import { MarsAccountNftQueryClient } from 'types/generated/mars-account-nft/MarsAccountNft.client'
 import { MarsCreditManagerQueryClient } from 'types/generated/mars-credit-manager/MarsCreditManager.client'
@@ -8,142 +7,187 @@ import { MarsIncentivesQueryClient } from 'types/generated/mars-incentives/MarsI
 import { MarsMockVaultQueryClient } from 'types/generated/mars-mock-vault/MarsMockVault.client'
 import { MarsOracleOsmosisQueryClient } from 'types/generated/mars-oracle-osmosis/MarsOracleOsmosis.client'
 import { MarsParamsQueryClient } from 'types/generated/mars-params/MarsParams.client'
+import { MarsPerpsQueryClient } from 'types/generated/mars-perps/MarsPerps.client'
 import { MarsRedBankQueryClient } from 'types/generated/mars-red-bank/MarsRedBank.client'
 import { MarsSwapperOsmosisQueryClient } from 'types/generated/mars-swapper-osmosis/MarsSwapperOsmosis.client'
 
-let _cosmWasmClient: CosmWasmClient
-let _accountNftQueryClient: MarsAccountNftQueryClient
-let _creditManagerQueryClient: MarsCreditManagerQueryClient
-let _oracleQueryClient: MarsOracleOsmosisQueryClient
-let _redBankQueryClient: MarsRedBankQueryClient
-let _paramsQueryClient: MarsParamsQueryClient
-let _incentivesQueryClient: MarsIncentivesQueryClient
-let _swapperOsmosisClient: MarsSwapperOsmosisQueryClient
-let _ICNSQueryClient: ICNSQueryClient
+let _cosmWasmClient: Map<string, CosmWasmClient> = new Map()
+let _accountNftQueryClient: Map<string, MarsAccountNftQueryClient> = new Map()
+let _creditManagerQueryClient: Map<string, MarsCreditManagerQueryClient> = new Map()
+let _oracleQueryClient: Map<string, MarsOracleOsmosisQueryClient> = new Map()
+let _redBankQueryClient: Map<string, MarsRedBankQueryClient> = new Map()
+let _paramsQueryClient: Map<string, MarsParamsQueryClient> = new Map()
+let _incentivesQueryClient: Map<string, MarsIncentivesQueryClient> = new Map()
+let _swapperOsmosisClient: Map<string, MarsSwapperOsmosisQueryClient> = new Map()
+let _perpsClient: Map<string, MarsPerpsQueryClient> = new Map()
+let _ICNSQueryClient: Map<string, ICNSQueryClient> = new Map()
 
-const getClient = async () => {
+const getClient = async (rpc: string) => {
   try {
-    if (!_cosmWasmClient) {
-      _cosmWasmClient = await CosmWasmClient.connect(ENV.URL_RPC)
+    if (!_cosmWasmClient.get(rpc)) {
+      const client = await CosmWasmClient.connect(rpc)
+      _cosmWasmClient.set(rpc, client)
     }
 
-    return _cosmWasmClient
+    return _cosmWasmClient.get(rpc)!
   } catch (error) {
     throw error
   }
 }
 
-const getAccountNftQueryClient = async () => {
+const getAccountNftQueryClient = async (chainConfig: ChainConfig) => {
   try {
-    if (!_accountNftQueryClient) {
-      const client = await getClient()
-      _accountNftQueryClient = new MarsAccountNftQueryClient(client, ENV.ADDRESS_ACCOUNT_NFT)
+    const contract = chainConfig.contracts.accountNft
+    const rpc = chainConfig.endpoints.rpc
+    const key = rpc + contract
+
+    if (!_accountNftQueryClient.get(key)) {
+      const client = await getClient(rpc)
+      _accountNftQueryClient.set(key, new MarsAccountNftQueryClient(client, contract))
     }
 
-    return _accountNftQueryClient
+    return _accountNftQueryClient.get(key)!
   } catch (error) {
     throw error
   }
 }
 
-const getCreditManagerQueryClient = async () => {
+const getCreditManagerQueryClient = async (chainConfig: ChainConfig) => {
   try {
-    if (!_creditManagerQueryClient) {
-      const client = await getClient()
-      _creditManagerQueryClient = new MarsCreditManagerQueryClient(
-        client,
-        ENV.ADDRESS_CREDIT_MANAGER,
-      )
+    const contract = chainConfig.contracts.creditManager
+    const rpc = chainConfig.endpoints.rpc
+    const key = rpc + contract
+
+    if (!_creditManagerQueryClient.get(key)) {
+      const client = await getClient(rpc)
+      _creditManagerQueryClient.set(key, new MarsCreditManagerQueryClient(client, contract))
     }
 
-    return _creditManagerQueryClient
+    return _creditManagerQueryClient.get(key)!
   } catch (error) {
     throw error
   }
 }
 
-const getParamsQueryClient = async () => {
+const getParamsQueryClient = async (chainConfig: ChainConfig) => {
   try {
-    if (!_paramsQueryClient) {
-      const client = await getClient()
-      _paramsQueryClient = new MarsParamsQueryClient(client, ENV.ADDRESS_PARAMS)
+    const contract = chainConfig.contracts.params
+    const rpc = chainConfig.endpoints.rpc
+    const key = rpc + contract
+
+    if (!_paramsQueryClient.get(key)) {
+      const client = await getClient(rpc)
+      _paramsQueryClient.set(key, new MarsParamsQueryClient(client, contract))
     }
 
-    return _paramsQueryClient
+    return _paramsQueryClient.get(key)!
   } catch (error) {
     throw error
   }
 }
 
-const getOracleQueryClient = async () => {
+const getOracleQueryClient = async (chainConfig: ChainConfig) => {
   try {
-    if (!_oracleQueryClient) {
-      const client = await getClient()
-      _oracleQueryClient = new MarsOracleOsmosisQueryClient(client, ENV.ADDRESS_ORACLE)
+    const contract = chainConfig.contracts.oracle
+    const rpc = chainConfig.endpoints.rpc
+    const key = rpc + contract
+
+    if (!_oracleQueryClient.get(key)) {
+      const client = await getClient(rpc)
+      _oracleQueryClient.set(key, new MarsOracleOsmosisQueryClient(client, contract))
     }
 
-    return _oracleQueryClient
+    return _oracleQueryClient.get(key)!
   } catch (error) {
     throw error
   }
 }
 
-const getRedBankQueryClient = async () => {
+const getRedBankQueryClient = async (chainConfig: ChainConfig) => {
   try {
-    if (!_redBankQueryClient) {
-      const client = await getClient()
-      _redBankQueryClient = new MarsRedBankQueryClient(client, ENV.ADDRESS_RED_BANK)
+    const contract = chainConfig.contracts.redBank
+    const rpc = chainConfig.endpoints.rpc
+    const key = rpc + contract
+
+    if (!_redBankQueryClient.get(key)) {
+      const client = await getClient(rpc)
+      _redBankQueryClient.set(key, new MarsRedBankQueryClient(client, contract))
     }
 
-    return _redBankQueryClient
+    return _redBankQueryClient.get(key)!
   } catch (error) {
     throw error
   }
 }
 
-const getVaultQueryClient = async (address: string) => {
+const getVaultQueryClient = async (chainConfig: ChainConfig, address: string) => {
   try {
-    const client = await getClient()
+    const client = await getClient(chainConfig.endpoints.rpc)
     return new MarsMockVaultQueryClient(client, address)
   } catch (error) {
     throw error
   }
 }
 
-const getIncentivesQueryClient = async () => {
+const getIncentivesQueryClient = async (chainConfig: ChainConfig) => {
   try {
-    if (!_incentivesQueryClient) {
-      const client = await getClient()
-      _incentivesQueryClient = new MarsIncentivesQueryClient(client, ENV.ADDRESS_INCENTIVES)
+    const contract = chainConfig.contracts.incentives
+    const rpc = chainConfig.endpoints.rpc
+    const key = rpc + contract
+    if (!_incentivesQueryClient.get(key)) {
+      const client = await getClient(rpc)
+      _incentivesQueryClient.set(key, new MarsIncentivesQueryClient(client, contract))
     }
 
-    return _incentivesQueryClient
+    return _incentivesQueryClient.get(key)!
   } catch (error) {
     throw error
   }
 }
 
-const getSwapperQueryClient = async () => {
+const getSwapperQueryClient = async (chainConfig: ChainConfig) => {
   try {
-    if (!_swapperOsmosisClient) {
-      const client = await getClient()
-      _swapperOsmosisClient = new MarsSwapperOsmosisQueryClient(client, ENV.ADDRESS_SWAPPER)
+    const contract = chainConfig.contracts.swapper
+    const rpc = chainConfig.endpoints.rpc
+    const key = rpc + contract
+    if (!_swapperOsmosisClient.get(key)) {
+      const client = await getClient(rpc)
+      _swapperOsmosisClient.set(key, new MarsSwapperOsmosisQueryClient(client, contract))
     }
 
-    return _swapperOsmosisClient
+    return _swapperOsmosisClient.get(key)!
   } catch (error) {
     throw error
   }
 }
 
-const getICNSQueryClient = async () => {
+const getPerpsQueryClient = async (chainConfig: ChainConfig) => {
   try {
-    if (!_ICNSQueryClient) {
-      const client = await getClient()
-      _ICNSQueryClient = new ICNSQueryClient(client)
+    const contract = chainConfig.contracts.perps
+    const rpc = chainConfig.endpoints.rpc
+    const key = rpc + contract
+    if (!_perpsClient.get(key)) {
+      const client = await getClient(rpc)
+      _perpsClient.set(key, new MarsPerpsQueryClient(client, contract))
     }
 
-    return _ICNSQueryClient
+    return _perpsClient.get(key)!
+  } catch (error) {
+    throw error
+  }
+}
+
+const getICNSQueryClient = async (chainConfig: ChainConfig) => {
+  try {
+    const contract = chainConfig.contracts.params
+    const rpc = chainConfig.endpoints.rpc
+    const key = rpc + contract
+    if (!_ICNSQueryClient.get(key)) {
+      const client = await getClient(rpc)
+      _ICNSQueryClient.set(key, new ICNSQueryClient(client))
+    }
+
+    return _ICNSQueryClient.get(key)!
   } catch (error) {
     throw error
   }
@@ -160,4 +204,5 @@ export {
   getRedBankQueryClient,
   getSwapperQueryClient,
   getVaultQueryClient,
+  getPerpsQueryClient,
 }

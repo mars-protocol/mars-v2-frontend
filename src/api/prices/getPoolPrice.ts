@@ -1,6 +1,5 @@
 import { cacheFn, poolPriceCache } from 'api/cache'
 import getPrice from 'api/prices/getPrice'
-import { ENV } from 'constants/env'
 import { BN_ONE } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom, byTokenDenom, partition } from 'utils/array'
@@ -17,28 +16,29 @@ interface PoolAsset {
 }
 
 export default async function getPoolPrice(
+  chainConfig: ChainConfig,
   asset: Asset,
   lookupPricesForBaseAsset?: BNCoin[],
 ): Promise<BigNumber> {
   if (!asset.poolId) throw 'given asset should have a poolId to fetch the price'
 
-  const [assetRate, baseAsset] = await getAssetRate(asset)
+  const [assetRate, baseAsset] = await getAssetRate(chainConfig, asset)
   const baseAssetPrice =
     (lookupPricesForBaseAsset &&
       lookupPricesForBaseAsset.find(byDenom(baseAsset.token.denom))?.amount) ||
-    (await getPrice(baseAsset.token.denom))
+    (await getPrice(chainConfig, baseAsset.token.denom))
 
   if (!baseAssetPrice) throw 'base asset price must be available on Pyth or in Oracle contract'
 
   return assetRate.multipliedBy(baseAssetPrice)
 }
 
-const getAssetRate = async (asset: Asset) => {
-  const url = `${ENV.URL_REST}osmosis/gamm/v1beta1/pools/${asset.poolId}`
+const getAssetRate = async (chainConfig: ChainConfig, asset: Asset) => {
+  const url = chainConfig.endpoints.pools.replace('POOL_ID', asset.poolId!.toString())
   const response = await cacheFn(
     () => fetch(url).then((res) => res.json()),
     poolPriceCache,
-    `poolPrices/${(asset.poolId || 0).toString()}`,
+    `${chainConfig.id}/poolPrices/${(asset.poolId || 0).toString()}`,
     60,
   )
   const pool = response.pool

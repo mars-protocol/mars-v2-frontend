@@ -1,12 +1,13 @@
 import { useMemo } from 'react'
 
+import { BN_ZERO } from 'constants/math'
+import useAllAssets from 'hooks/assets/useAllAssets'
+import useMarketDeposits from 'hooks/markets/useMarketDeposits'
+import useMarketLiquidities from 'hooks/markets/useMarketLiquidities'
 import useCurrentAccountLends from 'hooks/useCurrentAccountLends'
 import useDepositEnabledMarkets from 'hooks/useDepositEnabledMarkets'
 import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
-import useMarketDeposits from 'hooks/useMarketDeposits'
-import useMarketLiquidities from 'hooks/useMarketLiquidities'
 import { byDenom } from 'utils/array'
-import { getAssetByDenom } from 'utils/assets'
 import { BN } from 'utils/helpers'
 
 function useLendingMarketAssetsTableData(): {
@@ -19,16 +20,17 @@ function useLendingMarketAssetsTableData(): {
   const { data: marketLiquidities } = useMarketLiquidities()
   const { data: marketDeposits } = useMarketDeposits()
   const { convertAmount } = useDisplayCurrencyPrice()
+  const assets = useAllAssets()
 
   return useMemo(() => {
     const accountLentAssets: LendingMarketTableData[] = [],
       availableAssets: LendingMarketTableData[] = []
 
     markets.forEach(({ denom, cap, ltv, apy, borrowEnabled }) => {
-      const asset = getAssetByDenom(denom) as Asset
+      const asset = assets.find(byDenom(denom)) as Asset
       const marketDepositAmount = BN(marketDeposits.find(byDenom(denom))?.amount ?? 0)
       const marketLiquidityAmount = BN(marketLiquidities.find(byDenom(denom))?.amount ?? 0)
-      const accountLentAmount = accountLentAmounts.find(byDenom(denom))?.amount
+      const accountLentAmount = accountLentAmounts.find(byDenom(denom))?.amount ?? BN_ZERO
       const accountLentValue = accountLentAmount
         ? convertAmount(asset, accountLentAmount)
         : undefined
@@ -45,9 +47,11 @@ function useLendingMarketAssetsTableData(): {
         cap,
       }
 
-      ;(lendingMarketAsset.accountLentValue ? accountLentAssets : availableAssets).push(
-        lendingMarketAsset,
-      )
+      if (lendingMarketAsset.accountLentAmount?.isZero()) {
+        availableAssets.push(lendingMarketAsset)
+      } else {
+        accountLentAssets.push(lendingMarketAsset)
+      }
     })
 
     return {
@@ -55,7 +59,7 @@ function useLendingMarketAssetsTableData(): {
       availableAssets,
       allAssets: [...accountLentAssets, ...availableAssets],
     }
-  }, [markets, marketLiquidities, accountLentAmounts, marketDeposits, convertAmount])
+  }, [markets, assets, marketDeposits, marketLiquidities, accountLentAmounts, convertAmount])
 }
 
 export default useLendingMarketAssetsTableData

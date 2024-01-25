@@ -1,24 +1,26 @@
 import classNames from 'classnames'
 import { useCallback, useMemo, useState } from 'react'
 
-import AssetImage from 'components/Asset/AssetImage'
-import Button from 'components/Button'
-import { ArrowCircle, Enter } from 'components/Icons'
-import Modal from 'components/Modal'
+import Modal from 'components/Modals/Modal'
 import SettingsOptions from 'components/Modals/Settings/SettingsOptions'
 import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
-import NumberInput from 'components/NumberInput'
-import Select from 'components/Select'
-import Text from 'components/Text'
-import { TextLink } from 'components/TextLink'
+import Button from 'components/common/Button'
+import { ArrowCircle, Enter } from 'components/common/Icons'
+import NumberInput from 'components/common/NumberInput'
+import Select from 'components/common/Select'
+import Text from 'components/common/Text'
+import { TextLink } from 'components/common/TextLink'
+import AssetImage from 'components/common/assets/AssetImage'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
+import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
+import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
+import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useAlertDialog from 'hooks/useAlertDialog'
 import useAutoLend from 'hooks/useAutoLend'
-import useLocalStorage from 'hooks/useLocalStorage'
 import useStore from 'store'
-import { getDisplayCurrencies } from 'utils/assets'
 import { BN } from 'utils/helpers'
 
 const slippages = [0.02, 0.03]
@@ -26,15 +28,13 @@ const slippages = [0.02, 0.03]
 export default function SettingsModal() {
   const modal = useStore((s) => s.settingsModal)
   const { open: showResetDialog } = useAlertDialog()
-  const displayCurrencies = getDisplayCurrencies()
+  const displayCurrencies = useDisplayCurrencyAssets()
   const { setAutoLendOnAllAccounts } = useAutoLend()
   const [customSlippage, setCustomSlippage] = useState<number>(0)
   const [inputRef, setInputRef] = useState<React.RefObject<HTMLInputElement>>()
   const [isCustom, setIsCustom] = useState(false)
-  const [displayCurrency, setDisplayCurrency] = useLocalStorage<string>(
-    LocalStorageKeys.DISPLAY_CURRENCY,
-    DEFAULT_SETTINGS.displayCurrency,
-  )
+
+  const [displayCurrency, setDisplayCurrency] = useDisplayCurrency()
   const [reduceMotion, setReduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
@@ -43,13 +43,14 @@ export default function SettingsModal() {
     LocalStorageKeys.TUTORIAL,
     DEFAULT_SETTINGS.tutorial,
   )
-  const [lendAssets, setLendAssets] = useLocalStorage<boolean>(
-    LocalStorageKeys.LEND_ASSETS,
-    DEFAULT_SETTINGS.lendAssets,
-  )
+  const [enableAutoLendGlobal, setLendAssets] = useEnableAutoLendGlobal()
   const [slippage, setSlippage] = useLocalStorage<number>(
     LocalStorageKeys.SLIPPAGE,
     DEFAULT_SETTINGS.slippage,
+  )
+  const [updateOracle, setUpdateOracle] = useLocalStorage<boolean>(
+    LocalStorageKeys.UPDATE_ORACLE,
+    DEFAULT_SETTINGS.updateOracle,
   )
 
   const displayCurrenciesOptions = useMemo(
@@ -148,8 +149,15 @@ export default function SettingsModal() {
     handleDisplayCurrency(DEFAULT_SETTINGS.displayCurrency)
     handleSlippage(DEFAULT_SETTINGS.slippage)
     handleReduceMotion(DEFAULT_SETTINGS.reduceMotion)
-    handleLendAssets(DEFAULT_SETTINGS.lendAssets)
+    handleLendAssets(DEFAULT_SETTINGS.enableAutoLendGlobal)
   }, [handleDisplayCurrency, handleReduceMotion, handleLendAssets, handleSlippage])
+
+  const handleUpdateOracle = useCallback(
+    (value: boolean) => {
+      setUpdateOracle(value)
+    },
+    [setUpdateOracle],
+  )
 
   const showResetModal = useCallback(() => {
     showResetDialog({
@@ -193,10 +201,19 @@ export default function SettingsModal() {
     >
       <SettingsSwitch
         onChange={handleLendAssets}
-        name='lendAssets'
-        value={lendAssets}
+        name='enableAutoLendGlobal'
+        value={enableAutoLendGlobal}
         label='Lend assets in Credit Accounts'
         description='By turning this on you will automatically lend out all the assets you deposit into your Credit Accounts to earn yield.'
+        withStatus
+      />
+
+      <SettingsSwitch
+        onChange={handleUpdateOracle}
+        name='updateOracle'
+        value={updateOracle}
+        label='Update Pyth Oracles on transactions'
+        description={`When this setting is on, your Mars transactions will automatically trigger an update of Pyth's price oracles. This increases the accuracy of the prices shown in the UI. In some instances, this could cause your transactions to fail when using a Ledger hardware wallet. If you encounter transaction failures with Ledger, please turn this setting off.`}
         withStatus
       />
       <SettingsSwitch

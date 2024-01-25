@@ -2,20 +2,16 @@ import getAssetParams from 'api/params/getAssetParams'
 import getAprs from 'api/vaults/getVaultAprs'
 import { getVaultConfigs } from 'api/vaults/getVaultConfigs'
 import { getVaultUtilizations } from 'api/vaults/getVaultUtilizations'
-import { ENV } from 'constants/env'
-import { TESTNET_VAULTS_META_DATA, VAULTS_META_DATA } from 'constants/vaults'
-import { NETWORK } from 'types/enums/network'
 import { BN } from 'utils/helpers'
 import { convertAprToApy } from 'utils/parsers'
 import { resolveHLSStrategies } from 'utils/resolvers'
 
-export default async function getVaults(): Promise<Vault[]> {
-  const assetParams = await getAssetParams()
-  const vaultConfigs = await getVaultConfigs()
-  const $vaultUtilizations = getVaultUtilizations(vaultConfigs)
-  const $aprs = getAprs()
-  const vaultMetaDatas =
-    ENV.NETWORK === NETWORK.TESTNET ? TESTNET_VAULTS_META_DATA : VAULTS_META_DATA
+export default async function getVaults(chainConfig: ChainConfig): Promise<Vault[]> {
+  const assetParams = await getAssetParams(chainConfig)
+  const vaultConfigs = await getVaultConfigs(chainConfig)
+  const $vaultUtilizations = getVaultUtilizations(chainConfig, vaultConfigs)
+  const $aprs = getAprs(chainConfig)
+  const vaultMetaDatas = chainConfig.vaults
   const HLSAssets = assetParams.filter((asset) => asset.credit_manager.hls)
   const hlsStrategies = resolveHLSStrategies('vault', HLSAssets)
 

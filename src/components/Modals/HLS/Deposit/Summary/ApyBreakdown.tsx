@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { FormattedNumber } from 'components/FormattedNumber'
-import Text from 'components/Text'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import Text from 'components/common/Text'
 
 interface Props {
   items: { title: string; amount: number }[]

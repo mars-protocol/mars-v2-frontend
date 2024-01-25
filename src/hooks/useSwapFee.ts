@@ -1,16 +1,23 @@
 import useSWR from 'swr'
 
-import getSwapFees from 'api/swap/getPools'
-import { BN_ZERO } from 'constants/math'
-
-const STANDARD_SWAP_FEE = 0.002
+import getOsmosisSwapFee from 'api/swap/getOsmosisSwapFee'
+import useChainConfig from 'hooks/useChainConfig'
+import { ChainInfoID } from 'types/enums/wallet'
+import { STANDARD_SWAP_FEE } from 'utils/constants'
 
 export default function useSwapFee(poolIds: string[]) {
-  const { data: pools } = useSWR(`swapFees/${poolIds.join(',')}`, () => getSwapFees(poolIds))
+  const chainConfig = useChainConfig()
+  const { data: swapFee } = useSWR(
+    `chains/${chainConfig.id}/swapFees/${poolIds.join(',')}`,
+    () => {
+      if (chainConfig.id === ChainInfoID.Pion1) {
+        return STANDARD_SWAP_FEE
+      }
 
-  if (!pools?.length) return STANDARD_SWAP_FEE
+      return getOsmosisSwapFee(chainConfig, poolIds)
+    },
+    {},
+  )
 
-  return pools
-    .reduce((acc, pool) => acc.plus(pool?.pool_params?.swap_fee || STANDARD_SWAP_FEE), BN_ZERO)
-    .toNumber()
+  return swapFee ?? STANDARD_SWAP_FEE
 }

@@ -1,24 +1,18 @@
 import classNames from 'classnames'
 import moment from 'moment'
 
-import Card from 'components/Card'
-import Divider from 'components/Divider'
-import Text from 'components/Text'
-import { TextLink } from 'components/TextLink'
-import { generateToastContent } from 'components/Toaster'
-import { EXPLORER_TX_URL } from 'constants/explorer'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useLocalStorage from 'hooks/useLocalStorage'
+import Card from 'components/common/Card'
+import Divider from 'components/common/Divider'
+import Text from 'components/common/Text'
+import { TextLink } from 'components/common/TextLink'
+import { generateToastContent } from 'components/common/Toaster'
+import useTransactions from 'hooks/localStorage/useTransactions'
 import useStore from 'store'
 
 export default function RecentTransactions() {
   const address = useStore((s) => s.address)
-  const [transactions, setTransactions] = useLocalStorage<ToastStore>(
-    LocalStorageKeys.TRANSACTIONS,
-    {
-      recent: [],
-    },
-  )
+  const [transactions, setTransactions] = useTransactions()
+  const chainConfig = useStore((s) => s.chainConfig)
   const recentTransactions = transactions.recent
     .filter((tx) => tx.address === address)
     .sort((a, b) => (a.timestamp > b.timestamp ? -1 : 1))
@@ -47,7 +41,7 @@ export default function RecentTransactions() {
                     )}
                     contentClassName='p-4'
                     onClick={() => {
-                      if (hash) window.open(`${EXPLORER_TX_URL}${hash}`, '_blank')
+                      if (hash) window.open(`${chainConfig.endpoints.explorer}${hash}`, '_blank')
                     }}
                     key={hash}
                   >
@@ -62,7 +56,7 @@ export default function RecentTransactions() {
                         {message}
                       </Text>
                     )}
-                    {content?.length > 0 && generateToastContent(content)}
+                    {content?.length > 0 && generateToastContent(content, chainConfig.assets)}
                   </Card>
                 )
               })}

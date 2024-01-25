@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react'
 
-import Button from 'components/Button'
-import Modal from 'components/Modal'
+import Button from 'components/common/Button'
+import Modal from 'components/Modals/Modal'
 import WalletAssetsModalContent from 'components/Modals/WalletAssets/WalletAssetsModalContent'
-import Text from 'components/Text'
+import Text from 'components/common/Text'
 import useStore from 'store'
 
 export default function WalletAssetsModal() {

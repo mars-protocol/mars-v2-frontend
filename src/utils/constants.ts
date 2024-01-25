@@ -20,6 +20,5 @@ export const DEFAULT_PORTFOLIO_STATS = [
   { title: null, sub: 'Account Leverage' },
 ]
 
-export const ENABLE_HLS = true
-export const ENABLE_PERPS = false
 export const ENABLE_AUTO_REPAY = true
+export const STANDARD_SWAP_FEE = 0.002

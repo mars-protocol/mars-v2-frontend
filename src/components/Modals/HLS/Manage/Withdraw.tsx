@@ -1,8 +1,9 @@
-import React, { useCallback, useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
-import Button from 'components/Button'
-import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
+import Button from 'components/common/Button'
+import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import useHealthComputer from 'hooks/useHealthComputer'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useStore from 'store'
@@ -20,6 +21,7 @@ interface Props {
 export default function Withdraw(props: Props) {
   const { removedDeposits, removeDeposits, updatedAccount } = useUpdatedAccount(props.account)
   const { computeMaxWithdrawAmount } = useHealthComputer(updatedAccount)
+  const assets = useAllAssets()
   const withdraw = useStore((s) => s.withdraw)
   const handleChange = useCallback(
     (amount: BigNumber) =>
@@ -40,6 +42,7 @@ export default function Withdraw(props: Props) {
 
   const onClick = useCallback(() => {
     useStore.setState({ hlsManageModal: null })
+    if (!removedDeposit) return
     withdraw({
       accountId: props.account.id,
       coins: [{ coin: removedDeposit }],
@@ -52,10 +55,12 @@ export default function Withdraw(props: Props) {
 
   const warningMessages = useMemo(() => {
     if (maxWithdrawAmount.isLessThan(withdrawAmount) || maxWithdrawAmount.isZero()) {
-      return [getHealthFactorMessage(props.collateralAsset.denom, maxWithdrawAmount, 'withdraw')]
+      return [
+        getHealthFactorMessage(props.collateralAsset.denom, maxWithdrawAmount, 'withdraw', assets),
+      ]
     }
     return []
-  }, [maxWithdrawAmount, props.collateralAsset.denom, withdrawAmount])
+  }, [assets, maxWithdrawAmount, props.collateralAsset.denom, withdrawAmount])
 
   return (
     <>

@@ -1,9 +1,10 @@
-import { ENV } from 'constants/env'
-
-export default async function getWalletBalances(address: string): Promise<Coin[]> {
+export default async function getWalletBalances(
+  chainConfig: ChainConfig,
+  address: string,
+): Promise<Coin[]> {
   const uri = '/cosmos/bank/v1beta1/balances/'
 
-  const response = await fetch(`${ENV.URL_REST}${uri}${address}`)
+  const response = await fetch(`${chainConfig.endpoints.rest}${uri}${address}`)
 
   if (response.ok) {
     const data = await response.json()

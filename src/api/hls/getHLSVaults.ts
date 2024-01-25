@@ -4,10 +4,10 @@ import { getVaultConfigs } from 'api/vaults/getVaultConfigs'
 import { BN } from 'utils/helpers'
 import { resolveHLSStrategies } from 'utils/resolvers'
 
-export default async function getHLSVaults() {
-  const assetParams = await getAssetParams()
-  const client = await getCreditManagerQueryClient()
-  const vaultConfigs = await getVaultConfigs()
+export default async function getHLSVaults(chainConfig: ChainConfig) {
+  const assetParams = await getAssetParams(chainConfig)
+  const client = await getCreditManagerQueryClient(chainConfig)
+  const vaultConfigs = await getVaultConfigs(chainConfig)
   const HLSAssets = assetParams.filter((asset) => asset.credit_manager.hls)
   const strategies = resolveHLSStrategies('vault', HLSAssets)
 

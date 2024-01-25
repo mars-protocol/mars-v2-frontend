@@ -11,6 +11,7 @@ import {
 } from 'components/Modals/HLS/Deposit/SubTitles'
 import Summary from 'components/Modals/HLS/Deposit/Summary'
 import { BN_ZERO } from 'constants/math'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
@@ -47,6 +48,7 @@ interface Props {
 
 export default function useAccordionItems(props: Props) {
   const { data: prices } = usePrices()
+  const assets = useAllAssets()
 
   const depositCapLeft = useMemo(() => {
     if (!props.strategy) return BN_ZERO
@@ -62,9 +64,10 @@ export default function useAccordionItems(props: Props) {
     const value = getCoinValue(
       BNCoin.fromDenomAndBigNumber(props.borrowAsset.denom, props.borrowAmount),
       prices,
+      assets,
     )
-    return getCoinAmount(props.collateralAsset.denom, value, prices)
-  }, [prices, props.borrowAmount, props.borrowAsset.denom, props.collateralAsset])
+    return getCoinAmount(props.collateralAsset.denom, value, prices, assets)
+  }, [assets, prices, props.borrowAmount, props.borrowAsset.denom, props.collateralAsset.denom])
 
   const collateralWarningMessages = useMemo(() => {
     const messages: string[] = []
@@ -73,11 +76,14 @@ export default function useAccordionItems(props: Props) {
     }
 
     if (props.depositAmount.isGreaterThan(depositCapLeft)) {
-      messages.push(getDepositCapMessage(props.collateralAsset.denom, depositCapLeft, 'deposit'))
+      messages.push(
+        getDepositCapMessage(props.collateralAsset.denom, depositCapLeft, 'deposit', assets),
+      )
     }
 
     return messages
   }, [
+    assets,
     depositCapLeft,
     props.collateralAsset.denom,
     props.collateralAsset.symbol,
@@ -90,21 +96,22 @@ export default function useAccordionItems(props: Props) {
 
     if (props.borrowAmount.isGreaterThan(props.maxBorrowAmount)) {
       messages.push(
-        getHealthFactorMessage(props.borrowAsset.denom, props.maxBorrowAmount, 'borrow'),
+        getHealthFactorMessage(props.borrowAsset.denom, props.maxBorrowAmount, 'borrow', assets),
       )
     }
 
     if (props.borrowAmount.isGreaterThan(borrowLiquidity)) {
-      messages.push(getLiquidityMessage(props.borrowAsset.denom, borrowLiquidity))
+      messages.push(getLiquidityMessage(props.borrowAsset.denom, borrowLiquidity, assets))
     }
 
     if (additionalDepositFromSwap.plus(props.depositAmount).isGreaterThan(props.maxBorrowAmount)) {
-      messages.push(getDepositCapMessage(props.borrowAsset.denom, depositCapLeft, 'borrow'))
+      messages.push(getDepositCapMessage(props.borrowAsset.denom, depositCapLeft, 'borrow', assets))
     }
 
     return messages
   }, [
     additionalDepositFromSwap,
+    assets,
     borrowLiquidity,
     depositCapLeft,
     props.borrowAmount,

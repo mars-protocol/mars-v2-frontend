@@ -1,12 +1,11 @@
 interface CommonSlice {
-  accounts: Account[] | null
   address?: string
+  chainConfig: ChainConfig
   userDomain?: {
     domain: string
     domain_full: string
   }
   balances: Coin[]
-  hlsAccounts: Account[] | null
   client?: WalletClient
   isOpen: boolean
   selectedAccount: string | null

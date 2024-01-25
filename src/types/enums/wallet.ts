@@ -7,11 +7,13 @@ export enum WalletID {
   LeapMobile = 'mobile-leap-cosmos',
   LeapSnap = 'leap-metamask-cosmos-snap',
   Station = 'station',
+  Vectis = 'vectis-cosmos',
   Xdefi = 'xfi-cosmos',
 }
 
 export enum ChainInfoID {
   Osmosis1 = 'osmosis-1',
   OsmosisDevnet = 'devnet',
-  OsmosisTestnet = 'osmo-test-5',
+  Pion1 = 'pion-1',
+  Neutron1 = 'neutron-1',
 }

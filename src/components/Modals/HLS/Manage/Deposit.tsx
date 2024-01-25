@@ -1,14 +1,15 @@
 import BigNumber from 'bignumber.js'
 import React, { useCallback, useMemo } from 'react'
 
-import Button from 'components/Button'
-import Divider from 'components/Divider'
-import SummaryItems from 'components/SummaryItems'
-import Switch from 'components/Switch'
-import Text from 'components/Text'
-import TokenInputWithSlider from 'components/TokenInput/TokenInputWithSlider'
+import Button from 'components/common/Button'
+import Divider from 'components/common/Divider'
+import SummaryItems from 'components/common/SummaryItems'
+import Switch from 'components/common/Switch'
+import Text from 'components/common/Text'
+import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
-import useDepositActions from 'hooks/HLS/useDepositActions'
+import useAllAssets from 'hooks/assets/useAllAssets'
+import useDepositActions from 'hooks/hls/useDepositActions'
 import useBorrowAsset from 'hooks/useBorrowAsset'
 import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
 import useHealthComputer from 'hooks/useHealthComputer'
@@ -40,6 +41,7 @@ export default function Deposit(props: Props) {
     useUpdatedAccount(props.account)
   const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
 
+  const assets = useAllAssets()
   const { data: prices } = usePrices()
   const [keepLeverage, toggleKeepLeverage] = useToggle(true)
   const collateralAssetAmountInWallet = BN(
@@ -49,8 +51,8 @@ export default function Deposit(props: Props) {
   const borrowRate = useBorrowAsset(props.borrowAsset.denom)?.borrowRate || 0
 
   const currentLeverage = useMemo(
-    () => calculateAccountLeverage(props.account, prices).toNumber(),
-    [prices, props.account],
+    () => calculateAccountLeverage(props.account, prices, assets).toNumber(),
+    [prices, props.account, assets],
   )
 
   const depositCoin = useMemo(
@@ -83,7 +85,7 @@ export default function Deposit(props: Props) {
     )
 
     if (capLeft.isLessThan(depositCoin.amount.plus(addedDepositFromSwap))) {
-      messages.push(getDepositCapMessage(props.collateralAsset.denom, capLeft, 'deposit'))
+      messages.push(getDepositCapMessage(props.collateralAsset.denom, capLeft, 'deposit', assets))
     }
 
     if (collateralAssetAmountInWallet.isZero()) {
@@ -99,6 +101,7 @@ export default function Deposit(props: Props) {
     props.account.strategy.depositCap.used,
     props.collateralAsset.denom,
     props.collateralAsset.symbol,
+    assets,
   ])
 
   const maxBorrowAmount = useMemo(
@@ -109,17 +112,20 @@ export default function Deposit(props: Props) {
   const borrowWarningMessages = useMemo(() => {
     let messages: string[] = []
     if (borrowCoin.amount.isGreaterThan(maxBorrowAmount)) {
-      messages.push(getHealthFactorMessage(props.borrowAsset.denom, maxBorrowAmount, 'borrow'))
+      messages.push(
+        getHealthFactorMessage(props.borrowAsset.denom, maxBorrowAmount, 'borrow', assets),
+      )
     }
 
     const borrowLiquidity = props.borrowAsset.liquidity?.amount || BN_ZERO
 
     if (borrowCoin.amount.isGreaterThan(borrowLiquidity)) {
-      messages.push(getLiquidityMessage(props.borrowAsset.denom, borrowLiquidity))
+      messages.push(getLiquidityMessage(props.borrowAsset.denom, borrowLiquidity, assets))
     }
 
     return messages
   }, [
+    assets,
     borrowCoin.amount,
     maxBorrowAmount,
     props.borrowAsset.denom,
@@ -151,9 +157,10 @@ export default function Deposit(props: Props) {
         const depositValue = getCoinValue(
           BNCoin.fromDenomAndBigNumber(props.collateralAsset.denom, amount),
           prices,
+          assets,
         )
         const borrowValue = BN(currentLeverage - 1).times(depositValue)
-        additionalDebt = getCoinAmount(props.borrowAsset.denom, borrowValue, prices)
+        additionalDebt = getCoinAmount(props.borrowAsset.denom, borrowValue, prices, assets)
       }
 
       simulateHlsStakingDeposit(
@@ -168,6 +175,7 @@ export default function Deposit(props: Props) {
       props.borrowAsset.denom,
       props.collateralAsset.denom,
       simulateHlsStakingDeposit,
+      assets,
     ],
   )
 

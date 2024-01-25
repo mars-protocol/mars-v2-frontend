@@ -1,10 +1,16 @@
 import useSWR from 'swr'
 
 import getSwapRoute from 'api/swap/getSwapRoute'
+import useChainConfig from 'hooks/useChainConfig'
 
 export default function useSwapRoute(denomIn: string, denomOut: string) {
-  return useSWR(`swapRoute-${denomIn}-${denomOut}`, () => getSwapRoute(denomIn, denomOut), {
-    fallbackData: [],
-    revalidateOnFocus: false,
-  })
+  const chainConfig = useChainConfig()
+  return useSWR(
+    `swapRoute-${denomIn}-${denomOut}`,
+    () => getSwapRoute(chainConfig, denomIn, denomOut),
+    {
+      fallbackData: [],
+      revalidateOnFocus: false,
+    },
+  )
 }

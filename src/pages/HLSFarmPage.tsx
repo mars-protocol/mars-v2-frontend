@@ -1,7 +1,7 @@
-import Tab from 'components/Earn/Tab'
-import AvailableHLSVaults from 'components/HLS/Farm/AvailableHLSVaults'
-import HlsFarmIntro from 'components/HLS/Farm/HLSFarmIntro'
-import MigrationBanner from 'components/MigrationBanner'
+import Tab from 'components/earn/Tab'
+import AvailableHLSVaults from 'components/hls/Farm/AvailableHLSVaults'
+import HlsFarmIntro from 'components/hls/Farm/HLSFarmIntro'
+import MigrationBanner from 'components/common/MigrationBanner'
 import { HLS_TABS } from 'constants/pages'
 
 export default function HLSFarmPage() {

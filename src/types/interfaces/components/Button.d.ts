@@ -10,6 +10,7 @@ interface ButtonProps {
   text?: string | ReactNode
   variant?: 'solid' | 'transparent' | 'round' | 'rounded'
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
+  onMouseOver?: (e: React.MouseEvent<HTMLButtonElement>) => void
   leftIcon?: ReactElement
   rightIcon?: ReactElement
   iconClassName?: string

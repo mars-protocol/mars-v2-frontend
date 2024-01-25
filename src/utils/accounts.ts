@@ -3,32 +3,33 @@ import BigNumber from 'bignumber.js'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import { BNCoin } from 'types/classes/BNCoin'
-import {
-  Positions,
-  VaultPosition,
-} from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { VaultPosition } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { byDenom } from 'utils/array'
-import { getAssetByDenom } from 'utils/assets'
 import { BN } from 'utils/helpers'
 import { convertApyToApr } from 'utils/parsers'
 
 export const calculateAccountBalanceValue = (
   account: Account | AccountChange,
   prices: BNCoin[],
+  assets: Asset[],
 ): BigNumber => {
-  const depositsValue = calculateAccountValue('deposits', account, prices)
-  const lendsValue = calculateAccountValue('lends', account, prices)
-  const debtsValue = calculateAccountValue('debts', account, prices)
-  const vaultsValue = calculateAccountValue('vaults', account, prices)
+  const depositsValue = calculateAccountValue('deposits', account, prices, assets)
+  const lendsValue = calculateAccountValue('lends', account, prices, assets)
+  const debtsValue = calculateAccountValue('debts', account, prices, assets)
+  const vaultsValue = calculateAccountValue('vaults', account, prices, assets)
 
   return depositsValue.plus(lendsValue).plus(vaultsValue).minus(debtsValue)
 }
 
-export const getAccountPositionValues = (account: Account | AccountChange, prices: BNCoin[]) => {
-  const deposits = calculateAccountValue('deposits', account, prices)
-  const lends = calculateAccountValue('lends', account, prices)
-  const debts = calculateAccountValue('debts', account, prices)
-  const vaults = calculateAccountValue('vaults', account, prices)
+export const getAccountPositionValues = (
+  account: Account | AccountChange,
+  prices: BNCoin[],
+  assets: Asset[],
+) => {
+  const deposits = calculateAccountValue('deposits', account, prices, assets)
+  const lends = calculateAccountValue('lends', account, prices, assets)
+  const debts = calculateAccountValue('debts', account, prices, assets)
+  const vaults = calculateAccountValue('vaults', account, prices, assets)
   return [deposits, lends, debts, vaults]
 }
 
@@ -36,6 +37,7 @@ export const calculateAccountValue = (
   type: 'deposits' | 'lends' | 'debts' | 'vaults',
   account: Account | AccountChange,
   prices: BNCoin[],
+  assets: Asset[],
 ): BigNumber => {
   if (!account[type] || !prices) return BN_ZERO
 
@@ -51,14 +53,16 @@ export const calculateAccountValue = (
     )
   }
 
-  return account[type]?.reduce((acc, position) => {
-    const asset = getAssetByDenom(position.denom)
-    if (!asset) return acc
-    const price = prices.find((price) => price.denom === position.denom)?.amount ?? 0
-    const amount = BN(position.amount).shiftedBy(-asset.decimals)
-    const positionValue = amount.multipliedBy(price)
-    return acc.plus(positionValue)
-  }, BN_ZERO)
+  return (
+    account[type]?.reduce((acc, position) => {
+      const asset = assets.find(byDenom(position.denom))
+      if (!asset) return acc
+      const price = prices.find((price) => price.denom === position.denom)?.amount ?? 0
+      const amount = BN(position.amount).shiftedBy(-asset.decimals)
+      const positionValue = amount.multipliedBy(price)
+      return acc.plus(positionValue)
+    }, BN_ZERO) ?? BN_ZERO
+  )
 }
 
 export const calculateAccountApr = (
@@ -67,12 +71,13 @@ export const calculateAccountApr = (
   lendingAssetsData: LendingMarketTableData[],
   prices: BNCoin[],
   hlsStrategies: HLSStrategy[],
+  assets: Asset[],
   isHls?: boolean,
 ): BigNumber => {
-  const depositValue = calculateAccountValue('deposits', account, prices)
-  const lendsValue = calculateAccountValue('lends', account, prices)
-  const vaultsValue = calculateAccountValue('vaults', account, prices)
-  const debtsValue = calculateAccountValue('debts', account, prices)
+  const depositValue = calculateAccountValue('deposits', account, prices, assets)
+  const lendsValue = calculateAccountValue('lends', account, prices, assets)
+  const vaultsValue = calculateAccountValue('vaults', account, prices, assets)
+  const debtsValue = calculateAccountValue('debts', account, prices, assets)
   const totalValue = depositValue.plus(lendsValue).plus(vaultsValue)
   const totalNetValue = totalValue.minus(debtsValue)
 
@@ -86,7 +91,7 @@ export const calculateAccountApr = (
 
   if (isHls) {
     deposits?.forEach((deposit) => {
-      const asset = getAssetByDenom(deposit.denom)
+      const asset = assets.find(byDenom(deposit.denom))
       if (!asset) return BN_ZERO
       const price = prices.find(byDenom(deposit.denom))?.amount ?? 0
       const amount = BN(deposit.amount).shiftedBy(-asset.decimals)
@@ -103,7 +108,7 @@ export const calculateAccountApr = (
   }
 
   lends?.forEach((lend) => {
-    const asset = getAssetByDenom(lend.denom)
+    const asset = assets.find(byDenom(lend.denom))
     if (!asset) return BN_ZERO
     const price = prices.find(byDenom(lend.denom))?.amount ?? 0
     const amount = BN(lend.amount).shiftedBy(-asset.decimals)
@@ -126,7 +131,7 @@ export const calculateAccountApr = (
   })
 
   debts?.forEach((debt) => {
-    const asset = getAssetByDenom(debt.denom)
+    const asset = assets.find(byDenom(debt.denom))
     if (!asset) return BN_ZERO
     const price = prices.find(byDenom(debt.denom))?.amount ?? 0
     const amount = BN(debt.amount).shiftedBy(-asset.decimals)
@@ -151,8 +156,8 @@ export const calculateAccountApr = (
   return totalInterestValue.dividedBy(totalNetValue).times(100)
 }
 
-export function calculateAccountLeverage(account: Account, prices: BNCoin[]) {
-  const [deposits, lends, debts, vaults] = getAccountPositionValues(account, prices)
+export function calculateAccountLeverage(account: Account, prices: BNCoin[], assets: Asset[]) {
+  const [deposits, lends, debts, vaults] = getAccountPositionValues(account, prices, assets)
   const netValue = deposits.plus(lends).plus(vaults).minus(debts)
   return debts.dividedBy(netValue).plus(1)
 }
@@ -165,7 +170,8 @@ export function accumulateAmounts(denom: string, coins: BNCoin[]): BigNumber {
   return coins.reduce((acc, coin) => acc.plus(getAmount(denom, [coin.toCoin()])), BN_ZERO)
 }
 
-export function convertAccountToPositions(account: Account): Positions {
+// TODO: 📈 Add correct type mapping
+export function convertAccountToPositions(account: Account): PositionsWithoutPerps {
   return {
     account_id: account.id,
     debts: account.debts.map((debt) => ({
@@ -236,6 +242,8 @@ export function cloneAccount(account: Account): Account {
         unlocked: vault.values.unlocked,
       },
     })),
+    // TODO: 📈Add correct type mapping
+    perps: account.perps,
   }
 }
 
@@ -292,9 +300,10 @@ export function getAccountSummaryStats(
   borrowAssets: BorrowMarketTableData[],
   lendingAssets: LendingMarketTableData[],
   hlsStrategies: HLSStrategy[],
+  assets: Asset[],
   isHls?: boolean,
 ) {
-  const [deposits, lends, debts, vaults] = getAccountPositionValues(account, prices)
+  const [deposits, lends, debts, vaults] = getAccountPositionValues(account, prices, assets)
   const positionValue = deposits.plus(lends).plus(vaults)
   const apr = calculateAccountApr(
     account,
@@ -302,9 +311,10 @@ export function getAccountSummaryStats(
     lendingAssets,
     prices,
     hlsStrategies,
+    assets,
     isHls,
   )
-  const leverage = calculateAccountLeverage(account, prices)
+  const leverage = calculateAccountLeverage(account, prices, assets)
 
   return {
     positionValue: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionValue),
@@ -322,4 +332,9 @@ export function isAccountEmpty(account: Account) {
     account.debts.length === 0 &&
     account.deposits.length === 0
   )
+}
+
+export function getAccountNetValue(account: Account, prices: BNCoin[], assets: Asset[]) {
+  const [deposits, lends, debts, vaults] = getAccountPositionValues(account, prices, assets)
+  return deposits.plus(lends).plus(vaults).minus(debts)
 }
