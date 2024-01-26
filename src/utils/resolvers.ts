@@ -11,18 +11,20 @@ import { BN, getLeverageFromLTV } from 'utils/helpers'
 import { convertAprToApy } from 'utils/parsers'
 
 export function resolveMarketResponse(
-  marketResponse: RedBankMarket,
+  asset: Asset,
+  marketResponse: RedBankMarket & Partial<Market>,
   assetParamsResponse: AssetParams,
   assetCapResponse: TotalDepositResponse,
 ): Market {
   return {
-    denom: marketResponse.denom,
+    asset,
     apy: {
       borrow: convertAprToApy(Number(marketResponse.borrow_rate), 365) * 100,
       deposit: convertAprToApy(Number(marketResponse.liquidity_rate), 365) * 100,
     },
-    debtTotalScaled: marketResponse.debt_total_scaled,
-    collateralTotalScaled: marketResponse.collateral_total_scaled,
+    debt: marketResponse.debt ?? BN_ZERO,
+    deposits: marketResponse.deposits ?? BN_ZERO,
+    liquidity: marketResponse.liquidity ?? BN_ZERO,
     depositEnabled: assetParamsResponse.red_bank.deposit_enabled,
     borrowEnabled: assetParamsResponse.red_bank.borrow_enabled,
     cap: {

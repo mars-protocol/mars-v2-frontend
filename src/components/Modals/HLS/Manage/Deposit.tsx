@@ -10,7 +10,7 @@ import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSli
 import { BN_ZERO } from 'constants/math'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useDepositActions from 'hooks/hls/useDepositActions'
-import useBorrowAsset from 'hooks/useBorrowAsset'
+import useMarket from 'hooks/markets/useMarket'
 import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
 import useHealthComputer from 'hooks/useHealthComputer'
 import usePrices from 'hooks/usePrices'
@@ -32,7 +32,7 @@ import {
 interface Props {
   account: HLSAccountWithStrategy
   action: HlsStakingManageAction
-  borrowAsset: BorrowAsset
+  borrowMarket: Market
   collateralAsset: Asset
 }
 
@@ -48,7 +48,7 @@ export default function Deposit(props: Props) {
     useCurrentWalletBalance(props.collateralAsset.denom)?.amount || '0',
   )
   const addToStakingStrategy = useStore((s) => s.addToStakingStrategy)
-  const borrowRate = useBorrowAsset(props.borrowAsset.denom)?.borrowRate || 0
+  const borrowRate = useMarket(props.borrowMarket.asset.denom)?.apy.borrow || 0
 
   const currentLeverage = useMemo(
     () => calculateAccountLeverage(props.account, prices, assets).toNumber(),
@@ -72,10 +72,10 @@ export default function Deposit(props: Props) {
   const borrowCoin = useMemo(
     () =>
       BNCoin.fromDenomAndBigNumber(
-        props.borrowAsset.denom,
-        addedDebts.find(byDenom(props.borrowAsset.denom))?.amount || BN_ZERO,
+        props.borrowMarket.asset.denom,
+        addedDebts.find(byDenom(props.borrowMarket.asset.denom))?.amount || BN_ZERO,
       ),
-    [addedDebts, props.borrowAsset.denom],
+    [addedDebts, props.borrowMarket.asset.denom],
   )
 
   const warningMessages = useMemo(() => {
@@ -105,22 +105,22 @@ export default function Deposit(props: Props) {
   ])
 
   const maxBorrowAmount = useMemo(
-    () => computeMaxBorrowAmount(props.borrowAsset.denom, 'deposit'),
-    [computeMaxBorrowAmount, props.borrowAsset.denom],
+    () => computeMaxBorrowAmount(props.borrowMarket.asset.denom, 'deposit'),
+    [computeMaxBorrowAmount, props.borrowMarket.asset.denom],
   )
 
   const borrowWarningMessages = useMemo(() => {
     let messages: string[] = []
     if (borrowCoin.amount.isGreaterThan(maxBorrowAmount)) {
       messages.push(
-        getHealthFactorMessage(props.borrowAsset.denom, maxBorrowAmount, 'borrow', assets),
+        getHealthFactorMessage(props.borrowMarket.asset.denom, maxBorrowAmount, 'borrow', assets),
       )
     }
 
-    const borrowLiquidity = props.borrowAsset.liquidity?.amount || BN_ZERO
+    const borrowLiquidity = props.borrowMarket.liquidity || BN_ZERO
 
     if (borrowCoin.amount.isGreaterThan(borrowLiquidity)) {
-      messages.push(getLiquidityMessage(props.borrowAsset.denom, borrowLiquidity, assets))
+      messages.push(getLiquidityMessage(props.borrowMarket.asset.denom, borrowLiquidity, assets))
     }
 
     return messages
@@ -128,15 +128,15 @@ export default function Deposit(props: Props) {
     assets,
     borrowCoin.amount,
     maxBorrowAmount,
-    props.borrowAsset.denom,
-    props.borrowAsset.liquidity?.amount,
+    props.borrowMarket.asset.denom,
+    props.borrowMarket.liquidity,
   ])
 
   const actions = useDepositActions({ depositCoin, borrowCoin })
 
   const currentDebt: BigNumber = useMemo(
-    () => props.account.debts.find(byDenom(props.borrowAsset.denom))?.amount || BN_ZERO,
-    [props.account.debts, props.borrowAsset.denom],
+    () => props.account.debts.find(byDenom(props.borrowMarket.asset.denom))?.amount || BN_ZERO,
+    [props.account.debts, props.borrowMarket.asset.denom],
   )
 
   const handleDeposit = useCallback(() => {
@@ -160,19 +160,19 @@ export default function Deposit(props: Props) {
           assets,
         )
         const borrowValue = BN(currentLeverage - 1).times(depositValue)
-        additionalDebt = getCoinAmount(props.borrowAsset.denom, borrowValue, prices, assets)
+        additionalDebt = getCoinAmount(props.borrowMarket.asset.denom, borrowValue, prices, assets)
       }
 
       simulateHlsStakingDeposit(
         BNCoin.fromDenomAndBigNumber(props.collateralAsset.denom, amount),
-        BNCoin.fromDenomAndBigNumber(props.borrowAsset.denom, additionalDebt),
+        BNCoin.fromDenomAndBigNumber(props.borrowMarket.asset.denom, additionalDebt),
       )
     },
     [
       currentLeverage,
       keepLeverage,
       prices,
-      props.borrowAsset.denom,
+      props.borrowMarket.asset.denom,
       props.collateralAsset.denom,
       simulateHlsStakingDeposit,
       assets,
@@ -197,18 +197,18 @@ export default function Deposit(props: Props) {
               amount: borrowCoin.amount.toNumber(),
               warningMessages: borrowWarningMessages,
               options: {
-                suffix: ` ${props.borrowAsset.symbol}`,
+                suffix: ` ${props.borrowMarket.asset.symbol}`,
                 abbreviated: true,
-                decimals: props.borrowAsset.decimals,
+                decimals: props.borrowMarket.asset.decimals,
               },
             },
             {
               title: 'New Debt Amount',
               amount: currentDebt.plus(borrowCoin.amount).toNumber(),
               options: {
-                suffix: ` ${props.borrowAsset.symbol}`,
+                suffix: ` ${props.borrowMarket.asset.symbol}`,
                 abbreviated: true,
-                decimals: props.borrowAsset.decimals,
+                decimals: props.borrowMarket.asset.decimals,
               },
             },
           ]
@@ -220,8 +220,8 @@ export default function Deposit(props: Props) {
       borrowWarningMessages,
       currentDebt,
       keepLeverage,
-      props.borrowAsset.decimals,
-      props.borrowAsset.symbol,
+      props.borrowMarket.asset.decimals,
+      props.borrowMarket.asset.symbol,
     ],
   )
 

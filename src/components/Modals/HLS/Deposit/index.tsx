@@ -13,7 +13,7 @@ import useStore from 'store'
 import { isAccountEmpty } from 'utils/accounts'
 
 interface Props {
-  borrowAsset: BorrowAsset
+  borrowMarket: Market
   collateralAsset: Asset
   vaultAddress: string | null
   strategy?: HLSStrategy
@@ -42,7 +42,7 @@ export default function Controller(props: Props) {
         walletCollateralAsset={walletCollateralAsset}
         vault={vault}
         collateralAsset={props.collateralAsset}
-        borrowAsset={props.borrowAsset}
+        borrowMarket={props.borrowMarket}
         emptyHlsAccounts={emptyHlsAccounts}
         hlsAccounts={hlsAccounts}
         isOpen={isOpen}
@@ -57,7 +57,7 @@ export default function Controller(props: Props) {
       <StakingContent
         walletCollateralAsset={walletCollateralAsset}
         collateralAsset={props.collateralAsset}
-        borrowAsset={props.borrowAsset}
+        borrowMarket={props.borrowMarket}
         emptyHlsAccounts={emptyHlsAccounts}
         hlsAccounts={hlsAccounts}
         isOpen={isOpen}
@@ -73,7 +73,7 @@ export default function Controller(props: Props) {
 }
 
 interface ContentProps {
-  borrowAsset: BorrowAsset
+  borrowMarket: Market
   collateralAsset: Asset
   emptyHlsAccounts: Account[]
   hlsAccounts: Account[]
@@ -102,14 +102,14 @@ function Vault(props: VaultContentProps) {
   } = useVaultController({
     vault: props.vault,
     collateralAsset: props.collateralAsset,
-    borrowAsset: props.borrowAsset,
+    borrowMarket: props.borrowMarket,
     selectedAccount: props.selectedAccount,
   })
 
   const items = useAccordionItems({
     apy: props.vault.apy || 0,
     borrowAmount,
-    borrowAsset: props.borrowAsset,
+    borrowMarket: props.borrowMarket,
     collateralAsset: props.collateralAsset,
     depositAmount,
     emptyHlsAccounts: props.emptyHlsAccounts,
@@ -148,13 +148,13 @@ function StakingContent(props: StakingContentProps) {
     execute,
   } = useStakingController({
     collateralAsset: props.collateralAsset,
-    borrowAsset: props.borrowAsset,
+    borrowMarket: props.borrowMarket,
     selectedAccount: props.selectedAccount,
   })
 
   const items = useAccordionItems({
     borrowAmount,
-    borrowAsset: props.borrowAsset,
+    borrowMarket: props.borrowMarket,
     collateralAsset: props.collateralAsset,
     depositAmount,
     emptyHlsAccounts: props.emptyHlsAccounts,

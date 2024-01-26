@@ -10,7 +10,7 @@ import Text from 'components/common/Text'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import { BN_ZERO } from 'constants/math'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
-import useMarketAssets from 'hooks/markets/useMarketAssets'
+import useMarkets from 'hooks/markets/useMarkets'
 import useAutoLend from 'hooks/useAutoLend'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useWalletBalances from 'hooks/useWalletBalances'
@@ -35,7 +35,8 @@ export default function AccountFundContent(props: Props) {
   const { autoLendEnabledAccountIds } = useAutoLend()
   const isLending = autoLendEnabledAccountIds.includes(props.accountId)
   const [fundingAssets, setFundingAssets] = useState<BNCoin[]>([])
-  const { data: marketAssets } = useMarketAssets()
+  const markets = useMarkets()
+
   const { data: walletBalances } = useWalletBalances(props.address)
   const { simulateDeposits } = useUpdatedAccount(props.account)
   const baseAsset = useBaseAsset()
@@ -127,7 +128,7 @@ export default function AccountFundContent(props: Props) {
   const depositCapReachedCoins = useMemo(() => {
     const depositCapReachedCoins: BNCoin[] = []
     fundingAssets.forEach((asset) => {
-      const marketAsset = marketAssets.find(byDenom(asset.denom))
+      const marketAsset = markets.find(byDenom(asset.denom))
       if (!marketAsset) return
 
       const capLeft = getCapLeftWithBuffer(marketAsset.cap)
@@ -137,7 +138,7 @@ export default function AccountFundContent(props: Props) {
       depositCapReachedCoins.push(BNCoin.fromDenomAndBigNumber(asset.denom, capLeft))
     })
     return depositCapReachedCoins
-  }, [fundingAssets, marketAssets])
+  }, [fundingAssets, markets])
 
   return (
     <>

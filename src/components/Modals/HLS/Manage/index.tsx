@@ -8,23 +8,23 @@ import Withdraw from 'components/Modals/HLS/Manage/Withdraw'
 import ModalContentWithSummary from 'components/Modals/ModalContentWithSummary'
 import useAccount from 'hooks/accounts/useAccount'
 import useAsset from 'hooks/assets/useAsset'
-import useBorrowAsset from 'hooks/useBorrowAsset'
+import useMarket from 'hooks/markets/useMarket'
 import useStore from 'store'
 
 export default function HlsManageModalController() {
   const modal = useStore((s) => s.hlsManageModal)
   const { data: account } = useAccount(modal?.accountId)
   const collateralAsset = useAsset(modal?.staking.strategy.denoms.deposit || '')
-  const borrowAsset = useBorrowAsset(modal?.staking.strategy.denoms.borrow || '')
+  const market = useMarket(modal?.staking.strategy.denoms.borrow || '')
 
-  if (!modal || !collateralAsset || !borrowAsset || !account) return null
+  if (!modal || !collateralAsset || !market || !account) return null
 
   return (
     <HlsModal
       account={{ ...account, strategy: modal.staking.strategy } as HLSAccountWithStrategy}
       action={modal.staking.action}
       collateralAsset={collateralAsset}
-      borrowAsset={borrowAsset}
+      borrowMarket={market}
     />
   )
 }
@@ -32,12 +32,11 @@ export default function HlsManageModalController() {
 interface Props {
   account: HLSAccountWithStrategy
   action: HlsStakingManageAction
-  borrowAsset: BorrowAsset
+  borrowMarket: Market
   collateralAsset: Asset
 }
 
 function HlsModal(props: Props) {
-  const updatedAccount = useStore((s) => s.updatedAccount)
   function handleClose() {
     useStore.setState({ hlsManageModal: null })
   }
@@ -65,7 +64,7 @@ function HlsModal(props: Props) {
         <Header
           action={props.action}
           primaryAsset={props.collateralAsset}
-          secondaryAsset={props.borrowAsset}
+          secondaryAsset={props.borrowMarket.asset}
         />
       }
       onClose={handleClose}

@@ -26,7 +26,7 @@ import {
 interface Props {
   apy: number
   borrowAmount: BigNumber
-  borrowAsset: BorrowAsset
+  borrowMarket: Market
   collateralAsset: Asset
   depositAmount: BigNumber
   emptyHlsAccounts: Account[]
@@ -56,18 +56,24 @@ export default function useAccordionItems(props: Props) {
   }, [props.strategy])
 
   const borrowLiquidity = useMemo(
-    () => props.borrowAsset.liquidity?.amount || BN_ZERO,
-    [props.borrowAsset.liquidity?.amount],
+    () => props.borrowMarket.liquidity || BN_ZERO,
+    [props.borrowMarket.liquidity],
   )
 
   const additionalDepositFromSwap = useMemo(() => {
     const value = getCoinValue(
-      BNCoin.fromDenomAndBigNumber(props.borrowAsset.denom, props.borrowAmount),
+      BNCoin.fromDenomAndBigNumber(props.borrowMarket.asset.denom, props.borrowAmount),
       prices,
       assets,
     )
     return getCoinAmount(props.collateralAsset.denom, value, prices, assets)
-  }, [assets, prices, props.borrowAmount, props.borrowAsset.denom, props.collateralAsset.denom])
+  }, [
+    assets,
+    prices,
+    props.borrowAmount,
+    props.borrowMarket.asset.denom,
+    props.collateralAsset.denom,
+  ])
 
   const collateralWarningMessages = useMemo(() => {
     const messages: string[] = []
@@ -96,16 +102,23 @@ export default function useAccordionItems(props: Props) {
 
     if (props.borrowAmount.isGreaterThan(props.maxBorrowAmount)) {
       messages.push(
-        getHealthFactorMessage(props.borrowAsset.denom, props.maxBorrowAmount, 'borrow', assets),
+        getHealthFactorMessage(
+          props.borrowMarket.asset.denom,
+          props.maxBorrowAmount,
+          'borrow',
+          assets,
+        ),
       )
     }
 
     if (props.borrowAmount.isGreaterThan(borrowLiquidity)) {
-      messages.push(getLiquidityMessage(props.borrowAsset.denom, borrowLiquidity, assets))
+      messages.push(getLiquidityMessage(props.borrowMarket.asset.denom, borrowLiquidity, assets))
     }
 
     if (additionalDepositFromSwap.plus(props.depositAmount).isGreaterThan(props.maxBorrowAmount)) {
-      messages.push(getDepositCapMessage(props.borrowAsset.denom, depositCapLeft, 'borrow', assets))
+      messages.push(
+        getDepositCapMessage(props.borrowMarket.asset.denom, depositCapLeft, 'borrow', assets),
+      )
     }
 
     return messages
@@ -115,7 +128,7 @@ export default function useAccordionItems(props: Props) {
     borrowLiquidity,
     depositCapLeft,
     props.borrowAmount,
-    props.borrowAsset.denom,
+    props.borrowMarket.asset.denom,
     props.depositAmount,
     props.maxBorrowAmount,
   ])
@@ -160,7 +173,7 @@ export default function useAccordionItems(props: Props) {
           <Leverage
             leverage={props.leverage}
             amount={props.borrowAmount}
-            asset={props.borrowAsset}
+            borrowMarket={props.borrowMarket}
             onChangeAmount={props.onChangeDebt}
             onClickBtn={() => props.toggleIsOpen(2)}
             max={props.maxBorrowAmount}
@@ -228,7 +241,7 @@ export default function useAccordionItems(props: Props) {
             leverage={props.leverage}
             positionValue={props.positionValue}
             collateralAsset={props.collateralAsset}
-            borrowAsset={props.borrowAsset}
+            borrowMarket={props.borrowMarket}
             apy={props.apy}
             onClickBtn={props.execute}
             disabled={

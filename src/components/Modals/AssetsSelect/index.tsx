@@ -1,15 +1,16 @@
 import { RowSelectionState } from '@tanstack/react-table'
 import { useEffect, useMemo, useState } from 'react'
 
-import useAssetSelectColumns from 'components/Modals/AssetsSelect/Columns/useAssetSelectColumns'
 import Table from 'components/common/Table'
+import useAssetSelectColumns from 'components/Modals/AssetsSelect/Columns/useAssetSelectColumns'
 import useGetCoinValue from 'hooks/assets/useGetCoinValue'
-import useMarketAssets from 'hooks/markets/useMarketAssets'
+import useMarkets from 'hooks/markets/useMarkets'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 
+// TODO: Pass the market data directly here instead of the assets
 interface Props {
   assets: Asset[]
   onChangeSelected: (selected: string[]) => void
@@ -20,12 +21,11 @@ interface Props {
 export default function AssetsSelect(props: Props) {
   const { assets, onChangeSelected, selectedDenoms, isBorrow } = props
   const columns = useAssetSelectColumns(isBorrow)
-  const { data: markets } = useMarketAssets()
+  const markets = useMarkets()
   const getCoinValue = useGetCoinValue()
 
   const defaultSelected = useMemo(() => {
-    const selectableAssets = assets
-    return selectableAssets.reduce(
+    return assets.reduce(
       (acc, asset, index) => {
         if (selectedDenoms?.includes(asset.denom)) {
           acc[index] = true
@@ -48,7 +48,7 @@ export default function AssetsSelect(props: Props) {
         asset,
         balance: balancesForAsset?.amount ?? '0',
         value,
-        market: markets.find((market) => market.denom === asset.denom),
+        market: markets.find((market) => market.asset.denom === asset.denom),
       }
     })
   }, [balances, assets, markets, getCoinValue])

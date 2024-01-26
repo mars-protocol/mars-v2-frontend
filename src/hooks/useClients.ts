@@ -34,6 +34,9 @@ export default function useClients() {
       } as ContractClients
     },
     {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      revalidateIfStale: false,
       keepPreviousData: false,
     },
   )

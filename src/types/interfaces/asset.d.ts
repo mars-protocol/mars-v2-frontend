@@ -50,35 +50,6 @@ interface BigNumberCoin {
   amount: BigNumber
 }
 
-interface BorrowMarketTableData extends MarketTableData {
-  liquidity: {
-    amount: BigNumber
-    value: BigNumber
-  } | null
-  debt?: BigNumber
-}
-
-interface LendingMarketTableData extends MarketTableData {
-  accountLentAmount?: BigNumber
-  accountLentValue?: BigNumber
-  borrowEnabled: boolean
-  cap: DepositCap
-}
-
-interface MarketTableData {
-  asset: Asset
-  marketDepositAmount: BigNumber
-  marketLiquidityAmount: BigNumber
-  apy: {
-    borrow: number
-    deposit: number
-  }
-  ltv: {
-    max: number
-    liq: number
-  }
-}
-
 interface HLSStrategy extends HLSStrategyNoCap {
   depositCap: DepositCap
 }

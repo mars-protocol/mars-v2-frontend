@@ -5,8 +5,7 @@ import AssetSelectorItem from 'components/trade/TradeModule/AssetSelector/AssetS
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
-import useMarketAssets from 'hooks/markets/useMarketAssets'
-import useMarketDeposits from 'hooks/markets/useMarketDeposits'
+import useMarkets from 'hooks/markets/useMarkets'
 import usePrices from 'hooks/usePrices'
 import { getMergedBalancesForAsset } from 'utils/accounts'
 import { byDenom } from 'utils/array'
@@ -22,8 +21,7 @@ interface Props {
 
 export default function PairsList(props: Props) {
   const account = useCurrentAccount()
-  const { data: marketAssets } = useMarketAssets()
-  const { data: marketDeposits } = useMarketDeposits()
+  const markets = useMarkets()
   const { data: prices } = usePrices()
   const baseDenom = useBaseAsset().denom
   const marketEnabledAssets = useMarketEnabledAssets()
@@ -44,8 +42,8 @@ export default function PairsList(props: Props) {
   }, [props.stables, props.assets])
 
   const sortedPairs = useMemo(
-    () => sortAssetsOrPairs(pairs, prices, marketDeposits, balances, baseDenom) as AssetPair[],
-    [pairs, prices, marketDeposits, balances, baseDenom],
+    () => sortAssetsOrPairs(pairs, prices, markets, balances, baseDenom) as AssetPair[],
+    [pairs, prices, markets, balances, baseDenom],
   )
 
   return (
@@ -62,7 +60,7 @@ export default function PairsList(props: Props) {
                 balances={balances}
                 key={`${assetPair.buy.symbol}-${assetPair.sell.symbol}`}
                 onSelect={props.onChangeAssetPair}
-                depositCap={marketAssets?.find(byDenom(assetPair.buy.denom))?.cap}
+                depositCap={markets?.find(byDenom(assetPair.buy.denom))?.cap}
                 asset={assetPair.buy}
                 sellAsset={assetPair.sell}
               />

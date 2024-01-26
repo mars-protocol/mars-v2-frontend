@@ -8,14 +8,14 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
-  borrowAsset: Asset
+  borrowMarket: Market
   collateralAsset: Asset
   selectedAccount: Account
   vault: Vault
 }
 
 export default function useVaultController(props: Props) {
-  const { vault, collateralAsset, borrowAsset, selectedAccount } = props
+  const { vault, collateralAsset, borrowMarket, selectedAccount } = props
 
   const depositIntoVault = useStore((s) => s.depositIntoVault)
 
@@ -28,14 +28,14 @@ export default function useVaultController(props: Props) {
     positionValue,
   } = useDepositHlsVault({
     collateralDenom: collateralAsset.denom,
-    borrowDenom: borrowAsset.denom,
+    borrowDenom: borrowMarket.asset.denom,
   })
 
   const { actions } = useDepositVault({
     vault,
     reclaims: [],
     deposits: [BNCoin.fromDenomAndBigNumber(collateralAsset.denom, depositAmount)],
-    borrowings: [BNCoin.fromDenomAndBigNumber(borrowAsset.denom, borrowAmount)],
+    borrowings: [BNCoin.fromDenomAndBigNumber(borrowMarket.asset.denom, borrowAmount)],
     kind: 'high_levered_strategy',
   })
 
@@ -43,17 +43,17 @@ export default function useVaultController(props: Props) {
   const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
 
   const maxBorrowAmount = useMemo(() => {
-    return computeMaxBorrowAmount(props.borrowAsset.denom, {
+    return computeMaxBorrowAmount(props.borrowMarket.asset.denom, {
       vault: { address: props.vault?.address },
     }).plus(borrowAmount)
-  }, [borrowAmount, computeMaxBorrowAmount, props.borrowAsset.denom, props.vault?.address])
+  }, [borrowAmount, computeMaxBorrowAmount, props.borrowMarket.asset.denom, props.vault?.address])
 
   const execute = useCallback(() => {
     depositIntoVault({
       accountId: selectedAccount.id,
       actions,
       deposits: [BNCoin.fromDenomAndBigNumber(collateralAsset.denom, depositAmount)],
-      borrowings: [BNCoin.fromDenomAndBigNumber(borrowAsset.denom, borrowAmount)],
+      borrowings: [BNCoin.fromDenomAndBigNumber(borrowMarket.asset.denom, borrowAmount)],
       isCreate: true,
       kind: 'high_levered_strategy',
     })
@@ -63,7 +63,7 @@ export default function useVaultController(props: Props) {
     borrowAmount,
     depositAmount,
     depositIntoVault,
-    borrowAsset.denom,
+    borrowMarket.asset.denom,
     collateralAsset.denom,
     selectedAccount.id,
   ])
@@ -75,12 +75,12 @@ export default function useVaultController(props: Props) {
       simulateVaultDeposit(
         vault.address,
         [BNCoin.fromDenomAndBigNumber(collateralAsset.denom, amount)],
-        [BNCoin.fromDenomAndBigNumber(borrowAsset.denom, borrowAmount)],
+        [BNCoin.fromDenomAndBigNumber(borrowMarket.asset.denom, borrowAmount)],
       )
     },
     [
       borrowAmount,
-      borrowAsset,
+      borrowMarket,
       collateralAsset,
       vault.address,
       setDepositAmount,
@@ -95,11 +95,11 @@ export default function useVaultController(props: Props) {
       simulateVaultDeposit(
         vault.address,
         [BNCoin.fromDenomAndBigNumber(collateralAsset.denom, depositAmount)],
-        [BNCoin.fromDenomAndBigNumber(borrowAsset.denom, amount)],
+        [BNCoin.fromDenomAndBigNumber(borrowMarket.asset.denom, amount)],
       )
     },
     [
-      borrowAsset,
+      borrowMarket,
       collateralAsset,
       depositAmount,
       vault.address,
