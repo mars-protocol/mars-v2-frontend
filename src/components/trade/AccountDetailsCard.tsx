@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 
 import AccountBalancesTable from 'components/account/AccountBalancesTable'
+import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
+import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
-import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 
 export default function AccountDetailsCard() {
   const account = useCurrentAccount()

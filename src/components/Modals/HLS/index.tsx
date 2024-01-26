@@ -1,10 +1,10 @@
 import React from 'react'
 
-import Modal from 'components/Modals/Modal'
 import Content from 'components/Modals/HLS/Deposit'
 import Header from 'components/Modals/HLS/Header'
+import Modal from 'components/Modals/Modal'
 import useAsset from 'hooks/assets/useAsset'
-import useBorrowAsset from 'hooks/useBorrowAsset'
+import useMarket from 'hooks/markets/useMarket'
 import useStore from 'store'
 
 export default function HlsModalController() {
@@ -14,7 +14,7 @@ export default function HlsModalController() {
     modal?.vault?.denoms.primary || modal?.strategy?.denoms.deposit || '',
   )
 
-  const secondaryAsset = useBorrowAsset(modal?.strategy?.denoms.borrow || '')
+  const secondaryAsset = useMarket(modal?.strategy?.denoms.borrow || '')
 
   if (!primaryAsset || !secondaryAsset) return null
 
@@ -41,7 +41,7 @@ export default function HlsModalController() {
 
 interface Props {
   primaryAsset: Asset
-  secondaryAsset: BorrowAsset
+  secondaryAsset: Market
   strategy?: HLSStrategy
   vaultAddress: string | null
 }
@@ -53,7 +53,9 @@ function HlsModal(props: Props) {
 
   return (
     <Modal
-      header={<Header primaryAsset={props.primaryAsset} secondaryAsset={props.secondaryAsset} />}
+      header={
+        <Header primaryAsset={props.primaryAsset} secondaryAsset={props.secondaryAsset.asset} />
+      }
       headerClassName='gradient-header pl-2 pr-2.5 py-3 border-b-white/5 border-b'
       contentClassName='flex flex-col p-6'
       modalClassName='max-w-modal-md'
@@ -61,7 +63,7 @@ function HlsModal(props: Props) {
     >
       <Content
         collateralAsset={props.primaryAsset}
-        borrowAsset={props.secondaryAsset}
+        borrowMarket={props.secondaryAsset}
         vaultAddress={props.vaultAddress}
         strategy={props.strategy}
       />

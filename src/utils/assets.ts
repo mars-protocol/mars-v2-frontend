@@ -14,11 +14,11 @@ function isAssetPair(assetPair: Asset | AssetPair): assetPair is AssetPair {
 export function sortAssetsOrPairs(
   assets: Asset[] | AssetPair[],
   prices: BNCoin[],
-  marketDeposits: BNCoin[],
+  markets: Market[],
   balances: BNCoin[],
   baseDenom: string,
 ): Asset[] | AssetPair[] {
-  if (prices.length === 0 || marketDeposits.length === 0) return assets
+  if (prices.length === 0 || markets.length === 0) return assets
 
   return assets.sort((a, b) => {
     const assetA = isAssetPair(a) ? a.buy : a
@@ -37,8 +37,10 @@ export function sortAssetsOrPairs(
     if (aDenom === baseDenom) return -1
     if (bDenom === baseDenom) return 1
 
-    const aMarketDeposit = marketDeposits?.find(byDenom(aDenom))?.amount ?? BN_ZERO
-    const bMarketDeposit = marketDeposits?.find(byDenom(bDenom))?.amount ?? BN_ZERO
+    const aMarketDeposit =
+      markets.find((market) => market.asset.denom === aDenom)?.deposits ?? BN_ZERO
+    const bMarketDeposit =
+      markets.find((market) => market.asset.denom === bDenom)?.deposits ?? BN_ZERO
     const aMarketValue = demagnify(aMarketDeposit, assetA) * aPrice.toNumber()
     const bMarketValue = demagnify(bMarketDeposit, assetB) * bPrice.toNumber()
 

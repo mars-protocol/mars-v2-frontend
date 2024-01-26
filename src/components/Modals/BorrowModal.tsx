@@ -16,7 +16,7 @@ import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSli
 import Modal from 'components/Modals/Modal'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useMarketAssets from 'hooks/markets/useMarketAssets'
+import useMarkets from 'hooks/markets/useMarkets'
 import useAutoLend from 'hooks/useAutoLend'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useToggle from 'hooks/useToggle'
@@ -91,7 +91,7 @@ function BorrowModal(props: Props) {
   const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
   const { computeMaxBorrowAmount } = useHealthComputer(account)
   const totalDebt = BN(getDebtAmount(modal))
-  const { data: marketAssets } = useMarketAssets()
+  const markets = useMarkets()
 
   const [depositBalance, lendBalance] = useMemo(
     () => [
@@ -107,13 +107,13 @@ function BorrowModal(props: Props) {
   )
 
   const overpayExeedsCap = useMemo(() => {
-    const marketAsset = marketAssets.find(byDenom(asset.denom))
+    const marketAsset = markets.find(byDenom(asset.denom))
     if (!marketAsset) return
     const overpayAmount = totalDebtRepayAmount.minus(totalDebt)
     const marketCapAfterOverpay = marketAsset.cap.used.plus(overpayAmount)
 
     return marketAsset.cap.max.isLessThanOrEqualTo(marketCapAfterOverpay)
-  }, [marketAssets, asset.denom, totalDebt, totalDebtRepayAmount])
+  }, [markets, asset.denom, totalDebt, totalDebtRepayAmount])
 
   const maxRepayAmount = useMemo(() => {
     const maxBalance = repayFromWallet
@@ -187,7 +187,7 @@ function BorrowModal(props: Props) {
       ? BN_ZERO
       : computeMaxBorrowAmount(asset.denom, borrowToWallet ? 'wallet' : 'deposit')
 
-    return BigNumber.min(maxBorrowAmount, modal.marketData?.liquidity?.amount || 0)
+    return BigNumber.min(maxBorrowAmount, modal.marketData?.liquidity || 0)
   }, [asset.denom, borrowToWallet, computeMaxBorrowAmount, isRepay, modal.marketData])
 
   useEffect(() => {
@@ -266,7 +266,7 @@ function BorrowModal(props: Props) {
           <div className='flex gap-2'>
             <FormattedNumber
               className='text-xs'
-              amount={modal.marketData?.liquidity?.amount.toNumber() ?? 0}
+              amount={modal.marketData?.liquidity.toNumber() ?? 0}
               options={{ decimals: asset.decimals, abbreviated: true, suffix: ` ${asset.symbol}` }}
               animate
             />
@@ -274,7 +274,7 @@ function BorrowModal(props: Props) {
               className='text-xs'
               coin={BNCoin.fromDenomAndBigNumber(
                 asset.denom,
-                modal.marketData?.liquidity?.amount ?? BN_ZERO,
+                modal.marketData?.liquidity ?? BN_ZERO,
               )}
               parentheses
             />

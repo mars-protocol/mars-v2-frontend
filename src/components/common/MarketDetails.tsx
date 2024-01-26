@@ -23,9 +23,7 @@ export default function MarketDetails({ row, type }: Props) {
     symbol: displayCurrencySymbol,
   } = useDisplayCurrencyPrice()
 
-  const { asset, ltv, marketDepositAmount, marketLiquidityAmount } = row.original
-
-  const totalBorrowed = marketDepositAmount.minus(marketLiquidityAmount)
+  const { asset, ltv, cap, liquidity, deposits, debt } = row.original
 
   const details: Detail[] = useMemo(() => {
     const isDollar = displayCurrencySymbol === '$'
@@ -33,7 +31,7 @@ export default function MarketDetails({ row, type }: Props) {
     function getLendingMarketDetails() {
       return [
         {
-          amount: convertAmount(asset, marketDepositAmount).toNumber(),
+          amount: convertAmount(asset, deposits).toNumber(),
           options: {
             abbreviated: true,
             suffix: isDollar ? undefined : ` ${displayCurrencySymbol}`,
@@ -62,9 +60,7 @@ export default function MarketDetails({ row, type }: Props) {
           title: 'Oracle Price',
         },
         {
-          amount: totalBorrowed.isZero()
-            ? 0
-            : totalBorrowed.dividedBy(marketDepositAmount).multipliedBy(100).toNumber(),
+          amount: debt.isZero() ? 0 : debt.dividedBy(deposits).multipliedBy(100).toNumber(), // TODO: Check if this number is still correct
           options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
           title: 'Utilization Rate',
         },
@@ -74,7 +70,7 @@ export default function MarketDetails({ row, type }: Props) {
     function getBorrowMarketDetails() {
       return [
         {
-          amount: convertAmount(asset, totalBorrowed).toNumber(),
+          amount: convertAmount(asset, debt).toNumber(),
           options: {
             abbreviated: true,
             suffix: isDollar ? undefined : ` ${displayCurrencySymbol}`,
@@ -93,9 +89,7 @@ export default function MarketDetails({ row, type }: Props) {
           title: 'Oracle Price',
         },
         {
-          amount: totalBorrowed.isZero()
-            ? 0
-            : totalBorrowed.dividedBy(marketDepositAmount).multipliedBy(100).toNumber(),
+          amount: debt.isZero() ? 0 : debt.dividedBy(deposits).multipliedBy(100).toNumber(), // TODO: CHeck if this is still correct
           options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
           title: 'Utilization Rate',
         },
@@ -105,14 +99,15 @@ export default function MarketDetails({ row, type }: Props) {
     if (type === 'lend') return getLendingMarketDetails()
     return getBorrowMarketDetails()
   }, [
-    type,
-    asset,
-    marketDepositAmount,
-    ltv,
-    totalBorrowed,
     displayCurrencySymbol,
+    type,
     convertAmount,
+    asset,
+    debt,
+    ltv.max,
+    ltv.liq,
     getConversionRate,
+    deposits,
   ])
 
   return (

@@ -13,7 +13,7 @@ import Value, {
   VALUE_META,
   valueBalancesSortingFn,
 } from 'components/account/AccountBalancesTable/Columns/Value'
-import useMarketAssets from 'hooks/markets/useMarketAssets'
+import useMarkets from 'hooks/markets/useMarkets'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useStore from 'store'
 
@@ -21,7 +21,8 @@ export default function useAccountBalancesColumns(
   account: Account,
   showLiquidationPrice?: boolean,
 ) {
-  const { data: markets } = useMarketAssets()
+  const markets = useMarkets()
+
   const updatedAccount = useStore((s) => s.updatedAccount)
 
   const { computeLiquidationPrice } = useHealthComputer(updatedAccount ?? account)

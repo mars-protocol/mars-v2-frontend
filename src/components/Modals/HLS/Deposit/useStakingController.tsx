@@ -10,17 +10,17 @@ import { SWAP_FEE_BUFFER } from 'utils/constants'
 import { BN } from 'utils/helpers'
 
 interface Props {
-  borrowAsset: Asset
+  borrowMarket: Market
   collateralAsset: Asset
   selectedAccount: Account
 }
 
 export default function useStakingController(props: Props) {
-  const { collateralAsset, borrowAsset, selectedAccount } = props
+  const { collateralAsset, borrowMarket, selectedAccount } = props
   const addToStakingStrategy = useStore((s) => s.addToStakingStrategy)
 
   const { data: swapValueLoss } = useSwapValueLoss(
-    props.borrowAsset.denom,
+    props.borrowMarket.asset.denom,
     props.collateralAsset.denom,
   )
   const {
@@ -33,34 +33,39 @@ export default function useStakingController(props: Props) {
     actions,
   } = useDepositHlsVault({
     collateralDenom: collateralAsset.denom,
-    borrowDenom: borrowAsset.denom,
+    borrowDenom: borrowMarket.asset.denom,
   })
 
   const { updatedAccount, addDeposits } = useUpdatedAccount(selectedAccount)
   const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
 
   const maxBorrowAmount = useMemo(() => {
-    return computeMaxBorrowAmount(props.borrowAsset.denom, {
+    return computeMaxBorrowAmount(props.borrowMarket.asset.denom, {
       swap: {
         denom_out: props.collateralAsset.denom,
         slippage: BN(swapValueLoss).plus(SWAP_FEE_BUFFER).toString(),
       },
     })
-  }, [computeMaxBorrowAmount, props.borrowAsset.denom, props.collateralAsset.denom, swapValueLoss])
+  }, [
+    computeMaxBorrowAmount,
+    props.borrowMarket.asset.denom,
+    props.collateralAsset.denom,
+    swapValueLoss,
+  ])
 
   const execute = useCallback(() => {
     useStore.setState({ hlsModal: null })
     addToStakingStrategy({
       actions,
       accountId: selectedAccount.id,
-      borrowCoin: BNCoin.fromDenomAndBigNumber(borrowAsset.denom, borrowAmount),
+      borrowCoin: BNCoin.fromDenomAndBigNumber(borrowMarket.asset.denom, borrowAmount),
       depositCoin: BNCoin.fromDenomAndBigNumber(collateralAsset.denom, depositAmount),
     })
   }, [
     actions,
     addToStakingStrategy,
     borrowAmount,
-    borrowAsset.denom,
+    borrowMarket.asset.denom,
     collateralAsset.denom,
     depositAmount,
     selectedAccount.id,

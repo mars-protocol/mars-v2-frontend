@@ -19,8 +19,8 @@ export const liquiditySortingFn = (
 ): number => {
   const assetA = a.original.asset
   const assetB = b.original.asset
-  const liquidityA = demagnify(a.original.liquidity?.amount ?? 0, assetA)
-  const liquidityB = demagnify(b.original.liquidity?.amount ?? 0, assetB)
+  const liquidityA = demagnify(a.original.liquidity ?? 0, assetA)
+  const liquidityB = demagnify(b.original.liquidity ?? 0, assetB)
 
   return liquidityA - liquidityB
 }
@@ -35,9 +35,9 @@ export default function Liquidity(props: Props) {
 
   if (!asset) return null
 
-  if (liquidity === null) {
+  if (liquidity.isZero()) {
     return <Loading />
   }
 
-  return <AmountAndValue asset={asset} amount={liquidity.amount ?? BN_ZERO} />
+  return <AmountAndValue asset={asset} amount={liquidity ?? BN_ZERO} />
 }

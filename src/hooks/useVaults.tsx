@@ -6,8 +6,12 @@ import useChainConfig from 'hooks/useChainConfig'
 export default function useVaults(suspense: boolean = true, address?: string) {
   const chainConfig = useChainConfig()
 
-  return useSWR(`chains/${chainConfig.id}/vaults/${address}`, () => getVaults(chainConfig), {
-    suspense,
-    revalidateOnFocus: false,
-  })
+  return useSWR(
+    address && `chains/${chainConfig.id}/vaults/${address}`,
+    () => getVaults(chainConfig),
+    {
+      suspense,
+      revalidateOnFocus: false,
+    },
+  )
 }

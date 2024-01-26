@@ -1,9 +1,9 @@
 import { useCallback, useMemo, useState } from 'react'
 
-import AssetsSelect from 'components/Modals/AssetsSelect'
 import SearchBar from 'components/common/SearchBar'
 import Text from 'components/common/Text'
-import useMarketBorrowings from 'hooks/markets/useMarketBorrowings'
+import AssetsSelect from 'components/Modals/AssetsSelect'
+import useMarkets from 'hooks/markets/useMarkets'
 import useStore from 'store'
 
 interface Props {
@@ -14,16 +14,16 @@ interface Props {
 
 export default function AddVaultAssetsModalContent(props: Props) {
   const [searchString, setSearchString] = useState<string>('')
-  const { data: borrowAssets } = useMarketBorrowings()
+  const markets = useMarkets()
 
-  const filteredBorrowAssets: BorrowAsset[] = useMemo(() => {
-    return borrowAssets.filter(
-      (asset) =>
-        asset.name.toLowerCase().includes(searchString.toLowerCase()) ||
-        asset.denom.toLowerCase().includes(searchString.toLowerCase()) ||
-        asset.symbol.toLowerCase().includes(searchString.toLowerCase()),
+  const filteredMarkets: Market[] = useMemo(() => {
+    return markets.filter(
+      (market) =>
+        market.asset.name.toLowerCase().includes(searchString.toLowerCase()) ||
+        market.asset.denom.toLowerCase().includes(searchString.toLowerCase()) ||
+        market.asset.symbol.toLowerCase().includes(searchString.toLowerCase()),
     )
-  }, [borrowAssets, searchString])
+  }, [markets, searchString])
 
   function onChangeSearchString(value: string) {
     setSearchString(value)
@@ -31,21 +31,21 @@ export default function AddVaultAssetsModalContent(props: Props) {
 
   const [poolAssets, stableAssets] = useMemo(
     () =>
-      filteredBorrowAssets.reduce(
-        (acc, asset) => {
+      filteredMarkets.reduce(
+        (acc, market) => {
           if (
-            asset.denom === props.vault.denoms.primary ||
-            asset.denom === props.vault.denoms.secondary
+            market.asset.denom === props.vault.denoms.primary ||
+            market.asset.denom === props.vault.denoms.secondary
           ) {
-            acc[0].push(asset)
-          } else if (asset.isStable) {
-            acc[1].push(asset)
+            acc[0].push(market.asset)
+          } else if (market.asset.isStable) {
+            acc[1].push(market.asset)
           }
           return acc
         },
-        [[], []] as [BorrowAsset[], BorrowAsset[]],
+        [[], []] as [Asset[], Asset[]],
       ),
-    [filteredBorrowAssets, props.vault.denoms.primary, props.vault.denoms.secondary],
+    [filteredMarkets, props.vault.denoms.primary, props.vault.denoms.secondary],
   )
 
   const selectedDenoms = useStore((s) => s.addVaultBorrowingsModal?.selectedDenoms)

@@ -22,8 +22,7 @@ import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import useMarketAssets from 'hooks/markets/useMarketAssets'
-import useMarketBorrowings from 'hooks/markets/useMarketBorrowings'
+import useMarkets from 'hooks/markets/useMarkets'
 import useAutoLend from 'hooks/useAutoLend'
 import useChainConfig from 'hooks/useChainConfig'
 import useHealthComputer from 'hooks/useHealthComputer'
@@ -53,8 +52,7 @@ export default function SwapForm(props: Props) {
   const [slippage] = useLocalStorage(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
   const { computeMaxSwapAmount } = useHealthComputer(account)
   const [tradeDirection, setTradeDirection] = useState<TradeDirection>('long')
-  const { data: borrowAssets } = useMarketBorrowings()
-  const { data: marketAssets } = useMarketAssets()
+  const markets = useMarkets()
 
   const [inputAsset, outputAsset] = useMemo(() => {
     if (isAdvanced) return [sellAsset, buyAsset]
@@ -65,7 +63,7 @@ export default function SwapForm(props: Props) {
     inputAsset.denom,
     outputAsset.denom,
   )
-  const isBorrowEnabled = !!marketAssets.find(byDenom(inputAsset.denom))?.borrowEnabled
+  const isBorrowEnabled = !!markets.find(byDenom(inputAsset.denom))?.borrowEnabled
   const isRepayable = !!account?.debts.find(byDenom(outputAsset.denom))
   const [isMarginChecked, setMarginChecked] = useToggle(isBorrowEnabled ? useMargin : false)
   const [isAutoRepayChecked, setAutoRepayChecked] = useToggle(
@@ -87,7 +85,7 @@ export default function SwapForm(props: Props) {
   const assets = useMarketEnabledAssets()
 
   const depositCapReachedCoins: BNCoin[] = useMemo(() => {
-    const outputMarketAsset = marketAssets.find(byDenom(outputAsset.denom))
+    const outputMarketAsset = markets.find(byDenom(outputAsset.denom))
 
     if (!outputMarketAsset) return []
 
@@ -97,7 +95,7 @@ export default function SwapForm(props: Props) {
     }
 
     return []
-  }, [marketAssets, outputAsset.denom, outputAssetAmount])
+  }, [markets, outputAsset.denom, outputAssetAmount])
 
   const onChangeInputAmount = useCallback(
     (amount: BigNumber) => {
@@ -305,9 +303,9 @@ export default function SwapForm(props: Props) {
     modal,
   ])
 
-  const borrowAsset = useMemo(
-    () => borrowAssets.find(byDenom(inputAsset.denom)),
-    [borrowAssets, inputAsset.denom],
+  const borrowMarket = useMemo(
+    () => markets.find((market) => market.asset.denom === inputAsset.denom),
+    [markets, inputAsset.denom],
   )
 
   useEffect(() => {
@@ -324,8 +322,8 @@ export default function SwapForm(props: Props) {
   )
 
   const availableLiquidity = useMemo(
-    () => borrowAsset?.liquidity?.amount ?? BN_ZERO,
-    [borrowAsset?.liquidity?.amount],
+    () => borrowMarket?.liquidity ?? BN_ZERO,
+    [borrowMarket?.liquidity],
   )
 
   const isSwapDisabled = useMemo(
@@ -349,7 +347,7 @@ export default function SwapForm(props: Props) {
         <MarginToggle
           checked={isMarginChecked}
           onChange={handleMarginToggleChange}
-          disabled={!borrowAsset?.isMarket}
+          disabled={!borrowMarket?.borrowEnabled}
           borrowAssetSymbol={inputAsset.symbol}
         />
         <Divider />
@@ -411,11 +409,8 @@ export default function SwapForm(props: Props) {
             className='p-4 bg-white/5'
           />
 
-          {borrowAsset && borrowAmount.isGreaterThanOrEqualTo(availableLiquidity) && (
-            <AvailableLiquidityMessage
-              availableLiquidity={borrowAsset?.liquidity?.amount ?? BN_ZERO}
-              asset={borrowAsset}
-            />
+          {borrowMarket && borrowAmount.isGreaterThanOrEqualTo(availableLiquidity) && (
+            <AvailableLiquidityMessage market={borrowMarket} />
           )}
           {isAdvanced ? (
             <AssetAmountInput
@@ -450,7 +445,7 @@ export default function SwapForm(props: Props) {
         <TradeSummary
           sellAsset={inputAsset}
           buyAsset={outputAsset}
-          borrowRate={borrowAsset?.borrowRate}
+          borrowRate={borrowMarket?.apy.borrow}
           buyAction={handleBuyClick}
           buyButtonDisabled={isSwapDisabled}
           showProgressIndicator={isConfirming || isRouteLoading}

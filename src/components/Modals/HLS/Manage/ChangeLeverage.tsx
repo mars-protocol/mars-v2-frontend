@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react'
 
 import Button from 'components/common/Button'
-import LeverageSummary from 'components/Modals/HLS/Deposit/LeverageSummary'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
+import LeverageSummary from 'components/Modals/HLS/Deposit/LeverageSummary'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
@@ -23,7 +23,7 @@ import { getDepositCapMessage, getHealthFactorMessage, getLiquidityMessage } fro
 interface Props {
   account: HLSAccountWithStrategy
   action: HlsStakingManageAction
-  borrowAsset: BorrowAsset
+  borrowMarket: Market
   collateralAsset: Asset
 }
 
@@ -42,19 +42,24 @@ export default function ChangeLeverage(props: Props) {
   const changeHlsStakingLeverage = useStore((s) => s.changeHlsStakingLeverage)
   const { computeMaxBorrowAmount } = useHealthComputer(props.account)
   const previousDebt: BigNumber = useMemo(
-    () => props.account.debts.find(byDenom(props.borrowAsset.denom))?.amount || BN_ZERO,
-    [props.account.debts, props.borrowAsset.denom],
+    () => props.account.debts.find(byDenom(props.borrowMarket.asset.denom))?.amount || BN_ZERO,
+    [props.account.debts, props.borrowMarket.asset.denom],
   )
 
   const [currentDebt, setAmount] = useState(previousDebt)
   const maxBorrowAmount = useMemo(() => {
-    return computeMaxBorrowAmount(props.borrowAsset.denom, {
+    return computeMaxBorrowAmount(props.borrowMarket.asset.denom, {
       swap: {
         denom_out: props.collateralAsset.denom,
         slippage: SWAP_FEE_BUFFER.toString(),
       },
     }).plus(previousDebt)
-  }, [computeMaxBorrowAmount, previousDebt, props.borrowAsset.denom, props.collateralAsset.denom])
+  }, [
+    computeMaxBorrowAmount,
+    previousDebt,
+    props.borrowMarket.asset.denom,
+    props.collateralAsset.denom,
+  ])
 
   const onChangeAmount = useCallback(
     (currentDebt: BigNumber) => {
@@ -62,19 +67,22 @@ export default function ChangeLeverage(props: Props) {
       if (currentDebt.isLessThan(previousDebt)) {
         simulateHlsStakingWithdraw(
           props.collateralAsset.denom,
-          props.borrowAsset.denom,
+          props.borrowMarket.asset.denom,
           previousDebt.minus(currentDebt),
         )
       } else {
         simulateHlsStakingDeposit(
           BNCoin.fromDenomAndBigNumber(props.collateralAsset.denom, BN_ZERO),
-          BNCoin.fromDenomAndBigNumber(props.borrowAsset.denom, currentDebt.minus(previousDebt)),
+          BNCoin.fromDenomAndBigNumber(
+            props.borrowMarket.asset.denom,
+            currentDebt.minus(previousDebt),
+          ),
         )
       }
     },
     [
       previousDebt,
-      props.borrowAsset.denom,
+      props.borrowMarket.asset.denom,
       props.collateralAsset.denom,
       simulateHlsStakingDeposit,
       simulateHlsStakingWithdraw,
@@ -98,7 +106,7 @@ export default function ChangeLeverage(props: Props) {
       previousDebt,
       currentDebt,
       props.collateralAsset.denom,
-      props.borrowAsset.denom,
+      props.borrowMarket.asset.denom,
       slippage,
       prices,
       assets,
@@ -108,7 +116,7 @@ export default function ChangeLeverage(props: Props) {
     currentDebt,
     previousDebt,
     props.collateralAsset.denom,
-    props.borrowAsset.denom,
+    props.borrowMarket.asset.denom,
     props.account.id,
     slippage,
     prices,
@@ -127,22 +135,22 @@ export default function ChangeLeverage(props: Props) {
   )
 
   const apy = useMemo(() => {
-    if (!props.borrowAsset.borrowRate || !props.account.strategy.apy) return 0
-    return getLeveragedApy(props.account.strategy.apy, props.borrowAsset.borrowRate, leverage)
-  }, [leverage, props.account.strategy.apy, props.borrowAsset.borrowRate])
+    if (!props.borrowMarket.apy.borrow || !props.account.strategy.apy) return 0
+    return getLeveragedApy(props.account.strategy.apy, props.borrowMarket.apy.borrow, leverage)
+  }, [leverage, props.account.strategy.apy, props.borrowMarket.apy.borrow])
 
   const warningMessages = useMemo(() => {
     const messages: string[] = []
 
-    const borrowLiquidity = props.borrowAsset.liquidity?.amount || BN_ZERO
+    const borrowLiquidity = props.borrowMarket.liquidity || BN_ZERO
 
     if (borrowLiquidity.isLessThan(currentDebt.minus(previousDebt))) {
-      messages.push(getLiquidityMessage(props.borrowAsset.denom, borrowLiquidity, assets))
+      messages.push(getLiquidityMessage(props.borrowMarket.asset.denom, borrowLiquidity, assets))
     }
 
     if (maxBorrowAmount.isLessThan(currentDebt)) {
       messages.push(
-        getHealthFactorMessage(props.borrowAsset.denom, maxBorrowAmount, 'borrow', assets),
+        getHealthFactorMessage(props.borrowMarket.asset.denom, maxBorrowAmount, 'borrow', assets),
       )
     }
 
@@ -160,8 +168,8 @@ export default function ChangeLeverage(props: Props) {
     depositCapLeft,
     maxBorrowAmount,
     previousDebt,
-    props.borrowAsset.denom,
-    props.borrowAsset.liquidity?.amount,
+    props.borrowMarket.asset.denom,
+    props.borrowMarket.liquidity,
     props.collateralAsset.denom,
   ])
 
@@ -169,7 +177,7 @@ export default function ChangeLeverage(props: Props) {
     <>
       <TokenInputWithSlider
         amount={currentDebt}
-        asset={props.borrowAsset}
+        asset={props.borrowMarket.asset}
         max={maxBorrowAmount}
         onChange={onChangeAmount}
         maxText='Max borrow'
@@ -180,7 +188,7 @@ export default function ChangeLeverage(props: Props) {
         warningMessages={warningMessages}
       />
       <div className='flex flex-col gap-6'>
-        <LeverageSummary asset={props.borrowAsset} positionValue={positionValue} apy={apy} />
+        <LeverageSummary asset={props.borrowMarket.asset} positionValue={positionValue} apy={apy} />
         <Button
           onClick={handleOnClick}
           text='Confirm'

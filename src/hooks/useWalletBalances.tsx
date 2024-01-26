@@ -7,7 +7,7 @@ export default function useWalletBalances(address?: string) {
   const chainConfig = useChainConfig()
 
   return useSWR(
-    `chains/${chainConfig.id}/wallets/${address}/balances`,
+    address && `chains/${chainConfig.id}/wallets/${address}/balances`,
     () => getWalletBalances(chainConfig, address || ''),
     {
       isPaused: () => !address,

@@ -1,8 +1,8 @@
 import AvailableBorrowingsTable from 'components/borrow/Table/AvailableBorrowingsTable'
 import DepositedBorrowingsTable from 'components/borrow/Table/DepositedBorrowingsTable'
+import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import { BN_ZERO } from 'constants/math'
 import useBorrowEnabledAssets from 'hooks/assets/useBorrowEnabledAssets'
-import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 
 export default function Borrowings() {
   const data = useBorrowMarketAssetsTableData()
@@ -30,10 +30,18 @@ function Fallback() {
       max: 0,
       liq: 0,
     },
-    liquidity: null,
-    marketDepositAmount: BN_ZERO,
+    liquidity: BN_ZERO,
     marketLiquidityRate: 0,
-    marketLiquidityAmount: BN_ZERO,
+    cap: {
+      denom: asset.denom,
+      max: BN_ZERO,
+      used: BN_ZERO,
+    },
+    debt: BN_ZERO,
+    borrowEnabled: true,
+    depositEnabled: true,
+    deposits: BN_ZERO,
+    accountDebt: BN_ZERO,
   }))
 
   return <AvailableBorrowingsTable data={data} isLoading />
