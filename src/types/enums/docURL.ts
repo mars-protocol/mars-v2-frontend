@@ -8,6 +8,7 @@ export enum DocURL {
   COUNCIL_KEPLR = 'https://wallet.keplr.app/chains/mars-hub?tab=governance',
   DOCS_URL = 'https://docs.marsprotocol.io/',
   FARM_INTRO_URL = 'https://docs.marsprotocol.io/docs/learn/tutorials/farming/farming-intro',
+  HLS_INTRO_URL = 'https://docs.marsprotocol.io/docs/learn/mars-v2/high-leveraged-strategies/high-leveraged-strategies-intro',
   MANAGE_ACCOUNT_URL = 'https://docs.marsprotocol.io/docs/learn/tutorials/credit-accounts/credit-accounts-intro',
   ROVER_INTRO_URL = 'https://docs.marsprotocol.io/docs/learn/mars-v2/credit-accounts',
   PRIVACY_POLICY_URL = 'https://docs.marsprotocol.io/docs/overview/legal/privacy-policy',

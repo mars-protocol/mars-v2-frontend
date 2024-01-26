@@ -20,7 +20,7 @@ export default function HLSStakingIntro() {
         leftIcon={<PlusSquared />}
         onClick={(e) => {
           e.preventDefault()
-          window.open(DocURL.FARM_INTRO_URL, '_blank')
+          window.open(DocURL.HLS_INTRO_URL, '_blank')
         }}
         color='secondary'
       />
