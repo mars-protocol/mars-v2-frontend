@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import ActionButton from 'components/common/Button/ActionButton'
 import { CircularProgress } from 'components/common/CircularProgress'
@@ -108,7 +108,7 @@ export default function TradeSummary(props: Props) {
               <FormattedNumber
                 className='inline'
                 amount={liquidationPrice}
-                options={{ abbreviated: true, prefix: `${props.buyAsset.symbol} = $ ` }}
+                options={{ abbreviated: true, prefix: `${props.buyAsset.symbol} = $` }}
               />
             )}
           </div>
