@@ -36,6 +36,34 @@ export function removeCoins(coinsToRemove: BNCoin[], currentCoins: BNCoin[]) {
   return currentCoins
 }
 
+export function updatePerpsPositions(
+  currentPositions: PerpsPosition[],
+  additionalPosition?: PerpsPosition,
+) {
+  if (!additionalPosition || additionalPosition.amount.isZero()) return currentPositions ?? []
+
+  const currentDenoms = currentPositions.map((position) => position.denom)
+
+  if (currentDenoms.includes(additionalPosition.denom)) {
+    const index = currentDenoms.indexOf(additionalPosition.denom)
+
+    const newAmount =
+      currentPositions[index].tradeDirection === additionalPosition.tradeDirection
+        ? currentPositions[index].amount.plus(additionalPosition.amount)
+        : currentPositions[index].amount.minus(additionalPosition.amount)
+
+    currentPositions[index].tradeDirection = newAmount.isGreaterThan(BN_ZERO)
+      ? currentPositions[index].tradeDirection
+      : additionalPosition.tradeDirection
+    currentPositions[index].amount = newAmount.abs()
+    if (newAmount.isZero()) currentPositions.splice(index, 1)
+  } else {
+    currentPositions.push(additionalPosition)
+  }
+
+  return currentPositions
+}
+
 export function addValueToVaults(
   vaultValues: VaultValue[],
   vaults: DepositedVault[],
