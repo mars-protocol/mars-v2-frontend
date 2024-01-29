@@ -8,11 +8,12 @@ import { TextLink } from 'components/common/TextLink'
 import { generateToastContent } from 'components/common/Toaster'
 import useTransactions from 'hooks/localStorage/useTransactions'
 import useStore from 'store'
+import useChainConfig from 'hooks/useChainConfig'
 
 export default function RecentTransactions() {
   const address = useStore((s) => s.address)
   const [transactions, setTransactions] = useTransactions()
-  const chainConfig = useStore((s) => s.chainConfig)
+  const chainConfig = useChainConfig()
   const recentTransactions = transactions.recent
     .filter((tx) => tx.address === address)
     .sort((a, b) => (a.timestamp > b.timestamp ? -1 : 1))

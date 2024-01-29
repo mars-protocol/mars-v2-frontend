@@ -1,11 +1,11 @@
 import { Suspense, useMemo } from 'react'
 
+import Table from 'components/common/Table'
 import { NAME_META } from 'components/hls/Farm/Table/Columns/Name'
 import useAvailableColumns from 'components/hls/Farm/Table/Columns/useAvailableColumns'
-import Table from 'components/common/Table'
 import { BN_ZERO } from 'constants/math'
+import useChainConfig from 'hooks/useChainConfig'
 import useVaults from 'hooks/useVaults'
-import useStore from 'store'
 
 const title = 'Available HLS Vaults'
 
@@ -34,7 +34,8 @@ export default function AvailableHlsVaults() {
 
 function Fallback() {
   const columns = useAvailableColumns({ isLoading: true })
-  const vaults = useStore((s) => s.chainConfig.vaults)
+  const chainConfig = useChainConfig()
+  const vaults = chainConfig.vaults
   const mockVaults: Vault[] = vaults
     .filter((v) => v.isHls)
     .map((vault) => ({
