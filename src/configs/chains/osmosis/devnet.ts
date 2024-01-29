@@ -1,7 +1,6 @@
+import Osmosis1 from 'configs/chains/osmosis/osmosis-1'
 import { NETWORK } from 'types/enums/network'
 import { ChainInfoID } from 'types/enums/wallet'
-
-import Osmosis1 from './osmosis-1'
 
 const Devnet: ChainConfig = {
   ...Osmosis1,

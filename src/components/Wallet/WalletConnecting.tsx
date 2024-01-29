@@ -26,8 +26,16 @@ const mapErrorMessages = (providerId: string, errorMessage: string, name: string
 }
 
 export default function WalletConnecting(props: Props) {
-  const { connect, mobileConnect, simulate, sign, broadcast, mobileProviders, extensionProviders } =
-    useShuttle()
+  const {
+    connect,
+    mobileConnect,
+    simulate,
+    sign,
+    broadcast,
+    mobileProviders,
+    extensionProviders,
+    disconnect,
+  } = useShuttle()
   const providers = useMemo(
     () => [...mobileProviders, ...extensionProviders],
     [mobileProviders, extensionProviders],
@@ -85,6 +93,9 @@ export default function WalletConnecting(props: Props) {
                     }}
                   />
                 ),
+                onClose: () => {
+                  disconnect({ chainId: chainConfig.id })
+                },
               },
             })
           }
@@ -105,6 +116,9 @@ export default function WalletConnecting(props: Props) {
             userDomain: undefined,
             focusComponent: {
               component: <WalletSelect />,
+              onClose: () => {
+                disconnect({ chainId: chainConfig.id })
+              },
             },
           })
           return
@@ -144,6 +158,9 @@ export default function WalletConnecting(props: Props) {
                     }}
                   />
                 ),
+                onClose: () => {
+                  disconnect({ chainId: chainConfig.id })
+                },
               },
             })
           }
@@ -172,6 +189,9 @@ export default function WalletConnecting(props: Props) {
         userDomain: undefined,
         focusComponent: {
           component: <WalletSelect />,
+          onClose: () => {
+            disconnect({ chainId: chainConfig.id })
+          },
         },
       })
       return
