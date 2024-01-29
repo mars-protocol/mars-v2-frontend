@@ -1,5 +1,6 @@
 import classNames from 'classnames'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import debounce from 'lodash.debounce'
 
 import { Cross } from 'components/common/Icons'
 import LeverageSlider from 'components/common/LeverageSlider'
@@ -11,11 +12,20 @@ import { Or } from 'components/perps/Module/Or'
 import usePerpsManageModule from 'components/perps/Module/PerpsManageModule/usePerpsManageModule'
 import PerpsSummary from 'components/perps/Module/Summary'
 import AssetAmountInput from 'components/trade/TradeModule/SwapForm/AssetAmountInput'
+import { BN_ONE } from 'constants/math'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import usePerpsAsset from 'hooks/perps/usePerpsAsset'
+import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
+import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
 export function PerpsManageModule() {
   const [tradeDirection, setTradeDirection] = useState<TradeDirection | null>(null)
   const [amount, setAmount] = useState<BigNumber | null>(null)
+  const account = useCurrentAccount()
+  const { simulatePerps, addedPerps } = useUpdatedAccount(account)
+  const perpsBaseDenom = 'ibc/F91EA2C0A23697A1048E08C2F787E3A58AC6F706A1CD2257A504925158CFC0F3'
+  const { perpsAsset } = usePerpsAsset()
 
   const {
     closeManagePerpModule,
@@ -25,6 +35,34 @@ export function PerpsManageModule() {
     leverage,
     asset,
   } = usePerpsManageModule(amount)
+
+  const debouncedUpdateAccount = useMemo(
+    () =>
+      debounce((perpsPosition: PerpsPosition) => {
+        if (
+          addedPerps &&
+          perpsPosition.amount === addedPerps.amount &&
+          perpsPosition.tradeDirection === addedPerps.tradeDirection
+        )
+          return
+        simulatePerps(perpsPosition)
+      }, 100),
+    [simulatePerps, addedPerps],
+  )
+
+  useEffect(() => {
+    if (!amount || !perpsAsset || !tradeDirection) return
+    const perpsPosition = {
+      amount,
+      closingFee: BNCoin.fromDenomAndBigNumber(perpsBaseDenom, BN_ONE),
+      pnl: BNCoin.fromDenomAndBigNumber(perpsBaseDenom, BN_ONE.negated()),
+      entryPrice: BN_ONE,
+      baseDenom: perpsBaseDenom,
+      denom: perpsAsset.denom,
+      tradeDirection,
+    }
+    debouncedUpdateAccount(perpsPosition)
+  }, [debouncedUpdateAccount, amount, perpsAsset, tradeDirection, perpsBaseDenom])
 
   if (!asset) return null
 

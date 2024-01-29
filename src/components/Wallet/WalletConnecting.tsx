@@ -103,7 +103,17 @@ export default function WalletConnecting(props: Props) {
       }
       if (!isConnecting) handleConnectAsync()
     },
-    [isConnecting, client, setIsConnecting, connect, chainConfig, broadcast, sign, simulate],
+    [
+      isConnecting,
+      client,
+      setIsConnecting,
+      connect,
+      chainConfig,
+      broadcast,
+      sign,
+      simulate,
+      disconnect,
+    ],
   )
 
   const handleMobileConnect = useCallback(
@@ -178,6 +188,7 @@ export default function WalletConnecting(props: Props) {
       broadcast,
       sign,
       simulate,
+      disconnect,
     ],
   )
 
@@ -208,7 +219,15 @@ export default function WalletConnecting(props: Props) {
       return
     }
     handleConnect(provider.id)
-  }, [handleConnect, isConnecting, providerId, providers, handleMobileConnect])
+  }, [
+    handleConnect,
+    isConnecting,
+    providerId,
+    providers,
+    handleMobileConnect,
+    disconnect,
+    chainConfig.id,
+  ])
 
   return (
     <FullOverlayContent

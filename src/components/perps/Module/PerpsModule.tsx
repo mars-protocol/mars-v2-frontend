@@ -26,7 +26,7 @@ export function PerpsModule() {
   const { perpsAsset } = usePerpsAsset()
   const [leverage, setLeverage] = useState<number>(1)
   const account = useCurrentAccount()
-  const { simulatePerps, addedPerps, updatedAccount } = useUpdatedAccount(account)
+  const { simulatePerps, addedPerps } = useUpdatedAccount(account)
   const [amount, setAmount] = useState<BigNumber>(BN_ZERO)
   const perpsBaseDenom = 'ibc/F91EA2C0A23697A1048E08C2F787E3A58AC6F706A1CD2257A504925158CFC0F3'
 
