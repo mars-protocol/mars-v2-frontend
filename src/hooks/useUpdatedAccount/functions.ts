@@ -38,27 +38,33 @@ export function removeCoins(coinsToRemove: BNCoin[], currentCoins: BNCoin[]) {
 
 export function updatePerpsPositions(
   currentPositions: PerpsPosition[],
-  additionalPosition?: PerpsPosition,
+  updatedPosition?: PerpsPosition,
 ) {
-  if (!additionalPosition || additionalPosition.amount.isZero()) return currentPositions ?? []
+  if (!updatedPosition) return currentPositions ?? []
 
   const currentDenoms = currentPositions.map((position) => position.denom)
 
-  if (currentDenoms.includes(additionalPosition.denom)) {
-    const index = currentDenoms.indexOf(additionalPosition.denom)
+  if (currentDenoms.includes(updatedPosition.denom)) {
+    const index = currentDenoms.indexOf(updatedPosition.denom)
 
-    const newAmount =
-      currentPositions[index].tradeDirection === additionalPosition.tradeDirection
-        ? currentPositions[index].amount.plus(additionalPosition.amount)
-        : currentPositions[index].amount.minus(additionalPosition.amount)
+    if (updatedPosition.update) {
+      currentPositions[index].tradeDirection = updatedPosition.tradeDirection
+      currentPositions[index].amount = updatedPosition.amount
+    } else {
+      if (updatedPosition.amount.isZero()) return currentPositions
+      const newAmount =
+        currentPositions[index].tradeDirection === updatedPosition.tradeDirection
+          ? currentPositions[index].amount.plus(updatedPosition.amount)
+          : currentPositions[index].amount.minus(updatedPosition.amount)
 
-    currentPositions[index].tradeDirection = newAmount.isGreaterThan(BN_ZERO)
-      ? currentPositions[index].tradeDirection
-      : additionalPosition.tradeDirection
-    currentPositions[index].amount = newAmount.abs()
-    if (newAmount.isZero()) currentPositions.splice(index, 1)
+      currentPositions[index].tradeDirection = newAmount.isGreaterThan(BN_ZERO)
+        ? currentPositions[index].tradeDirection
+        : updatedPosition.tradeDirection
+      currentPositions[index].amount = newAmount.abs()
+      if (newAmount.isZero()) currentPositions.splice(index, 1)
+    }
   } else {
-    currentPositions.push(additionalPosition)
+    currentPositions.push(updatedPosition)
   }
 
   return currentPositions

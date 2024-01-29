@@ -1,6 +1,6 @@
 import classNames from 'classnames'
-import { useEffect, useMemo, useState } from 'react'
 import debounce from 'lodash.debounce'
+import { useEffect, useMemo, useState } from 'react'
 
 import { Cross } from 'components/common/Icons'
 import LeverageSlider from 'components/common/LeverageSlider'
@@ -41,13 +41,13 @@ export function PerpsManageModule() {
       debounce((perpsPosition: PerpsPosition) => {
         if (
           addedPerps &&
-          perpsPosition.amount === addedPerps.amount &&
-          perpsPosition.tradeDirection === addedPerps.tradeDirection
+          addedPerps.tradeDirection === tradeDirection &&
+          addedPerps.amount === amount
         )
           return
-        simulatePerps(perpsPosition)
+        simulatePerps(perpsPosition, 'update')
       }, 100),
-    [simulatePerps, addedPerps],
+    [simulatePerps, addedPerps, tradeDirection, amount],
   )
 
   useEffect(() => {
@@ -85,7 +85,7 @@ export function PerpsManageModule() {
       />
       <AssetAmountInput
         label='Amount'
-        max={BN(100000)} // TODO: Implement max calculation
+        max={BN(1000000)} // TODO: Implement max calculation
         amount={amount ?? previousAmount}
         setAmount={setAmount}
         asset={asset}
