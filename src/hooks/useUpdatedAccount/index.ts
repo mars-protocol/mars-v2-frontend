@@ -11,6 +11,7 @@ import {
   addValueToVaults,
   getDepositAndLendCoinsToSpend,
   removeCoins,
+  updatePerpsPositions,
 } from 'hooks/useUpdatedAccount/functions'
 import useVaults from 'hooks/useVaults'
 import useStore from 'store'
@@ -43,6 +44,7 @@ export function useUpdatedAccount(account?: Account) {
   const [addedLends, addLends] = useState<BNCoin[]>([])
   const [removedLends, removeLends] = useState<BNCoin[]>([])
   const [addedTrades, addTrades] = useState<BNCoin[]>([])
+  const [addedPerps, addPerps] = useState<PerpsPosition>()
   const [leverage, setLeverage] = useState<number>(0)
 
   const removeDepositAndLendsByDenom = useCallback(
@@ -241,6 +243,14 @@ export function useUpdatedAccount(account?: Account) {
     [account, assets, prices, slippage],
   )
 
+  const simulatePerps = useCallback(
+    (position: PerpsPosition) => {
+      if (!account) return
+      addPerps(position)
+    },
+    [account, addPerps],
+  )
+
   useEffect(() => {
     if (!account) return
 
@@ -252,6 +262,7 @@ export function useUpdatedAccount(account?: Account) {
       [...accountCopy.vaults],
       availableVaults ?? [],
     )
+    accountCopy.perps = updatePerpsPositions([...accountCopy.perps], addedPerps)
     accountCopy.deposits = removeCoins(removedDeposits, [...accountCopy.deposits])
     accountCopy.debts = removeCoins(removedDebts, [...accountCopy.debts])
     accountCopy.lends = addCoins(addedLends, [...accountCopy.lends])
@@ -274,6 +285,7 @@ export function useUpdatedAccount(account?: Account) {
     prices,
     addedTrades,
     assets,
+    addedPerps,
   ])
 
   return {
@@ -286,10 +298,12 @@ export function useUpdatedAccount(account?: Account) {
     addLends,
     removeLends,
     addVaultValues,
+    addPerps,
     addedDeposits,
     addedDebts,
     addedLends,
     addedTrades,
+    addedPerps,
     leverage,
     removedDeposits,
     removedDebts,
@@ -303,5 +317,6 @@ export function useUpdatedAccount(account?: Account) {
     simulateTrade,
     simulateVaultDeposit,
     simulateWithdraw,
+    simulatePerps,
   }
 }

@@ -1,16 +1,16 @@
 import classNames from 'classnames'
-import { isDesktop } from 'react-device-detect'
 import { useMemo } from 'react'
+import { isDesktop } from 'react-device-detect'
 
+import Wallet from 'components/Wallet'
 import AccountMenu from 'components/account/AccountMenu'
 import EscButton from 'components/common/Button/EscButton'
+import { Coins, CoinsSwap } from 'components/common/Icons'
+import Settings from 'components/common/Settings'
 import ChainSelect from 'components/header/ChainSelect'
 import OracleResyncButton from 'components/header/OracleResyncButton'
-import { Coins, CoinsSwap } from 'components/common/Icons'
-import DesktopNavigation from 'components/header/navigation/DesktopNavigation'
 import RewardsCenter from 'components/header/RewardsCenter'
-import Settings from 'components/common/Settings'
-import Wallet from 'components/Wallet'
+import DesktopNavigation from 'components/header/navigation/DesktopNavigation'
 import useAccountId from 'hooks/useAccountId'
 import useStore from 'store'
 import { WalletID } from 'types/enums/wallet'
@@ -83,7 +83,10 @@ export default function DesktopHeader() {
                 <ChainSelect />
               </div>
             )}
-            <EscButton onClick={handleCloseFocusMode} />
+            <div className='flex gap-4'>
+              {!address && <ChainSelect />}
+              <EscButton onClick={handleCloseFocusMode} />
+            </div>
           </div>
         ) : (
           <div className='flex gap-4'>

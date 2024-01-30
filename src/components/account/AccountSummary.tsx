@@ -38,7 +38,6 @@ export default function AccountSummary(props: Props) {
   const { data: prices } = usePrices()
   const assets = useAllAssets()
   const updatedAccount = useStore((s) => s.updatedAccount)
-  const chainConfig = useStore((s) => s.chainConfig)
   const accountBalance = useMemo(
     () =>
       props.account
@@ -104,7 +103,7 @@ export default function AccountSummary(props: Props) {
         renderSubTitle: () => <></>,
       },
     ]
-    if (chainConfig.perps)
+    if (props.account.perps.length > 0)
       itemsArray.push({
         title: 'Perp Positions',
         renderContent: () =>
@@ -122,7 +121,6 @@ export default function AccountSummary(props: Props) {
     borrowAssetsData,
     lendingAssetsData,
     props.isHls,
-    chainConfig.perps,
     handleToggle,
     accountSummaryTabs,
   ])
