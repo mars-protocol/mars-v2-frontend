@@ -128,7 +128,7 @@ export default function AccountFundContent(props: Props) {
   const depositCapReachedCoins = useMemo(() => {
     const depositCapReachedCoins: BNCoin[] = []
     fundingAssets.forEach((asset) => {
-      const marketAsset = markets.find(byDenom(asset.denom))
+      const marketAsset = markets.find((market) => market.asset.denom === asset.denom)
       if (!marketAsset) return
 
       const capLeft = getCapLeftWithBuffer(marketAsset.cap)

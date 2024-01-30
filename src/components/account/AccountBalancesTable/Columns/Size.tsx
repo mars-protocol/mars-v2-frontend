@@ -1,5 +1,6 @@
 import { Row } from '@tanstack/react-table'
 import classNames from 'classnames'
+import { useMemo } from 'react'
 
 import { getAmountChangeColor } from 'components/account/AccountBalancesTable/functions'
 import { FormattedNumber } from 'components/common/FormattedNumber'
@@ -27,10 +28,9 @@ export const sizeSortingFn = (a: Row<AccountBalanceRow>, b: Row<AccountBalanceRo
 
 export default function Size(props: Props) {
   const { amountChange, type, size } = props
+  const color = useMemo(() => getAmountChangeColor(type, amountChange), [amountChange, type])
 
   if (type === 'vault') return <p className='text-xs text-right number'>&ndash;</p>
-
-  const color = getAmountChangeColor(type, amountChange)
   const className = classNames('text-xs text-right', color)
   const allowZero = !amountChange.isZero()
 
@@ -47,6 +47,7 @@ export default function Size(props: Props) {
   const formattedAmount = formatAmountToPrecision(size, MAX_AMOUNT_DECIMALS)
   const minimumAmount = allowZero ? 0 : MIN_AMOUNT
   const lowAmount = formattedAmount === 0 ? minimumAmount : Math.max(formattedAmount, MIN_AMOUNT)
+
   return (
     <FormattedNumber
       className={className}

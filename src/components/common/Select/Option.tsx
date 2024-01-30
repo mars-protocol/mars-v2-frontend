@@ -9,7 +9,6 @@ import { BN_ZERO } from 'constants/math'
 import useAsset from 'hooks/assets/useAsset'
 import useMarkets from 'hooks/markets/useMarkets'
 import { BNCoin } from 'types/classes/BNCoin'
-import { byDenom } from 'utils/array'
 import { formatValue } from 'utils/formatters'
 
 interface Props extends SelectOption {
@@ -33,7 +32,7 @@ export default function Option(props: Props) {
 
   if (isCoin) {
     const balance = props.amount ?? BN_ZERO
-    const marketAsset = markets.find(byDenom(props.denom || ''))
+    const marketAsset = markets.find((market) => market.asset.denom === props.denom)
 
     if (!asset || !marketAsset) return null
 
