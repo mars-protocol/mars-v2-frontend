@@ -34,7 +34,6 @@ export function PerpsManageModule() {
   const debouncedUpdateAccount = useMemo(
     () =>
       debounce((perpsPosition: PerpsPosition) => {
-        console.log(perpsPosition.amount.toString())
         if (
           addedPerps &&
           perpsPosition.amount === addedPerps.amount &&
