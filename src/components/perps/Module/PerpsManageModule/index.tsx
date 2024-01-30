@@ -12,11 +12,9 @@ import { Or } from 'components/perps/Module/Or'
 import usePerpsManageModule from 'components/perps/Module/PerpsManageModule/usePerpsManageModule'
 import PerpsSummary from 'components/perps/Module/Summary'
 import AssetAmountInput from 'components/trade/TradeModule/SwapForm/AssetAmountInput'
-import { BN_ONE } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
-import { BNCoin } from 'types/classes/BNCoin'
+import getPerpsPosition from 'utils/getPerpsPosition'
 import { BN } from 'utils/helpers'
 
 export function PerpsManageModule() {
@@ -24,9 +22,6 @@ export function PerpsManageModule() {
   const [amount, setAmount] = useState<BigNumber | null>(null)
   const account = useCurrentAccount()
   const { simulatePerps, addedPerps } = useUpdatedAccount(account)
-  const perpsBaseDenom = 'ibc/F91EA2C0A23697A1048E08C2F787E3A58AC6F706A1CD2257A504925158CFC0F3'
-  const { perpsAsset } = usePerpsAsset()
-
   const {
     closeManagePerpModule,
     previousAmount,
@@ -39,30 +34,33 @@ export function PerpsManageModule() {
   const debouncedUpdateAccount = useMemo(
     () =>
       debounce((perpsPosition: PerpsPosition) => {
+        console.log(perpsPosition.amount.toString())
         if (
           addedPerps &&
-          addedPerps.tradeDirection === tradeDirection &&
-          addedPerps.amount === amount
+          perpsPosition.amount === addedPerps.amount &&
+          perpsPosition.tradeDirection === addedPerps.tradeDirection
         )
           return
         simulatePerps(perpsPosition)
       }, 100),
-    [simulatePerps, addedPerps, tradeDirection, amount],
+    [simulatePerps, addedPerps],
   )
 
   useEffect(() => {
-    if (!amount || !perpsAsset || !tradeDirection) return
-    const perpsPosition = {
-      amount,
-      closingFee: BNCoin.fromDenomAndBigNumber(perpsBaseDenom, BN_ONE),
-      pnl: BNCoin.fromDenomAndBigNumber(perpsBaseDenom, BN_ONE.negated()),
-      entryPrice: BN_ONE,
-      baseDenom: perpsBaseDenom,
-      denom: perpsAsset.denom,
-      tradeDirection,
-    }
+    const perpsPosition = getPerpsPosition(
+      asset,
+      amount ?? previousAmount,
+      tradeDirection ?? previousTradeDirection,
+    )
     debouncedUpdateAccount(perpsPosition)
-  }, [debouncedUpdateAccount, amount, perpsAsset, tradeDirection, perpsBaseDenom])
+  }, [
+    debouncedUpdateAccount,
+    asset,
+    amount,
+    previousAmount,
+    tradeDirection,
+    previousTradeDirection,
+  ])
 
   if (!asset) return null
 
