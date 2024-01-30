@@ -45,7 +45,7 @@ export function PerpsManageModule() {
           addedPerps.amount === amount
         )
           return
-        simulatePerps(perpsPosition, 'update')
+        simulatePerps(perpsPosition)
       }, 100),
     [simulatePerps, addedPerps, tradeDirection, amount],
   )

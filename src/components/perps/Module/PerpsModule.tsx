@@ -39,7 +39,7 @@ export function PerpsModule() {
           perpsPosition.tradeDirection === addedPerps.tradeDirection
         )
           return
-        simulatePerps(perpsPosition, 'create')
+        simulatePerps(perpsPosition)
       }, 100),
     [simulatePerps, addedPerps],
   )
