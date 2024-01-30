@@ -107,7 +107,7 @@ function BorrowModal(props: Props) {
   )
 
   const overpayExeedsCap = useMemo(() => {
-    const marketAsset = markets.find(byDenom(asset.denom))
+    const marketAsset = markets.find((market) => market.asset.denom === asset.denom)
     if (!marketAsset) return
     const overpayAmount = totalDebtRepayAmount.minus(totalDebt)
     const marketCapAfterOverpay = marketAsset.cap.used.plus(overpayAmount)

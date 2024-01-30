@@ -1,5 +1,4 @@
 import AssetRate from 'components/common/assets/AssetRate'
-import { byDenom } from 'utils/array'
 
 export const APY_META = { accessorKey: 'apy', header: 'APY', meta: { className: 'w-30' } }
 
@@ -14,7 +13,8 @@ export default function Apr(props: Props) {
   const { markets, type, denom, apy } = props
 
   if (apy === 0) return <p className='w-full text-xs text-right number'>&ndash;</p>
-  const isEnabled = markets.find(byDenom(denom))?.borrowEnabled ?? false
+  const isEnabled =
+    markets.find((market) => market.asset.denom === props.denom)?.borrowEnabled ?? false
 
   return (
     <AssetRate
