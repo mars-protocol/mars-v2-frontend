@@ -34,8 +34,6 @@ function useDisplayCurrencyPrice() {
 
   const convertAmount = useCallback(
     (asset: Asset, amount: string | number | BigNumber) => {
-      if (!asset) return BN_ZERO
-
       return (
         getConversionRate(asset.denom)?.multipliedBy(BN(amount).shiftedBy(-asset.decimals)) ??
         BN_ZERO
