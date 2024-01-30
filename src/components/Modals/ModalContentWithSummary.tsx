@@ -5,7 +5,6 @@ import AccountSummary from 'components/account/AccountSummary'
 import Card from 'components/common/Card'
 import { CircularProgress } from 'components/common/CircularProgress'
 import Modal, { ModalProps } from 'components/Modals/Modal'
-import useStore from 'store'
 
 interface Props extends ModalProps {
   isHls?: boolean
@@ -36,7 +35,6 @@ function modalContent(content: React.ReactNode, isContentCard?: boolean, account
 }
 
 export default function ModalContentWithSummary(props: Props) {
-  const updatedAccount = useStore((s) => s.updatedAccount)
   return (
     <Modal
       {...props}
@@ -48,9 +46,7 @@ export default function ModalContentWithSummary(props: Props) {
     >
       {props.subHeader && props.subHeader}
       {modalContent(props.content, props.isContentCard, props.account)}
-      {props.account && (
-        <AccountSummary account={updatedAccount || props.account} isHls={props.isHls} />
-      )}
+      {props.account && <AccountSummary account={props.account} isHls={props.isHls} />}
     </Modal>
   )
 }
