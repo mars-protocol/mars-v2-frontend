@@ -14,7 +14,6 @@ interface PerpsPosition {
   closingFee: BNCoin
   pnl: BNCoin
   entryPrice: BigNumber
-  update?: boolean
 }
 
 interface PerpPositionRow extends PerpsPosition {

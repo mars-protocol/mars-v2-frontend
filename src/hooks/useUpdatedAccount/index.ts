@@ -244,10 +244,8 @@ export function useUpdatedAccount(account?: Account) {
   )
 
   const simulatePerps = useCallback(
-    (position: PerpsPosition, type: 'create' | 'update') => {
-      addPerps(undefined)
+    (position: PerpsPosition) => {
       if (!account) return
-      position.update = type === 'update'
       addPerps(position)
     },
     [account, addPerps],
