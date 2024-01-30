@@ -1,6 +1,6 @@
 import { Navigate, Outlet, Route, Routes as RoutesWrapper } from 'react-router-dom'
 
-import Layout from 'pages/_layout'
+import useChainConfig from 'hooks/useChainConfig'
 import BorrowPage from 'pages/BorrowPage'
 import ExecuteMessagePage from 'pages/ExecuteMessagePage'
 import FarmPage from 'pages/FarmPage'
@@ -12,10 +12,10 @@ import PerpsPage from 'pages/PerpsPage'
 import PortfolioAccountPage from 'pages/PortfolioAccountPage'
 import PortfolioPage from 'pages/PortfolioPage'
 import TradePage from 'pages/TradePage'
-import useStore from 'store'
+import Layout from 'pages/_layout'
 
 export default function Routes() {
-  const chainConfig = useStore((s) => s.chainConfig)
+  const chainConfig = useChainConfig()
   return (
     <RoutesWrapper>
       <Route

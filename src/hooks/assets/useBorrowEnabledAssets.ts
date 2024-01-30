@@ -1,7 +1,7 @@
-import useStore from 'store'
+import useAllAssets from 'hooks/assets/useAllAssets'
 
 export default function useBorrowEnabledAssets() {
-  const assets = useStore((s) => s.chainConfig.assets)
+  const assets = useAllAssets()
 
   return assets.filter((asset) => asset.isBorrowEnabled)
 }

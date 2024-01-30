@@ -7,8 +7,8 @@ import AssetSelectorItem from 'components/trade/TradeModule/AssetSelector/AssetS
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
 import useMarkets from 'hooks/markets/useMarkets'
+import useChainConfig from 'hooks/useChainConfig'
 import usePrices from 'hooks/usePrices'
-import useStore from 'store'
 import { getMergedBalancesForAsset } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { sortAssetsOrPairs } from 'utils/assets'
@@ -22,7 +22,8 @@ interface Props {
 }
 
 export default function AssetList(props: Props) {
-  const baseDenom = useStore((s) => s.chainConfig.assets[0].denom)
+  const chainConfig = useChainConfig()
+  const baseDenom = chainConfig.assets[0].denom
   const { assets, type, isOpen, toggleOpen, onChangeAsset } = props
   const account = useCurrentAccount()
   const markets = useMarkets()

@@ -7,11 +7,11 @@ import BreadCrumbs from 'components/portfolio/Account/BreadCrumbs'
 import PerpPositions from 'components/portfolio/Account/PerpPositions'
 import Summary from 'components/portfolio/Account/Summary'
 import useAccountId from 'hooks/useAccountId'
-import useStore from 'store'
+import useChainConfig from 'hooks/useChainConfig'
 import { getRoute } from 'utils/route'
 
 export default function PortfolioAccountPage() {
-  const chainConfig = useStore((s) => s.chainConfig)
+  const chainConfig = useChainConfig()
   const selectedAccountId = useAccountId()
   const { address, accountId } = useParams()
   const navigate = useNavigate()

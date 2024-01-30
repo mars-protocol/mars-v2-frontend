@@ -13,6 +13,7 @@ import { WALLETS } from 'constants/wallets'
 import useStore from 'store'
 import { WalletID } from 'types/enums/wallet'
 import { isAndroid, isIOS, isMobile } from 'utils/mobile'
+import useChainConfig from 'hooks/useChainConfig'
 
 interface Props {
   error?: ErrorObject
@@ -52,7 +53,7 @@ function WalletOption(props: WalletOptionProps) {
 }
 
 export default function WalletSelect(props: Props) {
-  const chainConfig = useStore((s) => s.chainConfig)
+  const chainConfig = useChainConfig()
   const { extensionProviders, mobileProviders, mobileConnect } = useShuttle()
   const [qrCodeUrl, setQRCodeUrl] = useState('')
   const [error, setError] = useState(props.error)
