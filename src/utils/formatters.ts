@@ -58,10 +58,10 @@ export const formatValue = (amount: number | string, options?: FormatOptions): s
     ? convertedAmount.isGreaterThanOrEqualTo(1_000_000_000)
       ? 'B'
       : convertedAmount.isGreaterThanOrEqualTo(1_000_000)
-      ? 'M'
-      : convertedAmount.isGreaterThanOrEqualTo(1_000)
-      ? 'K'
-      : false
+        ? 'M'
+        : convertedAmount.isGreaterThanOrEqualTo(1_000)
+          ? 'K'
+          : false
     : ''
 
   if (amountSuffix === 'B') {

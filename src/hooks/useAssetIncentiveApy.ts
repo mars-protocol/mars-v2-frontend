@@ -1,20 +1,26 @@
 import useSWR from 'swr'
 
-import getTotalActiveEmissionValue from 'api/incentives/getTotalActiveEmissionValue'
+import { BN_ZERO } from 'constants/math'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import useMarket from 'hooks/markets/useMarket'
 import useChainConfig from 'hooks/useChainConfig'
-import usePrice from 'hooks/usePrice'
+import useClients from 'hooks/useClients'
+import usePrices from 'hooks/usePrices'
+import { byDenom } from 'utils/array'
 import { SECONDS_IN_A_YEAR } from 'utils/constants'
 import { BN } from 'utils/helpers'
 
 export default function useAssetIncentivesApy(denom: string) {
   const chainConfig = useChainConfig()
   const market = useMarket(denom)
-  const price = usePrice(denom)
+  const { data: prices } = usePrices()
+  const assets = useAllAssets()
+  const clients = useClients()
+  const enabled = !!market && !!prices.length && !!assets.length && !!clients
 
   return useSWR(
-    market && `chains/${chainConfig.id}/assets/${denom}/incentives`,
-    () => calculateAssetIncentivesApy(chainConfig, market!, price),
+    enabled && `chains/${chainConfig.id}/assets/${denom}/incentives`,
+    () => calculateAssetIncentivesApy(clients!, assets, prices, market!),
     {
       revalidateOnFocus: false,
     },
@@ -22,16 +28,20 @@ export default function useAssetIncentivesApy(denom: string) {
 }
 
 async function calculateAssetIncentivesApy(
-  chainConfig: ChainConfig,
+  clients: ContractClients,
+  assets: Asset[],
+  prices: BNCoin[],
   market: Market,
-  price: BigNumber,
 ) {
   const totalActiveEmissionValue = await getTotalActiveEmissionValue(
-    chainConfig,
-    market.asset.denom,
+    clients,
+    assets,
+    prices,
+    market,
   )
 
   if (!totalActiveEmissionValue) return null
+  const price = prices.find(byDenom(market.asset.denom))?.amount ?? BN_ZERO
 
   const marketLiquidityValue = BN(market.deposits)
     .shiftedBy(-market.asset.decimals)
@@ -42,4 +52,31 @@ async function calculateAssetIncentivesApy(
 
   const totalAnnualReturnsValue = annualEmission.plus(marketReturns)
   return totalAnnualReturnsValue.dividedBy(marketLiquidityValue).multipliedBy(100)
+}
+
+async function getTotalActiveEmissionValue(
+  clients: ContractClients,
+  assets: Asset[],
+  prices: BNCoin[],
+  market: Market,
+): Promise<BigNumber | null> {
+  try {
+    const activeEmissions = await clients.incentives.activeEmissions({
+      collateralDenom: market.asset.denom,
+    })
+
+    if (activeEmissions.length === 0) {
+      throw 'Asset has no active incentive emission.'
+    }
+
+    return activeEmissions.reduce((accumulation, current, index) => {
+      const price = prices.find(byDenom(current.denom))?.amount ?? BN_ZERO
+      const decimals = assets.find(byDenom(current.denom))?.decimals as number
+      const emissionValue = BN(current.emission_rate).shiftedBy(-decimals).multipliedBy(price)
+
+      return accumulation.plus(emissionValue)
+    }, BN_ZERO)
+  } catch (ex) {
+    return null
+  }
 }
