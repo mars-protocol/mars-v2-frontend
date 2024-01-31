@@ -58,7 +58,7 @@ export default function LendingActionButtons(props: Props) {
 
   return (
     <div className='flex flex-row space-x-2'>
-      {accountLendValue && (
+      {accountLendValue && accountLendValue.isGreaterThan(0) && (
         <Button
           leftIcon={<ArrowDownLine />}
           iconClassName={iconClassnames}
