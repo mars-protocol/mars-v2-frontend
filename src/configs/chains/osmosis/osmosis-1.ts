@@ -11,6 +11,7 @@ import OSMO_WBTC from 'configs/assets/lp/OSMO_WBTC'
 import OSMO_WETH from 'configs/assets/lp/OSMO_WETH'
 import stATOM_ATOM from 'configs/assets/lp/stATOM_ATOM'
 import MARS from 'configs/assets/MARS'
+import milkTIA from 'configs/assets/milkTIA'
 import OSMO from 'configs/assets/OSMO'
 import stATOM from 'configs/assets/stATOM'
 import stOSMO from 'configs/assets/stOSMO'
@@ -97,6 +98,11 @@ const ASSETS = [
     ...DYDX,
     poolId: 1245,
     denom: 'ibc/831F0B1BBB1D08A2B75311892876D71565478C532967545476DF4C2D7492E48C',
+  },
+  {
+    ...milkTIA,
+    poolId: 1335,
+    denom: 'factory/osmo1f5vfcph2dvfeqcqkhetwv75fda69z7e5c2dldm3kvgj23crkv6wqcn47a0/umilkTIA',
   },
   OSMO_ATOM,
   OSMO_USDC,
