@@ -63,8 +63,8 @@ export default function DisplayCurrency(props: Props) {
       ? amount > 0
         ? '+'
         : amount < 0
-        ? '-'
-        : ''
+          ? '-'
+          : ''
       : ''
     const approximationPrefix = isApproximation ? '~ ' : ''
     const smallerThanPrefix = isLessThanACent && !showZero ? '< ' : ''
