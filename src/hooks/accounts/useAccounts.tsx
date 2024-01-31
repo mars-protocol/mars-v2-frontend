@@ -8,7 +8,7 @@ export default function useAccounts(kind: AccountKind, address?: string, suspens
   const chainConfig = useChainConfig()
 
   return useSWR(
-    `chains/${chainConfig.id}/accounts/${kind}`,
+    address && `chains/${chainConfig.id}/accounts/${kind}`,
     () => getAccounts(kind, chainConfig, address),
     {
       suspense: suspense,

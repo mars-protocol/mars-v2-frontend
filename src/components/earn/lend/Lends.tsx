@@ -1,8 +1,8 @@
 import AvailableLendsTable from 'components/earn/lend/Table/AvailableLendsTable'
 import DepositedLendsTable from 'components/earn/lend/Table/DepositedLendsTable'
+import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import { BN_ZERO } from 'constants/math'
-import useLendEnabledAssets from 'hooks/assets/useLendEnabledAssets'
-import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
+import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
 
 export default function Lends() {
   const { accountLentAssets, availableAssets, allAssets } = useLendingMarketAssetsTableData()
@@ -19,14 +19,15 @@ export default function Lends() {
 }
 
 function Fallback() {
-  const assets = useLendEnabledAssets()
+  const assets = useMarketEnabledAssets()
 
   const data: LendingMarketTableData[] = assets.map((asset) => ({
     asset,
-    marketDepositCap: BN_ZERO,
-    borrowEnabled: false,
-    marketDepositAmount: BN_ZERO,
-    marketLiquidityAmount: BN_ZERO,
+    borrowEnabled: true,
+    depositEnabled: true,
+    debt: BN_ZERO,
+    deposits: BN_ZERO,
+    liquidity: BN_ZERO,
     cap: {
       max: BN_ZERO,
       used: BN_ZERO,

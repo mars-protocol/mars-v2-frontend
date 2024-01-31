@@ -37,6 +37,7 @@ export default function useAccountBalanceData(props: Props) {
         ? hlsStrategies.find((strategy) => strategy.denoms.deposit === asset.denom)?.apy ?? 0
         : 0
       const prevDeposit = updatedAccount ? account?.deposits.find(byDenom(deposit.denom)) : deposit
+
       deposits.push(
         getAssetAccountBalanceRow('deposit', asset, prices, assets, deposit, apy, prevDeposit),
       )

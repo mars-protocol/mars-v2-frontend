@@ -14,7 +14,6 @@ import { getHealthFactorMessage } from 'utils/messages'
 interface Props {
   account: Account
   action: HlsStakingManageAction
-  borrowAsset: Asset
   collateralAsset: Asset
 }
 

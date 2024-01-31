@@ -5,17 +5,17 @@ import DepositedVaultsTable from 'components/earn/farm/Table/DepositedVaultsTabl
 import VaultUnlockBanner from 'components/earn/farm/VaultUnlockBanner'
 import { BN_ZERO } from 'constants/math'
 import useAccountId from 'hooks/useAccountId'
+import useChainConfig from 'hooks/useChainConfig'
 import useDepositedVaults from 'hooks/useDepositedVaults'
 import useVaults from 'hooks/useVaults'
-import useStore from 'store'
 import { VaultStatus } from 'types/enums/vault'
 
 function Content() {
   const accountId = useAccountId()
   const { data: vaults } = useVaults()
   const { data: depositedVaults } = useDepositedVaults(accountId || '')
-
-  const vaultMetaData = useStore((s) => s.chainConfig.vaults)
+  const chainConfig = useChainConfig()
+  const vaultMetaData = chainConfig.vaults
 
   const { deposited, available } = useMemo(() => {
     return vaultMetaData.reduce(
@@ -60,7 +60,8 @@ function Content() {
 }
 
 function Fallback() {
-  const vaults = useStore((s) => s.chainConfig.vaults)
+  const chainConfig = useChainConfig()
+  const vaults = chainConfig.vaults
   const mockVaults: Vault[] = vaults.map((vault) => ({
     ...vault,
     apy: null,

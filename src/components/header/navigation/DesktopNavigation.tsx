@@ -3,10 +3,11 @@ import classNames from 'classnames'
 import { useMemo } from 'react'
 
 import Button from 'components/common/Button'
-import { menuTree } from 'components/header/DesktopHeader'
 import { ChevronDown, Logo } from 'components/common/Icons'
+import { menuTree } from 'components/header/DesktopHeader'
 import { NavLink } from 'components/header/navigation/NavLink'
 import { NavMenu } from 'components/header/navigation/NavMenu'
+import useChainConfig from 'hooks/useChainConfig'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { WalletID } from 'types/enums/wallet'
@@ -19,7 +20,7 @@ export function getIsActive(pages: string[]) {
 export default function DesktopNavigation() {
   const [showMenu, setShowMenu] = useToggle()
   const { recentWallet } = useShuttle()
-  const chainConfig = useStore((s) => s.chainConfig)
+  const chainConfig = useChainConfig()
   const walletId = (recentWallet?.providerId as WalletID) ?? WalletID.Keplr
   const focusComponent = useStore((s) => s.focusComponent)
 

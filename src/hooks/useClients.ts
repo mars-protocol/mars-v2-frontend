@@ -2,6 +2,7 @@ import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import useSWR from 'swr'
 
 import useChainConfig from 'hooks/useChainConfig'
+import { ICNSQueryClient } from 'types/classes/ICNSClient.client'
 import { MarsAccountNftQueryClient } from 'types/generated/mars-account-nft/MarsAccountNft.client'
 import { MarsCreditManagerQueryClient } from 'types/generated/mars-credit-manager/MarsCreditManager.client'
 import { MarsIncentivesQueryClient } from 'types/generated/mars-incentives/MarsIncentives.client'
@@ -31,9 +32,13 @@ export default function useClients() {
         swapper: new MarsSwapperOsmosisQueryClient(client, chainConfig.contracts.swapper),
         incentives: new MarsIncentivesQueryClient(client, chainConfig.contracts.incentives),
         perps: new MarsPerpsQueryClient(client, chainConfig.contracts.perps),
+        icns: new ICNSQueryClient(client),
       } as ContractClients
     },
     {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      revalidateIfStale: false,
       keepPreviousData: false,
     },
   )

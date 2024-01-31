@@ -1,26 +1,20 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 
-import { ICNSQueryClient } from 'types/classes/ICNSClient.client'
-import { MarsAccountNftQueryClient } from 'types/generated/mars-account-nft/MarsAccountNft.client'
 import { MarsCreditManagerQueryClient } from 'types/generated/mars-credit-manager/MarsCreditManager.client'
 import { MarsIncentivesQueryClient } from 'types/generated/mars-incentives/MarsIncentives.client'
 import { MarsMockVaultQueryClient } from 'types/generated/mars-mock-vault/MarsMockVault.client'
 import { MarsOracleOsmosisQueryClient } from 'types/generated/mars-oracle-osmosis/MarsOracleOsmosis.client'
 import { MarsParamsQueryClient } from 'types/generated/mars-params/MarsParams.client'
 import { MarsPerpsQueryClient } from 'types/generated/mars-perps/MarsPerps.client'
-import { MarsRedBankQueryClient } from 'types/generated/mars-red-bank/MarsRedBank.client'
 import { MarsSwapperOsmosisQueryClient } from 'types/generated/mars-swapper-osmosis/MarsSwapperOsmosis.client'
 
 let _cosmWasmClient: Map<string, CosmWasmClient> = new Map()
-let _accountNftQueryClient: Map<string, MarsAccountNftQueryClient> = new Map()
 let _creditManagerQueryClient: Map<string, MarsCreditManagerQueryClient> = new Map()
 let _oracleQueryClient: Map<string, MarsOracleOsmosisQueryClient> = new Map()
-let _redBankQueryClient: Map<string, MarsRedBankQueryClient> = new Map()
 let _paramsQueryClient: Map<string, MarsParamsQueryClient> = new Map()
 let _incentivesQueryClient: Map<string, MarsIncentivesQueryClient> = new Map()
 let _swapperOsmosisClient: Map<string, MarsSwapperOsmosisQueryClient> = new Map()
 let _perpsClient: Map<string, MarsPerpsQueryClient> = new Map()
-let _ICNSQueryClient: Map<string, ICNSQueryClient> = new Map()
 
 const getClient = async (rpc: string) => {
   try {
@@ -30,23 +24,6 @@ const getClient = async (rpc: string) => {
     }
 
     return _cosmWasmClient.get(rpc)!
-  } catch (error) {
-    throw error
-  }
-}
-
-const getAccountNftQueryClient = async (chainConfig: ChainConfig) => {
-  try {
-    const contract = chainConfig.contracts.accountNft
-    const rpc = chainConfig.endpoints.rpc
-    const key = rpc + contract
-
-    if (!_accountNftQueryClient.get(key)) {
-      const client = await getClient(rpc)
-      _accountNftQueryClient.set(key, new MarsAccountNftQueryClient(client, contract))
-    }
-
-    return _accountNftQueryClient.get(key)!
   } catch (error) {
     throw error
   }
@@ -98,23 +75,6 @@ const getOracleQueryClient = async (chainConfig: ChainConfig) => {
     }
 
     return _oracleQueryClient.get(key)!
-  } catch (error) {
-    throw error
-  }
-}
-
-const getRedBankQueryClient = async (chainConfig: ChainConfig) => {
-  try {
-    const contract = chainConfig.contracts.redBank
-    const rpc = chainConfig.endpoints.rpc
-    const key = rpc + contract
-
-    if (!_redBankQueryClient.get(key)) {
-      const client = await getClient(rpc)
-      _redBankQueryClient.set(key, new MarsRedBankQueryClient(client, contract))
-    }
-
-    return _redBankQueryClient.get(key)!
   } catch (error) {
     throw error
   }
@@ -177,31 +137,12 @@ const getPerpsQueryClient = async (chainConfig: ChainConfig) => {
   }
 }
 
-const getICNSQueryClient = async (chainConfig: ChainConfig) => {
-  try {
-    const contract = chainConfig.contracts.params
-    const rpc = chainConfig.endpoints.rpc
-    const key = rpc + contract
-    if (!_ICNSQueryClient.get(key)) {
-      const client = await getClient(rpc)
-      _ICNSQueryClient.set(key, new ICNSQueryClient(client))
-    }
-
-    return _ICNSQueryClient.get(key)!
-  } catch (error) {
-    throw error
-  }
-}
-
 export {
-  getAccountNftQueryClient,
   getClient,
   getCreditManagerQueryClient,
-  getICNSQueryClient,
   getIncentivesQueryClient,
   getOracleQueryClient,
   getParamsQueryClient,
-  getRedBankQueryClient,
   getSwapperQueryClient,
   getVaultQueryClient,
   getPerpsQueryClient,

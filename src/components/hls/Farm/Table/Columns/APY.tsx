@@ -2,7 +2,7 @@ import React from 'react'
 
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
-import useMarketBorrowings from 'hooks/markets/useMarketBorrowings'
+import useMarket from 'hooks/markets/useMarket'
 
 export const APY_META = { accessorKey: 'apy', header: 'APY Range' }
 
@@ -12,10 +12,7 @@ interface Props {
 
 export default function Apy(props: Props) {
   const { vault } = props
-  const { data: marketBorrowings } = useMarketBorrowings()
-
-  const borrowRate = marketBorrowings.find((asset) => asset.denom === vault.hls?.borrowDenom)
-    ?.borrowRate
+  const borrowRate = useMarket(vault.hls?.borrowDenom || '')?.apy.borrow
 
   if (vault.apy === null || borrowRate === null) return <Loading />
 

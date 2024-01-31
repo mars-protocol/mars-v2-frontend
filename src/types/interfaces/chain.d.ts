@@ -56,4 +56,5 @@ interface ContractClients {
   perps: import('types/generated/mars-perps/MarsPerps.client').MarsPerpsQueryClient
   redBank: import('types/generated/mars-red-bank/MarsRedBank.client').MarsRedBankQueryClient
   swapper: import('types/generated/mars-swapper-osmosis/MarsSwapperOsmosis.client').MarsSwapperOsmosisQueryClient
+  icns: import('types/classes/ICNSClient.client').ICNSQueryClient
 }

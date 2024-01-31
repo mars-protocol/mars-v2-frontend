@@ -16,7 +16,7 @@ interface Props {
 }
 
 function LabelAndValue(props: { label: string; children: ReactNode; className?: string }) {
-  const { label, children, className } = props
+  const { label, children } = props
 
   return (
     <div className='flex items-center justify-between'>
@@ -58,6 +58,7 @@ function TooltipContent(props: Props) {
 
 export default function Asset(props: Props) {
   const { row } = props
+
   return (
     <Tooltip content={<TooltipContent row={row} />} type='info'>
       <Text size='xs' className='flex items-center gap-1 no-wrap group/asset hover:cursor-help'>

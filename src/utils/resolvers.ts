@@ -11,29 +11,56 @@ import { BN, getLeverageFromLTV } from 'utils/helpers'
 import { convertAprToApy } from 'utils/parsers'
 
 export function resolveMarketResponse(
-  marketResponse: RedBankMarket,
+  asset: Asset,
+  marketResponse: RedBankMarket & Partial<Market>,
   assetParamsResponse: AssetParams,
   assetCapResponse: TotalDepositResponse,
 ): Market {
-  return {
-    denom: marketResponse.denom,
-    apy: {
-      borrow: convertAprToApy(Number(marketResponse.borrow_rate), 365) * 100,
-      deposit: convertAprToApy(Number(marketResponse.liquidity_rate), 365) * 100,
-    },
-    debtTotalScaled: marketResponse.debt_total_scaled,
-    collateralTotalScaled: marketResponse.collateral_total_scaled,
-    depositEnabled: assetParamsResponse.red_bank.deposit_enabled,
-    borrowEnabled: assetParamsResponse.red_bank.borrow_enabled,
-    cap: {
-      denom: assetCapResponse.denom,
-      used: BN(assetCapResponse.amount),
-      max: BN(assetParamsResponse.deposit_cap),
-    },
-    ltv: {
-      max: Number(assetParamsResponse.max_loan_to_value),
-      liq: Number(assetParamsResponse.liquidation_threshold),
-    },
+  try {
+    return {
+      asset,
+      apy: {
+        borrow: convertAprToApy(Number(marketResponse.borrow_rate), 365) * 100,
+        deposit: convertAprToApy(Number(marketResponse.liquidity_rate), 365) * 100,
+      },
+      debt: marketResponse.debt ?? BN_ZERO,
+      deposits: marketResponse.deposits ?? BN_ZERO,
+      liquidity: marketResponse.liquidity ?? BN_ZERO,
+      depositEnabled: assetParamsResponse.red_bank.deposit_enabled,
+      borrowEnabled: assetParamsResponse.red_bank.borrow_enabled,
+      cap: {
+        denom: assetCapResponse.denom,
+        used: BN(assetCapResponse.amount),
+        max: BN(assetParamsResponse.deposit_cap),
+      },
+      ltv: {
+        max: Number(assetParamsResponse.max_loan_to_value),
+        liq: Number(assetParamsResponse.liquidation_threshold),
+      },
+    }
+  } catch (e) {
+    console.log(e)
+    return {
+      asset,
+      apy: {
+        borrow: 0,
+        deposit: 0,
+      },
+      debt: BN_ZERO,
+      deposits: BN_ZERO,
+      liquidity: BN_ZERO,
+      depositEnabled: false,
+      borrowEnabled: false,
+      cap: {
+        denom: '',
+        used: BN_ZERO,
+        max: BN_ZERO,
+      },
+      ltv: {
+        max: 0,
+        liq: 0,
+      },
+    }
   }
 }
 

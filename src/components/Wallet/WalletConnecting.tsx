@@ -26,8 +26,16 @@ const mapErrorMessages = (providerId: string, errorMessage: string, name: string
 }
 
 export default function WalletConnecting(props: Props) {
-  const { connect, mobileConnect, simulate, sign, broadcast, mobileProviders, extensionProviders } =
-    useShuttle()
+  const {
+    connect,
+    mobileConnect,
+    simulate,
+    sign,
+    broadcast,
+    mobileProviders,
+    extensionProviders,
+    disconnect,
+  } = useShuttle()
   const providers = useMemo(
     () => [...mobileProviders, ...extensionProviders],
     [mobileProviders, extensionProviders],
@@ -85,6 +93,9 @@ export default function WalletConnecting(props: Props) {
                     }}
                   />
                 ),
+                onClose: () => {
+                  disconnect({ chainId: chainConfig.id })
+                },
               },
             })
           }
@@ -92,7 +103,17 @@ export default function WalletConnecting(props: Props) {
       }
       if (!isConnecting) handleConnectAsync()
     },
-    [isConnecting, client, setIsConnecting, connect, chainConfig, broadcast, sign, simulate],
+    [
+      isConnecting,
+      client,
+      setIsConnecting,
+      connect,
+      chainConfig,
+      broadcast,
+      sign,
+      simulate,
+      disconnect,
+    ],
   )
 
   const handleMobileConnect = useCallback(
@@ -105,6 +126,9 @@ export default function WalletConnecting(props: Props) {
             userDomain: undefined,
             focusComponent: {
               component: <WalletSelect />,
+              onClose: () => {
+                disconnect({ chainId: chainConfig.id })
+              },
             },
           })
           return
@@ -144,6 +168,9 @@ export default function WalletConnecting(props: Props) {
                     }}
                   />
                 ),
+                onClose: () => {
+                  disconnect({ chainId: chainConfig.id })
+                },
               },
             })
           }
@@ -161,6 +188,7 @@ export default function WalletConnecting(props: Props) {
       broadcast,
       sign,
       simulate,
+      disconnect,
     ],
   )
 
@@ -172,6 +200,9 @@ export default function WalletConnecting(props: Props) {
         userDomain: undefined,
         focusComponent: {
           component: <WalletSelect />,
+          onClose: () => {
+            disconnect({ chainId: chainConfig.id })
+          },
         },
       })
       return
@@ -188,7 +219,15 @@ export default function WalletConnecting(props: Props) {
       return
     }
     handleConnect(provider.id)
-  }, [handleConnect, isConnecting, providerId, providers, handleMobileConnect])
+  }, [
+    handleConnect,
+    isConnecting,
+    providerId,
+    providers,
+    handleMobileConnect,
+    disconnect,
+    chainConfig.id,
+  ])
 
   return (
     <FullOverlayContent

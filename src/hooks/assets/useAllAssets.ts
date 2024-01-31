@@ -1,5 +1,6 @@
-import useStore from 'store'
+import useChainConfig from 'hooks/useChainConfig'
 
 export default function useAllAssets() {
-  return useStore((s) => s.chainConfig.assets)
+  const chainConfig = useChainConfig()
+  return chainConfig.assets
 }

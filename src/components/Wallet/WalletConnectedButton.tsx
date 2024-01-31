@@ -27,6 +27,7 @@ import { NETWORK } from 'types/enums/network'
 import { ChainInfoID } from 'types/enums/wallet'
 import { truncate } from 'utils/formatters'
 import { getPage, getRoute } from 'utils/route'
+import useChainConfig from 'hooks/useChainConfig'
 
 export default function WalletConnectedButton() {
   // ---------------
@@ -40,7 +41,7 @@ export default function WalletConnectedButton() {
   const userDomain = useStore((s) => s.userDomain)
   const focusComponent = useStore((s) => s.focusComponent)
   const network = useStore((s) => s.client?.connectedWallet.network)
-  const chainConfig = useStore((s) => s.chainConfig)
+  const chainConfig = useChainConfig()
   const baseAsset = useBaseAsset()
   const { data: walletBalances, isLoading } = useWalletBalances(address)
   const { data: icnsData, isLoading: isLoadingICNS } = useICNSDomain(address)

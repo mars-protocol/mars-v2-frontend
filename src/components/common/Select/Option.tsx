@@ -7,9 +7,8 @@ import { ChevronDown, ChevronRight } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
 import useAsset from 'hooks/assets/useAsset'
-import useMarketAssets from 'hooks/markets/useMarketAssets'
+import useMarkets from 'hooks/markets/useMarkets'
 import { BNCoin } from 'types/classes/BNCoin'
-import { byDenom } from 'utils/array'
 import { formatValue } from 'utils/formatters'
 
 interface Props extends SelectOption {
@@ -22,7 +21,8 @@ interface Props extends SelectOption {
 
 export default function Option(props: Props) {
   const isCoin = !!props.denom
-  const { data: marketAssets } = useMarketAssets()
+  const markets = useMarkets()
+
   const asset = useAsset(props.denom || '')
 
   function handleOnClick(value: string | undefined) {
@@ -32,7 +32,7 @@ export default function Option(props: Props) {
 
   if (isCoin) {
     const balance = props.amount ?? BN_ZERO
-    const marketAsset = marketAssets.find(byDenom(props.denom || ''))
+    const marketAsset = markets.find((market) => market.asset.denom === props.denom)
 
     if (!asset || !marketAsset) return null
 

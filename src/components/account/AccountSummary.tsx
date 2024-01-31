@@ -5,21 +5,21 @@ import AccountBalancesTable from 'components/account/AccountBalancesTable'
 import AccountComposition from 'components/account/AccountComposition'
 import AccountPerpPositionTable from 'components/account/AccountPerpPositionTable'
 import HealthBar from 'components/account/Health/HealthBar'
+import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import Accordion from 'components/common/Accordion'
 import Card from 'components/common/Card'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ArrowRight } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import useBorrowMarketAssetsTableData from 'hooks/useBorrowMarketAssetsTableData'
 import useHealthComputer from 'hooks/useHealthComputer'
-import useLendingMarketAssetsTableData from 'hooks/useLendingMarketAssetsTableData'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -38,7 +38,6 @@ export default function AccountSummary(props: Props) {
   const { data: prices } = usePrices()
   const assets = useAllAssets()
   const updatedAccount = useStore((s) => s.updatedAccount)
-  const chainConfig = useStore((s) => s.chainConfig)
   const accountBalance = useMemo(
     () =>
       props.account
@@ -104,7 +103,7 @@ export default function AccountSummary(props: Props) {
         renderSubTitle: () => <></>,
       },
     ]
-    if (chainConfig.perps)
+    if (props.account.perps.length > 0)
       itemsArray.push({
         title: 'Perp Positions',
         renderContent: () =>
@@ -122,7 +121,6 @@ export default function AccountSummary(props: Props) {
     borrowAssetsData,
     lendingAssetsData,
     props.isHls,
-    chainConfig.perps,
     handleToggle,
     accountSummaryTabs,
   ])

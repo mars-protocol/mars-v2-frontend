@@ -2,19 +2,21 @@ import classNames from 'classnames'
 import { Suspense } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useLocation } from 'react-router-dom'
+import { SWRConfig } from 'swr'
 
 import AccountDetails from 'components/account/AccountDetails'
 import Background from 'components/common/Background'
 import Footer from 'components/common/Footer'
-import DesktopHeader from 'components/header/DesktopHeader'
-import ModalsContainer from 'components/Modals/ModalsContainer'
 import PageMetadata from 'components/common/PageMetadata'
 import Toaster from 'components/common/Toaster'
+import DesktopHeader from 'components/header/DesktopHeader'
+import ModalsContainer from 'components/Modals/ModalsContainer'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useAccountId from 'hooks/useAccountId'
 import useStore from 'store'
+import { debugSWR } from 'utils/middleware'
 
 interface Props {
   focusComponent: FocusComponent | null
@@ -62,36 +64,38 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <PageMetadata />
-      <Background />
-      <DesktopHeader />
-      <main
-        className={classNames(
-          'lg:min-h-[calc(100dvh-73px)]',
-          'lg:mt-[73px]',
-          'flex',
-          'min-h-screen gap-6 px-4 py-6 w-full relative',
-          !focusComponent &&
-            address &&
-            isFullWidth &&
-            accountId &&
-            (accountDetailsExpanded ? 'pr-118' : 'pr-24'),
-          !reduceMotion && isFullWidth && 'transition-all duration-300',
-          'justify-center',
-          focusComponent && 'items-center',
-          isMobile && 'items-start',
-        )}
-      >
-        <Suspense>
-          <PageContainer focusComponent={focusComponent} fullWidth={isFullWidth}>
-            {children}
-          </PageContainer>
-        </Suspense>
-        <AccountDetails />
-      </main>
-      <Footer />
-      <ModalsContainer />
-      <Toaster />
+      <SWRConfig value={{ use: [debugSWR] }}>
+        <PageMetadata />
+        <Background />
+        <DesktopHeader />
+        <main
+          className={classNames(
+            'lg:min-h-[calc(100dvh-73px)]',
+            'lg:mt-[73px]',
+            'flex',
+            'min-h-screen gap-6 px-4 py-6 w-full relative',
+            !focusComponent &&
+              address &&
+              isFullWidth &&
+              accountId &&
+              (accountDetailsExpanded ? 'pr-118' : 'pr-24'),
+            !reduceMotion && isFullWidth && 'transition-all duration-300',
+            'justify-center',
+            focusComponent && 'items-center',
+            isMobile && 'items-start',
+          )}
+        >
+          <Suspense>
+            <PageContainer focusComponent={focusComponent} fullWidth={isFullWidth}>
+              {children}
+            </PageContainer>
+          </Suspense>
+          <AccountDetails />
+        </main>
+        <Footer />
+        <ModalsContainer />
+        <Toaster />
+      </SWRConfig>
     </>
   )
 }

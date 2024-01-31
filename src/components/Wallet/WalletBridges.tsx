@@ -17,6 +17,7 @@ import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { defaultFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
+import useChainConfig from 'hooks/useChainConfig'
 
 function Bridge({ name, url, image }: Bridge) {
   return (
@@ -35,7 +36,7 @@ function Bridge({ name, url, image }: Bridge) {
 }
 
 export default function WalletBridges() {
-  const chainConfig = useStore((s) => s.chainConfig)
+  const chainConfig = useChainConfig()
 
   const address = useStore((s) => s.address)
   const currentWallet = useCurrentWallet()

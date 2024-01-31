@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 
 import SummaryItems from 'components/common/SummaryItems'
-import useBorrowAsset from 'hooks/useBorrowAsset'
+import useMarket from 'hooks/markets/useMarket'
 
 interface Props {
   asset: Asset
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function LeverageSummary(props: Props) {
-  const borrowAsset = useBorrowAsset(props.asset.denom)
+  const market = useMarket(props.asset.denom)
 
   const items: SummaryItem[] = useMemo(() => {
     return [
@@ -21,7 +21,7 @@ export default function LeverageSummary(props: Props) {
       },
       {
         title: `Borrow APR ${props.asset.symbol}`,
-        amount: borrowAsset?.borrowRate || 0,
+        amount: market?.apy.borrow || 0,
         options: { suffix: '%', minDecimals: 2, maxDecimals: 2 },
       },
       {
@@ -30,7 +30,7 @@ export default function LeverageSummary(props: Props) {
         options: { prefix: '$' },
       },
     ]
-  }, [borrowAsset?.borrowRate, props.apy, props.asset.symbol, props.positionValue])
+  }, [market?.apy.borrow, props.apy, props.asset.symbol, props.positionValue])
 
   return <SummaryItems items={items} />
 }

@@ -1,5 +1,6 @@
 import classNames from 'classnames'
-import { useState } from 'react'
+import debounce from 'lodash.debounce'
+import { useEffect, useMemo, useState } from 'react'
 
 import { Cross } from 'components/common/Icons'
 import LeverageSlider from 'components/common/LeverageSlider'
@@ -11,12 +12,16 @@ import { Or } from 'components/perps/Module/Or'
 import usePerpsManageModule from 'components/perps/Module/PerpsManageModule/usePerpsManageModule'
 import PerpsSummary from 'components/perps/Module/Summary'
 import AssetAmountInput from 'components/trade/TradeModule/SwapForm/AssetAmountInput'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
+import getPerpsPosition from 'utils/getPerpsPosition'
 import { BN } from 'utils/helpers'
 
 export function PerpsManageModule() {
   const [tradeDirection, setTradeDirection] = useState<TradeDirection | null>(null)
   const [amount, setAmount] = useState<BigNumber | null>(null)
-
+  const account = useCurrentAccount()
+  const { simulatePerps, addedPerps } = useUpdatedAccount(account)
   const {
     closeManagePerpModule,
     previousAmount,
@@ -25,6 +30,36 @@ export function PerpsManageModule() {
     leverage,
     asset,
   } = usePerpsManageModule(amount)
+
+  const debouncedUpdateAccount = useMemo(
+    () =>
+      debounce((perpsPosition: PerpsPosition) => {
+        if (
+          addedPerps &&
+          perpsPosition.amount === addedPerps.amount &&
+          perpsPosition.tradeDirection === addedPerps.tradeDirection
+        )
+          return
+        simulatePerps(perpsPosition)
+      }, 100),
+    [simulatePerps, addedPerps],
+  )
+
+  useEffect(() => {
+    const perpsPosition = getPerpsPosition(
+      asset,
+      amount ?? previousAmount,
+      tradeDirection ?? previousTradeDirection,
+    )
+    debouncedUpdateAccount(perpsPosition)
+  }, [
+    debouncedUpdateAccount,
+    asset,
+    amount,
+    previousAmount,
+    tradeDirection,
+    previousTradeDirection,
+  ])
 
   if (!asset) return null
 
@@ -47,7 +82,7 @@ export function PerpsManageModule() {
       />
       <AssetAmountInput
         label='Amount'
-        max={BN(100000)} // TODO: Implement max calculation
+        max={BN(1000000)} // TODO: Implement max calculation
         amount={amount ?? previousAmount}
         setAmount={setAmount}
         asset={asset}

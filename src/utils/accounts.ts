@@ -242,8 +242,14 @@ export function cloneAccount(account: Account): Account {
         unlocked: vault.values.unlocked,
       },
     })),
-    // TODO: 📈Add correct type mapping
-    perps: account.perps,
+    perps: account.perps.map((perpPosition) => ({
+      ...perpPosition,
+      amount: perpPosition.amount,
+      closingFee: perpPosition.closingFee,
+      pnl: perpPosition.pnl,
+      entryPrice: perpPosition.entryPrice,
+      tradeDirection: perpPosition.tradeDirection,
+    })),
   }
 }
 

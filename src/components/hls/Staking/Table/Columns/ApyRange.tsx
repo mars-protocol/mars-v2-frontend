@@ -3,7 +3,7 @@ import { Row } from '@tanstack/react-table'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
-import useBorrowAsset from 'hooks/useBorrowAsset'
+import useMarket from 'hooks/markets/useMarket'
 import { getLeveragedApy } from 'utils/math'
 
 export const APY_RANGE_META = { header: 'APY range', accessorKey: 'apy' }
@@ -19,7 +19,7 @@ interface Props {
 
 export default function ApyRange(props: Props) {
   const baseApy = props.strategy.apy
-  const borrowRate = useBorrowAsset(props.strategy.denoms.borrow)?.borrowRate
+  const borrowRate = useMarket(props.strategy.denoms.borrow)?.apy.borrow
 
   if (!borrowRate || props.isLoading || !baseApy) {
     return <Loading />

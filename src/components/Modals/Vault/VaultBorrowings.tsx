@@ -12,7 +12,7 @@ import TokenInput from 'components/common/TokenInput'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAllAssets from 'hooks/assets/useAllAssets'
-import useMarketAssets from 'hooks/markets/useMarketAssets'
+import useMarkets from 'hooks/markets/useMarkets'
 import useHealthComputer from 'hooks/useHealthComputer'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
@@ -39,7 +39,7 @@ export interface VaultBorrowingsProps {
 export default function VaultBorrowings(props: VaultBorrowingsProps) {
   const assets = useAllAssets()
   const { borrowings, onChangeBorrowings } = props
-  const { data: marketAssets } = useMarketAssets()
+  const markets = useMarkets()
   const { data: prices } = usePrices()
   const vaultModal = useStore((s) => s.vaultModal)
   const depositIntoVault = useStore((s) => s.depositIntoVault)
@@ -227,7 +227,8 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
         </div>
         {props.borrowings.map((coin) => {
           const asset = assets.find(byDenom(coin.denom))
-          const borrowRate = marketAssets?.find((market) => market.denom === coin.denom)?.apy.borrow
+          const borrowRate = markets?.find((market) => market.asset.denom === coin.denom)?.apy
+            .borrow
 
           if (!asset || !borrowRate)
             return <React.Fragment key={`borrow-rate-${coin.denom}`}></React.Fragment>

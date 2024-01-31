@@ -16,25 +16,25 @@ import { getNoBalanceInWalletMessage } from 'utils/messages'
 interface Props {
   account: Account
   action: HlsStakingManageAction
-  borrowAsset: Asset
+  borrowMarket: Market
   collateralAsset: Asset
 }
 
 export default function Repay(props: Props) {
   const { removeDebts, removedDebts } = useUpdatedAccount(props.account)
   const borrowAssetAmountInWallet = BN(
-    useCurrentWalletBalance(props.borrowAsset.denom)?.amount || '0',
+    useCurrentWalletBalance(props.borrowMarket.asset.denom)?.amount || '0',
   )
   const repay = useStore((s) => s.repay)
 
   const currentDebt: BigNumber = useMemo(
-    () => props.account.debts.find(byDenom(props.borrowAsset.denom))?.amount || BN_ZERO,
-    [props.account.debts, props.borrowAsset.denom],
+    () => props.account.debts.find(byDenom(props.borrowMarket.asset.denom))?.amount || BN_ZERO,
+    [props.account.debts, props.borrowMarket.asset.denom],
   )
 
   const repayAmount: BigNumber = useMemo(
-    () => removedDebts.find(byDenom(props.borrowAsset.denom))?.amount || BN_ZERO,
-    [removedDebts, props.borrowAsset.denom],
+    () => removedDebts.find(byDenom(props.borrowMarket.asset.denom))?.amount || BN_ZERO,
+    [removedDebts, props.borrowMarket.asset.denom],
   )
 
   const maxRepayAmount = useMemo(
@@ -48,51 +48,51 @@ export default function Repay(props: Props) {
         title: 'Total Debt Repayable',
         amount: currentDebt.toNumber(),
         options: {
-          suffix: ` ${props.borrowAsset.symbol}`,
+          suffix: ` ${props.borrowMarket.asset.symbol}`,
           abbreviated: true,
-          decimals: props.borrowAsset.decimals,
+          decimals: props.borrowMarket.asset.decimals,
         },
       },
       {
         title: 'New Debt Amount',
         amount: currentDebt.minus(repayAmount).toNumber(),
         options: {
-          suffix: ` ${props.borrowAsset.symbol}`,
+          suffix: ` ${props.borrowMarket.asset.symbol}`,
           abbreviated: true,
-          decimals: props.borrowAsset.decimals,
+          decimals: props.borrowMarket.asset.decimals,
         },
       },
     ],
-    [currentDebt, props.borrowAsset.decimals, props.borrowAsset.symbol, repayAmount],
+    [currentDebt, props.borrowMarket.asset.decimals, props.borrowMarket.asset.symbol, repayAmount],
   )
 
   const handleRepay = useCallback(() => {
     useStore.setState({ hlsManageModal: null })
     repay({
       accountId: props.account.id,
-      coin: BNCoin.fromDenomAndBigNumber(props.borrowAsset.denom, repayAmount),
+      coin: BNCoin.fromDenomAndBigNumber(props.borrowMarket.asset.denom, repayAmount),
       fromWallet: true,
     })
-  }, [props.account.id, props.borrowAsset.denom, repay, repayAmount])
+  }, [props.account.id, props.borrowMarket.asset.denom, repay, repayAmount])
 
   const handleOnChange = useCallback(
     (amount: BigNumber) =>
-      removeDebts([BNCoin.fromDenomAndBigNumber(props.borrowAsset.denom, amount)]),
-    [props.borrowAsset.denom, removeDebts],
+      removeDebts([BNCoin.fromDenomAndBigNumber(props.borrowMarket.asset.denom, amount)]),
+    [props.borrowMarket.asset.denom, removeDebts],
   )
 
   const warningMessages = useMemo(() => {
     if (borrowAssetAmountInWallet.isZero()) {
-      return [getNoBalanceInWalletMessage(props.borrowAsset.symbol)]
+      return [getNoBalanceInWalletMessage(props.borrowMarket.asset.symbol)]
     }
     return []
-  }, [borrowAssetAmountInWallet, props.borrowAsset.symbol])
+  }, [borrowAssetAmountInWallet, props.borrowMarket.asset.symbol])
 
   return (
     <>
       <TokenInputWithSlider
         amount={repayAmount}
-        asset={props.borrowAsset}
+        asset={props.borrowMarket.asset}
         max={maxRepayAmount}
         onChange={handleOnChange}
         maxText='In Wallet'

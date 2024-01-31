@@ -15,6 +15,7 @@ import useTransactionStore from 'hooks/useTransactionStore'
 import useStore from 'store'
 import { formatAmountWithSymbol } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+import useChainConfig from 'hooks/useChainConfig'
 
 const toastBodyClasses = classNames(
   'flex flex-wrap w-full group/transaction',
@@ -60,7 +61,7 @@ export default function Toaster() {
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
   )
-  const chainConfig = useStore((s) => s.chainConfig)
+  const chainConfig = useChainConfig()
 
   const toast = useStore((s) => s.toast)
   const { addTransaction } = useTransactionStore()

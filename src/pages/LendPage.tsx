@@ -1,12 +1,12 @@
+import MigrationBanner from 'components/common/MigrationBanner'
+import Tab from 'components/earn/Tab'
 import LendIntro from 'components/earn/lend/LendIntro'
 import Lends from 'components/earn/lend/Lends'
-import Tab from 'components/earn/Tab'
-import MigrationBanner from 'components/common/MigrationBanner'
 import { EARN_TABS } from 'constants/pages'
-import useStore from 'store'
+import useChainConfig from 'hooks/useChainConfig'
 
 export default function LendPage() {
-  const chainConfig = useStore((s) => s.chainConfig)
+  const chainConfig = useChainConfig()
 
   return (
     <div className='flex flex-wrap w-full gap-6'>

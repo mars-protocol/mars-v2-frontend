@@ -5,8 +5,12 @@ import useChainConfig from 'hooks/useChainConfig'
 
 export default function useHLSStakingAssets() {
   const chainConfig = useChainConfig()
-  return useSWR('hls-staking', () => getHLSStakingAssets(chainConfig), {
-    fallbackData: [],
-    revalidateOnFocus: false,
-  })
+  return useSWR(
+    `chains/${chainConfig.id}/assets/hls/staking`,
+    () => getHLSStakingAssets(chainConfig),
+    {
+      fallbackData: [],
+      revalidateOnFocus: false,
+    },
+  )
 }
