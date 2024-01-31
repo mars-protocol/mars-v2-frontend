@@ -20,7 +20,7 @@ export default function useMarkets() {
   const { data: assetParams } = useAssetParams()
   const assets = useAssets()
 
-  return useSWR(
+  const result = useSWR(
     !!marketInfos?.length &&
       !!marketDepositCaps?.length &&
       !!assetParams.length &&
@@ -38,5 +38,7 @@ export default function useMarkets() {
     {
       fallbackData: [],
     },
-  ).data
+  )
+
+  return result.data
 }
