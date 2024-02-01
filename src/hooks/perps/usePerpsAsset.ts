@@ -6,6 +6,7 @@ import { LocalStorageKeys } from 'constants/localStorageKeys'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useChainConfig from 'hooks/useChainConfig'
+import { SearchParams } from 'types/enums/searchParams'
 import { getSearchParamsObject } from 'utils/route'
 
 export default function usePerpsAsset() {
@@ -18,10 +19,12 @@ export default function usePerpsAsset() {
   >(chainConfig.id + '/' + LocalStorageKeys.PERPS_ASSET, DEFAULT_SETTINGS.perpsAsset)
 
   const updatePerpsAsset = useCallback(
-    (denom: string) => {
+    (denom: string, manage?: boolean) => {
       const params = getSearchParamsObject(searchParams)
-      params.perpsMarket = denom
-      setSearchParams(params)
+      setSearchParams({
+        ...params,
+        [SearchParams.PERPS_MARKET]: denom,
+      })
       setPerpsAssetInLocalStorage(denom)
     },
     [searchParams, setPerpsAssetInLocalStorage, setSearchParams],
