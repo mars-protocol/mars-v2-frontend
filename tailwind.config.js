@@ -176,6 +176,7 @@ module.exports = {
         45: '180px',
         50: '200px',
         55: '220px',
+        75: '300px',
       },
       hueRotate: {
         '-82': '-82deg',
@@ -235,6 +236,7 @@ module.exports = {
         10: '40px',
         14: '56px',
         30.5: '122px',
+        75: '300px',
       },
       maxWidth: {
         content: '1024px',
@@ -265,8 +267,10 @@ module.exports = {
         6.5: '26px',
         24: '96px',
         35: '140px',
+        70: '280px',
         80: '320px',
         90: '360px',
+        98: '392px',
         118: '472px',
       },
       transitionDuration: {
@@ -284,6 +288,7 @@ module.exports = {
         13: '52px',
         15: '60px',
         18: '72px',
+        25: '100px',
         30: '120px',
         35: '140px',
         50: '200px',

@@ -7,6 +7,7 @@ interface Props {
   enableKeyPress?: boolean
   hideText?: boolean
   className?: string
+  icon?: React.ReactNode
   onClick: () => void
 }
 
@@ -32,10 +33,10 @@ export default function EscButton(props: Props) {
   return (
     <Button
       onClick={props.onClick}
-      leftIcon={<Cross size={16} />}
-      iconClassName='w-3'
+      leftIcon={props.icon ?? <Cross />}
+      iconClassName='w-full'
       color='tertiary'
-      className={props.className ? props.className : 'h-8 w-8'}
+      className={props.className ? props.className : 'h-8 w-8 !p-2'}
       size='xs'
     />
   )

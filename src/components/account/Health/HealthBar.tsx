@@ -11,7 +11,6 @@ import { getHealthIndicatorColors } from 'utils/healthIndicator'
 
 interface Props {
   className?: string
-  hasLabel?: boolean
   health: number
   healthFactor: number
   height?: string

@@ -78,8 +78,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               address &&
               isFullWidth &&
               accountId &&
-              (accountDetailsExpanded ? 'pr-118' : 'pr-24'),
-            !reduceMotion && isFullWidth && 'transition-all duration-300',
+              (accountDetailsExpanded ? 'pr-98' : 'pr-24'),
+            !reduceMotion && isFullWidth && 'transition-all duration-800',
             'justify-center',
             focusComponent && 'items-center',
             isMobile && 'items-start',

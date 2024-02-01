@@ -6,6 +6,9 @@ import { ArrowRight } from 'components/common/Icons'
 interface Props {
   leverage: number
   updatedLeverage: number | null
+  className?: string
+  containerClassName?: string
+  enforceSuffix?: boolean
 }
 
 export default function AccountDetailsLeverage(props: Props) {
@@ -14,7 +17,7 @@ export default function AccountDetailsLeverage(props: Props) {
   if (!updatedLeverage) {
     return (
       <FormattedNumber
-        className={'w-full text-center text-2xs'}
+        className={classNames(props.className ? props.className : 'w-full text-center text-2xs')}
         amount={isNaN(leverage) ? 0 : leverage}
         options={{
           maxDecimals: 2,
@@ -27,26 +30,38 @@ export default function AccountDetailsLeverage(props: Props) {
   }
 
   return (
-    <div className='flex'>
+    <div
+      className={classNames(
+        props.containerClassName ? props.containerClassName : 'flex items-center',
+      )}
+    >
       <FormattedNumber
-        className={'w-full text-center text-2xs'}
+        className={classNames(props.className ? props.className : 'w-full text-center text-2xs')}
         amount={isNaN(leverage) ? 1 : leverage}
         options={{
           maxDecimals: 1,
           minDecimals: 1,
           rounded: true,
+          suffix: props.enforceSuffix ? 'x' : '',
         }}
         animate
       />
-      <ArrowRight width={12} />
+      <div className='w-3.5'>
+        <ArrowRight />
+      </div>
       <FormattedNumber
         className={classNames(
-          'w-full text-center text-2xs',
+          props.className ? props.className : 'w-full text-center text-2xs',
           updatedLeverage > leverage && 'text-loss',
           updatedLeverage < leverage && 'text-profit',
         )}
         amount={isNaN(updatedLeverage) ? 0 : updatedLeverage}
-        options={{ maxDecimals: 1, minDecimals: 1, rounded: true }}
+        options={{
+          maxDecimals: 1,
+          minDecimals: 1,
+          rounded: true,
+          suffix: props.enforceSuffix ? 'x' : '',
+        }}
         animate
       />
     </div>
