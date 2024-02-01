@@ -7,7 +7,7 @@ export default function useVaults(suspense: boolean = true, address?: string) {
   const chainConfig = useChainConfig()
 
   return useSWR(
-    address && `chains/${chainConfig.id}/vaults/${address}`,
+    address ? `chains/${chainConfig.id}/vaults/${address}` : `chains/${chainConfig.id}/vaults`,
     () => getVaults(chainConfig),
     {
       suspense,
