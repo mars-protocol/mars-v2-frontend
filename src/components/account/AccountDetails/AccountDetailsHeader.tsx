@@ -34,8 +34,8 @@ export default function AccountDetailsHeader(props: Props) {
         hideText
         className='!absolute top-4 right-4 w-8 h-6 px-2 z-4'
       />
-      <Text size='sm' className='w-full text-white/50'>{`Credit Account ${id}`}</Text>
-      <div className='flex items-end w-full gap-1 py-2 border-b border-white/5'>
+      <Text size='sm' className='w-full pb-1 text-white/50'>{`Credit Account ${id}`}</Text>
+      <div className='flex items-end w-full gap-1 pb-2 border-b border-white/5'>
         <DisplayCurrency
           options={{ abbreviated: false }}
           coin={netWorth}
