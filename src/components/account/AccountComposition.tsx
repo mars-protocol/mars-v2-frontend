@@ -167,6 +167,7 @@ function Item(props: ItemProps) {
               suffix: '%',
               minDecimals: 2,
               maxDecimals: current.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,
+              abbreviated: false,
             }}
             className='text-sm'
             animate
@@ -175,6 +176,7 @@ function Item(props: ItemProps) {
           <DisplayCurrency
             coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, current)}
             className='text-sm'
+            options={{ abbreviated: false }}
           />
         )}
         {current.toFixed(2) !== change.toFixed(2) && (

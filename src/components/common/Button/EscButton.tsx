@@ -36,7 +36,7 @@ export default function EscButton(props: Props) {
       leftIcon={props.icon ?? <Cross />}
       iconClassName='w-full'
       color='tertiary'
-      className={props.className ? props.className : 'h-8 w-8 !p-2'}
+      className={props.className ? props.className : 'h-8 w-8 !p-2.5'}
       size='xs'
     />
   )
