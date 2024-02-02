@@ -19,6 +19,10 @@ export const ASSET_META = {
 
 interface Props {
   row: AccountPerpRow
+}
+
+interface TooltipProps {
+  row: AccountPerpRow
   asset: Asset
 }
 
@@ -35,7 +39,7 @@ function LabelAndValue(props: { label: string; children: ReactNode; className?: 
   )
 }
 
-function TooltipContent(props: Props) {
+function TooltipContent(props: TooltipProps) {
   const { row, asset } = props
 
   return (
