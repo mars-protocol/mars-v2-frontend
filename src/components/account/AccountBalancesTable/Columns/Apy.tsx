@@ -25,7 +25,7 @@ export default function Apr(props: Props) {
 
   return (
     <AssetRate
-      className={classNames('justify-end text-xs', type === 'vault' && 'items-start')}
+      className={classNames('justify-end text-xs', type === 'vault' && 'pb-4')}
       rate={apy}
       isEnabled={type !== 'lend' || isEnabled}
       type='apy'
