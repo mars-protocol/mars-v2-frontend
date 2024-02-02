@@ -29,7 +29,6 @@ export default function Manage(props: Props) {
           setSearchParams({
             ...params,
             [SearchParams.PERPS_MARKET]: props.perpPosition.asset.denom,
-            [SearchParams.PERPS_MANAGE]: 'true',
           })
         },
       },
