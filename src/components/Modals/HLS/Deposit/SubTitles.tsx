@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import React from 'react'
 
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { ExclamationMarkTriangle } from 'components/common/Icons'
@@ -40,8 +39,10 @@ export function CollateralSubTitle(props: CollateralSubTitleProps) {
   if (!props.isOpen && props.amount.isZero()) {
     return (
       <div className='flex gap-2'>
-        <ExclamationMarkTriangle width={24} className='text-warning' />
-        <Text className='text-warning mt-1' size='xs' tag='span'>
+        <div className='w-6'>
+          <ExclamationMarkTriangle className='text-warning' />
+        </div>
+        <Text className='mt-1 text-warning' size='xs' tag='span'>
           You have not provided any collateral.
         </Text>
       </div>
@@ -111,8 +112,10 @@ export function SelectAccountSubTitle(props: SelectAccountSubTitleProps) {
   if (!props.selectedAccountId && props.isSummaryOpen) {
     return (
       <div className='flex gap-2'>
-        <ExclamationMarkTriangle width={24} className='text-warning' />
-        <Text className='text-warning mt-1' size='xs' tag='span'>
+        <div className='w-6'>
+          <ExclamationMarkTriangle className='text-warning' />
+        </div>
+        <Text className='mt-1 text-warning' size='xs' tag='span'>
           You need to {props.type} an account
         </Text>
       </div>
