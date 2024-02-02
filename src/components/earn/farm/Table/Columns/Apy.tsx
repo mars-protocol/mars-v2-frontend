@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
 
@@ -14,10 +12,11 @@ export default function Apy(props: Props) {
 
   if (vault.apy === null) return <Loading />
 
+  const realAPY = vault.apy && vault.apy > 100000 ? 100000 : vault.apy ?? 0
   return (
     <FormattedNumber
-      amount={vault.apy ?? 0}
-      options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
+      amount={realAPY}
+      options={{ minDecimals: 2, maxDecimals: 2, suffix: '%', abbreviated: true }}
       className='text-xs'
       animate
     />
