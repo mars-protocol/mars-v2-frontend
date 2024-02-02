@@ -18,10 +18,10 @@ type Props = {
   amount: BigNumber
   tradeDirection: TradeDirection
   asset: Asset
-  changeTradeDirection?: boolean
   previousAmount?: BigNumber
   previousTradeDirection?: 'long' | 'short'
   previousLeverage?: number
+  hasActivePosition: boolean
 }
 
 export default function PerpsSummary(props: Props) {
@@ -70,14 +70,13 @@ export default function PerpsSummary(props: Props) {
 function ManageSummary(props: Props) {
   const showTradeDirection =
     props.previousTradeDirection && props.previousTradeDirection !== props.tradeDirection
-  const showAmount =
-    props.previousAmount && props.amount && !props.previousAmount.isEqualTo(props.amount)
+  const showAmount = !props.amount.isZero() && props.previousAmount
   const showLeverage =
     props.previousLeverage &&
     props.leverage &&
     props.previousLeverage.toFixed(2) !== props.leverage.toFixed(2)
 
-  if (!showTradeDirection && !showLeverage && !showAmount) return null
+  if ((!showTradeDirection && !showLeverage && !showAmount) || !props.hasActivePosition) return null
 
   return (
     <div className='pt-4 px-3 flex flex-col gap-1'>
@@ -95,14 +94,17 @@ function ManageSummary(props: Props) {
 
       {showAmount && props.previousAmount && (
         <SummaryLine label='Size' contentClassName='flex gap-1'>
-          <AssetAmount asset={props.asset} amount={props.previousAmount.toNumber()} />
+          <AssetAmount asset={props.asset} amount={props.previousAmount.abs().toNumber()} />
           <ArrowRight
             width={16}
             className={classNames(
               props.previousAmount.isGreaterThan(props.amount) ? 'text-error' : 'text-success',
             )}
           />
-          <AssetAmount asset={props.asset} amount={props.amount.toNumber()} />
+          <AssetAmount
+            asset={props.asset}
+            amount={props.previousAmount.plus(props.amount).abs().toNumber()}
+          />
         </SummaryLine>
       )}
 
