@@ -67,9 +67,7 @@ svg {
   height: auto;
 }
 
-.rounded-full.overflow-hidden {
-  svg {
-    width: auto;
-    height: 100%;
-  }
+.rounded-full.overflow-hidden svg {
+  width: auto;
+  height: 100%;
 }

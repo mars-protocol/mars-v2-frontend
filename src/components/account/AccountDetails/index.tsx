@@ -219,6 +219,7 @@ function AccountDetails(props: Props) {
                 updatedHealth={updatedHealth}
                 healthFactor={healthFactor}
                 updatedHealthFactor={updatedHealthFactor}
+                isClosable
               />
               <AccountComposition account={account} />
               <Text className='w-full px-4 py-2 text-white bg-white/10'>Balances</Text>

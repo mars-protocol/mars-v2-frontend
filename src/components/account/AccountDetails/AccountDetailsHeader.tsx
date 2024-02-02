@@ -1,10 +1,10 @@
 import { useCallback } from 'react'
 
-import useStore from 'store'
-import EscButton from 'components/common/Button/EscButton'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { ArrowRightLine } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import useStore from 'store'
+import Button from 'components/common/Button'
 
 import AccountDetailsLeverage from './AccountDetailsLeverage'
 
@@ -20,20 +20,25 @@ interface Props {
   updatedHealth: number
   healthFactor: number
   updatedHealthFactor: number
+  isClosable?: boolean
 }
 
 export default function AccountDetailsHeader(props: Props) {
-  const { id, netWorth, leverage, updatedLeverage, health, healthFactor } = props
+  const { id, netWorth, leverage, updatedLeverage, health, healthFactor, isClosable } = props
   const onClose = useCallback(() => useStore.setState({ accountDetailsExpanded: false }), [])
 
   return (
     <div className='relative flex flex-wrap w-full p-4 bg-white/10'>
-      <EscButton
-        icon={<ArrowRightLine />}
-        onClick={onClose}
-        hideText
-        className='!absolute top-4 right-4 w-8 h-6 px-2 z-4'
-      />
+      {isClosable && (
+        <Button
+          onClick={onClose}
+          leftIcon={<ArrowRightLine />}
+          iconClassName='w-full'
+          className='!absolute top-4 right-4 w-8 h-6 px-2 z-4'
+          size='xs'
+          color='secondary'
+        />
+      )}
       <Text size='sm' className='w-full pb-1 text-white/50'>{`Credit Account ${id}`}</Text>
       <div className='flex items-end w-full gap-1 pb-2 border-b border-white/5'>
         <DisplayCurrency
