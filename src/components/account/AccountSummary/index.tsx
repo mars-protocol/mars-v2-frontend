@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react'
 import AccountBalancesTable from 'components/account/AccountBalancesTable'
 import AccountComposition from 'components/account/AccountComposition'
 import AccountPerpPositionTable from 'components/account/AccountPerpPositionTable'
+import AccountStrategiesTable from 'components/account/AccountStrategiesTable'
 import AccountSummaryHeader from 'components/account/AccountSummary/AccountSummaryHeader'
 import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import Accordion from 'components/common/Accordion'
@@ -118,14 +119,23 @@ export default function AccountSummary(props: Props) {
         renderSubTitle: () => <></>,
       },
     ]
+
+    if (props.account.vaults.length > 0)
+      itemsArray.push({
+        title: 'Strategies',
+        renderContent: () =>
+          props.account ? <AccountStrategiesTable account={props.account} hideCard /> : null,
+        isOpen: accountSummaryTabs[2] ?? false,
+        toggleOpen: (index: number) => handleToggle(index),
+        renderSubTitle: () => <></>,
+      })
+
     if (props.account.perps.length > 0)
       itemsArray.push({
         title: 'Perp Positions',
         renderContent: () =>
-          props.account && props.account.perps.length > 0 ? (
-            <AccountPerpPositionTable account={props.account} hideCard />
-          ) : null,
-        isOpen: accountSummaryTabs[2] ?? false,
+          props.account ? <AccountPerpPositionTable account={props.account} hideCard /> : null,
+        isOpen: accountSummaryTabs[props.account.vaults.length > 0 ? 3 : 2] ?? false,
         toggleOpen: (index: number) => handleToggle(index),
         renderSubTitle: () => <></>,
       })

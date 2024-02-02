@@ -34,11 +34,11 @@ export default function AccountSummaryLeverage(props: Props) {
       className={classNames(
         props.containerClassName
           ? props.containerClassName
-          : 'flex items-center justify-center w-full',
+          : 'flex items-center w-full justify-between',
       )}
     >
       <FormattedNumber
-        className={classNames(props.className ? props.className : 'w-4 text-center text-2xs pr-1')}
+        className={classNames(props.className ? props.className : 'w-6 text-left text-2xs pl-2')}
         amount={isNaN(leverage) ? 1 : leverage}
         options={{
           maxDecimals: props.enforceSuffix ? 2 : 1,
@@ -48,12 +48,18 @@ export default function AccountSummaryLeverage(props: Props) {
         }}
         animate
       />
-      <div className='w-3.5'>
+      <div
+        className={classNames(
+          'w-3',
+          updatedLeverage > leverage && 'text-loss',
+          updatedLeverage < leverage && 'text-profit',
+        )}
+      >
         <ArrowRight />
       </div>
       <FormattedNumber
         className={classNames(
-          props.className ? props.className : 'w-4 text-center text-2xs pl-1',
+          props.className ? props.className : 'w-6 text-right text-2xs pr-2',
           updatedLeverage > leverage && 'text-loss',
           updatedLeverage < leverage && 'text-profit',
         )}

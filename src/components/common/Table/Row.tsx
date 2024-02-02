@@ -12,7 +12,11 @@ interface Props<T> {
   type?: TableType
 }
 
-function getBorderColor(type: TableType, row: AccountBalanceRow | AccountPerpRow) {
+function getBorderColor(
+  type: TableType,
+  row: AccountBalanceRow | AccountStrategyRow | AccountPerpRow,
+) {
+  if (type === 'strategies') return ''
   if (type === 'balances') {
     const balancesRow = row as AccountBalanceRow
     return balancesRow.type === 'borrow' ? 'border-loss' : 'border-profit'
@@ -55,8 +59,8 @@ export default function Row<T>(props: Props<T>) {
               className={classNames(
                 isSymbolOrName ? 'text-left' : 'text-right',
                 spacingClassName ?? 'px-3 py-4',
-                type && isSymbolOrName && 'border-l',
-                type && getBorderColor(type, cell.row.original as any),
+                type && type !== 'strategies' && isSymbolOrName && 'border-l',
+                type && type !== 'strategies' && getBorderColor(type, cell.row.original as any),
                 cell.column.columnDef.meta?.className,
               )}
             >

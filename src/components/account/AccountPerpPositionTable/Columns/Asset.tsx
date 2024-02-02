@@ -4,15 +4,22 @@ import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
+import AssetImage from 'components/common/assets/AssetImage'
 import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirection'
 import { BN_ZERO } from 'constants/math'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import { BNCoin } from 'types/classes/BNCoin'
 import { demagnify } from 'utils/formatters'
-export const ASSET_META = { accessorKey: 'symbol', header: 'Asset', id: 'symbol' }
+export const ASSET_META = {
+  accessorKey: 'symbol',
+  header: 'Asset',
+  id: 'symbol',
+  meta: { className: 'w-40' },
+}
 
 interface Props {
   row: AccountPerpRow
+  asset: Asset
 }
 
 function LabelAndValue(props: { label: string; children: ReactNode; className?: string }) {
@@ -29,10 +36,7 @@ function LabelAndValue(props: { label: string; children: ReactNode; className?: 
 }
 
 function TooltipContent(props: Props) {
-  const { row } = props
-  const assets = usePerpsEnabledAssets()
-  const asset = assets.find((asset) => asset.symbol === row.symbol)
-  if (!asset) return null
+  const { row, asset } = props
 
   return (
     <div className='flex flex-col flex-wrap gap-1 w-50'>
@@ -58,10 +62,14 @@ function TooltipContent(props: Props) {
 
 export default function Asset(props: Props) {
   const { row } = props
+  const assets = usePerpsEnabledAssets()
+  const asset = assets.find((asset) => asset.symbol === row.symbol)
+  if (!asset) return null
 
   return (
-    <Tooltip content={<TooltipContent row={row} />} type='info'>
-      <Text size='xs' className='flex items-center gap-1 no-wrap group/asset hover:cursor-help'>
+    <Tooltip content={<TooltipContent row={row} asset={asset} />} type='info'>
+      <Text size='xs' className='flex items-center gap-2 no-wrap group/asset hover:cursor-help'>
+        <AssetImage asset={asset} size={16} className='w-4 h-4' />
         <span className='pb-[1px] border-b border-white/20 border-dashed group-hover/asset:border-transparent'>
           {row.symbol}
         </span>

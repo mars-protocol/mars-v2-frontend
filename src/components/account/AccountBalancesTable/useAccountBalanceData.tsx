@@ -1,9 +1,6 @@
 import { useMemo } from 'react'
 
-import {
-  getAssetAccountBalanceRow,
-  getVaultAccountBalanceRow,
-} from 'components/account/AccountBalancesTable/functions'
+import { getAssetAccountBalanceRow } from 'components/account/AccountBalancesTable/functions'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import usePrices from 'hooks/usePrices'
@@ -54,14 +51,6 @@ export default function useAccountBalanceData(props: Props) {
       return getAssetAccountBalanceRow('lend', asset, prices, assets, lending, apy, prevLending)
     })
 
-    const vaults = accountVaults.map((vault) => {
-      const apy = vault.apy ?? 0
-      const prevVault = updatedAccount
-        ? account?.vaults.find((position) => position.name === vault.name)
-        : vault
-      return getVaultAccountBalanceRow(vault, apy, prevVault)
-    })
-
     const debts = accountDebts.map((debt) => {
       const asset = assets.find(byDenom(debt.denom)) ?? assets[0]
       const apy = borrowingData.find((market) => market.asset.denom === debt.denom)?.apy.borrow ?? 0
@@ -70,7 +59,7 @@ export default function useAccountBalanceData(props: Props) {
         : debt
       return getAssetAccountBalanceRow('borrow', asset, prices, assets, debt, apy, prevDebt)
     })
-    return [...deposits, ...lends, ...vaults, ...debts]
+    return [...deposits, ...lends, ...debts]
   }, [
     updatedAccount,
     account,

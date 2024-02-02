@@ -151,7 +151,7 @@ function AccountDetails(props: Props) {
             className={classNames(
               'w-16 pr-[1px]',
               accountDetailsExpanded
-                ? 'opacity-0 absolute inset-0 z-1'
+                ? 'opacity-0 absolute inset-0 -z-1'
                 : 'transition-opacity opacity-100 duration-300 delay-200',
             )}
           >

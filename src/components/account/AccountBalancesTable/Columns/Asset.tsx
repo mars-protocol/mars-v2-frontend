@@ -21,7 +21,7 @@ export default function Asset(props: Props) {
   return (
     <div className='flex gap-2'>
       <AssetImage asset={asset} size={16} className='w-4 h-4' />
-      <Text size='xs'>
+      <Text size='xs' className='text-white'>
         {asset.symbol}
         {type === 'borrow' && <span className='ml-1 text-loss'>(debt)</span>}
         {type === 'lend' && <span className='ml-1 text-profit'>(lent)</span>}
