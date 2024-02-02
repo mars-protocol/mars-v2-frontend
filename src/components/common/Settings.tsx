@@ -6,7 +6,7 @@ export default function Settings() {
   return (
     <Button
       variant='solid'
-      color='tertiary'
+      color='secondary'
       className='w-16'
       leftIcon={<Gear />}
       onClick={() => useStore.setState({ settingsModal: true })}

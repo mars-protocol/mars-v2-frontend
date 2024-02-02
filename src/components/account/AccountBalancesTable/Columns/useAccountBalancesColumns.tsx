@@ -13,7 +13,6 @@ import Value, {
   VALUE_META,
   valueBalancesSortingFn,
 } from 'components/account/AccountBalancesTable/Columns/Value'
-import useAllAssets from 'hooks/assets/useAllAssets'
 import useMarkets from 'hooks/markets/useMarkets'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useStore from 'store'
@@ -23,7 +22,6 @@ export default function useAccountBalancesColumns(
   showLiquidationPrice?: boolean,
 ) {
   const markets = useMarkets()
-  const assets = useAllAssets()
 
   const updatedAccount = useStore((s) => s.updatedAccount)
 
@@ -33,12 +31,7 @@ export default function useAccountBalancesColumns(
     return [
       {
         ...ASSET_META,
-        cell: ({ row }) => (
-          <Asset
-            type={row.original.type}
-            asset={assets.find((asset) => asset.symbol === row.original.symbol) ?? assets[0]}
-          />
-        ),
+        cell: ({ row }) => <Asset type={row.original.type} symbol={row.original.symbol} />,
       },
       {
         ...VALUE_META,
@@ -106,5 +99,5 @@ export default function useAccountBalancesColumns(
         ),
       },
     ]
-  }, [computeLiquidationPrice, markets, showLiquidationPrice, account, updatedAccount, assets])
+  }, [computeLiquidationPrice, markets, showLiquidationPrice, account, updatedAccount])
 }

@@ -2,8 +2,9 @@ import classNames from 'classnames'
 import { useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import AccountDetailsLeverage from 'components/account/AccountDetails/AccountDetailsLeverage'
 import Skeleton from 'components/account/AccountDetails/Skeleton'
+import AccountSummary from 'components/account/AccountSummary'
+import AccountSummaryLeverage from 'components/account/AccountSummary/AccountSummaryLeverage'
 import { HealthGauge } from 'components/account/Health/HealthGauge'
 import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import { glowElement } from 'components/common/Button/utils'
@@ -31,7 +32,6 @@ import {
   calculateAccountBalanceValue,
   calculateAccountLeverage,
 } from 'utils/accounts'
-import AccountSummary from 'components/account/AccountSummary'
 
 export default function AccountDetailsController() {
   const address = useStore((s) => s.address)
@@ -127,8 +127,8 @@ function AccountDetails(props: Props) {
       <div
         data-testid='account-details'
         className={classNames(
-          accountDetailsExpanded ? 'right-4' : '-right-70',
-          'w-90 flex items-start gap-4 absolute top-6',
+          accountDetailsExpanded ? 'right-4' : '-right-74',
+          'w-94 flex items-start gap-4 absolute top-6',
           !reduceMotion && 'transition-all duration-500',
         )}
       >
@@ -136,11 +136,11 @@ function AccountDetails(props: Props) {
           className={classNames(
             'group/accountdetail relative min-h-75',
             'border rounded-base border-white/20',
-            'bg-white/5 backdrop-blur-sticky z-2',
+            'backdrop-blur-sticky z-2',
             !reduceMotion && 'transition-all duration-500',
             accountDetailsExpanded
               ? 'is-expanded w-full h-auto'
-              : 'w-16 hover:bg-white/10 hover:cursor-pointer',
+              : 'w-16 hover:bg-white/10 hover:cursor-pointer bg-white/5',
           )}
           onClick={() => {
             if (accountDetailsExpanded) return
@@ -149,9 +149,9 @@ function AccountDetails(props: Props) {
         >
           <div
             className={classNames(
-              'w-16',
+              'w-16 pr-[1px]',
               accountDetailsExpanded
-                ? 'opacity-0 absolute inset-0'
+                ? 'opacity-0 absolute inset-0 z-1'
                 : 'transition-opacity opacity-100 duration-300 delay-200',
             )}
           >
@@ -179,7 +179,7 @@ function AccountDetails(props: Props) {
               <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
                 Leverage
               </Text>
-              <AccountDetailsLeverage
+              <AccountSummaryLeverage
                 leverage={leverage.toNumber() || 1}
                 updatedLeverage={updatedLeverage?.toNumber() || null}
               />
@@ -206,7 +206,7 @@ function AccountDetails(props: Props) {
             )}
           >
             <div className='overflow-hidden'>
-              <AccountSummary account={account} isClosable />
+              <AccountSummary account={account} isAccountDetails />
             </div>
           </div>
           <div

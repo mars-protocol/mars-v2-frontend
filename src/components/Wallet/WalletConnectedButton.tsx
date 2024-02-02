@@ -144,7 +144,7 @@ export default function WalletConnectedButton() {
       <Button
         variant='solid'
         leftIcon={<Wallet />}
-        color='tertiary'
+        color='secondary'
         onClick={() => {
           setShowDetails(!showDetails)
         }}

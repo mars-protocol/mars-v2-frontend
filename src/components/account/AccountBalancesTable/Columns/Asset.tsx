@@ -1,17 +1,26 @@
 import Text from 'components/common/Text'
 import AssetImage from 'components/common/assets/AssetImage'
-export const ASSET_META = { accessorKey: 'symbol', header: 'Asset', id: 'symbol' }
+import useAllAssets from 'hooks/assets/useAllAssets'
+export const ASSET_META = {
+  accessorKey: 'symbol',
+  header: 'Asset',
+  id: 'symbol',
+  meta: { className: 'w-40' },
+}
 
 interface Props {
-  asset: Asset
+  symbol: string
   type: PositionType
 }
 
 export default function Asset(props: Props) {
-  const { asset, type } = props
+  const { symbol, type } = props
+  const assets = useAllAssets()
+  const asset = assets.find((asset) => asset.symbol === symbol) ?? assets[0]
+
   return (
     <div className='flex gap-2'>
-      <AssetImage asset={asset} size={16} />
+      <AssetImage asset={asset} size={16} className='w-4 h-4' />
       <Text size='xs'>
         {asset.symbol}
         {type === 'borrow' && <span className='ml-1 text-loss'>(debt)</span>}

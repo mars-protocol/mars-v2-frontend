@@ -27,13 +27,15 @@ export default function AccordionContent(props: Props) {
       <div
         onClick={() => toggleOpen(props.index)}
         className={classNames(
-          'mb-0 flex hover:cursor-pointer items-center justify-between bg-white/10 p-4 text-white border-b border-transparent',
+          'mb-0 flex hover:cursor-pointer items-center justify-between bg-white/10 py-2 px-4 text-white border-b border-transparent',
           '[&::marker]:hidden [&::marker]:content-[""]',
-          isOpen && 'border-white/20',
+          isOpen && 'border-white/10',
         )}
       >
         <div>
-          <Text>{title}</Text>
+          <Text size='sm' className='font-semibold'>
+            {title}
+          </Text>
           {renderSubTitle()}
         </div>
         <div className='block pr-1 group-[[open]]/accordion:hidden'>
@@ -42,7 +44,7 @@ export default function AccordionContent(props: Props) {
       </div>
       <div
         className={classNames(
-          'grid bg-white/5 transition-[grid-template-rows]',
+          'grid transition-[grid-template-rows]',
           isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
         )}
       >

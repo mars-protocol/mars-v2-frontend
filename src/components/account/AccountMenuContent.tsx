@@ -103,7 +103,7 @@ export default function AccountMenuContent() {
         id={ACCOUNT_MENU_BUTTON_ID}
         onClick={handleCreateAccountClick}
         leftIcon={hasCreditAccounts ? <Account /> : <PlusCircled />}
-        color={hasCreditAccounts ? 'tertiary' : 'primary'}
+        color={hasCreditAccounts ? 'secondary' : 'primary'}
         hasFocus={showMenu}
         hasSubmenu={hasCreditAccounts}
       >

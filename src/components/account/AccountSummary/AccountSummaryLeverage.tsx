@@ -11,7 +11,7 @@ interface Props {
   enforceSuffix?: boolean
 }
 
-export default function AccountDetailsLeverage(props: Props) {
+export default function AccountSummaryLeverage(props: Props) {
   const { leverage, updatedLeverage } = props
 
   if (!updatedLeverage) {
@@ -32,15 +32,17 @@ export default function AccountDetailsLeverage(props: Props) {
   return (
     <div
       className={classNames(
-        props.containerClassName ? props.containerClassName : 'flex items-center',
+        props.containerClassName
+          ? props.containerClassName
+          : 'flex items-center justify-center w-full',
       )}
     >
       <FormattedNumber
-        className={classNames(props.className ? props.className : 'w-full text-center text-2xs')}
+        className={classNames(props.className ? props.className : 'w-4 text-center text-2xs pr-1')}
         amount={isNaN(leverage) ? 1 : leverage}
         options={{
-          maxDecimals: 1,
-          minDecimals: 1,
+          maxDecimals: props.enforceSuffix ? 2 : 1,
+          minDecimals: props.enforceSuffix ? 2 : 1,
           rounded: true,
           suffix: props.enforceSuffix ? 'x' : '',
         }}
@@ -51,14 +53,14 @@ export default function AccountDetailsLeverage(props: Props) {
       </div>
       <FormattedNumber
         className={classNames(
-          props.className ? props.className : 'w-full text-center text-2xs',
+          props.className ? props.className : 'w-4 text-center text-2xs pl-1',
           updatedLeverage > leverage && 'text-loss',
           updatedLeverage < leverage && 'text-profit',
         )}
         amount={isNaN(updatedLeverage) ? 0 : updatedLeverage}
         options={{
-          maxDecimals: 1,
-          minDecimals: 1,
+          maxDecimals: props.enforceSuffix ? 2 : 1,
+          minDecimals: props.enforceSuffix ? 2 : 1,
           rounded: true,
           suffix: props.enforceSuffix ? 'x' : '',
         }}

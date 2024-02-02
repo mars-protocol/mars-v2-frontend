@@ -15,11 +15,7 @@ import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import {
-  calculateAccountApr,
-  calculateAccountBalanceValue,
-  getAccountPositionValues,
-} from 'utils/accounts'
+import { calculateAccountApr, getAccountPositionValues } from 'utils/accounts'
 
 interface Props {
   account: Account
@@ -69,15 +65,6 @@ export default function AccountComposition(props: Props) {
 
     return [updatedPositionValue, updatedDebtsBalance]
   }, [updatedAccount, prices, assets])
-
-  const netWorth = useMemo(
-    () => calculateAccountBalanceValue(account, prices, assets),
-    [account, assets, prices],
-  )
-  const updatedTotalBalance = useMemo(
-    () => (updatedAccount ? calculateAccountBalanceValue(updatedAccount, prices, assets) : BN_ZERO),
-    [updatedAccount, prices, assets],
-  )
 
   const apr = useMemo(
     () =>
@@ -132,16 +119,10 @@ export default function AccountComposition(props: Props) {
         isDecrease
       />
       <Item
-        title='Net worth'
-        current={netWorth}
-        change={hasChanged ? updatedTotalBalance : netWorth}
-        className='py-3 font-bold border border-transparent border-y-white/20'
-      />
-      <Item
         title='APR'
         current={apr}
         change={hasChanged ? updatedApr : apr}
-        className='py-3'
+        className='pb-3'
         isPercentage
       />
     </div>
@@ -199,6 +180,7 @@ function Item(props: ItemProps) {
               <DisplayCurrency
                 coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, change)}
                 className={classNames('text-sm', increase ? 'text-profit' : 'text-loss')}
+                options={{ abbreviated: false }}
               />
             )}
           </>

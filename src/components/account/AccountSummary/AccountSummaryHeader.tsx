@@ -1,16 +1,23 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
+import classNames from 'classnames'
 
+import AccountSummaryLeverage from 'components/account/AccountSummary/AccountSummaryLeverage'
+import HealthBar from 'components/account/Health/HealthBar'
 import Button from 'components/common/Button'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import { ArrowRightLine } from 'components/common/Icons'
+import { ArrowRight, ArrowRightLine } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import { BN_ZERO } from 'constants/math'
+import { ORACLE_DENOM } from 'constants/oracle'
 import useStore from 'store'
-import AccountDetailsLeverage from 'components/account/AccountDetails/AccountDetailsLeverage'
-import HealthBar from 'components/account/Health/HealthBar'
+import { BNCoin } from 'types/classes/BNCoin'
+import { calculateAccountBalanceValue } from 'utils/accounts'
 
 interface Props {
-  id: string
-  netWorth: BNCoin
+  account: Account
+  updatedAccount?: Account
+  prices: BNCoin[]
+  assets: Asset[]
   leverage: number
   updatedLeverage: number | null
   apr: number
@@ -22,11 +29,34 @@ interface Props {
 }
 
 export default function AccountDetailsHeader(props: Props) {
-  const { id, netWorth, leverage, updatedLeverage, health, healthFactor, isClosable } = props
+  const {
+    account,
+    updatedAccount,
+    prices,
+    assets,
+    leverage,
+    updatedLeverage,
+    health,
+    healthFactor,
+    updatedHealth,
+    updatedHealthFactor,
+    isClosable,
+  } = props
   const onClose = useCallback(() => useStore.setState({ accountDetailsExpanded: false }), [])
+  const accountBalance = useMemo(
+    () => (account ? calculateAccountBalanceValue(account, prices, assets) : BN_ZERO),
+    [account, prices, assets],
+  )
+  const updatedAccountBalance = useMemo(
+    () =>
+      updatedAccount ? calculateAccountBalanceValue(updatedAccount, prices, assets) : undefined,
+    [updatedAccount, prices, assets],
+  )
+  const hasChanged = !updatedAccountBalance?.isEqualTo(accountBalance)
+  const increase = updatedAccountBalance?.isGreaterThan(accountBalance)
 
   return (
-    <div className='relative flex flex-wrap w-full p-4 border-b bg-white/10 border-white/20'>
+    <div className='relative flex flex-wrap w-full p-4 border-b bg-white/10 border-white/10'>
       {isClosable && (
         <Button
           onClick={onClose}
@@ -37,23 +67,45 @@ export default function AccountDetailsHeader(props: Props) {
           color='secondary'
         />
       )}
-      <Text size='sm' className='w-full pb-1 text-white/50'>{`Credit Account ${id}`}</Text>
-      <div className='flex items-end w-full gap-1 pb-2 border-b border-white/5'>
+      <Text size='sm' className='w-full pb-1 text-white/50'>{`Credit Account ${account.id}`}</Text>
+      <div className='flex items-end w-full gap-2 pb-2 border-b border-white/5'>
         <DisplayCurrency
           options={{ abbreviated: false }}
-          coin={netWorth}
+          coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalance)}
           className='text-lg -mb-[1px]'
         />
+        {hasChanged && updatedAccountBalance && (
+          <>
+            <span
+              className={classNames(
+                'w-3 flex h-full items-center',
+                increase ? 'text-profit' : 'text-loss',
+              )}
+            >
+              <ArrowRight />
+            </span>
+            <DisplayCurrency
+              options={{ abbreviated: false }}
+              coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, updatedAccountBalance)}
+              className={classNames(
+                'text-lg -mb-[1px]',
+                hasChanged && increase && 'text-profit',
+                hasChanged && !increase && 'text-loss',
+              )}
+            />
+          </>
+        )}
+
         <Text className='text-white/50' size='xs'>
           Networth
         </Text>
       </div>
       <div className='flex items-center w-full pt-2'>
-        <div className='flex flex-wrap pr-4 border-r w-25 border-white/5'>
+        <div className='flex flex-wrap pr-4 border-r w-29 border-white/5'>
           <Text size='xs' className='mb-0.5 w-full text-white/50'>
             Leverage
           </Text>
-          <AccountDetailsLeverage
+          <AccountSummaryLeverage
             leverage={leverage}
             updatedLeverage={updatedLeverage}
             className='text-sm'
@@ -65,7 +117,12 @@ export default function AccountDetailsHeader(props: Props) {
           <Text size='xs' className='w-full h-4 mb-2 text-white/50'>
             Health
           </Text>
-          <HealthBar health={health} healthFactor={healthFactor} />
+          <HealthBar
+            health={health}
+            healthFactor={healthFactor}
+            updatedHealth={updatedHealth}
+            updatedHealthFactor={updatedHealthFactor}
+          />
         </div>
       </div>
     </div>

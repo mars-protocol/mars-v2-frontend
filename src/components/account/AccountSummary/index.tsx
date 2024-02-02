@@ -10,41 +10,34 @@ import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendi
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
-import { ORACLE_DENOM } from 'constants/oracle'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import useHealthComputer from 'hooks/useHealthComputer'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
-import {
-  calculateAccountApr,
-  calculateAccountBalanceValue,
-  calculateAccountLeverage,
-} from 'utils/accounts'
+import { calculateAccountApr, calculateAccountLeverage } from 'utils/accounts'
 
 interface Props {
   account: Account
-  isClosable?: boolean
+  isAccountDetails?: boolean
   isHls?: boolean
 }
 
 export default function AccountSummary(props: Props) {
+  const storageKey = props.isAccountDetails
+    ? LocalStorageKeys.ACCOUNT_DETAILS_TABS
+    : LocalStorageKeys.ACCOUNT_SUMMARY_TABS
+  const defaultSetting = props.isAccountDetails
+    ? DEFAULT_SETTINGS.accountDetailsTabs
+    : DEFAULT_SETTINGS.accountSummaryTabs
   const [accountSummaryTabs, setAccountSummaryTabs] = useLocalStorage<boolean[]>(
-    LocalStorageKeys.ACCOUNT_SUMMARY_TABS,
-    DEFAULT_SETTINGS.accountSummaryTabs,
+    storageKey,
+    defaultSetting,
   )
   const { data: prices } = usePrices()
   const assets = useAllAssets()
   const updatedAccount = useStore((s) => s.updatedAccount)
-  const accountBalance = useMemo(
-    () =>
-      props.account
-        ? calculateAccountBalanceValue(updatedAccount ?? props.account, prices, assets)
-        : BN_ZERO,
-    [props.account, updatedAccount, prices, assets],
-  )
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
@@ -101,7 +94,7 @@ export default function AccountSummary(props: Props) {
   const items = useMemo(() => {
     const itemsArray = [
       {
-        title: `Credit Account ${props.account.id} Composition`,
+        title: `Composition`,
         renderContent: () =>
           props.account ? <AccountComposition account={props.account} isHls={props.isHls} /> : null,
         isOpen: accountSummaryTabs[0],
@@ -151,8 +144,10 @@ export default function AccountSummary(props: Props) {
   return (
     <>
       <AccountSummaryHeader
-        id={props.account.id}
-        netWorth={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalance)}
+        account={props.account}
+        updatedAccount={updatedAccount}
+        prices={prices}
+        assets={assets}
         leverage={leverage.toNumber() || 1}
         updatedLeverage={updatedLeverage?.toNumber() || null}
         apr={apr.toNumber()}
@@ -160,7 +155,7 @@ export default function AccountSummary(props: Props) {
         updatedHealth={updatedHealth}
         healthFactor={healthFactor}
         updatedHealthFactor={updatedHealthFactor}
-        isClosable={props.isClosable}
+        isClosable={props.isAccountDetails}
       />
       <Accordion items={items} allowMultipleOpen />
     </>
