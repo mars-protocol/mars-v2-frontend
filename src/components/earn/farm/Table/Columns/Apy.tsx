@@ -16,7 +16,7 @@ export default function Apy(props: Props) {
   return (
     <FormattedNumber
       amount={realAPY}
-      options={{ minDecimals: 2, maxDecimals: 2, suffix: '%', abbreviated: true }}
+      options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
       className='text-xs'
       animate
     />
