@@ -40,7 +40,14 @@ export default function AccordionContent(props: Props) {
           {isOpen ? <ChevronDown className='h-1.5' /> : <ChevronRight className='w-1.5' />}
         </div>
       </div>
-      {isOpen && <div className='bg-white/5 transition-[padding]'>{renderContent()}</div>}
+      <div
+        className={classNames(
+          'grid bg-white/5 transition-[grid-template-rows]',
+          isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
+        )}
+      >
+        <div className='overflow-hidden'>{renderContent()}</div>
+      </div>
     </div>
   )
 }

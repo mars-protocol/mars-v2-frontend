@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 
 import Modal from 'components/Modals/Modal'
-import CurrentAccountSummary from 'components/account/CurrentAccountSummary'
+import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
 import Button from 'components/common/Button'
 import Card from 'components/common/Card'
 import Divider from 'components/common/Divider'
@@ -10,6 +10,7 @@ import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import AssetImage from 'components/common/assets/AssetImage'
 import { BN_ZERO } from 'constants/math'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
@@ -38,7 +39,7 @@ export default function AssetAmountSelectActionModal(props: Props) {
   } = props
   const [amount, setAmount] = useState(BN_ZERO)
   const maxAmount = BN(coinBalances.find(byDenom(asset.denom))?.amount ?? 0)
-
+  const account = useCurrentAccount()
   const handleAmountChange = useCallback(
     (value: BigNumber) => {
       setAmount(value)
@@ -51,6 +52,7 @@ export default function AssetAmountSelectActionModal(props: Props) {
     onAction(amount, amount.isEqualTo(maxAmount))
   }, [amount, maxAmount, onAction])
 
+  if (!account) return
   return (
     <Modal
       onClose={onClose}
@@ -87,7 +89,7 @@ export default function AssetAmountSelectActionModal(props: Props) {
             rightIcon={<ArrowRight />}
           />
         </Card>
-        <CurrentAccountSummary />
+        <AccountSummaryInModal account={account} />
       </div>
     </Modal>
   )

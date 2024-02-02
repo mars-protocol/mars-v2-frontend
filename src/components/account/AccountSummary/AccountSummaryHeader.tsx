@@ -1,14 +1,12 @@
 import { useCallback } from 'react'
 
+import Button from 'components/common/Button'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { ArrowRightLine } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import useStore from 'store'
-import Button from 'components/common/Button'
-
-import AccountDetailsLeverage from './AccountDetailsLeverage'
-
-import HealthBar from '../Health/HealthBar'
+import AccountDetailsLeverage from 'components/account/AccountDetails/AccountDetailsLeverage'
+import HealthBar from 'components/account/Health/HealthBar'
 
 interface Props {
   id: string
@@ -28,7 +26,7 @@ export default function AccountDetailsHeader(props: Props) {
   const onClose = useCallback(() => useStore.setState({ accountDetailsExpanded: false }), [])
 
   return (
-    <div className='relative flex flex-wrap w-full p-4 bg-white/10'>
+    <div className='relative flex flex-wrap w-full p-4 border-b bg-white/10 border-white/20'>
       {isClosable && (
         <Button
           onClick={onClose}

@@ -2,12 +2,8 @@ import classNames from 'classnames'
 import { useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import AccountBalancesTable from 'components/account/AccountBalancesTable'
-import AccountComposition from 'components/account/AccountComposition'
-import AccountDetailsHeader from 'components/account/AccountDetails/AccountDetailsHeader'
 import AccountDetailsLeverage from 'components/account/AccountDetails/AccountDetailsLeverage'
 import Skeleton from 'components/account/AccountDetails/Skeleton'
-import AccountPerpPositionTable from 'components/account/AccountPerpPositionTable'
 import { HealthGauge } from 'components/account/Health/HealthGauge'
 import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import { glowElement } from 'components/common/Button/utils'
@@ -35,11 +31,12 @@ import {
   calculateAccountBalanceValue,
   calculateAccountLeverage,
 } from 'utils/accounts'
+import AccountSummary from 'components/account/AccountSummary'
 
 export default function AccountDetailsController() {
   const address = useStore((s) => s.address)
   const isHLS = useStore((s) => s.isHLS)
-  const { data: accounts, isLoading } = useAccounts('default', address)
+  const { data: _, isLoading } = useAccounts('default', address)
   const { data: accountIds } = useAccountIds(address, false, true)
   const accountId = useAccountId()
 
@@ -132,7 +129,7 @@ function AccountDetails(props: Props) {
         className={classNames(
           accountDetailsExpanded ? 'right-4' : '-right-70',
           'w-90 flex items-start gap-4 absolute top-6',
-          !reduceMotion && 'transition-all duration-800',
+          !reduceMotion && 'transition-all duration-500',
         )}
       >
         <div
@@ -140,7 +137,7 @@ function AccountDetails(props: Props) {
             'group/accountdetail relative min-h-75',
             'border rounded-base border-white/20',
             'bg-white/5 backdrop-blur-sticky z-2',
-            !reduceMotion && 'transition-all duration-600',
+            !reduceMotion && 'transition-all duration-500',
             accountDetailsExpanded
               ? 'is-expanded w-full h-auto'
               : 'w-16 hover:bg-white/10 hover:cursor-pointer',
@@ -155,7 +152,7 @@ function AccountDetails(props: Props) {
               'w-16',
               accountDetailsExpanded
                 ? 'opacity-0 absolute inset-0'
-                : 'transition-opacity opacity-100 duration-600 delay-500',
+                : 'transition-opacity opacity-100 duration-300 delay-200',
             )}
           >
             <div className='flex flex-wrap justify-center w-full py-4'>
@@ -209,32 +206,7 @@ function AccountDetails(props: Props) {
             )}
           >
             <div className='overflow-hidden'>
-              <AccountDetailsHeader
-                id={account.id}
-                netWorth={coin}
-                leverage={leverage.toNumber() || 1}
-                updatedLeverage={updatedLeverage?.toNumber() || null}
-                apr={apr.toNumber()}
-                health={health}
-                updatedHealth={updatedHealth}
-                healthFactor={healthFactor}
-                updatedHealthFactor={updatedHealthFactor}
-                isClosable
-              />
-              <AccountComposition account={account} />
-              <Text className='w-full px-4 py-2 text-white bg-white/10'>Balances</Text>
-              <AccountBalancesTable
-                account={account}
-                borrowingData={borrowAssetsData}
-                lendingData={lendingAssetsData}
-                hideCard
-              />
-              {account.perps.length > 0 && (
-                <>
-                  <Text className='w-full px-4 py-2 text-white bg-white/10'>Perp Positions</Text>
-                  <AccountPerpPositionTable account={account} hideCard />
-                </>
-              )}
+              <AccountSummary account={account} isClosable />
             </div>
           </div>
           <div
