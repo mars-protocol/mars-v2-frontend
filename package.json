@@ -75,6 +75,6 @@
     "prettier-plugin-tailwindcss": "^0.5.11",
     "shelljs": "^0.8.5",
     "tailwindcss": "^3.3.3",
-    "typescript": "5.2.2"
+    "typescript": "5.3.3"
   }
 }
