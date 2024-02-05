@@ -26,6 +26,10 @@ export default function AssetSelectorItem(props: Props) {
   const amount = demagnify(props.balances.find(byDenom(asset.denom))?.amount ?? BN_ZERO, asset)
 
   const [favoriteAssetsDenoms, setFavoriteAssetsDenoms] = useFavoriteAssets()
+  const isFavorite = useMemo(
+    () => favoriteAssetsDenoms.includes(asset.denom),
+    [favoriteAssetsDenoms, asset.denom],
+  )
 
   function handleToggleFavorite(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     event.stopPropagation()
@@ -47,14 +51,14 @@ export default function AssetSelectorItem(props: Props) {
   }, [props.depositCap])
 
   return (
-    <li className='border-b border-white/10 hover:bg-black/10'>
+    <li className='relative border-b border-white/10 hover:bg-black/10 z-1'>
       <button
         onClick={() => onSelect(sellAsset ? { buy: asset, sell: sellAsset } : asset)}
         className='flex items-center justify-between w-full gap-2 p-4'
       >
         <div className='flex items-center gap-2'>
           <div onClick={handleToggleFavorite}>
-            {asset.isFavorite ? <StarFilled width={16} /> : <StarOutlined width={16} />}
+            {isFavorite ? <StarFilled width={16} /> : <StarOutlined width={16} />}
           </div>
           <AssetImage asset={asset} size={24} />
           <div className='flex-col'>
