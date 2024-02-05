@@ -35,7 +35,7 @@ export function getVaultAccountStrategiesRow(
   const secondaryAmount = halfValue.dividedBy(secondaryPrice.amount)
   const secondaryAmountPrev = halfValuePrev.dividedBy(secondaryPrice.amount)
 
-  const sizeChange = [
+  const amountChange = [
     BNCoin.fromDenomAndBigNumber(
       vault.denoms.primary,
       !prev ? BN_ZERO : primaryAmount.minus(primaryAmountPrev),
@@ -49,19 +49,19 @@ export function getVaultAccountStrategiesRow(
   return {
     name: name,
     denom: vault.denoms.lp,
-    size: [
+    amount: [
       BNCoin.fromDenomAndBigNumber(vault.denoms.primary, primaryAmount),
       BNCoin.fromDenomAndBigNumber(vault.denoms.secondary, secondaryAmount),
     ],
     value: totalValue.toString(),
     apy,
-    sizeChange: sizeChange,
+    amountChange: amountChange,
   }
 }
 
-export function getSizeChangeColor(sizeChange: BNCoin[]) {
-  const primaryChange = sizeChange[0].amount
-  const secondaryChange = sizeChange[1].amount
+export function getSizeChangeColor(amountChange: BNCoin[]) {
+  const primaryChange = amountChange[0].amount
+  const secondaryChange = amountChange[1].amount
 
   if (primaryChange.isGreaterThan(0) || secondaryChange.isGreaterThan(0)) return 'text-profit'
   if (primaryChange.isLessThan(0) || secondaryChange.isLessThan(0)) return 'text-loss'
