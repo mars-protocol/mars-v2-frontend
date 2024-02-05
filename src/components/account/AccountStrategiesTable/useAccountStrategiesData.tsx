@@ -20,7 +20,6 @@ export default function useAccountStategiesData(props: Props) {
       const prevVault = updatedAccount
         ? account?.vaults.find((position) => position.name === vault.name)
         : vault
-      console.log('prevVault', updatedAccount?.vaults)
 
       return getVaultAccountStrategiesRow(vault, apy, prices, prevVault)
     })
