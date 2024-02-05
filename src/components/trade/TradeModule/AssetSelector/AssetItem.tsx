@@ -26,6 +26,11 @@ export default function AssetItem(props: Props) {
   const formattedAmount = formatAmountToPrecision(amount, MAX_AMOUNT_DECIMALS)
   const lowAmount = formattedAmount === 0 ? 0 : Math.max(formattedAmount, MIN_AMOUNT)
 
+  const isFavorite = useMemo(
+    () => favoriteAssetsDenoms.includes(asset.denom),
+    [favoriteAssetsDenoms, asset.denom],
+  )
+
   function handleToggleFavorite(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     event.stopPropagation()
 
@@ -51,7 +56,7 @@ export default function AssetItem(props: Props) {
       >
         <div className='flex items-center gap-2'>
           <div onClick={handleToggleFavorite}>
-            {asset.isFavorite ? <StarFilled width={16} /> : <StarOutlined width={16} />}
+            {isFavorite ? <StarFilled width={16} /> : <StarOutlined width={16} />}
           </div>
           <AssetImage asset={asset} size={24} />
           <div className='flex-col'>
