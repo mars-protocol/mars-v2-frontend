@@ -11,11 +11,9 @@ export default function Apy(props: Props) {
   const { vault } = props
 
   if (vault.apy === null) return <Loading />
-
-  const realAPY = vault.apy && vault.apy > 100000 ? 100000 : vault.apy ?? 0
   return (
     <FormattedNumber
-      amount={realAPY}
+      amount={vault.apy ?? 0}
       options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
       className='text-xs'
       animate

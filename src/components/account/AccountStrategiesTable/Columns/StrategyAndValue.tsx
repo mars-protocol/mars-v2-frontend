@@ -15,12 +15,12 @@ export const STRATEGY_AND_VALUE_META = {
 interface Props {
   name: string
   value: string
-  sizeChange: BNCoin[]
+  amountChange: BNCoin[]
 }
 
 export default function StrategyAndValue(props: Props) {
-  const { name, value, sizeChange } = props
-  const color = getSizeChangeColor(sizeChange)
+  const { name, value, amountChange } = props
+  const color = getSizeChangeColor(amountChange)
   const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, BN(value))
 
   return (

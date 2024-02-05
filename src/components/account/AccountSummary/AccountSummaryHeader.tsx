@@ -1,5 +1,5 @@
-import { useCallback, useMemo } from 'react'
 import classNames from 'classnames'
+import { useCallback, useMemo } from 'react'
 
 import AccountSummaryLeverage from 'components/account/AccountSummary/AccountSummaryLeverage'
 import HealthBar from 'components/account/Health/HealthBar'
@@ -28,7 +28,7 @@ interface Props {
   isClosable?: boolean
 }
 
-export default function AccountDetailsHeader(props: Props) {
+export default function AccountSummaryHeader(props: Props) {
   const {
     account,
     updatedAccount,

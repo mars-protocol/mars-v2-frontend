@@ -33,9 +33,9 @@ interface AccountStrategyRow {
   apy: number
   name: string
   denom: string
-  size: BNCoin[]
+  amount: BNCoin[]
   value: string
-  sizeChange: BNCoin[]
+  amountChange: BNCoin[]
 }
 
 interface AccountPerpRow extends PerpsPosition {

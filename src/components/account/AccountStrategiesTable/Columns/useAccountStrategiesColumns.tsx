@@ -19,13 +19,15 @@ export default function useAccountStrategiesColumns(account: Account) {
           <StrategyAndValue
             name={row.original.name}
             value={row.original.value}
-            sizeChange={row.original.sizeChange}
+            amountChange={row.original.amountChange}
           />
         ),
       },
       {
         ...SIZE_META,
-        cell: ({ row }) => <Size size={row.original.size} sizeChange={row.original.sizeChange} />,
+        cell: ({ row }) => (
+          <Size amount={row.original.amount} amountChange={row.original.amountChange} />
+        ),
       },
       {
         ...APY_META,
