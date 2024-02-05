@@ -8,7 +8,10 @@ import Text from 'components/common/Text'
 import { datafeed } from 'components/trade/TradeChart/DataFeed'
 import PoweredByPyth from 'components/trade/TradeChart/PoweredByPyth'
 import { disabledFeatures, enabledFeatures } from 'components/trade/TradeChart/constants'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
@@ -20,6 +23,10 @@ interface Props {
 }
 export default function TradeChart(props: Props) {
   const { data: prices, isLoading } = usePrices()
+  const [chartInterval, _] = useLocalStorage<ResolutionString>(
+    LocalStorageKeys.CHART_INTERVAL,
+    DEFAULT_SETTINGS.chartInterval,
+  )
   const ratio = useMemo(() => {
     const priceBuyAsset = prices.find(byDenom(props.buyAsset.denom))?.amount
     const priceSellAsset = prices.find(byDenom(props.sellAsset.denom))?.amount
@@ -35,7 +42,7 @@ export default function TradeChart(props: Props) {
       const widgetOptions: ChartingLibraryWidgetOptions = {
         symbol: props.buyAsset.pythFeedName ?? `${props.buyAsset.symbol}/USD`,
         datafeed: datafeed,
-        interval: '1h' as ResolutionString,
+        interval: chartInterval,
         library_path: '/charting_library/',
         locale: 'en',
         time_scale: {

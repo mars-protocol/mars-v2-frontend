@@ -1,5 +1,6 @@
 import { ORACLE_DENOM } from 'constants/oracle'
 import useStore from 'store'
+import { ResolutionString } from 'utils/charting_library/charting_library'
 
 // This does not retrigger when chains are switched. Assets might not be present on the new chain, but
 // This scenario is still caught.
@@ -22,4 +23,5 @@ export const DEFAULT_SETTINGS: Settings = {
   migrationBanner: true,
   perpsAsset: '',
   updateOracle: true,
+  chartInterval: '60' as ResolutionString,
 }
