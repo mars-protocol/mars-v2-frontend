@@ -16,4 +16,5 @@ export enum LocalStorageKeys {
   CURRENT_CHAIN_ID = 'currentChainId',
   PERPS_ASSET = 'perpsAsset',
   UPDATE_ORACLE = 'updateOracle',
+  CHART_INTERVAL = 'tradingview.chart.lastUsedTimeBasedResolution',
 }
