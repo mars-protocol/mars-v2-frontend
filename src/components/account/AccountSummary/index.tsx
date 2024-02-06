@@ -1,55 +1,49 @@
-import classNames from 'classnames'
-import { HTMLAttributes, useCallback, useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import AccountBalancesTable from 'components/account/AccountBalancesTable'
 import AccountComposition from 'components/account/AccountComposition'
 import AccountPerpPositionTable from 'components/account/AccountPerpPositionTable'
-import HealthBar from 'components/account/Health/HealthBar'
+import AccountStrategiesTable from 'components/account/AccountStrategiesTable'
+import AccountSummaryHeader from 'components/account/AccountSummary/AccountSummaryHeader'
 import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import Accordion from 'components/common/Accordion'
-import Card from 'components/common/Card'
-import DisplayCurrency from 'components/common/DisplayCurrency'
-import { FormattedNumber } from 'components/common/FormattedNumber'
-import { ArrowRight } from 'components/common/Icons'
-import Text from 'components/common/Text'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
-import { ORACLE_DENOM } from 'constants/oracle'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import useHealthComputer from 'hooks/useHealthComputer'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
-import { calculateAccountBalanceValue, calculateAccountLeverage } from 'utils/accounts'
+import { calculateAccountApr, calculateAccountLeverage } from 'utils/accounts'
 
 interface Props {
   account: Account
+  isAccountDetails?: boolean
   isHls?: boolean
 }
 
 export default function AccountSummary(props: Props) {
+  const storageKey = props.isAccountDetails
+    ? LocalStorageKeys.ACCOUNT_DETAILS_TABS
+    : LocalStorageKeys.ACCOUNT_SUMMARY_TABS
+  const defaultSetting = props.isAccountDetails
+    ? DEFAULT_SETTINGS.accountDetailsTabs
+    : DEFAULT_SETTINGS.accountSummaryTabs
   const [accountSummaryTabs, setAccountSummaryTabs] = useLocalStorage<boolean[]>(
-    LocalStorageKeys.ACCOUNT_SUMMARY_TABS,
-    DEFAULT_SETTINGS.accountSummaryTabs,
+    storageKey,
+    defaultSetting,
   )
   const { data: prices } = usePrices()
   const assets = useAllAssets()
   const updatedAccount = useStore((s) => s.updatedAccount)
-  const accountBalance = useMemo(
-    () =>
-      props.account
-        ? calculateAccountBalanceValue(updatedAccount ?? props.account, prices, assets)
-        : BN_ZERO,
-    [props.account, updatedAccount, prices, assets],
-  )
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
     useLendingMarketAssetsTableData()
-
+  const { data: hlsStrategies } = useHLSStakingAssets()
   const lendingAssetsData = useMemo(
     () => [...lendingAvailableAssets, ...accountLentAssets],
     [lendingAvailableAssets, accountLentAssets],
@@ -76,10 +70,32 @@ export default function AccountSummary(props: Props) {
     [accountSummaryTabs, setAccountSummaryTabs],
   )
 
+  const apr = useMemo(
+    () =>
+      calculateAccountApr(
+        updatedAccount ?? props.account,
+        borrowAssetsData,
+        lendingAssetsData,
+        prices,
+        hlsStrategies,
+        assets,
+        props.account.kind === 'high_levered_strategy',
+      ),
+    [
+      props.account,
+      assets,
+      borrowAssetsData,
+      hlsStrategies,
+      lendingAssetsData,
+      prices,
+      updatedAccount,
+    ],
+  )
+
   const items = useMemo(() => {
     const itemsArray = [
       {
-        title: `Credit Account ${props.account.id} Composition`,
+        title: `Composition`,
         renderContent: () =>
           props.account ? <AccountComposition account={props.account} isHls={props.isHls} /> : null,
         isOpen: accountSummaryTabs[0],
@@ -103,14 +119,23 @@ export default function AccountSummary(props: Props) {
         renderSubTitle: () => <></>,
       },
     ]
+
+    if (props.account.vaults.length > 0)
+      itemsArray.push({
+        title: 'Strategies',
+        renderContent: () =>
+          props.account ? <AccountStrategiesTable account={props.account} hideCard /> : null,
+        isOpen: accountSummaryTabs[2] ?? false,
+        toggleOpen: (index: number) => handleToggle(index),
+        renderSubTitle: () => <></>,
+      })
+
     if (props.account.perps.length > 0)
       itemsArray.push({
         title: 'Perp Positions',
         renderContent: () =>
-          props.account && props.account.perps.length > 0 ? (
-            <AccountPerpPositionTable account={props.account} hideCard />
-          ) : null,
-        isOpen: accountSummaryTabs[2] ?? false,
+          props.account ? <AccountPerpPositionTable account={props.account} hideCard /> : null,
+        isOpen: accountSummaryTabs[props.account.vaults.length > 0 ? 3 : 2] ?? false,
         toggleOpen: (index: number) => handleToggle(index),
         renderSubTitle: () => <></>,
       })
@@ -127,74 +152,22 @@ export default function AccountSummary(props: Props) {
 
   if (!props.account) return null
   return (
-    <div className='h-[546px] max-w-screen overflow-y-scroll scrollbar-hide w-93.5'>
-      <Card className='mb-4 h-min min-w-fit bg-white/10' contentClassName='flex'>
-        <Item label='Net worth' classes='flex-1'>
-          <DisplayCurrency
-            coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalance)}
-            className='text-2xs'
-          />
-        </Item>
-        <Item label='Leverage' classes='flex-1 w-[93px]'>
-          <FormattedNumber
-            className={'w-full text-center text-2xs'}
-            amount={isNaN(leverage.toNumber()) ? 0 : leverage.toNumber()}
-            options={{
-              maxDecimals: 2,
-              minDecimals: 2,
-              suffix: 'x',
-            }}
-            animate
-          />
-          {updatedLeverage && (
-            <>
-              <ArrowRight width={12} />
-              <FormattedNumber
-                className={classNames(
-                  'w-full text-center text-2xs',
-                  updatedLeverage?.isGreaterThan(leverage) && 'text-loss',
-                  updatedLeverage?.isLessThan(leverage) && 'text-profit',
-                )}
-                amount={isNaN(updatedLeverage.toNumber()) ? 0 : updatedLeverage?.toNumber()}
-                options={{ maxDecimals: 2, minDecimals: 2, suffix: 'x' }}
-                animate
-              />
-            </>
-          )}
-        </Item>
-        <Item label='Account health'>
-          <HealthBar
-            health={health}
-            healthFactor={healthFactor}
-            updatedHealth={updatedHealth}
-            updatedHealthFactor={updatedHealthFactor}
-            className='h-1'
-          />
-        </Item>
-      </Card>
+    <>
+      <AccountSummaryHeader
+        account={props.account}
+        updatedAccount={updatedAccount}
+        prices={prices}
+        assets={assets}
+        leverage={leverage.toNumber() || 1}
+        updatedLeverage={updatedLeverage?.toNumber() || null}
+        apr={apr.toNumber()}
+        health={health}
+        updatedHealth={updatedHealth}
+        healthFactor={healthFactor}
+        updatedHealthFactor={updatedHealthFactor}
+        isAccountDetails={props.isAccountDetails}
+      />
       <Accordion items={items} allowMultipleOpen />
-    </div>
-  )
-}
-
-interface ItemProps extends HTMLAttributes<HTMLDivElement> {
-  label: string
-  classes?: string
-}
-
-function Item(props: ItemProps) {
-  return (
-    <div
-      className={classNames(
-        'flex flex-col justify-around px-3 py-1 border-r border-r-white/10',
-        props.classes,
-      )}
-      {...props}
-    >
-      <Text size='2xs' className='text-white/50 whitespace-nowrap'>
-        {props.label}
-      </Text>
-      <div className='flex h-4.5 w-full'>{props.children}</div>
-    </div>
+    </>
   )
 }

@@ -29,6 +29,7 @@ import { byDenom } from 'utils/array'
 import { formatPercent } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { getDebtAmountWithInterest } from 'utils/tokens'
+import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
 
 interface Props {
   account: Account
@@ -347,7 +348,7 @@ function BorrowModal(props: Props) {
             rightIcon={<ArrowRight />}
           />
         </Card>
-        <AccountSummary account={account} />
+        <AccountSummaryInModal account={account} />
       </div>
     </Modal>
   )

@@ -85,7 +85,7 @@ export default function RewardsCenter() {
     <div className={'relative'}>
       <Button
         variant='solid'
-        color='tertiary'
+        color='secondary'
         leftIcon={<Logo />}
         onClick={() => {
           setShowRewardsCenter(!showRewardsCenter)

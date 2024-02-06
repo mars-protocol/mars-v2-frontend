@@ -1,5 +1,6 @@
 interface Settings {
   accountSummaryTabs: boolean[]
+  accountDetailsTabs: boolean[]
   displayCurrency: string
   reduceMotion: boolean
   tradingPairSimple: TradingPair

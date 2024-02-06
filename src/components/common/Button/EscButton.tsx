@@ -32,10 +32,10 @@ export default function EscButton(props: Props) {
   return (
     <Button
       onClick={props.onClick}
-      leftIcon={<Cross size={16} />}
+      leftIcon={<Cross />}
       iconClassName='w-3'
       color='tertiary'
-      className={props.className ? props.className : 'h-8 w-8'}
+      className='w-8 h-8'
       size='xs'
     />
   )

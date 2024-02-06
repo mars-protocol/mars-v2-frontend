@@ -70,7 +70,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <DesktopHeader />
         <main
           className={classNames(
-            'lg:min-h-[calc(100dvh-73px)]',
+            'lg:min-h-[calc(100dvh-81px)]',
             'lg:mt-[73px]',
             'flex',
             'min-h-screen gap-6 px-4 py-6 w-full relative',
@@ -78,8 +78,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               address &&
               isFullWidth &&
               accountId &&
-              (accountDetailsExpanded ? 'pr-118' : 'pr-24'),
-            !reduceMotion && isFullWidth && 'transition-all duration-300',
+              (accountDetailsExpanded ? 'pr-102' : 'pr-24'),
+            !reduceMotion && isFullWidth && 'transition-all duration-500',
             'justify-center',
             focusComponent && 'items-center',
             isMobile && 'items-start',

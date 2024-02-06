@@ -41,7 +41,7 @@ export default function AssetSelectorPair(props: Props) {
         color='quaternary'
         variant='transparent'
         onClick={() => useStore.setState({ assetOverlayState: 'pair' })}
-        className='flex items-center justify-between w-full py-5 bg-white/5'
+        className='flex items-center justify-between w-full py-5 bg-white/10'
       >
         <Text size='sm' className='text-white/60'>
           <span className='text-white'>{buyAsset.symbol}</span>/{sellAsset.symbol}

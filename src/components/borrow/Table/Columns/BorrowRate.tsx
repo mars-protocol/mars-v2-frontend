@@ -2,7 +2,7 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
 
 export const BORROW_RATE_META = {
-  accessorKey: 'borrowRate',
+  accessorKey: 'apy.borrow',
   header: 'Borrow Rate APY',
   meta: { className: 'w-40' },
 }

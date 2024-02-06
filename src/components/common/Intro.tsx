@@ -23,17 +23,41 @@ interface Props {
 function IntroBackground(props: { bg: Props['bg'] }) {
   switch (props.bg) {
     case 'borrow':
-      return <GridHole className='h-55 opacity-5' />
+      return (
+        <div className='absolute top-0 right-0 block w-140 opacity-5'>
+          <GridHole />
+        </div>
+      )
     case 'lend':
-      return <GridTire className='h-55 opacity-5' />
+      return (
+        <div className='absolute top-0 right-0 block w-180 opacity-5'>
+          <GridTire />
+        </div>
+      )
     case 'farm':
-      return <GridLandscape className='h-55 opacity-5' />
+      return (
+        <div className='absolute top-0 right-0 block w-140 opacity-5'>
+          <GridLandscape />
+        </div>
+      )
     case 'hls-farm':
-      return <GridWeb className='h-45 opacity-5' />
+      return (
+        <div className='absolute bottom-0 right-0 block w-140 opacity-10'>
+          <GridWeb />
+        </div>
+      )
     case 'hls-staking':
-      return <GridPlanet className='h-55 opacity-10' />
+      return (
+        <div className='absolute top-0 right-0 block w-110 opacity-10'>
+          <GridPlanet />
+        </div>
+      )
     default:
-      return <GridGlobe className='h-50 opacity-5' />
+      return (
+        <div className='absolute bottom-0 right-0 block w-3/4 md:w-120 opacity-5'>
+          <GridGlobe />
+        </div>
+      )
   }
 }
 
@@ -49,7 +73,7 @@ export default function Intro(props: Props) {
       )}
       contentClassName='flex w-full h-full flex-col justify-between'
     >
-      <div className='absolute inset-0 flex items-end justify-end w-full h-full text-white'>
+      <div className='absolute inset-0 w-full h-full overflow-hidden text-white'>
         <IntroBackground bg={props.bg} />
       </div>
       <Tooltip

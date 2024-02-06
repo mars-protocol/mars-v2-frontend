@@ -87,15 +87,6 @@ export default function Table<T>(props: Props<T>) {
                         'align-center',
                       )}
                     >
-                      <span className='w-5 h-5 my-auto text-white'>
-                        {header.column.getCanSort()
-                          ? {
-                              asc: <SortAsc size={16} />,
-                              desc: <SortDesc />,
-                              false: <SortNone />,
-                            }[header.column.getIsSorted() as string] ?? null
-                          : null}
-                      </span>
                       <Text
                         tag='span'
                         size='xs'
@@ -103,6 +94,17 @@ export default function Table<T>(props: Props<T>) {
                       >
                         {flexRender(header.column.columnDef.header, header.getContext())}
                       </Text>
+                      {header.column.getCanSort() && (
+                        <span className='w-5 h-5 my-auto text-white'>
+                          {header.column.getCanSort()
+                            ? {
+                                asc: <SortAsc size={16} />,
+                                desc: <SortDesc />,
+                                false: <SortNone />,
+                              }[header.column.getIsSorted() as string] ?? null
+                            : null}
+                        </span>
+                      )}
                     </div>
                   </th>
                 )

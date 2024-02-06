@@ -60,7 +60,7 @@ export default function ChainSelect() {
       <Button
         leftIcon={<ChainLogo chainID={chainConfig.id} className='w-4' />}
         iconClassName='w-5 h-5'
-        color='tertiary'
+        color='secondary'
         onClick={() => setShowMenu()}
         className={classNames('!p-0 w-8 flex items-center justify-center')}
       ></Button>
