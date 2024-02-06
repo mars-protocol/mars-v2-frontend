@@ -85,7 +85,7 @@ export default function TradeChart(props: Props) {
         })
       })
     }
-  }, [props.buyAsset.pythFeedName, props.buyAsset.symbol])
+  }, [props.buyAsset.pythFeedName, props.buyAsset.symbol, chartInterval])
 
   return (
     <Card
