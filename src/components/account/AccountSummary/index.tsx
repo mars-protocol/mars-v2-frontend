@@ -165,7 +165,7 @@ export default function AccountSummary(props: Props) {
         updatedHealth={updatedHealth}
         healthFactor={healthFactor}
         updatedHealthFactor={updatedHealthFactor}
-        isClosable={props.isAccountDetails}
+        isAccountDetails={props.isAccountDetails}
       />
       <Accordion items={items} allowMultipleOpen />
     </>
