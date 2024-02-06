@@ -5,7 +5,6 @@ import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import usePrices from 'hooks/usePrices'
-import { BNCoin } from 'types/classes/BNCoin'
 import { getAccountNetValue } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { demagnify } from 'utils/formatters'
@@ -30,13 +29,7 @@ export default function usePerpsBalancesTable() {
         asset,
         tradeDirection: position.tradeDirection,
         amount: position.amount,
-        pnl: {
-          ...position.pnl,
-          net: BNCoin.fromDenomAndBigNumber(
-            position.baseDenom,
-            position.pnl.realized.net.amount.times(basePrice).plus(position.pnl.unrealized.net),
-          ),
-        },
+        pnl: position.pnl,
         entryPrice: position.entryPrice,
         liquidationPrice: position.entryPrice, // TODO: 📈 Get actual liquidation price from HC
         leverage: perpPrice

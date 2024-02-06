@@ -20,19 +20,12 @@ interface PerpPositionRow extends PerpsPosition {
   asset: Asset
   liquidationPrice: BigNumber
   leverage: number
-  pnl: PerpsPnL & { net: BNCoin }
 }
 
 interface PerpsPnL {
-  // These are coins / amounts
+  net: BNCoin
   realized: PerpsPnLCoins
-  unrealized: {
-    // These are VALUES (usd).
-    fees: BigNumber
-    funding: BigNumber
-    net: BigNumber
-    price: BigNumber
-  }
+  unrealized: PerpsPnLCoins
 }
 
 interface PerpsPnLCoins {

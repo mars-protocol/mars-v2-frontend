@@ -1,17 +1,15 @@
 import classNames from 'classnames'
-import { useCallback, useMemo } from 'react'
 
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
-import usePrice from 'hooks/usePrice'
 import { BNCoin } from 'types/classes/BNCoin'
 
 export const PNL_META = { accessorKey: 'pnl.net.amount', header: 'Total PnL', id: 'pnl' }
 
 type Props = {
-  pnl: PerpPositionRow['pnl']
+  pnl: PerpsPnL
 }
 
 export default function PnL(props: Props) {
@@ -29,32 +27,9 @@ export default function PnL(props: Props) {
 }
 
 function PnLTooltip(props: Props) {
-  const basePrice = usePrice(props.pnl.realized.net.denom)
-
-  const getBNCoin = useCallback(
-    (amount: BigNumber) => BNCoin.fromDenomAndBigNumber(props.pnl.realized.net.denom, amount),
-    [props.pnl.realized.net.denom],
-  )
-
-  const unrealizedCoins = useMemo(() => {
-    return {
-      net: getBNCoin(props.pnl.unrealized.net.div(basePrice)),
-      price: getBNCoin(props.pnl.unrealized.price.div(basePrice)),
-      funding: getBNCoin(props.pnl.unrealized.funding.div(basePrice)),
-      fees: getBNCoin(props.pnl.unrealized.fees.div(basePrice)),
-    } as PerpsPnLCoins
-  }, [
-    basePrice,
-    getBNCoin,
-    props.pnl.unrealized.fees,
-    props.pnl.unrealized.funding,
-    props.pnl.unrealized.net,
-    props.pnl.unrealized.price,
-  ])
-
   return (
     <div className='flex flex-col w-full gap-2 min-w-[280px]'>
-      {[props.pnl.realized, unrealizedCoins].map((coins, i) => (
+      {[props.pnl.realized, props.pnl.unrealized].map((coins, i) => (
         <>
           <div key={i} className='flex items-center w-full gap-8 space-between'>
             <Text className='mr-auto text-white/60 font-bold' size='sm'>

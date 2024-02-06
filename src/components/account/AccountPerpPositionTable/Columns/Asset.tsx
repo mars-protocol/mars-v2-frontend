@@ -1,15 +1,16 @@
 import { ReactNode } from 'react'
 
+import AssetImage from 'components/common/assets/AssetImage'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
-import AssetImage from 'components/common/assets/AssetImage'
 import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirection'
 import { BN_ZERO } from 'constants/math'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import { BNCoin } from 'types/classes/BNCoin'
 import { demagnify } from 'utils/formatters'
+
 export const ASSET_META = {
   accessorKey: 'symbol',
   header: 'Asset',
@@ -58,7 +59,12 @@ function TooltipContent(props: TooltipProps) {
         />
       </LabelAndValue>
       <LabelAndValue label='Unrealized PnL'>
-        <DisplayCurrency coin={row.pnl} options={{ abbreviated: false }} showZero isProfitOrLoss />
+        <DisplayCurrency
+          coin={row.pnl.net}
+          options={{ abbreviated: false }}
+          showZero
+          isProfitOrLoss
+        />
       </LabelAndValue>
     </div>
   )
