@@ -26,10 +26,11 @@ interface Props {
 }
 
 export default function AccountSummary(props: Props) {
-  const storageKey = props.isAccountDetails
+  const { account, isAccountDetails, isHls } = props
+  const storageKey = isAccountDetails
     ? LocalStorageKeys.ACCOUNT_DETAILS_TABS
     : LocalStorageKeys.ACCOUNT_SUMMARY_TABS
-  const defaultSetting = props.isAccountDetails
+  const defaultSetting = isAccountDetails
     ? DEFAULT_SETTINGS.accountDetailsTabs
     : DEFAULT_SETTINGS.accountSummaryTabs
   const [accountSummaryTabs, setAccountSummaryTabs] = useLocalStorage<boolean[]>(
@@ -48,12 +49,13 @@ export default function AccountSummary(props: Props) {
     () => [...lendingAvailableAssets, ...accountLentAssets],
     [lendingAvailableAssets, accountLentAssets],
   )
-  const { health, healthFactor } = useHealthComputer(props.account)
-  const { health: updatedHealth, healthFactor: updatedHealthFactor } =
-    useHealthComputer(updatedAccount)
+  const { health, healthFactor } = useHealthComputer(account)
+  const { health: updatedHealth, healthFactor: updatedHealthFactor } = useHealthComputer(
+    updatedAccount || account,
+  )
   const leverage = useMemo(
-    () => (props.account ? calculateAccountLeverage(props.account, prices, assets) : BN_ZERO),
-    [props.account, prices, assets],
+    () => (account ? calculateAccountLeverage(account, prices, assets) : BN_ZERO),
+    [account, prices, assets],
   )
   const updatedLeverage = useMemo(() => {
     if (!updatedAccount) return null
@@ -73,23 +75,15 @@ export default function AccountSummary(props: Props) {
   const apr = useMemo(
     () =>
       calculateAccountApr(
-        updatedAccount ?? props.account,
+        updatedAccount ?? account,
         borrowAssetsData,
         lendingAssetsData,
         prices,
         hlsStrategies,
         assets,
-        props.account.kind === 'high_levered_strategy',
+        account.kind === 'high_levered_strategy',
       ),
-    [
-      props.account,
-      assets,
-      borrowAssetsData,
-      hlsStrategies,
-      lendingAssetsData,
-      prices,
-      updatedAccount,
-    ],
+    [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, prices, updatedAccount],
   )
 
   const items = useMemo(() => {
@@ -97,7 +91,7 @@ export default function AccountSummary(props: Props) {
       {
         title: `Composition`,
         renderContent: () =>
-          props.account ? <AccountComposition account={props.account} isHls={props.isHls} /> : null,
+          account ? <AccountComposition account={account} isHls={isHls} /> : null,
         isOpen: accountSummaryTabs[0],
         toggleOpen: (index: number) => handleToggle(index),
         renderSubTitle: () => <></>,
@@ -105,13 +99,13 @@ export default function AccountSummary(props: Props) {
       {
         title: 'Balances',
         renderContent: () =>
-          props.account ? (
+          account ? (
             <AccountBalancesTable
-              account={props.account}
+              account={account}
               borrowingData={borrowAssetsData}
               lendingData={lendingAssetsData}
               hideCard
-              isHls={props.isHls}
+              isHls={isHls}
             />
           ) : null,
         isOpen: accountSummaryTabs[1],
@@ -120,41 +114,34 @@ export default function AccountSummary(props: Props) {
       },
     ]
 
-    if (props.account.vaults.length > 0)
+    if (account.vaults.length > 0)
       itemsArray.push({
         title: 'Strategies',
         renderContent: () =>
-          props.account ? <AccountStrategiesTable account={props.account} hideCard /> : null,
+          account ? <AccountStrategiesTable account={account} hideCard /> : null,
         isOpen: accountSummaryTabs[2] ?? false,
         toggleOpen: (index: number) => handleToggle(index),
         renderSubTitle: () => <></>,
       })
 
-    if (props.account.perps.length > 0)
+    if (account.perps.length > 0)
       itemsArray.push({
         title: 'Perp Positions',
         renderContent: () =>
-          props.account ? <AccountPerpPositionTable account={props.account} hideCard /> : null,
-        isOpen: accountSummaryTabs[props.account.vaults.length > 0 ? 3 : 2] ?? false,
+          account ? <AccountPerpPositionTable account={account} hideCard /> : null,
+        isOpen: accountSummaryTabs[account.vaults.length > 0 ? 3 : 2] ?? false,
         toggleOpen: (index: number) => handleToggle(index),
         renderSubTitle: () => <></>,
       })
 
     return itemsArray
-  }, [
-    props.account,
-    borrowAssetsData,
-    lendingAssetsData,
-    props.isHls,
-    handleToggle,
-    accountSummaryTabs,
-  ])
+  }, [account, borrowAssetsData, lendingAssetsData, isHls, handleToggle, accountSummaryTabs])
 
-  if (!props.account) return null
+  if (!account) return null
   return (
     <>
       <AccountSummaryHeader
-        account={props.account}
+        account={account}
         updatedAccount={updatedAccount}
         prices={prices}
         assets={assets}
@@ -165,7 +152,7 @@ export default function AccountSummary(props: Props) {
         updatedHealth={updatedHealth}
         healthFactor={healthFactor}
         updatedHealthFactor={updatedHealthFactor}
-        isAccountDetails={props.isAccountDetails}
+        isAccountDetails={isAccountDetails}
       />
       <Accordion items={items} allowMultipleOpen />
     </>

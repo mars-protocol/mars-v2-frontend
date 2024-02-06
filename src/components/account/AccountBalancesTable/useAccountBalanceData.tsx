@@ -24,7 +24,6 @@ export default function useAccountBalanceData(props: Props) {
     const accountDeposits = usedAccount?.deposits ?? []
     const accountLends = usedAccount?.lends ?? []
     const accountDebts = usedAccount?.debts ?? []
-    const accountVaults = usedAccount?.vaults ?? []
 
     const deposits: AccountBalanceRow[] = []
     accountDeposits.forEach((deposit) => {
