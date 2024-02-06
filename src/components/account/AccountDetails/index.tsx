@@ -201,7 +201,7 @@ function AccountDetails(props: Props) {
               'grid relative z-2',
               !reduceMotion && 'transition-[grid-template-rows,opacity]',
               accountDetailsExpanded
-                ? 'transition-[grid-template-rows,opacity] opacity-100 delay-500 duration-600 grid-rows-[1fr]'
+                ? 'transition-[grid-template-rows,opacity] opacity-100 delay-200 duration-600 grid-rows-[1fr]'
                 : 'transition-opacity opacity-0 duration-300 grid-rows-[0fr]',
             )}
           >
@@ -211,8 +211,10 @@ function AccountDetails(props: Props) {
             <div
               className={classNames(
                 'absolute inset-0 -z-1',
-                accountDetailsExpanded &&
-                  'before:content-[""] before:-z-1 before:absolute before:top-full before:left-0 before:h-full before:w-full before:bg-white/10 before:rounded-b-base before:border-t before:border-white/10',
+                'before:content-[""] before:transition-opacity before:-z-1 before:absolute before:left-0 before:h-full before:w-full before:bg-white/10 before:rounded-b-base before:border-t before:border-white/10',
+                accountDetailsExpanded
+                  ? 'before:opacity-100 before:delay-500 before:top-full'
+                  : 'before:opacity-0 before:duration-0',
               )}
             />
           </div>
