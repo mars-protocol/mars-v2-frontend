@@ -56,7 +56,7 @@ export default function AccountSummaryHeader(props: Props) {
   const increase = updatedAccountBalance?.isGreaterThan(accountBalance)
 
   return (
-    <div className='relative flex flex-wrap w-full p-4 border-b bg-white/10 border-white/10'>
+    <div className='relative flex flex-wrap w-full p-4 pb-2 border-b bg-white/10 border-white/10'>
       {isAccountDetails && (
         <Button
           onClick={onClose}
