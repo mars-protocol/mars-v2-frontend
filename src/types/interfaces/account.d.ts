@@ -7,7 +7,7 @@ interface Account {
   debts: BNCoin[]
   lends: BNCoin[]
   vaults: DepositedVault[]
-  perps: PerpPosition[]
+  perps: PerpsPosition[]
   kind: AccountKind
 }
 

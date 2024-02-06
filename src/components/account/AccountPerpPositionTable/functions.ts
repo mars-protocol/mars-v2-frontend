@@ -6,7 +6,7 @@ export function getAssetAccountPerpRow(
   prices: BNCoin[],
   position: PerpsPosition,
   assets: Asset[],
-  prev?: BNCoin,
+  prev?: PerpsPosition,
 ): AccountPerpRow {
   const { denom, amount } = position
   const amountChange = !prev ? position.amount : position.amount.minus(prev.amount)
