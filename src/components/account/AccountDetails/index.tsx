@@ -136,7 +136,7 @@ function AccountDetails(props: Props) {
           className={classNames(
             'group/accountdetail relative min-h-75',
             'border rounded-base border-white/20',
-            'backdrop-blur-sticky z-2',
+            'backdrop-blur-sticky z-3 overflow-hidden',
             !reduceMotion && 'transition-all duration-500',
             accountDetailsExpanded
               ? 'is-expanded w-full h-auto'
@@ -198,7 +198,7 @@ function AccountDetails(props: Props) {
           </div>
           <div
             className={classNames(
-              'grid',
+              'grid relative z-2',
               !reduceMotion && 'transition-[grid-template-rows,opacity]',
               accountDetailsExpanded
                 ? 'transition-[grid-template-rows,opacity] opacity-100 delay-500 duration-600 grid-rows-[1fr]'
@@ -208,6 +208,13 @@ function AccountDetails(props: Props) {
             <div className='overflow-hidden'>
               <AccountSummary account={account} isAccountDetails />
             </div>
+            <div
+              className={classNames(
+                'absolute inset-0 -z-1',
+                accountDetailsExpanded &&
+                  'before:content-[""] before:-z-1 before:absolute before:top-full before:left-0 before:h-full before:w-full before:bg-white/10 before:rounded-b-base before:border-t before:border-white/10',
+              )}
+            />
           </div>
           <div
             className={classNames(
