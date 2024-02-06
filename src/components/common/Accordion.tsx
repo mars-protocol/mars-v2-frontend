@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 
-import AccordionContent, { Item } from 'components/common/AccordionContent'
+import AccordionContent from 'components/common/AccordionContent'
 import Card from 'components/common/Card'
 
 interface Props {

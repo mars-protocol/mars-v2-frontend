@@ -8,14 +8,6 @@ interface Props {
   index: number
 }
 
-export interface Item {
-  title: string
-  renderContent: () => React.ReactNode
-  isOpen?: boolean
-  renderSubTitle: () => React.ReactNode
-  toggleOpen: (index: number) => void
-}
-
 export default function AccordionContent(props: Props) {
   const { title, renderContent, isOpen, renderSubTitle, toggleOpen } = props.item
 
