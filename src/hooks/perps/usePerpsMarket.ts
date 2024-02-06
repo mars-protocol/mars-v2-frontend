@@ -15,8 +15,8 @@ export default function usePerpsMarket() {
     clients && perpsAsset && `chains/${chainConfig.id}/perps/${perpsAsset.denom}`,
     () => getPerpsMarket(clients!, perpsAsset!),
     {
-      refreshInterval: 1000,
-      dedupingInterval: 1000,
+      refreshInterval: 5000,
+      dedupingInterval: 5000,
     },
   )
 }

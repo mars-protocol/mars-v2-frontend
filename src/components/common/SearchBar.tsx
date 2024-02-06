@@ -24,10 +24,12 @@ const SearchBar = (props: Props, ref: LegacyRef<HTMLDivElement>) => {
       )}
       ref={ref}
     >
-      <Search width={14} height={14} className='mr-2.5 text-white' />
+      <div className='w-3.5 h-3.5 mr-2.5 text-white'>
+        <Search />
+      </div>
       <input
         value={props.value}
-        className='h-full w-full bg-transparent text-xs placeholder-white/50 outline-none'
+        className='w-full h-full text-xs bg-transparent outline-none placeholder-white/50'
         placeholder={props.placeholder}
         onChange={(event) => onChange(event)}
         autoFocus={props.autoFocus}

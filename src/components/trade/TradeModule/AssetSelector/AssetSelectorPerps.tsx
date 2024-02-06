@@ -4,25 +4,32 @@ import Button from 'components/common/Button'
 import { ChevronDown } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import AssetOverlay from 'components/trade/TradeModule/AssetSelector/AssetOverlay'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import useStore from 'store'
 
 interface Props {
   asset: Asset
+  hasActivePosition: boolean
 }
 
 export default function AssetSelectorPerps(props: Props) {
   const assetOverlayState = useStore((s) => s.assetOverlayState)
   const { perpsAsset, updatePerpsAsset } = usePerpsAsset()
+  const currentAccount = useCurrentAccount()
 
   const perpAssets = usePerpsEnabledAssets()
 
   const onChangePerpsAsset = useCallback(
     (asset: Asset) => {
-      updatePerpsAsset(asset.denom)
+      let hasPosition = false
+      if (currentAccount && currentAccount.perps.find((perp) => perp.denom === asset.denom)) {
+        hasPosition = true
+      }
+      updatePerpsAsset(asset.denom, hasPosition)
     },
-    [updatePerpsAsset],
+    [currentAccount, updatePerpsAsset],
   )
 
   const handleChangeState = useCallback(() => {
@@ -37,9 +44,15 @@ export default function AssetSelectorPerps(props: Props) {
         onClick={() => useStore.setState({ assetOverlayState: 'pair' })}
         className='flex items-center justify-between w-full py-5 bg-white/5'
       >
-        <Text size='sm' className='text-white/60'>
-          <span className='text-white'>{perpsAsset.symbol}</span>/USD
-        </Text>
+        <div className='flex gap-2 items-center'>
+          <Text size='sm' className='text-white/60'>
+            <span className='text-white'>{perpsAsset.symbol}</span>/USD
+          </Text>
+
+          {props.hasActivePosition && (
+            <div className='px-1.5 py-0.5 bg-white/20 rounded-sm text-white text-xs'>Active</div>
+          )}
+        </div>
         <div className='flex items-center gap-2'>
           <Text>All markets</Text>
           <ChevronDown className='w-3 h-3' />

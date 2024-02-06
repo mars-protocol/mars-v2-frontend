@@ -2,6 +2,7 @@ export enum LocalStorageKeys {
   TRADING_PAIR_SIMPLE = 'tradingPairSimple',
   TRADING_PAIR_ADVANCED = 'tradingPairAdvanced',
   ACCOUNT_SUMMARY_TABS = 'accountSummaryTabs',
+  ACCOUNT_DETAILS_TABS = 'accountDetailsTabs',
   DISPLAY_CURRENCY = 'displayCurrency',
   REDUCE_MOTION = 'reduceMotion',
   FAVORITE_ASSETS = 'favoriteAssets',
@@ -16,4 +17,5 @@ export enum LocalStorageKeys {
   CURRENT_CHAIN_ID = 'currentChainId',
   PERPS_ASSET = 'perpsAsset',
   UPDATE_ORACLE = 'updateOracle',
+  CHART_INTERVAL = 'tradingview.chart.lastUsedTimeBasedResolution',
 }

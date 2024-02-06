@@ -1,5 +1,6 @@
 import { ORACLE_DENOM } from 'constants/oracle'
 import useStore from 'store'
+import { ResolutionString } from 'utils/charting_library/charting_library'
 
 // This does not retrigger when chains are switched. Assets might not be present on the new chain, but
 // This scenario is still caught.
@@ -8,7 +9,8 @@ const enabledMarketAssets = useStore
   .chainConfig.assets.filter((asset) => asset.isEnabled && asset.isMarket)
 
 export const DEFAULT_SETTINGS: Settings = {
-  accountSummaryTabs: [true, true, false],
+  accountSummaryTabs: [true, true, true, false],
+  accountDetailsTabs: [true, true, true, true],
   reduceMotion: false,
   enableAutoLendGlobal: true,
   tradingPairSimple: {
@@ -22,4 +24,5 @@ export const DEFAULT_SETTINGS: Settings = {
   migrationBanner: true,
   perpsAsset: '',
   updateOracle: true,
+  chartInterval: '60' as ResolutionString,
 }

@@ -33,7 +33,9 @@ export default function WarningMessages(props: Props) {
         type='warning'
         interactive
       >
-        <ExclamationMarkTriangle width={24} className='text-warning' />
+        <div className='w-6'>
+          <ExclamationMarkTriangle className='text-warning' />
+        </div>
       </Tooltip>
     </div>
   )

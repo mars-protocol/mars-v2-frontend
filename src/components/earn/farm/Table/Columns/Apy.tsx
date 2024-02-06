@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
 
@@ -13,7 +11,6 @@ export default function Apy(props: Props) {
   const { vault } = props
 
   if (vault.apy === null) return <Loading />
-
   return (
     <FormattedNumber
       amount={vault.apy ?? 0}

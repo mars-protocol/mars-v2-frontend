@@ -1,5 +1,5 @@
 type PositionType = 'deposit' | 'borrow' | 'lend' | 'vault' | 'perp'
-type TableType = 'balances' | 'perps'
+type TableType = 'balances' | 'strategies' | 'perps'
 
 interface Account {
   id: string
@@ -27,6 +27,15 @@ interface AccountBalanceRow {
   type: PositionType
   value: string
   amountChange: BigNumber
+}
+
+interface AccountStrategyRow {
+  apy: number
+  name: string
+  denom: string
+  amount: BNCoin[]
+  value: string
+  amountChange: BNCoin[]
 }
 
 interface AccountPerpRow extends PerpsPosition {

@@ -12,11 +12,11 @@ interface Props {
 export default function Accordion(props: Props) {
   if (props.allowMultipleOpen) {
     return (
-      <Card className='w-full'>
+      <>
         {props.items.map((item, index) => (
           <AccordionContent key={index} item={item} index={index} />
         ))}
-      </Card>
+      </>
     )
   }
 

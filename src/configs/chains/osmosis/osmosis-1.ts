@@ -137,8 +137,8 @@ const Osmosis1: ChainConfig = {
     },
   },
   endpoints: {
-    rpc: 'https://osmosis-node.marsprotocol.io/GGSFGSFGFG34/osmosis-rpc-front/',
-    rest: 'https://osmosis-node.marsprotocol.io/GGSFGSFGFG34/osmosis-lcd-front/',
+    rpc: process.env.NEXT_PUBLIC_OSMOSIS_RPC ?? 'https://rpc-osmosis.blockapsis.com/',
+    rest: process.env.NEXT_PUBLIC_OSMOSIS_REST ?? 'https://lcd-osmosis.blockapsis.com/',
     swap: 'https://app.osmosis.zone',
     explorer: 'https://www.mintscan.io/osmosis/transactions/',
     routes: 'https://sqs.osmosis.zone/router',

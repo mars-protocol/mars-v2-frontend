@@ -28,7 +28,7 @@ export default function WalletConnectButton(props: Props) {
   return (
     <Button
       variant={props.variant ?? 'solid'}
-      color={props.color ?? 'tertiary'}
+      color={props.color ?? 'secondary'}
       size={props.size ?? 'sm'}
       disabled={props.disabled}
       onClick={handleClick}

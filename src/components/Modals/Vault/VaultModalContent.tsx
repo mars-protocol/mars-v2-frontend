@@ -1,11 +1,11 @@
 import { useCallback, useMemo, useState } from 'react'
 
-import Accordion from 'components/common/Accordion'
-import AccountSummary from 'components/account/AccountSummary'
 import VaultBorrowings from 'components/Modals/Vault/VaultBorrowings'
 import VaultBorrowingsSubTitle from 'components/Modals/Vault/VaultBorrowingsSubTitle'
 import VaultDeposit from 'components/Modals/Vault/VaultDeposits'
 import VaultDepositSubTitle from 'components/Modals/Vault/VaultDepositsSubTitle'
+import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
+import Accordion from 'components/common/Accordion'
 import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
 import useAllAssets from 'hooks/assets/useAllAssets'
@@ -177,8 +177,7 @@ export default function VaultModalContent(props: Props) {
           },
         ]}
       />
-
-      <AccountSummary account={props.account} />
+      <AccountSummaryInModal account={props.account} />
     </div>
   )
 }

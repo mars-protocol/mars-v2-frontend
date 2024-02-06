@@ -9,8 +9,8 @@ const Devnet: ChainConfig = {
   name: 'Osmosis Devnet',
   endpoints: {
     ...Osmosis1.endpoints,
-    rpc: 'https://rpc.devnet.osmosis.zone/',
-    rest: 'https://lcd.devnet.osmosis.zone/',
+    rpc: process.env.NEXT_PUBLIC_OSMOSIS_TEST_RPC ?? 'https://rpc-osmosis.blockapsis.com/',
+    rest: process.env.NEXT_PUBLIC_OSMOSIS_TEST_REST ?? 'https://lcd-osmosis.blockapsis.com/',
     swap: 'https://testnet.osmosis.zone',
   },
 }

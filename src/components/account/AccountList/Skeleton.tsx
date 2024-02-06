@@ -46,12 +46,7 @@ export default function Skeleton(props: Props) {
           <Text size='xs' className='w-auto mr-1 text-white/70'>
             Health
           </Text>
-          <HealthBar
-            health={health}
-            healthFactor={healthFactor}
-            className='w-[92px] h-0.5'
-            hasLabel
-          />
+          <HealthBar health={health} healthFactor={healthFactor} className='w-[92px] h-0.5' />
         </div>
       </div>
     </div>
