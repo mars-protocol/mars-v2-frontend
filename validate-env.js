@@ -1,16 +1,10 @@
 require('dotenv').config({ path: './.env.local' })
 
-if (!process.env.CHARTING_LIBRARY_USERNAME) {
-  throw 'CHARTING_LIBRARY_USERNAME is not defined'
-}
-if (!process.env.CHARTING_LIBRARY_ACCESS_TOKEN) {
-  throw 'CHARTING_LIBRARY_ACCESS_TOKEN is not defined'
-}
-if (!process.env.CHARTING_LIBRARY_REPOSITORY) {
-  throw 'CHARTING_LIBRARY_REPOSITORY is not defined'
+if (!process.env.NEXT_PUBLIC_NETWORK) {
+  throw 'NEXT_PUBLIC_NETWORK is not defined. Set ot to "mainnet" or "testnet".'
 }
 if (!process.env.NEXT_PUBLIC_WALLET_CONNECT_ID) {
-  throw 'NEXT_PUBLIC_WALLET_CONNECT_ID is not defined'
+  throw 'NEXT_PUBLIC_WALLET_CONNECT_ID is not defined. Get a WalletConnect project ID from https://walletconnect.com/.'
 }
 
 console.log('✅ Required env variables set')

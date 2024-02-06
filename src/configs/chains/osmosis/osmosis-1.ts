@@ -137,8 +137,8 @@ const Osmosis1: ChainConfig = {
     },
   },
   endpoints: {
-    rpc: 'https://osmosis-rpc.cosmos-apis.com?x-apikey=' + process.env.NEXT_PUBLIC_API_KEY,
-    rest: 'https://osmosis-rest.cosmos-apis.com/',
+    rpc: process.env.NEXT_PUBLIC_OSMOSIS_RPC ?? 'https://rpc-osmosis.blockapsis.com/',
+    rest: process.env.NEXT_PUBLIC_OSMOSIS_REST ?? 'https://lcd-osmosis.blockapsis.com/',
     swap: 'https://app.osmosis.zone',
     explorer: 'https://www.mintscan.io/osmosis/transactions/',
     routes: 'https://sqs.osmosis.zone/router',
