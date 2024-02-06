@@ -19,7 +19,9 @@ async function getWalletBalances(chainConfig: ChainConfig, address: string): Pro
   const uri = '/cosmos/bank/v1beta1/balances/'
 
   const response = await fetch(
-    `${chainConfig.endpoints.rest}${uri}${address}?x-apikey=${process.env.NEXT_PUBLIC_API_KEY}`,
+    process.env.NEXT_PUBLIC_API_KEY
+      ? `${chainConfig.endpoints.rest}${uri}${address}?x-apikey=${process.env.NEXT_PUBLIC_API_KEY}`
+      : `${chainConfig.endpoints.rest}${uri}${address}`,
   )
 
   if (response.ok) {
