@@ -22,63 +22,70 @@ export interface InstantiateMsg {
 }
 export type ExecuteMsg =
   | {
-      update_owner: OwnerUpdate
-    }
+  update_owner: OwnerUpdate
+}
   | {
-      init_denom: {
-        denom: string
-        max_funding_velocity: Decimal
-        skew_scale: Decimal
-      }
-    }
+  init_denom: {
+    denom: string
+    max_funding_velocity: Decimal
+    skew_scale: Decimal
+  }
+}
   | {
-      enable_denom: {
-        denom: string
-      }
-    }
+  enable_denom: {
+    denom: string
+  }
+}
   | {
-      disable_denom: {
-        denom: string
-      }
-    }
+  disable_denom: {
+    denom: string
+  }
+}
   | {
-      deposit: {}
-    }
+  deposit: {}
+}
   | {
-      unlock: {
-        shares: Uint128
-      }
-    }
+  unlock: {
+    shares: Uint128
+  }
+}
   | {
-      withdraw: {}
-    }
+  withdraw: {}
+}
   | {
-      open_position: {
-        account_id: string
-        denom: string
-        size: SignedDecimal
-      }
-    }
+  open_position: {
+    account_id: string
+    denom: string
+    size: SignedDecimal
+  }
+}
   | {
-      close_position: {
-        account_id: string
-        denom: string
-      }
-    }
+  close_position: {
+    account_id: string
+    denom: string
+  }
+}
+  | {
+  modify_position: {
+    account_id: string
+    denom: string
+    new_size: SignedDecimal
+  }
+}
 export type OwnerUpdate =
   | {
-      propose_new_owner: {
-        proposed: string
-      }
-    }
+  propose_new_owner: {
+    proposed: string
+  }
+}
   | 'clear_proposed'
   | 'accept_proposed'
   | 'abolish_owner_role'
   | {
-      set_emergency_owner: {
-        emergency_owner: string
-      }
-    }
+  set_emergency_owner: {
+    emergency_owner: string
+  }
+}
   | 'clear_emergency_owner'
 export interface SignedDecimal {
   abs: Decimal
@@ -87,72 +94,86 @@ export interface SignedDecimal {
 }
 export type QueryMsg =
   | {
-      owner: {}
-    }
+  owner: {}
+}
   | {
-      config: {}
-    }
+  config: {}
+}
   | {
-      vault_state: {}
-    }
+  vault_state: {}
+}
   | {
-      denom_state: {
-        denom: string
-      }
-    }
+  denom_state: {
+    denom: string
+  }
+}
   | {
-      perp_denom_state: {
-        denom: string
-      }
-    }
+  perp_denom_state: {
+    denom: string
+  }
+}
   | {
-      denom_states: {
-        limit?: number | null
-        start_after?: string | null
-      }
-    }
+  denom_states: {
+    limit?: number | null
+    start_after?: string | null
+  }
+}
   | {
-      deposit: {
-        depositor: string
-      }
-    }
+  deposit: {
+    depositor: string
+  }
+}
   | {
-      deposits: {
-        limit?: number | null
-        start_after?: string | null
-      }
-    }
+  deposits: {
+    limit?: number | null
+    start_after?: string | null
+  }
+}
   | {
-      unlocks: {
-        depositor: string
-      }
-    }
+  unlocks: {
+    depositor: string
+  }
+}
   | {
-      position: {
-        account_id: string
-        denom: string
-      }
-    }
+  position: {
+    account_id: string
+    denom: string
+  }
+}
   | {
-      positions: {
-        limit?: number | null
-        start_after?: [string, string] | null
-      }
-    }
+  positions: {
+    limit?: number | null
+    start_after?: [string, string] | null
+  }
+}
   | {
-      positions_by_account: {
-        account_id: string
-      }
-    }
+  positions_by_account: {
+    account_id: string
+  }
+}
   | {
-      total_pnl: {}
-    }
+  total_pnl: {}
+}
   | {
-      opening_fee: {
-        denom: string
-        size: SignedDecimal
-      }
-    }
+  opening_fee: {
+    denom: string
+    size: SignedDecimal
+  }
+}
+  | {
+  denom_accounting: {
+    denom: string
+  }
+}
+  | {
+  total_accounting: {}
+}
+  | {
+  denom_realized_pnl_for_account: {
+    account_id: string
+    denom: string
+  }
+}
 export interface ConfigForString {
   base_denom: string
   closing_fee_rate: Decimal
@@ -163,6 +184,31 @@ export interface ConfigForString {
   opening_fee_rate: Decimal
   oracle: OracleBaseForString
   params: ParamsBaseForString
+}
+export interface Accounting {
+  balance: Balance
+  cash_flow: CashFlow
+  withdrawal_balance: Balance
+}
+export interface Balance {
+  accrued_funding: SignedDecimal
+  closing_fee: SignedDecimal
+  opening_fee: SignedDecimal
+  price_pnl: SignedDecimal
+  total: SignedDecimal
+}
+export interface CashFlow {
+  accrued_funding: SignedDecimal
+  closing_fee: SignedDecimal
+  opening_fee: SignedDecimal
+  price_pnl: SignedDecimal
+}
+export interface RealizedPnlAmounts {
+  accrued_funding: SignedDecimal
+  closing_fee: SignedDecimal
+  opening_fee: SignedDecimal
+  pnl: SignedDecimal
+  price_pnl: SignedDecimal
 }
 export interface DenomStateResponse {
   denom: string
@@ -203,24 +249,27 @@ export interface OwnerResponse {
 export interface PerpDenomState {
   denom: string
   enabled: boolean
+  long_oi: Decimal
   pnl_values: DenomPnlValues
   rate: SignedDecimal
+  short_oi: Decimal
   total_entry_cost: SignedDecimal
   total_entry_funding: SignedDecimal
 }
 export interface DenomPnlValues {
   accrued_funding: SignedDecimal
+  closing_fees: SignedDecimal
   pnl: SignedDecimal
   price_pnl: SignedDecimal
 }
 export type PnL =
   | 'break_even'
   | {
-      profit: Coin
-    }
+  profit: Coin
+}
   | {
-      loss: Coin
-    }
+  loss: Coin
+}
 export interface PositionResponse {
   account_id: string
   position: PerpPosition
@@ -228,11 +277,14 @@ export interface PositionResponse {
 export interface PerpPosition {
   base_denom: string
   closing_fee_rate: Decimal
+  current_exec_price: Decimal
   current_price: Decimal
   denom: string
+  entry_exec_price: Decimal
   entry_price: Decimal
-  pnl: PositionPnl
+  realised_pnl: RealizedPnlAmounts
   size: SignedDecimal
+  unrealised_pnl: PositionPnl
 }
 export interface PositionPnl {
   coins: PnlCoins

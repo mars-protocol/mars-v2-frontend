@@ -44,4 +44,8 @@ export class BNCoin {
       size: this.amount.toString(),
     }
   }
+
+  abs() {
+    return BNCoin.fromDenomAndBigNumber(this.denom, this.amount.abs())
+  }
 }

@@ -132,6 +132,7 @@ export function PerpsModule() {
         previousTradeDirection={previousTradeDirection}
         previousLeverage={previousLeverage}
         hasActivePosition={hasActivePosition}
+        onTxExecuted={() => setAmount(BN_ZERO)}
       />
     </Card>
   )
