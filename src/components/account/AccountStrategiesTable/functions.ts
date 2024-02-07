@@ -4,8 +4,8 @@ import { byDenom } from 'utils/array'
 
 export function getVaultAccountStrategiesRow(
   vault: DepositedVault,
-  apy: number,
   prices: BNCoin[],
+  apy?: number | null,
   prev?: DepositedVault,
 ): AccountStrategyRow {
   const { name } = vault
@@ -17,7 +17,7 @@ export function getVaultAccountStrategiesRow(
     .plus(previous.values.unlocked)
     .plus(previous.values.unlocking)
 
-  if (totalLockedValue.isLessThan(totalValue)) {
+  if (totalLockedValue.isLessThan(totalValue) && apy) {
     apy = totalLockedValue.dividedBy(totalValue).times(apy).toNumber()
   }
 

@@ -8,12 +8,14 @@ import useAccountId from 'hooks/useAccountId'
 import useChainConfig from 'hooks/useChainConfig'
 import useDepositedVaults from 'hooks/useDepositedVaults'
 import useVaults from 'hooks/useVaults'
+import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { VaultStatus } from 'types/enums/vault'
 
 function Content() {
   const accountId = useAccountId()
   const { data: vaults } = useVaults()
   const { data: depositedVaults } = useDepositedVaults(accountId || '')
+  const { data: vaultAprs } = useVaultAprs()
   const chainConfig = useChainConfig()
   const vaultMetaData = chainConfig.vaults
 
@@ -23,18 +25,19 @@ function Content() {
         if (!vaults) return prev
         const vault = vaults.find((vault) => vault.address === curr.address)
         const depositedVault = depositedVaults?.find((vault) => vault.address === curr.address)
+        const apr = vaultAprs.find((vaultApr) => vaultApr.address === curr.address)!
 
         if (depositedVault) {
-          prev.deposited.push(depositedVault)
+          prev.deposited.push({ ...depositedVault, ...apr })
         } else if (vault) {
-          prev.available.push(vault)
+          prev.available.push({ ...vault, ...apr })
         }
 
         return prev
       },
       { deposited: [], available: [] },
     )
-  }, [vaults, depositedVaults, vaultMetaData])
+  }, [vaultMetaData, vaults, depositedVaults, vaultAprs])
 
   const unlockedVaults: DepositedVault[] = []
 
