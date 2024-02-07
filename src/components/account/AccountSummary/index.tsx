@@ -13,9 +13,10 @@ import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import useHealthComputer from 'hooks/useHealthComputer'
+import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import usePrices from 'hooks/usePrices'
+import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { calculateAccountApr, calculateAccountLeverage } from 'utils/accounts'
 
@@ -37,6 +38,7 @@ export default function AccountSummary(props: Props) {
     storageKey,
     defaultSetting,
   )
+  const { data: vaultAprs } = useVaultAprs()
   const { data: prices } = usePrices()
   const assets = useAllAssets()
   const updatedAccount = useStore((s) => s.updatedAccount)
@@ -81,9 +83,19 @@ export default function AccountSummary(props: Props) {
         prices,
         hlsStrategies,
         assets,
-        account.kind === 'high_levered_strategy',
+        vaultAprs,
+        props.account.kind === 'high_levered_strategy',
       ),
-    [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, prices, updatedAccount],
+    [
+      updatedAccount,
+      props.account,
+      borrowAssetsData,
+      lendingAssetsData,
+      prices,
+      hlsStrategies,
+      assets,
+      vaultAprs,
+    ],
   )
 
   const items = useMemo(() => {

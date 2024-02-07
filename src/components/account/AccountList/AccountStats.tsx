@@ -12,6 +12,7 @@ import useAllAssets from 'hooks/assets/useAllAssets'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import usePrices from 'hooks/usePrices'
+import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { calculateAccountApr, calculateAccountBalanceValue } from 'utils/accounts'
 
@@ -27,6 +28,7 @@ export default function AccountStats(props: Props) {
   const { data: account } = useAccount(accountId)
   const { data: prices } = usePrices()
   const { data: hlsStrategies } = useHLSStakingAssets()
+  const { data: vaultAprs } = useVaultAprs()
 
   const positionBalance = useMemo(
     () => (!account ? null : calculateAccountBalanceValue(account, prices, assets)),
@@ -52,9 +54,10 @@ export default function AccountStats(props: Props) {
             prices,
             hlsStrategies,
             assets,
+            vaultAprs,
             account.kind === 'high_levered_strategy',
           ),
-    [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, prices],
+    [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, prices, vaultAprs],
   )
 
   const deleteAccountHandler = useCallback(() => {

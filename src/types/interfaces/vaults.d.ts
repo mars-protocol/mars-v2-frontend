@@ -39,8 +39,8 @@ interface Vault extends VaultConfig {
     maxLeverage: number
     borrowDenom: string
   }
-  apy: number | null
-  apr: number | null
+  apr?: number | null
+  apy?: number | null
 }
 
 interface VaultValuesAndAmounts {
@@ -120,5 +120,6 @@ interface AprBreakdown {
 
 interface Apr {
   address: string
-  apr: number
+  apr?: number | null
+  apy?: number | null
 }
