@@ -22,9 +22,10 @@ import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useAccountId from 'hooks/useAccountId'
-import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import useHealthComputer from 'hooks/useHealthComputer'
+import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import usePrices from 'hooks/usePrices'
+import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import {
@@ -38,6 +39,7 @@ export default function AccountDetailsController() {
   const isHLS = useStore((s) => s.isHLS)
   const { data: _, isLoading } = useAccounts('default', address)
   const { data: accountIds } = useAccountIds(address, false, true)
+
   const accountId = useAccountId()
 
   const account = useCurrentAccount()
@@ -59,6 +61,7 @@ function AccountDetails(props: Props) {
   const { account } = props
   const location = useLocation()
   const { data: hlsStrategies } = useHLSStakingAssets()
+  const { data: vaultAprs } = useVaultAprs()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
@@ -107,9 +110,19 @@ function AccountDetails(props: Props) {
         prices,
         hlsStrategies,
         assets,
+        vaultAprs,
         account.kind === 'high_levered_strategy',
       ),
-    [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, prices, updatedAccount],
+    [
+      account,
+      assets,
+      borrowAssetsData,
+      hlsStrategies,
+      lendingAssetsData,
+      prices,
+      updatedAccount,
+      vaultAprs,
+    ],
   )
   const isFullWidth =
     location.pathname.includes('trade') ||
@@ -128,7 +141,7 @@ function AccountDetails(props: Props) {
         data-testid='account-details'
         className={classNames(
           accountDetailsExpanded ? 'right-4' : '-right-74',
-          'w-94 flex items-start gap-4 absolute top-6',
+          'w-94 flex items-start gap-4 absolute top-6 z-2',
           !reduceMotion && 'transition-all duration-500',
         )}
       >

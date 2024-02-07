@@ -11,6 +11,7 @@ import useAccounts from 'hooks/accounts/useAccounts'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import usePrices from 'hooks/usePrices'
+import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
@@ -24,6 +25,7 @@ export default function PortfolioSummary() {
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const { data: accounts } = useAccounts('default', urlAddress || walletAddress)
   const { data: hlsStrategies } = useHLSStakingAssets()
+  const { data: vaultAprs } = useVaultAprs()
   const assets = useAllAssets()
   const stats = useMemo(() => {
     if (!accounts?.length) return
@@ -53,6 +55,7 @@ export default function PortfolioSummary() {
       lendingAssets,
       hlsStrategies,
       assets,
+      vaultAprs,
     )
 
     return [
@@ -93,7 +96,7 @@ export default function PortfolioSummary() {
         sub: 'Combined leverage',
       },
     ]
-  }, [accounts, assets, borrowAssets, hlsStrategies, lendingAssets, prices])
+  }, [accounts, assets, borrowAssets, hlsStrategies, lendingAssets, prices, vaultAprs])
 
   if (!walletAddress && !urlAddress) return null
 

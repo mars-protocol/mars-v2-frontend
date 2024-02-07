@@ -11,6 +11,7 @@ import useAllAssets from 'hooks/assets/useAllAssets'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import usePrices from 'hooks/usePrices'
+import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 
@@ -21,6 +22,7 @@ interface Props {
 function Content(props: Props) {
   const { data: account } = useAccount(props.accountId, true)
   const { data: prices } = usePrices()
+  const { data: vaultAprs } = useVaultAprs()
   const { health, healthFactor } = useHealthComputer(account)
   const data = useBorrowMarketAssetsTableData()
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
@@ -37,6 +39,7 @@ function Content(props: Props) {
       lendingAssets,
       hlsStrategies,
       assets,
+      vaultAprs,
       account.kind === 'high_levered_strategy',
     )
 
@@ -78,7 +81,7 @@ function Content(props: Props) {
         sub: DEFAULT_PORTFOLIO_STATS[4].sub,
       },
     ]
-  }, [account, assets, borrowAssets, hlsStrategies, lendingAssets, prices])
+  }, [account, assets, borrowAssets, hlsStrategies, lendingAssets, prices, vaultAprs])
 
   return (
     <Skeleton

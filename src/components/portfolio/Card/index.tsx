@@ -17,6 +17,7 @@ import useAccountId from 'hooks/useAccountId'
 import useHealthComputer from 'hooks/useHealthComputer'
 import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import usePrices from 'hooks/usePrices'
+import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import {
   calculateAccountApr,
   calculateAccountLeverage,
@@ -37,6 +38,7 @@ export default function PortfolioCard(props: Props) {
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const data = useBorrowMarketAssetsTableData()
   const { data: hlsStrategies } = useHLSStakingAssets()
+  const { data: vaultAprs } = useVaultAprs()
   const [searchParams] = useSearchParams()
   const assets = useAllAssets()
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
@@ -64,9 +66,10 @@ export default function PortfolioCard(props: Props) {
       prices,
       hlsStrategies,
       assets,
+      vaultAprs,
       account.kind === 'high_levered_strategy',
     )
-  }, [lendingAssets, borrowAssets, prices, account, hlsStrategies, assets])
+  }, [lendingAssets, borrowAssets, prices, account, hlsStrategies, assets, vaultAprs])
 
   const stats: { title: ReactNode; sub: string }[] = useMemo(() => {
     const isLoaded = account && prices.length && apr !== null
