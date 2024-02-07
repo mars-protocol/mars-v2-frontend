@@ -1,0 +1,4 @@
+diff --git a/next.config.js b/next.config.js
+index 2801090..4b5fabe 100644
+--- a/next.config.js
++++ b/next.config.js

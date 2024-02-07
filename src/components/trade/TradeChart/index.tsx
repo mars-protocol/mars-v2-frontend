@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef } from 'react'
 import classNames from 'classnames'
+import { useEffect, useMemo, useRef } from 'react'
 
 import Card from 'components/common/Card'
 import DisplayCurrency from 'components/common/DisplayCurrency'
@@ -39,9 +39,8 @@ export default function TradeChart(props: Props) {
 
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
   const hasTradingChartInstalled =
-    process.env.CHARTING_LIBRARY_USERNAME &&
     process.env.CHARTING_LIBRARY_ACCESS_TOKEN &&
-    process.env.CHARTING_LIBRARY_REPOSITORY
+    process.env.CHARTING_LIBRARY_ACCESS_TOKEN !== 'APP_CHARTING_LIBRARY_ACCESS_TOKEN'
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.TradingView) {
