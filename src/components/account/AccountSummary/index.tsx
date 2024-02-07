@@ -84,11 +84,11 @@ export default function AccountSummary(props: Props) {
         hlsStrategies,
         assets,
         vaultAprs,
-        props.account.kind === 'high_levered_strategy',
+        account.kind === 'high_levered_strategy',
       ),
     [
+      account,
       updatedAccount,
-      props.account,
       borrowAssetsData,
       lendingAssetsData,
       prices,
