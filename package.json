@@ -3,7 +3,7 @@
   "version": "2.2.2",
   "private": true,
   "scripts": {
-    "build": "yarn validate-env && next build",
+    "build": "yarn validate-env && yarn install-charting-library && next build",
     "dev": "next dev",
     "lint": "eslint ./src/ && yarn prettier-check",
     "format": "eslint ./src/ --fix && prettier --write ./src/ ",

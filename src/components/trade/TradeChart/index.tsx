@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef } from 'react'
+import classNames from 'classnames'
 
 import Card from 'components/common/Card'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
+import { ArrowChartLineUp } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
 import Text from 'components/common/Text'
 import { datafeed } from 'components/trade/TradeChart/DataFeed'
@@ -36,6 +38,10 @@ export default function TradeChart(props: Props) {
   }, [prices, props.buyAsset.denom, props.sellAsset.denom])
 
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
+  const hasTradingChartInstalled =
+    process.env.CHARTING_LIBRARY_USERNAME &&
+    process.env.CHARTING_LIBRARY_ACCESS_TOKEN &&
+    process.env.CHARTING_LIBRARY_REPOSITORY
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.TradingView) {
@@ -124,10 +130,30 @@ export default function TradeChart(props: Props) {
           )}
         </div>
       }
-      contentClassName='px-0.5 pb-0.5 h-full bg-chart w-[calc(100%-2px)] ml-[1px]'
+      contentClassName={classNames(
+        'px-0.5 pb-0.5 h-full  w-[calc(100%-2px)] ml-[1px]',
+        hasTradingChartInstalled ? 'bg-chart' : 'bg-white/5',
+      )}
       className='h-[70dvh] max-h-[980px] min-h-[560px]'
     >
-      <div ref={chartContainerRef} className='h-[calc(100%-32px)] overflow-hidden' />
+      <div ref={chartContainerRef} className='h-[calc(100%-32px)] overflow-hidden'>
+        {!hasTradingChartInstalled && (
+          <div className='flex items-center w-full h-full'>
+            <div className='flex flex-col flex-wrap items-center w-full gap-4'>
+              <Text size='lg' uppercase className='w-full text-center'>
+                Trading View is not installed
+              </Text>
+              <div className='w-20'>
+                <ArrowChartLineUp />
+              </div>
+              <Text size='sm' className='w-full text-center text-white/60'>
+                This deployment of the Mars Protocol v2 Outpost has no Trading View charting library
+                installed.
+              </Text>
+            </div>
+          </div>
+        )}
+      </div>
       <PoweredByPyth />
     </Card>
   )
