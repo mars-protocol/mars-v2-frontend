@@ -1,5 +1,6 @@
 import { cacheFn, positionsCache } from 'api/cache'
 import { getCreditManagerQueryClient } from 'api/cosmwasm-client'
+import getPrices from 'api/prices/getPrices'
 import getDepositedVaults from 'api/vaults/getDepositedVaults'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Positions } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
@@ -19,6 +20,8 @@ export default async function getAccount(
     `${chainConfig.id}/account/${accountId}`,
   )
 
+  const prices = await getPrices(chainConfig)
+
   const accountKind = await creditManagerQueryClient.accountKind({ accountId: accountId })
 
   const depositedVaults = await getDepositedVaults(accountId, chainConfig, accountPosition)
@@ -30,7 +33,7 @@ export default async function getAccount(
       lends: accountPosition.lends.map((lend) => new BNCoin(lend)),
       deposits: accountPosition.deposits.map((deposit) => new BNCoin(deposit)),
       vaults: depositedVaults,
-      perps: resolvePerpsPositions(accountPosition.perps),
+      perps: resolvePerpsPositions(accountPosition.perps, prices),
       kind: accountKind,
     }
   }

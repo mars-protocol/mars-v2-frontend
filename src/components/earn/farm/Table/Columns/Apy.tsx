@@ -1,5 +1,6 @@
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
+import Text from 'components/common/Text'
 
 export const APY_META = { accessorKey: 'apy', header: 'APY' }
 
@@ -10,7 +11,9 @@ interface Props {
 export default function Apy(props: Props) {
   const { vault } = props
 
-  if (vault.apy === null) return <Loading />
+  if (vault.apy === undefined) return <Loading />
+  if (vault.apy === null) return <Text size='xs'>N/A</Text>
+
   return (
     <FormattedNumber
       amount={vault.apy ?? 0}

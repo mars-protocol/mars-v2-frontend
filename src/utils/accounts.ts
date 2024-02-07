@@ -72,6 +72,7 @@ export const calculateAccountApr = (
   prices: BNCoin[],
   hlsStrategies: HLSStrategy[],
   assets: Asset[],
+  vaultAprs: Apr[],
   isHls?: boolean,
 ): BigNumber => {
   const depositValue = calculateAccountValue('deposits', account, prices, assets)
@@ -125,8 +126,10 @@ export const calculateAccountApr = (
   })
 
   vaults?.forEach((vault) => {
+    const apr = vaultAprs.find((vaultApr) => vaultApr.address === vault.address)?.apr
+    if (!apr) return
     const lockedValue = vault.values.primary.plus(vault.values.secondary)
-    const positionInterest = lockedValue.multipliedBy(vault?.apr ?? 0).dividedBy(100)
+    const positionInterest = lockedValue.multipliedBy(apr).dividedBy(100)
     totalVaultsInterestValue = totalVaultsInterestValue.plus(positionInterest)
   })
 
@@ -307,6 +310,7 @@ export function getAccountSummaryStats(
   lendingAssets: LendingMarketTableData[],
   hlsStrategies: HLSStrategy[],
   assets: Asset[],
+  vaultAprs: Apr[],
   isHls?: boolean,
 ) {
   const [deposits, lends, debts, vaults] = getAccountPositionValues(account, prices, assets)
@@ -318,6 +322,7 @@ export function getAccountSummaryStats(
     prices,
     hlsStrategies,
     assets,
+    vaultAprs,
     isHls,
   )
   const leverage = calculateAccountLeverage(account, prices, assets)

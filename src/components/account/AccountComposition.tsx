@@ -13,6 +13,7 @@ import { ORACLE_DENOM } from 'constants/oracle'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
 import usePrices from 'hooks/usePrices'
+import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountApr, getAccountPositionValues } from 'utils/accounts'
@@ -37,6 +38,7 @@ export default function AccountComposition(props: Props) {
   const hasChanged = !!updatedAccount
   const { data: prices } = usePrices()
   const { data: hlsStrategies } = useHLSStakingAssets()
+  const { data: vaultAprs } = useVaultAprs()
   const assets = useAllAssets()
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
@@ -75,9 +77,19 @@ export default function AccountComposition(props: Props) {
         prices,
         hlsStrategies,
         assets,
+        vaultAprs,
         props.isHls,
       ),
-    [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, prices, props.isHls],
+    [
+      account,
+      assets,
+      borrowAssetsData,
+      hlsStrategies,
+      lendingAssetsData,
+      prices,
+      props.isHls,
+      vaultAprs,
+    ],
   )
   const updatedApr = useMemo(
     () =>
@@ -89,6 +101,7 @@ export default function AccountComposition(props: Props) {
             prices,
             hlsStrategies,
             assets,
+            vaultAprs,
             props.isHls,
           )
         : BN_ZERO,
@@ -99,6 +112,7 @@ export default function AccountComposition(props: Props) {
       prices,
       hlsStrategies,
       assets,
+      vaultAprs,
       props.isHls,
     ],
   )

@@ -1,10 +1,9 @@
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import { BNCoin } from 'types/classes/BNCoin'
 
 export const PNL_META = { id: 'pnl', header: 'Total PnL', meta: { className: 'w-30' } }
 
 interface Props {
-  pnl: BNCoin
+  pnl: PerpsPnL
 }
 
 export default function TotalPnL(props: Props) {
@@ -13,7 +12,7 @@ export default function TotalPnL(props: Props) {
   return (
     <DisplayCurrency
       className='text-xs text-right number'
-      coin={pnl}
+      coin={pnl.net}
       options={{ abbreviated: false }}
       isProfitOrLoss
       showZero

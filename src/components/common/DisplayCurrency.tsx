@@ -19,10 +19,20 @@ interface Props {
   showZero?: boolean
   options?: FormatOptions
   isProfitOrLoss?: boolean
+  showSignPrefix?: boolean
 }
 
 export default function DisplayCurrency(props: Props) {
-  const { coin, className, isApproximation, parentheses, showZero, options, isProfitOrLoss } = props
+  const {
+    coin,
+    className,
+    isApproximation,
+    parentheses,
+    showSignPrefix,
+    showZero,
+    options,
+    isProfitOrLoss,
+  } = props
   const displayCurrencies = useDisplayCurrencyAssets()
   const assets = useAllAssets()
   const [displayCurrency] = useDisplayCurrency()
@@ -59,7 +69,7 @@ export default function DisplayCurrency(props: Props) {
   )
 
   const prefix = useMemo(() => {
-    const positiveOrNegativePrefix = isProfitOrLoss
+    const positiveOrNegativePrefix = showSignPrefix
       ? amount > 0
         ? '+'
         : amount < 0
@@ -72,7 +82,7 @@ export default function DisplayCurrency(props: Props) {
     return isUSD
       ? `${approximationPrefix}${smallerThanPrefix}${positiveOrNegativePrefix}$`
       : `${approximationPrefix}${smallerThanPrefix}${positiveOrNegativePrefix}`
-  }, [isUSD, isApproximation, showZero, isProfitOrLoss, amount, isLessThanACent])
+  }, [isUSD, isApproximation, showZero, showSignPrefix, amount, isLessThanACent])
 
   const suffix = isUSD
     ? ''

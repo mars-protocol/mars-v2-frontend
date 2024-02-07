@@ -21,7 +21,8 @@ export default function usePerpsBalancesTable() {
     const netValue = getAccountNetValue(currentAccount, prices, allAssets)
 
     return currentAccount.perps.map((position) => {
-      const price = prices.find(byDenom(position.denom))?.amount ?? BN_ZERO
+      const perpPrice = prices.find(byDenom(position.denom))?.amount ?? BN_ZERO
+      const basePrice = prices.find(byDenom(position.baseDenom))?.amount ?? BN_ZERO
       const asset = perpAssets.find(byDenom(position.denom))!
 
       return {
@@ -31,7 +32,11 @@ export default function usePerpsBalancesTable() {
         pnl: position.pnl,
         entryPrice: position.entryPrice,
         liquidationPrice: position.entryPrice, // TODO: 📈 Get actual liquidation price from HC
-        leverage: price.times(demagnify(position.amount, asset)).div(netValue).plus(1).toNumber(),
+        leverage: perpPrice
+          .times(demagnify(position.amount, asset))
+          .div(netValue)
+          .plus(1)
+          .toNumber(),
       } as PerpPositionRow
     })
   }, [allAssets, currentAccount, perpAssets, prices])

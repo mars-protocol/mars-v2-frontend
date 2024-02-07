@@ -1,6 +1,6 @@
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
-import { PnL, Positions } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { Positions } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import {
   AssetParamsBaseForAddr as AssetParams,
   AssetParamsBaseForAddr,
@@ -104,8 +104,14 @@ export function resolveHLSStrategies(
   return HLSStakingStrategies
 }
 
-export function resolvePerpsPositions(perpPositions: Positions['perps']): PerpsPosition[] {
+export function resolvePerpsPositions(
+  perpPositions: Positions['perps'],
+  prices: BNCoin[],
+): PerpsPosition[] {
   if (!perpPositions) return []
+  const basePrice =
+    prices.find((price) => price.denom === perpPositions[0].base_denom)?.amount ?? BN_ZERO
+
   return perpPositions.map((position) => {
     return {
       denom: position.denom,
@@ -113,22 +119,37 @@ export function resolvePerpsPositions(perpPositions: Positions['perps']): PerpsP
       amount: BN(position.size as any).abs(),
       tradeDirection: BN(position.size as any).isNegative() ? 'short' : 'long',
       closingFee: BNCoin.fromCoin(position.pnl.coins.closing_fee),
-      pnl: getPnlCoin(position.pnl.coins.pnl, position.base_denom),
+      pnl: {
+        net: BNCoin.fromDenomAndBigNumber(
+          position.base_denom,
+          BN(position.pnl.values.pnl as any).plus(BN_ZERO),
+        ),
+        realized: {
+          net: BNCoin.fromDenomAndBigNumber(position.base_denom, BN_ZERO),
+          price: BNCoin.fromDenomAndBigNumber(position.base_denom, BN_ZERO),
+          funding: BNCoin.fromDenomAndBigNumber(position.base_denom, BN_ZERO),
+          fees: BNCoin.fromDenomAndBigNumber(position.base_denom, BN_ZERO.times(-1)),
+        },
+        unrealized: {
+          net: BNCoin.fromDenomAndBigNumber(
+            position.base_denom,
+            BN(position.pnl.values.pnl as any),
+          ),
+          price: BNCoin.fromDenomAndBigNumber(
+            position.base_denom,
+            BN(position.pnl.values.price_pnl as any),
+          ),
+          funding: BNCoin.fromDenomAndBigNumber(
+            position.base_denom,
+            BN(position.pnl.values.accrued_funding as any),
+          ),
+          fees: BNCoin.fromDenomAndBigNumber(
+            position.base_denom,
+            BN(position.pnl.values.closing_fee as any).times(-1),
+          ),
+        },
+      },
       entryPrice: BN(position.entry_price),
     }
   })
-}
-
-function getPnlCoin(pnl: PnL, denom: string): BNCoin {
-  let amount = BN_ZERO
-
-  if (pnl === 'break_even') return BNCoin.fromDenomAndBigNumber(denom, amount)
-
-  if ('loss' in (pnl as any)) {
-    amount = BN((pnl as any).loss.amount).times(-1)
-  } else if ('profit' in (pnl as { profit: Coin })) {
-    amount = BN((pnl as any).profit.amount)
-  }
-
-  return BNCoin.fromDenomAndBigNumber(denom, amount)
 }
