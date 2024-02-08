@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js'
-import { useEffect, useState } from 'react'
+import debounce from 'lodash.debounce'
+import { useEffect, useMemo, useState } from 'react'
 
 import Slider from 'components/common/Slider'
 import TokenInput from 'components/common/TokenInput/index'
@@ -29,6 +30,15 @@ interface Props {
 export default function TokenInputWithSlider(props: Props) {
   const [amount, setAmount] = useState(props.amount)
   const [percentage, setPercentage] = useState(0)
+
+  const debouncedChange = useMemo(
+    () =>
+      debounce((updatedPercentage: number) => {
+        if (updatedPercentage === percentage) return
+        onChangeSlider(updatedPercentage)
+      }, 300),
+    [onChangeSlider, percentage],
+  )
 
   function onChangeSlider(percentage: number) {
     const newAmount = BN(percentage).dividedBy(100).multipliedBy(props.max).integerValue()
@@ -75,7 +85,7 @@ export default function TokenInputWithSlider(props: Props) {
       />
       <Slider
         value={percentage || 0}
-        onChange={(value) => onChangeSlider(value)}
+        onChange={(value) => debouncedChange(value)}
         disabled={props.disabled}
         leverage={props.leverage}
       />
