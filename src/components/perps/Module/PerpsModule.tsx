@@ -61,6 +61,10 @@ export function PerpsModule() {
     previousTradeDirection,
   ])
 
+  const onDebounce = useCallback(() => {
+    // TODO:  Implement debounced simulation
+  }, [])
+
   const setLeverage = useCallback((leverage: number) => {
     // TODO: Implement leverage setting
   }, [])
@@ -116,6 +120,7 @@ export function PerpsModule() {
             max={10}
             value={leverage}
             onChange={setLeverage}
+            onDebounce={onDebounce}
             type={tradeDirection}
           />
           <LeverageButtons />

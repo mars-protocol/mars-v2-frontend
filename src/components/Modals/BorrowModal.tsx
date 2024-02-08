@@ -1,8 +1,8 @@
 import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import AccountSummary from 'components/account/AccountSummary'
-import AssetImage from 'components/common/assets/AssetImage'
+import Modal from 'components/Modals/Modal'
+import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
 import Button from 'components/common/Button'
 import Card from 'components/common/Card'
 import DisplayCurrency from 'components/common/DisplayCurrency'
@@ -13,7 +13,7 @@ import Switch from 'components/common/Switch'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
-import Modal from 'components/Modals/Modal'
+import AssetImage from 'components/common/assets/AssetImage'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useMarkets from 'hooks/markets/useMarkets'
@@ -29,7 +29,6 @@ import { byDenom } from 'utils/array'
 import { formatPercent } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { getDebtAmountWithInterest } from 'utils/tokens'
-import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
 
 interface Props {
   account: Account
@@ -172,16 +171,38 @@ function BorrowModal(props: Props) {
 
   const handleChange = useCallback(
     (newAmount: BigNumber) => {
-      const coin = BNCoin.fromDenomAndBigNumber(asset.denom, newAmount)
       if (!amount.isEqualTo(newAmount)) setAmount(newAmount)
-      if (!isRepay) return
-      const repayCoin = coin.amount.isGreaterThan(totalDebt)
-        ? BNCoin.fromDenomAndBigNumber(asset.denom, totalDebt)
-        : coin
-      simulateRepay(repayCoin, repayFromWallet)
     },
-    [amount, asset.denom, isRepay, simulateRepay, totalDebt, repayFromWallet],
+    [amount, setAmount],
   )
+
+  const onDebounce = useCallback(() => {
+    if (isRepay) {
+      const repayCoin = BNCoin.fromDenomAndBigNumber(
+        asset.denom,
+        amount.isGreaterThan(totalDebt) ? totalDebt : amount,
+      )
+      simulateRepay(repayCoin, repayFromWallet)
+    } else {
+      const borrowCoin = BNCoin.fromDenomAndBigNumber(
+        asset.denom,
+        amount.isGreaterThan(max) ? max : amount,
+      )
+      const target = borrowToWallet ? 'wallet' : isAutoLendEnabled ? 'lend' : 'deposit'
+      simulateBorrow(target, borrowCoin)
+    }
+  }, [
+    amount,
+    isRepay,
+    repayFromWallet,
+    totalDebt,
+    max,
+    asset,
+    borrowToWallet,
+    isAutoLendEnabled,
+    simulateBorrow,
+    simulateRepay,
+  ])
 
   const maxBorrow = useMemo(() => {
     const maxBorrowAmount = isRepay
@@ -208,13 +229,6 @@ function BorrowModal(props: Props) {
     handleChange(max)
     setAmount(max)
   }, [amount, max, handleChange])
-
-  useEffect(() => {
-    if (isRepay) return
-    const coin = BNCoin.fromDenomAndBigNumber(asset.denom, amount.isGreaterThan(max) ? max : amount)
-    const target = borrowToWallet ? 'wallet' : isAutoLendEnabled ? 'lend' : 'deposit'
-    simulateBorrow(target, coin)
-  }, [isRepay, borrowToWallet, isAutoLendEnabled, simulateBorrow, asset, amount, max])
 
   if (!modal || !asset) return null
   return (
@@ -294,6 +308,7 @@ function BorrowModal(props: Props) {
             <TokenInputWithSlider
               asset={asset}
               onChange={handleChange}
+              onDebounce={onDebounce}
               amount={amount}
               max={max}
               disabled={max.isZero()}

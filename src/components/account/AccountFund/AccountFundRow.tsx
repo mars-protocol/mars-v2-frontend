@@ -10,6 +10,7 @@ interface Props {
   denom: string
   isConfirming: boolean
   updateFundingAssets: (amount: BigNumber, denom: string) => void
+  onDebounce: () => void
 }
 
 export default function AccountFundRow(props: Props) {
@@ -23,6 +24,7 @@ export default function AccountFundRow(props: Props) {
     <TokenInputWithSlider
       asset={asset}
       onChange={(amount) => props.updateFundingAssets(amount, asset.denom)}
+      onDebounce={props.onDebounce}
       amount={props.amount}
       max={balance}
       balances={props.balances}
