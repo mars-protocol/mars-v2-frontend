@@ -60,7 +60,7 @@ export default function Slider(props: Props) {
       debounce(() => {
         if (!onDebounce) return
         onDebounce()
-      }, 300),
+      }, 250),
     [onDebounce],
   )
 
@@ -116,6 +116,7 @@ export default function Slider(props: Props) {
   const DraggableElement: any = Draggable
 
   const [positionOffset, position] = useMemo(() => {
+    debounceFunction()
     return [
       { x: (value / 100) * -12, y: 0 },
       { x: (sliderRect.width / 100) * value, y: -2 },

@@ -108,7 +108,7 @@ export function resolvePerpsPositions(
   perpPositions: Positions['perps'],
   prices: BNCoin[],
 ): PerpsPosition[] {
-  if (!perpPositions) return []
+  if (!perpPositions.length) return []
   const basePrice =
     prices.find((price) => price.denom === perpPositions[0].base_denom)?.amount ?? BN_ZERO
 

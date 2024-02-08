@@ -91,6 +91,7 @@ function BorrowModal(props: Props) {
   const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
   const { computeMaxBorrowAmount } = useHealthComputer(account)
   const totalDebt = BN(getDebtAmount(modal))
+  const accountDebt = account.debts.find(byDenom(asset.denom))?.amount ?? BN_ZERO
   const markets = useMarkets()
 
   const [depositBalance, lendBalance] = useMemo(
@@ -101,34 +102,34 @@ function BorrowModal(props: Props) {
     [account, asset.denom],
   )
 
-  const totalDebtRepayAmount = useMemo(
-    () => getDebtAmountWithInterest(totalDebt, apy),
-    [totalDebt, apy],
+  const accountDebtWithInterest = useMemo(
+    () => getDebtAmountWithInterest(accountDebt, apy),
+    [accountDebt, apy],
   )
 
   const overpayExeedsCap = useMemo(() => {
     const marketAsset = markets.find((market) => market.asset.denom === asset.denom)
     if (!marketAsset) return
-    const overpayAmount = totalDebtRepayAmount.minus(totalDebt)
+    const overpayAmount = accountDebtWithInterest.minus(accountDebt)
     const marketCapAfterOverpay = marketAsset.cap.used.plus(overpayAmount)
 
     return marketAsset.cap.max.isLessThanOrEqualTo(marketCapAfterOverpay)
-  }, [markets, asset.denom, totalDebt, totalDebtRepayAmount])
+  }, [markets, asset.denom, accountDebt, accountDebtWithInterest])
 
   const maxRepayAmount = useMemo(() => {
     const maxBalance = repayFromWallet
       ? BN(walletBalances.find(byDenom(asset.denom))?.amount ?? 0)
       : depositBalance.plus(lendBalance)
     return isRepay
-      ? BigNumber.min(maxBalance, overpayExeedsCap ? totalDebt : totalDebtRepayAmount)
+      ? BigNumber.min(maxBalance, overpayExeedsCap ? accountDebt : accountDebtWithInterest)
       : BN_ZERO
   }, [
     depositBalance,
     lendBalance,
     isRepay,
-    totalDebtRepayAmount,
+    accountDebtWithInterest,
     overpayExeedsCap,
-    totalDebt,
+    accountDebt,
     walletBalances,
     asset.denom,
     repayFromWallet,
@@ -148,7 +149,7 @@ function BorrowModal(props: Props) {
       repay({
         accountId: account.id,
         coin: BNCoin.fromDenomAndBigNumber(asset.denom, amount),
-        accountBalance: amount.isEqualTo(totalDebtRepayAmount),
+        accountBalance: amount.isEqualTo(accountDebtWithInterest),
         lend: repayFromWallet ? BNCoin.fromDenomAndBigNumber(asset.denom, BN_ZERO) : lend,
         fromWallet: repayFromWallet,
       })
@@ -180,7 +181,7 @@ function BorrowModal(props: Props) {
     if (isRepay) {
       const repayCoin = BNCoin.fromDenomAndBigNumber(
         asset.denom,
-        amount.isGreaterThan(totalDebt) ? totalDebt : amount,
+        amount.isGreaterThan(accountDebt) ? accountDebt : amount,
       )
       simulateRepay(repayCoin, repayFromWallet)
     } else {
@@ -195,7 +196,7 @@ function BorrowModal(props: Props) {
     amount,
     isRepay,
     repayFromWallet,
-    totalDebt,
+    maxRepayAmount,
     max,
     asset,
     borrowToWallet,
@@ -271,7 +272,7 @@ function BorrowModal(props: Props) {
                 />
               </div>
               <Text size='xs' className='text-white/50' tag='span'>
-                Borrowed
+                Total Borrowed
               </Text>
             </div>
           </>

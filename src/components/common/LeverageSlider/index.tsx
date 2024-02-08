@@ -39,7 +39,7 @@ function LeverageSlider(props: Props) {
       debounce(() => {
         if (!onDebounce) return
         onDebounce()
-      }, 300),
+      }, 250),
     [onDebounce],
   )
 
