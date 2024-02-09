@@ -121,7 +121,7 @@ export default function Slider(props: Props) {
       { x: (value / 100) * -12, y: 0 },
       { x: (sliderRect.width / 100) * value, y: -2 },
     ]
-  }, [value, sliderRect.width])
+  }, [value, sliderRect.width, debounceFunction])
 
   useEffect(() => {
     handleSliderRect()

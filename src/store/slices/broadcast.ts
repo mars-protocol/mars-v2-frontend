@@ -191,7 +191,6 @@ export default function createBroadcastSlice(
 
       if (simulateResult) {
         const { success } = simulateResult
-
         if (success) {
           const fee = simulateResult.fee
           return {
