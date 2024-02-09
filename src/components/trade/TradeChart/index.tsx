@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import Card from 'components/common/Card'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { ArrowChartLineUp } from 'components/common/Icons'
+import { LineChart } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
 import Text from 'components/common/Text'
 import { datafeed } from 'components/trade/TradeChart/DataFeed'
@@ -138,16 +138,15 @@ export default function TradeChart(props: Props) {
       <div ref={chartContainerRef} className='h-[calc(100%-32px)] overflow-hidden'>
         {!hasTradingChartInstalled && (
           <div className='flex items-center w-full h-full'>
-            <div className='flex flex-col flex-wrap items-center w-full gap-4'>
-              <Text size='lg' uppercase className='w-full text-center'>
+            <div className='flex flex-col flex-wrap items-center w-full gap-2'>
+              <div className='w-8 mb-2'>
+                <LineChart />
+              </div>
+              <Text size='lg' className='w-full text-center'>
                 Trading View is not installed
               </Text>
-              <div className='w-20'>
-                <ArrowChartLineUp />
-              </div>
               <Text size='sm' className='w-full text-center text-white/60'>
-                This deployment of the Mars Protocol v2 Outpost has no Trading View charting library
-                installed.
+                Charting data is not available.
               </Text>
             </div>
           </div>
