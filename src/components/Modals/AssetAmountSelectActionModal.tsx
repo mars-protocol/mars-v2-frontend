@@ -24,6 +24,7 @@ interface Props {
   onClose: () => void
   onChange: (value: BigNumber) => void
   onAction: (value: BigNumber, isMax: boolean) => void
+  onDebounce: () => void
 }
 
 export default function AssetAmountSelectActionModal(props: Props) {
@@ -36,6 +37,7 @@ export default function AssetAmountSelectActionModal(props: Props) {
     onClose,
     onChange,
     onAction,
+    onDebounce,
   } = props
   const [amount, setAmount] = useState(BN_ZERO)
   const maxAmount = BN(coinBalances.find(byDenom(asset.denom))?.amount ?? 0)
@@ -74,6 +76,7 @@ export default function AssetAmountSelectActionModal(props: Props) {
           <TokenInputWithSlider
             asset={asset}
             onChange={handleAmountChange}
+            onDebounce={onDebounce}
             amount={amount}
             max={maxAmount}
             hasSelect

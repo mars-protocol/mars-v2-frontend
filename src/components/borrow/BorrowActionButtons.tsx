@@ -11,7 +11,7 @@ interface Props {
 }
 
 export default function BorrowActionButtons(props: Props) {
-  const { asset, debt } = props.data
+  const { asset, accountDebt } = props.data
   const marketAssets = useMarketEnabledAssets()
   const currentAsset = marketAssets.find((a) => a.denom === asset.denom)
 
@@ -33,10 +33,10 @@ export default function BorrowActionButtons(props: Props) {
         leftIcon={<Plus className='w-3' />}
         onClick={borrowHandler}
         color='secondary'
-        text={debt ? 'Borrow more' : 'Borrow'}
-        className='min-w-40 text-center'
+        text={accountDebt ? 'Borrow more' : 'Borrow'}
+        className='text-center min-w-40'
       />
-      {debt && (
+      {accountDebt && (
         <Button color='tertiary' leftIcon={<HandCoins />} text='Repay' onClick={repayHandler} />
       )}
     </div>

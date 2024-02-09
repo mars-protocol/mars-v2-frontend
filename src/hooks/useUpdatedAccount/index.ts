@@ -246,6 +246,11 @@ export function useUpdatedAccount(account?: Account) {
   const simulatePerps = useCallback(
     (position: PerpsPosition) => {
       if (!account) return
+
+      if (position.amount.isZero()) {
+        return addPerps(undefined)
+      }
+
       addPerps(position)
     },
     [account, addPerps],

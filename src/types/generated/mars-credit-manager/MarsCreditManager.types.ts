@@ -28,374 +28,387 @@ export interface InstantiateMsg {
 }
 export type ExecuteMsg =
   | {
-      create_credit_account: AccountKind
-    }
+  create_credit_account: AccountKind
+}
   | {
-      update_credit_account: {
-        account_id: string
-        actions: Action[]
-      }
-    }
+  update_credit_account: {
+    account_id: string
+    actions: Action[]
+  }
+}
   | {
-      repay_from_wallet: {
-        account_id: string
-      }
-    }
+  repay_from_wallet: {
+    account_id: string
+  }
+}
   | {
-      update_config: {
-        updates: ConfigUpdates
-      }
-    }
+  update_config: {
+    updates: ConfigUpdates
+  }
+}
   | {
-      update_owner: OwnerUpdate
-    }
+  update_owner: OwnerUpdate
+}
   | {
-      update_nft_config: {
-        config?: NftConfigUpdates | null
-        ownership?: Action2 | null
-      }
-    }
+  update_nft_config: {
+    config?: NftConfigUpdates | null
+    ownership?: Action2 | null
+  }
+}
   | {
-      callback: CallbackMsg
-    }
+  callback: CallbackMsg
+}
 export type AccountKind = 'default' | 'high_levered_strategy'
 export type Action =
   | {
-      deposit: Coin
-    }
+  deposit: Coin
+}
   | {
-      withdraw: ActionCoin
-    }
+  withdraw: ActionCoin
+}
   | {
-      borrow: Coin
-    }
+  borrow: Coin
+}
   | {
-      lend: ActionCoin
-    }
+  lend: ActionCoin
+}
   | {
-      reclaim: ActionCoin
-    }
+  reclaim: ActionCoin
+}
   | {
-      claim_rewards: {}
-    }
+  claim_rewards: {}
+}
   | {
-      repay: {
-        coin: ActionCoin
-        recipient_account_id?: string | null
-      }
-    }
+  repay: {
+    coin: ActionCoin
+    recipient_account_id?: string | null
+  }
+}
   | {
-      open_perp: {
-        denom: string
-        size: SignedDecimal
-      }
-    }
+  open_perp: {
+    denom: string
+    size: SignedDecimal
+  }
+}
   | {
-      close_perp: {
-        denom: string
-      }
-    }
+  close_perp: {
+    denom: string
+  }
+}
   | {
-      enter_vault: {
-        coin: ActionCoin
-        vault: VaultBaseForString
-      }
-    }
+  modify_perp: {
+    denom: string
+    new_size: SignedDecimal
+  }
+}
   | {
-      exit_vault: {
-        amount: Uint128
-        vault: VaultBaseForString
-      }
-    }
+  enter_vault: {
+    coin: ActionCoin
+    vault: VaultBaseForString
+  }
+}
   | {
-      request_vault_unlock: {
-        amount: Uint128
-        vault: VaultBaseForString
-      }
-    }
+  exit_vault: {
+    amount: Uint128
+    vault: VaultBaseForString
+  }
+}
   | {
-      exit_vault_unlocked: {
-        id: number
-        vault: VaultBaseForString
-      }
-    }
+  request_vault_unlock: {
+    amount: Uint128
+    vault: VaultBaseForString
+  }
+}
   | {
-      liquidate: {
-        debt_coin: Coin
-        liquidatee_account_id: string
-        request: LiquidateRequestForVaultBaseForString
-      }
-    }
+  exit_vault_unlocked: {
+    id: number
+    vault: VaultBaseForString
+  }
+}
   | {
-      swap_exact_in: {
-        coin_in: ActionCoin
-        denom_out: string
-        slippage: Decimal
-      }
-    }
+  liquidate: {
+    debt_coin: Coin
+    liquidatee_account_id: string
+    request: LiquidateRequestForVaultBaseForString
+  }
+}
   | {
-      provide_liquidity: {
-        coins_in: ActionCoin[]
-        lp_token_out: string
-        slippage: Decimal
-      }
-    }
+  swap_exact_in: {
+    coin_in: ActionCoin
+    denom_out: string
+    slippage: Decimal
+  }
+}
   | {
-      withdraw_liquidity: {
-        lp_token: ActionCoin
-        slippage: Decimal
-      }
-    }
+  provide_liquidity: {
+    coins_in: ActionCoin[]
+    lp_token_out: string
+    slippage: Decimal
+  }
+}
   | {
-      refund_all_coin_balances: {}
-    }
+  withdraw_liquidity: {
+    lp_token: ActionCoin
+    slippage: Decimal
+  }
+}
+  | {
+  refund_all_coin_balances: {}
+}
 export type ActionAmount =
   | 'account_balance'
   | {
-      exact: Uint128
-    }
+  exact: Uint128
+}
 export type LiquidateRequestForVaultBaseForString =
   | {
-      deposit: string
-    }
+  deposit: string
+}
   | {
-      lend: string
-    }
+  lend: string
+}
   | {
-      vault: {
-        position_type: VaultPositionType
-        request_vault: VaultBaseForString
-      }
-    }
+  vault: {
+    position_type: VaultPositionType
+    request_vault: VaultBaseForString
+  }
+}
 export type VaultPositionType = 'u_n_l_o_c_k_e_d' | 'l_o_c_k_e_d' | 'u_n_l_o_c_k_i_n_g'
 export type AccountNftBaseForString = string
 export type PerpsBaseForString = string
 export type OwnerUpdate =
   | {
-      propose_new_owner: {
-        proposed: string
-      }
-    }
+  propose_new_owner: {
+    proposed: string
+  }
+}
   | 'clear_proposed'
   | 'accept_proposed'
   | 'abolish_owner_role'
   | {
-      set_emergency_owner: {
-        emergency_owner: string
-      }
-    }
+  set_emergency_owner: {
+    emergency_owner: string
+  }
+}
   | 'clear_emergency_owner'
 export type Action2 =
   | {
-      transfer_ownership: {
-        expiry?: Expiration | null
-        new_owner: string
-      }
-    }
+  transfer_ownership: {
+    expiry?: Expiration | null
+    new_owner: string
+  }
+}
   | 'accept_ownership'
   | 'renounce_ownership'
 export type Expiration =
   | {
-      at_height: number
-    }
+  at_height: number
+}
   | {
-      at_time: Timestamp
-    }
+  at_time: Timestamp
+}
   | {
-      never: {}
-    }
+  never: {}
+}
 export type Timestamp = Uint64
 export type Uint64 = string
 export type CallbackMsg =
   | {
-      withdraw: {
-        account_id: string
-        coin: ActionCoin
-        recipient: Addr
-      }
-    }
+  withdraw: {
+    account_id: string
+    coin: ActionCoin
+    recipient: Addr
+  }
+}
   | {
-      borrow: {
-        account_id: string
-        coin: Coin
-      }
-    }
+  borrow: {
+    account_id: string
+    coin: Coin
+  }
+}
   | {
-      repay: {
-        account_id: string
-        coin: ActionCoin
-      }
-    }
+  repay: {
+    account_id: string
+    coin: ActionCoin
+  }
+}
   | {
-      repay_for_recipient: {
-        benefactor_account_id: string
-        coin: ActionCoin
-        recipient_account_id: string
-      }
-    }
+  repay_for_recipient: {
+    benefactor_account_id: string
+    coin: ActionCoin
+    recipient_account_id: string
+  }
+}
   | {
-      lend: {
-        account_id: string
-        coin: ActionCoin
-      }
-    }
+  lend: {
+    account_id: string
+    coin: ActionCoin
+  }
+}
   | {
-      reclaim: {
-        account_id: string
-        coin: ActionCoin
-      }
-    }
+  reclaim: {
+    account_id: string
+    coin: ActionCoin
+  }
+}
   | {
-      claim_rewards: {
-        account_id: string
-        recipient: Addr
-      }
-    }
+  claim_rewards: {
+    account_id: string
+    recipient: Addr
+  }
+}
   | {
-      assert_max_ltv: {
-        account_id: string
-        prev_health_state: HealthState
-      }
-    }
+  assert_max_ltv: {
+    account_id: string
+    prev_health_state: HealthState
+  }
+}
   | {
-      assert_deposit_caps: {
-        denoms: string[]
-      }
-    }
+  assert_deposit_caps: {
+    denoms: string[]
+  }
+}
   | {
-      open_perp: {
-        account_id: string
-        denom: string
-        size: SignedDecimal
-      }
-    }
+  open_perp: {
+    account_id: string
+    denom: string
+    size: SignedDecimal
+  }
+}
   | {
-      close_perp: {
-        account_id: string
-        denom: string
-      }
-    }
+  close_perp: {
+    account_id: string
+    denom: string
+  }
+}
   | {
-      enter_vault: {
-        account_id: string
-        coin: ActionCoin
-        vault: VaultBaseForAddr
-      }
-    }
+  modify_perp: {
+    account_id: string
+    denom: string
+    new_size: SignedDecimal
+  }
+}
   | {
-      exit_vault: {
-        account_id: string
-        amount: Uint128
-        vault: VaultBaseForAddr
-      }
-    }
+  enter_vault: {
+    account_id: string
+    coin: ActionCoin
+    vault: VaultBaseForAddr
+  }
+}
   | {
-      update_vault_coin_balance: {
-        account_id: string
-        previous_total_balance: Uint128
-        vault: VaultBaseForAddr
-      }
-    }
+  exit_vault: {
+    account_id: string
+    amount: Uint128
+    vault: VaultBaseForAddr
+  }
+}
   | {
-      request_vault_unlock: {
-        account_id: string
-        amount: Uint128
-        vault: VaultBaseForAddr
-      }
-    }
+  update_vault_coin_balance: {
+    account_id: string
+    previous_total_balance: Uint128
+    vault: VaultBaseForAddr
+  }
+}
   | {
-      exit_vault_unlocked: {
-        account_id: string
-        position_id: number
-        vault: VaultBaseForAddr
-      }
-    }
+  request_vault_unlock: {
+    account_id: string
+    amount: Uint128
+    vault: VaultBaseForAddr
+  }
+}
   | {
-      liquidate: {
-        debt_coin: Coin
-        liquidatee_account_id: string
-        liquidator_account_id: string
-        request: LiquidateRequestForVaultBaseForAddr
-      }
-    }
+  exit_vault_unlocked: {
+    account_id: string
+    position_id: number
+    vault: VaultBaseForAddr
+  }
+}
   | {
-      swap_exact_in: {
-        account_id: string
-        coin_in: ActionCoin
-        denom_out: string
-        slippage: Decimal
-      }
-    }
+  liquidate: {
+    debt_coin: Coin
+    liquidatee_account_id: string
+    liquidator_account_id: string
+    request: LiquidateRequestForVaultBaseForAddr
+  }
+}
   | {
-      update_coin_balance: {
-        account_id: string
-        change: ChangeExpected
-        previous_balance: Coin
-      }
-    }
+  swap_exact_in: {
+    account_id: string
+    coin_in: ActionCoin
+    denom_out: string
+    slippage: Decimal
+  }
+}
   | {
-      update_coin_balance_after_vault_liquidation: {
-        account_id: string
-        previous_balance: Coin
-        protocol_fee: Decimal
-      }
-    }
+  update_coin_balance: {
+    account_id: string
+    change: ChangeExpected
+    previous_balance: Coin
+  }
+}
   | {
-      provide_liquidity: {
-        account_id: string
-        coins_in: ActionCoin[]
-        lp_token_out: string
-        slippage: Decimal
-      }
-    }
+  update_coin_balance_after_vault_liquidation: {
+    account_id: string
+    previous_balance: Coin
+    protocol_fee: Decimal
+  }
+}
   | {
-      withdraw_liquidity: {
-        account_id: string
-        lp_token: ActionCoin
-        slippage: Decimal
-      }
-    }
+  provide_liquidity: {
+    account_id: string
+    coins_in: ActionCoin[]
+    lp_token_out: string
+    slippage: Decimal
+  }
+}
   | {
-      refund_all_coin_balances: {
-        account_id: string
-      }
-    }
+  withdraw_liquidity: {
+    account_id: string
+    lp_token: ActionCoin
+    slippage: Decimal
+  }
+}
   | {
-      assert_hls_rules: {
-        account_id: string
-      }
-    }
+  refund_all_coin_balances: {
+    account_id: string
+  }
+}
   | {
-      remove_reentrancy_guard: {}
-    }
+  assert_hls_rules: {
+    account_id: string
+  }
+}
   | {
-      send_rewards_to_addr: {
-        account_id: string
-        previous_balances: Coin[]
-        recipient: Addr
-      }
-    }
+  remove_reentrancy_guard: {}
+}
+  | {
+  send_rewards_to_addr: {
+    account_id: string
+    previous_balances: Coin[]
+    recipient: Addr
+  }
+}
 export type Addr = string
 export type HealthState =
   | 'healthy'
   | {
-      unhealthy: {
-        max_ltv_health_factor: Decimal
-      }
-    }
+  unhealthy: {
+    max_ltv_health_factor: Decimal
+  }
+}
 export type LiquidateRequestForVaultBaseForAddr =
   | {
-      deposit: string
-    }
+  deposit: string
+}
   | {
-      lend: string
-    }
+  lend: string
+}
   | {
-      vault: {
-        position_type: VaultPositionType
-        request_vault: VaultBaseForAddr
-      }
-    }
+  vault: {
+    position_type: VaultPositionType
+    request_vault: VaultBaseForAddr
+  }
+}
 export type ChangeExpected = 'increase' | 'decrease'
 export interface Coin {
   amount: Uint128
@@ -438,80 +451,80 @@ export interface VaultBaseForAddr {
 }
 export type QueryMsg =
   | {
-      account_kind: {
-        account_id: string
-      }
-    }
+  account_kind: {
+    account_id: string
+  }
+}
   | {
-      accounts: {
-        limit?: number | null
-        owner: string
-        start_after?: string | null
-      }
-    }
+  accounts: {
+    limit?: number | null
+    owner: string
+    start_after?: string | null
+  }
+}
   | {
-      config: {}
-    }
+  config: {}
+}
   | {
-      vault_utilization: {
-        vault: VaultBaseForString
-      }
-    }
+  vault_utilization: {
+    vault: VaultBaseForString
+  }
+}
   | {
-      positions: {
-        account_id: string
-      }
-    }
+  positions: {
+    account_id: string
+  }
+}
   | {
-      all_coin_balances: {
-        limit?: number | null
-        start_after?: [string, string] | null
-      }
-    }
+  all_coin_balances: {
+    limit?: number | null
+    start_after?: [string, string] | null
+  }
+}
   | {
-      all_debt_shares: {
-        limit?: number | null
-        start_after?: [string, string] | null
-      }
-    }
+  all_debt_shares: {
+    limit?: number | null
+    start_after?: [string, string] | null
+  }
+}
   | {
-      total_debt_shares: string
-    }
+  total_debt_shares: string
+}
   | {
-      all_total_debt_shares: {
-        limit?: number | null
-        start_after?: string | null
-      }
-    }
+  all_total_debt_shares: {
+    limit?: number | null
+    start_after?: string | null
+  }
+}
   | {
-      all_vault_positions: {
-        limit?: number | null
-        start_after?: [string, string] | null
-      }
-    }
+  all_vault_positions: {
+    limit?: number | null
+    start_after?: [string, string] | null
+  }
+}
   | {
-      estimate_provide_liquidity: {
-        coins_in: Coin[]
-        lp_token_out: string
-      }
-    }
+  estimate_provide_liquidity: {
+    coins_in: Coin[]
+    lp_token_out: string
+  }
+}
   | {
-      estimate_withdraw_liquidity: {
-        lp_token: Coin
-      }
-    }
+  estimate_withdraw_liquidity: {
+    lp_token: Coin
+  }
+}
   | {
-      vault_position_value: {
-        vault_position: VaultPosition
-      }
-    }
+  vault_position_value: {
+    vault_position: VaultPosition
+  }
+}
 export type VaultPositionAmount =
   | {
-      unlocked: VaultAmount
-    }
+  unlocked: VaultAmount
+}
   | {
-      locking: LockingVaultAmount
-    }
+  locking: LockingVaultAmount
+}
 export type VaultAmount = string
 export type VaultAmount1 = string
 export type UnlockingPositions = VaultUnlockingPosition[]
@@ -584,11 +597,11 @@ export type ArrayOfCoin = Coin[]
 export type PnL =
   | 'break_even'
   | {
-      profit: Coin
-    }
+  profit: Coin
+}
   | {
-      loss: Coin
-    }
+  loss: Coin
+}
 export interface Positions {
   account_id: string
   debts: DebtAmount[]
@@ -605,11 +618,21 @@ export interface DebtAmount {
 export interface PerpPosition {
   base_denom: string
   closing_fee_rate: Decimal
+  current_exec_price: Decimal
   current_price: Decimal
   denom: string
+  entry_exec_price: Decimal
   entry_price: Decimal
-  pnl: PositionPnl
+  realised_pnl: RealizedPnlAmounts
   size: SignedDecimal
+  unrealised_pnl: PositionPnl
+}
+export interface RealizedPnlAmounts {
+  accrued_funding: SignedDecimal
+  closing_fee: SignedDecimal
+  opening_fee: SignedDecimal
+  pnl: SignedDecimal
+  price_pnl: SignedDecimal
 }
 export interface PositionPnl {
   coins: PnlCoins
