@@ -194,9 +194,9 @@ function BorrowModal(props: Props) {
     }
   }, [
     amount,
+    accountDebt,
     isRepay,
     repayFromWallet,
-    maxRepayAmount,
     max,
     asset,
     borrowToWallet,
