@@ -72,6 +72,7 @@ interface HandleResponseProps {
     | 'hls-staking'
     | 'open-perp'
     | 'close-perp'
+    | 'modify-perp'
   lend?: boolean
   accountId?: string
   changes?: {
@@ -123,6 +124,11 @@ interface BroadcastSlice {
   lend: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
   closePerpPosition: (options: { accountId: string; denom: string }) => Promise<boolean>
   openPerpPosition: (options: { accountId: string; coin: BNCoin }) => Promise<boolean>
+  modifyPerpPosition: (options: {
+    accountId: string
+    coin: BNCoin
+    changeDirection: boolean
+  }) => Promise<boolean>
   reclaim: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
   repay: (options: {
     accountId: string

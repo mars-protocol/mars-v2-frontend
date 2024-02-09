@@ -1,24 +1,20 @@
 import getAssetParams from 'api/params/getAssetParams'
-import getAprs from 'api/vaults/getVaultAprs'
 import { getVaultConfigs } from 'api/vaults/getVaultConfigs'
 import { getVaultUtilizations } from 'api/vaults/getVaultUtilizations'
 import { BN } from 'utils/helpers'
-import { convertAprToApy } from 'utils/parsers'
 import { resolveHLSStrategies } from 'utils/resolvers'
 
 export default async function getVaults(chainConfig: ChainConfig): Promise<Vault[]> {
   const assetParams = await getAssetParams(chainConfig)
   const vaultConfigs = await getVaultConfigs(chainConfig)
   const $vaultUtilizations = getVaultUtilizations(chainConfig, vaultConfigs)
-  const $aprs = getAprs(chainConfig)
   const vaultMetaDatas = chainConfig.vaults
   const HLSAssets = assetParams.filter((asset) => asset.credit_manager.hls)
   const hlsStrategies = resolveHLSStrategies('vault', HLSAssets)
 
   const vaults: Vault[] = []
-  await Promise.all([$vaultUtilizations, $aprs]).then(([vaultUtilizations, aprs]) => {
+  await $vaultUtilizations.then((vaultUtilizations) => {
     return vaultConfigs.map((vaultConfig) => {
-      const apr = aprs.find((apr) => apr.address === vaultConfig.addr)
       const vaultMetaData = vaultMetaDatas.find(
         (vaultMetaData) => vaultMetaData.address === vaultConfig.addr,
       )
@@ -36,8 +32,6 @@ export default async function getVaults(chainConfig: ChainConfig): Promise<Vault
             )?.utilization.amount || 0,
           ),
         },
-        apy: apr ? convertAprToApy(apr.apr, 365) : null,
-        apr: apr ? apr.apr : null,
         ltv: {
           max: Number(vaultConfig.max_loan_to_value),
           liq: Number(vaultConfig.liquidation_threshold),

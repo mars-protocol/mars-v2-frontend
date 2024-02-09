@@ -126,9 +126,16 @@ export default function createBroadcastSlice(
         })
         break
       case 'close-perp':
+        // TODO: [Perps] Elaborate on the message
         toast.content.push({
-          coins: changes.deposits?.map((deposit) => deposit.toCoin()) ?? [],
+          coins: [],
           text: 'Closed perp position',
+        })
+        break
+      case 'modify-perp':
+        toast.content.push({
+          coins: [],
+          text: 'Modified perp position',
         })
         break
 
@@ -184,7 +191,6 @@ export default function createBroadcastSlice(
 
       if (simulateResult) {
         const { success } = simulateResult
-
         if (success) {
           const fee = simulateResult.fee
           return {
@@ -990,6 +996,57 @@ export default function createBroadcastSlice(
           target: 'account',
           accountId: options.accountId,
           changes: { deposits: [] },
+        },
+      })
+
+      return response.then((response) => !!response.result)
+    },
+    modifyPerpPosition: async (options: {
+      accountId: string
+      coin: BNCoin
+      changeDirection: boolean
+    }) => {
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: [
+            ...(options.changeDirection
+              ? [
+                  {
+                    close_perp: {
+                      denom: options.coin.denom,
+                    },
+                  },
+                  {
+                    open_perp: options.coin.toSignedCoin(),
+                  },
+                ]
+              : [
+                  {
+                    modify_perp: {
+                      denom: options.coin.denom,
+                      new_size: options.coin.amount.toString() as any,
+                    },
+                  },
+                ]),
+          ],
+        },
+      }
+
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+      })
+
+      get().setToast({
+        response,
+        options: {
+          action: 'modify-perp',
+          target: 'account',
+          message: `Modified position to a ${formatAmountWithSymbol(options.coin.abs().toCoin(), get().chainConfig.assets)} ${options.coin.amount.isNegative() ? 'short' : 'long'}`,
+          accountId: options.accountId,
+          changes: { deposits: [options.coin] },
         },
       })
 

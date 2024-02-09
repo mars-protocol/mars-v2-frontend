@@ -5,7 +5,7 @@ export const debugSWR: Middleware = (useSWRNext: SWRHook) => (key, fetcher, conf
     const startTime = Date.now()
     const res = await fetcher!(...args)
     process.env.NODE_ENV !== 'production' &&
-      console.log('⬇️ GET: ', key, ' in ', Date.now() - startTime, 'ms')
+      console.log('⬇️ GET: ', key, ' in ', Date.now() - startTime, 'ms', 'data: ', res)
     return res
   }
   // ...

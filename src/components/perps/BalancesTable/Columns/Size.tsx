@@ -1,3 +1,4 @@
+import { Row } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
 import { FormattedNumber } from 'components/common/FormattedNumber'
@@ -18,6 +19,10 @@ export const SIZE_META = {
   ),
 }
 
+export const sizeSortingFn = (a: Row<PerpPositionRow>, b: Row<PerpPositionRow>): number => {
+  return a.original.amount.abs().minus(b.original.amount.abs()).toNumber()
+}
+
 type Props = {
   amount: BigNumber
   asset: Asset
@@ -27,7 +32,7 @@ export default function Size(props: Props) {
   const price = usePrice(props.asset.denom)
 
   const amount = useMemo(
-    () => demagnify(props.amount.toString(), props.asset),
+    () => demagnify(props.amount.abs().toString(), props.asset),
     [props.asset, props.amount],
   )
   const value = useMemo(() => price.times(amount).toNumber(), [amount, price])

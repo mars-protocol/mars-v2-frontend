@@ -7,8 +7,10 @@ import { ArrowRight } from 'components/common/Icons'
 import SummaryLine from 'components/common/SummaryLine'
 import Text from 'components/common/Text'
 import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirection'
-import OpeningFee from 'components/perps/Module/OpeningFee'
+import TradingFee from 'components/perps/Module/TradingFee'
+import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useTradingFee from 'hooks/perps/useTradingFee'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatLeverage } from 'utils/formatters'
@@ -18,44 +20,67 @@ type Props = {
   amount: BigNumber
   tradeDirection: TradeDirection
   asset: Asset
-  previousAmount?: BigNumber
+  previousAmount?: BigNumber | null
   previousTradeDirection?: 'long' | 'short'
-  previousLeverage?: number
+  previousLeverage?: number | null
   hasActivePosition: boolean
+  onTxExecuted: () => void
 }
 
 export default function PerpsSummary(props: Props) {
   const openPerpPosition = useStore((s) => s.openPerpPosition)
+  const modifyPerpPosition = useStore((s) => s.modifyPerpPosition)
+  const closePerpPosition = useStore((s) => s.closePerpPosition)
   const currentAccount = useCurrentAccount()
+  const { data: tradingFee, isLoading } = useTradingFee(props.asset.denom, props.amount)
 
-  const onConfirm = useCallback(async () => {
-    if (!currentAccount) return
-    await openPerpPosition({
-      accountId: currentAccount.id,
-      coin: BNCoin.fromDenomAndBigNumber(
-        props.asset.denom,
-        props.amount.times(props.tradeDirection === 'short' ? -1 : 1),
-      ),
-    })
-  }, [currentAccount, openPerpPosition, props.amount, props.asset.denom, props.tradeDirection])
-
-  const disabled = useMemo(
-    () =>
-      (props.previousAmount && props.previousAmount.isEqualTo(props.amount)) ||
-      props.amount.isZero(),
+  const newAmount = useMemo(
+    () => (props.previousAmount ?? BN_ZERO).plus(props.amount),
     [props.amount, props.previousAmount],
   )
 
+  const onConfirm = useCallback(async () => {
+    if (!currentAccount) return
+
+    if (props.previousAmount && newAmount.isZero()) {
+      await closePerpPosition({
+        accountId: currentAccount.id,
+        denom: props.asset.denom,
+      })
+      return props.onTxExecuted()
+    }
+
+    if (props.previousAmount && newAmount) {
+      await modifyPerpPosition({
+        accountId: currentAccount.id,
+        coin: BNCoin.fromDenomAndBigNumber(props.asset.denom, newAmount),
+        changeDirection: props.previousAmount.isNegative() !== newAmount.isNegative(),
+      })
+      return props.onTxExecuted()
+    }
+
+    await openPerpPosition({
+      accountId: currentAccount.id,
+      coin: BNCoin.fromDenomAndBigNumber(props.asset.denom, props.amount),
+    })
+    return props.onTxExecuted()
+  }, [closePerpPosition, currentAccount, modifyPerpPosition, newAmount, openPerpPosition, props])
+
+  const disabled = useMemo(() => props.amount.isZero(), [props.amount])
+
   return (
     <div className='border border-white/10 rounded-sm bg-white/5'>
-      <ManageSummary {...props} />
+      <ManageSummary {...props} newAmount={newAmount} />
       <div className='py-4 px-3 flex flex-col gap-1'>
         <Text size='xs' className='font-bold mb-2'>
           Summary
         </Text>
         <SummaryLine label='Expected Price'>-</SummaryLine>
-        <SummaryLine label='Fees'>
-          <OpeningFee denom={props.asset.denom} amount={props.amount} />
+        <SummaryLine
+          label='Fees'
+          tooltip={`${tradingFee ? tradingFee.rate.times(100) + '% ' : ''}Trading Fees`}
+        >
+          <TradingFee denom={props.asset.denom} amount={props.amount} />
         </SummaryLine>
         <SummaryLine label='Total'>-</SummaryLine>
       </div>
@@ -67,9 +92,9 @@ export default function PerpsSummary(props: Props) {
   )
 }
 
-function ManageSummary(props: Props) {
+function ManageSummary(props: Props & { newAmount: BigNumber }) {
   const showTradeDirection =
-    props.previousTradeDirection && props.previousTradeDirection !== props.tradeDirection
+    props.previousAmount && props.previousAmount.isNegative() !== props.newAmount.isNegative()
   const showAmount = !props.amount.isZero() && props.previousAmount
   const showLeverage =
     props.previousLeverage &&
@@ -84,7 +109,13 @@ function ManageSummary(props: Props) {
         Your new position
       </Text>
 
-      {showTradeDirection && props.previousTradeDirection && (
+      {props.newAmount.isZero() && (
+        <Text size='xs' className='text-white/40 mb-1'>
+          Your position will be closed
+        </Text>
+      )}
+
+      {showTradeDirection && props.previousTradeDirection && !props.newAmount.isZero() && (
         <SummaryLine label='Side' contentClassName='flex gap-1'>
           <TradeDirection tradeDirection={props.previousTradeDirection} />
           <ArrowRight width={16} />
@@ -92,13 +123,15 @@ function ManageSummary(props: Props) {
         </SummaryLine>
       )}
 
-      {showAmount && props.previousAmount && (
+      {showAmount && props.newAmount && props.previousAmount && !props.newAmount.isZero() && (
         <SummaryLine label='Size' contentClassName='flex gap-1'>
           <AssetAmount asset={props.asset} amount={props.previousAmount.abs().toNumber()} />
           <ArrowRight
             width={16}
             className={classNames(
-              props.previousAmount.isGreaterThan(props.amount) ? 'text-error' : 'text-success',
+              props.previousAmount.abs().isGreaterThan(props.newAmount)
+                ? 'text-error'
+                : 'text-success',
             )}
           />
           <AssetAmount

@@ -96,10 +96,6 @@ export default function AccountFundContent(props: Props) {
   }, [baseBalance])
 
   useEffect(() => {
-    simulateDeposits(isLending ? 'lend' : 'deposit', fundingAssets)
-  }, [isLending, fundingAssets, simulateDeposits])
-
-  useEffect(() => {
     const currentSelectedDenom = fundingAssets.map((asset) => asset.denom)
 
     if (
@@ -124,6 +120,10 @@ export default function AccountFundContent(props: Props) {
       return [...fundingAssets]
     })
   }, [])
+
+  const onDebounce = useCallback(() => {
+    simulateDeposits(isLending ? 'lend' : 'deposit', fundingAssets)
+  }, [isLending, fundingAssets, simulateDeposits])
 
   const depositCapReachedCoins = useMemo(() => {
     const depositCapReachedCoins: BNCoin[] = []
@@ -159,6 +159,7 @@ export default function AccountFundContent(props: Props) {
                 amount={coin.amount ?? BN_ZERO}
                 isConfirming={isConfirming}
                 updateFundingAssets={updateFundingAssets}
+                onDebounce={onDebounce}
               />
             </div>
           )

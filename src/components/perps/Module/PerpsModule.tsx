@@ -61,6 +61,10 @@ export function PerpsModule() {
     previousTradeDirection,
   ])
 
+  const onDebounce = useCallback(() => {
+    // TODO:  Implement debounced simulation
+  }, [])
+
   const setLeverage = useCallback((leverage: number) => {
     // TODO: Implement leverage setting
   }, [])
@@ -100,7 +104,7 @@ export function PerpsModule() {
       />
       <AssetAmountInput
         label='Amount'
-        max={BN(1000000)} // TODO: Implement max calculation
+        max={BN(100000000)} // TODO: Implement max calculation
         amount={amount.abs()}
         setAmount={onChangeAmount}
         asset={perpsAsset}
@@ -116,6 +120,7 @@ export function PerpsModule() {
             max={10}
             value={leverage}
             onChange={setLeverage}
+            onDebounce={onDebounce}
             type={tradeDirection}
           />
           <LeverageButtons />
@@ -132,6 +137,7 @@ export function PerpsModule() {
         previousTradeDirection={previousTradeDirection}
         previousLeverage={previousLeverage}
         hasActivePosition={hasActivePosition}
+        onTxExecuted={() => setAmount(BN_ZERO)}
       />
     </Card>
   )

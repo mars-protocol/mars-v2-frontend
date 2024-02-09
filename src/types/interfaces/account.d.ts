@@ -20,7 +20,7 @@ interface AccountChange extends Account {
 
 interface AccountBalanceRow {
   amount: BigNumber
-  apy: number
+  apy?: number | null
   denom: string
   size: number
   symbol: string
@@ -30,7 +30,7 @@ interface AccountBalanceRow {
 }
 
 interface AccountStrategyRow {
-  apy: number
+  apy?: number | null
   name: string
   denom: string
   amount: BNCoin[]

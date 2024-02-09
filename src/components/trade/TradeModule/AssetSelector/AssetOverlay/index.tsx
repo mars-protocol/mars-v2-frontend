@@ -8,6 +8,7 @@ import Text from 'components/common/Text'
 import AssetList from 'components/trade/TradeModule/AssetSelector/AssetList'
 import StablesFilter from 'components/trade/TradeModule/AssetSelector/AssetOverlay/StablesFilter'
 import PairsList from 'components/trade/TradeModule/AssetSelector/PairsList'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useFilteredAssets from 'hooks/useFilteredAssets'
 
@@ -23,8 +24,17 @@ interface Props {
   type: 'pair' | 'single' | 'perps'
 }
 
+function MarketSubheadLine(props: { title: string }) {
+  return (
+    <Text size='sm' className='px-4 py-2 border-b border-white/5 text-white/60 bg-white/5'>
+      {props.title}
+    </Text>
+  )
+}
+
 export default function AssetOverlay(props: Props) {
   const { assets, searchString, onChangeSearch } = useFilteredAssets(props.buyAssets)
+  const account = useCurrentAccount()
   const allAssets = useAllAssets()
   const stableAssets = useMemo(() => allAssets.filter((asset) => asset.isStable), [allAssets])
   const handleClose = useCallback(() => props.onChangeState('closed'), [props])
@@ -76,6 +86,18 @@ export default function AssetOverlay(props: Props) {
     [onChangeSearch, props],
   )
 
+  const [activePerpsPositions, availablePerpsMarkets] = useMemo(() => {
+    if (!account) return [[], []]
+    const activePerpsPositions = assets.filter((assets) =>
+      account?.perps.find((perp) => perp.denom === assets.denom),
+    )
+    const availablePerpsMarkets = assets.filter(
+      (assets) => !activePerpsPositions.find((perp) => perp.denom === assets.denom),
+    )
+
+    return [activePerpsPositions, availablePerpsMarkets]
+  }, [assets, account])
+
   return (
     <Overlay
       className='inset-0 w-full overflow-y-scroll scrollbar-hide'
@@ -104,14 +126,29 @@ export default function AssetOverlay(props: Props) {
         />
       </div>
       <Divider />
-      {props.type === 'perps' && (
-        <AssetList
-          assets={props.buyAssets}
-          type='perps'
-          onChangeAsset={onChangeBuyAsset}
-          isOpen
-          toggleOpen={() => {}}
-        />
+      {props.type === 'perps' && activePerpsPositions.length > 0 && (
+        <>
+          <MarketSubheadLine title='Active Positions' />
+          <AssetList
+            assets={activePerpsPositions}
+            type='perps'
+            onChangeAsset={onChangeBuyAsset}
+            isOpen
+            toggleOpen={() => {}}
+          />
+        </>
+      )}
+      {props.type === 'perps' && availablePerpsMarkets.length > 0 && (
+        <>
+          <MarketSubheadLine title='Available Markets' />
+          <AssetList
+            assets={availablePerpsMarkets}
+            type='perps'
+            onChangeAsset={onChangeBuyAsset}
+            isOpen
+            toggleOpen={() => {}}
+          />
+        </>
       )}
 
       {props.type === 'pair' && (
