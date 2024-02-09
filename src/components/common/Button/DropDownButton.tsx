@@ -16,7 +16,7 @@ export default function DropDownButton(props: Props) {
       content={<DropDown closeMenu={() => toggleIsOpen(false)} {...props} />}
       type='info'
       placement='bottom'
-      contentClassName='!bg-white/10 border border-white/20 backdrop-blur-xl !p-0'
+      contentClassName='!bg-white/10 backdrop-blur-xl !p-0'
       interactive
       hideArrow
       visible={isOpen}

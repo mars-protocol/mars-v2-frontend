@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 
 import AssetAmountSelectActionModal from 'components/Modals/AssetAmountSelectActionModal'
 import DetailsHeader from 'components/Modals/LendAndReclaim/DetailsHeader'
@@ -27,6 +27,7 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
   const reclaim = useStore((s) => s.reclaim)
   const { close } = useLendAndReclaimModal()
   const { simulateLending } = useUpdatedAccount(currentAccount)
+  const [coin, setCoin] = useState<BNCoin>()
 
   const { data, action } = config
   const { asset } = data
@@ -37,11 +38,15 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
 
   const handleAmountChange = useCallback(
     (value: BigNumber) => {
-      const coin = BNCoin.fromDenomAndBigNumber(asset.denom, value)
-      simulateLending(isLendAction, coin)
+      setCoin(BNCoin.fromDenomAndBigNumber(asset.denom, value))
     },
-    [asset.denom, isLendAction, simulateLending],
+    [asset.denom],
   )
+
+  const onDebounce = useCallback(() => {
+    if (!coin) return
+    simulateLending(isLendAction, coin)
+  }, [coin, isLendAction, simulateLending])
 
   const handleAction = useCallback(
     (value: BigNumber, isMax: boolean) => {
@@ -70,6 +75,7 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
       onClose={close}
       onAction={handleAction}
       onChange={handleAmountChange}
+      onDebounce={onDebounce}
     />
   )
 }

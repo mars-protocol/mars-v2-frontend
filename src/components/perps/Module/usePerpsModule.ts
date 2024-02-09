@@ -29,11 +29,7 @@ export default function usePerpsModule(amount: BigNumber | null) {
     return getAccountNetValue(account, prices, assets)
   }, [account, assets, prices])
 
-  const previousAmount = useMemo(
-    () =>
-      (perpPosition?.amount ?? BN_ZERO).times(perpPosition?.tradeDirection === 'short' ? -1 : 1),
-    [perpPosition?.amount, perpPosition?.tradeDirection],
-  )
+  const previousAmount = useMemo(() => perpPosition?.amount ?? BN_ZERO, [perpPosition?.amount])
   const previousTradeDirection = useMemo(
     () => perpPosition?.tradeDirection || 'long',
     [perpPosition?.tradeDirection],
@@ -41,18 +37,16 @@ export default function usePerpsModule(amount: BigNumber | null) {
 
   const previousLeverage = useMemo(
     () =>
-      price
-        .times(demagnify(previousAmount.abs(), perpsAsset))
-        .div(accountNetValue)
-        .plus(1)
-        .toNumber(),
+      previousAmount
+        ? price.times(demagnify(previousAmount, perpsAsset)).div(accountNetValue).plus(1).toNumber()
+        : null,
     [accountNetValue, perpsAsset, previousAmount, price],
   )
 
   const leverage = useMemo(
     () =>
       price
-        .times(demagnify(previousAmount.plus(amount ?? BN_ZERO).abs(), perpsAsset))
+        .times(demagnify(previousAmount.plus(amount ?? BN_ZERO), perpsAsset))
         .div(accountNetValue)
         .plus(1)
         .toNumber(),

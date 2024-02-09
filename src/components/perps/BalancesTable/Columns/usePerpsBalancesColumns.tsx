@@ -6,7 +6,7 @@ import Leverage, { LEVERAGE_META } from 'components/perps/BalancesTable/Columns/
 import Manage, { MANAGE_META } from 'components/perps/BalancesTable/Columns/Manage'
 import { PERP_NAME_META, PerpName } from 'components/perps/BalancesTable/Columns/PerpName'
 import PnL, { PNL_META } from 'components/perps/BalancesTable/Columns/PnL'
-import Size, { SIZE_META } from 'components/perps/BalancesTable/Columns/Size'
+import Size, { SIZE_META, sizeSortingFn } from 'components/perps/BalancesTable/Columns/Size'
 import TradeDirection, {
   PERP_TYPE_META,
 } from 'components/perps/BalancesTable/Columns/TradeDirection'
@@ -25,6 +25,7 @@ export default function usePerpsBalancesTable() {
       {
         ...SIZE_META,
         cell: ({ row }) => <Size amount={row.original.amount} asset={row.original.asset} />,
+        sortingFn: sizeSortingFn,
       },
       {
         ...LEVERAGE_META,

@@ -248,7 +248,6 @@ export function cloneAccount(account: Account): Account {
     perps: account.perps.map((perpPosition) => ({
       ...perpPosition,
       amount: perpPosition.amount,
-      closingFee: perpPosition.closingFee,
       pnl: perpPosition.pnl,
       entryPrice: perpPosition.entryPrice,
       tradeDirection: perpPosition.tradeDirection,

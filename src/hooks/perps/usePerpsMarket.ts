@@ -1,6 +1,5 @@
 import useSWR from 'swr'
 
-import { BN_ZERO } from 'constants/math'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import useChainConfig from 'hooks/useChainConfig'
 import useClients from 'hooks/useClients'
@@ -27,8 +26,8 @@ async function getPerpsMarket(clients: ContractClients, asset: Asset) {
     fundingRate: BN(denomState.rate as any),
     asset: asset,
     openInterest: {
-      long: BN_ZERO,
-      short: BN_ZERO,
+      long: BN(denomState.long_oi),
+      short: BN(denomState.short_oi),
     },
   } as PerpsMarket
 }
