@@ -201,7 +201,7 @@ export default function SwapForm(props: Props) {
           isAutoLendEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
           isAutoRepayChecked,
         )
-      }, 100),
+      }, 250),
     [simulateTrade, isAutoLendEnabled, isAutoRepayChecked],
   )
 

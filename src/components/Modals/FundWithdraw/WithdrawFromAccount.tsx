@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import Button from 'components/common/Button'
 import Divider from 'components/common/Divider'
@@ -86,17 +86,10 @@ export default function WithdrawFromAccount(props: Props) {
     useStore.setState({ fundAndWithdrawModal: null })
   }
 
-  useEffect(() => {
+  const onDebounce = useCallback(() => {
     const coin = BNCoin.fromDenomAndBigNumber(currentAsset.denom, withdrawAmount.plus(debtAmount))
     simulateWithdraw(withdrawWithBorrowing, coin)
-  }, [
-    amount,
-    withdrawWithBorrowing,
-    currentAsset.denom,
-    debtAmount,
-    simulateWithdraw,
-    withdrawAmount,
-  ])
+  }, [withdrawWithBorrowing, currentAsset.denom, debtAmount, simulateWithdraw, withdrawAmount])
 
   return (
     <>
@@ -104,6 +97,7 @@ export default function WithdrawFromAccount(props: Props) {
         <TokenInputWithSlider
           asset={currentAsset}
           onChange={onChangeAmount}
+          onDebounce={onDebounce}
           onChangeAsset={(asset) => {
             setAmount(BN_ZERO)
             setWithdrawWithBorrowing(false)
