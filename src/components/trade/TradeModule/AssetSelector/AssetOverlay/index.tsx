@@ -87,18 +87,16 @@ export default function AssetOverlay(props: Props) {
   )
 
   const [activePerpsPositions, availablePerpsMarkets] = useMemo(() => {
-    const activePerpsPositions =
-      account?.perps.length === 0
-        ? []
-        : props.buyAssets.filter((assets) =>
-            account?.perps.find((perp) => perp.denom === assets.denom),
-          )
-    const availablePerpsMarkets = props.buyAssets.filter(
+    if (!account) return [[], []]
+    const activePerpsPositions = assets.filter((assets) =>
+      account?.perps.find((perp) => perp.denom === assets.denom),
+    )
+    const availablePerpsMarkets = assets.filter(
       (assets) => !activePerpsPositions.find((perp) => perp.denom === assets.denom),
     )
 
     return [activePerpsPositions, availablePerpsMarkets]
-  }, [props.buyAssets, account])
+  }, [assets, account])
 
   return (
     <Overlay
