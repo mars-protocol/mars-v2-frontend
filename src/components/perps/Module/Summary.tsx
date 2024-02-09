@@ -7,9 +7,10 @@ import { ArrowRight } from 'components/common/Icons'
 import SummaryLine from 'components/common/SummaryLine'
 import Text from 'components/common/Text'
 import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirection'
-import OpeningFee from 'components/perps/Module/OpeningFee'
+import TradingFee from 'components/perps/Module/TradingFee'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useTradingFee from 'hooks/perps/useTradingFee'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatLeverage } from 'utils/formatters'
@@ -31,6 +32,7 @@ export default function PerpsSummary(props: Props) {
   const modifyPerpPosition = useStore((s) => s.modifyPerpPosition)
   const closePerpPosition = useStore((s) => s.closePerpPosition)
   const currentAccount = useCurrentAccount()
+  const { data: tradingFee, isLoading } = useTradingFee(props.asset.denom, props.amount)
 
   const newAmount = useMemo(
     () => (props.previousAmount ?? BN_ZERO).plus(props.amount),
@@ -74,8 +76,11 @@ export default function PerpsSummary(props: Props) {
           Summary
         </Text>
         <SummaryLine label='Expected Price'>-</SummaryLine>
-        <SummaryLine label='Fees'>
-          <OpeningFee denom={props.asset.denom} amount={props.amount} />
+        <SummaryLine
+          label='Fees'
+          tooltip={`${tradingFee ? tradingFee.rate.times(100) + '% ' : ''}Trading Fees`}
+        >
+          <TradingFee denom={props.asset.denom} amount={props.amount} />
         </SummaryLine>
         <SummaryLine label='Total'>-</SummaryLine>
       </div>
