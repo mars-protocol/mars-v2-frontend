@@ -1,7 +1,7 @@
 {
   "name": "mars-v2-frontend",
   "version": "2.2.3",
-  "private": true,
+  "private": false,
   "scripts": {
     "build": "yarn validate-env && yarn install-charting-library && next build",
     "dev": "next dev",
