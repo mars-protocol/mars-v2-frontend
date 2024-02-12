@@ -10,7 +10,7 @@ export default function getTokenOutFromSwapResponse(
   try {
     if (response.result?.response.code === 0) {
       const rawLogs = JSON.parse(response.result.rawLogs)
-      const events = rawLogs[0].events as Event[]
+      const events = rawLogs.map((log: any) => log.events).flat() as Event[]
       let tokensOutValue = '0'
       events.forEach((event: Event) => {
         const attributes = event.attributes
