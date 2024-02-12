@@ -44,7 +44,6 @@ next-env.d.ts
 .env.local
 .env.local.testnet
 .env.local.mainnet
-.env
 
 # IDE
 .idea

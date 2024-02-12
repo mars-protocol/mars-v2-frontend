@@ -20,29 +20,15 @@ Start web server
 yarn && yarn dev
 ```
 
-### 2.1 Custom node endpoints using non-Docker deployments
-
-Copy `.env.example` to `.env` and modify the values to suit your needs.
-
-### 2.2 Custom node endpoints using Docker
+### 2.1 Custom node endpoints using Docker
 
 We allow the use of environment variables to be passed to the Docker container to specify custom endpoints for the app. The variables are:
 
 | Variable          | Description                           | Default                                  |
 | ----------------- | ------------------------------------- | ---------------------------------------- |
-| URL_OSMOSIS_REST  | The Osmosis node REST endpoint to use | https://lcd-osmosis.blockapsis.com       |
-| URL_OSMOSIS_RPC   | The Osmosis node RPC endpoint to use  | https://rpc-osmosis.blockapsis.com       |
+| URL_OSMOSIS_REST  | The Osmosis node REST endpoint to use | https://lcd-osmosis.blockapsis.com/      |
+| URL_OSMOSIS_RPC   | The Osmosis node RPC endpoint to use  | https://rpc-osmosis.blockapsis.com/      |
 | WALLET_CONNECT_ID | Your projects WalletConnect v2 ID     | 0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x |
-
-### 2.3 OPTIONAL: Install TradingView library
-
-The Outpost UI has a [TradingView](https://www.tradingview.com/) implementation, to display charts for the listed assets. To enable it you have to pass these environment variables to the Docker container. _NOTE: You'll need to have an active TradingView license to obtain those credentials_
-
-| Variable                      | Description                                                           | Default                                  |
-| ----------------------------- | --------------------------------------------------------------------- | ---------------------------------------- |
-| CHARTING_LIBRARY_USERNAME     | Your github user, that has access to the TradingView charting library |                                          |
-| CHARTING_LIBRARY_ACCESS_TOKEN | The charting library access token                                     |                                          |
-| CHARTING_LIBRARY_REPOSITORY   | The url to the TradingView charting library                           | github.com/tradingview/charting_library/ |
 
 **Sample Docker run command**
 
@@ -50,10 +36,30 @@ This command will start the container in interactive mode with port 3000 bound t
 
 ```sh
 docker run -it -p 3000:3000 \
-      -e URL_OSMOSIS_REST=https://lcd-osmosis.blockapsis.com \
-      -e URL_OSMOSIS_RPC=https://rpc-osmosis.blockapsis.com \
+      -e URL_OSMOSIS_REST=https://lcd-osmosis.blockapsis.com/ \
+      -e URL_OSMOSIS_RPC=https://rpc-osmosis.blockapsis.com/ \
       -e WALLET_CONNECT_ID=0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x marsprotocol/interface:latest
 ```
+
+### 2.2 Custom node endpoints using non-Docker deployments
+
+Copy `.env.example` to `.env` and modify the values to suit your needs.
+
+#### 2.2.1 TradingView library
+
+The Outpost UI has a [TradingView](https://www.tradingview.com/) implementation, to display charts for the listed assets.
+
+**TradingView only works on non-docker deployments (e.g. via [vercel](https://vercel.com)). As the docker image already has a fallback installed and can not be updated on `docker run`**
+
+If you are running the UI on a node based server, add the following environment variables to install TradingView.
+
+```
+CHARTING_LIBRARY_USERNAME=YOUR_GIT_USERNAME
+CHARTING_LIBRARY_ACCESS_TOKEN=YOUR_TRADING_VIEW_ACCESS_TOKEN
+CHARTING_LIBRARY_REPOSITORY=github.com/tradingview/charting_library/
+```
+
+_NOTE: You'll also need to have an active TradingView license to obtain those credentials_
 
 ## 4. Development practices
 

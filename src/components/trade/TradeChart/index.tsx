@@ -38,9 +38,7 @@ export default function TradeChart(props: Props) {
   }, [prices, props.buyAsset.denom, props.sellAsset.denom])
 
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
-  const hasTradingChartInstalled =
-    process.env.CHARTING_LIBRARY_ACCESS_TOKEN &&
-    process.env.CHARTING_LIBRARY_ACCESS_TOKEN !== 'APP_CHARTING_LIBRARY_ACCESS_TOKEN'
+  const hasTradingChartInstalled = process.env.CHARTING_LIBRARY_ACCESS_TOKEN
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.TradingView) {

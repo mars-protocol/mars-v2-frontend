@@ -1,4 +1,4 @@
-FROM node:19-alpine as builder
+FROM node:20-alpine as builder
 WORKDIR /app
 
 COPY package.json yarn.lock ./
@@ -8,14 +8,13 @@ RUN apk --update add patch
 RUN patch next.config.js next-config.patch
 RUN yarn build
 
-FROM node:19-alpine as runner
+FROM node:20-alpine as runner
 WORKDIR /app
 ENV NODE_ENV=production
 COPY --from=builder /app/package.json .
 COPY --from=builder /app/yarn.lock .
 COPY --from=builder /app/next.config.js .
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY entrypoint.sh .
 

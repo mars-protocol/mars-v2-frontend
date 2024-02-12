@@ -7,9 +7,6 @@ envFilename='override.conf'
 echo "APP_NEXT_OSMOSIS_RPC=$URL_OSMOSIS_RPC" >> $envFilename
 echo "APP_NEXT_OSMOSIS_REST=$URL_OSMOSIS_REST" >> $envFilename
 echo "APP_NEXT_WALLET_CONNECT_ID=$WALLET_CONNECT_ID" >> $envFilename
-echo "APP_CHARTING_LIBRARY_USERNAME=$CHARTING_LIBRARY_USERNAME" >> $envFilename
-echo "APP_CHARTING_LIBRARY_ACCESS_TOKEN=$CHARTING_LIBRARY_ACCESS_TOKEN" >> $envFilename
-echo "APP_CHARTING_LIBRARY_REPOSITORY=$CHARTING_LIBRARY_REPOSITORY" >> $envFilename
 
 function apply_path {
   # read all config file  
