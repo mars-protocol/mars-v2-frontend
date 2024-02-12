@@ -28,15 +28,11 @@ Copy `.env.example` to `.env` and modify the values to suit your needs.
 
 We allow the use of environment variables to be passed to the Docker container to specify custom endpoints for the app. The variables are:
 
-| Variable              | Description                                   | Default                                  |
-| --------------------- | --------------------------------------------- | ---------------------------------------- |
-| URL_OSMOSIS_REST      | The Osmosis node REST endpoint to use         | https://lcd-osmosis.blockapsis.com       |
-| URL_OSMOSIS_RPC       | The Osmosis node RPC endpoint to use          | https://rpc-osmosis.blockapsis.com       |
-| URL_OSMOSIS_TEST_REST | The Osmosis Devnet node REST endpoint to use  | https://lcd.devnet.osmosis.zone          |
-| URL_OSMOSIS_TEST_RPC  | The Osmosis Devnet node RPC endpoint to use   | https://rpc.devnet.osmosis.zone          |
-| URL_NEUTRON_TEST_REST | The Neutron Testnet node REST endpoint to use | https://rest-palvus.pion-1.ntrn.tech     |
-| URL_NEUTRON_TEST_RPC  | The Neutron Testnet node RPC endpoint to use  | https://rpc-palvus.pion-1.ntrn.tech      |
-| WALLET_CONNECT_ID     | Your projects WalletConnect v2 ID             | 0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x |
+| Variable          | Description                           | Default                                  |
+| ----------------- | ------------------------------------- | ---------------------------------------- |
+| URL_OSMOSIS_REST  | The Osmosis node REST endpoint to use | https://lcd-osmosis.blockapsis.com       |
+| URL_OSMOSIS_RPC   | The Osmosis node RPC endpoint to use  | https://rpc-osmosis.blockapsis.com       |
+| WALLET_CONNECT_ID | Your projects WalletConnect v2 ID     | 0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x |
 
 ### 2.3 OPTIONAL: Install TradingView library
 
@@ -56,10 +52,6 @@ This command will start the container in interactive mode with port 3000 bound t
 docker run -it -p 3000:3000 \
       -e URL_OSMOSIS_REST=https://lcd-osmosis.blockapsis.com \
       -e URL_OSMOSIS_RPC=https://rpc-osmosis.blockapsis.com \
-      -e URL_OSMOSIS_TEST_REST=https://lcd.devnet.osmosis.zone \
-      -e URL_OSMOSIS_TEST_RPC=https://rpc.devnet.osmosis.zon \
-      -e URL_NEUTRON_TEST_REST=https://rest-palvus.pion-1.ntrn.tech \
-      -e URL_NEUTRON_TEST_RPC=https://rpc-palvus.pion-1.ntrn.tech \
       -e WALLET_CONNECT_ID=0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x marsprotocol/interface:latest
 ```
 
