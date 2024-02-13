@@ -1,17 +1,17 @@
 {
   "name": "mars-v2-frontend",
-  "version": "2.2.2",
-  "private": true,
+  "version": "2.2.3",
+  "homepage": "./",
+  "private": false,
+  "license": "SEE LICENSE IN LICENSE FILE",
   "scripts": {
-    "build": "yarn validate-env && next build",
+    "build": "yarn install-charting-library && next build",
     "dev": "next dev",
     "lint": "eslint ./src/ && yarn prettier-check",
     "format": "eslint ./src/ --fix && prettier --write ./src/ ",
     "prettier-check": "prettier --ignore-path .gitignore --check ./src/",
     "start": "next start",
-    "validate-env": "node ./validate-env",
-    "install-charting-library": "dotenv -e .env.local node install_charting_library.js",
-    "prepare": "husky install"
+    "install-charting-library": "dotenv -e .env.local node install_charting_library.js"
   },
   "lint-staged": {
     "*.ts*": [
@@ -75,5 +75,9 @@
     "shelljs": "^0.8.5",
     "tailwindcss": "^3.4.1",
     "typescript": "5.3.3"
+  },
+  "engines": {
+    "npm": "please-use-yarn",
+    "yarn": ">= 1.19.1"
   }
 }

@@ -14,8 +14,8 @@ remove_if_directory_exists "$LATEST_HASH"
 
 git clone -q --depth 1 -b "$BRANCH" $REPOSITORY "$LATEST_HASH"
 
-remove_if_directory_exists "public/static/charting_library"
-remove_if_directory_exists "public/static/datafeeds"
+remove_if_directory_exists "public/charting_library"
+remove_if_directory_exists "public/datafeeds"
 remove_if_directory_exists "src/utils/charting_library"
 remove_if_directory_exists "src/utils/datafeeds"
 

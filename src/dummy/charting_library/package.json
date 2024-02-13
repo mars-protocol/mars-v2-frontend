@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "description": "Dummy CL",
+  "type": "module",
+  "main": "charting_library.cjs.js",
+  "module": "charting_library.esm.js",
+  "types": "charting_library.d.ts"
+}
