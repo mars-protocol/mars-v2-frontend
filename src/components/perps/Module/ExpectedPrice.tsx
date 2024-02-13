@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js'
 import { CircularProgress } from 'components/common/CircularProgress'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
+import { BNCoin } from 'types/classes/BNCoin'
 
 type Props = {
   denom: string
@@ -10,7 +11,7 @@ type Props = {
   previousAmount: BigNumber
 }
 
-export default function TradingFee(props: Props) {
+export const ExpectedPrice = (props: Props) => {
   const { data: tradingFeeAndPrice, isLoading } = useTradingFeeAndPrice(
     props.denom,
     props.newAmount,
@@ -18,7 +19,10 @@ export default function TradingFee(props: Props) {
   )
 
   if (isLoading) return <CircularProgress className='h-full' size={12} />
-  if (props.newAmount.isEqualTo(props.previousAmount) || !tradingFeeAndPrice?.fee) return '-'
 
-  return <DisplayCurrency coin={tradingFeeAndPrice.fee} />
+  if (tradingFeeAndPrice?.price) {
+    return <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber('usd', tradingFeeAndPrice.price)} />
+  }
+
+  return '-'
 }
