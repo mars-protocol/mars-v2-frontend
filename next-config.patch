@@ -1,12 +1,3 @@
-diff --git a/next-config.patch b/next-config.patch
-index ab7706ba..e69de29b 100644
---- a/next-config.patch
-+++ b/next-config.patch
-@@ -1,4 +0,0 @@
--diff --git a/next.config.js b/next.config.js
--index 2801090..4b5fabe 100644
----- a/next.config.js
--+++ b/next.config.js
 diff --git a/next.config.js b/next.config.js
 index 4a208ebb..9c716638 100644
 --- a/next.config.js
