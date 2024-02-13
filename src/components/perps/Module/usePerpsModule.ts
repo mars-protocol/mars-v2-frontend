@@ -38,7 +38,11 @@ export default function usePerpsModule(amount: BigNumber | null) {
   const previousLeverage = useMemo(
     () =>
       previousAmount
-        ? price.times(demagnify(previousAmount, perpsAsset)).div(accountNetValue).plus(1).toNumber()
+        ? price
+            .times(demagnify(previousAmount.abs(), perpsAsset))
+            .div(accountNetValue)
+            .plus(1)
+            .toNumber()
         : null,
     [accountNetValue, perpsAsset, previousAmount, price],
   )
@@ -46,7 +50,7 @@ export default function usePerpsModule(amount: BigNumber | null) {
   const leverage = useMemo(
     () =>
       price
-        .times(demagnify(previousAmount.plus(amount ?? BN_ZERO), perpsAsset))
+        .times(demagnify(previousAmount.plus(amount ?? BN_ZERO).abs(), perpsAsset))
         .div(accountNetValue)
         .plus(1)
         .toNumber(),

@@ -7,10 +7,11 @@ import { ArrowRight } from 'components/common/Icons'
 import SummaryLine from 'components/common/SummaryLine'
 import Text from 'components/common/Text'
 import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirection'
+import { ExpectedPrice } from 'components/perps/Module/ExpectedPrice'
 import TradingFee from 'components/perps/Module/TradingFee'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useTradingFee from 'hooks/perps/useTradingFee'
+import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatLeverage } from 'utils/formatters'
@@ -20,7 +21,7 @@ type Props = {
   amount: BigNumber
   tradeDirection: TradeDirection
   asset: Asset
-  previousAmount?: BigNumber | null
+  previousAmount: BigNumber
   previousTradeDirection?: 'long' | 'short'
   previousLeverage?: number | null
   hasActivePosition: boolean
@@ -32,17 +33,21 @@ export default function PerpsSummary(props: Props) {
   const modifyPerpPosition = useStore((s) => s.modifyPerpPosition)
   const closePerpPosition = useStore((s) => s.closePerpPosition)
   const currentAccount = useCurrentAccount()
-  const { data: tradingFee, isLoading } = useTradingFee(props.asset.denom, props.amount)
 
   const newAmount = useMemo(
     () => (props.previousAmount ?? BN_ZERO).plus(props.amount),
     [props.amount, props.previousAmount],
   )
+  const { data: tradingFee } = useTradingFeeAndPrice(
+    props.asset.denom,
+    newAmount,
+    props.previousAmount,
+  )
 
   const onConfirm = useCallback(async () => {
     if (!currentAccount) return
 
-    if (props.previousAmount && newAmount.isZero()) {
+    if (!props.previousAmount.isZero() && newAmount.isZero()) {
       await closePerpPosition({
         accountId: currentAccount.id,
         denom: props.asset.denom,
@@ -50,7 +55,7 @@ export default function PerpsSummary(props: Props) {
       return props.onTxExecuted()
     }
 
-    if (props.previousAmount && newAmount) {
+    if (!props.previousAmount.isZero() && !newAmount.isZero()) {
       await modifyPerpPosition({
         accountId: currentAccount.id,
         coin: BNCoin.fromDenomAndBigNumber(props.asset.denom, newAmount),
@@ -75,12 +80,22 @@ export default function PerpsSummary(props: Props) {
         <Text size='xs' className='font-bold mb-2'>
           Summary
         </Text>
-        <SummaryLine label='Expected Price'>-</SummaryLine>
+        <SummaryLine label='Expected Price'>
+          <ExpectedPrice
+            denom={props.asset.denom}
+            newAmount={newAmount}
+            previousAmount={props.previousAmount}
+          />
+        </SummaryLine>
         <SummaryLine
           label='Fees'
           tooltip={`${tradingFee ? tradingFee.rate.times(100) + '% ' : ''}Trading Fees`}
         >
-          <TradingFee denom={props.asset.denom} amount={props.amount} />
+          <TradingFee
+            denom={props.asset.denom}
+            newAmount={newAmount}
+            previousAmount={props.previousAmount}
+          />
         </SummaryLine>
         <SummaryLine label='Total'>-</SummaryLine>
       </div>
