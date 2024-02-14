@@ -3,10 +3,10 @@ import React from 'react'
 import HealthBar from 'components/account/Health/HealthBar'
 import HealthIcon from 'components/account/Health/HealthIcon'
 import Card from 'components/common/Card'
-import HLSTag from 'components/hls/HLSTag'
 import Loading from 'components/common/Loading'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import HLSTag from 'components/hls/HLSTag'
 import useAccount from 'hooks/accounts/useAccount'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 
@@ -31,9 +31,11 @@ export default function SummarySkeleton(props: Props) {
           {account?.kind === 'high_levered_strategy' && <HLSTag />}
         </div>
         {health !== undefined && healthFactor !== undefined && (
-          <div className='flex gap-1 max-w-[300px] flex-grow'>
-            <HealthIcon isLoading={healthFactor === 0} health={health} className='w-5' />
-            <HealthBar health={health} healthFactor={healthFactor} className='h-full' />
+          <div className='flex items-center justify-end flex-grow gap-2'>
+            <HealthIcon isLoading={healthFactor === 0} health={health} />
+            <div className='w-[260px]'>
+              <HealthBar health={health} healthFactor={healthFactor} className='h-3' />
+            </div>
           </div>
         )}
       </div>

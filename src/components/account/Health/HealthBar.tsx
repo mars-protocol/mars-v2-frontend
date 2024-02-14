@@ -63,16 +63,22 @@ export default function HealthBar({
       health={isUpdated ? updatedHealth : health}
       healthFactor={isUpdated ? updatedHealthFactor : healthFactor}
     >
-      <>
+      <div className={classNames('flex w-full', showIcon && 'gap-2')}>
         {showIcon && (
           <HealthIcon
             health={health}
             isLoading={healthFactor === 0}
-            className={classNames('mr-2', iconClassName)}
+            className={iconClassName}
             colorClass='text-white'
           />
         )}
-        <div className={classNames('flex w-full', 'rounded-full overflow-hidden', className)}>
+        <div
+          className={classNames(
+            'flex w-full flex-shrink',
+            'rounded-full overflow-hidden',
+            className,
+          )}
+        >
           <svg
             version='1.1'
             xmlns='http://www.w3.org/2000/svg'
@@ -153,7 +159,7 @@ export default function HealthBar({
             )}
           </svg>
         </div>
-      </>
+      </div>
     </HealthTooltip>
   )
 }
