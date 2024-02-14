@@ -10,6 +10,7 @@ import useToggle from 'hooks/useToggle'
 interface Props extends ButtonProps {
   items: DropDownItem[]
   text: string
+  showProgressIndicator?: boolean
 }
 
 export default function DropDownButton(props: Props) {
@@ -32,6 +33,7 @@ export default function DropDownButton(props: Props) {
         }}
         rightIcon={<ChevronDown />}
         iconClassName='w-3 h-3'
+        showProgressIndicator={props.showProgressIndicator}
         {...props}
       />
     </Tooltip>
@@ -62,16 +64,19 @@ function DropDownItem(props: DropDownItemProps) {
   return (
     <ConditionalWrapper
       condition={!!props.item.disabled}
-      wrapper={(children) => (
-        <Tooltip
-          type='warning'
-          content={<Text size='sm'>{props.item.disabledTooltip}</Text>}
-          contentClassName='max-w-[200px]'
-          className='ml-auto'
-        >
-          {children}
-        </Tooltip>
-      )}
+      wrapper={(children) => {
+        if (!props.item.disabledTooltip) return children
+        return (
+          <Tooltip
+            type='warning'
+            content={<Text size='sm'>{props.item.disabledTooltip}</Text>}
+            contentClassName='max-w-[200px]'
+            className='ml-auto'
+          >
+            {children}
+          </Tooltip>
+        )
+      }}
     >
       <button
         onClick={(e) => {
@@ -86,7 +91,7 @@ function DropDownItem(props: DropDownItemProps) {
         )}
         disabled={props.item.disabled}
       >
-        <div className='flex justify-center w-5 h-5'>{props.item.icon}</div>
+        <div className='flex justify-center w-4 h-4'>{props.item.icon}</div>
         <Text size='sm'>{props.item.text}</Text>
       </button>
     </ConditionalWrapper>

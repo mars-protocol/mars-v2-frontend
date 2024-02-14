@@ -20,7 +20,7 @@ interface Props {
 export default function BorrowButton(props: Props) {
   const account = useCurrentAccount()
   const address = useStore((s) => s.address)
-  const hasNoDeposits = !!account?.deposits?.length && !!account?.lends?.length && !!address
+  const hasNoDeposits = !account?.deposits?.length && !account?.lends?.length && !!address
 
   const borrowHandler = useCallback(() => {
     if (!props.data.asset) return null

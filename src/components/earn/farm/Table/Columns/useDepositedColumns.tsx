@@ -6,7 +6,7 @@ import DepositCap, {
   DEPOSIT_CAP_META,
   depositCapSortingFn,
 } from 'components/earn/farm/Table/Columns/DepositCap'
-import Details, { DETAILS_META } from 'components/earn/farm/Table/Columns/Details'
+import Manage, { MANAGE_META } from 'components/earn/farm/Table/Columns/Manage'
 import MaxLTV, { LTV_MAX_META } from 'components/earn/farm/Table/Columns/MaxLTV'
 import Name, { NAME_META } from 'components/earn/farm/Table/Columns/Name'
 import PositionValue, {
@@ -55,8 +55,14 @@ export default function useDepositedColumns(props: Props) {
         ),
       },
       {
-        ...DETAILS_META,
-        cell: ({ row }) => <Details isLoading={props.isLoading} isExpanded={row.getIsExpanded()} />,
+        ...MANAGE_META,
+        cell: ({ row }) => (
+          <Manage
+            vault={row.original}
+            isLoading={props.isLoading}
+            isExpanded={row.getIsExpanded()}
+          />
+        ),
       },
     ]
   }, [props.isLoading])
