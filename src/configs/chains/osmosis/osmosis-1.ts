@@ -138,13 +138,13 @@ const Osmosis1: ChainConfig = {
     },
   },
   endpoints: {
-    rpc: process.env.NEXT_PUBLIC_OSMOSIS_RPC ?? 'https://rpc-osmosis.blockapsis.com/',
-    rest: process.env.NEXT_PUBLIC_OSMOSIS_REST ?? 'https://lcd-osmosis.blockapsis.com/',
+    rpc: process.env.NEXT_PUBLIC_OSMOSIS_RPC ?? 'https://rpc-osmosis.blockapsis.com',
+    rest: process.env.NEXT_PUBLIC_OSMOSIS_REST ?? 'https://lcd-osmosis.blockapsis.com',
     swap: 'https://app.osmosis.zone',
     explorer: 'https://www.mintscan.io/osmosis/transactions/',
     routes: 'https://sqs.osmosis.zone/router',
     pools: getUrl(
-      process.env.NEXT_PUBLIC_OSMOSIS_REST ?? 'https://lcd-osmosis.blockapsis.com/',
+      process.env.NEXT_PUBLIC_OSMOSIS_REST ?? 'https://lcd-osmosis.blockapsis.com',
       'osmosis/gamm/v1beta1/pools/POOL_ID',
     ),
     aprs: {
