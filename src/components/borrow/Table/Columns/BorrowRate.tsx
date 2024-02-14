@@ -4,7 +4,6 @@ import Loading from 'components/common/Loading'
 export const BORROW_RATE_META = {
   accessorKey: 'apy.borrow',
   header: 'Borrow Rate APY',
-  meta: { className: 'w-40' },
 }
 
 interface Props {
