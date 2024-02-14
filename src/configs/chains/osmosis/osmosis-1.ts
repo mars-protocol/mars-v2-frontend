@@ -25,6 +25,7 @@ import WETHaxl from 'configs/assets/WETH.xal'
 import { VAULTS_META_DATA } from 'constants/vaults'
 import { NETWORK } from 'types/enums/network'
 import { ChainInfoID } from 'types/enums/wallet'
+import { getUrl } from 'utils/url'
 
 const ASSETS = [
   { ...OSMO, denom: 'uosmo' },
@@ -137,15 +138,15 @@ const Osmosis1: ChainConfig = {
     },
   },
   endpoints: {
-    rpc: process.env.NEXT_PUBLIC_OSMOSIS_RPC ?? 'https://rpc-osmosis.blockapsis.com/',
-    rest: process.env.NEXT_PUBLIC_OSMOSIS_REST ?? 'https://lcd-osmosis.blockapsis.com/',
+    rpc: process.env.NEXT_PUBLIC_OSMOSIS_RPC ?? 'https://rpc-osmosis.blockapsis.com',
+    rest: process.env.NEXT_PUBLIC_OSMOSIS_REST ?? 'https://lcd-osmosis.blockapsis.com',
     swap: 'https://app.osmosis.zone',
     explorer: 'https://www.mintscan.io/osmosis/transactions/',
     routes: 'https://sqs.osmosis.zone/router',
-    pools:
-      (process.env.NEXT_PUBLIC_OSMOSIS_REST ||
-        'https://osmosis-node.marsprotocol.io/GGSFGSFGFG34/osmosis-lcd-front/') +
+    pools: getUrl(
+      process.env.NEXT_PUBLIC_OSMOSIS_REST ?? 'https://lcd-osmosis.blockapsis.com',
       'osmosis/gamm/v1beta1/pools/POOL_ID',
+    ),
     aprs: {
       vaults: 'https://api.marsprotocol.io/v1/vaults/osmosis',
       stride: 'https://edge.stride.zone/api/stake-stats',
