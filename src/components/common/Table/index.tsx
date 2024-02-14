@@ -31,6 +31,7 @@ interface Props<T> {
   hideCard?: boolean
   setRowSelection?: OnChangeFn<RowSelectionState>
   selectedRows?: RowSelectionState
+  onClickRow?: (id: string) => void
 }
 
 export default function Table<T>(props: Props<T>) {
@@ -75,6 +76,7 @@ export default function Table<T>(props: Props<T>) {
                       props.spacingClassName ?? 'px-4 py-3',
                       header.column.getCanSort() && 'hover:cursor-pointer',
                       header.id === 'symbol' || header.id === 'name' ? 'text-left' : 'text-right',
+                      'w-min',
                       header.column.columnDef.meta?.className,
                     )}
                   >
@@ -122,6 +124,7 @@ export default function Table<T>(props: Props<T>) {
               spacingClassName={props.spacingClassName}
               isSelectable={!!props.setRowSelection}
               type={props.type}
+              onClick={props.onClickRow}
             />
           ))}
         </tbody>

@@ -18,6 +18,7 @@ import chains from 'configs/chains'
 import { BN_ZERO } from 'constants/math'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
+import useChainConfig from 'hooks/useChainConfig'
 import useCurrentWallet from 'hooks/useCurrentWallet'
 import useICNSDomain from 'hooks/useICNSDomain'
 import useToggle from 'hooks/useToggle'
@@ -27,7 +28,6 @@ import { NETWORK } from 'types/enums/network'
 import { ChainInfoID } from 'types/enums/wallet'
 import { truncate } from 'utils/formatters'
 import { getPage, getRoute } from 'utils/route'
-import useChainConfig from 'hooks/useChainConfig'
 
 export default function WalletConnectedButton() {
   // ---------------

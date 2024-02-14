@@ -16,14 +16,17 @@ export default function DropDownButton(props: Props) {
       content={<DropDown closeMenu={() => toggleIsOpen(false)} {...props} />}
       type='info'
       placement='bottom'
-      contentClassName='!bg-white/10 backdrop-blur-xl !p-0'
+      contentClassName='!bg-white/10 backdrop-blur-xl !p-0 w-full min-w-[140px]'
       interactive
       hideArrow
       visible={isOpen}
       onClickOutside={() => toggleIsOpen(false)}
     >
       <Button
-        onClick={() => toggleIsOpen()}
+        onClick={(e) => {
+          toggleIsOpen()
+          e.stopPropagation()
+        }}
         rightIcon={<ChevronDown />}
         iconClassName='w-3 h-3'
         {...props}
@@ -39,7 +42,7 @@ interface DropDownProps {
 
 function DropDown(props: DropDownProps) {
   return (
-    <div>
+    <div className='w-full'>
       {props.items.map((item) => (
         <DropDownItem key={item.text} item={item} closeMenu={props.closeMenu} />
       ))}
@@ -55,11 +58,13 @@ interface DropDownItemProps {
 function DropDownItem(props: DropDownItemProps) {
   return (
     <button
-      onClick={() => {
+      onClick={(e) => {
+        e.preventDefault()
         props.item.onClick()
         props.closeMenu()
+        e.stopPropagation()
       }}
-      className=' px-4 py-3 flex gap-2 items-center hover:bg-white/5 w-full [&:not(:last-child)]:border-b border-white/10'
+      className='z-1 px-4 py-3 flex gap-2 items-center hover:bg-white/5 w-full [&:not(:last-child)]:border-b border-white/10'
     >
       <div className='flex justify-center w-5 h-5'>{props.item.icon}</div>
       <Text size='sm'>{props.item.text}</Text>

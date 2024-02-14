@@ -10,6 +10,7 @@ interface Props<T> {
   className?: string
   isSelectable?: boolean
   type?: TableType
+  onClick?: (id: string) => void
 }
 
 function getBorderColor(
@@ -36,7 +37,7 @@ export default function Row<T>(props: Props<T>) {
         key={`${row.id}-row`}
         className={classNames(
           'group/row transition-bg',
-          (renderExpanded || isSelectable) && 'hover:cursor-pointer',
+          (renderExpanded || isSelectable || props.onClick) && 'hover:cursor-pointer',
           canExpand && row.getIsExpanded() ? 'is-expanded bg-black/20' : 'hover:bg-white/5',
         )}
         onClick={(e) => {
@@ -48,6 +49,10 @@ export default function Row<T>(props: Props<T>) {
             const isExpanded = row.getIsExpanded()
             table.resetExpanded()
             !isExpanded && row.toggleExpanded()
+          }
+
+          if (props.onClick) {
+            props.onClick((row.original as any).asset.denom)
           }
         }}
       >
@@ -61,7 +66,7 @@ export default function Row<T>(props: Props<T>) {
                 spacingClassName ?? 'px-3 py-4',
                 type && type !== 'strategies' && isSymbolOrName && 'border-l',
                 type && type !== 'strategies' && getBorderColor(type, cell.row.original as any),
-                cell.column.columnDef.meta?.className,
+                cell.column.columnDef.meta?.className ?? 'w-min',
               )}
             >
               {flexRender(cell.column.columnDef.cell, cell.getContext())}

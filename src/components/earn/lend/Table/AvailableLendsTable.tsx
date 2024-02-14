@@ -1,12 +1,10 @@
 import { Row } from '@tanstack/react-table'
 import { useCallback } from 'react'
 
-import LendingActionButtons from 'components/earn/lend/LendingActionButtons'
-import { NAME_META } from 'components/earn/lend/Table/Columns/Name'
-import useAvailableColumns from 'components/earn/lend/Table/Columns/useAvailableColumns'
 import MarketDetails from 'components/common/MarketDetails'
 import Table from 'components/common/Table'
-import ActionButtonRow from 'components/common/Table/ActionButtonRow'
+import { NAME_META } from 'components/earn/lend/Table/Columns/Name'
+import useAvailableColumns from 'components/earn/lend/Table/Columns/useAvailableColumns'
 
 type Props = {
   data: LendingMarketTableData[]
@@ -19,9 +17,6 @@ export default function AvailableLendsTable(props: Props) {
   const renderExpanded = useCallback(
     (row: Row<LendingMarketTableData>) => (
       <>
-        <ActionButtonRow row={row}>
-          <LendingActionButtons data={row.original} />
-        </ActionButtonRow>
         <MarketDetails row={row} type='lend' />
       </>
     ),

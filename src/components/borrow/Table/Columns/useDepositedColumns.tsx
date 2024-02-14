@@ -2,6 +2,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
 import BorrowRate, { BORROW_RATE_META } from 'components/borrow/Table/Columns/BorrowRate'
+import Chevron, { CHEVRON_META } from 'components/borrow/Table/Columns/Chevron'
 import Debt, { DEBT_META, debtSortingFn } from 'components/borrow/Table/Columns/Debt'
 import Liquidity, {
   LIQUIDITY_META,
@@ -33,7 +34,11 @@ export default function useDepositedColumns() {
       },
       {
         ...MANAGE_META,
-        cell: ({ row }) => <Manage isExpanded={row.getIsExpanded()} />,
+        cell: ({ row }) => <Manage data={row.original} />,
+      },
+      {
+        ...CHEVRON_META,
+        cell: ({ row }) => <Chevron isExpanded={row.getIsExpanded()} />,
       },
     ]
   }, [])
