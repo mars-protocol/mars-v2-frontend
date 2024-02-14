@@ -40,6 +40,7 @@ export const menuTree = (walletId: WalletID, chainConfig: ChainConfig): MenuTree
   { pages: ['borrow'], label: 'Borrow' },
   ...(chainConfig.hls ? [{ pages: ['hls-staking'] as Page[], label: 'High Leverage' }] : []),
   { pages: ['portfolio'], label: 'Portfolio' },
+  { pages: ['v1'], label: 'V1' },
   { pages: ['governance'], label: 'Governance', externalUrl: getGovernanceUrl(walletId) },
 ]
 

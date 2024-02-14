@@ -1,16 +1,18 @@
 import { Row } from '@tanstack/react-table'
 import { useCallback } from 'react'
 
-import LendingActionButtons from 'components/earn/lend/LendingActionButtons'
-import { NAME_META } from 'components/earn/lend/Table/Columns/Name'
-import useDepositedColumns from 'components/earn/lend/Table/Columns/useDepositedColumns'
 import MarketDetails from 'components/common/MarketDetails'
 import Table from 'components/common/Table'
 import ActionButtonRow from 'components/common/Table/ActionButtonRow'
+import LendingActionButtons from 'components/earn/lend/LendingActionButtons'
+import { DEPOSIT_VALUE_META } from 'components/earn/lend/Table/Columns/DepositValue'
+import { NAME_META } from 'components/earn/lend/Table/Columns/Name'
+import useDepositedColumns from 'components/earn/lend/Table/Columns/useDepositedColumns'
 
 type Props = {
   data: LendingMarketTableData[]
   isLoading: boolean
+  v1?: boolean
 }
 
 export default function DepositedLendsTable(props: Props) {
@@ -32,10 +34,17 @@ export default function DepositedLendsTable(props: Props) {
 
   return (
     <Table
-      title='Lent Assets'
+      title={props.v1 ? 'Deposits' : 'Lent Assets'}
       columns={columns}
       data={props.data}
-      initialSorting={[{ id: NAME_META.id, desc: false }]}
+      initialSorting={
+        props.v1
+          ? [
+              { id: DEPOSIT_VALUE_META.id, desc: true },
+              { id: NAME_META.id, desc: false },
+            ]
+          : [{ id: NAME_META.id, desc: false }]
+      }
       renderExpanded={renderExpanded}
     />
   )

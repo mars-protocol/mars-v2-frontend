@@ -12,6 +12,7 @@ import PerpsPage from 'pages/PerpsPage'
 import PortfolioAccountPage from 'pages/PortfolioAccountPage'
 import PortfolioPage from 'pages/PortfolioPage'
 import TradePage from 'pages/TradePage'
+import V1Page from 'pages/V1Page'
 import Layout from 'pages/_layout'
 
 export default function Routes() {
@@ -32,6 +33,7 @@ export default function Routes() {
         <Route path='/lend' element={<LendPage />} />
         <Route path='/borrow' element={<BorrowPage />} />
         <Route path='/portfolio' element={<PortfolioPage />} />
+        <Route path='/v1' element={<V1Page />} />
         <Route path='/mobile' element={<MobilePage />} />
         {chainConfig.hls && <Route path='/hls-staking' element={<HLSStakingPage />} />}
         {chainConfig.hls && <Route path='/hls-farm' element={<HLSFarmPage />} />}
@@ -47,6 +49,7 @@ export default function Routes() {
           <Route path='portfolio' element={<PortfolioPage />} />
           {chainConfig.hls && <Route path='hls-staking' element={<HLSStakingPage />} />}
           {chainConfig.hls && <Route path='hls-farm' element={<HLSFarmPage />} />}
+          <Route path='v1' element={<V1Page />} />
           <Route path='portfolio/:accountId'>
             <Route path='' element={<PortfolioAccountPage />} />
           </Route>

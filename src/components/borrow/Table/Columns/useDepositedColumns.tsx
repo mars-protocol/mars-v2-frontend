@@ -2,7 +2,10 @@ import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
 import BorrowRate, { BORROW_RATE_META } from 'components/borrow/Table/Columns/BorrowRate'
-import Debt, { DEBT_META, debtSortingFn } from 'components/borrow/Table/Columns/Debt'
+import DebtValue, {
+  DEBT_VALUE_META,
+  debtSortingFn,
+} from 'components/borrow/Table/Columns/DebtValue'
 import Liquidity, {
   LIQUIDITY_META,
   liquiditySortingFn,
@@ -18,8 +21,10 @@ export default function useDepositedColumns() {
         cell: ({ row }) => <Name data={row.original} />,
       },
       {
-        ...DEBT_META,
-        cell: ({ row }) => <Debt data={row.original} />,
+        ...DEBT_VALUE_META,
+        cell: ({ row }) => (
+          <DebtValue asset={row.original.asset} debtAmount={row.original.accountDebtAmount} />
+        ),
         sortingFn: debtSortingFn,
       },
       {

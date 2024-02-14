@@ -11,6 +11,7 @@ type Page =
   | 'hls-staking'
   | 'governance'
   | 'execute'
+  | 'v1'
 
 type OsmosisRouteResponse = {
   amount_in: {

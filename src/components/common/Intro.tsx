@@ -17,7 +17,7 @@ import useStore from 'store'
 interface Props {
   text: string | ReactNode
   children?: ReactNode
-  bg: 'borrow' | 'lend' | 'farm' | 'portfolio' | 'hls-farm' | 'hls-staking'
+  bg: Page
 }
 
 function IntroBackground(props: { bg: Props['bg'] }) {

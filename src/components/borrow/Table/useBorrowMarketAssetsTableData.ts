@@ -1,11 +1,14 @@
 import { useMemo } from 'react'
 
+import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useMarkets from 'hooks/markets/useMarkets'
+import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
 
 export default function useBorrowMarketAssetsTableData() {
   const account = useCurrentAccount()
   const markets = useMarkets()
+  const { convertAmount } = useDisplayCurrencyPrice()
 
   return useMemo((): {
     accountBorrowedAssets: BorrowMarketTableData[]
@@ -18,13 +21,16 @@ export default function useBorrowMarketAssetsTableData() {
     markets
       .filter((market) => market.borrowEnabled)
       .forEach((market) => {
-        const debt = account?.debts?.find((debt) => debt.denom === market.asset.denom)
+        const amount =
+          account?.debts?.find((debt) => debt.denom === market.asset.denom)?.amount ?? BN_ZERO
+        const value = amount ? convertAmount(market.asset, amount) : undefined
 
         const borrowMarketAsset: BorrowMarketTableData = {
           ...market,
-          accountDebt: debt?.amount,
+          accountDebtAmount: amount,
+          accountDebtValue: value,
         }
-        ;(borrowMarketAsset.accountDebt ? accountBorrowedAssets : availableAssets).push(
+        ;(borrowMarketAsset.accountDebtAmount ? accountBorrowedAssets : availableAssets).push(
           borrowMarketAsset,
         )
       })
@@ -34,5 +40,5 @@ export default function useBorrowMarketAssetsTableData() {
       availableAssets,
       allAssets: [...accountBorrowedAssets, ...availableAssets],
     }
-  }, [account?.debts, markets])
+  }, [account?.debts, markets, convertAmount])
 }
