@@ -33,8 +33,8 @@ const Pion1: ChainConfig = {
   },
   endpoints: {
     routes: 'https://app.astroport.fi/api/routes',
-    rpc: process.env.NEXT_PUBLIC_NEUTRON_TEST_RPC ?? 'https://rpc-palvus.pion-1.ntrn.tech/',
-    rest: process.env.NEXT_PUBLIC_NEUTRON_TEST_REST ?? 'https://rest-palvus.pion-1.ntrn.tech/',
+    rpc: process.env.NEXT_PUBLIC_NEUTRON_TEST_RPC ?? 'https://rpc-palvus.pion-1.ntrn.tech',
+    rest: process.env.NEXT_PUBLIC_NEUTRON_TEST_REST ?? 'https://rest-palvus.pion-1.ntrn.tech',
     swap: 'https://testnet-neutron.astroport.fi/swap',
     pools: '', //TODO: ⛓️ Implement this
     explorer: 'https://testnet.mintscan.io/neutron-testnet',

@@ -26,8 +26,8 @@ We allow the use of environment variables to be passed to the Docker container t
 
 | Variable          | Description                           | Default                                  |
 | ----------------- | ------------------------------------- | ---------------------------------------- |
-| URL_OSMOSIS_REST  | The Osmosis node REST endpoint to use | https://lcd-osmosis.blockapsis.com/      |
-| URL_OSMOSIS_RPC   | The Osmosis node RPC endpoint to use  | https://rpc-osmosis.blockapsis.com/      |
+| URL_OSMOSIS_REST  | The Osmosis node REST endpoint to use | https://lcd-osmosis.blockapsis.com       |
+| URL_OSMOSIS_RPC   | The Osmosis node RPC endpoint to use  | https://rpc-osmosis.blockapsis.com       |
 | WALLET_CONNECT_ID | Your projects WalletConnect v2 ID     | 0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x |
 
 **Sample Docker run command**
@@ -36,8 +36,8 @@ This command will start the container in interactive mode with port 3000 bound t
 
 ```sh
 docker run -it -p 3000:3000 \
-      -e URL_OSMOSIS_REST=https://lcd-osmosis.blockapsis.com/ \
-      -e URL_OSMOSIS_RPC=https://rpc-osmosis.blockapsis.com/ \
+      -e URL_OSMOSIS_REST=https://lcd-osmosis.blockapsis.com \
+      -e URL_OSMOSIS_RPC=https://rpc-osmosis.blockapsis.com \
       -e WALLET_CONNECT_ID=0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x0x marsprotocol/interface:latest
 ```
 
