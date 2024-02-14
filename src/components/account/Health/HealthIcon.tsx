@@ -5,7 +5,7 @@ import { ExclamationMarkCircled, Heart } from 'components/common/Icons'
 interface Props {
   isLoading: boolean
   health: number
-  className: string
+  className?: string
   colorClass?: string
 }
 
@@ -14,9 +14,9 @@ export default function HealthIcon(props: Props) {
   const color = colorClass ?? 'text-white'
 
   return (
-    <>
+    <div className='w-5'>
       {!isLoading && health === 0 ? (
-        <ExclamationMarkCircled className={classNames('w-5 text-loss animate-pulse', className)} />
+        <ExclamationMarkCircled className={classNames(' text-loss animate-pulse', className)} />
       ) : (
         <Heart
           className={classNames(
@@ -26,6 +26,6 @@ export default function HealthIcon(props: Props) {
           )}
         />
       )}
-    </>
+    </div>
   )
 }
