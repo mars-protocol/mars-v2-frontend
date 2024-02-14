@@ -30,9 +30,12 @@ export default function useBorrowMarketAssetsTableData() {
           accountDebtAmount: amount,
           accountDebtValue: value,
         }
-        ;(borrowMarketAsset.accountDebtAmount ? accountBorrowedAssets : availableAssets).push(
-          borrowMarketAsset,
-        )
+
+        if (borrowMarketAsset.accountDebtAmount?.isZero()) {
+          availableAssets.push(borrowMarketAsset)
+        } else {
+          accountBorrowedAssets.push(borrowMarketAsset)
+        }
       })
 
     return {
