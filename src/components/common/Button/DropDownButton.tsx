@@ -1,7 +1,10 @@
+import classNames from 'classnames'
+
 import Button from 'components/common/Button/index'
 import { ChevronDown } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
+import ConditionalWrapper from 'hocs/ConditionalWrapper'
 import useToggle from 'hooks/useToggle'
 
 interface Props extends ButtonProps {
@@ -57,17 +60,35 @@ interface DropDownItemProps {
 
 function DropDownItem(props: DropDownItemProps) {
   return (
-    <button
-      onClick={(e) => {
-        e.preventDefault()
-        props.item.onClick()
-        props.closeMenu()
-        e.stopPropagation()
-      }}
-      className='z-1 px-4 py-3 flex gap-2 items-center hover:bg-white/5 w-full [&:not(:last-child)]:border-b border-white/10'
+    <ConditionalWrapper
+      condition={!!props.item.disabled}
+      wrapper={(children) => (
+        <Tooltip
+          type='warning'
+          content={<Text size='sm'>{props.item.disabledTooltip}</Text>}
+          contentClassName='max-w-[200px]'
+          className='ml-auto'
+        >
+          {children}
+        </Tooltip>
+      )}
     >
-      <div className='flex justify-center w-5 h-5'>{props.item.icon}</div>
-      <Text size='sm'>{props.item.text}</Text>
-    </button>
+      <button
+        onClick={(e) => {
+          e.preventDefault()
+          props.item.onClick()
+          props.closeMenu()
+          e.stopPropagation()
+        }}
+        className={classNames(
+          'z-1 px-4 py-3 flex gap-2 items-center  w-full [&:not(:last-child)]:border-b border-white/10',
+          props.item.disabled ? 'bg-black/20 text-white/40 cursor-events-none' : 'hover:bg-white/5',
+        )}
+        disabled={props.item.disabled}
+      >
+        <div className='flex justify-center w-5 h-5'>{props.item.icon}</div>
+        <Text size='sm'>{props.item.text}</Text>
+      </button>
+    </ConditionalWrapper>
   )
 }

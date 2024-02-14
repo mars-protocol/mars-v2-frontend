@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react'
 import { ACCOUNT_MENU_BUTTON_ID } from 'components/account/AccountMenuContent'
 import DropDownButton from 'components/common/Button/DropDownButton'
 import { ArrowDownLine, ArrowUpLine, Enter, ExclamationMarkCircled } from 'components/common/Icons'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAlertDialog from 'hooks/useAlertDialog'
 import useAutoLend from 'hooks/useAutoLend'
 import useLendAndReclaimModal from 'hooks/useLendAndReclaimModal'
@@ -22,10 +23,11 @@ export default function Manage(props: Props) {
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const { open: showAlertDialog } = useAlertDialog()
   const address = useStore((s) => s.address)
+  const account = useCurrentAccount()
 
-  const hasLendAsset = useMemo(
-    () => !!props.data.accountLentValue && props.data.accountLentValue.isGreaterThan(0),
-    [props.data.accountLentValue],
+  const hasAssetInDeposits = useMemo(
+    () => !!account?.deposits?.find((deposit) => deposit.denom === props.data.asset.denom),
+    [account?.deposits, props.data.asset.denom],
   )
 
   const handleUnlend = useCallback(() => {
@@ -55,8 +57,11 @@ export default function Manage(props: Props) {
     () => [
       {
         icon: <ArrowUpLine />,
-        text: hasLendAsset ? 'Lend more' : 'Lend',
+        text: 'Lend more',
         onClick: () => openLend(props.data),
+        disabled: !hasAssetInDeposits,
+        disabledTooltip: `You don’t have any ${props.data.asset.symbol}.
+             Please first deposit ${props.data.asset.symbol} into your Credit Account before lending.`,
       },
       {
         icon: <ArrowDownLine />,
@@ -64,7 +69,7 @@ export default function Manage(props: Props) {
         onClick: handleUnlend,
       },
     ],
-    [handleUnlend, hasLendAsset, openLend, props.data],
+    [handleUnlend, hasAssetInDeposits, openLend, props.data],
   )
 
   if (!address) return null
