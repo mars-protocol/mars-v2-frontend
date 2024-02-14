@@ -1,6 +1,7 @@
 import useSWR from 'swr'
 
 import useChainConfig from 'hooks/useChainConfig'
+import { getUrl } from 'utils/url'
 
 export default function useWalletBalances(address?: string) {
   const chainConfig = useChainConfig()
@@ -16,13 +17,9 @@ export default function useWalletBalances(address?: string) {
 }
 
 async function getWalletBalances(chainConfig: ChainConfig, address: string): Promise<Coin[]> {
-  const uri = '/cosmos/bank/v1beta1/balances/'
+  const uri = getUrl(chainConfig.endpoints.rest, `cosmos/bank/v1beta1/balances/${address}`)
 
-  const response = await fetch(
-    process.env.NEXT_PUBLIC_API_KEY
-      ? `${chainConfig.endpoints.rest}${uri}${address}?x-apikey=${process.env.NEXT_PUBLIC_API_KEY}`
-      : `${chainConfig.endpoints.rest}${uri}${address}`,
-  )
+  const response = await fetch(uri)
 
   if (response.ok) {
     const data = await response.json()
