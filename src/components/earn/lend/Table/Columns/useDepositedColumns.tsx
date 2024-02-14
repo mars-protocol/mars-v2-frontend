@@ -2,6 +2,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
 import Apy, { APY_META } from 'components/earn/lend/Table/Columns/Apy'
+import Chevron, { CHEVRON_META } from 'components/earn/lend/Table/Columns/Chevron'
 import DepositCap, {
   DEPOSIT_CAP_META,
   marketDepositCapSortingFn,
@@ -48,7 +49,11 @@ export default function useDepositedColumns(props: Props) {
       },
       {
         ...MANAGE_META,
-        cell: ({ row }) => <Manage isExpanded={row.getIsExpanded()} />,
+        cell: ({ row }) => <Manage data={row.original} />,
+      },
+      {
+        ...CHEVRON_META,
+        cell: ({ row }) => <Chevron isExpanded={row.getIsExpanded()} />,
       },
     ]
   }, [props.isLoading])

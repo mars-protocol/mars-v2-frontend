@@ -2,9 +2,9 @@ import React from 'react'
 
 import HealthBar from 'components/account/Health/HealthBar'
 import Card from 'components/common/Card'
-import HLSTag from 'components/hls/HLSTag'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import HLSTag from 'components/hls/HLSTag'
 
 interface Props {
   stats: { title: React.ReactNode; sub: string }[]
@@ -33,7 +33,7 @@ export default function Skeleton(props: Props) {
           <TitleAndSubCell key={`${accountId}-${sub}`} title={title} sub={sub} />
         ))}
       </div>
-      <div className='flex gap-1 mt-6'>
+      <div className='flex mt-6'>
         <HealthBar health={health} healthFactor={healthFactor} showIcon />
       </div>
     </Card>

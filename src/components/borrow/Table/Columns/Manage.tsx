@@ -1,20 +1,55 @@
-import { ChevronDown, ChevronUp } from 'components/common/Icons'
+import { useCallback, useMemo } from 'react'
+
+import DropDownButton from 'components/common/Button/DropDownButton'
+import { HandCoins, Plus } from 'components/common/Icons'
+import useStore from 'store'
 
 export const MANAGE_META = {
   accessorKey: 'manage',
   enableSorting: false,
-  header: 'Manage',
-  meta: { className: 'w-30' },
+  header: '',
 }
 
 interface Props {
-  isExpanded: boolean
+  data: BorrowMarketTableData
 }
 
 export default function Manage(props: Props) {
+  const address = useStore((s) => s.address)
+
+  const borrowHandler = useCallback(() => {
+    if (!props.data.asset) return null
+    useStore.setState({ borrowModal: { asset: props.data.asset, marketData: props.data } })
+  }, [props.data])
+
+  const repayHandler = useCallback(() => {
+    if (!props.data.asset) return null
+    useStore.setState({
+      borrowModal: { asset: props.data.asset, marketData: props.data, isRepay: true },
+    })
+  }, [props.data])
+
+  const ITEMS: DropDownItem[] = useMemo(
+    () => [
+      {
+        icon: <Plus />,
+        text: 'Borrow more',
+        onClick: borrowHandler,
+      },
+      {
+        icon: <HandCoins />,
+        text: 'Repay',
+        onClick: repayHandler,
+      },
+    ],
+    [borrowHandler, repayHandler],
+  )
+
+  if (!address) return null
+
   return (
-    <div className='flex items-center justify-end'>
-      <div className='w-4'>{props.isExpanded ? <ChevronUp /> : <ChevronDown />}</div>
+    <div className='flex justify-end z-10'>
+      <DropDownButton items={ITEMS} text='Manage' color='tertiary' />
     </div>
   )
 }
