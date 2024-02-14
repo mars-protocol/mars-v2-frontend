@@ -68,7 +68,7 @@ export default function HealthBar({
           <HealthIcon
             health={health}
             isLoading={healthFactor === 0}
-            className={classNames('mr-2', iconClassName)}
+            className={iconClassName}
             colorClass='text-white'
           />
         )}
