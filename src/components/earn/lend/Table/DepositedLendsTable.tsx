@@ -14,7 +14,7 @@ type Props = {
 }
 
 export default function DepositedLendsTable(props: Props) {
-  const columns = useDepositedColumns({ isLoading: props.isLoading })
+  const columns = useDepositedColumns({ isLoading: props.isLoading, v1: props.v1 })
 
   const renderExpanded = useCallback(
     (row: Row<LendingMarketTableData>) => <MarketDetails row={row} type='lend' />,

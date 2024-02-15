@@ -3,7 +3,7 @@ import { useCallback } from 'react'
 
 import { DEBT_VALUE_META } from 'components/borrow/Table/Columns/DebtValue'
 import { NAME_META } from 'components/borrow/Table/Columns/Name'
-import useDepositedColumns from 'components/borrow/Table/Columns/useDepositedColumns'
+import useBorrowingsColumns from 'components/borrow/Table/Columns/useActiveColumns'
 import MarketDetails from 'components/common/MarketDetails'
 import Table from 'components/common/Table'
 
@@ -13,8 +13,8 @@ type Props = {
   v1?: boolean
 }
 
-export default function DepositedBorrowingsTable(props: Props) {
-  const columns = useDepositedColumns()
+export default function ActiveBorrowingsTable(props: Props) {
+  const columns = useBorrowingsColumns({ v1: props.v1 })
 
   const renderExpanded = useCallback((row: Row<BorrowMarketTableData>) => {
     return <MarketDetails row={row} type='borrow' />

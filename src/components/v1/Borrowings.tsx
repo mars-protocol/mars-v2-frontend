@@ -1,4 +1,4 @@
-import BorrowingsTable from 'components/borrow/Table/DepositedBorrowingsTable'
+import BorrowingsTable from 'components/borrow/Table/ActiveBorrowingsTable'
 import useV1BorrowingsTableData from 'components/v1/Table/useV1BorrowingsTableData'
 import { BN_ZERO } from 'constants/math'
 import useBorrowEnabledAssets from 'hooks/assets/useBorrowEnabledAssets'

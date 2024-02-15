@@ -1,5 +1,5 @@
+import ActiveBorrowingsTable from 'components/borrow/Table/ActiveBorrowingsTable'
 import AvailableBorrowingsTable from 'components/borrow/Table/AvailableBorrowingsTable'
-import DepositedBorrowingsTable from 'components/borrow/Table/DepositedBorrowingsTable'
 import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import { BN_ZERO } from 'constants/math'
 import useBorrowEnabledAssets from 'hooks/assets/useBorrowEnabledAssets'
@@ -12,7 +12,7 @@ export default function Borrowings() {
   }
   return (
     <>
-      <DepositedBorrowingsTable data={accountBorrowedAssets} isLoading={false} />
+      <ActiveBorrowingsTable data={accountBorrowedAssets} isLoading={false} />
       <AvailableBorrowingsTable data={availableAssets} isLoading={false} />
     </>
   )

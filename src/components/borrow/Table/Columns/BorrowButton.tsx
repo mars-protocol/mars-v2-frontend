@@ -16,6 +16,7 @@ export const BORROW_BUTTON_META = {
 
 interface Props {
   data: LendingMarketTableData
+  v1?: boolean
 }
 export default function BorrowButton(props: Props) {
   const account = useCurrentAccount()

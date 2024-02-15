@@ -23,7 +23,7 @@ export default function MarketDetails({ row, type }: Props) {
     symbol: displayCurrencySymbol,
   } = useDisplayCurrencyPrice()
 
-  const { asset, ltv, cap, liquidity, deposits, debt } = row.original
+  const { asset, ltv, deposits, debt } = row.original
 
   const details: Detail[] = useMemo(() => {
     const isDollar = displayCurrencySymbol === '$'

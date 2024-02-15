@@ -1,21 +1,21 @@
 import { useMemo } from 'react'
 
 import { BN_ZERO } from 'constants/math'
+import useAccount from 'hooks/accounts/useAccount'
 import useMarkets from 'hooks/markets/useMarkets'
 import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
-import useV1Positions from 'hooks/v1/useV1Positions'
 import useStore from 'store'
 
 export default function useV1BorrowingsTableData() {
   const address = useStore((s) => s.address)
   const markets = useMarkets()
-  const { data: v1Positions } = useV1Positions(address)
-  const userDebts = v1Positions?.debts ?? []
+  const { data: v1Positions } = useAccount(address)
   const { convertAmount } = useDisplayCurrencyPrice()
 
   return useMemo((): {
     debtAssets: BorrowMarketTableData[]
   } => {
+    const userDebts = v1Positions?.debts ?? []
     const debtAssets: BorrowMarketTableData[] = []
 
     markets
@@ -34,5 +34,5 @@ export default function useV1BorrowingsTableData() {
       })
 
     return { debtAssets }
-  }, [userDebts, markets, convertAmount])
+  }, [v1Positions, markets, convertAmount])
 }

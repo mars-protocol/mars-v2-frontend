@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 
 import { BN_ZERO } from 'constants/math'
+import useAccount from 'hooks/accounts/useAccount'
 import useMarkets from 'hooks/markets/useMarkets'
 import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
-import useV1Positions from 'hooks/v1/useV1Positions'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 
@@ -12,12 +12,12 @@ export default function useV1DepositsTableData(): {
 } {
   const address = useStore((s) => s.address)
   const markets = useMarkets()
-  const { data: v1Positions } = useV1Positions(address)
-  const userCollateral = v1Positions?.lends ?? []
+  const { data: v1Positions } = useAccount(address)
   const { convertAmount } = useDisplayCurrencyPrice()
 
   return useMemo(() => {
     const depositAssets: LendingMarketTableData[] = []
+    const userCollateral = v1Positions?.lends ?? []
 
     markets.forEach((market) => {
       const amount = userCollateral.find(byDenom(market.asset.denom))?.amount ?? BN_ZERO
@@ -35,5 +35,5 @@ export default function useV1DepositsTableData(): {
     return {
       depositAssets,
     }
-  }, [markets, userCollateral, convertAmount])
+  }, [markets, v1Positions, convertAmount])
 }

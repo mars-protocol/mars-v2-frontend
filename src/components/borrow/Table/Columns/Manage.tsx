@@ -12,6 +12,7 @@ export const MANAGE_META = {
 
 interface Props {
   data: BorrowMarketTableData
+  v1?: boolean
 }
 
 export default function Manage(props: Props) {
@@ -48,7 +49,7 @@ export default function Manage(props: Props) {
   if (!address) return null
 
   return (
-    <div className='flex justify-end z-10'>
+    <div className='z-10 flex justify-end'>
       <DropDownButton items={ITEMS} text='Manage' color='tertiary' />
     </div>
   )

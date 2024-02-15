@@ -13,8 +13,13 @@ import Liquidity, {
 } from 'components/borrow/Table/Columns/Liquidity'
 import Manage, { MANAGE_META } from 'components/borrow/Table/Columns/Manage'
 import Name, { NAME_META } from 'components/borrow/Table/Columns/Name'
+import Action from 'components/v1/Table/borrowings/Columns/Action'
 
-export default function useDepositedColumns() {
+interface Props {
+  v1?: boolean
+}
+
+export default function useActiveColumns(props: Props) {
   return useMemo<ColumnDef<BorrowMarketTableData>[]>(() => {
     return [
       {
@@ -39,12 +44,13 @@ export default function useDepositedColumns() {
       },
       {
         ...MANAGE_META,
-        cell: ({ row }) => <Manage data={row.original} />,
+        cell: ({ row }) =>
+          props.v1 ? <Action data={row.original} /> : <Manage data={row.original} />,
       },
       {
         ...CHEVRON_META,
         cell: ({ row }) => <Chevron isExpanded={row.getIsExpanded()} />,
       },
     ]
-  }, [])
+  }, [props.v1])
 }
