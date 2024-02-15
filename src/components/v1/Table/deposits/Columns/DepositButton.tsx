@@ -37,7 +37,9 @@ export default function DepositButton(props: Props) {
           disabled={!hasBalance}
           color='tertiary'
           onClick={(e) => {
-            useStore.setState({ fundAndWithdrawModal: 'fund' })
+            useStore.setState({
+              v1DepositAndWithdrawModal: { type: 'deposit', data: props.data },
+            })
             e.stopPropagation()
           }}
           text='Deposit'

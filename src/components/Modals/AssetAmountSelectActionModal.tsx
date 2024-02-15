@@ -10,12 +10,12 @@ import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import AssetImage from 'components/common/assets/AssetImage'
 import { BN_ZERO } from 'constants/math'
-import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 
 interface Props {
+  account: Account
   asset: Asset
   title: string
   coinBalances: BNCoin[]
@@ -29,6 +29,7 @@ interface Props {
 
 export default function AssetAmountSelectActionModal(props: Props) {
   const {
+    account,
     asset,
     title,
     coinBalances,
@@ -41,7 +42,6 @@ export default function AssetAmountSelectActionModal(props: Props) {
   } = props
   const [amount, setAmount] = useState(BN_ZERO)
   const maxAmount = BN(coinBalances.find(byDenom(asset.denom))?.amount ?? 0)
-  const account = useCurrentAccount()
   const handleAmountChange = useCallback(
     (value: BigNumber) => {
       setAmount(value)
@@ -54,7 +54,6 @@ export default function AssetAmountSelectActionModal(props: Props) {
     onAction(amount, amount.isEqualTo(maxAmount))
   }, [amount, maxAmount, onAction])
 
-  if (!account) return
   return (
     <Modal
       onClose={onClose}

@@ -7,8 +7,8 @@ import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
 import { generateToastContent } from 'components/common/Toaster'
 import useTransactions from 'hooks/localStorage/useTransactions'
-import useStore from 'store'
 import useChainConfig from 'hooks/useChainConfig'
+import useStore from 'store'
 
 export default function RecentTransactions() {
   const address = useStore((s) => s.address)
@@ -47,7 +47,9 @@ export default function RecentTransactions() {
                     key={hash}
                   >
                     <div className='flex items-start justify-between w-full pb-2'>
-                      <Text className='flex font-bold'>Credit Account {accountId}</Text>
+                      <Text className='flex font-bold'>
+                        {accountId === address ? 'Red Bank' : `Credit Account ${accountId}`}
+                      </Text>
                       <Text size='sm' className='text-white/70'>
                         {moment.unix(timestamp).format('lll')}
                       </Text>

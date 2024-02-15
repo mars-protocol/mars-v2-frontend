@@ -11,11 +11,11 @@ import { TextLink } from 'components/common/TextLink'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useChainConfig from 'hooks/useChainConfig'
 import useTransactionStore from 'hooks/useTransactionStore'
 import useStore from 'store'
 import { formatAmountWithSymbol } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import useChainConfig from 'hooks/useChainConfig'
 
 const toastBodyClasses = classNames(
   'flex flex-wrap w-full group/transaction',
@@ -99,6 +99,13 @@ export default function Toaster() {
     if (!isError && toast.accountId) addTransaction(toast)
     const generalMessage = isError ? 'Transaction failed!' : 'Transaction completed successfully!'
     const showDetailElement = !!(!details && toast.hash)
+    const address = useStore.getState().address
+
+    let target: string
+    if (!isError) {
+      target = toast.accountId === address ? 'Red Bank' : `Credit Account ${toast.accountId}`
+    }
+
     const Msg = () => (
       <div className='relative flex flex-wrap w-full m-0 isolate'>
         <div className='flex w-full gap-2 mb-2'>
@@ -141,7 +148,7 @@ export default function Toaster() {
           )}
         >
           {!isError && toast.accountId && (
-            <Text className='mb-1 font-bold text-white'>{`Credit Account ${toast.accountId}`}</Text>
+            <Text className='mb-1 font-bold text-white'>{target}</Text>
           )}
           {showDetailElement && toast.message && (
             <Text size='sm' className='w-full mb-1 text-white'>

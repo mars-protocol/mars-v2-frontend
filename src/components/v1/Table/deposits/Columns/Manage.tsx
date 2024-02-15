@@ -22,17 +22,23 @@ export default function Manage(props: Props) {
       {
         icon: <ArrowUpLine />,
         text: 'Deposit more',
-        onClick: () => openLend(props.data),
+        onClick: () =>
+          useStore.setState({
+            v1DepositAndWithdrawModal: { type: 'deposit', data: props.data },
+          }),
         disabled: !hasBalance,
         disabledTooltip: `You don’t have any ${props.data.asset.symbol} in your Wallet.`,
       },
       {
         icon: <ArrowDownLine />,
         text: 'Withdraw',
-        onClick: () => openReclaim(props.data),
+        onClick: () =>
+          useStore.setState({
+            v1DepositAndWithdrawModal: { type: 'withdraw', data: props.data },
+          }),
       },
     ],
-    [hasBalance, openLend, openReclaim, props.data],
+    [hasBalance, props.data],
   )
 
   return (
