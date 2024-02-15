@@ -17,8 +17,6 @@ export default function Manage(props: Props) {
   const { data: balances } = useWalletBalances(address)
   const hasBalance = !!balances.find(byDenom(props.data.asset.denom))
 
-  console.log(balances)
-
   const ITEMS: DropDownItem[] = useMemo(
     () => [
       {

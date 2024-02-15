@@ -18,6 +18,7 @@ interface CommonSlice {
   useAutoRepay: boolean
   isOracleStale: boolean
   isHLS: boolean
+  isV1: boolean
 }
 
 interface FocusComponent {

@@ -49,7 +49,9 @@ export default function DesktopHeader() {
   const focusComponent = useStore((s) => s.focusComponent)
   const isOracleStale = useStore((s) => s.isOracleStale)
   const isHLS = useStore((s) => s.isHLS)
+  const isV1 = useStore((s) => s.isV1)
   const accountId = useAccountId()
+  const showAccountMenu = address && !isHLS && !isV1
 
   function handleCloseFocusMode() {
     if (focusComponent && focusComponent.onClose) focusComponent.onClose()
@@ -93,7 +95,7 @@ export default function DesktopHeader() {
           <div className='flex gap-4'>
             {showStaleOracle && <OracleResyncButton />}
             {accountId && <RewardsCenter />}
-            {address && !isHLS && <AccountMenu />}
+            {showAccountMenu && <AccountMenu />}
             <Wallet />
             <ChainSelect />
             <Settings />

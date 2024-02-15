@@ -10,8 +10,6 @@ export default function Deposits() {
     return <Fallback />
   }
 
-  console.log(depositAssets)
-
   return (
     <>
       <DepositsTable data={depositAssets} isLoading={false} v1 />

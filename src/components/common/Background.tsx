@@ -15,11 +15,23 @@ export default function Background() {
   )
   const { pathname } = useLocation()
   const page = getPage(pathname)
-  const isHLS = useMemo(() => page.split('-')[0] === 'hls', [page])
+  const [isHLS, isV1] = useMemo(() => [page.split('-')[0] === 'hls', page === 'v1'], [page])
 
   useEffect(() => {
-    useStore.setState({ isHLS })
-  }, [isHLS])
+    useStore.setState({ isHLS: isHLS, isV1: isV1 })
+  }, [isHLS, isV1])
+
+  const [primaryOrbClassName, secondaryOrbClassName, tertiaryOrbClassName, bodyClassName] =
+    useMemo(() => {
+      if (isHLS) {
+        return ['bg-orb-primary-hls', 'bg-orb-secondary-hls', 'bg-orb-tertiary-hls', 'bg-body-hls']
+      }
+      if (isV1) {
+        return ['bg-orb-primary-v1', 'bg-orb-secondary-v1', 'bg-orb-tertiary-v1', 'bg-body-v1']
+      }
+
+      return ['bg-orb-primary', 'bg-orb-secondary', 'bg-orb-tertiary', 'bg-body']
+    }, [isHLS, isV1])
 
   return (
     <div
@@ -27,7 +39,7 @@ export default function Background() {
         'fixed inset-0',
         'w-full h-full',
         'overflow-hidden pointer-events-none background ',
-        isHLS ? 'bg-body-hls' : 'bg-body',
+        bodyClassName,
         !reduceMotion && 'transition-bg duration-1000 delay-300',
       )}
     >
@@ -39,7 +51,7 @@ export default function Background() {
           'max-h-[500px] max-w-[500px]',
           'left-[-10vw] top-[-10vw]',
           'blur-orb-primary',
-          isHLS ? ' bg-orb-primary-hls' : 'bg-orb-primary',
+          primaryOrbClassName,
           'translate-x-0 translate-y-0 rounded-full opacity-20',
           !reduceMotion && 'animate-[float_120s_ease-in-out_infinite_2s]',
           !reduceMotion && 'transition-bg duration-1000 delay-300',
@@ -53,7 +65,7 @@ export default function Background() {
           'max-h-[1000px] max-w-[1000px]',
           'bottom-[-20vw] right-[-10vw]',
           'blur-orb-secondary',
-          isHLS ? ' bg-orb-secondary-hls' : 'bg-orb-secondary',
+          secondaryOrbClassName,
           'translate-x-0 translate-y-0  rounded-full opacity-30',
           !reduceMotion && 'transition-bg duration-1000 delay-300',
         )}
@@ -66,7 +78,7 @@ export default function Background() {
           'max-h-[600px] max-w-[600px]',
           'right-[-4vw] top-[-10vw]',
           'blur-orb-tertiary ',
-          isHLS ? ' bg-orb-tertiary-hls' : 'bg-orb-tertiary',
+          tertiaryOrbClassName,
           'translate-x-0 translate-y-0 rounded-full opacity-20',
           !reduceMotion && 'animate-[float_180s_ease-in_infinite]',
           !reduceMotion && 'transition-bg duration-1000 delay-300',
