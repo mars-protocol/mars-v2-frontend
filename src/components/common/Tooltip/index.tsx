@@ -48,7 +48,7 @@ export const Tooltip = (props: Props) => {
       visible={props.visible}
     >
       {props.children ? (
-        <span
+        <div
           className={classNames(
             props.underline &&
               'border-b hover:cursor-help  border-dashed border-white/20 pb-1 hover:border-transparent',
@@ -57,7 +57,7 @@ export const Tooltip = (props: Props) => {
           )}
         >
           {props.children}
-        </span>
+        </div>
       ) : (
         <span
           className={classNames(

@@ -2,11 +2,12 @@ import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
 import Apy, { APY_META } from 'components/earn/lend/Table/Columns/Apy'
+import Chevron, { CHEVRON_META } from 'components/earn/lend/Table/Columns/Chevron'
 import DepositCap, {
   DEPOSIT_CAP_META,
   marketDepositCapSortingFn,
 } from 'components/earn/lend/Table/Columns/DepositCap'
-import Manage, { MANAGE_META } from 'components/earn/lend/Table/Columns/Manage'
+import LendButton, { LEND_BUTTON_META } from 'components/earn/lend/Table/Columns/LendButton'
 import Name, { NAME_META } from 'components/earn/lend/Table/Columns/Name'
 
 interface Props {
@@ -36,8 +37,12 @@ export default function useAvailableColumns(props: Props) {
         sortingFn: marketDepositCapSortingFn,
       },
       {
-        ...MANAGE_META,
-        cell: ({ row }) => <Manage isExpanded={row.getIsExpanded()} />,
+        ...LEND_BUTTON_META,
+        cell: ({ row }) => <LendButton data={row.original} />,
+      },
+      {
+        ...CHEVRON_META,
+        cell: ({ row }) => <Chevron isExpanded={row.getIsExpanded()} />,
       },
     ]
   }, [props.isLoading])

@@ -16,9 +16,9 @@ export default function TooltipContent(props: Props) {
     <div>
       <div
         className={classNames(
-          'flex max-w-[320px] flex-1 gap-2 rounded-lg p-3 text-sm shadow-tooltip backdrop-blur-[100px]',
+          'flex max-w-[320px] flex-1 gap-2 rounded-base p-3 text-sm shadow-tooltip backdrop-blur-[100px]',
           'relative isolate max-w-full overflow-hidden',
-          'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-lg before:p-[1px] before:border-glas',
+          'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
           props.type === 'info' && 'bg-white/10',
           props.type === 'warning' && 'bg-warning',
           props.type === 'error' && 'bg-error',
