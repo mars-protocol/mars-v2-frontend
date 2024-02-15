@@ -5,23 +5,24 @@ import ATOM from 'configs/assets/ATOM'
 import AXL from 'configs/assets/AXL'
 import DYDX from 'configs/assets/DYDX'
 import INJ from 'configs/assets/INJ'
+import MARS from 'configs/assets/MARS'
+import OSMO from 'configs/assets/OSMO'
+import TIA from 'configs/assets/TIA'
+import USDC from 'configs/assets/USDC'
+import USDCaxl from 'configs/assets/USDC.axl'
+import USDT from 'configs/assets/USDT'
+import USDollar from 'configs/assets/USDollar'
+import WBTCaxl from 'configs/assets/WBTC.axl'
+import WETHaxl from 'configs/assets/WETH.xal'
 import OSMO_ATOM from 'configs/assets/lp/OSMO-ATOM'
 import OSMO_USDC from 'configs/assets/lp/OSMO_USDC'
 import OSMO_WBTC from 'configs/assets/lp/OSMO_WBTC'
 import OSMO_WETH from 'configs/assets/lp/OSMO_WETH'
 import stATOM_ATOM from 'configs/assets/lp/stATOM_ATOM'
-import MARS from 'configs/assets/MARS'
 import milkTIA from 'configs/assets/milkTIA'
-import OSMO from 'configs/assets/OSMO'
 import stATOM from 'configs/assets/stATOM'
+import stDYDX from 'configs/assets/stDYDX'
 import stOSMO from 'configs/assets/stOSMO'
-import TIA from 'configs/assets/TIA'
-import USDC from 'configs/assets/USDC'
-import USDCaxl from 'configs/assets/USDC.axl'
-import USDollar from 'configs/assets/USDollar'
-import USDT from 'configs/assets/USDT'
-import WBTCaxl from 'configs/assets/WBTC.axl'
-import WETHaxl from 'configs/assets/WETH.xal'
 import { VAULTS_META_DATA } from 'constants/vaults'
 import { NETWORK } from 'types/enums/network'
 import { ChainInfoID } from 'types/enums/wallet'
@@ -46,14 +47,19 @@ const ASSETS = [
     denom: 'ibc/D1542AA8762DB13087D8364F3EA6509FD6F009A34F00426AF9E4F9FA85CBBF1F',
   },
   {
+    ...stATOM,
+    poolId: 803,
+    denom: 'ibc/C140AFD542AE77BD7DCC83F13FDD8C5E5BB8C4929785E6EC2F4C636F98F17901',
+  },
+  {
     ...stOSMO,
     poolId: 833,
     denom: 'ibc/D176154B0C63D1F9C6DCFB4F70349EBF2E2B5A87A05902F57A6AE92B863E9AEC',
   },
   {
-    ...stATOM,
-    poolId: 803,
-    denom: 'ibc/C140AFD542AE77BD7DCC83F13FDD8C5E5BB8C4929785E6EC2F4C636F98F17901',
+    ...stDYDX,
+    poolId: 1423,
+    denom: 'ibc/980E82A9F8E7CA8CD480F4577E73682A6D3855A267D1831485D7EBEF0E7A6C2C',
   },
   {
     ...USDCaxl,
