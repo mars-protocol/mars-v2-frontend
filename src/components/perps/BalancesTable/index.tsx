@@ -12,13 +12,16 @@ export default function PerpsBalancesTable() {
   const columns = usePerpsBalancesColumns()
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const onClickRow = useCallback((denom: string) => {
-    const params = getSearchParamsObject(searchParams)
-    setSearchParams({
-      ...params,
-      [SearchParams.PERPS_MARKET]: denom,
-    })
-  }, [])
+  const onClickRow = useCallback(
+    (denom: string) => {
+      const params = getSearchParamsObject(searchParams)
+      setSearchParams({
+        ...params,
+        [SearchParams.PERPS_MARKET]: denom,
+      })
+    },
+    [searchParams, setSearchParams],
+  )
 
   return (
     <Table
