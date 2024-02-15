@@ -12,7 +12,6 @@ export const MANAGE_META = {
 
 interface Props {
   data: BorrowMarketTableData
-  v1?: boolean
 }
 
 export default function Manage(props: Props) {

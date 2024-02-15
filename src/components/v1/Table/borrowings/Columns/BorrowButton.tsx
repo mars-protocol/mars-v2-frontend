@@ -1,42 +1,29 @@
-import { useCallback } from 'react'
-
 import ActionButton from 'components/common/Button/ActionButton'
 import { Plus } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
-import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useAccount from 'hooks/accounts/useAccount'
 import useStore from 'store'
 
-export const BORROW_BUTTON_META = {
-  accessorKey: 'borrow',
-  enableSorting: false,
-  header: '',
-}
-
 interface Props {
-  data: LendingMarketTableData
+  data: BorrowMarketTableData
 }
 export default function BorrowButton(props: Props) {
-  const account = useCurrentAccount()
   const address = useStore((s) => s.address)
-  const hasNoDeposits = !account?.deposits?.length && !account?.lends?.length && !!address
+  const { data: account } = useAccount(address)
 
-  const borrowHandler = useCallback(() => {
-    if (!props.data.asset) return null
-    useStore.setState({ borrowModal: { asset: props.data.asset, marketData: props.data } })
-  }, [props.data])
+  const hasCollateral = account?.lends?.length ?? 0 > 0
 
   return (
     <div className='flex justify-end'>
       <ConditionalWrapper
-        condition={hasNoDeposits}
+        condition={!hasCollateral}
         wrapper={(children) => (
           <Tooltip
             type='warning'
             content={
-              <Text size='sm'>{`You don’t have any collateral.
-             Please first deposit into your Credit Account before borrowing.`}</Text>
+              <Text size='sm'>{`You don’t have assets deposited in the Red Bank. Please deposit assets before you borrow.`}</Text>
             }
             contentClassName='max-w-[200px]'
             className='ml-auto'
@@ -47,10 +34,12 @@ export default function BorrowButton(props: Props) {
       >
         <ActionButton
           leftIcon={<Plus />}
-          disabled={hasNoDeposits}
+          disabled={!hasCollateral}
           color='tertiary'
           onClick={(e) => {
-            borrowHandler()
+            useStore.setState({
+              v1BorrowAndRepayModal: { type: 'borrow', data: props.data },
+            })
             e.stopPropagation()
           }}
           text='Borrow'

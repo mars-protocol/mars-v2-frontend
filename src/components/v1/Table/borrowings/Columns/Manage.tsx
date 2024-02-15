@@ -1,14 +1,13 @@
 import { useMemo } from 'react'
 
 import DropDownButton from 'components/common/Button/DropDownButton'
-import { ArrowDownLine, ArrowUpLine } from 'components/common/Icons'
-import useLendAndReclaimModal from 'hooks/useLendAndReclaimModal'
+import { HandCoins, Plus } from 'components/common/Icons'
 import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 
 interface Props {
-  data: LendingMarketTableData
+  data: BorrowMarketTableData
 }
 
 export default function Manage(props: Props) {
@@ -19,22 +18,22 @@ export default function Manage(props: Props) {
   const ITEMS: DropDownItem[] = useMemo(
     () => [
       {
-        icon: <ArrowUpLine />,
-        text: 'Deposit more',
+        icon: <Plus />,
+        text: 'Borrow more',
         onClick: () =>
           useStore.setState({
-            v1DepositAndWithdrawModal: { type: 'deposit', data: props.data },
+            v1BorrowAndRepayModal: { type: 'borrow', data: props.data },
+          }),
+      },
+      {
+        icon: <HandCoins />,
+        text: 'Repay',
+        onClick: () =>
+          useStore.setState({
+            v1BorrowAndRepayModal: { type: 'repay', data: props.data },
           }),
         disabled: !hasBalance,
         disabledTooltip: `You don’t have any ${props.data.asset.symbol} in your Wallet.`,
-      },
-      {
-        icon: <ArrowDownLine />,
-        text: 'Withdraw',
-        onClick: () =>
-          useStore.setState({
-            v1DepositAndWithdrawModal: { type: 'withdraw', data: props.data },
-          }),
       },
     ],
     [hasBalance, props.data],

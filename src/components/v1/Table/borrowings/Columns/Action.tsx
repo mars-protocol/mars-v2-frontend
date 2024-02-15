@@ -1,5 +1,5 @@
-import BorrowButton from 'components/borrow/Table/Columns/BorrowButton'
-import Manage from 'components/borrow/Table/Columns/Manage'
+import BorrowButton from 'components/v1/Table/borrowings/Columns/BorrowButton'
+import Manage from 'components/v1/Table/borrowings/Columns/Manage'
 
 export const MANAGE_META = {
   accessorKey: 'manage',
@@ -14,7 +14,7 @@ interface Props {
 export default function Action(props: Props) {
   const hasDebt = !props.data.accountDebtAmount?.isZero() ?? false
 
-  if (hasDebt) return <Manage data={props.data} v1 />
+  if (hasDebt) return <Manage data={props.data} />
 
-  return <BorrowButton data={props.data} v1 />
+  return <BorrowButton data={props.data} />
 }

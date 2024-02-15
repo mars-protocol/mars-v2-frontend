@@ -7,7 +7,6 @@ interface ModalSlice {
   hlsManageModal: HlsManageModal | null
   borrowModal: BorrowModal | null
   fundAndWithdrawModal: 'fund' | 'withdraw' | null
-  v1DepositAndWithdrawModal: V1DepositAndWithdrawModal | null
   getStartedModal: boolean
   hlsInformationModal: boolean | null
   lendAndReclaimModal: LendAndReclaimModalConfig | null
@@ -16,6 +15,8 @@ interface ModalSlice {
   vaultModal: VaultModal | null
   walletAssetsModal: WalletAssetModal | null
   withdrawFromVaultsModal: DepositedVault[] | null
+  v1DepositAndWithdrawModal: V1DepositAndWithdrawModal | null
+  v1BorrowAndRepayModal: V1BorrowAndRepayModal | null
 }
 
 interface AlertDialogButton {
@@ -89,4 +90,9 @@ type HlsStakingManageAction = 'deposit' | 'withdraw' | 'repay' | 'leverage'
 interface V1DepositAndWithdrawModal {
   type: 'deposit' | 'withdraw'
   data: LendingMarketTableData
+}
+
+interface V1BorrowAndRepayModal {
+  type: 'borrow' | 'repay'
+  data: BorrowMarketTableData
 }

@@ -11,9 +11,8 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { defaultFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
-
-import AssetAmountSelectActionModal from '../AssetAmountSelectActionModal'
-import DetailsHeader from '../LendAndReclaim/DetailsHeader'
+import AssetAmountSelectActionModal from 'components/Modals/AssetAmountSelectActionModal'
+import DetailsHeader from 'components/Modals/LendAndReclaim/DetailsHeader'
 
 interface Props {
   account: Account
