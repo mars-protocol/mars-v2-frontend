@@ -66,7 +66,7 @@ export default function Row<T>(props: Props<T>) {
                 spacingClassName ?? 'px-3 py-4',
                 type && type !== 'strategies' && isSymbolOrName && 'border-l',
                 type && type !== 'strategies' && getBorderColor(type, cell.row.original as any),
-                cell.column.columnDef.meta?.className ?? 'w-min',
+                cell.column.columnDef.meta?.className,
               )}
             >
               {flexRender(cell.column.columnDef.cell, cell.getContext())}

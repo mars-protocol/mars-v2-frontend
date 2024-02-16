@@ -13,6 +13,9 @@ export const LEND_BUTTON_META = {
   accessorKey: 'lend',
   enableSorting: false,
   header: '',
+  meta: {
+    className: 'w-40',
+  },
 }
 
 interface Props {

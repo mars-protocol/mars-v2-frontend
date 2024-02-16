@@ -10,6 +10,9 @@ export const DEPOSIT_CAP_META = {
   accessorKey: 'marketDepositCap',
   header: 'Deposit Cap',
   id: 'marketDepositCap',
+  meta: {
+    className: 'w-50',
+  },
 }
 
 export const marketDepositCapSortingFn = (
