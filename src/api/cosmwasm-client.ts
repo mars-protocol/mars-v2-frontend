@@ -8,6 +8,7 @@ import { MarsParamsQueryClient } from 'types/generated/mars-params/MarsParams.cl
 import { MarsPerpsQueryClient } from 'types/generated/mars-perps/MarsPerps.client'
 import { MarsRedBankQueryClient } from 'types/generated/mars-red-bank/MarsRedBank.client'
 import { MarsSwapperOsmosisQueryClient } from 'types/generated/mars-swapper-osmosis/MarsSwapperOsmosis.client'
+import { getUrl } from 'utils/url'
 
 let _cosmWasmClient: Map<string, CosmWasmClient> = new Map()
 let _creditManagerQueryClient: Map<string, MarsCreditManagerQueryClient> = new Map()
@@ -34,7 +35,7 @@ const getClient = async (rpc: string) => {
 const getCreditManagerQueryClient = async (chainConfig: ChainConfig) => {
   try {
     const contract = chainConfig.contracts.creditManager
-    const rpc = chainConfig.endpoints.rpc
+    const rpc = getUrl(chainConfig.endpoints.rpc)
     const key = rpc + contract
 
     if (!_creditManagerQueryClient.get(key)) {
@@ -51,7 +52,7 @@ const getCreditManagerQueryClient = async (chainConfig: ChainConfig) => {
 const getParamsQueryClient = async (chainConfig: ChainConfig) => {
   try {
     const contract = chainConfig.contracts.params
-    const rpc = chainConfig.endpoints.rpc
+    const rpc = getUrl(chainConfig.endpoints.rpc)
     const key = rpc + contract
 
     if (!_paramsQueryClient.get(key)) {
@@ -68,7 +69,7 @@ const getParamsQueryClient = async (chainConfig: ChainConfig) => {
 const getOracleQueryClient = async (chainConfig: ChainConfig) => {
   try {
     const contract = chainConfig.contracts.oracle
-    const rpc = chainConfig.endpoints.rpc
+    const rpc = getUrl(chainConfig.endpoints.rpc)
     const key = rpc + contract
 
     if (!_oracleQueryClient.get(key)) {
@@ -84,7 +85,7 @@ const getOracleQueryClient = async (chainConfig: ChainConfig) => {
 
 const getVaultQueryClient = async (chainConfig: ChainConfig, address: string) => {
   try {
-    const client = await getClient(chainConfig.endpoints.rpc)
+    const client = await getClient(getUrl(chainConfig.endpoints.rpc))
     return new MarsMockVaultQueryClient(client, address)
   } catch (error) {
     throw error
@@ -94,7 +95,7 @@ const getVaultQueryClient = async (chainConfig: ChainConfig, address: string) =>
 const getIncentivesQueryClient = async (chainConfig: ChainConfig) => {
   try {
     const contract = chainConfig.contracts.incentives
-    const rpc = chainConfig.endpoints.rpc
+    const rpc = getUrl(chainConfig.endpoints.rpc)
     const key = rpc + contract
     if (!_incentivesQueryClient.get(key)) {
       const client = await getClient(rpc)
@@ -110,7 +111,7 @@ const getIncentivesQueryClient = async (chainConfig: ChainConfig) => {
 const getSwapperQueryClient = async (chainConfig: ChainConfig) => {
   try {
     const contract = chainConfig.contracts.swapper
-    const rpc = chainConfig.endpoints.rpc
+    const rpc = getUrl(chainConfig.endpoints.rpc)
     const key = rpc + contract
     if (!_swapperOsmosisClient.get(key)) {
       const client = await getClient(rpc)
@@ -126,7 +127,7 @@ const getSwapperQueryClient = async (chainConfig: ChainConfig) => {
 const getPerpsQueryClient = async (chainConfig: ChainConfig) => {
   try {
     const contract = chainConfig.contracts.perps
-    const rpc = chainConfig.endpoints.rpc
+    const rpc = getUrl(chainConfig.endpoints.rpc)
     const key = rpc + contract
     if (!_perpsClient.get(key)) {
       const client = await getClient(rpc)
@@ -142,7 +143,7 @@ const getPerpsQueryClient = async (chainConfig: ChainConfig) => {
 const getRedBankQueryClient = async (chainConfig: ChainConfig) => {
   try {
     const contract = chainConfig.contracts.redBank
-    const rpc = chainConfig.endpoints.rpc
+    const rpc = getUrl(chainConfig.endpoints.rpc)
     const key = rpc + contract
 
     if (!_redBankQueryClient.get(key)) {
@@ -162,8 +163,8 @@ export {
   getIncentivesQueryClient,
   getOracleQueryClient,
   getParamsQueryClient,
-  getSwapperQueryClient,
-  getVaultQueryClient,
   getPerpsQueryClient,
   getRedBankQueryClient,
+  getSwapperQueryClient,
+  getVaultQueryClient,
 }

@@ -75,7 +75,7 @@ function Content(props: Props) {
         title: (
           <FormattedNumber
             className='text-xl'
-            amount={leverage.toNumber()}
+            amount={isNaN(leverage.toNumber()) ? 1 : leverage.toNumber()}
             options={{ suffix: 'x' }}
           />
         ),

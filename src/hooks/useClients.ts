@@ -11,6 +11,7 @@ import { MarsParamsQueryClient } from 'types/generated/mars-params/MarsParams.cl
 import { MarsPerpsQueryClient } from 'types/generated/mars-perps/MarsPerps.client'
 import { MarsRedBankQueryClient } from 'types/generated/mars-red-bank/MarsRedBank.client'
 import { MarsSwapperOsmosisQueryClient } from 'types/generated/mars-swapper-osmosis/MarsSwapperOsmosis.client'
+import { getUrl } from 'utils/url'
 
 export default function useClients() {
   const chainConfig = useChainConfig()
@@ -18,7 +19,7 @@ export default function useClients() {
   const swr = useSWR(
     `chains/${chainConfig.id}/clients`,
     async () => {
-      const client = await CosmWasmClient.connect(chainConfig.endpoints.rpc)
+      const client = await CosmWasmClient.connect(getUrl(chainConfig.endpoints.rpc))
 
       return {
         creditManager: new MarsCreditManagerQueryClient(
