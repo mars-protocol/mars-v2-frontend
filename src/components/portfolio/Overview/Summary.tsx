@@ -89,7 +89,7 @@ export default function PortfolioSummary() {
         title: (
           <FormattedNumber
             className='text-xl'
-            amount={leverage.toNumber()}
+            amount={isNaN(leverage.toNumber()) ? 1 : leverage.toNumber()}
             options={{ suffix: 'x' }}
           />
         ),
