@@ -118,7 +118,7 @@ export function resolvePerpsPositions(
       baseDenom: position.base_denom,
       amount: BN(position.size as any), // Amount is negative for SHORT positions
       tradeDirection: BN(position.size as any).isNegative() ? 'short' : 'long',
-      // closingFee: BNCoin.fromCoin(position.pnl.coins.closing_fee),
+      closingFeeRate: BN(position.closing_fee_rate),
       pnl: {
         net: BNCoin.fromDenomAndBigNumber(
           position.base_denom,

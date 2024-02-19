@@ -8,6 +8,8 @@ import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 import { convertApyToApr } from 'utils/parsers'
 
+import { Positions } from '../types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
+
 export const calculateAccountBalanceValue = (
   account: Account | AccountChange,
   prices: BNCoin[],
@@ -174,7 +176,7 @@ export function accumulateAmounts(denom: string, coins: BNCoin[]): BigNumber {
 }
 
 // TODO: 📈 Add correct type mapping
-export function convertAccountToPositions(account: Account): PositionsWithoutPerps {
+export function convertAccountToPositions(account: Account, prices: BNCoin[]): Positions {
   return {
     account_id: account.id,
     debts: account.debts.map((debt) => ({
@@ -188,6 +190,56 @@ export function convertAccountToPositions(account: Account): PositionsWithoutPer
       amount: lend.amount.toString(),
       denom: lend.denom,
     })),
+    perps: account.perps.map((perpPosition) => {
+      // TODO: Check if this needs to be converted (in regards to HC decimal scaling)
+      const currentPrice = prices.find(byDenom(perpPosition.denom))?.amount ?? BN_ZERO
+      return {
+        // Used
+        base_denom: perpPosition.baseDenom,
+        // Used
+        closing_fee_rate: perpPosition.closingFeeRate.toString(),
+        // Used
+        current_price: currentPrice.toString(), // Check what prices we should pass to current and entry prices. Entry price will change when modifying positionl
+        current_exec_price: currentPrice.toString(), // TODO: 📈 This needs to be queried
+        denom: perpPosition.denom,
+        // Used (for now, this might be changed)
+        entry_price: currentPrice.toString(),
+        // Used (not actually used, but it's in todo)
+        entry_exec_price: currentPrice.toString(), // TODO: 📈 Check if this matters (currently just using entry price)
+        // Used
+        size: perpPosition.amount.toString() as any,
+        unrealised_pnl: {
+          coins: {
+            closing_fee: perpPosition.pnl.unrealized.fees.toCoin(),
+            // Used
+            pnl: perpPosition.pnl.unrealized.net.toPnLCoin(), // Used
+          },
+          amounts: {
+            // CHeck if these are correct
+            accrued_funding: perpPosition.pnl.unrealized.funding.amount.toString() as any,
+            opening_fee: perpPosition.pnl.unrealized.fees.amount.toString() as any, // Add openning fee for modifying position
+            closing_fee: perpPosition.pnl.unrealized.fees.amount.toString() as any, // Add closing fee for modifying position
+            pnl: perpPosition.pnl.unrealized.net.amount.toString() as any,
+            price_pnl: perpPosition.pnl.unrealized.price.amount.toString() as any,
+          },
+          values: {
+            // This does not matter for health calculation
+            accrued_funding: perpPosition.pnl.unrealized.funding.amount.toString() as any,
+            closing_fee: perpPosition.pnl.unrealized.fees.amount.toString() as any,
+            pnl: perpPosition.pnl.unrealized.net.amount.toString() as any,
+            price_pnl: perpPosition.pnl.unrealized.price.amount.toString() as any,
+          },
+        },
+        realised_pnl: {
+          // This does not matter for the health calculation
+          accrued_funding: perpPosition.pnl.realized.funding.amount.toString() as any,
+          closing_fee: perpPosition.pnl.realized.fees.amount.toString() as any,
+          opening_fee: perpPosition.pnl.realized.fees.amount.toString() as any,
+          pnl: perpPosition.pnl.realized.net.amount.toString() as any,
+          price_pnl: perpPosition.pnl.realized.price.amount.toString() as any,
+        },
+      }
+    }),
     vaults: account.vaults.map(
       (vault) =>
         ({

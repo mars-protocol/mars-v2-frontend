@@ -104,7 +104,7 @@ export function PerpsModule() {
       />
       <AssetAmountInput
         label='Amount'
-        max={BN(100000000)} // TODO: Implement max calculation
+        max={BN(10000000000)} // TODO: Implement max calculation
         amount={amount.abs()}
         setAmount={onChangeAmount}
         asset={perpsAsset}

@@ -1,11 +1,5 @@
 type TradeDirection = 'long' | 'short'
 
-// TODO: 📈Remove this type when healthcomputer is implemented
-type PositionsWithoutPerps = Omit<
-  import('types/generated/mars-credit-manager/MarsCreditManager.types').Positions,
-  'perps'
->
-
 interface PerpsPosition {
   denom: string
   baseDenom: string
@@ -13,6 +7,7 @@ interface PerpsPosition {
   amount: BigNumber
   pnl: PerpsPnL
   entryPrice: BigNumber
+  closingFeeRate: BigNumber
 }
 
 interface PerpPositionRow extends PerpsPosition {

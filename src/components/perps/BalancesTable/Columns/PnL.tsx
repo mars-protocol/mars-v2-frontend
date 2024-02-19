@@ -14,7 +14,7 @@ type Props = {
 
 export default function PnL(props: Props) {
   return (
-    <Tooltip content={<PnLTooltip {...props} />} type='info' underline>
+    <Tooltip content={<PnLTooltip {...props} />} type='info' underline className='w-min ml-auto'>
       <DisplayCurrency
         className='inline text-xs'
         coin={props.pnl.net}
