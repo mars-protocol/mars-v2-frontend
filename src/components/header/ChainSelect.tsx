@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { useCallback, useMemo } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 
 import Button from 'components/common/Button'
@@ -15,11 +15,16 @@ import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { NETWORK } from 'types/enums/network'
 import { ChainInfoID } from 'types/enums/wallet'
-import { getPage, getRoute } from 'utils/route'
+import { getRoute } from 'utils/route'
 
 const v1Outposts = [
-  { chainId: ChainInfoID.Neutron1, name: 'Neutron', url: 'https://neutron.marsprotocol.io' },
-  { chainId: ChainInfoID.Osmosis1, name: 'Osmosis', url: 'https://v1.marsprotocol.io' },
+  {
+    chainId: ChainInfoID.Neutron1,
+    name: 'Neutron',
+    url: 'https://neutron.marsprotocol.io',
+    target: '_blank',
+  },
+  { chainId: ChainInfoID.Osmosis1, name: 'Osmosis', url: '/v1', target: '_self' },
 ]
 
 export default function ChainSelect() {
@@ -27,8 +32,8 @@ export default function ChainSelect() {
   const chainConfig = useChainConfig()
   const { mutate } = useSWRConfig()
   const navigate = useNavigate()
-  const { pathname } = useLocation()
   const [searchParams] = useSearchParams()
+  const isV1 = useStore((s) => s.isV1)
 
   const [_, setCurrentChainId] = useCurrentChainId()
 
@@ -39,14 +44,15 @@ export default function ChainSelect() {
       mutate(() => true)
       useStore.setState({
         chainConfig,
+        isV1: false,
         client: undefined,
         address: undefined,
         userDomain: undefined,
         balances: [],
       })
-      navigate(getRoute(getPage(pathname), searchParams))
+      navigate(getRoute('trade', searchParams))
     },
-    [setCurrentChainId, setShowMenu, mutate, navigate, pathname, searchParams],
+    [setCurrentChainId, setShowMenu, mutate, navigate, searchParams],
   )
 
   const currentChains = useMemo(() => {
@@ -80,7 +86,7 @@ export default function ChainSelect() {
             <li
               className={classNames(
                 'w-full py-2 flex gap-3 group/chain text-white items-center',
-                chainConfig.name === chain.name
+                chainConfig.name === chain.name && !isV1
                   ? 'pointer-events-none'
                   : 'opacity-60 hover:opacity-100',
               )}
@@ -108,14 +114,22 @@ export default function ChainSelect() {
             <ul className='w-full px-4 py-3 list-none'>
               {v1Outposts.map((outpost) => (
                 <li
-                  className='flex items-center w-full gap-3 py-2 text-white group/chain opacity-60 hover:opacity-100'
+                  className={classNames(
+                    'w-full py-2 flex gap-3 group/chain text-white items-center',
+                    chainConfig.name === outpost.name && isV1
+                      ? 'pointer-events-none'
+                      : 'opacity-60 hover:opacity-100',
+                  )}
                   role='button'
-                  onClick={() => window.open(outpost.url, '_blank')}
+                  onClick={() => window.open(outpost.url, outpost.target)}
                   key={outpost.name}
                 >
                   <ChainLogo chainID={outpost.chainId} className='w-6' />
                   <Text size='sm'>
-                    {outpost.name} <ExternalLink className='w-4 ml-1 mb-0.5 inline' />
+                    {outpost.name}{' '}
+                    {outpost.target !== '_self' && (
+                      <ExternalLink className='w-4 ml-1 mb-0.5 inline' />
+                    )}
                   </Text>
                 </li>
               ))}

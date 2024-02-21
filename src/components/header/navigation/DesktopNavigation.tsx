@@ -4,7 +4,6 @@ import { useMemo } from 'react'
 
 import Button from 'components/common/Button'
 import { ChevronDown, Logo } from 'components/common/Icons'
-import { menuTree } from 'components/header/DesktopHeader'
 import { NavLink } from 'components/header/navigation/NavLink'
 import { NavMenu } from 'components/header/navigation/NavMenu'
 import useChainConfig from 'hooks/useChainConfig'
@@ -12,19 +11,24 @@ import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { WalletID } from 'types/enums/wallet'
 
+interface Props {
+  menuTree: (walletId: WalletID, chainConfig: ChainConfig) => MenuTreeEntry[]
+}
+
 export function getIsActive(pages: string[]) {
   const segments = location.pathname.split('/')
   return pages.some((page) => segments.includes(page))
 }
 
-export default function DesktopNavigation() {
+export default function DesktopNavigation(props: Props) {
+  const { menuTree } = props
   const [showMenu, setShowMenu] = useToggle()
   const { recentWallet } = useShuttle()
   const chainConfig = useChainConfig()
   const walletId = (recentWallet?.providerId as WalletID) ?? WalletID.Keplr
   const focusComponent = useStore((s) => s.focusComponent)
 
-  const menu = useMemo(() => menuTree(walletId, chainConfig), [walletId, chainConfig])
+  const menu = useMemo(() => menuTree(walletId, chainConfig), [walletId, chainConfig, menuTree])
 
   return (
     <div

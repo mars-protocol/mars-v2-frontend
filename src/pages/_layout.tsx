@@ -4,13 +4,14 @@ import { isMobile } from 'react-device-detect'
 import { useLocation } from 'react-router-dom'
 import { SWRConfig } from 'swr'
 
+import ModalsContainer from 'components/Modals/ModalsContainer'
 import AccountDetails from 'components/account/AccountDetails'
 import Background from 'components/common/Background'
 import Footer from 'components/common/Footer'
 import PageMetadata from 'components/common/PageMetadata'
 import Toaster from 'components/common/Toaster'
 import DesktopHeader from 'components/header/DesktopHeader'
-import ModalsContainer from 'components/Modals/ModalsContainer'
+import V1DesktopHeader from 'components/header/V1DesktopHeader'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -50,6 +51,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
   const focusComponent = useStore((s) => s.focusComponent)
   const address = useStore((s) => s.address)
+  const isV1 = useStore((s) => s.isV1)
 
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
@@ -67,7 +69,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <SWRConfig value={{ use: [debugSWR] }}>
         <PageMetadata />
         <Background />
-        <DesktopHeader />
+        {isV1 ? <V1DesktopHeader /> : <DesktopHeader />}
         <main
           className={classNames(
             'lg:min-h-[calc(100dvh-81px)]',
