@@ -75,6 +75,7 @@ export default function AccountBalancesTable(props: Props) {
                 },
               })
             }}
+            short
           />
         </div>
       </ConditionalWrapper>

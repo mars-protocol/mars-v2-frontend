@@ -43,6 +43,7 @@ export default function DepositButton(props: Props) {
             e.stopPropagation()
           }}
           text='Deposit'
+          short
         />
       </ConditionalWrapper>
     </div>

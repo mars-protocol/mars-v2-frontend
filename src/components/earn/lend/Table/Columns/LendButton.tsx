@@ -56,6 +56,7 @@ export default function LendButton(props: Props) {
             e.stopPropagation()
           }}
           text='Lend'
+          short
         />
       </ConditionalWrapper>
     </div>

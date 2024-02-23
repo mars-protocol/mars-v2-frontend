@@ -54,6 +54,7 @@ export default function BorrowButton(props: Props) {
             e.stopPropagation()
           }}
           text='Borrow'
+          short
         />
       </ConditionalWrapper>
     </div>
