@@ -22,6 +22,7 @@ interface V1Outpost {
   chainId: ChainInfoID
   name: string
   url: string
+  network: NETWORK.MAINNET | NETWORK.TESTNET
   target: '_blank' | '_self'
 }
 
@@ -37,16 +38,30 @@ const v1Outposts: V1Outpost[] = [
     chainId: ChainInfoID.Neutron1,
     name: 'Neutron',
     url: 'https://neutron.marsprotocol.io',
+    network: NETWORK.MAINNET,
     target: '_blank',
   },
   {
     chainId: ChainInfoID.Pion1,
     name: 'Neutron Testnet',
     url: '/v1',
+    network: NETWORK.TESTNET,
     target: '_self',
   },
-  { chainId: ChainInfoID.Osmosis1, name: 'Osmosis', url: '/v1', target: '_self' },
-  { chainId: ChainInfoID.OsmosisDevnet, name: 'Osmosis Devnet', url: '/v1', target: '_self' },
+  {
+    chainId: ChainInfoID.Osmosis1,
+    name: 'Osmosis',
+    url: '/v1',
+    network: NETWORK.MAINNET,
+    target: '_self',
+  },
+  {
+    chainId: ChainInfoID.OsmosisDevnet,
+    name: 'Osmosis Devnet',
+    network: NETWORK.TESTNET,
+    url: '/v1',
+    target: '_self',
+  },
 ]
 
 export default function ChainSelect() {
@@ -117,7 +132,10 @@ export default function ChainSelect() {
     if (currentNetworkType === NETWORK.TESTNET) return availableChains
 
     v1Outposts.forEach((v1Outpost) => {
-      if (!availableChains.find((chain) => chain.chainId === v1Outpost.chainId))
+      if (
+        !availableChains.find((chain) => chain.chainId === v1Outpost.chainId) &&
+        v1Outpost.network === currentNetworkType
+      )
         availableChains.push({ chainId: v1Outpost.chainId, name: v1Outpost.name })
     })
 
