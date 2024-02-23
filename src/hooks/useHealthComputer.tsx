@@ -152,7 +152,9 @@ export default function useHealthComputer(account?: Account) {
     if (!healthComputer) return
     try {
       setHealthFactor(Number(compute_health_js(healthComputer).max_ltv_health_factor) || 10)
-    } catch (err) {}
+    } catch (err) {
+      console.error(err)
+    }
   }, [healthComputer])
 
   const computeMaxBorrowAmount = useCallback(

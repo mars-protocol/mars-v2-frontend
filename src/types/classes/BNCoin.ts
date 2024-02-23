@@ -23,7 +23,7 @@ export class BNCoin {
   toCoin(): Coin {
     return {
       denom: this.denom,
-      amount: this.amount.toString(),
+      amount: this.amount.integerValue().toString(),
     }
   }
 
@@ -33,7 +33,7 @@ export class BNCoin {
       amount: max
         ? 'account_balance'
         : {
-            exact: this.amount.toString(),
+            exact: this.amount.integerValue().toString(),
           },
     }
   }
@@ -41,7 +41,7 @@ export class BNCoin {
   toSignedCoin(): any {
     return {
       denom: this.denom,
-      size: this.amount.toString(),
+      size: this.amount.integerValue().toString(),
     }
   }
 
@@ -57,7 +57,7 @@ export class BNCoin {
     }
 
     return {
-      loss: this.toCoin(),
+      loss: this.abs().toCoin(),
     }
   }
 

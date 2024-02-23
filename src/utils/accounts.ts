@@ -4,11 +4,10 @@ import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultPosition } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { Positions } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 import { convertApyToApr } from 'utils/parsers'
-
-import { Positions } from '../types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 
 export const calculateAccountBalanceValue = (
   account: Account | AccountChange,
@@ -210,24 +209,34 @@ export function convertAccountToPositions(account: Account, prices: BNCoin[]): P
         size: perpPosition.amount.toString() as any,
         unrealised_pnl: {
           coins: {
-            closing_fee: perpPosition.pnl.unrealized.fees.toCoin(),
+            closing_fee: perpPosition.pnl.unrealized.fees.abs().toCoin(),
             // Used
             pnl: perpPosition.pnl.unrealized.net.toPnLCoin(), // Used
           },
           amounts: {
             // CHeck if these are correct
-            accrued_funding: perpPosition.pnl.unrealized.funding.amount.toString() as any,
-            opening_fee: perpPosition.pnl.unrealized.fees.amount.toString() as any, // Add openning fee for modifying position
-            closing_fee: perpPosition.pnl.unrealized.fees.amount.toString() as any, // Add closing fee for modifying position
-            pnl: perpPosition.pnl.unrealized.net.amount.toString() as any,
-            price_pnl: perpPosition.pnl.unrealized.price.amount.toString() as any,
+            accrued_funding: perpPosition.pnl.unrealized.funding.amount
+              .integerValue()
+              .toString() as any,
+            opening_fee: perpPosition.pnl.unrealized.fees.amount
+              .abs()
+              .integerValue()
+              .toString() as any, // Add openning fee for modifying position
+            closing_fee: perpPosition.pnl.unrealized.fees.amount
+              .abs()
+              .integerValue()
+              .toString() as any, // Add closing fee for modifying position
+            pnl: perpPosition.pnl.unrealized.net.amount.integerValue().toString() as any,
+            price_pnl: perpPosition.pnl.unrealized.price.amount.integerValue().toString() as any,
           },
           values: {
             // This does not matter for health calculation
-            accrued_funding: perpPosition.pnl.unrealized.funding.amount.toString() as any,
-            closing_fee: perpPosition.pnl.unrealized.fees.amount.toString() as any,
-            pnl: perpPosition.pnl.unrealized.net.amount.toString() as any,
-            price_pnl: perpPosition.pnl.unrealized.price.amount.toString() as any,
+            accrued_funding: perpPosition.pnl.unrealized.funding.amount
+              .integerValue()
+              .toString() as any,
+            closing_fee: perpPosition.pnl.unrealized.fees.amount.integerValue().toString() as any,
+            pnl: perpPosition.pnl.unrealized.net.amount.integerValue().toString() as any,
+            price_pnl: perpPosition.pnl.unrealized.price.amount.integerValue().toString() as any,
           },
         },
         realised_pnl: {
