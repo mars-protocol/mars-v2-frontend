@@ -118,7 +118,7 @@ export default function MarketDetails({ row, type }: Props) {
             <TitleAndSubCell
               key={index}
               className='text-center'
-              containerClassName='m-5 ml-10 mr-10 space-y-1'
+              containerClassName='m-5 mx-auto space-y-1'
               title={
                 <FormattedNumber
                   className='text-xs text-center'

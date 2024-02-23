@@ -27,7 +27,7 @@ export default function Background() {
         return ['bg-orb-primary-hls', 'bg-orb-secondary-hls', 'bg-orb-tertiary-hls', 'bg-body-hls']
       }
       if (isV1) {
-        return ['bg-orb-primary-v1', 'bg-orb-secondary-v1', 'bg-orb-tertiary-v1', 'bg-body-v1']
+        return ['bg-transparent', 'bg-transparent', 'bg-transparent', 'bg-body bg-v1 blur-[2px]']
       }
 
       return ['bg-orb-primary', 'bg-orb-secondary', 'bg-orb-tertiary', 'bg-body']
@@ -38,7 +38,7 @@ export default function Background() {
       className={classNames(
         'fixed inset-0',
         'w-full h-full',
-        'overflow-hidden pointer-events-none background ',
+        'overflow-hidden pointer-events-none background',
         bodyClassName,
         !reduceMotion && 'transition-bg duration-1000 delay-300',
       )}

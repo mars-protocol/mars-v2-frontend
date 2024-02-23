@@ -26,6 +26,8 @@ interface Props {
 }
 
 function PageContainer(props: Props) {
+  const isV1 = useStore((s) => s.isV1)
+
   if (isMobile) return props.children
 
   if (!props.focusComponent)
@@ -33,7 +35,8 @@ function PageContainer(props: Props) {
       <div
         className={classNames(
           'mx-auto flex items-start w-full',
-          !props.fullWidth && 'max-w-content',
+          !props.fullWidth && !isV1 && 'max-w-content',
+          isV1 && 'max-w-v1',
         )}
       >
         {props.children}

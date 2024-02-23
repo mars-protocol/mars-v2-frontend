@@ -12,8 +12,10 @@ export default function V1Page() {
       <MigrationBanner />
       <V1Intro />
       {address && <Summary accountId={address} v1 />}
-      <Deposits />
-      <Borrowings />
+      <div className='grid w-full grid-cols-1 gap-6 lg:grid-cols-2'>
+        <Deposits />
+        <Borrowings />
+      </div>
     </div>
   )
 }

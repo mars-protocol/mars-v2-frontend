@@ -1,10 +1,12 @@
 import { TextLink } from 'components/common/TextLink'
 import { DocURL } from 'types/enums/docURL'
 
+import useStore from 'store'
 import packageInfo from '../../../package.json'
 
 export default function Footer() {
-  const version = `v${packageInfo.version}`
+  const isV1 = useStore((s) => s.isV1)
+  const version = isV1 ? `v${packageInfo.v1version}` : `v${packageInfo.version}`
   const flatVersion = packageInfo.version.split('.').join('')
   return (
     <footer className='flex items-center justify-center w-full h-6 -mt-6'>

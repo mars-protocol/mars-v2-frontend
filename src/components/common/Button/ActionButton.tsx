@@ -13,6 +13,7 @@ export default function ActionButton(props: ButtonProps) {
   const { className, color, variant, size } = props
   const defaultProps = { className, color, variant, size }
   const address = useStore((s) => s.address)
+  const isV1 = useStore((s) => s.isV1)
 
   const { data: accountIds } = useAccountIds(address || '')
   const selectedAccountId = useAccountId()
@@ -34,7 +35,7 @@ export default function ActionButton(props: ButtonProps) {
     )
   }
 
-  if (!selectedAccountId) {
+  if (!selectedAccountId && !isV1) {
     return (
       <Button
         text='Select Account'
