@@ -5,6 +5,7 @@ export const NAME_META = { accessorKey: 'asset.symbol', header: 'Asset', id: 'sy
 
 interface Props {
   data: BorrowMarketTableData
+  v1?: boolean
 }
 
 export default function Name(props: Props) {
@@ -12,7 +13,11 @@ export default function Name(props: Props) {
   return (
     <div className='flex items-center flex-1 gap-3'>
       <AssetImage asset={asset} size={32} />
-      <TitleAndSubCell title={asset.symbol} sub={asset.name} className='text-left min-w-15' />
+      <TitleAndSubCell
+        title={asset.symbol}
+        sub={props.v1 ? '' : asset.name}
+        className='text-left min-w-15'
+      />
     </div>
   )
 }

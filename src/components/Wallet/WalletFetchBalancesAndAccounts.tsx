@@ -75,6 +75,7 @@ function Content() {
     urlAddress,
     urlAccountId,
     searchParams,
+    isV1,
   ])
 
   if (isLoadingAccounts || isLoadingBalances) return <FetchLoading />

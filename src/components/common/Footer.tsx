@@ -1,7 +1,7 @@
 import { TextLink } from 'components/common/TextLink'
 import { DocURL } from 'types/enums/docURL'
-
 import useStore from 'store'
+
 import packageInfo from '../../../package.json'
 
 export default function Footer() {

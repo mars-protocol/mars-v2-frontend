@@ -24,7 +24,7 @@ export default function useActiveColumns(props: Props) {
     return [
       {
         ...NAME_META,
-        cell: ({ row }) => <Name data={row.original} />,
+        cell: ({ row }) => <Name data={row.original} v1={props.v1} />,
       },
       {
         ...DEBT_VALUE_META,

@@ -11,9 +11,9 @@ export default function V1Intro() {
           <span className='text-white'>Welcome to the Red Bank!</span>
           <br />
           This is the first version (v1) of the Red Bank. It provides simple lending and borrowing,
-          without the use of Credit Accounts. Funds are{' '}
-          <span className='text-white'>not cross-collateralized</span> and can&lsquo;t be used on v2
-          as collateral.
+          without the use of Credit Accounts.
+          <br />
+          Deposited funds can&lsquo;t be used on v2 as collateral.
         </>
       }
       bg='v1'

@@ -20,7 +20,6 @@ export default function useClients() {
     `chains/${chainConfig.id}/clients`,
     async () => {
       const client = await CosmWasmClient.connect(getUrl(chainConfig.endpoints.rpc))
-
       return {
         creditManager: new MarsCreditManagerQueryClient(
           client,

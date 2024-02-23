@@ -25,7 +25,7 @@ export default function useDepositedColumns(props: Props) {
     return [
       {
         ...NAME_META,
-        cell: ({ row }) => <Name asset={row.original.asset} />,
+        cell: ({ row }) => <Name asset={row.original.asset} v1={props.v1} />,
       },
       {
         ...DEPOSIT_VALUE_META,

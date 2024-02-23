@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import MigrationBanner from 'components/common/MigrationBanner'
 import AccountDetailsCard from 'components/trade/AccountDetailsCard'
 import TradeChart from 'components/trade/TradeChart'
 import TradeModule from 'components/trade/TradeModule'
@@ -47,7 +46,6 @@ export default function TradePage() {
   )
   return (
     <div className='flex flex-col w-full h-full gap-4'>
-      <MigrationBanner />
       <div className='grid w-full grid-cols-[auto_346px] gap-4'>
         <TradeChart buyAsset={buyAsset} sellAsset={sellAsset} />
         <TradeModule buyAsset={buyAsset} sellAsset={sellAsset} isAdvanced={isAdvanced} />
