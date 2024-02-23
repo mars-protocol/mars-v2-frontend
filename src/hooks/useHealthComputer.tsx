@@ -14,6 +14,7 @@ import { VaultConfigBaseForString } from 'types/generated/mars-params/MarsParams
 import {
   AssetParamsBaseForAddr,
   HealthComputer,
+  Positions,
 } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 import { convertAccountToPositions } from 'utils/accounts'
 import { byDenom } from 'utils/array'
@@ -32,7 +33,8 @@ import { BN } from 'utils/helpers'
 
 // Pyth returns prices with up to 32 decimals. Javascript only supports 18 decimals. So we need to scale by 14 t
 // avoid "too many decimals" errors.
-const VALUE_SCALE_FACTOR = 14
+// TODO: Remove adjustment properly (after testing). We will just ignore the last 14 decimals.
+const VALUE_SCALE_FACTOR = 0
 
 export default function useHealthComputer(account?: Account) {
   const assets = useAllAssets()
@@ -42,10 +44,10 @@ export default function useHealthComputer(account?: Account) {
   const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
 
   const [healthFactor, setHealthFactor] = useState(0)
-  const positions: PositionsWithoutPerps | null = useMemo(() => {
+  const positions: Positions | null = useMemo(() => {
     if (!account) return null
-    return convertAccountToPositions(account)
-  }, [account])
+    return convertAccountToPositions(account, prices)
+  }, [account, prices])
 
   const vaultPositionValues = useMemo(() => {
     if (!account?.vaults) return null
@@ -87,6 +89,7 @@ export default function useHealthComputer(account?: Account) {
         prev[curr.denom] = curr.amount
           .shiftedBy(VALUE_SCALE_FACTOR)
           .shiftedBy(-decimals + 6)
+          .decimalPlaces(18)
           .toString()
         return prev
       },

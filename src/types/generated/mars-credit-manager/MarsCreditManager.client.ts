@@ -69,6 +69,7 @@ import {
   Positions,
   DebtAmount,
   PerpPosition,
+  PnlAmounts,
   PositionPnl,
   PnlCoins,
   PnlValues,
