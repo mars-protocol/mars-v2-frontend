@@ -7,9 +7,9 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { LineChart } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
 import Text from 'components/common/Text'
+import { disabledFeatures, enabledFeatures } from 'components/trade/TradeChart/constants'
 import { datafeed } from 'components/trade/TradeChart/DataFeed'
 import PoweredByPyth from 'components/trade/TradeChart/PoweredByPyth'
-import { disabledFeatures, enabledFeatures } from 'components/trade/TradeChart/constants'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
@@ -19,6 +19,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { ChartingLibraryWidgetOptions, ResolutionString, widget } from 'utils/charting_library'
 import { magnify } from 'utils/formatters'
+
 interface Props {
   buyAsset: Asset
   sellAsset: Asset

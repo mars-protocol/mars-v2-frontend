@@ -7,8 +7,8 @@ import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
 import { generateToastContent } from 'components/common/Toaster'
 import useTransactions from 'hooks/localStorage/useTransactions'
-import useStore from 'store'
 import useChainConfig from 'hooks/useChainConfig'
+import useStore from 'store'
 
 export default function RecentTransactions() {
   const address = useStore((s) => s.address)
