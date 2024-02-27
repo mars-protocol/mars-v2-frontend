@@ -6,7 +6,6 @@ import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useChainConfig from 'hooks/useChainConfig'
 import useClients from 'hooks/useClients'
 import useDebounce from 'hooks/useDebounce'
-import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
 export default function useTradingFeeAndPrice(
@@ -34,14 +33,15 @@ export default function useTradingFeeAndPrice(
         })
 
         return {
+          baseDenom: positionFees.base_denom,
           price: positionFees.opening_exec_price
             ? BN(positionFees.opening_exec_price)
             : BN(positionFees.closing_exec_price ?? BN_ZERO),
-          fee: BNCoin.fromDenomAndBigNumber(
-            positionFees.base_denom,
-            BN(positionFees.opening_fee).plus(positionFees.closing_fee),
-          ),
-          rate: BN(0.005),
+          fee: {
+            opening: BN(positionFees.opening_fee),
+            closing: BN(positionFees.closing_fee),
+          },
+          rate: BN(0.0005),
         }
       }
 
@@ -61,15 +61,13 @@ export default function useTradingFeeAndPrice(
 
       return await Promise.all([closingPositionFees$, openingPositionFees$]).then(
         ([closingPositionFees, openingPositionFees]) => ({
+          baseDenom: openingPositionFees.base_denom,
           price: BN(openingPositionFees.opening_exec_price ?? 0),
-          fee: BNCoin.fromDenomAndBigNumber(
-            closingPositionFees.base_denom,
-            BN(closingPositionFees.opening_fee)
-              .plus(closingPositionFees.closing_fee)
-              .plus(openingPositionFees.opening_fee)
-              .plus(openingPositionFees.closing_fee),
-          ),
-          rate: BN(0.005),
+          fee: {
+            opening: BN(closingPositionFees.opening_fee).plus(openingPositionFees.opening_fee),
+            closing: BN(closingPositionFees.closing_fee).plus(openingPositionFees.closing_fee),
+          },
+          rate: BN(0.0005), // TODO: Make this rate the actula rate again!
         }),
       )
     },

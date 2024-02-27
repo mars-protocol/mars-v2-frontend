@@ -296,6 +296,7 @@ async function __wbg_load(module, imports) {
 function __wbg_get_imports() {
   const imports = {}
   imports.wbg = {}
+  imports.wbg.__wbg_log_117d9799fa4f6287 = function (arg0, arg1, arg2, arg3) {}
   imports.wbg.__wbindgen_object_clone_ref = function (arg0) {
     const ret = getObject(arg0)
     return addHeapObject(ret)
