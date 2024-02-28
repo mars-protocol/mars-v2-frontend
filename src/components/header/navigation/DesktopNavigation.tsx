@@ -94,7 +94,7 @@ export default function DesktopNavigation(props: Props) {
                   </ul>
                 </div>
                 <div
-                  className='fixed -top-6 -left-[55px] z-40 w-screen h-screen hover:cursor-pointer'
+                  className='fixed -top-6 -left-[55px] z-40 w-screen-full h-screen-full hover:cursor-pointer'
                   onClick={() => setShowMenu(false)}
                   role='button'
                 />

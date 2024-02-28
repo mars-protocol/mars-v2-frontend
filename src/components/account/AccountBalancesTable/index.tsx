@@ -7,6 +7,7 @@ import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullP
 import ActionButton from 'components/common/Button/ActionButton'
 import Card from 'components/common/Card'
 import Table from 'components/common/Table'
+import Text from 'components/common/Text'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useStore from 'store'
@@ -75,7 +76,6 @@ export default function AccountBalancesTable(props: Props) {
                 },
               })
             }}
-            short
           />
         </div>
       </ConditionalWrapper>
@@ -83,7 +83,15 @@ export default function AccountBalancesTable(props: Props) {
 
   return (
     <Table
-      title='Balances'
+      title={
+        <Text
+          size='lg'
+          className='flex items-center justify-between w-full p-4 font-semibold bg-white/10'
+        >
+          <span>Balances</span>
+          <span className='text-white/60'>Credit Account {account.id}</span>
+        </Text>
+      }
       columns={columns}
       data={accountBalanceData}
       tableBodyClassName={classNames(tableBodyClassName, 'text-white/60')}

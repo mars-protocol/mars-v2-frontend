@@ -37,7 +37,7 @@ export default function Background() {
     <div
       className={classNames(
         'fixed inset-0',
-        'w-full h-full',
+        'w-screen-full h-screen-full',
         'overflow-hidden pointer-events-none background',
         bodyClassName,
         !reduceMotion && 'transition-bg duration-1000 delay-300',

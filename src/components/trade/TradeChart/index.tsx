@@ -9,7 +9,12 @@ import Loading from 'components/common/Loading'
 import Text from 'components/common/Text'
 import { datafeed } from 'components/trade/TradeChart/DataFeed'
 import PoweredByPyth from 'components/trade/TradeChart/PoweredByPyth'
-import { disabledFeatures, enabledFeatures } from 'components/trade/TradeChart/constants'
+import {
+  disabledFeatures,
+  disabledFeaturesMobile,
+  enabledFeatures,
+  enabledFeaturesMobile,
+} from 'components/trade/TradeChart/constants'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
@@ -19,6 +24,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { ChartingLibraryWidgetOptions, ResolutionString, widget } from 'utils/charting_library'
 import { magnify } from 'utils/formatters'
+import { isMobile } from 'utils/mobile'
 interface Props {
   buyAsset: Asset
   sellAsset: Asset
@@ -38,10 +44,10 @@ export default function TradeChart(props: Props) {
   }, [prices, props.buyAsset.denom, props.sellAsset.denom])
 
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
-  const hasTradingChartInstalled = process.env.CHARTING_LIBRARY_ACCESS_TOKEN
+  const hasTradingChartInstalled = typeof window !== 'undefined' && window.TradingView
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.TradingView) {
+    if (hasTradingChartInstalled) {
       const widgetOptions: ChartingLibraryWidgetOptions = {
         symbol: props.buyAsset.pythFeedName ?? `${props.buyAsset.symbol}/USD`,
         datafeed: datafeed,
@@ -49,11 +55,11 @@ export default function TradeChart(props: Props) {
         library_path: '/charting_library/',
         locale: 'en',
         time_scale: {
-          min_bar_spacing: 12,
+          min_bar_spacing: isMobile() ? 2 : 12,
         },
         toolbar_bg: '#220E1D',
-        disabled_features: disabledFeatures,
-        enabled_features: enabledFeatures,
+        disabled_features: isMobile() ? disabledFeaturesMobile : disabledFeatures,
+        enabled_features: isMobile() ? enabledFeaturesMobile : enabledFeatures,
         fullscreen: false,
         autosize: true,
         container: chartContainerRef.current,
@@ -61,10 +67,9 @@ export default function TradeChart(props: Props) {
         overrides: {
           'paneProperties.background': '#220E1D',
           'paneProperties.backgroundType': 'solid',
-          'paneProperties.backgroundGradientStartColor': '#220E1D',
-          'paneProperties.backgroundGradientEndColor': '#220E1D',
           'linetooltrendline.linecolor': 'rgba(255, 255, 255, 0.8)',
           'linetooltrendline.linewidth': 2,
+          'scalesProperties.fontSize': isMobile() ? 6 : 12,
         },
         loading_screen: {
           backgroundColor: '#220E1D',
@@ -87,8 +92,18 @@ export default function TradeChart(props: Props) {
           barColorsOnPrevClose: false,
         })
       })
+
+      const chartProperties = localStorage.getItem('tradingview.chartproperties')
+      if (chartProperties) {
+        const newChartProperties = JSON.parse(chartProperties)
+        newChartProperties.paneProperties.backgroundType = 'solid'
+        newChartProperties.paneProperties.background = '#220E1D'
+        newChartProperties.paneProperties.backgroundGradientStartColor = '#220E1D'
+        newChartProperties.paneProperties.backgroundGradientEndColor = '#220E1D'
+        localStorage.setItem('tradingview.chartproperties', JSON.stringify(newChartProperties))
+      }
     }
-  }, [props.buyAsset.pythFeedName, props.buyAsset.symbol, chartInterval])
+  }, [props.buyAsset.pythFeedName, props.buyAsset.symbol, chartInterval, hasTradingChartInstalled])
 
   return (
     <Card
@@ -97,41 +112,46 @@ export default function TradeChart(props: Props) {
           <Text size='lg' className='flex items-center flex-1 p-4 font-semibold'>
             Trading Chart
           </Text>
-          {ratio.isZero() || isLoading ? (
-            <Loading className='h-4 mr-4 w-60' />
-          ) : (
-            <div className='flex items-center gap-1 p-4'>
-              <Text size='sm'>1 {props.buyAsset.symbol}</Text>
-              <FormattedNumber
-                className='text-sm'
-                amount={Number(ratio.toPrecision(6))}
-                options={{
-                  prefix: '= ',
-                  suffix: ` ${props.sellAsset.symbol}`,
-                  abbreviated: false,
-                  maxDecimals: props.sellAsset.decimals,
-                }}
-              />
-              <DisplayCurrency
-                parentheses
-                options={{ abbreviated: false }}
-                className='justify-end pl-2 text-sm text-white/50'
-                coin={
-                  new BNCoin({
-                    denom: props.buyAsset.denom,
-                    amount: magnify(1, props.buyAsset).toString(),
-                  })
-                }
-              />
-            </div>
-          )}
+          <div className='hidden md:flex'>
+            {ratio.isZero() || isLoading ? (
+              <Loading className='h-4 mr-4 w-60' />
+            ) : (
+              <div className='flex items-center gap-1 p-4'>
+                <Text size='sm'>1 {props.buyAsset.symbol}</Text>
+                <FormattedNumber
+                  className='text-sm'
+                  amount={Number(ratio.toPrecision(6))}
+                  options={{
+                    prefix: '= ',
+                    suffix: ` ${props.sellAsset.symbol}`,
+                    abbreviated: false,
+                    maxDecimals: props.sellAsset.decimals,
+                  }}
+                />
+                <DisplayCurrency
+                  parentheses
+                  options={{ abbreviated: false }}
+                  className='justify-end pl-2 text-sm text-white/50'
+                  coin={
+                    new BNCoin({
+                      denom: props.buyAsset.denom,
+                      amount: magnify(1, props.buyAsset).toString(),
+                    })
+                  }
+                />
+              </div>
+            )}
+          </div>
         </div>
       }
       contentClassName={classNames(
-        'px-0.5 pb-0.5 h-full  w-[calc(100%-2px)] ml-[1px]',
+        'px-0.5 pb-0.5 h-full w-[calc(100%-2px)] ml-[1px]',
         hasTradingChartInstalled ? 'bg-chart' : 'bg-white/5',
       )}
-      className='h-[70dvh] max-h-[980px] min-h-[560px]'
+      className={classNames(
+        'h-[500px]',
+        'md:h-screen/70 md:max-h-[980px] md:min-h-[560px] order-1',
+      )}
     >
       <div ref={chartContainerRef} className='h-[calc(100%-32px)] overflow-hidden'>
         {!hasTradingChartInstalled && (

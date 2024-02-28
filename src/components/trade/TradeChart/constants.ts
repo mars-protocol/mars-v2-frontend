@@ -1,9 +1,4 @@
-import {
-  ChartingLibraryFeatureset,
-  LibrarySymbolInfo,
-  SeriesFormat,
-  Timezone,
-} from 'utils/charting_library/charting_library'
+import { ChartingLibraryFeatureset } from 'utils/charting_library/charting_library'
 
 export const disabledFeatures: ChartingLibraryFeatureset[] = [
   'timeframes_toolbar',
@@ -12,6 +7,10 @@ export const disabledFeatures: ChartingLibraryFeatureset[] = [
   'header_saveload',
   'popup_hints',
   'header_symbol_search',
+  'symbol_info',
+  'horz_touch_drag_scroll',
+  'vert_touch_drag_scroll',
+  'main_series_scale_menu',
   'symbol_info',
 ]
 
@@ -22,20 +21,24 @@ export const enabledFeatures: ChartingLibraryFeatureset[] = [
   'chart_zoom',
 ]
 
-export const overrides = {
-  'linetooltrendline.linecolor': 'rgba(255, 255, 255, 0.8)',
-  'linetooltrendline.linewidth': 2,
-}
+export const disabledFeaturesMobile: ChartingLibraryFeatureset[] = [
+  'timeframes_toolbar',
+  'go_to_date',
+  'header_compare',
+  'header_saveload',
+  'popup_hints',
+  'header_symbol_search',
+  'symbol_info',
+  'timezone_menu',
+  'main_series_scale_menu',
+  'symbol_info',
+  'show_zoom_and_move_buttons_on_touch',
+  'vert_touch_drag_scroll',
+]
 
-export const defaultSymbolInfo: Partial<LibrarySymbolInfo> = {
-  listed_exchange: 'Pyth Oracle',
-  type: 'AMM',
-  session: '24x7',
-  minmov: 1,
-  pricescale: 100000,
-  timezone: 'Etc/UTC' as Timezone,
-  has_intraday: true,
-  has_daily: true,
-  has_weekly_and_monthly: false,
-  format: 'price' as SeriesFormat,
-}
+export const enabledFeaturesMobile: ChartingLibraryFeatureset[] = [
+  'horz_touch_drag_scroll',
+  'use_localstorage_for_settings',
+  'chart_zoom',
+  'hide_left_toolbar_by_default',
+]

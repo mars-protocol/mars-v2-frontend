@@ -7,7 +7,6 @@ import FarmPage from 'pages/FarmPage'
 import HLSFarmPage from 'pages/HLSFarmPage'
 import HLSStakingPage from 'pages/HLSStakingPage'
 import LendPage from 'pages/LendPage'
-import MobilePage from 'pages/MobilePage'
 import PerpsPage from 'pages/PerpsPage'
 import PortfolioAccountPage from 'pages/PortfolioAccountPage'
 import PortfolioPage from 'pages/PortfolioPage'
@@ -34,7 +33,6 @@ export default function Routes() {
         <Route path='/borrow' element={<BorrowPage />} />
         <Route path='/portfolio' element={<PortfolioPage />} />
         <Route path='/v1' element={<V1Page />} />
-        <Route path='/mobile' element={<MobilePage />} />
         {chainConfig.hls && <Route path='/hls-staking' element={<HLSStakingPage />} />}
         {chainConfig.hls && <Route path='/hls-farm' element={<HLSFarmPage />} />}
         <Route path='/' element={<TradePage />} />

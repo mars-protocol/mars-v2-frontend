@@ -18,6 +18,7 @@ function DefaultPageHead() {
       <meta content='Mars Protocol V2' property='og:site_name' />
       <meta content='#ffffff' name='msapplication-TileColor' />
       <meta content='#ffffff' name='theme-color' />
+      <meta name='viewport' content='width=device-width, initial-scale=1' />
     </Head>
   )
 }

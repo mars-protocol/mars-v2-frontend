@@ -1,6 +1,6 @@
 import { TextLink } from 'components/common/TextLink'
-import { DocURL } from 'types/enums/docURL'
 import useStore from 'store'
+import { DocURL } from 'types/enums/docURL'
 
 import packageInfo from '../../../package.json'
 
@@ -10,7 +10,7 @@ export default function Footer() {
   const flatVersion = packageInfo.version.split('.').join('')
   return (
     <footer className='flex items-center justify-center w-full h-6 -mt-6'>
-      <div className='w-full px-4 pb-4 text-right'>
+      <div className='w-full p-2 pt-0 text-right md:p-4'>
         <TextLink
           className='text-xs text-white opacity-50 hover:text-white hover:opacity-80'
           href={`${DocURL.CHANGE_LOG_URL}#release-v${flatVersion}`}

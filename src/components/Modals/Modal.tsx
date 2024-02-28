@@ -29,7 +29,7 @@ export default function Modal(props: ModalProps) {
 
   useEffect(() => {
     ref.current?.showModal()
-    document.body.classList.add('h-screen', 'overflow-hidden')
+    document.body.classList.add('h-screen-full', 'overflow-hidden')
   }, [])
 
   // close dialog on unmount
@@ -38,7 +38,7 @@ export default function Modal(props: ModalProps) {
     return () => {
       dialog?.removeAttribute('open')
       dialog?.close()
-      document.body.classList.remove('h-screen', 'overflow-hidden')
+      document.body.classList.remove('h-screen-full', 'overflow-hidden')
     }
   }, [])
 
@@ -47,7 +47,7 @@ export default function Modal(props: ModalProps) {
       ref={ref}
       onCancel={onClose}
       className={classNames(
-        `w-screen border-none bg-transparent text-white`,
+        `w-screen-full border-none bg-transparent text-white`,
         'focus-visible:outline-none',
         'max-h-full scrollbar-hide',
         'backdrop:bg-black/50 backdrop:backdrop-blur-sm',

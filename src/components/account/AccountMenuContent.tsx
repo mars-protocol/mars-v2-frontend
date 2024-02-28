@@ -114,7 +114,7 @@ export default function AccountMenuContent() {
           : 'Create Account'}
       </Button>
       <Overlay
-        className='max-w-screen right-0 mt-2 flex h-[530px] w-[336px] overflow-hidden'
+        className='max-w-screen-full right-0 mt-2 flex h-[530px] w-[336px] overflow-hidden'
         show={showMenu}
         setShow={setShowMenu}
       >
