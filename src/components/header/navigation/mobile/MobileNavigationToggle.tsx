@@ -15,7 +15,10 @@ export default function MobileNavigationToggle(props: Props) {
     <Button
       variant='solid'
       color='secondary'
-      className={classNames('!px-2 w-10 flex-wrap focus:bg-transparent', props.className)}
+      className={classNames(
+        '!px-2 w-10 flex-wrap active:bg-transparent focus:bg-transparent',
+        props.className,
+      )}
       onClick={() => useStore.setState({ mobileNavExpanded: !mobileNavExpanded })}
     >
       <div
