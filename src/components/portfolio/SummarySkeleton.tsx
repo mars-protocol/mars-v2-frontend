@@ -31,7 +31,7 @@ export default function SummarySkeleton(props: Props) {
           {account?.kind === 'high_levered_strategy' && <HLSTag />}
         </div>
         {health !== undefined && healthFactor !== undefined && (
-          <div className='flex items-center flex-grow gap-2 md:justify-end'>
+          <div className='flex items-center gap-2 md:flex-grow md:justify-end'>
             <HealthIcon isLoading={healthFactor === 0} health={health} />
             <div className='w-[260px]'>
               <HealthBar health={health} healthFactor={healthFactor} className='h-3' />

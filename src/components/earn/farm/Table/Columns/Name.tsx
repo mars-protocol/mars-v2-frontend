@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import React from 'react'
 
 import DoubleLogo from 'components/common/DoubleLogo'
 import Text from 'components/common/Text'
@@ -7,7 +6,12 @@ import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import { VaultStatus } from 'types/enums/vault'
 import { produceCountdown } from 'utils/formatters'
 
-export const NAME_META = { id: 'name', header: 'Vault', accessorKey: 'name' }
+export const NAME_META = {
+  id: 'name',
+  header: 'Vault',
+  accessorKey: 'name',
+  meta: { className: 'min-w-50' },
+}
 interface Props {
   vault: Vault | DepositedVault
 }

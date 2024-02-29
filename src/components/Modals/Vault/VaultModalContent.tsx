@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 
+import classNames from 'classnames'
 import VaultBorrowings from 'components/Modals/Vault/VaultBorrowings'
 import VaultBorrowingsSubTitle from 'components/Modals/Vault/VaultBorrowingsSubTitle'
 import VaultDeposit from 'components/Modals/Vault/VaultDeposits'
@@ -132,7 +133,13 @@ export default function VaultModalContent(props: Props) {
   }
 
   return (
-    <div className='flex items-start flex-1 gap-6 p-6'>
+    <div
+      className={classNames(
+        'flex items-start flex-1 p-2 gap-4 flex-wrap',
+        'md:p-4 md:gap-6',
+        'lg:flex-nowrap lg:p-6',
+      )}
+    >
       <Accordion
         className='h-[546px] overflow-y-scroll scrollbar-hide flex-1'
         items={[

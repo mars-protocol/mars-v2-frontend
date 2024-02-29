@@ -21,7 +21,7 @@ export default function FundAndWithdrawModal() {
       account={account}
       isContentCard
       header={
-        <span className='flex items-center gap-4 px-4'>
+        <span className='flex items-center gap-4 px-2 md:px-4'>
           <Text>
             {isFunding
               ? `Fund Credit Account ${accountId ?? ''}`

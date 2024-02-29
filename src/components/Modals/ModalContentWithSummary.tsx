@@ -1,10 +1,10 @@
 import classNames from 'classnames'
 import React from 'react'
 
-import Card from 'components/common/Card'
-import { CircularProgress } from 'components/common/CircularProgress'
 import Modal, { ModalProps } from 'components/Modals/Modal'
 import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
+import Card from 'components/common/Card'
+import { CircularProgress } from 'components/common/CircularProgress'
 
 interface Props extends ModalProps {
   isHls?: boolean
@@ -24,8 +24,8 @@ function modalContent(content: React.ReactNode, isContentCard?: boolean, account
   if (isContentCard)
     return (
       <Card
-        className='flex flex-1 p-4 bg-white/5'
-        contentClassName='gap-6 flex flex-col justify-between h-full min-h-[380px]'
+        className='flex flex-1 w-full p-4 bg-white/5 max-w-screen-full min-w-[200px]'
+        contentClassName='gap-6 flex flex-col justify-between h-full md:min-h-[380px]'
       >
         {content}
       </Card>
@@ -42,7 +42,12 @@ export default function ModalContentWithSummary(props: Props) {
         'gradient-header pl-2 pr-2.5 py-3 border-b-white/5 border-b',
         props.headerClassName,
       )}
-      contentClassName={classNames('flex items-start flex-1 gap-6 p-6', props.contentClassName)}
+      contentClassName={classNames(
+        'flex items-start flex-1 p-2 gap-4 flex-wrap',
+        'md:p-4 md:gap-6',
+        'lg:flex-nowrap lg:p-6',
+        props.contentClassName,
+      )}
     >
       {props.subHeader && props.subHeader}
       {modalContent(props.content, props.isContentCard, props.account)}

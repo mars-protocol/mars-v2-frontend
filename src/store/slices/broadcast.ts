@@ -861,6 +861,7 @@ export default function createBroadcastSlice(
     setToast: (toast: ToastObject) => {
       const id = moment().unix()
       set({
+        mobileNavExpanded: false,
         toast: {
           id,
           promise: toast.response,

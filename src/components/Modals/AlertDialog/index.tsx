@@ -1,9 +1,9 @@
 import classNames from 'classnames'
 
+import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
+import Modal from 'components/Modals/Modal'
 import Button from 'components/common/Button'
 import Checkbox from 'components/common/Checkbox'
-import Modal from 'components/Modals/Modal'
-import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
 import Text from 'components/common/Text'
 import useAlertDialog from 'hooks/useAlertDialog'
 import useToggle from 'hooks/useToggle'
@@ -50,9 +50,10 @@ function AlertDialog(props: Props) {
           <Text size='2xl'>{title}</Text>
         </div>
       }
-      modalClassName='max-w-modal-sm'
-      headerClassName='p-8'
-      contentClassName='px-8 pb-8'
+      className='md:h-auto h-screen-full'
+      modalClassName='max-w-screen-full md:max-w-modal-sm'
+      headerClassName='p-4 md:p-8'
+      contentClassName='md:px-8 md:pb-8 p-4'
       hideCloseBtn
     >
       {typeof content === 'string' ? (
@@ -61,7 +62,10 @@ function AlertDialog(props: Props) {
         content
       )}
       <div
-        className={classNames('mt-10 flex justify-between', positiveButton && 'flex-row-reverse')}
+        className={classNames(
+          'mt-10 flex justify-between gap-4 md:flex-nowrap flex-wrap',
+          positiveButton && 'flex-row-reverse',
+        )}
       >
         <div className='flex flex-row-reverse gap-4'>
           {positiveButton && (

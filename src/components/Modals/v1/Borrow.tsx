@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import classNames from 'classnames'
 import Modal from 'components/Modals/Modal'
 import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
 import Button from 'components/common/Button'
@@ -91,7 +92,7 @@ export default function Borrow(props: Props) {
     <Modal
       onClose={close}
       header={
-        <span className='flex items-center gap-4 px-4'>
+        <span className='flex items-center gap-4 px-2 md:px-4'>
           <AssetImage asset={modal.data.asset} size={24} />
           <Text>{`Borrow ${asset.symbol} from the Red Bank`}</Text>
         </span>
@@ -147,9 +148,15 @@ export default function Borrow(props: Props) {
           </Text>
         </div>
       </div>
-      <div className='flex items-start flex-1 gap-6 p-6'>
+      <div
+        className={classNames(
+          'flex items-start flex-1 p-2 gap-4 flex-wrap',
+          'md:p-4 md:gap-6',
+          'lg:flex-nowrap lg:p-6',
+        )}
+      >
         <Card
-          className='flex flex-1 p-4 bg-white/5'
+          className='flex flex-1 w-full p-4 bg-white/5 max-w-screen-full min-w-[200px]'
           contentClassName='gap-6 flex flex-col justify-between h-full'
         >
           <TokenInputWithSlider

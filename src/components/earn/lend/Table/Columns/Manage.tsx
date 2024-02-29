@@ -7,6 +7,7 @@ import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAlertDialog from 'hooks/useAlertDialog'
 import useAutoLend from 'hooks/useAutoLend'
 import useLendAndReclaimModal from 'hooks/useLendAndReclaimModal'
+import { isMobile } from 'react-device-detect'
 import useStore from 'store'
 
 export const MANAGE_META = {
@@ -41,7 +42,9 @@ export default function Manage(props: Props) {
         content:
           "Your auto-lend feature is currently enabled. To unlend your funds, please confirm if you'd like to disable this feature in order to continue.",
         positiveButton: {
-          onClick: () => document.getElementById(ACCOUNT_MENU_BUTTON_ID)?.click(),
+          onClick: isMobile
+            ? () => useStore.setState({ settingsModal: true })
+            : () => document.getElementById(ACCOUNT_MENU_BUTTON_ID)?.click(),
           text: 'Continue to Account Settings',
           icon: <Enter />,
         },

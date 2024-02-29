@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import classNames from 'classnames'
 import Modal from 'components/Modals/Modal'
 import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
 import Button from 'components/common/Button'
@@ -120,7 +121,7 @@ export default function Repay(props: Props) {
     <Modal
       onClose={close}
       header={
-        <span className='flex items-center gap-4 px-4'>
+        <span className='flex items-center gap-4 px-2 md:px-4'>
           <AssetImage asset={modal.data.asset} size={24} />
           <Text>
             {'Repay'} {asset.symbol}
@@ -130,11 +131,10 @@ export default function Repay(props: Props) {
       headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col'
     >
-      <div className='flex gap-3 px-6 py-4 border-b border-white/5 gradient-header'>
+      <div className='flex flex-wrap gap-4 p-4 border-b md:gap-6 md:px-6 md:py-4 border-white/5 gradient-header md:flex-nowrap'>
         <TitleAndSubCell title={formatPercent(apy)} sub={'Borrow Rate APY'} />
 
-        <div className='h-100 w-[1px] bg-white/10' />
-        <div className='flex flex-col gap-0.5'>
+        <div className='flex flex-col gap-0.5 md:border-l md:border-white/10 md:pl-6 w-full md:w-auto'>
           <div className='flex gap-2'>
             <FormattedNumber
               className='text-xs'
@@ -155,8 +155,7 @@ export default function Repay(props: Props) {
             Total Borrowed
           </Text>
         </div>
-        <div className='h-100 w-[1px] bg-white/10' />
-        <div className='flex flex-col gap-0.5'>
+        <div className='flex flex-col gap-0.5 md:border-l md:border-white/10 md:pl-6 w-full md:w-auto'>
           <div className='flex gap-2'>
             <FormattedNumber
               className='text-xs'
@@ -175,9 +174,15 @@ export default function Repay(props: Props) {
           </Text>
         </div>
       </div>
-      <div className='flex items-start flex-1 gap-6 p-6'>
+      <div
+        className={classNames(
+          'flex items-start flex-1 p-2 gap-4 flex-wrap',
+          'md:p-4 md:gap-6',
+          'lg:flex-nowrap lg:p-6',
+        )}
+      >
         <Card
-          className='flex flex-1 p-4 bg-white/5'
+          className='flex flex-1 w-full p-4 bg-white/5 max-w-screen-full min-w-[200px]'
           contentClassName='gap-6 flex flex-col justify-between h-full'
         >
           <TokenInputWithSlider

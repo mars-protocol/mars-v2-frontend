@@ -46,7 +46,7 @@ export default function RecentTransactions() {
                     }}
                     key={hash}
                   >
-                    <div className='flex items-start justify-between w-full pb-2'>
+                    <div className='flex flex-wrap items-start justify-between w-full gap-2 pb-2 md:flex-nowrap'>
                       <Text className='flex font-bold'>
                         {accountId === address ? 'Red Bank' : `Credit Account ${accountId}`}
                       </Text>

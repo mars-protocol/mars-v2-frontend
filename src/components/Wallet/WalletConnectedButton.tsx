@@ -6,14 +6,14 @@ import { useCallback, useEffect, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import useClipboard from 'react-use-clipboard'
 
+import RecentTransactions from 'components/Wallet/RecentTransactions'
+import WalletSelect from 'components/Wallet/WalletSelect'
 import Button from 'components/common/Button'
 import { CircularProgress } from 'components/common/CircularProgress'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { Check, Copy, ExternalLink, Wallet } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
-import RecentTransactions from 'components/Wallet/RecentTransactions'
-import WalletSelect from 'components/Wallet/WalletSelect'
 import chains from 'configs/chains'
 import { BN_ZERO } from 'constants/math'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
@@ -23,6 +23,7 @@ import useCurrentWallet from 'hooks/useCurrentWallet'
 import useICNSDomain from 'hooks/useICNSDomain'
 import useToggle from 'hooks/useToggle'
 import useWalletBalances from 'hooks/useWalletBalances'
+import { isMobile } from 'react-device-detect'
 import useStore from 'store'
 import { NETWORK } from 'types/enums/network'
 import { ChainInfoID } from 'types/enums/wallet'
@@ -171,7 +172,10 @@ export default function WalletConnectedButton() {
         </div>
       </Button>
       <Overlay
-        className={classNames('mt-2', focusComponent ? '-left-[110px]' : 'right-0')}
+        className={classNames(
+          isMobile ? 'top-18 h-[calc(100dvh-72px)]' : 'top-8',
+          focusComponent ? '-left-[110px]' : 'right-0',
+        )}
         show={showDetails}
         setShow={setShowDetails}
       >

@@ -40,7 +40,9 @@ export default function AccordionContent(props: Props) {
           isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
         )}
       >
-        <div className='overflow-hidden'>{renderContent()}</div>
+        <div className='overflow-x-scroll overflow-y-hidden md:overflow-hidden'>
+          {renderContent()}
+        </div>
       </div>
     </div>
   )
