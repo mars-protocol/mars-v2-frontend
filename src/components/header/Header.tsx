@@ -104,7 +104,7 @@ export default function Header() {
               {address && (
                 <div className='flex gap-4'>
                   <Wallet />
-                  <ChainSelect />
+                  {!isMobile && <ChainSelect />}
                 </div>
               )}
               <div className='flex gap-4'>

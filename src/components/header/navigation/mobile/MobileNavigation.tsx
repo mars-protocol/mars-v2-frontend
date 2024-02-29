@@ -54,7 +54,7 @@ export default function MobileNavigation(props: Props) {
   return (
     <div
       className={classNames(
-        'fixed md:hidden w-screen-full top-18 gap-4 flex flex-wrap p-2 pt-4 pb-8 transition-all overflow-y-scroll h-[calc(100dvh-72px)] z-20',
+        'fixed md:hidden w-screen-full top-18 gap-4 flex flex-wrap p-2 pt-4 pb-8 transition-all overflow-y-scroll h-[calc(100dvh-72px)] z-20 items-start flex-col',
         mobileNavExpanded ? 'right-0 opacity-100' : '-right-full opacity-0',
       )}
     >
@@ -104,7 +104,7 @@ export default function MobileNavigation(props: Props) {
           </div>
         </div>
       </div>
-      {!isV1 && (
+      {!isV1 && address && (
         <div className='flex items-center justify-between w-full'>
           <Text size='sm'>Account:</Text>
           <div className='relative'>
