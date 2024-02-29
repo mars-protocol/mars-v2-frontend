@@ -298,6 +298,7 @@ module.exports = {
       },
       spacing: {
         6.5: '26px',
+        18: '72px',
         24: '96px',
         35: '140px',
         70: '280px',
@@ -307,6 +308,7 @@ module.exports = {
         98: '392px',
         102: '408px',
         118: '472px',
+        full: '100%',
       },
       transitionDuration: {
         3000: '3000ms',

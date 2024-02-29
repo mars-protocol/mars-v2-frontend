@@ -11,7 +11,6 @@ import Footer from 'components/common/Footer'
 import PageMetadata from 'components/common/PageMetadata'
 import Toaster from 'components/common/Toaster'
 import Header from 'components/header/Header'
-import V1Header from 'components/header/V1Header'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -51,9 +50,8 @@ function PageContainer(props: Props) {
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
   const focusComponent = useStore((s) => s.focusComponent)
+  const mobileNavExpanded = useStore((s) => s.mobileNavExpanded)
   const address = useStore((s) => s.address)
-  const isV1 = useStore((s) => s.isV1)
-
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
@@ -70,7 +68,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <SWRConfig value={{ use: [debugSWR] }}>
         <PageMetadata />
         <Background />
-        {isV1 ? <V1Header /> : <Header />}
+        <Header />
         <main
           className={classNames(
             'md:min-h-[calc(100dvh-81px)]',
@@ -83,11 +81,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               address &&
               isFullWidth &&
               accountId &&
-              (accountDetailsExpanded ? 'md:pr-102' : 'md:pr-24'),
+              (accountDetailsExpanded && !isMobile ? 'md:pr-102' : 'md:pr-24'),
             !reduceMotion && isFullWidth && 'transition-all duration-500',
             'justify-center',
             focusComponent && 'items-center',
-            isMobile && 'items-start',
+            isMobile && 'items-start transition-all duration-500',
+            mobileNavExpanded && isMobile && '-ml-full',
           )}
         >
           <Suspense>
@@ -95,7 +94,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               {children}
             </PageContainer>
           </Suspense>
-          <AccountDetails className='hidden md:flex' />
+          {!isMobile && <AccountDetails className='hidden md:flex' />}
         </main>
         <Footer />
         <ModalsContainer />

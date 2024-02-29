@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import { useCallback } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
+import WalletBridges from 'components/Wallet/WalletBridges'
 import AccountCreateFirst from 'components/account/AccountCreateFirst'
 import AccountFund from 'components/account/AccountFund/AccountFundFullPage'
 import AccountList from 'components/account/AccountList'
@@ -9,7 +10,6 @@ import Button from 'components/common/Button'
 import { Account, Plus, PlusCircled } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
-import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
@@ -17,6 +17,7 @@ import useAccountId from 'hooks/useAccountId'
 import useAutoLend from 'hooks/useAutoLend'
 import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
 import useToggle from 'hooks/useToggle'
+import { isMobile } from 'react-device-detect'
 import useStore from 'store'
 import { defaultFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
@@ -110,6 +111,7 @@ export default function AccountMenuContent(props: Props) {
         color={hasCreditAccounts ? 'secondary' : 'primary'}
         hasFocus={showMenu}
         hasSubmenu={hasCreditAccounts}
+        className={isMobile ? '!px-2' : undefined}
       >
         {hasCreditAccounts
           ? isAccountSelected
@@ -118,7 +120,7 @@ export default function AccountMenuContent(props: Props) {
           : 'Create Account'}
       </Button>
       <Overlay
-        className='max-w-screen-full right-0 mt-2 flex h-[530px] w-[336px] overflow-hidden'
+        className='max-w-screen-full right-0 mt-2 flex md:h-[530px] w-[336px] overflow-hidden fixed md:absolute top-18 md:top-8 h-[calc(100dvh-72px)]'
         show={showMenu}
         setShow={setShowMenu}
       >

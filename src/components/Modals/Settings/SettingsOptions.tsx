@@ -14,19 +14,20 @@ export default function SettingsOptions(props: Props) {
   return (
     <div
       className={classNames(
-        'mb-6 flex w-full items-start justify-between border-b border-white/5',
+        'mb-4 flex w-full flex-wrap gap-4 items-start justify-between border-b border-white/5',
+        'md:mb-6 md:flex-nowrap md:gap-0',
         props.className,
       )}
     >
-      <div className='flex w-120 flex-wrap'>
-        <Text size='lg' className='mb-2 w-full'>
+      <div className='flex flex-wrap w-120'>
+        <Text size='lg' className='w-full mb-2'>
           {props.label}
         </Text>
         <Text size='xs' className='text-white/50'>
           {props.description}
         </Text>
       </div>
-      <div className='flex w-60 flex-wrap justify-end'>{props.children}</div>
+      <div className='flex flex-wrap justify-end w-60'>{props.children}</div>
     </div>
   )
 }

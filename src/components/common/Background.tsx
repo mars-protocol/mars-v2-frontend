@@ -27,7 +27,12 @@ export default function Background() {
         return ['bg-orb-primary-hls', 'bg-orb-secondary-hls', 'bg-orb-tertiary-hls', 'bg-body-hls']
       }
       if (isV1) {
-        return ['bg-transparent', 'bg-transparent', 'bg-transparent', 'bg-body bg-v1 blur-[2px]']
+        return [
+          'bg-transparent',
+          'bg-transparent',
+          'bg-transparent',
+          'bg-body md:bg-v1 md:blur-[2px]',
+        ]
       }
 
       return ['bg-orb-primary', 'bg-orb-secondary', 'bg-orb-tertiary', 'bg-body']

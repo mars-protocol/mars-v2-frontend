@@ -1,7 +1,13 @@
 import AssetImage from 'components/common/assets/AssetImage'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import { isMobile } from 'react-device-detect'
 
-export const NAME_META = { accessorKey: 'asset.symbol', header: 'Asset', id: 'symbol' }
+export const NAME_META = {
+  accessorKey: 'asset.symbol',
+  header: 'Asset',
+  id: 'symbol',
+  meta: { className: 'min-w-30' },
+}
 interface Props {
   asset: Asset
   v1?: boolean
@@ -13,7 +19,7 @@ export default function Name(props: Props) {
       <AssetImage asset={asset} size={32} />
       <TitleAndSubCell
         title={asset.symbol}
-        sub={props.v1 ? '' : asset.name}
+        sub={props.v1 && !isMobile ? '' : asset.name}
         className='text-left min-w-15'
       />
     </div>

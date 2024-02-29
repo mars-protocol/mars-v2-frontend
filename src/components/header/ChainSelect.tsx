@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 
 import Button from 'components/common/Button'
-import { ExternalLink } from 'components/common/Icons'
+import { ChevronDown, Cross, ExternalLink } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Radio from 'components/common/Radio'
 import Text from 'components/common/Text'
@@ -20,6 +20,7 @@ import { getRoute } from 'utils/route'
 
 interface Props {
   className?: string
+  withText?: boolean
 }
 
 interface V1Outpost {
@@ -152,24 +153,45 @@ export default function ChainSelect(props: Props) {
         leftIcon={<ChainLogo chainID={chainConfig.id} className='w-4' />}
         iconClassName='w-5 h-5'
         color='secondary'
+        text={props.withText ? `${chainConfig.name} ${isV1 ? 'v1' : 'v2'}` : undefined}
         onClick={() => setShowMenu()}
-        className={classNames('!p-0 w-8 flex items-center justify-center')}
+        className={classNames(
+          'flex items-center justify-center',
+          props.withText ? 'w-auto !px-2 !pr-8 h-[32px]' : '!p-0 w-8',
+        )}
       />
+      {props.withText && (
+        <div className='absolute w-3 -translate-y-1/2 right-2 top-1/2 z-1'>
+          <ChevronDown />
+        </div>
+      )}
       <Overlay
         show={showMenu}
         setShow={setShowMenu}
-        className='right-0 w-[200px] mt-2 overflow-hidden'
+        className='right-0 md:top-8 md:w-[200px] md:mt-2 overflow-hidden top-18 fixed md:absolute w-screen-full md:h-auto'
       >
         {availableChains.map((chain, index) => (
           <React.Fragment key={chain.chainId}>
             <div
               className={classNames(
-                'flex items-center gap-2 px-4 py-3 border-b bg-white/10 border-white/20',
+                'flex items-center gap-2 px-4 py-3 border-b bg-white/10 border-white/20 relative',
                 index > 0 && 'border-t',
               )}
             >
               <ChainLogo chainID={chain.chainId} className='w-5' />
               <Text>{chain.name}</Text>
+              {props.withText && index === 0 && (
+                <div className='absolute top-2 right-2'>
+                  <Button
+                    onClick={() => setShowMenu(false)}
+                    leftIcon={<Cross />}
+                    iconClassName='w-3'
+                    color='tertiary'
+                    className='w-8 h-8 '
+                    size='xs'
+                  />
+                </div>
+              )}
             </div>
             {!!chains[chain.chainId] && (
               <ChainOption

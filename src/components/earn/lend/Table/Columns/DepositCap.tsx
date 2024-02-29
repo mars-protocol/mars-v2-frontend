@@ -11,7 +11,7 @@ export const DEPOSIT_CAP_META = {
   header: 'Deposit Cap',
   id: 'marketDepositCap',
   meta: {
-    className: 'w-50',
+    className: 'w-40 min-w-30',
   },
 }
 

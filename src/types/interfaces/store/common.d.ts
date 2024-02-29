@@ -11,6 +11,7 @@ interface CommonSlice {
   selectedAccount: string | null
   updatedAccount?: Account
   focusComponent: FocusComponent | null
+  mobileNavExpanded: boolean
   accountDetailsExpanded: boolean
   migrationBanner: boolean
   tutorial: boolean

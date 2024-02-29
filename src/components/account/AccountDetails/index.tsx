@@ -225,7 +225,7 @@ function AccountDetails(props: Props) {
                 : 'transition-opacity opacity-0 duration-300 grid-rows-[0fr]',
             )}
           >
-            <div className='overflow-hidden'>
+            <div className='overflow-x-scroll overflow-y-hidden md:overflow-hidden'>
               <AccountSummary account={account} isAccountDetails />
             </div>
             <div

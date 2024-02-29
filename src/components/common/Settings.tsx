@@ -5,6 +5,7 @@ import useStore from 'store'
 
 interface Props {
   className?: string
+  showText?: boolean
 }
 
 export default function Settings(props: Props) {
@@ -12,8 +13,9 @@ export default function Settings(props: Props) {
     <Button
       variant='solid'
       color='secondary'
-      className={classNames('w-16', props.className)}
+      className={classNames(props.showText ? 'w-auto' : 'w-16', props.className)}
       leftIcon={<Gear />}
+      text={props.showText ? 'Settings' : undefined}
       onClick={() => useStore.setState({ settingsModal: true })}
     />
   )

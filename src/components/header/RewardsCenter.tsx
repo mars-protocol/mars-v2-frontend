@@ -101,7 +101,11 @@ export default function RewardsCenter(props: Props) {
           <DisplayCurrency coin={totalRewardsCoin} />
         </div>
       </Button>
-      <Overlay className={'mt-2 right-0'} show={showRewardsCenter} setShow={setShowRewardsCenter}>
+      <Overlay
+        className={'mt-2 right-0 top-8'}
+        show={showRewardsCenter}
+        setShow={setShowRewardsCenter}
+      >
         <div className='flex w-[402px] flex-wrap'>
           <Text size='lg' className='w-full px-4 py-5 rounded-t-base bg-white/10'>
             Rewards Center

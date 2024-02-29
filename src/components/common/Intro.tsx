@@ -68,7 +68,7 @@ export default function Intro(props: Props) {
   return (
     <Card
       className={classNames(
-        'relative w-full p-8 bg-cover h-55',
+        'relative w-full p-8 bg-cover md:h-55 min-h-55',
         isHLS ? 'bg-intro-hls' : 'bg-intro',
       )}
       contentClassName='flex w-full h-full flex-col justify-between'
@@ -91,7 +91,11 @@ export default function Intro(props: Props) {
           {props.text}
         </Text>
       </div>
-      {props.children && <div className='flex w-full gap-4'>{props.children}</div>}
+      {props.children && (
+        <div className='flex flex-wrap w-full gap-4 pt-4 md:flex-nowrap md:pt-0'>
+          {props.children}
+        </div>
+      )}
     </Card>
   )
 }

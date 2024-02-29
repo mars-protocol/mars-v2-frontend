@@ -8,6 +8,7 @@ import Radio from 'components/common/Radio'
 import Text from 'components/common/Text'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useAccountId from 'hooks/useAccountId'
+import { isMobile } from 'react-device-detect'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
 
@@ -54,11 +55,16 @@ export default function AccountList(props: Props) {
               contentClassName='bg-white/10 group-hover/account:bg-white/20'
               onClick={() => {
                 if (isActive) return
+                if (isMobile) setShowMenu(false)
                 useStore.setState({ accountDeleteModal: null })
                 navigate(getRoute(getPage(pathname), searchParams, address, accountId))
               }}
               title={
-                <div className={accountCardHeaderClasses} role={!isActive ? 'button' : undefined}>
+                <div
+                  className={accountCardHeaderClasses}
+                  role='button'
+                  onClick={() => setShowMenu(false)}
+                >
                   <Text size='xs' className='flex flex-1'>
                     Credit Account {accountId}
                   </Text>
