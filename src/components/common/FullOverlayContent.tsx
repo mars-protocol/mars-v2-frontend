@@ -15,7 +15,12 @@ interface Props {
 
 export default function FullOverlayContent(props: Props) {
   return (
-    <div className={classNames('min-h-[600px] w-100 max-w-full', props.className)}>
+    <div
+      className={classNames(
+        'h-screen-full md:min-h-[600px] w-screen-full md:w-100 max-w-full px-4 md:px-0',
+        props.className,
+      )}
+    >
       <Text size='4xl' className='w-full pb-2 text-center'>
         {props.title}
       </Text>

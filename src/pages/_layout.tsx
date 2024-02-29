@@ -10,8 +10,8 @@ import Background from 'components/common/Background'
 import Footer from 'components/common/Footer'
 import PageMetadata from 'components/common/PageMetadata'
 import Toaster from 'components/common/Toaster'
-import DesktopHeader from 'components/header/DesktopHeader'
-import V1DesktopHeader from 'components/header/V1DesktopHeader'
+import Header from 'components/header/Header'
+import V1Header from 'components/header/V1Header'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -28,15 +28,13 @@ interface Props {
 function PageContainer(props: Props) {
   const isV1 = useStore((s) => s.isV1)
 
-  if (isMobile) return props.children
-
   if (!props.focusComponent)
     return (
       <div
         className={classNames(
-          'mx-auto flex items-start w-full',
-          !props.fullWidth && !isV1 && 'max-w-content',
-          isV1 && 'max-w-v1',
+          'mx-auto flex items-start w-full max-w-screen-full ',
+          !props.fullWidth && !isV1 && 'md:max-w-content',
+          isV1 && 'md:max-w-v1',
         )}
       >
         {props.children}
@@ -72,11 +70,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <SWRConfig value={{ use: [debugSWR] }}>
         <PageMetadata />
         <Background />
-        {isV1 ? <V1DesktopHeader /> : <DesktopHeader />}
+        {isV1 ? <V1Header /> : <Header />}
         <main
           className={classNames(
-            'lg:min-h-[calc(100dvh-81px)]',
-            'lg:mt-[73px]',
+            'md:min-h-[calc(100dvh-81px)]',
+            'mt-[73px]',
             'flex',
             'min-h-screen-full w-full relative',
             'gap-4 p-2 pb-10',
@@ -85,7 +83,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               address &&
               isFullWidth &&
               accountId &&
-              (accountDetailsExpanded ? 'pr-102' : 'pr-24'),
+              (accountDetailsExpanded ? 'md:pr-102' : 'md:pr-24'),
             !reduceMotion && isFullWidth && 'transition-all duration-500',
             'justify-center',
             focusComponent && 'items-center',
@@ -97,7 +95,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               {children}
             </PageContainer>
           </Suspense>
-          <AccountDetails />
+          <AccountDetails className='hidden md:flex' />
         </main>
         <Footer />
         <ModalsContainer />

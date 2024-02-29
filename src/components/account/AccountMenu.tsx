@@ -4,19 +4,24 @@ import AccountMenuContent from 'components/account/AccountMenuContent'
 import Loading from 'components/common/Loading'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useStore from 'store'
+import classNames from 'classnames'
 
-function Content() {
-  const address = useStore((s) => s.address)
-  const { data: accountIds, isLoading } = useAccountIds(address)
-  if (isLoading) return <Loading className='h-8 w-35' />
-  if (!accountIds) return null
-  return <AccountMenuContent />
+interface Props {
+  className?: string
 }
 
-export default function AccountMenu() {
+function Content(props: Props) {
+  const address = useStore((s) => s.address)
+  const { data: accountIds, isLoading } = useAccountIds(address)
+  if (isLoading) return <Loading className={classNames('h-8 w-35', props.className)} />
+  if (!accountIds) return null
+  return <AccountMenuContent className={props.className} />
+}
+
+export default function AccountMenu(props: Props) {
   return (
     <Suspense fallback={<Loading className='h-8 w-35' />}>
-      <Content />
+      <Content className={props.className} />
     </Suspense>
   )
 }

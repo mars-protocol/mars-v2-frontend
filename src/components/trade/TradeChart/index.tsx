@@ -20,11 +20,11 @@ import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import usePrices from 'hooks/usePrices'
+import { isMobile } from 'react-device-detect'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { ChartingLibraryWidgetOptions, ResolutionString, widget } from 'utils/charting_library'
 import { magnify } from 'utils/formatters'
-import { isMobile } from 'utils/mobile'
 interface Props {
   buyAsset: Asset
   sellAsset: Asset
@@ -55,11 +55,11 @@ export default function TradeChart(props: Props) {
         library_path: '/charting_library/',
         locale: 'en',
         time_scale: {
-          min_bar_spacing: isMobile() ? 2 : 12,
+          min_bar_spacing: isMobile ? 2 : 12,
         },
         toolbar_bg: '#220E1D',
-        disabled_features: isMobile() ? disabledFeaturesMobile : disabledFeatures,
-        enabled_features: isMobile() ? enabledFeaturesMobile : enabledFeatures,
+        disabled_features: isMobile ? disabledFeaturesMobile : disabledFeatures,
+        enabled_features: isMobile ? enabledFeaturesMobile : enabledFeatures,
         fullscreen: false,
         autosize: true,
         container: chartContainerRef.current,
@@ -69,7 +69,7 @@ export default function TradeChart(props: Props) {
           'paneProperties.backgroundType': 'solid',
           'linetooltrendline.linecolor': 'rgba(255, 255, 255, 0.8)',
           'linetooltrendline.linewidth': 2,
-          'scalesProperties.fontSize': isMobile() ? 6 : 12,
+          'scalesProperties.fontSize': isMobile ? 6 : 12,
         },
         loading_screen: {
           backgroundColor: '#220E1D',
@@ -151,6 +151,7 @@ export default function TradeChart(props: Props) {
       className={classNames(
         'h-[500px]',
         'md:h-screen/70 md:max-h-[980px] md:min-h-[560px] order-1',
+        'before:z-0',
       )}
     >
       <div ref={chartContainerRef} className='h-[calc(100%-32px)] overflow-hidden'>

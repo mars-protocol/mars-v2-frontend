@@ -34,7 +34,15 @@ import {
   calculateAccountLeverage,
 } from 'utils/accounts'
 
-export default function AccountDetailsController() {
+interface Props {
+  account: Account
+}
+
+interface AccountDetailsControllerProps {
+  className?: string
+}
+
+export default function AccountDetailsController(props: AccountDetailsControllerProps) {
   const address = useStore((s) => s.address)
   const isHLS = useStore((s) => s.isHLS)
   const isV1 = useStore((s) => s.isV1)
@@ -50,13 +58,9 @@ export default function AccountDetailsController() {
   const isLoadingAccountDetails = (isLoading && accountId && !focusComponent) || !account
 
   if (hideAccountDetails) return null
-  if (isLoadingAccountDetails) return <Skeleton />
+  if (isLoadingAccountDetails) return <Skeleton className={props.className} />
 
   return <AccountDetails account={account} />
-}
-
-interface Props {
-  account: Account
 }
 
 function AccountDetails(props: Props) {
@@ -135,7 +139,7 @@ function AccountDetails(props: Props) {
     <>
       {!isFullWidth && accountDetailsExpanded && (
         <div
-          className='absolute w-full h-full hover:cursor-pointer z-1'
+          className='absolute hidden w-full h-full hover:cursor-pointer z-1 md:block'
           onClick={() => useStore.setState({ accountDetailsExpanded: false })}
         />
       )}
@@ -143,7 +147,8 @@ function AccountDetails(props: Props) {
         data-testid='account-details'
         className={classNames(
           accountDetailsExpanded ? 'right-4' : '-right-74',
-          'w-94 flex items-start gap-4 absolute top-6 z-2',
+          'w-94 hidden items-start gap-4 absolute top-6 z-2',
+          'md:flex',
           !reduceMotion && 'transition-all duration-500',
         )}
       >

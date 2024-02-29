@@ -52,7 +52,7 @@ export default function AssetItem(props: Props) {
     <li className='border-b border-white/10 hover:bg-black/10'>
       <button
         onClick={() => props.onSelectAsset(asset)}
-        className='flex items-center justify-between w-full gap-2 p-4'
+        className='flex items-center justify-between w-full gap-2 p-4 min-h-14'
       >
         <div className='flex items-center gap-2'>
           <div onClick={handleToggleFavorite}>

@@ -34,7 +34,7 @@ export default function DesktopNavigation(props: Props) {
     <div
       className={classNames(
         focusComponent
-          ? 'absolute left-4 top-3 z-1 block'
+          ? 'absolute left-4 top-4 z-1 block'
           : 'flex flex-1 items-center relative z-50',
       )}
     >
@@ -44,7 +44,7 @@ export default function DesktopNavigation(props: Props) {
         </span>
       </NavLink>
       {!focusComponent && (
-        <div className='flex gap-8 px-6 h-6 @container/navigation relative flex-1'>
+        <div className='hidden md:flex gap-8 px-6 h-6 @container/navigation relative flex-1'>
           {menu.map((item, index) =>
             item.submenu ? (
               <NavMenu key={index} item={item} index={index} />

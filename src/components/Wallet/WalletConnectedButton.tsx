@@ -150,7 +150,9 @@ export default function WalletConnectedButton() {
         }}
         hasFocus={showDetails}
       >
-        <span>{userDomain?.domain ? userDomain.domain : truncate(address, [2, 4])}</span>
+        <span className='hidden md:inline'>
+          {userDomain?.domain ? userDomain.domain : truncate(address, [2, 4])}
+        </span>
         <div
           className={classNames(
             'relative ml-2 flex h-full items-center pl-2 number',
@@ -173,16 +175,14 @@ export default function WalletConnectedButton() {
         show={showDetails}
         setShow={setShowDetails}
       >
-        <div className='flex w-[440px] flex-wrap p-6'>
+        <div className='flex max-w-screen-full w-[440px] flex-wrap p-6'>
           <div className='flex items-start w-full mb-4 flex-0 flex-nowrap'>
             <div className='flex flex-1 w-auto'>
-              <div className='mr-2 flex h-[31px] items-end pb-0.5  text-base-caps'>
-                {baseAsset.symbol}
-              </div>
+              <div className='mr-2 flex h-[31px] items-end text-base-caps'>{baseAsset.symbol}</div>
               <div className='flex flex-wrap justify-end flex-0'>
                 <FormattedNumber
                   animate
-                  className='flex items-end text-2xl '
+                  className='flex items-end h-[31px] text-2xl !leading-5'
                   amount={walletAmount.toNumber()}
                 />
               </div>
@@ -205,17 +205,17 @@ export default function WalletConnectedButton() {
             >
               {truncate(address, [14, 14])}
             </Text>
-            <div className='flex w-full gap-6 pt-2'>
+            <div className='flex flex-wrap w-full gap-4 pt-2 md:gap-6 md:flex-nowrap'>
               <Button
                 leftIcon={isCopied ? <Check /> : <Copy />}
-                className='flex w-auto'
+                className='flex w-full md:w-auto'
                 color='secondary'
                 onClick={setCopied}
                 text={isCopied ? 'Copied' : 'Copy Address'}
               />
               <Button
                 leftIcon={<ExternalLink />}
-                className='flex w-auto'
+                className='flex w-full md:w-auto'
                 color='secondary'
                 onClick={viewOnFinder}
               >

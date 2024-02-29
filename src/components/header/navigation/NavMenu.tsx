@@ -2,9 +2,9 @@ import classNames from 'classnames'
 
 import Divider from 'components/common/Divider'
 import { ChevronDown } from 'components/common/Icons'
-import { NavLink } from 'components/header/navigation/NavLink'
-import { getIsActive } from 'components/header/navigation/DesktopNavigation'
 import Text from 'components/common/Text'
+import { getIsActive } from 'components/header/navigation/DesktopNavigation'
+import { NavLink } from 'components/header/navigation/NavLink'
 import useToggle from 'hooks/useToggle'
 
 interface Props {
@@ -19,7 +19,10 @@ export const NavMenu = (props: Props) => {
   if (!item.submenu) return null
 
   return (
-    <div className='relative flex items-center pb-2 -mb-2' onMouseLeave={() => setShowMenu(false)}>
+    <div
+      className={`@nav-${index}/navigation:inline-block hidden relative items-center pb-2 -mb-2 pt-0.5`}
+      onMouseLeave={() => setShowMenu(false)}
+    >
       <div
         onMouseOver={() => {
           if (!showMenu) setShowMenu(true)
@@ -31,7 +34,7 @@ export const NavMenu = (props: Props) => {
           key={index}
           item={{ pages: [item.pages[0]], label: item.label }}
           className={classNames(
-            `@nav-${index}/navigation:inline-block hidden whitespace-nowrap`,
+            'whitespace-nowrap',
             (getIsActive(item.pages) || showMenu) && '!text-white',
           )}
         >

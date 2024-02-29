@@ -4,16 +4,17 @@ import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import QRCode from 'react-qr-code'
 
+import WalletConnecting from 'components/Wallet/WalletConnecting'
 import Button from 'components/common/Button'
 import FullOverlayContent from 'components/common/FullOverlayContent'
 import { ChevronLeft, ChevronRight } from 'components/common/Icons'
 import Text from 'components/common/Text'
-import WalletConnecting from 'components/Wallet/WalletConnecting'
 import { WALLETS } from 'constants/wallets'
+import useChainConfig from 'hooks/useChainConfig'
+import { isMobile } from 'react-device-detect'
 import useStore from 'store'
 import { WalletID } from 'types/enums/wallet'
-import { isAndroid, isIOS, isMobile } from 'utils/mobile'
-import useChainConfig from 'hooks/useChainConfig'
+import { isAndroid, isIOS } from 'utils/mobile'
 
 interface Props {
   error?: ErrorObject
@@ -79,7 +80,7 @@ export default function WalletSelect(props: Props) {
         chainId,
       })
 
-      if (isMobile()) {
+      if (isMobile) {
         if (isAndroid()) {
           window.location.href = urls.androidUrl
         } else if (isIOS()) {
@@ -139,7 +140,7 @@ export default function WalletSelect(props: Props) {
       docs='wallet'
     >
       <div className='flex flex-wrap w-full gap-3'>
-        {!isMobile() && (
+        {!isMobile && (
           <>
             {sortedExtensionProviders.map((provider) => {
               const walletId = provider.id as WalletID

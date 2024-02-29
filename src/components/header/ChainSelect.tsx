@@ -18,6 +18,10 @@ import { NETWORK } from 'types/enums/network'
 import { ChainInfoID } from 'types/enums/wallet'
 import { getRoute } from 'utils/route'
 
+interface Props {
+  className?: string
+}
+
 interface V1Outpost {
   chainId: ChainInfoID
   name: string
@@ -64,7 +68,7 @@ const v1Outposts: V1Outpost[] = [
   },
 ]
 
-export default function ChainSelect() {
+export default function ChainSelect(props: Props) {
   const [showMenu, setShowMenu] = useToggle()
   const chainConfig = useChainConfig()
   const { mutate } = useSWRConfig()
@@ -143,7 +147,7 @@ export default function ChainSelect() {
   }, [])
 
   return (
-    <div className='relative'>
+    <div className={classNames('relative', props.className)}>
       <Button
         leftIcon={<ChainLogo chainID={chainConfig.id} className='w-4' />}
         iconClassName='w-5 h-5'

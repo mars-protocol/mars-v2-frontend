@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
+import classNames from 'classnames'
 import Button from 'components/common/Button'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
 import { Logo } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
+import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useAccountId from 'hooks/useAccountId'
@@ -18,6 +19,10 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { defaultFee } from 'utils/constants'
 import { formatAmountWithSymbol, getCoinValue } from 'utils/formatters'
+
+interface Props {
+  className?: string
+}
 
 const renderIncentives = (assets: Asset[], unclaimedRewards: BNCoin[]) => {
   if (unclaimedRewards.length === 0)
@@ -39,7 +44,7 @@ const renderIncentives = (assets: Asset[], unclaimedRewards: BNCoin[]) => {
   })
 }
 
-export default function RewardsCenter() {
+export default function RewardsCenter(props: Props) {
   const accountId = useAccountId()
   const [isConfirming, setIsConfirming] = useState(false)
   const [estimatedFee, setEstimatedFee] = useState(defaultFee)
@@ -82,7 +87,7 @@ export default function RewardsCenter() {
   }, [accountId, claimTx])
 
   return (
-    <div className={'relative'}>
+    <div className={classNames('relative', props.className)}>
       <Button
         variant='solid'
         color='secondary'

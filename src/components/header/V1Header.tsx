@@ -1,11 +1,8 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
-import { isDesktop } from 'react-device-detect'
 
 import Wallet from 'components/Wallet'
-import AccountMenu from 'components/account/AccountMenu'
 import EscButton from 'components/common/Button/EscButton'
-import { Coins, CoinsSwap } from 'components/common/Icons'
 import Settings from 'components/common/Settings'
 import ChainSelect from 'components/header/ChainSelect'
 import OracleResyncButton from 'components/header/OracleResyncButton'
@@ -18,38 +15,17 @@ import { getGovernanceUrl } from 'utils/helpers'
 
 const menuTree = (walletId: WalletID, chainConfig: ChainConfig): MenuTreeEntry[] => [
   {
-    pages: ['trade', 'trade-advanced'],
-    label: 'Trade',
-    submenu: [
-      {
-        page: 'trade',
-        label: 'Spot',
-        subtitle: 'Trade assets against stables',
-        icon: <Coins className='w-6 h-6' />,
-      },
-      {
-        page: 'trade-advanced',
-        label: 'Spot Advanced',
-        subtitle: 'Trade any assets',
-        icon: <CoinsSwap className='w-6 h-6' />,
-      },
-    ],
+    pages: ['v1'],
+    label: 'Red Bank',
   },
-  ...(chainConfig.perps ? [{ pages: ['perps'] as Page[], label: 'Perps' }] : []),
-  { pages: chainConfig.farm ? ['lend', 'farm'] : ['lend'], label: 'Earn' },
-  { pages: ['borrow'], label: 'Borrow' },
-  ...(chainConfig.hls ? [{ pages: ['hls-staking'] as Page[], label: 'High Leverage' }] : []),
-  { pages: ['portfolio'], label: 'Portfolio' },
   { pages: ['governance'], label: 'Governance', externalUrl: getGovernanceUrl(walletId) },
 ]
 
-export default function DesktopHeader() {
+export default function V1Header() {
   const address = useStore((s) => s.address)
   const focusComponent = useStore((s) => s.focusComponent)
   const isOracleStale = useStore((s) => s.isOracleStale)
-  const isHLS = useStore((s) => s.isHLS)
   const accountId = useAccountId()
-  const showAccountMenu = address && !isHLS
 
   function handleCloseFocusMode() {
     if (focusComponent && focusComponent.onClose) focusComponent.onClose()
@@ -57,8 +33,6 @@ export default function DesktopHeader() {
   }
 
   const showStaleOracle = useMemo(() => isOracleStale && address, [isOracleStale, address])
-
-  if (!isDesktop) return null
 
   return (
     <header
@@ -92,11 +66,10 @@ export default function DesktopHeader() {
         ) : (
           <div className='flex gap-4'>
             {showStaleOracle && <OracleResyncButton />}
-            {accountId && <RewardsCenter />}
-            {showAccountMenu && <AccountMenu />}
+            {accountId && <RewardsCenter className='hidden md:flex' />}
             <Wallet />
-            <ChainSelect />
-            <Settings />
+            <ChainSelect className='hidden md:flex' />
+            <Settings className='hidden md:flex' />
           </div>
         )}
       </div>

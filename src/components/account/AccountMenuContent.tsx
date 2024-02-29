@@ -23,10 +23,14 @@ import { BN } from 'utils/helpers'
 import { isNumber } from 'utils/parsers'
 import { getPage, getRoute } from 'utils/route'
 
+interface Props {
+  className?: string
+}
+
 const menuClasses = 'absolute isolate flex w-full flex-wrap scrollbar-hide'
 const ACCOUNT_MENU_BUTTON_ID = 'account-menu-button'
 
-export default function AccountMenuContent() {
+export default function AccountMenuContent(props: Props) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const address = useStore((s) => s.address)
@@ -98,7 +102,7 @@ export default function AccountMenuContent() {
   if (!address) return null
 
   return (
-    <div className='relative'>
+    <div className={classNames('relative', props.className)}>
       <Button
         id={ACCOUNT_MENU_BUTTON_ID}
         onClick={handleCreateAccountClick}
