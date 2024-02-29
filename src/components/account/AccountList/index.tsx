@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 import { useEffect } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { isMobile } from 'react-device-detect'
 
 import AccountStats from 'components/account/AccountList/AccountStats'
 import Card from 'components/common/Card'
@@ -8,7 +9,6 @@ import Radio from 'components/common/Radio'
 import Text from 'components/common/Text'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useAccountId from 'hooks/useAccountId'
-import { isMobile } from 'react-device-detect'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
 

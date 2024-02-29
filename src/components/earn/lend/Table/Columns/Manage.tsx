@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react'
+import { isMobile } from 'react-device-detect'
 
 import { ACCOUNT_MENU_BUTTON_ID } from 'components/account/AccountMenuContent'
 import DropDownButton from 'components/common/Button/DropDownButton'
@@ -7,7 +8,6 @@ import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAlertDialog from 'hooks/useAlertDialog'
 import useAutoLend from 'hooks/useAutoLend'
 import useLendAndReclaimModal from 'hooks/useLendAndReclaimModal'
-import { isMobile } from 'react-device-detect'
 import useStore from 'store'
 
 export const MANAGE_META = {

@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
-
 import classNames from 'classnames'
+
 import VaultBorrowings from 'components/Modals/Vault/VaultBorrowings'
 import VaultBorrowingsSubTitle from 'components/Modals/Vault/VaultBorrowingsSubTitle'
 import VaultDeposit from 'components/Modals/Vault/VaultDeposits'

@@ -1,10 +1,10 @@
 import { Suspense } from 'react'
+import classNames from 'classnames'
 
 import AccountMenuContent from 'components/account/AccountMenuContent'
 import Loading from 'components/common/Loading'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useStore from 'store'
-import classNames from 'classnames'
 
 interface Props {
   className?: string

@@ -1,6 +1,7 @@
+import { isMobile } from 'react-device-detect'
+
 import AssetImage from 'components/common/assets/AssetImage'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
-import { isMobile } from 'react-device-detect'
 
 export const NAME_META = {
   accessorKey: 'asset.symbol',

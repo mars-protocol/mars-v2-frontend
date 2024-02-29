@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
+import { isMobile } from 'react-device-detect'
 
 import Wallet from 'components/Wallet'
 import AccountMenu from 'components/account/AccountMenu'
@@ -10,14 +11,13 @@ import ChainSelect from 'components/header/ChainSelect'
 import OracleResyncButton from 'components/header/OracleResyncButton'
 import RewardsCenter from 'components/header/RewardsCenter'
 import DesktopNavigation from 'components/header/navigation/desktop/DesktopNavigation'
+import { NavLink } from 'components/header/navigation/desktop/NavLink'
+import MobileNavigation from 'components/header/navigation/mobile/MobileNavigation'
+import MobileNavigationToggle from 'components/header/navigation/mobile/MobileNavigationToggle'
 import useAccountId from 'hooks/useAccountId'
-import { isMobile } from 'react-device-detect'
 import useStore from 'store'
 import { WalletID } from 'types/enums/wallet'
 import { getGovernanceUrl } from 'utils/helpers'
-import { NavLink } from './navigation/desktop/NavLink'
-import MobileNavigation from './navigation/mobile/MobileNavigation'
-import MobileNavigationToggle from './navigation/mobile/MobileNavigationToggle'
 
 const menuTree = (walletId: WalletID, chainConfig: ChainConfig): MenuTreeEntry[] => [
   {
