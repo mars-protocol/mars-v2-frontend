@@ -20,7 +20,9 @@ export interface ModalProps {
 
 export default function Modal(props: ModalProps) {
   const ref: React.RefObject<HTMLDialogElement> = useRef(null)
-  const modalClassName = props.modalClassName ?? 'max-w-screen-full md:max-w-modal h-screen-full'
+  const modalClassName =
+    props.modalClassName ??
+    'max-w-screen-full md:max-w-modal h-screen-full flex items-center justify-center'
 
   function onClose() {
     ref.current?.close()

@@ -108,40 +108,41 @@ export default function TradeChart(props: Props) {
   return (
     <Card
       title={
-        <div className='flex items-center w-full bg-white/10'>
-          <Text size='lg' className='flex items-center flex-1 p-4 font-semibold'>
+        <div className='flex flex-wrap items-center w-full bg-white/10'>
+          <Text
+            size='lg'
+            className='flex items-center w-full p-4 pb-0 font-semibold md:pb-4 md:flex-1 md:w-auto'
+          >
             Trading Chart
           </Text>
-          <div className='hidden md:flex'>
-            {ratio.isZero() || isLoading ? (
-              <Loading className='h-4 mr-4 w-60' />
-            ) : (
-              <div className='flex items-center gap-1 p-4'>
-                <Text size='sm'>1 {props.buyAsset.symbol}</Text>
-                <FormattedNumber
-                  className='text-sm'
-                  amount={Number(ratio.toPrecision(6))}
-                  options={{
-                    prefix: '= ',
-                    suffix: ` ${props.sellAsset.symbol}`,
-                    abbreviated: false,
-                    maxDecimals: props.sellAsset.decimals,
-                  }}
-                />
-                <DisplayCurrency
-                  parentheses
-                  options={{ abbreviated: false }}
-                  className='justify-end pl-2 text-sm text-white/50'
-                  coin={
-                    new BNCoin({
-                      denom: props.buyAsset.denom,
-                      amount: magnify(1, props.buyAsset).toString(),
-                    })
-                  }
-                />
-              </div>
-            )}
-          </div>
+          {ratio.isZero() || isLoading ? (
+            <Loading className='h-4 mr-4 w-60' />
+          ) : (
+            <div className='flex items-center gap-1 p-4'>
+              <Text size='sm'>1 {props.buyAsset.symbol}</Text>
+              <FormattedNumber
+                className='text-sm'
+                amount={Number(ratio.toPrecision(6))}
+                options={{
+                  prefix: '= ',
+                  suffix: ` ${props.sellAsset.symbol}`,
+                  abbreviated: false,
+                  maxDecimals: props.sellAsset.decimals,
+                }}
+              />
+              <DisplayCurrency
+                parentheses
+                options={{ abbreviated: false }}
+                className='justify-end pl-2 text-sm text-white/50'
+                coin={
+                  new BNCoin({
+                    denom: props.buyAsset.denom,
+                    amount: magnify(1, props.buyAsset).toString(),
+                  })
+                }
+              />
+            </div>
+          )}
         </div>
       }
       contentClassName='pb-0.5 h-full !w-[calc(100%-2px)] ml-[1px] bg-chart'

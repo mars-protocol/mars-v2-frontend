@@ -51,7 +51,7 @@ function AlertDialog(props: Props) {
         </div>
       }
       className='md:h-auto h-screen-full'
-      modalClassName='max-w-screen-full md:max-w-modal-sm'
+      modalClassName='max-w-screen-full md:max-w-modal-sm h-screen-full flex items-center justify-center '
       headerClassName='p-4 md:p-8'
       contentClassName='md:px-8 md:pb-8 p-4'
       hideCloseBtn
