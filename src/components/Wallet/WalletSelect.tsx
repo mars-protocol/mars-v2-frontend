@@ -16,7 +16,6 @@ import useCurrentWallet from 'hooks/useCurrentWallet'
 import useStore from 'store'
 import { WalletID } from 'types/enums/wallet'
 import { isAndroid, isIOS } from 'utils/mobile'
-import WalletFetchBalancesAndAccounts from './WalletFetchBalancesAndAccounts'
 
 interface Props {
   error?: ErrorObject
@@ -106,7 +105,7 @@ export default function WalletSelect(props: Props) {
     if (!address && !recentWallet) return
     useStore.setState({
       focusComponent: {
-        component: <WalletFetchBalancesAndAccounts />,
+        component: <WalletConnecting providerId={recentWallet?.providerId} />,
         onClose: () => {
           useStore.setState({ focusComponent: null })
         },
