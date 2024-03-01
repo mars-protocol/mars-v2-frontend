@@ -108,7 +108,7 @@ export default function Header() {
                 </div>
               )}
               <div className='flex gap-4'>
-                {!address && <ChainSelect />}
+                {!isMobile && !address && <ChainSelect />}
                 <EscButton onClick={handleCloseFocusMode} />
               </div>
             </div>

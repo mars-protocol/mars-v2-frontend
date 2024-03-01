@@ -69,7 +69,7 @@ export default function TradeChart(props: Props) {
           'paneProperties.backgroundType': 'solid',
           'linetooltrendline.linecolor': 'rgba(255, 255, 255, 0.8)',
           'linetooltrendline.linewidth': 2,
-          'scalesProperties.fontSize': isMobile ? 6 : 12,
+          'scalesProperties.fontSize': 12,
         },
         loading_screen: {
           backgroundColor: '#220E1D',
@@ -145,13 +145,12 @@ export default function TradeChart(props: Props) {
         </div>
       }
       contentClassName={classNames(
-        'px-0.5 pb-0.5 h-full w-[calc(100%-2px)] ml-[1px]',
+        'pb-0.5 h-full w-[calc(100%-3px)] ml-[1px]',
         hasTradingChartInstalled ? 'bg-chart' : 'bg-white/5',
       )}
       className={classNames(
         'h-[500px]',
         'md:h-screen/70 md:max-h-[980px] md:min-h-[560px] order-1',
-        'before:z-0',
       )}
     >
       <div ref={chartContainerRef} className='h-[calc(100%-32px)] overflow-hidden'>

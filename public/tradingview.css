@@ -334,10 +334,3 @@ html.theme-dark ::selection {
   background: var(--tv-background) !important;
   color: var(--tv-menu-text-hover) !important;
 }
-
-@media screen and (max-width: 768px) {
-  .chart-markup-table.time-axis div canvas {
-    height: 29px !important;
-    top: -10px !important;
-  }
-}
