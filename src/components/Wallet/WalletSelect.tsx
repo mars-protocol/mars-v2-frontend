@@ -2,8 +2,8 @@ import { useShuttle } from '@delphi-labs/shuttle-react'
 import moment from 'moment'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
-import QRCode from 'react-qr-code'
 import { isMobile } from 'react-device-detect'
+import QRCode from 'react-qr-code'
 
 import WalletConnecting from 'components/Wallet/WalletConnecting'
 import Button from 'components/common/Button'
@@ -186,8 +186,8 @@ export default function WalletSelect(props: Props) {
                   return (
                     <WalletOption
                       key={`${walletId}-${network.chainId}`}
-                      name={WALLETS[walletId].walletConnect ?? 'WalletConnect'}
-                      imageSrc={WALLETS[walletId].mobileImageURL ?? '/'}
+                      name={WALLETS[walletId].name ?? 'WalletConnect'}
+                      imageSrc={WALLETS[walletId].imageURL ?? '/'}
                       handleClick={() => handleMobileConnectClick(walletId, network.chainId)}
                       showLoader={isLoading === walletId}
                     />

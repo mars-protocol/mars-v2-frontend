@@ -152,6 +152,12 @@ export default function WalletConnecting(props: Props) {
             address: recentWallet.account.address,
             userDomain: undefined,
             chainConfig: chainConfig,
+            focusComponent: {
+              component: <WalletFetchBalancesAndAccounts />,
+              onClose: () => {
+                useStore.setState({ focusComponent: null })
+              },
+            },
           })
         } catch (error) {
           setIsConnecting(false)
