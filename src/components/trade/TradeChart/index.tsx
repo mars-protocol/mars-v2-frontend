@@ -147,7 +147,7 @@ export default function TradeChart(props: Props) {
       contentClassName='pb-0.5 h-full !w-[calc(100%-2px)] ml-[1px] bg-chart'
       className={classNames(
         'h-[500px]',
-        'md:h-screen/70 md:max-h-[980px] md:min-h-[560px] order-1',
+        'md:h-screen/70 md:max-h-[980px] md:min-h-[560px] order-1 w-full',
       )}
     >
       <div ref={chartContainerRef} className='h-[calc(100%-32px)] overflow-hidden'>
