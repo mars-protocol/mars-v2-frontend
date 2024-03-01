@@ -12,9 +12,11 @@ import { ChevronLeft, ChevronRight } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { WALLETS } from 'constants/wallets'
 import useChainConfig from 'hooks/useChainConfig'
+import useCurrentWallet from 'hooks/useCurrentWallet'
 import useStore from 'store'
 import { WalletID } from 'types/enums/wallet'
 import { isAndroid, isIOS } from 'utils/mobile'
+import WalletFetchBalancesAndAccounts from './WalletFetchBalancesAndAccounts'
 
 interface Props {
   error?: ErrorObject
@@ -57,10 +59,11 @@ export default function WalletSelect(props: Props) {
   const chainConfig = useChainConfig()
   const { extensionProviders, mobileProviders, mobileConnect } = useShuttle()
   const [qrCodeUrl, setQRCodeUrl] = useState('')
+  const address = useStore((s) => s.address)
   const [error, setError] = useState(props.error)
   const [isLoading, setIsLoading] = useState<string | boolean>(false)
   const sortedExtensionProviders = extensionProviders.sort((a, b) => +b - +a)
-
+  const recentWallet = useCurrentWallet()
   const handleConnectClick = (extensionProviderId: string) => {
     useStore.setState({
       focusComponent: {
@@ -98,6 +101,18 @@ export default function WalletSelect(props: Props) {
     }
     setIsLoading(false)
   }
+
+  useEffect(() => {
+    if (!address && !recentWallet) return
+    useStore.setState({
+      focusComponent: {
+        component: <WalletFetchBalancesAndAccounts />,
+        onClose: () => {
+          useStore.setState({ focusComponent: null })
+        },
+      },
+    })
+  }, [address, recentWallet])
 
   useEffect(() => {
     if (error?.message && error?.title) {
