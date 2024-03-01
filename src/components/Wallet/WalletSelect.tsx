@@ -186,8 +186,16 @@ export default function WalletSelect(props: Props) {
                   return (
                     <WalletOption
                       key={`${walletId}-${network.chainId}`}
-                      name={WALLETS[walletId].name ?? 'WalletConnect'}
-                      imageSrc={WALLETS[walletId].imageURL ?? '/'}
+                      name={
+                        isMobile
+                          ? WALLETS[walletId].name
+                          : WALLETS[walletId].walletConnect ?? 'WalletConnect'
+                      }
+                      imageSrc={
+                        isMobile
+                          ? WALLETS[walletId].imageURL
+                          : WALLETS[walletId].mobileImageURL ?? '/'
+                      }
                       handleClick={() => handleMobileConnectClick(walletId, network.chainId)}
                       showLoader={isLoading === walletId}
                     />
