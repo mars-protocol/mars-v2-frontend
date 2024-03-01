@@ -44,10 +44,10 @@ export default function TradeChart(props: Props) {
   }, [prices, props.buyAsset.denom, props.sellAsset.denom])
 
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
-  const hasTradingChartInstalled = typeof window !== 'undefined' && window.TradingView
+  const hasTradingChartInstalled = !!process.env.CHARTING_LIBRARY_ACCESS_TOKEN
 
   useEffect(() => {
-    if (hasTradingChartInstalled) {
+    if (typeof window !== 'undefined' && window.TradingView) {
       const widgetOptions: ChartingLibraryWidgetOptions = {
         symbol: props.buyAsset.pythFeedName ?? `${props.buyAsset.symbol}/USD`,
         datafeed: datafeed,
@@ -144,10 +144,7 @@ export default function TradeChart(props: Props) {
           </div>
         </div>
       }
-      contentClassName={classNames(
-        'pb-0.5 h-full w-[calc(100%-3px)] ml-[1px]',
-        hasTradingChartInstalled ? 'bg-chart' : 'bg-white/5',
-      )}
+      contentClassName='pb-0.5 h-full !w-[calc(100%-2px)] ml-[1px] bg-chart'
       className={classNames(
         'h-[500px]',
         'md:h-screen/70 md:max-h-[980px] md:min-h-[560px] order-1',
