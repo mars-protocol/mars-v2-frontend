@@ -71,7 +71,9 @@ export default function Toaster() {
       <div className='relative flex flex-wrap w-full m-0 isolate'>
         <div className='flex items-center w-full gap-2 mb-2'>
           <div className='rounded-sm p-1.5 pt-1 bg-info w-7 h-7 flex items-center'>
-            <CircularProgress size={16} />
+            <div className='w-4'>
+              <CircularProgress />
+            </div>
           </div>
           <Text className='flex items-center font-bold text-info'>Pending Transaction</Text>
         </div>
@@ -117,7 +119,9 @@ export default function Toaster() {
             </div>
           ) : (
             <div className='rounded-sm p-1.5 pt-1 bg-success w-7 h-7  flex items-center'>
-              <CheckMark size={16} />
+              <div className='w-4'>
+                <CheckMark />
+              </div>
             </div>
           )}
           <Text
