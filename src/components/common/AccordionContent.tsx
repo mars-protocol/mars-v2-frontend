@@ -31,7 +31,7 @@ export default function AccordionContent(props: Props) {
           {renderSubTitle()}
         </div>
         <div className='block pr-1 group-[[open]]/accordion:hidden'>
-          {isOpen ? <ChevronDown className='h-1.5' /> : <ChevronRight className='w-1.5' />}
+          {isOpen ? <ChevronDown className='w-3' /> : <ChevronRight className='w-1.5' />}
         </div>
       </div>
       <div
