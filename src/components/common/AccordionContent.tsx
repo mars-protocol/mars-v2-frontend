@@ -19,7 +19,7 @@ export default function AccordionContent(props: Props) {
       <div
         onClick={() => toggleOpen(props.index)}
         className={classNames(
-          'mb-0 flex hover:cursor-pointer items-center justify-between bg-white/10 py-2 px-4 text-white border-b border-transparent',
+          'w-full mb-0 flex hover:cursor-pointer items-center justify-between bg-white/10 py-2 px-4 text-white border-b border-transparent',
           '[&::marker]:hidden [&::marker]:content-[""]',
           isOpen && 'border-white/10',
         )}
