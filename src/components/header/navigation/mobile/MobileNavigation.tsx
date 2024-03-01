@@ -23,7 +23,7 @@ interface Props {
 
 export default function MobileNavigation(props: Props) {
   const { menuTree } = props
-  const accountId = useAccountId()
+  const currentAccountId = useAccountId()
   const mobileNavExpanded = useStore((s) => s.mobileNavExpanded)
   const isV1 = useStore((s) => s.isV1)
   const { recentWallet } = useShuttle()
@@ -34,21 +34,20 @@ export default function MobileNavigation(props: Props) {
   const address = useStore((s) => s.address)
   const { pathname } = useLocation()
   const currentPage = getPage(pathname)
-  const { data: account } = useAccount(isV1 ? address : accountId ?? undefined)
+  const { data: account } = useAccount(isV1 ? address : currentAccountId ?? undefined)
 
   const menu = useMemo(() => menuTree(walletId, chainConfig), [walletId, chainConfig, menuTree])
 
   const selectPage = useCallback(
     (page: Page) => {
-      console.log(page)
       useStore.setState({ mobileNavExpanded: false })
       if (page.includes('http')) {
         window.open(page, '_blank')
         return
       }
-      navigate(getRoute(getPage(page), searchParams, address, accountId))
+      navigate(getRoute(getPage(page), searchParams, address, currentAccountId))
     },
-    [navigate, searchParams, address, accountId],
+    [navigate, searchParams, address, currentAccountId],
   )
 
   return (
@@ -112,6 +111,8 @@ export default function MobileNavigation(props: Props) {
           </div>
         </div>
       )}
+      <p>{account?.id}</p>
+      <p>{address}</p>
       {account && (
         <Card title={isV1 ? 'Red Bank' : `Credit Account ${account.id}`}>
           <AccountSummary account={account} />
