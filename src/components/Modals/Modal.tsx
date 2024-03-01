@@ -49,7 +49,7 @@ export default function Modal(props: ModalProps) {
       ref={ref}
       onCancel={onClose}
       className={classNames(
-        `w-screen-full border-none bg-transparent text-white`,
+        `w-screen-full border-none bg-transparent text-white h-screen-full flex justify-center items-center`,
         'focus-visible:outline-none',
         'max-h-full scrollbar-hide',
         'backdrop:bg-black/50 backdrop:backdrop-blur-sm',
@@ -59,7 +59,7 @@ export default function Modal(props: ModalProps) {
     >
       <Card
         className={classNames(
-          'flex max-w-full flex-1 bg-white/5 backdrop-blur-3xl md:overflow-hidden overflow-y-scroll',
+          'flex max-w-full h-full flex-1 bg-white/5 backdrop-blur-3xl md:overflow-hidden overflow-y-scroll md:h-auto',
           props.className,
         )}
       >
