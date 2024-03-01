@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
-import { useCallback, useEffect, useMemo, useState } from 'react'
 import classNames from 'classnames'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import Modal from 'components/Modals/Modal'
 import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'

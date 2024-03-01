@@ -2,7 +2,7 @@ import { MsgExecuteContract } from '@delphi-labs/shuttle-react'
 import BigNumber from 'bignumber.js'
 import moment from 'moment'
 import { isMobile } from 'react-device-detect'
-import { GetState, SetState } from 'zustand'
+import { StoreApi } from 'zustand'
 
 import getPythPriceData from 'api/prices/getPythPriceData'
 import { BN_ZERO } from 'constants/math'
@@ -43,8 +43,8 @@ function generateExecutionMessage(
 }
 
 export default function createBroadcastSlice(
-  set: SetState<Store>,
-  get: GetState<Store>,
+  set: StoreApi<Store>['setState'],
+  get: StoreApi<Store>['getState'],
 ): BroadcastSlice {
   const handleResponseMessages = (props: HandleResponseProps) => {
     const { id, accountId, response, action, lend, changes, target, message } = props

@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react'
 import classNames from 'classnames'
+import { useCallback, useState } from 'react'
 
 import Modal from 'components/Modals/Modal'
 import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
@@ -77,7 +77,7 @@ export default function AssetAmountSelectActionModal(props: Props) {
       >
         <Card
           className='flex flex-1 w-full p-4 bg-white/5 max-w-screen-full min-w-[200px]'
-          contentClassName='gap-6 flex flex-col justify-between h-full'
+          contentClassName='gap-6 flex flex-col justify-between h-full min-h-[300px]'
         >
           <TokenInputWithSlider
             asset={asset}
