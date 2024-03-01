@@ -33,11 +33,11 @@ export const disabledFeaturesMobile: ChartingLibraryFeatureset[] = [
   'main_series_scale_menu',
   'symbol_info',
   'show_zoom_and_move_buttons_on_touch',
+  'vert_touch_drag_scroll',
 ]
 
 export const enabledFeaturesMobile: ChartingLibraryFeatureset[] = [
   'horz_touch_drag_scroll',
-  'vert_touch_drag_scroll',
   'use_localstorage_for_settings',
   'chart_zoom',
   'hide_left_toolbar_by_default',
