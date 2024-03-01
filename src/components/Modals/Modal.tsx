@@ -20,7 +20,7 @@ export interface ModalProps {
 
 export default function Modal(props: ModalProps) {
   const ref: React.RefObject<HTMLDialogElement> = useRef(null)
-  const modalClassName = props.modalClassName ?? 'max-w-screen-full md:max-w-modal'
+  const modalClassName = props.modalClassName ?? 'max-w-screen-full md:max-w-modal h-screen-full'
 
   function onClose() {
     ref.current?.close()
@@ -57,7 +57,7 @@ export default function Modal(props: ModalProps) {
     >
       <Card
         className={classNames(
-          'flex max-w-full flex-1 bg-white/5 backdrop-blur-3xl',
+          'flex max-w-full flex-1 bg-white/5 backdrop-blur-3xl md:overflow-hidden overflow-y-scroll',
           props.className,
         )}
       >
