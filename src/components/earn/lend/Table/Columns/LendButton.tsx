@@ -27,12 +27,12 @@ export default function LendButton(props: Props) {
   const assetDepositAmount = accountDeposits.find(byDenom(props.data.asset.denom))?.amount
   const address = useStore((s) => s.address)
   const accountId = useAccountId()
-  const hasNoDeposit = !!(!assetDepositAmount && address && accountId)
+  const hasNoDeposit = !!(!assetDepositAmount && accountId)
 
   return (
     <div className='flex justify-end'>
       <ConditionalWrapper
-        condition={hasNoDeposit}
+        condition={hasNoDeposit && !!address}
         wrapper={(children) => (
           <Tooltip
             type='warning'

@@ -18,7 +18,7 @@ export default function BorrowButton(props: Props) {
   return (
     <div className='flex justify-end'>
       <ConditionalWrapper
-        condition={!hasCollateral}
+        condition={!hasCollateral && !!address}
         wrapper={(children) => (
           <Tooltip
             type='warning'

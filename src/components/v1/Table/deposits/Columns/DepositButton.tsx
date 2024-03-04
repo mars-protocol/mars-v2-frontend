@@ -18,7 +18,7 @@ export default function DepositButton(props: Props) {
   return (
     <div className='flex justify-end'>
       <ConditionalWrapper
-        condition={!hasBalance}
+        condition={!hasBalance && !!address}
         wrapper={(children) => (
           <Tooltip
             type='warning'
