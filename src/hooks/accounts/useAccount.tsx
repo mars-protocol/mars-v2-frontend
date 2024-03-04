@@ -10,7 +10,7 @@ export default function useAccount(accountId?: string, suspense?: boolean) {
   const address = useStore((s) => s.address)
   const isV1 = accountId === address
 
-  const v1Account = useV1Account(accountId, suspense)
+  const v1Account = useV1Account()
   const v2Account = useSWR(
     !!accountId && !isV1 && `chains/${chainConfig.id}/accounts/${accountId}`,
     () => getAccount(chainConfig, accountId),
