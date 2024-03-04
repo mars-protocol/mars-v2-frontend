@@ -5,11 +5,12 @@ import useChainConfig from 'hooks/useChainConfig'
 import useStore from 'store'
 
 export default function useV1Debts() {
+  const isV1 = useStore((s) => s.isV1)
   const chainConfig = useChainConfig()
   const address = useStore((s) => s.address)
 
   return useSWR(
-    !!address && `${chainConfig.id}/v1/debts/${address}`,
+    !!address && isV1 && `${chainConfig.id}/v1/debts/${address}`,
     () => getV1Debts(chainConfig, address ?? ''),
     {
       suspense: true,
