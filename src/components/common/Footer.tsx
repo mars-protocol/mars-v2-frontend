@@ -5,8 +5,7 @@ import { DocURL } from 'types/enums/docURL'
 import packageInfo from '../../../package.json'
 
 export default function Footer() {
-  const isV1 = useStore((s) => s.isV1)
-  const version = isV1 ? `v${packageInfo.v1version}` : `v${packageInfo.version}`
+  const version = `v${packageInfo.version}`
   const flatVersion = packageInfo.version.split('.').join('')
   return (
     <footer className='flex items-center justify-center w-full h-6 -mt-6'>
