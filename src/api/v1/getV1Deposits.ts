@@ -1,19 +1,19 @@
 import { getRedBankQueryClient } from 'api/cosmwasm-client'
-import { ArrayOfUserDebtResponse } from 'types/generated/mars-red-bank/MarsRedBank.types'
+import { ArrayOfUserCollateralResponse } from 'types/generated/mars-red-bank/MarsRedBank.types'
 
-export default async function getV1Positions(
+export default async function getV1Deposits(
   chainConfig: ChainConfig,
   user: string,
-): Promise<ArrayOfUserDebtResponse> {
+): Promise<ArrayOfUserCollateralResponse> {
   const redBankQueryClient = await getRedBankQueryClient(chainConfig)
 
-  const userDebt: ArrayOfUserDebtResponse = await redBankQueryClient.userDebts({
+  const userCollateral: ArrayOfUserCollateralResponse = await redBankQueryClient.userCollaterals({
     user: user,
     limit: 50,
   })
 
-  if (userDebt) {
-    return userDebt
+  if (userCollateral) {
+    return userCollateral
   }
 
   return new Promise((_, reject) => reject('No account found'))
