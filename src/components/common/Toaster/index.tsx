@@ -70,8 +70,8 @@ export default function Toaster() {
     const Content = () => (
       <div className='relative flex flex-wrap w-full m-0 isolate'>
         <div className='flex items-center w-full gap-2 mb-2'>
-          <div className='rounded-sm p-1.5 pt-1 bg-info w-7 h-7 flex items-center'>
-            <div className='w-4'>
+          <div className='flex items-center justify-center rounded-sm bg-info w-7 h-7'>
+            <div className='w-4 h-4 -mt-1 -ml-1'>
               <CircularProgress />
             </div>
           </div>
@@ -118,8 +118,8 @@ export default function Toaster() {
               </span>
             </div>
           ) : (
-            <div className='rounded-sm p-1.5 pt-1 bg-success w-7 h-7  flex items-center'>
-              <div className='w-4'>
+            <div className='flex items-center justify-center rounded-sm bg-success w-7 h-7'>
+              <div className='w-4 h-4 -mt-1 -ml-1 text-white'>
                 <CheckMark />
               </div>
             </div>
