@@ -13,7 +13,7 @@ import {
   removeCoins,
   updatePerpsPositions,
 } from 'hooks/useUpdatedAccount/functions'
-import useVaults from 'hooks/useVaults'
+import useVaults from 'hooks/vaults/useVaults'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountLeverage, cloneAccount } from 'utils/accounts'

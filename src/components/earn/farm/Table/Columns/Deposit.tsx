@@ -6,8 +6,9 @@ import Loading from 'components/common/Loading'
 import useStore from 'store'
 
 interface Props {
-  vault: Vault | DepositedVault
+  isPerps?: boolean
   isLoading: boolean
+  vault: Vault | DepositedVault | PerpsVault
 }
 
 export const DEPOSIT_META = { accessorKey: 'deposit', enableSorting: false, header: '' }
@@ -16,6 +17,12 @@ export const Deposit = (props: Props) => {
   const { vault } = props
 
   function enterVaultHandler() {
+    if (props.isPerps) {
+      return
+    }
+
+    const vault = props.vault as Vault
+
     useStore.setState({
       vaultModal: {
         vault,

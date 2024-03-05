@@ -6,13 +6,13 @@ import Loading from 'components/common/Loading'
 export const DEPOSIT_CAP_META = { accessorKey: 'cap', header: 'Deposit Cap' }
 
 interface Props {
-  vault: Vault | DepositedVault
+  vault: Vault | DepositedVault | PerpsVault
   isLoading: boolean
 }
 
 export const depositCapSortingFn = (
-  a: Row<Vault> | Row<DepositedVault>,
-  b: Row<Vault> | Row<DepositedVault>,
+  a: Row<Vault> | Row<DepositedVault> | Row<PerpsVault>,
+  b: Row<Vault> | Row<DepositedVault> | Row<PerpsVault>,
 ): number => {
   const depositCapA = a.original.cap.max
   const depositCapB = b.original.cap.max
