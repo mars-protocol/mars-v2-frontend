@@ -25,7 +25,7 @@ function modalContent(content: React.ReactNode, isContentCard?: boolean, account
     return (
       <Card
         className='flex flex-1 p-4 bg-white/5'
-        contentClassName='gap-6 flex flex-col justify-between h-full min-h-[380px]'
+        contentClassName='gap-6 flex flex-col justify-between h-full'
       >
         {content}
       </Card>
@@ -44,7 +44,6 @@ export default function ModalContentWithSummary(props: Props) {
       )}
       contentClassName={classNames('flex items-start flex-1 gap-6 p-6', props.contentClassName)}
     >
-      {props.subHeader && props.subHeader}
       {modalContent(props.content, props.isContentCard, props.account)}
       {props.account && <AccountSummaryInModal account={props.account} isHls={props.isHls} />}
     </Modal>

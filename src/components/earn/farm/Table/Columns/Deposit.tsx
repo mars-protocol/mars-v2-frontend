@@ -18,6 +18,11 @@ export const Deposit = (props: Props) => {
 
   function enterVaultHandler() {
     if (props.isPerps) {
+      useStore.setState({
+        perpsVaultModal: {
+          type: 'deposit',
+        },
+      })
       return
     }
 

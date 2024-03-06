@@ -10,6 +10,8 @@ type Props = {
 export function CardWithTabs(props: Props) {
   const [activeIdx, setActiveIdx] = useState(0)
 
+  if (props.tabs.length === 0) return null
+
   return (
     <Card
       title={<Tabs onChange={setActiveIdx} activeIdx={activeIdx} {...props} />}

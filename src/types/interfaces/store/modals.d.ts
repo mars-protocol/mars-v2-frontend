@@ -10,6 +10,7 @@ interface ModalSlice {
   getStartedModal: boolean
   hlsInformationModal: boolean | null
   lendAndReclaimModal: LendAndReclaimModalConfig | null
+  perpsVaultModal: PerpsVaultModal | null
   settingsModal: boolean
   unlockModal: UnlockModal | null
   vaultModal: VaultModal | null
@@ -84,3 +85,7 @@ interface HlsManageModal {
 }
 
 type HlsStakingManageAction = 'deposit' | 'withdraw' | 'repay' | 'leverage'
+
+interface PerpsVaultModal {
+  type: 'deposit' | 'unlock'
+}

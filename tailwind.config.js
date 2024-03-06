@@ -129,6 +129,7 @@ module.exports = {
         'orb-tertiary-hls': '#FB9562',
         profit: '#4CA30D',
         primary: '#FF625E',
+        purple: '#7F78E8',
         secondary: '#FB9562',
         success: '#32D583',
         'success-bg': '#6CE9A6',

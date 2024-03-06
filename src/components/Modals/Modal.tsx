@@ -6,6 +6,7 @@ import Card from 'components/common/Card'
 
 export interface ModalProps {
   header: string | ReactNode
+  subHeader?: string | ReactNode
   headerClassName?: string
   hideCloseBtn?: boolean
   children?: ReactNode | string
@@ -65,6 +66,7 @@ export default function Modal(props: ModalProps) {
           {props.header}
           {!props.hideCloseBtn && <EscButton onClick={props.onClose} />}
         </div>
+        <div className='gradient-header'>{props.subHeader}</div>
         <div
           className={classNames(
             props.contentClassName,

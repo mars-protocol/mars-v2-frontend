@@ -16,6 +16,7 @@ import {
   ExecuteMsg as CreditManagerExecuteMsg,
   ExecuteMsg,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { ExecuteMsg as PerpsExecuteMsg } from 'types/generated/mars-perps/MarsPerps.types'
 import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHealthTypes.types'
 import { byDenom, bySymbol } from 'utils/array'
 import { generateErrorMessage, getSingleValueFromBroadcastResult } from 'utils/broadcast'
@@ -30,7 +31,7 @@ import { getVaultDepositCoinsFromActions } from 'utils/vaults'
 function generateExecutionMessage(
   sender: string | undefined = '',
   contract: string,
-  msg: CreditManagerExecuteMsg | AccountNftExecuteMsg | PythUpdateExecuteMsg,
+  msg: CreditManagerExecuteMsg | AccountNftExecuteMsg | PythUpdateExecuteMsg | PerpsExecuteMsg,
   funds: Coin[],
 ) {
   return new MsgExecuteContract({
@@ -138,7 +139,26 @@ export default function createBroadcastSlice(
           text: 'Modified perp position',
         })
         break
+      // TODO: Finetune the messages
+      case 'perp-vault-deposit':
+        toast.content.push({
+          coins: changes.deposits?.map((deposit) => deposit.toCoin()) ?? [],
 
+          text: 'Deposited into perp vault',
+        })
+        break
+      case 'perp-vault-unlock':
+        toast.content.push({
+          coins: changes.deposits?.map((deposit) => deposit.toCoin()) ?? [],
+          text: 'Deposited into perp vault',
+        })
+        break
+      case 'perp-vault-withdraw':
+        toast.content.push({
+          coins: changes.deposits?.map((deposit) => deposit.toCoin()) ?? [],
+          text: 'Deposited into perp vault',
+        })
+        break
       case 'swap':
         if (changes.debts) {
           toast.content.push({
@@ -1064,6 +1084,122 @@ export default function createBroadcastSlice(
       return generateExecutionMessage(get().address, pythContract, msg, [
         { denom: get().chainConfig.assets[0].denom, amount: String(pythAssets.length) },
       ])
+    },
+    depositIntoPerpsVault: async (options: {
+      accountId: string
+      denom: string
+      fromDeposits?: BigNumber
+      fromLends?: BigNumber
+    }) => {
+      const depositCoin = BNCoin.fromDenomAndBigNumber(
+        options.denom,
+        (options.fromDeposits || BN_ZERO).plus(options.fromLends || BN_ZERO),
+      )
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: [
+            ...(options.fromLends
+              ? [
+                  {
+                    reclaim: BNCoin.fromDenomAndBigNumber(
+                      options.denom,
+                      options.fromLends,
+                    ).toActionCoin(),
+                  },
+                ]
+              : []),
+            {
+              deposit_to_perp_vault: depositCoin.toActionCoin(),
+            },
+          ],
+        },
+      }
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+      })
+
+      get().setToast({
+        response,
+        options: {
+          action: 'perp-vault-deposit',
+          target: 'account',
+          message: `Deposited into perps Vault`,
+          accountId: options.accountId,
+          changes: {
+            deposits: [depositCoin],
+            reclaims: options.fromLends
+              ? [BNCoin.fromDenomAndBigNumber(options.denom, options.fromLends)]
+              : [],
+          },
+        },
+      })
+
+      const response_1 = await response
+      return !!response_1.result
+    },
+    requestUnlockPerpsVault: (options: { accountId: string; amount: BigNumber }) => {
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: [
+            {
+              unlock_from_perp_vault: {
+                shares: options.amount.integerValue().toString(),
+              },
+            },
+          ],
+        },
+      }
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+      })
+
+      get().setToast({
+        response,
+        options: {
+          action: 'perp-vault-unlock',
+          target: 'account',
+          message: `Requested unlock from perps Vault`,
+          accountId: options.accountId,
+          changes: { deposits: [] },
+        },
+      })
+
+      return response.then((response) => !!response.result)
+    },
+    withdrawFromPerpsVault: (options: { accountId: string }) => {
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: [
+            {
+              withdraw_from_perp_vault: {},
+            },
+          ],
+        },
+      }
+      const cmContract = get().chainConfig.contracts.creditManager
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+      })
+
+      get().setToast({
+        response,
+        options: {
+          action: 'perp-vault-withdraw',
+          target: 'account',
+          message: `Withdrew funds from perps Vault`,
+          accountId: options.accountId,
+          changes: { deposits: [] },
+        },
+      })
+
+      return response.then((response) => !!response.result)
     },
   }
 }

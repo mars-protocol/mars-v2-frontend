@@ -45,7 +45,6 @@ interface Vault extends VaultConfig {
 
 interface PerpsVault {
   apy?: number | null
-  cap: DepositCap
   collateralizationRatio: number
   denom: string
   name: string
