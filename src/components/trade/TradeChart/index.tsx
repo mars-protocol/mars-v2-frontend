@@ -116,7 +116,7 @@ export default function TradeChart(props: Props) {
             Trading Chart
           </Text>
           {ratio.isZero() || isLoading ? (
-            <Loading className='h-4 mr-4 w-60' />
+            <Loading className='h-4 m-4 md:m-0 md:mr-4 w-60 ' />
           ) : (
             <div className='flex items-center gap-1 p-4'>
               <Text size='sm'>1 {props.buyAsset.symbol}</Text>
