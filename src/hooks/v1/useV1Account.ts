@@ -13,8 +13,10 @@ export default function useV1Account() {
   return useSWR(
     !!address && `chains/${chainConfig.id}/v1/user/${address}`,
     async () => {
-      const debts = await getV1Debts(chainConfig, address ?? '')
-      const lends = await getV1Deposits(chainConfig, address ?? '')
+      const [debts, lends] = await Promise.all([
+        getV1Debts(chainConfig, address ?? ''),
+        getV1Deposits(chainConfig, address ?? ''),
+      ])
       return {
         id: address ?? '',
         debts: debts.map((debt) => new BNCoin(debt)),

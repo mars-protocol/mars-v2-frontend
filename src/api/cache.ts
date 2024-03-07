@@ -12,9 +12,7 @@ import {
 } from 'types/generated/mars-params/MarsParams.types'
 import {
   ArrayOfMarket,
-  ArrayOfUserCollateralResponse,
   ArrayOfUserDebtResponse,
-  UserCollateralResponse,
 } from 'types/generated/mars-red-bank/MarsRedBank.types'
 
 interface Cache<T> extends Map<string, { data: T | null; timestamp: number }> {}
@@ -67,5 +65,4 @@ export const underlyingDebtCache: Cache<string> = new Map()
 export const previewDepositCache: Cache<{ vaultAddress: string; amount: string }> = new Map()
 export const stakingAprCache: Cache<StakingApr[]> = new Map()
 export const assetParamsCache: Cache<AssetParamsBaseForAddr[]> = new Map()
-export const userCollateralCache: Cache<ArrayOfUserCollateralResponse> = new Map()
 export const userDebtCache: Cache<ArrayOfUserDebtResponse> = new Map()
