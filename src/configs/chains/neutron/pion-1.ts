@@ -2,7 +2,7 @@ import { Bech32Address } from '@keplr-wallet/cosmos'
 
 import ATOM from 'configs/assets/ATOM'
 import NTRN from 'configs/assets/NTRN'
-import USDCaxl from 'configs/assets/USDC.axl'
+import USDC from 'configs/assets/USDC'
 import USDollar from 'configs/assets/USDollar'
 import { NETWORK } from 'types/enums/network'
 import { ChainInfoID } from 'types/enums/wallet'
@@ -10,7 +10,7 @@ import { ChainInfoID } from 'types/enums/wallet'
 const Pion1: ChainConfig = {
   assets: [
     { ...NTRN, denom: 'untrn', isPerpsEnabled: true },
-    { ...USDCaxl, denom: 'ibc/F91EA2C0A23697A1048E08C2F787E3A58AC6F706A1CD2257A504925158CFC0F3' },
+    { ...USDC, denom: 'ibc/4C19E7EC06C1AB2EC2D70C6855FEB6D48E9CE174913991DA0A517D21978E7E42' },
     {
       ...ATOM,
       denom: 'ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9',
@@ -21,14 +21,14 @@ const Pion1: ChainConfig = {
   id: ChainInfoID.Pion1,
   name: 'Neutron Testnet',
   contracts: {
-    redBank: 'neutron190calx030x3mmmzwfx9gt6ne7jfkn64p9gfl052ayutc2qm668hsjepjmv',
-    incentives: 'neutron1h48rzcufkzv57ke0qdlp5yp77nzca6rf4yl6k8xgummskzttyzlsa0qypx',
-    oracle: 'neutron1vnvfa6tnyfm3zuagpxh9cjfdavdcqzx6mtqxuvg46q42y37jndsqz7u6nh',
-    swapper: 'neutron1rha2nvskmlw654jkgwxptltqrcwwpwsadg6sxj5rgsnypcxga7xs2p79sl',
-    params: 'neutron1er0nhljflg4kq5a95k4hlgrp8z7jsaldf5gy6a6zqwfezfeu37ws6hc6um',
-    creditManager: 'neutron1u44ncq2e8n5u22rzlpgwv5n06z4lkv4vj2r7kd3xtd96jnr6u8nqnr4ag8',
-    accountNft: 'neutron19egqmcakfjste99xddemfpqtpuz0y0dlkzmxyusc76aue90uugysx8vukd',
-    perps: 'neutron1mzcjf8mfx8ejjn824hv6tqkxy3hzjt3wj99qwfuvlqc68g7s37asy7fley',
+    redBank: 'neutron1yzazm4e697mgjjsuepl8gr6yyuuxff2nwzfgg3nlxctavvt7f8pqr424cz',
+    incentives: 'neutron1cywvc60yylwkjzh3zm5ftfmuxra5hcq4xe7q00see04an7udvddsy2xl37',
+    oracle: 'neutron1j5mz5scmx2ezmch3qzxx0xpvsyw2alxv5k7xs0v20m64p5qmvtqsn00rz5',
+    swapper: 'neutron1383ytqh0l39vmml2a8m6etwueet4d8fs5h9h48mkjkftn7wtyrhsjya838',
+    params: 'neutron1gwplf5cxzkug5jufl228m8tqtd3tc089ds9zptpl4y7y623lr3zst8wpg0',
+    creditManager: 'neutron1v4qz5w6n09la2f9uutkvyklutas9g3cd9rqhdcappajavrv4d6xqzuvnrv',
+    accountNft: 'neutron10ps7kpw7x78fx2t3uy58henttna8t750tp2s6tjn4tuk0jadp7csytk9yx',
+    perps: 'neutron1he5f7ch3e9mze39pl95fl4ljszk7wd8lg3ungay5lq4hpj8lq4yqp4y3xj',
     pyth: 'neutron15ldst8t80982akgr8w8ekcytejzkmfpgdkeq4xgtge48qs7435jqp87u3t',
   },
   endpoints: {

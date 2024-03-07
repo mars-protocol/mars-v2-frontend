@@ -3,10 +3,7 @@ type BigNumber = import('bignumber.js').BigNumber
 interface VaultMetaData {
   address: string
   name: string
-  lockup: {
-    duration: number
-    timeframe: string
-  }
+  lockup: Lockup
   provider: string
   denoms: {
     primary: string
@@ -28,7 +25,7 @@ interface VaultInfo {
     max: number
     liq: number
   }
-  cap: DepositCap
+  cap: DepositCap | null
 }
 
 interface VaultConfig extends VaultMetaData, VaultInfo {}
@@ -49,6 +46,8 @@ interface PerpsVault {
   denom: string
   name: string
   provider: string
+  liquidity: BigNumber
+  lockup: Lockup
 }
 
 interface VaultValuesAndAmounts {
@@ -70,6 +69,7 @@ interface VaultValuesAndAmounts {
 type VaultStatus = 'active' | 'unlocking' | 'unlocked'
 
 interface DepositedVault extends Vault, VaultValuesAndAmounts {
+  type: 'normal' | 'perp'
   status: VaultStatus
   unlockId?: number
   unlocksAt?: number
@@ -130,4 +130,9 @@ interface Apr {
   address: string
   apr?: number | null
   apy?: number | null
+}
+
+interface Lockup {
+  duration: number
+  timeframe: string
 }

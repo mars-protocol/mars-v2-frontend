@@ -33,48 +33,32 @@ export function ActiveVaults() {
 
   const tabs: CardTab[] = useMemo(
     () => [
-      ...(chainConfig.farm
-        ? [
-            {
-              title: 'Active Vaults',
-              renderContent: () => (
-                <DepositedVaultsTable
-                  data={activeVaults}
-                  isLoading={false}
-                  status={VaultStatus.ACTIVE}
-                />
-              ),
-            },
-          ]
-        : []),
-      ...(chainConfig.farm
-        ? [
-            {
-              title: 'Unlocking',
-              renderContent: () => (
-                <DepositedVaultsTable
-                  data={unlockingVaults}
-                  isLoading={false}
-                  status={VaultStatus.UNLOCKING}
-                />
-              ),
-            },
-          ]
-        : []),
-      ...(chainConfig.farm
-        ? [
-            {
-              title: 'Unlocked',
-              renderContent: () => (
-                <DepositedVaultsTable
-                  data={unlockedVaults}
-                  isLoading={false}
-                  status={VaultStatus.UNLOCKED}
-                />
-              ),
-            },
-          ]
-        : []),
+      {
+        title: 'Active Vaults',
+        renderContent: () => (
+          <DepositedVaultsTable data={activeVaults} isLoading={false} status={VaultStatus.ACTIVE} />
+        ),
+      },
+      {
+        title: 'Unlocking',
+        renderContent: () => (
+          <DepositedVaultsTable
+            data={unlockingVaults}
+            isLoading={false}
+            status={VaultStatus.UNLOCKING}
+          />
+        ),
+      },
+      {
+        title: 'Unlocked',
+        renderContent: () => (
+          <DepositedVaultsTable
+            data={unlockedVaults}
+            isLoading={false}
+            status={VaultStatus.UNLOCKED}
+          />
+        ),
+      },
     ],
     [activeVaults, chainConfig.farm, unlockedVaults, unlockingVaults],
   )

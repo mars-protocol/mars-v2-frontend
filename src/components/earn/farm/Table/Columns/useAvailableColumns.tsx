@@ -29,7 +29,12 @@ export default function useAvailableColumns(props: Props) {
       },
       {
         ...TVL_META,
-        cell: ({ row }) => <TVL vault={row.original as Vault} isLoading={props.isLoading} />,
+        cell: ({ row }) => (
+          <TVL
+            denom={(row.original as Vault).cap?.denom}
+            amount={(row.original as Vault).cap?.used}
+          />
+        ),
       },
       {
         ...DEPOSIT_CAP_META,

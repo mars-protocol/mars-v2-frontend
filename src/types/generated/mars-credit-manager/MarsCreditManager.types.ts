@@ -689,6 +689,7 @@ export interface Positions {
   debts: DebtAmount[]
   deposits: Coin[]
   lends: Coin[]
+  perp_vault?: PerpVaultPosition | null
   perps: PerpPosition[]
   vaults: VaultPosition[]
 }
@@ -696,6 +697,20 @@ export interface DebtAmount {
   amount: Uint128
   denom: string
   shares: Uint128
+}
+export interface PerpVaultPosition {
+  denom: string
+  deposit: PerpVaultDeposit
+  unlocks: UnlockState[]
+}
+export interface PerpVaultDeposit {
+  amount: Uint128
+  shares: Uint128
+}
+export interface UnlockState {
+  amount: Uint128
+  cooldown_end: number
+  created_at: number
 }
 export interface PerpPosition {
   base_denom: string

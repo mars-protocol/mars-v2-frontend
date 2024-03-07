@@ -38,14 +38,18 @@ export default function useDepositedColumns(props: Props) {
       {
         ...TVL_META,
         cell: ({ row }) => (
-          <TVL vault={row.original as DepositedVault} isLoading={props.isLoading} />
+          <TVL
+            denom={(row.original as DepositedVault).cap?.denom}
+            amount={(row.original as DepositedVault).cap?.used}
+          />
         ),
       },
       {
         ...DEPOSIT_CAP_META,
-        cell: ({ row }) => (
-          <DepositCap vault={row.original as DepositedVault} isLoading={props.isLoading} />
-        ),
+        cell: ({ row }) => {
+          if (row.original.cap === null) return null
+          return <DepositCap vault={row.original as DepositedVault} isLoading={props.isLoading} />
+        },
         sortingFn: depositCapSortingFn,
       },
       {

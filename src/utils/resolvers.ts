@@ -1,6 +1,6 @@
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
-import { Positions } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { Positions, UnlockState } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import {
   AssetParamsBaseForAddr as AssetParams,
   AssetParamsBaseForAddr,
@@ -168,4 +168,38 @@ export function resolvePerpsPositions(
       entryPrice: BN(position.entry_price),
     }
   })
+}
+
+export function resolvePerpVaultPositions(
+  perpVaultPositions?: Positions['perp_vault'],
+): PerpVaultPositions | null {
+  if (!perpVaultPositions) return null
+
+  const [unlocking, unlockedAmount] = perpVaultPositions.unlocks.reduce(
+    (prev, curr) => {
+      if (curr.cooldown_end < Date.now()) {
+        prev[1].plus(curr.amount)
+        return prev
+      }
+
+      prev[0].push(curr)
+      return prev
+    },
+    [[] as UnlockState[], BN_ZERO],
+  )
+
+  return {
+    denom: perpVaultPositions.denom,
+    active: BN(perpVaultPositions.deposit.amount).isZero()
+      ? null
+      : {
+          amount: BN(perpVaultPositions.deposit.amount),
+          shares: BN(perpVaultPositions.deposit.shares),
+        },
+    unlocking: unlocking.map((position) => ({
+      amount: BN(position.amount),
+      unlocksAt: position.cooldown_end,
+    })),
+    unlocked: unlockedAmount.isZero() ? null : unlockedAmount,
+  }
 }

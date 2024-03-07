@@ -8,6 +8,7 @@ interface Account {
   lends: BNCoin[]
   vaults: DepositedVault[]
   perps: PerpsPosition[]
+  perpVault: PerpVaultPositions | null
   kind: AccountKind
 }
 
@@ -58,4 +59,19 @@ interface HLSAccountWithStrategy extends Account {
     debt: BigNumber
     total: BigNumber
   }
+}
+
+interface PerpVaultPositions {
+  active: {
+    amount: BigNumber
+    shares: BigNumber
+  } | null
+  denom: string
+  unlocked: BigNumber | null
+  unlocking: PerpVaultUnlockingPosition[]
+}
+
+interface PerpVaultUnlockingPosition {
+  amount: BigNumber
+  unlocksAt: number
 }

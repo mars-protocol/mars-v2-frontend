@@ -229,7 +229,8 @@ async function getDepositedVaults(
         unlockId,
         unlocksAt,
         ...valuesAndAmounts,
-      }
+        type: 'normal',
+      } as DepositedVault
     })
 
     return await Promise.all(depositedVaults)

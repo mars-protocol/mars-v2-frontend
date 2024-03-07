@@ -6,12 +6,14 @@ import { BNCoin } from 'types/classes/BNCoin'
 export const TVL_META = { accessorKey: 'tvl', header: 'TVL' }
 
 interface Props {
-  vault: Vault | DepositedVault
+  amount?: BigNumber
+  denom?: string
 }
 
 export default function TVL(props: Props) {
-  const { vault } = props
-  const coin = BNCoin.fromDenomAndBigNumber(vault.cap.denom, vault.cap.used)
+  if (!props.denom || !props.amount) return null
+
+  const coin = BNCoin.fromDenomAndBigNumber(props.denom, props.amount)
 
   return <DisplayCurrency coin={coin} className='text-xs' />
 }
