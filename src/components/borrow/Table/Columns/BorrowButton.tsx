@@ -20,7 +20,7 @@ interface Props {
 export default function BorrowButton(props: Props) {
   const account = useCurrentAccount()
   const address = useStore((s) => s.address)
-  const hasNoDeposits = !account?.deposits?.length && !account?.lends?.length && !!address
+  const hasNoDeposits = !account?.deposits?.length && !account?.lends?.length
 
   const borrowHandler = useCallback(() => {
     if (!props.data.asset) return null
@@ -30,7 +30,7 @@ export default function BorrowButton(props: Props) {
   return (
     <div className='flex justify-end'>
       <ConditionalWrapper
-        condition={hasNoDeposits}
+        condition={hasNoDeposits && !!address}
         wrapper={(children) => (
           <Tooltip
             type='warning'
@@ -54,6 +54,7 @@ export default function BorrowButton(props: Props) {
             e.stopPropagation()
           }}
           text='Borrow'
+          short
         />
       </ConditionalWrapper>
     </div>

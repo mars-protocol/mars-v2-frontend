@@ -3,7 +3,11 @@ import { Row } from '@tanstack/react-table'
 import DepositCapCell from 'components/common/DepositCapCell'
 import Loading from 'components/common/Loading'
 
-export const DEPOSIT_CAP_META = { accessorKey: 'cap', header: 'Deposit Cap' }
+export const DEPOSIT_CAP_META = {
+  accessorKey: 'cap',
+  header: 'Deposit Cap',
+  meta: { className: 'min-w-35' },
+}
 
 interface Props {
   vault: Vault | DepositedVault

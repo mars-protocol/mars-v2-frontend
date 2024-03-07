@@ -10,6 +10,8 @@ import {
   LendAndReclaimModalController,
   SettingsModal,
   UnlockModal,
+  V1BorrowAndRepay,
+  V1DepositAndWithdraw,
   VaultModal,
   WalletAssets,
   WithdrawFromVaultsModal,
@@ -32,6 +34,8 @@ export default function ModalsContainer() {
       <AlertDialogController />
       <HlsModal />
       <HlsManageModal />
+      <V1DepositAndWithdraw />
+      <V1BorrowAndRepay />
     </>
   )
 }

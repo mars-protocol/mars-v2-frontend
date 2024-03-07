@@ -60,7 +60,7 @@ function VaultModal(props: Props) {
     <Modal
       onClose={onClose}
       header={
-        <span className='flex items-center pr-4 py-1'>
+        <span className='flex items-center py-1 pr-4'>
           <DoubleLogo primaryDenom={vault.denoms.primary} secondaryDenom={vault.denoms.secondary} />
           <Text className='pl-3 pr-2'>{vault.name}</Text>
           {unlockTime && (
@@ -68,7 +68,9 @@ function VaultModal(props: Props) {
               content={`Account position for this vault unlocks at ${unlockTime}`}
               type={'info'}
             >
-              <InfoCircle width={16} height={16} />
+              <div className='w-4 h-4'>
+                <InfoCircle />
+              </div>
             </Tooltip>
           )}
         </span>

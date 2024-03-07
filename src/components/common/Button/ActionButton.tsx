@@ -9,10 +9,15 @@ import useAccountIds from 'hooks/accounts/useAccountIds'
 import useAccountId from 'hooks/useAccountId'
 import useStore from 'store'
 
-export default function ActionButton(props: ButtonProps) {
-  const { className, color, variant, size } = props
+interface Props extends ButtonProps {
+  short?: boolean
+}
+
+export default function ActionButton(props: Props) {
+  const { className, color, variant, size, short } = props
   const defaultProps = { className, color, variant, size }
   const address = useStore((s) => s.address)
+  const isV1 = useStore((s) => s.isV1)
 
   const { data: accountIds } = useAccountIds(address || '')
   const selectedAccountId = useAccountId()
@@ -21,7 +26,8 @@ export default function ActionButton(props: ButtonProps) {
     useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
   }, [])
 
-  if (!address) return <WalletConnectButton {...defaultProps} />
+  if (!address)
+    return <WalletConnectButton {...defaultProps} textOverride={short ? 'Connect' : undefined} />
 
   if (accountIds && accountIds.length === 0) {
     return (
@@ -34,7 +40,7 @@ export default function ActionButton(props: ButtonProps) {
     )
   }
 
-  if (!selectedAccountId) {
+  if (!selectedAccountId && !isV1) {
     return (
       <Button
         text='Select Account'

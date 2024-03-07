@@ -23,6 +23,7 @@ interface Props {
 }
 
 function LendAndReclaimModal({ currentAccount, config }: Props) {
+  const account = useCurrentAccount()
   const lend = useStore((s) => s.lend)
   const reclaim = useStore((s) => s.reclaim)
   const { close } = useLendAndReclaimModal()
@@ -65,8 +66,11 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
     },
     [asset.denom, close, currentAccount.id, isLendAction, lend, reclaim],
   )
+  if (!account) return null
+
   return (
     <AssetAmountSelectActionModal
+      account={account}
       asset={asset}
       contentHeader={<DetailsHeader data={data} />}
       coinBalances={coinBalances}

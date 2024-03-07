@@ -13,7 +13,7 @@ type Props = {
 }
 
 export default function AvailableBorrowingsTable(props: Props) {
-  const columns = useAvailableColumns()
+  const columns = useAvailableColumns({ v1: false })
 
   const renderExpanded = useCallback(
     (row: Row<BorrowMarketTableData>, _: TanstackTable<BorrowMarketTableData>) => {

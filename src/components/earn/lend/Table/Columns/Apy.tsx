@@ -1,7 +1,11 @@
 import AssetRate from 'components/common/assets/AssetRate'
 import Loading from 'components/common/Loading'
 
-export const APY_META = { accessorKey: 'apy.deposit', header: 'APY', meta: { className: 'w-40' } }
+export const APY_META = {
+  accessorKey: 'apy.deposit',
+  header: 'APY',
+  meta: { className: 'min-w-20' },
+}
 
 interface Props {
   apy: number

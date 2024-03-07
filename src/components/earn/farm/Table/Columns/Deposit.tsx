@@ -34,6 +34,7 @@ export const Deposit = (props: Props) => {
         color='tertiary'
         text='Deposit'
         leftIcon={<Plus />}
+        short
       />
     </div>
   )

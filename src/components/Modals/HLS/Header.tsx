@@ -1,8 +1,6 @@
-import React from 'react'
-
 import DoubleLogo from 'components/common/DoubleLogo'
-import HLSTag from 'components/hls/HLSTag'
 import Text from 'components/common/Text'
+import HLSTag from 'components/hls/HLSTag'
 
 interface Props {
   primaryAsset: Asset
@@ -12,7 +10,7 @@ interface Props {
 
 export default function Header(props: Props) {
   return (
-    <div className='flex items-center gap-2'>
+    <div className='flex flex-wrap items-center gap-2 md:flex-nowrap'>
       <DoubleLogo
         primaryDenom={props.primaryAsset.denom}
         secondaryDenom={props.secondaryAsset.denom}

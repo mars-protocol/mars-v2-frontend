@@ -47,6 +47,11 @@ const PAGE_METADATA = {
       'Stake MARS token to ascend to the Martian Council and help govern key changes to the protocol.',
     keywords: 'martian council, mars governance, cosmos governance, mars voting, mars staking',
   },
+  v1: {
+    title: 'Mars Protocol V1',
+    description: "Lend, borrow and earn on the galaxy's most powerful credit protocol.",
+    keywords: 'martian council, mars governance, cosmos governance, mars voting, mars staking',
+  },
 }
 
 export default PAGE_METADATA

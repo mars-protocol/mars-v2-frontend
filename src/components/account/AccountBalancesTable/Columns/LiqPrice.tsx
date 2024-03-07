@@ -13,7 +13,7 @@ export const LIQ_META = {
   accessorKey: 'symbol',
   header: 'Liquidation Price',
   id: 'liqPrice',
-  meta: { className: 'w-40' },
+  meta: { className: 'min-w-30 w-40' },
 }
 
 interface Props {

@@ -1,9 +1,11 @@
-import React from 'react'
-
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
 
-export const LTV_MAX_META = { accessorKey: 'ltv.max', header: 'Max LTV' }
+export const LTV_MAX_META = {
+  accessorKey: 'ltv.max',
+  header: 'Max LTV',
+  meta: { className: 'min-w-28' },
+}
 
 interface Props {
   vault: Vault | DepositedVault

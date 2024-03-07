@@ -11,11 +11,11 @@ import { TextLink } from 'components/common/TextLink'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useChainConfig from 'hooks/useChainConfig'
 import useTransactionStore from 'hooks/useTransactionStore'
 import useStore from 'store'
 import { formatAmountWithSymbol } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import useChainConfig from 'hooks/useChainConfig'
 
 const toastBodyClasses = classNames(
   'flex flex-wrap w-full group/transaction',
@@ -70,8 +70,10 @@ export default function Toaster() {
     const Content = () => (
       <div className='relative flex flex-wrap w-full m-0 isolate'>
         <div className='flex items-center w-full gap-2 mb-2'>
-          <div className='rounded-sm p-1.5 pt-1 bg-info w-7 h-7 flex items-center'>
-            <CircularProgress size={16} />
+          <div className='flex items-center justify-center rounded-sm bg-info w-7 h-7'>
+            <div className='w-4 h-4 -mt-1 -ml-1'>
+              <CircularProgress />
+            </div>
           </div>
           <Text className='flex items-center font-bold text-info'>Pending Transaction</Text>
         </div>
@@ -99,6 +101,13 @@ export default function Toaster() {
     if (!isError && toast.accountId) addTransaction(toast)
     const generalMessage = isError ? 'Transaction failed!' : 'Transaction completed successfully!'
     const showDetailElement = !!(!details && toast.hash)
+    const address = useStore.getState().address
+
+    let target: string
+    if (!isError) {
+      target = toast.accountId === address ? 'Red Bank' : `Credit Account ${toast.accountId}`
+    }
+
     const Msg = () => (
       <div className='relative flex flex-wrap w-full m-0 isolate'>
         <div className='flex w-full gap-2 mb-2'>
@@ -109,8 +118,10 @@ export default function Toaster() {
               </span>
             </div>
           ) : (
-            <div className='rounded-sm p-1.5 pt-1 bg-success w-7 h-7  flex items-center'>
-              <CheckMark size={16} />
+            <div className='flex items-center justify-center rounded-sm bg-success w-7 h-7'>
+              <div className='w-4 h-4 -mt-1 -ml-1 text-white'>
+                <CheckMark />
+              </div>
             </div>
           )}
           <Text
@@ -141,7 +152,7 @@ export default function Toaster() {
           )}
         >
           {!isError && toast.accountId && (
-            <Text className='mb-1 font-bold text-white'>{`Credit Account ${toast.accountId}`}</Text>
+            <Text className='mb-1 font-bold text-white'>{target}</Text>
           )}
           {showDetailElement && toast.message && (
             <Text size='sm' className='w-full mb-1 text-white'>

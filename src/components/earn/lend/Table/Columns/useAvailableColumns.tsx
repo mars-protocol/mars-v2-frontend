@@ -12,6 +12,7 @@ import Name, { NAME_META } from 'components/earn/lend/Table/Columns/Name'
 
 interface Props {
   isLoading: boolean
+  v1?: boolean
 }
 
 export default function useAvailableColumns(props: Props) {
@@ -19,7 +20,7 @@ export default function useAvailableColumns(props: Props) {
     return [
       {
         ...NAME_META,
-        cell: ({ row }) => <Name asset={row.original.asset} />,
+        cell: ({ row }) => <Name asset={row.original.asset} v1={props.v1} />,
       },
       {
         ...APY_META,
@@ -45,5 +46,5 @@ export default function useAvailableColumns(props: Props) {
         cell: ({ row }) => <Chevron isExpanded={row.getIsExpanded()} />,
       },
     ]
-  }, [props.isLoading])
+  }, [props.isLoading, props.v1])
 }

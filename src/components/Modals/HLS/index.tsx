@@ -1,5 +1,3 @@
-import React from 'react'
-
 import Content from 'components/Modals/HLS/Deposit'
 import Header from 'components/Modals/HLS/Header'
 import Modal from 'components/Modals/Modal'
@@ -57,8 +55,8 @@ function HlsModal(props: Props) {
         <Header primaryAsset={props.primaryAsset} secondaryAsset={props.secondaryAsset.asset} />
       }
       headerClassName='gradient-header pl-2 pr-2.5 py-3 border-b-white/5 border-b'
-      contentClassName='flex flex-col p-6'
-      modalClassName='max-w-modal-md'
+      contentClassName='flex flex-col p-2 md:p-6 h-screen-full md:h-auto'
+      modalClassName='max-w-screen-full md:max-w-modal-md '
       onClose={handleClose}
     >
       <Content

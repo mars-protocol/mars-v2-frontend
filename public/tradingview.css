@@ -19,6 +19,9 @@
   --tv-color-toolbar-button-background-expanded: var(--tv-background);
   --tv-color-toolbar-button-background-active: var(--tv-background);
   --tv-color-toolbar-button-background-active-hover: var(--tv-background);
+  --tv-horizontal-scroll-fade-color: var(--tv-background);
+  --tv-vertical-scroll-fade-color: var(--tv-background);
+  --tv-color-popup-background: var(--tv-background);
   --tv-color-toolbar-toggle-button-background-active: rgba(255, 255, 255, 0.2);
   --tv-color-toolbar-toggle-button-background-active-hover: rgba(255, 255, 255, 0.2);
   --tv-color-toolbar-divider-background: var(--tv-menu-text);
@@ -317,4 +320,17 @@ button[class^='button-'][class*='secondary-']:hover {
 [class^='scrollWrap-']::-webkit-scrollbar-track,
 [class^='tabContent-']::-webkit-scrollbar-track {
   border-radius: 2px;
+}
+
+[class^='fadeTop-'] {
+  background-image: linear-gradient(180deg, var(--tv-background), transparent) !important;
+}
+
+[class^='fadeBot-'] {
+  background-image: linear-gradient(0deg, var(--tv-background), transparent) !important;
+}
+
+html.theme-dark ::selection {
+  background: var(--tv-background) !important;
+  color: var(--tv-menu-text-hover) !important;
 }
