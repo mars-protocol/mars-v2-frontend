@@ -84,7 +84,9 @@ export default function TokenInput(props: Props) {
         />
         {props.onDelete && (
           <div role='button' className='grid items-center pr-2' onClick={props.onDelete}>
-            <TrashBin width={16} />
+            <div className='w-4'>
+              <TrashBin />
+            </div>
           </div>
         )}
         <WarningMessages messages={props.warningMessages} />

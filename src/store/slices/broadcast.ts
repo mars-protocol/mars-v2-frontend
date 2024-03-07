@@ -2,7 +2,7 @@ import { MsgExecuteContract } from '@delphi-labs/shuttle-react'
 import BigNumber from 'bignumber.js'
 import moment from 'moment'
 import { isMobile } from 'react-device-detect'
-import { GetState, SetState } from 'zustand'
+import { StoreApi } from 'zustand'
 
 import getPythPriceData from 'api/prices/getPythPriceData'
 import { BN_ZERO } from 'constants/math'
@@ -16,6 +16,7 @@ import {
   ExecuteMsg as CreditManagerExecuteMsg,
   ExecuteMsg,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { ExecuteMsg as RedBankExecuteMsg } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHealthTypes.types'
 import { byDenom, bySymbol } from 'utils/array'
 import { generateErrorMessage, getSingleValueFromBroadcastResult } from 'utils/broadcast'
@@ -30,7 +31,7 @@ import { getVaultDepositCoinsFromActions } from 'utils/vaults'
 function generateExecutionMessage(
   sender: string | undefined = '',
   contract: string,
-  msg: CreditManagerExecuteMsg | AccountNftExecuteMsg | PythUpdateExecuteMsg,
+  msg: CreditManagerExecuteMsg | AccountNftExecuteMsg | RedBankExecuteMsg | PythUpdateExecuteMsg,
   funds: Coin[],
 ) {
   return new MsgExecuteContract({
@@ -42,8 +43,8 @@ function generateExecutionMessage(
 }
 
 export default function createBroadcastSlice(
-  set: SetState<Store>,
-  get: GetState<Store>,
+  set: StoreApi<Store>['setState'],
+  get: StoreApi<Store>['getState'],
 ): BroadcastSlice {
   const handleResponseMessages = (props: HandleResponseProps) => {
     const { id, accountId, response, action, lend, changes, target, message } = props
@@ -860,6 +861,7 @@ export default function createBroadcastSlice(
     setToast: (toast: ToastObject) => {
       const id = moment().unix()
       set({
+        mobileNavExpanded: false,
         toast: {
           id,
           promise: toast.response,
@@ -1064,6 +1066,70 @@ export default function createBroadcastSlice(
       return generateExecutionMessage(get().address, pythContract, msg, [
         { denom: get().chainConfig.assets[0].denom, amount: String(pythAssets.length) },
       ])
+    },
+    v1Action: async (type: V1ActionType, coin: BNCoin) => {
+      let msg: RedBankExecuteMsg
+      let toastOptions: ToastObjectOptions = {
+        action: type,
+        accountId: get().address,
+        changes: {},
+      }
+      let funds: Coin[] = []
+
+      switch (type) {
+        case 'withdraw':
+          msg = {
+            withdraw: {
+              amount: coin.amount.toString(),
+              denom: coin.denom,
+            },
+          }
+          toastOptions = {
+            ...toastOptions,
+            changes: { deposits: [coin] },
+            target: 'wallet',
+          }
+          break
+        case 'repay':
+          msg = {
+            repay: {},
+          }
+          toastOptions.changes = { deposits: [coin] }
+          funds = [coin.toCoin()]
+          break
+        case 'borrow':
+          msg = {
+            borrow: {
+              amount: coin.amount.toString(),
+              denom: coin.denom,
+            },
+          }
+          toastOptions = {
+            ...toastOptions,
+            changes: { debts: [coin] },
+            target: 'wallet',
+          }
+          break
+        default:
+          msg = {
+            deposit: {},
+          }
+          toastOptions.changes = { deposits: [coin] }
+          funds = [coin.toCoin()]
+      }
+
+      const redBankContract = get().chainConfig.contracts.redBank
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, redBankContract, msg, funds)],
+      })
+
+      get().setToast({
+        response,
+        options: toastOptions,
+      })
+
+      return response.then((response) => !!response.result)
     },
   }
 }

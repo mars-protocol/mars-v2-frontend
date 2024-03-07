@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 import { useEffect } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { isMobile } from 'react-device-detect'
 
 import AccountStats from 'components/account/AccountList/AccountStats'
 import Card from 'components/common/Card'
@@ -54,11 +55,16 @@ export default function AccountList(props: Props) {
               contentClassName='bg-white/10 group-hover/account:bg-white/20'
               onClick={() => {
                 if (isActive) return
+                if (isMobile) setShowMenu(false)
                 useStore.setState({ accountDeleteModal: null })
                 navigate(getRoute(getPage(pathname), searchParams, address, accountId))
               }}
               title={
-                <div className={accountCardHeaderClasses} role={!isActive ? 'button' : undefined}>
+                <div
+                  className={accountCardHeaderClasses}
+                  role='button'
+                  onClick={() => setShowMenu(false)}
+                >
                   <Text size='xs' className='flex flex-1'>
                     Credit Account {accountId}
                   </Text>

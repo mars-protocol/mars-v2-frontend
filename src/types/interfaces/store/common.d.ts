@@ -11,6 +11,7 @@ interface CommonSlice {
   selectedAccount: string | null
   updatedAccount?: Account
   focusComponent: FocusComponent | null
+  mobileNavExpanded: boolean
   accountDetailsExpanded: boolean
   migrationBanner: boolean
   tutorial: boolean
@@ -18,6 +19,7 @@ interface CommonSlice {
   useAutoRepay: boolean
   isOracleStale: boolean
   isHLS: boolean
+  isV1: boolean
 }
 
 interface FocusComponent {

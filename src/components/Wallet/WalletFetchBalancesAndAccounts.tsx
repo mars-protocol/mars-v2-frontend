@@ -29,7 +29,7 @@ function FetchLoading() {
 function Content() {
   const address = useStore((s) => s.address)
   const [searchParams] = useSearchParams()
-
+  const isV1 = useStore((s) => s.isV1)
   const { address: urlAddress } = useParams()
   const urlAccountId = useAccountId()
   const navigate = useNavigate()
@@ -62,7 +62,7 @@ function Content() {
     ) {
       const currentAccountIsHLS = urlAccountId && !accountIds.includes(urlAccountId)
       const currentAccount = currentAccountIsHLS || !urlAccountId ? accountIds[0] : urlAccountId
-      navigate(getRoute(page, searchParams, address, currentAccount))
+      navigate(getRoute(page, searchParams, address, isV1 ? undefined : currentAccount))
       useStore.setState({ balances: walletBalances, focusComponent: null })
     }
   }, [
@@ -75,11 +75,12 @@ function Content() {
     urlAddress,
     urlAccountId,
     searchParams,
+    isV1,
   ])
 
   if (isLoadingAccounts || isLoadingBalances) return <FetchLoading />
   if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) return <WalletBridges />
-  if (accountIds && accountIds.length === 0) return <AccountCreateFirst />
+  if (accountIds && accountIds.length === 0 && !isV1) return <AccountCreateFirst />
   return null
 }
 

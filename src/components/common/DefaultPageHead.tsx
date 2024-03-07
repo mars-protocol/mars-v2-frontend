@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import { isMobile } from 'react-device-detect'
 
 function DefaultPageHead() {
   return (
@@ -18,6 +19,11 @@ function DefaultPageHead() {
       <meta content='Mars Protocol V2' property='og:site_name' />
       <meta content='#ffffff' name='msapplication-TileColor' />
       <meta content='#ffffff' name='theme-color' />
+      {isMobile ? (
+        <meta name='viewport' content='width=device-width, initial-scale=1, user-scalable=no' />
+      ) : (
+        <meta name='viewport' content='width=device-width, initial-scale=1' />
+      )}
     </Head>
   )
 }

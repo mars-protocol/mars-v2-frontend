@@ -1,11 +1,12 @@
 import classNames from 'classnames'
-import { useCallback, useMemo } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import React, { useCallback, useMemo } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 
 import Button from 'components/common/Button'
-import { ExternalLink } from 'components/common/Icons'
+import { ChevronDown, Cross, ExternalLink } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
+import Radio from 'components/common/Radio'
 import Text from 'components/common/Text'
 import ChainLogo from 'components/common/chain/ChainLogo'
 import chains from 'configs/chains'
@@ -15,20 +16,66 @@ import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { NETWORK } from 'types/enums/network'
 import { ChainInfoID } from 'types/enums/wallet'
-import { getPage, getRoute } from 'utils/route'
+import { getRoute } from 'utils/route'
 
-const v1Outposts = [
-  { chainId: ChainInfoID.Neutron1, name: 'Neutron', url: 'https://neutron.marsprotocol.io' },
-  { chainId: ChainInfoID.Osmosis1, name: 'Osmosis', url: 'https://v1.marsprotocol.io' },
+interface Props {
+  className?: string
+  withText?: boolean
+}
+
+interface V1Outpost {
+  chainId: ChainInfoID
+  name: string
+  url: string
+  network: NETWORK.MAINNET | NETWORK.TESTNET
+  target: '_blank' | '_self'
+}
+
+interface ChainOptionProps {
+  chainConfig?: ChainConfig
+  onSelect?: (chain: ChainConfig) => void
+  active: boolean
+  outpost?: V1Outpost
+}
+
+const v1Outposts: V1Outpost[] = [
+  {
+    chainId: ChainInfoID.Neutron1,
+    name: 'Neutron',
+    url: 'https://neutron.marsprotocol.io',
+    network: NETWORK.MAINNET,
+    target: '_blank',
+  },
+  {
+    chainId: ChainInfoID.Pion1,
+    name: 'Neutron Testnet',
+    url: '/v1',
+    network: NETWORK.TESTNET,
+    target: '_self',
+  },
+  {
+    chainId: ChainInfoID.Osmosis1,
+    name: 'Osmosis',
+    url: '/v1',
+    network: NETWORK.MAINNET,
+    target: '_self',
+  },
+  {
+    chainId: ChainInfoID.OsmosisDevnet,
+    name: 'Osmosis Devnet',
+    network: NETWORK.TESTNET,
+    url: '/v1',
+    target: '_self',
+  },
 ]
 
-export default function ChainSelect() {
+export default function ChainSelect(props: Props) {
   const [showMenu, setShowMenu] = useToggle()
   const chainConfig = useChainConfig()
   const { mutate } = useSWRConfig()
   const navigate = useNavigate()
-  const { pathname } = useLocation()
   const [searchParams] = useSearchParams()
+  const isV1 = useStore((s) => s.isV1)
 
   const [_, setCurrentChainId] = useCurrentChainId()
 
@@ -39,89 +86,127 @@ export default function ChainSelect() {
       mutate(() => true)
       useStore.setState({
         chainConfig,
+        isV1: false,
         client: undefined,
         address: undefined,
         userDomain: undefined,
         balances: [],
       })
-      navigate(getRoute(getPage(pathname), searchParams))
+      navigate(getRoute('trade', searchParams))
     },
-    [setCurrentChainId, setShowMenu, mutate, navigate, pathname, searchParams],
+    [setCurrentChainId, setShowMenu, mutate, navigate, searchParams],
   )
 
-  const currentChains = useMemo(() => {
-    const currentNetworkType = process.env.NEXT_PUBLIC_NETWORK ?? NETWORK.TESTNET
+  const ChainOption = (props: ChainOptionProps) => {
+    const { onSelect, active, outpost, chainConfig } = props
+    return (
+      <div
+        className={classNames(
+          'w-full px-4 py-3 flex gap-3 group/chain text-white items-center',
+          active ? 'pointer-events-none' : 'opacity-60 hover:opacity-100',
+        )}
+        role='button'
+        onClick={
+          onSelect && chainConfig
+            ? () => onSelect(chainConfig)
+            : () => {
+                if (chainConfig) {
+                  setCurrentChainId(chainConfig.id)
+                  useStore.setState({
+                    chainConfig,
+                  })
+                }
+                window.open(outpost?.url, outpost?.target)
+              }
+        }
+      >
+        <Radio active={active} className='group-hover/account:opacity-100' />
+        <Text size='sm'>{outpost ? 'v1' : 'v2'} Outpost</Text>
+        {outpost && outpost.target !== '_self' && <ExternalLink className='inline w-4 -mb-0.5' />}
+      </div>
+    )
+  }
 
-    return Object.entries(chains).filter(([_, chain]) => chain.network === currentNetworkType)
+  const availableChains = useMemo(() => {
+    const currentNetworkType = process.env.NEXT_PUBLIC_NETWORK ?? NETWORK.TESTNET
+    const availableChains: { chainId: ChainInfoID; name: string }[] = []
+    Object.entries(chains).forEach(([chainId, chainConfig]) => {
+      if (chainConfig.network !== currentNetworkType) return
+      availableChains.push({ chainId: chainId as ChainInfoID, name: chainConfig.name })
+    })
+    if (currentNetworkType === NETWORK.TESTNET) return availableChains
+
+    v1Outposts.forEach((v1Outpost) => {
+      if (
+        !availableChains.find((chain) => chain.chainId === v1Outpost.chainId) &&
+        v1Outpost.network === currentNetworkType
+      )
+        availableChains.push({ chainId: v1Outpost.chainId, name: v1Outpost.name })
+    })
+
+    return availableChains
   }, [])
 
   return (
-    <div className='relative'>
+    <div className={classNames('relative', props.className)}>
       <Button
         leftIcon={<ChainLogo chainID={chainConfig.id} className='w-4' />}
         iconClassName='w-5 h-5'
         color='secondary'
+        text={props.withText ? `${chainConfig.name} ${isV1 ? 'v1' : 'v2'}` : undefined}
         onClick={() => setShowMenu()}
-        className={classNames('!p-0 w-8 flex items-center justify-center')}
-      ></Button>
-      <Overlay show={showMenu} setShow={setShowMenu} className='right-0 w-[180px] mt-2'>
-        <div
-          className={classNames(
-            'flex w-full items-center bg-white/5 px-4 py-3',
-            'border border-transparent border-b-white/10',
-          )}
-        >
-          <Text size='lg' className='font-bold'>
-            Select Chain
-          </Text>
+        className={classNames(
+          'flex items-center justify-center',
+          props.withText ? 'w-auto !px-2 !pr-8 h-[32px]' : '!p-0 w-8',
+        )}
+      />
+      {props.withText && (
+        <div className='absolute w-3 -translate-y-1/2 right-2 top-1/2 z-1'>
+          <ChevronDown />
         </div>
-        <ul className='w-full px-4 py-3 list-none'>
-          {currentChains.map(([name, chain]) => (
-            <li
-              className={classNames(
-                'w-full py-2 flex gap-3 group/chain text-white items-center',
-                chainConfig.name === chain.name
-                  ? 'pointer-events-none'
-                  : 'opacity-60 hover:opacity-100',
-              )}
-              role='button'
-              key={name}
-              onClick={() => selectChain(chain)}
-            >
-              <ChainLogo chainID={chain.id} className='w-6' />
-              <Text size='sm'>{chain.name}</Text>
-            </li>
-          ))}
-        </ul>
-        {process.env.NEXT_PUBLIC_NETWORK === NETWORK.MAINNET && (
-          <>
+      )}
+      <Overlay
+        show={showMenu}
+        setShow={setShowMenu}
+        className='right-0 md:top-8 md:w-[200px] md:mt-2 overflow-hidden top-18 fixed md:absolute w-screen-full md:h-auto'
+      >
+        {availableChains.map((chain, index) => (
+          <React.Fragment key={chain.chainId}>
             <div
               className={classNames(
-                'flex w-full items-center bg-white/5 px-4 py-3',
-                'border border-transparent border-y-white/10',
+                'flex items-center gap-2 px-4 py-3 border-b bg-white/10 border-white/20 relative',
+                index > 0 && 'border-t',
               )}
             >
-              <Text size='lg' className='font-bold'>
-                V1 Outposts
-              </Text>
+              <ChainLogo chainID={chain.chainId} className='w-5' />
+              <Text>{chain.name}</Text>
+              {props.withText && index === 0 && (
+                <div className='absolute top-2 right-2'>
+                  <Button
+                    onClick={() => setShowMenu(false)}
+                    leftIcon={<Cross />}
+                    iconClassName='w-3'
+                    color='tertiary'
+                    className='w-8 h-8 '
+                    size='xs'
+                  />
+                </div>
+              )}
             </div>
-            <ul className='w-full px-4 py-3 list-none'>
-              {v1Outposts.map((outpost) => (
-                <li
-                  className='flex items-center w-full gap-3 py-2 text-white group/chain opacity-60 hover:opacity-100'
-                  role='button'
-                  onClick={() => window.open(outpost.url, '_blank')}
-                  key={outpost.name}
-                >
-                  <ChainLogo chainID={outpost.chainId} className='w-6' />
-                  <Text size='sm'>
-                    {outpost.name} <ExternalLink className='w-4 ml-1 mb-0.5 inline' />
-                  </Text>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
+            {!!chains[chain.chainId] && (
+              <ChainOption
+                chainConfig={chains[chain.chainId]}
+                onSelect={() => selectChain(chains[chain.chainId])}
+                active={chainConfig.name === chain.name && !isV1}
+              />
+            )}
+            <ChainOption
+              chainConfig={chains[chain.chainId]}
+              outpost={v1Outposts.find((outpost) => outpost.chainId === chain.chainId)}
+              active={chainConfig.name === chain.name && isV1}
+            />
+          </React.Fragment>
+        ))}
       </Overlay>
     </div>
   )

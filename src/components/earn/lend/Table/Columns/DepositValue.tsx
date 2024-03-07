@@ -5,6 +5,7 @@ import { BN_ZERO } from 'constants/math'
 import { BN } from 'utils/helpers'
 
 export const DEPOSIT_VALUE_META = {
+  id: 'accountLentValue',
   accessorKey: 'accountLentValue',
   header: 'Deposited',
 }

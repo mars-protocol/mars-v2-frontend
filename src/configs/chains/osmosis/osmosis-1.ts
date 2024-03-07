@@ -13,7 +13,7 @@ import USDCaxl from 'configs/assets/USDC.axl'
 import USDT from 'configs/assets/USDT'
 import USDollar from 'configs/assets/USDollar'
 import WBTCaxl from 'configs/assets/WBTC.axl'
-import WETHaxl from 'configs/assets/WETH.xal'
+import WETHaxl from 'configs/assets/WETH.axl'
 import OSMO_ATOM from 'configs/assets/lp/OSMO-ATOM'
 import OSMO_USDC from 'configs/assets/lp/OSMO_USDC'
 import OSMO_WBTC from 'configs/assets/lp/OSMO_WBTC'
@@ -138,8 +138,8 @@ const Osmosis1: ChainConfig = {
     coinDecimals: 6,
     coinGeckoId: 'osmosis',
     gasPriceStep: {
-      low: 0.0025,
-      average: 0.003,
+      low: 0.003,
+      average: 0.0035,
       high: 0.04,
     },
   },
@@ -160,7 +160,7 @@ const Osmosis1: ChainConfig = {
   },
   explorerName: 'Mintscan',
   features: ['ibc-transfer', 'ibc-go'],
-  gasPrice: '0.003uosmo',
+  gasPrice: '0.0035uosmo',
   id: ChainInfoID.Osmosis1,
   name: 'Osmosis',
   network: NETWORK.MAINNET,

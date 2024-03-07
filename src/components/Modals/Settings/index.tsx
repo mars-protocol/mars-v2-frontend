@@ -305,7 +305,7 @@ export default function SettingsModal() {
           %
         </Button>
       </SettingsOptions>
-      <div className='flex justify-between w-full'>
+      <div className='flex flex-wrap justify-center w-full gap-4 md:justify-between md:flex-nowrap'>
         <Button
           color='quaternary'
           variant='transparent'

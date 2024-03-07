@@ -12,9 +12,9 @@ interface Props {
 
 export default function AssetBalanceRow(props: Props) {
   return (
-    <div className='flex w-full items-center gap-4'>
+    <div className='flex items-center w-full gap-4'>
       <AssetImage asset={props.asset} size={32} />
-      <div className='flex flex-1 flex-wrap'>
+      <div className='flex flex-wrap flex-1'>
         <Text className='w-full'>{props.asset.symbol}</Text>
         <Text size='sm' className='w-full text-white/50'>
           {props.asset.name}
@@ -24,8 +24,8 @@ export default function AssetBalanceRow(props: Props) {
         <DisplayCurrency coin={props.coin} className='w-full text-right' />
         <FormattedNumber
           amount={demagnify(props.coin.amount, props.asset)}
-          className='w-full text-right text-sm text-white/50'
-          options={{ suffix: ` ${props.asset.symbol}` }}
+          className='w-full text-sm text-right text-white/50'
+          options={{ suffix: ` ${props.asset.symbol}`, maxDecimals: props.asset.decimals }}
           animate
         />
       </div>

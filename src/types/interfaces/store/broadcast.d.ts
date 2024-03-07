@@ -167,4 +167,7 @@ interface BroadcastSlice {
     borrow: BNCoin[]
     reclaims: ActionCoin[]
   }) => Promise<boolean>
+  v1Action: (type: V1ActionType, funds: BNCoin) => Promise<boolean>
 }
+
+type V1ActionType = 'withdraw' | 'deposit' | 'borrow' | 'repay'

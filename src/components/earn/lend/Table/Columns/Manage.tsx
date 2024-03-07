@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react'
+import { isMobile } from 'react-device-detect'
 
 import { ACCOUNT_MENU_BUTTON_ID } from 'components/account/AccountMenuContent'
 import DropDownButton from 'components/common/Button/DropDownButton'
@@ -13,6 +14,9 @@ export const MANAGE_META = {
   accessorKey: 'manage',
   enableSorting: false,
   header: '',
+  meta: {
+    className: 'w-40',
+  },
 }
 
 interface Props {
@@ -38,7 +42,9 @@ export default function Manage(props: Props) {
         content:
           "Your auto-lend feature is currently enabled. To unlend your funds, please confirm if you'd like to disable this feature in order to continue.",
         positiveButton: {
-          onClick: () => document.getElementById(ACCOUNT_MENU_BUTTON_ID)?.click(),
+          onClick: isMobile
+            ? () => useStore.setState({ settingsModal: true })
+            : () => document.getElementById(ACCOUNT_MENU_BUTTON_ID)?.click(),
           text: 'Continue to Account Settings',
           icon: <Enter />,
         },
@@ -75,7 +81,7 @@ export default function Manage(props: Props) {
   if (!address) return null
 
   return (
-    <div className='flex justify-end z-10'>
+    <div className='z-10 flex justify-end'>
       <DropDownButton items={ITEMS} text='Manage' color='tertiary' />
     </div>
   )

@@ -1,0 +1,18 @@
+const wstETH: AssetMetaData = {
+  symbol: 'wstETH',
+  id: 'wstETH',
+  name: 'Lido Wrapped Staked Ethereum',
+  color: '#00a3ff',
+  logo: '/images/tokens/wsteth.svg',
+  decimals: 18,
+  hasOraclePrice: true,
+  isEnabled: true,
+  isMarket: true,
+  isDisplayCurrency: true,
+  isAutoLendEnabled: true,
+  isBorrowEnabled: true,
+  pythPriceFeedId: '0x6df640f3b8963d8f8358f791f352b8364513f6ab1cca5ed3f1f7b5448980e784',
+  pythFeedName: 'WSTETHUSD',
+}
+
+export default wstETH

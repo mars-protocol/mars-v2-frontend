@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import Accordion from 'components/common/Accordion'
 import useStakingController from 'components/Modals/HLS/Deposit//useStakingController'
@@ -128,7 +128,12 @@ function Vault(props: VaultContentProps) {
     walletCollateralAsset: props.walletCollateralAsset,
   })
 
-  return <Accordion className='h-[546px] overflow-y-scroll scrollbar-hide' items={items} />
+  return (
+    <Accordion
+      className='h-screen-full md:h-[546px] overflow-y-scroll scrollbar-hide'
+      items={items}
+    />
+  )
 }
 
 interface StakingContentProps extends ContentProps {
@@ -175,5 +180,10 @@ function StakingContent(props: StakingContentProps) {
     walletCollateralAsset: props.walletCollateralAsset,
   })
 
-  return <Accordion className='h-[546px] overflow-y-scroll scrollbar-hide' items={items} />
+  return (
+    <Accordion
+      className='h-screen-full md:h-[546px] overflow-y-scroll scrollbar-hide'
+      items={items}
+    />
+  )
 }

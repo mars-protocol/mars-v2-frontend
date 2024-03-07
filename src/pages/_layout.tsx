@@ -4,13 +4,13 @@ import { isMobile } from 'react-device-detect'
 import { useLocation } from 'react-router-dom'
 import { SWRConfig } from 'swr'
 
+import ModalsContainer from 'components/Modals/ModalsContainer'
 import AccountDetails from 'components/account/AccountDetails'
 import Background from 'components/common/Background'
 import Footer from 'components/common/Footer'
 import PageMetadata from 'components/common/PageMetadata'
 import Toaster from 'components/common/Toaster'
-import DesktopHeader from 'components/header/DesktopHeader'
-import ModalsContainer from 'components/Modals/ModalsContainer'
+import Header from 'components/header/Header'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -25,14 +25,15 @@ interface Props {
 }
 
 function PageContainer(props: Props) {
-  if (isMobile) return props.children
+  const isV1 = useStore((s) => s.isV1)
 
   if (!props.focusComponent)
     return (
       <div
         className={classNames(
-          'mx-auto flex items-start w-full',
-          !props.fullWidth && 'max-w-content',
+          'mx-auto flex items-start w-full max-w-screen-full ',
+          !props.fullWidth && !isV1 && 'md:max-w-content',
+          isV1 && 'md:max-w-v1',
         )}
       >
         {props.children}
@@ -49,8 +50,8 @@ function PageContainer(props: Props) {
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
   const focusComponent = useStore((s) => s.focusComponent)
+  const mobileNavExpanded = useStore((s) => s.mobileNavExpanded)
   const address = useStore((s) => s.address)
-
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
@@ -67,22 +68,25 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <SWRConfig value={{ use: [debugSWR] }}>
         <PageMetadata />
         <Background />
-        <DesktopHeader />
+        <Header />
         <main
           className={classNames(
-            'lg:min-h-[calc(100dvh-81px)]',
-            'lg:mt-[73px]',
+            'md:min-h-[calc(100dvh-81px)]',
+            'mt-[73px]',
             'flex',
-            'min-h-screen gap-6 px-4 py-6 w-full relative',
+            'min-h-screen-full w-full relative',
+            'gap-4 p-2 pb-10',
+            'md:gap-6 md:px-4 md:py-6 ',
             !focusComponent &&
               address &&
               isFullWidth &&
               accountId &&
-              (accountDetailsExpanded ? 'pr-102' : 'pr-24'),
+              (accountDetailsExpanded && !isMobile ? 'md:pr-102' : 'md:pr-24'),
             !reduceMotion && isFullWidth && 'transition-all duration-500',
             'justify-center',
             focusComponent && 'items-center',
-            isMobile && 'items-start',
+            isMobile && 'items-start transition-all duration-500',
+            mobileNavExpanded && isMobile && '-ml-full',
           )}
         >
           <Suspense>
@@ -90,7 +94,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               {children}
             </PageContainer>
           </Suspense>
-          <AccountDetails />
+          {!isMobile && <AccountDetails className='hidden md:flex' />}
         </main>
         <Footer />
         <ModalsContainer />

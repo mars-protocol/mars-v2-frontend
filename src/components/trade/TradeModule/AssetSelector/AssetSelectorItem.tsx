@@ -54,11 +54,11 @@ export default function AssetSelectorItem(props: Props) {
     <li className='relative border-b border-white/10 hover:bg-black/10 z-1'>
       <button
         onClick={() => onSelect(sellAsset ? { buy: asset, sell: sellAsset } : asset)}
-        className='flex items-center justify-between w-full gap-2 p-4'
+        className='flex items-center justify-between w-full gap-2 p-4 min-h-14'
       >
         <div className='flex items-center gap-2'>
-          <div onClick={handleToggleFavorite}>
-            {isFavorite ? <StarFilled width={16} /> : <StarOutlined width={16} />}
+          <div onClick={handleToggleFavorite} className='w-4'>
+            {isFavorite ? <StarFilled /> : <StarOutlined />}
           </div>
           <AssetImage asset={asset} size={24} />
           <div className='flex-col'>

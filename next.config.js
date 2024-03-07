@@ -9,22 +9,6 @@ const nextConfig = {
       'xdefi-static.s3.eu-west-1.amazonaws.com',
     ],
   },
-  async redirects() {
-    return [
-      {
-        source: '/((?!_next|mobile).*)',
-        has: [
-          {
-            type: 'header',
-            key: 'User-Agent',
-            value: '.*(Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop).*',
-          },
-        ],
-        permanent: true,
-        destination: '/mobile',
-      },
-    ]
-  },
   async headers() {
     return [
       {

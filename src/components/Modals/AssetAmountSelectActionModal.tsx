@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import { useCallback, useState } from 'react'
 
 import Modal from 'components/Modals/Modal'
@@ -10,12 +11,12 @@ import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import AssetImage from 'components/common/assets/AssetImage'
 import { BN_ZERO } from 'constants/math'
-import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 
 interface Props {
+  account: Account
   asset: Asset
   title: string
   coinBalances: BNCoin[]
@@ -29,6 +30,7 @@ interface Props {
 
 export default function AssetAmountSelectActionModal(props: Props) {
   const {
+    account,
     asset,
     title,
     coinBalances,
@@ -41,7 +43,6 @@ export default function AssetAmountSelectActionModal(props: Props) {
   } = props
   const [amount, setAmount] = useState(BN_ZERO)
   const maxAmount = BN(coinBalances.find(byDenom(asset.denom))?.amount ?? 0)
-  const account = useCurrentAccount()
   const handleAmountChange = useCallback(
     (value: BigNumber) => {
       setAmount(value)
@@ -54,12 +55,11 @@ export default function AssetAmountSelectActionModal(props: Props) {
     onAction(amount, amount.isEqualTo(maxAmount))
   }, [amount, maxAmount, onAction])
 
-  if (!account) return
   return (
     <Modal
       onClose={onClose}
       header={
-        <span className='flex items-center gap-4 px-4'>
+        <span className='flex items-center gap-4 px-2 md:px-4'>
           <AssetImage size={24} asset={asset} />
           <Text>{title}</Text>
         </span>
@@ -68,10 +68,16 @@ export default function AssetAmountSelectActionModal(props: Props) {
       contentClassName='flex flex-col min-h-[400px]'
     >
       {contentHeader}
-      <div className='flex items-start flex-1 gap-6 p-6'>
+      <div
+        className={classNames(
+          'flex items-start flex-1 p-2 gap-4 flex-wrap',
+          'md:p-4 md:gap-6',
+          'lg:flex-nowrap lg:p-6',
+        )}
+      >
         <Card
-          className='flex flex-1 p-4 bg-white/5'
-          contentClassName='gap-6 flex flex-col justify-between h-full'
+          className='flex flex-1 w-full p-4 bg-white/5 max-w-screen-full min-w-[200px]'
+          contentClassName='gap-6 flex flex-col justify-between h-full min-h-[300px]'
         >
           <TokenInputWithSlider
             asset={asset}

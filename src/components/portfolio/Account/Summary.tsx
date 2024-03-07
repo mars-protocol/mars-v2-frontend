@@ -17,6 +17,7 @@ import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 
 interface Props {
   accountId: string
+  v1?: boolean
 }
 
 function Content(props: Props) {
@@ -74,21 +75,21 @@ function Content(props: Props) {
         title: (
           <FormattedNumber
             className='text-xl'
-            amount={leverage.toNumber()}
+            amount={isNaN(leverage.toNumber()) ? 1 : leverage.toNumber()}
             options={{ suffix: 'x' }}
           />
         ),
-        sub: DEFAULT_PORTFOLIO_STATS[4].sub,
+        sub: props.v1 ? 'Total Leverage' : DEFAULT_PORTFOLIO_STATS[4].sub,
       },
     ]
-  }, [account, assets, borrowAssets, hlsStrategies, lendingAssets, prices, vaultAprs])
+  }, [account, assets, borrowAssets, hlsStrategies, lendingAssets, prices, vaultAprs, props.v1])
 
   return (
     <Skeleton
       stats={stats}
       health={health}
       healthFactor={healthFactor}
-      title={`Credit Account ${props.accountId}`}
+      title={props.v1 ? 'V1 Portfolio' : `Credit Account ${props.accountId}`}
       accountId={props.accountId}
     />
   )

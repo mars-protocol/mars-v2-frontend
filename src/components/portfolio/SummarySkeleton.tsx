@@ -24,14 +24,14 @@ export default function SummarySkeleton(props: Props) {
   const { data: account } = useAccount(props.accountId, false)
 
   return (
-    <div className='flex flex-col w-full gap-8'>
-      <div className='flex justify-between'>
+    <div className='flex flex-col w-full gap-4 md:gap-8'>
+      <div className='flex flex-wrap justify-between gap-2 md:flex-nowrap'>
         <div className='flex items-center'>
           <Text size='2xl'>{title}</Text>
           {account?.kind === 'high_levered_strategy' && <HLSTag />}
         </div>
         {health !== undefined && healthFactor !== undefined && (
-          <div className='flex items-center justify-end flex-grow gap-2'>
+          <div className='flex items-center gap-2 md:flex-grow md:justify-end'>
             <HealthIcon isLoading={healthFactor === 0} health={health} />
             <div className='w-[260px]'>
               <HealthBar health={health} healthFactor={healthFactor} className='h-3' />

@@ -3,7 +3,7 @@ import Loading from 'components/common/Loading'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import useAsset from 'hooks/assets/useAsset'
 
-export const NAME_META = { id: 'name', header: 'Strategy' }
+export const NAME_META = { id: 'name', header: 'Strategy', meta: { className: 'min-w-50' } }
 interface Props {
   strategy: HLSStrategy
 }

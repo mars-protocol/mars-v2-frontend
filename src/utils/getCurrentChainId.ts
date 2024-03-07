@@ -23,6 +23,10 @@ export const getCurrentChainId = () => {
         if (currentNetwork === NETWORK.TESTNET) chainId = ChainInfoID.OsmosisDevnet
         break
 
+      case 'neutron':
+        if (currentNetwork === NETWORK.MAINNET) chainId = ChainInfoID.Neutron1
+        break
+
       case 'testnet-neutron':
         if (currentNetwork === NETWORK.TESTNET) chainId = ChainInfoID.Pion1
         break
@@ -40,6 +44,10 @@ export const getCurrentChainId = () => {
 
       case ChainInfoID.OsmosisDevnet:
         if (currentNetwork === NETWORK.TESTNET) chainId = ChainInfoID.OsmosisDevnet
+        break
+
+      case ChainInfoID.Neutron1:
+        if (currentNetwork === NETWORK.MAINNET) chainId = ChainInfoID.Neutron1
         break
 
       case ChainInfoID.Pion1:
