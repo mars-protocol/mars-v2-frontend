@@ -11,6 +11,8 @@ import {
   PerpsVaultModal,
   SettingsModal,
   UnlockModal,
+  V1BorrowAndRepay,
+  V1DepositAndWithdraw,
   VaultModal,
   WalletAssets,
   WithdrawFromVaultsModal,
@@ -34,6 +36,8 @@ export default function ModalsContainer() {
       <HlsModal />
       <HlsManageModal />
       <PerpsVaultModal />
+      <V1DepositAndWithdraw />
+      <V1BorrowAndRepay />
     </>
   )
 }

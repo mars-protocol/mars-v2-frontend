@@ -5,13 +5,15 @@ import { PerpsPositions } from 'components/perps/PerpsPositions'
 
 export default function PerpsPage() {
   return (
-    <div className='grid grid-cols-[auto_376px] grid-rows-[min-content_auto_auto] w-full gap-4'>
-      <PerpsInfo />
-      <div className='h-full w-[376px] row-span-3 relative'>
-        <PerpsModule />
+    <div className='flex flex-col w-full h-full gap-4'>
+      <div className='md:grid flex flex-wrap w-full md:grid-cols-[auto_346px] gap-4'>
+        <PerpsInfo />
+        <div className='relative order-4 w-full h-full md:row-span-3 md:order-2'>
+          <PerpsModule />
+        </div>
+        <PerpsChart />
+        <PerpsPositions />
       </div>
-      <PerpsChart />
-      <PerpsPositions />
     </div>
   )
 }

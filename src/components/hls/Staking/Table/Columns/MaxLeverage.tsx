@@ -1,8 +1,10 @@
-import React from 'react'
-
 import { FormattedNumber } from 'components/common/FormattedNumber'
 
-export const MAX_LEV_META = { accessorKey: 'maxLeverage', header: 'Max Leverage' }
+export const MAX_LEV_META = {
+  accessorKey: 'maxLeverage',
+  header: 'Max Leverage',
+  meta: { className: 'min-w-40' },
+}
 
 interface Props {
   strategy: HLSStrategy

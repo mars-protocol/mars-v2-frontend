@@ -15,7 +15,7 @@ export const WALLETS: WalletInfos = {
     walletConnect: 'Cosmostation WalletConnect',
     imageURL: '/images/wallets/cosmostation.png',
     mobileImageURL: '/images/wallets/cosmostation-wc.png',
-    supportedChains: [ChainInfoID.Osmosis1, ChainInfoID.OsmosisDevnet],
+    supportedChains: [ChainInfoID.Osmosis1, ChainInfoID.OsmosisDevnet, ChainInfoID.Pion1],
   },
   [WalletID.Keplr]: {
     name: 'Keplr Wallet',

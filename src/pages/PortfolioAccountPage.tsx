@@ -1,6 +1,5 @@
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
-import MigrationBanner from 'components/common/MigrationBanner'
 import ShareBar from 'components/common/ShareBar'
 import Balances from 'components/portfolio/Account/Balances'
 import BreadCrumbs from 'components/portfolio/Account/BreadCrumbs'
@@ -25,7 +24,6 @@ export default function PortfolioAccountPage() {
 
   return (
     <div className='flex flex-wrap w-full gap-6'>
-      <MigrationBanner />
       <BreadCrumbs accountId={accountId} />
       <Summary accountId={accountId} />
       <Balances accountId={accountId} />

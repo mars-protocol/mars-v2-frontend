@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import { useEffect, useMemo, useRef } from 'react'
+import { isMobile } from 'react-device-detect'
 
 import Card from 'components/common/Card'
 import DisplayCurrency from 'components/common/DisplayCurrency'
@@ -7,7 +8,12 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { LineChart } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
 import Text from 'components/common/Text'
-import { disabledFeatures, enabledFeatures } from 'components/trade/TradeChart/constants'
+import {
+  disabledFeatures,
+  disabledFeaturesMobile,
+  enabledFeatures,
+  enabledFeaturesMobile,
+} from 'components/trade/TradeChart/constants'
 import { datafeed } from 'components/trade/TradeChart/DataFeed'
 import PoweredByPyth from 'components/trade/TradeChart/PoweredByPyth'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
@@ -39,7 +45,7 @@ export default function TradeChart(props: Props) {
   }, [prices, props.buyAsset.denom, props.sellAsset.denom])
 
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
-  const hasTradingChartInstalled = process.env.CHARTING_LIBRARY_ACCESS_TOKEN
+  const hasTradingChartInstalled = !!process.env.CHARTING_LIBRARY_ACCESS_TOKEN
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.TradingView) {
@@ -50,11 +56,11 @@ export default function TradeChart(props: Props) {
         library_path: '/charting_library/',
         locale: 'en',
         time_scale: {
-          min_bar_spacing: 12,
+          min_bar_spacing: isMobile ? 2 : 12,
         },
         toolbar_bg: '#220E1D',
-        disabled_features: disabledFeatures,
-        enabled_features: enabledFeatures,
+        disabled_features: isMobile ? disabledFeaturesMobile : disabledFeatures,
+        enabled_features: isMobile ? enabledFeaturesMobile : enabledFeatures,
         fullscreen: false,
         autosize: true,
         container: chartContainerRef.current,
@@ -62,10 +68,9 @@ export default function TradeChart(props: Props) {
         overrides: {
           'paneProperties.background': '#220E1D',
           'paneProperties.backgroundType': 'solid',
-          'paneProperties.backgroundGradientStartColor': '#220E1D',
-          'paneProperties.backgroundGradientEndColor': '#220E1D',
           'linetooltrendline.linecolor': 'rgba(255, 255, 255, 0.8)',
           'linetooltrendline.linewidth': 2,
+          'scalesProperties.fontSize': 12,
         },
         loading_screen: {
           backgroundColor: '#220E1D',
@@ -88,18 +93,31 @@ export default function TradeChart(props: Props) {
           barColorsOnPrevClose: false,
         })
       })
+
+      const chartProperties = localStorage.getItem('tradingview.chartproperties')
+      if (chartProperties) {
+        const newChartProperties = JSON.parse(chartProperties)
+        newChartProperties.paneProperties.backgroundType = 'solid'
+        newChartProperties.paneProperties.background = '#220E1D'
+        newChartProperties.paneProperties.backgroundGradientStartColor = '#220E1D'
+        newChartProperties.paneProperties.backgroundGradientEndColor = '#220E1D'
+        localStorage.setItem('tradingview.chartproperties', JSON.stringify(newChartProperties))
+      }
     }
-  }, [props.buyAsset.pythFeedName, props.buyAsset.symbol, chartInterval])
+  }, [props.buyAsset.pythFeedName, props.buyAsset.symbol, chartInterval, hasTradingChartInstalled])
 
   return (
     <Card
       title={
-        <div className='flex items-center w-full bg-white/10'>
-          <Text size='lg' className='flex items-center flex-1 p-4 font-semibold'>
+        <div className='flex flex-wrap items-center w-full bg-white/10'>
+          <Text
+            size='lg'
+            className='flex items-center w-full p-4 pb-0 font-semibold md:pb-4 md:flex-1 md:w-auto'
+          >
             Trading Chart
           </Text>
           {ratio.isZero() || isLoading ? (
-            <Loading className='h-4 mr-4 w-60' />
+            <Loading className='h-4 m-4 md:m-0 md:mr-4 w-60 ' />
           ) : (
             <div className='flex items-center gap-1 p-4'>
               <Text size='sm'>1 {props.buyAsset.symbol}</Text>
@@ -128,11 +146,11 @@ export default function TradeChart(props: Props) {
           )}
         </div>
       }
-      contentClassName={classNames(
-        'px-0.5 pb-0.5 h-full  w-[calc(100%-2px)] ml-[1px]',
-        hasTradingChartInstalled ? 'bg-chart' : 'bg-white/5',
+      contentClassName='pb-0.5 h-full !w-[calc(100%-2px)] ml-[1px] bg-chart'
+      className={classNames(
+        'h-[500px]',
+        'md:h-screen/70 md:max-h-[980px] md:min-h-[560px] order-1 w-full',
       )}
-      className='h-[70dvh] max-h-[980px] min-h-[560px]'
     >
       <div ref={chartContainerRef} className='h-[calc(100%-32px)] overflow-hidden'>
         {!hasTradingChartInstalled && (

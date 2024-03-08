@@ -18,7 +18,7 @@ export default function AccountDetailsCard() {
 
   if (account)
     return (
-      <div className='w-full'>
+      <div className='order-2 w-full max-w-full overflow-hidden md:order-3'>
         <AccountBalancesTable
           account={account}
           borrowingData={borrowAssetsData}

@@ -13,9 +13,11 @@ import DepositValue, {
 } from 'components/earn/lend/Table/Columns/DepositValue'
 import Manage, { MANAGE_META } from 'components/earn/lend/Table/Columns/Manage'
 import Name, { NAME_META } from 'components/earn/lend/Table/Columns/Name'
+import Action from 'components/v1/Table/deposits/Columns/Action'
 
 interface Props {
   isLoading: boolean
+  v1?: boolean
 }
 
 export default function useDepositedColumns(props: Props) {
@@ -23,7 +25,7 @@ export default function useDepositedColumns(props: Props) {
     return [
       {
         ...NAME_META,
-        cell: ({ row }) => <Name asset={row.original.asset} />,
+        cell: ({ row }) => <Name asset={row.original.asset} v1={props.v1} />,
       },
       {
         ...DEPOSIT_VALUE_META,
@@ -49,12 +51,13 @@ export default function useDepositedColumns(props: Props) {
       },
       {
         ...MANAGE_META,
-        cell: ({ row }) => <Manage data={row.original} />,
+        cell: ({ row }) =>
+          props.v1 ? <Action data={row.original} /> : <Manage data={row.original} />,
       },
       {
         ...CHEVRON_META,
         cell: ({ row }) => <Chevron isExpanded={row.getIsExpanded()} />,
       },
     ]
-  }, [props.isLoading])
+  }, [props.isLoading, props.v1])
 }

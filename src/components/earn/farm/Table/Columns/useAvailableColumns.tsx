@@ -2,6 +2,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
 import Apy, { APY_META } from 'components/earn/farm/Table/Columns/Apy'
+import { Deposit, DEPOSIT_META } from 'components/earn/farm/Table/Columns/Deposit'
 import DepositCap, {
   DEPOSIT_CAP_META,
   depositCapSortingFn,
@@ -9,8 +10,6 @@ import DepositCap, {
 import MaxLTV, { LTV_MAX_META } from 'components/earn/farm/Table/Columns/MaxLTV'
 import Name, { NAME_META } from 'components/earn/farm/Table/Columns/Name'
 import TVL, { TVL_META } from 'components/earn/farm/Table/Columns/TVL'
-
-import { Deposit, DEPOSIT_META } from './Deposit'
 
 interface Props {
   isLoading: boolean

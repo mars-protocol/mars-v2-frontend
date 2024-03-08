@@ -21,7 +21,9 @@ export interface ModalProps {
 
 export default function Modal(props: ModalProps) {
   const ref: React.RefObject<HTMLDialogElement> = useRef(null)
-  const modalClassName = props.modalClassName ?? 'max-w-modal'
+  const modalClassName =
+    props.modalClassName ??
+    'max-w-screen-full md:max-w-modal h-screen-full flex items-center justify-center'
 
   function onClose() {
     ref.current?.close()
@@ -30,7 +32,7 @@ export default function Modal(props: ModalProps) {
 
   useEffect(() => {
     ref.current?.showModal()
-    document.body.classList.add('h-screen', 'overflow-hidden')
+    document.body.classList.add('h-screen-full', 'overflow-hidden')
   }, [])
 
   // close dialog on unmount
@@ -39,7 +41,7 @@ export default function Modal(props: ModalProps) {
     return () => {
       dialog?.removeAttribute('open')
       dialog?.close()
-      document.body.classList.remove('h-screen', 'overflow-hidden')
+      document.body.classList.remove('h-screen-full', 'overflow-hidden')
     }
   }, [])
 
@@ -48,7 +50,7 @@ export default function Modal(props: ModalProps) {
       ref={ref}
       onCancel={onClose}
       className={classNames(
-        `w-screen border-none bg-transparent text-white`,
+        `w-screen-full border-none bg-transparent text-white h-screen-full flex justify-center items-center`,
         'focus-visible:outline-none',
         'max-h-full scrollbar-hide',
         'backdrop:bg-black/50 backdrop:backdrop-blur-sm',
@@ -58,7 +60,7 @@ export default function Modal(props: ModalProps) {
     >
       <Card
         className={classNames(
-          'flex max-w-full flex-1 bg-white/5 backdrop-blur-3xl',
+          'flex max-w-full h-full flex-1 bg-white/5 backdrop-blur-3xl md:overflow-hidden overflow-y-scroll md:h-auto',
           props.className,
         )}
       >

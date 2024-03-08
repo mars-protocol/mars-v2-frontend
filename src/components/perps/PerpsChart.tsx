@@ -1,5 +1,3 @@
-import React from 'react'
-
 import TradeChart from 'components/trade/TradeChart'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
@@ -9,7 +7,7 @@ export function PerpsChart() {
   const { perpsAsset } = usePerpsAsset()
 
   return (
-    <div className='h-full'>
+    <div className='order-2 h-full'>
       <TradeChart buyAsset={perpsAsset} sellAsset={assets[1]} />
     </div>
   )

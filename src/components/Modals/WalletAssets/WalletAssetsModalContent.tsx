@@ -58,7 +58,7 @@ export default function WalletAssetsModalContent(props: Props) {
           onChange={setSearchString}
         />
       </div>
-      <div className='max-h-[446px] overflow-y-scroll scrollbar-hide'>
+      <div className='h-full md:max-h-[446px] overflow-y-scroll scrollbar-hide'>
         <AssetsSelect
           assets={filteredAssets}
           onChangeSelected={onChangeSelect}

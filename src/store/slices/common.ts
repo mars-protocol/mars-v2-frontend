@@ -12,6 +12,7 @@ export default function createCommonSlice(set: SetState<CommonSlice>, get: GetSt
     isOpen: true,
     selectedAccount: null,
     focusComponent: null,
+    mobileNavExpanded: false,
     accountDetailsExpanded: false,
     migrationBanner: true,
     tutorial: true,
@@ -19,5 +20,6 @@ export default function createCommonSlice(set: SetState<CommonSlice>, get: GetSt
     useAutoRepay: true,
     isOracleStale: false,
     isHLS: false,
+    isV1: false,
   }
 }

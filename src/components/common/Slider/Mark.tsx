@@ -13,7 +13,7 @@ export default function Mark(props: Props) {
     <button
       onClick={() => props.onClick(props.value)}
       className={classNames(
-        'z-20 h-2 w-2 rotate-45 rounded-xs border-[1px] border-white/20 hover:border-[1px] hover:border-white',
+        'z-20 h-2 w-2 rotate-45 !outline-none rounded-xs border-[1px] border-white/20 hover:border-[1px] md:hover:border-white',
         (props.sliderValue < props.value || props.disabled) && '!bg-grey-medium',
       )}
       style={props.style}

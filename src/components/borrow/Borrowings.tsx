@@ -1,19 +1,19 @@
+import ActiveBorrowingsTable from 'components/borrow/Table/ActiveBorrowingsTable'
 import AvailableBorrowingsTable from 'components/borrow/Table/AvailableBorrowingsTable'
-import DepositedBorrowingsTable from 'components/borrow/Table/DepositedBorrowingsTable'
 import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import { BN_ZERO } from 'constants/math'
 import useBorrowEnabledAssets from 'hooks/assets/useBorrowEnabledAssets'
 
 export default function Borrowings() {
-  const data = useBorrowMarketAssetsTableData()
+  const { accountBorrowedAssets, availableAssets, allAssets } = useBorrowMarketAssetsTableData()
 
-  if (!data?.allAssets?.length) {
+  if (!allAssets?.length) {
     return <Fallback />
   }
   return (
     <>
-      <DepositedBorrowingsTable data={data.accountBorrowedAssets} isLoading={false} />
-      <AvailableBorrowingsTable data={data.availableAssets} isLoading={false} />
+      <ActiveBorrowingsTable data={accountBorrowedAssets} isLoading={false} />
+      <AvailableBorrowingsTable data={availableAssets} isLoading={false} />
     </>
   )
 }

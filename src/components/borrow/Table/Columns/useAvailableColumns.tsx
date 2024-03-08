@@ -10,12 +10,16 @@ import Liquidity, {
 } from 'components/borrow/Table/Columns/Liquidity'
 import Name, { NAME_META } from 'components/borrow/Table/Columns/Name'
 
-export default function useAvailableColumns() {
+interface Props {
+  v1?: boolean
+}
+
+export default function useAvailableColumns(props: Props) {
   return useMemo<ColumnDef<BorrowMarketTableData>[]>(() => {
     return [
       {
         ...NAME_META,
-        cell: ({ row }) => <Name data={row.original} />,
+        cell: ({ row }) => <Name data={row.original} v1={props.v1} />,
       },
       {
         ...BORROW_RATE_META,
@@ -35,5 +39,5 @@ export default function useAvailableColumns() {
         cell: ({ row }) => <Chevron isExpanded={row.getIsExpanded()} />,
       },
     ]
-  }, [])
+  }, [props.v1])
 }

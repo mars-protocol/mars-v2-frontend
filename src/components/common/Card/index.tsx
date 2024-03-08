@@ -20,7 +20,7 @@ export default function Card(props: Props) {
       className={classNames(
         props.className,
         'flex flex-col',
-        'relative isolate max-w-full overflow-hidden rounded-base',
+        'relative isolate max-w-full overflow-hidden rounded-base max-h-full',
         'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
       )}
     >

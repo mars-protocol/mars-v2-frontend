@@ -8,6 +8,7 @@ export { default as ArrowDownLine } from 'components/common/Icons/ArrowDownLine.
 export { default as ArrowRight } from 'components/common/Icons/ArrowRight.svg'
 export { default as ArrowRightLine } from 'components/common/Icons/ArrowRightLine.svg'
 export { default as ArrowUpLine } from 'components/common/Icons/ArrowUpLine.svg'
+export { default as Burger } from 'components/common/Icons/Burger.svg'
 export { default as Chain } from 'components/common/Icons/Chain.svg'
 export { default as Check } from 'components/common/Icons/Check.svg'
 export { default as CheckCircled } from 'components/common/Icons/CheckCircled.svg'

@@ -74,10 +74,10 @@ export default function PerpsSummary(props: Props) {
   const disabled = useMemo(() => props.amount.isZero(), [props.amount])
 
   return (
-    <div className='border border-white/10 rounded-sm bg-white/5'>
+    <div className='border rounded-sm border-white/10 bg-white/5'>
       <ManageSummary {...props} newAmount={newAmount} />
-      <div className='py-4 px-3 flex flex-col gap-1'>
-        <Text size='xs' className='font-bold mb-2'>
+      <div className='flex flex-col gap-1 px-3 py-4'>
+        <Text size='xs' className='mb-2 font-bold'>
           Summary
         </Text>
         <SummaryLine label='Expected Price'>
@@ -100,7 +100,7 @@ export default function PerpsSummary(props: Props) {
         <SummaryLine label='Total'>-</SummaryLine>
       </div>
       <ActionButton onClick={onConfirm} disabled={disabled} className='w-full py-2.5'>
-        <span className='capitalize mr-1'>{props.tradeDirection}</span>
+        <span className='mr-1 capitalize'>{props.tradeDirection}</span>
         {props.asset.symbol}
       </ActionButton>
     </div>
@@ -119,13 +119,13 @@ function ManageSummary(props: Props & { newAmount: BigNumber }) {
   if ((!showTradeDirection && !showLeverage && !showAmount) || !props.hasActivePosition) return null
 
   return (
-    <div className='pt-4 px-3 flex flex-col gap-1'>
-      <Text size='xs' className='font-bold mb-2'>
+    <div className='flex flex-col gap-1 px-3 pt-4'>
+      <Text size='xs' className='mb-2 font-bold'>
         Your new position
       </Text>
 
       {props.newAmount.isZero() && (
-        <Text size='xs' className='text-white/40 mb-1'>
+        <Text size='xs' className='mb-1 text-white/40'>
           Your position will be closed
         </Text>
       )}
@@ -133,7 +133,9 @@ function ManageSummary(props: Props & { newAmount: BigNumber }) {
       {showTradeDirection && props.previousTradeDirection && !props.newAmount.isZero() && (
         <SummaryLine label='Side' contentClassName='flex gap-1'>
           <TradeDirection tradeDirection={props.previousTradeDirection} />
-          <ArrowRight width={16} />
+          <div className='w-4'>
+            <ArrowRight />
+          </div>
           <TradeDirection tradeDirection={props.tradeDirection} />
         </SummaryLine>
       )}
@@ -141,14 +143,15 @@ function ManageSummary(props: Props & { newAmount: BigNumber }) {
       {showAmount && props.newAmount && props.previousAmount && !props.newAmount.isZero() && (
         <SummaryLine label='Size' contentClassName='flex gap-1'>
           <AssetAmount asset={props.asset} amount={props.previousAmount.abs().toNumber()} />
-          <ArrowRight
-            width={16}
-            className={classNames(
-              props.previousAmount.abs().isGreaterThan(props.newAmount)
-                ? 'text-error'
-                : 'text-success',
-            )}
-          />
+          <div className='w-4'>
+            <ArrowRight
+              className={classNames(
+                props.previousAmount.abs().isGreaterThan(props.newAmount)
+                  ? 'text-error'
+                  : 'text-success',
+              )}
+            />
+          </div>
           <AssetAmount
             asset={props.asset}
             amount={props.previousAmount.plus(props.amount).abs().toNumber()}
@@ -159,12 +162,13 @@ function ManageSummary(props: Props & { newAmount: BigNumber }) {
       {showLeverage && props.previousLeverage && (
         <SummaryLine label='Leverage' contentClassName='flex gap-1'>
           <span>{formatLeverage(props.previousLeverage)}</span>
-          <ArrowRight
-            width={16}
-            className={classNames(
-              props.leverage > props.previousLeverage ? 'text-error' : 'text-success',
-            )}
-          />
+          <div className='w-4'>
+            <ArrowRight
+              className={classNames(
+                props.leverage > props.previousLeverage ? 'text-error' : 'text-success',
+              )}
+            />
+          </div>
           <span>{formatLeverage(props.leverage)}</span>
         </SummaryLine>
       )}

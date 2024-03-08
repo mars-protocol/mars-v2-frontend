@@ -2,18 +2,20 @@ import { useShuttle } from '@delphi-labs/shuttle-react'
 import moment from 'moment'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
+import { isMobile } from 'react-device-detect'
 import QRCode from 'react-qr-code'
 
+import WalletConnecting from 'components/Wallet/WalletConnecting'
 import Button from 'components/common/Button'
 import FullOverlayContent from 'components/common/FullOverlayContent'
 import { ChevronLeft, ChevronRight } from 'components/common/Icons'
 import Text from 'components/common/Text'
-import WalletConnecting from 'components/Wallet/WalletConnecting'
 import { WALLETS } from 'constants/wallets'
+import useChainConfig from 'hooks/useChainConfig'
+import useCurrentWallet from 'hooks/useCurrentWallet'
 import useStore from 'store'
 import { WalletID } from 'types/enums/wallet'
-import { isAndroid, isIOS, isMobile } from 'utils/mobile'
-import useChainConfig from 'hooks/useChainConfig'
+import { isAndroid, isIOS } from 'utils/mobile'
 
 interface Props {
   error?: ErrorObject
@@ -56,10 +58,11 @@ export default function WalletSelect(props: Props) {
   const chainConfig = useChainConfig()
   const { extensionProviders, mobileProviders, mobileConnect } = useShuttle()
   const [qrCodeUrl, setQRCodeUrl] = useState('')
+  const address = useStore((s) => s.address)
   const [error, setError] = useState(props.error)
   const [isLoading, setIsLoading] = useState<string | boolean>(false)
   const sortedExtensionProviders = extensionProviders.sort((a, b) => +b - +a)
-
+  const recentWallet = useCurrentWallet()
   const handleConnectClick = (extensionProviderId: string) => {
     useStore.setState({
       focusComponent: {
@@ -79,7 +82,7 @@ export default function WalletSelect(props: Props) {
         chainId,
       })
 
-      if (isMobile()) {
+      if (isMobile) {
         if (isAndroid()) {
           window.location.href = urls.androidUrl
         } else if (isIOS()) {
@@ -97,6 +100,18 @@ export default function WalletSelect(props: Props) {
     }
     setIsLoading(false)
   }
+
+  useEffect(() => {
+    if (!address && !recentWallet) return
+    useStore.setState({
+      focusComponent: {
+        component: <WalletConnecting providerId={recentWallet?.providerId} />,
+        onClose: () => {
+          useStore.setState({ focusComponent: null })
+        },
+      },
+    })
+  }, [address, recentWallet])
 
   useEffect(() => {
     if (error?.message && error?.title) {
@@ -139,7 +154,7 @@ export default function WalletSelect(props: Props) {
       docs='wallet'
     >
       <div className='flex flex-wrap w-full gap-3'>
-        {!isMobile() && (
+        {!isMobile && (
           <>
             {sortedExtensionProviders.map((provider) => {
               const walletId = provider.id as WalletID
@@ -185,8 +200,16 @@ export default function WalletSelect(props: Props) {
                   return (
                     <WalletOption
                       key={`${walletId}-${network.chainId}`}
-                      name={WALLETS[walletId].walletConnect ?? 'WalletConnect'}
-                      imageSrc={WALLETS[walletId].mobileImageURL ?? '/'}
+                      name={
+                        isMobile
+                          ? WALLETS[walletId].name
+                          : WALLETS[walletId].walletConnect ?? 'WalletConnect'
+                      }
+                      imageSrc={
+                        isMobile
+                          ? WALLETS[walletId].imageURL
+                          : WALLETS[walletId].mobileImageURL ?? '/'
+                      }
                       handleClick={() => handleMobileConnectClick(walletId, network.chainId)}
                       showLoader={isLoading === walletId}
                     />

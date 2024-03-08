@@ -15,6 +15,7 @@ interface Props {
   color?: ButtonProps['color']
   variant?: ButtonProps['variant']
   size?: ButtonProps['size']
+  short?: boolean
 }
 
 export default function WalletConnectButton(props: Props) {

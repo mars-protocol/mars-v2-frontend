@@ -13,6 +13,9 @@ export const LEND_BUTTON_META = {
   accessorKey: 'lend',
   enableSorting: false,
   header: '',
+  meta: {
+    className: 'w-40',
+  },
 }
 
 interface Props {
@@ -24,12 +27,12 @@ export default function LendButton(props: Props) {
   const assetDepositAmount = accountDeposits.find(byDenom(props.data.asset.denom))?.amount
   const address = useStore((s) => s.address)
   const accountId = useAccountId()
-  const hasNoDeposit = !!(!assetDepositAmount && address && accountId)
+  const hasNoDeposit = !!(!assetDepositAmount && accountId)
 
   return (
     <div className='flex justify-end'>
       <ConditionalWrapper
-        condition={hasNoDeposit}
+        condition={hasNoDeposit && !!address}
         wrapper={(children) => (
           <Tooltip
             type='warning'
@@ -53,6 +56,7 @@ export default function LendButton(props: Props) {
             e.stopPropagation()
           }}
           text='Lend'
+          short
         />
       </ConditionalWrapper>
     </div>

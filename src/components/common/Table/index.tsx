@@ -11,7 +11,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import classNames from 'classnames'
-import React from 'react'
+import React, { ReactElement } from 'react'
 
 import Card from 'components/common/Card'
 import { SortAsc, SortDesc, SortNone } from 'components/common/Icons'
@@ -20,7 +20,7 @@ import Text from 'components/common/Text'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
 
 interface Props<T> {
-  title: string
+  title: string | ReactElement
   columns: ColumnDef<T>[]
   data: T[]
   initialSorting: SortingState
@@ -57,6 +57,7 @@ export default function Table<T>(props: Props<T>) {
       wrapper={(children) => (
         <Card
           className={classNames('w-full', props.type !== 'balances' && 'h-fit bg-white/5')}
+          contentClassName='max-w-full overflow-x-scroll scrollbar-hide'
           title={props.title}
         >
           {children}
@@ -76,7 +77,6 @@ export default function Table<T>(props: Props<T>) {
                       props.spacingClassName ?? 'px-4 py-3',
                       header.column.getCanSort() && 'hover:cursor-pointer',
                       header.id === 'symbol' || header.id === 'name' ? 'text-left' : 'text-right',
-                      'w-min',
                       header.column.columnDef.meta?.className,
                     )}
                   >

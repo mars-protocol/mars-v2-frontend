@@ -1,7 +1,9 @@
 import classNames from 'classnames'
 import { useCallback } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { isMobile } from 'react-device-detect'
 
+import WalletBridges from 'components/Wallet/WalletBridges'
 import AccountCreateFirst from 'components/account/AccountCreateFirst'
 import AccountFund from 'components/account/AccountFund/AccountFundFullPage'
 import AccountList from 'components/account/AccountList'
@@ -9,7 +11,6 @@ import Button from 'components/common/Button'
 import { Account, Plus, PlusCircled } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
-import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
@@ -23,10 +24,14 @@ import { BN } from 'utils/helpers'
 import { isNumber } from 'utils/parsers'
 import { getPage, getRoute } from 'utils/route'
 
+interface Props {
+  className?: string
+}
+
 const menuClasses = 'absolute isolate flex w-full flex-wrap scrollbar-hide'
 const ACCOUNT_MENU_BUTTON_ID = 'account-menu-button'
 
-export default function AccountMenuContent() {
+export default function AccountMenuContent(props: Props) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const address = useStore((s) => s.address)
@@ -98,7 +103,7 @@ export default function AccountMenuContent() {
   if (!address) return null
 
   return (
-    <div className='relative'>
+    <div className={classNames('relative', props.className)}>
       <Button
         id={ACCOUNT_MENU_BUTTON_ID}
         onClick={handleCreateAccountClick}
@@ -106,6 +111,7 @@ export default function AccountMenuContent() {
         color={hasCreditAccounts ? 'secondary' : 'primary'}
         hasFocus={showMenu}
         hasSubmenu={hasCreditAccounts}
+        className={isMobile ? '!px-2' : undefined}
       >
         {hasCreditAccounts
           ? isAccountSelected
@@ -114,7 +120,7 @@ export default function AccountMenuContent() {
           : 'Create Account'}
       </Button>
       <Overlay
-        className='max-w-screen right-0 mt-2 flex h-[530px] w-[336px] overflow-hidden'
+        className='max-w-screen-full right-0 mt-2 flex md:h-[530px] w-[336px] overflow-hidden fixed md:absolute top-18 md:top-8 h-[calc(100dvh-72px)]'
         show={showMenu}
         setShow={setShowMenu}
       >

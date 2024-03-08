@@ -17,7 +17,8 @@ interface Market {
 }
 
 interface BorrowMarketTableData extends Market {
-  accountDebt?: BigNumber
+  accountDebtAmount?: BigNumber
+  accountDebtValue?: BigNumber
 }
 
 interface LendingMarketTableData extends Market {

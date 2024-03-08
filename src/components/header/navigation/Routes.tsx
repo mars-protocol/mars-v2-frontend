@@ -8,11 +8,11 @@ import FarmPage from 'pages/FarmPage'
 import HLSFarmPage from 'pages/HLSFarmPage'
 import HLSStakingPage from 'pages/HLSStakingPage'
 import LendPage from 'pages/LendPage'
-import MobilePage from 'pages/MobilePage'
 import PerpsPage from 'pages/PerpsPage'
 import PortfolioAccountPage from 'pages/PortfolioAccountPage'
 import PortfolioPage from 'pages/PortfolioPage'
 import TradePage from 'pages/TradePage'
+import V1Page from 'pages/V1Page'
 
 export default function Routes() {
   const chainConfig = useChainConfig()
@@ -32,7 +32,7 @@ export default function Routes() {
         <Route path='/lend' element={<LendPage />} />
         <Route path='/borrow' element={<BorrowPage />} />
         <Route path='/portfolio' element={<PortfolioPage />} />
-        <Route path='/mobile' element={<MobilePage />} />
+        <Route path='/v1' element={<V1Page />} />
         {chainConfig.hls && <Route path='/hls-staking' element={<HLSStakingPage />} />}
         {chainConfig.hls && <Route path='/hls-farm' element={<HLSFarmPage />} />}
         <Route path='/' element={<TradePage />} />
@@ -47,6 +47,7 @@ export default function Routes() {
           <Route path='portfolio' element={<PortfolioPage />} />
           {chainConfig.hls && <Route path='hls-staking' element={<HLSStakingPage />} />}
           {chainConfig.hls && <Route path='hls-farm' element={<HLSFarmPage />} />}
+          <Route path='v1' element={<V1Page />} />
           <Route path='portfolio/:accountId'>
             <Route path='' element={<PortfolioAccountPage />} />
           </Route>

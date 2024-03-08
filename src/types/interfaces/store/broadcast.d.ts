@@ -176,6 +176,9 @@ interface BroadcastSlice {
     fromDeposits?: BigNumber
     fromLends?: BigNumber
   }) => Promise<boolean>
-  requestUnlockPerpsVault: (options: { accountId: string; coin: BNCoin }) => Promise<boolean>
+  requestUnlockPerpsVault: (options: { accountId: string; amount: BigNumber }) => Promise<boolean>
   withdrawFromPerpsVault: (options: { accountId: string }) => Promise<boolean>
+  v1Action: (type: V1ActionType, funds: BNCoin) => Promise<boolean>
 }
+
+type V1ActionType = 'withdraw' | 'deposit' | 'borrow' | 'repay'

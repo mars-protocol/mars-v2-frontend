@@ -20,8 +20,14 @@ export function PerpsInfo() {
 
     return [
       ...(!assetPrice.isZero()
-        ? [<DisplayCurrency key='price' coin={BNCoin.fromDenomAndBigNumber('usd', assetPrice)} />]
-        : [<Loading key='price' className='w-14 h-4' />]),
+        ? [
+            <DisplayCurrency
+              className='min-w-20'
+              key='price'
+              coin={BNCoin.fromDenomAndBigNumber('usd', assetPrice)}
+            />,
+          ]
+        : [<Loading key='price' className='h-4 w-14' />]),
       <InfoItem
         key='openInterestLong'
         label='Open Interest (L)'
@@ -39,8 +45,11 @@ export function PerpsInfo() {
   if (!market) return null
 
   return (
-    <Card contentClassName='bg-white/10 py-3.5 px-4'>
-      <div className='flex gap-4 items-center'>
+    <Card
+      contentClassName='bg-white/10 py-3.5 px-4 overflow-x-scroll scrollbar-hide'
+      className='order-1'
+    >
+      <div className='flex items-center gap-4'>
         {items.map((item, index) => (
           <React.Fragment key={index}>
             {item}
@@ -59,7 +68,7 @@ interface InfoItemProps {
 
 function InfoItem(props: InfoItemProps) {
   return (
-    <div className='flex flex-col gap-1'>
+    <div className='flex flex-col gap-1 min-w-30'>
       <Text size='xs' className='text-white/40'>
         {props.label}
       </Text>

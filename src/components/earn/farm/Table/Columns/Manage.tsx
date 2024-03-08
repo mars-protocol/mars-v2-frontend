@@ -1,16 +1,15 @@
 import moment from 'moment/moment'
-import React, { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
+import DropDownButton from 'components/common/Button/DropDownButton'
 import { AccountArrowDown, LockLocked, LockUnlocked, Plus } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useAccountId from 'hooks/useAccountId'
+import useStore from 'store'
 import { VaultStatus } from 'types/enums/vault'
-
-import { DEFAULT_SETTINGS } from '../../../../../constants/defaultSettings'
-import { LocalStorageKeys } from '../../../../../constants/localStorageKeys'
-import useLocalStorage from '../../../../../hooks/localStorage/useLocalStorage'
-import useAccountId from '../../../../../hooks/useAccountId'
-import useStore from '../../../../../store'
-import DropDownButton from '../../../../common/Button/DropDownButton'
 
 export const MANAGE_META = { accessorKey: 'details', enableSorting: false, header: '' }
 
@@ -104,7 +103,7 @@ export default function Manage(props: Props) {
   if (!address) return null
 
   return (
-    <div className='flex justify-end z-10'>
+    <div className='z-10 flex justify-end'>
       <DropDownButton
         items={ITEMS}
         text='Manage'

@@ -1,10 +1,21 @@
+import classNames from 'classnames'
+
 import { HealthGauge } from 'components/account/Health/HealthGauge'
 import Loading from 'components/common/Loading'
 import Text from 'components/common/Text'
 
-export default function Skeleton() {
+interface Props {
+  className?: string
+}
+
+export default function Skeleton(props: Props) {
   return (
-    <div className='absolute flex items-start w-16 gap-4 right-4 top-6 opacity-90'>
+    <div
+      className={classNames(
+        'absolute flex items-start w-16 gap-4 right-4 top-6 opacity-90',
+        props.className,
+      )}
+    >
       <div className='relative flex flex-wrap w-16 border min-w-16 rounded-base border-white/20'>
         <div className='flex flex-wrap justify-center w-full py-4'>
           <HealthGauge health={0} healthFactor={0} />

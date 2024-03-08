@@ -201,7 +201,7 @@ export default function Slider(props: Props) {
               <div ref={nodeRef} className='absolute z-20 leading-3'>
                 <div
                   className={classNames(
-                    'z-20 h-3 w-3 rotate-45 hover:cursor-pointer rounded-xs border-[2px] border-white',
+                    'z-20 h-3 w-3 rotate-45 hover:cursor-pointer rounded-xs border-[2px] border-white !outline-none',
                   )}
                   style={{ background: colors[getActiveIndex()] }}
                 />

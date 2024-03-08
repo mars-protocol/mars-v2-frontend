@@ -10,6 +10,7 @@ export const LIQUIDITY_META = {
   accessorKey: 'liquidity',
   header: 'Liquidity Available',
   id: 'liquidity',
+  meta: { className: 'min-w-30' },
 }
 
 export const liquiditySortingFn = (

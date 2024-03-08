@@ -20,6 +20,7 @@ import {
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+import { getUrl } from 'utils/url'
 
 async function getUnlocksAtTimestamp(
   chainConfig: ChainConfig,
@@ -27,7 +28,7 @@ async function getUnlocksAtTimestamp(
   vaultAddress: string,
 ) {
   try {
-    const client = await getClient(chainConfig.endpoints.rpc)
+    const client = await getClient(getUrl(chainConfig.endpoints.rpc))
 
     const vaultExtension = (await cacheFn(
       () =>

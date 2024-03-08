@@ -1,3 +1,6 @@
+import classNames from 'classnames'
+import { isMobile } from 'react-device-detect'
+
 import AssetImage from 'components/common/assets/AssetImage'
 import Button from 'components/common/Button'
 
@@ -13,7 +16,10 @@ export default function AssetButton(props: Props) {
       text={props.asset.symbol}
       color='tertiary'
       variant='transparent'
-      className='w-full border border-white/20'
+      className={classNames(
+        isMobile ? '!px-2 text-sm' : 'md:text-base',
+        'w-full border border-white/20',
+      )}
       textClassNames='flex flex-1'
       size='md'
       hasSubmenu
