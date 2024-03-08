@@ -47,8 +47,8 @@ export default function PerpsVaultModal() {
       await useStore.getState().depositIntoPerpsVault({
         accountId: account.id,
         denom: perpsVault.denom,
-        ...(amountFromDeposits.isPositive() ? { fromDeposits: amountFromDeposits } : {}),
-        ...(amountFromLends.isPositive() ? { fromLends: amountFromLends } : {}),
+        ...(!amountFromDeposits.isZero() ? { fromDeposits: amountFromDeposits } : {}),
+        ...(!amountFromLends.isZero() ? { fromLends: amountFromLends } : {}),
       })
 
       setIsConfirming(false)
