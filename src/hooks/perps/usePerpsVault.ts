@@ -25,6 +25,7 @@ export default function usePerpsVault() {
           duration: perpsVault.cooldown_period,
           timeframe: 'days',
         },
+        cap: null,
       }
     },
   )

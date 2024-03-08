@@ -48,6 +48,7 @@ interface PerpsVault {
   provider: string
   liquidity: BigNumber
   lockup: Lockup
+  cap: DepositCap | null
 }
 
 interface VaultValuesAndAmounts {

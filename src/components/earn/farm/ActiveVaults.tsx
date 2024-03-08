@@ -60,7 +60,7 @@ export function ActiveVaults() {
         ),
       },
     ],
-    [activeVaults, chainConfig.farm, unlockedVaults, unlockingVaults],
+    [activeVaults, unlockedVaults, unlockingVaults],
   )
 
   if (depositedVaults.length === 0) return null

@@ -17,6 +17,8 @@ interface AccountChange extends Account {
   debts?: BNCoin[]
   lends?: BNCoin[]
   vaults?: DepositedVault[]
+  perps?: PerpsPosition[]
+  perpVault?: PerpVaultPositions
 }
 
 interface AccountBalanceRow {

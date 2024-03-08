@@ -44,6 +44,7 @@ export default function PortfolioSummary() {
         debts: [],
         vaults: [],
         perps: [],
+        perpVault: null,
         kind: 'default',
       } as Account,
     )

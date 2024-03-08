@@ -313,6 +313,17 @@ export function cloneAccount(account: Account): Account {
       entryPrice: perpPosition.entryPrice,
       tradeDirection: perpPosition.tradeDirection,
     })),
+    perpVault: account.perpVault
+      ? {
+          active: account.perpVault?.active ? { ...account.perpVault.active } : null,
+          denom: account.perpVault.denom,
+          unlocked: account.perpVault.unlocked,
+          unlocking: account.perpVault.unlocking.map((unlocking) => ({
+            amount: unlocking.amount,
+            unlocksAt: unlocking.unlocksAt,
+          })),
+        }
+      : null,
   }
 }
 

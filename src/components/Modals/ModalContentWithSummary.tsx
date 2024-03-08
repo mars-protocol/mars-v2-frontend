@@ -1,9 +1,10 @@
 import classNames from 'classnames'
+import React from 'react'
+
 import Modal, { ModalProps } from 'components/Modals/Modal'
 import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
 import Card from 'components/common/Card'
 import { CircularProgress } from 'components/common/CircularProgress'
-import React from 'react'
 
 interface Props extends ModalProps {
   isHls?: boolean
