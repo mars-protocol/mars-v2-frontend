@@ -74,6 +74,7 @@ export default function useAccountBalancesColumns(
         ? [
             {
               ...LIQ_META,
+              className: 'min-w-30 w-40',
               enableSorting: false,
               cell: ({ row }: { row: Row<AccountBalanceRow> }) => (
                 <LiqPrice

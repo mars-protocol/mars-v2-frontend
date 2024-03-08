@@ -15,7 +15,7 @@ export const ASSET_META = {
   accessorKey: 'symbol',
   header: 'Asset',
   id: 'symbol',
-  meta: { className: 'min-w-40 w-40' },
+  meta: { className: 'min-w-30 w-30' },
 }
 
 interface Props {
