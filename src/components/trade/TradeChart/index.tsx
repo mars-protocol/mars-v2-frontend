@@ -48,7 +48,7 @@ export default function TradeChart(props: Props) {
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
 
   useEffect(() => {
-    if (typeof window === 'undefined' || !window.TradingView) return
+    if (typeof window === 'undefined' || !window.TradingView || !chartContainerRef.current) return
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: props.buyAsset.pythFeedName ?? `${props.buyAsset.symbol}/USD`,
       datafeed: datafeed,
@@ -81,7 +81,7 @@ export default function TradeChart(props: Props) {
 
     const tvWidget = new widget(widgetOptions)
 
-    tvWidget.headerReady().then(() => {
+    tvWidget.onChartReady(() => {
       const chart = tvWidget.chart()
       chart.getSeries().setChartStyleProperties(1, {
         upColor: '#3DAE9A',
@@ -108,7 +108,7 @@ export default function TradeChart(props: Props) {
     return () => {
       tvWidget.remove()
     }
-  }, [props.buyAsset.pythFeedName, props.buyAsset.symbol, chartInterval])
+  }, [props.buyAsset.pythFeedName, props.buyAsset.symbol, chartInterval, chartContainerRef])
 
   return (
     <Card
