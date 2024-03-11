@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 
 import Card from 'components/common/Card'
@@ -30,6 +30,7 @@ interface Props {
   sellAsset: Asset
 }
 export default function TradeChart(props: Props) {
+  const [isServer, setIsServer] = useState(true)
   const { data: prices, isLoading } = usePrices()
   const [chartInterval, _] = useLocalStorage<ResolutionString>(
     LocalStorageKeys.CHART_INTERVAL,
@@ -47,61 +48,64 @@ export default function TradeChart(props: Props) {
   const hasTradingChartInstalled = !!process.env.CHARTING_LIBRARY_ACCESS_TOKEN
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.TradingView) {
-      const widgetOptions: ChartingLibraryWidgetOptions = {
-        symbol: props.buyAsset.pythFeedName ?? `${props.buyAsset.symbol}/USD`,
-        datafeed: datafeed,
-        interval: chartInterval,
-        library_path: '/charting_library/',
-        locale: 'en',
-        time_scale: {
-          min_bar_spacing: isMobile ? 2 : 12,
-        },
-        toolbar_bg: '#220E1D',
-        disabled_features: isMobile ? disabledFeaturesMobile : disabledFeatures,
-        enabled_features: isMobile ? enabledFeaturesMobile : enabledFeatures,
-        fullscreen: false,
-        autosize: true,
-        container: chartContainerRef.current,
-        theme: 'dark',
-        overrides: {
-          'paneProperties.background': '#220E1D',
-          'paneProperties.backgroundType': 'solid',
-          'linetooltrendline.linecolor': 'rgba(255, 255, 255, 0.8)',
-          'linetooltrendline.linewidth': 2,
-          'scalesProperties.fontSize': 12,
-        },
-        loading_screen: {
-          backgroundColor: '#220E1D',
-          foregroundColor: 'rgba(255, 255, 255, 0.3)',
-        },
-        custom_css_url: '/tradingview.css',
-      }
+    setIsServer(false)
+  }, [])
 
-      const tvWidget = new widget(widgetOptions)
-      tvWidget.onChartReady(() => {
-        const chart = tvWidget.chart()
-        chart.getSeries().setChartStyleProperties(1, {
-          upColor: '#3DAE9A',
-          downColor: '#AE3D3D',
-          borderColor: '#232834',
-          borderUpColor: '#3DAE9A',
-          borderDownColor: '#AE3D3D',
-          wickUpColor: '#3DAE9A',
-          wickDownColor: '#AE3D3D',
-          barColorsOnPrevClose: false,
-        })
+  useEffect(() => {
+    if (isServer) return
+    const widgetOptions: ChartingLibraryWidgetOptions = {
+      symbol: props.buyAsset.pythFeedName ?? `${props.buyAsset.symbol}/USD`,
+      datafeed: datafeed,
+      interval: chartInterval,
+      library_path: '/charting_library/',
+      locale: 'en',
+      time_scale: {
+        min_bar_spacing: isMobile ? 2 : 12,
+      },
+      toolbar_bg: '#220E1D',
+      disabled_features: isMobile ? disabledFeaturesMobile : disabledFeatures,
+      enabled_features: isMobile ? enabledFeaturesMobile : enabledFeatures,
+      fullscreen: false,
+      autosize: true,
+      container: chartContainerRef.current,
+      theme: 'dark',
+      overrides: {
+        'paneProperties.background': '#220E1D',
+        'paneProperties.backgroundType': 'solid',
+        'linetooltrendline.linecolor': 'rgba(255, 255, 255, 0.8)',
+        'linetooltrendline.linewidth': 2,
+        'scalesProperties.fontSize': 12,
+      },
+      loading_screen: {
+        backgroundColor: '#220E1D',
+        foregroundColor: 'rgba(255, 255, 255, 0.3)',
+      },
+      custom_css_url: '/tradingview.css',
+    }
+
+    const tvWidget = new widget(widgetOptions)
+    tvWidget.onChartReady(() => {
+      const chart = tvWidget.chart()
+      chart.getSeries().setChartStyleProperties(1, {
+        upColor: '#3DAE9A',
+        downColor: '#AE3D3D',
+        borderColor: '#232834',
+        borderUpColor: '#3DAE9A',
+        borderDownColor: '#AE3D3D',
+        wickUpColor: '#3DAE9A',
+        wickDownColor: '#AE3D3D',
+        barColorsOnPrevClose: false,
       })
+    })
 
-      const chartProperties = localStorage.getItem('tradingview.chartproperties')
-      if (chartProperties) {
-        const newChartProperties = JSON.parse(chartProperties)
-        newChartProperties.paneProperties.backgroundType = 'solid'
-        newChartProperties.paneProperties.background = '#220E1D'
-        newChartProperties.paneProperties.backgroundGradientStartColor = '#220E1D'
-        newChartProperties.paneProperties.backgroundGradientEndColor = '#220E1D'
-        localStorage.setItem('tradingview.chartproperties', JSON.stringify(newChartProperties))
-      }
+    const chartProperties = localStorage.getItem('tradingview.chartproperties')
+    if (chartProperties) {
+      const newChartProperties = JSON.parse(chartProperties)
+      newChartProperties.paneProperties.backgroundType = 'solid'
+      newChartProperties.paneProperties.background = '#220E1D'
+      newChartProperties.paneProperties.backgroundGradientStartColor = '#220E1D'
+      newChartProperties.paneProperties.backgroundGradientEndColor = '#220E1D'
+      localStorage.setItem('tradingview.chartproperties', JSON.stringify(newChartProperties))
     }
   }, [props.buyAsset.pythFeedName, props.buyAsset.symbol, chartInterval, hasTradingChartInstalled])
 
