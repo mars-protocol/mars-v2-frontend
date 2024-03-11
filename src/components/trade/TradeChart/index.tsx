@@ -45,14 +45,13 @@ export default function TradeChart(props: Props) {
   }, [prices, props.buyAsset.denom, props.sellAsset.denom])
 
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
-  const hasTradingChartInstalled = !!process.env.CHARTING_LIBRARY_ACCESS_TOKEN
 
   useEffect(() => {
     setIsServer(false)
   }, [])
 
   useEffect(() => {
-    if (isServer) return
+    if (isServer && typeof window === 'undefined') return
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: props.buyAsset.pythFeedName ?? `${props.buyAsset.symbol}/USD`,
       datafeed: datafeed,
@@ -107,7 +106,7 @@ export default function TradeChart(props: Props) {
       newChartProperties.paneProperties.backgroundGradientEndColor = '#220E1D'
       localStorage.setItem('tradingview.chartproperties', JSON.stringify(newChartProperties))
     }
-  }, [props.buyAsset.pythFeedName, props.buyAsset.symbol, chartInterval, hasTradingChartInstalled])
+  }, [props.buyAsset.pythFeedName, props.buyAsset.symbol, chartInterval])
 
   return (
     <Card
@@ -156,21 +155,19 @@ export default function TradeChart(props: Props) {
       )}
     >
       <div ref={chartContainerRef} className='h-[calc(100%-32px)] overflow-hidden'>
-        {!hasTradingChartInstalled && (
-          <div className='flex items-center w-full h-full'>
-            <div className='flex flex-col flex-wrap items-center w-full gap-2'>
-              <div className='w-8 mb-2'>
-                <LineChart />
-              </div>
-              <Text size='lg' className='w-full text-center'>
-                Trading View is not installed
-              </Text>
-              <Text size='sm' className='w-full text-center text-white/60'>
-                Charting data is not available.
-              </Text>
+        <div className='flex items-center w-full h-full'>
+          <div className='flex flex-col flex-wrap items-center w-full gap-2'>
+            <div className='w-8 mb-2'>
+              <LineChart />
             </div>
+            <Text size='lg' className='w-full text-center'>
+              Trading View is not installed
+            </Text>
+            <Text size='sm' className='w-full text-center text-white/60'>
+              Charting data is not available.
+            </Text>
           </div>
-        )}
+        </div>
       </div>
       <PoweredByPyth />
     </Card>
