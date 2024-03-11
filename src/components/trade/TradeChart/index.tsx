@@ -25,10 +25,12 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { ChartingLibraryWidgetOptions, ResolutionString, widget } from 'utils/charting_library'
 import { magnify } from 'utils/formatters'
+
 interface Props {
   buyAsset: Asset
   sellAsset: Asset
 }
+
 export default function TradeChart(props: Props) {
   const [isServer, setIsServer] = useState(true)
   const { data: prices, isLoading } = usePrices()
@@ -51,7 +53,7 @@ export default function TradeChart(props: Props) {
   }, [])
 
   useEffect(() => {
-    if (isServer && typeof window === 'undefined') return
+    if (isServer) return
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: props.buyAsset.pythFeedName ?? `${props.buyAsset.symbol}/USD`,
       datafeed: datafeed,
