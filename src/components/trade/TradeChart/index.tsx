@@ -106,7 +106,7 @@ export default function TradeChart(props: Props) {
       newChartProperties.paneProperties.backgroundGradientEndColor = '#220E1D'
       localStorage.setItem('tradingview.chartproperties', JSON.stringify(newChartProperties))
     }
-  }, [props.buyAsset.pythFeedName, props.buyAsset.symbol, chartInterval])
+  }, [props.buyAsset.pythFeedName, props.buyAsset.symbol, chartInterval, isServer])
 
   return (
     <Card
