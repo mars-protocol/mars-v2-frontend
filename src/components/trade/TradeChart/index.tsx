@@ -80,8 +80,8 @@ export default function TradeChart(props: Props) {
     }
 
     const tvWidget = new widget(widgetOptions)
-    tvWidget.onChartReady(() => {
-      alert('chart ready')
+
+    tvWidget.headerReady().then(() => {
       const chart = tvWidget.chart()
       chart.getSeries().setChartStyleProperties(1, {
         upColor: '#3DAE9A',
@@ -103,6 +103,10 @@ export default function TradeChart(props: Props) {
       newChartProperties.paneProperties.backgroundGradientStartColor = '#220E1D'
       newChartProperties.paneProperties.backgroundGradientEndColor = '#220E1D'
       localStorage.setItem('tradingview.chartproperties', JSON.stringify(newChartProperties))
+    }
+
+    return () => {
+      tvWidget.remove()
     }
   }, [props.buyAsset.pythFeedName, props.buyAsset.symbol, chartInterval])
 
