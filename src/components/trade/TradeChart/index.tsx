@@ -61,7 +61,7 @@ export default function TradeChart(props: Props) {
       library_path: '/charting_library/',
       locale: 'en',
       time_scale: {
-        min_bar_spacing: isMobile ? 2 : 12,
+        min_bar_spacing: 12,
       },
       toolbar_bg: '#220E1D',
       disabled_features: isMobile ? disabledFeaturesMobile : disabledFeatures,
@@ -108,7 +108,7 @@ export default function TradeChart(props: Props) {
       newChartProperties.paneProperties.backgroundGradientEndColor = '#220E1D'
       localStorage.setItem('tradingview.chartproperties', JSON.stringify(newChartProperties))
     }
-  }, [props.buyAsset.pythFeedName, props.buyAsset.symbol, chartInterval, isServer])
+  }, [props.buyAsset.pythFeedName, props.buyAsset.symbol, chartInterval, isServer, isMobile])
 
   return (
     <Card
@@ -157,19 +157,21 @@ export default function TradeChart(props: Props) {
       )}
     >
       <div ref={chartContainerRef} className='h-[calc(100%-32px)] overflow-hidden'>
-        <div className='flex items-center w-full h-full'>
-          <div className='flex flex-col flex-wrap items-center w-full gap-2'>
-            <div className='w-8 mb-2'>
-              <LineChart />
+        {isServer && (
+          <div className='flex items-center w-full h-full'>
+            <div className='flex flex-col flex-wrap items-center w-full gap-2'>
+              <div className='w-8 mb-2'>
+                <LineChart />
+              </div>
+              <Text size='lg' className='w-full text-center'>
+                Trading View is not installed
+              </Text>
+              <Text size='sm' className='w-full text-center text-white/60'>
+                Charting data is not available.
+              </Text>
             </div>
-            <Text size='lg' className='w-full text-center'>
-              Trading View is not installed
-            </Text>
-            <Text size='sm' className='w-full text-center text-white/60'>
-              Charting data is not available.
-            </Text>
           </div>
-        </div>
+        )}
       </div>
       <PoweredByPyth />
     </Card>
