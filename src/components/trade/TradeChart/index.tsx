@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { isMobile } from 'react-device-detect'
 
 import Card from 'components/common/Card'
@@ -32,7 +32,6 @@ interface Props {
 }
 
 export default function TradeChart(props: Props) {
-  const [isServer, setIsServer] = useState(true)
   const { data: prices, isLoading } = usePrices()
   const [chartInterval, _] = useLocalStorage<ResolutionString>(
     LocalStorageKeys.CHART_INTERVAL,
@@ -49,11 +48,7 @@ export default function TradeChart(props: Props) {
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
 
   useEffect(() => {
-    setIsServer(false)
-  }, [])
-
-  useEffect(() => {
-    if (isServer) return
+    if (typeof window === 'undefined' || !window.TradingView) return
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: props.buyAsset.pythFeedName ?? `${props.buyAsset.symbol}/USD`,
       datafeed: datafeed,
@@ -86,6 +81,7 @@ export default function TradeChart(props: Props) {
 
     const tvWidget = new widget(widgetOptions)
     tvWidget.onChartReady(() => {
+      alert('chart ready')
       const chart = tvWidget.chart()
       chart.getSeries().setChartStyleProperties(1, {
         upColor: '#3DAE9A',
@@ -108,7 +104,7 @@ export default function TradeChart(props: Props) {
       newChartProperties.paneProperties.backgroundGradientEndColor = '#220E1D'
       localStorage.setItem('tradingview.chartproperties', JSON.stringify(newChartProperties))
     }
-  }, [props.buyAsset.pythFeedName, props.buyAsset.symbol, chartInterval, isServer, isMobile])
+  }, [props.buyAsset.pythFeedName, props.buyAsset.symbol, chartInterval])
 
   return (
     <Card
@@ -121,7 +117,7 @@ export default function TradeChart(props: Props) {
             Trading Chart
           </Text>
           {ratio.isZero() || isLoading ? (
-            <Loading className='h-4 m-4 md:m-0 md:mr-4 w-60 ' />
+            <Loading className='h-4 m-4 md:m-0 md:mr-4 w-60' />
           ) : (
             <div className='flex items-center gap-1 p-4'>
               <Text size='sm'>1 {props.buyAsset.symbol}</Text>
@@ -157,21 +153,19 @@ export default function TradeChart(props: Props) {
       )}
     >
       <div ref={chartContainerRef} className='h-[calc(100%-32px)] overflow-hidden'>
-        {isServer && (
-          <div className='flex items-center w-full h-full'>
-            <div className='flex flex-col flex-wrap items-center w-full gap-2'>
-              <div className='w-8 mb-2'>
-                <LineChart />
-              </div>
-              <Text size='lg' className='w-full text-center'>
-                Trading View is not installed
-              </Text>
-              <Text size='sm' className='w-full text-center text-white/60'>
-                Charting data is not available.
-              </Text>
+        <div className='flex items-center w-full h-full'>
+          <div className='flex flex-col flex-wrap items-center w-full gap-2'>
+            <div className='w-8 mb-2'>
+              <LineChart />
             </div>
+            <Text size='lg' className='w-full text-center'>
+              Trading View is not installed
+            </Text>
+            <Text size='sm' className='w-full text-center text-white/60'>
+              Charting data is not available.
+            </Text>
           </div>
-        )}
+        </div>
       </div>
       <PoweredByPyth />
     </Card>
