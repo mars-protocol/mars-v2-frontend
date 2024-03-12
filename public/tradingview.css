@@ -332,6 +332,9 @@ button[class^='button-'][class*='secondary-']:hover {
 
 [class^='noWrapWrapper-'] * {
   pointer-events: none !important;
+  border: none !important;
+  background: transparent !important;
+  outline: none !important;
 }
 
 html.theme-dark ::selection {

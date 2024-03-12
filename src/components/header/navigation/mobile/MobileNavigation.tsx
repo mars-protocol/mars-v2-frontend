@@ -52,6 +52,8 @@ export default function MobileNavigation(props: Props) {
 
   const selectPage = useCallback(
     (page: Page) => {
+      window.scrollTo(0, 0)
+      if (typeof window !== 'undefined') setTimeout(() => window.scrollTo(0, 0), 200)
       useStore.setState({ mobileNavExpanded: false })
       if (page.includes('http')) {
         window.open(page, '_blank')
