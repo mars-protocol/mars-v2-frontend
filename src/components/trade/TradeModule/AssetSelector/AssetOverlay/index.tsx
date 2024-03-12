@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
+import { isMobile } from 'react-device-detect'
 
 import EscButton from 'components/common/Button/EscButton'
 import Divider from 'components/common/Divider'
@@ -11,7 +12,6 @@ import PairsList from 'components/trade/TradeModule/AssetSelector/PairsList'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useFilteredAssets from 'hooks/useFilteredAssets'
-import { isMobile } from 'react-device-detect'
 
 interface Props {
   state: OverlayState
