@@ -193,39 +193,32 @@ export function convertAccountToPositions(account: Account, prices: BNCoin[]): P
       // TODO: Check if this needs to be converted (in regards to HC decimal scaling)
       const currentPrice = prices.find(byDenom(perpPosition.denom))?.amount ?? BN_ZERO
       return {
-        // Used
         base_denom: perpPosition.baseDenom,
-        // Used
         closing_fee_rate: perpPosition.closingFeeRate.toString(),
-        // Used
-        current_price: currentPrice.toString(), // Check what prices we should pass to current and entry prices. Entry price will change when modifying positionl
-        current_exec_price: currentPrice.toString(), // TODO: 📈 This needs to be queried
+        current_price: perpPosition.currentPrice.toString(),
+        current_exec_price: perpPosition.currentPrice.toString(),
         denom: perpPosition.denom,
-        // Used (for now, this might be changed)
-        entry_price: currentPrice.toString(),
-        // Used (not actually used, but it's in todo)
-        entry_exec_price: currentPrice.toString(), // TODO: 📈 Check if this matters (currently just using entry price)
-        // Used
+        entry_price: perpPosition.entryPrice.toString(),
+        entry_exec_price: perpPosition.entryPrice.toString(),
         size: perpPosition.amount.toString() as any,
         unrealised_pnl: {
           coins: {
             closing_fee: perpPosition.pnl.unrealized.fees.abs().toCoin(),
-            // Used
-            pnl: perpPosition.pnl.unrealized.net.toPnLCoin(), // Used
+            pnl: perpPosition.pnl.unrealized.net.toPnLCoin(),
           },
           amounts: {
-            // CHeck if these are correct
             accrued_funding: perpPosition.pnl.unrealized.funding.amount
               .integerValue()
               .toString() as any,
+            // TODO: There is now a double fee applied. This might be inaccurate (on the conservative side)
             opening_fee: perpPosition.pnl.unrealized.fees.amount
               .abs()
               .integerValue()
-              .toString() as any, // Add openning fee for modifying position
+              .toString() as any,
             closing_fee: perpPosition.pnl.unrealized.fees.amount
               .abs()
               .integerValue()
-              .toString() as any, // Add closing fee for modifying position
+              .toString() as any,
             pnl: perpPosition.pnl.unrealized.net.amount.integerValue().toString() as any,
             price_pnl: perpPosition.pnl.unrealized.price.amount.integerValue().toString() as any,
           },
@@ -311,6 +304,7 @@ export function cloneAccount(account: Account): Account {
       amount: perpPosition.amount,
       pnl: perpPosition.pnl,
       entryPrice: perpPosition.entryPrice,
+      currentPrice: perpPosition.currentPrice,
       tradeDirection: perpPosition.tradeDirection,
     })),
     perpVault: account.perpVault

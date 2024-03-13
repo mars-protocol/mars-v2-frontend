@@ -119,6 +119,8 @@ export function resolvePerpsPositions(
       amount: BN(position.size as any), // Amount is negative for SHORT positions
       tradeDirection: BN(position.size as any).isNegative() ? 'short' : 'long',
       closingFeeRate: BN(position.closing_fee_rate),
+      entryPrice: BN(position.entry_exec_price),
+      currentPrice: BN(position.current_exec_price),
       pnl: {
         net: BNCoin.fromDenomAndBigNumber(
           position.base_denom,
@@ -149,23 +151,22 @@ export function resolvePerpsPositions(
         unrealized: {
           net: BNCoin.fromDenomAndBigNumber(
             position.base_denom,
-            BN(position.unrealised_pnl.values.pnl as any).div(basePrice),
+            BN(position.unrealised_pnl.amounts.pnl as any),
           ),
           price: BNCoin.fromDenomAndBigNumber(
             position.base_denom,
-            BN(position.unrealised_pnl.values.price_pnl as any).div(basePrice),
+            BN(position.unrealised_pnl.amounts.price_pnl as any),
           ),
           funding: BNCoin.fromDenomAndBigNumber(
             position.base_denom,
-            BN(position.unrealised_pnl.values.accrued_funding as any).div(basePrice),
+            BN(position.unrealised_pnl.amounts.accrued_funding as any),
           ),
           fees: BNCoin.fromDenomAndBigNumber(
             position.base_denom,
-            BN(position.unrealised_pnl.values.closing_fee as any).div(basePrice),
+            BN(position.unrealised_pnl.amounts.closing_fee as any),
           ),
         },
       },
-      entryPrice: BN(position.entry_price),
     }
   })
 }

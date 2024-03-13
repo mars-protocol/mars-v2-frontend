@@ -2,6 +2,7 @@ import useSWR from 'swr'
 
 import useChainConfig from 'hooks/useChainConfig'
 import useClients from 'hooks/useClients'
+import { BN } from 'utils/helpers'
 
 export default function usePerpsConfig() {
   const chainConfig = useChainConfig()
@@ -10,5 +11,13 @@ export default function usePerpsConfig() {
 }
 
 async function getPerpsConfig(clients: ContractClients) {
-  return clients.perps.config()
+  const config = await clients.perps.config()
+
+  return {
+    closingFee: BN(config.closing_fee_rate),
+  } as PerpsConfig
+}
+
+export interface PerpsConfig {
+  closingFee: BigNumber
 }

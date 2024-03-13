@@ -49,7 +49,7 @@ export default function HealthBar({
   )
   const width = calculateHealth(health)
   const updatedWidth = calculateHealth(updatedHealth ?? 0)
-  const isUpdated = updatedWidth > 0 && updatedWidth !== width
+  const isUpdated = updatedWidth >= 0 && updatedWidth !== width
   const isIncrease = isUpdated && updatedWidth > width
   const color = useHealthColor(health, 'fill')
   const updatedColor = useHealthColor(updatedHealth ?? 0, 'fill')

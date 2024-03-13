@@ -11,6 +11,7 @@ import { ExpectedPrice } from 'components/perps/Module/ExpectedPrice'
 import TradingFee from 'components/perps/Module/TradingFee'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import usePerpsConfig from 'hooks/perps/usePerpsConfig'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -43,6 +44,8 @@ export default function PerpsSummary(props: Props) {
     newAmount,
     props.previousAmount,
   )
+
+  const { data: perpsConfig } = usePerpsConfig()
 
   const onConfirm = useCallback(async () => {
     if (!currentAccount) return
@@ -89,7 +92,7 @@ export default function PerpsSummary(props: Props) {
         </SummaryLine>
         <SummaryLine
           label='Fees'
-          tooltip={`${tradingFee ? tradingFee.rate.times(100) + '% ' : ''}Trading Fees`}
+          tooltip={`${perpsConfig ? perpsConfig.closingFee.times(100) + '% ' : ''}Trading Fees`}
         >
           <TradingFee
             denom={props.asset.denom}
@@ -97,7 +100,6 @@ export default function PerpsSummary(props: Props) {
             previousAmount={props.previousAmount}
           />
         </SummaryLine>
-        <SummaryLine label='Total'>-</SummaryLine>
       </div>
       <ActionButton onClick={onConfirm} disabled={disabled} className='w-full py-2.5'>
         <span className='mr-1 capitalize'>{props.tradeDirection}</span>

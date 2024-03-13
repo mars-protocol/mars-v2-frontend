@@ -9,7 +9,7 @@ export default function usePerpsVault() {
   const clients = useClients()
 
   return useSWR(
-    clients && `chains/${chainConfig.id}/perps/vaults`,
+    clients && `chains/${chainConfig.id}/perps/vault`,
     async (): Promise<PerpsVault> => {
       const vaultState = await clients!.perps.vaultState()
       const perpsVault = await clients!.perps.config()

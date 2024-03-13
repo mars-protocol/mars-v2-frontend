@@ -1,7 +1,6 @@
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
-import usePrice from 'hooks/usePrice'
 
 export const ENTRY_PRICE_META = {
   accessorKey: 'entryPrice',
@@ -17,16 +16,15 @@ export const ENTRY_PRICE_META = {
 
 type Props = {
   entryPrice: BigNumber
+  currentPrice: BigNumber
   asset: Asset
 }
 
 export default function EntryPrice(props: Props) {
-  const price = usePrice(props.asset.denom)
-
   return (
     <TitleAndSubCell
       title={<FormattedNumber amount={props.entryPrice.toNumber()} options={{ prefix: '$' }} />}
-      sub={<FormattedNumber amount={price.toNumber()} options={{ prefix: '$' }} />}
+      sub={<FormattedNumber amount={props.currentPrice.toNumber()} options={{ prefix: '$' }} />}
     />
   )
 }

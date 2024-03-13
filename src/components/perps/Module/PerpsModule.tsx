@@ -17,6 +17,10 @@ import { AvailableOrderType } from 'components/trade/TradeModule/SwapForm/OrderT
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
+import usePerpsConfig from 'hooks/perps/usePerpsConfig'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
+import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
+import usePrice from 'hooks/usePrice'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import getPerpsPosition from 'utils/getPerpsPosition'
 import { BN } from 'utils/helpers'
@@ -24,33 +28,51 @@ import { BN } from 'utils/helpers'
 export function PerpsModule() {
   const [selectedOrderType, setSelectedOrderType] = useState<AvailableOrderType>('Market')
   const [tradeDirection, setTradeDirection] = useState<TradeDirection>('long')
+  const { data: perpsVault } = usePerpsVault()
   const { perpsAsset } = usePerpsAsset()
   const account = useCurrentAccount()
-  const { simulatePerps, addedPerps } = useUpdatedAccount(account)
+  const { simulatePerps, updatedPerpPosition } = useUpdatedAccount(account)
   const [amount, setAmount] = useState<BigNumber>(BN_ZERO)
   const { previousAmount, previousTradeDirection, previousLeverage, leverage, hasActivePosition } =
     usePerpsModule(amount)
+
+  const { data: tradingFee } = useTradingFeeAndPrice(
+    perpsAsset.denom,
+    amount.plus(previousAmount),
+    previousAmount,
+  )
+  const perpsOraclePrice = usePrice(perpsAsset.denom)
+  const { data: perpsConfig } = usePerpsConfig()
 
   const debouncedUpdateAccount = useMemo(
     () =>
       debounce((perpsPosition: PerpsPosition) => {
         if (
-          addedPerps &&
-          perpsPosition.amount === addedPerps.amount &&
-          perpsPosition.tradeDirection === addedPerps.tradeDirection
+          !!updatedPerpPosition &&
+          perpsPosition.amount.isEqualTo(updatedPerpPosition.amount) &&
+          perpsPosition.tradeDirection === updatedPerpPosition.tradeDirection
         )
           return
+
         simulatePerps(perpsPosition)
-      }, 100),
-    [simulatePerps, addedPerps],
+      }, 500),
+    [simulatePerps, updatedPerpPosition],
   )
 
   useEffect(() => {
+    const currentPerpPosition = account?.perps.find((p) => p.denom === perpsAsset.denom)
+    if (!perpsConfig || !tradingFee || !perpsVault) return
+
     const perpsPosition = getPerpsPosition(
+      perpsVault.denom,
       perpsAsset,
-      amount ?? previousAmount,
+      amount.plus(previousAmount),
       tradeDirection ?? previousTradeDirection,
+      perpsConfig,
+      tradingFee,
+      currentPerpPosition,
     )
+
     debouncedUpdateAccount(perpsPosition)
   }, [
     debouncedUpdateAccount,
@@ -59,6 +81,11 @@ export function PerpsModule() {
     tradeDirection,
     previousAmount,
     previousTradeDirection,
+    perpsConfig,
+    tradingFee,
+    perpsVault,
+    account?.perps,
+    perpsOraclePrice,
   ])
 
   const onDebounce = useCallback(() => {

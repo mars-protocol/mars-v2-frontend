@@ -10,7 +10,7 @@ import useAssetParams from 'hooks/params/useAssetParams'
 import usePrices from 'hooks/usePrices'
 import useVaultConfigs from 'hooks/useVaultConfigs'
 import { VaultPositionValue } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { VaultConfigBaseForString } from 'types/generated/mars-params/MarsParams.types'
+import { PerpParams, VaultConfigBaseForString } from 'types/generated/mars-params/MarsParams.types'
 import {
   AssetParamsBaseForAddr,
   HealthComputer,
@@ -31,6 +31,9 @@ import {
 } from 'utils/health_computer'
 import { BN } from 'utils/helpers'
 
+import usePerpsDenomState from './perps/usePerpsDenomState'
+import usePerpsParams from './perps/usePerpsParams'
+
 // Pyth returns prices with up to 32 decimals. Javascript only supports 18 decimals. So we need to scale by 14 t
 // avoid "too many decimals" errors.
 // TODO: Remove adjustment properly (after testing). We will just ignore the last 14 decimals.
@@ -41,6 +44,8 @@ export default function useHealthComputer(account?: Account) {
   const { data: prices } = usePrices()
   const { data: assetParams } = useAssetParams()
   const { data: vaultConfigs } = useVaultConfigs()
+  const { data: perpsDenomState } = usePerpsDenomState()
+  const { data: perpsParams } = usePerpsParams()
   const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
 
   const [healthFactor, setHealthFactor] = useState(0)
@@ -102,6 +107,9 @@ export default function useHealthComputer(account?: Account) {
       assetParams.reduce(
         (prev, curr) => {
           prev[curr.denom] = curr
+          if (!curr.close_factor) {
+            prev[curr.denom].close_factor = '0'
+          }
 
           return prev
         },
@@ -122,12 +130,27 @@ export default function useHealthComputer(account?: Account) {
     )
   }, [vaultConfigs])
 
+  const perpsParamsData = useMemo(
+    () =>
+      perpsParams?.reduce(
+        (prev, curr) => {
+          prev[curr.denom] = curr
+
+          return prev
+        },
+        {} as { [key: string]: PerpParams },
+      ),
+    [perpsParams],
+  )
+
   const healthComputer: HealthComputer | null = useMemo(() => {
     if (
       !account ||
       !positions ||
       !vaultPositionValues ||
       !vaultConfigsData ||
+      !perpsDenomState ||
+      !perpsParamsData ||
       Object.keys(denomsData).length === 0 ||
       Object.keys(priceData).length === 0 ||
       positions.vaults.length !== Object.keys(vaultPositionValues).length
@@ -140,13 +163,25 @@ export default function useHealthComputer(account?: Account) {
         vault_configs: vaultConfigsData,
         vault_values: vaultPositionValues,
       },
-      denoms_data: {
-        params: denomsData,
-        prices: priceData,
-      },
+      asset_params: denomsData,
+      oracle_prices: priceData,
       positions: positions,
+      perps_data: {
+        // TODO: Currently we only pass the current selected perp Denom, not ALL
+        denom_states: { [perpsDenomState.denom]: perpsDenomState },
+        params: perpsParamsData,
+      },
     } as HealthComputer
-  }, [account, positions, vaultPositionValues, vaultConfigsData, denomsData, priceData])
+  }, [
+    account,
+    positions,
+    vaultPositionValues,
+    vaultConfigsData,
+    perpsDenomState,
+    perpsParamsData,
+    denomsData,
+    priceData,
+  ])
 
   useEffect(() => {
     if (!healthComputer) return

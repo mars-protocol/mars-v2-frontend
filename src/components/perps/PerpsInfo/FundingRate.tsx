@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ChevronDown } from 'components/common/Icons'
-import Loading from 'components/common/Loading'
 import { Tooltip } from 'components/common/Tooltip'
 import { BN_ZERO } from 'constants/math'
 import usePerpsMarket from 'hooks/perps/usePerpsMarket'
@@ -19,7 +18,7 @@ enum Intervals {
 }
 
 export default function FundingRate() {
-  const { data: market, isLoading } = usePerpsMarket()
+  const market = usePerpsMarket()
   const [interval, setInterval] = useState<Interval>('1H')
   const [show, toggleShow] = useToggle(false)
 
@@ -27,7 +26,6 @@ export default function FundingRate() {
     return market?.fundingRate.div(Intervals[interval]) ?? BN_ZERO
   }, [interval, market?.fundingRate])
 
-  if (isLoading) return <Loading className='w-14 h-4' />
   if (!market) return '-'
 
   return (
