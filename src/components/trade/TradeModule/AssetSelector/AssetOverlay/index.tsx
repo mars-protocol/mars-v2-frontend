@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
+import { isMobile } from 'react-device-detect'
 
 import EscButton from 'components/common/Button/EscButton'
 import Divider from 'components/common/Divider'
@@ -100,7 +101,7 @@ export default function AssetOverlay(props: Props) {
 
   return (
     <Overlay
-      className='left-0 w-full overflow-y-scroll  scrollbar-hide top-18 md:inset-0'
+      className='left-0 w-full overflow-y-scroll h-screen-full scrollbar-hide top-18 md:inset-0'
       show={props.state !== 'closed'}
       setShow={handleClose}
     >
@@ -122,7 +123,7 @@ export default function AssetOverlay(props: Props) {
           value={searchString}
           onChange={onChangeSearch}
           placeholder='Search for e.g. "ETH" or "Ethereum"'
-          autoFocus
+          autoFocus={!isMobile}
         />
       </div>
       <Divider />
