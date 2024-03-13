@@ -5,6 +5,7 @@ import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import usePerpPosition from 'hooks/perps/usePerpPosition'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
+import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import usePrice from 'hooks/usePrice'
 import usePrices from 'hooks/usePrices'
 import { getAccountNetValue } from 'utils/accounts'
@@ -18,6 +19,12 @@ export default function usePerpsModule(amount: BigNumber | null) {
   const assets = useAllAssets()
   const account = useCurrentAccount()
   const price = usePrice(perpsAsset.denom)
+  const previousAmount = useMemo(() => perpPosition?.amount ?? BN_ZERO, [perpPosition?.amount])
+  const { data: tradingFee } = useTradingFeeAndPrice(
+    perpsAsset.denom,
+    (amount || BN_ZERO).plus(previousAmount),
+    previousAmount,
+  )
 
   const hasActivePosition = useMemo(
     () => !!account?.perps.find(byDenom(perpsAsset.denom)),
@@ -29,32 +36,44 @@ export default function usePerpsModule(amount: BigNumber | null) {
     return getAccountNetValue(account, prices, assets)
   }, [account, assets, prices])
 
-  const previousAmount = useMemo(() => perpPosition?.amount ?? BN_ZERO, [perpPosition?.amount])
   const previousTradeDirection = useMemo(
     () => perpPosition?.tradeDirection || 'long',
     [perpPosition?.tradeDirection],
   )
 
-  const previousLeverage = useMemo(
-    () =>
-      previousAmount
-        ? price
-            .times(demagnify(previousAmount.abs(), perpsAsset))
-            .div(accountNetValue)
-            .plus(1)
-            .toNumber()
-        : null,
-    [accountNetValue, perpsAsset, previousAmount, price],
-  )
+  const previousLeverage = useMemo(() => {
+    return previousAmount
+      ? (perpPosition?.currentPrice || tradingFee?.price || price)
+          .times(demagnify(previousAmount.abs(), perpsAsset))
+          .div(accountNetValue)
+          .plus(1)
+          .toNumber()
+      : null
+  }, [
+    accountNetValue,
+    perpPosition?.currentPrice,
+    perpsAsset,
+    previousAmount,
+    price,
+    tradingFee?.price,
+  ])
 
   const leverage = useMemo(
     () =>
-      price
+      (perpPosition?.currentPrice || tradingFee?.price || price)
         .times(demagnify(previousAmount.plus(amount ?? BN_ZERO).abs(), perpsAsset))
         .div(accountNetValue)
         .plus(1)
         .toNumber(),
-    [accountNetValue, amount, perpsAsset, previousAmount, price],
+    [
+      accountNetValue,
+      amount,
+      perpPosition?.currentPrice,
+      perpsAsset,
+      previousAmount,
+      price,
+      tradingFee?.price,
+    ],
   )
 
   return {

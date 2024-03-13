@@ -65,6 +65,7 @@ export default function useDepositedColumns(props: Props) {
             vault={row.original}
             isLoading={props.isLoading}
             isExpanded={row.getIsExpanded()}
+            isPerps={row.original.type === 'perp'}
           />
         ),
       },

@@ -244,15 +244,25 @@ export function useUpdatedAccount(account?: Account) {
   )
 
   const simulatePerps = useCallback(
-    // TODO: Make sure the position received is the updated position
     (position: PerpsPosition) => {
       if (!account) return
 
-      if (position.amount.isZero()) {
+      const currentPerpPosition = account.perps.find((perp) => perp.denom === position.denom)
+
+      if (currentPerpPosition && currentPerpPosition.amount.isEqualTo(position.amount)) {
+        addDeposits([])
+        removeDeposits([])
+        addDebts([])
         return setUpdatedPerpPosition(undefined)
       }
 
-      const currentPerpPosition = account.perps.find((perp) => perp.denom === position.denom)
+      if (!currentPerpPosition && position.amount.isEqualTo(0)) {
+        addDeposits([])
+        removeDeposits([])
+        addDebts([])
+        return setUpdatedPerpPosition(undefined)
+      }
+
       if (currentPerpPosition) {
         const unrealizedPnL = currentPerpPosition.pnl.unrealized.net
 

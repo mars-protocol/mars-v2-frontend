@@ -7,6 +7,9 @@ import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useAssetParams from 'hooks/params/useAssetParams'
+import usePerpsDenomState from 'hooks/perps/usePerpsDenomState'
+import usePerpsParams from 'hooks/perps/usePerpsParams'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
 import usePrices from 'hooks/usePrices'
 import useVaultConfigs from 'hooks/useVaultConfigs'
 import { VaultPositionValue } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
@@ -25,14 +28,12 @@ import {
   liquidation_price_js,
   LiquidationPriceKind,
   max_borrow_estimate_js,
+  max_perp_size_estimate_js,
   max_swap_estimate_js,
   max_withdraw_estimate_js,
   SwapKind,
 } from 'utils/health_computer'
 import { BN } from 'utils/helpers'
-
-import usePerpsDenomState from './perps/usePerpsDenomState'
-import usePerpsParams from './perps/usePerpsParams'
 
 // Pyth returns prices with up to 32 decimals. Javascript only supports 18 decimals. So we need to scale by 14 t
 // avoid "too many decimals" errors.
@@ -46,12 +47,13 @@ export default function useHealthComputer(account?: Account) {
   const { data: vaultConfigs } = useVaultConfigs()
   const { data: perpsDenomState } = usePerpsDenomState()
   const { data: perpsParams } = usePerpsParams()
+  const { data: perpVault } = usePerpsVault()
   const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
 
   const [healthFactor, setHealthFactor] = useState(0)
   const positions: Positions | null = useMemo(() => {
     if (!account) return null
-    return convertAccountToPositions(account, prices)
+    return convertAccountToPositions(account)
   }, [account, prices])
 
   const vaultPositionValues = useMemo(() => {
@@ -256,6 +258,27 @@ export default function useHealthComputer(account?: Account) {
     [assets, healthComputer],
   )
 
+  const computeMaxPerpAmount = useCallback(
+    (denom: string, tradeDirection: TradeDirection) => {
+      if (!healthComputer || !perpVault || !perpsDenomState) return BN_ZERO
+      try {
+        return BN(
+          max_perp_size_estimate_js(
+            healthComputer,
+            denom,
+            perpVault.denom,
+            perpsDenomState.long_oi.toString(),
+            perpsDenomState.short_oi.toString(),
+            tradeDirection,
+          ),
+        )
+      } catch (e) {
+        return BN_ZERO
+      }
+    },
+    [healthComputer, perpVault, perpsDenomState],
+  )
+
   const health = useMemo(() => {
     const slope = account?.kind === 'high_levered_strategy' ? 1.2 : 3.5
     const convertedHealth = BN(Math.log(healthFactor))
@@ -277,5 +300,6 @@ export default function useHealthComputer(account?: Account) {
     computeMaxWithdrawAmount,
     computeMaxSwapAmount,
     computeLiquidationPrice,
+    computeMaxPerpAmount,
   }
 }

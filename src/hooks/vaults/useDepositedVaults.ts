@@ -4,13 +4,19 @@ import getDepositedVaults from 'api/vaults/getDepositedVaults'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
+import useAssets from 'hooks/useAssets'
 import useChainConfig from 'hooks/useChainConfig'
+import usePrices from 'hooks/usePrices'
+import { BNCoin } from 'types/classes/BNCoin'
 import { VaultStatus } from 'types/enums/vault'
+import { getCoinValue } from 'utils/formatters'
 
 export default function useDepositedVaults(accountId: string) {
   const chainConfig = useChainConfig()
   const currentAccount = useCurrentAccount()
   const { data: perpsVault } = usePerpsVault()
+  const { data: prices } = usePrices()
+  const assets = useAssets()
 
   return useSWR(
     currentAccount && `chains/${chainConfig.id}/vaults/${accountId}/deposited`,
@@ -19,6 +25,14 @@ export default function useDepositedVaults(accountId: string) {
 
       if (currentAccount && perpsVault) {
         if (currentAccount.perpVault?.active) {
+          const netValue = getCoinValue(
+            BNCoin.fromDenomAndBigNumber(
+              currentAccount.perpVault.denom,
+              currentAccount.perpVault.active.amount,
+            ),
+            prices,
+            assets,
+          )
           const activeVault: DepositedVault = {
             type: 'perp',
             ...perpsVault,
@@ -48,7 +62,7 @@ export default function useDepositedVaults(accountId: string) {
               unlocking: BN_ZERO,
             },
             values: {
-              primary: currentAccount.perpVault.active.amount,
+              primary: netValue,
               secondary: BN_ZERO,
               unlocked: BN_ZERO,
               unlocking: BN_ZERO,

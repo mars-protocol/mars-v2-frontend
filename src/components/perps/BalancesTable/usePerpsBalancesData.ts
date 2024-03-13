@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 
-import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
@@ -21,8 +20,6 @@ export default function usePerpsBalancesTable() {
     const netValue = getAccountNetValue(currentAccount, prices, allAssets)
 
     return currentAccount.perps.map((position) => {
-      const perpPrice = prices.find(byDenom(position.denom))?.amount ?? BN_ZERO
-      const basePrice = prices.find(byDenom(position.baseDenom))?.amount ?? BN_ZERO
       const asset = perpAssets.find(byDenom(position.denom))!
 
       return {
@@ -33,7 +30,7 @@ export default function usePerpsBalancesTable() {
         entryPrice: position.entryPrice,
         currentPrice: position.currentPrice,
         liquidationPrice: position.entryPrice, // TODO: 📈 Get actual liquidation price from HC
-        leverage: perpPrice
+        leverage: position.currentPrice
           .times(demagnify(position.amount, asset))
           .div(netValue)
           .plus(1)
