@@ -36,7 +36,7 @@ function Tabs(props: TabsProps) {
           <button
             key={tab.title}
             className={classNames(
-              'py-4 border-b-[2px] border-transparent',
+              'py-4 border-b-[2px] border-transparent flex items-center',
               props.tabs.length < 2 && 'cursor-default text-white border-transparent',
               index === props.activeIdx && props.tabs.length > 1 && 'border-mars',
               index !== props.activeIdx && props.tabs.length > 1 && 'text-white/20',
@@ -44,9 +44,20 @@ function Tabs(props: TabsProps) {
             onClick={() => props.onChange(index)}
           >
             {tab.title}
+            <NotificationCount count={tab.notificationCount} />
           </button>
         )
       })}
     </div>
   )
+}
+
+interface NotificationCountProps {
+  count?: number
+}
+
+function NotificationCount(props: NotificationCountProps) {
+  if (!props.count) return null
+
+  return <div className='px-1 bg-martian-red text-xs text-white rounded-sm ml-1'>{props.count}</div>
 }

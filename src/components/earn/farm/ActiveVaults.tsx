@@ -41,6 +41,7 @@ export function ActiveVaults() {
       },
       {
         title: 'Unlocking',
+        notificationCount: unlockingVaults.length,
         renderContent: () => (
           <DepositedVaultsTable
             data={unlockingVaults}
@@ -51,6 +52,7 @@ export function ActiveVaults() {
       },
       {
         title: 'Unlocked',
+        notificationCount: unlockedVaults.length,
         renderContent: () => (
           <DepositedVaultsTable
             data={unlockedVaults}
