@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import AssetAmountSelectActionModal from 'components/Modals/AssetAmountSelectActionModal'
+import DetailsHeader from 'components/Modals/LendAndReclaim/DetailsHeader'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import { BN_ZERO } from 'constants/math'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
@@ -9,10 +11,7 @@ import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { defaultFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
-import AssetAmountSelectActionModal from 'components/Modals/AssetAmountSelectActionModal'
-import DetailsHeader from 'components/Modals/LendAndReclaim/DetailsHeader'
 
 interface Props {
   account: Account
@@ -47,7 +46,7 @@ export default function Deposit(props: Props) {
   }, [v1Action, fundingAsset, close])
 
   useEffect(() => {
-    if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) {
+    if (BN(baseBalance).isZero()) {
       useStore.setState({ focusComponent: { component: <WalletBridges /> } })
     }
   }, [baseBalance])

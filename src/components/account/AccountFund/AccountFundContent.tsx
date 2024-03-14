@@ -17,7 +17,6 @@ import useWalletBalances from 'hooks/useWalletBalances'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { defaultFee } from 'utils/constants'
 import { getCapLeftWithBuffer } from 'utils/generic'
 import { BN } from 'utils/helpers'
 
@@ -90,7 +89,7 @@ export default function AccountFundContent(props: Props) {
   }, [props.accountId, deposit, fundingAssets, isLending, props.isFullPage])
 
   useEffect(() => {
-    if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) {
+    if (BN(baseBalance).isZero()) {
       useStore.setState({ focusComponent: { component: <WalletBridges /> } })
     }
   }, [baseBalance])

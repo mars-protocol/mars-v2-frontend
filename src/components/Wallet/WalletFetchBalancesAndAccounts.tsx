@@ -79,7 +79,7 @@ function Content() {
   ])
 
   if (isLoadingAccounts || isLoadingBalances) return <FetchLoading />
-  if (BN(baseBalance).isLessThan(defaultFee.amount[0].amount)) return <WalletBridges />
+  if (BN(baseBalance).isZero()) return <WalletBridges />
   if (accountIds && accountIds.length === 0 && !isV1) return <AccountCreateFirst />
   return null
 }

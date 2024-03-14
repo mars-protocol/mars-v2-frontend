@@ -52,10 +52,7 @@ export default function AccountMenuContent(props: Props) {
     hasCreditAccounts && accountId && isNumber(accountId) && accountIds.includes(accountId)
 
   const checkHasFunds = useCallback(() => {
-    return (
-      transactionFeeCoinBalance &&
-      BN(transactionFeeCoinBalance.amount).isGreaterThan(defaultFee.amount[0].amount)
-    )
+    return transactionFeeCoinBalance && !BN(transactionFeeCoinBalance.amount).isZero()
   }, [transactionFeeCoinBalance])
 
   const performCreateAccount = useCallback(async () => {
