@@ -23,7 +23,7 @@ export default function WalletConnectButton(props: Props) {
 
   const handleClick = useCallback(() => {
     const component = hasAgreedToTerms ? <WalletSelect /> : <TermsOfService />
-    useStore.setState({ focusComponent: { component } })
+    useStore.setState({ focusComponent: { component }, mobileNavExpanded: false })
   }, [hasAgreedToTerms])
 
   return (

@@ -1,6 +1,6 @@
 import { useShuttle } from '@delphi-labs/shuttle-react'
 import classNames from 'classnames'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import AccountMenu from 'components/account/AccountMenu'
@@ -38,8 +38,22 @@ export default function MobileNavigation(props: Props) {
 
   const menu = useMemo(() => menuTree(walletId, chainConfig), [walletId, chainConfig, menuTree])
 
+  useEffect(() => {
+    if (mobileNavExpanded) {
+      document.body.classList.add('h-screen-full', 'overflow-hidden')
+    } else {
+      document.body.classList.remove('h-screen-full', 'overflow-hidden')
+    }
+
+    return () => {
+      document.body.classList.remove('h-screen-full', 'overflow-hidden')
+    }
+  }, [mobileNavExpanded])
+
   const selectPage = useCallback(
     (page: Page) => {
+      window.scrollTo(0, 0)
+      if (typeof window !== 'undefined') setTimeout(() => window.scrollTo(0, 0), 200)
       useStore.setState({ mobileNavExpanded: false })
       if (page.includes('http')) {
         window.open(page, '_blank')
@@ -53,7 +67,7 @@ export default function MobileNavigation(props: Props) {
   return (
     <nav
       className={classNames(
-        'fixed md:hidden max-w-screen-full w-screen-full top-18 p-2 pt-4 pb-8 transition-all overflow-y-scroll h-[calc(100dvh-72px)] z-20 items-start',
+        'fixed md:hidden max-w-screen-full w-screen-full top-18 p-2 pt-4 pb-20 transition-all overflow-y-scroll h-[calc(100dvh-72px)] z-20 items-start',
         mobileNavExpanded ? 'right-0 opacity-100' : '-right-full opacity-0',
       )}
     >

@@ -85,6 +85,7 @@ export default function ChainSelect(props: Props) {
       setCurrentChainId(chainConfig.id)
       mutate(() => true)
       useStore.setState({
+        mobileNavExpanded: false,
         chainConfig,
         isV1: false,
         client: undefined,
@@ -114,6 +115,7 @@ export default function ChainSelect(props: Props) {
                   setCurrentChainId(chainConfig.id)
                   useStore.setState({
                     chainConfig,
+                    mobileNavExpanded: false,
                   })
                 }
                 window.open(outpost?.url, outpost?.target)
