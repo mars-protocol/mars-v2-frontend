@@ -928,7 +928,6 @@ export default function createBroadcastSlice(
           wallet: client.connectedWallet,
           mobile: isMobile,
         }
-        console.log('Broadcasting', broadcastOptions)
         const result = await client.broadcast(broadcastOptions)
         if (result.hash) {
           return { result }
