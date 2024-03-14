@@ -20,9 +20,9 @@
     ]
   },
   "dependencies": {
-    "@cosmjs/cosmwasm-stargate": "^0.32.2",
+    "@cosmjs/cosmwasm-stargate": "^0.32.3",
     "@delphi-labs/shuttle-react": "^3.19.1",
-    "@keplr-wallet/cosmos": "^0.12.70",
+    "@keplr-wallet/cosmos": "^0.12.74",
     "@splinetool/react-spline": "^2.2.6",
     "@splinetool/runtime": "^1.0.55",
     "@tailwindcss/container-queries": "^0.1.1",
