@@ -81,6 +81,7 @@ function Content() {
   if (isLoadingAccounts || isLoadingBalances) return <FetchLoading />
   if (BN(baseBalance).isZero()) return <WalletBridges />
   if (accountIds && accountIds.length === 0 && !isV1) return <AccountCreateFirst />
+  if (isV1) useStore.setState({ focusComponent: null })
   return null
 }
 
