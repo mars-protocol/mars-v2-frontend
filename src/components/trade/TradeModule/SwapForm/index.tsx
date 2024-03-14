@@ -79,7 +79,8 @@ export default function SwapForm(props: Props) {
   const { computeLiquidationPrice } = useHealthComputer(updatedAccount)
   const chainConfig = useChainConfig()
   const assets = useMarketEnabledAssets()
-  const { data: routeInfo } = useRouteInfo(sellAsset.denom, buyAsset.denom, inputAssetAmount)
+
+  const { data: routeInfo } = useRouteInfo(inputAsset.denom, outputAsset.denom, inputAssetAmount)
 
   const depositCapReachedCoins: BNCoin[] = useMemo(() => {
     const outputMarketAsset = markets.find((market) => market.asset.denom === outputAsset.denom)

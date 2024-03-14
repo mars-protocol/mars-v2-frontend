@@ -15,7 +15,6 @@ import useAllAssets from 'hooks/assets/useAllAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useRouteInfo from 'hooks/trade/useRouteInfo'
 import useLiquidationPrice from 'hooks/useLiquidationPrice'
-import usePrice from 'hooks/usePrice'
 import useToggle from 'hooks/useToggle'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatAmountWithSymbol, formatPercent, formatValue } from 'utils/formatters'
@@ -57,7 +56,6 @@ export default function TradeSummary(props: Props) {
   } = props
   const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
   const assets = useAllAssets()
-  const sellAssetPrice = usePrice(sellAsset.denom)
   const [showSummary, setShowSummary] = useToggle()
   const { liquidationPrice, isUpdatingLiquidationPrice } = useLiquidationPrice(
     props.liquidationPrice,
@@ -68,9 +66,9 @@ export default function TradeSummary(props: Props) {
     return buyAmount.times(1 - (routeInfo?.fee.toNumber() || 0)).times(1 - slippage)
   }, [buyAmount, routeInfo?.fee, slippage])
 
-  const swapFeeValue = useMemo(() => {
-    return sellAmount.times(routeInfo?.fee || 0).times(sellAssetPrice)
-  }, [routeInfo?.fee, sellAmount, sellAssetPrice])
+  const swapFeeAmount = useMemo(() => {
+    return sellAmount.times(routeInfo?.fee || 0)
+  }, [routeInfo?.fee, sellAmount])
 
   const buttonText = useMemo(() => {
     if (!isAdvanced && direction === 'short') return `Sell ${sellAsset.symbol}`
@@ -162,7 +160,9 @@ export default function TradeSummary(props: Props) {
                   : ''
               }`}
             >
-              <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(sellAsset.denom, swapFeeValue)} />
+              <DisplayCurrency
+                coin={BNCoin.fromDenomAndBigNumber(sellAsset.denom, swapFeeAmount)}
+              />
             </SummaryLine>
             <SummaryLine label='Transaction fees'>
               <span>{formatAmountWithSymbol(estimatedFee.amount[0], assets)}</span>

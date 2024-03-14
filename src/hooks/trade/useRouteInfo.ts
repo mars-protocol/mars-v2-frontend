@@ -35,7 +35,7 @@ export default function useRouteInfo(denomIn: string, denomOut: string, amount: 
               swaps: route.route[0].pools.map(
                 (pool) =>
                   ({
-                    pool_id: pool.id.toString(),
+                    pool_id: pool.id,
                     to: pool.token_out_denom,
                   }) as unknown,
               ),
