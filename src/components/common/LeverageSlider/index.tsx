@@ -66,8 +66,8 @@ function LeverageSlider(props: Props) {
             'relative w-full appearance-none bg-transparent hover:cursor-pointer',
             '[&::-webkit-slider-runnable-track]:bg-white [&::-webkit-slider-runnable-track]:bg-opacity-20 [&::-webkit-slider-runnable-track]:h-[9px] [&::-webkit-slider-runnable-track]:rounded-lg',
             '[&::-moz-range-track]:bg-white [&::-moz-range-track]:bg-opacity-20 [&::-moz-range-track]:h-1 [&::-moz-range-track]:pb-[5px] [&::-moz-range-track]:rounded-lg',
-            '[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:-mt-1 [&::-webkit-slider-thumb]:w-[33px] [&::-webkit-slider-thumb]:h-4',
-            '[&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:opacity-0 [&::-moz-range-thumb]:w-[33px] [&::-moz-range-thumb]:h-4',
+            '[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:bg-transparent [&::-webkit-slider-thumb]:-mt-1 [&::-webkit-slider-thumb]:w-[33px] [&::-webkit-slider-thumb]:h-4',
+            '[&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:bg-transparent [&::-moz-range-thumb]:opacity-0 [&::-moz-range-thumb]:w-[33px] [&::-moz-range-thumb]:h-4',
           )}
           type='range'
           value={value.toFixed(2)}

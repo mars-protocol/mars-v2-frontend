@@ -23,10 +23,10 @@ import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useMarkets from 'hooks/markets/useMarkets'
+import useRouteInfo from 'hooks/trade/useRouteInfo'
 import useAutoLend from 'hooks/useAutoLend'
 import useChainConfig from 'hooks/useChainConfig'
 import useHealthComputer from 'hooks/useHealthComputer'
-import useSwapRoute from 'hooks/useSwapRoute'
 import useToggle from 'hooks/useToggle'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useStore from 'store'
@@ -59,12 +59,7 @@ export default function SwapForm(props: Props) {
     if (tradeDirection === 'long') return [sellAsset, buyAsset]
     return [buyAsset, sellAsset]
   }, [buyAsset, sellAsset, tradeDirection, isAdvanced])
-  const { data: route, isLoading: isRouteLoading } = useSwapRoute(
-    inputAsset.denom,
-    outputAsset.denom,
-  )
-  const isBorrowEnabled = !!markets.find((market) => market.asset.denom === inputAsset.denom)
-    ?.borrowEnabled
+  const isBorrowEnabled = !!markets.find(byDenom(inputAsset.denom))?.borrowEnabled
   const isRepayable = !!account?.debts.find(byDenom(outputAsset.denom))
   const [isMarginChecked, setMarginChecked] = useToggle(isBorrowEnabled ? useMargin : false)
   const [isAutoRepayChecked, setAutoRepayChecked] = useToggle(
@@ -84,6 +79,8 @@ export default function SwapForm(props: Props) {
   const { computeLiquidationPrice } = useHealthComputer(updatedAccount)
   const chainConfig = useChainConfig()
   const assets = useMarketEnabledAssets()
+
+  const { data: routeInfo } = useRouteInfo(inputAsset.denom, outputAsset.denom, inputAssetAmount)
 
   const depositCapReachedCoins: BNCoin[] = useMemo(() => {
     const outputMarketAsset = markets.find((market) => market.asset.denom === outputAsset.denom)
@@ -164,6 +161,8 @@ export default function SwapForm(props: Props) {
   }, [marginRatio, maxOutputAmountEstimation])
 
   const swapTx = useMemo(() => {
+    if (!routeInfo) return
+
     const borrowCoin = inputAssetAmount.isGreaterThan(imputMarginThreshold)
       ? BNCoin.fromDenomAndBigNumber(inputAsset.denom, inputAssetAmount.minus(imputMarginThreshold))
       : undefined
@@ -177,16 +176,18 @@ export default function SwapForm(props: Props) {
       slippage,
       isMax: inputAssetAmount.isEqualTo(maxInputAmount),
       repay: isAutoRepayChecked,
+      route: routeInfo.route,
     })
   }, [
-    removedLends,
-    account?.id,
-    outputAsset.denom,
+    routeInfo,
+    inputAssetAmount,
     imputMarginThreshold,
     inputAsset.denom,
-    inputAssetAmount,
-    slippage,
     swap,
+    account?.id,
+    removedLends,
+    outputAsset.denom,
+    slippage,
     maxInputAmount,
     isAutoRepayChecked,
   ])
@@ -226,14 +227,14 @@ export default function SwapForm(props: Props) {
   )
 
   useEffect(() => {
-    swapTx.estimateFee().then(setEstimatedFee)
+    swapTx?.estimateFee().then(setEstimatedFee)
   }, [swapTx])
 
   const handleBuyClick = useCallback(async () => {
     if (account?.id) {
       setIsConfirming(true)
 
-      const isSucceeded = await swapTx.execute()
+      const isSucceeded = await swapTx?.execute()
 
       if (isSucceeded) {
         setInputAssetAmount(BN_ZERO)
@@ -331,9 +332,8 @@ export default function SwapForm(props: Props) {
     () =>
       inputAssetAmount.isZero() ||
       depositCapReachedCoins.length > 0 ||
-      borrowAmount.isGreaterThan(availableLiquidity) ||
-      route.length === 0,
-    [inputAssetAmount, depositCapReachedCoins, borrowAmount, availableLiquidity, route],
+      borrowAmount.isGreaterThan(availableLiquidity),
+    [inputAssetAmount, depositCapReachedCoins, borrowAmount, availableLiquidity],
   )
 
   return (
@@ -449,11 +449,10 @@ export default function SwapForm(props: Props) {
           borrowRate={borrowMarket?.apy.borrow}
           buyAction={handleBuyClick}
           buyButtonDisabled={isSwapDisabled}
-          showProgressIndicator={isConfirming || isRouteLoading}
+          showProgressIndicator={isConfirming}
           isMargin={isMarginChecked}
           borrowAmount={borrowAmount}
           estimatedFee={estimatedFee}
-          route={route}
           liquidationPrice={liquidationPrice}
           sellAmount={inputAssetAmount}
           buyAmount={outputAssetAmount}

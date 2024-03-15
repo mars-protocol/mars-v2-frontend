@@ -75,7 +75,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             'mt-[73px]',
             'flex',
             'min-h-screen-full w-full relative',
-            'gap-4 p-2 pb-10',
+            'gap-4 p-2 pb-20',
             'md:gap-6 md:px-4 md:py-6 ',
             !focusComponent &&
               address &&
