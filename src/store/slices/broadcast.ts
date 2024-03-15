@@ -15,6 +15,7 @@ import {
   Action as CreditManagerAction,
   ExecuteMsg as CreditManagerExecuteMsg,
   ExecuteMsg,
+  SwapperRoute,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { ExecuteMsg as RedBankExecuteMsg } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHealthTypes.types'
@@ -772,6 +773,7 @@ export default function createBroadcastSlice(
       slippage: number
       isMax?: boolean
       repay: boolean
+      route: SwapperRoute
     }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
@@ -784,6 +786,7 @@ export default function createBroadcastSlice(
                 coin_in: options.coinIn.toActionCoin(options.isMax),
                 denom_out: options.denomOut,
                 slippage: options.slippage.toString(),
+                route: options.route as SwapperRoute,
               },
             },
             ...(options.repay
