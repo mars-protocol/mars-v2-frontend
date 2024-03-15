@@ -58,7 +58,6 @@ export default function WalletSelect(props: Props) {
   const chainConfig = useChainConfig()
   const { extensionProviders, mobileProviders, mobileConnect } = useShuttle()
   const [qrCodeUrl, setQRCodeUrl] = useState('')
-  const address = useStore((s) => s.address)
   const [error, setError] = useState(props.error)
   const [isLoading, setIsLoading] = useState<string | boolean>(false)
   const sortedExtensionProviders = extensionProviders.sort((a, b) => +b - +a)
@@ -102,7 +101,7 @@ export default function WalletSelect(props: Props) {
   }
 
   useEffect(() => {
-    if (!address && !recentWallet) return
+    if (!recentWallet) return
     useStore.setState({
       focusComponent: {
         component: <WalletConnecting providerId={recentWallet?.providerId} />,
@@ -111,7 +110,7 @@ export default function WalletSelect(props: Props) {
         },
       },
     })
-  }, [address, recentWallet])
+  }, [recentWallet])
 
   useEffect(() => {
     if (error?.message && error?.title) {
