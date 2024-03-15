@@ -17,6 +17,7 @@ import {
   ExecuteMsg,
   SwapperRoute,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { ExecuteMsg as IncentivesExecuteMsg } from 'types/generated/mars-incentives/MarsIncentives.types'
 import { ExecuteMsg as RedBankExecuteMsg } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHealthTypes.types'
 import { byDenom, bySymbol } from 'utils/array'
@@ -32,7 +33,12 @@ import { getVaultDepositCoinsFromActions } from 'utils/vaults'
 function generateExecutionMessage(
   sender: string | undefined = '',
   contract: string,
-  msg: CreditManagerExecuteMsg | AccountNftExecuteMsg | RedBankExecuteMsg | PythUpdateExecuteMsg,
+  msg:
+    | CreditManagerExecuteMsg
+    | AccountNftExecuteMsg
+    | RedBankExecuteMsg
+    | PythUpdateExecuteMsg
+    | IncentivesExecuteMsg,
   funds: Coin[],
 ) {
   return new MsgExecuteContract({
@@ -410,7 +416,8 @@ export default function createBroadcastSlice(
       return response.then((response) => !!response.result)
     },
     claimRewards: (options: { accountId: string }) => {
-      const msg: CreditManagerExecuteMsg = {
+      const isV1 = get().isV1
+      const creditManagerMsg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
           actions: [
@@ -420,9 +427,22 @@ export default function createBroadcastSlice(
           ],
         },
       }
-      const cmContract = get().chainConfig.contracts.creditManager
 
-      const messages = [generateExecutionMessage(get().address, cmContract, msg, [])]
+      const incentivesMsg: IncentivesExecuteMsg = {
+        claim_rewards: {},
+      }
+      const contract = isV1
+        ? get().chainConfig.contracts.incentives
+        : get().chainConfig.contracts.creditManager
+
+      const messages = [
+        generateExecutionMessage(
+          get().address,
+          contract,
+          isV1 ? incentivesMsg : creditManagerMsg,
+          [],
+        ),
+      ]
       const estimateFee = () => getEstimatedFee(messages)
 
       const execute = async () => {
@@ -434,7 +454,7 @@ export default function createBroadcastSlice(
           response,
           options: {
             action: 'claim',
-            accountId: options.accountId,
+            accountId: isV1 ? get().address : options.accountId,
             message: `Claimed rewards`,
           },
         })
