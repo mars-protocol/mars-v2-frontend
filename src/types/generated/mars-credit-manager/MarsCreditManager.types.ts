@@ -85,28 +85,28 @@ export type Action =
   }
 }
   | {
-  open_perp: {
-    denom: string
-    size: SignedDecimal
-  }
-}
+      open_perp: {
+        denom: string
+        size: SignedDecimal
+      }
+    }
   | {
-  close_perp: {
-    denom: string
-  }
-}
+      close_perp: {
+        denom: string
+      }
+    }
   | {
-  modify_perp: {
-    denom: string
-    new_size: SignedDecimal
-  }
-}
+      modify_perp: {
+        denom: string
+        new_size: SignedDecimal
+      }
+    }
   | {
-  enter_vault: {
-    coin: ActionCoin
-    vault: VaultBaseForString
-  }
-}
+      enter_vault: {
+        coin: ActionCoin
+        vault: VaultBaseForString
+      }
+    }
   | {
   exit_vault: {
     amount: Uint128
@@ -136,6 +136,7 @@ export type Action =
   swap_exact_in: {
     coin_in: ActionCoin
     denom_out: string
+    route?: SwapperRoute | null
     slippage: Decimal
   }
 }
@@ -174,8 +175,14 @@ export type LiquidateRequestForVaultBaseForString =
   }
 }
 export type VaultPositionType = 'u_n_l_o_c_k_e_d' | 'l_o_c_k_e_d' | 'u_n_l_o_c_k_i_n_g'
+export type SwapperRoute =
+  | {
+  astro: AstroRoute
+}
+  | {
+  osmo: OsmoRoute
+}
 export type AccountNftBaseForString = string
-export type PerpsBaseForString = string
 export type OwnerUpdate =
   | {
   propose_new_owner: {
@@ -269,32 +276,32 @@ export type CallbackMsg =
   }
 }
   | {
-  open_perp: {
-    account_id: string
-    denom: string
-    size: SignedDecimal
-  }
-}
+      open_perp: {
+        account_id: string
+        denom: string
+        size: SignedDecimal
+      }
+    }
   | {
-  close_perp: {
-    account_id: string
-    denom: string
-  }
-}
+      close_perp: {
+        account_id: string
+        denom: string
+      }
+    }
   | {
-  modify_perp: {
-    account_id: string
-    denom: string
-    new_size: SignedDecimal
-  }
-}
+      modify_perp: {
+        account_id: string
+        denom: string
+        new_size: SignedDecimal
+      }
+    }
   | {
-  enter_vault: {
-    account_id: string
-    coin: ActionCoin
-    vault: VaultBaseForAddr
-  }
-}
+      enter_vault: {
+        account_id: string
+        coin: ActionCoin
+        vault: VaultBaseForAddr
+      }
+    }
   | {
   exit_vault: {
     account_id: string
@@ -336,6 +343,7 @@ export type CallbackMsg =
     account_id: string
     coin_in: ActionCoin
     denom_out: string
+    route?: SwapperRoute | null
     slippage: Decimal
   }
 }
@@ -426,6 +434,20 @@ export interface SignedDecimal {
 }
 export interface VaultBaseForString {
   address: string
+}
+export interface AstroRoute {
+  swaps: AstroSwap[]
+}
+export interface AstroSwap {
+  from: string
+  to: string
+}
+export interface OsmoRoute {
+  swaps: OsmoSwap[]
+}
+export interface OsmoSwap {
+  pool_id: number
+  to: string
 }
 export interface ConfigUpdates {
   account_nft?: AccountNftBaseForString | null
@@ -597,11 +619,11 @@ export type ArrayOfCoin = Coin[]
 export type PnL =
   | 'break_even'
   | {
-  profit: Coin
-}
+      profit: Coin
+    }
   | {
-  loss: Coin
-}
+      loss: Coin
+    }
 export interface Positions {
   account_id: string
   debts: DebtAmount[]
@@ -623,11 +645,11 @@ export interface PerpPosition {
   denom: string
   entry_exec_price: Decimal
   entry_price: Decimal
-  realised_pnl: RealizedPnlAmounts
+  realised_pnl: PnlAmounts
   size: SignedDecimal
   unrealised_pnl: PositionPnl
 }
-export interface RealizedPnlAmounts {
+export interface PnlAmounts {
   accrued_funding: SignedDecimal
   closing_fee: SignedDecimal
   opening_fee: SignedDecimal
@@ -635,6 +657,7 @@ export interface RealizedPnlAmounts {
   price_pnl: SignedDecimal
 }
 export interface PositionPnl {
+  amounts: PnlAmounts
   coins: PnlCoins
   values: PnlValues
 }

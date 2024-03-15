@@ -1,4 +1,4 @@
-import { ActionCoin } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { ActionCoin, PnL } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { BN } from 'utils/helpers'
 
 export class BNCoin {
@@ -23,7 +23,7 @@ export class BNCoin {
   toCoin(): Coin {
     return {
       denom: this.denom,
-      amount: this.amount.toString(),
+      amount: this.amount.integerValue().toString(),
     }
   }
 
@@ -33,7 +33,7 @@ export class BNCoin {
       amount: max
         ? 'account_balance'
         : {
-            exact: this.amount.toString(),
+            exact: this.amount.integerValue().toString(),
           },
     }
   }
@@ -41,7 +41,23 @@ export class BNCoin {
   toSignedCoin(): any {
     return {
       denom: this.denom,
-      size: this.amount.toString(),
+      size: this.amount.integerValue().toString(),
+    }
+  }
+
+  toPnLCoin(): PnL {
+    if (this.amount.isZero()) {
+      return 'break_even'
+    }
+
+    if (this.amount.isPositive()) {
+      return {
+        profit: this.toCoin(),
+      }
+    }
+
+    return {
+      loss: this.abs().toCoin(),
     }
   }
 

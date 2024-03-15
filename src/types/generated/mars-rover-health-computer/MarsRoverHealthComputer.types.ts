@@ -41,7 +41,7 @@ export type UnlockingPositions = VaultUnlockingPosition[]
 export interface HealthComputer {
   denoms_data: DenomsData
   kind: AccountKind
-  positions: PositionsWithoutPerps
+  positions: Positions
   vaults_data: VaultsData
 }
 export interface DenomsData {
@@ -102,13 +102,29 @@ export interface Coin {
 export interface PerpPosition {
   base_denom: string
   closing_fee_rate: Decimal
+  current_exec_price: Decimal
   current_price: Decimal
   denom: string
+  entry_exec_price: Decimal
   entry_price: Decimal
-  pnl: PositionPnl
+  realised_pnl: PnlAmounts
   size: SignedDecimal
+  unrealised_pnl: PositionPnl
+}
+export interface PnlAmounts {
+  accrued_funding: SignedDecimal
+  closing_fee: SignedDecimal
+  opening_fee: SignedDecimal
+  pnl: SignedDecimal
+  price_pnl: SignedDecimal
+}
+export interface SignedDecimal {
+  abs: Decimal
+  negative: boolean
+  [k: string]: unknown
 }
 export interface PositionPnl {
+  amounts: PnlAmounts
   coins: PnlCoins
   values: PnlValues
 }
@@ -121,11 +137,6 @@ export interface PnlValues {
   closing_fee: SignedDecimal
   pnl: SignedDecimal
   price_pnl: SignedDecimal
-}
-export interface SignedDecimal {
-  abs: Decimal
-  negative: boolean
-  [k: string]: unknown
 }
 export interface VaultPosition {
   amount: VaultPositionAmount
