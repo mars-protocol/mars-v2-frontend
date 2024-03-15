@@ -13,13 +13,11 @@ import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useRouteInfo from 'hooks/trade/useRouteInfo'
 import useLiquidationPrice from 'hooks/useLiquidationPrice'
-import usePrice from 'hooks/usePrice'
-import useSwapFee from 'hooks/useSwapFee'
 import useToggle from 'hooks/useToggle'
 import { BNCoin } from 'types/classes/BNCoin'
-import { byDenom } from 'utils/array'
-import { formatAmountWithSymbol, formatPercent } from 'utils/formatters'
+import { formatAmountWithSymbol, formatPercent, formatValue } from 'utils/formatters'
 
 interface Props {
   borrowAmount: BigNumber
@@ -32,7 +30,6 @@ interface Props {
   estimatedFee: StdFee
   isMargin?: boolean
   liquidationPrice: number | null
-  route: Route[]
   sellAmount: BigNumber
   sellAsset: Asset
   showProgressIndicator: boolean
@@ -52,7 +49,6 @@ export default function TradeSummary(props: Props) {
     borrowAmount,
     estimatedFee,
     showProgressIndicator,
-    route,
     sellAmount,
     buyAmount,
     isAdvanced,
@@ -60,35 +56,24 @@ export default function TradeSummary(props: Props) {
   } = props
   const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
   const assets = useAllAssets()
-  const sellAssetPrice = usePrice(sellAsset.denom)
-  // FIXME: ⛓️ Swap fee needs to be chainagnostic!
-  const swapFee = useSwapFee(route.map((route) => route.pool_id))
   const [showSummary, setShowSummary] = useToggle()
   const { liquidationPrice, isUpdatingLiquidationPrice } = useLiquidationPrice(
     props.liquidationPrice,
   )
+  const { data: routeInfo } = useRouteInfo(sellAsset.denom, buyAsset.denom, sellAmount)
 
   const minReceive = useMemo(() => {
-    return buyAmount.times(1 - swapFee).times(1 - slippage)
-  }, [buyAmount, slippage, swapFee])
+    return buyAmount.times(1 - (routeInfo?.fee.toNumber() || 0)).times(1 - slippage)
+  }, [buyAmount, routeInfo?.fee, slippage])
 
-  const swapFeeValue = useMemo(() => {
-    return sellAssetPrice.times(swapFee).times(sellAmount)
-  }, [sellAmount, sellAssetPrice, swapFee])
-
-  const parsedRoutes = useMemo(() => {
-    if (!route.length) return '-'
-
-    const routeSymbols = route.map((r) => assets.find(byDenom(r.token_out_denom))?.symbol)
-    routeSymbols.unshift(sellAsset.symbol)
-
-    return routeSymbols.join(' -> ')
-  }, [assets, route, sellAsset.symbol])
+  const swapFeeAmount = useMemo(() => {
+    return sellAmount.times(routeInfo?.fee || 0)
+  }, [routeInfo?.fee, sellAmount])
 
   const buttonText = useMemo(() => {
     if (!isAdvanced && direction === 'short') return `Sell ${sellAsset.symbol}`
-    return route.length ? `Buy ${buyAsset.symbol}` : 'No route found'
-  }, [buyAsset.symbol, route, sellAsset.symbol, isAdvanced, direction])
+    return `Buy ${buyAsset.symbol}`
+  }, [isAdvanced, direction, sellAsset.symbol, buyAsset.symbol])
 
   return (
     <div
@@ -155,8 +140,29 @@ export default function TradeSummary(props: Props) {
         </div>
         {showSummary && (
           <>
-            <SummaryLine label={`Swap fees (${(swapFee || 0.002) * 100}%)`} className='mt-2'>
-              <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(sellAsset.denom, swapFeeValue)} />
+            <SummaryLine label='Price impact' className='mt-2'>
+              {routeInfo?.priceImpact ? (
+                <FormattedNumber
+                  amount={routeInfo?.priceImpact.times(100).toNumber() || 0}
+                  options={{ suffix: '%' }}
+                />
+              ) : (
+                '-'
+              )}
+            </SummaryLine>
+            <SummaryLine
+              label={`Swap fees ${
+                routeInfo?.fee
+                  ? formatValue(routeInfo.fee.times(100).decimalPlaces(2).toNumber(), {
+                      prefix: '(',
+                      suffix: '%)',
+                    })
+                  : ''
+              }`}
+            >
+              <DisplayCurrency
+                coin={BNCoin.fromDenomAndBigNumber(sellAsset.denom, swapFeeAmount)}
+              />
             </SummaryLine>
             <SummaryLine label='Transaction fees'>
               <span>{formatAmountWithSymbol(estimatedFee.amount[0], assets)}</span>
@@ -172,7 +178,7 @@ export default function TradeSummary(props: Props) {
               />
             </SummaryLine>
             <Divider className='my-2' />
-            <SummaryLine label='Route'>{parsedRoutes}</SummaryLine>
+            <SummaryLine label='Route'>{routeInfo?.description}</SummaryLine>
           </>
         )}
       </div>

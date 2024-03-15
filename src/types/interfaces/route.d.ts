@@ -43,25 +43,8 @@ type OsmosisRoutePool = {
 type SwapRouteInfo = {
   priceImpact: BigNumber
   fee: BigNumber
-  route: OsmosisSwap | AstroportSwap
-}
-
-type OsmosisSwap = {
-  osmo: {
-    swaps: {
-      pool_id: string
-      to: string
-    }[]
-  }
-}
-
-type AstroportSwap = {
-  astro: {
-    swaps: {
-      from: string
-      to: string
-    }[]
-  }
+  route: import('types/generated/mars-credit-manager/MarsCreditManager.types').SwapperRoute
+  description: string
 }
 
 type AstroportRouteResponse = {
