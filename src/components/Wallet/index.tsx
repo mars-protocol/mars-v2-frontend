@@ -13,7 +13,7 @@ export default function Wallet() {
   const address = useStore((s) => s.address)
 
   useEffect(() => {
-    if (address) return
+    if (address && currentWallet?.account.address === address) return
     useStore.setState({
       address: undefined,
       userDomain: undefined,

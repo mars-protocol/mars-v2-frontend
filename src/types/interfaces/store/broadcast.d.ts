@@ -147,6 +147,7 @@ interface BroadcastSlice {
     slippage: number
     isMax?: boolean
     repay: boolean
+    route: import('types/generated/mars-credit-manager/MarsCreditManager.types').SwapperRoute
   }) => ExecutableTx
   toast: ToastResponse | ToastPending | null
   unlock: (options: {

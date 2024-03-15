@@ -10,7 +10,6 @@ import useChainConfig from 'hooks/useChainConfig'
 import useCurrentWallet from 'hooks/useCurrentWallet'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
-import { getUrl } from 'utils/url'
 
 interface Props {
   providerId?: string
@@ -54,7 +53,7 @@ export default function WalletConnecting(props: Props) {
         setIsConnecting(true)
         try {
           const response = await connect({ extensionProviderId, chainId: chainConfig.id })
-          const cosmClient = await CosmWasmClient.connect(getUrl(chainConfig.endpoints.rpc))
+          const cosmClient = await CosmWasmClient.connect(chainConfig.endpoints.rpc)
           const walletClient: WalletClient = {
             broadcast,
             cosmWasmClient: cosmClient,
@@ -138,7 +137,7 @@ export default function WalletConnecting(props: Props) {
         setIsConnecting(true)
         try {
           await mobileConnect({ mobileProviderId, chainId: chainConfig.id })
-          const cosmClient = await CosmWasmClient.connect(getUrl(chainConfig.endpoints.rpc))
+          const cosmClient = await CosmWasmClient.connect(chainConfig.endpoints.rpc)
           const walletClient: WalletClient = {
             broadcast,
             cosmWasmClient: cosmClient,
