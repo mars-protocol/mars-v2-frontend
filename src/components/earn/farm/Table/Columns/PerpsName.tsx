@@ -15,7 +15,7 @@ export function PerpsName(props: Props) {
     <div className='flex items-center flex-1 gap-3'>
       <AssetImage asset={asset} size={32} />
       <TitleAndSubCell
-        title={props.vault.name}
+        title={`${props.vault.name} - (${props.vault.lockup.duration}${props.vault.lockup.timeframe[0]})`}
         sub={`Via ${props.vault.provider}`}
         className='text-left min-w-15'
       />

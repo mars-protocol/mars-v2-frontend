@@ -10,6 +10,7 @@ import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultStatus } from 'types/enums/vault'
 import { getCoinValue } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 export default function useDepositedVaults(accountId: string) {
   const chainConfig = useChainConfig()
@@ -38,7 +39,11 @@ export default function useDepositedVaults(accountId: string) {
             ...perpsVault,
             ...currentAccount.perpVault.active,
             status: VaultStatus.ACTIVE,
-            cap: null,
+            cap: {
+              used: perpsVault.liquidity,
+              denom: perpsVault.denom,
+              max: BN(9e12), // Placeholder value. There is no deposit cap currently
+            },
             denoms: {
               primary: perpsVault.denom,
               secondary: '',

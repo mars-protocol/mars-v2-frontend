@@ -47,7 +47,7 @@ export default function useDepositedColumns(props: Props) {
       {
         ...DEPOSIT_CAP_META,
         cell: ({ row }) => {
-          if (row.original.cap === null) return null
+          if (row.original.cap === null || row.original.type === 'perp') return null
           return <DepositCap vault={row.original as DepositedVault} isLoading={props.isLoading} />
         },
         sortingFn: depositCapSortingFn,
