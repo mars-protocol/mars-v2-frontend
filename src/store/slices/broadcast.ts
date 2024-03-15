@@ -914,7 +914,7 @@ export default function createBroadcastSlice(
       isPythUpdate?: boolean
     }): Promise<BroadcastResult> => {
       try {
-        const client = get().client!
+        const client = get().client
         const isLedger = client?.connectedWallet?.account.isLedger
         if (!client)
           return { result: undefined, error: 'No client detected. Please reconnect your wallet.' }

@@ -11,31 +11,23 @@ import Text from 'components/common/Text'
 import PortfolioCard from 'components/portfolio/Card'
 import ConnectInfo from 'components/portfolio/Overview/ConnectInfo'
 import useAccountIds from 'hooks/accounts/useAccountIds'
-import useBaseAsset from 'hooks/assets/useBasetAsset'
-import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
+import useHasFundsForTxFee from 'hooks/useHasFundsForTxFee'
 import useStore from 'store'
-import { BN } from 'utils/helpers'
 
 export default function AccountSummary() {
   const { address: urlAddress } = useParams()
   const walletAddress = useStore((s) => s.address)
   const { data: accountIds, isLoading } = useAccountIds(urlAddress)
-
-  const baseAsset = useBaseAsset()
-  const transactionFeeCoinBalance = useCurrentWalletBalance(baseAsset.denom)
-
-  const checkHasFunds = useCallback(() => {
-    return transactionFeeCoinBalance && !BN(transactionFeeCoinBalance.amount).isZero()
-  }, [transactionFeeCoinBalance])
+  const hasFundsForTxFee = useHasFundsForTxFee()
 
   const handleCreateAccountClick = useCallback(() => {
-    if (!checkHasFunds()) {
+    if (!hasFundsForTxFee) {
       useStore.setState({ focusComponent: { component: <WalletBridges /> } })
       return
     }
 
     useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
-  }, [checkHasFunds])
+  }, [hasFundsForTxFee])
 
   if (!walletAddress && !urlAddress) return <ConnectInfo />
 
