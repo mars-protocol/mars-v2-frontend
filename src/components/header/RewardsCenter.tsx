@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
 import classNames from 'classnames'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import Button from 'components/common/Button'
 import DisplayCurrency from 'components/common/DisplayCurrency'
@@ -46,6 +46,8 @@ const renderIncentives = (assets: Asset[], unclaimedRewards: BNCoin[]) => {
 
 export default function RewardsCenter(props: Props) {
   const accountId = useAccountId()
+  const address = useStore((s) => s.address)
+  const isV1 = useStore((s) => s.isV1)
   const [isConfirming, setIsConfirming] = useState(false)
   const [estimatedFee, setEstimatedFee] = useState(defaultFee)
   const [showRewardsCenter, setShowRewardsCenter] = useToggle()
@@ -78,7 +80,7 @@ export default function RewardsCenter(props: Props) {
   }, [claimTx])
 
   const handleClaim = useCallback(async () => {
-    if (accountId) {
+    if ((!isV1 && accountId) || (isV1 && address)) {
       setIsConfirming(true)
 
       await claimTx.execute()
@@ -121,7 +123,7 @@ export default function RewardsCenter(props: Props) {
                   color='tertiary'
                   className='w-full py-2'
                   showProgressIndicator={isConfirming}
-                  text={'Claim total account rewards'}
+                  text={isV1 ? 'Claim v1 rewards' : 'Claim total account rewards'}
                   onClick={handleClaim}
                 />
                 <Text className='w-full py-4 text-center text-white/50' size='sm'>
