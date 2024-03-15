@@ -123,7 +123,7 @@ export default function RewardsCenter(props: Props) {
                   color='tertiary'
                   className='w-full py-2'
                   showProgressIndicator={isConfirming}
-                  text={'Claim total account rewards'}
+                  text={isV1 ? 'Claim v1 rewards' : 'Claim total account rewards'}
                   onClick={handleClaim}
                 />
                 <Text className='w-full py-4 text-center text-white/50' size='sm'>
