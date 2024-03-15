@@ -2,44 +2,32 @@ import classNames from 'classnames'
 import { useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 
+import WalletBridges from 'components/Wallet/WalletBridges'
 import AccountCreateFirst from 'components/account/AccountCreateFirst'
 import Button from 'components/common/Button'
 import Card from 'components/common/Card'
 import { PlusCircled } from 'components/common/Icons'
+import Text from 'components/common/Text'
 import PortfolioCard from 'components/portfolio/Card'
 import ConnectInfo from 'components/portfolio/Overview/ConnectInfo'
-import Text from 'components/common/Text'
-import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccountIds from 'hooks/accounts/useAccountIds'
-import useBaseAsset from 'hooks/assets/useBasetAsset'
-import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
+import useHasFundsForTxFee from 'hooks/useHasFundsForTxFee'
 import useStore from 'store'
-import { defaultFee } from 'utils/constants'
-import { BN } from 'utils/helpers'
 
 export default function AccountSummary() {
   const { address: urlAddress } = useParams()
   const walletAddress = useStore((s) => s.address)
   const { data: accountIds, isLoading } = useAccountIds(urlAddress)
-
-  const baseAsset = useBaseAsset()
-  const transactionFeeCoinBalance = useCurrentWalletBalance(baseAsset.denom)
-
-  const checkHasFunds = useCallback(() => {
-    return (
-      transactionFeeCoinBalance &&
-      BN(transactionFeeCoinBalance.amount).isGreaterThan(defaultFee.amount[0].amount)
-    )
-  }, [transactionFeeCoinBalance])
+  const hasFundsForTxFee = useHasFundsForTxFee()
 
   const handleCreateAccountClick = useCallback(() => {
-    if (!checkHasFunds()) {
+    if (!hasFundsForTxFee) {
       useStore.setState({ focusComponent: { component: <WalletBridges /> } })
       return
     }
 
     useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
-  }, [checkHasFunds])
+  }, [hasFundsForTxFee])
 
   if (!walletAddress && !urlAddress) return <ConnectInfo />
 

@@ -18,7 +18,6 @@ export default function ActionButton(props: Props) {
   const defaultProps = { className, color, variant, size }
   const address = useStore((s) => s.address)
   const isV1 = useStore((s) => s.isV1)
-
   const { data: accountIds } = useAccountIds(address || '')
   const selectedAccountId = useAccountId()
 
@@ -29,7 +28,7 @@ export default function ActionButton(props: Props) {
   if (!address)
     return <WalletConnectButton {...defaultProps} textOverride={short ? 'Connect' : undefined} />
 
-  if (accountIds && accountIds.length === 0) {
+  if (accountIds && accountIds.length === 0 && !isV1) {
     return (
       <Button
         onClick={handleCreateAccountClick}
