@@ -4,7 +4,6 @@ const stATOM_ATOM: Asset = {
   id: 'gamm/pool/803',
   denom: 'gamm/pool/803',
   color: '',
-  logo: '',
   decimals: 6,
   isEnabled: false,
   isMarket: false,

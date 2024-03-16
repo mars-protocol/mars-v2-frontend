@@ -4,7 +4,6 @@ const OSMO_WETH: Asset = {
   id: 'gamm/pool/704',
   denom: 'gamm/pool/704',
   color: '',
-  logo: '',
   decimals: 6,
   isEnabled: false,
   isMarket: false,

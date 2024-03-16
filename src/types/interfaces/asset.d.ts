@@ -18,7 +18,7 @@ interface AssetMetaData {
   isMarket: boolean
   isStable?: boolean
   isStaking?: boolean
-  logo: React.FC
+  logo?: React.FC
   name: string
   prefix?: string
   pythFeedName?: string
