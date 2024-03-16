@@ -1,9 +1,11 @@
+import { LogoAxlWETH } from 'components/common/assets/AssetLogos'
+
 const WETHaxl: AssetMetaData = {
   symbol: 'WETH.axl',
   id: 'axlWETH',
   name: 'Axelar Wrapped Ethereum',
   color: '#343434',
-  logo: '/images/tokens/axlweth.svg',
+  logo: LogoAxlWETH,
   decimals: 18,
   hasOraclePrice: true,
   isEnabled: true,

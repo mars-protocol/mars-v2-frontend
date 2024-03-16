@@ -122,7 +122,7 @@ export default function Repay(props: Props) {
       onClose={close}
       header={
         <span className='flex items-center gap-4 px-2 md:px-4'>
-          <AssetImage asset={modal.data.asset} size={24} />
+          <AssetImage asset={modal.data.asset} className='w-6 h-6' />
           <Text>
             {'Repay'} {asset.symbol}
           </Text>

@@ -58,7 +58,7 @@ export default function AssetItem(props: Props) {
           <div onClick={handleToggleFavorite} className='w-4'>
             {isFavorite ? <StarFilled /> : <StarOutlined />}
           </div>
-          <AssetImage asset={asset} size={24} />
+          <AssetImage asset={asset} className='w-6 h-6' />
           <div className='flex-col'>
             <div className='flex gap-1 flex-nowrap max-w-[185px]'>
               <Text size='sm' className='h-5 leading-5 text-left truncate '>

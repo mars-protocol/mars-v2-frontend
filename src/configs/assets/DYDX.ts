@@ -1,9 +1,11 @@
+import { LogoDYDX } from 'components/common/assets/AssetLogos'
+
 const DYDX: AssetMetaData = {
   symbol: 'DYDX',
   id: 'DYDX',
   name: 'dYdX',
   color: '#6966ff',
-  logo: '/images/tokens/dydx.svg',
+  logo: LogoDYDX,
   decimals: 18,
   hasOraclePrice: true,
   isEnabled: true,

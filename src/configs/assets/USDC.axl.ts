@@ -1,9 +1,11 @@
+import { LogoAxlUSDC } from 'components/common/assets/AssetLogos'
+
 const USDCaxl: AssetMetaData = {
   symbol: 'USDC.axl',
   name: 'Axelar USDC',
   id: 'axlUSDC',
   color: '#478edc',
-  logo: '/images/tokens/axlusdc.svg',
+  logo: LogoAxlUSDC,
   decimals: 6,
   hasOraclePrice: true,
   isEnabled: true,

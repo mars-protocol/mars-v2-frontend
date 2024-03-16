@@ -69,7 +69,7 @@ export default function TokenInput(props: Props) {
           />
         ) : (
           <div className='flex items-center gap-2 p-3 border-r min-w-fit border-white/20 bg-white/5'>
-            <AssetImage asset={props.asset} size={20} />
+            <AssetImage asset={props.asset} className='w-5 h-5' />
             <Text>{props.asset.symbol}</Text>
           </div>
         )}

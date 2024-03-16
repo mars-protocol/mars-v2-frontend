@@ -60,7 +60,7 @@ export default function AssetAmountSelectActionModal(props: Props) {
       onClose={onClose}
       header={
         <span className='flex items-center gap-4 px-2 md:px-4'>
-          <AssetImage size={24} asset={asset} />
+          <AssetImage className='w-6 h-6' asset={asset} />
           <Text>{title}</Text>
         </span>
       }

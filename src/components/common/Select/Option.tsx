@@ -45,7 +45,7 @@ export default function Option(props: Props) {
             props.displayClassName,
           )}
         >
-          <AssetImage asset={asset} size={20} />
+          <AssetImage asset={asset} className='w-5 h-5' />
           <span className='flex'>{asset.symbol}</span>
           <ChevronRight
             className={classNames(
@@ -69,7 +69,7 @@ export default function Option(props: Props) {
         onClick={() => handleOnClick(asset.denom)}
       >
         <div className='flex items-center justify-center h-full row-span-2'>
-          <AssetImage asset={asset} size={32} />
+          <AssetImage asset={asset} className='w-8 h-8' />
         </div>
         <Text className='col-span-2 pb-1'>{asset.symbol}</Text>
         <Text size='sm' className='col-span-2 pb-1 font-bold text-right'>

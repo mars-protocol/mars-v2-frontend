@@ -1,10 +1,8 @@
-import React from 'react'
-
-import AmountAndValue from 'components/common/AmountAndValue'
-import AssetImage from 'components/common/assets/AssetImage'
-import { FormattedNumber } from 'components/common/FormattedNumber'
 import Container from 'components/Modals/HLS/Deposit/Summary/Container'
+import AmountAndValue from 'components/common/AmountAndValue'
+import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
+import AssetImage from 'components/common/assets/AssetImage'
 
 interface Props {
   amount: BigNumber
@@ -16,7 +14,7 @@ export default function AssetSummary(props: Props) {
     <Container title={props.isBorrow ? 'Leverage' : 'Supplying'}>
       <div className='flex justify-between'>
         <span className='flex items-center gap-2'>
-          <AssetImage asset={props.asset} size={32} />
+          <AssetImage asset={props.asset} className='w-8 h-8' />
           <Text size='xs' className='font-bold'>
             {props.asset.symbol}
           </Text>
@@ -24,11 +22,11 @@ export default function AssetSummary(props: Props) {
         <AmountAndValue asset={props.asset} amount={props.amount} isApproximation />
       </div>
       {props.isBorrow && (
-        <div className='rounded-sm bg-white/5 grid place-items-center py-2 mt-3'>
+        <div className='grid py-2 mt-3 rounded-sm bg-white/5 place-items-center'>
           <FormattedNumber
             amount={(props.asset as BorrowAsset).borrowRate ?? 0}
             options={{ suffix: '% Borrow Rate', maxDecimals: 2, minDecimals: 0 }}
-            className='text-white/70 text-xs'
+            className='text-xs text-white/70'
           />
         </div>
       )}

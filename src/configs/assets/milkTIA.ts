@@ -1,9 +1,11 @@
+import { LogoMilkTIA } from 'components/common/assets/AssetLogos'
+
 const milkTIA: AssetMetaData = {
   symbol: 'milkTIA',
   id: 'milkTIA',
   name: 'MilkyWay liquid staked TIA',
   color: '#E69EFE',
-  logo: '/images/tokens/milktia.svg',
+  logo: LogoMilkTIA,
   decimals: 6,
   hasOraclePrice: true,
   isEnabled: true,

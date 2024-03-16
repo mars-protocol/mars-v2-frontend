@@ -1,9 +1,11 @@
+import { LogoAKT } from 'components/common/assets/AssetLogos'
+
 const AKT: AssetMetaData = {
   symbol: 'AKT',
   id: 'AKT',
   name: 'Akash',
   color: '#F34C2D',
-  logo: '/images/tokens/akt.svg',
+  logo: LogoAKT,
   decimals: 6,
   hasOraclePrice: true,
   isEnabled: true,

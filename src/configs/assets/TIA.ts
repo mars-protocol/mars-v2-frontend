@@ -1,9 +1,11 @@
+import { LogoTIA } from 'components/common/assets/AssetLogos'
+
 const TIA: AssetMetaData = {
   symbol: 'TIA',
   id: 'TIA',
   name: 'Celestia',
   color: '#8623ff',
-  logo: '/images/tokens/tia.svg',
+  logo: LogoTIA,
   decimals: 6,
   hasOraclePrice: true,
   isEnabled: true,

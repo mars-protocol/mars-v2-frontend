@@ -1,9 +1,11 @@
+import { LogoUSDC } from 'components/common/assets/AssetLogos'
+
 const USDC: AssetMetaData = {
   symbol: 'USDC',
   name: 'Noble',
   id: 'USDC',
   color: '#478edc',
-  logo: '/images/tokens/usdc.svg',
+  logo: LogoUSDC,
   decimals: 6,
   hasOraclePrice: true,
   isEnabled: true,

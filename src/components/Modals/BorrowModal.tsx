@@ -228,7 +228,7 @@ function BorrowModal(props: Props) {
       onClose={onClose}
       header={
         <span className='flex items-center gap-4 px-2 md:px-4'>
-          <AssetImage asset={asset} size={24} />
+          <AssetImage asset={asset} className='w-6 h-6' />
           <Text>
             {isRepay ? 'Repay' : 'Borrow'} {asset.symbol}
           </Text>
