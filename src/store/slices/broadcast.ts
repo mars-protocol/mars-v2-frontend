@@ -17,8 +17,8 @@ import {
   ExecuteMsg,
   SwapperRoute,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { ExecuteMsg as PerpsExecuteMsg } from 'types/generated/mars-perps/MarsPerps.types'
 import { ExecuteMsg as IncentivesExecuteMsg } from 'types/generated/mars-incentives/MarsIncentives.types'
+import { ExecuteMsg as PerpsExecuteMsg } from 'types/generated/mars-perps/MarsPerps.types'
 import { ExecuteMsg as RedBankExecuteMsg } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHealthTypes.types'
 import { byDenom, bySymbol } from 'utils/array'
@@ -39,7 +39,7 @@ function generateExecutionMessage(
     | AccountNftExecuteMsg
     | RedBankExecuteMsg
     | PythUpdateExecuteMsg
-    | PerpsExecuteMsg,
+    | PerpsExecuteMsg
     | IncentivesExecuteMsg,
   funds: Coin[],
 ) {
