@@ -15,6 +15,7 @@ export default function useRouteInfo(denomIn: string, denomOut: string, amount: 
 
   const osmosisRoute = useSWR<SwapRouteInfo | null>(
     isOsmosis &&
+      debouncedAmount !== '0' &&
       `${chainConfig.endpoints.routes}/quote?tokenIn=${debouncedAmount}${denomIn}&tokenOutDenom=${denomOut}`,
     async (url: string) => {
       try {
