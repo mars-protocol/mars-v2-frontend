@@ -59,7 +59,8 @@ export default function SwapForm(props: Props) {
     if (tradeDirection === 'long') return [sellAsset, buyAsset]
     return [buyAsset, sellAsset]
   }, [buyAsset, sellAsset, tradeDirection, isAdvanced])
-  const isBorrowEnabled = !!markets.find(byDenom(inputAsset.denom))?.borrowEnabled
+  const isBorrowEnabled = !!markets.find((market) => market.asset.denom === inputAsset.denom)
+    ?.borrowEnabled
   const isRepayable = !!account?.debts.find(byDenom(outputAsset.denom))
   const [isMarginChecked, setMarginChecked] = useToggle(isBorrowEnabled ? useMargin : false)
   const [isAutoRepayChecked, setAutoRepayChecked] = useToggle(
