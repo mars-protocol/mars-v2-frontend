@@ -3,7 +3,7 @@ import Head from 'next/head'
 function DefaultPageHead() {
   return (
     <Head>
-      <title>Mars Protocol V2</title>
+      <title>Mars Protocol</title>
       <meta charSet='utf-8' />
       <link href='/favicon.svg' rel='icon' />
       <link href='/apple-touch-icon.png' rel='apple-touch-icon' sizes='180x180' />
@@ -13,9 +13,9 @@ function DefaultPageHead() {
       <meta content='summary_large_image' name='twitter:card' />
       <meta content='@mars_protocol' name='twitter:site' />
       <meta content='@mars_protocol' name='twitter:creator' />
-      <meta content='https://osmosis.marsprotocol.io' property='og:url' />
-      <meta content='https://osmosis.marsprotocol.io/banner.png' property='og:image' />
-      <meta content='Mars Protocol V2' property='og:site_name' />
+      <meta content='https://app.marsprotocol.io' property='og:url' />
+      <meta content='https://app.marsprotocol.io/banner.png' property='og:image' />
+      <meta content='Mars Protocol' property='og:site_name' />
       <meta content='#ffffff' name='msapplication-TileColor' />
       <meta content='#ffffff' name='theme-color' />
       <meta

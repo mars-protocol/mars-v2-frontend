@@ -69,7 +69,10 @@ export default function Header() {
   }
 
   const showStaleOracle = useMemo(() => isOracleStale && address, [isOracleStale, address])
-
+  const showRewardsCenter = useMemo(
+    () => (isV1 ? address && !isMobile : accountId && !isMobile),
+    [isV1, address, accountId],
+  )
   return (
     <>
       <header
@@ -115,7 +118,7 @@ export default function Header() {
           ) : (
             <div className='flex gap-4'>
               {showStaleOracle && <OracleResyncButton />}
-              {accountId && !isMobile && <RewardsCenter className='hidden lg:flex' />}
+              {showRewardsCenter && <RewardsCenter className='hidden lg:flex' />}
               {showAccountMenu && <AccountMenu className='hidden md:flex' />}
               <Wallet />
               {!isMobile && <ChainSelect className='hidden md:flex' />}

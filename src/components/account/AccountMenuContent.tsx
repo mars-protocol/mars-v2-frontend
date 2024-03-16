@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { useCallback } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { isMobile } from 'react-device-detect'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import WalletBridges from 'components/Wallet/WalletBridges'
 import AccountCreateFirst from 'components/account/AccountCreateFirst'
@@ -12,15 +12,12 @@ import { Account, Plus, PlusCircled } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
 import useAccountIds from 'hooks/accounts/useAccountIds'
-import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import useAccountId from 'hooks/useAccountId'
 import useAutoLend from 'hooks/useAutoLend'
-import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
+import useHasFundsForTxFee from 'hooks/useHasFundsForTxFee'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
-import { defaultFee } from 'utils/constants'
-import { BN } from 'utils/helpers'
 import { isNumber } from 'utils/parsers'
 import { getPage, getRoute } from 'utils/route'
 
@@ -40,23 +37,15 @@ export default function AccountMenuContent(props: Props) {
   const [searchParams] = useSearchParams()
 
   const createAccount = useStore((s) => s.createAccount)
-  const baseAsset = useBaseAsset()
   const [showMenu, setShowMenu] = useToggle()
   const [isCreating, setIsCreating] = useToggle()
-  const transactionFeeCoinBalance = useCurrentWalletBalance(baseAsset.denom)
+  const hasFundsForTxFee = useHasFundsForTxFee()
   const [enableAutoLendGlobal] = useEnableAutoLendGlobal()
   const { enableAutoLendAccountId } = useAutoLend()
 
   const hasCreditAccounts = !!accountIds?.length
   const isAccountSelected =
     hasCreditAccounts && accountId && isNumber(accountId) && accountIds.includes(accountId)
-
-  const checkHasFunds = useCallback(() => {
-    return (
-      transactionFeeCoinBalance &&
-      BN(transactionFeeCoinBalance.amount).isGreaterThan(defaultFee.amount[0].amount)
-    )
-  }, [transactionFeeCoinBalance])
 
   const performCreateAccount = useCallback(async () => {
     setShowMenu(false)
@@ -90,7 +79,7 @@ export default function AccountMenuContent(props: Props) {
 
   const handleCreateAccountClick = useCallback(() => {
     setShowMenu(!showMenu)
-    if (!checkHasFunds() && !hasCreditAccounts) {
+    if (!hasFundsForTxFee && !hasCreditAccounts) {
       useStore.setState({ focusComponent: { component: <WalletBridges /> } })
       return
     }
@@ -98,7 +87,7 @@ export default function AccountMenuContent(props: Props) {
       useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
       return
     }
-  }, [checkHasFunds, hasCreditAccounts, setShowMenu, showMenu])
+  }, [hasFundsForTxFee, hasCreditAccounts, setShowMenu, showMenu])
 
   if (!address) return null
 

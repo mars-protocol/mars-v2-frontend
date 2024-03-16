@@ -101,7 +101,7 @@ export default function AssetOverlay(props: Props) {
 
   return (
     <Overlay
-      className='left-0 w-full overflow-y-scroll h-screen-full scrollbar-hide top-18 md:inset-0'
+      className='left-0 w-full overflow-y-scroll h-screen-full md:h-full scrollbar-hide top-18 md:inset-0'
       show={props.state !== 'closed'}
       setShow={handleClose}
     >
