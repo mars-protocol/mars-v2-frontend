@@ -223,8 +223,6 @@ function BorrowModal(props: Props) {
     setAmount(max)
   }, [amount, max, handleChange])
 
-  console.log('max', max.toNumber())
-
   if (!modal || !asset) return null
   return (
     <Modal
