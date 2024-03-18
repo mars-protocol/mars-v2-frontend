@@ -5,32 +5,49 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { StdFee } from "@cosmjs/amino";
-import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
+import { StdFee } from '@cosmjs/amino'
 import {
-  Accounting,
-  ArrayOfDenomStateResponse,
-  ArrayOfDepositResponse,
-  ArrayOfPositionResponse,
-  ArrayOfUnlockState,
-  Coin,
-  ConfigForString,
-  Decimal,
-  DenomStateResponse,
-  DepositResponse,
-  OwnerResponse,
+  OracleBaseForString,
+  ParamsBaseForString,
+  InstantiateMsg,
+  ExecuteMsg,
   OwnerUpdate,
-  PerpDenomState,
-  PnlAmounts,
-  PositionFeesResponse,
-  PositionResponse,
-  PositionsByAccountResponse,
-  SignedDecimal,
-  TradingFee,
+  Decimal,
   Uint128,
-  VaultState
-} from "./MarsPerps.types";
-
+  ActionKind,
+  SignedDecimal,
+  QueryMsg,
+  ConfigForString,
+  Accounting,
+  Balance,
+  CashFlow,
+  PnlAmounts,
+  DenomStateResponse,
+  Funding,
+  ArrayOfDenomStateResponse,
+  DepositResponse,
+  ArrayOfDepositResponse,
+  TradingFee,
+  Coin,
+  OwnerResponse,
+  PerpDenomState,
+  PnlValues,
+  NullablePerpVaultPosition,
+  PerpVaultPosition,
+  PerpVaultDeposit,
+  UnlockState,
+  PnL,
+  PositionResponse,
+  PerpPosition,
+  PositionPnl,
+  PnlCoins,
+  PositionFeesResponse,
+  ArrayOfPositionResponse,
+  PositionsByAccountResponse,
+  ArrayOfUnlockState,
+  VaultState,
+} from './MarsPerps.types'
 export interface MarsPerpsReadOnlyInterface {
   contractAddress: string
   owner: () => Promise<OwnerResponse>
@@ -45,7 +62,14 @@ export interface MarsPerpsReadOnlyInterface {
     limit?: number
     startAfter?: string
   }) => Promise<ArrayOfDenomStateResponse>
-  deposit: ({ depositor }: { depositor: string }) => Promise<DepositResponse>
+  perpVaultPosition: ({
+    accountId,
+    action,
+  }: {
+    accountId: string
+    action?: ActionKind
+  }) => Promise<NullablePerpVaultPosition>
+  deposit: ({ accountId }: { accountId: string }) => Promise<DepositResponse>
   deposits: ({
     limit,
     startAfter,
@@ -53,25 +77,7 @@ export interface MarsPerpsReadOnlyInterface {
     limit?: number
     startAfter?: string
   }) => Promise<ArrayOfDepositResponse>
-  unlocks: ({ depositor }: { depositor: string }) => Promise<ArrayOfUnlockState>
-  denomAccounting: ({ denom }: { denom: string }) => Promise<Accounting>
-  positions: ({
-    limit,
-    startAfter,
-  }: {
-    limit?: number
-    startAfter?: string[][]
-  }) => Promise<ArrayOfPositionResponse>
-  positionsByAccount: ({ accountId }: { accountId: string }) => Promise<PositionsByAccountResponse>
-  totalPnl: () => Promise<SignedDecimal>
-  openingFee: ({ denom, size }: { denom: string; size: SignedDecimal }) => Promise<TradingFee>
-  denomRealizedPnlForAccount: ({
-    accountId,
-    denom,
-  }: {
-    accountId: string
-    denom: string
-  }) => Promise<PnlAmounts>
+  unlocks: ({ accountId }: { accountId: string }) => Promise<ArrayOfUnlockState>
   position: ({
     accountId,
     denom,
@@ -81,6 +87,31 @@ export interface MarsPerpsReadOnlyInterface {
     denom: string
     newSize?: SignedDecimal
   }) => Promise<PositionResponse>
+  positions: ({
+    limit,
+    startAfter,
+  }: {
+    limit?: number
+    startAfter?: string[][]
+  }) => Promise<ArrayOfPositionResponse>
+  positionsByAccount: ({
+    accountId,
+    action,
+  }: {
+    accountId: string
+    action?: ActionKind
+  }) => Promise<PositionsByAccountResponse>
+  totalPnl: () => Promise<SignedDecimal>
+  openingFee: ({ denom, size }: { denom: string; size: SignedDecimal }) => Promise<TradingFee>
+  denomAccounting: ({ denom }: { denom: string }) => Promise<Accounting>
+  totalAccounting: () => Promise<Accounting>
+  denomRealizedPnlForAccount: ({
+    accountId,
+    denom,
+  }: {
+    accountId: string
+    denom: string
+  }) => Promise<PnlAmounts>
   positionFees: ({
     accountId,
     denom,
@@ -90,7 +121,6 @@ export interface MarsPerpsReadOnlyInterface {
     denom: string
     newSize: SignedDecimal
   }) => Promise<PositionFeesResponse>
-  totalAccounting: () => Promise<Accounting>
 }
 export class MarsPerpsQueryClient implements MarsPerpsReadOnlyInterface {
   client: CosmWasmClient
@@ -105,6 +135,7 @@ export class MarsPerpsQueryClient implements MarsPerpsReadOnlyInterface {
     this.denomState = this.denomState.bind(this)
     this.perpDenomState = this.perpDenomState.bind(this)
     this.denomStates = this.denomStates.bind(this)
+    this.perpVaultPosition = this.perpVaultPosition.bind(this)
     this.deposit = this.deposit.bind(this)
     this.deposits = this.deposits.bind(this)
     this.unlocks = this.unlocks.bind(this)
@@ -162,10 +193,24 @@ export class MarsPerpsQueryClient implements MarsPerpsReadOnlyInterface {
       },
     })
   }
-  deposit = async ({ depositor }: { depositor: string }): Promise<DepositResponse> => {
+  perpVaultPosition = async ({
+    accountId,
+    action,
+  }: {
+    accountId: string
+    action?: ActionKind
+  }): Promise<NullablePerpVaultPosition> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      perp_vault_position: {
+        account_id: accountId,
+        action,
+      },
+    })
+  }
+  deposit = async ({ accountId }: { accountId: string }): Promise<DepositResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       deposit: {
-        depositor,
+        account_id: accountId,
       },
     })
   }
@@ -183,18 +228,27 @@ export class MarsPerpsQueryClient implements MarsPerpsReadOnlyInterface {
       },
     })
   }
-  unlocks = async ({ depositor }: { depositor: string }): Promise<ArrayOfUnlockState> => {
+  unlocks = async ({ accountId }: { accountId: string }): Promise<ArrayOfUnlockState> => {
     return this.client.queryContractSmart(this.contractAddress, {
       unlocks: {
-        depositor,
+        account_id: accountId,
       },
     })
   }
-
-  denomAccounting = async ({ denom }: { denom: string }): Promise<Accounting> => {
+  position = async ({
+    accountId,
+    denom,
+    newSize,
+  }: {
+    accountId: string
+    denom: string
+    newSize?: SignedDecimal
+  }): Promise<PositionResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
-      denom_accounting: {
+      position: {
+        account_id: accountId,
         denom,
+        new_size: newSize,
       },
     })
   }
@@ -214,12 +268,15 @@ export class MarsPerpsQueryClient implements MarsPerpsReadOnlyInterface {
   }
   positionsByAccount = async ({
     accountId,
+    action,
   }: {
     accountId: string
+    action?: ActionKind
   }): Promise<PositionsByAccountResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       positions_by_account: {
         account_id: accountId,
+        action,
       },
     })
   }
@@ -242,7 +299,18 @@ export class MarsPerpsQueryClient implements MarsPerpsReadOnlyInterface {
       },
     })
   }
-
+  denomAccounting = async ({ denom }: { denom: string }): Promise<Accounting> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      denom_accounting: {
+        denom,
+      },
+    })
+  }
+  totalAccounting = async (): Promise<Accounting> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      total_accounting: {},
+    })
+  }
   denomRealizedPnlForAccount = async ({
     accountId,
     denom,
@@ -257,25 +325,6 @@ export class MarsPerpsQueryClient implements MarsPerpsReadOnlyInterface {
       },
     })
   }
-
-  position = async ({
-    accountId,
-    denom,
-    newSize,
-  }: {
-    accountId: string
-    denom: string
-    newSize?: SignedDecimal
-  }): Promise<PositionResponse> => {
-    return this.client.queryContractSmart(this.contractAddress, {
-      position: {
-        account_id: accountId,
-        denom,
-        new_size: newSize,
-      },
-    })
-  }
-
   positionFees = async ({
     accountId,
     denom,
@@ -291,12 +340,6 @@ export class MarsPerpsQueryClient implements MarsPerpsReadOnlyInterface {
         denom,
         new_size: newSize,
       },
-    })
-  }
-
-  totalAccounting = async (): Promise<Accounting> => {
-    return this.client.queryContractSmart(this.contractAddress, {
-      total_accounting: {},
     })
   }
 }
@@ -344,14 +387,21 @@ export interface MarsPerpsInterface extends MarsPerpsReadOnlyInterface {
     _funds?: Coin[],
   ) => Promise<ExecuteResult>
   deposit: (
+    {
+      accountId,
+    }: {
+      accountId: string
+    },
     fee?: number | StdFee | 'auto',
     memo?: string,
     _funds?: Coin[],
   ) => Promise<ExecuteResult>
   unlock: (
     {
+      accountId,
       shares,
     }: {
+      accountId: string
       shares: Uint128
     },
     fee?: number | StdFee | 'auto',
@@ -359,6 +409,11 @@ export interface MarsPerpsInterface extends MarsPerpsReadOnlyInterface {
     _funds?: Coin[],
   ) => Promise<ExecuteResult>
   withdraw: (
+    {
+      accountId,
+    }: {
+      accountId: string
+    },
     fee?: number | StdFee | 'auto',
     memo?: string,
     _funds?: Coin[],
@@ -403,6 +458,18 @@ export interface MarsPerpsInterface extends MarsPerpsReadOnlyInterface {
     memo?: string,
     _funds?: Coin[],
   ) => Promise<ExecuteResult>
+  closeAllPositions: (
+    {
+      accountId,
+      action,
+    }: {
+      accountId: string
+      action?: ActionKind
+    },
+    fee?: number | StdFee | 'auto',
+    memo?: string,
+    _funds?: Coin[],
+  ) => Promise<ExecuteResult>
 }
 export class MarsPerpsClient extends MarsPerpsQueryClient implements MarsPerpsInterface {
   client: SigningCosmWasmClient
@@ -424,6 +491,7 @@ export class MarsPerpsClient extends MarsPerpsQueryClient implements MarsPerpsIn
     this.openPosition = this.openPosition.bind(this)
     this.closePosition = this.closePosition.bind(this)
     this.modifyPosition = this.modifyPosition.bind(this)
+    this.closeAllPositions = this.closeAllPositions.bind(this)
   }
 
   updateOwner = async (
@@ -519,6 +587,11 @@ export class MarsPerpsClient extends MarsPerpsQueryClient implements MarsPerpsIn
     )
   }
   deposit = async (
+    {
+      accountId,
+    }: {
+      accountId: string
+    },
     fee: number | StdFee | 'auto' = 'auto',
     memo?: string,
     _funds?: Coin[],
@@ -527,7 +600,9 @@ export class MarsPerpsClient extends MarsPerpsQueryClient implements MarsPerpsIn
       this.sender,
       this.contractAddress,
       {
-        deposit: {},
+        deposit: {
+          account_id: accountId,
+        },
       },
       fee,
       memo,
@@ -536,8 +611,10 @@ export class MarsPerpsClient extends MarsPerpsQueryClient implements MarsPerpsIn
   }
   unlock = async (
     {
+      accountId,
       shares,
     }: {
+      accountId: string
       shares: Uint128
     },
     fee: number | StdFee | 'auto' = 'auto',
@@ -549,6 +626,7 @@ export class MarsPerpsClient extends MarsPerpsQueryClient implements MarsPerpsIn
       this.contractAddress,
       {
         unlock: {
+          account_id: accountId,
           shares,
         },
       },
@@ -558,6 +636,11 @@ export class MarsPerpsClient extends MarsPerpsQueryClient implements MarsPerpsIn
     )
   }
   withdraw = async (
+    {
+      accountId,
+    }: {
+      accountId: string
+    },
     fee: number | StdFee | 'auto' = 'auto',
     memo?: string,
     _funds?: Coin[],
@@ -566,7 +649,9 @@ export class MarsPerpsClient extends MarsPerpsQueryClient implements MarsPerpsIn
       this.sender,
       this.contractAddress,
       {
-        withdraw: {},
+        withdraw: {
+          account_id: accountId,
+        },
       },
       fee,
       memo,
@@ -650,6 +735,32 @@ export class MarsPerpsClient extends MarsPerpsQueryClient implements MarsPerpsIn
           account_id: accountId,
           denom,
           new_size: newSize,
+        },
+      },
+      fee,
+      memo,
+      _funds,
+    )
+  }
+  closeAllPositions = async (
+    {
+      accountId,
+      action,
+    }: {
+      accountId: string
+      action?: ActionKind
+    },
+    fee: number | StdFee | 'auto' = 'auto',
+    memo?: string,
+    _funds?: Coin[],
+  ): Promise<ExecuteResult> => {
+    return await this.client.execute(
+      this.sender,
+      this.contractAddress,
+      {
+        close_all_positions: {
+          account_id: accountId,
+          action,
         },
       },
       fee,

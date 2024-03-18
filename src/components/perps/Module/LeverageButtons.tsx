@@ -20,9 +20,9 @@ export function LeverageButtons(props: Props) {
 
   return (
     <div className='flex justify-between'>
-      {leveragePresets.map((leverage) => (
+      {leveragePresets.map((leverage, index) => (
         <button
-          key={leverage}
+          key={`${index}-${leverage}`}
           onClick={() => props.onChange(leverage)}
           className='w-12 !border:none bg-white/10 rounded-sm py-1 text-xs hover:bg-white/20'
         >

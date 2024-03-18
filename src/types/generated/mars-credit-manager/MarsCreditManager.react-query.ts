@@ -25,7 +25,6 @@ import {
   ActionAmount,
   LiquidateRequestForVaultBaseForString,
   VaultPositionType,
-  LiquidateDebt,
   SwapperRoute,
   AccountNftBaseForString,
   PerpsBaseForString,
@@ -51,6 +50,7 @@ import {
   NftConfigUpdates,
   VaultBaseForAddr,
   QueryMsg,
+  ActionKind,
   VaultPositionAmount,
   VaultAmount,
   VaultAmount1,
@@ -375,6 +375,7 @@ export interface MarsCreditManagerPositionsQuery<TData>
   extends MarsCreditManagerReactQuery<Positions, TData> {
   args: {
     accountId: string
+    action?: ActionKind
   }
 }
 export function useMarsCreditManagerPositionsQuery<TData = Positions>({
@@ -388,6 +389,7 @@ export function useMarsCreditManagerPositionsQuery<TData = Positions>({
       client
         ? client.positions({
             accountId: args.accountId,
+            action: args.action,
           })
         : Promise.reject(new Error('Invalid client')),
     { ...options, enabled: !!client && (options?.enabled != undefined ? options.enabled : true) },

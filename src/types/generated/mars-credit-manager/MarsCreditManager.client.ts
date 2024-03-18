@@ -24,7 +24,6 @@ import {
   ActionAmount,
   LiquidateRequestForVaultBaseForString,
   VaultPositionType,
-  LiquidateDebt,
   SwapperRoute,
   AccountNftBaseForString,
   PerpsBaseForString,
@@ -50,6 +49,7 @@ import {
   NftConfigUpdates,
   VaultBaseForAddr,
   QueryMsg,
+  ActionKind,
   VaultPositionAmount,
   VaultAmount,
   VaultAmount1,
@@ -100,7 +100,13 @@ export interface MarsCreditManagerReadOnlyInterface {
   }) => Promise<ArrayOfAccount>
   config: () => Promise<ConfigResponse>
   vaultUtilization: ({ vault }: { vault: VaultBaseForString }) => Promise<VaultUtilizationResponse>
-  positions: ({ accountId }: { accountId: string }) => Promise<Positions>
+  positions: ({
+    accountId,
+    action,
+  }: {
+    accountId: string
+    action?: ActionKind
+  }) => Promise<Positions>
   allCoinBalances: ({
     limit,
     startAfter,
@@ -206,10 +212,17 @@ export class MarsCreditManagerQueryClient implements MarsCreditManagerReadOnlyIn
       },
     })
   }
-  positions = async ({ accountId }: { accountId: string }): Promise<Positions> => {
+  positions = async ({
+    accountId,
+    action,
+  }: {
+    accountId: string
+    action?: ActionKind
+  }): Promise<Positions> => {
     return this.client.queryContractSmart(this.contractAddress, {
       positions: {
         account_id: accountId,
+        action,
       },
     })
   }

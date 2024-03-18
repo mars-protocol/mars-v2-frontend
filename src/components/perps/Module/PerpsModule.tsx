@@ -19,7 +19,7 @@ import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
-import usePerpsConfig from 'hooks/perps/usePerpsConfig'
+import { usePerpsParams } from 'hooks/perps/usePerpsParams'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import useHealthComputer from 'hooks/useHealthComputer'
@@ -55,7 +55,7 @@ export function PerpsModule() {
     previousAmount,
   )
   const perpsOraclePrice = usePrice(perpsAsset.denom)
-  const { data: perpsConfig } = usePerpsConfig()
+  const perpsParams = usePerpsParams(perpsAsset.denom)
 
   const debouncedUpdateAccount = useMemo(
     () =>
@@ -74,14 +74,14 @@ export function PerpsModule() {
 
   useEffect(() => {
     const currentPerpPosition = account?.perps.find((p) => p.denom === perpsAsset.denom)
-    if (!perpsConfig || !tradingFee || !perpsVault) return
+    if (!perpsParams || !tradingFee || !perpsVault) return
 
     const perpsPosition = getPerpsPosition(
       perpsVault.denom,
       perpsAsset,
       amount.plus(previousAmount),
       tradeDirection ?? previousTradeDirection,
-      perpsConfig,
+      perpsParams,
       tradingFee,
       currentPerpPosition,
     )
@@ -94,7 +94,7 @@ export function PerpsModule() {
     tradeDirection,
     previousAmount,
     previousTradeDirection,
-    perpsConfig,
+    perpsParams,
     tradingFee,
     perpsVault,
     account?.perps,

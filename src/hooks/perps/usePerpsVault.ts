@@ -15,6 +15,8 @@ export default function usePerpsVault() {
       const vaultState = await clients!.perps.vaultState()
       const perpsVault = await clients!.perps.config()
 
+      const timeframe = moment.duration(perpsVault.cooldown_period, 'seconds').humanize().split(' ')
+
       return {
         name: 'Perps USDC Vault',
         provider: 'MARS',
@@ -23,14 +25,8 @@ export default function usePerpsVault() {
         collateralizationRatio: 1.1,
         liquidity: BN(vaultState.total_liquidity),
         lockup: {
-          duration: +moment
-            .duration(perpsVault.cooldown_period, 'seconds')
-            .humanize()
-            .split(' ')[0],
-          timeframe: moment
-            .duration(perpsVault.cooldown_period, 'seconds')
-            .humanize()
-            .split(' ')[1],
+          duration: +timeframe[0],
+          timeframe: timeframe[1],
         },
         cap: null,
       }

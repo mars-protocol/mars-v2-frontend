@@ -8,7 +8,7 @@ import useAllAssets from 'hooks/assets/useAllAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useAssetParams from 'hooks/params/useAssetParams'
 import usePerpsDenomState from 'hooks/perps/usePerpsDenomState'
-import usePerpsParams from 'hooks/perps/usePerpsParams'
+import { usePerpsParamsSC } from 'hooks/perps/usePerpsParams'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import usePrices from 'hooks/usePrices'
 import useVaultConfigs from 'hooks/useVaultConfigs'
@@ -46,7 +46,7 @@ export default function useHealthComputer(account?: Account) {
   const { data: assetParams } = useAssetParams()
   const { data: vaultConfigs } = useVaultConfigs()
   const { data: perpsDenomState } = usePerpsDenomState()
-  const { data: perpsParams } = usePerpsParams()
+  const { data: perpsParams } = usePerpsParamsSC()
   const { data: perpVault } = usePerpsVault()
   const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
 
@@ -54,7 +54,7 @@ export default function useHealthComputer(account?: Account) {
   const positions: Positions | null = useMemo(() => {
     if (!account) return null
     return convertAccountToPositions(account)
-  }, [account, prices])
+  }, [account])
 
   const vaultPositionValues = useMemo(() => {
     if (!account?.vaults) return null

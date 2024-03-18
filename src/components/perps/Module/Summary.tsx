@@ -11,7 +11,7 @@ import { ExpectedPrice } from 'components/perps/Module/ExpectedPrice'
 import TradingFee from 'components/perps/Module/TradingFee'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import usePerpsConfig from 'hooks/perps/usePerpsConfig'
+import { usePerpsParams } from 'hooks/perps/usePerpsParams'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -45,7 +45,7 @@ export default function PerpsSummary(props: Props) {
     props.previousAmount,
   )
 
-  const { data: perpsConfig } = usePerpsConfig()
+  const perpsParams = usePerpsParams(props.asset.denom)
 
   const onConfirm = useCallback(async () => {
     if (!currentAccount) return
@@ -76,6 +76,21 @@ export default function PerpsSummary(props: Props) {
 
   const disabled = useMemo(() => props.amount.isZero(), [props.amount])
 
+  const tradingFeeTooltip = useMemo(() => {
+    let text = 'Trading Fees'
+    if (!perpsParams) return text
+    if (
+      props.amount
+        .plus(props.previousAmount)
+        .abs()
+        .isGreaterThanOrEqualTo(props.previousAmount.abs())
+    ) {
+      return `${perpsParams.openingFeeRate.times(100)}% ${text}`
+    }
+
+    return `${perpsParams.closingFeeRate.times(100)}% ${text}`
+  }, [perpsParams, props.amount, props.previousAmount])
+
   return (
     <div className='border rounded-sm border-white/10 bg-white/5'>
       <ManageSummary {...props} newAmount={newAmount} />
@@ -90,10 +105,7 @@ export default function PerpsSummary(props: Props) {
             previousAmount={props.previousAmount}
           />
         </SummaryLine>
-        <SummaryLine
-          label='Fees'
-          tooltip={`${perpsConfig ? perpsConfig.closingFee.times(100) + '% ' : ''}Trading Fees`}
-        >
+        <SummaryLine label='Fees' tooltip={tradingFeeTooltip}>
           <TradingFee
             denom={props.asset.denom}
             newAmount={newAmount}

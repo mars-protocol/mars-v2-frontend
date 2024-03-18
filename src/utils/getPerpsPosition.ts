@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 
 import { BN_ZERO } from 'constants/math'
-import { PerpsConfig } from 'hooks/perps/usePerpsConfig'
+import { PerpsParams } from 'hooks/perps/usePerpsParams'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
@@ -10,7 +10,7 @@ export default function getPerpsPosition(
   asset: Asset,
   amount: BigNumber,
   tradeDirection: TradeDirection,
-  perpsConfig: PerpsConfig,
+  perpsParams: PerpsParams,
   tradingFee: any,
   currentPerpPosition?: PerpsPosition,
 ): PerpsPosition {
@@ -22,7 +22,7 @@ export default function getPerpsPosition(
 
   const basePosition = {
     amount,
-    closingFeeRate: BN(perpsConfig.closingFee),
+    closingFeeRate: BN(perpsParams.closingFeeRate),
     entryPrice: tradingFee.price,
     currentPrice,
     baseDenom,
