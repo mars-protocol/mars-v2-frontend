@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
-import { useCallback, useEffect, useMemo, useState } from 'react'
 import classNames from 'classnames'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
 import AssetImage from 'components/common/assets/AssetImage'
@@ -169,6 +169,7 @@ function BorrowModal(props: Props) {
   )
 
   const onDebounce = useCallback(() => {
+    if (max.isZero() || amount.isZero()) return
     if (isRepay) {
       const repayCoin = BNCoin.fromDenomAndBigNumber(
         asset.denom,
