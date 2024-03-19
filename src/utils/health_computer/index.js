@@ -355,6 +355,12 @@ function __wbg_get_imports() {
   imports.wbg.__wbindgen_object_drop_ref = function (arg0) {
     takeObject(arg0)
   }
+  imports.wbg.__wbg_log_3bcbebe443ecc27e = function (arg0, arg1) {
+    console.log(getStringFromWasm0(arg0, arg1))
+  }
+  imports.wbg.__wbg_log_117d9799fa4f6287 = function (arg0, arg1, arg2, arg3) {
+    console.log(getStringFromWasm0(arg0, arg1), getStringFromWasm0(arg2, arg3))
+  }
   imports.wbg.__wbindgen_string_get = function (arg0, arg1) {
     const obj = getObject(arg1)
     const ret = typeof obj === 'string' ? obj : undefined
