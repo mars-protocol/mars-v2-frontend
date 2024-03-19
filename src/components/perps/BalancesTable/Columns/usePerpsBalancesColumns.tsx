@@ -39,7 +39,11 @@ export default function usePerpsBalancesTable() {
       {
         ...ENTRY_PRICE_META,
         cell: ({ row }) => (
-          <EntryPrice entryPrice={row.original.entryPrice} asset={row.original.asset} />
+          <EntryPrice
+            entryPrice={row.original.entryPrice}
+            currentPrice={row.original.currentPrice}
+            asset={row.original.asset}
+          />
         ),
       },
       {

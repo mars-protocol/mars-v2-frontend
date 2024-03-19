@@ -1,6 +1,6 @@
 import DisplayCurrency from 'components/common/DisplayCurrency'
 
-export const PNL_META = { id: 'pnl', header: 'Total PnL', meta: { className: 'w-30' } }
+export const PNL_META = { id: 'pnl', header: 'Total PnL', meta: { className: 'w-20' } }
 
 interface Props {
   pnl: PerpsPnL

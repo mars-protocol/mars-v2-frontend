@@ -38,14 +38,18 @@ export default function useDepositedColumns(props: Props) {
       {
         ...TVL_META,
         cell: ({ row }) => (
-          <TVL vault={row.original as DepositedVault} isLoading={props.isLoading} />
+          <TVL
+            denom={(row.original as DepositedVault).cap?.denom}
+            amount={(row.original as DepositedVault).cap?.used}
+          />
         ),
       },
       {
         ...DEPOSIT_CAP_META,
-        cell: ({ row }) => (
-          <DepositCap vault={row.original as DepositedVault} isLoading={props.isLoading} />
-        ),
+        cell: ({ row }) => {
+          if (row.original.cap === null || row.original.type === 'perp') return null
+          return <DepositCap vault={row.original as DepositedVault} isLoading={props.isLoading} />
+        },
         sortingFn: depositCapSortingFn,
       },
       {
@@ -61,6 +65,7 @@ export default function useDepositedColumns(props: Props) {
             vault={row.original}
             isLoading={props.isLoading}
             isExpanded={row.getIsExpanded()}
+            isPerps={row.original.type === 'perp'}
           />
         ),
       },

@@ -1,21 +1,28 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 
-import useAvailableColumns from 'components/earn/farm/Table/Columns/useAvailableColumns'
 import Table from 'components/common/Table'
+import useAvailableColumns from 'components/earn/farm/Table/Columns/useAvailableColumns'
+import useAvailableVaults from 'hooks/vaults/useAvailableVaults'
+import useVaultAprs from 'hooks/vaults/useVaultAprs'
 
-type Props = {
-  data: Vault[]
-  isLoading: boolean
-}
+export default function AvailableVaultsTable() {
+  const availableVaultsWithoutApr = useAvailableVaults()
+  const { data: vaultAprs } = useVaultAprs()
+  const columns = useAvailableColumns({ isLoading: false })
 
-export default function AvailableVaultsTable(props: Props) {
-  const columns = useAvailableColumns({ isLoading: props.isLoading })
+  const availableVaults = useMemo(() => {
+    return availableVaultsWithoutApr.map((vault) => {
+      const apr = vaultAprs.find((vaultApr) => vaultApr.address === vault.address)!
+      return { ...vault, ...apr }
+    })
+  }, [availableVaultsWithoutApr, vaultAprs])
 
   return (
     <Table
+      hideCard
       title='Available vaults'
       columns={columns}
-      data={props.data}
+      data={availableVaults}
       initialSorting={[{ id: 'name', desc: true }]}
     />
   )

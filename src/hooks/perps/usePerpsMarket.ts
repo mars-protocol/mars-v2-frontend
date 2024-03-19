@@ -1,33 +1,23 @@
-import useSWR from 'swr'
+import { useMemo } from 'react'
 
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
-import useChainConfig from 'hooks/useChainConfig'
-import useClients from 'hooks/useClients'
+import usePerpsDenomState from 'hooks/perps/usePerpsDenomState'
 import { BN } from 'utils/helpers'
 
 export default function usePerpsMarket() {
-  const chainConfig = useChainConfig()
   const { perpsAsset } = usePerpsAsset()
-  const clients = useClients()
 
-  return useSWR(
-    clients && perpsAsset && `chains/${chainConfig.id}/perps/${perpsAsset.denom}`,
-    () => getPerpsMarket(clients!, perpsAsset!),
-    {
-      refreshInterval: 5000,
-      dedupingInterval: 5000,
-    },
-  )
-}
+  const { data: perpsDenomState } = usePerpsDenomState()
 
-async function getPerpsMarket(clients: ContractClients, asset: Asset) {
-  const denomState = await clients.perps.perpDenomState({ denom: asset.denom })
-  return {
-    fundingRate: BN(denomState.rate as any),
-    asset: asset,
-    openInterest: {
-      long: BN(denomState.long_oi),
-      short: BN(denomState.short_oi),
-    },
-  } as PerpsMarket
+  return useMemo(() => {
+    if (!perpsDenomState) return null
+    return {
+      fundingRate: BN(perpsDenomState.rate as any),
+      asset: perpsAsset,
+      openInterest: {
+        long: BN(perpsDenomState.long_oi),
+        short: BN(perpsDenomState.short_oi),
+      },
+    } as PerpsMarket
+  }, [perpsAsset, perpsDenomState])
 }

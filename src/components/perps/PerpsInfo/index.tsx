@@ -12,7 +12,7 @@ import usePrice from 'hooks/usePrice'
 import { BNCoin } from 'types/classes/BNCoin'
 
 export function PerpsInfo() {
-  const { data: market } = usePerpsMarket()
+  const market = usePerpsMarket()
   const assetPrice = usePrice(market?.asset.denom || '')
 
   const items = useMemo(() => {

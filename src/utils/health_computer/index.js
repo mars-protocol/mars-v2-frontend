@@ -98,6 +98,7 @@ function passStringToWasm0(arg, malloc, realloc) {
     const ret = encodeString(arg, view)
 
     offset += ret.written
+    ptr = realloc(ptr, len, offset, 1) >>> 0
   }
 
   WASM_VECTOR_LEN = offset
@@ -197,7 +198,7 @@ export function max_borrow_estimate_js(c, borrow_denom, target) {
  * @param {string} from_denom
  * @param {string} to_denom
  * @param {SwapKind} kind
- * @param {Slippage} slippage
+ * @param {Number} slippage
  * @returns {string}
  */
 export function max_swap_estimate_js(c, from_denom, to_denom, kind, slippage) {
@@ -255,6 +256,53 @@ export function liquidation_price_js(c, denom, kind) {
   }
 }
 
+/**
+ * @param {HealthComputer} c
+ * @param {string} denom
+ * @param {string} base_denom
+ * @param {Number} long_oi_amount
+ * @param {Number} short_oi_amount
+ * @param {Direction} direction
+ * @returns {string}
+ */
+export function max_perp_size_estimate_js(
+  c,
+  denom,
+  base_denom,
+  long_oi_amount,
+  short_oi_amount,
+  direction,
+) {
+  let deferred3_0
+  let deferred3_1
+  try {
+    const retptr = wasm.__wbindgen_add_to_stack_pointer(-16)
+    const ptr0 = passStringToWasm0(denom, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc)
+    const len0 = WASM_VECTOR_LEN
+    const ptr1 = passStringToWasm0(base_denom, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc)
+    const len1 = WASM_VECTOR_LEN
+    wasm.max_perp_size_estimate_js(
+      retptr,
+      addHeapObject(c),
+      ptr0,
+      len0,
+      ptr1,
+      len1,
+      addHeapObject(long_oi_amount),
+      addHeapObject(short_oi_amount),
+      addHeapObject(direction),
+    )
+    var r0 = getInt32Memory0()[retptr / 4 + 0]
+    var r1 = getInt32Memory0()[retptr / 4 + 1]
+    deferred3_0 = r0
+    deferred3_1 = r1
+    return getStringFromWasm0(r0, r1)
+  } finally {
+    wasm.__wbindgen_add_to_stack_pointer(16)
+    wasm.__wbindgen_free(deferred3_0, deferred3_1, 1)
+  }
+}
+
 function handleError(f, args) {
   try {
     return f.apply(this, args)
@@ -296,7 +344,6 @@ async function __wbg_load(module, imports) {
 function __wbg_get_imports() {
   const imports = {}
   imports.wbg = {}
-  imports.wbg.__wbg_log_117d9799fa4f6287 = function (arg0, arg1, arg2, arg3) {}
   imports.wbg.__wbindgen_object_clone_ref = function (arg0) {
     const ret = getObject(arg0)
     return addHeapObject(ret)

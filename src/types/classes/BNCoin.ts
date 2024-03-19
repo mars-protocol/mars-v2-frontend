@@ -64,4 +64,8 @@ export class BNCoin {
   abs() {
     return BNCoin.fromDenomAndBigNumber(this.denom, this.amount.abs())
   }
+
+  integerValue() {
+    return BNCoin.fromDenomAndBigNumber(this.denom, this.amount.integerValue())
+  }
 }

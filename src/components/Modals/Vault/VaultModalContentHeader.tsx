@@ -57,12 +57,14 @@ export default function VaultModalContentHeader({ vault }: Props) {
         </>
       )}
 
-      <TitleAndSubCell
-        title={
-          <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(vault.cap.denom, vault.cap.max)} />
-        }
-        sub={'Deposit Cap'}
-      />
+      {vault.cap && (
+        <TitleAndSubCell
+          title={
+            <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(vault.cap.denom, vault.cap.max)} />
+          }
+          sub={'Deposit Cap'}
+        />
+      )}
     </div>
   )
 }

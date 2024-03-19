@@ -1,6 +1,6 @@
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
-import { Positions } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { Positions, UnlockState } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import {
   AssetParamsBaseForAddr as AssetParams,
   AssetParamsBaseForAddr,
@@ -119,6 +119,8 @@ export function resolvePerpsPositions(
       amount: BN(position.size as any), // Amount is negative for SHORT positions
       tradeDirection: BN(position.size as any).isNegative() ? 'short' : 'long',
       closingFeeRate: BN(position.closing_fee_rate),
+      entryPrice: BN(position.entry_exec_price),
+      currentPrice: BN(position.current_exec_price),
       pnl: {
         net: BNCoin.fromDenomAndBigNumber(
           position.base_denom,
@@ -149,23 +151,56 @@ export function resolvePerpsPositions(
         unrealized: {
           net: BNCoin.fromDenomAndBigNumber(
             position.base_denom,
-            BN(position.unrealised_pnl.values.pnl as any).div(basePrice),
+            BN(position.unrealised_pnl.amounts.pnl as any),
           ),
           price: BNCoin.fromDenomAndBigNumber(
             position.base_denom,
-            BN(position.unrealised_pnl.values.price_pnl as any).div(basePrice),
+            BN(position.unrealised_pnl.amounts.price_pnl as any),
           ),
           funding: BNCoin.fromDenomAndBigNumber(
             position.base_denom,
-            BN(position.unrealised_pnl.values.accrued_funding as any).div(basePrice),
+            BN(position.unrealised_pnl.amounts.accrued_funding as any),
           ),
           fees: BNCoin.fromDenomAndBigNumber(
             position.base_denom,
-            BN(position.unrealised_pnl.values.closing_fee as any).div(basePrice),
+            BN(position.unrealised_pnl.amounts.closing_fee as any),
           ),
         },
       },
-      entryPrice: BN(position.entry_price),
     }
   })
+}
+
+export function resolvePerpVaultPositions(
+  perpVaultPositions?: Positions['perp_vault'],
+): PerpVaultPositions | null {
+  if (!perpVaultPositions) return null
+
+  const [unlocking, unlockedAmount] = perpVaultPositions.unlocks.reduce(
+    (prev, curr) => {
+      if (curr.cooldown_end < Date.now()) {
+        prev[1].plus(curr.amount)
+        return prev
+      }
+
+      prev[0].push(curr)
+      return prev
+    },
+    [[] as UnlockState[], BN_ZERO],
+  )
+
+  return {
+    denom: perpVaultPositions.denom,
+    active: BN(perpVaultPositions.deposit.amount).isZero()
+      ? null
+      : {
+          amount: BN(perpVaultPositions.deposit.amount),
+          shares: BN(perpVaultPositions.deposit.shares),
+        },
+    unlocking: unlocking.map((position) => ({
+      amount: BN(position.amount),
+      unlocksAt: position.cooldown_end,
+    })),
+    unlocked: unlockedAmount.isZero() ? null : unlockedAmount,
+  }
 }

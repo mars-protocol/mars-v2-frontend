@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js'
 import debounce from 'lodash.debounce'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -16,41 +17,75 @@ import OrderTypeSelector from 'components/trade/TradeModule/SwapForm/OrderTypeSe
 import { AvailableOrderType } from 'components/trade/TradeModule/SwapForm/OrderTypeSelector/types'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
+import { usePerpsParams } from 'hooks/perps/usePerpsParams'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
+import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
+import useHealthComputer from 'hooks/useHealthComputer'
+import usePrice from 'hooks/usePrice'
+import usePrices from 'hooks/usePrices'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
+import { getAccountNetValue } from 'utils/accounts'
+import { demagnify } from 'utils/formatters'
 import getPerpsPosition from 'utils/getPerpsPosition'
 import { BN } from 'utils/helpers'
 
 export function PerpsModule() {
   const [selectedOrderType, setSelectedOrderType] = useState<AvailableOrderType>('Market')
   const [tradeDirection, setTradeDirection] = useState<TradeDirection>('long')
+  const { data: perpsVault } = usePerpsVault()
   const { perpsAsset } = usePerpsAsset()
   const account = useCurrentAccount()
-  const { simulatePerps, addedPerps } = useUpdatedAccount(account)
+  const { data: prices } = usePrices()
+  const allAssets = useAllAssets()
+  const { simulatePerps, updatedPerpPosition, updatedAccount, removedDeposits } =
+    useUpdatedAccount(account)
   const [amount, setAmount] = useState<BigNumber>(BN_ZERO)
   const { previousAmount, previousTradeDirection, previousLeverage, leverage, hasActivePosition } =
     usePerpsModule(amount)
+
+  const [sliderLeverage, setSliderLeverage] = useState<number>(1)
+
+  const { computeMaxPerpAmount } = useHealthComputer(account)
+
+  const { data: tradingFee } = useTradingFeeAndPrice(
+    perpsAsset.denom,
+    amount.plus(previousAmount),
+    previousAmount,
+  )
+  const perpsOraclePrice = usePrice(perpsAsset.denom)
+  const perpsParams = usePerpsParams(perpsAsset.denom)
 
   const debouncedUpdateAccount = useMemo(
     () =>
       debounce((perpsPosition: PerpsPosition) => {
         if (
-          addedPerps &&
-          perpsPosition.amount === addedPerps.amount &&
-          perpsPosition.tradeDirection === addedPerps.tradeDirection
+          !!updatedPerpPosition &&
+          perpsPosition.amount.isEqualTo(updatedPerpPosition.amount) &&
+          perpsPosition.tradeDirection === updatedPerpPosition.tradeDirection
         )
           return
+
         simulatePerps(perpsPosition)
-      }, 100),
-    [simulatePerps, addedPerps],
+      }, 500),
+    [simulatePerps, updatedPerpPosition],
   )
 
   useEffect(() => {
+    const currentPerpPosition = account?.perps.find((p) => p.denom === perpsAsset.denom)
+    if (!perpsParams || !tradingFee || !perpsVault) return
+
     const perpsPosition = getPerpsPosition(
+      perpsVault.denom,
       perpsAsset,
-      amount ?? previousAmount,
+      amount.plus(previousAmount),
       tradeDirection ?? previousTradeDirection,
+      perpsParams,
+      tradingFee,
+      currentPerpPosition,
     )
+
     debouncedUpdateAccount(perpsPosition)
   }, [
     debouncedUpdateAccount,
@@ -59,15 +94,51 @@ export function PerpsModule() {
     tradeDirection,
     previousAmount,
     previousTradeDirection,
+    perpsParams,
+    tradingFee,
+    perpsVault,
+    account?.perps,
+    perpsOraclePrice,
+  ])
+
+  const netValue = useMemo(() => {
+    if (!account) return BN_ZERO
+
+    return getAccountNetValue(account, prices, allAssets)
+  }, [account, allAssets, prices])
+
+  const [maxAmount, maxLeverage] = useMemo(() => {
+    let maxAmount = computeMaxPerpAmount(perpsAsset.denom, tradeDirection)
+
+    if (tradeDirection === 'short') maxAmount = maxAmount.plus(previousAmount)
+    if (tradeDirection === 'long') maxAmount = maxAmount.minus(previousAmount)
+
+    maxAmount = BigNumber.max(maxAmount, 0)
+    let maxLeverage = 1
+
+    if (!hasActivePosition) {
+      maxLeverage = perpsOraclePrice
+        .times(demagnify(maxAmount, perpsAsset))
+        .div(netValue)
+        .plus(1)
+        .toNumber()
+    }
+
+    return [maxAmount, maxLeverage]
+  }, [
+    computeMaxPerpAmount,
+    hasActivePosition,
+    netValue,
+    perpsAsset,
+    perpsOraclePrice,
+    previousAmount,
+    tradeDirection,
   ])
 
   const onDebounce = useCallback(() => {
-    // TODO:  Implement debounced simulation
-  }, [])
-
-  const setLeverage = useCallback((leverage: number) => {
-    // TODO: Implement leverage setting
-  }, [])
+    const percentOfMax = BN(sliderLeverage - 1).div(maxLeverage - 1)
+    setAmount(maxAmount.times(percentOfMax).integerValue())
+  }, [maxAmount, maxLeverage, sliderLeverage])
 
   const onChangeTradeDirection = useCallback(
     (tradeDirection: TradeDirection) => {
@@ -104,7 +175,7 @@ export function PerpsModule() {
       />
       <AssetAmountInput
         label='Amount'
-        max={BN(10000000000)} // TODO: Implement max calculation
+        max={maxAmount}
         amount={amount.abs()}
         setAmount={onChangeAmount}
         asset={perpsAsset}
@@ -117,13 +188,22 @@ export function PerpsModule() {
           <Text size='sm'>Position Leverage</Text>
           <LeverageSlider
             min={1}
-            max={10}
-            value={leverage}
-            onChange={setLeverage}
+            max={maxLeverage}
+            value={sliderLeverage}
+            onChange={setSliderLeverage}
             onDebounce={onDebounce}
             type={tradeDirection}
           />
-          <LeverageButtons />
+          <LeverageButtons
+            maxLeverage={maxLeverage}
+            currentLeverage={leverage}
+            maxAmount={maxAmount}
+            onChange={(leverage) => {
+              const percentOfMax = BN(leverage - 1).div(maxLeverage - 1)
+              setAmount(maxAmount.times(percentOfMax).integerValue())
+              setSliderLeverage(leverage)
+            }}
+          />
         </>
       )}
 

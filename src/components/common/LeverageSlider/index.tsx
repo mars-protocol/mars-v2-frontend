@@ -87,7 +87,7 @@ function LeverageSlider(props: Props) {
       </div>
       <div className={'flex w-full justify-between text-xs text-opacity-50 text-white font-bold'}>
         <span>{markPosPercent > LEFT_MARGIN ? min : ''}</span>
-        <span>{max.toFixed(type !== 'margin' ? 0 : 2)}</span>
+        <span>{max.toFixed(1)}</span>
       </div>
     </div>
   )
