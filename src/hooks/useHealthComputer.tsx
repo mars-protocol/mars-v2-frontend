@@ -132,18 +132,23 @@ export default function useHealthComputer(account?: Account) {
     )
   }, [vaultConfigs])
 
-  const perpsParamsData = useMemo(
-    () =>
-      perpsParams?.reduce(
-        (prev, curr) => {
-          prev[curr.denom] = curr
+  const perpsParamsData = useMemo(() => {
+    if (!perpsParams) return {}
+    return perpsParams.reduce(
+      (prev, curr) => {
+        prev[curr.denom] = curr
 
-          return prev
-        },
-        {} as { [key: string]: PerpParams },
-      ),
-    [perpsParams],
-  )
+        return prev
+      },
+      {} as { [key: string]: PerpParams },
+    )
+  }, [perpsParams])
+
+  const perpsDenomStates = useMemo(() => {
+    if (!perpsDenomState) return {}
+
+    return { [perpsDenomState.denom]: perpsDenomState }
+  }, [perpsDenomState])
 
   const healthComputer: HealthComputer | null = useMemo(() => {
     if (
@@ -151,7 +156,7 @@ export default function useHealthComputer(account?: Account) {
       !positions ||
       !vaultPositionValues ||
       !vaultConfigsData ||
-      !perpsDenomState ||
+      !perpsDenomStates ||
       !perpsParamsData ||
       Object.keys(denomsData).length === 0 ||
       Object.keys(priceData).length === 0 ||
@@ -170,7 +175,7 @@ export default function useHealthComputer(account?: Account) {
       positions: positions,
       perps_data: {
         // TODO: Currently we only pass the current selected perp Denom, not ALL
-        denom_states: { [perpsDenomState.denom]: perpsDenomState },
+        denom_states: perpsDenomStates,
         params: perpsParamsData,
       },
     } as HealthComputer
@@ -179,7 +184,7 @@ export default function useHealthComputer(account?: Account) {
     positions,
     vaultPositionValues,
     vaultConfigsData,
-    perpsDenomState,
+    perpsDenomStates,
     perpsParamsData,
     denomsData,
     priceData,
