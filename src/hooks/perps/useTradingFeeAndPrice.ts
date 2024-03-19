@@ -3,6 +3,7 @@ import useSWR from 'swr'
 
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import { usePerpsParams } from 'hooks/perps/usePerpsParams'
 import useChainConfig from 'hooks/useChainConfig'
 import useClients from 'hooks/useClients'
 import useDebounce from 'hooks/useDebounce'
@@ -18,6 +19,7 @@ export default function useTradingFeeAndPrice(
   const debouncedAmount = useDebounce<BigNumber>(newAmount, 500)
   const clients = useClients()
   const enabled = !debouncedAmount.isEqualTo(previousAmount) && clients && !!accountId
+  const perpsParams = usePerpsParams(denom)
 
   return useSWR(
     enabled && `${chainConfig.id}/perps/${denom}/positionFeeAndPrice/${debouncedAmount}`,
@@ -41,7 +43,6 @@ export default function useTradingFeeAndPrice(
             opening: BN(positionFees.opening_fee),
             closing: BN(positionFees.closing_fee),
           },
-          rate: BN(0.0005),
         }
       }
 
@@ -56,7 +57,7 @@ export default function useTradingFeeAndPrice(
       const openingPositionFees$ = clients!.perps.positionFees({
         denom,
         newSize: newAmount.toString() as any,
-        accountId: '91283123987467', // TODO: Remove this hard-coded value. SC currently does not allow flipping, so providing arbitrary accountId prevents this
+        accountId: '999999999999999', // TODO: Remove this hard-coded value. SC currently does not allow flipping, so providing arbitrary accountId prevents this
       })
 
       return await Promise.all([closingPositionFees$, openingPositionFees$]).then(
@@ -67,7 +68,7 @@ export default function useTradingFeeAndPrice(
             opening: BN(closingPositionFees.opening_fee).plus(openingPositionFees.opening_fee),
             closing: BN(closingPositionFees.closing_fee).plus(openingPositionFees.closing_fee),
           },
-          rate: BN(0.0005), // TODO: Make this rate the actula rate again!
+          rate: perpsParams ? BN(perpsParams.closingFeeRate) : BN(0.0005),
         }),
       )
     },

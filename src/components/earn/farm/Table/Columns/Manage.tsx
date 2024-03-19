@@ -17,6 +17,7 @@ interface Props {
   vault: DepositedVault
   isLoading: boolean
   isExpanded: boolean
+  isPerps: boolean
 }
 
 export default function Manage(props: Props) {
@@ -27,6 +28,15 @@ export default function Manage(props: Props) {
   const [isConfirming, setIsConfirming] = useState(false)
 
   const depositMoreHandler = useCallback(() => {
+    if (props.isPerps) {
+      useStore.setState({
+        perpsVaultModal: {
+          type: 'deposit',
+        },
+      })
+      return
+    }
+
     useStore.setState({
       vaultModal: {
         vault: props.vault,

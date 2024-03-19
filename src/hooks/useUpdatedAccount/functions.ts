@@ -51,8 +51,7 @@ export function updatePerpsPositions(
     return currentPositions
   }
 
-  currentPositions[index].tradeDirection = updatedPosition.tradeDirection
-  currentPositions[index].amount = updatedPosition.amount
+  currentPositions[index] = updatedPosition
 
   return currentPositions
 }

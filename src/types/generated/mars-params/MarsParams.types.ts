@@ -5,11 +5,9 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-export type Decimal = string
 export interface InstantiateMsg {
   address_provider: string
   owner: string
-  target_health_factor: Decimal
 }
 export type ExecuteMsg =
   | {
@@ -19,9 +17,6 @@ export type ExecuteMsg =
       update_config: {
         address_provider?: string | null
       }
-    }
-  | {
-      update_target_health_factor: Decimal
     }
   | {
       update_asset_params: AssetParamsUpdate
@@ -55,6 +50,7 @@ export type AssetParamsUpdate = {
     params: AssetParamsBaseForString
   }
 }
+export type Decimal = string
 export type HlsAssetTypeForString =
   | {
       coin: {
@@ -98,6 +94,7 @@ export type RedBankEmergencyUpdate = {
   disable_borrowing: string
 }
 export interface AssetParamsBaseForString {
+  close_factor: Decimal
   credit_manager: CmSettingsForString
   denom: string
   deposit_cap: Uint128
@@ -140,9 +137,16 @@ export interface Coin {
   [k: string]: unknown
 }
 export interface PerpParams {
+  closing_fee_rate: Decimal
   denom: string
-  max_long_oi: Uint128
-  max_short_oi: Uint128
+  liquidation_threshold: Decimal
+  max_loan_to_value: Decimal
+  max_long_oi_value: Uint128
+  max_net_oi_value: Uint128
+  max_position_value?: Uint128 | null
+  max_short_oi_value: Uint128
+  min_position_value: Uint128
+  opening_fee_rate: Decimal
 }
 export type QueryMsg =
   | {
@@ -185,9 +189,6 @@ export type QueryMsg =
       }
     }
   | {
-      target_health_factor: {}
-    }
-  | {
       total_deposit: {
         denom: string
       }
@@ -206,6 +207,7 @@ export type HlsAssetTypeForAddr =
 export type Addr = string
 export type ArrayOfAssetParamsBaseForAddr = AssetParamsBaseForAddr[]
 export interface AssetParamsBaseForAddr {
+  close_factor: Decimal
   credit_manager: CmSettingsForAddr
   denom: string
   deposit_cap: Uint128

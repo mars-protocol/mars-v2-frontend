@@ -43,7 +43,7 @@ function PnLTooltip(props: Props) {
               showZero
             />
           </div>
-          <PnLRow coin={coins.price} text='Price' />
+          <PnLRow coin={coins.price} text='Price' showSignPrefix />
           <PnLRow coin={coins.funding} text='Funding' className='text-white/60' showSignPrefix />
           <PnLRow coin={coins.fees} text='Fees' className='text-white/60' showSignPrefix />
           {i === 0 && <Divider className='my-2' />}

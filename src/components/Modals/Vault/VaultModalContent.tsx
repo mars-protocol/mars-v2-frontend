@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useState } from 'react'
 import classNames from 'classnames'
+import { useCallback, useMemo, useState } from 'react'
 
 import VaultBorrowings from 'components/Modals/Vault/VaultBorrowings'
 import VaultBorrowingsSubTitle from 'components/Modals/Vault/VaultBorrowingsSubTitle'
@@ -51,6 +51,8 @@ export default function VaultModalContent(props: Props) {
   })
 
   const depositCapReachedCoins = useMemo(() => {
+    if (!props.vault.cap) return [BNCoin.fromDenomAndBigNumber(displayAsset.denom, BN_ZERO)]
+
     const capLeft = getCapLeftWithBuffer(props.vault.cap)
 
     if (totalValue.isGreaterThan(capLeft)) {

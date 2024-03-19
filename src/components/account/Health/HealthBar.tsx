@@ -48,8 +48,8 @@ export default function HealthBar({
     DEFAULT_SETTINGS.reduceMotion,
   )
   const width = calculateHealth(health)
-  const updatedWidth = calculateHealth(updatedHealth ?? 0)
-  const isUpdated = updatedWidth > 0 && updatedWidth !== width
+  const updatedWidth = calculateHealth(updatedHealth)
+  const isUpdated = updatedHealthFactor !== 0 && healthFactor !== updatedHealthFactor
   const isIncrease = isUpdated && updatedWidth > width
   const color = useHealthColor(health, 'fill')
   const updatedColor = useHealthColor(updatedHealth ?? 0, 'fill')

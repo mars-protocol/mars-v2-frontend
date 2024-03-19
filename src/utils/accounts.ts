@@ -6,6 +6,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { VaultPosition } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { Positions } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 import { byDenom } from 'utils/array'
+import { getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { convertApyToApr } from 'utils/parsers'
 
@@ -14,12 +15,9 @@ export const calculateAccountBalanceValue = (
   prices: BNCoin[],
   assets: Asset[],
 ): BigNumber => {
-  const depositsValue = calculateAccountValue('deposits', account, prices, assets)
-  const lendsValue = calculateAccountValue('lends', account, prices, assets)
-  const debtsValue = calculateAccountValue('debts', account, prices, assets)
-  const vaultsValue = calculateAccountValue('vaults', account, prices, assets)
+  const [deposits, lends, debts, vaults, perps] = getAccountPositionValues(account, prices, assets)
 
-  return depositsValue.plus(lendsValue).plus(vaultsValue).minus(debtsValue)
+  return deposits.plus(lends).plus(vaults).plus(perps).minus(debts)
 }
 
 export const getAccountPositionValues = (
@@ -31,11 +29,12 @@ export const getAccountPositionValues = (
   const lends = calculateAccountValue('lends', account, prices, assets)
   const debts = calculateAccountValue('debts', account, prices, assets)
   const vaults = calculateAccountValue('vaults', account, prices, assets)
-  return [deposits, lends, debts, vaults]
+  const perps = calculateAccountValue('perps', account, prices, assets)
+  return [deposits, lends, debts, vaults, perps]
 }
 
 export const calculateAccountValue = (
-  type: 'deposits' | 'lends' | 'debts' | 'vaults',
+  type: 'deposits' | 'lends' | 'debts' | 'vaults' | 'perps',
   account: Account | AccountChange,
   prices: BNCoin[],
   assets: Asset[],
@@ -50,6 +49,15 @@ export const calculateAccountValue = (
           .plus(vaultPosition.values.secondary)
           .plus(vaultPosition.values.unlocking)
           .plus(vaultPosition.values.unlocked)
+      }, BN_ZERO) || BN_ZERO
+    )
+  }
+
+  if (type === 'perps') {
+    return (
+      account.perps?.reduce((acc, perpPosition) => {
+        acc = acc.plus(getCoinValue(perpPosition.pnl.unrealized.net, prices, assets))
+        return acc
       }, BN_ZERO) || BN_ZERO
     )
   }
@@ -80,7 +88,9 @@ export const calculateAccountApr = (
   const lendsValue = calculateAccountValue('lends', account, prices, assets)
   const vaultsValue = calculateAccountValue('vaults', account, prices, assets)
   const debtsValue = calculateAccountValue('debts', account, prices, assets)
-  const totalValue = depositValue.plus(lendsValue).plus(vaultsValue)
+  const perpsValue = calculateAccountValue('perps', account, prices, assets)
+
+  const totalValue = depositValue.plus(lendsValue).plus(vaultsValue).plus(perpsValue)
   const totalNetValue = totalValue.minus(debtsValue)
 
   if (totalNetValue.isLessThanOrEqualTo(0)) return BN_ZERO
@@ -174,8 +184,7 @@ export function accumulateAmounts(denom: string, coins: BNCoin[]): BigNumber {
   return coins.reduce((acc, coin) => acc.plus(getAmount(denom, [coin.toCoin()])), BN_ZERO)
 }
 
-// TODO: 📈 Add correct type mapping
-export function convertAccountToPositions(account: Account, prices: BNCoin[]): Positions {
+export function convertAccountToPositions(account: Account): Positions {
   return {
     account_id: account.id,
     debts: account.debts.map((debt) => ({
@@ -190,42 +199,33 @@ export function convertAccountToPositions(account: Account, prices: BNCoin[]): P
       denom: lend.denom,
     })),
     perps: account.perps.map((perpPosition) => {
-      // TODO: Check if this needs to be converted (in regards to HC decimal scaling)
-      const currentPrice = prices.find(byDenom(perpPosition.denom))?.amount ?? BN_ZERO
       return {
-        // Used
         base_denom: perpPosition.baseDenom,
-        // Used
         closing_fee_rate: perpPosition.closingFeeRate.toString(),
-        // Used
-        current_price: currentPrice.toString(), // Check what prices we should pass to current and entry prices. Entry price will change when modifying positionl
-        current_exec_price: currentPrice.toString(), // TODO: 📈 This needs to be queried
+        current_price: perpPosition.currentPrice.toString(),
+        current_exec_price: perpPosition.currentPrice.toString(),
         denom: perpPosition.denom,
-        // Used (for now, this might be changed)
-        entry_price: currentPrice.toString(),
-        // Used (not actually used, but it's in todo)
-        entry_exec_price: currentPrice.toString(), // TODO: 📈 Check if this matters (currently just using entry price)
-        // Used
+        entry_price: perpPosition.entryPrice.toString(),
+        entry_exec_price: perpPosition.entryPrice.toString(),
         size: perpPosition.amount.toString() as any,
         unrealised_pnl: {
           coins: {
             closing_fee: perpPosition.pnl.unrealized.fees.abs().toCoin(),
-            // Used
-            pnl: perpPosition.pnl.unrealized.net.toPnLCoin(), // Used
+            pnl: perpPosition.pnl.unrealized.net.toPnLCoin(),
           },
           amounts: {
-            // CHeck if these are correct
             accrued_funding: perpPosition.pnl.unrealized.funding.amount
               .integerValue()
               .toString() as any,
+            // TODO: There is now a double fee applied. This might be inaccurate (on the conservative side)
             opening_fee: perpPosition.pnl.unrealized.fees.amount
               .abs()
               .integerValue()
-              .toString() as any, // Add openning fee for modifying position
+              .toString() as any,
             closing_fee: perpPosition.pnl.unrealized.fees.amount
               .abs()
               .integerValue()
-              .toString() as any, // Add closing fee for modifying position
+              .toString() as any,
             pnl: perpPosition.pnl.unrealized.net.amount.integerValue().toString() as any,
             price_pnl: perpPosition.pnl.unrealized.price.amount.integerValue().toString() as any,
           },
@@ -311,8 +311,20 @@ export function cloneAccount(account: Account): Account {
       amount: perpPosition.amount,
       pnl: perpPosition.pnl,
       entryPrice: perpPosition.entryPrice,
+      currentPrice: perpPosition.currentPrice,
       tradeDirection: perpPosition.tradeDirection,
     })),
+    perpVault: account.perpVault
+      ? {
+          active: account.perpVault?.active ? { ...account.perpVault.active } : null,
+          denom: account.perpVault.denom,
+          unlocked: account.perpVault.unlocked,
+          unlocking: account.perpVault.unlocking.map((unlocking) => ({
+            amount: unlocking.amount,
+            unlocksAt: unlocking.unlocksAt,
+          })),
+        }
+      : null,
   }
 }
 

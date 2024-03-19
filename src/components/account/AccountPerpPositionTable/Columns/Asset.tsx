@@ -6,16 +6,14 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirection'
-import { BN_ZERO } from 'constants/math'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
-import { BNCoin } from 'types/classes/BNCoin'
 import { demagnify } from 'utils/formatters'
 
 export const ASSET_META = {
   accessorKey: 'symbol',
   header: 'Asset',
   id: 'symbol',
-  meta: { className: 'min-w-40 w-40' },
+  meta: { className: 'min-w-30 w-30' },
 }
 
 interface Props {
@@ -54,16 +52,19 @@ function TooltipContent(props: TooltipProps) {
       <LabelAndValue label='Realized PnL'>
         <DisplayCurrency
           className='text-sm text-right number'
-          coin={BNCoin.fromDenomAndBigNumber('usd', BN_ZERO)}
+          coin={row.pnl.realized.net}
           showZero
+          isProfitOrLoss
+          showSignPrefix
         />
       </LabelAndValue>
       <LabelAndValue label='Unrealized PnL'>
         <DisplayCurrency
-          coin={row.pnl.net}
+          coin={row.pnl.unrealized.net}
           options={{ abbreviated: false }}
           showZero
           isProfitOrLoss
+          showSignPrefix
         />
       </LabelAndValue>
     </div>

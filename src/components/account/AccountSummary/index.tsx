@@ -126,7 +126,7 @@ export default function AccountSummary(props: Props) {
       },
     ]
 
-    if (account.vaults.length > 0)
+    if (account.vaults.length > 0 || (updatedAccount && updatedAccount.vaults.length > 0))
       itemsArray.push({
         title: 'Strategies',
         renderContent: () =>
@@ -136,7 +136,7 @@ export default function AccountSummary(props: Props) {
         renderSubTitle: () => <></>,
       })
 
-    if (account.perps.length > 0)
+    if (account.perps.length > 0 || (updatedAccount && updatedAccount.perps.length > 0))
       itemsArray.push({
         title: 'Perp Positions',
         renderContent: () =>
