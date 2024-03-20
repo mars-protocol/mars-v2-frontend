@@ -6,6 +6,7 @@ interface PerpsPosition {
   tradeDirection: TradeDirection
   amount: BigNumber
   pnl: PerpsPnL
+  currentPrice: BigNumber
   entryPrice: BigNumber
   closingFeeRate: BigNumber
 }

@@ -49,7 +49,6 @@ export default function ModalContentWithSummary(props: Props) {
         props.contentClassName,
       )}
     >
-      {props.subHeader && props.subHeader}
       {modalContent(props.content, props.isContentCard, props.account)}
       {props.account && <AccountSummaryInModal account={props.account} isHls={props.isHls} />}
     </Modal>

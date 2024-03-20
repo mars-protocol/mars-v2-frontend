@@ -9,11 +9,11 @@ import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tan
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
 import {
-  Decimal,
   InstantiateMsg,
   ExecuteMsg,
   OwnerUpdate,
   AssetParamsUpdate,
+  Decimal,
   HlsAssetTypeForString,
   Uint128,
   VaultConfigUpdate,
@@ -74,10 +74,6 @@ export const marsParamsQueryKeys = {
     [
       { ...marsParamsQueryKeys.address(contractAddress)[0], method: 'all_perp_params', args },
     ] as const,
-  targetHealthFactor: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
-    [
-      { ...marsParamsQueryKeys.address(contractAddress)[0], method: 'target_health_factor', args },
-    ] as const,
   totalDeposit: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
     [
       { ...marsParamsQueryKeys.address(contractAddress)[0], method: 'total_deposit', args },
@@ -111,18 +107,6 @@ export function useMarsParamsTotalDepositQuery<TData = TotalDepositResponse>({
             denom: args.denom,
           })
         : Promise.reject(new Error('Invalid client')),
-    { ...options, enabled: !!client && (options?.enabled != undefined ? options.enabled : true) },
-  )
-}
-export interface MarsParamsTargetHealthFactorQuery<TData>
-  extends MarsParamsReactQuery<Decimal, TData> {}
-export function useMarsParamsTargetHealthFactorQuery<TData = Decimal>({
-  client,
-  options,
-}: MarsParamsTargetHealthFactorQuery<TData>) {
-  return useQuery<Decimal, Error, TData>(
-    marsParamsQueryKeys.targetHealthFactor(client?.contractAddress),
-    () => (client ? client.targetHealthFactor() : Promise.reject(new Error('Invalid client'))),
     { ...options, enabled: !!client && (options?.enabled != undefined ? options.enabled : true) },
   )
 }
@@ -366,26 +350,6 @@ export function useMarsParamsUpdateAssetParamsMutation(
   return useMutation<ExecuteResult, Error, MarsParamsUpdateAssetParamsMutation>(
     ({ client, msg, args: { fee, memo, funds } = {} }) =>
       client.updateAssetParams(msg, fee, memo, funds),
-    options,
-  )
-}
-export interface MarsParamsUpdateTargetHealthFactorMutation {
-  client: MarsParamsClient
-  args?: {
-    fee?: number | StdFee | 'auto'
-    memo?: string
-    funds?: Coin[]
-  }
-}
-export function useMarsParamsUpdateTargetHealthFactorMutation(
-  options?: Omit<
-    UseMutationOptions<ExecuteResult, Error, MarsParamsUpdateTargetHealthFactorMutation>,
-    'mutationFn'
-  >,
-) {
-  return useMutation<ExecuteResult, Error, MarsParamsUpdateTargetHealthFactorMutation>(
-    ({ client, msg, args: { fee, memo, funds } = {} }) =>
-      client.updateTargetHealthFactor(msg, fee, memo, funds),
     options,
   )
 }

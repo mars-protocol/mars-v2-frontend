@@ -5,18 +5,12 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-export type Decimal = string
-export type Uint128 = string
 export type OracleBaseForString = string
 export type ParamsBaseForString = string
 export interface InstantiateMsg {
   base_denom: string
-  closing_fee_rate: Decimal
   cooldown_period: number
   credit_manager: string
-  max_position_in_base_denom?: Uint128 | null
-  min_position_in_base_denom: Uint128
-  opening_fee_rate: Decimal
   oracle: OracleBaseForString
   params: ParamsBaseForString
 }
@@ -42,15 +36,20 @@ export type ExecuteMsg =
       }
     }
   | {
-      deposit: {}
+      deposit: {
+        account_id: string
+      }
     }
   | {
       unlock: {
+        account_id: string
         shares: Uint128
       }
     }
   | {
-      withdraw: {}
+      withdraw: {
+        account_id: string
+      }
     }
   | {
       open_position: {
@@ -72,6 +71,12 @@ export type ExecuteMsg =
         new_size: SignedDecimal
       }
     }
+  | {
+      close_all_positions: {
+        account_id: string
+        action?: ActionKind | null
+      }
+    }
 export type OwnerUpdate =
   | {
       propose_new_owner: {
@@ -87,6 +92,9 @@ export type OwnerUpdate =
       }
     }
   | 'clear_emergency_owner'
+export type Decimal = string
+export type Uint128 = string
+export type ActionKind = 'default' | 'liquidation'
 export interface SignedDecimal {
   abs: Decimal
   negative: boolean
@@ -119,8 +127,14 @@ export type QueryMsg =
       }
     }
   | {
+      perp_vault_position: {
+        account_id: string
+        action?: ActionKind | null
+      }
+    }
+  | {
       deposit: {
-        depositor: string
+        account_id: string
       }
     }
   | {
@@ -131,7 +145,7 @@ export type QueryMsg =
     }
   | {
       unlocks: {
-        depositor: string
+        account_id: string
       }
     }
   | {
@@ -150,6 +164,7 @@ export type QueryMsg =
   | {
       positions_by_account: {
         account_id: string
+        action?: ActionKind | null
       }
     }
   | {
@@ -184,12 +199,8 @@ export type QueryMsg =
     }
 export interface ConfigForString {
   base_denom: string
-  closing_fee_rate: Decimal
   cooldown_period: number
   credit_manager: string
-  max_position_in_base_denom?: Uint128 | null
-  min_position_in_base_denom: Uint128
-  opening_fee_rate: Decimal
   oracle: OracleBaseForString
   params: ParamsBaseForString
 }
@@ -233,8 +244,8 @@ export interface Funding {
 }
 export type ArrayOfDenomStateResponse = DenomStateResponse[]
 export interface DepositResponse {
+  account_id: string
   amount: Uint128
-  depositor: string
   shares: Uint128
 }
 export type ArrayOfDepositResponse = DepositResponse[]
@@ -257,6 +268,7 @@ export interface OwnerResponse {
 export interface PerpDenomState {
   denom: string
   enabled: boolean
+  funding: Funding
   long_oi: Decimal
   pnl_values: PnlValues
   rate: SignedDecimal
@@ -269,6 +281,21 @@ export interface PnlValues {
   closing_fee: SignedDecimal
   pnl: SignedDecimal
   price_pnl: SignedDecimal
+}
+export type NullablePerpVaultPosition = PerpVaultPosition | null
+export interface PerpVaultPosition {
+  denom: string
+  deposit: PerpVaultDeposit
+  unlocks: UnlockState[]
+}
+export interface PerpVaultDeposit {
+  amount: Uint128
+  shares: Uint128
+}
+export interface UnlockState {
+  amount: Uint128
+  cooldown_end: number
+  created_at: number
 }
 export type PnL =
   | 'break_even'
@@ -316,11 +343,6 @@ export interface PositionsByAccountResponse {
   positions: PerpPosition[]
 }
 export type ArrayOfUnlockState = UnlockState[]
-export interface UnlockState {
-  amount: Uint128
-  cooldown_end: number
-  created_at: number
-}
 export interface VaultState {
   total_liquidity: Uint128
   total_shares: Uint128

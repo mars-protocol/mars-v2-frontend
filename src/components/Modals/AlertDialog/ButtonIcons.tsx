@@ -10,8 +10,8 @@ export function NoIcon() {
 
 export function YesIcon() {
   return (
-    <div className='ml-1 rounded-xs border-[1px] border-white/5 bg-white/5 px-1 py-0.5'>
-      <Enter width={12} />
+    <div className='w-5 rounded-xs border-[1px] border-white/5 bg-white/5 px-1 py-0.5'>
+      <Enter />
     </div>
   )
 }

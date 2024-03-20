@@ -73,6 +73,9 @@ interface HandleResponseProps {
     | 'open-perp'
     | 'close-perp'
     | 'modify-perp'
+    | 'perp-vault-deposit'
+    | 'perp-vault-unlock'
+    | 'perp-vault-withdraw'
   lend?: boolean
   accountId?: string
   changes?: {
@@ -168,6 +171,14 @@ interface BroadcastSlice {
     borrow: BNCoin[]
     reclaims: ActionCoin[]
   }) => Promise<boolean>
+  depositIntoPerpsVault: (options: {
+    accountId: string
+    denom: string
+    fromDeposits?: BigNumber
+    fromLends?: BigNumber
+  }) => Promise<boolean>
+  requestUnlockPerpsVault: (options: { accountId: string; amount: BigNumber }) => Promise<boolean>
+  withdrawFromPerpsVault: (options: { accountId: string }) => Promise<boolean>
   v1Action: (type: V1ActionType, funds: BNCoin) => Promise<boolean>
 }
 

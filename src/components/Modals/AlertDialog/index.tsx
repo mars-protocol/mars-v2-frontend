@@ -74,6 +74,7 @@ function AlertDialog(props: Props) {
               color='tertiary'
               className='px-6'
               rightIcon={positiveButton.icon ?? <YesIcon />}
+              iconClassName='h-4 w-5'
               onClick={() => handleButtonClick(positiveButton)}
             />
           )}

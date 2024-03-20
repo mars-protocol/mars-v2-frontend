@@ -1,6 +1,7 @@
 import { Navigate, Outlet, Route, Routes as RoutesWrapper } from 'react-router-dom'
 
 import useChainConfig from 'hooks/useChainConfig'
+import Layout from 'pages/_layout'
 import BorrowPage from 'pages/BorrowPage'
 import ExecuteMessagePage from 'pages/ExecuteMessagePage'
 import FarmPage from 'pages/FarmPage'
@@ -12,7 +13,6 @@ import PortfolioAccountPage from 'pages/PortfolioAccountPage'
 import PortfolioPage from 'pages/PortfolioPage'
 import TradePage from 'pages/TradePage'
 import V1Page from 'pages/V1Page'
-import Layout from 'pages/_layout'
 
 export default function Routes() {
   const chainConfig = useChainConfig()
@@ -28,7 +28,7 @@ export default function Routes() {
         <Route path='/trade' element={<TradePage />} />
         <Route path='/trade-advanced' element={<TradePage />} />
         {chainConfig.perps && <Route path='/perps' element={<PerpsPage />} />}
-        {chainConfig.farm && <Route path='/farm' element={<FarmPage />} />}
+        <Route path='/farm' element={<FarmPage />} />
         <Route path='/lend' element={<LendPage />} />
         <Route path='/borrow' element={<BorrowPage />} />
         <Route path='/portfolio' element={<PortfolioPage />} />
@@ -41,7 +41,7 @@ export default function Routes() {
           <Route path='trade' element={<TradePage />} />
           <Route path='trade-advanced' element={<TradePage />} />
           {chainConfig.perps && <Route path='perps' element={<PerpsPage />} />}
-          {chainConfig.farm && <Route path='farm' element={<FarmPage />} />}
+          <Route path='farm' element={<FarmPage />} />
           <Route path='lend' element={<LendPage />} />
           <Route path='borrow' element={<BorrowPage />} />
           <Route path='portfolio' element={<PortfolioPage />} />

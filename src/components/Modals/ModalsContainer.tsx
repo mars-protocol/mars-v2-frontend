@@ -8,6 +8,7 @@ import {
   HlsManageModal,
   HlsModal,
   LendAndReclaimModalController,
+  PerpsVaultModal,
   SettingsModal,
   UnlockModal,
   V1BorrowAndRepay,
@@ -34,6 +35,7 @@ export default function ModalsContainer() {
       <AlertDialogController />
       <HlsModal />
       <HlsManageModal />
+      <PerpsVaultModal />
       <V1DepositAndWithdraw />
       <V1BorrowAndRepay />
     </>

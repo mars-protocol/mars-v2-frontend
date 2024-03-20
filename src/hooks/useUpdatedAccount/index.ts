@@ -13,7 +13,7 @@ import {
   removeCoins,
   updatePerpsPositions,
 } from 'hooks/useUpdatedAccount/functions'
-import useVaults from 'hooks/useVaults'
+import useVaults from 'hooks/vaults/useVaults'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountLeverage, cloneAccount } from 'utils/accounts'
@@ -44,7 +44,7 @@ export function useUpdatedAccount(account?: Account) {
   const [addedLends, addLends] = useState<BNCoin[]>([])
   const [removedLends, removeLends] = useState<BNCoin[]>([])
   const [addedTrades, addTrades] = useState<BNCoin[]>([])
-  const [addedPerps, addPerps] = useState<PerpsPosition>()
+  const [updatedPerpPosition, setUpdatedPerpPosition] = useState<PerpsPosition>()
   const [leverage, setLeverage] = useState<number>(0)
 
   const removeDepositAndLendsByDenom = useCallback(
@@ -247,19 +247,59 @@ export function useUpdatedAccount(account?: Account) {
     (position: PerpsPosition) => {
       if (!account) return
 
-      if (position.amount.isZero()) {
-        return addPerps(undefined)
+      const currentPerpPosition = account.perps.find((perp) => perp.denom === position.denom)
+
+      if (currentPerpPosition && currentPerpPosition.amount.isEqualTo(position.amount)) {
+        addDeposits([])
+        removeDeposits([])
+        addDebts([])
+        return setUpdatedPerpPosition(undefined)
       }
 
-      addPerps(position)
+      if (!currentPerpPosition && position.amount.isEqualTo(0)) {
+        addDeposits([])
+        removeDeposits([])
+        addDebts([])
+        return setUpdatedPerpPosition(undefined)
+      }
+
+      if (currentPerpPosition) {
+        const unrealizedPnL = currentPerpPosition.pnl.unrealized.net
+
+        if (unrealizedPnL.amount.isGreaterThan(0)) {
+          addDeposits([unrealizedPnL])
+        }
+
+        if (unrealizedPnL.amount.isLessThan(0)) {
+          const currentDepositAmount = account.deposits.find(byDenom(position.baseDenom))?.amount
+          const debtAmount = unrealizedPnL.amount.integerValue().abs()
+
+          if (currentDepositAmount && currentDepositAmount.isGreaterThanOrEqualTo(debtAmount)) {
+            removeDeposits([BNCoin.fromDenomAndBigNumber(position.baseDenom, debtAmount)])
+          } else if (currentDepositAmount && currentDepositAmount.isLessThan(debtAmount)) {
+            removeDeposits([BNCoin.fromDenomAndBigNumber(position.baseDenom, currentDepositAmount)])
+            addDebts([
+              BNCoin.fromDenomAndBigNumber(
+                position.baseDenom,
+                debtAmount.minus(currentDepositAmount),
+              ),
+            ])
+          } else {
+            addDebts([BNCoin.fromDenomAndBigNumber(position.baseDenom, debtAmount)])
+          }
+        }
+      }
+
+      setUpdatedPerpPosition(position)
     },
-    [account, addPerps],
+    [account, setUpdatedPerpPosition],
   )
 
   useEffect(() => {
     if (!account) return
 
     const accountCopy = cloneAccount(account)
+
     accountCopy.deposits = addCoins([...addedDeposits, ...addedTrades], [...accountCopy.deposits])
     accountCopy.debts = addCoins(addedDebts, [...accountCopy.debts])
     accountCopy.vaults = addValueToVaults(
@@ -267,7 +307,7 @@ export function useUpdatedAccount(account?: Account) {
       [...accountCopy.vaults],
       availableVaults ?? [],
     )
-    accountCopy.perps = updatePerpsPositions([...accountCopy.perps], addedPerps)
+    accountCopy.perps = updatePerpsPositions([...accountCopy.perps], updatedPerpPosition)
     accountCopy.deposits = removeCoins(removedDeposits, [...accountCopy.deposits])
     accountCopy.debts = removeCoins(removedDebts, [...accountCopy.debts])
     accountCopy.lends = addCoins(addedLends, [...accountCopy.lends])
@@ -290,7 +330,7 @@ export function useUpdatedAccount(account?: Account) {
     prices,
     addedTrades,
     assets,
-    addedPerps,
+    updatedPerpPosition,
   ])
 
   return {
@@ -303,12 +343,12 @@ export function useUpdatedAccount(account?: Account) {
     addLends,
     removeLends,
     addVaultValues,
-    addPerps,
+    setUpdatedPerpPosition,
     addedDeposits,
     addedDebts,
     addedLends,
     addedTrades,
-    addedPerps,
+    updatedPerpPosition,
     leverage,
     removedDeposits,
     removedDebts,
