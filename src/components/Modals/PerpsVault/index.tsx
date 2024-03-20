@@ -76,7 +76,9 @@ export default function PerpsVaultModal() {
             warningMessages={[]}
             maxText='Available'
           />
-          <Callout description='Please note there is an unlocking period of 7 days when depositing into this vault.' />
+          <Callout>
+            Please note there is an unlocking period of 7 days when depositing into this vault.
+          </Callout>
           <Button
             onClick={handleClick}
             rightIcon={<ArrowRight />}
