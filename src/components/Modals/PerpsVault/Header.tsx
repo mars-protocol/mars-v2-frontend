@@ -11,8 +11,8 @@ export function Header(props: Props) {
   if (!perpsVault) return null
 
   return (
-    <div className='flex gap-4 items-center px-4'>
-      <AssetImage asset={props.asset} size={24} />
+    <div className='flex items-center gap-4 px-4'>
+      <AssetImage asset={props.asset} className='w-6 h-6' />
       <Text>{perpsVault.name}</Text>
     </div>
   )
