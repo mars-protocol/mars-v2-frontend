@@ -76,17 +76,23 @@ export default function PerpsVaultModal() {
             warningMessages={[]}
             maxText='Available'
           />
-          <Callout>
-            Please note there is an unlocking period of 7 days when depositing into this vault.
-          </Callout>
-          <Button
-            onClick={handleClick}
-            rightIcon={<ArrowRight />}
-            showProgressIndicator={isConfirming}
-            disabled={isConfirming}
-          >
-            {modal.type === 'deposit' ? 'Deposit' : 'Request unlock'}
-          </Button>
+          <div className='gap-4 flex flex-col'>
+            <Callout>
+              Please note there is an unlocking period of 7 days when depositing into this vault.
+            </Callout>
+            <Callout>
+              Your overall leverage may be increased as any deposits into this vault are removed
+              from your total collateral value.
+            </Callout>
+            <Button
+              onClick={handleClick}
+              rightIcon={<ArrowRight />}
+              showProgressIndicator={isConfirming}
+              disabled={isConfirming}
+            >
+              {modal.type === 'deposit' ? 'Deposit' : 'Request unlock'}
+            </Button>
+          </div>
         </>
       }
       header={<Header asset={asset} />}
