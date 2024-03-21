@@ -17,7 +17,7 @@ export default function Name(props: Props) {
   const { asset } = props
   return (
     <div className='flex items-center flex-1 gap-3'>
-      <AssetImage asset={asset} size={32} />
+      <AssetImage asset={asset} className='w-8 h-8' />
       <TitleAndSubCell
         title={asset.symbol}
         sub={props.v1 && !isMobile ? '' : asset.name}

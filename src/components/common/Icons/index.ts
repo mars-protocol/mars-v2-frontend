@@ -1,4 +1,3 @@
-// @index(['./*.svg'], f => `export { default as ${f.name} } from 'components/Icons/${f.name}.svg'`)
 export { default as Account } from 'components/common/Icons/Account.svg'
 export { default as AccountArrowDown } from 'components/common/Icons/AccountArrowDown.svg'
 export { default as ArrowChartLineUp } from 'components/common/Icons/ArrowChartLineUp.svg'
@@ -70,4 +69,3 @@ export { default as TrashBin } from 'components/common/Icons/TrashBin.svg'
 export { default as Twitter } from 'components/common/Icons/Twitter.svg'
 export { default as VerticalThreeLine } from 'components/common/Icons/VerticalThreeLine.svg'
 export { default as Wallet } from 'components/common/Icons/Wallet.svg'
-// @endindex

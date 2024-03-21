@@ -37,7 +37,7 @@ export default function Name(props: Props) {
   return (
     <div className='flex'>
       {vault.denoms.secondary === '' ? (
-        <AssetImage asset={primaryAsset} size={32} />
+        <AssetImage asset={primaryAsset} className='w-8 h-8' />
       ) : (
         <DoubleLogo primaryDenom={vault.denoms.primary} secondaryDenom={vault.denoms.secondary} />
       )}

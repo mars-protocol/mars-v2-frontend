@@ -4,7 +4,6 @@ const OSMO_USDC: Asset = {
   id: 'gamm/pool/678',
   denom: 'gamm/pool/678',
   color: '',
-  logo: '',
   decimals: 6,
   isEnabled: false,
   isMarket: false,

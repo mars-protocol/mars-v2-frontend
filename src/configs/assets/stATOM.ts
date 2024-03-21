@@ -1,9 +1,11 @@
+import { LogoStATOM } from 'components/common/assets/AssetLogos'
+
 const stATOM: AssetMetaData = {
   symbol: 'stATOM',
   name: 'Stride Atom',
   id: 'stATOM',
   color: '#e50571',
-  logo: '/images/tokens/statom.svg',
+  logo: LogoStATOM,
   decimals: 6,
   hasOraclePrice: true,
   isEnabled: true,

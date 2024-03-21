@@ -45,7 +45,7 @@ export default function Manage(props: Props) {
         isCreate: false,
       },
     })
-  }, [props.vault])
+  }, [props.vault, props.isPerps])
 
   const unlockHandler = useCallback(
     () => useStore.setState({ unlockModal: { vault: props.vault } }),
