@@ -4,8 +4,7 @@ interface Props {
 }
 
 export default function AssetImage(props: Props) {
-  if (!props.asset.logo) return <div className={props.className} />
-  const AssetLogo = props.asset.logo
+  const AssetLogo = props.asset?.logo ?? null
   return (
     <div className={props.className}>
       <AssetLogo />
