@@ -3,10 +3,12 @@ import { useMemo } from 'react'
 import { CardWithTabs } from 'components/common/Card/CardWithTabs'
 import AvailablePerpsVaultsTable from 'components/earn/farm/Table/AvailablePerpsVaultTable'
 import AvailableVaultsTable from 'components/earn/farm/Table/AvailableVaultsTable'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useChainConfig from 'hooks/useChainConfig'
 
 export function AvailableVaults() {
   const chainConfig = useChainConfig()
+  const account = useCurrentAccount()
 
   const tabs: CardTab[] = useMemo(
     () => [
@@ -18,11 +20,11 @@ export function AvailableVaults() {
             },
           ]
         : []),
-      ...(chainConfig.perps
+      ...(chainConfig.perps && !account?.perpVault
         ? [{ title: 'Perps Vaults', renderContent: () => <AvailablePerpsVaultsTable /> }]
         : []),
     ],
-    [chainConfig],
+    [account?.perpVault, chainConfig.farm, chainConfig.perps],
   )
 
   return <CardWithTabs tabs={tabs} />
