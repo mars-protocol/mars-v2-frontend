@@ -276,7 +276,7 @@ export default function useHealthComputer(account?: Account) {
             perpsDenomState.short_oi.toString(),
             tradeDirection,
           ),
-        )
+        ).abs()
       } catch (e) {
         return BN_ZERO
       }
