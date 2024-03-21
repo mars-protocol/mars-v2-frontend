@@ -63,7 +63,7 @@ export default function SettingsModal() {
                 {asset.symbol}
               </Text>
             ) : (
-              <AssetImage asset={asset} size={16} />
+              <AssetImage asset={asset} className='w-4 h-4' />
             )}
             <Text size='sm' className='leading-4'>
               {asset.name}

@@ -86,7 +86,7 @@ export default function RewardsCenter(props: Props) {
       await claimTx.execute()
       setIsConfirming(false)
     }
-  }, [accountId, claimTx])
+  }, [accountId, claimTx, isV1, address])
 
   return (
     <div className={classNames('relative', props.className)}>

@@ -32,7 +32,7 @@ export default function Asset(props: Props) {
         onChange={row.getToggleSelectedHandler()}
         noMouseEvents
       />
-      <AssetImage asset={asset} size={24} className='ml-4' />
+      <AssetImage asset={asset} className='w-6 h-6 ml-4' />
       <div className='ml-2 text-left'>
         <Text size='sm' className='mb-0.5 text-white'>
           {asset.symbol}

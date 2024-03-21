@@ -1,9 +1,11 @@
+import { LogoAxlWBTC } from 'components/common/assets/AssetLogos'
+
 const WBTCaxl: AssetMetaData = {
   symbol: 'WBTC.axl',
   id: 'axlWBTC',
   name: 'Axelar Wrapped Bitcoin',
   color: '#f09242',
-  logo: '/images/tokens/axlwbtc.svg',
+  logo: LogoAxlWBTC,
   decimals: 8,
   hasOraclePrice: true,
   isEnabled: true,

@@ -4,7 +4,6 @@ const USD: Asset = {
   id: 'USD',
   denom: 'usd',
   color: '',
-  logo: '',
   decimals: 2,
   hasOraclePrice: false,
   isEnabled: false,

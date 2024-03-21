@@ -1,9 +1,11 @@
+import { LogoAXL } from 'components/common/assets/AssetLogos'
+
 const AXL: AssetMetaData = {
   symbol: 'AXL',
   name: 'Axelar',
   id: 'AXL',
   color: '#FFF',
-  logo: '/images/tokens/axl.svg',
+  logo: LogoAXL,
   decimals: 6,
   hasOraclePrice: true,
   isEnabled: true,

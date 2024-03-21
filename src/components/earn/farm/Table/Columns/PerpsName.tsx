@@ -13,7 +13,7 @@ export function PerpsName(props: Props) {
 
   return (
     <div className='flex items-center flex-1 gap-3'>
-      <AssetImage asset={asset} size={32} />
+      <AssetImage asset={asset} className='w-8 h-8' />
       <TitleAndSubCell
         title={`${props.vault.name} - (${props.vault.lockup.duration}${props.vault.lockup.timeframe[0]})`}
         sub={`Via ${props.vault.provider}`}

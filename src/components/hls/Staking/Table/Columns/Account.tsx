@@ -1,10 +1,13 @@
-import React from 'react'
-
 import HealthBar from 'components/account/Health/HealthBar'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import useHealthComputer from 'hooks/useHealthComputer'
 
-export const ACCOUNT_META = { id: 'account', header: 'Account', accessorKey: 'id' }
+export const ACCOUNT_META = {
+  id: 'account',
+  header: 'Account',
+  accessorKey: 'id',
+  meta: { className: 'w-30' },
+}
 interface Props {
   account: HLSAccountWithStrategy
 }

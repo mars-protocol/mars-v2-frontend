@@ -1,3 +1,5 @@
+import { LogoOSMO } from 'components/common/assets/AssetLogos'
+
 const OSMO: AssetMetaData = {
   symbol: 'OSMO',
   name: 'Osmosis',
@@ -5,7 +7,7 @@ const OSMO: AssetMetaData = {
   color: '#9f1ab9',
   decimals: 6,
   hasOraclePrice: true,
-  logo: '/images/tokens/osmo.svg',
+  logo: LogoOSMO,
   isEnabled: true,
   isMarket: true,
   isBorrowEnabled: true,
