@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useEffect, useMemo, useRef } from 'react'
+import { ReactNode, useEffect, useMemo, useRef } from 'react'
 import { isMobile } from 'react-device-detect'
 
 import Card from 'components/common/Card'
@@ -29,6 +29,7 @@ import { magnify } from 'utils/formatters'
 interface Props {
   buyAsset: Asset
   sellAsset: Asset
+  title?: ReactNode
 }
 
 export default function TradeChart(props: Props) {
@@ -113,17 +114,21 @@ export default function TradeChart(props: Props) {
   return (
     <Card
       title={
-        <div className='flex flex-wrap items-center w-full bg-white/10'>
-          <Text
-            size='lg'
-            className='flex items-center w-full p-4 pb-0 font-semibold md:pb-4 md:flex-1 md:w-auto'
-          >
-            Trading Chart
-          </Text>
+        <div className='flex flex-wrap items-center justify-between w-full bg-white/10 p-4'>
+          {props.title ? (
+            props.title
+          ) : (
+            <Text
+              size='lg'
+              className='flex items-center w-full font-semibold md:pb-0 md:flex-1 md:w-auto'
+            >
+              Trading Chart
+            </Text>
+          )}
           {ratio.isZero() || isLoading ? (
             <Loading className='h-4 m-4 md:m-0 md:mr-4 w-60' />
           ) : (
-            <div className='flex items-center gap-1 p-4'>
+            <div className='flex items-center gap-1'>
               <Text size='sm'>1 {props.buyAsset.symbol}</Text>
               <FormattedNumber
                 className='text-sm'
