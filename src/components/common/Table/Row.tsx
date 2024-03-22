@@ -58,12 +58,14 @@ export default function Row<T>(props: Props<T>) {
       >
         {row.getVisibleCells().map((cell) => {
           const isSymbolOrName = cell.column.id === 'symbol' || cell.column.id === 'name'
+          const canSort = table.getColumn(cell.column.id)?.getCanSort()
           return (
             <td
               key={cell.id}
               className={classNames(
                 isSymbolOrName ? 'text-left' : 'text-right',
                 spacingClassName ?? 'px-3 py-4',
+                canSort && !type && 'pr-8',
                 type && type !== 'strategies' && isSymbolOrName && 'border-l',
                 type && type !== 'strategies' && getBorderColor(type, cell.row.original as any),
                 cell.column.columnDef.meta?.className,

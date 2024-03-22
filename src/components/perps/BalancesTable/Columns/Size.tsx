@@ -1,8 +1,11 @@
 import { Row } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
+import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import { BNCoin } from 'types/classes/BNCoin'
 import { demagnify } from 'utils/formatters'
 
 export const SIZE_META = {
@@ -10,6 +13,9 @@ export const SIZE_META = {
   header: () => (
     <div className='flex flex-col gap-1'>
       <Text size='xs'>Size</Text>
+      <Text size='xs' className='text-white/40'>
+        Value
+      </Text>
     </div>
   ),
 }
@@ -30,10 +36,19 @@ export default function Size(props: Props) {
   )
 
   return (
-    <FormattedNumber
-      amount={amount}
-      options={{ maxDecimals: amount < 0.0001 ? props.asset.decimals : 4 }}
-      className='text-xs'
+    <TitleAndSubCell
+      title={
+        <FormattedNumber
+          amount={amount}
+          options={{ maxDecimals: amount < 0.0001 ? props.asset.decimals : 4 }}
+          className='text-xs'
+        />
+      }
+      sub={
+        <DisplayCurrency
+          coin={BNCoin.fromDenomAndBigNumber(props.asset.denom, props.amount.abs())}
+        />
+      }
     />
   )
 }
