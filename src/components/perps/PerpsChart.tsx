@@ -1,3 +1,4 @@
+import { PerpsInfo } from 'components/perps/PerpsInfo'
 import TradeChart from 'components/trade/TradeChart'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
@@ -8,7 +9,7 @@ export function PerpsChart() {
 
   return (
     <div className='order-2 h-full'>
-      <TradeChart buyAsset={perpsAsset} sellAsset={assets[1]} />
+      <TradeChart buyAsset={perpsAsset} sellAsset={assets[1]} title={<PerpsInfo />} />
     </div>
   )
 }
