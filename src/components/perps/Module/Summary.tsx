@@ -27,6 +27,7 @@ type Props = {
   previousLeverage?: number | null
   hasActivePosition: boolean
   onTxExecuted: () => void
+  disabled: boolean
 }
 
 export default function PerpsSummary(props: Props) {
@@ -113,7 +114,11 @@ export default function PerpsSummary(props: Props) {
           />
         </SummaryLine>
       </div>
-      <ActionButton onClick={onConfirm} disabled={disabled} className='w-full py-2.5'>
+      <ActionButton
+        onClick={onConfirm}
+        disabled={disabled || props.disabled}
+        className='w-full py-2.5'
+      >
         <span className='mr-1 capitalize'>{props.tradeDirection}</span>
         {props.asset.symbol}
       </ActionButton>

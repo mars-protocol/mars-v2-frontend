@@ -149,6 +149,10 @@ export function PerpsModule() {
 
   const onChangeAmount = useCallback(
     (amount: BigNumber) => {
+      const percentOfMax = BN(amount).div(maxAmount)
+      const newLeverage = percentOfMax.times(maxLeverage).toNumber()
+
+      setSliderLeverage(newLeverage)
       if (tradeDirection === 'short') {
         setAmount(amount.times(-1))
         return
@@ -156,7 +160,7 @@ export function PerpsModule() {
 
       setAmount(amount)
     },
-    [tradeDirection],
+    [maxAmount, maxLeverage, tradeDirection],
   )
 
   if (!perpsAsset) return null
@@ -216,6 +220,7 @@ export function PerpsModule() {
         previousLeverage={previousLeverage}
         hasActivePosition={hasActivePosition}
         onTxExecuted={() => setAmount(BN_ZERO)}
+        disabled={amount.isGreaterThan(maxAmount)}
       />
     </Card>
   )
