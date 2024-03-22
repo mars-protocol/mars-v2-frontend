@@ -31,7 +31,7 @@ export default function usePerpsBalancesTable() {
         currentPrice: position.currentPrice,
         liquidationPrice: position.entryPrice, // TODO: 📈 Get actual liquidation price from HC
         leverage: position.currentPrice
-          .times(demagnify(position.amount, asset))
+          .times(demagnify(position.amount.abs(), asset))
           .div(netValue)
           .plus(1)
           .toNumber(),
