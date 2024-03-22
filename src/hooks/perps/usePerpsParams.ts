@@ -9,28 +9,23 @@ import { BN } from 'utils/helpers'
 import iterateContractQuery from 'utils/iterateContractQuery'
 
 export function usePerpsParams(denom: string) {
-  const { data: perpsParams } = useAllPerpsParams()
+  const perpsParams = useAllPerpsParams()
 
   return useMemo(() => perpsParams?.find(byDenom(denom)) as PerpsParams, [denom, perpsParams])
 }
 
 export function useAllPerpsParams() {
-  const perpsParams = usePerpsParamsSC()
+  const { data: perpsParams } = useAllPerpsParamsSC()
 
-  return useMemo(() => {
-    if (!perpsParams.data) return perpsParams
-
-    return {
-      ...perpsParams,
-      data: perpsParams.data.map(resolvePerpsParams),
-    }
-  }, [perpsParams])
+  return useMemo(() => perpsParams?.map(resolvePerpsParams), [perpsParams])
 }
 
-export function usePerpsParamsSC() {
+export function useAllPerpsParamsSC() {
   const chainConfig = useChainConfig()
   const clients = useClients()
-  return useSWR(clients && `chains/${chainConfig.id}/perps/params`, () => getPerpsParams(clients!))
+  return useSWR(clients && `chains/${chainConfig.id}/perps/params`, async () =>
+    getPerpsParams(clients!),
+  )
 }
 
 async function getPerpsParams(clients: ContractClients) {
@@ -50,6 +45,7 @@ function resolvePerpsParams(param: PerpParams) {
 }
 
 export interface PerpsParams {
+  denom: string
   closingFeeRate: BigNumber
   maxOpenInterestLong: BigNumber
   maxOpenInterestShort: BigNumber

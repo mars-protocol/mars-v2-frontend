@@ -7,13 +7,14 @@ import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useAssetParams from 'hooks/params/useAssetParams'
-import usePerpsDenomState from 'hooks/perps/usePerpsDenomState'
-import { usePerpsParamsSC } from 'hooks/perps/usePerpsParams'
+import useAllPerpsDenomStates from 'hooks/perps/usePerpsDenomStates'
+import { useAllPerpsParamsSC } from 'hooks/perps/usePerpsParams'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import usePrices from 'hooks/usePrices'
 import useVaultConfigs from 'hooks/useVaultConfigs'
 import { VaultPositionValue } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { PerpParams, VaultConfigBaseForString } from 'types/generated/mars-params/MarsParams.types'
+import { PerpDenomState } from 'types/generated/mars-perps/MarsPerps.types'
 import {
   AssetParamsBaseForAddr,
   HealthComputer,
@@ -45,8 +46,8 @@ export default function useHealthComputer(account?: Account) {
   const { data: prices } = usePrices()
   const { data: assetParams } = useAssetParams()
   const { data: vaultConfigs } = useVaultConfigs()
-  const { data: perpsDenomState } = usePerpsDenomState()
-  const { data: perpsParams } = usePerpsParamsSC()
+  const { data: perpsDenomStates } = useAllPerpsDenomStates()
+  const { data: perpsParams } = useAllPerpsParamsSC()
   const { data: perpVault } = usePerpsVault()
   const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
 
@@ -144,11 +145,15 @@ export default function useHealthComputer(account?: Account) {
     )
   }, [perpsParams])
 
-  const perpsDenomStates = useMemo(() => {
-    if (!perpsDenomState) return {}
+  const denomStates = useMemo(() => {
+    let denomStates: { [key: string]: PerpDenomState } = {}
+    if (!perpsDenomStates) return denomStates
 
-    return { [perpsDenomState.denom]: perpsDenomState }
-  }, [perpsDenomState])
+    for (let denomState of perpsDenomStates) {
+      denomStates[denomState.denom] = denomState
+    }
+    return denomStates
+  }, [perpsDenomStates])
 
   const healthComputer: HealthComputer | null = useMemo(() => {
     if (
@@ -174,8 +179,7 @@ export default function useHealthComputer(account?: Account) {
       oracle_prices: priceData,
       positions: positions,
       perps_data: {
-        // TODO: Currently we only pass the current selected perp Denom, not ALL
-        denom_states: perpsDenomStates,
+        denom_states: denomStates,
         params: perpsParamsData,
       },
     } as HealthComputer
@@ -188,6 +192,7 @@ export default function useHealthComputer(account?: Account) {
     perpsParamsData,
     denomsData,
     priceData,
+    denomStates,
   ])
 
   useEffect(() => {
@@ -265,15 +270,15 @@ export default function useHealthComputer(account?: Account) {
 
   const computeMaxPerpAmount = useCallback(
     (denom: string, tradeDirection: TradeDirection) => {
-      if (!healthComputer || !perpVault || !perpsDenomState) return BN_ZERO
+      if (!healthComputer || !perpVault || !denomStates) return BN_ZERO
       try {
         return BN(
           max_perp_size_estimate_js(
             healthComputer,
             denom,
             perpVault.denom,
-            perpsDenomState.long_oi.toString(),
-            perpsDenomState.short_oi.toString(),
+            denomStates[denom].long_oi.toString(),
+            denomStates[denom].short_oi.toString(),
             tradeDirection,
           ),
         ).abs()
@@ -281,7 +286,7 @@ export default function useHealthComputer(account?: Account) {
         return BN_ZERO
       }
     },
-    [healthComputer, perpVault, perpsDenomState],
+    [healthComputer, perpVault, denomStates],
   )
 
   const health = useMemo(() => {
