@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import Card from 'components/common/Card'
 import LeverageSlider from 'components/common/LeverageSlider'
-import { Spacer } from 'components/common/Spacer'
 import Text from 'components/common/Text'
 import { TradeDirectionSelector } from 'components/common/TradeDirectionSelector'
 import { LeverageButtons } from 'components/perps/Module/LeverageButtons'
@@ -207,7 +206,6 @@ export function PerpsModule() {
         </>
       )}
 
-      <Spacer />
       <PerpsSummary
         amount={amount ?? previousAmount}
         tradeDirection={tradeDirection ?? previousTradeDirection}
