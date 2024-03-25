@@ -3,10 +3,7 @@ import { useCallback, useMemo, useState } from 'react'
 
 import DropDownButton from 'components/common/Button/DropDownButton'
 import { AccountArrowDown, LockLocked, LockUnlocked, Plus } from 'components/common/Icons'
-import Loading from 'components/common/Loading'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useSlippage from 'hooks/settings/useSlippage'
 import useAccountId from 'hooks/useAccountId'
 import useStore from 'store'
 import { VaultStatus } from 'types/enums/vault'
@@ -15,7 +12,6 @@ export const MANAGE_META = { accessorKey: 'details', enableSorting: false, heade
 
 interface Props {
   vault: DepositedVault
-  isLoading: boolean
   isExpanded: boolean
   isPerps: boolean
 }
@@ -24,7 +20,7 @@ export default function Manage(props: Props) {
   const accountId = useAccountId()
   const address = useStore((s) => s.address)
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
-  const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
+  const [slippage] = useSlippage()
   const [isConfirming, setIsConfirming] = useState(false)
 
   const depositMoreHandler = useCallback(() => {
@@ -45,12 +41,20 @@ export default function Manage(props: Props) {
         isCreate: false,
       },
     })
-  }, [props.vault, props.isPerps])
+  }, [props.isPerps, props.vault])
 
-  const unlockHandler = useCallback(
-    () => useStore.setState({ unlockModal: { vault: props.vault } }),
-    [props.vault],
-  )
+  const unlockHandler = useCallback(() => {
+    if (props.isPerps) {
+      useStore.setState({
+        perpsVaultModal: {
+          type: 'unlock',
+        },
+      })
+      return
+    }
+
+    useStore.setState({ unlockModal: { vault: props.vault } })
+  }, [props.isPerps, props.vault])
 
   const withdrawHandler = useCallback(async () => {
     if (!accountId) return
@@ -107,8 +111,6 @@ export default function Manage(props: Props) {
       withdrawHandler,
     ],
   )
-
-  if (props.isLoading) return <Loading />
 
   if (!address) return null
 

@@ -1,15 +1,13 @@
-import Modal from 'components/Modals/Modal'
 import Button from 'components/common/Button'
 import { CircularProgress } from 'components/common/CircularProgress'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import DoubleLogo from 'components/common/DoubleLogo'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
+import Modal from 'components/Modals/Modal'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAllAssets from 'hooks/assets/useAllAssets'
-import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useSlippage from 'hooks/settings/useSlippage'
 import useAccountId from 'hooks/useAccountId'
 import usePrices from 'hooks/usePrices'
 import useStore from 'store'
@@ -21,7 +19,7 @@ export default function WithdrawFromVaultsModal() {
   const accountId = useAccountId()
   const { data: prices } = usePrices()
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
-  const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
+  const [slippage] = useSlippage()
   const assets = useAllAssets()
 
   function onClose() {

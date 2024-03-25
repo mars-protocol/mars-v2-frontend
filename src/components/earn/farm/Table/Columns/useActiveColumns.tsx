@@ -14,11 +14,7 @@ import PositionValue, {
 } from 'components/earn/farm/Table/Columns/PositionValue'
 import TVL, { TVL_META } from 'components/earn/farm/Table/Columns/TVL'
 
-interface Props {
-  isLoading: boolean
-}
-
-export default function useDepositedColumns(props: Props) {
+export default function useActiveColumns() {
   return useMemo<ColumnDef<DepositedVault>[]>(() => {
     return [
       {
@@ -28,7 +24,7 @@ export default function useDepositedColumns(props: Props) {
       {
         ...POSITION_VALUE_META,
         cell: ({ row }: { row: Row<DepositedVault> }) => (
-          <PositionValue vault={row.original as DepositedVault} isLoading={props.isLoading} />
+          <PositionValue vault={row.original as DepositedVault} />
         ),
       },
       {
@@ -48,27 +44,24 @@ export default function useDepositedColumns(props: Props) {
         ...DEPOSIT_CAP_META,
         cell: ({ row }) => {
           if (row.original.cap === null || row.original.type === 'perp') return null
-          return <DepositCap vault={row.original as DepositedVault} isLoading={props.isLoading} />
+          return <DepositCap vault={row.original as DepositedVault} />
         },
         sortingFn: depositCapSortingFn,
       },
       {
         ...LTV_MAX_META,
-        cell: ({ row }) => (
-          <MaxLTV vault={row.original as DepositedVault} isLoading={props.isLoading} />
-        ),
+        cell: ({ row }) => <MaxLTV vault={row.original as DepositedVault} />,
       },
       {
         ...MANAGE_META,
         cell: ({ row }) => (
           <Manage
             vault={row.original}
-            isLoading={props.isLoading}
             isExpanded={row.getIsExpanded()}
             isPerps={row.original.type === 'perp'}
           />
         ),
       },
     ]
-  }, [props.isLoading])
+  }, [])
 }

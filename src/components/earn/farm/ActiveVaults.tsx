@@ -1,16 +1,16 @@
 import { useMemo } from 'react'
 
 import { CardWithTabs } from 'components/common/Card/CardWithTabs'
-import DepositedVaultsTable from 'components/earn/farm/Table/DepositedVaultsTable'
+import ActiveVaultsTable from 'components/earn/farm/Table/ActiveVaultsTable'
+import useActiveColumns from 'components/earn/farm/Table/Columns/useActiveColumns'
+import useUnlockColumns from 'components/earn/farm/Table/Columns/useUnlockColumns'
 import VaultUnlockBanner from 'components/earn/farm/VaultUnlockBanner'
 import useAccountId from 'hooks/useAccountId'
-import useChainConfig from 'hooks/useChainConfig'
 import useDepositedVaults from 'hooks/vaults/useDepositedVaults'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { VaultStatus } from 'types/enums/vault'
 
 export function ActiveVaults() {
-  const chainConfig = useChainConfig()
   const accountId = useAccountId()
   const { data: depositedVaults } = useDepositedVaults(accountId || '')
   const { data: vaultAprs } = useVaultAprs()
@@ -31,19 +31,29 @@ export function ActiveVaults() {
     [depositedVaults, vaultAprs],
   )
 
+  const activeColumns = useActiveColumns()
+  const unlockColumns = useUnlockColumns({ showActions: false })
+  const unlockedColumns = useUnlockColumns({ showActions: true })
+
   const tabs: CardTab[] = useMemo(
     () => [
       {
         title: 'Active Vaults',
         renderContent: () => (
-          <DepositedVaultsTable data={activeVaults} isLoading={false} status={VaultStatus.ACTIVE} />
+          <ActiveVaultsTable
+            columns={activeColumns}
+            data={activeVaults}
+            isLoading={false}
+            status={VaultStatus.ACTIVE}
+          />
         ),
       },
       {
         title: 'Unlocking',
         notificationCount: unlockingVaults.length,
         renderContent: () => (
-          <DepositedVaultsTable
+          <ActiveVaultsTable
+            columns={unlockColumns}
             data={unlockingVaults}
             isLoading={false}
             status={VaultStatus.UNLOCKING}
@@ -54,7 +64,8 @@ export function ActiveVaults() {
         title: 'Unlocked',
         notificationCount: unlockedVaults.length,
         renderContent: () => (
-          <DepositedVaultsTable
+          <ActiveVaultsTable
+            columns={unlockedColumns}
             data={unlockedVaults}
             isLoading={false}
             status={VaultStatus.UNLOCKED}

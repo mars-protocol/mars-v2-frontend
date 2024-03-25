@@ -1,10 +1,8 @@
 import { useMemo, useState } from 'react'
 
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useAllAssets from 'hooks/assets/useAllAssets'
-import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useSlippage from 'hooks/settings/useSlippage'
 import usePrices from 'hooks/usePrices'
 import useSwapValueLoss from 'hooks/useSwapValueLoss'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -18,7 +16,7 @@ interface Props {
 }
 export default function useDepositHlsVault(props: Props) {
   const { data: prices } = usePrices()
-  const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
+  const [slippage] = useSlippage()
   const assets = useAllAssets()
   const { data: valueLossPercentage } = useSwapValueLoss(props.borrowDenom, props.collateralDenom)
 
