@@ -3,11 +3,9 @@ import React, { useCallback, useMemo, useState } from 'react'
 import Button from 'components/common/Button'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import LeverageSummary from 'components/Modals/HLS/Deposit/LeverageSummary'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useAllAssets from 'hooks/assets/useAllAssets'
-import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useSlippage from 'hooks/settings/useSlippage'
 import useHealthComputer from 'hooks/useHealthComputer'
 import usePrices from 'hooks/usePrices'
 import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
@@ -30,7 +28,7 @@ interface Props {
 export default function ChangeLeverage(props: Props) {
   const { data: prices } = usePrices()
   const assets = useAllAssets()
-  const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
+  const [slippage] = useSlippage()
   const {
     updatedAccount,
     simulateHlsStakingDeposit,

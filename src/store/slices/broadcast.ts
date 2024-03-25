@@ -561,7 +561,7 @@ export default function createBroadcastSlice(
     }) => {
       const actions: CreditManagerAction[] = []
       options.vaults.forEach((vault) => {
-        if (vault.unlockId) {
+        if (vault.unlockId && vault.type === 'normal') {
           actions.push({
             exit_vault_unlocked: {
               id: vault.unlockId,
@@ -573,6 +573,11 @@ export default function createBroadcastSlice(
               lp_token: { denom: vault.denoms.lp, amount: 'account_balance' },
               slippage: options.slippage.toString(),
             },
+          })
+        }
+        if (vault.type === 'perp') {
+          actions.push({
+            withdraw_from_perp_vault: {},
           })
         }
       })

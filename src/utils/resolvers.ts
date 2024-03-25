@@ -178,8 +178,8 @@ export function resolvePerpVaultPositions(
 
   const [unlocking, unlockedAmount] = perpVaultPositions.unlocks.reduce(
     (prev, curr) => {
-      if (curr.cooldown_end < Date.now()) {
-        prev[1].plus(curr.amount)
+      if (curr.cooldown_end * 1000 < Date.now()) {
+        prev[1] = prev[1].plus(curr.amount)
         return prev
       }
 
@@ -199,7 +199,7 @@ export function resolvePerpVaultPositions(
         },
     unlocking: unlocking.map((position) => ({
       amount: BN(position.amount),
-      unlocksAt: position.cooldown_end,
+      unlocksAt: position.cooldown_end * 1000,
     })),
     unlocked: unlockedAmount.isZero() ? null : unlockedAmount,
   }

@@ -10,7 +10,6 @@ export const POSITION_VALUE_META = {
 
 interface Props {
   vault: DepositedVault
-  isLoading: boolean
 }
 export default function PositionValue(props: Props) {
   const { vault } = props

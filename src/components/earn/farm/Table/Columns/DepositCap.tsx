@@ -11,7 +11,7 @@ export const DEPOSIT_CAP_META = {
 
 interface Props {
   vault: Vault | DepositedVault | PerpsVault
-  isLoading: boolean
+  isLoading?: boolean
 }
 
 export const depositCapSortingFn = (
