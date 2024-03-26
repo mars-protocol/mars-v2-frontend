@@ -71,7 +71,7 @@ function LeverageSlider(props: Props) {
           )}
           type='range'
           value={value.toFixed(2)}
-          step={max / 101}
+          step={(max - min) / 101}
           min={min}
           max={max}
           onChange={handleOnChange}
@@ -87,7 +87,7 @@ function LeverageSlider(props: Props) {
       </div>
       <div className={'flex w-full justify-between text-xs text-opacity-50 text-white font-bold'}>
         <span>{markPosPercent > LEFT_MARGIN ? min : ''}</span>
-        <span>{max.toFixed(1)}</span>
+        <span>{max.toFixed(2)}</span>
       </div>
     </div>
   )
