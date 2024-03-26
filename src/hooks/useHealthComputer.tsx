@@ -159,7 +159,7 @@ export default function useHealthComputer(account?: Account) {
       !positions ||
       !vaultPositionValues ||
       !vaultConfigsData ||
-      !perpsDenomStates ||
+      !denomStates ||
       !perpsParamsData ||
       Object.keys(denomsData).length === 0 ||
       Object.keys(priceData).length === 0 ||
@@ -186,7 +186,6 @@ export default function useHealthComputer(account?: Account) {
     positions,
     vaultPositionValues,
     vaultConfigsData,
-    perpsDenomStates,
     perpsParamsData,
     denomsData,
     priceData,
@@ -198,7 +197,6 @@ export default function useHealthComputer(account?: Account) {
     try {
       setHealthFactor(Number(compute_health_js(healthComputer).max_ltv_health_factor) || 10)
     } catch (err) {
-      console.log(healthComputer)
       console.error('Failed to calculate health: ', err)
     }
   }, [healthComputer])

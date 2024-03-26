@@ -197,16 +197,18 @@ export function PerpsModule() {
             onDebounce={onDebounce}
             type={tradeDirection}
           />
-          <LeverageButtons
-            maxLeverage={maxLeverage}
-            currentLeverage={leverage}
-            maxAmount={maxAmount}
-            onChange={(leverage) => {
-              const percentOfMax = BN(leverage - 1).div(maxLeverage - 1)
-              setAmount(maxAmount.times(percentOfMax).integerValue())
-              setSliderLeverage(leverage)
-            }}
-          />
+          {maxLeverage > 5 && (
+            <LeverageButtons
+              maxLeverage={maxLeverage}
+              currentLeverage={leverage}
+              maxAmount={maxAmount}
+              onChange={(leverage) => {
+                const percentOfMax = BN(leverage - 1).div(maxLeverage - 1)
+                setAmount(maxAmount.times(percentOfMax).integerValue())
+                setSliderLeverage(leverage)
+              }}
+            />
+          )}
         </>
       )}
 
