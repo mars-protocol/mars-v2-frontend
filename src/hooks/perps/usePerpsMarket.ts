@@ -12,7 +12,8 @@ export default function usePerpsMarket() {
   return useMemo(() => {
     if (!perpsDenomState) return null
     return {
-      fundingRate: BN(perpsDenomState.rate as any),
+      // Funding rate is per 24h
+      fundingRate: BN(perpsDenomState.rate as any).times(100),
       asset: perpsAsset,
       openInterest: {
         long: BN(perpsDenomState.long_oi),

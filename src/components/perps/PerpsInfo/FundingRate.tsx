@@ -10,11 +10,11 @@ import useToggle from 'hooks/useToggle'
 type Interval = '1H' | '1D' | '1W' | '1M' | '1Y'
 
 enum Intervals {
-  '1H' = 365 * 24,
-  '1D' = 365,
-  '1W' = 52,
-  '1M' = 12,
-  '1Y' = 1,
+  '1H' = 1 / 24,
+  '1D' = 1,
+  '1W' = 7,
+  '1M' = 31,
+  '1Y' = 365,
 }
 
 export default function FundingRate() {
@@ -23,7 +23,7 @@ export default function FundingRate() {
   const [show, toggleShow] = useToggle(false)
 
   const fundingRate = useMemo(() => {
-    return market?.fundingRate.div(Intervals[interval]) ?? BN_ZERO
+    return market?.fundingRate.times(Intervals[interval]) ?? BN_ZERO
   }, [interval, market?.fundingRate])
 
   if (!market) return '-'
