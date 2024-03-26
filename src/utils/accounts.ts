@@ -413,11 +413,214 @@ export function isAccountEmpty(account: Account) {
     account.vaults.length === 0 &&
     account.lends.length === 0 &&
     account.debts.length === 0 &&
-    account.deposits.length === 0
+    account.deposits.length === 0 &&
+    account.perpVault === null
   )
 }
 
 export function getAccountNetValue(account: Account, prices: BNCoin[], assets: Asset[]) {
   const [deposits, lends, debts, vaults] = getAccountPositionValues(account, prices, assets)
   return deposits.plus(lends).plus(vaults).minus(debts)
+}
+
+export function compareAccounts(account: Account, updatedAccount: Account) {
+  const depositDiffs = compareBNCoinArrays(account.deposits, updatedAccount.deposits)
+  const lendDiffs = compareBNCoinArrays(account.lends, updatedAccount.lends)
+  const debtDiffs = compareBNCoinArrays(account.debts, updatedAccount.debts)
+  const vaultDiffs = compareDepositedVaultArrays(account.vaults, updatedAccount.vaults)
+  const perpDiffs = comparePerpsPositionArrays(account.perps, updatedAccount.perps)
+  const perpVaultDiffs = comparePerpVaultPositions(account.perpVault, updatedAccount.perpVault)
+
+  return {
+    id: account.id,
+    kind: account.kind,
+    deposits: depositDiffs,
+    lends: lendDiffs,
+    debts: debtDiffs,
+    vaults: vaultDiffs,
+    perps: perpDiffs,
+    perpVault: perpVaultDiffs,
+  }
+}
+
+function compareBNCoinArrays(array1: BNCoin[], array2: BNCoin[]): BNCoin[] {
+  const differences: BNCoin[] = []
+
+  for (const coin1 of array1) {
+    const coin2 = array2.find((c) => c.denom === coin1.denom)
+    if (!coin2) {
+      differences.push(coin1)
+    } else {
+      differences.push(BNCoin.fromDenomAndBigNumber(coin1.denom, coin2.amount.minus(coin1.amount)))
+    }
+  }
+
+  for (const coin2 of array2) {
+    const coin1 = array1.find((c) => c.denom === coin2.denom)
+    if (!coin1) {
+      differences.push(coin2)
+    }
+  }
+
+  return differences
+}
+
+function compareDepositedVaultArrays(
+  array1: DepositedVault[],
+  array2: DepositedVault[],
+): DepositedVault[] {
+  const differences: DepositedVault[] = []
+
+  for (const vault1 of array1) {
+    const vault2 = array2.find((vault) => vault.address === vault1.address)
+    if (!vault2) {
+      differences.push(negateVault(vault1))
+    } else {
+      const difference = getVaultsDifference(vault1, vault2)
+      if (Object.keys(difference).length > 0) {
+        differences.push(difference)
+      }
+    }
+  }
+
+  for (const vault2 of array2) {
+    const vault1 = array1.find((vault) => vault.address === vault2.address)
+    if (!vault1) {
+      differences.push(vault2)
+    }
+  }
+
+  return differences
+}
+
+function comparePerpsPositionArrays(
+  array1: PerpsPosition[],
+  array2: PerpsPosition[],
+): PerpsPosition[] {
+  const differences: PerpsPosition[] = []
+
+  for (const perps1 of array1) {
+    const perps2 = array2.find((perp) => perp.denom === perps1.denom)
+    if (!perps2) {
+      differences.push(negatePerp(perps1))
+    } else {
+      const difference = getPerpsDifference(perps1, perps2)
+      if (Object.keys(difference).length > 0) {
+        differences.push(difference)
+      }
+    }
+  }
+
+  for (const perps2 of array2) {
+    const perps1 = array1.find((perp) => perp.denom === perps2.denom)
+    if (!perps1) {
+      differences.push(perps2)
+    }
+  }
+
+  return differences
+}
+
+function comparePerpVaultPositions(
+  position1: PerpVaultPositions | null,
+  position2: PerpVaultPositions | null,
+): PerpVaultPositions | null {
+  if (position1 === null && position2 === null) return null
+  if (position1 === null) return position2
+  if (position2 === null) return negatePerpVault(position1)
+
+  const difference: PerpVaultPositions = {
+    active: {
+      amount: position2.active
+        ? position2.active.amount.minus(position1.active?.amount || BN_ZERO)
+        : position1.active
+          ? position1.active.amount
+          : BN_ZERO,
+      shares: position2.active
+        ? position2.active.shares.minus(position1.active?.shares || BN_ZERO)
+        : position1.active
+          ? position1.active.shares
+          : BN_ZERO,
+    },
+    denom: position2.denom,
+    unlocked:
+      position2.unlocked !== null
+        ? position2.unlocked.minus(position1.unlocked || BN_ZERO)
+        : position1.unlocked !== null
+          ? position1.unlocked
+          : null,
+    unlocking: [],
+  }
+
+  for (const unlockingPosition of position2.unlocking) {
+    const isNewEntry = !position1.unlocking.some(
+      (p) => p.amount.eq(unlockingPosition.amount) && p.unlocksAt === unlockingPosition.unlocksAt,
+    )
+    if (isNewEntry) {
+      difference.unlocking.push(unlockingPosition)
+    }
+  }
+
+  return difference
+}
+
+function getVaultsDifference(vault1: DepositedVault, vault2: DepositedVault): DepositedVault {
+  return {
+    ...vault2,
+    amounts: {
+      primary: vault2.amounts.primary.minus(vault1.amounts.primary),
+      secondary: vault2.amounts.secondary.minus(vault1.amounts.secondary),
+      locked: vault2.amounts.locked.minus(vault1.amounts.locked),
+      unlocked: vault2.amounts.unlocked.minus(vault1.amounts.unlocked),
+      unlocking: vault2.amounts.unlocking.minus(vault1.amounts.unlocking),
+    },
+    values: {
+      primary: vault2.values.primary.minus(vault1.values.primary),
+      secondary: vault2.values.secondary.minus(vault1.values.secondary),
+      unlocked: vault2.values.unlocked.minus(vault1.values.unlocked),
+      unlocking: vault2.values.unlocking.minus(vault1.values.unlocking),
+    },
+  }
+}
+
+function negateVault(vault: DepositedVault) {
+  return {
+    ...vault,
+    amounts: {
+      primary: vault.amounts.primary.negated(),
+      secondary: vault.amounts.secondary.negated(),
+      locked: vault.amounts.locked.negated(),
+      unlocked: vault.amounts.unlocked.negated(),
+      unlocking: vault.amounts.unlocking.negated(),
+    },
+    values: {
+      primary: vault.values.primary.negated(),
+      secondary: vault.values.secondary.negated(),
+      unlocked: vault.values.unlocked.negated(),
+      unlocking: vault.values.unlocking.negated(),
+    },
+  }
+}
+
+function negatePerpVault(perpVault: PerpVaultPositions): PerpVaultPositions {
+  return {
+    active: null,
+    denom: perpVault.denom,
+    unlocked: perpVault.unlocked ? perpVault.unlocked.negated() : null,
+    unlocking: [],
+  }
+}
+
+function getPerpsDifference(perps1: PerpsPosition, perps2: PerpsPosition): PerpsPosition {
+  return {
+    ...perps2,
+    amount: perps2.amount.minus(perps1.amount),
+  }
+}
+
+function negatePerp(perp: PerpsPosition) {
+  return {
+    ...perp,
+    amount: perp.amount.negated(),
+  }
 }
