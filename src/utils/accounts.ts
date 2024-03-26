@@ -449,7 +449,7 @@ function compareBNCoinArrays(array1: BNCoin[], array2: BNCoin[]): BNCoin[] {
   for (const coin1 of array1) {
     const coin2 = array2.find((c) => c.denom === coin1.denom)
     if (!coin2) {
-      differences.push(coin1)
+      differences.push(BNCoin.fromDenomAndBigNumber(coin1.denom, coin1.amount.negated()))
     } else {
       differences.push(BNCoin.fromDenomAndBigNumber(coin1.denom, coin2.amount.minus(coin1.amount)))
     }
@@ -527,7 +527,13 @@ function comparePerpVaultPositions(
 ): PerpVaultPositions | null {
   if (position1 === null && position2 === null) return null
   if (position1 === null) return position2
-  if (position2 === null) return negatePerpVault(position1)
+  if (position2 === null)
+    return {
+      active: null,
+      denom: position1.denom,
+      unlocked: position1.unlocked ? position1.unlocked.negated() : null,
+      unlocking: [],
+    }
 
   const difference: PerpVaultPositions = {
     active: {
@@ -599,15 +605,6 @@ function negateVault(vault: DepositedVault) {
       unlocked: vault.values.unlocked.negated(),
       unlocking: vault.values.unlocking.negated(),
     },
-  }
-}
-
-function negatePerpVault(perpVault: PerpVaultPositions): PerpVaultPositions {
-  return {
-    active: null,
-    denom: perpVault.denom,
-    unlocked: perpVault.unlocked ? perpVault.unlocked.negated() : null,
-    unlocking: [],
   }
 }
 
