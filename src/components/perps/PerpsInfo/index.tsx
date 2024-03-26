@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react'
 
+import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
 import Text from 'components/common/Text'
 import FundingRate from 'components/perps/PerpsInfo/FundingRate'
-import InterestItem from 'components/perps/PerpsInfo/InterestItem'
 import usePerpsMarket from 'hooks/perps/usePerpsMarket'
+import { BNCoin } from 'types/classes/BNCoin'
 
 export function PerpsInfo() {
   const market = usePerpsMarket()
@@ -16,12 +17,22 @@ export function PerpsInfo() {
       <InfoItem
         key='openInterestLong'
         label='Open Interest (L)'
-        item={<InterestItem type='long' />}
+        item={
+          <DisplayCurrency
+            className='text-sm'
+            coin={BNCoin.fromDenomAndBigNumber(market.asset.denom, market.openInterest.long)}
+          />
+        }
       />,
       <InfoItem
         key='openInterestShort'
         label='Open Interest (S)'
-        item={<InterestItem type='short' />}
+        item={
+          <DisplayCurrency
+            className='text-sm'
+            coin={BNCoin.fromDenomAndBigNumber(market.asset.denom, market.openInterest.short)}
+          />
+        }
       />,
       <InfoItem key='fundingRate' label='Funding rate' item={<FundingRate />} />,
     ]
