@@ -1,6 +1,6 @@
 # Mars Protocol v2 Outpost Frontend
 
-![mars-banner-1200w](https://app.marsprotocol.io/banner.png)
+![https://app.marsprotocol.io](https://app.marsprotocol.io/banner.png)
 
 ## 1. Web App
 
