@@ -13,7 +13,7 @@ interface Props {
 export default function AssetBalanceRow(props: Props) {
   return (
     <div className='flex items-center w-full gap-4'>
-      <AssetImage asset={props.asset} size={32} />
+      <AssetImage asset={props.asset} className='w-8 h-8' />
       <div className='flex flex-wrap flex-1'>
         <Text className='w-full'>{props.asset.symbol}</Text>
         <Text size='sm' className='w-full text-white/50'>

@@ -1,9 +1,11 @@
+import { LogoWstETH } from 'components/common/assets/AssetLogos'
+
 const wstETH: AssetMetaData = {
   symbol: 'wstETH',
   id: 'wstETH',
   name: 'Lido Wrapped Staked Ethereum',
   color: '#00a3ff',
-  logo: '/images/tokens/wsteth.svg',
+  logo: LogoWstETH,
   decimals: 18,
   hasOraclePrice: true,
   isEnabled: true,

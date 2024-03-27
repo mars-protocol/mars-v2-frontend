@@ -22,63 +22,16 @@ export default function useDepositedVaults(accountId: string) {
   return useSWR(
     currentAccount && `chains/${chainConfig.id}/vaults/${accountId}/deposited`,
     async () => {
-      const vaults = await getDepositedVaults(accountId, chainConfig)
+      let vaults = await getDepositedVaults(accountId, chainConfig)
 
       if (currentAccount && perpsVault) {
-        if (currentAccount.perpVault?.active) {
-          const netValue = getCoinValue(
-            BNCoin.fromDenomAndBigNumber(
-              currentAccount.perpVault.denom,
-              currentAccount.perpVault.active.amount,
-            ),
-            prices,
-            assets,
-          )
-          const activeVault: DepositedVault = {
-            type: 'perp',
-            ...perpsVault,
-            ...currentAccount.perpVault.active,
-            status: VaultStatus.ACTIVE,
-            cap: {
-              used: perpsVault.liquidity,
-              denom: perpsVault.denom,
-              max: BN(9e12), // Placeholder value. There is no deposit cap currently
-            },
-            denoms: {
-              primary: perpsVault.denom,
-              secondary: '',
-              lp: '',
-              vault: '',
-            },
-            address: '',
-            ltv: {
-              max: 0,
-              liq: 0,
-            },
-            symbols: {
-              primary: '',
-              secondary: '',
-            },
-            amounts: {
-              primary: currentAccount.perpVault.active.amount,
-              secondary: BN_ZERO,
-              locked: BN_ZERO,
-              unlocked: BN_ZERO,
-              unlocking: BN_ZERO,
-            },
-            values: {
-              primary: netValue,
-              secondary: BN_ZERO,
-              unlocked: BN_ZERO,
-              unlocking: BN_ZERO,
-            },
-          }
-
-          vaults.push(activeVault)
-        }
+        vaults = [
+          ...vaults,
+          ...transformPerpsVaultIntoDeposited(currentAccount, perpsVault, prices, assets),
+        ]
       }
 
-      return vaults || []
+      return vaults
     },
     {
       suspense: true,
@@ -86,4 +39,122 @@ export default function useDepositedVaults(accountId: string) {
       fallbackData: [],
     },
   )
+}
+
+function transformPerpsVaultIntoDeposited(
+  account: Account,
+  perpsVault: PerpsVault,
+  prices: BNCoin[],
+  assets: Asset[],
+) {
+  const vaults: DepositedVault[] = []
+
+  const depositedTemplate: DepositedVault = {
+    type: 'perp',
+    ...perpsVault,
+    status: VaultStatus.ACTIVE,
+    cap: {
+      used: perpsVault.liquidity,
+      denom: perpsVault.denom,
+      max: BN(9e12), // Placeholder value. There is no deposit cap currently
+    },
+    denoms: {
+      primary: perpsVault.denom,
+      secondary: '',
+      lp: '',
+      vault: '',
+    },
+    address: '',
+    ltv: {
+      max: 0,
+      liq: 0,
+    },
+    symbols: {
+      primary: '',
+      secondary: '',
+    },
+    amounts: {
+      primary: BN_ZERO,
+      secondary: BN_ZERO,
+      locked: BN_ZERO,
+      unlocked: BN_ZERO,
+      unlocking: BN_ZERO,
+    },
+    values: {
+      primary: BN_ZERO,
+      secondary: BN_ZERO,
+      unlocked: BN_ZERO,
+      unlocking: BN_ZERO,
+    },
+  }
+
+  if (account.perpVault?.active) {
+    const netValue = getCoinValue(
+      BNCoin.fromDenomAndBigNumber(account.perpVault.denom, account.perpVault.active.amount),
+      prices,
+      assets,
+    )
+    const activeVault: DepositedVault = {
+      ...depositedTemplate,
+      status: VaultStatus.ACTIVE,
+      ...account.perpVault.active, // TODO: Is this needed?
+      amounts: {
+        ...depositedTemplate.amounts,
+        primary: account.perpVault.active.amount,
+      },
+      values: {
+        ...depositedTemplate.values,
+        primary: netValue,
+      },
+    }
+    vaults.push(activeVault)
+  }
+
+  if (account.perpVault?.unlocked) {
+    const netValue = getCoinValue(
+      BNCoin.fromDenomAndBigNumber(account.perpVault.denom, account.perpVault.unlocked),
+      prices,
+      assets,
+    )
+
+    const unlockedVault: DepositedVault = {
+      ...depositedTemplate,
+      status: VaultStatus.UNLOCKED,
+      amounts: {
+        ...depositedTemplate.amounts,
+        primary: account.perpVault.unlocked,
+      },
+      values: {
+        ...depositedTemplate.values,
+        primary: netValue,
+      },
+    }
+
+    vaults.push(unlockedVault)
+  }
+
+  if (account.perpVault?.unlocking) {
+    for (let unlock of account.perpVault.unlocking) {
+      const unlockingVault: DepositedVault = {
+        ...depositedTemplate,
+        status: VaultStatus.UNLOCKING,
+        unlocksAt: unlock.unlocksAt,
+        amounts: {
+          ...depositedTemplate.amounts,
+          primary: unlock.amount,
+        },
+        values: {
+          ...depositedTemplate.values,
+          primary: getCoinValue(
+            BNCoin.fromDenomAndBigNumber(account.perpVault.denom, unlock.amount),
+            prices,
+            assets,
+          ),
+        },
+      }
+      vaults.push(unlockingVault)
+    }
+  }
+
+  return vaults
 }

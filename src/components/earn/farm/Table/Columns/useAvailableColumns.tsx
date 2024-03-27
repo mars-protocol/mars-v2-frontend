@@ -42,7 +42,7 @@ export default function useAvailableColumns(props: Props) {
       },
       {
         ...LTV_MAX_META,
-        cell: ({ row }) => <MaxLTV vault={row.original as Vault} isLoading={props.isLoading} />,
+        cell: ({ row }) => <MaxLTV vault={row.original as Vault} />,
       },
       {
         ...DEPOSIT_META,

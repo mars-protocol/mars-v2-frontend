@@ -1,12 +1,12 @@
 import { useState } from 'react'
+import { useSWRConfig } from 'swr'
 
 import Button from 'components/common/Button'
 import { ChevronRight } from 'components/common/Icons'
 import NotificationBanner from 'components/common/NotificationBanner'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useSlippage from 'hooks/settings/useSlippage'
 import useAccountId from 'hooks/useAccountId'
+import useChainConfig from 'hooks/useChainConfig'
 import useStore from 'store'
 
 interface Props {
@@ -17,7 +17,9 @@ export default function VaultUnlockBanner(props: Props) {
   const accountId = useAccountId()
   const [isConfirming, setIsConfirming] = useState(false)
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
-  const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
+  const [slippage] = useSlippage()
+  const { mutate } = useSWRConfig()
+  const chainConfig = useChainConfig()
 
   async function handleWithdraw() {
     if (!accountId) return
@@ -32,6 +34,8 @@ export default function VaultUnlockBanner(props: Props) {
         vaults: props.vaults,
         slippage,
       })
+      await mutate(`chains/${chainConfig.id}/accounts/${accountId}`)
+      await mutate(`chains/${chainConfig.id}/vaults/${accountId}/deposited`)
       setIsConfirming(false)
     }
   }

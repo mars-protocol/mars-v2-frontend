@@ -1,8 +1,6 @@
 import { useMemo } from 'react'
 
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useSlippage from 'hooks/settings/useSlippage'
 import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
@@ -11,7 +9,7 @@ interface Props {
 }
 
 export default function useDepositActions(props: Props) {
-  const [slippage] = useLocalStorage<number>(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
+  const [slippage] = useSlippage()
 
   return useMemo(
     () => [

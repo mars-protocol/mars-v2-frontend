@@ -1,10 +1,12 @@
+import { LogoATOM } from 'components/common/assets/AssetLogos'
+
 const ATOM: AssetMetaData = {
   symbol: 'ATOM',
   name: 'Atom',
   id: 'ATOM',
 
   color: '#6f7390',
-  logo: '/images/tokens/atom.svg',
+  logo: LogoATOM,
   decimals: 6,
   hasOraclePrice: true,
   isEnabled: true,

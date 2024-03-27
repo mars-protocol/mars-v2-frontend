@@ -147,7 +147,15 @@ export default function AccountSummary(props: Props) {
       })
 
     return itemsArray
-  }, [account, borrowAssetsData, lendingAssetsData, isHls, handleToggle, accountSummaryTabs])
+  }, [
+    account,
+    borrowAssetsData,
+    lendingAssetsData,
+    isHls,
+    handleToggle,
+    accountSummaryTabs,
+    updatedAccount,
+  ])
 
   if (!account) return null
   return (

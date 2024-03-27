@@ -1,10 +1,9 @@
-import classNames from 'classnames'
 import { useCallback } from 'react'
 
 import Button from 'components/common/Button'
 import { Circle, Enter, TrashBin, Wallet } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
-import Text from 'components/common/Text'
+import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useAlertDialog from 'hooks/useAlertDialog'
@@ -41,26 +40,7 @@ export default function Deposit(props: Props) {
 
     openAlertDialog({
       title: 'Understanding HLS Positions',
-      content: (
-        <div className='flex flex-col gap-8 pt-2 pb-8 pr-10'>
-          {INFO_ITEMS.map((item) => (
-            <div key={item.title} className='grid grid-cols-[min-content,auto]'>
-              <span
-                className={classNames(
-                  'rounded-sm relative h-10 w-10 p-3 bg-white/10 mr-6 grid place-items-center',
-                  'before:content-[" "] before:absolute before:inset-0 before:rounded-sm before:p-[1px] before:border-glas before:-z-1',
-                )}
-              >
-                {item.icon}
-              </span>
-              <span className='flex flex-col'>
-                <Text>{item.title}</Text>
-                <Text className='text-sm text-white/60'>{item.description}</Text>
-              </span>
-            </div>
-          ))}
-        </div>
-      ),
+      content: <AlertDialogItems items={INFO_ITEMS} />,
       positiveButton: {
         text: 'Continue',
         icon: <Enter />,

@@ -1,9 +1,11 @@
+import { LogoUSDT } from 'components/common/assets/AssetLogos'
+
 const USDT: AssetMetaData = {
   symbol: 'USDT',
   id: 'USDT',
   name: 'Tether',
   color: '#50af95',
-  logo: '/images/tokens/usdt.svg',
+  logo: LogoUSDT,
   decimals: 6,
   hasOraclePrice: true,
   isEnabled: true,

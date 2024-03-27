@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import Card from 'components/common/Card'
 import LeverageSlider from 'components/common/LeverageSlider'
-import { Spacer } from 'components/common/Spacer'
 import Text from 'components/common/Text'
 import { TradeDirectionSelector } from 'components/common/TradeDirectionSelector'
 import { LeverageButtons } from 'components/perps/Module/LeverageButtons'
@@ -150,6 +149,10 @@ export function PerpsModule() {
 
   const onChangeAmount = useCallback(
     (amount: BigNumber) => {
+      const percentOfMax = BN(amount).div(maxAmount)
+      const newLeverage = percentOfMax.times(maxLeverage).toNumber()
+
+      setSliderLeverage(newLeverage)
       if (tradeDirection === 'short') {
         setAmount(amount.times(-1))
         return
@@ -157,7 +160,7 @@ export function PerpsModule() {
 
       setAmount(amount)
     },
-    [tradeDirection],
+    [maxAmount, maxLeverage, tradeDirection],
   )
 
   if (!perpsAsset) return null
@@ -194,20 +197,21 @@ export function PerpsModule() {
             onDebounce={onDebounce}
             type={tradeDirection}
           />
-          <LeverageButtons
-            maxLeverage={maxLeverage}
-            currentLeverage={leverage}
-            maxAmount={maxAmount}
-            onChange={(leverage) => {
-              const percentOfMax = BN(leverage - 1).div(maxLeverage - 1)
-              setAmount(maxAmount.times(percentOfMax).integerValue())
-              setSliderLeverage(leverage)
-            }}
-          />
+          {maxLeverage > 5 && (
+            <LeverageButtons
+              maxLeverage={maxLeverage}
+              currentLeverage={leverage}
+              maxAmount={maxAmount}
+              onChange={(leverage) => {
+                const percentOfMax = BN(leverage - 1).div(maxLeverage - 1)
+                setAmount(maxAmount.times(percentOfMax).integerValue())
+                setSliderLeverage(leverage)
+              }}
+            />
+          )}
         </>
       )}
 
-      <Spacer />
       <PerpsSummary
         amount={amount ?? previousAmount}
         tradeDirection={tradeDirection ?? previousTradeDirection}
@@ -218,6 +222,7 @@ export function PerpsModule() {
         previousLeverage={previousLeverage}
         hasActivePosition={hasActivePosition}
         onTxExecuted={() => setAmount(BN_ZERO)}
+        disabled={amount.isGreaterThan(maxAmount)}
       />
     </Card>
   )

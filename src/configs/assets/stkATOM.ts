@@ -1,9 +1,11 @@
+import { LogoStkATOM } from 'components/common/assets/AssetLogos'
+
 const stkATOM: AssetMetaData = {
   symbol: 'stkATOM',
   name: 'Persistence Staked Atom',
   id: 'stkATOM',
   color: '#c73238',
-  logo: '/images/tokens/stkatom.svg',
+  logo: LogoStkATOM,
   decimals: 6,
   hasOraclePrice: true,
   isEnabled: true,

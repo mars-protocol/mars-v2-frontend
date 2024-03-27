@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
+import { useSWRConfig } from 'swr'
 
 import Button from 'components/common/Button'
 import { Callout } from 'components/common/Callout'
@@ -7,30 +8,39 @@ import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSli
 import ModalContentWithSummary from 'components/Modals/ModalContentWithSummary'
 import { Header } from 'components/Modals/PerpsVault/Header'
 import { SubHeader } from 'components/Modals/PerpsVault/SubHeader'
+import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAsset from 'hooks/assets/useAsset'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
+import useChainConfig from 'hooks/useChainConfig'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
 
 export default function PerpsVaultModal() {
+  const chainConfig = useChainConfig()
   const modal = useStore((s) => s.perpsVaultModal)
   const account = useCurrentAccount()
   const [amount, setAmount] = useState(BN(0))
   const [isConfirming, setIsConfirming] = useState(false)
+  const { mutate } = useSWRConfig()
 
   const { data: perpsVault } = usePerpsVault()
   const asset = useAsset(perpsVault?.denom || '')
 
-  const [amountInDeposits, amountInLends, maxAmount] = useMemo(() => {
+  const [amountInDeposits, maxAmount] = useMemo(() => {
     if (!account) return [BN(0), BN(0), BN(0)]
 
-    const amountInDeposits =
-      account.deposits.find((d) => d.denom === perpsVault?.denom)?.amount || BN(0)
-    const amountInLends = account.lends.find((d) => d.denom === perpsVault?.denom)?.amount || BN(0)
+    if (modal?.type === 'deposit') {
+      const amountInDeposits =
+        account.deposits.find((d) => d.denom === perpsVault?.denom)?.amount || BN(0)
+      const amountInLends =
+        account.lends.find((d) => d.denom === perpsVault?.denom)?.amount || BN(0)
 
-    return [amountInDeposits, amountInLends, amountInDeposits.plus(amountInLends)]
-  }, [account, perpsVault?.denom])
+      return [amountInDeposits, amountInDeposits.plus(amountInLends)]
+    }
+
+    return [BN_ZERO, account.perpVault?.active?.amount ?? BN_ZERO]
+  }, [account, modal?.type, perpsVault?.denom])
 
   const onClose = useCallback(() => useStore.setState({ perpsVaultModal: null }), [])
   const handleClick = useCallback(async () => {
@@ -50,12 +60,26 @@ export default function PerpsVaultModal() {
         ...(!amountFromDeposits.isZero() ? { fromDeposits: amountFromDeposits } : {}),
         ...(!amountFromLends.isZero() ? { fromLends: amountFromLends } : {}),
       })
-
-      setIsConfirming(false)
-      onClose()
-      return
     }
-  }, [account, amount, amountInDeposits, modal?.type, onClose, perpsVault])
+
+    const activeVaultPosition = account.perpVault?.active
+
+    if (modal?.type === 'unlock' && activeVaultPosition) {
+      const percentageOfMax = amount.div(activeVaultPosition.amount)
+      const amountOfShares = percentageOfMax.times(activeVaultPosition.shares)
+      await useStore.getState().requestUnlockPerpsVault({
+        accountId: account.id,
+        amount: amountOfShares.integerValue(),
+      })
+    }
+
+    setIsConfirming(false)
+    setAmount(BN_ZERO)
+    await mutate(`chains/${chainConfig.id}/accounts/${account.id}`)
+    await mutate(`chains/${chainConfig.id}/vaults/${account.id}/deposited`)
+    onClose()
+    return
+  }, [account, amount, amountInDeposits, chainConfig.id, modal?.type, mutate, onClose, perpsVault])
 
   if (!modal || !asset) return null
 
@@ -76,15 +100,28 @@ export default function PerpsVaultModal() {
             warningMessages={[]}
             maxText='Available'
           />
-          <Callout description='Please note there is an unlocking period of 7 days when depositing into this vault.' />
-          <Button
-            onClick={handleClick}
-            rightIcon={<ArrowRight />}
-            showProgressIndicator={isConfirming}
-            disabled={isConfirming}
-          >
-            {modal.type === 'deposit' ? 'Deposit' : 'Request unlock'}
-          </Button>
+          <div className='gap-4 flex flex-col'>
+            {modal.type === 'deposit' && (
+              <>
+                <Callout>
+                  Please note there is an unlocking period of 7 days when depositing into this
+                  vault.
+                </Callout>
+                <Callout>
+                  Your overall leverage may be increased as any deposits into this vault are removed
+                  from your total collateral value.
+                </Callout>
+              </>
+            )}
+            <Button
+              onClick={handleClick}
+              rightIcon={<ArrowRight />}
+              showProgressIndicator={isConfirming}
+              disabled={isConfirming || amount.isZero()}
+            >
+              {modal.type === 'deposit' ? 'Deposit' : 'Request unlock'}
+            </Button>
+          </div>
         </>
       }
       header={<Header asset={asset} />}

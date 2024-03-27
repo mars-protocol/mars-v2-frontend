@@ -1,20 +1,19 @@
+import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
 import { LockLocked, LockUnlocked } from 'components/common/Icons'
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
-import useDepositedColumns from 'components/earn/farm/Table/Columns/useDepositedColumns'
 import { VaultStatus } from 'types/enums/vault'
 
 type Props = {
   data: DepositedVault[]
+  columns: ColumnDef<DepositedVault>[]
   isLoading: boolean
   status: VaultStatus
 }
 
-export default function DepositedVaultsTable(props: Props) {
-  const columns = useDepositedColumns({ isLoading: props.isLoading })
-
+export default function ActiveVaultsTable(props: Props) {
   if (props.data.length === 0) {
     return (
       <div className='flex flex-col items-center py-10 gap-1'>
@@ -31,7 +30,7 @@ export default function DepositedVaultsTable(props: Props) {
     <Table
       hideCard
       title='Deposited Vaults'
-      columns={columns}
+      columns={props.columns}
       data={props.data}
       initialSorting={[{ id: 'name', desc: true }]}
     />
