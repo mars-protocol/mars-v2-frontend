@@ -23,6 +23,7 @@ import milkTIA from 'configs/assets/milkTIA'
 import stATOM from 'configs/assets/stATOM'
 import stDYDX from 'configs/assets/stDYDX'
 import stOSMO from 'configs/assets/stOSMO'
+import stTIA from 'configs/assets/stTIA'
 import { VAULTS_META_DATA } from 'constants/vaults'
 import { NETWORK } from 'types/enums/network'
 import { ChainInfoID } from 'types/enums/wallet'
@@ -60,6 +61,11 @@ const ASSETS = [
     ...stDYDX,
     poolId: 1423,
     denom: 'ibc/980E82A9F8E7CA8CD480F4577E73682A6D3855A267D1831485D7EBEF0E7A6C2C',
+  },
+  {
+    ...stTIA,
+    poolId: 1428,
+    denom: 'ibc/698350B8A61D575025F3ED13E9AC9C0F45C89DEFE92F76D5838F1D3C1A7FF7C9',
   },
   {
     ...USDCaxl,
