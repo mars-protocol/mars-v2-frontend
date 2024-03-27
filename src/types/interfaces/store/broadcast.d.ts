@@ -15,11 +15,6 @@ interface ToastObjectOptions extends HandleResponseProps {
 interface ToastObject {
   response: Promise<BroadcastResult>
   options: ToastObjectOptions
-
-  swapOptions?: {
-    coinIn: BNCoin
-    denomOut: string
-  }
 }
 
 interface ToastPending {
@@ -55,40 +50,8 @@ interface ToastStore {
 interface HandleResponseProps {
   id: number
   response?: BroadcastResult
-  action:
-    | 'deposit'
-    | 'withdraw'
-    | 'borrow'
-    | 'repay'
-    | 'vault'
-    | 'vaultCreate'
-    | 'lend'
-    | 'create'
-    | 'delete'
-    | 'claim'
-    | 'unlock'
-    | 'swap'
-    | 'oracle'
-    | 'hls-staking'
-    | 'open-perp'
-    | 'close-perp'
-    | 'modify-perp'
-    | 'perp-vault-deposit'
-    | 'perp-vault-unlock'
-    | 'perp-vault-withdraw'
-  lend?: boolean
   accountId?: string
-  changes?: {
-    debts?: BNCoin[]
-    deposits?: BNCoin[]
-    lends?: BNCoin[]
-    reclaims?: BNCoin[]
-    repays?: BNCoin[]
-    swap?: { from: Coin; to: Coin }
-  }
-  target?: 'wallet' | 'account'
   message?: string
-  repay?: boolean
 }
 
 interface BroadcastSlice {
@@ -140,7 +103,12 @@ interface BroadcastSlice {
     lend?: BNCoin
     fromWallet?: boolean
   }) => Promise<boolean>
-  setToast: (toast: ToastObject) => void
+  handleTransaction: (options: {
+    response: Promise<BroadcastResult>
+    accountId?: string | null
+    isSwap?: boolean
+    message?: string
+  }) => void
   swap: (options: {
     accountId: string
     coinIn: BNCoin
