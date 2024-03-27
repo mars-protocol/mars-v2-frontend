@@ -86,7 +86,7 @@ export default function Table<T>(props: Props<T>) {
                         header.id === 'symbol' || header.id === 'name'
                           ? 'justify-start'
                           : 'justify-end',
-                        'align-center',
+                        'align-center relative',
                       )}
                     >
                       <Text
@@ -97,7 +97,14 @@ export default function Table<T>(props: Props<T>) {
                         {flexRender(header.column.columnDef.header, header.getContext())}
                       </Text>
                       {header.column.getCanSort() && (
-                        <span className='w-5 h-5 my-auto text-white'>
+                        <span
+                          className={classNames(
+                            'w-5 h-5 my-auto text-white',
+                            header.id !== 'symbol' &&
+                              header.id !== 'name' &&
+                              'absolute -mr-5 -translate-y-1/2 top-1/2',
+                          )}
+                        >
                           {header.column.getCanSort()
                             ? {
                                 asc: <SortAsc size={16} />,
