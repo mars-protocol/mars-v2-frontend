@@ -14,6 +14,7 @@ export { default as LogoStATOM } from 'components/common/assets/AssetLogos/stato
 export { default as LogoStDYDX } from 'components/common/assets/AssetLogos/stdydx.svg'
 export { default as LogoStkATOM } from 'components/common/assets/AssetLogos/stkatom.svg'
 export { default as LogoStOSMO } from 'components/common/assets/AssetLogos/stosmo.svg'
+export { default as LogoStTIA } from 'components/common/assets/AssetLogos/sttia.svg'
 export { default as LogoTIA } from 'components/common/assets/AssetLogos/tia.svg'
 export { default as LogoUSDC } from 'components/common/assets/AssetLogos/usdc.svg'
 export { default as LogoUSDT } from 'components/common/assets/AssetLogos/usdt.svg'
