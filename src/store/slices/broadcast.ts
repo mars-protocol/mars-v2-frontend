@@ -4,6 +4,7 @@ import moment from 'moment'
 import { isMobile } from 'react-device-detect'
 import { StoreApi } from 'zustand'
 
+import getAccount from 'api/accounts/getAccount'
 import getPythPriceData from 'api/prices/getPythPriceData'
 import { BN_ZERO } from 'constants/math'
 import { Store } from 'store'
@@ -21,6 +22,7 @@ import { ExecuteMsg as IncentivesExecuteMsg } from 'types/generated/mars-incenti
 import { ExecuteMsg as PerpsExecuteMsg } from 'types/generated/mars-perps/MarsPerps.types'
 import { ExecuteMsg as RedBankExecuteMsg } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHealthTypes.types'
+import { compareAccounts } from 'utils/accounts'
 import { byDenom, bySymbol } from 'utils/array'
 import { generateErrorMessage, getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
@@ -610,7 +612,8 @@ export default function createBroadcastSlice(
       const { response, accountId, message, isSwap } = options
       const isV1 = get().isV1
       const id = moment().unix()
-
+      const account =
+        accountId === 'new' ? undefined : getAccount(get().chainConfig, accountId ?? undefined)
       const toastOptions: Partial<ToastObjectOptions> = {
         id,
         accountId: accountId ?? get().selectedAccount ?? undefined,
@@ -624,7 +627,7 @@ export default function createBroadcastSlice(
         },
       })
 
-      response.then((r) => {
+      Promise.all([response, account]).then(([r, a]): void => {
         if (accountId === 'new') {
           toastOptions.accountId =
             getSingleValueFromBroadcastResult(r.result, 'wasm', 'token_id') ?? undefined
@@ -658,8 +661,33 @@ export default function createBroadcastSlice(
           return
         }
 
-        set({ toast })
-        return
+        if (!accountId) {
+          // no account id, no need to compare
+          return
+        }
+
+        const updatedAccount = getAccount(get().chainConfig, accountId ?? undefined)
+        updatedAccount.then((ua) => {
+          if (ua && a) {
+            const differences = compareAccounts(a, ua)
+
+            differences.lends.forEach((lend) => {
+              console.log('lend denom', lend.denom)
+              console.log('lend amount', lend.amount.toString())
+            })
+            differences.deposits.forEach((deposits) => {
+              console.log('deposits denom', deposits.denom)
+              console.log('deposits amount', deposits.amount.toString())
+            })
+            differences.debts.forEach((debt) => {
+              console.log('debt denom', debt.denom)
+              console.log('debt amount', debt.amount.toString())
+            })
+
+            set({ toast })
+            return
+          }
+        })
       })
     },
     executeMsg: async (options: {
