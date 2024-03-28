@@ -18,8 +18,11 @@ export function toastify(
     message: toastOptions?.message,
   }
 
-  const lend = false // TODO check for Lend
   const recipient = 'wallet' // TODO get recipient
+  const txCoins = [] as {
+    coins: Coin[]
+    type: 'borrow' | 'lend' | 'withdraw' | 'reclaim' | 'deposit' | 'repay' | 'swap' | 'repay'
+  }[] // TODO get coins
 
   switch (transactionType) {
     case 'create':
@@ -28,36 +31,47 @@ export function toastify(
 
     case 'borrow':
       toast.content.push({
-        text: lend ? 'Borrowed and lent' : 'Borrowed',
-        coins: [], // TODO get coins
+        text: 'Borrowed',
+        coins: txCoins.find((c) => c.type === 'borrow')?.coins ?? [],
+      })
+      toast.content.push({
+        text: 'Lent',
+        coins: txCoins.find((c) => c.type === 'lend')?.coins ?? [],
       })
       break
 
     case 'withdraw':
       toast.content.push({
         text: recipient === 'wallet' ? 'Withdrew to Wallet' : 'Unlent',
-        coins: [], // TODO get coins
+        coins:
+          txCoins.find((c) =>
+            recipient === 'wallet' ? c.type === 'withdraw' : c.type === 'reclaim',
+          )?.coins ?? [],
       })
       break
 
     case 'deposit':
       toast.content.push({
-        text: lend ? 'Deposited and lent' : 'Deposited',
-        coins: [], // TODO get coins
+        text: 'Deposited',
+        coins: txCoins.find((c) => c.type === 'deposit')?.coins ?? [],
+      })
+      toast.content.push({
+        text: 'Lent',
+        coins: txCoins.find((c) => c.type === 'lend')?.coins ?? [],
       })
       break
 
     case 'lend':
       toast.content.push({
         text: 'Lent',
-        coins: [], // TODO get coins
+        coins: txCoins.find((c) => c.type === 'lend')?.coins ?? [],
       })
       break
 
     case 'repay':
       toast.content.push({
         text: 'Repaid',
-        coins: [], // TODO get coins
+        coins: txCoins.find((c) => c.type === 'repay')?.coins ?? [],
       })
       break
 
@@ -104,22 +118,22 @@ export function toastify(
     case 'swap':
       toast.content.push({
         text: 'Borrowed',
-        coins: [], // TODO get coins
+        coins: txCoins.find((c) => c.type === 'borrow')?.coins ?? [],
       })
 
       toast.content.push({
         text: 'Unlent',
-        coins: [], // TODO get coins
+        coins: txCoins.find((c) => c.type === 'reclaim')?.coins ?? [],
       })
 
       toast.content.push({
         text: 'Swapped',
-        coins: [], // TODO get coins (from, to)
+        coins: txCoins.find((c) => c.type === 'swap')?.coins ?? [],
       })
 
       toast.content.push({
         text: 'Repaid',
-        coins: [], // TODO get coins
+        coins: txCoins.find((c) => c.type === 'repay')?.coins ?? [],
       })
       break
 
