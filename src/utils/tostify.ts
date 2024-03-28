@@ -3,11 +3,14 @@ import { getTransactionTarget, identifyTransactionType } from 'utils/broadcast'
 export function toastify(
   result: BroadcastResult,
   toastOptions: Partial<ToastObjectOptions>,
+  address: string,
 ): ToastResponse {
   const target = getTransactionTarget(result)
   const transactionType = identifyTransactionType(result)
   const toast = {
     id: toastOptions?.id ?? Date.now(),
+    timestamp: toastOptions?.id ?? Date.now(),
+    address,
     isError: false,
     hash: result.result?.hash ?? '',
     target,

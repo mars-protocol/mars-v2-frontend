@@ -34,6 +34,8 @@ interface ToastSuccess {
   isError: boolean
   message?: string
   hash: string
+  address: string
+  timestamp: number
 }
 
 interface ToastError {

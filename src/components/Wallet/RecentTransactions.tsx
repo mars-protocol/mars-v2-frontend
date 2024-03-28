@@ -32,7 +32,7 @@ export default function RecentTransactions() {
           <div className='px-4 py-2 max-h-[400px] overflow-y-scroll scrollbar-hide'>
             <div className='flex flex-col w-full gap-2'>
               {recentTransactions.map((tx) => {
-                const { accountId, hash, content, message, timestamp } = tx
+                const { hash, content, message, target, timestamp } = tx
                 return (
                   <Card
                     className={classNames(
@@ -47,9 +47,7 @@ export default function RecentTransactions() {
                     key={hash}
                   >
                     <div className='flex flex-wrap items-start justify-between w-full gap-2 pb-2 md:flex-nowrap'>
-                      <Text className='flex font-bold'>
-                        {accountId === address ? 'Red Bank' : `Credit Account ${accountId}`}
-                      </Text>
+                      <Text className='flex font-bold'>{target}</Text>
                       <Text size='sm' className='text-white/70'>
                         {moment.unix(timestamp).format('lll')}
                       </Text>

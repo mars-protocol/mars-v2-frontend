@@ -631,7 +631,7 @@ export default function createBroadcastSlice(
           return
         }
 
-        set({ toast: toastify(r, toastOptions) })
+        set({ toast: toastify(r, toastOptions, get().address ?? '') })
         return
       })
     },
