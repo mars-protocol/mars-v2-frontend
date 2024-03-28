@@ -151,3 +151,8 @@ interface Event {
   type: string
   attributes: { key: string; value: string }[]
 }
+
+interface TransactionCoins {
+  coins: Coin[]
+  type: 'borrow' | 'lend' | 'withdraw' | 'reclaim' | 'deposit' | 'repay' | 'swap' | 'repay'
+}

@@ -19,10 +19,7 @@ export function toastify(
   }
 
   const recipient = 'wallet' // TODO get recipient
-  const txCoins = [] as {
-    coins: Coin[]
-    type: 'borrow' | 'lend' | 'withdraw' | 'reclaim' | 'deposit' | 'repay' | 'swap' | 'repay'
-  }[] // TODO get coins
+  const txCoins = [] as TransactionCoins[] // TODO get coins
 
   switch (transactionType) {
     case 'create':
