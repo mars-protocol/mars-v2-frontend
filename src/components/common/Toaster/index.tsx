@@ -98,16 +98,9 @@ export default function Toaster() {
 
   const handleResponse = (toast: ToastResponse, details?: boolean) => {
     const isError = toast?.isError
-    if (!isError && toast.accountId) addTransaction(toast)
+    if (!isError && toast.target) addTransaction(toast)
     const generalMessage = isError ? 'Transaction failed!' : 'Transaction completed successfully!'
     const showDetailElement = !!(!details && toast.hash)
-    const address = useStore.getState().address
-
-    let target: string
-    if (!isError) {
-      target = toast.accountId === address ? 'Red Bank' : `Credit Account ${toast.accountId}`
-    }
-
     const Msg = () => (
       <div className='relative flex flex-wrap w-full m-0 isolate'>
         <div className='flex w-full gap-2 mb-2'>
@@ -151,8 +144,8 @@ export default function Toaster() {
             showDetailElement && 'hidden group-hover/transaction:flex',
           )}
         >
-          {!isError && toast.accountId && (
-            <Text className='mb-1 font-bold text-white'>{target}</Text>
+          {!isError && toast.target && (
+            <Text className='mb-1 font-bold text-white'>{toast.target}</Text>
           )}
           {showDetailElement && toast.message && (
             <Text size='sm' className='w-full mb-1 text-white'>

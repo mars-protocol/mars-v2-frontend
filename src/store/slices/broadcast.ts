@@ -4,7 +4,6 @@ import moment from 'moment'
 import { isMobile } from 'react-device-detect'
 import { StoreApi } from 'zustand'
 
-import getAccount from 'api/accounts/getAccount'
 import getPythPriceData from 'api/prices/getPythPriceData'
 import { BN_ZERO } from 'constants/math'
 import { Store } from 'store'
@@ -22,13 +21,13 @@ import { ExecuteMsg as IncentivesExecuteMsg } from 'types/generated/mars-incenti
 import { ExecuteMsg as PerpsExecuteMsg } from 'types/generated/mars-perps/MarsPerps.types'
 import { ExecuteMsg as RedBankExecuteMsg } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHealthTypes.types'
-import { compareAccounts } from 'utils/accounts'
 import { byDenom, bySymbol } from 'utils/array'
 import { generateErrorMessage, getSingleValueFromBroadcastResult } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import checkPythUpdateEnabled from 'utils/checkPythUpdateEnabled'
 import { defaultFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
+import { toastify } from 'utils/tostify'
 
 function generateExecutionMessage(
   sender: string | undefined = '',
@@ -104,7 +103,7 @@ export default function createBroadcastSlice(
         ],
       })
 
-      get().handleTransaction({ response, accountId: options.accountId })
+      get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
     },
@@ -112,7 +111,7 @@ export default function createBroadcastSlice(
       const response = get().executeMsg({
         messages: [generateExecutionMessage(get().address, contract, msg, funds)],
       })
-      get().handleTransaction({ response, accountId: get().selectedAccount })
+      get().handleTransaction({ response })
 
       return response
     },
@@ -143,7 +142,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().handleTransaction({ response, accountId: options.accountId })
+      get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
     },
@@ -160,7 +159,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().handleTransaction({ response, accountId: options.accountId })
+      get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
     closeHlsStakingPosition: async (options: { accountId: string; actions: Action[] }) => {
@@ -176,7 +175,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().handleTransaction({ response, accountId: options.accountId })
+      get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
     },
@@ -191,7 +190,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().handleTransaction({ response, accountId: 'new' })
+      get().handleTransaction({ response })
 
       return response.then((response) =>
         response.result
@@ -228,7 +227,7 @@ export default function createBroadcastSlice(
         ],
       })
 
-      get().handleTransaction({ response, accountId: options.accountId })
+      get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
     },
@@ -267,7 +266,7 @@ export default function createBroadcastSlice(
           messages,
         })
 
-        get().handleTransaction({ response, accountId: isV1 ? get().address : options.accountId })
+        get().handleTransaction({ response })
 
         return response.then((response) => !!response.result)
       }
@@ -299,7 +298,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, funds)],
       })
 
-      get().handleTransaction({ response, accountId: options.accountId })
+      get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
     },
@@ -323,7 +322,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().handleTransaction({ response, accountId: options.accountId })
+      get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
 
@@ -379,7 +378,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().handleTransaction({ response, accountId: options.accountId })
+      get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
     depositIntoVault: async (options: {
@@ -408,7 +407,7 @@ export default function createBroadcastSlice(
           ),
         ],
       })
-      get().handleTransaction({ response, accountId: options.accountId })
+      get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
     withdraw: async (options: {
@@ -439,7 +438,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().handleTransaction({ response, accountId: options.accountId })
+      get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
     repay: async (options: {
@@ -485,7 +484,7 @@ export default function createBroadcastSlice(
         ],
       })
 
-      get().handleTransaction({ response, accountId: options.accountId })
+      get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
     },
@@ -505,7 +504,7 @@ export default function createBroadcastSlice(
       const response = get().executeMsg({
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
-      get().handleTransaction({ response, accountId: options.accountId })
+      get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
     reclaim: async (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => {
@@ -525,7 +524,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().handleTransaction({ response, accountId: options.accountId })
+      get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
     swap: (options: {
@@ -588,7 +587,7 @@ export default function createBroadcastSlice(
           messages,
         })
 
-        get().handleTransaction({ response, accountId: options.accountId, isSwap: true })
+        get().handleTransaction({ response })
         return response.then((response) => !!response.result)
       }
 
@@ -603,20 +602,12 @@ export default function createBroadcastSlice(
       get().handleTransaction({ response, message: 'Oracle updated successfully!' })
       return response.then((response) => !!response.result)
     },
-    handleTransaction: (options: {
-      response: Promise<BroadcastResult>
-      accountId?: string | null
-      isSwap?: boolean
-      message?: string
-    }) => {
-      const { response, accountId, message, isSwap } = options
-      const isV1 = get().isV1
+    handleTransaction: (options: { response: Promise<BroadcastResult>; message?: string }) => {
+      const { response, message } = options
       const id = moment().unix()
-      const account =
-        accountId === 'new' ? undefined : getAccount(get().chainConfig, accountId ?? undefined)
       const toastOptions: Partial<ToastObjectOptions> = {
         id,
-        accountId: accountId ?? get().selectedAccount ?? undefined,
+        message,
       }
 
       set({
@@ -627,12 +618,7 @@ export default function createBroadcastSlice(
         },
       })
 
-      Promise.all([response, account]).then(([r, a]): void => {
-        if (accountId === 'new') {
-          toastOptions.accountId =
-            getSingleValueFromBroadcastResult(r.result, 'wasm', 'token_id') ?? undefined
-        }
-
+      response.then((r): void => {
         if (r.error || r.result?.response.code !== 0) {
           set({
             toast: {
@@ -645,49 +631,8 @@ export default function createBroadcastSlice(
           return
         }
 
-        const toast: ToastResponse = {
-          id,
-          accountId: toastOptions.accountId,
-          isError: false,
-          hash: r?.result?.hash,
-          content: [],
-          timestamp: moment().unix(),
-          address: get().address ?? '',
-        }
-
-        if (message) {
-          toast.message = message
-          set({ toast })
-          return
-        }
-
-        if (!accountId) {
-          // no account id, no need to compare
-          return
-        }
-
-        const updatedAccount = getAccount(get().chainConfig, accountId ?? undefined)
-        updatedAccount.then((ua) => {
-          if (ua && a) {
-            const differences = compareAccounts(a, ua)
-
-            differences.lends.forEach((lend) => {
-              console.log('lend denom', lend.denom)
-              console.log('lend amount', lend.amount.toString())
-            })
-            differences.deposits.forEach((deposits) => {
-              console.log('deposits denom', deposits.denom)
-              console.log('deposits amount', deposits.amount.toString())
-            })
-            differences.debts.forEach((debt) => {
-              console.log('debt denom', debt.denom)
-              console.log('debt amount', debt.amount.toString())
-            })
-
-            set({ toast })
-            return
-          }
-        })
+        set({ toast: toastify(r, toastOptions) })
+        return
       })
     },
     executeMsg: async (options: {
@@ -745,7 +690,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().handleTransaction({ response, accountId: options.accountId })
+      get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
     closePerpPosition: async (options: { accountId: string; denom: string }) => {
@@ -766,7 +711,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().handleTransaction({ response, accountId: options.accountId })
+      get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
     },
@@ -808,7 +753,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().handleTransaction({ response, accountId: options.accountId })
+      get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
     },
@@ -874,7 +819,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, redBankContract, msg, funds)],
       })
 
-      get().handleTransaction({ response, accountId: get().address })
+      get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
     },
@@ -915,7 +860,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().handleTransaction({ response, accountId: options.accountId })
+      get().handleTransaction({ response })
       const response_1 = await response
       return !!response_1.result
     },
@@ -938,7 +883,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().handleTransaction({ response, accountId: options.accountId })
+      get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
     },
@@ -958,7 +903,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().handleTransaction({ response, accountId: options.accountId })
+      get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
     },

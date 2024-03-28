@@ -29,12 +29,10 @@ type ToastResponse = {
 } & (ToastSuccess | ToastError)
 
 interface ToastSuccess {
-  accountId?: string
+  target: string
   content: { coins: Coin[]; text: string }[]
-  isError: false
+  isError: boolean
   message?: string
-  timestamp: number
-  address: string
   hash: string
 }
 
@@ -103,12 +101,7 @@ interface BroadcastSlice {
     lend?: BNCoin
     fromWallet?: boolean
   }) => Promise<boolean>
-  handleTransaction: (options: {
-    response: Promise<BroadcastResult>
-    accountId?: string | null
-    isSwap?: boolean
-    message?: string
-  }) => void
+  handleTransaction: (options: { response: Promise<BroadcastResult>; message?: string }) => void
   swap: (options: {
     accountId: string
     coinIn: BNCoin
@@ -151,3 +144,8 @@ interface BroadcastSlice {
 }
 
 type V1ActionType = 'withdraw' | 'deposit' | 'borrow' | 'repay'
+
+interface Event {
+  type: string
+  attributes: { key: string; value: string }[]
+}
