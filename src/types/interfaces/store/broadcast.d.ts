@@ -154,5 +154,5 @@ interface Event {
 
 interface TransactionCoins {
   coins: Coin[]
-  type: 'borrow' | 'lend' | 'withdraw' | 'reclaim' | 'deposit' | 'repay' | 'swap' | 'repay'
+  type: 'borrow' | 'lend' | 'withdraw' | 'reclaim' | 'deposit' | 'repay' | 'swap'
 }
