@@ -1,11 +1,11 @@
-import { LogoDYDX } from 'components/common/assets/AssetLogos'
+import { LogoINJ } from 'components/common/assets/AssetLogos'
 
 const INJ: AssetMetaData = {
   symbol: 'INJ',
   id: 'INJ',
   name: 'Injective',
   color: '#00F2FE',
-  logo: LogoDYDX,
+  logo: LogoINJ,
   decimals: 18,
   hasOraclePrice: true,
   isEnabled: true,
