@@ -100,7 +100,7 @@ function getTransactionCoins(result: BroadcastResult, address: string) {
       const target = getTargetFromEvent(event, address)
       const action = attr.value
       const coinType = coinRules.get(`${action}_${target}`) ?? coinRules.get(action)
-      if (coinType) transactionCoins[coinType].push(coin)
+      if (coinType) transactionCoins[coinType].push(...coin)
     })
   })
 
@@ -108,6 +108,7 @@ function getTransactionCoins(result: BroadcastResult, address: string) {
 }
 
 function getCoinFromEvent(event: TransactionEvent) {
+  const coins = [] as Coin[]
   const denomAmountActions = [
     'coin_reclaimed',
     'coin_deposited',
@@ -120,16 +121,15 @@ function getCoinFromEvent(event: TransactionEvent) {
   const denom = event.attributes.find((a) => a.key === 'denom')?.value
   const amount = event.attributes.find((a) => a.key === 'amount')?.value
 
-  if (!denom || !amount) {
-    const amountDenomString = event.attributes.find((a) =>
-      denomAmountActions.includes(a.key),
-    )?.value
+  if (denom && amount) coins.push(BNCoin.fromDenomAndBigNumber(denom, BN(amount)).toCoin())
 
+  event.attributes.forEach((attr: TransactionEventAttribute) => {
+    const amountDenomString = denomAmountActions.includes(attr.key) ? attr.value : undefined
     if (!amountDenomString) return
-    return getCoinFromAmountDenomString(amountDenomString)
-  }
-
-  return BNCoin.fromDenomAndBigNumber(denom, BN(amount)).toCoin()
+    const result = getCoinFromAmountDenomString(amountDenomString)
+    if (result) coins.push(result)
+  })
+  return coins
 }
 
 function getCoinFromSwapEvent(event: TransactionEvent) {

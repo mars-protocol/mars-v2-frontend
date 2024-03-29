@@ -13,6 +13,7 @@ import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useChainConfig from 'hooks/useChainConfig'
 import useTransactionStore from 'hooks/useTransactionStore'
+import React from 'react'
 import useStore from 'store'
 import { formatAmountWithSymbol } from 'utils/formatters'
 import { BN } from 'utils/helpers'
@@ -30,9 +31,9 @@ function isPromise(object?: any): object is ToastPending {
 
 export function generateToastContent(content: ToastSuccess['content'], assets: Asset[]): ReactNode {
   return content.map((item, index) => (
-    <>
+    <React.Fragment key={index}>
       {item.text && item.coins.length > 0 && (
-        <div className='flex flex-wrap w-full mb-1' key={index}>
+        <div className='flex flex-wrap w-full mb-1'>
           <Text size='sm' className='w-full mb-1 text-white'>
             {item.text}
           </Text>
@@ -56,7 +57,7 @@ export function generateToastContent(content: ToastSuccess['content'], assets: A
           )}
         </div>
       )}
-    </>
+    </React.Fragment>
   ))
 }
 
