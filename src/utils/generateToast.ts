@@ -41,8 +41,12 @@ export function generateToast(
 
     case 'withdraw':
       toast.content.push({
-        text: recipient === 'wallet' ? 'Withdrew to Wallet' : 'Unlent',
-        coins: recipient === 'wallet' ? txCoins.withdraw : txCoins.reclaim,
+        text: 'Unlent',
+        coins: txCoins.reclaim,
+      })
+      toast.content.push({
+        text: 'Withdrew to Wallet',
+        coins: txCoins.withdraw,
       })
       break
 
@@ -51,13 +55,6 @@ export function generateToast(
         text: 'Deposited',
         coins: txCoins.deposit,
       })
-      toast.content.push({
-        text: 'Lent',
-        coins: txCoins.lend,
-      })
-      break
-
-    case 'lend':
       toast.content.push({
         text: 'Lent',
         coins: txCoins.lend,

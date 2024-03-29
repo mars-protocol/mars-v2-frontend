@@ -48,7 +48,7 @@ export function analizeTransaction(
   const accountId = getSingleValueFromBroadcastResult(result.result, 'wasm', 'account_id')
   if (accountId) target = `Credit Account ${accountId}`
 
-  const txCoins = getTransactionCoins(result)
+  const txCoins = getTransactionCoins(result, address)
 
   const transactionType = getTransactionTypeFromCoins(txCoins)
 
@@ -60,7 +60,7 @@ export function analizeTransaction(
   }
 }
 
-function getTransactionCoins(result: BroadcastResult) {
+function getTransactionCoins(result: BroadcastResult, address: string) {
   let transactionCoins: TransactionCoins = {
     borrow: [],
     deposit: [],
@@ -84,7 +84,10 @@ function getTransactionCoins(result: BroadcastResult) {
       event.attributes.forEach((attr: TransactionEventAttribute) => {
         if (attr.key !== 'action') return
         const coin = getCoinFromEvent(event)
+        const target = getTargetFromEvent(event, address)
         if (attr.value === 'withdraw' && coin) transactionCoins.withdraw.push(coin)
+        if (attr.value === 'withdraw' && target !== 'wallet' && coin)
+          transactionCoins.reclaim.push(coin)
         if (attr.value === 'deposit' && coin) transactionCoins.deposit.push(coin)
       })
     }
@@ -100,12 +103,19 @@ function getCoinFromEvent(event: TransactionEvent) {
   return BNCoin.fromDenomAndBigNumber(denom, BN(amount))
 }
 
+function getTargetFromEvent(event: TransactionEvent, address: string): TransactionRecipient {
+  const recipient = event.attributes.find((a) => a.key === 'recipient')?.value
+
+  if (recipient && recipient === address) return 'wallet'
+  return 'contract'
+}
+
 function getTransactionTypeFromCoins(coins: TransactionCoins): string {
   if (coins.borrow.length > 0) return 'borrow'
   if (coins.deposit.length > 0) return 'deposit'
   if (coins.lend.length > 0) return 'lend'
   if (coins.repay.length > 0) return 'repay'
-  if (coins.withdraw.length > 0) return 'withdraw'
+  if (coins.withdraw.length > 0 || coins.reclaim.length > 0) return 'withdraw'
   return 'create'
 }
 
