@@ -1,25 +1,27 @@
-import { getTransactionTarget, identifyTransactionType } from 'utils/broadcast'
+import moment from 'moment'
+import { analizeTransaction } from 'utils/broadcast'
 
-export function toastify(
+export function generateToast(
   result: BroadcastResult,
   toastOptions: Partial<ToastObjectOptions>,
+  chainConfig: ChainConfig,
   address: string,
 ): ToastResponse {
-  const target = getTransactionTarget(result)
-  const transactionType = identifyTransactionType(result)
+  const { target, transactionType, recipient, txCoins } = analizeTransaction(
+    result,
+    chainConfig,
+    address,
+  )
   const toast = {
-    id: toastOptions?.id ?? Date.now(),
-    timestamp: toastOptions?.id ?? Date.now(),
+    id: toastOptions?.id ?? moment().unix(),
+    timestamp: toastOptions?.id ?? moment().unix(),
     address,
     isError: false,
     hash: result.result?.hash ?? '',
     target,
-    content: [] as { coins: Coin[]; text: string }[],
+    content: [] as ToastContent[],
     message: toastOptions?.message,
   }
-
-  const recipient = 'wallet' // TODO get recipient
-  const txCoins = [] as TransactionCoins[] // TODO get coins
 
   switch (transactionType) {
     case 'create':
@@ -29,46 +31,43 @@ export function toastify(
     case 'borrow':
       toast.content.push({
         text: 'Borrowed',
-        coins: txCoins.find((c) => c.type === 'borrow')?.coins ?? [],
+        coins: txCoins.borrow,
       })
       toast.content.push({
         text: 'Lent',
-        coins: txCoins.find((c) => c.type === 'lend')?.coins ?? [],
+        coins: txCoins.lend,
       })
       break
 
     case 'withdraw':
       toast.content.push({
         text: recipient === 'wallet' ? 'Withdrew to Wallet' : 'Unlent',
-        coins:
-          txCoins.find((c) =>
-            recipient === 'wallet' ? c.type === 'withdraw' : c.type === 'reclaim',
-          )?.coins ?? [],
+        coins: recipient === 'wallet' ? txCoins.withdraw : txCoins.reclaim,
       })
       break
 
     case 'deposit':
       toast.content.push({
         text: 'Deposited',
-        coins: txCoins.find((c) => c.type === 'deposit')?.coins ?? [],
+        coins: txCoins.deposit,
       })
       toast.content.push({
         text: 'Lent',
-        coins: txCoins.find((c) => c.type === 'lend')?.coins ?? [],
+        coins: txCoins.lend,
       })
       break
 
     case 'lend':
       toast.content.push({
         text: 'Lent',
-        coins: txCoins.find((c) => c.type === 'lend')?.coins ?? [],
+        coins: txCoins.lend,
       })
       break
 
     case 'repay':
       toast.content.push({
         text: 'Repaid',
-        coins: txCoins.find((c) => c.type === 'repay')?.coins ?? [],
+        coins: txCoins.repay,
       })
       break
 
@@ -115,22 +114,22 @@ export function toastify(
     case 'swap':
       toast.content.push({
         text: 'Borrowed',
-        coins: txCoins.find((c) => c.type === 'borrow')?.coins ?? [],
+        coins: txCoins.borrow,
       })
 
       toast.content.push({
         text: 'Unlent',
-        coins: txCoins.find((c) => c.type === 'reclaim')?.coins ?? [],
+        coins: txCoins.reclaim,
       })
 
       toast.content.push({
         text: 'Swapped',
-        coins: txCoins.find((c) => c.type === 'swap')?.coins ?? [],
+        coins: txCoins.swap,
       })
 
       toast.content.push({
         text: 'Repaid',
-        coins: txCoins.find((c) => c.type === 'repay')?.coins ?? [],
+        coins: txCoins.repay,
       })
       break
 

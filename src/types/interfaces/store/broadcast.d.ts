@@ -30,12 +30,17 @@ type ToastResponse = {
 
 interface ToastSuccess {
   target: string
-  content: { coins: Coin[]; text: string }[]
+  content: ToastContent[]
   isError: boolean
   message?: string
   hash: string
   address: string
   timestamp: number
+}
+
+interface ToastContent {
+  coins: BNCoin[]
+  text: string
 }
 
 interface ToastError {
@@ -153,6 +158,23 @@ interface Event {
 }
 
 interface TransactionCoins {
-  coins: Coin[]
-  type: 'borrow' | 'lend' | 'withdraw' | 'reclaim' | 'deposit' | 'repay' | 'swap'
+  borrow: BNCoin[]
+  deposit: BNCoin[]
+  lend: BNCoin[]
+  reclaim: BNCoin[]
+  repay: BNCoin[]
+  swap: BNCoin[]
+  withdraw: BNCoin[]
+}
+
+type TransactionRecipient = 'contract' | 'wallet'
+
+interface TransactionEvent {
+  type: string
+  attributes: TransactionEventAttribute[]
+}
+
+interface TransactionEventAttribute {
+  key: string
+  value: string
 }

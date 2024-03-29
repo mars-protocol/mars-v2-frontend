@@ -26,8 +26,8 @@ import { generateErrorMessage, getSingleValueFromBroadcastResult } from 'utils/b
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import checkPythUpdateEnabled from 'utils/checkPythUpdateEnabled'
 import { defaultFee } from 'utils/constants'
+import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
-import { toastify } from 'utils/tostify'
 
 function generateExecutionMessage(
   sender: string | undefined = '',
@@ -631,7 +631,7 @@ export default function createBroadcastSlice(
           return
         }
 
-        set({ toast: toastify(r, toastOptions, get().address ?? '') })
+        set({ toast: generateToast(r, toastOptions, get().chainConfig, get().address ?? '') })
         return
       })
     },
