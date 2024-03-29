@@ -35,15 +35,7 @@ export function analizeTransaction(
 } {
   let target = 'Red Bank'
   let recipient: TransactionRecipient = 'wallet'
-
   console.log(result)
-  const filteredEvents = result?.result?.response.events
-    .filter(
-      (event: TransactionEvent) =>
-        event.type === 'wasm' || event.type === 'coin_spent' || event.type === 'coin_received',
-    )
-    .flat()
-  console.log('filtered', filteredEvents)
 
   const accountId = getSingleValueFromBroadcastResult(result.result, 'wasm', 'account_id')
   if (accountId) target = `Credit Account ${accountId}`
@@ -85,21 +77,41 @@ function getTransactionCoins(result: BroadcastResult, address: string) {
         if (attr.key !== 'action') return
         const coin = getCoinFromEvent(event)
         const target = getTargetFromEvent(event, address)
-        if (attr.value === 'withdraw' && coin) transactionCoins.withdraw.push(coin)
-        if (attr.value === 'withdraw' && target !== 'wallet' && coin)
-          transactionCoins.reclaim.push(coin)
-        if (attr.value === 'deposit' && coin) transactionCoins.deposit.push(coin)
+
+        /* TODO beautify ruleset */
+
+        if (attr.value === 'withdraw' && target === 'wallet' && coin)
+          transactionCoins.withdraw.push(coin)
+
+        if (attr.value === 'callback/withdraw' && coin) transactionCoins.withdraw.push(coin)
+
+        if (attr.value === 'reclaim' && coin) transactionCoins.reclaim.push(coin)
+
+        if (attr.value === 'callback/deposit' && coin) transactionCoins.deposit.push(coin)
+
+        if (attr.value === 'deposit' && target === 'wallet' && coin)
+          transactionCoins.deposit.push(coin)
+
+        if (attr.value === 'deposit' && target !== 'wallet' && coin)
+          transactionCoins.lend.push(coin)
       })
     }
   })
-
   return transactionCoins
 }
 
 function getCoinFromEvent(event: TransactionEvent) {
+  const denomAmountActions = ['coin_reclaimed', 'coin_deposited', 'coin_withdrawn']
+
   const denom = event.attributes.find((a) => a.key === 'denom')?.value
   const amount = event.attributes.find((a) => a.key === 'amount')?.value
-  if (!denom || !amount) return
+  if (!denom || !amount) {
+    const amountDenomString = event.attributes.find((a) =>
+      denomAmountActions.includes(a.key),
+    )?.value
+    if (!amountDenomString) return
+    return getBNCoinFromAmountDenomString(amountDenomString)
+  }
   return BNCoin.fromDenomAndBigNumber(denom, BN(amount))
 }
 
@@ -111,12 +123,26 @@ function getTargetFromEvent(event: TransactionEvent, address: string): Transacti
 }
 
 function getTransactionTypeFromCoins(coins: TransactionCoins): string {
-  if (coins.borrow.length > 0) return 'borrow'
-  if (coins.deposit.length > 0) return 'deposit'
-  if (coins.lend.length > 0) return 'lend'
-  if (coins.repay.length > 0) return 'repay'
-  if (coins.withdraw.length > 0 || coins.reclaim.length > 0) return 'withdraw'
+  if (
+    coins.borrow.length > 0 ||
+    coins.deposit.length > 0 ||
+    coins.lend.length > 0 ||
+    coins.repay.length > 0 ||
+    coins.withdraw.length > 0 ||
+    coins.reclaim.length > 0
+  )
+    return 'transaction'
   return 'create'
+}
+
+export function getBNCoinFromAmountDenomString(amountDenomString: string): BNCoin | undefined {
+  const regex = /(?:(\d+).*)/g
+  const matches = regex.exec(amountDenomString)
+
+  console.log(matches)
+  if (!matches || matches.length < 2) return
+  const denom = amountDenomString.split(matches[1])[1]
+  return BNCoin.fromDenomAndBigNumber(denom, BN(matches[1]))
 }
 
 export function getTokenOutFromSwapResponse(response: BroadcastResult, denom: string): Coin {

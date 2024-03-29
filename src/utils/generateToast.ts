@@ -28,18 +28,11 @@ export function generateToast(
       toast.message = 'Created the Credit Account'
       break
 
-    case 'borrow':
+    case 'transaction':
       toast.content.push({
         text: 'Borrowed',
         coins: txCoins.borrow,
       })
-      toast.content.push({
-        text: 'Lent',
-        coins: txCoins.lend,
-      })
-      break
-
-    case 'withdraw':
       toast.content.push({
         text: 'Unlent',
         coins: txCoins.reclaim,
@@ -48,23 +41,17 @@ export function generateToast(
         text: 'Withdrew to Wallet',
         coins: txCoins.withdraw,
       })
-      break
-
-    case 'deposit':
       toast.content.push({
         text: 'Deposited',
         coins: txCoins.deposit,
       })
       toast.content.push({
-        text: 'Lent',
-        coins: txCoins.lend,
-      })
-      break
-
-    case 'repay':
-      toast.content.push({
         text: 'Repaid',
         coins: txCoins.repay,
+      })
+      toast.content.push({
+        text: target === 'Red Bank' ? 'Deposited' : 'Lent',
+        coins: txCoins.lend,
       })
       break
 

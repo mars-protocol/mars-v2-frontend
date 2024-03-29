@@ -30,9 +30,9 @@ function isPromise(object?: any): object is ToastPending {
 
 export function generateToastContent(content: ToastSuccess['content'], assets: Asset[]): ReactNode {
   return content.map((item, index) => (
-    <div className='flex flex-wrap w-full mb-1' key={index}>
+    <>
       {item.text && item.coins.length > 0 && (
-        <>
+        <div className='flex flex-wrap w-full mb-1' key={index}>
           <Text size='sm' className='w-full mb-1 text-white'>
             {item.text}
           </Text>
@@ -50,9 +50,9 @@ export function generateToastContent(content: ToastSuccess['content'], assets: A
               })}
             </ul>
           )}
-        </>
+        </div>
       )}
-    </div>
+    </>
   ))
 }
 
