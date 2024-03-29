@@ -63,6 +63,7 @@ function getRules() {
   coinRules.set('deposit_wallet', 'deposit')
   coinRules.set('deposit_contract', 'lend')
   coinRules.set('repay', 'repay')
+  coinRules.set('borrow', 'borrow')
 
   return coinRules
 }
@@ -77,13 +78,19 @@ function getTransactionCoins(result: BroadcastResult, address: string) {
     swap: [],
     withdraw: [],
   }
+  const eventTypes = ['wasm', 'token_swapped']
   const coinRules = getRules()
   const filteredEvents = result?.result?.response.events
-    .filter((event: TransactionEvent) => event.type === 'wasm')
+    .filter((event: TransactionEvent) => eventTypes.includes(event.type))
     .flat()
 
   filteredEvents.forEach((event: TransactionEvent) => {
     if (!Array.isArray(event.attributes)) return
+    if (event.type === 'token_swapped') {
+      const { tokenIn, tokenOut } = getCoinFromSwapEvent(event)
+      if (tokenIn && tokenOut) transactionCoins.swap.push(tokenIn, tokenOut)
+      return
+    }
     event.attributes.forEach((attr: TransactionEventAttribute) => {
       if (attr.key !== 'action') return
 
@@ -97,7 +104,7 @@ function getTransactionCoins(result: BroadcastResult, address: string) {
     })
   })
 
-  return transactionCoins
+  return removeDuplicatesFromTransactionCoins(transactionCoins)
 }
 
 function getCoinFromEvent(event: TransactionEvent) {
@@ -119,10 +126,23 @@ function getCoinFromEvent(event: TransactionEvent) {
     )?.value
 
     if (!amountDenomString) return
-    return getBNCoinFromAmountDenomString(amountDenomString)
+    return getCoinFromAmountDenomString(amountDenomString)
   }
 
-  return BNCoin.fromDenomAndBigNumber(denom, BN(amount))
+  return BNCoin.fromDenomAndBigNumber(denom, BN(amount)).toCoin()
+}
+
+function getCoinFromSwapEvent(event: TransactionEvent) {
+  const tokenInAmountDenomString = event.attributes.find((a) => a.key === 'tokens_in')?.value
+  const tokenOutAmountDenomString = event.attributes.find((a) => a.key === 'tokens_out')?.value
+
+  if (!tokenInAmountDenomString || !tokenOutAmountDenomString)
+    return { tokenIn: undefined, tokenOut: undefined }
+
+  return {
+    tokenIn: getCoinFromAmountDenomString(tokenInAmountDenomString),
+    tokenOut: getCoinFromAmountDenomString(tokenOutAmountDenomString),
+  }
 }
 
 function getTargetFromEvent(event: TransactionEvent, address: string): TransactionRecipient {
@@ -146,38 +166,31 @@ function getTransactionTypeFromCoins(coins: TransactionCoins): string {
   return 'create'
 }
 
-export function getBNCoinFromAmountDenomString(amountDenomString: string): BNCoin | undefined {
+function getCoinFromAmountDenomString(amountDenomString: string): Coin | undefined {
   const regex = /(?:(\d+).*)/g
   const matches = regex.exec(amountDenomString)
   if (!matches || matches.length < 2) return
   const denom = amountDenomString.split(matches[1])[1]
-  return BNCoin.fromDenomAndBigNumber(denom, BN(matches[1]))
+  return BNCoin.fromDenomAndBigNumber(denom, BN(matches[1])).toCoin()
 }
 
-export function getTokenOutFromSwapResponse(response: BroadcastResult, denom: string): Coin {
-  try {
-    if (response.result?.response.code === 0) {
-      const rawLogs = JSON.parse(response.result.rawLogs)
-      const events = rawLogs.map((log: any) => log.events).flat() as Event[]
-      let tokensOutValue = '0'
-      events.forEach((event: Event) => {
-        const attributes = event.attributes
-        const type = event.type
-        if (type === 'token_swapped') {
-          attributes.forEach((a) => {
-            if (a.key === 'tokens_out' && a.value.toLowerCase().includes(denom.toLowerCase())) {
-              tokensOutValue = a.value
-            }
-          })
-        }
-      })
-
-      const amount = tokensOutValue.split(denom)[0]
-      return { denom, amount }
-    }
-  } catch (ex) {
-    console.error(ex)
+function removeDuplicatesFromTransactionCoins(coins: TransactionCoins): TransactionCoins {
+  const uniqueCoins = {
+    borrow: removeDuplicates(coins.borrow),
+    deposit: removeDuplicates(coins.deposit),
+    lend: removeDuplicates(coins.lend),
+    repay: removeDuplicates(coins.repay),
+    reclaim: removeDuplicates(coins.reclaim),
+    swap: removeDuplicates(coins.swap),
+    withdraw: removeDuplicates(coins.withdraw),
   }
 
-  return { denom, amount: '0' }
+  return uniqueCoins
+}
+
+function removeDuplicates(coins: Coin[]): Coin[] {
+  return coins.filter(
+    (coin, index, self) =>
+      self.findIndex((c) => c.denom === coin.denom && c.amount === coin.amount) === index,
+  )
 }

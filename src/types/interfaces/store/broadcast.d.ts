@@ -39,7 +39,7 @@ interface ToastSuccess {
 }
 
 interface ToastContent {
-  coins: BNCoin[]
+  coins: Coin[]
   text: string
 }
 
@@ -158,13 +158,13 @@ interface Event {
 }
 
 interface TransactionCoins {
-  borrow: BNCoin[]
-  deposit: BNCoin[]
-  lend: BNCoin[]
-  reclaim: BNCoin[]
-  repay: BNCoin[]
-  swap: BNCoin[]
-  withdraw: BNCoin[]
+  borrow: Coin[]
+  deposit: Coin[]
+  lend: Coin[]
+  reclaim: Coin[]
+  repay: Coin[]
+  swap: Coin[]
+  withdraw: Coin[]
 }
 
 type TransactionCoinType = keyof TransactionCoins

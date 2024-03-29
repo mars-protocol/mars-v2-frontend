@@ -40,11 +40,15 @@ export function generateToastContent(content: ToastSuccess['content'], assets: A
             <ul className='flex flex-wrap w-full gap-1 p-1 pl-4 list-disc'>
               {item.coins.map((coin, index) => {
                 let prefix = ''
-                if (item.text === 'Swapped') prefix = index === 0 ? 'from ' : 'to '
+                if (item.text === 'Swapped') prefix = index % 2 === 0 ? 'from ' : 'to '
 
-                return BN(coin.amount).isZero() ? null : (
-                  <li className='w-full p-0 text-sm text-white' key={coin.denom}>
-                    {`${prefix}${formatAmountWithSymbol(coin.toCoin(), assets)}`}
+                return BN(coin.amount).isPositive() && formatAmountWithSymbol(coin, assets) ? (
+                  <li className='w-full p-0 text-sm text-white' key={`${coin.denom}_${index}`}>
+                    {`${prefix}${formatAmountWithSymbol(coin, assets)}`}
+                  </li>
+                ) : (
+                  <li className='w-full p-0 text-sm text-white' key={`${coin.denom}_${index}`}>
+                    {`${prefix}unknown asset`}
                   </li>
                 )
               })}

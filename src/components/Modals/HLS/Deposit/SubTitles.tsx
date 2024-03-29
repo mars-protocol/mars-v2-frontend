@@ -48,18 +48,19 @@ export function CollateralSubTitle(props: CollateralSubTitleProps) {
       </div>
     )
   }
-
   return (
     <div className='flex items-center gap-1'>
       <WarningMessages messages={props.warningMessages} />
       <SubTitle
-        text={formatAmountWithSymbol(
-          {
-            denom: props.denom,
-            amount: props.amount.toString(),
-          },
-          assets,
-        )}
+        text={
+          formatAmountWithSymbol(
+            {
+              denom: props.denom,
+              amount: props.amount.toString(),
+            },
+            assets,
+          ) ?? ''
+        }
         color={props.warningMessages.length > 0 ? 'text-warning' : ''}
       />
     </div>

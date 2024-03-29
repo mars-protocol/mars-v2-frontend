@@ -155,6 +155,8 @@ export function formatPercent(percent: number | string, minDecimals?: number) {
 export function formatAmountWithSymbol(coin: Coin, assets: Asset[]) {
   const asset = assets.find((asset) => asset.denom === coin.denom)
 
+  if (!asset) return
+
   return formatValue(coin.amount, {
     decimals: asset?.decimals,
     maxDecimals: asset?.decimals,
