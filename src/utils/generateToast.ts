@@ -4,14 +4,9 @@ import { analizeTransaction } from 'utils/broadcast'
 export function generateToast(
   result: BroadcastResult,
   toastOptions: Partial<ToastObjectOptions>,
-  chainConfig: ChainConfig,
   address: string,
 ): ToastResponse {
-  const { target, transactionType, recipient, txCoins } = analizeTransaction(
-    result,
-    chainConfig,
-    address,
-  )
+  const { target, transactionType, recipient, txCoins } = analizeTransaction(result, address)
   const toast = {
     id: toastOptions?.id ?? moment().unix(),
     timestamp: toastOptions?.id ?? moment().unix(),

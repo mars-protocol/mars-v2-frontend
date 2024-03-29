@@ -20,12 +20,12 @@ export function generateErrorMessage(result: BroadcastResult, errorMessage?: str
   const error = result.error ? result.error : result.result?.rawLogs
   if (errorMessage) return errorMessage
   if (error === 'Transaction failed: Request rejected') return 'Transaction rejected by user'
+  /* TODO: beautify error messages */
   return `Transaction failed: ${error}`
 }
 
 export function analizeTransaction(
   result: BroadcastResult,
-  chainConfig: ChainConfig,
   address: string,
 ): {
   target: string
@@ -33,12 +33,11 @@ export function analizeTransaction(
   recipient: TransactionRecipient
   txCoins: TransactionCoins
 } {
-  let target = 'Red Bank'
   let recipient: TransactionRecipient = 'wallet'
   console.log(result)
 
   const accountId = getSingleValueFromBroadcastResult(result.result, 'wasm', 'account_id')
-  if (accountId) target = `Credit Account ${accountId}`
+  const target = accountId ? `Credit Account ${accountId}` : 'Red Bank'
 
   const txCoins = getTransactionCoins(result, address)
 
@@ -52,8 +51,24 @@ export function analizeTransaction(
   }
 }
 
+function getRules() {
+  const coinRules = new Map<string, TransactionCoinType>()
+
+  // coinRule keys are either ${action} or `${action}_${target}`
+  coinRules.set('withdraw_wallet', 'withdraw')
+  coinRules.set('callback/withdraw', 'withdraw')
+  coinRules.set('reclaim', 'reclaim')
+  coinRules.set('callback/deposit', 'deposit')
+  coinRules.set('repay_from_wallet', 'deposit')
+  coinRules.set('deposit_wallet', 'deposit')
+  coinRules.set('deposit_contract', 'lend')
+  coinRules.set('repay', 'repay')
+
+  return coinRules
+}
+
 function getTransactionCoins(result: BroadcastResult, address: string) {
-  let transactionCoins: TransactionCoins = {
+  const transactionCoins: TransactionCoins = {
     borrow: [],
     deposit: [],
     lend: [],
@@ -62,49 +77,25 @@ function getTransactionCoins(result: BroadcastResult, address: string) {
     swap: [],
     withdraw: [],
   }
-
+  const coinRules = getRules()
   const filteredEvents = result?.result?.response.events
-    .filter(
-      (event: TransactionEvent) =>
-        event.type === 'wasm' || event.type === 'coin_spent' || event.type === 'coin_received',
-    )
+    .filter((event: TransactionEvent) => event.type === 'wasm')
     .flat()
 
   filteredEvents.forEach((event: TransactionEvent) => {
-    if (event.type === 'wasm') {
-      if (!Array.isArray(event.attributes)) return
-      event.attributes.forEach((attr: TransactionEventAttribute) => {
-        if (attr.key !== 'action') return
-        const coin = getCoinFromEvent(event)
-        const target = getTargetFromEvent(event, address)
+    if (!Array.isArray(event.attributes)) return
+    event.attributes.forEach((attr: TransactionEventAttribute) => {
+      if (attr.key !== 'action') return
 
-        /* TODO beautify ruleset */
+      const coin = getCoinFromEvent(event)
+      if (!coin) return
 
-        if (attr.value === 'withdraw' && target === 'wallet' && coin)
-          transactionCoins.withdraw.push(coin)
-
-        if (attr.value === 'callback/withdraw' && coin) transactionCoins.withdraw.push(coin)
-
-        if (attr.value === 'reclaim' && coin) transactionCoins.reclaim.push(coin)
-
-        if (attr.value === 'callback/deposit' && coin) transactionCoins.deposit.push(coin)
-
-        if (attr.value === 'repay_from_wallet' && coin) transactionCoins.deposit.push(coin)
-
-        if (attr.value === 'deposit' && target === 'wallet' && coin)
-          transactionCoins.deposit.push(coin)
-
-        if (attr.value === 'deposit' && target !== 'wallet' && coin)
-          transactionCoins.lend.push(coin)
-
-        if (attr.value === 'borrow' && coin) transactionCoins.borrow.push(coin)
-
-        if (attr.value === 'repay' && coin) transactionCoins.repay.push(coin)
-      })
-    }
+      const target = getTargetFromEvent(event, address)
+      const action = attr.value
+      const coinType = coinRules.get(`${action}_${target}`) ?? coinRules.get(action)
+      if (coinType) transactionCoins[coinType].push(coin)
+    })
   })
-
-  /*TODO: remove possible duplicates */
 
   return transactionCoins
 }
@@ -158,8 +149,6 @@ function getTransactionTypeFromCoins(coins: TransactionCoins): string {
 export function getBNCoinFromAmountDenomString(amountDenomString: string): BNCoin | undefined {
   const regex = /(?:(\d+).*)/g
   const matches = regex.exec(amountDenomString)
-
-  console.log(matches)
   if (!matches || matches.length < 2) return
   const denom = amountDenomString.split(matches[1])[1]
   return BNCoin.fromDenomAndBigNumber(denom, BN(matches[1]))

@@ -167,6 +167,8 @@ interface TransactionCoins {
   withdraw: BNCoin[]
 }
 
+type TransactionCoinType = keyof TransactionCoins
+
 type TransactionRecipient = 'contract' | 'wallet'
 
 interface TransactionEvent {
