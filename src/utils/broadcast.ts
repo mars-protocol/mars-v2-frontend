@@ -89,29 +89,48 @@ function getTransactionCoins(result: BroadcastResult, address: string) {
 
         if (attr.value === 'callback/deposit' && coin) transactionCoins.deposit.push(coin)
 
+        if (attr.value === 'repay_from_wallet' && coin) transactionCoins.deposit.push(coin)
+
         if (attr.value === 'deposit' && target === 'wallet' && coin)
           transactionCoins.deposit.push(coin)
 
         if (attr.value === 'deposit' && target !== 'wallet' && coin)
           transactionCoins.lend.push(coin)
+
+        if (attr.value === 'borrow' && coin) transactionCoins.borrow.push(coin)
+
+        if (attr.value === 'repay' && coin) transactionCoins.repay.push(coin)
       })
     }
   })
+
+  /*TODO: remove possible duplicates */
+
   return transactionCoins
 }
 
 function getCoinFromEvent(event: TransactionEvent) {
-  const denomAmountActions = ['coin_reclaimed', 'coin_deposited', 'coin_withdrawn']
+  const denomAmountActions = [
+    'coin_reclaimed',
+    'coin_deposited',
+    'coin_withdrawn',
+    'coin_repaid',
+    'borrow',
+    'repay',
+  ]
 
   const denom = event.attributes.find((a) => a.key === 'denom')?.value
   const amount = event.attributes.find((a) => a.key === 'amount')?.value
+
   if (!denom || !amount) {
     const amountDenomString = event.attributes.find((a) =>
       denomAmountActions.includes(a.key),
     )?.value
+
     if (!amountDenomString) return
     return getBNCoinFromAmountDenomString(amountDenomString)
   }
+
   return BNCoin.fromDenomAndBigNumber(denom, BN(amount))
 }
 
@@ -129,7 +148,8 @@ function getTransactionTypeFromCoins(coins: TransactionCoins): string {
     coins.lend.length > 0 ||
     coins.repay.length > 0 ||
     coins.withdraw.length > 0 ||
-    coins.reclaim.length > 0
+    coins.reclaim.length > 0 ||
+    coins.swap.length > 0
   )
     return 'transaction'
   return 'create'

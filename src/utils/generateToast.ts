@@ -42,6 +42,10 @@ export function generateToast(
         coins: txCoins.withdraw,
       })
       toast.content.push({
+        text: 'Swapped',
+        coins: txCoins.swap,
+      })
+      toast.content.push({
         text: 'Deposited',
         coins: txCoins.deposit,
       })
@@ -93,27 +97,6 @@ export function generateToast(
       toast.content.push({
         text: 'Deposited into perp vault',
         coins: [], // TODO get coins
-      })
-      break
-    case 'swap':
-      toast.content.push({
-        text: 'Borrowed',
-        coins: txCoins.borrow,
-      })
-
-      toast.content.push({
-        text: 'Unlent',
-        coins: txCoins.reclaim,
-      })
-
-      toast.content.push({
-        text: 'Swapped',
-        coins: txCoins.swap,
-      })
-
-      toast.content.push({
-        text: 'Repaid',
-        coins: txCoins.repay,
       })
       break
 
