@@ -1467,21 +1467,21 @@
   resolved "https://registry.yarnpkg.com/@cosmjs/utils/-/utils-0.32.3.tgz#5dcaee6dd7cc846cdc073e9a7a7f63242f5f7e31"
   integrity sha512-WCZK4yksj2hBDz4w7xFZQTRZQ/RJhBX26uFHmmQFIcNUUVAihrLO+RerqJgk0dZqC42wstM9pEUQGtPmLcIYvg==
 
-"@delphi-labs/shuttle-react@^3.21.0":
-  version "3.21.0"
-  resolved "https://registry.yarnpkg.com/@delphi-labs/shuttle-react/-/shuttle-react-3.21.0.tgz#cfb9d16f1e95b4bd683280eac7933694c105dc4e"
-  integrity sha512-nCQcesPkHjHLgrSnkjKG1oCSftcPjhq+yC1RNG8Oa33gxsDLLGQYIF4Z4z7zBE8uS3IfB0Q+dh6V0Kn5N/xEmA==
+"@delphi-labs/shuttle-react@^3.22.0":
+  version "3.22.0"
+  resolved "https://registry.yarnpkg.com/@delphi-labs/shuttle-react/-/shuttle-react-3.22.0.tgz#270affb293eeec8f25f5932b3cdb996dc29b7c22"
+  integrity sha512-yozwwLrDEBQH+0T3q5pMFFmnBxT7nWCv51pBTE1xQnDeTS5Ir/tsKjax3UjvxyrpYrHL2OLDX1CIY+7U1ZOj5w==
   dependencies:
-    "@delphi-labs/shuttle" "3.21.0"
+    "@delphi-labs/shuttle" "3.22.0"
     tslib "^2.6.0"
     tsup "^7.1.0"
     use-local-storage-state "^18.3.3"
     zustand "^4.3.8"
 
-"@delphi-labs/shuttle@3.21.0":
-  version "3.21.0"
-  resolved "https://registry.yarnpkg.com/@delphi-labs/shuttle/-/shuttle-3.21.0.tgz#6a6a11202b061cc0c99c5b84b1e8366e8672dba1"
-  integrity sha512-qxx/IJQN83o/ajep9Q6whW4EMc0HXOvuwYK5RxpDGsIlq5oizG2sbuYXalylICVM4U37S4btq300U+iEWtONFg==
+"@delphi-labs/shuttle@3.22.0":
+  version "3.22.0"
+  resolved "https://registry.yarnpkg.com/@delphi-labs/shuttle/-/shuttle-3.22.0.tgz#38ad628a9e41dbfd52a855657f3c8fae37657bd9"
+  integrity sha512-6DcNqxjHZNVaNzIrlsTw+DLTdWDOFs7hNaVHDKYjPA+Md9ei/MVooMX2RpQBxGSAPxudfrO5dgyGKUp1w0NJhg==
   dependencies:
     "@bufbuild/protobuf" "^1.8.0"
     "@cosmjs/amino" "^0.31.0"
@@ -8833,14 +8833,7 @@ zen-observable@0.8.15:
   resolved "https://registry.yarnpkg.com/zen-observable/-/zen-observable-0.8.15.tgz#96415c512d8e3ffd920afd3889604e30b9eaac15"
   integrity sha512-PQ2PC7R9rslx84ndNBZB/Dkv8V8fZEpk83RLgXtYd0fwUgEjseMn1Dgajh2x6S8QbZAFa9p2qVCEuYZNgve0dQ==
 
-zustand@^4.3.8:
-  version "4.5.1"
-  resolved "https://registry.yarnpkg.com/zustand/-/zustand-4.5.1.tgz#2088956ee454759fb8b866ca335a2373e76736c5"
-  integrity sha512-XlauQmH64xXSC1qGYNv00ODaQ3B+tNPoy22jv2diYiP4eoDKr9LA+Bh5Bc3gplTrFdb6JVI+N4kc1DZ/tbtfPg==
-  dependencies:
-    use-sync-external-store "1.2.0"
-
-zustand@^4.5.2:
+zustand@^4.3.8, zustand@^4.5.2:
   version "4.5.2"
   resolved "https://registry.yarnpkg.com/zustand/-/zustand-4.5.2.tgz#fddbe7cac1e71d45413b3682cdb47b48034c3848"
   integrity sha512-2cN1tPkDVkwCy5ickKrI7vijSjPksFRfqS6237NzT0vqSsztTNnQdHw9mmN7uBdk3gceVXU0a+21jFzFzAc9+g==
