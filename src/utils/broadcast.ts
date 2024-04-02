@@ -51,7 +51,7 @@ export async function analizeTransaction(
   const txCoins = getTransactionCoins(result, address, target)
 
   let transactionType = getTransactionTypeFromCoins(txCoins)
-  if (transactionType === 'create') {
+  if (transactionType === 'execution') {
     transactionType = getTransactionTypeFromBroadcastResult(result)
   }
 
@@ -72,6 +72,17 @@ function getCreditAccountIdFromBroadcastResult(result: BroadcastResult) {
   }
 
   return existingAccountId
+}
+
+function getTransactionTypes() {
+  const transactionTypes = new Map<string, string>()
+
+  // transactionTypes keys are the actions and the value is the transaction type
+  transactionTypes.set('create_credit_account', 'create')
+  transactionTypes.set('burn', 'burn')
+  transactionTypes.set('update_price_feeds', 'oracle')
+
+  return transactionTypes
 }
 
 function getRules() {
@@ -217,24 +228,29 @@ function getTransactionTypeFromCoins(coins: TransactionCoins): string {
   )
     return 'transaction'
 
-  return 'create'
+  return 'execution'
 }
 
 function getTransactionTypeFromBroadcastResult(result: BroadcastResult): string {
-  const eventTypes = ['begin_unlock']
+  const transactionTypes = getTransactionTypes()
+  const eventTypes = ['begin_unlock', 'wasm']
+  let transactionType = 'execution'
 
   const filteredEvents = result?.result?.response.events
     .filter((event: TransactionEvent) => eventTypes.includes(event.type))
     .flat()
 
-  const eventType = filteredEvents.forEach((event: TransactionEvent) => {
-    if (event.type === 'begin_unlock') {
-      return 'unlock'
+  filteredEvents.forEach((event: TransactionEvent) => {
+    if (event.type === 'begin_unlock') return 'unlock'
+
+    if (event.type === 'wasm') {
+      const action = event.attributes.find((a) => a.key === 'action')?.value ?? ''
+      const foundTransactionType = transactionTypes.get(action)
+      if (foundTransactionType) transactionType = foundTransactionType
     }
   })
 
-  if (eventType) return eventType
-  return 'create'
+  return transactionType
 }
 
 function getVaultTokensFromEvent(event: TransactionEvent): Coin[] | undefined {

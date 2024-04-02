@@ -33,8 +33,20 @@ export async function generateToast(
       : 'Deposit into Vault'
 
   switch (transactionType) {
+    case 'execution':
+      toast.message = 'Executed a Transaction'
+      break
+
+    case 'oracle':
+      toast.message = 'Updated the Oracle Prices'
+      break
+
     case 'create':
       toast.message = 'Minted the Account'
+      break
+
+    case 'burn':
+      toast.message = 'Deleted the Account'
       break
 
     case 'unlock':
