@@ -1,5 +1,6 @@
 type PositionType = 'deposit' | 'borrow' | 'lend' | 'vault' | 'perp'
 type TableType = 'balances' | 'strategies' | 'perps'
+type AccountKind = 'high_levered_strategy' | 'default'
 
 interface Account {
   id: string

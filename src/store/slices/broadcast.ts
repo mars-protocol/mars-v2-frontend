@@ -631,7 +631,8 @@ export default function createBroadcastSlice(
           return
         }
 
-        set({ toast: generateToast(r, toastOptions, get().address ?? '') })
+        const toast = generateToast(get().chainConfig, r, toastOptions, get().address ?? '')
+        toast.then((t) => set({ toast: t }))
         return
       })
     },

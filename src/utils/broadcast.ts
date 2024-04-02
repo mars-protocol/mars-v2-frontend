@@ -1,3 +1,4 @@
+import getAccount from 'api/accounts/getAccount'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
@@ -24,24 +25,28 @@ export function generateErrorMessage(result: BroadcastResult, errorMessage?: str
   return `Transaction failed: ${error}`
 }
 
-export function analizeTransaction(
+export async function analizeTransaction(
+  chainConfig: ChainConfig,
   result: BroadcastResult,
   address: string,
-): {
+): Promise<{
   target: string
   transactionType: string
   recipient: TransactionRecipient
   txCoins: TransactionCoins
-} {
+}> {
   let recipient: TransactionRecipient = 'wallet'
+  let target = 'Red Bank'
   console.log(result)
 
-  const { accountId, accountType } = getCreditAccountIdFromBroadcastResult(result)
-  const account =
-    accountType === 'HighLeveredStrategy' && accountId
-      ? `HLS Account ${accountId}`
-      : `Credit Account ${accountId}`
-  const target = accountId ? account : 'Red Bank'
+  const accountId = getCreditAccountIdFromBroadcastResult(result)
+  const account = accountId ? await getAccount(chainConfig, accountId) : undefined
+  if (account) {
+    target =
+      account.kind === 'high_levered_strategy'
+        ? `HLS Account ${account.id}`
+        : `Account ${account.id}`
+  }
 
   const txCoins = getTransactionCoins(result, address, target)
 
@@ -58,13 +63,12 @@ export function analizeTransaction(
 function getCreditAccountIdFromBroadcastResult(result: BroadcastResult) {
   const existingAccountId = getSingleValueFromBroadcastResult(result.result, 'wasm', 'account_id')
 
-  const accountType = getSingleValueFromBroadcastResult(result.result, 'wasm', 'account_kind')
   if (!existingAccountId) {
     const newAccountId = getSingleValueFromBroadcastResult(result.result, 'wasm', 'token_id')
-    if (newAccountId) return { accountId: newAccountId, accountType }
+    if (newAccountId) return newAccountId
   }
 
-  return { accountId: existingAccountId, accountType }
+  return existingAccountId
 }
 
 function getRules() {

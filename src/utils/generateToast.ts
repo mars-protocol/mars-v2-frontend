@@ -1,13 +1,21 @@
+import getAccount from 'api/accounts/getAccount'
 import moment from 'moment'
 
 import { analizeTransaction } from 'utils/broadcast'
 
-export function generateToast(
+export async function generateToast(
+  chainConfig: ChainConfig,
   result: BroadcastResult,
   toastOptions: Partial<ToastObjectOptions>,
   address: string,
-): ToastResponse {
-  const { target, transactionType, recipient, txCoins } = analizeTransaction(result, address)
+): Promise<ToastResponse> {
+  const { target, transactionType, recipient, txCoins } = await analizeTransaction(
+    chainConfig,
+    result,
+    address,
+  )
+  const isHLS = target.split(' ')[0] === 'HLS'
+
   const toast = {
     id: toastOptions?.id ?? moment().unix(),
     timestamp: toastOptions?.id ?? moment().unix(),
@@ -18,7 +26,7 @@ export function generateToast(
     content: [] as ToastContent[],
     message: toastOptions?.message,
   }
-  const isHLS = target.split(' ')[0] === 'HLS'
+
   switch (transactionType) {
     case 'create':
       toast.message = 'Minted the Account'
