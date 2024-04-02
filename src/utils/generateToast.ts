@@ -18,13 +18,19 @@ export function generateToast(
     content: [] as ToastContent[],
     message: toastOptions?.message,
   }
-
+  const isHLS = target.split(' ')[0] === 'HLS'
   switch (transactionType) {
     case 'create':
-      toast.message = 'Created the Credit Account'
+      toast.message = 'Minted the Account'
       break
 
     case 'transaction':
+      if (isHLS && txCoins.deposit.length === 2) {
+        toast.content.push({
+          text: 'Deposited from Wallet',
+          coins: [txCoins.deposit[0]],
+        })
+      }
       toast.content.push({
         text: 'Borrowed',
         coins: txCoins.borrow,
@@ -34,17 +40,20 @@ export function generateToast(
         coins: txCoins.reclaim,
       })
       toast.content.push({
-        text: 'Withdrew to Wallet',
-        coins: txCoins.withdraw,
-      })
-      toast.content.push({
         text: 'Swapped',
         coins: txCoins.swap,
       })
-      toast.content.push({
-        text: 'Deposited',
-        coins: txCoins.deposit,
-      })
+      if (isHLS && txCoins.deposit.length === 2) {
+        toast.content.push({
+          text: 'Deposited into HLS Account',
+          coins: [txCoins.deposit[1]],
+        })
+      } else {
+        toast.content.push({
+          text: 'Deposited',
+          coins: txCoins.deposit,
+        })
+      }
       toast.content.push({
         text: 'Repaid',
         coins: txCoins.repay,
@@ -52,6 +61,10 @@ export function generateToast(
       toast.content.push({
         text: target === 'Red Bank' ? 'Deposited' : 'Lent',
         coins: txCoins.lend,
+      })
+      toast.content.push({
+        text: 'Withdrew to Wallet',
+        coins: txCoins.withdraw,
       })
       break
 

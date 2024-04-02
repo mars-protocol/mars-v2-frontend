@@ -36,10 +36,14 @@ export function analizeTransaction(
   let recipient: TransactionRecipient = 'wallet'
   console.log(result)
 
-  const accountId = getSingleValueFromBroadcastResult(result.result, 'wasm', 'account_id')
-  const target = accountId ? `Credit Account ${accountId}` : 'Red Bank'
+  const { accountId, accountType } = getCreditAccountIdFromBroadcastResult(result)
+  const account =
+    accountType === 'HighLeveredStrategy' && accountId
+      ? `HLS Account ${accountId}`
+      : `Credit Account ${accountId}`
+  const target = accountId ? account : 'Red Bank'
 
-  const txCoins = getTransactionCoins(result, address)
+  const txCoins = getTransactionCoins(result, address, target)
 
   const transactionType = getTransactionTypeFromCoins(txCoins)
 
@@ -49,6 +53,18 @@ export function analizeTransaction(
     recipient,
     txCoins,
   }
+}
+
+function getCreditAccountIdFromBroadcastResult(result: BroadcastResult) {
+  const existingAccountId = getSingleValueFromBroadcastResult(result.result, 'wasm', 'account_id')
+
+  const accountType = getSingleValueFromBroadcastResult(result.result, 'wasm', 'account_kind')
+  if (!existingAccountId) {
+    const newAccountId = getSingleValueFromBroadcastResult(result.result, 'wasm', 'token_id')
+    if (newAccountId) return { accountId: newAccountId, accountType }
+  }
+
+  return { accountId: existingAccountId, accountType }
 }
 
 function getRules() {
@@ -68,7 +84,8 @@ function getRules() {
   return coinRules
 }
 
-function getTransactionCoins(result: BroadcastResult, address: string) {
+function getTransactionCoins(result: BroadcastResult, address: string, target: string) {
+  const isHLS = target.split(' ')[0] === 'HLS'
   const transactionCoins: TransactionCoins = {
     borrow: [],
     deposit: [],
@@ -101,6 +118,11 @@ function getTransactionCoins(result: BroadcastResult, address: string) {
       const action = attr.value
       const coinType = coinRules.get(`${action}_${target}`) ?? coinRules.get(action)
       if (coinType) transactionCoins[coinType].push(...coin)
+
+      if (isHLS) {
+        const HLSDeposit = findUpdateCoinBalanceAndAddDeposit(event, transactionCoins)
+        if (HLSDeposit) transactionCoins.deposit.push(HLSDeposit)
+      }
     })
   })
 
@@ -145,11 +167,32 @@ function getCoinFromSwapEvent(event: TransactionEvent) {
   }
 }
 
+function findUpdateCoinBalanceAndAddDeposit(
+  event: TransactionEvent,
+  transactionCoins: TransactionCoins,
+) {
+  const hasDeposit = !!transactionCoins.deposit[0]
+  if (!hasDeposit) return
+  if (event.attributes.find((a) => a.key === 'action')?.value !== 'update_coin_balance') return
+  const amountDenomString = event.attributes.find((a) => a.key === 'coin')?.value
+  if (!amountDenomString) return
+  const result = getCoinFromAmountDenomString(amountDenomString)
+  if (!result) return
+
+  return mergeCoins(transactionCoins.deposit[0], result)
+}
+
 function getTargetFromEvent(event: TransactionEvent, address: string): TransactionRecipient {
   const recipient = event.attributes.find((a) => a.key === 'recipient')?.value
 
   if (recipient && recipient === address) return 'wallet'
   return 'contract'
+}
+
+function mergeCoins(coin1: Coin, coin2: Coin): Coin {
+  if (coin1.denom !== coin2.denom) return coin2
+
+  return BNCoin.fromDenomAndBigNumber(coin1.denom, BN(coin1.amount).plus(BN(coin2.amount))).toCoin()
 }
 
 function getTransactionTypeFromCoins(coins: TransactionCoins): string {
