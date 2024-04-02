@@ -1,7 +1,7 @@
 import moment from 'moment'
 
-import getAccount from 'api/accounts/getAccount'
 import { analizeTransaction } from 'utils/broadcast'
+import { getVaultByDenoms } from 'utils/vaults'
 
 export async function generateToast(
   chainConfig: ChainConfig,
@@ -27,9 +27,18 @@ export async function generateToast(
     message: toastOptions?.message,
   }
 
+  const vaultString =
+    txCoins.vault.length === 2
+      ? `Deposited into ${getVaultByDenoms(chainConfig, txCoins.vault)} Vault`
+      : 'Deposit into Vault'
+
   switch (transactionType) {
     case 'create':
       toast.message = 'Minted the Account'
+      break
+
+    case 'unlock':
+      toast.message = 'Started the unlock period of a vault position'
       break
 
     case 'transaction':
@@ -65,6 +74,10 @@ export async function generateToast(
       toast.content.push({
         text: 'Repaid',
         coins: txCoins.repay,
+      })
+      toast.content.push({
+        text: vaultString,
+        coins: txCoins.vault,
       })
       toast.content.push({
         text: target === 'Red Bank' ? 'Deposited' : 'Lent',

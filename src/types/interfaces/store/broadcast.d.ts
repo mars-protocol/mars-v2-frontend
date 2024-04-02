@@ -165,6 +165,7 @@ interface TransactionCoins {
   repay: Coin[]
   swap: Coin[]
   withdraw: Coin[]
+  vault: Coin[]
 }
 
 type TransactionCoinType = keyof TransactionCoins

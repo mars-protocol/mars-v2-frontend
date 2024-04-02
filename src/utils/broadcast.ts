@@ -50,7 +50,10 @@ export async function analizeTransaction(
 
   const txCoins = getTransactionCoins(result, address, target)
 
-  const transactionType = getTransactionTypeFromCoins(txCoins)
+  let transactionType = getTransactionTypeFromCoins(txCoins)
+  if (transactionType === 'create') {
+    transactionType = getTransactionTypeFromBroadcastResult(result)
+  }
 
   return {
     target,
@@ -98,8 +101,9 @@ function getTransactionCoins(result: BroadcastResult, address: string, target: s
     reclaim: [],
     swap: [],
     withdraw: [],
+    vault: [],
   }
-  const eventTypes = ['wasm', 'token_swapped']
+  const eventTypes = ['wasm', 'token_swapped', 'pool_joined']
   const coinRules = getRules()
   const filteredEvents = result?.result?.response.events
     .filter((event: TransactionEvent) => eventTypes.includes(event.type))
@@ -111,6 +115,10 @@ function getTransactionCoins(result: BroadcastResult, address: string, target: s
       const { tokenIn, tokenOut } = getCoinFromSwapEvent(event)
       if (tokenIn && tokenOut) transactionCoins.swap.push(tokenIn, tokenOut)
       return
+    }
+    if (event.type === 'pool_joined') {
+      const vaultTokens = getVaultTokensFromEvent(event)
+      if (vaultTokens) transactionCoins.vault.push(...vaultTokens)
     }
     event.attributes.forEach((attr: TransactionEventAttribute) => {
       if (attr.key !== 'action') return
@@ -208,7 +216,37 @@ function getTransactionTypeFromCoins(coins: TransactionCoins): string {
     coins.swap.length > 0
   )
     return 'transaction'
+
   return 'create'
+}
+
+function getTransactionTypeFromBroadcastResult(result: BroadcastResult): string {
+  const eventTypes = ['begin_unlock']
+
+  const filteredEvents = result?.result?.response.events
+    .filter((event: TransactionEvent) => eventTypes.includes(event.type))
+    .flat()
+
+  const eventType = filteredEvents.forEach((event: TransactionEvent) => {
+    if (event.type === 'begin_unlock') {
+      return 'unlock'
+    }
+  })
+
+  if (eventType) return eventType
+  return 'create'
+}
+
+function getVaultTokensFromEvent(event: TransactionEvent): Coin[] | undefined {
+  const denomAndAmountStringArray = event.attributes
+    .find((a) => a.key === 'tokens_in')
+    ?.value.split(',')
+  if (!denomAndAmountStringArray) return
+  if (denomAndAmountStringArray.length !== 2) return
+  const vaultToken1 = getCoinFromAmountDenomString(denomAndAmountStringArray[0])
+  const vaultToken2 = getCoinFromAmountDenomString(denomAndAmountStringArray[1])
+  if (!vaultToken1 || !vaultToken2) return
+  return [vaultToken1, vaultToken2]
 }
 
 function getCoinFromAmountDenomString(amountDenomString: string): Coin | undefined {
@@ -228,6 +266,7 @@ function removeDuplicatesFromTransactionCoins(coins: TransactionCoins): Transact
     reclaim: removeDuplicates(coins.reclaim),
     swap: removeDuplicates(coins.swap),
     withdraw: removeDuplicates(coins.withdraw),
+    vault: removeDuplicates(coins.vault),
   }
 
   return uniqueCoins

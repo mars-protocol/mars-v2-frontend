@@ -8,7 +8,7 @@ import StrategyAndValue, {
 } from 'components/account/AccountStrategiesTable/Columns/StrategyAndValue'
 import useMarkets from 'hooks/markets/useMarkets'
 
-export default function useAccountStrategiesColumns(account: Account) {
+export default function useAccountStrategiesColumns() {
   const markets = useMarkets()
 
   return useMemo<ColumnDef<AccountStrategyRow>[]>(() => {
