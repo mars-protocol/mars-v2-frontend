@@ -1,6 +1,6 @@
-import getAccount from 'api/accounts/getAccount'
 import moment from 'moment'
 
+import getAccount from 'api/accounts/getAccount'
 import { analizeTransaction } from 'utils/broadcast'
 
 export async function generateToast(

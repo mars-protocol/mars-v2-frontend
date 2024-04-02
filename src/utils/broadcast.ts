@@ -175,15 +175,13 @@ function findUpdateCoinBalanceAndAddDeposit(
   event: TransactionEvent,
   transactionCoins: TransactionCoins,
 ) {
-  const hasDeposit = !!transactionCoins.deposit[0]
-  if (!hasDeposit) return
   if (event.attributes.find((a) => a.key === 'action')?.value !== 'update_coin_balance') return
   const amountDenomString = event.attributes.find((a) => a.key === 'coin')?.value
   if (!amountDenomString) return
   const result = getCoinFromAmountDenomString(amountDenomString)
   if (!result) return
 
-  return mergeCoins(transactionCoins.deposit[0], result)
+  return transactionCoins.deposit.length ? mergeCoins(transactionCoins.deposit[0], result) : result
 }
 
 function getTargetFromEvent(event: TransactionEvent, address: string): TransactionRecipient {

@@ -25,7 +25,7 @@ export default function useV1Account() {
         vaults: [],
         perps: [],
         perpVault: null,
-        kind: 'default',
+        kind: 'default' as AccountKind,
       }
     },
     { suspense: false, revalidateOnFocus: false, enabled: !!address },
