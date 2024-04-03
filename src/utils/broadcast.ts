@@ -33,10 +33,8 @@ export async function analizeTransaction(
 ): Promise<{
   target: string
   transactionType: string
-  recipient: TransactionRecipient
   txCoins: TransactionCoins
 }> {
-  let recipient: TransactionRecipient = 'wallet'
   let target = 'Red Bank'
 
   const accountId = getCreditAccountIdFromBroadcastResult(result)
@@ -57,7 +55,6 @@ export async function analizeTransaction(
   return {
     target,
     transactionType,
-    recipient,
     txCoins,
   }
 }
@@ -142,13 +139,13 @@ function getTransactionCoins(result: BroadcastResult, address: string, target: s
     event.attributes.forEach((attr: TransactionEventAttribute) => {
       if (!transactionAttributes.includes(attr.key)) return
 
-      const coin = getCoinFromEvent(event)
-      if (!coin) return
+      const coins = getCoinsFromEvent(event)
+      if (!coins) return
 
       const target = getTargetFromEvent(event, address)
       const action = attr.value
       const coinType = coinRules.get(`${action}_${target}`) ?? coinRules.get(action)
-      if (coinType) transactionCoins[coinType].push(...coin)
+      if (coinType) transactionCoins[coinType].push(...coins)
 
       if (perpsMethods.includes(action)) {
         event.attributes.forEach((attr: TransactionEventAttribute) => {
@@ -176,7 +173,7 @@ function getTransactionCoins(result: BroadcastResult, address: string, target: s
   return removeDuplicatesFromTransactionCoins(transactionCoins)
 }
 
-function getCoinFromEvent(event: TransactionEvent) {
+function getCoinsFromEvent(event: TransactionEvent) {
   const coins = [] as Coin[]
   const denomAmountActions = [
     'coin_reclaimed',
@@ -243,7 +240,9 @@ function findUpdateCoinBalanceAndAddDeposit(
   const result = getCoinFromAmountDenomString(amountDenomString)
   if (!result) return
 
-  return transactionCoins.deposit.length ? mergeCoins(transactionCoins.deposit[0], result) : result
+  return transactionCoins.deposit.length
+    ? mergeCoinAmounts(transactionCoins.deposit[0], result)
+    : result
 }
 
 function getTargetFromEvent(event: TransactionEvent, address: string): TransactionRecipient {
@@ -253,10 +252,10 @@ function getTargetFromEvent(event: TransactionEvent, address: string): Transacti
   return 'contract'
 }
 
-function mergeCoins(coin1: Coin, coin2: Coin): Coin {
+function mergeCoinAmounts(coin1: Coin, coin2: Coin): Coin {
   if (coin1.denom !== coin2.denom) return coin2
 
-  return BNCoin.fromDenomAndBigNumber(coin1.denom, BN(coin1.amount).plus(BN(coin2.amount))).toCoin()
+  return { denom: coin1.denom, amount: BN(coin1.amount).plus(BN(coin2.amount)).toString() }
 }
 
 function getTransactionTypeFromCoins(coins: TransactionCoins): string {
@@ -325,7 +324,7 @@ function getCoinFromPnLString(pnlString: string): Coin | undefined {
 }
 
 function removeDuplicatesFromTransactionCoins(coins: TransactionCoins): TransactionCoins {
-  const uniqueCoins = {
+  return {
     borrow: removeDuplicates(coins.borrow),
     deposit: removeDuplicates(coins.deposit),
     lend: removeDuplicates(coins.lend),
@@ -338,8 +337,6 @@ function removeDuplicatesFromTransactionCoins(coins: TransactionCoins): Transact
     perpsModify: coins.perpsModify,
     pnl: removeDuplicates(coins.pnl),
   }
-
-  return uniqueCoins
 }
 
 function removeDuplicates(coins: Coin[]): Coin[] {

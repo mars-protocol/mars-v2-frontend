@@ -11,7 +11,7 @@ export async function generateToast(
   toastOptions: Partial<ToastObjectOptions>,
   address: string,
 ): Promise<ToastResponse> {
-  const { target, transactionType, recipient, txCoins } = await analizeTransaction(
+  const { target, transactionType, txCoins } = await analizeTransaction(
     chainConfig,
     result,
     address,
@@ -162,33 +162,6 @@ export async function generateToast(
           })
         }
       }
-      break
-
-    case 'modify-perp':
-      toast.content.push({
-        text: 'Modified perp position',
-        coins: [], // TODO get coins
-      })
-      break
-
-    case 'perp-vault-deposit':
-      toast.content.push({
-        text: 'Deposited into perp vault',
-        coins: [], // TODO get coins
-      })
-      break
-
-    case 'perp-vault-unlock':
-      toast.content.push({
-        text: 'Deposited into perp vault',
-        coins: [], // TODO get coins
-      })
-      break
-    case 'perp-vault-withdraw':
-      toast.content.push({
-        text: 'Withdrew from perp vault',
-        coins: [], // TODO get coins
-      })
       break
   }
 

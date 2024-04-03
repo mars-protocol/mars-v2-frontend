@@ -1,6 +1,6 @@
 type PositionType = 'deposit' | 'borrow' | 'lend' | 'vault' | 'perp'
 type TableType = 'balances' | 'strategies' | 'perps'
-type AccountKind = 'high_levered_strategy' | 'default'
+type AccountKind = import('types/generated/mars-credit-manager/MarsCreditManager.types').AccountKind
 
 interface Account {
   id: string
