@@ -38,7 +38,6 @@ export async function analizeTransaction(
 }> {
   let recipient: TransactionRecipient = 'wallet'
   let target = 'Red Bank'
-  console.log(result)
 
   const accountId = getCreditAccountIdFromBroadcastResult(result)
   const account = accountId ? await getAccount(chainConfig, accountId) : undefined
@@ -52,9 +51,8 @@ export async function analizeTransaction(
   const txCoins = getTransactionCoins(result, address, target)
 
   let transactionType = getTransactionTypeFromCoins(txCoins)
-  if (transactionType === 'execution') {
+  if (transactionType === 'execution')
     transactionType = getTransactionTypeFromBroadcastResult(result)
-  }
 
   return {
     target,
@@ -82,6 +80,7 @@ function getTransactionTypes() {
   transactionTypes.set('create_credit_account', 'create')
   transactionTypes.set('burn', 'burn')
   transactionTypes.set('update_price_feeds', 'oracle')
+  transactionTypes.set('unlock', 'unlock')
 
   return transactionTypes
 }
@@ -97,6 +96,7 @@ function getRules() {
   coinRules.set('repay_from_wallet', 'deposit')
   coinRules.set('deposit_wallet', 'deposit')
   coinRules.set('deposit_contract', 'lend')
+  coinRules.set('deposit_to_perp_vault', 'vault')
   coinRules.set('repay', 'repay')
   coinRules.set('borrow', 'borrow')
   coinRules.set('open_position', 'perps')
@@ -122,6 +122,7 @@ function getTransactionCoins(result: BroadcastResult, address: string, target: s
   }
   const eventTypes = ['wasm', 'token_swapped', 'pool_joined']
   const perpsMethods = ['open_position', 'close_position', 'modify_position']
+  const transactionAttributes = ['action', 'method']
   const coinRules = getRules()
   const filteredEvents = result?.result?.response.events
     .filter((event: TransactionEvent) => eventTypes.includes(event.type))
@@ -139,7 +140,7 @@ function getTransactionCoins(result: BroadcastResult, address: string, target: s
       if (vaultTokens) transactionCoins.vault.push(...vaultTokens)
     }
     event.attributes.forEach((attr: TransactionEventAttribute) => {
-      if (attr.key !== 'action' && attr.key !== 'method') return
+      if (!transactionAttributes.includes(attr.key)) return
 
       const coin = getCoinFromEvent(event)
       if (!coin) return
@@ -259,28 +260,19 @@ function mergeCoins(coin1: Coin, coin2: Coin): Coin {
 }
 
 function getTransactionTypeFromCoins(coins: TransactionCoins): string {
-  if (
-    coins.borrow.length > 0 ||
-    coins.deposit.length > 0 ||
-    coins.lend.length > 0 ||
-    coins.repay.length > 0 ||
-    coins.withdraw.length > 0 ||
-    coins.reclaim.length > 0 ||
-    coins.swap.length > 0 ||
-    coins.perps.length > 0 ||
-    coins.perpsModify.length > 0 ||
-    coins.pnl.length > 0
-  )
-    return 'transaction'
+  let transactionType = 'execution'
+  const transactionKeys = Object.keys(coins) as TransactionCoinType[]
+  transactionKeys.forEach((key: TransactionCoinType) => {
+    if (coins[key].length > 0) transactionType = 'transaction'
+  })
 
-  if (coins.perps) return 'perps'
-
-  return 'execution'
+  return transactionType
 }
 
 function getTransactionTypeFromBroadcastResult(result: BroadcastResult): string {
   const transactionTypes = getTransactionTypes()
   const eventTypes = ['begin_unlock', 'wasm']
+  const transactionAttributes = ['action', 'method']
   let transactionType = 'execution'
 
   const filteredEvents = result?.result?.response.events
@@ -291,7 +283,8 @@ function getTransactionTypeFromBroadcastResult(result: BroadcastResult): string 
     if (event.type === 'begin_unlock') return 'unlock'
 
     if (event.type === 'wasm') {
-      const action = event.attributes.find((a) => a.key === 'action')?.value ?? ''
+      const action =
+        event.attributes.find((a) => transactionAttributes.includes(a.key))?.value ?? ''
       const foundTransactionType = transactionTypes.get(action)
       if (foundTransactionType) transactionType = foundTransactionType
     }

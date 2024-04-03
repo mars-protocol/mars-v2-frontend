@@ -100,7 +100,7 @@ export default function PerpsVaultModal() {
             warningMessages={[]}
             maxText='Available'
           />
-          <div className='gap-4 flex flex-col'>
+          <div className='flex flex-col gap-4'>
             {modal.type === 'deposit' && (
               <>
                 <Callout>
