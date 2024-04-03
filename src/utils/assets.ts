@@ -59,6 +59,6 @@ export function getAllAssetsWithPythId(chains: { [key: string]: ChainConfig }) {
     .filter((asset) => asset.pythPriceFeedId)
 }
 
-export function getAssetSymbolByDenom(chainConfig: ChainConfig, denom: string) {
+export function getAssetSymbol(chainConfig: ChainConfig, denom: string) {
   return chainConfig.assets.find((asset) => asset.denom === denom)?.symbol
 }

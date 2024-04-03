@@ -1,6 +1,6 @@
 import moment from 'moment'
 
-import { getAssetSymbolByDenom } from 'utils/assets'
+import { getAssetSymbol } from 'utils/assets'
 import { analizeTransaction } from 'utils/broadcast'
 import { BN } from 'utils/helpers'
 import { getVaultByDenoms } from 'utils/vaults'
@@ -29,7 +29,6 @@ export async function generateToast(
     message: toastOptions?.message,
   }
 
-  console.log(transactionType, txCoins)
   switch (transactionType) {
     case 'execution':
       toast.message = 'Executed a transaction'
@@ -89,7 +88,7 @@ export async function generateToast(
         const vaultString =
           txCoins.vault.length === 2
             ? `Deposited into the ${getVaultByDenoms(chainConfig, txCoins.vault)} vault`
-            : `Deposited into the Perps ${getAssetSymbolByDenom(chainConfig, txCoins.vault[0].denom)} vault`
+            : `Deposited into the Perps ${getAssetSymbol(chainConfig, txCoins.vault[0].denom)} vault`
 
         toast.content.push({
           text: vaultString,
