@@ -184,3 +184,5 @@ interface TransactionEventAttribute {
   key: string
   value: string
 }
+
+type TransactionType = 'execution' | 'oracle' | 'create' | 'burn' | 'unlock' | 'transaction'

@@ -32,7 +32,7 @@ export async function analizeTransaction(
   address: string,
 ): Promise<{
   target: string
-  transactionType: string
+  transactionType: TransactionType
   txCoins: TransactionCoins
 }> {
   let target = 'Red Bank'
@@ -70,8 +70,8 @@ function getCreditAccountIdFromBroadcastResult(result: BroadcastResult) {
   return existingAccountId
 }
 
-function getTransactionTypes() {
-  const transactionTypes = new Map<string, string>()
+function getTransactionTypesByAction() {
+  const transactionTypes = new Map<string, TransactionType>()
 
   // transactionTypes keys are the actions and the value is the transaction type
   transactionTypes.set('create_credit_account', 'create')
@@ -258,8 +258,8 @@ function mergeCoinAmounts(coin1: Coin, coin2: Coin): Coin {
   return { denom: coin1.denom, amount: BN(coin1.amount).plus(BN(coin2.amount)).toString() }
 }
 
-function getTransactionTypeFromCoins(coins: TransactionCoins): string {
-  let transactionType = 'execution'
+function getTransactionTypeFromCoins(coins: TransactionCoins): TransactionType {
+  let transactionType = 'execution' as TransactionType
   const transactionKeys = Object.keys(coins) as TransactionCoinType[]
   transactionKeys.forEach((key: TransactionCoinType) => {
     if (coins[key].length > 0) transactionType = 'transaction'
@@ -268,11 +268,11 @@ function getTransactionTypeFromCoins(coins: TransactionCoins): string {
   return transactionType
 }
 
-function getTransactionTypeFromBroadcastResult(result: BroadcastResult): string {
-  const transactionTypes = getTransactionTypes()
+function getTransactionTypeFromBroadcastResult(result: BroadcastResult): TransactionType {
+  const transactionTypes = getTransactionTypesByAction()
   const eventTypes = ['begin_unlock', 'wasm']
   const transactionAttributes = ['action', 'method']
-  let transactionType = 'execution'
+  let transactionType = 'execution' as TransactionType
 
   const filteredEvents = result?.result?.response.events
     .filter((event: TransactionEvent) => eventTypes.includes(event.type))
