@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 import debounce from 'lodash.debounce'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { Callout, CalloutType } from 'components/common/Callout'
 import Card from 'components/common/Card'
 import LeverageSlider from 'components/common/LeverageSlider'
 import Text from 'components/common/Text'
@@ -41,8 +42,14 @@ export function PerpsModule() {
   const { simulatePerps, updatedPerpPosition, updatedAccount, removedDeposits } =
     useUpdatedAccount(account)
   const [amount, setAmount] = useState<BigNumber>(BN_ZERO)
-  const { previousAmount, previousTradeDirection, previousLeverage, leverage, hasActivePosition } =
-    usePerpsModule(amount)
+  const {
+    warningMessages,
+    previousAmount,
+    previousTradeDirection,
+    previousLeverage,
+    leverage,
+    hasActivePosition,
+  } = usePerpsModule(amount)
 
   const [sliderLeverage, setSliderLeverage] = useState<number>(1)
 
@@ -212,6 +219,12 @@ export function PerpsModule() {
         </>
       )}
 
+      {warningMessages.value.map((message) => (
+        <Callout key={message} type={CalloutType.WARNING}>
+          {message}
+        </Callout>
+      ))}
+
       <PerpsSummary
         amount={amount ?? previousAmount}
         tradeDirection={tradeDirection ?? previousTradeDirection}
@@ -222,7 +235,7 @@ export function PerpsModule() {
         previousLeverage={previousLeverage}
         hasActivePosition={hasActivePosition}
         onTxExecuted={() => setAmount(BN_ZERO)}
-        disabled={amount.isGreaterThan(maxAmount)}
+        disabled={amount.isGreaterThan(maxAmount) || warningMessages.isNotEmpty()}
       />
     </Card>
   )
