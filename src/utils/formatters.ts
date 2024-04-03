@@ -152,7 +152,7 @@ export function formatPercent(percent: number | string, minDecimals?: number) {
   })
 }
 
-export function formatAmountWithSymbol(coin: Coin, assets: Asset[]) {
+export function formatAmountWithSymbol(coin: Coin, assets: Asset[], options?: FormatOptions) {
   const asset = assets.find((asset) => asset.denom === coin.denom)
 
   if (!asset) return
@@ -164,6 +164,7 @@ export function formatAmountWithSymbol(coin: Coin, assets: Asset[]) {
     suffix: ` ${asset?.symbol}`,
     abbreviated: true,
     rounded: true,
+    ...options,
   })
 }
 

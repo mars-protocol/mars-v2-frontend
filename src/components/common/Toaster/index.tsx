@@ -45,7 +45,7 @@ export function generateToastContent(content: ToastSuccess['content'], assets: A
 
                 return BN(coin.amount).isPositive() && formatAmountWithSymbol(coin, assets) ? (
                   <li className='w-full p-0 text-sm text-white' key={`${coin.denom}_${index}`}>
-                    {`${prefix}${formatAmountWithSymbol(coin, assets)}`}
+                    {`${prefix}${formatAmountWithSymbol(coin, assets, { abbreviated: false })}`}
                   </li>
                 ) : (
                   <li className='w-full p-0 text-sm text-white' key={`${coin.denom}_${index}`}>

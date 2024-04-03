@@ -166,6 +166,8 @@ interface TransactionCoins {
   swap: Coin[]
   withdraw: Coin[]
   vault: Coin[]
+  perps: Coin[]
+  pnl: Coin[]
 }
 
 type TransactionCoinType = keyof TransactionCoins

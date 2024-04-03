@@ -41,24 +41,14 @@ export default function UnlockAmount(props: Props) {
     )
   }
 
-  return <Amount asset={primaryAsset} amount={props.vault.amounts.primary} />
-}
-
-interface AmountProps {
-  amount: BigNumber
-  asset: Asset
-  symbol?: boolean
-}
-
-function Amount(props: AmountProps) {
   return (
     <FormattedNumber
       className='text-xs'
-      amount={props.amount.toNumber()}
+      amount={props.vault.amounts.primary.toNumber()}
       options={{
-        decimals: props.asset.decimals,
-        maxDecimals: props.asset.decimals > 6 ? 6 : 2,
-        suffix: props.symbol ? ` ${props.asset.symbol}` : '',
+        decimals: primaryAsset.decimals,
+        maxDecimals: primaryAsset.decimals > 6 ? 6 : 2,
+        suffix: ` ${primaryAsset.symbol}`,
       }}
     />
   )

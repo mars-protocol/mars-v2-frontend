@@ -98,7 +98,8 @@ function getRules() {
   coinRules.set('deposit_contract', 'lend')
   coinRules.set('repay', 'repay')
   coinRules.set('borrow', 'borrow')
-
+  coinRules.set('open_position', 'perps')
+  coinRules.set('close_position', 'perps')
   return coinRules
 }
 
@@ -113,8 +114,11 @@ function getTransactionCoins(result: BroadcastResult, address: string, target: s
     swap: [],
     withdraw: [],
     vault: [],
+    perps: [],
+    pnl: [],
   }
   const eventTypes = ['wasm', 'token_swapped', 'pool_joined']
+  const perpsMethods = ['open_position', 'close_position']
   const coinRules = getRules()
   const filteredEvents = result?.result?.response.events
     .filter((event: TransactionEvent) => eventTypes.includes(event.type))
@@ -132,7 +136,7 @@ function getTransactionCoins(result: BroadcastResult, address: string, target: s
       if (vaultTokens) transactionCoins.vault.push(...vaultTokens)
     }
     event.attributes.forEach((attr: TransactionEventAttribute) => {
-      if (attr.key !== 'action') return
+      if (attr.key !== 'action' && attr.key !== 'method') return
 
       const coin = getCoinFromEvent(event)
       if (!coin) return
@@ -141,6 +145,18 @@ function getTransactionCoins(result: BroadcastResult, address: string, target: s
       const action = attr.value
       const coinType = coinRules.get(`${action}_${target}`) ?? coinRules.get(action)
       if (coinType) transactionCoins[coinType].push(...coin)
+
+      if (perpsMethods.includes(action)) {
+        event.attributes.forEach((attr: TransactionEventAttribute) => {
+          const realizedProfitOrLoss = attr.key === 'realised_pnl' ? attr.value : undefined
+          if (realizedProfitOrLoss) {
+            const pnlCoin = getCoinFromPnLString(realizedProfitOrLoss)
+            if (pnlCoin) {
+              transactionCoins.pnl.push(pnlCoin)
+            }
+          }
+        })
+      }
 
       if (isHLS) {
         const HLSDeposit = findUpdateCoinBalanceAndAddDeposit(event, transactionCoins)
@@ -165,15 +181,21 @@ function getCoinFromEvent(event: TransactionEvent) {
 
   const denom = event.attributes.find((a) => a.key === 'denom')?.value
   const amount = event.attributes.find((a) => a.key === 'amount')?.value
+  const size = event.attributes.find((a) => a.key === 'size')?.value
+  const newSize = event.attributes.find((a) => a.key === 'new_size')?.value
 
   if (denom && amount) coins.push(BNCoin.fromDenomAndBigNumber(denom, BN(amount)).toCoin())
+  if (denom && (size || newSize))
+    coins.push(BNCoin.fromDenomAndBigNumber(denom, size ? BN(size) : BN(newSize ?? 0)).toCoin())
 
   event.attributes.forEach((attr: TransactionEventAttribute) => {
     const amountDenomString = denomAmountActions.includes(attr.key) ? attr.value : undefined
-    if (!amountDenomString) return
-    const result = getCoinFromAmountDenomString(amountDenomString)
-    if (result) coins.push(result)
+    if (amountDenomString) {
+      const coin = getCoinFromAmountDenomString(amountDenomString)
+      if (coin) coins.push(coin)
+    }
   })
+
   return coins
 }
 
@@ -224,9 +246,13 @@ function getTransactionTypeFromCoins(coins: TransactionCoins): string {
     coins.repay.length > 0 ||
     coins.withdraw.length > 0 ||
     coins.reclaim.length > 0 ||
-    coins.swap.length > 0
+    coins.swap.length > 0 ||
+    coins.perps.length > 0 ||
+    coins.pnl.length > 0
   )
     return 'transaction'
+
+  if (coins.perps) return 'perps'
 
   return 'execution'
 }
@@ -273,6 +299,17 @@ function getCoinFromAmountDenomString(amountDenomString: string): Coin | undefin
   return BNCoin.fromDenomAndBigNumber(denom, BN(matches[1])).toCoin()
 }
 
+function getCoinFromPnLString(pnlString: string): Coin | undefined {
+  const pnlStringParts = pnlString.split(':')
+  if (pnlStringParts.length !== 3) return
+
+  if (pnlStringParts[0] === 'profit')
+    return BNCoin.fromDenomAndBigNumber(pnlStringParts[1], BN(pnlStringParts[2])).toCoin()
+  if (pnlStringParts[0] === 'loss')
+    return BNCoin.fromDenomAndBigNumber(pnlStringParts[1], BN(pnlStringParts[2]).negated()).toCoin()
+  return
+}
+
 function removeDuplicatesFromTransactionCoins(coins: TransactionCoins): TransactionCoins {
   const uniqueCoins = {
     borrow: removeDuplicates(coins.borrow),
@@ -283,6 +320,8 @@ function removeDuplicatesFromTransactionCoins(coins: TransactionCoins): Transact
     swap: removeDuplicates(coins.swap),
     withdraw: removeDuplicates(coins.withdraw),
     vault: removeDuplicates(coins.vault),
+    perps: coins.perps,
+    pnl: removeDuplicates(coins.pnl),
   }
 
   return uniqueCoins

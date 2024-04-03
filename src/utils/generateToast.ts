@@ -1,6 +1,7 @@
 import moment from 'moment'
 
 import { analizeTransaction } from 'utils/broadcast'
+import { BN } from 'utils/helpers'
 import { getVaultByDenoms } from 'utils/vaults'
 
 export async function generateToast(
@@ -99,20 +100,45 @@ export async function generateToast(
         text: 'Withdrew to Wallet',
         coins: txCoins.withdraw,
       })
-      break
 
-    case 'open-perp':
-      toast.content.push({
-        text: 'Market order executed',
-        coins: [], // TODO get coins
-      })
-      break
+      if (txCoins.pnl.length > 0) {
+        txCoins.pnl.forEach((coin) => {
+          if (BN(coin.amount).isPositive()) {
+            toast.content.push({
+              text: 'Realised Profit',
+              coins: [coin],
+            })
+          }
+          if (BN(coin.amount).isNegative()) {
+            toast.content.push({
+              text: 'Covered Loss',
+              coins: [{ denom: coin.denom, amount: BN(coin.amount).abs().toString() }],
+            })
+          }
+        })
+      }
 
-    case 'close-perp':
-      toast.content.push({
-        text: 'Closed perp position',
-        coins: [], // TODO get coins
-      })
+      if (txCoins.perps.length > 0) {
+        txCoins.perps.forEach((coin) => {
+          if (BN(coin.amount).isPositive() && !BN(coin.amount).isZero()) {
+            toast.message = 'Opened Perps Position'
+            toast.content.push({
+              text: 'Longed',
+              coins: [coin],
+            })
+          }
+          if (BN(coin.amount).isZero()) {
+            toast.message = 'Closed Perps Position'
+          }
+          if (BN(coin.amount).isNegative()) {
+            toast.message = 'Opened Perps Position'
+            toast.content.push({
+              text: 'Shorted',
+              coins: [{ denom: coin.denom, amount: BN(coin.amount).abs().toString() }],
+            })
+          }
+        })
+      }
       break
 
     case 'modify-perp':
@@ -137,18 +163,7 @@ export async function generateToast(
       break
     case 'perp-vault-withdraw':
       toast.content.push({
-        text: 'Deposited into perp vault',
-        coins: [], // TODO get coins
-      })
-      break
-
-    case 'vault':
-    case 'vaultCreate':
-      toast.content.push({
-        text:
-          transactionType === 'vaultCreate'
-            ? 'Created a Vault Position'
-            : 'Added to Vault Position',
+        text: 'Withdrew from perp vault',
         coins: [], // TODO get coins
       })
       break
