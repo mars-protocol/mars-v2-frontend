@@ -11,7 +11,10 @@ import iterateContractQuery from 'utils/iterateContractQuery'
 export function usePerpsParams(denom: string) {
   const perpsParams = useAllPerpsParams()
 
-  return useMemo(() => perpsParams?.find(byDenom(denom)) as PerpsParams, [denom, perpsParams])
+  return useMemo(() => {
+    if (!perpsParams) return null
+    return perpsParams.find(byDenom(denom)) as PerpsParams
+  }, [denom, perpsParams])
 }
 
 export function useAllPerpsParams() {

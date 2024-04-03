@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { useSWRConfig } from 'swr'
 
 import Button from 'components/common/Button'
-import { Callout } from 'components/common/Callout'
+import { Callout, CalloutType } from 'components/common/Callout'
 import { ArrowRight } from 'components/common/Icons'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import ModalContentWithSummary from 'components/Modals/ModalContentWithSummary'
@@ -103,11 +103,11 @@ export default function PerpsVaultModal() {
           <div className='flex flex-col gap-4'>
             {modal.type === 'deposit' && (
               <>
-                <Callout>
+                <Callout type={CalloutType.INFO}>
                   Please note there is an unlocking period of 7 days when depositing into this
                   vault.
                 </Callout>
-                <Callout>
+                <Callout type={CalloutType.INFO}>
                   Your overall leverage may be increased as any deposits into this vault are removed
                   from your total collateral value.
                 </Callout>

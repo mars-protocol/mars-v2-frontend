@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react'
 
 import AssetAmount from 'components/common/assets/AssetAmount'
 import ActionButton from 'components/common/Button/ActionButton'
-import { Callout } from 'components/common/Callout'
+import { Callout, CalloutType } from 'components/common/Callout'
 import { ArrowRight } from 'components/common/Icons'
 import SummaryLine from 'components/common/SummaryLine'
 import Text from 'components/common/Text'
@@ -144,7 +144,11 @@ function ManageSummary(props: Props & { newAmount: BigNumber }) {
         Your new position
       </Text>
 
-      {props.newAmount.isZero() && <Callout>Your position will be closed</Callout>}
+      {props.newAmount.isZero() && (
+        <Callout type={CalloutType.INFO} className='mb-2'>
+          Your position will be closed
+        </Callout>
+      )}
 
       {showTradeDirection && props.previousTradeDirection && !props.newAmount.isZero() && (
         <SummaryLine label='Side' contentClassName='flex gap-1'>

@@ -1,19 +1,25 @@
 import { useMemo } from 'react'
 
+import { checkOpenInterest, checkPositionValue } from 'components/perps/Module/validators'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import usePerpPosition from 'hooks/perps/usePerpPosition'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
+import usePerpsMarket from 'hooks/perps/usePerpsMarket'
+import { usePerpsParams } from 'hooks/perps/usePerpsParams'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import usePrice from 'hooks/usePrice'
 import usePrices from 'hooks/usePrices'
+import { List } from 'types/classes/List'
 import { getAccountNetValue } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { demagnify } from 'utils/formatters'
 
 export default function usePerpsModule(amount: BigNumber | null) {
   const { perpsAsset } = usePerpsAsset()
+  const params = usePerpsParams(perpsAsset.denom)
+  const perpsMarket = usePerpsMarket()
   const perpPosition = usePerpPosition(perpsAsset.denom)
   const { data: prices } = usePrices()
   const assets = useAllAssets()
@@ -39,6 +45,14 @@ export default function usePerpsModule(amount: BigNumber | null) {
   const previousTradeDirection = useMemo(
     () => perpPosition?.tradeDirection || 'long',
     [perpPosition?.tradeDirection],
+  )
+
+  const currentTradeDirection = useMemo(
+    () =>
+      (previousAmount.plus(amount || BN_ZERO).isGreaterThanOrEqualTo(0)
+        ? 'long'
+        : 'short') as TradeDirection,
+    [amount, previousAmount],
   )
 
   const previousLeverage = useMemo(() => {
@@ -76,11 +90,41 @@ export default function usePerpsModule(amount: BigNumber | null) {
     ],
   )
 
+  const warningMessages = useMemo(() => {
+    const messages = new List<string>()
+    if (!params || !amount || !perpsMarket) return messages
+
+    messages.pushIfNotEmpty(checkPositionValue(amount, previousAmount, price, perpsAsset, params))
+    messages.pushIfNotEmpty(
+      checkOpenInterest(
+        perpsMarket,
+        previousTradeDirection,
+        currentTradeDirection,
+        amount,
+        previousAmount,
+        price,
+        params,
+      ),
+    )
+
+    return messages
+  }, [
+    amount,
+    currentTradeDirection,
+    params,
+    perpsAsset,
+    perpsMarket,
+    previousAmount,
+    previousTradeDirection,
+    price,
+  ])
+
   return {
     previousAmount,
     previousTradeDirection,
     previousLeverage,
     leverage,
     hasActivePosition,
+    warningMessages,
   }
 }
