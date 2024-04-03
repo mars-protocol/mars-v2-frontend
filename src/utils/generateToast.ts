@@ -120,10 +120,9 @@ export async function generateToast(
 
       if (txCoins.perps.length > 0) {
         txCoins.perps.forEach((coin) => {
-          if (BN(coin.amount).isPositive() && !BN(coin.amount).isZero()) {
-            toast.message = 'Opened Perps Position'
+          if (BN(coin.amount).isGreaterThan(0)) {
             toast.content.push({
-              text: 'Longed',
+              text: 'Opened Perps Long Position',
               coins: [coin],
             })
           }
@@ -131,9 +130,8 @@ export async function generateToast(
             toast.message = 'Closed Perps Position'
           }
           if (BN(coin.amount).isNegative()) {
-            toast.message = 'Opened Perps Position'
             toast.content.push({
-              text: 'Shorted',
+              text: 'Opened Perps Short Position',
               coins: [{ denom: coin.denom, amount: BN(coin.amount).abs().toString() }],
             })
           }
