@@ -30,24 +30,24 @@ export async function generateToast(
 
   const vaultString =
     txCoins.vault.length === 2
-      ? `Deposited into ${getVaultByDenoms(chainConfig, txCoins.vault)} Vault`
-      : 'Deposit into Vault'
+      ? `Deposited into the ${getVaultByDenoms(chainConfig, txCoins.vault)} vault`
+      : 'Deposited into a vault'
 
   switch (transactionType) {
     case 'execution':
-      toast.message = 'Executed a Transaction'
+      toast.message = 'Executed a transaction'
       break
 
     case 'oracle':
-      toast.message = 'Updated the Oracle Prices'
+      toast.message = 'Updated the oracle'
       break
 
     case 'create':
-      toast.message = 'Minted the Account'
+      toast.message = 'Minted the account'
       break
 
     case 'burn':
-      toast.message = 'Deleted the Account'
+      toast.message = 'Deleted the account'
       break
 
     case 'unlock':
@@ -57,12 +57,12 @@ export async function generateToast(
     case 'transaction':
       if (isHLS && txCoins.deposit.length === 2) {
         toast.content.push({
-          text: 'Deposited from Wallet',
+          text: 'Deposited from wallet',
           coins: [txCoins.deposit[0]],
         })
       }
       toast.content.push({
-        text: 'Borrowed',
+        text: txCoins.perps.length ? 'Borrowed to cover fees' : 'Borrowed',
         coins: txCoins.borrow,
       })
       toast.content.push({
@@ -75,7 +75,7 @@ export async function generateToast(
       })
       if (isHLS && txCoins.deposit.length === 2) {
         toast.content.push({
-          text: 'Deposited into HLS Account',
+          text: 'Deposited into HLS account',
           coins: [txCoins.deposit[1]],
         })
       } else {
@@ -97,7 +97,7 @@ export async function generateToast(
         coins: txCoins.lend,
       })
       toast.content.push({
-        text: 'Withdrew to Wallet',
+        text: 'Withdrew to wallet',
         coins: txCoins.withdraw,
       })
 
@@ -105,13 +105,13 @@ export async function generateToast(
         txCoins.pnl.forEach((coin) => {
           if (BN(coin.amount).isPositive()) {
             toast.content.push({
-              text: 'Realised Profit',
+              text: 'Realised profit',
               coins: [coin],
             })
           }
           if (BN(coin.amount).isNegative()) {
             toast.content.push({
-              text: 'Covered Loss',
+              text: 'Realised loss',
               coins: [{ denom: coin.denom, amount: BN(coin.amount).abs().toString() }],
             })
           }
@@ -122,20 +122,41 @@ export async function generateToast(
         txCoins.perps.forEach((coin) => {
           if (BN(coin.amount).isGreaterThan(0)) {
             toast.content.push({
-              text: 'Opened Perps Long Position',
+              text: 'Opened perps long position',
               coins: [coin],
             })
           }
           if (BN(coin.amount).isZero()) {
-            toast.message = 'Closed Perps Position'
+            toast.message = 'Closed perps position'
           }
           if (BN(coin.amount).isNegative()) {
             toast.content.push({
-              text: 'Opened Perps Short Position',
+              text: 'Opened perps short position',
               coins: [{ denom: coin.denom, amount: BN(coin.amount).abs().toString() }],
             })
           }
         })
+      }
+
+      if (txCoins.perpsModify.length === 2) {
+        toast.message = 'Modified perps position'
+        const beforePosition = txCoins.perpsModify[0]
+        const modification = txCoins.perpsModify[1]
+        const positionType = BN(beforePosition.amount).isGreaterThan(0) ? 'long' : 'short'
+        if (BN(modification.amount).isGreaterThan(0)) {
+          toast.content.push({
+            text: `Increased ${positionType} by`,
+            coins: [modification],
+          })
+        }
+        if (BN(modification.amount).isNegative()) {
+          toast.content.push({
+            text: `Decreased ${positionType} by`,
+            coins: [
+              { denom: modification.denom, amount: BN(modification.amount).abs().toString() },
+            ],
+          })
+        }
       }
       break
 

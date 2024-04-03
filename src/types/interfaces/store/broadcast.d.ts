@@ -167,6 +167,7 @@ interface TransactionCoins {
   withdraw: Coin[]
   vault: Coin[]
   perps: Coin[]
+  perpsModify: Coin[]
   pnl: Coin[]
 }
 

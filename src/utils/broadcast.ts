@@ -1,4 +1,5 @@
 import getAccount from 'api/accounts/getAccount'
+import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
@@ -100,6 +101,7 @@ function getRules() {
   coinRules.set('borrow', 'borrow')
   coinRules.set('open_position', 'perps')
   coinRules.set('close_position', 'perps')
+  coinRules.set('modify_position', 'perpsModify')
   return coinRules
 }
 
@@ -115,10 +117,11 @@ function getTransactionCoins(result: BroadcastResult, address: string, target: s
     withdraw: [],
     vault: [],
     perps: [],
+    perpsModify: [],
     pnl: [],
   }
   const eventTypes = ['wasm', 'token_swapped', 'pool_joined']
-  const perpsMethods = ['open_position', 'close_position']
+  const perpsMethods = ['open_position', 'close_position', 'modify_position']
   const coinRules = getRules()
   const filteredEvents = result?.result?.response.events
     .filter((event: TransactionEvent) => eventTypes.includes(event.type))
@@ -153,6 +156,10 @@ function getTransactionCoins(result: BroadcastResult, address: string, target: s
             const pnlCoin = getCoinFromPnLString(realizedProfitOrLoss)
             if (pnlCoin) {
               transactionCoins.pnl.push(pnlCoin)
+              transactionCoins.borrow = []
+              transactionCoins.deposit = []
+              transactionCoins.reclaim = []
+              transactionCoins.lend = []
             }
           }
         })
@@ -183,10 +190,23 @@ function getCoinFromEvent(event: TransactionEvent) {
   const amount = event.attributes.find((a) => a.key === 'amount')?.value
   const size = event.attributes.find((a) => a.key === 'size')?.value
   const newSize = event.attributes.find((a) => a.key === 'new_size')?.value
+  const startingSize = event.attributes.find((a) => a.key === 'starting_size')?.value
 
   if (denom && amount) coins.push(BNCoin.fromDenomAndBigNumber(denom, BN(amount)).toCoin())
-  if (denom && (size || newSize))
-    coins.push(BNCoin.fromDenomAndBigNumber(denom, size ? BN(size) : BN(newSize ?? 0)).toCoin())
+  if (denom && size) coins.push(BNCoin.fromDenomAndBigNumber(denom, BN(size)).toCoin())
+  if (denom && newSize && startingSize) {
+    if (BN(newSize).isZero()) {
+      coins.push(BNCoin.fromDenomAndBigNumber(denom, BN_ZERO).toCoin())
+    } else {
+      coins.push(BNCoin.fromDenomAndBigNumber(denom, BN(startingSize)).toCoin())
+      coins.push(
+        BNCoin.fromDenomAndBigNumber(
+          denom,
+          BN(newSize).abs().minus(BN(startingSize).abs()),
+        ).toCoin(),
+      )
+    }
+  }
 
   event.attributes.forEach((attr: TransactionEventAttribute) => {
     const amountDenomString = denomAmountActions.includes(attr.key) ? attr.value : undefined
@@ -248,6 +268,7 @@ function getTransactionTypeFromCoins(coins: TransactionCoins): string {
     coins.reclaim.length > 0 ||
     coins.swap.length > 0 ||
     coins.perps.length > 0 ||
+    coins.perpsModify.length > 0 ||
     coins.pnl.length > 0
   )
     return 'transaction'
@@ -321,6 +342,7 @@ function removeDuplicatesFromTransactionCoins(coins: TransactionCoins): Transact
     withdraw: removeDuplicates(coins.withdraw),
     vault: removeDuplicates(coins.vault),
     perps: coins.perps,
+    perpsModify: coins.perpsModify,
     pnl: removeDuplicates(coins.pnl),
   }
 
