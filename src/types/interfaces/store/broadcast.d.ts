@@ -157,21 +157,29 @@ interface Event {
   attributes: { key: string; value: string }[]
 }
 
-interface TransactionCoins {
-  borrow: Coin[]
-  deposit: Coin[]
-  lend: Coin[]
-  reclaim: Coin[]
-  repay: Coin[]
-  swap: Coin[]
-  withdraw: Coin[]
-  vault: Coin[]
-  perps: Coin[]
-  perpsModify: Coin[]
-  pnl: Coin[]
+type TransactionCoinType =
+  | 'borrow'
+  | 'deposit'
+  | 'deposit_from_wallet'
+  | 'lend'
+  | 'reclaim'
+  | 'repay'
+  | 'swap'
+  | 'withdraw'
+  | 'vault'
+  | 'perps'
+  | 'perpsPnl'
+
+interface TransactionCoin {
+  type: TransactionCoinType
+  coin: BNCoin
+  before?: BNCoin
 }
 
-type TransactionCoinType = keyof TransactionCoins
+interface GroupedTransactionCoin {
+  type: TransactionCoinType
+  coins: { coin: BNCoin; before?: BNCoin }[]
+}
 
 type TransactionRecipient = 'contract' | 'wallet'
 
@@ -185,4 +193,4 @@ interface TransactionEventAttribute {
   value: string
 }
 
-type TransactionType = 'execution' | 'oracle' | 'create' | 'burn' | 'unlock' | 'transaction'
+type TransactionType = 'default' | 'oracle' | 'create' | 'burn' | 'unlock' | 'transaction'
