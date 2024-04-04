@@ -109,7 +109,7 @@ export default function createBroadcastSlice(
     },
     execute: async (contract: string, msg: ExecuteMsg, funds: Coin[]) => {
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, contract, msg, funds)],
+        messages: [generateExecutionMessage(get().address, contract, msg, sortFunds(funds))],
       })
       get().handleTransaction({ response })
 
@@ -816,7 +816,7 @@ export default function createBroadcastSlice(
       const redBankContract = get().chainConfig.contracts.redBank
 
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, redBankContract, msg, funds)],
+        messages: [generateExecutionMessage(get().address, redBankContract, msg, sortFunds(funds))],
       })
 
       get().handleTransaction({ response })

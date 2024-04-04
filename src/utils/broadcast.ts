@@ -38,10 +38,15 @@ export async function analizeTransaction(
   transactionType: TransactionType
   txCoinGroups: GroupedTransactionCoin[]
 }> {
+  // Set default values for target (Red Bank or Credit Account) and accountKind (default or high_levered_strategy)
   let target = 'Red Bank'
   let accountKind = 'default'
+
+  // Check for the usage of a credit account in the BroadcastResult
   const accountId = getCreditAccountIdFromBroadcastResult(result)
+
   if (accountId) {
+    // If it is a credit account, get the AccountKind of the credit account
     const creditManagerQueryClient = await getCreditManagerQueryClient(chainConfig)
     accountKind = await creditManagerQueryClient.accountKind({ accountId: accountId })
     if (accountKind) {
@@ -53,8 +58,10 @@ export async function analizeTransaction(
   }
   const isHLS = accountKind === 'high_levered_strategy'
 
+  // Fetch all coins from the BroadcastResult
   const txCoinGroups = getTransactionCoins(result, address, isHLS)
 
+  // If there are no coins involved, try to identify the transaction type, otherwise set it to 'transaction'
   const transactionType = txCoinGroups.length
     ? 'transaction'
     : getTransactionTypeFromBroadcastResult(result)
@@ -68,8 +75,10 @@ export async function analizeTransaction(
 }
 
 function getCreditAccountIdFromBroadcastResult(result: BroadcastResult) {
+  // Check for interaction with an existing credit account
   const existingAccountId = getSingleValueFromBroadcastResult(result.result, 'wasm', 'account_id')
 
+  // Check for the token_id attribute of the mint action
   if (!existingAccountId) {
     const newAccountId = getSingleValueFromBroadcastResult(result.result, 'wasm', 'token_id')
     if (newAccountId) return newAccountId
@@ -107,21 +116,30 @@ function getRules() {
   coinRules.set('open_position', 'perps')
   coinRules.set('close_position', 'perps')
   coinRules.set('modify_position', 'perps')
+
   return coinRules
 }
 
 function getTransactionCoins(result: BroadcastResult, address: string, isHLS: boolean) {
   const transactionCoins: TransactionCoin[] = []
+
+  // Event types that include coins are wasm, token_swapped and pool_joined
+  // This should be streamlined by SC one day
   const eventTypes = ['wasm', 'token_swapped', 'pool_joined']
-  const perpsMethods = ['open_position', 'close_position', 'modify_position']
+
+  // Event attributes that include coins can be action and method
+  // This will be streamlined by SC to be 'action' only in the future
   const transactionAttributes = ['action', 'method']
+
   const coinRules = getRules()
+
   const filteredEvents = result?.result?.response.events
     .filter((event: TransactionEvent) => eventTypes.includes(event.type))
     .flat()
 
   filteredEvents.forEach((event: TransactionEvent) => {
     if (!Array.isArray(event.attributes)) return
+    // Check if the event type is a token_swapped and get coins from the event
     if (event.type === 'token_swapped') {
       const { tokenIn, tokenOut } = getCoinFromSwapEvent(event)
       if (tokenIn && tokenOut) {
@@ -130,26 +148,38 @@ function getTransactionCoins(result: BroadcastResult, address: string, isHLS: bo
       }
       return
     }
+
+    // Check if the event type is a pool_join event and get coins from the event
     if (event.type === 'pool_joined') {
       const vaultTokens = getVaultTokensFromEvent(event)
       if (vaultTokens)
         vaultTokens.map((coin) => transactionCoins.push({ type: 'vault', coin: coin }))
+
+      // There is no return here, since the pool_joined event can also include coins in the attributes
     }
+
+    // Check all other events for coins
     event.attributes.forEach((attr: TransactionEventAttribute) => {
       if (!transactionAttributes.includes(attr.key)) return
 
       const coins = getCoinsFromEvent(event)
       if (!coins) return
 
+      // Check if the TransactionRecipient is the wallet or a contract
       const target = getTargetFromEvent(event, address)
       const action = attr.value
-      const coinType = coinRules.get(`${action}_${target}`) ?? coinRules.get(action)
-      if (coinType)
-        coins.map((eventCoin) =>
-          transactionCoins.push({ type: coinType, coin: eventCoin.coin, before: eventCoin.before }),
-        )
 
-      if (perpsMethods.includes(action)) {
+      // Find the CoinType for the action and target
+      let coinType = coinRules.get(`${action}_${target}`) ?? coinRules.get(action)
+      if (isHLS && action === 'callback/deposit')
+        coinType = 'deposit_from_wallet' as TransactionCoinType
+      coins.forEach((eventCoin) => {
+        if (!coinType) return
+        transactionCoins.push({ type: coinType, coin: eventCoin.coin, before: eventCoin.before })
+      })
+
+      // If the event is a perps event, check for realized profit or loss
+      if (coinRules.get(action) === 'perps') {
         event.attributes.forEach((attr: TransactionEventAttribute) => {
           const realizedProfitOrLoss = attr.key === 'realised_pnl' ? attr.value : undefined
           if (realizedProfitOrLoss) {
@@ -160,8 +190,14 @@ function getTransactionCoins(result: BroadcastResult, address: string, isHLS: bo
       }
 
       if (isHLS) {
+        // If the account is an hls account, check for a deposit_from_wallet event and add the amount of the 'update_coin_balance' event
+        // This is because the deposit from wallet is sent to the hls account first and then the result of a potential swap event
+        // gets added to the hls account via 'update_coin_balance'.
+        // To display those transaction correctly a 'deposit' coin has to be added to transactionCoins that has the sum of the deposit and the swap amount
         const HLSDeposit = findUpdateCoinBalanceAndAddDeposit(event, transactionCoins)
-        if (HLSDeposit) transactionCoins.push({ type: 'deposit', coin: HLSDeposit })
+        if (HLSDeposit) {
+          transactionCoins.push({ type: 'deposit', coin: HLSDeposit })
+        }
       }
     })
   })
@@ -180,25 +216,31 @@ function getCoinsFromEvent(event: TransactionEvent) {
     'repay',
   ]
 
+  // Check for denom and amount and add the coin to the return
   const denom = event.attributes.find((a) => a.key === 'denom')?.value
   const amount = event.attributes.find((a) => a.key === 'amount')?.value
+  if (denom && amount) coins.push({ coin: BNCoin.fromDenomAndBigNumber(denom, BN(amount)) })
+
+  // For perps actions check for size and new_size or starting_size
   const size = event.attributes.find((a) => a.key === 'size')?.value
   const newSize = event.attributes.find((a) => a.key === 'new_size')?.value
   const startingSize = event.attributes.find((a) => a.key === 'starting_size')?.value
 
-  if (denom && amount) coins.push({ coin: BNCoin.fromDenomAndBigNumber(denom, BN(amount)) })
+  // If there is a size, but no newSize and no startingSize, set the before coin amount to 0 to indicate a new position
   if (denom && size && !newSize && !startingSize)
     coins.push({
       coin: BNCoin.fromDenomAndBigNumber(denom, BN(size)),
       before: BNCoin.fromDenomAndBigNumber(denom, BN_ZERO),
     })
 
+  // If there is a size and a newSize or a startingSize, set the before coin accordingly to indicate a modification of a position
   if (denom && newSize && startingSize)
     coins.push({
-      coin: BNCoin.fromDenomAndBigNumber(denom, BN(startingSize)),
-      before: BNCoin.fromDenomAndBigNumber(denom, BN(newSize)),
+      coin: BNCoin.fromDenomAndBigNumber(denom, BN(newSize)),
+      before: BNCoin.fromDenomAndBigNumber(denom, BN(startingSize)),
     })
 
+  // Check for denomAmount strings like '1000uosmo' and add the coin to the return
   event.attributes.forEach((attr: TransactionEventAttribute) => {
     const amountDenomString = denomAmountActions.includes(attr.key) ? attr.value : undefined
     if (amountDenomString) {
@@ -251,7 +293,9 @@ function mergeCoinAmounts(coin1: BNCoin, coin2: BNCoin): BNCoin {
 }
 
 function getTransactionTypeFromBroadcastResult(result: BroadcastResult): TransactionType {
+  // BoradCastResult's that don't include any coins need to be checked for other actions and methods to identify the transaction type
   const transactionTypes = getTransactionTypesByAction()
+  // Filter events by 'wasm' and the pseudo event 'begin_unlock'
   const eventTypes = ['begin_unlock', 'wasm']
   const transactionAttributes = ['action', 'method']
   let transactionType = 'default' as TransactionType
@@ -261,7 +305,10 @@ function getTransactionTypeFromBroadcastResult(result: BroadcastResult): Transac
     .flat()
 
   filteredEvents.forEach((event: TransactionEvent) => {
-    if (event.type === 'begin_unlock') return 'unlock'
+    // If the event is 'begin_unlock' the transaction type is 'unlock'
+    // The SC team will update the begin_unlock to be a wasm event, with funds in the action
+    // as soon as the update is live, this can be moved to getTransactionCoins()
+    if (event.type === 'begin_unlock') transactionType = 'unlock'
 
     if (event.type === 'wasm') {
       const action =
@@ -413,15 +460,6 @@ export function getToastContentsFromGroupedTransactionCoin(
             })
             return
           }
-          // if amount of the new position is 0 -> close position
-          if (txCoin.coin.amount.isZero()) {
-            toastContents.push({
-              text: txCoin.before.amount.isPositive()
-                ? `Closed ${perpsAssetSymbol} long`
-                : `Closed ${perpsAssetSymbol} short`,
-              coins: [],
-            })
-          }
           // if amount of the new position is different from the before position -> modified position
           const beforeTradeDirection: TradeDirection = txCoin.before.amount.isPositive()
             ? 'long'
@@ -431,7 +469,7 @@ export function getToastContentsFromGroupedTransactionCoin(
             : 'short'
 
           // if trade direction changed
-          if (beforeTradeDirection !== afterTradeDirection) {
+          if (beforeTradeDirection !== afterTradeDirection && !txCoin.coin.amount.isZero()) {
             toastContents.push({
               text: `Switched ${perpsAssetSymbol} from ${beforeTradeDirection} to ${afterTradeDirection}`,
               coins: [txCoin.coin.abs().toCoin()],
@@ -439,19 +477,27 @@ export function getToastContentsFromGroupedTransactionCoin(
             return
           }
 
-          const modificationAnmount = txCoin.before.amount.abs().minus(txCoin.coin.amount.abs())
+          const modificationAnmount = txCoin.coin.amount.abs().minus(txCoin.before.amount.abs())
           const modificationCoin = BNCoin.fromDenomAndBigNumber(
             txCoin.coin.denom,
             modificationAnmount,
           )
-
+          // if amount of the new position is 0 -> close position
+          if (txCoin.coin.amount.isZero()) {
+            toastContents.push({
+              text: txCoin.before.amount.isPositive()
+                ? `Closed ${perpsAssetSymbol} long`
+                : `Closed ${perpsAssetSymbol} short`,
+              coins: [modificationCoin.abs().toCoin()],
+            })
+            return
+          }
           toastContents.push({
             text: modificationAnmount.isPositive()
               ? `Increased ${perpsAssetSymbol} ${afterTradeDirection} by`
               : `Decreased ${perpsAssetSymbol} ${afterTradeDirection} by`,
-            coins: [modificationCoin.toCoin()],
+            coins: [modificationCoin.abs().toCoin()],
           })
-          return
         }
       })
 

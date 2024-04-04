@@ -1,8 +1,7 @@
 import classNames from 'classnames'
-import { ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 import { Slide, ToastContainer, toast as toastify } from 'react-toastify'
 import { mutate } from 'swr'
-import React from 'react'
 
 import { CheckMark } from 'components/common/CheckMark'
 import { CircularProgress } from 'components/common/CircularProgress'
@@ -32,7 +31,7 @@ function isPromise(object?: any): object is ToastPending {
 export function generateToastContent(content: ToastSuccess['content'], assets: Asset[]): ReactNode {
   return content.map((item, index) => (
     <React.Fragment key={index}>
-      {item.text && item.coins.length > 0 && (
+      {item.text && (
         <div className='flex flex-wrap w-full mb-1'>
           <Text size='sm' className='w-full mb-1 text-white'>
             {item.text}
