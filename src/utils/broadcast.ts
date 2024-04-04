@@ -222,6 +222,7 @@ function getCoinsFromEvent(event: TransactionEvent) {
   if (denom && amount) coins.push({ coin: BNCoin.fromDenomAndBigNumber(denom, BN(amount)) })
 
   // For perps actions check for size and new_size or starting_size
+  // NOTE: starting_size will be entry_size after the next SC update
   const size = event.attributes.find((a) => a.key === 'size')?.value
   const newSize = event.attributes.find((a) => a.key === 'new_size')?.value
   const startingSize = event.attributes.find((a) => a.key === 'starting_size')?.value
