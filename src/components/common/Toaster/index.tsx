@@ -163,7 +163,7 @@ export default function Toaster() {
           {toast.hash && (
             <div className='w-full'>
               <TextLink
-                href={`${chainConfig.endpoints.explorer}${toast.hash}`}
+                href={`${chainConfig.endpoints.explorer}/transactions/${toast.hash}`}
                 target='_blank'
                 className={classNames(
                   'leading-4 underline mt-4 hover:no-underline hover:text-white',

@@ -22,7 +22,7 @@ import { ExecuteMsg as PerpsExecuteMsg } from 'types/generated/mars-perps/MarsPe
 import { ExecuteMsg as RedBankExecuteMsg } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHealthTypes.types'
 import { byDenom, bySymbol } from 'utils/array'
-import { generateErrorMessage, getSingleValueFromBroadcastResult } from 'utils/broadcast'
+import { generateErrorMessage, getSingleValueFromBroadcastResult, sortFunds } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import checkPythUpdateEnabled from 'utils/checkPythUpdateEnabled'
 import { defaultFee } from 'utils/constants'
@@ -282,22 +282,21 @@ export default function createBroadcastSlice(
           })),
         },
       }
-
       if (options.lend) {
         msg.update_credit_account.actions.push(
           ...options.coins
             .filter((coin) => get().chainConfig.assets.find(byDenom(coin.denom))?.isAutoLendEnabled)
-            .map((coin) => ({ lend: coin.toActionCoin(options.lend) })),
+            .map((coin) => ({ lend: coin.toActionCoin() })),
         )
       }
 
       const funds = options.coins.map((coin) => coin.toCoin())
       const cmContract = get().chainConfig.contracts.creditManager
 
+      console.log(sortFunds(funds))
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, cmContract, msg, funds)],
+        messages: [generateExecutionMessage(get().address, cmContract, msg, sortFunds(funds))],
       })
-
       get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)

@@ -42,7 +42,11 @@ export default function RecentTransactions() {
                     )}
                     contentClassName='p-4'
                     onClick={() => {
-                      if (hash) window.open(`${chainConfig.endpoints.explorer}${hash}`, '_blank')
+                      if (hash)
+                        window.open(
+                          `${chainConfig.endpoints.explorer}/transactions/${hash}`,
+                          '_blank',
+                        )
                     }}
                     key={hash}
                   >

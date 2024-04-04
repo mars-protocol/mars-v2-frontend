@@ -309,10 +309,13 @@ function groupTransactionCoins(coins: TransactionCoin[]): GroupedTransactionCoin
   const groupedCoins = [] as GroupedTransactionCoin[]
 
   coins.forEach((txCoin) => {
-    const existingCoin = groupedCoins.find((c) =>
-      c.coins.find(
-        (coin) => coin.coin.denom === txCoin.coin.denom && coin.coin.amount === txCoin.coin.amount,
-      ),
+    const existingCoin = groupedCoins.find(
+      (c) =>
+        c.type === txCoin.type &&
+        c.coins.find(
+          (coin) =>
+            coin.coin.denom === txCoin.coin.denom && coin.coin.amount.isEqualTo(txCoin.coin.amount),
+        ),
     )
     if (existingCoin) return
 
@@ -335,55 +338,55 @@ export function getToastContentsFromGroupedTransactionCoin(
   chainConfig: ChainConfig,
 ): ToastContent[] {
   const toastContents = [] as ToastContent[]
-  const defaultCoins = transactionCoin.coins.map((c) => c.coin.toCoin())
+  const coins = transactionCoin.coins.map((c) => c.coin.toCoin())
 
   switch (transactionCoin.type) {
     case 'borrow':
       toastContents.push({
         text: 'Borrowed',
-        coins: defaultCoins,
+        coins,
       })
       break
     case 'deposit':
       toastContents.push({
         text: isHLS ? 'Deposited into HLS account' : 'Deposited',
-        coins: defaultCoins,
+        coins,
       })
       break
     case 'deposit_from_wallet':
       toastContents.push({
         text: 'Deposited from wallet',
-        coins: defaultCoins,
+        coins,
       })
       break
     case 'lend':
       toastContents.push({
         text: target === 'Red Bank' ? 'Deposited' : 'Lent',
-        coins: defaultCoins,
+        coins,
       })
       break
     case 'reclaim':
       toastContents.push({
         text: 'Unlent',
-        coins: defaultCoins,
+        coins,
       })
       break
     case 'repay':
       toastContents.push({
         text: 'Repaid',
-        coins: defaultCoins,
+        coins,
       })
       break
     case 'swap':
       toastContents.push({
         text: 'Swapped',
-        coins: defaultCoins,
+        coins,
       })
       break
     case 'withdraw':
       toastContents.push({
         text: 'Withdrew to wallet',
-        coins: defaultCoins,
+        coins,
       })
       break
     case 'vault':
@@ -473,4 +476,11 @@ export function getToastContentsFromGroupedTransactionCoin(
   }
 
   return toastContents
+}
+
+export function sortFunds(funds: Coin[]) {
+  // FIX:
+  // Transaction failed: Broadcasting transaction failed with code 10 (codespace: sdk). Log: sentFunds: invalid coins
+  // Transaction on Osmosis fail, if uosmo is not at the last position of the funds array
+  return funds.sort((a, b) => a.denom.localeCompare(b.denom))
 }
