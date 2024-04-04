@@ -9,7 +9,7 @@ interface Account {
   lends: BNCoin[]
   vaults: DepositedVault[]
   perps: PerpsPosition[]
-  perpVault: PerpVaultPositions | null
+  perpsVault: PerpsVaultPositions | null
   kind: AccountKind
 }
 
@@ -19,7 +19,7 @@ interface AccountChange extends Account {
   lends?: BNCoin[]
   vaults?: DepositedVault[]
   perps?: PerpsPosition[]
-  perpVault?: PerpVaultPositions
+  perpsVault?: PerpsVaultPositions
 }
 
 interface AccountBalanceRow {
@@ -37,9 +37,16 @@ interface AccountStrategyRow {
   apy?: number | null
   name: string
   denom: string
-  amount: BNCoin[]
   value: string
-  amountChange: BNCoin[]
+  coins: {
+    primary: BNCoin
+    secondary?: BNCoin
+  }
+  coinsChange: {
+    primary: BNCoin
+    secondary?: BNCoin
+  }
+  unlocksAt?: number
 }
 
 interface AccountPerpRow extends PerpsPosition {
@@ -64,17 +71,17 @@ interface HLSAccountWithStrategy extends Account {
   }
 }
 
-interface PerpVaultPositions {
+interface PerpsVaultPositions {
   active: {
     amount: BigNumber
     shares: BigNumber
   } | null
   denom: string
   unlocked: BigNumber | null
-  unlocking: PerpVaultUnlockingPosition[]
+  unlocking: PerpsVaultUnlockingPosition[]
 }
 
-interface PerpVaultUnlockingPosition {
+interface PerpsVaultUnlockingPosition {
   amount: BigNumber
   unlocksAt: number
 }

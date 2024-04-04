@@ -20,11 +20,11 @@ export function AvailableVaults() {
             },
           ]
         : []),
-      ...(chainConfig.perps && !account?.perpVault
+      ...(chainConfig.perps && !account?.perpsVault
         ? [{ title: 'Perps Vaults', renderContent: () => <AvailablePerpsVaultsTable /> }]
         : []),
     ],
-    [account?.perpVault, chainConfig.farm, chainConfig.perps],
+    [account?.perpsVault, chainConfig.farm, chainConfig.perps],
   )
 
   return <CardWithTabs tabs={tabs} />

@@ -13,24 +13,51 @@ import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAsset from 'hooks/assets/useAsset'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useChainConfig from 'hooks/useChainConfig'
+import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
-export default function PerpsVaultModal() {
-  const chainConfig = useChainConfig()
+export default function PerpsVaultModalController() {
   const modal = useStore((s) => s.perpsVaultModal)
+
+  if (!modal) return null
+
+  return <PerpsVaultModal modal={modal} />
+}
+
+type Props = {
+  modal: PerpsVaultModal
+}
+
+function PerpsVaultModal(props: Props) {
+  const chainConfig = useChainConfig()
   const account = useCurrentAccount()
   const [amount, setAmount] = useState(BN(0))
   const [isConfirming, setIsConfirming] = useState(false)
   const { mutate } = useSWRConfig()
-
+  const { simulatePerpsVaultDeposit, simulatePerpsVaultUnlock } = useUpdatedAccount(account)
   const { data: perpsVault } = usePerpsVault()
   const asset = useAsset(perpsVault?.denom || '')
+
+  const updateAmount = useCallback(
+    (amount: BigNumber) => {
+      setAmount(amount)
+
+      if (!perpsVault?.denom) return
+      if (props.modal.type === 'deposit') {
+        simulatePerpsVaultDeposit(BNCoin.fromDenomAndBigNumber(perpsVault.denom, amount))
+      } else {
+        simulatePerpsVaultUnlock(BNCoin.fromDenomAndBigNumber(perpsVault.denom, amount))
+      }
+    },
+    [props.modal.type, perpsVault?.denom, simulatePerpsVaultDeposit, simulatePerpsVaultUnlock],
+  )
 
   const [amountInDeposits, maxAmount] = useMemo(() => {
     if (!account) return [BN(0), BN(0), BN(0)]
 
-    if (modal?.type === 'deposit') {
+    if (props.modal.type === 'deposit') {
       const amountInDeposits =
         account.deposits.find((d) => d.denom === perpsVault?.denom)?.amount || BN(0)
       const amountInLends =
@@ -39,15 +66,19 @@ export default function PerpsVaultModal() {
       return [amountInDeposits, amountInDeposits.plus(amountInLends)]
     }
 
-    return [BN_ZERO, account.perpVault?.active?.amount ?? BN_ZERO]
-  }, [account, modal?.type, perpsVault?.denom])
+    return [BN_ZERO, account.perpsVault?.active?.amount ?? BN_ZERO]
+  }, [account, props.modal.type, perpsVault?.denom])
 
-  const onClose = useCallback(() => useStore.setState({ perpsVaultModal: null }), [])
+  const onClose = useCallback(() => {
+    useStore.setState({ perpsVaultModal: null })
+    setAmount(BN_ZERO)
+  }, [])
+
   const handleClick = useCallback(async () => {
     if (!account || !perpsVault) return
     setIsConfirming(true)
 
-    if (modal?.type === 'deposit') {
+    if (props.modal.type === 'deposit') {
       const amountFromDeposits = amount.isLessThanOrEqualTo(amountInDeposits)
         ? amount
         : amountInDeposits
@@ -62,9 +93,9 @@ export default function PerpsVaultModal() {
       })
     }
 
-    const activeVaultPosition = account.perpVault?.active
+    const activeVaultPosition = account.perpsVault?.active
 
-    if (modal?.type === 'unlock' && activeVaultPosition) {
+    if (props.modal.type === 'unlock' && activeVaultPosition) {
       const percentageOfMax = amount.div(activeVaultPosition.amount)
       const amountOfShares = percentageOfMax.times(activeVaultPosition.shares)
       await useStore.getState().requestUnlockPerpsVault({
@@ -79,9 +110,18 @@ export default function PerpsVaultModal() {
     await mutate(`chains/${chainConfig.id}/vaults/${account.id}/deposited`)
     onClose()
     return
-  }, [account, amount, amountInDeposits, chainConfig.id, modal?.type, mutate, onClose, perpsVault])
+  }, [
+    account,
+    amount,
+    amountInDeposits,
+    chainConfig.id,
+    props.modal.type,
+    mutate,
+    onClose,
+    perpsVault,
+  ])
 
-  if (!modal || !asset) return null
+  if (!asset) return null
 
   return (
     <ModalContentWithSummary
@@ -95,13 +135,13 @@ export default function PerpsVaultModal() {
             disabled={isConfirming}
             asset={asset}
             amount={amount}
-            onChange={setAmount}
+            onChange={updateAmount}
             max={maxAmount}
             warningMessages={[]}
             maxText='Available'
           />
           <div className='flex flex-col gap-4'>
-            {modal.type === 'deposit' && (
+            {props.modal.type === 'deposit' && (
               <>
                 <Callout type={CalloutType.INFO}>
                   Please note there is an unlocking period of 7 days when depositing into this
@@ -119,7 +159,7 @@ export default function PerpsVaultModal() {
               showProgressIndicator={isConfirming}
               disabled={isConfirming || amount.isZero()}
             >
-              {modal.type === 'deposit' ? 'Deposit' : 'Request unlock'}
+              {props.modal.type === 'deposit' ? 'Deposit' : 'Request unlock'}
             </Button>
           </div>
         </>

@@ -15,9 +15,13 @@ export const calculateAccountBalanceValue = (
   prices: BNCoin[],
   assets: Asset[],
 ): BigNumber => {
-  const [deposits, lends, debts, vaults, perps] = getAccountPositionValues(account, prices, assets)
+  const [deposits, lends, debts, vaults, perps, perpsVault] = getAccountPositionValues(
+    account,
+    prices,
+    assets,
+  )
 
-  return deposits.plus(lends).plus(vaults).plus(perps).minus(debts)
+  return deposits.plus(lends).plus(vaults).plus(perps).plus(perpsVault).minus(debts)
 }
 
 export const getAccountPositionValues = (
@@ -30,11 +34,12 @@ export const getAccountPositionValues = (
   const debts = calculateAccountValue('debts', account, prices, assets)
   const vaults = calculateAccountValue('vaults', account, prices, assets)
   const perps = calculateAccountValue('perps', account, prices, assets)
-  return [deposits, lends, debts, vaults, perps]
+  const perpsVault = calculateAccountValue('perpsVault', account, prices, assets)
+  return [deposits, lends, debts, vaults, perps, perpsVault]
 }
 
 export const calculateAccountValue = (
-  type: 'deposits' | 'lends' | 'debts' | 'vaults' | 'perps',
+  type: 'deposits' | 'lends' | 'debts' | 'vaults' | 'perps' | 'perpsVault',
   account: Account | AccountChange,
   prices: BNCoin[],
   assets: Asset[],
@@ -59,6 +64,23 @@ export const calculateAccountValue = (
         acc = acc.plus(getCoinValue(perpPosition.pnl.unrealized.net, prices, assets))
         return acc
       }, BN_ZERO) || BN_ZERO
+    )
+  }
+
+  if (type === 'perpsVault') {
+    if (!account.perpsVault) return BN_ZERO
+    const activeAmount = account.perpsVault.active?.amount ?? BN_ZERO
+    const unlockingAmount = account.perpsVault.unlocking.reduce(
+      (total, unlocking) => total.plus(unlocking.amount),
+      BN_ZERO,
+    )
+    const unlockedAmount = account.perpsVault.unlocked ?? BN_ZERO
+    const totalAmount = activeAmount.plus(unlockingAmount).plus(unlockedAmount)
+
+    return getCoinValue(
+      BNCoin.fromDenomAndBigNumber(account.perpsVault.denom, totalAmount),
+      prices,
+      assets,
     )
   }
 
@@ -171,6 +193,7 @@ export const calculateAccountApr = (
 }
 
 export function calculateAccountLeverage(account: Account, prices: BNCoin[], assets: Asset[]) {
+  // TODO: MP-2307: Include perps positions into account leverage calculation
   const [deposits, lends, debts, vaults] = getAccountPositionValues(account, prices, assets)
   const netValue = deposits.plus(lends).plus(vaults).minus(debts)
   return debts.dividedBy(netValue).plus(1)
@@ -314,12 +337,12 @@ export function cloneAccount(account: Account): Account {
       currentPrice: perpPosition.currentPrice,
       tradeDirection: perpPosition.tradeDirection,
     })),
-    perpVault: account.perpVault
+    perpsVault: account.perpsVault
       ? {
-          active: account.perpVault?.active ? { ...account.perpVault.active } : null,
-          denom: account.perpVault.denom,
-          unlocked: account.perpVault.unlocked,
-          unlocking: account.perpVault.unlocking.map((unlocking) => ({
+          active: account.perpsVault?.active ? { ...account.perpsVault.active } : null,
+          denom: account.perpsVault.denom,
+          unlocked: account.perpsVault.unlocked,
+          unlocking: account.perpsVault.unlocking.map((unlocking) => ({
             amount: unlocking.amount,
             unlocksAt: unlocking.unlocksAt,
           })),

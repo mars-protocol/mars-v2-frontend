@@ -117,3 +117,35 @@ export function getDepositAndLendCoinsToSpend(coin: BNCoin, account?: Account) {
 
   return makeOutput(accountDepositAmount, coin.amount.minus(accountDepositAmount))
 }
+
+export function adjustPerpsVaultAmounts(
+  perpsVault: PerpsVault,
+  depositAmount: BigNumber,
+  unlockAmount: BigNumber,
+  position: PerpsVaultPositions | null,
+): PerpsVaultPositions {
+  const perpPosition = {
+    active: {
+      amount: position?.active ? position.active.amount : BN_ZERO,
+      shares: position?.active ? position.active.shares : BN_ZERO,
+    },
+    denom: perpsVault.denom,
+    unlocked: position?.unlocked ?? null,
+    unlocking: position?.unlocking ?? [],
+  }
+
+  if (perpPosition.active) {
+    if (!depositAmount.isZero()) {
+      perpPosition.active.amount = perpPosition.active?.amount.plus(depositAmount)
+    }
+
+    if (!unlockAmount.isZero()) {
+      perpPosition.active.amount = perpPosition.active?.amount.minus(unlockAmount)
+      perpPosition.unlocking = [
+        { amount: unlockAmount, unlocksAt: Date.now() + perpsVault.lockup.duration * 1000 * 60 },
+      ]
+    }
+  }
+
+  return perpPosition
+}
