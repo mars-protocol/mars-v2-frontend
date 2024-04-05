@@ -437,7 +437,7 @@ export function isAccountEmpty(account: Account) {
     account.lends.length === 0 &&
     account.debts.length === 0 &&
     account.deposits.length === 0 &&
-    account.perpVault === null
+    account.perpsVault === null
   )
 }
 
