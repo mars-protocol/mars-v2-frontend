@@ -2,11 +2,13 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { BN_ZERO } from 'constants/math'
 import useAllAssets from 'hooks/assets/useAllAssets'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useSlippage from 'hooks/settings/useSlippage'
 import usePrices from 'hooks/usePrices'
 import {
   addCoins,
   addValueToVaults,
+  adjustPerpsVaultAmounts,
   getDepositAndLendCoinsToSpend,
   removeCoins,
   updatePerpsPositions,
@@ -28,6 +30,7 @@ export interface VaultValue {
 export function useUpdatedAccount(account?: Account) {
   const { data: availableVaults } = useVaults(false)
   const { data: prices } = usePrices()
+  const { data: perpsVault } = usePerpsVault()
   const assets = useAllAssets()
   const [updatedAccount, setUpdatedAccount] = useState<Account | undefined>(
     account ? cloneAccount(account) : undefined,
@@ -39,6 +42,8 @@ export function useUpdatedAccount(account?: Account) {
   const [addedDebts, addDebts] = useState<BNCoin[]>([])
   const [removedDebts, removeDebts] = useState<BNCoin[]>([])
   const [addedVaultValues, addVaultValues] = useState<VaultValue[]>([])
+  const [addedPerpsVaultAmount, addPerpsVaultAmount] = useState<BigNumber>(BN_ZERO)
+  const [unlockingPerpsVaultAmount, addUnlockingPerpsVaultAmount] = useState<BigNumber>(BN_ZERO)
   const [addedLends, addLends] = useState<BNCoin[]>([])
   const [removedLends, removeLends] = useState<BNCoin[]>([])
   const [addedTrades, addTrades] = useState<BNCoin[]>([])
@@ -293,6 +298,20 @@ export function useUpdatedAccount(account?: Account) {
     [account, setUpdatedPerpPosition],
   )
 
+  const simulatePerpsVaultDeposit = useCallback(
+    (coin: BNCoin) => {
+      const { deposit, lend } = getDepositAndLendCoinsToSpend(coin, account)
+      removeDeposits([deposit])
+      removeLends([lend])
+      addPerpsVaultAmount(coin.amount)
+    },
+    [account],
+  )
+
+  const simulatePerpsVaultUnlock = useCallback((coin: BNCoin) => {
+    addUnlockingPerpsVaultAmount(coin.amount)
+  }, [])
+
   useEffect(() => {
     if (!account) return
 
@@ -305,6 +324,19 @@ export function useUpdatedAccount(account?: Account) {
       [...accountCopy.vaults],
       availableVaults ?? [],
     )
+
+    if (
+      perpsVault &&
+      (addedPerpsVaultAmount.isGreaterThan(0) || unlockingPerpsVaultAmount.isGreaterThan(0))
+    ) {
+      accountCopy.perpsVault = adjustPerpsVaultAmounts(
+        perpsVault,
+        addedPerpsVaultAmount,
+        unlockingPerpsVaultAmount,
+        account.perpsVault,
+      )
+    }
+
     accountCopy.perps = updatePerpsPositions([...accountCopy.perps], updatedPerpPosition)
     accountCopy.deposits = removeCoins(removedDeposits, [...accountCopy.deposits])
     accountCopy.debts = removeCoins(removedDebts, [...accountCopy.debts])
@@ -329,6 +361,9 @@ export function useUpdatedAccount(account?: Account) {
     addedTrades,
     assets,
     updatedPerpPosition,
+    perpsVault,
+    addedPerpsVaultAmount,
+    unlockingPerpsVaultAmount,
   ])
 
   return {
@@ -361,5 +396,7 @@ export function useUpdatedAccount(account?: Account) {
     simulateVaultDeposit,
     simulateWithdraw,
     simulatePerps,
+    simulatePerpsVaultDeposit,
+    simulatePerpsVaultUnlock,
   }
 }

@@ -24,7 +24,7 @@ export default function useV1Account() {
         deposits: [],
         vaults: [],
         perps: [],
-        perpVault: null,
+        perpsVault: null,
         kind: 'default' as AccountKind,
       }
     },

@@ -171,12 +171,12 @@ export function resolvePerpsPositions(
   })
 }
 
-export function resolvePerpVaultPositions(
-  perpVaultPositions?: Positions['perp_vault'],
-): PerpVaultPositions | null {
-  if (!perpVaultPositions) return null
+export function resolvePerpsVaultPositions(
+  perpsVaultPositions?: Positions['perp_vault'],
+): PerpsVaultPositions | null {
+  if (!perpsVaultPositions) return null
 
-  const [unlocking, unlockedAmount] = perpVaultPositions.unlocks.reduce(
+  const [unlocking, unlockedAmount] = perpsVaultPositions.unlocks.reduce(
     (prev, curr) => {
       if (curr.cooldown_end * 1000 < Date.now()) {
         prev[1] = prev[1].plus(curr.amount)
@@ -190,12 +190,12 @@ export function resolvePerpVaultPositions(
   )
 
   return {
-    denom: perpVaultPositions.denom,
-    active: BN(perpVaultPositions.deposit.amount).isZero()
+    denom: perpsVaultPositions.denom,
+    active: BN(perpsVaultPositions.deposit.amount).isZero()
       ? null
       : {
-          amount: BN(perpVaultPositions.deposit.amount),
-          shares: BN(perpVaultPositions.deposit.shares),
+          amount: BN(perpsVaultPositions.deposit.amount),
+          shares: BN(perpsVaultPositions.deposit.shares),
         },
     unlocking: unlocking.map((position) => ({
       amount: BN(position.amount),
