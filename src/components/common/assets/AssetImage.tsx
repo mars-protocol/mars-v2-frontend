@@ -5,9 +5,5 @@ interface Props {
 
 export default function AssetImage(props: Props) {
   const AssetLogo = props.asset?.logo ?? null
-  return (
-    <div className={props.className}>
-      {AssetLogo && <AssetLogo />}
-    </div>
-  )
+  return <div className={props.className}>{AssetLogo && <AssetLogo />}</div>
 }

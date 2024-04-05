@@ -209,3 +209,13 @@ export function getVaultDepositCoinsFromActions(actions: Action[]) {
     })
   })
 }
+
+export function getVaultNameByCoins(chainConfig: ChainConfig, coins: Coin[]) {
+  const vaults = chainConfig.vaults
+  if (!vaults.length || coins.length !== 2) return
+  const coinDenoms = coins.map((coin) => coin.denom)
+
+  return vaults.find((vault) =>
+    [vault.denoms.primary, vault.denoms.secondary].every((denom) => coinDenoms.includes(denom)),
+  )?.name
+}

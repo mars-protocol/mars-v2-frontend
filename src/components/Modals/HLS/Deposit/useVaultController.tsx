@@ -36,7 +36,7 @@ export default function useVaultController(props: Props) {
     reclaims: [],
     deposits: [BNCoin.fromDenomAndBigNumber(collateralAsset.denom, depositAmount)],
     borrowings: [BNCoin.fromDenomAndBigNumber(borrowMarket.asset.denom, borrowAmount)],
-    kind: 'high_levered_strategy',
+    kind: 'high_levered_strategy' as AccountKind,
   })
 
   const { updatedAccount, simulateVaultDeposit } = useUpdatedAccount(selectedAccount)
@@ -55,7 +55,7 @@ export default function useVaultController(props: Props) {
       deposits: [BNCoin.fromDenomAndBigNumber(collateralAsset.denom, depositAmount)],
       borrowings: [BNCoin.fromDenomAndBigNumber(borrowMarket.asset.denom, borrowAmount)],
       isCreate: true,
-      kind: 'high_levered_strategy',
+      kind: 'high_levered_strategy' as AccountKind,
     })
     useStore.setState({ hlsModal: null })
   }, [

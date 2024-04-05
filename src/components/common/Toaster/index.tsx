@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 import { Slide, ToastContainer, toast as toastify } from 'react-toastify'
 import { mutate } from 'swr'
 
@@ -30,9 +30,9 @@ function isPromise(object?: any): object is ToastPending {
 
 export function generateToastContent(content: ToastSuccess['content'], assets: Asset[]): ReactNode {
   return content.map((item, index) => (
-    <div className='flex flex-wrap w-full mb-1' key={index}>
+    <React.Fragment key={index}>
       {item.text && (
-        <>
+        <div className='flex flex-wrap w-full mb-1'>
           <Text size='sm' className='w-full mb-1 text-white'>
             {item.text}
           </Text>
@@ -40,19 +40,23 @@ export function generateToastContent(content: ToastSuccess['content'], assets: A
             <ul className='flex flex-wrap w-full gap-1 p-1 pl-4 list-disc'>
               {item.coins.map((coin, index) => {
                 let prefix = ''
-                if (item.text === 'Swapped') prefix = index === 0 ? 'from ' : 'to '
+                if (item.text === 'Swapped') prefix = index % 2 === 0 ? 'from ' : 'to '
 
-                return BN(coin.amount).isZero() ? null : (
-                  <li className='w-full p-0 text-sm text-white' key={coin.denom}>
-                    {`${prefix}${formatAmountWithSymbol(coin, assets)}`}
+                return BN(coin.amount).isPositive() && formatAmountWithSymbol(coin, assets) ? (
+                  <li className='w-full p-0 text-sm text-white' key={`${coin.denom}_${index}`}>
+                    {`${prefix}${formatAmountWithSymbol(coin, assets, { abbreviated: false })}`}
+                  </li>
+                ) : (
+                  <li className='w-full p-0 text-sm text-white' key={`${coin.denom}_${index}`}>
+                    {`${prefix}unknown asset`}
                   </li>
                 )
               })}
             </ul>
           )}
-        </>
+        </div>
       )}
-    </div>
+    </React.Fragment>
   ))
 }
 
@@ -98,16 +102,9 @@ export default function Toaster() {
 
   const handleResponse = (toast: ToastResponse, details?: boolean) => {
     const isError = toast?.isError
-    if (!isError && toast.accountId) addTransaction(toast)
+    if (!isError && toast.target) addTransaction(toast)
     const generalMessage = isError ? 'Transaction failed!' : 'Transaction completed successfully!'
     const showDetailElement = !!(!details && toast.hash)
-    const address = useStore.getState().address
-
-    let target: string
-    if (!isError) {
-      target = toast.accountId === address ? 'Red Bank' : `Credit Account ${toast.accountId}`
-    }
-
     const Msg = () => (
       <div className='relative flex flex-wrap w-full m-0 isolate'>
         <div className='flex w-full gap-2 mb-2'>
@@ -151,8 +148,8 @@ export default function Toaster() {
             showDetailElement && 'hidden group-hover/transaction:flex',
           )}
         >
-          {!isError && toast.accountId && (
-            <Text className='mb-1 font-bold text-white'>{target}</Text>
+          {!isError && toast.target && (
+            <Text className='mb-1 font-bold text-white'>{toast.target}</Text>
           )}
           {showDetailElement && toast.message && (
             <Text size='sm' className='w-full mb-1 text-white'>
@@ -165,7 +162,7 @@ export default function Toaster() {
           {toast.hash && (
             <div className='w-full'>
               <TextLink
-                href={`${chainConfig.endpoints.explorer}${toast.hash}`}
+                href={`${chainConfig.endpoints.explorer}/tx/${toast.hash}`}
                 target='_blank'
                 className={classNames(
                   'leading-4 underline mt-4 hover:no-underline hover:text-white',

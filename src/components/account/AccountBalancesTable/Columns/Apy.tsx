@@ -4,7 +4,7 @@ import AssetRate from 'components/common/assets/AssetRate'
 import Loading from 'components/common/Loading'
 import Text from 'components/common/Text'
 
-export const APY_META = { accessorKey: 'apy', header: 'APY', meta: { className: 'w-30' } }
+export const APY_META = { accessorKey: 'apy', header: 'APY', meta: { className: 'w-30 pr-4' } }
 
 interface Props {
   apy?: number | null

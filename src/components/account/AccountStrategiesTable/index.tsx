@@ -19,7 +19,7 @@ export default function AccountStrategiesTable(props: Props) {
     updatedAccount,
   })
 
-  const columns = useAccountStrategiesColumns(account)
+  const columns = useAccountStrategiesColumns()
 
   if (accountStrategiesData.length === 0) return null
 

@@ -36,7 +36,7 @@ export default function AssetRate(props: Props) {
 
   if (!isEnabled)
     return (
-      <Text className={classNames('flex items-center', className)}>
+      <Text tag='div' className={classNames('flex items-center', className)}>
         {orientation === 'ltr' && <RateTooltip orientation='ltr' />}N/A
         {orientation === 'rtl' && <RateTooltip orientation='rtl' />}
       </Text>

@@ -15,11 +15,6 @@ interface ToastObjectOptions extends HandleResponseProps {
 interface ToastObject {
   response: Promise<BroadcastResult>
   options: ToastObjectOptions
-
-  swapOptions?: {
-    coinIn: BNCoin
-    denomOut: string
-  }
 }
 
 interface ToastPending {
@@ -34,13 +29,18 @@ type ToastResponse = {
 } & (ToastSuccess | ToastError)
 
 interface ToastSuccess {
-  accountId?: string
-  content: { coins: Coin[]; text: string }[]
-  isError: false
+  target: string
+  content: ToastContent[]
+  isError: boolean
   message?: string
-  timestamp: number
-  address: string
   hash: string
+  address: string
+  timestamp: number
+}
+
+interface ToastContent {
+  coins: Coin[]
+  text: string
 }
 
 interface ToastError {
@@ -55,40 +55,8 @@ interface ToastStore {
 interface HandleResponseProps {
   id: number
   response?: BroadcastResult
-  action:
-    | 'deposit'
-    | 'withdraw'
-    | 'borrow'
-    | 'repay'
-    | 'vault'
-    | 'vaultCreate'
-    | 'lend'
-    | 'create'
-    | 'delete'
-    | 'claim'
-    | 'unlock'
-    | 'swap'
-    | 'oracle'
-    | 'hls-staking'
-    | 'open-perp'
-    | 'close-perp'
-    | 'modify-perp'
-    | 'perp-vault-deposit'
-    | 'perp-vault-unlock'
-    | 'perp-vault-withdraw'
-  lend?: boolean
   accountId?: string
-  changes?: {
-    debts?: BNCoin[]
-    deposits?: BNCoin[]
-    lends?: BNCoin[]
-    reclaims?: BNCoin[]
-    repays?: BNCoin[]
-    swap?: { from: Coin; to: Coin }
-  }
-  target?: 'wallet' | 'account'
   message?: string
-  repay?: boolean
 }
 
 interface BroadcastSlice {
@@ -140,7 +108,7 @@ interface BroadcastSlice {
     lend?: BNCoin
     fromWallet?: boolean
   }) => Promise<boolean>
-  setToast: (toast: ToastObject) => void
+  handleTransaction: (options: { response: Promise<BroadcastResult>; message?: string }) => void
   swap: (options: {
     accountId: string
     coinIn: BNCoin
@@ -183,3 +151,46 @@ interface BroadcastSlice {
 }
 
 type V1ActionType = 'withdraw' | 'deposit' | 'borrow' | 'repay'
+
+interface Event {
+  type: string
+  attributes: { key: string; value: string }[]
+}
+
+type TransactionCoinType =
+  | 'borrow'
+  | 'deposit'
+  | 'deposit_from_wallet'
+  | 'lend'
+  | 'reclaim'
+  | 'repay'
+  | 'swap'
+  | 'withdraw'
+  | 'vault'
+  | 'perps'
+  | 'perpsPnl'
+
+interface TransactionCoin {
+  type: TransactionCoinType
+  coin: BNCoin
+  before?: BNCoin
+}
+
+interface GroupedTransactionCoin {
+  type: TransactionCoinType
+  coins: { coin: BNCoin; before?: BNCoin }[]
+}
+
+type TransactionRecipient = 'contract' | 'wallet'
+
+interface TransactionEvent {
+  type: string
+  attributes: TransactionEventAttribute[]
+}
+
+interface TransactionEventAttribute {
+  key: string
+  value: string
+}
+
+type TransactionType = 'default' | 'oracle' | 'create' | 'burn' | 'unlock' | 'transaction'

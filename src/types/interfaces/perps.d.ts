@@ -42,3 +42,5 @@ interface PerpsPnLCoins {
   net: BNCoin
   price: BNCoin
 }
+
+type PerpsTransactionType = 'open' | 'close' | 'modify'

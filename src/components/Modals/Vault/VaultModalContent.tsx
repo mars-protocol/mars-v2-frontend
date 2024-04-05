@@ -47,7 +47,7 @@ export default function VaultModalContent(props: Props) {
     reclaims: removedLends,
     deposits: removedDeposits,
     borrowings: addedDebts,
-    kind: 'default',
+    kind: 'default' as AccountKind,
   })
 
   const depositCapReachedCoins = useMemo(() => {
