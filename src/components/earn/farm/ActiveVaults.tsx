@@ -73,7 +73,7 @@ export function ActiveVaults() {
         ),
       },
     ],
-    [activeVaults, unlockedVaults, unlockingVaults, activeColumns, unlockColumns, unlockedColumns],
+    [activeColumns, activeVaults, unlockColumns, unlockedColumns, unlockedVaults, unlockingVaults],
   )
 
   if (depositedVaults.length === 0) return null

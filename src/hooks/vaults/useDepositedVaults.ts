@@ -41,7 +41,7 @@ export default function useDepositedVaults(accountId: string) {
   )
 }
 
-function transformPerpsVaultIntoDeposited(
+export function transformPerpsVaultIntoDeposited(
   account: Account,
   perpsVault: PerpsVault,
   prices: BNCoin[],
@@ -88,19 +88,19 @@ function transformPerpsVaultIntoDeposited(
     },
   }
 
-  if (account.perpVault?.active) {
+  if (account.perpsVault?.active) {
     const netValue = getCoinValue(
-      BNCoin.fromDenomAndBigNumber(account.perpVault.denom, account.perpVault.active.amount),
+      BNCoin.fromDenomAndBigNumber(account.perpsVault.denom, account.perpsVault.active.amount),
       prices,
       assets,
     )
     const activeVault: DepositedVault = {
       ...depositedTemplate,
       status: VaultStatus.ACTIVE,
-      ...account.perpVault.active, // TODO: Is this needed?
+      ...account.perpsVault.active, // TODO: Is this needed?
       amounts: {
         ...depositedTemplate.amounts,
-        primary: account.perpVault.active.amount,
+        primary: BN(account.perpsVault.active.amount),
       },
       values: {
         ...depositedTemplate.values,
@@ -110,9 +110,9 @@ function transformPerpsVaultIntoDeposited(
     vaults.push(activeVault)
   }
 
-  if (account.perpVault?.unlocked) {
+  if (account.perpsVault?.unlocked) {
     const netValue = getCoinValue(
-      BNCoin.fromDenomAndBigNumber(account.perpVault.denom, account.perpVault.unlocked),
+      BNCoin.fromDenomAndBigNumber(account.perpsVault.denom, account.perpsVault.unlocked),
       prices,
       assets,
     )
@@ -120,9 +120,10 @@ function transformPerpsVaultIntoDeposited(
     const unlockedVault: DepositedVault = {
       ...depositedTemplate,
       status: VaultStatus.UNLOCKED,
+      unlocksAt: 0,
       amounts: {
         ...depositedTemplate.amounts,
-        primary: account.perpVault.unlocked,
+        primary: BN(account.perpsVault.unlocked),
       },
       values: {
         ...depositedTemplate.values,
@@ -133,8 +134,8 @@ function transformPerpsVaultIntoDeposited(
     vaults.push(unlockedVault)
   }
 
-  if (account.perpVault?.unlocking) {
-    for (let unlock of account.perpVault.unlocking) {
+  if (account.perpsVault?.unlocking) {
+    for (let unlock of account.perpsVault.unlocking) {
       const unlockingVault: DepositedVault = {
         ...depositedTemplate,
         status: VaultStatus.UNLOCKING,
@@ -146,7 +147,7 @@ function transformPerpsVaultIntoDeposited(
         values: {
           ...depositedTemplate.values,
           primary: getCoinValue(
-            BNCoin.fromDenomAndBigNumber(account.perpVault.denom, unlock.amount),
+            BNCoin.fromDenomAndBigNumber(account.perpsVault.denom, unlock.amount),
             prices,
             assets,
           ),

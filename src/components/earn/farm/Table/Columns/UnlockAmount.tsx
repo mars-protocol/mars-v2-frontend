@@ -1,6 +1,7 @@
 import { getVaultAccountStrategiesRow } from 'components/account/AccountStrategiesTable/functions'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { BN_ZERO } from 'constants/math'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import useAsset from 'hooks/assets/useAsset'
 import usePrices from 'hooks/usePrices'
 
@@ -14,17 +15,14 @@ export default function UnlockAmount(props: Props) {
   const primaryAsset = useAsset(props.vault.denoms.primary)
   const secondaryAsset = useAsset(props.vault.denoms.secondary)
   const { data: prices } = usePrices()
+  const assets = useAllAssets()
 
   if (!primaryAsset) return null
 
   if (primaryAsset && secondaryAsset) {
-    const unlockAmounts = getVaultAccountStrategiesRow(props.vault, prices)
-    const primaryUnlockAmount =
-      unlockAmounts?.amount?.find((coin) => coin.denom === props.vault.denoms.primary)?.amount ??
-      BN_ZERO
-    const secondaryUnlockAmount =
-      unlockAmounts?.amount?.find((coin) => coin.denom === props.vault.denoms.secondary)?.amount ??
-      BN_ZERO
+    const unlockAmounts = getVaultAccountStrategiesRow(props.vault, prices, assets)
+    const primaryUnlockAmount = unlockAmounts?.coins?.primary?.amount ?? BN_ZERO
+    const secondaryUnlockAmount = unlockAmounts?.coins?.secondary?.amount ?? BN_ZERO
     return (
       <div className='flex flex-col'>
         <FormattedNumber

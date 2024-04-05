@@ -126,7 +126,13 @@ export default function AccountSummary(props: Props) {
       },
     ]
 
-    if (account.vaults.length > 0 || (updatedAccount && updatedAccount.vaults.length > 0))
+    const showStrategies =
+      !!account.vaults.length ||
+      !!updatedAccount?.vaults.length ||
+      !!account.perpsVault ||
+      !!updatedAccount?.perpsVault
+
+    if (showStrategies)
       itemsArray.push({
         title: 'Strategies',
         renderContent: () =>
@@ -141,7 +147,7 @@ export default function AccountSummary(props: Props) {
         title: 'Perp Positions',
         renderContent: () =>
           account ? <AccountPerpPositionTable account={account} hideCard /> : null,
-        isOpen: accountSummaryTabs[account.vaults.length > 0 ? 3 : 2] ?? false,
+        isOpen: accountSummaryTabs[showStrategies ? 3 : 2] ?? false,
         toggleOpen: (index: number) => handleToggle(index),
         renderSubTitle: () => <></>,
       })
