@@ -171,9 +171,19 @@ function getTransactionCoinsGrouped(result: BroadcastResult, address: string, is
 
       // Find the CoinType for the action and target
       let coinType = coinRules.get(`${action}_${target}`) ?? coinRules.get(action)
+
       if (isHLS && action === 'callback/deposit')
         coinType = 'deposit_from_wallet' as TransactionCoinType
       coins.forEach((eventCoin) => {
+        // check for duplicates
+        const existingCoin = transactionCoins.find(
+          (c) =>
+            c.type === coinType &&
+            c.coin.denom === eventCoin.coin.denom &&
+            c.coin.amount.isEqualTo(eventCoin.coin.amount),
+        )
+        if (existingCoin) return
+
         if (!coinType) return
         transactionCoins.push({ type: coinType, coin: eventCoin.coin, before: eventCoin.before })
       })
@@ -354,29 +364,18 @@ function getCoinFromPnLString(pnlString: string): BNCoin | undefined {
 }
 
 function groupTransactionCoins(coins: TransactionCoin[]): GroupedTransactionCoin[] {
-  const groupedCoins = [] as GroupedTransactionCoin[]
+  // Group coins by type so that for example multiple deposit objects are passed as a single deposit array
+  return coins.reduce((grouped, coin) => {
+    const existingGroup = grouped.find((g) => g.type === coin.type)
 
-  coins.forEach((txCoin) => {
-    const existingCoin = groupedCoins.find(
-      (c) =>
-        c.type === txCoin.type &&
-        c.coins.find(
-          (coin) =>
-            coin.coin.denom === txCoin.coin.denom && coin.coin.amount.isEqualTo(txCoin.coin.amount),
-        ),
-    )
-    if (existingCoin) return
-
-    const existingType = groupedCoins.find((c) => c.type === txCoin.type)
-    if (existingType) {
-      existingType.coins.push(txCoin)
-      return
+    if (existingGroup) {
+      existingGroup.coins.push(coin)
+      return grouped
     }
 
-    groupedCoins.push({ type: txCoin.type, coins: [txCoin] })
-  })
-
-  return groupedCoins
+    grouped.push({ type: coin.type, coins: [coin] })
+    return grouped
+  }, [] as GroupedTransactionCoin[])
 }
 
 export function getToastContentsFromGroupedTransactionCoin(
@@ -449,56 +448,58 @@ export function getToastContentsFromGroupedTransactionCoin(
       break
     case 'perps':
       transactionCoin.coins.forEach((txCoin) => {
-        if (txCoin.before) {
-          const perpsAssetSymbol = getAssetSymbol(chainConfig, txCoin.coin.denom)
-          // if amount of the before positon was 0 -> opened a new position
-          if (txCoin.before.amount.isZero()) {
+        if (!txCoin.before) return
+        const type = getPerpsTransactionTypeFromCoin({ coin: txCoin.coin, before: txCoin.before })
+        const perpsAssetSymbol = getAssetSymbol(chainConfig, txCoin.coin.denom)
+
+        const beforeTradeDirection: TradeDirection = txCoin.before.amount.isPositive()
+          ? 'long'
+          : 'short'
+        const afterTradeDirection: TradeDirection = txCoin.coin.amount.isPositive()
+          ? 'long'
+          : 'short'
+
+        const modificationAnmount = txCoin.coin.amount.abs().minus(txCoin.before.amount.abs())
+        const modificationCoin = BNCoin.fromDenomAndBigNumber(
+          txCoin.coin.denom,
+          modificationAnmount,
+        )
+
+        switch (type) {
+          case 'open':
             toastContents.push({
               text: txCoin.coin.amount.isPositive()
                 ? `Opened ${perpsAssetSymbol} long`
                 : `Opened ${perpsAssetSymbol} short`,
               coins: [txCoin.coin.abs().toCoin()],
             })
-            return
-          }
-          // if amount of the new position is different from the before position -> modified position
-          const beforeTradeDirection: TradeDirection = txCoin.before.amount.isPositive()
-            ? 'long'
-            : 'short'
-          const afterTradeDirection: TradeDirection = txCoin.coin.amount.isPositive()
-            ? 'long'
-            : 'short'
+            break
 
-          // if trade direction changed
-          if (beforeTradeDirection !== afterTradeDirection && !txCoin.coin.amount.isZero()) {
-            toastContents.push({
-              text: `Switched ${perpsAssetSymbol} from ${beforeTradeDirection} to ${afterTradeDirection}`,
-              coins: [txCoin.coin.abs().toCoin()],
-            })
-            return
-          }
-
-          const modificationAnmount = txCoin.coin.amount.abs().minus(txCoin.before.amount.abs())
-          const modificationCoin = BNCoin.fromDenomAndBigNumber(
-            txCoin.coin.denom,
-            modificationAnmount,
-          )
-          // if amount of the new position is 0 -> close position
-          if (txCoin.coin.amount.isZero()) {
+          case 'close':
             toastContents.push({
               text: txCoin.before.amount.isPositive()
                 ? `Closed ${perpsAssetSymbol} long`
                 : `Closed ${perpsAssetSymbol} short`,
               coins: [modificationCoin.abs().toCoin()],
             })
-            return
-          }
-          toastContents.push({
-            text: modificationAnmount.isPositive()
-              ? `Increased ${perpsAssetSymbol} ${afterTradeDirection} by`
-              : `Decreased ${perpsAssetSymbol} ${afterTradeDirection} by`,
-            coins: [modificationCoin.abs().toCoin()],
-          })
+            break
+
+          case 'modify':
+            if (beforeTradeDirection !== afterTradeDirection && !txCoin.coin.amount.isZero()) {
+              toastContents.push({
+                text: `Switched ${perpsAssetSymbol} from ${beforeTradeDirection} to ${afterTradeDirection}`,
+                coins: [txCoin.coin.abs().toCoin()],
+              })
+              return
+            }
+            toastContents.push({
+              text: modificationAnmount.isPositive()
+                ? `Increased ${perpsAssetSymbol} ${afterTradeDirection} by`
+                : `Decreased ${perpsAssetSymbol} ${afterTradeDirection} by`,
+              coins: [modificationCoin.abs().toCoin()],
+            })
+
+            break
         }
       })
 
@@ -523,6 +524,17 @@ export function getToastContentsFromGroupedTransactionCoin(
   }
 
   return toastContents
+}
+
+function getPerpsTransactionTypeFromCoin(txCoin: {
+  coin: BNCoin
+  before: BNCoin
+}): PerpsTransactionType {
+  // if amount of the before positon was 0 -> opened a new position
+  if (txCoin.before.amount.isZero()) return 'open'
+  // if amount of the new position is 0 -> close position
+  if (txCoin.coin.amount.isZero()) return 'close'
+  return 'modify'
 }
 
 export function sortFunds(funds: Coin[]) {
