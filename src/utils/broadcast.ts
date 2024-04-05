@@ -59,7 +59,7 @@ export async function analizeTransaction(
   const isHLS = accountKind === 'high_levered_strategy'
 
   // Fetch all coins from the BroadcastResult
-  const txCoinGroups = getTransactionCoins(result, address, isHLS)
+  const txCoinGroups = getTransactionCoinsGrouped(result, address, isHLS)
 
   // If there are no coins involved, try to identify the transaction type, otherwise set it to 'transaction'
   const transactionType = txCoinGroups.length
@@ -120,7 +120,7 @@ function getRules() {
   return coinRules
 }
 
-function getTransactionCoins(result: BroadcastResult, address: string, isHLS: boolean) {
+function getTransactionCoinsGrouped(result: BroadcastResult, address: string, isHLS: boolean) {
   const transactionCoins: TransactionCoin[] = []
 
   // Event types that include coins are wasm, token_swapped and pool_joined
@@ -308,7 +308,7 @@ function getTransactionTypeFromBroadcastResult(result: BroadcastResult): Transac
   filteredEvents.forEach((event: TransactionEvent) => {
     // If the event is 'begin_unlock' the transaction type is 'unlock'
     // The SC team will update the begin_unlock to be a wasm event, with funds in the action
-    // as soon as the update is live, this can be moved to getTransactionCoins()
+    // as soon as the update is live, this can be moved to getTransactionCoinsGrouped()
     if (event.type === 'begin_unlock') transactionType = 'unlock'
 
     if (event.type === 'wasm') {
