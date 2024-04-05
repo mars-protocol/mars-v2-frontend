@@ -283,10 +283,7 @@ function findUpdateCoinBalanceAndAddDeposit(
 
   // If a deposit from wallet was found add the update_coin_balance to it
   // This is needed for HLS accounts, where the deposit_from_wallet and the update_coin_balance combined make up the final hls account deposit
-  return BNCoin.fromDenomAndBigNumber(
-    depositFromWallet.denom,
-    depositFromWallet.amount.plus(result.amount),
-  )
+  return result.plus(depositFromWallet.amount)
 }
 
 function getTargetFromEvent(event: TransactionEvent, address: string): TransactionRecipient {
