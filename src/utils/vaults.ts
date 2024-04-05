@@ -210,19 +210,12 @@ export function getVaultDepositCoinsFromActions(actions: Action[]) {
   })
 }
 
-export function getVaultByDenoms(chainConfig: ChainConfig, coins: Coin[]) {
+export function getVaultNameByCoins(chainConfig: ChainConfig, coins: Coin[]) {
   const vaults = chainConfig.vaults
   if (!vaults.length || coins.length !== 2) return
-  const token1Denom = coins[0].denom
-  const token2Denom = coins[1].denom
+  const coinDenoms = coins.map((coin) => coin.denom)
 
-  const vault = vaults.find((vault) => {
-    return (
-      (vault.denoms.primary === token1Denom && vault.denoms.secondary === token2Denom) ||
-      (vault.denoms.primary === token2Denom && vault.denoms.secondary === token1Denom)
-    )
-  })
-
-  if (vault) return vault.name
-  return
+  return vaults.find((vault) =>
+    [vault.denoms.primary, vault.denoms.secondary].every((denom) => coinDenoms.includes(denom)),
+  )?.name
 }

@@ -1,9 +1,9 @@
 import { getCreditManagerQueryClient } from 'api/cosmwasm-client'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
+import { getAssetSymbol } from 'utils/assets'
 import { BN } from 'utils/helpers'
-import { getAssetSymbol } from './assets'
-import { getVaultByDenoms } from './vaults'
+import { getVaultNameByCoins } from 'utils/vaults'
 
 export function getSingleValueFromBroadcastResult(
   response: BroadcastResult['result'],
@@ -442,7 +442,7 @@ export function getToastContentsFromGroupedTransactionCoin(
       toastContents.push({
         text:
           transactionCoin.coins.length === 2
-            ? `Deposited into the ${getVaultByDenoms(chainConfig, vaultCoins)} vault`
+            ? `Deposited into the ${getVaultNameByCoins(chainConfig, vaultCoins)} vault`
             : `Deposited into the Perps ${getAssetSymbol(chainConfig, vaultCoins[0].denom)} vault`,
         coins: vaultCoins,
       })
