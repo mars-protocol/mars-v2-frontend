@@ -276,8 +276,17 @@ function findUpdateCoinBalanceAndAddDeposit(
   const result = getCoinFromAmountDenomString(amountDenomString)
   if (!result) return
 
-  const depositFromWallet = transactionCoins.find((c) => c.type === 'deposit_from_wallet')?.coin
-  return depositFromWallet ? mergeCoinAmounts(depositFromWallet, result) : result
+  const depositFromWallet = transactionCoins.find(
+    (c) => c.type === 'deposit_from_wallet' && c.coin.denom === result.denom,
+  )?.coin
+  if (!depositFromWallet) return result
+
+  // If a deposit from wallet was found add the update_coin_balance to it
+  // This is needed for HLS accounts, where the deposit_from_wallet and the update_coin_balance combined make up the final hls account deposit
+  return BNCoin.fromDenomAndBigNumber(
+    depositFromWallet.denom,
+    depositFromWallet.amount.plus(result.amount),
+  )
 }
 
 function getTargetFromEvent(event: TransactionEvent, address: string): TransactionRecipient {
@@ -285,12 +294,6 @@ function getTargetFromEvent(event: TransactionEvent, address: string): Transacti
 
   if (recipient && recipient === address) return 'wallet'
   return 'contract'
-}
-
-function mergeCoinAmounts(coin1: BNCoin, coin2: BNCoin): BNCoin {
-  if (coin1.denom !== coin2.denom) return coin2
-
-  return BNCoin.fromDenomAndBigNumber(coin1.denom, coin1.amount.plus(coin2.amount))
 }
 
 function getTransactionTypeFromBroadcastResult(result: BroadcastResult): TransactionType {

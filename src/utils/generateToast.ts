@@ -1,4 +1,5 @@
 import moment from 'moment'
+
 import { analizeTransaction, getToastContentsFromGroupedTransactionCoin } from 'utils/broadcast'
 
 export async function generateToast(

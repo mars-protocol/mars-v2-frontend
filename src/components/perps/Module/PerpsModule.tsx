@@ -1,8 +1,8 @@
 import BigNumber from 'bignumber.js'
 import debounce from 'lodash.debounce'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-
 import classNames from 'classnames'
+
 import { Callout, CalloutType } from 'components/common/Callout'
 import Card from 'components/common/Card'
 import LeverageSlider from 'components/common/LeverageSlider'
