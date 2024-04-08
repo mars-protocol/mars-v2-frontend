@@ -22,14 +22,12 @@ import { ExecuteMsg as PerpsExecuteMsg } from 'types/generated/mars-perps/MarsPe
 import { ExecuteMsg as RedBankExecuteMsg } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHealthTypes.types'
 import { byDenom, bySymbol } from 'utils/array'
-import { generateErrorMessage, getSingleValueFromBroadcastResult } from 'utils/broadcast'
+import { generateErrorMessage, getSingleValueFromBroadcastResult, sortFunds } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import checkPythUpdateEnabled from 'utils/checkPythUpdateEnabled'
 import { defaultFee } from 'utils/constants'
-import { formatAmountWithSymbol } from 'utils/formatters'
-import getTokenOutFromSwapResponse from 'utils/getTokenOutFromSwapResponse'
+import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
-import { getVaultDepositCoinsFromActions } from 'utils/vaults'
 
 function generateExecutionMessage(
   sender: string | undefined = '',
@@ -55,159 +53,6 @@ export default function createBroadcastSlice(
   set: StoreApi<Store>['setState'],
   get: StoreApi<Store>['getState'],
 ): BroadcastSlice {
-  const handleResponseMessages = (props: HandleResponseProps) => {
-    const { id, accountId, response, action, lend, changes, target, message } = props
-    if (!response) return
-
-    if (response.error || response.result?.response.code !== 0) {
-      set({
-        toast: {
-          id,
-          message: generateErrorMessage(response),
-          isError: true,
-          hash: response.result?.hash,
-        },
-      })
-      return
-    }
-
-    const toast: ToastResponse = {
-      id,
-      accountId: accountId,
-      isError: false,
-      hash: response?.result?.hash,
-      content: [],
-      timestamp: moment().unix(),
-      address: get().address ?? '',
-    }
-
-    if (message) {
-      toast.message = message
-      set({ toast })
-      return
-    }
-
-    if (!changes) return
-
-    switch (action) {
-      case 'borrow':
-        const borrowCoin = changes.debts ? [changes.debts[0].toCoin()] : []
-        const borrowAction = lend ? 'Borrowed and lent' : 'Borrowed'
-        toast.content.push({
-          coins: borrowCoin,
-          text: target === 'wallet' ? 'Borrowed to wallet' : borrowAction,
-        })
-        break
-
-      case 'withdraw':
-        toast.content.push({
-          coins: changes.deposits?.map((deposit) => deposit.toCoin()) ?? [],
-          text: target === 'wallet' ? 'Withdrew to Wallet' : 'Unlent',
-        })
-        break
-
-      case 'deposit':
-        toast.content.push({
-          coins: changes.deposits?.map((deposit) => deposit.toCoin()) ?? [],
-          text: lend ? 'Deposited and lent' : 'Deposited',
-        })
-        break
-
-      case 'lend':
-        const lendCoin = changes.lends ? [changes.lends[0].toCoin()] : []
-        toast.content.push({
-          coins: lendCoin,
-          text: 'Lent',
-        })
-        break
-
-      case 'repay':
-        const repayCoin = changes.deposits ? [changes.deposits[0].toCoin()] : []
-        toast.content.push({
-          coins: repayCoin,
-          text: 'Repaid',
-        })
-        break
-
-      case 'open-perp':
-        toast.content.push({
-          coins: changes.deposits?.map((deposit) => deposit.toCoin()) ?? [],
-          text: 'Market order executed',
-        })
-        break
-      case 'close-perp':
-        // TODO: [Perps] Elaborate on the message
-        toast.content.push({
-          coins: [],
-          text: 'Closed perp position',
-        })
-        break
-      case 'modify-perp':
-        toast.content.push({
-          coins: [],
-          text: 'Modified perp position',
-        })
-        break
-      // TODO: Finetune the messages
-      case 'perp-vault-deposit':
-        toast.content.push({
-          coins: changes.deposits?.map((deposit) => deposit.toCoin()) ?? [],
-
-          text: 'Deposited into perp vault',
-        })
-        break
-      case 'perp-vault-unlock':
-        toast.content.push({
-          coins: changes.deposits?.map((deposit) => deposit.toCoin()) ?? [],
-          text: 'Deposited into perp vault',
-        })
-        break
-      case 'perp-vault-withdraw':
-        toast.content.push({
-          coins: changes.deposits?.map((deposit) => deposit.toCoin()) ?? [],
-          text: 'Deposited into perp vault',
-        })
-        break
-      case 'swap':
-        if (changes.debts) {
-          toast.content.push({
-            coins: [changes.debts[0].toCoin()],
-            text: 'Borrowed',
-          })
-        }
-        if (changes.reclaims) {
-          toast.content.push({
-            coins: [changes.reclaims[0].toCoin()],
-            text: 'Unlent',
-          })
-        }
-        if (changes.swap) {
-          toast.content.push({
-            coins: [changes.swap.from, changes.swap.to],
-            text: 'Swapped',
-          })
-        }
-        if (changes.repays) {
-          toast.content.push({
-            coins: [changes.repays[0].toCoin()],
-            text: 'Repaid',
-          })
-        }
-        break
-
-      case 'vault':
-      case 'vaultCreate':
-        toast.content.push({
-          coins: changes.deposits?.map((debt) => debt.toCoin()) ?? [],
-          text: action === 'vaultCreate' ? 'Created a Vault Position' : 'Added to Vault Position',
-        })
-        break
-    }
-
-    set({ toast })
-    return
-  }
-
   const getEstimatedFee = async (messages: MsgExecuteContract[]) => {
     if (!get().client) {
       return defaultFee
@@ -258,30 +103,15 @@ export default function createBroadcastSlice(
         ],
       })
 
-      const swapOptions = { denomOut: options.depositCoin.denom, coinIn: options.borrowCoin }
-
-      get().setToast({
-        response,
-
-        options: {
-          action: 'hls-staking',
-          accountId: options.accountId,
-          changes: { deposits: [options.depositCoin], debts: [options.borrowCoin] },
-        },
-        swapOptions,
-      })
+      get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
     },
     execute: async (contract: string, msg: ExecuteMsg, funds: Coin[]) => {
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, contract, msg, funds)],
+        messages: [generateExecutionMessage(get().address, contract, msg, sortFunds(funds))],
       })
-
-      get().setToast({
-        response,
-        options: { action: 'deposit', message: `Executed message` },
-      })
+      get().handleTransaction({ response })
 
       return response
     },
@@ -312,16 +142,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().setToast({
-        response,
-        options: {
-          action: 'borrow',
-          lend: checkAutoLendEnabled(options.accountId, get().chainConfig.id),
-          target: options.borrowToWallet ? 'wallet' : 'account',
-          accountId: options.accountId,
-          changes: { debts: [options.coin] },
-        },
-      })
+      get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
     },
@@ -338,14 +159,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().setToast({
-        response,
-        options: {
-          action: 'deposit',
-          message: `Changed Leverage`,
-        },
-      })
-
+      get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
     closeHlsStakingPosition: async (options: { accountId: string; actions: Action[] }) => {
@@ -361,13 +175,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().setToast({
-        response,
-        options: {
-          action: 'deposit',
-          message: `Exited HLS strategy`,
-        },
-      })
+      get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
     },
@@ -382,13 +190,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().setToast({
-        response,
-        options: {
-          action: 'create',
-          message: `Created the Credit Account`,
-        },
-      })
+      get().handleTransaction({ response })
 
       return response.then((response) =>
         response.result
@@ -425,14 +227,7 @@ export default function createBroadcastSlice(
         ],
       })
 
-      get().setToast({
-        response,
-        options: {
-          action: 'delete',
-          accountId: options.accountId,
-          message: `Deleted the Credit Account`,
-        },
-      })
+      get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
     },
@@ -471,14 +266,7 @@ export default function createBroadcastSlice(
           messages,
         })
 
-        get().setToast({
-          response,
-          options: {
-            action: 'claim',
-            accountId: isV1 ? get().address : options.accountId,
-            message: `Claimed rewards`,
-          },
-        })
+        get().handleTransaction({ response })
 
         return response.then((response) => !!response.result)
       }
@@ -494,31 +282,22 @@ export default function createBroadcastSlice(
           })),
         },
       }
-
       if (options.lend) {
         msg.update_credit_account.actions.push(
           ...options.coins
             .filter((coin) => get().chainConfig.assets.find(byDenom(coin.denom))?.isAutoLendEnabled)
-            .map((coin) => ({ lend: coin.toActionCoin(options.lend) })),
+            .map((coin) => ({ lend: coin.toActionCoin() })),
         )
       }
 
       const funds = options.coins.map((coin) => coin.toCoin())
       const cmContract = get().chainConfig.contracts.creditManager
 
+      console.log(sortFunds(funds))
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, cmContract, msg, funds)],
+        messages: [generateExecutionMessage(get().address, cmContract, msg, sortFunds(funds))],
       })
-
-      get().setToast({
-        response,
-        options: {
-          action: 'deposit',
-          lend: options.lend,
-          accountId: options.accountId,
-          changes: { deposits: options.coins },
-        },
-      })
+      get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
     },
@@ -542,15 +321,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().setToast({
-        response,
-        options: {
-          action: 'unlock',
-          accountId: options.accountId,
-          message: `Requested unlock for ${options.vault.name}`,
-        },
-      })
-
+      get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
 
@@ -606,17 +377,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      const vaultsString = options.vaults.length === 1 ? 'vault' : 'vaults'
-
-      get().setToast({
-        response,
-        options: {
-          action: 'withdraw',
-          accountId: options.accountId,
-          message: `Withdrew ${options.vaults.length} unlocked ${vaultsString} to the account`,
-        },
-      })
-
+      get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
     depositIntoVault: async (options: {
@@ -645,18 +406,7 @@ export default function createBroadcastSlice(
           ),
         ],
       })
-
-      const depositedCoins = getVaultDepositCoinsFromActions(options.actions)
-
-      get().setToast({
-        response,
-        options: {
-          action: options.isCreate ? 'vaultCreate' : 'vault',
-          accountId: options.accountId,
-          changes: { deposits: depositedCoins },
-        },
-      })
-
+      get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
     withdraw: async (options: {
@@ -687,16 +437,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().setToast({
-        response,
-        options: {
-          action: 'withdraw',
-          target: 'wallet',
-          accountId: options.accountId,
-          changes: { deposits: options.coins.map((coin) => coin.coin) },
-        },
-      })
-
+      get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
     repay: async (options: {
@@ -742,14 +483,7 @@ export default function createBroadcastSlice(
         ],
       })
 
-      get().setToast({
-        response,
-        options: {
-          action: 'repay',
-          accountId: options.accountId,
-          changes: { deposits: [options.coin] },
-        },
-      })
+      get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
     },
@@ -769,16 +503,7 @@ export default function createBroadcastSlice(
       const response = get().executeMsg({
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
-
-      get().setToast({
-        response,
-        options: {
-          action: 'lend',
-          accountId: options.accountId,
-          changes: { lends: [options.coin] },
-        },
-      })
-
+      get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
     reclaim: async (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => {
@@ -798,16 +523,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().setToast({
-        response,
-        options: {
-          action: 'withdraw',
-          target: 'account',
-          accountId: options.accountId,
-          changes: { deposits: [options.coin] },
-        },
-      })
-
+      get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
     swap: (options: {
@@ -870,22 +586,7 @@ export default function createBroadcastSlice(
           messages,
         })
 
-        const swapOptions = { denomOut: options.denomOut, coinIn: options.coinIn }
-
-        get().setToast({
-          response,
-          options: {
-            action: 'swap',
-            accountId: options.accountId,
-            changes: {
-              reclaims: options.reclaim ? [options.reclaim] : undefined,
-              debts: options.borrow ? [options.borrow] : undefined,
-            },
-            repay: options.repay,
-          },
-          swapOptions,
-        })
-
+        get().handleTransaction({ response })
         return response.then((response) => !!response.result)
       }
 
@@ -897,62 +598,41 @@ export default function createBroadcastSlice(
         isPythUpdate: true,
       })
 
-      get().setToast({
-        response,
-        options: {
-          action: 'oracle',
-          message: 'Oracle updated successfully!',
-        },
-      })
-
+      get().handleTransaction({ response, message: 'Oracle updated successfully!' })
       return response.then((response) => !!response.result)
     },
-    setToast: (toast: ToastObject) => {
+    handleTransaction: (options: { response: Promise<BroadcastResult>; message?: string }) => {
+      const { response, message } = options
       const id = moment().unix()
+      const toastOptions: Partial<ToastObjectOptions> = {
+        id,
+        message,
+      }
+
       set({
         mobileNavExpanded: false,
         toast: {
           id,
-          promise: toast.response,
+          promise: response,
         },
       })
 
-      toast.response.then((response) => {
-        if (toast.options.action === 'create') {
-          toast.options.accountId =
-            getSingleValueFromBroadcastResult(response.result, 'wasm', 'token_id') ?? undefined
+      response.then((r): void => {
+        if (r.error || r.result?.response.code !== 0) {
+          set({
+            toast: {
+              id,
+              message: generateErrorMessage(r),
+              isError: true,
+              hash: r.result?.hash,
+            },
+          })
+          return
         }
 
-        if (toast.swapOptions) {
-          const coinOut = getTokenOutFromSwapResponse(response, toast.swapOptions.denomOut)
-
-          if (toast.options.action === 'swap') {
-            if (!toast.options.changes) toast.options.changes = {}
-            toast.options.changes.swap = {
-              from: toast.swapOptions.coinIn.toCoin(),
-              to: getTokenOutFromSwapResponse(response, toast.swapOptions.denomOut),
-            }
-            if (toast.options.repay) toast.options.changes.repays = [BNCoin.fromCoin(coinOut)]
-          }
-
-          if (toast.options.action === 'hls-staking') {
-            const depositAmount: BigNumber = toast.options.changes?.deposits?.length
-              ? toast.options.changes.deposits[0].amount
-              : BN_ZERO
-
-            coinOut.amount = depositAmount.plus(coinOut.amount).toFixed(0)
-            toast.options.message = `Added ${formatAmountWithSymbol(
-              coinOut,
-              get().chainConfig.assets,
-            )}`
-          }
-        }
-
-        handleResponseMessages({
-          id,
-          response,
-          ...toast.options,
-        })
+        const toast = generateToast(get().chainConfig, r, toastOptions, get().address ?? '')
+        toast.then((t) => set({ toast: t }))
+        return
       })
     },
     executeMsg: async (options: {
@@ -1010,16 +690,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().setToast({
-        response,
-        options: {
-          action: 'open-perp',
-          target: 'account',
-          accountId: options.accountId,
-          changes: { deposits: [options.coin] },
-        },
-      })
-
+      get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
     closePerpPosition: async (options: { accountId: string; denom: string }) => {
@@ -1040,15 +711,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().setToast({
-        response,
-        options: {
-          action: 'close-perp',
-          target: 'account',
-          accountId: options.accountId,
-          changes: { deposits: [] },
-        },
-      })
+      get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
     },
@@ -1090,16 +753,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().setToast({
-        response,
-        options: {
-          action: 'modify-perp',
-          target: 'account',
-          message: `Modified position to a ${formatAmountWithSymbol(options.coin.abs().toCoin(), get().chainConfig.assets)} ${options.coin.amount.isNegative() ? 'short' : 'long'}`,
-          accountId: options.accountId,
-          changes: { deposits: [options.coin] },
-        },
-      })
+      get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
     },
@@ -1119,9 +773,7 @@ export default function createBroadcastSlice(
     v1Action: async (type: V1ActionType, coin: BNCoin) => {
       let msg: RedBankExecuteMsg
       let toastOptions: ToastObjectOptions = {
-        action: type,
         accountId: get().address,
-        changes: {},
       }
       let funds: Coin[] = []
 
@@ -1135,15 +787,12 @@ export default function createBroadcastSlice(
           }
           toastOptions = {
             ...toastOptions,
-            changes: { deposits: [coin] },
-            target: 'wallet',
           }
           break
         case 'repay':
           msg = {
             repay: {},
           }
-          toastOptions.changes = { deposits: [coin] }
           funds = [coin.toCoin()]
           break
         case 'borrow':
@@ -1155,28 +804,22 @@ export default function createBroadcastSlice(
           }
           toastOptions = {
             ...toastOptions,
-            changes: { debts: [coin] },
-            target: 'wallet',
           }
           break
         default:
           msg = {
             deposit: {},
           }
-          toastOptions.changes = { deposits: [coin] }
           funds = [coin.toCoin()]
       }
 
       const redBankContract = get().chainConfig.contracts.redBank
 
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, redBankContract, msg, funds)],
+        messages: [generateExecutionMessage(get().address, redBankContract, msg, sortFunds(funds))],
       })
 
-      get().setToast({
-        response,
-        options: toastOptions,
-      })
+      get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
     },
@@ -1217,22 +860,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().setToast({
-        response,
-        options: {
-          action: 'perp-vault-deposit',
-          target: 'account',
-          message: `Deposited into perps Vault`,
-          accountId: options.accountId,
-          changes: {
-            deposits: [depositCoin],
-            reclaims: options.fromLends
-              ? [BNCoin.fromDenomAndBigNumber(options.denom, options.fromLends)]
-              : [],
-          },
-        },
-      })
-
+      get().handleTransaction({ response })
       const response_1 = await response
       return !!response_1.result
     },
@@ -1255,16 +883,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().setToast({
-        response,
-        options: {
-          action: 'perp-vault-unlock',
-          target: 'account',
-          message: `Requested unlock from perps Vault`,
-          accountId: options.accountId,
-          changes: { deposits: [] },
-        },
-      })
+      get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
     },
@@ -1284,16 +903,7 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
       })
 
-      get().setToast({
-        response,
-        options: {
-          action: 'perp-vault-withdraw',
-          target: 'account',
-          message: `Withdrew funds from perps Vault`,
-          accountId: options.accountId,
-          changes: { deposits: [] },
-        },
-      })
+      get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
     },

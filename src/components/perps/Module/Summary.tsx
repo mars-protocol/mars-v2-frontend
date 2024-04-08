@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react'
 
 import AssetAmount from 'components/common/assets/AssetAmount'
 import ActionButton from 'components/common/Button/ActionButton'
-import { Callout } from 'components/common/Callout'
+import { Callout, CalloutType } from 'components/common/Callout'
 import { ArrowRight } from 'components/common/Icons'
 import SummaryLine from 'components/common/SummaryLine'
 import Text from 'components/common/Text'
@@ -94,7 +94,7 @@ export default function PerpsSummary(props: Props) {
   }, [perpsParams, props.amount, props.previousAmount])
 
   return (
-    <div className='border rounded-sm border-white/10 bg-white/5'>
+    <div className='flex flex-col bg-white bg-opacity-5 rounded border-[1px] border-white/20'>
       <ManageSummary {...props} newAmount={newAmount} />
       <div className='flex flex-col gap-1 px-3 py-4'>
         <Text size='xs' className='mb-2 font-bold'>
@@ -118,7 +118,7 @@ export default function PerpsSummary(props: Props) {
       <ActionButton
         onClick={onConfirm}
         disabled={disabled || props.disabled}
-        className='w-full py-2.5'
+        className='w-full py-2.5 !text-base'
       >
         <span className='mr-1 capitalize'>{props.tradeDirection}</span>
         {props.asset.symbol}
@@ -144,7 +144,11 @@ function ManageSummary(props: Props & { newAmount: BigNumber }) {
         Your new position
       </Text>
 
-      {props.newAmount.isZero() && <Callout>Your position will be closed</Callout>}
+      {props.newAmount.isZero() && (
+        <Callout type={CalloutType.INFO} className='mb-2'>
+          Your position will be closed
+        </Callout>
+      )}
 
       {showTradeDirection && props.previousTradeDirection && !props.newAmount.isZero() && (
         <SummaryLine label='Side' contentClassName='flex gap-1'>

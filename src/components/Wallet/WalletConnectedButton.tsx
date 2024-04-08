@@ -3,9 +3,9 @@ import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import { resolvePrimaryDomainByAddress } from 'ibc-domains-sdk'
 import { useCallback, useEffect, useState } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import useClipboard from 'react-use-clipboard'
-import { isMobile } from 'react-device-detect'
 
 import RecentTransactions from 'components/Wallet/RecentTransactions'
 import WalletSelect from 'components/Wallet/WalletSelect'
@@ -173,7 +173,7 @@ export default function WalletConnectedButton() {
       </Button>
       <Overlay
         className={classNames(
-          isMobile ? 'top-18 h-[calc(100dvh-72px)]' : 'top-8',
+          isMobile ? 'top-18 h-[calc(100dvh-72px)]' : 'top-10',
           focusComponent ? '-left-[110px]' : 'right-0',
         )}
         show={showDetails}

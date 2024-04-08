@@ -28,7 +28,7 @@ export default function useRouteInfo(denomIn: string, denomOut: string, amount: 
           description: [
             assets.find(byDenom(denomIn))?.symbol,
             ...route.route[0].pools.map(
-              (pool) => assets.find(byDenom(pool.token_out_denom))?.symbol,
+              (pool) => assets.find(byDenom(pool.token_out_denom))?.symbol ?? '...',
             ),
           ].join(' -> '),
           route: {

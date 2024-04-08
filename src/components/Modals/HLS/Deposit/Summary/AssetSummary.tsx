@@ -3,6 +3,7 @@ import AmountAndValue from 'components/common/AmountAndValue'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import AssetImage from 'components/common/assets/AssetImage'
+import useMarket from 'hooks/markets/useMarket'
 
 interface Props {
   amount: BigNumber
@@ -10,6 +11,7 @@ interface Props {
   isBorrow?: boolean
 }
 export default function AssetSummary(props: Props) {
+  const market = useMarket(props.asset.denom)
   return (
     <Container title={props.isBorrow ? 'Leverage' : 'Supplying'}>
       <div className='flex justify-between'>
@@ -24,7 +26,7 @@ export default function AssetSummary(props: Props) {
       {props.isBorrow && (
         <div className='grid py-2 mt-3 rounded-sm bg-white/5 place-items-center'>
           <FormattedNumber
-            amount={(props.asset as BorrowAsset).borrowRate ?? 0}
+            amount={market?.apy.borrow || 0}
             options={{ suffix: '% Borrow Rate', maxDecimals: 2, minDecimals: 0 }}
             className='text-xs text-white/70'
           />

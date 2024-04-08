@@ -46,7 +46,7 @@ export default function useHealthComputer(account?: Account) {
   const { data: vaultConfigs } = useVaultConfigs()
   const { data: perpsDenomStates } = useAllPerpsDenomStates()
   const { data: perpsParams } = useAllPerpsParamsSC()
-  const { data: perpVault } = usePerpsVault()
+  const { data: perpsVault } = usePerpsVault()
   const [slippage] = useSlippage()
 
   const [healthFactor, setHealthFactor] = useState(0)
@@ -269,13 +269,13 @@ export default function useHealthComputer(account?: Account) {
 
   const computeMaxPerpAmount = useCallback(
     (denom: string, tradeDirection: TradeDirection) => {
-      if (!healthComputer || !perpVault || !denomStates) return BN_ZERO
+      if (!healthComputer || !perpsVault || !denomStates) return BN_ZERO
       try {
         return BN(
           max_perp_size_estimate_js(
             healthComputer,
             denom,
-            perpVault.denom,
+            perpsVault.denom,
             denomStates[denom].long_oi.toString(),
             denomStates[denom].short_oi.toString(),
             tradeDirection,
@@ -286,7 +286,7 @@ export default function useHealthComputer(account?: Account) {
         return BN_ZERO
       }
     },
-    [healthComputer, perpVault, denomStates],
+    [healthComputer, perpsVault, denomStates],
   )
 
   const health = useMemo(() => {

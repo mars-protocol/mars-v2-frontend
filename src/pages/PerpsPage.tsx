@@ -8,7 +8,7 @@ export default function PerpsPage() {
       <div>
         <PerpsChart />
       </div>
-      <div className='row-span-3'>
+      <div className='row-span-2'>
         <PerpsModule />
       </div>
       <PerpsPositions />

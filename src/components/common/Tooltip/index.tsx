@@ -48,7 +48,7 @@ export const Tooltip = (props: Props) => {
       visible={props.visible}
     >
       {props.children ? (
-        <span
+        <div
           className={classNames(
             props.underline &&
               'border-b hover:cursor-help  border-dashed border-white/20 pb-1 hover:border-transparent',
@@ -57,16 +57,16 @@ export const Tooltip = (props: Props) => {
           )}
         >
           {props.children}
-        </span>
+        </div>
       ) : (
-        <span
+        <div
           className={classNames(
             'inline-block w-[18px] hover:cursor-pointer opacity-40 hover:opacity-80',
             props.className,
           )}
         >
           <Questionmark />
-        </span>
+        </div>
       )}
     </Tippy>
   )

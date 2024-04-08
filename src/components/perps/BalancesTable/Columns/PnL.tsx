@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import React from 'react'
 
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
@@ -14,7 +15,7 @@ type Props = {
 
 export default function PnL(props: Props) {
   return (
-    <Tooltip content={<PnLTooltip {...props} />} type='info' underline className='w-min ml-auto'>
+    <Tooltip content={<PnLTooltip {...props} />} type='info' underline className='ml-auto w-min'>
       <DisplayCurrency
         className='inline text-xs'
         coin={props.pnl.net}
@@ -30,14 +31,14 @@ function PnLTooltip(props: Props) {
   return (
     <div className='flex flex-col w-full gap-2 min-w-[280px]'>
       {[props.pnl.realized, props.pnl.unrealized].map((coins, i) => (
-        <>
-          <div key={i} className='flex items-center w-full gap-8 space-between'>
-            <Text className='mr-auto text-white/60 font-bold' size='sm'>
+        <React.Fragment key={i}>
+          <div className='flex items-center w-full gap-8 space-between'>
+            <Text className='mr-auto font-bold text-white/60' size='sm'>
               {i === 0 ? 'Realized' : 'Unrealized'} PnL
             </Text>
             <DisplayCurrency
               coin={coins.net}
-              className='self-end text-sm text-end font-bold'
+              className='self-end text-sm font-bold text-end'
               isProfitOrLoss
               showSignPrefix
               showZero
@@ -52,7 +53,7 @@ function PnLTooltip(props: Props) {
             showSignPrefix
           />
           {i === 0 && <Divider className='my-2' />}
-        </>
+        </React.Fragment>
       ))}
     </div>
   )
@@ -67,7 +68,7 @@ type PnLRowProps = {
 
 function PnLRow(props: PnLRowProps) {
   return (
-    <div className='flex items-center w-full gap-8 space-between pl-4'>
+    <div className='flex items-center w-full gap-8 pl-4 space-between'>
       <Text className='mr-auto text-white/60' size='sm'>
         {props.text}
       </Text>

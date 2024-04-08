@@ -21,10 +21,22 @@ type Props = {
 }
 
 export default function EntryPrice(props: Props) {
+  const entryPrice = props.entryPrice.toNumber()
+  const currentPrice = props.currentPrice.toNumber()
   return (
     <TitleAndSubCell
-      title={<FormattedNumber amount={props.entryPrice.toNumber()} options={{ prefix: '$' }} />}
-      sub={<FormattedNumber amount={props.currentPrice.toNumber()} options={{ prefix: '$' }} />}
+      title={
+        <FormattedNumber
+          amount={entryPrice}
+          options={{ prefix: '$', maxDecimals: entryPrice >= 100 ? 2 : 6 }}
+        />
+      }
+      sub={
+        <FormattedNumber
+          amount={currentPrice}
+          options={{ prefix: '$', maxDecimals: currentPrice >= 100 ? 2 : 6 }}
+        />
+      }
     />
   )
 }

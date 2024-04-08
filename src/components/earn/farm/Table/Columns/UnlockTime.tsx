@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import React from 'react'
 
 import Text from 'components/common/Text'
@@ -10,12 +11,17 @@ interface Props {
 }
 
 export default function UnlockTime(props: Props) {
+  const timeLeft = props.unlocksAt ? props.unlocksAt - Date.now() : 0
+
   return (
     <Text
-      className='group/label relative h-5 w-[84px] rounded-sm bg-green text-center leading-5 text-white ml-auto'
+      className={classNames(
+        'group/label relative w-[84px] rounded-sm  text-center leading-5 ml-auto ',
+        timeLeft > 0 ? 'bg-purple/10 text-purple' : 'bg-green/10 text-green ',
+      )}
       size='xs'
     >
-      {props.unlocksAt ? produceCountdown(props.unlocksAt - Date.now()) : 'Unlocked'}
+      {timeLeft > 0 ? produceCountdown(timeLeft) : 'Unlocked'}
     </Text>
   )
 }

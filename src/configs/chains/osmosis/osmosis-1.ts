@@ -153,7 +153,7 @@ const Osmosis1: ChainConfig = {
     rpc: process.env.NEXT_PUBLIC_OSMOSIS_RPC ?? 'https://rpc-osmosis.blockapsis.com',
     rest: process.env.NEXT_PUBLIC_OSMOSIS_REST ?? 'https://lcd-osmosis.blockapsis.com',
     swap: 'https://app.osmosis.zone',
-    explorer: 'https://www.mintscan.io/osmosis/transactions/',
+    explorer: 'https://www.mintscan.io/osmosis',
     routes: 'https://sqs.osmosis.zone/router',
     pools: getUrl(
       process.env.NEXT_PUBLIC_OSMOSIS_REST ?? 'https://lcd-osmosis.blockapsis.com',

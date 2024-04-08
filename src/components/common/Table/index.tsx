@@ -102,7 +102,7 @@ export default function Table<T>(props: Props<T>) {
                             'w-5 h-5 my-auto text-white',
                             header.id !== 'symbol' &&
                               header.id !== 'name' &&
-                              'absolute -mr-5 -translate-y-1/2 top-1/2',
+                              'absolute -mr-4.5 -translate-y-1/2 top-1/2',
                           )}
                         >
                           {header.column.getCanSort()

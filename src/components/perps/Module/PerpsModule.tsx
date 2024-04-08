@@ -1,7 +1,9 @@
 import BigNumber from 'bignumber.js'
 import debounce from 'lodash.debounce'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import classNames from 'classnames'
 
+import { Callout, CalloutType } from 'components/common/Callout'
 import Card from 'components/common/Card'
 import LeverageSlider from 'components/common/LeverageSlider'
 import Text from 'components/common/Text'
@@ -12,8 +14,6 @@ import PerpsSummary from 'components/perps/Module/Summary'
 import usePerpsModule from 'components/perps/Module/usePerpsModule'
 import AssetSelectorPerps from 'components/trade/TradeModule/AssetSelector/AssetSelectorPerps'
 import AssetAmountInput from 'components/trade/TradeModule/SwapForm/AssetAmountInput'
-import OrderTypeSelector from 'components/trade/TradeModule/SwapForm/OrderTypeSelector'
-import { AvailableOrderType } from 'components/trade/TradeModule/SwapForm/OrderTypeSelector/types'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAllAssets from 'hooks/assets/useAllAssets'
@@ -31,7 +31,6 @@ import getPerpsPosition from 'utils/getPerpsPosition'
 import { BN } from 'utils/helpers'
 
 export function PerpsModule() {
-  const [selectedOrderType, setSelectedOrderType] = useState<AvailableOrderType>('Market')
   const [tradeDirection, setTradeDirection] = useState<TradeDirection>('long')
   const { data: perpsVault } = usePerpsVault()
   const { perpsAsset } = usePerpsAsset()
@@ -41,8 +40,14 @@ export function PerpsModule() {
   const { simulatePerps, updatedPerpPosition, updatedAccount, removedDeposits } =
     useUpdatedAccount(account)
   const [amount, setAmount] = useState<BigNumber>(BN_ZERO)
-  const { previousAmount, previousTradeDirection, previousLeverage, leverage, hasActivePosition } =
-    usePerpsModule(amount)
+  const {
+    warningMessages,
+    previousAmount,
+    previousTradeDirection,
+    previousLeverage,
+    leverage,
+    hasActivePosition,
+  } = usePerpsModule(amount)
 
   const [sliderLeverage, setSliderLeverage] = useState<number>(1)
 
@@ -167,51 +172,63 @@ export function PerpsModule() {
 
   return (
     <Card
-      contentClassName='px-4 gap-5 flex flex-col h-full pb-4'
+      contentClassName='p-4 px-3 h-auto flex flex-grow flex-col justify-between h-full'
       title={<AssetSelectorPerps asset={perpsAsset} hasActivePosition={hasActivePosition} />}
-      className='h-full mb-4'
-    >
-      <OrderTypeSelector selected={selectedOrderType} onChange={setSelectedOrderType} />
-      <TradeDirectionSelector
-        direction={tradeDirection}
-        onChangeDirection={onChangeTradeDirection}
-      />
-      <AssetAmountInput
-        label='Amount'
-        max={maxAmount}
-        amount={amount.abs()}
-        setAmount={onChangeAmount}
-        asset={perpsAsset}
-        maxButtonLabel='Max:'
-        disabled={false}
-      />
-      {!hasActivePosition && (
-        <>
-          <Or />
-          <Text size='sm'>Position Leverage</Text>
-          <LeverageSlider
-            min={1}
-            max={maxLeverage}
-            value={sliderLeverage}
-            onChange={setSliderLeverage}
-            onDebounce={onDebounce}
-            type={tradeDirection}
-          />
-          {maxLeverage > 5 && (
-            <LeverageButtons
-              maxLeverage={maxLeverage}
-              currentLeverage={leverage}
-              maxAmount={maxAmount}
-              onChange={(leverage) => {
-                const percentOfMax = BN(leverage - 1).div(maxLeverage - 1)
-                setAmount(maxAmount.times(percentOfMax).integerValue())
-                setSliderLeverage(leverage)
-              }}
-            />
-          )}
-        </>
+      className={classNames(
+        'mb-4 md:mb-0',
+        'md:min-h-[850px]',
+        'relative isolate overflow-hidden rounded-base z-30',
       )}
+    >
+      <div className='flex flex-col gap-5'>
+        <TradeDirectionSelector
+          direction={tradeDirection}
+          onChangeDirection={onChangeTradeDirection}
+        />
+        <AssetAmountInput
+          label='Amount'
+          max={maxAmount}
+          amount={amount.abs()}
+          setAmount={onChangeAmount}
+          asset={perpsAsset}
+          maxButtonLabel='Max:'
+          disabled={false}
+        />
+        {!hasActivePosition && (
+          <div className='w-full'>
+            <Or />
+            <Text size='sm' className='mt-5 mb-2'>
+              Position Leverage
+            </Text>
+            <LeverageSlider
+              min={1}
+              max={maxLeverage}
+              value={sliderLeverage}
+              onChange={setSliderLeverage}
+              onDebounce={onDebounce}
+              type={tradeDirection}
+            />
+            {maxLeverage > 5 && (
+              <LeverageButtons
+                maxLeverage={maxLeverage}
+                currentLeverage={leverage}
+                maxAmount={maxAmount}
+                onChange={(leverage) => {
+                  const percentOfMax = BN(leverage - 1).div(maxLeverage - 1)
+                  setAmount(maxAmount.times(percentOfMax).integerValue())
+                  setSliderLeverage(leverage)
+                }}
+              />
+            )}
+          </div>
+        )}
 
+        {warningMessages.value.map((message) => (
+          <Callout key={message} type={CalloutType.WARNING}>
+            {message}
+          </Callout>
+        ))}
+      </div>
       <PerpsSummary
         amount={amount ?? previousAmount}
         tradeDirection={tradeDirection ?? previousTradeDirection}
@@ -222,7 +239,7 @@ export function PerpsModule() {
         previousLeverage={previousLeverage}
         hasActivePosition={hasActivePosition}
         onTxExecuted={() => setAmount(BN_ZERO)}
-        disabled={amount.isGreaterThan(maxAmount)}
+        disabled={amount.isGreaterThan(maxAmount) || warningMessages.isNotEmpty()}
       />
     </Card>
   )

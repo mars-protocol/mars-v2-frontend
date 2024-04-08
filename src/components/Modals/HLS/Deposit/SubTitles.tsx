@@ -9,7 +9,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { formatAmountWithSymbol, formatLeverage } from 'utils/formatters'
 
 interface SubTitleProps {
-  text: string
+  text?: string
   color?: string
 }
 
@@ -48,7 +48,6 @@ export function CollateralSubTitle(props: CollateralSubTitleProps) {
       </div>
     )
   }
-
   return (
     <div className='flex items-center gap-1'>
       <WarningMessages messages={props.warningMessages} />
