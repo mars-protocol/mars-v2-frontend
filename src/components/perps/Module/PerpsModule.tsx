@@ -14,11 +14,7 @@ import { TradeDirectionSelector } from 'components/common/TradeDirectionSelector
 import { LeverageButtons } from 'components/perps/Module/LeverageButtons'
 import { Or } from 'components/perps/Module/Or'
 import PerpsSummary from 'components/perps/Module/Summary'
-import {
-  DEFAULT_LIMIT_PRICE_INFO,
-  PERPS_ORDER_TYPE_TABS,
-  PERPS_ORDER_TYPE_TABS_ACTIVE,
-} from 'components/perps/Module/constants'
+import { DEFAULT_LIMIT_PRICE_INFO, PERPS_ORDER_TYPE_TABS } from 'components/perps/Module/constants'
 import usePerpsModule from 'components/perps/Module/usePerpsModule'
 import AssetSelectorPerps from 'components/trade/TradeModule/AssetSelector/AssetSelectorPerps'
 import USD from 'configs/assets/USDollar'
@@ -37,7 +33,7 @@ import { CalloutType } from 'types/enums/callOut'
 import { getAccountNetValue } from 'utils/accounts'
 import { demagnify } from 'utils/formatters'
 import getPerpsPosition from 'utils/getPerpsPosition'
-import { BN } from 'utils/helpers'
+import { BN, capitalizeFirstLetter } from 'utils/helpers'
 
 export function PerpsModule() {
   const [tradeDirection, setTradeDirection] = useState<TradeDirection>('long')
@@ -147,9 +143,9 @@ export function PerpsModule() {
 
   const maxLeverage = useMemo(() => {
     let maxLeverage = 1
-
+    const priceToUse = isLimitOrder ? limitPrice : perpsOraclePrice
     if (!hasActivePosition) {
-      maxLeverage = perpsOraclePrice
+      maxLeverage = priceToUse
         .times(demagnify(currentMaxAmount, perpsAsset))
         .div(netValue)
         .plus(1)
@@ -157,11 +153,19 @@ export function PerpsModule() {
     }
 
     return maxLeverage
-  }, [hasActivePosition, perpsOraclePrice, currentMaxAmount, perpsAsset, netValue])
+  }, [
+    hasActivePosition,
+    perpsOraclePrice,
+    currentMaxAmount,
+    perpsAsset,
+    netValue,
+    isLimitOrder,
+    limitPrice,
+  ])
 
   const onDebounce = useCallback(() => {
     if (currentMaxAmount.isZero()) return
-    const percentOfMax = BN(sliderLeverage - 1).div(maxLeverage - 1)
+    const percentOfMax = BN(sliderLeverage).div(maxLeverage)
     setAmount(currentMaxAmount.times(percentOfMax).integerValue())
   }, [currentMaxAmount, maxLeverage, sliderLeverage])
 
@@ -208,10 +212,13 @@ export function PerpsModule() {
     }
     if (!perpsOraclePrice) return
 
-    if (limitPrice.isLessThanOrEqualTo(perpsOraclePrice)) {
+    if (
+      (limitPrice.isLessThanOrEqualTo(perpsOraclePrice) && tradeDirection === 'short') ||
+      (limitPrice.isGreaterThanOrEqualTo(perpsOraclePrice) && tradeDirection === 'long')
+    ) {
+      const belowOrAbove = tradeDirection === 'short' ? 'below' : 'above'
       setLimitPriceInfo({
-        message:
-          'You can not create a Limit order, below the current price. To create an immediate executed order use the "Market" order type.',
+        message: `You can not create a ${capitalizeFirstLetter(tradeDirection)} Limit order, ${belowOrAbove} the current ${perpsAsset.symbol} price.`,
         type: CalloutType.WARNING,
       })
       return
@@ -219,7 +226,15 @@ export function PerpsModule() {
     if (limitPriceInfo) setLimitPriceInfo(undefined)
 
     return
-  }, [limitPrice, prices, perpsAsset, limitPriceInfo, perpsOraclePrice])
+  }, [
+    limitPrice,
+    prices,
+    perpsAsset,
+    limitPriceInfo,
+    perpsOraclePrice,
+    tradeDirection,
+    perpsAsset.symbol,
+  ])
 
   const isDisabledExecution = useMemo(() => {
     if (selectedOrderType === 'Market')
@@ -252,7 +267,7 @@ export function PerpsModule() {
     >
       <div className='flex flex-col gap-5'>
         <OrderTypeSelector
-          orderTabs={hasActivePosition ? PERPS_ORDER_TYPE_TABS_ACTIVE : PERPS_ORDER_TYPE_TABS}
+          orderTabs={PERPS_ORDER_TYPE_TABS}
           selected={selectedOrderType}
           onChange={onChangeOrderType}
         />

@@ -73,3 +73,8 @@ export function getGovernanceUrl(walletId: WalletID) {
       return DocURL.COUNCIL_KEPLR
   }
 }
+
+export function capitalizeFirstLetter(string: string) {
+  const firstLetter = string.charAt(0).toUpperCase()
+  return `${firstLetter}${string.slice(1)}`
+}
