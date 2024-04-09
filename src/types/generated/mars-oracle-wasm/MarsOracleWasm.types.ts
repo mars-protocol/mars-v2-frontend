@@ -7,17 +7,17 @@
 
 export interface InstantiateMsg {
   base_denom: string
-  custom_init?: Empty | null
+  custom_init?: WasmOracleCustomInitParams | null
   owner: string
 }
-export interface Empty {
-  [k: string]: unknown
+export interface WasmOracleCustomInitParams {
+  astroport_factory: string
 }
 export type ExecuteMsg =
   | {
       set_price_source: {
         denom: string
-        price_source: OsmosisPriceSourceForString
+        price_source: WasmPriceSourceForString
       }
     }
   | {
@@ -34,43 +34,23 @@ export type ExecuteMsg =
       }
     }
   | {
-      custom: Empty
+      custom: WasmOracleCustomExecuteMsg
     }
-export type OsmosisPriceSourceForString =
+export type WasmPriceSourceForString =
   | {
       fixed: {
         price: Decimal
       }
     }
   | {
-      spot: {
-        pool_id: number
+      astroport_spot: {
+        pair_address: string
       }
     }
   | {
-      arithmetic_twap: {
-        downtime_detector?: DowntimeDetector | null
-        pool_id: number
-        window_size: number
-      }
-    }
-  | {
-      geometric_twap: {
-        downtime_detector?: DowntimeDetector | null
-        pool_id: number
-        window_size: number
-      }
-    }
-  | {
-      xyk_liquidity_token: {
-        pool_id: number
-      }
-    }
-  | {
-      staked_geometric_twap: {
-        downtime_detector?: DowntimeDetector | null
-        pool_id: number
-        transitive_denom: string
+      astroport_twap: {
+        pair_address: string
+        tolerance: number
         window_size: number
       }
     }
@@ -84,48 +64,8 @@ export type OsmosisPriceSourceForString =
         price_feed_id: Identifier
       }
     }
-  | {
-      lsd: {
-        redemption_rate: RedemptionRateForString
-        transitive_denom: string
-        twap: Twap
-      }
-    }
 export type Decimal = string
-export type Downtime =
-  | 'Duration30s'
-  | 'Duration1m'
-  | 'Duration2m'
-  | 'Duration3m'
-  | 'Duration4m'
-  | 'Duration5m'
-  | 'Duration10m'
-  | 'Duration20m'
-  | 'Duration30m'
-  | 'Duration40m'
-  | 'Duration50m'
-  | 'Duration1h'
-  | 'Duration15h'
-  | 'Duration2h'
-  | 'Duration25h'
-  | 'Duration3h'
-  | 'Duration4h'
-  | 'Duration5h'
-  | 'Duration6h'
-  | 'Duration9h'
-  | 'Duration12h'
-  | 'Duration18h'
-  | 'Duration24h'
-  | 'Duration36h'
-  | 'Duration48h'
 export type Identifier = string
-export type TwapKind =
-  | {
-      arithmetic_twap: {}
-    }
-  | {
-      geometric_twap: {}
-    }
 export type OwnerUpdate =
   | {
       propose_new_owner: {
@@ -141,19 +81,10 @@ export type OwnerUpdate =
       }
     }
   | 'clear_emergency_owner'
-export interface DowntimeDetector {
-  downtime: Downtime
-  recovery: number
-}
-export interface RedemptionRateForString {
-  contract_addr: string
-  max_staleness: number
-}
-export interface Twap {
-  downtime_detector?: DowntimeDetector | null
-  kind: TwapKind
-  pool_id: number
-  window_size: number
+export type WasmOracleCustomExecuteMsg = {
+  record_twap_snapshots: {
+    denoms: string[]
+  }
 }
 export type QueryMsg =
   | {

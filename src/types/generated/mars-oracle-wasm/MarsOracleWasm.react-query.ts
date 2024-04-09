@@ -10,17 +10,13 @@ import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee, Coin } from '@cosmjs/amino'
 import {
   InstantiateMsg,
-  Empty,
+  WasmOracleCustomInitParams,
   ExecuteMsg,
-  OsmosisPriceSourceForString,
+  WasmPriceSourceForString,
   Decimal,
-  Downtime,
   Identifier,
-  TwapKind,
   OwnerUpdate,
-  DowntimeDetector,
-  RedemptionRateForString,
-  Twap,
+  WasmOracleCustomExecuteMsg,
   QueryMsg,
   ActionKind,
   ConfigResponse,
@@ -28,37 +24,33 @@ import {
   PriceSourceResponseForString,
   ArrayOfPriceSourceResponseForString,
   ArrayOfPriceResponse,
-} from './MarsOracleOsmosis.types'
-import { MarsOracleOsmosisQueryClient, MarsOracleOsmosisClient } from './MarsOracleOsmosis.client'
-export const marsOracleOsmosisQueryKeys = {
+} from './MarsOracleWasm.types'
+import { MarsOracleWasmQueryClient, MarsOracleWasmClient } from './MarsOracleWasm.client'
+export const marsOracleWasmQueryKeys = {
   contract: [
     {
-      contract: 'marsOracleOsmosis',
+      contract: 'marsOracleWasm',
     },
   ] as const,
   address: (contractAddress: string | undefined) =>
-    [{ ...marsOracleOsmosisQueryKeys.contract[0], address: contractAddress }] as const,
+    [{ ...marsOracleWasmQueryKeys.contract[0], address: contractAddress }] as const,
   config: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
-    [
-      { ...marsOracleOsmosisQueryKeys.address(contractAddress)[0], method: 'config', args },
-    ] as const,
+    [{ ...marsOracleWasmQueryKeys.address(contractAddress)[0], method: 'config', args }] as const,
   priceSource: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
     [
-      { ...marsOracleOsmosisQueryKeys.address(contractAddress)[0], method: 'price_source', args },
+      { ...marsOracleWasmQueryKeys.address(contractAddress)[0], method: 'price_source', args },
     ] as const,
   priceSources: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
     [
-      { ...marsOracleOsmosisQueryKeys.address(contractAddress)[0], method: 'price_sources', args },
+      { ...marsOracleWasmQueryKeys.address(contractAddress)[0], method: 'price_sources', args },
     ] as const,
   price: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
-    [{ ...marsOracleOsmosisQueryKeys.address(contractAddress)[0], method: 'price', args }] as const,
+    [{ ...marsOracleWasmQueryKeys.address(contractAddress)[0], method: 'price', args }] as const,
   prices: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
-    [
-      { ...marsOracleOsmosisQueryKeys.address(contractAddress)[0], method: 'prices', args },
-    ] as const,
+    [{ ...marsOracleWasmQueryKeys.address(contractAddress)[0], method: 'prices', args }] as const,
 }
-export interface MarsOracleOsmosisReactQuery<TResponse, TData = TResponse> {
-  client: MarsOracleOsmosisQueryClient | undefined
+export interface MarsOracleWasmReactQuery<TResponse, TData = TResponse> {
+  client: MarsOracleWasmQueryClient | undefined
   options?: Omit<
     UseQueryOptions<TResponse, Error, TData>,
     "'queryKey' | 'queryFn' | 'initialData'"
@@ -66,21 +58,21 @@ export interface MarsOracleOsmosisReactQuery<TResponse, TData = TResponse> {
     initialData?: undefined
   }
 }
-export interface MarsOracleOsmosisPricesQuery<TData>
-  extends MarsOracleOsmosisReactQuery<ArrayOfPriceResponse, TData> {
+export interface MarsOracleWasmPricesQuery<TData>
+  extends MarsOracleWasmReactQuery<ArrayOfPriceResponse, TData> {
   args: {
     kind?: ActionKind
     limit?: number
     startAfter?: string
   }
 }
-export function useMarsOracleOsmosisPricesQuery<TData = ArrayOfPriceResponse>({
+export function useMarsOracleWasmPricesQuery<TData = ArrayOfPriceResponse>({
   client,
   args,
   options,
-}: MarsOracleOsmosisPricesQuery<TData>) {
+}: MarsOracleWasmPricesQuery<TData>) {
   return useQuery<ArrayOfPriceResponse, Error, TData>(
-    marsOracleOsmosisQueryKeys.prices(client?.contractAddress, args),
+    marsOracleWasmQueryKeys.prices(client?.contractAddress, args),
     () =>
       client
         ? client.prices({
@@ -92,20 +84,20 @@ export function useMarsOracleOsmosisPricesQuery<TData = ArrayOfPriceResponse>({
     { ...options, enabled: !!client && (options?.enabled != undefined ? options.enabled : true) },
   )
 }
-export interface MarsOracleOsmosisPriceQuery<TData>
-  extends MarsOracleOsmosisReactQuery<PriceResponse, TData> {
+export interface MarsOracleWasmPriceQuery<TData>
+  extends MarsOracleWasmReactQuery<PriceResponse, TData> {
   args: {
     denom: string
     kind?: ActionKind
   }
 }
-export function useMarsOracleOsmosisPriceQuery<TData = PriceResponse>({
+export function useMarsOracleWasmPriceQuery<TData = PriceResponse>({
   client,
   args,
   options,
-}: MarsOracleOsmosisPriceQuery<TData>) {
+}: MarsOracleWasmPriceQuery<TData>) {
   return useQuery<PriceResponse, Error, TData>(
-    marsOracleOsmosisQueryKeys.price(client?.contractAddress, args),
+    marsOracleWasmQueryKeys.price(client?.contractAddress, args),
     () =>
       client
         ? client.price({
@@ -116,20 +108,20 @@ export function useMarsOracleOsmosisPriceQuery<TData = PriceResponse>({
     { ...options, enabled: !!client && (options?.enabled != undefined ? options.enabled : true) },
   )
 }
-export interface MarsOracleOsmosisPriceSourcesQuery<TData>
-  extends MarsOracleOsmosisReactQuery<ArrayOfPriceSourceResponseForString, TData> {
+export interface MarsOracleWasmPriceSourcesQuery<TData>
+  extends MarsOracleWasmReactQuery<ArrayOfPriceSourceResponseForString, TData> {
   args: {
     limit?: number
     startAfter?: string
   }
 }
-export function useMarsOracleOsmosisPriceSourcesQuery<TData = ArrayOfPriceSourceResponseForString>({
+export function useMarsOracleWasmPriceSourcesQuery<TData = ArrayOfPriceSourceResponseForString>({
   client,
   args,
   options,
-}: MarsOracleOsmosisPriceSourcesQuery<TData>) {
+}: MarsOracleWasmPriceSourcesQuery<TData>) {
   return useQuery<ArrayOfPriceSourceResponseForString, Error, TData>(
-    marsOracleOsmosisQueryKeys.priceSources(client?.contractAddress, args),
+    marsOracleWasmQueryKeys.priceSources(client?.contractAddress, args),
     () =>
       client
         ? client.priceSources({
@@ -140,19 +132,19 @@ export function useMarsOracleOsmosisPriceSourcesQuery<TData = ArrayOfPriceSource
     { ...options, enabled: !!client && (options?.enabled != undefined ? options.enabled : true) },
   )
 }
-export interface MarsOracleOsmosisPriceSourceQuery<TData>
-  extends MarsOracleOsmosisReactQuery<PriceSourceResponseForString, TData> {
+export interface MarsOracleWasmPriceSourceQuery<TData>
+  extends MarsOracleWasmReactQuery<PriceSourceResponseForString, TData> {
   args: {
     denom: string
   }
 }
-export function useMarsOracleOsmosisPriceSourceQuery<TData = PriceSourceResponseForString>({
+export function useMarsOracleWasmPriceSourceQuery<TData = PriceSourceResponseForString>({
   client,
   args,
   options,
-}: MarsOracleOsmosisPriceSourceQuery<TData>) {
+}: MarsOracleWasmPriceSourceQuery<TData>) {
   return useQuery<PriceSourceResponseForString, Error, TData>(
-    marsOracleOsmosisQueryKeys.priceSource(client?.contractAddress, args),
+    marsOracleWasmQueryKeys.priceSource(client?.contractAddress, args),
     () =>
       client
         ? client.priceSource({
@@ -162,39 +154,40 @@ export function useMarsOracleOsmosisPriceSourceQuery<TData = PriceSourceResponse
     { ...options, enabled: !!client && (options?.enabled != undefined ? options.enabled : true) },
   )
 }
-export interface MarsOracleOsmosisConfigQuery<TData>
-  extends MarsOracleOsmosisReactQuery<ConfigResponse, TData> {}
-export function useMarsOracleOsmosisConfigQuery<TData = ConfigResponse>({
+export interface MarsOracleWasmConfigQuery<TData>
+  extends MarsOracleWasmReactQuery<ConfigResponse, TData> {}
+export function useMarsOracleWasmConfigQuery<TData = ConfigResponse>({
   client,
   options,
-}: MarsOracleOsmosisConfigQuery<TData>) {
+}: MarsOracleWasmConfigQuery<TData>) {
   return useQuery<ConfigResponse, Error, TData>(
-    marsOracleOsmosisQueryKeys.config(client?.contractAddress),
+    marsOracleWasmQueryKeys.config(client?.contractAddress),
     () => (client ? client.config() : Promise.reject(new Error('Invalid client'))),
     { ...options, enabled: !!client && (options?.enabled != undefined ? options.enabled : true) },
   )
 }
-export interface MarsOracleOsmosisCustomMutation {
-  client: MarsOracleOsmosisClient
+export interface MarsOracleWasmCustomMutation {
+  client: MarsOracleWasmClient
+  msg: WasmOracleCustomExecuteMsg
   args?: {
     fee?: number | StdFee | 'auto'
     memo?: string
     funds?: Coin[]
   }
 }
-export function useMarsOracleOsmosisCustomMutation(
+export function useMarsOracleWasmCustomMutation(
   options?: Omit<
-    UseMutationOptions<ExecuteResult, Error, MarsOracleOsmosisCustomMutation>,
+    UseMutationOptions<ExecuteResult, Error, MarsOracleWasmCustomMutation>,
     'mutationFn'
   >,
 ) {
-  return useMutation<ExecuteResult, Error, MarsOracleOsmosisCustomMutation>(
+  return useMutation<ExecuteResult, Error, MarsOracleWasmCustomMutation>(
     ({ client, msg, args: { fee, memo, funds } = {} }) => client.custom(msg, fee, memo, funds),
     options,
   )
 }
-export interface MarsOracleOsmosisUpdateConfigMutation {
-  client: MarsOracleOsmosisClient
+export interface MarsOracleWasmUpdateConfigMutation {
+  client: MarsOracleWasmClient
   msg: {
     baseDenom?: string
   }
@@ -204,20 +197,20 @@ export interface MarsOracleOsmosisUpdateConfigMutation {
     funds?: Coin[]
   }
 }
-export function useMarsOracleOsmosisUpdateConfigMutation(
+export function useMarsOracleWasmUpdateConfigMutation(
   options?: Omit<
-    UseMutationOptions<ExecuteResult, Error, MarsOracleOsmosisUpdateConfigMutation>,
+    UseMutationOptions<ExecuteResult, Error, MarsOracleWasmUpdateConfigMutation>,
     'mutationFn'
   >,
 ) {
-  return useMutation<ExecuteResult, Error, MarsOracleOsmosisUpdateConfigMutation>(
+  return useMutation<ExecuteResult, Error, MarsOracleWasmUpdateConfigMutation>(
     ({ client, msg, args: { fee, memo, funds } = {} }) =>
       client.updateConfig(msg, fee, memo, funds),
     options,
   )
 }
-export interface MarsOracleOsmosisUpdateOwnerMutation {
-  client: MarsOracleOsmosisClient
+export interface MarsOracleWasmUpdateOwnerMutation {
+  client: MarsOracleWasmClient
   msg: OwnerUpdate
   args?: {
     fee?: number | StdFee | 'auto'
@@ -225,19 +218,19 @@ export interface MarsOracleOsmosisUpdateOwnerMutation {
     funds?: Coin[]
   }
 }
-export function useMarsOracleOsmosisUpdateOwnerMutation(
+export function useMarsOracleWasmUpdateOwnerMutation(
   options?: Omit<
-    UseMutationOptions<ExecuteResult, Error, MarsOracleOsmosisUpdateOwnerMutation>,
+    UseMutationOptions<ExecuteResult, Error, MarsOracleWasmUpdateOwnerMutation>,
     'mutationFn'
   >,
 ) {
-  return useMutation<ExecuteResult, Error, MarsOracleOsmosisUpdateOwnerMutation>(
+  return useMutation<ExecuteResult, Error, MarsOracleWasmUpdateOwnerMutation>(
     ({ client, msg, args: { fee, memo, funds } = {} }) => client.updateOwner(msg, fee, memo, funds),
     options,
   )
 }
-export interface MarsOracleOsmosisRemovePriceSourceMutation {
-  client: MarsOracleOsmosisClient
+export interface MarsOracleWasmRemovePriceSourceMutation {
+  client: MarsOracleWasmClient
   msg: {
     denom: string
   }
@@ -247,23 +240,23 @@ export interface MarsOracleOsmosisRemovePriceSourceMutation {
     funds?: Coin[]
   }
 }
-export function useMarsOracleOsmosisRemovePriceSourceMutation(
+export function useMarsOracleWasmRemovePriceSourceMutation(
   options?: Omit<
-    UseMutationOptions<ExecuteResult, Error, MarsOracleOsmosisRemovePriceSourceMutation>,
+    UseMutationOptions<ExecuteResult, Error, MarsOracleWasmRemovePriceSourceMutation>,
     'mutationFn'
   >,
 ) {
-  return useMutation<ExecuteResult, Error, MarsOracleOsmosisRemovePriceSourceMutation>(
+  return useMutation<ExecuteResult, Error, MarsOracleWasmRemovePriceSourceMutation>(
     ({ client, msg, args: { fee, memo, funds } = {} }) =>
       client.removePriceSource(msg, fee, memo, funds),
     options,
   )
 }
-export interface MarsOracleOsmosisSetPriceSourceMutation {
-  client: MarsOracleOsmosisClient
+export interface MarsOracleWasmSetPriceSourceMutation {
+  client: MarsOracleWasmClient
   msg: {
     denom: string
-    priceSource: OsmosisPriceSourceForString
+    priceSource: WasmPriceSourceForString
   }
   args?: {
     fee?: number | StdFee | 'auto'
@@ -271,13 +264,13 @@ export interface MarsOracleOsmosisSetPriceSourceMutation {
     funds?: Coin[]
   }
 }
-export function useMarsOracleOsmosisSetPriceSourceMutation(
+export function useMarsOracleWasmSetPriceSourceMutation(
   options?: Omit<
-    UseMutationOptions<ExecuteResult, Error, MarsOracleOsmosisSetPriceSourceMutation>,
+    UseMutationOptions<ExecuteResult, Error, MarsOracleWasmSetPriceSourceMutation>,
     'mutationFn'
   >,
 ) {
-  return useMutation<ExecuteResult, Error, MarsOracleOsmosisSetPriceSourceMutation>(
+  return useMutation<ExecuteResult, Error, MarsOracleWasmSetPriceSourceMutation>(
     ({ client, msg, args: { fee, memo, funds } = {} }) =>
       client.setPriceSource(msg, fee, memo, funds),
     options,

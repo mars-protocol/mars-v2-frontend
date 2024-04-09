@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
+import classNames from 'classnames'
 import debounce from 'lodash.debounce'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import classNames from 'classnames'
 
 import { Callout, CalloutType } from 'components/common/Callout'
 import Card from 'components/common/Card'
@@ -127,8 +127,8 @@ export function PerpsModule() {
         .plus(1)
         .toNumber()
     }
-
-    return [maxAmount, maxLeverage]
+    // todo: revert this
+    return [BN(10000000000), maxLeverage]
   }, [
     computeMaxPerpAmount,
     hasActivePosition,

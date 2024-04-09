@@ -5,9 +5,9 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import * as _12 from './MarsMockVault.types'
-import * as _13 from './MarsMockVault.client'
-import * as _14 from './MarsMockVault.react-query'
+import * as _48 from './MarsZapperBase.types'
+import * as _49 from './MarsZapperBase.client'
+import * as _50 from './MarsZapperBase.react-query'
 export namespace contracts {
-  export const MarsMockVault = { ..._12, ..._13, ..._14 }
+  export const MarsZapperBase = { ..._48, ..._49, ..._50 }
 }

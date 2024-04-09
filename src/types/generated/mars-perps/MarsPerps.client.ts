@@ -16,7 +16,7 @@ import {
   Decimal,
   Uint128,
   ActionKind,
-  SignedDecimal,
+  SignedUint,
   QueryMsg,
   ConfigForString,
   Accounting,
@@ -25,9 +25,9 @@ import {
   PnlAmounts,
   DenomStateResponse,
   Funding,
+  SignedDecimal,
   ArrayOfDenomStateResponse,
-  DepositResponse,
-  ArrayOfDepositResponse,
+  PerpVaultDeposit,
   TradingFee,
   Coin,
   OwnerResponse,
@@ -35,17 +35,13 @@ import {
   PnlValues,
   NullablePerpVaultPosition,
   PerpVaultPosition,
-  PerpVaultDeposit,
-  UnlockState,
-  PnL,
+  PerpVaultUnlock,
   PositionResponse,
   PerpPosition,
-  PositionPnl,
-  PnlCoins,
   PositionFeesResponse,
   ArrayOfPositionResponse,
   PositionsByAccountResponse,
-  ArrayOfUnlockState,
+  ArrayOfPerpVaultUnlock,
   VaultState,
 } from './MarsPerps.types'
 export interface MarsPerpsReadOnlyInterface {
@@ -65,19 +61,26 @@ export interface MarsPerpsReadOnlyInterface {
   perpVaultPosition: ({
     accountId,
     action,
+    userAddress,
   }: {
-    accountId: string
+    accountId?: string
     action?: ActionKind
+    userAddress: string
   }) => Promise<NullablePerpVaultPosition>
-  deposit: ({ accountId }: { accountId: string }) => Promise<DepositResponse>
-  deposits: ({
-    limit,
-    startAfter,
+  deposit: ({
+    accountId,
+    userAddress,
   }: {
-    limit?: number
-    startAfter?: string
-  }) => Promise<ArrayOfDepositResponse>
-  unlocks: ({ accountId }: { accountId: string }) => Promise<ArrayOfUnlockState>
+    accountId?: string
+    userAddress: string
+  }) => Promise<PerpVaultDeposit>
+  unlocks: ({
+    accountId,
+    userAddress,
+  }: {
+    accountId?: string
+    userAddress: string
+  }) => Promise<ArrayOfPerpVaultUnlock>
   position: ({
     accountId,
     denom,
@@ -85,7 +88,7 @@ export interface MarsPerpsReadOnlyInterface {
   }: {
     accountId: string
     denom: string
-    newSize?: SignedDecimal
+    newSize?: SignedUint
   }) => Promise<PositionResponse>
   positions: ({
     limit,
@@ -102,7 +105,7 @@ export interface MarsPerpsReadOnlyInterface {
     action?: ActionKind
   }) => Promise<PositionsByAccountResponse>
   totalPnl: () => Promise<SignedDecimal>
-  openingFee: ({ denom, size }: { denom: string; size: SignedDecimal }) => Promise<TradingFee>
+  openingFee: ({ denom, size }: { denom: string; size: SignedUint }) => Promise<TradingFee>
   denomAccounting: ({ denom }: { denom: string }) => Promise<Accounting>
   totalAccounting: () => Promise<Accounting>
   denomRealizedPnlForAccount: ({
@@ -119,7 +122,7 @@ export interface MarsPerpsReadOnlyInterface {
   }: {
     accountId: string
     denom: string
-    newSize: SignedDecimal
+    newSize: SignedUint
   }) => Promise<PositionFeesResponse>
 }
 export class MarsPerpsQueryClient implements MarsPerpsReadOnlyInterface {
@@ -137,7 +140,6 @@ export class MarsPerpsQueryClient implements MarsPerpsReadOnlyInterface {
     this.denomStates = this.denomStates.bind(this)
     this.perpVaultPosition = this.perpVaultPosition.bind(this)
     this.deposit = this.deposit.bind(this)
-    this.deposits = this.deposits.bind(this)
     this.unlocks = this.unlocks.bind(this)
     this.position = this.position.bind(this)
     this.positions = this.positions.bind(this)
@@ -196,42 +198,45 @@ export class MarsPerpsQueryClient implements MarsPerpsReadOnlyInterface {
   perpVaultPosition = async ({
     accountId,
     action,
+    userAddress,
   }: {
-    accountId: string
+    accountId?: string
     action?: ActionKind
+    userAddress: string
   }): Promise<NullablePerpVaultPosition> => {
     return this.client.queryContractSmart(this.contractAddress, {
       perp_vault_position: {
         account_id: accountId,
         action,
+        user_address: userAddress,
       },
     })
   }
-  deposit = async ({ accountId }: { accountId: string }): Promise<DepositResponse> => {
+  deposit = async ({
+    accountId,
+    userAddress,
+  }: {
+    accountId?: string
+    userAddress: string
+  }): Promise<PerpVaultDeposit> => {
     return this.client.queryContractSmart(this.contractAddress, {
       deposit: {
         account_id: accountId,
+        user_address: userAddress,
       },
     })
   }
-  deposits = async ({
-    limit,
-    startAfter,
+  unlocks = async ({
+    accountId,
+    userAddress,
   }: {
-    limit?: number
-    startAfter?: string
-  }): Promise<ArrayOfDepositResponse> => {
-    return this.client.queryContractSmart(this.contractAddress, {
-      deposits: {
-        limit,
-        start_after: startAfter,
-      },
-    })
-  }
-  unlocks = async ({ accountId }: { accountId: string }): Promise<ArrayOfUnlockState> => {
+    accountId?: string
+    userAddress: string
+  }): Promise<ArrayOfPerpVaultUnlock> => {
     return this.client.queryContractSmart(this.contractAddress, {
       unlocks: {
         account_id: accountId,
+        user_address: userAddress,
       },
     })
   }
@@ -242,7 +247,7 @@ export class MarsPerpsQueryClient implements MarsPerpsReadOnlyInterface {
   }: {
     accountId: string
     denom: string
-    newSize?: SignedDecimal
+    newSize?: SignedUint
   }): Promise<PositionResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       position: {
@@ -290,7 +295,7 @@ export class MarsPerpsQueryClient implements MarsPerpsReadOnlyInterface {
     size,
   }: {
     denom: string
-    size: SignedDecimal
+    size: SignedUint
   }): Promise<TradingFee> => {
     return this.client.queryContractSmart(this.contractAddress, {
       opening_fee: {
@@ -332,7 +337,7 @@ export class MarsPerpsQueryClient implements MarsPerpsReadOnlyInterface {
   }: {
     accountId: string
     denom: string
-    newSize: SignedDecimal
+    newSize: SignedUint
   }): Promise<PositionFeesResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       position_fees: {
@@ -360,7 +365,7 @@ export interface MarsPerpsInterface extends MarsPerpsReadOnlyInterface {
     }: {
       denom: string
       maxFundingVelocity: Decimal
-      skewScale: Decimal
+      skewScale: Uint128
     },
     fee?: number | StdFee | 'auto',
     memo?: string,
@@ -390,7 +395,7 @@ export interface MarsPerpsInterface extends MarsPerpsReadOnlyInterface {
     {
       accountId,
     }: {
-      accountId: string
+      accountId?: string
     },
     fee?: number | StdFee | 'auto',
     memo?: string,
@@ -401,7 +406,7 @@ export interface MarsPerpsInterface extends MarsPerpsReadOnlyInterface {
       accountId,
       shares,
     }: {
-      accountId: string
+      accountId?: string
       shares: Uint128
     },
     fee?: number | StdFee | 'auto',
@@ -412,7 +417,7 @@ export interface MarsPerpsInterface extends MarsPerpsReadOnlyInterface {
     {
       accountId,
     }: {
-      accountId: string
+      accountId?: string
     },
     fee?: number | StdFee | 'auto',
     memo?: string,
@@ -426,7 +431,7 @@ export interface MarsPerpsInterface extends MarsPerpsReadOnlyInterface {
     }: {
       accountId: string
       denom: string
-      size: SignedDecimal
+      size: SignedUint
     },
     fee?: number | StdFee | 'auto',
     memo?: string,
@@ -452,7 +457,7 @@ export interface MarsPerpsInterface extends MarsPerpsReadOnlyInterface {
     }: {
       accountId: string
       denom: string
-      newSize: SignedDecimal
+      newSize: SignedUint
     },
     fee?: number | StdFee | 'auto',
     memo?: string,
@@ -519,7 +524,7 @@ export class MarsPerpsClient extends MarsPerpsQueryClient implements MarsPerpsIn
     }: {
       denom: string
       maxFundingVelocity: Decimal
-      skewScale: Decimal
+      skewScale: Uint128
     },
     fee: number | StdFee | 'auto' = 'auto',
     memo?: string,
@@ -590,7 +595,7 @@ export class MarsPerpsClient extends MarsPerpsQueryClient implements MarsPerpsIn
     {
       accountId,
     }: {
-      accountId: string
+      accountId?: string
     },
     fee: number | StdFee | 'auto' = 'auto',
     memo?: string,
@@ -614,7 +619,7 @@ export class MarsPerpsClient extends MarsPerpsQueryClient implements MarsPerpsIn
       accountId,
       shares,
     }: {
-      accountId: string
+      accountId?: string
       shares: Uint128
     },
     fee: number | StdFee | 'auto' = 'auto',
@@ -639,7 +644,7 @@ export class MarsPerpsClient extends MarsPerpsQueryClient implements MarsPerpsIn
     {
       accountId,
     }: {
-      accountId: string
+      accountId?: string
     },
     fee: number | StdFee | 'auto' = 'auto',
     memo?: string,
@@ -666,7 +671,7 @@ export class MarsPerpsClient extends MarsPerpsQueryClient implements MarsPerpsIn
     }: {
       accountId: string
       denom: string
-      size: SignedDecimal
+      size: SignedUint
     },
     fee: number | StdFee | 'auto' = 'auto',
     memo?: string,
@@ -721,7 +726,7 @@ export class MarsPerpsClient extends MarsPerpsQueryClient implements MarsPerpsIn
     }: {
       accountId: string
       denom: string
-      newSize: SignedDecimal
+      newSize: SignedUint
     },
     fee: number | StdFee | 'auto' = 'auto',
     memo?: string,
