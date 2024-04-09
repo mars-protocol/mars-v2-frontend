@@ -1,5 +1,3 @@
-import React from 'react'
-
 import Table from 'components/common/Table'
 import useAvailablePerpsColumns from 'components/earn/farm/Table/Columns/useAvailablePerpsColumns'
 import usePerpsVault from 'hooks/perps/usePerpsVault'

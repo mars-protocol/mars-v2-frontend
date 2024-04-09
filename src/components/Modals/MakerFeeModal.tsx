@@ -65,8 +65,9 @@ export default function MakerFeeModal() {
           </Callout>
         )}
         <Text size='sm' className='text-white/60'>
-          The Taker Fee is used to cover gas fees and to incentivise the execution mechanism. A high
-          Taker Fee increases the chances of a transaction to be executed.
+          Limit Orders are executed by third-party facilitators and require a Maker Fee to
+          compensate them for their services. Increasing the maker fee enhances the likelihood of
+          your order being picked up sooner.
         </Text>
         <Button
           onClick={handleActionClick}

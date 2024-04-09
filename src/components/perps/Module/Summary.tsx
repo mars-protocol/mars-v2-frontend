@@ -10,14 +10,18 @@ import AssetAmount from 'components/common/assets/AssetAmount'
 import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirection'
 import { ExpectedPrice } from 'components/perps/Module/ExpectedPrice'
 import TradingFee from 'components/perps/Module/TradingFee'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import { usePerpsParams } from 'hooks/perps/usePerpsParams'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { CalloutType } from 'types/enums/callOut'
 import { OrderType } from 'types/enums/orderType'
-import { formatLeverage } from 'utils/formatters'
+import { Trigger } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { formatLeverage, magnify } from 'utils/formatters'
 
 type Props = {
   leverage: number
@@ -38,22 +42,46 @@ export default function PerpsSummary(props: Props) {
   const openPerpPosition = useStore((s) => s.openPerpPosition)
   const modifyPerpPosition = useStore((s) => s.modifyPerpPosition)
   const closePerpPosition = useStore((s) => s.closePerpPosition)
+  const [makerFee, _] = useLocalStorage(
+    LocalStorageKeys.PERPS_MAKER_FEE,
+    DEFAULT_SETTINGS.perpsMakerFee,
+  )
+  const chainConfig = useStore((s) => s.chainConfig)
   const currentAccount = useCurrentAccount()
-
+  const isLimitOrder = props.orderType === OrderType.LIMIT
   const newAmount = useMemo(
     () => (props.previousAmount ?? BN_ZERO).plus(props.amount),
     [props.amount, props.previousAmount],
   )
 
   const perpsParams = usePerpsParams(props.asset.denom)
+  const feeToken = useMemo(
+    () => chainConfig.assets.find((asset) => asset.symbol === 'USDC'),
+    [chainConfig],
+  )
 
   const onConfirm = useCallback(async () => {
-    if (!currentAccount) return
+    if (!currentAccount || !feeToken) return
+    const keeperFee = isLimitOrder
+      ? BNCoin.fromDenomAndBigNumber(feeToken.denom, magnify(makerFee.amount, feeToken))
+      : undefined
+    const triggers: Trigger[] = []
+
+    if (isLimitOrder)
+      triggers.push({
+        price_trigger: {
+          denom: props.asset.denom,
+          oracle_price: props.limitPrice.toString(),
+          trigger_type: props.tradeDirection === 'long' ? 'less_than' : 'greater_than',
+        },
+      })
 
     if (!props.previousAmount.isZero() && newAmount.isZero()) {
       await closePerpPosition({
         accountId: currentAccount.id,
         denom: props.asset.denom,
+        keeperFee,
+        triggers,
       })
       return props.onTxExecuted()
     }
@@ -63,6 +91,8 @@ export default function PerpsSummary(props: Props) {
         accountId: currentAccount.id,
         coin: BNCoin.fromDenomAndBigNumber(props.asset.denom, newAmount),
         changeDirection: props.previousAmount.isNegative() !== newAmount.isNegative(),
+        keeperFee,
+        triggers,
       })
       return props.onTxExecuted()
     }
@@ -70,9 +100,21 @@ export default function PerpsSummary(props: Props) {
     await openPerpPosition({
       accountId: currentAccount.id,
       coin: BNCoin.fromDenomAndBigNumber(props.asset.denom, props.amount),
+      keeperFee,
+      triggers,
     })
     return props.onTxExecuted()
-  }, [closePerpPosition, currentAccount, modifyPerpPosition, newAmount, openPerpPosition, props])
+  }, [
+    closePerpPosition,
+    currentAccount,
+    modifyPerpPosition,
+    newAmount,
+    openPerpPosition,
+    props,
+    feeToken,
+    isLimitOrder,
+    makerFee,
+  ])
 
   const disabled = useMemo(() => props.amount.isZero(), [props.amount])
 

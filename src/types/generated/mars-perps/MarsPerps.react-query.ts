@@ -5,51 +5,35 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tanstack/react-query'
-import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
+import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
+import { UseMutationOptions, UseQueryOptions, useMutation, useQuery } from '@tanstack/react-query'
+import { MarsPerpsClient, MarsPerpsQueryClient } from './MarsPerps.client'
 import {
-  OracleBaseForString,
-  ParamsBaseForString,
-  InstantiateMsg,
-  ExecuteMsg,
-  OwnerUpdate,
-  Decimal,
-  Uint128,
-  ActionKind,
-  SignedDecimal,
-  QueryMsg,
-  ConfigForString,
   Accounting,
-  Balance,
-  CashFlow,
-  PnlAmounts,
-  DenomStateResponse,
-  Funding,
+  ActionKind,
   ArrayOfDenomStateResponse,
-  DepositResponse,
-  ArrayOfDepositResponse,
-  TradingFee,
-  Coin,
-  OwnerResponse,
-  PerpDenomState,
-  PnlValues,
-  NullablePerpVaultPosition,
-  PerpVaultPosition,
-  PerpVaultDeposit,
-  UnlockState,
-  PnL,
-  PositionResponse,
-  PerpPosition,
-  PositionPnl,
-  PnlCoins,
-  PositionFeesResponse,
+  ArrayOfPerpVaultUnlock,
   ArrayOfPositionResponse,
+  Coin,
+  ConfigForString,
+  Decimal,
+  DenomStateResponse,
+  NullablePerpVaultPosition,
+  OwnerResponse,
+  OwnerUpdate,
+  PerpDenomState,
+  PerpVaultDeposit,
+  PnlAmounts,
+  PositionFeesResponse,
+  PositionResponse,
   PositionsByAccountResponse,
-  ArrayOfUnlockState,
-  VaultState,
+  SignedDecimal,
+  SignedUint,
+  TradingFee,
+  Uint128,
+  VaultState
 } from './MarsPerps.types'
-import { MarsPerpsQueryClient, MarsPerpsClient } from './MarsPerps.client'
 export const marsPerpsQueryKeys = {
   contract: [
     {
@@ -78,8 +62,6 @@ export const marsPerpsQueryKeys = {
     ] as const,
   deposit: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
     [{ ...marsPerpsQueryKeys.address(contractAddress)[0], method: 'deposit', args }] as const,
-  deposits: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
-    [{ ...marsPerpsQueryKeys.address(contractAddress)[0], method: 'deposits', args }] as const,
   unlocks: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
     [{ ...marsPerpsQueryKeys.address(contractAddress)[0], method: 'unlocks', args }] as const,
   position: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
@@ -130,7 +112,7 @@ export interface MarsPerpsPositionFeesQuery<TData>
   args: {
     accountId: string
     denom: string
-    newSize: SignedDecimal
+    newSize: SignedUint
   }
 }
 export function useMarsPerpsPositionFeesQuery<TData = PositionFeesResponse>({
@@ -212,7 +194,7 @@ export function useMarsPerpsDenomAccountingQuery<TData = Accounting>({
 export interface MarsPerpsOpeningFeeQuery<TData> extends MarsPerpsReactQuery<TradingFee, TData> {
   args: {
     denom: string
-    size: SignedDecimal
+    size: SignedUint
   }
 }
 export function useMarsPerpsOpeningFeeQuery<TData = TradingFee>({
@@ -296,7 +278,7 @@ export interface MarsPerpsPositionQuery<TData>
   args: {
     accountId: string
     denom: string
-    newSize?: SignedDecimal
+    newSize?: SignedUint
   }
 }
 export function useMarsPerpsPositionQuery<TData = PositionResponse>({
@@ -318,67 +300,47 @@ export function useMarsPerpsPositionQuery<TData = PositionResponse>({
   )
 }
 export interface MarsPerpsUnlocksQuery<TData>
-  extends MarsPerpsReactQuery<ArrayOfUnlockState, TData> {
+  extends MarsPerpsReactQuery<ArrayOfPerpVaultUnlock, TData> {
   args: {
-    accountId: string
+    accountId?: string
+    userAddress: string
   }
 }
-export function useMarsPerpsUnlocksQuery<TData = ArrayOfUnlockState>({
+export function useMarsPerpsUnlocksQuery<TData = ArrayOfPerpVaultUnlock>({
   client,
   args,
   options,
 }: MarsPerpsUnlocksQuery<TData>) {
-  return useQuery<ArrayOfUnlockState, Error, TData>(
+  return useQuery<ArrayOfPerpVaultUnlock, Error, TData>(
     marsPerpsQueryKeys.unlocks(client?.contractAddress, args),
     () =>
       client
         ? client.unlocks({
             accountId: args.accountId,
+            userAddress: args.userAddress,
           })
         : Promise.reject(new Error('Invalid client')),
     { ...options, enabled: !!client && (options?.enabled != undefined ? options.enabled : true) },
   )
 }
-export interface MarsPerpsDepositsQuery<TData>
-  extends MarsPerpsReactQuery<ArrayOfDepositResponse, TData> {
+export interface MarsPerpsDepositQuery<TData> extends MarsPerpsReactQuery<PerpVaultDeposit, TData> {
   args: {
-    limit?: number
-    startAfter?: string
+    accountId?: string
+    userAddress: string
   }
 }
-export function useMarsPerpsDepositsQuery<TData = ArrayOfDepositResponse>({
-  client,
-  args,
-  options,
-}: MarsPerpsDepositsQuery<TData>) {
-  return useQuery<ArrayOfDepositResponse, Error, TData>(
-    marsPerpsQueryKeys.deposits(client?.contractAddress, args),
-    () =>
-      client
-        ? client.deposits({
-            limit: args.limit,
-            startAfter: args.startAfter,
-          })
-        : Promise.reject(new Error('Invalid client')),
-    { ...options, enabled: !!client && (options?.enabled != undefined ? options.enabled : true) },
-  )
-}
-export interface MarsPerpsDepositQuery<TData> extends MarsPerpsReactQuery<DepositResponse, TData> {
-  args: {
-    accountId: string
-  }
-}
-export function useMarsPerpsDepositQuery<TData = DepositResponse>({
+export function useMarsPerpsDepositQuery<TData = PerpVaultDeposit>({
   client,
   args,
   options,
 }: MarsPerpsDepositQuery<TData>) {
-  return useQuery<DepositResponse, Error, TData>(
+  return useQuery<PerpVaultDeposit, Error, TData>(
     marsPerpsQueryKeys.deposit(client?.contractAddress, args),
     () =>
       client
         ? client.deposit({
             accountId: args.accountId,
+            userAddress: args.userAddress,
           })
         : Promise.reject(new Error('Invalid client')),
     { ...options, enabled: !!client && (options?.enabled != undefined ? options.enabled : true) },
@@ -387,8 +349,9 @@ export function useMarsPerpsDepositQuery<TData = DepositResponse>({
 export interface MarsPerpsPerpVaultPositionQuery<TData>
   extends MarsPerpsReactQuery<NullablePerpVaultPosition, TData> {
   args: {
-    accountId: string
+    accountId?: string
     action?: ActionKind
+    userAddress: string
   }
 }
 export function useMarsPerpsPerpVaultPositionQuery<TData = NullablePerpVaultPosition>({
@@ -403,6 +366,7 @@ export function useMarsPerpsPerpVaultPositionQuery<TData = NullablePerpVaultPosi
         ? client.perpVaultPosition({
             accountId: args.accountId,
             action: args.action,
+            userAddress: args.userAddress,
           })
         : Promise.reject(new Error('Invalid client')),
     { ...options, enabled: !!client && (options?.enabled != undefined ? options.enabled : true) },
@@ -538,7 +502,7 @@ export interface MarsPerpsModifyPositionMutation {
   msg: {
     accountId: string
     denom: string
-    newSize: SignedDecimal
+    newSize: SignedUint
   }
   args?: {
     fee?: number | StdFee | 'auto'
@@ -587,7 +551,7 @@ export interface MarsPerpsOpenPositionMutation {
   msg: {
     accountId: string
     denom: string
-    size: SignedDecimal
+    size: SignedUint
   }
   args?: {
     fee?: number | StdFee | 'auto'
@@ -610,7 +574,7 @@ export function useMarsPerpsOpenPositionMutation(
 export interface MarsPerpsWithdrawMutation {
   client: MarsPerpsClient
   msg: {
-    accountId: string
+    accountId?: string
   }
   args?: {
     fee?: number | StdFee | 'auto'
@@ -629,7 +593,7 @@ export function useMarsPerpsWithdrawMutation(
 export interface MarsPerpsUnlockMutation {
   client: MarsPerpsClient
   msg: {
-    accountId: string
+    accountId?: string
     shares: Uint128
   }
   args?: {
@@ -649,7 +613,7 @@ export function useMarsPerpsUnlockMutation(
 export interface MarsPerpsDepositMutation {
   client: MarsPerpsClient
   msg: {
-    accountId: string
+    accountId?: string
   }
   args?: {
     fee?: number | StdFee | 'auto'
@@ -715,7 +679,7 @@ export interface MarsPerpsInitDenomMutation {
   msg: {
     denom: string
     maxFundingVelocity: Decimal
-    skewScale: Decimal
+    skewScale: Uint128
   }
   args?: {
     fee?: number | StdFee | 'auto'

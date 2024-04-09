@@ -5,31 +5,27 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tanstack/react-query'
-import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
+import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
+import { UseMutationOptions, UseQueryOptions, useMutation, useQuery } from '@tanstack/react-query'
 import {
-  InstantiateMsg,
-  ExecuteMsg,
-  OwnerUpdate,
-  SwapOperation,
-  AssetInfo,
+  MarsSwapperAstroportClient,
+  MarsSwapperAstroportQueryClient,
+} from './MarsSwapperAstroport.client'
+import {
   Addr,
-  Uint128,
-  Decimal,
+  ArrayOfRouteResponseForEmpty,
+  AstroportConfig,
   AstroportRoute,
   Coin,
-  QueryMsg,
+  Decimal,
+  Empty,
   EstimateExactInSwapResponse,
   OwnerResponse,
+  OwnerUpdate,
   RouteResponseForEmpty,
-  Empty,
-  ArrayOfRouteResponseForEmpty,
+  SwapperRoute
 } from './MarsSwapperAstroport.types'
-import {
-  MarsSwapperAstroportQueryClient,
-  MarsSwapperAstroportClient,
-} from './MarsSwapperAstroport.client'
 export const marsSwapperAstroportQueryKeys = {
   contract: [
     {
@@ -58,6 +54,10 @@ export const marsSwapperAstroportQueryKeys = {
         args,
       },
     ] as const,
+  config: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
+    [
+      { ...marsSwapperAstroportQueryKeys.address(contractAddress)[0], method: 'config', args },
+    ] as const,
 }
 export interface MarsSwapperAstroportReactQuery<TResponse, TData = TResponse> {
   client: MarsSwapperAstroportQueryClient | undefined
@@ -68,11 +68,24 @@ export interface MarsSwapperAstroportReactQuery<TResponse, TData = TResponse> {
     initialData?: undefined
   }
 }
+export interface MarsSwapperAstroportConfigQuery<TData>
+  extends MarsSwapperAstroportReactQuery<Empty, TData> {}
+export function useMarsSwapperAstroportConfigQuery<TData = Empty>({
+  client,
+  options,
+}: MarsSwapperAstroportConfigQuery<TData>) {
+  return useQuery<Empty, Error, TData>(
+    marsSwapperAstroportQueryKeys.config(client?.contractAddress),
+    () => (client ? client.config() : Promise.reject(new Error('Invalid client'))),
+    { ...options, enabled: !!client && (options?.enabled != undefined ? options.enabled : true) },
+  )
+}
 export interface MarsSwapperAstroportEstimateExactInSwapQuery<TData>
   extends MarsSwapperAstroportReactQuery<EstimateExactInSwapResponse, TData> {
   args: {
     coinIn: Coin
     denomOut: string
+    route?: SwapperRoute
   }
 }
 export function useMarsSwapperAstroportEstimateExactInSwapQuery<
@@ -85,6 +98,7 @@ export function useMarsSwapperAstroportEstimateExactInSwapQuery<
         ? client.estimateExactInSwap({
             coinIn: args.coinIn,
             denomOut: args.denomOut,
+            route: args.route,
           })
         : Promise.reject(new Error('Invalid client')),
     { ...options, enabled: !!client && (options?.enabled != undefined ? options.enabled : true) },
@@ -150,6 +164,29 @@ export function useMarsSwapperAstroportOwnerQuery<TData = OwnerResponse>({
     { ...options, enabled: !!client && (options?.enabled != undefined ? options.enabled : true) },
   )
 }
+export interface MarsSwapperAstroportUpdateConfigMutation {
+  client: MarsSwapperAstroportClient
+  msg: {
+    config: AstroportConfig
+  }
+  args?: {
+    fee?: number | StdFee | 'auto'
+    memo?: string
+    funds?: Coin[]
+  }
+}
+export function useMarsSwapperAstroportUpdateConfigMutation(
+  options?: Omit<
+    UseMutationOptions<ExecuteResult, Error, MarsSwapperAstroportUpdateConfigMutation>,
+    'mutationFn'
+  >,
+) {
+  return useMutation<ExecuteResult, Error, MarsSwapperAstroportUpdateConfigMutation>(
+    ({ client, msg, args: { fee, memo, funds } = {} }) =>
+      client.updateConfig(msg, fee, memo, funds),
+    options,
+  )
+}
 export interface MarsSwapperAstroportTransferResultMutation {
   client: MarsSwapperAstroportClient
   msg: {
@@ -180,6 +217,7 @@ export interface MarsSwapperAstroportSwapExactInMutation {
   msg: {
     coinIn: Coin
     denomOut: string
+    route?: SwapperRoute
     slippage: Decimal
   }
   args?: {

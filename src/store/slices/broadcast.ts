@@ -16,6 +16,7 @@ import {
   ExecuteMsg as CreditManagerExecuteMsg,
   ExecuteMsg,
   SwapperRoute,
+  Trigger,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { ExecuteMsg as IncentivesExecuteMsg } from 'types/generated/mars-incentives/MarsIncentives.types'
 import { ExecuteMsg as PerpsExecuteMsg } from 'types/generated/mars-perps/MarsPerps.types'
@@ -671,17 +672,40 @@ export default function createBroadcastSlice(
         return { result: undefined, error: e.message }
       }
     },
-    openPerpPosition: async (options: { accountId: string; coin: BNCoin }) => {
-      const msg: CreditManagerExecuteMsg = {
-        update_credit_account: {
-          account_id: options.accountId,
-          actions: [
-            {
-              open_perp: options.coin.toSignedCoin(),
-            },
-          ],
+    openPerpPosition: async (options: {
+      accountId: string
+      coin: BNCoin
+      keeperFee?: BNCoin
+      triggers?: Trigger[]
+    }) => {
+      const actions = [
+        {
+          open_perp: options.coin.toSignedCoin(),
         },
-      }
+      ]
+
+      const msg: CreditManagerExecuteMsg =
+        options.keeperFee && options.triggers
+          ? {
+              update_credit_account: {
+                account_id: options.accountId,
+                actions: [
+                  {
+                    create_trigger_order: {
+                      actions,
+                      keeper_fee: options.keeperFee.toCoin(),
+                      triggers: options.triggers,
+                    },
+                  },
+                ],
+              },
+            }
+          : {
+              update_credit_account: {
+                account_id: options.accountId,
+                actions,
+              },
+            }
 
       const cmContract = get().chainConfig.contracts.creditManager
 

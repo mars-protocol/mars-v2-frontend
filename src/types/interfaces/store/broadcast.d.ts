@@ -93,12 +93,24 @@ interface BroadcastSlice {
     isPythUpdate?: boolean
   }) => Promise<BroadcastResult>
   lend: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
-  closePerpPosition: (options: { accountId: string; denom: string }) => Promise<boolean>
-  openPerpPosition: (options: { accountId: string; coin: BNCoin }) => Promise<boolean>
+  closePerpPosition: (options: {
+    accountId: string
+    denom: string
+    keeperFee?: BNCoin
+    triggers?: import('types/generated/mars-credit-manager/MarsCreditManager.types').Trigger[]
+  }) => Promise<boolean>
+  openPerpPosition: (options: {
+    accountId: string
+    coin: BNCoin
+    keeperFee?: BNCoin
+    triggers?: import('types/generated/mars-credit-manager/MarsCreditManager.types').Trigger[]
+  }) => Promise<boolean>
   modifyPerpPosition: (options: {
     accountId: string
     coin: BNCoin
     changeDirection: boolean
+    keeperFee?: BNCoin
+    triggers?: import('types/generated/mars-credit-manager/MarsCreditManager.types').Trigger[]
   }) => Promise<boolean>
   reclaim: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
   repay: (options: {

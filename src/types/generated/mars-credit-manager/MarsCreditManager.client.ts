@@ -29,7 +29,7 @@ import {
   Positions,
   Uint128,
   VaultBaseForString,
-  VaultPosition,  
+  VaultPosition,
   VaultPositionValue,
   VaultUtilizationResponse
 } from './MarsCreditManager.types'

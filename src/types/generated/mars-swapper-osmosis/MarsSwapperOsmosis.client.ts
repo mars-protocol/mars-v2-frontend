@@ -5,24 +5,21 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
+import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import {
-  InstantiateMsg,
-  ExecuteMsg,
-  OwnerUpdate,
-  OsmosisRoute,
-  Uint128,
-  Decimal,
   Addr,
-  SwapAmountInRoute,
-  Coin,
-  QueryMsg,
-  EstimateExactInSwapResponse,
-  OwnerResponse,
-  RouteResponseForEmpty,
-  Empty,
   ArrayOfRouteResponseForEmpty,
+  Coin,
+  Decimal,
+  Empty,
+  EstimateExactInSwapResponse,
+  OsmosisConfig,
+  OsmosisRoute,
+  OwnerResponse,
+  OwnerUpdate,
+  RouteResponseForEmpty,
+  SwapperRoute
 } from './MarsSwapperOsmosis.types'
 export interface MarsSwapperOsmosisReadOnlyInterface {
   contractAddress: string
@@ -44,10 +41,13 @@ export interface MarsSwapperOsmosisReadOnlyInterface {
   estimateExactInSwap: ({
     coinIn,
     denomOut,
+    route,
   }: {
     coinIn: Coin
     denomOut: string
+    route?: SwapperRoute
   }) => Promise<EstimateExactInSwapResponse>
+  config: () => Promise<Empty>
 }
 export class MarsSwapperOsmosisQueryClient implements MarsSwapperOsmosisReadOnlyInterface {
   client: CosmWasmClient
@@ -60,6 +60,7 @@ export class MarsSwapperOsmosisQueryClient implements MarsSwapperOsmosisReadOnly
     this.route = this.route.bind(this)
     this.routes = this.routes.bind(this)
     this.estimateExactInSwap = this.estimateExactInSwap.bind(this)
+    this.config = this.config.bind(this)
   }
 
   owner = async (): Promise<OwnerResponse> => {
@@ -98,15 +99,23 @@ export class MarsSwapperOsmosisQueryClient implements MarsSwapperOsmosisReadOnly
   estimateExactInSwap = async ({
     coinIn,
     denomOut,
+    route,
   }: {
     coinIn: Coin
     denomOut: string
+    route?: SwapperRoute
   }): Promise<EstimateExactInSwapResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       estimate_exact_in_swap: {
         coin_in: coinIn,
         denom_out: denomOut,
+        route,
       },
+    })
+  }
+  config = async (): Promise<Empty> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      config: {},
     })
   }
 }
@@ -137,10 +146,12 @@ export interface MarsSwapperOsmosisInterface extends MarsSwapperOsmosisReadOnlyI
     {
       coinIn,
       denomOut,
+      route,
       slippage,
     }: {
       coinIn: Coin
       denomOut: string
+      route?: SwapperRoute
       slippage: Decimal
     },
     fee?: number | StdFee | 'auto',
@@ -156,6 +167,16 @@ export interface MarsSwapperOsmosisInterface extends MarsSwapperOsmosisReadOnlyI
       denomIn: string
       denomOut: string
       recipient: Addr
+    },
+    fee?: number | StdFee | 'auto',
+    memo?: string,
+    _funds?: Coin[],
+  ) => Promise<ExecuteResult>
+  updateConfig: (
+    {
+      config,
+    }: {
+      config: OsmosisConfig
     },
     fee?: number | StdFee | 'auto',
     memo?: string,
@@ -179,6 +200,7 @@ export class MarsSwapperOsmosisClient
     this.setRoute = this.setRoute.bind(this)
     this.swapExactIn = this.swapExactIn.bind(this)
     this.transferResult = this.transferResult.bind(this)
+    this.updateConfig = this.updateConfig.bind(this)
   }
 
   updateOwner = async (
@@ -231,10 +253,12 @@ export class MarsSwapperOsmosisClient
     {
       coinIn,
       denomOut,
+      route,
       slippage,
     }: {
       coinIn: Coin
       denomOut: string
+      route?: SwapperRoute
       slippage: Decimal
     },
     fee: number | StdFee | 'auto' = 'auto',
@@ -248,6 +272,7 @@ export class MarsSwapperOsmosisClient
         swap_exact_in: {
           coin_in: coinIn,
           denom_out: denomOut,
+          route,
           slippage,
         },
       },
@@ -278,6 +303,29 @@ export class MarsSwapperOsmosisClient
           denom_in: denomIn,
           denom_out: denomOut,
           recipient,
+        },
+      },
+      fee,
+      memo,
+      _funds,
+    )
+  }
+  updateConfig = async (
+    {
+      config,
+    }: {
+      config: OsmosisConfig
+    },
+    fee: number | StdFee | 'auto' = 'auto',
+    memo?: string,
+    _funds?: Coin[],
+  ): Promise<ExecuteResult> => {
+    return await this.client.execute(
+      this.sender,
+      this.contractAddress,
+      {
+        update_config: {
+          config,
         },
       },
       fee,

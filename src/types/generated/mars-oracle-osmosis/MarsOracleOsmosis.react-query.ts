@@ -5,30 +5,20 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tanstack/react-query'
+import { Coin, StdFee } from '@cosmjs/amino'
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
-import { StdFee, Coin } from '@cosmjs/amino'
+import { UseMutationOptions, UseQueryOptions, useMutation, useQuery } from '@tanstack/react-query'
+import { MarsOracleOsmosisClient, MarsOracleOsmosisQueryClient } from './MarsOracleOsmosis.client'
 import {
-  InstantiateMsg,
-  Empty,
-  ExecuteMsg,
-  OsmosisPriceSourceForString,
-  Decimal,
-  Downtime,
-  Identifier,
-  OwnerUpdate,
-  DowntimeDetector,
-  GeometricTwap,
-  RedemptionRateForString,
-  QueryMsg,
   ActionKind,
-  ConfigResponse,
-  PriceResponse,
-  PriceSourceResponseForString,
-  ArrayOfPriceSourceResponseForString,
   ArrayOfPriceResponse,
+  ArrayOfPriceSourceResponseForString,
+  ConfigResponse,
+  OsmosisPriceSourceForString,
+  OwnerUpdate,
+  PriceResponse,
+  PriceSourceResponseForString
 } from './MarsOracleOsmosis.types'
-import { MarsOracleOsmosisQueryClient, MarsOracleOsmosisClient } from './MarsOracleOsmosis.client'
 export const marsOracleOsmosisQueryKeys = {
   contract: [
     {
