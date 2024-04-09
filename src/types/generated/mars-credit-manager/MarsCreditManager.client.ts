@@ -5,86 +5,33 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
+import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import {
-  HealthContractBaseForString,
-  IncentivesUnchecked,
-  Decimal,
-  Uint128,
-  OracleBaseForString,
-  ParamsBaseForString,
-  RedBankUnchecked,
-  SwapperBaseForString,
-  ZapperBaseForString,
-  InstantiateMsg,
-  ExecuteMsg,
   AccountKind,
   Action,
-  ActionAmount,
-  LiquidateRequestForVaultBaseForString,
-  VaultPositionType,
-  SwapperRoute,
-  AccountNftBaseForString,
-  PerpsBaseForString,
-  OwnerUpdate,
   Action2,
-  Expiration,
-  Timestamp,
-  Uint64,
-  CallbackMsg,
-  Addr,
-  HealthState,
-  LiquidateRequestForVaultBaseForAddr,
-  ChangeExpected,
-  Coin,
-  ActionCoin,
-  SignedDecimal,
-  VaultBaseForString,
-  AstroRoute,
-  AstroSwap,
-  OsmoRoute,
-  OsmoSwap,
-  ConfigUpdates,
-  NftConfigUpdates,
-  VaultBaseForAddr,
-  QueryMsg,
   ActionKind,
-  VaultPositionAmount,
-  VaultAmount,
-  VaultAmount1,
-  UnlockingPositions,
-  VaultPosition,
-  LockingVaultAmount,
-  VaultUnlockingPosition,
   ArrayOfAccount,
-  Account,
-  ArrayOfCoinBalanceResponseItem,
-  CoinBalanceResponseItem,
-  ArrayOfSharesResponseItem,
-  SharesResponseItem,
-  ArrayOfDebtShares,
-  DebtShares,
-  ArrayOfVaultPositionResponseItem,
-  VaultPositionResponseItem,
-  ConfigResponse,
-  OwnerResponse,
-  RewardsCollector,
   ArrayOfCoin,
-  PnL,
+  ArrayOfCoinBalanceResponseItem,
+  ArrayOfDebtShares,
+  ArrayOfSharesResponseItem,
+  ArrayOfTriggerOrder,
+  ArrayOfVaultPositionResponseItem,
+  CallbackMsg,
+  Coin,
+  ConfigResponse,
+  ConfigUpdates,
+  DebtShares,
+  NftConfigUpdates,
+  OwnerUpdate,
   Positions,
-  DebtAmount,
-  PerpVaultPosition,
-  PerpVaultDeposit,
-  UnlockState,
-  PerpPosition,
-  PnlAmounts,
-  PositionPnl,
-  PnlCoins,
-  PnlValues,
+  Uint128,
+  VaultBaseForString,
+  VaultPosition,  
   VaultPositionValue,
-  CoinValue,
-  VaultUtilizationResponse,
+  VaultUtilizationResponse
 } from './MarsCreditManager.types'
 export interface MarsCreditManagerReadOnlyInterface {
   contractAddress: string
@@ -149,6 +96,13 @@ export interface MarsCreditManagerReadOnlyInterface {
   }: {
     vaultPosition: VaultPosition
   }) => Promise<VaultPositionValue>
+  allTriggerOrders: ({
+    limit,
+    startAfter,
+  }: {
+    limit?: number
+    startAfter?: string
+  }) => Promise<ArrayOfTriggerOrder>
 }
 export class MarsCreditManagerQueryClient implements MarsCreditManagerReadOnlyInterface {
   client: CosmWasmClient
@@ -170,6 +124,7 @@ export class MarsCreditManagerQueryClient implements MarsCreditManagerReadOnlyIn
     this.estimateProvideLiquidity = this.estimateProvideLiquidity.bind(this)
     this.estimateWithdrawLiquidity = this.estimateWithdrawLiquidity.bind(this)
     this.vaultPositionValue = this.vaultPositionValue.bind(this)
+    this.allTriggerOrders = this.allTriggerOrders.bind(this)
   }
 
   accountKind = async ({ accountId }: { accountId: string }): Promise<AccountKind> => {
@@ -316,6 +271,20 @@ export class MarsCreditManagerQueryClient implements MarsCreditManagerReadOnlyIn
     return this.client.queryContractSmart(this.contractAddress, {
       vault_position_value: {
         vault_position: vaultPosition,
+      },
+    })
+  }
+  allTriggerOrders = async ({
+    limit,
+    startAfter,
+  }: {
+    limit?: number
+    startAfter?: string
+  }): Promise<ArrayOfTriggerOrder> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      all_trigger_orders: {
+        limit,
+        start_after: startAfter,
       },
     })
   }

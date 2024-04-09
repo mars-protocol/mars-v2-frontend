@@ -98,7 +98,7 @@ export type Action =
   | {
       open_perp: {
         denom: string
-        size: SignedDecimal
+        size: SignedUint
       }
     }
   | {
@@ -109,7 +109,20 @@ export type Action =
   | {
       modify_perp: {
         denom: string
-        new_size: SignedDecimal
+        new_size: SignedUint
+      }
+    }
+  | {
+      create_trigger_order: {
+        actions: Action[]
+        keeper_fee: Coin
+        triggers: Trigger[]
+      }
+    }
+  | {
+      delete_trigger_order: {
+        account_id: string
+        trigger_order_id: string
       }
     }
   | {
@@ -172,6 +185,14 @@ export type ActionAmount =
   | {
       exact: Uint128
     }
+export type Trigger = {
+  price_trigger: {
+    denom: string
+    oracle_price: Decimal
+    trigger_type: PriceTriggerType
+  }
+}
+export type PriceTriggerType = 'greater_than' | 'less_than'
 export type LiquidateRequestForVaultBaseForString =
   | {
       deposit: string
@@ -308,7 +329,7 @@ export type CallbackMsg =
       open_perp: {
         account_id: string
         denom: string
-        size: SignedDecimal
+        size: SignedUint
       }
     }
   | {
@@ -321,7 +342,28 @@ export type CallbackMsg =
       modify_perp: {
         account_id: string
         denom: string
-        new_size: SignedDecimal
+        new_size: SignedUint
+      }
+    }
+  | {
+      create_trigger_order: {
+        account_id: string
+        actions: Action[]
+        keeper_fee: Coin
+        triggers: Trigger[]
+      }
+    }
+  | {
+      delete_trigger_order: {
+        account_id: string
+        trigger_order_id: string
+      }
+    }
+  | {
+      perp_limit_order: {
+        account_id: string
+        denom: string
+        size: SignedUint
       }
     }
   | {
@@ -461,8 +503,8 @@ export interface ActionCoin {
   amount: ActionAmount
   denom: string
 }
-export interface SignedDecimal {
-  abs: Decimal
+export interface SignedUint {
+  abs: Uint128
   negative: boolean
   [k: string]: unknown
 }
@@ -575,6 +617,12 @@ export type QueryMsg =
         vault_position: VaultPosition
       }
     }
+  | {
+      all_trigger_orders: {
+        limit?: number | null
+        start_after?: string | null
+      }
+    }
 export type ActionKind = 'default' | 'liquidation'
 export type VaultPositionAmount =
   | {
@@ -620,6 +668,12 @@ export interface DebtShares {
   denom: string
   shares: Uint128
 }
+export type ArrayOfTriggerOrder = TriggerOrder[]
+export interface TriggerOrder {
+  actions: Action[]
+  keeper_fee: Coin
+  triggers: Trigger[]
+}
 export type ArrayOfVaultPositionResponseItem = VaultPositionResponseItem[]
 export interface VaultPositionResponseItem {
   account_id: string
@@ -652,14 +706,6 @@ export interface RewardsCollector {
   address: string
 }
 export type ArrayOfCoin = Coin[]
-export type PnL =
-  | 'break_even'
-  | {
-      profit: Coin
-    }
-  | {
-      loss: Coin
-    }
 export interface Positions {
   account_id: string
   debts: DebtAmount[]
@@ -677,16 +723,17 @@ export interface DebtAmount {
 export interface PerpVaultPosition {
   denom: string
   deposit: PerpVaultDeposit
-  unlocks: UnlockState[]
+  unlocks: PerpVaultUnlock[]
 }
 export interface PerpVaultDeposit {
   amount: Uint128
   shares: Uint128
 }
-export interface UnlockState {
+export interface PerpVaultUnlock {
   amount: Uint128
   cooldown_end: number
   created_at: number
+  shares: Uint128
 }
 export interface PerpPosition {
   base_denom: string
@@ -697,30 +744,15 @@ export interface PerpPosition {
   entry_exec_price: Decimal
   entry_price: Decimal
   realised_pnl: PnlAmounts
-  size: SignedDecimal
-  unrealised_pnl: PositionPnl
+  size: SignedUint
+  unrealised_pnl: PnlAmounts
 }
 export interface PnlAmounts {
-  accrued_funding: SignedDecimal
-  closing_fee: SignedDecimal
-  opening_fee: SignedDecimal
-  pnl: SignedDecimal
-  price_pnl: SignedDecimal
-}
-export interface PositionPnl {
-  amounts: PnlAmounts
-  coins: PnlCoins
-  values: PnlValues
-}
-export interface PnlCoins {
-  closing_fee: Coin
-  pnl: PnL
-}
-export interface PnlValues {
-  accrued_funding: SignedDecimal
-  closing_fee: SignedDecimal
-  pnl: SignedDecimal
-  price_pnl: SignedDecimal
+  accrued_funding: SignedUint
+  closing_fee: SignedUint
+  opening_fee: SignedUint
+  pnl: SignedUint
+  price_pnl: SignedUint
 }
 export interface VaultPositionValue {
   base_coin: CoinValue
@@ -735,3 +767,11 @@ export interface VaultUtilizationResponse {
   utilization: Coin
   vault: VaultBaseForString
 }
+export type PnL =
+  | 'break_even'
+  | {
+      profit: Coin
+    }
+  | {
+      loss: Coin
+    }

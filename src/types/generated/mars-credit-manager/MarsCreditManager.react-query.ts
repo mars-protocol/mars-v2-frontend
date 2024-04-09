@@ -5,89 +5,36 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tanstack/react-query'
-import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
+import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
+import { UseMutationOptions, UseQueryOptions, useMutation, useQuery } from '@tanstack/react-query'
+import { MarsCreditManagerClient, MarsCreditManagerQueryClient } from './MarsCreditManager.client'
 import {
-  HealthContractBaseForString,
-  IncentivesUnchecked,
-  Decimal,
-  Uint128,
-  OracleBaseForString,
-  ParamsBaseForString,
-  RedBankUnchecked,
-  SwapperBaseForString,
-  ZapperBaseForString,
-  InstantiateMsg,
-  ExecuteMsg,
   AccountKind,
   Action,
-  ActionAmount,
-  LiquidateRequestForVaultBaseForString,
-  VaultPositionType,
-  SwapperRoute,
-  AccountNftBaseForString,
-  PerpsBaseForString,
-  OwnerUpdate,
   Action2,
-  Expiration,
-  Timestamp,
-  Uint64,
-  CallbackMsg,
-  Addr,
-  HealthState,
-  LiquidateRequestForVaultBaseForAddr,
-  ChangeExpected,
-  Coin,
-  ActionCoin,
-  SignedDecimal,
-  VaultBaseForString,
-  AstroRoute,
-  AstroSwap,
-  OsmoRoute,
-  OsmoSwap,
-  ConfigUpdates,
-  NftConfigUpdates,
-  VaultBaseForAddr,
-  QueryMsg,
   ActionKind,
-  VaultPositionAmount,
-  VaultAmount,
-  VaultAmount1,
-  UnlockingPositions,
-  VaultPosition,
-  LockingVaultAmount,
-  VaultUnlockingPosition,
   ArrayOfAccount,
-  Account,
-  ArrayOfCoinBalanceResponseItem,
-  CoinBalanceResponseItem,
-  ArrayOfSharesResponseItem,
-  SharesResponseItem,
-  ArrayOfDebtShares,
-  DebtShares,
-  ArrayOfVaultPositionResponseItem,
-  VaultPositionResponseItem,
-  ConfigResponse,
-  OwnerResponse,
-  RewardsCollector,
   ArrayOfCoin,
-  PnL,
+  ArrayOfCoinBalanceResponseItem,
+  ArrayOfDebtShares,
+  ArrayOfSharesResponseItem,
+  ArrayOfTriggerOrder,
+  ArrayOfVaultPositionResponseItem,
+  CallbackMsg,
+  Coin,
+  ConfigResponse,
+  ConfigUpdates,
+  DebtShares,
+  NftConfigUpdates,
+  OwnerUpdate,
   Positions,
-  DebtAmount,
-  PerpVaultPosition,
-  PerpVaultDeposit,
-  UnlockState,
-  PerpPosition,
-  PnlAmounts,
-  PositionPnl,
-  PnlCoins,
-  PnlValues,
+  Uint128,
+  VaultBaseForString,
+  VaultPosition,
   VaultPositionValue,
-  CoinValue,
-  VaultUtilizationResponse,
+  VaultUtilizationResponse
 } from './MarsCreditManager.types'
-import { MarsCreditManagerQueryClient, MarsCreditManagerClient } from './MarsCreditManager.client'
 export const marsCreditManagerQueryKeys = {
   contract: [
     {
@@ -187,6 +134,14 @@ export const marsCreditManagerQueryKeys = {
         args,
       },
     ] as const,
+  allTriggerOrders: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
+    [
+      {
+        ...marsCreditManagerQueryKeys.address(contractAddress)[0],
+        method: 'all_trigger_orders',
+        args,
+      },
+    ] as const,
 }
 export interface MarsCreditManagerReactQuery<TResponse, TData = TResponse> {
   client: MarsCreditManagerQueryClient | undefined
@@ -196,6 +151,30 @@ export interface MarsCreditManagerReactQuery<TResponse, TData = TResponse> {
   > & {
     initialData?: undefined
   }
+}
+export interface MarsCreditManagerAllTriggerOrdersQuery<TData>
+  extends MarsCreditManagerReactQuery<ArrayOfTriggerOrder, TData> {
+  args: {
+    limit?: number
+    startAfter?: string
+  }
+}
+export function useMarsCreditManagerAllTriggerOrdersQuery<TData = ArrayOfTriggerOrder>({
+  client,
+  args,
+  options,
+}: MarsCreditManagerAllTriggerOrdersQuery<TData>) {
+  return useQuery<ArrayOfTriggerOrder, Error, TData>(
+    marsCreditManagerQueryKeys.allTriggerOrders(client?.contractAddress, args),
+    () =>
+      client
+        ? client.allTriggerOrders({
+            limit: args.limit,
+            startAfter: args.startAfter,
+          })
+        : Promise.reject(new Error('Invalid client')),
+    { ...options, enabled: !!client && (options?.enabled != undefined ? options.enabled : true) },
+  )
 }
 export interface MarsCreditManagerVaultPositionValueQuery<TData>
   extends MarsCreditManagerReactQuery<VaultPositionValue, TData> {
