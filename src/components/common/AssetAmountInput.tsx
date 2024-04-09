@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo } from 'react'
 import classNames from 'classnames'
+import { useCallback, useEffect, useMemo } from 'react'
 
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import NumberInput from 'components/common/NumberInput'
@@ -11,7 +11,7 @@ interface Props {
   max?: BigNumber
   asset: Asset
   amount: BigNumber
-  disabled: boolean
+  disabled?: boolean
   maxButtonLabel?: string
   amountValueText?: string
   containerClassName?: string
@@ -62,7 +62,7 @@ export default function AssetAmountInput(props: Props) {
         {label}
         <div
           className={classNames(
-            'flex flex-1 flex-row py-3 border-[1px] border-white/20 rounded bg-white bg-opacity-5 pl-3 pr-2 mt-2',
+            'flex flex-1 flex-row py-3 border border-white/20 rounded bg-white/5 pl-3 pr-2 mt-2',
             disabled && 'opacity-50',
           )}
         >

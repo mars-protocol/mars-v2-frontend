@@ -36,6 +36,7 @@ import { defaultFee, ENABLE_AUTO_REPAY } from 'utils/constants'
 import { formatValue } from 'utils/formatters'
 import { getCapLeftWithBuffer } from 'utils/generic'
 import { asyncThrottle, BN } from 'utils/helpers'
+import { OrderType } from 'types/enums/orderType'
 
 interface Props {
   buyAsset: Asset
@@ -69,7 +70,7 @@ export default function SwapForm(props: Props) {
   const [outputAssetAmount, setOutputAssetAmount] = useState(BN_ZERO)
   const [inputAssetAmount, setInputAssetAmount] = useState(BN_ZERO)
   const [maxOutputAmountEstimation, setMaxBuyableAmountEstimation] = useState(BN_ZERO)
-  const [selectedOrderType, setSelectedOrderType] = useState<AvailableOrderType>('Market')
+  const [selectedOrderType, setSelectedOrderType] = useState<OrderType>(OrderType.MARKET)
   const [isConfirming, setIsConfirming] = useToggle()
   const [estimatedFee, setEstimatedFee] = useState(defaultFee)
   const { autoLendEnabledAccountIds } = useAutoLend()

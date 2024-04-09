@@ -1,21 +1,22 @@
 import classNames from 'classnames'
 import { useCallback, useMemo } from 'react'
 
-import AssetAmount from 'components/common/assets/AssetAmount'
 import ActionButton from 'components/common/Button/ActionButton'
-import { Callout, CalloutType } from 'components/common/Callout'
+import { Callout } from 'components/common/Callout'
 import { ArrowRight } from 'components/common/Icons'
 import SummaryLine from 'components/common/SummaryLine'
 import Text from 'components/common/Text'
+import AssetAmount from 'components/common/assets/AssetAmount'
 import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirection'
 import { ExpectedPrice } from 'components/perps/Module/ExpectedPrice'
 import TradingFee from 'components/perps/Module/TradingFee'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { usePerpsParams } from 'hooks/perps/usePerpsParams'
-import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
+import { CalloutType } from 'types/enums/callOut'
+import { OrderType } from 'types/enums/orderType'
 import { formatLeverage } from 'utils/formatters'
 
 type Props = {
@@ -24,11 +25,13 @@ type Props = {
   tradeDirection: TradeDirection
   asset: Asset
   previousAmount: BigNumber
-  previousTradeDirection?: 'long' | 'short'
+  previousTradeDirection?: TradeDirection
   previousLeverage?: number | null
   hasActivePosition: boolean
   onTxExecuted: () => void
   disabled: boolean
+  orderType: OrderType
+  limitPrice: BigNumber
 }
 
 export default function PerpsSummary(props: Props) {
@@ -40,11 +43,6 @@ export default function PerpsSummary(props: Props) {
   const newAmount = useMemo(
     () => (props.previousAmount ?? BN_ZERO).plus(props.amount),
     [props.amount, props.previousAmount],
-  )
-  const { data: tradingFee } = useTradingFeeAndPrice(
-    props.asset.denom,
-    newAmount,
-    props.previousAmount,
   )
 
   const perpsParams = usePerpsParams(props.asset.denom)
@@ -94,7 +92,7 @@ export default function PerpsSummary(props: Props) {
   }, [perpsParams, props.amount, props.previousAmount])
 
   return (
-    <div className='flex flex-col bg-white bg-opacity-5 rounded border-[1px] border-white/20 mt-4'>
+    <div className='flex flex-col w-full border rounded bg-white/5 border-white/20'>
       <ManageSummary {...props} newAmount={newAmount} />
       <div className='flex flex-col gap-1 px-3 py-4'>
         <Text size='xs' className='mb-2 font-bold'>

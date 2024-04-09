@@ -12,4 +12,5 @@ interface Settings {
   migrationBanner: boolean
   updateOracle: boolean
   chartInterval: import('utils/charting_library').ResolutionString
+  perpsMakerFee: Coin
 }

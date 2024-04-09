@@ -1,6 +1,8 @@
 import { ORACLE_DENOM } from 'constants/oracle'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 import { ResolutionString } from 'utils/charting_library'
+import { BN_ONE } from 'constants/math'
 
 // This does not retrigger when chains are switched. Assets might not be present on the new chain, but
 // This scenario is still caught.
@@ -25,4 +27,5 @@ export const DEFAULT_SETTINGS: Settings = {
   perpsAsset: '',
   updateOracle: true,
   chartInterval: '60' as ResolutionString,
+  perpsMakerFee: BNCoin.fromDenomAndBigNumber('usd', BN_ONE).toCoin(),
 }

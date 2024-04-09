@@ -18,6 +18,7 @@ interface ModalSlice {
   withdrawFromVaultsModal: DepositedVault[] | null
   v1DepositAndWithdrawModal: V1DepositAndWithdrawModal | null
   v1BorrowAndRepayModal: V1BorrowAndRepayModal | null
+  makerFeeModal: boolean
 }
 
 interface AlertDialogButton {

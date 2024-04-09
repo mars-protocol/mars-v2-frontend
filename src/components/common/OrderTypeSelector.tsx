@@ -4,11 +4,13 @@ import { InfoCircle } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
+import { OrderType } from 'types/enums/orderType'
+import { capitalizeFirstLetter } from 'utils/helpers'
 
 interface Props {
   orderTabs: OrderTab[]
-  selected: AvailableOrderType
-  onChange: (value: AvailableOrderType) => void
+  selected: OrderType
+  onChange: (value: OrderType) => void
 }
 
 export default function OrderTypeSelector(props: Props) {
@@ -36,7 +38,7 @@ export default function OrderTypeSelector(props: Props) {
             )}
           >
             <div onClick={() => onChange(tab.type)} className={classes}>
-              {tab.type}
+              {capitalizeFirstLetter(tab.type)}
               {tab.isDisabled && <InfoCircle className='w-4 h-4 mt-1 ml-2' />}
             </div>
           </ConditionalWrapper>

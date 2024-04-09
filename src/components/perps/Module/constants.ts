@@ -1,15 +1,16 @@
 import { CalloutType } from 'types/enums/callOut'
+import { OrderType } from 'types/enums/orderType'
 
 const ORDER_TYPE_UNAVAILABLE_MESSAGE = 'This type of order is coming soon.'
 
 export const PERPS_ORDER_TYPE_TABS: OrderTab[] = [
-  { type: 'Market', isDisabled: false },
+  { type: OrderType.MARKET, isDisabled: false },
   {
-    type: 'Limit',
+    type: OrderType.LIMIT,
     isDisabled: false,
   },
   {
-    type: 'Stop',
+    type: OrderType.STOP,
     isDisabled: true,
     tooltipText: ORDER_TYPE_UNAVAILABLE_MESSAGE,
   },
@@ -17,6 +18,6 @@ export const PERPS_ORDER_TYPE_TABS: OrderTab[] = [
 
 export const DEFAULT_LIMIT_PRICE_INFO: CallOut = {
   message:
-    'In order to create a limit order, please specify a price greater than the current price of the selected asset.',
+    'In order to create a limit order please specify a price. As soon as the price is hit, the transaction will be executed.',
   type: CalloutType.INFO,
 }

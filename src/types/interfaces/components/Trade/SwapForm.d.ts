@@ -1,6 +1,5 @@
-type AvailableOrderType = 'Market' | 'Limit' | 'Stop'
 interface OrderTab {
-  type: AvailableOrderType
+  type: import('types/enums/orderType').OrderType
   isDisabled: boolean
   tooltipText?: string
 }
