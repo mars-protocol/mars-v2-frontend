@@ -61,7 +61,7 @@ export default function MakerFeeModal() {
         />
         {amount.isZero() && (
           <Callout type={CalloutType.WARNING}>
-            You can't set the Maker Fee to $0.00. It's recommended to set it to at least $1.00.
+            You can not set the Maker Fee to $0.00. The recommended amount is aleast $1.00.
           </Callout>
         )}
         <Text size='sm' className='text-white/60'>
@@ -71,8 +71,9 @@ export default function MakerFeeModal() {
         <Button
           onClick={handleActionClick}
           disabled={!amount.toNumber()}
-          className='w-full'
-          text='Set Maker Fee'
+          className='w-full !text-base'
+          color='tertiary'
+          text='Done'
         />
       </div>
     </Modal>

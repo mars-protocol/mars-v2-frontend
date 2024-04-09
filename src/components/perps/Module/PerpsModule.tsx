@@ -166,6 +166,12 @@ export function PerpsModule() {
     limitPrice,
   ])
 
+  const reset = useCallback(() => {
+    setLimitPrice(BN_ZERO)
+    setAmount(BN_ZERO)
+    setSliderLeverage(1)
+  }, [])
+
   const onDebounce = useCallback(() => {
     if (currentMaxAmount.isZero()) return
     const percentOfMax = BN(sliderLeverage).div(maxLeverage)
@@ -178,13 +184,16 @@ export function PerpsModule() {
       setTradeDirection(tradeDirection)
       if (isLimitOrder) reset()
     },
-    [amount, isLimitOrder],
+    [amount, isLimitOrder, reset],
   )
 
-  const onChangeOrderType = useCallback((orderType: OrderType) => {
-    reset()
-    setSelectedOrderType(orderType)
-  }, [])
+  const onChangeOrderType = useCallback(
+    (orderType: OrderType) => {
+      reset()
+      setSelectedOrderType(orderType)
+    },
+    [reset],
+  )
 
   const onChangeAmount = useCallback(
     (amount: BigNumber) => {
@@ -205,12 +214,6 @@ export function PerpsModule() {
     },
     [currentMaxAmount, maxLeverage, tradeDirection],
   )
-
-  const reset = useCallback(() => {
-    setLimitPrice(BN_ZERO)
-    setAmount(BN_ZERO)
-    setSliderLeverage(1)
-  }, [])
 
   useEffect(() => {
     if (!prices || !perpsAsset) return
@@ -253,12 +256,12 @@ export function PerpsModule() {
       amount.isGreaterThan(currentMaxAmount) ||
       warningMessages.isNotEmpty()
     )
-  }, [amount, limitPriceInfo, limitPrice, selectedOrderType, currentMaxAmount, warningMessages])
+  }, [amount, limitPriceInfo, limitPrice, currentMaxAmount, warningMessages, isLimitOrder])
 
   const isDisabledAmountInput = useMemo(() => {
     if (!isLimitOrder) return false
     return limitPrice.isZero() || !!limitPriceInfo
-  }, [limitPrice, limitPriceInfo, selectedOrderType])
+  }, [limitPrice, limitPriceInfo, isLimitOrder])
 
   if (!perpsAsset) return null
 
