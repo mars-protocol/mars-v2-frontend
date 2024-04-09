@@ -3,6 +3,7 @@ import { useCallback } from 'react'
 
 import { ExclamationMarkTriangle, InfoCircle } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import { CalloutType } from 'types/enums/callOut'
 
 interface Props {
   children: string
@@ -35,9 +36,4 @@ export function Callout(props: Props) {
       <Text size='xs'>{props.children}</Text>
     </div>
   )
-}
-
-export enum CalloutType {
-  INFO,
-  WARNING,
 }

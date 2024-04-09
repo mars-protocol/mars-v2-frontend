@@ -2,19 +2,19 @@ import debounce from 'lodash.debounce'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import estimateExactIn from 'api/swap/estimateExactIn'
+import AssetAmountInput from 'components/common/AssetAmountInput'
 import AvailableLiquidityMessage from 'components/common/AvailableLiquidityMessage'
 import DepositCapMessage from 'components/common/DepositCapMessage'
 import Divider from 'components/common/Divider'
 import LeverageSlider from 'components/common/LeverageSlider'
+import OrderTypeSelector from 'components/common/OrderTypeSelector'
 import Text from 'components/common/Text'
 import { TradeDirectionSelector } from 'components/common/TradeDirectionSelector'
 import AssetSelectorPair from 'components/trade/TradeModule/AssetSelector/AssetSelectorPair'
 import AssetSelectorSingle from 'components/trade/TradeModule/AssetSelector/AssetSelectorSingle'
-import AssetAmountInput from 'components/trade/TradeModule/SwapForm/AssetAmountInput'
 import AutoRepayToggle from 'components/trade/TradeModule/SwapForm/AutoRepayToggle'
+import { TRADE_ORDER_TYPE_TABS } from 'components/trade/TradeModule/SwapForm/constants'
 import MarginToggle from 'components/trade/TradeModule/SwapForm/MarginToggle'
-import OrderTypeSelector from 'components/trade/TradeModule/SwapForm/OrderTypeSelector'
-import { AvailableOrderType } from 'components/trade/TradeModule/SwapForm/OrderTypeSelector/types'
 import TradeSummary from 'components/trade/TradeModule/SwapForm/TradeSummary'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
@@ -361,7 +361,11 @@ export default function SwapForm(props: Props) {
           />
         )}
         <div className='px-3'>
-          <OrderTypeSelector selected={selectedOrderType} onChange={setSelectedOrderType} />
+          <OrderTypeSelector
+            orderTabs={TRADE_ORDER_TYPE_TABS}
+            selected={selectedOrderType}
+            onChange={setSelectedOrderType}
+          />
         </div>
         <div className='flex flex-col w-full gap-6 px-3 mt-6'>
           {isAdvanced ? (

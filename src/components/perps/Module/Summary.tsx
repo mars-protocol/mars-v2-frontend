@@ -94,7 +94,7 @@ export default function PerpsSummary(props: Props) {
   }, [perpsParams, props.amount, props.previousAmount])
 
   return (
-    <div className='flex flex-col bg-white bg-opacity-5 rounded border-[1px] border-white/20'>
+    <div className='flex flex-col bg-white bg-opacity-5 rounded border-[1px] border-white/20 mt-4'>
       <ManageSummary {...props} newAmount={newAmount} />
       <div className='flex flex-col gap-1 px-3 py-4'>
         <Text size='xs' className='mb-2 font-bold'>

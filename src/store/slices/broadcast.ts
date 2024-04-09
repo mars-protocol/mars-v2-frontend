@@ -293,7 +293,6 @@ export default function createBroadcastSlice(
       const funds = options.coins.map((coin) => coin.toCoin())
       const cmContract = get().chainConfig.contracts.creditManager
 
-      console.log(sortFunds(funds))
       const response = get().executeMsg({
         messages: [generateExecutionMessage(get().address, cmContract, msg, sortFunds(funds))],
       })
