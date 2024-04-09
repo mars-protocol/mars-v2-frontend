@@ -131,7 +131,7 @@ export function PerpsModule() {
     if (tradeDirection === 'short') maxAmount = maxAmount.plus(previousAmount)
     if (tradeDirection === 'long') maxAmount = maxAmount.minus(previousAmount)
 
-    return (maxAmount = BigNumber.max(maxAmount, 100000000000))
+    return (maxAmount = BigNumber.max(maxAmount, 100000000))
   }, [computeMaxPerpAmount, perpsAsset, previousAmount, tradeDirection])
 
   const maxAmountLimitOrder = useMemo(() => {

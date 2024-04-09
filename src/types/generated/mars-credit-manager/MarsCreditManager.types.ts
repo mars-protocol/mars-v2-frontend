@@ -670,10 +670,11 @@ export interface DebtShares {
 }
 export type ArrayOfTriggerOrder = TriggerOrder[]
 export interface TriggerOrder {
-  actions: Action[]
-  keeper_fee: Coin
-  triggers: Trigger[]
+  account_id: string
+  order_id: string
+  order: { actions: Action[]; keeper_fee: Coin; triggers: Trigger[] }
 }
+
 export type ArrayOfVaultPositionResponseItem = VaultPositionResponseItem[]
 export interface VaultPositionResponseItem {
   account_id: string
