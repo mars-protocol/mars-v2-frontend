@@ -173,8 +173,12 @@ export function PerpsModule() {
     (tradeDirection: TradeDirection) => {
       setAmount(amount.times(-1))
       setTradeDirection(tradeDirection)
+      if (isLimitOrder) {
+        setAmount(BN_ZERO)
+        setSliderLeverage(1)
+      }
     },
-    [amount],
+    [amount, isLimitOrder],
   )
 
   const onChangeOrderType = useCallback((orderType: AvailableOrderType) => {
