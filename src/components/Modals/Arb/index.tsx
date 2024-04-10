@@ -71,7 +71,7 @@ function ArbModal(props: Props) {
         disabled={false}
       />
       <Button onClick={onConfirm} className='w-full'>
-        Deposit
+        {props.type === 'withdraw' ? 'Withdraw' : 'Deposit'}
       </Button>
     </Modal>
   )
