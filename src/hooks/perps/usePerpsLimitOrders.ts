@@ -12,6 +12,7 @@ export default function usePerpsLimitOrders() {
     accountId && `chains/${chainConfig.id}/perps/limit-orders/${accountId}`,
     () => getLimitOrders(chainConfig, accountId),
     {
+      refreshInterval: 10_000,
       revalidateOnFocus: false,
     },
   )
