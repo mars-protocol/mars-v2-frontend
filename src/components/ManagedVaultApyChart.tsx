@@ -14,7 +14,7 @@ export default function ManagedVaultApyChart(props: Props) {
   const { data } = useManagedVaultApy(props.address)
 
   const [min, max] = useMemo(() => {
-    if (!data) return [0, 100]
+    if (!data || data.length < 2) return [0, 100]
     const min = data.sort((a: any, b: any) => a.value - b.value)
 
     return [Math.floor(min[0].value), Math.ceil(min.at(-1).value)]

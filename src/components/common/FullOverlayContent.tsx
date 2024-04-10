@@ -48,18 +48,14 @@ export default function FullOverlayContent(props: Props) {
       )}
       {props.text && (
         <div>
-          <div className='flex flex-1 flex-row py-3 border-[1px] border-white/20 rounded bg-white bg-opacity-5 pl-3 pr-2 mt-2'>
-            <TextInput {...props.text[0]} />
-          </div>
-          <div className='flex flex-1 flex-row py-3 border-[1px] border-white/20 rounded bg-white bg-opacity-5 pl-3 pr-2 mt-2'>
-            <TextInput {...props.text[1]} />
-          </div>
-          <div className='flex flex-1 flex-row py-3 border-[1px] border-white/20 rounded bg-white bg-opacity-5 pl-3 pr-2 mt-2'>
-            <TextInput {...props.text[2]} />
-          </div>
-          <div className='flex flex-1 flex-row py-3 border-[1px] border-white/20 rounded bg-white bg-opacity-5 pl-3 pr-2 mt-2'>
-            <TextInput {...props.text[3]} />
-          </div>
+          {[0, 1, 2, 3].map((_, i) => (
+            <div
+              key={i}
+              className='flex flex-1 flex-row py-3 border-[1px] border-white/20 rounded bg-white/5 pl-3 pr-2 mt-2'
+            >
+              <TextInput {...props.text![i]} />
+            </div>
+          ))}
         </div>
       )}
       {props.button && (

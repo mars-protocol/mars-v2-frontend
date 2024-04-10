@@ -62,7 +62,7 @@ function Content(props: Props) {
         title: (
           <FormattedNumber
             className='text-xl'
-            amount={props.managedVault ? props.managedVault.apy : apr.toNumber()}
+            amount={props.managedVault ? props.managedVault.apy || 0 : apr.toNumber()}
             options={{
               suffix: '%',
               maxDecimals: apr.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,

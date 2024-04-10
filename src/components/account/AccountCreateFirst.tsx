@@ -109,22 +109,22 @@ export default function AccountCreateFirst() {
               {
                 text: title,
                 onChange: handleTitleChange,
-                placeholder: 'vault title',
+                placeholder: 'Vault Title',
               },
               {
                 text: subTitle,
                 onChange: handleSubTitleChange,
-                placeholder: 'vault subtitle',
+                placeholder: 'Vault Subtitle',
               },
               {
                 text: desc,
                 onChange: handleDescChange,
-                placeholder: 'vault description',
+                placeholder: 'Vault Description',
               },
               {
                 text: nickName,
                 onChange: handleNickNameChange,
-                placeholder: 'vault nickname',
+                placeholder: 'Account nickname',
               },
             ]
           : undefined) as any
