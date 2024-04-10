@@ -13,19 +13,21 @@ import { getRoute } from 'utils/route'
 import AssetImage from '../components/common/assets/AssetImage'
 import DisplayCurrency from '../components/common/DisplayCurrency'
 import { AccountArrowDown, Plus } from '../components/common/Icons'
+import Loading from '../components/common/Loading'
 import useAccountId from '../hooks/useAccountId'
 import { BNCoin } from '../types/classes/BNCoin'
 
 export default function ManagedVaultsPage() {
   const { data: managedVaults } = useArbVault()
 
-  if (!managedVaults) return null
-
   return (
     <div className='grid grid-cols-3 gap-6 w-full'>
-      {managedVaults.map((vault) => (
-        <ManagedVaultCard key={vault.address} vault={vault} />
-      ))}
+      {managedVaults ? (
+        managedVaults.map((vault) => <ManagedVaultCard key={vault.address} vault={vault} />)
+      ) : (
+        <Skeleton count={3} />
+      )}
+      {}
     </div>
   )
 }
@@ -117,7 +119,8 @@ function ManagedVaultCard(props: ManagedVaultCardProps) {
             color='secondary'
             className='w-full'
             leftIcon={<AccountArrowDown />}
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation()
               useStore.setState({ managedVaultModal: { type: 'withdraw', vault: props.vault } })
             }}
           >
@@ -132,7 +135,8 @@ function ManagedVaultCard(props: ManagedVaultCardProps) {
               <Plus />
             </div>
           }
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation()
             console.log('opening modal')
             useStore.setState({ managedVaultModal: { type: 'deposit', vault: props.vault } })
           }}
@@ -141,5 +145,28 @@ function ManagedVaultCard(props: ManagedVaultCardProps) {
         </Button>
       </div>
     </Card>
+  )
+}
+
+type Props = {
+  count: number
+}
+
+function Skeleton(props: Props) {
+  return (
+    <>
+      {[0, 1, 2, 3].map((_, i) => (
+        <Card key={i} className='h-[200px] p-6 gap-6'>
+          <Loading className='h-4 w-10 mb-6' />
+          <Loading className='h-5 w-20 mb-6' />
+          <div className='flex justify-around mb-6'>
+            <Loading className='h-5 w-12' />
+            <Loading className='h-5 w-12' />
+            <Loading className='h-5 w-12' />
+          </div>
+          <Loading className='h-5 w-full' />
+        </Card>
+      ))}
+    </>
   )
 }

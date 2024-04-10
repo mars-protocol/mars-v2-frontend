@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from 'recharts'
 
 import Card from './common/Card'
+import { CircularProgress } from './common/CircularProgress'
 
 import useManagedVaultApy from '../hooks/vaults/useManagedVaultApy'
 
@@ -24,8 +25,8 @@ export default function ManagedVaultApyChart(props: Props) {
       className='flex flex-wrap w-full overflow-hidden gradient-card-content'
       contentClassName='px-4 pb-4 pt-8'
     >
-      <div className='h-[400px] w-full'>
-        {data && (
+      <div className='h-[400px] w-full flex items-center justify-center'>
+        {data ? (
           <ResponsiveContainer width='100%' height='100%'>
             <LineChart
               data={data}
@@ -63,6 +64,8 @@ export default function ManagedVaultApyChart(props: Props) {
               <Line type='monotone' dataKey='value' stroke='#7230d6' dot={false} />
             </LineChart>
           </ResponsiveContainer>
+        ) : (
+          <CircularProgress />
         )}
       </div>
     </Card>
