@@ -179,7 +179,13 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
-    createAccount: async (accountKind: AccountKind, title: string, subtitle: string, description: string, nickname: string) => {
+    createAccount: async (
+      accountKind: AccountKind,
+      title?: string,
+      subtitle?: string,
+      description?: string,
+      nickname?: string,
+    ) => {
       const managedVaultConfig = get().chainConfig.managedVault
 
       const msg: CreditManagerExecuteMsg =

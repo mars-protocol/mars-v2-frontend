@@ -8,14 +8,13 @@ import FarmPage from 'pages/FarmPage'
 import HLSFarmPage from 'pages/HLSFarmPage'
 import HLSStakingPage from 'pages/HLSStakingPage'
 import LendPage from 'pages/LendPage'
+import { ManagedVaultPortfolioPage } from 'pages/ManagedVaultPortfolioPage'
 import ManagedVaultsPage from 'pages/ManagedVaultsPage'
 import PerpsPage from 'pages/PerpsPage'
 import PortfolioAccountPage from 'pages/PortfolioAccountPage'
 import PortfolioPage from 'pages/PortfolioPage'
 import TradePage from 'pages/TradePage'
 import V1Page from 'pages/V1Page'
-
-import { ManagedVaultPortfolioPage } from '../../../pages/ManagedVaultPortfolioPage'
 
 export default function Routes() {
   const chainConfig = useChainConfig()

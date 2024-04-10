@@ -23,7 +23,7 @@ export default function AccountCreateFirst() {
 
   useEffect(() => {
     if (!address) useStore.setState({ focusComponent: { component: <WalletSelect /> } })
-      useStore.setState({accountKind: 'default'})
+    useStore.setState({ accountKind: 'default' })
   }, [address])
 
   const handleApproveTransactionClick = useCallback(async () => {
@@ -36,7 +36,7 @@ export default function AccountCreateFirst() {
         useStore.setState({ focusComponent: null, getStartedModal: true })
       } else {
         navigate(getRoute(getPage(pathname), searchParams, address, accountId))
-        useStore.setState({ 
+        useStore.setState({
           focusComponent: {
             component: <AccountFundFullPage />,
             onClose: () => {
@@ -46,71 +46,89 @@ export default function AccountCreateFirst() {
         })
       }
     }
-  }, [setIsCreating, createAccount, navigate, pathname, searchParams, address, accountKind, title, subTitle, desc, nickName])
+  }, [
+    setIsCreating,
+    createAccount,
+    navigate,
+    pathname,
+    searchParams,
+    address,
+    accountKind,
+    title,
+    subTitle,
+    desc,
+    nickName,
+  ])
 
-  const handleDefaultClick = (async () => {
-    useStore.setState({accountKind: 'default'})
-  })
+  const handleDefaultClick = async () => {
+    useStore.setState({ accountKind: 'default' })
+  }
 
-  const handleFundManagerClick = (async () => {
-    useStore.setState({accountKind: 'fund_manager'})
-  })
-  
-  const handleTitleChange = ((text: string) => {
+  const handleFundManagerClick = async () => {
+    useStore.setState({ accountKind: 'fund_manager' })
+  }
+
+  const handleTitleChange = (text: string) => {
     setTitle(text)
-  })
-  const handleSubTitleChange = ((text: string) => {
+  }
+  const handleSubTitleChange = (text: string) => {
     setSubTitle(text)
-  })
-  const handleDescChange = ((text: string) => {
+  }
+  const handleDescChange = (text: string) => {
     setDesc(text)
-  })
-  const handleNickNameChange = ((text: string) => {
+  }
+  const handleNickNameChange = (text: string) => {
     setNickName(text)
-  })
-
+  }
 
   return (
     <FullOverlayContent
       title='Mint your account'
       copy="We'll require you to authorise a transaction in your wallet in order to begin."
-      select={[{
-        className: 'mt-4 w-full',
-        text: 'Standard',
-        color: accountKind === 'default' ? 'secondary' : 'quaternary',
-        showProgressIndicator: isCreating,
-        onClick: handleDefaultClick,
-        size: 'sm',
-      }, {
-        className: 'mt-4 w-full',
-        text: 'Fund Manager',
-        color: accountKind === 'fund_manager' ? 'secondary' : 'quaternary',
-        showProgressIndicator: isCreating,
-        onClick: handleFundManagerClick,
-        size: 'sm',
-      }]}
-      text={accountKind === 'fund_manager' ? [
+      select={[
         {
-          text: title,
-          onChange: handleTitleChange,
-          placeholder: 'vault title'
+          className: 'mt-4 w-full',
+          text: 'Standard',
+          color: accountKind === 'default' ? 'secondary' : 'quaternary',
+          showProgressIndicator: isCreating,
+          onClick: handleDefaultClick,
+          size: 'sm',
         },
         {
-          text: subTitle,
-          onChange: handleSubTitleChange,
-          placeholder: 'vault subtitle'
+          className: 'mt-4 w-full',
+          text: 'Fund Manager',
+          color: accountKind === 'fund_manager' ? 'secondary' : 'quaternary',
+          showProgressIndicator: isCreating,
+          onClick: handleFundManagerClick,
+          size: 'sm',
         },
-        {
-          text: desc,
-          onChange: handleDescChange,
-          placeholder: 'vault description'
-        },
-        {
-          text: nickName,
-          onChange: handleNickNameChange,
-          placeholder: 'vault nickname'
-        }
-      ] : undefined}
+      ]}
+      text={
+        (accountKind === 'fund_manager'
+          ? [
+              {
+                text: title,
+                onChange: handleTitleChange,
+                placeholder: 'vault title',
+              },
+              {
+                text: subTitle,
+                onChange: handleSubTitleChange,
+                placeholder: 'vault subtitle',
+              },
+              {
+                text: desc,
+                onChange: handleDescChange,
+                placeholder: 'vault description',
+              },
+              {
+                text: nickName,
+                onChange: handleNickNameChange,
+                placeholder: 'vault nickname',
+              },
+            ]
+          : undefined) as any
+      }
       button={{
         className: 'mt-4 w-full',
         text: 'Approve transaction',

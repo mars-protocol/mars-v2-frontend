@@ -1,9 +1,9 @@
 import classNames from 'classnames'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 
 interface Props {
   text: string | undefined
-  className: string
+  className?: string
   style?: {}
   disabled?: boolean
   placeholder?: string

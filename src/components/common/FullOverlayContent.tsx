@@ -9,6 +9,7 @@ interface TextProps {
   text: string
   className?: string
   onChange: (text: string) => void
+  placeholder: string
 }
 
 interface Props {
@@ -17,7 +18,7 @@ interface Props {
   className?: string
   children?: React.ReactNode
   select?: [ButtonProps, ButtonProps]
-  text?: [TextProps, TextProps, TextProps, TextProps]
+  text?: TextProps[] | undefined
   button?: ButtonProps
   docs?: DocLinkType
 }
@@ -60,8 +61,7 @@ export default function FullOverlayContent(props: Props) {
             <TextInput {...props.text[3]} />
           </div>
         </div>
-      )
-      }
+      )}
       {props.button && (
         <div className='flex justify-center w-full'>
           <Button {...props.button} />
