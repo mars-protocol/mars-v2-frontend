@@ -123,6 +123,7 @@ function getRules() {
 function getTransactionCoinsGrouped(result: BroadcastResult, address: string, isHLS: boolean) {
   const transactionCoins: TransactionCoin[] = []
 
+  console.log(result.result)
   // Event types that include coins are wasm, token_swapped and pool_joined
   // This should be streamlined by SC one day
   const eventTypes = ['wasm', 'token_swapped', 'pool_joined']
