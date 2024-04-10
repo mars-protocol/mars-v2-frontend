@@ -79,7 +79,7 @@ const Pion1: ChainConfig = {
     },
   },
   managedVault: {
-    codeId: 4316,
+    codeId: 4354,
     baseToken: 'ibc/4C19E7EC06C1AB2EC2D70C6855FEB6D48E9CE174913991DA0A517D21978E7E42',
     vaultTokenSubdenom: 'uUSDv',
   },

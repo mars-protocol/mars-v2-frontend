@@ -45,7 +45,7 @@ export default function AccountMenuContent(props: Props) {
 
   const hasCreditAccounts = !!accountIds?.length
   const isAccountSelected =
-    hasCreditAccounts && accountId && isNumber(accountId) && accountIds.includes(accountId)
+    hasCreditAccounts && accountId && accountIds.includes(accountId)
 
   const performCreateAccount = useCallback(async () => {
     setShowMenu(false)
@@ -89,7 +89,7 @@ export default function AccountMenuContent(props: Props) {
       >
         {hasCreditAccounts
           ? isAccountSelected
-            ? `Credit Account ${accountId}`
+            ?  isNumber(accountId) ? `Credit Account ${accountId}` : accountId
             : 'Select Account'
           : 'Create Account'}
       </Button>
