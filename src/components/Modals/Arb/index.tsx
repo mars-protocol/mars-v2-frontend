@@ -22,6 +22,7 @@ export default function ArbModalController() {
       type={modal.type}
       vaultBaseDenom={arbVault.denoms.primary}
       vaultAddress={arbVault.address}
+      vaultToken={arbVault.denoms.vault}
     />
   )
 }
@@ -31,6 +32,7 @@ type Props = {
   type: 'deposit' | 'withdraw'
   vaultBaseDenom: string
   vaultAddress: string
+  vaultToken: string
 }
 function ArbModal(props: Props) {
   const [amount, setAmount] = useState(BN(0))
@@ -38,27 +40,35 @@ function ArbModal(props: Props) {
   const { data: walletBalances } = useWalletBalances(address)
 
   const maxAmount = useMemo(() => {
-    const walletBalance = walletBalances?.find((balance) => balance.denom === props.vaultBaseDenom)
+    const targetDenom = props.type === 'withdraw' ? props.vaultToken : props.vaultBaseDenom
+    const walletBalance = walletBalances?.find((balance) => balance.denom === targetDenom)
     if (!walletBalance) return BN(0)
     return BN(walletBalance.amount)
-  }, [props.vaultBaseDenom, walletBalances])
+  }, [props.type, props.vaultBaseDenom, props.vaultToken, walletBalances])
 
   const onClose = useCallback(() => {
     useStore.setState({ arbModal: null })
   }, [])
 
   const onConfirm = useCallback(() => {
-    useStore.getState().depositArbVault({
-      coin: BNCoin.fromDenomAndBigNumber(props.vaultBaseDenom, amount),
-      vaultAddress: props.vaultAddress,
-    })
+    if (props.type === 'withdraw') {
+      useStore.getState().withdrawFromArbVault({
+        coin: BNCoin.fromDenomAndBigNumber(props.vaultToken, amount),
+        vaultAddress: props.vaultAddress,
+      })
+    } else {
+      useStore.getState().depositArbVault({
+        coin: BNCoin.fromDenomAndBigNumber(props.vaultBaseDenom, amount),
+        vaultAddress: props.vaultAddress,
+      })
+    }
     onClose()
   }, [amount, onClose, props.vaultAddress, props.vaultBaseDenom])
 
   return (
     <Modal
       onClose={onClose}
-      header={`${props.type.toLocaleUpperCase()} into Arb strategy`}
+      header={`${props.type === 'withdraw' ? 'Withdraw from' : 'Deposit into'} Vault`}
       className='p-6'
       modalClassName='max-w-[400px]'
       contentClassName='gap-6 flex flex-col'

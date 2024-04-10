@@ -149,6 +149,7 @@ interface BroadcastSlice {
   withdrawFromPerpsVault: (options: { accountId: string }) => Promise<boolean>
   v1Action: (type: V1ActionType, funds: BNCoin) => Promise<boolean>
   depositArbVault: (options: { coin: BNCoin; vaultAddress: string }) => Promise<boolean>
+  withdrawFromArbVault: (options: { coin: BNCoin; vaultAddress: string }) => Promise<boolean>
 }
 
 type V1ActionType = 'withdraw' | 'deposit' | 'borrow' | 'repay'

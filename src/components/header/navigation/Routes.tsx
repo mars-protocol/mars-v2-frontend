@@ -31,7 +31,7 @@ export default function Routes() {
         <Route path='/trade-advanced' element={<TradePage />} />
         {chainConfig.perps && <Route path='/perps' element={<PerpsPage />} />}
         <Route path='/farm' element={<FarmPage />} />
-        <Route path='/arb' element={<ArbStrategiesPage />} />
+        <Route path='/vaults' element={<ArbStrategiesPage />} />
         <Route path='/lend' element={<LendPage />} />
         <Route path='/borrow' element={<BorrowPage />} />
         <Route path='/portfolio' element={<PortfolioPage />} />
@@ -45,7 +45,7 @@ export default function Routes() {
           <Route path='trade-advanced' element={<TradePage />} />
           {chainConfig.perps && <Route path='perps' element={<PerpsPage />} />}
           <Route path='farm' element={<FarmPage />} />
-          <Route path='arb' element={<ArbStrategiesPage />} />
+          <Route path='vaults' element={<ArbStrategiesPage />} />
           <Route path='lend' element={<LendPage />} />
           <Route path='borrow' element={<BorrowPage />} />
           <Route path='portfolio' element={<PortfolioPage />} />

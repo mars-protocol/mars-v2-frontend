@@ -29,7 +29,7 @@ const Pion1: ChainConfig = {
     creditManager: 'neutron1g77y2r74d9zhvu4ttc3w0nszxc9wxsy7uzc6f32lxpeuascgx24qz4p6zx',
     accountNft: 'neutron14rjvpanqdm0j7ewfu8g5vqv0acfreuhp9rt2pw28cfy87a466lpqw207ez',
     perps: 'neutron186qk9zs2ye8ws498dnykk6e0vgh27skvxe70u0us5gk2jw6mfk8qj46tx8',
-    pyth: 'neutron15ldst8t80982akgr8w8ekcytejzkmfpgdkeq4xgtge48qs7435jqp87u3t'
+    pyth: 'neutron15ldst8t80982akgr8w8ekcytejzkmfpgdkeq4xgtge48qs7435jqp87u3t',
   },
   endpoints: {
     routes: 'https://testnet.astroport.fi/api/routes',
@@ -46,17 +46,17 @@ const Pion1: ChainConfig = {
   network: NETWORK.TESTNET,
   vaults: [
     {
-      address: 'neutron1jvx3unsq0fsaf7smdefzz7wah437mhnl2paaquc4jzaj2vzefa2qteklve',
+      address: 'neutron1esczez5ga0p99enddu6d0r49myh73plaas07dqelhmvv4f82ddjqhyc96x',
       denoms: {
         primary: 'ibc/4C19E7EC06C1AB2EC2D70C6855FEB6D48E9CE174913991DA0A517D21978E7E42',
         secondary: 'untrn',
         lp: '',
-        vault: 'factory/neutron1jvx3unsq0fsaf7smdefzz7wah437mhnl2paaquc4jzaj2vzefa2qteklve/vusdc',
+        vault: 'factory/neutron1esczez5ga0p99enddu6d0r49myh73plaas07dqelhmvv4f82ddjqhyc96x/vusdc',
       },
       name: 'Perps Funding Rate Bot',
       provider: 'Mars Wif Bots',
       lockup: {
-        duration: 5,
+        duration: 0,
         timeframe: 'days',
       },
       symbols: {
@@ -81,7 +81,7 @@ const Pion1: ChainConfig = {
   managedVault: {
     codeId: 4316,
     baseToken: 'ibc/4C19E7EC06C1AB2EC2D70C6855FEB6D48E9CE174913991DA0A517D21978E7E42',
-    vaultTokenSubdenom: 'uUSDv'
+    vaultTokenSubdenom: 'uUSDv',
   },
   features: ['ibc-transfer', 'ibc-go'],
   gasPrice: '0.025untrn',

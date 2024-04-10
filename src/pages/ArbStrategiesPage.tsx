@@ -75,7 +75,7 @@ export function ArbStrategiesPage() {
             className='w-full'
             leftIcon={<AccountArrowDown />}
             onClick={() => {
-              useStore.setState({ arbModal: { type: 'deposit' } })
+              useStore.setState({ arbModal: { type: 'withdraw' } })
             }}
           >
             Withdraw

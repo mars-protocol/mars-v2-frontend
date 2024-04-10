@@ -182,15 +182,18 @@ export default function createBroadcastSlice(
     createAccount: async (accountKind: AccountKind) => {
       const managedVaultConfig = get().chainConfig.managedVault
 
-      const msg: CreditManagerExecuteMsg = accountKind === 'fund_manager' && managedVaultConfig ? {
-          create_credit_account_v2: {
-            code_id: managedVaultConfig.codeId,
-            base_token: managedVaultConfig.baseToken,
-            vault_token_subdenom: managedVaultConfig.vaultTokenSubdenom
-          }
-      } : {
-        create_credit_account: accountKind,
-      }
+      const msg: CreditManagerExecuteMsg =
+        accountKind === 'fund_manager' && managedVaultConfig
+          ? {
+              create_credit_account_v2: {
+                code_id: managedVaultConfig.codeId,
+                base_token: managedVaultConfig.baseToken,
+                vault_token_subdenom: managedVaultConfig.vaultTokenSubdenom,
+              },
+            }
+          : {
+              create_credit_account: accountKind,
+            }
       const cmContract = get().chainConfig.contracts.creditManager
 
       const response = get().executeMsg({
@@ -917,6 +920,24 @@ export default function createBroadcastSlice(
     depositArbVault: (options: { coin: BNCoin; vaultAddress: string }) => {
       const msg: any = {
         deposit: {
+          amount: options.coin.amount,
+        },
+      }
+      const response = get().executeMsg({
+        messages: [
+          generateExecutionMessage(get().address, options.vaultAddress, msg, [
+            options.coin.toCoin(),
+          ]),
+        ],
+      })
+
+      get().handleTransaction({ response })
+
+      return response.then((response) => !!response.result)
+    },
+    withdrawFromArbVault: (options: { coin: BNCoin; vaultAddress: string }) => {
+      const msg: any = {
+        redeem: {
           amount: options.coin.amount,
         },
       }
