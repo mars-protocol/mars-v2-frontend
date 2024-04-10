@@ -684,12 +684,12 @@ export default function createBroadcastSlice(
         },
       ]
 
-      const msg: CreditManagerExecuteMsg =
-        options.keeperFee && options.triggers
-          ? {
-              update_credit_account: {
-                account_id: options.accountId,
-                actions: [
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions:
+            options.keeperFee && options.triggers
+              ? [
                   {
                     create_trigger_order: {
                       actions,
@@ -697,15 +697,10 @@ export default function createBroadcastSlice(
                       triggers: options.triggers,
                     },
                   },
-                ],
-              },
-            }
-          : {
-              update_credit_account: {
-                account_id: options.accountId,
-                actions,
-              },
-            }
+                ]
+              : actions,
+        },
+      }
 
       const cmContract = get().chainConfig.contracts.creditManager
 
@@ -716,15 +711,33 @@ export default function createBroadcastSlice(
       get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
-    closePerpPosition: async (options: { accountId: string; denom: string }) => {
+    closePerpPosition: async (options: {
+      accountId: string
+      denom: string
+      keeperFee?: BNCoin
+      triggers?: Trigger[]
+    }) => {
+      const actions = [
+        {
+          close_perp: { denom: options.denom },
+        },
+      ]
+
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
-          actions: [
-            {
-              close_perp: { denom: options.denom },
-            },
-          ],
+          actions:
+            options.keeperFee && options.triggers
+              ? [
+                  {
+                    create_trigger_order: {
+                      actions,
+                      keeper_fee: options.keeperFee.toCoin(),
+                      triggers: options.triggers,
+                    },
+                  },
+                ]
+              : actions,
         },
       }
 
@@ -742,34 +755,48 @@ export default function createBroadcastSlice(
       accountId: string
       coin: BNCoin
       changeDirection: boolean
+      keeperFee?: BNCoin
+      triggers?: Trigger[]
     }) => {
+      const actions = [
+        ...(options.changeDirection
+          ? [
+              {
+                close_perp: {
+                  denom: options.coin.denom,
+                },
+              },
+              {
+                open_perp: options.coin.toSignedCoin(),
+              },
+            ]
+          : [
+              {
+                modify_perp: {
+                  denom: options.coin.denom,
+                  new_size: options.coin.amount.toString() as any,
+                },
+              },
+            ]),
+      ]
+
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
-          actions: [
-            ...(options.changeDirection
+          actions:
+            options.keeperFee && options.triggers
               ? [
                   {
-                    close_perp: {
-                      denom: options.coin.denom,
+                    create_trigger_order: {
+                      actions,
+                      keeper_fee: options.keeperFee.toCoin(),
+                      triggers: options.triggers,
                     },
-                  },
-                  {
-                    open_perp: options.coin.toSignedCoin(),
                   },
                 ]
-              : [
-                  {
-                    modify_perp: {
-                      denom: options.coin.denom,
-                      new_size: options.coin.amount.toString() as any,
-                    },
-                  },
-                ]),
-          ],
+              : actions,
         },
       }
-
       const cmContract = get().chainConfig.contracts.creditManager
 
       const response = get().executeMsg({

@@ -206,4 +206,12 @@ interface TransactionEventAttribute {
   value: string
 }
 
-type TransactionType = 'default' | 'oracle' | 'create' | 'burn' | 'unlock' | 'transaction'
+type TransactionType =
+  | 'default'
+  | 'oracle'
+  | 'create'
+  | 'burn'
+  | 'unlock'
+  | 'transaction'
+  | 'cancel-order'
+  | 'create-order'

@@ -42,6 +42,14 @@ export async function generateToast(
       toast.message = 'Deleted the account'
       break
 
+    case 'cancel-order':
+      toast.message = 'Canceled Limit Order'
+      break
+
+    case 'create-order':
+      toast.message = 'Create Limit Order'
+      break
+
     case 'unlock':
       toast.message = 'Started the unlock period of a vault position'
       break
