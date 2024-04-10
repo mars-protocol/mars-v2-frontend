@@ -3,6 +3,13 @@ import classNames from 'classnames'
 import Button from 'components/common/Button'
 import DocsLink from 'components/common/DocsLink'
 import Text from 'components/common/Text'
+import TextInput from 'components/common/TextInput'
+
+interface TextProps {
+  text: string
+  className?: string
+  onChange: (text: string) => void
+}
 
 interface Props {
   title: string
@@ -10,6 +17,7 @@ interface Props {
   className?: string
   children?: React.ReactNode
   select?: [ButtonProps, ButtonProps]
+  text?: [TextProps, TextProps, TextProps, TextProps]
   button?: ButtonProps
   docs?: DocLinkType
 }
@@ -37,6 +45,23 @@ export default function FullOverlayContent(props: Props) {
           <Button {...props.select[1]} />
         </div>
       )}
+      {props.text && (
+        <div>
+          <div className='flex flex-1 flex-row py-3 border-[1px] border-white/20 rounded bg-white bg-opacity-5 pl-3 pr-2 mt-2'>
+            <TextInput {...props.text[0]} />
+          </div>
+          <div className='flex flex-1 flex-row py-3 border-[1px] border-white/20 rounded bg-white bg-opacity-5 pl-3 pr-2 mt-2'>
+            <TextInput {...props.text[1]} />
+          </div>
+          <div className='flex flex-1 flex-row py-3 border-[1px] border-white/20 rounded bg-white bg-opacity-5 pl-3 pr-2 mt-2'>
+            <TextInput {...props.text[2]} />
+          </div>
+          <div className='flex flex-1 flex-row py-3 border-[1px] border-white/20 rounded bg-white bg-opacity-5 pl-3 pr-2 mt-2'>
+            <TextInput {...props.text[3]} />
+          </div>
+        </div>
+      )
+      }
       {props.button && (
         <div className='flex justify-center w-full'>
           <Button {...props.button} />

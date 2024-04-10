@@ -31,14 +31,15 @@ export type ExecuteMsg =
       create_credit_account: AccountKind
     }
   | {
-      create_credit_account_v2: {
-        base_token: string
-        code_id: number
-        description?: string | null
-        subtitle?: string | null
-        title?: string | null
-        vault_token_subdenom: string
-      }
+  create_credit_account_v2: {
+    code_id: number,
+    base_token: string,
+    vault_token_subdenom: string,
+    title?: string,
+    subtitle?: string,
+    description?: string,
+    nickname?: string,
+  }
     }
   | {
       update_credit_account: {
