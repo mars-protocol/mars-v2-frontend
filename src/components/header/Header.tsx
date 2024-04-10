@@ -4,7 +4,7 @@ import { isMobile } from 'react-device-detect'
 
 import AccountMenu from 'components/account/AccountMenu'
 import EscButton from 'components/common/Button/EscButton'
-import { Coins, CoinsSwap, Logo } from 'components/common/Icons'
+import { Coins, CoinsSwap } from 'components/common/Icons'
 import Settings from 'components/common/Settings'
 import ChainSelect from 'components/header/ChainSelect'
 import DesktopNavigation from 'components/header/navigation/desktop/DesktopNavigation'
@@ -40,6 +40,7 @@ const menuTree = (walletId: WalletID, chainConfig: ChainConfig): MenuTreeEntry[]
   },
   ...(chainConfig.perps ? [{ pages: ['perps'] as Page[], label: 'Perps' }] : []),
   { pages: chainConfig.farm || chainConfig.perps ? ['lend', 'farm'] : ['lend'], label: 'Earn' },
+  { pages: ['arb'], label: 'Arb strategies' },
   { pages: ['borrow'], label: 'Borrow' },
   ...(chainConfig.hls ? [{ pages: ['hls-staking'] as Page[], label: 'High Leverage' }] : []),
   { pages: ['portfolio'], label: 'Portfolio' },
@@ -95,8 +96,9 @@ export default function Header() {
             )}
           >
             <NavLink isHome item={{ pages: ['trade'], label: 'home' }}>
-              <span className='block w-10 h-10'>
-                <Logo className='text-white' />
+              <span className='block w-10 h-10 mb-3'>
+                <img src='/mars-wif-hat.png' alt='mars wif hat' />
+                {/*<Logo className='text-white' />*/}
               </span>
             </NavLink>
             {!isMobile && <DesktopNavigation menuTree={isV1 ? menuTreeV1 : menuTree} />}

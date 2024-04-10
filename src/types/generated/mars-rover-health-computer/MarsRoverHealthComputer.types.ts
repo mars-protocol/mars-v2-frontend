@@ -19,7 +19,7 @@ export type HlsAssetTypeForAddr =
     }
 export type Addr = string
 export type Uint128 = string
-export type AccountKind = 'default' | 'high_levered_strategy'
+export type AccountKind = 'default' | 'high_levered_strategy' | 'fund_manager'
 export type VaultPositionAmount =
   | {
       unlocked: VaultAmount

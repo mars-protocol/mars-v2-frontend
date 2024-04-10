@@ -324,6 +324,20 @@ export interface MarsCreditManagerInterface extends MarsCreditManagerReadOnlyInt
     memo?: string,
     _funds?: Coin[],
   ) => Promise<ExecuteResult>
+  createCreditAccountV2: (
+    {
+      baseToken,
+      codeId,
+      vaultTokenSubdenom,
+    }: {
+      baseToken: string
+      codeId: number
+      vaultTokenSubdenom: string
+    },
+    fee?: number | StdFee | 'auto',
+    memo?: string,
+    _funds?: Coin[],
+  ) => Promise<ExecuteResult>
   updateCreditAccount: (
     {
       accountId,
@@ -395,6 +409,7 @@ export class MarsCreditManagerClient
     this.sender = sender
     this.contractAddress = contractAddress
     this.createCreditAccount = this.createCreditAccount.bind(this)
+    this.createCreditAccountV2 = this.createCreditAccountV2.bind(this)
     this.updateCreditAccount = this.updateCreditAccount.bind(this)
     this.repayFromWallet = this.repayFromWallet.bind(this)
     this.updateConfig = this.updateConfig.bind(this)
@@ -413,6 +428,35 @@ export class MarsCreditManagerClient
       this.contractAddress,
       {
         create_credit_account: {},
+      },
+      fee,
+      memo,
+      _funds,
+    )
+  }
+  createCreditAccountV2 = async (
+    {
+      baseToken,
+      codeId,
+      vaultTokenSubdenom,
+    }: {
+      baseToken: string
+      codeId: number
+      vaultTokenSubdenom: string
+    },
+    fee: number | StdFee | 'auto' = 'auto',
+    memo?: string,
+    _funds?: Coin[],
+  ): Promise<ExecuteResult> => {
+    return await this.client.execute(
+      this.sender,
+      this.contractAddress,
+      {
+        create_credit_account_v2: {
+          base_token: baseToken,
+          code_id: codeId,
+          vault_token_subdenom: vaultTokenSubdenom,
+        },
       },
       fee,
       memo,

@@ -12,6 +12,7 @@ type Page =
   | 'governance'
   | 'execute'
   | 'v1'
+  | 'arb'
 
 type OsmosisRouteResponse = {
   amount_in: {

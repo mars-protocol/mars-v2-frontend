@@ -26,6 +26,33 @@ export default async function getAccount(
 
   const depositedVaults = await getDepositedVaults(accountId, chainConfig, accountPosition)
 
+  // const arbVault: DepositedVault = {
+  //
+  //   address: 'neutron1lsfp7svm3r09zqqxz39d6dcy57m48dzs0xhvcrtvm7ek6esc2x4sx2vaqf',
+  //     denoms: {
+  //   primary: 'ibc/4C19E7EC06C1AB2EC2D70C6855FEB6D48E9CE174913991DA0A517D21978E7E42',
+  //     secondary: '',
+  //     lp: '',
+  //     vault: '',
+  // },
+  //   name: 'NTRN Funding Rate Arb.',
+  //     provider: 'Mars Wif Bots',
+  //   lockup: {
+  //   duration: 5,
+  //     timeframe: 'days',
+  // },
+  //   symbols: {
+  //     primary: 'USDC',
+  //       secondary: '',
+  //   },
+  //   ltv: {
+  //     max: 0.67,
+  //     liq: 0.6
+  //   },
+  //
+  // }
+  //
+
   if (accountPosition) {
     return {
       id: accountPosition.account_id,
