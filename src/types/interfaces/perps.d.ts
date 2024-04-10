@@ -17,7 +17,7 @@ interface PerpPositionRow extends PerpsPosition {
   asset: Asset
   type: PerpsPositionType
   liquidationPrice: BigNumber
-  leverage: number
+  leverage: number | null
 }
 
 interface PerpsPnL {

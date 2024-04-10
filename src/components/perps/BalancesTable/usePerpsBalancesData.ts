@@ -81,11 +81,7 @@ export default function usePerpsBalancesTable() {
           entryPrice: BN(limitOrder.trigger_price),
           currentPrice: assetPrice,
           liquidationPrice: BN_ONE, // TODO: 📈 Get actual liquidation price from HC
-          leverage: BN(limitOrder.trigger_price)
-            .times(demagnify(amount.abs(), asset))
-            .div(netValue)
-            .plus(1)
-            .toNumber(),
+          leverage: null,
         } as PerpPositionRow
       })
 

@@ -23,7 +23,9 @@ export default function Leverage(props: Props) {
   return (
     <TitleAndSubCell
       title={'-'}
-      sub={<FormattedNumber amount={props.leverage} options={{ suffix: 'x' }} />}
+      sub={
+        props.leverage ? <FormattedNumber amount={props.leverage} options={{ suffix: 'x' }} /> : ''
+      }
     />
   )
 }

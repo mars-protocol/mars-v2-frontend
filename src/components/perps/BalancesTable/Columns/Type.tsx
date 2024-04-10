@@ -1,5 +1,4 @@
 import Text from 'components/common/Text'
-import { capitalizeFirstLetter } from 'utils/helpers'
 
 export const TYPE_META = {
   accessorKey: 'type',
@@ -14,8 +13,11 @@ interface Props {
 
 export function Type(props: Props) {
   return (
-    <Text size='xs' className='text-white/60'>
-      {capitalizeFirstLetter(props.type)}
+    <Text
+      size='xs'
+      className='inline-block px-2 py-0.5 capitalize rounded-sm bg-white/20 text-white/80'
+    >
+      {props.type}
     </Text>
   )
 }
