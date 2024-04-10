@@ -9,6 +9,7 @@ interface Props {
   copy: string
   className?: string
   children?: React.ReactNode
+  select?: [ButtonProps, ButtonProps]
   button?: ButtonProps
   docs?: DocLinkType
 }
@@ -29,6 +30,12 @@ export default function FullOverlayContent(props: Props) {
       </Text>
       {props.children && (
         <div className='relative flex flex-wrap justify-center w-full pt-4'>{props.children}</div>
+      )}
+      {props.select && (
+        <div className='flex justify-center w-full'>
+          <Button {...props.select[0]} />
+          <Button {...props.select[1]} />
+        </div>
       )}
       {props.button && (
         <div className='flex justify-center w-full'>

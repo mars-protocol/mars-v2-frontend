@@ -179,9 +179,16 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
-
     createAccount: async (accountKind: AccountKind) => {
-      const msg: CreditManagerExecuteMsg = {
+      const managedVaultConfig = get().chainConfig.managedVault
+
+      const msg: CreditManagerExecuteMsg = accountKind === 'fund_manager' && managedVaultConfig ? {
+          create_credit_account_v2: {
+            code_id: managedVaultConfig.codeId,
+            base_token: managedVaultConfig.baseToken,
+            vault_token_subdenom: managedVaultConfig.vaultTokenSubdenom
+          }
+      } : {
         create_credit_account: accountKind,
       }
       const cmContract = get().chainConfig.contracts.creditManager

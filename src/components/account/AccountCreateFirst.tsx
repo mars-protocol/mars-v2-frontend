@@ -15,18 +15,20 @@ export default function AccountCreateFirst() {
   const createAccount = useStore((s) => s.createAccount)
   const [isCreating, setIsCreating] = useToggle(false)
   const [searchParams] = useSearchParams()
+  const accountKind = useStore((s) => s.accountKind)
 
   useEffect(() => {
     if (!address) useStore.setState({ focusComponent: { component: <WalletSelect /> } })
+      useStore.setState({accountKind: 'default'})
   }, [address])
 
-  const handleClick = useCallback(async () => {
+  const handleApproveTransactionClick = useCallback(async () => {
     setIsCreating(true)
-    const accountId = await createAccount('default')
+    const accountId = await createAccount(accountKind)
     setIsCreating(false)
     if (accountId) {
       navigate(getRoute(getPage(pathname), searchParams, address, accountId))
-      useStore.setState({
+      useStore.setState({ 
         focusComponent: {
           component: <AccountFundFullPage />,
           onClose: () => {
@@ -35,18 +37,41 @@ export default function AccountCreateFirst() {
         },
       })
     }
-  }, [setIsCreating, createAccount, navigate, pathname, searchParams, address])
+  }, [setIsCreating, createAccount, navigate, pathname, searchParams, address, accountKind])
+
+  const handleDefaultClick = (async () => {
+    useStore.setState({accountKind: 'default'})
+  })
+
+  const handleFundManagerClick = (async () => {
+    useStore.setState({accountKind: 'fund_manager'})
+  })
 
   return (
     <FullOverlayContent
       title='Mint your account'
       copy="We'll require you to authorise a transaction in your wallet in order to begin."
+      select={[{
+        className: 'mt-4 w-full',
+        text: 'Standard',
+        color: accountKind === 'default' ? 'secondary' : 'quaternary',
+        showProgressIndicator: isCreating,
+        onClick: handleDefaultClick,
+        size: 'sm',
+      }, {
+        className: 'mt-4 w-full',
+        text: 'Fund Manager',
+        color: accountKind === 'fund_manager' ? 'secondary' : 'quaternary',
+        showProgressIndicator: isCreating,
+        onClick: handleFundManagerClick,
+        size: 'sm',
+      }]}
       button={{
         className: 'mt-4 w-full',
         text: 'Approve transaction',
         color: 'tertiary',
         showProgressIndicator: isCreating,
-        onClick: handleClick,
+        onClick: handleApproveTransactionClick,
         size: 'lg',
       }}
       docs='account'

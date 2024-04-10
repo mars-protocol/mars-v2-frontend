@@ -31,6 +31,13 @@ export type ExecuteMsg =
       create_credit_account: AccountKind
     }
   | {
+  create_credit_account_v2: {
+    code_id: number,
+    base_token: string,
+    vault_token_subdenom: string
+  }
+    }
+  | {
       update_credit_account: {
         account_id: string
         actions: Action[]
@@ -58,7 +65,7 @@ export type ExecuteMsg =
   | {
       callback: CallbackMsg
     }
-export type AccountKind = 'default' | 'high_levered_strategy'
+export type AccountKind = 'default' | 'high_levered_strategy' | 'fund_manager'
 export type Action =
   | {
       deposit: Coin

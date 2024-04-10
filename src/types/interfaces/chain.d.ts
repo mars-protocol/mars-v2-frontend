@@ -35,6 +35,11 @@ interface ChainConfig {
       stride: string
     }
   }
+  managedVault?: {
+    codeId: number
+    baseToken: string
+    vaultTokenSubdenom: string
+  }
   explorerName: string
   features: ('ibc-transfer' | 'ibc-go')[]
   gasPrice: string

@@ -49,22 +49,7 @@ export default function AccountMenuContent(props: Props) {
 
   const performCreateAccount = useCallback(async () => {
     setShowMenu(false)
-    setIsCreating(true)
-    const accountId = await createAccount('default')
-    setIsCreating(false)
-
-    if (accountId) {
-      navigate(getRoute(getPage(pathname), searchParams, address, accountId))
-      if (enableAutoLendGlobal) enableAutoLendAccountId(accountId)
-      useStore.setState({
-        focusComponent: {
-          component: <AccountFund />,
-          onClose: () => {
-            useStore.setState({ getStartedModal: true })
-          },
-        },
-      })
-    }
+    useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
   }, [
     setShowMenu,
     setIsCreating,
