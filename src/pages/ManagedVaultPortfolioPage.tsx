@@ -13,7 +13,7 @@ import { ChevronLeft } from '../components/common/Icons'
 import useChainConfig from '../hooks/useChainConfig'
 import useArbVault from '../hooks/vaults/useArbVault'
 
-export function ManagedVaultPortfolioPage() {
+export default function ManagedVaultPortfolioPage() {
   const router = useRouter()
   const { pathname } = useLocation()
   const chainConfig = useChainConfig()
