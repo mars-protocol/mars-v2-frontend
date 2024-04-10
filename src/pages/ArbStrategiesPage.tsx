@@ -65,7 +65,7 @@ export function ArbStrategiesPage() {
         </div>
         <div className='flex flex-col gap-2 items-center'>
           <p className='text-white/60 text-xs'>APY</p>
-          <p className=''>60%</p>
+          <p className=''>{arbVault.apy ? arbVault.apy + '%' : '-'}</p>
         </div>
       </div>
       <div className='flex gap-4'>

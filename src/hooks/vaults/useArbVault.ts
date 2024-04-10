@@ -19,10 +19,15 @@ export default function useArbVault() {
       total_vault_token_supply: {},
     })
 
+    const apy = await fetch(
+      `https://mars-wif-bots-5e8e.onrender.com/api/vaults/${vaults[0].address}/apy`,
+    ).then((res) => res.json().then((data) => data[0]?.apy))
+
     return {
       ...vaults[0],
       tvl: BNCoin.fromDenomAndBigNumber(vaults[0].denoms.primary, BN(totalAssets)),
       vaultTokenSupply: BN(totalVaultTokens),
+      apy,
     }
   })
 }
