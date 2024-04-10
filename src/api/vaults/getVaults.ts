@@ -13,6 +13,7 @@ export default async function getVaults(chainConfig: ChainConfig): Promise<Vault
   const hlsStrategies = resolveHLSStrategies('vault', HLSAssets)
 
   const vaults: Vault[] = []
+
   await $vaultUtilizations.then((vaultUtilizations) => {
     return vaultConfigs.map((vaultConfig) => {
       const vaultMetaData = vaultMetaDatas.find(

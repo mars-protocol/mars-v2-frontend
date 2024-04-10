@@ -39,6 +39,7 @@ export const Deposit = (props: Props) => {
 
     const vault = props.vault as Vault
 
+    console.log('trying to enter the vault ')
     useStore.setState({
       vaultModal: {
         vault,

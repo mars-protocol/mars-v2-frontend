@@ -914,5 +914,23 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
+    depositArbVault: (options: { coin: BNCoin; vaultAddress: string }) => {
+      const msg: any = {
+        deposit: {
+          amount: options.coin.amount,
+        },
+      }
+      const response = get().executeMsg({
+        messages: [
+          generateExecutionMessage(get().address, options.vaultAddress, msg, [
+            options.coin.toCoin(),
+          ]),
+        ],
+      })
+
+      get().handleTransaction({ response })
+
+      return response.then((response) => !!response.result)
+    },
   }
 }

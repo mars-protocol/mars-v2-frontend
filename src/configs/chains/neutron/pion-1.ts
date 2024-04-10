@@ -44,7 +44,27 @@ const Pion1: ChainConfig = {
     },
   },
   network: NETWORK.TESTNET,
-  vaults: [],
+  vaults: [
+    {
+      address: 'neutron1jvx3unsq0fsaf7smdefzz7wah437mhnl2paaquc4jzaj2vzefa2qteklve',
+      denoms: {
+        primary: 'ibc/4C19E7EC06C1AB2EC2D70C6855FEB6D48E9CE174913991DA0A517D21978E7E42',
+        secondary: 'untrn',
+        lp: '',
+        vault: 'factory/neutron1jvx3unsq0fsaf7smdefzz7wah437mhnl2paaquc4jzaj2vzefa2qteklve/vusdc',
+      },
+      name: 'Perps Funding Rate Bot',
+      provider: 'Mars Wif Bots',
+      lockup: {
+        duration: 5,
+        timeframe: 'days',
+      },
+      symbols: {
+        primary: 'USDC',
+        secondary: '',
+      },
+    },
+  ],
   explorerName: 'Mintscan',
   bech32Config: Bech32Address.defaultBech32Config('neutron'),
   defaultCurrency: {

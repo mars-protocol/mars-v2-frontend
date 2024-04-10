@@ -2,6 +2,7 @@ import {
   AccountDeleteController,
   AddVaultBorrowAssetsModal,
   AlertDialogController,
+  ArbModal,
   BorrowModal,
   FundAndWithdrawModal,
   GetStartedModal,
@@ -38,6 +39,7 @@ export default function ModalsContainer() {
       <PerpsVaultModal />
       <V1DepositAndWithdraw />
       <V1BorrowAndRepay />
+      <ArbModal />
     </>
   )
 }
