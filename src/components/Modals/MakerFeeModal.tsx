@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import Modal from 'components/Modals/Modal'
 import AssetAmountInput from 'components/common/AssetAmountInput'
@@ -9,6 +9,7 @@ import Text from 'components/common/Text'
 import USD from 'configs/assets/USDollar'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import { BN_ONE } from 'constants/math'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { CalloutType } from 'types/enums/callOut'
@@ -24,6 +25,10 @@ export default function MakerFeeModal() {
   const onClose = useCallback(() => {
     useStore.setState({ makerFeeModal: false })
   }, [])
+
+  useEffect(() => {
+    setAmount(BN(makerFee.amount))
+  }, [makerFee])
 
   const handleActionClick = () => {
     setMakerFee({ denom: makerFee.denom, amount: amount.toString() })
@@ -59,9 +64,10 @@ export default function MakerFeeModal() {
           asset={USD}
           isUSD
         />
-        {amount.isZero() && (
+        {amount.isLessThan(BN_ONE) && (
           <Callout type={CalloutType.WARNING}>
-            You can not set the Maker Fee to $0.00. The recommended amount is aleast $1.00.
+            You can not set the Maker Fee to less than $1.00 as it is the minimum amount for the
+            Maker Fee.
           </Callout>
         )}
         <Text size='sm' className='text-white/60'>
@@ -71,7 +77,7 @@ export default function MakerFeeModal() {
         </Text>
         <Button
           onClick={handleActionClick}
-          disabled={!amount.toNumber()}
+          disabled={amount.isLessThan(BN_ONE)}
           className='w-full !text-base'
           color='tertiary'
           text='Done'

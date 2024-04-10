@@ -9,6 +9,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 interface Props {
   label?: string
   max?: BigNumber
+  min?: BigNumber
   asset: Asset
   amount: BigNumber
   disabled?: boolean
@@ -24,6 +25,7 @@ interface Props {
 export default function AssetAmountInput(props: Props) {
   const {
     max,
+    min,
     label,
     amount,
     asset,
@@ -72,6 +74,7 @@ export default function AssetAmountInput(props: Props) {
             className='border-none bg-transparent outline-none flex-1 !text-left'
             maxDecimals={isUSD ? 6 : asset.decimals}
             max={max}
+            min={min}
             disabled={disabled}
             onChange={setAmount}
             onFocus={onFocus}

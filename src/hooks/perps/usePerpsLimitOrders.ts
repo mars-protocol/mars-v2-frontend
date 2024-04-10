@@ -1,11 +1,18 @@
 import useSWR from 'swr'
 
-import getLimitOrders from 'api/perps/getLimitOrders'
+import getLimitOrders from 'api/perps/getAccountLimitOrders'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useChainConfig from 'hooks/useChainConfig'
 
 export default function usePerpsLimitOrders() {
   const chainConfig = useChainConfig()
-  return useSWR(`chains/${chainConfig.id}/perps/limit-orders}`, () => getLimitOrders(chainConfig), {
-    revalidateOnFocus: false,
-  })
+  const currentAccount = useCurrentAccount()
+  const accountId = currentAccount?.id
+  return useSWR(
+    accountId && `chains/${chainConfig.id}/perps/limit-orders/${accountId}`,
+    () => getLimitOrders(chainConfig, accountId),
+    {
+      revalidateOnFocus: false,
+    },
+  )
 }

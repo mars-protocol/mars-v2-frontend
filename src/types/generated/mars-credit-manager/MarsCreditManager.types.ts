@@ -126,6 +126,12 @@ export type Action =
       }
     }
   | {
+      execute_trigger_order: {
+        account_id: string
+        order_id: string
+      }
+    }
+  | {
       enter_vault: {
         coin: ActionCoin
         vault: VaultBaseForString
@@ -357,6 +363,12 @@ export type CallbackMsg =
       delete_trigger_order: {
         account_id: string
         trigger_order_id: string
+      }
+    }
+  | {
+      execute_trigger_order: {
+        account_id: string
+        order_id: string
       }
     }
   | {
@@ -623,6 +635,13 @@ export type QueryMsg =
         start_after?: string | null
       }
     }
+  | {
+      all_account_trigger_orders: {
+        account_id: string
+        limit?: number | null
+        start_after?: string | null
+      }
+    }
 export type ActionKind = 'default' | 'liquidation'
 export type VaultPositionAmount =
   | {
@@ -649,7 +668,16 @@ export interface VaultUnlockingPosition {
 export type ArrayOfAccount = Account[]
 export interface Account {
   id: string
-  kind: AccountKind
+  kind: AccountKind 
+}
+export type ArrayOfPerpLimitOrder = PerpLimitOrder[]
+export interface PerpLimitOrder {
+  account_id: string
+  denom: string
+  keeper_fee: Coin
+  order_id: string
+  size: string
+  trigger_price: Decimal
 }
 export type ArrayOfCoinBalanceResponseItem = CoinBalanceResponseItem[]
 export interface CoinBalanceResponseItem {
@@ -670,11 +698,10 @@ export interface DebtShares {
 }
 export type ArrayOfTriggerOrder = TriggerOrder[]
 export interface TriggerOrder {
-  account_id: string
-  order_id: string
-  order: { actions: Action[]; keeper_fee: Coin; triggers: Trigger[] }
+  actions: Action[]
+  keeper_fee: Coin
+  triggers: Trigger[]
 }
-
 export type ArrayOfVaultPositionResponseItem = VaultPositionResponseItem[]
 export interface VaultPositionResponseItem {
   account_id: string
@@ -768,11 +795,3 @@ export interface VaultUtilizationResponse {
   utilization: Coin
   vault: VaultBaseForString
 }
-export type PnL =
-  | 'break_even'
-  | {
-      profit: Coin
-    }
-  | {
-      loss: Coin
-    }

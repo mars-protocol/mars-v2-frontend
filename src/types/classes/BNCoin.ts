@@ -1,4 +1,4 @@
-import { ActionCoin, PnL } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { ActionCoin } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { BN } from 'utils/helpers'
 
 export class BNCoin {
@@ -71,5 +71,9 @@ export class BNCoin {
 
   plus(amount: BigNumber) {
     return BNCoin.fromDenomAndBigNumber(this.denom, this.amount.plus(amount))
+  }
+
+  negated() {
+    return BNCoin.fromDenomAndBigNumber(this.denom, this.amount.negated())
   }
 }

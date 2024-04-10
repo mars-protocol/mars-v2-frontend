@@ -16,6 +16,7 @@ import {
   ArrayOfCoin,
   ArrayOfCoinBalanceResponseItem,
   ArrayOfDebtShares,
+  ArrayOfPerpLimitOrder,
   ArrayOfSharesResponseItem,
   ArrayOfTriggerOrder,
   ArrayOfVaultPositionResponseItem,
@@ -103,6 +104,15 @@ export interface MarsCreditManagerReadOnlyInterface {
     limit?: number
     startAfter?: string
   }) => Promise<ArrayOfTriggerOrder>
+  allAccountTriggerOrders: ({
+    accountId,
+    limit,
+    startAfter,
+  }: {
+    accountId: string
+    limit?: number
+    startAfter?: string
+  }) => Promise<ArrayOfPerpLimitOrder>
 }
 export class MarsCreditManagerQueryClient implements MarsCreditManagerReadOnlyInterface {
   client: CosmWasmClient
@@ -125,6 +135,7 @@ export class MarsCreditManagerQueryClient implements MarsCreditManagerReadOnlyIn
     this.estimateWithdrawLiquidity = this.estimateWithdrawLiquidity.bind(this)
     this.vaultPositionValue = this.vaultPositionValue.bind(this)
     this.allTriggerOrders = this.allTriggerOrders.bind(this)
+    this.allAccountTriggerOrders = this.allAccountTriggerOrders.bind(this)
   }
 
   accountKind = async ({ accountId }: { accountId: string }): Promise<AccountKind> => {
@@ -230,7 +241,7 @@ export class MarsCreditManagerQueryClient implements MarsCreditManagerReadOnlyIn
   }
   allVaultPositions = async ({
     limit,
-    startAfter,
+    startAfter, 
   }: {
     limit?: number
     startAfter?: string[][]
@@ -283,6 +294,23 @@ export class MarsCreditManagerQueryClient implements MarsCreditManagerReadOnlyIn
   }): Promise<ArrayOfTriggerOrder> => {
     return this.client.queryContractSmart(this.contractAddress, {
       all_trigger_orders: {
+        limit,
+        start_after: startAfter,
+      },
+    })
+  }
+  allAccountTriggerOrders = async ({
+    accountId,
+    limit,
+    startAfter,
+  }: {
+    accountId: string
+    limit?: number
+    startAfter?: string
+  }): Promise<ArrayOfPerpLimitOrder> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      all_account_trigger_orders: {
+        account_id: accountId,
         limit,
         start_after: startAfter,
       },

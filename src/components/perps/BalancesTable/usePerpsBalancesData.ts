@@ -45,27 +45,26 @@ export default function usePerpsBalancesTable() {
     })
 
     if (!limitOrders) return activePerpsPositions
-    const ntrn = chainConfig.assets.find((asset) => asset.symbol === 'NTRN')
+
     const usdc = chainConfig.assets.find((asset) => asset.symbol === 'USDC')
 
-    if (!ntrn || !usdc) return activePerpsPositions
-    const assetPrice = prices.find((price) => price.denom == ntrn.denom)?.amount ?? BN_ZERO
-
+    if (!usdc) return activePerpsPositions
     const zeroCoin = BNCoin.fromDenomAndBigNumber(usdc.denom, BN_ZERO)
 
     const activeLimitOrders = limitOrders
       .filter((order) => order['account_id'] === currentAccount.id)
       .map((limitOrder) => {
+        const assetPrice = prices.find(byDenom(limitOrder.denom))?.amount ?? BN_ZERO
+        const asset = perpAssets.find(byDenom(limitOrder.denom))!
+        const amount = BN(limitOrder.size)
         return {
           orderId: limitOrder.order_id,
-          asset: ntrn,
-          denom: ntrn.denom,
-          baseDenom: usdc.denom,
-          tradeDirection: 'long',
-          amount: BN(100000),
+          asset,
+          tradeDirection: BN(limitOrder.size).isGreaterThanOrEqualTo(0) ? 'long' : 'short',
+          amount: amount.abs(),
           type: 'limit',
           pnl: {
-            net: zeroCoin,
+            net: BNCoin.fromCoin(limitOrder.keeper_fee).negated(),
             realized: {
               fees: zeroCoin,
               funding: zeroCoin,
@@ -79,10 +78,14 @@ export default function usePerpsBalancesTable() {
               price: zeroCoin,
             },
           },
-          entryPrice: BN_ONE,
+          entryPrice: BN(limitOrder.trigger_price),
           currentPrice: assetPrice,
           liquidationPrice: BN_ONE, // TODO: 📈 Get actual liquidation price from HC
-          leverage: 1,
+          leverage: BN(limitOrder.trigger_price)
+            .times(demagnify(amount.abs(), asset))
+            .div(netValue)
+            .plus(1)
+            .toNumber(),
         } as PerpPositionRow
       })
 

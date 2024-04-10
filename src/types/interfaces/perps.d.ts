@@ -47,3 +47,22 @@ interface PerpsPnLCoins {
 }
 
 type PerpsTransactionType = 'open' | 'close' | 'modify'
+
+type PnL =
+  | 'break_even'
+  | {
+      profit: Coin
+    }
+  | {
+      loss: Coin
+    }
+
+type ArrayOfAccountTriggerOrder = AccountTriggerOrder[]
+interface AccountTriggerOrder {
+  account_id: string
+  denom: string
+  keeper_fee: Coin
+  order_id: string
+  size: string
+  trigger_price: string
+}

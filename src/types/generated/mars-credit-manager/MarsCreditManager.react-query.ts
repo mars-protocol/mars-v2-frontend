@@ -18,6 +18,7 @@ import {
   ArrayOfCoin,
   ArrayOfCoinBalanceResponseItem,
   ArrayOfDebtShares,
+  ArrayOfPerpLimitOrder,
   ArrayOfSharesResponseItem,
   ArrayOfTriggerOrder,
   ArrayOfVaultPositionResponseItem,
@@ -142,6 +143,14 @@ export const marsCreditManagerQueryKeys = {
         args,
       },
     ] as const,
+  allAccountTriggerOrders: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
+    [
+      {
+        ...marsCreditManagerQueryKeys.address(contractAddress)[0],
+        method: 'all_account_trigger_orders',
+        args,
+      },
+    ] as const,
 }
 export interface MarsCreditManagerReactQuery<TResponse, TData = TResponse> {
   client: MarsCreditManagerQueryClient | undefined
@@ -151,6 +160,32 @@ export interface MarsCreditManagerReactQuery<TResponse, TData = TResponse> {
   > & {
     initialData?: undefined
   }
+}
+export interface MarsCreditManagerAllAccountTriggerOrdersQuery<TData>
+  extends MarsCreditManagerReactQuery<ArrayOfPerpLimitOrder, TData> {
+  args: {
+    accountId: string
+    limit?: number
+    startAfter?: string
+  }
+}
+export function useMarsCreditManagerAllAccountTriggerOrdersQuery<TData = ArrayOfPerpLimitOrder>({
+  client,
+  args,
+  options,
+}: MarsCreditManagerAllAccountTriggerOrdersQuery<TData>) {
+  return useQuery<ArrayOfPerpLimitOrder, Error, TData>(
+    marsCreditManagerQueryKeys.allAccountTriggerOrders(client?.contractAddress, args),
+    () =>
+      client
+        ? client.allAccountTriggerOrders({
+            accountId: args.accountId,
+            limit: args.limit,
+            startAfter: args.startAfter,
+          })
+        : Promise.reject(new Error('Invalid client')),
+    { ...options, enabled: !!client && (options?.enabled != undefined ? options.enabled : true) },
+  )
 }
 export interface MarsCreditManagerAllTriggerOrdersQuery<TData>
   extends MarsCreditManagerReactQuery<ArrayOfTriggerOrder, TData> {
