@@ -16,7 +16,7 @@ export const LEVERAGE_META = {
 
 type Props = {
   liquidationPrice: BigNumber
-  leverage: number
+  leverage: number | null
 }
 
 export default function Leverage(props: Props) {
