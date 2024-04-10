@@ -133,7 +133,20 @@ interface Apr {
   apy?: number | null
 }
 
+number
 interface Lockup {
-  duration: number
   timeframe: string
+}
+
+type ManagedVault = {
+  address: string
+  apy: number
+  accountId: string
+  tvl: BNCoin
+  vaultTokenSupply: BigNumber
+  baseDenom: string
+  vaultDenom: string
+  title: string
+  description: string
+  subtitle: string
 }

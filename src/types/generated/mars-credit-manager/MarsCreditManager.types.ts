@@ -31,11 +31,14 @@ export type ExecuteMsg =
       create_credit_account: AccountKind
     }
   | {
-  create_credit_account_v2: {
-    code_id: number,
-    base_token: string,
-    vault_token_subdenom: string
-  }
+      create_credit_account_v2: {
+        base_token: string
+        code_id: number
+        description?: string | null
+        subtitle?: string | null
+        title?: string | null
+        vault_token_subdenom: string
+      }
     }
   | {
       update_credit_account: {
@@ -588,6 +591,9 @@ export type QueryMsg =
         vault_position: VaultPosition
       }
     }
+  | {
+      fund_manager_vaults: {}
+    }
 export type ActionKind = 'default' | 'liquidation'
 export type VaultPositionAmount =
   | {
@@ -665,6 +671,18 @@ export interface RewardsCollector {
   address: string
 }
 export type ArrayOfCoin = Coin[]
+export type ArrayOfFundManagerVault = FundManagerVault[]
+export interface FundManagerVault {
+  account_id: string
+  base_token: string
+  description?: string | null
+  subtitle?: string | null
+  title?: string | null
+  total_assets: Uint128
+  vault_addr: string
+  vault_token: string
+  vault_token_supply: Uint128
+}
 export interface Positions {
   account_id: string
   debts: DebtAmount[]

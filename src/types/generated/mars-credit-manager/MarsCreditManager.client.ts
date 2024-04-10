@@ -71,6 +71,8 @@ import {
   OwnerResponse,
   RewardsCollector,
   ArrayOfCoin,
+  ArrayOfFundManagerVault,
+  FundManagerVault,
   Positions,
   DebtAmount,
   PerpVaultPosition,
@@ -145,6 +147,7 @@ export interface MarsCreditManagerReadOnlyInterface {
   }: {
     vaultPosition: VaultPosition
   }) => Promise<VaultPositionValue>
+  fundManagerVaults: () => Promise<ArrayOfFundManagerVault>
 }
 export class MarsCreditManagerQueryClient implements MarsCreditManagerReadOnlyInterface {
   client: CosmWasmClient
@@ -166,6 +169,7 @@ export class MarsCreditManagerQueryClient implements MarsCreditManagerReadOnlyIn
     this.estimateProvideLiquidity = this.estimateProvideLiquidity.bind(this)
     this.estimateWithdrawLiquidity = this.estimateWithdrawLiquidity.bind(this)
     this.vaultPositionValue = this.vaultPositionValue.bind(this)
+    this.fundManagerVaults = this.fundManagerVaults.bind(this)
   }
 
   accountKind = async ({ accountId }: { accountId: string }): Promise<AccountKind> => {
@@ -315,6 +319,11 @@ export class MarsCreditManagerQueryClient implements MarsCreditManagerReadOnlyIn
       },
     })
   }
+  fundManagerVaults = async (): Promise<ArrayOfFundManagerVault> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      fund_manager_vaults: {},
+    })
+  }
 }
 export interface MarsCreditManagerInterface extends MarsCreditManagerReadOnlyInterface {
   contractAddress: string
@@ -328,10 +337,16 @@ export interface MarsCreditManagerInterface extends MarsCreditManagerReadOnlyInt
     {
       baseToken,
       codeId,
+      description,
+      subtitle,
+      title,
       vaultTokenSubdenom,
     }: {
       baseToken: string
       codeId: number
+      description?: string
+      subtitle?: string
+      title?: string
       vaultTokenSubdenom: string
     },
     fee?: number | StdFee | 'auto',
@@ -438,10 +453,16 @@ export class MarsCreditManagerClient
     {
       baseToken,
       codeId,
+      description,
+      subtitle,
+      title,
       vaultTokenSubdenom,
     }: {
       baseToken: string
       codeId: number
+      description?: string
+      subtitle?: string
+      title?: string
       vaultTokenSubdenom: string
     },
     fee: number | StdFee | 'auto' = 'auto',
@@ -455,6 +476,9 @@ export class MarsCreditManagerClient
         create_credit_account_v2: {
           base_token: baseToken,
           code_id: codeId,
+          description,
+          subtitle,
+          title,
           vault_token_subdenom: vaultTokenSubdenom,
         },
       },

@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState } from 'react'
 
 import Button from 'components/common/Button'
 import useAsset from 'hooks/assets/useAsset'
-import useArbVault from 'hooks/vaults/useArbVault'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
@@ -12,27 +11,17 @@ import AssetAmountInput from '../../trade/TradeModule/SwapForm/AssetAmountInput'
 import Modal from '../Modal'
 
 export default function ArbModalController() {
-  const modal = useStore((s) => s.arbModal)
-  const { data: arbVault } = useArbVault()
-  const asset = useAsset(arbVault?.denoms.primary ?? '')
-  if (!modal || !asset || !arbVault) return null
-  return (
-    <ArbModal
-      asset={asset}
-      type={modal.type}
-      vaultBaseDenom={arbVault.denoms.primary}
-      vaultAddress={arbVault.address}
-      vaultToken={arbVault.denoms.vault}
-    />
-  )
+  const modal = useStore((s) => s.managedVaultModal)
+
+  const asset = useAsset(modal?.vault?.baseDenom ?? '')
+  if (!modal || !asset || !modal.vault) return null
+  return <ArbModal asset={asset} type={modal.type} vault={modal.vault} />
 }
 
 type Props = {
   asset: Asset
   type: 'deposit' | 'withdraw'
-  vaultBaseDenom: string
-  vaultAddress: string
-  vaultToken: string
+  vault: ManagedVault
 }
 function ArbModal(props: Props) {
   const [amount, setAmount] = useState(BN(0))
@@ -40,30 +29,30 @@ function ArbModal(props: Props) {
   const { data: walletBalances } = useWalletBalances(address)
 
   const maxAmount = useMemo(() => {
-    const targetDenom = props.type === 'withdraw' ? props.vaultToken : props.vaultBaseDenom
+    const targetDenom = props.type === 'withdraw' ? props.vault.vaultDenom : props.vault.baseDenom
     const walletBalance = walletBalances?.find((balance) => balance.denom === targetDenom)
     if (!walletBalance) return BN(0)
     return BN(walletBalance.amount)
-  }, [props.type, props.vaultBaseDenom, props.vaultToken, walletBalances])
+  }, [props.type, props.vault.baseDenom, props.vault.vaultDenom, walletBalances])
 
   const onClose = useCallback(() => {
-    useStore.setState({ arbModal: null })
+    useStore.setState({ managedVaultModal: null })
   }, [])
 
   const onConfirm = useCallback(() => {
     if (props.type === 'withdraw') {
       useStore.getState().withdrawFromArbVault({
-        coin: BNCoin.fromDenomAndBigNumber(props.vaultToken, amount),
-        vaultAddress: props.vaultAddress,
+        coin: BNCoin.fromDenomAndBigNumber(props.vault.vaultDenom, amount),
+        vaultAddress: props.vault.address,
       })
     } else {
       useStore.getState().depositArbVault({
-        coin: BNCoin.fromDenomAndBigNumber(props.vaultBaseDenom, amount),
-        vaultAddress: props.vaultAddress,
+        coin: BNCoin.fromDenomAndBigNumber(props.vault.baseDenom, amount),
+        vaultAddress: props.vault.address,
       })
     }
     onClose()
-  }, [amount, onClose, props.vaultAddress, props.vaultBaseDenom])
+  }, [amount, onClose, props.vault.address, props.vault.baseDenom])
 
   return (
     <Modal

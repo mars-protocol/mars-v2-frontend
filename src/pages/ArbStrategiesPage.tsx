@@ -14,45 +14,68 @@ import { AccountArrowDown, Plus } from '../components/common/Icons'
 import { BNCoin } from '../types/classes/BNCoin'
 
 export function ArbStrategiesPage() {
-  const { data: arbVault } = useArbVault()
-  const asset = useAsset(arbVault?.denoms.primary ?? '')
+  const { data: managedVaults } = useArbVault()
+
+  if (!managedVaults) return null
+
+  return (
+    <div className='grid grid-cols-3 gap-6 w-full'>
+      {managedVaults.map((vault) => (
+        <ManagedVaultCard key={vault.address} vault={vault} />
+      ))}
+    </div>
+  )
+}
+
+type ManagedVaultCardProps = {
+  vault: ManagedVault
+}
+
+function ManagedVaultCard(props: ManagedVaultCardProps) {
+  const asset = useAsset(props.vault.baseDenom)
   const address = useStore((s) => s.address)
   const { data: walletBalances } = useWalletBalances(address)
 
   const depositedCoin = useMemo(() => {
     const walletBalance = walletBalances?.find(
-      (balance) => balance.denom === arbVault?.denoms.vault,
+      (balance) => balance.denom === props.vault.vaultDenom,
     )
-    if (!walletBalance || !arbVault) return null
+    if (!walletBalance) return null
 
     return BNCoin.fromDenomAndBigNumber(
-      arbVault.denoms.primary,
+      props.vault.baseDenom,
       BN(walletBalance.amount)
-        .div(arbVault.vaultTokenSupply)
-        .times(arbVault.tvl.amount)
+        .div(props.vault.vaultTokenSupply)
+        .times(props.vault.tvl.amount)
         .integerValue(),
     )
-  }, [arbVault, walletBalances])
+  }, [
+    props.vault.baseDenom,
+    props.vault.tvl.amount,
+    props.vault.vaultDenom,
+    props.vault.vaultTokenSupply,
+    walletBalances,
+  ])
 
-  if (!asset || !arbVault) return null
+  if (!asset) return null
 
   return (
-    <Card className='p-4 bg-white/5'>
-      <div className='flex gap-8 items-center mb-6'>
-        <div className='flex flex-col'>
-          <p className='text-white/60 text-xs mt-2'>Hot off the presses</p>
-          <div>
-            Perps Funding Rate Bot{' '}
-            <span className='text-white/60 text-sm'>- via {arbVault.provider}</span>
-          </div>
+    <Card className='p-4 bg-white/5 w-full' contentClassName='gap-6 flex flex-col'>
+      <div className='flex gap-8 items-start w-full justify-between'>
+        <div className='flex flex-col items-start gap-1'>
+          <span className='text-white/60 text-xs'>Account #{props.vault.accountId}</span>
+          <div>{props.vault.title ? props.vault.title : <p>Managed vault </p>}</div>
+          <p className='text-white/60 text-sm'>{props.vault.subtitle}</p>
+          <p className='text-white/60 text-xs'>{props.vault.description}</p>
         </div>
 
-        <div className='w-10'>
+        <div className='w-10 mt-2'>
           <AssetImage asset={asset} />
         </div>
       </div>
 
-      <div className='flex mb-6 gap-2 justify-around'>
+      {/*<Divider />*/}
+      <div className='flex gap-2 justify-around'>
         {depositedCoin && (
           <div className='flex flex-col gap-2 items-center'>
             <p className='text-white/60 text-xs'>Your deposits</p>
@@ -61,11 +84,11 @@ export function ArbStrategiesPage() {
         )}
         <div className='flex flex-col gap-2 items-center'>
           <p className='text-white/60 text-xs'>TVL</p>
-          <DisplayCurrency coin={arbVault.tvl} />
+          <DisplayCurrency coin={props.vault.tvl} />
         </div>
         <div className='flex flex-col gap-2 items-center'>
           <p className='text-white/60 text-xs'>APY</p>
-          <p className=''>{arbVault.apy ? arbVault.apy + '%' : '-'}</p>
+          <p className=''>{props.vault.apy ? props.vault.apy.toFixed(2) + '%' : '-'}</p>
         </div>
       </div>
       <div className='flex gap-4'>
@@ -75,7 +98,7 @@ export function ArbStrategiesPage() {
             className='w-full'
             leftIcon={<AccountArrowDown />}
             onClick={() => {
-              useStore.setState({ arbModal: { type: 'withdraw' } })
+              useStore.setState({ managedVaultModal: { type: 'withdraw', vault: props.vault } })
             }}
           >
             Withdraw
@@ -91,7 +114,7 @@ export function ArbStrategiesPage() {
           }
           onClick={() => {
             console.log('opening modal')
-            useStore.setState({ arbModal: { type: 'deposit' } })
+            useStore.setState({ managedVaultModal: { type: 'deposit', vault: props.vault } })
           }}
         >
           Deposit

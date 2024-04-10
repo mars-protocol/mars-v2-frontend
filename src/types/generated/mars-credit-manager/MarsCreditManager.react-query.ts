@@ -72,6 +72,8 @@ import {
   OwnerResponse,
   RewardsCollector,
   ArrayOfCoin,
+  ArrayOfFundManagerVault,
+  FundManagerVault,
   Positions,
   DebtAmount,
   PerpVaultPosition,
@@ -183,6 +185,14 @@ export const marsCreditManagerQueryKeys = {
         args,
       },
     ] as const,
+  fundManagerVaults: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
+    [
+      {
+        ...marsCreditManagerQueryKeys.address(contractAddress)[0],
+        method: 'fund_manager_vaults',
+        args,
+      },
+    ] as const,
 }
 export interface MarsCreditManagerReactQuery<TResponse, TData = TResponse> {
   client: MarsCreditManagerQueryClient | undefined
@@ -192,6 +202,18 @@ export interface MarsCreditManagerReactQuery<TResponse, TData = TResponse> {
   > & {
     initialData?: undefined
   }
+}
+export interface MarsCreditManagerFundManagerVaultsQuery<TData>
+  extends MarsCreditManagerReactQuery<ArrayOfFundManagerVault, TData> {}
+export function useMarsCreditManagerFundManagerVaultsQuery<TData = ArrayOfFundManagerVault>({
+  client,
+  options,
+}: MarsCreditManagerFundManagerVaultsQuery<TData>) {
+  return useQuery<ArrayOfFundManagerVault, Error, TData>(
+    marsCreditManagerQueryKeys.fundManagerVaults(client?.contractAddress),
+    () => (client ? client.fundManagerVaults() : Promise.reject(new Error('Invalid client'))),
+    { ...options, enabled: !!client && (options?.enabled != undefined ? options.enabled : true) },
+  )
 }
 export interface MarsCreditManagerVaultPositionValueQuery<TData>
   extends MarsCreditManagerReactQuery<VaultPositionValue, TData> {
@@ -604,6 +626,34 @@ export function useMarsCreditManagerUpdateCreditAccountMutation(
   return useMutation<ExecuteResult, Error, MarsCreditManagerUpdateCreditAccountMutation>(
     ({ client, msg, args: { fee, memo, funds } = {} }) =>
       client.updateCreditAccount(msg, fee, memo, funds),
+    options,
+  )
+}
+export interface MarsCreditManagerCreateCreditAccountV2Mutation {
+  client: MarsCreditManagerClient
+  msg: {
+    baseToken: string
+    codeId: number
+    description?: string
+    subtitle?: string
+    title?: string
+    vaultTokenSubdenom: string
+  }
+  args?: {
+    fee?: number | StdFee | 'auto'
+    memo?: string
+    funds?: Coin[]
+  }
+}
+export function useMarsCreditManagerCreateCreditAccountV2Mutation(
+  options?: Omit<
+    UseMutationOptions<ExecuteResult, Error, MarsCreditManagerCreateCreditAccountV2Mutation>,
+    'mutationFn'
+  >,
+) {
+  return useMutation<ExecuteResult, Error, MarsCreditManagerCreateCreditAccountV2Mutation>(
+    ({ client, msg, args: { fee, memo, funds } = {} }) =>
+      client.createCreditAccountV2(msg, fee, memo, funds),
     options,
   )
 }

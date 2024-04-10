@@ -1,5 +1,8 @@
 interface ModalSlice {
-  arbModal: { type: 'deposit' | 'withdraw' } | null
+  managedVaultModal: {
+    type: 'deposit' | 'withdraw'
+    vault: ManagedVault
+  } | null
   accountDeleteModal: Account | null
   addVaultBorrowingsModal: AddVaultBorrowingsModal | null
   alertDialog: AlertDialogConfig | null
