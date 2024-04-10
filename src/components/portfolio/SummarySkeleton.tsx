@@ -16,6 +16,7 @@ interface Props {
   healthFactor?: number
   title: string
   accountId: string
+  managedVault?: ManagedVault
 }
 
 export default function SummarySkeleton(props: Props) {

@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import Button from 'components/common/Button'
 import Card from 'components/common/Card'
@@ -7,13 +8,15 @@ import useWalletBalances from 'hooks/useWalletBalances'
 import useArbVault from 'hooks/vaults/useArbVault'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
+import { getRoute } from 'utils/route'
 
 import AssetImage from '../components/common/assets/AssetImage'
 import DisplayCurrency from '../components/common/DisplayCurrency'
 import { AccountArrowDown, Plus } from '../components/common/Icons'
+import useAccountId from '../hooks/useAccountId'
 import { BNCoin } from '../types/classes/BNCoin'
 
-export default function ArbStrategiesPage() {
+export default function ManagedVaultsPage() {
   const { data: managedVaults } = useArbVault()
 
   if (!managedVaults) return null
@@ -57,10 +60,27 @@ function ManagedVaultCard(props: ManagedVaultCardProps) {
     walletBalances,
   ])
 
+  const selectedAccountId = useAccountId()
+  const accountId = useAccountId()
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+
+  const onClickCard = useCallback(() => {
+    if (!accountId) return null
+
+    const route = getRoute('vaults', searchParams, address, selectedAccountId, props.vault.address)
+    navigate(route)
+    return null
+  }, [accountId, address, navigate, props.vault.address, searchParams, selectedAccountId])
+
   if (!asset) return null
 
   return (
-    <Card className='p-4 bg-white/5 w-full' contentClassName='gap-6 flex flex-col'>
+    <Card
+      className='p-4 bg-white/5 w-full cursor-pointer hover:bg-white/10 transition-all duration-200'
+      contentClassName='gap-6 flex flex-col justify-between h-full'
+      onClick={onClickCard}
+    >
       <div className='flex gap-8 items-start w-full justify-between'>
         <div className='flex flex-col items-start gap-1'>
           <span className='text-white/60 text-xs'>Account #{props.vault.accountId}</span>

@@ -17,6 +17,7 @@ import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 
 interface Props {
   accountId: string
+  managedVault?: ManagedVault
   v1?: boolean
 }
 
@@ -61,7 +62,7 @@ function Content(props: Props) {
         title: (
           <FormattedNumber
             className='text-xl'
-            amount={apr.toNumber()}
+            amount={props.managedVault ? props.managedVault.apy : apr.toNumber()}
             options={{
               suffix: '%',
               maxDecimals: apr.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,
@@ -82,14 +83,29 @@ function Content(props: Props) {
         sub: props.v1 ? 'Total Leverage' : DEFAULT_PORTFOLIO_STATS[4].sub,
       },
     ]
-  }, [account, assets, borrowAssets, hlsStrategies, lendingAssets, prices, vaultAprs, props.v1])
+  }, [
+    account,
+    borrowAssets,
+    lendingAssets,
+    prices,
+    hlsStrategies,
+    assets,
+    vaultAprs,
+    props.managedVault,
+    props.v1,
+  ])
+
+  const title = useMemo(() => {
+    if (props.managedVault?.title) return props.managedVault.title
+    return props.v1 ? 'V1 Portfolio' : `Credit Account ${props.accountId}`
+  }, [props.accountId, props.managedVault?.title, props.v1])
 
   return (
     <Skeleton
       stats={stats}
       health={health}
       healthFactor={healthFactor}
-      title={props.v1 ? 'V1 Portfolio' : `Credit Account ${props.accountId}`}
+      title={title}
       accountId={props.accountId}
     />
   )

@@ -5,6 +5,7 @@ export function getRoute(
   searchParams: URLSearchParams,
   address?: string,
   accountId?: string | null,
+  managedVaultAddress?: string | null,
 ) {
   let nextUrl = ''
 
@@ -23,6 +24,10 @@ export function getRoute(
   if (accountId) {
     url.searchParams.delete(SearchParams.ACCOUNT_ID)
     url.searchParams.append(SearchParams.ACCOUNT_ID, accountId)
+  }
+
+  if (managedVaultAddress) {
+    url.pathname = url.pathname + '/' + managedVaultAddress
   }
 
   return url.pathname + url.search
