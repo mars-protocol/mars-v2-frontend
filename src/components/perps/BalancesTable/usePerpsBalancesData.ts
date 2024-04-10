@@ -87,5 +87,5 @@ export default function usePerpsBalancesTable() {
       })
 
     return [...activePerpsPositions, ...activeLimitOrders]
-  }, [chainConfig, currentAccount, perpAssets, prices])
+  }, [chainConfig, currentAccount, perpAssets, prices, limitOrders])
 }

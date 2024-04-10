@@ -1,5 +1,6 @@
 import { flexRender, Row as TanstackRow, Table as TanstackTable } from '@tanstack/react-table'
 import classNames from 'classnames'
+
 import { LEFT_ALIGNED_ROWS } from 'constants/table'
 
 interface Props<T> {

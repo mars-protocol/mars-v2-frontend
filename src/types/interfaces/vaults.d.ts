@@ -67,7 +67,7 @@ interface VaultValuesAndAmounts {
   }
 }
 
-type VaultStatus = 'market' | 'unlocking' | 'unlocked'
+type VaultStatus = 'active' | 'unlocking' | 'unlocked'
 
 interface DepositedVault extends Vault, VaultValuesAndAmounts {
   type: 'normal' | 'perp'
