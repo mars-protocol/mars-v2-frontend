@@ -15,6 +15,7 @@ export default function useAccount(accountId?: string, suspense?: boolean) {
     !!accountId && !isV1 && `chains/${chainConfig.id}/accounts/${accountId}`,
     () => getAccount(chainConfig, accountId),
     {
+      refreshInterval: 10_000,
       suspense: suspense,
       revalidateOnFocus: false,
     },

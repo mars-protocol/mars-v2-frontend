@@ -49,6 +49,7 @@ export default function usePerpsBalancesTable() {
     const usdc = chainConfig.assets.find((asset) => asset.symbol === 'USDC')
 
     if (!ntrn || !usdc) return activePerpsPositions
+    const assetPrice = prices.find((price) => price.denom == ntrn.denom)?.amount ?? BN_ZERO
 
     const zeroCoin = BNCoin.fromDenomAndBigNumber(usdc.denom, BN_ZERO)
 
@@ -79,7 +80,7 @@ export default function usePerpsBalancesTable() {
             },
           },
           entryPrice: BN_ONE,
-          currentPrice: BN_ONE,
+          currentPrice: assetPrice,
           liquidationPrice: BN_ONE, // TODO: 📈 Get actual liquidation price from HC
           leverage: 1,
         } as PerpPositionRow

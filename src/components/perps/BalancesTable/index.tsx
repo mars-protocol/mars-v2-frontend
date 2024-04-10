@@ -22,7 +22,6 @@ export default function PerpsBalancesTable() {
     },
     [searchParams, setSearchParams],
   )
-
   return (
     <Table
       title='Perp Positions'

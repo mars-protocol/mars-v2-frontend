@@ -8,7 +8,7 @@ export default function usePrices() {
 
   return useSWR(`chains/${chainConfig.id}/prices`, () => getPrices(chainConfig), {
     fallbackData: [],
-    refreshInterval: 30_000,
+    refreshInterval: 10_000,
     revalidateOnFocus: false,
     keepPreviousData: false,
   })
