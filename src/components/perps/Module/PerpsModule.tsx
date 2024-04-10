@@ -19,13 +19,18 @@ import { DEFAULT_LIMIT_PRICE_INFO, PERPS_ORDER_TYPE_TABS } from 'components/perp
 import usePerpsModule from 'components/perps/Module/usePerpsModule'
 import AssetSelectorPerps from 'components/trade/TradeModule/AssetSelector/AssetSelectorPerps'
 import USD from 'configs/assets/USDollar'
+import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAllAssets from 'hooks/assets/useAllAssets'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
+import usePerpsConfig from 'hooks/perps/usePerpsConfig'
 import { usePerpsParams } from 'hooks/perps/usePerpsParams'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
+import useChainConfig from 'hooks/useChainConfig'
 import useHealthComputer from 'hooks/useHealthComputer'
 import usePrice from 'hooks/usePrice'
 import usePrices from 'hooks/usePrices'
@@ -33,22 +38,32 @@ import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import { CalloutType } from 'types/enums/callOut'
 import { OrderType } from 'types/enums/orderType'
 import { getAccountNetValue } from 'utils/accounts'
+import { byDenom } from 'utils/array'
 import { demagnify } from 'utils/formatters'
 import getPerpsPosition from 'utils/getPerpsPosition'
 import { BN, capitalizeFirstLetter } from 'utils/helpers'
 
 export function PerpsModule() {
+  const [makerFee, _] = useLocalStorage(
+    LocalStorageKeys.PERPS_MAKER_FEE,
+    DEFAULT_SETTINGS.perpsMakerFee,
+  )
   const [tradeDirection, setTradeDirection] = useState<TradeDirection>('long')
   const { data: perpsVault } = usePerpsVault()
   const { perpsAsset } = usePerpsAsset()
   const [selectedOrderType, setSelectedOrderType] = useState<OrderType>(OrderType.MARKET)
   const account = useCurrentAccount()
+  const chainConfig = useChainConfig()
   const { data: prices } = usePrices()
   const allAssets = useAllAssets()
+  const { data: perpsConfig } = usePerpsConfig()
   const { simulatePerps, updatedPerpPosition } = useUpdatedAccount(account)
   const [amount, setAmount] = useState<BigNumber>(BN_ZERO)
   const [limitPrice, setLimitPrice] = useState<BigNumber>(BN_ZERO)
-
+  const perpsBaseAsset = useMemo(() => {
+    if (!perpsConfig) return
+    return chainConfig.assets.find(byDenom(perpsConfig.base_denom))
+  }, [chainConfig, perpsConfig])
   const {
     warningMessages,
     previousAmount,
@@ -85,13 +100,18 @@ export function PerpsModule() {
         )
           return
 
+        //Maker Fee Deduction
+        //if (isLimitOrder && perpsBaseAsset) {
+        //  const makerFeeAmount = magnify(makerFee.amount, perpsBaseAsset).negated()
+        //  perpsPosition.pnl.unrealized.net = perpsPosition.pnl.unrealized.net.plus(makerFeeAmount)
+        //}
         simulatePerps(perpsPosition)
       }, 500),
     [simulatePerps, updatedPerpPosition],
   )
 
   useEffect(() => {
-    const currentPerpPosition = account?.perps.find((p) => p.denom === perpsAsset.denom)
+    const currentPerpPosition = account?.perps.find(byDenom(perpsAsset.denom))
     if (!perpsParams || !tradingFee || !perpsVault) return
 
     const perpsPosition = getPerpsPosition(
