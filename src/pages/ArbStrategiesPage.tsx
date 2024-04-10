@@ -13,7 +13,7 @@ import DisplayCurrency from '../components/common/DisplayCurrency'
 import { AccountArrowDown, Plus } from '../components/common/Icons'
 import { BNCoin } from '../types/classes/BNCoin'
 
-export function ArbStrategiesPage() {
+export default function ArbStrategiesPage() {
   const { data: managedVaults } = useArbVault()
 
   if (!managedVaults) return null

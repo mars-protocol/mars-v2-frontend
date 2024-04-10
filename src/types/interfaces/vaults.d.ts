@@ -135,6 +135,7 @@ interface Apr {
 
 number
 interface Lockup {
+  duration: number
   timeframe: string
 }
 

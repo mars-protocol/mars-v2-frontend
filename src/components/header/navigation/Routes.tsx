@@ -2,6 +2,7 @@ import { Navigate, Outlet, Route, Routes as RoutesWrapper } from 'react-router-d
 
 import useChainConfig from 'hooks/useChainConfig'
 import Layout from 'pages/_layout'
+import ArbStrategiesPage from 'pages/ArbStrategiesPage'
 import BorrowPage from 'pages/BorrowPage'
 import ExecuteMessagePage from 'pages/ExecuteMessagePage'
 import FarmPage from 'pages/FarmPage'
@@ -13,8 +14,6 @@ import PortfolioAccountPage from 'pages/PortfolioAccountPage'
 import PortfolioPage from 'pages/PortfolioPage'
 import TradePage from 'pages/TradePage'
 import V1Page from 'pages/V1Page'
-
-import { ArbStrategiesPage } from '../../../pages/ArbStrategiesPage'
 
 export default function Routes() {
   const chainConfig = useChainConfig()

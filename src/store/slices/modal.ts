@@ -2,6 +2,7 @@ import { GetState, SetState } from 'zustand'
 
 export default function createModalSlice(set: SetState<ModalSlice>, get: GetState<ModalSlice>) {
   return {
+    accountKind: 'default' as AccountKind,
     managedVaultModal: null,
     accountDeleteModal: null,
     addVaultBorrowingsModal: null,

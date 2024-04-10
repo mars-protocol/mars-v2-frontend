@@ -20,7 +20,7 @@ interface ModalSlice {
   vaultModal: VaultModal | null
   walletAssetsModal: WalletAssetModal | null
   withdrawFromVaultsModal: DepositedVault[] | null
-  accountKind: 'default' | 'fund_manager'
+  accountKind: AccountKind
   v1DepositAndWithdrawModal: V1DepositAndWithdrawModal | null
   v1BorrowAndRepayModal: V1BorrowAndRepayModal | null
 }
