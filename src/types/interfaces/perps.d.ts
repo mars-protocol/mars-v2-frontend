@@ -1,5 +1,5 @@
 type TradeDirection = 'long' | 'short'
-type PerpsPositionStatus = 'active' | 'pending'
+type PerpsPositionType = 'market' | 'limit'
 
 interface PerpsPosition {
   denom: string
@@ -13,8 +13,9 @@ interface PerpsPosition {
 }
 
 interface PerpPositionRow extends PerpsPosition {
+  orderId?: string
   asset: Asset
-  status: PerpsPositionStatus
+  type: PerpsPositionType
   liquidationPrice: BigNumber
   leverage: number
 }

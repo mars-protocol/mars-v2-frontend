@@ -7,6 +7,7 @@ import Manage, { MANAGE_META } from 'components/perps/BalancesTable/Columns/Mana
 import { PERP_NAME_META, PerpName } from 'components/perps/BalancesTable/Columns/PerpName'
 import PnL, { PNL_META } from 'components/perps/BalancesTable/Columns/PnL'
 import Size, { SIZE_META, sizeSortingFn } from 'components/perps/BalancesTable/Columns/Size'
+import { TYPE_META, Type } from 'components/perps/BalancesTable/Columns/Type'
 import TradeDirection, {
   PERP_TYPE_META,
 } from 'components/perps/BalancesTable/Columns/TradeDirection'
@@ -17,6 +18,10 @@ export default function usePerpsBalancesTable() {
       {
         ...PERP_NAME_META,
         cell: ({ row }) => <PerpName asset={row.original.asset} />,
+      },
+      {
+        ...TYPE_META,
+        cell: ({ row }) => <Type type={row.original.type} />,
       },
       {
         ...PERP_TYPE_META,
@@ -48,7 +53,7 @@ export default function usePerpsBalancesTable() {
       },
       {
         ...PNL_META,
-        cell: ({ row }) => <PnL pnl={row.original.pnl} />,
+        cell: ({ row }) => <PnL pnl={row.original.pnl} type={row.original.type} />,
       },
       {
         ...MANAGE_META,

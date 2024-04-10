@@ -160,6 +160,7 @@ interface BroadcastSlice {
   requestUnlockPerpsVault: (options: { accountId: string; amount: BigNumber }) => Promise<boolean>
   withdrawFromPerpsVault: (options: { accountId: string }) => Promise<boolean>
   v1Action: (type: V1ActionType, funds: BNCoin) => Promise<boolean>
+  cancelTriggerOrder: (options: { accountId: string; orderId: string }) => Promise<boolean>
 }
 
 type V1ActionType = 'withdraw' | 'deposit' | 'borrow' | 'repay'

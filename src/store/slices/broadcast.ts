@@ -846,7 +846,31 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
+    cancelTriggerOrder: async (options: { accountId: string; orderId: string }) => {
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: [
+            {
+              delete_trigger_order: {
+                account_id: options.accountId,
+                trigger_order_id: options.orderId,
+              },
+            },
+          ],
+        },
+      }
 
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+      })
+
+      get().handleTransaction({ response })
+
+      return response.then((response) => !!response.result)
+    },
     depositIntoPerpsVault: async (options: {
       accountId: string
       denom: string
