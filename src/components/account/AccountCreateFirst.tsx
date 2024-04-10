@@ -28,14 +28,19 @@ export default function AccountCreateFirst() {
     setIsCreating(false)
     if (accountId) {
       navigate(getRoute(getPage(pathname), searchParams, address, accountId))
-      useStore.setState({ 
-        focusComponent: {
-          component: <AccountFundFullPage />,
-          onClose: () => {
-            useStore.setState({ getStartedModal: true })
+      if (accountKind === 'fund_manager') {
+        useStore.setState({ focusComponent: null, getStartedModal: true })
+      } else {
+        navigate(getRoute(getPage(pathname), searchParams, address, accountId))
+        useStore.setState({ 
+          focusComponent: {
+            component: <AccountFundFullPage />,
+            onClose: () => {
+              useStore.setState({ getStartedModal: true })
+            },
           },
-        },
-      })
+        })
+      }
     }
   }, [setIsCreating, createAccount, navigate, pathname, searchParams, address, accountKind])
 
