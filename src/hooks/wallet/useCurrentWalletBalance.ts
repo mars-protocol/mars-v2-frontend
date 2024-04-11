@@ -1,5 +1,5 @@
 import useStore from 'store'
-import useWalletBalances from 'hooks/useWalletBalances'
+import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import { byDenom } from 'utils/array'
 
 function useCurrentWalletBalance(denom: string) {

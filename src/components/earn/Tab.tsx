@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { NavLink, useParams, useSearchParams } from 'react-router-dom'
 
-import useAccountId from 'hooks/useAccountId'
+import useAccountId from 'hooks/accounts/useAccountId'
 import { getRoute } from 'utils/route'
 
 const underlineClasses =

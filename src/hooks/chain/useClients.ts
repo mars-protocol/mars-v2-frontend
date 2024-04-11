@@ -1,7 +1,7 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import useSWR from 'swr'
 
-import useChainConfig from 'hooks/useChainConfig'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import { ICNSQueryClient } from 'types/classes/ICNSClient.client'
 import { MarsAccountNftQueryClient } from 'types/generated/mars-account-nft/MarsAccountNft.client'
 import { MarsCreditManagerQueryClient } from 'types/generated/mars-credit-manager/MarsCreditManager.client'

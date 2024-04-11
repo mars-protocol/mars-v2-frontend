@@ -1,7 +1,7 @@
 import Button from 'components/common/Button'
 import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
 import Text from 'components/common/Text'
-import useAccountId from 'hooks/useAccountId'
+import useAccountId from 'hooks/accounts/useAccountId'
 import useStore from 'store'
 
 interface Props {

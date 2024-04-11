@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 
 import getPrices from 'api/prices/getPrices'
-import useChainConfig from 'hooks/useChainConfig'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 export default function usePrices() {
   const chainConfig = useChainConfig()

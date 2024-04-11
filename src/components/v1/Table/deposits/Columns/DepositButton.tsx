@@ -3,7 +3,7 @@ import { ArrowUpLine } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
-import useWalletBalances from 'hooks/useWalletBalances'
+import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 

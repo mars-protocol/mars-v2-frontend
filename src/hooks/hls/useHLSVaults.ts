@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 
 import getHLSVaults from 'api/hls/getHLSVaults'
-import useChainConfig from 'hooks/useChainConfig'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 export default function useHLSVaults() {
   const chainConfig = useChainConfig()

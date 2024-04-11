@@ -52,8 +52,8 @@ export function liquidation_price_js(
  * @param {HealthComputer} c
  * @param {string} denom
  * @param {string} base_denom
- * @param {Number} long_oi_amount
- * @param {Number} short_oi_amount
+ * @param {Uint} long_oi_amount
+ * @param {Uint} short_oi_amount
  * @param {Direction} direction
  * @returns {string}
  */
@@ -61,8 +61,8 @@ export function max_perp_size_estimate_js(
   c: HealthComputer,
   denom: string,
   base_denom: string,
-  long_oi_amount: Number,
-  short_oi_amount: Number,
+  long_oi_amount: Uint,
+  short_oi_amount: Uint,
   direction: Direction,
 ): string
 export type Direction = 'long' | 'short'
@@ -88,6 +88,8 @@ export interface HealthValuesResponse {
 }
 
 export type LiquidationPriceKind = 'asset' | 'debt'
+
+export type Uint = Uint128
 
 export type Number = Decimal
 

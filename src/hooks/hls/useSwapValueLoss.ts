@@ -1,8 +1,8 @@
 import useSWR from 'swr'
 
 import estimateExactIn from 'api/swap/estimateExactIn'
-import useChainConfig from 'hooks/useChainConfig'
-import usePrice from 'hooks/usePrice'
+import usePrice from 'hooks/prices/usePrice'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import { BNCoin } from 'types/classes/BNCoin'
 import { SWAP_FEE_BUFFER } from 'utils/constants'
 import { BN } from 'utils/helpers'

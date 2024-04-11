@@ -1,7 +1,7 @@
 import { NAME_META } from 'components/hls/Farm/Table/Columns/Name'
 import useDepositedColumns from 'components/hls/Staking/Table/Columns/useDepositedColumns'
 import Table from 'components/common/Table'
-import useHLSStakingAccounts from 'hooks/useHLSStakingAccounts'
+import useHLSStakingAccounts from 'hooks/hls/useHLSStakingAccounts'
 import useStore from 'store'
 
 const title = 'Active Strategies'

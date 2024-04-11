@@ -7,7 +7,7 @@ import AssetOverlay from 'components/trade/TradeModule/AssetSelector/AssetOverla
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import useChainConfig from 'hooks/useChainConfig'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 
 interface Props {

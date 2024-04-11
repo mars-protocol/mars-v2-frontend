@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 import useSWR from 'swr'
 
-import useChainConfig from 'hooks/useChainConfig'
-import useClients from 'hooks/useClients'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useClients from 'hooks/chain/useClients'
 import { PerpParams } from 'types/generated/mars-params/MarsParams.types'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'

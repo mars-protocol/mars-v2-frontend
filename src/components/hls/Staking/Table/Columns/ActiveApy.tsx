@@ -6,7 +6,7 @@ import Loading from 'components/common/Loading'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useMarket from 'hooks/markets/useMarket'
-import usePrices from 'hooks/usePrices'
+import usePrices from 'hooks/prices/usePrices'
 import { calculateAccountLeverage } from 'utils/accounts'
 import { getLeveragedApy } from 'utils/math'
 

@@ -7,7 +7,7 @@ import { OverlayMark } from 'components/common/Icons'
 import LeverageLabel from 'components/common/Slider/LeverageLabel'
 import Mark from 'components/common/Slider/Mark'
 import Track from 'components/common/Slider/Track'
-import useToggle from 'hooks/useToggle'
+import useToggle from 'hooks/common/useToggle'
 
 const colors = {
   '1': '#897E83',
