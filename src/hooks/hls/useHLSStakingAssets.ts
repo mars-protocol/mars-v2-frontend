@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 
 import getHLSStakingAssets from 'api/hls/getHLSStakingAssets'
-import useChainConfig from 'hooks/useChainConfig'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 export default function useHLSStakingAssets() {
   const chainConfig = useChainConfig()

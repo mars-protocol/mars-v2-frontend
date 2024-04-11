@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 
 import getAssetParams from 'api/params/getAssetParams'
-import useChainConfig from 'hooks/useChainConfig'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 export default function useAssetParams() {
   const chainConfig = useChainConfig()

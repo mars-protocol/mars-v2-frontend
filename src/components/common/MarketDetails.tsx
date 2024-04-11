@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
-import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
+import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
 
 interface Props {
   row: Row<BorrowMarketTableData | LendingMarketTableData>

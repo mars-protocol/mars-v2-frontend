@@ -4,7 +4,7 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
 import FullOverlayContent from 'components/common/FullOverlayContent'
 import WalletSelect from 'components/Wallet/WalletSelect'
-import useToggle from 'hooks/useToggle'
+import useToggle from 'hooks/common/useToggle'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
 

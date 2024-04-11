@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react'
 import { BN_ZERO } from 'constants/math'
 import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
-import usePrices from 'hooks/usePrices'
+import usePrices from 'hooks/prices/usePrices'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 

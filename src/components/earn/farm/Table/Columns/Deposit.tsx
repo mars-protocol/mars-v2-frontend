@@ -5,9 +5,9 @@ import { Enter, Plus, TrashBin, Wallet } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
 import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import useAlertDialog from 'hooks/useAlertDialog'
-import useChainConfig from 'hooks/useChainConfig'
 import useStore from 'store'
 
 interface Props {

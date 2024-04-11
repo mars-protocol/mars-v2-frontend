@@ -1,8 +1,8 @@
 import useSWR from 'swr'
 
 import useAllAssets from 'hooks/assets/useAllAssets'
-import useChainConfig from 'hooks/useChainConfig'
-import useDebounce from 'hooks/useDebounce'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useDebounce from 'hooks/common/useDebounce'
 import { ChainInfoID } from 'types/enums/wallet'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'

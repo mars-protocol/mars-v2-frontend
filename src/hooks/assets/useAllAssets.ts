@@ -1,4 +1,4 @@
-import useChainConfig from 'hooks/useChainConfig'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 export default function useAllAssets() {
   const chainConfig = useChainConfig()

@@ -8,7 +8,7 @@ import Value, {
 } from 'components/account/AccountBalancesTable/Columns/Value'
 import Asset, { ASSET_META } from 'components/account/AccountPerpPositionTable/Columns/Asset'
 import TotalPnL, { PNL_META } from 'components/account/AccountPerpPositionTable/Columns/TotalPnL'
-import useHealthComputer from 'hooks/useHealthComputer'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useStore from 'store'
 
 export default function useAccountPerpsColumns(account: Account, showLiquidationPrice?: boolean) {

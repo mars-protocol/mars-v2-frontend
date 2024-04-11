@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 
 import getHLSStakingAccounts from 'api/hls/getHLSStakingAccounts'
-import useChainConfig from 'hooks/useChainConfig'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 export default function useHLSStakingAccounts(address?: string) {
   const chainConfig = useChainConfig()

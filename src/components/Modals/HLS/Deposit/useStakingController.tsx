@@ -1,9 +1,9 @@
 import { useCallback, useMemo } from 'react'
 
-import useDepositHlsVault from 'hooks/useDepositHlsVault'
-import useHealthComputer from 'hooks/useHealthComputer'
-import useSwapValueLoss from 'hooks/useSwapValueLoss'
-import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import useDepositHlsVault from 'hooks/hls/useDepositHlsVault'
+import useSwapValueLoss from 'hooks/hls/useSwapValueLoss'
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { SWAP_FEE_BUFFER } from 'utils/constants'
