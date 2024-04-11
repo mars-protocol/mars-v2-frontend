@@ -6,7 +6,7 @@ import Button from 'components/common/Button/index'
 import { Account, PlusCircled } from 'components/common/Icons'
 import WalletConnectButton from 'components/Wallet/WalletConnectButton'
 import useAccountIds from 'hooks/accounts/useAccountIds'
-import useAccountId from 'hooks/useAccountId'
+import useAccountId from 'hooks/accounts/useAccountId'
 import useStore from 'store'
 
 interface Props extends ButtonProps {

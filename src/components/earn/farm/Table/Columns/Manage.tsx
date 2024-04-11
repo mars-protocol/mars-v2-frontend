@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from 'react'
 import DropDownButton from 'components/common/Button/DropDownButton'
 import { AccountArrowDown, LockLocked, LockUnlocked, Plus } from 'components/common/Icons'
 import useSlippage from 'hooks/settings/useSlippage'
-import useAccountId from 'hooks/useAccountId'
+import useAccountId from 'hooks/accounts/useAccountId'
 import useStore from 'store'
 import { VaultStatus } from 'types/enums/vault'
 

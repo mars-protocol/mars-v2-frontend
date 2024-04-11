@@ -1,5 +1,5 @@
 import { BN_ZERO } from 'constants/math'
-import usePrices from 'hooks/usePrices'
+import usePrices from 'hooks/prices/usePrices'
 
 export default function usePrice(denom: string) {
   const { data: prices } = usePrices()

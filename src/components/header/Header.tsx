@@ -14,7 +14,7 @@ import MobileNavigationToggle from 'components/header/navigation/mobile/MobileNa
 import OracleResyncButton from 'components/header/OracleResyncButton'
 import RewardsCenter from 'components/header/RewardsCenter'
 import Wallet from 'components/Wallet'
-import useAccountId from 'hooks/useAccountId'
+import useAccountId from 'hooks/accounts/useAccountId'
 import useStore from 'store'
 import { WalletID } from 'types/enums/wallet'
 import { getGovernanceUrl } from 'utils/helpers'

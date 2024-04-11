@@ -5,7 +5,7 @@ import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import useChainConfig from 'hooks/useChainConfig'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import { SearchParams } from 'types/enums/searchParams'
 import { getSearchParamsObject } from 'utils/route'
 

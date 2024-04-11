@@ -3,8 +3,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { BN_ZERO } from 'constants/math'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
+import usePrices from 'hooks/prices/usePrices'
 import useSlippage from 'hooks/settings/useSlippage'
-import usePrices from 'hooks/usePrices'
 import {
   addCoins,
   addValueToVaults,
@@ -12,7 +12,7 @@ import {
   getDepositAndLendCoinsToSpend,
   removeCoins,
   updatePerpsPositions,
-} from 'hooks/useUpdatedAccount/functions'
+} from 'hooks/accounts/useUpdatedAccount/functions'
 import useVaults from 'hooks/vaults/useVaults'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'

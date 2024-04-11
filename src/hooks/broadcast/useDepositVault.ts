@@ -2,9 +2,9 @@ import { useMemo } from 'react'
 
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useLendEnabledAssets from 'hooks/assets/useLendEnabledAssets'
+import usePrices from 'hooks/prices/usePrices'
 import useSlippage from 'hooks/settings/useSlippage'
-import useAutoLend from 'hooks/useAutoLend'
-import usePrices from 'hooks/usePrices'
+import useAutoLend from 'hooks/wallet/useAutoLend'
 import { BNCoin } from 'types/classes/BNCoin'
 import { AccountKind, Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import {

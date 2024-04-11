@@ -3,7 +3,7 @@ import { Suspense } from 'react'
 import { NAME_META } from 'components/hls/Farm/Table/Columns/Name'
 import useAvailableColumns from 'components/hls/Staking/Table/Columns/useAvailableColumns'
 import Table from 'components/common/Table'
-import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
+import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 
 const title = 'Available Strategies'
 
