@@ -46,13 +46,3 @@ function resolvePerpsParams(param: PerpParams) {
     maxOpenInterestLong: BN(param.max_long_oi_value),
   } as PerpsParams
 }
-
-export interface PerpsParams {
-  denom: string
-  closingFeeRate: BigNumber
-  maxOpenInterestLong: BigNumber
-  maxOpenInterestShort: BigNumber
-  maxPositionValue: BigNumber | null
-  minPositionValue: BigNumber
-  openingFeeRate: BigNumber
-}

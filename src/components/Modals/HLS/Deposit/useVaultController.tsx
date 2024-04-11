@@ -1,11 +1,11 @@
 import { useCallback, useMemo } from 'react'
 
-import useDepositVault from 'hooks/broadcast/useDepositVault'
-import useDepositHlsVault from 'hooks/hls/useDepositHlsVault'
-import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import { BNCoin } from 'classes/BNCoin'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
+import useDepositVault from 'hooks/broadcast/useDepositVault'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import useDepositHlsVault from 'hooks/hls/useDepositHlsVault'
 import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   borrowMarket: Market

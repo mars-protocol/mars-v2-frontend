@@ -1,11 +1,11 @@
 import classNames from 'classnames'
 
+import { BNCoin } from 'classes/BNCoin'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { ExclamationMarkTriangle } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import WarningMessages from 'components/common/WarningMessages'
 import useAllAssets from 'hooks/assets/useAllAssets'
-import { BNCoin } from 'types/classes/BNCoin'
 import { formatAmountWithSymbol, formatLeverage } from 'utils/formatters'
 
 interface SubTitleProps {

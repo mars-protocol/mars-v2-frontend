@@ -1,9 +1,9 @@
 import BigNumber from 'bignumber.js'
 import moment from 'moment'
 
+import { BNCoin } from 'classes/BNCoin'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
-import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 
@@ -13,17 +13,6 @@ export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
   const tail = text.slice(-1 * t, text.length)
   if (h === 0) return text.length > h + t ? '...' + tail : text
   return text.length > h + t ? [head, tail].join('...') : text
-}
-
-export interface FormatOptions {
-  decimals?: number
-  minDecimals?: number
-  maxDecimals?: number
-  thousandSeparator?: boolean
-  prefix?: string
-  suffix?: string
-  rounded?: boolean
-  abbreviated?: boolean
 }
 
 export const produceCountdown = (remainingTime: number) => {

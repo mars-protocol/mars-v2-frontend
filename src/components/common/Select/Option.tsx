@@ -1,14 +1,14 @@
 import classNames from 'classnames'
 
-import AssetImage from 'components/common/assets/AssetImage'
-import AssetRate from 'components/common/assets/AssetRate'
+import { BNCoin } from 'classes/BNCoin'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { ChevronDown, ChevronRight } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import AssetImage from 'components/common/assets/AssetImage'
+import AssetRate from 'components/common/assets/AssetRate'
 import { BN_ZERO } from 'constants/math'
 import useAsset from 'hooks/assets/useAsset'
 import useMarkets from 'hooks/markets/useMarkets'
-import { BNCoin } from 'types/classes/BNCoin'
 import { formatValue } from 'utils/formatters'
 
 interface Props extends SelectOption {

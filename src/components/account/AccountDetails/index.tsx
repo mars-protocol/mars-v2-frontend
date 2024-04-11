@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import { useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 
+import { BNCoin } from 'classes/BNCoin'
 import Skeleton from 'components/account/AccountDetails/Skeleton'
 import AccountSummary from 'components/account/AccountSummary'
 import AccountSummaryLeverage from 'components/account/AccountSummary/AccountSummaryLeverage'
@@ -21,13 +22,12 @@ import useAccountIds from 'hooks/accounts/useAccountIds'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAllAssets from 'hooks/assets/useAllAssets'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import usePrices from 'hooks/prices/usePrices'
-import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
 import {
   calculateAccountApr,
   calculateAccountBalanceValue,

@@ -1,8 +1,8 @@
 import BigNumber from 'bignumber.js'
 
+import { BNCoin } from 'classes/BNCoin'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
-import { BNCoin } from 'types/classes/BNCoin'
 import { VaultPosition } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { Positions } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 import { byDenom } from 'utils/array'

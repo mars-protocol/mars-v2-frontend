@@ -1,14 +1,14 @@
 import useSWR from 'swr'
 
+import { VaultStatus } from 'types/enums'
 import getDepositedVaults from 'api/vaults/getDepositedVaults'
+import { BNCoin } from 'classes/BNCoin'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAssets from 'hooks/assets/useAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import usePrices from 'hooks/prices/usePrices'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import { BNCoin } from 'types/classes/BNCoin'
-import { VaultStatus } from 'types/enums/vault'
 import { getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 

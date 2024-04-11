@@ -4,6 +4,7 @@ import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import QRCode from 'react-qr-code'
+import { WalletID } from 'types/enums'
 
 import WalletConnecting from 'components/Wallet/WalletConnecting'
 import Button from 'components/common/Button'
@@ -14,7 +15,6 @@ import { WALLETS } from 'constants/wallets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import useStore from 'store'
-import { WalletID } from 'types/enums/wallet'
 import { isAndroid, isIOS } from 'utils/mobile'
 
 interface Props {

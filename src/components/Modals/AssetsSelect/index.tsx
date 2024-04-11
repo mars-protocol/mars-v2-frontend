@@ -1,12 +1,12 @@
 import { RowSelectionState } from '@tanstack/react-table'
 import { useEffect, useMemo, useState } from 'react'
 
-import Table from 'components/common/Table'
+import { BNCoin } from 'classes/BNCoin'
 import useAssetSelectColumns from 'components/Modals/AssetsSelect/Columns/useAssetSelectColumns'
+import Table from 'components/common/Table'
 import useGetCoinValue from 'hooks/assets/useGetCoinValue'
 import useMarkets from 'hooks/markets/useMarkets'
 import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 

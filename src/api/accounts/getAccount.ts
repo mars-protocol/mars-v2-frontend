@@ -2,7 +2,7 @@ import { cacheFn, positionsCache } from 'api/cache'
 import { getCreditManagerQueryClient } from 'api/cosmwasm-client'
 import getPrices from 'api/prices/getPrices'
 import getDepositedVaults from 'api/vaults/getDepositedVaults'
-import { BNCoin } from 'types/classes/BNCoin'
+import { BNCoin } from 'classes/BNCoin'
 import { Positions } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { resolvePerpsPositions, resolvePerpsVaultPositions } from 'utils/resolvers'
 

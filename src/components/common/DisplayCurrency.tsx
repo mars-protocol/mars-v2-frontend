@@ -1,13 +1,13 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
+import { BNCoin } from 'classes/BNCoin'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import usePrices from 'hooks/prices/usePrices'
-import { BNCoin } from 'types/classes/BNCoin'
 import { getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 

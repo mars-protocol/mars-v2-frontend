@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 import { useCallback, useMemo } from 'react'
 
+import { BNCoin } from 'classes/BNCoin'
 import AccountSummaryLeverage from 'components/account/AccountSummary/AccountSummaryLeverage'
 import HealthBar from 'components/account/Health/HealthBar'
 import Button from 'components/common/Button'
@@ -10,7 +11,6 @@ import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountBalanceValue } from 'utils/accounts'
 
 interface Props {

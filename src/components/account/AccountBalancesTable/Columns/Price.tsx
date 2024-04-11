@@ -1,6 +1,6 @@
+import { BNCoin } from 'classes/BNCoin'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import usePrice from 'hooks/prices/usePrice'
-import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
 export const PRICE_META = { id: 'price', header: 'Price', meta: { className: 'w-30' } }

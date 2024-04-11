@@ -1,8 +1,8 @@
-import AssetImage from 'components/common/assets/AssetImage'
+import { BNCoin } from 'classes/BNCoin'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
-import { BNCoin } from 'types/classes/BNCoin'
+import AssetImage from 'components/common/assets/AssetImage'
 import { demagnify } from 'utils/formatters'
 
 interface Props {

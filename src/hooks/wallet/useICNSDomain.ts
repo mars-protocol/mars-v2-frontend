@@ -1,8 +1,8 @@
 import useSWR from 'swr'
 
+import { ChainInfoID } from 'types/enums'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useClients from 'hooks/chain/useClients'
-import { ChainInfoID } from 'types/enums/wallet'
 
 export default function useICNSDomain(address?: string) {
   const chainConfig = useChainConfig()

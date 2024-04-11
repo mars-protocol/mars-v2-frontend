@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
+import { BNCoin } from 'classes/BNCoin'
 import CreateAccount from 'components/Modals/HLS/Deposit/CreateAccount'
 import Leverage from 'components/Modals/HLS/Deposit/Leverage'
 import ProvideCollateral from 'components/Modals/HLS/Deposit/ProvideCollateral'
@@ -13,7 +14,6 @@ import Summary from 'components/Modals/HLS/Deposit/Summary'
 import { BN_ZERO } from 'constants/math'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import usePrices from 'hooks/prices/usePrices'
-import { BNCoin } from 'types/classes/BNCoin'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import {

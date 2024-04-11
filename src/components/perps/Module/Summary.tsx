@@ -1,12 +1,13 @@
 import classNames from 'classnames'
 import { useCallback, useMemo } from 'react'
 
-import AssetAmount from 'components/common/assets/AssetAmount'
+import { BNCoin } from 'classes/BNCoin'
 import ActionButton from 'components/common/Button/ActionButton'
 import { Callout, CalloutType } from 'components/common/Callout'
 import { ArrowRight } from 'components/common/Icons'
 import SummaryLine from 'components/common/SummaryLine'
 import Text from 'components/common/Text'
+import AssetAmount from 'components/common/assets/AssetAmount'
 import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirection'
 import { ExpectedPrice } from 'components/perps/Module/ExpectedPrice'
 import TradingFee from 'components/perps/Module/TradingFee'
@@ -15,7 +16,6 @@ import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { usePerpsParams } from 'hooks/perps/usePerpsParams'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
 import { formatLeverage } from 'utils/formatters'
 
 type Props = {

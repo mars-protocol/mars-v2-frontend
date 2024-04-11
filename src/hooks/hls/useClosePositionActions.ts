@@ -1,12 +1,12 @@
 import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
 
+import { BNCoin } from 'classes/BNCoin'
 import { BN_ZERO } from 'constants/math'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useSwapValueLoss from 'hooks/hls/useSwapValueLoss'
 import usePrices from 'hooks/prices/usePrices'
 import useSlippage from 'hooks/settings/useSlippage'
-import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { SWAP_FEE_BUFFER } from 'utils/constants'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'

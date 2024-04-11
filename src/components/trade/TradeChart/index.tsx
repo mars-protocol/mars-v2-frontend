@@ -2,26 +2,26 @@ import classNames from 'classnames'
 import { ReactNode, useEffect, useMemo, useRef } from 'react'
 import { isMobile } from 'react-device-detect'
 
+import { BNCoin } from 'classes/BNCoin'
 import Card from 'components/common/Card'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { LineChart } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
 import Text from 'components/common/Text'
+import { datafeed } from 'components/trade/TradeChart/DataFeed'
+import PoweredByPyth from 'components/trade/TradeChart/PoweredByPyth'
 import {
   disabledFeatures,
   disabledFeaturesMobile,
   enabledFeatures,
   enabledFeaturesMobile,
 } from 'components/trade/TradeChart/constants'
-import { datafeed } from 'components/trade/TradeChart/DataFeed'
-import PoweredByPyth from 'components/trade/TradeChart/PoweredByPyth'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import usePrices from 'hooks/prices/usePrices'
-import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { ChartingLibraryWidgetOptions, ResolutionString, widget } from 'utils/charting_library'
 import { magnify } from 'utils/formatters'

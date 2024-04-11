@@ -1,5 +1,5 @@
 import { getPerpsQueryClient } from 'api/cosmwasm-client'
-import { BNCoin } from 'types/classes/BNCoin'
+import { BNCoin } from 'classes/BNCoin'
 
 export default async function getOpeningFee(
   chainConfig: ChainConfig,

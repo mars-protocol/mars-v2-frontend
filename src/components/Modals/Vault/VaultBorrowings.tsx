@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useMemo, useState } from 'react'
 
+import { BNCoin } from 'classes/BNCoin'
 import Button from 'components/common/Button'
 import DepositCapMessage from 'components/common/DepositCapMessage'
 import DisplayCurrency from 'components/common/DisplayCurrency'
@@ -12,29 +13,14 @@ import TokenInput from 'components/common/TokenInput'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAllAssets from 'hooks/assets/useAllAssets'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useMarkets from 'hooks/markets/useMarkets'
 import usePrices from 'hooks/prices/usePrices'
-import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
-import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { byDenom } from 'utils/array'
 import { findCoinByDenom } from 'utils/assets'
 import { formatPercent } from 'utils/formatters'
 import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
-
-export interface VaultBorrowingsProps {
-  account: Account
-  borrowings: BNCoin[]
-  deposits: BNCoin[]
-  primaryAsset: Asset
-  secondaryAsset: Asset
-  vault: Vault
-  depositActions: Action[]
-  onChangeBorrowings: (borrowings: BNCoin[]) => void
-  displayCurrency: string
-  depositCapReachedCoins: BNCoin[]
-}
 
 export default function VaultBorrowings(props: VaultBorrowingsProps) {
   const assets = useAllAssets()

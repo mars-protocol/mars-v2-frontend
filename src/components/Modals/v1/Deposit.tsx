@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { BNCoin } from 'classes/BNCoin'
 import AssetAmountSelectActionModal from 'components/Modals/AssetAmountSelectActionModal'
 import DetailsHeader from 'components/Modals/LendAndReclaim/DetailsHeader'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import { BN_ZERO } from 'constants/math'
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
-import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 

@@ -1,5 +1,5 @@
+import { BNCoin } from 'classes/BNCoin'
 import { BN_ZERO } from 'constants/math'
-import { BNCoin } from 'types/classes/BNCoin'
 import { Action, Uint128 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { byDenom } from 'utils/array'
 import { VAULT_DEPOSIT_BUFFER } from 'utils/constants'

@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 
+import { BNCoin } from 'classes/BNCoin'
 import { BN_ZERO } from 'constants/math'
-import useAllAssets from 'hooks/assets/useAllAssets'
-import usePerpsVault from 'hooks/perps/usePerpsVault'
-import usePrices from 'hooks/prices/usePrices'
-import useSlippage from 'hooks/settings/useSlippage'
 import {
   addCoins,
   addValueToVaults,
@@ -13,19 +10,17 @@ import {
   removeCoins,
   updatePerpsPositions,
 } from 'hooks/accounts/useUpdatedAccount/functions'
+import useAllAssets from 'hooks/assets/useAllAssets'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
+import usePrices from 'hooks/prices/usePrices'
+import useSlippage from 'hooks/settings/useSlippage'
 import useVaults from 'hooks/vaults/useVaults'
 import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountLeverage, cloneAccount } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { SWAP_FEE_BUFFER } from 'utils/constants'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { getValueFromBNCoins } from 'utils/helpers'
-
-export interface VaultValue {
-  address: string
-  value: BigNumber
-}
 
 export function useUpdatedAccount(account?: Account) {
   const { data: availableVaults } = useVaults(false)

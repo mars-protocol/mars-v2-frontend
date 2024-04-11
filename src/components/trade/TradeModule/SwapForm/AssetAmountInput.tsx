@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react'
 
+import { BNCoin } from 'classes/BNCoin'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import NumberInput from 'components/common/NumberInput'
-import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   label?: string

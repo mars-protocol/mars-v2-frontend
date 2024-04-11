@@ -1,8 +1,6 @@
-import React from 'react'
-
+import { BNCoin } from 'classes/BNCoin'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { ORACLE_DENOM } from 'constants/oracle'
-import { BNCoin } from 'types/classes/BNCoin'
 
 export const POSITION_VALUE_META = {
   header: 'Pos. Value',

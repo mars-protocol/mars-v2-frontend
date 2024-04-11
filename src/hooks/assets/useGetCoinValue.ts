@@ -1,10 +1,10 @@
 import { useCallback } from 'react'
 
+import { BNCoin } from 'classes/BNCoin'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import usePrices from 'hooks/prices/usePrices'
-import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 
 export default function useGetCoinValue() {

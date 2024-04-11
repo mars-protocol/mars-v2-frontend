@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
+import { BNCoin } from 'classes/BNCoin'
 import useSlippage from 'hooks/settings/useSlippage'
-import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   borrowCoin: BNCoin

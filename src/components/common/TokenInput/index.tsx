@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 
-import AssetImage from 'components/common/assets/AssetImage'
+import { BNCoin } from 'classes/BNCoin'
 import Button from 'components/common/Button'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
@@ -10,9 +10,9 @@ import NumberInput from 'components/common/NumberInput'
 import Select from 'components/common/Select'
 import Text from 'components/common/Text'
 import WarningMessages from 'components/common/WarningMessages'
+import AssetImage from 'components/common/assets/AssetImage'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
-import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
 interface Props {

@@ -1,11 +1,11 @@
 import { Row } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
+import { BNCoin } from 'classes/BNCoin'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
-import { BNCoin } from 'types/classes/BNCoin'
 import { demagnify } from 'utils/formatters'
 
 export const SIZE_META = {

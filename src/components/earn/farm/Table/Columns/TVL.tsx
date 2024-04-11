@@ -1,7 +1,5 @@
-import React from 'react'
-
+import { BNCoin } from 'classes/BNCoin'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import { BNCoin } from 'types/classes/BNCoin'
 
 export const TVL_META = { accessorKey: 'tvl', header: 'TVL' }
 

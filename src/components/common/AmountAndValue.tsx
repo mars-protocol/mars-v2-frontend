@@ -1,7 +1,7 @@
+import { BNCoin } from 'classes/BNCoin'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { MAX_AMOUNT_DECIMALS, MIN_AMOUNT } from 'constants/math'
-import { BNCoin } from 'types/classes/BNCoin'
 import { demagnify } from 'utils/formatters'
 
 interface Props {

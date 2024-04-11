@@ -1,3 +1,4 @@
+import { BNCoin } from 'classes/BNCoin'
 import HealthBar from 'components/account/Health/HealthBar'
 import HealthIcon from 'components/account/Health/HealthIcon'
 import DisplayCurrency from 'components/common/DisplayCurrency'
@@ -6,7 +7,6 @@ import { ArrowChartLineUp } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
 import Text from 'components/common/Text'
 import { ORACLE_DENOM } from 'constants/oracle'
-import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   health: number

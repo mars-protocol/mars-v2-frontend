@@ -1,7 +1,7 @@
+import { VaultStatus } from 'types/enums'
+import { BNCoin } from 'classes/BNCoin'
 import { BN_ONE, BN_ZERO } from 'constants/math'
 import { transformPerpsVaultIntoDeposited } from 'hooks/vaults/useDepositedVaults'
-import { BNCoin } from 'types/classes/BNCoin'
-import { VaultStatus } from 'types/enums/vault'
 import { byDenom } from 'utils/array'
 
 export function getVaultAccountStrategiesRow(

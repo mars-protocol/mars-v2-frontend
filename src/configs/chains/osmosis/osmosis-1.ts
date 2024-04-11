@@ -1,5 +1,6 @@
 import { Bech32Address } from '@keplr-wallet/cosmos'
 
+import { ChainInfoID, NETWORK } from 'types/enums'
 import AKT from 'configs/assets/AKT'
 import ATOM from 'configs/assets/ATOM'
 import AXL from 'configs/assets/AXL'
@@ -25,8 +26,6 @@ import stDYDX from 'configs/assets/stDYDX'
 import stOSMO from 'configs/assets/stOSMO'
 import stTIA from 'configs/assets/stTIA'
 import { VAULTS_META_DATA } from 'constants/vaults'
-import { NETWORK } from 'types/enums/network'
-import { ChainInfoID } from 'types/enums/wallet'
 import { getUrl } from 'utils/url'
 
 const ASSETS = [

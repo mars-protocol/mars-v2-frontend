@@ -1,4 +1,4 @@
-import { BNCoin } from 'types/classes/BNCoin'
+import { BNCoin } from 'classes/BNCoin'
 import { BN } from 'utils/helpers'
 
 export function isNumber(value: unknown) {
