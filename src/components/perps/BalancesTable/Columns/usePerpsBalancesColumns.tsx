@@ -11,7 +11,7 @@ import TradeDirection, {
   PERP_TYPE_META,
 } from 'components/perps/BalancesTable/Columns/TradeDirection'
 
-export default function usePerpsBalancesTable() {
+export default function usePerpsBalancesColumns() {
   return useMemo<ColumnDef<PerpPositionRow>[]>(() => {
     return [
       {

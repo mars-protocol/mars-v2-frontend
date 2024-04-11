@@ -17,6 +17,7 @@ import Card from 'components/common/Card'
 import { SortAsc, SortDesc, SortNone } from 'components/common/Icons'
 import Row from 'components/common/Table/Row'
 import Text from 'components/common/Text'
+import { LEFT_ALIGNED_ROWS } from 'constants/table'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
 
 interface Props<T> {
@@ -76,16 +77,14 @@ export default function Table<T>(props: Props<T>) {
                     className={classNames(
                       props.spacingClassName ?? 'px-4 py-3',
                       header.column.getCanSort() && 'hover:cursor-pointer',
-                      header.id === 'symbol' || header.id === 'name' ? 'text-left' : 'text-right',
+                      LEFT_ALIGNED_ROWS.includes(header.id) ? 'text-left' : 'text-right',
                       header.column.columnDef.meta?.className,
                     )}
                   >
                     <div
                       className={classNames(
                         'flex',
-                        header.id === 'symbol' || header.id === 'name'
-                          ? 'justify-start'
-                          : 'justify-end',
+                        LEFT_ALIGNED_ROWS.includes(header.id) ? 'text-left' : 'text-right',
                         'align-center relative',
                       )}
                     >
@@ -100,8 +99,7 @@ export default function Table<T>(props: Props<T>) {
                         <span
                           className={classNames(
                             'w-5 h-5 my-auto text-white',
-                            header.id !== 'symbol' &&
-                              header.id !== 'name' &&
+                            !LEFT_ALIGNED_ROWS.includes(header.id) &&
                               'absolute -mr-4.5 -translate-y-1/2 top-1/2',
                           )}
                         >
