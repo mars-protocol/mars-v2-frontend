@@ -84,7 +84,7 @@ export default function Table<T>(props: Props<T>) {
                     <div
                       className={classNames(
                         'flex',
-                        LEFT_ALIGNED_ROWS.includes(header.id) ? 'text-left' : 'text-right',
+                        LEFT_ALIGNED_ROWS.includes(header.id) ? 'justify-start' : 'justify-end',
                         'align-center relative',
                       )}
                     >
