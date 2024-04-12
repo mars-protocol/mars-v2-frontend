@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useLocation } from 'react-router-dom'
 import { SWRConfig } from 'swr'
@@ -13,8 +13,8 @@ import Toaster from 'components/common/Toaster'
 import Header from 'components/header/Header'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useAccountId from 'hooks/accounts/useAccountId'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { debugSWR } from 'utils/middleware'
 
@@ -62,6 +62,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     location.pathname === '/' ||
     location.pathname.includes('perps')
   const accountId = useAccountId()
+
+  useEffect(()=> {
+    if(!window) return
+      const theme = localStorage.getItem(LocalStorageKeys.THEME) ?? 'default'
+      const root = window.document.documentElement
+      root.setAttribute('data-theme', theme)
+  }, [])
 
   return (
     <>

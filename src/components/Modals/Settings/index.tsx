@@ -52,6 +52,12 @@ export default function SettingsModal() {
     LocalStorageKeys.UPDATE_ORACLE,
     DEFAULT_SETTINGS.updateOracle,
   )
+  const [theme, setTheme] = useLocalStorage<string>(
+    LocalStorageKeys.THEME,
+    DEFAULT_SETTINGS.theme,
+  )
+
+  const themeOptions: SelectOption[] = [{label: 'Default', value: 'default'}, {label: 'Light', value: 'light'}, {label: 'Dark', value: 'dark'}]
 
   const displayCurrenciesOptions = useMemo(
     () =>
@@ -103,6 +109,13 @@ export default function SettingsModal() {
     },
     [setDisplayCurrency],
   )
+
+  const handleTheme = useCallback((value: string) => {
+    if(!window) return
+    const root = window.document.documentElement
+    root.setAttribute('data-theme', value)
+    setTheme(value)
+  }, [setTheme])
 
   const handleSlippageInputFocus = useCallback(() => {
     setIsCustom(true)
@@ -199,6 +212,19 @@ export default function SettingsModal() {
       headerClassName='p-6'
       contentClassName='flex flex-wrap px-6 pb-6 pt-4'
     >
+            <SettingsOptions
+        label='Theme'
+        description='Change the appearance of the Outpost.'
+        className='pb-6'
+      >
+        <Select
+          options={themeOptions.map((option) => ({ label: (<Text size='sm' className='leading-4'>{option.label}</Text>), value: option.value }))}
+          defaultValue={theme}
+          onChange={handleTheme}
+          className='relative border w-60 rounded-base border-white/10'
+          containerClassName='justify-end'
+        />
+      </SettingsOptions>
       <SettingsSwitch
         onChange={handleLendAssets}
         name='enableAutoLendGlobal'
