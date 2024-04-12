@@ -51,6 +51,14 @@ module.exports = {
     '@nav-4/navigation:hidden',
     '@nav-5/navigation:hidden',
     '@nav-6/navigation:hidden',
+    'bg-slider-1',
+    'bg-slider-2',
+    'bg-slider-3',
+    'bg-slider-4',
+    'bg-slider-5',
+    'bg-slider-6',
+    'bg-slider-7',
+    'bg-slider-8',
   ],
   theme: {
     extend: {

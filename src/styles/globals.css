@@ -69,7 +69,6 @@
   --color-loss: 11deg 96% 46%;
   --color-mars: 354deg 46% 43%;
   --color-martian-red: 2deg 100% 69%;
-  --color-osmo: 290deg 75% 41%;
   --color-orb-primary: 4deg 65% 42%;
   --color-orb-primary-hls: 2deg 100% 69%;
   --color-orb-secondary: 277deg 90% 27%;
@@ -98,7 +97,7 @@
   --color-slider-5: 335deg 54% 67%;
   --color-slider-6: 315deg 44% 51%;
   --color-slider-7:  313deg 47% 48%;
-  --color-slider-8:301deg 79% 33%;
+  --color-slider-8: 301deg 79% 33%;
   --color-slider-pink-primary: 343deg 100% 69%;
   --color-slider-pink-secondary: 280deg 9% 25%;
   --color-slider-green-primary: 126deg 100% 69%;
@@ -116,11 +115,51 @@
 
 :root[data-theme='light'] {
   --color-body: 0deg 0% 100%;
-  --color-white: 0deg 0% 0%;
+  --color-body-hls: 0deg 0% 100%;
+  --color-white: 0deg 0% 20%;
   --color-black: 0deg 0% 100%;
-  --glas-border: linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.05)); 
- 
+  --glas-border: linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.05));
+  --color-purple: 47deg 97% 67%;
+  --color-purple-dark: 36deg 99% 65%;
+  --color-martian-red: 40deg 100% 73%;
+  --color-pink: 2deg 99% 68%;
+  --color-fuchsia: 2deg 99% 68%;
+  --color-slider-pink-primary: 2deg 99% 68%;
+  --color-slider-pink-secondary: 2deg 99% 68%;
+  --color-green: 124deg 57% 79%;
+  --color-warning: 40deg 100% 79%;
+  --color-orb-primary: 0deg 0% 70%;
+  --color-orb-primary-hls: 0deg 0% 70%;
+  --color-orb-secondary: 0deg 0% 70%;
+  --color-orb-secondary-hls: 0deg 0% 70%;
+  --color-orb-tertiary: 0deg 0% 70%;
+  --color-orb-tertiary-hls: 0deg 0% 70%;
+  --color-error: 0deg 97% 75%;
+  --color-slider-1: 57deg 97% 85%;
+  --color-slider-2: 57deg 97%, 75%;
+  --color-slider-3: 47deg 97% 79%;
+  --color-slider-4: 47deg 97% 67%;
+  --color-slider-5: 36deg 97% 77%;
+  --color-slider-6: 36deg 97% 65%;
+  --color-slider-7:  36deg 99% 65%;
+  --color-slider-8: 36deg 99% 65%;
+  --color-active-tab-primary: 47deg 97% 79%;
+  --color-active-tab-secondary: 36deg 99% 65%;
+  --color-active-tab-tertiary: 57deg 97% 85%;
 }
+
+:root[data-theme='dark'] {
+  --color-body: 0deg 0% 0%;
+  --color-body-hls: 0deg 0% 0%;
+  --color-orb-primary: 0deg 0% 0%;
+  --color-orb-primary-hls: 0deg 0% 0%;
+  --color-orb-secondary: 0deg 0% 0%;
+  --color-orb-secondary-hls: 0deg 0% 0%;
+  --color-orb-tertiary: 0deg 0% 0%;
+  --color-orb-tertiary-hls: 0deg 0% 0%;
+}
+
+
 
 .Toastify__toast {
   transition-property: background-color;

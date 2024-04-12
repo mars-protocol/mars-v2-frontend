@@ -193,7 +193,7 @@ export default function Slider(props: Props) {
                 <div
                   className={classNames(
                     `bg-slider-${Number(getActiveIndex()) + 1}`,
-                    'z-20 h-3 w-3 rotate-45 hover:cursor-pointer rounded-xs border-[2px] border-white !outline-none',
+                    'z-20 h-3 w-3 rotate-45 hover:cursor-pointer rounded-xs border-[2px] border-white/60 !outline-none',
                   )}
                 />
                 {leverage ? (
