@@ -98,7 +98,7 @@
   --color-slider-5: 335deg 54% 67%;
   --color-slider-6: 315deg 44% 51%;
   --color-slider-7:  313deg 47% 48%;
-  --color-slider-8: 301deg 79% 33%;
+  --color-slider-8:301deg 79% 33%;
   --color-slider-pink-primary: 343deg 100% 69%;
   --color-slider-pink-secondary: 280deg 9% 25%;
   --color-slider-green-primary: 126deg 100% 69%;
@@ -110,6 +110,15 @@
   --color-active-tab-primary: 299deg 92% 39%;
   --color-active-tab-secondary: 343deg 100% 81%;
   --color-active-tab-tertiary: 13deg 33% 14%;
+
+  --color-glas-border: transparent; 
+}
+
+:root[data-theme='light'] {
+  --color-body: 0deg 0% 100%;
+  --color-white: 0deg 0% 0%;
+  --color-black: 0deg 0% 100%;
+  --color-glas-border: rgba(0, 0, 0, 0.1); 
 }
 
 .Toastify__toast {

@@ -84,11 +84,11 @@ module.exports = {
         '4xl': '100px',
       },
       boxShadow: {
-        inset: 'inset 0px 2px 2px rgba(0, 0, 0, 0.25)',
-        overlay: '0 2px 2px rgba(0, 0, 0, 0.14), 0 1px 5px rgba(0, 0, 0, 0.2)',
-        button: '0px 1px 1px rgba(0, 0, 0, 0.14), 0px 1px 3px rgba(0, 0, 0, 0.2)',
+        inset: 'inset 0px 2px 2px hsla(var(--color-black) 0.25)',
+        overlay: '0 2px 2px hsla(var(--color-black) 0.14), 0 1px 5px hsla(var(--color-black) 0.2)',
+        button: '0px 1px 1px hsla(var(--color-black) 0.14), 0px 1px 3px hsla(var(--color-black) 0.2)',
         tooltip:
-          '0 3px 4px rgba(0, 0, 0, 0.04), 0 3px 3px rgba(0, 0, 0, 0.04), 0 1px 8px rgba(0, 0, 0, 0.04)',
+          '0 3px 4px hsla(var(--color-black) 0.04), 0 3px 3px hsla(var(--color-black) 0.04), 0 1px 8px hsla(var(--color-black) 0.04)',
       },
       brightness: {
         30: '.3',
@@ -394,15 +394,16 @@ module.exports = {
         '.border-glas': {
           background:
             'linear-gradient(180deg,  hsla(var(--color-white) 0.2),  hsla(var(--color-white) 0.05))',
-          mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+          mask: 'linear-gradient(hsl(var(--color-white)) 0 0) content-box, linear-gradient(hsl(var(--color-white)) 0 0)',
           '-webkit-mask-composite': 'xor',
           maskComposite: 'exclude',
+          border: '1px solid var(--color-glas-border)',
         },
         '.glow-line': {
           x: 0,
           y: 0,
           fill: 'transparent',
-          stroke: '#FFF',
+          stroke: 'hsl(var(--color-white))',
           strokeWidth: '0.5',
           strokeDasharray: '20px 30px',
         },
