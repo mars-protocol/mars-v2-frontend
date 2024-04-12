@@ -109,8 +109,6 @@
   --color-active-tab-primary: 299deg 92% 39%;
   --color-active-tab-secondary: 343deg 100% 81%;
   --color-active-tab-tertiary: 13deg 33% 14%;
-
-  --glas-border: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
 }
 
 :root[data-theme='light'] {
@@ -119,7 +117,6 @@
   --color-white: 0deg 0% 20%;
   --color-chart: 0deg 0% 100%;
   --color-black: 0deg 0% 100%;
-  --glas-border: linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.05));
   --color-purple: 47deg 97% 67%;
   --color-purple-dark: 36deg 99% 65%;
   --color-martian-red: 40deg 100% 73%;

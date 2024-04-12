@@ -65,7 +65,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!window) return
-    const theme = localStorage.getItem(LocalStorageKeys.THEME) ?? 'default'
+    const theme = localStorage.getItem(LocalStorageKeys.THEME) ?? DEFAULT_SETTINGS.theme
     const root = window.document.documentElement
     root.setAttribute('data-theme', theme)
   }, [])
@@ -83,7 +83,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             'flex',
             'min-h-screen-full w-full relative',
             'gap-4 p-2 pb-20',
-            'md:gap-6 md:px-4 md:py-6 ',
+            'md:gap-6 md:px-4 md:py-6',
             !focusComponent &&
               address &&
               isFullWidth &&
