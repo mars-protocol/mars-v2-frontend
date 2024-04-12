@@ -2,7 +2,7 @@ import { Head, Html, Main, NextScript } from 'next/document'
 
 export default function Document() {
   return (
-    <Html className='p-0 m-0 scrollbar-hide' lang='en' data-theme='light'>
+    <Html className='p-0 m-0 scrollbar-hide' lang='en'>
       <Head>
         <script defer src='/charting_library/charting_library.standalone.js' />
         <script defer src='/datafeeds/udf/dist/bundle.js' />
