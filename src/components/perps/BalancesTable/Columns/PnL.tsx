@@ -1,11 +1,11 @@
 import classNames from 'classnames'
 import React from 'react'
 
-import { BNCoin } from 'classes/BNCoin'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
+import { BNCoin } from 'types/classes/BNCoin'
 
 export const PNL_META = { accessorKey: 'pnl.net.amount', header: 'Total PnL', id: 'pnl' }
 

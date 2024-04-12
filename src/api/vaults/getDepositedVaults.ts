@@ -10,8 +10,8 @@ import {
 import { getClient, getCreditManagerQueryClient, getVaultQueryClient } from 'api/cosmwasm-client'
 import getPrice from 'api/prices/getPrice'
 import getVaults from 'api/vaults/getVaults'
-import { BNCoin } from 'classes/BNCoin'
 import { BN_ZERO } from 'constants/math'
+import { BNCoin } from 'types/classes/BNCoin'
 import { VaultStatus } from 'types/enums'
 import {
   Positions,

@@ -1,7 +1,6 @@
 import classNames from 'classnames'
 import { useCallback, useState } from 'react'
 
-import { BNCoin } from 'classes/BNCoin'
 import Modal from 'components/Modals/Modal'
 import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
 import Button from 'components/common/Button'
@@ -12,6 +11,7 @@ import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import AssetImage from 'components/common/assets/AssetImage'
 import { BN_ZERO } from 'constants/math'
+import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 

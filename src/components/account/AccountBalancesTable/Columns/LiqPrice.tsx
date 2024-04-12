@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 
-import { BNCoin } from 'classes/BNCoin'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { InfoCircle } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import useLiquidationPrice from 'hooks/prices/useLiquidationPrice'
+import { BNCoin } from 'types/classes/BNCoin'
 import { LiquidationPriceKind } from 'utils/health_computer'
 import { BN } from 'utils/helpers'
 

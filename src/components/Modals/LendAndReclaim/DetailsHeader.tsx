@@ -1,9 +1,9 @@
-import { BNCoin } from 'classes/BNCoin'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import useAssetIncentivesApy from 'hooks/incentives/useAssetIncentiveApy'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
+import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   data: LendingMarketTableData

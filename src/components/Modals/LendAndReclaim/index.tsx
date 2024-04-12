@@ -1,12 +1,12 @@
 import { useCallback, useState } from 'react'
 
-import { BNCoin } from 'classes/BNCoin'
 import AssetAmountSelectActionModal from 'components/Modals/AssetAmountSelectActionModal'
 import DetailsHeader from 'components/Modals/LendAndReclaim/DetailsHeader'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useLendAndReclaimModal from 'hooks/common/useLendAndReclaimModal'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 
 function LendAndReclaimModalController() {
   const currentAccount = useCurrentAccount()

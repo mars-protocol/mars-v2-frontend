@@ -2,12 +2,12 @@ import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
-import { BNCoin } from 'classes/BNCoin'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Text from 'components/common/Text'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import usePrices from 'hooks/prices/usePrices'
+import { BNCoin } from 'types/classes/BNCoin'
 import { formatAmountWithSymbol } from 'utils/formatters'
 import { getValueFromBNCoins } from 'utils/helpers'
 

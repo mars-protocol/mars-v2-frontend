@@ -1,7 +1,7 @@
-import { BNCoin } from 'classes/BNCoin'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
 import useAsset from 'hooks/assets/useAsset'
+import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 
 interface Props {

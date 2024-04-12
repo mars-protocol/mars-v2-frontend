@@ -1,10 +1,10 @@
 import { Row } from '@tanstack/react-table'
 import classNames from 'classnames'
 
-import { BNCoin } from 'classes/BNCoin'
 import { getAmountChangeColor } from 'components/account/AccountBalancesTable/functions'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { ORACLE_DENOM } from 'constants/oracle'
+import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
 export const VALUE_META = { accessorKey: 'value', header: 'Value' }

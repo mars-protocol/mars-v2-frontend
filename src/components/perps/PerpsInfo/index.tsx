@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react'
 
-import { BNCoin } from 'classes/BNCoin'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
 import Text from 'components/common/Text'
 import FundingRate from 'components/perps/PerpsInfo/FundingRate'
 import usePerpsMarket from 'hooks/perps/usePerpsMarket'
+import { BNCoin } from 'types/classes/BNCoin'
 
 export function PerpsInfo() {
   const market = usePerpsMarket()

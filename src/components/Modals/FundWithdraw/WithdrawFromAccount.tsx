@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { useCallback, useState } from 'react'
 
-import { BNCoin } from 'classes/BNCoin'
 import Button from 'components/common/Button'
 import Divider from 'components/common/Divider'
 import { ArrowRight } from 'components/common/Icons'
@@ -15,6 +14,7 @@ import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
 import useToggle from 'hooks/common/useToggle'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 import { cloneAccount, getMergedBalancesForAsset, removeDepositsAndLends } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 

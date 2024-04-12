@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useSWRConfig } from 'swr'
 
-import { BNCoin } from 'classes/BNCoin'
 import ModalContentWithSummary from 'components/Modals/ModalContentWithSummary'
 import { Header } from 'components/Modals/PerpsVault/Header'
 import { SubHeader } from 'components/Modals/PerpsVault/SubHeader'
@@ -16,6 +15,7 @@ import useAsset from 'hooks/assets/useAsset'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
 export default function PerpsVaultModalController() {

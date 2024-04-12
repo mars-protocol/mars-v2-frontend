@@ -1,12 +1,12 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
-import { BNCoin } from 'classes/BNCoin'
 import { getSizeChangeColor } from 'components/account/AccountStrategiesTable/functions'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { MAX_AMOUNT_DECIMALS, MIN_AMOUNT } from 'constants/math'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useAsset from 'hooks/assets/useAsset'
+import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { formatAmountToPrecision } from 'utils/formatters'
 

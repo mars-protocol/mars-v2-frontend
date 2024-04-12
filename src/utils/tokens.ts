@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 
-import { BNCoin } from 'classes/BNCoin'
+import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
 export const getTokenSymbol = (denom: string, marketAssets: Asset[]) =>

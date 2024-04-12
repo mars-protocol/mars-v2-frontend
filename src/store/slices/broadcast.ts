@@ -5,8 +5,8 @@ import { isMobile } from 'react-device-detect'
 import { StoreApi } from 'zustand'
 
 import getPythPriceData from 'api/prices/getPythPriceData'
-import { BNCoin } from 'classes/BNCoin'
 import { BN_ZERO } from 'constants/math'
+import { BNCoin } from 'types/classes/BNCoin'
 import { ExecuteMsg as AccountNftExecuteMsg } from 'types/generated/mars-account-nft/MarsAccountNft.types'
 import {
   Action,

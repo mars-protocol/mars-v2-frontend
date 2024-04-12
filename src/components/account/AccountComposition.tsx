@@ -2,7 +2,6 @@ import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
-import { BNCoin } from 'classes/BNCoin'
 import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
@@ -16,6 +15,7 @@ import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import usePrices from 'hooks/prices/usePrices'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountApr, getAccountPositionValues } from 'utils/accounts'
 
 interface Props {

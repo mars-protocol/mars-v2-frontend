@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 
-import { BNCoin } from 'classes/BNCoin'
 import AprBreakdown from 'components/Modals/HLS/Deposit/Summary/ApyBreakdown'
 import Container from 'components/Modals/HLS/Deposit/Summary/Container'
 import DisplayCurrency from 'components/common/DisplayCurrency'
@@ -8,6 +7,7 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { InfoCircle } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
+import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   baseApy: number

@@ -1,9 +1,9 @@
 import { Row } from '@tanstack/react-table'
 
-import { BNCoin } from 'classes/BNCoin'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { BN_ZERO } from 'constants/math'
+import { BNCoin } from 'types/classes/BNCoin'
 import { demagnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 

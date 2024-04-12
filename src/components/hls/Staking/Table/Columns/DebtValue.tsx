@@ -1,7 +1,7 @@
 import { Row } from '@tanstack/react-table'
 
-import { BNCoin } from 'classes/BNCoin'
 import DisplayCurrency from 'components/common/DisplayCurrency'
+import { BNCoin } from 'types/classes/BNCoin'
 
 export const DEBT_VAL_META = { header: 'Debt Value', accessorKey: 'values.debt' }
 interface Props {

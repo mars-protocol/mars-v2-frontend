@@ -1,7 +1,6 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
-import { BNCoin } from 'classes/BNCoin'
 import ActionButton from 'components/common/Button/ActionButton'
 import { CircularProgress } from 'components/common/CircularProgress'
 import DisplayCurrency from 'components/common/DisplayCurrency'
@@ -15,6 +14,7 @@ import useToggle from 'hooks/common/useToggle'
 import useLiquidationPrice from 'hooks/prices/useLiquidationPrice'
 import useSlippage from 'hooks/settings/useSlippage'
 import useRouteInfo from 'hooks/trade/useRouteInfo'
+import { BNCoin } from 'types/classes/BNCoin'
 import { formatAmountWithSymbol, formatPercent, formatValue } from 'utils/formatters'
 
 interface Props {

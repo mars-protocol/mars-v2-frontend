@@ -1,4 +1,4 @@
-import { BNCoin } from 'classes/BNCoin'
+import { BNCoin } from 'types/classes/BNCoin'
 import { demagnify, getCoinValue } from 'utils/formatters'
 
 export function getAssetAccountBalanceRow(

@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react'
 
-import { BNCoin } from 'classes/BNCoin'
 import AssetAmountSelectActionModal from 'components/Modals/AssetAmountSelectActionModal'
 import DetailsHeader from 'components/Modals/LendAndReclaim/DetailsHeader'
 import { BN_ZERO } from 'constants/math'
@@ -8,6 +7,7 @@ import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   account: Account

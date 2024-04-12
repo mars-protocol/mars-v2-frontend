@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react'
 
-import { BNCoin } from 'classes/BNCoin'
 import Button from 'components/common/Button'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
@@ -8,6 +7,7 @@ import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { getHealthFactorMessage } from 'utils/messages'
 

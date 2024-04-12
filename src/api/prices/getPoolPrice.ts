@@ -1,7 +1,7 @@
 import { cacheFn, poolPriceCache } from 'api/cache'
 import getPrice from 'api/prices/getPrice'
-import { BNCoin } from 'classes/BNCoin'
 import { BN_ONE } from 'constants/math'
+import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom, byTokenDenom, partition } from 'utils/array'
 import { BN } from 'utils/helpers'
 

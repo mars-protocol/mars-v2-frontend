@@ -1,5 +1,5 @@
-import { BNCoin } from 'classes/BNCoin'
 import { BN_ZERO } from 'constants/math'
+import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
 

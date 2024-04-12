@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import { BNCoin } from 'classes/BNCoin'
 import { BN_ZERO } from 'constants/math'
 import {
   addCoins,
@@ -16,6 +15,7 @@ import usePrices from 'hooks/prices/usePrices'
 import useSlippage from 'hooks/settings/useSlippage'
 import useVaults from 'hooks/vaults/useVaults'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountLeverage, cloneAccount } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { SWAP_FEE_BUFFER } from 'utils/constants'

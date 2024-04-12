@@ -1,6 +1,6 @@
 import { getCreditManagerQueryClient } from 'api/cosmwasm-client'
-import { BNCoin } from 'classes/BNCoin'
 import { BN_ZERO } from 'constants/math'
+import { BNCoin } from 'types/classes/BNCoin'
 import { getAssetSymbol } from 'utils/assets'
 import { BN } from 'utils/helpers'
 import { getVaultNameByCoins } from 'utils/vaults'

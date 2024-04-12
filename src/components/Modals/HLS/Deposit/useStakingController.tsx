@@ -1,11 +1,11 @@
 import { useCallback, useMemo } from 'react'
 
-import { BNCoin } from 'classes/BNCoin'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useDepositHlsVault from 'hooks/hls/useDepositHlsVault'
 import useSwapValueLoss from 'hooks/hls/useSwapValueLoss'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 import { SWAP_FEE_BUFFER } from 'utils/constants'
 import { BN } from 'utils/helpers'
 

@@ -1,8 +1,8 @@
-import { BNCoin } from 'classes/BNCoin'
 import AssetSummary from 'components/Modals/HLS/Deposit/Summary/AssetSummary'
 import YourPosition from 'components/Modals/HLS/Deposit/Summary/YourPosition'
 import Button from 'components/common/Button'
 import { ArrowRight } from 'components/common/Icons'
+import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   apy: number

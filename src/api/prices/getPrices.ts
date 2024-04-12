@@ -1,9 +1,9 @@
 import getOraclePrices from 'api/prices/getOraclePrices'
 import getPoolPrice from 'api/prices/getPoolPrice'
 import fetchPythPrices from 'api/prices/getPythPrices'
-import { BNCoin } from 'classes/BNCoin'
 import chains from 'configs/chains'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 import { partition } from 'utils/array'
 import { getAllAssetsWithPythId } from 'utils/assets'
 

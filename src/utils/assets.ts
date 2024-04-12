@@ -1,5 +1,5 @@
-import { BNCoin } from 'classes/BNCoin'
 import { BN_ZERO } from 'constants/math'
+import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { demagnify } from 'utils/formatters'
 

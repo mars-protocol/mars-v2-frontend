@@ -1,11 +1,11 @@
 import classNames from 'classnames'
 import { HTMLAttributes } from 'react'
 
-import { BNCoin } from 'classes/BNCoin'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { InfoCircle } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import useAsset from 'hooks/assets/useAsset'
+import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   action: 'buy' | 'deposit' | 'fund'

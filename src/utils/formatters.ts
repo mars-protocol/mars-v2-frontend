@@ -1,9 +1,9 @@
 import BigNumber from 'bignumber.js'
 import moment from 'moment'
 
-import { BNCoin } from 'classes/BNCoin'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
+import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 

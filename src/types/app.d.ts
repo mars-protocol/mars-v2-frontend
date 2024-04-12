@@ -19,7 +19,7 @@ type StdFee = {
 
 type ActionCoin = import('types/generated/mars-credit-manager/MarsCreditManager.types').ActionCoin
 
-type BNCoin = import('classes/BNCoin').BNCoin
+type BNCoin = import('types/classes/BNCoin').BNCoin
 
 type PositionType = 'deposit' | 'borrow' | 'lend' | 'vault' | 'perp'
 type TableType = 'balances' | 'strategies' | 'perps'
@@ -263,7 +263,7 @@ interface ContractClients {
   perps: import('types/generated/mars-perps/MarsPerps.client').MarsPerpsQueryClient
   redBank: import('types/generated/mars-red-bank/MarsRedBank.client').MarsRedBankQueryClient
   swapper: import('types/generated/mars-swapper-osmosis/MarsSwapperOsmosis.client').MarsSwapperOsmosisQueryClient
-  icns: import('classes/ICNSClient.client').ICNSQueryClient
+  icns: import('types/classes/ICNSClient.client').ICNSQueryClient
 }
 
 interface Market {
@@ -1231,3 +1231,12 @@ interface FormatOptions {
   rounded?: boolean
   abbreviated?: boolean
 }
+
+type PnL =
+  | 'break_even'
+  | {
+      profit: Coin
+    }
+  | {
+      loss: Coin
+    }
