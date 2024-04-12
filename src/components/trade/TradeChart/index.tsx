@@ -25,6 +25,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { ChartingLibraryWidgetOptions, ResolutionString, widget } from 'utils/charting_library'
 import { magnify } from 'utils/formatters'
+import { getTradingViewSettings } from 'utils/theme'
 
 interface Props {
   buyAsset: Asset
@@ -38,6 +39,7 @@ export default function TradeChart(props: Props) {
     LocalStorageKeys.CHART_INTERVAL,
     DEFAULT_SETTINGS.chartInterval,
   )
+  const [theme, __] = useLocalStorage<string>(LocalStorageKeys.THEME, DEFAULT_SETTINGS.theme)
   const ratio = useMemo(() => {
     const priceBuyAsset = prices.find(byDenom(props.buyAsset.denom))?.amount
     const priceSellAsset = prices.find(byDenom(props.sellAsset.denom))?.amount
@@ -50,6 +52,9 @@ export default function TradeChart(props: Props) {
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.TradingView || !chartContainerRef.current) return
+
+    const settings = getTradingViewSettings(theme)
+
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: props.buyAsset.pythFeedName ?? `${props.buyAsset.symbol}/USD`,
       datafeed: datafeed,
@@ -59,57 +64,44 @@ export default function TradeChart(props: Props) {
       time_scale: {
         min_bar_spacing: 12,
       },
-      toolbar_bg: '#220E1D',
+      toolbar_bg: settings.backgroundColor,
       disabled_features: isMobile ? disabledFeaturesMobile : disabledFeatures,
       enabled_features: isMobile ? enabledFeaturesMobile : enabledFeatures,
       fullscreen: false,
       autosize: true,
       container: chartContainerRef.current,
-      theme: 'dark',
+      theme: settings.theme,
       overrides: {
-        'paneProperties.background': '#220E1D',
+        ...settings.overrides,
         'paneProperties.backgroundType': 'solid',
-        'linetooltrendline.linecolor': 'rgba(255, 255, 255, 0.8)',
         'linetooltrendline.linewidth': 2,
         'scalesProperties.fontSize': 12,
       },
-      loading_screen: {
-        backgroundColor: '#220E1D',
-        foregroundColor: 'rgba(255, 255, 255, 0.3)',
-      },
-      custom_css_url: '/tradingview.css',
+      loading_screen: settings.loadingScreen,
+      custom_css_url:settings.stylesheet,
     }
 
     const tvWidget = new widget(widgetOptions)
 
     tvWidget.onChartReady(() => {
       const chart = tvWidget.chart()
-      chart.getSeries().setChartStyleProperties(1, {
-        upColor: '#3DAE9A',
-        downColor: '#AE3D3D',
-        borderColor: '#232834',
-        borderUpColor: '#3DAE9A',
-        borderDownColor: '#AE3D3D',
-        wickUpColor: '#3DAE9A',
-        wickDownColor: '#AE3D3D',
-        barColorsOnPrevClose: false,
-      })
+      chart.getSeries().setChartStyleProperties(1, settings.chartStyle)
     })
 
     const chartProperties = localStorage.getItem('tradingview.chartproperties')
     if (chartProperties) {
       const newChartProperties = JSON.parse(chartProperties)
       newChartProperties.paneProperties.backgroundType = 'solid'
-      newChartProperties.paneProperties.background = '#220E1D'
-      newChartProperties.paneProperties.backgroundGradientStartColor = '#220E1D'
-      newChartProperties.paneProperties.backgroundGradientEndColor = '#220E1D'
+      newChartProperties.paneProperties.background = settings.backgroundColor
+      newChartProperties.paneProperties.backgroundGradientStartColor = settings.backgroundColor
+      newChartProperties.paneProperties.backgroundGradientEndColor = settings.backgroundColor
       localStorage.setItem('tradingview.chartproperties', JSON.stringify(newChartProperties))
     }
 
     return () => {
       tvWidget.remove()
     }
-  }, [props.buyAsset.pythFeedName, props.buyAsset.symbol, chartInterval, chartContainerRef])
+  }, [props.buyAsset.pythFeedName, props.buyAsset.symbol, chartInterval, chartContainerRef, theme])
 
   return (
     <Card

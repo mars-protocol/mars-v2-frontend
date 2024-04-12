@@ -1233,6 +1233,29 @@ interface FormatOptions {
   abbreviated?: boolean
 }
 
+interface TradingViewSettings {
+  theme: import('utils/charting_library/charting_library').ThemeName
+  backgroundColor: string
+  stylesheet: string
+  overrides: {
+    'paneProperties.background': string
+    'linetooltrendline.linecolor': string
+  }
+  loadingScreen: {
+    backgroundColor: string
+    foregroundColor: string
+  }
+  chartStyle: {
+    upColor: string
+    downColor: string
+    borderColor: string
+    borderUpColor: string
+    borderDownColor: string
+    wickUpColor: string
+    wickDownColor: string
+  }
+}
+
 type PnL =
   | 'break_even'
   | {

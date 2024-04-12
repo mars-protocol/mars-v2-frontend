@@ -117,6 +117,7 @@
   --color-body: 0deg 0% 100%;
   --color-body-hls: 0deg 0% 100%;
   --color-white: 0deg 0% 20%;
+  --color-chart: 0deg 0% 100%;
   --color-black: 0deg 0% 100%;
   --glas-border: linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.05));
   --color-purple: 47deg 97% 67%;
@@ -151,6 +152,7 @@
 :root[data-theme='dark'] {
   --color-body: 0deg 0% 0%;
   --color-body-hls: 0deg 0% 0%;
+  --color-chart: 0deg 0% 0%;
   --color-orb-primary: 0deg 0% 0%;
   --color-orb-primary-hls: 0deg 0% 0%;
   --color-orb-secondary: 0deg 0% 0%;
