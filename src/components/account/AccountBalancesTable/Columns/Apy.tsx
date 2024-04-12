@@ -24,7 +24,7 @@ export default function Apr(props: Props) {
 
   return (
     <AssetRate
-      className='justify-end text-xs my-auto'
+      className='justify-end my-auto text-xs'
       rate={apy}
       isEnabled={type !== 'lend' || isEnabled}
       type='apy'
