@@ -8,14 +8,14 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { LineChart } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
 import Text from 'components/common/Text'
-import { datafeed } from 'components/trade/TradeChart/DataFeed'
-import PoweredByPyth from 'components/trade/TradeChart/PoweredByPyth'
 import {
   disabledFeatures,
   disabledFeaturesMobile,
   enabledFeatures,
   enabledFeaturesMobile,
 } from 'components/trade/TradeChart/constants'
+import { datafeed } from 'components/trade/TradeChart/DataFeed'
+import PoweredByPyth from 'components/trade/TradeChart/PoweredByPyth'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
@@ -114,7 +114,7 @@ export default function TradeChart(props: Props) {
   return (
     <Card
       title={
-        <div className='flex flex-wrap items-center justify-between w-full bg-white/10 p-4'>
+        <div className='flex flex-wrap items-center justify-between w-full p-4 bg-white/10'>
           {props.title ? (
             props.title
           ) : (

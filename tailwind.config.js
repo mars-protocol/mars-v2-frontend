@@ -66,10 +66,6 @@ module.exports = {
       backdropBlur: {
         sticky: '50px',
       },
-      backgroundImage: {
-        intro: 'url(/images/bg-intro.webp), url(/images/bg-intro.png)',
-        'intro-hls': 'url(/images/bg-intro-hls.webp), url(/images/bg-intro-hls.png)',
-      },
       backgroundSize: {
         desktop: '100% auto',
       },
@@ -84,11 +80,11 @@ module.exports = {
         '4xl': '100px',
       },
       boxShadow: {
-        inset: 'inset 0px 2px 2px hsla(var(--color-black) 0.25)',
-        overlay: '0 2px 2px hsla(var(--color-black) 0.14), 0 1px 5px hsla(var(--color-black) 0.2)',
-        button: '0px 1px 1px hsla(var(--color-black) 0.14), 0px 1px 3px hsla(var(--color-black) 0.2)',
+        inset: 'inset 0px 2px 2px hsl(var(--color-black) /0.25)',
+        overlay: '0 2px 2px hsl(var(--color-black) /0.14), 0 1px 5px hsl(var(--color-black) /0.2)',
+        button: '0px 1px 1px hsl(var(--color-black) /0.14), 0px 1px 3px hsl(var(--color-black) /0.2)',
         tooltip:
-          '0 3px 4px hsla(var(--color-black) 0.04), 0 3px 3px hsla(var(--color-black) 0.04), 0 1px 8px hsla(var(--color-black) 0.04)',
+          '0 3px 4px hsl(var(--color-black) /0.04), 0 3px 3px hsl(var(--color-black) /0.04), 0 1px 8px hsl(var(--color-black) /0.04)',
       },
       brightness: {
         30: '.3',
@@ -392,12 +388,10 @@ module.exports = {
           filter: 'blur(clamp(60px, 10vw, 150px))',
         },
         '.border-glas': {
-          background:
-            'linear-gradient(180deg,  hsla(var(--color-white) 0.2),  hsla(var(--color-white) 0.05))',
-          mask: 'linear-gradient(hsl(var(--color-white)) 0 0) content-box, linear-gradient(hsl(var(--color-white)) 0 0)',
+          background: 'linear-gradient(180deg,  hsl(var(--color-white) /0.2),  hsl(var(--color-white) /0.05))',
+          mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
           '-webkit-mask-composite': 'xor',
           maskComposite: 'exclude',
-          border: '1px solid var(--color-glas-border)',
         },
         '.glow-line': {
           x: 0,
@@ -413,21 +407,29 @@ module.exports = {
         },
         '.gradient-card': {
           background:
-            'linear-gradient(180deg, hsla(var(--color-white) 0.2) 0%, hsla(var(--color-white) 0) 100%), linear-gradient(0deg,  hsla(var(--color-white) 0.05),  hsla(var(--color-white) 0.05))',
+            'linear-gradient(180deg, hsl(var(--color-white) /0.2) 0%, hsl(var(--color-white) /0) 100%), linear-gradient(0deg,  hsl(var(--color-white) /0.05),  hsl(var(--color-white) /0.05))',
         },
         '.gradient-card-content': {
-          backgroundImage: 'linear-gradient(to right, transparent, hsla(var(--color-white) 0.05))',
+          backgroundImage: 'linear-gradient(to right, transparent, hsl(var(--color-white) /0.05))',
         },
         '.gradient-header': {
           background:
-            'linear-gradient(90deg, hsla(var(--color-white) 0.1) 0%, hsla(var(--color-white) 0) 50%)',
+            'linear-gradient(90deg, hsl(var(--color-white) /0.1) 0%, hsl(var(--color-white) /0) 50%)',
+        },
+        '.gradient-intro': {
+          background:
+            'linear-gradient(90deg, hsl(var(--color-white) /0) 60%, hsl(var(--color-purple-dark) /0.1) 90%)',
+        },
+        '.gradient-hls-intro': {
+          background:
+            'linear-gradient(90deg, hsl(var(--color-white) /0) 60%, hsl(var(--color-hls-secondary) /0.1) 90%)',
         },
         '.gradient-hls': {
           background: 'linear-gradient(180deg, hsl(var(--color-hsl-primary)) 0%, hsl(var(--color-hsl-secondary)) 50%)',
         },
         '.gradient-popover': {
           background:
-            'linear-gradient(180deg, hsla(var(--color-white) 0.1) 0%,  hsla(var(--color-white) 0) 100%), linear-gradient(0deg,  hsla(var(--color-white) 0.1), hsla(var(--color-white) 0.05))',
+            'linear-gradient(180deg, hsl(var(--color-white) /0.1) 0%,  hsl(var(--color-white) /0) 100%), linear-gradient(0deg,  hsl(var(--color-white) /0.1), hsl(var(--color-white) /0.05))',
         },
         '.gradient-primary-to-secondary': {
           background: 'linear-gradient(180deg, hsl(var(--color-purple)) 0%, hsl(var(--color-purple-dark)) 100%)',
@@ -449,21 +451,21 @@ module.exports = {
         },
         '.gradient-slider-pink': {
           background:
-            'linear-gradient(270deg, hsla(var(--color-slider-pink-primary) 0.89) 0%, hsla(var(--color-slider-pink-secondary) 0.05) 100%)',
+            'linear-gradient(270deg, hsl(var(--color-slider-pink-primary) /0.89) 0%, hsl(var(--color-slider-pink-secondary) /0.05) 100%)',
         },
         '.gradient-slider-green': {
-          background: 'linear-gradient(270deg, hsla(var(--color-slider-green-primary) 0.886) 0%, hsla(var(--color-slider-green-secondary) 0.051) 100%)',
+          background: 'linear-gradient(270deg, hsl(var(--color-slider-green-primary) /0.886) 0%, hsl(var(--color-slider-green-secondary) /0.051) 100%)',
         },
         '.gradient-slider-red': {
-          background: 'linear-gradient(270deg, hsla(var(--color-slider-red-primary) 0.886) 0%, hsla(var(--color-slider-red-secondary) 0.051) 100%)',
+          background: 'linear-gradient(270deg, hsl(var(--color-slider-red-primary) /0.886) 0%, hsl(var(--color-slider-red-secondary) /0.051) 100%)',
         },
         '.gradient-tooltip': {
           background:
-            'linear-gradient(77.47deg, hsla(var(--color-tooltip-primary) 0.9) 11.58%, hsla(var(--color-tooltip-secondary) 0.9) 93.89%)',
+            'linear-gradient(77.47deg, hsl(var(--color-tooltip-primary) /0.9) 11.58%, hsl(var(--color-tooltip-secondary) /0.9) 93.89%)',
         },
         '.gradient-active-tab': {
           background:
-            'linear-gradient(270deg, hsla(var(--color-active-tab-primary) 0.765) 0%, hsla(var(--color-active-tab-secondary) 0.886) 23.77%, hsla(var(--color-active-tab-tertiary) 0.26) 99.2%)',
+            'linear-gradient(270deg, hsl(var(--color-active-tab-primary) /0.765) 0%, hsl(var(--color-active-tab-secondary) /0.886) 23.77%, hsl(var(--color-active-tab-tertiary) /0.26) 99.2%)',
         },
         '.number': {
           whiteSpace: 'nowrap',

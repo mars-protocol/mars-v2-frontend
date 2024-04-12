@@ -111,14 +111,15 @@
   --color-active-tab-secondary: 343deg 100% 81%;
   --color-active-tab-tertiary: 13deg 33% 14%;
 
-  --color-glas-border: transparent; 
+  --glas-border: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05)); 
 }
 
 :root[data-theme='light'] {
   --color-body: 0deg 0% 100%;
   --color-white: 0deg 0% 0%;
   --color-black: 0deg 0% 100%;
-  --color-glas-border: rgba(0, 0, 0, 0.1); 
+  --glas-border: linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.05)); 
+ 
 }
 
 .Toastify__toast {

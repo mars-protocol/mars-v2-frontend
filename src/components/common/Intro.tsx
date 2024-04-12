@@ -69,7 +69,7 @@ export default function Intro(props: Props) {
     <Card
       className={classNames(
         'relative w-full p-8 bg-cover md:h-55 min-h-55',
-        isHLS ? 'bg-intro-hls' : 'bg-intro',
+        isHLS ? 'gradient-hls-intro' : 'gradient-intro',
       )}
       contentClassName='flex w-full h-full flex-col justify-between'
     >
