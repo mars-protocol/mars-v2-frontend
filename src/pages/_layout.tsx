@@ -63,11 +63,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     location.pathname.includes('perps')
   const accountId = useAccountId()
 
-  useEffect(()=> {
-    if(!window) return
-      const theme = localStorage.getItem(LocalStorageKeys.THEME) ?? 'default'
-      const root = window.document.documentElement
-      root.setAttribute('data-theme', theme)
+  useEffect(() => {
+    if (!window) return
+    const theme = localStorage.getItem(LocalStorageKeys.THEME) ?? 'default'
+    const root = window.document.documentElement
+    root.setAttribute('data-theme', theme)
   }, [])
 
   return (

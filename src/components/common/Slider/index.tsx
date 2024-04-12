@@ -9,7 +9,6 @@ import Mark from 'components/common/Slider/Mark'
 import Track from 'components/common/Slider/Track'
 import useToggle from 'hooks/common/useToggle'
 
-
 type Props = {
   value: number
   onChange: (value: number) => void
