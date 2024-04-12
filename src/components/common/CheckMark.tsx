@@ -11,7 +11,7 @@ interface Props {
   className?: string
 }
 
-export const CheckMark = ({ color = '#FFFFFF', size = 20, className }: Props) => {
+export const CheckMark = ({ color = 'text-white', size = 20, className }: Props) => {
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
@@ -21,8 +21,8 @@ export const CheckMark = ({ color = '#FFFFFF', size = 20, className }: Props) =>
   if (reduceMotion)
     return (
       <CheckCircled
-        className={classes}
-        style={{ width: `${size}px`, height: `${size}px`, color: `${color}` }}
+        className={classNames(classes, color)}
+        style={{ width: `${size}px`, height: `${size}px` }}
       />
     )
 
