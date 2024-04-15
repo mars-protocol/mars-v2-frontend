@@ -1163,6 +1163,7 @@ interface Settings {
   migrationBanner: boolean
   updateOracle: boolean
   chartInterval: import('utils/charting_library').ResolutionString
+  theme: string
 }
 
 interface KeyValuePair {
@@ -1230,6 +1231,29 @@ interface FormatOptions {
   suffix?: string
   rounded?: boolean
   abbreviated?: boolean
+}
+
+interface TradingViewSettings {
+  theme: import('utils/charting_library/charting_library').ThemeName
+  backgroundColor: string
+  stylesheet: string
+  overrides: {
+    'paneProperties.background': string
+    'linetooltrendline.linecolor': string
+  }
+  loadingScreen: {
+    backgroundColor: string
+    foregroundColor: string
+  }
+  chartStyle: {
+    upColor: string
+    downColor: string
+    borderColor: string
+    borderUpColor: string
+    borderDownColor: string
+    wickUpColor: string
+    wickDownColor: string
+  }
 }
 
 type PnL =

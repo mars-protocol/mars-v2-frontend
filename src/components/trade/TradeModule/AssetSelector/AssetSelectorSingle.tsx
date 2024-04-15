@@ -7,8 +7,8 @@ import AssetOverlay from 'components/trade/TradeModule/AssetSelector/AssetOverla
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
-import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 
 interface Props {
@@ -51,7 +51,7 @@ export default function AssetSelectorSingle(props: Props) {
   }, [])
 
   return (
-    <div className='grid-rows-auto grid grid-cols-[1fr_min-content_1fr] gap-y-2 bg-white/10 p-3 w-full'>
+    <div className='grid-rows-auto grid grid-cols-[1fr_min-content_1fr] gap-y-2 bg-white/10 p-3 w-full rounded-b-none'>
       <Text size='sm'>Buy</Text>
       <Text size='sm' className='col-start-3'>
         Sell
