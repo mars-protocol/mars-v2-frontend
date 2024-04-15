@@ -57,7 +57,7 @@ export default function Table<T>(props: Props<T>) {
       condition={!props.hideCard}
       wrapper={(children) => (
         <Card
-          className={classNames('w-full', props.type !== 'balances' && 'h-fit bg-white/5')}
+          className={classNames('w-full', props.type !== 'balances' && 'h-fit')}
           contentClassName='max-w-full overflow-x-scroll scrollbar-hide'
           title={props.title}
         >

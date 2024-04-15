@@ -194,7 +194,7 @@ export default function VaultDeposit(props: Props) {
             tooltip={`${primaryValuePercentage}% of value is ${primaryAsset.symbol}`}
             labelClassName='text-martian-red'
             diameter={32}
-            strokeColor='#FF645F'
+            strokeClass='stroke-martian-red'
             strokeWidth={3}
           />
           <div className='h-full w-[1px] rounded-xl bg-white/10'></div>
@@ -203,7 +203,7 @@ export default function VaultDeposit(props: Props) {
             tooltip={`${secondaryValuePercentage}% of value is ${secondaryAsset.symbol}`}
             labelClassName='text-martian-red'
             diameter={32}
-            strokeColor='#FF645F'
+            strokeClass='stroke-martian-red'
             strokeWidth={3}
           />
         </div>
