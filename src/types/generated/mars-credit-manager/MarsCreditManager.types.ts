@@ -98,7 +98,7 @@ export type Action =
   | {
       open_perp: {
         denom: string
-        size: SignedDecimal
+        size: SignedUint
       }
     }
   | {
@@ -109,7 +109,7 @@ export type Action =
   | {
       modify_perp: {
         denom: string
-        new_size: SignedDecimal
+        new_size: SignedUint
       }
     }
   | {
@@ -308,7 +308,7 @@ export type CallbackMsg =
       open_perp: {
         account_id: string
         denom: string
-        size: SignedDecimal
+        size: SignedUint
       }
     }
   | {
@@ -321,7 +321,7 @@ export type CallbackMsg =
       modify_perp: {
         account_id: string
         denom: string
-        new_size: SignedDecimal
+        new_size: SignedUint
       }
     }
   | {
@@ -461,8 +461,8 @@ export interface ActionCoin {
   amount: ActionAmount
   denom: string
 }
-export interface SignedDecimal {
-  abs: Decimal
+export interface SignedUint {
+  abs: Uint128
   negative: boolean
   [k: string]: unknown
 }
@@ -652,14 +652,6 @@ export interface RewardsCollector {
   address: string
 }
 export type ArrayOfCoin = Coin[]
-export type PnL =
-  | 'break_even'
-  | {
-      profit: Coin
-    }
-  | {
-      loss: Coin
-    }
 export interface Positions {
   account_id: string
   debts: DebtAmount[]
@@ -677,16 +669,17 @@ export interface DebtAmount {
 export interface PerpVaultPosition {
   denom: string
   deposit: PerpVaultDeposit
-  unlocks: UnlockState[]
+  unlocks: PerpVaultUnlock[]
 }
 export interface PerpVaultDeposit {
   amount: Uint128
   shares: Uint128
 }
-export interface UnlockState {
+export interface PerpVaultUnlock {
   amount: Uint128
   cooldown_end: number
   created_at: number
+  shares: Uint128
 }
 export interface PerpPosition {
   base_denom: string
@@ -697,30 +690,15 @@ export interface PerpPosition {
   entry_exec_price: Decimal
   entry_price: Decimal
   realised_pnl: PnlAmounts
-  size: SignedDecimal
-  unrealised_pnl: PositionPnl
+  size: SignedUint
+  unrealised_pnl: PnlAmounts
 }
 export interface PnlAmounts {
-  accrued_funding: SignedDecimal
-  closing_fee: SignedDecimal
-  opening_fee: SignedDecimal
-  pnl: SignedDecimal
-  price_pnl: SignedDecimal
-}
-export interface PositionPnl {
-  amounts: PnlAmounts
-  coins: PnlCoins
-  values: PnlValues
-}
-export interface PnlCoins {
-  closing_fee: Coin
-  pnl: PnL
-}
-export interface PnlValues {
-  accrued_funding: SignedDecimal
-  closing_fee: SignedDecimal
-  pnl: SignedDecimal
-  price_pnl: SignedDecimal
+  accrued_funding: SignedUint
+  closing_fee: SignedUint
+  opening_fee: SignedUint
+  pnl: SignedUint
+  price_pnl: SignedUint
 }
 export interface VaultPositionValue {
   base_coin: CoinValue

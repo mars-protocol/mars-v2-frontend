@@ -1,6 +1,9 @@
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
-import { Positions, UnlockState } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import {
+  PerpVaultUnlock,
+  Positions,
+} from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import {
   AssetParamsBaseForAddr as AssetParams,
   AssetParamsBaseForAddr,
@@ -124,7 +127,7 @@ export function resolvePerpsPositions(
       pnl: {
         net: BNCoin.fromDenomAndBigNumber(
           position.base_denom,
-          BN(position.unrealised_pnl.values.pnl as any)
+          BN(position.unrealised_pnl.pnl as any)
             .div(basePrice)
             .plus(position.realised_pnl.pnl as any),
         ),
@@ -151,19 +154,19 @@ export function resolvePerpsPositions(
         unrealized: {
           net: BNCoin.fromDenomAndBigNumber(
             position.base_denom,
-            BN(position.unrealised_pnl.amounts.pnl as any),
+            BN(position.unrealised_pnl.pnl as any),
           ),
           price: BNCoin.fromDenomAndBigNumber(
             position.base_denom,
-            BN(position.unrealised_pnl.amounts.price_pnl as any),
+            BN(position.unrealised_pnl.price_pnl as any),
           ),
           funding: BNCoin.fromDenomAndBigNumber(
             position.base_denom,
-            BN(position.unrealised_pnl.amounts.accrued_funding as any),
+            BN(position.unrealised_pnl.accrued_funding as any),
           ),
           fees: BNCoin.fromDenomAndBigNumber(
             position.base_denom,
-            BN(position.unrealised_pnl.amounts.closing_fee as any),
+            BN(position.unrealised_pnl.closing_fee as any),
           ),
         },
       },
@@ -186,7 +189,7 @@ export function resolvePerpsVaultPositions(
       prev[0].push(curr)
       return prev
     },
-    [[] as UnlockState[], BN_ZERO],
+    [[] as PerpVaultUnlock[], BN_ZERO],
   )
 
   return {

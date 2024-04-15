@@ -1,12 +1,12 @@
 import moment from 'moment/moment'
 import { useCallback, useMemo, useState } from 'react'
 
+import { VaultStatus } from 'types/enums'
 import DropDownButton from 'components/common/Button/DropDownButton'
 import { AccountArrowDown, LockLocked, LockUnlocked, Plus } from 'components/common/Icons'
 import useSlippage from 'hooks/settings/useSlippage'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useStore from 'store'
-import { VaultStatus } from 'types/enums/vault'
 
 export const MANAGE_META = { accessorKey: 'details', enableSorting: false, header: '' }
 

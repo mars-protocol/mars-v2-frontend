@@ -4,21 +4,6 @@ import { ReactNode, useEffect, useRef } from 'react'
 import EscButton from 'components/common/Button/EscButton'
 import Card from 'components/common/Card'
 
-export interface ModalProps {
-  header: string | ReactNode
-  subHeader?: string | ReactNode
-  headerClassName?: string
-  hideCloseBtn?: boolean
-  children?: ReactNode | string
-  content?: ReactNode | string
-  className?: string
-  contentClassName?: string
-  modalClassName?: string
-  onClose: () => void
-  hideTxLoader?: boolean
-  dialogId?: string
-}
-
 export default function Modal(props: ModalProps) {
   const ref: React.RefObject<HTMLDialogElement> = useRef(null)
   const modalClassName =

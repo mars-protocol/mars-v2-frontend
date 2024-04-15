@@ -1,5 +1,5 @@
+import { ChainInfoID } from 'types/enums'
 import { Neutron, Osmo } from 'components/common/Icons'
-import { ChainInfoID } from 'types/enums/wallet'
 
 interface Props {
   chainID: ChainInfoID

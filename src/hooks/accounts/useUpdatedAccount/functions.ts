@@ -1,6 +1,5 @@
 import { BN_ZERO } from 'constants/math'
 import { MOCK_DEPOSITED_VAULT_POSITION } from 'constants/vaults'
-import { VaultValue } from 'hooks/accounts/useUpdatedAccount/index'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'

@@ -232,35 +232,20 @@ export function convertAccountToPositions(account: Account): Positions {
         entry_exec_price: perpPosition.entryPrice.toString(),
         size: perpPosition.amount.toString() as any,
         unrealised_pnl: {
-          coins: {
-            closing_fee: perpPosition.pnl.unrealized.fees.abs().toCoin(),
-            pnl: perpPosition.pnl.unrealized.net.toPnLCoin(),
-          },
-          amounts: {
-            accrued_funding: perpPosition.pnl.unrealized.funding.amount
-              .integerValue()
-              .toString() as any,
-            // TODO: There is now a double fee applied. This might be inaccurate (on the conservative side)
-            opening_fee: perpPosition.pnl.unrealized.fees.amount
-              .abs()
-              .integerValue()
-              .toString() as any,
-            closing_fee: perpPosition.pnl.unrealized.fees.amount
-              .abs()
-              .integerValue()
-              .toString() as any,
-            pnl: perpPosition.pnl.unrealized.net.amount.integerValue().toString() as any,
-            price_pnl: perpPosition.pnl.unrealized.price.amount.integerValue().toString() as any,
-          },
-          values: {
-            // This does not matter for health calculation
-            accrued_funding: perpPosition.pnl.unrealized.funding.amount
-              .integerValue()
-              .toString() as any,
-            closing_fee: perpPosition.pnl.unrealized.fees.amount.integerValue().toString() as any,
-            pnl: perpPosition.pnl.unrealized.net.amount.integerValue().toString() as any,
-            price_pnl: perpPosition.pnl.unrealized.price.amount.integerValue().toString() as any,
-          },
+          accrued_funding: perpPosition.pnl.unrealized.funding.amount
+            .integerValue()
+            .toString() as any,
+          // TODO: There is now a double fee applied. This might be inaccurate (on the conservative side)
+          opening_fee: perpPosition.pnl.unrealized.fees.amount
+            .abs()
+            .integerValue()
+            .toString() as any,
+          closing_fee: perpPosition.pnl.unrealized.fees.amount
+            .abs()
+            .integerValue()
+            .toString() as any,
+          pnl: perpPosition.pnl.unrealized.net.amount.integerValue().toString() as any,
+          price_pnl: perpPosition.pnl.unrealized.price.amount.integerValue().toString() as any,
         },
         realised_pnl: {
           // This does not matter for the health calculation

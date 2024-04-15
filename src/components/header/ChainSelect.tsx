@@ -3,6 +3,7 @@ import React, { useCallback, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 
+import { ChainInfoID, NETWORK } from 'types/enums'
 import Button from 'components/common/Button'
 import ChainLogo from 'components/common/chain/ChainLogo'
 import { ChevronDown, Cross, ExternalLink } from 'components/common/Icons'
@@ -14,8 +15,6 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useStore from 'store'
-import { NETWORK } from 'types/enums/network'
-import { ChainInfoID } from 'types/enums/wallet'
 import { getRoute } from 'utils/route'
 
 interface Props {

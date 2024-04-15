@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import CreateAccount from 'components/Modals/HLS/Deposit/CreateAccount'
 import Leverage from 'components/Modals/HLS/Deposit/Leverage'

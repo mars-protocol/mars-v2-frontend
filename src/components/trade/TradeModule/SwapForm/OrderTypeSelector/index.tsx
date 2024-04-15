@@ -4,7 +4,6 @@ import { InfoCircle } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import { ORDER_TYPE_TABS } from 'components/trade/TradeModule/SwapForm/OrderTypeSelector/constants'
-import { AvailableOrderType } from 'components/trade/TradeModule/SwapForm/OrderTypeSelector/types'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
 
 interface Props {

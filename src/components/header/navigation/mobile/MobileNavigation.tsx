@@ -3,6 +3,7 @@ import classNames from 'classnames'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
+import { WalletID } from 'types/enums'
 import AccountMenu from 'components/account/AccountMenu'
 import AccountSummary from 'components/account/AccountSummary'
 import Card from 'components/common/Card'
@@ -14,7 +15,6 @@ import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
-import { WalletID } from 'types/enums/wallet'
 import { getPage, getRoute } from 'utils/route'
 
 interface Props {

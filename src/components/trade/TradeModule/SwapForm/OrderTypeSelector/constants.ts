@@ -1,5 +1,3 @@
-import { OrderTab } from 'components/trade/TradeModule/SwapForm/OrderTypeSelector/types'
-
 const ORDER_TYPE_UNAVAILABLE_MESSAGE =
   'This type of order is currently unavailable and is coming soon.'
 

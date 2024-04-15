@@ -15,17 +15,6 @@ export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
   return text.length > h + t ? [head, tail].join('...') : text
 }
 
-export interface FormatOptions {
-  decimals?: number
-  minDecimals?: number
-  maxDecimals?: number
-  thousandSeparator?: boolean
-  prefix?: string
-  suffix?: string
-  rounded?: boolean
-  abbreviated?: boolean
-}
-
 export const produceCountdown = (remainingTime: number) => {
   const duration = moment.duration(remainingTime, 'milliseconds')
   const days = formatValue(duration.asDays(), { minDecimals: 0, maxDecimals: 0 })

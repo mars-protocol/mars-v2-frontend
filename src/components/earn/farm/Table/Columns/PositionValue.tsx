@@ -1,5 +1,3 @@
-import React from 'react'
-
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { ORACLE_DENOM } from 'constants/oracle'
 import { BNCoin } from 'types/classes/BNCoin'
