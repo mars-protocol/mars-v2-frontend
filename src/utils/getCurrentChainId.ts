@@ -4,7 +4,7 @@ import { NETWORK } from 'types/enums/network'
 import { ChainInfoID } from 'types/enums/wallet'
 
 export const getCurrentChainId = () => {
-  const currentNetwork = process.env.NEXT_PUBLIC_NETWORK ?? NETWORK.TESTNET
+  const currentNetwork = process.env.NEXT_PUBLIC_THIS_SHOULD_FAIL ?? NETWORK.TESTNET
   const defaultChainId =
     currentNetwork === NETWORK.MAINNET
       ? chains[ChainInfoID.Osmosis1].id
