@@ -15,21 +15,21 @@ export default function useArbVault() {
     !!managedVaults?.length && `chains/${chainConfig.id}/managed-vaults/info`,
     async () => {
       if (!managedVaults?.length) return null
-
-      const apys = await Promise.all(
-        managedVaults.map((vault) =>
-          fetch(`https://mars-wif-bots-5e8e.onrender.com/api/vaults/${vault.vault_addr}/apy`).then(
-            (res) => res.json().then((data) => data[0]?.apy as number),
-          ),
-        ),
-      )
+      //
+      // const apys = await Promise.all(
+      //   managedVaults.map((vault) =>
+      //     fetch(`https://mars-wif-bots-5e8e.onrender.com/api/vaults/${vault.vault_addr}/apy`).then(
+      //       (res) => res.json().then((data) => data[0]?.apy as number),
+      //     ),
+      //   ),
+      // )
 
       return managedVaults
         .map((vault, index) => {
           return {
             address: vault.vault_addr,
             accountId: vault.account_id,
-            apy: apys[index],
+            apy: 0,
             vaultTokenSupply: BN(vault.vault_token_supply),
             tvl: BNCoin.fromDenomAndBigNumber(vault.base_token, BN(vault.total_assets)),
             baseDenom: vault.base_token,

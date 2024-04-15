@@ -3,14 +3,13 @@ import { useCallback } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
-import WalletBridges from 'components/Wallet/WalletBridges'
 import AccountCreateFirst from 'components/account/AccountCreateFirst'
-import AccountFund from 'components/account/AccountFund/AccountFundFullPage'
 import AccountList from 'components/account/AccountList'
 import Button from 'components/common/Button'
 import { Account, Plus, PlusCircled } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
+import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import useAccountId from 'hooks/useAccountId'
@@ -19,7 +18,6 @@ import useHasFundsForTxFee from 'hooks/useHasFundsForTxFee'
 import useToggle from 'hooks/useToggle'
 import useStore from 'store'
 import { isNumber } from 'utils/parsers'
-import { getPage, getRoute } from 'utils/route'
 
 interface Props {
   className?: string
@@ -44,23 +42,12 @@ export default function AccountMenuContent(props: Props) {
   const { enableAutoLendAccountId } = useAutoLend()
 
   const hasCreditAccounts = !!accountIds?.length
-  const isAccountSelected =
-    hasCreditAccounts && accountId && accountIds.includes(accountId)
+  const isAccountSelected = hasCreditAccounts && accountId && accountIds.includes(accountId)
 
   const performCreateAccount = useCallback(async () => {
     setShowMenu(false)
     useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
-  }, [
-    setShowMenu,
-    setIsCreating,
-    createAccount,
-    navigate,
-    pathname,
-    searchParams,
-    address,
-    enableAutoLendGlobal,
-    enableAutoLendAccountId,
-  ])
+  }, [setShowMenu])
 
   const handleCreateAccountClick = useCallback(() => {
     setShowMenu(!showMenu)
@@ -89,7 +76,9 @@ export default function AccountMenuContent(props: Props) {
       >
         {hasCreditAccounts
           ? isAccountSelected
-            ?  isNumber(accountId) ? `Credit Account ${accountId}` : accountId
+            ? isNumber(accountId)
+              ? `Credit Account ${accountId}`
+              : accountId
             : 'Select Account'
           : 'Create Account'}
       </Button>

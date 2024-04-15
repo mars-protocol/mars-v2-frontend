@@ -47,7 +47,7 @@ const menuTree = (walletId: WalletID, chainConfig: ChainConfig): MenuTreeEntry[]
   { pages: ['governance'], label: 'Governance', externalUrl: getGovernanceUrl(walletId) },
 ]
 
-const menuTreeV1 = (walletId: WalletID, chainConfig: ChainConfig): MenuTreeEntry[] => [
+const menuTreeV1 = (walletId: WalletID): MenuTreeEntry[] => [
   {
     pages: ['v1'],
     label: 'Red Bank',
@@ -97,6 +97,7 @@ export default function Header() {
           >
             <NavLink isHome item={{ pages: ['trade'], label: 'home' }}>
               <span className='block w-10 h-10 mb-3'>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src='/mars-wif-hat.png' alt='mars wif hat' />
                 {/*<Logo className='text-white' />*/}
               </span>
