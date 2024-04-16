@@ -11,7 +11,7 @@ import PortfolioCard from 'components/portfolio/Card'
 import ConnectInfo from 'components/portfolio/Overview/ConnectInfo'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccountIds from 'hooks/accounts/useAccountIds'
-import useHasFundsForTxFee from 'hooks/wallet/useHasFundsForTxFee'
+import useHasFundsForTxFee from 'hooks/useHasFundsForTxFee'
 import useStore from 'store'
 
 export default function AccountSummary() {

@@ -1,4 +1,4 @@
-import { ChainInfoID, WalletID } from 'types/enums'
+import { ChainInfoID, WalletID } from 'types/enums/wallet'
 
 export const WALLETS: WalletInfos = {
   [WalletID.Cosmostation]: {

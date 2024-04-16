@@ -2,7 +2,7 @@ import useSWR from 'swr'
 
 import getV1Debts from 'api/v1/getV1Debts'
 import getV1Deposits from 'api/v1/getV1Deposits'
-import useChainConfig from 'hooks/chain/useChainConfig'
+import useChainConfig from 'hooks/useChainConfig'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 

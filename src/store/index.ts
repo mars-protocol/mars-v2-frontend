@@ -5,6 +5,8 @@ import createBroadcastSlice from 'store/slices/broadcast'
 import createCommonSlice from 'store/slices/common'
 import createModalSlice from 'store/slices/modal'
 
+export interface Store extends CommonSlice, BroadcastSlice, ModalSlice {}
+
 const store = (set: SetState<any>, get: GetState<any>) => ({
   ...createCommonSlice(set, get),
   ...createBroadcastSlice(set, get),

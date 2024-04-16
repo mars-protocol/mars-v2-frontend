@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { BN_ZERO } from 'constants/math'
 import useAccount from 'hooks/accounts/useAccount'
 import useMarkets from 'hooks/markets/useMarkets'
-import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
+import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 

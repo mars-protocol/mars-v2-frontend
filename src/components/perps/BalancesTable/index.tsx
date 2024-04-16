@@ -1,10 +1,10 @@
 import { useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-import { SearchParams } from 'types/enums'
 import Table from 'components/common/Table'
 import usePerpsBalancesColumns from 'components/perps/BalancesTable/Columns/usePerpsBalancesColumns'
 import usePerpsBalancesData from 'components/perps/BalancesTable/usePerpsBalancesData'
+import { SearchParams } from 'types/enums/searchParams'
 import { getSearchParamsObject } from 'utils/route'
 
 export default function PerpsBalancesTable() {
@@ -23,7 +23,6 @@ export default function PerpsBalancesTable() {
     [searchParams, setSearchParams],
   )
 
-  if (!data.length) return null
   return (
     <Table
       title='Perp Positions'

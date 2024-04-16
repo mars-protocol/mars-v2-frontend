@@ -10,15 +10,16 @@ interface Props {
   className?: string
 }
 
-export const CircularProgress = ({ size = 20, className }: Props) => {
+export const CircularProgress = ({ color = '#FFFFFF', size = 20, className }: Props) => {
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
   )
   const borderWidth = `${size / 10}px`
+  const borderColor = `${color} transparent transparent transparent`
   const loaderClasses = classNames('inline-block relative', className)
   const elementClasses =
-    'block absolute w-4/5 h-4/5 m-[10%] rounded-full animate-progress border border-transparent border-l-white'
+    'block absolute w-4/5 h-4/5 m-[10%] rounded-full animate-progress border-solid'
 
   if (reduceMotion)
     return (
@@ -27,8 +28,8 @@ export const CircularProgress = ({ size = 20, className }: Props) => {
         style={{ width: `${size}px`, height: `${size}px` }}
       >
         <p
-          className='w-full text-center text-white'
-          style={{ fontSize: `${size}px`, lineHeight: `${size}px` }}
+          className='w-full text-center'
+          style={{ fontSize: `${size}px`, lineHeight: `${size}px`, color: `${color}` }}
         >
           ...
         </p>
@@ -41,6 +42,7 @@ export const CircularProgress = ({ size = 20, className }: Props) => {
         className={elementClasses}
         style={{
           borderWidth: borderWidth,
+          borderColor: borderColor,
         }}
       />
       <div
@@ -48,6 +50,7 @@ export const CircularProgress = ({ size = 20, className }: Props) => {
         style={{
           animationDelay: '-0.45s',
           borderWidth: borderWidth,
+          borderColor: borderColor,
         }}
       />
       <div
@@ -55,6 +58,7 @@ export const CircularProgress = ({ size = 20, className }: Props) => {
         style={{
           animationDelay: '-0.3s',
           borderWidth: borderWidth,
+          borderColor: borderColor,
         }}
       />
       <div
@@ -62,6 +66,7 @@ export const CircularProgress = ({ size = 20, className }: Props) => {
         style={{
           animationDelay: '-0.15s',
           borderWidth: borderWidth,
+          borderColor: borderColor,
         }}
       />
     </div>

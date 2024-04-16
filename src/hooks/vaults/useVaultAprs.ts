@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 
-import useChainConfig from 'hooks/chain/useChainConfig'
+import useChainConfig from 'hooks/useChainConfig'
 import { convertAprToApy } from 'utils/parsers'
 
 export default function useVaultAprs() {

@@ -8,7 +8,7 @@ import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 
 interface Props {
   tooltip: string | ReactNode
-  strokeClass?: string
+  strokeColor?: string
   strokeWidth?: number
   background?: string
   diameter?: number
@@ -18,8 +18,8 @@ interface Props {
 }
 
 export const Gauge = ({
-  background = 'stroke-white/13',
-  strokeClass,
+  background = '#FFFFFF22',
+  strokeColor,
   strokeWidth = 4,
   diameter = 40,
   percentage = 0,
@@ -49,7 +49,7 @@ export const Gauge = ({
           style={{ transform: 'rotate(-90deg)' }}
           className='absolute top-0 left-0'
         >
-          {!strokeClass && (
+          {!strokeColor && (
             <linearGradient id='gradient'>
               <stop stopColor='rgba(255, 160, 187)' offset='0%'></stop>
               <stop stopColor='rgba(186, 8, 189)' offset='50%'></stop>
@@ -58,7 +58,7 @@ export const Gauge = ({
           )}
           <circle
             fill='none'
-            className={background}
+            stroke={background}
             strokeWidth={strokeWidth}
             strokeDashoffset='0'
             r={radius}
@@ -71,7 +71,7 @@ export const Gauge = ({
             cx={radius}
             cy={radius}
             fill='transparent'
-            stroke={strokeClass ? strokeClass : `url(#gradient)`}
+            stroke={strokeColor ? strokeColor : `url(#gradient)`}
             strokeWidth={strokeWidth}
             strokeDashoffset={circlePercent}
             strokeDasharray='100'

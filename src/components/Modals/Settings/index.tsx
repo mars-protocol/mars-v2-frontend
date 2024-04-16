@@ -1,25 +1,25 @@
 import classNames from 'classnames'
 import { useCallback, useMemo, useState } from 'react'
 
-import AssetImage from 'components/common/assets/AssetImage'
+import Modal from 'components/Modals/Modal'
+import SettingsOptions from 'components/Modals/Settings/SettingsOptions'
+import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
 import Button from 'components/common/Button'
 import { ArrowCircle, Enter } from 'components/common/Icons'
 import NumberInput from 'components/common/NumberInput'
 import Select from 'components/common/Select'
 import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
-import Modal from 'components/Modals/Modal'
-import SettingsOptions from 'components/Modals/Settings/SettingsOptions'
-import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
+import AssetImage from 'components/common/assets/AssetImage'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
-import useAlertDialog from 'hooks/common/useAlertDialog'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import useAutoLend from 'hooks/wallet/useAutoLend'
+import useAlertDialog from 'hooks/useAlertDialog'
+import useAutoLend from 'hooks/useAutoLend'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
 
@@ -52,13 +52,6 @@ export default function SettingsModal() {
     LocalStorageKeys.UPDATE_ORACLE,
     DEFAULT_SETTINGS.updateOracle,
   )
-  const [theme, setTheme] = useLocalStorage<string>(LocalStorageKeys.THEME, DEFAULT_SETTINGS.theme)
-
-  const themeOptions: SelectOption[] = [
-    { label: 'Default', value: 'default' },
-    { label: 'Light', value: 'light' },
-    { label: 'Dark', value: 'dark' },
-  ]
 
   const displayCurrenciesOptions = useMemo(
     () =>
@@ -109,16 +102,6 @@ export default function SettingsModal() {
       setDisplayCurrency(value)
     },
     [setDisplayCurrency],
-  )
-
-  const handleTheme = useCallback(
-    (value: string) => {
-      if (!window) return
-      const root = window.document.documentElement
-      root.setAttribute('data-theme', value)
-      setTheme(value)
-    },
-    [setTheme],
   )
 
   const handleSlippageInputFocus = useCallback(() => {
@@ -216,26 +199,6 @@ export default function SettingsModal() {
       headerClassName='p-6'
       contentClassName='flex flex-wrap px-6 pb-6 pt-4'
     >
-      <SettingsOptions
-        label='Theme'
-        description='Change the appearance of the Outpost.'
-        className='pb-6'
-      >
-        <Select
-          options={themeOptions.map((option) => ({
-            label: (
-              <Text size='sm' className='leading-4'>
-                {option.label}
-              </Text>
-            ),
-            value: option.value,
-          }))}
-          defaultValue={theme}
-          onChange={handleTheme}
-          className='relative border w-60 rounded-base border-white/10'
-          containerClassName='justify-end'
-        />
-      </SettingsOptions>
       <SettingsSwitch
         onChange={handleLendAssets}
         name='enableAutoLendGlobal'

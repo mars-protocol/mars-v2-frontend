@@ -1,6 +1,6 @@
-import { DocURL } from 'types/enums'
 import { TextLink } from 'components/common/TextLink'
 import useStore from 'store'
+import { DocURL } from 'types/enums/docURL'
 
 import packageInfo from '../../../package.json'
 

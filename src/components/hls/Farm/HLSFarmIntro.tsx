@@ -1,9 +1,9 @@
 import React from 'react'
 
-import { DocURL } from 'types/enums'
 import Button from 'components/common/Button'
 import { PlusSquared } from 'components/common/Icons'
 import Intro from 'components/common/Intro'
+import { DocURL } from 'types/enums/docURL'
 
 export default function HlsFarmIntro() {
   return (

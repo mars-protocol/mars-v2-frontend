@@ -1,6 +1,7 @@
-import { ChainInfoID, NETWORK } from 'types/enums'
 import chains from 'configs/chains'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import { NETWORK } from 'types/enums/network'
+import { ChainInfoID } from 'types/enums/wallet'
 
 export const getCurrentChainId = () => {
   const currentNetwork = process.env.NEXT_PUBLIC_NETWORK ?? NETWORK.TESTNET

@@ -2,14 +2,14 @@ import { useShuttle } from '@delphi-labs/shuttle-react'
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
-import { WalletID } from 'types/enums'
 import Button from 'components/common/Button'
 import { ChevronDown } from 'components/common/Icons'
 import { NavLink } from 'components/header/navigation/desktop/NavLink'
 import { NavMenu } from 'components/header/navigation/desktop/NavMenu'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import useToggle from 'hooks/common/useToggle'
+import useChainConfig from 'hooks/useChainConfig'
+import useToggle from 'hooks/useToggle'
 import useStore from 'store'
+import { WalletID } from 'types/enums/wallet'
 
 interface Props {
   menuTree: (walletId: WalletID, chainConfig: ChainConfig) => MenuTreeEntry[]

@@ -2,8 +2,8 @@ import { useMemo } from 'react'
 
 import { BN_ZERO } from 'constants/math'
 import useMarkets from 'hooks/markets/useMarkets'
-import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
-import useCurrentAccountLends from 'hooks/wallet/useCurrentAccountLends'
+import useCurrentAccountLends from 'hooks/useCurrentAccountLends'
+import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
 import { byDenom } from 'utils/array'
 
 function useLendingMarketAssetsTableData(): {

@@ -1,4 +1,4 @@
-import { ActionCoin } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { ActionCoin, PnL } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { BN } from 'utils/helpers'
 
 export class BNCoin {

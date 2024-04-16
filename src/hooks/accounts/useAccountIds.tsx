@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 
 import getAccountIds from 'api/wallets/getAccountIds'
-import useChainConfig from 'hooks/chain/useChainConfig'
+import useChainConfig from 'hooks/useChainConfig'
 
 export default function useAccountIdsAndKinds(address?: string, suspense = true, noHls = false) {
   const chainConfig = useChainConfig()

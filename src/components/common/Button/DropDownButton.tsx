@@ -5,7 +5,7 @@ import { ChevronDown } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
-import useToggle from 'hooks/common/useToggle'
+import useToggle from 'hooks/useToggle'
 
 interface Props extends ButtonProps {
   items: DropDownItem[]

@@ -12,7 +12,7 @@ import getPrice from 'api/prices/getPrice'
 import getVaults from 'api/vaults/getVaults'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
-import { VaultStatus } from 'types/enums'
+import { VaultStatus } from 'types/enums/vault'
 import {
   Positions,
   VaultPosition,

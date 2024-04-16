@@ -7,7 +7,15 @@ import { OverlayMark } from 'components/common/Icons'
 import LeverageLabel from 'components/common/Slider/LeverageLabel'
 import Mark from 'components/common/Slider/Mark'
 import Track from 'components/common/Slider/Track'
-import useToggle from 'hooks/common/useToggle'
+import useToggle from 'hooks/useToggle'
+
+const colors = {
+  '1': '#897E83',
+  '2': '#BD8898',
+  '3': '#DB83A5',
+  '4': '#B5469B',
+  '5': '#920D92',
+}
 
 type Props = {
   value: number
@@ -98,9 +106,9 @@ export default function Slider(props: Props) {
   }
 
   function getActiveIndex() {
-    if (value >= 100) return '7'
-    if (value >= 75) return '6'
-    if (value >= 50) return '4'
+    if (value >= 100) return '5'
+    if (value >= 75) return '4'
+    if (value >= 50) return '3'
     if (value >= 25) return '2'
     return '1'
   }
@@ -143,21 +151,23 @@ export default function Slider(props: Props) {
             value={0}
             sliderValue={value}
             disabled={disabled}
-            backgroundClassName='bg-slider-1'
+            style={{ backgroundColor: colors['1'] }}
           />
           <Track maxValue={23} sliderValue={value} bg='before:gradient-slider-1' />
           <Mark
             onClick={() => handleOnChange(25)}
             value={25}
             sliderValue={value}
-            backgroundClassName='bg-slider-3'
+            disabled={disabled}
+            style={{ backgroundColor: colors['2'] }}
           />
           <Track maxValue={48} sliderValue={value} bg='before:gradient-slider-2' />
           <Mark
             onClick={() => handleOnChange(50)}
             value={50}
             sliderValue={value}
-            backgroundClassName='bg-slider-5'
+            disabled={disabled}
+            style={{ backgroundColor: colors['3'] }}
           />
           <Track maxValue={73} sliderValue={value} bg='before:gradient-slider-3' />
           <Mark
@@ -165,7 +175,7 @@ export default function Slider(props: Props) {
             value={75}
             sliderValue={value}
             disabled={disabled}
-            backgroundClassName='bg-slider-6'
+            style={{ backgroundColor: colors['4'] }}
           />
           <Track maxValue={98} sliderValue={value} bg='before:gradient-slider-4' />
           <Mark
@@ -173,7 +183,7 @@ export default function Slider(props: Props) {
             value={100}
             sliderValue={value}
             disabled={disabled}
-            backgroundClassName='bg-slider-8'
+            style={{ backgroundColor: colors['5'] }}
           />
         </div>
         {!disabled && (
@@ -191,9 +201,9 @@ export default function Slider(props: Props) {
               <div ref={nodeRef} className='absolute z-20 leading-3'>
                 <div
                   className={classNames(
-                    `bg-slider-${Number(getActiveIndex()) + 1}`,
-                    'z-20 h-3 w-3 rotate-45 hover:cursor-pointer rounded-xs border-[2px] border-white/60 !outline-none',
+                    'z-20 h-3 w-3 rotate-45 hover:cursor-pointer rounded-xs border-[2px] border-white !outline-none',
                   )}
+                  style={{ background: colors[getActiveIndex()] }}
                 />
                 {leverage ? (
                   <div className='pt-2.5'>

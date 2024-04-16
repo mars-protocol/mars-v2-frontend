@@ -5,7 +5,7 @@ import { ChevronDown } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Option from 'components/common/Select/Option'
 import Text from 'components/common/Text'
-import useToggle from 'hooks/common/useToggle'
+import useToggle from 'hooks/useToggle'
 
 interface Props {
   options: SelectOption[]

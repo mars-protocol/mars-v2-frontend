@@ -4,7 +4,7 @@ import Table from 'components/common/Table'
 import { NAME_META } from 'components/hls/Farm/Table/Columns/Name'
 import useAvailableColumns from 'components/hls/Farm/Table/Columns/useAvailableColumns'
 import { BN_ZERO } from 'constants/math'
-import useChainConfig from 'hooks/chain/useChainConfig'
+import useChainConfig from 'hooks/useChainConfig'
 import useVaults from 'hooks/vaults/useVaults'
 
 const title = 'Available HLS Vaults'

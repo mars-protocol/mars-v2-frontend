@@ -18,12 +18,12 @@ export default function SummaryLine(props: SummaryLineProps) {
     <div className={classNames(infoLineClasses, props.className)}>
       {props.tooltip ? (
         <Tooltip content={<span className='text-sm'>{props.tooltip}</span>} type='info' underline>
-          <Text size='xs' className='text-white/40'>
+          <Text size='xs' className='opacity-40'>
             {props.label}
           </Text>
         </Tooltip>
       ) : (
-        <span className='text-white/40'>{props.label}</span>
+        <span className='opacity-40'>{props.label}</span>
       )}
       <span className={props.contentClassName}>{props.children}</span>
     </div>

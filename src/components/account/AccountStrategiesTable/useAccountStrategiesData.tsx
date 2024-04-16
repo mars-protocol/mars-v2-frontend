@@ -6,7 +6,7 @@ import {
 } from 'components/account/AccountStrategiesTable/functions'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
-import usePrices from 'hooks/prices/usePrices'
+import usePrices from 'hooks/usePrices'
 import { transformPerpsVaultIntoDeposited } from 'hooks/vaults/useDepositedVaults'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 

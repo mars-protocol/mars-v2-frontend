@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import React from 'react'
 
-import Modal from 'components/Modals/Modal'
+import Modal, { ModalProps } from 'components/Modals/Modal'
 import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
 import Card from 'components/common/Card'
 import { CircularProgress } from 'components/common/CircularProgress'

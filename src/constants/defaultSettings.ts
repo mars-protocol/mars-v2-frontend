@@ -25,5 +25,4 @@ export const DEFAULT_SETTINGS: Settings = {
   perpsAsset: '',
   updateOracle: true,
   chartInterval: '60' as ResolutionString,
-  theme: 'default',
 }

@@ -1,12 +1,12 @@
 import classNames from 'classnames'
 
+import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
+import Modal from 'components/Modals/Modal'
 import Button from 'components/common/Button'
 import Checkbox from 'components/common/Checkbox'
 import Text from 'components/common/Text'
-import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
-import Modal from 'components/Modals/Modal'
-import useAlertDialog from 'hooks/common/useAlertDialog'
-import useToggle from 'hooks/common/useToggle'
+import useAlertDialog from 'hooks/useAlertDialog'
+import useToggle from 'hooks/useToggle'
 
 export default function AlertDialogController() {
   const { config, close } = useAlertDialog()

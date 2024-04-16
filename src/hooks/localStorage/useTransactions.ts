@@ -1,6 +1,6 @@
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import useChainConfig from 'hooks/chain/useChainConfig'
+import useChainConfig from 'hooks/useChainConfig'
 
 export default function useDisplayCurrency() {
   const chainConfig = useChainConfig()

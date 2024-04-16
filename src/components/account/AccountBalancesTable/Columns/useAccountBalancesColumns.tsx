@@ -14,7 +14,7 @@ import Value, {
   valueBalancesSortingFn,
 } from 'components/account/AccountBalancesTable/Columns/Value'
 import useMarkets from 'hooks/markets/useMarkets'
-import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import useHealthComputer from 'hooks/useHealthComputer'
 import useStore from 'store'
 
 export default function useAccountBalancesColumns(

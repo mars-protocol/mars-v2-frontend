@@ -3,10 +3,10 @@ import useSWR from 'swr'
 
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import useClients from 'hooks/chain/useClients'
-import useDebounce from 'hooks/common/useDebounce'
 import { usePerpsParams } from 'hooks/perps/usePerpsParams'
+import useChainConfig from 'hooks/useChainConfig'
+import useClients from 'hooks/useClients'
+import useDebounce from 'hooks/useDebounce'
 import { BN } from 'utils/helpers'
 
 export default function useTradingFeeAndPrice(

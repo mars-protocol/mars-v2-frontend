@@ -3,7 +3,7 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { BN_ZERO } from 'constants/math'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useAsset from 'hooks/assets/useAsset'
-import usePrices from 'hooks/prices/usePrices'
+import usePrices from 'hooks/usePrices'
 
 export const UNLOCK_AMOUNT_META = { accessorKey: 'amounts.primary', header: 'Unlock Amount' }
 

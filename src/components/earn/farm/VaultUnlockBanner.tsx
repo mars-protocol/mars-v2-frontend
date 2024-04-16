@@ -5,8 +5,8 @@ import Button from 'components/common/Button'
 import { ChevronRight } from 'components/common/Icons'
 import NotificationBanner from 'components/common/NotificationBanner'
 import useSlippage from 'hooks/settings/useSlippage'
-import useAccountId from 'hooks/accounts/useAccountId'
-import useChainConfig from 'hooks/chain/useChainConfig'
+import useAccountId from 'hooks/useAccountId'
+import useChainConfig from 'hooks/useChainConfig'
 import useStore from 'store'
 
 interface Props {

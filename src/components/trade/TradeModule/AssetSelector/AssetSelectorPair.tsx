@@ -6,8 +6,8 @@ import Text from 'components/common/Text'
 import AssetOverlay from 'components/trade/TradeModule/AssetSelector/AssetOverlay'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useChainConfig from 'hooks/useChainConfig'
 import useStore from 'store'
 
 interface Props {
@@ -41,7 +41,7 @@ export default function AssetSelectorPair(props: Props) {
         color='quaternary'
         variant='transparent'
         onClick={() => useStore.setState({ assetOverlayState: 'pair' })}
-        className='flex items-center justify-between w-full py-5 rounded-b-none bg-white/10'
+        className='flex items-center justify-between w-full py-5 bg-white/10'
       >
         <Text size='sm' className='text-white/60'>
           <span className='text-white'>{buyAsset.symbol}</span>/{sellAsset.symbol}

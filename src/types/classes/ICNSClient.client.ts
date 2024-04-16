@@ -1,4 +1,8 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
+export interface ICNSReadOnlyInterface {
+  contractAddress: string
+  primaryName: ({ address }: { address: string }) => Promise<ICNSResult>
+}
 export class ICNSQueryClient implements ICNSReadOnlyInterface {
   client: CosmWasmClient
   contractAddress: string

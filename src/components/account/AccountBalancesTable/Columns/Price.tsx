@@ -1,5 +1,5 @@
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import usePrice from 'hooks/prices/usePrice'
+import usePrice from 'hooks/usePrice'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 

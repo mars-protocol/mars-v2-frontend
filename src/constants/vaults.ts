@@ -1,5 +1,5 @@
-import { VaultStatus } from 'types/enums'
 import { BN_ZERO } from 'constants/math'
+import { VaultStatus } from 'types/enums/vault'
 
 export const VAULT_DEPOSIT_BUFFER = 0.999
 

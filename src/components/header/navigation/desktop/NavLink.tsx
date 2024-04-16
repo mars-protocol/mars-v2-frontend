@@ -4,7 +4,7 @@ import { NavLink as Link, useSearchParams } from 'react-router-dom'
 
 import { ExternalLink } from 'components/common/Icons'
 import { getIsActive } from 'components/header/navigation/desktop/DesktopNavigation'
-import useAccountId from 'hooks/accounts/useAccountId'
+import useAccountId from 'hooks/useAccountId'
 import useStore from 'store'
 import { getRoute } from 'utils/route'
 

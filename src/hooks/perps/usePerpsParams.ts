@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 import useSWR from 'swr'
 
-import useChainConfig from 'hooks/chain/useChainConfig'
-import useClients from 'hooks/chain/useClients'
+import useChainConfig from 'hooks/useChainConfig'
+import useClients from 'hooks/useClients'
 import { PerpParams } from 'types/generated/mars-params/MarsParams.types'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
@@ -45,4 +45,14 @@ function resolvePerpsParams(param: PerpParams) {
     maxOpenInterestShort: BN(param.max_short_oi_value),
     maxOpenInterestLong: BN(param.max_long_oi_value),
   } as PerpsParams
+}
+
+export interface PerpsParams {
+  denom: string
+  closingFeeRate: BigNumber
+  maxOpenInterestLong: BigNumber
+  maxOpenInterestShort: BigNumber
+  maxPositionValue: BigNumber | null
+  minPositionValue: BigNumber
+  openingFeeRate: BigNumber
 }

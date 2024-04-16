@@ -5,9 +5,9 @@ import { ACCOUNT_MENU_BUTTON_ID } from 'components/account/AccountMenuContent'
 import DropDownButton from 'components/common/Button/DropDownButton'
 import { ArrowDownLine, ArrowUpLine, Enter, ExclamationMarkCircled } from 'components/common/Icons'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useAlertDialog from 'hooks/common/useAlertDialog'
-import useLendAndReclaimModal from 'hooks/common/useLendAndReclaimModal'
-import useAutoLend from 'hooks/wallet/useAutoLend'
+import useAlertDialog from 'hooks/useAlertDialog'
+import useAutoLend from 'hooks/useAutoLend'
+import useLendAndReclaimModal from 'hooks/useLendAndReclaimModal'
 import useStore from 'store'
 
 export const MANAGE_META = {

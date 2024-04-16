@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useMarkets from 'hooks/markets/useMarkets'
-import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
+import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
 
 export default function useBorrowMarketAssetsTableData() {
   const account = useCurrentAccount()

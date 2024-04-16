@@ -22,7 +22,7 @@ export type ExecuteMsg =
       init_denom: {
         denom: string
         max_funding_velocity: Decimal
-        skew_scale: Uint128
+        skew_scale: Decimal
       }
     }
   | {
@@ -37,25 +37,25 @@ export type ExecuteMsg =
     }
   | {
       deposit: {
-        account_id?: string | null
+        account_id: string
       }
     }
   | {
       unlock: {
-        account_id?: string | null
+        account_id: string
         shares: Uint128
       }
     }
   | {
       withdraw: {
-        account_id?: string | null
+        account_id: string
       }
     }
   | {
       open_position: {
         account_id: string
         denom: string
-        size: SignedUint
+        size: SignedDecimal
       }
     }
   | {
@@ -68,7 +68,7 @@ export type ExecuteMsg =
       modify_position: {
         account_id: string
         denom: string
-        new_size: SignedUint
+        new_size: SignedDecimal
       }
     }
   | {
@@ -95,8 +95,8 @@ export type OwnerUpdate =
 export type Decimal = string
 export type Uint128 = string
 export type ActionKind = 'default' | 'liquidation'
-export interface SignedUint {
-  abs: Uint128
+export interface SignedDecimal {
+  abs: Decimal
   negative: boolean
   [k: string]: unknown
 }
@@ -128,28 +128,31 @@ export type QueryMsg =
     }
   | {
       perp_vault_position: {
-        account_id?: string | null
+        account_id: string
         action?: ActionKind | null
-        user_address: string
       }
     }
   | {
       deposit: {
-        account_id?: string | null
-        user_address: string
+        account_id: string
+      }
+    }
+  | {
+      deposits: {
+        limit?: number | null
+        start_after?: string | null
       }
     }
   | {
       unlocks: {
-        account_id?: string | null
-        user_address: string
+        account_id: string
       }
     }
   | {
       position: {
         account_id: string
         denom: string
-        new_size?: SignedUint | null
+        new_size?: SignedDecimal | null
       }
     }
   | {
@@ -170,7 +173,7 @@ export type QueryMsg =
   | {
       opening_fee: {
         denom: string
-        size: SignedUint
+        size: SignedDecimal
       }
     }
   | {
@@ -191,7 +194,7 @@ export type QueryMsg =
       position_fees: {
         account_id: string
         denom: string
-        new_size: SignedUint
+        new_size: SignedDecimal
       }
     }
 export interface ConfigForString {
@@ -207,48 +210,45 @@ export interface Accounting {
   withdrawal_balance: Balance
 }
 export interface Balance {
-  accrued_funding: SignedUint
-  closing_fee: SignedUint
-  opening_fee: SignedUint
-  price_pnl: SignedUint
-  total: SignedUint
+  accrued_funding: SignedDecimal
+  closing_fee: SignedDecimal
+  opening_fee: SignedDecimal
+  price_pnl: SignedDecimal
+  total: SignedDecimal
 }
 export interface CashFlow {
-  accrued_funding: SignedUint
-  closing_fee: SignedUint
-  opening_fee: SignedUint
-  price_pnl: SignedUint
+  accrued_funding: SignedDecimal
+  closing_fee: SignedDecimal
+  opening_fee: SignedDecimal
+  price_pnl: SignedDecimal
 }
 export interface PnlAmounts {
-  accrued_funding: SignedUint
-  closing_fee: SignedUint
-  opening_fee: SignedUint
-  pnl: SignedUint
-  price_pnl: SignedUint
+  accrued_funding: SignedDecimal
+  closing_fee: SignedDecimal
+  opening_fee: SignedDecimal
+  pnl: SignedDecimal
+  price_pnl: SignedDecimal
 }
 export interface DenomStateResponse {
   denom: string
   enabled: boolean
   funding: Funding
   last_updated: number
-  total_cost_base: SignedUint
+  total_cost_base: SignedDecimal
 }
 export interface Funding {
   last_funding_accrued_per_unit_in_base_denom: SignedDecimal
   last_funding_rate: SignedDecimal
   max_funding_velocity: Decimal
-  skew_scale: Uint128
-}
-export interface SignedDecimal {
-  abs: Decimal
-  negative: boolean
-  [k: string]: unknown
+  skew_scale: Decimal
 }
 export type ArrayOfDenomStateResponse = DenomStateResponse[]
-export interface PerpVaultDeposit {
+export interface DepositResponse {
+  account_id: string
   amount: Uint128
   shares: Uint128
 }
+export type ArrayOfDepositResponse = DepositResponse[]
 export interface TradingFee {
   fee: Coin
   rate: Decimal
@@ -269,31 +269,42 @@ export interface PerpDenomState {
   denom: string
   enabled: boolean
   funding: Funding
-  long_oi: Uint128
+  long_oi: Decimal
   pnl_values: PnlValues
   rate: SignedDecimal
-  short_oi: Uint128
-  total_entry_cost: SignedUint
-  total_entry_funding: SignedUint
+  short_oi: Decimal
+  total_entry_cost: SignedDecimal
+  total_entry_funding: SignedDecimal
 }
 export interface PnlValues {
-  accrued_funding: SignedUint
-  closing_fee: SignedUint
-  pnl: SignedUint
-  price_pnl: SignedUint
+  accrued_funding: SignedDecimal
+  closing_fee: SignedDecimal
+  pnl: SignedDecimal
+  price_pnl: SignedDecimal
 }
 export type NullablePerpVaultPosition = PerpVaultPosition | null
 export interface PerpVaultPosition {
   denom: string
   deposit: PerpVaultDeposit
-  unlocks: PerpVaultUnlock[]
+  unlocks: UnlockState[]
 }
-export interface PerpVaultUnlock {
+export interface PerpVaultDeposit {
+  amount: Uint128
+  shares: Uint128
+}
+export interface UnlockState {
   amount: Uint128
   cooldown_end: number
   created_at: number
-  shares: Uint128
 }
+export type PnL =
+  | 'break_even'
+  | {
+      profit: Coin
+    }
+  | {
+      loss: Coin
+    }
 export interface PositionResponse {
   account_id: string
   position: PerpPosition
@@ -307,8 +318,17 @@ export interface PerpPosition {
   entry_exec_price: Decimal
   entry_price: Decimal
   realised_pnl: PnlAmounts
-  size: SignedUint
-  unrealised_pnl: PnlAmounts
+  size: SignedDecimal
+  unrealised_pnl: PositionPnl
+}
+export interface PositionPnl {
+  amounts: PnlAmounts
+  coins: PnlCoins
+  values: PnlValues
+}
+export interface PnlCoins {
+  closing_fee: Coin
+  pnl: PnL
 }
 export interface PositionFeesResponse {
   base_denom: string
@@ -322,7 +342,7 @@ export interface PositionsByAccountResponse {
   account_id: string
   positions: PerpPosition[]
 }
-export type ArrayOfPerpVaultUnlock = PerpVaultUnlock[]
+export type ArrayOfUnlockState = UnlockState[]
 export interface VaultState {
   total_liquidity: Uint128
   total_shares: Uint128

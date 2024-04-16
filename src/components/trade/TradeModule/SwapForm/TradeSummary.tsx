@@ -10,10 +10,10 @@ import { ChevronDown } from 'components/common/Icons'
 import SummaryLine from 'components/common/SummaryLine'
 import Text from 'components/common/Text'
 import useAllAssets from 'hooks/assets/useAllAssets'
-import useToggle from 'hooks/common/useToggle'
-import useLiquidationPrice from 'hooks/prices/useLiquidationPrice'
 import useSlippage from 'hooks/settings/useSlippage'
 import useRouteInfo from 'hooks/trade/useRouteInfo'
+import useLiquidationPrice from 'hooks/useLiquidationPrice'
+import useToggle from 'hooks/useToggle'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatAmountWithSymbol, formatPercent, formatValue } from 'utils/formatters'
 
@@ -77,7 +77,7 @@ export default function TradeSummary(props: Props) {
     <div
       className={classNames(
         containerClassName,
-        'flex flex-1 flex-col bg-white/5 rounded border border-white/20',
+        'flex flex-1 flex-col bg-white bg-opacity-5 rounded border-[1px] border-white/20',
       )}
     >
       <div className='flex flex-col flex-1 m-3'>

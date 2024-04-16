@@ -11,7 +11,7 @@ import StablesFilter from 'components/trade/TradeModule/AssetSelector/AssetOverl
 import PairsList from 'components/trade/TradeModule/AssetSelector/PairsList'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAllAssets from 'hooks/assets/useAllAssets'
-import useFilteredAssets from 'hooks/assets/useFilteredAssets'
+import useFilteredAssets from 'hooks/useFilteredAssets'
 
 interface Props {
   state: OverlayState

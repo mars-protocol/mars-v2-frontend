@@ -1,3 +1,5 @@
+import React from 'react'
+
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { BNCoin } from 'types/classes/BNCoin'
 

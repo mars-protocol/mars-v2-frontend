@@ -6,9 +6,9 @@ import useVaultController from 'components/Modals/HLS/Deposit//useVaultControlle
 import useAccordionItems from 'components/Modals/HLS/Deposit/useAccordionItems'
 import { EMPTY_ACCOUNT_HLS } from 'constants/accounts'
 import useAccounts from 'hooks/accounts/useAccounts'
-import useIsOpenArray from 'hooks/common/useIsOpenArray'
-import useVault from 'hooks/vaults/useVault'
-import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
+import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
+import useIsOpenArray from 'hooks/useIsOpenArray'
+import useVault from 'hooks/useVault'
 import useStore from 'store'
 import { isAccountEmpty } from 'utils/accounts'
 

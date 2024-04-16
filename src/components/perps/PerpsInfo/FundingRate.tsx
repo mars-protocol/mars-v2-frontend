@@ -4,8 +4,8 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ChevronDown } from 'components/common/Icons'
 import { Tooltip } from 'components/common/Tooltip'
 import { BN_ZERO } from 'constants/math'
-import useToggle from 'hooks/common/useToggle'
 import usePerpsMarket from 'hooks/perps/usePerpsMarket'
+import useToggle from 'hooks/useToggle'
 
 type Interval = '1H' | '1D' | '1W' | '1M' | '1Y'
 

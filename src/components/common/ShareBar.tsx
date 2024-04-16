@@ -2,12 +2,12 @@ import classNames from 'classnames'
 import { useLocation, useParams } from 'react-router-dom'
 import useClipboard from 'react-use-clipboard'
 
-import { DocURL } from 'types/enums'
 import Button from 'components/common/Button'
 import { Chain, Check, Twitter } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
+import { DocURL } from 'types/enums/docURL'
 
 interface Props {
   text: string

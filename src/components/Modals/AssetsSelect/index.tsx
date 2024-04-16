@@ -1,8 +1,8 @@
 import { RowSelectionState } from '@tanstack/react-table'
 import { useEffect, useMemo, useState } from 'react'
 
-import useAssetSelectColumns from 'components/Modals/AssetsSelect/Columns/useAssetSelectColumns'
 import Table from 'components/common/Table'
+import useAssetSelectColumns from 'components/Modals/AssetsSelect/Columns/useAssetSelectColumns'
 import useGetCoinValue from 'hooks/assets/useGetCoinValue'
 import useMarkets from 'hooks/markets/useMarkets'
 import useStore from 'store'

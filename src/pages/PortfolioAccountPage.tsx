@@ -6,8 +6,8 @@ import BreadCrumbs from 'components/portfolio/Account/BreadCrumbs'
 import PerpPositions from 'components/portfolio/Account/PerpPositions'
 import Strategies from 'components/portfolio/Account/Strategies'
 import Summary from 'components/portfolio/Account/Summary'
-import useAccountId from 'hooks/accounts/useAccountId'
-import useChainConfig from 'hooks/chain/useChainConfig'
+import useAccountId from 'hooks/useAccountId'
+import useChainConfig from 'hooks/useChainConfig'
 import { getRoute } from 'utils/route'
 
 export default function PortfolioAccountPage() {

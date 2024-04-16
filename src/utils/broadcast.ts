@@ -127,6 +127,10 @@ function getTransactionCoinsGrouped(result: BroadcastResult, address: string, is
   // This should be streamlined by SC one day
   const eventTypes = ['wasm', 'token_swapped', 'pool_joined']
 
+  // Event attributes that include coins can be action and method
+  // This will be streamlined by SC to be 'action' only in the future
+  const transactionAttributes = ['action', 'method']
+
   const coinRules = getRules()
 
   const filteredEvents = result?.result?.response.events
@@ -156,7 +160,7 @@ function getTransactionCoinsGrouped(result: BroadcastResult, address: string, is
 
     // Check all other events for coins
     event.attributes.forEach((attr: TransactionEventAttribute) => {
-      if (attr.key !== 'action') return
+      if (!transactionAttributes.includes(attr.key)) return
 
       const coins = getCoinsFromEvent(event)
       if (!coins) return
@@ -227,10 +231,11 @@ function getCoinsFromEvent(event: TransactionEvent) {
   const amount = event.attributes.find((a) => a.key === 'amount')?.value
   if (denom && amount) coins.push({ coin: BNCoin.fromDenomAndBigNumber(denom, BN(amount)) })
 
-  // For perps actions check for size and new_size or entry_size
+  // For perps actions check for size and new_size or starting_size
+  // NOTE: starting_size will be entry_size after the next SC update
   const size = event.attributes.find((a) => a.key === 'size')?.value
   const newSize = event.attributes.find((a) => a.key === 'new_size')?.value
-  const startingSize = event.attributes.find((a) => a.key === 'entry_size')?.value
+  const startingSize = event.attributes.find((a) => a.key === 'starting_size')?.value
 
   // If there is a size, but no newSize and no startingSize, set the before coin amount to 0 to indicate a new position
   if (denom && size && !newSize && !startingSize)
@@ -303,6 +308,7 @@ function getTransactionTypeFromBroadcastResult(result: BroadcastResult): Transac
   const transactionTypes = getTransactionTypesByAction()
   // Filter events by 'wasm' and the pseudo event 'begin_unlock'
   const eventTypes = ['begin_unlock', 'wasm']
+  const transactionAttributes = ['action', 'method']
   let transactionType = 'default' as TransactionType
 
   const filteredEvents = result?.result?.response.events
@@ -316,7 +322,8 @@ function getTransactionTypeFromBroadcastResult(result: BroadcastResult): Transac
     if (event.type === 'begin_unlock') transactionType = 'unlock'
 
     if (event.type === 'wasm') {
-      const action = event.attributes.find((a) => a.key === 'action')?.value ?? ''
+      const action =
+        event.attributes.find((a) => transactionAttributes.includes(a.key))?.value ?? ''
       const foundTransactionType = transactionTypes.get(action)
       if (foundTransactionType) transactionType = foundTransactionType
     }

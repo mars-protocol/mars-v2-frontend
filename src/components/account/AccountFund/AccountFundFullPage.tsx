@@ -6,7 +6,7 @@ import { CircularProgress } from 'components/common/CircularProgress'
 import FullOverlayContent from 'components/common/FullOverlayContent'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useAccountId from 'hooks/accounts/useAccountId'
+import useAccountId from 'hooks/useAccountId'
 import useStore from 'store'
 
 export default function AccountFundFullPage() {

@@ -1,11 +1,14 @@
-.theme-dark:root {
-  --tv-background: #000;
+:root {
+  --tv-background: #220e1d;
   --tv-form-background: #7f78e8;
   --tv-button-background: linear-gradient(180deg, #7f78e8 0%, #926ac8 100%);
   --tv-button-background-hover: linear-gradient(180deg, #926ac8 0%, #7f78e8 100%);
-  --tv-menu-background: #222;
+  --tv-menu-background: #31142a;
   --tv-menu-text: rgba(255, 255, 255, 0.3);
   --tv-menu-text-hover: rgba(255, 255, 255, 1);
+}
+
+.theme-dark:root {
   --tv-color-pane-background: var(--tv-background);
   --tv-color-platform-background: var(--tv-background);
   --tv-color-toolbar-button-text: var(--tv-menu-text);
@@ -26,7 +29,6 @@
   --ui-lib-button-default-color-border: var(--tv-form-background);
   --ui-lib-button-default-color-bg: var(--tv-button-background);
 }
-
 
 /* Favorited menus */
 .tv-floating-toolbar__widget-wrapper > div {

@@ -2,7 +2,7 @@ import FundWithdrawModalContent from 'components/Modals/FundWithdraw/FundAndWith
 import ModalContentWithSummary from 'components/Modals/ModalContentWithSummary'
 import Text from 'components/common/Text'
 import useAccount from 'hooks/accounts/useAccount'
-import useAccountId from 'hooks/accounts/useAccountId'
+import useAccountId from 'hooks/useAccountId'
 import useStore from 'store'
 
 export default function FundAndWithdrawModal() {

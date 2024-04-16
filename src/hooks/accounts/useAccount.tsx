@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 
 import getAccount from 'api/accounts/getAccount'
-import useChainConfig from 'hooks/chain/useChainConfig'
+import useChainConfig from 'hooks/useChainConfig'
 import useV1Account from 'hooks/v1/useV1Account'
 import useStore from 'store'
 

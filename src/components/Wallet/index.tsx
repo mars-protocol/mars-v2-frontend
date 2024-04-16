@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import WalletConnectButton from 'components/Wallet/WalletConnectButton'
 import WalletConnectedButton from 'components/Wallet/WalletConnectedButton'
 import WalletConnecting from 'components/Wallet/WalletConnecting'
-import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
+import useCurrentWallet from 'hooks/useCurrentWallet'
 import useStore from 'store'
 
 export default function Wallet() {

@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 
 import { BN_ZERO } from 'constants/math'
+import { PerpsParams } from 'hooks/perps/usePerpsParams'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 

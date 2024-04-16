@@ -1,6 +1,6 @@
 import HealthBar from 'components/account/Health/HealthBar'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
-import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import useHealthComputer from 'hooks/useHealthComputer'
 
 export const ACCOUNT_META = {
   id: 'account',

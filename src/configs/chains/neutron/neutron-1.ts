@@ -1,6 +1,5 @@
 import { Bech32Address } from '@keplr-wallet/cosmos'
 
-import { ChainInfoID, NETWORK } from 'types/enums'
 import ATOM from 'configs/assets/ATOM'
 import DYDX from 'configs/assets/DYDX'
 import NTRN from 'configs/assets/NTRN'
@@ -10,6 +9,8 @@ import WETHaxl from 'configs/assets/WETH.axl'
 import stATOM from 'configs/assets/stATOM'
 import stkATOM from 'configs/assets/stkATOM'
 import wstETH from 'configs/assets/wstETH'
+import { NETWORK } from 'types/enums/network'
+import { ChainInfoID } from 'types/enums/wallet'
 
 const Neutron1: ChainConfig = {
   assets: [

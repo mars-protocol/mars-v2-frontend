@@ -19,5 +19,4 @@ export enum LocalStorageKeys {
   UPDATE_ORACLE = 'updateOracle',
   CHART_INTERVAL = 'tradingview.chart.lastUsedTimeBasedResolution',
   PERPS_VAULT_INFORMATION = 'perpsVaultInformation',
-  THEME = 'theme',
 }

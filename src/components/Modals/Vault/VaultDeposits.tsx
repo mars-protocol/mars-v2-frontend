@@ -14,7 +14,7 @@ import TokenInput from 'components/common/TokenInput'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAllAssets from 'hooks/assets/useAllAssets'
-import usePrices from 'hooks/prices/usePrices'
+import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { accumulateAmounts } from 'utils/accounts'
 import { byDenom } from 'utils/array'
@@ -194,7 +194,7 @@ export default function VaultDeposit(props: Props) {
             tooltip={`${primaryValuePercentage}% of value is ${primaryAsset.symbol}`}
             labelClassName='text-martian-red'
             diameter={32}
-            strokeClass='stroke-martian-red'
+            strokeColor='#FF645F'
             strokeWidth={3}
           />
           <div className='h-full w-[1px] rounded-xl bg-white/10'></div>
@@ -203,7 +203,7 @@ export default function VaultDeposit(props: Props) {
             tooltip={`${secondaryValuePercentage}% of value is ${secondaryAsset.symbol}`}
             labelClassName='text-martian-red'
             diameter={32}
-            strokeClass='stroke-martian-red'
+            strokeColor='#FF645F'
             strokeWidth={3}
           />
         </div>

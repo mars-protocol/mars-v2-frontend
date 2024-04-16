@@ -5,8 +5,8 @@ import { Circle, Enter, TrashBin, Wallet } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
 import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useAlertDialog from 'hooks/useAlertDialog'
 import useStore from 'store'
 
 export const DEPOSIT_META = { accessorKey: 'deposit', header: 'Deposit' }

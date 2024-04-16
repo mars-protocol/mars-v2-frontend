@@ -4,7 +4,7 @@ import { CardWithTabs } from 'components/common/Card/CardWithTabs'
 import AvailablePerpsVaultsTable from 'components/earn/farm/Table/AvailablePerpsVaultTable'
 import AvailableVaultsTable from 'components/earn/farm/Table/AvailableVaultsTable'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useChainConfig from 'hooks/chain/useChainConfig'
+import useChainConfig from 'hooks/useChainConfig'
 
 export function AvailableVaults() {
   const chainConfig = useChainConfig()
