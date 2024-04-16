@@ -2,7 +2,7 @@ import { getVaultAccountStrategiesRow } from 'components/account/AccountStrategi
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useAsset from 'hooks/assets/useAsset'
-import usePrices from 'hooks/usePrices'
+import usePrices from 'hooks/prices/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 

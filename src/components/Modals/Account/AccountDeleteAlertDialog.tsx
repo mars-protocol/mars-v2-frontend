@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 
 import { Enter, InfoCircle } from 'components/common/Icons'
-import useAlertDialog from 'hooks/useAlertDialog'
+import useAlertDialog from 'hooks/common/useAlertDialog'
 
 interface Props {
   content: string | JSX.Element

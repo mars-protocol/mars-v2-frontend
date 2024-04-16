@@ -1,9 +1,9 @@
 import { useCallback, useMemo } from 'react'
 
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useDepositVault from 'hooks/broadcast/useDepositVault'
-import useDepositHlsVault from 'hooks/useDepositHlsVault'
-import useHealthComputer from 'hooks/useHealthComputer'
-import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import useDepositHlsVault from 'hooks/hls/useDepositHlsVault'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 

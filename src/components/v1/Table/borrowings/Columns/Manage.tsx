@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 
 import DropDownButton from 'components/common/Button/DropDownButton'
 import { HandCoins, Plus } from 'components/common/Icons'
-import useWalletBalances from 'hooks/useWalletBalances'
+import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 

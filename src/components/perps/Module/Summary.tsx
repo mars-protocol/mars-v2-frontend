@@ -1,12 +1,12 @@
 import classNames from 'classnames'
 import { useCallback, useMemo } from 'react'
 
-import AssetAmount from 'components/common/assets/AssetAmount'
 import ActionButton from 'components/common/Button/ActionButton'
 import { Callout, CalloutType } from 'components/common/Callout'
 import { ArrowRight } from 'components/common/Icons'
 import SummaryLine from 'components/common/SummaryLine'
 import Text from 'components/common/Text'
+import AssetAmount from 'components/common/assets/AssetAmount'
 import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirection'
 import { ExpectedPrice } from 'components/perps/Module/ExpectedPrice'
 import TradingFee from 'components/perps/Module/TradingFee'

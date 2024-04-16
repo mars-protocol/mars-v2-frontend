@@ -15,9 +15,9 @@ import {
 } from '@delphi-labs/shuttle-react'
 import { FC } from 'react'
 
+import { WalletID } from 'types/enums'
 import chains from 'configs/chains'
 import { WALLETS } from 'constants/wallets'
-import { WalletID } from 'types/enums/wallet'
 
 type Props = {
   children?: React.ReactNode

@@ -1,8 +1,8 @@
 import useSWR from 'swr'
 
 import getVaults from 'api/vaults/getVaults'
-import useAccountId from 'hooks/useAccountId'
-import useChainConfig from 'hooks/useChainConfig'
+import useAccountId from 'hooks/accounts/useAccountId'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useDepositedVaults from 'hooks/vaults/useDepositedVaults'
 
 export default function useVaults(suspense: boolean = true, address?: string) {

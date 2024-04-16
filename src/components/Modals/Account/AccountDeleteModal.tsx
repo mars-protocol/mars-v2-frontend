@@ -1,10 +1,10 @@
 import { useCallback, useMemo } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
-import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
-import { ArrowRight, ExclamationMarkCircled } from 'components/common/Icons'
 import AccountDeleteAlertDialog from 'components/Modals/Account/AccountDeleteAlertDialog'
+import { ArrowRight, ExclamationMarkCircled } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
 import useAllAssets from 'hooks/assets/useAllAssets'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'

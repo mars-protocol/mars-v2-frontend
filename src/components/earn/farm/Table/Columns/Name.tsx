@@ -1,8 +1,8 @@
+import { VaultStatus } from 'types/enums'
 import AssetImage from 'components/common/assets/AssetImage'
 import DoubleLogo from 'components/common/DoubleLogo'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import useAsset from 'hooks/assets/useAsset'
-import { VaultStatus } from 'types/enums/vault'
 
 export const NAME_META = {
   id: 'name',

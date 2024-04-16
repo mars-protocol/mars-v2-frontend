@@ -8,7 +8,7 @@ import Card from 'components/common/Card'
 import Radio from 'components/common/Radio'
 import Text from 'components/common/Text'
 import useAccountIds from 'hooks/accounts/useAccountIds'
-import useAccountId from 'hooks/useAccountId'
+import useAccountId from 'hooks/accounts/useAccountId'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
 

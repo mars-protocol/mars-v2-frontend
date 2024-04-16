@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { BN_ZERO } from 'constants/math'
 import useAccount from 'hooks/accounts/useAccount'
 import useMarkets from 'hooks/markets/useMarkets'
-import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
+import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
 import useStore from 'store'
 
 export default function useV1BorrowingsTableData() {

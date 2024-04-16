@@ -1,12 +1,12 @@
 import { useCallback, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
+import { SearchParams } from 'types/enums'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import useChainConfig from 'hooks/useChainConfig'
-import { SearchParams } from 'types/enums/searchParams'
 import { getSearchParamsObject } from 'utils/route'
 
 export default function usePerpsAsset() {

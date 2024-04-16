@@ -2,8 +2,8 @@ import { useMemo } from 'react'
 
 import { getAssetAccountBalanceRow } from 'components/account/AccountBalancesTable/functions'
 import useAllAssets from 'hooks/assets/useAllAssets'
-import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
-import usePrices from 'hooks/usePrices'
+import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
+import usePrices from 'hooks/prices/usePrices'
 import { byDenom } from 'utils/array'
 
 interface Props {

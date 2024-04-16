@@ -12,6 +12,7 @@ import USDC from 'configs/assets/USDC'
 import USDCaxl from 'configs/assets/USDC.axl'
 import USDT from 'configs/assets/USDT'
 import USDollar from 'configs/assets/USDollar'
+import WBTC from 'configs/assets/WBTC'
 import WBTCaxl from 'configs/assets/WBTC.axl'
 import WETHaxl from 'configs/assets/WETH.axl'
 import OSMO_ATOM from 'configs/assets/lp/OSMO-ATOM'
@@ -25,8 +26,7 @@ import stDYDX from 'configs/assets/stDYDX'
 import stOSMO from 'configs/assets/stOSMO'
 import stTIA from 'configs/assets/stTIA'
 import { VAULTS_META_DATA } from 'constants/vaults'
-import { NETWORK } from 'types/enums/network'
-import { ChainInfoID } from 'types/enums/wallet'
+import { ChainInfoID, NETWORK } from 'types/enums'
 import { getUrl } from 'utils/url'
 
 const ASSETS = [
@@ -46,6 +46,11 @@ const ASSETS = [
     ...WBTCaxl,
     poolId: 712,
     denom: 'ibc/D1542AA8762DB13087D8364F3EA6509FD6F009A34F00426AF9E4F9FA85CBBF1F',
+  },
+  {
+    ...WBTC,
+    poolId: 1422,
+    denom: 'factory/osmo1z0qrq605sjgcqpylfl4aa6s90x738j7m58wyatt0tdzflg2ha26q67k743/wbtc',
   },
   {
     ...stATOM,

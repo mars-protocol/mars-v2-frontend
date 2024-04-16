@@ -1,10 +1,9 @@
 import { ColumnDef } from '@tanstack/react-table'
-import React from 'react'
 
+import { VaultStatus } from 'types/enums'
 import { LockLocked, LockUnlocked } from 'components/common/Icons'
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
-import { VaultStatus } from 'types/enums/vault'
 
 type Props = {
   data: DepositedVault[]
@@ -16,7 +15,7 @@ type Props = {
 export default function ActiveVaultsTable(props: Props) {
   if (props.data.length === 0) {
     return (
-      <div className='flex flex-col items-center py-10 gap-1'>
+      <div className='flex flex-col items-center gap-1 py-10'>
         <div className='w-6 mb-2'>{iconAndTexts[props.status].icon}</div>
         <Text size='xs'>{iconAndTexts[props.status].title}</Text>
         <Text size='xs' className='text-white/60'>

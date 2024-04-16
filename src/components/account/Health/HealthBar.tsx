@@ -6,7 +6,7 @@ import HealthTooltip from 'components/account/Health/HealthTooltip'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import useHealthColor from 'hooks/useHealthColor'
+import useHealthColor from 'hooks/health-computer/useHealthColor'
 import { getHealthIndicatorColors } from 'utils/healthIndicator'
 
 interface Props {

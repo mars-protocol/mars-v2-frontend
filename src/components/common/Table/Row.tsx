@@ -1,6 +1,8 @@
 import { flexRender, Row as TanstackRow, Table as TanstackTable } from '@tanstack/react-table'
 import classNames from 'classnames'
 
+import { LEFT_ALIGNED_ROWS } from 'constants/table'
+
 interface Props<T> {
   row: TanstackRow<T>
   table: TanstackTable<T>
@@ -57,14 +59,16 @@ export default function Row<T>(props: Props<T>) {
         }}
       >
         {row.getVisibleCells().map((cell) => {
-          const isSymbolOrName = cell.column.id === 'symbol' || cell.column.id === 'name'
           return (
             <td
               key={cell.id}
               className={classNames(
-                isSymbolOrName ? 'text-left' : 'text-right',
+                LEFT_ALIGNED_ROWS.includes(cell.column.id) ? 'text-left' : 'text-right',
                 spacingClassName ?? 'px-3 py-4',
-                type && type !== 'strategies' && isSymbolOrName && 'border-l',
+                type &&
+                  type !== 'strategies' &&
+                  LEFT_ALIGNED_ROWS.includes(cell.column.id) &&
+                  'border-l',
                 type && type !== 'strategies' && getBorderColor(type, cell.row.original as any),
                 cell.column.columnDef.meta?.className,
               )}

@@ -1,5 +1,4 @@
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
-import { PerpsParams } from 'hooks/perps/usePerpsParams'
 import { formatValue } from 'utils/formatters'
 
 export function checkPositionValue(
