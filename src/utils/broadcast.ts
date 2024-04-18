@@ -116,6 +116,7 @@ function getRules() {
   coinRules.set('open_position', 'perps')
   coinRules.set('close_position', 'perps')
   coinRules.set('modify_position', 'perps')
+  coinRules.set('withdraw_liquidity', 'farm')
 
   return coinRules
 }
@@ -255,6 +256,14 @@ function getCoinsFromEvent(event: TransactionEvent) {
     }
   })
 
+  // Check for 'withdraw_liquidity' event and add the coins to the return
+  const isWithdrawLiquidity =
+    event.attributes.find((a) => a.key === 'action')?.value === 'withdraw_liquidity'
+  if (isWithdrawLiquidity) {
+    const withdrawTokens = getVaultTokensFromEvent(event)
+    if (withdrawTokens) withdrawTokens.map((coin) => coins.push({ coin: coin }))
+  }
+
   return coins
 }
 
@@ -327,7 +336,7 @@ function getTransactionTypeFromBroadcastResult(result: BroadcastResult): Transac
 
 function getVaultTokensFromEvent(event: TransactionEvent): BNCoin[] | undefined {
   const denomAndAmountStringArray = event.attributes
-    .find((a) => a.key === 'tokens_in')
+    .find((a) => a.key === 'tokens_in' || a.key === 'coins_out')
     ?.value.split(',')
   if (!denomAndAmountStringArray) return
   if (denomAndAmountStringArray.length !== 2) return
@@ -427,6 +436,12 @@ export function getToastContentsFromGroupedTransactionCoin(
       toastContents.push({
         text: 'Withdrew to wallet',
         coins,
+      })
+      break
+    case 'farm':
+      toastContents.push({
+        text: `Withdrew from farm`,
+        coins: coins,
       })
       break
     case 'vault':

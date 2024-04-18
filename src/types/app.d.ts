@@ -987,6 +987,7 @@ type TransactionCoinType =
   | 'repay'
   | 'swap'
   | 'withdraw'
+  | 'farm'
   | 'vault'
   | 'perps'
   | 'perpsPnl'
