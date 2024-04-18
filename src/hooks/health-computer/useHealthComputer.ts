@@ -23,21 +23,21 @@ import { byDenom } from 'utils/array'
 import { SWAP_FEE_BUFFER } from 'utils/constants'
 import {
   BorrowTarget,
+  LiquidationPriceKind,
+  SwapKind,
   compute_health_js,
   liquidation_price_js,
-  LiquidationPriceKind,
   max_borrow_estimate_js,
   max_perp_size_estimate_js,
   max_swap_estimate_js,
   max_withdraw_estimate_js,
-  SwapKind,
 } from 'utils/health_computer'
 import { BN } from 'utils/helpers'
 
 // Pyth returns prices with up to 32 decimals. Javascript only supports 18 decimals. So we need to scale by 14 t
 // avoid "too many decimals" errors.
 // TODO: Remove adjustment properly (after testing). We will just ignore the last 14 decimals.
-const VALUE_SCALE_FACTOR = 0
+const VALUE_SCALE_FACTOR = 12
 
 export default function useHealthComputer(account?: Account) {
   const assets = useAllAssets()
