@@ -27,12 +27,22 @@ export default function UnlockAmount(props: Props) {
       <div className='flex flex-col'>
         <FormattedNumber
           amount={primaryUnlockAmount.toNumber()}
-          options={{ suffix: ` ${primaryAsset.symbol}` }}
+          options={{
+            suffix: ` ${primaryAsset.symbol}`,
+            decimals: primaryAsset.decimals,
+            maxDecimals: primaryAsset.decimals,
+            abbreviated: false,
+          }}
           className='text-xs'
         />
         <FormattedNumber
           amount={secondaryUnlockAmount.toNumber()}
-          options={{ suffix: ` ${primaryAsset.symbol}` }}
+          options={{
+            suffix: ` ${secondaryAsset.symbol}`,
+            decimals: secondaryAsset.decimals,
+            maxDecimals: secondaryAsset.decimals,
+            abbreviated: false,
+          }}
           className='text-xs'
         />
       </div>
