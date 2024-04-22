@@ -640,6 +640,7 @@ export default function createBroadcastSlice(
     }): Promise<BroadcastResult> => {
       try {
         const client = get().client
+        const isV1 = get().isV1
         const isLedger = client?.connectedWallet?.account.isLedger
         if (!client)
           return { result: undefined, error: 'No client detected. Please reconnect your wallet.' }
@@ -652,7 +653,7 @@ export default function createBroadcastSlice(
           messages: options.messages,
           feeAmount: fee.amount[0].amount,
           gasLimit: fee.gas,
-          memo: 'MPv2',
+          memo: isV1 ? 'MPv1' : 'MPv2',
           wallet: client.connectedWallet,
           mobile: isMobile,
         }
