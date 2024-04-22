@@ -652,7 +652,7 @@ export default function createBroadcastSlice(
           messages: options.messages,
           feeAmount: fee.amount[0].amount,
           gasLimit: fee.gas,
-          memo: undefined,
+          memo: 'MPv2',
           wallet: client.connectedWallet,
           mobile: isMobile,
         }
