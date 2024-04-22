@@ -7,34 +7,27 @@ import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 
 interface Props {
   color?: string
-  size?: number
   className?: string
 }
 
-export const CheckMark = ({ color = 'text-white', size = 20, className }: Props) => {
+export const CheckMark = ({ color = 'text-white', className }: Props) => {
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
   )
-  const classes = classNames('inline-block relative', className)
+  const classes = classNames('inline-block relative h-5 w-5', className)
 
-  if (reduceMotion)
-    return (
-      <CheckCircled
-        className={classNames(classes, color)}
-        style={{ width: `${size}px`, height: `${size}px` }}
-      />
-    )
+  if (reduceMotion) return <CheckCircled className={classNames(classes, color)} />
 
   return (
-    <div className={classes} style={{ width: `${size}px`, height: `${size}px` }}>
+    <div className={classes}>
       <svg version='1.1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130.2 130.2'>
         <circle
           className='animate-circle'
           fill='none'
           strokeDasharray='1000'
           strokeDashoffset='0'
-          stroke={color}
+          stroke='currentColor'
           strokeWidth='6'
           strokeMiterlimit='10'
           cx='65.1'
@@ -46,7 +39,7 @@ export const CheckMark = ({ color = 'text-white', size = 20, className }: Props)
           fill='none'
           strokeDasharray='1000'
           strokeDashoffset='-100'
-          stroke={color}
+          stroke='currentColor'
           strokeWidth='6'
           strokeLinecap='round'
           strokeMiterlimit='10'
