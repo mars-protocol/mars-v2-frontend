@@ -12,10 +12,10 @@ export default async function getOraclePrices(
   chainConfig: ChainConfig,
   assets: Asset[],
 ): Promise<BNCoin[]> {
+  const oracleQueryClient = await getOracleQueryClient(chainConfig)
   try {
     if (!assets.length) return []
 
-    const oracleQueryClient = await getOracleQueryClient(chainConfig)
     const priceResults = await cacheFn(
       () => iterateContractQuery(oracleQueryClient.prices),
       oraclePriceCache,
@@ -25,13 +25,23 @@ export default async function getOraclePrices(
 
     return assets.map((asset) => {
       const priceResponse = priceResults.find(byDenom(asset.denom)) as PriceResponse
+      const price = BN(priceResponse?.price ?? BN_ZERO)
       const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
-      return BNCoin.fromDenomAndBigNumber(
-        asset.denom,
-        BN(priceResponse?.price ?? BN_ZERO).shiftedBy(decimalDiff),
-      )
+      return BNCoin.fromDenomAndBigNumber(asset.denom, price.shiftedBy(decimalDiff))
     })
-  } catch (ex) {
-    throw ex
+  } catch (error) {
+    console.error(error)
+    try {
+      const assetPrices = assets.map(async (asset) => {
+        const assetPrice = await oracleQueryClient.price({ denom: asset.denom })
+        const price = BN(assetPrice?.price ?? BN_ZERO)
+
+        const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
+        return BNCoin.fromDenomAndBigNumber(asset.denom, price.shiftedBy(decimalDiff))
+      })
+      return Promise.all(assetPrices)
+    } catch (ex) {
+      throw ex
+    }
   }
 }
