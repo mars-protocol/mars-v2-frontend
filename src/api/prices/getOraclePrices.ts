@@ -8,6 +8,12 @@ import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 import iterateContractQuery from 'utils/iterateContractQuery'
 
+function getAssetPrice(asset: Asset, priceResult: PriceResponse): BNCoin {
+  const price = BN(priceResult?.price ?? BN_ZERO)
+  const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
+  return BNCoin.fromDenomAndBigNumber(asset.denom, price.shiftedBy(decimalDiff))
+}
+
 export default async function getOraclePrices(
   chainConfig: ChainConfig,
   assets: Asset[],
@@ -25,21 +31,18 @@ export default async function getOraclePrices(
 
     return assets.map((asset) => {
       const priceResponse = priceResults.find(byDenom(asset.denom)) as PriceResponse
-      const price = BN(priceResponse?.price ?? BN_ZERO)
-      const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
-      return BNCoin.fromDenomAndBigNumber(asset.denom, price.shiftedBy(decimalDiff))
+      return getAssetPrice(asset, priceResponse)
     })
   } catch (error) {
     console.error(error)
     try {
-      const assetPrices = assets.map(async (asset) => {
-        const assetPrice = await oracleQueryClient.price({ denom: asset.denom })
-        const price = BN(assetPrice?.price ?? BN_ZERO)
-
-        const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
-        return BNCoin.fromDenomAndBigNumber(asset.denom, price.shiftedBy(decimalDiff))
-      })
-      return Promise.all(assetPrices)
+      const assetPrices = Promise.all(
+        assets.map(async (asset) => {
+          const priceResponse = await oracleQueryClient.price({ denom: asset.denom })
+          return getAssetPrice(asset, priceResponse)
+        }),
+      )
+      return assetPrices
     } catch (ex) {
       throw ex
     }
