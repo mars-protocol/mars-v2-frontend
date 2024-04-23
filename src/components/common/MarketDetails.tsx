@@ -31,15 +31,6 @@ export default function MarketDetails({ row, type }: Props) {
     function getLendingMarketDetails() {
       return [
         {
-          amount: convertAmount(asset, deposits).toNumber(),
-          options: {
-            abbreviated: true,
-            suffix: isDollar ? undefined : ` ${displayCurrencySymbol}`,
-            prefix: isDollar ? '$' : undefined,
-          },
-          title: 'Total Supplied',
-        },
-        {
           amount: ltv.max * 100,
           options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
           title: 'Max LTV',
