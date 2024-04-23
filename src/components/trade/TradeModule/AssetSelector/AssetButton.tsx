@@ -13,6 +13,7 @@ export default function AssetButton(props: Props) {
   return (
     <Button
       leftIcon={<AssetImage asset={props.asset} className='w-6 h-6' />}
+      iconClassName='w-6 h-6'
       text={props.asset.symbol}
       color='tertiary'
       variant='transparent'
