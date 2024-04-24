@@ -642,7 +642,7 @@ export default function createBroadcastSlice(
         const client = get().client
         const isV1 = get().isV1
         const isLedger = client?.connectedWallet?.account.isLedger
-const memo = isLedger ? '' : isV1 ? 'MPv1' : 'MPv2'
+        const memo = isLedger ? '' : isV1 ? 'MPv1' : 'MPv2'
 
         if (!client)
           return { result: undefined, error: 'No client detected. Please reconnect your wallet.' }
