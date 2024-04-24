@@ -36,13 +36,12 @@ export default async function getOraclePrices(
   } catch (error) {
     console.error(error)
     try {
-      const assetPrices = Promise.all(
+      return Promise.all(
         assets.map(async (asset) => {
           const priceResponse = await oracleQueryClient.price({ denom: asset.denom })
           return getAssetPrice(asset, priceResponse)
         }),
       )
-      return assetPrices
     } catch (ex) {
       throw ex
     }
