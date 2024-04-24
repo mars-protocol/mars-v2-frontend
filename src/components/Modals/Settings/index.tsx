@@ -1,31 +1,42 @@
+import { useShuttle } from '@delphi-labs/shuttle-react'
 import classNames from 'classnames'
 import { useCallback, useMemo, useState } from 'react'
 
-import AssetImage from 'components/common/assets/AssetImage'
+import Modal from 'components/Modals/Modal'
+import SettingsOptions from 'components/Modals/Settings/SettingsOptions'
+import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
+import WalletSelect from 'components/Wallet/WalletSelect'
 import Button from 'components/common/Button'
 import { ArrowCircle, Enter } from 'components/common/Icons'
 import NumberInput from 'components/common/NumberInput'
 import Select from 'components/common/Select'
 import Text from 'components/common/Text'
+import TextInput from 'components/common/TextInput'
 import { TextLink } from 'components/common/TextLink'
-import Modal from 'components/Modals/Modal'
-import SettingsOptions from 'components/Modals/Settings/SettingsOptions'
-import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
+import AssetImage from 'components/common/assets/AssetImage'
+import chains from 'configs/chains'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useAlertDialog from 'hooks/common/useAlertDialog'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useAutoLend from 'hooks/wallet/useAutoLend'
+import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import useStore from 'store'
+import { getCurrentChainId } from 'utils/getCurrentChainId'
 import { BN } from 'utils/helpers'
 
 const slippages = [0.02, 0.03]
 
 export default function SettingsModal() {
+  const chainConfig = useChainConfig()
+  const chainId = getCurrentChainId()
+  const { disconnectWallet } = useShuttle()
+  const currentWallet = useCurrentWallet()
   const modal = useStore((s) => s.settingsModal)
   const { open: showResetDialog } = useAlertDialog()
   const displayCurrencies = useDisplayCurrencyAssets()
@@ -33,8 +44,17 @@ export default function SettingsModal() {
   const [customSlippage, setCustomSlippage] = useState<number>(0)
   const [inputRef, setInputRef] = useState<React.RefObject<HTMLInputElement>>()
   const [isCustom, setIsCustom] = useState(false)
+  const [rpcOrRestChanged, setRpcOrRestChanged] = useState(false)
 
   const [displayCurrency, setDisplayCurrency] = useDisplayCurrency()
+  const [rpcEndpoint, setRpcEndpoint] = useLocalStorage<string>(
+    `${chainConfig.id}/${LocalStorageKeys.RPC_ENDPOINT}`,
+    chainConfig.endpoints.rpc,
+  )
+  const [restEndpoint, setRestEndpoint] = useLocalStorage<string>(
+    `${chainConfig.id}/${LocalStorageKeys.REST_ENDPOINT}`,
+    chainConfig.endpoints.rest,
+  )
   const [reduceMotion, setReduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
@@ -53,7 +73,6 @@ export default function SettingsModal() {
     DEFAULT_SETTINGS.updateOracle,
   )
   const [theme, setTheme] = useLocalStorage<string>(LocalStorageKeys.THEME, DEFAULT_SETTINGS.theme)
-
   const themeOptions: SelectOption[] = [
     { label: 'Default', value: 'default' },
     { label: 'Light', value: 'light' },
@@ -162,19 +181,37 @@ export default function SettingsModal() {
     [handleSlippage],
   )
 
-  const handleResetSettings = useCallback(() => {
-    handleDisplayCurrency(DEFAULT_SETTINGS.displayCurrency)
-    handleSlippage(DEFAULT_SETTINGS.slippage)
-    handleReduceMotion(DEFAULT_SETTINGS.reduceMotion)
-    handleLendAssets(DEFAULT_SETTINGS.enableAutoLendGlobal)
-  }, [handleDisplayCurrency, handleReduceMotion, handleLendAssets, handleSlippage])
-
   const handleUpdateOracle = useCallback(
     (value: boolean) => {
       setUpdateOracle(value)
     },
     [setUpdateOracle],
   )
+
+  const handleResetSettings = useCallback(() => {
+    handleDisplayCurrency(DEFAULT_SETTINGS.displayCurrency)
+    handleSlippage(DEFAULT_SETTINGS.slippage)
+    handleReduceMotion(DEFAULT_SETTINGS.reduceMotion)
+    handleLendAssets(DEFAULT_SETTINGS.enableAutoLendGlobal)
+    handleTutorial(DEFAULT_SETTINGS.tutorial)
+    handleUpdateOracle(DEFAULT_SETTINGS.updateOracle)
+    handleTheme(DEFAULT_SETTINGS.theme)
+    setRpcOrRestChanged(true)
+    setRpcEndpoint(chains[chainId].endpoints.rpc)
+    setRestEndpoint(chains[chainId].endpoints.rest)
+  }, [
+    handleDisplayCurrency,
+    handleReduceMotion,
+    handleLendAssets,
+    handleSlippage,
+    handleTheme,
+    handleTutorial,
+    handleUpdateOracle,
+    setRpcOrRestChanged,
+    setRpcEndpoint,
+    setRestEndpoint,
+    chainId,
+  ])
 
   const showResetModal = useCallback(() => {
     showResetDialog({
@@ -195,8 +232,21 @@ export default function SettingsModal() {
   }, [showResetDialog, handleResetSettings])
 
   const handleCloseModal = useCallback(() => {
+    if (rpcOrRestChanged && currentWallet) {
+      disconnectWallet(currentWallet)
+      useStore.setState({
+        client: undefined,
+        address: undefined,
+        userDomain: undefined,
+        balances: [],
+        focusComponent: {
+          component: <WalletSelect />,
+        },
+      })
+    }
+
     useStore.setState({ settingsModal: false })
-  }, [])
+  }, [rpcOrRestChanged, currentWallet, disconnectWallet])
 
   if (!modal) return null
 
@@ -341,6 +391,35 @@ export default function SettingsModal() {
           />
           %
         </Button>
+      </SettingsOptions>
+      <SettingsOptions
+        label='RPC and REST endpoints'
+        description='Set a custom RPC and REST endpoint for current chain.'
+        className='pb-6'
+        fullwidth
+      >
+        <div className='flex flex-wrap w-full gap-4'>
+          <TextInput
+            label='RPC'
+            placeholder='https://'
+            value={rpcEndpoint}
+            onChange={(value) => {
+              setRpcOrRestChanged(true)
+              setRpcEndpoint(value)
+            }}
+            className='w-full'
+          />
+          <TextInput
+            label='REST'
+            value={restEndpoint}
+            placeholder='https://'
+            onChange={(value) => {
+              setRpcOrRestChanged(true)
+              setRestEndpoint(value)
+            }}
+            className='w-full'
+          />
+        </div>
       </SettingsOptions>
       <div className='flex flex-wrap justify-center w-full gap-4 md:justify-between md:flex-nowrap'>
         <Button

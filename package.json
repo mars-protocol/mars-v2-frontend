@@ -7,15 +7,15 @@
   "scripts": {
     "build": "yarn install-charting-library && next build",
     "dev": "next dev",
-    "lint": "eslint ./src/ && yarn prettier-check",
-    "format": "eslint ./src/ --fix && prettier --write ./src/ ",
+    "lint": "eslint './src/**/*.ts' && yarn prettier-check",
+    "format": "eslint './src/**/*.ts' --fix && prettier --write ./src/ ",
     "prettier-check": "prettier --ignore-path .gitignore --check ./src/",
     "start": "next start",
     "install-charting-library": "dotenv -e .env.local node install_charting_library.js"
   },
   "lint-staged": {
     "*.ts*": [
-      "eslint ./src/ --fix",
+      "eslint './src/**/*.ts' --fix",
       "prettier --write ./src/"
     ]
   },
@@ -72,6 +72,11 @@
     "shelljs": "^0.8.5",
     "tailwindcss": "^3.4.3",
     "typescript": "5.3.3"
+  },
+  "resolutions": {
+    "strip-ansi": "6.0.1",
+    "string-width": "4.2.2",
+    "wrap-ansi": "7.0.0"
   },
   "engines": {
     "npm": "please-use-yarn",
