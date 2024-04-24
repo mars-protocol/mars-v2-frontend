@@ -24,11 +24,13 @@ interface Props {
 export default function LendButton(props: Props) {
   const { openLend } = useLendAndReclaimModal()
   const accountDeposits = useCurrentAccountDeposits()
+  const isAutoLendEnabled = props.data.asset.isAutoLendEnabled
   const assetDepositAmount = accountDeposits.find(byDenom(props.data.asset.denom))?.amount
   const address = useStore((s) => s.address)
   const accountId = useAccountId()
   const hasNoDeposit = !!(!assetDepositAmount && accountId)
 
+  if (!isAutoLendEnabled && address) return null
   return (
     <div className='flex justify-end'>
       <ConditionalWrapper
