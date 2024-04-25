@@ -8,6 +8,7 @@ interface Props {
   description: string
   className?: string
   children: ReactNode | ReactNode[]
+  fullwidth?: boolean
 }
 
 export default function SettingsOptions(props: Props) {
@@ -19,7 +20,7 @@ export default function SettingsOptions(props: Props) {
         props.className,
       )}
     >
-      <div className='flex flex-wrap w-120'>
+      <div className={classNames('flex flex-wrap', props.fullwidth ? 'w-full' : 'w-120')}>
         <Text size='lg' className='w-full mb-2'>
           {props.label}
         </Text>
@@ -27,7 +28,11 @@ export default function SettingsOptions(props: Props) {
           {props.description}
         </Text>
       </div>
-      <div className='flex flex-wrap justify-end w-60'>{props.children}</div>
+      <div
+        className={classNames('flex flex-wrap', props.fullwidth ? 'w-full' : 'w-60 justify-end')}
+      >
+        {props.children}
+      </div>
     </div>
   )
 }

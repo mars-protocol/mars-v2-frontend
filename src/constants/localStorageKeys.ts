@@ -20,4 +20,6 @@ export enum LocalStorageKeys {
   CHART_INTERVAL = 'tradingview.chart.lastUsedTimeBasedResolution',
   PERPS_VAULT_INFORMATION = 'perpsVaultInformation',
   THEME = 'theme',
+  RPC_ENDPOINT = 'rpcEndpoint',
+  REST_ENDPOINT = 'restEndpoint',
 }
