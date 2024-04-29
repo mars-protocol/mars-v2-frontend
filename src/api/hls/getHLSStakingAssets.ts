@@ -11,8 +11,22 @@ export default async function getHLSStakingAssets(chainConfig: ChainConfig) {
     .map((asset) => asset.denom)
   const assetParams = await getAssetParams(chainConfig)
   const HLSAssets = assetParams
-    .filter((asset) => stakingAssetDenoms.includes(asset.denom))
     .filter((asset) => asset.credit_manager.hls)
+    .filter((asset) => {
+      const correlations = asset.credit_manager.hls?.correlations.filter((correlation) => {
+        return 'coin' in correlation
+      })
+
+      let correlatedDenoms: string[] | undefined
+
+      correlatedDenoms = correlations
+        ?.map((correlation) => (correlation as { coin: { denom: string } }).coin.denom)
+        .filter((denoms) => !denoms.includes('gamm/pool/'))
+
+      if (!correlatedDenoms?.length) return false
+
+      return stakingAssetDenoms.some((denom) => correlatedDenoms?.includes(denom))
+    })
   const strategies = resolveHLSStrategies('coin', HLSAssets)
   const client = await getParamsQueryClient(chainConfig)
   const depositCaps$ = strategies.map((strategy) =>
