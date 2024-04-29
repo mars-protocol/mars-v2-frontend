@@ -213,6 +213,19 @@ export default function SettingsModal() {
     chainId,
   ])
 
+  const validateEndpoints = useCallback(async () => {
+    const url = new URL(restEndpoint)
+    await fetch(`${url.href}/status?`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then(async (res) => {
+      const result = await res.json()
+      // VALID : {"code": 12, "message": "Not Implemented", "details": [] }
+      console.log(result)
+    })
+  }, [restEndpoint])
+
   const showResetModal = useCallback(() => {
     showResetDialog({
       icon: (
@@ -406,6 +419,9 @@ export default function SettingsModal() {
             onChange={(value) => {
               setRpcOrRestChanged(true)
               setRpcEndpoint(value)
+            }}
+            onBlur={() => {
+              validateEndpoints()
             }}
             className='w-full'
           />
