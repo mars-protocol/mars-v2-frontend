@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import Text from 'components/common/Text'
 
@@ -21,10 +21,6 @@ export default function TextInput(props: Props) {
   const [value, setValue] = useState<string>(props.value ?? '')
   const inputRef = React.useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
-    if (value !== props.value) setValue(props.value ?? '')
-  }, [props.value, value])
-
   const onInputChange = (inputValue: string) => {
     setValue(inputValue)
     props.onChange(inputValue)
@@ -39,15 +35,15 @@ export default function TextInput(props: Props) {
       )}
     >
       {props.label && (
-        <div
-          className={classNames(
-            'absolute flex items-center h-full pl-2 border-r w-18 text-white/50 border-white/10',
-          )}
+        <label
+          htmlFor={props.label.toLowerCase()}
+          className='absolute flex items-center h-full pl-2 border-r w-18 text-white/50 border-white/10 hover:cursor-pointer'
         >
           {props.label}
-        </div>
+        </label>
       )}
       <input
+        id={props.label ? props.label.toLowerCase() : undefined}
         ref={inputRef}
         type='text'
         value={value}
