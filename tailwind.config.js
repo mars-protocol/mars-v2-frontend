@@ -436,7 +436,7 @@ module.exports = {
         },
         '.gradient-hls': {
           background:
-            'linear-gradient(180deg, hsl(var(--color-hsl-primary)) 0%, hsl(var(--color-hsl-secondary)) 50%)',
+            'linear-gradient(180deg, hsl(var(--color-hls-primary)) 0%, hsl(var(--color-hls-secondary)) 50%)',
         },
         '.gradient-popover': {
           background:
