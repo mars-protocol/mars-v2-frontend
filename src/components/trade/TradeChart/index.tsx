@@ -78,7 +78,7 @@ export default function TradeChart(props: Props) {
         'scalesProperties.fontSize': 12,
       },
       loading_screen: settings.loadingScreen,
-      custom_css_url:settings.stylesheet,
+      custom_css_url: settings.stylesheet,
     }
 
     const tvWidget = new widget(widgetOptions)
