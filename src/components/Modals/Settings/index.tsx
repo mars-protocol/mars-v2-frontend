@@ -240,7 +240,7 @@ export default function SettingsModal() {
         setValidRpc(false)
       }
     },
-    [setValidRpc],
+    [setValidRpc, chainId, setRpcEndpoint],
   )
 
   const validateRestEndpoint = useCallback(
@@ -266,7 +266,7 @@ export default function SettingsModal() {
         setValidRest(false)
       }
     },
-    [setValidRest],
+    [setValidRest, chainId, setRestEndpoint],
   )
 
   const showResetModal = useCallback(() => {
@@ -310,7 +310,7 @@ export default function SettingsModal() {
     setValidRest(true)
     setValidRpc(true)
     useStore.setState({ settingsModal: false })
-  }, [tempRpcEndpoint, tempRestEndpoint, currentWallet, disconnectWallet])
+  }, [tempRpcEndpoint, tempRestEndpoint, currentWallet, disconnectWallet, validRest, validRpc])
 
   if (!modal) return null
 

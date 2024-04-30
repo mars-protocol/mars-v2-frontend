@@ -1,6 +1,7 @@
 import classNames from 'classnames'
-import Text from 'components/common/Text'
 import React, { useEffect, useState } from 'react'
+
+import Text from 'components/common/Text'
 
 interface Props {
   className: string
