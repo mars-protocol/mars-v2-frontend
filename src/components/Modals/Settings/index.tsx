@@ -247,23 +247,26 @@ export default function SettingsModal() {
     async (value: string) => {
       try {
         const url = new URL(value)
-        const isValidEndpoint = await fetch(`${url.href}status?`, {
-          headers: {
-            'Content-Type': 'application/json',
+        const isValidEndpoint = await fetch(
+          `${url.href}cosmos/base/tendermint/v1beta1/blocks/latest`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
           },
-        }).then(async (res) => {
-          const json = await res.json()
-          return json?.result?.node_info?.network === chainId
+        ).then(async (res) => {
+          const result = await res.json()
+          return result?.block?.header?.chain_id === chainId
         })
         if (isValidEndpoint) {
-          setValidRpc(true)
-          setRpcEndpoint(value)
+          setValidRest(true)
+          setRestEndpoint(value)
         }
       } catch (error) {
-        setValidRpc(false)
+        setValidRest(false)
       }
     },
-    [setValidRpc],
+    [setValidRest],
   )
 
   const showResetModal = useCallback(() => {
@@ -285,7 +288,12 @@ export default function SettingsModal() {
   }, [showResetDialog, handleResetSettings])
 
   const handleCloseModal = useCallback(() => {
-    if ((tempRpcEndpoint !== '' || tempRestEndpoint !== '') && currentWallet) {
+    if (
+      (tempRpcEndpoint !== '' || tempRestEndpoint !== '') &&
+      validRest &&
+      validRpc &&
+      currentWallet
+    ) {
       disconnectWallet(currentWallet)
       useStore.setState({
         client: undefined,
@@ -297,7 +305,10 @@ export default function SettingsModal() {
         },
       })
     }
-
+    setTempRestEndpoint('')
+    setTempRpcEndpoint('')
+    setValidRest(true)
+    setValidRpc(true)
     useStore.setState({ settingsModal: false })
   }, [tempRpcEndpoint, tempRestEndpoint, currentWallet, disconnectWallet])
 
@@ -473,7 +484,7 @@ export default function SettingsModal() {
               validateRestEndpoint(value)
             }}
             error={!validRest}
-            errorMessage={`Invalid ${chainId} REST Endpoint. Failed to fetch a test-wallet balance.`}
+            errorMessage={`Invalid ${chainId} REST Endpoint. Failed to fetch the latest block.`}
             className='w-full'
           />
         </div>
@@ -486,7 +497,7 @@ export default function SettingsModal() {
           leftIcon={<ArrowCircle />}
           text='Reset to default settings'
         />
-        <Button text='Confirm' onClick={handleCloseModal} />
+        <Button text='Confirm' onClick={handleCloseModal} disabled={!validRest || !validRpc} />
       </div>
     </Modal>
   )
