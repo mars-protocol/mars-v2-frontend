@@ -44,7 +44,6 @@ export default function SettingsModal() {
   const [customSlippage, setCustomSlippage] = useState<number>(0)
   const [inputRef, setInputRef] = useState<React.RefObject<HTMLInputElement>>()
   const [isCustom, setIsCustom] = useState(false)
-  const [rpcOrRestChanged, setRpcOrRestChanged] = useState(false)
 
   const [displayCurrency, setDisplayCurrency] = useDisplayCurrency()
   const [rpcEndpoint, setRpcEndpoint] = useLocalStorage<string>(
@@ -72,6 +71,12 @@ export default function SettingsModal() {
     LocalStorageKeys.UPDATE_ORACLE,
     DEFAULT_SETTINGS.updateOracle,
   )
+
+  const [tempRpcEndpoint, setTempRpcEndpoint] = useState('')
+  const [tempRestEndpoint, setTempRestEndpoint] = useState('')
+  const [validRpc, setValidRpc] = useState(true)
+  const [validRest, setValidRest] = useState(true)
+
   const [theme, setTheme] = useLocalStorage<string>(LocalStorageKeys.THEME, DEFAULT_SETTINGS.theme)
   const themeOptions: SelectOption[] = [
     { label: 'Default', value: 'default' },
@@ -196,7 +201,8 @@ export default function SettingsModal() {
     handleTutorial(DEFAULT_SETTINGS.tutorial)
     handleUpdateOracle(DEFAULT_SETTINGS.updateOracle)
     handleTheme(DEFAULT_SETTINGS.theme)
-    setRpcOrRestChanged(true)
+    setTempRpcEndpoint(chains[chainId].endpoints.rpc)
+    setTempRestEndpoint(chains[chainId].endpoints.rest)
     setRpcEndpoint(chains[chainId].endpoints.rpc)
     setRestEndpoint(chains[chainId].endpoints.rest)
   }, [
@@ -207,24 +213,58 @@ export default function SettingsModal() {
     handleTheme,
     handleTutorial,
     handleUpdateOracle,
-    setRpcOrRestChanged,
+    setTempRpcEndpoint,
+    setTempRestEndpoint,
     setRpcEndpoint,
     setRestEndpoint,
     chainId,
   ])
 
-  const validateEndpoints = useCallback(async () => {
-    const url = new URL(restEndpoint)
-    await fetch(`${url.href}/status?`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }).then(async (res) => {
-      const result = await res.json()
-      // VALID : {"code": 12, "message": "Not Implemented", "details": [] }
-      console.log(result)
-    })
-  }, [restEndpoint])
+  const validateRpcEndpoint = useCallback(
+    async (value: string) => {
+      try {
+        const url = new URL(value)
+        const isValidEndpoint = await fetch(`${url.href}status?`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }).then(async (res) => {
+          const json = await res.json()
+          return json?.result?.node_info?.network === chainId
+        })
+        if (isValidEndpoint) {
+          setValidRpc(true)
+          setRpcEndpoint(value)
+        }
+      } catch (error) {
+        setValidRpc(false)
+      }
+    },
+    [setValidRpc],
+  )
+
+  const validateRestEndpoint = useCallback(
+    async (value: string) => {
+      try {
+        const url = new URL(value)
+        const isValidEndpoint = await fetch(`${url.href}status?`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }).then(async (res) => {
+          const json = await res.json()
+          return json?.result?.node_info?.network === chainId
+        })
+        if (isValidEndpoint) {
+          setValidRpc(true)
+          setRpcEndpoint(value)
+        }
+      } catch (error) {
+        setValidRpc(false)
+      }
+    },
+    [setValidRpc],
+  )
 
   const showResetModal = useCallback(() => {
     showResetDialog({
@@ -245,7 +285,7 @@ export default function SettingsModal() {
   }, [showResetDialog, handleResetSettings])
 
   const handleCloseModal = useCallback(() => {
-    if (rpcOrRestChanged && currentWallet) {
+    if ((tempRpcEndpoint !== '' || tempRestEndpoint !== '') && currentWallet) {
       disconnectWallet(currentWallet)
       useStore.setState({
         client: undefined,
@@ -259,7 +299,7 @@ export default function SettingsModal() {
     }
 
     useStore.setState({ settingsModal: false })
-  }, [rpcOrRestChanged, currentWallet, disconnectWallet])
+  }, [tempRpcEndpoint, tempRestEndpoint, currentWallet, disconnectWallet])
 
   if (!modal) return null
 
@@ -415,24 +455,25 @@ export default function SettingsModal() {
           <TextInput
             label='RPC'
             placeholder='https://'
-            value={rpcEndpoint}
+            value={tempRpcEndpoint === '' ? rpcEndpoint : tempRpcEndpoint}
             onChange={(value) => {
-              setRpcOrRestChanged(true)
-              setRpcEndpoint(value)
+              setTempRpcEndpoint(value)
+              validateRpcEndpoint(value)
             }}
-            onBlur={() => {
-              validateEndpoints()
-            }}
+            error={!validRpc}
+            errorMessage={`Invalid ${chainId} RPC Endpoint. Failed to fetch the /status? API.`}
             className='w-full'
           />
           <TextInput
             label='REST'
-            value={restEndpoint}
+            value={tempRestEndpoint === '' ? restEndpoint : tempRestEndpoint}
             placeholder='https://'
             onChange={(value) => {
-              setRpcOrRestChanged(true)
-              setRestEndpoint(value)
+              setTempRestEndpoint(value)
+              validateRestEndpoint(value)
             }}
+            error={!validRest}
+            errorMessage={`Invalid ${chainId} REST Endpoint. Failed to fetch a test-wallet balance.`}
             className='w-full'
           />
         </div>
