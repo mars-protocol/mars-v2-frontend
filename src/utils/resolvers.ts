@@ -98,8 +98,8 @@ export function resolveHLSStrategies(
         maxLeverage: getLeverageFromLTV(+asset.credit_manager.hls!.max_loan_to_value),
         maxLTV: +asset.credit_manager.hls!.max_loan_to_value,
         denoms: {
-          deposit: asset.denom,
-          borrow: correlatedDenom,
+          deposit: correlatedDenom,
+          borrow: asset.denom,
         },
       }),
     )

@@ -115,7 +115,7 @@ export default function useAccordionItems(props: Props) {
       messages.push(getLiquidityMessage(props.borrowMarket.asset.denom, borrowLiquidity, assets))
     }
 
-    if (additionalDepositFromSwap.plus(props.depositAmount).isGreaterThan(props.maxBorrowAmount)) {
+    if (additionalDepositFromSwap.plus(props.depositAmount).isGreaterThan(depositCapLeft)) {
       messages.push(
         getDepositCapMessage(props.borrowMarket.asset.denom, depositCapLeft, 'borrow', assets),
       )
