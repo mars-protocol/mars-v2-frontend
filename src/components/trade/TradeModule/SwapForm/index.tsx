@@ -21,7 +21,6 @@ import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
-import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -76,10 +75,7 @@ export default function SwapForm(props: Props) {
   const isAutoLendEnabled = account ? autoLendEnabledAccountIds.includes(account.id) : false
   const modal = useStore<string | null>((s) => s.fundAndWithdrawModal)
   const { simulateTrade, removedLends, updatedAccount } = useUpdatedAccount(account)
-  const throttledEstimateExactIn = useMemo(
-    () => asyncThrottle(estimateExactIn, 250),
-    [asyncThrottle, estimateExactIn],
-  )
+  const throttledEstimateExactIn = useMemo(() => asyncThrottle(estimateExactIn, 250), [])
   const { computeLiquidationPrice } = useHealthComputer(updatedAccount)
   const assets = useMarketEnabledAssets()
 
@@ -158,6 +154,7 @@ export default function SwapForm(props: Props) {
     isMarginChecked,
     inputAssetAmount,
     onChangeInputAmount,
+    throttledEstimateExactIn,
   ])
 
   const outputSideMarginThreshold = useMemo(() => {
