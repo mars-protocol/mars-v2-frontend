@@ -130,8 +130,6 @@ export default function SwapForm(props: Props) {
       'margin',
     ).integerValue()
     const marginRatio = maxAmount.dividedBy(maxAmountOnMargin)
-
-    console.log('estimate exact in')
     throttledEstimateExactIn(
       chainConfig,
       {
