@@ -11,8 +11,8 @@ interface Props {
 
 export default function TradeModule(props: Props) {
   const { buyAsset, sellAsset, isAdvanced } = props
-
   const chainConfig = useChainConfig()
+
   return (
     <div className='order-3 md:order-2 md:row-span-2'>
       <div
