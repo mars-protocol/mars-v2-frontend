@@ -40,10 +40,11 @@ interface Props {
   buyAsset: Asset
   sellAsset: Asset
   isAdvanced: boolean
+  chainConfig: ChainConfig
 }
 
 export default function SwapForm(props: Props) {
-  const { buyAsset, sellAsset, isAdvanced } = props
+  const { buyAsset, sellAsset, isAdvanced, chainConfig } = props
   const useMargin = useStore((s) => s.useMargin)
   const useAutoRepay = useStore((s) => s.useAutoRepay)
   const account = useCurrentAccount()
@@ -75,9 +76,11 @@ export default function SwapForm(props: Props) {
   const isAutoLendEnabled = account ? autoLendEnabledAccountIds.includes(account.id) : false
   const modal = useStore<string | null>((s) => s.fundAndWithdrawModal)
   const { simulateTrade, removedLends, updatedAccount } = useUpdatedAccount(account)
-  const throttledEstimateExactIn = useMemo(() => asyncThrottle(estimateExactIn, 250), [])
+  const throttledEstimateExactIn = useMemo(
+    () => asyncThrottle(estimateExactIn, 250),
+    [asyncThrottle, estimateExactIn],
+  )
   const { computeLiquidationPrice } = useHealthComputer(updatedAccount)
-  const chainConfig = useChainConfig()
   const assets = useMarketEnabledAssets()
 
   const { data: routeInfo } = useRouteInfo(inputAsset.denom, outputAsset.denom, inputAssetAmount)
@@ -132,7 +135,8 @@ export default function SwapForm(props: Props) {
     ).integerValue()
     const marginRatio = maxAmount.dividedBy(maxAmountOnMargin)
 
-    estimateExactIn(
+    console.log('estimate exact in')
+    throttledEstimateExactIn(
       chainConfig,
       {
         denom: inputAsset.denom,
@@ -244,10 +248,14 @@ export default function SwapForm(props: Props) {
     }
   }, [account?.id, swapTx, setIsConfirming])
 
-  useEffect(() => {
-    onChangeOutputAmount(BN_ZERO)
-    onChangeInputAmount(BN_ZERO)
-  }, [tradeDirection, onChangeOutputAmount, onChangeInputAmount])
+  const changeTradeDirection = useCallback(
+    (direction: TradeDirection) => {
+      onChangeOutputAmount(BN_ZERO)
+      onChangeInputAmount(BN_ZERO)
+      setTradeDirection(direction)
+    },
+    [onChangeOutputAmount, onChangeInputAmount],
+  )
 
   useEffect(() => {
     setOutputAssetAmount(BN_ZERO)
@@ -377,7 +385,7 @@ export default function SwapForm(props: Props) {
             <>
               <TradeDirectionSelector
                 direction={tradeDirection}
-                onChangeDirection={setTradeDirection}
+                onChangeDirection={changeTradeDirection}
                 asset={buyAsset}
               />
               <AssetAmountInput

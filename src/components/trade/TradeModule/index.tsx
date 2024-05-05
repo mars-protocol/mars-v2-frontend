@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 
 import SwapForm from 'components/trade/TradeModule/SwapForm'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 interface Props {
   buyAsset: Asset
@@ -10,6 +11,8 @@ interface Props {
 
 export default function TradeModule(props: Props) {
   const { buyAsset, sellAsset, isAdvanced } = props
+
+  const chainConfig = useChainConfig()
   return (
     <div className='order-3 md:order-2 md:row-span-2'>
       <div
@@ -19,7 +22,12 @@ export default function TradeModule(props: Props) {
           'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
         )}
       >
-        <SwapForm buyAsset={buyAsset} sellAsset={sellAsset} isAdvanced={isAdvanced} />
+        <SwapForm
+          buyAsset={buyAsset}
+          sellAsset={sellAsset}
+          isAdvanced={isAdvanced}
+          chainConfig={chainConfig}
+        />
       </div>
     </div>
   )
