@@ -1,31 +1,42 @@
+import { useShuttle } from '@delphi-labs/shuttle-react'
 import classNames from 'classnames'
 import { useCallback, useMemo, useState } from 'react'
 
-import AssetImage from 'components/common/assets/AssetImage'
+import Modal from 'components/Modals/Modal'
+import SettingsOptions from 'components/Modals/Settings/SettingsOptions'
+import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
+import WalletSelect from 'components/Wallet/WalletSelect'
 import Button from 'components/common/Button'
 import { ArrowCircle, Enter } from 'components/common/Icons'
 import NumberInput from 'components/common/NumberInput'
 import Select from 'components/common/Select'
 import Text from 'components/common/Text'
+import TextInput from 'components/common/TextInput'
 import { TextLink } from 'components/common/TextLink'
-import Modal from 'components/Modals/Modal'
-import SettingsOptions from 'components/Modals/Settings/SettingsOptions'
-import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
+import AssetImage from 'components/common/assets/AssetImage'
+import chains from 'configs/chains'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useAlertDialog from 'hooks/common/useAlertDialog'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useAutoLend from 'hooks/wallet/useAutoLend'
+import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import useStore from 'store'
+import { getCurrentChainId } from 'utils/getCurrentChainId'
 import { BN } from 'utils/helpers'
 
 const slippages = [0.02, 0.03]
 
 export default function SettingsModal() {
+  const chainConfig = useChainConfig()
+  const chainId = getCurrentChainId()
+  const { disconnectWallet } = useShuttle()
+  const currentWallet = useCurrentWallet()
   const modal = useStore((s) => s.settingsModal)
   const { open: showResetDialog } = useAlertDialog()
   const displayCurrencies = useDisplayCurrencyAssets()
@@ -35,6 +46,14 @@ export default function SettingsModal() {
   const [isCustom, setIsCustom] = useState(false)
 
   const [displayCurrency, setDisplayCurrency] = useDisplayCurrency()
+  const [rpcEndpoint, setRpcEndpoint] = useLocalStorage<string>(
+    `${chainConfig.id}/${LocalStorageKeys.RPC_ENDPOINT}`,
+    chainConfig.endpoints.rpc,
+  )
+  const [restEndpoint, setRestEndpoint] = useLocalStorage<string>(
+    `${chainConfig.id}/${LocalStorageKeys.REST_ENDPOINT}`,
+    chainConfig.endpoints.rest,
+  )
   const [reduceMotion, setReduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
@@ -52,8 +71,13 @@ export default function SettingsModal() {
     LocalStorageKeys.UPDATE_ORACLE,
     DEFAULT_SETTINGS.updateOracle,
   )
-  const [theme, setTheme] = useLocalStorage<string>(LocalStorageKeys.THEME, DEFAULT_SETTINGS.theme)
 
+  const [tempRpcEndpoint, setTempRpcEndpoint] = useState('')
+  const [tempRestEndpoint, setTempRestEndpoint] = useState('')
+  const [validRpc, setValidRpc] = useState(true)
+  const [validRest, setValidRest] = useState(true)
+
+  const [theme, setTheme] = useLocalStorage<string>(LocalStorageKeys.THEME, DEFAULT_SETTINGS.theme)
   const themeOptions: SelectOption[] = [
     { label: 'Default', value: 'default' },
     { label: 'Light', value: 'light' },
@@ -162,18 +186,87 @@ export default function SettingsModal() {
     [handleSlippage],
   )
 
-  const handleResetSettings = useCallback(() => {
-    handleDisplayCurrency(DEFAULT_SETTINGS.displayCurrency)
-    handleSlippage(DEFAULT_SETTINGS.slippage)
-    handleReduceMotion(DEFAULT_SETTINGS.reduceMotion)
-    handleLendAssets(DEFAULT_SETTINGS.enableAutoLendGlobal)
-  }, [handleDisplayCurrency, handleReduceMotion, handleLendAssets, handleSlippage])
-
   const handleUpdateOracle = useCallback(
     (value: boolean) => {
       setUpdateOracle(value)
     },
     [setUpdateOracle],
+  )
+
+  const handleResetSettings = useCallback(() => {
+    handleDisplayCurrency(DEFAULT_SETTINGS.displayCurrency)
+    handleSlippage(DEFAULT_SETTINGS.slippage)
+    handleReduceMotion(DEFAULT_SETTINGS.reduceMotion)
+    handleLendAssets(DEFAULT_SETTINGS.enableAutoLendGlobal)
+    handleTutorial(DEFAULT_SETTINGS.tutorial)
+    handleUpdateOracle(DEFAULT_SETTINGS.updateOracle)
+    handleTheme(DEFAULT_SETTINGS.theme)
+    setTempRpcEndpoint(chains[chainId].endpoints.rpc)
+    setTempRestEndpoint(chains[chainId].endpoints.rest)
+    setRpcEndpoint(chains[chainId].endpoints.rpc)
+    setRestEndpoint(chains[chainId].endpoints.rest)
+  }, [
+    handleDisplayCurrency,
+    handleReduceMotion,
+    handleLendAssets,
+    handleSlippage,
+    handleTheme,
+    handleTutorial,
+    handleUpdateOracle,
+    setTempRpcEndpoint,
+    setTempRestEndpoint,
+    setRpcEndpoint,
+    setRestEndpoint,
+    chainId,
+  ])
+
+  const validateRpcEndpoint = useCallback(
+    async (value: string) => {
+      try {
+        const url = new URL(value)
+        const isValidEndpoint = await fetch(`${url.href}status?`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }).then(async (res) => {
+          const json = await res.json()
+          return json?.result?.node_info?.network === chainId
+        })
+        if (isValidEndpoint) {
+          setValidRpc(true)
+          setRpcEndpoint(value)
+        }
+      } catch (error) {
+        setValidRpc(false)
+      }
+    },
+    [setValidRpc, chainId, setRpcEndpoint],
+  )
+
+  const validateRestEndpoint = useCallback(
+    async (value: string) => {
+      try {
+        const url = new URL(value)
+        const isValidEndpoint = await fetch(
+          `${url.href}cosmos/base/tendermint/v1beta1/blocks/latest`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        ).then(async (res) => {
+          const result = await res.json()
+          return result?.block?.header?.chain_id === chainId
+        })
+        if (isValidEndpoint) {
+          setValidRest(true)
+          setRestEndpoint(value)
+        }
+      } catch (error) {
+        setValidRest(false)
+      }
+    },
+    [setValidRest, chainId, setRestEndpoint],
   )
 
   const showResetModal = useCallback(() => {
@@ -195,8 +288,29 @@ export default function SettingsModal() {
   }, [showResetDialog, handleResetSettings])
 
   const handleCloseModal = useCallback(() => {
+    if (
+      (tempRpcEndpoint !== '' || tempRestEndpoint !== '') &&
+      validRest &&
+      validRpc &&
+      currentWallet
+    ) {
+      disconnectWallet(currentWallet)
+      useStore.setState({
+        client: undefined,
+        address: undefined,
+        userDomain: undefined,
+        balances: [],
+        focusComponent: {
+          component: <WalletSelect />,
+        },
+      })
+    }
+    setTempRestEndpoint('')
+    setTempRpcEndpoint('')
+    setValidRest(true)
+    setValidRpc(true)
     useStore.setState({ settingsModal: false })
-  }, [])
+  }, [tempRpcEndpoint, tempRestEndpoint, currentWallet, disconnectWallet, validRest, validRpc])
 
   if (!modal) return null
 
@@ -342,6 +456,39 @@ export default function SettingsModal() {
           %
         </Button>
       </SettingsOptions>
+      <SettingsOptions
+        label='RPC and REST endpoints'
+        description='Set a custom RPC and REST endpoint for current chain.'
+        className='pb-6'
+        fullwidth
+      >
+        <div className='flex flex-wrap w-full gap-4'>
+          <TextInput
+            label='RPC'
+            placeholder='https://'
+            value={tempRpcEndpoint === '' ? rpcEndpoint : tempRpcEndpoint}
+            onChange={(value) => {
+              setTempRpcEndpoint(value)
+              validateRpcEndpoint(value)
+            }}
+            error={!validRpc}
+            errorMessage={`Invalid ${chainId} RPC Endpoint. Failed to fetch the /status? API.`}
+            className='w-full'
+          />
+          <TextInput
+            label='REST'
+            value={tempRestEndpoint === '' ? restEndpoint : tempRestEndpoint}
+            placeholder='https://'
+            onChange={(value) => {
+              setTempRestEndpoint(value)
+              validateRestEndpoint(value)
+            }}
+            error={!validRest}
+            errorMessage={`Invalid ${chainId} REST Endpoint. Failed to fetch the latest block.`}
+            className='w-full'
+          />
+        </div>
+      </SettingsOptions>
       <div className='flex flex-wrap justify-center w-full gap-4 md:justify-between md:flex-nowrap'>
         <Button
           color='quaternary'
@@ -350,7 +497,7 @@ export default function SettingsModal() {
           leftIcon={<ArrowCircle />}
           text='Reset to default settings'
         />
-        <Button text='Confirm' onClick={handleCloseModal} />
+        <Button text='Confirm' onClick={handleCloseModal} disabled={!validRest || !validRpc} />
       </div>
     </Modal>
   )
