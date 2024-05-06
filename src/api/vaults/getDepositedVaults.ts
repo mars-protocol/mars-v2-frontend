@@ -40,6 +40,26 @@ async function getUnlocksAtTimestamp(
       60,
     )) as VaultExtensionResponse
 
+    const lockingVault: any = {
+      vault: {
+        address: '',
+      },
+      locking: {
+        locked: {
+          vault: 0,
+          base: 0,
+          coins: [],
+        },
+        unlocking: [
+          {
+            base: 0,
+            timestamp: 0,
+            coins: [],
+          },
+        ],
+      },
+    }
+
     return Number(vaultExtension.release_at.at_time) / 1e6
   } catch (ex) {
     throw ex
