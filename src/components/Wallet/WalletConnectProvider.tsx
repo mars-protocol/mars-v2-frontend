@@ -16,6 +16,7 @@ import {
 import { FC } from 'react'
 
 import chains from 'configs/chains'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { WALLETS } from 'constants/wallets'
 import { WalletID } from 'types/enums'
 
@@ -23,10 +24,21 @@ type Props = {
   children?: React.ReactNode
 }
 
+function getLocalStorageEndpoint(key: string, fallback: string) {
+  if (typeof window !== 'undefined') return localStorage.getItem(key) ?? fallback
+  return fallback
+}
+
 function mapChainConfigToChainInfo(chainConfig: ChainConfig): ChainInfo {
   const chainInfo: ChainInfo = {
-    rpc: chainConfig.endpoints.rpc,
-    rest: chainConfig.endpoints.rest,
+    rpc: getLocalStorageEndpoint(
+      `${chainConfig.id}/${LocalStorageKeys.RPC_ENDPOINT}`,
+      chainConfig.endpoints.rpc,
+    ),
+    rest: getLocalStorageEndpoint(
+      `${chainConfig.id}/${LocalStorageKeys.REST_ENDPOINT}`,
+      chainConfig.endpoints.rest,
+    ),
     explorer: chainConfig.endpoints.explorer,
     explorerName: chainConfig.explorerName,
     chainId: chainConfig.id,

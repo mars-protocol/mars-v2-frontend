@@ -5,7 +5,6 @@ import { useCallback, useMemo, useState } from 'react'
 import Modal from 'components/Modals/Modal'
 import SettingsOptions from 'components/Modals/Settings/SettingsOptions'
 import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
-import WalletSelect from 'components/Wallet/WalletSelect'
 import Button from 'components/common/Button'
 import { ArrowCircle, Enter } from 'components/common/Icons'
 import NumberInput from 'components/common/NumberInput'
@@ -300,10 +299,10 @@ export default function SettingsModal() {
         address: undefined,
         userDomain: undefined,
         balances: [],
-        focusComponent: {
-          component: <WalletSelect />,
-        },
       })
+      if (typeof window !== 'undefined') {
+        window.location.reload()
+      }
     }
     setTempRestEndpoint('')
     setTempRpcEndpoint('')
