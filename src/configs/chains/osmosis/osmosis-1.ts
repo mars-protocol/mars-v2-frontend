@@ -5,26 +5,26 @@ import ATOM from 'configs/assets/ATOM'
 import AXL from 'configs/assets/AXL'
 import DYDX from 'configs/assets/DYDX'
 import INJ from 'configs/assets/INJ'
-import MARS from 'configs/assets/MARS'
-import OSMO from 'configs/assets/OSMO'
-import TIA from 'configs/assets/TIA'
-import USDC from 'configs/assets/USDC'
-import USDCaxl from 'configs/assets/USDC.axl'
-import USDT from 'configs/assets/USDT'
-import USDollar from 'configs/assets/USDollar'
-import WBTC from 'configs/assets/WBTC'
-import WBTCaxl from 'configs/assets/WBTC.axl'
-import WETHaxl from 'configs/assets/WETH.axl'
 import OSMO_ATOM from 'configs/assets/lp/OSMO-ATOM'
 import OSMO_USDC from 'configs/assets/lp/OSMO_USDC'
 import OSMO_WBTC from 'configs/assets/lp/OSMO_WBTC'
 import OSMO_WETH from 'configs/assets/lp/OSMO_WETH'
 import stATOM_ATOM from 'configs/assets/lp/stATOM_ATOM'
+import MARS from 'configs/assets/MARS'
 import milkTIA from 'configs/assets/milkTIA'
+import OSMO from 'configs/assets/OSMO'
 import stATOM from 'configs/assets/stATOM'
 import stDYDX from 'configs/assets/stDYDX'
 import stOSMO from 'configs/assets/stOSMO'
 import stTIA from 'configs/assets/stTIA'
+import TIA from 'configs/assets/TIA'
+import USDC from 'configs/assets/USDC'
+import USDCaxl from 'configs/assets/USDC.axl'
+import USDollar from 'configs/assets/USDollar'
+import USDT from 'configs/assets/USDT'
+import WBTC from 'configs/assets/WBTC'
+import WBTCaxl from 'configs/assets/WBTC.axl'
+import WETHaxl from 'configs/assets/WETH.axl'
 import { VAULTS_META_DATA } from 'constants/vaults'
 import { ChainInfoID, NETWORK } from 'types/enums'
 import { getUrl } from 'utils/url'
@@ -171,7 +171,7 @@ const Osmosis1: ChainConfig = {
   },
   explorerName: 'Mintscan',
   features: ['ibc-transfer', 'ibc-go'],
-  gasPrice: '0.0035uosmo',
+  gasPrice: '0.025uosmo',
   id: ChainInfoID.Osmosis1,
   name: 'Osmosis',
   network: NETWORK.MAINNET,
