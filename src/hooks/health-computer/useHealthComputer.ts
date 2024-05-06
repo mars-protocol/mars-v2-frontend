@@ -203,7 +203,6 @@ export default function useHealthComputer(account?: Account) {
 
   const computeMaxBorrowAmount = useCallback(
     (denom: string, target: BorrowTarget) => {
-      console.log(healthComputer)
       if (!healthComputer) return BN_ZERO
       try {
         return BN(max_borrow_estimate_js(healthComputer, denom, target)).integerValue()
