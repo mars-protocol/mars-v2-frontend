@@ -300,9 +300,7 @@ export default function SettingsModal() {
         userDomain: undefined,
         balances: [],
       })
-      if (typeof window !== 'undefined') {
-        window.location.reload()
-      }
+      if (typeof window !== 'undefined') window.location.reload()
     }
     setTempRestEndpoint('')
     setTempRpcEndpoint('')
