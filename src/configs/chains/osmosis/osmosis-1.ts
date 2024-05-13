@@ -171,7 +171,7 @@ const Osmosis1: ChainConfig = {
   },
   explorerName: 'Mintscan',
   features: ['ibc-transfer', 'ibc-go'],
-  gasPrice: '0.025uosmo',
+  gasPrice: '0.0035uosmo',
   id: ChainInfoID.Osmosis1,
   name: 'Osmosis',
   network: NETWORK.MAINNET,
