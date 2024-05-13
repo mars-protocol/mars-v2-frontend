@@ -9,13 +9,13 @@ import Card from 'components/common/Card'
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
+import useAccountIds from 'hooks/accounts/useAccountIds'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
 
 interface Props {
   account: Account
-  isHls?: boolean
   lendingData: LendingMarketTableData[]
   borrowingData: BorrowMarketTableData[]
   hideCard?: boolean
@@ -38,17 +38,19 @@ export default function AccountBalancesTable(props: Props) {
   const { pathname } = useLocation()
   const address = useStore((s) => s.address)
   const updatedAccount = useStore((s) => s.updatedAccount)
+  const isHls = account.kind === 'high_levered_strategy'
   const accountBalanceData = useAccountBalanceData({
     account,
     updatedAccount,
     lendingData,
     borrowingData,
-    isHls: props.isHls,
+    isHls,
   })
-
   const columns = useAccountBalancesColumns(account, showLiquidationPrice)
+  const { data: accountIds } = useAccountIds(address)
+  const isUsersAccount = accountIds?.includes(account.id)
 
-  if (accountBalanceData.length === 0)
+  if (accountBalanceData.length === 0) {
     return (
       <ConditionalWrapper
         condition={!hideCard}
@@ -59,28 +61,34 @@ export default function AccountBalancesTable(props: Props) {
         )}
       >
         <div className='w-full p-4'>
-          <ActionButton
-            className='w-full'
-            text='Fund this Account'
-            color='tertiary'
-            onClick={() => {
-              if (currentAccount?.id !== account.id) {
-                navigate(getRoute(getPage(pathname), searchParams, address, account.id))
-              }
-              useStore.setState({
-                focusComponent: {
-                  component: <AccountFundFullPage />,
-                  onClose: () => {
-                    useStore.setState({ getStartedModal: true })
+          {isUsersAccount && !isHls ? (
+            <ActionButton
+              className='w-full'
+              text='Fund this Account'
+              color='tertiary'
+              onClick={() => {
+                if (currentAccount?.id !== account.id) {
+                  navigate(getRoute(getPage(pathname), searchParams, address, account.id))
+                }
+                useStore.setState({
+                  focusComponent: {
+                    component: <AccountFundFullPage />,
+                    onClose: () => {
+                      useStore.setState({ getStartedModal: true })
+                    },
                   },
-                },
-              })
-            }}
-          />
+                })
+              }}
+            />
+          ) : (
+            <Text size='sm' className='text-center'>
+              This account has no balances.
+            </Text>
+          )}
         </div>
       </ConditionalWrapper>
     )
-
+  }
   return (
     <Table
       title={
