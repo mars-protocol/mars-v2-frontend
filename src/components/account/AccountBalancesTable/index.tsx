@@ -9,7 +9,6 @@ import Card from 'components/common/Card'
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
-import useAccountIds from 'hooks/accounts/useAccountIds'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
@@ -21,6 +20,7 @@ interface Props {
   hideCard?: boolean
   tableBodyClassName?: string
   showLiquidationPrice?: boolean
+  isUsersAccount?: boolean
 }
 
 export default function AccountBalancesTable(props: Props) {
@@ -32,6 +32,7 @@ export default function AccountBalancesTable(props: Props) {
     tableBodyClassName,
     hideCard,
     showLiquidationPrice,
+    isUsersAccount,
   } = props
   const currentAccount = useCurrentAccount()
   const navigate = useNavigate()
@@ -47,8 +48,6 @@ export default function AccountBalancesTable(props: Props) {
     isHls,
   })
   const columns = useAccountBalancesColumns(account, showLiquidationPrice)
-  const { data: accountIds } = useAccountIds(address)
-  const isUsersAccount = accountIds?.includes(account.id)
 
   if (accountBalanceData.length === 0) {
     return (
