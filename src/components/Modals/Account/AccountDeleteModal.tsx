@@ -1,11 +1,13 @@
 import { useCallback, useMemo } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useSWRConfig } from 'swr'
 
 import AccountDeleteAlertDialog from 'components/Modals/Account/AccountDeleteAlertDialog'
 import { ArrowRight, ExclamationMarkCircled } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
 import useAllAssets from 'hooks/assets/useAllAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
@@ -26,7 +28,10 @@ export default function AccountDeleteController() {
 
 function AccountDeleteModal(props: Props) {
   const modal = props.modal
+  const chainConfig = useChainConfig()
   const deleteAccount = useStore((s) => s.deleteAccount)
+  const { mutate } = useSWRConfig()
+  const { address: urlAddress } = useParams()
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { address } = useParams()
@@ -37,10 +42,19 @@ function AccountDeleteModal(props: Props) {
     useStore.setState({ accountDeleteModal: null })
   }, [])
 
-  const deleteAccountHandler = useCallback(() => {
+  const deleteAccountHandler = useCallback(async () => {
     const options = { accountId: modal.id, lends: modal.lends }
-    deleteAccount(options)
-    navigate(getRoute(getPage(pathname), searchParams, address))
+    const path = getPage(pathname)
+    const isDeleted = await deleteAccount(options)
+    if (isDeleted) {
+      mutate(`chains/${chainConfig.id}/wallets/${urlAddress}/account-ids`)
+      if (path.includes('portfolio')) {
+        // If the current page is the portfolio accounts detail page. Reroute the user to the portfolio overview page.
+        navigate(getRoute('portfolio', searchParams, urlAddress))
+      } else {
+        navigate(getRoute(path, searchParams, address))
+      }
+    }
     closeDeleteAccountModal()
   }, [
     modal.id,
@@ -50,6 +64,9 @@ function AccountDeleteModal(props: Props) {
     pathname,
     searchParams,
     address,
+    urlAddress,
+    chainConfig.id,
+    mutate,
     closeDeleteAccountModal,
   ])
 

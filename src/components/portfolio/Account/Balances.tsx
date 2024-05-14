@@ -6,15 +6,14 @@ import Card from 'components/common/Card'
 import TableSkeleton from 'components/common/Table/TableSkeleton'
 import Text from 'components/common/Text'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
-import useAccount from 'hooks/accounts/useAccount'
 
 interface Props {
-  accountId: string
+  isUsersAccount?: boolean
+  account: Account
 }
 
 function Content(props: Props) {
-  const { data: account } = useAccount(props.accountId, true)
-
+  const { isUsersAccount, account } = props
   const data = useBorrowMarketAssetsTableData()
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
@@ -29,6 +28,7 @@ function Content(props: Props) {
         account={account}
         borrowingData={borrowAssets}
         lendingData={lendingAssets}
+        isUsersAccount={isUsersAccount}
         showLiquidationPrice
         hideCard
       />
