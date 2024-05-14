@@ -6,22 +6,21 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import Skeleton from 'components/portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
-import useAccount from 'hooks/accounts/useAccount'
 import useAllAssets from 'hooks/assets/useAllAssets'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import usePrices from 'hooks/prices/usePrices'
-import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 
 interface Props {
-  accountId: string
+  account: Account
   v1?: boolean
 }
 
 function Content(props: Props) {
-  const { data: account } = useAccount(props.accountId, true)
+  const { account } = props
   const { data: prices } = usePrices()
   const { data: vaultAprs } = useVaultAprs()
   const { health, healthFactor } = useHealthComputer(account)
@@ -89,8 +88,8 @@ function Content(props: Props) {
       stats={stats}
       health={health}
       healthFactor={healthFactor}
-      title={props.v1 ? 'V1 Portfolio' : `Credit Account ${props.accountId}`}
-      accountId={props.accountId}
+      title={props.v1 ? 'V1 Portfolio' : `Credit Account ${account.id}`}
+      accountId={account.id}
     />
   )
 }
@@ -102,8 +101,8 @@ export default function Summary(props: Props) {
         <Skeleton
           health={0}
           healthFactor={0}
-          title={`Credit Account ${props.accountId}`}
-          accountId={props.accountId}
+          title={`Credit Account ${props.account.id}`}
+          accountId={props.account.id}
         />
       }
     >

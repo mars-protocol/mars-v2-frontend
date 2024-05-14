@@ -2,10 +2,10 @@ export const defaultFee: StdFee = {
   amount: [
     {
       denom: 'uosmo',
-      amount: '100000',
+      amount: '500000',
     },
   ],
-  gas: '10000000',
+  gas: '15000000',
 }
 
 export const SECONDS_IN_A_YEAR = 31540000

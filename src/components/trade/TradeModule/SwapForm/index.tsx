@@ -21,7 +21,6 @@ import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
-import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -40,10 +39,11 @@ interface Props {
   buyAsset: Asset
   sellAsset: Asset
   isAdvanced: boolean
+  chainConfig: ChainConfig
 }
 
 export default function SwapForm(props: Props) {
-  const { buyAsset, sellAsset, isAdvanced } = props
+  const { buyAsset, sellAsset, isAdvanced, chainConfig } = props
   const useMargin = useStore((s) => s.useMargin)
   const useAutoRepay = useStore((s) => s.useAutoRepay)
   const account = useCurrentAccount()
@@ -77,7 +77,6 @@ export default function SwapForm(props: Props) {
   const { simulateTrade, removedLends, updatedAccount } = useUpdatedAccount(account)
   const throttledEstimateExactIn = useMemo(() => asyncThrottle(estimateExactIn, 250), [])
   const { computeLiquidationPrice } = useHealthComputer(updatedAccount)
-  const chainConfig = useChainConfig()
   const assets = useMarketEnabledAssets()
 
   const { data: routeInfo } = useRouteInfo(inputAsset.denom, outputAsset.denom, inputAssetAmount)
@@ -131,8 +130,7 @@ export default function SwapForm(props: Props) {
       'margin',
     ).integerValue()
     const marginRatio = maxAmount.dividedBy(maxAmountOnMargin)
-
-    estimateExactIn(
+    throttledEstimateExactIn(
       chainConfig,
       {
         denom: inputAsset.denom,
@@ -154,6 +152,7 @@ export default function SwapForm(props: Props) {
     isMarginChecked,
     inputAssetAmount,
     onChangeInputAmount,
+    throttledEstimateExactIn,
   ])
 
   const outputSideMarginThreshold = useMemo(() => {
@@ -244,10 +243,14 @@ export default function SwapForm(props: Props) {
     }
   }, [account?.id, swapTx, setIsConfirming])
 
-  useEffect(() => {
-    onChangeOutputAmount(BN_ZERO)
-    onChangeInputAmount(BN_ZERO)
-  }, [tradeDirection, onChangeOutputAmount, onChangeInputAmount])
+  const changeTradeDirection = useCallback(
+    (direction: TradeDirection) => {
+      onChangeOutputAmount(BN_ZERO)
+      onChangeInputAmount(BN_ZERO)
+      setTradeDirection(direction)
+    },
+    [onChangeOutputAmount, onChangeInputAmount],
+  )
 
   useEffect(() => {
     setOutputAssetAmount(BN_ZERO)
@@ -377,7 +380,7 @@ export default function SwapForm(props: Props) {
             <>
               <TradeDirectionSelector
                 direction={tradeDirection}
-                onChangeDirection={setTradeDirection}
+                onChangeDirection={changeTradeDirection}
                 asset={buyAsset}
               />
               <AssetAmountInput

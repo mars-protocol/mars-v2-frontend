@@ -16,15 +16,15 @@ import AssetSelectorPerps from 'components/trade/TradeModule/AssetSelector/Asset
 import AssetAmountInput from 'components/trade/TradeModule/SwapForm/AssetAmountInput'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useAllAssets from 'hooks/assets/useAllAssets'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import { usePerpsParams } from 'hooks/perps/usePerpsParams'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import usePrice from 'hooks/prices/usePrice'
 import usePrices from 'hooks/prices/usePrices'
-import useHealthComputer from 'hooks/health-computer/useHealthComputer'
-import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import { getAccountNetValue } from 'utils/accounts'
 import { demagnify } from 'utils/formatters'
 import getPerpsPosition from 'utils/getPerpsPosition'
@@ -117,7 +117,7 @@ export function PerpsModule() {
     if (tradeDirection === 'short') maxAmount = maxAmount.plus(previousAmount)
     if (tradeDirection === 'long') maxAmount = maxAmount.minus(previousAmount)
 
-    maxAmount = BigNumber.max(maxAmount, 0)
+    maxAmount = BigNumber.max(maxAmount, 0).plus(1000000000)
     let maxLeverage = 1
 
     if (!hasActivePosition) {

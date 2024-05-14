@@ -2,10 +2,7 @@ import { useShuttle } from '@delphi-labs/shuttle-react'
 import classNames from 'classnames'
 import { useCallback, useMemo, useState } from 'react'
 
-import Modal from 'components/Modals/Modal'
-import SettingsOptions from 'components/Modals/Settings/SettingsOptions'
-import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
-import WalletSelect from 'components/Wallet/WalletSelect'
+import AssetImage from 'components/common/assets/AssetImage'
 import Button from 'components/common/Button'
 import { ArrowCircle, Enter } from 'components/common/Icons'
 import NumberInput from 'components/common/NumberInput'
@@ -13,7 +10,9 @@ import Select from 'components/common/Select'
 import Text from 'components/common/Text'
 import TextInput from 'components/common/TextInput'
 import { TextLink } from 'components/common/TextLink'
-import AssetImage from 'components/common/assets/AssetImage'
+import Modal from 'components/Modals/Modal'
+import SettingsOptions from 'components/Modals/Settings/SettingsOptions'
+import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
 import chains from 'configs/chains'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
@@ -29,6 +28,8 @@ import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import useStore from 'store'
 import { getCurrentChainId } from 'utils/getCurrentChainId'
 import { BN } from 'utils/helpers'
+
+import { Callout, CalloutType } from '../../common/Callout'
 
 const slippages = [0.02, 0.03]
 
@@ -269,6 +270,11 @@ export default function SettingsModal() {
     [setValidRest, chainId, setRestEndpoint],
   )
 
+  const hasEndpointsChangedValid = useMemo(
+    () => (tempRestEndpoint !== '' && validRest) || (tempRpcEndpoint !== '' && validRpc),
+    [tempRestEndpoint, tempRpcEndpoint, validRest, validRpc],
+  )
+
   const showResetModal = useCallback(() => {
     showResetDialog({
       icon: (
@@ -288,29 +294,16 @@ export default function SettingsModal() {
   }, [showResetDialog, handleResetSettings])
 
   const handleCloseModal = useCallback(() => {
-    if (
-      (tempRpcEndpoint !== '' || tempRestEndpoint !== '') &&
-      validRest &&
-      validRpc &&
-      currentWallet
-    ) {
+    if (hasEndpointsChangedValid && currentWallet) {
       disconnectWallet(currentWallet)
-      useStore.setState({
-        client: undefined,
-        address: undefined,
-        userDomain: undefined,
-        balances: [],
-        focusComponent: {
-          component: <WalletSelect />,
-        },
-      })
+      window.location.reload()
     }
     setTempRestEndpoint('')
     setTempRpcEndpoint('')
     setValidRest(true)
     setValidRpc(true)
     useStore.setState({ settingsModal: false })
-  }, [tempRpcEndpoint, tempRestEndpoint, currentWallet, disconnectWallet, validRest, validRpc])
+  }, [hasEndpointsChangedValid, currentWallet, disconnectWallet])
 
   if (!modal) return null
 
@@ -462,7 +455,7 @@ export default function SettingsModal() {
         className='pb-6'
         fullwidth
       >
-        <div className='flex flex-wrap w-full gap-4'>
+        <div className='flex flex-wrap w-full gap-4 items-stretch'>
           <TextInput
             label='RPC'
             placeholder='https://'
@@ -487,6 +480,11 @@ export default function SettingsModal() {
             errorMessage={`Invalid ${chainId} REST Endpoint. Failed to fetch the latest block.`}
             className='w-full'
           />
+          {hasEndpointsChangedValid && (
+            <Callout type={CalloutType.INFO} className='w-full'>
+              The app will reload and you will have to re-connect the wallet.
+            </Callout>
+          )}
         </div>
       </SettingsOptions>
       <div className='flex flex-wrap justify-center w-full gap-4 md:justify-between md:flex-nowrap'>
