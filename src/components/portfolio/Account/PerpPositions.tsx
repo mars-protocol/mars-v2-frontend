@@ -4,16 +4,14 @@ import AccountPerpPositionTable from 'components/account/AccountPerpPositionTabl
 import Card from 'components/common/Card'
 import TableSkeleton from 'components/common/Table/TableSkeleton'
 import Text from 'components/common/Text'
-import useAccount from 'hooks/accounts/useAccount'
 
 interface Props {
-  accountId: string
+  account: Account
 }
 
 function Content(props: Props) {
-  const { data: account } = useAccount(props.accountId, true)
-
-  if (!account || account.perps.length === 0) return null
+  const { account } = props
+  if (account.perps.length === 0) return null
 
   return (
     <Skeleton>
