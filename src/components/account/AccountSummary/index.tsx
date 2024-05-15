@@ -69,7 +69,13 @@ export default function AccountSummary(props: Props) {
 
   const handleToggle = useCallback(
     (index: number) => {
-      setAccountSummaryTabs(accountSummaryTabs.map((tab, i) => (i === index ? !tab : tab)))
+      if (accountSummaryTabs.length === defaultSetting.length) {
+        setAccountSummaryTabs(accountSummaryTabs.map((tab, i) => (i === index ? !tab : tab)))
+        return
+      }
+
+      const newAccountSummaryTabs = defaultSetting.map((tab, i) => accountSummaryTabs[i] ?? false)
+      setAccountSummaryTabs(newAccountSummaryTabs)
     },
     [accountSummaryTabs, setAccountSummaryTabs],
   )
