@@ -5,7 +5,7 @@ import useAccountId from 'hooks/accounts/useAccountId'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useDepositedVaults from 'hooks/vaults/useDepositedVaults'
 
-export default function useVaults(suspense: boolean = true, address?: string) {
+export default function useVaults(suspense = true, address?: string) {
   const accountId = useAccountId()
   const chainConfig = useChainConfig()
   const { data: activeVaults } = useDepositedVaults(accountId || '')
