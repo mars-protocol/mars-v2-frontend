@@ -38,9 +38,11 @@ export default function Row<T>(props: Props<T>) {
       <tr
         key={`${row.id}-row`}
         className={classNames(
-          'group/row transition-bg',
+          'transition-bg duration-100 border-white/10',
           (renderExpanded || isSelectable || props.onClick) && 'hover:cursor-pointer',
-          canExpand && row.getIsExpanded() ? 'is-expanded bg-black/20' : 'hover:bg-white/5',
+          canExpand && row.getIsExpanded()
+            ? 'is-expanded border-t gradient-header'
+            : 'hover:bg-white/5',
         )}
         onClick={(e) => {
           e.preventDefault()
