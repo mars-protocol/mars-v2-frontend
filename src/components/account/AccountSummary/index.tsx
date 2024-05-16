@@ -23,19 +23,19 @@ import { calculateAccountApr, calculateAccountLeverage } from 'utils/accounts'
 
 interface Props {
   account: Account
-  isInPage?: boolean
+  isInModal?: boolean
   isHls?: boolean
 }
 
 export default function AccountSummary(props: Props) {
-  const { account, isInPage, isHls } = props
+  const { account, isInModal, isHls } = props
   const chainConfig = useChainConfig()
-  const storageKey = isInPage
-    ? `${chainConfig.id}/${LocalStorageKeys.ACCOUNT_SUMMARY_INPAGE_TABS_EXPANDED}`
-    : `${chainConfig.id}/${LocalStorageKeys.ACCOUNT_SUMMARY_INMODAL_TABS_EXPANDED}`
-  const defaultSetting = isInPage
-    ? DEFAULT_SETTINGS.accountSummaryInPageTabsExpanded
-    : DEFAULT_SETTINGS.accountSummaryInModalTabsExpanded
+  const storageKey = isInModal
+    ? `${chainConfig.id}/${LocalStorageKeys.ACCOUNT_SUMMARY_INMODAL_TABS_EXPANDED}`
+    : `${chainConfig.id}/${LocalStorageKeys.ACCOUNT_SUMMARY_INPAGE_TABS_EXPANDED}`
+  const defaultSetting = isInModal
+    ? DEFAULT_SETTINGS.accountSummaryInModalTabsExpanded
+    : DEFAULT_SETTINGS.accountSummaryInPageTabsExpanded
   const [accountSummaryTabs, setAccountSummaryTabs] = useLocalStorage<boolean[]>(
     storageKey,
     defaultSetting,
@@ -183,7 +183,7 @@ export default function AccountSummary(props: Props) {
         updatedHealth={updatedHealth}
         healthFactor={healthFactor}
         updatedHealthFactor={updatedHealthFactor}
-        isInPage={isInPage}
+        isInModal={isInModal}
       />
       <Accordion items={items} allowMultipleOpen />
     </>
