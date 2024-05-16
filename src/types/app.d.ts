@@ -1152,7 +1152,7 @@ interface V1BorrowAndRepayModal {
 
 interface Settings {
   accountSummaryInModalTabsExpanded: boolean[]
-  accountSummaryInPageTabsExpanded: boolean[]
+  accountSummaryTabsExpanded: boolean[]
   displayCurrency: string
   reduceMotion: boolean
   tradingPairSimple: TradingPair
