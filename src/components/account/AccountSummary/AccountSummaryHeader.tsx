@@ -25,7 +25,7 @@ interface Props {
   updatedHealth: number
   healthFactor: number
   updatedHealthFactor: number
-  isAccountDetails?: boolean
+  isInModal?: boolean
 }
 
 export default function AccountSummaryHeader(props: Props) {
@@ -40,7 +40,7 @@ export default function AccountSummaryHeader(props: Props) {
     healthFactor,
     updatedHealth,
     updatedHealthFactor,
-    isAccountDetails,
+    isInModal,
   } = props
   const onClose = useCallback(() => useStore.setState({ accountDetailsExpanded: false }), [])
   const accountBalance = useMemo(
@@ -57,7 +57,7 @@ export default function AccountSummaryHeader(props: Props) {
 
   return (
     <div className='relative flex flex-wrap w-full p-4 pb-2 border-b bg-white/10 border-white/10'>
-      {isAccountDetails && (
+      {!isInModal && (
         <Button
           onClick={onClose}
           leftIcon={<ArrowRightLine />}
@@ -67,7 +67,7 @@ export default function AccountSummaryHeader(props: Props) {
           color='secondary'
         />
       )}
-      {isAccountDetails && (
+      {!isInModal && (
         <Text
           size='sm'
           className='w-full pb-1 text-white/50'

@@ -12,6 +12,7 @@ import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useAllAssets from 'hooks/assets/useAllAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -22,18 +23,19 @@ import { calculateAccountApr, calculateAccountLeverage } from 'utils/accounts'
 
 interface Props {
   account: Account
-  isAccountDetails?: boolean
+  isInModal?: boolean
   isHls?: boolean
 }
 
 export default function AccountSummary(props: Props) {
-  const { account, isAccountDetails, isHls } = props
-  const storageKey = isAccountDetails
-    ? LocalStorageKeys.ACCOUNT_DETAILS_TABS
-    : LocalStorageKeys.ACCOUNT_SUMMARY_TABS
-  const defaultSetting = isAccountDetails
-    ? DEFAULT_SETTINGS.accountDetailsTabs
-    : DEFAULT_SETTINGS.accountSummaryTabs
+  const { account, isInModal, isHls } = props
+  const chainConfig = useChainConfig()
+  const storageKey = isInModal
+    ? `${chainConfig.id}/${LocalStorageKeys.ACCOUNT_SUMMARY_INMODAL_TABS_EXPANDED}`
+    : `${chainConfig.id}/${LocalStorageKeys.ACCOUNT_SUMMARY_TABS_EXPANDED}`
+  const defaultSetting = isInModal
+    ? DEFAULT_SETTINGS.accountSummaryInModalTabsExpanded
+    : DEFAULT_SETTINGS.accountSummaryTabsExpanded
   const [accountSummaryTabs, setAccountSummaryTabs] = useLocalStorage<boolean[]>(
     storageKey,
     defaultSetting,
@@ -69,7 +71,11 @@ export default function AccountSummary(props: Props) {
 
   const handleToggle = useCallback(
     (index: number) => {
-      setAccountSummaryTabs(accountSummaryTabs.map((tab, i) => (i === index ? !tab : tab)))
+      setAccountSummaryTabs(
+        defaultSetting.map((_, i) =>
+          i === index ? !accountSummaryTabs[i] ?? true : accountSummaryTabs[i] ?? false,
+        ),
+      )
     },
     [accountSummaryTabs, setAccountSummaryTabs],
   )
@@ -177,7 +183,7 @@ export default function AccountSummary(props: Props) {
         updatedHealth={updatedHealth}
         healthFactor={healthFactor}
         updatedHealthFactor={updatedHealthFactor}
-        isAccountDetails={isAccountDetails}
+        isInModal={isInModal}
       />
       <Accordion items={items} allowMultipleOpen />
     </>

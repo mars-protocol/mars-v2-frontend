@@ -103,7 +103,10 @@ export default function MarketDetails({ row, type }: Props) {
 
   return (
     <tr>
-      <td colSpan={row.getAllCells().length} className='p-4 border-b bg-black/20 border-white/10'>
+      <td
+        colSpan={row.getAllCells().length}
+        className='p-4 border-b gradient-header border-white/10'
+      >
         <div className='flex justify-between flex-1 rounded-md bg-white/5'>
           {details.map((detail, index) => (
             <TitleAndSubCell

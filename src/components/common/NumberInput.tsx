@@ -48,7 +48,6 @@ export default function NumberInput(props: Props) {
   useEffect(() => {
     if (!props.onRef) return
     props.onRef(inputRef)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputRef, props.onRef])
 
   const onInputFocus = () => {

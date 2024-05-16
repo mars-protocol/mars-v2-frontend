@@ -7,11 +7,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { SWAP_FEE_BUFFER } from 'utils/constants'
 import { BN } from 'utils/helpers'
 
-export default function useSwapValueLoss(
-  denomIn: string,
-  denomOut: string,
-  amount: number = 1_000_000,
-) {
+export default function useSwapValueLoss(denomIn: string, denomOut: string, amount = 1_000_000) {
   const denomInPrice = usePrice(denomIn)
   const denomOutPrice = usePrice(denomOut)
   const chainConfig = useChainConfig()

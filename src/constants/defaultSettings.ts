@@ -9,8 +9,8 @@ const enabledMarketAssets = useStore
   .chainConfig.assets.filter((asset) => asset.isEnabled && asset.isMarket)
 
 export const DEFAULT_SETTINGS: Settings = {
-  accountSummaryTabs: [true, true, true, false],
-  accountDetailsTabs: [true, true, true, true],
+  accountSummaryTabsExpanded: [true, true, true, true],
+  accountSummaryInModalTabsExpanded: [true, true, true, false],
   reduceMotion: false,
   enableAutoLendGlobal: true,
   tradingPairSimple: {

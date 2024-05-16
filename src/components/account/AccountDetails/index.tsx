@@ -226,7 +226,7 @@ function AccountDetails(props: Props) {
             )}
           >
             <div className='overflow-x-scroll overflow-y-hidden md:overflow-hidden'>
-              <AccountSummary account={account} isAccountDetails />
+              <AccountSummary account={account} />
             </div>
             <div
               className={classNames(
