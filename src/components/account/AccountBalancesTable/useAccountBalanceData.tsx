@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import { getAssetAccountBalanceRow } from 'components/account/AccountBalancesTable/functions'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import usePrices from 'hooks/prices/usePrices'
 import { byDenom } from 'utils/array'
@@ -18,7 +18,7 @@ export default function useAccountBalanceData(props: Props) {
   const { account, updatedAccount, lendingData, borrowingData } = props
   const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: prices } = usePrices()
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   return useMemo<AccountBalanceRow[]>(() => {
     const usedAccount = updatedAccount ?? account
     const accountDeposits = usedAccount?.deposits ?? []

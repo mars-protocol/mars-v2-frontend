@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import useAssetParams from 'hooks/params/useAssetParams'
 import useAllPerpsDenomStates from 'hooks/perps/usePerpsDenomStates'
 import { useAllPerpsParamsSC } from 'hooks/perps/usePerpsParams'
@@ -23,14 +23,14 @@ import { byDenom } from 'utils/array'
 import { SWAP_FEE_BUFFER } from 'utils/constants'
 import {
   BorrowTarget,
+  LiquidationPriceKind,
+  SwapKind,
   compute_health_js,
   liquidation_price_js,
-  LiquidationPriceKind,
   max_borrow_estimate_js,
   max_perp_size_estimate_js,
   max_swap_estimate_js,
   max_withdraw_estimate_js,
-  SwapKind,
 } from 'utils/health_computer'
 import { BN } from 'utils/helpers'
 
@@ -40,7 +40,7 @@ import { BN } from 'utils/helpers'
 const VALUE_SCALE_FACTOR = 12
 
 export default function useHealthComputer(account?: Account) {
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const { data: prices } = usePrices()
   const { data: assetParams } = useAssetParams()
   const { data: vaultConfigs } = useVaultConfigs()

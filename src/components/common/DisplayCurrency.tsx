@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ORACLE_DENOM } from 'constants/oracle'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import usePrices from 'hooks/prices/usePrices'
@@ -34,7 +34,7 @@ export default function DisplayCurrency(props: Props) {
     isProfitOrLoss,
   } = props
   const displayCurrencies = useDisplayCurrencyAssets()
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const [displayCurrency] = useDisplayCurrency()
   const { data: prices } = usePrices()
 

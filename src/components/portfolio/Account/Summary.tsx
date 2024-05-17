@@ -6,7 +6,7 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import Skeleton from 'components/portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import usePrices from 'hooks/prices/usePrices'
@@ -28,7 +28,7 @@ function Content(props: Props) {
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const { data: hlsStrategies } = useHLSStakingAssets()
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const stats = useMemo(() => {
     if (!account || !borrowAssets.length || !lendingAssets.length) return DEFAULT_PORTFOLIO_STATS
 

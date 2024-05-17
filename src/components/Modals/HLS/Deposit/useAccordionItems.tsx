@@ -11,7 +11,7 @@ import {
 } from 'components/Modals/HLS/Deposit/SubTitles'
 import Summary from 'components/Modals/HLS/Deposit/Summary'
 import { BN_ZERO } from 'constants/math'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import usePrices from 'hooks/prices/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
@@ -48,7 +48,7 @@ interface Props {
 
 export default function useAccordionItems(props: Props) {
   const { data: prices } = usePrices()
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
 
   const depositCapLeft = useMemo(() => {
     if (!props.strategy) return BN_ZERO

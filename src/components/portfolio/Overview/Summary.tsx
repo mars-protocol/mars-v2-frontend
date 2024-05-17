@@ -8,7 +8,7 @@ import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendi
 import SummarySkeleton from 'components/portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
 import useAccounts from 'hooks/accounts/useAccounts'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import usePrices from 'hooks/prices/usePrices'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
@@ -26,7 +26,7 @@ export default function PortfolioSummary() {
   const { data: accounts } = useAccounts('default', urlAddress || walletAddress)
   const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const stats = useMemo(() => {
     if (!accounts?.length) return
     const combinedAccount = accounts.reduce(

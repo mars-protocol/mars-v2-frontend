@@ -11,7 +11,7 @@ import Text from 'components/common/Text'
 import TokenInput from 'components/common/TokenInput'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useMarkets from 'hooks/markets/useMarkets'
 import usePrices from 'hooks/prices/usePrices'
@@ -23,7 +23,7 @@ import { formatPercent } from 'utils/formatters'
 import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
 
 export default function VaultBorrowings(props: VaultBorrowingsProps) {
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const { borrowings, onChangeBorrowings } = props
   const markets = useMarkets()
   const { data: prices } = usePrices()

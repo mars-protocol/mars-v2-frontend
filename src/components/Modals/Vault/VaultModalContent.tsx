@@ -10,7 +10,7 @@ import Accordion from 'components/common/Accordion'
 import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import useDisplayAsset from 'hooks/assets/useDisplayAsset'
 import useDepositVault from 'hooks/broadcast/useDepositVault'
 import useIsOpenArray from 'hooks/common/useIsOpenArray'
@@ -33,7 +33,7 @@ export default function VaultModalContent(props: Props) {
   const { addedDebts, removedDeposits, removedLends, simulateVaultDeposit } = useUpdatedAccount(
     props.account,
   )
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
 
   const { data: prices } = usePrices()
   const [displayCurrency] = useDisplayCurrency()

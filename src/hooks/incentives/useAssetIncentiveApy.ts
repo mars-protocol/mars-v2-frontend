@@ -1,11 +1,11 @@
 import useSWR from 'swr'
 
 import { BN_ZERO } from 'constants/math'
-import useAllAssets from 'hooks/assets/useAllAssets'
-import useMarket from 'hooks/markets/useMarket'
-import usePrices from 'hooks/prices/usePrices'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useClients from 'hooks/chain/useClients'
+import useMarket from 'hooks/markets/useMarket'
+import usePrices from 'hooks/prices/usePrices'
 import { byDenom } from 'utils/array'
 import { SECONDS_IN_A_YEAR } from 'utils/constants'
 import { BN } from 'utils/helpers'
@@ -14,7 +14,7 @@ export default function useAssetIncentivesApy(denom: string) {
   const chainConfig = useChainConfig()
   const market = useMarket(denom)
   const { data: prices } = usePrices()
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const clients = useClients()
   const enabled = !!market && !!prices.length && !!assets.length && !!clients
 

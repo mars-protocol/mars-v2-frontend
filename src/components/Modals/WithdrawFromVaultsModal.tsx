@@ -7,7 +7,7 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAccountId from 'hooks/accounts/useAccountId'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import usePrices from 'hooks/prices/usePrices'
 import useSlippage from 'hooks/settings/useSlippage'
 import useStore from 'store'
@@ -20,7 +20,7 @@ export default function WithdrawFromVaultsModal() {
   const { data: prices } = usePrices()
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
   const [slippage] = useSlippage()
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
 
   function onClose() {
     useStore.setState({ withdrawFromVaultsModal: null })

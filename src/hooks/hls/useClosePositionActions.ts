@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
 
 import { BN_ZERO } from 'constants/math'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import useSwapValueLoss from 'hooks/hls/useSwapValueLoss'
 import usePrices from 'hooks/prices/usePrices'
 import useSlippage from 'hooks/settings/useSlippage'
@@ -21,7 +21,7 @@ export default function UseClosePositionActions(props: Props): Action[] {
   const collateralDenom = props.account.strategy.denoms.deposit
   const borrowDenom = props.account.strategy.denoms.borrow
   const { data: swapValueLoss } = useSwapValueLoss(collateralDenom, borrowDenom)
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const debtAmount: BigNumber = useMemo(
     () =>
       props.account.debts.find((debt) => debt.denom === props.account.strategy.denoms.borrow)

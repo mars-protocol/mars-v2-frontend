@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { checkOpenInterest, checkPositionValue } from 'components/perps/Module/validators'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import usePerpPosition from 'hooks/perps/usePerpPosition'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import usePerpsMarket from 'hooks/perps/usePerpsMarket'
@@ -22,7 +22,7 @@ export default function usePerpsModule(amount: BigNumber | null) {
   const perpsMarket = usePerpsMarket()
   const perpPosition = usePerpPosition(perpsAsset.denom)
   const { data: prices } = usePrices()
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const account = useCurrentAccount()
   const price = usePrice(perpsAsset.denom)
   const previousAmount = useMemo(() => perpPosition?.amount ?? BN_ZERO, [perpPosition?.amount])

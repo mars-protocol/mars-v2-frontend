@@ -2,14 +2,14 @@ import { useCallback } from 'react'
 
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import usePrices from 'hooks/prices/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 
 export default function useGetCoinValue() {
   const { data: prices } = usePrices()
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
 
   return useCallback(
     (coin: BNCoin) => {

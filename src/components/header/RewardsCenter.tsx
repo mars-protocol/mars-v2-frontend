@@ -10,7 +10,7 @@ import Text from 'components/common/Text'
 import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAccountId from 'hooks/accounts/useAccountId'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import useToggle from 'hooks/common/useToggle'
 import useUnclaimedRewards from 'hooks/incentives/useUnclaimedRewards'
 import usePrices from 'hooks/prices/usePrices'
@@ -54,7 +54,7 @@ export default function RewardsCenter(props: Props) {
   const claimRewards = useStore((s) => s.claimRewards)
   const { data: prices } = usePrices()
   const { data: unclaimedRewards } = useUnclaimedRewards()
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const totalRewardsCoin = useMemo(() => {
     let total = 0
     unclaimedRewards.forEach((reward) => {

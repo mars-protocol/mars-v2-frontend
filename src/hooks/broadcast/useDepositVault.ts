@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import useLendEnabledAssets from 'hooks/assets/useLendEnabledAssets'
 import usePrices from 'hooks/prices/usePrices'
 import useSlippage from 'hooks/settings/useSlippage'
@@ -26,7 +26,7 @@ export default function useDepositVault(props: Props): {
   totalValue: BigNumber
 } {
   const lendEnabledAssets = useLendEnabledAssets()
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const { data: prices } = usePrices()
   const [slippage] = useSlippage()
   const { isAutoLendEnabledForCurrentAccount: isAutoLend } = useAutoLend()

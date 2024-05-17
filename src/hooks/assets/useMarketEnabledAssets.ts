@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 
 export default function useMarketEnabledAssets() {
-  const assets = useAllAssets()
-  return useMemo(() => assets.filter((asset) => asset.isEnabled && asset.isMarket), [assets])
+  const assets = useAllWhitelistedAssets()
+  return useMemo(() => assets.filter((asset) => asset.isMarket), [assets])
 }

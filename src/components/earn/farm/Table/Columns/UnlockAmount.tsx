@@ -1,7 +1,7 @@
 import { getVaultAccountStrategiesRow } from 'components/account/AccountStrategiesTable/functions'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { BN_ZERO } from 'constants/math'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import useAsset from 'hooks/assets/useAsset'
 import usePrices from 'hooks/prices/usePrices'
 
@@ -15,7 +15,7 @@ export default function UnlockAmount(props: Props) {
   const primaryAsset = useAsset(props.vault.denoms.primary)
   const secondaryAsset = useAsset(props.vault.denoms.secondary)
   const { data: prices } = usePrices()
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
 
   if (!primaryAsset) return null
 

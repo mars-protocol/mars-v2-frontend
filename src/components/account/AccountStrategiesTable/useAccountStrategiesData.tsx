@@ -4,7 +4,7 @@ import {
   getPerpsVaultAccountStrategiesRow,
   getVaultAccountStrategiesRow,
 } from 'components/account/AccountStrategiesTable/functions'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import usePrices from 'hooks/prices/usePrices'
 import { transformPerpsVaultIntoDeposited } from 'hooks/vaults/useDepositedVaults'
@@ -19,7 +19,7 @@ export default function useAccountStrategiesData(props: Props) {
   const { account, updatedAccount } = props
   const { data: prices } = usePrices()
   const { data: vaultAprs } = useVaultAprs()
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const { data: perpsVault } = usePerpsVault()
 
   return useMemo<AccountStrategyRow[]>(() => {

@@ -9,7 +9,7 @@ import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
 import useToggle from 'hooks/common/useToggle'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
@@ -24,7 +24,7 @@ interface Props {
 
 export default function WithdrawFromAccount(props: Props) {
   const { account } = props
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const defaultAsset =
     assets.find(byDenom(account.deposits[0]?.denom || account.lends[0]?.denom)) ?? assets[0]
   const withdraw = useStore((s) => s.withdraw)

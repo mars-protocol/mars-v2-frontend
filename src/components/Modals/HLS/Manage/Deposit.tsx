@@ -9,7 +9,7 @@ import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import useToggle from 'hooks/common/useToggle'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useDepositActions from 'hooks/hls/useDepositActions'
@@ -41,7 +41,7 @@ export default function Deposit(props: Props) {
     useUpdatedAccount(props.account)
   const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
 
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const { data: prices } = usePrices()
   const [keepLeverage, toggleKeepLeverage] = useToggle(true)
   const collateralAssetAmountInWallet = BN(

@@ -5,7 +5,7 @@ import { useMemo } from 'react'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Text from 'components/common/Text'
 import { ORACLE_DENOM } from 'constants/oracle'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import usePrices from 'hooks/prices/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatAmountWithSymbol } from 'utils/formatters'
@@ -21,7 +21,7 @@ interface Props {
 
 export default function VaultDepositSubTitle(props: Props) {
   const { data: prices } = usePrices()
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const primaryText = useMemo(
     () => (
       <Text size='xs' className='inline mt-1 text-white/60'>

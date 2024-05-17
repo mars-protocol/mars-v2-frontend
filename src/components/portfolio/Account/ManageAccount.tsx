@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react'
 import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
 import Button from 'components/common/Button'
 import { ArrowDownLine, ArrowUpLine, TrashBin } from 'components/common/Icons'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import usePrices from 'hooks/prices/usePrices'
 import useStore from 'store'
 import { calculateAccountBalanceValue } from 'utils/accounts'
@@ -14,7 +14,7 @@ interface Props {
 
 export default function ManageAccount(props: Props) {
   const { account } = props
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const { data: prices } = usePrices()
   const isHls = account.kind === 'high_levered_strategy'
   const positionBalance = useMemo(

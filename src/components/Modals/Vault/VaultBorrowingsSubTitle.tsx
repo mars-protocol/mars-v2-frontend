@@ -5,7 +5,7 @@ import DisplayCurrency from 'components/common/DisplayCurrency'
 import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import usePrices from 'hooks/prices/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatAmountWithSymbol, getCoinValue } from 'utils/formatters'
@@ -17,7 +17,7 @@ interface Props {
 
 export default function VaultBorrowingsSubTitle(props: Props) {
   const { data: prices } = usePrices()
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const borrowingValue = useMemo(() => {
     let borrowingValue = BN_ZERO
     props.borrowings.map((coin) => {

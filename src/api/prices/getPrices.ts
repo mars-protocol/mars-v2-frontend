@@ -12,7 +12,7 @@ export default async function getPrices(chainConfig: ChainConfig): Promise<BNCoi
 
   const pythAndOraclePrices = []
   const assetsToFetchPrices = chainConfig.assets.filter(
-    (asset) => (asset.isEnabled && asset.isMarket) || asset.forceFetchPrice,
+    (asset) => asset.isMarket || asset.forceFetchPrice,
   )
 
   const assetsWithPythPriceFeedId = getAllAssetsWithPythId(chains)

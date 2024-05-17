@@ -17,7 +17,7 @@ import AssetAmountInput from 'components/trade/TradeModule/SwapForm/AssetAmountI
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import { usePerpsParams } from 'hooks/perps/usePerpsParams'
@@ -36,7 +36,7 @@ export function PerpsModule() {
   const { perpsAsset } = usePerpsAsset()
   const account = useCurrentAccount()
   const { data: prices } = usePrices()
-  const allAssets = useAllAssets()
+  const allAssets = useAllWhitelistedAssets()
   const { simulatePerps, updatedPerpPosition, updatedAccount, removedDeposits } =
     useUpdatedAccount(account)
   const [amount, setAmount] = useState<BigNumber>(BN_ZERO)

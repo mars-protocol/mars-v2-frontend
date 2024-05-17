@@ -1,10 +1,10 @@
 import { PerpsInfo } from 'components/perps/PerpsInfo'
 import TradeChart from 'components/trade/TradeChart'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 
 export function PerpsChart() {
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const { perpsAsset } = usePerpsAsset()
 
   return (

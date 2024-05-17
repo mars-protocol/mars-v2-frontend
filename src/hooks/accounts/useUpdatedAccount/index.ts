@@ -9,7 +9,7 @@ import {
   removeCoins,
   updatePerpsPositions,
 } from 'hooks/accounts/useUpdatedAccount/functions'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import usePrices from 'hooks/prices/usePrices'
 import useSlippage from 'hooks/settings/useSlippage'
@@ -26,7 +26,7 @@ export function useUpdatedAccount(account?: Account) {
   const { data: availableVaults } = useVaults(false)
   const { data: prices } = usePrices()
   const { data: perpsVault } = usePerpsVault()
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const [updatedAccount, setUpdatedAccount] = useState<Account | undefined>(
     account ? cloneAccount(account) : undefined,
   )

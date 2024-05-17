@@ -8,10 +8,10 @@ import { ArrowDownLine, ArrowUpLine, TrashBin } from 'components/common/Icons'
 import SwitchAutoLend from 'components/common/Switch/SwitchAutoLend'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import useAccount from 'hooks/accounts/useAccount'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import usePrices from 'hooks/prices/usePrices'
-import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { calculateAccountApr, calculateAccountBalanceValue } from 'utils/accounts'
@@ -24,7 +24,7 @@ interface Props {
 
 export default function AccountStats(props: Props) {
   const { accountId, isActive, setShowMenu } = props
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const { data: account } = useAccount(accountId)
   const { data: prices } = usePrices()
   const { data: hlsStrategies } = useHLSStakingAssets()

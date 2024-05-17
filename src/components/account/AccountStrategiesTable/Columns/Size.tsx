@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { getSizeChangeColor } from 'components/account/AccountStrategiesTable/functions'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { MAX_AMOUNT_DECIMALS, MIN_AMOUNT } from 'constants/math'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import useAsset from 'hooks/assets/useAsset'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
@@ -39,7 +39,7 @@ type FormattedSizeProps = {
 }
 
 function FormattedSize(props: FormattedSizeProps) {
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const asset = useAsset(props.coin.denom)
 
   const symbol = assets.find(byDenom(props.coin.denom))?.symbol

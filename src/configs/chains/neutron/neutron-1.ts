@@ -80,6 +80,7 @@ const Neutron1: ChainConfig = {
   hls: false,
   perps: false,
   farm: false,
+  anyAsset: true,
 }
 
 export default Neutron1

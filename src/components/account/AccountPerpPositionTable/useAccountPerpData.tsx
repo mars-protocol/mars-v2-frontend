@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import { getAssetAccountPerpRow } from 'components/account/AccountPerpPositionTable/functions'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import { byDenom } from 'utils/array'
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
 
 export default function useAccountPerpData(props: Props) {
   const { account, updatedAccount } = props
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
 
   return useMemo<AccountPerpRow[]>(() => {
     const usedAccount = updatedAccount ?? account

@@ -116,20 +116,19 @@ interface Asset extends AssetMetaData {
 }
 
 interface AssetMetaData {
-  color: string
+  color?: string
   decimals: number
   forceFetchPrice?: boolean
   hasOraclePrice: boolean
   id: string
+  isMarket?: boolean
   isAutoLendEnabled?: boolean
   isBorrowEnabled?: boolean
   isDisplayCurrency?: boolean
-  isEnabled: boolean
   isFavorite?: boolean
-  isMarket: boolean
   isStable?: boolean
   isStaking?: boolean
-  logo?: React.FC
+  logo?: React.FC | string | null
   name: string
   prefix?: string
   pythFeedName?: string
@@ -252,6 +251,7 @@ interface ChainConfig {
   hls: boolean
   perps: boolean
   farm: boolean
+  anyAsset: boolean
 }
 
 interface ContractClients {
@@ -1265,3 +1265,30 @@ type PnL =
   | {
       loss: Coin
     }
+
+interface OsmosisAssetsResponseData {
+  json: OsmosisAssetsItem
+}
+
+interface OsmosisAssetsItem {
+  items: OsmosisAsset[]
+}
+
+interface OsmosisAsset {
+  coinDenom: string
+  coinName: string
+  coinMinimalDenom: string
+  coinDecimals: number
+  coinGeckoId: string | null
+  coinImageUrl: string | null
+  isUnstable: boolean | null
+  isVerified: boolean | null
+  amount?: string
+  usdValue?: string
+  currentPrice?: string | null
+  marketCap?: string | null
+  priceChange1h?: string | null
+  priceChange24h?: string | null
+  priceChange7d?: string | null
+  volume24h?: string | null
+}

@@ -7,15 +7,14 @@ import { isMobile } from 'react-device-detect'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import useClipboard from 'react-use-clipboard'
 
-import { ChainInfoID, NETWORK } from 'types/enums'
+import RecentTransactions from 'components/Wallet/RecentTransactions'
+import WalletSelect from 'components/Wallet/WalletSelect'
 import Button from 'components/common/Button'
 import { CircularProgress } from 'components/common/CircularProgress'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { Check, Copy, ExternalLink, Wallet } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
-import RecentTransactions from 'components/Wallet/RecentTransactions'
-import WalletSelect from 'components/Wallet/WalletSelect'
 import chains from 'configs/chains'
 import { BN_ZERO } from 'constants/math'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
@@ -26,6 +25,7 @@ import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import useICNSDomain from 'hooks/wallet/useICNSDomain'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
+import { ChainInfoID, NETWORK } from 'types/enums'
 import { truncate } from 'utils/formatters'
 import { getPage, getRoute } from 'utils/route'
 
@@ -119,15 +119,11 @@ export default function WalletConnectedButton() {
   useEffect(() => {
     const newAmount = BigNumber(
       walletBalances.find((coin: Coin) => coin.denom === baseAsset.denom)?.amount ?? 0,
-    ).dividedBy(10 ** baseAsset.decimals)
-
+    ).shiftedBy(-baseAsset.decimals)
     if (walletAmount.isEqualTo(newAmount)) return
     setWalletAmount(newAmount)
-
-    const assetDenoms = marketAssets.map((asset) => asset.denom)
-    const balances = walletBalances.filter((coin) => assetDenoms.includes(coin.denom))
-    useStore.setState({ balances })
-  }, [walletBalances, baseAsset.denom, baseAsset.decimals, marketAssets, walletAmount])
+    useStore.setState({ balances: walletBalances })
+  }, [walletBalances, baseAsset.denom, baseAsset.decimals, walletAmount])
 
   return (
     <div className='relative'>

@@ -13,7 +13,7 @@ import Text from 'components/common/Text'
 import TokenInput from 'components/common/TokenInput'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import usePrices from 'hooks/prices/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { accumulateAmounts } from 'utils/accounts'
@@ -42,7 +42,7 @@ export default function VaultDeposit(props: Props) {
     [account.deposits, account.lends, primaryAsset.denom, secondaryAsset.denom],
   )
   const { data: prices } = usePrices()
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const primaryPrice = prices.find(byDenom(primaryAsset.denom))?.amount ?? BN_ZERO
   const secondaryPrice = prices.find(byDenom(secondaryAsset.denom))?.amount ?? BN_ZERO
 

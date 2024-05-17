@@ -1,6 +1,6 @@
 import { getVaultAccountStrategiesRow } from 'components/account/AccountStrategiesTable/functions'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import useAsset from 'hooks/assets/useAsset'
 import usePrices from 'hooks/prices/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -16,7 +16,7 @@ export default function UnlockValue(props: Props) {
   const primaryAsset = useAsset(props.vault.denoms.primary)
   const secondaryAsset = useAsset(props.vault.denoms.secondary)
   const { data: prices } = usePrices()
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
 
   if (primaryAsset && secondaryAsset) {
     const unlockValue = getVaultAccountStrategiesRow(props.vault, prices, assets)

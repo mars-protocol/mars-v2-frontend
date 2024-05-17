@@ -12,11 +12,11 @@ import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import usePrices from 'hooks/prices/usePrices'
-import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import {
   calculateAccountApr,
@@ -40,7 +40,7 @@ export default function PortfolioCard(props: Props) {
   const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
   const [searchParams] = useSearchParams()
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,

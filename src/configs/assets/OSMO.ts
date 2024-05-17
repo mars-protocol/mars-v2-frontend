@@ -8,7 +8,6 @@ const OSMO: AssetMetaData = {
   decimals: 6,
   hasOraclePrice: true,
   logo: LogoOSMO,
-  isEnabled: true,
   isMarket: true,
   isBorrowEnabled: true,
   isDisplayCurrency: true,

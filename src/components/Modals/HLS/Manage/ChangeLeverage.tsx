@@ -5,7 +5,7 @@ import Button from 'components/common/Button'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import usePrices from 'hooks/prices/usePrices'
 import useSlippage from 'hooks/settings/useSlippage'
@@ -27,7 +27,7 @@ interface Props {
 
 export default function ChangeLeverage(props: Props) {
   const { data: prices } = usePrices()
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const [slippage] = useSlippage()
   const {
     updatedAccount,

@@ -2,6 +2,7 @@ import { Row } from '@tanstack/react-table'
 
 import Checkbox from 'components/common/Checkbox'
 import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
 import AssetImage from 'components/common/assets/AssetImage'
 import AssetRate from 'components/common/assets/AssetRate'
 
@@ -47,7 +48,16 @@ export default function Asset(props: Props) {
             suffix
           />
         ) : (
-          <Text size='xs'>{asset.name}</Text>
+          <Tooltip
+            type='info'
+            content={
+              <Text size='2xs' className='w-full'>
+                {asset.denom}
+              </Text>
+            }
+          >
+            <Text size='xs'>{asset.name}</Text>
+          </Tooltip>
         )}
       </div>
     </div>

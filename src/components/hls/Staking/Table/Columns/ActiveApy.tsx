@@ -1,10 +1,10 @@
 import { Row } from '@tanstack/react-table'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import useMarket from 'hooks/markets/useMarket'
 import usePrices from 'hooks/prices/usePrices'
 import { calculateAccountLeverage } from 'utils/accounts'
@@ -26,7 +26,7 @@ interface Props {
 
 export default function ActiveAPY(props: Props) {
   const { data: prices } = usePrices()
-  const assets = useAllAssets()
+  const assets = useAllWhitelistedAssets()
   const borrowRate = useMarket(props.account.strategy.denoms.borrow)?.apy.borrow
 
   const leverage = useMemo(

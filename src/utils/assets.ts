@@ -1,7 +1,7 @@
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { demagnify } from 'utils/formatters'
+import { demagnify, truncate } from 'utils/formatters'
 
 export function findCoinByDenom(denom: string, coins: BigNumberCoin[]) {
   return coins.find((coin) => coin.denom === denom)
@@ -61,4 +61,53 @@ export function getAllAssetsWithPythId(chains: { [key: string]: ChainConfig }) {
 
 export function getAssetSymbol(chainConfig: ChainConfig, denom: string) {
   return chainConfig.assets.find((asset) => asset.denom === denom)?.symbol
+}
+
+export function stringifyDenom(denom: string) {
+  return denom.replaceAll('/', '_').replaceAll('.', '')
+}
+
+export function getSymbolFromUnknownAssetDenom(denom: string) {
+  const denomParts = denom.split('/')
+  if (denomParts[0] === 'factory') return denomParts[denomParts.length - 1].toUpperCase()
+  return 'UNKNOWN'
+}
+
+export function getNameFromUnknownAssetDenom(denom: string) {
+  const denomParts = denom.split('/')
+  if (denomParts[0] === 'factory') return `factory...${denomParts[denomParts.length - 1]}`
+  if (denomParts[0] === 'gamm') return `Pool Token #${denomParts[denomParts.length - 1]}`
+  return truncate(denom, [3, 6])
+}
+
+export function handleUnknownAsset(coin: Coin): Asset {
+  return {
+    denom: coin.denom,
+    decimals: 6,
+    hasOraclePrice: false,
+    id: stringifyDenom(coin.denom),
+    name: getNameFromUnknownAssetDenom(coin.denom),
+    symbol: getSymbolFromUnknownAssetDenom(coin.denom),
+  }
+}
+
+export function convertOsmosisAssetsResponse(
+  data: OsmosisAssetsResponseData,
+  assets: Asset[],
+): Asset[] {
+  const whitelistedAssetDenoms = assets.map((asset) => asset.denom)
+  const osmosisAssets = data.json.items.filter(
+    (item) => !whitelistedAssetDenoms.includes(item.coinMinimalDenom),
+  )
+  return osmosisAssets.map((item) => {
+    return {
+      denom: item.coinMinimalDenom,
+      decimals: item.coinDecimals,
+      hasOraclePrice: false,
+      id: stringifyDenom(item.coinDenom),
+      name: item.coinName,
+      symbol: item.coinDenom,
+      logo: `https://app.osmosis.zone${item.coinImageUrl}`,
+    }
+  })
 }

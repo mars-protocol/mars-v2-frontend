@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import usePrices from 'hooks/prices/usePrices'
 import { getAccountNetValue } from 'utils/accounts'
@@ -11,7 +11,7 @@ import { demagnify } from 'utils/formatters'
 export default function usePerpsBalancesTable() {
   const currentAccount = useCurrentAccount()
   const perpAssets = usePerpsEnabledAssets()
-  const allAssets = useAllAssets()
+  const allAssets = useAllWhitelistedAssets()
   const { data: prices } = usePrices()
 
   return useMemo<PerpPositionRow[]>(() => {

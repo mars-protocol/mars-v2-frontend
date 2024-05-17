@@ -10,7 +10,6 @@ import OSMO_USDC from 'configs/assets/lp/OSMO_USDC'
 import OSMO_WBTC from 'configs/assets/lp/OSMO_WBTC'
 import OSMO_WETH from 'configs/assets/lp/OSMO_WETH'
 import stATOM_ATOM from 'configs/assets/lp/stATOM_ATOM'
-import MARS from 'configs/assets/MARS'
 import milkTIA from 'configs/assets/milkTIA'
 import OSMO from 'configs/assets/OSMO'
 import stATOM from 'configs/assets/stATOM'
@@ -86,11 +85,6 @@ const ASSETS = [
     ...AKT,
     poolId: 1093,
     denom: 'ibc/1480B8FD20AD5FCAE81EA87584D269547DD4D436843C1D20F15E00EB64743EF4',
-  },
-  {
-    ...MARS,
-    poolId: 907,
-    denom: 'ibc/573FCD90FACEE750F55A8864EF7D38265F07E5A9273FA0E8DAFD39951332B580',
   },
   {
     ...USDT,
@@ -179,6 +173,7 @@ const Osmosis1: ChainConfig = {
   hls: true,
   perps: false,
   farm: true,
+  anyAsset: true,
 }
 
 export default Osmosis1
