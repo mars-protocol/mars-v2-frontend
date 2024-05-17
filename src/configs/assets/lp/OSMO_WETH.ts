@@ -5,7 +5,6 @@ const OSMO_WETH: Asset = {
   denom: 'gamm/pool/704',
   color: '',
   decimals: 6,
-  isEnabled: false,
   isMarket: false,
   hasOraclePrice: true,
   forceFetchPrice: true,

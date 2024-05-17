@@ -5,7 +5,6 @@ const OSMO_WBTC: Asset = {
   denom: 'gamm/pool/712',
   color: '',
   decimals: 6,
-  isEnabled: false,
   isMarket: false,
   hasOraclePrice: true,
   forceFetchPrice: true,

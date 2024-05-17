@@ -1,10 +1,10 @@
 import { Bech32Address } from '@keplr-wallet/cosmos'
 
-import { ChainInfoID, NETWORK } from 'types/enums'
 import ATOM from 'configs/assets/ATOM'
 import NTRN from 'configs/assets/NTRN'
 import USDC from 'configs/assets/USDC'
 import USDollar from 'configs/assets/USDollar'
+import { ChainInfoID, NETWORK } from 'types/enums'
 
 const Pion1: ChainConfig = {
   assets: [
@@ -62,6 +62,7 @@ const Pion1: ChainConfig = {
   hls: false,
   perps: true,
   farm: false,
+  anyAsset: true,
 }
 
 export default Pion1

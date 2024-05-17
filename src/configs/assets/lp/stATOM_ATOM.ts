@@ -5,7 +5,6 @@ const stATOM_ATOM: Asset = {
   denom: 'gamm/pool/803',
   color: '',
   decimals: 6,
-  isEnabled: false,
   isMarket: false,
   hasOraclePrice: true,
   forceFetchPrice: true,
