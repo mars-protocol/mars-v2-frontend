@@ -8,6 +8,7 @@ const nextConfig = {
       'raw.githubusercontent.com',
       'xdefi-static.s3.eu-west-1.amazonaws.com',
       'app.osmosis.zone',
+      'app.astroport.fi',
     ],
   },
   async headers() {

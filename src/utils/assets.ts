@@ -111,3 +111,28 @@ export function convertOsmosisAssetsResponse(
     }
   })
 }
+
+export function convertAstroportAssetsResponse(
+  data: AstroportAssetsResponseData,
+  assets: Asset[],
+): Asset[] {
+  const whitelistedAssetDenoms = assets.map((asset) => asset.denom)
+
+  console.log(data.result.data.json)
+  const astroportAssetData = Object.keys(data.result.data.json).filter(
+    (token) => !whitelistedAssetDenoms.includes(token),
+  )
+
+  return astroportAssetData.map((denom) => {
+    const token = data.result.data.json[denom]
+    return {
+      denom: denom,
+      decimals: token.decimals,
+      hasOraclePrice: false,
+      id: stringifyDenom(token.symbol),
+      name: token.protocol,
+      symbol: token.symbol,
+      logo: token.icon ? `https://app.astroport.fi${token.icon}` : undefined,
+    }
+  })
+}

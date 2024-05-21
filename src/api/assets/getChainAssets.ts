@@ -1,7 +1,7 @@
 import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import { mockedOsmosisAssetsResponseData } from 'mocks/osmosisAssetsResponseData'
 import { ChainInfoID } from 'types/enums'
-import { convertOsmosisAssetsResponse } from 'utils/assets'
+import { convertAstroportAssetsResponse, convertOsmosisAssetsResponse } from 'utils/assets'
 
 export default async function getChainAssets(chainConfig: ChainConfig) {
   const whitelistedAssets = useAllWhitelistedAssets()
@@ -27,9 +27,7 @@ export default async function getChainAssets(chainConfig: ChainConfig) {
     const fetches = []
     for (let i = 0; i < maxFetch; i += limitPerPage) {
       searchParams.json.cursor = i
-      const fetchURL = new URL(
-        'https://app.osmosis.zone/api/edge-trpc-assets/assets.getMarketAssets',
-      )
+      const fetchURL = new URL(chainConfig.endpoints.anyAsset)
       fetchURL.searchParams.append('input', JSON.stringify(searchParams))
       fetches.push(fetch(fetchURL.toString()))
     }
@@ -49,7 +47,24 @@ export default async function getChainAssets(chainConfig: ChainConfig) {
     )
     // return [...whitelistedAssets, ...assets.flat()]
     return [...whitelistedAssets, ...mockedAssets]
-  } else {
+  }
+
+  if (chainConfig.id === ChainInfoID.Pion1 || chainConfig.id === ChainInfoID.Neutron1) {
+    const searchParams = { json: { chainId: chainConfig.id } }
+    const uri = new URL(chainConfig.endpoints.anyAsset)
+    uri.searchParams.append('input', JSON.stringify(searchParams))
+    try {
+      const assets = await fetch(uri.toString()).then(async (res) => {
+        const data = (await res.json()) as AstroportAssetsResponseData
+        return convertAstroportAssetsResponse(data, whitelistedAssets)
+      })
+      return [...whitelistedAssets, ...assets]
+    } catch (e) {
+      console.error(e)
+    }
+
     return whitelistedAssets
   }
+
+  return whitelistedAssets
 }

@@ -236,6 +236,7 @@ interface ChainConfig {
     explorer: string
     pools: string
     routes: string
+    anyAsset: string
     aprs: {
       vaults: string
       stride: string
@@ -1267,11 +1268,9 @@ type PnL =
     }
 
 interface OsmosisAssetsResponseData {
-  json: OsmosisAssetsItem
-}
-
-interface OsmosisAssetsItem {
-  items: OsmosisAsset[]
+  json: {
+    items: OsmosisAssetsItem[]
+  }
 }
 
 interface OsmosisAsset {
@@ -1291,4 +1290,24 @@ interface OsmosisAsset {
   priceChange24h?: string | null
   priceChange7d?: string | null
   volume24h?: string | null
+}
+
+interface AstroportAssetsResponseData {
+  result: {
+    data: {
+      json: Record<string, AstroportAsset>
+    }
+  }
+}
+
+interface AstroportAsset {
+  protocol: string
+  symbol: string
+  token: string
+  icon?: string
+  decimals: number
+  chainId: import('types/enums').ChainInfoID
+  priceUsd: number
+  isBlocked: boolean
+  isHidden: boolean
 }

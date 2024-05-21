@@ -55,6 +55,7 @@ const Neutron1: ChainConfig = {
     swap: 'https://neutron.astroport.fi/swap',
     pools: '', //TODO: ⛓️ Implement this
     explorer: 'https://mintscan.io/neutron',
+    anyAsset: 'https://app.astroport.fi/api/trpc/tokens.getAll',
     aprs: {
       vaults: 'https://api.marsprotocol.io/v1/vaults/neutron',
       stride: 'https://edge.stride.zone/api/stake-stats',
