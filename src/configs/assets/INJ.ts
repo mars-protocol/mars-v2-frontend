@@ -7,7 +7,7 @@ const INJ: AssetMetaData = {
   color: '#00F2FE',
   logo: LogoINJ,
   decimals: 18,
-  isMarket: true,
+  isTradeEnabled: true,
   hasOraclePrice: true,
   isDisplayCurrency: true,
   isAutoLendEnabled: true,

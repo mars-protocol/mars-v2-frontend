@@ -4,7 +4,9 @@ import { ResolutionString } from 'utils/charting_library'
 
 // This does not retrigger when chains are switched. Assets might not be present on the new chain, but
 // This scenario is still caught.
-const enabledMarketAssets = useStore.getState().chainConfig.assets.filter((asset) => asset.isMarket)
+const enabledMarketAssets = useStore
+  .getState()
+  .chainConfig.assets.filter((asset) => asset.isTradeEnabled)
 
 export const DEFAULT_SETTINGS: Settings = {
   accountSummaryTabsExpanded: [true, true, true, true],

@@ -7,7 +7,7 @@ const stOSMO: AssetMetaData = {
   color: '#e50571',
   logo: LogoStOSMO,
   decimals: 6,
-  isMarket: true,
+  isTradeEnabled: true,
   hasOraclePrice: true,
   isDisplayCurrency: true,
   isAutoLendEnabled: false,

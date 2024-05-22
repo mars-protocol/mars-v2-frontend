@@ -4,7 +4,7 @@ import Text from 'components/common/Text'
 import AssetSelectorItem from 'components/trade/TradeModule/AssetSelector/AssetSelectorItem'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
-import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
+import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
 import useMarkets from 'hooks/markets/useMarkets'
 import usePrices from 'hooks/prices/usePrices'
 import { getMergedBalancesForAsset } from 'utils/accounts'
@@ -24,7 +24,7 @@ export default function PairsList(props: Props) {
   const markets = useMarkets()
   const { data: prices } = usePrices()
   const baseDenom = useBaseAsset().denom
-  const marketEnabledAssets = useMarketEnabledAssets()
+  const marketEnabledAssets = useTradeEnabledAssets()
   const balances = useMemo(() => {
     if (!account) return []
     return getMergedBalancesForAsset(account, marketEnabledAssets)

@@ -180,10 +180,7 @@ export function demagnify(amount: number | string | BigNumber, asset: Asset | Ps
 
 export function getCoinValue(coin: BNCoin, prices: BNCoin[], assets: Asset[]) {
   const asset = assets.find(byDenom(coin.denom))
-
   const coinPrice = asset?.price ?? prices.find(byDenom(coin.denom))
-
-  console.log(asset?.symbol, coinPrice?.amount.toString())
 
   if (!coinPrice || !asset) return
 

@@ -5,10 +5,10 @@ import { ChevronDown } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import AssetSelectorItem from 'components/trade/TradeModule/AssetSelector/AssetSelectorItem'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
+import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useMarkets from 'hooks/markets/useMarkets'
 import usePrices from 'hooks/prices/usePrices'
-import useChainConfig from 'hooks/chain/useChainConfig'
 import { getMergedBalancesForAsset } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { sortAssetsOrPairs } from 'utils/assets'
@@ -28,16 +28,18 @@ export default function AssetList(props: Props) {
   const account = useCurrentAccount()
   const markets = useMarkets()
   const { data: prices } = usePrices()
-  const marketEnabledAssets = useMarketEnabledAssets()
+  const marketEnabledAssets = useTradeEnabledAssets()
   const balances = useMemo(() => {
     if (!account) return []
     return getMergedBalancesForAsset(account, marketEnabledAssets)
   }, [account, marketEnabledAssets])
 
-  const sortedAssets = useMemo(
-    () => sortAssetsOrPairs(assets, prices, markets, balances, baseDenom) as Asset[],
-    [assets, prices, markets, balances, baseDenom],
-  )
+  const sortedAssets = useMemo(() => {
+    const sorted = sortAssetsOrPairs(assets, prices, markets, balances, baseDenom) as Asset[]
+    return sorted.filter(
+      (asset, index, self) => index === self.findIndex((t) => t.denom === asset.denom),
+    )
+  }, [assets, prices, markets, balances, baseDenom])
 
   return (
     <section>
@@ -60,8 +62,8 @@ export default function AssetList(props: Props) {
             {sortedAssets.map((asset) => (
               <AssetSelectorItem
                 balances={balances}
-                key={`${type}-${asset.symbol}`}
-                onSelect={props.onChangeAsset}
+                key={`${type}-${asset.denom}`}
+                onSelect={onChangeAsset}
                 depositCap={type === 'buy' ? markets?.find(byDenom(asset.denom))?.cap : undefined}
                 asset={asset}
               />

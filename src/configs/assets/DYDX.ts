@@ -7,7 +7,7 @@ const DYDX: AssetMetaData = {
   color: '#6966ff',
   logo: LogoDYDX,
   decimals: 18,
-  isMarket: true,
+  isTradeEnabled: true,
   hasOraclePrice: true,
   isDisplayCurrency: true,
   isAutoLendEnabled: true,

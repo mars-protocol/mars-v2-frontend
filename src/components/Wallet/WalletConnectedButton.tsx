@@ -18,7 +18,7 @@ import Text from 'components/common/Text'
 import chains from 'configs/chains'
 import { BN_ZERO } from 'constants/math'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
-import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
+import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
@@ -34,7 +34,7 @@ export default function WalletConnectedButton() {
   // EXTERNAL HOOKS
   // ---------------
 
-  const marketAssets = useMarketEnabledAssets()
+  const marketAssets = useTradeEnabledAssets()
   const currentWallet = useCurrentWallet()
   const { disconnectWallet } = useShuttle()
   const address = currentWallet?.account.address

@@ -7,7 +7,7 @@ const WBTCaxl: AssetMetaData = {
   color: '#f09242',
   logo: LogoAxlWBTC,
   decimals: 8,
-  isMarket: true,
+  isTradeEnabled: true,
   hasOraclePrice: true,
   isDisplayCurrency: true,
   isAutoLendEnabled: true,

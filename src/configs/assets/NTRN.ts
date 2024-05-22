@@ -7,7 +7,7 @@ const NTRN: AssetMetaData = {
   color: '#FFFFFF',
   logo: LogoNTRN,
   decimals: 6,
-  isMarket: true,
+  isTradeEnabled: true,
   pythPriceFeedId: 'a8e6517966a52cb1df864b2764f3629fde3f21d2b640b5c572fcd654cbccd65e',
   hasOraclePrice: true,
   isBorrowEnabled: true,

@@ -5,7 +5,7 @@ const USD: Asset = {
   denom: 'usd',
   color: '',
   decimals: 2,
-  isMarket: false,
+  isTradeEnabled: false,
   hasOraclePrice: false,
   isDisplayCurrency: true,
   isStable: false,

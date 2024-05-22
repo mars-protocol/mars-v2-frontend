@@ -7,7 +7,7 @@ const wstETH: AssetMetaData = {
   color: '#00a3ff',
   logo: LogoWstETH,
   decimals: 18,
-  isMarket: true,
+  isTradeEnabled: true,
   hasOraclePrice: true,
   isDisplayCurrency: true,
   isAutoLendEnabled: true,

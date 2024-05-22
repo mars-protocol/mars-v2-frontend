@@ -7,7 +7,7 @@ const USDT: AssetMetaData = {
   color: '#50af95',
   logo: LogoUSDT,
   decimals: 6,
-  isMarket: true,
+  isTradeEnabled: true,
   hasOraclePrice: true,
   isDisplayCurrency: true,
   isStable: true,

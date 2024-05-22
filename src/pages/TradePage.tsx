@@ -6,9 +6,9 @@ import TradeChart from 'components/trade/TradeChart'
 import TradeModule from 'components/trade/TradeModule'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
-import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { getPage } from 'utils/route'
@@ -28,21 +28,19 @@ export default function TradePage() {
     DEFAULT_SETTINGS.tradingPairSimple,
   )
 
-  const enabledMarketAssets = useMarketEnabledAssets()
+  const assets = useTradeEnabledAssets()
   const assetOverlayState = useStore((s) => s.assetOverlayState)
   const buyAsset = useMemo(
     () =>
-      enabledMarketAssets.find(
-        byDenom(isAdvanced ? tradingPairAdvanced.buy : tradingPairSimple.buy),
-      ) ?? enabledMarketAssets[0],
-    [tradingPairAdvanced, tradingPairSimple, enabledMarketAssets, isAdvanced],
+      assets.find(byDenom(isAdvanced ? tradingPairAdvanced.buy : tradingPairSimple.buy)) ??
+      assets[0],
+    [tradingPairAdvanced, tradingPairSimple, assets, isAdvanced],
   )
   const sellAsset = useMemo(
     () =>
-      enabledMarketAssets.find(
-        byDenom(isAdvanced ? tradingPairAdvanced.sell : tradingPairSimple.sell),
-      ) ?? enabledMarketAssets[1],
-    [tradingPairAdvanced, tradingPairSimple, enabledMarketAssets, isAdvanced],
+      assets.find(byDenom(isAdvanced ? tradingPairAdvanced.sell : tradingPairSimple.sell)) ??
+      assets[1],
+    [tradingPairAdvanced, tradingPairSimple, assets, isAdvanced],
   )
   return (
     <div className='flex flex-col w-full h-full gap-4'>

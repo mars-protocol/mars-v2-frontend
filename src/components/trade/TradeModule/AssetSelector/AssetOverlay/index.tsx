@@ -10,7 +10,6 @@ import AssetList from 'components/trade/TradeModule/AssetSelector/AssetList'
 import StablesFilter from 'components/trade/TradeModule/AssetSelector/AssetOverlay/StablesFilter'
 import PairsList from 'components/trade/TradeModule/AssetSelector/PairsList'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useAllChainAssets from 'hooks/assets/useAllChainAssets'
 import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import useFilteredAssets from 'hooks/assets/useFilteredAssets'
 
@@ -37,11 +36,10 @@ function MarketSubheadLine(props: { title: string }) {
 export default function AssetOverlay(props: Props) {
   const { assets, searchString, onChangeSearch } = useFilteredAssets(props.buyAssets)
   const account = useCurrentAccount()
-  const allAssets = useAllChainAssets()
   const whitelistedAssets = useAllWhitelistedAssets()
   const stableAssets = useMemo(
     () => whitelistedAssets.filter((asset) => asset.isStable),
-    [allAssets],
+    [whitelistedAssets],
   )
   const handleClose = useCallback(() => props.onChangeState('closed'), [props])
   const handleToggle = useCallback(() => props.onChangeState(props.state), [props])

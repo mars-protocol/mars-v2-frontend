@@ -1,10 +1,10 @@
 import useSWR from 'swr'
 
+import useAssets from 'hooks/assets/useAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useMarketDepositCaps from 'hooks/markets/useMarketDepositCaps'
 import useMarketsInfo from 'hooks/markets/useMarketsInfo'
 import useAssetParams from 'hooks/params/useAssetParams'
-import useAssets from 'hooks/assets/useAssets'
-import useChainConfig from 'hooks/chain/useChainConfig'
 import {
   AssetParamsBaseForAddr as AssetParams,
   TotalDepositResponse,

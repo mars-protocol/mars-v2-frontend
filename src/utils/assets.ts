@@ -81,6 +81,14 @@ export function getNameFromUnknownAssetDenom(denom: string) {
   return truncate(denom, [3, 6])
 }
 
+export function getAssetSymbolFromUnknownAsset(symbol: string) {
+  const symbolParts = symbol.split('/')
+  if (symbolParts[0] === 'factory') return symbolParts[symbolParts.length - 1]
+  if (symbolParts[0] === 'gamm') return `POOL ${symbolParts[symbolParts.length - 1]}`
+  if (symbolParts[0] === 'ibc') return truncate(symbol, [3, 6])
+  return symbol
+}
+
 export function handleUnknownAsset(coin: Coin): Asset {
   return {
     denom: coin.denom,
@@ -102,9 +110,10 @@ export function convertAstroportAssetsResponse(data: AstroportAsset[], assets: A
       hasOraclePrice: false,
       id: stringifyDenom(asset.symbol),
       name: asset.description,
-      symbol: asset.symbol,
-      logo: getAssetLogo(asset.icon),
+      symbol: getAssetSymbolFromUnknownAsset(asset.symbol),
+      logo: getAstroportAssetLogo(asset.icon),
       isAutoLendEnabled: false,
+      isTradeEnabled: true,
       price: asset.priceUSD
         ? BNCoin.fromCoin({ denom: asset.denom, amount: String(asset.priceUSD) })
         : undefined,
@@ -112,7 +121,8 @@ export function convertAstroportAssetsResponse(data: AstroportAsset[], assets: A
   })
 }
 
-export function getAssetLogo(icon?: string) {
+export function getAstroportAssetLogo(icon?: string) {
   if (!icon) return LogoUKNOWN
-  return icon
+  if (icon.startsWith('https://')) return icon
+  return `https://app.astroport.fi${icon}`
 }

@@ -7,7 +7,7 @@ const WBTC: AssetMetaData = {
   color: '#f09242',
   logo: LogoWBTC,
   decimals: 8,
-  isMarket: true,
+  isTradeEnabled: true,
   hasOraclePrice: true,
   isDisplayCurrency: true,
   isAutoLendEnabled: true,

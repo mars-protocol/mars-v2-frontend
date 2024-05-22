@@ -20,7 +20,7 @@ import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
-import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
+import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
 import useToggle from 'hooks/common/useToggle'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -77,7 +77,7 @@ export default function SwapForm(props: Props) {
   const { simulateTrade, removedLends, updatedAccount } = useUpdatedAccount(account)
   const throttledEstimateExactIn = useMemo(() => asyncThrottle(estimateExactIn, 250), [])
   const { computeLiquidationPrice } = useHealthComputer(updatedAccount)
-  const assets = useMarketEnabledAssets()
+  const assets = useTradeEnabledAssets()
 
   const { data: routeInfo } = useRouteInfo(inputAsset.denom, outputAsset.denom, inputAssetAmount)
 

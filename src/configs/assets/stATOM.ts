@@ -7,7 +7,7 @@ const stATOM: AssetMetaData = {
   color: '#e50571',
   logo: LogoStATOM,
   decimals: 6,
-  isMarket: true,
+  isTradeEnabled: true,
   hasOraclePrice: true,
   isDisplayCurrency: true,
   isAutoLendEnabled: false,

@@ -121,7 +121,7 @@ interface AssetMetaData {
   forceFetchPrice?: boolean
   hasOraclePrice: boolean
   id: string
-  isMarket?: boolean
+  isTradeEnabled?: boolean
   isAutoLendEnabled?: boolean
   isBorrowEnabled?: boolean
   isDisplayCurrency?: boolean

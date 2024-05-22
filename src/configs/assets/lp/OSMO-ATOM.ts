@@ -5,7 +5,7 @@ const OSMO_ATOM: Asset = {
   denom: 'gamm/pool/1',
   color: '',
   decimals: 6,
-  isMarket: false,
+  isTradeEnabled: false,
   hasOraclePrice: true,
   forceFetchPrice: true,
 }

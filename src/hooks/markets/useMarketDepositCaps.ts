@@ -1,13 +1,13 @@
 import useSWR from 'swr'
 
-import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
+import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useClients from 'hooks/chain/useClients'
 
 export default function useMarketDepositCaps() {
   const chainConfig = useChainConfig()
   const clients = useClients()
-  const assets = useMarketEnabledAssets()
+  const assets = useTradeEnabledAssets()
 
   return useSWR(
     assets.length > 0 && clients && `chains/${chainConfig.id}/markets/depositCap`,

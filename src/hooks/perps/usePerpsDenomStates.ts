@@ -19,8 +19,8 @@ export default function useAllPerpsDenomStates() {
       return Promise.all(promises)
     },
     {
-      refreshInterval: 30000,
-      dedupingInterval: 30000,
+      refreshInterval: 30_000,
+      dedupingInterval: 30_000,
     },
   )
 }

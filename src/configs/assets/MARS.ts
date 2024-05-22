@@ -7,7 +7,7 @@ const MARS: AssetMetaData = {
   color: '#a03b45',
   logo: LogoMARS,
   decimals: 6,
-  isMarket: false,
+  isTradeEnabled: false,
   hasOraclePrice: false,
   forceFetchPrice: true,
 }

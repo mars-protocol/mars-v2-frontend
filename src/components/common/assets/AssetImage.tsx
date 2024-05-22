@@ -16,7 +16,7 @@ export default function AssetImage(props: Props) {
           width={24}
           height={24}
           alt={props.asset.symbol}
-          className='w-full'
+          className='w-full h-full rounded-full'
           loading='lazy'
         />
       </div>

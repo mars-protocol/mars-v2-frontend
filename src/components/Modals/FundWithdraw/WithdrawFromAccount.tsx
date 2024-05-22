@@ -10,7 +10,7 @@ import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSli
 import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useAllChainAssets from 'hooks/assets/useAllChainAssets'
-import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
+import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
 import useToggle from 'hooks/common/useToggle'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useStore from 'store'
@@ -36,7 +36,7 @@ export default function WithdrawFromAccount(props: Props) {
   const accountClone = cloneAccount(account)
   const borrowAccount = removeDepositsAndLends(accountClone, currentAsset.denom)
   const { computeMaxBorrowAmount } = useHealthComputer(borrowAccount)
-  const marketEnabledAssets = useMarketEnabledAssets()
+  const marketEnabledAssets = useTradeEnabledAssets()
   const balances = getMergedBalancesForAsset(account, marketEnabledAssets)
   const maxWithdrawAmount = computeMaxWithdrawAmount(currentAsset.denom)
   const maxWithdrawWithBorrowAmount = computeMaxBorrowAmount(currentAsset.denom, 'wallet').plus(

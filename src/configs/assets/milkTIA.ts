@@ -7,7 +7,7 @@ const milkTIA: AssetMetaData = {
   color: '#E69EFE',
   logo: LogoMilkTIA,
   decimals: 6,
-  isMarket: true,
+  isTradeEnabled: true,
   hasOraclePrice: true,
   isDisplayCurrency: true,
   isAutoLendEnabled: false,

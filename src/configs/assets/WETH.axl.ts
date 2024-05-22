@@ -7,7 +7,7 @@ const WETHaxl: AssetMetaData = {
   color: '#343434',
   logo: LogoAxlWETH,
   decimals: 18,
-  isMarket: true,
+  isTradeEnabled: true,
   hasOraclePrice: true,
   isDisplayCurrency: true,
   isAutoLendEnabled: true,

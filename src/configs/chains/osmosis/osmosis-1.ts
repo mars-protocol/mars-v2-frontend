@@ -174,7 +174,7 @@ const Osmosis1: ChainConfig = {
   hls: true,
   perps: false,
   farm: true,
-  anyAsset: true,
+  anyAsset: false,
 }
 
 export default Osmosis1
