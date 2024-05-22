@@ -41,8 +41,10 @@ export default function TradeChart(props: Props) {
   )
   const [theme, __] = useLocalStorage<string>(LocalStorageKeys.THEME, DEFAULT_SETTINGS.theme)
   const ratio = useMemo(() => {
-    const priceBuyAsset = prices.find(byDenom(props.buyAsset.denom))?.amount
-    const priceSellAsset = prices.find(byDenom(props.sellAsset.denom))?.amount
+    const priceBuyAsset =
+      props.buyAsset.price?.amount ?? prices.find(byDenom(props.buyAsset.denom))?.amount
+    const priceSellAsset =
+      props.sellAsset.price?.amount ?? prices.find(byDenom(props.sellAsset.denom))?.amount
 
     if (!priceBuyAsset || !priceSellAsset) return BN_ZERO
     return priceBuyAsset.dividedBy(priceSellAsset)
