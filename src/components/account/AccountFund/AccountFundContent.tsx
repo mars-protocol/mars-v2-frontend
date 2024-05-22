@@ -96,7 +96,6 @@ export default function AccountFundContent(props: Props) {
 
   useEffect(() => {
     const currentSelectedDenom = fundingAssets.map((asset) => asset.denom)
-    console.log('Current Selected Denom', currentSelectedDenom)
 
     if (
       selectedDenoms.every((denom) => currentSelectedDenom.includes(denom)) &&

@@ -40,14 +40,14 @@ export default function TradeChart(props: Props) {
     DEFAULT_SETTINGS.chartInterval,
   )
   const [theme, __] = useLocalStorage<string>(LocalStorageKeys.THEME, DEFAULT_SETTINGS.theme)
-  const ratio = useMemo(() => {
+  const [ratio, priceBuyAsset, priceSellAsset] = useMemo(() => {
     const priceBuyAsset =
       props.buyAsset.price?.amount ?? prices.find(byDenom(props.buyAsset.denom))?.amount
     const priceSellAsset =
       props.sellAsset.price?.amount ?? prices.find(byDenom(props.sellAsset.denom))?.amount
 
-    if (!priceBuyAsset || !priceSellAsset) return BN_ZERO
-    return priceBuyAsset.dividedBy(priceSellAsset)
+    if (!priceBuyAsset || !priceSellAsset) return [BN_ZERO]
+    return [priceBuyAsset.dividedBy(priceSellAsset), priceBuyAsset, priceSellAsset]
   }, [prices, props.buyAsset.denom, props.sellAsset.denom])
 
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
@@ -119,7 +119,7 @@ export default function TradeChart(props: Props) {
               Trading Chart
             </Text>
           )}
-          {ratio.isZero() || isLoading ? (
+          {!priceBuyAsset || !priceSellAsset ? null : ratio.isZero() || isLoading ? (
             <Loading className='h-4 m-4 md:m-0 md:mr-4 w-60' />
           ) : (
             <div className='flex items-center gap-1'>

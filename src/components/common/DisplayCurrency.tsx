@@ -23,6 +23,7 @@ interface Props {
   options?: FormatOptions
   isProfitOrLoss?: boolean
   showSignPrefix?: boolean
+  showDetailedPrice?: boolean
 }
 
 export default function DisplayCurrency(props: Props) {
@@ -35,6 +36,7 @@ export default function DisplayCurrency(props: Props) {
     showZero,
     options,
     isProfitOrLoss,
+    showDetailedPrice,
   } = props
   const displayCurrencies = useDisplayCurrencyAssets()
   const { data: assets } = useAllChainAssets()
@@ -77,7 +79,7 @@ export default function DisplayCurrency(props: Props) {
     if (amount && amount > 0 && showSignPrefix) positiveOrNegativePrefix = '+'
     if (amount && amount > 0 && showSignPrefix) positiveOrNegativePrefix = '-'
     const approximationPrefix = isApproximation ? '~ ' : ''
-    const smallerThanPrefix = isLessThanACent && !showZero ? '< ' : ''
+    const smallerThanPrefix = isLessThanACent && !showDetailedPrice && !showZero ? '< ' : ''
 
     return isUSD
       ? `${approximationPrefix}${smallerThanPrefix}${positiveOrNegativePrefix}$`
@@ -110,10 +112,10 @@ export default function DisplayCurrency(props: Props) {
         isProfitOrLoss && amount && amount < 0 && 'text-loss',
         isProfitOrLoss && amount && amount > 0 && 'text-profit',
       )}
-      amount={isLessThanACent ? 0.01 : absoluteAmount ?? 0}
+      amount={isLessThanACent && !showDetailedPrice ? 0.01 : absoluteAmount ?? 0}
       options={{
         minDecimals: isUSD ? 2 : 0,
-        maxDecimals: 2,
+        maxDecimals: isLessThanACent && showDetailedPrice ? 6 : 2,
         abbreviated: true,
         suffix,
         ...options,
