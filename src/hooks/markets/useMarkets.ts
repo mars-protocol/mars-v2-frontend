@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 
-import useAssets from 'hooks/assets/useAssets'
+import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useMarketDepositCaps from 'hooks/markets/useMarketDepositCaps'
 import useMarketsInfo from 'hooks/markets/useMarketsInfo'
@@ -18,7 +18,7 @@ export default function useMarkets() {
   const { data: marketInfos } = useMarketsInfo()
   const { data: marketDepositCaps } = useMarketDepositCaps()
   const { data: assetParams } = useAssetParams()
-  const assets = useAssets()
+  const assets = useTradeEnabledAssets()
 
   const result = useSWR(
     !!marketInfos?.length &&
