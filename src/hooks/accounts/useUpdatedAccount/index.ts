@@ -9,7 +9,7 @@ import {
   removeCoins,
   updatePerpsPositions,
 } from 'hooks/accounts/useUpdatedAccount/functions'
-import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
+import useAllChainAssets from 'hooks/assets/useAllChainAssets'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import usePrices from 'hooks/prices/usePrices'
 import useSlippage from 'hooks/settings/useSlippage'
@@ -26,7 +26,7 @@ export function useUpdatedAccount(account?: Account) {
   const { data: availableVaults } = useVaults(false)
   const { data: prices } = usePrices()
   const { data: perpsVault } = usePerpsVault()
-  const assets = useAllWhitelistedAssets()
+  const { data: assets } = useAllChainAssets()
   const [updatedAccount, setUpdatedAccount] = useState<Account | undefined>(
     account ? cloneAccount(account) : undefined,
   )
@@ -114,7 +114,18 @@ export function useUpdatedAccount(account?: Account) {
       addDeposits([])
       addLends([])
       if (target === 'deposit') addDeposits(coins)
-      if (target === 'lend') addLends(coins)
+
+      if (target === 'lend') {
+        const lendableCoins = [] as BNCoin[]
+        const depositableCoins = [] as BNCoin[]
+        coins.forEach((coin) => {
+          assets.find((asset) => asset.denom === coin.denom)?.isAutoLendEnabled
+            ? lendableCoins.push(coin)
+            : depositableCoins.push(coin)
+        })
+        addDeposits(depositableCoins)
+        addLends(lendableCoins)
+      }
     },
     [account, addDeposits, addLends],
   )
@@ -184,7 +195,7 @@ export function useUpdatedAccount(account?: Account) {
     (depositCoin: BNCoin, borrowCoin: BNCoin) => {
       addDeposits([depositCoin])
       addDebts([borrowCoin])
-      const additionalDebtValue = getCoinValue(borrowCoin, prices, assets)
+      const additionalDebtValue = getCoinValue(borrowCoin, prices, assets) ?? BN_ZERO
 
       const tradeOutputAmount = getCoinAmount(
         depositCoin.denom,
@@ -201,11 +212,9 @@ export function useUpdatedAccount(account?: Account) {
 
   const simulateHlsStakingWithdraw = useCallback(
     (collateralDenom: string, debtDenom: string, repayAmount: BigNumber) => {
-      const repayValue = getCoinValue(
-        BNCoin.fromDenomAndBigNumber(debtDenom, repayAmount),
-        prices,
-        assets,
-      )
+      const repayValue =
+        getCoinValue(BNCoin.fromDenomAndBigNumber(debtDenom, repayAmount), prices, assets) ??
+        BN_ZERO
       const removeDepositAmount = getCoinAmount(collateralDenom, repayValue, prices, assets)
         .times(1 + slippage)
         .integerValue()

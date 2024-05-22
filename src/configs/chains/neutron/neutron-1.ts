@@ -1,6 +1,5 @@
 import { Bech32Address } from '@keplr-wallet/cosmos'
 
-import { ChainInfoID, NETWORK } from 'types/enums'
 import ATOM from 'configs/assets/ATOM'
 import DYDX from 'configs/assets/DYDX'
 import NTRN from 'configs/assets/NTRN'
@@ -10,6 +9,7 @@ import WETHaxl from 'configs/assets/WETH.axl'
 import stATOM from 'configs/assets/stATOM'
 import stkATOM from 'configs/assets/stkATOM'
 import wstETH from 'configs/assets/wstETH'
+import { ChainInfoID, NETWORK } from 'types/enums'
 
 const Neutron1: ChainConfig = {
   assets: [
@@ -55,7 +55,7 @@ const Neutron1: ChainConfig = {
     swap: 'https://neutron.astroport.fi/swap',
     pools: '', //TODO: ⛓️ Implement this
     explorer: 'https://mintscan.io/neutron',
-    anyAsset: 'https://app.astroport.fi/api/trpc/tokens.getAll',
+    anyAsset: 'https://api.astroport.fi/api/tokens?chainId=neutron-1',
     aprs: {
       vaults: 'https://api.marsprotocol.io/v1/vaults/neutron',
       stride: 'https://edge.stride.zone/api/stake-stats',

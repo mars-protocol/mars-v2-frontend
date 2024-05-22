@@ -42,7 +42,6 @@ export function resolveMarketResponse(
       },
     }
   } catch (e) {
-    console.log(e)
     return {
       asset,
       apy: {
@@ -54,11 +53,6 @@ export function resolveMarketResponse(
       liquidity: BN_ZERO,
       depositEnabled: false,
       borrowEnabled: false,
-      cap: {
-        denom: '',
-        used: BN_ZERO,
-        max: BN_ZERO,
-      },
       ltv: {
         max: 0,
         liq: 0,

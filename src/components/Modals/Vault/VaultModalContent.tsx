@@ -61,7 +61,7 @@ export default function VaultModalContent(props: Props) {
           BNCoin.fromDenomAndBigNumber(props.vault.cap.denom, capLeft),
           prices,
           assets,
-        ).toString(),
+        )?.toString() ?? '0',
         displayAsset,
       )
 

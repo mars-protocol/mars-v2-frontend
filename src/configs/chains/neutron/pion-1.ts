@@ -37,7 +37,7 @@ const Pion1: ChainConfig = {
     swap: 'https://testnet-neutron.astroport.fi/swap',
     pools: '', //TODO: ⛓️ Implement this
     explorer: 'https://www.mintscan.io/neutron-testnet',
-    anyAsset: 'https://app.astroport.fi/api/trpc/tokens.getAll',
+    anyAsset: 'https://testnet.astroport.fi/api/tokens?chainId=pion-1',
     aprs: {
       vaults: 'https://api.marsprotocol.io/v1/vaults/neutron',
       stride: 'https://edge.stride.zone/api/stake-stats',

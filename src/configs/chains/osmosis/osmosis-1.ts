@@ -158,7 +158,7 @@ const Osmosis1: ChainConfig = {
       process.env.NEXT_PUBLIC_OSMOSIS_REST ?? 'https://lcd-osmosis.blockapsis.com',
       'osmosis/gamm/v1beta1/pools/POOL_ID',
     ),
-    anyAsset: 'https://app.osmosis.zone/api/edge-trpc-assets/assets.getMarketAssets',
+    anyAsset: 'https://api.astroport.fi/api/tokens?chainId=osmosis-1',
     aprs: {
       vaults: 'https://api.marsprotocol.io/v1/vaults/osmosis',
       stride: 'https://edge.stride.zone/api/stake-stats',

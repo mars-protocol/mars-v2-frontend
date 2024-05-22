@@ -1,8 +1,8 @@
-import useStore from 'store'
+import useAllChainAssets from 'hooks/assets/useAllChainAssets'
 import { byDenom, bySymbol } from 'utils/array'
 
 export default function useAsset(denomOrSymbol: string) {
-  const assets = useStore((s) => s.chainConfig.assets)
+  const { data: assets } = useAllChainAssets()
 
   return assets.find(byDenom(denomOrSymbol)) ?? assets.find(bySymbol(denomOrSymbol))
 }

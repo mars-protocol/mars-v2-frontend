@@ -186,26 +186,30 @@ async function getVaultValuesAndAmounts(
         secondary: BN(secondaryLpToken.amount),
       },
       values: {
-        primary: getCoinValue(
-          new BNCoin(primaryLpToken),
-          [BNCoin.fromDenomAndBigNumber(primaryLpToken.denom, primaryPrice)],
-          chainConfig.assets,
-        ),
-        secondary: getCoinValue(
-          new BNCoin(secondaryLpToken),
-          [BNCoin.fromDenomAndBigNumber(secondaryLpToken.denom, secondaryPrice)],
-          chainConfig.assets,
-        ),
-        unlocking: getCoinValue(
-          BNCoin.fromDenomAndBigNumber(vault.denoms.lp, amounts.unlocking),
-          [BNCoin.fromDenomAndBigNumber(vault.denoms.lp, lpPrice)],
-          chainConfig.assets,
-        ),
-        unlocked: getCoinValue(
-          BNCoin.fromDenomAndBigNumber(vault.denoms.lp, amounts.unlocked),
-          [BNCoin.fromDenomAndBigNumber(vault.denoms.lp, lpPrice)],
-          chainConfig.assets,
-        ),
+        primary:
+          getCoinValue(
+            new BNCoin(primaryLpToken),
+            [BNCoin.fromDenomAndBigNumber(primaryLpToken.denom, primaryPrice)],
+            chainConfig.assets,
+          ) ?? BN_ZERO,
+        secondary:
+          getCoinValue(
+            new BNCoin(secondaryLpToken),
+            [BNCoin.fromDenomAndBigNumber(secondaryLpToken.denom, secondaryPrice)],
+            chainConfig.assets,
+          ) ?? BN_ZERO,
+        unlocking:
+          getCoinValue(
+            BNCoin.fromDenomAndBigNumber(vault.denoms.lp, amounts.unlocking),
+            [BNCoin.fromDenomAndBigNumber(vault.denoms.lp, lpPrice)],
+            chainConfig.assets,
+          ) ?? BN_ZERO,
+        unlocked:
+          getCoinValue(
+            BNCoin.fromDenomAndBigNumber(vault.denoms.lp, amounts.unlocked),
+            [BNCoin.fromDenomAndBigNumber(vault.denoms.lp, lpPrice)],
+            chainConfig.assets,
+          ) ?? BN_ZERO,
       },
     }
   } catch (ex) {

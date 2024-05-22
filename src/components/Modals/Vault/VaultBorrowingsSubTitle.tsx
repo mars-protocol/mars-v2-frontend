@@ -23,7 +23,7 @@ export default function VaultBorrowingsSubTitle(props: Props) {
     props.borrowings.map((coin) => {
       const price = prices.find((p) => p.denom === coin.denom)?.amount
       if (!price || coin.amount.isZero()) return
-      borrowingValue = getCoinValue(coin, prices, assets)
+      borrowingValue = getCoinValue(coin, prices, assets) ?? BN_ZERO
     })
     return borrowingValue
   }, [props.borrowings, prices, assets])

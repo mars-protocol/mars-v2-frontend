@@ -8,9 +8,10 @@ import { Logo } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
 import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
+import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAccountId from 'hooks/accounts/useAccountId'
-import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
+import useAllChainAssets from 'hooks/assets/useAllChainAssets'
 import useToggle from 'hooks/common/useToggle'
 import useUnclaimedRewards from 'hooks/incentives/useUnclaimedRewards'
 import usePrices from 'hooks/prices/usePrices'
@@ -54,11 +55,12 @@ export default function RewardsCenter(props: Props) {
   const claimRewards = useStore((s) => s.claimRewards)
   const { data: prices } = usePrices()
   const { data: unclaimedRewards } = useUnclaimedRewards()
-  const assets = useAllWhitelistedAssets()
+  const { data: assets } = useAllChainAssets()
   const totalRewardsCoin = useMemo(() => {
     let total = 0
     unclaimedRewards.forEach((reward) => {
-      total = total + getCoinValue(reward, prices, assets).toNumber()
+      const value = getCoinValue(reward, prices, assets) ?? BN_ZERO
+      total = total + value.toNumber()
     })
 
     return new BNCoin({

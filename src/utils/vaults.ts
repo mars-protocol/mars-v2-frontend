@@ -90,7 +90,7 @@ export function getVaultSwapActions(
   )
 
   primaryCoins.forEach((bnCoin) => {
-    let value = getCoinValue(bnCoin, prices, assets)
+    let value = getCoinValue(bnCoin, prices, assets) ?? BN_ZERO
     if (value.isLessThanOrEqualTo(primaryLeftoverValue)) {
       primaryLeftoverValue = primaryLeftoverValue.minus(value)
     } else {
@@ -106,7 +106,7 @@ export function getVaultSwapActions(
   })
 
   secondaryCoins.forEach((bnCoin) => {
-    let value = getCoinValue(bnCoin, prices, assets)
+    let value = getCoinValue(bnCoin, prices, assets) ?? BN_ZERO
     if (value.isLessThanOrEqualTo(secondaryLeftoverValue)) {
       secondaryLeftoverValue = secondaryLeftoverValue.minus(value)
     } else {
@@ -122,7 +122,7 @@ export function getVaultSwapActions(
   })
 
   otherCoins.forEach((bnCoin) => {
-    let value = getCoinValue(bnCoin, prices, assets)
+    let value = getCoinValue(bnCoin, prices, assets) ?? BN_ZERO
     let amount = bnCoin.amount
 
     if (primaryLeftoverValue.isGreaterThan(0)) {

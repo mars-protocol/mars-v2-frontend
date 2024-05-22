@@ -38,11 +38,8 @@ export default function UseClosePositionActions(props: Props): Action[] {
   )
 
   const swapInAmount = useMemo(() => {
-    const targetValue = getCoinValue(
-      BNCoin.fromDenomAndBigNumber(borrowDenom, debtAmount),
-      prices,
-      assets,
-    )
+    const targetValue =
+      getCoinValue(BNCoin.fromDenomAndBigNumber(borrowDenom, debtAmount), prices, assets) ?? BN_ZERO
     return BigNumber.max(
       getCoinAmount(collateralDenom, targetValue, prices, assets)
         .times(1 + slippage + SWAP_FEE_BUFFER + swapValueLoss)

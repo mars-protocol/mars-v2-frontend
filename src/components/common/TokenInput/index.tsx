@@ -120,7 +120,7 @@ export default function TokenInput(props: Props) {
         </div>
         <div className='flex'>
           <DisplayCurrency
-            isApproximation
+            isApproximation={props.amount.isGreaterThan(0)}
             className='inline pl-1 text-xs text-white/50'
             coin={new BNCoin({ denom: props.asset.denom, amount: props.amount.toString() })}
           />

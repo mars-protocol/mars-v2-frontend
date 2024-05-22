@@ -1,3 +1,4 @@
+import { LogoUKNOWN } from 'components/common/assets/AssetLogos'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
@@ -90,49 +91,28 @@ export function handleUnknownAsset(coin: Coin): Asset {
     symbol: getSymbolFromUnknownAssetDenom(coin.denom),
   }
 }
-
-export function convertOsmosisAssetsResponse(
-  data: OsmosisAssetsResponseData,
-  assets: Asset[],
-): Asset[] {
+export function convertAstroportAssetsResponse(data: AstroportAsset[], assets: Asset[]): Asset[] {
   const whitelistedAssetDenoms = assets.map((asset) => asset.denom)
-  const osmosisAssets = data.json.items.filter(
-    (item) => !whitelistedAssetDenoms.includes(item.coinMinimalDenom),
-  )
-  return osmosisAssets.map((item) => {
+  const astroportAssetData = data.filter((asset) => !whitelistedAssetDenoms.includes(asset.denom))
+
+  return astroportAssetData.map((asset) => {
     return {
-      denom: item.coinMinimalDenom,
-      decimals: item.coinDecimals,
+      denom: asset.denom,
+      decimals: asset.decimals,
       hasOraclePrice: false,
-      id: stringifyDenom(item.coinDenom),
-      name: item.coinName,
-      symbol: item.coinDenom,
-      logo: `https://app.osmosis.zone${item.coinImageUrl}`,
+      id: stringifyDenom(asset.symbol),
+      name: asset.description,
+      symbol: asset.symbol,
+      logo: getAssetLogo(asset.icon),
+      isAutoLendEnabled: false,
+      price: asset.priceUSD
+        ? BNCoin.fromCoin({ denom: asset.denom, amount: String(asset.priceUSD) })
+        : undefined,
     }
   })
 }
 
-export function convertAstroportAssetsResponse(
-  data: AstroportAssetsResponseData,
-  assets: Asset[],
-): Asset[] {
-  const whitelistedAssetDenoms = assets.map((asset) => asset.denom)
-
-  console.log(data.result.data.json)
-  const astroportAssetData = Object.keys(data.result.data.json).filter(
-    (token) => !whitelistedAssetDenoms.includes(token),
-  )
-
-  return astroportAssetData.map((denom) => {
-    const token = data.result.data.json[denom]
-    return {
-      denom: denom,
-      decimals: token.decimals,
-      hasOraclePrice: false,
-      id: stringifyDenom(token.symbol),
-      name: token.protocol,
-      symbol: token.symbol,
-      logo: token.icon ? `https://app.astroport.fi${token.icon}` : undefined,
-    }
-  })
+export function getAssetLogo(icon?: string) {
+  if (!icon) return LogoUKNOWN
+  return icon
 }

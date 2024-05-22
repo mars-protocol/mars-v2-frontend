@@ -96,6 +96,7 @@ export default function AccountFundContent(props: Props) {
 
   useEffect(() => {
     const currentSelectedDenom = fundingAssets.map((asset) => asset.denom)
+    console.log('Current Selected Denom', currentSelectedDenom)
 
     if (
       selectedDenoms.every((denom) => currentSelectedDenom.includes(denom)) &&
@@ -128,7 +129,7 @@ export default function AccountFundContent(props: Props) {
     const depositCapReachedCoins: BNCoin[] = []
     fundingAssets.forEach((asset) => {
       const marketAsset = markets.find((market) => market.asset.denom === asset.denom)
-      if (!marketAsset) return
+      if (!marketAsset || !marketAsset.cap) return
 
       const capLeft = getCapLeftWithBuffer(marketAsset.cap)
 

@@ -135,6 +135,7 @@ interface AssetMetaData {
   pythPriceFeedId?: string
   symbol: string
   testnetDenom?: string
+  price?: BNCoin
 }
 
 interface AssetPair {
@@ -269,7 +270,7 @@ interface ContractClients {
 
 interface Market {
   asset: Asset
-  cap: DepositCap // Deposits via CM
+  cap?: DepositCap // Deposits via CM
   debt: BigNumber // Total outstanding debt
   deposits: BigNumber // Deposits directly into the RB
   liquidity: BigNumber // Available liqudiity to be borrowed
@@ -1267,47 +1268,14 @@ type PnL =
       loss: Coin
     }
 
-interface OsmosisAssetsResponseData {
-  json: {
-    items: OsmosisAssetsItem[]
-  }
-}
-
-interface OsmosisAsset {
-  coinDenom: string
-  coinName: string
-  coinMinimalDenom: string
-  coinDecimals: number
-  coinGeckoId: string | null
-  coinImageUrl: string | null
-  isUnstable: boolean | null
-  isVerified: boolean | null
-  amount?: string
-  usdValue?: string
-  currentPrice?: string | null
-  marketCap?: string | null
-  priceChange1h?: string | null
-  priceChange24h?: string | null
-  priceChange7d?: string | null
-  volume24h?: string | null
-}
-
-interface AstroportAssetsResponseData {
-  result: {
-    data: {
-      json: Record<string, AstroportAsset>
-    }
-  }
-}
-
 interface AstroportAsset {
-  protocol: string
+  chainId: string
+  denom: string
   symbol: string
-  token: string
   icon?: string
+  description: string
   decimals: number
-  chainId: import('types/enums').ChainInfoID
-  priceUsd: number
-  isBlocked: boolean
-  isHidden: boolean
+  priceUSD: number
+  totalLiquidityUSD: number
+  dayVolumeUSD: number
 }

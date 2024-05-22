@@ -84,7 +84,7 @@ export default function SwapForm(props: Props) {
   const depositCapReachedCoins: BNCoin[] = useMemo(() => {
     const outputMarketAsset = markets.find((market) => market.asset.denom === outputAsset.denom)
 
-    if (!outputMarketAsset) return []
+    if (!outputMarketAsset || !outputMarketAsset.cap) return []
 
     const depositCapLeft = getCapLeftWithBuffer(outputMarketAsset.cap)
     if (outputAssetAmount.isGreaterThan(depositCapLeft)) {

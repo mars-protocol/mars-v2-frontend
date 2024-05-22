@@ -59,7 +59,9 @@ function DetailsHeader({ data }: Props) {
       )}
       <TitleAndSubCell
         title={
-          <DisplayCurrency coin={new BNCoin({ denom: asset.denom, amount: cap.max.toString() })} />
+          <DisplayCurrency
+            coin={new BNCoin({ denom: asset.denom, amount: cap?.max.toString() ?? '0' })}
+          />
         }
         sub={'Deposit Cap'}
       />

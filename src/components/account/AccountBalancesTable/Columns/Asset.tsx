@@ -1,6 +1,6 @@
 import Text from 'components/common/Text'
 import AssetImage from 'components/common/assets/AssetImage'
-import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
+import useAllChainAssets from 'hooks/assets/useAllChainAssets'
 export const ASSET_META = {
   accessorKey: 'symbol',
   header: 'Asset',
@@ -15,7 +15,7 @@ interface Props {
 
 export default function Asset(props: Props) {
   const { symbol, type } = props
-  const assets = useAllWhitelistedAssets()
+  const { data: assets } = useAllChainAssets()
   const asset = assets.find((asset) => asset.symbol === symbol) ?? assets[0]
 
   return (

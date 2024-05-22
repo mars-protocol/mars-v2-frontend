@@ -61,11 +61,12 @@ export default function useAccordionItems(props: Props) {
   )
 
   const additionalDepositFromSwap = useMemo(() => {
-    const value = getCoinValue(
-      BNCoin.fromDenomAndBigNumber(props.borrowMarket.asset.denom, props.borrowAmount),
-      prices,
-      assets,
-    )
+    const value =
+      getCoinValue(
+        BNCoin.fromDenomAndBigNumber(props.borrowMarket.asset.denom, props.borrowAmount),
+        prices,
+        assets,
+      ) ?? BN_ZERO
     return getCoinAmount(props.collateralAsset.denom, value, prices, assets)
   }, [
     assets,

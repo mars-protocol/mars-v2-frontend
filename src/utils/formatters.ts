@@ -180,9 +180,12 @@ export function demagnify(amount: number | string | BigNumber, asset: Asset | Ps
 
 export function getCoinValue(coin: BNCoin, prices: BNCoin[], assets: Asset[]) {
   const asset = assets.find(byDenom(coin.denom))
-  const coinPrice = prices.find(byDenom(coin.denom))
 
-  if (!coinPrice || !asset) return BN_ZERO
+  const coinPrice = asset?.price ?? prices.find(byDenom(coin.denom))
+
+  console.log(asset?.symbol, coinPrice?.amount.toString())
+
+  if (!coinPrice || !asset) return
 
   const decimals = asset.denom === ORACLE_DENOM ? 0 : asset.decimals * -1
   return coin.amount.shiftedBy(decimals).multipliedBy(coinPrice.amount)

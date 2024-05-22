@@ -2,17 +2,18 @@ import { useShuttle } from '@delphi-labs/shuttle-react'
 import classNames from 'classnames'
 import { useCallback, useMemo, useState } from 'react'
 
-import AssetImage from 'components/common/assets/AssetImage'
+import Modal from 'components/Modals/Modal'
+import SettingsOptions from 'components/Modals/Settings/SettingsOptions'
+import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
 import Button from 'components/common/Button'
+import { Callout, CalloutType } from 'components/common/Callout'
 import { ArrowCircle, Enter } from 'components/common/Icons'
 import NumberInput from 'components/common/NumberInput'
 import Select from 'components/common/Select'
 import Text from 'components/common/Text'
 import TextInput from 'components/common/TextInput'
 import { TextLink } from 'components/common/TextLink'
-import Modal from 'components/Modals/Modal'
-import SettingsOptions from 'components/Modals/Settings/SettingsOptions'
-import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
+import AssetImage from 'components/common/assets/AssetImage'
 import chains from 'configs/chains'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
@@ -28,8 +29,6 @@ import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import useStore from 'store'
 import { getCurrentChainId } from 'utils/getCurrentChainId'
 import { BN } from 'utils/helpers'
-
-import { Callout, CalloutType } from '../../common/Callout'
 
 const slippages = [0.02, 0.03]
 
@@ -455,7 +454,7 @@ export default function SettingsModal() {
         className='pb-6'
         fullwidth
       >
-        <div className='flex flex-wrap w-full gap-4 items-stretch'>
+        <div className='flex flex-wrap items-stretch w-full gap-4'>
           <TextInput
             label='RPC'
             placeholder='https://'

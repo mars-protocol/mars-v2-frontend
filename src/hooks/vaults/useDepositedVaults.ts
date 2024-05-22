@@ -89,11 +89,12 @@ export function transformPerpsVaultIntoDeposited(
   }
 
   if (account.perpsVault?.active) {
-    const netValue = getCoinValue(
-      BNCoin.fromDenomAndBigNumber(account.perpsVault.denom, account.perpsVault.active.amount),
-      prices,
-      assets,
-    )
+    const netValue =
+      getCoinValue(
+        BNCoin.fromDenomAndBigNumber(account.perpsVault.denom, account.perpsVault.active.amount),
+        prices,
+        assets,
+      ) ?? BN_ZERO
     const activeVault: DepositedVault = {
       ...depositedTemplate,
       status: VaultStatus.ACTIVE,
@@ -111,11 +112,12 @@ export function transformPerpsVaultIntoDeposited(
   }
 
   if (account.perpsVault?.unlocked) {
-    const netValue = getCoinValue(
-      BNCoin.fromDenomAndBigNumber(account.perpsVault.denom, account.perpsVault.unlocked),
-      prices,
-      assets,
-    )
+    const netValue =
+      getCoinValue(
+        BNCoin.fromDenomAndBigNumber(account.perpsVault.denom, account.perpsVault.unlocked),
+        prices,
+        assets,
+      ) ?? BN_ZERO
 
     const unlockedVault: DepositedVault = {
       ...depositedTemplate,
@@ -146,11 +148,12 @@ export function transformPerpsVaultIntoDeposited(
         },
         values: {
           ...depositedTemplate.values,
-          primary: getCoinValue(
-            BNCoin.fromDenomAndBigNumber(account.perpsVault.denom, unlock.amount),
-            prices,
-            assets,
-          ),
+          primary:
+            getCoinValue(
+              BNCoin.fromDenomAndBigNumber(account.perpsVault.denom, unlock.amount),
+              prices,
+              assets,
+            ) ?? BN_ZERO,
         },
       }
       vaults.push(unlockingVault)

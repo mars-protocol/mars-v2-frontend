@@ -17,7 +17,8 @@ export function getAssetAccountBalanceRow(
     type,
     symbol: asset.symbol,
     size: demagnify(amount, asset),
-    value: getCoinValue(BNCoin.fromDenomAndBigNumber(denom, amount), prices, assets).toString(),
+    value:
+      getCoinValue(BNCoin.fromDenomAndBigNumber(denom, amount), prices, assets)?.toString() ?? '0',
     denom,
     amount,
     apy,
