@@ -66,7 +66,7 @@ export default function WalletAssetsModalContent(props: Props) {
         />
       </div>
       <div className='h-full md:max-h-[446px] overflow-y-scroll scrollbar-hide'>
-        {filteredAssets.length === 0 ? (
+        {isLoading ? (
           <div className='flex justify-center w-full p-8'>
             <CircularProgress size={40} />
           </div>
