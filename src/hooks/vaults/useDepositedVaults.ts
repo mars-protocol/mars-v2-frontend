@@ -3,7 +3,7 @@ import useSWR from 'swr'
 import getDepositedVaults from 'api/vaults/getDepositedVaults'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -15,7 +15,7 @@ export default function useDepositedVaults(accountId: string) {
   const chainConfig = useChainConfig()
   const currentAccount = useCurrentAccount()
   const { data: perpsVault } = usePerpsVault()
-  const { data: assets } = useAllAssets()
+  const { data: assets } = useAssets()
 
   return useSWR(
     currentAccount && `chains/${chainConfig.id}/vaults/${accountId}/deposited`,

@@ -1,14 +1,14 @@
 import { useCallback, useMemo } from 'react'
 
 import { BN_ZERO } from 'constants/math'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 
 function useDisplayCurrencyPrice() {
-  const { data: assets } = useAllAssets()
+  const { data: assets } = useAssets()
   const displayCurrencies = useDisplayCurrencyAssets()
   const [displayCurrency] = useDisplayCurrency()
 

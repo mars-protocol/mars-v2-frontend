@@ -6,7 +6,7 @@ import { InfoCircle } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import { ORACLE_DENOM } from 'constants/oracle'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -40,7 +40,7 @@ export default function DisplayCurrency(props: Props) {
     allowZeroAmount,
   } = props
   const displayCurrencies = useDisplayCurrencyAssets()
-  const { data: assets } = useAllAssets()
+  const { data: assets } = useAssets()
   const [displayCurrency] = useDisplayCurrency()
 
   const displayCurrencyAsset = useMemo(

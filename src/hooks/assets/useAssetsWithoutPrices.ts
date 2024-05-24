@@ -3,21 +3,19 @@ import useAstroportAssets from 'hooks/assets/useAstroportAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useAssetParams from 'hooks/params/useAssetParams'
 import { useAllPerpsParamsSC } from 'hooks/perps/usePerpsParams'
-import usePrices from 'hooks/prices/usePrices'
 import useStore from 'store'
 import useSWR from 'swr'
 import { AssetParamsBaseForAddr, PerpParams } from 'types/generated/mars-params/MarsParams.types'
 
-export default function useAllAssets() {
+export default function useAssetsWithoutPrices() {
   const chainConfig = useChainConfig()
   const { data: assets } = useAstroportAssets()
   const { data: assetParams } = useAssetParams()
   const { data: perpsParams } = useAllPerpsParamsSC()
-  const { data: prices } = usePrices()
 
   return useSWR(
-    assets && assetParams && prices && `chains/${chainConfig.id}/allAssets`,
-    () => sortAndMapAllAssets(chainConfig, assets!, assetParams!, prices!, perpsParams),
+    assets && assetParams && `chains/${chainConfig.id}/allAssets`,
+    () => sortAndMapAllAssets(chainConfig, assets!, assetParams!, perpsParams),
     {
       suspense: true,
       revalidateOnFocus: false,
@@ -31,7 +29,6 @@ function sortAndMapAllAssets(
   chainConfig: ChainConfig,
   assets: Asset[],
   assetParams: AssetParamsBaseForAddr[],
-  prices: BNCoin[],
   perpsParams?: PerpParams[],
 ) {
   const allAssets = chainConfig.lp ? [...assets, USD, ...chainConfig.lp] : [...assets, USD]
@@ -56,7 +53,6 @@ function sortAndMapAllAssets(
       isTradeEnabled:
         asset.denom !== 'usd' &&
         (currentAssetParams?.red_bank.deposit_enabled || !currentAssetParams),
-      price: prices.find((p) => p.denom === asset.denom) ?? asset.price,
     }
   })
 

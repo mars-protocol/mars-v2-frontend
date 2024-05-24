@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react'
 import AssetsSelect from 'components/Modals/AssetsSelect'
 import { CircularProgress } from 'components/common/CircularProgress'
 import SearchBar from 'components/common/SearchBar'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
@@ -17,7 +17,7 @@ export default function WalletAssetsModalContent(props: Props) {
   const { onChangeDenoms } = props
   const [searchString, setSearchString] = useState<string>('')
   const balances = useStore((s) => s.balances)
-  const { data: allChainAssets, isLoading } = useAllAssets()
+  const { data: allChainAssets, isLoading } = useAssets()
   const chainConfig = useChainConfig()
   const enableAnyAsset = chainConfig.anyAsset
 

@@ -1,13 +1,13 @@
 import useSWR from 'swr'
 
 import getAccount from 'api/accounts/getAccount'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useV1Account from 'hooks/v1/useV1Account'
 import useStore from 'store'
 
 export default function useAccount(accountId?: string, suspense?: boolean) {
-  const { data: assets } = useAllAssets()
+  const { data: assets } = useAssets()
   const chainConfig = useChainConfig()
   const address = useStore((s) => s.address)
   const isV1 = accountId === address

@@ -1,13 +1,13 @@
 import useSWR from 'swr'
 
 import getAccounts from 'api/wallets/getAccounts'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import { AccountKind } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 
 export default function useAccounts(kind: AccountKind, address?: string, suspense = true) {
   const chainConfig = useChainConfig()
-  const { data: assets } = useAllAssets()
+  const { data: assets } = useAssets()
 
   return useSWR(
     !!address && `chains/${chainConfig.id}/accounts/${kind}`,

@@ -9,7 +9,7 @@ import {
   removeCoins,
   updatePerpsPositions,
 } from 'hooks/accounts/useUpdatedAccount/functions'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAssets from 'hooks/assets/useAssets'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useSlippage from 'hooks/settings/useSlippage'
 import useVaults from 'hooks/vaults/useVaults'
@@ -24,7 +24,7 @@ import { getValueFromBNCoins } from 'utils/helpers'
 export function useUpdatedAccount(account?: Account) {
   const { data: availableVaults } = useVaults(false)
   const { data: perpsVault } = usePerpsVault()
-  const { data: assets } = useAllAssets()
+  const { data: assets } = useAssets()
   const [updatedAccount, setUpdatedAccount] = useState<Account | undefined>(
     account ? cloneAccount(account) : undefined,
   )

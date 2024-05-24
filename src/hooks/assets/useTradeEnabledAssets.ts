@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAssets from 'hooks/assets/useAssets'
 
 export default function useTradeEnabledAssets() {
-  const { data: assets } = useAllAssets()
+  const { data: assets } = useAssets()
   return useMemo(() => assets.filter((asset) => asset.isTradeEnabled), [assets])
 }

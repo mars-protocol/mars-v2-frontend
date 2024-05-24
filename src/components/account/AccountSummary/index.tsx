@@ -11,6 +11,7 @@ import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendi
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
+import useAssets from 'hooks/assets/useAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
@@ -18,7 +19,6 @@ import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { calculateAccountApr, calculateAccountLeverage } from 'utils/accounts'
-import useAllAssets from 'hooks/assets/useAllAssets'
 
 interface Props {
   account: Account
@@ -40,7 +40,7 @@ export default function AccountSummary(props: Props) {
     defaultSetting,
   )
   const { data: vaultAprs } = useVaultAprs()
-  const { data: assets } = useAllAssets()
+  const { data: assets } = useAssets()
   const updatedAccount = useStore((s) => s.updatedAccount)
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])

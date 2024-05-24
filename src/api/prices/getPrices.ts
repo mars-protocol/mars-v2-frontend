@@ -7,10 +7,9 @@ export default async function getPrices(
   chainConfig: ChainConfig,
   assets: Asset[],
 ): Promise<BNCoin[]> {
-  const usdPrice = new BNCoin({ denom: 'usd', amount: '1' })
-
   const pythAndOraclePrices = []
   const assetsToFetchPrices = assets.filter((asset) => asset.hasAssetParams)
+
   const assetsWithPythPriceFeedId = assets.filter((asset) => asset.pythPriceFeedId)
   const assetsWithOraclePrices = assetsToFetchPrices.filter((asset) => !asset.pythPriceFeedId)
   const pythPrices = await requestPythPrices(assetsWithPythPriceFeedId)
@@ -22,7 +21,7 @@ export default async function getPrices(
 
     if (oraclePrices) useStore.setState({ isOracleStale: false })
 
-    return [...pythAndOraclePrices, ...oraclePrices, usdPrice]
+    return [...pythAndOraclePrices, ...oraclePrices]
   } catch (ex) {
     console.error(ex)
     let message = 'Unknown Error'
@@ -30,7 +29,7 @@ export default async function getPrices(
     if (message.includes('price publish time is too old'))
       useStore.setState({ isOracleStale: true })
 
-    return [...pythAndOraclePrices, usdPrice]
+    return [...pythAndOraclePrices]
   }
 }
 
