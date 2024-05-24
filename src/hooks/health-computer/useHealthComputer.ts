@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useAssetParams from 'hooks/params/useAssetParams'
 import useAllPerpsDenomStates from 'hooks/perps/usePerpsDenomStates'
 import { useAllPerpsParamsSC } from 'hooks/perps/usePerpsParams'
@@ -39,7 +39,7 @@ import { BN } from 'utils/helpers'
 const VALUE_SCALE_FACTOR = 12
 
 export default function useHealthComputer(account?: Account) {
-  const { data: assets } = useAllAssets()
+  const assets = useDepositEnabledAssets()
   const { data: assetParams } = useAssetParams()
   const { data: vaultConfigs } = useVaultConfigs()
   const { data: perpsDenomStates } = useAllPerpsDenomStates()
@@ -86,10 +86,9 @@ export default function useHealthComputer(account?: Account) {
   }, [account?.vaults])
 
   const priceData = useMemo(() => {
-    const prices = assets.map((asset) => asset.price)
+    const prices = assets.map((asset) => asset.price) as BNCoin[]
     return prices.reduce(
       (prev, curr) => {
-        if (!curr) return prev
         const decimals = assets.find(byDenom(curr.denom))?.decimals || 6
 
         // The HealthComputer needs prices expressed per 1 amount. So we need to correct here for any additional decimals.
@@ -290,6 +289,7 @@ export default function useHealthComputer(account?: Account) {
     [healthComputer, perpsVault, denomStates],
   )
 
+  console
   const health = useMemo(() => {
     const slope = account?.kind === 'high_levered_strategy' ? 1.2 : 3.5
     const convertedHealth = BN(Math.log(healthFactor))
