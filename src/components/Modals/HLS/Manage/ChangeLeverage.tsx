@@ -5,9 +5,8 @@ import Button from 'components/common/Button'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
-import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
-import usePrices from 'hooks/prices/usePrices'
 import useSlippage from 'hooks/settings/useSlippage'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -26,8 +25,7 @@ interface Props {
 }
 
 export default function ChangeLeverage(props: Props) {
-  const { data: prices } = usePrices()
-  const assets = useAllWhitelistedAssets()
+  const assets = useDepositEnabledAssets()
   const [slippage] = useSlippage()
   const {
     updatedAccount,
@@ -90,12 +88,11 @@ export default function ChangeLeverage(props: Props) {
   const positionValue = useMemo(() => {
     const [deposits, lends, debts, vaults] = getAccountPositionValues(
       updatedAccount || props.account,
-      prices,
       assets,
     )
 
     return deposits.plus(lends).plus(debts).plus(vaults)
-  }, [assets, prices, props.account, updatedAccount])
+  }, [assets, props.account, updatedAccount])
 
   const handleOnClick = useCallback(() => {
     useStore.setState({ hlsManageModal: null })
@@ -106,7 +103,6 @@ export default function ChangeLeverage(props: Props) {
       props.collateralAsset.denom,
       props.borrowMarket.asset.denom,
       slippage,
-      prices,
       assets,
     )
     changeHlsStakingLeverage({ accountId: props.account.id, actions })
@@ -117,7 +113,6 @@ export default function ChangeLeverage(props: Props) {
     props.borrowMarket.asset.denom,
     props.account.id,
     slippage,
-    prices,
     assets,
     changeHlsStakingLeverage,
   ])

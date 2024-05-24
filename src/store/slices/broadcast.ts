@@ -129,7 +129,7 @@ export default function createBroadcastSlice(
       if (
         !options.borrowToWallet &&
         checkAutoLendEnabled(options.accountId, get().chainConfig.id) &&
-        get().chainConfig.assets.find(byDenom(options.coin.denom))?.isAutoLendEnabled
+        get().assets.find(byDenom(options.coin.denom))?.isAutoLendEnabled
       ) {
         msg.update_credit_account.actions.push({
           lend: { denom: options.coin.denom, amount: 'account_balance' },
@@ -284,7 +284,7 @@ export default function createBroadcastSlice(
       if (options.lend) {
         msg.update_credit_account.actions.push(
           ...options.coins
-            .filter((coin) => get().chainConfig.assets.find(byDenom(coin.denom))?.isAutoLendEnabled)
+            .filter((coin) => get().assets.find(byDenom(coin.denom))?.isAutoLendEnabled)
             .map((coin) => ({ lend: coin.toActionCoin() })),
         )
       }
@@ -359,7 +359,7 @@ export default function createBroadcastSlice(
       if (checkAutoLendEnabled(options.accountId, get().chainConfig.id)) {
         for (const vault of options.vaults) {
           for (const symbol of Object.values(vault.symbols)) {
-            const asset = get().chainConfig.assets.find(bySymbol(symbol))
+            const asset = get().assets.find(bySymbol(symbol))
             if (asset?.isAutoLendEnabled) {
               msg.update_credit_account.actions.push({
                 lend: { denom: asset.denom, amount: 'account_balance' },
@@ -565,7 +565,7 @@ export default function createBroadcastSlice(
 
       if (
         checkAutoLendEnabled(options.accountId, get().chainConfig.id) &&
-        get().chainConfig.assets.find(byDenom(options.denomOut))?.isAutoLendEnabled &&
+        get().assets.find(byDenom(options.denomOut))?.isAutoLendEnabled &&
         !options.repay
       ) {
         msg.update_credit_account.actions.push({
@@ -627,7 +627,13 @@ export default function createBroadcastSlice(
           return
         }
 
-        const toast = generateToast(get().chainConfig, r, toastOptions, get().address ?? '')
+        const toast = generateToast(
+          get().chainConfig,
+          r,
+          toastOptions,
+          get().address ?? '',
+          get().assets,
+        )
         toast.then((t) => set({ toast: t }))
         return
       })
@@ -759,15 +765,15 @@ export default function createBroadcastSlice(
     },
     getPythVaas: async () => {
       const priceFeedIds = get()
-        .chainConfig.assets.filter((asset) => !!asset.pythPriceFeedId)
+        .assets.filter((asset) => !!asset.pythPriceFeedId)
         .map((asset) => asset.pythPriceFeedId as string)
       const pricesData = await getPythPriceData(priceFeedIds)
       const msg: PythUpdateExecuteMsg = { update_price_feeds: { data: pricesData } }
-      const pythAssets = get().chainConfig.assets.filter((asset) => !!asset.pythPriceFeedId)
+      const pythAssets = get().assets.filter((asset) => !!asset.pythPriceFeedId)
       const pythContract = get().chainConfig.contracts.pyth
 
       return generateExecutionMessage(get().address, pythContract, msg, [
-        { denom: get().chainConfig.assets[0].denom, amount: String(pythAssets.length) },
+        { denom: get().assets[0].denom, amount: String(pythAssets.length) },
       ])
     },
     v1Action: async (type: V1ActionType, coin: BNCoin) => {

@@ -9,7 +9,7 @@ import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
-import useAllChainAssets from 'hooks/assets/useAllChainAssets'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
 import useToggle from 'hooks/common/useToggle'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
@@ -24,12 +24,12 @@ interface Props {
 
 export default function WithdrawFromAccount(props: Props) {
   const { account } = props
-  const { data: assets } = useAllChainAssets()
+  const { data: assets } = useAllAssets()
   const defaultAsset =
     assets.find(byDenom(account.deposits[0]?.denom || account.lends[0]?.denom)) ?? assets[0]
   const withdraw = useStore((s) => s.withdraw)
   const [withdrawWithBorrowing, setWithdrawWithBorrowing] = useToggle()
-  const [currentAsset, setCurrentAsset] = useState(defaultAsset)
+  const [currentAsset, setCurrentAsset] = useState<Asset>(defaultAsset)
   const [amount, setAmount] = useState(BN_ZERO)
   const { simulateWithdraw } = useUpdatedAccount(account)
   const { computeMaxWithdrawAmount } = useHealthComputer(account)

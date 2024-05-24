@@ -34,7 +34,6 @@ export default function WalletConnectedButton() {
   // EXTERNAL HOOKS
   // ---------------
 
-  const marketAssets = useTradeEnabledAssets()
   const currentWallet = useCurrentWallet()
   const { disconnectWallet } = useShuttle()
   const address = currentWallet?.account.address
@@ -47,7 +46,6 @@ export default function WalletConnectedButton() {
   const { data: icnsData, isLoading: isLoadingICNS } = useICNSDomain(address)
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const [searchParams] = useSearchParams()
 
   // ---------------
   // LOCAL STATE

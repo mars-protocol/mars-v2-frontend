@@ -111,30 +111,26 @@ interface PerpsVaultUnlockingPosition {
 
 interface Asset extends AssetMetaData {
   denom: string
-  poolId?: number
-  isPerpsEnabled?: boolean
+  name: string
+  decimals: number
+  symbol: string
 }
 
 interface AssetMetaData {
-  color?: string
-  decimals: number
-  forceFetchPrice?: boolean
-  hasOraclePrice: boolean
-  id: string
-  isTradeEnabled?: boolean
+  hasAssetParams?: boolean
   isAutoLendEnabled?: boolean
   isBorrowEnabled?: boolean
+  isDepositEnabled?: boolean
   isDisplayCurrency?: boolean
+  isTradeEnabled?: boolean
   isFavorite?: boolean
   isStable?: boolean
   isStaking?: boolean
+  isPerpsEnabled?: boolean
   logo?: React.FC | string | null
-  name: string
   prefix?: string
-  pythFeedName?: string
   pythPriceFeedId?: string
-  symbol: string
-  testnetDenom?: string
+  pythFeedName?: string
   price?: BNCoin
 }
 
@@ -206,7 +202,9 @@ interface Bridge {
 }
 
 interface ChainConfig {
-  assets: Asset[]
+  lp?: Asset[]
+  stables: string[]
+  defaultTradingPair: TradingPair
   bech32Config: import('@keplr-wallet/types').Bech32Config
   contracts: {
     redBank: string
@@ -1041,6 +1039,7 @@ interface CommonSlice {
   isOracleStale: boolean
   isHLS: boolean
   isV1: boolean
+  assets: Asset[]
 }
 
 interface FocusComponent {
@@ -1278,4 +1277,36 @@ interface AstroportAsset {
   priceUSD: number
   totalLiquidityUSD: number
   dayVolumeUSD: number
+}
+
+interface Pool {
+  '@type': string
+  address: string
+  future_pool_governor: string
+  id: string
+  pool_assets?: PoolAsset[]
+  pool_liquidity?: PoolLiquidity[]
+  pool_params: PoolParams
+  total_shares: TotalShares
+  total_weight: string
+}
+
+interface PoolAsset {
+  token: TotalShares
+  weight: string
+}
+
+interface PoolLiquidity {
+  amount: string
+  denom: string
+}
+interface TotalShares {
+  amount: string
+  denom: string
+}
+
+interface PoolParams {
+  exit_fee: string
+  smooth_weight_change_params: null
+  swap_fee: string
 }

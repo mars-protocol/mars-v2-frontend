@@ -178,9 +178,9 @@ export function demagnify(amount: number | string | BigNumber, asset: Asset | Ps
   return _amount.isZero() ? 0 : _amount.shiftedBy(-1 * asset.decimals).toNumber()
 }
 
-export function getCoinValue(coin: BNCoin, prices: BNCoin[], assets: Asset[]) {
+export function getCoinValue(coin: BNCoin, assets: Asset[]) {
   const asset = assets.find(byDenom(coin.denom))
-  const coinPrice = asset?.price ?? prices.find(byDenom(coin.denom))
+  const coinPrice = asset?.price
 
   if (!coinPrice || !asset) return
 
@@ -188,9 +188,9 @@ export function getCoinValue(coin: BNCoin, prices: BNCoin[], assets: Asset[]) {
   return coin.amount.shiftedBy(decimals).multipliedBy(coinPrice.amount)
 }
 
-export function getCoinAmount(denom: string, value: BigNumber, prices: BNCoin[], assets: Asset[]) {
+export function getCoinAmount(denom: string, value: BigNumber, assets: Asset[]) {
   const asset = assets.find(byDenom(denom))
-  const coinPrice = prices.find(byDenom(denom))
+  const coinPrice = asset?.price
 
   if (!coinPrice || !asset) return BN_ZERO
 

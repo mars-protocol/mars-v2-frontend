@@ -1,8 +1,7 @@
 import { useMemo } from 'react'
 
-import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useLendEnabledAssets from 'hooks/assets/useLendEnabledAssets'
-import usePrices from 'hooks/prices/usePrices'
 import useSlippage from 'hooks/settings/useSlippage'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -26,8 +25,7 @@ export default function useDepositVault(props: Props): {
   totalValue: BigNumber
 } {
   const lendEnabledAssets = useLendEnabledAssets()
-  const assets = useAllWhitelistedAssets()
-  const { data: prices } = usePrices()
+  const assets = useDepositEnabledAssets()
   const [slippage] = useSlippage()
   const { isAutoLendEnabledForCurrentAccount: isAutoLend } = useAutoLend()
   const borrowings: BNCoin[] = useMemo(
@@ -45,16 +43,8 @@ export default function useDepositVault(props: Props): {
 
   const { primaryCoin, secondaryCoin, totalValue } = useMemo(
     () =>
-      getVaultDepositCoinsAndValue(
-        props.vault,
-        deposits,
-        borrowings,
-        reclaims,
-        prices,
-        slippage,
-        assets,
-      ),
-    [props.vault, deposits, borrowings, reclaims, prices, slippage, assets],
+      getVaultDepositCoinsAndValue(props.vault, deposits, borrowings, reclaims, slippage, assets),
+    [props.vault, deposits, borrowings, reclaims, slippage, assets],
   )
 
   const depositActions: Action[] = useMemo(() => {
@@ -78,9 +68,8 @@ export default function useDepositVault(props: Props): {
   }, [borrowings])
 
   const swapActions: Action[] = useMemo(
-    () =>
-      getVaultSwapActions(props.vault, deposits, reclaims, borrowings, prices, assets, slippage),
-    [props.vault, deposits, reclaims, borrowings, prices, assets, slippage],
+    () => getVaultSwapActions(props.vault, deposits, reclaims, borrowings, assets, slippage),
+    [props.vault, deposits, reclaims, borrowings, assets, slippage],
   )
 
   const enterVaultActions: Action[] = useMemo(() => {

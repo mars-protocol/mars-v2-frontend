@@ -6,7 +6,7 @@ import AccountDeleteAlertDialog from 'components/Modals/Account/AccountDeleteAle
 import { ArrowRight, ExclamationMarkCircled } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
-import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -37,7 +37,7 @@ function AccountDeleteModal(props: Props) {
   const { address } = useParams()
   const { debts, vaults, id: accountId } = modal || {}
   const [searchParams] = useSearchParams()
-  const assets = useAllWhitelistedAssets()
+  const assets = useDepositEnabledAssets()
   const closeDeleteAccountModal = useCallback(() => {
     useStore.setState({ accountDeleteModal: null })
   }, [])

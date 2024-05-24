@@ -6,13 +6,15 @@ import Divider from 'components/common/Divider'
 import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
 import { generateToastContent } from 'components/common/Toaster'
-import useTransactions from 'hooks/localStorage/useTransactions'
+import useAstroportAssets from 'hooks/assets/useAstroportAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import useTransactions from 'hooks/localStorage/useTransactions'
 import useStore from 'store'
 
 export default function RecentTransactions() {
   const address = useStore((s) => s.address)
   const [transactions, setTransactions] = useTransactions()
+  const { data: assets } = useAstroportAssets()
   const chainConfig = useChainConfig()
   const recentTransactions = transactions.recent
     .filter((tx) => tx.address === address)
@@ -58,7 +60,7 @@ export default function RecentTransactions() {
                         {message}
                       </Text>
                     )}
-                    {content?.length > 0 && generateToastContent(content, chainConfig.assets)}
+                    {content?.length > 0 && generateToastContent(content, assets)}
                   </Card>
                 )
               })}

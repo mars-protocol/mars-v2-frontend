@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import { BN_ZERO } from 'constants/math'
-import useMarkets from 'hooks/markets/useMarkets'
+import useLendingMarkets from 'hooks/markets/useLendingMarkets'
 import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
 import useCurrentAccountLends from 'hooks/wallet/useCurrentAccountLends'
 import { byDenom } from 'utils/array'
@@ -11,15 +11,16 @@ function useLendingMarketAssetsTableData(): {
   availableAssets: LendingMarketTableData[]
   allAssets: LendingMarketTableData[]
 } {
-  const markets = useMarkets()
+  const markets = useLendingMarkets()
   const accountLentAmounts = useCurrentAccountLends()
   const { convertAmount } = useDisplayCurrencyPrice()
+  const lendingMarkets = markets.filter((market) => market.asset.isDepositEnabled)
 
   return useMemo(() => {
     const accountLentAssets: LendingMarketTableData[] = [],
       availableAssets: LendingMarketTableData[] = []
 
-    markets.forEach((market) => {
+    lendingMarkets.forEach((market) => {
       const accountLentAmount =
         accountLentAmounts.find(byDenom(market.asset.denom))?.amount ?? BN_ZERO
       const accountLentValue = accountLentAmount
@@ -44,7 +45,7 @@ function useLendingMarketAssetsTableData(): {
       availableAssets,
       allAssets: [...accountLentAssets, ...availableAssets],
     }
-  }, [markets, accountLentAmounts, convertAmount])
+  }, [lendingMarkets, accountLentAmounts, convertAmount])
 }
 
 export default useLendingMarketAssetsTableData

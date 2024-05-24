@@ -3,10 +3,9 @@ import useSWR from 'swr'
 import getDepositedVaults from 'api/vaults/getDepositedVaults'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useAssets from 'hooks/assets/useAssets'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
-import usePrices from 'hooks/prices/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultStatus } from 'types/enums'
 import { getCoinValue } from 'utils/formatters'
@@ -16,18 +15,17 @@ export default function useDepositedVaults(accountId: string) {
   const chainConfig = useChainConfig()
   const currentAccount = useCurrentAccount()
   const { data: perpsVault } = usePerpsVault()
-  const { data: prices } = usePrices()
-  const assets = useAssets()
+  const { data: assets } = useAllAssets()
 
   return useSWR(
     currentAccount && `chains/${chainConfig.id}/vaults/${accountId}/deposited`,
     async () => {
-      let vaults = await getDepositedVaults(accountId, chainConfig)
+      let vaults = await getDepositedVaults(accountId, chainConfig, assets)
 
       if (currentAccount && perpsVault) {
         vaults = [
           ...vaults,
-          ...transformPerpsVaultIntoDeposited(currentAccount, perpsVault, prices, assets),
+          ...transformPerpsVaultIntoDeposited(currentAccount, perpsVault, assets),
         ]
       }
 
@@ -44,7 +42,6 @@ export default function useDepositedVaults(accountId: string) {
 export function transformPerpsVaultIntoDeposited(
   account: Account,
   perpsVault: PerpsVault,
-  prices: BNCoin[],
   assets: Asset[],
 ) {
   const vaults: DepositedVault[] = []
@@ -92,7 +89,6 @@ export function transformPerpsVaultIntoDeposited(
     const netValue =
       getCoinValue(
         BNCoin.fromDenomAndBigNumber(account.perpsVault.denom, account.perpsVault.active.amount),
-        prices,
         assets,
       ) ?? BN_ZERO
     const activeVault: DepositedVault = {
@@ -115,7 +111,6 @@ export function transformPerpsVaultIntoDeposited(
     const netValue =
       getCoinValue(
         BNCoin.fromDenomAndBigNumber(account.perpsVault.denom, account.perpsVault.unlocked),
-        prices,
         assets,
       ) ?? BN_ZERO
 
@@ -151,7 +146,6 @@ export function transformPerpsVaultIntoDeposited(
           primary:
             getCoinValue(
               BNCoin.fromDenomAndBigNumber(account.perpsVault.denom, unlock.amount),
-              prices,
               assets,
             ) ?? BN_ZERO,
         },

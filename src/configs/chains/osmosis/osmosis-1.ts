@@ -1,130 +1,53 @@
 import { Bech32Address } from '@keplr-wallet/cosmos'
 
-import AKT from 'configs/assets/AKT'
-import ATOM from 'configs/assets/ATOM'
-import AXL from 'configs/assets/AXL'
-import DYDX from 'configs/assets/DYDX'
-import INJ from 'configs/assets/INJ'
-import OSMO_ATOM from 'configs/assets/lp/OSMO-ATOM'
-import OSMO_USDC from 'configs/assets/lp/OSMO_USDC'
-import OSMO_WBTC from 'configs/assets/lp/OSMO_WBTC'
-import OSMO_WETH from 'configs/assets/lp/OSMO_WETH'
-import stATOM_ATOM from 'configs/assets/lp/stATOM_ATOM'
-import milkTIA from 'configs/assets/milkTIA'
-import OSMO from 'configs/assets/OSMO'
-import stATOM from 'configs/assets/stATOM'
-import stDYDX from 'configs/assets/stDYDX'
-import stOSMO from 'configs/assets/stOSMO'
-import stTIA from 'configs/assets/stTIA'
-import TIA from 'configs/assets/TIA'
-import USDC from 'configs/assets/USDC'
-import USDCaxl from 'configs/assets/USDC.axl'
-import USDollar from 'configs/assets/USDollar'
-import USDT from 'configs/assets/USDT'
-import WBTC from 'configs/assets/WBTC'
-import WBTCaxl from 'configs/assets/WBTC.axl'
-import WETHaxl from 'configs/assets/WETH.axl'
 import { VAULTS_META_DATA } from 'constants/vaults'
 import { ChainInfoID, NETWORK } from 'types/enums'
 import { getUrl } from 'utils/url'
 
-const ASSETS = [
-  { ...OSMO, denom: 'uosmo' },
-  USDollar,
+const LP_ASSETS = [
   {
-    ...USDC,
-    poolId: 1221,
-    denom: 'ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4',
+    symbol: 'OSMO-ATOM',
+    name: 'OSMO-ATOM LP',
+    denom: 'gamm/pool/1',
+    decimals: 6,
   },
   {
-    ...ATOM,
-    poolId: 1,
-    denom: 'ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2',
+    symbol: 'OSMO-USDC.axl',
+    name: 'OSMO-USDC.axl LP',
+    denom: 'gamm/pool/678',
+    decimals: 6,
   },
   {
-    ...WBTCaxl,
-    poolId: 712,
-    denom: 'ibc/D1542AA8762DB13087D8364F3EA6509FD6F009A34F00426AF9E4F9FA85CBBF1F',
+    symbol: 'OSMO-WBTC.axl',
+    name: 'OSMO-WBTC.axl LP',
+    denom: 'gamm/pool/712',
+    decimals: 6,
   },
   {
-    ...WBTC,
-    poolId: 1422,
-    denom: 'factory/osmo1z0qrq605sjgcqpylfl4aa6s90x738j7m58wyatt0tdzflg2ha26q67k743/wbtc',
+    symbol: 'OSMO-WETH.axl',
+    name: 'OSMO-WETH.axl LP',
+    denom: 'gamm/pool/704',
+    decimals: 6,
   },
   {
-    ...stATOM,
-    poolId: 803,
-    denom: 'ibc/C140AFD542AE77BD7DCC83F13FDD8C5E5BB8C4929785E6EC2F4C636F98F17901',
+    symbol: 'stATOM-ATOM',
+    name: 'stATOM-ATOM LP',
+    denom: 'gamm/pool/803',
+    decimals: 6,
   },
-  {
-    ...stOSMO,
-    poolId: 833,
-    denom: 'ibc/D176154B0C63D1F9C6DCFB4F70349EBF2E2B5A87A05902F57A6AE92B863E9AEC',
-  },
-  {
-    ...stDYDX,
-    poolId: 1423,
-    denom: 'ibc/980E82A9F8E7CA8CD480F4577E73682A6D3855A267D1831485D7EBEF0E7A6C2C',
-  },
-  {
-    ...stTIA,
-    poolId: 1428,
-    denom: 'ibc/698350B8A61D575025F3ED13E9AC9C0F45C89DEFE92F76D5838F1D3C1A7FF7C9',
-  },
-  {
-    ...USDCaxl,
-    poolId: 678,
-    denom: 'ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858',
-  },
-  {
-    ...WETHaxl,
-    poolId: 704,
-    denom: 'ibc/EA1D43981D5C9A1C4AAEA9C23BB1D4FA126BA9BC7020A25E0AE4AA841EA25DC5',
-  },
-  {
-    ...AKT,
-    poolId: 1093,
-    denom: 'ibc/1480B8FD20AD5FCAE81EA87584D269547DD4D436843C1D20F15E00EB64743EF4',
-  },
-  {
-    ...USDT,
-    poolId: 1077,
-    denom: 'ibc/4ABBEF4C8926DDDB320AE5188CFD63267ABBCEFC0583E4AE05D6E5AA2401DDAB',
-  },
-  {
-    ...AXL,
-    poolId: 812,
-    denom: 'ibc/903A61A498756EA560B85A85132D3AEE21B5DEDD41213725D22ABF276EA6945E',
-  },
-  {
-    ...INJ,
-    poolId: 725,
-    denom: 'ibc/64BA6E31FE887D66C6F8F31C7B1A80C7CA179239677B4088BB55F5EA07DBE273',
-  },
-  {
-    ...TIA,
-    poolId: 1249,
-    denom: 'ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877',
-  },
-  {
-    ...DYDX,
-    poolId: 1245,
-    denom: 'ibc/831F0B1BBB1D08A2B75311892876D71565478C532967545476DF4C2D7492E48C',
-  },
-  {
-    ...milkTIA,
-    poolId: 1335,
-    denom: 'factory/osmo1f5vfcph2dvfeqcqkhetwv75fda69z7e5c2dldm3kvgj23crkv6wqcn47a0/umilkTIA',
-  },
-  OSMO_ATOM,
-  OSMO_USDC,
-  OSMO_WETH,
-  OSMO_WBTC,
-  stATOM_ATOM,
 ]
 
 const Osmosis1: ChainConfig = {
-  assets: ASSETS,
+  lp: LP_ASSETS,
+  stables: [
+    'ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4',
+    'ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858',
+    'ibc/4ABBEF4C8926DDDB320AE5188CFD63267ABBCEFC0583E4AE05D6E5AA2401DDAB',
+  ],
+  defaultTradingPair: {
+    buy: 'uosmo',
+    sell: 'ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4',
+  },
   bech32Config: Bech32Address.defaultBech32Config('osmo'),
   contracts: {
     redBank: 'osmo1c3ljch9dfw5kf52nfwpxd2zmj2ese7agnx0p9tenkrryasrle5sqf3ftpg',

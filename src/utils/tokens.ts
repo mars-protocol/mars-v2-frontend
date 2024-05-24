@@ -1,19 +1,20 @@
 import BigNumber from 'bignumber.js'
+import { BN_ZERO } from 'constants/math'
 
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
 export const getTokenSymbol = (denom: string, marketAssets: Asset[]) =>
-  marketAssets.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())?.symbol || ''
+  marketAssets.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())?.symbol ?? ''
 
 export const getTokenDecimals = (denom: string, marketAssets: Asset[]) =>
-  marketAssets.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())?.decimals || 6
+  marketAssets.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())?.decimals ?? 6
 
 export const getTokenIcon = (denom: string, marketAssets: Asset[]) =>
-  marketAssets.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())?.logo || ''
+  marketAssets.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())?.logo ?? ''
 
-export function getTokenPrice(denom: string, prices: BNCoin[]): BigNumber {
-  const price = prices.find((price) => price.denom === denom)?.amount || '0'
+export function getTokenPrice(denom: string, assets: Asset[]): BigNumber {
+  const price = assets.find((asset) => asset.denom === denom)?.price?.amount ?? BN_ZERO
   return BN(price)
 }
 

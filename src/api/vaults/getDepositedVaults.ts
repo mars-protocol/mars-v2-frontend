@@ -8,7 +8,6 @@ import {
   unlockPositionsCache,
 } from 'api/cache'
 import { getClient, getCreditManagerQueryClient, getVaultQueryClient } from 'api/cosmwasm-client'
-import getPrice from 'api/prices/getPrice'
 import getVaults from 'api/vaults/getVaults'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -39,26 +38,6 @@ async function getUnlocksAtTimestamp(
       `unlockPositions/${vaultAddress}.id/${unlockingId}`,
       60,
     )) as VaultExtensionResponse
-
-    const lockingVault: any = {
-      vault: {
-        address: '',
-      },
-      locking: {
-        locked: {
-          vault: 0,
-          base: 0,
-          coins: [],
-        },
-        unlocking: [
-          {
-            base: 0,
-            timestamp: 0,
-            coins: [],
-          },
-        ],
-      },
-    }
 
     return Number(vaultExtension.release_at.at_time) / 1e6
   } catch (ex) {
@@ -165,19 +144,13 @@ async function getVaultValuesAndAmounts(
   vault: Vault,
   vaultPosition: VaultPosition,
   chainConfig: ChainConfig,
+  assets: Asset[],
 ): Promise<VaultValuesAndAmounts> {
   try {
-    const pricesQueries = Promise.all([
-      getPrice(chainConfig, vault.denoms.primary),
-      getPrice(chainConfig, vault.denoms.secondary),
-      getPrice(chainConfig, vault.denoms.lp),
-    ])
-
     const lpTokensQuery = getLpTokensForVaultPosition(chainConfig, vault, vaultPosition)
     const amounts = flatVaultPositionAmount(vaultPosition.amount)
 
-    const [[primaryLpToken, secondaryLpToken], [primaryPrice, secondaryPrice, lpPrice]] =
-      await Promise.all([lpTokensQuery, pricesQueries])
+    const [primaryLpToken, secondaryLpToken] = await lpTokensQuery
 
     return {
       amounts: {
@@ -186,30 +159,14 @@ async function getVaultValuesAndAmounts(
         secondary: BN(secondaryLpToken.amount),
       },
       values: {
-        primary:
-          getCoinValue(
-            new BNCoin(primaryLpToken),
-            [BNCoin.fromDenomAndBigNumber(primaryLpToken.denom, primaryPrice)],
-            chainConfig.assets,
-          ) ?? BN_ZERO,
-        secondary:
-          getCoinValue(
-            new BNCoin(secondaryLpToken),
-            [BNCoin.fromDenomAndBigNumber(secondaryLpToken.denom, secondaryPrice)],
-            chainConfig.assets,
-          ) ?? BN_ZERO,
+        primary: getCoinValue(new BNCoin(primaryLpToken), assets) ?? BN_ZERO,
+        secondary: getCoinValue(new BNCoin(secondaryLpToken), assets) ?? BN_ZERO,
         unlocking:
-          getCoinValue(
-            BNCoin.fromDenomAndBigNumber(vault.denoms.lp, amounts.unlocking),
-            [BNCoin.fromDenomAndBigNumber(vault.denoms.lp, lpPrice)],
-            chainConfig.assets,
-          ) ?? BN_ZERO,
+          getCoinValue(BNCoin.fromDenomAndBigNumber(vault.denoms.lp, amounts.unlocking), assets) ??
+          BN_ZERO,
         unlocked:
-          getCoinValue(
-            BNCoin.fromDenomAndBigNumber(vault.denoms.lp, amounts.unlocked),
-            [BNCoin.fromDenomAndBigNumber(vault.denoms.lp, lpPrice)],
-            chainConfig.assets,
-          ) ?? BN_ZERO,
+          getCoinValue(BNCoin.fromDenomAndBigNumber(vault.denoms.lp, amounts.unlocked), assets) ??
+          BN_ZERO,
       },
     }
   } catch (ex) {
@@ -220,6 +177,7 @@ async function getVaultValuesAndAmounts(
 async function getDepositedVaults(
   accountId: string,
   chainConfig: ChainConfig,
+  assets: Asset[],
   positions?: Positions,
 ): Promise<DepositedVault[]> {
   try {
@@ -245,7 +203,7 @@ async function getDepositedVaults(
 
       const [[status, unlockId, unlocksAt], valuesAndAmounts] = await Promise.all([
         getVaultPositionStatusAndUnlockIdAndUnlockTime(chainConfig, vaultPosition),
-        getVaultValuesAndAmounts(vault, vaultPosition, chainConfig),
+        getVaultValuesAndAmounts(vault, vaultPosition, chainConfig, assets),
       ])
 
       return {

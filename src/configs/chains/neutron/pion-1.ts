@@ -1,24 +1,15 @@
 import { Bech32Address } from '@keplr-wallet/cosmos'
 
-import ATOM from 'configs/assets/ATOM'
-import NTRN from 'configs/assets/NTRN'
-import USDC from 'configs/assets/USDC'
-import USDollar from 'configs/assets/USDollar'
 import { ChainInfoID, NETWORK } from 'types/enums'
 
 const Pion1: ChainConfig = {
-  assets: [
-    { ...NTRN, denom: 'untrn', isPerpsEnabled: true },
-    { ...USDC, denom: 'ibc/4C19E7EC06C1AB2EC2D70C6855FEB6D48E9CE174913991DA0A517D21978E7E42' },
-    {
-      ...ATOM,
-      denom: 'ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9',
-      isPerpsEnabled: true,
-    },
-    USDollar,
-  ],
   id: ChainInfoID.Pion1,
   name: 'Neutron Testnet',
+  stables: ['ibc/4C19E7EC06C1AB2EC2D70C6855FEB6D48E9CE174913991DA0A517D21978E7E42'],
+  defaultTradingPair: {
+    buy: 'untrn',
+    sell: 'ibc/4C19E7EC06C1AB2EC2D70C6855FEB6D48E9CE174913991DA0A517D21978E7E42',
+  },
   contracts: {
     redBank: 'neutron1fu3p73w5q8e4gz9u2hqmwk5nqmntzemt4a3reglzttn9vgcecsgqj4mzw3',
     incentives: 'neutron1ra7a2nxhv2x5e2pvz7lecc09kdtf458xks2me6kge64j5v5qat5spl2f35',

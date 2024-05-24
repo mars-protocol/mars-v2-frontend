@@ -4,9 +4,8 @@ import { useMemo } from 'react'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
-import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useMarket from 'hooks/markets/useMarket'
-import usePrices from 'hooks/prices/usePrices'
 import { calculateAccountLeverage } from 'utils/accounts'
 import { getLeveragedApy } from 'utils/math'
 
@@ -25,13 +24,12 @@ interface Props {
 }
 
 export default function ActiveAPY(props: Props) {
-  const { data: prices } = usePrices()
-  const assets = useAllWhitelistedAssets()
+  const assets = useDepositEnabledAssets()
   const borrowRate = useMarket(props.account.strategy.denoms.borrow)?.apy.borrow
 
   const leverage = useMemo(
-    () => calculateAccountLeverage(props.account, prices, assets),
-    [assets, prices, props.account],
+    () => calculateAccountLeverage(props.account, assets),
+    [assets, props.account],
   )
 
   const leveragedApy = useMemo(() => {

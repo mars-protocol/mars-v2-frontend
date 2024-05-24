@@ -9,7 +9,6 @@ export function getHlsStakingChangeLevActions(
   collateralDenom: string,
   borrowDenom: string,
   slippage: number,
-  prices: BNCoin[],
   assets: Asset[],
 ): Action[] {
   let actions: Action[] = []
@@ -18,10 +17,9 @@ export function getHlsStakingChangeLevActions(
     const debtValue =
       getCoinValue(
         BNCoin.fromDenomAndBigNumber(borrowDenom, previousAmount.minus(currentAmount)),
-        prices,
         assets,
       ) ?? BN_ZERO
-    const collateralAmount = getCoinAmount(collateralDenom, debtValue, prices, assets)
+    const collateralAmount = getCoinAmount(collateralDenom, debtValue, assets)
 
     actions = [
       {

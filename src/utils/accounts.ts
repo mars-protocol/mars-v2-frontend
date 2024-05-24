@@ -12,39 +12,32 @@ import { convertApyToApr } from 'utils/parsers'
 
 export const calculateAccountBalanceValue = (
   account: Account | AccountChange,
-  prices: BNCoin[],
   assets: Asset[],
 ): BigNumber => {
   const [deposits, lends, debts, vaults, perps, perpsVault] = getAccountPositionValues(
     account,
-    prices,
     assets,
   )
 
   return deposits.plus(lends).plus(vaults).plus(perps).plus(perpsVault).minus(debts)
 }
 
-export const getAccountPositionValues = (
-  account: Account | AccountChange,
-  prices: BNCoin[],
-  assets: Asset[],
-) => {
-  const deposits = calculateAccountValue('deposits', account, prices, assets)
-  const lends = calculateAccountValue('lends', account, prices, assets)
-  const debts = calculateAccountValue('debts', account, prices, assets)
-  const vaults = calculateAccountValue('vaults', account, prices, assets)
-  const perps = calculateAccountValue('perps', account, prices, assets)
-  const perpsVault = calculateAccountValue('perpsVault', account, prices, assets)
+export const getAccountPositionValues = (account: Account | AccountChange, assets: Asset[]) => {
+  const deposits = calculateAccountValue('deposits', account, assets)
+  const lends = calculateAccountValue('lends', account, assets)
+  const debts = calculateAccountValue('debts', account, assets)
+  const vaults = calculateAccountValue('vaults', account, assets)
+  const perps = calculateAccountValue('perps', account, assets)
+  const perpsVault = calculateAccountValue('perpsVault', account, assets)
   return [deposits, lends, debts, vaults, perps, perpsVault]
 }
 
 export const calculateAccountValue = (
   type: 'deposits' | 'lends' | 'debts' | 'vaults' | 'perps' | 'perpsVault',
   account: Account | AccountChange,
-  prices: BNCoin[],
   assets: Asset[],
 ): BigNumber => {
-  if (!account[type] || !prices) return BN_ZERO
+  if (!account[type] || !assets) return BN_ZERO
 
   if (type === 'vaults') {
     return (
@@ -61,7 +54,7 @@ export const calculateAccountValue = (
   if (type === 'perps') {
     return (
       account.perps?.reduce((acc, perpPosition) => {
-        acc = acc.plus(getCoinValue(perpPosition.pnl.unrealized.net, prices, assets) ?? BN_ZERO)
+        acc = acc.plus(getCoinValue(perpPosition.pnl.unrealized.net, assets) ?? BN_ZERO)
         return acc
       }, BN_ZERO) || BN_ZERO
     )
@@ -78,11 +71,8 @@ export const calculateAccountValue = (
     const totalAmount = activeAmount.plus(unlockingAmount).plus(unlockedAmount)
 
     return (
-      getCoinValue(
-        BNCoin.fromDenomAndBigNumber(account.perpsVault.denom, totalAmount),
-        prices,
-        assets,
-      ) ?? BN_ZERO
+      getCoinValue(BNCoin.fromDenomAndBigNumber(account.perpsVault.denom, totalAmount), assets) ??
+      BN_ZERO
     )
   }
 
@@ -90,8 +80,8 @@ export const calculateAccountValue = (
     account[type]?.reduce((acc, position) => {
       const asset = assets.find(byDenom(position.denom))
       if (!asset) return acc
-      const price = prices.find((price) => price.denom === position.denom)?.amount ?? 0
-      const amount = BN(position.amount).shiftedBy(-asset.decimals)
+      const price = asset.price?.amount ?? BN_ZERO
+      const amount = position.amount.shiftedBy(-asset.decimals)
       const positionValue = amount.multipliedBy(price)
       return acc.plus(positionValue)
     }, BN_ZERO) ?? BN_ZERO
@@ -102,17 +92,16 @@ export const calculateAccountApr = (
   account: Account,
   borrowAssetsData: BorrowMarketTableData[],
   lendingAssetsData: LendingMarketTableData[],
-  prices: BNCoin[],
   hlsStrategies: HLSStrategy[],
   assets: Asset[],
   vaultAprs: Apr[],
   isHls?: boolean,
 ): BigNumber => {
-  const depositValue = calculateAccountValue('deposits', account, prices, assets)
-  const lendsValue = calculateAccountValue('lends', account, prices, assets)
-  const vaultsValue = calculateAccountValue('vaults', account, prices, assets)
-  const debtsValue = calculateAccountValue('debts', account, prices, assets)
-  const perpsValue = calculateAccountValue('perps', account, prices, assets)
+  const depositValue = calculateAccountValue('deposits', account, assets)
+  const lendsValue = calculateAccountValue('lends', account, assets)
+  const vaultsValue = calculateAccountValue('vaults', account, assets)
+  const debtsValue = calculateAccountValue('debts', account, assets)
+  const perpsValue = calculateAccountValue('perps', account, assets)
 
   const totalValue = depositValue.plus(lendsValue).plus(vaultsValue).plus(perpsValue)
   const totalNetValue = totalValue.minus(debtsValue)
@@ -129,8 +118,8 @@ export const calculateAccountApr = (
     deposits?.forEach((deposit) => {
       const asset = assets.find(byDenom(deposit.denom))
       if (!asset) return BN_ZERO
-      const price = prices.find(byDenom(deposit.denom))?.amount ?? 0
-      const amount = BN(deposit.amount).shiftedBy(-asset.decimals)
+      const price = asset.price?.amount ?? BN_ZERO
+      const amount = deposit.amount.shiftedBy(-asset.decimals)
       const apy =
         hlsStrategies.find((strategy) => strategy.denoms.deposit === deposit.denom)?.apy || 0
 
@@ -146,8 +135,8 @@ export const calculateAccountApr = (
   lends?.forEach((lend) => {
     const asset = assets.find(byDenom(lend.denom))
     if (!asset) return BN_ZERO
-    const price = prices.find(byDenom(lend.denom))?.amount ?? 0
-    const amount = BN(lend.amount).shiftedBy(-asset.decimals)
+    const price = asset.price?.amount ?? BN_ZERO
+    const amount = lend.amount.shiftedBy(-asset.decimals)
     const apy = lendingAssetsData.find((lendingAsset) => lendingAsset.asset.denom === lend.denom)
       ?.apy.deposit
 
@@ -171,8 +160,8 @@ export const calculateAccountApr = (
   debts?.forEach((debt) => {
     const asset = assets.find(byDenom(debt.denom))
     if (!asset) return BN_ZERO
-    const price = prices.find(byDenom(debt.denom))?.amount ?? 0
-    const amount = BN(debt.amount).shiftedBy(-asset.decimals)
+    const price = asset.price?.amount ?? BN_ZERO
+    const amount = debt.amount.shiftedBy(-asset.decimals)
     const apy = borrowAssetsData.find((borrowAsset) => borrowAsset.asset.denom === debt.denom)?.apy
       .borrow
 
@@ -194,9 +183,9 @@ export const calculateAccountApr = (
   return totalInterestValue.dividedBy(totalNetValue).times(100)
 }
 
-export function calculateAccountLeverage(account: Account, prices: BNCoin[], assets: Asset[]) {
+export function calculateAccountLeverage(account: Account, assets: Asset[]) {
   // TODO: MP-2307: Include perps positions into account leverage calculation
-  const [deposits, lends, debts, vaults] = getAccountPositionValues(account, prices, assets)
+  const [deposits, lends, debts, vaults] = getAccountPositionValues(account, assets)
   const netValue = deposits.plus(lends).plus(vaults).minus(debts)
   return debts.dividedBy(netValue).plus(1)
 }
@@ -387,7 +376,6 @@ export function computeHealthGaugePercentage(health: number) {
 
 export function getAccountSummaryStats(
   account: Account,
-  prices: BNCoin[],
   borrowAssets: BorrowMarketTableData[],
   lendingAssets: LendingMarketTableData[],
   hlsStrategies: HLSStrategy[],
@@ -395,19 +383,18 @@ export function getAccountSummaryStats(
   vaultAprs: Apr[],
   isHls?: boolean,
 ) {
-  const [deposits, lends, debts, vaults] = getAccountPositionValues(account, prices, assets)
+  const [deposits, lends, debts, vaults] = getAccountPositionValues(account, assets)
   const positionValue = deposits.plus(lends).plus(vaults)
   const apr = calculateAccountApr(
     account,
     borrowAssets,
     lendingAssets,
-    prices,
     hlsStrategies,
     assets,
     vaultAprs,
     isHls,
   )
-  const leverage = calculateAccountLeverage(account, prices, assets)
+  const leverage = calculateAccountLeverage(account, assets)
 
   return {
     positionValue: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionValue),
@@ -428,7 +415,7 @@ export function isAccountEmpty(account: Account) {
   )
 }
 
-export function getAccountNetValue(account: Account, prices: BNCoin[], assets: Asset[]) {
-  const [deposits, lends, debts, vaults] = getAccountPositionValues(account, prices, assets)
+export function getAccountNetValue(account: Account, assets: Asset[]) {
+  const [deposits, lends, debts, vaults] = getAccountPositionValues(account, assets)
   return deposits.plus(lends).plus(vaults).minus(debts)
 }

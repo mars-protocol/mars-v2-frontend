@@ -1,41 +1,14 @@
 import { Bech32Address } from '@keplr-wallet/cosmos'
 
-import ATOM from 'configs/assets/ATOM'
-import DYDX from 'configs/assets/DYDX'
-import NTRN from 'configs/assets/NTRN'
-import USDCaxl from 'configs/assets/USDC.axl'
-import USDollar from 'configs/assets/USDollar'
-import WETHaxl from 'configs/assets/WETH.axl'
-import stATOM from 'configs/assets/stATOM'
-import stkATOM from 'configs/assets/stkATOM'
-import wstETH from 'configs/assets/wstETH'
 import { ChainInfoID, NETWORK } from 'types/enums'
 
 const Neutron1: ChainConfig = {
-  assets: [
-    { ...NTRN, denom: 'untrn' },
-    { ...USDCaxl, denom: 'ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349' },
-    {
-      ...ATOM,
-      denom: 'ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9',
-    },
-    {
-      ...stATOM,
-      denom: 'ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C',
-    },
-    {
-      ...stkATOM,
-      denom: 'ibc/3649CE0C8A2C79048D8C6F31FF18FA69C9BC7EB193512E0BD03B733011290445',
-    },
-    { ...WETHaxl, denom: 'ibc/A585C2D15DCD3B010849B453A2CFCB5E213208A5AB665691792684C26274304D' },
-    {
-      ...wstETH,
-      denom: 'factory/neutron1ug740qrkquxzrk2hh29qrlx3sktkfml3je7juusc2te7xmvsscns0n2wry/wstETH',
-    },
-    { ...DYDX, denom: 'ibc/2CB87BCE0937B1D1DFCEE79BE4501AAF3C265E923509AEAC410AD85D27F35130' },
-    USDollar,
-  ],
   id: ChainInfoID.Neutron1,
+  stables: ['ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349'],
+  defaultTradingPair: {
+    buy: 'untrn',
+    sell: 'ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349',
+  },
   name: 'Neutron',
   contracts: {
     redBank: 'neutron1n97wnm7q6d2hrcna3rqlnyqw2we6k0l8uqvmyqq6gsml92epdu7quugyph',

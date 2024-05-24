@@ -103,11 +103,11 @@ export function resolveHLSStrategies(
 
 export function resolvePerpsPositions(
   perpPositions: Positions['perps'],
-  prices: BNCoin[],
+  assets: Asset[],
 ): PerpsPosition[] {
   if (!perpPositions || !perpPositions.length) return []
   const basePrice =
-    prices.find((price) => price.denom === perpPositions[0].base_denom)?.amount ?? BN_ZERO
+    assets.find((asset) => asset.denom === perpPositions[0].base_denom)?.price?.amount ?? BN_ZERO
 
   return perpPositions.map((position) => {
     return {

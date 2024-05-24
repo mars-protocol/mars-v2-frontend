@@ -9,7 +9,7 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ChevronDown } from 'components/common/Icons'
 import SummaryLine from 'components/common/SummaryLine'
 import Text from 'components/common/Text'
-import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useToggle from 'hooks/common/useToggle'
 import useLiquidationPrice from 'hooks/prices/useLiquidationPrice'
 import useSlippage from 'hooks/settings/useSlippage'
@@ -53,7 +53,7 @@ export default function TradeSummary(props: Props) {
     direction,
   } = props
   const [slippage] = useSlippage()
-  const assets = useAllWhitelistedAssets()
+  const assets = useDepositEnabledAssets()
   const [showSummary, setShowSummary] = useToggle()
   const { liquidationPrice, isUpdatingLiquidationPrice } = useLiquidationPrice(
     props.liquidationPrice,

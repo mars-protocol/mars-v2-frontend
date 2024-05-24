@@ -28,7 +28,7 @@ export default function Asset(props: Props) {
   return (
     <div className='flex items-center'>
       <Checkbox
-        name={`asset-${asset.id.toLowerCase()}`}
+        name={`asset-${asset.denom.toLowerCase()}`}
         checked={row.getIsSelected()}
         onChange={row.getToggleSelectedHandler()}
         noMouseEvents

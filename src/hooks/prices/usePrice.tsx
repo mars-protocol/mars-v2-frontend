@@ -1,8 +1,8 @@
 import { BN_ZERO } from 'constants/math'
-import usePrices from 'hooks/prices/usePrices'
+import useAllAssets from 'hooks/assets/useAllAssets'
 
 export default function usePrice(denom: string) {
-  const { data: prices } = usePrices()
+  const { data: assets } = useAllAssets()
 
-  return prices.find((coin) => coin.denom === denom)?.amount ?? BN_ZERO
+  return assets.find((asset) => asset.denom === denom)?.price?.amount ?? BN_ZERO
 }

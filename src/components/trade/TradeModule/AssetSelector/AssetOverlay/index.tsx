@@ -10,7 +10,7 @@ import AssetList from 'components/trade/TradeModule/AssetSelector/AssetList'
 import StablesFilter from 'components/trade/TradeModule/AssetSelector/AssetOverlay/StablesFilter'
 import PairsList from 'components/trade/TradeModule/AssetSelector/PairsList'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useFilteredAssets from 'hooks/assets/useFilteredAssets'
 
 interface Props {
@@ -36,7 +36,7 @@ function MarketSubheadLine(props: { title: string }) {
 export default function AssetOverlay(props: Props) {
   const { assets, searchString, onChangeSearch } = useFilteredAssets(props.buyAssets)
   const account = useCurrentAccount()
-  const whitelistedAssets = useAllWhitelistedAssets()
+  const whitelistedAssets = useDepositEnabledAssets()
   const stableAssets = useMemo(
     () => whitelistedAssets.filter((asset) => asset.isStable),
     [whitelistedAssets],

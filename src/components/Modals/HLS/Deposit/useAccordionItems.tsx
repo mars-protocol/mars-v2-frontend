@@ -11,8 +11,7 @@ import {
 } from 'components/Modals/HLS/Deposit/SubTitles'
 import Summary from 'components/Modals/HLS/Deposit/Summary'
 import { BN_ZERO } from 'constants/math'
-import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
-import usePrices from 'hooks/prices/usePrices'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
@@ -47,8 +46,7 @@ interface Props {
 }
 
 export default function useAccordionItems(props: Props) {
-  const { data: prices } = usePrices()
-  const assets = useAllWhitelistedAssets()
+  const assets = useDepositEnabledAssets()
 
   const depositCapLeft = useMemo(() => {
     if (!props.strategy) return BN_ZERO
@@ -64,17 +62,10 @@ export default function useAccordionItems(props: Props) {
     const value =
       getCoinValue(
         BNCoin.fromDenomAndBigNumber(props.borrowMarket.asset.denom, props.borrowAmount),
-        prices,
         assets,
       ) ?? BN_ZERO
-    return getCoinAmount(props.collateralAsset.denom, value, prices, assets)
-  }, [
-    assets,
-    prices,
-    props.borrowAmount,
-    props.borrowMarket.asset.denom,
-    props.collateralAsset.denom,
-  ])
+    return getCoinAmount(props.collateralAsset.denom, value, assets)
+  }, [assets, props.borrowAmount, props.borrowMarket.asset.denom, props.collateralAsset.denom])
 
   const collateralWarningMessages = useMemo(() => {
     const messages: string[] = []

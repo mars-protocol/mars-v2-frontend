@@ -9,12 +9,11 @@ import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
-import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useToggle from 'hooks/common/useToggle'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useDepositActions from 'hooks/hls/useDepositActions'
 import useMarket from 'hooks/markets/useMarket'
-import usePrices from 'hooks/prices/usePrices'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -41,8 +40,7 @@ export default function Deposit(props: Props) {
     useUpdatedAccount(props.account)
   const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
 
-  const assets = useAllWhitelistedAssets()
-  const { data: prices } = usePrices()
+  const assets = useDepositEnabledAssets()
   const [keepLeverage, toggleKeepLeverage] = useToggle(true)
   const collateralAssetAmountInWallet = BN(
     useCurrentWalletBalance(props.collateralAsset.denom)?.amount || '0',
@@ -51,8 +49,8 @@ export default function Deposit(props: Props) {
   const borrowRate = useMarket(props.borrowMarket.asset.denom)?.apy.borrow || 0
 
   const currentLeverage = useMemo(
-    () => calculateAccountLeverage(props.account, prices, assets).toNumber(),
-    [prices, props.account, assets],
+    () => calculateAccountLeverage(props.account, assets).toNumber(),
+    [props.account, assets],
   )
 
   const depositCoin = useMemo(
@@ -155,13 +153,10 @@ export default function Deposit(props: Props) {
 
       if (currentLeverage > 1 && keepLeverage) {
         const depositValue =
-          getCoinValue(
-            BNCoin.fromDenomAndBigNumber(props.collateralAsset.denom, amount),
-            prices,
-            assets,
-          ) ?? BN_ZERO
+          getCoinValue(BNCoin.fromDenomAndBigNumber(props.collateralAsset.denom, amount), assets) ??
+          BN_ZERO
         const borrowValue = BN(currentLeverage - 1).times(depositValue)
-        additionalDebt = getCoinAmount(props.borrowMarket.asset.denom, borrowValue, prices, assets)
+        additionalDebt = getCoinAmount(props.borrowMarket.asset.denom, borrowValue, assets)
       }
 
       simulateHlsStakingDeposit(
@@ -172,7 +167,6 @@ export default function Deposit(props: Props) {
     [
       currentLeverage,
       keepLeverage,
-      prices,
       props.borrowMarket.asset.denom,
       props.collateralAsset.denom,
       simulateHlsStakingDeposit,

@@ -5,8 +5,7 @@ import { useMemo } from 'react'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Text from 'components/common/Text'
 import { ORACLE_DENOM } from 'constants/oracle'
-import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
-import usePrices from 'hooks/prices/usePrices'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatAmountWithSymbol } from 'utils/formatters'
 import { getValueFromBNCoins } from 'utils/helpers'
@@ -20,8 +19,7 @@ interface Props {
 }
 
 export default function VaultDepositSubTitle(props: Props) {
-  const { data: prices } = usePrices()
-  const assets = useAllWhitelistedAssets()
+  const assets = useDepositEnabledAssets()
   const primaryText = useMemo(
     () => (
       <Text size='xs' className='inline mt-1 text-white/60'>
@@ -57,7 +55,6 @@ export default function VaultDepositSubTitle(props: Props) {
       BNCoin.fromDenomAndBigNumber(props.primaryAsset.denom, props.primaryAmount),
       BNCoin.fromDenomAndBigNumber(props.secondaryAsset.denom, props.secondaryAmount),
     ],
-    prices,
     assets,
   )
 

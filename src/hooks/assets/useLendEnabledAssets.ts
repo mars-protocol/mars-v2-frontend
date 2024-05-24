@@ -1,7 +1,7 @@
-import useStore from 'store'
+import useAllAssets from 'hooks/assets/useAllAssets'
 
 export default function useLendEnabledAssets() {
-  const assets = useStore((s) => s.chainConfig.assets)
+  const { data: assets } = useAllAssets()
 
   return assets.filter((asset) => asset.isAutoLendEnabled)
 }

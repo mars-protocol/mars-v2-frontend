@@ -4,7 +4,7 @@ import DisplayCurrency from 'components/common/DisplayCurrency'
 import { ExclamationMarkTriangle } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import WarningMessages from 'components/common/WarningMessages'
-import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatAmountWithSymbol, formatLeverage } from 'utils/formatters'
 
@@ -33,7 +33,7 @@ interface CollateralSubTitleProps {
 }
 
 export function CollateralSubTitle(props: CollateralSubTitleProps) {
-  const assets = useAllWhitelistedAssets()
+  const assets = useDepositEnabledAssets()
   if (props.isOpen) return null
 
   if (!props.isOpen && props.amount.isZero()) {

@@ -11,15 +11,14 @@ import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendi
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
-import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import usePrices from 'hooks/prices/usePrices'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { calculateAccountApr, calculateAccountLeverage } from 'utils/accounts'
+import useAllAssets from 'hooks/assets/useAllAssets'
 
 interface Props {
   account: Account
@@ -41,8 +40,7 @@ export default function AccountSummary(props: Props) {
     defaultSetting,
   )
   const { data: vaultAprs } = useVaultAprs()
-  const { data: prices } = usePrices()
-  const assets = useAllWhitelistedAssets()
+  const { data: assets } = useAllAssets()
   const updatedAccount = useStore((s) => s.updatedAccount)
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
@@ -58,16 +56,16 @@ export default function AccountSummary(props: Props) {
     updatedAccount || account,
   )
   const leverage = useMemo(
-    () => (account ? calculateAccountLeverage(account, prices, assets) : BN_ZERO),
-    [account, prices, assets],
+    () => (account ? calculateAccountLeverage(account, assets) : BN_ZERO),
+    [account, assets],
   )
   const updatedLeverage = useMemo(() => {
     if (!updatedAccount) return null
-    const updatedLeverage = calculateAccountLeverage(updatedAccount, prices, assets)
+    const updatedLeverage = calculateAccountLeverage(updatedAccount, assets)
 
     if (updatedLeverage.eq(leverage)) return null
     return updatedLeverage
-  }, [updatedAccount, prices, assets, leverage])
+  }, [updatedAccount, assets, leverage])
 
   const handleToggle = useCallback(
     (index: number) => {
@@ -86,7 +84,6 @@ export default function AccountSummary(props: Props) {
         updatedAccount ?? account,
         borrowAssetsData,
         lendingAssetsData,
-        prices,
         hlsStrategies,
         assets,
         vaultAprs,
@@ -97,7 +94,6 @@ export default function AccountSummary(props: Props) {
       updatedAccount,
       borrowAssetsData,
       lendingAssetsData,
-      prices,
       hlsStrategies,
       assets,
       vaultAprs,
@@ -174,7 +170,6 @@ export default function AccountSummary(props: Props) {
       <AccountSummaryHeader
         account={account}
         updatedAccount={updatedAccount}
-        prices={prices}
         assets={assets}
         leverage={leverage.toNumber() || 1}
         updatedLeverage={updatedLeverage?.toNumber() || null}

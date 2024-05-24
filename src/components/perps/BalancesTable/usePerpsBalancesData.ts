@@ -1,9 +1,8 @@
 import { useMemo } from 'react'
 
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
-import usePrices from 'hooks/prices/usePrices'
 import { getAccountNetValue } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { demagnify } from 'utils/formatters'
@@ -11,13 +10,12 @@ import { demagnify } from 'utils/formatters'
 export default function usePerpsBalancesTable() {
   const currentAccount = useCurrentAccount()
   const perpAssets = usePerpsEnabledAssets()
-  const allAssets = useAllWhitelistedAssets()
-  const { data: prices } = usePrices()
+  const allAssets = useDepositEnabledAssets()
 
   return useMemo<PerpPositionRow[]>(() => {
     if (!currentAccount) return []
 
-    const netValue = getAccountNetValue(currentAccount, prices, allAssets)
+    const netValue = getAccountNetValue(currentAccount, allAssets)
 
     return currentAccount.perps.map((position) => {
       const asset = perpAssets.find(byDenom(position.denom))!
@@ -37,5 +35,5 @@ export default function usePerpsBalancesTable() {
           .toNumber(),
       } as PerpPositionRow
     })
-  }, [allAssets, currentAccount, perpAssets, prices])
+  }, [allAssets, currentAccount, perpAssets])
 }

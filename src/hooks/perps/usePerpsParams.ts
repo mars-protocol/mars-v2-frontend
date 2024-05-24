@@ -26,12 +26,15 @@ export function useAllPerpsParams() {
 export function useAllPerpsParamsSC() {
   const chainConfig = useChainConfig()
   const clients = useClients()
-  return useSWR(clients && `chains/${chainConfig.id}/perps/params`, async () =>
-    getPerpsParams(clients!),
+  return useSWR(
+    clients && chainConfig.perps && `chains/${chainConfig.id}/perps/params`,
+    async () => getPerpsParams(chainConfig, clients!),
+    { fallbackData: [], revalidateOnFocus: false, staleTime: 60_000, revalidateIfStale: true },
   )
 }
 
-async function getPerpsParams(clients: ContractClients) {
+async function getPerpsParams(chainConfig: ChainConfig, clients: ContractClients) {
+  if (!chainConfig.perps) return []
   return iterateContractQuery(clients.params.allPerpParams, undefined, [])
 }
 

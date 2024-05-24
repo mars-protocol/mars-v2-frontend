@@ -1,7 +1,7 @@
-import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
+import useAllAssets from 'hooks/assets/useAllAssets'
 
 export default function useDisplayCurrencyAssets() {
-  const assets = useAllWhitelistedAssets()
+  const { data: assets } = useAllAssets()
 
   return assets.filter((asset) => asset.isDisplayCurrency)
 }

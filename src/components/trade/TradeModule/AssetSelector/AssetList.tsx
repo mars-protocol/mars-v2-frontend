@@ -5,10 +5,9 @@ import { ChevronDown } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import AssetSelectorItem from 'components/trade/TradeModule/AssetSelector/AssetSelectorItem'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
-import useChainConfig from 'hooks/chain/useChainConfig'
 import useMarkets from 'hooks/markets/useMarkets'
-import usePrices from 'hooks/prices/usePrices'
 import { getMergedBalancesForAsset } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { sortAssetsOrPairs } from 'utils/assets'
@@ -22,12 +21,10 @@ interface Props {
 }
 
 export default function AssetList(props: Props) {
-  const chainConfig = useChainConfig()
-  const baseDenom = chainConfig.assets[0].denom
+  const baseAsset = useBaseAsset()
   const { assets, type, isOpen, toggleOpen, onChangeAsset } = props
   const account = useCurrentAccount()
   const markets = useMarkets()
-  const { data: prices } = usePrices()
   const marketEnabledAssets = useTradeEnabledAssets()
   const balances = useMemo(() => {
     if (!account) return []
@@ -35,11 +32,11 @@ export default function AssetList(props: Props) {
   }, [account, marketEnabledAssets])
 
   const sortedAssets = useMemo(() => {
-    const sorted = sortAssetsOrPairs(assets, prices, markets, balances, baseDenom) as Asset[]
+    const sorted = sortAssetsOrPairs(assets, markets, balances, baseAsset.denom) as Asset[]
     return sorted.filter(
       (asset, index, self) => index === self.findIndex((t) => t.denom === asset.denom),
     )
-  }, [assets, prices, markets, balances, baseDenom])
+  }, [assets, markets, balances, baseAsset])
 
   return (
     <section>

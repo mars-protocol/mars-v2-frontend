@@ -6,10 +6,9 @@ import { InfoCircle } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import { ORACLE_DENOM } from 'constants/oracle'
-import useAllChainAssets from 'hooks/assets/useAllChainAssets'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
-import usePrices from 'hooks/prices/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
@@ -24,6 +23,7 @@ interface Props {
   isProfitOrLoss?: boolean
   showSignPrefix?: boolean
   showDetailedPrice?: boolean
+  allowZeroAmount?: boolean
 }
 
 export default function DisplayCurrency(props: Props) {
@@ -37,11 +37,11 @@ export default function DisplayCurrency(props: Props) {
     options,
     isProfitOrLoss,
     showDetailedPrice,
+    allowZeroAmount,
   } = props
   const displayCurrencies = useDisplayCurrencyAssets()
-  const { data: assets } = useAllChainAssets()
+  const { data: assets } = useAllAssets()
   const [displayCurrency] = useDisplayCurrency()
-  const { data: prices } = usePrices()
 
   const displayCurrencyAsset = useMemo(
     () =>
@@ -49,25 +49,26 @@ export default function DisplayCurrency(props: Props) {
     [displayCurrency, displayCurrencies],
   )
 
-  const isUSD = displayCurrencyAsset.id === 'USD'
+  const isUSD = displayCurrencyAsset.denom === 'usd'
 
   const [amount, absoluteAmount] = useMemo(() => {
-    const coinValue = getCoinValue(coin, prices, assets)
+    const coinValue = getCoinValue(coin, assets)
 
-    if (typeof coinValue === 'undefined') return []
+    if (typeof coinValue === 'undefined' && !allowZeroAmount) return []
+    if (typeof coinValue === 'undefined') return [0, 0]
     if (displayCurrency === ORACLE_DENOM) return [coinValue.toNumber(), coinValue.abs().toNumber()]
 
     const displayDecimals = displayCurrencyAsset.decimals
     const displayPrice = getCoinValue(
       BNCoin.fromDenomAndBigNumber(displayCurrency, BN(1).shiftedBy(displayDecimals)),
-      prices,
+
       assets,
     )
 
     const amount = displayPrice ? coinValue.div(displayPrice).toNumber() : 0
 
     return [amount, Math.abs(amount)]
-  }, [assets, displayCurrency, displayCurrencyAsset.decimals, prices, coin])
+  }, [assets, displayCurrency, displayCurrencyAsset.decimals, coin])
 
   const isLessThanACent = useMemo(
     () => isUSD && absoluteAmount && absoluteAmount < 0.01 && absoluteAmount > 0,

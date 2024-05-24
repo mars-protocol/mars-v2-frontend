@@ -20,11 +20,10 @@ import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import usePrices from 'hooks/prices/usePrices'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -78,24 +77,20 @@ function AccountDetails(props: Props) {
   const { health: updatedHealth, healthFactor: updatedHealthFactor } = useHealthComputer(
     updatedAccount || account,
   )
-  const { data: prices } = usePrices()
-  const assets = useAllWhitelistedAssets()
+  const assets = useDepositEnabledAssets()
   const accountBalanceValue = useMemo(
-    () => calculateAccountBalanceValue(updatedAccount ?? account, prices, assets),
-    [updatedAccount, account, prices, assets],
+    () => calculateAccountBalanceValue(updatedAccount ?? account, assets),
+    [updatedAccount, account, assets],
   )
   const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalanceValue)
-  const leverage = useMemo(
-    () => calculateAccountLeverage(account, prices, assets),
-    [account, assets, prices],
-  )
+  const leverage = useMemo(() => calculateAccountLeverage(account, assets), [account, assets])
   const updatedLeverage = useMemo(() => {
     if (!updatedAccount) return null
-    const updatedLeverage = calculateAccountLeverage(updatedAccount, prices, assets)
+    const updatedLeverage = calculateAccountLeverage(updatedAccount, assets)
 
     if (updatedLeverage.eq(leverage)) return null
     return updatedLeverage
-  }, [updatedAccount, prices, leverage, assets])
+  }, [updatedAccount, leverage, assets])
 
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
@@ -113,7 +108,6 @@ function AccountDetails(props: Props) {
         updatedAccount ?? account,
         borrowAssetsData,
         lendingAssetsData,
-        prices,
         hlsStrategies,
         assets,
         vaultAprs,
@@ -125,7 +119,6 @@ function AccountDetails(props: Props) {
       borrowAssetsData,
       hlsStrategies,
       lendingAssetsData,
-      prices,
       updatedAccount,
       vaultAprs,
     ],

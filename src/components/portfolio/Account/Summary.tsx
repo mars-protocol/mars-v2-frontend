@@ -6,10 +6,9 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import Skeleton from 'components/portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
-import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
-import usePrices from 'hooks/prices/usePrices'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
@@ -21,20 +20,18 @@ interface Props {
 
 function Content(props: Props) {
   const { account } = props
-  const { data: prices } = usePrices()
   const { data: vaultAprs } = useVaultAprs()
   const { health, healthFactor } = useHealthComputer(account)
   const data = useBorrowMarketAssetsTableData()
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const { data: hlsStrategies } = useHLSStakingAssets()
-  const assets = useAllWhitelistedAssets()
+  const assets = useDepositEnabledAssets()
   const stats = useMemo(() => {
     if (!account || !borrowAssets.length || !lendingAssets.length) return DEFAULT_PORTFOLIO_STATS
 
     const { positionValue, debts, netWorth, apr, leverage } = getAccountSummaryStats(
       account,
-      prices,
       borrowAssets,
       lendingAssets,
       hlsStrategies,
@@ -81,7 +78,7 @@ function Content(props: Props) {
         sub: props.v1 ? 'Total Leverage' : DEFAULT_PORTFOLIO_STATS[4].sub,
       },
     ]
-  }, [account, assets, borrowAssets, hlsStrategies, lendingAssets, prices, vaultAprs, props.v1])
+  }, [account, assets, borrowAssets, hlsStrategies, lendingAssets, vaultAprs, props.v1])
 
   return (
     <Skeleton

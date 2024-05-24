@@ -1,16 +1,15 @@
 import getHLSStakingAssets from 'api/hls/getHLSStakingAssets'
-import getPrices from 'api/prices/getPrices'
 import getAccounts from 'api/wallets/getAccounts'
 import { calculateAccountLeverage, getAccountPositionValues, isAccountEmpty } from 'utils/accounts'
 
 export default async function getHLSStakingAccounts(
   chainConfig: ChainConfig,
+  assets: Asset[],
   address?: string,
 ): Promise<HLSAccountWithStrategy[]> {
-  const accounts = await getAccounts('high_levered_strategy', chainConfig, address)
+  const accounts = await getAccounts('high_levered_strategy', chainConfig, assets, address)
   const activeAccounts = accounts.filter((account) => !isAccountEmpty(account))
-  const hlsStrategies = await getHLSStakingAssets(chainConfig)
-  const prices = await getPrices(chainConfig)
+  const hlsStrategies = await getHLSStakingAssets(chainConfig, assets)
   const hlsAccountsWithStrategy: HLSAccountWithStrategy[] = []
 
   activeAccounts.forEach((account) => {
@@ -22,11 +21,7 @@ export default async function getHLSStakingAccounts(
 
     if (!strategy) return
 
-    const [deposits, lends, debts, vaults] = getAccountPositionValues(
-      account,
-      prices,
-      chainConfig.assets,
-    )
+    const [deposits, _, debts, __] = getAccountPositionValues(account, assets)
 
     hlsAccountsWithStrategy.push({
       ...account,
@@ -36,7 +31,7 @@ export default async function getHLSStakingAccounts(
         debt: debts,
         total: deposits,
       },
-      leverage: calculateAccountLeverage(account, prices, chainConfig.assets).toNumber(),
+      leverage: calculateAccountLeverage(account, assets).toNumber(),
     })
   })
 

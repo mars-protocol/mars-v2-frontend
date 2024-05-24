@@ -17,14 +17,13 @@ import AssetAmountInput from 'components/trade/TradeModule/SwapForm/AssetAmountI
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
-import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
+import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import { usePerpsParams } from 'hooks/perps/usePerpsParams'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import usePrice from 'hooks/prices/usePrice'
-import usePrices from 'hooks/prices/usePrices'
 import { getAccountNetValue } from 'utils/accounts'
 import { demagnify } from 'utils/formatters'
 import getPerpsPosition from 'utils/getPerpsPosition'
@@ -35,8 +34,7 @@ export function PerpsModule() {
   const { data: perpsVault } = usePerpsVault()
   const { perpsAsset } = usePerpsAsset()
   const account = useCurrentAccount()
-  const { data: prices } = usePrices()
-  const allAssets = useAllWhitelistedAssets()
+  const allAssets = usePerpsEnabledAssets()
   const { simulatePerps, updatedPerpPosition, updatedAccount, removedDeposits } =
     useUpdatedAccount(account)
   const [amount, setAmount] = useState<BigNumber>(BN_ZERO)
@@ -108,8 +106,8 @@ export function PerpsModule() {
   const netValue = useMemo(() => {
     if (!account) return BN_ZERO
 
-    return getAccountNetValue(account, prices, allAssets)
-  }, [account, allAssets, prices])
+    return getAccountNetValue(account, allAssets)
+  }, [account, allAssets])
 
   const [maxAmount, maxLeverage] = useMemo(() => {
     let maxAmount = computeMaxPerpAmount(perpsAsset.denom, tradeDirection)

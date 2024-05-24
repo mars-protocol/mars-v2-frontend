@@ -13,8 +13,7 @@ import Text from 'components/common/Text'
 import TokenInput from 'components/common/TokenInput'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
-import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
-import usePrices from 'hooks/prices/usePrices'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import { BNCoin } from 'types/classes/BNCoin'
 import { accumulateAmounts } from 'utils/accounts'
 import { byDenom } from 'utils/array'
@@ -41,10 +40,9 @@ export default function VaultDeposit(props: Props) {
     ],
     [account.deposits, account.lends, primaryAsset.denom, secondaryAsset.denom],
   )
-  const { data: prices } = usePrices()
-  const assets = useAllWhitelistedAssets()
-  const primaryPrice = prices.find(byDenom(primaryAsset.denom))?.amount ?? BN_ZERO
-  const secondaryPrice = prices.find(byDenom(secondaryAsset.denom))?.amount ?? BN_ZERO
+  const assets = useDepositEnabledAssets()
+  const primaryPrice = primaryAsset.price?.amount ?? BN_ZERO
+  const secondaryPrice = secondaryAsset.price?.amount ?? BN_ZERO
 
   const primaryCoin = useMemo(() => {
     const amount = deposits.find(byDenom(primaryAsset.denom))?.amount ?? BN_ZERO
@@ -57,13 +55,13 @@ export default function VaultDeposit(props: Props) {
   }, [deposits, secondaryAsset.denom])
 
   const primaryValue = useMemo(
-    () => getValueFromBNCoins([primaryCoin], prices, assets),
-    [primaryCoin, prices, assets],
+    () => getValueFromBNCoins([primaryCoin], assets),
+    [primaryCoin, assets],
   )
 
   const totalValue = useMemo(
-    () => getValueFromBNCoins([primaryCoin, secondaryCoin], prices, assets),
-    [primaryCoin, secondaryCoin, prices, assets],
+    () => getValueFromBNCoins([primaryCoin, secondaryCoin], assets),
+    [primaryCoin, secondaryCoin, assets],
   )
 
   const primaryValuePercentage = useMemo(() => {

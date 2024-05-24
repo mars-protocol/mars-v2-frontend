@@ -2,12 +2,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
-import useAllWhitelistedAssets from 'hooks/assets/useAllWhitelistedAssets'
+import useAllAssets from 'hooks/assets/useAllAssets'
 import useAssetParams from 'hooks/params/useAssetParams'
 import useAllPerpsDenomStates from 'hooks/perps/usePerpsDenomStates'
 import { useAllPerpsParamsSC } from 'hooks/perps/usePerpsParams'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
-import usePrices from 'hooks/prices/usePrices'
 import useSlippage from 'hooks/settings/useSlippage'
 import useVaultConfigs from 'hooks/vaults/useVaultConfigs'
 import { VaultPositionValue } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
@@ -23,14 +22,14 @@ import { byDenom } from 'utils/array'
 import { SWAP_FEE_BUFFER } from 'utils/constants'
 import {
   BorrowTarget,
+  LiquidationPriceKind,
+  SwapKind,
   compute_health_js,
   liquidation_price_js,
-  LiquidationPriceKind,
   max_borrow_estimate_js,
   max_perp_size_estimate_js,
   max_swap_estimate_js,
   max_withdraw_estimate_js,
-  SwapKind,
 } from 'utils/health_computer'
 import { BN } from 'utils/helpers'
 
@@ -40,8 +39,7 @@ import { BN } from 'utils/helpers'
 const VALUE_SCALE_FACTOR = 12
 
 export default function useHealthComputer(account?: Account) {
-  const assets = useAllWhitelistedAssets()
-  const { data: prices } = usePrices()
+  const { data: assets } = useAllAssets()
   const { data: assetParams } = useAssetParams()
   const { data: vaultConfigs } = useVaultConfigs()
   const { data: perpsDenomStates } = useAllPerpsDenomStates()
@@ -59,7 +57,8 @@ export default function useHealthComputer(account?: Account) {
     if (!account?.vaults) return null
     return account.vaults.reduce(
       (prev, curr) => {
-        const baseCoinPrice = prices.find((price) => price.denom === curr.denoms.lp)?.amount || 0
+        const baseCoinPrice =
+          assets.find((asset) => asset.denom === curr.denoms.lp)?.price?.amount || BN_ZERO
         prev[curr.address] = {
           base_coin: {
             amount: '0', // Not used by healthcomputer
@@ -84,11 +83,13 @@ export default function useHealthComputer(account?: Account) {
       },
       {} as { [key: string]: VaultPositionValue },
     )
-  }, [account?.vaults, prices])
+  }, [account?.vaults])
 
   const priceData = useMemo(() => {
+    const prices = assets.map((asset) => asset.price)
     return prices.reduce(
       (prev, curr) => {
+        if (!curr) return prev
         const decimals = assets.find(byDenom(curr.denom))?.decimals || 6
 
         // The HealthComputer needs prices expressed per 1 amount. So we need to correct here for any additional decimals.
@@ -101,7 +102,7 @@ export default function useHealthComputer(account?: Account) {
       },
       {} as { [key: string]: string },
     )
-  }, [assets, prices])
+  }, [assets])
 
   const denomsData = useMemo(
     () =>

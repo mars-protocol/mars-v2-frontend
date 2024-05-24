@@ -1,4 +1,5 @@
 import { LogoUKNOWN } from 'components/common/assets/AssetLogos'
+import { priceFeedIDs } from 'configs/assets/pythPriceFeedIDs'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
@@ -14,12 +15,11 @@ function isAssetPair(assetPair: Asset | AssetPair): assetPair is AssetPair {
 
 export function sortAssetsOrPairs(
   assets: Asset[] | AssetPair[],
-  prices: BNCoin[],
   markets: Market[],
   balances: BNCoin[],
   baseDenom: string,
 ): Asset[] | AssetPair[] {
-  if (prices.length === 0 || markets.length === 0) return assets
+  if (assets.length === 0 || markets.length === 0) return assets
 
   return assets.sort((a, b) => {
     const assetA = isAssetPair(a) ? a.buy : a
@@ -28,9 +28,9 @@ export function sortAssetsOrPairs(
     const aDenom = assetA.denom
     const bDenom = assetB.denom
     const aBalance = balances?.find(byDenom(aDenom))?.amount ?? BN_ZERO
-    const aPrice = prices?.find(byDenom(aDenom))?.amount ?? BN_ZERO
+    const aPrice = assetA.price?.amount ?? BN_ZERO
     const bBalance = balances?.find(byDenom(bDenom))?.amount ?? BN_ZERO
-    const bPrice = prices?.find(byDenom(bDenom))?.amount ?? BN_ZERO
+    const bPrice = assetB.price?.amount ?? BN_ZERO
 
     const aValue = demagnify(aBalance, assetA) * aPrice.toNumber()
     const bValue = demagnify(bBalance, assetB) * bPrice.toNumber()
@@ -49,23 +49,13 @@ export function sortAssetsOrPairs(
   })
 }
 
-export function getAllAssetsWithPythId(chains: { [key: string]: ChainConfig }) {
-  return Object.entries(chains)
-    .map(([_, chainConfig]) => chainConfig.assets)
-    .flatMap((assets) => assets)
-    .filter(
-      (item, index, array) =>
-        index === array.findIndex((foundItem) => foundItem['denom'] === item['denom']),
-    )
-    .filter((asset) => asset.pythPriceFeedId)
-}
-
-export function getAssetSymbol(chainConfig: ChainConfig, denom: string) {
-  return chainConfig.assets.find((asset) => asset.denom === denom)?.symbol
-}
-
 export function stringifyDenom(denom: string) {
   return denom.replaceAll('/', '_').replaceAll('.', '')
+}
+
+export function getAssetSymbolByDenom(denom: string, assets: Asset[]) {
+  const asset = assets.find(byDenom(denom))
+  return asset?.symbol ?? getSymbolFromUnknownAssetDenom(denom)
 }
 
 export function getSymbolFromUnknownAssetDenom(denom: string) {
@@ -93,30 +83,24 @@ export function handleUnknownAsset(coin: Coin): Asset {
   return {
     denom: coin.denom,
     decimals: 6,
-    hasOraclePrice: false,
-    id: stringifyDenom(coin.denom),
     name: getNameFromUnknownAssetDenom(coin.denom),
     symbol: getSymbolFromUnknownAssetDenom(coin.denom),
   }
 }
-export function convertAstroportAssetsResponse(data: AstroportAsset[], assets: Asset[]): Asset[] {
-  const whitelistedAssetDenoms = assets.map((asset) => asset.denom)
-  const astroportAssetData = data.filter((asset) => !whitelistedAssetDenoms.includes(asset.denom))
-
-  return astroportAssetData.map((asset) => {
+export function convertAstroportAssetsResponse(data: AstroportAsset[]): Asset[] {
+  return data.map((asset) => {
     return {
       denom: asset.denom,
-      decimals: asset.decimals,
-      hasOraclePrice: false,
-      id: stringifyDenom(asset.symbol),
       name: asset.description,
+      decimals: asset.decimals,
       symbol: getAssetSymbolFromUnknownAsset(asset.symbol),
       logo: getAstroportAssetLogo(asset.icon),
-      isAutoLendEnabled: false,
-      isTradeEnabled: true,
       price: asset.priceUSD
         ? BNCoin.fromCoin({ denom: asset.denom, amount: String(asset.priceUSD) })
         : undefined,
+      pythPriceFeedId: priceFeedIDs.find((pf) => pf.symbol === asset.symbol.toUpperCase())
+        ?.priceFeedID,
+      pythFeedName: priceFeedIDs.find((pf) => pf.symbol === asset.symbol.toUpperCase())?.feedName,
     }
   })
 }
