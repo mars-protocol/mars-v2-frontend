@@ -1,12 +1,12 @@
 import getPrices from 'api/prices/getPrices'
-import useAssetsWithoutPrices from 'hooks/assets/useAssetsWithoutPrices'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useSWR from 'swr'
 import { BNCoin } from 'types/classes/BNCoin'
+import useAssetsNoOraclePrices from './useAssetsNoOraclePrices'
 
 export default function useAssets() {
   const chainConfig = useChainConfig()
-  const { data: assets } = useAssetsWithoutPrices()
+  const { data: assets } = useAssetsNoOraclePrices()
 
   return useSWR(
     assets && `chains/${chainConfig.id}/assets`,

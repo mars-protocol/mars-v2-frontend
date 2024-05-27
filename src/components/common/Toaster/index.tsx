@@ -10,7 +10,7 @@ import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useAstroportAssets from 'hooks/assets/useAstroportAssets'
+import useAssetsNoOraclePrices from 'hooks/assets/useAssetsNoOraclePrices'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useTransactionStore from 'hooks/common/useTransactionStore'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -67,7 +67,7 @@ export default function Toaster() {
     DEFAULT_SETTINGS.reduceMotion,
   )
   const chainConfig = useChainConfig()
-  const { data: assets } = useAstroportAssets()
+  const { data: assets } = useAssetsNoOraclePrices()
 
   const toast = useStore((s) => s.toast)
   const { addTransaction } = useTransactionStore()

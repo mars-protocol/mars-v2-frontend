@@ -1,5 +1,5 @@
+import getAstroportAssets from 'api/assets/getAstroportAssets'
 import USD from 'configs/assets/USDollar'
-import useAstroportAssets from 'hooks/assets/useAstroportAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useAssetParams from 'hooks/params/useAssetParams'
 import { useAllPerpsParamsSC } from 'hooks/perps/usePerpsParams'
@@ -7,15 +7,14 @@ import useStore from 'store'
 import useSWR from 'swr'
 import { AssetParamsBaseForAddr, PerpParams } from 'types/generated/mars-params/MarsParams.types'
 
-export default function useAssetsWithoutPrices() {
+export default function useAssetsNoOraclePrices() {
   const chainConfig = useChainConfig()
-  const { data: assets } = useAstroportAssets()
   const { data: assetParams } = useAssetParams()
   const { data: perpsParams } = useAllPerpsParamsSC()
 
   return useSWR(
-    assets && assetParams && `chains/${chainConfig.id}/allAssets`,
-    () => sortAndMapAllAssets(chainConfig, assets!, assetParams!, perpsParams),
+    assetParams && `chains/${chainConfig.id}/assetsNoOraclePrices`,
+    async () => fetchSortAndMapAllAssets(chainConfig, assetParams!, perpsParams),
     {
       suspense: true,
       revalidateOnFocus: false,
@@ -25,12 +24,12 @@ export default function useAssetsWithoutPrices() {
   )
 }
 
-function sortAndMapAllAssets(
+async function fetchSortAndMapAllAssets(
   chainConfig: ChainConfig,
-  assets: Asset[],
   assetParams: AssetParamsBaseForAddr[],
   perpsParams?: PerpParams[],
 ) {
+  const assets = await getAstroportAssets(chainConfig)
   const allAssets = chainConfig.lp ? [...assets, USD, ...chainConfig.lp] : [...assets, USD]
 
   const unsortedAssets = allAssets.map((asset) => {
