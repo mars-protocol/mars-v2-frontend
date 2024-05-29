@@ -7,7 +7,6 @@ const nextConfig = {
       'assets.leapwallet.io',
       'raw.githubusercontent.com',
       'xdefi-static.s3.eu-west-1.amazonaws.com',
-      'app.astroport.fi',
     ],
   },
   async headers() {
