@@ -21,6 +21,7 @@ import useAccountIds from 'hooks/accounts/useAccountIds'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -78,19 +79,23 @@ function AccountDetails(props: Props) {
     updatedAccount || account,
   )
   const assets = useDepositEnabledAssets()
+  const whitelistedAssets = useWhitelistedAssets()
   const accountBalanceValue = useMemo(
     () => calculateAccountBalanceValue(updatedAccount ?? account, assets),
     [updatedAccount, account, assets],
   )
   const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalanceValue)
-  const leverage = useMemo(() => calculateAccountLeverage(account, assets), [account, assets])
+  const leverage = useMemo(
+    () => calculateAccountLeverage(account, whitelistedAssets),
+    [account, whitelistedAssets],
+  )
   const updatedLeverage = useMemo(() => {
     if (!updatedAccount) return null
-    const updatedLeverage = calculateAccountLeverage(updatedAccount, assets)
+    const updatedLeverage = calculateAccountLeverage(updatedAccount, whitelistedAssets)
 
     if (updatedLeverage.eq(leverage)) return null
     return updatedLeverage
-  }, [updatedAccount, leverage, assets])
+  }, [updatedAccount, leverage, whitelistedAssets])
 
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
@@ -109,13 +114,13 @@ function AccountDetails(props: Props) {
         borrowAssetsData,
         lendingAssetsData,
         hlsStrategies,
-        assets,
+        whitelistedAssets,
         vaultAprs,
         account.kind === 'high_levered_strategy',
       ),
     [
       account,
-      assets,
+      whitelistedAssets,
       borrowAssetsData,
       hlsStrategies,
       lendingAssetsData,
