@@ -13,6 +13,7 @@ import useSlippage from 'hooks/settings/useSlippage'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
+import { getTokenPrice } from 'utils/tokens'
 
 export default function WithdrawFromVaultsModal() {
   const modal = useStore((s) => s.withdrawFromVaultsModal)
@@ -58,10 +59,8 @@ export default function WithdrawFromVaultsModal() {
             const secondaryAsset = assets.find(byDenom(vault.denoms.secondary))
 
             if (!primaryAsset || !secondaryAsset) return null
-            const primaryAssetPrice =
-              assets.find(byDenom(primaryAsset.denom))?.price?.amount ?? BN_ONE
-            const secondaryAssetPrice =
-              assets.find(byDenom(secondaryAsset.denom))?.price?.amount ?? BN_ONE
+            const primaryAssetPrice = getTokenPrice(primaryAsset.denom, assets, BN_ONE)
+            const secondaryAssetPrice = getTokenPrice(secondaryAsset.denom, assets, BN_ONE)
 
             const primaryAssetAmount = positionValue.dividedBy(primaryAssetPrice).dividedBy(2)
             const secondaryAssetAmount = positionValue.dividedBy(secondaryAssetPrice).dividedBy(2)

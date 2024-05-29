@@ -57,7 +57,7 @@ export default function RewardsCenter(props: Props) {
   const totalRewardsCoin = useMemo(() => {
     let total = 0
     unclaimedRewards.forEach((reward) => {
-      const value = getCoinValue(reward, assets) ?? BN_ZERO
+      const value = getCoinValue(reward, assets)
       total = total + value.toNumber()
     })
 

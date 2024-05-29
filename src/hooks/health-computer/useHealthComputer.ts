@@ -22,16 +22,17 @@ import { byDenom } from 'utils/array'
 import { SWAP_FEE_BUFFER } from 'utils/constants'
 import {
   BorrowTarget,
-  LiquidationPriceKind,
-  SwapKind,
   compute_health_js,
   liquidation_price_js,
+  LiquidationPriceKind,
   max_borrow_estimate_js,
   max_perp_size_estimate_js,
   max_swap_estimate_js,
   max_withdraw_estimate_js,
+  SwapKind,
 } from 'utils/health_computer'
 import { BN } from 'utils/helpers'
+import { getTokenPrice } from 'utils/tokens'
 
 // Pyth returns prices with up to 32 decimals. Javascript only supports 18 decimals. So we need to scale by 14 t
 // avoid "too many decimals" errors.
@@ -57,8 +58,7 @@ export default function useHealthComputer(account?: Account) {
     if (!account?.vaults) return null
     return account.vaults.reduce(
       (prev, curr) => {
-        const baseCoinPrice =
-          assets.find((asset) => asset.denom === curr.denoms.lp)?.price?.amount || BN_ZERO
+        const baseCoinPrice = getTokenPrice(curr.denoms.lp, assets)
         prev[curr.address] = {
           base_coin: {
             amount: '0', // Not used by healthcomputer
@@ -86,8 +86,8 @@ export default function useHealthComputer(account?: Account) {
   }, [account?.vaults])
 
   const priceData = useMemo(() => {
-    const assetWithPrice = assets.filter((asset) => asset.price)
-    const prices = assetWithPrice.map((asset) => asset.price) as BNCoin[]
+    const assetsWithPrice = assets.filter((asset) => asset.price)
+    const prices = assetsWithPrice.map((asset) => asset.price) as BNCoin[]
     return prices.reduce(
       (prev, curr) => {
         const decimals = assets.find(byDenom(curr.denom))?.decimals || 6

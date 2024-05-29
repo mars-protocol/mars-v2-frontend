@@ -117,7 +117,7 @@ interface Asset extends AssetMetaData {
 }
 
 interface AssetMetaData {
-  hasAssetParams?: boolean
+  isWhitelisted?: boolean
   isAutoLendEnabled?: boolean
   isBorrowEnabled?: boolean
   isDepositEnabled?: boolean
@@ -127,7 +127,7 @@ interface AssetMetaData {
   isStable?: boolean
   isStaking?: boolean
   isPerpsEnabled?: boolean
-  logo?: React.FC | string | null
+  logo?: string | null
   prefix?: string
   pythPriceFeedId?: string
   pythFeedName?: string
@@ -235,7 +235,7 @@ interface ChainConfig {
     explorer: string
     pools: string
     routes: string
-    anyAsset: string
+    dexAssets: string
     aprs: {
       vaults: string
       stride: string

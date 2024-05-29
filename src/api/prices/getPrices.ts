@@ -8,7 +8,7 @@ export default async function getPrices(
   assets: Asset[],
 ): Promise<BNCoin[]> {
   const pythAndOraclePrices = []
-  const assetsToFetchPrices = assets.filter((asset) => asset.hasAssetParams)
+  const assetsToFetchPrices = assets.filter((asset) => asset.isWhitelisted)
 
   const assetsWithPythPriceFeedId = assets.filter((asset) => asset.pythPriceFeedId)
   const assetsWithOraclePrices = assetsToFetchPrices.filter((asset) => !asset.pythPriceFeedId)

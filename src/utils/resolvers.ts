@@ -12,6 +12,7 @@ import {
 import { Market as RedBankMarket } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { BN, getLeverageFromLTV } from 'utils/helpers'
 import { convertAprToApy } from 'utils/parsers'
+import { getTokenPrice } from 'utils/tokens'
 
 export function resolveMarketResponse(
   asset: Asset,
@@ -106,8 +107,7 @@ export function resolvePerpsPositions(
   assets: Asset[],
 ): PerpsPosition[] {
   if (!perpPositions || !perpPositions.length) return []
-  const basePrice =
-    assets.find((asset) => asset.denom === perpPositions[0].base_denom)?.price?.amount ?? BN_ZERO
+  const basePrice = getTokenPrice(perpPositions[0].base_denom, assets)
 
   return perpPositions.map((position) => {
     return {

@@ -32,11 +32,14 @@ export default function useDepositHlsVault(props: Props) {
   )
 
   const { positionValue, leverage } = useMemo(() => {
-    const collateralValue =
-      getCoinValue(BNCoin.fromDenomAndBigNumber(props.collateralDenom, depositAmount), assets) ??
-      BN_ZERO
-    const borrowValue =
-      getCoinValue(BNCoin.fromDenomAndBigNumber(props.borrowDenom, borrowAmount), assets) ?? BN_ZERO
+    const collateralValue = getCoinValue(
+      BNCoin.fromDenomAndBigNumber(props.collateralDenom, depositAmount),
+      assets,
+    )
+    const borrowValue = getCoinValue(
+      BNCoin.fromDenomAndBigNumber(props.borrowDenom, borrowAmount),
+      assets,
+    )
 
     return {
       positionValue: collateralValue.plus(borrowValue),

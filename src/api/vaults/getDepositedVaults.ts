@@ -159,14 +159,16 @@ async function getVaultValuesAndAmounts(
         secondary: BN(secondaryLpToken.amount),
       },
       values: {
-        primary: getCoinValue(new BNCoin(primaryLpToken), assets) ?? BN_ZERO,
-        secondary: getCoinValue(new BNCoin(secondaryLpToken), assets) ?? BN_ZERO,
-        unlocking:
-          getCoinValue(BNCoin.fromDenomAndBigNumber(vault.denoms.lp, amounts.unlocking), assets) ??
-          BN_ZERO,
-        unlocked:
-          getCoinValue(BNCoin.fromDenomAndBigNumber(vault.denoms.lp, amounts.unlocked), assets) ??
-          BN_ZERO,
+        primary: getCoinValue(new BNCoin(primaryLpToken), assets),
+        secondary: getCoinValue(new BNCoin(secondaryLpToken), assets),
+        unlocking: getCoinValue(
+          BNCoin.fromDenomAndBigNumber(vault.denoms.lp, amounts.unlocking),
+          assets,
+        ),
+        unlocked: getCoinValue(
+          BNCoin.fromDenomAndBigNumber(vault.denoms.lp, amounts.unlocked),
+          assets,
+        ),
       },
     }
   } catch (ex) {

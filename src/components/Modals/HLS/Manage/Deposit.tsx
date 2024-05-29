@@ -152,9 +152,10 @@ export default function Deposit(props: Props) {
       let additionalDebt = BN_ZERO
 
       if (currentLeverage > 1 && keepLeverage) {
-        const depositValue =
-          getCoinValue(BNCoin.fromDenomAndBigNumber(props.collateralAsset.denom, amount), assets) ??
-          BN_ZERO
+        const depositValue = getCoinValue(
+          BNCoin.fromDenomAndBigNumber(props.collateralAsset.denom, amount),
+          assets,
+        )
         const borrowValue = BN(currentLeverage - 1).times(depositValue)
         additionalDebt = getCoinAmount(props.borrowMarket.asset.denom, borrowValue, assets)
       }

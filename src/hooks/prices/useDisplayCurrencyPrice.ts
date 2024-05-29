@@ -4,8 +4,8 @@ import { BN_ZERO } from 'constants/math'
 import useAssets from 'hooks/assets/useAssets'
 import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
-import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
+import { getTokenPrice } from 'utils/tokens'
 
 function useDisplayCurrencyPrice() {
   const { data: assets } = useAssets()
@@ -20,11 +20,11 @@ function useDisplayCurrencyPrice() {
 
   const getConversionRate = useCallback(
     (denom: string) => {
-      const assetPrice = assets.find(byDenom(denom))?.price
-      const displayCurrencyPrice = assets.find(byDenom(displayCurrency))?.price
+      const assetPrice = getTokenPrice(denom, assets)
+      const displayCurrencyPrice = getTokenPrice(displayCurrency, assets)
 
       if (assetPrice && displayCurrencyPrice) {
-        return BN(assetPrice.amount).dividedBy(displayCurrencyPrice.amount)
+        return assetPrice.dividedBy(displayCurrencyPrice)
       }
 
       return BN_ZERO

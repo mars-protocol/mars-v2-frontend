@@ -58,7 +58,7 @@ export default function VaultModalContent(props: Props) {
         getCoinValue(
           BNCoin.fromDenomAndBigNumber(props.vault.cap.denom, capLeft),
           assets,
-        )?.toString() ?? '0',
+        ).toString(),
         displayAsset,
       )
 

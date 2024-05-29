@@ -1,6 +1,5 @@
-import { LogoUKNOWN } from 'components/common/assets/AssetLogos'
-import { priceFeedIDs } from 'configs/assets/pythPriceFeedIDs'
 import { BN_ZERO } from 'constants/math'
+import { priceFeedIDs } from 'constants/pythPriceFeedIDs'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { demagnify, truncate } from 'utils/formatters'
@@ -106,7 +105,7 @@ export function convertAstroportAssetsResponse(data: AstroportAsset[]): Asset[] 
 }
 
 export function getAstroportAssetLogo(icon?: string) {
-  if (!icon) return LogoUKNOWN
+  if (!icon) return null
   if (icon.startsWith('https://')) return icon
   return `https://app.astroport.fi${icon}`
 }

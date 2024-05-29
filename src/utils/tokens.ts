@@ -13,8 +13,9 @@ export const getTokenDecimals = (denom: string, marketAssets: Asset[]) =>
 export const getTokenIcon = (denom: string, marketAssets: Asset[]) =>
   marketAssets.find((asset) => asset.denom.toLowerCase() === denom.toLowerCase())?.logo ?? ''
 
-export function getTokenPrice(denom: string, assets: Asset[]): BigNumber {
-  const price = assets.find((asset) => asset.denom === denom)?.price?.amount ?? BN_ZERO
+export function getTokenPrice(denom: string, assets: Asset[], fallback?: BigNumber): BigNumber {
+  const price = assets.find((asset) => asset.denom === denom)?.price?.amount
+  if (!price) return fallback ?? BN_ZERO
   return BN(price)
 }
 

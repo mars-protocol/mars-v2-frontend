@@ -1,8 +1,8 @@
-import useAssetsNoOraclePrices from 'hooks/assets/useAssetsNoOraclePrices'
+import useAssets from 'hooks/assets/useAssets'
 import { byDenom, bySymbol } from 'utils/array'
 
 export default function useAsset(denomOrSymbol: string) {
-  const { data: assets } = useAssetsNoOraclePrices()
+  const { data: assets } = useAssets()
 
   return assets.find(byDenom(denomOrSymbol)) ?? assets.find(bySymbol(denomOrSymbol))
 }

@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 
-import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useDebounce from 'hooks/common/useDebounce'
 import { ChainInfoID } from 'types/enums'
@@ -10,7 +10,7 @@ import { BN } from 'utils/helpers'
 export default function useRouteInfo(denomIn: string, denomOut: string, amount: BigNumber) {
   const chainConfig = useChainConfig()
   const isOsmosis = [ChainInfoID.Osmosis1, ChainInfoID.OsmosisDevnet].includes(chainConfig.id)
-  const assets = useDepositEnabledAssets()
+  const { data: assets } = useAssets()
   const debouncedAmount = useDebounce<string>(amount.toString(), 500)
 
   const osmosisRoute = useSWR<SwapRouteInfo | null>(

@@ -193,7 +193,7 @@ export function useUpdatedAccount(account?: Account) {
     (depositCoin: BNCoin, borrowCoin: BNCoin) => {
       addDeposits([depositCoin])
       addDebts([borrowCoin])
-      const additionalDebtValue = getCoinValue(borrowCoin, assets) ?? BN_ZERO
+      const additionalDebtValue = getCoinValue(borrowCoin, assets)
 
       const tradeOutputAmount = getCoinAmount(depositCoin.denom, additionalDebtValue, assets)
         .times(1 - SWAP_FEE_BUFFER)
@@ -205,8 +205,7 @@ export function useUpdatedAccount(account?: Account) {
 
   const simulateHlsStakingWithdraw = useCallback(
     (collateralDenom: string, debtDenom: string, repayAmount: BigNumber) => {
-      const repayValue =
-        getCoinValue(BNCoin.fromDenomAndBigNumber(debtDenom, repayAmount), assets) ?? BN_ZERO
+      const repayValue = getCoinValue(BNCoin.fromDenomAndBigNumber(debtDenom, repayAmount), assets)
       const removeDepositAmount = getCoinAmount(collateralDenom, repayValue, assets)
         .times(1 + slippage)
         .integerValue()

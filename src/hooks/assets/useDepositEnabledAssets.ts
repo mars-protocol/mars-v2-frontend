@@ -1,7 +1,8 @@
 import useAssets from 'hooks/assets/useAssets'
+import { useMemo } from 'react'
 
 export default function useDepositEnabledAssets() {
   const { data: assets } = useAssets()
 
-  return assets.filter((asset) => asset.isDepositEnabled)
+  return useMemo(() => assets.filter((asset) => asset.isDepositEnabled), [assets])
 }

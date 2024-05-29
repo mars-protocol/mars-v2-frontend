@@ -15,7 +15,7 @@ import {
 } from '@delphi-labs/shuttle-react'
 import { FC } from 'react'
 
-import chains from 'configs/chains'
+import chains from 'chains'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { WALLETS } from 'constants/wallets'
 import { WalletID } from 'types/enums'

@@ -7,6 +7,7 @@ export default function useFilteredAssets(assets: Asset[]) {
     () =>
       assets.filter(
         (asset) =>
+          asset.denom.toLocaleLowerCase().includes(searchString.toLowerCase()) ||
           asset.symbol.toLocaleLowerCase().includes(searchString.toLowerCase()) ||
           asset.name.toLocaleLowerCase().includes(searchString.toLowerCase()),
       ),

@@ -1,11 +1,13 @@
 import getAstroportAssets from 'api/assets/getAstroportAssets'
-import USD from 'configs/assets/USDollar'
+import USD from 'constants/USDollar'
+import { PRICE_STALE_TIME } from 'constants/query'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useAssetParams from 'hooks/params/useAssetParams'
 import { useAllPerpsParamsSC } from 'hooks/perps/usePerpsParams'
 import useStore from 'store'
 import useSWR from 'swr'
 import { AssetParamsBaseForAddr, PerpParams } from 'types/generated/mars-params/MarsParams.types'
+import { byDenom } from 'utils/array'
 
 export default function useAssetsNoOraclePrices() {
   const chainConfig = useChainConfig()
@@ -13,12 +15,12 @@ export default function useAssetsNoOraclePrices() {
   const { data: perpsParams } = useAllPerpsParamsSC()
 
   return useSWR(
-    assetParams && `chains/${chainConfig.id}/assetsNoOraclePrices`,
+    assetParams && `chains/${chainConfig.id}/noOraclePrices`,
     async () => fetchSortAndMapAllAssets(chainConfig, assetParams!, perpsParams),
     {
       suspense: true,
       revalidateOnFocus: false,
-      staleTime: 30_000,
+      staleTime: PRICE_STALE_TIME,
       revalidateIfStale: true,
     },
   )
@@ -33,14 +35,13 @@ async function fetchSortAndMapAllAssets(
   const allAssets = chainConfig.lp ? [...assets, USD, ...chainConfig.lp] : [...assets, USD]
 
   const unsortedAssets = allAssets.map((asset) => {
-    const currentAssetParams = assetParams.find((ap) => ap.denom === asset.denom)
-    const currentAssetPerpsParams = perpsParams
-      ? perpsParams.find((pp) => pp.denom === asset.denom)
-      : undefined
+    const currentAssetParams = assetParams.find(byDenom(asset.denom))
+
+    const currentAssetPerpsParams = perpsParams ? perpsParams.find(byDenom(asset.denom)) : undefined
 
     return {
       ...asset,
-      hasAssetParams: !!currentAssetParams,
+      isWhitelisted: !!currentAssetParams,
       isAutoLendEnabled: currentAssetParams?.red_bank.borrow_enabled ?? false,
       isBorrowEnabled: currentAssetParams?.red_bank.borrow_enabled ?? false,
       isDepositEnabled: currentAssetParams?.red_bank.deposit_enabled ?? false,
@@ -57,15 +58,15 @@ async function fetchSortAndMapAllAssets(
 
   // Sort Assets to list assets with asset params (listed assets) first
   const sortedAssets = unsortedAssets.sort((a, b) => {
-    if (a.hasAssetParams && !b.hasAssetParams) return -1
-    if (!a.hasAssetParams && b.hasAssetParams) return 1
+    if (a.isWhitelisted && !b.isWhitelisted) return -1
+    if (!a.isWhitelisted && b.isWhitelisted) return 1
     return a.symbol.localeCompare(b.symbol)
   })
 
   // We need to set the assets to the store to use them in the broadcast slice
   useStore.setState({ assets: sortedAssets })
   if (!chainConfig.anyAsset)
-    return sortedAssets.filter((asset) => asset.hasAssetParams || asset.denom === 'usd')
+    return sortedAssets.filter((asset) => asset.isWhitelisted || asset.denom === 'usd')
 
   return sortedAssets
 }

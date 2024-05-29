@@ -10,8 +10,8 @@ import Select from 'components/common/Select'
 import Text from 'components/common/Text'
 import WarningMessages from 'components/common/WarningMessages'
 import AssetImage from 'components/common/assets/AssetImage'
+import useAssets from 'hooks/assets/useAssets'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
-import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
@@ -33,7 +33,7 @@ interface Props {
 
 export default function TokenInput(props: Props) {
   const baseAsset = useBaseAsset()
-  const assets = useDepositEnabledAssets()
+  const { data: assets } = useAssets()
   function onMaxBtnClick() {
     props.onChange(BN(props.max))
   }

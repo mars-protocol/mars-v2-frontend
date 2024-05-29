@@ -30,7 +30,7 @@ export default function AccountSummary(props: Props) {
   const { account, isInModal, isHls } = props
   const chainConfig = useChainConfig()
   const storageKey = isInModal
-    ? `${chainConfig.id}/${LocalStorageKeys.ACCOUNT_SUMMARY_INMODAL_TABS_EXPANDED}`
+    ? `${chainConfig.id}/${LocalStorageKeys.ACCOUNT_SUMMARY_IN_MODAL_TABS_EXPANDED}`
     : `${chainConfig.id}/${LocalStorageKeys.ACCOUNT_SUMMARY_TABS_EXPANDED}`
   const defaultSetting = isInModal
     ? DEFAULT_SETTINGS.accountSummaryInModalTabsExpanded

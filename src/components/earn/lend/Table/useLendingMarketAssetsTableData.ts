@@ -14,13 +14,12 @@ function useLendingMarketAssetsTableData(): {
   const markets = useLendingMarkets()
   const accountLentAmounts = useCurrentAccountLends()
   const { convertAmount } = useDisplayCurrencyPrice()
-  const lendingMarkets = markets.filter((market) => market.asset.isDepositEnabled)
 
   return useMemo(() => {
     const accountLentAssets: LendingMarketTableData[] = [],
       availableAssets: LendingMarketTableData[] = []
 
-    lendingMarkets.forEach((market) => {
+    markets.forEach((market) => {
       const accountLentAmount =
         accountLentAmounts.find(byDenom(market.asset.denom))?.amount ?? BN_ZERO
       const accountLentValue = accountLentAmount
@@ -45,7 +44,7 @@ function useLendingMarketAssetsTableData(): {
       availableAssets,
       allAssets: [...accountLentAssets, ...availableAssets],
     }
-  }, [lendingMarkets, accountLentAmounts, convertAmount])
+  }, [markets, accountLentAmounts, convertAmount])
 }
 
 export default useLendingMarketAssetsTableData

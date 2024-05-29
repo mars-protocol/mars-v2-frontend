@@ -52,7 +52,7 @@ export function getValueFromBNCoins(coins: BNCoin[], assets: Asset[]): BigNumber
   let totalValue = BN_ZERO
 
   coins.forEach((coin) => {
-    totalValue = totalValue.plus(getCoinValue(coin, assets) ?? BN_ZERO)
+    totalValue = totalValue.plus(getCoinValue(coin, assets))
   })
 
   return totalValue

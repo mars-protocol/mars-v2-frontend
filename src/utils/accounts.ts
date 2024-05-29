@@ -54,7 +54,7 @@ export const calculateAccountValue = (
   if (type === 'perps') {
     return (
       account.perps?.reduce((acc, perpPosition) => {
-        acc = acc.plus(getCoinValue(perpPosition.pnl.unrealized.net, assets) ?? BN_ZERO)
+        acc = acc.plus(getCoinValue(perpPosition.pnl.unrealized.net, assets))
         return acc
       }, BN_ZERO) || BN_ZERO
     )
@@ -70,10 +70,7 @@ export const calculateAccountValue = (
     const unlockedAmount = account.perpsVault.unlocked ?? BN_ZERO
     const totalAmount = activeAmount.plus(unlockingAmount).plus(unlockedAmount)
 
-    return (
-      getCoinValue(BNCoin.fromDenomAndBigNumber(account.perpsVault.denom, totalAmount), assets) ??
-      BN_ZERO
-    )
+    return getCoinValue(BNCoin.fromDenomAndBigNumber(account.perpsVault.denom, totalAmount), assets)
   }
 
   return (

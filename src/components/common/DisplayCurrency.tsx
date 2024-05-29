@@ -10,7 +10,7 @@ import useAssets from 'hooks/assets/useAssets'
 import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import { BNCoin } from 'types/classes/BNCoin'
-import { getCoinValue } from 'utils/formatters'
+import { getCoinValue, getCoinValueWithoutFallback } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
 interface Props {
@@ -52,16 +52,16 @@ export default function DisplayCurrency(props: Props) {
   const isUSD = displayCurrencyAsset.denom === 'usd'
 
   const [amount, absoluteAmount] = useMemo(() => {
-    const coinValue = getCoinValue(coin, assets)
+    const coinValue = allowZeroAmount
+      ? getCoinValue(coin, assets)
+      : getCoinValueWithoutFallback(coin, assets)
 
-    if (typeof coinValue === 'undefined' && !allowZeroAmount) return []
-    if (typeof coinValue === 'undefined') return [0, 0]
+    if (typeof coinValue === 'undefined') return []
     if (displayCurrency === ORACLE_DENOM) return [coinValue.toNumber(), coinValue.abs().toNumber()]
 
     const displayDecimals = displayCurrencyAsset.decimals
-    const displayPrice = getCoinValue(
+    const displayPrice = getCoinValueWithoutFallback(
       BNCoin.fromDenomAndBigNumber(displayCurrency, BN(1).shiftedBy(displayDecimals)),
-
       assets,
     )
 
