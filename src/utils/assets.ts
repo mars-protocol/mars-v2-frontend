@@ -107,5 +107,5 @@ export function convertAstroportAssetsResponse(data: AstroportAsset[]): Asset[] 
 export function getAstroportAssetLogo(icon?: string) {
   if (!icon) return null
   if (icon.startsWith('https://')) return icon
-  return `https://app.astroport.fi${icon}`
+  return `https://raw.githubusercontent.com/astroport-fi/astroport-token-lists/main${icon}`
 }
