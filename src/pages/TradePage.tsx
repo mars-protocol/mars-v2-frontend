@@ -43,7 +43,6 @@ export default function TradePage() {
     [tradingPairAdvanced, tradingPairSimple, assets, isAdvanced],
   )
 
-  if (assets.length === 0) return null
   return (
     <div className='flex flex-col w-full h-full gap-4'>
       <div className='md:grid flex flex-wrap w-full md:grid-cols-[auto_346px] gap-4'>
