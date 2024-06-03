@@ -93,7 +93,7 @@ export function convertAstroportAssetsResponse(data: AstroportAsset[]): Asset[] 
       name: asset.description,
       decimals: asset.decimals,
       symbol: getAssetSymbolFromUnknownAsset(asset.symbol),
-      logo: getAstroportAssetLogo(asset.icon),
+      logo: asset.icon ?? null,
       price: asset.priceUSD
         ? BNCoin.fromCoin({ denom: asset.denom, amount: String(asset.priceUSD) })
         : undefined,
@@ -102,10 +102,4 @@ export function convertAstroportAssetsResponse(data: AstroportAsset[]): Asset[] 
       pythFeedName: priceFeedIDs.find((pf) => pf.symbol === asset.symbol.toUpperCase())?.feedName,
     }
   })
-}
-
-export function getAstroportAssetLogo(icon?: string) {
-  if (!icon) return null
-  if (icon.startsWith('https://')) return icon
-  return `https://app.astroport.fi${icon}`
 }
