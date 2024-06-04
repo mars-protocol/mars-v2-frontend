@@ -947,7 +947,7 @@ interface BroadcastSlice {
     vault: DepositedVault
     amount: string
   }) => Promise<boolean>
-  updateOracle: () => Promise<boolean>
+  resyncOracle: () => Promise<boolean>
   getPythVaas: () => Promise<import('@delphi-labs/shuttle-react').MsgExecuteContract>
   withdrawFromVaults: (options: {
     accountId: string
