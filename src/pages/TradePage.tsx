@@ -17,7 +17,10 @@ export default function TradePage() {
   const { pathname } = useLocation()
   const chainConfig = useChainConfig()
   const page = getPage(pathname)
-  const isAdvanced = useMemo(() => page === 'trade-advanced', [page])
+  const isAdvanced = useMemo(() => {
+    useStore.setState({ assetOverlayState: 'closed' })
+    return page === 'trade-advanced'
+  }, [page])
 
   const [tradingPairAdvanced] = useLocalStorage<Settings['tradingPairAdvanced']>(
     chainConfig.id + '/' + LocalStorageKeys.TRADING_PAIR_ADVANCED,

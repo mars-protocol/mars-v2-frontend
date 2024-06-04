@@ -102,7 +102,7 @@ export default function AssetOverlay(props: Props) {
 
   return (
     <Overlay
-      className='left-0 flex flex-col w-full overflow-hidden h-screen-full md:h-full top-18 md:inset-0'
+      className='left-0 flex flex-col w-full overflow-hidden h-screen-full md:h-auto top-18 md:inset-0'
       show={props.state !== 'closed'}
       setShow={handleClose}
     >
@@ -129,7 +129,7 @@ export default function AssetOverlay(props: Props) {
       </div>
       <Divider />
       {props.type === 'perps' && activePerpsPositions.length > 0 && (
-        <div className='flex flex-wrap w-full'>
+        <>
           <MarketSubheadLine title='Active Positions' />
           <AssetList
             assets={activePerpsPositions}
@@ -139,10 +139,10 @@ export default function AssetOverlay(props: Props) {
             toggleOpen={() => {}}
             activeAsset={props.buyAsset}
           />
-        </div>
+        </>
       )}
       {props.type === 'perps' && availablePerpsMarkets.length > 0 && (
-        <div className='flex flex-wrap w-full'>
+        <>
           <MarketSubheadLine title='Available Markets' />
           <AssetList
             assets={availablePerpsMarkets}
@@ -152,7 +152,7 @@ export default function AssetOverlay(props: Props) {
             toggleOpen={() => {}}
             activeAsset={props.buyAsset}
           />
-        </div>
+        </>
       )}
 
       {props.type === 'pair' && (

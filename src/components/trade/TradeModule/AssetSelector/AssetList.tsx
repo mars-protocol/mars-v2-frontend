@@ -42,7 +42,7 @@ export default function AssetList(props: Props) {
   return (
     <section
       className={classNames(
-        'flex flex-wrap flex-grow w-full overflow-hidden',
+        'flex flex-wrap w-full overflow-hidden',
         type !== 'perps' && 'pb-12',
       )}
     >
@@ -61,7 +61,7 @@ export default function AssetList(props: Props) {
             No available assets found
           </Text>
         ) : (
-          <ul className='flex flex-wrap w-full h-full overflow-y-scroll scrollbar-hide'>
+          <ul className='flex flex-wrap items-start w-full h-full overflow-y-scroll scrollbar-hide'>
             {sortedAssets.map((asset) => (
               <AssetSelectorItem
                 balances={balances}
