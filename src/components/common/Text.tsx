@@ -15,7 +15,7 @@ const headMap = ['6xl', '5xl', '4xl', '3xl']
 
 export default function Text(props: Props) {
   const tag = props.tag ?? 'p'
-  const size = props.size ?? 'base'
+  const size = props.size
 
   const tagIndex = headlines.indexOf(tag)
   const sizeClass = tagIndex > -1 ? headMap[tagIndex] : size
@@ -26,7 +26,8 @@ export default function Text(props: Props) {
       data-testid='text-component'
       className={classNames(
         props.className,
-        props.uppercase ? `text-${sizeClass}-caps` : `text-${sizeClass}`,
+        sizeClass && props.uppercase && `text-${sizeClass}-caps`,
+        sizeClass && !props.uppercase && `text-${sizeClass}`,
         props.monospace && 'number',
       )}
     >
