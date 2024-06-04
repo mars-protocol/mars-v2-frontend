@@ -26,10 +26,11 @@ export function useAllPerpsParams() {
 export function useAllPerpsParamsSC() {
   const chainConfig = useChainConfig()
   const clients = useClients()
+
   return useSWRImmutable(
     clients && chainConfig.perps && `chains/${chainConfig.id}/perps/params`,
     async () => getPerpsParams(chainConfig, clients!),
-    { fallbackData: [] },
+    { suspense: true },
   )
 }
 

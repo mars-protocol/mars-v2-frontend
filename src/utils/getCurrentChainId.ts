@@ -7,7 +7,7 @@ export const getCurrentChainId = () => {
   const defaultChainId =
     currentNetwork === NETWORK.MAINNET
       ? chains[ChainInfoID.Osmosis1].id
-      : chains[ChainInfoID.OsmosisDevnet].id
+      : chains[ChainInfoID.Pion1].id
   let chainId = defaultChainId
 
   if (window) {
@@ -16,10 +16,6 @@ export const getCurrentChainId = () => {
     switch (subdomain) {
       case 'osmosis':
         if (currentNetwork === NETWORK.MAINNET) chainId = ChainInfoID.Osmosis1
-        break
-
-      case 'testnet-osmosis':
-        if (currentNetwork === NETWORK.TESTNET) chainId = ChainInfoID.OsmosisDevnet
         break
 
       case 'neutron':
@@ -39,10 +35,6 @@ export const getCurrentChainId = () => {
     switch (localStorageChainId) {
       case ChainInfoID.Osmosis1:
         if (currentNetwork === NETWORK.MAINNET) chainId = ChainInfoID.Osmosis1
-        break
-
-      case ChainInfoID.OsmosisDevnet:
-        if (currentNetwork === NETWORK.TESTNET) chainId = ChainInfoID.OsmosisDevnet
         break
 
       case ChainInfoID.Neutron1:

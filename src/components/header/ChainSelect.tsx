@@ -59,13 +59,6 @@ const v1Outposts: V1Outpost[] = [
     network: NETWORK.MAINNET,
     target: '_self',
   },
-  {
-    chainId: ChainInfoID.OsmosisDevnet,
-    name: 'Osmosis Devnet',
-    network: NETWORK.TESTNET,
-    url: '/v1',
-    target: '_self',
-  },
 ]
 
 export default function ChainSelect(props: Props) {

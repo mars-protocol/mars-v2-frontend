@@ -13,10 +13,11 @@ export default function useAssetsNoOraclePrices() {
   const chainConfig = useChainConfig()
   const { data: assetParams } = useAssetParams()
   const { data: perpsParams } = useAllPerpsParamsSC()
+  const fetchedPerpsParams = chainConfig.perps ? perpsParams : ([] as PerpParams[])
 
   return useSWR(
-    assetParams && `chains/${chainConfig.id}/noOraclePrices`,
-    async () => fetchSortAndMapAllAssets(chainConfig, assetParams!, perpsParams),
+    assetParams && fetchedPerpsParams && `chains/${chainConfig.id}/noOraclePrices`,
+    async () => fetchSortAndMapAllAssets(chainConfig, assetParams, fetchedPerpsParams),
     {
       suspense: true,
       revalidateOnFocus: false,
@@ -29,7 +30,7 @@ export default function useAssetsNoOraclePrices() {
 async function fetchSortAndMapAllAssets(
   chainConfig: ChainConfig,
   assetParams: AssetParamsBaseForAddr[],
-  perpsParams?: PerpParams[],
+  perpsParams: PerpParams[],
 ) {
   const assets = await getAstroportAssets(chainConfig)
   const allAssets = chainConfig.lp ? [...assets, USD, ...chainConfig.lp] : [...assets, USD]

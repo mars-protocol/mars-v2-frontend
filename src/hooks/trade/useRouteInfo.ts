@@ -9,7 +9,7 @@ import { BN } from 'utils/helpers'
 
 export default function useRouteInfo(denomIn: string, denomOut: string, amount: BigNumber) {
   const chainConfig = useChainConfig()
-  const isOsmosis = [ChainInfoID.Osmosis1, ChainInfoID.OsmosisDevnet].includes(chainConfig.id)
+  const isOsmosis = [ChainInfoID.Osmosis1].includes(chainConfig.id)
   const { data: assets } = useAssets()
   const debouncedAmount = useDebounce<string>(amount.toString(), 500)
 
