@@ -1,4 +1,4 @@
-import chains from 'configs/chains'
+import chains from 'chains'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { getCurrentChainId } from 'utils/getCurrentChainId'
 

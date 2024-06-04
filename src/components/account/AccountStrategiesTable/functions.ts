@@ -3,10 +3,10 @@ import { transformPerpsVaultIntoDeposited } from 'hooks/vaults/useDepositedVault
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultStatus } from 'types/enums'
 import { byDenom } from 'utils/array'
+import { getTokenPrice } from 'utils/tokens'
 
 export function getVaultAccountStrategiesRow(
   vault: DepositedVault,
-  prices: BNCoin[],
   assets: Asset[],
   apy?: number | null,
   prev?: DepositedVault,
@@ -27,21 +27,14 @@ export function getVaultAccountStrategiesRow(
   const primaryDecimals = assets.find(byDenom(vault.denoms.primary))?.decimals ?? 6
   const halfValue = totalValue.dividedBy(2)
   const halfValuePrev = prevTotalValue.dividedBy(2)
-  const primaryPrice =
-    prices.find(byDenom(vault.denoms.primary)) ??
-    BNCoin.fromDenomAndBigNumber(vault.denoms.primary, BN_ONE)
-  const primaryAmount = halfValue.dividedBy(primaryPrice.amount).shiftedBy(primaryDecimals)
-  const primaryAmountPrev = halfValuePrev.dividedBy(primaryPrice.amount).shiftedBy(primaryDecimals)
+  const primaryPrice = getTokenPrice(vault.denoms.primary, assets, BN_ONE)
+  const primaryAmount = halfValue.dividedBy(primaryPrice).shiftedBy(primaryDecimals)
+  const primaryAmountPrev = halfValuePrev.dividedBy(primaryPrice).shiftedBy(primaryDecimals)
 
   const secondaryDecimals = assets.find(byDenom(vault.denoms.primary))?.decimals ?? 6
-
-  const secondaryPrice =
-    prices.find(byDenom(vault.denoms.secondary)) ??
-    BNCoin.fromDenomAndBigNumber(vault.denoms.secondary, BN_ONE)
-  const secondaryAmount = halfValue.dividedBy(secondaryPrice.amount).shiftedBy(secondaryDecimals)
-  const secondaryAmountPrev = halfValuePrev
-    .dividedBy(secondaryPrice.amount)
-    .shiftedBy(secondaryDecimals)
+  const secondaryPrice = getTokenPrice(vault.denoms.secondary, assets, BN_ONE)
+  const secondaryAmount = halfValue.dividedBy(secondaryPrice).shiftedBy(secondaryDecimals)
+  const secondaryAmountPrev = halfValuePrev.dividedBy(secondaryPrice).shiftedBy(secondaryDecimals)
 
   return {
     name: name,
@@ -78,7 +71,6 @@ export function getSizeChangeColor(coinsChange: AccountStrategyRow['coinsChange'
 
 export function getPerpsVaultAccountStrategiesRow(
   perpsVault: PerpsVault,
-  prices: BNCoin[],
   assets: Asset[],
   currentAccount: Account,
   prevAccount?: Account,
@@ -86,11 +78,10 @@ export function getPerpsVaultAccountStrategiesRow(
   const currentDepositedPerpsVaults = transformPerpsVaultIntoDeposited(
     currentAccount,
     perpsVault,
-    prices,
     assets,
   )
   const previousDepositedPerpsVaults = prevAccount
-    ? transformPerpsVaultIntoDeposited(prevAccount, perpsVault, prices, assets)
+    ? transformPerpsVaultIntoDeposited(prevAccount, perpsVault, assets)
     : null
 
   return currentDepositedPerpsVaults.map((vault) => {

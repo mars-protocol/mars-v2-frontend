@@ -5,6 +5,7 @@ import { AccountKind } from 'types/generated/mars-rover-health-computer/MarsRove
 export default async function getAccounts(
   kind: AccountKind,
   chainConfig: ChainConfig,
+  assets: Asset[],
   address?: string,
 ): Promise<Account[]> {
   if (!address) return new Promise((_, reject) => reject('No address'))
@@ -12,7 +13,7 @@ export default async function getAccounts(
 
   const $accounts = accountIdsAndKinds
     .filter((a) => a.kind === kind)
-    .map((account) => getAccount(chainConfig, account.id))
+    .map((account) => getAccount(chainConfig, assets, account.id))
 
   const accounts = await Promise.all($accounts).then((accounts) => accounts)
   if (accounts) {

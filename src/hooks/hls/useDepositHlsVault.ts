@@ -1,9 +1,8 @@
 import { useMemo, useState } from 'react'
 
 import { BN_ZERO } from 'constants/math'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useSwapValueLoss from 'hooks/hls/useSwapValueLoss'
-import usePrices from 'hooks/prices/usePrices'
 import useSlippage from 'hooks/settings/useSlippage'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
@@ -15,9 +14,8 @@ interface Props {
   collateralDenom: string
 }
 export default function useDepositHlsVault(props: Props) {
-  const { data: prices } = usePrices()
   const [slippage] = useSlippage()
-  const assets = useAllAssets()
+  const assets = useDepositEnabledAssets()
   const { data: valueLossPercentage } = useSwapValueLoss(props.borrowDenom, props.collateralDenom)
 
   const [depositAmount, setDepositAmount] = useState<BigNumber>(BN_ZERO)
@@ -36,12 +34,10 @@ export default function useDepositHlsVault(props: Props) {
   const { positionValue, leverage } = useMemo(() => {
     const collateralValue = getCoinValue(
       BNCoin.fromDenomAndBigNumber(props.collateralDenom, depositAmount),
-      prices,
       assets,
     )
     const borrowValue = getCoinValue(
       BNCoin.fromDenomAndBigNumber(props.borrowDenom, borrowAmount),
-      prices,
       assets,
     )
 
@@ -61,7 +57,6 @@ export default function useDepositHlsVault(props: Props) {
     props.collateralDenom,
     props.borrowDenom,
     depositAmount,
-    prices,
     assets,
     borrowAmount,
     valueLossPercentage,

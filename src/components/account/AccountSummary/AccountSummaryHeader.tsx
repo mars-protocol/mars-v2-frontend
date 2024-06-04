@@ -16,7 +16,6 @@ import { calculateAccountBalanceValue } from 'utils/accounts'
 interface Props {
   account: Account
   updatedAccount?: Account
-  prices: BNCoin[]
   assets: Asset[]
   leverage: number
   updatedLeverage: number | null
@@ -32,7 +31,6 @@ export default function AccountSummaryHeader(props: Props) {
   const {
     account,
     updatedAccount,
-    prices,
     assets,
     leverage,
     updatedLeverage,
@@ -44,13 +42,12 @@ export default function AccountSummaryHeader(props: Props) {
   } = props
   const onClose = useCallback(() => useStore.setState({ accountDetailsExpanded: false }), [])
   const accountBalance = useMemo(
-    () => (account ? calculateAccountBalanceValue(account, prices, assets) : BN_ZERO),
-    [account, prices, assets],
+    () => (account ? calculateAccountBalanceValue(account, assets) : BN_ZERO),
+    [account, assets],
   )
   const updatedAccountBalance = useMemo(
-    () =>
-      updatedAccount ? calculateAccountBalanceValue(updatedAccount, prices, assets) : undefined,
-    [updatedAccount, prices, assets],
+    () => (updatedAccount ? calculateAccountBalanceValue(updatedAccount, assets) : undefined),
+    [updatedAccount, assets],
   )
   const hasChanged = !updatedAccountBalance?.isEqualTo(accountBalance)
   const increase = updatedAccountBalance?.isGreaterThan(accountBalance)

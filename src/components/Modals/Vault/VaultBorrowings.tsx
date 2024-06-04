@@ -11,10 +11,9 @@ import Text from 'components/common/Text'
 import TokenInput from 'components/common/TokenInput'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useMarkets from 'hooks/markets/useMarkets'
-import usePrices from 'hooks/prices/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
@@ -23,10 +22,9 @@ import { formatPercent } from 'utils/formatters'
 import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
 
 export default function VaultBorrowings(props: VaultBorrowingsProps) {
-  const assets = useAllAssets()
+  const assets = useDepositEnabledAssets()
   const { borrowings, onChangeBorrowings } = props
   const markets = useMarkets()
-  const { data: prices } = usePrices()
   const vaultModal = useStore((s) => s.vaultModal)
   const depositIntoVault = useStore((s) => s.depositIntoVault)
   const updatedAccount = useStore((s) => s.updatedAccount)
@@ -73,8 +71,8 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
   }, [maxBorrowAmountsRaw, props.borrowings])
 
   const totalValue = useMemo(
-    () => getValueFromBNCoins(mergeBNCoinArrays(props.deposits, props.borrowings), prices, assets),
-    [props.deposits, props.borrowings, prices, assets],
+    () => getValueFromBNCoins(mergeBNCoinArrays(props.deposits, props.borrowings), assets),
+    [props.deposits, props.borrowings, assets],
   )
 
   useEffect(() => {

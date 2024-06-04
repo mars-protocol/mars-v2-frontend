@@ -1,7 +1,8 @@
 import { BN_ZERO } from 'constants/math'
+import { priceFeedIDs } from 'constants/pythPriceFeedIDs'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { demagnify } from 'utils/formatters'
+import { demagnify, truncate } from 'utils/formatters'
 
 export function findCoinByDenom(denom: string, coins: BigNumberCoin[]) {
   return coins.find((coin) => coin.denom === denom)
@@ -13,12 +14,11 @@ function isAssetPair(assetPair: Asset | AssetPair): assetPair is AssetPair {
 
 export function sortAssetsOrPairs(
   assets: Asset[] | AssetPair[],
-  prices: BNCoin[],
   markets: Market[],
   balances: BNCoin[],
   baseDenom: string,
 ): Asset[] | AssetPair[] {
-  if (prices.length === 0 || markets.length === 0) return assets
+  if (assets.length === 0 || markets.length === 0) return assets
 
   return assets.sort((a, b) => {
     const assetA = isAssetPair(a) ? a.buy : a
@@ -27,9 +27,9 @@ export function sortAssetsOrPairs(
     const aDenom = assetA.denom
     const bDenom = assetB.denom
     const aBalance = balances?.find(byDenom(aDenom))?.amount ?? BN_ZERO
-    const aPrice = prices?.find(byDenom(aDenom))?.amount ?? BN_ZERO
+    const aPrice = assetA.price?.amount ?? BN_ZERO
     const bBalance = balances?.find(byDenom(bDenom))?.amount ?? BN_ZERO
-    const bPrice = prices?.find(byDenom(bDenom))?.amount ?? BN_ZERO
+    const bPrice = assetB.price?.amount ?? BN_ZERO
 
     const aValue = demagnify(aBalance, assetA) * aPrice.toNumber()
     const bValue = demagnify(bBalance, assetB) * bPrice.toNumber()
@@ -48,17 +48,58 @@ export function sortAssetsOrPairs(
   })
 }
 
-export function getAllAssetsWithPythId(chains: { [key: string]: ChainConfig }) {
-  return Object.entries(chains)
-    .map(([_, chainConfig]) => chainConfig.assets)
-    .flatMap((assets) => assets)
-    .filter(
-      (item, index, array) =>
-        index === array.findIndex((foundItem) => foundItem['denom'] === item['denom']),
-    )
-    .filter((asset) => asset.pythPriceFeedId)
+export function stringifyDenom(denom: string) {
+  return denom.replaceAll('/', '_').replaceAll('.', '')
 }
 
-export function getAssetSymbol(chainConfig: ChainConfig, denom: string) {
-  return chainConfig.assets.find((asset) => asset.denom === denom)?.symbol
+export function getAssetSymbolByDenom(denom: string, assets: Asset[]) {
+  const asset = assets.find(byDenom(denom))
+  return asset?.symbol ?? getSymbolFromUnknownAssetDenom(denom)
+}
+
+export function getSymbolFromUnknownAssetDenom(denom: string) {
+  const denomParts = denom.split('/')
+  if (denomParts[0] === 'factory') return denomParts[denomParts.length - 1].toUpperCase()
+  return 'UNKNOWN'
+}
+
+export function getNameFromUnknownAssetDenom(denom: string) {
+  const denomParts = denom.split('/')
+  if (denomParts[0] === 'factory') return `factory...${denomParts[denomParts.length - 1]}`
+  if (denomParts[0] === 'gamm') return `Pool Token #${denomParts[denomParts.length - 1]}`
+  return truncate(denom, [3, 6])
+}
+
+export function getAssetSymbolFromUnknownAsset(symbol: string) {
+  const symbolParts = symbol.split('/')
+  if (symbolParts[0] === 'factory') return symbolParts[symbolParts.length - 1]
+  if (symbolParts[0] === 'gamm') return `POOL ${symbolParts[symbolParts.length - 1]}`
+  if (symbolParts[0] === 'ibc') return truncate(symbol, [3, 6])
+  return symbol
+}
+
+export function handleUnknownAsset(coin: Coin): Asset {
+  return {
+    denom: coin.denom,
+    decimals: 6,
+    name: getNameFromUnknownAssetDenom(coin.denom),
+    symbol: getSymbolFromUnknownAssetDenom(coin.denom),
+  }
+}
+export function convertAstroportAssetsResponse(data: AstroportAsset[]): Asset[] {
+  return data.map((asset) => {
+    return {
+      denom: asset.denom,
+      name: asset.description,
+      decimals: asset.decimals,
+      symbol: getAssetSymbolFromUnknownAsset(asset.symbol),
+      logo: asset.icon ?? null,
+      price: asset.priceUSD
+        ? BNCoin.fromCoin({ denom: asset.denom, amount: String(asset.priceUSD) })
+        : undefined,
+      pythPriceFeedId: priceFeedIDs.find((pf) => pf.symbol === asset.symbol.toUpperCase())
+        ?.priceFeedID,
+      pythFeedName: priceFeedIDs.find((pf) => pf.symbol === asset.symbol.toUpperCase())?.feedName,
+    }
+  })
 }

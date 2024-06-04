@@ -5,10 +5,8 @@ import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 import { resolveHLSStrategies } from 'utils/resolvers'
 
-export default async function getHLSStakingAssets(chainConfig: ChainConfig) {
-  const stakingAssetDenoms = chainConfig.assets
-    .filter((asset) => asset.isStaking)
-    .map((asset) => asset.denom)
+export default async function getHLSStakingAssets(chainConfig: ChainConfig, assets: Asset[]) {
+  const stakingAssetDenoms = assets.filter((asset) => asset.isStaking).map((asset) => asset.denom)
   const assetParams = await getAssetParams(chainConfig)
   const HLSAssets = assetParams
     .filter((asset) => asset.credit_manager.hls)
@@ -37,7 +35,7 @@ export default async function getHLSStakingAssets(chainConfig: ChainConfig) {
 
   return Promise.all(depositCaps$).then((depositCaps) => {
     return depositCaps.map((depositCap, index) => {
-      const borrowSymbol = chainConfig.assets.find(byDenom(strategies[index].denoms.borrow))?.symbol
+      const borrowSymbol = assets.find(byDenom(strategies[index].denoms.borrow))?.symbol
       return {
         ...strategies[index],
         depositCap: {

@@ -110,6 +110,7 @@ export default function AssetItem(props: Props) {
           coin={
             new BNCoin({ denom: asset.denom, amount: BN_ONE.shiftedBy(asset.decimals).toString() })
           }
+          showDetailedPrice
         />
       </button>
     </li>

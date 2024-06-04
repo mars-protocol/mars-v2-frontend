@@ -4,9 +4,8 @@ import Text from 'components/common/Text'
 import AssetSelectorItem from 'components/trade/TradeModule/AssetSelector/AssetSelectorItem'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
-import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
+import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
 import useMarkets from 'hooks/markets/useMarkets'
-import usePrices from 'hooks/prices/usePrices'
 import { getMergedBalancesForAsset } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { sortAssetsOrPairs } from 'utils/assets'
@@ -22,9 +21,8 @@ interface Props {
 export default function PairsList(props: Props) {
   const account = useCurrentAccount()
   const markets = useMarkets()
-  const { data: prices } = usePrices()
   const baseDenom = useBaseAsset().denom
-  const marketEnabledAssets = useMarketEnabledAssets()
+  const marketEnabledAssets = useTradeEnabledAssets()
   const balances = useMemo(() => {
     if (!account) return []
     return getMergedBalancesForAsset(account, marketEnabledAssets)
@@ -42,8 +40,8 @@ export default function PairsList(props: Props) {
   }, [props.stables, props.assets])
 
   const sortedPairs = useMemo(
-    () => sortAssetsOrPairs(pairs, prices, markets, balances, baseDenom) as AssetPair[],
-    [pairs, prices, markets, balances, baseDenom],
+    () => sortAssetsOrPairs(pairs, markets, balances, baseDenom) as AssetPair[],
+    [pairs, markets, balances, baseDenom],
   )
 
   return (
@@ -58,7 +56,7 @@ export default function PairsList(props: Props) {
             {sortedPairs.map((assetPair) => (
               <AssetSelectorItem
                 balances={balances}
-                key={`${assetPair.buy.symbol}-${assetPair.sell.symbol}`}
+                key={`${assetPair.buy.denom}-${assetPair.sell.denom}`}
                 onSelect={props.onChangeAssetPair}
                 depositCap={markets?.find(byDenom(assetPair.buy.denom))?.cap}
                 asset={assetPair.buy}

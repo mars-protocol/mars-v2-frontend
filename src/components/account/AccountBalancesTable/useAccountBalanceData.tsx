@@ -1,9 +1,8 @@
 import { useMemo } from 'react'
 
 import { getAssetAccountBalanceRow } from 'components/account/AccountBalancesTable/functions'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
-import usePrices from 'hooks/prices/usePrices'
 import { byDenom } from 'utils/array'
 
 interface Props {
@@ -17,8 +16,7 @@ interface Props {
 export default function useAccountBalanceData(props: Props) {
   const { account, updatedAccount, lendingData, borrowingData } = props
   const { data: hlsStrategies } = useHLSStakingAssets()
-  const { data: prices } = usePrices()
-  const assets = useAllAssets()
+  const { data: assets } = useAssets()
   return useMemo<AccountBalanceRow[]>(() => {
     const usedAccount = updatedAccount ?? account
     const accountDeposits = usedAccount?.deposits ?? []
@@ -34,9 +32,7 @@ export default function useAccountBalanceData(props: Props) {
         : 0
       const prevDeposit = updatedAccount ? account?.deposits.find(byDenom(deposit.denom)) : deposit
 
-      deposits.push(
-        getAssetAccountBalanceRow('deposit', asset, prices, assets, deposit, apy, prevDeposit),
-      )
+      deposits.push(getAssetAccountBalanceRow('deposit', asset, assets, deposit, apy, prevDeposit))
     })
 
     const lends = accountLends.map((lending) => {
@@ -47,7 +43,7 @@ export default function useAccountBalanceData(props: Props) {
       const prevLending = updatedAccount
         ? account?.lends.find((position) => position.denom === lending.denom)
         : lending
-      return getAssetAccountBalanceRow('lend', asset, prices, assets, lending, apy, prevLending)
+      return getAssetAccountBalanceRow('lend', asset, assets, lending, apy, prevLending)
     })
 
     const debts = accountDebts.map((debt) => {
@@ -56,17 +52,8 @@ export default function useAccountBalanceData(props: Props) {
       const prevDebt = updatedAccount
         ? account?.debts.find((position) => position.denom === debt.denom)
         : debt
-      return getAssetAccountBalanceRow('borrow', asset, prices, assets, debt, apy, prevDebt)
+      return getAssetAccountBalanceRow('borrow', asset, assets, debt, apy, prevDebt)
     })
     return [...deposits, ...lends, ...debts]
-  }, [
-    updatedAccount,
-    account,
-    props.isHls,
-    hlsStrategies,
-    prices,
-    assets,
-    lendingData,
-    borrowingData,
-  ])
+  }, [updatedAccount, account, props.isHls, hlsStrategies, assets, lendingData, borrowingData])
 }

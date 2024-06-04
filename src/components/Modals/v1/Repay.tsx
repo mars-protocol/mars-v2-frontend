@@ -67,7 +67,7 @@ export default function Repay(props: Props) {
 
   const overpayExeedsCap = useMemo(() => {
     const marketAsset = markets.find((market) => market.asset.denom === asset.denom)
-    if (!marketAsset) return
+    if (!marketAsset || !marketAsset.cap) return
     const overpayAmount = accountDebtWithInterest.minus(accountDebt)
     const marketCapAfterOverpay = marketAsset.cap.used.plus(overpayAmount)
 

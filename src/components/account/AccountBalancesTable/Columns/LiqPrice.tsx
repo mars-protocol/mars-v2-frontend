@@ -48,7 +48,7 @@ export default function LiqPrice(props: Props) {
 
   if (!lastLiquidationPrice || (liquidationPrice === 0 && lastLiquidationPrice === 0))
     return (
-      <Text size='xs' className='flex items-center justify-end number'>
+      <Text size='xs' tag='div' className='flex items-center justify-end number'>
         N/A
         <Tooltip content={tooltipText} type='info' className='ml-1'>
           <InfoCircle className='w-3.5 h-3.5 text-white/40 hover:text-inherit' />

@@ -1,33 +1,27 @@
 import getOraclePrices from 'api/prices/getOraclePrices'
-import getPoolPrice from 'api/prices/getPoolPrice'
 import fetchPythPrices from 'api/prices/getPythPrices'
-import chains from 'configs/chains'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { partition } from 'utils/array'
-import { getAllAssetsWithPythId } from 'utils/assets'
 
-export default async function getPrices(chainConfig: ChainConfig): Promise<BNCoin[]> {
-  const usdPrice = new BNCoin({ denom: 'usd', amount: '1' })
-
+export default async function getPrices(
+  chainConfig: ChainConfig,
+  assets: Asset[],
+): Promise<BNCoin[]> {
   const pythAndOraclePrices = []
-  const assetsToFetchPrices = chainConfig.assets.filter(
-    (asset) => (asset.isEnabled && asset.isMarket) || asset.forceFetchPrice,
-  )
+  const assetsToFetchPrices = assets.filter((asset) => asset.isWhitelisted)
 
-  const assetsWithPythPriceFeedId = getAllAssetsWithPythId(chains)
+  const assetsWithPythPriceFeedId = assets.filter((asset) => asset.pythPriceFeedId)
+  const assetsWithOraclePrices = assetsToFetchPrices.filter((asset) => !asset.pythPriceFeedId)
   const pythPrices = await requestPythPrices(assetsWithPythPriceFeedId)
+
   pythAndOraclePrices.push(...pythPrices)
 
   try {
-    const [assetsWithOraclePrices, assetsWithPoolIds] =
-      separateAssetsByPriceSources(assetsToFetchPrices)
     const oraclePrices: BNCoin[] = await getOraclePrices(chainConfig, assetsWithOraclePrices)
-    const poolPrices = await requestPoolPrices(chainConfig, assetsWithPoolIds, pythAndOraclePrices)
 
     if (oraclePrices) useStore.setState({ isOracleStale: false })
 
-    return [...pythAndOraclePrices, ...oraclePrices, ...poolPrices, usdPrice]
+    return [...pythAndOraclePrices, ...oraclePrices]
   } catch (ex) {
     console.error(ex)
     let message = 'Unknown Error'
@@ -35,7 +29,7 @@ export default async function getPrices(chainConfig: ChainConfig): Promise<BNCoi
     if (message.includes('price publish time is too old'))
       useStore.setState({ isOracleStale: true })
 
-    return [...pythAndOraclePrices, usdPrice]
+    return [...pythAndOraclePrices]
   }
 }
 
@@ -46,32 +40,4 @@ async function requestPythPrices(assets: Asset[]): Promise<BNCoin[]> {
     .map((a) => a.pythPriceFeedId)
     .filter((priceFeedId, index, array) => array.indexOf(priceFeedId) === index) as string[]
   return await fetchPythPrices(priceFeedIds, assets)
-}
-
-async function requestPoolPrices(
-  chainConfig: ChainConfig,
-  assets: Asset[],
-  lookupPrices: BNCoin[],
-): Promise<BNCoin[]> {
-  const requests = assets.map((asset) => getPoolPrice(chainConfig, asset, lookupPrices))
-
-  return await Promise.all(requests).then(mapResponseToBnCoin(assets))
-}
-
-const mapResponseToBnCoin = (assets: Asset[]) => (prices: BigNumber[]) => {
-  return prices.map((price: BigNumber, index: number) =>
-    BNCoin.fromDenomAndBigNumber(assets[index].denom, price),
-  )
-}
-
-function separateAssetsByPriceSources(assets: Asset[]) {
-  const assetsWithoutPythPriceFeedId = assets.filter((asset) => !asset.pythPriceFeedId)
-
-  const [assetsWithOraclePrice, assetsWithoutOraclePrice] = partition(
-    assetsWithoutPythPriceFeedId,
-    (asset) => asset.hasOraclePrice || !asset.poolId,
-  )
-  const assetsWithPoolId = assetsWithoutOraclePrice.filter((asset) => !!asset.poolId)
-
-  return [assetsWithOraclePrice, assetsWithPoolId]
 }

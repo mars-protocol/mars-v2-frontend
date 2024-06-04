@@ -4,7 +4,6 @@ import { demagnify, getCoinValue } from 'utils/formatters'
 export function getAssetAccountBalanceRow(
   type: 'deposit' | 'borrow' | 'lend',
   asset: Asset,
-  prices: BNCoin[],
   assets: Asset[],
   position: BNCoin,
   apy: number,
@@ -17,7 +16,7 @@ export function getAssetAccountBalanceRow(
     type,
     symbol: asset.symbol,
     size: demagnify(amount, asset),
-    value: getCoinValue(BNCoin.fromDenomAndBigNumber(denom, amount), prices, assets).toString(),
+    value: getCoinValue(BNCoin.fromDenomAndBigNumber(denom, amount), assets).toString(),
     denom,
     amount,
     apy,

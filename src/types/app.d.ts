@@ -111,31 +111,26 @@ interface PerpsVaultUnlockingPosition {
 
 interface Asset extends AssetMetaData {
   denom: string
-  poolId?: number
-  isPerpsEnabled?: boolean
+  name: string
+  decimals: number
+  symbol: string
 }
 
 interface AssetMetaData {
-  color: string
-  decimals: number
-  forceFetchPrice?: boolean
-  hasOraclePrice: boolean
-  id: string
+  isWhitelisted?: boolean
   isAutoLendEnabled?: boolean
   isBorrowEnabled?: boolean
+  isDepositEnabled?: boolean
   isDisplayCurrency?: boolean
-  isEnabled: boolean
-  isFavorite?: boolean
-  isMarket: boolean
+  isTradeEnabled?: boolean
   isStable?: boolean
   isStaking?: boolean
-  logo?: React.FC
-  name: string
+  isPerpsEnabled?: boolean
+  logo?: string | null
   prefix?: string
-  pythFeedName?: string
   pythPriceFeedId?: string
-  symbol: string
-  testnetDenom?: string
+  pythFeedName?: string
+  price?: BNCoin
 }
 
 interface AssetPair {
@@ -206,7 +201,9 @@ interface Bridge {
 }
 
 interface ChainConfig {
-  assets: Asset[]
+  lp?: Asset[]
+  stables: string[]
+  defaultTradingPair: TradingPair
   bech32Config: import('@keplr-wallet/types').Bech32Config
   contracts: {
     redBank: string
@@ -237,6 +234,7 @@ interface ChainConfig {
     explorer: string
     pools: string
     routes: string
+    dexAssets: string
     aprs: {
       vaults: string
       stride: string
@@ -252,6 +250,7 @@ interface ChainConfig {
   hls: boolean
   perps: boolean
   farm: boolean
+  anyAsset: boolean
 }
 
 interface ContractClients {
@@ -268,7 +267,7 @@ interface ContractClients {
 
 interface Market {
   asset: Asset
-  cap: DepositCap // Deposits via CM
+  cap?: DepositCap // Deposits via CM
   debt: BigNumber // Total outstanding debt
   deposits: BigNumber // Deposits directly into the RB
   liquidity: BigNumber // Available liqudiity to be borrowed
@@ -1039,6 +1038,7 @@ interface CommonSlice {
   isOracleStale: boolean
   isHLS: boolean
   isV1: boolean
+  assets: Asset[]
 }
 
 interface FocusComponent {
@@ -1265,3 +1265,47 @@ type PnL =
   | {
       loss: Coin
     }
+
+interface AstroportAsset {
+  chainId: string
+  denom: string
+  symbol: string
+  icon?: string
+  description: string
+  decimals: number
+  priceUSD: number
+  totalLiquidityUSD: number
+  dayVolumeUSD: number
+}
+
+interface Pool {
+  '@type': string
+  address: string
+  future_pool_governor: string
+  id: string
+  pool_assets?: PoolAsset[]
+  pool_liquidity?: PoolLiquidity[]
+  pool_params: PoolParams
+  total_shares: TotalShares
+  total_weight: string
+}
+
+interface PoolAsset {
+  token: TotalShares
+  weight: string
+}
+
+interface PoolLiquidity {
+  amount: string
+  denom: string
+}
+interface TotalShares {
+  amount: string
+  denom: string
+}
+
+interface PoolParams {
+  exit_fee: string
+  smooth_weight_change_params: null
+  swap_fee: string
+}

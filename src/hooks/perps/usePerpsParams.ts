@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import useSWR from 'swr'
+import useSWRImmutable from 'swr/immutable'
 
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useClients from 'hooks/chain/useClients'
@@ -26,12 +26,16 @@ export function useAllPerpsParams() {
 export function useAllPerpsParamsSC() {
   const chainConfig = useChainConfig()
   const clients = useClients()
-  return useSWR(clients && `chains/${chainConfig.id}/perps/params`, async () =>
-    getPerpsParams(clients!),
+
+  return useSWRImmutable(
+    clients && chainConfig.perps && `chains/${chainConfig.id}/perps/params`,
+    async () => getPerpsParams(chainConfig, clients!),
+    { suspense: true },
   )
 }
 
-async function getPerpsParams(clients: ContractClients) {
+async function getPerpsParams(chainConfig: ChainConfig, clients: ContractClients) {
+  if (!chainConfig.perps) return []
   return iterateContractQuery(clients.params.allPerpParams, undefined, [])
 }
 

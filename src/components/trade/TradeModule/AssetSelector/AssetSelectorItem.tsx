@@ -123,6 +123,7 @@ export default function AssetSelectorItem(props: Props) {
               amount: BN_ONE.shiftedBy(asset.decimals).toString(),
             })
           }
+          showDetailedPrice
         />
       </button>
     </li>

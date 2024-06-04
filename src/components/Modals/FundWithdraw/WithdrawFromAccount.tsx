@@ -9,8 +9,8 @@ import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
-import useAllAssets from 'hooks/assets/useAllAssets'
-import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
+import useAssets from 'hooks/assets/useAssets'
+import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
 import useToggle from 'hooks/common/useToggle'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useStore from 'store'
@@ -24,19 +24,19 @@ interface Props {
 
 export default function WithdrawFromAccount(props: Props) {
   const { account } = props
-  const assets = useAllAssets()
+  const { data: assets } = useAssets()
   const defaultAsset =
     assets.find(byDenom(account.deposits[0]?.denom || account.lends[0]?.denom)) ?? assets[0]
   const withdraw = useStore((s) => s.withdraw)
   const [withdrawWithBorrowing, setWithdrawWithBorrowing] = useToggle()
-  const [currentAsset, setCurrentAsset] = useState(defaultAsset)
+  const [currentAsset, setCurrentAsset] = useState<Asset>(defaultAsset)
   const [amount, setAmount] = useState(BN_ZERO)
   const { simulateWithdraw } = useUpdatedAccount(account)
   const { computeMaxWithdrawAmount } = useHealthComputer(account)
   const accountClone = cloneAccount(account)
   const borrowAccount = removeDepositsAndLends(accountClone, currentAsset.denom)
   const { computeMaxBorrowAmount } = useHealthComputer(borrowAccount)
-  const marketEnabledAssets = useMarketEnabledAssets()
+  const marketEnabledAssets = useTradeEnabledAssets()
   const balances = getMergedBalancesForAsset(account, marketEnabledAssets)
   const maxWithdrawAmount = computeMaxWithdrawAmount(currentAsset.denom)
   const maxWithdrawWithBorrowAmount = computeMaxBorrowAmount(currentAsset.denom, 'wallet').plus(

@@ -2,13 +2,15 @@ import classNames from 'classnames'
 import { useMemo } from 'react'
 
 import { FormattedNumber } from 'components/common/FormattedNumber'
+import { InfoCircle } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
 import { ORACLE_DENOM } from 'constants/oracle'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
-import usePrices from 'hooks/prices/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
-import { getCoinValue } from 'utils/formatters'
+import { getCoinValue, getCoinValueWithoutFallback } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
 interface Props {
@@ -20,6 +22,8 @@ interface Props {
   options?: FormatOptions
   isProfitOrLoss?: boolean
   showSignPrefix?: boolean
+  showDetailedPrice?: boolean
+  allowZeroAmount?: boolean
 }
 
 export default function DisplayCurrency(props: Props) {
@@ -32,11 +36,12 @@ export default function DisplayCurrency(props: Props) {
     showZero,
     options,
     isProfitOrLoss,
+    showDetailedPrice,
+    allowZeroAmount,
   } = props
   const displayCurrencies = useDisplayCurrencyAssets()
-  const assets = useAllAssets()
+  const { data: assets } = useAssets()
   const [displayCurrency] = useDisplayCurrency()
-  const { data: prices } = usePrices()
 
   const displayCurrencyAsset = useMemo(
     () =>
@@ -44,40 +49,38 @@ export default function DisplayCurrency(props: Props) {
     [displayCurrency, displayCurrencies],
   )
 
-  const isUSD = displayCurrencyAsset.id === 'USD'
+  const isUSD = displayCurrencyAsset.denom === 'usd'
 
   const [amount, absoluteAmount] = useMemo(() => {
-    const coinValue = getCoinValue(coin, prices, assets)
+    const coinValue = allowZeroAmount
+      ? getCoinValue(coin, assets)
+      : getCoinValueWithoutFallback(coin, assets)
 
+    if (typeof coinValue === 'undefined') return []
     if (displayCurrency === ORACLE_DENOM) return [coinValue.toNumber(), coinValue.abs().toNumber()]
 
     const displayDecimals = displayCurrencyAsset.decimals
-    const displayPrice = getCoinValue(
+    const displayPrice = getCoinValueWithoutFallback(
       BNCoin.fromDenomAndBigNumber(displayCurrency, BN(1).shiftedBy(displayDecimals)),
-      prices,
       assets,
     )
 
-    const amount = coinValue.div(displayPrice).toNumber()
+    const amount = displayPrice ? coinValue.div(displayPrice).toNumber() : 0
 
     return [amount, Math.abs(amount)]
-  }, [assets, displayCurrency, displayCurrencyAsset.decimals, prices, coin])
+  }, [assets, displayCurrency, displayCurrencyAsset.decimals, coin])
 
   const isLessThanACent = useMemo(
-    () => isUSD && absoluteAmount < 0.01 && absoluteAmount > 0,
+    () => isUSD && absoluteAmount && absoluteAmount < 0.01 && absoluteAmount > 0,
     [absoluteAmount, isUSD],
   )
 
   const prefix = useMemo(() => {
-    const positiveOrNegativePrefix = showSignPrefix
-      ? amount > 0
-        ? '+'
-        : amount < 0
-          ? '-'
-          : ''
-      : ''
+    let positiveOrNegativePrefix = ''
+    if (amount && amount > 0 && showSignPrefix) positiveOrNegativePrefix = '+'
+    if (amount && amount > 0 && showSignPrefix) positiveOrNegativePrefix = '-'
     const approximationPrefix = isApproximation ? '~ ' : ''
-    const smallerThanPrefix = isLessThanACent && !showZero ? '< ' : ''
+    const smallerThanPrefix = isLessThanACent && !showDetailedPrice && !showZero ? '< ' : ''
 
     return isUSD
       ? `${approximationPrefix}${smallerThanPrefix}${positiveOrNegativePrefix}$`
@@ -88,18 +91,32 @@ export default function DisplayCurrency(props: Props) {
     ? ''
     : ` ${displayCurrencyAsset.symbol ? ` ${displayCurrencyAsset.symbol}` : ''}`
 
+  if (typeof amount === 'undefined')
+    return (
+      <Text tag='div' className={classNames(className, 'flex flex-wrap justify-end items-center')}>
+        N/A
+        <Tooltip
+          content='There is currently no price source availible for this Asset'
+          type='info'
+          className='ml-1'
+        >
+          <InfoCircle className='w-3.5 h-3.5 text-white/40 hover:text-inherit' />
+        </Tooltip>
+      </Text>
+    )
+
   return (
     <FormattedNumber
       className={classNames(
         className,
         parentheses && 'before:content-["("] after:content-[")"]',
-        isProfitOrLoss && amount < 0 && 'text-loss',
-        isProfitOrLoss && amount > 0 && 'text-profit',
+        isProfitOrLoss && amount && amount < 0 && 'text-loss',
+        isProfitOrLoss && amount && amount > 0 && 'text-profit',
       )}
-      amount={isLessThanACent ? 0.01 : absoluteAmount}
+      amount={isLessThanACent && !showDetailedPrice ? 0.01 : absoluteAmount ?? 0}
       options={{
         minDecimals: isUSD ? 2 : 0,
-        maxDecimals: 2,
+        maxDecimals: isLessThanACent && showDetailedPrice ? 6 : 2,
         abbreviated: true,
         suffix,
         ...options,

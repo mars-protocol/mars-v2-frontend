@@ -1,7 +1,7 @@
 export enum LocalStorageKeys {
   TRADING_PAIR_SIMPLE = 'tradingPairSimple',
   TRADING_PAIR_ADVANCED = 'tradingPairAdvanced',
-  ACCOUNT_SUMMARY_INMODAL_TABS_EXPANDED = 'accountSummaryInModalTabsExpanded',
+  ACCOUNT_SUMMARY_IN_MODAL_TABS_EXPANDED = 'accountSummaryInModalTabsExpanded',
   ACCOUNT_SUMMARY_TABS_EXPANDED = 'accountSummaryInPageTabsExpanded',
   DISPLAY_CURRENCY = 'displayCurrency',
   REDUCE_MOTION = 'reduceMotion',
