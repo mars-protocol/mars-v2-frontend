@@ -7,6 +7,7 @@ import AssetSelectorItem from 'components/trade/TradeModule/AssetSelector/AssetS
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
+import useFavoriteAssets from 'hooks/localStorage/useFavoriteAssets'
 import useMarkets from 'hooks/markets/useMarkets'
 import { getMergedBalancesForAsset } from 'utils/accounts'
 import { byDenom } from 'utils/array'
@@ -31,8 +32,15 @@ export default function AssetList(props: Props) {
     return getMergedBalancesForAsset(account, marketEnabledAssets)
   }, [account, marketEnabledAssets])
 
+  const [favoriteAssetsDenoms, _] = useFavoriteAssets()
   const sortedAssets = useMemo(() => {
-    const sorted = sortAssetsOrPairs(assets, markets, balances, baseAsset.denom) as Asset[]
+    const sorted = sortAssetsOrPairs(
+      assets,
+      markets,
+      balances,
+      baseAsset.denom,
+      favoriteAssetsDenoms,
+    ) as Asset[]
     return sorted.filter(
       (asset, index, self) => index === self.findIndex((t) => t.denom === asset.denom),
     )

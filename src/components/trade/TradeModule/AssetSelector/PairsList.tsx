@@ -5,6 +5,7 @@ import AssetSelectorItem from 'components/trade/TradeModule/AssetSelector/AssetS
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
+import useFavoriteAssets from 'hooks/localStorage/useFavoriteAssets'
 import useMarkets from 'hooks/markets/useMarkets'
 import { getMergedBalancesForAsset } from 'utils/accounts'
 import { byDenom } from 'utils/array'
@@ -27,6 +28,7 @@ export default function PairsList(props: Props) {
     if (!account) return []
     return getMergedBalancesForAsset(account, marketEnabledAssets)
   }, [account, marketEnabledAssets])
+  const [favoriteAssetsDenoms, _] = useFavoriteAssets()
 
   const pairs = useMemo(() => {
     const tradingPairs: AssetPair[] = []
@@ -40,7 +42,8 @@ export default function PairsList(props: Props) {
   }, [props.stables, props.assets])
 
   const sortedPairs = useMemo(
-    () => sortAssetsOrPairs(pairs, markets, balances, baseDenom) as AssetPair[],
+    () =>
+      sortAssetsOrPairs(pairs, markets, balances, baseDenom, favoriteAssetsDenoms) as AssetPair[],
     [pairs, markets, balances, baseDenom],
   )
 

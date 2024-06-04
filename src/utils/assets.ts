@@ -17,12 +17,16 @@ export function sortAssetsOrPairs(
   markets: Market[],
   balances: BNCoin[],
   baseDenom: string,
+  favoriteAssetsDenoms: string[],
 ): Asset[] | AssetPair[] {
   if (assets.length === 0 || markets.length === 0) return assets
 
   return assets.sort((a, b) => {
     const assetA = isAssetPair(a) ? a.buy : a
     const assetB = isAssetPair(b) ? b.buy : b
+
+    if (favoriteAssetsDenoms.includes(assetA.denom) && !favoriteAssetsDenoms.includes(assetB.denom))
+      return -1
 
     const aDenom = assetA.denom
     const bDenom = assetB.denom
@@ -75,7 +79,7 @@ export function getAssetSymbolFromUnknownAsset(symbol: string) {
   if (symbolParts[0] === 'factory') return symbolParts[symbolParts.length - 1]
   if (symbolParts[0] === 'gamm') return `POOL ${symbolParts[symbolParts.length - 1]}`
   if (symbolParts[0] === 'ibc') return truncate(symbol, [3, 6])
-  return symbol
+  return truncate(symbol, [7, 3])
 }
 
 export function handleUnknownAsset(coin: Coin): Asset {
