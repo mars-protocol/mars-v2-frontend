@@ -303,6 +303,7 @@ module.exports = {
       },
       padding: {
         5.5: '22px',
+        12: '48px',
         18: '72px',
         21: '84px',
       },

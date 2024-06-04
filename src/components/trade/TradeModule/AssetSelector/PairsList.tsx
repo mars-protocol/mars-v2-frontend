@@ -3,7 +3,6 @@ import { useMemo } from 'react'
 import Text from 'components/common/Text'
 import AssetSelectorItem from 'components/trade/TradeModule/AssetSelector/AssetSelectorItem'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
 import useFavoriteAssets from 'hooks/localStorage/useFavoriteAssets'
 import useMarkets from 'hooks/markets/useMarkets'
@@ -15,6 +14,7 @@ interface Props {
   assets: Asset[]
   stables: Asset[]
   isOpen: boolean
+  activeAsset: Asset
   toggleOpen: () => void
   onChangeAssetPair: (assetPair: AssetPair | Asset) => void
 }
@@ -22,13 +22,12 @@ interface Props {
 export default function PairsList(props: Props) {
   const account = useCurrentAccount()
   const markets = useMarkets()
-  const baseDenom = useBaseAsset().denom
+  const [favoriteAssetsDenoms, _] = useFavoriteAssets()
   const marketEnabledAssets = useTradeEnabledAssets()
   const balances = useMemo(() => {
     if (!account) return []
     return getMergedBalancesForAsset(account, marketEnabledAssets)
   }, [account, marketEnabledAssets])
-  const [favoriteAssetsDenoms, _] = useFavoriteAssets()
 
   const pairs = useMemo(() => {
     const tradingPairs: AssetPair[] = []
@@ -42,20 +41,19 @@ export default function PairsList(props: Props) {
   }, [props.stables, props.assets])
 
   const sortedPairs = useMemo(
-    () =>
-      sortAssetsOrPairs(pairs, markets, balances, baseDenom, favoriteAssetsDenoms) as AssetPair[],
-    [pairs, markets, balances, baseDenom],
+    () => sortAssetsOrPairs(pairs, markets, balances, favoriteAssetsDenoms) as AssetPair[],
+    [pairs, markets, balances, favoriteAssetsDenoms],
   )
 
   return (
-    <section>
+    <section className='flex flex-wrap flex-grow w-full overflow-hidden'>
       {props.isOpen &&
         (props.assets.length === 0 ? (
           <Text size='xs' className='p-4'>
             No available assets found
           </Text>
         ) : (
-          <ul>
+          <ul className='flex flex-wrap w-full h-full overflow-y-scroll scrollbar-hide'>
             {sortedPairs.map((assetPair) => (
               <AssetSelectorItem
                 balances={balances}
@@ -64,6 +62,7 @@ export default function PairsList(props: Props) {
                 depositCap={markets?.find(byDenom(assetPair.buy.denom))?.cap}
                 asset={assetPair.buy}
                 sellAsset={assetPair.sell}
+                isActive={props.activeAsset.denom === assetPair.buy.denom}
               />
             ))}
           </ul>

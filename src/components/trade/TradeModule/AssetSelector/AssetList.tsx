@@ -5,7 +5,6 @@ import { ChevronDown } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import AssetSelectorItem from 'components/trade/TradeModule/AssetSelector/AssetSelectorItem'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
 import useFavoriteAssets from 'hooks/localStorage/useFavoriteAssets'
 import useMarkets from 'hooks/markets/useMarkets'
@@ -19,35 +18,34 @@ interface Props {
   isOpen: boolean
   toggleOpen: () => void
   onChangeAsset: (asset: Asset | AssetPair) => void
+  activeAsset: Asset
 }
 
 export default function AssetList(props: Props) {
-  const baseAsset = useBaseAsset()
   const { assets, type, isOpen, toggleOpen, onChangeAsset } = props
   const account = useCurrentAccount()
   const markets = useMarkets()
   const marketEnabledAssets = useTradeEnabledAssets()
+  const [favoriteAssetsDenoms, _] = useFavoriteAssets()
   const balances = useMemo(() => {
     if (!account) return []
     return getMergedBalancesForAsset(account, marketEnabledAssets)
   }, [account, marketEnabledAssets])
 
-  const [favoriteAssetsDenoms, _] = useFavoriteAssets()
   const sortedAssets = useMemo(() => {
-    const sorted = sortAssetsOrPairs(
-      assets,
-      markets,
-      balances,
-      baseAsset.denom,
-      favoriteAssetsDenoms,
-    ) as Asset[]
+    const sorted = sortAssetsOrPairs(assets, markets, balances, favoriteAssetsDenoms) as Asset[]
     return sorted.filter(
       (asset, index, self) => index === self.findIndex((t) => t.denom === asset.denom),
     )
-  }, [assets, markets, balances, baseAsset])
+  }, [assets, markets, balances, favoriteAssetsDenoms])
 
   return (
-    <section>
+    <section
+      className={classNames(
+        'flex flex-wrap flex-grow w-full overflow-hidden',
+        type !== 'perps' && 'pb-12',
+      )}
+    >
       {type !== 'perps' && (
         <button
           className='flex items-center justify-between w-full p-4 bg-black/20'
@@ -63,7 +61,7 @@ export default function AssetList(props: Props) {
             No available assets found
           </Text>
         ) : (
-          <ul>
+          <ul className='flex flex-wrap w-full h-full overflow-y-scroll scrollbar-hide'>
             {sortedAssets.map((asset) => (
               <AssetSelectorItem
                 balances={balances}
@@ -71,6 +69,7 @@ export default function AssetList(props: Props) {
                 onSelect={onChangeAsset}
                 depositCap={type === 'buy' ? markets?.find(byDenom(asset.denom))?.cap : undefined}
                 asset={asset}
+                isActive={props.activeAsset.denom === asset.denom}
               />
             ))}
           </ul>
