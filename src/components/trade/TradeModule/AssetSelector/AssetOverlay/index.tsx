@@ -176,6 +176,7 @@ export default function AssetOverlay(props: Props) {
             onChangeAsset={onChangeBuyAsset}
             activeAsset={props.buyAsset}
           />
+          <Divider />
           <AssetList
             type='sell'
             assets={sellAssets}

@@ -42,7 +42,10 @@ export default function AssetList(props: Props) {
 
   return (
     <section
-      className={classNames('flex flex-wrap w-full overflow-hidden', type !== 'perps' && 'pb-12')}
+      className={classNames(
+        'flex flex-wrap w-full overflow-hidden',
+        type !== 'buy' && assets.length > 9 && 'pb-12',
+      )}
     >
       {type !== 'perps' && (
         <button
@@ -59,7 +62,7 @@ export default function AssetList(props: Props) {
             No available assets found
           </Text>
         ) : (
-          <ul className='flex flex-wrap items-start w-full h-full overflow-y-scroll scrollbar-hide'>
+          <ul className='flex flex-wrap items-start content-start w-full h-full overflow-y-scroll scrollbar-hide'>
             {sortedAssets.map((asset) => (
               <Suspense fallback={<AssetSelectorItemLoading />}>
                 <AssetSelectorItem
