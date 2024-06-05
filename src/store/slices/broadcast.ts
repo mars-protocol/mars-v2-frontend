@@ -589,7 +589,7 @@ export default function createBroadcastSlice(
 
       return { estimateFee, execute }
     },
-    updateOracle: async () => {
+    resyncOracle: async () => {
       const response = get().executeMsg({
         messages: [],
         isPythUpdate: true,

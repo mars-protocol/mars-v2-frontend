@@ -6,8 +6,8 @@ import { Tooltip } from 'components/common/Tooltip'
 import useStore from 'store'
 
 export default function OracleResyncButton() {
-  const updateOracle = useStore((s) => s.updateOracle)
-  const updatePythOracle = useCallback(() => updateOracle(), [updateOracle])
+  const resyncOracle = useStore((s) => s.resyncOracle)
+  const updatePythOracle = useCallback(() => resyncOracle(), [resyncOracle])
 
   return (
     <Tooltip

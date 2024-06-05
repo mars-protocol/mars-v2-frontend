@@ -68,6 +68,7 @@ export function getSymbolFromUnknownAssetDenom(denom: string) {
 export function getNameFromUnknownAssetDenom(denom: string) {
   const denomParts = denom.split('/')
   if (denomParts[0] === 'factory') return denomParts[denomParts.length - 1]
+
   if (denomParts[0] === 'gamm') return `Pool Token #${denomParts[denomParts.length - 1]}`
   return truncate(denom, [3, 6])
 }
