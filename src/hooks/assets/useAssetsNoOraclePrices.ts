@@ -61,6 +61,10 @@ async function fetchSortAndMapAllAssets(
   const sortedAssets = unsortedAssets.sort((a, b) => {
     if (a.isWhitelisted && !b.isWhitelisted) return -1
     if (!a.isWhitelisted && b.isWhitelisted) return 1
+    if (a.logo && !b.logo) return -1
+    if (!a.logo && b.logo) return 1
+    if (a.denom === chainConfig.defaultCurrency.coinMinimalDenom) return -1
+    if (b.denom === chainConfig.defaultCurrency.coinMinimalDenom) return 1
     return a.symbol.localeCompare(b.symbol)
   })
 

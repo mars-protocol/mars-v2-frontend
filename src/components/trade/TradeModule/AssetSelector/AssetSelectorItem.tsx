@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 
+import classNames from 'classnames'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { StarFilled, StarOutlined } from 'components/common/Icons'
@@ -18,10 +19,11 @@ interface Props {
   sellAsset?: Asset
   balances: BNCoin[]
   onSelect: (selected: Asset | AssetPair) => void
+  isActive: boolean
   depositCap?: DepositCap
 }
 export default function AssetSelectorItem(props: Props) {
-  const { asset, sellAsset, balances, onSelect, depositCap } = props
+  const { asset, sellAsset, balances, onSelect, depositCap, isActive } = props
 
   const amount = demagnify(props.balances.find(byDenom(asset.denom))?.amount ?? BN_ZERO, asset)
 
@@ -51,7 +53,12 @@ export default function AssetSelectorItem(props: Props) {
   }, [props.depositCap])
 
   return (
-    <li className='relative border-b border-white/10 hover:bg-black/10 z-1'>
+    <li
+      className={classNames(
+        'relative w-full border-b border-white/10 hover:bg-black/10 z-1',
+        isActive && 'bg-white/20',
+      )}
+    >
       <button
         onClick={() => onSelect(sellAsset ? { buy: asset, sell: sellAsset } : asset)}
         className='flex items-center justify-between w-full gap-2 p-4 min-h-14'

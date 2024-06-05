@@ -413,9 +413,11 @@ export default function SwapForm(props: Props) {
             className='p-4 bg-white/5'
           />
 
-          {borrowMarket && borrowAmount.isGreaterThanOrEqualTo(availableLiquidity) && (
-            <AvailableLiquidityMessage market={borrowMarket} />
-          )}
+          {isMarginChecked &&
+            borrowMarket &&
+            borrowAmount.isGreaterThanOrEqualTo(availableLiquidity) && (
+              <AvailableLiquidityMessage market={borrowMarket} />
+            )}
           {isAdvanced ? (
             <AssetAmountInput
               label='Sell'
