@@ -44,7 +44,7 @@ export default function AssetList(props: Props) {
     <section
       className={classNames(
         'flex flex-wrap w-full overflow-hidden',
-        type !== 'buy' && assets.length > 9 && 'pb-12',
+        type !== 'perps' && assets.length > 9 && 'pb-12',
       )}
     >
       {type !== 'perps' && (
