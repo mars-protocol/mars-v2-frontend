@@ -1,9 +1,10 @@
 import classNames from 'classnames'
-import { useMemo } from 'react'
+import { Suspense, useMemo } from 'react'
 
 import { ChevronDown } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import AssetSelectorItem from 'components/trade/TradeModule/AssetSelector/AssetSelectorItem'
+import AssetSelectorItemLoading from 'components/trade/TradeModule/AssetSelector/AssetSelectorItemLoading'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
 import useFavoriteAssets from 'hooks/localStorage/useFavoriteAssets'
@@ -41,10 +42,7 @@ export default function AssetList(props: Props) {
 
   return (
     <section
-      className={classNames(
-        'flex flex-wrap w-full overflow-hidden',
-        type !== 'perps' && 'pb-12',
-      )}
+      className={classNames('flex flex-wrap w-full overflow-hidden', type !== 'perps' && 'pb-12')}
     >
       {type !== 'perps' && (
         <button
@@ -63,14 +61,16 @@ export default function AssetList(props: Props) {
         ) : (
           <ul className='flex flex-wrap items-start w-full h-full overflow-y-scroll scrollbar-hide'>
             {sortedAssets.map((asset) => (
-              <AssetSelectorItem
-                balances={balances}
-                key={`${type}-${asset.denom}`}
-                onSelect={onChangeAsset}
-                depositCap={type === 'buy' ? markets?.find(byDenom(asset.denom))?.cap : undefined}
-                asset={asset}
-                isActive={props.activeAsset.denom === asset.denom}
-              />
+              <Suspense fallback={<AssetSelectorItemLoading />}>
+                <AssetSelectorItem
+                  balances={balances}
+                  key={`${type}-${asset.denom}`}
+                  onSelect={onChangeAsset}
+                  depositCap={type === 'buy' ? markets?.find(byDenom(asset.denom))?.cap : undefined}
+                  asset={asset}
+                  isActive={props.activeAsset.denom === asset.denom}
+                />
+              </Suspense>
             ))}
           </ul>
         ))}

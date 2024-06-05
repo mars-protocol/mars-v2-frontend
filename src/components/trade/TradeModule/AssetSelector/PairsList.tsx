@@ -1,7 +1,8 @@
-import { useMemo } from 'react'
+import { Suspense, useMemo } from 'react'
 
 import Text from 'components/common/Text'
 import AssetSelectorItem from 'components/trade/TradeModule/AssetSelector/AssetSelectorItem'
+import AssetSelectorItemLoading from 'components/trade/TradeModule/AssetSelector/AssetSelectorItemLoading'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
 import useFavoriteAssets from 'hooks/localStorage/useFavoriteAssets'
@@ -55,15 +56,17 @@ export default function PairsList(props: Props) {
         ) : (
           <ul className='flex flex-wrap w-full h-full overflow-y-scroll scrollbar-hide'>
             {sortedPairs.map((assetPair) => (
-              <AssetSelectorItem
-                balances={balances}
-                key={`${assetPair.buy.denom}-${assetPair.sell.denom}`}
-                onSelect={props.onChangeAssetPair}
-                depositCap={markets?.find(byDenom(assetPair.buy.denom))?.cap}
-                asset={assetPair.buy}
-                sellAsset={assetPair.sell}
-                isActive={props.activeAsset.denom === assetPair.buy.denom}
-              />
+              <Suspense fallback={<AssetSelectorItemLoading />}>
+                <AssetSelectorItem
+                  balances={balances}
+                  key={`${assetPair.buy.denom}-${assetPair.sell.denom}`}
+                  onSelect={props.onChangeAssetPair}
+                  depositCap={markets?.find(byDenom(assetPair.buy.denom))?.cap}
+                  asset={assetPair.buy}
+                  sellAsset={assetPair.sell}
+                  isActive={props.activeAsset.denom === assetPair.buy.denom}
+                />
+              </Suspense>
             ))}
           </ul>
         ))}
