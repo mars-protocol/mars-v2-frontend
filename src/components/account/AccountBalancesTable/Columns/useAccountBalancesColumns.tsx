@@ -13,7 +13,6 @@ import Value, {
   VALUE_META,
   valueBalancesSortingFn,
 } from 'components/account/AccountBalancesTable/Columns/Value'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useMarkets from 'hooks/markets/useMarkets'
 import useStore from 'store'
@@ -23,7 +22,6 @@ export default function useAccountBalancesColumns(
   showLiquidationPrice?: boolean,
 ) {
   const markets = useMarkets()
-  const whitelistedAssets = useWhitelistedAssets()
 
   const updatedAccount = useStore((s) => s.updatedAccount)
 
@@ -85,7 +83,6 @@ export default function useAccountBalancesColumns(
                   type={row.original.type}
                   amount={row.original.amount.toNumber()}
                   account={updatedAccount ?? account}
-                  whitelistedAssets={whitelistedAssets}
                 />
               ),
             },

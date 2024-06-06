@@ -6,7 +6,6 @@ import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import useLiquidationPrice from 'hooks/prices/useLiquidationPrice'
 import { BNCoin } from 'types/classes/BNCoin'
-import { byDenom } from 'utils/array'
 import { LiquidationPriceKind } from 'utils/health_computer'
 import { BN } from 'utils/helpers'
 
@@ -22,18 +21,16 @@ interface Props {
   denom: string
   type: PositionType
   account: Account
-  whitelistedAssets: Asset[]
 }
 
 export default function LiqPrice(props: Props) {
-  const { denom, type, amount, account, computeLiquidationPrice, whitelistedAssets } = props
+  const { denom, type, amount, account, computeLiquidationPrice } = props
   const hasDebt = account.debts.length > 0
 
   const liqPrice = useMemo(() => {
-    const asset = whitelistedAssets.find(byDenom(denom))
-    if (type === 'vault' || !asset || amount === 0) return 0
+    if (type === 'vault' || amount === 0) return 0
     return computeLiquidationPrice(denom, type === 'borrow' ? 'debt' : 'asset')
-  }, [amount, computeLiquidationPrice, denom, type, whitelistedAssets])
+  }, [amount, computeLiquidationPrice, denom, type])
 
   const { liquidationPrice } = useLiquidationPrice(liqPrice)
 

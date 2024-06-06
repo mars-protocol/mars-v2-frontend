@@ -21,16 +21,17 @@ import {
 import { convertAccountToPositions } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { SWAP_FEE_BUFFER } from 'utils/constants'
+import { findPositionInAccount } from 'utils/healthComputer'
 import {
   BorrowTarget,
+  LiquidationPriceKind,
+  SwapKind,
   compute_health_js,
   liquidation_price_js,
-  LiquidationPriceKind,
   max_borrow_estimate_js,
   max_perp_size_estimate_js,
   max_swap_estimate_js,
   max_withdraw_estimate_js,
-  SwapKind,
 } from 'utils/health_computer'
 import { BN } from 'utils/helpers'
 import { getTokenPrice } from 'utils/tokens'
@@ -256,7 +257,8 @@ export default function useHealthComputer(account?: Account) {
       if (!healthComputer) return null
       try {
         const asset = whitelistedAsset.find(byDenom(denom))
-        if (!asset) return null
+        const assetInAccount = findPositionInAccount(healthComputer, denom)
+        if (!asset || !assetInAccount) return 0
         const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
         return BN(liquidation_price_js(healthComputer, denom, kind))
           .shiftedBy(-VALUE_SCALE_FACTOR)

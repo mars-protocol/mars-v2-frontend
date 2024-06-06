@@ -8,13 +8,11 @@ import Value, {
 } from 'components/account/AccountBalancesTable/Columns/Value'
 import Asset, { ASSET_META } from 'components/account/AccountPerpPositionTable/Columns/Asset'
 import TotalPnL, { PNL_META } from 'components/account/AccountPerpPositionTable/Columns/TotalPnL'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useStore from 'store'
 
 export default function useAccountPerpsColumns(account: Account, showLiquidationPrice?: boolean) {
   const updatedAccount = useStore((s) => s.updatedAccount)
-  const whitelistedAssets = useWhitelistedAssets()
   const { computeLiquidationPrice } = useHealthComputer(updatedAccount ?? account)
 
   return useMemo<ColumnDef<AccountPerpRow>[]>(() => {
@@ -41,7 +39,6 @@ export default function useAccountPerpsColumns(account: Account, showLiquidation
             type='perp'
             amount={row.original.amount.toNumber()}
             account={updatedAccount ?? account}
-            whitelistedAssets={whitelistedAssets}
           />
         ),
       },
