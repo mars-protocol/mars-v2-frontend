@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { InfoCircle } from 'components/common/Icons'
@@ -6,6 +6,7 @@ import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import useLiquidationPrice from 'hooks/prices/useLiquidationPrice'
 import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
 import { LiquidationPriceKind } from 'utils/health_computer'
 import { BN } from 'utils/helpers'
 
@@ -21,23 +22,22 @@ interface Props {
   denom: string
   type: PositionType
   account: Account
+  whitelistedAssets: Asset[]
 }
 
 export default function LiqPrice(props: Props) {
-  const { denom, type, amount, account, computeLiquidationPrice } = props
-  const [lastLiquidationPrice, setLastLiquidationPrice] = useState<number | null>(null)
+  const { denom, type, amount, account, computeLiquidationPrice, whitelistedAssets } = props
   const hasDebt = account.debts.length > 0
 
   const liqPrice = useMemo(() => {
-    if (type === 'vault' || amount === 0) return 0
+    const asset = whitelistedAssets.find(byDenom(denom))
+    if (type === 'vault' || !asset || amount === 0) return 0
     return computeLiquidationPrice(denom, type === 'borrow' ? 'debt' : 'asset')
-  }, [amount, computeLiquidationPrice, denom, type])
+  }, [amount, computeLiquidationPrice, denom, type, whitelistedAssets])
 
   const { liquidationPrice } = useLiquidationPrice(liqPrice)
 
-  useEffect(() => {
-    if (lastLiquidationPrice !== liqPrice && liqPrice !== null) setLastLiquidationPrice(liqPrice)
-  }, [liqPrice, lastLiquidationPrice])
+  const lastLiquidationPrice = useMemo(() => liqPrice, [liqPrice])
 
   const tooltipText = useMemo(() => {
     if (type === 'vault')

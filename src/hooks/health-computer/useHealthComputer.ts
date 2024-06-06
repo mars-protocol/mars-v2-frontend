@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useAssets from 'hooks/assets/useAssets'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAssetParams from 'hooks/params/useAssetParams'
 import useAllPerpsDenomStates from 'hooks/perps/usePerpsDenomStates'
 import { useAllPerpsParamsSC } from 'hooks/perps/usePerpsParams'
@@ -41,6 +42,7 @@ const VALUE_SCALE_FACTOR = 12
 
 export default function useHealthComputer(account?: Account) {
   const { data: assets } = useAssets()
+  const whitelistedAsset = useWhitelistedAssets()
   const { data: assetParams } = useAssetParams()
   const { data: vaultConfigs } = useVaultConfigs()
   const { data: perpsDenomStates } = useAllPerpsDenomStates()
@@ -253,7 +255,7 @@ export default function useHealthComputer(account?: Account) {
     (denom: string, kind: LiquidationPriceKind) => {
       if (!healthComputer) return null
       try {
-        const asset = assets.find(byDenom(denom))
+        const asset = whitelistedAsset.find(byDenom(denom))
         if (!asset) return null
         const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
         return BN(liquidation_price_js(healthComputer, denom, kind))
@@ -261,7 +263,14 @@ export default function useHealthComputer(account?: Account) {
           .shiftedBy(decimalDiff)
           .toNumber()
       } catch (err) {
-        console.error('Failed to calculate liquidation price: ', err)
+        console.error(
+          'Failed to calculate liquidation price: ',
+          err,
+          'denom:',
+          denom,
+          'kind:',
+          kind,
+        )
         return null
       }
     },
