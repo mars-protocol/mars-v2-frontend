@@ -34,8 +34,6 @@ export default function LiqPrice(props: Props) {
 
   const { liquidationPrice } = useLiquidationPrice(liqPrice)
 
-  const lastLiquidationPrice = useMemo(() => liqPrice, [liqPrice])
-
   const tooltipText = useMemo(() => {
     if (type === 'vault')
       return 'Liquidation prices cannot be calculated for farm positions. But it a drop in price of the underlying assets can still cause a liquidation.'
@@ -43,7 +41,7 @@ export default function LiqPrice(props: Props) {
     return 'The position size is too small to liquidate the account, even if the price goes to $0.00.'
   }, [type, hasDebt])
 
-  if (!lastLiquidationPrice || (liquidationPrice === 0 && lastLiquidationPrice === 0))
+  if (!liqPrice || (liquidationPrice === 0 && liqPrice === 0))
     return (
       <Text size='xs' tag='div' className='flex items-center justify-end number'>
         N/A
@@ -56,7 +54,7 @@ export default function LiqPrice(props: Props) {
   return (
     <DisplayCurrency
       className='text-xs text-right number'
-      coin={BNCoin.fromDenomAndBigNumber('usd', BN(lastLiquidationPrice))}
+      coin={BNCoin.fromDenomAndBigNumber('usd', BN(liqPrice))}
       options={{ abbreviated: false }}
     />
   )
