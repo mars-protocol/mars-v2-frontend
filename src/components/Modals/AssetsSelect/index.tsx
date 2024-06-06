@@ -3,11 +3,11 @@ import { useEffect, useMemo, useState } from 'react'
 
 import useAssetSelectColumns from 'components/Modals/AssetsSelect/Columns/useAssetSelectColumns'
 import Table from 'components/common/Table'
-import useGetCoinValue from 'hooks/assets/useGetCoinValue'
 import useMarkets from 'hooks/markets/useMarkets'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
+import { getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
 // TODO: Pass the market data directly here instead of the assets
@@ -22,7 +22,6 @@ export default function AssetsSelect(props: Props) {
   const { assets, onChangeSelected, selectedDenoms, isBorrow } = props
   const columns = useAssetSelectColumns(isBorrow)
   const markets = useMarkets()
-  const getCoinValue = useGetCoinValue()
 
   const defaultSelected = useMemo(() => {
     return assets.reduce(
@@ -43,7 +42,7 @@ export default function AssetsSelect(props: Props) {
     return assets.map((asset) => {
       const balancesForAsset = balances.find(byDenom(asset.denom))
       const coin = BNCoin.fromDenomAndBigNumber(asset.denom, BN(balancesForAsset?.amount ?? '0'))
-      const value = getCoinValue(coin)
+      const value = getCoinValue(coin, assets)
       return {
         asset,
         balance: balancesForAsset?.amount ?? '0',

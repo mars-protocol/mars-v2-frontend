@@ -1,9 +1,8 @@
 import { getVaultAccountStrategiesRow } from 'components/account/AccountStrategiesTable/functions'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { BN_ZERO } from 'constants/math'
-import useAllAssets from 'hooks/assets/useAllAssets'
 import useAsset from 'hooks/assets/useAsset'
-import usePrices from 'hooks/prices/usePrices'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 
 export const UNLOCK_AMOUNT_META = { accessorKey: 'amounts.primary', header: 'Unlock Amount' }
 
@@ -14,13 +13,12 @@ interface Props {
 export default function UnlockAmount(props: Props) {
   const primaryAsset = useAsset(props.vault.denoms.primary)
   const secondaryAsset = useAsset(props.vault.denoms.secondary)
-  const { data: prices } = usePrices()
-  const assets = useAllAssets()
+  const assets = useDepositEnabledAssets()
 
   if (!primaryAsset) return null
 
   if (primaryAsset && secondaryAsset) {
-    const unlockAmounts = getVaultAccountStrategiesRow(props.vault, prices, assets)
+    const unlockAmounts = getVaultAccountStrategiesRow(props.vault, assets)
     const primaryUnlockAmount = unlockAmounts?.coins?.primary?.amount ?? BN_ZERO
     const secondaryUnlockAmount = unlockAmounts?.coins?.secondary?.amount ?? BN_ZERO
     return (

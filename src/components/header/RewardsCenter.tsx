@@ -8,12 +8,12 @@ import { Logo } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
 import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
+import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAccountId from 'hooks/accounts/useAccountId'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useToggle from 'hooks/common/useToggle'
 import useUnclaimedRewards from 'hooks/incentives/useUnclaimedRewards'
-import usePrices from 'hooks/prices/usePrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
@@ -52,20 +52,20 @@ export default function RewardsCenter(props: Props) {
   const [estimatedFee, setEstimatedFee] = useState(defaultFee)
   const [showRewardsCenter, setShowRewardsCenter] = useToggle()
   const claimRewards = useStore((s) => s.claimRewards)
-  const { data: prices } = usePrices()
   const { data: unclaimedRewards } = useUnclaimedRewards()
-  const assets = useAllAssets()
+  const { data: assets } = useAssets()
   const totalRewardsCoin = useMemo(() => {
     let total = 0
     unclaimedRewards.forEach((reward) => {
-      total = total + getCoinValue(reward, prices, assets).toNumber()
+      const value = getCoinValue(reward, assets)
+      total = total + value.toNumber()
     })
 
     return new BNCoin({
       denom: ORACLE_DENOM,
       amount: total.toString(),
     })
-  }, [assets, prices, unclaimedRewards])
+  }, [assets, unclaimedRewards])
 
   const hasIncentives = unclaimedRewards.length > 0
 
@@ -100,7 +100,7 @@ export default function RewardsCenter(props: Props) {
         hasFocus={showRewardsCenter}
       >
         <div className='relative flex items-center h-fullx'>
-          <DisplayCurrency coin={totalRewardsCoin} />
+          <DisplayCurrency coin={totalRewardsCoin} allowZeroAmount />
         </div>
       </Button>
       <Overlay

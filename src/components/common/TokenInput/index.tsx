@@ -10,7 +10,7 @@ import Select from 'components/common/Select'
 import Text from 'components/common/Text'
 import WarningMessages from 'components/common/WarningMessages'
 import AssetImage from 'components/common/assets/AssetImage'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
@@ -33,7 +33,7 @@ interface Props {
 
 export default function TokenInput(props: Props) {
   const baseAsset = useBaseAsset()
-  const assets = useAllAssets()
+  const { data: assets } = useAssets()
   function onMaxBtnClick() {
     props.onChange(BN(props.max))
   }
@@ -120,7 +120,7 @@ export default function TokenInput(props: Props) {
         </div>
         <div className='flex'>
           <DisplayCurrency
-            isApproximation
+            isApproximation={props.amount.isGreaterThan(0)}
             className='inline pl-1 text-xs text-white/50'
             coin={new BNCoin({ denom: props.asset.denom, amount: props.amount.toString() })}
           />

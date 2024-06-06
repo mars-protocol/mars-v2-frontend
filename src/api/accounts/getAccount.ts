@@ -1,6 +1,5 @@
 import { cacheFn, positionsCache } from 'api/cache'
 import { getCreditManagerQueryClient } from 'api/cosmwasm-client'
-import getPrices from 'api/prices/getPrices'
 import getDepositedVaults from 'api/vaults/getDepositedVaults'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Positions } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
@@ -8,6 +7,7 @@ import { resolvePerpsPositions, resolvePerpsVaultPositions } from 'utils/resolve
 
 export default async function getAccount(
   chainConfig: ChainConfig,
+  assets: Asset[],
   accountId?: string,
 ): Promise<Account> {
   if (!accountId) return new Promise((_, reject) => reject('No account ID found'))
@@ -20,11 +20,9 @@ export default async function getAccount(
     `${chainConfig.id}/account/${accountId}`,
   )
 
-  const prices = await getPrices(chainConfig)
-
   const accountKind = await creditManagerQueryClient.accountKind({ accountId: accountId })
 
-  const depositedVaults = await getDepositedVaults(accountId, chainConfig, accountPosition)
+  const depositedVaults = await getDepositedVaults(accountId, chainConfig, assets, accountPosition)
 
   if (accountPosition) {
     return {
@@ -34,7 +32,7 @@ export default async function getAccount(
       deposits: accountPosition.deposits.map((deposit) => new BNCoin(deposit)),
       vaults: depositedVaults,
       perpsVault: resolvePerpsVaultPositions(accountPosition.perp_vault),
-      perps: resolvePerpsPositions(accountPosition.perps, prices),
+      perps: resolvePerpsPositions(accountPosition.perps, assets),
       kind: accountKind,
     }
   }

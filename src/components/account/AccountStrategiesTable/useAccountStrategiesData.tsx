@@ -4,9 +4,8 @@ import {
   getPerpsVaultAccountStrategiesRow,
   getVaultAccountStrategiesRow,
 } from 'components/account/AccountStrategiesTable/functions'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
-import usePrices from 'hooks/prices/usePrices'
 import { transformPerpsVaultIntoDeposited } from 'hooks/vaults/useDepositedVaults'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 
@@ -17,9 +16,8 @@ interface Props {
 
 export default function useAccountStrategiesData(props: Props) {
   const { account, updatedAccount } = props
-  const { data: prices } = usePrices()
   const { data: vaultAprs } = useVaultAprs()
-  const assets = useAllAssets()
+  const assets = useDepositEnabledAssets()
   const { data: perpsVault } = usePerpsVault()
 
   return useMemo<AccountStrategyRow[]>(() => {
@@ -33,17 +31,15 @@ export default function useAccountStrategiesData(props: Props) {
         : vault
 
       if (vault.type === 'perp' && updatedAccount?.perpsVault && perpsVault) {
-        prevVault = transformPerpsVaultIntoDeposited(updatedAccount, perpsVault, prices, assets)[1]
+        prevVault = transformPerpsVaultIntoDeposited(updatedAccount, perpsVault, assets)[1]
       }
-      return getVaultAccountStrategiesRow(vault, prices, assets, apy, prevVault)
+      return getVaultAccountStrategiesRow(vault, assets, apy, prevVault)
     })
 
     if (usedAccount.perpsVault && perpsVault) {
-      vaultRows.push(
-        ...getPerpsVaultAccountStrategiesRow(perpsVault, prices, assets, usedAccount, account),
-      )
+      vaultRows.push(...getPerpsVaultAccountStrategiesRow(perpsVault, assets, usedAccount, account))
     }
 
     return vaultRows
-  }, [updatedAccount, account, perpsVault, prices, assets, vaultAprs])
+  }, [updatedAccount, account, perpsVault, assets, vaultAprs])
 }

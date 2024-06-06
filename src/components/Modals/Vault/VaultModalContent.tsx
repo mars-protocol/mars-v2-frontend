@@ -10,12 +10,11 @@ import Accordion from 'components/common/Accordion'
 import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useDisplayAsset from 'hooks/assets/useDisplayAsset'
 import useDepositVault from 'hooks/broadcast/useDepositVault'
 import useIsOpenArray from 'hooks/common/useIsOpenArray'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
-import usePrices from 'hooks/prices/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getCoinValue, magnify } from 'utils/formatters'
 import { getCapLeftWithBuffer } from 'utils/generic'
@@ -33,9 +32,8 @@ export default function VaultModalContent(props: Props) {
   const { addedDebts, removedDeposits, removedLends, simulateVaultDeposit } = useUpdatedAccount(
     props.account,
   )
-  const assets = useAllAssets()
+  const assets = useDepositEnabledAssets()
 
-  const { data: prices } = usePrices()
   const [displayCurrency] = useDisplayCurrency()
   const [isOpen, toggleOpen] = useIsOpenArray(2, false)
   const [isCustomRatio, setIsCustomRatio] = useState(false)
@@ -59,7 +57,6 @@ export default function VaultModalContent(props: Props) {
       const amount = magnify(
         getCoinValue(
           BNCoin.fromDenomAndBigNumber(props.vault.cap.denom, capLeft),
-          prices,
           assets,
         ).toString(),
         displayAsset,
@@ -68,7 +65,7 @@ export default function VaultModalContent(props: Props) {
       return [BNCoin.fromDenomAndBigNumber(displayAsset.denom, amount)]
     }
     return []
-  }, [assets, displayAsset, prices, props.vault.cap, totalValue])
+  }, [assets, displayAsset, props.vault.cap, totalValue])
 
   const onChangeIsCustomRatio = useCallback(
     (isCustomRatio: boolean) => setIsCustomRatio(isCustomRatio),

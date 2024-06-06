@@ -35,7 +35,6 @@ export default function AssetSelectorPerps(props: Props) {
   const handleChangeState = useCallback(() => {
     useStore.setState({ assetOverlayState: 'closed' })
   }, [])
-
   return (
     <>
       <Button

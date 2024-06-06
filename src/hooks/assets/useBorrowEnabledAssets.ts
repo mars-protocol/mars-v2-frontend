@@ -1,7 +1,8 @@
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAssets from 'hooks/assets/useAssets'
+import { useMemo } from 'react'
 
 export default function useBorrowEnabledAssets() {
-  const assets = useAllAssets()
+  const { data: assets } = useAssets()
 
-  return assets.filter((asset) => asset.isBorrowEnabled)
+  return useMemo(() => assets.filter((asset) => asset.isBorrowEnabled), [assets])
 }

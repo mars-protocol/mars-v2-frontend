@@ -10,6 +10,7 @@ import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useAssetsNoOraclePrices from 'hooks/assets/useAssetsNoOraclePrices'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useTransactionStore from 'hooks/common/useTransactionStore'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -66,6 +67,7 @@ export default function Toaster() {
     DEFAULT_SETTINGS.reduceMotion,
   )
   const chainConfig = useChainConfig()
+  const { data: assets } = useAssetsNoOraclePrices()
 
   const toast = useStore((s) => s.toast)
   const { addTransaction } = useTransactionStore()
@@ -156,9 +158,7 @@ export default function Toaster() {
               {toast.message}
             </Text>
           )}
-          {!isError &&
-            toast.content?.length > 0 &&
-            generateToastContent(toast.content, chainConfig.assets)}
+          {!isError && toast.content?.length > 0 && generateToastContent(toast.content, assets)}
           {toast.hash && (
             <div className='w-full'>
               <TextLink

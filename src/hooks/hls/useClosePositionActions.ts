@@ -2,9 +2,8 @@ import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
 
 import { BN_ZERO } from 'constants/math'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useSwapValueLoss from 'hooks/hls/useSwapValueLoss'
-import usePrices from 'hooks/prices/usePrices'
 import useSlippage from 'hooks/settings/useSlippage'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
@@ -17,11 +16,10 @@ interface Props {
 
 export default function UseClosePositionActions(props: Props): Action[] {
   const [slippage] = useSlippage()
-  const { data: prices } = usePrices()
   const collateralDenom = props.account.strategy.denoms.deposit
   const borrowDenom = props.account.strategy.denoms.borrow
   const { data: swapValueLoss } = useSwapValueLoss(collateralDenom, borrowDenom)
-  const assets = useAllAssets()
+  const assets = useDepositEnabledAssets()
   const debtAmount: BigNumber = useMemo(
     () =>
       props.account.debts.find((debt) => debt.denom === props.account.strategy.denoms.borrow)
@@ -38,27 +36,14 @@ export default function UseClosePositionActions(props: Props): Action[] {
   )
 
   const swapInAmount = useMemo(() => {
-    const targetValue = getCoinValue(
-      BNCoin.fromDenomAndBigNumber(borrowDenom, debtAmount),
-      prices,
-      assets,
-    )
+    const targetValue = getCoinValue(BNCoin.fromDenomAndBigNumber(borrowDenom, debtAmount), assets)
     return BigNumber.max(
-      getCoinAmount(collateralDenom, targetValue, prices, assets)
+      getCoinAmount(collateralDenom, targetValue, assets)
         .times(1 + slippage + SWAP_FEE_BUFFER + swapValueLoss)
         .integerValue(),
       collateralAmount,
     )
-  }, [
-    borrowDenom,
-    debtAmount,
-    prices,
-    assets,
-    collateralDenom,
-    slippage,
-    swapValueLoss,
-    collateralAmount,
-  ])
+  }, [borrowDenom, debtAmount, assets, collateralDenom, slippage, swapValueLoss, collateralAmount])
 
   return useMemo<Action[]>(
     () => [

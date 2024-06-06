@@ -12,6 +12,7 @@ import {
 import { Market as RedBankMarket } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { BN, getLeverageFromLTV } from 'utils/helpers'
 import { convertAprToApy } from 'utils/parsers'
+import { getTokenPrice } from 'utils/tokens'
 
 export function resolveMarketResponse(
   asset: Asset,
@@ -42,7 +43,6 @@ export function resolveMarketResponse(
       },
     }
   } catch (e) {
-    console.log(e)
     return {
       asset,
       apy: {
@@ -54,11 +54,6 @@ export function resolveMarketResponse(
       liquidity: BN_ZERO,
       depositEnabled: false,
       borrowEnabled: false,
-      cap: {
-        denom: '',
-        used: BN_ZERO,
-        max: BN_ZERO,
-      },
       ltv: {
         max: 0,
         liq: 0,
@@ -109,11 +104,10 @@ export function resolveHLSStrategies(
 
 export function resolvePerpsPositions(
   perpPositions: Positions['perps'],
-  prices: BNCoin[],
+  assets: Asset[],
 ): PerpsPosition[] {
   if (!perpPositions || !perpPositions.length) return []
-  const basePrice =
-    prices.find((price) => price.denom === perpPositions[0].base_denom)?.amount ?? BN_ZERO
+  const basePrice = getTokenPrice(perpPositions[0].base_denom, assets)
 
   return perpPositions.map((position) => {
     return {

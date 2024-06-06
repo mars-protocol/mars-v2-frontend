@@ -1,7 +1,7 @@
 import { getCreditManagerQueryClient } from 'api/cosmwasm-client'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
-import { getAssetSymbol } from 'utils/assets'
+import { getAssetSymbolByDenom } from 'utils/assets'
 import { BN } from 'utils/helpers'
 import { getVaultNameByCoins } from 'utils/vaults'
 
@@ -385,6 +385,7 @@ export function getToastContentsFromGroupedTransactionCoin(
   isHLS: boolean,
   target: string,
   chainConfig: ChainConfig,
+  assets: Asset[],
 ): ToastContent[] {
   const toastContents = [] as ToastContent[]
   const coins = transactionCoin.coins.map((c) => c.coin.toCoin())
@@ -450,7 +451,7 @@ export function getToastContentsFromGroupedTransactionCoin(
         text:
           transactionCoin.coins.length === 2
             ? `Deposited into the ${getVaultNameByCoins(chainConfig, vaultCoins)} vault`
-            : `Deposited into the Perps ${getAssetSymbol(chainConfig, vaultCoins[0].denom)} vault`,
+            : `Deposited into the Perps ${getAssetSymbolByDenom(vaultCoins[0].denom, assets)} vault`,
         coins: vaultCoins,
       })
       break
@@ -458,7 +459,7 @@ export function getToastContentsFromGroupedTransactionCoin(
       transactionCoin.coins.forEach((txCoin) => {
         if (!txCoin.before) return
         const type = getPerpsTransactionTypeFromCoin({ coin: txCoin.coin, before: txCoin.before })
-        const perpsAssetSymbol = getAssetSymbol(chainConfig, txCoin.coin.denom)
+        const perpsAssetSymbol = getAssetSymbolByDenom(txCoin.coin.denom, assets)
 
         const beforeTradeDirection: TradeDirection = txCoin.before.amount.isPositive()
           ? 'long'

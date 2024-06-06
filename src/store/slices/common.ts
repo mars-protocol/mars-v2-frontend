@@ -1,6 +1,6 @@
 import { GetState, SetState } from 'zustand'
 
-import Osmosis1 from 'configs/chains/osmosis/osmosis-1'
+import Osmosis1 from 'chains/osmosis/osmosis-1'
 
 export default function createCommonSlice(set: SetState<CommonSlice>, get: GetState<CommonSlice>) {
   return {
@@ -21,5 +21,6 @@ export default function createCommonSlice(set: SetState<CommonSlice>, get: GetSt
     isOracleStale: false,
     isHLS: false,
     isV1: false,
+    assets: [],
   }
 }

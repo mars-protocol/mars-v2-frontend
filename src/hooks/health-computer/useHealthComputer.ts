@@ -2,12 +2,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useAssetParams from 'hooks/params/useAssetParams'
 import useAllPerpsDenomStates from 'hooks/perps/usePerpsDenomStates'
 import { useAllPerpsParamsSC } from 'hooks/perps/usePerpsParams'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
-import usePrices from 'hooks/prices/usePrices'
 import useSlippage from 'hooks/settings/useSlippage'
 import useVaultConfigs from 'hooks/vaults/useVaultConfigs'
 import { VaultPositionValue } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
@@ -33,6 +32,7 @@ import {
   SwapKind,
 } from 'utils/health_computer'
 import { BN } from 'utils/helpers'
+import { getTokenPrice } from 'utils/tokens'
 
 // Pyth returns prices with up to 32 decimals. Javascript only supports 18 decimals. So we need to scale by 14 t
 // avoid "too many decimals" errors.
@@ -40,8 +40,7 @@ import { BN } from 'utils/helpers'
 const VALUE_SCALE_FACTOR = 12
 
 export default function useHealthComputer(account?: Account) {
-  const assets = useAllAssets()
-  const { data: prices } = usePrices()
+  const { data: assets } = useAssets()
   const { data: assetParams } = useAssetParams()
   const { data: vaultConfigs } = useVaultConfigs()
   const { data: perpsDenomStates } = useAllPerpsDenomStates()
@@ -59,7 +58,7 @@ export default function useHealthComputer(account?: Account) {
     if (!account?.vaults) return null
     return account.vaults.reduce(
       (prev, curr) => {
-        const baseCoinPrice = prices.find((price) => price.denom === curr.denoms.lp)?.amount || 0
+        const baseCoinPrice = getTokenPrice(curr.denoms.lp, assets)
         prev[curr.address] = {
           base_coin: {
             amount: '0', // Not used by healthcomputer
@@ -84,9 +83,11 @@ export default function useHealthComputer(account?: Account) {
       },
       {} as { [key: string]: VaultPositionValue },
     )
-  }, [account?.vaults, prices])
+  }, [account?.vaults])
 
   const priceData = useMemo(() => {
+    const assetsWithPrice = assets.filter((asset) => asset.price)
+    const prices = assetsWithPrice.map((asset) => asset.price) as BNCoin[]
     return prices.reduce(
       (prev, curr) => {
         const decimals = assets.find(byDenom(curr.denom))?.decimals || 6
@@ -101,7 +102,7 @@ export default function useHealthComputer(account?: Account) {
       },
       {} as { [key: string]: string },
     )
-  }, [assets, prices])
+  }, [assets])
 
   const denomsData = useMemo(
     () =>
