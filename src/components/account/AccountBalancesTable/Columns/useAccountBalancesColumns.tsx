@@ -16,15 +16,16 @@ import Value, {
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useMarkets from 'hooks/markets/useMarkets'
 import useStore from 'store'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import { byDenom } from 'utils/array'
 
 export default function useAccountBalancesColumns(
   account: Account,
   showLiquidationPrice?: boolean,
 ) {
   const markets = useMarkets()
-
   const updatedAccount = useStore((s) => s.updatedAccount)
-
+  const whitelistedAssets = useWhitelistedAssets()
   const { computeLiquidationPrice } = useHealthComputer(updatedAccount ?? account)
 
   return useMemo<ColumnDef<AccountBalanceRow>[]>(() => {
@@ -83,6 +84,7 @@ export default function useAccountBalancesColumns(
                   type={row.original.type}
                   amount={row.original.amount.toNumber()}
                   account={updatedAccount ?? account}
+                  isWhitelisted={whitelistedAssets.find(byDenom(row.original.denom)) !== undefined}
                 />
               ),
             },

@@ -21,10 +21,11 @@ interface Props {
   denom: string
   type: PositionType
   account: Account
+  isWhitelisted: boolean
 }
 
 export default function LiqPrice(props: Props) {
-  const { denom, type, amount, account, computeLiquidationPrice } = props
+  const { denom, type, amount, account, computeLiquidationPrice, isWhitelisted } = props
   const hasDebt = account.debts.length > 0
 
   const liqPrice = useMemo(() => {
@@ -38,6 +39,7 @@ export default function LiqPrice(props: Props) {
     if (type === 'vault')
       return 'Liquidation prices cannot be calculated for farm positions. But it a drop in price of the underlying assets can still cause a liquidation.'
     if (!hasDebt) return 'Your position cannot be liquidated as you currently have no debt.'
+    if (!isWhitelisted) return 'This asset is not collateral and can not be liquidated.'
     return 'The position size is too small to liquidate the account, even if the price goes to $0.00.'
   }, [type, hasDebt])
 

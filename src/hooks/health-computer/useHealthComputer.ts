@@ -24,14 +24,14 @@ import { SWAP_FEE_BUFFER } from 'utils/constants'
 import { findPositionInAccount } from 'utils/healthComputer'
 import {
   BorrowTarget,
-  LiquidationPriceKind,
-  SwapKind,
   compute_health_js,
   liquidation_price_js,
+  LiquidationPriceKind,
   max_borrow_estimate_js,
   max_perp_size_estimate_js,
   max_swap_estimate_js,
   max_withdraw_estimate_js,
+  SwapKind,
 } from 'utils/health_computer'
 import { BN } from 'utils/helpers'
 import { getTokenPrice } from 'utils/tokens'
