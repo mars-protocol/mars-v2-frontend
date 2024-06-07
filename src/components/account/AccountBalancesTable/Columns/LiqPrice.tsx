@@ -38,8 +38,8 @@ export default function LiqPrice(props: Props) {
   const tooltipText = useMemo(() => {
     if (type === 'vault')
       return 'Liquidation prices cannot be calculated for farm positions. But it a drop in price of the underlying assets can still cause a liquidation.'
-    if (!hasDebt) return 'Your position cannot be liquidated as you currently have no debt.'
     if (!isWhitelisted) return 'This asset is not collateral and can not be liquidated.'
+    if (!hasDebt) return 'Your position cannot be liquidated as you currently have no debt.'
     return 'The position size is too small to liquidate the account, even if the price goes to $0.00.'
   }, [type, hasDebt])
 
