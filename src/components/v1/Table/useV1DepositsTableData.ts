@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 
 import { BN_ZERO } from 'constants/math'
 import useAccount from 'hooks/accounts/useAccount'
-import useMarkets from 'hooks/markets/useMarkets'
+import useLendingMarkets from 'hooks/markets/useLendingMarkets'
 import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
@@ -11,7 +11,7 @@ export default function useV1DepositsTableData(): {
   depositAssets: LendingMarketTableData[]
 } {
   const address = useStore((s) => s.address)
-  const markets = useMarkets()
+  const markets = useLendingMarkets()
   const { data: v1Positions } = useAccount(address)
   const { convertAmount } = useDisplayCurrencyPrice()
 

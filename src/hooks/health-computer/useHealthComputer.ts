@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useAssets from 'hooks/assets/useAssets'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAssetParams from 'hooks/params/useAssetParams'
 import useAllPerpsDenomStates from 'hooks/perps/usePerpsDenomStates'
 import { useAllPerpsParamsSC } from 'hooks/perps/usePerpsParams'
@@ -20,6 +21,7 @@ import {
 import { convertAccountToPositions } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { SWAP_FEE_BUFFER } from 'utils/constants'
+import { findPositionInAccount } from 'utils/healthComputer'
 import {
   BorrowTarget,
   compute_health_js,
@@ -41,6 +43,7 @@ const VALUE_SCALE_FACTOR = 12
 
 export default function useHealthComputer(account?: Account) {
   const { data: assets } = useAssets()
+  const whitelistedAsset = useWhitelistedAssets()
   const { data: assetParams } = useAssetParams()
   const { data: vaultConfigs } = useVaultConfigs()
   const { data: perpsDenomStates } = useAllPerpsDenomStates()
@@ -253,15 +256,23 @@ export default function useHealthComputer(account?: Account) {
     (denom: string, kind: LiquidationPriceKind) => {
       if (!healthComputer) return null
       try {
-        const asset = assets.find(byDenom(denom))
-        if (!asset) return null
+        const asset = whitelistedAsset.find(byDenom(denom))
+        const assetInAccount = findPositionInAccount(healthComputer, denom)
+        if (!asset || !assetInAccount) return 0
         const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
         return BN(liquidation_price_js(healthComputer, denom, kind))
           .shiftedBy(-VALUE_SCALE_FACTOR)
           .shiftedBy(decimalDiff)
           .toNumber()
       } catch (err) {
-        console.error('Failed to calculate liquidation price: ', err)
+        console.error(
+          'Failed to calculate liquidation price: ',
+          err,
+          'denom:',
+          denom,
+          'kind:',
+          kind,
+        )
         return null
       }
     },
