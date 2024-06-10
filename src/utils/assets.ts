@@ -73,13 +73,23 @@ export function getNameFromUnknownAssetDenom(denom: string) {
   return truncate(denom, [3, 6])
 }
 
-export function getAssetSymbolFromUnknownAsset(symbol: string) {
-  const symbolParts = symbol.split('/')
-  if (symbolParts.length === 1 && symbol.length < 13) return symbol
+export function getAssetNameOrSymbolFromUnknownAsset({
+  symbol,
+  name,
+}: {
+  symbol?: string
+  name?: string
+}) {
+  const symbolOrName = symbol ?? name
+
+  if (!symbolOrName) return 'UNKNOWN'
+  const symbolParts = symbolOrName.split('/')
+  if (symbolParts.length === 1 && symbol && symbolOrName.length < 13) return symbol
+  if (symbolParts.length === 1 && name && symbolOrName.length < 26) return name
   if (symbolParts[0] === 'factory') return symbolParts[symbolParts.length - 1]
   if (symbolParts[0] === 'gamm') return `POOL ${symbolParts[symbolParts.length - 1]}`
-  if (symbolParts[0] === 'ibc') return truncate(symbol, [3, 6])
-  return truncate(symbol, [7, 3])
+  if (symbolParts[0] === 'ibc') return truncate(symbolOrName, [3, 6])
+  return truncate(symbolOrName, [7, 3])
 }
 
 export function handleUnknownAsset(coin: Coin): Asset {
@@ -94,9 +104,9 @@ export function convertAstroportAssetsResponse(data: AstroportAsset[]): Asset[] 
   return data.map((asset) => {
     return {
       denom: asset.denom,
-      name: asset.description,
+      name: getAssetNameOrSymbolFromUnknownAsset({ name: asset.description }),
       decimals: asset.decimals,
-      symbol: getAssetSymbolFromUnknownAsset(asset.symbol),
+      symbol: getAssetNameOrSymbolFromUnknownAsset({ symbol: asset.symbol }),
       logo: asset.icon ?? null,
       price: asset.priceUSD
         ? BNCoin.fromCoin({ denom: asset.denom, amount: String(asset.priceUSD) })
