@@ -20,7 +20,7 @@ export default function AccountPerpPositionTable(props: Props) {
     updatedAccount,
   })
 
-  const columns = useAccountPerpsColumns(account, showLiquidationPrice)
+  const columns = useAccountPerpsColumns(account)
 
   return (
     <Table
