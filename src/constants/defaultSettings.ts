@@ -4,20 +4,15 @@ import { ResolutionString } from 'utils/charting_library'
 
 // This does not retrigger when chains are switched. Assets might not be present on the new chain, but
 // This scenario is still caught.
-const enabledMarketAssets = useStore
-  .getState()
-  .chainConfig.assets.filter((asset) => asset.isEnabled && asset.isMarket)
+const defaultTradingPair = useStore.getState().chainConfig.defaultTradingPair
 
 export const DEFAULT_SETTINGS: Settings = {
-  accountSummaryTabs: [true, true, true, false],
-  accountDetailsTabs: [true, true, true, true],
+  accountSummaryTabsExpanded: [true, true, true, true],
+  accountSummaryInModalTabsExpanded: [true, true, true, false],
   reduceMotion: false,
   enableAutoLendGlobal: true,
-  tradingPairSimple: {
-    buy: enabledMarketAssets[0].denom,
-    sell: enabledMarketAssets[1].denom,
-  },
-  tradingPairAdvanced: { buy: enabledMarketAssets[0].denom, sell: enabledMarketAssets[1].denom },
+  tradingPairSimple: defaultTradingPair,
+  tradingPairAdvanced: defaultTradingPair,
   displayCurrency: ORACLE_DENOM,
   slippage: 0.02,
   tutorial: true,

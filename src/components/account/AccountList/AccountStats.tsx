@@ -8,10 +8,9 @@ import { ArrowDownLine, ArrowUpLine, TrashBin } from 'components/common/Icons'
 import SwitchAutoLend from 'components/common/Switch/SwitchAutoLend'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import useAccount from 'hooks/accounts/useAccount'
-import useAllAssets from 'hooks/assets/useAllAssets'
-import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
-import usePrices from 'hooks/prices/usePrices'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { calculateAccountApr, calculateAccountBalanceValue } from 'utils/accounts'
@@ -24,15 +23,14 @@ interface Props {
 
 export default function AccountStats(props: Props) {
   const { accountId, isActive, setShowMenu } = props
-  const assets = useAllAssets()
+  const assets = useDepositEnabledAssets()
   const { data: account } = useAccount(accountId)
-  const { data: prices } = usePrices()
   const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
 
   const positionBalance = useMemo(
-    () => (!account ? null : calculateAccountBalanceValue(account, prices, assets)),
-    [account, assets, prices],
+    () => (!account ? null : calculateAccountBalanceValue(account, assets)),
+    [account, assets],
   )
   const { health, healthFactor } = useHealthComputer(account)
   const data = useBorrowMarketAssetsTableData()
@@ -51,13 +49,12 @@ export default function AccountStats(props: Props) {
             account,
             borrowAssetsData,
             lendingAssetsData,
-            prices,
             hlsStrategies,
             assets,
             vaultAprs,
             account.kind === 'high_levered_strategy',
           ),
-    [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, prices, vaultAprs],
+    [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, vaultAprs],
   )
 
   const deleteAccountHandler = useCallback(() => {

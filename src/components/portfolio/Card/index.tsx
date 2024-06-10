@@ -12,11 +12,10 @@ import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import usePrices from 'hooks/prices/usePrices'
-import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import {
   calculateAccountApr,
@@ -33,14 +32,13 @@ export default function PortfolioCard(props: Props) {
   const { data: account } = useAccount(props.accountId)
   const { health, healthFactor } = useHealthComputer(account)
   const { address: urlAddress } = useParams()
-  const { data: prices } = usePrices()
   const currentAccountId = useAccountId()
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const data = useBorrowMarketAssetsTableData()
   const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
   const [searchParams] = useSearchParams()
-  const assets = useAllAssets()
+  const assets = useDepositEnabledAssets()
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
@@ -48,31 +46,30 @@ export default function PortfolioCard(props: Props) {
   )
 
   const [deposits, lends, debts, vaults] = useMemo(() => {
-    if (!prices.length || !account) return Array(4).fill(BN_ZERO)
-    return getAccountPositionValues(account, prices, assets)
-  }, [prices, account, assets])
+    if (!assets.length || !account) return Array(4).fill(BN_ZERO)
+    return getAccountPositionValues(account, assets)
+  }, [account, assets])
 
   const leverage = useMemo(() => {
-    if (!prices.length || !account) return BN_ZERO
-    return calculateAccountLeverage(account, prices, assets)
-  }, [account, assets, prices])
+    if (!assets.length || !account) return BN_ZERO
+    return calculateAccountLeverage(account, assets)
+  }, [account, assets])
 
   const apr = useMemo(() => {
-    if (!lendingAssets.length || !borrowAssets.length || !prices.length || !account) return null
+    if (!lendingAssets.length || !borrowAssets.length || !assets.length || !account) return null
     return calculateAccountApr(
       account,
       borrowAssets,
       lendingAssets,
-      prices,
       hlsStrategies,
       assets,
       vaultAprs,
       account.kind === 'high_levered_strategy',
     )
-  }, [lendingAssets, borrowAssets, prices, account, hlsStrategies, assets, vaultAprs])
+  }, [lendingAssets, borrowAssets, account, hlsStrategies, assets, vaultAprs])
 
   const stats: { title: ReactNode; sub: string }[] = useMemo(() => {
-    const isLoaded = account && prices.length && apr !== null
+    const isLoaded = account && assets.length && apr !== null
     return [
       {
         title: isLoaded ? (
@@ -102,7 +99,7 @@ export default function PortfolioCard(props: Props) {
         sub: 'APR',
       },
     ]
-  }, [account, prices.length, deposits, lends, vaults, debts, leverage, apr])
+  }, [account, assets, deposits, lends, vaults, debts, leverage, apr])
 
   if (!account) {
     return (

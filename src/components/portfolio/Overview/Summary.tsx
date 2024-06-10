@@ -8,9 +8,8 @@ import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendi
 import SummarySkeleton from 'components/portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
 import useAccounts from 'hooks/accounts/useAccounts'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
-import usePrices from 'hooks/prices/usePrices'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { getAccountSummaryStats } from 'utils/accounts'
@@ -19,14 +18,13 @@ import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 export default function PortfolioSummary() {
   const { address: urlAddress } = useParams()
   const walletAddress = useStore((s) => s.address)
-  const { data: prices } = usePrices()
   const data = useBorrowMarketAssetsTableData()
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const { data: accounts } = useAccounts('default', urlAddress || walletAddress)
   const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
-  const assets = useAllAssets()
+  const assets = useDepositEnabledAssets()
   const stats = useMemo(() => {
     if (!accounts?.length) return
     const combinedAccount = accounts.reduce(
@@ -51,7 +49,6 @@ export default function PortfolioSummary() {
 
     const { positionValue, debts, netWorth, apr, leverage } = getAccountSummaryStats(
       combinedAccount,
-      prices,
       borrowAssets,
       lendingAssets,
       hlsStrategies,
@@ -97,7 +94,7 @@ export default function PortfolioSummary() {
         sub: 'Combined leverage',
       },
     ]
-  }, [accounts, assets, borrowAssets, hlsStrategies, lendingAssets, prices, vaultAprs])
+  }, [accounts, assets, borrowAssets, hlsStrategies, lendingAssets, vaultAprs])
 
   if (!walletAddress && !urlAddress) return null
 

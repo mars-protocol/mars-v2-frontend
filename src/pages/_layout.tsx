@@ -7,8 +7,10 @@ import { SWRConfig } from 'swr'
 import ModalsContainer from 'components/Modals/ModalsContainer'
 import AccountDetails from 'components/account/AccountDetails'
 import Background from 'components/common/Background'
+import { CircularProgress } from 'components/common/CircularProgress'
 import Footer from 'components/common/Footer'
 import PageMetadata from 'components/common/PageMetadata'
+import Text from 'components/common/Text'
 import Toaster from 'components/common/Toaster'
 import Header from 'components/header/Header'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
@@ -73,39 +75,50 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <SWRConfig value={{ use: [debugSWR] }}>
-        <PageMetadata />
-        <Background />
-        <Header />
-        <main
-          className={classNames(
-            'md:min-h-[calc(100dvh-81px)]',
-            'mt-[73px]',
-            'flex',
-            'min-h-screen-full w-full relative',
-            'gap-4 p-2 pb-20',
-            'md:gap-6 md:px-4 md:py-6',
-            !focusComponent &&
-              address &&
-              isFullWidth &&
-              accountId &&
-              (accountDetailsExpanded && !isMobile ? 'md:pr-102' : 'md:pr-24'),
-            !reduceMotion && isFullWidth && 'transition-all duration-500',
-            'justify-center',
-            focusComponent && 'items-center',
-            isMobile && 'items-start transition-all duration-500',
-            mobileNavExpanded && isMobile && '-ml-full',
-          )}
+        <Suspense
+          fallback={
+            <div className='flex items-center justify-center w-full h-screen-full'>
+              <div className='flex flex-wrap justify-center w-full gap-4'>
+                <CircularProgress size={60} />
+                <Text className='w-full text-center' size='2xl'>
+                  Fetching on-chain data...
+                </Text>
+              </div>
+            </div>
+          }
         >
-          <Suspense>
+          <PageMetadata />
+          <Background />
+          <Header />
+          <main
+            className={classNames(
+              'md:min-h-[calc(100dvh-81px)]',
+              'mt-[73px]',
+              'flex',
+              'min-h-screen-full w-full relative',
+              'gap-4 p-2 pb-20',
+              'md:gap-6 md:px-4 md:py-6',
+              !focusComponent &&
+                address &&
+                isFullWidth &&
+                accountId &&
+                (accountDetailsExpanded && !isMobile ? 'md:pr-102' : 'md:pr-24'),
+              !reduceMotion && isFullWidth && 'transition-all duration-500',
+              'justify-center',
+              focusComponent && 'items-center',
+              isMobile && 'items-start transition-all duration-500',
+              mobileNavExpanded && isMobile && '-ml-full',
+            )}
+          >
             <PageContainer focusComponent={focusComponent} fullWidth={isFullWidth}>
               {children}
             </PageContainer>
-          </Suspense>
-          {!isMobile && <AccountDetails className='hidden md:flex' />}
-        </main>
-        <Footer />
-        <ModalsContainer />
-        <Toaster />
+            {!isMobile && <AccountDetails className='hidden md:flex' />}
+          </main>
+          <Footer />
+          <ModalsContainer />
+          <Toaster />
+        </Suspense>
       </SWRConfig>
     </>
   )

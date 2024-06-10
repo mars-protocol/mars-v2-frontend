@@ -11,36 +11,36 @@ import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendi
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAssets from 'hooks/assets/useAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import usePrices from 'hooks/prices/usePrices'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { calculateAccountApr, calculateAccountLeverage } from 'utils/accounts'
 
 interface Props {
   account: Account
-  isAccountDetails?: boolean
+  isInModal?: boolean
   isHls?: boolean
 }
 
 export default function AccountSummary(props: Props) {
-  const { account, isAccountDetails, isHls } = props
-  const storageKey = isAccountDetails
-    ? LocalStorageKeys.ACCOUNT_DETAILS_TABS
-    : LocalStorageKeys.ACCOUNT_SUMMARY_TABS
-  const defaultSetting = isAccountDetails
-    ? DEFAULT_SETTINGS.accountDetailsTabs
-    : DEFAULT_SETTINGS.accountSummaryTabs
+  const { account, isInModal, isHls } = props
+  const chainConfig = useChainConfig()
+  const storageKey = isInModal
+    ? `${chainConfig.id}/${LocalStorageKeys.ACCOUNT_SUMMARY_IN_MODAL_TABS_EXPANDED}`
+    : `${chainConfig.id}/${LocalStorageKeys.ACCOUNT_SUMMARY_TABS_EXPANDED}`
+  const defaultSetting = isInModal
+    ? DEFAULT_SETTINGS.accountSummaryInModalTabsExpanded
+    : DEFAULT_SETTINGS.accountSummaryTabsExpanded
   const [accountSummaryTabs, setAccountSummaryTabs] = useLocalStorage<boolean[]>(
     storageKey,
     defaultSetting,
   )
   const { data: vaultAprs } = useVaultAprs()
-  const { data: prices } = usePrices()
-  const assets = useAllAssets()
+  const { data: assets } = useAssets()
   const updatedAccount = useStore((s) => s.updatedAccount)
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
@@ -56,20 +56,24 @@ export default function AccountSummary(props: Props) {
     updatedAccount || account,
   )
   const leverage = useMemo(
-    () => (account ? calculateAccountLeverage(account, prices, assets) : BN_ZERO),
-    [account, prices, assets],
+    () => (account ? calculateAccountLeverage(account, assets) : BN_ZERO),
+    [account, assets],
   )
   const updatedLeverage = useMemo(() => {
     if (!updatedAccount) return null
-    const updatedLeverage = calculateAccountLeverage(updatedAccount, prices, assets)
+    const updatedLeverage = calculateAccountLeverage(updatedAccount, assets)
 
     if (updatedLeverage.eq(leverage)) return null
     return updatedLeverage
-  }, [updatedAccount, prices, assets, leverage])
+  }, [updatedAccount, assets, leverage])
 
   const handleToggle = useCallback(
     (index: number) => {
-      setAccountSummaryTabs(accountSummaryTabs.map((tab, i) => (i === index ? !tab : tab)))
+      setAccountSummaryTabs(
+        defaultSetting.map((_, i) =>
+          i === index ? !accountSummaryTabs[i] ?? true : accountSummaryTabs[i] ?? false,
+        ),
+      )
     },
     [accountSummaryTabs, setAccountSummaryTabs],
   )
@@ -80,7 +84,6 @@ export default function AccountSummary(props: Props) {
         updatedAccount ?? account,
         borrowAssetsData,
         lendingAssetsData,
-        prices,
         hlsStrategies,
         assets,
         vaultAprs,
@@ -91,7 +94,6 @@ export default function AccountSummary(props: Props) {
       updatedAccount,
       borrowAssetsData,
       lendingAssetsData,
-      prices,
       hlsStrategies,
       assets,
       vaultAprs,
@@ -168,7 +170,6 @@ export default function AccountSummary(props: Props) {
       <AccountSummaryHeader
         account={account}
         updatedAccount={updatedAccount}
-        prices={prices}
         assets={assets}
         leverage={leverage.toNumber() || 1}
         updatedLeverage={updatedLeverage?.toNumber() || null}
@@ -177,7 +178,7 @@ export default function AccountSummary(props: Props) {
         updatedHealth={updatedHealth}
         healthFactor={healthFactor}
         updatedHealthFactor={updatedHealthFactor}
-        isAccountDetails={isAccountDetails}
+        isInModal={isInModal}
       />
       <Accordion items={items} allowMultipleOpen />
     </>

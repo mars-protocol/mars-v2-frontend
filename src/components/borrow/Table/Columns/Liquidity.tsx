@@ -1,7 +1,6 @@
 import { Row } from '@tanstack/react-table'
 
 import AmountAndValue from 'components/common/AmountAndValue'
-import Loading from 'components/common/Loading'
 import { BN_ZERO } from 'constants/math'
 import useAsset from 'hooks/assets/useAsset'
 import { demagnify } from 'utils/formatters'
@@ -34,10 +33,6 @@ export default function Liquidity(props: Props) {
   const asset = useAsset(borrowAsset.denom)
 
   if (!asset) return null
-
-  if (liquidity.isZero()) {
-    return <Loading />
-  }
 
   return <AmountAndValue asset={asset} amount={liquidity ?? BN_ZERO} />
 }

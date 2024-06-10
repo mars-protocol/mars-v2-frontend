@@ -1,31 +1,34 @@
-import { useCallback, useEffect, useState } from 'react'
-
-import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
-import useFavoriteAssets from 'hooks/localStorage/useFavoriteAssets'
+import getPrices from 'api/prices/getPrices'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useSWR from 'swr'
+import { BNCoin } from 'types/classes/BNCoin'
+import useAssetsNoOraclePrices from 'hooks/assets/useAssetsNoOraclePrices'
 
 export default function useAssets() {
-  const marketEnabledAssets = useMarketEnabledAssets()
-  const [assets, setAssets] = useState<Asset[]>(marketEnabledAssets)
-  const [favoriteAssetsDenoms] = useFavoriteAssets()
-  const getFavoriteAssets = useCallback(() => {
-    const assets = marketEnabledAssets
-      .map((asset) => ({
+  const chainConfig = useChainConfig()
+  const { data: assets } = useAssetsNoOraclePrices()
+
+  return useSWR(
+    assets && `chains/${chainConfig.id}/assets`,
+    async () => mapPricesToAllAssets(assets!),
+    {
+      suspense: true,
+      revalidateOnFocus: false,
+      staleTime: 30_000,
+      revalidateIfStale: true,
+    },
+  )
+
+  async function mapPricesToAllAssets(assets: Asset[]) {
+    const prices = await getPrices(chainConfig, assets)
+    return assets.map((asset) => {
+      return {
         ...asset,
-        isFavorite: favoriteAssetsDenoms.includes(asset.denom),
-      }))
-      .sort((a, b) => +b.isFavorite - +a.isFavorite)
-
-    setAssets(assets)
-  }, [favoriteAssetsDenoms, marketEnabledAssets])
-
-  useEffect(() => {
-    getFavoriteAssets()
-    window.addEventListener('storage', getFavoriteAssets)
-
-    return () => {
-      window.removeEventListener('storage', getFavoriteAssets)
-    }
-  }, [getFavoriteAssets])
-
-  return assets
+        price:
+          asset.denom === 'usd'
+            ? BNCoin.fromCoin({ denom: 'usd', amount: '1' })
+            : prices.find((price) => price.denom === asset.denom) ?? asset.price,
+      }
+    })
+  }
 }

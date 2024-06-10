@@ -5,22 +5,22 @@ import DisplayCurrency from 'components/common/DisplayCurrency'
 import DoubleLogo from 'components/common/DoubleLogo'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
+import { BN_ONE } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAccountId from 'hooks/accounts/useAccountId'
-import useAllAssets from 'hooks/assets/useAllAssets'
-import usePrices from 'hooks/prices/usePrices'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useSlippage from 'hooks/settings/useSlippage'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
+import { getTokenPrice } from 'utils/tokens'
 
 export default function WithdrawFromVaultsModal() {
   const modal = useStore((s) => s.withdrawFromVaultsModal)
   const accountId = useAccountId()
-  const { data: prices } = usePrices()
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
   const [slippage] = useSlippage()
-  const assets = useAllAssets()
+  const assets = useDepositEnabledAssets()
 
   function onClose() {
     useStore.setState({ withdrawFromVaultsModal: null })
@@ -59,8 +59,8 @@ export default function WithdrawFromVaultsModal() {
             const secondaryAsset = assets.find(byDenom(vault.denoms.secondary))
 
             if (!primaryAsset || !secondaryAsset) return null
-            const primaryAssetPrice = prices.find(byDenom(primaryAsset.denom))?.amount ?? 1
-            const secondaryAssetPrice = prices.find(byDenom(secondaryAsset.denom))?.amount ?? 1
+            const primaryAssetPrice = getTokenPrice(primaryAsset.denom, assets, BN_ONE)
+            const secondaryAssetPrice = getTokenPrice(secondaryAsset.denom, assets, BN_ONE)
 
             const primaryAssetAmount = positionValue.dividedBy(primaryAssetPrice).dividedBy(2)
             const secondaryAssetAmount = positionValue.dividedBy(secondaryAssetPrice).dividedBy(2)

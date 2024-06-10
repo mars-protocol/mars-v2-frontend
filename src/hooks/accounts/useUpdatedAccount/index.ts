@@ -9,9 +9,8 @@ import {
   removeCoins,
   updatePerpsPositions,
 } from 'hooks/accounts/useUpdatedAccount/functions'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAssets from 'hooks/assets/useAssets'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
-import usePrices from 'hooks/prices/usePrices'
 import useSlippage from 'hooks/settings/useSlippage'
 import useVaults from 'hooks/vaults/useVaults'
 import useStore from 'store'
@@ -24,9 +23,8 @@ import { getValueFromBNCoins } from 'utils/helpers'
 
 export function useUpdatedAccount(account?: Account) {
   const { data: availableVaults } = useVaults(false)
-  const { data: prices } = usePrices()
   const { data: perpsVault } = usePerpsVault()
-  const assets = useAllAssets()
+  const { data: assets } = useAssets()
   const [updatedAccount, setUpdatedAccount] = useState<Account | undefined>(
     account ? cloneAccount(account) : undefined,
   )
@@ -114,7 +112,18 @@ export function useUpdatedAccount(account?: Account) {
       addDeposits([])
       addLends([])
       if (target === 'deposit') addDeposits(coins)
-      if (target === 'lend') addLends(coins)
+
+      if (target === 'lend') {
+        const lendableCoins = [] as BNCoin[]
+        const depositableCoins = [] as BNCoin[]
+        coins.forEach((coin) => {
+          assets.find((asset) => asset.denom === coin.denom)?.isAutoLendEnabled
+            ? lendableCoins.push(coin)
+            : depositableCoins.push(coin)
+        })
+        addDeposits(depositableCoins)
+        addLends(lendableCoins)
+      }
     },
     [account, addDeposits, addLends],
   )
@@ -184,35 +193,26 @@ export function useUpdatedAccount(account?: Account) {
     (depositCoin: BNCoin, borrowCoin: BNCoin) => {
       addDeposits([depositCoin])
       addDebts([borrowCoin])
-      const additionalDebtValue = getCoinValue(borrowCoin, prices, assets)
+      const additionalDebtValue = getCoinValue(borrowCoin, assets)
 
-      const tradeOutputAmount = getCoinAmount(
-        depositCoin.denom,
-        additionalDebtValue,
-        prices,
-        assets,
-      )
+      const tradeOutputAmount = getCoinAmount(depositCoin.denom, additionalDebtValue, assets)
         .times(1 - SWAP_FEE_BUFFER)
         .integerValue()
       addTrades([BNCoin.fromDenomAndBigNumber(depositCoin.denom, tradeOutputAmount)])
     },
-    [assets, prices],
+    [assets],
   )
 
   const simulateHlsStakingWithdraw = useCallback(
     (collateralDenom: string, debtDenom: string, repayAmount: BigNumber) => {
-      const repayValue = getCoinValue(
-        BNCoin.fromDenomAndBigNumber(debtDenom, repayAmount),
-        prices,
-        assets,
-      )
-      const removeDepositAmount = getCoinAmount(collateralDenom, repayValue, prices, assets)
+      const repayValue = getCoinValue(BNCoin.fromDenomAndBigNumber(debtDenom, repayAmount), assets)
+      const removeDepositAmount = getCoinAmount(collateralDenom, repayValue, assets)
         .times(1 + slippage)
         .integerValue()
       removeDeposits([BNCoin.fromDenomAndBigNumber(collateralDenom, removeDepositAmount)])
       removeDebts([BNCoin.fromDenomAndBigNumber(debtDenom, repayAmount)])
     },
-    [assets, prices, slippage],
+    [assets, slippage],
   )
 
   const simulateVaultDeposit = useCallback(
@@ -233,12 +233,10 @@ export function useUpdatedAccount(account?: Account) {
       addDebts(borrowCoins)
 
       // Value has to be adjusted for slippage
-      const value = getValueFromBNCoins([...coins, ...borrowCoins], prices, assets).times(
-        1 - slippage,
-      )
+      const value = getValueFromBNCoins([...coins, ...borrowCoins], assets).times(1 - slippage)
       addVaultValues([{ address, value }])
     },
-    [account, assets, prices, slippage],
+    [account, assets, slippage],
   )
 
   const simulatePerps = useCallback(
@@ -311,7 +309,6 @@ export function useUpdatedAccount(account?: Account) {
     if (!account) return
 
     const accountCopy = cloneAccount(account)
-
     accountCopy.deposits = addCoins([...addedDeposits, ...addedTrades], [...accountCopy.deposits])
     accountCopy.debts = addCoins(addedDebts, [...accountCopy.debts])
     accountCopy.vaults = addValueToVaults(
@@ -338,7 +335,7 @@ export function useUpdatedAccount(account?: Account) {
     accountCopy.lends = addCoins(addedLends, [...accountCopy.lends])
     accountCopy.lends = removeCoins(removedLends, [...accountCopy.lends])
     setUpdatedAccount(accountCopy)
-    setLeverage(calculateAccountLeverage(accountCopy, prices, assets).toNumber())
+    setLeverage(calculateAccountLeverage(accountCopy, assets).toNumber())
     useStore.setState({ updatedAccount: accountCopy })
 
     return () => useStore.setState({ updatedAccount: undefined })
@@ -352,7 +349,6 @@ export function useUpdatedAccount(account?: Account) {
     addedLends,
     removedLends,
     availableVaults,
-    prices,
     addedTrades,
     assets,
     updatedPerpPosition,

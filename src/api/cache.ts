@@ -17,14 +17,14 @@ import {
 
 interface Cache<T> extends Map<string, { data: T | null; timestamp: number }> {}
 
-let totalRequests: number = 0
-let cachedRequests: number = 0
+let totalRequests = 0
+let cachedRequests = 0
 
 export async function cacheFn<T>(
   fn: () => Promise<T>,
   cache: Cache<T>,
   key: string,
-  staleAfter: number = 5,
+  staleAfter = 5,
 ) {
   const cachedData = cache.get(key)?.data
   const isStale = (cache.get(key)?.timestamp || 0) + 1000 * staleAfter < new Date().getTime()

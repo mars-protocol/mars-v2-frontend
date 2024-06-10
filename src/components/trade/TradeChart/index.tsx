@@ -20,9 +20,7 @@ import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import usePrices from 'hooks/prices/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
-import { byDenom } from 'utils/array'
 import { ChartingLibraryWidgetOptions, ResolutionString, widget } from 'utils/charting_library'
 import { magnify } from 'utils/formatters'
 import { getTradingViewSettings } from 'utils/theme'
@@ -34,21 +32,21 @@ interface Props {
 }
 
 export default function TradeChart(props: Props) {
-  const { data: prices, isLoading } = usePrices()
   const [chartInterval, _] = useLocalStorage<ResolutionString>(
     LocalStorageKeys.CHART_INTERVAL,
     DEFAULT_SETTINGS.chartInterval,
   )
   const [theme, __] = useLocalStorage<string>(LocalStorageKeys.THEME, DEFAULT_SETTINGS.theme)
-  const ratio = useMemo(() => {
-    const priceBuyAsset = prices.find(byDenom(props.buyAsset.denom))?.amount
-    const priceSellAsset = prices.find(byDenom(props.sellAsset.denom))?.amount
+  const [ratio, priceBuyAsset, priceSellAsset] = useMemo(() => {
+    const priceBuyAsset = props.buyAsset?.price?.amount
+    const priceSellAsset = props.sellAsset?.price?.amount
 
-    if (!priceBuyAsset || !priceSellAsset) return BN_ZERO
-    return priceBuyAsset.dividedBy(priceSellAsset)
-  }, [prices, props.buyAsset.denom, props.sellAsset.denom])
+    if (!priceBuyAsset || !priceSellAsset) return [BN_ZERO]
+    return [priceBuyAsset.dividedBy(priceSellAsset), priceBuyAsset, priceSellAsset]
+  }, [props.buyAsset, props.sellAsset])
 
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
+  const { symbol: buyAssetSymbol, pythFeedName: buyAssetFeedName } = props.buyAsset
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.TradingView || !chartContainerRef.current) return
@@ -56,7 +54,7 @@ export default function TradeChart(props: Props) {
     const settings = getTradingViewSettings(theme)
 
     const widgetOptions: ChartingLibraryWidgetOptions = {
-      symbol: props.buyAsset.pythFeedName ?? `${props.buyAsset.symbol}/USD`,
+      symbol: buyAssetFeedName ?? `${buyAssetSymbol}/USD`,
       datafeed: datafeed,
       interval: chartInterval,
       library_path: '/charting_library/',
@@ -101,7 +99,7 @@ export default function TradeChart(props: Props) {
     return () => {
       tvWidget.remove()
     }
-  }, [props.buyAsset.pythFeedName, props.buyAsset.symbol, chartInterval, chartContainerRef, theme])
+  }, [buyAssetSymbol, buyAssetFeedName, chartInterval, chartContainerRef, theme])
 
   return (
     <Card
@@ -117,7 +115,7 @@ export default function TradeChart(props: Props) {
               Trading Chart
             </Text>
           )}
-          {ratio.isZero() || isLoading ? (
+          {!priceBuyAsset || !priceSellAsset ? null : ratio.isZero() ? (
             <Loading className='h-4 m-4 md:m-0 md:mr-4 w-60' />
           ) : (
             <div className='flex items-center gap-1'>

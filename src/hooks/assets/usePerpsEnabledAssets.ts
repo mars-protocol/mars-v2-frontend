@@ -1,7 +1,8 @@
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAssets from 'hooks/assets/useAssets'
+import { useMemo } from 'react'
 
 export default function usePerpsEnabledAssets() {
-  const assets = useAllAssets()
+  const { data: assets } = useAssets()
 
-  return assets.filter((asset) => asset.isPerpsEnabled)
+  return useMemo(() => assets.filter((asset) => asset.isPerpsEnabled), [assets])
 }

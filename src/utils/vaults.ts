@@ -12,7 +12,6 @@ export function getVaultDepositCoinsAndValue(
   deposits: BNCoin[],
   borrowings: BNCoin[],
   reclaims: BNCoin[],
-  prices: BNCoin[],
   slippage: number,
   assets: Asset[],
 ) {
@@ -21,7 +20,7 @@ export function getVaultDepositCoinsAndValue(
 
   // The slippage is to account for rounding errors. Otherwise, it might happen we try to deposit more value
   // into the vaults than there are funds available.
-  const totalValue = getValueFromBNCoins(borrowingsAndDepositsAndReclaims, prices, assets).times(
+  const totalValue = getValueFromBNCoins(borrowingsAndDepositsAndReclaims, assets).times(
     1 - slippage,
   )
   const halfValue = totalValue.dividedBy(2)
@@ -31,13 +30,13 @@ export function getVaultDepositCoinsAndValue(
 
   // The buffer is needed as sometimes the pools are a bit skew, or because of other inaccuracies in the messages
   const primaryDepositAmount = halfValue
-    .dividedBy(getTokenPrice(primaryAsset.denom, prices))
+    .dividedBy(getTokenPrice(primaryAsset.denom, assets))
     .shiftedBy(primaryAsset.decimals)
     .times(VAULT_DEPOSIT_BUFFER)
     .integerValue()
 
   const secondaryDepositAmount = halfValue
-    .dividedBy(getTokenPrice(secondaryAsset.denom, prices))
+    .dividedBy(getTokenPrice(secondaryAsset.denom, assets))
     .shiftedBy(secondaryAsset.decimals)
     .times(VAULT_DEPOSIT_BUFFER)
     .integerValue()
@@ -60,14 +59,13 @@ export function getVaultSwapActions(
   deposits: BNCoin[],
   reclaims: BNCoin[],
   borrowings: BNCoin[],
-  prices: BNCoin[],
   assets: Asset[],
   slippage: number,
 ): Action[] {
   const swapActions: Action[] = []
   const coins = [...deposits, ...borrowings, ...reclaims]
 
-  const value = getValueFromBNCoins(coins, prices, assets)
+  const value = getValueFromBNCoins(coins, assets)
 
   let primaryLeftoverValue = value.dividedBy(2)
   let secondaryLeftoverValue = value.dividedBy(2)
@@ -90,44 +88,38 @@ export function getVaultSwapActions(
   )
 
   primaryCoins.forEach((bnCoin) => {
-    let value = getCoinValue(bnCoin, prices, assets)
+    let value = getCoinValue(bnCoin, assets)
     if (value.isLessThanOrEqualTo(primaryLeftoverValue)) {
       primaryLeftoverValue = primaryLeftoverValue.minus(value)
     } else {
       value = value.minus(primaryLeftoverValue)
       primaryLeftoverValue = primaryLeftoverValue.minus(primaryLeftoverValue)
       otherCoins.push(
-        BNCoin.fromDenomAndBigNumber(
-          bnCoin.denom,
-          getCoinAmount(bnCoin.denom, value, prices, assets),
-        ),
+        BNCoin.fromDenomAndBigNumber(bnCoin.denom, getCoinAmount(bnCoin.denom, value, assets)),
       )
     }
   })
 
   secondaryCoins.forEach((bnCoin) => {
-    let value = getCoinValue(bnCoin, prices, assets)
+    let value = getCoinValue(bnCoin, assets)
     if (value.isLessThanOrEqualTo(secondaryLeftoverValue)) {
       secondaryLeftoverValue = secondaryLeftoverValue.minus(value)
     } else {
       value = value.minus(secondaryLeftoverValue)
       secondaryLeftoverValue = secondaryLeftoverValue.minus(secondaryLeftoverValue)
       otherCoins.push(
-        BNCoin.fromDenomAndBigNumber(
-          bnCoin.denom,
-          getCoinAmount(bnCoin.denom, value, prices, assets),
-        ),
+        BNCoin.fromDenomAndBigNumber(bnCoin.denom, getCoinAmount(bnCoin.denom, value, assets)),
       )
     }
   })
 
   otherCoins.forEach((bnCoin) => {
-    let value = getCoinValue(bnCoin, prices, assets)
+    let value = getCoinValue(bnCoin, assets)
     let amount = bnCoin.amount
 
     if (primaryLeftoverValue.isGreaterThan(0)) {
       const swapValue = value.isLessThan(primaryLeftoverValue) ? value : primaryLeftoverValue
-      const swapAmount = getCoinAmount(bnCoin.denom, swapValue, prices, assets)
+      const swapAmount = getCoinAmount(bnCoin.denom, swapValue, assets)
 
       value = value.minus(swapValue)
       amount = amount.minus(swapAmount)

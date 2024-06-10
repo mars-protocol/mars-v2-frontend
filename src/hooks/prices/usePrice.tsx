@@ -1,8 +1,9 @@
-import { BN_ZERO } from 'constants/math'
-import usePrices from 'hooks/prices/usePrices'
+import useAssets from 'hooks/assets/useAssets'
+import { useMemo } from 'react'
+import { getTokenPrice } from 'utils/tokens'
 
 export default function usePrice(denom: string) {
-  const { data: prices } = usePrices()
+  const { data: assets } = useAssets()
 
-  return prices.find((coin) => coin.denom === denom)?.amount ?? BN_ZERO
+  return useMemo(() => getTokenPrice(denom, assets), [denom, assets])
 }

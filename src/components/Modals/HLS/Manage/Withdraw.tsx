@@ -4,7 +4,7 @@ import Button from 'components/common/Button'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -20,7 +20,7 @@ interface Props {
 export default function Withdraw(props: Props) {
   const { removedDeposits, removeDeposits, updatedAccount } = useUpdatedAccount(props.account)
   const { computeMaxWithdrawAmount } = useHealthComputer(updatedAccount)
-  const assets = useAllAssets()
+  const assets = useDepositEnabledAssets()
   const withdraw = useStore((s) => s.withdraw)
   const handleChange = useCallback(
     (amount: BigNumber) =>

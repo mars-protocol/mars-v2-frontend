@@ -10,7 +10,7 @@ import AssetList from 'components/trade/TradeModule/AssetSelector/AssetList'
 import StablesFilter from 'components/trade/TradeModule/AssetSelector/AssetOverlay/StablesFilter'
 import PairsList from 'components/trade/TradeModule/AssetSelector/PairsList'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useFilteredAssets from 'hooks/assets/useFilteredAssets'
 
 interface Props {
@@ -20,6 +20,7 @@ interface Props {
   buyAssets: Asset[]
   onChangeBuyAsset?: (asset: Asset) => void
   onChangeSellAsset?: (asset: Asset) => void
+  onSwapAssets?: () => void
   onChangeTradingPair?: (tradingPair: TradingPair) => void
   onChangeState: (state: OverlayState) => void
   type: 'pair' | 'single' | 'perps'
@@ -27,7 +28,7 @@ interface Props {
 
 function MarketSubheadLine(props: { title: string }) {
   return (
-    <Text size='sm' className='px-4 py-2 border-b border-white/5 text-white/60 bg-white/5'>
+    <Text size='sm' className='w-full px-4 py-2 border-b border-white/5 text-white/60 bg-white/5'>
       {props.title}
     </Text>
   )
@@ -36,19 +37,14 @@ function MarketSubheadLine(props: { title: string }) {
 export default function AssetOverlay(props: Props) {
   const { assets, searchString, onChangeSearch } = useFilteredAssets(props.buyAssets)
   const account = useCurrentAccount()
-  const allAssets = useAllAssets()
-  const stableAssets = useMemo(() => allAssets.filter((asset) => asset.isStable), [allAssets])
+  const whitelistedAssets = useDepositEnabledAssets()
+  const stableAssets = useMemo(
+    () => whitelistedAssets.filter((asset) => asset.isStable),
+    [whitelistedAssets],
+  )
   const handleClose = useCallback(() => props.onChangeState('closed'), [props])
   const handleToggle = useCallback(() => props.onChangeState(props.state), [props])
   const [selectedStables, setSelectedStables] = useState<Asset[]>([stableAssets[0]])
-
-  const buyAssets = useMemo(
-    () =>
-      props.type === 'pair'
-        ? assets
-        : assets.filter((asset) => asset.denom !== props.sellAsset.denom),
-    [assets, props.sellAsset, props.type],
-  )
 
   const sellAssets = useMemo(
     () => assets.filter((asset) => asset.denom !== props.buyAsset.denom),
@@ -58,9 +54,14 @@ export default function AssetOverlay(props: Props) {
   const onChangeBuyAsset = useCallback(
     (asset: AssetPair | Asset) => {
       const selectedAsset = asset as Asset
+      if (selectedAsset.denom === props.sellAsset.denom && props.onSwapAssets) {
+        props.onSwapAssets()
+        handleToggle()
+        return
+      }
       if (!props.onChangeBuyAsset) return
       props.onChangeBuyAsset(selectedAsset)
-      props.onChangeState('sell')
+      handleToggle()
       onChangeSearch('')
     },
     [onChangeSearch, props],
@@ -101,11 +102,11 @@ export default function AssetOverlay(props: Props) {
 
   return (
     <Overlay
-      className='left-0 w-full overflow-y-scroll h-screen-full md:h-full scrollbar-hide top-18 md:inset-0'
+      className='left-0 flex flex-col w-full overflow-hidden h-screen-full md:h-auto top-18 md:inset-0'
       show={props.state !== 'closed'}
       setShow={handleClose}
     >
-      <div className='flex justify-between p-4 overflow-hidden'>
+      <div className='flex justify-between p-4'>
         <Text>{props.type !== 'single' ? 'Select a market' : 'Select asset'}</Text>
         <EscButton onClick={handleClose} enableKeyPress />
       </div>
@@ -136,6 +137,7 @@ export default function AssetOverlay(props: Props) {
             onChangeAsset={onChangeBuyAsset}
             isOpen
             toggleOpen={() => {}}
+            activeAsset={props.buyAsset}
           />
         </>
       )}
@@ -148,17 +150,19 @@ export default function AssetOverlay(props: Props) {
             onChangeAsset={onChangeBuyAsset}
             isOpen
             toggleOpen={() => {}}
+            activeAsset={props.buyAsset}
           />
         </>
       )}
 
       {props.type === 'pair' && (
         <PairsList
-          assets={buyAssets}
+          assets={assets}
           stables={selectedStables}
           isOpen={props.state === 'pair'}
           toggleOpen={handleToggle}
           onChangeAssetPair={onChangeAssetPair}
+          activeAsset={props.buyAsset}
         />
       )}
 
@@ -166,17 +170,20 @@ export default function AssetOverlay(props: Props) {
         <>
           <AssetList
             type='buy'
-            assets={buyAssets}
+            assets={assets}
             isOpen={props.state === 'buy'}
             toggleOpen={handleToggle}
             onChangeAsset={onChangeBuyAsset}
+            activeAsset={props.buyAsset}
           />
+          <Divider />
           <AssetList
             type='sell'
             assets={sellAssets}
             isOpen={props.state === 'sell'}
             toggleOpen={handleToggle}
             onChangeAsset={onChangeSellAsset}
+            activeAsset={props.sellAsset}
           />
         </>
       )}

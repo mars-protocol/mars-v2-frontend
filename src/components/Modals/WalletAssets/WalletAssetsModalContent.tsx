@@ -1,10 +1,13 @@
 import { useCallback, useMemo, useState } from 'react'
 
 import AssetsSelect from 'components/Modals/AssetsSelect'
+import { CircularProgress } from 'components/common/CircularProgress'
 import SearchBar from 'components/common/SearchBar'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAssets from 'hooks/assets/useAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
+import { handleUnknownAsset } from 'utils/assets'
 
 interface Props {
   onChangeDenoms: (denoms: string[]) => void
@@ -14,17 +17,22 @@ export default function WalletAssetsModalContent(props: Props) {
   const { onChangeDenoms } = props
   const [searchString, setSearchString] = useState<string>('')
   const balances = useStore((s) => s.balances)
-  const assets = useAllAssets()
+  const { data: allChainAssets, isLoading } = useAssets()
+  const chainConfig = useChainConfig()
+  const enableAnyAsset = chainConfig.anyAsset
 
   const assetsInWallet = useMemo(() => {
-    const assetsInWalletInWallet: Asset[] = []
-    balances.forEach((balance) => {
-      const asset = assets.find(byDenom(balance.denom))
-      if (asset && asset.isMarket) assetsInWalletInWallet.push(asset)
+    if (isLoading) return []
+    const knownAssetsInWallet: Asset[] = []
+    const unknownAssetsInWallet: Asset[] = []
+    balances.forEach((coin) => {
+      const asset = allChainAssets.find(byDenom(coin.denom))
+      if (asset) knownAssetsInWallet.push(asset)
+      if (!asset && enableAnyAsset) unknownAssetsInWallet.push(handleUnknownAsset(coin))
     })
 
-    return assetsInWalletInWallet
-  }, [assets, balances])
+    return [...knownAssetsInWallet, ...unknownAssetsInWallet]
+  }, [allChainAssets, balances, isLoading, enableAnyAsset])
 
   const filteredAssets: Asset[] = useMemo(() => {
     return assetsInWallet.filter(
@@ -35,7 +43,6 @@ export default function WalletAssetsModalContent(props: Props) {
     )
   }, [assetsInWallet, searchString])
 
-  const isBorrow = useStore((s) => s.walletAssetsModal?.isBorrow ?? false)
   const currentSelectedDenom = useStore((s) => s.walletAssetsModal?.selectedDenoms ?? [])
   const [selectedDenoms, setSelectedDenoms] = useState<string[]>(
     currentSelectedDenom.filter((denom) => filteredAssets.findIndex(byDenom(denom)) || []),
@@ -59,11 +66,17 @@ export default function WalletAssetsModalContent(props: Props) {
         />
       </div>
       <div className='h-full md:max-h-[446px] overflow-y-scroll scrollbar-hide'>
-        <AssetsSelect
-          assets={filteredAssets}
-          onChangeSelected={onChangeSelect}
-          selectedDenoms={selectedDenoms}
-        />
+        {isLoading ? (
+          <div className='flex justify-center w-full p-8'>
+            <CircularProgress size={40} />
+          </div>
+        ) : (
+          <AssetsSelect
+            assets={filteredAssets}
+            onChangeSelected={onChangeSelect}
+            selectedDenoms={selectedDenoms}
+          />
+        )}
       </div>
     </>
   )

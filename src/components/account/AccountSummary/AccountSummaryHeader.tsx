@@ -16,7 +16,6 @@ import { calculateAccountBalanceValue } from 'utils/accounts'
 interface Props {
   account: Account
   updatedAccount?: Account
-  prices: BNCoin[]
   assets: Asset[]
   leverage: number
   updatedLeverage: number | null
@@ -25,14 +24,13 @@ interface Props {
   updatedHealth: number
   healthFactor: number
   updatedHealthFactor: number
-  isAccountDetails?: boolean
+  isInModal?: boolean
 }
 
 export default function AccountSummaryHeader(props: Props) {
   const {
     account,
     updatedAccount,
-    prices,
     assets,
     leverage,
     updatedLeverage,
@@ -40,24 +38,23 @@ export default function AccountSummaryHeader(props: Props) {
     healthFactor,
     updatedHealth,
     updatedHealthFactor,
-    isAccountDetails,
+    isInModal,
   } = props
   const onClose = useCallback(() => useStore.setState({ accountDetailsExpanded: false }), [])
   const accountBalance = useMemo(
-    () => (account ? calculateAccountBalanceValue(account, prices, assets) : BN_ZERO),
-    [account, prices, assets],
+    () => (account ? calculateAccountBalanceValue(account, assets) : BN_ZERO),
+    [account, assets],
   )
   const updatedAccountBalance = useMemo(
-    () =>
-      updatedAccount ? calculateAccountBalanceValue(updatedAccount, prices, assets) : undefined,
-    [updatedAccount, prices, assets],
+    () => (updatedAccount ? calculateAccountBalanceValue(updatedAccount, assets) : undefined),
+    [updatedAccount, assets],
   )
   const hasChanged = !updatedAccountBalance?.isEqualTo(accountBalance)
   const increase = updatedAccountBalance?.isGreaterThan(accountBalance)
 
   return (
     <div className='relative flex flex-wrap w-full p-4 pb-2 border-b bg-white/10 border-white/10'>
-      {isAccountDetails && (
+      {!isInModal && (
         <Button
           onClick={onClose}
           leftIcon={<ArrowRightLine />}
@@ -67,7 +64,7 @@ export default function AccountSummaryHeader(props: Props) {
           color='secondary'
         />
       )}
-      {isAccountDetails && (
+      {!isInModal && (
         <Text
           size='sm'
           className='w-full pb-1 text-white/50'

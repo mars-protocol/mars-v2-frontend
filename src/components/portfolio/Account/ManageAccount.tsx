@@ -3,8 +3,7 @@ import { useCallback, useMemo } from 'react'
 import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
 import Button from 'components/common/Button'
 import { ArrowDownLine, ArrowUpLine, TrashBin } from 'components/common/Icons'
-import useAllAssets from 'hooks/assets/useAllAssets'
-import usePrices from 'hooks/prices/usePrices'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useStore from 'store'
 import { calculateAccountBalanceValue } from 'utils/accounts'
 
@@ -14,12 +13,11 @@ interface Props {
 
 export default function ManageAccount(props: Props) {
   const { account } = props
-  const assets = useAllAssets()
-  const { data: prices } = usePrices()
+  const assets = useDepositEnabledAssets()
   const isHls = account.kind === 'high_levered_strategy'
   const positionBalance = useMemo(
-    () => (!account ? null : calculateAccountBalanceValue(account, prices, assets)),
-    [account, assets, prices],
+    () => (!account ? null : calculateAccountBalanceValue(account, assets)),
+    [account, assets],
   )
   const deleteAccountHandler = useCallback(() => {
     if (!account) return
