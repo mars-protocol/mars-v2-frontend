@@ -43,8 +43,8 @@ export default function AssetList(props: Props) {
   return (
     <section
       className={classNames(
-        'flex flex-wrap w-full overflow-hidden',
-        type !== 'perps' && assets.length > 9 && 'pb-12',
+        'flex flex-wrap w-full overflow-hidden min-h-[58px]',
+        type === 'buy' && isOpen && assets.length > 9 && 'pb-12',
       )}
     >
       {type !== 'perps' && (
