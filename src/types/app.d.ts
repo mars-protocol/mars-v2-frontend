@@ -123,6 +123,7 @@ interface AssetMetaData {
   isDepositEnabled?: boolean
   isDisplayCurrency?: boolean
   isTradeEnabled?: boolean
+  isPoolToken?: boolean
   isStable?: boolean
   isStaking?: boolean
   isPerpsEnabled?: boolean

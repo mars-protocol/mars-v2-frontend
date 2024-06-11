@@ -53,6 +53,7 @@ async function fetchSortAndMapAllAssets(
       isPerpsEnabled: !!currentAssetPerpsParams,
       isTradeEnabled:
         asset.denom !== 'usd' &&
+        !asset.isPoolToken &&
         (currentAssetParams?.red_bank.deposit_enabled || !currentAssetParams),
     }
   })

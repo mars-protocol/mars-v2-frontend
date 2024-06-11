@@ -59,13 +59,13 @@ export function getAssetSymbolByDenom(denom: string, assets: Asset[]) {
   return asset?.symbol ?? getSymbolFromUnknownAssetDenom(denom)
 }
 
-export function getSymbolFromUnknownAssetDenom(denom: string) {
+function getSymbolFromUnknownAssetDenom(denom: string) {
   const denomParts = denom.split('/')
   if (denomParts[0] === 'factory') return denomParts[denomParts.length - 1].toUpperCase()
   return 'UNKNOWN'
 }
 
-export function getNameFromUnknownAssetDenom(denom: string) {
+function getNameFromUnknownAssetDenom(denom: string) {
   const denomParts = denom.split('/')
   if (denomParts[0] === 'factory') return denomParts[denomParts.length - 1]
 
@@ -73,7 +73,7 @@ export function getNameFromUnknownAssetDenom(denom: string) {
   return truncate(denom, [3, 6])
 }
 
-export function getAssetNameOrSymbolFromUnknownAsset({
+function getAssetNameOrSymbolFromUnknownAsset({
   symbol,
   name,
 }: {
@@ -87,7 +87,6 @@ export function getAssetNameOrSymbolFromUnknownAsset({
   if (symbolParts.length === 1 && symbol && symbolOrName.length < 13) return symbol
   if (symbolParts.length === 1 && name && symbolOrName.length < 26) return name
   if (symbolParts[0] === 'factory') return symbolParts[symbolParts.length - 1]
-  if (symbolParts[0] === 'gamm') return `POOL ${symbolParts[symbolParts.length - 1]}`
   if (symbolParts[0] === 'ibc') return truncate(symbolOrName, [3, 6])
   return truncate(symbolOrName, [7, 3])
 }
@@ -100,8 +99,18 @@ export function handleUnknownAsset(coin: Coin): Asset {
     symbol: getSymbolFromUnknownAssetDenom(coin.denom),
   }
 }
+
+function identifyPoolToken(denom: string) {
+  const denomParts = denom.split('/')
+  if (denomParts.length < 3) return false
+  if (denomParts[0] === 'gamm' || denomParts[3] === 'share') return true
+  return false
+}
+
 export function convertAstroportAssetsResponse(data: AstroportAsset[]): Asset[] {
   return data.map((asset) => {
+    const isPoolToken = identifyPoolToken(asset.denom)
+
     return {
       denom: asset.denom,
       name: getAssetNameOrSymbolFromUnknownAsset({ name: asset.description }),
@@ -114,6 +123,7 @@ export function convertAstroportAssetsResponse(data: AstroportAsset[]): Asset[] 
       pythPriceFeedId: priceFeedIDs.find((pf) => pf.symbol === asset.symbol.toUpperCase())
         ?.priceFeedID,
       pythFeedName: priceFeedIDs.find((pf) => pf.symbol === asset.symbol.toUpperCase())?.feedName,
+      isPoolToken,
     }
   })
 }
