@@ -1,8 +1,8 @@
 import useSWR from 'swr'
 
-import { useAllPerpsParams } from 'hooks/perps/usePerpsParams'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useClients from 'hooks/chain/useClients'
+import { useAllPerpsParams } from 'hooks/perps/usePerpsParams'
 
 export default function useAllPerpsDenomStates() {
   const chainConfig = useChainConfig()
@@ -12,11 +12,14 @@ export default function useAllPerpsDenomStates() {
   return useSWR(
     clients && perpsParams && `chains/${chainConfig.id}/perps/state`,
     () => {
+      /* PERPS
       const promises = perpsParams!.map((perp) =>
         clients!.perps.perpDenomState({ denom: perp.denom }),
       )
 
       return Promise.all(promises)
+      */
+      return []
     },
     {
       refreshInterval: 30_000,

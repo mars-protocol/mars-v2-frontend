@@ -11,7 +11,7 @@ interface Props {
 
 function Content(props: Props) {
   const { account } = props
-  if (account.perps.length === 0) return null
+  if (!account.perps || account.perps.length === 0) return null
 
   return (
     <Skeleton>

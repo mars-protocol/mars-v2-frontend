@@ -53,7 +53,7 @@ const Pion1: ChainConfig = {
   gasPrice: '0.025untrn',
   hls: false,
   perps: false,
-  farm: false,
+  farm: true,
   anyAsset: true,
 }
 

@@ -13,7 +13,7 @@ export default function usePerpsBalancesTable() {
   const allAssets = useDepositEnabledAssets()
 
   return useMemo<PerpPositionRow[]>(() => {
-    if (!currentAccount) return []
+    if (!currentAccount || !currentAccount.perps) return []
 
     const netValue = getAccountNetValue(currentAccount, allAssets)
 

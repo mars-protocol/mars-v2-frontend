@@ -25,6 +25,7 @@ export default function useV1Account() {
         vaults: [],
         perps: [],
         perpsVault: null,
+        stakedAstroLps: [],
         kind: 'default' as AccountKind,
       }
     },
