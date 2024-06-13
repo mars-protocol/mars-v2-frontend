@@ -143,7 +143,10 @@ export default function AccountSummary(props: Props) {
         renderSubTitle: () => <></>,
       })
 
-    if (account.perps.length > 0 || (updatedAccount && updatedAccount.perps.length > 0))
+    if (
+      (account.perps && account.perps.length > 0) ||
+      (updatedAccount && updatedAccount.perps && updatedAccount.perps.length > 0)
+    )
       itemsArray.push({
         title: 'Perp Positions',
         renderContent: () =>

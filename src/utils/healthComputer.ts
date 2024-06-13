@@ -7,9 +7,12 @@ export function findPositionInAccount(healthComputer: HealthComputer, denom: str
     ...healthComputer.positions.lends,
   ]
   const hasAccountPosition = positions.find((position) => position.denom === denom)
+  /* PERPS
   const hasPerpPosition = healthComputer.positions.perps.find(
     (position) => position.denom === denom,
   )
 
   return hasAccountPosition || hasPerpPosition
+  */
+  return hasAccountPosition
 }

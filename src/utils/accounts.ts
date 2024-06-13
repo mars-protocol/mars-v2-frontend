@@ -14,12 +14,16 @@ export const calculateAccountBalanceValue = (
   account: Account | AccountChange,
   assets: Asset[],
 ): BigNumber => {
-  const [deposits, lends, debts, vaults, perps, perpsVault] = getAccountPositionValues(
-    account,
-    assets,
-  )
+  const [deposits, lends, debts, vaults, perps, perpsVault, stakedAstroLps] =
+    getAccountPositionValues(account, assets)
 
-  return deposits.plus(lends).plus(vaults).plus(perps).plus(perpsVault).minus(debts)
+  return deposits
+    .plus(lends)
+    .plus(vaults)
+    .plus(perps)
+    .plus(perpsVault)
+    .plus(stakedAstroLps)
+    .minus(debts)
 }
 
 export const getAccountPositionValues = (account: Account | AccountChange, assets: Asset[]) => {
@@ -29,11 +33,13 @@ export const getAccountPositionValues = (account: Account | AccountChange, asset
   const vaults = calculateAccountValue('vaults', account, assets)
   const perps = calculateAccountValue('perps', account, assets)
   const perpsVault = calculateAccountValue('perpsVault', account, assets)
-  return [deposits, lends, debts, vaults, perps, perpsVault]
+  const stakedAstroLps = calculateAccountValue('stakedAstroLps', account, assets)
+
+  return [deposits, lends, debts, vaults, perps, perpsVault, stakedAstroLps]
 }
 
 export const calculateAccountValue = (
-  type: 'deposits' | 'lends' | 'debts' | 'vaults' | 'perps' | 'perpsVault',
+  type: 'deposits' | 'lends' | 'debts' | 'vaults' | 'perps' | 'perpsVault' | 'stakedAstroLps',
   account: Account | AccountChange,
   assets: Asset[],
 ): BigNumber => {
@@ -197,6 +203,7 @@ export function accumulateAmounts(denom: string, coins: BNCoin[]): BigNumber {
 
 export function convertAccountToPositions(account: Account): Positions {
   return {
+    account_kind: account.kind,
     account_id: account.id,
     debts: account.debts.map((debt) => ({
       shares: '0', // This is not needed, but required by the contract
@@ -209,6 +216,9 @@ export function convertAccountToPositions(account: Account): Positions {
       amount: lend.amount.toString(),
       denom: lend.denom,
     })),
+    // TODO: Add staked astro LPs
+    staked_astro_lps: [],
+    /* PERPS
     perps: account.perps.map((perpPosition) => {
       return {
         base_denom: perpPosition.baseDenom,
@@ -245,6 +255,7 @@ export function convertAccountToPositions(account: Account): Positions {
         },
       }
     }),
+    */
     vaults: account.vaults.map(
       (vault) =>
         ({
@@ -302,6 +313,10 @@ export function cloneAccount(account: Account): Account {
         unlocked: vault.values.unlocked,
       },
     })),
+    stakedAstroLps: account.stakedAstroLps.map(
+      (stakedAstroLp) => new BNCoin(stakedAstroLp.toCoin()),
+    ),
+    /* PERPS
     perps: account.perps.map((perpPosition) => ({
       ...perpPosition,
       amount: perpPosition.amount,
@@ -321,6 +336,7 @@ export function cloneAccount(account: Account): Account {
           })),
         }
       : null,
+    */
   }
 }
 
@@ -408,11 +424,19 @@ export function isAccountEmpty(account: Account) {
     account.lends.length === 0 &&
     account.debts.length === 0 &&
     account.deposits.length === 0 &&
+    account.stakedAstroLps.length === 0 &&
     account.perpsVault === null
   )
 }
 
 export function getAccountNetValue(account: Account, assets: Asset[]) {
-  const [deposits, lends, debts, vaults] = getAccountPositionValues(account, assets)
-  return deposits.plus(lends).plus(vaults).minus(debts)
+  const [deposits, lends, debts, vaults, perps, perpsVault, staked_astro_lps] =
+    getAccountPositionValues(account, assets)
+  return deposits
+    .plus(lends)
+    .plus(vaults)
+    .plus(perps)
+    .plus(perpsVault)
+    .plus(staked_astro_lps)
+    .minus(debts)
 }

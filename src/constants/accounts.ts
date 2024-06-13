@@ -7,6 +7,7 @@ export const EMPTY_ACCOUNT: Account = {
   vaults: [],
   perps: [],
   perpsVault: null,
+  stakedAstroLps: [],
 }
 
 export const EMPTY_ACCOUNT_HLS: Account = {

@@ -3,21 +3,27 @@ import USD from 'constants/USDollar'
 import { PRICE_STALE_TIME } from 'constants/query'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useAssetParams from 'hooks/params/useAssetParams'
-import { useAllPerpsParamsSC } from 'hooks/perps/usePerpsParams'
 import useStore from 'store'
 import useSWR from 'swr'
-import { AssetParamsBaseForAddr, PerpParams } from 'types/generated/mars-params/MarsParams.types'
+import { AssetParamsBaseForAddr } from 'types/generated/mars-params/MarsParams.types'
 import { byDenom } from 'utils/array'
 
 export default function useAssetsNoOraclePrices() {
   const chainConfig = useChainConfig()
   const { data: assetParams } = useAssetParams()
+  /* PERPS
   const { data: perpsParams } = useAllPerpsParamsSC()
   const fetchedPerpsParams = chainConfig.perps ? perpsParams : ([] as PerpParams[])
+  */
 
   return useSWR(
+    /* PERPS
     assetParams && fetchedPerpsParams && `chains/${chainConfig.id}/noOraclePrices`,
     async () => fetchSortAndMapAllAssets(chainConfig, assetParams, fetchedPerpsParams),
+    */
+
+    assetParams && `chains/${chainConfig.id}/noOraclePrices`,
+    async () => fetchSortAndMapAllAssets(chainConfig, assetParams),
     {
       suspense: true,
       revalidateOnFocus: false,
@@ -30,7 +36,9 @@ export default function useAssetsNoOraclePrices() {
 async function fetchSortAndMapAllAssets(
   chainConfig: ChainConfig,
   assetParams: AssetParamsBaseForAddr[],
-  perpsParams: PerpParams[],
+  /* PERPS
+  perpsParams: PerpParams[], 
+  */
 ) {
   const assets = await getAstroportAssets(chainConfig)
   const allAssets = chainConfig.lp ? [...assets, USD, ...chainConfig.lp] : [...assets, USD]
@@ -38,7 +46,9 @@ async function fetchSortAndMapAllAssets(
   const unsortedAssets = allAssets.map((asset) => {
     const currentAssetParams = assetParams.find(byDenom(asset.denom))
 
-    const currentAssetPerpsParams = perpsParams ? perpsParams.find(byDenom(asset.denom)) : undefined
+    /* PERPS
+    const currentAssetPerpsParams = perpsParams ? perpsParams.find(byDenom(asset.denom)) : undefined 
+    */
 
     return {
       ...asset,
@@ -50,7 +60,9 @@ async function fetchSortAndMapAllAssets(
       isStable: chainConfig.stables.includes(asset.denom),
       isStaking:
         !!currentAssetParams?.credit_manager.hls && !currentAssetParams?.red_bank.borrow_enabled,
+      /* PERPS
       isPerpsEnabled: !!currentAssetPerpsParams,
+      */
       isTradeEnabled:
         asset.denom !== 'usd' &&
         (currentAssetParams?.red_bank.deposit_enabled || !currentAssetParams),

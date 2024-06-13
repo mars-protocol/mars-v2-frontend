@@ -31,8 +31,9 @@ interface Account {
   debts: BNCoin[]
   lends: BNCoin[]
   vaults: DepositedVault[]
-  perps: PerpsPosition[]
-  perpsVault: PerpsVaultPositions | null
+  stakedAstroLps: BNCoin[]
+  perps?: PerpsPosition[]
+  perpsVault?: PerpsVaultPositions | null
   kind: AccountKind
 }
 
@@ -41,6 +42,7 @@ interface AccountChange extends Account {
   debts?: BNCoin[]
   lends?: BNCoin[]
   vaults?: DepositedVault[]
+  stakedAstroLps?: BNCoin[]
   perps?: PerpsPosition[]
   perpsVault?: PerpsVaultPositions
 }

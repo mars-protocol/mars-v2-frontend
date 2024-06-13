@@ -24,7 +24,11 @@ export default function AssetSelectorPerps(props: Props) {
   const onChangePerpsAsset = useCallback(
     (asset: Asset) => {
       let hasPosition = false
-      if (currentAccount && currentAccount.perps.find((perp) => perp.denom === asset.denom)) {
+      if (
+        currentAccount &&
+        currentAccount.perps &&
+        currentAccount.perps.find((perp) => perp.denom === asset.denom)
+      ) {
         hasPosition = true
       }
       updatePerpsAsset(asset.denom, hasPosition)
