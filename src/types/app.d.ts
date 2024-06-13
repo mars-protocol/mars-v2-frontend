@@ -236,6 +236,7 @@ interface ChainConfig {
     pools: string
     routes: string
     dexAssets: string
+    dexPools?: string
     aprs: {
       vaults: string
       stride: string
@@ -1277,6 +1278,44 @@ interface AstroportAsset {
   priceUSD: number
   totalLiquidityUSD: number
   dayVolumeUSD: number
+}
+
+interface AstroportPool {
+  chainId: string
+  osmosisPoolId: null | string
+  poolAddress: string
+  poolType: 'xyk' | 'concentrated' | 'stable' | 'transmuter' | 'astroport-pair-xyk-sale-tax'
+  lpAddress: string
+  assets: AstroportPoolAsset[]
+  totalLiquidityUSD: number
+  poolTotalShare: string
+  poolStakedLiquidityUSD: number
+  dayVolumeUSD: number
+  dayLpFeesUSD: number
+  rewards: AstroportPoolReward[]
+  yield: {
+    poolFees: number
+    astro: number
+    externalRewards: number
+    total: number
+  }
+}
+
+interface AstroportPoolAsset {
+  amount: string
+  denom: string
+  symbol: string
+  description: string
+  decimals: number
+  priceUSD: number
+}
+
+interface AstroportPoolReward {
+  denom: string
+  symbol: string
+  dayUSD: number
+  yield: number
+  isInternal: boolean
 }
 
 interface Pool {

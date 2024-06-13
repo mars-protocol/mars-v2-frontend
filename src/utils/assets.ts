@@ -127,3 +127,22 @@ export function convertAstroportAssetsResponse(data: AstroportAsset[]): Asset[] 
     }
   })
 }
+
+export function convertAstroportPoolResponse(data: AstroportPool[]): Asset[] {
+  return data.map((asset) => {
+    return {
+      denom: asset.denom,
+      name: getAssetNameOrSymbolFromUnknownAsset({ name: asset.description }),
+      decimals: asset.decimals,
+      symbol: getAssetNameOrSymbolFromUnknownAsset({ symbol: asset.symbol }),
+      logo: asset.icon ?? null,
+      price: asset.priceUSD
+        ? BNCoin.fromCoin({ denom: asset.denom, amount: String(asset.priceUSD) })
+        : undefined,
+      pythPriceFeedId: priceFeedIDs.find((pf) => pf.symbol === asset.symbol.toUpperCase())
+        ?.priceFeedID,
+      pythFeedName: priceFeedIDs.find((pf) => pf.symbol === asset.symbol.toUpperCase())?.feedName,
+      isPoolToken,
+    }
+  })
+}

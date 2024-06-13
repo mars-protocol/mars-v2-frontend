@@ -1,4 +1,4 @@
-import getAstroportAssets from 'api/assets/getAstroportAssets'
+import getDexAssets from 'api/assets/getDexAssets'
 import USD from 'constants/USDollar'
 import { PRICE_STALE_TIME } from 'constants/query'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -32,7 +32,7 @@ async function fetchSortAndMapAllAssets(
   assetParams: AssetParamsBaseForAddr[],
   perpsParams: PerpParams[],
 ) {
-  const assets = await getAstroportAssets(chainConfig)
+  const assets = await getDexAssets(chainConfig)
   const allAssets = chainConfig.lp ? [...assets, USD, ...chainConfig.lp] : [...assets, USD]
 
   const unsortedAssets = allAssets.map((asset) => {

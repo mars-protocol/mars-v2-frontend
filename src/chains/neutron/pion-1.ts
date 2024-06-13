@@ -29,6 +29,7 @@ const Pion1: ChainConfig = {
     pools: '', //TODO: ⛓️ Implement this
     explorer: 'https://www.mintscan.io/neutron-testnet',
     dexAssets: 'https://testnet.astroport.fi/api/tokens?chainId=pion-1',
+    dexPools: 'https://testnet.astroport.fi/api/pools?chainId=pion-1',
     aprs: {
       vaults: 'https://api.marsprotocol.io/v1/vaults/neutron',
       stride: 'https://edge.stride.zone/api/stake-stats',
