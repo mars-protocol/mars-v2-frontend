@@ -25,12 +25,13 @@ import useToggle from 'hooks/common/useToggle'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useMarkets from 'hooks/markets/useMarkets'
+import useMaxOutputAmount from 'hooks/trade/useMaxOutputAmount'
 import useRouteInfo from 'hooks/trade/useRouteInfo'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { defaultFee, ENABLE_AUTO_REPAY } from 'utils/constants'
+import { ENABLE_AUTO_REPAY } from 'utils/constants'
 import { formatValue } from 'utils/formatters'
 import { getCapLeftWithBuffer } from 'utils/generic'
 import { asyncThrottle, BN } from 'utils/helpers'
@@ -67,10 +68,8 @@ export default function SwapForm(props: Props) {
   )
   const [outputAssetAmount, setOutputAssetAmount] = useState(BN_ZERO)
   const [inputAssetAmount, setInputAssetAmount] = useState(BN_ZERO)
-  const [maxOutputAmountEstimation, setMaxBuyableAmountEstimation] = useState(BN_ZERO)
   const [selectedOrderType, setSelectedOrderType] = useState<AvailableOrderType>('Market')
   const [isConfirming, setIsConfirming] = useToggle()
-  const [estimatedFee, setEstimatedFee] = useState(defaultFee)
   const { autoLendEnabledAccountIds } = useAutoLend()
   const isAutoLendEnabled = account ? autoLendEnabledAccountIds.includes(account.id) : false
   const modal = useStore<string | null>((s) => s.fundAndWithdrawModal)
@@ -117,12 +116,12 @@ export default function SwapForm(props: Props) {
 
   const handleRangeInputChange = useCallback(
     (value: number) => {
-      onChangeOutputAmount(BN(value).shiftedBy(outputAsset.decimals).integerValue())
+      onChangeInputAmount(BN(value).shiftedBy(inputAsset.decimals).integerValue())
     },
-    [onChangeOutputAmount, outputAsset.decimals],
+    [onChangeInputAmount, inputAsset.decimals],
   )
 
-  const [maxInputAmount, imputMarginThreshold, marginRatio] = useMemo(() => {
+  const [maxInputAmount, inputMarginThreshold, marginRatio] = useMemo(() => {
     const maxAmount = computeMaxSwapAmount(inputAsset.denom, outputAsset.denom, 'default')
     const maxAmountOnMargin = computeMaxSwapAmount(
       inputAsset.denom,
@@ -130,14 +129,6 @@ export default function SwapForm(props: Props) {
       'margin',
     ).integerValue()
     const marginRatio = maxAmount.dividedBy(maxAmountOnMargin)
-    throttledEstimateExactIn(
-      chainConfig,
-      {
-        denom: inputAsset.denom,
-        amount: (isMarginChecked ? maxAmountOnMargin : maxAmount).toString(),
-      },
-      outputAsset.denom,
-    ).then(setMaxBuyableAmountEstimation)
 
     if (isMarginChecked) return [maxAmountOnMargin, maxAmount, marginRatio]
 
@@ -155,15 +146,17 @@ export default function SwapForm(props: Props) {
     throttledEstimateExactIn,
   ])
 
-  const outputSideMarginThreshold = useMemo(() => {
-    return maxOutputAmountEstimation.multipliedBy(marginRatio)
-  }, [marginRatio, maxOutputAmountEstimation])
+  const maxOutputAmountEstimation = useMaxOutputAmount(
+    inputAsset.denom,
+    outputAsset.denom,
+    maxInputAmount,
+  )
 
   const swapTx = useMemo(() => {
     if (!routeInfo) return
 
-    const borrowCoin = inputAssetAmount.isGreaterThan(imputMarginThreshold)
-      ? BNCoin.fromDenomAndBigNumber(inputAsset.denom, inputAssetAmount.minus(imputMarginThreshold))
+    const borrowCoin = inputAssetAmount.isGreaterThan(inputMarginThreshold)
+      ? BNCoin.fromDenomAndBigNumber(inputAsset.denom, inputAssetAmount.minus(inputMarginThreshold))
       : undefined
 
     return swap({
@@ -180,7 +173,7 @@ export default function SwapForm(props: Props) {
   }, [
     routeInfo,
     inputAssetAmount,
-    imputMarginThreshold,
+    inputMarginThreshold,
     inputAsset.denom,
     swap,
     account?.id,
@@ -224,10 +217,6 @@ export default function SwapForm(props: Props) {
     () => computeLiquidationPrice(outputAsset.denom, 'asset'),
     [computeLiquidationPrice, outputAsset.denom],
   )
-
-  useEffect(() => {
-    swapTx?.estimateFee().then(setEstimatedFee)
-  }, [swapTx])
 
   const handleBuyClick = useCallback(async () => {
     if (account?.id) {
@@ -279,11 +268,11 @@ export default function SwapForm(props: Props) {
   ])
 
   useEffect(() => {
-    const removeDepositAmount = inputAssetAmount.isGreaterThanOrEqualTo(imputMarginThreshold)
-      ? imputMarginThreshold
+    const removeDepositAmount = inputAssetAmount.isGreaterThanOrEqualTo(inputMarginThreshold)
+      ? inputMarginThreshold
       : inputAssetAmount
-    const addDebtAmount = inputAssetAmount.isGreaterThan(imputMarginThreshold)
-      ? inputAssetAmount.minus(imputMarginThreshold)
+    const addDebtAmount = inputAssetAmount.isGreaterThan(inputMarginThreshold)
+      ? inputAssetAmount.minus(inputMarginThreshold)
       : BN_ZERO
 
     if (
@@ -301,7 +290,7 @@ export default function SwapForm(props: Props) {
   }, [
     inputAssetAmount,
     outputAssetAmount,
-    imputMarginThreshold,
+    inputMarginThreshold,
     outputAsset.denom,
     inputAsset.denom,
     debouncedUpdateAccount,
@@ -320,10 +309,10 @@ export default function SwapForm(props: Props) {
 
   const borrowAmount = useMemo(
     () =>
-      inputAssetAmount.isGreaterThan(imputMarginThreshold)
-        ? inputAssetAmount.minus(imputMarginThreshold)
+      inputAssetAmount.isGreaterThan(inputMarginThreshold)
+        ? inputAssetAmount.minus(inputMarginThreshold)
         : BN_ZERO,
-    [inputAssetAmount, imputMarginThreshold],
+    [inputAssetAmount, inputMarginThreshold],
   )
 
   const availableLiquidity = useMemo(
@@ -396,14 +385,14 @@ export default function SwapForm(props: Props) {
 
           {!isAdvanced && <Divider />}
           <LeverageSlider
-            disabled={isConfirming || maxOutputAmountEstimation.isZero()}
+            disabled={isConfirming || maxInputAmount.isZero()}
             onChange={handleRangeInputChange}
-            value={outputAssetAmount.shiftedBy(-outputAsset.decimals).toNumber()}
-            max={maxOutputAmountEstimation.shiftedBy(-outputAsset.decimals).toNumber()}
+            value={inputAssetAmount.shiftedBy(-inputAsset.decimals).toNumber()}
+            max={maxInputAmount.shiftedBy(-inputAsset.decimals).toNumber()}
             type='margin'
             marginThreshold={
               isMarginChecked
-                ? outputSideMarginThreshold.shiftedBy(-outputAsset.decimals).toNumber()
+                ? inputMarginThreshold.shiftedBy(-inputAsset.decimals).toNumber()
                 : undefined
             }
           />
@@ -457,12 +446,12 @@ export default function SwapForm(props: Props) {
           showProgressIndicator={isConfirming}
           isMargin={isMarginChecked}
           borrowAmount={borrowAmount}
-          estimatedFee={estimatedFee}
           liquidationPrice={liquidationPrice}
           sellAmount={inputAssetAmount}
           buyAmount={outputAssetAmount}
           isAdvanced={isAdvanced}
           direction={tradeDirection}
+          swapTx={swapTx}
         />
       </div>
     </>

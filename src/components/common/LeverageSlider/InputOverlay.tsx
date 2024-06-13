@@ -25,7 +25,7 @@ function InputOverlay({ max, value, marginThreshold, type, min }: Props) {
     <>
       <div
         className={classNames(
-          'absolute flex-1 flex w-full justify-evenly  top-[8.5px] pointer-events-none pt-[2.5px] pb-[2.5px] rounded-lg',
+          'absolute flex h-2 w-full top-[9px] pointer-events-none rounded-lg',
           'before:absolute',
           'before:top-0 before:bottom-0 before:right-0 before:left-0',
           'slider-mask',
@@ -34,7 +34,8 @@ function InputOverlay({ max, value, marginThreshold, type, min }: Props) {
           type === 'margin' && 'before:gradient-slider-pink',
         )}
         style={{ width: `${thumbPosPercent}%` }}
-      >
+      />
+      <div className='absolute flex w-full h-2 pointer-events-none top-[11px] justify-evenly'>
         {Array.from(Array(9).keys()).map((i) => (
           <div key={`mark-${i}`} className='w-1 h-1 bg-black rounded-full bg-opacity-30' />
         ))}

@@ -64,10 +64,9 @@ export default function AssetList(props: Props) {
         ) : (
           <ul className='flex flex-wrap items-start content-start w-full h-full overflow-y-scroll scrollbar-hide'>
             {sortedAssets.map((asset) => (
-              <Suspense fallback={<AssetSelectorItemLoading />}>
+              <Suspense fallback={<AssetSelectorItemLoading />} key={`${type}-${asset.denom}`}>
                 <AssetSelectorItem
                   balances={balances}
-                  key={`${type}-${asset.denom}`}
                   onSelect={onChangeAsset}
                   depositCap={type === 'buy' ? markets?.find(byDenom(asset.denom))?.cap : undefined}
                   asset={asset}

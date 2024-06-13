@@ -23,6 +23,7 @@ export default function useRouteInfo(denomIn: string, denomOut: string, amount: 
         const route = (await resp.json()) as OsmosisRouteResponse
 
         return {
+          amountOut: BN(route.amount_out),
           priceImpact: BN(route.price_impact),
           fee: BN(route.effective_fee),
           description: [
@@ -58,6 +59,7 @@ export default function useRouteInfo(denomIn: string, denomOut: string, amount: 
         const route = (await resp.json())[0] as AstroportRouteResponse
 
         return {
+          amountOut: BN(route.amount_out),
           priceImpact: BN(route.price_impact),
           fee: BN(0), // TODO: Fees are not implemented yet on Astroport endpoint
           description: [
