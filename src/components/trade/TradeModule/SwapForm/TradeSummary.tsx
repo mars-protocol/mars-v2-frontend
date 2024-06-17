@@ -11,9 +11,9 @@ import SummaryLine from 'components/common/SummaryLine'
 import Text from 'components/common/Text'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useToggle from 'hooks/common/useToggle'
+import useEstimatedFee from 'hooks/prices/useEstimatedFee'
 import useLiquidationPrice from 'hooks/prices/useLiquidationPrice'
 import useSlippage from 'hooks/settings/useSlippage'
-import useRouteInfo from 'hooks/trade/useRouteInfo'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatAmountWithSymbol, formatPercent, formatValue } from 'utils/formatters'
 
@@ -25,14 +25,15 @@ interface Props {
   buyAsset: Asset
   buyButtonDisabled: boolean
   containerClassName?: string
-  estimatedFee: StdFee
   isMargin?: boolean
   liquidationPrice: number | null
   sellAmount: BigNumber
   sellAsset: Asset
   showProgressIndicator: boolean
+  routeInfo?: SwapRouteInfo | null
   isAdvanced?: boolean
   direction?: TradeDirection
+  swapTx?: ExecutableTx
 }
 
 export default function TradeSummary(props: Props) {
@@ -45,20 +46,21 @@ export default function TradeSummary(props: Props) {
     containerClassName,
     isMargin,
     borrowAmount,
-    estimatedFee,
     showProgressIndicator,
     sellAmount,
     buyAmount,
     isAdvanced,
     direction,
+    routeInfo,
+    swapTx,
   } = props
   const [slippage] = useSlippage()
   const assets = useDepositEnabledAssets()
+  const { estimatedFee, isUpdatingEstimatedFee } = useEstimatedFee(swapTx)
   const [showSummary, setShowSummary] = useToggle()
   const { liquidationPrice, isUpdatingLiquidationPrice } = useLiquidationPrice(
     props.liquidationPrice,
   )
-  const { data: routeInfo } = useRouteInfo(sellAsset.denom, buyAsset.denom, sellAmount)
 
   const minReceive = useMemo(() => {
     return buyAmount.times(1 - (routeInfo?.fee.toNumber() || 0)).times(1 - slippage)
@@ -84,7 +86,7 @@ export default function TradeSummary(props: Props) {
         <SummaryLine label='Liquidation Price'>
           <div className='flex h-2'>
             {isUpdatingLiquidationPrice ? (
-              <CircularProgress className='opacity-50' />
+              <CircularProgress size={10} />
             ) : liquidationPrice === null || liquidationPrice === 0 ? (
               '-'
             ) : (
@@ -110,7 +112,6 @@ export default function TradeSummary(props: Props) {
                   abbreviated: true,
                   rounded: true,
                 }}
-                animate
               />
             </SummaryLine>
             <SummaryLine label='Borrow Rate APY'>
@@ -163,7 +164,11 @@ export default function TradeSummary(props: Props) {
               />
             </SummaryLine>
             <SummaryLine label='Transaction fees'>
-              <span>{formatAmountWithSymbol(estimatedFee.amount[0], assets)}</span>
+              {isUpdatingEstimatedFee ? (
+                <CircularProgress size={10} />
+              ) : (
+                <span>{formatAmountWithSymbol(estimatedFee.amount[0], assets)}</span>
+              )}
             </SummaryLine>
             <SummaryLine label={`Min receive (${slippage * 100}% slippage)`}>
               <FormattedNumber

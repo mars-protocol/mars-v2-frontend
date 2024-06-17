@@ -1,5 +1,5 @@
-import { getSwapperQueryClient } from 'api/cosmwasm-client'
 import { BN_ZERO } from 'constants/math'
+import { ChainInfoID } from 'types/enums'
 import { BN } from 'utils/helpers'
 
 export default async function estimateExactIn(
@@ -7,11 +7,22 @@ export default async function estimateExactIn(
   coinIn: Coin,
   denomOut: string,
 ) {
-  try {
-    const swapperClient = await getSwapperQueryClient(chainConfig)
-    const estimatedAmount = (await swapperClient.estimateExactInSwap({ coinIn, denomOut })).amount
+  const isOsmosis = [ChainInfoID.Osmosis1].includes(chainConfig.id)
 
-    return BN(estimatedAmount)
+  try {
+    if (isOsmosis) {
+      const url = `${chainConfig.endpoints.routes}/quote?tokenIn=${coinIn.amount}${coinIn.denom}&tokenOutDenom=${denomOut}`
+      const resp = await fetch(url)
+      const route = (await resp.json()) as OsmosisRouteResponse
+
+      return BN(route.amount_out)
+    } else {
+      const url = `${chainConfig.endpoints.routes}?start=${coinIn.denom}&end=${denomOut}&amount=${coinIn.amount}&chainId=${chainConfig.id}&limit=1`
+      const resp = await fetch(url)
+      const route = (await resp.json())[0] as AstroportRouteResponse
+
+      return BN(route.amount_out)
+    }
   } catch (ex) {
     return BN_ZERO
   }

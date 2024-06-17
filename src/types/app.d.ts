@@ -402,6 +402,7 @@ type OsmosisRoutePool = {
 }
 
 type SwapRouteInfo = {
+  amountOut: BigNumber
   priceImpact: BigNumber
   fee: BigNumber
   route: import('types/generated/mars-credit-manager/MarsCreditManager.types').SwapperRoute
