@@ -1,7 +1,6 @@
 import debounce from 'lodash.debounce'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import estimateExactIn from 'api/swap/estimateExactIn'
 import AvailableLiquidityMessage from 'components/common/AvailableLiquidityMessage'
 import DepositCapMessage from 'components/common/DepositCapMessage'
 import Divider from 'components/common/Divider'
@@ -34,7 +33,7 @@ import { byDenom } from 'utils/array'
 import { ENABLE_AUTO_REPAY } from 'utils/constants'
 import { formatValue } from 'utils/formatters'
 import { getCapLeftWithBuffer } from 'utils/generic'
-import { asyncThrottle, BN } from 'utils/helpers'
+import { BN } from 'utils/helpers'
 
 interface Props {
   buyAsset: Asset
@@ -66,7 +65,6 @@ export default function SwapForm(props: Props) {
   const [isAutoRepayChecked, setAutoRepayChecked] = useToggle(
     isRepayable && ENABLE_AUTO_REPAY ? useAutoRepay : false,
   )
-  const [outputAssetAmount, setOutputAssetAmount] = useState(BN_ZERO)
   const [inputAssetAmount, setInputAssetAmount] = useState(BN_ZERO)
   const [selectedOrderType, setSelectedOrderType] = useState<AvailableOrderType>('Market')
   const [isConfirming, setIsConfirming] = useToggle()
@@ -74,11 +72,14 @@ export default function SwapForm(props: Props) {
   const isAutoLendEnabled = account ? autoLendEnabledAccountIds.includes(account.id) : false
   const modal = useStore<string | null>((s) => s.fundAndWithdrawModal)
   const { simulateTrade, removedLends, updatedAccount } = useUpdatedAccount(account)
-  const throttledEstimateExactIn = useMemo(() => asyncThrottle(estimateExactIn, 250), [])
   const { computeLiquidationPrice } = useHealthComputer(updatedAccount)
   const assets = useTradeEnabledAssets()
 
   const { data: routeInfo } = useRouteInfo(inputAsset.denom, outputAsset.denom, inputAssetAmount)
+
+  const outputAssetAmount = useMemo(() => {
+    return routeInfo?.amountOut || BN_ZERO
+  }, [routeInfo])
 
   const depositCapReachedCoins: BNCoin[] = useMemo(() => {
     const outputMarketAsset = markets.find((market) => market.asset.denom === outputAsset.denom)
@@ -93,48 +94,26 @@ export default function SwapForm(props: Props) {
     return []
   }, [markets, outputAsset.denom, outputAssetAmount])
 
-  const onChangeInputAmount = useCallback(
-    (amount: BigNumber) => {
-      setInputAssetAmount(amount)
-      const swapTo = { denom: inputAsset.denom, amount: amount.toString() }
-      throttledEstimateExactIn(chainConfig, swapTo, outputAsset.denom).then(setOutputAssetAmount)
-    },
-    [inputAsset.denom, throttledEstimateExactIn, chainConfig, outputAsset.denom],
-  )
-
-  const onChangeOutputAmount = useCallback(
-    (amount: BigNumber) => {
-      setOutputAssetAmount(amount)
-      const swapFrom = {
-        denom: outputAsset.denom,
-        amount: amount.toString(),
-      }
-      throttledEstimateExactIn(chainConfig, swapFrom, inputAsset.denom).then(setInputAssetAmount)
-    },
-    [outputAsset.denom, throttledEstimateExactIn, chainConfig, inputAsset.denom],
-  )
-
   const handleRangeInputChange = useCallback(
     (value: number) => {
-      onChangeInputAmount(BN(value).shiftedBy(inputAsset.decimals).integerValue())
+      setInputAssetAmount(BN(value).shiftedBy(inputAsset.decimals).integerValue())
     },
-    [onChangeInputAmount, inputAsset.decimals],
+    [setInputAssetAmount, inputAsset.decimals],
   )
 
-  const [maxInputAmount, inputMarginThreshold, marginRatio] = useMemo(() => {
+  const [maxInputAmount, inputMarginThreshold] = useMemo(() => {
     const maxAmount = computeMaxSwapAmount(inputAsset.denom, outputAsset.denom, 'default')
     const maxAmountOnMargin = computeMaxSwapAmount(
       inputAsset.denom,
       outputAsset.denom,
       'margin',
     ).integerValue()
-    const marginRatio = maxAmount.dividedBy(maxAmountOnMargin)
 
-    if (isMarginChecked) return [maxAmountOnMargin, maxAmount, marginRatio]
+    if (isMarginChecked) return [maxAmountOnMargin, maxAmount]
 
-    if (inputAssetAmount.isGreaterThan(maxAmount)) onChangeInputAmount(maxAmount)
+    if (inputAssetAmount.isGreaterThan(maxAmount)) setInputAssetAmount(maxAmount)
 
-    return [maxAmount, maxAmount, marginRatio]
+    return [maxAmount, maxAmount]
   }, [
     computeMaxSwapAmount,
     inputAsset.denom,
@@ -142,8 +121,7 @@ export default function SwapForm(props: Props) {
     chainConfig,
     isMarginChecked,
     inputAssetAmount,
-    onChangeInputAmount,
-    throttledEstimateExactIn,
+    setInputAssetAmount,
   ])
 
   const maxOutputAmountEstimation = useMaxOutputAmount(
@@ -226,7 +204,6 @@ export default function SwapForm(props: Props) {
 
       if (isSucceeded) {
         setInputAssetAmount(BN_ZERO)
-        setOutputAssetAmount(BN_ZERO)
       }
       setIsConfirming(false)
     }
@@ -234,15 +211,13 @@ export default function SwapForm(props: Props) {
 
   const changeTradeDirection = useCallback(
     (direction: TradeDirection) => {
-      onChangeOutputAmount(BN_ZERO)
-      onChangeInputAmount(BN_ZERO)
+      setInputAssetAmount(BN_ZERO)
       setTradeDirection(direction)
     },
-    [onChangeOutputAmount, onChangeInputAmount],
+    [setInputAssetAmount],
   )
 
   useEffect(() => {
-    setOutputAssetAmount(BN_ZERO)
     setInputAssetAmount(BN_ZERO)
     setMarginChecked(isBorrowEnabled ? useMargin : false)
     setAutoRepayChecked(isRepayable ? useAutoRepay : false)
@@ -355,35 +330,22 @@ export default function SwapForm(props: Props) {
           <OrderTypeSelector selected={selectedOrderType} onChange={setSelectedOrderType} />
         </div>
         <div className='flex flex-col w-full gap-6 px-3 mt-6'>
-          {isAdvanced ? (
-            <AssetAmountInput
-              label='Buy'
-              max={maxOutputAmountEstimation}
-              amount={outputAssetAmount}
-              setAmount={onChangeOutputAmount}
-              asset={outputAsset}
-              maxButtonLabel='Max Amount:'
-              disabled={isConfirming}
+          {!isAdvanced && (
+            <TradeDirectionSelector
+              direction={tradeDirection}
+              onChangeDirection={changeTradeDirection}
+              asset={buyAsset}
             />
-          ) : (
-            <>
-              <TradeDirectionSelector
-                direction={tradeDirection}
-                onChangeDirection={changeTradeDirection}
-                asset={buyAsset}
-              />
-              <AssetAmountInput
-                max={maxInputAmount}
-                amount={inputAssetAmount}
-                setAmount={onChangeInputAmount}
-                asset={inputAsset}
-                maxButtonLabel='Balance:'
-                disabled={isConfirming}
-              />
-            </>
           )}
-
-          {!isAdvanced && <Divider />}
+          <AssetAmountInput
+            max={maxInputAmount}
+            amount={inputAssetAmount}
+            setAmount={setInputAssetAmount}
+            asset={inputAsset}
+            maxButtonLabel='Balance:'
+            disabled={isConfirming}
+          />
+          <Divider />
           <LeverageSlider
             disabled={isConfirming || maxInputAmount.isZero()}
             onChange={handleRangeInputChange}
@@ -407,33 +369,19 @@ export default function SwapForm(props: Props) {
             borrowAmount.isGreaterThanOrEqualTo(availableLiquidity) && (
               <AvailableLiquidityMessage market={borrowMarket} />
             )}
-          {isAdvanced ? (
-            <AssetAmountInput
-              label='Sell'
-              max={maxInputAmount}
-              amount={inputAssetAmount}
-              setAmount={onChangeInputAmount}
-              asset={inputAsset}
-              maxButtonLabel='Balance:'
-              disabled={isConfirming}
-            />
-          ) : (
-            <>
-              <Divider />
-              <div className='flex justify-between w-full'>
-                <Text size='sm'>You receive</Text>
-                <Text size='sm'>
-                  {formatValue(outputAssetAmount.toNumber(), {
-                    decimals: outputAsset.decimals,
-                    abbreviated: false,
-                    suffix: ` ${outputAsset.symbol}`,
-                    minDecimals: 0,
-                    maxDecimals: outputAsset.decimals,
-                  })}
-                </Text>
-              </div>
-            </>
-          )}
+          <Divider />
+          <div className='flex justify-between w-full'>
+            <Text size='sm'>You receive</Text>
+            <Text size='sm'>
+              {formatValue(outputAssetAmount.toNumber(), {
+                decimals: outputAsset.decimals,
+                abbreviated: false,
+                suffix: ` ${outputAsset.symbol}`,
+                minDecimals: 0,
+                maxDecimals: outputAsset.decimals,
+              })}
+            </Text>
+          </div>
         </div>
       </div>
       <div className='flex w-full px-3 pt-6'>
