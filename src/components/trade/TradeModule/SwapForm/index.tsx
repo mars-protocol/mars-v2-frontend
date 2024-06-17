@@ -2,6 +2,7 @@ import debounce from 'lodash.debounce'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import AvailableLiquidityMessage from 'components/common/AvailableLiquidityMessage'
+import { CircularProgress } from 'components/common/CircularProgress'
 import DepositCapMessage from 'components/common/DepositCapMessage'
 import Divider from 'components/common/Divider'
 import LeverageSlider from 'components/common/LeverageSlider'
@@ -372,15 +373,19 @@ export default function SwapForm(props: Props) {
           <Divider />
           <div className='flex justify-between w-full'>
             <Text size='sm'>You receive</Text>
-            <Text size='sm'>
-              {formatValue(outputAssetAmount.toNumber(), {
-                decimals: outputAsset.decimals,
-                abbreviated: false,
-                suffix: ` ${outputAsset.symbol}`,
-                minDecimals: 0,
-                maxDecimals: outputAsset.decimals,
-              })}
-            </Text>
+            {!inputAssetAmount.isZero() && outputAssetAmount.isZero() ? (
+              <CircularProgress size={14} />
+            ) : (
+              <Text size='sm'>
+                {formatValue(outputAssetAmount.toNumber(), {
+                  decimals: outputAsset.decimals,
+                  abbreviated: false,
+                  suffix: ` ${outputAsset.symbol}`,
+                  minDecimals: 0,
+                  maxDecimals: outputAsset.decimals,
+                })}
+              </Text>
+            )}
           </div>
         </div>
       </div>
