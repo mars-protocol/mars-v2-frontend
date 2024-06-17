@@ -660,6 +660,8 @@ export interface Positions {
   lends: Coin[]
   staked_astro_lps: Coin[]
   vaults: VaultPosition[]
+  perp_vault?: VaultPosition | null
+  perps?: PerpPosition[]
 }
 export interface DebtAmount {
   amount: Uint128
