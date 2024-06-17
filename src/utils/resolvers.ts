@@ -1,9 +1,6 @@
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
-import {
-  PerpVaultUnlock,
-  Positions,
-} from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { Positions } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import {
   AssetParamsBaseForAddr as AssetParams,
   AssetParamsBaseForAddr,
@@ -168,6 +165,7 @@ export function resolvePerpsPositions(
   })
 }
 
+/* PERPS
 export function resolvePerpsVaultPositions(
   perpsVaultPositions?: Positions['perp_vault'],
 ): PerpsVaultPositions | null {
@@ -201,3 +199,4 @@ export function resolvePerpsVaultPositions(
     unlocked: unlockedAmount.isZero() ? null : unlockedAmount,
   }
 }
+  */

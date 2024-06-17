@@ -56,10 +56,12 @@ export default function PairsList(props: Props) {
         ) : (
           <ul className='flex flex-wrap w-full h-full overflow-y-scroll scrollbar-hide'>
             {sortedPairs.map((assetPair) => (
-              <Suspense fallback={<AssetSelectorItemLoading />}>
+              <Suspense
+                fallback={<AssetSelectorItemLoading />}
+                key={`${assetPair.buy.denom}-${assetPair.sell.denom}`}
+              >
                 <AssetSelectorItem
                   balances={balances}
-                  key={`${assetPair.buy.denom}-${assetPair.sell.denom}`}
                   onSelect={props.onChangeAssetPair}
                   depositCap={markets?.find(byDenom(assetPair.buy.denom))?.cap}
                   asset={assetPair.buy}

@@ -241,7 +241,7 @@ export function useUpdatedAccount(account?: Account) {
 
   const simulatePerps = useCallback(
     (position: PerpsPosition) => {
-      if (!account) return
+      if (!account || !account.perps) return
 
       const currentPerpPosition = account.perps.find((perp) => perp.denom === position.denom)
 
@@ -325,11 +325,14 @@ export function useUpdatedAccount(account?: Account) {
         perpsVault,
         addedPerpsVaultAmount,
         unlockingPerpsVaultAmount,
-        account.perpsVault,
+        account?.perpsVault ?? null,
       )
     }
 
-    accountCopy.perps = updatePerpsPositions([...accountCopy.perps], updatedPerpPosition)
+    accountCopy.perps = updatePerpsPositions(
+      accountCopy.perps ? [...accountCopy.perps] : [],
+      updatedPerpPosition,
+    )
     accountCopy.deposits = removeCoins(removedDeposits, [...accountCopy.deposits])
     accountCopy.debts = removeCoins(removedDebts, [...accountCopy.debts])
     accountCopy.lends = addCoins(addedLends, [...accountCopy.lends])

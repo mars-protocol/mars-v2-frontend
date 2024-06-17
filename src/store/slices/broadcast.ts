@@ -17,7 +17,6 @@ import {
   SwapperRoute,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { ExecuteMsg as IncentivesExecuteMsg } from 'types/generated/mars-incentives/MarsIncentives.types'
-import { ExecuteMsg as PerpsExecuteMsg } from 'types/generated/mars-perps/MarsPerps.types'
 import { ExecuteMsg as RedBankExecuteMsg } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHealthTypes.types'
 import { byDenom, bySymbol } from 'utils/array'
@@ -36,7 +35,9 @@ function generateExecutionMessage(
     | AccountNftExecuteMsg
     | RedBankExecuteMsg
     | PythUpdateExecuteMsg
+    /* PERPS
     | PerpsExecuteMsg
+    */
     | IncentivesExecuteMsg,
   funds: Coin[],
 ) {
@@ -343,11 +344,13 @@ export default function createBroadcastSlice(
             },
           })
         }
+        /* PERPS
         if (vault.type === 'perp') {
           actions.push({
             withdraw_from_perp_vault: {},
           })
         }
+        */
       })
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
@@ -683,9 +686,11 @@ export default function createBroadcastSlice(
         update_credit_account: {
           account_id: options.accountId,
           actions: [
+            /* PERPS
             {
               open_perp: options.coin.toSignedCoin(),
             },
+             */
           ],
         },
       }
@@ -704,9 +709,11 @@ export default function createBroadcastSlice(
         update_credit_account: {
           account_id: options.accountId,
           actions: [
+            /* PERPS
             {
               close_perp: { denom: options.denom },
             },
+            */
           ],
         },
       }
@@ -730,8 +737,10 @@ export default function createBroadcastSlice(
         update_credit_account: {
           account_id: options.accountId,
           actions: [
+            /* PERPS
             ...(options.changeDirection
               ? [
+
                   {
                     close_perp: {
                       denom: options.coin.denom,
@@ -749,6 +758,7 @@ export default function createBroadcastSlice(
                     },
                   },
                 ]),
+                */
           ],
         },
       }
@@ -854,9 +864,11 @@ export default function createBroadcastSlice(
                   },
                 ]
               : []),
+            /* PERPS
             {
               deposit_to_perp_vault: depositCoin.toActionCoin(),
             },
+            */
           ],
         },
       }
@@ -875,11 +887,13 @@ export default function createBroadcastSlice(
         update_credit_account: {
           account_id: options.accountId,
           actions: [
+            /* PERPS
             {
               unlock_from_perp_vault: {
                 shares: options.amount.integerValue().toString(),
               },
             },
+            */
           ],
         },
       }
@@ -898,9 +912,11 @@ export default function createBroadcastSlice(
         update_credit_account: {
           account_id: options.accountId,
           actions: [
+            /* PERPS
             {
               withdraw_from_perp_vault: {},
             },
+            */
           ],
         },
       }

@@ -10,9 +10,9 @@ import { useAllPerpsParamsSC } from 'hooks/perps/usePerpsParams'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useSlippage from 'hooks/settings/useSlippage'
 import useVaultConfigs from 'hooks/vaults/useVaultConfigs'
+import { BNCoin } from 'types/classes/BNCoin'
 import { VaultPositionValue } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { PerpParams, VaultConfigBaseForString } from 'types/generated/mars-params/MarsParams.types'
-import { PerpDenomState } from 'types/generated/mars-perps/MarsPerps.types'
+import { VaultConfigBaseForString } from 'types/generated/mars-params/MarsParams.types'
 import {
   AssetParamsBaseForAddr,
   HealthComputer,
@@ -24,14 +24,13 @@ import { SWAP_FEE_BUFFER } from 'utils/constants'
 import { findPositionInAccount } from 'utils/healthComputer'
 import {
   BorrowTarget,
-  LiquidationPriceKind,
-  SwapKind,
   compute_health_js,
   liquidation_price_js,
+  LiquidationPriceKind,
   max_borrow_estimate_js,
-  max_perp_size_estimate_js,
   max_swap_estimate_js,
   max_withdraw_estimate_js,
+  SwapKind,
 } from 'utils/health_computer'
 import { BN } from 'utils/helpers'
 import { getTokenPrice } from 'utils/tokens'
@@ -43,7 +42,7 @@ const VALUE_SCALE_FACTOR = 12
 
 export default function useHealthComputer(account?: Account) {
   const { data: assets } = useAssets()
-  const whitelistedAsset = useWhitelistedAssets()
+  const whitelistedAssets = useWhitelistedAssets()
   const { data: assetParams } = useAssetParams()
   const { data: vaultConfigs } = useVaultConfigs()
   const { data: perpsDenomStates } = useAllPerpsDenomStates()
@@ -89,7 +88,7 @@ export default function useHealthComputer(account?: Account) {
   }, [account?.vaults])
 
   const priceData = useMemo(() => {
-    const assetsWithPrice = assets.filter((asset) => asset.price)
+    const assetsWithPrice = whitelistedAssets.filter((asset) => asset.price)
     const prices = assetsWithPrice.map((asset) => asset.price) as BNCoin[]
     return prices.reduce(
       (prev, curr) => {
@@ -107,15 +106,11 @@ export default function useHealthComputer(account?: Account) {
     )
   }, [assets])
 
-  const denomsData = useMemo(
+  const assetsParams = useMemo(
     () =>
       assetParams.reduce(
         (prev, curr) => {
           prev[curr.denom] = curr
-          if (!curr.close_factor) {
-            prev[curr.denom].close_factor = '0'
-          }
-
           return prev
         },
         {} as { [key: string]: AssetParamsBaseForAddr },
@@ -135,6 +130,7 @@ export default function useHealthComputer(account?: Account) {
     )
   }, [vaultConfigs])
 
+  /* PERPS
   const perpsParamsData = useMemo(() => {
     if (!perpsParams) return {}
     return perpsParams.reduce(
@@ -148,14 +144,19 @@ export default function useHealthComputer(account?: Account) {
   }, [perpsParams])
 
   const denomStates = useMemo(() => {
+
     let denomStates: { [key: string]: PerpDenomState } = {}
+    
+    
     if (!perpsDenomStates) return denomStates
 
     for (let denomState of perpsDenomStates) {
       denomStates[denomState.denom] = denomState
     }
     return denomStates
+
   }, [perpsDenomStates])
+  */
 
   const healthComputer: HealthComputer | null = useMemo(() => {
     if (
@@ -163,9 +164,11 @@ export default function useHealthComputer(account?: Account) {
       !positions ||
       !vaultPositionValues ||
       !vaultConfigsData ||
+      /* PERPS
       !denomStates ||
       !perpsParamsData ||
-      Object.keys(denomsData).length === 0 ||
+      */
+      Object.keys(assetsParams).length === 0 ||
       Object.keys(priceData).length === 0 ||
       positions.vaults.length !== Object.keys(vaultPositionValues).length
     )
@@ -173,27 +176,33 @@ export default function useHealthComputer(account?: Account) {
 
     return {
       kind: account.kind,
+      denoms_data: {
+        params: assetsParams,
+        prices: priceData,
+      },
       vaults_data: {
         vault_configs: vaultConfigsData,
         vault_values: vaultPositionValues,
       },
-      asset_params: denomsData,
-      oracle_prices: priceData,
       positions: positions,
-      perps_data: {
+      /* PERPS
+       perps_data: {
         denom_states: denomStates,
         params: perpsParamsData,
       },
+      */
     } as HealthComputer
   }, [
     account,
     positions,
     vaultPositionValues,
     vaultConfigsData,
+    /* PERPS
     perpsParamsData,
-    denomsData,
-    priceData,
     denomStates,
+    */
+    assetsParams,
+    priceData,
   ])
 
   useEffect(() => {
@@ -256,7 +265,7 @@ export default function useHealthComputer(account?: Account) {
     (denom: string, kind: LiquidationPriceKind) => {
       if (!healthComputer) return null
       try {
-        const asset = whitelistedAsset.find(byDenom(denom))
+        const asset = whitelistedAssets.find(byDenom(denom))
         const assetInAccount = findPositionInAccount(healthComputer, denom)
         if (!asset || !assetInAccount) return 0
         const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
@@ -281,9 +290,17 @@ export default function useHealthComputer(account?: Account) {
 
   const computeMaxPerpAmount = useCallback(
     (denom: string, tradeDirection: TradeDirection) => {
-      if (!healthComputer || !perpsVault || !denomStates) return BN_ZERO
+      if (
+        !healthComputer ||
+        !perpsVault
+        /* PERPS
+        || !denomStates
+        */
+      )
+        return BN_ZERO
       try {
         return BN(
+          /* PERPS
           max_perp_size_estimate_js(
             healthComputer,
             denom,
@@ -292,13 +309,21 @@ export default function useHealthComputer(account?: Account) {
             denomStates[denom].short_oi.toString(),
             tradeDirection,
           ),
+        */
+          1,
         ).abs()
       } catch (err) {
         console.error('Failed to calculate max perp size: ', err)
         return BN_ZERO
       }
     },
-    [healthComputer, perpsVault, denomStates],
+    [
+      healthComputer,
+      perpsVault,
+      /* PERPS
+      , denomStates
+      */
+    ],
   )
 
   const health = useMemo(() => {

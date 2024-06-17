@@ -43,6 +43,7 @@ export default function PortfolioSummary() {
         vaults: [],
         perps: [],
         perpsVault: null,
+        stakedAstroLps: [],
         kind: 'default' as AccountKind,
       } as Account,
     )
