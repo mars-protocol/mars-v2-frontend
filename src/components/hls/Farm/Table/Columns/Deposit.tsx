@@ -28,6 +28,7 @@ export default function Deposit(props: Props) {
   const { open: openAlertDialog, close } = useAlertDialog()
 
   const openHlsModal = useCallback(() => {
+    if (!strategy && !vault) return
     useStore.setState({ hlsModal: { strategy, vault } })
   }, [strategy, vault])
 
