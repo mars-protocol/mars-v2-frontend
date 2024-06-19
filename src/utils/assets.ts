@@ -131,7 +131,7 @@ export function convertAstroportAssetsResponse(data: AstroportAsset[]): Asset[] 
 export function convertAstroportPoolResponse(data: AstroportPool[]): Asset[] {
   return data.map((asset) => {
     return {
-      denom: asset.denom,
+      denom: asset.lpAddress,
       name: getAssetNameOrSymbolFromUnknownAsset({ name: asset.description }),
       decimals: asset.decimals,
       symbol: getAssetNameOrSymbolFromUnknownAsset({ symbol: asset.symbol }),
