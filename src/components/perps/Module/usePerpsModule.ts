@@ -31,7 +31,7 @@ export default function usePerpsModule(amount: BigNumber | null) {
   )
 
   const hasActivePosition = useMemo(
-    () => !!account?.perps.find(byDenom(perpsAsset.denom)),
+    () => !!account?.perps?.find(byDenom(perpsAsset.denom)),
     [account?.perps, perpsAsset.denom],
   )
 

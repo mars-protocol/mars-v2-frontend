@@ -48,7 +48,7 @@ export async function analizeTransaction(
   if (accountId) {
     // If it is a credit account, get the AccountKind of the credit account
     const creditManagerQueryClient = await getCreditManagerQueryClient(chainConfig)
-    accountKind = await creditManagerQueryClient.accountKind({ accountId: accountId })
+    accountKind = (await creditManagerQueryClient.accountKind({ accountId: accountId })) as any
     if (accountKind) {
       target =
         accountKind === 'high_levered_strategy'

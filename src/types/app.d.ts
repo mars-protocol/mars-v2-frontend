@@ -31,8 +31,9 @@ interface Account {
   debts: BNCoin[]
   lends: BNCoin[]
   vaults: DepositedVault[]
-  perps: PerpsPosition[]
-  perpsVault: PerpsVaultPositions | null
+  stakedAstroLps: BNCoin[]
+  perps?: PerpsPosition[]
+  perpsVault?: PerpsVaultPositions | null
   kind: AccountKind
 }
 
@@ -41,6 +42,7 @@ interface AccountChange extends Account {
   debts?: BNCoin[]
   lends?: BNCoin[]
   vaults?: DepositedVault[]
+  stakedAstroLps?: BNCoin[]
   perps?: PerpsPosition[]
   perpsVault?: PerpsVaultPositions
 }
@@ -402,6 +404,7 @@ type OsmosisRoutePool = {
 }
 
 type SwapRouteInfo = {
+  amountOut: BigNumber
   priceImpact: BigNumber
   fee: BigNumber
   route: import('types/generated/mars-credit-manager/MarsCreditManager.types').SwapperRoute

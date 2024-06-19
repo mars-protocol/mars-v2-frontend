@@ -3,17 +3,17 @@ import useSWRImmutable from 'swr/immutable'
 
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useClients from 'hooks/chain/useClients'
-import { PerpParams } from 'types/generated/mars-params/MarsParams.types'
 import { byDenom } from 'utils/array'
-import { BN } from 'utils/helpers'
-import iterateContractQuery from 'utils/iterateContractQuery'
 
 export function usePerpsParams(denom: string) {
   const perpsParams = useAllPerpsParams()
 
   return useMemo(() => {
+    /* PERPS
     if (!perpsParams) return null
     return perpsParams.find(byDenom(denom)) as PerpsParams
+    */
+    return null
   }, [denom, perpsParams])
 }
 
@@ -35,10 +35,14 @@ export function useAllPerpsParamsSC() {
 }
 
 async function getPerpsParams(chainConfig: ChainConfig, clients: ContractClients) {
+  /* PERPS
   if (!chainConfig.perps) return []
   return iterateContractQuery(clients.params.allPerpParams, undefined, [])
+  */
+  return []
 }
 
+/* PERPS
 function resolvePerpsParams(param: PerpParams) {
   return {
     denom: param.denom,
@@ -49,4 +53,8 @@ function resolvePerpsParams(param: PerpParams) {
     maxOpenInterestShort: BN(param.max_short_oi_value),
     maxOpenInterestLong: BN(param.max_long_oi_value),
   } as PerpsParams
+}
+*/
+function resolvePerpsParams() {
+  return [{ denom: '' }]
 }

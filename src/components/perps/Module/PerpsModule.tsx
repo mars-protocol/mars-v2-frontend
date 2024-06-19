@@ -75,7 +75,7 @@ export function PerpsModule() {
   )
 
   useEffect(() => {
-    const currentPerpPosition = account?.perps.find((p) => p.denom === perpsAsset.denom)
+    const currentPerpPosition = account?.perps?.find((p) => p.denom === perpsAsset.denom)
     if (!perpsParams || !tradingFee || !perpsVault) return
 
     const perpsPosition = getPerpsPosition(

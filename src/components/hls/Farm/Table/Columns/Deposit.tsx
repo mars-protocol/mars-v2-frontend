@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 
 import Button from 'components/common/Button'
-import { Circle, Enter, TrashBin, Wallet } from 'components/common/Icons'
+import { ArrowRight, Circle, TrashBin, Wallet } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
 import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
@@ -27,10 +27,10 @@ export default function Deposit(props: Props) {
 
   const { open: openAlertDialog, close } = useAlertDialog()
 
-  const openHlsModal = useCallback(
-    () => useStore.setState({ hlsModal: { strategy, vault } }),
-    [strategy, vault],
-  )
+  const openHlsModal = useCallback(() => {
+    if (!strategy && !vault) return
+    useStore.setState({ hlsModal: { strategy, vault } })
+  }, [strategy, vault])
 
   const handleOnClick = useCallback(() => {
     if (!showHlsInfo) {
@@ -43,7 +43,7 @@ export default function Deposit(props: Props) {
       content: <AlertDialogItems items={INFO_ITEMS} />,
       positiveButton: {
         text: 'Continue',
-        icon: <Enter />,
+        icon: <ArrowRight />,
         onClick: openHlsModal,
       },
       negativeButton: {
