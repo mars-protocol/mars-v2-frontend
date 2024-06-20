@@ -140,7 +140,7 @@ export default function TradeSummary(props: Props) {
             <SummaryLine label='Price impact' className='mt-2'>
               {routeInfo?.priceImpact ? (
                 <FormattedNumber
-                  amount={routeInfo?.priceImpact.times(100).toNumber() || 0}
+                  amount={routeInfo?.priceImpact.toNumber() || 0}
                   options={{ suffix: '%' }}
                 />
               ) : (
