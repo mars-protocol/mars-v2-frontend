@@ -11,11 +11,10 @@ import SummaryLine from 'components/common/SummaryLine'
 import Text from 'components/common/Text'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useToggle from 'hooks/common/useToggle'
-import useEstimatedFee from 'hooks/prices/useEstimatedFee'
 import useLiquidationPrice from 'hooks/prices/useLiquidationPrice'
 import useSlippage from 'hooks/settings/useSlippage'
 import { BNCoin } from 'types/classes/BNCoin'
-import { formatAmountWithSymbol, formatPercent, formatValue } from 'utils/formatters'
+import { formatPercent, formatValue } from 'utils/formatters'
 
 interface Props {
   borrowAmount: BigNumber
@@ -56,7 +55,6 @@ export default function TradeSummary(props: Props) {
   } = props
   const [slippage] = useSlippage()
   const assets = useDepositEnabledAssets()
-  const { estimatedFee, isUpdatingEstimatedFee } = useEstimatedFee(swapTx)
   const [showSummary, setShowSummary] = useToggle()
   const { liquidationPrice, isUpdatingLiquidationPrice } = useLiquidationPrice(
     props.liquidationPrice,
@@ -163,13 +161,7 @@ export default function TradeSummary(props: Props) {
                 coin={BNCoin.fromDenomAndBigNumber(sellAsset.denom, swapFeeAmount)}
               />
             </SummaryLine>
-            <SummaryLine label='Transaction fees'>
-              {isUpdatingEstimatedFee ? (
-                <CircularProgress size={10} />
-              ) : (
-                <span>{formatAmountWithSymbol(estimatedFee.amount[0], assets)}</span>
-              )}
-            </SummaryLine>
+
             <SummaryLine label={`Min receive (${slippage * 100}% slippage)`}>
               <FormattedNumber
                 amount={minReceive.toNumber()}
