@@ -89,13 +89,17 @@ async function fetchSortAndMapAllAssets(
     const currentAssetPerpsParams = perpsParams ? perpsParams.find(byDenom(asset.denom)) : undefined 
     */
 
+    const isDepositEnabled = chainConfig.anyAsset
+      ? !currentAssetPoolInfo
+      : currentAssetParams?.red_bank.deposit_enabled
+
     return {
       ...asset,
       isPoolToken: !!currentAssetPoolInfo,
       isWhitelisted: !!currentAssetParams,
       isAutoLendEnabled: currentAssetParams?.red_bank.borrow_enabled ?? false,
       isBorrowEnabled: currentAssetParams?.red_bank.borrow_enabled ?? false,
-      isDepositEnabled: currentAssetParams?.red_bank.deposit_enabled ?? false,
+      isDepositEnabled: isDepositEnabled,
       isDisplayCurrency: currentAssetParams?.red_bank.borrow_enabled || asset.denom === 'usd',
       isStable: chainConfig.stables.includes(asset.denom),
       isStaking:
