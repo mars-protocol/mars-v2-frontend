@@ -37,6 +37,7 @@ const Pion1: ChainConfig = {
   },
   network: NETWORK.TESTNET,
   vaults: [],
+  dexName: 'Astroport',
   explorerName: 'Mintscan',
   bech32Config: Bech32Address.defaultBech32Config('neutron'),
   defaultCurrency: {

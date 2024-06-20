@@ -99,18 +99,8 @@ export function handleUnknownAsset(coin: Coin): Asset {
     symbol: getSymbolFromUnknownAssetDenom(coin.denom),
   }
 }
-
-function identifyPoolToken(denom: string) {
-  const denomParts = denom.split('/')
-  if (denomParts.length < 3) return false
-  if (denomParts[0] === 'gamm' || denomParts[3] === 'share') return true
-  return false
-}
-
 export function convertAstroportAssetsResponse(data: AstroportAsset[]): Asset[] {
   return data.map((asset) => {
-    const isPoolToken = identifyPoolToken(asset.denom)
-
     return {
       denom: asset.denom,
       name: getAssetNameOrSymbolFromUnknownAsset({ name: asset.description }),
@@ -123,26 +113,6 @@ export function convertAstroportAssetsResponse(data: AstroportAsset[]): Asset[] 
       pythPriceFeedId: priceFeedIDs.find((pf) => pf.symbol === asset.symbol.toUpperCase())
         ?.priceFeedID,
       pythFeedName: priceFeedIDs.find((pf) => pf.symbol === asset.symbol.toUpperCase())?.feedName,
-      isPoolToken,
-    }
-  })
-}
-
-export function convertAstroportPoolResponse(data: AstroportPool[]): Asset[] {
-  return data.map((asset) => {
-    return {
-      denom: asset.lpAddress,
-      name: getAssetNameOrSymbolFromUnknownAsset({ name: asset.description }),
-      decimals: asset.decimals,
-      symbol: getAssetNameOrSymbolFromUnknownAsset({ symbol: asset.symbol }),
-      logo: asset.icon ?? null,
-      price: asset.priceUSD
-        ? BNCoin.fromCoin({ denom: asset.denom, amount: String(asset.priceUSD) })
-        : undefined,
-      pythPriceFeedId: priceFeedIDs.find((pf) => pf.symbol === asset.symbol.toUpperCase())
-        ?.priceFeedID,
-      pythFeedName: priceFeedIDs.find((pf) => pf.symbol === asset.symbol.toUpperCase())?.feedName,
-      isPoolToken,
     }
   })
 }

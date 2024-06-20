@@ -87,6 +87,7 @@ const Osmosis1: ChainConfig = {
       stride: 'https://edge.stride.zone/api/stake-stats',
     },
   },
+  dexName: 'Osmosis Dex',
   explorerName: 'Mintscan',
   features: ['ibc-transfer', 'ibc-go'],
   gasPrice: '0.0035uosmo',

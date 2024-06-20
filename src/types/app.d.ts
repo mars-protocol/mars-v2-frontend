@@ -134,6 +134,7 @@ interface AssetMetaData {
   pythPriceFeedId?: string
   pythFeedName?: string
   price?: BNCoin
+  poolInfo?: PoolInfo
 }
 
 interface AssetPair {
@@ -244,6 +245,7 @@ interface ChainConfig {
       stride: string
     }
   }
+  dexName: string
   explorerName: string
   features: ('ibc-transfer' | 'ibc-go')[]
   gasPrice: string
@@ -1283,11 +1285,13 @@ interface AstroportAsset {
   dayVolumeUSD: number
 }
 
+type PoolType = 'xyk' | 'concentrated' | 'stable' | 'transmuter' | 'astroport-pair-xyk-sale-tax'
+
 interface AstroportPool {
   chainId: string
   osmosisPoolId: null | string
   poolAddress: string
-  poolType: 'xyk' | 'concentrated' | 'stable' | 'transmuter' | 'astroport-pair-xyk-sale-tax'
+  poolType: PoolType
   lpAddress: string
   assets: AstroportPoolAsset[]
   totalLiquidityUSD: number
@@ -1296,12 +1300,7 @@ interface AstroportPool {
   dayVolumeUSD: number
   dayLpFeesUSD: number
   rewards: AstroportPoolReward[]
-  yield: {
-    poolFees: number
-    astro: number
-    externalRewards: number
-    total: number
-  }
+  yield: PoolYield
 }
 
 interface AstroportPoolAsset {
@@ -1351,4 +1350,29 @@ interface PoolParams {
   exit_fee: string
   smooth_weight_change_params: null
   swap_fee: string
+}
+
+interface PoolWeight {
+  primaryToSecondary: number
+  secondaryToPrimary: number
+}
+
+interface PoolYield {
+  poolFees: number
+  astro: number
+  externalRewards: number
+  total: number
+}
+
+interface PoolInfo {
+  poolAddress: string
+  poolType: PoolType
+  assets: {
+    primary: Asset
+    secondary: Asset
+  }
+  poolTotalShare: string
+  rewards: AstroportPoolReward[]
+  yield: PoolYield
+  poolWeight: PoolWeight
 }
