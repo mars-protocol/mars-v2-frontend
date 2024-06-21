@@ -43,6 +43,7 @@ function AccountDeleteModal(props: Props) {
   }, [])
 
   const deleteAccountHandler = useCallback(async () => {
+    useStore.setState({ accountDeleteModal: null })
     const options = { accountId: modal.id, lends: modal.lends }
     const path = getPage(pathname)
     const isDeleted = await deleteAccount(options)
