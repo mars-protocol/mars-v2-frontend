@@ -1341,6 +1341,7 @@ interface PoolLiquidity {
   amount: string
   denom: string
 }
+
 interface TotalShares {
   amount: string
   denom: string
@@ -1365,14 +1366,14 @@ interface PoolYield {
 }
 
 interface PoolInfo {
-  poolAddress: string
-  poolType: PoolType
+  address: string
+  type: PoolType
   assets: {
     primary: Asset
     secondary: Asset
   }
-  poolTotalShare: string
+  totalShare: string
   rewards: AstroportPoolReward[]
   yield: PoolYield
-  poolWeight: PoolWeight
+  weight: PoolWeight
 }

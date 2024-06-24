@@ -50,15 +50,15 @@ async function fetchSortAndMapAllAssets(
     const currentAssetParams = assetParams.find(byDenom(asset.denom))
     const currentAssetPoolParams = pools.find((pool) => pool.lpAddress === asset.denom)
 
-    let currentAssetPoolInfo
+    let currentAssetPoolInfo: PoolInfo | undefined
 
     if (currentAssetPoolParams) {
       const primaryAsset = assets.find(byDenom(currentAssetPoolParams.assets[0].denom))
       const secondaryAsset = assets.find(byDenom(currentAssetPoolParams.assets[1].denom))
       const symbol = `${primaryAsset?.symbol ?? currentAssetPoolParams.assets[0].symbol}-${secondaryAsset?.symbol ?? currentAssetPoolParams.assets[1].symbol}`
       currentAssetPoolInfo = {
-        poolAddress: currentAssetPoolParams.poolAddress,
-        poolType: currentAssetPoolParams.poolType,
+        address: currentAssetPoolParams.poolAddress,
+        type: currentAssetPoolParams.poolType,
         assets: {
           primary: primaryAsset ?? {
             denom: currentAssetPoolParams.assets[0].denom,
@@ -73,10 +73,10 @@ async function fetchSortAndMapAllAssets(
             symbol: currentAssetPoolParams.assets[1].symbol,
           },
         },
-        poolTotalShare: currentAssetPoolParams.poolTotalShare,
+        totalShare: currentAssetPoolParams.poolTotalShare,
         rewards: currentAssetPoolParams.rewards,
         yield: currentAssetPoolParams.yield,
-        poolWeight: calculatePoolWeight(
+        weight: calculatePoolWeight(
           currentAssetPoolParams.assets[0],
           currentAssetPoolParams.assets[1],
         ),
