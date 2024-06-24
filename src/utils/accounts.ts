@@ -419,14 +419,14 @@ export function getAccountSummaryStats(
 }
 
 export function isAccountEmpty(account: Account) {
-  return (
-    account.vaults.length === 0 &&
-    account.lends.length === 0 &&
-    account.debts.length === 0 &&
-    account.deposits.length === 0 &&
-    account.stakedAstroLps.length === 0 &&
-    account.perpsVault === null
-  )
+  if (account.vaults.length > 0) return false
+  if (account.lends.length > 0) return false
+  if (account.debts.length > 0) return false
+  if (account.deposits.length > 0) return false
+  if (account.stakedAstroLps.length > 0) return false
+  if (account.perpsVault) return false
+
+  return true
 }
 
 export function getAccountNetValue(account: Account, assets: Asset[]) {
