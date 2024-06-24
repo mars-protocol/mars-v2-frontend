@@ -24,7 +24,7 @@ export default function useRouteInfo(denomIn: string, denomOut: string, amount: 
 
         return {
           amountOut: BN(route.amount_out),
-          priceImpact: BN(route.price_impact),
+          priceImpact: BN(route.price_impact).times(100),
           fee: BN(route.effective_fee),
           description: [
             assets.find(byDenom(denomIn))?.symbol,
@@ -52,6 +52,7 @@ export default function useRouteInfo(denomIn: string, denomOut: string, amount: 
 
   const astroportRoute = useSWR<SwapRouteInfo | null>(
     !isOsmosis &&
+      debouncedAmount !== '0' &&
       `${chainConfig.endpoints.routes}?start=${denomIn}&end=${denomOut}&amount=${debouncedAmount}&chainId=${chainConfig.id}&limit=1`,
     async (url: string) => {
       try {

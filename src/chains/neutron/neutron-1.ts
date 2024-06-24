@@ -36,6 +36,7 @@ const Neutron1: ChainConfig = {
   },
   network: NETWORK.MAINNET,
   vaults: [],
+  dexName: 'Astroport',
   explorerName: 'Mintscan',
   bech32Config: Bech32Address.defaultBech32Config('neutron'),
   defaultCurrency: {

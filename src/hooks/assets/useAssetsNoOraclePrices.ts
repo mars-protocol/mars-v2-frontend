@@ -1,4 +1,5 @@
-import getAstroportAssets from 'api/assets/getAstroportAssets'
+import getDexAssets from 'api/assets/getDexAssets'
+import getDexPools from 'api/assets/getDexPools'
 import USD from 'constants/USDollar'
 import { PRICE_STALE_TIME } from 'constants/query'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -7,6 +8,7 @@ import useStore from 'store'
 import useSWR from 'swr'
 import { AssetParamsBaseForAddr } from 'types/generated/mars-params/MarsParams.types'
 import { byDenom } from 'utils/array'
+import { calculatePoolWeight } from 'utils/pools'
 
 export default function useAssetsNoOraclePrices() {
   const chainConfig = useChainConfig()
@@ -40,22 +42,64 @@ async function fetchSortAndMapAllAssets(
   perpsParams: PerpParams[], 
   */
 ) {
-  const assets = await getAstroportAssets(chainConfig)
+  const [assets, pools] = await Promise.all([getDexAssets(chainConfig), getDexPools(chainConfig)])
+
   const allAssets = chainConfig.lp ? [...assets, USD, ...chainConfig.lp] : [...assets, USD]
 
   const unsortedAssets = allAssets.map((asset) => {
     const currentAssetParams = assetParams.find(byDenom(asset.denom))
+    const currentAssetPoolParams = pools.find((pool) => pool.lpAddress === asset.denom)
+
+    let currentAssetPoolInfo: PoolInfo | undefined
+
+    if (currentAssetPoolParams) {
+      const primaryAsset = assets.find(byDenom(currentAssetPoolParams.assets[0].denom))
+      const secondaryAsset = assets.find(byDenom(currentAssetPoolParams.assets[1].denom))
+      const symbol = `${primaryAsset?.symbol ?? currentAssetPoolParams.assets[0].symbol}-${secondaryAsset?.symbol ?? currentAssetPoolParams.assets[1].symbol}`
+      currentAssetPoolInfo = {
+        address: currentAssetPoolParams.poolAddress,
+        type: currentAssetPoolParams.poolType,
+        assets: {
+          primary: primaryAsset ?? {
+            denom: currentAssetPoolParams.assets[0].denom,
+            name: currentAssetPoolParams.assets[0].symbol,
+            decimals: currentAssetPoolParams.assets[0].decimals,
+            symbol: currentAssetPoolParams.assets[0].symbol,
+          },
+          secondary: secondaryAsset ?? {
+            denom: currentAssetPoolParams.assets[1].denom,
+            name: currentAssetPoolParams.assets[1].symbol,
+            decimals: currentAssetPoolParams.assets[1].decimals,
+            symbol: currentAssetPoolParams.assets[1].symbol,
+          },
+        },
+        totalShare: currentAssetPoolParams.poolTotalShare,
+        rewards: currentAssetPoolParams.rewards,
+        yield: currentAssetPoolParams.yield,
+        weight: calculatePoolWeight(
+          currentAssetPoolParams.assets[0],
+          currentAssetPoolParams.assets[1],
+        ),
+      }
+      asset.symbol = symbol
+      asset.name = `${chainConfig.dexName} ${symbol} LP`
+    }
 
     /* PERPS
     const currentAssetPerpsParams = perpsParams ? perpsParams.find(byDenom(asset.denom)) : undefined 
     */
 
+    const isDepositEnabled = chainConfig.anyAsset
+      ? !currentAssetPoolInfo
+      : currentAssetParams?.red_bank.deposit_enabled
+
     return {
       ...asset,
+      isPoolToken: !!currentAssetPoolInfo,
       isWhitelisted: !!currentAssetParams,
       isAutoLendEnabled: currentAssetParams?.red_bank.borrow_enabled ?? false,
       isBorrowEnabled: currentAssetParams?.red_bank.borrow_enabled ?? false,
-      isDepositEnabled: currentAssetParams?.red_bank.deposit_enabled ?? false,
+      isDepositEnabled: isDepositEnabled,
       isDisplayCurrency: currentAssetParams?.red_bank.borrow_enabled || asset.denom === 'usd',
       isStable: chainConfig.stables.includes(asset.denom),
       isStaking:
@@ -65,7 +109,9 @@ async function fetchSortAndMapAllAssets(
       */
       isTradeEnabled:
         asset.denom !== 'usd' &&
+        !currentAssetPoolInfo &&
         (currentAssetParams?.red_bank.deposit_enabled || !currentAssetParams),
+      poolInfo: currentAssetPoolInfo,
     }
   })
 

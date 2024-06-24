@@ -1,13 +1,13 @@
 import useSWR from 'swr'
 
-import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useClients from 'hooks/chain/useClients'
 
 export default function useMarketDepositCaps() {
   const chainConfig = useChainConfig()
   const clients = useClients()
-  const assets = useDepositEnabledAssets()
+  const assets = useWhitelistedAssets()
 
   return useSWR(
     assets.length > 0 && clients && `chains/${chainConfig.id}/markets/depositCap`,
