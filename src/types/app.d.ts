@@ -125,6 +125,7 @@ interface AssetMetaData {
   isDepositEnabled?: boolean
   isDisplayCurrency?: boolean
   isTradeEnabled?: boolean
+  isPoolToken?: boolean
   isStable?: boolean
   isStaking?: boolean
   isPerpsEnabled?: boolean
@@ -133,6 +134,7 @@ interface AssetMetaData {
   pythPriceFeedId?: string
   pythFeedName?: string
   price?: BNCoin
+  poolInfo?: PoolInfo
 }
 
 interface AssetPair {
@@ -237,11 +239,13 @@ interface ChainConfig {
     pools: string
     routes: string
     dexAssets: string
+    dexPools?: string
     aprs: {
       vaults: string
       stride: string
     }
   }
+  dexName: string
   explorerName: string
   features: ('ibc-transfer' | 'ibc-go')[]
   gasPrice: string
@@ -1281,6 +1285,41 @@ interface AstroportAsset {
   dayVolumeUSD: number
 }
 
+type PoolType = 'xyk' | 'concentrated' | 'stable' | 'transmuter' | 'astroport-pair-xyk-sale-tax'
+
+interface AstroportPool {
+  chainId: string
+  osmosisPoolId: null | string
+  poolAddress: string
+  poolType: PoolType
+  lpAddress: string
+  assets: AstroportPoolAsset[]
+  totalLiquidityUSD: number
+  poolTotalShare: string
+  poolStakedLiquidityUSD: number
+  dayVolumeUSD: number
+  dayLpFeesUSD: number
+  rewards: AstroportPoolReward[]
+  yield: PoolYield
+}
+
+interface AstroportPoolAsset {
+  amount: string
+  denom: string
+  symbol: string
+  description: string
+  decimals: number
+  priceUSD: number
+}
+
+interface AstroportPoolReward {
+  denom: string
+  symbol: string
+  dayUSD: number
+  yield: number
+  isInternal: boolean
+}
+
 interface Pool {
   '@type': string
   address: string
@@ -1302,6 +1341,7 @@ interface PoolLiquidity {
   amount: string
   denom: string
 }
+
 interface TotalShares {
   amount: string
   denom: string
@@ -1311,4 +1351,29 @@ interface PoolParams {
   exit_fee: string
   smooth_weight_change_params: null
   swap_fee: string
+}
+
+interface PoolWeight {
+  primaryToSecondary: number
+  secondaryToPrimary: number
+}
+
+interface PoolYield {
+  poolFees: number
+  astro: number
+  externalRewards: number
+  total: number
+}
+
+interface PoolInfo {
+  address: string
+  type: PoolType
+  assets: {
+    primary: Asset
+    secondary: Asset
+  }
+  totalShare: string
+  rewards: AstroportPoolReward[]
+  yield: PoolYield
+  weight: PoolWeight
 }

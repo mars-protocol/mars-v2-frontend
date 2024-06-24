@@ -17,6 +17,7 @@ export default function useAccountBalanceData(props: Props) {
   const { account, updatedAccount, lendingData, borrowingData } = props
   const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: assets } = useAssets()
+
   return useMemo<AccountBalanceRow[]>(() => {
     const usedAccount = updatedAccount ?? account
     const accountDeposits = usedAccount?.deposits ?? []
