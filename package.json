@@ -20,9 +20,9 @@
     ]
   },
   "dependencies": {
-    "@cosmjs/cosmwasm-stargate": "^0.32.3",
+    "@cosmjs/cosmwasm-stargate": "^0.32.4",
     "@delphi-labs/shuttle-react": "^3.24.0",
-    "@keplr-wallet/cosmos": "^0.12.105",
+    "@keplr-wallet/cosmos": "^0.12.107",
     "@tailwindcss/container-queries": "^0.1.1",
     "@tanstack/react-table": "^8.17.3",
     "@tippyjs/react": "^4.2.6",
@@ -41,26 +41,26 @@
     "react-draggable": "^4.4.6",
     "react-helmet-async": "^2.0.5",
     "react-qr-code": "^2.0.15",
-    "react-router-dom": "^6.23.1",
+    "react-router-dom": "^6.24.0",
     "react-spring": "^9.7.3",
     "react-toastify": "^10.0.5",
     "react-use-clipboard": "^1.0.9",
     "recharts": "^2.12.7",
     "swr": "^2.2.5",
     "tailwind-scrollbar-hide": "^1.1.7",
-    "zustand": "^4.5.2"
+    "zustand": "4.5.2"
   },
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",
     "@types/debounce-promise": "^3.1.9",
     "@types/lodash.debounce": "^4.0.9",
     "@types/lodash.throttle": "^4.1.9",
-    "@types/node": "^20.14.8",
+    "@types/node": "^20.14.9",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
     "@types/react-helmet": "^6.1.11",
-    "@typescript-eslint/eslint-plugin": "^7.13.1",
-    "@typescript-eslint/parser": "^7.13.1",
+    "@typescript-eslint/eslint-plugin": "^7.14.1",
+    "@typescript-eslint/parser": "^7.14.1",
     "eslint-plugin-functional": "^6.6.0",
     "eslint-plugin-import": "^2.29.1",
     "autoprefixer": "^10.4.19",
@@ -74,10 +74,7 @@
     "prettier-plugin-tailwindcss": "^0.6.5",
     "shelljs": "^0.8.5",
     "tailwindcss": "^3.4.4",
-    "typescript": "5.5.2"
-  },
-  "resolutions": {
-    "@cosmjs/encoding": "0.32.3"
+    "typescript": "^5.5.2"
   },
   "engines": {
     "npm": "please-use-yarn",
