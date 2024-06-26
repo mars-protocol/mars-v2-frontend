@@ -4,6 +4,7 @@ import moment from 'moment'
 import { isMobile } from 'react-device-detect'
 import { StoreApi } from 'zustand'
 
+import getGasPrice from 'api/gasPrice/getGasPrice'
 import getPythPriceData from 'api/prices/getPythPriceData'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -68,8 +69,8 @@ export default function createBroadcastSlice(
         if (success) {
           const fee = simulateResult.fee
           return {
-            amount: fee ? fee.amount : [],
-            gas: BN(fee ? fee.gas : 0).toFixed(0),
+            amount: fee.amount,
+            gas: BN(fee.gas).toFixed(0),
           }
         }
       }
@@ -650,6 +651,9 @@ export default function createBroadcastSlice(
         const isV1 = get().isV1
         const isLedger = client?.connectedWallet?.account.isLedger
         const memo = isLedger ? '' : isV1 ? 'MPv1' : 'MPv2'
+
+        const gasPrice = await getGasPrice(get().chainConfig)
+        console.log('GAS:', gasPrice)
 
         if (!client)
           return { result: undefined, error: 'No client detected. Please reconnect your wallet.' }

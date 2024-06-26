@@ -82,6 +82,7 @@ const Osmosis1: ChainConfig = {
       'osmosis/gamm/v1beta1/pools/POOL_ID',
     ),
     dexAssets: 'https://api.astroport.fi/api/tokens?chainId=osmosis-1',
+    gasPrices: 'https://osmosis-api.polkachu.com/osmosis/txfees/v1beta1/cur_eip_base_fee',
     aprs: {
       vaults: 'https://api.marsprotocol.io/v1/vaults/osmosis',
       stride: 'https://edge.stride.zone/api/stake-stats',
@@ -90,7 +91,7 @@ const Osmosis1: ChainConfig = {
   dexName: 'Osmosis Dex',
   explorerName: 'Mintscan',
   features: ['ibc-transfer', 'ibc-go'],
-  gasPrice: '0.0035uosmo',
+  gasPrice: '0.003',
   id: ChainInfoID.Osmosis1,
   name: 'Osmosis',
   network: NETWORK.MAINNET,
