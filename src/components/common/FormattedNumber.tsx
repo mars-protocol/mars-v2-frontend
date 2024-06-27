@@ -73,7 +73,7 @@ export const FormattedNumber = React.memo(
       </animated.p>
     )
   },
-  (prevProps, nextProps) => prevProps.amount === nextProps.amount,
+  (prevProps, nextProps) => prevProps.amount === nextProps.amount && JSON.stringify(prevProps.options) === JSON.stringify(nextProps.options),
 )
 
 FormattedNumber.displayName = 'FormattedNumber'
