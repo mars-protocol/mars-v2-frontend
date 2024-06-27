@@ -278,11 +278,6 @@ export default function SwapForm(props: Props) {
     [markets, inputAsset.denom],
   )
 
-  useEffect(() => {
-    if (inputAssetAmount.isEqualTo(maxInputAmount) || outputAssetAmount.isZero()) return
-    if (outputAssetAmount.isEqualTo(maxOutputAmountEstimation)) setInputAssetAmount(maxInputAmount)
-  }, [inputAssetAmount, maxInputAmount, outputAssetAmount, maxOutputAmountEstimation])
-
   const borrowAmount = useMemo(
     () =>
       inputAssetAmount.isGreaterThan(inputMarginThreshold)

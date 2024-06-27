@@ -99,7 +99,7 @@ export default function AccountSummaryHeader(props: Props) {
         )}
 
         <Text className='text-white/50' size='xs'>
-          Networth
+          Net worth
         </Text>
       </div>
       <div className='flex items-center w-full pt-2'>
