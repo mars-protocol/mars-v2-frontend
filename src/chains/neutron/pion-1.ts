@@ -14,7 +14,6 @@ const Pion1: ChainConfig = {
     redBank: 'neutron1ka6fmyj2e46szv3nzg7xs0t08uja0ra5jyvjfvryyx2selnm00vse6n4n2',
     incentives: 'neutron1q3n9cmrsv62v9t2k0zjfr6xaex82cr93xj0sx3j6ur9hsnj7n3wqxe5pmv',
     oracle: 'neutron14nklvm2ncnnmnzf3zlpkz5krt0aqheucnljjx82j06s9h559s0qsecnk9y',
-    swapper: 'neutron1z02mknfryt85fpth8xuaqsnh8a9ys7g8admc0f5qvrjhekkamt2svdkatl',
     params: 'neutron1kgcmwwu76vqdsy8jwx6e5s6l8982eyj05ghgqhuuw20rzv44a4ws3y4284',
     creditManager: 'neutron1gxg9ld2n4g0gg8w77e9xl22xdfgyj26mhj6cqc8pnlsx5jxum88srxwu9c',
     accountNft: 'neutron1qwz2fkt4y4u2nmh30cmjeh60pw4rq2pap3lapf76rm6mlksnevts9lm0yv',

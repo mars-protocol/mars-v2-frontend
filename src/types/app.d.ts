@@ -213,7 +213,6 @@ interface ChainConfig {
     redBank: string
     incentives: string
     oracle: string
-    swapper: string
     params: string
     creditManager: string
     accountNft: string
@@ -267,7 +266,6 @@ interface ContractClients {
   params: import('types/generated/mars-params/MarsParams.client').MarsParamsQueryClient
   perps: import('types/generated/mars-perps/MarsPerps.client').MarsPerpsQueryClient
   redBank: import('types/generated/mars-red-bank/MarsRedBank.client').MarsRedBankQueryClient
-  swapper: import('types/generated/mars-swapper-osmosis/MarsSwapperOsmosis.client').MarsSwapperOsmosisQueryClient
   icns: import('types/classes/ICNSClient.client').ICNSQueryClient
 }
 
