@@ -82,7 +82,7 @@ async function fetchSortAndMapAllAssets(
         ),
       }
       asset.symbol = symbol
-      asset.name = `${chainConfig.dexName} ${symbol} LP`
+      asset.name = `${symbol} LP`
     }
 
     /* PERPS

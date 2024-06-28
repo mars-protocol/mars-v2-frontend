@@ -236,7 +236,7 @@ interface ChainConfig {
     rpc: string
     swap: string
     explorer: string
-    pools: string
+    pools?: string
     routes: string
     dexAssets: string
     dexPools?: string

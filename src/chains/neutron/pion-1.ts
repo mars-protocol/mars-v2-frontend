@@ -26,7 +26,6 @@ const Pion1: ChainConfig = {
     rpc: process.env.NEXT_PUBLIC_NEUTRON_TEST_RPC ?? 'https://rpc-palvus.pion-1.ntrn.tech',
     rest: process.env.NEXT_PUBLIC_NEUTRON_TEST_REST ?? 'https://rest-palvus.pion-1.ntrn.tech',
     swap: 'https://testnet-neutron.astroport.fi/swap',
-    pools: '', //TODO: ⛓️ Implement this
     explorer: 'https://www.mintscan.io/neutron-testnet',
     dexAssets: 'https://testnet.astroport.fi/api/tokens?chainId=pion-1',
     dexPools: 'https://testnet.astroport.fi/api/pools?chainId=pion-1',
@@ -55,7 +54,7 @@ const Pion1: ChainConfig = {
   gasPrice: '0.025untrn',
   hls: false,
   perps: false,
-  farm: false,
+  farm: true,
   anyAsset: true,
 }
 
