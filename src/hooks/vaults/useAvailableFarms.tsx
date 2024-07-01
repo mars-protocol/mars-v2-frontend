@@ -29,7 +29,7 @@ export default function useAvailableFarms() {
       name: pool.name,
       lockup: {
         duration: 0,
-        timeframe: 'days',
+        timeframe: '',
       },
       provider: chainConfig.dexName,
       denoms: {
