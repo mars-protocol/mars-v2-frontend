@@ -1,11 +1,10 @@
 import Table from 'components/common/Table'
-import useAvailableColumns from 'components/earn/farm/Table/Columns/useAvailableColumns'
+import useAvailableFarmsColumns from 'components/earn/farm/Table/Columns/useAvailableFarmsColumns'
 import useAvailableFarms from 'hooks/vaults/useAvailableFarms'
-import useVaultAprs from 'hooks/vaults/useVaultAprs'
 
 export default function AvailableFarmsTable() {
   const availableFarms = useAvailableFarms()
-  const columns = useAvailableColumns({ isLoading: false })
+  const columns = useAvailableFarmsColumns({ isLoading: false })
 
   return (
     <Table

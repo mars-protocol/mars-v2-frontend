@@ -515,6 +515,8 @@ interface Vault extends VaultConfig {
   }
   apr?: number | null
   apy?: number | null
+  baseApy?: number | null
+  incentives?: AstroportPoolReward[]
 }
 
 interface PerpsVault {

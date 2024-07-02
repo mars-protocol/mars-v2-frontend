@@ -3,7 +3,6 @@ import { useMemo } from 'react'
 import usePoolAssets from 'hooks/assets/usePoolAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useMarketDepositCaps from 'hooks/markets/useMarketDepositCaps'
-import useMarkets from 'hooks/markets/useMarkets'
 import useAssetParams from 'hooks/params/useAssetParams'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
@@ -13,10 +12,7 @@ export default function useAvailableFarms() {
   const pools = usePoolAssets()
   const whitelistedPools = pools.filter((pool) => pool.isWhitelisted)
   const { data: depositCaps } = useMarketDepositCaps()
-  const markets = useMarkets()
   const { data: assetParams } = useAssetParams()
-  console.log(markets)
-  console.log('depositCaps', depositCaps)
   const mappedFarms = [] as Vault[]
 
   whitelistedPools.forEach((pool) => {
@@ -51,7 +47,9 @@ export default function useAvailableFarms() {
         used: BN(depositCap?.amount ?? 0).shiftedBy(-pool.decimals),
         max: BN(depositCap?.cap ?? 0).shiftedBy(-pool.decimals),
       },
-      apy: pool.poolInfo.yield.total,
+      apy: pool.poolInfo.yield.total * 100,
+      baseApy: pool.poolInfo.yield.poolFees * 100,
+      incentives: pool.poolInfo.rewards,
     })
   })
 
