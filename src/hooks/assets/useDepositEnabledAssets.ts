@@ -4,5 +4,10 @@ import { useMemo } from 'react'
 export default function useDepositEnabledAssets() {
   const { data: assets } = useAssets()
 
-  return useMemo(() => assets.filter((asset) => asset.isDepositEnabled), [assets])
+  console.log('assets', assets)
+
+  return useMemo(
+    () => assets.filter((asset) => asset.isDepositEnabled && !asset.isPoolToken),
+    [assets],
+  )
 }
