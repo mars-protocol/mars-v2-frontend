@@ -18,7 +18,7 @@ interface Props {
 }
 
 export const Gauge = ({
-  background = 'stroke-white/13',
+  background = 'rgba(255, 255, 255, 0.13)',
   strokeClass,
   strokeWidth = 4,
   diameter = 40,
@@ -58,7 +58,7 @@ export const Gauge = ({
           )}
           <circle
             fill='none'
-            className={background}
+            stroke={background}
             strokeWidth={strokeWidth}
             strokeDashoffset='0'
             r={radius}
