@@ -13,7 +13,6 @@ interface Props {
   background?: string
   diameter?: number
   percentage: number
-  labelClassName?: string
   icon?: ReactElement
 }
 
