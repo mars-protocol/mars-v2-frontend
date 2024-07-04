@@ -4,7 +4,6 @@ export default function createModalSlice(set: SetState<ModalSlice>, get: GetStat
   return {
     accountDeleteModal: null,
     addLiquidityPoolBorrowingsModal: null,
-    addFarmBorrowingsModal: null,
     alertDialog: null,
     assetOverlayState: 'closed' as OverlayState,
     hlsModal: null,

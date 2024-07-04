@@ -137,7 +137,7 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
 
   function addAsset() {
     useStore.setState({
-      addFarmBorrowingsModal: {
+      addLiquidityPoolBorrowingsModal: {
         selectedDenoms: props.borrowings.map((coin) => coin.denom),
       },
     })

@@ -29,7 +29,7 @@ const Neutron1: ChainConfig = {
     explorer: 'https://mintscan.io/neutron',
     dexAssets: 'https://api.astroport.fi/api/tokens?chainId=neutron-1',
     aprs: {
-      vaults: 'https://api.marsprotocol.io/v1/vaults/neutron',
+      vaults: '',
       stride: 'https://edge.stride.zone/api/stake-stats',
     },
   },

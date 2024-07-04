@@ -29,7 +29,7 @@ const Pion1: ChainConfig = {
     dexAssets: 'https://testnet.astroport.fi/api/tokens?chainId=pion-1',
     dexPools: 'https://testnet.astroport.fi/api/pools?chainId=pion-1',
     aprs: {
-      vaults: 'https://api.marsprotocol.io/v1/vaults/neutron',
+      vaults: '',
       stride: 'https://edge.stride.zone/api/stake-stats',
     },
   },

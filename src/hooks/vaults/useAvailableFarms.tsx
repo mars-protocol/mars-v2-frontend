@@ -20,7 +20,7 @@ export default function useAvailableFarms() {
     const depositCap = depositCaps?.find(byDenom(pool.denom))
     const params = assetParams.find(byDenom(pool.denom))
 
-    const 
+    const mappedFarms = [] as Farm[]
 
     mappedFarms.push({
       address: pool.poolInfo.address,
@@ -34,7 +34,7 @@ export default function useAvailableFarms() {
         primary: pool.poolInfo.assets.primary.denom,
         secondary: pool.poolInfo.assets.secondary.denom,
         lp: pool.denom,
-        vault: pool.poolInfo.address,
+        farm: pool.poolInfo.address,
       },
       symbols: {
         primary: pool.poolInfo.assets.primary.symbol,
@@ -52,7 +52,7 @@ export default function useAvailableFarms() {
       apy: pool.poolInfo.yield.total * 100,
       baseApy: pool.poolInfo.yield.poolFees * 100,
       incentives: pool.poolInfo.rewards,
-    })
+    } as Farm)
   })
 
   return useMemo(() => mappedFarms, [mappedFarms])
