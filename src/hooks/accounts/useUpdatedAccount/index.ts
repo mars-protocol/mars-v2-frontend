@@ -262,7 +262,7 @@ export function useUpdatedAccount(account?: Account) {
       removeLends(totalLends)
       addDebts(borrowCoins)
 
-      const shares = getFarmSharesFromCoins(farm, coins)
+      const shares = getFarmSharesFromCoins(farm, coins, assets)
 
       addStakedAstroLps([BNCoin.fromDenomAndBigNumber(address, shares)])
     },

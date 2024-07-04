@@ -231,21 +231,22 @@ export function getFarmDepositCoinsAndValue(
   }
 }
 
-export function getFarmSharesFromCoins(farm: Farm, coins: BNCoin[]): BigNumber {
-  const primaryCoin = BNCoin.fromDenomAndBigNumber(farm.denoms.primary, BN_ZERO)
-  const secondaryCoin = BNCoin.fromDenomAndBigNumber(farm.denoms.secondary, BN_ZERO)
+export function getFarmSharesFromCoins(farm: Farm, coins: BNCoin[], assets: Asset[]): BigNumber {
+  let totalValue = BN_ZERO
 
   coins.forEach((coin) => {
-    if (coin.denom === farm.denoms.primary)
-      primaryCoin.amount = primaryCoin.amount.plus(coin.amount)
-    if (coin.denom === farm.denoms.secondary)
-      secondaryCoin.amount = secondaryCoin.amount.plus(coin.amount)
+    const asset = assets.find(byDenom(coin.denom))
+    if (!asset) return
+
+    totalValue = totalValue.plus(
+      coin.amount.times(asset.price?.amount ?? 0).shiftedBy(-asset.decimals),
+    )
   })
 
-  const primaryCoinShare = primaryCoin.amount.times(farm.assetsPerShare.primary)
-  const secondaryCoinShare = secondaryCoin.amount.times(farm.assetsPerShare.secondary)
+  const farmAsset = assets.find(byDenom(farm.denoms.lp))
+  if (!farmAsset || !farmAsset.price) return BN_ZERO
 
-  return primaryCoinShare.plus(secondaryCoinShare)
+  return totalValue.dividedBy(farmAsset.price.amount).shiftedBy(farmAsset.decimals)
 }
 
 export function getDepositedFarmFromStakedLpBNCoin(
@@ -259,21 +260,24 @@ export function getDepositedFarmFromStakedLpBNCoin(
   const secondaryAsset = assets.find(byDenom(asset.poolInfo.assets.secondary.denom))
 
   if (!primaryAsset || !secondaryAsset) return
-  const primaryAssetAmount = asset.poolInfo.assetsPerShare.primary.times(stakedAstroLp.amount)
-  const secondaryAssetAmount = asset.poolInfo.assetsPerShare.secondary.times(stakedAstroLp.amount)
+  const totalValue = stakedAstroLp.amount.times(asset.price?.amount ?? 0).shiftedBy(-asset.decimals)
+  const halfValue = totalValue.dividedBy(2)
+
+  const primaryAssetAmount = halfValue
+    .dividedBy(primaryAsset.price?.amount ?? 0)
+    .shiftedBy(primaryAsset.decimals)
+  const secondaryAssetAmount = halfValue
+    .dividedBy(secondaryAsset.price?.amount ?? 0)
+    .shiftedBy(secondaryAsset.decimals)
 
   const amountsAndValues: FarmValuesAndAmounts = {
     amounts: {
       primary: primaryAssetAmount,
-      secondary: asset.poolInfo.assetsPerShare.secondary.times(stakedAstroLp.amount),
+      secondary: secondaryAssetAmount,
     },
     values: {
-      primary: primaryAssetAmount
-        .times(primaryAsset.price?.amount ?? 0)
-        .shiftedBy(-primaryAsset.decimals),
-      secondary: secondaryAssetAmount
-        .times(secondaryAsset.price?.amount ?? 0)
-        .shiftedBy(-secondaryAsset.decimals),
+      primary: halfValue,
+      secondary: halfValue,
     },
   }
 

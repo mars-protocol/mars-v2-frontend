@@ -80,17 +80,17 @@ export default function FarmModalContent(props: Props) {
   const onChangeDeposits = useCallback(
     (coins: BNCoin[]) => {
       setDepositCoins(coins)
-      simulateFarmDeposit(props.farm.address, coins, borrowCoins)
+      simulateFarmDeposit(props.farm.denoms.lp, coins, borrowCoins)
     },
-    [borrowCoins, props.farm.address, simulateFarmDeposit],
+    [borrowCoins, props.farm.denoms.lp, simulateFarmDeposit],
   )
 
   const onChangeBorrowings = useCallback(
     (coins: BNCoin[]) => {
       setBorrowCoins(coins)
-      simulateFarmDeposit(props.farm.address, depositCoins, coins)
+      simulateFarmDeposit(props.farm.denoms.lp, depositCoins, coins)
     },
-    [depositCoins, props.farm.address, simulateFarmDeposit],
+    [depositCoins, props.farm.denoms.lp, simulateFarmDeposit],
   )
 
   function getDepositSubTitle() {

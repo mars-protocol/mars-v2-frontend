@@ -80,14 +80,8 @@ export const calculateAccountValue = (
   }
 
   return (
-    account[type]?.reduce((acc, position) => {
-      const asset = assets.find(byDenom(position.denom))
-      if (!asset) return acc
-      const price = asset.price?.amount ?? BN_ZERO
-      const amount = position.amount.shiftedBy(-asset.decimals)
-      const positionValue = amount.multipliedBy(price)
-      return acc.plus(positionValue)
-    }, BN_ZERO) ?? BN_ZERO
+    account[type]?.reduce((acc, position) => acc.plus(getCoinValue(position, assets)), BN_ZERO) ??
+    BN_ZERO
   )
 }
 

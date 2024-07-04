@@ -6,9 +6,8 @@ import {
   getVaultAccountStrategiesRow,
 } from 'components/account/AccountStrategiesTable/functions'
 import { BN_ZERO } from 'constants/math'
-import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useAvailableFarms from 'hooks/farms/useAvailableFarms'
-import useDepositedFarms from 'hooks/farms/useDepositedFarms'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import { transformPerpsVaultIntoDeposited } from 'hooks/vaults/useDepositedVaults'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
@@ -24,10 +23,9 @@ interface Props {
 export default function useAccountStrategiesData(props: Props) {
   const { account, updatedAccount } = props
   const { data: vaultAprs } = useVaultAprs()
-  const assets = useDepositEnabledAssets()
+  const { data: assets } = useAssets()
   const { data: perpsVault } = usePerpsVault()
   const availableFarms = useAvailableFarms()
-  const depositedFarms = useDepositedFarms()
 
   return useMemo<AccountStrategyRow[]>(() => {
     const usedAccount = updatedAccount ?? account
@@ -53,6 +51,7 @@ export default function useAccountStrategiesData(props: Props) {
     if (usedAccount.stakedAstroLps) {
       accountLps.forEach((lp) => {
         const farm = availableFarms.find((farm) => farm.denoms.lp === lp.denom)
+
         if (!farm) return
         const prevFarm = updatedAccount
           ? updatedAccount.stakedAstroLps?.find(byDenom(lp.denom)) ??

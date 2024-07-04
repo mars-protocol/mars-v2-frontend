@@ -49,7 +49,7 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
         amount: maxAmount.toString(),
       })
     })
-  }, [props.borrowings, computeMaxBorrowAmount, props.farm.address])
+  }, [props.borrowings, computeMaxBorrowAmount])
 
   const maxBorrowAmounts = useMemo(() => {
     const borrowPowerLeft = props.borrowings.reduce((capLeft, borrowing) => {
