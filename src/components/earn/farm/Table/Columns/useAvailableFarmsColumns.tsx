@@ -1,12 +1,12 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import Apy, { APY_META } from 'components/earn/farm/Table/Columns/Apy'
-import { Deposit, DEPOSIT_META } from 'components/earn/farm/Table/Columns/Deposit'
 import DepositCap, {
   DEPOSIT_CAP_META,
   depositCapSortingFn,
 } from 'components/earn/farm/Table/Columns/DepositCap'
+import FarmApy, { APY_META } from 'components/earn/farm/Table/Columns/FarmApy'
+import { DEPOSIT_META, FarmDeposit } from 'components/earn/farm/Table/Columns/FarmDeposit'
 import MaxLTV, { LTV_MAX_META } from 'components/earn/farm/Table/Columns/MaxLTV'
 import Name, { NAME_META } from 'components/earn/farm/Table/Columns/Name'
 import TVL, { TVL_META } from 'components/earn/farm/Table/Columns/TVL'
@@ -26,7 +26,7 @@ export default function useAvailableFarmsColumns(props: Props) {
       },
       {
         ...APY_META,
-        cell: ({ row }) => <Apy vault={row.original as Farm} assets={assets} />,
+        cell: ({ row }) => <FarmApy farm={row.original as Farm} assets={assets} />,
       },
       {
         ...TVL_META,
@@ -48,7 +48,7 @@ export default function useAvailableFarmsColumns(props: Props) {
       },
       {
         ...DEPOSIT_META,
-        cell: ({ row }) => <Deposit vault={row.original as Farm} isLoading={props.isLoading} />,
+        cell: ({ row }) => <FarmDeposit farm={row.original as Farm} isLoading={props.isLoading} />,
       },
     ]
   }, [props.isLoading])
