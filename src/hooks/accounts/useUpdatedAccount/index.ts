@@ -10,6 +10,7 @@ import {
   updatePerpsPositions,
 } from 'hooks/accounts/useUpdatedAccount/functions'
 import useAssets from 'hooks/assets/useAssets'
+import useAvailableFarms from 'hooks/farms/useAvailableFarms'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useSlippage from 'hooks/settings/useSlippage'
 import useVaults from 'hooks/vaults/useVaults'
@@ -18,6 +19,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountLeverage, cloneAccount } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { SWAP_FEE_BUFFER } from 'utils/constants'
+import { getFarmSharesFromCoins } from 'utils/farms'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { getValueFromBNCoins } from 'utils/helpers'
 
@@ -25,6 +27,7 @@ export function useUpdatedAccount(account?: Account) {
   const { data: availableVaults } = useVaults(false)
   const { data: perpsVault } = usePerpsVault()
   const { data: assets } = useAssets()
+  const availableFarms = useAvailableFarms()
   const [updatedAccount, setUpdatedAccount] = useState<Account | undefined>(
     account ? cloneAccount(account) : undefined,
   )
@@ -35,6 +38,7 @@ export function useUpdatedAccount(account?: Account) {
   const [addedDebts, addDebts] = useState<BNCoin[]>([])
   const [removedDebts, removeDebts] = useState<BNCoin[]>([])
   const [addedVaultValues, addVaultValues] = useState<VaultValue[]>([])
+  const [addedStakedAstroLps, addStakedAstroLps] = useState<BNCoin[]>([])
   const [addedPerpsVaultAmount, addPerpsVaultAmount] = useState<BigNumber>(BN_ZERO)
   const [unlockingPerpsVaultAmount, addUnlockingPerpsVaultAmount] = useState<BigNumber>(BN_ZERO)
   const [addedLends, addLends] = useState<BNCoin[]>([])
@@ -239,6 +243,32 @@ export function useUpdatedAccount(account?: Account) {
     [account, assets, slippage],
   )
 
+  const simulateFarmDeposit = useCallback(
+    (address: string, coins: BNCoin[], borrowCoins: BNCoin[]) => {
+      if (!account) return
+      const farm = availableFarms.find((farm) => farm.denoms.lp === address)
+      if (!farm) return
+
+      const totalDeposits: BNCoin[] = []
+      const totalLends: BNCoin[] = []
+
+      coins.forEach((coin) => {
+        const { deposit, lend } = getDepositAndLendCoinsToSpend(coin, account)
+        totalDeposits.push(deposit)
+        totalLends.push(lend)
+      })
+
+      removeDeposits(totalDeposits)
+      removeLends(totalLends)
+      addDebts(borrowCoins)
+
+      const shares = getFarmSharesFromCoins(farm, coins)
+
+      addStakedAstroLps([BNCoin.fromDenomAndBigNumber(address, shares)])
+    },
+    [account, assets, slippage],
+  )
+
   const simulatePerps = useCallback(
     (position: PerpsPosition) => {
       if (!account || !account.perps) return
@@ -316,6 +346,7 @@ export function useUpdatedAccount(account?: Account) {
       [...accountCopy.vaults],
       availableVaults ?? [],
     )
+    accountCopy.stakedAstroLps = addCoins(addedStakedAstroLps, [...accountCopy.stakedAstroLps])
 
     if (
       perpsVault &&
@@ -387,6 +418,7 @@ export function useUpdatedAccount(account?: Account) {
     simulateLending,
     simulateRepay,
     simulateTrade,
+    simulateFarmDeposit,
     simulateVaultDeposit,
     simulateWithdraw,
     simulatePerps,

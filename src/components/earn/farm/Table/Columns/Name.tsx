@@ -11,7 +11,7 @@ export const NAME_META = {
   meta: { className: 'min-w-50' },
 }
 interface Props {
-  vault: Vault | DepositedVault
+  vault: Vault | DepositedVault | Farm | DepositedFarm
 }
 
 export default function Name(props: Props) {

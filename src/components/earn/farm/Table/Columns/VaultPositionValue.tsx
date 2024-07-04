@@ -9,7 +9,7 @@ export const POSITION_VALUE_META = {
 interface Props {
   vault: DepositedVault
 }
-export default function PositionValue(props: Props) {
+export default function VaultPositionValue(props: Props) {
   const { vault } = props
   const positionValue = vault.values.primary
     .plus(vault.values.secondary)

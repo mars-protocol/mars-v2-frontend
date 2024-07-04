@@ -1,6 +1,6 @@
 import Table from 'components/common/Table'
 import useAvailableFarmsColumns from 'components/earn/farm/Table/Columns/useAvailableFarmsColumns'
-import useAvailableFarms from 'hooks/vaults/useAvailableFarms'
+import useAvailableFarms from 'hooks/farms/useAvailableFarms'
 
 export default function AvailableFarmsTable() {
   const availableFarms = useAvailableFarms()

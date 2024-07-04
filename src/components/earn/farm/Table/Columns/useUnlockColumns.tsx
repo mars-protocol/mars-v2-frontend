@@ -5,7 +5,7 @@ import Name, { NAME_META } from 'components/earn/farm/Table/Columns/Name'
 import UnlockAmount, { UNLOCK_AMOUNT_META } from 'components/earn/farm/Table/Columns/UnlockAmount'
 import UnlockTime, { UNLOCK_TIME_META } from 'components/earn/farm/Table/Columns/UnlockTime'
 import UnlockValue, { UNLOCK_VALUE_META } from 'components/earn/farm/Table/Columns/UnlockValue'
-import { Withdraw, WITHDRAW_META } from 'components/earn/farm/Table/Columns/Withdraw'
+import { VaultWithdraw, WITHDRAW_META } from 'components/earn/farm/Table/Columns/VaultWithdraw'
 
 interface Props {
   showActions?: boolean
@@ -33,7 +33,9 @@ export default function useUnlockColumns(props: Props) {
         ? [
             {
               ...WITHDRAW_META,
-              cell: ({ row }: { row: any }) => <Withdraw vault={row.original as DepositedVault} />,
+              cell: ({ row }: { row: any }) => (
+                <VaultWithdraw vault={row.original as DepositedVault} />
+              ),
             },
           ]
         : []),

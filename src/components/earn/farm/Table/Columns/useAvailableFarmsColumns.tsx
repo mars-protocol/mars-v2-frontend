@@ -18,37 +18,37 @@ interface Props {
 
 export default function useAvailableFarmsColumns(props: Props) {
   const { data: assets } = useAssets()
-  return useMemo<ColumnDef<Vault | DepositedVault>[]>(() => {
+  return useMemo<ColumnDef<Farm | DepositedFarm>[]>(() => {
     return [
       {
         ...NAME_META,
-        cell: ({ row }) => <Name vault={row.original as Vault} />,
+        cell: ({ row }) => <Name vault={row.original as Farm} />,
       },
       {
         ...APY_META,
-        cell: ({ row }) => <Apy vault={row.original as Vault} assets={assets} />,
+        cell: ({ row }) => <Apy vault={row.original as Farm} assets={assets} />,
       },
       {
         ...TVL_META,
         cell: ({ row }) => (
           <TVL
-            denom={(row.original as Vault).cap?.denom}
-            amount={(row.original as Vault).cap?.used}
+            denom={(row.original as Farm).cap?.denom}
+            amount={(row.original as Farm).cap?.used}
           />
         ),
       },
       {
         ...DEPOSIT_CAP_META,
-        cell: ({ row }) => <DepositCap vault={row.original as Vault} isLoading={props.isLoading} />,
+        cell: ({ row }) => <DepositCap vault={row.original as Farm} isLoading={props.isLoading} />,
         sortingFn: depositCapSortingFn,
       },
       {
         ...LTV_MAX_META,
-        cell: ({ row }) => <MaxLTV vault={row.original as Vault} />,
+        cell: ({ row }) => <MaxLTV vault={row.original as Farm} />,
       },
       {
         ...DEPOSIT_META,
-        cell: ({ row }) => <Deposit vault={row.original as Vault} isLoading={props.isLoading} />,
+        cell: ({ row }) => <Deposit vault={row.original as Farm} isLoading={props.isLoading} />,
       },
     ]
   }, [props.isLoading])
