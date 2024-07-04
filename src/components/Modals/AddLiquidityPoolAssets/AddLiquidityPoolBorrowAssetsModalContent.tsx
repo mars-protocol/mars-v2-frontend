@@ -7,12 +7,12 @@ import useMarkets from 'hooks/markets/useMarkets'
 import useStore from 'store'
 
 interface Props {
-  vault: Vault
+  pool: Vault | Farm
   defaultSelectedDenoms: string[]
   onChangeBorrowDenoms: (denoms: string[]) => void
 }
 
-export default function AddVaultAssetsModalContent(props: Props) {
+export default function AddPoolAssetsModalContent(props: Props) {
   const [searchString, setSearchString] = useState<string>('')
   const markets = useMarkets()
 
@@ -34,8 +34,8 @@ export default function AddVaultAssetsModalContent(props: Props) {
       filteredMarkets.reduce(
         (acc, market) => {
           if (
-            market.asset.denom === props.vault.denoms.primary ||
-            market.asset.denom === props.vault.denoms.secondary
+            market.asset.denom === props.pool.denoms.primary ||
+            market.asset.denom === props.pool.denoms.secondary
           ) {
             acc[0].push(market.asset)
           } else if (market.asset.isStable) {
@@ -45,10 +45,10 @@ export default function AddVaultAssetsModalContent(props: Props) {
         },
         [[], []] as [Asset[], Asset[]],
       ),
-    [filteredMarkets, props.vault.denoms.primary, props.vault.denoms.secondary],
+    [filteredMarkets, props.pool.denoms.primary, props.pool.denoms.secondary],
   )
 
-  const selectedDenoms = useStore((s) => s.addVaultBorrowingsModal?.selectedDenoms)
+  const selectedDenoms = useStore((s) => s.addLiquidityPoolBorrowingsModal?.selectedDenoms)
   const [selectedPoolDenoms, setSelectedPoolDenoms] = useState<string[]>(
     selectedDenoms?.filter((denom) => poolAssets.map((asset) => asset.denom).includes(denom)) || [],
   )

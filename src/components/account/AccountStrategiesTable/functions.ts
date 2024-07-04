@@ -120,3 +120,39 @@ export function getPerpsVaultAccountStrategiesRow(
     }
   })
 }
+
+export function getFarmAccountStrategiesRow(
+  farm: DepositedFarm,
+  assets: Asset[],
+  apy?: number | null,
+  prev?: DepositedFarm,
+): AccountStrategyRow {
+  const { name } = farm
+  const previous = prev || farm
+  const totalValue = farm.values.primary.plus(farm.values.secondary)
+  const primaryAmount = farm.amounts.primary
+  const primaryAmountPrev = previous.amounts.primary
+  const secondaryAmount = farm.amounts.secondary
+  const secondaryAmountPrev = previous.amounts.secondary
+
+  return {
+    name: name,
+    denom: farm.denoms.lp,
+    value: totalValue.toString(),
+    apy,
+    coins: {
+      primary: BNCoin.fromDenomAndBigNumber(farm.denoms.primary, primaryAmount),
+      secondary: BNCoin.fromDenomAndBigNumber(farm.denoms.secondary, secondaryAmount),
+    },
+    coinsChange: {
+      primary: BNCoin.fromDenomAndBigNumber(
+        farm.denoms.primary,
+        !prev ? BN_ZERO : primaryAmount.minus(primaryAmountPrev),
+      ),
+      secondary: BNCoin.fromDenomAndBigNumber(
+        farm.denoms.secondary,
+        !prev ? BN_ZERO : secondaryAmount.minus(secondaryAmountPrev),
+      ),
+    },
+  }
+}

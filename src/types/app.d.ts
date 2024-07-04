@@ -477,7 +477,7 @@ interface V1Positions {
 
 type BigNumber = import('bignumber.js').BigNumber
 
-interface VaultAndFarmMetaData {
+interface LiquidityPoolMetaData {
   address: string
   name: string
   provider: string
@@ -487,7 +487,7 @@ interface VaultAndFarmMetaData {
   }
 }
 
-interface VaultMetaData extends VaultAndFarmMetaData {
+interface VaultMetaData extends LiquidityPoolMetaData {
   lockup: Lockup
   denoms: {
     primary: string
@@ -508,7 +508,7 @@ interface VaultInfo {
   cap: DepositCap | null
 }
 
-interface VaultAndFarmInfo {
+interface LiquidityPoolInfo {
   address: string
   ltv: {
     max: number
@@ -517,7 +517,7 @@ interface VaultAndFarmInfo {
   cap: DepositCap | null
 }
 
-interface VaultConfig extends VaultMetaData, VaultAndFarmInfo {}
+interface VaultConfig extends VaultMetaData, LiquidityPoolInfo {}
 
 interface Vault extends VaultConfig {
   hls?: {
@@ -529,7 +529,7 @@ interface Vault extends VaultConfig {
   apy?: number | null
 }
 
-interface FarmMetaData extends VaultAndFarmMetaData {
+interface FarmMetaData extends LiquidityPoolMetaData {
   lockup: Lockup
   denoms: {
     primary: string
@@ -539,9 +539,9 @@ interface FarmMetaData extends VaultAndFarmMetaData {
   }
 }
 
-interface FarmConfig extends FarmMetaData, VaultAndFarmInfo {}
+interface FarmConfig extends FarmMetaData, LiquidityPoolInfo {}
 
-interface Farm extends FarmMetaData, VaultAndFarmInfo {
+interface Farm extends FarmMetaData, LiquidityPoolInfo {
   baseApy?: number | null
   incentives?: AstroportPoolReward[]
   apr?: number | null
@@ -1114,8 +1114,7 @@ interface FocusComponent {
 
 interface ModalSlice {
   accountDeleteModal: Account | null
-  addVaultBorrowingsModal: AddVaultAndFarmBorrowingsModal | null
-  addFarmBorrowingsModal: AddVaultAndFarmBorrowingsModal | null
+  addLiquidityPoolBorrowingsModal: AddLiquidityPoolBorrowingsModal | null
   alertDialog: AlertDialogConfig | null
   assetOverlayState: OverlayState
   hlsModal: HlsModal | null
@@ -1168,21 +1167,21 @@ interface LendAndReclaimModalConfig {
   action: LendAndReclaimModalAction
 }
 
-interface VaultAndFarmModal {
+interface LiquidityPoolModal {
   isDeposited?: boolean
   selectedBorrowDenoms: string[]
   isCreate: boolean
 }
 
-interface VaultModal extends VaultAndFarmModal {
+interface VaultModal extends LiquidityPoolModal {
   vault: Vault | DepositedVault
 }
 
-interface FarmModal extends VaultAndFarmModal {
+interface FarmModal extends LiquidityPoolModal {
   farm: Farm | DepositedFarm
 }
 
-interface AddVaultAndFarmBorrowingsModal {
+interface AddLiquidityPoolBorrowingsModal {
   selectedDenoms: string[]
 }
 
@@ -1261,7 +1260,7 @@ interface ModalProps {
   dialogId?: string
 }
 
-interface VaultAndFarmBorrowingsProps {
+interface LiquidityPoolBorrowingsProps {
   account: Account
   borrowings: BNCoin[]
   deposits: BNCoin[]
@@ -1273,11 +1272,11 @@ interface VaultAndFarmBorrowingsProps {
   depositCapReachedCoins: BNCoin[]
 }
 
-interface VaultBorrowingsProps extends VaultAndFarmBorrowingsProps {
+interface VaultBorrowingsProps extends LiquidityPoolBorrowingsProps {
   vault: Vault
 }
 
-interface FarmBorrowingsProps extends VaultAndFarmBorrowingsProps {
+interface FarmBorrowingsProps extends LiquidityPoolBorrowingsProps {
   farm: Farm
 }
 

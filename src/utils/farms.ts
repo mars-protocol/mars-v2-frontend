@@ -247,3 +247,35 @@ export function getFarmSharesFromCoins(farm: Farm, coins: BNCoin[]): BigNumber {
 
   return primaryCoinShare.plus(secondaryCoinShare)
 }
+
+export function getDepositedFarmFromStakedLpBNCoin(
+  assets: Asset[],
+  stakedAstroLp: BNCoin,
+  farm: Farm,
+) {
+  const asset = assets.find(byDenom(stakedAstroLp.denom))
+  if (!asset || !asset.poolInfo) return
+  const primaryAsset = assets.find(byDenom(asset.poolInfo.assets.primary.denom))
+  const secondaryAsset = assets.find(byDenom(asset.poolInfo.assets.secondary.denom))
+
+  if (!primaryAsset || !secondaryAsset) return
+  const primaryAssetAmount = asset.poolInfo.assetsPerShare.primary.times(stakedAstroLp.amount)
+  const secondaryAssetAmount = asset.poolInfo.assetsPerShare.secondary.times(stakedAstroLp.amount)
+
+  const amountsAndValues: FarmValuesAndAmounts = {
+    amounts: {
+      primary: primaryAssetAmount,
+      secondary: asset.poolInfo.assetsPerShare.secondary.times(stakedAstroLp.amount),
+    },
+    values: {
+      primary: primaryAssetAmount
+        .times(primaryAsset.price?.amount ?? 0)
+        .shiftedBy(-primaryAsset.decimals),
+      secondary: secondaryAssetAmount
+        .times(secondaryAsset.price?.amount ?? 0)
+        .shiftedBy(-secondaryAsset.decimals),
+    },
+  }
+
+  return { ...farm, ...amountsAndValues } as DepositedFarm
+}

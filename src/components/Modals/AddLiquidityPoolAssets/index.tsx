@@ -2,21 +2,22 @@ import { useCallback, useState } from 'react'
 
 import Button from 'components/common/Button'
 import { CircularProgress } from 'components/common/CircularProgress'
-import Modal from 'components/Modals/Modal'
-import AddVaultAssetsModalContent from 'components/Modals/AddVaultAssets/AddVaultBorrowAssetsModalContent'
 import Text from 'components/common/Text'
+import AddVLiquidityPoolAssetsModalContent from 'components/Modals/AddLiquidityPoolAssets/AddLiquidityPoolBorrowAssetsModalContent'
+import Modal from 'components/Modals/Modal'
 import useStore from 'store'
 
-export default function AddVaultBorrowAssetsModal() {
-  const modal = useStore((s) => s.addVaultBorrowingsModal)
+export default function AddLiquidityPoolBorrowAssetsModal() {
+  const modal = useStore((s) => s.addLiquidityPoolBorrowingsModal)
   const vaultModal = useStore((s) => s.vaultModal)
+  const farmModal = useStore((s) => s.farmModal)
   const [selectedDenoms, setSelectedDenoms] = useState<string[]>([])
 
   function onClose() {
     if (!vaultModal) return
 
     useStore.setState({
-      addVaultBorrowingsModal: null,
+      addLiquidityPoolBorrowingsModal: null,
       vaultModal: { ...vaultModal, selectedBorrowDenoms: selectedDenoms },
     })
   }
@@ -34,8 +35,8 @@ export default function AddVaultBorrowAssetsModal() {
       headerClassName='bg-white/10 border-b-white/5 border-b items-center p-4'
     >
       {showContent ? (
-        <AddVaultAssetsModalContent
-          vault={vaultModal?.vault}
+        <AddVLiquidityPoolAssetsModalContent
+          pool={vaultModal?.vault ?? farmModal?.farm}
           defaultSelectedDenoms={modal.selectedDenoms}
           onChangeBorrowDenoms={updateSelectedDenoms}
         />
