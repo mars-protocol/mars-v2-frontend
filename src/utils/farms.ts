@@ -41,8 +41,8 @@ export function getFarmFromPoolAsset(
     },
     cap: {
       denom: asset.denom,
-      used: BN(depositCap?.amount ?? 0).shiftedBy(-asset.decimals),
-      max: BN(depositCap?.cap ?? 0).shiftedBy(-asset.decimals),
+      used: BN(depositCap?.amount ?? 0),
+      max: BN(depositCap?.cap ?? 0),
     },
     assetsPerShare: asset.poolInfo.assetsPerShare,
     apy: apy,
