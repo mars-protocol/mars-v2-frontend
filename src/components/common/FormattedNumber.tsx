@@ -24,7 +24,8 @@ export const FormattedNumber = React.memo(
     )
     const prevAmountRef = useRef<number>(0)
 
-    let { options, smallerThanThreshold } = props
+    let options = props.options
+    const smallerThanThreshold = props.smallerThanThreshold
 
     if (smallerThanThreshold) {
       if (!options) options = { prefix: '< ' }
@@ -73,7 +74,9 @@ export const FormattedNumber = React.memo(
       </animated.p>
     )
   },
-  (prevProps, nextProps) => prevProps.amount === nextProps.amount && JSON.stringify(prevProps.options) === JSON.stringify(nextProps.options),
+  (prevProps, nextProps) =>
+    prevProps.amount === nextProps.amount &&
+    JSON.stringify(prevProps.options) === JSON.stringify(nextProps.options),
 )
 
 FormattedNumber.displayName = 'FormattedNumber'

@@ -8,15 +8,15 @@ import { MarsParamsQueryClient } from 'types/generated/mars-params/MarsParams.cl
 import { MarsRedBankQueryClient } from 'types/generated/mars-red-bank/MarsRedBank.client'
 import { getUrl } from 'utils/url'
 
-let _cosmWasmClient: Map<string, CosmWasmClient> = new Map()
-let _creditManagerQueryClient: Map<string, MarsCreditManagerQueryClient> = new Map()
-let _oracleQueryClient: Map<string, MarsOracleOsmosisQueryClient> = new Map()
-let _paramsQueryClient: Map<string, MarsParamsQueryClient> = new Map()
-let _incentivesQueryClient: Map<string, MarsIncentivesQueryClient> = new Map()
+const _cosmWasmClient: Map<string, CosmWasmClient> = new Map()
+const _creditManagerQueryClient: Map<string, MarsCreditManagerQueryClient> = new Map()
+const _oracleQueryClient: Map<string, MarsOracleOsmosisQueryClient> = new Map()
+const _paramsQueryClient: Map<string, MarsParamsQueryClient> = new Map()
+const _incentivesQueryClient: Map<string, MarsIncentivesQueryClient> = new Map()
 /* PERPS 
 let _perpsClient: Map<string, MarsPerpsQueryClient> = new Map()
 */
-let _redBankQueryClient: Map<string, MarsRedBankQueryClient> = new Map()
+const _redBankQueryClient: Map<string, MarsRedBankQueryClient> = new Map()
 
 const getClient = async (rpc: string) => {
   try {

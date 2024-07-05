@@ -15,9 +15,7 @@ export default async function getHLSStakingAssets(chainConfig: ChainConfig, asse
         return 'coin' in correlation
       })
 
-      let correlatedDenoms: string[] | undefined
-
-      correlatedDenoms = correlations
+      const correlatedDenoms = correlations
         ?.map((correlation) => (correlation as { coin: { denom: string } }).coin.denom)
         .filter((denoms) => !denoms.includes('gamm/pool/'))
 

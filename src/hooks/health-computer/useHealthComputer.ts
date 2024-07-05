@@ -85,7 +85,7 @@ export default function useHealthComputer(account?: Account) {
       },
       {} as { [key: string]: VaultPositionValue },
     )
-  }, [account?.vaults])
+  }, [account?.vaults, assets])
 
   const priceData = useMemo(() => {
     const assetsWithPrice = whitelistedAssets.filter((asset) => asset.price)
@@ -104,7 +104,7 @@ export default function useHealthComputer(account?: Account) {
       },
       {} as { [key: string]: string },
     )
-  }, [assets])
+  }, [assets, whitelistedAssets])
 
   const assetsParams = useMemo(
     () =>
@@ -285,7 +285,7 @@ export default function useHealthComputer(account?: Account) {
         return null
       }
     },
-    [assets, healthComputer],
+    [healthComputer, whitelistedAssets],
   )
 
   const computeMaxPerpAmount = useCallback(

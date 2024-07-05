@@ -69,7 +69,7 @@ export default function PortfolioCard(props: Props) {
       farmAprs,
       account.kind === 'high_levered_strategy',
     )
-  }, [lendingAssets, borrowAssets, account, hlsStrategies, assets, vaultAprs])
+  }, [lendingAssets, borrowAssets, account, hlsStrategies, assets, vaultAprs, farmAprs])
 
   const stats: { title: ReactNode; sub: string }[] = useMemo(() => {
     const isLoaded = account && assets.length && apr !== null

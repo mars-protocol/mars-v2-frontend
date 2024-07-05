@@ -52,7 +52,7 @@ export default function useDepositLiquidity(props: Props): {
       slippage,
       assets,
     )
-  }, [props.pool, deposits, borrowings, reclaims, slippage, assets])
+  }, [props.pool, deposits, borrowings, reclaims, slippage, assets, props.isFarm])
 
   const depositActions: Action[] = useMemo(() => {
     if (props.kind === 'default') return []
@@ -84,7 +84,7 @@ export default function useDepositLiquidity(props: Props): {
     if (props.isFarm)
       return getEnterFarmActions(props.pool as Farm, primaryCoin, secondaryCoin, slippage)
     return getEnterVaultActions(props.pool as Vault, primaryCoin, secondaryCoin, slippage)
-  }, [props.pool, primaryCoin, secondaryCoin, slippage])
+  }, [props.pool, primaryCoin, secondaryCoin, slippage, props.isFarm])
 
   const lendActions: Action[] = useMemo(() => {
     if (!isAutoLend || props.kind === 'high_levered_strategy' || swapActions.length === 0) return []
@@ -106,6 +106,7 @@ export default function useDepositLiquidity(props: Props): {
     props.kind,
     props.pool.denoms.primary,
     props.pool.denoms.secondary,
+    swapActions,
   ])
 
   const refundActions: Action[] = useMemo(() => {

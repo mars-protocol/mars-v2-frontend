@@ -128,6 +128,7 @@ function AccountDetails(props: Props) {
       lendingAssetsData,
       updatedAccount,
       vaultAprs,
+      farmAprs,
     ],
   )
   const isFullWidth =

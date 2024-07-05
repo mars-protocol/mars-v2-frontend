@@ -129,7 +129,7 @@ export function useUpdatedAccount(account?: Account) {
         addLends(lendableCoins)
       }
     },
-    [account, addDeposits, addLends],
+    [account, addDeposits, addLends, assets],
   )
 
   const simulateWithdraw = useCallback(
@@ -266,7 +266,7 @@ export function useUpdatedAccount(account?: Account) {
 
       addStakedAstroLps([BNCoin.fromDenomAndBigNumber(address, shares)])
     },
-    [account, assets, slippage],
+    [account, assets, availableFarms],
   )
 
   const simulatePerps = useCallback(
@@ -389,6 +389,7 @@ export function useUpdatedAccount(account?: Account) {
     perpsVault,
     addedPerpsVaultAmount,
     unlockingPerpsVaultAmount,
+    addedStakedAstroLps,
   ])
 
   return {

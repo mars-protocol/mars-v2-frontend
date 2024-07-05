@@ -104,7 +104,16 @@ export default function AccountComposition(props: Props) {
         farmAprs,
         props.isHls,
       ),
-    [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, props.isHls, vaultAprs],
+    [
+      account,
+      assets,
+      borrowAssetsData,
+      hlsStrategies,
+      lendingAssetsData,
+      props.isHls,
+      vaultAprs,
+      farmAprs,
+    ],
   )
   const updatedApr = useMemo(
     () =>
@@ -127,6 +136,7 @@ export default function AccountComposition(props: Props) {
       hlsStrategies,
       assets,
       vaultAprs,
+      farmAprs,
       props.isHls,
     ],
   )

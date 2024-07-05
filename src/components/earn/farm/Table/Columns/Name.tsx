@@ -17,7 +17,7 @@ interface Props {
 export default function Name(props: Props) {
   const { vault } = props
   const timeframe = vault.lockup.timeframe[0]
-  const unlockDuration = !!timeframe ? ` - (${vault.lockup.duration}${timeframe})` : ''
+  const unlockDuration = timeframe ? ` - (${vault.lockup.duration}${timeframe})` : ''
   const primaryAsset = useAsset(vault.denoms.primary)
   let status: VaultStatus = VaultStatus.ACTIVE
   if ('status' in vault) {

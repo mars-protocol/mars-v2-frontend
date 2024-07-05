@@ -77,7 +77,7 @@ export default function AccountSummary(props: Props) {
         ),
       )
     },
-    [accountSummaryTabs, setAccountSummaryTabs],
+    [accountSummaryTabs, setAccountSummaryTabs, defaultSetting],
   )
 
   const apr = useMemo(
@@ -100,6 +100,7 @@ export default function AccountSummary(props: Props) {
       hlsStrategies,
       assets,
       vaultAprs,
+      farmAprs,
     ],
   )
 

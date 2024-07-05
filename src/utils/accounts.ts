@@ -2,7 +2,6 @@ import BigNumber from 'bignumber.js'
 
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
-import { useMemo } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultPosition } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { Positions } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
@@ -199,8 +198,10 @@ export const calculateAccountApr = (
 
 export function calculateAccountLeverage(account: Account, assets: Asset[]) {
   // TODO: MP-2307: Include perps positions into account leverage calculation
-  const [deposits, lends, debts, vaults, perps, perpsVault, stakedAstroLps] =
-    getAccountPositionValues(account, assets)
+  const [deposits, lends, debts, vaults, _, __, stakedAstroLps] = getAccountPositionValues(
+    account,
+    assets,
+  )
   const netValue = deposits.plus(lends).plus(vaults).plus(stakedAstroLps).minus(debts)
   return debts.dividedBy(netValue).plus(1)
 }
@@ -409,21 +410,17 @@ export function getAccountSummaryStats(
 ) {
   const [deposits, lends, debts, vaults, stakedAstroLps] = getAccountPositionValues(account, assets)
   const positionValue = deposits.plus(lends).plus(vaults).plus(stakedAstroLps)
-  const apr = useMemo(
-    () =>
-      calculateAccountApr(
-        account,
-        borrowAssets,
-        lendingAssets,
-        hlsStrategies,
-        assets,
-        vaultAprs,
-        farmAprs,
-        isHls,
-      ),
-    [account, borrowAssets, lendingAssets, hlsStrategies, assets, vaultAprs, farmAprs, isHls],
+  const apr = calculateAccountApr(
+    account,
+    borrowAssets,
+    lendingAssets,
+    hlsStrategies,
+    assets,
+    vaultAprs,
+    farmAprs,
+    isHls,
   )
-  const leverage = useMemo(() => calculateAccountLeverage(account, assets), [account, assets])
+  const leverage = calculateAccountLeverage(account, assets)
 
   return {
     positionValue: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionValue),

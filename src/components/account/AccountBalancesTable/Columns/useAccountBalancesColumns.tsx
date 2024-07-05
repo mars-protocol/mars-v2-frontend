@@ -102,5 +102,12 @@ export default function useAccountBalancesColumns(
         ),
       },
     ]
-  }, [computeLiquidationPrice, markets, showLiquidationPrice, account, updatedAccount])
+  }, [
+    computeLiquidationPrice,
+    markets,
+    showLiquidationPrice,
+    account,
+    updatedAccount,
+    whitelistedAssets,
+  ])
 }

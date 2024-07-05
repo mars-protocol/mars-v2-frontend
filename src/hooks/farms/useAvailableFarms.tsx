@@ -13,19 +13,21 @@ export default function useAvailableFarms() {
   const whitelistedPools = assets.filter((asset) => asset.isWhitelisted)
   const { data: depositCaps } = useMarketDepositCaps()
   const { data: assetParams } = useAssetParams()
-  const mappedFarms = [] as Farm[]
 
-  whitelistedPools.forEach((asset) => {
-    if (!asset.poolInfo) return
-    const depositCap = depositCaps?.find(byDenom(asset.denom))
-    const params = assetParams.find(byDenom(asset.denom))
+  return useMemo(() => {
+    const mappedFarms = [] as Farm[]
 
-    if (!depositCap || !params) return
-    const farm = getFarmFromPoolAsset(asset, chainConfig, depositCap, params)
+    whitelistedPools.forEach((asset) => {
+      if (!asset.poolInfo) return
+      const depositCap = depositCaps?.find(byDenom(asset.denom))
+      const params = assetParams.find(byDenom(asset.denom))
 
-    if (!farm) return
-    mappedFarms.push(farm)
-  })
+      if (!depositCap || !params) return
+      const farm = getFarmFromPoolAsset(asset, chainConfig, depositCap, params)
 
-  return useMemo(() => mappedFarms, [mappedFarms])
+      if (!farm) return
+      mappedFarms.push(farm)
+    })
+    return mappedFarms
+  }, [depositCaps, assetParams, chainConfig, whitelistedPools])
 }

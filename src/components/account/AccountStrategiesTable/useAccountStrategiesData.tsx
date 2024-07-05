@@ -29,8 +29,8 @@ export default function useAccountStrategiesData(props: Props) {
 
   return useMemo<AccountStrategyRow[]>(() => {
     const usedAccount = updatedAccount ?? account
-    const accountVaults = [...usedAccount?.vaults] ?? []
-    const accountLps = [...usedAccount?.stakedAstroLps] ?? []
+    const accountVaults = usedAccount?.vaults ? [...usedAccount.vaults] : []
+    const accountLps = usedAccount?.stakedAstroLps ? [...usedAccount.stakedAstroLps] : []
 
     const vaultRows = accountVaults.map((vault) => {
       const apy = vaultAprs.find((vaultApr) => vaultApr.address === vault.address)?.apy
@@ -68,5 +68,5 @@ export default function useAccountStrategiesData(props: Props) {
     }
 
     return vaultRows
-  }, [updatedAccount, account, perpsVault, assets, vaultAprs])
+  }, [updatedAccount, account, perpsVault, assets, vaultAprs, availableFarms])
 }

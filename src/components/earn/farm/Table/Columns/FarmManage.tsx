@@ -42,7 +42,7 @@ export default function FarmManage(props: Props) {
       farms: [props.farm],
       amount: account?.stakedAstroLps.find(byDenom(props.farm.denoms.lp))?.amount.toString() ?? '0',
     })
-  }, [accountId, props.farm, slippage, withdrawFromFarms])
+  }, [accountId, props.farm, withdrawFromFarms, account?.stakedAstroLps])
 
   const ITEMS: DropDownItem[] = useMemo(
     () => [

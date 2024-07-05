@@ -99,7 +99,7 @@ export default function PortfolioSummary() {
         sub: 'Combined leverage',
       },
     ]
-  }, [accounts, assets, borrowAssets, hlsStrategies, lendingAssets, vaultAprs])
+  }, [accounts, assets, borrowAssets, hlsStrategies, lendingAssets, vaultAprs, farmAprs])
 
   if (!walletAddress && !urlAddress) return null
 

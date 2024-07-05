@@ -3,18 +3,19 @@ import useSWRImmutable from 'swr/immutable'
 
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useClients from 'hooks/chain/useClients'
-import { byDenom } from 'utils/array'
 
 export function usePerpsParams(denom: string) {
+  /* PERPS
   const perpsParams = useAllPerpsParams()
 
   return useMemo(() => {
-    /* PERPS
+    
     if (!perpsParams) return null
     return perpsParams.find(byDenom(denom)) as PerpsParams
+  
+  }, [denom, perpsParams ])
     */
-    return null
-  }, [denom, perpsParams])
+  return null
 }
 
 export function useAllPerpsParams() {

@@ -69,7 +69,7 @@ function startStreaming(retries = 3, delay = 3000) {
               const trimmedDataString = dataString.trim()
               if (trimmedDataString) {
                 try {
-                  var jsonData = JSON.parse(trimmedDataString)
+                  const jsonData = JSON.parse(trimmedDataString)
                   handleStreamingData(jsonData)
                 } catch (e) {
                   if (e instanceof Error) {

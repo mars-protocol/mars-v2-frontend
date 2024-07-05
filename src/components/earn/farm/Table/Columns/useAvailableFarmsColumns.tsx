@@ -51,5 +51,5 @@ export default function useAvailableFarmsColumns(props: Props) {
         cell: ({ row }) => <FarmDeposit farm={row.original as Farm} isLoading={props.isLoading} />,
       },
     ]
-  }, [props.isLoading])
+  }, [props.isLoading, assets])
 }

@@ -1,11 +1,8 @@
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { byDenom } from 'utils/array'
-import { VAULT_DEPOSIT_BUFFER } from 'utils/constants'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
-import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
-import { getTokenPrice } from 'utils/tokens'
+import { getValueFromBNCoins } from 'utils/helpers'
 
 export function getLiquidityPoolSwapActions(
   pool: Vault | Farm,
