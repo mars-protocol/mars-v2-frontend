@@ -87,7 +87,7 @@ export default function useDepositLiquidity(props: Props): {
   }, [props.pool, primaryCoin, secondaryCoin, slippage])
 
   const lendActions: Action[] = useMemo(() => {
-    if (!isAutoLend || props.kind === 'high_levered_strategy') return []
+    if (!isAutoLend || props.kind === 'high_levered_strategy' || swapActions.length === 0) return []
 
     const denoms = [props.pool.denoms.primary, props.pool.denoms.secondary]
     const denomsForLend = lendEnabledAssets

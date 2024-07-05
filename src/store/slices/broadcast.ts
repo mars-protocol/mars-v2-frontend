@@ -412,14 +412,25 @@ export default function createBroadcastSlice(
     withdrawFromFarms: async (options: {
       accountId: string
       farms: DepositedFarm[]
-      slippage: number
+      amount: string
     }) => {
       const actions: CreditManagerAction[] = []
+
       options.farms.forEach((farm) => {
+        const coin = BNCoin.fromCoin({
+          denom: farm.denoms.lp,
+          amount: options.amount,
+        }).toActionCoin()
+
+        actions.push({
+          unstake_astro_lp: {
+            lp_token: coin,
+          },
+        })
         actions.push({
           withdraw_liquidity: {
-            lp_token: { denom: farm.denoms.lp, amount: 'account_balance' },
-            slippage: options.slippage.toString(),
+            lp_token: coin,
+            slippage: '0',
           },
         })
       })

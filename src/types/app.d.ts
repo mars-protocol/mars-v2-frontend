@@ -1012,7 +1012,7 @@ interface BroadcastSlice {
   withdrawFromFarms: (options: {
     accountId: string
     farms: DepositedFarm[]
-    slippage: number
+    amount: string
   }) => Promise<boolean>
   withdrawFromVaults: (options: {
     accountId: string

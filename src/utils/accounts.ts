@@ -432,3 +432,11 @@ export function getAccountNetValue(account: Account, assets: Asset[]) {
     .plus(staked_astro_lps)
     .minus(debts)
 }
+
+export function convertCoinArrayIntoBNCoinArray(coins: Coin[]) {
+  const BNCoins = [] as BNCoin[]
+  coins.forEach((coin) => {
+    if (coin.amount !== '0') BNCoins.push(BNCoin.fromCoin(coin))
+  })
+  return BNCoins
+}

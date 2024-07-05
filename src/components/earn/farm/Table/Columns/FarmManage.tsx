@@ -3,8 +3,10 @@ import { useCallback, useMemo, useState } from 'react'
 import DropDownButton from 'components/common/Button/DropDownButton'
 import { AccountArrowDown, Plus } from 'components/common/Icons'
 import useAccountId from 'hooks/accounts/useAccountId'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useSlippage from 'hooks/settings/useSlippage'
 import useStore from 'store'
+import { byDenom } from 'utils/array'
 
 export const MANAGE_META = { accessorKey: 'details', enableSorting: false, header: '' }
 
@@ -15,6 +17,7 @@ interface Props {
 
 export default function FarmManage(props: Props) {
   const accountId = useAccountId()
+  const account = useCurrentAccount()
   const address = useStore((s) => s.address)
   const withdrawFromFarms = useStore((s) => s.withdrawFromFarms)
   const [slippage] = useSlippage()
@@ -37,7 +40,7 @@ export default function FarmManage(props: Props) {
     await withdrawFromFarms({
       accountId: accountId,
       farms: [props.farm],
-      slippage,
+      amount: account?.stakedAstroLps.find(byDenom(props.farm.denoms.lp))?.amount.toString() ?? '0',
     })
   }, [accountId, props.farm, slippage, withdrawFromFarms])
 
