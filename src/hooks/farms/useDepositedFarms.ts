@@ -14,8 +14,9 @@ export default function useDepositedFarms() {
   const { data: assetParams } = useAssetParams()
 
   const depositedFarms = [] as DepositedFarm[]
+  if (!currentAccount?.stakedAstroLps) return depositedFarms
 
-  currentAccount?.stakedAstroLps.forEach((stakedAstroLp) => {
+  currentAccount.stakedAstroLps.forEach((stakedAstroLp) => {
     const asset = assets.find(byDenom(stakedAstroLp.denom))
     if (!asset) return
     const depositCap = depositCaps?.find(byDenom(asset.denom))

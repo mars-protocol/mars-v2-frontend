@@ -132,8 +132,8 @@ export default function AccountSummary(props: Props) {
       !!updatedAccount?.vaults.length ||
       !!account.perpsVault ||
       !!updatedAccount?.perpsVault ||
-      !!account.stakedAstroLps ||
-      !!updatedAccount?.stakedAstroLps
+      !!account.stakedAstroLps.length ||
+      !!updatedAccount?.stakedAstroLps.length
 
     if (showStrategies)
       itemsArray.push({

@@ -12,13 +12,13 @@ import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useDisplayAsset from 'hooks/assets/useDisplayAsset'
+import useDepositLiquidity from 'hooks/broadcast/useDepositLiquidity'
 import useIsOpenArray from 'hooks/common/useIsOpenArray'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getCoinValue, magnify } from 'utils/formatters'
 import { getCapLeftWithBuffer } from 'utils/generic'
 import { mergeBNCoinArrays } from 'utils/helpers'
-import useDepositFarm from 'hooks/broadcast/useDepositFarm'
 
 interface Props {
   farm: Farm | DepositedFarm
@@ -40,12 +40,13 @@ export default function FarmModalContent(props: Props) {
   const [depositCoins, setDepositCoins] = useState<BNCoin[]>([])
   const [borrowCoins, setBorrowCoins] = useState<BNCoin[]>([])
   const displayAsset = useDisplayAsset()
-  const { actions: depositActions, totalValue } = useDepositFarm({
-    farm: props.farm,
+  const { actions: depositActions, totalValue } = useDepositLiquidity({
+    pool: props.farm,
     reclaims: removedLends,
     deposits: removedDeposits,
     borrowings: addedDebts,
     kind: 'default' as AccountKind,
+    isFarm: true,
   })
 
   const depositCapReachedCoins = useMemo(() => {

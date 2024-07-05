@@ -210,8 +210,7 @@ export function convertAccountToPositions(account: Account): Positions {
       amount: lend.amount.toString(),
       denom: lend.denom,
     })),
-    // TODO: Add staked astro LPs
-    staked_astro_lps: [],
+    staked_astro_lps: account.stakedAstroLps?.map((stakedAstroLp) => stakedAstroLp.toCoin()) ?? [],
     /* PERPS
     perps: account.perps.map((perpPosition) => {
       return {
@@ -307,9 +306,8 @@ export function cloneAccount(account: Account): Account {
         unlocked: vault.values.unlocked,
       },
     })),
-    stakedAstroLps: account.stakedAstroLps.map(
-      (stakedAstroLp) => new BNCoin(stakedAstroLp.toCoin()),
-    ),
+    stakedAstroLps:
+      account.stakedAstroLps?.map((stakedAstroLp) => new BNCoin(stakedAstroLp.toCoin())) ?? [],
     /* PERPS
     perps: account.perps.map((perpPosition) => ({
       ...perpPosition,

@@ -22,6 +22,7 @@ export default async function getAccount(
   const accountKind = await creditManagerQueryClient.accountKind({ accountId: accountId })
 
   const depositedVaults = await getDepositedVaults(accountId, chainConfig, assets, accountPosition)
+  const stakedAstroLps = accountPosition.staked_astro_lps ?? []
 
   if (accountPosition) {
     return {
@@ -34,7 +35,7 @@ export default async function getAccount(
       perpsVault: resolvePerpsVaultPositions(accountPosition.perp_vault),
       perps: resolvePerpsPositions(accountPosition.perps, assets),
       */
-      stakedAstroLps: [],
+      stakedAstroLps: stakedAstroLps.map((stakedAstroLp) => new BNCoin(stakedAstroLp)),
       kind: accountKind,
     }
   }
