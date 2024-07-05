@@ -9,7 +9,6 @@ import { MarsIncentivesQueryClient } from 'types/generated/mars-incentives/MarsI
 import { MarsOracleOsmosisQueryClient } from 'types/generated/mars-oracle-osmosis/MarsOracleOsmosis.client'
 import { MarsParamsQueryClient } from 'types/generated/mars-params/MarsParams.client'
 import { MarsRedBankQueryClient } from 'types/generated/mars-red-bank/MarsRedBank.client'
-import { MarsSwapperOsmosisQueryClient } from 'types/generated/mars-swapper-osmosis/MarsSwapperOsmosis.client'
 import { getUrl } from 'utils/url'
 
 export default function useClients() {
@@ -28,7 +27,6 @@ export default function useClients() {
         oracle: new MarsOracleOsmosisQueryClient(client, chainConfig.contracts.oracle),
         params: new MarsParamsQueryClient(client, chainConfig.contracts.params),
         redBank: new MarsRedBankQueryClient(client, chainConfig.contracts.redBank),
-        swapper: new MarsSwapperOsmosisQueryClient(client, chainConfig.contracts.swapper),
         incentives: new MarsIncentivesQueryClient(client, chainConfig.contracts.incentives),
         /* PERPS perps: new MarsPerpsQueryClient(client, chainConfig.contracts.perps), */
         icns: new ICNSQueryClient(client),

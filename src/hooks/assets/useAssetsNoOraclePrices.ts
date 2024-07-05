@@ -8,6 +8,7 @@ import useStore from 'store'
 import useSWR from 'swr'
 import { AssetParamsBaseForAddr } from 'types/generated/mars-params/MarsParams.types'
 import { byDenom } from 'utils/array'
+import { BN } from 'utils/helpers'
 import { calculatePoolWeight } from 'utils/pools'
 
 export default function useAssetsNoOraclePrices() {
@@ -56,6 +57,8 @@ async function fetchSortAndMapAllAssets(
       const primaryAsset = assets.find(byDenom(currentAssetPoolParams.assets[0].denom))
       const secondaryAsset = assets.find(byDenom(currentAssetPoolParams.assets[1].denom))
       const symbol = `${primaryAsset?.symbol ?? currentAssetPoolParams.assets[0].symbol}-${secondaryAsset?.symbol ?? currentAssetPoolParams.assets[1].symbol}`
+      const primaryAssetAmount = currentAssetPoolParams.assets[0].amount ?? 0
+      const secondaryAssetAmount = currentAssetPoolParams.assets[1].amount ?? 0
       currentAssetPoolInfo = {
         address: currentAssetPoolParams.poolAddress,
         type: currentAssetPoolParams.poolType,
@@ -73,7 +76,10 @@ async function fetchSortAndMapAllAssets(
             symbol: currentAssetPoolParams.assets[1].symbol,
           },
         },
-        totalShare: currentAssetPoolParams.poolTotalShare,
+        assetsPerShare: {
+          primary: BN(primaryAssetAmount).dividedBy(currentAssetPoolParams.poolTotalShare),
+          secondary: BN(secondaryAssetAmount).dividedBy(currentAssetPoolParams.poolTotalShare),
+        },
         rewards: currentAssetPoolParams.rewards,
         yield: currentAssetPoolParams.yield,
         weight: calculatePoolWeight(
@@ -82,7 +88,7 @@ async function fetchSortAndMapAllAssets(
         ),
       }
       asset.symbol = symbol
-      asset.name = `${chainConfig.dexName} ${symbol} LP`
+      asset.name = `${symbol} LP`
     }
 
     /* PERPS

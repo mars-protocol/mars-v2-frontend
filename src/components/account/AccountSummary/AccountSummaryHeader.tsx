@@ -12,6 +12,7 @@ import { ORACLE_DENOM } from 'constants/oracle'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountBalanceValue } from 'utils/accounts'
+import { BN } from 'utils/helpers'
 
 interface Props {
   account: Account
@@ -49,7 +50,9 @@ export default function AccountSummaryHeader(props: Props) {
     () => (updatedAccount ? calculateAccountBalanceValue(updatedAccount, assets) : undefined),
     [updatedAccount, assets],
   )
-  const hasChanged = !updatedAccountBalance?.isEqualTo(accountBalance)
+  const hasChanged = !BN(updatedAccountBalance?.toFixed(2) ?? 0)?.isEqualTo(
+    accountBalance.toFixed(2),
+  )
   const increase = updatedAccountBalance?.isGreaterThan(accountBalance)
 
   return (

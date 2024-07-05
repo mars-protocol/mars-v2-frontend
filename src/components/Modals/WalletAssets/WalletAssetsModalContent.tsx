@@ -1,9 +1,8 @@
 import { useCallback, useMemo, useState } from 'react'
 
 import AssetsSelect from 'components/Modals/AssetsSelect'
-import { CircularProgress } from 'components/common/CircularProgress'
 import SearchBar from 'components/common/SearchBar'
-import useAssets from 'hooks/assets/useAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
@@ -17,22 +16,25 @@ export default function WalletAssetsModalContent(props: Props) {
   const { onChangeDenoms } = props
   const [searchString, setSearchString] = useState<string>('')
   const balances = useStore((s) => s.balances)
-  const { data: allChainAssets, isLoading } = useAssets()
+  const allChainAssets = useDepositEnabledAssets()
   const chainConfig = useChainConfig()
   const enableAnyAsset = chainConfig.anyAsset
 
   const assetsInWallet = useMemo(() => {
-    if (isLoading) return []
     const knownAssetsInWallet: Asset[] = []
     const unknownAssetsInWallet: Asset[] = []
     balances.forEach((coin) => {
       const asset = allChainAssets.find(byDenom(coin.denom))
       if (asset) knownAssetsInWallet.push(asset)
-      if (!asset && enableAnyAsset) unknownAssetsInWallet.push(handleUnknownAsset(coin))
+      if (!asset && enableAnyAsset) {
+        const unknownAsset = handleUnknownAsset(coin)
+        if (unknownAsset.symbol === 'SHARE') return
+        unknownAssetsInWallet.push(unknownAsset)
+      }
     })
 
     return [...knownAssetsInWallet, ...unknownAssetsInWallet]
-  }, [allChainAssets, balances, isLoading, enableAnyAsset])
+  }, [allChainAssets, balances, enableAnyAsset])
 
   const filteredAssets: Asset[] = useMemo(() => {
     return assetsInWallet.filter(
@@ -66,17 +68,11 @@ export default function WalletAssetsModalContent(props: Props) {
         />
       </div>
       <div className='h-full md:max-h-[446px] overflow-y-scroll scrollbar-hide'>
-        {isLoading ? (
-          <div className='flex justify-center w-full p-8'>
-            <CircularProgress size={40} />
-          </div>
-        ) : (
-          <AssetsSelect
-            assets={filteredAssets}
-            onChangeSelected={onChangeSelect}
-            selectedDenoms={selectedDenoms}
-          />
-        )}
+        <AssetsSelect
+          assets={filteredAssets}
+          onChangeSelected={onChangeSelect}
+          selectedDenoms={selectedDenoms}
+        />
       </div>
     </>
   )

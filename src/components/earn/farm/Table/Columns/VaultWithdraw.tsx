@@ -14,7 +14,7 @@ interface Props {
   vault: DepositedVault
 }
 
-export function Withdraw(props: Props) {
+export function VaultWithdraw(props: Props) {
   const accountId = useAccountId()
   const [isConfirming, setIsConfirming] = useState(false)
   const [slippage] = useSlippage()

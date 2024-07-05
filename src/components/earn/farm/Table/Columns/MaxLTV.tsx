@@ -7,7 +7,7 @@ export const LTV_MAX_META = {
 }
 
 interface Props {
-  vault: Vault | DepositedVault
+  vault: Vault | DepositedVault | Farm | DepositedFarm
 }
 export default function MaxLtv(props: Props) {
   const { vault } = props

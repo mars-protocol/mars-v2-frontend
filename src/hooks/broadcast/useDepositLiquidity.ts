@@ -6,21 +6,20 @@ import useSlippage from 'hooks/settings/useSlippage'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import { BNCoin } from 'types/classes/BNCoin'
 import { AccountKind, Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import {
-  getEnterVaultActions,
-  getVaultDepositCoinsAndValue,
-  getVaultSwapActions,
-} from 'utils/vaults'
+import { getEnterFarmActions, getFarmDepositCoinsAndValue } from 'utils/farms'
+import { getLiquidityPoolSwapActions } from 'utils/liquidityPool'
+import { getEnterVaultActions, getVaultDepositCoinsAndValue } from 'utils/vaults'
 
 interface Props {
-  vault: Vault
+  pool: Vault | Farm
   reclaims: BNCoin[]
   deposits: BNCoin[]
   borrowings: BNCoin[]
   kind: AccountKind
+  isFarm?: boolean
 }
 
-export default function useDepositVault(props: Props): {
+export default function useDepositLiquidity(props: Props): {
   actions: Action[]
   totalValue: BigNumber
 } {
@@ -41,11 +40,19 @@ export default function useDepositVault(props: Props): {
     [props.reclaims],
   )
 
-  const { primaryCoin, secondaryCoin, totalValue } = useMemo(
-    () =>
-      getVaultDepositCoinsAndValue(props.vault, deposits, borrowings, reclaims, slippage, assets),
-    [props.vault, deposits, borrowings, reclaims, slippage, assets],
-  )
+  const { primaryCoin, secondaryCoin, totalValue } = useMemo(() => {
+    if (props.isFarm)
+      return getFarmDepositCoinsAndValue(props.pool as Farm, deposits, borrowings, reclaims, assets)
+
+    return getVaultDepositCoinsAndValue(
+      props.pool as Vault,
+      deposits,
+      borrowings,
+      reclaims,
+      slippage,
+      assets,
+    )
+  }, [props.pool, deposits, borrowings, reclaims, slippage, assets])
 
   const depositActions: Action[] = useMemo(() => {
     if (props.kind === 'default') return []
@@ -68,20 +75,21 @@ export default function useDepositVault(props: Props): {
   }, [borrowings])
 
   const swapActions: Action[] = useMemo(
-    () => getVaultSwapActions(props.vault, deposits, reclaims, borrowings, assets, slippage),
-    [props.vault, deposits, reclaims, borrowings, assets, slippage],
+    () => getLiquidityPoolSwapActions(props.pool, deposits, reclaims, borrowings, assets, slippage),
+    [props.pool, deposits, reclaims, borrowings, assets, slippage],
   )
 
   const enterVaultActions: Action[] = useMemo(() => {
     if (primaryCoin.amount.isZero() || secondaryCoin.amount.isZero()) return []
-
-    return getEnterVaultActions(props.vault, primaryCoin, secondaryCoin, slippage)
-  }, [props.vault, primaryCoin, secondaryCoin, slippage])
+    if (props.isFarm)
+      return getEnterFarmActions(props.pool as Farm, primaryCoin, secondaryCoin, slippage)
+    return getEnterVaultActions(props.pool as Vault, primaryCoin, secondaryCoin, slippage)
+  }, [props.pool, primaryCoin, secondaryCoin, slippage])
 
   const lendActions: Action[] = useMemo(() => {
-    if (!isAutoLend || props.kind === 'high_levered_strategy') return []
+    if (!isAutoLend || props.kind === 'high_levered_strategy' || swapActions.length === 0) return []
 
-    const denoms = [props.vault.denoms.primary, props.vault.denoms.secondary]
+    const denoms = [props.pool.denoms.primary, props.pool.denoms.secondary]
     const denomsForLend = lendEnabledAssets
       .filter((asset) => denoms.includes(asset.denom))
       .map((asset) => asset.denom)
@@ -96,8 +104,8 @@ export default function useDepositVault(props: Props): {
     isAutoLend,
     lendEnabledAssets,
     props.kind,
-    props.vault.denoms.primary,
-    props.vault.denoms.secondary,
+    props.pool.denoms.primary,
+    props.pool.denoms.secondary,
   ])
 
   const refundActions: Action[] = useMemo(() => {

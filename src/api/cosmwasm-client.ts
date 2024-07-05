@@ -6,7 +6,6 @@ import { MarsMockVaultQueryClient } from 'types/generated/mars-mock-vault/MarsMo
 import { MarsOracleOsmosisQueryClient } from 'types/generated/mars-oracle-osmosis/MarsOracleOsmosis.client'
 import { MarsParamsQueryClient } from 'types/generated/mars-params/MarsParams.client'
 import { MarsRedBankQueryClient } from 'types/generated/mars-red-bank/MarsRedBank.client'
-import { MarsSwapperOsmosisQueryClient } from 'types/generated/mars-swapper-osmosis/MarsSwapperOsmosis.client'
 import { getUrl } from 'utils/url'
 
 let _cosmWasmClient: Map<string, CosmWasmClient> = new Map()
@@ -14,7 +13,6 @@ let _creditManagerQueryClient: Map<string, MarsCreditManagerQueryClient> = new M
 let _oracleQueryClient: Map<string, MarsOracleOsmosisQueryClient> = new Map()
 let _paramsQueryClient: Map<string, MarsParamsQueryClient> = new Map()
 let _incentivesQueryClient: Map<string, MarsIncentivesQueryClient> = new Map()
-let _swapperOsmosisClient: Map<string, MarsSwapperOsmosisQueryClient> = new Map()
 /* PERPS 
 let _perpsClient: Map<string, MarsPerpsQueryClient> = new Map()
 */
@@ -109,22 +107,6 @@ const getIncentivesQueryClient = async (chainConfig: ChainConfig) => {
   }
 }
 
-const getSwapperQueryClient = async (chainConfig: ChainConfig) => {
-  try {
-    const contract = chainConfig.contracts.swapper
-    const rpc = getUrl(chainConfig.endpoints.rpc)
-    const key = rpc + contract
-    if (!_swapperOsmosisClient.get(key)) {
-      const client = await getClient(rpc)
-      _swapperOsmosisClient.set(key, new MarsSwapperOsmosisQueryClient(client, contract))
-    }
-
-    return _swapperOsmosisClient.get(key)!
-  } catch (error) {
-    throw error
-  }
-}
-
 /* PERPS
 const getPerpsQueryClient = async (chainConfig: ChainConfig) => {
   try {
@@ -170,6 +152,5 @@ export {
   getPerpsQueryClient,
   */
   getRedBankQueryClient,
-  getSwapperQueryClient,
   getVaultQueryClient,
 }

@@ -7,6 +7,7 @@ import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendi
 import Skeleton from 'components/portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
 import useAssets from 'hooks/assets/useAssets'
+import useFarmAprs from 'hooks/farms/useFarmAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
@@ -27,6 +28,8 @@ function Content(props: Props) {
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: assets } = useAssets()
+  const farmAprs = useFarmAprs()
+
   const stats = useMemo(() => {
     if (!account || !borrowAssets.length || !lendingAssets.length) return DEFAULT_PORTFOLIO_STATS
 
@@ -37,6 +40,7 @@ function Content(props: Props) {
       hlsStrategies,
       assets,
       vaultAprs,
+      farmAprs,
       account.kind === 'high_levered_strategy',
     )
 

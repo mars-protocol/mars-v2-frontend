@@ -6,10 +6,11 @@ export const APY_META = { accessorKey: 'apy', header: 'APY' }
 
 interface Props {
   vault: Vault | DepositedVault
+  assets?: Asset[]
 }
 
 export default function Apy(props: Props) {
-  const { vault } = props
+  const { vault, assets } = props
 
   if (vault.apy === undefined) return <Loading />
   if (vault.apy === null) return <Text size='xs'>N/A</Text>

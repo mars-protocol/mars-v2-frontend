@@ -1,8 +1,8 @@
-import { VaultStatus } from 'types/enums'
 import AssetImage from 'components/common/assets/AssetImage'
 import DoubleLogo from 'components/common/DoubleLogo'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import useAsset from 'hooks/assets/useAsset'
+import { VaultStatus } from 'types/enums'
 
 export const NAME_META = {
   id: 'name',
@@ -11,7 +11,7 @@ export const NAME_META = {
   meta: { className: 'min-w-50' },
 }
 interface Props {
-  vault: Vault | DepositedVault
+  vault: Vault | DepositedVault | Farm | DepositedFarm
 }
 
 export default function Name(props: Props) {

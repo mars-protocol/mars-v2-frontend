@@ -139,7 +139,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
 
   function addAsset() {
     useStore.setState({
-      addVaultBorrowingsModal: {
+      addLiquidityPoolBorrowingsModal: {
         selectedDenoms: props.borrowings.map((coin) => coin.denom),
       },
     })

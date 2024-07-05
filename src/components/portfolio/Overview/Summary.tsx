@@ -14,6 +14,7 @@ import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
+import useFarmAprs from 'hooks/farms/useFarmAprs'
 
 export default function PortfolioSummary() {
   const { address: urlAddress } = useParams()
@@ -25,6 +26,8 @@ export default function PortfolioSummary() {
   const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
   const assets = useDepositEnabledAssets()
+  const farmAprs = useFarmAprs()
+
   const stats = useMemo(() => {
     if (!accounts?.length) return
     const combinedAccount = accounts.reduce(
@@ -55,6 +58,7 @@ export default function PortfolioSummary() {
       hlsStrategies,
       assets,
       vaultAprs,
+      farmAprs,
     )
 
     return [

@@ -10,13 +10,13 @@ export const DEPOSIT_CAP_META = {
 }
 
 interface Props {
-  vault: Vault | DepositedVault | PerpsVault
+  vault: Vault | DepositedVault | PerpsVault | Farm | DepositedFarm
   isLoading?: boolean
 }
 
 export const depositCapSortingFn = (
-  a: Row<Vault> | Row<DepositedVault> | Row<PerpsVault>,
-  b: Row<Vault> | Row<DepositedVault> | Row<PerpsVault>,
+  a: Row<Vault> | Row<DepositedVault> | Row<PerpsVault> | Row<Farm> | Row<DepositedFarm>,
+  b: Row<Vault> | Row<DepositedVault> | Row<PerpsVault> | Row<Farm> | Row<DepositedFarm>,
 ): number => {
   const depositCapA = a.original.cap?.max
   const depositCapB = b.original.cap?.max

@@ -15,10 +15,10 @@ export default function DoubleLogo(props: Props) {
   return (
     <div className='relative grid w-9 h-9 place-items-center'>
       <div className='absolute'>
-        <AssetImage asset={primaryAsset} className='w-6 h-6' />
+        <AssetImage asset={primaryAsset} className='w-5 h-5 -mt-3 -ml-3' />
       </div>
       <div className='absolute'>
-        <AssetImage asset={secondaryAsset} className='w-4 h-4 mt-5 ml-5' />
+        <AssetImage asset={secondaryAsset} className='w-5 h-5 mt-2 ml-2' />
       </div>
     </div>
   )
