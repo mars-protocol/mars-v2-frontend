@@ -161,3 +161,11 @@ export function getFarmDepositCoinsAndValue(
     totalValue,
   }
 }
+
+export function getFarmAprs(stakedAstroLp: BNCoin[], assets: Asset[]): Apr[] {
+  return stakedAstroLp.map((lp) => {
+    const asset = assets.find(byDenom(lp.denom))
+    if (!asset) return { address: lp.denom, apr: 0 }
+    return { address: lp.denom, apr: convertApyToApr(asset.poolInfo?.yield?.total ?? 0, 365) }
+  })
+}

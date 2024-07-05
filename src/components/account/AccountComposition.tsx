@@ -10,7 +10,8 @@ import Text from 'components/common/Text'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import { BN_ZERO, MAX_AMOUNT_DECIMALS } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
-import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useFarmAprs from 'hooks/farms/useFarmAprs'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
@@ -37,7 +38,8 @@ export default function AccountComposition(props: Props) {
   const hasChanged = !!updatedAccount
   const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
-  const assets = useDepositEnabledAssets()
+  const farmAprs = useFarmAprs()
+  const assets = useWhitelistedAssets()
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
@@ -99,6 +101,7 @@ export default function AccountComposition(props: Props) {
         hlsStrategies,
         assets,
         vaultAprs,
+        farmAprs,
         props.isHls,
       ),
     [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, props.isHls, vaultAprs],
@@ -113,6 +116,7 @@ export default function AccountComposition(props: Props) {
             hlsStrategies,
             assets,
             vaultAprs,
+            farmAprs,
             props.isHls,
           )
         : BN_ZERO,
@@ -120,7 +124,6 @@ export default function AccountComposition(props: Props) {
       updatedAccount,
       borrowAssetsData,
       lendingAssetsData,
-
       hlsStrategies,
       assets,
       vaultAprs,

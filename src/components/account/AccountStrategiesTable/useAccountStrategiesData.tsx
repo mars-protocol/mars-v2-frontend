@@ -6,7 +6,7 @@ import {
   getVaultAccountStrategiesRow,
 } from 'components/account/AccountStrategiesTable/functions'
 import { BN_ZERO } from 'constants/math'
-import useAssets from 'hooks/assets/useAssets'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAvailableFarms from 'hooks/farms/useAvailableFarms'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import { transformPerpsVaultIntoDeposited } from 'hooks/vaults/useDepositedVaults'
@@ -23,7 +23,7 @@ interface Props {
 export default function useAccountStrategiesData(props: Props) {
   const { account, updatedAccount } = props
   const { data: vaultAprs } = useVaultAprs()
-  const { data: assets } = useAssets()
+  const assets = useWhitelistedAssets()
   const { data: perpsVault } = usePerpsVault()
   const availableFarms = useAvailableFarms()
 

@@ -22,6 +22,7 @@ import useAccounts from 'hooks/accounts/useAccounts'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useFarmAprs from 'hooks/farms/useFarmAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -48,7 +49,6 @@ export default function AccountDetailsController(props: AccountDetailsController
   const isV1 = useStore((s) => s.isV1)
   const { data: _, isLoading } = useAccounts('default', address)
   const { data: accountIds } = useAccountIds(address, false, true)
-
   const accountId = useAccountId()
 
   const account = useCurrentAccount()
@@ -68,6 +68,7 @@ function AccountDetails(props: Props) {
   const location = useLocation()
   const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
+  const farmAprs = useFarmAprs()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
@@ -116,6 +117,7 @@ function AccountDetails(props: Props) {
         hlsStrategies,
         whitelistedAssets,
         vaultAprs,
+        farmAprs,
         account.kind === 'high_levered_strategy',
       ),
     [

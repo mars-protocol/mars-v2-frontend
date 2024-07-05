@@ -21,7 +21,7 @@ export default async function getHLSStakingAccounts(
 
     if (!strategy) return
 
-    const [deposits, _, debts, __] = getAccountPositionValues(account, assets)
+    const [deposits, _, debts] = getAccountPositionValues(account, assets)
 
     hlsAccountsWithStrategy.push({
       ...account,

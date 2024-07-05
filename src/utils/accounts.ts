@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
+import { useMemo } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultPosition } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { Positions } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
@@ -92,6 +93,7 @@ export const calculateAccountApr = (
   hlsStrategies: HLSStrategy[],
   assets: Asset[],
   vaultAprs: Apr[],
+  farmAprs: Apr[],
   isHls?: boolean,
 ): BigNumber => {
   const depositValue = calculateAccountValue('deposits', account, assets)
@@ -99,17 +101,22 @@ export const calculateAccountApr = (
   const vaultsValue = calculateAccountValue('vaults', account, assets)
   const debtsValue = calculateAccountValue('debts', account, assets)
   const perpsValue = calculateAccountValue('perps', account, assets)
-
-  const totalValue = depositValue.plus(lendsValue).plus(vaultsValue).plus(perpsValue)
+  const stakedAstroLpsValue = calculateAccountValue('stakedAstroLps', account, assets)
+  const totalValue = depositValue
+    .plus(lendsValue)
+    .plus(vaultsValue)
+    .plus(perpsValue)
+    .plus(stakedAstroLpsValue)
   const totalNetValue = totalValue.minus(debtsValue)
 
   if (totalNetValue.isLessThanOrEqualTo(0)) return BN_ZERO
-  const { vaults, lends, debts, deposits } = account
+  const { vaults, lends, debts, deposits, stakedAstroLps } = account
 
   let totalDepositsInterestValue = BN_ZERO
   let totalLendsInterestValue = BN_ZERO
   let totalVaultsInterestValue = BN_ZERO
   let totalDebtInterestValue = BN_ZERO
+  let totalFarmInterestValue = BN_ZERO
 
   if (isHls) {
     deposits?.forEach((deposit) => {
@@ -172,18 +179,29 @@ export const calculateAccountApr = (
     totalDebtInterestValue = totalDebtInterestValue.plus(positionInterest)
   })
 
+  stakedAstroLps.forEach((stakedAstroLp) => {
+    const farm = farmAprs.find((farmApr) => farmApr.address === stakedAstroLp.denom)
+    if (!farm) return
+    const farmApr = farm.apr ?? 0
+    const farmValue = getCoinValue(stakedAstroLp, assets)
+    const positionInterest = farmValue.multipliedBy(farmApr).dividedBy(100)
+    totalFarmInterestValue = totalFarmInterestValue.plus(positionInterest)
+  })
+
   const totalInterestValue = totalLendsInterestValue
     .plus(totalVaultsInterestValue)
     .minus(totalDebtInterestValue)
     .plus(totalDepositsInterestValue)
+    .plus(totalFarmInterestValue)
 
   return totalInterestValue.dividedBy(totalNetValue).times(100)
 }
 
 export function calculateAccountLeverage(account: Account, assets: Asset[]) {
   // TODO: MP-2307: Include perps positions into account leverage calculation
-  const [deposits, lends, debts, vaults] = getAccountPositionValues(account, assets)
-  const netValue = deposits.plus(lends).plus(vaults).minus(debts)
+  const [deposits, lends, debts, vaults, perps, perpsVault, stakedAstroLps] =
+    getAccountPositionValues(account, assets)
+  const netValue = deposits.plus(lends).plus(vaults).plus(stakedAstroLps).minus(debts)
   return debts.dividedBy(netValue).plus(1)
 }
 
@@ -386,20 +404,26 @@ export function getAccountSummaryStats(
   hlsStrategies: HLSStrategy[],
   assets: Asset[],
   vaultAprs: Apr[],
+  farmAprs: Apr[],
   isHls?: boolean,
 ) {
-  const [deposits, lends, debts, vaults] = getAccountPositionValues(account, assets)
-  const positionValue = deposits.plus(lends).plus(vaults)
-  const apr = calculateAccountApr(
-    account,
-    borrowAssets,
-    lendingAssets,
-    hlsStrategies,
-    assets,
-    vaultAprs,
-    isHls,
+  const [deposits, lends, debts, vaults, stakedAstroLps] = getAccountPositionValues(account, assets)
+  const positionValue = deposits.plus(lends).plus(vaults).plus(stakedAstroLps)
+  const apr = useMemo(
+    () =>
+      calculateAccountApr(
+        account,
+        borrowAssets,
+        lendingAssets,
+        hlsStrategies,
+        assets,
+        vaultAprs,
+        farmAprs,
+        isHls,
+      ),
+    [account, borrowAssets, lendingAssets, hlsStrategies, assets, vaultAprs, farmAprs, isHls],
   )
-  const leverage = calculateAccountLeverage(account, assets)
+  const leverage = useMemo(() => calculateAccountLeverage(account, assets), [account, assets])
 
   return {
     positionValue: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionValue),

@@ -86,12 +86,12 @@ export default function ChangeLeverage(props: Props) {
   )
 
   const positionValue = useMemo(() => {
-    const [deposits, lends, debts, vaults] = getAccountPositionValues(
+    const [deposits, lends, debts, vaults, stakedAstroLps] = getAccountPositionValues(
       updatedAccount || props.account,
       assets,
     )
 
-    return deposits.plus(lends).plus(debts).plus(vaults)
+    return deposits.plus(lends).plus(debts).plus(vaults).plus(stakedAstroLps)
   }, [assets, props.account, updatedAccount])
 
   const handleOnClick = useCallback(() => {
