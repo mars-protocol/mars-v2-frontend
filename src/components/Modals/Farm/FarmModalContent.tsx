@@ -16,6 +16,7 @@ import useDepositLiquidity from 'hooks/broadcast/useDepositLiquidity'
 import useIsOpenArray from 'hooks/common/useIsOpenArray'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import { BNCoin } from 'types/classes/BNCoin'
+import { getFarmSharesFromCoinsValue } from 'utils/farms'
 import { getCoinValue, magnify } from 'utils/formatters'
 import { getCapLeftWithBuffer } from 'utils/generic'
 import { mergeBNCoinArrays } from 'utils/helpers'
@@ -53,8 +54,9 @@ export default function FarmModalContent(props: Props) {
     if (!props.farm.cap) return [BNCoin.fromDenomAndBigNumber(displayAsset.denom, BN_ZERO)]
 
     const capLeft = getCapLeftWithBuffer(props.farm.cap)
+    const totalShares = getFarmSharesFromCoinsValue(props.farm, totalValue, assets)
 
-    if (totalValue.isGreaterThan(capLeft)) {
+    if (totalShares.isGreaterThan(capLeft)) {
       const amount = magnify(
         getCoinValue(
           BNCoin.fromDenomAndBigNumber(props.farm.cap.denom, capLeft),
@@ -66,7 +68,7 @@ export default function FarmModalContent(props: Props) {
       return [BNCoin.fromDenomAndBigNumber(displayAsset.denom, amount)]
     }
     return []
-  }, [assets, displayAsset, props.farm.cap, totalValue])
+  }, [assets, displayAsset, totalValue, props.farm])
 
   const onChangeIsCustomRatio = useCallback(
     (isCustomRatio: boolean) => setIsCustomRatio(isCustomRatio),

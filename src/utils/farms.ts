@@ -138,9 +138,9 @@ export function getFarmDepositCoinsAndValue(
   const primaryAsset = assets.find(byDenom(farm.denoms.primary)) ?? assets[0]
   const secondaryAsset = assets.find(byDenom(farm.denoms.secondary)) ?? assets[0]
 
-  const primaryDepositAmount = getBNCoinFromValue(totalValue.dividedBy(2), primaryAsset)
+  const primaryDepositAmount = getBNCoinFromValue(totalValue.dividedBy(2), primaryAsset).amount
 
-  const secondaryDepositAmount = getBNCoinFromValue(totalValue.dividedBy(2), secondaryAsset)
+  const secondaryDepositAmount = getBNCoinFromValue(totalValue.dividedBy(2), secondaryAsset).amount
 
   return {
     primaryCoin: new BNCoin({

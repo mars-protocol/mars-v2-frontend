@@ -11,7 +11,7 @@ export function ActiveFarms() {
   const tabs: CardTab[] = useMemo(
     () => [
       {
-        title: 'Active Farms',
+        title: 'Active LP Farms',
         renderContent: () => (
           <ActiveFarmsTable columns={activeColumns} data={activeFarms} isLoading={false} />
         ),
