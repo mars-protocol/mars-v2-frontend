@@ -19,9 +19,9 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountLeverage, cloneAccount } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { SWAP_FEE_BUFFER } from 'utils/constants'
-import { getFarmSharesFromCoins } from 'utils/farms'
+import { getFarmSharesFromCoinsValue } from 'utils/farms'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
-import { getValueFromBNCoins } from 'utils/helpers'
+import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
 
 export function useUpdatedAccount(account?: Account) {
   const { data: availableVaults } = useVaults(false)
@@ -236,8 +236,10 @@ export function useUpdatedAccount(account?: Account) {
       removeLends(totalLends)
       addDebts(borrowCoins)
 
+      const mergedCoins = mergeBNCoinArrays(coins, borrowCoins)
+
       // Value has to be adjusted for slippage
-      const value = getValueFromBNCoins([...coins, ...borrowCoins], assets).times(1 - slippage)
+      const value = getValueFromBNCoins(mergedCoins, assets).times(1 - slippage)
       addVaultValues([{ address, value }])
     },
     [account, assets, slippage],
@@ -262,11 +264,14 @@ export function useUpdatedAccount(account?: Account) {
       removeLends(totalLends)
       addDebts(borrowCoins)
 
-      const shares = getFarmSharesFromCoins(farm, coins, assets)
+      const coinsValue = getValueFromBNCoins(coins, assets)
+      const borrowValue = getValueFromBNCoins(borrowCoins, assets).times(1 - slippage)
+      const totalValue = coinsValue.plus(borrowValue)
+      const shares = getFarmSharesFromCoinsValue(farm, totalValue, assets)
 
       addStakedAstroLps([BNCoin.fromDenomAndBigNumber(address, shares)])
     },
-    [account, assets, availableFarms],
+    [account, assets, availableFarms, slippage],
   )
 
   const simulatePerps = useCallback(

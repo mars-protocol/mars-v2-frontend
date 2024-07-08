@@ -6,7 +6,7 @@ import {
   TotalDepositResponse,
 } from 'types/generated/mars-params/MarsParams.types'
 import { byDenom } from 'utils/array'
-import { BN, getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
+import { BN, getBNCoinFromValue, getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
 import { convertApyToApr } from 'utils/parsers'
 
 export function getFarmFromPoolAsset(
@@ -52,22 +52,15 @@ export function getFarmFromPoolAsset(
   }
 }
 
-export function getFarmSharesFromCoins(farm: Farm, coins: BNCoin[], assets: Asset[]): BigNumber {
-  let totalValue = BN_ZERO
-
-  coins.forEach((coin) => {
-    const asset = assets.find(byDenom(coin.denom))
-    if (!asset) return
-
-    totalValue = totalValue.plus(
-      coin.amount.times(asset.price?.amount ?? 0).shiftedBy(-asset.decimals),
-    )
-  })
-
+export function getFarmSharesFromCoinsValue(
+  farm: Farm,
+  coinsValue: BigNumber,
+  assets: Asset[],
+): BigNumber {
   const farmAsset = assets.find(byDenom(farm.denoms.lp))
   if (!farmAsset || !farmAsset.price) return BN_ZERO
 
-  return totalValue.dividedBy(farmAsset.price.amount).shiftedBy(farmAsset.decimals)
+  return coinsValue.dividedBy(farmAsset.price.amount).shiftedBy(farmAsset.decimals)
 }
 
 export function getDepositedFarmFromStakedLpBNCoin(
@@ -133,21 +126,21 @@ export function getFarmDepositCoinsAndValue(
   deposits: BNCoin[],
   borrowings: BNCoin[],
   reclaims: BNCoin[],
+  slippage: number,
   assets: Asset[],
 ) {
   const depositsAndReclaims = mergeBNCoinArrays(deposits, reclaims)
-  const borrowingsAndDepositsAndReclaims = mergeBNCoinArrays(borrowings, depositsAndReclaims)
 
-  const totalValue = getValueFromBNCoins(borrowingsAndDepositsAndReclaims, assets)
+  const depositsAndReclaimsValue = getValueFromBNCoins(depositsAndReclaims, assets)
+  const borrowingValue = getValueFromBNCoins(borrowings, assets).times(1 - slippage)
 
+  const totalValue = depositsAndReclaimsValue.plus(borrowingValue)
   const primaryAsset = assets.find(byDenom(farm.denoms.primary)) ?? assets[0]
   const secondaryAsset = assets.find(byDenom(farm.denoms.secondary)) ?? assets[0]
 
-  const primaryDepositAmount =
-    borrowingsAndDepositsAndReclaims.find(byDenom(primaryAsset.denom))?.amount ?? BN_ZERO
+  const primaryDepositAmount = getBNCoinFromValue(totalValue.dividedBy(2), primaryAsset)
 
-  const secondaryDepositAmount =
-    borrowingsAndDepositsAndReclaims.find(byDenom(secondaryAsset.denom))?.amount ?? BN_ZERO
+  const secondaryDepositAmount = getBNCoinFromValue(totalValue.dividedBy(2), secondaryAsset)
 
   return {
     primaryCoin: new BNCoin({

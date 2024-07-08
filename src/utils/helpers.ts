@@ -58,6 +58,14 @@ export function getValueFromBNCoins(coins: BNCoin[], assets: Asset[]): BigNumber
   return totalValue
 }
 
+export function getBNCoinFromValue(value: BigNumber, asset: Asset): BNCoin {
+  if (!asset.price) return new BNCoin({ denom: asset.denom, amount: '0' })
+  return BNCoin.fromDenomAndBigNumber(
+    asset.denom,
+    value.dividedBy(asset.price.amount).shiftedBy(asset.decimals),
+  )
+}
+
 export function getLeverageFromLTV(ltv: number) {
   return +(1 / (1 - ltv)).toPrecision(2)
 }

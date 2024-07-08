@@ -262,7 +262,10 @@ export default function FarmDeposit(props: Props) {
         </div>
         <div className='flex justify-between'>
           <Text className='text-white/50'>{`${primaryAsset.symbol}-${secondaryAsset.symbol} Deposit Value`}</Text>
-          <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, totalValue)} />
+          <DisplayCurrency
+            coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, totalValue)}
+            options={{ abbreviated: false, minDecimals: 2, maxDecimals: 2 }}
+          />
         </div>
         <Button
           onClick={() => props.toggleOpen(1)}

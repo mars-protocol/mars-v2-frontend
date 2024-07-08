@@ -175,6 +175,7 @@ export default function FarmModalContent(props: Props) {
                 depositActions={depositActions}
                 depositCapReachedCoins={depositCapReachedCoins}
                 displayCurrency={displayCurrency}
+                totalValue={totalValue}
               />
             ),
             title: 'Borrow',

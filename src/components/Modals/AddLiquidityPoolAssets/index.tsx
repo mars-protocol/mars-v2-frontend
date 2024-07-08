@@ -12,19 +12,26 @@ export default function AddLiquidityPoolBorrowAssetsModal() {
   const vaultModal = useStore((s) => s.vaultModal)
   const farmModal = useStore((s) => s.farmModal)
   const [selectedDenoms, setSelectedDenoms] = useState<string[]>([])
-
+  const pool = vaultModal?.vault ?? farmModal?.farm
   function onClose() {
-    if (!vaultModal) return
+    if (vaultModal) {
+      useStore.setState({
+        addLiquidityPoolBorrowingsModal: null,
+        vaultModal: { ...vaultModal, selectedBorrowDenoms: selectedDenoms },
+      })
+    }
 
-    useStore.setState({
-      addLiquidityPoolBorrowingsModal: null,
-      vaultModal: { ...vaultModal, selectedBorrowDenoms: selectedDenoms },
-    })
+    if (farmModal) {
+      useStore.setState({
+        addLiquidityPoolBorrowingsModal: null,
+        farmModal: { ...farmModal, selectedBorrowDenoms: selectedDenoms },
+      })
+    }
   }
 
   const updateSelectedDenoms = useCallback((denoms: string[]) => setSelectedDenoms(denoms), [])
 
-  const showContent = modal && vaultModal?.vault
+  const showContent = modal && !!pool
 
   if (!showContent) return null
   return (
@@ -36,7 +43,7 @@ export default function AddLiquidityPoolBorrowAssetsModal() {
     >
       {showContent ? (
         <AddVLiquidityPoolAssetsModalContent
-          pool={vaultModal?.vault ?? farmModal?.farm}
+          pool={pool}
           defaultSelectedDenoms={modal.selectedDenoms}
           onChangeBorrowDenoms={updateSelectedDenoms}
         />

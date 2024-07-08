@@ -123,6 +123,7 @@ export default function TokenInput(props: Props) {
             isApproximation={props.amount.isGreaterThan(0)}
             className='inline pl-1 text-xs text-white/50'
             coin={new BNCoin({ denom: props.asset.denom, amount: props.amount.toString() })}
+            options={{ abbreviated: false, minDecimals: 2, maxDecimals: 2 }}
           />
         </div>
       </div>

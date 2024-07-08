@@ -5,10 +5,10 @@ import DisplayCurrency from 'components/common/DisplayCurrency'
 import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
-import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useSlippage from 'hooks/settings/useSlippage'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatAmountWithSymbol, getCoinValue } from 'utils/formatters'
-import { getTokenPrice } from 'utils/tokens'
 
 interface Props {
   borrowings: BNCoin[]
@@ -16,13 +16,12 @@ interface Props {
 }
 
 export default function FarmBorrowingsSubTitle(props: Props) {
-  const assets = useDepositEnabledAssets()
+  const assets = useWhitelistedAssets()
+  const [slippage] = useSlippage()
   const borrowingValue = useMemo(() => {
     let borrowingValue = BN_ZERO
     props.borrowings.map((coin) => {
-      const price = getTokenPrice(coin.denom, assets)
-      if (!price || coin.amount.isZero()) return
-      borrowingValue = getCoinValue(coin, assets)
+      borrowingValue = borrowingValue.plus(getCoinValue(coin, assets))
     })
     return borrowingValue
   }, [props.borrowings, assets])
@@ -53,7 +52,13 @@ export default function FarmBorrowingsSubTitle(props: Props) {
             'text-xs mt-1 text-white/60 ml-1 inline',
             'before:content-["="] before:pr-1',
           )}
-          coin={new BNCoin({ denom: ORACLE_DENOM, amount: borrowingValue.toString() })}
+          coin={
+            new BNCoin({
+              denom: ORACLE_DENOM,
+              amount: borrowingValue.times(1 - slippage).toString(),
+            })
+          }
+          options={{ abbreviated: false, minDecimals: 2, maxDecimals: 2 }}
         />
       )}
     </>

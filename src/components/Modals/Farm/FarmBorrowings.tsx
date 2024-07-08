@@ -19,7 +19,6 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { findCoinByDenom } from 'utils/assets'
 import { formatPercent } from 'utils/formatters'
-import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
 
 export default function FarmBorrowings(props: FarmBorrowingsProps) {
   const assets = useDepositEnabledAssets()
@@ -67,11 +66,6 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
       })
     })
   }, [maxBorrowAmountsRaw, props.borrowings])
-
-  const totalValue = useMemo(
-    () => getValueFromBNCoins(mergeBNCoinArrays(props.deposits, props.borrowings), assets),
-    [props.deposits, props.borrowings, assets],
-  )
 
   useEffect(() => {
     const selectedBorrowDenoms = farmModal?.selectedBorrowDenoms || []
@@ -180,8 +174,8 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
       {props.borrowings.length === 1 && <Index onChange={onChangeSlider} value={percentage} />}
       {props.borrowings.length === 0 && (
         <div className='flex items-center gap-4 py-2'>
-          <div className='w-4'>
-            <ExclamationMarkCircled width={20} height={20} />
+          <div className='w-6 h-6'>
+            <ExclamationMarkCircled />
           </div>
           <Text size='xs'>
             You have no borrowing assets selected. Click on select borrow assets if you would like
@@ -204,7 +198,8 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
         <div className='flex justify-between'>
           <Text className='text-white/50'>{`${props.primaryAsset.symbol}-${props.secondaryAsset.symbol} Position Value`}</Text>
           <DisplayCurrency
-            coin={new BNCoin({ denom: ORACLE_DENOM, amount: totalValue.toString() })}
+            coin={new BNCoin({ denom: ORACLE_DENOM, amount: props.totalValue.toString() })}
+            options={{ abbreviated: false, minDecimals: 2, maxDecimals: 2 }}
           />
         </div>
         {props.borrowings.map((coin) => {

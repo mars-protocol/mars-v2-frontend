@@ -1278,6 +1278,7 @@ interface VaultBorrowingsProps extends LiquidityPoolBorrowingsProps {
 
 interface FarmBorrowingsProps extends LiquidityPoolBorrowingsProps {
   farm: Farm
+  totalValue: BigNumber
 }
 
 type AvailableOrderType = 'Market' | 'Limit' | 'Stop'
