@@ -346,7 +346,7 @@ function getTransactionTypeFromBroadcastResult(result: BroadcastResult): Transac
 
 function getVaultTokensFromEvent(event: TransactionEvent): BNCoin[] | undefined {
   const denomAndAmountStringArray = event.attributes
-    .find((a) => a.key === 'tokens_in' || a.key === 'coins_out')
+    .find((a) => a.key === 'tokens_in' || a.key === 'coins_out' || a.key === 'assets')
     ?.value.split(',')
   if (!denomAndAmountStringArray) return
   if (denomAndAmountStringArray.length !== 2) return
@@ -451,17 +451,20 @@ export function getToastContentsFromGroupedTransactionCoin(
       break
     case 'farm':
       toastContents.push({
-        text: `Withdrew from farm`,
-        coins: coins,
+        text:
+          coins.length === 2
+            ? `Withdrew from ${getAssetSymbolByDenom(coins[0].denom, assets)}-${getAssetSymbolByDenom(coins[1].denom, assets)}`
+            : 'Withdrew from farm',
+        coins,
       })
       break
     case 'provide_liquidity':
       toastContents.push({
         text:
           coins.length === 2
-            ? `Provided Liquidity to ${getAssetSymbolByDenom(coins[0].denom, assets)}-${getAssetSymbolByDenom(coins[1].denom, assets)}`
-            : 'Provided Liquidity',
-        coins: coins,
+            ? `Added to ${getAssetSymbolByDenom(coins[0].denom, assets)}-${getAssetSymbolByDenom(coins[1].denom, assets)}`
+            : 'Deposited into farm',
+        coins,
       })
       break
     case 'vault':
