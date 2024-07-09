@@ -1053,6 +1053,7 @@ type TransactionCoinType =
   | 'swap'
   | 'withdraw'
   | 'farm'
+  | 'provide_liquidity'
   | 'vault'
   | 'perps'
   | 'perpsPnl'

@@ -18,7 +18,7 @@ export default function AvailableFarmsTable() {
   if (filteredFarms.length === 0)
     return (
       <Text className='p-4 text-center text-white/70' size='sm'>
-        No additional LP Farms available
+        There are no additional LP Farms available
       </Text>
     )
 
