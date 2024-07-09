@@ -51,7 +51,6 @@ export default function useAccountStrategiesData(props: Props) {
     if (usedAccount.stakedAstroLps) {
       accountLps.forEach((lp) => {
         const farm = availableFarms.find((farm) => farm.denoms.lp === lp.denom)
-
         if (!farm) return
         const prevFarm = updatedAccount
           ? updatedAccount.stakedAstroLps?.find(byDenom(lp.denom)) ??
@@ -61,6 +60,8 @@ export default function useAccountStrategiesData(props: Props) {
         const depositedFarm = getDepositedFarmFromStakedLpBNCoin(assets, lp, farm)
         const prevDepositedFarm = getDepositedFarmFromStakedLpBNCoin(assets, prevFarm, farm)
         if (!depositedFarm || !prevDepositedFarm) return
+        if (depositedFarm.amounts.primary.isZero() && depositedFarm.amounts.secondary.isZero())
+          return
         vaultRows.push(
           getFarmAccountStrategiesRow(depositedFarm, assets, farm.apy, prevDepositedFarm),
         )

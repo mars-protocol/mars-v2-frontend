@@ -957,7 +957,6 @@ interface BroadcastSlice {
     actions: Action[]
     deposits: BNCoin[]
     borrowings: BNCoin[]
-    isCreate: boolean
     kind: import('types/generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind
   }) => Promise<boolean>
   depositIntoVault: (options: {
@@ -1169,17 +1168,18 @@ interface LendAndReclaimModalConfig {
 }
 
 interface LiquidityPoolModal {
-  isDeposited?: boolean
   selectedBorrowDenoms: string[]
-  isCreate: boolean
+  isDeposited?: boolean
 }
 
 interface VaultModal extends LiquidityPoolModal {
   vault: Vault | DepositedVault
+  isCreate: boolean
 }
 
 interface FarmModal extends LiquidityPoolModal {
   farm: Farm | DepositedFarm
+  action: 'deposit' | 'withdraw'
 }
 
 interface AddLiquidityPoolBorrowingsModal {

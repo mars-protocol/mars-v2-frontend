@@ -18,7 +18,7 @@ export const FarmDeposit = (props: Props) => {
       farmModal: {
         farm,
         selectedBorrowDenoms: [farm.denoms.secondary],
-        isCreate: true,
+        action: 'deposit',
       },
     })
   }

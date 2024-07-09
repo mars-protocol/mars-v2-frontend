@@ -10,12 +10,13 @@ import Accordion from 'components/common/Accordion'
 import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
-import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useDisplayAsset from 'hooks/assets/useDisplayAsset'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useDepositLiquidity from 'hooks/broadcast/useDepositLiquidity'
 import useIsOpenArray from 'hooks/common/useIsOpenArray'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
 import { getFarmSharesFromCoinsValue } from 'utils/farms'
 import { getCoinValue, magnify } from 'utils/formatters'
 import { getCapLeftWithBuffer } from 'utils/generic'
@@ -23,8 +24,6 @@ import { mergeBNCoinArrays } from 'utils/helpers'
 
 interface Props {
   farm: Farm | DepositedFarm
-  primaryAsset: Asset
-  secondaryAsset: Asset
   account: Account
   isDeposited?: boolean
 }
@@ -33,8 +32,7 @@ export default function FarmModalContent(props: Props) {
   const { addedDebts, removedDeposits, removedLends, simulateFarmDeposit } = useUpdatedAccount(
     props.account,
   )
-  const assets = useDepositEnabledAssets()
-
+  const assets = useWhitelistedAssets()
   const [displayCurrency] = useDisplayCurrency()
   const [isOpen, toggleOpen] = useIsOpenArray(2, false)
   const [isCustomRatio, setIsCustomRatio] = useState(false)
@@ -49,7 +47,8 @@ export default function FarmModalContent(props: Props) {
     kind: 'default' as AccountKind,
     isFarm: true,
   })
-
+  const primaryAsset = assets.find(byDenom(props.farm.denoms.primary))
+  const secondaryAsset = assets.find(byDenom(props.farm.denoms.secondary))
   const depositCapReachedCoins = useMemo(() => {
     if (!props.farm.cap) return [BNCoin.fromDenomAndBigNumber(displayAsset.denom, BN_ZERO)]
 
@@ -105,17 +104,17 @@ export default function FarmModalContent(props: Props) {
       )
 
     if (isOpen[0]) return null
-
+    if (!primaryAsset || !secondaryAsset) return null
     return (
       <FarmDepositSubTitle
         primaryAmount={
-          deposits.find((coin) => coin.denom === props.primaryAsset.denom)?.amount || BN_ZERO
+          deposits.find((coin) => coin.denom === primaryAsset.denom)?.amount || BN_ZERO
         }
         secondaryAmount={
-          deposits.find((coin) => coin.denom === props.secondaryAsset.denom)?.amount || BN_ZERO
+          deposits.find((coin) => coin.denom === secondaryAsset.denom)?.amount || BN_ZERO
         }
-        primaryAsset={props.primaryAsset}
-        secondaryAsset={props.secondaryAsset}
+        primaryAsset={primaryAsset}
+        secondaryAsset={secondaryAsset}
         displayCurrency={displayCurrency}
       />
     )
@@ -134,6 +133,7 @@ export default function FarmModalContent(props: Props) {
     return <FarmBorrowingsSubTitle borrowings={addedDebts} displayCurrency={displayCurrency} />
   }
 
+  if (!primaryAsset || !secondaryAsset) return null
   return (
     <div
       className={classNames(
@@ -150,8 +150,8 @@ export default function FarmModalContent(props: Props) {
               <FarmDeposit
                 deposits={depositCoins}
                 onChangeDeposits={onChangeDeposits}
-                primaryAsset={props.primaryAsset}
-                secondaryAsset={props.secondaryAsset}
+                primaryAsset={primaryAsset}
+                secondaryAsset={secondaryAsset}
                 account={props.account}
                 toggleOpen={toggleOpen}
                 isCustomRatio={isCustomRatio}
@@ -170,8 +170,8 @@ export default function FarmModalContent(props: Props) {
                 account={props.account}
                 borrowings={borrowCoins}
                 deposits={deposits}
-                primaryAsset={props.primaryAsset}
-                secondaryAsset={props.secondaryAsset}
+                primaryAsset={primaryAsset}
+                secondaryAsset={secondaryAsset}
                 onChangeBorrowings={onChangeBorrowings}
                 farm={props.farm}
                 depositActions={depositActions}

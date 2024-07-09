@@ -19,7 +19,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountLeverage, cloneAccount } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { SWAP_FEE_BUFFER } from 'utils/constants'
-import { getFarmSharesFromCoinsValue } from 'utils/farms'
+import { getFarmCoinsFromShares, getFarmSharesFromCoinsValue } from 'utils/farms'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
 
@@ -35,6 +35,7 @@ export function useUpdatedAccount(account?: Account) {
   const [slippage] = useSlippage()
   const [addedDeposits, addDeposits] = useState<BNCoin[]>([])
   const [removedDeposits, removeDeposits] = useState<BNCoin[]>([])
+  const [removedStakedAstroLps, removeStakedAstroLps] = useState<BNCoin[]>([])
   const [addedDebts, addDebts] = useState<BNCoin[]>([])
   const [removedDebts, removeDebts] = useState<BNCoin[]>([])
   const [addedVaultValues, addVaultValues] = useState<VaultValue[]>([])
@@ -148,6 +149,23 @@ export function useUpdatedAccount(account?: Account) {
       }
     },
     [account, removeDeposits, removeLends, addDebts],
+  )
+
+  const simulateUnstakeAstroLp = useCallback(
+    (isLendAction: boolean, shares: BNCoin, farm: Farm) => {
+      if (!account) return
+      addDeposits([])
+      addLends([])
+
+      const shareCoins = getFarmCoinsFromShares(shares, farm, assets)
+      removeStakedAstroLps([shares])
+      if (isLendAction) {
+        addLends(shareCoins)
+        return
+      }
+      addDeposits(shareCoins)
+    },
+    [account, assets],
   )
 
   const simulateTrade = useCallback(
@@ -373,6 +391,8 @@ export function useUpdatedAccount(account?: Account) {
     accountCopy.debts = removeCoins(removedDebts, [...accountCopy.debts])
     accountCopy.lends = addCoins(addedLends, [...accountCopy.lends])
     accountCopy.lends = removeCoins(removedLends, [...accountCopy.lends])
+    accountCopy.stakedAstroLps = removeCoins(removedStakedAstroLps, [...accountCopy.stakedAstroLps])
+
     setUpdatedAccount(accountCopy)
     setLeverage(calculateAccountLeverage(accountCopy, assets).toNumber())
     useStore.setState({ updatedAccount: accountCopy })
@@ -395,6 +415,7 @@ export function useUpdatedAccount(account?: Account) {
     addedPerpsVaultAmount,
     unlockingPerpsVaultAmount,
     addedStakedAstroLps,
+    removedStakedAstroLps,
   ])
 
   return {
@@ -408,15 +429,19 @@ export function useUpdatedAccount(account?: Account) {
     removeLends,
     addVaultValues,
     setUpdatedPerpPosition,
+    addStakedAstroLps,
+    removeStakedAstroLps,
     addedDeposits,
     addedDebts,
     addedLends,
     addedTrades,
+    addedStakedAstroLps,
     updatedPerpPosition,
     leverage,
     removedDeposits,
     removedDebts,
     removedLends,
+    removedStakedAstroLps,
     simulateBorrow,
     simulateDeposits,
     simulateHlsStakingDeposit,
@@ -430,5 +455,6 @@ export function useUpdatedAccount(account?: Account) {
     simulatePerps,
     simulatePerpsVaultDeposit,
     simulatePerpsVaultUnlock,
+    simulateUnstakeAstroLp,
   }
 }

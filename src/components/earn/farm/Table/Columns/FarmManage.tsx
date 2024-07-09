@@ -6,7 +6,6 @@ import useAccountId from 'hooks/accounts/useAccountId'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useSlippage from 'hooks/settings/useSlippage'
 import useStore from 'store'
-import { byDenom } from 'utils/array'
 
 export const MANAGE_META = { accessorKey: 'details', enableSorting: false, header: '' }
 
@@ -29,20 +28,21 @@ export default function FarmManage(props: Props) {
         farm: props.farm,
         isDeposited: true,
         selectedBorrowDenoms: [props.farm.denoms.secondary],
-        isCreate: false,
+        action: 'deposit',
       },
     })
   }, [props.farm])
 
-  const withdrawHandler = useCallback(async () => {
-    if (!accountId) return
-    setIsConfirming(true)
-    await withdrawFromFarms({
-      accountId: accountId,
-      farms: [props.farm],
-      amount: account?.stakedAstroLps.find(byDenom(props.farm.denoms.lp))?.amount.toString() ?? '0',
+  const withdrawHandler = useCallback(() => {
+    useStore.setState({
+      farmModal: {
+        farm: props.farm,
+        isDeposited: true,
+        selectedBorrowDenoms: [props.farm.denoms.secondary],
+        action: 'withdraw',
+      },
     })
-  }, [accountId, props.farm, withdrawFromFarms, account?.stakedAstroLps])
+  }, [props.farm])
 
   const ITEMS: DropDownItem[] = useMemo(
     () => [

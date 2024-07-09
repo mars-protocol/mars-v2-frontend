@@ -467,7 +467,6 @@ export default function createBroadcastSlice(
       actions: Action[]
       deposits: BNCoin[]
       borrowings: BNCoin[]
-      isCreate: boolean
       kind: AccountKind
     }) => {
       const msg: CreditManagerExecuteMsg = {

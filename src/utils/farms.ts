@@ -63,6 +63,19 @@ export function getFarmSharesFromCoinsValue(
   return coinsValue.dividedBy(farmAsset.price.amount).shiftedBy(farmAsset.decimals)
 }
 
+export function getFarmCoinsFromShares(farmShares: BNCoin, farm: Farm, assets: Asset[]): BNCoin[] {
+  const coins = [] as BNCoin[]
+  const farmValuesAndAmounts = getDepositedFarmFromStakedLpBNCoin(assets, farmShares, farm)
+  if (!farmValuesAndAmounts) return coins
+
+  coins.push(
+    BNCoin.fromDenomAndBigNumber(farm.denoms.primary, farmValuesAndAmounts.amounts.primary),
+    BNCoin.fromDenomAndBigNumber(farm.denoms.secondary, farmValuesAndAmounts.amounts.secondary),
+  )
+
+  return coins
+}
+
 export function getDepositedFarmFromStakedLpBNCoin(
   assets: Asset[],
   stakedAstroLp: BNCoin,
@@ -86,8 +99,8 @@ export function getDepositedFarmFromStakedLpBNCoin(
 
   const amountsAndValues: FarmValuesAndAmounts = {
     amounts: {
-      primary: primaryAssetAmount,
-      secondary: secondaryAssetAmount,
+      primary: primaryAssetAmount.integerValue(),
+      secondary: secondaryAssetAmount.integerValue(),
     },
     values: {
       primary: halfValue,

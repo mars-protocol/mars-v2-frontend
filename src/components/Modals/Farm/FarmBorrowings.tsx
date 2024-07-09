@@ -149,7 +149,6 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
       actions: props.depositActions,
       deposits: props.deposits,
       borrowings: props.borrowings,
-      isCreate: farmModal.isCreate,
       kind: 'default' as AccountKind,
     })
     useStore.setState({ farmModal: null })
