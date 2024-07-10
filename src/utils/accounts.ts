@@ -115,7 +115,7 @@ export const calculateAccountApr = (
   let totalLendsInterestValue = BN_ZERO
   let totalVaultsInterestValue = BN_ZERO
   let totalDebtInterestValue = BN_ZERO
-  let totalFarmInterestValue = BN_ZERO
+  let totalAstroStakedLpsValue = BN_ZERO
 
   if (isHls) {
     deposits?.forEach((deposit) => {
@@ -184,14 +184,14 @@ export const calculateAccountApr = (
     const farmApr = farm.apr ?? 0
     const farmValue = getCoinValue(stakedAstroLp, assets)
     const positionInterest = farmValue.multipliedBy(farmApr).dividedBy(100)
-    totalFarmInterestValue = totalFarmInterestValue.plus(positionInterest)
+    totalAstroStakedLpsValue = totalAstroStakedLpsValue.plus(positionInterest)
   })
 
   const totalInterestValue = totalLendsInterestValue
     .plus(totalVaultsInterestValue)
     .minus(totalDebtInterestValue)
     .plus(totalDepositsInterestValue)
-    .plus(totalFarmInterestValue)
+    .plus(totalAstroStakedLpsValue)
 
   return totalInterestValue.dividedBy(totalNetValue).times(100)
 }
