@@ -42,14 +42,7 @@ export default function useDepositLiquidity(props: Props): {
 
   const { primaryCoin, secondaryCoin, totalValue } = useMemo(() => {
     if (props.isFarm)
-      return getFarmDepositCoinsAndValue(
-        props.pool as Farm,
-        deposits,
-        borrowings,
-        reclaims,
-        slippage,
-        assets,
-      )
+      return getFarmDepositCoinsAndValue(props.pool as Farm, deposits, borrowings, reclaims, assets)
 
     return getVaultDepositCoinsAndValue(
       props.pool as Vault,

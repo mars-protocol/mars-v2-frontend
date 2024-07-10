@@ -283,13 +283,13 @@ export function useUpdatedAccount(account?: Account) {
       addDebts(borrowCoins)
 
       const coinsValue = getValueFromBNCoins(coins, assets)
-      const borrowValue = getValueFromBNCoins(borrowCoins, assets).times(1 - slippage)
+      const borrowValue = getValueFromBNCoins(borrowCoins, assets)
       const totalValue = coinsValue.plus(borrowValue)
       const shares = getFarmSharesFromCoinsValue(farm, totalValue, assets)
 
       addStakedAstroLps([BNCoin.fromDenomAndBigNumber(address, shares)])
     },
-    [account, assets, availableFarms, slippage],
+    [account, assets, availableFarms],
   )
 
   const simulatePerps = useCallback(

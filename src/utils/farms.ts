@@ -139,13 +139,12 @@ export function getFarmDepositCoinsAndValue(
   deposits: BNCoin[],
   borrowings: BNCoin[],
   reclaims: BNCoin[],
-  slippage: number,
   assets: Asset[],
 ) {
   const depositsAndReclaims = mergeBNCoinArrays(deposits, reclaims)
 
   const depositsAndReclaimsValue = getValueFromBNCoins(depositsAndReclaims, assets)
-  const borrowingValue = getValueFromBNCoins(borrowings, assets).times(1 - slippage)
+  const borrowingValue = getValueFromBNCoins(borrowings, assets)
 
   const totalValue = depositsAndReclaimsValue.plus(borrowingValue)
   const primaryAsset = assets.find(byDenom(farm.denoms.primary)) ?? assets[0]

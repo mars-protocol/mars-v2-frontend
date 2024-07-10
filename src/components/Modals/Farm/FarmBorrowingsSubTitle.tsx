@@ -55,7 +55,7 @@ export default function FarmBorrowingsSubTitle(props: Props) {
           coin={
             new BNCoin({
               denom: ORACLE_DENOM,
-              amount: borrowingValue.times(1 - slippage).toString(),
+              amount: borrowingValue.toString(),
             })
           }
           options={{ abbreviated: false, minDecimals: 2, maxDecimals: 2 }}
