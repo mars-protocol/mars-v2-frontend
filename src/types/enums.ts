@@ -1,7 +1,7 @@
 export enum DocURL {
   ADVANCED_TRADING_URL = 'https://docs.marsprotocol.io/docs/learn/mars-v2/trade/margin',
   BORROW_LENDING_URL = 'https://docs.marsprotocol.io/docs/learn/mars-v2/borrow',
-  CHANGE_LOG_URL = 'https://docs.marsprotocol.io/docs/overview/changelog',
+  FEATURE_URL = 'https://github.com/mars-protocol/mars-v2-frontend/releases/tag/',
   COOKIE_POLICY_URL = 'https://docs.marsprotocol.io/docs/overview/legal/cookie-policy',
   COUNCIL_LEAP = 'https://cosmos.leapwallet.io/chains/mars/governance',
   COUNCIL_STATION = 'https://station.terra.money/gov#PROPOSAL_STATUS_VOTING_PERIOD',
