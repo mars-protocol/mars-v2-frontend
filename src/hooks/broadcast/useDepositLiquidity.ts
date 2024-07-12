@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 
+import { BN_ZERO } from 'constants/math'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useLendEnabledAssets from 'hooks/assets/useLendEnabledAssets'
 import useSlippage from 'hooks/settings/useSlippage'
@@ -7,6 +8,7 @@ import useAutoLend from 'hooks/wallet/useAutoLend'
 import { BNCoin } from 'types/classes/BNCoin'
 import { AccountKind, Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getEnterFarmActions, getFarmDepositCoinsAndValue } from 'utils/farms'
+import { mergeBNCoinArrays } from 'utils/helpers'
 import { getLiquidityPoolSwapActions } from 'utils/liquidityPool'
 import { getEnterVaultActions, getVaultDepositCoinsAndValue } from 'utils/vaults'
 
@@ -74,12 +76,37 @@ export default function useDepositLiquidity(props: Props): {
     }))
   }, [borrowings])
 
-  const swapActions: Action[] = useMemo(
-    () => getLiquidityPoolSwapActions(props.pool, deposits, reclaims, borrowings, assets, slippage),
-    [props.pool, deposits, reclaims, borrowings, assets, slippage],
-  )
+  const swapActions: Action[] = useMemo(() => {
+    if (props.isFarm) {
+      const depositsAndReclaims = mergeBNCoinArrays(deposits, reclaims)
+      const allCoins = mergeBNCoinArrays(depositsAndReclaims, borrowings)
+      const hasOtherCoins =
+        allCoins.filter(
+          (coin) =>
+            coin.denom !== props.pool.denoms.primary && coin.denom !== props.pool.denoms.secondary,
+        ).length > 0
+      if (!hasOtherCoins) {
+        primaryCoin.amount =
+          allCoins.find((coin) => coin.denom === props.pool.denoms.primary)?.amount ?? BN_ZERO
+        secondaryCoin.amount =
+          allCoins.find((coin) => coin.denom === props.pool.denoms.secondary)?.amount ?? BN_ZERO
+        return []
+      }
+    }
+    return getLiquidityPoolSwapActions(props.pool, deposits, reclaims, borrowings, assets, slippage)
+  }, [
+    props.isFarm,
+    props.pool,
+    deposits,
+    reclaims,
+    borrowings,
+    assets,
+    slippage,
+    primaryCoin,
+    secondaryCoin,
+  ])
 
-  const enterVaultActions: Action[] = useMemo(() => {
+  const enterLiquidityPoolActions: Action[] = useMemo(() => {
     if (primaryCoin.amount.isZero() || secondaryCoin.amount.isZero()) return []
     if (props.isFarm)
       return getEnterFarmActions(props.pool as Farm, primaryCoin, secondaryCoin, slippage)
@@ -125,7 +152,7 @@ export default function useDepositLiquidity(props: Props): {
       ...reclaimActions,
       ...borrowActions,
       ...swapActions,
-      ...enterVaultActions,
+      ...enterLiquidityPoolActions,
       ...lendActions,
       ...refundActions,
     ]
@@ -134,7 +161,7 @@ export default function useDepositLiquidity(props: Props): {
     reclaimActions,
     borrowActions,
     swapActions,
-    enterVaultActions,
+    enterLiquidityPoolActions,
     lendActions,
     refundActions,
   ])
