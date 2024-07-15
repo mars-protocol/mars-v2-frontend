@@ -24,7 +24,7 @@
     "@delphi-labs/shuttle-react": "^3.24.0",
     "@keplr-wallet/cosmos": "^0.12.107",
     "@tailwindcss/container-queries": "^0.1.1",
-    "@tanstack/react-table": "^8.17.3",
+    "@tanstack/react-table": "^8.19.3",
     "@tippyjs/react": "^4.2.6",
     "bignumber.js": "^9.1.2",
     "classnames": "^2.5.1",
