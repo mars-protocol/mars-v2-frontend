@@ -108,11 +108,11 @@ async function fetchSortAndMapAllAssets(
       isPerpsEnabled: !!currentAssetPerpsParams,
       */
       isTradeEnabled:
-      /* USDC.axl EXCEPTION */
-      asset.denom === 'ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858' || (
-        asset.denom !== 'usd' &&
-        !currentAssetPoolInfo &&
-        (currentAssetParams?.red_bank.deposit_enabled || !currentAssetParams)),
+        /* USDC.axl EXCEPTION */
+        asset.denom === 'ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858' ||
+        (asset.denom !== 'usd' &&
+          !currentAssetPoolInfo &&
+          (currentAssetParams?.red_bank.deposit_enabled || !currentAssetParams)),
       poolInfo: currentAssetPoolInfo,
     }
   })
