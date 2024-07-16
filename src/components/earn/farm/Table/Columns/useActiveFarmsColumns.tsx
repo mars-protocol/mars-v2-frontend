@@ -57,5 +57,5 @@ export default function useActiveFarmsColumns(assets: Asset[]) {
         cell: ({ row }) => <FarmManage farm={row.original} isExpanded={row.getIsExpanded()} />,
       },
     ]
-  }, [])
+  }, [assets])
 }

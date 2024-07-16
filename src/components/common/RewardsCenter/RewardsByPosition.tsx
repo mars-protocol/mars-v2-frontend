@@ -9,7 +9,7 @@ interface Props {
   active: boolean
 }
 
-export default function RewardsByToken(props: Props) {
+export default function RewardsByPosition(props: Props) {
   const { rewards, assets, active } = props
 
   if (rewards.length === 0 || !active) return null
@@ -17,7 +17,7 @@ export default function RewardsByToken(props: Props) {
   return (
     <React.Fragment>
       <Text size='xs' className='w-full'>
-        Breakdown by Token
+        Breakdown by Position
       </Text>
       <div className='flex flex-wrap w-full gap-2'>
         {rewards.map((reward) => {

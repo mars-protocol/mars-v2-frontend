@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.32.4",
-    "@delphi-labs/shuttle-react": "^3.27.0",
+    "@delphi-labs/shuttle-react": "^3.28.0",
     "@keplr-wallet/cosmos": "^0.12.111",
     "@tailwindcss/container-queries": "^0.1.1",
     "@tanstack/react-table": "^8.19.3",
@@ -41,7 +41,7 @@
     "react-draggable": "^4.4.6",
     "react-helmet-async": "^2.0.5",
     "react-qr-code": "^2.0.15",
-    "react-router-dom": "^6.24.1",
+    "react-router-dom": "^6.25.0",
     "react-spring": "^9.7.3",
     "react-toastify": "^10.0.5",
     "react-use-clipboard": "^1.0.9",
@@ -61,8 +61,8 @@
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
     "@types/react-helmet": "^6.1.11",
-    "@typescript-eslint/eslint-plugin": "^7.16.0",
-    "@typescript-eslint/parser": "^7.16.0",
+    "@typescript-eslint/eslint-plugin": "^7.16.1",
+    "@typescript-eslint/parser": "^7.16.1",
     "autoprefixer": "^10.4.19",
     "dotenv": "^16.4.5",
     "dotenv-cli": "^7.4.2",
@@ -79,9 +79,9 @@
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.5",
     "shelljs": "^0.8.5",
-    "tailwindcss": "^3.4.4",
+    "tailwindcss": "^3.4.5",
     "typescript": "^5.5.3",
-    "typescript-eslint": "^7.16.0"
+    "typescript-eslint": "^7.16.1"
   },
   "engines": {
     "npm": "please-use-yarn",

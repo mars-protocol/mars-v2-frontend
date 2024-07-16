@@ -73,7 +73,7 @@ export default function AccountSummary(props: Props) {
     (index: number) => {
       setAccountSummaryTabs(
         defaultSetting.map((_, i) =>
-          i === index ? !accountSummaryTabs[i] ?? true : accountSummaryTabs[i] ?? false,
+          i === index ? (!accountSummaryTabs[i] ?? true) : (accountSummaryTabs[i] ?? false),
         ),
       )
     },

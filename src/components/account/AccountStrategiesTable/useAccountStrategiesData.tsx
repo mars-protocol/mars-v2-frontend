@@ -53,8 +53,8 @@ export default function useAccountStrategiesData(props: Props) {
         const farm = availableFarms.find((farm) => farm.denoms.lp === lp.denom)
         if (!farm) return
         const prevFarm = updatedAccount
-          ? updatedAccount.stakedAstroLps?.find(byDenom(lp.denom)) ??
-            BNCoin.fromDenomAndBigNumber(lp.denom, BN_ZERO)
+          ? (updatedAccount.stakedAstroLps?.find(byDenom(lp.denom)) ??
+            BNCoin.fromDenomAndBigNumber(lp.denom, BN_ZERO))
           : lp
 
         const depositedFarm = getDepositedFarmFromStakedLpBNCoin(assets, lp, farm)

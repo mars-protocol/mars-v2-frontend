@@ -1240,6 +1240,7 @@ interface Settings {
   updateOracle: boolean
   chartInterval: import('utils/charting_library').ResolutionString
   theme: string
+  rewardsCenterType: import('types/enums').RewardsCenterType
 }
 
 interface KeyValuePair {
@@ -1457,4 +1458,9 @@ interface PoolInfo {
   rewards: AstroportPoolReward[]
   yield: PoolYield
   weight: PoolWeight
+}
+
+interface SwitchOption {
+  text: string
+  value: string
 }

@@ -1,10 +1,13 @@
 import classNames from 'classnames'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import Button from 'components/common/Button'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { Logo } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
+import RewardsByPosition from 'components/common/RewardsCenter/RewardsByPosition'
+import RewardsByToken from 'components/common/RewardsCenter/RewardsByToken'
+import SwitchWithText from 'components/common/Switch/SwitchWithText'
 import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
@@ -12,20 +15,28 @@ import useAccountId from 'hooks/accounts/useAccountId'
 import useAssets from 'hooks/assets/useAssets'
 import useToggle from 'hooks/common/useToggle'
 import useUnclaimedRewards from 'hooks/incentives/useUnclaimedRewards'
+import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
+import useRewardsCenterType from 'hooks/localStorage/useRewardsCenterType'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
+import { ChainInfoID, RewardsCenterType } from 'types/enums'
 import { getCoinValue } from 'utils/formatters'
-import RewardsByToken from './RewardsByToken'
 
 interface Props {
   className?: string
 }
 export default function RewardsCenter(props: Props) {
   const accountId = useAccountId()
+  const [currentChainId, _] = useCurrentChainId()
+  const [rewardsCenterType, setRewardCenterType] = useRewardsCenterType()
   const [showRewardsCenter, setShowRewardsCenter] = useToggle()
   const [isConfirming, setIsConfirming] = useState(false)
   const { data: unclaimedRewards } = useUnclaimedRewards()
   const { data: assets } = useAssets()
+  const isNeutron = useMemo(
+    () => currentChainId === ChainInfoID.Neutron1 || currentChainId === ChainInfoID.Pion1,
+    [currentChainId],
+  )
   const totalRewardsCoin = useMemo(() => {
     const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, BN_ZERO)
     unclaimedRewards.forEach((reward) => {
@@ -43,7 +54,11 @@ export default function RewardsCenter(props: Props) {
       accountId: accountId || '',
     })
     setIsConfirming(false)
-  }, [accountId])
+  }, [accountId, claimRewards])
+
+  useEffect(() => {
+    if (!isNeutron) setRewardCenterType(RewardsCenterType.Token)
+  }, [isNeutron, rewardsCenterType, setRewardCenterType])
 
   return (
     <div className={classNames('relative', props.className)}>
@@ -76,16 +91,37 @@ export default function RewardsCenter(props: Props) {
           </Text>
         </div>
         <div className='flex flex-col w-full gap-4 px-4 py-5'>
+          {isNeutron && (
+            <SwitchWithText
+              options={[
+                { text: 'By Token', value: RewardsCenterType.Token },
+                { text: 'By Position', value: RewardsCenterType.Position },
+              ]}
+              selected={rewardsCenterType}
+              onChange={(value) => setRewardCenterType(value as RewardsCenterType)}
+              name='rewardsCenterType'
+              className='w-full'
+            />
+          )}
           <Text size='xs' className='w-full'>
             Total Rewards
           </Text>
-          <div className='flex flex-wrap content-center justify-center w-full gap-1 p-4 rounded-lg bg-black/20'>
+          <div className='flex flex-wrap content-center justify-center w-full gap-1 p-4 rounded-md bg-black/20'>
             <DisplayCurrency coin={totalRewardsCoin} allowZeroAmount className='text-2xl' />
             <Text size='xs' className='w-full text-center text-white/60'>
               Unclaimed Rewards
             </Text>
           </div>
-          <RewardsByToken rewards={unclaimedRewards} assets={assets} />
+          <RewardsByToken
+            rewards={unclaimedRewards}
+            assets={assets}
+            active={rewardsCenterType === RewardsCenterType.Token || !isNeutron}
+          />
+          <RewardsByPosition
+            rewards={unclaimedRewards}
+            assets={assets}
+            active={rewardsCenterType === RewardsCenterType.Position}
+          />
           <Button
             className='w-full'
             onClick={() => handleClick()}
