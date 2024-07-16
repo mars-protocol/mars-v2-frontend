@@ -899,7 +899,7 @@ interface BroadcastSlice {
     borrowToWallet: boolean
   }) => Promise<boolean>
   changeHlsStakingLeverage: (options: { accountId: string; actions: Action[] }) => Promise<boolean>
-  claimRewards: (options: { accountId: string }) => ExecutableTx
+  claimRewards: (options: { accountId: string }) => Promise<boolean>
   closeHlsStakingPosition: (options: { accountId: string; actions: Action[] }) => Promise<boolean>
   createAccount: (
     accountKind: import('types/generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind,

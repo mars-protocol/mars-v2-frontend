@@ -231,7 +231,7 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
-    claimRewards: (options: { accountId: string }) => {
+    claimRewards: async (options: { accountId: string }) => {
       const isV1 = get().isV1
       const creditManagerMsg: CreditManagerExecuteMsg = {
         update_credit_account: {
@@ -251,27 +251,20 @@ export default function createBroadcastSlice(
         ? get().chainConfig.contracts.incentives
         : get().chainConfig.contracts.creditManager
 
-      const messages = [
-        generateExecutionMessage(
-          get().address,
-          contract,
-          isV1 ? incentivesMsg : creditManagerMsg,
-          [],
-        ),
-      ]
-      const estimateFee = () => getEstimatedFee(messages)
+      const response = get().executeMsg({
+        messages: [
+          generateExecutionMessage(
+            get().address,
+            contract,
+            isV1 ? incentivesMsg : creditManagerMsg,
+            [],
+          ),
+        ],
+      })
 
-      const execute = async () => {
-        const response = get().executeMsg({
-          messages,
-        })
+      get().handleTransaction({ response })
 
-        get().handleTransaction({ response })
-
-        return response.then((response) => !!response.result)
-      }
-
-      return { estimateFee, execute }
+      return response.then((response) => !!response.result)
     },
     deposit: async (options: { accountId: string; coins: BNCoin[]; lend: boolean }) => {
       const msg: CreditManagerExecuteMsg = {

@@ -16,6 +16,8 @@ import Header from 'components/header/Header'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAccountId from 'hooks/accounts/useAccountId'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { debugSWR } from 'utils/middleware'
@@ -54,6 +56,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const focusComponent = useStore((s) => s.focusComponent)
   const mobileNavExpanded = useStore((s) => s.mobileNavExpanded)
   const address = useStore((s) => s.address)
+  const [currentChainId, setCurrentChainId] = useCurrentChainId()
+  const chainConfig = useChainConfig()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
@@ -71,6 +75,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     const root = window.document.documentElement
     root.setAttribute('data-theme', theme)
   }, [])
+
+  useEffect(() => {
+    if (currentChainId !== chainConfig.id) {
+      setCurrentChainId(chainConfig.id)
+    }
+  }, [chainConfig.id, currentChainId, setCurrentChainId])
 
   return (
     <>
