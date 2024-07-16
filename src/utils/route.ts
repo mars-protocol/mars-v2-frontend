@@ -14,7 +14,7 @@ export function getRoute(
 
   nextUrl += `/${page}`
 
-  let url = new URL(nextUrl, 'https://app.marsprotocol.io')
+  const url = new URL(nextUrl, 'https://app.marsprotocol.io')
 
   Array.from(searchParams?.entries() || []).map(([key, value]) =>
     url.searchParams.append(key, value),

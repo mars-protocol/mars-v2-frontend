@@ -24,7 +24,8 @@ export const FormattedNumber = React.memo(
     )
     const prevAmountRef = useRef<number>(0)
 
-    let { options, smallerThanThreshold } = props
+    let options = props.options
+    const smallerThanThreshold = props.smallerThanThreshold
 
     if (smallerThanThreshold) {
       if (!options) options = { prefix: '< ' }

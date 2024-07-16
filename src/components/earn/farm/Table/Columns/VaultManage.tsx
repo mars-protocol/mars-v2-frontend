@@ -16,7 +16,7 @@ interface Props {
   isPerps: boolean
 }
 
-export default function Manage(props: Props) {
+export default function VaultManage(props: Props) {
   const accountId = useAccountId()
   const address = useStore((s) => s.address)
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)

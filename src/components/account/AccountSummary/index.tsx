@@ -11,8 +11,9 @@ import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendi
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
-import useAssets from 'hooks/assets/useAssets'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import useFarmAprs from 'hooks/farms/useFarmAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -40,7 +41,8 @@ export default function AccountSummary(props: Props) {
     defaultSetting,
   )
   const { data: vaultAprs } = useVaultAprs()
-  const { data: assets } = useAssets()
+  const farmAprs = useFarmAprs()
+  const assets = useWhitelistedAssets()
   const updatedAccount = useStore((s) => s.updatedAccount)
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
@@ -75,7 +77,7 @@ export default function AccountSummary(props: Props) {
         ),
       )
     },
-    [accountSummaryTabs, setAccountSummaryTabs],
+    [accountSummaryTabs, setAccountSummaryTabs, defaultSetting],
   )
 
   const apr = useMemo(
@@ -87,6 +89,7 @@ export default function AccountSummary(props: Props) {
         hlsStrategies,
         assets,
         vaultAprs,
+        farmAprs,
         account.kind === 'high_levered_strategy',
       ),
     [
@@ -97,6 +100,7 @@ export default function AccountSummary(props: Props) {
       hlsStrategies,
       assets,
       vaultAprs,
+      farmAprs,
     ],
   )
 
@@ -131,7 +135,9 @@ export default function AccountSummary(props: Props) {
       !!account.vaults.length ||
       !!updatedAccount?.vaults.length ||
       !!account.perpsVault ||
-      !!updatedAccount?.perpsVault
+      !!updatedAccount?.perpsVault ||
+      !!account.stakedAstroLps.length ||
+      !!updatedAccount?.stakedAstroLps.length
 
     if (showStrategies)
       itemsArray.push({

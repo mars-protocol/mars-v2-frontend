@@ -1,5 +1,5 @@
 /* tslint:disable */
-/* eslint-disable */
+
 /**
  * @param {HealthComputer} c
  * @returns {HealthValuesResponse}

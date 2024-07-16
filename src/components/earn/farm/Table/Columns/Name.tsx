@@ -1,8 +1,8 @@
-import { VaultStatus } from 'types/enums'
 import AssetImage from 'components/common/assets/AssetImage'
 import DoubleLogo from 'components/common/DoubleLogo'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import useAsset from 'hooks/assets/useAsset'
+import { VaultStatus } from 'types/enums'
 
 export const NAME_META = {
   id: 'name',
@@ -11,13 +11,13 @@ export const NAME_META = {
   meta: { className: 'min-w-50' },
 }
 interface Props {
-  vault: Vault | DepositedVault
+  vault: Vault | DepositedVault | Farm | DepositedFarm
 }
 
 export default function Name(props: Props) {
   const { vault } = props
   const timeframe = vault.lockup.timeframe[0]
-  const unlockDuration = !!timeframe ? ` - (${vault.lockup.duration}${timeframe})` : ''
+  const unlockDuration = timeframe ? ` - (${vault.lockup.duration}${timeframe})` : ''
   const primaryAsset = useAsset(vault.denoms.primary)
   let status: VaultStatus = VaultStatus.ACTIVE
   if ('status' in vault) {

@@ -50,7 +50,7 @@ export default function AssetsSelect(props: Props) {
         market: markets.find((market) => market.asset.denom === asset.denom),
       }
     })
-  }, [balances, assets, markets, getCoinValue])
+  }, [balances, assets, markets])
 
   useEffect(() => {
     const selectedAssets = assets.filter((_, index) => selected[index])

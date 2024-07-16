@@ -1,8 +1,9 @@
 import {
   AccountDeleteController,
-  AddVaultBorrowAssetsModal,
+  AddLiquidityPoolAssetsModal,
   AlertDialogController,
   BorrowModal,
+  FarmModal,
   FundAndWithdrawModal,
   GetStartedModal,
   HlsManageModal,
@@ -22,13 +23,14 @@ export default function ModalsContainer() {
   return (
     <>
       <AccountDeleteController />
-      <AddVaultBorrowAssetsModal />
+      <AddLiquidityPoolAssetsModal />
       <BorrowModal />
       <FundAndWithdrawModal />
       <GetStartedModal />
       <LendAndReclaimModalController />
       <SettingsModal />
       <UnlockModal />
+      <FarmModal />
       <VaultModal />
       <WithdrawFromVaultsModal />
       <WalletAssets />

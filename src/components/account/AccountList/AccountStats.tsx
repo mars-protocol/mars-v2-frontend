@@ -9,6 +9,7 @@ import SwitchAutoLend from 'components/common/Switch/SwitchAutoLend'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import useAccount from 'hooks/accounts/useAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useFarmAprs from 'hooks/farms/useFarmAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
@@ -27,7 +28,7 @@ export default function AccountStats(props: Props) {
   const { data: account } = useAccount(accountId)
   const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
-
+  const farmAprs = useFarmAprs()
   const positionBalance = useMemo(
     () => (!account ? null : calculateAccountBalanceValue(account, assets)),
     [account, assets],
@@ -52,9 +53,10 @@ export default function AccountStats(props: Props) {
             hlsStrategies,
             assets,
             vaultAprs,
+            farmAprs,
             account.kind === 'high_levered_strategy',
           ),
-    [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, vaultAprs],
+    [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, vaultAprs, farmAprs],
   )
 
   const deleteAccountHandler = useCallback(() => {

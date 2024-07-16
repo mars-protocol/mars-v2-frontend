@@ -13,6 +13,7 @@ import { BN_ZERO } from 'constants/math'
 import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useFarmAprs from 'hooks/farms/useFarmAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -32,6 +33,7 @@ export default function PortfolioCard(props: Props) {
   const { data: account } = useAccount(props.accountId)
   const { health, healthFactor } = useHealthComputer(account)
   const { address: urlAddress } = useParams()
+  const farmAprs = useFarmAprs()
   const currentAccountId = useAccountId()
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const data = useBorrowMarketAssetsTableData()
@@ -45,7 +47,7 @@ export default function PortfolioCard(props: Props) {
     DEFAULT_SETTINGS.reduceMotion,
   )
 
-  const [deposits, lends, debts, vaults] = useMemo(() => {
+  const [deposits, lends, debts, vaults, stakedAstroLps] = useMemo(() => {
     if (!assets.length || !account) return Array(4).fill(BN_ZERO)
     return getAccountPositionValues(account, assets)
   }, [account, assets])
@@ -64,9 +66,10 @@ export default function PortfolioCard(props: Props) {
       hlsStrategies,
       assets,
       vaultAprs,
+      farmAprs,
       account.kind === 'high_levered_strategy',
     )
-  }, [lendingAssets, borrowAssets, account, hlsStrategies, assets, vaultAprs])
+  }, [lendingAssets, borrowAssets, account, hlsStrategies, assets, vaultAprs, farmAprs])
 
   const stats: { title: ReactNode; sub: string }[] = useMemo(() => {
     const isLoaded = account && assets.length && apr !== null
@@ -74,7 +77,7 @@ export default function PortfolioCard(props: Props) {
       {
         title: isLoaded ? (
           <FormattedNumber
-            amount={deposits.plus(lends).plus(vaults).minus(debts).toNumber()}
+            amount={deposits.plus(lends).plus(vaults).plus(stakedAstroLps).minus(debts).toNumber()}
             options={{ prefix: '$' }}
           />
         ) : (
@@ -99,7 +102,7 @@ export default function PortfolioCard(props: Props) {
         sub: 'APR',
       },
     ]
-  }, [account, assets, deposits, lends, vaults, debts, leverage, apr])
+  }, [account, assets, deposits, lends, vaults, stakedAstroLps, debts, leverage, apr])
 
   if (!account) {
     return (

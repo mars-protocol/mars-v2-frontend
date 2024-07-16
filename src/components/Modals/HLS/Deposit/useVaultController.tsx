@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react'
 
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
-import useDepositVault from 'hooks/broadcast/useDepositVault'
+import useDepositLiquidity from 'hooks/broadcast/useDepositLiquidity'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useDepositHlsVault from 'hooks/hls/useDepositHlsVault'
 import useStore from 'store'
@@ -31,8 +31,8 @@ export default function useVaultController(props: Props) {
     borrowDenom: borrowMarket.asset.denom,
   })
 
-  const { actions } = useDepositVault({
-    vault,
+  const { actions } = useDepositLiquidity({
+    pool: vault,
     reclaims: [],
     deposits: [BNCoin.fromDenomAndBigNumber(collateralAsset.denom, depositAmount)],
     borrowings: [BNCoin.fromDenomAndBigNumber(borrowMarket.asset.denom, borrowAmount)],

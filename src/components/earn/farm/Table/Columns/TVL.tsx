@@ -10,7 +10,6 @@ interface Props {
 
 export default function TVL(props: Props) {
   if (!props.denom || !props.amount) return null
-
   const coin = BNCoin.fromDenomAndBigNumber(props.denom, props.amount)
 
   return <DisplayCurrency coin={coin} className='text-xs' />

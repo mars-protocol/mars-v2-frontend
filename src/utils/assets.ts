@@ -59,7 +59,7 @@ export function getAssetSymbolByDenom(denom: string, assets: Asset[]) {
   return asset?.symbol ?? getSymbolFromUnknownAssetDenom(denom)
 }
 
-function getSymbolFromUnknownAssetDenom(denom: string) {
+export function getSymbolFromUnknownAssetDenom(denom: string) {
   const denomParts = denom.split('/')
   if (denomParts[0] === 'factory') return denomParts[denomParts.length - 1].toUpperCase()
   return 'UNKNOWN'

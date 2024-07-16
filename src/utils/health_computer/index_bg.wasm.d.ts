@@ -1,5 +1,5 @@
 /* tslint:disable */
-/* eslint-disable */
+
 export const memory: WebAssembly.Memory
 export function compute_health_js(a: number): number
 export function max_withdraw_estimate_js(a: number, b: number, c: number, d: number): void

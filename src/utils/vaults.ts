@@ -28,7 +28,7 @@ export function getVaultDepositCoinsAndValue(
   const primaryAsset = assets.find(byDenom(vault.denoms.primary)) ?? assets[0]
   const secondaryAsset = assets.find(byDenom(vault.denoms.secondary)) ?? assets[0]
 
-  // The buffer is needed as sometimes the pools are a bit skew, or because of other inaccuracies in the messages
+  // The buffer is needed as sometimes the vaults are a bit skew, or because of other inaccuracies in the messages
   const primaryDepositAmount = halfValue
     .dividedBy(getTokenPrice(primaryAsset.denom, assets))
     .shiftedBy(primaryAsset.decimals)

@@ -402,6 +402,88 @@ export default function createBroadcastSlice(
       get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
+    withdrawFromFarms: async (options: {
+      accountId: string
+      farms: DepositedFarm[]
+      amount: string
+    }) => {
+      const actions: CreditManagerAction[] = []
+
+      options.farms.forEach((farm) => {
+        const coin = BNCoin.fromCoin({
+          denom: farm.denoms.lp,
+          amount: options.amount,
+        }).toActionCoin()
+
+        actions.push({
+          unstake_astro_lp: {
+            lp_token: coin,
+          },
+        })
+        actions.push({
+          withdraw_liquidity: {
+            lp_token: coin,
+            slippage: '0',
+          },
+        })
+      })
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions,
+        },
+      }
+
+      if (checkAutoLendEnabled(options.accountId, get().chainConfig.id)) {
+        for (const farm of options.farms) {
+          for (const symbol of Object.values(farm.symbols)) {
+            const asset = get().assets.find(bySymbol(symbol))
+            if (asset?.isAutoLendEnabled) {
+              msg.update_credit_account.actions.push({
+                lend: { denom: asset.denom, amount: 'account_balance' },
+              })
+            }
+          }
+        }
+      }
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+      })
+
+      get().handleTransaction({ response })
+      return response.then((response) => !!response.result)
+    },
+    depositIntoFarm: async (options: {
+      accountId: string
+      actions: Action[]
+      deposits: BNCoin[]
+      borrowings: BNCoin[]
+      kind: AccountKind
+    }) => {
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: options.actions,
+        },
+      }
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const response = get().executeMsg({
+        messages: [
+          generateExecutionMessage(
+            get().address,
+            cmContract,
+            msg,
+            options.kind === 'default' ? [] : options.deposits.map((coin) => coin.toCoin()),
+          ),
+        ],
+      })
+      get().handleTransaction({ response })
+      return response.then((response) => !!response.result)
+    },
+
     withdraw: async (options: {
       accountId: string
       coins: Array<{ coin: BNCoin; isMax?: boolean }>

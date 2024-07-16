@@ -6,15 +6,15 @@ import DepositCap, {
   DEPOSIT_CAP_META,
   depositCapSortingFn,
 } from 'components/earn/farm/Table/Columns/DepositCap'
-import Manage, { MANAGE_META } from 'components/earn/farm/Table/Columns/Manage'
+import VaultManage, { MANAGE_META } from 'components/earn/farm/Table/Columns/VaultManage'
 import MaxLTV, { LTV_MAX_META } from 'components/earn/farm/Table/Columns/MaxLTV'
 import Name, { NAME_META } from 'components/earn/farm/Table/Columns/Name'
-import PositionValue, {
-  POSITION_VALUE_META,
-} from 'components/earn/farm/Table/Columns/PositionValue'
 import TVL, { TVL_META } from 'components/earn/farm/Table/Columns/TVL'
+import VaultPositionValue, {
+  POSITION_VALUE_META,
+} from 'components/earn/farm/Table/Columns/VaultPositionValue'
 
-export default function useActiveColumns() {
+export default function useActiveVaultsColumns() {
   return useMemo<ColumnDef<DepositedVault>[]>(() => {
     return [
       {
@@ -24,7 +24,7 @@ export default function useActiveColumns() {
       {
         ...POSITION_VALUE_META,
         cell: ({ row }: { row: Row<DepositedVault> }) => (
-          <PositionValue vault={row.original as DepositedVault} />
+          <VaultPositionValue vault={row.original as DepositedVault} />
         ),
       },
       {
@@ -55,7 +55,7 @@ export default function useActiveColumns() {
       {
         ...MANAGE_META,
         cell: ({ row }) => (
-          <Manage
+          <VaultManage
             vault={row.original}
             isExpanded={row.getIsExpanded()}
             isPerps={row.original.type === 'perp'}
