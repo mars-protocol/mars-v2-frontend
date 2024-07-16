@@ -1,7 +1,6 @@
-import { useCallback, useMemo } from 'react'
-
 import DropDownButton from 'components/common/Button/DropDownButton'
 import { HandCoins, Plus } from 'components/common/Icons'
+import { useCallback, useMemo } from 'react'
 import useStore from 'store'
 
 export const MANAGE_META = {
@@ -29,20 +28,28 @@ export default function Manage(props: Props) {
     })
   }, [props.data])
 
+  const isNotUSDCAxelar =
+    props.data.asset.denom !==
+    'ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858'
+
   const ITEMS: DropDownItem[] = useMemo(
     () => [
-      {
-        icon: <Plus />,
-        text: 'Borrow more',
-        onClick: borrowHandler,
-      },
+      ...(isNotUSDCAxelar
+        ? [
+            {
+              icon: <Plus />,
+              text: 'Borrow more',
+              onClick: borrowHandler,
+            },
+          ]
+        : []),
       {
         icon: <HandCoins />,
         text: 'Repay',
         onClick: repayHandler,
       },
     ],
-    [borrowHandler, repayHandler],
+    [borrowHandler, repayHandler, isNotUSDCAxelar],
   )
 
   if (!address) return null
