@@ -14,7 +14,7 @@ import MaxLTV, { LTV_MAX_META } from 'components/earn/farm/Table/Columns/MaxLTV'
 import Name, { NAME_META } from 'components/earn/farm/Table/Columns/Name'
 import TVL, { TVL_META } from 'components/earn/farm/Table/Columns/TVL'
 
-export default function useActiveFarmsColumns() {
+export default function useActiveFarmsColumns(assets: Asset[]) {
   return useMemo<ColumnDef<DepositedFarm>[]>(() => {
     return [
       {
@@ -29,7 +29,7 @@ export default function useActiveFarmsColumns() {
       },
       {
         ...APY_META,
-        cell: ({ row }) => <FarmApy farm={row.original as DepositedFarm} />,
+        cell: ({ row }) => <FarmApy farm={row.original as Farm} assets={assets} />,
       },
       {
         ...TVL_META,
