@@ -3,11 +3,9 @@ import { useCallback, useMemo, useState } from 'react'
 
 import Button from 'components/common/Button'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import Divider from 'components/common/Divider'
 import { Logo } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
-import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAccountId from 'hooks/accounts/useAccountId'
@@ -16,8 +14,8 @@ import useToggle from 'hooks/common/useToggle'
 import useUnclaimedRewards from 'hooks/incentives/useUnclaimedRewards'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { byDenom } from 'utils/array'
 import { getCoinValue } from 'utils/formatters'
+import RewardsByToken from './RewardsByToken'
 
 interface Props {
   className?: string
@@ -45,7 +43,7 @@ export default function RewardsCenter(props: Props) {
       accountId: accountId || '',
     })
     setIsConfirming(false)
-  }, [])
+  }, [accountId])
 
   return (
     <div className={classNames('relative', props.className)}>
@@ -63,7 +61,7 @@ export default function RewardsCenter(props: Props) {
         </div>
       </Button>
       <Overlay
-        className={'mt-2 right-0 top-8 w-[320px] flex flex-wrap'}
+        className={'mt-2 right-0 top-8 w-[420px] flex flex-wrap'}
         show={showRewardsCenter}
         setShow={setShowRewardsCenter}
       >
@@ -82,22 +80,12 @@ export default function RewardsCenter(props: Props) {
             Total Rewards
           </Text>
           <div className='flex flex-wrap content-center justify-center w-full gap-1 p-4 rounded-lg bg-black/20'>
-            <DisplayCurrency coin={totalRewardsCoin} allowZeroAmount className='text-lg' />
+            <DisplayCurrency coin={totalRewardsCoin} allowZeroAmount className='text-2xl' />
             <Text size='xs' className='w-full text-center text-white/60'>
               Unclaimed Rewards
             </Text>
           </div>
-          {unclaimedRewards.length > 0 &&
-            unclaimedRewards.map((reward, index) => {
-              const asset = assets.find(byDenom(reward.denom))
-              if (!asset) return null
-              return (
-                <div className='w-full' key={index}>
-                  {index !== 0 && <Divider />}
-                  <AssetBalanceRow key={reward.denom} coin={reward} asset={asset} />
-                </div>
-              )
-            })}
+          <RewardsByToken rewards={unclaimedRewards} assets={assets} />
           <Button
             className='w-full'
             onClick={() => handleClick()}

@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
@@ -8,11 +9,12 @@ import { demagnify } from 'utils/formatters'
 interface Props {
   asset: Asset
   coin: BNCoin
+  className?: string
 }
 
 export default function AssetBalanceRow(props: Props) {
   return (
-    <div className='flex items-center w-full gap-4'>
+    <div className={classNames('flex items-center w-full gap-4', props.className)}>
       <AssetImage asset={props.asset} className='w-8 h-8' />
       <div className='flex flex-wrap flex-1'>
         <Text className='w-full'>{props.asset.symbol}</Text>
