@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import Button from 'components/common/Button'
 import Divider from 'components/common/Divider'
@@ -38,15 +38,6 @@ export default function WithdrawFromAccount(props: Props) {
   const { computeMaxBorrowAmount } = useHealthComputer(borrowAccount)
   const marketEnabledAssets = useTradeEnabledAssets()
   const balances = getMergedBalancesForAsset(account, marketEnabledAssets)
-  const maxWithdrawAmount = computeMaxWithdrawAmount(currentAsset.denom)
-  const maxWithdrawWithBorrowAmount = computeMaxBorrowAmount(currentAsset.denom, 'wallet').plus(
-    maxWithdrawAmount,
-  )
-  const isWithinBalance = amount.isLessThan(maxWithdrawAmount)
-  const withdrawAmount = isWithinBalance ? amount : maxWithdrawAmount
-  const debtAmount = isWithinBalance ? BN_ZERO : amount.minus(maxWithdrawAmount)
-  const max = withdrawWithBorrowing ? maxWithdrawWithBorrowAmount : maxWithdrawAmount
-
   const accountDeposit = account.deposits.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO
   const accountLent = account.lends.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO
   const shouldReclaim = amount.isGreaterThan(accountDeposit) && !accountLent.isZero()
@@ -54,6 +45,21 @@ export default function WithdrawFromAccount(props: Props) {
 
   const reclaimAmount = isReclaimingMaxAmount ? amount : amount.minus(accountDeposit)
 
+  const isUSDCAxelar = useMemo(
+    () =>
+      currentAsset.denom === 'ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858',
+    [currentAsset.denom],
+  )
+  const maxWithdrawAmount = isUSDCAxelar
+    ? (balances.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO)
+    : computeMaxWithdrawAmount(currentAsset.denom)
+  const maxWithdrawWithBorrowAmount = isUSDCAxelar
+    ? maxWithdrawAmount
+    : computeMaxBorrowAmount(currentAsset.denom, 'wallet').plus(maxWithdrawAmount)
+  const isWithinBalance = amount.isLessThan(maxWithdrawAmount)
+  const withdrawAmount = isWithinBalance ? amount : maxWithdrawAmount
+  const debtAmount = isWithinBalance ? BN_ZERO : amount.minus(maxWithdrawAmount)
+  const max = withdrawWithBorrowing ? maxWithdrawWithBorrowAmount : maxWithdrawAmount
   function onChangeAmount(val: BigNumber) {
     setAmount(val)
   }
@@ -120,13 +126,15 @@ export default function WithdrawFromAccount(props: Props) {
               Borrow assets from your Credit Account to withdraw to your wallet
             </Text>
           </div>
-          <div className='flex flex-wrap items-center justify-end'>
-            <Switch
-              name='borrow-to-wallet'
-              checked={withdrawWithBorrowing}
-              onChange={setWithdrawWithBorrowing}
-            />
-          </div>
+          {!isUSDCAxelar && (
+            <div className='flex flex-wrap items-center justify-end'>
+              <Switch
+                name='borrow-to-wallet'
+                checked={withdrawWithBorrowing}
+                onChange={setWithdrawWithBorrowing}
+              />
+            </div>
+          )}
         </div>
       </div>
       <Button onClick={onConfirm} className='w-full' text={'Withdraw'} rightIcon={<ArrowRight />} />
