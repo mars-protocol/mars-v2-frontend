@@ -1,9 +1,8 @@
-import { useMemo } from 'react'
-
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useMarkets from 'hooks/markets/useMarkets'
 import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
+import { useMemo } from 'react'
 
 export default function useBorrowMarketAssetsTableData() {
   const account = useCurrentAccount()
@@ -40,7 +39,10 @@ export default function useBorrowMarketAssetsTableData() {
 
     return {
       accountBorrowedAssets,
-      availableAssets,
+      availableAssets: availableAssets.filter(
+        (a) =>
+          a.asset.denom !== 'ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858',
+      ),
       allAssets: [...accountBorrowedAssets, ...availableAssets],
     }
   }, [account?.debts, markets, convertAmount])
