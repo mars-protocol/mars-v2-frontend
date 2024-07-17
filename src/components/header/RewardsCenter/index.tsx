@@ -39,6 +39,7 @@ export default function RewardsCenter(props: Props) {
     () => currentChainId === ChainInfoID.Neutron1 || currentChainId === ChainInfoID.Pion1,
     [currentChainId],
   )
+
   const { data: stakedAstroLpRewards } = useStakedAstroLpRewards()
   const currentLpRewards = useMemo(() => {
     if (stakedAstroLpRewards.length === 0) return []
@@ -50,14 +51,17 @@ export default function RewardsCenter(props: Props) {
     [unclaimedRewards, currentLpRewards],
   )
 
-  const totalRewardsCoin = useMemo(() => {
-    const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, BN_ZERO)
-    rewards.forEach((reward) => {
+  const rewardsValue = useMemo(() => {
+    return rewards.reduce((acc, reward) => {
       const value = getCoinValue(reward, assets)
-      coin.amount = coin.amount.plus(value)
-    })
-    return coin
-  }, [rewards, assets])
+      return acc.plus(value)
+    }, BN_ZERO)
+  }, [assets, rewards])
+
+  const rewardsValueCoin = useMemo(
+    () => BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, rewardsValue),
+    [rewardsValue],
+  )
 
   const claimRewards = useStore((s) => s.claimRewards)
 
@@ -85,7 +89,7 @@ export default function RewardsCenter(props: Props) {
         hasFocus={showRewardsCenter}
       >
         <div className='relative flex items-center h-fullx'>
-          <DisplayCurrency coin={totalRewardsCoin} allowZeroAmount />
+          <DisplayCurrency coin={rewardsValueCoin} allowZeroAmount />
         </div>
       </Button>
       <Overlay
@@ -120,7 +124,7 @@ export default function RewardsCenter(props: Props) {
             Total Rewards
           </Text>
           <div className='flex flex-wrap content-center justify-center w-full gap-1 p-4 rounded-md bg-black/20'>
-            <DisplayCurrency coin={totalRewardsCoin} allowZeroAmount className='text-2xl' />
+            <DisplayCurrency coin={rewardsValueCoin} allowZeroAmount className='text-2xl' />
             <Text size='xs' className='w-full text-center text-white/60'>
               Unclaimed Rewards
             </Text>
@@ -131,14 +135,15 @@ export default function RewardsCenter(props: Props) {
             active={rewardsCenterType === RewardsCenterType.Token || !isNeutron}
           />
           <RewardsByPosition
-            rewards={unclaimedRewards}
+            redBankRewards={unclaimedRewards}
+            stakedAstroLpRewards={stakedAstroLpRewards}
             assets={assets}
             active={rewardsCenterType === RewardsCenterType.Position}
           />
           <Button
             className='w-full'
             onClick={() => handleClick()}
-            disabled={totalRewardsCoin.amount.isZero()}
+            disabled={rewards.length === 0}
             showProgressIndicator={isConfirming}
           >
             Claim All Rewards

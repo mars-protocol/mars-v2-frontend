@@ -1465,7 +1465,7 @@ interface SwitchOption {
   value: string
 }
 
-interface StakedAstroLpIncentive {
+interface stakedAstroLpRewards {
   lp_denom: string
   rewards: BNCoin[]
 }
