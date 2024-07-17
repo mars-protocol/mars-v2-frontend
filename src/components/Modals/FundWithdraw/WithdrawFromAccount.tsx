@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import Button from 'components/common/Button'
 import Divider from 'components/common/Divider'
@@ -44,16 +44,11 @@ export default function WithdrawFromAccount(props: Props) {
   const isReclaimingMaxAmount = accountLent.isLessThanOrEqualTo(amount.minus(accountDeposit))
 
   const reclaimAmount = isReclaimingMaxAmount ? amount : amount.minus(accountDeposit)
-
-  const isUSDCAxelar = useMemo(
-    () =>
-      currentAsset.denom === 'ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858',
-    [currentAsset.denom],
-  )
-  const maxWithdrawAmount = isUSDCAxelar
+  const isDeprecatedAsset = currentAsset.isDeprecated
+  const maxWithdrawAmount = isDeprecatedAsset
     ? (balances.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO)
     : computeMaxWithdrawAmount(currentAsset.denom)
-  const maxWithdrawWithBorrowAmount = isUSDCAxelar
+  const maxWithdrawWithBorrowAmount = isDeprecatedAsset
     ? maxWithdrawAmount
     : computeMaxBorrowAmount(currentAsset.denom, 'wallet').plus(maxWithdrawAmount)
   const isWithinBalance = amount.isLessThan(maxWithdrawAmount)
@@ -119,14 +114,15 @@ export default function WithdrawFromAccount(props: Props) {
           warningMessages={[]}
         />
         <Divider className='my-6' />
-        <div className='flex flex-wrap w-full'>
-          <div className='flex flex-wrap flex-1'>
-            <Text className='w-full mb-1'>Withdraw with borrowing</Text>
-            <Text size='xs' className='text-white/50'>
-              Borrow assets from your Credit Account to withdraw to your wallet
-            </Text>
-          </div>
-          {!isUSDCAxelar && (
+        {!isDeprecatedAsset && (
+          <div className='flex flex-wrap w-full'>
+            <div className='flex flex-wrap flex-1'>
+              <Text className='w-full mb-1'>Withdraw with borrowing</Text>
+              <Text size='xs' className='text-white/50'>
+                Borrow assets from your Credit Account to withdraw to your wallet
+              </Text>
+            </div>
+
             <div className='flex flex-wrap items-center justify-end'>
               <Switch
                 name='borrow-to-wallet'
@@ -134,8 +130,8 @@ export default function WithdrawFromAccount(props: Props) {
                 onChange={setWithdrawWithBorrowing}
               />
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
       <Button onClick={onConfirm} className='w-full' text={'Withdraw'} rightIcon={<ArrowRight />} />
     </>

@@ -104,11 +104,11 @@ export default function Table<T>(props: Props<T>) {
                           )}
                         >
                           {header.column.getCanSort()
-                            ? {
+                            ? ({
                                 asc: <SortAsc size={16} />,
                                 desc: <SortDesc />,
                                 false: <SortNone />,
-                              }[header.column.getIsSorted() as string] ?? null
+                              }[header.column.getIsSorted() as string] ?? null)
                             : null}
                         </span>
                       )}

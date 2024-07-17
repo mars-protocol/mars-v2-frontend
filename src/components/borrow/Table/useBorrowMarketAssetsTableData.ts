@@ -39,10 +39,7 @@ export default function useBorrowMarketAssetsTableData() {
 
     return {
       accountBorrowedAssets,
-      availableAssets: availableAssets.filter(
-        (a) =>
-          a.asset.denom !== 'ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858',
-      ),
+      availableAssets: availableAssets.filter((a) => !a.asset.isDeprecated),
       allAssets: [...accountBorrowedAssets, ...availableAssets],
     }
   }, [account?.debts, markets, convertAmount])
