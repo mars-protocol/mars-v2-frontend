@@ -5,15 +5,16 @@ import Button from 'components/common/Button'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { Logo } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
-import RewardsByPosition from 'components/common/RewardsCenter/RewardsByPosition'
-import RewardsByToken from 'components/common/RewardsCenter/RewardsByToken'
 import SwitchWithText from 'components/common/Switch/SwitchWithText'
 import Text from 'components/common/Text'
+import RewardsByPosition from 'components/header/RewardsCenter/RewardsByPosition'
+import RewardsByToken from 'components/header/RewardsCenter/RewardsByToken'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAssets from 'hooks/assets/useAssets'
 import useToggle from 'hooks/common/useToggle'
+import useStakedAstroLpRewards from 'hooks/incentives/useStakedAstroLpRewards'
 import useUnclaimedRewards from 'hooks/incentives/useUnclaimedRewards'
 import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useRewardsCenterType from 'hooks/localStorage/useRewardsCenterType'
@@ -21,6 +22,7 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { ChainInfoID, RewardsCenterType } from 'types/enums'
 import { getCoinValue } from 'utils/formatters'
+import { mergeBNCoinArrays } from 'utils/helpers'
 
 interface Props {
   className?: string
@@ -37,14 +39,25 @@ export default function RewardsCenter(props: Props) {
     () => currentChainId === ChainInfoID.Neutron1 || currentChainId === ChainInfoID.Pion1,
     [currentChainId],
   )
+  const { data: stakedAstroLpRewards } = useStakedAstroLpRewards()
+  const currentLpRewards = useMemo(() => {
+    if (stakedAstroLpRewards.length === 0) return []
+    return stakedAstroLpRewards[0].rewards
+  }, [stakedAstroLpRewards])
+
+  const rewards = useMemo(
+    () => mergeBNCoinArrays(unclaimedRewards, currentLpRewards),
+    [unclaimedRewards, currentLpRewards],
+  )
+
   const totalRewardsCoin = useMemo(() => {
     const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, BN_ZERO)
-    unclaimedRewards.forEach((reward) => {
+    rewards.forEach((reward) => {
       const value = getCoinValue(reward, assets)
       coin.amount = coin.amount.plus(value)
     })
     return coin
-  }, [assets, unclaimedRewards])
+  }, [rewards, assets])
 
   const claimRewards = useStore((s) => s.claimRewards)
 
@@ -113,7 +126,7 @@ export default function RewardsCenter(props: Props) {
             </Text>
           </div>
           <RewardsByToken
-            rewards={unclaimedRewards}
+            rewards={rewards}
             assets={assets}
             active={rewardsCenterType === RewardsCenterType.Token || !isNeutron}
           />

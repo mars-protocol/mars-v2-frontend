@@ -29,6 +29,7 @@ export default function RewardsByToken(props: Props) {
               coin={reward}
               asset={asset}
               className='p-4 rounded-md bg-white/10'
+              small
             />
           )
         })}
