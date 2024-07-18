@@ -12,7 +12,7 @@ export default function AddFarmBorrowAssetsModal() {
   const vaultModal = useStore((s) => s.vaultModal)
   const astroLpModal = useStore((s) => s.astroLpModal)
   const [selectedDenoms, setSelectedDenoms] = useState<string[]>([])
-  const pool = vaultModal?.vault ?? astroLpModal?.astroLp
+  const farm = vaultModal?.vault ?? astroLpModal?.astroLp
   function onClose() {
     if (vaultModal) {
       useStore.setState({
@@ -31,7 +31,7 @@ export default function AddFarmBorrowAssetsModal() {
 
   const updateSelectedDenoms = useCallback((denoms: string[]) => setSelectedDenoms(denoms), [])
 
-  const showContent = modal && !!pool
+  const showContent = modal && !!farm
 
   if (!showContent) return null
   return (
@@ -43,7 +43,7 @@ export default function AddFarmBorrowAssetsModal() {
     >
       {showContent ? (
         <AddFarmAssetsModalContent
-          pool={pool}
+          farm={farm}
           defaultSelectedDenoms={modal.selectedDenoms}
           onChangeBorrowDenoms={updateSelectedDenoms}
         />
