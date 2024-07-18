@@ -4,6 +4,7 @@ import useAccountId from 'hooks/accounts/useAccountId'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useClients from 'hooks/chain/useClients'
 import { BNCoin } from 'types/classes/BNCoin'
+import { ChainInfoID } from 'types/enums'
 import {
   PaginationResponseForStakedLpPositionResponse,
   StakedLpPositionResponse,
@@ -19,8 +20,9 @@ export default function useStakedAstroLpRewards(lpDenom?: string) {
   const accountId = useAccountId()
   const chainConfig = useChainConfig()
   const clients = useClients()
+  const isOsmosis = chainConfig.id === ChainInfoID.Osmosis1
 
-  const enabled = !!clients && !!accountId
+  const enabled = !!clients && !!accountId && !isOsmosis
   const key = lpDenom
     ? `chains/${chainConfig.id}/accounts/${accountId}/staked-astro-lp-rewards/${lpDenom}`
     : `chains/${chainConfig.id}/accounts/${accountId}/staked-astro-lp-rewards`
