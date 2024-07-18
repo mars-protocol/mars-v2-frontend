@@ -33,7 +33,7 @@ export default function RewardsCenter(props: Props) {
   const [rewardsCenterType, setRewardCenterType] = useRewardsCenterType()
   const [showRewardsCenter, setShowRewardsCenter] = useToggle()
   const [isConfirming, setIsConfirming] = useState(false)
-  const { data: unclaimedRewards } = useUnclaimedRewards()
+  const { data: redBankRewards } = useUnclaimedRewards()
   const { data: assets } = useAssets()
   const isNeutron = useMemo(
     () => currentChainId === ChainInfoID.Neutron1 || currentChainId === ChainInfoID.Pion1,
@@ -47,8 +47,8 @@ export default function RewardsCenter(props: Props) {
   }, [stakedAstroLpRewards])
 
   const rewards = useMemo(
-    () => mergeBNCoinArrays(unclaimedRewards, currentLpRewards),
-    [unclaimedRewards, currentLpRewards],
+    () => mergeBNCoinArrays(redBankRewards, currentLpRewards),
+    [redBankRewards, currentLpRewards],
   )
 
   const rewardsValue = useMemo(() => {
@@ -69,9 +69,12 @@ export default function RewardsCenter(props: Props) {
     setIsConfirming(true)
     await claimRewards({
       accountId: accountId || '',
+      redBankRewards,
+      stakedAstroLpRewards,
     })
     setIsConfirming(false)
-  }, [accountId, claimRewards])
+    setShowRewardsCenter(false)
+  }, [accountId, claimRewards, redBankRewards, setShowRewardsCenter, stakedAstroLpRewards])
 
   useEffect(() => {
     if (!isNeutron) setRewardCenterType(RewardsCenterType.Token)
@@ -135,7 +138,7 @@ export default function RewardsCenter(props: Props) {
             active={rewardsCenterType === RewardsCenterType.Token || !isNeutron}
           />
           <RewardsByPosition
-            redBankRewards={unclaimedRewards}
+            redBankRewards={redBankRewards}
             stakedAstroLpRewards={stakedAstroLpRewards}
             assets={assets}
             active={rewardsCenterType === RewardsCenterType.Position}

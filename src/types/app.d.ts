@@ -945,7 +945,11 @@ interface BroadcastSlice {
     borrowToWallet: boolean
   }) => Promise<boolean>
   changeHlsStakingLeverage: (options: { accountId: string; actions: Action[] }) => Promise<boolean>
-  claimRewards: (options: { accountId: string }) => Promise<boolean>
+  claimRewards: (options: {
+    accountId: string
+    redBankRewards?: BNCoin[]
+    stakedAstroLpRewards?: StakedAstroLpRewards[]
+  }) => Promise<boolean>
   closeHlsStakingPosition: (options: { accountId: string; actions: Action[] }) => Promise<boolean>
   createAccount: (
     accountKind: import('types/generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind,
@@ -1056,6 +1060,7 @@ type TransactionCoinType =
   | 'vault'
   | 'perps'
   | 'perpsPnl'
+  | 'claim_rewards'
 
 interface TransactionCoin {
   type: TransactionCoinType
@@ -1465,7 +1470,7 @@ interface SwitchOption {
   value: string
 }
 
-interface stakedAstroLpRewards {
+interface StakedAstroLpRewards {
   lp_denom: string
   rewards: BNCoin[]
 }

@@ -20,7 +20,7 @@ import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useFarmAprs from 'hooks/farms/useFarmAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
@@ -79,7 +79,7 @@ function AccountDetails(props: Props) {
   const { health: updatedHealth, healthFactor: updatedHealthFactor } = useHealthComputer(
     updatedAccount || account,
   )
-  const assets = useDepositEnabledAssets()
+  const { data: assets } = useAssets()
   const whitelistedAssets = useWhitelistedAssets()
   const accountBalanceValue = useMemo(
     () => calculateAccountBalanceValue(updatedAccount ?? account, assets),

@@ -4,7 +4,7 @@ import RewardsPosition from './RewardsPosition'
 
 interface Props {
   redBankRewards: BNCoin[]
-  stakedAstroLpRewards: stakedAstroLpRewards[]
+  stakedAstroLpRewards: StakedAstroLpRewards[]
   active: boolean
   assets: Asset[]
 }

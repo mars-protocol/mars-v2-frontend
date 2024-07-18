@@ -231,16 +231,36 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
-    claimRewards: async (options: { accountId: string }) => {
+    claimRewards: async (options: {
+      accountId: string
+      redBankRewards?: BNCoin[]
+      stakedAstroLpRewards?: StakedAstroLpRewards[]
+    }) => {
+      const redBankRewards = options.redBankRewards ?? []
+      const stakedAstroLpRewards = options.stakedAstroLpRewards ?? []
+
       const isV1 = get().isV1
+      const actions = [] as Action[]
+
+      if (redBankRewards.length > 0)
+        actions.push({
+          claim_rewards: {},
+        })
+
+      if (stakedAstroLpRewards.length > 0) {
+        for (const reward of stakedAstroLpRewards) {
+          actions.push({
+            claim_astro_lp_rewards: {
+              lp_denom: reward.lp_denom,
+            },
+          })
+        }
+      }
+
       const creditManagerMsg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
-          actions: [
-            {
-              claim_rewards: {},
-            },
-          ],
+          actions,
         },
       }
 

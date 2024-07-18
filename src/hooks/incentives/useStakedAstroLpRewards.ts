@@ -26,7 +26,7 @@ export default function useStakedAstroLpRewards(lpDenom?: string) {
     : `chains/${chainConfig.id}/accounts/${accountId}/staked-astro-lp-rewards`
 
   return useSWR(enabled && key, () => getStakedAstroLpRewards(clients!, accountId!, lpDenom), {
-    fallbackData: [] as stakedAstroLpRewards[],
+    fallbackData: [] as StakedAstroLpRewards[],
     isPaused: () => !enabled,
     revalidateOnFocus: false,
     refreshInterval: 30_0000,
@@ -37,7 +37,7 @@ async function getStakedAstroLpRewards(
   clients: ContractClients,
   accountId: string,
   lpDenom?: string,
-): Promise<stakedAstroLpRewards[]> {
+): Promise<StakedAstroLpRewards[]> {
   try {
     const stakedAstroLpRewardsData = lpDenom
       ? await clients.incentives.stakedAstroLpPosition({
@@ -62,6 +62,6 @@ async function getStakedAstroLpRewards(
       })),
     )
   } catch (ex) {
-    return [] as stakedAstroLpRewards[]
+    return [] as StakedAstroLpRewards[]
   }
 }

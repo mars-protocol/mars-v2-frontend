@@ -6,8 +6,10 @@ import { Logo } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
+import useAccountId from 'hooks/accounts/useAccountId'
 import useAssets from 'hooks/assets/useAssets'
-import { useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { getCoinValue } from 'utils/formatters'
@@ -33,6 +35,8 @@ function getPositionLogo(asset?: Asset) {
 export default function RewardsPosition(props: Props) {
   const { denom, rewards } = props
   const { data: assets } = useAssets()
+  const accountId = useAccountId()
+  const [isConfirming, setIsConfirming] = useState(false)
 
   const isRedBank = denom === 'redbank'
   const positionAsset = isRedBank ? assets[0] : assets.find(byDenom(denom))
@@ -48,6 +52,18 @@ export default function RewardsPosition(props: Props) {
     () => BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, rewardsValue),
     [rewardsValue],
   )
+
+  const claimRewards = useStore((s) => s.claimRewards)
+
+  const handleClick = useCallback(async () => {
+    setIsConfirming(true)
+    await claimRewards({
+      accountId: accountId || '',
+      redBankRewards: denom === 'redbank' ? rewards : undefined,
+      stakedAstroLpRewards: denom !== 'redbank' ? [{ lp_denom: denom, rewards }] : undefined,
+    })
+    setIsConfirming(false)
+  }, [accountId, claimRewards, denom, rewards])
 
   if (!positionAsset) return null
 
@@ -71,9 +87,8 @@ export default function RewardsPosition(props: Props) {
         color='secondary'
         size='sm'
         text='Claim'
-        onClick={() => {
-          console.log('CLAIM')
-        }}
+        showProgressIndicator={isConfirming}
+        onClick={handleClick}
       />
     </div>
   )
