@@ -41,7 +41,7 @@ export default function VaultModalContent(props: Props) {
   const [borrowCoins, setBorrowCoins] = useState<BNCoin[]>([])
   const displayAsset = useDisplayAsset()
   const { actions: depositActions, totalValue } = useDepositLiquidity({
-    pool: props.vault,
+    farm: props.vault,
     reclaims: removedLends,
     deposits: removedDeposits,
     borrowings: addedDebts,

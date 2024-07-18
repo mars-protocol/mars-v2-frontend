@@ -13,7 +13,7 @@ import { BN_ZERO } from 'constants/math'
 import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
-import useFarmAprs from 'hooks/farms/useFarmAprs'
+import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -33,7 +33,7 @@ export default function PortfolioCard(props: Props) {
   const { data: account } = useAccount(props.accountId)
   const { health, healthFactor } = useHealthComputer(account)
   const { address: urlAddress } = useParams()
-  const farmAprs = useFarmAprs()
+  const astroLpAprs = useAstroLpAprs()
   const currentAccountId = useAccountId()
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const data = useBorrowMarketAssetsTableData()
@@ -66,10 +66,10 @@ export default function PortfolioCard(props: Props) {
       hlsStrategies,
       assets,
       vaultAprs,
-      farmAprs,
+      astroLpAprs,
       account.kind === 'high_levered_strategy',
     )
-  }, [lendingAssets, borrowAssets, account, hlsStrategies, assets, vaultAprs, farmAprs])
+  }, [lendingAssets, borrowAssets, account, hlsStrategies, assets, vaultAprs, astroLpAprs])
 
   const stats: { title: ReactNode; sub: string }[] = useMemo(() => {
     const isLoaded = account && assets.length && apr !== null

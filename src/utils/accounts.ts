@@ -92,7 +92,7 @@ export const calculateAccountApr = (
   hlsStrategies: HLSStrategy[],
   assets: Asset[],
   vaultAprs: Apr[],
-  farmAprs: Apr[],
+  astroLpAprs: Apr[],
   isHls?: boolean,
 ): BigNumber => {
   const depositValue = calculateAccountValue('deposits', account, assets)
@@ -179,7 +179,7 @@ export const calculateAccountApr = (
   })
 
   stakedAstroLps.forEach((stakedAstroLp) => {
-    const farm = farmAprs.find((farmApr) => farmApr.address === stakedAstroLp.denom)
+    const farm = astroLpAprs.find((farmApr) => farmApr.address === stakedAstroLp.denom)
     if (!farm) return
     const farmApr = farm.apr ?? 0
     const farmValue = getCoinValue(stakedAstroLp, assets)
@@ -405,7 +405,7 @@ export function getAccountSummaryStats(
   hlsStrategies: HLSStrategy[],
   assets: Asset[],
   vaultAprs: Apr[],
-  farmAprs: Apr[],
+  astroLpAprs: Apr[],
   isHls?: boolean,
 ) {
   const [deposits, lends, debts, vaults, stakedAstroLps] = getAccountPositionValues(account, assets)
@@ -417,7 +417,7 @@ export function getAccountSummaryStats(
     hlsStrategies,
     assets,
     vaultAprs,
-    farmAprs,
+    astroLpAprs,
     isHls,
   )
   const leverage = calculateAccountLeverage(account, assets)
@@ -454,7 +454,7 @@ export function getAccountNetValue(account: Account, assets: Asset[]) {
     .minus(debts)
 }
 
-export function convertCoinArrayIntoBNCoinArray(coins: Coin[]) {
+export function convertCoinArrayIntoBNCoinArrayAndRemoveEmptyCoins(coins: Coin[]) {
   const BNCoins = [] as BNCoin[]
   coins.forEach((coin) => {
     if (coin.amount !== '0') BNCoins.push(BNCoin.fromCoin(coin))

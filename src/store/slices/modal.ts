@@ -3,7 +3,7 @@ import { GetState, SetState } from 'zustand'
 export default function createModalSlice(set: SetState<ModalSlice>, get: GetState<ModalSlice>) {
   return {
     accountDeleteModal: null,
-    addLiquidityPoolBorrowingsModal: null,
+    addFarmBorrowingsModal: null,
     alertDialog: null,
     assetOverlayState: 'closed' as OverlayState,
     hlsModal: null,
@@ -18,10 +18,10 @@ export default function createModalSlice(set: SetState<ModalSlice>, get: GetStat
     settingsModal: false,
     unlockModal: null,
     vaultModal: null,
-    farmModal: null,
+    astroLpModal: null,
     walletAssetsModal: null,
     withdrawFromVaultsModal: null,
-    withdrawFromFarmModal: null,
+    withdrawFromAstroLpModal: null,
     v1DepositAndWithdrawModal: null,
     v1BorrowAndRepayModal: null,
   }
