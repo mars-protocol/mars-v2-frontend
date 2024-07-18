@@ -4,8 +4,8 @@ import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.ty
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { getValueFromBNCoins } from 'utils/helpers'
 
-export function getLiquidityPoolSwapActions(
-  pool: Vault | Farm,
+export function getFarmSwapActions(
+  pool: Vault | AstroLp,
   deposits: BNCoin[],
   reclaims: BNCoin[],
   borrowings: BNCoin[],

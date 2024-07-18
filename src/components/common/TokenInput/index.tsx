@@ -3,6 +3,7 @@ import classNames from 'classnames'
 
 import Button from 'components/common/Button'
 import DisplayCurrency from 'components/common/DisplayCurrency'
+import DoubleLogo from 'components/common/DoubleLogo'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { TrashBin } from 'components/common/Icons'
 import NumberInput from 'components/common/NumberInput'
@@ -14,7 +15,6 @@ import useAssets from 'hooks/assets/useAssets'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
-import DoubleLogo from '../DoubleLogo'
 
 interface Props {
   amount: BigNumber

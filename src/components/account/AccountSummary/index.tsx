@@ -12,8 +12,8 @@ import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import useFarmAprs from 'hooks/farms/useFarmAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -41,7 +41,7 @@ export default function AccountSummary(props: Props) {
     defaultSetting,
   )
   const { data: vaultAprs } = useVaultAprs()
-  const farmAprs = useFarmAprs()
+  const astroLpAprs = useAstroLpAprs()
   const assets = useWhitelistedAssets()
   const updatedAccount = useStore((s) => s.updatedAccount)
   const data = useBorrowMarketAssetsTableData()
@@ -73,7 +73,7 @@ export default function AccountSummary(props: Props) {
     (index: number) => {
       setAccountSummaryTabs(
         defaultSetting.map((_, i) =>
-          i === index ? !accountSummaryTabs[i] ?? true : accountSummaryTabs[i] ?? false,
+          i === index ? (!accountSummaryTabs[i] ?? true) : (accountSummaryTabs[i] ?? false),
         ),
       )
     },
@@ -89,7 +89,7 @@ export default function AccountSummary(props: Props) {
         hlsStrategies,
         assets,
         vaultAprs,
-        farmAprs,
+        astroLpAprs,
         account.kind === 'high_levered_strategy',
       ),
     [
@@ -100,7 +100,7 @@ export default function AccountSummary(props: Props) {
       hlsStrategies,
       assets,
       vaultAprs,
-      farmAprs,
+      astroLpAprs,
     ],
   )
 

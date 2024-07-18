@@ -22,7 +22,7 @@ import useAccounts from 'hooks/accounts/useAccounts'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
-import useFarmAprs from 'hooks/farms/useFarmAprs'
+import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -68,7 +68,7 @@ function AccountDetails(props: Props) {
   const location = useLocation()
   const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
-  const farmAprs = useFarmAprs()
+  const astroLpAprs = useAstroLpAprs()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
@@ -117,7 +117,7 @@ function AccountDetails(props: Props) {
         hlsStrategies,
         whitelistedAssets,
         vaultAprs,
-        farmAprs,
+        astroLpAprs,
         account.kind === 'high_levered_strategy',
       ),
     [
@@ -128,7 +128,7 @@ function AccountDetails(props: Props) {
       lendingAssetsData,
       updatedAccount,
       vaultAprs,
-      farmAprs,
+      astroLpAprs,
     ],
   )
   const isFullWidth =

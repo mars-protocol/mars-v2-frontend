@@ -40,7 +40,7 @@ export default function WithdrawFromAccount(props: Props) {
   const balances = getMergedBalancesForAsset(account, marketEnabledAssets)
   const maxWithdrawAmount = currentAsset.isWhitelisted
     ? computeMaxWithdrawAmount(currentAsset.denom)
-    : balances.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO
+    : (balances.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO)
   const maxWithdrawWithBorrowAmount = computeMaxBorrowAmount(currentAsset.denom, 'wallet').plus(
     maxWithdrawAmount,
   )

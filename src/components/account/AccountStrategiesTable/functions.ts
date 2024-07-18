@@ -121,36 +121,35 @@ export function getPerpsVaultAccountStrategiesRow(
   })
 }
 
-export function getFarmAccountStrategiesRow(
-  farm: DepositedFarm,
-  assets: Asset[],
+export function getAstroLpAccountStrategiesRow(
+  astroLp: DepositedAstroLp,
   apy?: number | null,
-  prev?: DepositedFarm,
+  prev?: DepositedAstroLp,
 ): AccountStrategyRow {
-  const { name } = farm
-  const previous = prev || farm
-  const totalValue = farm.values.primary.plus(farm.values.secondary)
-  const primaryAmount = farm.amounts.primary
+  const { name } = astroLp
+  const previous = prev || astroLp
+  const totalValue = astroLp.values.primary.plus(astroLp.values.secondary)
+  const primaryAmount = astroLp.amounts.primary
   const primaryAmountPrev = previous.amounts.primary
-  const secondaryAmount = farm.amounts.secondary
+  const secondaryAmount = astroLp.amounts.secondary
   const secondaryAmountPrev = previous.amounts.secondary
 
   return {
     name: name,
-    denom: farm.denoms.lp,
+    denom: astroLp.denoms.lp,
     value: totalValue.toString(),
     apy,
     coins: {
-      primary: BNCoin.fromDenomAndBigNumber(farm.denoms.primary, primaryAmount),
-      secondary: BNCoin.fromDenomAndBigNumber(farm.denoms.secondary, secondaryAmount),
+      primary: BNCoin.fromDenomAndBigNumber(astroLp.denoms.primary, primaryAmount),
+      secondary: BNCoin.fromDenomAndBigNumber(astroLp.denoms.secondary, secondaryAmount),
     },
     coinsChange: {
       primary: BNCoin.fromDenomAndBigNumber(
-        farm.denoms.primary,
+        astroLp.denoms.primary,
         !prev ? BN_ZERO : primaryAmount.minus(primaryAmountPrev),
       ),
       secondary: BNCoin.fromDenomAndBigNumber(
-        farm.denoms.secondary,
+        astroLp.denoms.secondary,
         !prev ? BN_ZERO : secondaryAmount.minus(secondaryAmountPrev),
       ),
     },

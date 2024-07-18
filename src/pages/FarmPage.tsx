@@ -1,13 +1,13 @@
 import Tab from 'components/earn/Tab'
-import { ActiveFarms } from 'components/earn/farm/ActiveFarms'
-import { ActiveVaults } from 'components/earn/farm/ActiveVaults'
-import { AvailableFarms } from 'components/earn/farm/AvailableFarms'
-import { AvailableVaults } from 'components/earn/farm/AvailableVaults'
-import FarmIntro from 'components/earn/farm/FarmIntro'
+import { ActiveAstroLps } from 'components/earn/farm/astroLp/ActiveAstroLps'
+import { AvailableAstroLps } from 'components/earn/farm/astroLp/AvailableAstroLps'
+import FarmIntro from 'components/earn/farm/common/FarmIntro'
+import { ActiveVaults } from 'components/earn/farm/vault/ActiveVaults'
+import { AvailableVaults } from 'components/earn/farm/vault/AvailableVaults'
 import { EARN_TABS } from 'constants/pages'
 import useChainConfig from 'hooks/chain/useChainConfig'
 
-export default function FarmPage() {
+export default function AstroLpPage() {
   const chainConfig = useChainConfig()
   return (
     <div className='flex flex-wrap w-full gap-6'>
@@ -19,7 +19,7 @@ export default function FarmPage() {
         </>
       ) : (
         <>
-          <ActiveFarms /> <AvailableFarms />
+          <ActiveAstroLps /> <AvailableAstroLps />
         </>
       )}
     </div>

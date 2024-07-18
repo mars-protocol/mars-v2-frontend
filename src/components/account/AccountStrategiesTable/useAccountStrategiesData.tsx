@@ -1,19 +1,19 @@
 import { useMemo } from 'react'
 
 import {
-  getFarmAccountStrategiesRow,
+  getAstroLpAccountStrategiesRow,
   getPerpsVaultAccountStrategiesRow,
   getVaultAccountStrategiesRow,
 } from 'components/account/AccountStrategiesTable/functions'
 import { BN_ZERO } from 'constants/math'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
-import useAvailableFarms from 'hooks/farms/useAvailableFarms'
+import useAvailableAstroLps from 'hooks/astroLp/useAvailableAstroLps'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import { transformPerpsVaultIntoDeposited } from 'hooks/vaults/useDepositedVaults'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { getDepositedFarmFromStakedLpBNCoin } from 'utils/farms'
+import { getDepositedAstroLpFromStakedLpBNCoin } from 'utils/astroLps'
 
 interface Props {
   account: Account
@@ -25,7 +25,7 @@ export default function useAccountStrategiesData(props: Props) {
   const { data: vaultAprs } = useVaultAprs()
   const assets = useWhitelistedAssets()
   const { data: perpsVault } = usePerpsVault()
-  const availableFarms = useAvailableFarms()
+  const availableAstroLps = useAvailableAstroLps()
 
   return useMemo<AccountStrategyRow[]>(() => {
     const usedAccount = updatedAccount ?? account
@@ -50,24 +50,31 @@ export default function useAccountStrategiesData(props: Props) {
 
     if (usedAccount.stakedAstroLps) {
       accountLps.forEach((lp) => {
-        const farm = availableFarms.find((farm) => farm.denoms.lp === lp.denom)
-        if (!farm) return
-        const prevFarm = updatedAccount
-          ? updatedAccount.stakedAstroLps?.find(byDenom(lp.denom)) ??
-            BNCoin.fromDenomAndBigNumber(lp.denom, BN_ZERO)
+        const astroLp = availableAstroLps.find((astroLp) => astroLp.denoms.lp === lp.denom)
+        if (!astroLp) return
+        const prevAstroLp = updatedAccount
+          ? (updatedAccount.stakedAstroLps?.find(byDenom(lp.denom)) ??
+            BNCoin.fromDenomAndBigNumber(lp.denom, BN_ZERO))
           : lp
 
-        const depositedFarm = getDepositedFarmFromStakedLpBNCoin(assets, lp, farm)
-        const prevDepositedFarm = getDepositedFarmFromStakedLpBNCoin(assets, prevFarm, farm)
-        if (!depositedFarm || !prevDepositedFarm) return
-        if (depositedFarm.amounts.primary.isZero() && depositedFarm.amounts.secondary.isZero())
+        const depositedAstroLp = getDepositedAstroLpFromStakedLpBNCoin(assets, lp, astroLp)
+        const prevDepositedAstroLp = getDepositedAstroLpFromStakedLpBNCoin(
+          assets,
+          prevAstroLp,
+          astroLp,
+        )
+        if (!depositedAstroLp || !prevDepositedAstroLp) return
+        if (
+          depositedAstroLp.amounts.primary.isZero() &&
+          depositedAstroLp.amounts.secondary.isZero()
+        )
           return
         vaultRows.push(
-          getFarmAccountStrategiesRow(depositedFarm, assets, farm.apy, prevDepositedFarm),
+          getAstroLpAccountStrategiesRow(depositedAstroLp, astroLp.apy, prevDepositedAstroLp),
         )
       })
     }
 
     return vaultRows
-  }, [updatedAccount, account, perpsVault, assets, vaultAprs, availableFarms])
+  }, [updatedAccount, account, perpsVault, assets, vaultAprs, availableAstroLps])
 }

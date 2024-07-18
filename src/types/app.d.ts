@@ -477,7 +477,7 @@ interface V1Positions {
 
 type BigNumber = import('bignumber.js').BigNumber
 
-interface LiquidityPoolMetaData {
+interface FarmMetaData {
   address: string
   name: string
   provider: string
@@ -487,7 +487,7 @@ interface LiquidityPoolMetaData {
   }
 }
 
-interface VaultMetaData extends LiquidityPoolMetaData {
+interface VaultMetaData extends FarmMetaData {
   lockup: Lockup
   denoms: {
     primary: string
@@ -508,7 +508,7 @@ interface VaultInfo {
   cap: DepositCap | null
 }
 
-interface LiquidityPoolInfo {
+interface FarmInfo {
   address: string
   ltv: {
     max: number
@@ -517,7 +517,7 @@ interface LiquidityPoolInfo {
   cap: DepositCap | null
 }
 
-interface VaultConfig extends VaultMetaData, LiquidityPoolInfo {}
+interface VaultConfig extends VaultMetaData, FarmInfo {}
 
 interface Vault extends VaultConfig {
   hls?: {
@@ -529,19 +529,19 @@ interface Vault extends VaultConfig {
   apy?: number | null
 }
 
-interface FarmMetaData extends LiquidityPoolMetaData {
+interface AstroLpMetaData extends FarmMetaData {
   lockup: Lockup
   denoms: {
     primary: string
     secondary: string
     lp: string
-    farm: string
+    astroLp: string
   }
 }
 
-interface FarmConfig extends FarmMetaData, LiquidityPoolInfo {}
+interface AstroLpConfig extends AstroLpMetaData, FarmInfo {}
 
-interface Farm extends FarmMetaData, LiquidityPoolInfo {
+interface AstroLp extends AstroLpMetaData, FarmInfo {
   baseApy?: number | null
   incentives?: AstroportPoolReward[]
   apr?: number | null
@@ -579,7 +579,7 @@ interface VaultValuesAndAmounts {
   }
 }
 
-interface FarmValuesAndAmounts {
+interface AstroLpValuesAndAmounts {
   amounts: {
     primary: BigNumber
     secondary: BigNumber
@@ -599,7 +599,7 @@ interface DepositedVault extends Vault, VaultValuesAndAmounts {
   unlocksAt?: number
 }
 
-interface DepositedFarm extends Farm, FarmValuesAndAmounts {}
+interface DepositedAstroLp extends AstroLp, AstroLpValuesAndAmounts {}
 
 interface VaultExtensionResponse {
   base_token_amount: string
@@ -952,7 +952,7 @@ interface BroadcastSlice {
   ) => Promise<string | null>
   deleteAccount: (options: { accountId: string; lends: BNCoin[] }) => Promise<boolean>
   deposit: (options: { accountId: string; coins: BNCoin[]; lend: boolean }) => Promise<boolean>
-  depositIntoFarm: (options: {
+  depositIntoAstroLp: (options: {
     accountId: string
     actions: Action[]
     deposits: BNCoin[]
@@ -1008,9 +1008,9 @@ interface BroadcastSlice {
   }) => Promise<boolean>
   resyncOracle: () => Promise<boolean>
   getPythVaas: () => Promise<import('@delphi-labs/shuttle-react').MsgExecuteContract>
-  withdrawFromFarms: (options: {
+  withdrawFromAstroLps: (options: {
     accountId: string
-    farms: DepositedFarm[]
+    astroLps: DepositedAstroLp[]
     amount: string
   }) => Promise<boolean>
   withdrawFromVaults: (options: {
@@ -1114,7 +1114,7 @@ interface FocusComponent {
 
 interface ModalSlice {
   accountDeleteModal: Account | null
-  addLiquidityPoolBorrowingsModal: AddLiquidityPoolBorrowingsModal | null
+  addFarmBorrowingsModal: AddFarmBorrowingsModal | null
   alertDialog: AlertDialogConfig | null
   assetOverlayState: OverlayState
   hlsModal: HlsModal | null
@@ -1128,7 +1128,7 @@ interface ModalSlice {
   settingsModal: boolean
   unlockModal: UnlockModal | null
   vaultModal: VaultModal | null
-  farmModal: FarmModal | null
+  astroLpModal: AstroLpModal | null
   walletAssetsModal: WalletAssetModal | null
   withdrawFromVaultsModal: DepositedVault[] | null
   v1DepositAndWithdrawModal: V1DepositAndWithdrawModal | null
@@ -1167,22 +1167,22 @@ interface LendAndReclaimModalConfig {
   action: LendAndReclaimModalAction
 }
 
-interface LiquidityPoolModal {
+interface FarmModal {
   selectedBorrowDenoms: string[]
   isDeposited?: boolean
 }
 
-interface VaultModal extends LiquidityPoolModal {
+interface VaultModal extends FarmModal {
   vault: Vault | DepositedVault
   isCreate: boolean
 }
 
-interface FarmModal extends LiquidityPoolModal {
-  farm: Farm | DepositedFarm
+interface AstroLpModal extends FarmModal {
+  astroLp: AstroLp | DepositedAstroLp
   action: 'deposit' | 'withdraw'
 }
 
-interface AddLiquidityPoolBorrowingsModal {
+interface AddFarmBorrowingsModal {
   selectedDenoms: string[]
 }
 
@@ -1261,7 +1261,7 @@ interface ModalProps {
   dialogId?: string
 }
 
-interface LiquidityPoolBorrowingsProps {
+interface FarmBorrowingsProps {
   account: Account
   borrowings: BNCoin[]
   deposits: BNCoin[]
@@ -1273,12 +1273,12 @@ interface LiquidityPoolBorrowingsProps {
   depositCapReachedCoins: BNCoin[]
 }
 
-interface VaultBorrowingsProps extends LiquidityPoolBorrowingsProps {
+interface VaultBorrowingsProps extends FarmBorrowingsProps {
   vault: Vault
 }
 
-interface FarmBorrowingsProps extends LiquidityPoolBorrowingsProps {
-  farm: Farm
+interface AstroLpBorrowingsProps extends FarmBorrowingsProps {
+  astroLp: AstroLp
   totalValue: BigNumber
 }
 
@@ -1294,7 +1294,7 @@ interface VaultValue {
   value: BigNumber
 }
 
-interface FarmValue extends VaultValue {}
+interface AstroLpValue extends VaultValue {}
 
 interface PerpsParams {
   denom: string

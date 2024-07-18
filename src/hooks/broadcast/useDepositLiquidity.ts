@@ -7,18 +7,18 @@ import useSlippage from 'hooks/settings/useSlippage'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import { BNCoin } from 'types/classes/BNCoin'
 import { AccountKind, Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { getEnterFarmActions, getFarmDepositCoinsAndValue } from 'utils/farms'
+import { getAstroLpDepositCoinsAndValue, getEnterAstroLpActions } from 'utils/astroLps'
 import { mergeBNCoinArrays } from 'utils/helpers'
-import { getLiquidityPoolSwapActions } from 'utils/liquidityPool'
+import { getFarmSwapActions } from 'utils/liquidityPool'
 import { getEnterVaultActions, getVaultDepositCoinsAndValue } from 'utils/vaults'
 
 interface Props {
-  pool: Vault | Farm
+  pool: Vault | AstroLp
   reclaims: BNCoin[]
   deposits: BNCoin[]
   borrowings: BNCoin[]
   kind: AccountKind
-  isFarm?: boolean
+  isAstroLp?: boolean
 }
 
 export default function useDepositLiquidity(props: Props): {
@@ -43,8 +43,14 @@ export default function useDepositLiquidity(props: Props): {
   )
 
   const { primaryCoin, secondaryCoin, totalValue } = useMemo(() => {
-    if (props.isFarm)
-      return getFarmDepositCoinsAndValue(props.pool as Farm, deposits, borrowings, reclaims, assets)
+    if (props.isAstroLp)
+      return getAstroLpDepositCoinsAndValue(
+        props.pool as AstroLp,
+        deposits,
+        borrowings,
+        reclaims,
+        assets,
+      )
 
     return getVaultDepositCoinsAndValue(
       props.pool as Vault,
@@ -54,7 +60,7 @@ export default function useDepositLiquidity(props: Props): {
       slippage,
       assets,
     )
-  }, [props.pool, deposits, borrowings, reclaims, slippage, assets, props.isFarm])
+  }, [props.pool, deposits, borrowings, reclaims, slippage, assets, props.isAstroLp])
 
   const depositActions: Action[] = useMemo(() => {
     if (props.kind === 'default') return []
@@ -77,7 +83,7 @@ export default function useDepositLiquidity(props: Props): {
   }, [borrowings])
 
   const swapActions: Action[] = useMemo(() => {
-    if (props.isFarm) {
+    if (props.isAstroLp) {
       const depositsAndReclaims = mergeBNCoinArrays(deposits, reclaims)
       const allCoins = mergeBNCoinArrays(depositsAndReclaims, borrowings)
       const hasOtherCoins =
@@ -93,9 +99,9 @@ export default function useDepositLiquidity(props: Props): {
         return []
       }
     }
-    return getLiquidityPoolSwapActions(props.pool, deposits, reclaims, borrowings, assets, slippage)
+    return getFarmSwapActions(props.pool, deposits, reclaims, borrowings, assets, slippage)
   }, [
-    props.isFarm,
+    props.isAstroLp,
     props.pool,
     deposits,
     reclaims,
@@ -106,12 +112,12 @@ export default function useDepositLiquidity(props: Props): {
     secondaryCoin,
   ])
 
-  const enterLiquidityPoolActions: Action[] = useMemo(() => {
+  const enterFarmActions: Action[] = useMemo(() => {
     if (primaryCoin.amount.isZero() || secondaryCoin.amount.isZero()) return []
-    if (props.isFarm)
-      return getEnterFarmActions(props.pool as Farm, primaryCoin, secondaryCoin, slippage)
+    if (props.isAstroLp)
+      return getEnterAstroLpActions(props.pool as AstroLp, primaryCoin, secondaryCoin, slippage)
     return getEnterVaultActions(props.pool as Vault, primaryCoin, secondaryCoin, slippage)
-  }, [props.pool, primaryCoin, secondaryCoin, slippage, props.isFarm])
+  }, [props.pool, primaryCoin, secondaryCoin, slippage, props.isAstroLp])
 
   const lendActions: Action[] = useMemo(() => {
     if (!isAutoLend || props.kind === 'high_levered_strategy' || swapActions.length === 0) return []
@@ -152,7 +158,7 @@ export default function useDepositLiquidity(props: Props): {
       ...reclaimActions,
       ...borrowActions,
       ...swapActions,
-      ...enterLiquidityPoolActions,
+      ...enterFarmActions,
       ...lendActions,
       ...refundActions,
     ]
@@ -161,7 +167,7 @@ export default function useDepositLiquidity(props: Props): {
     reclaimActions,
     borrowActions,
     swapActions,
-    enterLiquidityPoolActions,
+    enterFarmActions,
     lendActions,
     refundActions,
   ])

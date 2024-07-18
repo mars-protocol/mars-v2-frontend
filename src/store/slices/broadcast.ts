@@ -409,16 +409,16 @@ export default function createBroadcastSlice(
       get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
-    withdrawFromFarms: async (options: {
+    withdrawFromAstroLps: async (options: {
       accountId: string
-      farms: DepositedFarm[]
+      astroLps: DepositedAstroLp[]
       amount: string
     }) => {
       const actions: CreditManagerAction[] = []
 
-      options.farms.forEach((farm) => {
+      options.astroLps.forEach((astroLp) => {
         const coin = BNCoin.fromCoin({
-          denom: farm.denoms.lp,
+          denom: astroLp.denoms.lp,
           amount: options.amount,
         }).toActionCoin()
 
@@ -442,8 +442,8 @@ export default function createBroadcastSlice(
       }
 
       if (checkAutoLendEnabled(options.accountId, get().chainConfig.id)) {
-        for (const farm of options.farms) {
-          for (const symbol of Object.values(farm.symbols)) {
+        for (const astroLp of options.astroLps) {
+          for (const symbol of Object.values(astroLp.symbols)) {
             const asset = get().assets.find(bySymbol(symbol))
             if (asset?.isAutoLendEnabled) {
               msg.update_credit_account.actions.push({
@@ -462,7 +462,7 @@ export default function createBroadcastSlice(
       get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
-    depositIntoFarm: async (options: {
+    depositIntoAstroLp: async (options: {
       accountId: string
       actions: Action[]
       deposits: BNCoin[]
