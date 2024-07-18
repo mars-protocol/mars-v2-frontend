@@ -3,6 +3,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { getValueFromBNCoins } from 'utils/helpers'
+import { getSwapAction } from 'utils/vaults'
 
 export function getFarmSwapActions(
   pool: Vault | AstroLp,
@@ -86,19 +87,4 @@ export function getFarmSwapActions(
   })
 
   return swapActions
-}
-
-function getSwapAction(denomIn: string, denomOut: string, amount: BigNumber, slippage: number) {
-  return {
-    swap_exact_in: {
-      coin_in: {
-        denom: denomIn,
-        amount: {
-          exact: amount.toString(),
-        },
-      },
-      denom_out: denomOut,
-      slippage: slippage.toString(),
-    },
-  }
 }

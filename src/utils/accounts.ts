@@ -454,7 +454,7 @@ export function getAccountNetValue(account: Account, assets: Asset[]) {
     .minus(debts)
 }
 
-export function convertCoinArrayIntoBNCoinArray(coins: Coin[]) {
+export function convertCoinArrayIntoBNCoinArrayAndRemoveEmptyCoins(coins: Coin[]) {
   const BNCoins = [] as BNCoin[]
   coins.forEach((coin) => {
     if (coin.amount !== '0') BNCoins.push(BNCoin.fromCoin(coin))

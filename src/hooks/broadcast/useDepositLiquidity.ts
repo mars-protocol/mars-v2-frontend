@@ -8,8 +8,8 @@ import useAutoLend from 'hooks/wallet/useAutoLend'
 import { BNCoin } from 'types/classes/BNCoin'
 import { AccountKind, Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getAstroLpDepositCoinsAndValue, getEnterAstroLpActions } from 'utils/astroLps'
+import { getFarmSwapActions } from 'utils/farm'
 import { mergeBNCoinArrays } from 'utils/helpers'
-import { getFarmSwapActions } from 'utils/liquidityPool'
 import { getEnterVaultActions, getVaultDepositCoinsAndValue } from 'utils/vaults'
 
 interface Props {

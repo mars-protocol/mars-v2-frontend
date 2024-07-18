@@ -170,7 +170,12 @@ export function getEnterVaultActions(
   ]
 }
 
-function getSwapAction(denomIn: string, denomOut: string, amount: BigNumber, slippage: number) {
+export function getSwapAction(
+  denomIn: string,
+  denomOut: string,
+  amount: BigNumber,
+  slippage: number,
+) {
   return {
     swap_exact_in: {
       coin_in: {

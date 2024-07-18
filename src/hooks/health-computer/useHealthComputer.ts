@@ -5,8 +5,6 @@ import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useAssets from 'hooks/assets/useAssets'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAssetParams from 'hooks/params/useAssetParams'
-import useAllPerpsDenomStates from 'hooks/perps/usePerpsDenomStates'
-import { useAllPerpsParamsSC } from 'hooks/perps/usePerpsParams'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useSlippage from 'hooks/settings/useSlippage'
 import useVaultConfigs from 'hooks/vaults/useVaultConfigs'
@@ -45,8 +43,6 @@ export default function useHealthComputer(account?: Account) {
   const whitelistedAssets = useWhitelistedAssets()
   const { data: assetParams } = useAssetParams()
   const { data: vaultConfigs } = useVaultConfigs()
-  const { data: perpsDenomStates } = useAllPerpsDenomStates()
-  const { data: perpsParams } = useAllPerpsParamsSC()
   const { data: perpsVault } = usePerpsVault()
   const [slippage] = useSlippage()
 
