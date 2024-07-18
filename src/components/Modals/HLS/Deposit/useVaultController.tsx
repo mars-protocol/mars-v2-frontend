@@ -32,7 +32,7 @@ export default function useVaultController(props: Props) {
   })
 
   const { actions } = useDepositLiquidity({
-    pool: vault,
+    farm: vault,
     reclaims: [],
     deposits: [BNCoin.fromDenomAndBigNumber(collateralAsset.denom, depositAmount)],
     borrowings: [BNCoin.fromDenomAndBigNumber(borrowMarket.asset.denom, borrowAmount)],

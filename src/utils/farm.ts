@@ -6,7 +6,7 @@ import { getValueFromBNCoins } from 'utils/helpers'
 import { getSwapAction } from 'utils/vaults'
 
 export function getFarmSwapActions(
-  pool: Vault | AstroLp,
+  farm: Vault | AstroLp,
   deposits: BNCoin[],
   reclaims: BNCoin[],
   borrowings: BNCoin[],
@@ -24,10 +24,10 @@ export function getFarmSwapActions(
   const [primaryCoins, secondaryCoins, otherCoins] = coins.reduce(
     (prev, bnCoin) => {
       switch (bnCoin.denom) {
-        case pool.denoms.primary:
+        case farm.denoms.primary:
           prev[0].push(bnCoin)
           break
-        case pool.denoms.secondary:
+        case farm.denoms.secondary:
           prev[1].push(bnCoin)
           break
         default:
@@ -76,13 +76,13 @@ export function getFarmSwapActions(
       amount = amount.minus(swapAmount)
       primaryLeftoverValue = primaryLeftoverValue.minus(swapValue)
       if (swapAmount.isGreaterThan(BN_ZERO))
-        swapActions.push(getSwapAction(bnCoin.denom, pool.denoms.primary, swapAmount, slippage))
+        swapActions.push(getSwapAction(bnCoin.denom, farm.denoms.primary, swapAmount, slippage))
     }
 
     if (secondaryLeftoverValue.isGreaterThan(0)) {
       secondaryLeftoverValue = secondaryLeftoverValue.minus(value)
       if (amount.isGreaterThan(BN_ZERO))
-        swapActions.push(getSwapAction(bnCoin.denom, pool.denoms.secondary, amount, slippage))
+        swapActions.push(getSwapAction(bnCoin.denom, farm.denoms.secondary, amount, slippage))
     }
   })
 

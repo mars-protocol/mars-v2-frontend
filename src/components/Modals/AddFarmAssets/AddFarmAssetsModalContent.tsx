@@ -7,7 +7,7 @@ import useMarkets from 'hooks/markets/useMarkets'
 import useStore from 'store'
 
 interface Props {
-  pool: Vault | AstroLp
+  farm: Vault | AstroLp
   defaultSelectedDenoms: string[]
   onChangeBorrowDenoms: (denoms: string[]) => void
 }
@@ -29,13 +29,13 @@ export default function AddFarmAssetsModalContent(props: Props) {
     setSearchString(value)
   }
 
-  const [poolAssets, stableAssets] = useMemo(
+  const [farmAssets, stableAssets] = useMemo(
     () =>
       filteredMarkets.reduce(
         (acc, market) => {
           if (
-            market.asset.denom === props.pool.denoms.primary ||
-            market.asset.denom === props.pool.denoms.secondary
+            market.asset.denom === props.farm.denoms.primary ||
+            market.asset.denom === props.farm.denoms.secondary
           ) {
             acc[0].push(market.asset)
           } else if (market.asset.isStable) {
@@ -45,12 +45,12 @@ export default function AddFarmAssetsModalContent(props: Props) {
         },
         [[], []] as [Asset[], Asset[]],
       ),
-    [filteredMarkets, props.pool.denoms.primary, props.pool.denoms.secondary],
+    [filteredMarkets, props.farm.denoms.primary, props.farm.denoms.secondary],
   )
 
   const selectedDenoms = useStore((s) => s.addFarmBorrowingsModal?.selectedDenoms)
   const [selectedPoolDenoms, setSelectedPoolDenoms] = useState<string[]>(
-    selectedDenoms?.filter((denom) => poolAssets.map((asset) => asset.denom).includes(denom)) || [],
+    selectedDenoms?.filter((denom) => farmAssets.map((asset) => asset.denom).includes(denom)) || [],
   )
   const [selectedOtherDenoms, setSelectedOtherDenoms] = useState<string[]>(
     selectedDenoms?.filter((denom) => stableAssets.map((asset) => asset.denom).includes(denom)) ||
@@ -90,7 +90,7 @@ export default function AddFarmAssetsModalContent(props: Props) {
           </Text>
         </div>
         <AssetsSelect
-          assets={poolAssets}
+          assets={farmAssets}
           onChangeSelected={onChangePoolDenoms}
           selectedDenoms={selectedPoolDenoms}
           isBorrow

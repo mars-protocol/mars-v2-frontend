@@ -40,7 +40,7 @@ export default function AstroLpModalContent(props: Props) {
   const [borrowCoins, setBorrowCoins] = useState<BNCoin[]>([])
   const displayAsset = useDisplayAsset()
   const { actions: depositActions, totalValue } = useDepositLiquidity({
-    pool: props.astroLp,
+    farm: props.astroLp,
     reclaims: removedLends,
     deposits: removedDeposits,
     borrowings: addedDebts,
