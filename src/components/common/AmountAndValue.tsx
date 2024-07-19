@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { MAX_AMOUNT_DECIMALS, MIN_AMOUNT } from 'constants/math'
@@ -7,6 +8,7 @@ import { demagnify } from 'utils/formatters'
 interface Props {
   asset: Asset
   amount: BigNumber
+  changePercentage?: BigNumber
   isApproximation?: boolean
 }
 
@@ -23,11 +25,24 @@ export default function AmountAndValue(props: Props) {
         options={{ abbreviated: true, maxDecimals: MAX_AMOUNT_DECIMALS }}
         animate
       />
-      <DisplayCurrency
-        className='justify-end text-xs text-white/50'
-        coin={BNCoin.fromDenomAndBigNumber(props.asset.denom, props.amount)}
-        isApproximation={props.isApproximation}
-      />
+      <div className='flex'>
+        {props.changePercentage && (
+          <FormattedNumber
+            amount={props.changePercentage.toNumber()}
+            className={classNames(
+              props.changePercentage.isNegative() ? 'text-loss' : 'text-profit',
+              'mx-1',
+            )}
+            parentheses
+            options={{ suffix: '%', prefix: props.changePercentage.isNegative() ? '' : '+' }}
+          />
+        )}
+        <DisplayCurrency
+          className='justify-end text-xs text-white/50'
+          coin={BNCoin.fromDenomAndBigNumber(props.asset.denom, props.amount)}
+          isApproximation={props.isApproximation}
+        />
+      </div>
     </div>
   )
 }

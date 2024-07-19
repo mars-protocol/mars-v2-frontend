@@ -229,6 +229,7 @@ export function convertAccountToPositions(account: Account): Positions {
       amount: lend.amount.toString(),
       denom: lend.denom,
     })),
+    perps: [],
     staked_astro_lps: account.stakedAstroLps?.map((stakedAstroLp) => stakedAstroLp.toCoin()) ?? [],
     /* PERPS
     perps: account.perps.map((perpPosition) => {

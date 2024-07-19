@@ -1,12 +1,14 @@
-import { useMemo } from 'react'
+import Button from 'components/common/Button'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import Divider from 'components/common/Divider'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { ArrowRight } from 'components/common/Icons'
+import { RouteInfo, SwapAssets } from 'components/common/RouteInfo'
+import SummaryLine from 'components/common/SummaryLine'
 
 import AprBreakdown from 'components/Modals/HLS/Deposit/Summary/ApyBreakdown'
 import Container from 'components/Modals/HLS/Deposit/Summary/Container'
-import DisplayCurrency from 'components/common/DisplayCurrency'
-import { FormattedNumber } from 'components/common/FormattedNumber'
-import { InfoCircle } from 'components/common/Icons'
-import Text from 'components/common/Text'
-import { Tooltip } from 'components/common/Tooltip'
+import { useMemo } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
@@ -14,6 +16,10 @@ interface Props {
   borrowRate: number
   leverage: number
   positionValue: BNCoin
+  assets: SwapAssets
+  disabled: boolean
+  onClickBtn: () => void
+  route?: SwapRouteInfo | null
 }
 
 export default function YourPosition(props: Props) {
@@ -41,40 +47,27 @@ export default function YourPosition(props: Props) {
 
   return (
     <Container title='Your Position'>
-      <div className='flex justify-between mb-2'>
-        <Text className='text-white/60 text-xs'>Total Position Value</Text>
-        <DisplayCurrency
-          coin={props.positionValue}
-          className='text-white/60 place-self-end text-xs'
-        />
-      </div>
-      <div className='flex justify-between mb-2'>
-        <Text className='text-white/60 text-xs'>Leverage</Text>
+      <SummaryLine label='Total Position Value'>
+        <DisplayCurrency coin={props.positionValue} />
+      </SummaryLine>
+      <SummaryLine label='Leverage'>
+        <FormattedNumber amount={props.leverage} options={{ suffix: 'x' }} />
+      </SummaryLine>
+      <SummaryLine label='Net APY' tooltip={<AprBreakdown items={apyItems} />}>
         <FormattedNumber
-          amount={props.leverage}
-          options={{ suffix: 'x' }}
-          className='text-white/60 place-self-end text-xs'
-        />
-      </div>
-      <div className='flex justify-between'>
-        <Text className='text-xs group/apytooltip' tag='span'>
-          <Tooltip
-            content={<AprBreakdown items={apyItems} />}
-            type='info'
-            className='items-center flex gap-2 group-hover/apytooltip:text-white text-white/60 cursor-pointer'
-          >
-            <>
-              <span className='mt-0.5'>Net APY</span>{' '}
-              <InfoCircle className='w-4 h-4 text-white/40  inline group-hover/apytooltip:text-white transition-all' />
-            </>
-          </Tooltip>
-        </Text>
-        <FormattedNumber
-          className='text-white/60 place-self-end text-xs'
           amount={netApy}
           options={{ suffix: '%', minDecimals: 0, maxDecimals: 2 }}
         />
-      </div>
+      </SummaryLine>
+      <Divider className='mt-4 mb-2' />
+      {props.route && <RouteInfo title='Swap summary' route={props.route} assets={props.assets} />}
+      <Button
+        onClick={props.onClickBtn}
+        text='Approve Funding Transaction'
+        rightIcon={<ArrowRight />}
+        className='mt-1 w-full mt-6'
+        disabled={props.disabled}
+      />
     </Container>
   )
 }

@@ -1,12 +1,10 @@
-import { useMemo, useState } from 'react'
-
 import { BN_ZERO } from 'constants/math'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
-import useSwapValueLoss from 'hooks/hls/useSwapValueLoss'
 import useSlippage from 'hooks/settings/useSlippage'
+import useRouteInfo from 'hooks/trade/useRouteInfo'
+import { useMemo, useState } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { SWAP_FEE_BUFFER } from 'utils/constants'
 import { getCoinValue } from 'utils/formatters'
 
 interface Props {
@@ -16,10 +14,11 @@ interface Props {
 export default function useDepositHlsVault(props: Props) {
   const [slippage] = useSlippage()
   const assets = useDepositEnabledAssets()
-  const { data: valueLossPercentage } = useSwapValueLoss(props.borrowDenom, props.collateralDenom)
 
   const [depositAmount, setDepositAmount] = useState<BigNumber>(BN_ZERO)
   const [borrowAmount, setBorrowAmount] = useState<BigNumber>(BN_ZERO)
+
+  const { data: route } = useRouteInfo(props.borrowDenom, props.collateralDenom, borrowAmount)
 
   const depositCoin = useMemo(
     () => BNCoin.fromDenomAndBigNumber(props.collateralDenom, depositAmount),
@@ -41,15 +40,16 @@ export default function useDepositHlsVault(props: Props) {
       assets,
     )
 
+    const swapOutputValue = getCoinValue(
+      BNCoin.fromDenomAndBigNumber(props.collateralDenom, route?.amountOut || BN_ZERO),
+      assets,
+    )
+
     return {
-      positionValue: collateralValue.plus(borrowValue),
+      positionValue: collateralValue.plus(swapOutputValue),
       leverage:
         borrowValue
-          .dividedBy(
-            collateralValue
-              .plus(borrowValue.times(1 - valueLossPercentage - SWAP_FEE_BUFFER))
-              .minus(borrowValue),
-          )
+          .dividedBy(collateralValue.plus(borrowValue.times(1 - slippage)).minus(borrowValue))
           .plus(1)
           .toNumber() || 1,
     }
@@ -59,11 +59,14 @@ export default function useDepositHlsVault(props: Props) {
     depositAmount,
     assets,
     borrowAmount,
-    valueLossPercentage,
+    route?.amountOut,
+    slippage,
   ])
 
-  const actions: Action[] = useMemo(
-    () => [
+  const actions: Action[] | null = useMemo(() => {
+    if (!route) return null
+
+    return [
       {
         deposit: depositCoin.toCoin(),
       },
@@ -75,6 +78,7 @@ export default function useDepositHlsVault(props: Props) {
             },
             {
               swap_exact_in: {
+                route: route.route,
                 denom_out: props.collateralDenom,
                 slippage: slippage.toString(),
                 coin_in: BNCoin.fromDenomAndBigNumber(
@@ -84,9 +88,16 @@ export default function useDepositHlsVault(props: Props) {
               },
             },
           ]),
-    ],
-    [borrowAmount, borrowCoin, depositCoin, props.borrowDenom, props.collateralDenom, slippage],
-  )
+    ]
+  }, [
+    borrowAmount,
+    borrowCoin,
+    depositCoin,
+    props.borrowDenom,
+    props.collateralDenom,
+    slippage,
+    route,
+  ])
 
   return {
     setDepositAmount,
