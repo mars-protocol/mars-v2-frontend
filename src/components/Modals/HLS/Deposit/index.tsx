@@ -180,10 +180,5 @@ function StakingContent(props: StakingContentProps) {
     walletCollateralAsset: props.walletCollateralAsset,
   })
 
-  return (
-    <Accordion
-      className='h-screen-full md:h-[546px] overflow-y-scroll scrollbar-hide'
-      items={items}
-    />
-  )
+  return <Accordion items={items} />
 }
