@@ -1,7 +1,6 @@
 import AssetSummary from 'components/Modals/HLS/Deposit/Summary/AssetSummary'
 import YourPosition from 'components/Modals/HLS/Deposit/Summary/YourPosition'
-import Button from 'components/common/Button'
-import { ArrowRight } from 'components/common/Icons'
+import useRouteInfo from 'hooks/trade/useRouteInfo'
 import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
@@ -17,21 +16,35 @@ interface Props {
 }
 
 export default function Summary(props: Props) {
+  const { data: route } = useRouteInfo(
+    props.borrowMarket.asset.denom,
+    props.collateralAsset.denom,
+    props.borrowAmount,
+  )
+
   return (
     <div id='item-3' className='p-4 flex flex-col gap-4'>
-      <AssetSummary asset={props.collateralAsset} amount={props.depositAmount} />
-      <AssetSummary asset={props.borrowMarket.asset} amount={props.borrowAmount} isBorrow />
+      <AssetSummary
+        asset={props.collateralAsset}
+        amount={props.depositAmount}
+        borrowAsset={props.borrowMarket.asset}
+      />
+      <AssetSummary
+        asset={props.collateralAsset}
+        amount={props.borrowAmount}
+        borrowAsset={props.borrowMarket.asset}
+        swapOutputAmount={route?.amountOut}
+        isBorrow
+      />
+
       <YourPosition
         positionValue={BNCoin.fromDenomAndBigNumber('usd', props.positionValue)}
         baseApy={props.apy || 0}
         borrowRate={props.borrowMarket.apy.borrow || 0}
         leverage={props.leverage}
-      />
-      <Button
-        onClick={props.onClickBtn}
-        text='Approve Funding Transaction'
-        rightIcon={<ArrowRight />}
-        className='mt-1'
+        route={route}
+        assets={{ in: props.collateralAsset, out: props.borrowMarket.asset }}
+        onClickBtn={props.onClickBtn}
         disabled={props.disabled}
       />
     </div>
