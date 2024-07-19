@@ -1,6 +1,4 @@
 import { BN_ZERO } from 'constants/math'
-import { BNCoin } from 'types/classes/BNCoin'
-import { Positions } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import {
   AssetParamsBaseForAddr as AssetParams,
   AssetParamsBaseForAddr,
@@ -9,7 +7,6 @@ import {
 import { Market as RedBankMarket } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { BN, getLeverageFromLTV } from 'utils/helpers'
 import { convertAprToApy } from 'utils/parsers'
-import { getTokenPrice } from 'utils/tokens'
 
 export function resolveMarketResponse(
   asset: Asset,
@@ -99,6 +96,7 @@ export function resolveHLSStrategies(
   return HLSStakingStrategies
 }
 
+/* PERPS
 export function resolvePerpsPositions(
   perpPositions: Positions['perps'],
   assets: Asset[],
@@ -165,7 +163,6 @@ export function resolvePerpsPositions(
   })
 }
 
-/* PERPS
 export function resolvePerpsVaultPositions(
   perpsVaultPositions?: Positions['perp_vault'],
 ): PerpsVaultPositions | null {

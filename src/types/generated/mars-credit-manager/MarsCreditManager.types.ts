@@ -138,8 +138,9 @@ export type Action =
       swap_exact_in: {
         coin_in: ActionCoin
         denom_out: string
+        min_receive?: Uint128
+        slippage?: Decimal
         route?: SwapperRoute | null
-        slippage: Decimal
       }
     }
   | {
@@ -281,7 +282,6 @@ export type CallbackMsg =
   | {
       claim_rewards: {
         account_id: string
-        recipient: Addr
       }
     }
   | {
@@ -343,8 +343,9 @@ export type CallbackMsg =
         account_id: string
         coin_in: ActionCoin
         denom_out: string
+        min_receive?: Uint128
+        slippage?: Decimal
         route?: SwapperRoute | null
-        slippage: Decimal
       }
     }
   | {
@@ -406,13 +407,6 @@ export type CallbackMsg =
     }
   | {
       remove_reentrancy_guard: {}
-    }
-  | {
-      send_rewards_to_addr: {
-        account_id: string
-        previous_balances: Coin[]
-        recipient: Addr
-      }
     }
 export type Addr = string
 export type HealthState =
@@ -660,8 +654,6 @@ export interface Positions {
   lends: Coin[]
   staked_astro_lps: Coin[]
   vaults: VaultPosition[]
-  perp_vault?: VaultPosition | null
-  perps?: PerpPosition[]
 }
 export interface DebtAmount {
   amount: Uint128

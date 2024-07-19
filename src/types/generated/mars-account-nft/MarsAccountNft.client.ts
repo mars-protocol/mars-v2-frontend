@@ -39,7 +39,7 @@ import {
 export interface MarsAccountNftReadOnlyInterface {
   contractAddress: string
   config: () => Promise<NftConfigBaseForString>
-  nextId: () => Promise<string>
+  nextId: () => Promise<String>
   ownerOf: ({
     includeExpired,
     tokenId,
@@ -129,7 +129,7 @@ export class MarsAccountNftQueryClient implements MarsAccountNftReadOnlyInterfac
       config: {},
     })
   }
-  nextId = async (): Promise<string> => {
+  nextId = async (): Promise<String> => {
     return this.client.queryContractSmart(this.contractAddress, {
       next_id: {},
     })
