@@ -34,7 +34,7 @@ export default function MobileNavigation(props: Props) {
   const address = useStore((s) => s.address)
   const { pathname } = useLocation()
   const currentPage = getPage(pathname)
-  const { data: account } = useAccount(isV1 ? address : currentAccountId ?? undefined)
+  const { data: account } = useAccount(isV1 ? address : (currentAccountId ?? undefined))
 
   const menu = useMemo(() => menuTree(walletId, chainConfig), [walletId, chainConfig, menuTree])
 
