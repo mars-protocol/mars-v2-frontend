@@ -360,6 +360,7 @@ function getVaultTokensFromEvent(event: TransactionEvent): BNCoin[] | undefined 
 }
 
 function getCoinFromAmountDenomString(amountDenomString: string): BNCoin | undefined {
+  if (amountDenomString.charAt(0) === '0') return
   const regex = /(?:(\d+).*)/g
   const matches = regex.exec(amountDenomString)
   if (!matches || matches.length < 2) return
@@ -381,8 +382,6 @@ function getCoinFromPnLString(pnlString: string): BNCoin | undefined {
 function groupTransactionCoins(coins: TransactionCoin[]): GroupedTransactionCoin[] {
   // Group coins by type so that for example multiple deposit objects are passed as a single deposit array
   return coins.reduce((grouped, coin) => {
-    console.log('coin', coin, grouped)
-
     const existingGroup = grouped.find((g) => g.type === coin.type)
 
     if (existingGroup) {
