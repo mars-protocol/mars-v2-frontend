@@ -6423,10 +6423,10 @@ mobile-detect@^1.4.5:
   resolved "https://registry.yarnpkg.com/mobile-detect/-/mobile-detect-1.4.5.tgz#da393c3c413ca1a9bcdd9ced653c38281c0fb6ad"
   integrity sha512-yc0LhH6tItlvfLBugVUEtgawwFU2sIe+cSdmRJJCTMZ5GEJyLxNyC/NIOAOGk67Fa8GNpOttO3Xz/1bHpXFD/g==
 
-mobx@^6.12.4:
-  version "6.12.4"
-  resolved "https://registry.yarnpkg.com/mobx/-/mobx-6.12.4.tgz#a1e176cd173bf45d3e5eb825eaff2c736c0a90cb"
-  integrity sha512-uIymg89x+HmItX1p3MG+d09irn2k63J6biftZ5Ok+UpNojS1I3NJPLfcmJT9ANnUltNlHi+HQqrVyxiAN8ISYg==
+mobx@^6.13.1:
+  version "6.13.1"
+  resolved "https://registry.yarnpkg.com/mobx/-/mobx-6.13.1.tgz#76c41aa675199f75b84a257e4bec8ff839e33259"
+  integrity sha512-ekLRxgjWJr8hVxj9ZKuClPwM/iHckx3euIJ3Np7zLVNtqJvfbbq7l370W/98C8EabdQ1pB5Jd3BbDWxJPNnaOg==
 
 moment@^2.30.1:
   version "2.30.1"
