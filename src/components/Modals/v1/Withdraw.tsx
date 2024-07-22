@@ -8,6 +8,7 @@ import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
 
 interface Props {
   account: Account
@@ -21,8 +22,11 @@ export default function Withdraw(props: Props) {
   const [withdrawAsset, setWithdrawAsset] = useState<BNCoin>(
     BNCoin.fromDenomAndBigNumber(modal?.data.asset.denom ?? baseAsset.denom, BN_ZERO),
   )
+  const isDeprecated = asset.isDeprecated
   const { computeMaxWithdrawAmount } = useHealthComputer(account)
-  const maxWithdrawAmount = computeMaxWithdrawAmount(asset.denom)
+  const maxWithdrawAmount = isDeprecated
+    ? (account?.lends?.find(byDenom(asset.denom))?.amount ?? BN_ZERO)
+    : computeMaxWithdrawAmount(asset.denom)
   const { simulateWithdraw } = useUpdatedAccount(account)
   const balance = BNCoin.fromDenomAndBigNumber(asset.denom, maxWithdrawAmount)
   const v1Action = useStore((s) => s.v1Action)
