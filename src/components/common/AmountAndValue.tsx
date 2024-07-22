@@ -18,7 +18,7 @@ export default function AmountAndValue(props: Props) {
   const isBelowMinAmount = amount < MIN_AMOUNT
   const displayAmount = isBelowMinAmount ? MIN_AMOUNT : amount
   return (
-    <div className='flex flex-col gap-[0.5] text-xs text-right'>
+    <div className='flex flex-col gap-[0.5] text-xs text-right items-end'>
       <FormattedNumber
         amount={isZero ? 0 : displayAmount}
         smallerThanThreshold={!isZero && isBelowMinAmount}
