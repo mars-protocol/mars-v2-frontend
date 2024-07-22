@@ -60,7 +60,7 @@ export default function RewardsPosition(props: Props) {
     await claimRewards({
       accountId: accountId || '',
       redBankRewards: denom === 'redbank' ? rewards : undefined,
-      stakedAstroLpRewards: denom !== 'redbank' ? [{ lp_denom: denom, rewards }] : undefined,
+      stakedAstroLpRewards: denom !== 'redbank' ? [{ lpDenom: denom, rewards }] : undefined,
     })
     setIsConfirming(false)
   }, [accountId, claimRewards, denom, rewards])

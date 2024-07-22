@@ -57,12 +57,10 @@ async function getStakedAstroLpRewards(
       stakedAstroLpRewards.push(stakedAstroLpRewardsData)
     }
 
-    return await Promise.all(
-      stakedAstroLpRewards.map((reward) => ({
-        lp_denom: reward.lp_coin.denom,
-        rewards: reward.rewards.map((reward) => new BNCoin(reward)),
-      })),
-    )
+    return stakedAstroLpRewards.map((reward) => ({
+      lpDenom: reward.lp_coin.denom,
+      rewards: reward.rewards.map((reward) => new BNCoin(reward)),
+    }))
   } catch (ex) {
     return [] as StakedAstroLpRewards[]
   }
