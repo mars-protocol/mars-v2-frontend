@@ -46,7 +46,7 @@ export default function useV1DepositsTableData(): {
           accountLentAmount: position.amount,
           debt: BN_ZERO,
           deposits: position.amount,
-          liquidity: position.amount, // Available liqudiity to be borrowed
+          liquidity: position.amount,
           depositEnabled: false,
           borrowEnabled: false,
           apy: {
