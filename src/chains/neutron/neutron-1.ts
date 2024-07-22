@@ -4,6 +4,7 @@ import { ChainInfoID, NETWORK } from 'types/enums'
 
 const Neutron1: ChainConfig = {
   id: ChainInfoID.Neutron1,
+  isOsmosis: false,
   stables: ['ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349'],
   defaultTradingPair: {
     buy: 'untrn',

@@ -1,5 +1,4 @@
 import { BN_ZERO } from 'constants/math'
-import { ChainInfoID } from 'types/enums'
 import { BN } from 'utils/helpers'
 
 export default async function estimateExactIn(
@@ -7,7 +6,7 @@ export default async function estimateExactIn(
   coinIn: Coin,
   denomOut: string,
 ) {
-  const isOsmosis = [ChainInfoID.Osmosis1].includes(chainConfig.id)
+  const isOsmosis = chainConfig.isOsmosis
   const osmosisFetchOptions = {
     method: 'GET',
     headers: {

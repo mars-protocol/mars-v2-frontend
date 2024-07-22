@@ -38,6 +38,8 @@ const LP_ASSETS = [
 ]
 
 const Osmosis1: ChainConfig = {
+  id: ChainInfoID.Osmosis1,
+  isOsmosis: true,
   lp: LP_ASSETS,
   stables: [
     'ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4',
@@ -90,7 +92,6 @@ const Osmosis1: ChainConfig = {
   explorerName: 'Mintscan',
   features: ['ibc-transfer', 'ibc-go'],
   gasPrice: '0.0035uosmo',
-  id: ChainInfoID.Osmosis1,
   name: 'Osmosis',
   network: NETWORK.MAINNET,
   vaults: VAULTS_META_DATA,

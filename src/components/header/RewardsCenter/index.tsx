@@ -13,14 +13,14 @@ import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAssets from 'hooks/assets/useAssets'
+import useIsOsmosis from 'hooks/chain/useIsOsmosis'
 import useToggle from 'hooks/common/useToggle'
 import useStakedAstroLpRewards from 'hooks/incentives/useStakedAstroLpRewards'
 import useUnclaimedRewards from 'hooks/incentives/useUnclaimedRewards'
-import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useRewardsCenterType from 'hooks/localStorage/useRewardsCenterType'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { ChainInfoID, RewardsCenterType } from 'types/enums'
+import { RewardsCenterType } from 'types/enums'
 import { getCoinValue } from 'utils/formatters'
 import { mergeBNCoinArrays } from 'utils/helpers'
 
@@ -29,16 +29,12 @@ interface Props {
 }
 export default function RewardsCenter(props: Props) {
   const accountId = useAccountId()
-  const [currentChainId, _] = useCurrentChainId()
   const [rewardsCenterType, setRewardCenterType] = useRewardsCenterType()
   const [showRewardsCenter, setShowRewardsCenter] = useToggle()
   const [isConfirming, setIsConfirming] = useState(false)
   const { data: redBankRewards } = useUnclaimedRewards()
   const { data: assets } = useAssets()
-  const isNeutron = useMemo(
-    () => currentChainId === ChainInfoID.Neutron1 || currentChainId === ChainInfoID.Pion1,
-    [currentChainId],
-  )
+  const isOsmosis = useIsOsmosis()
 
   const { data: stakedAstroLpRewards } = useStakedAstroLpRewards()
   const currentLpRewards = useMemo(() => {
@@ -77,8 +73,8 @@ export default function RewardsCenter(props: Props) {
   }, [accountId, claimRewards, redBankRewards, setShowRewardsCenter, stakedAstroLpRewards])
 
   useEffect(() => {
-    if (!isNeutron) setRewardCenterType(RewardsCenterType.Token)
-  }, [isNeutron, rewardsCenterType, setRewardCenterType])
+    if (isOsmosis) setRewardCenterType(RewardsCenterType.Token)
+  }, [isOsmosis, rewardsCenterType, setRewardCenterType])
 
   return (
     <div className={classNames('relative', props.className)}>
@@ -111,7 +107,7 @@ export default function RewardsCenter(props: Props) {
           </Text>
         </div>
         <div className='flex flex-col w-full gap-4 px-4 py-5'>
-          {isNeutron && (
+          {!isOsmosis && (
             <SwitchWithText
               options={[
                 { text: 'By Token', value: RewardsCenterType.Token },
@@ -135,7 +131,7 @@ export default function RewardsCenter(props: Props) {
           <RewardsByToken
             rewards={rewards}
             assets={assets}
-            active={rewardsCenterType === RewardsCenterType.Token || !isNeutron}
+            active={rewardsCenterType === RewardsCenterType.Token || isOsmosis}
           />
           <RewardsByPosition
             redBankRewards={redBankRewards}

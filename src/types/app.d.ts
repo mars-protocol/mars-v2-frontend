@@ -205,6 +205,7 @@ interface Bridge {
 }
 
 interface ChainConfig {
+  isOsmosis: boolean
   lp?: Asset[]
   stables: string[]
   defaultTradingPair: TradingPair
