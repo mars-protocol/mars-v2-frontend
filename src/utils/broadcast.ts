@@ -381,8 +381,6 @@ function getCoinFromPnLString(pnlString: string): BNCoin | undefined {
 function groupTransactionCoins(coins: TransactionCoin[]): GroupedTransactionCoin[] {
   // Group coins by type so that for example multiple deposit objects are passed as a single deposit array
   return coins.reduce((grouped, coin) => {
-    console.log('coin', coin, grouped)
-
     const existingGroup = grouped.find((g) => g.type === coin.type)
 
     if (existingGroup) {
