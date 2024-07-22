@@ -38,24 +38,23 @@ export default function WithdrawFromAccount(props: Props) {
   const { computeMaxBorrowAmount } = useHealthComputer(borrowAccount)
   const marketEnabledAssets = useTradeEnabledAssets()
   const balances = getMergedBalancesForAsset(account, marketEnabledAssets)
-  const maxWithdrawAmount = currentAsset.isWhitelisted
-    ? computeMaxWithdrawAmount(currentAsset.denom)
-    : (balances.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO)
-  const maxWithdrawWithBorrowAmount = computeMaxBorrowAmount(currentAsset.denom, 'wallet').plus(
-    maxWithdrawAmount,
-  )
-  const isWithinBalance = amount.isLessThan(maxWithdrawAmount)
-  const withdrawAmount = isWithinBalance ? amount : maxWithdrawAmount
-  const debtAmount = isWithinBalance ? BN_ZERO : amount.minus(maxWithdrawAmount)
-  const max = withdrawWithBorrowing ? maxWithdrawWithBorrowAmount : maxWithdrawAmount
-
   const accountDeposit = account.deposits.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO
   const accountLent = account.lends.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO
   const shouldReclaim = amount.isGreaterThan(accountDeposit) && !accountLent.isZero()
   const isReclaimingMaxAmount = accountLent.isLessThanOrEqualTo(amount.minus(accountDeposit))
 
   const reclaimAmount = isReclaimingMaxAmount ? amount : amount.minus(accountDeposit)
-
+  const isDeprecatedAsset = currentAsset.isDeprecated
+  const maxWithdrawAmount = isDeprecatedAsset
+    ? (balances.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO)
+    : computeMaxWithdrawAmount(currentAsset.denom)
+  const maxWithdrawWithBorrowAmount = isDeprecatedAsset
+    ? maxWithdrawAmount
+    : computeMaxBorrowAmount(currentAsset.denom, 'wallet').plus(maxWithdrawAmount)
+  const isWithinBalance = amount.isLessThan(maxWithdrawAmount)
+  const withdrawAmount = isWithinBalance ? amount : maxWithdrawAmount
+  const debtAmount = isWithinBalance ? BN_ZERO : amount.minus(maxWithdrawAmount)
+  const max = withdrawWithBorrowing ? maxWithdrawWithBorrowAmount : maxWithdrawAmount
   function onChangeAmount(val: BigNumber) {
     setAmount(val)
   }
@@ -114,25 +113,24 @@ export default function WithdrawFromAccount(props: Props) {
           maxText='Max'
           warningMessages={[]}
         />
-        {currentAsset.isWhitelisted && (
-          <>
-            <Divider className='my-6' />
-            <div className='flex flex-wrap w-full'>
-              <div className='flex flex-wrap flex-1'>
-                <Text className='w-full mb-1'>Withdraw with borrowing</Text>
-                <Text size='xs' className='text-white/50'>
-                  Borrow assets from your Credit Account to withdraw to your wallet
-                </Text>
-              </div>
-              <div className='flex flex-wrap items-center justify-end'>
-                <Switch
-                  name='borrow-to-wallet'
-                  checked={withdrawWithBorrowing}
-                  onChange={setWithdrawWithBorrowing}
-                />
-              </div>
+        <Divider className='my-6' />
+        {!isDeprecatedAsset && (
+          <div className='flex flex-wrap w-full'>
+            <div className='flex flex-wrap flex-1'>
+              <Text className='w-full mb-1'>Withdraw with borrowing</Text>
+              <Text size='xs' className='text-white/50'>
+                Borrow assets from your Credit Account to withdraw to your wallet
+              </Text>
             </div>
-          </>
+
+            <div className='flex flex-wrap items-center justify-end'>
+              <Switch
+                name='borrow-to-wallet'
+                checked={withdrawWithBorrowing}
+                onChange={setWithdrawWithBorrowing}
+              />
+            </div>
+          </div>
         )}
       </div>
       <Button onClick={onConfirm} className='w-full' text={'Withdraw'} rightIcon={<ArrowRight />} />

@@ -129,6 +129,7 @@ interface AssetMetaData {
   isStable?: boolean
   isStaking?: boolean
   isPerpsEnabled?: boolean
+  isDeprecated?: boolean
   logo?: string | null
   prefix?: string
   pythPriceFeedId?: string
@@ -208,6 +209,7 @@ interface ChainConfig {
   isOsmosis: boolean
   lp?: Asset[]
   stables: string[]
+  deprecated?: string[]
   defaultTradingPair: TradingPair
   bech32Config: import('@keplr-wallet/types').Bech32Config
   contracts: {
