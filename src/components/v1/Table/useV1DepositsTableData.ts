@@ -7,6 +7,7 @@ import useLendingMarkets from 'hooks/markets/useLendingMarkets'
 import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
+import { getCoinValue } from 'utils/formatters'
 
 export default function useV1DepositsTableData(): {
   depositAssets: LendingMarketTableData[]
@@ -36,9 +37,27 @@ export default function useV1DepositsTableData(): {
 
     userCollateral.forEach((position) => {
       const collateralAsset = assets.find(byDenom(position.denom))
-      const collateralMarket = markets.find((market) => market.asset.denom === position.denom)
-      if (!collateralAsset || !collateralMarket) return
-      if (collateralAsset.isDeprecated) depositAssets.push(collateralMarket)
+      const value = getCoinValue(position, assets)
+      if (!collateralAsset) return
+      if (collateralAsset.isDeprecated)
+        depositAssets.push({
+          asset: collateralAsset,
+          accountLentValue: value,
+          accountLentAmount: position.amount,
+          debt: BN_ZERO,
+          deposits: position.amount,
+          liquidity: position.amount, // Available liqudiity to be borrowed
+          depositEnabled: false,
+          borrowEnabled: false,
+          apy: {
+            borrow: 0,
+            deposit: 0,
+          },
+          ltv: {
+            max: 0,
+            liq: 0,
+          },
+        })
     })
 
     return {
