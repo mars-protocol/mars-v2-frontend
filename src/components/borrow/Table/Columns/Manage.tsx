@@ -1,7 +1,7 @@
-import { useCallback, useMemo } from 'react'
-
+import ActionButton from 'components/common/Button/ActionButton'
 import DropDownButton from 'components/common/Button/DropDownButton'
 import { HandCoins, Plus } from 'components/common/Icons'
+import { useCallback, useMemo } from 'react'
 import useStore from 'store'
 
 export const MANAGE_META = {
@@ -29,17 +29,19 @@ export default function Manage(props: Props) {
     })
   }, [props.data])
 
+  const isDeprecatedAsset = props.data.asset.isDeprecated
+
   const ITEMS: DropDownItem[] = useMemo(
     () => [
-      {
-        icon: <Plus />,
-        text: 'Borrow more',
-        onClick: borrowHandler,
-      },
       {
         icon: <HandCoins />,
         text: 'Repay',
         onClick: repayHandler,
+      },
+      {
+        icon: <Plus />,
+        text: 'Borrow more',
+        onClick: borrowHandler,
       },
     ],
     [borrowHandler, repayHandler],
@@ -49,7 +51,17 @@ export default function Manage(props: Props) {
 
   return (
     <div className='z-10 flex justify-end'>
-      <DropDownButton items={ITEMS} text='Manage' color='tertiary' />
+      {isDeprecatedAsset ? (
+        <ActionButton
+          leftIcon={<HandCoins />}
+          color='tertiary'
+          onClick={() => repayHandler()}
+          text='Repay'
+          short
+        />
+      ) : (
+        <DropDownButton items={ITEMS} text='Manage' color='tertiary' />
+      )}
     </div>
   )
 }
