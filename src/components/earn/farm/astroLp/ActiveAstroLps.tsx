@@ -13,7 +13,7 @@ export function ActiveAstroLps() {
   const tabs: CardTab[] = useMemo(
     () => [
       {
-        title: 'Active LP AstroLps',
+        title: 'Active Astro LPs',
         renderContent: () => (
           <ActiveAstroLpsTable columns={activeColumns} data={activeAstroLps} isLoading={false} />
         ),

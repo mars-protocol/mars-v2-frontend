@@ -15,7 +15,7 @@ export function AvailableAstroLps() {
       ...(chainConfig.farm
         ? [
             {
-              title: 'Available LP AstroLps',
+              title: 'Available Astro LPs',
               renderContent: () => <AvailableAstroLpsTable />,
             },
           ]
