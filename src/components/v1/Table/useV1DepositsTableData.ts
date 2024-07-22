@@ -36,7 +36,7 @@ export default function useV1DepositsTableData(): {
 
     userCollateral.forEach((position) => {
       const collateralAsset = assets.find(byDenom(position.denom))
-      const collateralMarket = markets.find(byDenom(position.denom))
+      const collateralMarket = markets.find((market) => market.asset.denom === position.denom)
       if (!collateralAsset || !collateralMarket) return
       if (collateralAsset.isDeprecated) depositAssets.push(collateralMarket)
     })
