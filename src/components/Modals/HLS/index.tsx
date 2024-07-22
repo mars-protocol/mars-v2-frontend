@@ -57,7 +57,7 @@ function HlsModal(props: Props) {
         <Header primaryAsset={props.primaryAsset} secondaryAsset={props.secondaryAsset.asset} />
       }
       headerClassName='gradient-header pl-2 pr-2.5 py-3 border-b-white/5 border-b'
-      contentClassName='flex flex-col p-2 md:p-6 h-screen-full md:h-auto'
+      contentClassName='flex flex-col p-2 md:p-6 h-screen-full max-h-[546px] md:h-auto overflow-y-scroll scrollbar-hide'
       modalClassName='max-w-screen-full md:max-w-modal-md '
       onClose={handleClose}
     >
