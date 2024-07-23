@@ -9,6 +9,7 @@ import SummarySkeleton from 'components/portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
@@ -25,6 +26,8 @@ export default function PortfolioSummary() {
   const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
   const assets = useDepositEnabledAssets()
+  const astroLpAprs = useAstroLpAprs()
+
   const stats = useMemo(() => {
     if (!accounts?.length) return
     const combinedAccount = accounts.reduce(
@@ -55,6 +58,7 @@ export default function PortfolioSummary() {
       hlsStrategies,
       assets,
       vaultAprs,
+      astroLpAprs,
     )
 
     return [
@@ -95,7 +99,7 @@ export default function PortfolioSummary() {
         sub: 'Combined leverage',
       },
     ]
-  }, [accounts, assets, borrowAssets, hlsStrategies, lendingAssets, vaultAprs])
+  }, [accounts, assets, borrowAssets, hlsStrategies, lendingAssets, vaultAprs, astroLpAprs])
 
   if (!walletAddress && !urlAddress) return null
 

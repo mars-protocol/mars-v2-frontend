@@ -1,30 +1,33 @@
 import BigNumber from 'bignumber.js'
-import { useMemo } from 'react'
 
 import { BN_ZERO } from 'constants/math'
-import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
-import useSwapValueLoss from 'hooks/hls/useSwapValueLoss'
 import useSlippage from 'hooks/settings/useSlippage'
+import useRouteInfo from 'hooks/trade/useRouteInfo'
+import { useMemo } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { SWAP_FEE_BUFFER } from 'utils/constants'
-import { getCoinAmount, getCoinValue } from 'utils/formatters'
 
 interface Props {
   account: HLSAccountWithStrategy
 }
 
-export default function UseClosePositionActions(props: Props): Action[] {
+export default function useClosePositionActions(props: Props): Action[] | null {
   const [slippage] = useSlippage()
   const collateralDenom = props.account.strategy.denoms.deposit
   const borrowDenom = props.account.strategy.denoms.borrow
-  const { data: swapValueLoss } = useSwapValueLoss(collateralDenom, borrowDenom)
-  const assets = useDepositEnabledAssets()
+
   const debtAmount: BigNumber = useMemo(
     () =>
       props.account.debts.find((debt) => debt.denom === props.account.strategy.denoms.borrow)
         ?.amount || BN_ZERO,
     [props.account.debts, props.account.strategy.denoms.borrow],
+  )
+
+  // This estimates the rough collateral amount we need to swap in order to repay the debt
+  const { data: routeInfoForCollateralAmount } = useRouteInfo(
+    borrowDenom,
+    collateralDenom,
+    debtAmount,
   )
 
   const collateralAmount: BigNumber = useMemo(
@@ -36,17 +39,20 @@ export default function UseClosePositionActions(props: Props): Action[] {
   )
 
   const swapInAmount = useMemo(() => {
-    const targetValue = getCoinValue(BNCoin.fromDenomAndBigNumber(borrowDenom, debtAmount), assets)
-    return BigNumber.max(
-      getCoinAmount(collateralDenom, targetValue, assets)
-        .times(1 + slippage + SWAP_FEE_BUFFER + swapValueLoss)
-        .integerValue(),
+    if (!routeInfoForCollateralAmount) return BN_ZERO
+
+    return BigNumber.min(
+      routeInfoForCollateralAmount.amountOut.times(1 + slippage),
       collateralAmount,
     )
-  }, [borrowDenom, debtAmount, assets, collateralDenom, slippage, swapValueLoss, collateralAmount])
+  }, [routeInfoForCollateralAmount, collateralAmount, slippage])
 
-  return useMemo<Action[]>(
-    () => [
+  const { data: routeInfo } = useRouteInfo(collateralDenom, borrowDenom, swapInAmount)
+
+  return useMemo<Action[] | null>(() => {
+    if (!routeInfo) return null
+
+    return [
       ...(debtAmount.isZero()
         ? []
         : [
@@ -55,6 +61,7 @@ export default function UseClosePositionActions(props: Props): Action[] {
                 coin_in: BNCoin.fromDenomAndBigNumber(collateralDenom, swapInAmount).toActionCoin(),
                 denom_out: borrowDenom,
                 slippage: slippage.toString(),
+                route: routeInfo?.route,
               },
             },
             {
@@ -67,7 +74,6 @@ export default function UseClosePositionActions(props: Props): Action[] {
             },
           ]),
       { refund_all_coin_balances: {} },
-    ],
-    [borrowDenom, collateralDenom, debtAmount, slippage, swapInAmount],
-  )
+    ]
+  }, [borrowDenom, collateralDenom, debtAmount, swapInAmount, routeInfo, slippage])
 }

@@ -2,7 +2,6 @@ import classNames from 'classnames'
 import { useMemo } from 'react'
 import { isMobile } from 'react-device-detect'
 
-import { WalletID } from 'types/enums'
 import AccountMenu from 'components/account/AccountMenu'
 import EscButton from 'components/common/Button/EscButton'
 import { Coins, CoinsSwap, Logo } from 'components/common/Icons'
@@ -17,6 +16,7 @@ import RewardsCenter from 'components/header/RewardsCenter'
 import Wallet from 'components/Wallet'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useStore from 'store'
+import { WalletID } from 'types/enums'
 import { getGovernanceUrl } from 'utils/helpers'
 
 const menuTree = (walletId: WalletID, chainConfig: ChainConfig): MenuTreeEntry[] => [

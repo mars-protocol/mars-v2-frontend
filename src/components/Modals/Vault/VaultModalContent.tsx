@@ -12,7 +12,7 @@ import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useDisplayAsset from 'hooks/assets/useDisplayAsset'
-import useDepositVault from 'hooks/broadcast/useDepositVault'
+import useDepositLiquidity from 'hooks/broadcast/useDepositLiquidity'
 import useIsOpenArray from 'hooks/common/useIsOpenArray'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -40,8 +40,8 @@ export default function VaultModalContent(props: Props) {
   const [depositCoins, setDepositCoins] = useState<BNCoin[]>([])
   const [borrowCoins, setBorrowCoins] = useState<BNCoin[]>([])
   const displayAsset = useDisplayAsset()
-  const { actions: depositActions, totalValue } = useDepositVault({
-    vault: props.vault,
+  const { actions: depositActions, totalValue } = useDepositLiquidity({
+    farm: props.vault,
     reclaims: removedLends,
     deposits: removedDeposits,
     borrowings: addedDebts,

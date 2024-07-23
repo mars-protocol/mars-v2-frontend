@@ -57,3 +57,8 @@ export enum AstroportSwapPoolType {
   XYK = 'xyk',
   PCL = 'pcl',
 }
+
+export enum RewardsCenterType {
+  Token = 'token',
+  Position = 'position',
+}

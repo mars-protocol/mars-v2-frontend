@@ -1,8 +1,7 @@
-import React, { useCallback, useMemo } from 'react'
-
 import DropDownButton from 'components/common/Button/DropDownButton'
 import { ArrowDownLine, Cross, HandCoins, Plus, Scale } from 'components/common/Icons'
 import useCloseHlsStakingPosition from 'hooks/hls/useClosePositionActions'
+import React, { useCallback, useMemo } from 'react'
 import useStore from 'store'
 
 export const MANAGE_META = { id: 'manage' }
@@ -58,7 +57,7 @@ export default function Manage(props: Props) {
       {
         icon: <Cross width={14} />,
         text: 'Close Position',
-        onClick: () => closeHlsStakingPosition({ accountId: props.account.id, actions }),
+        onClick: () => actions && closeHlsStakingPosition({ accountId: props.account.id, actions }),
       },
     ],
     [actions, closeHlsStakingPosition, hasNoDebt, openModal, props.account.id],

@@ -455,12 +455,12 @@ export function useMarsAccountNftOwnerOfQuery<TData = OwnerOfResponse>({
     },
   )
 }
-export interface MarsAccountNftNextIdQuery<TData> extends MarsAccountNftReactQuery<String, TData> {}
-export function useMarsAccountNftNextIdQuery<TData = String>({
+export interface MarsAccountNftNextIdQuery<TData> extends MarsAccountNftReactQuery<string, TData> {}
+export function useMarsAccountNftNextIdQuery<TData = string>({
   client,
   options,
 }: MarsAccountNftNextIdQuery<TData>) {
-  return useQuery<String, Error, TData>(
+  return useQuery<string, Error, TData>(
     marsAccountNftQueryKeys.nextId(client?.contractAddress),
     () => (client ? client.nextId() : Promise.reject(new Error('Invalid client'))),
     {

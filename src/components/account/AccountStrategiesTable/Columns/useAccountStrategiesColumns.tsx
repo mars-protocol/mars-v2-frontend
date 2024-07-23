@@ -6,7 +6,7 @@ import Size, { SIZE_META } from 'components/account/AccountStrategiesTable/Colum
 import StrategyAndValue, {
   STRATEGY_AND_VALUE_META,
 } from 'components/account/AccountStrategiesTable/Columns/StrategyAndValue'
-import UnlockTime from 'components/earn/farm/Table/Columns/UnlockTime'
+import UnlockTime from 'components/earn/farm/common/Table/Columns/UnlockTime'
 import useMarkets from 'hooks/markets/useMarkets'
 
 export default function useAccountStrategiesColumns() {

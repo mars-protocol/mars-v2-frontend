@@ -117,6 +117,8 @@ function getRules() {
   coinRules.set('close_position', 'perps')
   coinRules.set('modify_position', 'perps')
   coinRules.set('withdraw_liquidity', 'farm')
+  coinRules.set('provide_liquidity', 'provide_liquidity')
+  coinRules.set('claim_rewards', 'claim_rewards')
 
   return coinRules
 }
@@ -167,6 +169,7 @@ function getTransactionCoinsGrouped(result: BroadcastResult, address: string, is
       const action = attr.value
 
       // Find the CoinType for the action and target
+
       let coinType = coinRules.get(`${action}_${target}`) ?? coinRules.get(action)
 
       if (isHLS && action === 'callback/deposit')
@@ -221,6 +224,8 @@ function getCoinsFromEvent(event: TransactionEvent) {
     'coin_repaid',
     'borrow',
     'repay',
+    'provide_liquidity',
+    'claimed_reward',
   ]
 
   // Check for denom and amount and add the coin to the return
@@ -262,6 +267,14 @@ function getCoinsFromEvent(event: TransactionEvent) {
   if (isWithdrawLiquidity) {
     const withdrawTokens = getVaultTokensFromEvent(event)
     if (withdrawTokens) withdrawTokens.map((coin) => coins.push({ coin: coin }))
+  }
+
+  // Check for 'provide_liquidity' event and add the coins to the return
+  const isProvideLiquidity =
+    event.attributes.find((a) => a.key === 'action')?.value === 'provide_liquidity'
+  if (isProvideLiquidity) {
+    const depositTokens = getVaultTokensFromEvent(event)
+    if (depositTokens) depositTokens.map((coin) => coins.push({ coin: coin }))
   }
 
   return coins
@@ -336,7 +349,7 @@ function getTransactionTypeFromBroadcastResult(result: BroadcastResult): Transac
 
 function getVaultTokensFromEvent(event: TransactionEvent): BNCoin[] | undefined {
   const denomAndAmountStringArray = event.attributes
-    .find((a) => a.key === 'tokens_in' || a.key === 'coins_out')
+    .find((a) => a.key === 'tokens_in' || a.key === 'coins_out' || a.key === 'assets')
     ?.value.split(',')
   if (!denomAndAmountStringArray) return
   if (denomAndAmountStringArray.length !== 2) return
@@ -441,8 +454,20 @@ export function getToastContentsFromGroupedTransactionCoin(
       break
     case 'farm':
       toastContents.push({
-        text: `Withdrew from farm`,
-        coins: coins,
+        text:
+          coins.length === 2
+            ? `Withdrew from ${getAssetSymbolByDenom(coins[0].denom, assets)}-${getAssetSymbolByDenom(coins[1].denom, assets)}`
+            : 'Withdrew from farm',
+        coins,
+      })
+      break
+    case 'provide_liquidity':
+      toastContents.push({
+        text:
+          coins.length === 2
+            ? `Added to ${getAssetSymbolByDenom(coins[0].denom, assets)}-${getAssetSymbolByDenom(coins[1].denom, assets)}`
+            : 'Deposited into farm',
+        coins,
       })
       break
     case 'vault':
@@ -528,6 +553,13 @@ export function getToastContentsFromGroupedTransactionCoin(
             coins: [coin.abs().toCoin()],
           })
         }
+      })
+      break
+
+    case 'claim_rewards':
+      toastContents.push({
+        text: 'Claimed rewards',
+        coins,
       })
       break
   }

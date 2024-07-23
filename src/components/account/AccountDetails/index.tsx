@@ -20,8 +20,9 @@ import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -48,7 +49,6 @@ export default function AccountDetailsController(props: AccountDetailsController
   const isV1 = useStore((s) => s.isV1)
   const { data: _, isLoading } = useAccounts('default', address)
   const { data: accountIds } = useAccountIds(address, false, true)
-
   const accountId = useAccountId()
 
   const account = useCurrentAccount()
@@ -68,6 +68,7 @@ function AccountDetails(props: Props) {
   const location = useLocation()
   const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
+  const astroLpAprs = useAstroLpAprs()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     DEFAULT_SETTINGS.reduceMotion,
@@ -78,7 +79,7 @@ function AccountDetails(props: Props) {
   const { health: updatedHealth, healthFactor: updatedHealthFactor } = useHealthComputer(
     updatedAccount || account,
   )
-  const assets = useDepositEnabledAssets()
+  const { data: assets } = useAssets()
   const whitelistedAssets = useWhitelistedAssets()
   const accountBalanceValue = useMemo(
     () => calculateAccountBalanceValue(updatedAccount ?? account, assets),
@@ -116,6 +117,7 @@ function AccountDetails(props: Props) {
         hlsStrategies,
         whitelistedAssets,
         vaultAprs,
+        astroLpAprs,
         account.kind === 'high_levered_strategy',
       ),
     [
@@ -126,6 +128,7 @@ function AccountDetails(props: Props) {
       lendingAssetsData,
       updatedAccount,
       vaultAprs,
+      astroLpAprs,
     ],
   )
   const isFullWidth =

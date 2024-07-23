@@ -5,7 +5,7 @@ interface Props {
   className?: string
 }
 
-function LogoUknown() {
+export function LogoUknown() {
   return (
     <svg xmlns='http://www.w3.org/2000/svg' version='1.1' viewBox='0 0 183 183'>
       <circle fill='#ffffff' cx='91.5' cy='91.5' r='91.5' />

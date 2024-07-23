@@ -1,19 +1,21 @@
-import { useCallback, useMemo, useState } from 'react'
-
-import LeverageSummary from 'components/Modals/HLS/Deposit/LeverageSummary'
 import Button from 'components/common/Button'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
+
+import LeverageSummary from 'components/Modals/HLS/Deposit/LeverageSummary'
 import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useSlippage from 'hooks/settings/useSlippage'
+import useRouteInfo from 'hooks/trade/useRouteInfo'
+import { useCallback, useMemo, useState } from 'react'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getAccountPositionValues } from 'utils/accounts'
 import { getHlsStakingChangeLevActions } from 'utils/actions'
 import { byDenom } from 'utils/array'
 import { SWAP_FEE_BUFFER } from 'utils/constants'
+import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { getLeveragedApy } from 'utils/math'
 import { getDepositCapMessage, getHealthFactorMessage, getLiquidityMessage } from 'utils/messages'
 
@@ -86,15 +88,48 @@ export default function ChangeLeverage(props: Props) {
   )
 
   const positionValue = useMemo(() => {
-    const [deposits, lends, debts, vaults] = getAccountPositionValues(
+    const [deposits, lends, debts, vaults, stakedAstroLps] = getAccountPositionValues(
       updatedAccount || props.account,
       assets,
     )
 
-    return deposits.plus(lends).plus(debts).plus(vaults)
+    return deposits.plus(lends).plus(debts).plus(vaults).plus(stakedAstroLps)
   }, [assets, props.account, updatedAccount])
 
+  const swapInAmount = useMemo(() => {
+    if (currentDebt.isLessThan(previousDebt)) {
+      const debtValue = getCoinValue(
+        BNCoin.fromDenomAndBigNumber(
+          props.borrowMarket.asset.denom,
+          previousDebt.minus(currentDebt),
+        ),
+        assets,
+      )
+      return getCoinAmount(props.collateralAsset.denom, debtValue, assets)
+    }
+
+    return currentDebt.minus(previousDebt)
+  }, [
+    currentDebt,
+    previousDebt,
+    assets,
+    props.borrowMarket.asset.denom,
+    props.collateralAsset.denom,
+  ])
+
+  const { data: routeInfo } = useRouteInfo(
+    currentDebt.isLessThan(previousDebt)
+      ? props.collateralAsset.denom
+      : props.borrowMarket.asset.denom,
+    currentDebt.isLessThan(previousDebt)
+      ? props.borrowMarket.asset.denom
+      : props.collateralAsset.denom,
+    swapInAmount,
+  )
+
   const handleOnClick = useCallback(() => {
+    if (!routeInfo) return
+
     useStore.setState({ hlsManageModal: null })
     if (currentDebt.isEqualTo(previousDebt)) return
     const actions = getHlsStakingChangeLevActions(
@@ -104,6 +139,8 @@ export default function ChangeLeverage(props: Props) {
       props.borrowMarket.asset.denom,
       slippage,
       assets,
+      routeInfo,
+      swapInAmount,
     )
     changeHlsStakingLeverage({ accountId: props.account.id, actions })
   }, [
@@ -115,6 +152,8 @@ export default function ChangeLeverage(props: Props) {
     slippage,
     assets,
     changeHlsStakingLeverage,
+    routeInfo,
+    swapInAmount,
   ])
 
   const addedDepositAmount = useMemo(

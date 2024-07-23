@@ -231,16 +231,36 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
-    claimRewards: (options: { accountId: string }) => {
+    claimRewards: async (options: {
+      accountId: string
+      redBankRewards?: BNCoin[]
+      stakedAstroLpRewards?: StakedAstroLpRewards[]
+    }) => {
+      const redBankRewards = options.redBankRewards ?? []
+      const stakedAstroLpRewards = options.stakedAstroLpRewards ?? []
+
       const isV1 = get().isV1
+      const actions = [] as Action[]
+
+      if (redBankRewards.length > 0)
+        actions.push({
+          claim_rewards: {},
+        })
+
+      if (stakedAstroLpRewards.length > 0) {
+        for (const reward of stakedAstroLpRewards) {
+          actions.push({
+            claim_astro_lp_rewards: {
+              lp_denom: reward.lpDenom,
+            },
+          })
+        }
+      }
+
       const creditManagerMsg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
-          actions: [
-            {
-              claim_rewards: {},
-            },
-          ],
+          actions,
         },
       }
 
@@ -251,27 +271,20 @@ export default function createBroadcastSlice(
         ? get().chainConfig.contracts.incentives
         : get().chainConfig.contracts.creditManager
 
-      const messages = [
-        generateExecutionMessage(
-          get().address,
-          contract,
-          isV1 ? incentivesMsg : creditManagerMsg,
-          [],
-        ),
-      ]
-      const estimateFee = () => getEstimatedFee(messages)
+      const response = get().executeMsg({
+        messages: [
+          generateExecutionMessage(
+            get().address,
+            contract,
+            isV1 ? incentivesMsg : creditManagerMsg,
+            [],
+          ),
+        ],
+      })
 
-      const execute = async () => {
-        const response = get().executeMsg({
-          messages,
-        })
+      get().handleTransaction({ response })
 
-        get().handleTransaction({ response })
-
-        return response.then((response) => !!response.result)
-      }
-
-      return { estimateFee, execute }
+      return response.then((response) => !!response.result)
     },
     deposit: async (options: { accountId: string; coins: BNCoin[]; lend: boolean }) => {
       const msg: CreditManagerExecuteMsg = {
@@ -409,6 +422,88 @@ export default function createBroadcastSlice(
       get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
+    withdrawFromAstroLps: async (options: {
+      accountId: string
+      astroLps: DepositedAstroLp[]
+      amount: string
+    }) => {
+      const actions: CreditManagerAction[] = []
+
+      options.astroLps.forEach((astroLp) => {
+        const coin = BNCoin.fromCoin({
+          denom: astroLp.denoms.lp,
+          amount: options.amount,
+        }).toActionCoin()
+
+        actions.push({
+          unstake_astro_lp: {
+            lp_token: coin,
+          },
+        })
+        actions.push({
+          withdraw_liquidity: {
+            lp_token: coin,
+            slippage: '0',
+          },
+        })
+      })
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions,
+        },
+      }
+
+      if (checkAutoLendEnabled(options.accountId, get().chainConfig.id)) {
+        for (const astroLp of options.astroLps) {
+          for (const symbol of Object.values(astroLp.symbols)) {
+            const asset = get().assets.find(bySymbol(symbol))
+            if (asset?.isAutoLendEnabled) {
+              msg.update_credit_account.actions.push({
+                lend: { denom: asset.denom, amount: 'account_balance' },
+              })
+            }
+          }
+        }
+      }
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+      })
+
+      get().handleTransaction({ response })
+      return response.then((response) => !!response.result)
+    },
+    depositIntoAstroLp: async (options: {
+      accountId: string
+      actions: Action[]
+      deposits: BNCoin[]
+      borrowings: BNCoin[]
+      kind: AccountKind
+    }) => {
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: options.actions,
+        },
+      }
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const response = get().executeMsg({
+        messages: [
+          generateExecutionMessage(
+            get().address,
+            cmContract,
+            msg,
+            options.kind === 'default' ? [] : options.deposits.map((coin) => coin.toCoin()),
+          ),
+        ],
+      })
+      get().handleTransaction({ response })
+      return response.then((response) => !!response.result)
+    },
+
     withdraw: async (options: {
       accountId: string
       coins: Array<{ coin: BNCoin; isMax?: boolean }>

@@ -3,6 +3,7 @@ import classNames from 'classnames'
 
 import Button from 'components/common/Button'
 import DisplayCurrency from 'components/common/DisplayCurrency'
+import DoubleLogo from 'components/common/DoubleLogo'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { TrashBin } from 'components/common/Icons'
 import NumberInput from 'components/common/NumberInput'
@@ -69,7 +70,14 @@ export default function TokenInput(props: Props) {
           />
         ) : (
           <div className='flex items-center gap-2 p-3 border-r min-w-fit border-white/20 bg-white/5'>
-            <AssetImage asset={props.asset} className='w-5 h-5' />
+            {props.asset.poolInfo ? (
+              <DoubleLogo
+                primaryDenom={props.asset.poolInfo.assets.primary.denom ?? ''}
+                secondaryDenom={props.asset.poolInfo.assets.secondary.denom ?? ''}
+              />
+            ) : (
+              <AssetImage asset={props.asset} className='w-5 h-5' />
+            )}
             <Text>{props.asset.symbol}</Text>
           </div>
         )}
@@ -123,6 +131,7 @@ export default function TokenInput(props: Props) {
             isApproximation={props.amount.isGreaterThan(0)}
             className='inline pl-1 text-xs text-white/50'
             coin={new BNCoin({ denom: props.asset.denom, amount: props.amount.toString() })}
+            options={{ abbreviated: false, minDecimals: 2, maxDecimals: 2 }}
           />
         </div>
       </div>

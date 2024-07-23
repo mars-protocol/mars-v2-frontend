@@ -5,9 +5,10 @@ export default async function getOsmosisSwapFee(
   chainConfig: ChainConfig,
   poolIds: string[],
 ): Promise<number> {
-  const promises = poolIds.map((poolId) =>
-    fetch(chainConfig.endpoints.pools.replace('POOL_ID', poolId)),
-  )
+  const uri = chainConfig.endpoints.pools
+  if (!uri) return STANDARD_SWAP_FEE
+
+  const promises = poolIds.map((poolId) => fetch(uri.replace('POOL_ID', poolId)))
 
   const responses = await Promise.all(promises)
 

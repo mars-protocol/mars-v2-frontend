@@ -10,6 +10,6 @@ export default function useBaseAsset() {
     () =>
       assets.find((asset) => asset.denom === chainConfig.defaultCurrency.coinMinimalDenom) ??
       assets[0],
-    [assets],
+    [assets, chainConfig.defaultCurrency.coinMinimalDenom],
   )
 }
