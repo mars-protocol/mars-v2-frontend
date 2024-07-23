@@ -251,7 +251,7 @@ export default function createBroadcastSlice(
         for (const reward of stakedAstroLpRewards) {
           actions.push({
             claim_astro_lp_rewards: {
-              lp_denom: reward.lp_denom,
+              lp_denom: reward.lpDenom,
             },
           })
         }

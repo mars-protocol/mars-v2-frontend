@@ -25,8 +25,8 @@ export default function RewardsByPosition(props: Props) {
         )}
         {stakedAstroLpRewards.map((stakedAstroLpReward) => (
           <RewardsPosition
-            key={stakedAstroLpReward.lp_denom}
-            denom={stakedAstroLpReward.lp_denom}
+            key={stakedAstroLpReward.lpDenom}
+            denom={stakedAstroLpReward.lpDenom}
             rewards={stakedAstroLpReward.rewards}
             assets={assets}
           />

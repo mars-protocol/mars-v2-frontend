@@ -1,7 +1,6 @@
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { getCoinAmount, getCoinValue } from 'utils/formatters'
 
 export function getHlsStakingChangeLevActions(
   previousAmount: BigNumber,
@@ -10,22 +9,19 @@ export function getHlsStakingChangeLevActions(
   borrowDenom: string,
   slippage: number,
   assets: Asset[],
+  routeInfo: SwapRouteInfo,
+  swapInAmount: BigNumber,
 ): Action[] {
   let actions: Action[] = []
 
   if (currentAmount.isLessThan(previousAmount)) {
-    const debtValue = getCoinValue(
-      BNCoin.fromDenomAndBigNumber(borrowDenom, previousAmount.minus(currentAmount)),
-      assets,
-    )
-    const collateralAmount = getCoinAmount(collateralDenom, debtValue, assets)
-
     actions = [
       {
         swap_exact_in: {
-          coin_in: BNCoin.fromDenomAndBigNumber(collateralDenom, collateralAmount).toActionCoin(),
+          coin_in: BNCoin.fromDenomAndBigNumber(collateralDenom, swapInAmount).toActionCoin(),
           denom_out: borrowDenom,
           slippage: slippage.toString(),
+          route: routeInfo.route,
         },
       },
       {
@@ -54,11 +50,9 @@ export function getHlsStakingChangeLevActions(
       {
         swap_exact_in: {
           denom_out: collateralDenom,
-          coin_in: BNCoin.fromDenomAndBigNumber(
-            borrowDenom,
-            currentAmount.minus(previousAmount),
-          ).toActionCoin(true),
+          coin_in: BNCoin.fromDenomAndBigNumber(borrowDenom, swapInAmount).toActionCoin(true),
           slippage: slippage.toString(),
+          route: routeInfo.route,
         },
       },
     ]

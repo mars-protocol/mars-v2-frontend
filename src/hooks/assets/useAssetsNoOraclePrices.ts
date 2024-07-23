@@ -50,7 +50,7 @@ async function fetchSortAndMapAllAssets(
   const unsortedAssets = allAssets.map((asset) => {
     const currentAssetParams = assetParams.find(byDenom(asset.denom))
     const currentAssetPoolParams = pools.find((pool) => pool.lpAddress === asset.denom)
-
+    const deprecatedAssets = chainConfig.deprecated ?? []
     let currentAssetPoolInfo: PoolInfo | undefined
 
     if (currentAssetPoolParams) {
@@ -95,9 +95,14 @@ async function fetchSortAndMapAllAssets(
     const currentAssetPerpsParams = perpsParams ? perpsParams.find(byDenom(asset.denom)) : undefined 
     */
 
-    const isDepositEnabled = chainConfig.anyAsset
-      ? !currentAssetPoolInfo
-      : currentAssetParams?.red_bank.deposit_enabled
+    const isDeprecated = deprecatedAssets.includes(asset.denom)
+    const isAnyAssetAndNoPool = chainConfig.anyAsset && !currentAssetPoolInfo
+    const isDepositEnabled = isDeprecated ? false : currentAssetParams?.red_bank.deposit_enabled
+    const isTradeEnabled = isDeprecated
+      ? true
+      : asset.denom !== 'usd' &&
+        !currentAssetPoolInfo &&
+        (currentAssetParams?.red_bank.deposit_enabled || !currentAssetParams)
 
     return {
       ...asset,
@@ -105,7 +110,7 @@ async function fetchSortAndMapAllAssets(
       isWhitelisted: !!currentAssetParams,
       isAutoLendEnabled: currentAssetParams?.red_bank.borrow_enabled ?? false,
       isBorrowEnabled: currentAssetParams?.red_bank.borrow_enabled ?? false,
-      isDepositEnabled: isDepositEnabled,
+      isDepositEnabled: isAnyAssetAndNoPool ? true : isDepositEnabled,
       isDisplayCurrency: currentAssetParams?.red_bank.borrow_enabled || asset.denom === 'usd',
       isStable: chainConfig.stables.includes(asset.denom),
       isStaking:
@@ -113,10 +118,8 @@ async function fetchSortAndMapAllAssets(
       /* PERPS
       isPerpsEnabled: !!currentAssetPerpsParams,
       */
-      isTradeEnabled:
-        asset.denom !== 'usd' &&
-        !currentAssetPoolInfo &&
-        (currentAssetParams?.red_bank.deposit_enabled || !currentAssetParams),
+      isDeprecated,
+      isTradeEnabled,
       poolInfo: currentAssetPoolInfo,
     }
   })

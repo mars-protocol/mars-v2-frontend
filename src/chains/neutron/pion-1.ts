@@ -4,6 +4,7 @@ import { ChainInfoID, NETWORK } from 'types/enums'
 
 const Pion1: ChainConfig = {
   id: ChainInfoID.Pion1,
+  isOsmosis: false,
   name: 'Neutron Testnet',
   stables: ['ibc/4C19E7EC06C1AB2EC2D70C6855FEB6D48E9CE174913991DA0A517D21978E7E42'],
   defaultTradingPair: {

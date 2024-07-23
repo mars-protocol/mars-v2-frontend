@@ -8,13 +8,14 @@ import { ArrowDownLine, ArrowUpLine, TrashBin } from 'components/common/Icons'
 import SwitchAutoLend from 'components/common/Switch/SwitchAutoLend'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import useAccount from 'hooks/accounts/useAccount'
-import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { calculateAccountApr, calculateAccountBalanceValue } from 'utils/accounts'
+import { mergeBNCoinArrays } from 'utils/helpers'
 
 interface Props {
   accountId: string
@@ -24,7 +25,7 @@ interface Props {
 
 export default function AccountStats(props: Props) {
   const { accountId, isActive, setShowMenu } = props
-  const assets = useDepositEnabledAssets()
+  const assets = useWhitelistedAssets()
   const { data: account } = useAccount(accountId)
   const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
@@ -106,7 +107,7 @@ export default function AccountStats(props: Props) {
               setShowMenu(false)
               useStore.setState({ fundAndWithdrawModal: 'withdraw' })
             }}
-            disabled={!positionBalance || positionBalance.isLessThanOrEqualTo(0)}
+            disabled={!account || mergeBNCoinArrays(account.deposits, account.lends).length === 0}
           />
           <Button
             className='w-full col-span-2'

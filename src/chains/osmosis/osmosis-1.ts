@@ -38,12 +38,14 @@ const LP_ASSETS = [
 ]
 
 const Osmosis1: ChainConfig = {
+  id: ChainInfoID.Osmosis1,
+  isOsmosis: true,
   lp: LP_ASSETS,
   stables: [
     'ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4',
-    'ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858',
     'ibc/4ABBEF4C8926DDDB320AE5188CFD63267ABBCEFC0583E4AE05D6E5AA2401DDAB',
   ],
+  deprecated: ['ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858'],
   defaultTradingPair: {
     buy: 'uosmo',
     sell: 'ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4',
@@ -90,7 +92,6 @@ const Osmosis1: ChainConfig = {
   explorerName: 'Mintscan',
   features: ['ibc-transfer', 'ibc-go'],
   gasPrice: '0.0035uosmo',
-  id: ChainInfoID.Osmosis1,
   name: 'Osmosis',
   network: NETWORK.MAINNET,
   vaults: VAULTS_META_DATA,

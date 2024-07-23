@@ -4,7 +4,6 @@ import useAccountId from 'hooks/accounts/useAccountId'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useClients from 'hooks/chain/useClients'
 import { BNCoin } from 'types/classes/BNCoin'
-import { ChainInfoID } from 'types/enums'
 import {
   PaginationResponseForStakedLpPositionResponse,
   StakedLpPositionResponse,
@@ -20,9 +19,8 @@ export default function useStakedAstroLpRewards(lpDenom?: string) {
   const accountId = useAccountId()
   const chainConfig = useChainConfig()
   const clients = useClients()
-  const isOsmosis = chainConfig.id === ChainInfoID.Osmosis1
 
-  const enabled = !!clients && !!accountId && !isOsmosis
+  const enabled = !!clients && !!accountId && !chainConfig.isOsmosis
   const key = lpDenom
     ? `chains/${chainConfig.id}/accounts/${accountId}/staked-astro-lp-rewards/${lpDenom}`
     : `chains/${chainConfig.id}/accounts/${accountId}/staked-astro-lp-rewards`
@@ -57,12 +55,10 @@ async function getStakedAstroLpRewards(
       stakedAstroLpRewards.push(stakedAstroLpRewardsData)
     }
 
-    return await Promise.all(
-      stakedAstroLpRewards.map((reward) => ({
-        lp_denom: reward.lp_coin.denom,
-        rewards: reward.rewards.map((reward) => new BNCoin(reward)),
-      })),
-    )
+    return stakedAstroLpRewards.map((reward) => ({
+      lpDenom: reward.lp_coin.denom,
+      rewards: reward.rewards.map((reward) => new BNCoin(reward)),
+    }))
   } catch (ex) {
     return [] as StakedAstroLpRewards[]
   }

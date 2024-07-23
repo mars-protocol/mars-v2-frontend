@@ -25,11 +25,11 @@ export function resolveMarketResponse(
       deposits: marketResponse.deposits ?? BN_ZERO,
       liquidity: marketResponse.liquidity ?? BN_ZERO,
       depositEnabled: assetParamsResponse.red_bank.deposit_enabled,
-      borrowEnabled: assetParamsResponse.red_bank.borrow_enabled,
+      borrowEnabled: asset.isDeprecated ? true : assetParamsResponse.red_bank.borrow_enabled,
       cap: {
         denom: assetCapResponse.denom,
         used: BN(assetCapResponse.amount),
-        max: BN(assetParamsResponse.deposit_cap),
+        max: asset.isDeprecated ? BN_ZERO : BN(assetParamsResponse.deposit_cap),
       },
       ltv: {
         max: Number(assetParamsResponse.max_loan_to_value),
