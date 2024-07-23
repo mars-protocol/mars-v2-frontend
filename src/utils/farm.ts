@@ -1,9 +1,10 @@
+import getRouteInfo from 'api/swap/getRouteInfo'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { getValueFromBNCoins } from 'utils/helpers'
-import { getSwapAction } from 'utils/vaults'
+import { getSwapExactInAction } from 'utils/swap'
 
 export function getFarmSwapActions(
   farm: Vault | AstroLp,
@@ -12,6 +13,7 @@ export function getFarmSwapActions(
   borrowings: BNCoin[],
   assets: Asset[],
   slippage: number,
+  chainConfig: ChainConfig,
 ): Action[] {
   const swapActions: Action[] = []
   const coins = [...deposits, ...borrowings, ...reclaims]
@@ -64,7 +66,7 @@ export function getFarmSwapActions(
     }
   })
 
-  otherCoins.forEach((bnCoin) => {
+  otherCoins.forEach(async (bnCoin) => {
     let value = getCoinValue(bnCoin, assets)
     let amount = bnCoin.amount
 
@@ -75,14 +77,52 @@ export function getFarmSwapActions(
       value = value.minus(swapValue)
       amount = amount.minus(swapAmount)
       primaryLeftoverValue = primaryLeftoverValue.minus(swapValue)
-      if (swapAmount.isGreaterThan(BN_ZERO))
-        swapActions.push(getSwapAction(bnCoin.denom, farm.denoms.primary, swapAmount, slippage))
+
+      const primarySwapUrl = chainConfig.isOsmosis
+        ? `${chainConfig.endpoints.routes}/quote?tokenIn=${swapAmount}${bnCoin.denom}&tokenOutDenom=${farm.denoms.primary}`
+        : `${chainConfig.endpoints.routes}?start=${bnCoin.denom}&end=${farm.denoms.primary}&amount=${swapAmount}&chainId=${chainConfig.id}&limit=1`
+      const primarySwapRouteInfo = await getRouteInfo(
+        primarySwapUrl,
+        farm.denoms.primary,
+        assets,
+        chainConfig.isOsmosis,
+      )
+
+      if (swapAmount.isGreaterThan(BN_ZERO) && primarySwapRouteInfo)
+        swapActions.push(
+          getSwapExactInAction(
+            BNCoin.fromDenomAndBigNumber(bnCoin.denom, swapAmount).toActionCoin(),
+            farm.denoms.primary,
+            primarySwapRouteInfo,
+            slippage,
+            chainConfig.isOsmosis,
+          ),
+        )
     }
 
     if (secondaryLeftoverValue.isGreaterThan(0)) {
       secondaryLeftoverValue = secondaryLeftoverValue.minus(value)
-      if (amount.isGreaterThan(BN_ZERO))
-        swapActions.push(getSwapAction(bnCoin.denom, farm.denoms.secondary, amount, slippage))
+
+      const secondarySwapUrl = chainConfig.isOsmosis
+        ? `${chainConfig.endpoints.routes}/quote?tokenIn=${amount}${bnCoin.denom}&tokenOutDenom=${farm.denoms.secondary}`
+        : `${chainConfig.endpoints.routes}?start=${bnCoin.denom}&end=${farm.denoms.secondary}&amount=${amount}&chainId=${chainConfig.id}&limit=1`
+      const secondarySwapRouteInfo = await getRouteInfo(
+        secondarySwapUrl,
+        farm.denoms.primary,
+        assets,
+        chainConfig.isOsmosis,
+      )
+
+      if (amount.isGreaterThan(BN_ZERO) && secondarySwapRouteInfo)
+        swapActions.push(
+          getSwapExactInAction(
+            BNCoin.fromDenomAndBigNumber(bnCoin.denom, amount).toActionCoin(),
+            farm.denoms.primary,
+            secondarySwapRouteInfo,
+            slippage,
+            chainConfig.isOsmosis,
+          ),
+        )
     }
   })
 

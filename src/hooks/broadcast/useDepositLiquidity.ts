@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import { BN_ZERO } from 'constants/math'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useLendEnabledAssets from 'hooks/assets/useLendEnabledAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useSlippage from 'hooks/settings/useSlippage'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -28,6 +29,7 @@ export default function useDepositLiquidity(props: Props): {
   const lendEnabledAssets = useLendEnabledAssets()
   const assets = useDepositEnabledAssets()
   const [slippage] = useSlippage()
+  const chainConfig = useChainConfig()
   const { isAutoLendEnabledForCurrentAccount: isAutoLend } = useAutoLend()
   const borrowings: BNCoin[] = useMemo(
     () => props.borrowings.filter((borrowing) => borrowing.amount.gt(0)),
@@ -99,7 +101,15 @@ export default function useDepositLiquidity(props: Props): {
         return []
       }
     }
-    return getFarmSwapActions(props.farm, deposits, reclaims, borrowings, assets, slippage)
+    return getFarmSwapActions(
+      props.farm,
+      deposits,
+      reclaims,
+      borrowings,
+      assets,
+      slippage,
+      chainConfig,
+    )
   }, [
     props.isAstroLp,
     props.farm,
@@ -108,6 +118,7 @@ export default function useDepositLiquidity(props: Props): {
     borrowings,
     assets,
     slippage,
+    chainConfig,
     primaryCoin,
     secondaryCoin,
   ])

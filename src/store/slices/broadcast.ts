@@ -14,7 +14,6 @@ import {
   Action as CreditManagerAction,
   ExecuteMsg as CreditManagerExecuteMsg,
   ExecuteMsg,
-  SwapperRoute,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { ExecuteMsg as IncentivesExecuteMsg } from 'types/generated/mars-incentives/MarsIncentives.types'
 import { ExecuteMsg as RedBankExecuteMsg } from 'types/generated/mars-red-bank/MarsRedBank.types'
@@ -26,6 +25,7 @@ import checkPythUpdateEnabled from 'utils/checkPythUpdateEnabled'
 import { defaultFee } from 'utils/constants'
 import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
+import { getSwapExactInAction } from 'utils/swap'
 
 function generateExecutionMessage(
   sender: string | undefined = '',
@@ -627,25 +627,28 @@ export default function createBroadcastSlice(
       reclaim?: BNCoin
       borrow?: BNCoin
       denomOut: string
-      slippage: number
+      slippage?: number
       isMax?: boolean
       repay: boolean
-      route: SwapperRoute
+      routeInfo: SwapRouteInfo
     }) => {
+      const isOsmosis = get().chainConfig.isOsmosis
+
+      const swapExactIn = getSwapExactInAction(
+        options.coinIn.toActionCoin(options.isMax),
+        options.denomOut,
+        options.routeInfo,
+        options.slippage ?? 0,
+        isOsmosis,
+      )
+
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
           actions: [
             ...(options.reclaim ? [{ reclaim: options.reclaim.toActionCoin() }] : []),
             ...(options.borrow ? [{ borrow: options.borrow.toCoin() }] : []),
-            {
-              swap_exact_in: {
-                coin_in: options.coinIn.toActionCoin(options.isMax),
-                denom_out: options.denomOut,
-                slippage: options.slippage.toString(),
-                route: options.route as SwapperRoute,
-              },
-            },
+            swapExactIn,
             ...(options.repay
               ? [
                   {

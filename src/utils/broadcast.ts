@@ -119,6 +119,7 @@ function getRules() {
   coinRules.set('withdraw_liquidity', 'farm')
   coinRules.set('provide_liquidity', 'provide_liquidity')
   coinRules.set('claim_rewards', 'claim_rewards')
+  coinRules.set('swap', 'swap')
 
   return coinRules
 }
@@ -139,6 +140,7 @@ function getTransactionCoinsGrouped(result: BroadcastResult, address: string, is
   filteredEvents.forEach((event: TransactionEvent) => {
     if (!Array.isArray(event.attributes)) return
     // Check if the event type is a token_swapped and get coins from the event
+    // This is needed for the "old" swap event, while the new swap event has an action attribute
     if (event.type === 'token_swapped') {
       const { tokenIn, tokenOut } = getCoinFromSwapEvent(event)
       if (tokenIn && tokenOut) {
@@ -179,6 +181,7 @@ function getTransactionCoinsGrouped(result: BroadcastResult, address: string, is
         const existingCoin = transactionCoins.find(
           (c) =>
             c.type === coinType &&
+            c.type !== 'swap' &&
             c.coin.denom === eventCoin.coin.denom &&
             c.coin.amount.isEqualTo(eventCoin.coin.amount),
         )
@@ -275,6 +278,25 @@ function getCoinsFromEvent(event: TransactionEvent) {
   if (isProvideLiquidity) {
     const depositTokens = getVaultTokensFromEvent(event)
     if (depositTokens) depositTokens.map((coin) => coins.push({ coin: coin }))
+  }
+
+  // Check if the event is a swap event and then return the coins
+  const isSwap = event.attributes.find((a) => a.key === 'action')?.value === 'swap'
+  if (isSwap) {
+    const coinInDenom = event.attributes.find((a) => a.key === 'offer_asset')?.value
+    const coinInAmount = event.attributes.find((a) => a.key === 'offer_amount')?.value
+    const coinOutDenom = event.attributes.find((a) => a.key === 'ask_asset')?.value
+    const coinOutAmount = event.attributes.find((a) => a.key === 'return_amount')?.value
+    if (coinInDenom && coinInAmount && coinOutDenom && coinOutAmount) {
+      coins.push(
+        {
+          coin: BNCoin.fromDenomAndBigNumber(coinInDenom, BN(coinInAmount)),
+        },
+        {
+          coin: BNCoin.fromDenomAndBigNumber(coinOutDenom, BN(coinOutAmount)),
+        },
+      )
+    }
   }
 
   return coins
@@ -381,7 +403,7 @@ function getCoinFromPnLString(pnlString: string): BNCoin | undefined {
 
 function groupTransactionCoins(coins: TransactionCoin[]): GroupedTransactionCoin[] {
   // Group coins by type so that for example multiple deposit objects are passed as a single deposit array
-  return coins.reduce((grouped, coin) => {
+  const reducedCoins = coins.reduce((grouped, coin) => {
     const existingGroup = grouped.find((g) => g.type === coin.type)
 
     if (existingGroup) {
@@ -392,6 +414,7 @@ function groupTransactionCoins(coins: TransactionCoin[]): GroupedTransactionCoin
     grouped.push({ type: coin.type, coins: [coin] })
     return grouped
   }, [] as GroupedTransactionCoin[])
+  return reducedCoins
 }
 
 export function getToastContentsFromGroupedTransactionCoin(

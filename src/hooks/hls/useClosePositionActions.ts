@@ -1,11 +1,13 @@
 import BigNumber from 'bignumber.js'
 
 import { BN_ZERO } from 'constants/math'
+import useIsOsmosis from 'hooks/chain/useIsOsmosis'
 import useSlippage from 'hooks/settings/useSlippage'
 import useRouteInfo from 'hooks/trade/useRouteInfo'
 import { useMemo } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { getSwapExactInAction } from 'utils/swap'
 
 interface Props {
   account: HLSAccountWithStrategy
@@ -13,6 +15,7 @@ interface Props {
 
 export default function useClosePositionActions(props: Props): Action[] | null {
   const [slippage] = useSlippage()
+  const isOsmosis = useIsOsmosis()
   const collateralDenom = props.account.strategy.denoms.deposit
   const borrowDenom = props.account.strategy.denoms.borrow
 
@@ -52,18 +55,19 @@ export default function useClosePositionActions(props: Props): Action[] | null {
   return useMemo<Action[] | null>(() => {
     if (!routeInfo) return null
 
+    const swapExactIn = getSwapExactInAction(
+      BNCoin.fromDenomAndBigNumber(collateralDenom, swapInAmount).toActionCoin(),
+      borrowDenom,
+      routeInfo,
+      slippage,
+      isOsmosis,
+    )
+
     return [
       ...(debtAmount.isZero()
         ? []
         : [
-            {
-              swap_exact_in: {
-                coin_in: BNCoin.fromDenomAndBigNumber(collateralDenom, swapInAmount).toActionCoin(),
-                denom_out: borrowDenom,
-                slippage: slippage.toString(),
-                route: routeInfo?.route,
-              },
-            },
+            swapExactIn,
             {
               repay: {
                 coin: BNCoin.fromDenomAndBigNumber(
@@ -75,5 +79,5 @@ export default function useClosePositionActions(props: Props): Action[] | null {
           ]),
       { refund_all_coin_balances: {} },
     ]
-  }, [borrowDenom, collateralDenom, debtAmount, swapInAmount, routeInfo, slippage])
+  }, [routeInfo, collateralDenom, swapInAmount, borrowDenom, isOsmosis, slippage, debtAmount])
 }

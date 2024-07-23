@@ -1002,10 +1002,10 @@ interface BroadcastSlice {
     reclaim?: BNCoin
     borrow?: BNCoin
     denomOut: string
-    slippage: number
+    slippage?: number
     isMax?: boolean
     repay: boolean
-    route: import('types/generated/mars-credit-manager/MarsCreditManager.types').SwapperRoute
+    routeInfo: SwapRouteInfo
   }) => ExecutableTx
   toast: ToastResponse | ToastPending | null
   unlock: (options: {

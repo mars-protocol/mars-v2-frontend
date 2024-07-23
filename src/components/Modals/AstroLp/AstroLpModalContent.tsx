@@ -47,6 +47,7 @@ export default function AstroLpModalContent(props: Props) {
     kind: 'default' as AccountKind,
     isAstroLp: true,
   })
+
   const primaryAsset = assets.find(byDenom(props.astroLp.denoms.primary))
   const secondaryAsset = assets.find(byDenom(props.astroLp.denoms.secondary))
   const depositCapReachedCoins = useMemo(() => {
