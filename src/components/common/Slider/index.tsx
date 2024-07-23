@@ -23,6 +23,7 @@ type Props = {
 
 export default function Slider(props: Props) {
   const { value, onChange, onDebounce, leverage, className, disabled } = props
+  const [newValue, setNewValue] = useState(value)
   const [showTooltip, setShowTooltip] = useToggle()
   const [sliderRect, setSliderRect] = useState({ width: 0, left: 0, right: 0 })
   const ref = useRef<HTMLDivElement>(null)
@@ -57,6 +58,8 @@ export default function Slider(props: Props) {
   )
 
   function handleOnChange(value: number) {
+    if (value === newValue) return
+    setNewValue(value)
     onChange(value)
     debounceFunction()
   }
@@ -108,12 +111,11 @@ export default function Slider(props: Props) {
   const DraggableElement: any = Draggable
 
   const [positionOffset, position] = useMemo(() => {
-    debounceFunction()
     return [
       { x: (value / 100) * -12, y: 0 },
       { x: (sliderRect.width / 100) * value, y: -2 },
     ]
-  }, [value, sliderRect.width, debounceFunction])
+  }, [value, sliderRect.width])
 
   useEffect(() => {
     handleSliderRect()

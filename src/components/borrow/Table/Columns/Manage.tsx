@@ -1,3 +1,4 @@
+import ActionButton from 'components/common/Button/ActionButton'
 import DropDownButton from 'components/common/Button/DropDownButton'
 import { HandCoins, Plus } from 'components/common/Icons'
 import { useCallback, useMemo } from 'react'
@@ -28,35 +29,39 @@ export default function Manage(props: Props) {
     })
   }, [props.data])
 
-  const isNotUSDCAxelar =
-    props.data.asset.denom !==
-    'ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858'
+  const isDeprecatedAsset = props.data.asset.isDeprecated
 
   const ITEMS: DropDownItem[] = useMemo(
     () => [
-      ...(isNotUSDCAxelar
-        ? [
-            {
-              icon: <Plus />,
-              text: 'Borrow more',
-              onClick: borrowHandler,
-            },
-          ]
-        : []),
       {
         icon: <HandCoins />,
         text: 'Repay',
         onClick: repayHandler,
       },
+      {
+        icon: <Plus />,
+        text: 'Borrow more',
+        onClick: borrowHandler,
+      },
     ],
-    [borrowHandler, repayHandler, isNotUSDCAxelar],
+    [borrowHandler, repayHandler],
   )
 
   if (!address) return null
 
   return (
     <div className='z-10 flex justify-end'>
-      <DropDownButton items={ITEMS} text='Manage' color='tertiary' />
+      {isDeprecatedAsset ? (
+        <ActionButton
+          leftIcon={<HandCoins />}
+          color='tertiary'
+          onClick={() => repayHandler()}
+          text='Repay'
+          short
+        />
+      ) : (
+        <DropDownButton items={ITEMS} text='Manage' color='tertiary' />
+      )}
     </div>
   )
 }

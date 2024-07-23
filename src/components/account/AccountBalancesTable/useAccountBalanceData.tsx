@@ -29,7 +29,7 @@ export default function useAccountBalanceData(props: Props) {
       const asset = assets.find(byDenom(deposit.denom))
       if (!asset) return
       const apy = props.isHls
-        ? hlsStrategies.find((strategy) => strategy.denoms.deposit === asset.denom)?.apy ?? 0
+        ? (hlsStrategies.find((strategy) => strategy.denoms.deposit === asset.denom)?.apy ?? 0)
         : 0
       const prevDeposit = updatedAccount ? account?.deposits.find(byDenom(deposit.denom)) : deposit
 

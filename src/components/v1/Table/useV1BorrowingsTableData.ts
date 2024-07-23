@@ -24,13 +24,12 @@ export default function useV1BorrowingsTableData() {
         const amount =
           userDebts.find((debt) => debt.denom === market.asset.denom)?.amount ?? BN_ZERO
         const value = amount ? convertAmount(market.asset, amount) : undefined
-
         const borrowMarketAsset: BorrowMarketTableData = {
           ...market,
           accountDebtAmount: amount,
           accountDebtValue: value,
         }
-        debtAssets.push(borrowMarketAsset)
+        if (!market.asset.isDeprecated || !value?.isZero()) debtAssets.push(borrowMarketAsset)
       })
 
     return { debtAssets }

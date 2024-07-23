@@ -9,11 +9,10 @@ export default function V1Page() {
   const address = useStore((s) => s.address)
   const { data: account } = useAccount(address)
 
-  if (!account) return null
   return (
     <div className='flex flex-wrap w-full gap-6'>
       <V1Intro />
-      {address && <Summary account={account} v1 />}
+      {account && address && <Summary account={account} v1 />}
       <div className='grid w-full grid-cols-1 gap-6 lg:grid-cols-2'>
         <Deposits />
         <Borrowings />

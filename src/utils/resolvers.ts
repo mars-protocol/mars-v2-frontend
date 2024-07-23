@@ -28,14 +28,11 @@ export function resolveMarketResponse(
       deposits: marketResponse.deposits ?? BN_ZERO,
       liquidity: marketResponse.liquidity ?? BN_ZERO,
       depositEnabled: assetParamsResponse.red_bank.deposit_enabled,
-      borrowEnabled:
-        asset.denom === 'ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858'
-          ? true
-          : assetParamsResponse.red_bank.borrow_enabled,
+      borrowEnabled: asset.isDeprecated ? true : assetParamsResponse.red_bank.borrow_enabled,
       cap: {
         denom: assetCapResponse.denom,
         used: BN(assetCapResponse.amount),
-        max: BN(assetParamsResponse.deposit_cap),
+        max: asset.isDeprecated ? BN_ZERO : BN(assetParamsResponse.deposit_cap),
       },
       ltv: {
         max: Number(assetParamsResponse.max_loan_to_value),

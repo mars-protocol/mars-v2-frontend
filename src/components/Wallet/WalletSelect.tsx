@@ -202,12 +202,12 @@ export default function WalletSelect(props: Props) {
                       name={
                         isMobile
                           ? WALLETS[walletId].name
-                          : WALLETS[walletId].walletConnect ?? 'WalletConnect'
+                          : (WALLETS[walletId].walletConnect ?? 'WalletConnect')
                       }
                       imageSrc={
                         isMobile
                           ? WALLETS[walletId].imageURL
-                          : WALLETS[walletId].mobileImageURL ?? '/'
+                          : (WALLETS[walletId].mobileImageURL ?? '/')
                       }
                       handleClick={() => handleMobileConnectClick(walletId, network.chainId)}
                       showLoader={isLoading === walletId}
