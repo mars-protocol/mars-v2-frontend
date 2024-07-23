@@ -28,7 +28,7 @@ export default function AvailableAstroLpsTable() {
   return (
     <Table
       hideCard
-      title='Available LP AstroLps'
+      title='Available Astro LPs'
       columns={columns}
       data={filteredAstroLps}
       initialSorting={[{ id: 'name', desc: true }]}

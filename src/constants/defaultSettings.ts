@@ -1,5 +1,6 @@
 import { ORACLE_DENOM } from 'constants/oracle'
 import useStore from 'store'
+import { RewardsCenterType } from 'types/enums'
 import { ResolutionString } from 'utils/charting_library'
 
 // This does not retrigger when chains are switched. Assets might not be present on the new chain, but
@@ -21,4 +22,5 @@ export const DEFAULT_SETTINGS: Settings = {
   updateOracle: true,
   chartInterval: '60' as ResolutionString,
   theme: 'default',
+  rewardsCenterType: RewardsCenterType.Token,
 }

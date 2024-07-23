@@ -1,5 +1,5 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { useShuttle } from '@delphi-labs/shuttle-react'
+import { isAndroid, isIOS, useShuttle } from '@delphi-labs/shuttle-react'
 import { useCallback, useEffect, useMemo } from 'react'
 
 import { CircularProgress } from 'components/common/CircularProgress'
@@ -136,7 +136,7 @@ export default function WalletConnecting(props: Props) {
         if (client || isConnecting) return
         setIsConnecting(true)
         try {
-          await mobileConnect({ mobileProviderId, chainId: chainConfig.id })
+          const urls = await mobileConnect({ mobileProviderId, chainId: chainConfig.id })
           const cosmClient = await CosmWasmClient.connect(chainConfig.endpoints.rpc)
           const walletClient: WalletClient = {
             broadcast,
@@ -146,6 +146,13 @@ export default function WalletConnecting(props: Props) {
             simulate,
           }
           setIsConnecting(false)
+          if (isAndroid()) {
+            window.location.href = urls.androidUrl
+          } else if (isIOS()) {
+            window.location.href = urls.iosUrl
+          } else {
+            window.location.href = urls.androidUrl
+          }
           useStore.setState({
             client: walletClient,
             address: recentWallet.account.address,

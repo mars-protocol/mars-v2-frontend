@@ -29,7 +29,7 @@ export default function AstroLpApy(props: Props) {
           type='info'
           className='ml-1'
         >
-          <div className='inline-block border-b border-dashed hover:cursor-help border-white/40 hover:border-transparent'>
+          <div className='inline-block border-b border-dashed hover:cursor-help border-white/40 hover:border-transparent mb-1.5'>
             {children}
           </div>
         </Tooltip>

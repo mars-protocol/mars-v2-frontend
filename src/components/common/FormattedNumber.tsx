@@ -5,6 +5,7 @@ import { animated, useSpring } from 'react-spring'
 import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import _ from 'lodash'
 import { formatValue } from 'utils/formatters'
 
 interface Props {
@@ -74,9 +75,7 @@ export const FormattedNumber = React.memo(
       </animated.p>
     )
   },
-  (prevProps, nextProps) =>
-    prevProps.amount === nextProps.amount &&
-    JSON.stringify(prevProps.options) === JSON.stringify(nextProps.options),
+  (prevProps, nextProps) => _.isEqual(prevProps, nextProps),
 )
 
 FormattedNumber.displayName = 'FormattedNumber'

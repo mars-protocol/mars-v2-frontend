@@ -206,6 +206,7 @@ interface Bridge {
 }
 
 interface ChainConfig {
+  isOsmosis: boolean
   lp?: Asset[]
   stables: string[]
   deprecated?: string[]
@@ -947,7 +948,11 @@ interface BroadcastSlice {
     borrowToWallet: boolean
   }) => Promise<boolean>
   changeHlsStakingLeverage: (options: { accountId: string; actions: Action[] }) => Promise<boolean>
-  claimRewards: (options: { accountId: string }) => ExecutableTx
+  claimRewards: (options: {
+    accountId: string
+    redBankRewards?: BNCoin[]
+    stakedAstroLpRewards?: StakedAstroLpRewards[]
+  }) => Promise<boolean>
   closeHlsStakingPosition: (options: { accountId: string; actions: Action[] }) => Promise<boolean>
   createAccount: (
     accountKind: import('types/generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind,
@@ -1058,6 +1063,7 @@ type TransactionCoinType =
   | 'vault'
   | 'perps'
   | 'perpsPnl'
+  | 'claim_rewards'
 
 interface TransactionCoin {
   type: TransactionCoinType
@@ -1242,6 +1248,7 @@ interface Settings {
   updateOracle: boolean
   chartInterval: import('utils/charting_library').ResolutionString
   theme: string
+  rewardsCenterType: import('types/enums').RewardsCenterType
 }
 
 interface KeyValuePair {
@@ -1459,4 +1466,14 @@ interface PoolInfo {
   rewards: AstroportPoolReward[]
   yield: PoolYield
   weight: PoolWeight
+}
+
+interface SwitchOption {
+  text: string
+  value: string
+}
+
+interface StakedAstroLpRewards {
+  lpDenom: string
+  rewards: BNCoin[]
 }

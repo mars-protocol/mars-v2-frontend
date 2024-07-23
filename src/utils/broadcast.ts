@@ -118,6 +118,7 @@ function getRules() {
   coinRules.set('modify_position', 'perps')
   coinRules.set('withdraw_liquidity', 'farm')
   coinRules.set('provide_liquidity', 'provide_liquidity')
+  coinRules.set('claim_rewards', 'claim_rewards')
 
   return coinRules
 }
@@ -168,6 +169,7 @@ function getTransactionCoinsGrouped(result: BroadcastResult, address: string, is
       const action = attr.value
 
       // Find the CoinType for the action and target
+
       let coinType = coinRules.get(`${action}_${target}`) ?? coinRules.get(action)
 
       if (isHLS && action === 'callback/deposit')
@@ -223,6 +225,7 @@ function getCoinsFromEvent(event: TransactionEvent) {
     'borrow',
     'repay',
     'provide_liquidity',
+    'claimed_reward',
   ]
 
   // Check for denom and amount and add the coin to the return
@@ -550,6 +553,13 @@ export function getToastContentsFromGroupedTransactionCoin(
             coins: [coin.abs().toCoin()],
           })
         }
+      })
+      break
+
+    case 'claim_rewards':
+      toastContents.push({
+        text: 'Claimed rewards',
+        coins,
       })
       break
   }

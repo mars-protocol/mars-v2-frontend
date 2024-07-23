@@ -231,16 +231,36 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
-    claimRewards: (options: { accountId: string }) => {
+    claimRewards: async (options: {
+      accountId: string
+      redBankRewards?: BNCoin[]
+      stakedAstroLpRewards?: StakedAstroLpRewards[]
+    }) => {
+      const redBankRewards = options.redBankRewards ?? []
+      const stakedAstroLpRewards = options.stakedAstroLpRewards ?? []
+
       const isV1 = get().isV1
+      const actions = [] as Action[]
+
+      if (redBankRewards.length > 0)
+        actions.push({
+          claim_rewards: {},
+        })
+
+      if (stakedAstroLpRewards.length > 0) {
+        for (const reward of stakedAstroLpRewards) {
+          actions.push({
+            claim_astro_lp_rewards: {
+              lp_denom: reward.lpDenom,
+            },
+          })
+        }
+      }
+
       const creditManagerMsg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
-          actions: [
-            {
-              claim_rewards: {},
-            },
-          ],
+          actions,
         },
       }
 
@@ -251,27 +271,20 @@ export default function createBroadcastSlice(
         ? get().chainConfig.contracts.incentives
         : get().chainConfig.contracts.creditManager
 
-      const messages = [
-        generateExecutionMessage(
-          get().address,
-          contract,
-          isV1 ? incentivesMsg : creditManagerMsg,
-          [],
-        ),
-      ]
-      const estimateFee = () => getEstimatedFee(messages)
+      const response = get().executeMsg({
+        messages: [
+          generateExecutionMessage(
+            get().address,
+            contract,
+            isV1 ? incentivesMsg : creditManagerMsg,
+            [],
+          ),
+        ],
+      })
 
-      const execute = async () => {
-        const response = get().executeMsg({
-          messages,
-        })
+      get().handleTransaction({ response })
 
-        get().handleTransaction({ response })
-
-        return response.then((response) => !!response.result)
-      }
-
-      return { estimateFee, execute }
+      return response.then((response) => !!response.result)
     },
     deposit: async (options: { accountId: string; coins: BNCoin[]; lend: boolean }) => {
       const msg: CreditManagerExecuteMsg = {
