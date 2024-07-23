@@ -18,7 +18,7 @@ type StdFee = {
 }
 
 type ActionCoin = import('types/generated/mars-credit-manager/MarsCreditManager.types').ActionCoin
-
+type Action = import('types/generated/mars-credit-manager/MarsCreditManager.types').Action
 type BNCoin = import('types/classes/BNCoin').BNCoin
 
 type PositionType = 'deposit' | 'borrow' | 'lend' | 'vault' | 'perp'
@@ -1272,11 +1272,11 @@ interface ModalProps {
 
 interface FarmBorrowingsProps {
   account: Account
+  reclaims: BNCoin[]
   borrowings: BNCoin[]
   deposits: BNCoin[]
   primaryAsset: Asset
   secondaryAsset: Asset
-  depositActions: Action[]
   onChangeBorrowings: (borrowings: BNCoin[]) => void
   displayCurrency: string
   depositCapReachedCoins: BNCoin[]
@@ -1304,6 +1304,11 @@ interface VaultValue {
 }
 
 interface AstroLpValue extends VaultValue {}
+
+interface FarmSwapCoins {
+  primary: BNCoin
+  secondary: BNCoin
+}
 
 interface PerpsParams {
   denom: string

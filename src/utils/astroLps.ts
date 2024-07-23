@@ -6,7 +6,7 @@ import {
   TotalDepositResponse,
 } from 'types/generated/mars-params/MarsParams.types'
 import { byDenom } from 'utils/array'
-import { BN, getBNCoinFromValue, getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
+import { BN, getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
 import { convertApyToApr } from 'utils/parsers'
 
 export function getAstroLpFromPoolAsset(
@@ -158,21 +158,18 @@ export function getAstroLpDepositCoinsAndValue(
   const borrowingValue = getValueFromBNCoins(borrowings, assets)
 
   const totalValue = depositsAndReclaimsValue.plus(borrowingValue)
-  const primaryAsset = assets.find(byDenom(astroLp.denoms.primary)) ?? assets[0]
-  const secondaryAsset = assets.find(byDenom(astroLp.denoms.secondary)) ?? assets[0]
-
-  const primaryDepositAmount = getBNCoinFromValue(totalValue.dividedBy(2), primaryAsset).amount
-
-  const secondaryDepositAmount = getBNCoinFromValue(totalValue.dividedBy(2), secondaryAsset).amount
+  const allCoins = mergeBNCoinArrays(depositsAndReclaims, borrowings)
 
   return {
     primaryCoin: new BNCoin({
       denom: astroLp.denoms.primary,
-      amount: primaryDepositAmount.integerValue().toString(),
+      amount:
+        allCoins.find((coin) => coin.denom === astroLp.denoms.primary)?.amount.toString() ?? '0',
     }),
     secondaryCoin: new BNCoin({
       denom: astroLp.denoms.secondary,
-      amount: secondaryDepositAmount.integerValue().toString(),
+      amount:
+        allCoins.find((coin) => coin.denom === astroLp.denoms.secondary)?.amount.toString() ?? '0',
     }),
     totalValue,
   }

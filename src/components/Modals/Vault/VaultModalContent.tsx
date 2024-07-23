@@ -12,13 +12,14 @@ import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useDisplayAsset from 'hooks/assets/useDisplayAsset'
-import useDepositLiquidity from 'hooks/broadcast/useDepositLiquidity'
 import useIsOpenArray from 'hooks/common/useIsOpenArray'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
+import useSlippage from 'hooks/settings/useSlippage'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getCoinValue, magnify } from 'utils/formatters'
 import { getCapLeftWithBuffer } from 'utils/generic'
 import { mergeBNCoinArrays } from 'utils/helpers'
+import { getVaultDepositCoinsAndValue } from 'utils/vaults'
 
 interface Props {
   vault: Vault | DepositedVault
@@ -33,20 +34,26 @@ export default function VaultModalContent(props: Props) {
     props.account,
   )
   const assets = useDepositEnabledAssets()
-
   const [displayCurrency] = useDisplayCurrency()
   const [isOpen, toggleOpen] = useIsOpenArray(2, false)
   const [isCustomRatio, setIsCustomRatio] = useState(false)
   const [depositCoins, setDepositCoins] = useState<BNCoin[]>([])
   const [borrowCoins, setBorrowCoins] = useState<BNCoin[]>([])
   const displayAsset = useDisplayAsset()
-  const { actions: depositActions, totalValue } = useDepositLiquidity({
-    farm: props.vault,
-    reclaims: removedLends,
-    deposits: removedDeposits,
-    borrowings: addedDebts,
-    kind: 'default' as AccountKind,
-  })
+  const [slippage] = useSlippage()
+
+  const { totalValue } = useMemo(
+    () =>
+      getVaultDepositCoinsAndValue(
+        props.vault as Vault,
+        removedDeposits,
+        addedDebts,
+        removedLends,
+        slippage,
+        assets,
+      ),
+    [addedDebts, assets, props.vault, removedDeposits, removedLends, slippage],
+  )
 
   const depositCapReachedCoins = useMemo(() => {
     if (!props.vault.cap) return [BNCoin.fromDenomAndBigNumber(displayAsset.denom, BN_ZERO)]
@@ -167,11 +174,11 @@ export default function VaultModalContent(props: Props) {
                 account={props.account}
                 borrowings={borrowCoins}
                 deposits={deposits}
+                reclaims={[]}
                 primaryAsset={props.primaryAsset}
                 secondaryAsset={props.secondaryAsset}
                 onChangeBorrowings={onChangeBorrowings}
                 vault={props.vault}
-                depositActions={depositActions}
                 depositCapReachedCoins={depositCapReachedCoins}
                 displayCurrency={displayCurrency}
               />

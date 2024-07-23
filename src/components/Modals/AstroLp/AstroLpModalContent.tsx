@@ -12,12 +12,11 @@ import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useDisplayAsset from 'hooks/assets/useDisplayAsset'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
-import useDepositLiquidity from 'hooks/broadcast/useDepositLiquidity'
 import useIsOpenArray from 'hooks/common/useIsOpenArray'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { getAstroLpSharesFromCoinsValue } from 'utils/astroLps'
+import { getAstroLpDepositCoinsAndValue, getAstroLpSharesFromCoinsValue } from 'utils/astroLps'
 import { getCoinValue, magnify } from 'utils/formatters'
 import { getCapLeftWithBuffer } from 'utils/generic'
 import { mergeBNCoinArrays } from 'utils/helpers'
@@ -39,14 +38,18 @@ export default function AstroLpModalContent(props: Props) {
   const [depositCoins, setDepositCoins] = useState<BNCoin[]>([])
   const [borrowCoins, setBorrowCoins] = useState<BNCoin[]>([])
   const displayAsset = useDisplayAsset()
-  const { actions: depositActions, totalValue } = useDepositLiquidity({
-    farm: props.astroLp,
-    reclaims: removedLends,
-    deposits: removedDeposits,
-    borrowings: addedDebts,
-    kind: 'default' as AccountKind,
-    isAstroLp: true,
-  })
+
+  const { totalValue } = useMemo(
+    () =>
+      getAstroLpDepositCoinsAndValue(
+        props.astroLp as AstroLp,
+        removedDeposits,
+        addedDebts,
+        removedLends,
+        assets,
+      ),
+    [addedDebts, assets, props.astroLp, removedDeposits, removedLends],
+  )
 
   const primaryAsset = assets.find(byDenom(props.astroLp.denoms.primary))
   const secondaryAsset = assets.find(byDenom(props.astroLp.denoms.secondary))
@@ -170,12 +173,12 @@ export default function AstroLpModalContent(props: Props) {
               <AstroLpBorrowings
                 account={props.account}
                 borrowings={borrowCoins}
-                deposits={deposits}
+                reclaims={removedLends}
+                deposits={removedDeposits}
                 primaryAsset={primaryAsset}
                 secondaryAsset={secondaryAsset}
                 onChangeBorrowings={onChangeBorrowings}
                 astroLp={props.astroLp}
-                depositActions={depositActions}
                 depositCapReachedCoins={depositCapReachedCoins}
                 displayCurrency={displayCurrency}
                 totalValue={totalValue}
