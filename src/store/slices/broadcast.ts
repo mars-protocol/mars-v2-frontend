@@ -264,7 +264,7 @@ export default function createBroadcastSlice(
         for (const reward of stakedAstroLpRewards) {
           for (const coin of reward.rewards) {
             const asset = assets.find(byDenom(coin.denom))
-            if (asset?.isAutoLendEnabled) {
+            if (asset?.isAutoLendEnabled && !lendCoins.find(byDenom(coin.denom))) {
               lendCoins.push(coin)
               actions.push({
                 lend: {
