@@ -12,6 +12,7 @@ interface Props {
   className?: string
   small?: boolean
   hideBalances?: boolean
+  hideNames?: boolean
 }
 
 export default function AssetBalanceRow(props: Props) {
@@ -28,7 +29,7 @@ export default function AssetBalanceRow(props: Props) {
         <Text className='w-full' size={props.small ? 'sm' : 'base'}>
           {props.asset.symbol}
         </Text>
-        {!props.hideBalances && (
+        {!props.hideBalances && !props.hideNames && (
           <Text size={props.small ? 'xs' : 'sm'} className='w-full text-white/50'>
             {props.asset.name}
           </Text>

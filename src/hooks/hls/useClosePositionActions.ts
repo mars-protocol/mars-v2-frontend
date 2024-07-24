@@ -13,7 +13,10 @@ interface Props {
   account: HLSAccountWithStrategy
 }
 
-export default function useClosePositionActions(props: Props): Action[] | null {
+export default function useClosePositionActions(props: Props): {
+  actions: Action[] | null
+  changes: HlsClosingChanges | null
+} {
   const [slippage] = useSlippage()
   const isOsmosis = useIsOsmosis()
   const collateralDenom = props.account.strategy.denoms.deposit
@@ -52,32 +55,60 @@ export default function useClosePositionActions(props: Props): Action[] | null {
 
   const { data: routeInfo } = useRouteInfo(collateralDenom, borrowDenom, swapInAmount)
 
-  return useMemo<Action[] | null>(() => {
-    if (!routeInfo) return null
+  return useMemo<{ actions: Action[] | null; changes: HlsClosingChanges | null }>(() => {
+    const swapExactIn = !routeInfo
+      ? null
+      : getSwapExactInAction(
+          BNCoin.fromDenomAndBigNumber(collateralDenom, swapInAmount).toActionCoin(),
+          borrowDenom,
+          routeInfo,
+          slippage,
+          isOsmosis,
+        )
 
-    const swapExactIn = getSwapExactInAction(
-      BNCoin.fromDenomAndBigNumber(collateralDenom, swapInAmount).toActionCoin(),
-      borrowDenom,
-      routeInfo,
-      slippage,
-      isOsmosis,
-    )
-
-    return [
-      ...(debtAmount.isZero()
-        ? []
-        : [
-            swapExactIn,
-            {
-              repay: {
-                coin: BNCoin.fromDenomAndBigNumber(
-                  borrowDenom,
-                  debtAmount.times(1.0001).integerValue(), // Over pay to by-pass increase in debt
-                ).toActionCoin(),
+    return {
+      actions: [
+        ...(debtAmount.isZero() || !swapExactIn
+          ? []
+          : [
+              swapExactIn,
+              {
+                repay: {
+                  coin: BNCoin.fromDenomAndBigNumber(
+                    borrowDenom,
+                    debtAmount.times(1.0001).integerValue(), // Over pay to by-pass increase in debt
+                  ).toActionCoin(),
+                },
               },
-            },
-          ]),
-      { refund_all_coin_balances: {} },
-    ]
-  }, [routeInfo, collateralDenom, swapInAmount, borrowDenom, isOsmosis, slippage, debtAmount])
+            ]),
+        { refund_all_coin_balances: {} },
+      ],
+      changes: {
+        swap:
+          debtAmount.isZero() || !routeInfo
+            ? null
+            : {
+                coinIn: BNCoin.fromDenomAndBigNumber(collateralDenom, swapInAmount),
+                coinOut: BNCoin.fromDenomAndBigNumber(borrowDenom, routeInfo.amountOut),
+              },
+        repay: debtAmount.isZero() ? null : BNCoin.fromDenomAndBigNumber(borrowDenom, debtAmount),
+        refund:
+          !routeInfo || debtAmount.isZero()
+            ? [BNCoin.fromDenomAndBigNumber(collateralDenom, collateralAmount.minus(swapInAmount))]
+            : [
+                BNCoin.fromDenomAndBigNumber(borrowDenom, routeInfo.amountOut.minus(debtAmount)),
+                BNCoin.fromDenomAndBigNumber(collateralDenom, collateralAmount.minus(swapInAmount)),
+              ],
+      },
+    }
+  }, [
+    borrowDenom,
+    collateralAmount,
+    collateralDenom,
+    debtAmount,
+    isOsmosis,
+    routeInfo,
+    slippage,
+    swapInAmount,
+  ])
 }
