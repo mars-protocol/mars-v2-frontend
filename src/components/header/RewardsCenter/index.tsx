@@ -18,12 +18,12 @@ import useToggle from 'hooks/common/useToggle'
 import useStakedAstroLpRewards from 'hooks/incentives/useStakedAstroLpRewards'
 import useUnclaimedRewards from 'hooks/incentives/useUnclaimedRewards'
 import useRewardsCenterType from 'hooks/localStorage/useRewardsCenterType'
+import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { RewardsCenterType } from 'types/enums'
 import { getCoinValue } from 'utils/formatters'
 import { mergeBNCoinArrays } from 'utils/helpers'
-import useAutoLend from 'hooks/wallet/useAutoLend'
 
 interface Props {
   className?: string
@@ -73,7 +73,14 @@ export default function RewardsCenter(props: Props) {
     })
     setIsConfirming(false)
     setShowRewardsCenter(false)
-  }, [accountId, claimRewards, redBankRewards, setShowRewardsCenter, stakedAstroLpRewards])
+  }, [
+    accountId,
+    claimRewards,
+    isAutoLend,
+    redBankRewards,
+    setShowRewardsCenter,
+    stakedAstroLpRewards,
+  ])
 
   useEffect(() => {
     if (isOsmosis) setRewardCenterType(RewardsCenterType.Token)
