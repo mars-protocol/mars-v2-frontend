@@ -243,6 +243,7 @@ export default function createBroadcastSlice(
       const isV1 = get().isV1
       const actions = [] as Action[]
       const assets = get().assets
+      const lendCoins = [] as BNCoin[]
 
       if (redBankRewards.length > 0)
         actions.push({
@@ -264,6 +265,7 @@ export default function createBroadcastSlice(
           for (const coin of reward.rewards) {
             const asset = assets.find(byDenom(coin.denom))
             if (asset?.isAutoLendEnabled) {
+              lendCoins.push(coin)
               actions.push({
                 lend: {
                   denom: coin.denom,
@@ -271,6 +273,20 @@ export default function createBroadcastSlice(
                 },
               })
             }
+          }
+        }
+      }
+
+      if (!isV1 && options.lend && redBankRewards.length) {
+        for (const coin of redBankRewards) {
+          const asset = assets.find(byDenom(coin.denom))
+          if (asset?.isAutoLendEnabled && !lendCoins.find(byDenom(coin.denom))) {
+            actions.push({
+              lend: {
+                denom: coin.denom,
+                amount: 'account_balance',
+              },
+            })
           }
         }
       }
