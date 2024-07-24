@@ -69,8 +69,7 @@ export default function SwapForm(props: Props) {
   const [inputAssetAmount, setInputAssetAmount] = useState(BN_ZERO)
   const [selectedOrderType, setSelectedOrderType] = useState<AvailableOrderType>('Market')
   const [isConfirming, setIsConfirming] = useToggle()
-  const { autoLendEnabledAccountIds } = useAutoLend()
-  const isAutoLendEnabled = account ? autoLendEnabledAccountIds.includes(account.id) : false
+  const { isAutoLendEnabledForCurrentAccount: isAutoLendEnabled } = useAutoLend()
   const modal = useStore<string | null>((s) => s.fundAndWithdrawModal)
   const { simulateTrade, removedLends, updatedAccount } = useUpdatedAccount(account)
   const { computeLiquidationPrice } = useHealthComputer(updatedAccount)

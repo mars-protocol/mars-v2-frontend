@@ -952,6 +952,7 @@ interface BroadcastSlice {
     accountId: string
     redBankRewards?: BNCoin[]
     stakedAstroLpRewards?: StakedAstroLpRewards[]
+    lend: boolean
   }) => Promise<boolean>
   closeHlsStakingPosition: (options: { accountId: string; actions: Action[] }) => Promise<boolean>
   createAccount: (

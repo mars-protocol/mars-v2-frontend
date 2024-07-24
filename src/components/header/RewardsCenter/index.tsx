@@ -23,6 +23,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { RewardsCenterType } from 'types/enums'
 import { getCoinValue } from 'utils/formatters'
 import { mergeBNCoinArrays } from 'utils/helpers'
+import useAutoLend from 'hooks/wallet/useAutoLend'
 
 interface Props {
   className?: string
@@ -35,6 +36,7 @@ export default function RewardsCenter(props: Props) {
   const { data: redBankRewards } = useUnclaimedRewards()
   const { data: assets } = useAssets()
   const isOsmosis = useIsOsmosis()
+  const { isAutoLendEnabledForCurrentAccount: isAutoLend } = useAutoLend()
 
   const { data: stakedAstroLpRewards } = useStakedAstroLpRewards()
   const currentLpRewards = useMemo(() => {
@@ -67,6 +69,7 @@ export default function RewardsCenter(props: Props) {
       accountId: accountId || '',
       redBankRewards,
       stakedAstroLpRewards,
+      lend: isAutoLend,
     })
     setIsConfirming(false)
     setShowRewardsCenter(false)

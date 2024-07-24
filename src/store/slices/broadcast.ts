@@ -235,12 +235,14 @@ export default function createBroadcastSlice(
       accountId: string
       redBankRewards?: BNCoin[]
       stakedAstroLpRewards?: StakedAstroLpRewards[]
+      lend: boolean
     }) => {
       const redBankRewards = options.redBankRewards ?? []
       const stakedAstroLpRewards = options.stakedAstroLpRewards ?? []
 
       const isV1 = get().isV1
       const actions = [] as Action[]
+      const assets = get().assets
 
       if (redBankRewards.length > 0)
         actions.push({
@@ -254,6 +256,22 @@ export default function createBroadcastSlice(
               lp_denom: reward.lpDenom,
             },
           })
+        }
+      }
+
+      if (!isV1 && options.lend && stakedAstroLpRewards.length) {
+        for (const reward of stakedAstroLpRewards) {
+          for (const coin of reward.rewards) {
+            const asset = assets.find(byDenom(coin.denom))
+            if (asset?.isAutoLendEnabled) {
+              actions.push({
+                lend: {
+                  denom: coin.denom,
+                  amount: 'account_balance',
+                },
+              })
+            }
+          }
         }
       }
 

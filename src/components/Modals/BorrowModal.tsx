@@ -78,9 +78,8 @@ function BorrowModal(props: Props) {
   const isRepay = modal.isRepay ?? false
   const [max, setMax] = useState(BN_ZERO)
   const { simulateBorrow, simulateRepay } = useUpdatedAccount(account)
-  const { autoLendEnabledAccountIds } = useAutoLend()
   const apy = modal.marketData.apy.borrow
-  const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
+  const { isAutoLendEnabledForCurrentAccount: isAutoLendEnabled } = useAutoLend()
   const { computeMaxBorrowAmount } = useHealthComputer(account)
   const accountDebt = account.debts.find(byDenom(asset.denom))?.amount ?? BN_ZERO
   const markets = useMarkets()
