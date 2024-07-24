@@ -89,7 +89,7 @@ function HlsCloseModal(props: Props) {
                       <AssetBalanceRow
                         asset={asset}
                         coin={coin}
-                        className='p-2 rounded-md bg-white/5 text-profit'
+                        className='p-2 rounded-md bg-white/5'
                         hideNames
                         small
                       />
@@ -131,7 +131,7 @@ function SwapAndRepay(props: SwapAndRepayProps) {
         <AssetBalanceRow
           asset={collateralAsset}
           coin={changes.swap.coinIn}
-          className='p-2 rounded-md bg-white/5 text-loss'
+          className='p-2 rounded-md bg-white/5'
           hideNames
           small
         />
@@ -139,7 +139,7 @@ function SwapAndRepay(props: SwapAndRepayProps) {
         <AssetBalanceRow
           asset={debtAsset}
           coin={changes.swap.coinOut}
-          className='p-2 rounded-md bg-white/5 text-profit'
+          className='p-2 rounded-md bg-white/5'
           hideNames
           small
         />
@@ -153,7 +153,7 @@ function SwapAndRepay(props: SwapAndRepayProps) {
       <AssetBalanceRow
         asset={debtAsset}
         coin={changes.repay}
-        className='p-2 rounded-md bg-white/5 text-loss'
+        className='p-2 rounded-md bg-white/5'
         hideNames
         small
       />
