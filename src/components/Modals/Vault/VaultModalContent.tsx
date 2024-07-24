@@ -181,6 +181,7 @@ export default function VaultModalContent(props: Props) {
                 vault={props.vault}
                 depositCapReachedCoins={depositCapReachedCoins}
                 displayCurrency={displayCurrency}
+                totalValue={totalValue}
               />
             ),
             title: 'Borrow',

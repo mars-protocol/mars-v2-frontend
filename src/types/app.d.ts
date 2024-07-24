@@ -1280,6 +1280,7 @@ interface FarmBorrowingsProps {
   onChangeBorrowings: (borrowings: BNCoin[]) => void
   displayCurrency: string
   depositCapReachedCoins: BNCoin[]
+  totalValue: BigNumber
 }
 
 interface VaultBorrowingsProps extends FarmBorrowingsProps {
@@ -1288,7 +1289,6 @@ interface VaultBorrowingsProps extends FarmBorrowingsProps {
 
 interface AstroLpBorrowingsProps extends FarmBorrowingsProps {
   astroLp: AstroLp
-  totalValue: BigNumber
 }
 
 type AvailableOrderType = 'Market' | 'Limit' | 'Stop'

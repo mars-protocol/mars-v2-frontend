@@ -23,7 +23,6 @@ import { byDenom } from 'utils/array'
 import { findCoinByDenom } from 'utils/assets'
 import { getFarmActions } from 'utils/farm'
 import { formatPercent } from 'utils/formatters'
-import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
 
 export default function VaultBorrowings(props: VaultBorrowingsProps) {
   const assets = useDepositEnabledAssets()
@@ -77,11 +76,6 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
       })
     })
   }, [maxBorrowAmountsRaw, props.borrowings])
-
-  const totalValue = useMemo(() => {
-    const depositsAndReclaims = mergeBNCoinArrays(props.deposits, props.reclaims)
-    return getValueFromBNCoins(mergeBNCoinArrays(depositsAndReclaims, props.borrowings), assets)
-  }, [props.deposits, props.reclaims, props.borrowings, assets])
 
   useEffect(() => {
     const selectedBorrowDenoms = vaultModal?.selectedBorrowDenoms || []
@@ -228,7 +222,7 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
         <div className='flex justify-between'>
           <Text className='text-white/50'>{`${props.primaryAsset.symbol}-${props.secondaryAsset.symbol} Position Value`}</Text>
           <DisplayCurrency
-            coin={new BNCoin({ denom: ORACLE_DENOM, amount: totalValue.toString() })}
+            coin={new BNCoin({ denom: ORACLE_DENOM, amount: props.totalValue.toString() })}
           />
         </div>
         {props.borrowings.map((coin) => {
