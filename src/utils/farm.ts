@@ -82,9 +82,8 @@ export function getFarmProvideLiquidityActions(
   } else {
     const { primaryCoin: vaultPrimaryCoin, secondaryCoin: vaultSecondaryCoin } =
       getVaultDepositCoinsAndValue(farm as Vault, deposits, borrowings, reclaims, slippage, assets)
-    primaryCoin.amount = vaultPrimaryCoin.amount.plus(swapCoins.primary.amount)
-    secondaryCoin.amount = vaultSecondaryCoin.amount.plus(swapCoins.secondary.amount)
-
+    primaryCoin.amount = vaultPrimaryCoin.amount.plus(swapCoins.primary.amount).integerValue()
+    secondaryCoin.amount = vaultSecondaryCoin.amount.plus(swapCoins.secondary.amount).integerValue()
     return getEnterVaultActions(farm as Vault, primaryCoin, secondaryCoin, slippage)
   }
 }

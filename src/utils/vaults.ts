@@ -2,7 +2,6 @@ import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action, Uint128 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { byDenom } from 'utils/array'
-import { VAULT_DEPOSIT_BUFFER } from 'utils/constants'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
 import { getTokenPrice } from 'utils/tokens'
@@ -23,7 +22,10 @@ export function getVaultDepositCoinsAndValue(
   const totalValue = getValueFromBNCoins(borrowingsAndDepositsAndReclaims, assets).times(
     1 - slippage,
   )
-  const halfValue = totalValue.dividedBy(2)
+
+  // only use the halfValue of the depositsAndReclaims to calculate the base deposit amount
+  const depositAndReclaimsValue = getValueFromBNCoins(depositsAndReclaims, assets)
+  const halfValue = depositAndReclaimsValue.dividedBy(2)
 
   const primaryAsset = assets.find(byDenom(vault.denoms.primary)) ?? assets[0]
   const secondaryAsset = assets.find(byDenom(vault.denoms.secondary)) ?? assets[0]
@@ -32,13 +34,11 @@ export function getVaultDepositCoinsAndValue(
   const primaryDepositAmount = halfValue
     .dividedBy(getTokenPrice(primaryAsset.denom, assets))
     .shiftedBy(primaryAsset.decimals)
-    .times(VAULT_DEPOSIT_BUFFER)
     .integerValue()
 
   const secondaryDepositAmount = halfValue
     .dividedBy(getTokenPrice(secondaryAsset.denom, assets))
     .shiftedBy(secondaryAsset.decimals)
-    .times(VAULT_DEPOSIT_BUFFER)
     .integerValue()
 
   return {
@@ -144,9 +144,6 @@ export function getEnterVaultActions(
   secondaryCoin: BNCoin,
   slippage: number,
 ): Action[] {
-  primaryCoin.amount = primaryCoin.amount.times(0.8).integerValue()
-  secondaryCoin.amount = secondaryCoin.amount.times(0.8).integerValue()
-
   return [
     {
       provide_liquidity: {
