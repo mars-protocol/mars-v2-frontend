@@ -18,6 +18,7 @@ import useToggle from 'hooks/common/useToggle'
 import useStakedAstroLpRewards from 'hooks/incentives/useStakedAstroLpRewards'
 import useUnclaimedRewards from 'hooks/incentives/useUnclaimedRewards'
 import useRewardsCenterType from 'hooks/localStorage/useRewardsCenterType'
+import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { RewardsCenterType } from 'types/enums'
@@ -35,6 +36,7 @@ export default function RewardsCenter(props: Props) {
   const { data: redBankRewards } = useUnclaimedRewards()
   const { data: assets } = useAssets()
   const isOsmosis = useIsOsmosis()
+  const { isAutoLendEnabledForCurrentAccount: isAutoLend } = useAutoLend()
 
   const { data: stakedAstroLpRewards } = useStakedAstroLpRewards()
   const currentLpRewards = useMemo(() => {
@@ -67,10 +69,18 @@ export default function RewardsCenter(props: Props) {
       accountId: accountId || '',
       redBankRewards,
       stakedAstroLpRewards,
+      lend: isAutoLend,
     })
     setIsConfirming(false)
     setShowRewardsCenter(false)
-  }, [accountId, claimRewards, redBankRewards, setShowRewardsCenter, stakedAstroLpRewards])
+  }, [
+    accountId,
+    claimRewards,
+    isAutoLend,
+    redBankRewards,
+    setShowRewardsCenter,
+    stakedAstroLpRewards,
+  ])
 
   useEffect(() => {
     if (isOsmosis) setRewardCenterType(RewardsCenterType.Token)

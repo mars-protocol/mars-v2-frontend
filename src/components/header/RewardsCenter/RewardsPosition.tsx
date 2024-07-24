@@ -8,6 +8,7 @@ import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAssets from 'hooks/assets/useAssets'
+import useAutoLend from 'hooks/wallet/useAutoLend'
 import { useCallback, useMemo, useState } from 'react'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -37,6 +38,7 @@ export default function RewardsPosition(props: Props) {
   const { data: assets } = useAssets()
   const accountId = useAccountId()
   const [isConfirming, setIsConfirming] = useState(false)
+  const { isAutoLendEnabledForCurrentAccount: isAutoLend } = useAutoLend()
 
   const isRedBank = denom === 'redbank'
   const positionAsset = isRedBank ? assets[0] : assets.find(byDenom(denom))
@@ -61,9 +63,10 @@ export default function RewardsPosition(props: Props) {
       accountId: accountId || '',
       redBankRewards: denom === 'redbank' ? rewards : undefined,
       stakedAstroLpRewards: denom !== 'redbank' ? [{ lpDenom: denom, rewards }] : undefined,
+      lend: isAutoLend,
     })
     setIsConfirming(false)
-  }, [accountId, claimRewards, denom, rewards])
+  }, [accountId, claimRewards, denom, isAutoLend, rewards])
 
   if (!positionAsset) return null
 
