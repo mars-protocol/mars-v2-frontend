@@ -78,10 +78,10 @@ export default function VaultBorrowings(props: VaultBorrowingsProps) {
     })
   }, [maxBorrowAmountsRaw, props.borrowings])
 
-  const totalValue = useMemo(
-    () => getValueFromBNCoins(mergeBNCoinArrays(props.deposits, props.borrowings), assets),
-    [props.deposits, props.borrowings, assets],
-  )
+  const totalValue = useMemo(() => {
+    const depositsAndReclaims = mergeBNCoinArrays(props.deposits, props.reclaims)
+    return getValueFromBNCoins(mergeBNCoinArrays(depositsAndReclaims, props.borrowings), assets)
+  }, [props.deposits, props.reclaims, props.borrowings, assets])
 
   useEffect(() => {
     const selectedBorrowDenoms = vaultModal?.selectedBorrowDenoms || []

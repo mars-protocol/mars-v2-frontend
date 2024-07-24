@@ -173,8 +173,8 @@ export default function VaultModalContent(props: Props) {
               <VaultBorrowings
                 account={props.account}
                 borrowings={borrowCoins}
-                deposits={deposits}
-                reclaims={[]}
+                deposits={removedDeposits}
+                reclaims={removedLends}
                 primaryAsset={props.primaryAsset}
                 secondaryAsset={props.secondaryAsset}
                 onChangeBorrowings={onChangeBorrowings}

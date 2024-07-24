@@ -83,7 +83,7 @@ export function getFarmProvideLiquidityActions(
     const { primaryCoin: vaultPrimaryCoin, secondaryCoin: vaultSecondaryCoin } =
       getVaultDepositCoinsAndValue(farm as Vault, deposits, borrowings, reclaims, slippage, assets)
     primaryCoin.amount = vaultPrimaryCoin.amount.plus(swapCoins.primary.amount)
-    primaryCoin.amount = vaultSecondaryCoin.amount.plus(swapCoins.secondary.amount)
+    secondaryCoin.amount = vaultSecondaryCoin.amount.plus(swapCoins.secondary.amount)
 
     return getEnterVaultActions(farm as Vault, primaryCoin, secondaryCoin, slippage)
   }
@@ -217,7 +217,7 @@ export async function getFarmSwapActionsAndCoins(
         swapActions.push(
           getSwapExactInAction(
             BNCoin.fromDenomAndBigNumber(bnCoin.denom, amount).toActionCoin(),
-            farm.denoms.primary,
+            farm.denoms.secondary,
             secondarySwapRouteInfo,
             slippage,
             chainConfig.isOsmosis,
