@@ -1,6 +1,8 @@
 import { useCallback } from 'react'
 
 import AccountDeleteAlertDialog from 'components/Modals/Account/AccountDeleteAlertDialog'
+import RepayInfo from 'components/Modals/HLS/Close/RepayInfo'
+import SwapInfo from 'components/Modals/HLS/Close/SwapInfo'
 import { ArrowRight, Plus } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
@@ -15,12 +17,6 @@ interface Props {
   collateralAsset: Asset
   debtAsset: Asset
   assets: Asset[]
-}
-
-interface SwapAndRepayProps {
-  changes: HlsClosingChanges
-  collateralAsset: Asset
-  debtAsset: Asset
 }
 
 export default function HlsCloseController() {
@@ -73,7 +69,12 @@ function HlsCloseModal(props: Props) {
             />
             <Text size='sm'>The following actions will be performed on closing the position</Text>
           </div>
-          <SwapAndRepay changes={changes} collateralAsset={collateralAsset} debtAsset={debtAsset} />
+          <SwapInfo
+            changes={changes.swap}
+            collateralAsset={collateralAsset}
+            debtAsset={debtAsset}
+          />
+          <RepayInfo repayCoin={changes.repay} debtAsset={debtAsset} />
           <div className='flex flex-col w-full gap-2 mt-8'>
             <Text className='font-bold' size='sm'>
               Refund
@@ -112,51 +113,5 @@ function HlsCloseModal(props: Props) {
         },
       }}
     />
-  )
-}
-
-function SwapAndRepay(props: SwapAndRepayProps) {
-  const { changes, collateralAsset, debtAsset } = props
-
-  if (!changes.swap || !changes.repay) return null
-  return (
-    <div className='flex flex-col w-full gap-2'>
-      <Text className='mt-6' size='sm'>
-        Swap
-      </Text>
-      <Text className='text-white/50' size='xs'>
-        A part of the total collateral will be swapped to repay the borrowed funds
-      </Text>
-      <div className='flex items-center gap-2'>
-        <AssetBalanceRow
-          asset={collateralAsset}
-          coin={changes.swap.coinIn}
-          className='p-2 rounded-md bg-white/5'
-          hideNames
-          small
-        />
-        <ArrowRight className='w-10 h-10 text-white' />
-        <AssetBalanceRow
-          asset={debtAsset}
-          coin={changes.swap.coinOut}
-          className='p-2 rounded-md bg-white/5'
-          hideNames
-          small
-        />
-      </div>
-      <Text className='mt-6' size='sm'>
-        Repay
-      </Text>
-      <Text className='text-white/50' size='xs'>
-        To bring the leverage down to 1x, the borrowed funds will be repaid
-      </Text>
-      <AssetBalanceRow
-        asset={debtAsset}
-        coin={changes.repay}
-        className='p-2 rounded-md bg-white/5'
-        hideNames
-        small
-      />
-    </div>
   )
 }

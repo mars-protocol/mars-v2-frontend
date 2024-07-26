@@ -56,19 +56,20 @@ export default function useClosePositionActions(props: Props): {
   const { data: routeInfo } = useRouteInfo(collateralDenom, borrowDenom, swapInAmount)
 
   return useMemo<{ actions: Action[] | null; changes: HlsClosingChanges | null }>(() => {
-    const swapExactIn = !routeInfo
-      ? null
-      : getSwapExactInAction(
-          BNCoin.fromDenomAndBigNumber(collateralDenom, swapInAmount).toActionCoin(),
-          borrowDenom,
-          routeInfo,
-          slippage,
-          isOsmosis,
-        )
+    const swapExactIn =
+      debtAmount.isZero() || !routeInfo
+        ? null
+        : getSwapExactInAction(
+            BNCoin.fromDenomAndBigNumber(collateralDenom, swapInAmount).toActionCoin(),
+            borrowDenom,
+            routeInfo,
+            slippage,
+            isOsmosis,
+          )
 
     return {
       actions: [
-        ...(debtAmount.isZero() || !swapExactIn
+        ...(!swapExactIn
           ? []
           : [
               swapExactIn,
@@ -84,13 +85,12 @@ export default function useClosePositionActions(props: Props): {
         { refund_all_coin_balances: {} },
       ],
       changes: {
-        swap:
-          debtAmount.isZero() || !routeInfo
-            ? null
-            : {
-                coinIn: BNCoin.fromDenomAndBigNumber(collateralDenom, swapInAmount),
-                coinOut: BNCoin.fromDenomAndBigNumber(borrowDenom, routeInfo.amountOut),
-              },
+        swap: !swapExactIn
+          ? null
+          : {
+              coinIn: BNCoin.fromDenomAndBigNumber(collateralDenom, swapInAmount),
+              coinOut: BNCoin.fromDenomAndBigNumber(borrowDenom, routeInfo?.amountOut ?? BN_ZERO),
+            },
         repay: debtAmount.isZero() ? null : BNCoin.fromDenomAndBigNumber(borrowDenom, debtAmount),
         refund:
           !routeInfo || debtAmount.isZero()

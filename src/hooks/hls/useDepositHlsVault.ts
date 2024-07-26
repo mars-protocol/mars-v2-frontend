@@ -64,11 +64,12 @@ export default function useDepositHlsVault(props: Props) {
   ])
 
   const actions: Action[] | null = useMemo(() => {
+    const hasSwapAndRepay = !borrowAmount.isZero() && route
     return [
       {
         deposit: depositCoin.toCoin(),
       },
-      ...(borrowAmount.isZero() || !route
+      ...(!hasSwapAndRepay
         ? []
         : [
             {
