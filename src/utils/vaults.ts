@@ -1,9 +1,10 @@
 import { BN_ZERO } from 'constants/math'
+import { VAULT_DEPOSIT_BUFFER } from 'constants/vaults'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action, Uint128 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { byDenom } from 'utils/array'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
-import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
+import { BN, getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
 import { getTokenPrice } from 'utils/tokens'
 
 export function getVaultDepositCoinsAndValue(
@@ -14,6 +15,8 @@ export function getVaultDepositCoinsAndValue(
   slippage: number,
   assets: Asset[],
 ) {
+  let primaryDepositValue = BN_ZERO
+  let secondaryDepositValue = BN_ZERO
   const depositsAndReclaims = mergeBNCoinArrays(deposits, reclaims)
   const borrowingsAndDepositsAndReclaims = mergeBNCoinArrays(borrowings, depositsAndReclaims)
 
@@ -23,20 +26,70 @@ export function getVaultDepositCoinsAndValue(
     1 - slippage,
   )
 
-  // only use the halfValue of the depositsAndReclaims to calculate the base deposit amount
-  const depositAndReclaimsValue = getValueFromBNCoins(depositsAndReclaims, assets)
-  const halfValue = depositAndReclaimsValue.dividedBy(2)
-
   const primaryAsset = assets.find(byDenom(vault.denoms.primary)) ?? assets[0]
   const secondaryAsset = assets.find(byDenom(vault.denoms.secondary)) ?? assets[0]
 
-  // The buffer is needed as sometimes the vaults are a bit skew, or because of other inaccuracies in the messages
-  const primaryDepositAmount = halfValue
+  const primaryAssetAmount =
+    borrowingsAndDepositsAndReclaims.find(byDenom(primaryAsset.denom))?.amount ?? BN_ZERO
+  const primaryAssetValue = getCoinValue(
+    BNCoin.fromDenomAndBigNumber(vault.denoms.primary, primaryAssetAmount),
+    assets,
+  )
+  const secondaryAssetAmount =
+    borrowingsAndDepositsAndReclaims.find(byDenom(secondaryAsset.denom))?.amount ?? BN_ZERO
+  const secondaryAssetValue = getCoinValue(
+    BNCoin.fromDenomAndBigNumber(vault.denoms.secondary, secondaryAssetAmount),
+    assets,
+  )
+
+  const depositAndReclaimsValue = getValueFromBNCoins(depositsAndReclaims, assets)
+
+  if (totalValue.isZero())
+    return {
+      primaryCoin: new BNCoin({
+        denom: vault.denoms.primary,
+        amount: '0',
+      }),
+      secondaryCoin: new BNCoin({
+        denom: vault.denoms.secondary,
+        amount: '0',
+      }),
+      totalValue: totalValue,
+    }
+  // only use the halfValue of the depositsAndReclaims to calculate the base deposit amount
+  const halfValue = depositAndReclaimsValue.dividedBy(2)
+
+  // get the ratio by dividing the totals of the primary and secondary assets
+  const ratio = primaryAssetValue.dividedBy(secondaryAssetValue)
+
+  // a custom ratio is given if the ratio is bigger than the buffer + slippage or smaller than the buffer - slippage
+  const isCustomRatio =
+    primaryAssetValue.isZero() || secondaryAssetValue.isZero()
+      ? true
+      : ratio.isLessThan(BN(VAULT_DEPOSIT_BUFFER).minus(slippage)) ||
+        ratio.isGreaterThan(BN(VAULT_DEPOSIT_BUFFER).plus(slippage))
+
+  if (isCustomRatio) {
+    // on a custom ratio the value of the asset with the highe value has to deducted by the value of the asset with the lower value
+    // this value is then divided by 2 to get the leftover value that will be swapped to the asset with the lower value
+
+    // e.g.: $250 ATOM (primary) and $500 stATOM (secondary) -> $750 totalValue, $375 halfValue
+    // return $250 ATOM and $375 stATOM as depositAmounts, since the swapFunction will return $125 worth of ATOM to add to the depositAmounts
+    const hasMorePrimaryAsset = primaryAssetValue.isGreaterThan(secondaryAssetValue)
+
+    primaryDepositValue = hasMorePrimaryAsset ? halfValue : primaryAssetValue
+    secondaryDepositValue = hasMorePrimaryAsset ? secondaryAssetValue : halfValue
+  } else {
+    primaryDepositValue = halfValue
+    secondaryDepositValue = halfValue
+  }
+
+  const primaryDepositAmount = primaryDepositValue
     .dividedBy(getTokenPrice(primaryAsset.denom, assets))
     .shiftedBy(primaryAsset.decimals)
     .integerValue()
 
-  const secondaryDepositAmount = halfValue
+  const secondaryDepositAmount = secondaryDepositValue
     .dividedBy(getTokenPrice(secondaryAsset.denom, assets))
     .shiftedBy(secondaryAsset.decimals)
     .integerValue()
