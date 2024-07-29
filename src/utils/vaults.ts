@@ -7,7 +7,7 @@ import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { BN, getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
 import { getTokenPrice } from 'utils/tokens'
 
-export function getVaultDepositCoinsAndValue(
+export function getVaultBaseDepositCoinsAndValue(
   vault: Vault,
   deposits: BNCoin[],
   borrowings: BNCoin[],

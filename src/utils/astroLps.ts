@@ -145,7 +145,7 @@ export function getEnterAstroLpActions(
   ]
 }
 
-export function getAstroLpDepositCoinsAndValue(
+export function getAstroLpBaseDepositCoinsAndValue(
   astroLp: AstroLp,
   deposits: BNCoin[],
   borrowings: BNCoin[],

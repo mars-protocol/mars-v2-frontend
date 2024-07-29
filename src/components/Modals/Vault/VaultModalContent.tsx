@@ -19,7 +19,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { getCoinValue, magnify } from 'utils/formatters'
 import { getCapLeftWithBuffer } from 'utils/generic'
 import { mergeBNCoinArrays } from 'utils/helpers'
-import { getVaultDepositCoinsAndValue } from 'utils/vaults'
+import { getVaultBaseDepositCoinsAndValue } from 'utils/vaults'
 
 interface Props {
   vault: Vault | DepositedVault
@@ -44,7 +44,7 @@ export default function VaultModalContent(props: Props) {
 
   const { totalValue } = useMemo(
     () =>
-      getVaultDepositCoinsAndValue(
+      getVaultBaseDepositCoinsAndValue(
         props.vault as Vault,
         removedDeposits,
         addedDebts,

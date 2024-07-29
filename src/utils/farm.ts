@@ -2,11 +2,11 @@ import getRouteInfo from 'api/swap/getRouteInfo'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { getAstroLpDepositCoinsAndValue, getEnterAstroLpActions } from 'utils/astroLps'
+import { getAstroLpBaseDepositCoinsAndValue, getEnterAstroLpActions } from 'utils/astroLps'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { getValueFromBNCoins } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
-import { getEnterVaultActions, getVaultDepositCoinsAndValue } from 'utils/vaults'
+import { getEnterVaultActions, getVaultBaseDepositCoinsAndValue } from 'utils/vaults'
 
 export function getFarmDepositsReclaimsAndBorrowingsActions(
   deposits: BNCoin[],
@@ -74,21 +74,28 @@ export function getFarmProvideLiquidityActions(
   const secondaryCoin = BNCoin.fromDenomAndBigNumber(farm.denoms.secondary, BN_ZERO)
   if (isAstroportLp) {
     const { primaryCoin: astroLpPrimaryCoin, secondaryCoin: astroLpSecondaryCoin } =
-      getAstroLpDepositCoinsAndValue(farm as AstroLp, deposits, borrowings, reclaims, assets)
+      getAstroLpBaseDepositCoinsAndValue(farm as AstroLp, deposits, borrowings, reclaims, assets)
     primaryCoin.amount = astroLpPrimaryCoin.amount.plus(swapCoins.primary.amount)
     secondaryCoin.amount = astroLpSecondaryCoin.amount.plus(swapCoins.secondary.amount)
 
     return getEnterAstroLpActions(farm as AstroLp, primaryCoin, secondaryCoin, slippage)
   } else {
     const { primaryCoin: vaultPrimaryCoin, secondaryCoin: vaultSecondaryCoin } =
-      getVaultDepositCoinsAndValue(farm as Vault, deposits, borrowings, reclaims, slippage, assets)
+      getVaultBaseDepositCoinsAndValue(
+        farm as Vault,
+        deposits,
+        borrowings,
+        reclaims,
+        slippage,
+        assets,
+      )
     primaryCoin.amount = vaultPrimaryCoin.amount.plus(swapCoins.primary.amount).integerValue()
     secondaryCoin.amount = vaultSecondaryCoin.amount.plus(swapCoins.secondary.amount).integerValue()
     return getEnterVaultActions(farm as Vault, primaryCoin, secondaryCoin, slippage)
   }
 }
 
-export async function getFarmSwapActionsAndCoins(
+export async function getFarmSwapActionsAndOutputCoins(
   farm: Vault | AstroLp,
   deposits: BNCoin[],
   reclaims: BNCoin[],
@@ -248,7 +255,7 @@ export async function getFarmActions(
     borrowings,
   )
 
-  const { swapActions, swapCoins } = await getFarmSwapActionsAndCoins(
+  const { swapActions, swapCoins } = await getFarmSwapActionsAndOutputCoins(
     farm,
     deposits,
     reclaims,

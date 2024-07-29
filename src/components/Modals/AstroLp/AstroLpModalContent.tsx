@@ -16,7 +16,7 @@ import useIsOpenArray from 'hooks/common/useIsOpenArray'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { getAstroLpDepositCoinsAndValue, getAstroLpSharesFromCoinsValue } from 'utils/astroLps'
+import { getAstroLpBaseDepositCoinsAndValue, getAstroLpSharesFromCoinsValue } from 'utils/astroLps'
 import { getCoinValue, magnify } from 'utils/formatters'
 import { getCapLeftWithBuffer } from 'utils/generic'
 import { mergeBNCoinArrays } from 'utils/helpers'
@@ -41,7 +41,7 @@ export default function AstroLpModalContent(props: Props) {
 
   const { totalValue } = useMemo(
     () =>
-      getAstroLpDepositCoinsAndValue(
+      getAstroLpBaseDepositCoinsAndValue(
         props.astroLp as AstroLp,
         removedDeposits,
         addedDebts,
