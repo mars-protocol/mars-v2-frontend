@@ -5,9 +5,9 @@ import AccountCreateFirst from 'components/account/AccountCreateFirst'
 import { CircularProgress } from 'components/common/CircularProgress'
 import FullOverlayContent from 'components/common/FullOverlayContent'
 import WalletBridges from 'components/Wallet/WalletBridges'
+import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
-import useAccountId from 'hooks/accounts/useAccountId'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
@@ -81,7 +81,7 @@ function Content() {
   if (isLoadingAccounts || isLoadingBalances) return <FetchLoading />
   if (BN(baseBalance).isZero()) return <WalletBridges />
   if (accountIds && accountIds.length === 0 && !isV1) return <AccountCreateFirst />
-  if (isV1) useStore.setState({ focusComponent: null })
+  useStore.setState({ focusComponent: null })
   return null
 }
 
