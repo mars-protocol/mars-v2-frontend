@@ -1128,6 +1128,7 @@ interface ModalSlice {
   assetOverlayState: OverlayState
   hlsModal: HlsModal | null
   hlsManageModal: HlsManageModal | null
+  hlsCloseModal: HlsCloseModal | null
   borrowModal: BorrowModal | null
   fundAndWithdrawModal: 'fund' | 'withdraw' | null
   getStartedModal: boolean
@@ -1149,6 +1150,7 @@ interface AlertDialogButton {
   icon?: JSX.Element
   isAsync?: boolean
   onClick?: () => Promise<void> | void
+  disabled?: boolean
 }
 
 interface AlertDialogConfig {
@@ -1216,6 +1218,22 @@ interface HlsManageModal {
     strategy: HLSStrategy
     action: HlsStakingManageAction
   }
+}
+
+interface HlsCloseModal {
+  account: HLSAccountWithStrategy
+  staking: {
+    strategy: HLSStrategy
+  }
+}
+
+interface HlsClosingChanges {
+  swap: {
+    coinIn: BNCoin
+    coinOut: BNCoin
+  } | null
+  repay: BNCoin | null
+  refund: BNCoin[]
 }
 
 type HlsStakingManageAction = 'deposit' | 'withdraw' | 'repay' | 'leverage'

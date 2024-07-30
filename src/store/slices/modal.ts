@@ -12,6 +12,7 @@ export default function createModalSlice(set: SetState<ModalSlice>, get: GetStat
     getStartedModal: false,
     hlsInformationModal: null,
     hlsManageModal: null,
+    hlsCloseModal: null,
     lendAndReclaimModal: null,
     perpsVaultModal: null,
     resetStettingsModal: false,

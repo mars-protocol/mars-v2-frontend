@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 
-import AccountDeleteAlertDialog from 'components/Modals/Account/AccountDeleteAlertDialog'
+import AccountAlertDialog from 'components/Modals/Account/AccountAlertDialog'
 import { ArrowRight, ExclamationMarkCircled } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
@@ -78,7 +78,7 @@ function AccountDeleteModal(props: Props) {
 
   if (debts.length > 0)
     return (
-      <AccountDeleteAlertDialog
+      <AccountAlertDialog
         title='Repay your Debts to delete your account'
         icon={<ExclamationMarkCircled width={18} />}
         content='You must repay all borrowings before deleting your account.'
@@ -96,7 +96,7 @@ function AccountDeleteModal(props: Props) {
 
   if (vaults.length > 0)
     return (
-      <AccountDeleteAlertDialog
+      <AccountAlertDialog
         title='Close your positions to delete your account'
         content='You must first close your farming positions before deleting your account.'
         closeHandler={closeDeleteAccountModal}
@@ -113,7 +113,7 @@ function AccountDeleteModal(props: Props) {
 
   if (depositsAndLends.length === 0)
     return (
-      <AccountDeleteAlertDialog
+      <AccountAlertDialog
         title={`Delete Credit Account ${accountId}`}
         content='Deleting your Credit Account is irreversible.'
         closeHandler={closeDeleteAccountModal}
@@ -126,7 +126,7 @@ function AccountDeleteModal(props: Props) {
     )
 
   return (
-    <AccountDeleteAlertDialog
+    <AccountAlertDialog
       title={`Delete Credit Account ${accountId}`}
       content={
         <>
