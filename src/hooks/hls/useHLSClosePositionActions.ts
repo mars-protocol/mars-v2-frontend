@@ -13,9 +13,10 @@ interface Props {
   account: HLSAccountWithStrategy
 }
 
-export default function useClosePositionActions(props: Props): {
+export default function useHLSClosePositionActions(props: Props): {
   actions: Action[] | null
   changes: HlsClosingChanges | null
+  hasRouteError: boolean
 } {
   const [slippage] = useSlippage()
   const isOsmosis = useIsOsmosis()
@@ -55,7 +56,11 @@ export default function useClosePositionActions(props: Props): {
 
   const { data: routeInfo } = useRouteInfo(collateralDenom, borrowDenom, swapInAmount)
 
-  return useMemo<{ actions: Action[] | null; changes: HlsClosingChanges | null }>(() => {
+  return useMemo<{
+    actions: Action[] | null
+    changes: HlsClosingChanges | null
+    hasRouteError: boolean
+  }>(() => {
     const swapExactIn =
       debtAmount.isZero() || !routeInfo
         ? null
@@ -100,6 +105,7 @@ export default function useClosePositionActions(props: Props): {
                 BNCoin.fromDenomAndBigNumber(collateralDenom, collateralAmount.minus(swapInAmount)),
               ],
       },
+      hasRouteError: !debtAmount.isZero() && !routeInfo,
     }
   }, [
     borrowDenom,

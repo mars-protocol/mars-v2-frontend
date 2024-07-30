@@ -76,6 +76,7 @@ function AlertDialog(props: Props) {
               rightIcon={positiveButton.icon ?? <YesIcon />}
               iconClassName='h-4 w-5'
               onClick={() => handleButtonClick(positiveButton)}
+              disabled={positiveButton.disabled}
             />
           )}
           {checkbox && (

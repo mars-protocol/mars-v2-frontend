@@ -1,13 +1,14 @@
 import { useCallback } from 'react'
 
-import AccountDeleteAlertDialog from 'components/Modals/Account/AccountDeleteAlertDialog'
+import AccountAlertDialog from 'components/Modals/Account/AccountAlertDialog'
 import RepayInfo from 'components/Modals/HLS/Close/RepayInfo'
 import SwapInfo from 'components/Modals/HLS/Close/SwapInfo'
+import { Callout, CalloutType } from 'components/common/Callout'
 import { ArrowRight, Plus } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
-import useCloseHlsStakingPosition from 'hooks/hls/useClosePositionActions'
+import useHLSClosePositionActions from 'hooks/hls/useHLSClosePositionActions'
 import React from 'react'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
@@ -42,7 +43,7 @@ export default function HlsCloseController() {
 
 function HlsCloseModal(props: Props) {
   const { modal, collateralAsset, debtAsset, assets } = props
-  const { actions, changes } = useCloseHlsStakingPosition({ account: modal.account })
+  const { actions, changes, hasRouteError } = useHLSClosePositionActions({ account: modal.account })
   const closeHlsStakingPosition = useStore((s) => s.closeHlsStakingPosition)
 
   const closeHlsClosingModal = useCallback(() => {
@@ -52,7 +53,7 @@ function HlsCloseModal(props: Props) {
   if (!actions || !changes) return null
 
   return (
-    <AccountDeleteAlertDialog
+    <AccountAlertDialog
       title='Close HLS Position'
       content={
         <>
@@ -75,6 +76,13 @@ function HlsCloseModal(props: Props) {
             debtAsset={debtAsset}
           />
           <RepayInfo repayCoin={changes.repay} debtAsset={debtAsset} />
+          {hasRouteError && (
+            <Callout type={CalloutType.WARNING} className='mt-8'>
+              There was an error fetching the swap route. Without a swapping your collateral to
+              repay the debt of the position, you won't be able to close the position. Please try
+              again later.
+            </Callout>
+          )}
           <div className='flex flex-col w-full gap-2 mt-8'>
             <Text className='font-bold' size='sm'>
               Refund
@@ -111,6 +119,7 @@ function HlsCloseModal(props: Props) {
           closeHlsStakingPosition({ accountId: modal.account.id, actions })
           closeHlsClosingModal()
         },
+        disabled: hasRouteError,
       }}
     />
   )

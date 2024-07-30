@@ -1149,6 +1149,7 @@ interface AlertDialogButton {
   icon?: JSX.Element
   isAsync?: boolean
   onClick?: () => Promise<void> | void
+  disabled?: boolean
 }
 
 interface AlertDialogConfig {

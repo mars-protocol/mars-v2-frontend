@@ -11,7 +11,7 @@ interface Props {
   positiveButton: AlertDialogButton
 }
 
-export default function AccountDeleteAlertDialog(props: Props) {
+export default function AccountAlertDialog(props: Props) {
   const { open: showAlertDialog } = useAlertDialog()
   const { title, content, closeHandler, positiveButton } = props
 
