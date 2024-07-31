@@ -39,6 +39,7 @@ export default function AssetSummary(props: Props) {
     return valueOut.minus(valueIn).div(valueIn).times(100)
   }, [props.swapOutputAmount, props.asset.denom, props.amount, props.borrowAsset.denom, assets])
 
+  if (props.amount.isZero()) return null
   return (
     <Container title={props.isBorrow ? 'Borrow + swap' : 'Supplying'}>
       <div className={classNames(props.isBorrow && 'flex')}>
@@ -54,7 +55,7 @@ export default function AssetSummary(props: Props) {
 
         {props.isBorrow && (
           <>
-            <div className='w-5 mx-5 items-center flex'>
+            <div className='flex items-center w-5 mx-5'>
               <ArrowRight />
             </div>
             <div className='flex justify-between flex-1'>

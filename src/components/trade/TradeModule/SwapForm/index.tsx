@@ -25,7 +25,6 @@ import useToggle from 'hooks/common/useToggle'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useMarkets from 'hooks/markets/useMarkets'
-import useMaxOutputAmount from 'hooks/trade/useMaxOutputAmount'
 import useRouteInfo from 'hooks/trade/useRouteInfo'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
@@ -123,12 +122,6 @@ export default function SwapForm(props: Props) {
     setInputAssetAmount,
   ])
 
-  const maxOutputAmountEstimation = useMaxOutputAmount(
-    inputAsset.denom,
-    outputAsset.denom,
-    maxInputAmount,
-  )
-
   const swapTx = useMemo(() => {
     if (!routeInfo) return
 
@@ -145,7 +138,7 @@ export default function SwapForm(props: Props) {
       slippage,
       isMax: inputAssetAmount.isEqualTo(maxInputAmount),
       repay: isAutoRepayChecked,
-      route: routeInfo.route,
+      routeInfo,
     })
   }, [
     routeInfo,
@@ -393,12 +386,9 @@ export default function SwapForm(props: Props) {
           isMargin={isMarginChecked}
           borrowAmount={borrowAmount}
           liquidationPrice={liquidationPrice}
-          sellAmount={inputAssetAmount}
-          buyAmount={outputAssetAmount}
           isAdvanced={isAdvanced}
           direction={tradeDirection}
           routeInfo={routeInfo}
-          swapTx={swapTx}
         />
       </div>
     </>

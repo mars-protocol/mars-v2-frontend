@@ -12,14 +12,18 @@ import TokenInput from 'components/common/TokenInput'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useMarkets from 'hooks/markets/useMarkets'
 import useSlippage from 'hooks/settings/useSlippage'
+import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { findCoinByDenom } from 'utils/assets'
+import { getFarmActions } from 'utils/farm'
 import { formatPercent } from 'utils/formatters'
+import { mergeBNCoinArrays } from 'utils/helpers'
 
 export default function AstroLpBorrowings(props: AstroLpBorrowingsProps) {
   const assets = useDepositEnabledAssets()
@@ -31,6 +35,9 @@ export default function AstroLpBorrowings(props: AstroLpBorrowingsProps) {
   const { computeMaxBorrowAmount } = useHealthComputer(props.account)
   const [percentage, setPercentage] = useState<number>(0)
   const [slippage] = useSlippage()
+  const chainConfig = useChainConfig()
+  const { isAutoLendEnabledForCurrentAccount: isAutoLend } = useAutoLend()
+  const [isCalculating, setIsCaluclating] = useState(false)
 
   const calculateSliderPercentage = (maxBorrowAmounts: BNCoin[], borrowings: BNCoin[]) => {
     if (borrowings.length === 1) {
@@ -142,15 +149,28 @@ export default function AstroLpBorrowings(props: AstroLpBorrowingsProps) {
     setPercentage(calculateSliderPercentage(maxBorrowAmounts, props.borrowings))
   }
 
-  function onConfirm() {
+  async function onConfirm() {
     if (!updatedAccount || !astroLpModal) return
+    setIsCaluclating(true)
+    const actions = await getFarmActions(
+      props.astroLp,
+      props.deposits,
+      props.reclaims,
+      props.borrowings,
+      assets,
+      slippage,
+      chainConfig,
+      isAutoLend,
+      true,
+    )
     depositIntoAstroLp({
       accountId: updatedAccount.id,
-      actions: props.depositActions,
-      deposits: props.deposits,
+      actions,
+      deposits: mergeBNCoinArrays(props.deposits, props.reclaims),
       borrowings: props.borrowings,
       kind: 'default' as AccountKind,
     })
+    setIsCaluclating(false)
     useStore.setState({ astroLpModal: null })
   }
 
@@ -225,7 +245,11 @@ export default function AstroLpBorrowings(props: AstroLpBorrowingsProps) {
         color='primary'
         text='Deposit'
         rightIcon={<ArrowRight />}
-        disabled={!props.depositActions.length || props.depositCapReachedCoins.length > 0}
+        showProgressIndicator={isCalculating}
+        disabled={
+          [...props.deposits, ...props.reclaims].length === 0 ||
+          props.depositCapReachedCoins.length > 0
+        }
       />
     </div>
   )

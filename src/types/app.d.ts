@@ -18,7 +18,7 @@ type StdFee = {
 }
 
 type ActionCoin = import('types/generated/mars-credit-manager/MarsCreditManager.types').ActionCoin
-
+type Action = import('types/generated/mars-credit-manager/MarsCreditManager.types').Action
 type BNCoin = import('types/classes/BNCoin').BNCoin
 
 type PositionType = 'deposit' | 'borrow' | 'lend' | 'vault' | 'perp'
@@ -1003,10 +1003,10 @@ interface BroadcastSlice {
     reclaim?: BNCoin
     borrow?: BNCoin
     denomOut: string
-    slippage: number
+    slippage?: number
     isMax?: boolean
     repay: boolean
-    route: import('types/generated/mars-credit-manager/MarsCreditManager.types').SwapperRoute
+    routeInfo: SwapRouteInfo
   }) => ExecutableTx
   toast: ToastResponse | ToastPending | null
   unlock: (options: {
@@ -1128,6 +1128,7 @@ interface ModalSlice {
   assetOverlayState: OverlayState
   hlsModal: HlsModal | null
   hlsManageModal: HlsManageModal | null
+  hlsCloseModal: HlsCloseModal | null
   borrowModal: BorrowModal | null
   fundAndWithdrawModal: 'fund' | 'withdraw' | null
   getStartedModal: boolean
@@ -1149,6 +1150,7 @@ interface AlertDialogButton {
   icon?: JSX.Element
   isAsync?: boolean
   onClick?: () => Promise<void> | void
+  disabled?: boolean
 }
 
 interface AlertDialogConfig {
@@ -1218,6 +1220,22 @@ interface HlsManageModal {
   }
 }
 
+interface HlsCloseModal {
+  account: HLSAccountWithStrategy
+  staking: {
+    strategy: HLSStrategy
+  }
+}
+
+interface HlsClosingChanges {
+  swap: {
+    coinIn: BNCoin
+    coinOut: BNCoin
+  } | null
+  repay: BNCoin | null
+  refund: BNCoin[]
+}
+
 type HlsStakingManageAction = 'deposit' | 'withdraw' | 'repay' | 'leverage'
 
 interface PerpsVaultModal {
@@ -1273,14 +1291,15 @@ interface ModalProps {
 
 interface FarmBorrowingsProps {
   account: Account
+  reclaims: BNCoin[]
   borrowings: BNCoin[]
   deposits: BNCoin[]
   primaryAsset: Asset
   secondaryAsset: Asset
-  depositActions: Action[]
   onChangeBorrowings: (borrowings: BNCoin[]) => void
   displayCurrency: string
   depositCapReachedCoins: BNCoin[]
+  totalValue: BigNumber
 }
 
 interface VaultBorrowingsProps extends FarmBorrowingsProps {
@@ -1289,7 +1308,6 @@ interface VaultBorrowingsProps extends FarmBorrowingsProps {
 
 interface AstroLpBorrowingsProps extends FarmBorrowingsProps {
   astroLp: AstroLp
-  totalValue: BigNumber
 }
 
 type AvailableOrderType = 'Market' | 'Limit' | 'Stop'
@@ -1305,6 +1323,11 @@ interface VaultValue {
 }
 
 interface AstroLpValue extends VaultValue {}
+
+interface FarmSwapCoins {
+  primary: BNCoin
+  secondary: BNCoin
+}
 
 interface PerpsParams {
   denom: string

@@ -6,6 +6,7 @@ import {
   BorrowModal,
   FundAndWithdrawModal,
   GetStartedModal,
+  HlsCloseModal,
   HlsManageModal,
   HlsModal,
   LendAndReclaimModalController,
@@ -36,6 +37,7 @@ export default function ModalsContainer() {
       <WalletAssets />
       <AlertDialogController />
       <HlsModal />
+      <HlsCloseModal />
       <HlsManageModal />
       <PerpsVaultModal />
       <V1DepositAndWithdraw />
