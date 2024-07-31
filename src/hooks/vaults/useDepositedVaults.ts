@@ -130,7 +130,7 @@ export function transformPerpsVaultIntoDeposited(
   }
 
   if (account.perpsVault?.unlocking) {
-    for (let unlock of account.perpsVault.unlocking) {
+    for (const unlock of account.perpsVault.unlocking) {
       const unlockingVault: DepositedVault = {
         ...depositedTemplate,
         status: VaultStatus.UNLOCKING,

@@ -38,6 +38,8 @@ const LP_ASSETS = [
 ]
 
 const Osmosis1: ChainConfig = {
+  id: ChainInfoID.Osmosis1,
+  isOsmosis: true,
   lp: LP_ASSETS,
   stables: [
     'ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4',
@@ -55,7 +57,6 @@ const Osmosis1: ChainConfig = {
     oracle: 'osmo1mhznfr60vjdp2gejhyv2gax9nvyyzhd3z0qcwseyetkfustjauzqycsy2g',
     creditManager: 'osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9ld2s2pvds87jqvf',
     incentives: 'osmo1nkahswfr8shg8rlxqwup0vgahp0dk4x8w6tkv3rra8rratnut36sk22vrm',
-    swapper: 'osmo1wee0z8c7tcawyl647eapqs4a88q8jpa7ddy6nn2nrs7t47p2zhxswetwla',
     params: 'osmo1nlmdxt9ctql2jr47qd4fpgzg84cjswxyw6q99u4y4u4q6c2f5ksq7ysent',
     pyth: 'osmo13ge29x4e2s63a8ytz2px8gurtyznmue4a69n5275692v3qn3ks8q7cwck7',
     perps: '',
@@ -91,7 +92,6 @@ const Osmosis1: ChainConfig = {
   explorerName: 'Mintscan',
   features: ['ibc-transfer', 'ibc-go'],
   gasPrice: '0.0035uosmo',
-  id: ChainInfoID.Osmosis1,
   name: 'Osmosis',
   network: NETWORK.MAINNET,
   vaults: VAULTS_META_DATA,

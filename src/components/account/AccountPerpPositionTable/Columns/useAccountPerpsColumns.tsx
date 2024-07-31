@@ -51,5 +51,5 @@ export default function useAccountPerpsColumns(account: Account) {
         cell: ({ row }) => <TotalPnL pnl={row.original.pnl} />,
       },
     ]
-  }, [computeLiquidationPrice, account, updatedAccount])
+  }, [computeLiquidationPrice, account, updatedAccount, whitelistedAssets])
 }

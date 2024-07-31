@@ -77,7 +77,7 @@ export default function Deposit(props: Props) {
   )
 
   const warningMessages = useMemo(() => {
-    let messages: string[] = []
+    const messages: string[] = []
     const capLeft = props.account.strategy.depositCap.max.minus(
       props.account.strategy.depositCap.used,
     )
@@ -108,7 +108,7 @@ export default function Deposit(props: Props) {
   )
 
   const borrowWarningMessages = useMemo(() => {
-    let messages: string[] = []
+    const messages: string[] = []
     if (borrowCoin.amount.isGreaterThan(maxBorrowAmount)) {
       messages.push(
         getHealthFactorMessage(props.borrowMarket.asset.denom, maxBorrowAmount, 'borrow', assets),

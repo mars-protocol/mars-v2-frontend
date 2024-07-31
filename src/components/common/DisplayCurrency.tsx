@@ -68,7 +68,7 @@ export default function DisplayCurrency(props: Props) {
     const amount = displayPrice ? coinValue.div(displayPrice).toNumber() : 0
 
     return [amount, Math.abs(amount)]
-  }, [assets, displayCurrency, displayCurrencyAsset.decimals, coin])
+  }, [assets, displayCurrency, displayCurrencyAsset.decimals, coin, allowZeroAmount])
 
   const isLessThanACent = useMemo(
     () => isUSD && absoluteAmount && absoluteAmount < 0.01 && absoluteAmount > 0,
@@ -85,7 +85,7 @@ export default function DisplayCurrency(props: Props) {
     return isUSD
       ? `${approximationPrefix}${smallerThanPrefix}${positiveOrNegativePrefix}$`
       : `${approximationPrefix}${smallerThanPrefix}${positiveOrNegativePrefix}`
-  }, [isUSD, isApproximation, showZero, showSignPrefix, amount, isLessThanACent])
+  }, [isUSD, isApproximation, showZero, showSignPrefix, amount, isLessThanACent, showDetailedPrice])
 
   const suffix = isUSD
     ? ''

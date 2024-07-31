@@ -41,7 +41,7 @@ export default function LiqPrice(props: Props) {
     if (!isWhitelisted) return 'This asset is not collateral and can not be liquidated.'
     if (!hasDebt) return 'Your position cannot be liquidated as you currently have no debt.'
     return 'The position size is too small to liquidate the account, even if the price goes to $0.00.'
-  }, [type, hasDebt])
+  }, [isWhitelisted, type, hasDebt])
 
   if (!liqPrice || (liquidationPrice === 0 && liqPrice === 0))
     return (

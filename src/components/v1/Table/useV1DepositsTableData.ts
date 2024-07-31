@@ -63,5 +63,5 @@ export default function useV1DepositsTableData(): {
     return {
       depositAssets,
     }
-  }, [markets, v1Positions, convertAmount])
+  }, [v1Positions?.lends, markets, convertAmount, assets])
 }

@@ -64,7 +64,7 @@ export default function AssetOverlay(props: Props) {
       handleToggle()
       onChangeSearch('')
     },
-    [onChangeSearch, props],
+    [onChangeSearch, props, handleToggle],
   )
 
   const onChangeSellAsset = useCallback(

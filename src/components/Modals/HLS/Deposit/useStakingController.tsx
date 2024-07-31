@@ -1,13 +1,10 @@
-import { useCallback, useMemo } from 'react'
-
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useDepositHlsVault from 'hooks/hls/useDepositHlsVault'
-import useSwapValueLoss from 'hooks/hls/useSwapValueLoss'
+import useSlippage from 'hooks/settings/useSlippage'
+import { useCallback, useMemo } from 'react'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { SWAP_FEE_BUFFER } from 'utils/constants'
-import { BN } from 'utils/helpers'
 
 interface Props {
   borrowMarket: Market
@@ -18,11 +15,8 @@ interface Props {
 export default function useStakingController(props: Props) {
   const { collateralAsset, borrowMarket, selectedAccount } = props
   const addToStakingStrategy = useStore((s) => s.addToStakingStrategy)
+  const [slippage] = useSlippage()
 
-  const { data: swapValueLoss } = useSwapValueLoss(
-    props.borrowMarket.asset.denom,
-    props.collateralAsset.denom,
-  )
   const {
     leverage,
     setDepositAmount,
@@ -43,17 +37,18 @@ export default function useStakingController(props: Props) {
     return computeMaxBorrowAmount(props.borrowMarket.asset.denom, {
       swap: {
         denom_out: props.collateralAsset.denom,
-        slippage: BN(swapValueLoss).plus(SWAP_FEE_BUFFER).toString(),
+        slippage: slippage.toString(),
       },
     })
   }, [
     computeMaxBorrowAmount,
     props.borrowMarket.asset.denom,
     props.collateralAsset.denom,
-    swapValueLoss,
+    slippage,
   ])
 
   const execute = useCallback(() => {
+    if (!actions) return
     useStore.setState({ hlsModal: null })
     addToStakingStrategy({
       actions,

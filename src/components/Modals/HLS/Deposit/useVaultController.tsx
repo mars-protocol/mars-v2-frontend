@@ -1,11 +1,16 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
-import useDepositVault from 'hooks/broadcast/useDepositVault'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useLendEnabledAssets from 'hooks/assets/useLendEnabledAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useDepositHlsVault from 'hooks/hls/useDepositHlsVault'
+import useSlippage from 'hooks/settings/useSlippage'
+import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
+import { getFarmActions } from 'utils/farm'
 
 interface Props {
   borrowMarket: Market
@@ -16,8 +21,13 @@ interface Props {
 
 export default function useVaultController(props: Props) {
   const { vault, collateralAsset, borrowMarket, selectedAccount } = props
-
+  const assets = useDepositEnabledAssets()
+  const lendEnabledAssets = useLendEnabledAssets()
+  const [slippage] = useSlippage()
+  const chainConfig = useChainConfig()
+  const { isAutoLendEnabledForCurrentAccount: isAutoLend } = useAutoLend()
   const depositIntoVault = useStore((s) => s.depositIntoVault)
+  const [isCalculating, setIsCaluclating] = useState(false)
 
   const {
     leverage,
@@ -31,14 +41,6 @@ export default function useVaultController(props: Props) {
     borrowDenom: borrowMarket.asset.denom,
   })
 
-  const { actions } = useDepositVault({
-    vault,
-    reclaims: [],
-    deposits: [BNCoin.fromDenomAndBigNumber(collateralAsset.denom, depositAmount)],
-    borrowings: [BNCoin.fromDenomAndBigNumber(borrowMarket.asset.denom, borrowAmount)],
-    kind: 'high_levered_strategy' as AccountKind,
-  })
-
   const { updatedAccount, simulateVaultDeposit } = useUpdatedAccount(selectedAccount)
   const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
 
@@ -48,7 +50,18 @@ export default function useVaultController(props: Props) {
     }).plus(borrowAmount)
   }, [borrowAmount, computeMaxBorrowAmount, props.borrowMarket.asset.denom, props.vault?.address])
 
-  const execute = useCallback(() => {
+  const execute = useCallback(async () => {
+    const actions = await getFarmActions(
+      vault,
+      [BNCoin.fromDenomAndBigNumber(collateralAsset.denom, depositAmount)],
+      [],
+      [BNCoin.fromDenomAndBigNumber(borrowMarket.asset.denom, borrowAmount)],
+      assets,
+      slippage,
+      chainConfig,
+      true,
+      false,
+    )
     depositIntoVault({
       accountId: selectedAccount.id,
       actions,
@@ -59,13 +72,16 @@ export default function useVaultController(props: Props) {
     })
     useStore.setState({ hlsModal: null })
   }, [
-    actions,
+    assets,
     borrowAmount,
+    borrowMarket.asset.denom,
+    chainConfig,
+    collateralAsset.denom,
     depositAmount,
     depositIntoVault,
-    borrowMarket.asset.denom,
-    collateralAsset.denom,
     selectedAccount.id,
+    slippage,
+    vault,
   ])
 
   const onChangeCollateral = useCallback(

@@ -1,15 +1,12 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-
 import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useAssets from 'hooks/assets/useAssets'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAssetParams from 'hooks/params/useAssetParams'
-import useAllPerpsDenomStates from 'hooks/perps/usePerpsDenomStates'
-import { useAllPerpsParamsSC } from 'hooks/perps/usePerpsParams'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useSlippage from 'hooks/settings/useSlippage'
 import useVaultConfigs from 'hooks/vaults/useVaultConfigs'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultPositionValue } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { VaultConfigBaseForString } from 'types/generated/mars-params/MarsParams.types'
@@ -21,7 +18,6 @@ import {
 import { convertAccountToPositions } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { SWAP_FEE_BUFFER } from 'utils/constants'
-import { findPositionInAccount } from 'utils/healthComputer'
 import {
   BorrowTarget,
   compute_health_js,
@@ -32,6 +28,7 @@ import {
   max_withdraw_estimate_js,
   SwapKind,
 } from 'utils/health_computer'
+import { findPositionInAccount } from 'utils/healthComputer'
 import { BN } from 'utils/helpers'
 import { getTokenPrice } from 'utils/tokens'
 
@@ -45,8 +42,6 @@ export default function useHealthComputer(account?: Account) {
   const whitelistedAssets = useWhitelistedAssets()
   const { data: assetParams } = useAssetParams()
   const { data: vaultConfigs } = useVaultConfigs()
-  const { data: perpsDenomStates } = useAllPerpsDenomStates()
-  const { data: perpsParams } = useAllPerpsParamsSC()
   const { data: perpsVault } = usePerpsVault()
   const [slippage] = useSlippage()
 
@@ -85,7 +80,7 @@ export default function useHealthComputer(account?: Account) {
       },
       {} as { [key: string]: VaultPositionValue },
     )
-  }, [account?.vaults])
+  }, [account?.vaults, assets])
 
   const priceData = useMemo(() => {
     const assetsWithPrice = whitelistedAssets.filter((asset) => asset.price)
@@ -104,13 +99,14 @@ export default function useHealthComputer(account?: Account) {
       },
       {} as { [key: string]: string },
     )
-  }, [assets])
+  }, [assets, whitelistedAssets])
 
   const assetsParams = useMemo(
     () =>
       assetParams.reduce(
         (prev, curr) => {
-          prev[curr.denom] = curr
+          // Close factor is not important for any HC calculation
+          prev[curr.denom] = { ...curr, close_factor: '0.9' }
           return prev
         },
         {} as { [key: string]: AssetParamsBaseForAddr },
@@ -176,15 +172,17 @@ export default function useHealthComputer(account?: Account) {
 
     return {
       kind: account.kind,
-      denoms_data: {
-        params: assetsParams,
-        prices: priceData,
-      },
+      asset_params: assetsParams,
+      oracle_prices: priceData,
       vaults_data: {
         vault_configs: vaultConfigsData,
         vault_values: vaultPositionValues,
       },
-      positions: positions,
+      positions: { ...positions, perps: [] },
+      perps_data: {
+        denom_states: {},
+        params: {},
+      },
       /* PERPS
        perps_data: {
         denom_states: denomStates,
@@ -285,7 +283,7 @@ export default function useHealthComputer(account?: Account) {
         return null
       }
     },
-    [assets, healthComputer],
+    [healthComputer, whitelistedAssets],
   )
 
   const computeMaxPerpAmount = useCallback(

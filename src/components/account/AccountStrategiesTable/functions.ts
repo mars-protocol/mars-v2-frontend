@@ -120,3 +120,38 @@ export function getPerpsVaultAccountStrategiesRow(
     }
   })
 }
+
+export function getAstroLpAccountStrategiesRow(
+  astroLp: DepositedAstroLp,
+  apy?: number | null,
+  prev?: DepositedAstroLp,
+): AccountStrategyRow {
+  const { name } = astroLp
+  const previous = prev || astroLp
+  const totalValue = astroLp.values.primary.plus(astroLp.values.secondary)
+  const primaryAmount = astroLp.amounts.primary
+  const primaryAmountPrev = previous.amounts.primary
+  const secondaryAmount = astroLp.amounts.secondary
+  const secondaryAmountPrev = previous.amounts.secondary
+
+  return {
+    name: name,
+    denom: astroLp.denoms.lp,
+    value: totalValue.toString(),
+    apy,
+    coins: {
+      primary: BNCoin.fromDenomAndBigNumber(astroLp.denoms.primary, primaryAmount),
+      secondary: BNCoin.fromDenomAndBigNumber(astroLp.denoms.secondary, secondaryAmount),
+    },
+    coinsChange: {
+      primary: BNCoin.fromDenomAndBigNumber(
+        astroLp.denoms.primary,
+        !prev ? BN_ZERO : primaryAmount.minus(primaryAmountPrev),
+      ),
+      secondary: BNCoin.fromDenomAndBigNumber(
+        astroLp.denoms.secondary,
+        !prev ? BN_ZERO : secondaryAmount.minus(secondaryAmountPrev),
+      ),
+    },
+  }
+}

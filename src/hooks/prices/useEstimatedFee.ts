@@ -26,7 +26,7 @@ export default function useEstimatedFee(estimateFeeTx: ExecutableTx | undefined)
     if (isUpdatingEstimatedFee) return
     debouncedSetEstimatedFee(estimateFeeTx)
     setIsUpdatingEstimatedFee(true)
-  }, [debouncedSetEstimatedFee, estimateFeeTx])
+  }, [debouncedSetEstimatedFee, estimateFeeTx, isUpdatingEstimatedFee])
 
   useEffect(() => {
     if (estimatedFee.amount[0].amount !== '0') setIsUpdatingEstimatedFee(false)

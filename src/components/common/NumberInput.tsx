@@ -27,6 +27,7 @@ interface Props {
 export default function NumberInput(props: Props) {
   const inputRef = React.useRef<HTMLInputElement>(null)
   const cursorRef = React.useRef(0)
+  const { onRef } = props
 
   const [formattedAmount, setFormattedAmount] = useState(
     props.amount.shiftedBy(-1 * props.asset.decimals).toString(),
@@ -46,9 +47,9 @@ export default function NumberInput(props: Props) {
   }, [props.amount, props.asset, props.maxDecimals])
 
   useEffect(() => {
-    if (!props.onRef) return
-    props.onRef(inputRef)
-  }, [inputRef, props.onRef])
+    if (!onRef) return
+    onRef(inputRef)
+  }, [inputRef, onRef])
 
   const onInputFocus = () => {
     inputRef.current?.select()
