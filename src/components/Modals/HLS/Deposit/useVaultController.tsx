@@ -1,13 +1,11 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
-import useLendEnabledAssets from 'hooks/assets/useLendEnabledAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useDepositHlsVault from 'hooks/hls/useDepositHlsVault'
 import useSlippage from 'hooks/settings/useSlippage'
-import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getFarmActions } from 'utils/farm'
@@ -22,12 +20,9 @@ interface Props {
 export default function useVaultController(props: Props) {
   const { vault, collateralAsset, borrowMarket, selectedAccount } = props
   const assets = useDepositEnabledAssets()
-  const lendEnabledAssets = useLendEnabledAssets()
   const [slippage] = useSlippage()
   const chainConfig = useChainConfig()
-  const { isAutoLendEnabledForCurrentAccount: isAutoLend } = useAutoLend()
-  const depositIntoVault = useStore((s) => s.depositIntoVault)
-  const [isCalculating, setIsCaluclating] = useState(false)
+  const depositIntoFarm = useStore((s) => s.depositIntoFarm)
 
   const {
     leverage,
@@ -62,12 +57,11 @@ export default function useVaultController(props: Props) {
       true,
       false,
     )
-    depositIntoVault({
+    depositIntoFarm({
       accountId: selectedAccount.id,
       actions,
       deposits: [BNCoin.fromDenomAndBigNumber(collateralAsset.denom, depositAmount)],
       borrowings: [BNCoin.fromDenomAndBigNumber(borrowMarket.asset.denom, borrowAmount)],
-      isCreate: true,
       kind: 'high_levered_strategy' as AccountKind,
     })
     useStore.setState({ hlsModal: null })
@@ -78,7 +72,7 @@ export default function useVaultController(props: Props) {
     chainConfig,
     collateralAsset.denom,
     depositAmount,
-    depositIntoVault,
+    depositIntoFarm,
     selectedAccount.id,
     slippage,
     vault,
