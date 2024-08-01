@@ -53,7 +53,7 @@ export default function useAccountStrategiesData(props: Props) {
         const astroLp = availableAstroLps.find((astroLp) => astroLp.denoms.lp === lp.denom)
         if (!astroLp) return
         const prevAstroLp = updatedAccount
-          ? (updatedAccount.stakedAstroLps?.find(byDenom(lp.denom)) ??
+          ? (account.stakedAstroLps?.find(byDenom(lp.denom)) ??
             BNCoin.fromDenomAndBigNumber(lp.denom, BN_ZERO))
           : lp
 

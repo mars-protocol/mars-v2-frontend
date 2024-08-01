@@ -49,11 +49,11 @@ export function getVaultAccountStrategiesRow(
     coinsChange: {
       primary: BNCoin.fromDenomAndBigNumber(
         vault.denoms.primary,
-        !prev ? BN_ZERO : primaryAmount.minus(primaryAmountPrev),
+        !prev ? primaryAmount : primaryAmount.minus(primaryAmountPrev),
       ),
       secondary: BNCoin.fromDenomAndBigNumber(
         vault.denoms.secondary,
-        !prev ? BN_ZERO : secondaryAmount.minus(secondaryAmountPrev),
+        !prev ? secondaryAmount : secondaryAmount.minus(secondaryAmountPrev),
       ),
     },
   }
@@ -146,11 +146,11 @@ export function getAstroLpAccountStrategiesRow(
     coinsChange: {
       primary: BNCoin.fromDenomAndBigNumber(
         astroLp.denoms.primary,
-        !prev ? BN_ZERO : primaryAmount.minus(primaryAmountPrev),
+        !prev ? primaryAmount : primaryAmount.minus(primaryAmountPrev),
       ),
       secondary: BNCoin.fromDenomAndBigNumber(
         astroLp.denoms.secondary,
-        !prev ? BN_ZERO : secondaryAmount.minus(secondaryAmountPrev),
+        !prev ? secondaryAmount : secondaryAmount.minus(secondaryAmountPrev),
       ),
     },
   }

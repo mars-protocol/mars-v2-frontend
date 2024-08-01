@@ -22,7 +22,7 @@ interface Props {
   astroLp: DepositedAstroLp
 }
 
-export default function Withdraw(props: Props) {
+export default function AstroLpWithdraw(props: Props) {
   const { account, astroLp } = props
   const { data: assets } = useAssets()
   const astroLpAsset = assets.find(byDenom(astroLp.denoms.lp))
@@ -67,7 +67,7 @@ export default function Withdraw(props: Props) {
       amount: withdrawAmount.toString(),
     })
     useStore.setState({
-      astroLpModal: null,
+      farmModal: null,
     })
   }, [account.id, props.astroLp, withdrawAmount, withdrawFromAstroLps])
 

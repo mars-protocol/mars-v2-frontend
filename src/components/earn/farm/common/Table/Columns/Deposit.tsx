@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import { useCallback } from 'react'
 
 import ActionButton from 'components/common/Button/ActionButton'
 import { Enter, Plus, TrashBin, Wallet } from 'components/common/Icons'
@@ -40,10 +40,11 @@ export const Deposit = (props: Props) => {
     const vault = props.vault as Vault
 
     useStore.setState({
-      vaultModal: {
-        vault,
+      farmModal: {
+        farm: vault,
         selectedBorrowDenoms: [vault.denoms.secondary],
         isCreate: true,
+        type: 'vault',
       },
     })
   }

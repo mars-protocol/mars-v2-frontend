@@ -1,5 +1,4 @@
 import { BN_ZERO } from 'constants/math'
-import { MOCK_DEPOSITED_VAULT_POSITION } from 'constants/vaults'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
@@ -61,6 +60,7 @@ export function addValueToVaults(
   availableVaults: Vault[],
 ): DepositedVault[] {
   const currentVaultAddresses = vaults.map((vault) => vault.address)
+
   vaultValues.forEach((vaultValue) => {
     if (vaultValue.value.isZero()) return
     const halfValue = vaultValue.value.div(2)
@@ -70,15 +70,35 @@ export function addValueToVaults(
       vaults[index].values.primary = BN(vaults[index].values.primary).plus(halfValue)
       vaults[index].values.secondary = BN(vaults[index].values.secondary).plus(halfValue)
     } else {
-      const vault = vaults.find((vault) => vault.address)
+      const vault = availableVaults.find((vault) => vaultValue.address === vault.address)
 
       if (!vault) return
       const apy = availableVaults.find((vault) => vault.address === vaultValue.address)?.apy ?? null
       const apr = availableVaults.find((vault) => vault.address === vaultValue.address)?.apr ?? null
 
+      console.log(vaultValues[0].address, availableVaults)
+
       vaults.push({
-        ...vault,
-        ...MOCK_DEPOSITED_VAULT_POSITION,
+        status: 'active',
+        address: vault.address,
+        denoms: vault.denoms,
+        type: 'normal',
+        symbols: vault.symbols,
+        name: vault.name,
+        provider: vault.provider,
+        ltv: vault.ltv,
+        cap: vault.cap,
+        lockup: {
+          duration: 0,
+          timeframe: '',
+        },
+        amounts: {
+          primary: BN_ZERO,
+          secondary: BN_ZERO,
+          locked: BN_ZERO,
+          unlocked: BN_ZERO,
+          unlocking: BN_ZERO,
+        },
         apy,
         apr,
         values: {

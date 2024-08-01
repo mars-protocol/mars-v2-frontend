@@ -9,12 +9,19 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
 interface Props {
-  vault: Vault | DepositedVault
+  farm: Vault | DepositedVault | AstroLp | DepositedAstroLp
+  account: Account
+  isAstroLp: boolean
 }
 
-export default function VaultModalContentHeader({ vault }: Props) {
+export default function FarmModalContentHeader(props: Props) {
+  const { account, isAstroLp } = props
+  const farm = isAstroLp ? (props.farm as DepositedAstroLp) : (props.farm as DepositedVault)
+
   const depositedValue = useMemo(() => {
-    if ('values' in vault) {
+    if (!isAstroLp) return BN_ZERO
+    const vault = farm as DepositedVault
+    if ('values' in farm) {
       const value = vault.values.primary
         .plus(vault.values.secondary)
         .plus(vault.values.unlocked)
@@ -27,17 +34,27 @@ export default function VaultModalContentHeader({ vault }: Props) {
     } else {
       return BN_ZERO
     }
-  }, [vault])
+  }, [farm, isAstroLp])
+
+  const deposited = useMemo(() => {
+    if (!isAstroLp) return BNCoin.fromDenomAndBigNumber('usd', depositedValue)
+    const astroLpPosition = account.stakedAstroLps.find(
+      (position) => position.denom === farm.denoms.lp,
+    )
+    if (!astroLpPosition) return BNCoin.fromDenomAndBigNumber(farm.denoms.lp, BN_ZERO)
+
+    return astroLpPosition
+  }, [account.stakedAstroLps, farm.denoms.lp, depositedValue, isAstroLp])
 
   return (
     <div className='flex gap-6 px-6 py-4 border-b border-white/5 gradient-header'>
       <TitleAndSubCell
         title={
           <div className='flex flex-row'>
-            <FormattedNumber amount={vault?.apy ?? 0} options={{ suffix: '%' }} animate />
+            <FormattedNumber amount={farm?.apy ?? 0} options={{ suffix: '%' }} animate />
             <FormattedNumber
               className='ml-2 text-xs'
-              amount={vault?.apy ?? 0 / 365}
+              amount={farm?.apy ?? 0 / 365}
               options={{ suffix: '%/day' }}
               parentheses
               animate
@@ -47,20 +64,16 @@ export default function VaultModalContentHeader({ vault }: Props) {
         sub={'Deposit APY'}
       />
       <div className='h-100 w-[1px] bg-white/10'></div>
-      {!depositedValue.isZero() && (
+      {!deposited.amount.isZero() && (
         <>
-          <TitleAndSubCell
-            title={<DisplayCurrency coin={BNCoin.fromDenomAndBigNumber('usd', depositedValue)} />}
-            sub={'Deposited'}
-          />
+          <TitleAndSubCell title={<DisplayCurrency coin={deposited} />} sub={'Deposited'} />
           <div className='h-100 w-[1px] bg-white/10'></div>
         </>
       )}
-
-      {vault.cap && (
+      {farm.cap && (
         <TitleAndSubCell
           title={
-            <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(vault.cap.denom, vault.cap.max)} />
+            <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(farm.cap.denom, farm.cap.max)} />
           }
           sub={'Deposit Cap'}
         />

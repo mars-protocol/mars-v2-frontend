@@ -427,12 +427,11 @@ export default function createBroadcastSlice(
       get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
-    depositIntoVault: async (options: {
+    depositIntoFarm: async (options: {
       accountId: string
       actions: Action[]
       deposits: BNCoin[]
       borrowings: BNCoin[]
-      isCreate: boolean
       kind: AccountKind
     }) => {
       const msg: CreditManagerExecuteMsg = {
@@ -509,35 +508,6 @@ export default function createBroadcastSlice(
       get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
-    depositIntoAstroLp: async (options: {
-      accountId: string
-      actions: Action[]
-      deposits: BNCoin[]
-      borrowings: BNCoin[]
-      kind: AccountKind
-    }) => {
-      const msg: CreditManagerExecuteMsg = {
-        update_credit_account: {
-          account_id: options.accountId,
-          actions: options.actions,
-        },
-      }
-      const cmContract = get().chainConfig.contracts.creditManager
-
-      const response = get().executeMsg({
-        messages: [
-          generateExecutionMessage(
-            get().address,
-            cmContract,
-            msg,
-            options.kind === 'default' ? [] : options.deposits.map((coin) => coin.toCoin()),
-          ),
-        ],
-      })
-      get().handleTransaction({ response })
-      return response.then((response) => !!response.result)
-    },
-
     withdraw: async (options: {
       accountId: string
       coins: Array<{ coin: BNCoin; isMax?: boolean }>

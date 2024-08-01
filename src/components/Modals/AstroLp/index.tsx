@@ -2,41 +2,41 @@ import { useCallback } from 'react'
 
 import DoubleLogo from 'components/common/DoubleLogo'
 import Text from 'components/common/Text'
-import AstroLpModalContent from 'components/Modals/AstroLp/AstroLpModalContent'
-import AstroLpModalContentHeader from 'components/Modals/AstroLp/AstroLpModalContentHeader'
 import AstroLpWithdraw from 'components/Modals/AstroLp/AstroLpWithdraw'
+import FarmModalContent from 'components/Modals/Farm/FarmModalContent'
+import FarmModalContentHeader from 'components/Modals/Farm/FarmModalContentHeader'
 import Modal from 'components/Modals/Modal'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useStore from 'store'
 
 export default function AstroLpModalController() {
   const currentAccount = useCurrentAccount()
-  const modal = useStore((s) => s.astroLpModal)
+  const modal = useStore((s) => s.farmModal)
 
-  if (!modal || !currentAccount) return null
+  if (!modal || !currentAccount || modal.type !== 'astroLp') return null
 
   return <AstroLpModal currentAccount={currentAccount} modal={modal} />
 }
 
 interface Props {
   currentAccount: Account
-  modal: AstroLpModal
+  modal: FarmModal
 }
 
 function AstroLpModal(props: Props) {
   const {
-    modal: { astroLp, action },
+    modal: { farm, action },
     currentAccount,
   } = props
-
+  const astroLp = farm as AstroLp
   const onClose = useCallback(() => {
-    useStore.setState({ astroLpModal: null })
+    useStore.setState({ farmModal: null })
   }, [])
 
   const ContentComponent = useCallback(() => {
     switch (action) {
       case 'deposit':
-        return <AstroLpModalContent astroLp={astroLp} account={currentAccount} />
+        return <FarmModalContent farm={astroLp} account={currentAccount} isAstroLp={true} />
       case 'withdraw':
         return <AstroLpWithdraw account={currentAccount} astroLp={astroLp as DepositedAstroLp} />
       default:
@@ -59,7 +59,7 @@ function AstroLpModal(props: Props) {
       headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col'
     >
-      <AstroLpModalContentHeader astroLp={astroLp} account={currentAccount} />
+      <FarmModalContentHeader farm={astroLp} account={currentAccount} isAstroLp={true} />
       <ContentComponent />
     </Modal>
   )
