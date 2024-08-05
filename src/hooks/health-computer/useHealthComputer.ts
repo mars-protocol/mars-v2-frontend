@@ -239,7 +239,7 @@ export default function useHealthComputer(account?: Account) {
   )
 
   const computeMaxSwapAmount = useCallback(
-    (from: string, to: string, kind: SwapKind) => {
+    (from: string, to: string, kind: SwapKind, isRepayDebt: boolean) => {
       if (!healthComputer) return BN_ZERO
       try {
         return BN(
@@ -249,6 +249,7 @@ export default function useHealthComputer(account?: Account) {
             to,
             kind,
             BN(slippage).plus(SWAP_FEE_BUFFER).toString(),
+            isRepayDebt,
           ),
         )
       } catch (err) {

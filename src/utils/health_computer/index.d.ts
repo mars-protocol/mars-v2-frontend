@@ -28,6 +28,7 @@ export function max_borrow_estimate_js(
  * @param {string} to_denom
  * @param {SwapKind} kind
  * @param {Number} slippage
+ * @param {boolean} is_repaying_debt
  * @returns {string}
  */
 export function max_swap_estimate_js(
@@ -36,6 +37,7 @@ export function max_swap_estimate_js(
   to_denom: string,
   kind: SwapKind,
   slippage: Number,
+  is_repaying_debt: boolean,
 ): string
 /**
  * @param {HealthComputer} c
@@ -117,6 +119,7 @@ export interface InitOutput {
     f: number,
     g: number,
     h: number,
+    i: number,
   ) => void
   readonly liquidation_price_js: (a: number, b: number, c: number, d: number, e: number) => void
   readonly max_perp_size_estimate_js: (
@@ -130,10 +133,10 @@ export interface InitOutput {
     h: number,
     i: number,
   ) => void
-  readonly interface_version_8: () => void
   readonly allocate: (a: number) => number
   readonly deallocate: (a: number) => void
   readonly requires_iterator: () => void
+  readonly interface_version_8: () => void
   readonly __wbindgen_malloc: (a: number, b: number) => number
   readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number
