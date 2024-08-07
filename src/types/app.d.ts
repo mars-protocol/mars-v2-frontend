@@ -265,6 +265,7 @@ interface AssetCampaignInfo {
   baseMultiplier?: number
   collateralMultiplier?: number
   campaignDenom?: string
+  evmAssetSupport: boolean
 }
 
 interface ContractClients {

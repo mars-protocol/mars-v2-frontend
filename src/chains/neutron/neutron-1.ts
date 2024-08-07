@@ -104,6 +104,7 @@ const Neutron1: ChainConfig = {
   perps: false,
   farm: false,
   anyAsset: true,
+  evmAssetSupport: true,
 }
 
 export default Neutron1
