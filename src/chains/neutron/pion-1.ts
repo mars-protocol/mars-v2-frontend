@@ -69,6 +69,7 @@ const Pion1: ChainConfig = {
   perps: false,
   farm: true,
   anyAsset: true,
+  evmAssetSupport: true,
 }
 
 export default Pion1

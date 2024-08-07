@@ -268,6 +268,7 @@ interface AssetCampaignInfo {
   campaignId: AssetCampaignId
   multiplier?: number
   campaignDenom?: string
+  evmAssetSupport: boolean
 }
 
 interface ContractClients {
