@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect, useState } from 'react'
-import { config, metadata, projectId } from '../../config/ethereumConfig'
+import { config, metadata, projectId } from 'constants/ethereumConfig'
 import { createWeb3Modal } from '@web3modal/wagmi/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { State, WagmiProvider } from 'wagmi'
@@ -25,16 +25,14 @@ export default function AppKitProvider({
   const [state, setState] = useState<State | undefined>(initialState)
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && !state) {
-      const storedState = localStorage.getItem('wagmi.state')
-      if (storedState) {
-        setState(JSON.parse(storedState))
-      }
-    }
-  }, [state])
+    if (typeof window === 'undefined') return
 
-  useEffect(() => {
-    if (state) {
+    if (!state) {
+      const storedState = localStorage.getItem('wagmi.state')
+      if (!storedState) return
+
+      setState(JSON.parse(storedState))
+    } else {
       localStorage.setItem('wagmi.state', JSON.stringify(state))
     }
   }, [state])
