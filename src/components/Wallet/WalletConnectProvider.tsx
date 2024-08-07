@@ -20,7 +20,7 @@ import chains from 'chains'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { WALLETS } from 'constants/wallets'
 import { WalletID } from 'types/enums'
-import AppKitProvider from './AppKitProvider'
+import AppKitProvider from 'components/Wallet/AppKitProvider'
 
 type Props = {
   children?: React.ReactNode
@@ -85,12 +85,11 @@ export const WalletConnectProvider: FC<Props> = ({ children }) => {
   const [initialState, setInitialState] = useState<State | undefined>(undefined)
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedState = localStorage.getItem('wagmi.state')
-      if (storedState) {
-        setInitialState(JSON.parse(storedState))
-      }
-    }
+    if (typeof window === 'undefined') return
+
+    const storedState = localStorage.getItem('wagmi.state')
+    if (!storedState) return
+    setInitialState(JSON.parse(storedState))
   }, [])
 
   return (

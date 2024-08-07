@@ -9,7 +9,7 @@ import WalletSelect from 'components/Wallet/WalletSelect'
 import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import useStore from 'store'
 
-export default function NeutronEVMWalletBridges() {
+export default function EvmSupportedBridges() {
   const { open } = useWeb3Modal()
   const { isConnected } = useAccount()
 
