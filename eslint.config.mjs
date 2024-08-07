@@ -13,12 +13,14 @@ export default tseslint.config(
   eslintPluginPrettierRecommended,
 
   { files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'] },
-  {    ignores: [
-    'src/utils/charting_library/*',
-    'src/utils/datafeeds/*',
-    'src/utils/health_computer/*',
-    'src/types/generated/**/*',
-  ]},
+  {
+    ignores: [
+      'src/utils/charting_library/*',
+      'src/utils/datafeeds/*',
+      'src/utils/health_computer/*',
+      'src/types/generated/**/*',
+    ],
+  },
   {
     languageOptions: {
       parserOptions: { ecmaFeatures: { jsx: true } },
@@ -26,7 +28,7 @@ export default tseslint.config(
   },
   {
     plugins: {
-      'react': eslintPluginReact,
+      react: eslintPluginReact,
       'react-hooks': fixupPluginRules(eslintPluginReactHooks),
     },
   },
@@ -42,6 +44,9 @@ export default tseslint.config(
       '@typescript-eslint/ban-types': 'off',
       'no-case-declarations': 'off',
       'no-constant-binary-expression': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off',
+      '@typescript-eslint/no-unused-expressions': 'off',
+      '@typescript-eslint/no-unsafe-function-type': 'off',
       'linebreak-style': ['warn', 'unix'],
       'no-undef': 'off',
       'sort-imports': [
@@ -51,7 +56,6 @@ export default tseslint.config(
           ignoreDeclarationSort: true,
         },
       ],
-
     },
   },
-);
+)
