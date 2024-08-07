@@ -259,6 +259,7 @@ interface ChainConfig {
   perps: boolean
   farm: boolean
   anyAsset: boolean
+  evmAssetSupport: boolean
 }
 
 interface ContractClients {

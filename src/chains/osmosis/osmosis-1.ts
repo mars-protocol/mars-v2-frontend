@@ -99,6 +99,7 @@ const Osmosis1: ChainConfig = {
   perps: false,
   farm: true,
   anyAsset: false,
+  evmAssetSupport: false,
 }
 
 export default Osmosis1
