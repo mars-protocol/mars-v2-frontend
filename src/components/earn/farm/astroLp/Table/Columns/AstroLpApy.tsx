@@ -59,11 +59,11 @@ function ApyBreakdown(props: Props) {
         />
       </div>
       {astroLp.incentives &&
-        astroLp.incentives.map((incentive) => {
+        astroLp.incentives.map((incentive, index) => {
           const incentiveAsset = assets?.find(byDenom(incentive.denom))
 
           return (
-            <div className='flex justify-between w-full'>
+            <div className='flex justify-between w-full' key={index}>
               <div className='flex'>
                 {!incentiveAsset ? (
                   <div className='w-4 h-4'>

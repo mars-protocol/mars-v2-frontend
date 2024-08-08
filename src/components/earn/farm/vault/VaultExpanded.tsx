@@ -24,11 +24,12 @@ export default function VaultExpanded(props: Props) {
 
   function depositMoreHandler() {
     useStore.setState({
-      vaultModal: {
-        vault: props.row.original,
+      farmModal: {
+        farm: props.row.original,
         isDeposited: true,
         selectedBorrowDenoms: [props.row.original.denoms.secondary],
         isCreate: false,
+        type: 'vault',
       },
     })
   }

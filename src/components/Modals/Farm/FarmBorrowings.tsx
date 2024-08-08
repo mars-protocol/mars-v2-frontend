@@ -25,12 +25,14 @@ import { getFarmActions } from 'utils/farm'
 import { formatPercent } from 'utils/formatters'
 import { mergeBNCoinArrays } from 'utils/helpers'
 
-export default function AstroLpBorrowings(props: AstroLpBorrowingsProps) {
+export default function FarmBorrowings(props: FarmBorrowingsProps) {
   const assets = useDepositEnabledAssets()
-  const { borrowings, onChangeBorrowings } = props
+  const { borrowings, onChangeBorrowings, type } = props
+  const isAstroLp = type === 'astroLp'
+  const farm = isAstroLp ? (props.farm as AstroLp) : (props.farm as Vault)
   const markets = useMarkets()
-  const astroLpModal = useStore((s) => s.astroLpModal)
-  const depositIntoAstroLp = useStore((s) => s.depositIntoAstroLp)
+  const modal = useStore((s) => s.farmModal)
+  const depositIntoFarm = useStore((s) => s.depositIntoFarm)
   const updatedAccount = useStore((s) => s.updatedAccount)
   const { computeMaxBorrowAmount } = useHealthComputer(props.account)
   const [percentage, setPercentage] = useState<number>(0)
@@ -51,15 +53,20 @@ export default function AstroLpBorrowings(props: AstroLpBorrowingsProps) {
 
   const maxBorrowAmountsRaw: BNCoin[] = useMemo(() => {
     return props.borrowings.map((borrowing) => {
-      const maxAmount = computeMaxBorrowAmount(borrowing.denom, {
-        swap: { denom_out: props.astroLp.denoms.lp, slippage: slippage.toString() },
-      })
+      const maxAmount = computeMaxBorrowAmount(
+        borrowing.denom,
+        isAstroLp
+          ? { swap: { denom_out: farm.denoms.lp, slippage: slippage.toString() } }
+          : {
+              vault: { address: farm.address },
+            },
+      )
       return new BNCoin({
         denom: borrowing.denom,
         amount: maxAmount.toString(),
       })
     })
-  }, [props.borrowings, props.astroLp.denoms.lp, computeMaxBorrowAmount, slippage])
+  }, [props.borrowings, computeMaxBorrowAmount, isAstroLp, farm.address, farm.denoms.lp, slippage])
 
   const maxBorrowAmounts = useMemo(() => {
     const borrowPowerLeft = props.borrowings.reduce((capLeft, borrowing) => {
@@ -79,7 +86,7 @@ export default function AstroLpBorrowings(props: AstroLpBorrowingsProps) {
   }, [maxBorrowAmountsRaw, props.borrowings])
 
   useEffect(() => {
-    const selectedBorrowDenoms = astroLpModal?.selectedBorrowDenoms || []
+    const selectedBorrowDenoms = modal?.selectedBorrowDenoms || []
     if (
       borrowings.length === selectedBorrowDenoms.length &&
       borrowings.every((coin) => selectedBorrowDenoms.includes(coin.denom))
@@ -96,7 +103,7 @@ export default function AstroLpBorrowings(props: AstroLpBorrowingsProps) {
     })
     setPercentage(calculateSliderPercentage(maxBorrowAmounts, updatedBorrowings))
     onChangeBorrowings(updatedBorrowings)
-  }, [astroLpModal, maxBorrowAmounts, borrowings, onChangeBorrowings])
+  }, [modal, maxBorrowAmounts, borrowings, onChangeBorrowings])
 
   function onChangeSlider(value: number) {
     if (props.borrowings.length !== 1) return
@@ -129,11 +136,11 @@ export default function AstroLpBorrowings(props: AstroLpBorrowingsProps) {
     props.borrowings.splice(index, 1)
     const newBorrowings = [...props.borrowings]
     props.onChangeBorrowings(newBorrowings)
-    if (!astroLpModal) return
+    if (!modal) return
 
     useStore.setState({
-      astroLpModal: {
-        ...astroLpModal,
+      farmModal: {
+        ...modal,
         selectedBorrowDenoms: props.borrowings.map((coin) => coin.denom),
       },
     })
@@ -150,10 +157,10 @@ export default function AstroLpBorrowings(props: AstroLpBorrowingsProps) {
   }
 
   async function onConfirm() {
-    if (!updatedAccount || !astroLpModal) return
+    if (!updatedAccount || !modal) return
     setIsCaluclating(true)
     const actions = await getFarmActions(
-      props.astroLp,
+      farm,
       props.deposits,
       props.reclaims,
       props.borrowings,
@@ -161,17 +168,18 @@ export default function AstroLpBorrowings(props: AstroLpBorrowingsProps) {
       slippage,
       chainConfig,
       isAutoLend,
-      true,
+      isAstroLp,
     )
-    depositIntoAstroLp({
+    depositIntoFarm({
       accountId: updatedAccount.id,
       actions,
-      deposits: mergeBNCoinArrays(props.deposits, props.reclaims),
+      deposits: isAstroLp ? mergeBNCoinArrays(props.deposits, props.reclaims) : props.deposits,
       borrowings: props.borrowings,
       kind: 'default' as AccountKind,
     })
+
     setIsCaluclating(false)
-    useStore.setState({ astroLpModal: null })
+    useStore.setState({ farmModal: null })
   }
 
   return (

@@ -15,10 +15,11 @@ export const AstroLpDeposit = (props: Props) => {
     const astroLp = props.astroLp as AstroLp
 
     useStore.setState({
-      astroLpModal: {
-        astroLp,
+      farmModal: {
+        farm: astroLp,
         selectedBorrowDenoms: [astroLp.denoms.secondary],
         action: 'deposit',
+        type: 'astroLp',
       },
     })
   }

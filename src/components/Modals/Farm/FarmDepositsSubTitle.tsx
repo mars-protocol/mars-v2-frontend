@@ -18,7 +18,7 @@ interface Props {
   displayCurrency: string
 }
 
-export default function VaultDepositSubTitle(props: Props) {
+export default function FarmDepositsSubTitle(props: Props) {
   const assets = useDepositEnabledAssets()
   const primaryText = useMemo(
     () => (

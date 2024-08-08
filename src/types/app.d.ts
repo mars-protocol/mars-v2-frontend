@@ -594,9 +594,9 @@ interface AstroLpValuesAndAmounts {
 }
 
 type VaultStatus = 'active' | 'unlocking' | 'unlocked'
-
+type VaultType = 'normal' | 'perp'
 interface DepositedVault extends Vault, VaultValuesAndAmounts {
-  type: 'normal' | 'perp'
+  type: VaultType
   status: VaultStatus
   unlockId?: number
   unlocksAt?: number
@@ -960,19 +960,11 @@ interface BroadcastSlice {
   ) => Promise<string | null>
   deleteAccount: (options: { accountId: string; lends: BNCoin[] }) => Promise<boolean>
   deposit: (options: { accountId: string; coins: BNCoin[]; lend: boolean }) => Promise<boolean>
-  depositIntoAstroLp: (options: {
+  depositIntoFarm: (options: {
     accountId: string
     actions: Action[]
     deposits: BNCoin[]
     borrowings: BNCoin[]
-    kind: import('types/generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind
-  }) => Promise<boolean>
-  depositIntoVault: (options: {
-    accountId: string
-    actions: Action[]
-    deposits: BNCoin[]
-    borrowings: BNCoin[]
-    isCreate: boolean
     kind: import('types/generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind
   }) => Promise<boolean>
   execute: (contract: string, msg: ExecuteMsg, funds: Coin[]) => Promise<BroadcastResult>
@@ -1137,8 +1129,7 @@ interface ModalSlice {
   perpsVaultModal: PerpsVaultModal | null
   settingsModal: boolean
   unlockModal: UnlockModal | null
-  vaultModal: VaultModal | null
-  astroLpModal: AstroLpModal | null
+  farmModal: FarmModal | null
   walletAssetsModal: WalletAssetModal | null
   withdrawFromVaultsModal: DepositedVault[] | null
   v1DepositAndWithdrawModal: V1DepositAndWithdrawModal | null
@@ -1181,16 +1172,10 @@ interface LendAndReclaimModalConfig {
 interface FarmModal {
   selectedBorrowDenoms: string[]
   isDeposited?: boolean
-}
-
-interface VaultModal extends FarmModal {
-  vault: Vault | DepositedVault
-  isCreate: boolean
-}
-
-interface AstroLpModal extends FarmModal {
-  astroLp: AstroLp | DepositedAstroLp
-  action: 'deposit' | 'withdraw'
+  farm: Vault | DepositedVault | AstroLp | DepositedAstroLp
+  isCreate?: boolean
+  action?: 'deposit' | 'withdraw'
+  type: 'vault' | 'astroLp'
 }
 
 interface AddFarmBorrowingsModal {
@@ -1290,6 +1275,7 @@ interface ModalProps {
 }
 
 interface FarmBorrowingsProps {
+  farm: Vault | AstroLp
   account: Account
   reclaims: BNCoin[]
   borrowings: BNCoin[]
@@ -1300,14 +1286,7 @@ interface FarmBorrowingsProps {
   displayCurrency: string
   depositCapReachedCoins: BNCoin[]
   totalValue: BigNumber
-}
-
-interface VaultBorrowingsProps extends FarmBorrowingsProps {
-  vault: Vault
-}
-
-interface AstroLpBorrowingsProps extends FarmBorrowingsProps {
-  astroLp: AstroLp
+  type: 'vault' | 'astroLp'
 }
 
 type AvailableOrderType = 'Market' | 'Limit' | 'Stop'

@@ -9,31 +9,20 @@ import useStore from 'store'
 
 export default function AddFarmBorrowAssetsModal() {
   const modal = useStore((s) => s.addFarmBorrowingsModal)
-  const vaultModal = useStore((s) => s.vaultModal)
-  const astroLpModal = useStore((s) => s.astroLpModal)
+  const farmModal = useStore((s) => s.farmModal)
+  const farm =
+    farmModal?.type === 'astroLp' ? (farmModal?.farm as AstroLp) : (farmModal?.farm as Vault)
   const [selectedDenoms, setSelectedDenoms] = useState<string[]>([])
-  const farm = vaultModal?.vault ?? astroLpModal?.astroLp
   function onClose() {
-    if (vaultModal) {
-      useStore.setState({
-        addFarmBorrowingsModal: null,
-        vaultModal: { ...vaultModal, selectedBorrowDenoms: selectedDenoms },
-      })
-    }
-
-    if (astroLpModal) {
-      useStore.setState({
-        addFarmBorrowingsModal: null,
-        astroLpModal: { ...astroLpModal, selectedBorrowDenoms: selectedDenoms },
-      })
-    }
+    useStore.setState({
+      addFarmBorrowingsModal: null,
+      farmModal: farmModal ? { ...farmModal, selectedBorrowDenoms: selectedDenoms } : null,
+    })
   }
 
   const updateSelectedDenoms = useCallback((denoms: string[]) => setSelectedDenoms(denoms), [])
 
-  const showContent = modal && !!farm
-
-  if (!showContent) return null
+  if (!modal) return null
   return (
     <Modal
       header={<Text>Add Assets</Text>}
@@ -41,7 +30,7 @@ export default function AddFarmBorrowAssetsModal() {
       modalClassName='max-w-modal-xs'
       headerClassName='bg-white/10 border-b-white/5 border-b items-center p-4'
     >
-      {showContent ? (
+      {modal ? (
         <AddFarmAssetsModalContent
           farm={farm}
           defaultSelectedDenoms={modal.selectedDenoms}

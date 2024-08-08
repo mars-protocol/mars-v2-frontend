@@ -16,22 +16,24 @@ export default function AstroLpManage(props: Props) {
 
   const depositMoreHandler = useCallback(() => {
     useStore.setState({
-      astroLpModal: {
-        astroLp: props.astroLp,
+      farmModal: {
+        farm: props.astroLp,
         isDeposited: true,
         selectedBorrowDenoms: [props.astroLp.denoms.secondary],
         action: 'deposit',
+        type: 'astroLp',
       },
     })
   }, [props.astroLp])
 
   const withdrawHandler = useCallback(() => {
     useStore.setState({
-      astroLpModal: {
-        astroLp: props.astroLp,
+      farmModal: {
+        farm: props.astroLp,
         isDeposited: true,
         selectedBorrowDenoms: [props.astroLp.denoms.secondary],
         action: 'withdraw',
+        type: 'astroLp',
       },
     })
   }, [props.astroLp])

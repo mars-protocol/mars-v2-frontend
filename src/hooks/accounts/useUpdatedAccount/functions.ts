@@ -61,6 +61,7 @@ export function addValueToVaults(
   availableVaults: Vault[],
 ): DepositedVault[] {
   const currentVaultAddresses = vaults.map((vault) => vault.address)
+
   vaultValues.forEach((vaultValue) => {
     if (vaultValue.value.isZero()) return
     const halfValue = vaultValue.value.div(2)
@@ -70,7 +71,7 @@ export function addValueToVaults(
       vaults[index].values.primary = BN(vaults[index].values.primary).plus(halfValue)
       vaults[index].values.secondary = BN(vaults[index].values.secondary).plus(halfValue)
     } else {
-      const vault = vaults.find((vault) => vault.address)
+      const vault = availableVaults.find((vault) => vaultValue.address === vault.address)
 
       if (!vault) return
       const apy = availableVaults.find((vault) => vault.address === vaultValue.address)?.apy ?? null
