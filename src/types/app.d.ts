@@ -136,6 +136,7 @@ interface AssetMetaData {
   pythFeedName?: string
   price?: BNCoin
   poolInfo?: PoolInfo
+  campaign?: AssetCampaign
 }
 
 interface AssetPair {
@@ -259,6 +260,14 @@ interface ChainConfig {
   perps: boolean
   farm: boolean
   anyAsset: boolean
+  campaignAssets?: AssetCampaignInfo[]
+}
+
+interface AssetCampaignInfo {
+  denom: string
+  campaignId: AssetCampaignId
+  multiplier?: number
+  campaignDenom?: string
 }
 
 interface ContractClients {
@@ -1301,8 +1310,6 @@ interface VaultValue {
   value: BigNumber
 }
 
-interface AstroLpValue extends VaultValue {}
-
 interface FarmSwapCoins {
   primary: BNCoin
   secondary: BNCoin
@@ -1479,4 +1486,22 @@ interface SwitchOption {
 interface StakedAstroLpRewards {
   lpDenom: string
   rewards: BNCoin[]
+}
+
+type AssetCampaignId = 'stride' | 'drop'
+type AssetCampaignType = 'points_with_multiplier' | 'apy'
+type AssetCampaignPointBase = 'value' | 'amount'
+
+interface AssetCampaign {
+  id: AssetCampaignId
+  type: AssetCampaignType
+  classNames: string
+  bgClassNames: string
+  incentiveCopy: string
+  detailedIncentiveCopy: string
+  tooltip: string
+  pointBase?: AssetCampaignPointBase
+  apyApi?: string
+  apy?: number
+  multiplier?: number
 }

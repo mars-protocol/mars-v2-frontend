@@ -1,3 +1,4 @@
+import { CAMPAIGNS } from 'constants/campaigns'
 import { BN_ZERO } from 'constants/math'
 import { priceFeedIDs } from 'constants/pythPriceFeedIDs'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -115,4 +116,56 @@ export function convertAstroportAssetsResponse(data: AstroportAsset[]): Asset[] 
       pythFeedName: priceFeedIDs.find((pf) => pf.symbol === asset.symbol.toUpperCase())?.feedName,
     }
   })
+}
+
+export function resolveAssetCampaign(
+  asset: Asset,
+  campaignAprs: StakingApr[],
+  chainConfig: ChainConfig,
+): AssetCampaign | undefined {
+  const campaign = chainConfig.campaignAssets?.find(byDenom(asset.denom))
+  if (!campaign) return
+
+  const currentCampaign = CAMPAIGNS.find((c) => c.id === campaign.campaignId)
+
+  if (!currentCampaign) return
+
+  const campaignInfo = {
+    id: currentCampaign.id,
+    type: currentCampaign.type,
+    incentiveCopy: currentCampaign.incentiveCopy,
+    detailedIncentiveCopy: currentCampaign.detailedIncentiveCopy,
+    classNames: currentCampaign.classNames,
+    bgClassNames: currentCampaign.bgClassNames,
+    tooltip: currentCampaign.tooltip,
+    multiplier: 0,
+    apy: 0,
+  }
+
+  if (campaignInfo.type === 'points_with_multiplier' && campaign.multiplier) {
+    campaignInfo.incentiveCopy = currentCampaign.incentiveCopy.replaceAll(
+      '##MULTIPLIER##',
+      campaign.multiplier.toString(),
+    )
+    campaignInfo.detailedIncentiveCopy = currentCampaign.detailedIncentiveCopy.replaceAll(
+      '##MULTIPLIER##',
+      campaign.multiplier.toString(),
+    )
+    campaignInfo.multiplier = campaign.multiplier
+  }
+
+  if (campaignInfo.type === 'apy' && campaignAprs.length && campaign.campaignDenom) {
+    const apy = (campaignAprs.find(byDenom(campaign.campaignDenom))?.strideYield || 0) * 100
+    campaignInfo.incentiveCopy = currentCampaign.incentiveCopy.replaceAll(
+      '##APY##',
+      apy.toFixed(2) ?? '0',
+    )
+    campaignInfo.detailedIncentiveCopy = currentCampaign.detailedIncentiveCopy.replaceAll(
+      '##APY##',
+      apy.toFixed(2) ?? '0',
+    )
+    campaignInfo.apy = apy
+  }
+
+  return campaignInfo
 }

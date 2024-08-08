@@ -7,6 +7,19 @@ const Pion1: ChainConfig = {
   isOsmosis: false,
   name: 'Neutron Testnet',
   stables: ['ibc/4C19E7EC06C1AB2EC2D70C6855FEB6D48E9CE174913991DA0A517D21978E7E42'],
+  campaignAssets: [
+    {
+      denom: 'factory/neutron1wm8jd0hrw79pfhhm9xmuq43jwz4wtukvxfgkkw/mars',
+      campaignId: 'drop',
+      multiplier: 1,
+    },
+    {
+      denom:
+        'factory/neutron1sf456kx85dz0wfjs4sx0s80dyzmc360pfc0rdzactxt8xrse9ykqsdpy2y/astroport/share',
+      campaignId: 'drop',
+      multiplier: 5,
+    },
+  ],
   defaultTradingPair: {
     buy: 'untrn',
     sell: 'ibc/4C19E7EC06C1AB2EC2D70C6855FEB6D48E9CE174913991DA0A517D21978E7E42',

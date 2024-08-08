@@ -13,10 +13,10 @@ import Value, {
   VALUE_META,
   valueBalancesSortingFn,
 } from 'components/account/AccountBalancesTable/Columns/Value'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useMarkets from 'hooks/markets/useMarkets'
 import useStore from 'store'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import { byDenom } from 'utils/array'
 
 export default function useAccountBalancesColumns(
