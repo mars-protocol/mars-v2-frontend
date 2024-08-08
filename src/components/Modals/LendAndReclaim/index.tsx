@@ -39,15 +39,12 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
 
   const handleAmountChange = useCallback(
     (value: BigNumber) => {
-      setCoin(BNCoin.fromDenomAndBigNumber(asset.denom, value))
+      const newCoin = BNCoin.fromDenomAndBigNumber(asset.denom, value)
+      setCoin(newCoin)
+      simulateLending(isLendAction, newCoin)
     },
-    [asset.denom],
+    [asset.denom, isLendAction, simulateLending],
   )
-
-  const onDebounce = useCallback(() => {
-    if (!coin) return
-    simulateLending(isLendAction, coin)
-  }, [coin, isLendAction, simulateLending])
 
   const handleAction = useCallback(
     (value: BigNumber, isMax: boolean) => {
@@ -79,7 +76,6 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
       onClose={close}
       onAction={handleAction}
       onChange={handleAmountChange}
-      onDebounce={onDebounce}
     />
   )
 }
