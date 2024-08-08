@@ -22,9 +22,7 @@ export default function AddFarmBorrowAssetsModal() {
 
   const updateSelectedDenoms = useCallback((denoms: string[]) => setSelectedDenoms(denoms), [])
 
-  const showContent = modal
-
-  if (!showContent) return null
+  if (!modal) return null
   return (
     <Modal
       header={<Text>Add Assets</Text>}
@@ -32,7 +30,7 @@ export default function AddFarmBorrowAssetsModal() {
       modalClassName='max-w-modal-xs'
       headerClassName='bg-white/10 border-b-white/5 border-b items-center p-4'
     >
-      {showContent ? (
+      {modal ? (
         <AddFarmAssetsModalContent
           farm={farm}
           defaultSelectedDenoms={modal.selectedDenoms}

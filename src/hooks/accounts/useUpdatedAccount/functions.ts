@@ -1,4 +1,5 @@
 import { BN_ZERO } from 'constants/math'
+import { MOCK_DEPOSITED_VAULT_POSITION } from 'constants/vaults'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
@@ -76,29 +77,9 @@ export function addValueToVaults(
       const apy = availableVaults.find((vault) => vault.address === vaultValue.address)?.apy ?? null
       const apr = availableVaults.find((vault) => vault.address === vaultValue.address)?.apr ?? null
 
-      console.log(vaultValues[0].address, availableVaults)
-
       vaults.push({
-        status: 'active',
-        address: vault.address,
-        denoms: vault.denoms,
-        type: 'normal',
-        symbols: vault.symbols,
-        name: vault.name,
-        provider: vault.provider,
-        ltv: vault.ltv,
-        cap: vault.cap,
-        lockup: {
-          duration: 0,
-          timeframe: '',
-        },
-        amounts: {
-          primary: BN_ZERO,
-          secondary: BN_ZERO,
-          locked: BN_ZERO,
-          unlocked: BN_ZERO,
-          unlocking: BN_ZERO,
-        },
+        ...vault,
+        ...MOCK_DEPOSITED_VAULT_POSITION,
         apy,
         apr,
         values: {

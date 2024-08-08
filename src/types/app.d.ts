@@ -594,9 +594,9 @@ interface AstroLpValuesAndAmounts {
 }
 
 type VaultStatus = 'active' | 'unlocking' | 'unlocked'
-
+type VaultType = 'normal' | 'perp'
 interface DepositedVault extends Vault, VaultValuesAndAmounts {
-  type: 'normal' | 'perp'
+  type: VaultType
   status: VaultStatus
   unlockId?: number
   unlocksAt?: number
