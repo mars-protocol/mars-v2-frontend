@@ -40,15 +40,14 @@ export default function Withdraw(props: Props) {
     close()
   }, [v1Action, withdrawAsset, close])
 
-  const onDebounce = useCallback(() => {
-    simulateWithdraw(false, withdrawAsset)
-  }, [withdrawAsset, simulateWithdraw])
-
   const handleAmountChange = useCallback(
     (value: BigNumber) => {
-      setWithdrawAsset(BNCoin.fromDenomAndBigNumber(asset.denom, value))
+      const newWithdrawAsset = BNCoin.fromDenomAndBigNumber(asset.denom, value)
+      setWithdrawAsset(newWithdrawAsset)
+
+      simulateWithdraw(false, newWithdrawAsset)
     },
-    [asset.denom],
+    [asset.denom, simulateWithdraw],
   )
 
   if (!modal) return
@@ -64,7 +63,6 @@ export default function Withdraw(props: Props) {
       onClose={close}
       onAction={handleClick}
       onChange={handleAmountChange}
-      onDebounce={onDebounce}
     />
   )
 }

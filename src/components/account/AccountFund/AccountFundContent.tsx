@@ -110,19 +110,19 @@ export default function AccountFundContent(props: Props) {
     setFundingAssets(newFundingAssets)
   }, [selectedDenoms, fundingAssets])
 
-  const updateFundingAssets = useCallback((amount: BigNumber, denom: string) => {
-    setFundingAssets((fundingAssets) => {
-      const updateIdx = fundingAssets.findIndex(byDenom(denom))
-      if (updateIdx === -1) return fundingAssets
+  const updateFundingAssets = useCallback(
+    (amount: BigNumber, denom: string) => {
+      setFundingAssets((fundingAssets) => {
+        const updateIdx = fundingAssets.findIndex(byDenom(denom))
+        if (updateIdx === -1) return fundingAssets
 
-      fundingAssets[updateIdx].amount = amount
-      return [...fundingAssets]
-    })
-  }, [])
-
-  const onDebounce = useCallback(() => {
-    simulateDeposits(isLending ? 'lend' : 'deposit', fundingAssets)
-  }, [isLending, fundingAssets, simulateDeposits])
+        fundingAssets[updateIdx].amount = amount
+        simulateDeposits(isLending ? 'lend' : 'deposit', fundingAssets)
+        return [...fundingAssets]
+      })
+    },
+    [isLending, simulateDeposits],
+  )
 
   const depositCapReachedCoins = useMemo(() => {
     const depositCapReachedCoins: BNCoin[] = []
@@ -158,7 +158,6 @@ export default function AccountFundContent(props: Props) {
                 amount={coin.amount ?? BN_ZERO}
                 isConfirming={isConfirming}
                 updateFundingAssets={updateFundingAssets}
-                onDebounce={onDebounce}
               />
             </div>
           )

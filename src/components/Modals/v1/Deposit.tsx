@@ -51,15 +51,13 @@ export default function Deposit(props: Props) {
     }
   }, [baseBalance])
 
-  const onDebounce = useCallback(() => {
-    simulateDeposits('lend', [fundingAsset])
-  }, [fundingAsset, simulateDeposits])
-
   const handleAmountChange = useCallback(
     (value: BigNumber) => {
-      setFundingAsset(BNCoin.fromDenomAndBigNumber(asset.denom, value))
+      const newFundingAsset = BNCoin.fromDenomAndBigNumber(asset.denom, value)
+      setFundingAsset(newFundingAsset)
+      simulateDeposits('lend', [newFundingAsset])
     },
-    [asset.denom],
+    [asset.denom, simulateDeposits],
   )
 
   if (!modal) return
@@ -75,7 +73,6 @@ export default function Deposit(props: Props) {
       onClose={close}
       onAction={handleClick}
       onChange={handleAmountChange}
-      onDebounce={onDebounce}
     />
   )
 }

@@ -6,7 +6,6 @@ import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
-import useSlippage from 'hooks/settings/useSlippage'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatAmountWithSymbol, getCoinValue } from 'utils/formatters'
 
@@ -15,9 +14,8 @@ interface Props {
   displayCurrency: string
 }
 
-export default function AstroLpBorrowingsSubTitle(props: Props) {
+export default function FarmBorrowingsSubTitle(props: Props) {
   const assets = useWhitelistedAssets()
-  const [slippage] = useSlippage()
   const borrowingValue = useMemo(() => {
     let borrowingValue = BN_ZERO
     props.borrowings.map((coin) => {

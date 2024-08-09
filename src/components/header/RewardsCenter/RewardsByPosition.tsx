@@ -1,6 +1,6 @@
 import Text from 'components/common/Text'
+import RewardsPosition from 'components/header/RewardsCenter/RewardsPosition'
 import React from 'react'
-import RewardsPosition from './RewardsPosition'
 
 interface Props {
   redBankRewards: BNCoin[]

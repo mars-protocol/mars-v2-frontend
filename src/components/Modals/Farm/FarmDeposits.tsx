@@ -31,7 +31,7 @@ interface Props {
   depositCapReachedCoins: BNCoin[]
 }
 
-export default function VaultDeposit(props: Props) {
+export default function FarmDeposits(props: Props) {
   const { deposits, primaryAsset, secondaryAsset, account, onChangeDeposits } = props
   const [availablePrimaryAmount, availableSecondaryAmount] = useMemo(
     () => [
@@ -262,7 +262,10 @@ export default function VaultDeposit(props: Props) {
         </div>
         <div className='flex justify-between'>
           <Text className='text-white/50'>{`${primaryAsset.symbol}-${secondaryAsset.symbol} Deposit Value`}</Text>
-          <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, totalValue)} />
+          <DisplayCurrency
+            coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, totalValue)}
+            options={{ abbreviated: false, minDecimals: 2, maxDecimals: 2 }}
+          />
         </div>
         <Button
           onClick={() => props.toggleOpen(1)}

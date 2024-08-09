@@ -1,36 +1,44 @@
 import classNames from 'classnames'
 import { useCallback, useMemo, useState } from 'react'
 
-import AstroLpBorrowings from 'components/Modals/AstroLp/AstroLpBorrowings'
-import AstroLpBorrowingsSubTitle from 'components/Modals/AstroLp/AstroLpBorrowingsSubTitle'
-import AstroLpDeposit from 'components/Modals/AstroLp/AstroLpDeposits'
-import AstroLpDepositSubTitle from 'components/Modals/AstroLp/AstroLpDepositsSubTitle'
 import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
 import Accordion from 'components/common/Accordion'
 import Text from 'components/common/Text'
+import FarmBorrowings from 'components/Modals/Farm/FarmBorrowings'
+import FarmBorrowingsSubTitle from 'components/Modals/Farm/FarmBorrowingsSubTitle'
+import FarmDeposits from 'components/Modals/Farm/FarmDeposits'
+import FarmDepositsSubTitle from 'components/Modals/Farm/FarmDepositsSubTitle'
 import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useDisplayAsset from 'hooks/assets/useDisplayAsset'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useIsOpenArray from 'hooks/common/useIsOpenArray'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
+import useSlippage from 'hooks/settings/useSlippage'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { getAstroLpBaseDepositCoinsAndValue, getAstroLpSharesFromCoinsValue } from 'utils/astroLps'
 import { getCoinValue, magnify } from 'utils/formatters'
 import { getCapLeftWithBuffer } from 'utils/generic'
 import { mergeBNCoinArrays } from 'utils/helpers'
+import { getVaultBaseDepositCoinsAndValue } from 'utils/vaults'
 
 interface Props {
-  astroLp: AstroLp | DepositedAstroLp
+  farm: Vault | DepositedVault | AstroLp | DepositedAstroLp
   account: Account
+  isAstroLp: boolean
   isDeposited?: boolean
 }
 
-export default function AstroLpModalContent(props: Props) {
-  const { addedDebts, removedDeposits, removedLends, simulateAstroLpDeposit } = useUpdatedAccount(
-    props.account,
-  )
+export default function FarmModalContent(props: Props) {
+  const { farm, account, isAstroLp, isDeposited } = props
+  const {
+    addedDebts,
+    removedDeposits,
+    removedLends,
+    simulateAstroLpDeposit,
+    simulateVaultDeposit,
+  } = useUpdatedAccount(account)
   const assets = useWhitelistedAssets()
   const [displayCurrency] = useDisplayCurrency()
   const [isOpen, toggleOpen] = useIsOpenArray(2, false)
@@ -38,40 +46,57 @@ export default function AstroLpModalContent(props: Props) {
   const [depositCoins, setDepositCoins] = useState<BNCoin[]>([])
   const [borrowCoins, setBorrowCoins] = useState<BNCoin[]>([])
   const displayAsset = useDisplayAsset()
+  const [slippage] = useSlippage()
 
   const { totalValue } = useMemo(
     () =>
-      getAstroLpBaseDepositCoinsAndValue(
-        props.astroLp as AstroLp,
-        removedDeposits,
-        addedDebts,
-        removedLends,
-        assets,
-      ),
-    [addedDebts, assets, props.astroLp, removedDeposits, removedLends],
+      isAstroLp
+        ? getAstroLpBaseDepositCoinsAndValue(
+            farm as AstroLp,
+            removedDeposits,
+            addedDebts,
+            removedLends,
+            assets,
+          )
+        : getVaultBaseDepositCoinsAndValue(
+            farm as Vault,
+            removedDeposits,
+            addedDebts,
+            removedLends,
+            slippage,
+            assets,
+          ),
+    [addedDebts, assets, farm, isAstroLp, removedDeposits, removedLends, slippage],
   )
 
-  const primaryAsset = assets.find(byDenom(props.astroLp.denoms.primary))
-  const secondaryAsset = assets.find(byDenom(props.astroLp.denoms.secondary))
+  const primaryAsset = assets.find(byDenom(farm.denoms.primary))
+  const secondaryAsset = assets.find(byDenom(farm.denoms.secondary))
   const depositCapReachedCoins = useMemo(() => {
-    if (!props.astroLp.cap) return [BNCoin.fromDenomAndBigNumber(displayAsset.denom, BN_ZERO)]
+    if (!farm.cap) return [BNCoin.fromDenomAndBigNumber(displayAsset.denom, BN_ZERO)]
 
-    const capLeft = getCapLeftWithBuffer(props.astroLp.cap)
-    const totalShares = getAstroLpSharesFromCoinsValue(props.astroLp, totalValue, assets)
+    const capLeft = getCapLeftWithBuffer(farm.cap)
+    const totalShares = getAstroLpSharesFromCoinsValue(farm as AstroLp, totalValue, assets)
 
-    if (totalShares.isGreaterThan(capLeft)) {
+    if (isAstroLp && totalShares.isGreaterThan(capLeft)) {
       const amount = magnify(
-        getCoinValue(
-          BNCoin.fromDenomAndBigNumber(props.astroLp.cap.denom, capLeft),
-          assets,
-        ).toString(),
+        getCoinValue(BNCoin.fromDenomAndBigNumber(farm.cap.denom, capLeft), assets).toString(),
         displayAsset,
       )
 
       return [BNCoin.fromDenomAndBigNumber(displayAsset.denom, amount)]
     }
+
+    if (!isAstroLp && totalValue.isGreaterThan(capLeft)) {
+      const amount = magnify(
+        getCoinValue(BNCoin.fromDenomAndBigNumber(farm.cap.denom, capLeft), assets).toString(),
+        displayAsset,
+      )
+
+      return [BNCoin.fromDenomAndBigNumber(displayAsset.denom, amount)]
+    }
+
     return []
-  }, [assets, displayAsset, totalValue, props.astroLp])
+  }, [farm, displayAsset, totalValue, assets, isAstroLp])
 
   const onChangeIsCustomRatio = useCallback(
     (isCustomRatio: boolean) => setIsCustomRatio(isCustomRatio),
@@ -86,21 +111,38 @@ export default function AstroLpModalContent(props: Props) {
   const onChangeDeposits = useCallback(
     (coins: BNCoin[]) => {
       setDepositCoins(coins)
-      simulateAstroLpDeposit(props.astroLp.denoms.lp, coins, borrowCoins)
+      if (isAstroLp) simulateAstroLpDeposit(farm.denoms.lp, coins, borrowCoins)
+      else simulateVaultDeposit(farm.address, coins, borrowCoins)
     },
-    [borrowCoins, props.astroLp.denoms.lp, simulateAstroLpDeposit],
+    [
+      borrowCoins,
+      farm.address,
+      farm.denoms.lp,
+      isAstroLp,
+      simulateAstroLpDeposit,
+      simulateVaultDeposit,
+    ],
   )
 
   const onChangeBorrowings = useCallback(
     (coins: BNCoin[]) => {
       setBorrowCoins(coins)
-      simulateAstroLpDeposit(props.astroLp.denoms.lp, depositCoins, coins)
+      if (isAstroLp) simulateAstroLpDeposit(farm.denoms.lp, depositCoins, coins)
+      else simulateVaultDeposit(farm.address, coins, borrowCoins)
     },
-    [depositCoins, props.astroLp.denoms.lp, simulateAstroLpDeposit],
+    [
+      borrowCoins,
+      depositCoins,
+      farm.address,
+      farm.denoms.lp,
+      isAstroLp,
+      simulateAstroLpDeposit,
+      simulateVaultDeposit,
+    ],
   )
 
   function getDepositSubTitle() {
-    if (isOpen[0] && props.isDeposited)
+    if (isOpen[0] && isDeposited)
       return (
         <Text size='xs' className='mt-1 text-white/60'>
           The amounts you enter below will be added to your current position.
@@ -110,7 +152,7 @@ export default function AstroLpModalContent(props: Props) {
     if (isOpen[0]) return null
     if (!primaryAsset || !secondaryAsset) return null
     return (
-      <AstroLpDepositSubTitle
+      <FarmDepositsSubTitle
         primaryAmount={
           deposits.find((coin) => coin.denom === primaryAsset.denom)?.amount || BN_ZERO
         }
@@ -125,7 +167,7 @@ export default function AstroLpModalContent(props: Props) {
   }
 
   function getBorrowingsSubTitle() {
-    if (isOpen[1] && props.isDeposited)
+    if (isOpen[1] && isDeposited)
       return (
         <Text size='xs' className='mt-1 text-white/60'>
           The amounts you enter below will be added to your current position.
@@ -134,7 +176,7 @@ export default function AstroLpModalContent(props: Props) {
 
     if (isOpen[1]) return null
 
-    return <AstroLpBorrowingsSubTitle borrowings={addedDebts} displayCurrency={displayCurrency} />
+    return <FarmBorrowingsSubTitle borrowings={addedDebts} displayCurrency={displayCurrency} />
   }
 
   if (!primaryAsset || !secondaryAsset) return null
@@ -151,12 +193,12 @@ export default function AstroLpModalContent(props: Props) {
         items={[
           {
             renderContent: () => (
-              <AstroLpDeposit
+              <FarmDeposits
                 deposits={depositCoins}
                 onChangeDeposits={onChangeDeposits}
                 primaryAsset={primaryAsset}
                 secondaryAsset={secondaryAsset}
-                account={props.account}
+                account={account}
                 toggleOpen={toggleOpen}
                 isCustomRatio={isCustomRatio}
                 onChangeIsCustomRatio={onChangeIsCustomRatio}
@@ -170,18 +212,19 @@ export default function AstroLpModalContent(props: Props) {
           },
           {
             renderContent: () => (
-              <AstroLpBorrowings
-                account={props.account}
+              <FarmBorrowings
+                account={account}
                 borrowings={borrowCoins}
                 reclaims={removedLends}
                 deposits={removedDeposits}
                 primaryAsset={primaryAsset}
                 secondaryAsset={secondaryAsset}
                 onChangeBorrowings={onChangeBorrowings}
-                astroLp={props.astroLp}
+                farm={farm}
                 depositCapReachedCoins={depositCapReachedCoins}
                 displayCurrency={displayCurrency}
                 totalValue={totalValue}
+                type={isAstroLp ? 'astroLp' : 'vault'}
               />
             ),
             title: 'Borrow',
@@ -191,7 +234,7 @@ export default function AstroLpModalContent(props: Props) {
           },
         ]}
       />
-      <AccountSummaryInModal account={props.account} />
+      <AccountSummaryInModal account={account} />
     </div>
   )
 }

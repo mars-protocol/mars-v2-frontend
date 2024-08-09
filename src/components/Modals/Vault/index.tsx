@@ -5,49 +5,35 @@ import DoubleLogo from 'components/common/DoubleLogo'
 import { InfoCircle } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
+import FarmModalContent from 'components/Modals/Farm/FarmModalContent'
+import FarmModalContentHeader from 'components/Modals/Farm/FarmModalContentHeader'
 import Modal from 'components/Modals/Modal'
-import VaultModalContent from 'components/Modals/Vault/VaultModalContent'
-import VaultModalContentHeader from 'components/Modals/Vault/VaultModalContentHeader'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useAsset from 'hooks/assets/useAsset'
 import useStore from 'store'
 
 export default function VaultModalController() {
   const currentAccount = useCurrentAccount()
-  const modal = useStore((s) => s.vaultModal)
+  const modal = useStore((s) => s.farmModal)
 
-  const primaryAsset = useAsset(modal?.vault.denoms.primary || '')
-  const secondaryAsset = useAsset(modal?.vault.denoms.secondary || '')
+  if (!modal || !currentAccount || modal.type !== 'vault') return null
 
-  if (!modal || !currentAccount || !primaryAsset || !secondaryAsset) return null
-
-  return (
-    <VaultModal
-      currentAccount={currentAccount}
-      modal={modal}
-      primaryAsset={primaryAsset}
-      secondaryAsset={secondaryAsset}
-    />
-  )
+  return <VaultModal currentAccount={currentAccount} modal={modal} />
 }
 
 interface Props {
   currentAccount: Account
-  modal: VaultModal
-  primaryAsset: Asset
-  secondaryAsset: Asset
+  modal: FarmModal
 }
 
 function VaultModal(props: Props) {
   const {
-    modal: { vault, isDeposited },
-    primaryAsset,
-    secondaryAsset,
+    modal: { farm, isDeposited },
     currentAccount,
   } = props
+  const vault = farm as Vault
 
   const onClose = useCallback(() => {
-    useStore.setState({ vaultModal: null })
+    useStore.setState({ farmModal: null })
   }, [])
 
   const unlockTime = useMemo(() => {
@@ -78,13 +64,12 @@ function VaultModal(props: Props) {
       headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col'
     >
-      <VaultModalContentHeader vault={vault} />
-      <VaultModalContent
-        vault={vault}
-        primaryAsset={primaryAsset}
-        secondaryAsset={secondaryAsset}
+      <FarmModalContentHeader farm={vault} isAstroLp={false} account={currentAccount} />
+      <FarmModalContent
+        farm={vault}
         account={currentAccount}
         isDeposited={isDeposited}
+        isAstroLp={false}
       />
     </Modal>
   )

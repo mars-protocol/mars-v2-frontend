@@ -1,4 +1,3 @@
-import { VaultStatus } from 'types/enums'
 import { BN_ZERO } from 'constants/math'
 
 export const VAULT_DEPOSIT_BUFFER = 0.999
@@ -132,11 +131,11 @@ export const VAULTS_META_DATA: VaultMetaData[] = [
 ]
 
 export const MOCK_DEPOSITED_VAULT_POSITION = {
-  values: {
-    primary: BN_ZERO,
-    secondary: BN_ZERO,
-    unlocked: BN_ZERO,
-    unlocking: BN_ZERO,
+  status: 'active' as VaultStatus,
+  type: 'normal' as VaultType,
+  lockup: {
+    duration: 0,
+    timeframe: '',
   },
   amounts: {
     primary: BN_ZERO,
@@ -144,15 +143,5 @@ export const MOCK_DEPOSITED_VAULT_POSITION = {
     locked: BN_ZERO,
     unlocked: BN_ZERO,
     unlocking: BN_ZERO,
-  },
-  status: VaultStatus.ACTIVE,
-  ltv: {
-    liq: 0,
-    max: 0,
-  },
-  cap: {
-    denom: '',
-    max: BN_ZERO,
-    used: BN_ZERO,
   },
 }

@@ -1,12 +1,12 @@
 import moment from 'moment/moment'
 import { useCallback, useMemo, useState } from 'react'
 
-import { VaultStatus } from 'types/enums'
 import DropDownButton from 'components/common/Button/DropDownButton'
 import { AccountArrowDown, LockLocked, LockUnlocked, Plus } from 'components/common/Icons'
-import useSlippage from 'hooks/settings/useSlippage'
 import useAccountId from 'hooks/accounts/useAccountId'
+import useSlippage from 'hooks/settings/useSlippage'
 import useStore from 'store'
+import { VaultStatus } from 'types/enums'
 
 export const MANAGE_META = { accessorKey: 'details', enableSorting: false, header: '' }
 
@@ -34,11 +34,12 @@ export default function VaultManage(props: Props) {
     }
 
     useStore.setState({
-      vaultModal: {
-        vault: props.vault,
+      farmModal: {
+        farm: props.vault,
         isDeposited: true,
         selectedBorrowDenoms: [props.vault.denoms.secondary],
         isCreate: false,
+        type: 'vault',
       },
     })
   }, [props.isPerps, props.vault])

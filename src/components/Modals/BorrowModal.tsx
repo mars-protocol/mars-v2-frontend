@@ -162,39 +162,36 @@ function BorrowModal(props: Props) {
 
   const handleChange = useCallback(
     (newAmount: BigNumber) => {
-      if (!amount.isEqualTo(newAmount)) setAmount(newAmount)
+      if (amount.isEqualTo(newAmount)) return
+      setAmount(newAmount)
+      if (isRepay) {
+        const repayCoin = BNCoin.fromDenomAndBigNumber(
+          asset.denom,
+          newAmount.isGreaterThan(accountDebt) ? accountDebt : newAmount,
+        )
+        simulateRepay(repayCoin, repayFromWallet)
+      } else {
+        const borrowCoin = BNCoin.fromDenomAndBigNumber(
+          asset.denom,
+          newAmount.isGreaterThan(max) ? max : newAmount,
+        )
+        const target = borrowToWallet ? 'wallet' : isAutoLendEnabled ? 'lend' : 'deposit'
+        simulateBorrow(target, borrowCoin)
+      }
     },
-    [amount, setAmount],
+    [
+      accountDebt,
+      amount,
+      asset.denom,
+      borrowToWallet,
+      isAutoLendEnabled,
+      isRepay,
+      max,
+      repayFromWallet,
+      simulateBorrow,
+      simulateRepay,
+    ],
   )
-
-  const onDebounce = useCallback(() => {
-    if (max.isZero() || amount.isZero()) return
-    if (isRepay) {
-      const repayCoin = BNCoin.fromDenomAndBigNumber(
-        asset.denom,
-        amount.isGreaterThan(accountDebt) ? accountDebt : amount,
-      )
-      simulateRepay(repayCoin, repayFromWallet)
-    } else {
-      const borrowCoin = BNCoin.fromDenomAndBigNumber(
-        asset.denom,
-        amount.isGreaterThan(max) ? max : amount,
-      )
-      const target = borrowToWallet ? 'wallet' : isAutoLendEnabled ? 'lend' : 'deposit'
-      simulateBorrow(target, borrowCoin)
-    }
-  }, [
-    amount,
-    accountDebt,
-    isRepay,
-    repayFromWallet,
-    max,
-    asset,
-    borrowToWallet,
-    isAutoLendEnabled,
-    simulateBorrow,
-    simulateRepay,
-  ])
 
   const maxBorrow = useMemo(() => {
     const maxBorrowAmount = isRepay
@@ -304,7 +301,6 @@ function BorrowModal(props: Props) {
           <TokenInputWithSlider
             asset={asset}
             onChange={handleChange}
-            onDebounce={onDebounce}
             amount={amount}
             max={max}
             disabled={max.isZero()}
