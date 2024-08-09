@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import debounce from 'lodash.debounce'
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
 
@@ -12,7 +11,6 @@ import useToggle from 'hooks/common/useToggle'
 type Props = {
   value: number
   onChange: (value: number) => void
-  onDebounce?: () => void
   leverage?: {
     current: number
     max: number
@@ -22,7 +20,7 @@ type Props = {
 }
 
 export default function Slider(props: Props) {
-  const { value, onChange, onDebounce, leverage, className, disabled } = props
+  const { value, onChange, leverage, className, disabled } = props
   const [newValue, setNewValue] = useState(value)
   const [showTooltip, setShowTooltip] = useToggle()
   const [sliderRect, setSliderRect] = useState({ width: 0, left: 0, right: 0 })
@@ -48,20 +46,10 @@ export default function Slider(props: Props) {
     }
   }, [sliderRect.left, sliderRect.right, sliderRect.width])
 
-  const debounceFunction = useMemo(
-    () =>
-      debounce(() => {
-        if (!onDebounce) return
-        onDebounce()
-      }, 250),
-    [onDebounce],
-  )
-
   function handleOnChange(value: number) {
     if (value === newValue) return
     setNewValue(value)
     onChange(value)
-    debounceFunction()
   }
 
   function handleDrag(e: any) {
