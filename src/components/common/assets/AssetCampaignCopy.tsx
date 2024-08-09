@@ -16,7 +16,14 @@ interface Props {
   amount?: BigNumber
 }
 
-export default function AssetCampaignCopy(props: Props) {
+export default function AssetCampaignCopyControler(props: Props) {
+  const { asset } = props
+  if (!asset.campaign) return null
+
+  return <AssetCampaignCopy {...props} />
+}
+
+function AssetCampaignCopy(props: Props) {
   const { asset, className, amount, withLogo, size, textClassName } = props
   const { data: assets } = useAssets()
 

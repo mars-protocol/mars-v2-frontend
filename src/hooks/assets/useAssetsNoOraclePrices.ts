@@ -28,7 +28,7 @@ export default function useAssetsNoOraclePrices() {
     async () => fetchSortAndMapAllAssets(chainConfig, assetParams, fetchedPerpsParams),
     */
 
-    assetParams && campaignAprs && `chains/${chainConfig.id}/noOraclePrices`,
+    assetParams && `chains/${chainConfig.id}/noOraclePrices`,
     async () => fetchSortAndMapAllAssets(chainConfig, assetParams, campaignAprs),
     {
       suspense: true,
