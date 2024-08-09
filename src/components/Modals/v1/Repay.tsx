@@ -92,17 +92,14 @@ export default function Repay(props: Props) {
   const handleChange = useCallback(
     (newAmount: BigNumber) => {
       if (!amount.isEqualTo(newAmount)) setAmount(newAmount)
+      const repayCoin = BNCoin.fromDenomAndBigNumber(
+        asset.denom,
+        newAmount.isGreaterThan(accountDebt) ? accountDebt : newAmount,
+      )
+      simulateRepay(repayCoin, true)
     },
-    [amount, setAmount],
+    [accountDebt, amount, asset.denom, simulateRepay],
   )
-
-  const onDebounce = useCallback(() => {
-    const repayCoin = BNCoin.fromDenomAndBigNumber(
-      asset.denom,
-      amount.isGreaterThan(accountDebt) ? accountDebt : amount,
-    )
-    simulateRepay(repayCoin, true)
-  }, [amount, accountDebt, asset, simulateRepay])
 
   useEffect(() => {
     if (maxRepayAmount.isEqualTo(max)) return
@@ -188,7 +185,6 @@ export default function Repay(props: Props) {
           <TokenInputWithSlider
             asset={asset}
             onChange={handleChange}
-            onDebounce={onDebounce}
             amount={amount}
             max={max}
             disabled={max.isZero()}

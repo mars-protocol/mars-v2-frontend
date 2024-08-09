@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import Button from 'components/common/Button'
 import Divider from 'components/common/Divider'
@@ -51,15 +51,16 @@ export default function WithdrawFromAccount(props: Props) {
   const maxWithdrawWithBorrowAmount = isDeprecatedAsset
     ? maxWithdrawAmount
     : computeMaxBorrowAmount(currentAsset.denom, 'wallet').plus(maxWithdrawAmount)
-  const isWithinBalance = amount.isLessThan(maxWithdrawAmount)
-  const withdrawAmount = isWithinBalance ? amount : maxWithdrawAmount
-  const debtAmount = isWithinBalance ? BN_ZERO : amount.minus(maxWithdrawAmount)
-  const max = withdrawWithBorrowing ? maxWithdrawWithBorrowAmount : maxWithdrawAmount
-  function onChangeAmount(val: BigNumber) {
-    setAmount(val)
-  }
 
-  function onConfirm() {
+  const [debtAmount, max] = useMemo(() => {
+    const isWithinBalance = amount.isLessThan(maxWithdrawAmount)
+    const debtAmount = isWithinBalance ? BN_ZERO : amount.minus(maxWithdrawAmount)
+    const max = withdrawWithBorrowing ? maxWithdrawWithBorrowAmount : maxWithdrawAmount
+
+    return [debtAmount, max]
+  }, [amount, maxWithdrawAmount, maxWithdrawWithBorrowAmount, withdrawWithBorrowing])
+
+  const onConfirm = useCallback(() => {
     const coins = [
       {
         coin: BNCoin.fromDenomAndBigNumber(currentAsset.denom, amount),
@@ -85,12 +86,29 @@ export default function WithdrawFromAccount(props: Props) {
       reclaims,
     })
     useStore.setState({ fundAndWithdrawModal: null })
-  }
+  }, [
+    account.id,
+    amount,
+    currentAsset.denom,
+    debtAmount,
+    isReclaimingMaxAmount,
+    max,
+    reclaimAmount,
+    shouldReclaim,
+    withdraw,
+  ])
 
-  const onDebounce = useCallback(() => {
-    const coin = BNCoin.fromDenomAndBigNumber(currentAsset.denom, withdrawAmount.plus(debtAmount))
-    simulateWithdraw(withdrawWithBorrowing, coin)
-  }, [withdrawWithBorrowing, currentAsset.denom, debtAmount, simulateWithdraw, withdrawAmount])
+  const onChangeAmount = useCallback(
+    (newAmount: BigNumber) => {
+      setAmount(newAmount)
+      const withdrawAmount = newAmount.isGreaterThan(maxWithdrawAmount)
+        ? maxWithdrawAmount
+        : newAmount
+      const coin = BNCoin.fromDenomAndBigNumber(currentAsset.denom, withdrawAmount.plus(debtAmount))
+      simulateWithdraw(withdrawWithBorrowing, coin)
+    },
+    [currentAsset.denom, debtAmount, maxWithdrawAmount, simulateWithdraw, withdrawWithBorrowing],
+  )
 
   return (
     <>
@@ -98,7 +116,6 @@ export default function WithdrawFromAccount(props: Props) {
         <TokenInputWithSlider
           asset={currentAsset}
           onChange={onChangeAmount}
-          onDebounce={onDebounce}
           onChangeAsset={(asset) => {
             setAmount(BN_ZERO)
             setWithdrawWithBorrowing(false)

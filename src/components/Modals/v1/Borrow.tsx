@@ -57,18 +57,16 @@ export default function Borrow(props: Props) {
 
   const handleChange = useCallback(
     (newAmount: BigNumber) => {
-      if (!amount.isEqualTo(newAmount)) setAmount(newAmount)
+      if (amount.isEqualTo(newAmount)) return
+      setAmount(newAmount)
+      const borrowCoin = BNCoin.fromDenomAndBigNumber(
+        asset.denom,
+        newAmount.isGreaterThan(max) ? max : newAmount,
+      )
+      simulateBorrow('wallet', borrowCoin)
     },
-    [amount, setAmount],
+    [amount, asset.denom, max, simulateBorrow],
   )
-
-  const onDebounce = useCallback(() => {
-    const borrowCoin = BNCoin.fromDenomAndBigNumber(
-      asset.denom,
-      amount.isGreaterThan(max) ? max : amount,
-    )
-    simulateBorrow('wallet', borrowCoin)
-  }, [amount, max, asset, simulateBorrow])
 
   const maxBorrow = useMemo(() => {
     const maxBorrowAmount = computeMaxBorrowAmount(asset.denom, 'wallet')
@@ -162,7 +160,6 @@ export default function Borrow(props: Props) {
           <TokenInputWithSlider
             asset={asset}
             onChange={handleChange}
-            onDebounce={onDebounce}
             amount={amount}
             max={max}
             disabled={max.isZero()}
