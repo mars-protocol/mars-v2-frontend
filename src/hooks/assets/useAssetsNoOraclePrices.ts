@@ -2,18 +2,21 @@ import getDexAssets from 'api/assets/getDexAssets'
 import getDexPools from 'api/assets/getDexPools'
 import USD from 'constants/USDollar'
 import { PRICE_STALE_TIME } from 'constants/query'
+import useCampaignAprs from 'hooks/campaign/useCampaignAprs'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useAssetParams from 'hooks/params/useAssetParams'
 import useStore from 'store'
 import useSWR from 'swr'
 import { AssetParamsBaseForAddr } from 'types/generated/mars-params/MarsParams.types'
 import { byDenom } from 'utils/array'
+import { resolveAssetCampaign } from 'utils/assets'
 import { BN } from 'utils/helpers'
 import { calculatePoolWeight } from 'utils/pools'
 
 export default function useAssetsNoOraclePrices() {
   const chainConfig = useChainConfig()
   const { data: assetParams } = useAssetParams()
+  const { data: campaignAprs } = useCampaignAprs()
   /* PERPS
   const { data: perpsParams } = useAllPerpsParamsSC()
   const fetchedPerpsParams = chainConfig.perps ? perpsParams : ([] as PerpParams[])
@@ -26,7 +29,7 @@ export default function useAssetsNoOraclePrices() {
     */
 
     assetParams && `chains/${chainConfig.id}/noOraclePrices`,
-    async () => fetchSortAndMapAllAssets(chainConfig, assetParams),
+    async () => fetchSortAndMapAllAssets(chainConfig, assetParams, campaignAprs),
     {
       suspense: true,
       revalidateOnFocus: false,
@@ -39,6 +42,7 @@ export default function useAssetsNoOraclePrices() {
 async function fetchSortAndMapAllAssets(
   chainConfig: ChainConfig,
   assetParams: AssetParamsBaseForAddr[],
+  campaignAprs: StakingApr[],
   /* PERPS
   perpsParams: PerpParams[], 
   */
@@ -121,6 +125,7 @@ async function fetchSortAndMapAllAssets(
       isDeprecated,
       isTradeEnabled,
       poolInfo: currentAssetPoolInfo,
+      campaign: resolveAssetCampaign(asset, campaignAprs, chainConfig),
     }
   })
 

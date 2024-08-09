@@ -43,6 +43,7 @@ export default function AssetsSelect(props: Props) {
       const balancesForAsset = balances.find(byDenom(asset.denom))
       const coin = BNCoin.fromDenomAndBigNumber(asset.denom, BN(balancesForAsset?.amount ?? '0'))
       const value = getCoinValue(coin, assets)
+      asset.campaign = isBorrow ? undefined : asset.campaign
       return {
         asset,
         balance: balancesForAsset?.amount ?? '0',
@@ -50,7 +51,7 @@ export default function AssetsSelect(props: Props) {
         market: markets.find((market) => market.asset.denom === asset.denom),
       }
     })
-  }, [balances, assets, markets])
+  }, [assets, balances, isBorrow, markets])
 
   useEffect(() => {
     const selectedAssets = assets.filter((_, index) => selected[index])

@@ -59,6 +59,10 @@ module.exports = {
     'bg-slider-6',
     'bg-slider-7',
     'bg-slider-8',
+    'gradient-droplets',
+    'gradient-stride',
+    'droplets',
+    'stride',
   ],
   theme: {
     extend: {
@@ -487,6 +491,12 @@ module.exports = {
           background:
             'linear-gradient(270deg, hsl(var(--color-active-tab-primary) /0.765) 0%, hsl(var(--color-active-tab-secondary) /0.886) 23.77%, hsl(var(--color-active-tab-tertiary) /0.26) 99.2%)',
         },
+        '.gradient-droplets': {
+          background: 'linear-gradient(90deg, #6039FF, #E8B8FF)',
+        },
+        '.gradient-stride': {
+          background: 'linear-gradient(90deg, #E50571, #FB5DA9)',
+        },
         '.number': {
           whiteSpace: 'nowrap',
           fontFeatureSettings: '"tnum" on',
@@ -569,6 +579,18 @@ module.exports = {
           backgroundRepeat: 'no-repeat',
           backgroundSize: '100% auto',
           backgroundPosition: 'top',
+        },
+        '.droplets': {
+          background: 'linear-gradient(90deg, #6039FF, #E8B8FF)',
+          '-webkit-background-clip': 'text',
+          '-webkit-text-fill-color': 'transparent',
+          fontWeight: 600,
+        },
+        '.stride': {
+          background: 'linear-gradient(90deg, #E50571, #FB5DA9)',
+          '-webkit-background-clip': 'text',
+          '-webkit-text-fill-color': 'transparent',
+          fontWeight: 600,
         },
       })
     }),
