@@ -56,6 +56,8 @@ export default function AccountFundContent(props: Props) {
     return walletAssetModal?.selectedDenoms ?? []
   }, [walletAssetModal?.selectedDenoms])
 
+  const prevSelectedDenomsRef = useRef<string[]>([])
+
   const baseBalance = useMemo(
     () => walletBalances.find(byDenom(baseAsset.denom))?.amount ?? '0',
     [walletBalances, baseAsset],
@@ -100,7 +102,6 @@ export default function AccountFundContent(props: Props) {
       useStore.setState({ focusComponent: { component: <WalletBridges /> } })
     }
   }, [baseBalance])
-  const prevSelectedDenomsRef = useRef<string[]>([])
 
   useEffect(() => {
     if (JSON.stringify(prevSelectedDenomsRef.current) === JSON.stringify(selectedDenoms)) {
@@ -129,6 +130,36 @@ export default function AccountFundContent(props: Props) {
 
     prevSelectedDenomsRef.current = selectedDenoms
   }, [selectedDenoms, fundingAssets])
+
+  useEffect(() => {
+    const fetchBalances = async () => {
+      if (isConnected && address && !isConnecting) {
+        try {
+          const balances = await fetchUSDCBalances(address)
+          const usdcAssets = Object.entries(balances).map(([chainId, balance]) => ({
+            denom: `ibc/4C19E7EC06C1AB2EC2D70C6855FEB6D48E9CE174913991DA0A517D21978E7E42`,
+            amount: (Number(balance) * 10 ** 6).toString(),
+            chainName: `${CHAIN_NAMES[Number(chainId)]}`,
+          }))
+
+          setUsdcBalances(usdcAssets)
+          const combinedBalances = [
+            ...walletBalances,
+            ...usdcAssets.map((asset) => ({
+              denom: asset.denom,
+              amount: asset.amount,
+              chainName: asset.chainName,
+            })),
+          ]
+          useStore.setState({ balances: combinedBalances })
+        } catch (error) {
+          console.error('Error fetching USDC balances:', error)
+        }
+      }
+    }
+
+    fetchBalances()
+  }, [address, isConnected, isConnecting, walletBalances])
 
   const updateFundingAssets = useCallback(
     (amount: BigNumber, denom: string, chainName?: string) => {
@@ -176,67 +207,37 @@ export default function AccountFundContent(props: Props) {
     await open()
   }, [open])
 
-  useEffect(() => {
-    const fetchBalances = async () => {
-      if (isConnected && address && !isConnecting) {
-        try {
-          const balances = await fetchUSDCBalances(address)
-          const usdcAssets = Object.entries(balances).map(([chainId, balance]) => ({
-            denom: `ibc/4C19E7EC06C1AB2EC2D70C6855FEB6D48E9CE174913991DA0A517D21978E7E42`,
-            amount: (Number(balance) * 10 ** 6).toString(),
-            chainName: `${CHAIN_NAMES[Number(chainId)]}`,
-          }))
-
-          setUsdcBalances(usdcAssets)
-          const combinedBalances = [
-            ...walletBalances,
-            ...usdcAssets.map((asset) => ({
-              denom: asset.denom,
-              amount: asset.amount,
-              chainName: asset.chainName,
-            })),
-          ]
-          useStore.setState({ balances: combinedBalances })
-        } catch (error) {
-          console.error('Error fetching USDC balances:', error)
-        }
-      }
-    }
-
-    fetchBalances()
-  }, [address, isConnected, isConnecting, walletBalances])
-
   const combinedBalances = useMemo(() => {
     const usdcBNCoinBalances = usdcBalances.map((asset) => new BNCoin(asset))
     return [...balances, ...usdcBNCoinBalances]
   }, [balances, usdcBalances])
 
+  const renderFundingAssets = () => {
+    return fundingAssets.map((coin, index) => (
+      <div
+        key={`${coin.denom}-${index}`}
+        className={classNames(
+          'w-full mb-4',
+          props.isFullPage && 'w-full p-4 border rounded-base border-white/20 bg-white/5',
+        )}
+      >
+        <AccountFundRow
+          denom={coin.denom}
+          balances={combinedBalances}
+          amount={coin.amount}
+          isConfirming={isConfirming}
+          updateFundingAssets={updateFundingAssets}
+          onDebounce={onDebounce}
+          chainName={coin.chainName}
+        />
+      </div>
+    ))
+  }
   return (
     <>
       <div>
         {!hasAssetSelected && <Text>Please select an asset.</Text>}
-        {fundingAssets.map((coin, index) => {
-          return (
-            <div
-              key={`${coin.denom}-${index}`}
-              className={classNames(
-                'w-full mb-4',
-                props.isFullPage && 'w-full p-4 border rounded-base border-white/20 bg-white/5',
-              )}
-            >
-              <AccountFundRow
-                denom={coin.denom}
-                balances={combinedBalances}
-                amount={coin.amount}
-                isConfirming={isConfirming}
-                updateFundingAssets={updateFundingAssets}
-                onDebounce={onDebounce}
-                chainName={coin.chainName}
-              />
-            </div>
-          )
-        })}
-
+        {renderFundingAssets()}
         <Button
           className='w-full mt-4'
           text='Select Assets'
