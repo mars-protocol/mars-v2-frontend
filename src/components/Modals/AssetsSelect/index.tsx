@@ -39,7 +39,6 @@ export default function AssetsSelect(props: Props) {
   const [selected, setSelected] = useState<RowSelectionState>(defaultSelected)
 
   const balances = useStore((s) => s.balances)
-
   const tableData: AssetTableRow[] = useMemo(() => {
     return assets.map((asset) => {
       const balanceData = balances.find(
