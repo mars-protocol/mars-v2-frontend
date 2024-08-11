@@ -24,9 +24,15 @@ export default function WalletAssetsModalContent(props: Props) {
   const assetsInWallet = useMemo(() => {
     const knownAssetsInWallet: Asset[] = []
     const unknownAssetsInWallet: Asset[] = []
+
     balances.forEach((coin) => {
       const asset = allChainAssets.find(byDenom(coin.denom))
-      if (asset) knownAssetsInWallet.push(asset)
+      if (asset) {
+        knownAssetsInWallet.push({
+          ...asset,
+          chainName: coin.chainName && coin.chainName !== 'undefined' ? coin.chainName : undefined,
+        })
+      }
       if (!asset && enableAnyAsset) {
         const unknownAsset = handleUnknownAsset(coin)
         if (unknownAsset.symbol === 'SHARE') return
@@ -42,13 +48,17 @@ export default function WalletAssetsModalContent(props: Props) {
       (asset) =>
         asset.name.toLowerCase().includes(searchString.toLowerCase()) ||
         asset.denom.toLowerCase().includes(searchString.toLowerCase()) ||
-        asset.symbol.toLowerCase().includes(searchString.toLowerCase()),
+        asset.symbol.toLowerCase().includes(searchString.toLowerCase()) ||
+        asset?.chainName?.toLowerCase().includes(searchString.toLowerCase()),
     )
   }, [assetsInWallet, searchString])
 
   const currentSelectedDenom = useStore((s) => s.walletAssetsModal?.selectedDenoms ?? [])
   const [selectedDenoms, setSelectedDenoms] = useState<string[]>(
-    currentSelectedDenom.filter((denom) => filteredAssets.findIndex(byDenom(denom)) || []),
+    currentSelectedDenom.filter(
+      (denom) =>
+        filteredAssets.findIndex((asset) => `${asset.denom}:${asset.chainName}` === denom) !== -1,
+    ),
   )
 
   const onChangeSelect = useCallback(

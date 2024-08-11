@@ -99,6 +99,7 @@ export function handleUnknownAsset(coin: Coin): Asset {
     name: getNameFromUnknownAssetDenom(coin.denom),
     symbol: getSymbolFromUnknownAssetDenom(coin.denom),
     campaigns: [],
+    chainName: coin.chainName && coin.chainName !== '' ? coin.chainName : undefined,
   }
 }
 export function convertAstroportAssetsResponse(data: AstroportAsset[]): Asset[] {

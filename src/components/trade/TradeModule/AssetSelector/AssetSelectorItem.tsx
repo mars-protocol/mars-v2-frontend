@@ -25,7 +25,11 @@ interface Props {
 export default function AssetSelectorItem(props: Props) {
   const { asset, sellAsset, balances, onSelect, depositCap, isActive } = props
 
-  const amount = demagnify(props.balances.find(byDenom(asset.denom))?.amount ?? BN_ZERO, asset)
+  const amount = demagnify(
+    props.balances.find((b) => b.denom === asset.denom && b.chainName === asset.chainName)
+      ?.amount ?? BN_ZERO,
+    asset,
+  )
 
   const [favoriteAssetsDenoms, setFavoriteAssetsDenoms] = useFavoriteAssets()
   const isFavorite = useMemo(
@@ -120,6 +124,9 @@ export default function AssetSelectorItem(props: Props) {
                 />
               </div>
             )}
+            {/* {asset.chainName && (
+              <div className='text-xs text-left text-white/60'>{asset.chainName}</div>
+            )} */}
           </div>
         </div>
         <DisplayCurrency

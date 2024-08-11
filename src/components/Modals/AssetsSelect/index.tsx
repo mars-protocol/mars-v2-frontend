@@ -19,6 +19,7 @@ interface Props {
   selectedDenoms: string[]
   isBorrow?: boolean
   nonCollateralTableAssets?: Asset[]
+  showChainColumn?: boolean
 }
 
 export default function AssetsSelect({
@@ -40,15 +41,18 @@ export default function AssetsSelect({
   const createTableData = useCallback(
     (assets: Asset[]): AssetTableRow[] => {
       return assets.map((asset) => {
-        const balancesForAsset = balances.find(byDenom(asset.denom))
-        const coin = BNCoin.fromDenomAndBigNumber(asset.denom, BN(balancesForAsset?.amount ?? '0'))
+        const balanceData = balances.find(
+          (balance) => balance.denom === asset.denom && balance.chainName === asset.chainName,
+        ) || { amount: '0', chainName: '' }
+        const coin = BNCoin.fromDenomAndBigNumber(asset.denom, BN(balanceData.amount))
         const value = getCoinValue(coin, assets)
         asset.campaigns = isBorrow ? [] : asset.campaigns
         return {
           asset,
-          balance: balancesForAsset?.amount ?? '0',
+          balance: balanceData.amount,
           value,
           market: markets.find((market) => market.asset.denom === asset.denom),
+          chainName: balanceData.chainName || '',
         }
       })
     },
@@ -80,7 +84,7 @@ export default function AssetsSelect({
         .filter((asset, index) =>
           tableData.some((row, idx) => row.asset.denom === asset.denom && whitelistedSelected[idx]),
         )
-        .map((asset) => asset.denom)
+        .map((asset) => `${asset.denom}:${asset.chainName}`)
     } else {
       const whitelistedAssets = assets.filter((asset) =>
         tableData.whitelistedData.some(
@@ -96,7 +100,7 @@ export default function AssetsSelect({
 
       newSelectedDenoms = [...whitelistedAssets, ...nonCollateralAssets]
         .sort((a, b) => a.symbol.localeCompare(b.symbol))
-        .map((asset) => asset.denom)
+        .map((asset) => `${asset.denom}:${asset.chainName}`)
     }
 
     if (

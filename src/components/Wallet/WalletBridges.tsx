@@ -1,6 +1,39 @@
+import { useShuttle } from '@delphi-labs/shuttle-react'
+import Image from 'next/image'
+import { useCallback, useEffect, useMemo } from 'react'
+
+import Button from 'components/common/Button'
+import FullOverlayContent from 'components/common/FullOverlayContent'
+import { ChevronRight } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import WalletFetchBalancesAndAccounts from 'components/Wallet/WalletFetchBalancesAndAccounts'
+import WalletSelect from 'components/Wallet/WalletSelect'
+import { BRIDGES } from 'constants/bridges'
+import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import CosmosWalletBridges from 'components/Wallet/CosmosWalletBridges'
-import EvmSupportedBridges from 'components/Wallet/EvmSupportedBridges'
+import useToggle from 'hooks/common/useToggle'
+import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
+import useWalletBalances from 'hooks/wallet/useWalletBalances'
+import useStore from 'store'
+import { byDenom } from 'utils/array'
+import { defaultFee } from 'utils/constants'
+import { BN } from 'utils/helpers'
+
+function Bridge({ name, url, image }: Bridge) {
+  return (
+    <Button
+      color='tertiary'
+      className='flex w-full px-4 py-3'
+      onClick={() => {
+        window.open(url, '_blank')
+      }}
+    >
+      <Image className='rounded-full' width={20} height={20} src={image} alt={name} />
+      <Text className='flex-1 ml-2 text-left'>{name}</Text>
+      <ChevronRight className='w-4 h-4' />
+    </Button>
+  )
+}
 
 export default function WalletBridges() {
   const chainConfig = useChainConfig()
