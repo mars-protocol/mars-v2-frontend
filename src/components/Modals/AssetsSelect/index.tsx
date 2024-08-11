@@ -16,6 +16,7 @@ interface Props {
   onChangeSelected: (selected: string[]) => void
   selectedDenoms: string[]
   isBorrow?: boolean
+  showChainColumn?: boolean
 }
 
 export default function AssetsSelect(props: Props) {
@@ -26,7 +27,7 @@ export default function AssetsSelect(props: Props) {
   const defaultSelected = useMemo(() => {
     return assets.reduce(
       (acc, asset, index) => {
-        if (selectedDenoms?.includes(asset.denom)) {
+        if (selectedDenoms?.includes(`${asset.denom}:${asset.chainName}`)) {
           acc[index] = true
         }
         return acc
@@ -38,17 +39,23 @@ export default function AssetsSelect(props: Props) {
   const [selected, setSelected] = useState<RowSelectionState>(defaultSelected)
 
   const balances = useStore((s) => s.balances)
+
   const tableData: AssetTableRow[] = useMemo(() => {
     return assets.map((asset) => {
-      const balancesForAsset = balances.find(byDenom(asset.denom))
-      const coin = BNCoin.fromDenomAndBigNumber(asset.denom, BN(balancesForAsset?.amount ?? '0'))
+      const balanceData = balances.find(
+        (balance) => balance.denom === asset.denom && balance.chainName === asset.chainName,
+      ) || { amount: '0', chainName: '' }
+
+      const balanceAmount = balanceData.amount
+      const coin = BNCoin.fromDenomAndBigNumber(asset.denom, BN(balanceAmount))
       const value = getCoinValue(coin, assets)
       asset.campaign = isBorrow ? undefined : asset.campaign
       return {
         asset,
-        balance: balancesForAsset?.amount ?? '0',
+        balance: balanceAmount,
         value,
         market: markets.find((market) => market.asset.denom === asset.denom),
+        chainName: balanceData.chainName || '',
       }
     })
   }, [assets, balances, isBorrow, markets])
@@ -58,14 +65,15 @@ export default function AssetsSelect(props: Props) {
 
     const newSelectedDenoms = selectedAssets
       .sort((a, b) => a.symbol.localeCompare(b.symbol))
-      .map((asset) => asset.denom)
+      .map((asset) => `${asset.denom}:${asset.chainName}`)
+
     if (
       selectedDenoms.length === newSelectedDenoms.length &&
       newSelectedDenoms.every((denom) => selectedDenoms.includes(denom))
     )
       return
     onChangeSelected(newSelectedDenoms)
-  }, [selected, props, assets, selectedDenoms, onChangeSelected])
+  }, [selected, assets, selectedDenoms, onChangeSelected])
 
   return (
     <Table

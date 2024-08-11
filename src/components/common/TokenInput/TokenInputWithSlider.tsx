@@ -24,6 +24,7 @@ interface Props {
     max: number
   }
   warningMessages: string[]
+  chainName?: string
 }
 
 export default function TokenInputWithSlider(props: Props) {
@@ -70,6 +71,7 @@ export default function TokenInputWithSlider(props: Props) {
         balances={props.balances}
         accountId={props.accountId}
         warningMessages={props.warningMessages}
+        chainName={props.chainName}
       />
       <Slider
         value={percentage || 0}

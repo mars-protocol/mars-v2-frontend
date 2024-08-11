@@ -6,6 +6,7 @@ interface ICNSReadOnlyInterface {
 type Coin = {
   denom: string
   amount: string
+  chainName?: string
 }
 
 type StdFee = {
@@ -116,6 +117,7 @@ interface Asset extends AssetMetaData {
   name: string
   decimals: number
   symbol: string
+  chainName?: string
 }
 
 interface AssetMetaData {
@@ -1141,6 +1143,7 @@ interface ModalSlice {
   unlockModal: UnlockModal | null
   farmModal: FarmModal | null
   walletAssetsModal: WalletAssetModal | null
+  evmBridgeAssetsModal: EVMBridgeAssetsModal | null
   withdrawFromVaultsModal: DepositedVault[] | null
   v1DepositAndWithdrawModal: V1DepositAndWithdrawModal | null
   v1BorrowAndRepayModal: V1BorrowAndRepayModal | null

@@ -30,6 +30,7 @@ interface Props {
   onChangeAsset?: (asset: Asset) => void
   onDelete?: () => void
   warningMessages: string[]
+  chainName?: string
 }
 
 export default function TokenInput(props: Props) {
@@ -78,7 +79,14 @@ export default function TokenInput(props: Props) {
             ) : (
               <AssetImage asset={props.asset} className='w-5 h-5' />
             )}
-            <Text>{props.asset.symbol}</Text>
+            <div className='flex flex-col'>
+              <Text>{props.asset.symbol}</Text>
+              {props.chainName && (
+                <Text size='xs' className='text-white/50'>
+                  {props.chainName}
+                </Text>
+              )}
+            </div>
           </div>
         )}
         <NumberInput

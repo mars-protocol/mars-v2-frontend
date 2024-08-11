@@ -61,6 +61,11 @@ export default function Asset(props: Props) {
               <Text size='xs'>{asset.name}</Text>
             </Tooltip>
           )}
+          {asset.chainName && (
+            <Text size='xs' className='text-white/60'>
+              {asset.chainName}
+            </Text>
+          )}
           {asset?.campaign && <AssetCampaignCopy size='xs' asset={asset} />}
         </div>
       </div>
