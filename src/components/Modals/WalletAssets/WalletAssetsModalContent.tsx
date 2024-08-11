@@ -24,13 +24,14 @@ export default function WalletAssetsModalContent(props: Props) {
   const assetsInWallet = useMemo(() => {
     const knownAssetsInWallet: Asset[] = []
     const unknownAssetsInWallet: Asset[] = []
-
     balances.forEach((coin) => {
+      if (coin.amount === '0') return
+
       const asset = allChainAssets.find(byDenom(coin.denom))
       if (asset) {
         knownAssetsInWallet.push({
           ...asset,
-          chainName: coin.chainName && coin.chainName !== 'undefined' ? coin.chainName : undefined,
+          chainName: coin.chainName,
         })
       }
       if (!asset && enableAnyAsset) {
