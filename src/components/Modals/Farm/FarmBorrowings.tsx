@@ -186,7 +186,8 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
     <div className='flex flex-col flex-1 gap-4 p-4'>
       {props.borrowings.map((coin) => {
         const asset = assets.find(byDenom(coin.denom))
-        const maxAmount = maxBorrowAmounts.find(byDenom(coin.denom))?.amount
+        const maxAmount = maxBorrowAmounts.find(byDenom(coin.denom))?.amount ?? BN_ZERO
+
         if (!asset || !maxAmount)
           return <React.Fragment key={`input-${coin.denom}`}></React.Fragment>
         return (

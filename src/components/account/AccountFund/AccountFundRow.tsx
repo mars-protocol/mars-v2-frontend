@@ -1,3 +1,4 @@
+import AssetCampaignCopy from 'components/common/assets/AssetCampaignCopy'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
 import useAsset from 'hooks/assets/useAsset'
@@ -20,15 +21,28 @@ export default function AccountFundRow(props: Props) {
   const balance = props.balances.find(byDenom(props.denom))?.amount ?? BN_ZERO
 
   return (
-    <TokenInputWithSlider
-      asset={asset}
-      onChange={(amount) => props.updateFundingAssets(amount, asset.denom)}
-      amount={props.amount}
-      max={balance}
-      balances={props.balances}
-      maxText='Max'
-      disabled={props.isConfirming}
-      warningMessages={[]}
-    />
+    <>
+      <TokenInputWithSlider
+        asset={asset}
+        onChange={(amount) => props.updateFundingAssets(amount, asset.denom)}
+        amount={props.amount}
+        max={balance}
+        balances={props.balances}
+        maxText='Max'
+        disabled={props.isConfirming}
+        warningMessages={[]}
+      />
+      {asset.campaign && (
+        <div className='w-full p-2 mt-4 border rounded border-white/20'>
+          <AssetCampaignCopy
+            asset={asset}
+            size='sm'
+            amount={props.amount}
+            withLogo
+            className='justify-center'
+          />
+        </div>
+      )}
+    </>
   )
 }

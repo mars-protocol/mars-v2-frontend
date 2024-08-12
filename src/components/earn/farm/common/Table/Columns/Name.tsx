@@ -1,8 +1,11 @@
+import AssetCampaignCopy from 'components/common/assets/AssetCampaignCopy'
 import AssetImage from 'components/common/assets/AssetImage'
 import DoubleLogo from 'components/common/DoubleLogo'
-import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import Text from 'components/common/Text'
 import useAsset from 'hooks/assets/useAsset'
+import usePoolAssets from 'hooks/assets/usePoolAssets'
 import { VaultStatus } from 'types/enums'
+import { byDenom } from 'utils/array'
 
 export const NAME_META = {
   id: 'name',
@@ -19,6 +22,10 @@ export default function Name(props: Props) {
   const timeframe = vault.lockup.timeframe[0]
   const unlockDuration = timeframe ? ` - (${vault.lockup.duration}${timeframe})` : ''
   const primaryAsset = useAsset(vault.denoms.primary)
+  const poolAssets = usePoolAssets()
+
+  const poolAsset = poolAssets.find(byDenom(vault.denoms.lp))
+
   let status: VaultStatus = VaultStatus.ACTIVE
   if ('status' in vault) {
     status = vault.status as VaultStatus
@@ -33,12 +40,17 @@ export default function Name(props: Props) {
       ) : (
         <DoubleLogo primaryDenom={vault.denoms.primary} secondaryDenom={vault.denoms.secondary} />
       )}
-
-      <TitleAndSubCell
-        className='ml-2 mr-2 text-left'
-        title={`${vault.name}${unlockDuration}`}
-        sub={vault.provider}
-      />
+      <div className='flex flex-col gap-0.5 ml-2'>
+        <Text size='xs' tag='span'>
+          {`${vault.name}${unlockDuration}`}
+        </Text>
+        <div className='flex items-center w-full'>
+          <Text size='xs' className='text-white/40' tag='span'>
+            {vault.provider}
+          </Text>
+          {poolAsset?.campaign && <AssetCampaignCopy asset={poolAsset} size='xs' />}
+        </div>
+      </div>
     </div>
   )
 }
