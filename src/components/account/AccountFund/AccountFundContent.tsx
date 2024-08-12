@@ -41,7 +41,7 @@ export default function AccountFundContent(props: Props) {
   const selectedDenoms = useMemo(() => {
     return walletAssetModal?.selectedDenoms ?? []
   }, [walletAssetModal?.selectedDenoms])
-  const { fundingAssets, updateFundingAssets } = useFundingAssets(selectedDenoms)
+  const { fundingAssets, updateFundingAssets, setFundingAssets } = useFundingAssets(selectedDenoms)
   const { depositCapReachedCoins } = useDepositCapCalculations(fundingAssets)
   const { isConnected, handleConnectWallet, handleDisconnectWallet } =
     useWeb3WalletConnection(walletBalances)
@@ -96,14 +96,23 @@ export default function AccountFundContent(props: Props) {
     }
   }, [baseBalance])
 
+  useEffect(() => {
+    if (!isConnected) {
+      setFundingAssets((prevAssets) => prevAssets.filter((asset) => !asset.chainName))
+    }
+  }, [isConnected, setFundingAssets])
+
   const onDebounce = useCallback(() => {
     simulateDeposits(isLending ? 'lend' : 'deposit', fundingAssets)
   }, [isLending, fundingAssets, simulateDeposits])
 
   const combinedBalances = useMemo(() => {
+    if (!isConnected) {
+      return balances
+    }
     const usdcBNCoinBalances = usdcBalances.map((asset) => new BNCoin(asset))
     return [...balances, ...usdcBNCoinBalances]
-  }, [balances, usdcBalances])
+  }, [balances, usdcBalances, isConnected])
 
   return (
     <>
