@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import AssetsSelect from 'components/Modals/AssetsSelect'
 import SearchBar from 'components/common/SearchBar'
@@ -8,6 +8,7 @@ import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { handleUnknownAsset } from 'utils/assets'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import { useSelectedDenoms } from 'hooks/assets/useSelectedDenoms'
 
 interface Props {
   onChangeDenoms: (denoms: string[]) => void
@@ -54,21 +55,7 @@ export default function WalletAssetsModalContent(props: Props) {
     )
   }, [assetsInWallet, searchString])
 
-  const currentSelectedDenom = useStore((s) => s.walletAssetsModal?.selectedDenoms ?? [])
-  const [selectedDenoms, setSelectedDenoms] = useState<string[]>(
-    currentSelectedDenom.filter(
-      (denom) =>
-        filteredAssets.findIndex((asset) => `${asset.denom}:${asset.chainName}` === denom) !== -1,
-    ),
-  )
-
-  const onChangeSelect = useCallback(
-    (denoms: string[]) => {
-      setSelectedDenoms(denoms)
-      onChangeDenoms(denoms)
-    },
-    [onChangeDenoms],
-  )
+  const { selectedDenoms, onChangeSelect } = useSelectedDenoms(filteredAssets, onChangeDenoms)
 
   const depositEnabledAssets = useDepositEnabledAssets()
   const whitelistedAssets = useWhitelistedAssets()

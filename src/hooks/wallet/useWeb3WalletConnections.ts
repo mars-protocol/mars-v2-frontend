@@ -10,10 +10,10 @@ export function useWeb3WalletConnection(walletBalances: any[]) {
 
   const handleDisconnectWallet = useCallback(async () => {
     disconnect()
-    useStore.setState({
-      balances: walletBalances,
-    })
-  }, [disconnect, walletBalances])
+    useStore.setState((state) => ({
+      balances: state.balances.filter((balance) => !balance.chainName),
+    }))
+  }, [disconnect])
 
   const handleConnectWallet = useCallback(async () => {
     await open()
