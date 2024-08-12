@@ -1,10 +1,6 @@
-import classNames from 'classnames'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import WalletBridges from 'components/Wallet/WalletBridges'
-import AccountFundRow from 'components/account/AccountFund/AccountFundRow'
-import Button from 'components/common/Button'
 import DepositCapMessage from 'components/common/DepositCapMessage'
-import { ArrowRight, Plus } from 'components/common/Icons'
 import SwitchAutoLend from 'components/common/Switch/SwitchAutoLend'
 import Text from 'components/common/Text'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
@@ -15,11 +11,14 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
-import { Callout, CalloutType } from 'components/common/Callout'
 import { useUSDCBalances } from 'hooks/assets/useUSDCBalances'
 import { useFundingAssets } from 'hooks/assets/useFundingAssets'
 import { useDepositCapCalculations } from 'hooks/markets/useDepositCapCalculations'
 import { useWeb3WalletConnection } from 'hooks/wallet/useWeb3WalletConnections'
+import EVMAccountSection from './EVMAccountSection'
+import AccountFundingAssets from './AccountFundingAssets'
+import { ArrowRight } from 'components/common/Icons'
+import Button from 'components/common/Button'
 
 interface Props {
   account?: Account
@@ -106,67 +105,24 @@ export default function AccountFundContent(props: Props) {
     return [...balances, ...usdcBNCoinBalances]
   }, [balances, usdcBalances])
 
-  function renderFundingAssets(
-    fundingAssets: BNCoin[],
-    combinedBalances: BNCoin[],
-    isConfirming: boolean,
-    updateFundingAssets: (amount: BigNumber, denom: string, chainName?: string) => void,
-    onDebounce: () => void,
-    isFullPage?: boolean,
-  ) {
-    return fundingAssets.map((coin, index) => (
-      <div
-        key={`${coin.denom}-${index}`}
-        className={classNames(
-          'w-full mb-4',
-          isFullPage && 'w-full p-4 border rounded-base border-white/20 bg-white/5',
-        )}
-      >
-        <AccountFundRow
-          denom={coin.denom}
-          balances={combinedBalances}
-          amount={coin.amount}
-          isConfirming={isConfirming}
-          updateFundingAssets={updateFundingAssets}
-          onDebounce={onDebounce}
-          chainName={coin.chainName}
-        />
-      </div>
-    ))
-  }
-
   return (
     <>
       <div>
         {!hasAssetSelected && <Text>Please select an asset.</Text>}
-        {renderFundingAssets(
-          fundingAssets,
-          combinedBalances,
-          isConfirming,
-          updateFundingAssets,
-          onDebounce,
-          props.isFullPage,
-        )}
-        <Button
-          className='w-full mt-4'
-          text='Select Assets'
-          color='tertiary'
-          rightIcon={<Plus />}
-          iconClassName='w-3'
-          onClick={handleSelectAssetsClick}
-          disabled={isConfirming}
+        <AccountFundingAssets
+          fundingAssets={fundingAssets}
+          combinedBalances={combinedBalances}
+          isConfirming={isConfirming}
+          updateFundingAssets={updateFundingAssets}
+          onDebounce={onDebounce}
+          isFullPage={props.isFullPage}
         />
-        <div className='mt-4 border border-transparent border-t-white/10' />
-        <Callout type={CalloutType.INFO} className='mt-4'>
-          {isConnected
-            ? 'Now that you have connected an EVM Wallet, please select the assets you want to deposit.'
-            : 'You want to add USDC from an Ethereum L1 or L2 chain? Connect your EVM wallet by clicking the button below and enable the deposit of EVM based USDC.'}
-        </Callout>
-        <Button
-          className='w-full mt-4'
-          text={isConnected ? 'Disconnect EVM Wallet' : 'Connect EVM Wallet'}
-          color='primary'
-          onClick={isConnected ? handleDisconnectWallet : handleConnectWallet}
+        <EVMAccountSection
+          isConnected={isConnected}
+          isConfirming={isConfirming}
+          handleSelectAssetsClick={handleSelectAssetsClick}
+          handleConnectWallet={handleConnectWallet}
+          handleDisconnectWallet={handleDisconnectWallet}
         />
         <DepositCapMessage
           action='fund'
@@ -178,17 +134,17 @@ export default function AccountFundContent(props: Props) {
           className='pt-4 mt-4 border border-transparent border-t-white/10'
           accountId={props.accountId}
         />
+        <Button
+          className='w-full mt-4'
+          text='Fund account'
+          disabled={!hasFundingAssets || depositCapReachedCoins.length > 0}
+          showProgressIndicator={isConfirming}
+          onClick={handleClick}
+          color={props.isFullPage ? 'tertiary' : undefined}
+          size={props.isFullPage ? 'lg' : undefined}
+          rightIcon={props.isFullPage ? undefined : <ArrowRight />}
+        />
       </div>
-      <Button
-        className='w-full mt-4'
-        text='Fund account'
-        disabled={!hasFundingAssets || depositCapReachedCoins.length > 0}
-        showProgressIndicator={isConfirming}
-        onClick={handleClick}
-        color={props.isFullPage ? 'tertiary' : undefined}
-        size={props.isFullPage ? 'lg' : undefined}
-        rightIcon={props.isFullPage ? undefined : <ArrowRight />}
-      />
     </>
   )
 }
