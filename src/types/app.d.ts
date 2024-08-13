@@ -1505,3 +1505,5 @@ interface AssetCampaign {
   apy?: number
   multiplier?: number
 }
+
+type KeplrMode = 'core' | 'extension' | 'mobile-web' | 'walletconnect'
