@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import QRCode from 'react-qr-code'
 
-import { WalletID } from 'types/enums'
 import WalletConnecting from 'components/Wallet/WalletConnecting'
 import Button from 'components/common/Button'
 import FullOverlayContent from 'components/common/FullOverlayContent'
@@ -15,6 +14,7 @@ import { WALLETS } from 'constants/wallets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import useStore from 'store'
+import { WalletID } from 'types/enums'
 import { isAndroid, isIOS } from 'utils/mobile'
 
 interface Props {
@@ -72,6 +72,18 @@ export default function WalletSelect(props: Props) {
       },
     })
   }
+  // this is currently "true" for other embeded browsers like leap and compass mobile apps
+  const isKeplrMobileInApp =
+    /**
+     * type here currently comes from shuttle and doesn't define the mode property
+     * @see https://github.com/chainapsis/keplr-wallet/blob/master/packages/types/src/wallet/keplr.ts#L63
+     */
+    typeof window !== 'undefined' &&
+    (
+      window.keplr as typeof window.keplr & {
+        mode: KeplrMode
+      }
+    )?.mode === 'mobile-web'
 
   const handleMobileConnectClick = async (mobileProviderId: string, chainId: string) => {
     setIsLoading(mobileProviderId)
@@ -209,7 +221,11 @@ export default function WalletSelect(props: Props) {
                           ? WALLETS[walletId].imageURL
                           : (WALLETS[walletId].mobileImageURL ?? '/')
                       }
-                      handleClick={() => handleMobileConnectClick(walletId, network.chainId)}
+                      handleClick={() =>
+                        isKeplrMobileInApp
+                          ? handleConnectClick(walletId)
+                          : handleMobileConnectClick(walletId, network.chainId)
+                      }
                       showLoader={isLoading === walletId}
                     />
                   )

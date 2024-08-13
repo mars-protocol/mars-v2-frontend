@@ -29,7 +29,7 @@ export const WALLETS: WalletInfos = {
     walletConnect: 'Keplr WalletConnect',
     imageURL: '/images/wallets/keplr.png',
     mobileImageURL: '/images/wallets/keplr-wc.png',
-    supportedChains: [ChainInfoID.Osmosis1],
+    supportedChains: [ChainInfoID.Osmosis1, ChainInfoID.Pion1],
   },
   [WalletID.Leap]: {
     name: 'Leap Wallet',
@@ -44,7 +44,7 @@ export const WALLETS: WalletInfos = {
     walletConnect: 'Leap WalletConnect',
     imageURL: '/images/wallets/leap.png',
     mobileImageURL: '/images/wallets/leap-wc.png',
-    supportedChains: [ChainInfoID.Osmosis1],
+    supportedChains: [ChainInfoID.Osmosis1, ChainInfoID.Pion1],
   },
   [WalletID.LeapSnap]: {
     name: 'MetaMask',
