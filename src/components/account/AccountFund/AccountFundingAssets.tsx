@@ -1,12 +1,12 @@
 import React from 'react'
 import classNames from 'classnames'
 import AccountFundRow from 'components/account/AccountFund/AccountFundRow'
-import { BNCoin } from 'types/classes/BNCoin'
+import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
 import { BigNumber } from 'bignumber.js'
 
 interface AccountFundingAssetsProps {
-  fundingAssets: BNCoin[]
-  combinedBalances: BNCoin[]
+  fundingAssets: WrappedBNCoin[]
+  combinedBalances: WrappedBNCoin[]
   isConfirming: boolean
   updateFundingAssets: (amount: BigNumber, denom: string, chainName?: string) => void
   onDebounce: () => void
@@ -21,22 +21,22 @@ export default function AccountFundingAssets({
   onDebounce,
   isFullPage,
 }: AccountFundingAssetsProps) {
-  return fundingAssets.map((coin, index) => (
+  return fundingAssets.map((wrappedCoin, index) => (
     <div
-      key={`${coin.denom}-${index}`}
+      key={`${wrappedCoin.coin.denom}-${index}`}
       className={classNames(
         'w-full mb-4',
         isFullPage && 'w-full p-4 border rounded-base border-white/20 bg-white/5',
       )}
     >
       <AccountFundRow
-        denom={coin.denom}
+        denom={wrappedCoin.coin.denom}
         balances={combinedBalances}
-        amount={coin.amount}
+        amount={wrappedCoin.coin.amount}
         isConfirming={isConfirming}
         updateFundingAssets={updateFundingAssets}
         onDebounce={onDebounce}
-        chainName={coin.chainName}
+        chainName={wrappedCoin.chain}
       />
     </div>
   ))
