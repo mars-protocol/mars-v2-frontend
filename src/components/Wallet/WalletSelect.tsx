@@ -223,7 +223,7 @@ export default function WalletSelect(props: Props) {
                       }
                       handleClick={() =>
                         isKeplrMobileInApp
-                          ? handleConnectClick(walletId)
+                          ? handleConnectClick(walletId.replace('mobile-', ''))
                           : handleMobileConnectClick(walletId, network.chainId)
                       }
                       showLoader={isLoading === walletId}
