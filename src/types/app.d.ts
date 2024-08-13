@@ -1518,3 +1518,5 @@ interface AssetCampaignApy {
   denom: string
   apy: number
 }
+
+type KeplrMode = 'core' | 'extension' | 'mobile-web' | 'walletconnect'

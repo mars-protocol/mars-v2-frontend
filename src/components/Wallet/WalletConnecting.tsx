@@ -46,6 +46,19 @@ export default function WalletConnecting(props: Props) {
   const providerId = props.providerId ?? recentWallet?.providerId
   const client = useStore((s) => s.client)
 
+  // this is currently "true" for other embeded browsers like leap and compass mobile apps
+  const isKeplrMobileInApp =
+    /**
+     * type here currently comes from shuttle and doesn't define the mode property
+     * @see https://github.com/chainapsis/keplr-wallet/blob/master/packages/types/src/wallet/keplr.ts#L63
+     */
+    typeof window !== 'undefined' &&
+    (
+      window.keplr as typeof window.keplr & {
+        mode: KeplrMode
+      }
+    )?.mode === 'mobile-web'
+
   const handleConnect = useCallback(
     (extensionProviderId: string) => {
       async function handleConnectAsync() {
@@ -227,7 +240,7 @@ export default function WalletConnecting(props: Props) {
     }
 
     const isMobileProvider = provider.id.split('-')[0] === 'mobile'
-    if (isMobileProvider) {
+    if (isMobileProvider && !isKeplrMobileInApp) {
       handleMobileConnect(provider.id)
       return
     }
@@ -240,6 +253,7 @@ export default function WalletConnecting(props: Props) {
     handleMobileConnect,
     disconnect,
     chainConfig.id,
+    isKeplrMobileInApp,
   ])
 
   return (
