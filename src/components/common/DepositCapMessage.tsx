@@ -6,10 +6,11 @@ import { InfoCircle } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import useAsset from 'hooks/assets/useAsset'
 import { BNCoin } from 'types/classes/BNCoin'
+import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   action: 'buy' | 'deposit' | 'fund'
-  coins: BNCoin[]
+  coins: BNCoin[] | WrappedBNCoin[]
   showIcon?: boolean
 }
 
@@ -29,7 +30,10 @@ export default function DepositCapMessage(props: Props) {
           props.action
         } more than the following amount${props.coins.length > 1 ? 's' : ''}:`}</Text>
         {props.coins.map((coin) => (
-          <AmountMessage key={coin.denom} coin={coin} />
+          <AmountMessage
+            key={isBNCoin(coin) ? coin.denom : coin.coin.denom}
+            coin={isBNCoin(coin) ? coin : coin.coin}
+          />
         ))}
       </div>
     </div>
@@ -39,6 +43,7 @@ export default function DepositCapMessage(props: Props) {
 interface AmountMessageProps {
   coin: BNCoin
 }
+
 function AmountMessage(props: AmountMessageProps) {
   const asset = useAsset(props.coin.denom)
   if (!asset) return null
@@ -57,4 +62,8 @@ function AmountMessage(props: AmountMessageProps) {
       />
     </div>
   )
+}
+
+function isBNCoin(coin: BNCoin | WrappedBNCoin): coin is BNCoin {
+  return (coin as BNCoin).denom !== undefined
 }

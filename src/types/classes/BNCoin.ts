@@ -7,16 +7,13 @@ export class BNCoin {
   }
   public denom: string
   public amount: BigNumber
-  public chainName?: string
-
   constructor(coin: Coin) {
     this.denom = coin.denom
     this.amount = BN(coin.amount)
-    this.chainName = coin.chainName || undefined
   }
 
-  static fromDenomAndBigNumber(denom: string, amount: BigNumber, chainName?: string) {
-    return new BNCoin({ denom, amount: amount.toString(), chainName })
+  static fromDenomAndBigNumber(denom: string, amount: BigNumber) {
+    return new BNCoin({ denom, amount: amount.toString() })
   }
   static fromCoin(coin: Coin) {
     return new BNCoin({ denom: coin.denom, amount: coin.amount.toString() })
@@ -26,7 +23,6 @@ export class BNCoin {
     return {
       denom: this.denom,
       amount: this.amount.integerValue().toString(),
-      chainName: this.chainName,
     }
   }
 

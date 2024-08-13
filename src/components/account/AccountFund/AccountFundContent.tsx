@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import DepositCapMessage from 'components/common/DepositCapMessage'
 import SwitchAutoLend from 'components/common/Switch/SwitchAutoLend'
@@ -9,6 +9,7 @@ import useAutoLend from 'hooks/wallet/useAutoLend'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
+import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 import { useUSDCBalances } from 'hooks/assets/useUSDCBalances'
@@ -48,8 +49,8 @@ export default function AccountFundContent(props: Props) {
 
   const hasAssetSelected = fundingAssets.length > 0
   const hasFundingAssets =
-    fundingAssets.length > 0 && fundingAssets.every((a) => a.toCoin().amount !== '0')
-  const balances = walletBalances.map((coin) => new BNCoin(coin))
+    fundingAssets.length > 0 && fundingAssets.every((a) => a.coin.amount.isGreaterThan(0))
+  const balances = walletBalances.map((coin) => WrappedBNCoin.fromCoin(coin))
 
   const baseBalance = useMemo(
     () => walletBalances.find(byDenom(baseAsset.denom))?.amount ?? '0',
@@ -71,7 +72,7 @@ export default function AccountFundContent(props: Props) {
 
     const depositObject = {
       accountId: props.accountId,
-      coins: fundingAssets,
+      coins: fundingAssets.map((wrappedCoin) => wrappedCoin.coin),
       lend: isLending,
     }
 
@@ -98,20 +99,22 @@ export default function AccountFundContent(props: Props) {
 
   useEffect(() => {
     if (!isConnected) {
-      setFundingAssets((prevAssets) => prevAssets.filter((asset) => !asset.chainName))
+      setFundingAssets((prevAssets) => prevAssets.filter((asset) => !asset.chain))
     }
   }, [isConnected, setFundingAssets])
 
   const onDebounce = useCallback(() => {
-    simulateDeposits(isLending ? 'lend' : 'deposit', fundingAssets)
+    simulateDeposits(
+      isLending ? 'lend' : 'deposit',
+      fundingAssets.map((wrappedCoin) => wrappedCoin.coin),
+    )
   }, [isLending, fundingAssets, simulateDeposits])
 
   const combinedBalances = useMemo(() => {
     if (!isConnected) {
       return balances
     }
-    const usdcBNCoinBalances = usdcBalances.map((asset) => new BNCoin(asset))
-    return [...balances, ...usdcBNCoinBalances]
+    return [...balances, ...usdcBalances]
   }, [balances, usdcBalances, isConnected])
 
   return (
