@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
 export function useFundingAssets(selectedDenoms: string[]) {
-  const [fundingAssets, setFundingAssets] = useState<BNCoin[]>([])
+  const [fundingAssets, setFundingAssets] = useState<WrappedBNCoin[]>([])
   const prevSelectedDenomsRef = useRef<string[]>([])
 
   useEffect(() => {
@@ -12,7 +13,7 @@ export function useFundingAssets(selectedDenoms: string[]) {
     }
 
     const currentSelectedDenom = fundingAssets.map((asset) =>
-      asset.chainName ? `${asset.denom}:${asset.chainName}` : asset.denom,
+      asset.chain ? `${asset.coin.denom}:${asset.chain}` : asset.coin.denom,
     )
 
     if (
@@ -26,7 +27,8 @@ export function useFundingAssets(selectedDenoms: string[]) {
       const [denom, chainName] = denomWithChain.split(':')
       const effectiveChainName = chainName && chainName !== 'undefined' ? chainName : undefined
 
-      return BNCoin.fromDenomAndBigNumber(denom, BN('0'), effectiveChainName)
+      const coin = BNCoin.fromDenomAndBigNumber(denom, BN('0'))
+      return WrappedBNCoin.fromBNCoin(coin, effectiveChainName)
     })
 
     setFundingAssets(newFundingAssets)
@@ -37,9 +39,10 @@ export function useFundingAssets(selectedDenoms: string[]) {
   const updateFundingAssets = useCallback(
     (amount: BigNumber, denom: string, chainName?: string) => {
       setFundingAssets((fundingAssets) => {
-        const updateIdx = fundingAssets.findIndex((asset) => asset.denom === denom)
+        const updateIdx = fundingAssets.findIndex((asset) => asset.coin.denom === denom)
         if (updateIdx === -1) return fundingAssets
-        const updatedAsset = BNCoin.fromDenomAndBigNumber(denom, amount, chainName)
+        const updatedCoin = BNCoin.fromDenomAndBigNumber(denom, amount)
+        const updatedAsset = WrappedBNCoin.fromBNCoin(updatedCoin, chainName)
         return [
           ...fundingAssets.slice(0, updateIdx),
           updatedAsset,

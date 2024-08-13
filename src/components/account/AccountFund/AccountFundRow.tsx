@@ -3,10 +3,11 @@ import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSli
 import useAsset from 'hooks/assets/useAsset'
 import { findBalanceForAsset } from 'utils/balances'
 import { BN } from 'utils/helpers'
+import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
 
 interface Props {
   amount: BigNumber
-  balances: BNCoin[]
+  balances: WrappedBNCoin[]
   denom: string
   chainName?: string
   isConfirming: boolean
@@ -30,7 +31,7 @@ export default function AccountFundRow(props: Props) {
         onDebounce={props.onDebounce}
         amount={props.amount}
         max={BN(balance)}
-        balances={props.balances}
+        balances={props.balances.map((wrappedCoin) => wrappedCoin.coin)}
         maxText='Max'
         disabled={props.isConfirming}
         warningMessages={[]}
