@@ -8,6 +8,8 @@ import useAccounts from 'hooks/accounts/useAccounts'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useStore from 'store'
+import { useWeb3WalletConnection } from 'hooks/wallet/useWeb3WalletConnections'
+import useWalletBalances from 'hooks/wallet/useWalletBalances'
 
 export default function AccountFundFullPage() {
   const address = useStore((s) => s.address)
@@ -16,6 +18,9 @@ export default function AccountFundFullPage() {
   const { data: accounts, isLoading } = useAccounts('default', address)
   const currentAccount = useCurrentAccount()
   const [selectedAccountId, setSelectedAccountId] = useState<null | string>(null)
+
+  const { data: walletBalances } = useWalletBalances(address ?? '')
+  const { handleConnectWallet } = useWeb3WalletConnection()
 
   useEffect(() => {
     if (accounts && !selectedAccountId && accountId) setSelectedAccountId(accountId)
@@ -39,6 +44,7 @@ export default function AccountFundFullPage() {
             address={address}
             accountId={selectedAccountId}
             isFullPage
+            onConnectWallet={handleConnectWallet}
           />
         </Card>
       )}
