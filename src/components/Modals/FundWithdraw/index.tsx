@@ -4,12 +4,14 @@ import Text from 'components/common/Text'
 import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useStore from 'store'
+import { useWeb3WalletConnection } from 'hooks/wallet/useWeb3WalletConnections'
 
 export default function FundAndWithdrawModal() {
   const accountId = useAccountId()
   const { data: account } = useAccount(accountId ?? undefined)
   const modal = useStore<string | null>((s) => s.fundAndWithdrawModal)
   const isFunding = modal === 'fund'
+  const { handleConnectWallet } = useWeb3WalletConnection()
 
   function onClose() {
     useStore.setState({ fundAndWithdrawModal: null })
@@ -30,7 +32,13 @@ export default function FundAndWithdrawModal() {
         </span>
       }
       onClose={onClose}
-      content={<FundWithdrawModalContent account={account} isFunding={isFunding} />}
+      content={
+        <FundWithdrawModalContent
+          account={account}
+          isFunding={isFunding}
+          onConnectWallet={handleConnectWallet}
+        />
+      }
     />
   )
 }

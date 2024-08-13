@@ -8,17 +8,17 @@ import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
 import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 import { useUSDCBalances } from 'hooks/assets/useUSDCBalances'
 import { useFundingAssets } from 'hooks/assets/useFundingAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import { useDepositCapCalculations } from 'hooks/markets/useDepositCapCalculations'
 import { useWeb3WalletConnection } from 'hooks/wallet/useWeb3WalletConnections'
 import EVMAccountSection from './EVMAccountSection'
 import AccountFundingAssets from './AccountFundingAssets'
-import { ArrowRight } from 'components/common/Icons'
+import { ArrowRight, Plus } from 'components/common/Icons'
 import Button from 'components/common/Button'
 
 interface Props {
@@ -26,6 +26,7 @@ interface Props {
   address: string
   accountId: string
   isFullPage?: boolean
+  onConnectWallet: () => Promise<void>
 }
 
 export default function AccountFundContent(props: Props) {
@@ -44,9 +45,7 @@ export default function AccountFundContent(props: Props) {
   }, [walletAssetModal?.selectedDenoms])
   const { fundingAssets, updateFundingAssets, setFundingAssets } = useFundingAssets(selectedDenoms)
   const { depositCapReachedCoins } = useDepositCapCalculations(fundingAssets)
-  const { isConnected, handleConnectWallet, handleDisconnectWallet } =
-    useWeb3WalletConnection(walletBalances)
-
+  const { isConnected, handleDisconnectWallet } = useWeb3WalletConnection()
   const hasAssetSelected = fundingAssets.length > 0
   const hasFundingAssets =
     fundingAssets.length > 0 && fundingAssets.every((a) => a.coin.amount.isGreaterThan(0))
@@ -56,6 +55,8 @@ export default function AccountFundContent(props: Props) {
     () => walletBalances.find(byDenom(baseAsset.denom))?.amount ?? '0',
     [walletBalances, baseAsset],
   )
+
+  const chainConfig = useChainConfig()
 
   const handleSelectAssetsClick = useCallback(() => {
     useStore.setState({
@@ -129,19 +130,31 @@ export default function AccountFundContent(props: Props) {
           onDebounce={onDebounce}
           isFullPage={props.isFullPage}
         />
-        <EVMAccountSection
-          isConnected={isConnected}
-          isConfirming={isConfirming}
-          handleSelectAssetsClick={handleSelectAssetsClick}
-          handleConnectWallet={handleConnectWallet}
-          handleDisconnectWallet={handleDisconnectWallet}
+        <Button
+          className='w-full mt-4'
+          text='Select Assets'
+          color='tertiary'
+          rightIcon={<Plus />}
+          iconClassName='w-3'
+          onClick={handleSelectAssetsClick}
+          disabled={isConfirming}
         />
-        <DepositCapMessage
-          action='fund'
-          coins={depositCapReachedCoins}
-          className='py-2 pr-4 mt-4'
-          showIcon
-        />
+        {chainConfig.evmAssetSupport && (
+          <>
+            <EVMAccountSection
+              isConnected={isConnected}
+              isConfirming={isConfirming}
+              handleConnectWallet={props.onConnectWallet}
+              handleDisconnectWallet={handleDisconnectWallet}
+            />
+            <DepositCapMessage
+              action='fund'
+              coins={depositCapReachedCoins}
+              className='py-2 pr-4 mt-4'
+              showIcon
+            />
+          </>
+        )}
         <SwitchAutoLend
           className='pt-4 mt-4 border border-transparent border-t-white/10'
           accountId={props.accountId}
