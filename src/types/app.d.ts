@@ -1488,9 +1488,17 @@ interface StakedAstroLpRewards {
   rewards: BNCoin[]
 }
 
-type AssetCampaignId = 'stride' | 'drop'
+type AssetCampaignId = 'stride' | 'drop' | 'lido'
 type AssetCampaignType = 'points_with_multiplier' | 'apy'
 type AssetCampaignPointBase = 'value' | 'amount'
+
+interface AssetCampaignApyApi {
+  url: string
+  isApr: boolean
+  isPercent: boolean
+  apyStructure: string[]
+  denomStructure: string[]
+}
 
 interface AssetCampaign {
   id: AssetCampaignId
@@ -1501,7 +1509,12 @@ interface AssetCampaign {
   detailedIncentiveCopy: string
   tooltip: string
   pointBase?: AssetCampaignPointBase
-  apyApi?: string
+  apyApi?: AssetCampaignApyApi
   apy?: number
   multiplier?: number
+}
+
+interface AssetCampaignApy {
+  denom: string
+  apy: number
 }

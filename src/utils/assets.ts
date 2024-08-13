@@ -120,7 +120,7 @@ export function convertAstroportAssetsResponse(data: AstroportAsset[]): Asset[] 
 
 export function resolveAssetCampaign(
   asset: Asset,
-  campaignAprs: StakingApr[],
+  campaignApys: AssetCampaignApy[],
   chainConfig: ChainConfig,
 ): AssetCampaign | undefined {
   const campaign = chainConfig.campaignAssets?.find(byDenom(asset.denom))
@@ -154,8 +154,8 @@ export function resolveAssetCampaign(
     campaignInfo.multiplier = campaign.multiplier
   }
 
-  if (campaignInfo.type === 'apy' && campaignAprs.length && campaign.campaignDenom) {
-    const apy = (campaignAprs.find(byDenom(campaign.campaignDenom))?.strideYield || 0) * 100
+  if (campaignInfo.type === 'apy' && campaignApys.length && campaign.campaignDenom) {
+    const apy = campaignApys.find(byDenom(campaign.campaignDenom))?.apy || 0
     campaignInfo.incentiveCopy = currentCampaign.incentiveCopy.replaceAll(
       '##APY##',
       apy.toFixed(2) ?? '0',

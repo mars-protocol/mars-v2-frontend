@@ -2,7 +2,7 @@ import getDexAssets from 'api/assets/getDexAssets'
 import getDexPools from 'api/assets/getDexPools'
 import USD from 'constants/USDollar'
 import { PRICE_STALE_TIME } from 'constants/query'
-import useCampaignAprs from 'hooks/campaign/useCampaignAprs'
+import useCampaignApys from 'hooks/campaign/useCampaignApys'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useAssetParams from 'hooks/params/useAssetParams'
 import useStore from 'store'
@@ -16,7 +16,7 @@ import { calculatePoolWeight } from 'utils/pools'
 export default function useAssetsNoOraclePrices() {
   const chainConfig = useChainConfig()
   const { data: assetParams } = useAssetParams()
-  const { data: campaignAprs } = useCampaignAprs()
+  const { data: campaignApys } = useCampaignApys()
   /* PERPS
   const { data: perpsParams } = useAllPerpsParamsSC()
   const fetchedPerpsParams = chainConfig.perps ? perpsParams : ([] as PerpParams[])
@@ -29,7 +29,7 @@ export default function useAssetsNoOraclePrices() {
     */
 
     assetParams && `chains/${chainConfig.id}/noOraclePrices`,
-    async () => fetchSortAndMapAllAssets(chainConfig, assetParams, campaignAprs),
+    async () => fetchSortAndMapAllAssets(chainConfig, assetParams, campaignApys),
     {
       suspense: true,
       revalidateOnFocus: false,
@@ -42,7 +42,7 @@ export default function useAssetsNoOraclePrices() {
 async function fetchSortAndMapAllAssets(
   chainConfig: ChainConfig,
   assetParams: AssetParamsBaseForAddr[],
-  campaignAprs: StakingApr[],
+  campaignApys: AssetCampaignApy[],
   /* PERPS
   perpsParams: PerpParams[], 
   */
@@ -125,7 +125,7 @@ async function fetchSortAndMapAllAssets(
       isDeprecated,
       isTradeEnabled,
       poolInfo: currentAssetPoolInfo,
-      campaign: resolveAssetCampaign(asset, campaignAprs, chainConfig),
+      campaign: resolveAssetCampaign(asset, campaignApys, chainConfig),
     }
   })
 

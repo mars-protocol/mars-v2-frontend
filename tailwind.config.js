@@ -61,8 +61,10 @@ module.exports = {
     'bg-slider-8',
     'gradient-droplets',
     'gradient-stride',
+    'gradient-lido',
     'droplets',
     'stride',
+    'lido',
   ],
   theme: {
     extend: {
@@ -497,6 +499,10 @@ module.exports = {
         '.gradient-stride': {
           background: 'linear-gradient(90deg, #E50571, #FB5DA9)',
         },
+        '.gradient-lido': {
+          background:
+            'linear-gradient(rgb(101, 98, 255) 11.28%, rgb(0, 163, 255) 61.02%, rgb(99, 214, 210) 100%)',
+        },
         '.number': {
           whiteSpace: 'nowrap',
           fontFeatureSettings: '"tnum" on',
@@ -588,6 +594,13 @@ module.exports = {
         },
         '.stride': {
           background: 'linear-gradient(90deg, #E50571, #FB5DA9)',
+          '-webkit-background-clip': 'text',
+          '-webkit-text-fill-color': 'transparent',
+          fontWeight: 600,
+        },
+        '.lido': {
+          background:
+            'linear-gradient(90deg, rgb(101, 98, 255) 11.28%, rgb(0, 163, 255) 61.02%, rgb(99, 214, 210) 100%)',
           '-webkit-background-clip': 'text',
           '-webkit-text-fill-color': 'transparent',
           fontWeight: 600,

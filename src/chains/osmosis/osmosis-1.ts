@@ -66,6 +66,11 @@ const Osmosis1: ChainConfig = {
       campaignId: 'stride',
       campaignDenom: 'DYDX',
     },
+    {
+      denom: 'ibc/2F21E6D4271DE3F561F20A02CD541DAF7405B1E9CB3B9B07E3C2AC7D8A4338A5',
+      campaignId: 'lido',
+      campaignDenom: 'stETH',
+    },
   ],
   deprecated: ['ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858'],
   defaultTradingPair: {

@@ -15,6 +15,7 @@ interface Props {
 }
 export default function Name(props: Props) {
   const { asset } = props
+  console.log(asset.symbol, asset.denom)
   return (
     <div className='flex items-center flex-1 gap-3'>
       <AssetImage asset={asset} className='w-8 h-8' />
