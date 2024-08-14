@@ -45,6 +45,33 @@ const Osmosis1: ChainConfig = {
     'ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4',
     'ibc/4ABBEF4C8926DDDB320AE5188CFD63267ABBCEFC0583E4AE05D6E5AA2401DDAB',
   ],
+  campaignAssets: [
+    {
+      denom: 'ibc/C140AFD542AE77BD7DCC83F13FDD8C5E5BB8C4929785E6EC2F4C636F98F17901',
+      campaignId: 'stride',
+      campaignDenom: 'ATOM',
+    },
+    {
+      denom: 'ibc/D176154B0C63D1F9C6DCFB4F70349EBF2E2B5A87A05902F57A6AE92B863E9AEC',
+      campaignId: 'stride',
+      campaignDenom: 'OSMO',
+    },
+    {
+      denom: 'ibc/698350B8A61D575025F3ED13E9AC9C0F45C89DEFE92F76D5838F1D3C1A7FF7C9',
+      campaignId: 'stride',
+      campaignDenom: 'TIA',
+    },
+    {
+      denom: 'ibc/980E82A9F8E7CA8CD480F4577E73682A6D3855A267D1831485D7EBEF0E7A6C2C',
+      campaignId: 'stride',
+      campaignDenom: 'DYDX',
+    },
+    {
+      denom: 'ibc/2F21E6D4271DE3F561F20A02CD541DAF7405B1E9CB3B9B07E3C2AC7D8A4338A5',
+      campaignId: 'lido',
+      campaignDenom: 'stETH',
+    },
+  ],
   deprecated: ['ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858'],
   defaultTradingPair: {
     buy: 'uosmo',

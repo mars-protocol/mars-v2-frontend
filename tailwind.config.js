@@ -59,6 +59,12 @@ module.exports = {
     'bg-slider-6',
     'bg-slider-7',
     'bg-slider-8',
+    'gradient-droplets',
+    'gradient-stride',
+    'gradient-lido',
+    'droplets',
+    'stride',
+    'lido',
   ],
   theme: {
     extend: {
@@ -296,6 +302,7 @@ module.exports = {
         28: '112px',
         30: '120px',
         35.5: '142px',
+        37: '148px',
         40: '160px',
         50: '200px',
         92.5: '370px',
@@ -487,6 +494,16 @@ module.exports = {
           background:
             'linear-gradient(270deg, hsl(var(--color-active-tab-primary) /0.765) 0%, hsl(var(--color-active-tab-secondary) /0.886) 23.77%, hsl(var(--color-active-tab-tertiary) /0.26) 99.2%)',
         },
+        '.gradient-droplets': {
+          background: 'linear-gradient(90deg, #6039FF, #E8B8FF)',
+        },
+        '.gradient-stride': {
+          background: 'linear-gradient(90deg, #E50571, #FB5DA9)',
+        },
+        '.gradient-lido': {
+          background:
+            'linear-gradient(rgb(101, 98, 255) 11.28%, rgb(0, 163, 255) 61.02%, rgb(99, 214, 210) 100%)',
+        },
         '.number': {
           whiteSpace: 'nowrap',
           fontFeatureSettings: '"tnum" on',
@@ -569,6 +586,25 @@ module.exports = {
           backgroundRepeat: 'no-repeat',
           backgroundSize: '100% auto',
           backgroundPosition: 'top',
+        },
+        '.droplets': {
+          background: 'linear-gradient(90deg, #6039FF, #E8B8FF)',
+          '-webkit-background-clip': 'text',
+          '-webkit-text-fill-color': 'transparent',
+          fontWeight: 600,
+        },
+        '.stride': {
+          background: 'linear-gradient(90deg, #E50571, #FB5DA9)',
+          '-webkit-background-clip': 'text',
+          '-webkit-text-fill-color': 'transparent',
+          fontWeight: 600,
+        },
+        '.lido': {
+          background:
+            'linear-gradient(90deg, rgb(101, 98, 255) 11.28%, rgb(0, 163, 255) 61.02%, rgb(99, 214, 210) 100%)',
+          '-webkit-background-clip': 'text',
+          '-webkit-text-fill-color': 'transparent',
+          fontWeight: 600,
         },
       })
     }),

@@ -1,7 +1,7 @@
 import { subscribeOnStream, unsubscribeFromStream } from 'components/trade/TradeChart/streaming'
 import { pythEndpoints } from 'constants/pyth'
 import {
-  ErrorCallback,
+  DatafeedErrorCallback,
   HistoryCallback,
   LibrarySymbolInfo,
   OnReadyCallback,
@@ -45,7 +45,7 @@ export const datafeed = {
     resolution: ResolutionString,
     periodParams: PeriodParams,
     onHistoryCallback: HistoryCallback,
-    onErrorCallback: ErrorCallback,
+    onErrorCallback: DatafeedErrorCallback,
   ) => {
     const { from, to, firstDataRequest } = periodParams
     fetch(
@@ -114,7 +114,7 @@ export const datafeed = {
   resolveSymbol: (
     symbolName: string,
     onResolve: ResolveCallback,
-    onError: ErrorCallback,
+    onError: DatafeedErrorCallback,
     extension?: SymbolResolveExtension,
   ) => {
     try {
