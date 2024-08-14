@@ -12,6 +12,7 @@ interface Props {
   asset: Asset
   max: BigNumber
   onChange: (amount: BigNumber) => void
+  onDebounce?: () => void
   accountId?: string
   balances?: BNCoin[]
   className?: string

@@ -35,7 +35,7 @@ export default function Asset(props: Props) {
         noMouseEvents
       />
       <AssetImage asset={asset} className='w-6 h-6 ml-4' />
-      <div className='flex flex-wrap ml-2 text-left'>
+      <div className='ml-2 text-left'>
         <Text size='sm' className='mb-0.5 text-white w-full'>
           {asset.symbol}
         </Text>
@@ -70,6 +70,11 @@ export default function Asset(props: Props) {
             </Text>
           )}
         </div>
+        {asset.chainName && (
+          <Text size='xs' className='text-white/60'>
+            {asset.chainName}
+          </Text>
+        )}
       </div>
     </div>
   )
