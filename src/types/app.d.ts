@@ -1520,3 +1520,5 @@ interface AssetCampaignApy {
 }
 
 type KeplrMode = 'core' | 'extension' | 'mobile-web' | 'walletconnect'
+
+type DatafeedErrorCallback = (reason: string) => void
