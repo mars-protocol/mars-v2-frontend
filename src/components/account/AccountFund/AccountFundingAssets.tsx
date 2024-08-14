@@ -9,7 +9,6 @@ interface AccountFundingAssetsProps {
   combinedBalances: WrappedBNCoin[]
   isConfirming: boolean
   updateFundingAssets: (amount: BigNumber, denom: string, chainName?: string) => void
-  onDebounce: () => void
   isFullPage?: boolean
 }
 
@@ -18,7 +17,6 @@ export default function AccountFundingAssets({
   combinedBalances,
   isConfirming,
   updateFundingAssets,
-  onDebounce,
   isFullPage,
 }: AccountFundingAssetsProps) {
   return fundingAssets.map((wrappedCoin, index) => (
@@ -35,7 +33,6 @@ export default function AccountFundingAssets({
         amount={wrappedCoin.coin.amount}
         isConfirming={isConfirming}
         updateFundingAssets={updateFundingAssets}
-        onDebounce={onDebounce}
         chainName={wrappedCoin.chain}
       />
     </div>

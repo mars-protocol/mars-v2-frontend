@@ -104,13 +104,6 @@ export default function AccountFundContent(props: Props) {
     }
   }, [isConnected, setFundingAssets])
 
-  const onDebounce = useCallback(() => {
-    simulateDeposits(
-      isLending ? 'lend' : 'deposit',
-      fundingAssets.map((wrappedCoin) => wrappedCoin.coin),
-    )
-  }, [isLending, fundingAssets, simulateDeposits])
-
   const combinedBalances = useMemo(() => {
     if (!isConnected) {
       return balances
@@ -127,7 +120,6 @@ export default function AccountFundContent(props: Props) {
           combinedBalances={combinedBalances}
           isConfirming={isConfirming}
           updateFundingAssets={updateFundingAssets}
-          onDebounce={onDebounce}
           isFullPage={props.isFullPage}
         />
         <Button

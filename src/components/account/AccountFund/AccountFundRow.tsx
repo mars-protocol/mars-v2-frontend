@@ -12,7 +12,6 @@ interface Props {
   chainName?: string
   isConfirming: boolean
   updateFundingAssets: (amount: BigNumber, denom: string, chainName?: string) => void
-  onDebounce: () => void
 }
 
 export default function AccountFundRow(props: Props) {
@@ -28,7 +27,6 @@ export default function AccountFundRow(props: Props) {
       <TokenInputWithSlider
         asset={asset}
         onChange={(amount) => props.updateFundingAssets(amount, props.denom, chainName)}
-        onDebounce={props.onDebounce}
         amount={props.amount}
         max={BN(balance)}
         balances={props.balances.map((wrappedCoin) => wrappedCoin.coin)}
