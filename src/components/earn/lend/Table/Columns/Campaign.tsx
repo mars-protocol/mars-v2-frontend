@@ -5,6 +5,7 @@ export const CAMPAIGN_META = {
   header: 'Campaign',
   id: 'campaign',
   sortDescFirst: false,
+  meta: { className: 'min-w-40' },
 }
 
 interface Props {

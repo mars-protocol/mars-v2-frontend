@@ -1,5 +1,11 @@
 import { convertAprToApy } from 'utils/parsers'
 
+function processApyData(aprOrApy: number, isApr: boolean, isPercent: boolean): number {
+  if (!isApr && isPercent) return aprOrApy
+  const apy = isApr ? convertAprToApy(aprOrApy, 365) : aprOrApy
+  return isPercent ? apy : apy * 100
+}
+
 export default async function getCampaignApys(
   apyApi: AssetCampaignApyApi,
 ): Promise<AssetCampaignApy[]> {
@@ -13,21 +19,15 @@ export default async function getCampaignApys(
       if (Array.isArray(data[apyStructure[0]])) {
         if (apyStructure[0] === denomStructure[0])
           data[apyStructure[0]].forEach((apyData: any, i: number) => {
-            const apy = isApr
-              ? convertAprToApy(apyData[apyStructure[1]] ?? 0, 365)
-              : (apyData[apyStructure[1]] ?? 0)
             apys.push({
-              apy: isPercent ? apy : apy * 100,
+              apy: processApyData(apyData[apyStructure[1]], isApr, isPercent),
               denom: apyData[denomStructure[1]],
             })
           })
         // TODO: wait for a campaign that has different api structure
       } else {
-        const apy = isApr
-          ? convertAprToApy(data[apyStructure[0]][apyStructure[1]], 365)
-          : data[apyStructure[0]][apyStructure[1]]
         apys.push({
-          apy: isPercent ? apy : apy * 100,
+          apy: processApyData(data[apyStructure[0]][apyStructure[1]], isApr, isPercent),
           denom: data[denomStructure[0]][denomStructure[1]],
         })
       }

@@ -54,27 +54,29 @@ function AssetCampaignCopy(props: Props) {
   if (!asset.campaign) return null
 
   return (
-    <Tooltip
-      type='info'
-      className={classNames('flex items-center gap-2', className)}
-      content={
-        <Text size='xs' className='w-[320px]'>
-          {asset.campaign.tooltip}
-        </Text>
-      }
-    >
-      <>
-        {withLogo ? (
-          <div className={iconClasses}>
-            <CampaignLogo campaignId={asset.campaign.id} />
-          </div>
-        ) : (
-          <div className='w-1 h-1 ml-2 rounded-full bg-white/50' />
-        )}
-        <Text size={size} className={textClassName ? textClassName : asset.campaign.classNames}>
-          {incentiveCopy}
-        </Text>
-      </>
-    </Tooltip>
+    <div className='inline-block'>
+      <Tooltip
+        type='info'
+        className={classNames('flex items-center gap-2', className)}
+        content={
+          <Text size='xs' className='w-[320px]'>
+            {asset.campaign.tooltip}
+          </Text>
+        }
+      >
+        <>
+          {withLogo ? (
+            <div className={iconClasses}>
+              <CampaignLogo campaignId={asset.campaign.id} />
+            </div>
+          ) : (
+            <div className='w-1 h-1 ml-2 rounded-full bg-white/50' />
+          )}
+          <Text size={size} className={textClassName ? textClassName : asset.campaign.classNames}>
+            {incentiveCopy}
+          </Text>
+        </>
+      </Tooltip>
+    </div>
   )
 }

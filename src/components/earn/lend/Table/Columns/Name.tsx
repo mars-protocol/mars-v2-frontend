@@ -7,7 +7,7 @@ export const NAME_META = {
   accessorKey: 'asset.symbol',
   header: 'Asset',
   id: 'symbol',
-  meta: { className: 'min-w-30' },
+  meta: { className: 'min-w-60 w-60' },
 }
 interface Props {
   asset: Asset
