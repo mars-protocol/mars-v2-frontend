@@ -260,6 +260,7 @@ interface ChainConfig {
   perps: boolean
   farm: boolean
   anyAsset: boolean
+  evmAssetSupport: boolean
   campaignAssets?: AssetCampaignInfo[]
 }
 
@@ -268,7 +269,6 @@ interface AssetCampaignInfo {
   campaignId: AssetCampaignId
   multiplier?: number
   campaignDenom?: string
-  evmAssetSupport: boolean
 }
 
 interface ContractClients {
