@@ -1,7 +1,6 @@
 import { subscribeOnStream, unsubscribeFromStream } from 'components/trade/TradeChart/streaming'
 import { pythEndpoints } from 'constants/pyth'
 import {
-  DatafeedErrorCallback,
   HistoryCallback,
   LibrarySymbolInfo,
   OnReadyCallback,

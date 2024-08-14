@@ -33,7 +33,7 @@ export default function AccountFundRow(props: Props) {
         warningMessages={[]}
       />
       {asset.campaign && (
-        <div className='w-full p-2 mt-4 border rounded border-white/20'>
+        <div className='flex justify-center w-full p-2 mt-4 border rounded border-white/20'>
           <AssetCampaignCopy
             asset={asset}
             size='sm'
