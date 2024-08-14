@@ -14,6 +14,7 @@ interface Props {
   textClassName?: string
   withLogo?: boolean
   amount?: BigNumber
+  noDot?: boolean
 }
 
 export default function AssetCampaignCopyControler(props: Props) {
@@ -24,7 +25,7 @@ export default function AssetCampaignCopyControler(props: Props) {
 }
 
 function AssetCampaignCopy(props: Props) {
-  const { asset, className, amount, withLogo, size, textClassName } = props
+  const { asset, className, amount, withLogo, size, textClassName, noDot } = props
   const { data: assets } = useAssets()
 
   const incentiveCopy = useMemo(() => {
@@ -70,7 +71,9 @@ function AssetCampaignCopy(props: Props) {
               <CampaignLogo campaignId={asset.campaign.id} />
             </div>
           ) : (
-            <div className='w-1 h-1 ml-2 rounded-full bg-white/50' />
+            <div
+              className={classNames('w-1 h-1 ml-2 rounded-full bg-white/50', noDot && 'hidden')}
+            />
           )}
           <Text size={size} className={textClassName ? textClassName : asset.campaign.classNames}>
             {incentiveCopy}

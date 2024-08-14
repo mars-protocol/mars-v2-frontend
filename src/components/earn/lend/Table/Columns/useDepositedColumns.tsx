@@ -1,4 +1,4 @@
-import { ColumnDef } from '@tanstack/react-table'
+import { ColumnDef, Row } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
 import Apy, { APY_META } from 'components/earn/lend/Table/Columns/Apy'
@@ -23,15 +23,25 @@ interface Props {
 
 export default function useDepositedColumns(props: Props) {
   return useMemo<ColumnDef<LendingMarketTableData>[]>(() => {
+    const adjustedNameMeta = props.v1
+      ? { ...NAME_META, meta: { className: 'min-w-37' } }
+      : NAME_META
+
     return [
       {
-        ...NAME_META,
+        ...adjustedNameMeta,
         cell: ({ row }) => <Name asset={row.original.asset} v1={props.v1} />,
       },
-      {
-        ...CAMPAIGN_META,
-        cell: ({ row }) => <Campaign asset={row.original.asset} />,
-      },
+      ...(!props.v1
+        ? [
+            {
+              ...CAMPAIGN_META,
+              cell: ({ row }: { row: Row<LendingMarketTableData> }) => (
+                <Campaign asset={row.original.asset} />
+              ),
+            },
+          ]
+        : []),
       {
         ...DEPOSIT_VALUE_META,
         cell: ({ row }) => (
