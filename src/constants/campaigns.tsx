@@ -24,7 +24,7 @@ export const CAMPAIGNS: AssetCampaign[] = [
     incentiveCopy: 'Earn ##MULTIPLIER##x Droplets',
     classNames: 'droplets',
     bgClassNames: 'gradient-droplets',
-    detailedIncentiveCopy: 'Earn ##POINTS## Droplets Daily (##MULTIPLIER##x)',
+    detailedIncentiveCopy: 'Earns ##POINTS## Droplets daily',
     tooltip:
       "To celebrate Drop Protocol's launch, they're running a campaign to earn Droplets. Droplets earned are based on the value of your position.",
   },
