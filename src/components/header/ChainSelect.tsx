@@ -41,9 +41,9 @@ const v1Outposts: V1Outpost[] = [
   {
     chainId: ChainInfoID.Neutron1,
     name: 'Neutron',
-    url: 'https://neutron.marsprotocol.io',
+    url: '/v1',
     network: NETWORK.MAINNET,
-    target: '_blank',
+    target: '_self',
   },
   {
     chainId: ChainInfoID.Pion1,
