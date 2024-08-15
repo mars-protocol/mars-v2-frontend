@@ -10,6 +10,7 @@ import useAccountId from 'hooks/accounts/useAccountId'
 import useStore from 'store'
 import { useWeb3WalletConnection } from 'hooks/wallet/useWeb3WalletConnections'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 interface AccountFundFullPageProps {
   hasExistingAccount?: boolean
@@ -18,6 +19,7 @@ interface AccountFundFullPageProps {
 export default function AccountFundFullPage(props: AccountFundFullPageProps) {
   const address = useStore((s) => s.address)
   const accountId = useAccountId()
+  const chainConfig = useChainConfig()
 
   const { data: accounts, isLoading } = useAccounts('default', address)
   const currentAccount = useCurrentAccount()
@@ -62,6 +64,7 @@ export default function AccountFundFullPage(props: AccountFundFullPageProps) {
             isFullPage
             onConnectWallet={handleConnectWallet}
             hasExistingAccount={props.hasExistingAccount}
+            chainConfig={chainConfig}
           />
         </Card>
       )}

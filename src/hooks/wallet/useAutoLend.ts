@@ -11,6 +11,7 @@ export default function useAutoLend(): {
   isAutoLendEnabledForCurrentAccount: boolean
   setAutoLendOnAllAccounts: (lendAssets: boolean) => void
   enableAutoLendAccountId: (accountId: string) => void
+  enableAutoLendForNewAccount: (accountId: string) => void
 } {
   const address = useStore((s) => s.address)
   const { data: accounts } = useAccounts('default', address, false)
@@ -57,6 +58,15 @@ export default function useAutoLend(): {
     [autoLendEnabledAccountIds, setAutoLendEnabledAccountIds],
   )
 
+  const enableAutoLendForNewAccount = useCallback(
+    (accountId: string) => {
+      if (isAutoLendEnabledForCurrentAccount) {
+        enableAutoLend(accountId)
+      }
+    },
+    [isAutoLendEnabledForCurrentAccount, enableAutoLend],
+  )
+
   return {
     autoLendEnabledAccountIds,
     enableAutoLend,
@@ -64,5 +74,6 @@ export default function useAutoLend(): {
     isAutoLendEnabledForCurrentAccount,
     setAutoLendOnAllAccounts,
     enableAutoLendAccountId,
+    enableAutoLendForNewAccount,
   }
 }

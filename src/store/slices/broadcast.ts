@@ -21,12 +21,7 @@ import { ExecuteMsg as IncentivesExecuteMsg } from 'types/generated/mars-incenti
 import { ExecuteMsg as RedBankExecuteMsg } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHealthTypes.types'
 import { byDenom, bySymbol } from 'utils/array'
-import {
-  generateCreditAccountId,
-  generateErrorMessage,
-  getSingleValueFromBroadcastResult,
-  sortFunds,
-} from 'utils/broadcast'
+import { generateErrorMessage, getSingleValueFromBroadcastResult, sortFunds } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import checkPythUpdateEnabled from 'utils/checkPythUpdateEnabled'
 import { defaultFee } from 'utils/constants'
@@ -348,10 +343,10 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
-    deposit: async (options: { accountId: string; coins: BNCoin[]; lend: boolean }) => {
+    deposit: async (options: { accountId?: string; coins: BNCoin[]; lend: boolean }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
-          account_id: options.accountId,
+          ...(options.accountId ? { account_id: options.accountId } : {}),
           actions: options.coins.map((coin) => ({
             deposit: coin.toCoin(),
           })),
@@ -397,57 +392,6 @@ export default function createBroadcastSlice(
       get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
-    createAndFundAccount: async (options: {
-      coins: BNCoin[]
-      lend: boolean
-      kind?: AccountKind
-    }) => {
-      const kind = options.kind || 'default'
-      const accountId = generateCreditAccountId()
-
-      const createMsg: CreditManagerExecuteMsg = {
-        create_credit_account_v2: {
-          kind,
-          account_id: accountId,
-        },
-      }
-
-      const updateMsg: CreditManagerExecuteMsg = {
-        update_credit_account: {
-          account_id: accountId,
-          actions: options.coins.map((coin) => ({
-            deposit: coin.toCoin(),
-          })),
-        },
-      }
-
-      if (options.lend) {
-        updateMsg.update_credit_account.actions.push(
-          ...options.coins
-            .filter((coin) => get().assets.find(byDenom(coin.denom))?.isAutoLendEnabled)
-            .map((coin) => ({ lend: coin.toActionCoin() })),
-        )
-      }
-
-      const funds = options.coins.map((coin) => coin.toCoin())
-      const cmContract = get().chainConfig.contracts.creditManager
-      const response = get().executeMsg({
-        messages: [
-          generateExecutionMessage(get().address, cmContract, createMsg, []),
-          generateExecutionMessage(get().address, cmContract, updateMsg, sortFunds(funds)),
-        ],
-      })
-
-      get().handleTransaction({ response })
-
-      return response.then((response) => {
-        if (response.result) {
-          return accountId
-        }
-        return null
-      })
-    },
-
     withdrawFromVaults: async (options: {
       accountId: string
       vaults: DepositedVault[]
