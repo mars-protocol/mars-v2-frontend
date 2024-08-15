@@ -7,6 +7,7 @@ import { Logo } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import SwitchWithText from 'components/common/Switch/SwitchWithText'
 import Text from 'components/common/Text'
+import CampaignRewards from 'components/header/RewardsCenter//CampaignRewards'
 import RewardsByPosition from 'components/header/RewardsCenter/RewardsByPosition'
 import RewardsByToken from 'components/header/RewardsCenter/RewardsByToken'
 import { BN_ZERO } from 'constants/math'
@@ -138,6 +139,7 @@ export default function RewardsCenter(props: Props) {
               Unclaimed Rewards
             </Text>
           </div>
+          <CampaignRewards />
           <RewardsByToken
             rewards={rewards}
             assets={assets}

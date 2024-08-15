@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import Modal from 'components/Modals/Modal'
 import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
@@ -9,11 +9,13 @@ import Divider from 'components/common/Divider'
 import { ArrowRight } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
+import AssetCampaignCopy from 'components/common/assets/AssetCampaignCopy'
 import AssetImage from 'components/common/assets/AssetImage'
 import { BN_ZERO } from 'constants/math'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { BN } from 'utils/helpers'
+import { BN, mergeBNCoinArrays } from 'utils/helpers'
 
 interface Props {
   account: Account
@@ -22,6 +24,7 @@ interface Props {
   coinBalances: BNCoin[]
   actionButtonText: string
   contentHeader?: JSX.Element
+  checkForCampaign?: boolean
   onClose: () => void
   onChange: (value: BigNumber) => void
   onAction: (value: BigNumber, isMax: boolean) => void
@@ -34,12 +37,14 @@ export default function AssetAmountSelectActionModal(props: Props) {
     title,
     coinBalances,
     actionButtonText,
+    checkForCampaign,
     contentHeader = null,
     onClose,
     onChange,
     onAction,
   } = props
   const [amount, setAmount] = useState(BN_ZERO)
+  const updatedAccount = useStore((s) => s.updatedAccount)
   const maxAmount = BN(coinBalances.find(byDenom(asset.denom))?.amount ?? 0)
   const handleAmountChange = useCallback(
     (value: BigNumber) => {
@@ -47,6 +52,19 @@ export default function AssetAmountSelectActionModal(props: Props) {
       onChange(value)
     },
     [onChange],
+  )
+
+  const updatedAmount = useMemo(() => {
+    const deposits = updatedAccount?.deposits.find(byDenom(asset.denom))
+    const lends = updatedAccount?.lends.find(byDenom(asset.denom))
+    const position = mergeBNCoinArrays(deposits ? [deposits] : [], lends ? [lends] : [])
+
+    return position[0]?.amount ?? BN_ZERO
+  }, [asset.denom, updatedAccount])
+
+  const showCampaignHeader = useMemo(
+    () => asset.campaign && asset.campaign.type === 'points_with_multiplier' && checkForCampaign,
+    [asset.campaign, checkForCampaign],
   )
 
   const handleActionClick = useCallback(() => {
@@ -66,6 +84,22 @@ export default function AssetAmountSelectActionModal(props: Props) {
       contentClassName='flex flex-col min-h-[400px]'
     >
       {contentHeader}
+      {showCampaignHeader && (
+        <div
+          className={classNames(
+            'w-full p-2 flex items-center justify-center',
+            asset.campaign?.bgClassNames ?? 'bg-white/50',
+          )}
+        >
+          <AssetCampaignCopy
+            asset={asset}
+            textClassName='text-white'
+            size='sm'
+            amount={updatedAmount}
+            withLogo
+          />
+        </div>
+      )}
       <div
         className={classNames(
           'flex items-start flex-1 p-2 gap-4 flex-wrap',

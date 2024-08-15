@@ -63,6 +63,7 @@ export default function Withdraw(props: Props) {
       onClose={close}
       onAction={handleClick}
       onChange={handleAmountChange}
+      checkForCampaign
     />
   )
 }
