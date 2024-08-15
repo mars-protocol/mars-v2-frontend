@@ -29,7 +29,6 @@ interface Props {
   isFullPage?: boolean
   onConnectWallet: () => Promise<void>
   hasExistingAccount?: boolean
-  chainConfig: ChainConfig
 }
 
 export default function AccountFundContent(props: Props) {
@@ -85,7 +84,7 @@ export default function AccountFundContent(props: Props) {
     } else {
       result = await deposit(depositObject)
       if (result) {
-        const accountIds = await getAccountIds(props.chainConfig, props.address)
+        const accountIds = await getAccountIds(chainConfig, props.address)
         if (accountIds.length > 0) {
           const latestAccountId = accountIds[accountIds.length - 1].id
           enableAutoLendForNewAccount(latestAccountId)
@@ -107,7 +106,7 @@ export default function AccountFundContent(props: Props) {
   }, [
     props.accountId,
     props.address,
-    props.chainConfig,
+    chainConfig,
     props.isFullPage,
     deposit,
     fundingAssets,
