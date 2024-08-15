@@ -73,9 +73,11 @@ export default function AccountFundContent(props: Props) {
   const handleClick = useCallback(async () => {
     if (!props.accountId) return
 
+    const nonZeroFundingAssets = fundingAssets.filter((asset) => asset.coin.amount.isGreaterThan(0))
+
     const depositObject = {
       accountId: props.accountId,
-      coins: fundingAssets.map((wrappedCoin) => wrappedCoin.coin),
+      coins: nonZeroFundingAssets.map((wrappedCoin) => wrappedCoin.coin),
       lend: isLending,
     }
 
