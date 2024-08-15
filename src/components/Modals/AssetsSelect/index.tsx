@@ -16,7 +16,6 @@ interface Props {
   onChangeSelected: (selected: string[]) => void
   selectedDenoms: string[]
   isBorrow?: boolean
-  showChainColumn?: boolean
 }
 
 export default function AssetsSelect(props: Props) {
