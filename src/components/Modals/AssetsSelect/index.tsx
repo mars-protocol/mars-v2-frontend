@@ -19,7 +19,6 @@ interface Props {
   selectedDenoms: string[]
   isBorrow?: boolean
   nonCollateralTableAssets?: Asset[]
-  showChainColumn?: boolean
 }
 
 export default function AssetsSelect({
