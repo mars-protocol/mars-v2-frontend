@@ -125,8 +125,6 @@ async function fetchSortAndMapAllAssets(
         !currentAssetPoolInfo &&
         (currentAssetParams?.red_bank.deposit_enabled || !currentAssetParams)
 
-    console.log(asset.symbol, asset.denom)
-
     return {
       ...asset,
       isPoolToken: !!currentAssetPoolInfo,
