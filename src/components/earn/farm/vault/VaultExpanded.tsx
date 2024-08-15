@@ -80,8 +80,8 @@ export default function VaultExpanded(props: Props) {
         onClick={withdrawHandler}
         color='tertiary'
         showProgressIndicator={isConfirming}
-        disabled={true}
         leftIcon={<LockLocked />}
+        disabled
       >
         {`Withdraw in ${moment(vault?.unlocksAt).fromNow(true)}`}
       </Button>

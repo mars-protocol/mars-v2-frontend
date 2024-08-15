@@ -34,6 +34,8 @@ export const CAMPAIGNS: AssetCampaign[] = [
     detailedIncentiveCopy: '##POINTS## Droplets daily (##MULTIPLIER##x)',
     tooltip:
       'Droplets earned are based on the value of your position. Some positions may have a multiplier range (e.g.: 1-3x). The higher multiplier will be unlocked as soon as you borrow against the position.',
+    totalPointsTooltip:
+      'Total Droplets earned are updated every 24 hours and are counted for the entire wallet.',
   },
   {
     id: 'lido',

@@ -36,7 +36,7 @@ function AstroLpModal(props: Props) {
   const ContentComponent = useCallback(() => {
     switch (action) {
       case 'deposit':
-        return <FarmModalContent farm={astroLp} account={currentAccount} isAstroLp={true} />
+        return <FarmModalContent farm={astroLp} account={currentAccount} isAstroLp />
       case 'withdraw':
         return <AstroLpWithdraw account={currentAccount} astroLp={astroLp as DepositedAstroLp} />
       default:
@@ -59,7 +59,7 @@ function AstroLpModal(props: Props) {
       headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col'
     >
-      <FarmModalContentHeader farm={astroLp} account={currentAccount} isAstroLp={true} />
+      <FarmModalContentHeader farm={astroLp} account={currentAccount} isAstroLp />
       <ContentComponent />
     </Modal>
   )

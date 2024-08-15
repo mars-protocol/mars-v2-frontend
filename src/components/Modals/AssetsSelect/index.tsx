@@ -70,12 +70,12 @@ export default function AssetsSelect(props: Props) {
   return (
     <Table
       title='Assets'
-      hideCard={true}
       columns={columns}
       data={tableData}
       initialSorting={[{ id: isBorrow ? 'asset.borrowRate' : 'value', desc: !isBorrow }]}
       setRowSelection={setSelected}
       selectedRows={selected}
+      hideCard
     />
   )
 }
