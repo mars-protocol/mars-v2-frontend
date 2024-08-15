@@ -13,6 +13,10 @@ export class WrappedBNCoin {
     return new WrappedBNCoin(coin, chain)
   }
 
+  static fromDenomAndBigNumber(denom: string, amount: BigNumber, chain?: string): WrappedBNCoin {
+    return new WrappedBNCoin(BNCoin.fromDenomAndBigNumber(denom, amount), chain)
+  }
+
   static fromCoin(coin: Coin, chain?: string): WrappedBNCoin {
     return new WrappedBNCoin(BNCoin.fromCoin(coin), chain)
   }
