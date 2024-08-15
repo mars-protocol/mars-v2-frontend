@@ -27,10 +27,12 @@ interface Props {
   accountId: string
   isFullPage?: boolean
   onConnectWallet: () => Promise<void>
+  hasExistingAccount?: boolean
 }
 
 export default function AccountFundContent(props: Props) {
   const deposit = useStore((s) => s.deposit)
+  const createAndFundAccount = useStore((s) => s.createAndFundAccount)
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
   const [isConfirming, setIsConfirming] = useState(false)
   const { autoLendEnabledAccountIds } = useAutoLend()
@@ -69,17 +71,19 @@ export default function AccountFundContent(props: Props) {
   }, [selectedDenoms])
 
   const handleClick = useCallback(async () => {
-    if (!props.accountId) return
-
     const depositObject = {
-      accountId: props.accountId,
       coins: fundingAssets.map((wrappedCoin) => wrappedCoin.coin),
       lend: isLending,
     }
 
     if (props.isFullPage) {
       setIsConfirming(true)
-      const result = await deposit(depositObject)
+      let result
+      if (props.hasExistingAccount) {
+        result = await deposit({ ...depositObject, accountId: props.accountId })
+      } else {
+        result = await createAndFundAccount(depositObject)
+      }
       setIsConfirming(false)
       if (result)
         useStore.setState({
@@ -87,10 +91,22 @@ export default function AccountFundContent(props: Props) {
           focusComponent: null,
         })
     } else {
-      deposit(depositObject)
+      if (props.hasExistingAccount) {
+        deposit({ ...depositObject, accountId: props.accountId })
+      } else {
+        createAndFundAccount(depositObject)
+      }
       useStore.setState({ fundAndWithdrawModal: null, walletAssetsModal: null })
     }
-  }, [props.accountId, deposit, fundingAssets, isLending, props.isFullPage])
+  }, [
+    props.hasExistingAccount,
+    props.accountId,
+    deposit,
+    createAndFundAccount,
+    fundingAssets,
+    isLending,
+    props.isFullPage,
+  ])
 
   useEffect(() => {
     if (BN(baseBalance).isZero()) {
