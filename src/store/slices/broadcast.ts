@@ -29,6 +29,13 @@ import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
 
+function generateCreditAccountId(): string {
+  const length = Math.floor(Math.random() * (15 - 4 + 1)) + 4
+  return Math.random()
+    .toString(36)
+    .substring(2, 2 + length)
+}
+
 function generateExecutionMessage(
   sender: string | undefined = '',
   contract: string,
@@ -392,6 +399,56 @@ export default function createBroadcastSlice(
 
       get().handleTransaction({ response })
       return response.then((response) => !!response.result)
+    },
+    createAndFundAccount: async (options: {
+      coins: BNCoin[]
+      lend: boolean
+      kind?: AccountKind
+    }) => {
+      const kind = options.kind || 'default'
+      const accountId = generateCreditAccountId()
+
+      const createMsg: CreditManagerExecuteMsg = {
+        create_credit_account_v2: {
+          kind,
+          account_id: accountId,
+        },
+      }
+
+      const updateMsg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: accountId,
+          actions: options.coins.map((coin) => ({
+            deposit: coin.toCoin(),
+          })),
+        },
+      }
+
+      if (options.lend) {
+        updateMsg.update_credit_account.actions.push(
+          ...options.coins
+            .filter((coin) => get().assets.find(byDenom(coin.denom))?.isAutoLendEnabled)
+            .map((coin) => ({ lend: coin.toActionCoin() })),
+        )
+      }
+
+      const funds = options.coins.map((coin) => coin.toCoin())
+      const cmContract = get().chainConfig.contracts.creditManager
+      const response = get().executeMsg({
+        messages: [
+          generateExecutionMessage(get().address, cmContract, createMsg, []),
+          generateExecutionMessage(get().address, cmContract, updateMsg, sortFunds(funds)),
+        ],
+      })
+
+      get().handleTransaction({ response })
+
+      return response.then((response) => {
+        if (response.result) {
+          return accountId
+        }
+        return null
+      })
     },
 
     withdrawFromVaults: async (options: {
