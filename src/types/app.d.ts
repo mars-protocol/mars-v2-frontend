@@ -266,7 +266,8 @@ interface ChainConfig {
 interface AssetCampaignInfo {
   denom: string
   campaignId: AssetCampaignId
-  multiplier?: number
+  baseMultiplier?: number
+  collateralMultiplier?: number
   campaignDenom?: string
 }
 
@@ -1511,7 +1512,8 @@ interface AssetCampaign {
   pointBase?: AssetCampaignPointBase
   apyApi?: AssetCampaignApyApi
   apy?: number
-  multiplier?: number
+  baseMultiplier?: number
+  collateralMultiplier?: number
 }
 
 interface AssetCampaignApy {

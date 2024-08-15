@@ -24,9 +24,9 @@ export const CAMPAIGNS: AssetCampaign[] = [
     incentiveCopy: 'Earn ##MULTIPLIER##x Droplets',
     classNames: 'droplets',
     bgClassNames: 'gradient-droplets',
-    detailedIncentiveCopy: 'Earns ##POINTS## Droplets daily',
+    detailedIncentiveCopy: '##POINTS## Droplets daily (##MULTIPLIER##x)',
     tooltip:
-      "To celebrate Drop Protocol's launch, they're running a campaign to earn Droplets. Droplets earned are based on the value of your position.",
+      'Droplets earned are based on the value of your position. Some positions may have a multiplier range (e.g.: 1-3x). The higher multiplier will be unlocked as soon as you borrow against the position.',
   },
   {
     id: 'lido',
