@@ -16,6 +16,7 @@ export const NAME_META = {
   accessorKey: 'name',
   meta: { className: 'min-w-50' },
 }
+
 interface Props {
   vault: Vault | DepositedVault | AstroLp | DepositedAstroLp
 }

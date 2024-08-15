@@ -31,7 +31,7 @@ export default function ActiveVaultsTable(props: Props) {
       title='Deposited Vaults'
       columns={props.columns}
       data={props.data}
-      initialSorting={[{ id: 'name', desc: true }]}
+      initialSorting={[{ id: 'name', desc: false }]}
     />
   )
 }

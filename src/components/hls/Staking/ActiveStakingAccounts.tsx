@@ -18,7 +18,7 @@ export default function ActiveStakingAccounts() {
       title={title}
       columns={columns}
       data={hlsStakingAccounts}
-      initialSorting={[{ id: NAME_META.id, desc: true }]}
+      initialSorting={[{ id: NAME_META.id, desc: false }]}
     />
   )
 }
