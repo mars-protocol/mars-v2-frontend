@@ -64,7 +64,6 @@ export default function AccountFundFullPage(props: AccountFundFullPageProps) {
             isFullPage
             onConnectWallet={handleConnectWallet}
             hasExistingAccount={props.hasExistingAccount}
-            chainConfig={chainConfig}
           />
         </Card>
       )}
