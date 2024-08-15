@@ -1,6 +1,7 @@
 import useAccounts from 'hooks/accounts/useAccounts'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAutoLendEnabledAccountIds from 'hooks/localStorage/useAutoLendEnabledAccountIds'
+import { useCallback } from 'react'
 import useStore from 'store'
 
 export default function useAutoLend(): {
@@ -10,17 +11,21 @@ export default function useAutoLend(): {
   isAutoLendEnabledForCurrentAccount: boolean
   setAutoLendOnAllAccounts: (lendAssets: boolean) => void
   enableAutoLendAccountId: (accountId: string) => void
+  enableAutoLendForNewAccount: (accountId: string) => void
 } {
   const address = useStore((s) => s.address)
   const { data: accounts } = useAccounts('default', address, false)
   const currentAccount = useCurrentAccount()
   const [autoLendEnabledAccountIds, setAutoLendEnabledAccountIds] = useAutoLendEnabledAccountIds()
 
-  const enableAutoLend = (accountId: string) => {
-    const setOfAccountIds = new Set(autoLendEnabledAccountIds)
-    setOfAccountIds.add(accountId)
-    setAutoLendEnabledAccountIds(Array.from(setOfAccountIds))
-  }
+  const enableAutoLend = useCallback(
+    (accountId: string) => {
+      const setOfAccountIds = new Set(autoLendEnabledAccountIds)
+      setOfAccountIds.add(accountId)
+      setAutoLendEnabledAccountIds(Array.from(setOfAccountIds))
+    },
+    [autoLendEnabledAccountIds, setAutoLendEnabledAccountIds],
+  )
 
   const disableAutoLend = (accountId: string) => {
     const setOfAccountIds = new Set(autoLendEnabledAccountIds)
@@ -44,6 +49,15 @@ export default function useAutoLend(): {
     setAutoLendEnabledAccountIds(Array.from(setOfAccountIds))
   }
 
+  const enableAutoLendForNewAccount = useCallback(
+    (accountId: string) => {
+      if (isAutoLendEnabledForCurrentAccount) {
+        enableAutoLend(accountId)
+      }
+    },
+    [isAutoLendEnabledForCurrentAccount, enableAutoLend],
+  )
+
   return {
     autoLendEnabledAccountIds,
     enableAutoLend,
@@ -51,5 +65,6 @@ export default function useAutoLend(): {
     isAutoLendEnabledForCurrentAccount,
     setAutoLendOnAllAccounts,
     enableAutoLendAccountId,
+    enableAutoLendForNewAccount,
   }
 }

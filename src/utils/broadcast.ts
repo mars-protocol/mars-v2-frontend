@@ -608,10 +608,3 @@ export function sortFunds(funds: Coin[]) {
   // Transaction on Osmosis fail, if uosmo is not at the last position of the funds array
   return funds.sort((a, b) => a.denom.localeCompare(b.denom))
 }
-
-export function generateCreditAccountId(): string {
-  const length = Math.floor(Math.random() * (15 - 4 + 1)) + 4
-  return Math.random()
-    .toString(36)
-    .substring(2, 2 + length)
-}
