@@ -31,11 +31,19 @@ export default function AccountFundFullPage(props: AccountFundFullPageProps) {
     if (accountId && selectedAccountId !== accountId) setSelectedAccountId(accountId)
   }, [accounts, selectedAccountId, accountId, currentAccount])
 
-  if (!selectedAccountId || !address) return null
-
   const title = props.hasExistingAccount
-    ? `Fund Credit Account #${selectedAccountId}`
-    : 'Fund a Credit Account'
+    ? `Fund Credit Account ${selectedAccountId ? `#${selectedAccountId}` : ''}`
+    : 'Create and Fund a Credit Account'
+
+  if (!address) {
+    return (
+      <FullOverlayContent
+        title='Connect Your Wallet'
+        copy='Please connect your wallet to create and fund your account.'
+        docs='fund'
+      />
+    )
+  }
 
   return (
     <FullOverlayContent
@@ -50,7 +58,7 @@ export default function AccountFundFullPage(props: AccountFundFullPageProps) {
           <AccountFundContent
             account={currentAccount}
             address={address}
-            accountId={selectedAccountId}
+            accountId={selectedAccountId ?? ''}
             isFullPage
             onConnectWallet={handleConnectWallet}
             hasExistingAccount={props.hasExistingAccount}

@@ -45,8 +45,7 @@ export default function AccountMenuContent(props: Props) {
   const [isAutoLendEnabled] = useEnableAutoLendGlobal()
 
   const hasCreditAccounts = !!accountIds?.length
-  const isAccountSelected =
-    hasCreditAccounts && accountId && isNumber(accountId) && accountIds.includes(accountId)
+  const isAccountSelected = hasCreditAccounts && accountId && accountIds.includes(accountId)
 
   const performCreateAccount = useCallback(async () => {
     setShowMenu(false)

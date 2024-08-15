@@ -23,7 +23,7 @@ import Button from 'components/common/Button'
 
 interface Props {
   account?: Account
-  address: string
+  address?: string
   accountId: string
   isFullPage?: boolean
   onConnectWallet: () => Promise<void>
