@@ -19,20 +19,18 @@ import { ExecuteMsg as IncentivesExecuteMsg } from 'types/generated/mars-incenti
 import { ExecuteMsg as RedBankExecuteMsg } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHealthTypes.types'
 import { byDenom, bySymbol } from 'utils/array'
-import { generateErrorMessage, getSingleValueFromBroadcastResult, sortFunds } from 'utils/broadcast'
+import {
+  generateCreditAccountId,
+  generateErrorMessage,
+  getSingleValueFromBroadcastResult,
+  sortFunds,
+} from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import checkPythUpdateEnabled from 'utils/checkPythUpdateEnabled'
 import { defaultFee } from 'utils/constants'
 import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
-
-function generateCreditAccountId(): string {
-  const length = Math.floor(Math.random() * (15 - 4 + 1)) + 4
-  return Math.random()
-    .toString(36)
-    .substring(2, 2 + length)
-}
 
 function generateExecutionMessage(
   sender: string | undefined = '',
