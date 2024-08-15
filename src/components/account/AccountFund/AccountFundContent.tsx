@@ -20,6 +20,7 @@ import EVMAccountSection from './EVMAccountSection'
 import AccountFundingAssets from './AccountFundingAssets'
 import { ArrowRight, Plus } from 'components/common/Icons'
 import Button from 'components/common/Button'
+import getAccountIds from 'api/wallets/getAccountIds'
 
 interface Props {
   account?: Account
@@ -28,17 +29,17 @@ interface Props {
   isFullPage?: boolean
   onConnectWallet: () => Promise<void>
   hasExistingAccount?: boolean
+  chainConfig: ChainConfig
 }
 
 export default function AccountFundContent(props: Props) {
   const deposit = useStore((s) => s.deposit)
-  const createAndFundAccount = useStore((s) => s.createAndFundAccount)
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
   const [isConfirming, setIsConfirming] = useState(false)
   const { autoLendEnabledAccountIds } = useAutoLend()
-  const isLending = autoLendEnabledAccountIds.includes(props.accountId)
   const { data: walletBalances } = useWalletBalances(props.address)
   const { simulateDeposits } = useUpdatedAccount(props.account)
+  const [isLending, setIsLending] = useState(autoLendEnabledAccountIds.includes(props.accountId))
   const baseAsset = useBaseAsset()
 
   const { usdcBalances } = useUSDCBalances(walletBalances)
@@ -48,6 +49,7 @@ export default function AccountFundContent(props: Props) {
   const { fundingAssets, updateFundingAssets, setFundingAssets } = useFundingAssets(selectedDenoms)
   const { depositCapReachedCoins } = useDepositCapCalculations(fundingAssets)
   const { isConnected, handleDisconnectWallet } = useWeb3WalletConnection()
+  const { enableAutoLendForNewAccount } = useAutoLend()
   const hasAssetSelected = fundingAssets.length > 0
   const hasFundingAssets =
     fundingAssets.length > 0 && fundingAssets.every((a) => a.coin.amount.isGreaterThan(0))
@@ -76,36 +78,41 @@ export default function AccountFundContent(props: Props) {
       lend: isLending,
     }
 
-    if (props.isFullPage) {
-      setIsConfirming(true)
-      let result
-      if (props.hasExistingAccount) {
-        result = await deposit({ ...depositObject, accountId: props.accountId })
-      } else {
-        result = await createAndFundAccount(depositObject)
+    setIsConfirming(true)
+    let result
+    if (props.accountId) {
+      result = await deposit({ ...depositObject, accountId: props.accountId })
+    } else {
+      result = await deposit(depositObject)
+      if (result) {
+        const accountIds = await getAccountIds(props.chainConfig, props.address)
+        if (accountIds.length > 0) {
+          const latestAccountId = accountIds[accountIds.length - 1].id
+          enableAutoLendForNewAccount(latestAccountId)
+        }
       }
-      setIsConfirming(false)
-      if (result)
+    }
+    setIsConfirming(false)
+
+    if (result) {
+      if (props.isFullPage) {
         useStore.setState({
           walletAssetsModal: null,
           focusComponent: null,
         })
-    } else {
-      if (props.hasExistingAccount) {
-        deposit({ ...depositObject, accountId: props.accountId })
       } else {
-        createAndFundAccount(depositObject)
+        useStore.setState({ fundAndWithdrawModal: null, walletAssetsModal: null })
       }
-      useStore.setState({ fundAndWithdrawModal: null, walletAssetsModal: null })
     }
   }, [
-    props.hasExistingAccount,
     props.accountId,
+    props.address,
+    props.chainConfig,
+    props.isFullPage,
     deposit,
-    createAndFundAccount,
     fundingAssets,
     isLending,
-    props.isFullPage,
+    enableAutoLendForNewAccount,
   ])
 
   useEffect(() => {
@@ -166,6 +173,8 @@ export default function AccountFundContent(props: Props) {
         <SwitchAutoLend
           className='pt-4 mt-4 border border-transparent border-t-white/10'
           accountId={props.accountId}
+          isEnabled={isLending}
+          onChange={setIsLending}
         />
         <Button
           className='w-full mt-4'

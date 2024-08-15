@@ -983,12 +983,7 @@ interface BroadcastSlice {
     isAutoLendEnabled: boolean,
   ) => Promise<string | null>
   deleteAccount: (options: { accountId: string; lends: BNCoin[] }) => Promise<boolean>
-  createAndFundAccount: (options: {
-    coins: BNCoin[]
-    lend: boolean
-    kind?: AccountKind
-  }) => Promise<string | null>
-  deposit: (options: { accountId: string; coins: BNCoin[]; lend: boolean }) => Promise<boolean>
+  deposit: (options: { accountId?: string; coins: BNCoin[]; lend: boolean }) => Promise<boolean>
   depositIntoFarm: (options: {
     accountId: string
     actions: Action[]
