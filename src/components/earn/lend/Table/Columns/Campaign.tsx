@@ -10,10 +10,11 @@ export const CAMPAIGN_META = {
 
 interface Props {
   asset?: Asset
+  amount?: BigNumber
 }
 
 export default function Apr(props: Props) {
   if (!props.asset || !props.asset.campaign) return null
 
-  return <AssetCampaignCopy asset={props.asset} withLogo size='sm' />
+  return <AssetCampaignCopy asset={props.asset} withLogo size='sm' amount={props.amount} />
 }

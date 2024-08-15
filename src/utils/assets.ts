@@ -133,25 +133,33 @@ export function resolveAssetCampaign(
   const campaignInfo = {
     id: currentCampaign.id,
     type: currentCampaign.type,
+    name: currentCampaign.name,
     incentiveCopy: currentCampaign.incentiveCopy,
     detailedIncentiveCopy: currentCampaign.detailedIncentiveCopy,
     classNames: currentCampaign.classNames,
     bgClassNames: currentCampaign.bgClassNames,
     tooltip: currentCampaign.tooltip,
-    multiplier: 0,
+    baseMultiplier: 0,
+    collateralMultiplier: 0,
     apy: 0,
   }
 
-  if (campaignInfo.type === 'points_with_multiplier' && campaign.multiplier) {
+  if (campaignInfo.type === 'points_with_multiplier' && campaign.baseMultiplier) {
+    const multiplierRange = campaign.collateralMultiplier
+      ? `${campaign.baseMultiplier}-${campaign.collateralMultiplier}`
+      : campaign.baseMultiplier.toString()
+
     campaignInfo.incentiveCopy = currentCampaign.incentiveCopy.replaceAll(
       '##MULTIPLIER##',
-      campaign.multiplier.toString(),
+      multiplierRange.toString(),
     )
+
     campaignInfo.detailedIncentiveCopy = currentCampaign.detailedIncentiveCopy.replaceAll(
       '##MULTIPLIER##',
-      campaign.multiplier.toString(),
+      multiplierRange.toString(),
     )
-    campaignInfo.multiplier = campaign.multiplier
+    campaignInfo.baseMultiplier = campaign.baseMultiplier
+    campaignInfo.collateralMultiplier = campaign.collateralMultiplier ?? campaign.baseMultiplier
   }
 
   if (campaignInfo.type === 'apy' && campaignApys.length && campaign.campaignDenom) {

@@ -37,7 +37,7 @@ export default function useDepositedColumns(props: Props) {
             {
               ...CAMPAIGN_META,
               cell: ({ row }: { row: Row<LendingMarketTableData> }) => (
-                <Campaign asset={row.original.asset} />
+                <Campaign asset={row.original.asset} amount={row.original.accountLentAmount} />
               ),
             },
           ]
