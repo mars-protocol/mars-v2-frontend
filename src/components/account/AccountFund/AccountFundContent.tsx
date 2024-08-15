@@ -47,8 +47,10 @@ export default function AccountFundContent(props: Props) {
   const { depositCapReachedCoins } = useDepositCapCalculations(fundingAssets)
   const { isConnected, handleDisconnectWallet } = useWeb3WalletConnection()
   const hasAssetSelected = fundingAssets.length > 0
-  const hasFundingAssets =
-    fundingAssets.length > 0 && fundingAssets.every((a) => a.coin.amount.isGreaterThan(0))
+  const hasFundingAssets = useMemo(
+    () => fundingAssets.length > 0 && fundingAssets.some((a) => a.coin.amount.isGreaterThan(0)),
+    [fundingAssets],
+  )
   const balances = walletBalances.map((coin) => WrappedBNCoin.fromCoin(coin))
 
   const baseBalance = useMemo(
