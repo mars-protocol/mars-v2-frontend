@@ -1521,6 +1521,7 @@ interface AssetCampaign {
   apy?: number
   baseMultiplier?: number
   collateralMultiplier?: number
+  totalPointsTooltip?: string
 }
 
 interface AssetCampaignApy {

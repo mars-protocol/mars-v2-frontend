@@ -13,6 +13,7 @@ export const NAME_META = {
 interface Props {
   asset: Asset
   v1?: boolean
+  amount?: BigNumber
 }
 export default function Name(props: Props) {
   const { asset } = props
@@ -23,7 +24,7 @@ export default function Name(props: Props) {
         title={asset.symbol}
         sub={
           props.v1 && !isMobile ? (
-            <AssetCampaignCopy asset={props.asset} size='xs' noDot />
+            <AssetCampaignCopy asset={props.asset} size='xs' noDot amount={props.amount} />
           ) : (
             asset.name
           )

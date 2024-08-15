@@ -13,7 +13,7 @@ export default function OracleResyncButton() {
     <Tooltip
       type='warning'
       content='The on-chain Pyth oracle prices are too old/stale. Update them by executing a resync transaction.'
-      hideArrow={true}
+      hideArrow
     >
       <Button
         leftIcon={<ExclamationMarkCircled className='w-4' />}
