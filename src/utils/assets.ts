@@ -133,6 +133,7 @@ export function resolveAssetCampaign(
   const campaignInfo = {
     id: currentCampaign.id,
     type: currentCampaign.type,
+    name: currentCampaign.name,
     incentiveCopy: currentCampaign.incentiveCopy,
     detailedIncentiveCopy: currentCampaign.detailedIncentiveCopy,
     classNames: currentCampaign.classNames,

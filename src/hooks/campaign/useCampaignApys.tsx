@@ -1,20 +1,20 @@
 import getCampaignApys from 'api/campaign/getCampaignApys'
-import { CAMPAIGNS } from 'constants/campaigns'
+import useAssetCampaigns from 'hooks/campaign/useAssetCampaigns'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import { useMemo } from 'react'
 import useSWRImmutable from 'swr/immutable'
 
 export default function useCampaignApys() {
   const chainConfig = useChainConfig()
+  const apyCampaigns = useAssetCampaigns('apy')
   const campaignApis = useMemo(() => {
     const apis = [] as AssetCampaignApyApi[]
-    chainConfig.campaignAssets?.forEach((campaign) => {
-      const campaignInfos = CAMPAIGNS.find((c) => c.id === campaign.campaignId)
-      if (!campaignInfos?.apyApi) return
-      apis.push(campaignInfos.apyApi)
+    apyCampaigns.forEach((campaign) => {
+      if (!campaign.apyApi) return
+      apis.push(campaign.apyApi)
     })
     return apis
-  }, [chainConfig.campaignAssets])
+  }, [apyCampaigns])
 
   return useSWRImmutable(
     campaignApis && `chain/${chainConfig.id}/campaignAprs`,

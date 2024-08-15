@@ -1500,10 +1500,16 @@ interface AssetCampaignApyApi {
   apyStructure: string[]
   denomStructure: string[]
 }
+interface AssetCampaignPointsApi {
+  url: string
+  pointsStructure: string[]
+  queryVariable: 'address' | 'accountId'
+}
 
 interface AssetCampaign {
   id: AssetCampaignId
   type: AssetCampaignType
+  name: string
   classNames: string
   bgClassNames: string
   incentiveCopy: string
@@ -1511,6 +1517,7 @@ interface AssetCampaign {
   tooltip: string
   pointBase?: AssetCampaignPointBase
   apyApi?: AssetCampaignApyApi
+  pointsApi?: AssetCampaignPointsApi
   apy?: number
   baseMultiplier?: number
   collateralMultiplier?: number
@@ -1519,6 +1526,11 @@ interface AssetCampaign {
 interface AssetCampaignApy {
   denom: string
   apy: number
+}
+
+interface AssetCampaignPoints {
+  id: AssetCampaignId
+  points: number
 }
 
 type KeplrMode = 'core' | 'extension' | 'mobile-web' | 'walletconnect'

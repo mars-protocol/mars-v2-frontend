@@ -3,6 +3,7 @@ import { Droplet, Lido, Stride } from 'components/common/Icons'
 export const CAMPAIGNS: AssetCampaign[] = [
   {
     id: 'stride',
+    name: 'Stride Staking',
     type: 'apy',
     apyApi: {
       url: 'https://edge.stride.zone/api/stake-stats',
@@ -19,7 +20,13 @@ export const CAMPAIGNS: AssetCampaign[] = [
   },
   {
     id: 'drop',
+    name: 'Droplets',
     type: 'points_with_multiplier',
+    pointsApi: {
+      url: 'https://droplets.drop.money/api/droplet?address=##ADDRESS##',
+      pointsStructure: ['points'],
+      queryVariable: 'address',
+    },
     pointBase: 'value',
     incentiveCopy: 'Earn ##MULTIPLIER##x Droplets',
     classNames: 'droplets',
@@ -30,6 +37,7 @@ export const CAMPAIGNS: AssetCampaign[] = [
   },
   {
     id: 'lido',
+    name: 'Lido Staking',
     type: 'apy',
     apyApi: {
       url: 'https://eth-api.lido.fi/v1/protocol/steth/apr/sma',
