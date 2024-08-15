@@ -10,7 +10,7 @@ import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   action: 'buy' | 'deposit' | 'fund'
-  coins: BNCoin[] | WrappedBNCoin[]
+  coins: (BNCoin | WrappedBNCoin)[]
   showIcon?: boolean
 }
 
@@ -31,15 +31,14 @@ export default function DepositCapMessage(props: Props) {
         } more than the following amount${props.coins.length > 1 ? 's' : ''}:`}</Text>
         {props.coins.map((coin) => (
           <AmountMessage
-            key={isBNCoin(coin) ? coin.denom : coin.coin.denom}
-            coin={isBNCoin(coin) ? coin : coin.coin}
+            key={isWrappedBNCoin(coin) ? coin.coin.denom : coin.denom}
+            coin={isWrappedBNCoin(coin) ? coin.coin : coin}
           />
         ))}
       </div>
     </div>
   )
 }
-
 interface AmountMessageProps {
   coin: BNCoin
 }
@@ -64,6 +63,6 @@ function AmountMessage(props: AmountMessageProps) {
   )
 }
 
-function isBNCoin(coin: BNCoin | WrappedBNCoin): coin is BNCoin {
-  return (coin as BNCoin).denom !== undefined
+function isWrappedBNCoin(coin: BNCoin | WrappedBNCoin): coin is WrappedBNCoin {
+  return 'coin' in coin
 }
