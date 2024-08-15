@@ -23,7 +23,7 @@ export default function AvailableVaultsTable() {
       title='Available vaults'
       columns={columns}
       data={availableVaults}
-      initialSorting={[{ id: 'name', desc: true }]}
+      initialSorting={[{ id: 'name', desc: false }]}
     />
   )
 }

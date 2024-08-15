@@ -3,7 +3,7 @@ import { useCallback } from 'react'
 
 import MarketDetails from 'components/common/MarketDetails'
 import Table from 'components/common/Table'
-import { NAME_META } from 'components/earn/lend/Table/Columns/Name'
+import { APY_META } from 'components/earn/lend/Table/Columns/Apy'
 import useAvailableColumns from 'components/earn/lend/Table/Columns/useAvailableColumns'
 
 type Props = {
@@ -30,7 +30,7 @@ export default function AvailableLendsTable(props: Props) {
       title='Available Markets'
       columns={columns}
       data={props.data}
-      initialSorting={[{ id: NAME_META.id, desc: false }]}
+      initialSorting={[{ id: APY_META.id, desc: true }]}
       renderExpanded={renderExpanded}
     />
   )

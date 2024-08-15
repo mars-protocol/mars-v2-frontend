@@ -14,7 +14,7 @@ export default function AvailablePerpsVaultsTable() {
       title='Available vaults'
       columns={columns}
       data={[vault]}
-      initialSorting={[{ id: 'name', desc: true }]}
+      initialSorting={[{ id: 'name', desc: false }]}
     />
   )
 }
