@@ -9,6 +9,7 @@ import { byDenom } from 'utils/array'
 import { handleUnknownAsset } from 'utils/assets'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import { useSelectedDenoms } from 'hooks/assets/useSelectedDenoms'
+import { useWeb3WalletConnection } from 'hooks/wallet/useWeb3WalletConnections'
 
 interface Props {
   onChangeDenoms: (denoms: string[]) => void
@@ -21,6 +22,7 @@ export default function WalletAssetsModalContent(props: Props) {
   const allChainAssets = useDepositEnabledAssets()
   const chainConfig = useChainConfig()
   const enableAnyAsset = chainConfig.anyAsset
+  const { isConnected } = useWeb3WalletConnection()
 
   const assetsInWallet = useMemo(() => {
     const knownAssetsInWallet: Asset[] = []
@@ -55,7 +57,11 @@ export default function WalletAssetsModalContent(props: Props) {
     )
   }, [assetsInWallet, searchString])
 
-  const { selectedDenoms, onChangeSelect } = useSelectedDenoms(filteredAssets, onChangeDenoms)
+  const { selectedDenoms, onChangeSelect } = useSelectedDenoms(
+    filteredAssets,
+    onChangeDenoms,
+    isConnected,
+  )
 
   const depositEnabledAssets = useDepositEnabledAssets()
   const whitelistedAssets = useWhitelistedAssets()
