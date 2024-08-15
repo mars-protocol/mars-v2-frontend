@@ -47,10 +47,8 @@ export default function AccountFundContent(props: Props) {
   const { depositCapReachedCoins } = useDepositCapCalculations(fundingAssets)
   const { isConnected, handleDisconnectWallet } = useWeb3WalletConnection()
   const hasAssetSelected = fundingAssets.length > 0
-  const hasFundingAssets = useMemo(
-    () => fundingAssets.length > 0 && fundingAssets.some((a) => a.coin.amount.isGreaterThan(0)),
-    [fundingAssets],
-  )
+  const hasFundingAssets =
+    fundingAssets.length > 0 && fundingAssets.every((a) => a.coin.amount.isGreaterThan(0))
   const balances = walletBalances.map((coin) => WrappedBNCoin.fromCoin(coin))
 
   const baseBalance = useMemo(
@@ -73,11 +71,9 @@ export default function AccountFundContent(props: Props) {
   const handleClick = useCallback(async () => {
     if (!props.accountId) return
 
-    const nonZeroFundingAssets = fundingAssets.filter((asset) => asset.coin.amount.isGreaterThan(0))
-
     const depositObject = {
       accountId: props.accountId,
-      coins: nonZeroFundingAssets.map((wrappedCoin) => wrappedCoin.coin),
+      coins: fundingAssets.map((wrappedCoin) => wrappedCoin.coin),
       lend: isLending,
     }
 
