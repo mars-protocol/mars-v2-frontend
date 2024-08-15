@@ -11,7 +11,11 @@ import useStore from 'store'
 import { useWeb3WalletConnection } from 'hooks/wallet/useWeb3WalletConnections'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 
-export default function AccountFundFullPage() {
+interface AccountFundFullPageProps {
+  hasExistingAccount?: boolean
+}
+
+export default function AccountFundFullPage(props: AccountFundFullPageProps) {
   const address = useStore((s) => s.address)
   const accountId = useAccountId()
 
@@ -29,9 +33,13 @@ export default function AccountFundFullPage() {
 
   if (!selectedAccountId || !address) return null
 
+  const title = props.hasExistingAccount
+    ? `Fund Credit Account #${selectedAccountId}`
+    : 'Fund a Credit Account'
+
   return (
     <FullOverlayContent
-      title={`Fund Credit Account #${selectedAccountId}`}
+      title={title}
       copy='In order to start using this account, you need to deposit funds.'
       docs='fund'
     >
@@ -45,6 +53,7 @@ export default function AccountFundFullPage() {
             accountId={selectedAccountId}
             isFullPage
             onConnectWallet={handleConnectWallet}
+            hasExistingAccount={props.hasExistingAccount}
           />
         </Card>
       )}
