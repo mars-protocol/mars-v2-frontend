@@ -18,7 +18,7 @@ interface Props {
   noDot?: boolean
 }
 
-export default function AssetCampaignCopyControler(props: Props) {
+export default function AssetCampaignCopyController(props: Props) {
   const { asset } = props
   if (!asset.campaign) return null
 
