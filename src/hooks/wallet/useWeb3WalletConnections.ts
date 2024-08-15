@@ -12,32 +12,52 @@ export function useWeb3WalletConnection() {
   const events = useWeb3ModalEvents()
   const modalState = useWeb3ModalState()
 
-  const handleDisconnectWallet = useCallback(async () => {
-    disconnect()
+  const clearBalances = useCallback(() => {
     useStore.setState((state) => ({
       balances: state.balances.filter((balance) => !balance.chainName),
     }))
-    hasLoggedConnection.current = false
-  }, [disconnect])
+  }, [])
+
+  const clearSelectedDenoms = useCallback(() => {
+    useStore.setState((state) => ({
+      walletAssetsModal: {
+        ...state.walletAssetsModal,
+        selectedDenoms:
+          state.walletAssetsModal?.selectedDenoms?.filter((denom) =>
+            denom.includes(':undefined'),
+          ) || [],
+      },
+    }))
+  }, [])
+
+  const handleDisconnectWallet = useCallback(async () => {
+    try {
+      disconnect()
+      clearBalances()
+      clearSelectedDenoms()
+      hasLoggedConnection.current = false
+    } catch (error) {
+      console.error('Failed to disconnect wallet:', error)
+    }
+  }, [disconnect, clearBalances, clearSelectedDenoms])
 
   const handleConnectWallet = useCallback(async () => {
-    const fundAndWithdrawModal = useStore.getState().fundAndWithdrawModal
-    if (fundAndWithdrawModal) {
-      useStore.setState({ fundAndWithdrawModal: null })
-      wasInFundModal.current = true
-    } else {
-      wasInFundModal.current = false
+    try {
+      const fundAndWithdrawModal = useStore.getState().fundAndWithdrawModal
+      if (fundAndWithdrawModal) {
+        useStore.setState({ fundAndWithdrawModal: null })
+        wasInFundModal.current = true
+      } else {
+        wasInFundModal.current = false
+      }
+      await open()
+    } catch (error) {
+      console.error('Failed to connect wallet:', error)
     }
-    await open()
   }, [open])
 
   useEffect(() => {
-    if (isConnected) {
-      console.log('Web3 wallet connection established successfully')
-      hasLoggedConnection.current = true
-    } else {
-      hasLoggedConnection.current = false
-    }
+    hasLoggedConnection.current = isConnected
   }, [isConnected])
 
   useEffect(() => {
