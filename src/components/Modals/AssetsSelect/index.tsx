@@ -15,7 +15,6 @@ import { BN } from 'utils/helpers'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import { Callout, CalloutType } from 'components/common/Callout'
 
-// TODO: Pass the market data directly here instead of the assets
 interface Props {
   assets: Asset[]
   onChangeSelected: (selected: string[]) => void
@@ -23,15 +22,17 @@ interface Props {
   isBorrow?: boolean
 }
 
-export default function AssetsSelect(props: Props) {
-  const { onChangeSelected, selectedDenoms, isBorrow, assets } = props
+export default function AssetsSelect({
+  onChangeSelected,
+  selectedDenoms,
+  isBorrow,
+  assets,
+}: Props) {
   const columns = useAssetSelectColumns(isBorrow)
   const markets = useMarkets()
   const chainConfig = useChainConfig()
-
   const whitelistedAssets = useWhitelistedAssets()
   const depositEnabledAssets = useDepositEnabledAssets()
-
   const balances = useStore((s) => s.balances)
 
   const createTableData = useCallback(
@@ -56,8 +57,7 @@ export default function AssetsSelect(props: Props) {
     const userWhitelistedAssets = whitelistedAssets.filter((asset) =>
       balances.some((balance) => balance.denom === asset.denom && balance.amount !== '0'),
     )
-    const data = createTableData(userWhitelistedAssets)
-    return data
+    return createTableData(userWhitelistedAssets)
   }, [whitelistedAssets, balances, createTableData])
 
   const depositEnabledTableData = useMemo(() => {
@@ -66,8 +66,7 @@ export default function AssetsSelect(props: Props) {
         !asset.isWhitelisted &&
         balances.some((balance) => balance.denom === asset.denom && balance.amount !== '0'),
     )
-    const data = createTableData(userDepositEnabledAssets)
-    return data
+    return createTableData(userDepositEnabledAssets)
   }, [depositEnabledAssets, balances, createTableData])
 
   const defaultSelected = useMemo(() => {
