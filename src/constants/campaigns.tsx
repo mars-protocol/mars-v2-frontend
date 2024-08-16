@@ -25,6 +25,7 @@ export const CAMPAIGNS: AssetCampaign[] = [
     pointsApi: {
       url: 'https://droplets.drop.money/api/droplet?address=##ADDRESS##',
       pointsStructure: ['result', 'data', 'points'],
+      pointsDecimals: 6,
       queryVariable: 'address',
     },
     pointBase: 'value',
