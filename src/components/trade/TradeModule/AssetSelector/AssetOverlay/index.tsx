@@ -123,7 +123,7 @@ export default function AssetOverlay(props: Props) {
           key={props.state}
           value={searchString}
           onChange={onChangeSearch}
-          placeholder='Search for e.g. "ETH" or "Ethereum"'
+          placeholder='Search for e.g. "ATOM" or "Cosmos"'
           autoFocus={!isMobile}
         />
       </div>
