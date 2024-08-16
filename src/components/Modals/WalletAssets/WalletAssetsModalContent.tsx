@@ -7,6 +7,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { handleUnknownAsset } from 'utils/assets'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 
 interface Props {
   onChangeDenoms: (denoms: string[]) => void
@@ -58,6 +59,28 @@ export default function WalletAssetsModalContent(props: Props) {
     [onChangeDenoms],
   )
 
+  const depositEnabledAssets = useDepositEnabledAssets()
+  const whitelistedAssets = useWhitelistedAssets()
+
+  const collateralAssets = useMemo(
+    () =>
+      whitelistedAssets.filter((asset) =>
+        filteredAssets.some((filteredAsset) => filteredAsset.denom === asset.denom),
+      ),
+    [whitelistedAssets, filteredAssets],
+  )
+
+  const nonCollateralAssets = useMemo(
+    () =>
+      depositEnabledAssets.filter(
+        (asset) =>
+          !asset.isWhitelisted &&
+          !asset.isPoolToken &&
+          filteredAssets.some((filteredAsset) => filteredAsset.denom === asset.denom),
+      ),
+    [depositEnabledAssets, filteredAssets],
+  )
+
   return (
     <>
       <div className='px-4 py-3 border-b border-white/5 bg-white/10'>
@@ -69,9 +92,10 @@ export default function WalletAssetsModalContent(props: Props) {
       </div>
       <div className='h-full md:max-h-[446px] overflow-y-scroll scrollbar-hide'>
         <AssetsSelect
-          assets={filteredAssets}
+          assets={collateralAssets}
           onChangeSelected={onChangeSelect}
           selectedDenoms={selectedDenoms}
+          nonCollateralTableAssets={nonCollateralAssets}
         />
       </div>
     </>
