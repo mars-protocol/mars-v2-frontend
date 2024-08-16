@@ -54,23 +54,25 @@ export default function PairsList(props: Props) {
             No available assets found
           </Text>
         ) : (
-          <ul className='flex flex-wrap w-full h-full overflow-y-scroll scrollbar-hide'>
-            {sortedPairs.map((assetPair) => (
-              <Suspense
-                fallback={<AssetSelectorItemLoading />}
-                key={`${assetPair.buy.denom}-${assetPair.sell.denom}`}
-              >
-                <AssetSelectorItem
-                  balances={balances}
-                  onSelect={props.onChangeAssetPair}
-                  depositCap={markets?.find(byDenom(assetPair.buy.denom))?.cap}
-                  asset={assetPair.buy}
-                  sellAsset={assetPair.sell}
-                  isActive={props.activeAsset.denom === assetPair.buy.denom}
-                />
-              </Suspense>
-            ))}
-          </ul>
+          <div className='flex items-start w-full h-full overflow-y-scroll scrollbar-hide'>
+            <ul className='w-full'>
+              {sortedPairs.map((assetPair) => (
+                <Suspense
+                  fallback={<AssetSelectorItemLoading />}
+                  key={`${assetPair.buy.denom}-${assetPair.sell.denom}`}
+                >
+                  <AssetSelectorItem
+                    balances={balances}
+                    onSelect={props.onChangeAssetPair}
+                    depositCap={markets?.find(byDenom(assetPair.buy.denom))?.cap}
+                    asset={assetPair.buy}
+                    sellAsset={assetPair.sell}
+                    isActive={props.activeAsset.denom === assetPair.buy.denom}
+                  />
+                </Suspense>
+              ))}
+            </ul>
+          </div>
         ))}
     </section>
   )

@@ -62,19 +62,23 @@ export default function AssetList(props: Props) {
             No available assets found
           </Text>
         ) : (
-          <ul className='flex flex-wrap items-start content-start w-full h-full overflow-y-scroll scrollbar-hide'>
-            {sortedAssets.map((asset) => (
-              <Suspense fallback={<AssetSelectorItemLoading />} key={`${type}-${asset.denom}`}>
-                <AssetSelectorItem
-                  balances={balances}
-                  onSelect={onChangeAsset}
-                  depositCap={type === 'buy' ? markets?.find(byDenom(asset.denom))?.cap : undefined}
-                  asset={asset}
-                  isActive={props.activeAsset.denom === asset.denom}
-                />
-              </Suspense>
-            ))}
-          </ul>
+          <div className='flex items-start w-full h-full overflow-y-scroll scrollbar-hide'>
+            <ul className='w-full'>
+              {sortedAssets.map((asset) => (
+                <Suspense fallback={<AssetSelectorItemLoading />} key={`${type}-${asset.denom}`}>
+                  <AssetSelectorItem
+                    balances={balances}
+                    onSelect={onChangeAsset}
+                    depositCap={
+                      type === 'buy' ? markets?.find(byDenom(asset.denom))?.cap : undefined
+                    }
+                    asset={asset}
+                    isActive={props.activeAsset.denom === asset.denom}
+                  />
+                </Suspense>
+              ))}
+            </ul>
+          </div>
         ))}
     </section>
   )
