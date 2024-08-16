@@ -141,8 +141,9 @@ export default function FarmModalContent(props: Props) {
   const onChangeBorrowings = useCallback(
     (coins: BNCoin[]) => {
       setBorrowCoins(coins)
-      if (isAstroLp) simulateAstroLpDeposit(farm.denoms.lp, depositCoins, coins)
-      else simulateVaultDeposit(farm.address, coins, borrowCoins)
+      if (isAstroLp && simulateAstroLpDeposit)
+        simulateAstroLpDeposit(farm.denoms.lp, depositCoins, coins)
+      if (!isAstroLp && simulateVaultDeposit) simulateVaultDeposit(farm.address, coins, borrowCoins)
     },
     [
       borrowCoins,
