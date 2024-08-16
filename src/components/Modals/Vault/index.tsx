@@ -9,6 +9,7 @@ import FarmModalContent from 'components/Modals/Farm/FarmModalContent'
 import FarmModalContentHeader from 'components/Modals/Farm/FarmModalContentHeader'
 import Modal from 'components/Modals/Modal'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useStore from 'store'
 
 export default function VaultModalController() {
@@ -42,6 +43,9 @@ function VaultModal(props: Props) {
     }
   }, [vault])
 
+  const { addedDebts, removedDeposits, removedLends, simulateVaultDeposit } =
+    useUpdatedAccount(currentAccount)
+
   return (
     <Modal
       onClose={onClose}
@@ -70,6 +74,10 @@ function VaultModal(props: Props) {
         account={currentAccount}
         isDeposited={isDeposited}
         isAstroLp={false}
+        addedDebts={addedDebts}
+        removedDeposits={removedDeposits}
+        removedLends={removedLends}
+        simulateVaultDeposit={simulateVaultDeposit}
       />
     </Modal>
   )

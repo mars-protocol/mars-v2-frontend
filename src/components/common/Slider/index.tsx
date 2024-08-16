@@ -19,6 +19,14 @@ type Props = {
   disabled?: boolean
 }
 
+function getActiveIndex(value: number) {
+  if (value >= 100) return '7'
+  if (value >= 75) return '6'
+  if (value >= 50) return '4'
+  if (value >= 25) return '2'
+  return '1'
+}
+
 export default function Slider(props: Props) {
   const { value, onChange, leverage, className, disabled } = props
   const [newValue, setNewValue] = useState(value)
@@ -46,55 +54,64 @@ export default function Slider(props: Props) {
     }
   }, [sliderRect.left, sliderRect.right, sliderRect.width])
 
-  function handleOnChange(value: number) {
-    if (value === newValue) return
-    setNewValue(value)
-    onChange(value)
-  }
+  const handleOnChange = useCallback(
+    (value: number) => {
+      if (value === newValue) return
+      setNewValue(value)
+      onChange(value)
+    },
+    [newValue, onChange],
+  )
 
-  function handleDrag(e: any) {
-    if (!isDragging) {
-      setIsDragging(true)
-    }
+  const handleDrag = useCallback(
+    (e: any) => {
+      if (!isDragging) {
+        setIsDragging(true)
+      }
 
-    const current: number = e.clientX
+      const current: number = e.clientX
 
-    if (current < sliderRect.left) {
-      handleOnChange(0)
-      return
-    }
+      if (current < sliderRect.left) {
+        handleOnChange(0)
+        return
+      }
 
-    if (current > sliderRect.right) {
-      handleOnChange(100)
-      return
-    }
+      if (current > sliderRect.right) {
+        handleOnChange(100)
+        return
+      }
 
-    const currentValue = Math.round(((current - sliderRect.left) / sliderRect.width) * 100)
+      const currentValue = Math.round(((current - sliderRect.left) / sliderRect.width) * 100)
 
-    if (currentValue !== value) {
-      handleOnChange(currentValue)
-    }
-  }
+      if (currentValue !== value) {
+        handleOnChange(currentValue)
+      }
+    },
+    [
+      handleOnChange,
+      isDragging,
+      setIsDragging,
+      sliderRect.left,
+      sliderRect.right,
+      sliderRect.width,
+      value,
+    ],
+  )
 
-  function handleSliderClick(e: ChangeEvent<HTMLInputElement>) {
-    handleOnChange(Number(e.target.value))
-  }
+  const handleSliderClick = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      handleOnChange(Number(e.target.value))
+    },
+    [handleOnChange],
+  )
 
-  function handleShowTooltip() {
+  const handleShowTooltip = useCallback(() => {
     setShowTooltip(true)
-  }
+  }, [setShowTooltip])
 
-  function handleHideTooltip() {
+  const handleHideTooltip = useCallback(() => {
     setShowTooltip(false)
-  }
-
-  function getActiveIndex() {
-    if (value >= 100) return '7'
-    if (value >= 75) return '6'
-    if (value >= 50) return '4'
-    if (value >= 25) return '2'
-    return '1'
-  }
+  }, [setShowTooltip])
 
   const DraggableElement: any = Draggable
 
@@ -105,9 +122,13 @@ export default function Slider(props: Props) {
     ]
   }, [value, sliderRect.width])
 
-  useEffect(() => {
-    handleSliderRect()
-  }, [handleSliderRect])
+  useEffect(
+    () => {
+      handleSliderRect()
+    },
+    //eslint-disable-next-line
+    [],
+  )
 
   return (
     <div>
@@ -181,7 +202,7 @@ export default function Slider(props: Props) {
               <div ref={nodeRef} className='absolute z-20 leading-3'>
                 <div
                   className={classNames(
-                    `bg-slider-${Number(getActiveIndex()) + 1}`,
+                    `bg-slider-${Number(getActiveIndex(value)) + 1}`,
                     'z-20 h-3 w-3 rotate-45 hover:cursor-pointer rounded-xs border-[2px] border-white/60 !outline-none',
                   )}
                 />
