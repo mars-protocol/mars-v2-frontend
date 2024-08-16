@@ -1,12 +1,16 @@
-import useSWR from 'swr'
+import useSWRImmutable from 'swr/immutable'
 
 import { getVaultConfigs } from 'api/vaults/getVaultConfigs'
 import useChainConfig from 'hooks/chain/useChainConfig'
 
 export default function useVaultConfigs() {
   const chainConfig = useChainConfig()
-  return useSWR(`chains/${chainConfig.id}/vaultConfigs`, () => getVaultConfigs(chainConfig), {
-    fallbackData: [],
-    revalidateOnFocus: false,
-  })
+  return useSWRImmutable(
+    `chains/${chainConfig.id}/vaultConfigs`,
+    () => getVaultConfigs(chainConfig),
+    {
+      fallbackData: [],
+      revalidateOnFocus: false,
+    },
+  )
 }

@@ -7,6 +7,7 @@ import FarmModalContent from 'components/Modals/Farm/FarmModalContent'
 import FarmModalContentHeader from 'components/Modals/Farm/FarmModalContentHeader'
 import Modal from 'components/Modals/Modal'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useStore from 'store'
 
 export default function AstroLpModalController() {
@@ -33,16 +34,8 @@ function AstroLpModal(props: Props) {
     useStore.setState({ farmModal: null })
   }, [])
 
-  const ContentComponent = useCallback(() => {
-    switch (action) {
-      case 'deposit':
-        return <FarmModalContent farm={astroLp} account={currentAccount} isAstroLp />
-      case 'withdraw':
-        return <AstroLpWithdraw account={currentAccount} astroLp={astroLp as DepositedAstroLp} />
-      default:
-        return null
-    }
-  }, [currentAccount, astroLp, action])
+  const { addedDebts, removedDeposits, removedLends, simulateAstroLpDeposit } =
+    useUpdatedAccount(currentAccount)
 
   return (
     <Modal
@@ -60,7 +53,19 @@ function AstroLpModal(props: Props) {
       contentClassName='flex flex-col'
     >
       <FarmModalContentHeader farm={astroLp} account={currentAccount} isAstroLp />
-      <ContentComponent />
+      {action === 'deposit' ? (
+        <FarmModalContent
+          farm={astroLp}
+          account={currentAccount}
+          isAstroLp
+          addedDebts={addedDebts}
+          removedDeposits={removedDeposits}
+          removedLends={removedLends}
+          simulateAstroLpDeposit={simulateAstroLpDeposit}
+        />
+      ) : (
+        <AstroLpWithdraw account={currentAccount} astroLp={astroLp as DepositedAstroLp} />
+      )}
     </Modal>
   )
 }
