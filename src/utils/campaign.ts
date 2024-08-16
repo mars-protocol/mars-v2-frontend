@@ -13,12 +13,12 @@ export function getDailyAccountPoints(
     (asset) => asset.campaignId === campaign.id,
   )
 
-  if (!campaignAssets || collateral.length === 0) return ''
+  if (!campaignAssets || collateral.length === 0) return '0'
   const activeCampaignPositions = collateral.filter((position) => {
     return campaignAssets?.some((campaignAsset) => campaignAsset.denom === position.denom)
   })
 
-  if (activeCampaignPositions.length === 0) return ''
+  if (activeCampaignPositions.length === 0) return '0'
   let points = 0
   activeCampaignPositions.forEach((position) => {
     const positionValue = getCoinValue(position, assets)

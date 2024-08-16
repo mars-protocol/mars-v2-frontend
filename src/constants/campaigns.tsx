@@ -24,7 +24,8 @@ export const CAMPAIGNS: AssetCampaign[] = [
     type: 'points_with_multiplier',
     pointsApi: {
       url: 'https://droplets.drop.money/api/droplet?address=##ADDRESS##',
-      pointsStructure: ['points'],
+      pointsStructure: ['result', 'data', 'points'],
+      pointsDecimals: 6,
       queryVariable: 'address',
     },
     pointBase: 'value',

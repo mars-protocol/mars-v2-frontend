@@ -128,7 +128,7 @@ async function fetchSortAndMapAllAssets(
     return {
       ...asset,
       isPoolToken: !!currentAssetPoolInfo,
-      isWhitelisted: !!currentAssetParams,
+      isWhitelisted: currentAssetParams && currentAssetParams.credit_manager.whitelisted,
       isAutoLendEnabled: currentAssetParams?.red_bank.borrow_enabled ?? false,
       isBorrowEnabled: currentAssetParams?.red_bank.borrow_enabled ?? false,
       isDepositEnabled: isAnyAssetAndNoPool ? true : isDepositEnabled,

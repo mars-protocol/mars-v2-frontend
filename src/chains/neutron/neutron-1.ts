@@ -74,8 +74,8 @@ const Neutron1: ChainConfig = {
   },
   endpoints: {
     routes: 'https://app.astroport.fi/api/routes',
-    rpc: process.env.NEXT_PUBLIC_NEUTRON_RPC ?? 'http://135.181.139.174:26657',
-    rest: process.env.NEXT_PUBLIC_NEUTRON_REST ?? 'http://135.181.139.174:1317',
+    rpc: process.env.NEXT_PUBLIC_NEUTRON_RPC ?? 'https://rpc-vele.neutron-1.neutron.org',
+    rest: process.env.NEXT_PUBLIC_NEUTRON_REST ?? 'https://rest-vele.neutron-1.neutron.org',
     swap: 'https://neutron.astroport.fi/swap',
     explorer: 'https://mintscan.io/neutron',
     dexAssets: 'https://api.astroport.fi/api/tokens?chainId=neutron-1',
