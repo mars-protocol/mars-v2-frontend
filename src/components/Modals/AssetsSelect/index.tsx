@@ -145,7 +145,7 @@ export default function AssetsSelect({
           <div className=''>
             <Text
               size='xs'
-              className='p-4 font-semibold bg-black/20 text-white/60 border-t border-b border-white/10 w-full'
+              className='p-4 font-semibold bg-black/20 text-white/60 border-b border-white/10 w-full'
             >
               Assets that can be used as collateral
             </Text>

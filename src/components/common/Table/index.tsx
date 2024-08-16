@@ -72,7 +72,7 @@ export default function Table<T>(props: Props<T>) {
       )}
     >
       <div className='w-full'>
-        <div className='w-full overflow-x-auto'>
+        <div className='w-full overflow-x-auto scrollbar-hide'>
           <table className={classNames('w-full', props?.tableBodyClassName)}>
             {!props.disableSortingRow && (
               <thead className='border-b bg-black/20 border-white/10'>
