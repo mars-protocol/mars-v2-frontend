@@ -1504,6 +1504,7 @@ interface AssetCampaignPointsApi {
   url: string
   pointsStructure: string[]
   queryVariable: 'address' | 'accountId'
+  pointsDecimals: number
 }
 
 interface AssetCampaign {
