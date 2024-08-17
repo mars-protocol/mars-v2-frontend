@@ -1,9 +1,7 @@
-import { useShuttle } from '@delphi-labs/shuttle-react'
 import classNames from 'classnames'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
-import { WalletID } from 'types/enums'
 import AccountMenu from 'components/account/AccountMenu'
 import AccountSummary from 'components/account/AccountSummary'
 import Card from 'components/common/Card'
@@ -18,7 +16,7 @@ import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
 
 interface Props {
-  menuTree: (walletId: WalletID, chainConfig: ChainConfig) => MenuTreeEntry[]
+  menuTree: (chainConfig: ChainConfig) => MenuTreeEntry[]
 }
 
 export default function MobileNavigation(props: Props) {
@@ -26,9 +24,7 @@ export default function MobileNavigation(props: Props) {
   const currentAccountId = useAccountId()
   const mobileNavExpanded = useStore((s) => s.mobileNavExpanded)
   const isV1 = useStore((s) => s.isV1)
-  const { recentWallet } = useShuttle()
   const chainConfig = useChainConfig()
-  const walletId = (recentWallet?.providerId as WalletID) ?? WalletID.Keplr
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const address = useStore((s) => s.address)
@@ -36,7 +32,7 @@ export default function MobileNavigation(props: Props) {
   const currentPage = getPage(pathname)
   const { data: account } = useAccount(isV1 ? address : (currentAccountId ?? undefined))
 
-  const menu = useMemo(() => menuTree(walletId, chainConfig), [walletId, chainConfig, menuTree])
+  const menu = useMemo(() => menuTree(chainConfig), [chainConfig, menuTree])
 
   useEffect(() => {
     if (mobileNavExpanded) {
