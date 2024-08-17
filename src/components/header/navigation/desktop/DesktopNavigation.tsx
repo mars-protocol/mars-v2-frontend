@@ -1,4 +1,3 @@
-import { useShuttle } from '@delphi-labs/shuttle-react'
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
@@ -9,10 +8,9 @@ import { NavMenu } from 'components/header/navigation/desktop/NavMenu'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useStore from 'store'
-import { WalletID } from 'types/enums'
 
 interface Props {
-  menuTree: (walletId: WalletID, chainConfig: ChainConfig) => MenuTreeEntry[]
+  menuTree: (chainConfig: ChainConfig) => MenuTreeEntry[]
 }
 
 export function getIsActive(pages: string[]) {
@@ -23,12 +21,10 @@ export function getIsActive(pages: string[]) {
 export default function DesktopNavigation(props: Props) {
   const { menuTree } = props
   const [showMenu, setShowMenu] = useToggle()
-  const { recentWallet } = useShuttle()
   const chainConfig = useChainConfig()
-  const walletId = (recentWallet?.providerId as WalletID) ?? WalletID.Keplr
   const focusComponent = useStore((s) => s.focusComponent)
 
-  const menu = useMemo(() => menuTree(walletId, chainConfig), [walletId, chainConfig, menuTree])
+  const menu = useMemo(() => menuTree(chainConfig), [chainConfig, menuTree])
 
   if (focusComponent) return null
 

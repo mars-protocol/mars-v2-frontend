@@ -16,10 +16,9 @@ import RewardsCenter from 'components/header/RewardsCenter'
 import Wallet from 'components/Wallet'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useStore from 'store'
-import { WalletID } from 'types/enums'
-import { getGovernanceUrl } from 'utils/helpers'
+import { DocURL } from 'types/enums'
 
-const menuTree = (walletId: WalletID, chainConfig: ChainConfig): MenuTreeEntry[] => [
+const menuTree = (chainConfig: ChainConfig): MenuTreeEntry[] => [
   {
     pages: ['trade', 'trade-advanced'],
     label: 'Trade',
@@ -43,15 +42,15 @@ const menuTree = (walletId: WalletID, chainConfig: ChainConfig): MenuTreeEntry[]
   { pages: ['borrow'], label: 'Borrow' },
   ...(chainConfig.hls ? [{ pages: ['hls-staking'] as Page[], label: 'High Leverage' }] : []),
   { pages: ['portfolio'], label: 'Portfolio' },
-  { pages: ['governance'], label: 'Governance', externalUrl: getGovernanceUrl(walletId) },
+  { pages: ['governance'], label: 'Governance', externalUrl: DocURL.COUNCIL },
 ]
 
-const menuTreeV1 = (walletId: WalletID, chainConfig: ChainConfig): MenuTreeEntry[] => [
+const menuTreeV1 = (): MenuTreeEntry[] => [
   {
     pages: ['v1'],
     label: 'Red Bank',
   },
-  { pages: ['governance'], label: 'Governance', externalUrl: getGovernanceUrl(walletId) },
+  { pages: ['governance'], label: 'Governance', externalUrl: DocURL.COUNCIL },
 ]
 
 export default function Header() {
