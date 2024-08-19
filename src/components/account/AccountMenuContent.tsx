@@ -42,6 +42,7 @@ export default function AccountMenuContent(props: Props) {
   const hasFundsForTxFee = useHasFundsForTxFee()
   const [enableAutoLendGlobal] = useEnableAutoLendGlobal()
   const { enableAutoLendAccountId } = useAutoLend()
+  const [isAutoLendEnabled] = useEnableAutoLendGlobal()
 
   const hasCreditAccounts = !!accountIds?.length
   const isAccountSelected =
@@ -50,7 +51,7 @@ export default function AccountMenuContent(props: Props) {
   const performCreateAccount = useCallback(async () => {
     setShowMenu(false)
     setIsCreating(true)
-    const accountId = await createAccount('default')
+    const accountId = await createAccount('default', isAutoLendEnabled)
     setIsCreating(false)
 
     if (accountId) {
@@ -74,6 +75,7 @@ export default function AccountMenuContent(props: Props) {
     searchParams,
     address,
     enableAutoLendGlobal,
+    isAutoLendEnabled,
     enableAutoLendAccountId,
   ])
 

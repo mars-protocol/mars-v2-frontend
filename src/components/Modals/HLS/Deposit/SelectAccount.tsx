@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import React from 'react'
 
 import Button from 'components/common/Button'
 import { ArrowRight } from 'components/common/Icons'
@@ -18,7 +17,7 @@ export default function CreateAccount(props: Props) {
   }
 
   return (
-    <div id='item-2' className='flex-col flex'>
+    <div id='item-2' className='flex flex-col'>
       {props.hlsAccounts.map((account, index) => (
         <div
           key={account.id}
@@ -40,7 +39,7 @@ export default function CreateAccount(props: Props) {
         text='Continue'
         rightIcon={<ArrowRight />}
         showProgressIndicator={false}
-        className='mb-2 mx-4 mb-5'
+        className='mx-4 mb-5'
       />
     </div>
   )

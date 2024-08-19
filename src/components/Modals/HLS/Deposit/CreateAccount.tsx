@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { mutate } from 'swr'
 
 import Button from 'components/common/Button'
@@ -14,7 +14,7 @@ export default function CreateAccount() {
 
   async function handleBtnClick() {
     setIsTxPending(true)
-    const response = await createAccount('high_levered_strategy')
+    const response = await createAccount('high_levered_strategy', false)
 
     if (response === null) {
       setIsTxPending(false)
@@ -24,8 +24,8 @@ export default function CreateAccount() {
   }
 
   return (
-    <div id='item-2' className='p-4 flex-col flex'>
-      <Text size='sm' className='text-white/50 mb-4 mt-2'>
+    <div id='item-2' className='flex flex-col p-4'>
+      <Text size='sm' className='mt-2 mb-4 text-white/50'>
         Depositing into a HLS strategy mandates the creation of a HLS credit account.
       </Text>
       <Button
