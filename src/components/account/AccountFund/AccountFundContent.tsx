@@ -3,7 +3,6 @@ import WalletBridges from 'components/Wallet/WalletBridges'
 import DepositCapMessage from 'components/common/DepositCapMessage'
 import SwitchAutoLend from 'components/common/Switch/SwitchAutoLend'
 import Text from 'components/common/Text'
-import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
@@ -20,7 +19,8 @@ import EVMAccountSection from './EVMAccountSection'
 import AccountFundingAssets from './AccountFundingAssets'
 import { ArrowRight, Plus } from 'components/common/Icons'
 import Button from 'components/common/Button'
-import getAccountIds from 'api/wallets/getAccountIds'
+import { useNavigate } from 'react-router-dom'
+import { getPage, getRoute } from 'utils/route'
 
 interface Props {
   account?: Account
@@ -37,7 +37,6 @@ export default function AccountFundContent(props: Props) {
   const [isConfirming, setIsConfirming] = useState(false)
   const { autoLendEnabledAccountIds } = useAutoLend()
   const { data: walletBalances } = useWalletBalances(props.address)
-  const { simulateDeposits } = useUpdatedAccount(props.account)
   const [isLending, setIsLending] = useState(autoLendEnabledAccountIds.includes(props.accountId))
   const baseAsset = useBaseAsset()
 
@@ -53,6 +52,7 @@ export default function AccountFundContent(props: Props) {
   const hasFundingAssets =
     fundingAssets.length > 0 && fundingAssets.every((a) => a.coin.amount.isGreaterThan(0))
   const balances = walletBalances.map((coin) => WrappedBNCoin.fromCoin(coin))
+  const navigate = useNavigate()
 
   const baseBalance = useMemo(
     () => walletBalances.find(byDenom(baseAsset.denom))?.amount ?? '0',
@@ -78,40 +78,43 @@ export default function AccountFundContent(props: Props) {
     }
 
     setIsConfirming(true)
-    let result
-    if (props.accountId) {
-      result = await deposit({ ...depositObject, accountId: props.accountId })
-    } else {
-      result = await deposit(depositObject)
-      if (result) {
-        const accountIds = await getAccountIds(chainConfig, props.address)
-        if (accountIds.length > 0) {
-          const latestAccountId = accountIds[accountIds.length - 1].id
-          enableAutoLendForNewAccount(latestAccountId)
-        }
-      }
-    }
+    const accountId = props.accountId
+      ? await deposit({ ...depositObject, accountId: props.accountId })
+      : await deposit(depositObject)
     setIsConfirming(false)
 
-    if (result) {
+    if (accountId) {
+      console.log('accountId', accountId)
+      enableAutoLendForNewAccount(accountId)
+      useStore.setState((state) => ({ ...state, selectedAccountId: accountId }))
+
+      const { pathname } = window.location
+      const searchParams = new URLSearchParams(window.location.search)
+      navigate(getRoute(getPage(pathname), searchParams, props.address, accountId))
+
       if (props.isFullPage) {
-        useStore.setState({
+        useStore.setState((state) => ({
+          ...state,
           walletAssetsModal: null,
           focusComponent: null,
-        })
+        }))
       } else {
-        useStore.setState({ fundAndWithdrawModal: null, walletAssetsModal: null })
+        useStore.setState((state) => ({
+          ...state,
+          fundAndWithdrawModal: null,
+          walletAssetsModal: null,
+        }))
       }
     }
   }, [
     props.accountId,
     props.address,
-    chainConfig,
     props.isFullPage,
     deposit,
     fundingAssets,
     isLending,
     enableAutoLendForNewAccount,
+    navigate,
   ])
 
   useEffect(() => {
