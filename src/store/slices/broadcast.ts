@@ -5,6 +5,7 @@ import { isMobile } from 'react-device-detect'
 import { StoreApi } from 'zustand'
 
 import getPythPriceData from 'api/prices/getPythPriceData'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { ExecuteMsg as AccountNftExecuteMsg } from 'types/generated/mars-account-nft/MarsAccountNft.types'
@@ -180,7 +181,7 @@ export default function createBroadcastSlice(
       return response.then((response) => !!response.result)
     },
 
-    createAccount: async (accountKind: AccountKind) => {
+    createAccount: async (accountKind: AccountKind, isAutoLendEnabled: boolean) => {
       const msg: CreditManagerExecuteMsg = {
         create_credit_account: accountKind,
       }
@@ -192,11 +193,27 @@ export default function createBroadcastSlice(
 
       get().handleTransaction({ response })
 
-      return response.then((response) =>
+      const accountId = await response.then((response) =>
         response.result
           ? getSingleValueFromBroadcastResult(response.result, 'wasm', 'token_id')
           : null,
       )
+
+      if (accountId && isAutoLendEnabled) {
+        const setOfAccountIds = new Set(
+          localStorage.getItem(
+            `${get().chainConfig.id}/${LocalStorageKeys.AUTO_LEND_ENABLED_ACCOUNT_IDS}`,
+          ) ?? [],
+        )
+        setOfAccountIds.add(accountId)
+        localStorage.setItem(
+          `${get().chainConfig.id}/${LocalStorageKeys.AUTO_LEND_ENABLED_ACCOUNT_IDS}`,
+          typeof setOfAccountIds === 'string'
+            ? (setOfAccountIds as string)
+            : JSON.stringify(setOfAccountIds),
+        )
+      }
+      return accountId
     },
     deleteAccount: async (options: { accountId: string; lends: BNCoin[] }) => {
       const reclaimMsg = options.lends.map((coin) => {
