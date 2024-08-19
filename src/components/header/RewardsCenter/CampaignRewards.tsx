@@ -5,16 +5,19 @@ import { Tooltip } from 'components/common/Tooltip'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAssetCampaigns from 'hooks/campaign/useAssetCampaigns'
-import useCampaignPoints from 'hooks/campaign/useCampaignPoints'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import { getDailyAccountPoints } from 'utils/campaign'
 
-export default function CampaignRewards() {
+interface Props {
+  campaignPoints: AssetCampaignPoints[]
+}
+
+export default function CampaignRewards(props: Props) {
+  const { campaignPoints } = props
   const chainConfig = useChainConfig()
   const account = useCurrentAccount()
   const pointCampaigns = useAssetCampaigns('points_with_multiplier')
   const assets = useWhitelistedAssets()
-  const { data: campaignPoints } = useCampaignPoints()
 
   if (!pointCampaigns || !account) return <></>
 

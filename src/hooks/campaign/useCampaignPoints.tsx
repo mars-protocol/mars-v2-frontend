@@ -13,6 +13,7 @@ export default function useCampaignPoints() {
   const account = useCurrentAccount()
   const campaignApis = useMemo(() => {
     const apis = [] as { api: AssetCampaignPointsApi; id: AssetCampaignId }[]
+    if (!walletAddress) return apis
     pointCampaigns.forEach((campaign) => {
       if (!campaign.pointsApi) return
       const pointsApi = campaign.pointsApi
@@ -26,7 +27,7 @@ export default function useCampaignPoints() {
   }, [account?.id, pointCampaigns, walletAddress])
 
   return useSWRImmutable(
-    campaignApis && `chain/${chainConfig.id}/campaignPoints`,
+    walletAddress && campaignApis && `chain/${chainConfig.id}/campaignPoints`,
     async () => {
       if (campaignApis.length === 0) return [] as AssetCampaignPoints[]
 
