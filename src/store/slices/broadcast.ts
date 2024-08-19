@@ -367,7 +367,11 @@ export default function createBroadcastSlice(
       })
       get().handleTransaction({ response })
 
-      return response.then((response) => !!response.result)
+      return response.then((response) =>
+        response.result
+          ? getSingleValueFromBroadcastResult(response.result, 'wasm', 'token_id')
+          : null,
+      )
     },
     unlock: async (options: { accountId: string; vault: DepositedVault; amount: string }) => {
       const msg: CreditManagerExecuteMsg = {

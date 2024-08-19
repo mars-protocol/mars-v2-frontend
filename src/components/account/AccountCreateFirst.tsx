@@ -1,7 +1,8 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import AccountFundContent from 'components/account/AccountFund/AccountFundContent'
+import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
 import Card from 'components/common/Card'
 import { CircularProgress } from 'components/common/CircularProgress'
 import FullOverlayContent from 'components/common/FullOverlayContent'
@@ -9,20 +10,22 @@ import WalletSelect from 'components/Wallet/WalletSelect'
 import useStore from 'store'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useAccountId from 'hooks/accounts/useAccountId'
 import { useWeb3WalletConnection } from 'hooks/wallet/useWeb3WalletConnections'
-import useWalletBalances from 'hooks/wallet/useWalletBalances'
+import useToggle from 'hooks/common/useToggle'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import { getPage, getRoute } from 'utils/route'
 
 export default function AccountCreateFirst() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
-  const accountId = useAccountId()
+  const createAccount = useStore((s) => s.createAccount)
+  const [isCreating, setIsCreating] = useToggle(false)
+  const chainConfig = useChainConfig()
 
   const { data: accounts, isLoading } = useAccounts('default', address)
   const currentAccount = useCurrentAccount()
-  const { data: walletBalances } = useWalletBalances(address ?? '')
   const { handleConnectWallet } = useWeb3WalletConnection()
 
   useEffect(() => {
@@ -30,6 +33,41 @@ export default function AccountCreateFirst() {
   }, [address])
 
   const hasExistingAccount = accounts && accounts.length > 0
+
+  const handleClick = useCallback(async () => {
+    setIsCreating(true)
+    const accountId = await createAccount('default')
+    setIsCreating(false)
+    if (accountId) {
+      navigate(getRoute(getPage(pathname), searchParams, address, accountId))
+      useStore.setState({
+        focusComponent: {
+          component: <AccountFundFullPage />,
+          onClose: () => {
+            useStore.setState({ getStartedModal: true })
+          },
+        },
+      })
+    }
+  }, [setIsCreating, createAccount, navigate, pathname, searchParams, address])
+
+  if (!chainConfig.evmAssetSupport) {
+    return (
+      <FullOverlayContent
+        title='Mint your account'
+        copy="We'll require you to authorise a transaction in your wallet in order to begin."
+        button={{
+          className: 'mt-4 w-full',
+          text: 'Approve transaction',
+          color: 'tertiary',
+          showProgressIndicator: isCreating,
+          onClick: handleClick,
+          size: 'lg',
+        }}
+        docs='account'
+      />
+    )
+  }
 
   return (
     <FullOverlayContent
