@@ -33,7 +33,7 @@ function useLendingMarketAssetsTableData(): {
       }
 
       if (lendingMarketAsset.accountLentAmount?.isZero()) {
-        availableAssets.push(lendingMarketAsset)
+        if (!market.asset.isDeprecated) availableAssets.push(lendingMarketAsset)
       } else {
         accountLentAssets.push(lendingMarketAsset)
       }
