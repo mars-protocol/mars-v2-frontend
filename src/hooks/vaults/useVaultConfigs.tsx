@@ -9,7 +9,7 @@ export default function useVaultConfigs() {
     `chains/${chainConfig.id}/vaultConfigs`,
     () => getVaultConfigs(chainConfig),
     {
-      fallbackData: [],
+      suspense: true,
       revalidateOnFocus: false,
     },
   )

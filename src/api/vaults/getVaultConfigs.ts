@@ -16,6 +16,6 @@ export const getVaultConfigs = async (
     )
   } catch (ex) {
     console.error(ex)
-    throw ex
+    return []
   }
 }

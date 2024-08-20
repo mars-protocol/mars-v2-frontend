@@ -16,7 +16,6 @@ export default function useAutoLend(): {
   const { data: accounts } = useAccounts('default', address, false)
   const currentAccount = useCurrentAccount()
   const [autoLendEnabledAccountIds, setAutoLendEnabledAccountIds] = useAutoLendEnabledAccountIds()
-  console.log('autoLendEnabledAccountIds', autoLendEnabledAccountIds)
 
   const enableAutoLend = useCallback(
     (accountId: string) => {
