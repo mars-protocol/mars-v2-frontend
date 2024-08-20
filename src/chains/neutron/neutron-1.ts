@@ -58,17 +58,18 @@ const Neutron1: ChainConfig = {
       campaignDenom: 'stETH',
     },
   ],
+  deprecated: ['ibc/3649CE0C8A2C79048D8C6F31FF18FA69C9BC7EB193512E0BD03B733011290445'],
   defaultTradingPair: {
     buy: 'untrn',
     sell: 'ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349',
   },
   contracts: {
-    redBank: 'neutron1d6dzqytwa8d6p3m5fkwzvtlzqk38fg4crg4hnupdyga88j65ahkqakpyl6',
-    incentives: 'neutron1fs9p72lr8gzlf4qmcqf4snfnrg66xd7866jjfecsr7tmr40uxe9sn6nav5',
-    oracle: 'neutron17hnkmu6awcq3j6yt9afz7nh3gx223p5xsma06ma5d9nnaks2kj2q94mugv',
-    params: 'neutron1lrfa3tuyclg7thln23679vz5khh7794cm09lc5rxqej2plfnq9cqw8z95m',
-    creditManager: 'neutron1pqnrg3dacm93z0v4nzrez4h48y20kk86h0y405jynhnrjg7x4aeqmlt7rd',
-    accountNft: 'neutron1yg6crykvfx2umgplwxvrduyypns8w7e3gtq0372taejkr3unvyuq4y9zm2',
+    redBank: 'neutron1n97wnm7q6d2hrcna3rqlnyqw2we6k0l8uqvmyqq6gsml92epdu7quugyph',
+    incentives: 'neutron1aszpdh35zsaz0yj80mz7f5dtl9zq5jfl8hgm094y0j0vsychfekqxhzd39',
+    oracle: 'neutron1dwp6m7pdrz6rnhdyrx5ha0acsduydqcpzkylvfgspsz60pj2agxqaqrr7g',
+    params: 'neutron144lvre6xy4eqz88aw4tkuaq8xl9w0yhqwhc6m82tjgud8mt8veuspydnqq',
+    creditManager: 'neutron1vq78hcqrnvp7evcvnfgq8zev5a93rwv0mcd5z70qqy6qjqh0t33qka3vqz',
+    accountNft: 'neutron1394jqgshzp0eyl8vha6gzja0cqfc46ma673cl3nnkhdjd9jsglts8leua0',
     perps: 'neutron14v9g7regs90qvful7djcajsvrfep5pg9qau7qm6wya6c2lzcpnms692dlt',
     pyth: 'neutron1m2emc93m9gpwgsrsf2vylv9xvgqh654630v7dfrhrkmr5slly53spg85wv',
   },
@@ -105,8 +106,8 @@ const Neutron1: ChainConfig = {
   gasPrice: '0.015untrn',
   hls: false,
   perps: false,
-  farm: true,
-  anyAsset: true,
+  farm: false,
+  anyAsset: false,
 }
 
 export default Neutron1

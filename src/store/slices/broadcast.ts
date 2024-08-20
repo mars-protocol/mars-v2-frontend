@@ -210,7 +210,7 @@ export default function createBroadcastSlice(
           `${get().chainConfig.id}/${LocalStorageKeys.AUTO_LEND_ENABLED_ACCOUNT_IDS}`,
           typeof setOfAccountIds === 'string'
             ? (setOfAccountIds as string)
-            : JSON.stringify(setOfAccountIds),
+            : JSON.stringify(Array.from(setOfAccountIds)),
         )
       }
       return accountId
