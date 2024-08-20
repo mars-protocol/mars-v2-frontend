@@ -7,12 +7,14 @@ import { Logo } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import SwitchWithText from 'components/common/Switch/SwitchWithText'
 import Text from 'components/common/Text'
+import CampaignRewards from 'components/header/RewardsCenter//CampaignRewards'
 import RewardsByPosition from 'components/header/RewardsCenter/RewardsByPosition'
 import RewardsByToken from 'components/header/RewardsCenter/RewardsByToken'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAssets from 'hooks/assets/useAssets'
+import useCampaignPoints from 'hooks/campaign/useCampaignPoints'
 import useIsOsmosis from 'hooks/chain/useIsOsmosis'
 import useToggle from 'hooks/common/useToggle'
 import useStakedAstroLpRewards from 'hooks/incentives/useStakedAstroLpRewards'
@@ -36,6 +38,7 @@ export default function RewardsCenter(props: Props) {
   const { data: redBankRewards } = useUnclaimedRewards()
   const { data: assets } = useAssets()
   const isOsmosis = useIsOsmosis()
+  const { data: campaignPoints } = useCampaignPoints()
   const { isAutoLendEnabledForCurrentAccount: isAutoLend } = useAutoLend()
 
   const { data: stakedAstroLpRewards } = useStakedAstroLpRewards()
@@ -138,6 +141,7 @@ export default function RewardsCenter(props: Props) {
               Unclaimed Rewards
             </Text>
           </div>
+          <CampaignRewards campaignPoints={campaignPoints} />
           <RewardsByToken
             rewards={rewards}
             assets={assets}

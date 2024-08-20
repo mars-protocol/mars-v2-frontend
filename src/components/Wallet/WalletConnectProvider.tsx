@@ -43,7 +43,6 @@ function mapChainConfigToChainInfo(chainConfig: ChainConfig): ChainInfo {
     explorerName: chainConfig.explorerName,
     chainId: chainConfig.id,
     name: chainConfig.name,
-    gasPrice: chainConfig.gasPrice,
     bech32Config: chainConfig.bech32Config,
     defaultCurrency: chainConfig.defaultCurrency,
     features: ['ibc-transfer', 'ibc-go'],

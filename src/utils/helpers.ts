@@ -3,7 +3,6 @@ import throttle from 'lodash.throttle'
 
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
-import { DocURL, WalletID } from 'types/enums'
 import { getCoinValue } from 'utils/formatters'
 
 BigNumber.config({ EXPONENTIAL_AT: 1e9 })
@@ -68,15 +67,4 @@ export function getBNCoinFromValue(value: BigNumber, asset: Asset): BNCoin {
 
 export function getLeverageFromLTV(ltv: number) {
   return +(1 / (1 - ltv)).toPrecision(2)
-}
-
-export function getGovernanceUrl(walletId: WalletID) {
-  switch (walletId) {
-    case WalletID.Station:
-      return DocURL.COUNCIL_STATION
-    case WalletID.Leap:
-      return DocURL.COUNCIL_LEAP
-    default:
-      return DocURL.COUNCIL_KEPLR
-  }
 }

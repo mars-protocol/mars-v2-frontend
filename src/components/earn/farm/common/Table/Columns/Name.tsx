@@ -2,8 +2,11 @@ import AssetCampaignCopy from 'components/common/assets/AssetCampaignCopy'
 import AssetImage from 'components/common/assets/AssetImage'
 import DoubleLogo from 'components/common/DoubleLogo'
 import Text from 'components/common/Text'
+import { BN_ZERO } from 'constants/math'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAsset from 'hooks/assets/useAsset'
 import usePoolAssets from 'hooks/assets/usePoolAssets'
+import { useMemo } from 'react'
 import { VaultStatus } from 'types/enums'
 import { byDenom } from 'utils/array'
 
@@ -13,6 +16,7 @@ export const NAME_META = {
   accessorKey: 'name',
   meta: { className: 'min-w-50' },
 }
+
 interface Props {
   vault: Vault | DepositedVault | AstroLp | DepositedAstroLp
 }
@@ -21,10 +25,17 @@ export default function Name(props: Props) {
   const { vault } = props
   const timeframe = vault.lockup.timeframe[0]
   const unlockDuration = timeframe ? ` - (${vault.lockup.duration}${timeframe})` : ''
+  const account = useCurrentAccount()
   const primaryAsset = useAsset(vault.denoms.primary)
   const poolAssets = usePoolAssets()
-
   const poolAsset = poolAssets.find(byDenom(vault.denoms.lp))
+
+  const lpAmount = useMemo(() => {
+    const currentLpPosition = account?.stakedAstroLps?.find(byDenom(vault.denoms.lp))
+    if (!currentLpPosition) return BN_ZERO
+
+    return currentLpPosition.amount
+  }, [account?.stakedAstroLps, vault.denoms.lp])
 
   let status: VaultStatus = VaultStatus.ACTIVE
   if ('status' in vault) {
@@ -48,7 +59,13 @@ export default function Name(props: Props) {
           <Text size='xs' className='text-white/40' tag='span'>
             {vault.provider}
           </Text>
-          {poolAsset?.campaign && <AssetCampaignCopy asset={poolAsset} size='xs' />}
+          {poolAsset?.campaign && (
+            <AssetCampaignCopy
+              asset={poolAsset}
+              size='xs'
+              amount={lpAmount.isZero() ? undefined : lpAmount}
+            />
+          )}
         </div>
       </div>
     </div>

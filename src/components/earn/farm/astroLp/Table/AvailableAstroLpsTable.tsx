@@ -31,7 +31,7 @@ export default function AvailableAstroLpsTable() {
       title='Available Astro LPs'
       columns={columns}
       data={filteredAstroLps}
-      initialSorting={[{ id: 'name', desc: true }]}
+      initialSorting={[{ id: 'name', desc: false }]}
     />
   )
 }

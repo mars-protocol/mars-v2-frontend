@@ -19,7 +19,7 @@ function Content() {
       title={title}
       columns={columns}
       data={hlsVaults}
-      initialSorting={[{ id: NAME_META.id, desc: true }]}
+      initialSorting={[{ id: NAME_META.id, desc: false }]}
     />
   )
 }
@@ -33,7 +33,7 @@ export default function AvailableHlsVaults() {
 }
 
 function Fallback() {
-  const columns = useAvailableColumns({ isLoading: true })
+  const columns = useAvailableColumns({ isLoading: false })
   const chainConfig = useChainConfig()
   const vaults = chainConfig.vaults
   const mockVaults: Vault[] = vaults
@@ -57,7 +57,7 @@ function Fallback() {
       title={title}
       columns={columns}
       data={mockVaults}
-      initialSorting={[{ id: NAME_META.id, desc: true }]}
+      initialSorting={[{ id: NAME_META.id, desc: false }]}
     />
   )
 }

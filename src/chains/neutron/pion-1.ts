@@ -11,13 +11,14 @@ const Pion1: ChainConfig = {
     {
       denom: 'factory/neutron1wm8jd0hrw79pfhhm9xmuq43jwz4wtukvxfgkkw/mars',
       campaignId: 'drop',
-      multiplier: 1,
+      baseMultiplier: 1,
+      collateralMultiplier: 3,
     },
     {
       denom:
         'factory/neutron1sf456kx85dz0wfjs4sx0s80dyzmc360pfc0rdzactxt8xrse9ykqsdpy2y/astroport/share',
       campaignId: 'drop',
-      multiplier: 5,
+      baseMultiplier: 50,
     },
   ],
   defaultTradingPair: {
@@ -42,6 +43,7 @@ const Pion1: ChainConfig = {
     explorer: 'https://www.mintscan.io/neutron-testnet',
     dexAssets: 'https://testnet.astroport.fi/api/tokens?chainId=pion-1',
     dexPools: 'https://testnet.astroport.fi/api/pools?chainId=pion-1',
+    gasPrices: '/feemarket/v1/gas_price/untrn',
     aprs: {
       vaults: '',
       stride: 'https://edge.stride.zone/api/stake-stats',
@@ -57,11 +59,6 @@ const Pion1: ChainConfig = {
     coinMinimalDenom: 'untrn',
     coinDecimals: 6,
     coinGeckoId: 'neutron',
-    gasPriceStep: {
-      low: 0,
-      average: 0.025,
-      high: 0.045,
-    },
   },
   features: ['ibc-transfer', 'ibc-go'],
   gasPrice: '0.025untrn',

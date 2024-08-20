@@ -3,6 +3,7 @@ import { Droplet, Lido, Stride } from 'components/common/Icons'
 export const CAMPAIGNS: AssetCampaign[] = [
   {
     id: 'stride',
+    name: 'Stride Staking',
     type: 'apy',
     apyApi: {
       url: 'https://edge.stride.zone/api/stake-stats',
@@ -19,17 +20,27 @@ export const CAMPAIGNS: AssetCampaign[] = [
   },
   {
     id: 'drop',
+    name: 'Droplets',
     type: 'points_with_multiplier',
+    pointsApi: {
+      url: 'https://droplets.drop.money/api/droplet?address=##ADDRESS##',
+      pointsStructure: ['result', 'data', 'points'],
+      pointsDecimals: 6,
+      queryVariable: 'address',
+    },
     pointBase: 'value',
     incentiveCopy: 'Earn ##MULTIPLIER##x Droplets',
     classNames: 'droplets',
     bgClassNames: 'gradient-droplets',
-    detailedIncentiveCopy: 'Earn ##POINTS## Droplets Daily (##MULTIPLIER##x)',
+    detailedIncentiveCopy: '##POINTS## Droplets daily (##MULTIPLIER##x)',
     tooltip:
-      "To celebrate Drop Protocol's launch, they're running a campaign to earn Droplets. Droplets earned are based on the value of your position.",
+      'Droplets earned are based on the value of your position. Some positions may have a multiplier range (e.g.: 1-3x). The higher multiplier will be unlocked as soon as you borrow against the position.',
+    totalPointsTooltip:
+      'Total Droplets earned are updated every 24 hours and are counted for the entire wallet.',
   },
   {
     id: 'lido',
+    name: 'Lido Staking',
     type: 'apy',
     apyApi: {
       url: 'https://eth-api.lido.fi/v1/protocol/steth/apr/sma',

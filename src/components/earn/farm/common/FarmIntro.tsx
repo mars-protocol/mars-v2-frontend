@@ -24,7 +24,7 @@ export default function FarmIntro() {
         color='secondary'
       />
       <Button
-        text='Learn how to Far,'
+        text='Learn how to Farm'
         leftIcon={<PlusSquared />}
         onClick={(e) => {
           e.preventDefault()

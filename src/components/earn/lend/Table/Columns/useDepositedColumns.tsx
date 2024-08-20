@@ -30,14 +30,16 @@ export default function useDepositedColumns(props: Props) {
     return [
       {
         ...adjustedNameMeta,
-        cell: ({ row }) => <Name asset={row.original.asset} v1={props.v1} />,
+        cell: ({ row }) => (
+          <Name asset={row.original.asset} v1={props.v1} amount={row.original.accountLentAmount} />
+        ),
       },
       ...(!props.v1
         ? [
             {
               ...CAMPAIGN_META,
               cell: ({ row }: { row: Row<LendingMarketTableData> }) => (
-                <Campaign asset={row.original.asset} />
+                <Campaign asset={row.original.asset} amount={row.original.accountLentAmount} />
               ),
             },
           ]

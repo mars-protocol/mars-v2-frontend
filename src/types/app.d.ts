@@ -228,11 +228,6 @@ interface ChainConfig {
     coinMinimalDenom: string
     coinDecimals: number
     coinGeckoId: string
-    gasPriceStep: {
-      low: number
-      average: number
-      high: number
-    }
   }
   endpoints: {
     rest: string
@@ -243,6 +238,7 @@ interface ChainConfig {
     routes: string
     dexAssets: string
     dexPools?: string
+    gasPrices?: string
     aprs: {
       vaults: string
       stride: string
@@ -266,7 +262,8 @@ interface ChainConfig {
 interface AssetCampaignInfo {
   denom: string
   campaignId: AssetCampaignId
-  multiplier?: number
+  baseMultiplier?: number
+  collateralMultiplier?: number
   campaignDenom?: string
 }
 
@@ -716,10 +713,24 @@ interface WalletClient {
     gasLimit?: string | null | undefined
     memo?: string | null | undefined
     wallet?: import('@delphi-labs/shuttle-react').WalletConnection | null | undefined
+    overrides?: {
+      rpc?: string
+      rest?: string
+      gasAdjustment?: number
+      gasPrice?: string
+      feeCurrency?: import('@delphi-labs/shuttle-react').NetworkCurrency
+    }
   }) => Promise<import('@delphi-labs/shuttle-react').BroadcastResult>
   simulate: (options: {
     messages: import('@delphi-labs/shuttle-react').TransactionMsg<any>[]
     wallet?: import('@delphi-labs/shuttle-react').WalletConnection | null | undefined
+    overrides?: {
+      rpc?: string
+      rest?: string
+      gasAdjustment?: number
+      gasPrice?: string
+      feeCurrency?: import('@delphi-labs/shuttle-react').NetworkCurrency
+    }
   }) => Promise<import('@delphi-labs/shuttle-react').SimulateResult>
 }
 
@@ -966,6 +977,7 @@ interface BroadcastSlice {
   closeHlsStakingPosition: (options: { accountId: string; actions: Action[] }) => Promise<boolean>
   createAccount: (
     accountKind: import('types/generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind,
+    isAutoLendEnabled: boolean,
   ) => Promise<string | null>
   deleteAccount: (options: { accountId: string; lends: BNCoin[] }) => Promise<boolean>
   deposit: (options: { accountId: string; coins: BNCoin[]; lend: boolean }) => Promise<boolean>
@@ -1499,10 +1511,17 @@ interface AssetCampaignApyApi {
   apyStructure: string[]
   denomStructure: string[]
 }
+interface AssetCampaignPointsApi {
+  url: string
+  pointsStructure: string[]
+  queryVariable: 'address' | 'accountId'
+  pointsDecimals: number
+}
 
 interface AssetCampaign {
   id: AssetCampaignId
   type: AssetCampaignType
+  name: string
   classNames: string
   bgClassNames: string
   incentiveCopy: string
@@ -1510,13 +1529,21 @@ interface AssetCampaign {
   tooltip: string
   pointBase?: AssetCampaignPointBase
   apyApi?: AssetCampaignApyApi
+  pointsApi?: AssetCampaignPointsApi
   apy?: number
-  multiplier?: number
+  baseMultiplier?: number
+  collateralMultiplier?: number
+  totalPointsTooltip?: string
 }
 
 interface AssetCampaignApy {
   denom: string
   apy: number
+}
+
+interface AssetCampaignPoints {
+  id: AssetCampaignId
+  points: number
 }
 
 type KeplrMode = 'core' | 'extension' | 'mobile-web' | 'walletconnect'

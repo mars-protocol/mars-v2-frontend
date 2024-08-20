@@ -78,7 +78,7 @@ export default function AddFarmAssetsModalContent(props: Props) {
       <div className='px-4 py-3 border-b border-white/5 bg-white/10'>
         <SearchBar
           value={searchString}
-          placeholder={`Search for e.g. "ETH" or "Ethereum"`}
+          placeholder={`Search for e.g. "ATOM" or "Cosmos"`}
           onChange={onChangeSearchString}
         />
       </div>

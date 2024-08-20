@@ -1,8 +1,8 @@
 import { Suspense } from 'react'
 
+import Table from 'components/common/Table'
 import { NAME_META } from 'components/hls/Farm/Table/Columns/Name'
 import useAvailableColumns from 'components/hls/Staking/Table/Columns/useAvailableColumns'
-import Table from 'components/common/Table'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 
 const title = 'Available Strategies'
@@ -16,7 +16,7 @@ function Content() {
       title={title}
       columns={columns}
       data={hlsStrategies}
-      initialSorting={[{ id: NAME_META.id, desc: true }]}
+      initialSorting={[{ id: NAME_META.id, desc: false }]}
     />
   )
 }
@@ -37,7 +37,7 @@ function Fallback() {
       title={title}
       columns={columns}
       data={[]}
-      initialSorting={[{ id: NAME_META.id, desc: true }]}
+      initialSorting={[{ id: NAME_META.id, desc: false }]}
     />
   )
 }

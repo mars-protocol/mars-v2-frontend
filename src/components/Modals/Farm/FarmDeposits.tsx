@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import Button from 'components/common/Button'
 import DepositCapMessage from 'components/common/DepositCapMessage'
@@ -41,8 +41,8 @@ export default function FarmDeposits(props: Props) {
     [account.deposits, account.lends, primaryAsset.denom, secondaryAsset.denom],
   )
   const assets = useDepositEnabledAssets()
-  const primaryPrice = primaryAsset.price?.amount ?? BN_ZERO
-  const secondaryPrice = secondaryAsset.price?.amount ?? BN_ZERO
+  const primaryPrice = useMemo(() => primaryAsset.price?.amount ?? BN_ZERO, [primaryAsset])
+  const secondaryPrice = useMemo(() => secondaryAsset.price?.amount ?? BN_ZERO, [secondaryAsset])
 
   const primaryCoin = useMemo(() => {
     const amount = deposits.find(byDenom(primaryAsset.denom))?.amount ?? BN_ZERO
@@ -132,8 +132,12 @@ export default function FarmDeposits(props: Props) {
     primaryValue.dividedBy(maxAssetValueNonCustom).multipliedBy(100).decimalPlaces(0).toNumber() ||
       0,
   )
-  const disableInput =
-    (availablePrimaryAmount.isZero() || availableSecondaryAmount.isZero()) && !props.isCustomRatio
+  const disableInput = useMemo(
+    () =>
+      (availablePrimaryAmount.isZero() || availableSecondaryAmount.isZero()) &&
+      !props.isCustomRatio,
+    [availablePrimaryAmount, availableSecondaryAmount, props.isCustomRatio],
+  )
 
   function handleSwitch() {
     const isCustomRatioNew = !props.isCustomRatio
@@ -146,42 +150,53 @@ export default function FarmDeposits(props: Props) {
     props.onChangeIsCustomRatio(isCustomRatioNew)
   }
 
-  function onChangePrimaryDeposit(amount: BigNumber) {
-    if (amount.isGreaterThan(primaryMax)) {
-      amount = primaryMax
-    }
-    primaryCoin.amount = amount
-    setPercentage(amount.dividedBy(primaryMax).multipliedBy(100).decimalPlaces(0).toNumber())
-    if (!props.isCustomRatio) {
-      secondaryCoin.amount = secondaryMax.multipliedBy(amount.dividedBy(primaryMax)).integerValue()
-    }
+  const onChangePrimaryDeposit = useCallback(
+    (amount: BigNumber) => {
+      if (amount.isGreaterThan(primaryMax)) {
+        amount = primaryMax
+      }
+      primaryCoin.amount = amount
+      setPercentage(amount.dividedBy(primaryMax).multipliedBy(100).decimalPlaces(0).toNumber())
+      if (!props.isCustomRatio) {
+        secondaryCoin.amount = secondaryMax
+          .multipliedBy(amount.dividedBy(primaryMax))
+          .integerValue()
+      }
 
-    onChangeDeposits([primaryCoin, secondaryCoin])
-  }
+      onChangeDeposits([primaryCoin, secondaryCoin])
+    },
+    [primaryMax, secondaryMax, props.isCustomRatio, primaryCoin, secondaryCoin, onChangeDeposits],
+  )
 
-  function onChangeSecondaryDeposit(amount: BigNumber) {
-    if (amount.isGreaterThan(secondaryMax)) {
-      amount = secondaryMax
-    }
-    secondaryCoin.amount = amount
-    setPercentage(amount.dividedBy(secondaryMax).multipliedBy(100).decimalPlaces(0).toNumber())
-    if (!props.isCustomRatio) {
-      primaryCoin.amount = primaryMax.multipliedBy(amount.dividedBy(secondaryMax)).integerValue()
-    }
+  const onChangeSecondaryDeposit = useCallback(
+    (amount: BigNumber) => {
+      if (amount.isGreaterThan(secondaryMax)) {
+        amount = secondaryMax
+      }
+      secondaryCoin.amount = amount
+      setPercentage(amount.dividedBy(secondaryMax).multipliedBy(100).decimalPlaces(0).toNumber())
+      if (!props.isCustomRatio) {
+        primaryCoin.amount = primaryMax.multipliedBy(amount.dividedBy(secondaryMax)).integerValue()
+      }
 
-    onChangeDeposits([primaryCoin, secondaryCoin])
-  }
+      onChangeDeposits([primaryCoin, secondaryCoin])
+    },
+    [primaryMax, secondaryMax, props.isCustomRatio, primaryCoin, secondaryCoin, onChangeDeposits],
+  )
 
-  function onChangeSlider(value: number) {
-    setPercentage(value)
-    primaryCoin.amount = primaryMax.multipliedBy(value / 100).integerValue()
-    secondaryCoin.amount = secondaryMax.multipliedBy(value / 100).integerValue()
-    onChangeDeposits([primaryCoin, secondaryCoin])
-  }
+  const onChangeSlider = useCallback(
+    (value: number) => {
+      if (percentage !== value) setPercentage(value)
+      primaryCoin.amount = primaryMax.multipliedBy(value / 100).integerValue()
+      secondaryCoin.amount = secondaryMax.multipliedBy(value / 100).integerValue()
+      onChangeDeposits([primaryCoin, secondaryCoin])
+    },
+    [percentage, primaryCoin, primaryMax, secondaryCoin, secondaryMax, onChangeDeposits],
+  )
 
-  function getWarningText(asset: Asset) {
+  const getWarningText = useCallback((asset: Asset) => {
     return `You don't have ${asset.symbol} balance in your account. Toggle custom amount to deposit.`
-  }
+  }, [])
 
   return (
     <div className='flex flex-col'>

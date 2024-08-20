@@ -17,7 +17,7 @@ export default function ActiveAstroLpsTable(props: Props) {
       title='Deposited and Staked AstroLps'
       columns={props.columns}
       data={props.data}
-      initialSorting={[{ id: 'name', desc: true }]}
+      initialSorting={[{ id: 'name', desc: false }]}
     />
   )
 }

@@ -4,7 +4,9 @@ import moment from 'moment'
 import { isMobile } from 'react-device-detect'
 import { StoreApi } from 'zustand'
 
+import getGasPrice from 'api/gasPrice/getGasPrice'
 import getPythPriceData from 'api/prices/getPythPriceData'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { ExecuteMsg as AccountNftExecuteMsg } from 'types/generated/mars-account-nft/MarsAccountNft.types'
@@ -58,9 +60,14 @@ export default function createBroadcastSlice(
       return defaultFee
     }
     try {
+      const gasPrice = await getGasPrice(get().chainConfig)
+
       const simulateResult = await get().client?.simulate({
         messages,
         wallet: get().client?.connectedWallet,
+        overrides: {
+          gasPrice,
+        },
       })
 
       if (simulateResult) {
@@ -68,8 +75,8 @@ export default function createBroadcastSlice(
         if (success) {
           const fee = simulateResult.fee
           return {
-            amount: fee ? fee.amount : [],
-            gas: BN(fee ? fee.gas : 0).toFixed(0),
+            amount: fee.amount,
+            gas: BN(fee.gas).toFixed(0),
           }
         }
       }
@@ -180,7 +187,7 @@ export default function createBroadcastSlice(
       return response.then((response) => !!response.result)
     },
 
-    createAccount: async (accountKind: AccountKind) => {
+    createAccount: async (accountKind: AccountKind, isAutoLendEnabled: boolean) => {
       const msg: CreditManagerExecuteMsg = {
         create_credit_account: accountKind,
       }
@@ -192,11 +199,27 @@ export default function createBroadcastSlice(
 
       get().handleTransaction({ response })
 
-      return response.then((response) =>
+      const accountId = await response.then((response) =>
         response.result
           ? getSingleValueFromBroadcastResult(response.result, 'wasm', 'token_id')
           : null,
       )
+
+      if (accountId && isAutoLendEnabled) {
+        const setOfAccountIds = new Set(
+          localStorage.getItem(
+            `${get().chainConfig.id}/${LocalStorageKeys.AUTO_LEND_ENABLED_ACCOUNT_IDS}`,
+          ) ?? [],
+        )
+        setOfAccountIds.add(accountId)
+        localStorage.setItem(
+          `${get().chainConfig.id}/${LocalStorageKeys.AUTO_LEND_ENABLED_ACCOUNT_IDS}`,
+          typeof setOfAccountIds === 'string'
+            ? (setOfAccountIds as string)
+            : JSON.stringify(Array.from(setOfAccountIds)),
+        )
+      }
+      return accountId
     },
     deleteAccount: async (options: { accountId: string; lends: BNCoin[] }) => {
       const reclaimMsg = options.lends.map((coin) => {
@@ -753,6 +776,7 @@ export default function createBroadcastSlice(
         const isLedger = client?.connectedWallet?.account.isLedger
         const memo = isLedger ? '' : isV1 ? 'MPv1' : 'MPv2'
 
+        const gasPrice = await getGasPrice(get().chainConfig)
         if (!client)
           return { result: undefined, error: 'No client detected. Please reconnect your wallet.' }
         if ((checkPythUpdateEnabled() || options.isPythUpdate) && !isLedger) {
@@ -767,6 +791,9 @@ export default function createBroadcastSlice(
           memo,
           wallet: client.connectedWallet,
           mobile: isMobile,
+          overrides: {
+            gasPrice,
+          },
         }
         const result = await client.broadcast(broadcastOptions)
         if (result.hash) {

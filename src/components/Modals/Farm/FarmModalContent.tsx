@@ -9,7 +9,6 @@ import FarmBorrowingsSubTitle from 'components/Modals/Farm/FarmBorrowingsSubTitl
 import FarmDeposits from 'components/Modals/Farm/FarmDeposits'
 import FarmDepositsSubTitle from 'components/Modals/Farm/FarmDepositsSubTitle'
 import { BN_ZERO } from 'constants/math'
-import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useDisplayAsset from 'hooks/assets/useDisplayAsset'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useIsOpenArray from 'hooks/common/useIsOpenArray'
@@ -28,17 +27,25 @@ interface Props {
   account: Account
   isAstroLp: boolean
   isDeposited?: boolean
+  removedDeposits: BNCoin[]
+  addedDebts: BNCoin[]
+  removedLends: BNCoin[]
+  simulateAstroLpDeposit?: (lp: string, deposits: BNCoin[], borrowings: BNCoin[]) => void
+  simulateVaultDeposit?: (address: string, deposits: BNCoin[], borrowings: BNCoin[]) => void
 }
 
 export default function FarmModalContent(props: Props) {
-  const { farm, account, isAstroLp, isDeposited } = props
   const {
-    addedDebts,
+    farm,
+    account,
+    isAstroLp,
+    isDeposited,
     removedDeposits,
+    addedDebts,
     removedLends,
     simulateAstroLpDeposit,
     simulateVaultDeposit,
-  } = useUpdatedAccount(account)
+  } = props
   const assets = useWhitelistedAssets()
   const [displayCurrency] = useDisplayCurrency()
   const [isOpen, toggleOpen] = useIsOpenArray(2, false)
@@ -69,8 +76,14 @@ export default function FarmModalContent(props: Props) {
     [addedDebts, assets, farm, isAstroLp, removedDeposits, removedLends, slippage],
   )
 
-  const primaryAsset = assets.find(byDenom(farm.denoms.primary))
-  const secondaryAsset = assets.find(byDenom(farm.denoms.secondary))
+  const primaryAsset = useMemo(
+    () => assets.find(byDenom(farm.denoms.primary)),
+    [assets, farm.denoms.primary],
+  )
+  const secondaryAsset = useMemo(
+    () => assets.find(byDenom(farm.denoms.secondary)),
+    [assets, farm.denoms.secondary],
+  )
   const depositCapReachedCoins = useMemo(() => {
     if (!farm.cap) return [BNCoin.fromDenomAndBigNumber(displayAsset.denom, BN_ZERO)]
 
@@ -111,8 +124,9 @@ export default function FarmModalContent(props: Props) {
   const onChangeDeposits = useCallback(
     (coins: BNCoin[]) => {
       setDepositCoins(coins)
-      if (isAstroLp) simulateAstroLpDeposit(farm.denoms.lp, coins, borrowCoins)
-      else simulateVaultDeposit(farm.address, coins, borrowCoins)
+      if (isAstroLp && simulateAstroLpDeposit)
+        simulateAstroLpDeposit(farm.denoms.lp, coins, borrowCoins)
+      if (!isAstroLp && simulateVaultDeposit) simulateVaultDeposit(farm.address, coins, borrowCoins)
     },
     [
       borrowCoins,
@@ -127,8 +141,9 @@ export default function FarmModalContent(props: Props) {
   const onChangeBorrowings = useCallback(
     (coins: BNCoin[]) => {
       setBorrowCoins(coins)
-      if (isAstroLp) simulateAstroLpDeposit(farm.denoms.lp, depositCoins, coins)
-      else simulateVaultDeposit(farm.address, coins, borrowCoins)
+      if (isAstroLp && simulateAstroLpDeposit)
+        simulateAstroLpDeposit(farm.denoms.lp, depositCoins, coins)
+      if (!isAstroLp && simulateVaultDeposit) simulateVaultDeposit(farm.address, coins, borrowCoins)
     },
     [
       borrowCoins,
@@ -141,7 +156,7 @@ export default function FarmModalContent(props: Props) {
     ],
   )
 
-  function getDepositSubTitle() {
+  const getDepositSubTitle = useCallback(() => {
     if (isOpen[0] && isDeposited)
       return (
         <Text size='xs' className='mt-1 text-white/60'>
@@ -164,9 +179,9 @@ export default function FarmModalContent(props: Props) {
         displayCurrency={displayCurrency}
       />
     )
-  }
+  }, [deposits, displayCurrency, isDeposited, isOpen, primaryAsset, secondaryAsset])
 
-  function getBorrowingsSubTitle() {
+  const getBorrowingsSubTitle = useCallback(() => {
     if (isOpen[1] && isDeposited)
       return (
         <Text size='xs' className='mt-1 text-white/60'>
@@ -177,9 +192,76 @@ export default function FarmModalContent(props: Props) {
     if (isOpen[1]) return null
 
     return <FarmBorrowingsSubTitle borrowings={addedDebts} displayCurrency={displayCurrency} />
-  }
+  }, [addedDebts, displayCurrency, isDeposited, isOpen])
 
-  if (!primaryAsset || !secondaryAsset) return null
+  const items = useMemo(() => {
+    if (!primaryAsset || !secondaryAsset) return []
+    return [
+      {
+        renderContent: () => (
+          <FarmDeposits
+            deposits={depositCoins}
+            onChangeDeposits={onChangeDeposits}
+            primaryAsset={primaryAsset}
+            secondaryAsset={secondaryAsset}
+            account={account}
+            toggleOpen={toggleOpen}
+            isCustomRatio={isCustomRatio}
+            onChangeIsCustomRatio={onChangeIsCustomRatio}
+            depositCapReachedCoins={depositCapReachedCoins}
+          />
+        ),
+        title: 'Deposit',
+        renderSubTitle: getDepositSubTitle,
+        isOpen: isOpen[0],
+        toggleOpen: (index: number) => toggleOpen(index),
+      },
+      {
+        renderContent: () => (
+          <FarmBorrowings
+            account={account}
+            borrowings={borrowCoins}
+            reclaims={removedLends}
+            deposits={removedDeposits}
+            primaryAsset={primaryAsset}
+            secondaryAsset={secondaryAsset}
+            onChangeBorrowings={onChangeBorrowings}
+            farm={farm}
+            depositCapReachedCoins={depositCapReachedCoins}
+            displayCurrency={displayCurrency}
+            totalValue={totalValue}
+            type={isAstroLp ? 'astroLp' : 'vault'}
+          />
+        ),
+        title: 'Borrow',
+        renderSubTitle: getBorrowingsSubTitle,
+        isOpen: isOpen[1],
+        toggleOpen: (index: number) => toggleOpen(index),
+      },
+    ]
+  }, [
+    account,
+    borrowCoins,
+    depositCapReachedCoins,
+    depositCoins,
+    displayCurrency,
+    farm,
+    getBorrowingsSubTitle,
+    getDepositSubTitle,
+    isAstroLp,
+    isCustomRatio,
+    isOpen,
+    onChangeBorrowings,
+    onChangeDeposits,
+    onChangeIsCustomRatio,
+    primaryAsset,
+    removedDeposits,
+    removedLends,
+    secondaryAsset,
+    toggleOpen,
+    totalValue,
+  ])
+
   return (
     <div
       className={classNames(
@@ -188,52 +270,7 @@ export default function FarmModalContent(props: Props) {
         'lg:flex-nowrap lg:p-6',
       )}
     >
-      <Accordion
-        className='h-[546px] overflow-y-scroll scrollbar-hide flex-1'
-        items={[
-          {
-            renderContent: () => (
-              <FarmDeposits
-                deposits={depositCoins}
-                onChangeDeposits={onChangeDeposits}
-                primaryAsset={primaryAsset}
-                secondaryAsset={secondaryAsset}
-                account={account}
-                toggleOpen={toggleOpen}
-                isCustomRatio={isCustomRatio}
-                onChangeIsCustomRatio={onChangeIsCustomRatio}
-                depositCapReachedCoins={depositCapReachedCoins}
-              />
-            ),
-            title: 'Deposit',
-            renderSubTitle: getDepositSubTitle,
-            isOpen: isOpen[0],
-            toggleOpen: (index: number) => toggleOpen(index),
-          },
-          {
-            renderContent: () => (
-              <FarmBorrowings
-                account={account}
-                borrowings={borrowCoins}
-                reclaims={removedLends}
-                deposits={removedDeposits}
-                primaryAsset={primaryAsset}
-                secondaryAsset={secondaryAsset}
-                onChangeBorrowings={onChangeBorrowings}
-                farm={farm}
-                depositCapReachedCoins={depositCapReachedCoins}
-                displayCurrency={displayCurrency}
-                totalValue={totalValue}
-                type={isAstroLp ? 'astroLp' : 'vault'}
-              />
-            ),
-            title: 'Borrow',
-            renderSubTitle: getBorrowingsSubTitle,
-            isOpen: isOpen[1],
-            toggleOpen: (index: number) => toggleOpen(index),
-          },
-        ]}
-      />
+      <Accordion className='h-[546px] overflow-y-scroll scrollbar-hide flex-1' items={items} />
       <AccountSummaryInModal account={account} />
     </div>
   )
