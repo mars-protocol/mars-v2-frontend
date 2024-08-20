@@ -60,9 +60,14 @@ export default function createBroadcastSlice(
       return defaultFee
     }
     try {
+      const gasPrice = await getGasPrice(get().chainConfig)
+
       const simulateResult = await get().client?.simulate({
         messages,
         wallet: get().client?.connectedWallet,
+        overrides: {
+          gasPrice,
+        },
       })
 
       if (simulateResult) {
@@ -772,8 +777,6 @@ export default function createBroadcastSlice(
         const memo = isLedger ? '' : isV1 ? 'MPv1' : 'MPv2'
 
         const gasPrice = await getGasPrice(get().chainConfig)
-        console.log('GAS:', gasPrice)
-
         if (!client)
           return { result: undefined, error: 'No client detected. Please reconnect your wallet.' }
         if ((checkPythUpdateEnabled() || options.isPythUpdate) && !isLedger) {
@@ -788,6 +791,9 @@ export default function createBroadcastSlice(
           memo,
           wallet: client.connectedWallet,
           mobile: isMobile,
+          overrides: {
+            gasPrice,
+          },
         }
         const result = await client.broadcast(broadcastOptions)
         if (result.hash) {

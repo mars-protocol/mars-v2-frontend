@@ -228,11 +228,6 @@ interface ChainConfig {
     coinMinimalDenom: string
     coinDecimals: number
     coinGeckoId: string
-    gasPriceStep: {
-      low: number
-      average: number
-      high: number
-    }
   }
   endpoints: {
     rest: string
@@ -718,10 +713,24 @@ interface WalletClient {
     gasLimit?: string | null | undefined
     memo?: string | null | undefined
     wallet?: import('@delphi-labs/shuttle-react').WalletConnection | null | undefined
+    overrides?: {
+      rpc?: string
+      rest?: string
+      gasAdjustment?: number
+      gasPrice?: string
+      feeCurrency?: import('@delphi-labs/shuttle-react').NetworkCurrency
+    }
   }) => Promise<import('@delphi-labs/shuttle-react').BroadcastResult>
   simulate: (options: {
     messages: import('@delphi-labs/shuttle-react').TransactionMsg<any>[]
     wallet?: import('@delphi-labs/shuttle-react').WalletConnection | null | undefined
+    overrides?: {
+      rpc?: string
+      rest?: string
+      gasAdjustment?: number
+      gasPrice?: string
+      feeCurrency?: import('@delphi-labs/shuttle-react').NetworkCurrency
+    }
   }) => Promise<import('@delphi-labs/shuttle-react').SimulateResult>
 }
 

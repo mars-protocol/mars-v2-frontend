@@ -81,6 +81,7 @@ const Neutron1: ChainConfig = {
     explorer: 'https://mintscan.io/neutron',
     dexAssets: 'https://api.astroport.fi/api/tokens?chainId=neutron-1',
     dexPools: 'https://api.astroport.fi/api/pools?chainId=neutron-1',
+    gasPrices: '/feemarket/v1/gas_price/untrn',
     aprs: {
       vaults: '',
       stride: 'https://edge.stride.zone/api/stake-stats',
@@ -96,14 +97,9 @@ const Neutron1: ChainConfig = {
     coinMinimalDenom: 'untrn',
     coinDecimals: 6,
     coinGeckoId: 'neutron',
-    gasPriceStep: {
-      low: 0,
-      average: 0.015,
-      high: 0.025,
-    },
   },
   features: ['ibc-transfer', 'ibc-go'],
-  gasPrice: '0.015',
+  gasPrice: '0.015untrn',
   hls: false,
   perps: false,
   farm: false,

@@ -93,11 +93,6 @@ const Osmosis1: ChainConfig = {
     coinMinimalDenom: 'uosmo',
     coinDecimals: 6,
     coinGeckoId: 'osmosis',
-    gasPriceStep: {
-      low: 0.0025,
-      average: 0.025,
-      high: 0.04,
-    },
   },
   endpoints: {
     rpc: process.env.NEXT_PUBLIC_OSMOSIS_RPC ?? 'https://rpc-osmosis.blockapsis.com',
@@ -119,7 +114,7 @@ const Osmosis1: ChainConfig = {
   dexName: 'Osmosis Dex',
   explorerName: 'Mintscan',
   features: ['ibc-transfer', 'ibc-go'],
-  gasPrice: '0.003',
+  gasPrice: '0.003uosmo',
   name: 'Osmosis',
   network: NETWORK.MAINNET,
   vaults: VAULTS_META_DATA,
