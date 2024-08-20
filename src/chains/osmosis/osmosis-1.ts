@@ -93,11 +93,6 @@ const Osmosis1: ChainConfig = {
     coinMinimalDenom: 'uosmo',
     coinDecimals: 6,
     coinGeckoId: 'osmosis',
-    gasPriceStep: {
-      low: 0.0025,
-      average: 0.025,
-      high: 0.04,
-    },
   },
   endpoints: {
     rpc: process.env.NEXT_PUBLIC_OSMOSIS_RPC ?? 'https://rpc-osmosis.blockapsis.com',
@@ -110,6 +105,7 @@ const Osmosis1: ChainConfig = {
       'osmosis/gamm/v1beta1/pools/POOL_ID',
     ),
     dexAssets: 'https://api.astroport.fi/api/tokens?chainId=osmosis-1',
+    gasPrices: 'https://osmosis-api.polkachu.com/osmosis/txfees/v1beta1/cur_eip_base_fee',
     aprs: {
       vaults: 'https://api.marsprotocol.io/v1/vaults/osmosis',
       stride: 'https://edge.stride.zone/api/stake-stats',
@@ -118,7 +114,7 @@ const Osmosis1: ChainConfig = {
   dexName: 'Osmosis Dex',
   explorerName: 'Mintscan',
   features: ['ibc-transfer', 'ibc-go'],
-  gasPrice: '0.0035uosmo',
+  gasPrice: '0.003uosmo',
   name: 'Osmosis',
   network: NETWORK.MAINNET,
   vaults: VAULTS_META_DATA,

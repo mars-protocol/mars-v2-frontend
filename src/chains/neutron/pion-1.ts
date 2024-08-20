@@ -43,6 +43,7 @@ const Pion1: ChainConfig = {
     explorer: 'https://www.mintscan.io/neutron-testnet',
     dexAssets: 'https://testnet.astroport.fi/api/tokens?chainId=pion-1',
     dexPools: 'https://testnet.astroport.fi/api/pools?chainId=pion-1',
+    gasPrices: '/feemarket/v1/gas_price/untrn',
     aprs: {
       vaults: '',
       stride: 'https://edge.stride.zone/api/stake-stats',
@@ -58,11 +59,6 @@ const Pion1: ChainConfig = {
     coinMinimalDenom: 'untrn',
     coinDecimals: 6,
     coinGeckoId: 'neutron',
-    gasPriceStep: {
-      low: 0,
-      average: 0.025,
-      high: 0.045,
-    },
   },
   features: ['ibc-transfer', 'ibc-go'],
   gasPrice: '0.025untrn',
