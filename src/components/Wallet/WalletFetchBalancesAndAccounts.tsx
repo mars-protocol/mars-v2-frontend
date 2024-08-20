@@ -11,7 +11,6 @@ import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
-import { defaultFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
 
@@ -49,25 +48,24 @@ function Content() {
 
   useEffect(() => {
     const page = getPage(pathname)
+
     if (page === 'portfolio' && urlAddress && urlAddress !== address) {
       navigate(getRoute(page, searchParams, urlAddress as string))
       useStore.setState({ balances: walletBalances, focusComponent: null })
       return
     }
 
-    if (
-      accountIds &&
-      accountIds.length !== 0 &&
-      BN(baseBalance).isGreaterThanOrEqualTo(defaultFee.amount[0].amount)
-    ) {
-      const currentAccountIsHLS = urlAccountId && !accountIds.includes(urlAccountId)
-      const currentAccount = currentAccountIsHLS || !urlAccountId ? accountIds[0] : urlAccountId
-      navigate(getRoute(page, searchParams, address, isV1 ? undefined : currentAccount))
-      useStore.setState({ balances: walletBalances, focusComponent: null })
-    }
+    if (!accountIds || accountIds.length === 0) return
+
+    const currentAccountIsHLS = urlAccountId && !accountIds.includes(urlAccountId)
+    const currentAccount = currentAccountIsHLS || !urlAccountId ? accountIds[0] : urlAccountId
+
+    navigate(getRoute(page, searchParams, address, isV1 ? undefined : currentAccount), {
+      replace: true,
+    })
+    setTimeout(() => useStore.setState({ balances: walletBalances, focusComponent: null }), 500)
   }, [
     accountIds,
-    baseBalance,
     navigate,
     pathname,
     address,
@@ -81,8 +79,7 @@ function Content() {
   if (isLoadingAccounts || isLoadingBalances) return <FetchLoading />
   if (BN(baseBalance).isZero()) return <WalletBridges />
   if (accountIds && accountIds.length === 0 && !isV1) return <AccountCreateFirst />
-  useStore.setState({ focusComponent: null })
-  return null
+  return <FetchLoading />
 }
 
 export default function WalletFetchBalancesAndAccounts() {
