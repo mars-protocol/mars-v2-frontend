@@ -6,6 +6,8 @@ nextFolder='/app/.next'
 envFilename='override.conf'
 echo "APP_NEXT_OSMOSIS_RPC=$URL_OSMOSIS_RPC" >> $envFilename
 echo "APP_NEXT_OSMOSIS_REST=$URL_OSMOSIS_REST" >> $envFilename
+echo "APP_NEXT_NEUTRON_RPC=$URL_NEUTRON_RPC" >> $envFilename
+echo "APP_NEXT_NEUTRON_REST=$URL_NEUTRON_REST" >> $envFilename
 echo "APP_NEXT_WALLET_CONNECT_ID=$WALLET_CONNECT_ID" >> $envFilename
 
 function apply_path {
