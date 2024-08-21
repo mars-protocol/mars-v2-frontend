@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
-import { CampaignLogo, CAMPAIGNS } from 'constants/campaigns'
+import { CampaignLogo } from 'constants/campaigns'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAssets from 'hooks/assets/useAssets'
 import { useMemo } from 'react'
@@ -20,7 +20,6 @@ interface Props {
 }
 
 interface CopyProps extends Props {
-  campaign: AssetCampaign
   isV1: boolean
 }
 
@@ -28,21 +27,19 @@ export default function AssetCampaignCopyController(props: Props) {
   const { asset, withLogo } = props
   const isV1 = useStore((s) => s.isV1)
   if (!asset.campaign) return null
-  const assetCampaignId = asset.campaign.id
-  const assetCampaign = CAMPAIGNS.find((campaign) => campaign.id === assetCampaignId)
-  if (!assetCampaign || (!assetCampaign.enabledOnV1 && isV1 && !withLogo)) return null
+  if (!asset.campaign.enabledOnV1 && isV1 && !withLogo) return null
 
-  return <AssetCampaignCopy campaign={assetCampaign} isV1={isV1} {...props} />
+  return <AssetCampaignCopy isV1={isV1} {...props} />
 }
 
 function AssetCampaignCopy(props: CopyProps) {
-  const { asset, className, amount, withLogo, size, textClassName, noDot, campaign, isV1 } = props
+  const { asset, className, amount, withLogo, size, textClassName, noDot, isV1 } = props
   const { data: assets } = useAssets()
   const account = useCurrentAccount()
 
   const incentiveCopy = useMemo(() => {
     if (!asset.campaign) return ''
-    if (!campaign.enabledOnV1 && isV1 && campaign.v1Tooltip) return campaign.v1Tooltip
+    if (!asset.campaign.enabledOnV1 && isV1) return asset.campaign.v1Tooltip
     if (
       !amount ||
       amount.isZero() ||
@@ -73,16 +70,7 @@ function AssetCampaignCopy(props: CopyProps) {
       '##POINTS##',
       formatValue(campaignPoints, { maxDecimals: 0, minDecimals: 0, abbreviated: false }),
     )
-  }, [
-    account?.debts,
-    amount,
-    asset.campaign,
-    asset.denom,
-    assets,
-    campaign.enabledOnV1,
-    campaign.v1Tooltip,
-    isV1,
-  ])
+  }, [account?.debts, amount, asset.campaign, asset.denom, assets, isV1])
 
   const iconClasses = useMemo(() => {
     if (size === 'xs') return 'w-4 h-4'
@@ -99,7 +87,7 @@ function AssetCampaignCopy(props: CopyProps) {
         className={classNames('flex items-center gap-2', className)}
         content={
           <Text size='xs' className='max-w-[320px]'>
-            {isV1 && !campaign.enabledOnV1
+            {isV1 && !asset.campaign.enabledOnV1
               ? 'This campaign is not available on v1.'
               : asset.campaign.tooltip}
           </Text>
