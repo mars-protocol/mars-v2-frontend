@@ -59,7 +59,6 @@ export default function Select(props: Props) {
       ))
     const end = performance.now()
     const sortingTime = end - start
-    console.log(`Sorting took ${sortingTime} milliseconds.`)
 
     const remainingTime = Math.max(0, 50 - sortingTime)
     setTimeout(() => {
