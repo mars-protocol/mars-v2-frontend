@@ -16,7 +16,7 @@ export const getCurrentChainId = () => {
     subdomain = window.location.hostname.split('.')[0]
   }
 
-  if (!localStorageChainId || (localStorageChainId === null && subdomain !== '')) {
+  if ((!localStorageChainId || localStorageChainId === null) && subdomain !== '') {
     switch (subdomain) {
       case 'osmosis':
         if (currentNetwork === NETWORK.MAINNET) chainId = ChainInfoID.Osmosis1
