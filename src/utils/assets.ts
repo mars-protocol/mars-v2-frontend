@@ -139,6 +139,8 @@ export function resolveAssetCampaign(
     classNames: currentCampaign.classNames,
     bgClassNames: currentCampaign.bgClassNames,
     tooltip: currentCampaign.tooltip,
+    enabledOnV1: currentCampaign.enabledOnV1,
+    v1Tooltip: currentCampaign.v1Tooltip ?? '',
     baseMultiplier: 0,
     collateralMultiplier: 0,
     apy: 0,
