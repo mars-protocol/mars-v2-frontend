@@ -19,6 +19,7 @@ export const getCurrentChainId = () => {
         break
 
       case 'neutron':
+      case 'testnet':
         if (currentNetwork === NETWORK.MAINNET) chainId = ChainInfoID.Neutron1
         break
 
