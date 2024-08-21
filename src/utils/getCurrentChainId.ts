@@ -10,29 +10,29 @@ export const getCurrentChainId = () => {
       : chains[ChainInfoID.Pion1].id
   let chainId = defaultChainId
 
+  const localStorageChainId = localStorage.getItem(LocalStorageKeys.CURRENT_CHAIN_ID) as ChainInfoID
   if (window) {
     const subdomain = window.location.hostname.split('.')[0]
 
-    switch (subdomain) {
-      case 'osmosis':
-        if (currentNetwork === NETWORK.MAINNET) chainId = ChainInfoID.Osmosis1
-        break
+    if (!localStorageChainId || localStorageChainId === null) {
+      switch (subdomain) {
+        case 'osmosis':
+          if (currentNetwork === NETWORK.MAINNET) chainId = ChainInfoID.Osmosis1
+          break
 
-      case 'neutron':
-      case 'testnet':
-        if (currentNetwork === NETWORK.MAINNET) chainId = ChainInfoID.Neutron1
-        break
+        case 'neutron':
+        case 'testnet':
+          if (currentNetwork === NETWORK.MAINNET) chainId = ChainInfoID.Neutron1
+          break
 
-      case 'testnet-neutron':
-        if (currentNetwork === NETWORK.TESTNET) chainId = ChainInfoID.Pion1
-        break
+        case 'testnet-neutron':
+          if (currentNetwork === NETWORK.TESTNET) chainId = ChainInfoID.Pion1
+          break
+      }
+
+      if (chainId !== defaultChainId) return chainId
     }
-
-    if (chainId !== defaultChainId) return chainId
-  }
-
-  const localStorageChainId = localStorage.getItem(LocalStorageKeys.CURRENT_CHAIN_ID) as ChainInfoID
-  if (localStorageChainId !== null) {
+  } else {
     switch (localStorageChainId) {
       case ChainInfoID.Osmosis1:
         if (currentNetwork === NETWORK.MAINNET) chainId = ChainInfoID.Osmosis1
