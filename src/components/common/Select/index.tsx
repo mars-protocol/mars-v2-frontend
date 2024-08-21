@@ -6,7 +6,7 @@ import Overlay from 'components/common/Overlay'
 import Option from 'components/common/Select/Option'
 import Text from 'components/common/Text'
 import useToggle from 'hooks/common/useToggle'
-import { CircularProgress } from '../CircularProgress'
+import { CircularProgress } from 'components/common/CircularProgress'
 
 interface Props {
   options: SelectOption[]
@@ -71,7 +71,7 @@ export default function Select(props: Props) {
     if (!showDropdown) {
       setIsAssetsLoading(true)
       setShowDropdown(true)
-      setTimeout(getSortedOptions, 0)
+      getSortedOptions()
     } else {
       setShowDropdown(false)
     }
