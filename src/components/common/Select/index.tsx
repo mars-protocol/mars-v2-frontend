@@ -1,11 +1,12 @@
 import classNames from 'classnames'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { ChevronDown } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Option from 'components/common/Select/Option'
 import Text from 'components/common/Text'
 import useToggle from 'hooks/common/useToggle'
+import { CircularProgress } from 'components/common/CircularProgress'
 
 interface Props {
   options: SelectOption[]
@@ -26,17 +27,55 @@ export default function Select(props: Props) {
     : undefined
   const [selected, setSelected] = useState<SelectOption | undefined>(undefined)
   const [showDropdown, setShowDropdown] = useToggle()
+  const [isAssetsLoading, setIsAssetsLoading] = useState(false)
+  const [sortedOptions, setSortedOptions] = useState<React.ReactNode[]>([])
 
-  function handleChange(optionValue: string) {
-    setValue(optionValue)
-    const option = props.options.find(
-      (option) => option?.value === optionValue || option?.denom === optionValue,
-    )
-    if (!option) return
-    setSelected(option)
-    setShowDropdown(false)
-    props.onChange(optionValue)
-  }
+  const handleChange = useCallback(
+    (optionValue: string) => {
+      setValue(optionValue)
+      const option = props.options.find(
+        (option) => option?.value === optionValue || option?.denom === optionValue,
+      )
+      if (!option) return
+      setSelected(option)
+      setShowDropdown(false)
+      props.onChange(optionValue)
+    },
+    [props, setShowDropdown],
+  )
+  const getSortedOptions = useCallback(() => {
+    const start = performance.now()
+    const sorted = props.options
+      .sort((a, b) => ((a.amount?.toNumber() ?? 0) > (b.amount?.toNumber() ?? 0) ? -1 : 1))
+      .map((option: SelectOption, index: number) => (
+        <Option
+          key={index}
+          {...option}
+          isSelected={
+            option?.value ? option?.value === selected?.value : option?.denom === selected?.denom
+          }
+          onClick={handleChange}
+        />
+      ))
+    const end = performance.now()
+    const sortingTime = end - start
+
+    const remainingTime = Math.max(0, 50 - sortingTime)
+    setTimeout(() => {
+      setSortedOptions(sorted)
+      setIsAssetsLoading(false)
+    }, remainingTime)
+  }, [props.options, selected, handleChange])
+
+  const handleToggleDropdown = useCallback(() => {
+    if (!showDropdown) {
+      setIsAssetsLoading(true)
+      setShowDropdown(true)
+      getSortedOptions()
+    } else {
+      setShowDropdown(false)
+    }
+  }, [showDropdown, setShowDropdown, getSortedOptions])
 
   useEffect(() => {
     if (selectedOption && !selected) setSelected(selectedOption)
@@ -65,7 +104,7 @@ export default function Select(props: Props) {
           props.className,
         )}
         role='select'
-        onClick={() => setShowDropdown(!showDropdown)}
+        onClick={handleToggleDropdown}
       >
         {selected ? (
           <Option
@@ -95,7 +134,7 @@ export default function Select(props: Props) {
         <Overlay
           show={showDropdown}
           className={classNames('left-0 top-[calc(100%+8px)] !absolute isolate w-full')}
-          setShow={setShowDropdown}
+          setShow={handleToggleDropdown}
           hasBackdropIsolation
         >
           <div className='relative w-full overflow-hidden rounded-sm isolate'>
@@ -104,24 +143,15 @@ export default function Select(props: Props) {
                 {props.title}
               </Text>
             )}
-            <div className='w-full overflow-y-scroll max-h-70 scrollbar-hide'>
-              {props.options
-                .sort((a, b) =>
-                  (a.amount?.toNumber() ?? 0) > (b.amount?.toNumber() ?? 0) ? -1 : 1,
-                )
-                .map((option: SelectOption, index: number) => (
-                  <Option
-                    key={index}
-                    {...option}
-                    isSelected={
-                      option?.value
-                        ? option?.value === selected?.value
-                        : option?.denom === selected?.denom
-                    }
-                    onClick={handleChange}
-                  />
-                ))}
-            </div>
+            {isAssetsLoading ? (
+              <div className='flex justify-center items-center px-4 py-10'>
+                <CircularProgress size={24} />
+              </div>
+            ) : (
+              <div className='w-full overflow-y-scroll max-h-70 scrollbar-hide'>
+                {sortedOptions}
+              </div>
+            )}
           </div>
         </Overlay>
       </div>
