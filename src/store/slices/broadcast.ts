@@ -25,6 +25,7 @@ import { generateErrorMessage, getSingleValueFromBroadcastResult, sortFunds } fr
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import checkPythUpdateEnabled from 'utils/checkPythUpdateEnabled'
 import { defaultFee } from 'utils/constants'
+import { setAutoLendForAccount } from 'utils/autoLend'
 import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
@@ -206,21 +207,11 @@ export default function createBroadcastSlice(
       )
 
       if (accountId && isAutoLendEnabled) {
-        const setOfAccountIds = new Set(
-          localStorage.getItem(
-            `${get().chainConfig.id}/${LocalStorageKeys.AUTO_LEND_ENABLED_ACCOUNT_IDS}`,
-          ) ?? [],
-        )
-        setOfAccountIds.add(accountId)
-        localStorage.setItem(
-          `${get().chainConfig.id}/${LocalStorageKeys.AUTO_LEND_ENABLED_ACCOUNT_IDS}`,
-          typeof setOfAccountIds === 'string'
-            ? (setOfAccountIds as string)
-            : JSON.stringify(Array.from(setOfAccountIds)),
-        )
+        setAutoLendForAccount(get().chainConfig.id, accountId)
       }
       return accountId
     },
+
     deleteAccount: async (options: { accountId: string; lends: BNCoin[] }) => {
       const reclaimMsg = options.lends.map((coin) => {
         return {
@@ -343,7 +334,12 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
-    deposit: async (options: { accountId?: string; coins: BNCoin[]; lend: boolean }) => {
+    deposit: async (options: {
+      accountId?: string
+      coins: BNCoin[]
+      lend: boolean
+      isAutoLend?: boolean
+    }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           ...(options.accountId ? { account_id: options.accountId } : {}),
@@ -367,11 +363,17 @@ export default function createBroadcastSlice(
       })
       get().handleTransaction({ response })
 
-      return response.then((response) =>
+      const accountId = await response.then((response) =>
         response.result
           ? getSingleValueFromBroadcastResult(response.result, 'wasm', 'token_id')
           : null,
       )
+
+      if (accountId && options.isAutoLend) {
+        setAutoLendForAccount(get().chainConfig.id, accountId)
+      }
+
+      return accountId
     },
     unlock: async (options: { accountId: string; vault: DepositedVault; amount: string }) => {
       const msg: CreditManagerExecuteMsg = {
