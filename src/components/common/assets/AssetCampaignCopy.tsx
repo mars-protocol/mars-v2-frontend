@@ -5,6 +5,7 @@ import { CampaignLogo } from 'constants/campaigns'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAssets from 'hooks/assets/useAssets'
 import { useMemo } from 'react'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatValue, getCoinValue } from 'utils/formatters'
 
@@ -18,20 +19,27 @@ interface Props {
   noDot?: boolean
 }
 
-export default function AssetCampaignCopyController(props: Props) {
-  const { asset } = props
-  if (!asset.campaign) return null
-
-  return <AssetCampaignCopy {...props} />
+interface CopyProps extends Props {
+  isV1: boolean
 }
 
-function AssetCampaignCopy(props: Props) {
-  const { asset, className, amount, withLogo, size, textClassName, noDot } = props
+export default function AssetCampaignCopyController(props: Props) {
+  const { asset, withLogo } = props
+  const isV1 = useStore((s) => s.isV1)
+  if (!asset.campaign) return null
+  if (!asset.campaign.enabledOnV1 && isV1 && !withLogo) return null
+
+  return <AssetCampaignCopy isV1={isV1} {...props} />
+}
+
+function AssetCampaignCopy(props: CopyProps) {
+  const { asset, className, amount, withLogo, size, textClassName, noDot, isV1 } = props
   const { data: assets } = useAssets()
   const account = useCurrentAccount()
 
   const incentiveCopy = useMemo(() => {
     if (!asset.campaign) return ''
+    if (!asset.campaign.enabledOnV1 && isV1) return asset.campaign.v1Tooltip
     if (
       !amount ||
       amount.isZero() ||
@@ -62,7 +70,7 @@ function AssetCampaignCopy(props: Props) {
       '##POINTS##',
       formatValue(campaignPoints, { maxDecimals: 0, minDecimals: 0, abbreviated: false }),
     )
-  }, [account, amount, asset.campaign, asset.denom, assets])
+  }, [account?.debts, amount, asset.campaign, asset.denom, assets, isV1])
 
   const iconClasses = useMemo(() => {
     if (size === 'xs') return 'w-4 h-4'
@@ -78,8 +86,10 @@ function AssetCampaignCopy(props: Props) {
         type='info'
         className={classNames('flex items-center gap-2', className)}
         content={
-          <Text size='xs' className='w-[320px]'>
-            {asset.campaign.tooltip}
+          <Text size='xs' className='max-w-[320px]'>
+            {isV1 && !asset.campaign.enabledOnV1
+              ? 'This campaign is not available on v1.'
+              : asset.campaign.tooltip}
           </Text>
         }
       >
