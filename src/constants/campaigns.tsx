@@ -17,6 +17,7 @@ export const CAMPAIGNS: AssetCampaign[] = [
     bgClassNames: 'gradient-stride',
     detailedIncentiveCopy: 'Deposits earn ##APY##% APY via Stride',
     tooltip: 'Your deposit will still earn the underlying Stride staking APY.',
+    enabledOnV1: true,
   },
   {
     id: 'drop',
@@ -37,6 +38,8 @@ export const CAMPAIGNS: AssetCampaign[] = [
       'Droplets earned are based on the value of your position. Some positions may have a multiplier range (e.g.: 1-3x). The higher multiplier will be unlocked as soon as you borrow against the position.',
     totalPointsTooltip:
       'Total Droplets earned are updated every 24 hours and are counted for the entire wallet.',
+    enabledOnV1: false,
+    v1Tooltip: 'Note: Only deposits on Mars v2 are eligible for the Droplets campaign.',
   },
   {
     id: 'lido',
@@ -55,6 +58,7 @@ export const CAMPAIGNS: AssetCampaign[] = [
     detailedIncentiveCopy: 'Deposits earn ##APY##% APY via Lido',
     tooltip:
       'Your deposit will still earn the underlying Lido staking yield. This number is based on the moving average of APR for 7 days period.',
+    enabledOnV1: true,
   },
 ]
 
