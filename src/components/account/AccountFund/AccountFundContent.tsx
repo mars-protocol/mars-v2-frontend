@@ -73,34 +73,40 @@ export default function AccountFundContent(props: Props) {
     const depositObject = {
       coins: fundingAssets.map((wrappedCoin) => wrappedCoin.coin),
       lend: isAutoLendEnabledForCurrentAccount,
+      isAutoLend: isAutoLendEnabledForCurrentAccount,
     }
 
     setIsConfirming(true)
-    const accountId = props.accountId
-      ? await deposit({ ...depositObject, accountId: props.accountId })
-      : await deposit(depositObject)
-    setIsConfirming(false)
+    try {
+      const accountId = props.accountId
+        ? await deposit({ ...depositObject, accountId: props.accountId })
+        : await deposit(depositObject)
 
-    if (accountId) {
-      useStore.setState((state) => ({ ...state, selectedAccountId: accountId }))
+      if (accountId) {
+        useStore.setState((state) => ({ ...state, selectedAccountId: accountId }))
 
-      const { pathname } = window.location
-      const searchParams = new URLSearchParams(window.location.search)
-      navigate(getRoute(getPage(pathname), searchParams, props.address, accountId))
+        const { pathname } = window.location
+        const searchParams = new URLSearchParams(window.location.search)
+        navigate(getRoute(getPage(pathname), searchParams, props.address, accountId))
 
-      if (props.isFullPage) {
-        useStore.setState((state) => ({
-          ...state,
-          walletAssetsModal: null,
-          focusComponent: null,
-        }))
-      } else {
-        useStore.setState((state) => ({
-          ...state,
-          fundAndWithdrawModal: null,
-          walletAssetsModal: null,
-        }))
+        if (props.isFullPage) {
+          useStore.setState((state) => ({
+            ...state,
+            walletAssetsModal: null,
+            focusComponent: null,
+          }))
+        } else {
+          useStore.setState((state) => ({
+            ...state,
+            fundAndWithdrawModal: null,
+            walletAssetsModal: null,
+          }))
+        }
       }
+    } catch (error) {
+      console.error('Deposit failed:', error)
+    } finally {
+      setIsConfirming(false)
     }
   }, [
     props.accountId,

@@ -987,6 +987,7 @@ interface BroadcastSlice {
     accountId?: string
     coins: BNCoin[]
     lend: boolean
+    isAutoLend?: boolean
   }) => Promise<string | null>
   depositIntoFarm: (options: {
     accountId: string
