@@ -6,6 +6,7 @@ import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAssetCampaigns from 'hooks/campaign/useAssetCampaigns'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import useStore from 'store'
 import { getDailyAccountPoints } from 'utils/campaign'
 
 interface Props {
@@ -18,12 +19,15 @@ export default function CampaignRewards(props: Props) {
   const account = useCurrentAccount()
   const pointCampaigns = useAssetCampaigns('points_with_multiplier')
   const assets = useWhitelistedAssets()
+  const isV1 = useStore((s) => s.isV1)
 
-  if (!pointCampaigns || !account) return <></>
+  if (!pointCampaigns || !account) return null
 
   return pointCampaigns.map((campaign) => {
     const dailyPoints = getDailyAccountPoints(account, campaign, chainConfig, assets)
     const totalPoints = campaignPoints.find((cp) => cp.id === campaign.id)?.points ?? 0
+
+    if (isV1 && !campaign.enabledOnV1) return null
 
     return (
       <div
