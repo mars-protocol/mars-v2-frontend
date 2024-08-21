@@ -34,7 +34,7 @@ export default function AccountCreateFirst() {
     if (!address) useStore.setState({ focusComponent: { component: <WalletSelect /> } })
   }, [address])
 
-  const hasExistingAccount = accounts && accounts.length > 0
+  const hasExistingAccount = useMemo(() => accounts && accounts.length > 0, [accounts])
 
   const handleClick = useCallback(async () => {
     setIsCreating(true)
