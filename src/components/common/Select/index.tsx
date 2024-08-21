@@ -144,7 +144,7 @@ export default function Select(props: Props) {
               </Text>
             )}
             {isAssetsLoading ? (
-              <div className='flex justify-center items-center p-4'>
+              <div className='flex justify-center items-center px-4 py-10'>
                 <CircularProgress size={24} />
               </div>
             ) : (
