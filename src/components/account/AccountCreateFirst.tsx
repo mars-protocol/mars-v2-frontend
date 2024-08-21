@@ -14,6 +14,7 @@ import { useWeb3WalletConnection } from 'hooks/wallet/useWeb3WalletConnections'
 import useToggle from 'hooks/common/useToggle'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import { getPage, getRoute } from 'utils/route'
+import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 
 export default function AccountCreateFirst() {
   const navigate = useNavigate()
@@ -23,6 +24,7 @@ export default function AccountCreateFirst() {
   const createAccount = useStore((s) => s.createAccount)
   const [isCreating, setIsCreating] = useToggle(false)
   const chainConfig = useChainConfig()
+  const [isAutoLendEnabled] = useEnableAutoLendGlobal()
 
   const { data: accounts, isLoading } = useAccounts('default', address)
   const currentAccount = useCurrentAccount()
@@ -36,7 +38,7 @@ export default function AccountCreateFirst() {
 
   const handleClick = useCallback(async () => {
     setIsCreating(true)
-    const accountId = await createAccount('default')
+    const accountId = await createAccount('default', isAutoLendEnabled)
     setIsCreating(false)
     if (accountId) {
       navigate(getRoute(getPage(pathname), searchParams, address, accountId))
@@ -49,7 +51,7 @@ export default function AccountCreateFirst() {
         },
       })
     }
-  }, [setIsCreating, createAccount, navigate, pathname, searchParams, address])
+  }, [setIsCreating, createAccount, navigate, pathname, searchParams, address, isAutoLendEnabled])
 
   if (!chainConfig.evmAssetSupport) {
     return (
