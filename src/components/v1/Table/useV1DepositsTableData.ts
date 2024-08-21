@@ -31,7 +31,7 @@ export default function useV1DepositsTableData(): {
         accountLentValue: value,
         accountLentAmount: amount,
       }
-
+      if (market.asset.isDeprecated) return
       depositAssets.push(lendingMarketAsset)
     })
 
