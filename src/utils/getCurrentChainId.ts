@@ -9,16 +9,21 @@ export const getCurrentChainId = () => {
       ? chains[ChainInfoID.Osmosis1].id
       : chains[ChainInfoID.Pion1].id
   let chainId = defaultChainId
+  let subdomain = ''
+  const localStorageChainId = localStorage.getItem(LocalStorageKeys.CURRENT_CHAIN_ID) as ChainInfoID
 
   if (window) {
-    const subdomain = window.location.hostname.split('.')[0]
+    subdomain = window.location.hostname.split('.')[0]
+  }
 
+  if ((!localStorageChainId || localStorageChainId === null) && subdomain !== '') {
     switch (subdomain) {
       case 'osmosis':
         if (currentNetwork === NETWORK.MAINNET) chainId = ChainInfoID.Osmosis1
         break
 
       case 'neutron':
+      case 'testnet':
         if (currentNetwork === NETWORK.MAINNET) chainId = ChainInfoID.Neutron1
         break
 
@@ -28,10 +33,7 @@ export const getCurrentChainId = () => {
     }
 
     if (chainId !== defaultChainId) return chainId
-  }
-
-  const localStorageChainId = localStorage.getItem(LocalStorageKeys.CURRENT_CHAIN_ID) as ChainInfoID
-  if (localStorageChainId !== null) {
+  } else {
     switch (localStorageChainId) {
       case ChainInfoID.Osmosis1:
         if (currentNetwork === NETWORK.MAINNET) chainId = ChainInfoID.Osmosis1
