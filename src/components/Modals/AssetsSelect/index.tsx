@@ -8,7 +8,6 @@ import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useMarkets from 'hooks/markets/useMarkets'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { byDenom } from 'utils/array'
 import { getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { Callout, CalloutType } from 'components/common/Callout'
@@ -36,6 +35,21 @@ export default function AssetsSelect({
   const [sorting, setSorting] = useState<SortingState>([
     { id: isBorrow ? 'asset.borrowRate' : 'value', desc: !isBorrow },
   ])
+
+  const defaultSelected = useMemo(() => {
+    return assets.reduce(
+      (acc, asset, index) => {
+        if (selectedDenoms?.includes(`${asset.denom}:${asset.chainName}`)) {
+          acc[index] = true
+        }
+        return acc
+      },
+      {} as { [key: number]: boolean },
+    )
+  }, [selectedDenoms, assets])
+
+  const [whitelistedSelected, setWhitelistedSelected] = useState<RowSelectionState>(defaultSelected)
+  const [nonCollateralSelected, setNonCollateralSelected] = useState<RowSelectionState>({})
 
   const createTableData = useCallback(
     (assets: Asset[]): AssetTableRow[] => {
@@ -72,30 +86,17 @@ export default function AssetsSelect({
     return { whitelistedData, nonCollateralData }
   }, [assets, nonCollateralTableAssets, whitelistedAssets, balances, createTableData])
 
-  const [whitelistedSelected, setWhitelistedSelected] = useState<RowSelectionState>({})
-  const [nonCollateralSelected, setNonCollateralSelected] = useState<RowSelectionState>({})
-
   useEffect(() => {
     let newSelectedDenoms: string[]
 
     if (Array.isArray(tableData)) {
       newSelectedDenoms = assets
-        .filter((asset, index) =>
-          tableData.some((row, idx) => row.asset.denom === asset.denom && whitelistedSelected[idx]),
-        )
+        .filter((asset, index) => whitelistedSelected[index])
         .map((asset) => `${asset.denom}:${asset.chainName}`)
     } else {
-      const whitelistedAssets = assets.filter((asset) =>
-        tableData.whitelistedData.some(
-          (row, index) => row.asset.denom === asset.denom && whitelistedSelected[index],
-        ),
-      )
+      const whitelistedAssets = assets.filter((_, index) => whitelistedSelected[index])
       const nonCollateralAssets =
-        nonCollateralTableAssets?.filter((asset) =>
-          tableData.nonCollateralData.some(
-            (row, index) => row.asset.denom === asset.denom && nonCollateralSelected[index],
-          ),
-        ) || []
+        nonCollateralTableAssets?.filter((_, index) => nonCollateralSelected[index]) || []
 
       newSelectedDenoms = [...whitelistedAssets, ...nonCollateralAssets]
         .sort((a, b) => a.symbol.localeCompare(b.symbol))
@@ -112,9 +113,9 @@ export default function AssetsSelect({
     whitelistedSelected,
     nonCollateralSelected,
     tableData,
+    assets,
     selectedDenoms,
     onChangeSelected,
-    assets,
     nonCollateralTableAssets,
   ])
 

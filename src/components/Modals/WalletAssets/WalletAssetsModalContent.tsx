@@ -66,6 +66,11 @@ export default function WalletAssetsModalContent(props: Props) {
   const depositEnabledAssets = useDepositEnabledAssets()
   const whitelistedAssets = useWhitelistedAssets()
 
+  const evmAssets = useMemo(
+    () => filteredAssets.filter((asset) => asset.chainName),
+    [filteredAssets],
+  )
+
   const collateralAssets = useMemo(
     () =>
       whitelistedAssets.filter((asset) =>
@@ -96,7 +101,7 @@ export default function WalletAssetsModalContent(props: Props) {
       </div>
       <div className='h-full md:max-h-[446px] overflow-y-scroll scrollbar-hide'>
         <AssetsSelect
-          assets={collateralAssets}
+          assets={[...collateralAssets, ...evmAssets]}
           onChangeSelected={onChangeSelect}
           selectedDenoms={selectedDenoms}
           nonCollateralTableAssets={nonCollateralAssets}
