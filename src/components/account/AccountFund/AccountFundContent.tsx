@@ -35,9 +35,8 @@ export default function AccountFundContent(props: Props) {
   const deposit = useStore((s) => s.deposit)
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
   const [isConfirming, setIsConfirming] = useState(false)
-  const { autoLendEnabledAccountIds } = useAutoLend()
+  const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const { data: walletBalances } = useWalletBalances(props.address)
-  const [isLending, setIsLending] = useState(autoLendEnabledAccountIds.includes(props.accountId))
   const baseAsset = useBaseAsset()
 
   const { usdcBalances } = useUSDCBalances(walletBalances)
@@ -47,7 +46,6 @@ export default function AccountFundContent(props: Props) {
   const { fundingAssets, updateFundingAssets, setFundingAssets } = useFundingAssets(selectedDenoms)
   const { depositCapReachedCoins } = useDepositCapCalculations(fundingAssets)
   const { isConnected, handleDisconnectWallet } = useWeb3WalletConnection()
-  const { enableAutoLendForNewAccount } = useAutoLend()
   const hasAssetSelected = fundingAssets.length > 0
   const hasFundingAssets =
     fundingAssets.length > 0 && fundingAssets.every((a) => a.coin.amount.isGreaterThan(0))
@@ -74,7 +72,7 @@ export default function AccountFundContent(props: Props) {
   const handleClick = useCallback(async () => {
     const depositObject = {
       coins: fundingAssets.map((wrappedCoin) => wrappedCoin.coin),
-      lend: isLending,
+      lend: isAutoLendEnabledForCurrentAccount,
     }
 
     setIsConfirming(true)
@@ -84,8 +82,6 @@ export default function AccountFundContent(props: Props) {
     setIsConfirming(false)
 
     if (accountId) {
-      console.log('accountId', accountId)
-      enableAutoLendForNewAccount(accountId)
       useStore.setState((state) => ({ ...state, selectedAccountId: accountId }))
 
       const { pathname } = window.location
@@ -112,8 +108,7 @@ export default function AccountFundContent(props: Props) {
     props.isFullPage,
     deposit,
     fundingAssets,
-    isLending,
-    enableAutoLendForNewAccount,
+    isAutoLendEnabledForCurrentAccount,
     navigate,
   ])
 
@@ -175,8 +170,6 @@ export default function AccountFundContent(props: Props) {
         <SwitchAutoLend
           className='pt-4 mt-4 border border-transparent border-t-white/10'
           accountId={props.accountId}
-          isEnabled={isLending}
-          onChange={setIsLending}
         />
         <Button
           className='w-full mt-4'
