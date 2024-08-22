@@ -38,6 +38,16 @@ export default function useAccountBalanceData(props: Props) {
 
     const lends = accountLends.map((lending) => {
       const asset = assets.find(byDenom(lending.denom)) ?? assets[0]
+      if (!asset.isBorrowEnabled) {
+        const prevDeposit = updatedAccount
+          ? account?.deposits.find(byDenom(lending.denom))
+          : lending
+        const apy = props.isHls
+          ? (hlsStrategies.find((strategy) => strategy.denoms.deposit === asset.denom)?.apy ?? 0)
+          : 0
+        return getAssetAccountBalanceRow('deposit', asset, assets, lending, apy, prevDeposit)
+      }
+
       const apy =
         lendingData.find((market) => market.asset.denom === lending.denom)?.apy.deposit ?? 0
 
