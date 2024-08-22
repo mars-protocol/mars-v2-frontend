@@ -26,8 +26,7 @@ export default async function getPrices(
     console.error(ex)
     let message = 'Unknown Error'
     if (ex instanceof Error) message = ex.message
-    if (message.includes('price publish time is too old'))
-      useStore.setState({ isOracleStale: true })
+    if (message.includes('time is too old')) useStore.setState({ isOracleStale: true })
 
     return [...pythAndOraclePrices]
   }
