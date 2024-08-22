@@ -21,9 +21,11 @@ import AccountFundingAssets from './AccountFundingAssets'
 import { ArrowRight, Plus } from 'components/common/Icons'
 import Button from 'components/common/Button'
 import getAccountIds from 'api/wallets/getAccountIds'
-import { RecommendationEntry, SkipClient } from '@skip-go/client'
-import { createWalletClient, custom, WalletClient } from 'viem'
+import { SkipClient } from '@skip-go/client'
+import { WalletClient } from 'viem'
 import { CHAIN_NAMES, chainNameToViemChain, USDC_ADDRESSES } from 'utils/fetchUSDCBalance'
+import { getWalletClient } from '@wagmi/core'
+import { config } from 'config/ethereumConfig'
 
 interface Props {
   account?: Account
@@ -40,7 +42,6 @@ export default function AccountFundContent(props: Props) {
   const [isConfirming, setIsConfirming] = useState(false)
   const { autoLendEnabledAccountIds } = useAutoLend()
   const { data: walletBalances } = useWalletBalances(props.address)
-  const { simulateDeposits } = useUpdatedAccount(props.account)
   const [isLending, setIsLending] = useState(autoLendEnabledAccountIds.includes(props.accountId))
   const baseAsset = useBaseAsset()
 
@@ -52,7 +53,6 @@ export default function AccountFundContent(props: Props) {
   const { depositCapReachedCoins } = useDepositCapCalculations(fundingAssets)
   const { isConnected, address: evmAddress, handleDisconnectWallet } = useWeb3WalletConnection()
   const cosmosAddress = useStore((s) => s.address)
-  const [recommendedRoute, setRecommendedRoute] = useState<RecommendationEntry | null>(null)
 
   const { enableAutoLendForNewAccount } = useAutoLend()
   const hasAssetSelected = fundingAssets.length > 0
@@ -67,46 +67,27 @@ export default function AccountFundContent(props: Props) {
 
   const chainConfig = useChainConfig()
 
-  const [skipClient] = useState(
+  const skipClient = useMemo(
     () =>
       new SkipClient({
-        apiKey: process.env.NEXT_PUBLIC_SKIP_API_KEY,
         getCosmosSigner: async (chainID) => {
           const offlineSigner = window.keplr?.getOfflineSigner(chainID)
           if (!offlineSigner) throw new Error('Keplr not installed')
           return offlineSigner
         },
-        getEVMSigner: async (chainName: string) => {
-          const ethereum = window.ethereum
-          if (!ethereum) throw new Error('MetaMask not installed')
-          const client = createWalletClient({
-            chain: chainNameToViemChain[chainName],
-            transport: custom(ethereum),
-          })
-          return client as any
+        getEVMSigner: async (chainID) => {
+          const evmWalletClient = (await getWalletClient(config, {
+            chainId: parseInt(chainID),
+          })) as WalletClient
+
+          if (!evmWalletClient) {
+            throw new Error(`getEVMSigner error: no wallet client available for chain ${chainID}`)
+          }
+
+          return evmWalletClient
         },
       }),
-  )
-
-  const getRecommendedRoute = useCallback(
-    async (selectedAsset: any) => {
-      if (!selectedAsset.chain) return null
-
-      const request = {
-        sourceAssetDenom: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359', // USDC
-        sourceAssetChainID: '137',
-        destChainID: 'neutron-1',
-      }
-
-      try {
-        const recommendations = await skipClient.recommendAssets(request)
-        return recommendations[0]
-      } catch (error) {
-        console.error('Failed to get recommended route:', error)
-        return null
-      }
-    },
-    [skipClient],
+    [],
   )
 
   const CHAIN_IDS = Object.fromEntries(Object.entries(CHAIN_NAMES).map(([id, name]) => [name, id]))
@@ -127,27 +108,15 @@ export default function AccountFundContent(props: Props) {
     try {
       if (!selectedAsset.chain) throw new Error('Chain not found')
 
-      const recommendation = await getRecommendedRoute(selectedAsset)
-      setRecommendedRoute(recommendation)
-
-      if (!recommendation) throw new Error('No recommended route found')
-
       const route = await skipClient.route({
-        sourceAssetDenom: USDC_ADDRESSES[CHAIN_IDS[selectedAsset.chain]],
-        sourceAssetChainID: CHAIN_IDS[selectedAsset.chain],
-        destAssetDenom: chainConfig.defaultCurrency.coinMinimalDenom,
-        destAssetChainID: chainConfig.id,
-        amountIn: selectedAsset.coin.amount.toString(),
-        cumulativeAffiliateFeeBPS: '0',
-        allowUnsafe: true,
-        experimentalFeatures: ['hyperlane'],
-        allowMultiTx: true,
-        smartRelay: true,
-        smartSwapOptions: {
-          splitRoutes: true,
-          evmSwaps: true,
-        },
+        sourceAssetDenom: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
+        sourceAssetChainID: '137',
+        destAssetDenom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
+        destAssetChainID: 'neutron-1',
+        amountIn: '20000000',
       })
+      console.log('route', route)
+
       const assets = await skipClient.assets({
         includeEvmAssets: true,
       })
@@ -167,15 +136,7 @@ export default function AccountFundContent(props: Props) {
     } catch (error) {
       console.error('Skip transfer failed:', error)
     }
-  }, [
-    cosmosAddress,
-    evmAddress,
-    fundingAssets,
-    chainConfig,
-    CHAIN_IDS,
-    getRecommendedRoute,
-    skipClient,
-  ])
+  }, [cosmosAddress, evmAddress, fundingAssets, chainConfig, skipClient])
 
   const handleSelectAssetsClick = useCallback(() => {
     useStore.setState({
