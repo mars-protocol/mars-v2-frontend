@@ -21,6 +21,7 @@ import { ArrowRight, Plus } from 'components/common/Icons'
 import Button from 'components/common/Button'
 import { useNavigate } from 'react-router-dom'
 import { getPage, getRoute } from 'utils/route'
+import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 
 interface Props {
   account?: Account
@@ -36,6 +37,7 @@ export default function AccountFundContent(props: Props) {
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
   const [isConfirming, setIsConfirming] = useState(false)
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
+  const [isAutoLendEnabledGlobal] = useEnableAutoLendGlobal()
   const { data: walletBalances } = useWalletBalances(props.address)
   const baseAsset = useBaseAsset()
 
@@ -70,10 +72,15 @@ export default function AccountFundContent(props: Props) {
   }, [selectedDenoms])
 
   const handleClick = useCallback(async () => {
+    const isNewAccount = !props.hasExistingAccount
+    const shouldAutoLend = isNewAccount
+      ? isAutoLendEnabledGlobal
+      : isAutoLendEnabledForCurrentAccount
+
     const depositObject = {
       coins: fundingAssets.map((wrappedCoin) => wrappedCoin.coin),
-      lend: isAutoLendEnabledForCurrentAccount,
-      isAutoLend: isAutoLendEnabledForCurrentAccount,
+      lend: shouldAutoLend,
+      isAutoLend: shouldAutoLend,
     }
 
     setIsConfirming(true)
@@ -112,9 +119,11 @@ export default function AccountFundContent(props: Props) {
     props.accountId,
     props.address,
     props.isFullPage,
+    props.hasExistingAccount,
     deposit,
     fundingAssets,
     isAutoLendEnabledForCurrentAccount,
+    isAutoLendEnabledGlobal,
     navigate,
   ])
 
@@ -176,6 +185,7 @@ export default function AccountFundContent(props: Props) {
         <SwitchAutoLend
           className='pt-4 mt-4 border border-transparent border-t-white/10'
           accountId={props.accountId}
+          isNewAccount={!props.hasExistingAccount}
         />
         <Button
           className='w-full mt-4'
