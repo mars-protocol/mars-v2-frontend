@@ -10,51 +10,52 @@ const Neutron1: ChainConfig = {
   campaignAssets: [
     {
       denom: 'factory/neutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa/udatom',
-      campaignId: 'drop',
+      campaignIds: ['drop', 'drop_apy'],
       baseMultiplier: 1,
       collateralMultiplier: 3,
+      campaignDenom: 'ATOM',
     },
     {
       denom:
         'factory/neutron1ke92yjl47eqy0mpgn9x4xups4szsm0ql6xhn4htw9zgn9wl5gm0quzh6ch/astroport/share',
-      campaignId: 'drop',
+      campaignIds: ['drop'],
       baseMultiplier: 50,
     },
     {
       denom:
         'factory/neutron1nfns3ck2ykrs0fknckrzd9728cyf77devuzernhwcwrdxw7ssk2s3tjf8r/astroport/share',
-      campaignId: 'drop',
+      campaignIds: ['drop'],
       baseMultiplier: 50,
     },
     {
       denom:
         'factory/neutron1yem82r0wf837lfkwvcu2zxlyds5qrzwkz8alvmg0apyrjthk64gqeq2e98/astroport/share',
-      campaignId: 'drop',
+      campaignIds: ['drop'],
       baseMultiplier: 5,
     },
     {
       denom: 'ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C',
-      campaignId: 'stride',
+      campaignIds: ['stride'],
       campaignDenom: 'ATOM',
     },
     {
       denom: 'ibc/6569E05DEE32B339D9286A52BE33DFCEFC97267F23EF9CFDE0C055140967A9A5',
-      campaignId: 'stride',
+      campaignIds: ['stride'],
       campaignDenom: 'TIA',
     },
     {
       denom: 'ibc/BAA1D21893B1D36865C6CA44D18F4ACF08BAD70CB6863C4722E0A61703808F77',
-      campaignId: 'stride',
+      campaignIds: ['stride'],
       campaignDenom: 'DYDX',
     },
     {
       denom: 'factory/neutron1ug740qrkquxzrk2hh29qrlx3sktkfml3je7juusc2te7xmvsscns0n2wry/wstETH',
-      campaignId: 'lido',
+      campaignIds: ['lido'],
       campaignDenom: 'stETH',
     },
     {
       denom: 'ibc/4D04085167777659C11784A356D6B0D13D5C7F0CE77F7DB1152FE03A2DE2CBF2',
-      campaignId: 'lido',
+      campaignIds: ['lido'],
       campaignDenom: 'stETH',
     },
   ],

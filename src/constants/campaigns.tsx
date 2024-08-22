@@ -42,6 +42,24 @@ export const CAMPAIGNS: AssetCampaign[] = [
     v1Tooltip: 'Note: Only deposits on Mars v2 are eligible for the Droplets campaign.',
   },
   {
+    id: 'drop_apy',
+    name: 'Drop Staking',
+    type: 'apy',
+    apyApi: {
+      url: 'https://app.drop.money/api/apy',
+      isApr: false,
+      isPercent: true,
+      apyStructure: ['apy'],
+      denomStructure: ['denom'],
+    },
+    incentiveCopy: '+##APY##% APY',
+    classNames: 'droplets',
+    bgClassNames: 'gradient-droplets',
+    detailedIncentiveCopy: 'Deposits earn ##APY##% APY via Drop',
+    tooltip: 'Your deposit will still earn the underlying Drop staking APY.',
+    enabledOnV1: true,
+  },
+  {
     id: 'lido',
     name: 'Lido Staking',
     type: 'apy',
@@ -67,6 +85,7 @@ export function CampaignLogo({ campaignId }: { campaignId: AssetCampaignId }) {
     case 'stride':
       return <Stride />
     case 'drop':
+    case 'drop_apy':
       return <Droplet />
     case 'lido':
       return <Lido />

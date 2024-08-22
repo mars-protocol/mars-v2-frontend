@@ -68,8 +68,10 @@ export default function FarmModalContentHeader(props: Props) {
     return astroLpPosition.amount.dividedBy(2)
   }, [isAstroLp, updatedAccount?.stakedAstroLps, updatedAccount?.vaults, farm.denoms.lp])
 
-  const showCampaignHeader =
-    poolToken && poolToken.campaign && poolToken.campaign.type === 'points_with_multiplier'
+  const campaignTypes =
+    poolToken && poolToken.campaigns ? poolToken.campaigns.map((campaign) => campaign.type) : []
+
+  const showCampaignHeader = poolToken && campaignTypes.includes('points_with_multiplier')
 
   return (
     <>
@@ -105,22 +107,30 @@ export default function FarmModalContentHeader(props: Props) {
           />
         )}
       </div>
-      {showCampaignHeader && (
-        <div
-          className={classNames(
-            'w-full p-2 flex items-center justify-center',
-            poolToken?.campaign?.bgClassNames ?? 'bg-white/50',
-          )}
-        >
-          <AssetCampaignCopy
-            asset={poolToken}
-            textClassName='text-white'
-            size='sm'
-            amount={updatedDepositedValue}
-            withLogo
-          />
-        </div>
-      )}
+      {showCampaignHeader && poolToken.campaigns
+        ? poolToken.campaigns.map((campaign, index) => {
+            if (campaign.type === 'points_with_multiplier')
+              return (
+                <div
+                  className={classNames(
+                    'w-full p-2 flex items-center justify-center',
+                    campaign?.bgClassNames ?? 'bg-white/50',
+                  )}
+                  key={index}
+                >
+                  <AssetCampaignCopy
+                    asset={poolToken}
+                    textClassName='text-white'
+                    size='sm'
+                    campaign={campaign}
+                    amount={updatedDepositedValue}
+                    withLogo
+                  />
+                </div>
+              )
+            return null
+          })
+        : null}
     </>
   )
 }

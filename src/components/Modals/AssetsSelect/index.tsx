@@ -2,6 +2,7 @@ import { RowSelectionState, SortingState } from '@tanstack/react-table'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import useAssetSelectColumns from 'components/Modals/AssetsSelect/Columns/useAssetSelectColumns'
+import { Callout, CalloutType } from 'components/common/Callout'
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
@@ -11,7 +12,6 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import { Callout, CalloutType } from 'components/common/Callout'
 
 interface Props {
   assets: Asset[]
@@ -43,7 +43,7 @@ export default function AssetsSelect({
         const balancesForAsset = balances.find(byDenom(asset.denom))
         const coin = BNCoin.fromDenomAndBigNumber(asset.denom, BN(balancesForAsset?.amount ?? '0'))
         const value = getCoinValue(coin, assets)
-        asset.campaign = isBorrow ? undefined : asset.campaign
+        asset.campaigns = isBorrow ? undefined : asset.campaigns
         return {
           asset,
           balance: balancesForAsset?.amount ?? '0',
@@ -145,7 +145,7 @@ export default function AssetsSelect({
           <div className=''>
             <Text
               size='xs'
-              className='p-4 font-semibold bg-black/20 text-white/60 border-b border-white/10 w-full'
+              className='w-full p-4 font-semibold border-b bg-black/20 text-white/60 border-white/10'
             >
               Assets that can be used as collateral
             </Text>
@@ -153,7 +153,7 @@ export default function AssetsSelect({
         }
       />
       {nonCollateralTableAssets.length > 0 && assets.length === 0 && (
-        <Callout type={CalloutType.INFO} className='px-4 py-2 text-white/60 m-4'>
+        <Callout type={CalloutType.INFO} className='px-4 py-2 m-4 text-white/60'>
           No whitelisted assets found in your wallet.
         </Callout>
       )}
@@ -161,7 +161,7 @@ export default function AssetsSelect({
         <>
           <Text
             size='xs'
-            className='p-4 font-semibold bg-black/20 text-white/60 border-t border-b border-white/10'
+            className='p-4 font-semibold border-t border-b bg-black/20 text-white/60 border-white/10'
           >
             Non whitelisted assets, cannot be used as collateral
           </Text>

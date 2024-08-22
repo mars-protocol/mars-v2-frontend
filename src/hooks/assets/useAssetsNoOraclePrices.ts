@@ -11,7 +11,7 @@ import useSWR from 'swr'
 import { BNCoin } from 'types/classes/BNCoin'
 import { AssetParamsBaseForAddr } from 'types/generated/mars-params/MarsParams.types'
 import { byDenom } from 'utils/array'
-import { resolveAssetCampaign } from 'utils/assets'
+import { resolveAssetCampaigns } from 'utils/assets'
 import { BN } from 'utils/helpers'
 import { calculatePoolWeight } from 'utils/pools'
 
@@ -143,7 +143,7 @@ async function fetchSortAndMapAllAssets(
       isDeprecated,
       isTradeEnabled,
       poolInfo: currentAssetPoolInfo,
-      campaign: resolveAssetCampaign(asset, campaignApys, chainConfig),
+      campaigns: resolveAssetCampaigns(asset, campaignApys, chainConfig),
     }
   })
 

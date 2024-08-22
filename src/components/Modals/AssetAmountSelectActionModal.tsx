@@ -62,10 +62,10 @@ export default function AssetAmountSelectActionModal(props: Props) {
     return position[0]?.amount ?? BN_ZERO
   }, [asset.denom, updatedAccount])
 
-  const showCampaignHeader = useMemo(
-    () => asset.campaign && asset.campaign.type === 'points_with_multiplier' && checkForCampaign,
-    [asset.campaign, checkForCampaign],
-  )
+  const showCampaignHeader = useMemo(() => {
+    const campaignTypes = asset?.campaigns?.map((campaign) => campaign.type) ?? []
+    return campaignTypes.includes('points_with_multiplier') && checkForCampaign
+  }, [asset.campaigns, checkForCampaign])
 
   const handleActionClick = useCallback(() => {
     onAction(amount, amount.isEqualTo(maxAmount))
@@ -84,22 +84,30 @@ export default function AssetAmountSelectActionModal(props: Props) {
       contentClassName='flex flex-col min-h-[400px]'
     >
       {contentHeader}
-      {showCampaignHeader && (
-        <div
-          className={classNames(
-            'w-full p-2 flex items-center justify-center',
-            asset.campaign?.bgClassNames ?? 'bg-white/50',
-          )}
-        >
-          <AssetCampaignCopy
-            asset={asset}
-            textClassName='text-white'
-            size='sm'
-            amount={updatedAmount}
-            withLogo
-          />
-        </div>
-      )}
+      {showCampaignHeader && asset.campaigns
+        ? asset.campaigns.map((campaign, index) => {
+            if (campaign.type === 'points_with_multiplier')
+              return (
+                <div
+                  className={classNames(
+                    'w-full p-2 flex items-center justify-center',
+                    campaign?.bgClassNames ?? 'bg-white/50',
+                  )}
+                  key={index}
+                >
+                  <AssetCampaignCopy
+                    campaign={campaign}
+                    asset={asset}
+                    textClassName='text-white'
+                    size='sm'
+                    amount={updatedAmount}
+                    withLogo
+                  />
+                </div>
+              )
+            return null
+          })
+        : null}
       <div
         className={classNames(
           'flex items-start flex-1 p-2 gap-4 flex-wrap',

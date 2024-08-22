@@ -59,13 +59,17 @@ export default function Name(props: Props) {
           <Text size='xs' className='text-white/40' tag='span'>
             {vault.provider}
           </Text>
-          {poolAsset?.campaign && (
-            <AssetCampaignCopy
-              asset={poolAsset}
-              size='xs'
-              amount={lpAmount.isZero() ? undefined : lpAmount}
-            />
-          )}
+          {poolAsset?.campaigns && poolAsset.campaigns.length >= 1
+            ? poolAsset.campaigns.map((campaign, index) => (
+                <AssetCampaignCopy
+                  asset={poolAsset}
+                  campaign={campaign}
+                  size='xs'
+                  amount={lpAmount.isZero() ? undefined : lpAmount}
+                  key={index}
+                />
+              ))
+            : null}
         </div>
       </div>
     </div>

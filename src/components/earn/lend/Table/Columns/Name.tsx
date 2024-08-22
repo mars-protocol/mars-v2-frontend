@@ -1,5 +1,3 @@
-import { isMobile } from 'react-device-detect'
-
 import AssetCampaignCopy from 'components/common/assets/AssetCampaignCopy'
 import AssetImage from 'components/common/assets/AssetImage'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
@@ -23,11 +21,22 @@ export default function Name(props: Props) {
       <TitleAndSubCell
         title={asset.symbol}
         sub={
-          props.v1 && !isMobile ? (
-            <AssetCampaignCopy asset={props.asset} size='xs' noDot amount={props.amount} />
-          ) : (
-            asset.name
-          )
+          props.v1
+            ? asset.campaigns
+              ? asset.campaigns.map((campaign, index) => (
+                  <>
+                    <AssetCampaignCopy
+                      campaign={campaign}
+                      asset={props.asset}
+                      size='xs'
+                      noDot
+                      amount={props.amount}
+                      key={index}
+                    />
+                  </>
+                ))
+              : null
+            : asset.name
         }
         className='text-left min-w-15'
       />
