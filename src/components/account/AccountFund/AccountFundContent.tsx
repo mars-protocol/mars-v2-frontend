@@ -21,6 +21,9 @@ import AccountFundingAssets from './AccountFundingAssets'
 import { ArrowRight, Plus } from 'components/common/Icons'
 import Button from 'components/common/Button'
 import getAccountIds from 'api/wallets/getAccountIds'
+import { RecommendationEntry, SkipClient } from '@skip-go/client'
+import { createWalletClient, custom, WalletClient } from 'viem'
+import { CHAIN_NAMES, chainNameToViemChain, USDC_ADDRESSES } from 'utils/fetchUSDCBalance'
 
 interface Props {
   account?: Account
@@ -47,7 +50,10 @@ export default function AccountFundContent(props: Props) {
   }, [walletAssetModal?.selectedDenoms])
   const { fundingAssets, updateFundingAssets, setFundingAssets } = useFundingAssets(selectedDenoms)
   const { depositCapReachedCoins } = useDepositCapCalculations(fundingAssets)
-  const { isConnected, handleDisconnectWallet } = useWeb3WalletConnection()
+  const { isConnected, address: evmAddress, handleDisconnectWallet } = useWeb3WalletConnection()
+  const cosmosAddress = useStore((s) => s.address)
+  const [recommendedRoute, setRecommendedRoute] = useState<RecommendationEntry | null>(null)
+
   const { enableAutoLendForNewAccount } = useAutoLend()
   const hasAssetSelected = fundingAssets.length > 0
   const hasFundingAssets =
@@ -61,6 +67,116 @@ export default function AccountFundContent(props: Props) {
 
   const chainConfig = useChainConfig()
 
+  const [skipClient] = useState(
+    () =>
+      new SkipClient({
+        apiKey: process.env.NEXT_PUBLIC_SKIP_API_KEY,
+        getCosmosSigner: async (chainID) => {
+          const offlineSigner = window.keplr?.getOfflineSigner(chainID)
+          if (!offlineSigner) throw new Error('Keplr not installed')
+          return offlineSigner
+        },
+        getEVMSigner: async (chainName: string) => {
+          const ethereum = window.ethereum
+          if (!ethereum) throw new Error('MetaMask not installed')
+          const client = createWalletClient({
+            chain: chainNameToViemChain[chainName],
+            transport: custom(ethereum),
+          })
+          return client as any
+        },
+      }),
+  )
+
+  const getRecommendedRoute = useCallback(
+    async (selectedAsset: any) => {
+      if (!selectedAsset.chain) return null
+
+      const request = {
+        sourceAssetDenom: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359', // USDC
+        sourceAssetChainID: '137',
+        destChainID: 'neutron-1',
+      }
+
+      try {
+        const recommendations = await skipClient.recommendAssets(request)
+        return recommendations[0]
+      } catch (error) {
+        console.error('Failed to get recommended route:', error)
+        return null
+      }
+    },
+    [skipClient],
+  )
+
+  const CHAIN_IDS = Object.fromEntries(Object.entries(CHAIN_NAMES).map(([id, name]) => [name, id]))
+
+  const handleSkipTransfer = useCallback(async () => {
+    if (!cosmosAddress || !evmAddress || fundingAssets.length === 0) return
+
+    const selectedAsset = fundingAssets[0]
+    console.log(
+      'routeProperties',
+      selectedAsset.coin.amount.toString(),
+      selectedAsset.coin.denom,
+      chainConfig.id,
+      selectedAsset.coin.amount.toString(),
+      selectedAsset.coin.denom,
+      'ethereum',
+    )
+    try {
+      if (!selectedAsset.chain) throw new Error('Chain not found')
+
+      const recommendation = await getRecommendedRoute(selectedAsset)
+      setRecommendedRoute(recommendation)
+
+      if (!recommendation) throw new Error('No recommended route found')
+
+      const route = await skipClient.route({
+        sourceAssetDenom: USDC_ADDRESSES[CHAIN_IDS[selectedAsset.chain]],
+        sourceAssetChainID: CHAIN_IDS[selectedAsset.chain],
+        destAssetDenom: chainConfig.defaultCurrency.coinMinimalDenom,
+        destAssetChainID: chainConfig.id,
+        amountIn: selectedAsset.coin.amount.toString(),
+        cumulativeAffiliateFeeBPS: '0',
+        allowUnsafe: true,
+        experimentalFeatures: ['hyperlane'],
+        allowMultiTx: true,
+        smartRelay: true,
+        smartSwapOptions: {
+          splitRoutes: true,
+          evmSwaps: true,
+        },
+      })
+      const assets = await skipClient.assets({
+        includeEvmAssets: true,
+      })
+      console.log('assets:', assets)
+
+      const userAddresses = await Promise.all(
+        route.requiredChainAddresses.map(async (chainID) => ({
+          chainID,
+          address: chainID === 'neutron-1' ? cosmosAddress : evmAddress,
+        })),
+      )
+
+      await skipClient.executeRoute({
+        route,
+        userAddresses,
+      })
+    } catch (error) {
+      console.error('Skip transfer failed:', error)
+    }
+  }, [
+    cosmosAddress,
+    evmAddress,
+    fundingAssets,
+    chainConfig,
+    CHAIN_IDS,
+    getRecommendedRoute,
+    skipClient,
+  ])
+
   const handleSelectAssetsClick = useCallback(() => {
     useStore.setState({
       walletAssetsModal: {
@@ -72,6 +188,7 @@ export default function AccountFundContent(props: Props) {
   }, [selectedDenoms])
 
   const handleClick = useCallback(async () => {
+    console.log('addresses', cosmosAddress, evmAddress)
     const depositObject = {
       coins: fundingAssets.map((wrappedCoin) => wrappedCoin.coin),
       lend: isLending,
@@ -107,6 +224,8 @@ export default function AccountFundContent(props: Props) {
     props.accountId,
     props.address,
     chainConfig,
+    cosmosAddress,
+    evmAddress,
     props.isFullPage,
     deposit,
     fundingAssets,
@@ -184,6 +303,14 @@ export default function AccountFundContent(props: Props) {
           color={props.isFullPage ? 'tertiary' : undefined}
           size={props.isFullPage ? 'lg' : undefined}
           rightIcon={props.isFullPage ? undefined : <ArrowRight />}
+        />
+        <Button
+          className='w-full mt-4'
+          text='Transfer with Skip'
+          disabled={!hasFundingAssets || isConfirming}
+          showProgressIndicator={isConfirming}
+          onClick={handleSkipTransfer}
+          color='secondary'
         />
       </div>
     </>
