@@ -10,7 +10,7 @@ const Neutron1: ChainConfig = {
   campaignAssets: [
     {
       denom: 'factory/neutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa/udatom',
-      campaignIds: ['drop', 'drop_apy'],
+      campaignIds: ['drop_apy', 'drop'],
       baseMultiplier: 1,
       collateralMultiplier: 3,
       campaignDenom: 'ATOM',
