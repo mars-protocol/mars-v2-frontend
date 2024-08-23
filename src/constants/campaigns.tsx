@@ -48,7 +48,7 @@ export const CAMPAIGNS: AssetCampaign[] = [
     apyApi: {
       url: 'https://app.drop.money/api/apy',
       isApr: false,
-      isPercent: true,
+      isPercent: false,
       apyStructure: ['apy'],
       denomStructure: ['denom'],
     },
