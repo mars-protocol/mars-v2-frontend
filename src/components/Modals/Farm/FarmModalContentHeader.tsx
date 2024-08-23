@@ -107,30 +107,28 @@ export default function FarmModalContentHeader(props: Props) {
           />
         )}
       </div>
-      {showCampaignHeader && poolToken.campaigns
-        ? poolToken.campaigns.map((campaign, index) => {
-            if (campaign.type === 'points_with_multiplier')
-              return (
-                <div
-                  className={classNames(
-                    'w-full p-2 flex items-center justify-center',
-                    campaign?.bgClassNames ?? 'bg-white/50',
-                  )}
-                  key={index}
-                >
-                  <AssetCampaignCopy
-                    asset={poolToken}
-                    textClassName='text-white'
-                    size='sm'
-                    campaign={campaign}
-                    amount={updatedDepositedValue}
-                    withLogo
-                  />
-                </div>
-              )
-            return null
-          })
-        : null}
+      {showCampaignHeader &&
+        poolToken.campaigns.map((campaign, index) => {
+          if (campaign.type !== 'points_with_multiplier') return null
+          return (
+            <div
+              className={classNames(
+                'w-full p-2 flex items-center justify-center',
+                campaign?.bgClassNames ?? 'bg-white/50',
+              )}
+              key={index}
+            >
+              <AssetCampaignCopy
+                asset={poolToken}
+                textClassName='text-white'
+                size='sm'
+                campaign={campaign}
+                amount={updatedDepositedValue}
+                withLogo
+              />
+            </div>
+          )
+        })}
     </>
   )
 }

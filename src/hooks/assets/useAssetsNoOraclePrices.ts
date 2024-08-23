@@ -60,6 +60,7 @@ async function fetchSortAndMapAllAssets(
         ORACLE_DENOM,
         BN(pool.totalLiquidityUSD).dividedBy(BN(pool.poolTotalShare).shiftedBy(-6)),
       ),
+      campaigns: [],
     }
   })
 
@@ -89,12 +90,14 @@ async function fetchSortAndMapAllAssets(
             name: currentAssetPoolParams.assets[0].symbol,
             decimals: currentAssetPoolParams.assets[0].decimals,
             symbol: currentAssetPoolParams.assets[0].symbol,
+            campaigns: [],
           },
           secondary: secondaryAsset ?? {
             denom: currentAssetPoolParams.assets[1].denom,
             name: currentAssetPoolParams.assets[1].symbol,
             decimals: currentAssetPoolParams.assets[1].decimals,
             symbol: currentAssetPoolParams.assets[1].symbol,
+            campaigns: [],
           },
         },
         assetsPerShare: {

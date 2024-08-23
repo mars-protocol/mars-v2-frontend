@@ -61,10 +61,9 @@ export default function Asset(props: Props) {
               <Text size='xs'>{asset.name}</Text>
             </Tooltip>
           )}
-          {asset?.campaigns &&
-            asset.campaigns.map((campaign, index) => (
-              <AssetCampaignCopy size='xs' asset={asset} key={index} campaign={campaign} />
-            ))}
+          {asset.campaigns.map((campaign, index) => (
+            <AssetCampaignCopy size='xs' asset={asset} key={index} campaign={campaign} />
+          ))}
         </div>
       </div>
     </div>

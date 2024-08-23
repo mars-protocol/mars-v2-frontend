@@ -43,7 +43,7 @@ export default function AssetsSelect({
         const balancesForAsset = balances.find(byDenom(asset.denom))
         const coin = BNCoin.fromDenomAndBigNumber(asset.denom, BN(balancesForAsset?.amount ?? '0'))
         const value = getCoinValue(coin, assets)
-        asset.campaigns = isBorrow ? undefined : asset.campaigns
+        asset.campaigns = isBorrow ? [] : asset.campaigns
         return {
           asset,
           balance: balancesForAsset?.amount ?? '0',

@@ -136,7 +136,7 @@ interface AssetMetaData {
   pythFeedName?: string
   price?: BNCoin
   poolInfo?: PoolInfo
-  campaigns?: AssetCampaign[]
+  campaigns: AssetCampaign[]
 }
 
 interface AssetPair {

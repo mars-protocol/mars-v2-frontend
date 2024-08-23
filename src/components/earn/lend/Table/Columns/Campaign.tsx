@@ -13,12 +13,12 @@ interface Props {
 }
 
 export default function Campaign(props: Props) {
-  if (!props.asset || !props.asset.campaigns) return null
-  return props.asset.campaigns.map((campaign, index) => {
-    if (!props.asset) return null
+  const asset = props.asset
+  if (!asset || asset.campaigns.length === 0) return null
+  return asset.campaigns.map((campaign, index) => {
     return (
       <AssetCampaignCopy
-        asset={props.asset}
+        asset={asset}
         withLogo
         size='sm'
         amount={props.amount}

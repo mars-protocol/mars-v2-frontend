@@ -98,6 +98,7 @@ export function handleUnknownAsset(coin: Coin): Asset {
     decimals: 6,
     name: getNameFromUnknownAssetDenom(coin.denom),
     symbol: getSymbolFromUnknownAssetDenom(coin.denom),
+    campaigns: [],
   }
 }
 export function convertAstroportAssetsResponse(data: AstroportAsset[]): Asset[] {
@@ -114,6 +115,7 @@ export function convertAstroportAssetsResponse(data: AstroportAsset[]): Asset[] 
       pythPriceFeedId: priceFeedIDs.find((pf) => pf.symbol === asset.symbol.toUpperCase())
         ?.priceFeedID,
       pythFeedName: priceFeedIDs.find((pf) => pf.symbol === asset.symbol.toUpperCase())?.feedName,
+      campaigns: [],
     }
   })
 }

@@ -10,30 +10,35 @@ const LP_ASSETS = [
     name: 'OSMO-ATOM LP',
     denom: 'gamm/pool/1',
     decimals: 6,
+    campaigns: [],
   },
   {
     symbol: 'OSMO-USDC.axl',
     name: 'OSMO-USDC.axl LP',
     denom: 'gamm/pool/678',
     decimals: 6,
+    campaigns: [],
   },
   {
     symbol: 'OSMO-WBTC.axl',
     name: 'OSMO-WBTC.axl LP',
     denom: 'gamm/pool/712',
     decimals: 6,
+    campaigns: [],
   },
   {
     symbol: 'OSMO-WETH.axl',
     name: 'OSMO-WETH.axl LP',
     denom: 'gamm/pool/704',
     decimals: 6,
+    campaigns: [],
   },
   {
     symbol: 'stATOM-ATOM',
     name: 'stATOM-ATOM LP',
     denom: 'gamm/pool/803',
     decimals: 6,
+    campaigns: [],
   },
 ]
 
