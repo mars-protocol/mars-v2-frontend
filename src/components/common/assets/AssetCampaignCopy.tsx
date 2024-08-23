@@ -76,7 +76,7 @@ function AssetCampaignCopy(props: CopyProps) {
   if (!campaign) return null
 
   return (
-    <div className='inline-block'>
+    <div>
       <Tooltip
         type='info'
         className={classNames('flex items-center gap-2', className)}

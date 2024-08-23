@@ -13,7 +13,7 @@ const Neutron1: ChainConfig = {
       campaignIds: ['drop_apy', 'drop'],
       baseMultiplier: 1,
       collateralMultiplier: 3,
-      campaignDenom: 'ATOM',
+      campaignDenom: 'dATOM',
     },
     {
       denom:
