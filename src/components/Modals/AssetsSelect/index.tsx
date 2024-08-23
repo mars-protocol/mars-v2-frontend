@@ -2,6 +2,7 @@ import { RowSelectionState, SortingState } from '@tanstack/react-table'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import useAssetSelectColumns from 'components/Modals/AssetsSelect/Columns/useAssetSelectColumns'
+import { Callout, CalloutType } from 'components/common/Callout'
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
@@ -11,7 +12,6 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import { Callout, CalloutType } from 'components/common/Callout'
 
 interface Props {
   assets: Asset[]
@@ -43,7 +43,7 @@ export default function AssetsSelect({
         const balancesForAsset = balances.find(byDenom(asset.denom))
         const coin = BNCoin.fromDenomAndBigNumber(asset.denom, BN(balancesForAsset?.amount ?? '0'))
         const value = getCoinValue(coin, assets)
-        asset.campaign = isBorrow ? undefined : asset.campaign
+        asset.campaigns = isBorrow ? [] : asset.campaigns
         return {
           asset,
           balance: balancesForAsset?.amount ?? '0',

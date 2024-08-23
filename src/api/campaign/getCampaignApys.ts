@@ -15,16 +15,21 @@ export default async function getCampaignApys(
   try {
     await fetch(url.toString()).then(async (res) => {
       const data = (await res.json()) as any
-
       if (Array.isArray(data[apyStructure[0]])) {
         if (apyStructure[0] === denomStructure[0])
-          data[apyStructure[0]].forEach((apyData: any, i: number) => {
+          data[apyStructure[0]].forEach((apyData: any) => {
             apys.push({
               apy: processApyData(apyData[apyStructure[1]], isApr, isPercent),
               denom: apyData[denomStructure[1]],
             })
           })
-        // TODO: wait for a campaign that has different api structure
+      } else if (Array.isArray(data)) {
+        data.forEach((campaign: any) => {
+          apys.push({
+            apy: processApyData(campaign[apyStructure[0]], isApr, isPercent),
+            denom: campaign[denomStructure[0]],
+          })
+        })
       } else {
         apys.push({
           apy: processApyData(data[apyStructure[0]][apyStructure[1]], isApr, isPercent),

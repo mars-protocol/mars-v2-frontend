@@ -136,7 +136,7 @@ interface AssetMetaData {
   pythFeedName?: string
   price?: BNCoin
   poolInfo?: PoolInfo
-  campaign?: AssetCampaign
+  campaigns: AssetCampaign[]
 }
 
 interface AssetPair {
@@ -261,7 +261,7 @@ interface ChainConfig {
 
 interface AssetCampaignInfo {
   denom: string
-  campaignId: AssetCampaignId
+  campaignIds: AssetCampaignId[]
   baseMultiplier?: number
   collateralMultiplier?: number
   campaignDenom?: string
@@ -1500,7 +1500,7 @@ interface StakedAstroLpRewards {
   rewards: BNCoin[]
 }
 
-type AssetCampaignId = 'stride' | 'drop' | 'lido'
+type AssetCampaignId = 'stride' | 'drop' | 'lido' | 'drop_apy'
 type AssetCampaignType = 'points_with_multiplier' | 'apy'
 type AssetCampaignPointBase = 'value' | 'amount'
 
