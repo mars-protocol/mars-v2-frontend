@@ -32,17 +32,20 @@ export default function AccountFundRow(props: Props) {
         disabled={props.isConfirming}
         warningMessages={[]}
       />
-      {asset.campaign && (
-        <div className='flex justify-center w-full p-2 mt-4 border rounded border-white/20'>
-          <AssetCampaignCopy
-            asset={asset}
-            size='sm'
-            amount={props.amount}
-            withLogo
-            className='justify-center'
-          />
-        </div>
-      )}
+      {asset.campaigns.length > 0 &&
+        asset.campaigns.map((campaign, index) => (
+          <div className='flex justify-center w-full p-2 mt-4 border rounded border-white/20'>
+            <AssetCampaignCopy
+              campaign={campaign}
+              asset={asset}
+              size='sm'
+              amount={props.amount}
+              withLogo
+              className='justify-center'
+              key={index}
+            />
+          </div>
+        ))}
     </>
   )
 }
