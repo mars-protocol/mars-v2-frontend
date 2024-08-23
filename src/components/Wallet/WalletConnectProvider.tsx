@@ -1,4 +1,5 @@
 import {
+  CosmiframeExtensionProvider,
   CosmostationExtensionProvider,
   CosmostationMobileProvider,
   KeplrExtensionProvider,
@@ -17,7 +18,7 @@ import { FC } from 'react'
 
 import chains from 'chains'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import { WALLETS } from 'constants/wallets'
+import { DAODAO_ORIGINS, WALLETS } from 'constants/wallets'
 import { WalletID } from 'types/enums'
 
 type Props = {
@@ -77,6 +78,10 @@ const extensionProviders: WalletExtensionProvider[] = [
   new XDEFICosmosExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Xdefi) }),
   new StationExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Station) }),
   new VectisCosmosExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Vectis) }),
+  new CosmiframeExtensionProvider({
+    allowedParentOrigins: DAODAO_ORIGINS,
+    networks: getSupportedChainsInfos(WalletID.Vectis),
+  }),
 ]
 
 export const WalletConnectProvider: FC<Props> = ({ children }) => {
