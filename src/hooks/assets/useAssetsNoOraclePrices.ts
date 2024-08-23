@@ -11,7 +11,7 @@ import useSWR from 'swr'
 import { BNCoin } from 'types/classes/BNCoin'
 import { AssetParamsBaseForAddr } from 'types/generated/mars-params/MarsParams.types'
 import { byDenom } from 'utils/array'
-import { resolveAssetCampaign } from 'utils/assets'
+import { resolveAssetCampaigns } from 'utils/assets'
 import { BN } from 'utils/helpers'
 import { calculatePoolWeight } from 'utils/pools'
 
@@ -60,6 +60,7 @@ async function fetchSortAndMapAllAssets(
         ORACLE_DENOM,
         BN(pool.totalLiquidityUSD).dividedBy(BN(pool.poolTotalShare).shiftedBy(-6)),
       ),
+      campaigns: [],
     }
   })
 
@@ -89,12 +90,14 @@ async function fetchSortAndMapAllAssets(
             name: currentAssetPoolParams.assets[0].symbol,
             decimals: currentAssetPoolParams.assets[0].decimals,
             symbol: currentAssetPoolParams.assets[0].symbol,
+            campaigns: [],
           },
           secondary: secondaryAsset ?? {
             denom: currentAssetPoolParams.assets[1].denom,
             name: currentAssetPoolParams.assets[1].symbol,
             decimals: currentAssetPoolParams.assets[1].decimals,
             symbol: currentAssetPoolParams.assets[1].symbol,
+            campaigns: [],
           },
         },
         assetsPerShare: {
@@ -143,7 +146,7 @@ async function fetchSortAndMapAllAssets(
       isDeprecated,
       isTradeEnabled,
       poolInfo: currentAssetPoolInfo,
-      campaign: resolveAssetCampaign(asset, campaignApys, chainConfig),
+      campaigns: resolveAssetCampaigns(asset, campaignApys, chainConfig),
     }
   })
 

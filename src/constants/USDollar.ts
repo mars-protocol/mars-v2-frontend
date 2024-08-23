@@ -3,6 +3,7 @@ const USD: Asset = {
   name: 'US Dollar',
   denom: 'usd',
   decimals: 2,
+  campaigns: [],
 }
 
 export default USD
