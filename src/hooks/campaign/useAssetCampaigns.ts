@@ -8,7 +8,9 @@ export default function useAssetCampaigns(type: AssetCampaignType) {
     if (!chainConfig.campaignAssets) return []
     const campaigns = [] as AssetCampaign[]
     chainConfig.campaignAssets?.forEach((campaign) => {
-      const campaignInfos = CAMPAIGNS.find((c) => c.type === type && c.id === campaign.campaignId)
+      const campaignInfos = CAMPAIGNS.find(
+        (c) => c.type === type && campaign.campaignIds.includes(c.id),
+      )
       if (!campaignInfos) return
       campaigns.push(campaignInfos)
     })

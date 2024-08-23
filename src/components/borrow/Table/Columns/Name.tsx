@@ -1,5 +1,3 @@
-import { isMobile } from 'react-device-detect'
-
 import AssetImage from 'components/common/assets/AssetImage'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 
@@ -22,7 +20,7 @@ export default function Name(props: Props) {
       <AssetImage asset={asset} className='w-8 h-8' />
       <TitleAndSubCell
         title={asset.symbol}
-        sub={props.v1 && !isMobile ? '' : asset.name}
+        sub={props.v1 ? '' : asset.name}
         className='text-left min-w-15'
       />
     </div>

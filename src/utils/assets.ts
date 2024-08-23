@@ -98,6 +98,7 @@ export function handleUnknownAsset(coin: Coin): Asset {
     decimals: 6,
     name: getNameFromUnknownAssetDenom(coin.denom),
     symbol: getSymbolFromUnknownAssetDenom(coin.denom),
+    campaigns: [],
   }
 }
 export function convertAstroportAssetsResponse(data: AstroportAsset[]): Asset[] {
@@ -114,68 +115,73 @@ export function convertAstroportAssetsResponse(data: AstroportAsset[]): Asset[] 
       pythPriceFeedId: priceFeedIDs.find((pf) => pf.symbol === asset.symbol.toUpperCase())
         ?.priceFeedID,
       pythFeedName: priceFeedIDs.find((pf) => pf.symbol === asset.symbol.toUpperCase())?.feedName,
+      campaigns: [],
     }
   })
 }
 
-export function resolveAssetCampaign(
+export function resolveAssetCampaigns(
   asset: Asset,
   campaignApys: AssetCampaignApy[],
   chainConfig: ChainConfig,
-): AssetCampaign | undefined {
+): AssetCampaign[] {
   const campaign = chainConfig.campaignAssets?.find(byDenom(asset.denom))
-  if (!campaign) return
+  if (!campaign) return []
+  const campaignInfos = [] as AssetCampaign[]
 
-  const currentCampaign = CAMPAIGNS.find((c) => c.id === campaign.campaignId)
+  campaign.campaignIds.forEach((campaignId) => {
+    const currentCampaign = CAMPAIGNS.find((c) => c.id === campaignId)
+    if (!currentCampaign) return
 
-  if (!currentCampaign) return
+    const campaignInfo = {
+      id: currentCampaign.id,
+      type: currentCampaign.type,
+      name: currentCampaign.name,
+      incentiveCopy: currentCampaign.incentiveCopy,
+      detailedIncentiveCopy: currentCampaign.detailedIncentiveCopy,
+      classNames: currentCampaign.classNames,
+      bgClassNames: currentCampaign.bgClassNames,
+      tooltip: currentCampaign.tooltip,
+      enabledOnV1: currentCampaign.enabledOnV1,
+      v1Tooltip: currentCampaign.v1Tooltip ?? '',
+      baseMultiplier: 0,
+      collateralMultiplier: 0,
+      apy: 0,
+    }
 
-  const campaignInfo = {
-    id: currentCampaign.id,
-    type: currentCampaign.type,
-    name: currentCampaign.name,
-    incentiveCopy: currentCampaign.incentiveCopy,
-    detailedIncentiveCopy: currentCampaign.detailedIncentiveCopy,
-    classNames: currentCampaign.classNames,
-    bgClassNames: currentCampaign.bgClassNames,
-    tooltip: currentCampaign.tooltip,
-    enabledOnV1: currentCampaign.enabledOnV1,
-    v1Tooltip: currentCampaign.v1Tooltip ?? '',
-    baseMultiplier: 0,
-    collateralMultiplier: 0,
-    apy: 0,
-  }
+    if (campaignInfo.type === 'points_with_multiplier' && campaign.baseMultiplier) {
+      const multiplierRange = campaign.collateralMultiplier
+        ? `${campaign.baseMultiplier}-${campaign.collateralMultiplier}`
+        : campaign.baseMultiplier.toString()
 
-  if (campaignInfo.type === 'points_with_multiplier' && campaign.baseMultiplier) {
-    const multiplierRange = campaign.collateralMultiplier
-      ? `${campaign.baseMultiplier}-${campaign.collateralMultiplier}`
-      : campaign.baseMultiplier.toString()
+      campaignInfo.incentiveCopy = currentCampaign.incentiveCopy.replaceAll(
+        '##MULTIPLIER##',
+        multiplierRange.toString(),
+      )
 
-    campaignInfo.incentiveCopy = currentCampaign.incentiveCopy.replaceAll(
-      '##MULTIPLIER##',
-      multiplierRange.toString(),
-    )
+      campaignInfo.detailedIncentiveCopy = currentCampaign.detailedIncentiveCopy.replaceAll(
+        '##MULTIPLIER##',
+        multiplierRange.toString(),
+      )
+      campaignInfo.baseMultiplier = campaign.baseMultiplier
+      campaignInfo.collateralMultiplier = campaign.collateralMultiplier ?? campaign.baseMultiplier
+    }
 
-    campaignInfo.detailedIncentiveCopy = currentCampaign.detailedIncentiveCopy.replaceAll(
-      '##MULTIPLIER##',
-      multiplierRange.toString(),
-    )
-    campaignInfo.baseMultiplier = campaign.baseMultiplier
-    campaignInfo.collateralMultiplier = campaign.collateralMultiplier ?? campaign.baseMultiplier
-  }
+    if (campaignInfo.type === 'apy' && campaignApys.length && campaign.campaignDenom) {
+      const apy = campaignApys.find(byDenom(campaign.campaignDenom))?.apy || 0
+      campaignInfo.incentiveCopy = currentCampaign.incentiveCopy.replaceAll(
+        '##APY##',
+        apy.toFixed(2) ?? '0',
+      )
+      campaignInfo.detailedIncentiveCopy = currentCampaign.detailedIncentiveCopy.replaceAll(
+        '##APY##',
+        apy.toFixed(2) ?? '0',
+      )
+      campaignInfo.apy = apy
+    }
 
-  if (campaignInfo.type === 'apy' && campaignApys.length && campaign.campaignDenom) {
-    const apy = campaignApys.find(byDenom(campaign.campaignDenom))?.apy || 0
-    campaignInfo.incentiveCopy = currentCampaign.incentiveCopy.replaceAll(
-      '##APY##',
-      apy.toFixed(2) ?? '0',
-    )
-    campaignInfo.detailedIncentiveCopy = currentCampaign.detailedIncentiveCopy.replaceAll(
-      '##APY##',
-      apy.toFixed(2) ?? '0',
-    )
-    campaignInfo.apy = apy
-  }
+    campaignInfos.push(campaignInfo)
+  })
 
-  return campaignInfo
+  return campaignInfos
 }

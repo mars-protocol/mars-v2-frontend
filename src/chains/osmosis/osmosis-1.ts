@@ -10,30 +10,35 @@ const LP_ASSETS = [
     name: 'OSMO-ATOM LP',
     denom: 'gamm/pool/1',
     decimals: 6,
+    campaigns: [],
   },
   {
     symbol: 'OSMO-USDC.axl',
     name: 'OSMO-USDC.axl LP',
     denom: 'gamm/pool/678',
     decimals: 6,
+    campaigns: [],
   },
   {
     symbol: 'OSMO-WBTC.axl',
     name: 'OSMO-WBTC.axl LP',
     denom: 'gamm/pool/712',
     decimals: 6,
+    campaigns: [],
   },
   {
     symbol: 'OSMO-WETH.axl',
     name: 'OSMO-WETH.axl LP',
     denom: 'gamm/pool/704',
     decimals: 6,
+    campaigns: [],
   },
   {
     symbol: 'stATOM-ATOM',
     name: 'stATOM-ATOM LP',
     denom: 'gamm/pool/803',
     decimals: 6,
+    campaigns: [],
   },
 ]
 
@@ -48,27 +53,27 @@ const Osmosis1: ChainConfig = {
   campaignAssets: [
     {
       denom: 'ibc/C140AFD542AE77BD7DCC83F13FDD8C5E5BB8C4929785E6EC2F4C636F98F17901',
-      campaignId: 'stride',
+      campaignIds: ['stride'],
       campaignDenom: 'ATOM',
     },
     {
       denom: 'ibc/D176154B0C63D1F9C6DCFB4F70349EBF2E2B5A87A05902F57A6AE92B863E9AEC',
-      campaignId: 'stride',
+      campaignIds: ['stride'],
       campaignDenom: 'OSMO',
     },
     {
       denom: 'ibc/698350B8A61D575025F3ED13E9AC9C0F45C89DEFE92F76D5838F1D3C1A7FF7C9',
-      campaignId: 'stride',
+      campaignIds: ['stride'],
       campaignDenom: 'TIA',
     },
     {
       denom: 'ibc/980E82A9F8E7CA8CD480F4577E73682A6D3855A267D1831485D7EBEF0E7A6C2C',
-      campaignId: 'stride',
+      campaignIds: ['stride'],
       campaignDenom: 'DYDX',
     },
     {
       denom: 'ibc/2F21E6D4271DE3F561F20A02CD541DAF7405B1E9CB3B9B07E3C2AC7D8A4338A5',
-      campaignId: 'lido',
+      campaignIds: ['lido'],
       campaignDenom: 'stETH',
     },
   ],

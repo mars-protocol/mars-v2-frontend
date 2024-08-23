@@ -281,6 +281,7 @@ module.exports = {
         content: '1024px',
         v1: '1248px',
         modal: '895px',
+        'modal-lg': '650px',
         'modal-md': '556px',
         'modal-sm': '526px',
         'modal-xs': '442px',
