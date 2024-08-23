@@ -80,7 +80,7 @@ const extensionProviders: WalletExtensionProvider[] = [
   new VectisCosmosExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Vectis) }),
   new CosmiframeExtensionProvider({
     allowedParentOrigins: DAODAO_ORIGINS,
-    networks: getSupportedChainsInfos(WalletID.Vectis),
+    networks: getSupportedChainsInfos(WalletID.DaoDao),
   }),
 ]
 
