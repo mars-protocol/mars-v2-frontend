@@ -57,7 +57,7 @@ export default function createBroadcastSlice(
 ): BroadcastSlice {
   const getEstimatedFee = async (messages: MsgExecuteContract[]) => {
     if (!get().client) {
-      return defaultFee
+      return defaultFee(get().chainConfig)
     }
     try {
       const gasPrice = await getGasPrice(get().chainConfig)
@@ -83,7 +83,7 @@ export default function createBroadcastSlice(
 
       throw 'Simulation failed'
     } catch (ex) {
-      return defaultFee
+      return defaultFee(get().chainConfig)
     }
   }
 

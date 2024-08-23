@@ -1,11 +1,13 @@
-export const defaultFee: StdFee = {
-  amount: [
-    {
-      denom: 'uosmo',
-      amount: '500000',
-    },
-  ],
-  gas: '15000000',
+export const defaultFee = (chainConfig: ChainConfig) => {
+  return {
+    amount: [
+      {
+        denom: chainConfig.isOsmosis ? 'uosmo' : 'ntrn',
+        amount: '70000',
+      },
+    ],
+    gas: '15000000',
+  } as StdFee
 }
 
 export const SECONDS_IN_A_YEAR = 31540000
