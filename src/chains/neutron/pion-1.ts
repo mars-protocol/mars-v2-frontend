@@ -10,14 +10,14 @@ const Pion1: ChainConfig = {
   campaignAssets: [
     {
       denom: 'factory/neutron1wm8jd0hrw79pfhhm9xmuq43jwz4wtukvxfgkkw/mars',
-      campaignId: 'drop',
+      campaignIds: ['drop'],
       baseMultiplier: 1,
       collateralMultiplier: 3,
     },
     {
       denom:
         'factory/neutron1sf456kx85dz0wfjs4sx0s80dyzmc360pfc0rdzactxt8xrse9ykqsdpy2y/astroport/share',
-      campaignId: 'drop',
+      campaignIds: ['drop'],
       baseMultiplier: 50,
     },
   ],

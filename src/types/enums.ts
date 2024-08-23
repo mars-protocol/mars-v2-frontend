@@ -43,6 +43,7 @@ export enum WalletID {
   Station = 'station',
   Vectis = 'vectis-cosmos',
   Xdefi = 'xfi-cosmos',
+  DaoDao = 'cosmiframe',
 }
 
 export enum ChainInfoID {

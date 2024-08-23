@@ -17,6 +17,7 @@ interface Props {
   withLogo?: boolean
   amount?: BigNumber
   noDot?: boolean
+  campaign: AssetCampaign
 }
 
 interface CopyProps extends Props {
@@ -24,36 +25,30 @@ interface CopyProps extends Props {
 }
 
 export default function AssetCampaignCopyController(props: Props) {
-  const { asset, withLogo } = props
+  const { asset, withLogo, campaign } = props
   const isV1 = useStore((s) => s.isV1)
-  if (!asset.campaign) return null
-  if (!asset.campaign.enabledOnV1 && isV1 && !withLogo) return null
+  if (!asset.campaigns || asset.campaigns.length === 0) return null
+  if (!campaign.enabledOnV1 && isV1 && !withLogo) return null
 
   return <AssetCampaignCopy isV1={isV1} {...props} />
 }
 
 function AssetCampaignCopy(props: CopyProps) {
-  const { asset, className, amount, withLogo, size, textClassName, noDot, isV1 } = props
+  const { asset, className, amount, withLogo, size, textClassName, noDot, isV1, campaign } = props
   const { data: assets } = useAssets()
-  const account = useCurrentAccount()
 
+  const account = useCurrentAccount()
   const incentiveCopy = useMemo(() => {
-    if (!asset.campaign) return ''
-    if (!asset.campaign.enabledOnV1 && isV1) return asset.campaign.v1Tooltip
-    if (
-      !amount ||
-      amount.isZero() ||
-      asset.campaign.type === 'apy' ||
-      !asset.campaign.baseMultiplier
-    )
-      return asset.campaign.incentiveCopy
+    if (!campaign) return ''
+    if (!campaign.enabledOnV1 && isV1) return campaign.v1Tooltip
+    if (!amount || amount.isZero() || campaign.type === 'apy' || !campaign.baseMultiplier)
+      return campaign.incentiveCopy
 
     const tokenValue = getCoinValue(BNCoin.fromDenomAndBigNumber(asset.denom, amount), assets)
-    const detailedCopy = asset.campaign.detailedIncentiveCopy
+    const detailedCopy = campaign.detailedIncentiveCopy
     const hasDebt = account?.debts && account.debts.length > 0
-    const activeCollateralMultiplier =
-      asset.campaign?.collateralMultiplier ?? asset.campaign.baseMultiplier
-    const multiplier = hasDebt ? activeCollateralMultiplier : asset.campaign.baseMultiplier
+    const activeCollateralMultiplier = campaign?.collateralMultiplier ?? campaign.baseMultiplier
+    const multiplier = hasDebt ? activeCollateralMultiplier : campaign.baseMultiplier
 
     const campaignPoints = tokenValue
       .times(multiplier ?? 0)
@@ -62,7 +57,7 @@ function AssetCampaignCopy(props: CopyProps) {
 
     let campaignDetailedCopy = detailedCopy
 
-    if (asset.campaign?.collateralMultiplier) {
+    if (campaign?.collateralMultiplier) {
       campaignDetailedCopy = campaignDetailedCopy.replace(/\([^()]*\)/g, `(${multiplier}x)`)
     }
 
@@ -70,7 +65,7 @@ function AssetCampaignCopy(props: CopyProps) {
       '##POINTS##',
       formatValue(campaignPoints, { maxDecimals: 0, minDecimals: 0, abbreviated: false }),
     )
-  }, [account?.debts, amount, asset.campaign, asset.denom, assets, isV1])
+  }, [account?.debts, amount, campaign, asset.denom, assets, isV1])
 
   const iconClasses = useMemo(() => {
     if (size === 'xs') return 'w-4 h-4'
@@ -78,32 +73,32 @@ function AssetCampaignCopy(props: CopyProps) {
     return 'w-6 h-6'
   }, [size])
 
-  if (!asset.campaign) return null
+  if (!campaign) return null
 
   return (
-    <div className='inline-block'>
+    <div>
       <Tooltip
         type='info'
         className={classNames('flex items-center gap-2', className)}
         content={
           <Text size='xs' className='max-w-[320px]'>
-            {isV1 && !asset.campaign.enabledOnV1
+            {isV1 && !campaign.enabledOnV1
               ? 'This campaign is not available on v1.'
-              : asset.campaign.tooltip}
+              : campaign.tooltip}
           </Text>
         }
       >
         <>
           {withLogo ? (
             <div className={iconClasses}>
-              <CampaignLogo campaignId={asset.campaign.id} />
+              <CampaignLogo campaignId={campaign.id} />
             </div>
           ) : (
             <div
               className={classNames('w-1 h-1 ml-2 rounded-full bg-white/50', noDot && 'hidden')}
             />
           )}
-          <Text size={size} className={textClassName ? textClassName : asset.campaign.classNames}>
+          <Text size={size} className={textClassName ? textClassName : campaign.classNames}>
             {incentiveCopy}
           </Text>
         </>

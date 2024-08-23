@@ -62,9 +62,12 @@ export default function WalletBridges() {
       return
     }
 
-    if (BN(baseBalance).isGreaterThanOrEqualTo(defaultFee.amount[0].amount) && !isLoading)
+    if (
+      BN(baseBalance).isGreaterThanOrEqualTo(defaultFee(chainConfig).amount[0].amount) &&
+      !isLoading
+    )
       setHasFunds(true)
-  }, [baseBalance, isLoading, hasFunds, setHasFunds])
+  }, [baseBalance, isLoading, hasFunds, setHasFunds, chainConfig])
 
   return (
     <FullOverlayContent
