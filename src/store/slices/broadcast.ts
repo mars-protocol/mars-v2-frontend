@@ -1,4 +1,4 @@
-import { MsgExecuteContract } from '@delphi-labs/shuttle-react'
+import { DEFAULT_GAS_MULTIPLIER, MsgExecuteContract } from '@delphi-labs/shuttle-react'
 import BigNumber from 'bignumber.js'
 import moment from 'moment'
 import { isMobile } from 'react-device-detect'
@@ -67,6 +67,7 @@ export default function createBroadcastSlice(
         wallet: get().client?.connectedWallet,
         overrides: {
           gasPrice,
+          gasAdjustment: DEFAULT_GAS_MULTIPLIER,
         },
       })
 
@@ -793,6 +794,7 @@ export default function createBroadcastSlice(
           mobile: isMobile,
           overrides: {
             gasPrice,
+            gasAdjustment: DEFAULT_GAS_MULTIPLIER,
           },
         }
         const result = await client.broadcast(broadcastOptions)
