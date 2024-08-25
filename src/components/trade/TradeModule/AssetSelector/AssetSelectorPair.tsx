@@ -51,15 +51,17 @@ export default function AssetSelectorPair(props: Props) {
           <ChevronDown className='w-3 h-3' />
         </div>
       </Button>
-      <AssetOverlay
-        state={assetOverlayState}
-        onChangeState={handleChangeState}
-        buyAsset={buyAsset}
-        sellAsset={sellAsset}
-        onChangeTradingPair={onChangeTradingPair}
-        buyAssets={props.assets}
-        type='pair'
-      />
+      {assetOverlayState === 'pair' && (
+        <AssetOverlay
+          state={assetOverlayState}
+          onChangeState={handleChangeState}
+          buyAsset={buyAsset}
+          sellAsset={sellAsset}
+          onChangeTradingPair={onChangeTradingPair}
+          buyAssets={props.assets}
+          type='pair'
+        />
+      )}
     </>
   )
 }
