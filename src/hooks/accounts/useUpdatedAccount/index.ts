@@ -10,7 +10,6 @@ import {
   updatePerpsPositions,
 } from 'hooks/accounts/useUpdatedAccount/functions'
 import useAssets from 'hooks/assets/useAssets'
-import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
 import useAvailableAstroLps from 'hooks/astroLp/useAvailableAstroLps'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useSlippage from 'hooks/settings/useSlippage'
@@ -28,7 +27,6 @@ export function useUpdatedAccount(account?: Account) {
   const { data: availableVaults } = useVaults(false)
   const { data: perpsVault } = usePerpsVault()
   const { data: assets } = useAssets()
-  const tradeEnabledAssets = useTradeEnabledAssets()
   const availableAstroLps = useAvailableAstroLps()
   const [updatedAccount, setUpdatedAccount] = useState<Account | undefined>(
     account ? cloneAccount(account) : undefined,
