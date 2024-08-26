@@ -6,7 +6,10 @@ const Neutron1: ChainConfig = {
   id: ChainInfoID.Neutron1,
   isOsmosis: false,
   name: 'Neutron',
-  stables: ['ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349'],
+  stables: [
+    'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
+    'ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349',
+  ],
   campaignAssets: [
     {
       denom: 'factory/neutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa/udatom',
@@ -103,7 +106,7 @@ const Neutron1: ChainConfig = {
   gasPrice: '0.015untrn',
   hls: false,
   perps: false,
-  farm: false,
+  farm: true,
   anyAsset: true,
 }
 
