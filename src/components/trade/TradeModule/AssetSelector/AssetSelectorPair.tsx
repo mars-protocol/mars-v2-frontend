@@ -4,7 +4,7 @@ import Button from 'components/common/Button'
 import { ChevronDown } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import AssetOverlay from 'components/trade/TradeModule/AssetSelector/AssetOverlay'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -20,7 +20,7 @@ export default function AssetSelectorPair(props: Props) {
   const chainConfig = useChainConfig()
   const [_, setTradingPairSimple] = useLocalStorage<Settings['tradingPairSimple']>(
     chainConfig.id + '/' + LocalStorageKeys.TRADING_PAIR_SIMPLE,
-    DEFAULT_SETTINGS.tradingPairSimple,
+    getDefaultChainSettings(chainConfig).tradingPairSimple,
   )
   const { buyAsset, sellAsset } = props
   const assetOverlayState = useStore((s) => s.assetOverlayState)

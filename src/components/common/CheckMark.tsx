@@ -1,8 +1,9 @@
 import classNames from 'classnames'
 
 import { CheckCircled } from 'components/common/Icons'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 
 interface Props {
@@ -11,9 +12,10 @@ interface Props {
 }
 
 export const CheckMark = ({ color = 'text-white', className }: Props) => {
+  const chainConfig = useChainConfig()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
-    DEFAULT_SETTINGS.reduceMotion,
+    getDefaultChainSettings(chainConfig).reduceMotion,
   )
   const classes = classNames('inline-block relative h-5 w-5', className)
 

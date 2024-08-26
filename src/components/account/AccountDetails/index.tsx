@@ -13,7 +13,7 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ThreeDots } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAccountId from 'hooks/accounts/useAccountId'
@@ -22,6 +22,7 @@ import useAccounts from 'hooks/accounts/useAccounts'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -63,6 +64,7 @@ export default function AccountDetailsController(props: AccountDetailsController
 }
 
 function AccountDetails(props: Props) {
+  const chainConfig = useChainConfig()
   const { account } = props
   const location = useLocation()
   const { data: hlsStrategies } = useHLSStakingAssets()
@@ -70,7 +72,7 @@ function AccountDetails(props: Props) {
   const astroLpAprs = useAstroLpAprs()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
-    DEFAULT_SETTINGS.reduceMotion,
+    getDefaultChainSettings(chainConfig).reduceMotion,
   )
   const updatedAccount = useStore((s) => s.updatedAccount)
   const accountDetailsExpanded = useStore((s) => s.accountDetailsExpanded)

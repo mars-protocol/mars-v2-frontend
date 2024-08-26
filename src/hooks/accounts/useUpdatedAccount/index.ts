@@ -213,7 +213,7 @@ export function useUpdatedAccount(account?: Account) {
       }
       if (debtCoin.amount.isGreaterThan(BN_ZERO)) addDebts([debtCoin])
     },
-    [account, addDebts, addDeposits, addLends, removeDeposits, removeLends],
+    [account, assets],
   )
 
   const simulateHlsStakingDeposit = useCallback(

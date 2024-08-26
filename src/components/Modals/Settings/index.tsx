@@ -15,7 +15,7 @@ import Text from 'components/common/Text'
 import TextInput from 'components/common/TextInput'
 import { TextLink } from 'components/common/TextLink'
 import AssetImage from 'components/common/assets/AssetImage'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
@@ -56,20 +56,20 @@ export default function SettingsModal() {
   )
   const [reduceMotion, setReduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
-    DEFAULT_SETTINGS.reduceMotion,
+    getDefaultChainSettings(chainConfig).reduceMotion,
   )
   const [tutorial, setTutorial] = useLocalStorage<boolean>(
     LocalStorageKeys.TUTORIAL,
-    DEFAULT_SETTINGS.tutorial,
+    getDefaultChainSettings(chainConfig).tutorial,
   )
   const [enableAutoLendGlobal, setLendAssets] = useEnableAutoLendGlobal()
   const [slippage, setSlippage] = useLocalStorage<number>(
     LocalStorageKeys.SLIPPAGE,
-    DEFAULT_SETTINGS.slippage,
+    getDefaultChainSettings(chainConfig).slippage,
   )
   const [updateOracle, setUpdateOracle] = useLocalStorage<boolean>(
     LocalStorageKeys.UPDATE_ORACLE,
-    DEFAULT_SETTINGS.updateOracle,
+    getDefaultChainSettings(chainConfig).updateOracle,
   )
 
   const [tempRpcEndpoint, setTempRpcEndpoint] = useState('')
@@ -77,7 +77,10 @@ export default function SettingsModal() {
   const [validRpc, setValidRpc] = useState(true)
   const [validRest, setValidRest] = useState(true)
 
-  const [theme, setTheme] = useLocalStorage<string>(LocalStorageKeys.THEME, DEFAULT_SETTINGS.theme)
+  const [theme, setTheme] = useLocalStorage<string>(
+    LocalStorageKeys.THEME,
+    getDefaultChainSettings(chainConfig).theme,
+  )
   const themeOptions: SelectOption[] = [
     { label: 'Default', value: 'default' },
     { label: 'Light', value: 'light' },
@@ -194,30 +197,29 @@ export default function SettingsModal() {
   )
 
   const handleResetSettings = useCallback(() => {
-    handleDisplayCurrency(DEFAULT_SETTINGS.displayCurrency)
-    handleSlippage(DEFAULT_SETTINGS.slippage)
-    handleReduceMotion(DEFAULT_SETTINGS.reduceMotion)
-    handleLendAssets(DEFAULT_SETTINGS.enableAutoLendGlobal)
-    handleTutorial(DEFAULT_SETTINGS.tutorial)
-    handleUpdateOracle(DEFAULT_SETTINGS.updateOracle)
-    handleTheme(DEFAULT_SETTINGS.theme)
+    handleDisplayCurrency(getDefaultChainSettings(chainConfig).displayCurrency)
+    handleSlippage(getDefaultChainSettings(chainConfig).slippage)
+    handleReduceMotion(getDefaultChainSettings(chainConfig).reduceMotion)
+    handleLendAssets(getDefaultChainSettings(chainConfig).enableAutoLendGlobal)
+    handleTutorial(getDefaultChainSettings(chainConfig).tutorial)
+    handleUpdateOracle(getDefaultChainSettings(chainConfig).updateOracle)
+    handleTheme(getDefaultChainSettings(chainConfig).theme)
     setTempRpcEndpoint(chains[chainId].endpoints.rpc)
     setTempRestEndpoint(chains[chainId].endpoints.rest)
     setRpcEndpoint(chains[chainId].endpoints.rpc)
     setRestEndpoint(chains[chainId].endpoints.rest)
   }, [
     handleDisplayCurrency,
+    chainConfig,
+    handleSlippage,
     handleReduceMotion,
     handleLendAssets,
-    handleSlippage,
-    handleTheme,
     handleTutorial,
     handleUpdateOracle,
-    setTempRpcEndpoint,
-    setTempRestEndpoint,
+    handleTheme,
+    chainId,
     setRpcEndpoint,
     setRestEndpoint,
-    chainId,
   ])
 
   const validateRpcEndpoint = useCallback(

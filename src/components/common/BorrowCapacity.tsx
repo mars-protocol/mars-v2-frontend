@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 
 interface Props {
@@ -31,9 +32,10 @@ export const BorrowCapacity = ({
   hideValues,
   decimals = 2,
 }: Props) => {
+  const chainConfig = useChainConfig()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
-    DEFAULT_SETTINGS.reduceMotion,
+    getDefaultChainSettings(chainConfig).reduceMotion,
   )
   const [percentOfMaxRound, setPercentOfMaxRound] = useState(0)
   const [percentOfMaxRange, setPercentOfMaxRange] = useState(0)
@@ -79,10 +81,10 @@ export const BorrowCapacity = ({
         <Tooltip type='info' content={<Text size='sm'>Borrow Capacity Tooltip</Text>}>
           <div className='relative'>
             <div
-              className='overflow-hidden rounded-3xl border-r-2 border-r-loss '
+              className='overflow-hidden border-r-2 rounded-3xl border-r-loss '
               style={{ height: barHeight }}
             >
-              <div className='absolute h-full w-full rounded-lg shadow-inset gradient-hatched '>
+              <div className='absolute w-full h-full rounded-lg shadow-inset gradient-hatched '>
                 <div
                   className={classNames(
                     'absolute left-0 h-full max-w-full rounded-l-3xl bg-body-dark',
@@ -93,7 +95,7 @@ export const BorrowCapacity = ({
                   }}
                 />
 
-                <div className='absolute top-0 h-full w-full'>
+                <div className='absolute top-0 w-full h-full'>
                   <div
                     className={classNames(
                       'h-full rounded-lg',
@@ -104,7 +106,7 @@ export const BorrowCapacity = ({
                       WebkitMask: 'linear-gradient(#fff 0 0)',
                     }}
                   >
-                    <div className='absolute bottom-0 left-0 right-0 top-0 gradient-limit' />
+                    <div className='absolute top-0 bottom-0 left-0 right-0 gradient-limit' />
                   </div>
 
                   <div
@@ -141,7 +143,7 @@ export const BorrowCapacity = ({
           </div>
         </Tooltip>
         {!hideValues && (
-          <div className='mt-2 flex opacity-50 text-3xs-caps'>
+          <div className='flex mt-2 opacity-50 text-3xs-caps'>
             <FormattedNumber animate amount={balance} className='mr-1' />
             <span className='mr-1'>of</span>
             <FormattedNumber animate amount={max} />
