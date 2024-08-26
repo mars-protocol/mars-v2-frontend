@@ -206,11 +206,9 @@ export function useUpdatedAccount(account?: Account) {
         addCoin.amount.minus(usedAmountForDebt),
       )
 
-      if (!asset?.isBorrowEnabled) {
+      if (!asset?.isBorrowEnabled || target === 'deposit') {
         addDeposits(repay ? [remainingAddCoin] : [addCoin])
-      } else if (target === 'deposit') {
-        addDeposits(repay ? [remainingAddCoin] : [addCoin])
-      } else if (target === 'lend') {
+      } else {
         addLends(repay ? [remainingAddCoin] : [addCoin])
       }
       if (debtCoin.amount.isGreaterThan(BN_ZERO)) addDebts([debtCoin])
