@@ -223,7 +223,6 @@ export default function SwapForm(props: Props) {
   )
 
   useEffect(() => {
-    setInputAssetAmount(BN_ZERO)
     setMarginChecked(isBorrowEnabled ? useMargin : false)
     setAutoRepayChecked(isRepayable ? useAutoRepay : false)
     simulateTrade(
