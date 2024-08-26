@@ -71,7 +71,7 @@ export default function AccountFundContent(props: Props) {
     () =>
       new SkipClient({
         getCosmosSigner: async (chainID) => {
-          const offlineSigner = window.keplr?.getOfflineSigner(chainID)
+          const offlineSigner = window.keplr?.getOfflineSigner('neutron-1')
           if (!offlineSigner) throw new Error('Keplr not installed')
           return offlineSigner
         },
@@ -84,7 +84,7 @@ export default function AccountFundContent(props: Props) {
             throw new Error(`getEVMSigner error: no wallet client available for chain ${chainID}`)
           }
 
-          return evmWalletClient
+          return evmWalletClient as any
         },
       }),
     [],
@@ -93,50 +93,59 @@ export default function AccountFundContent(props: Props) {
   const CHAIN_IDS = Object.fromEntries(Object.entries(CHAIN_NAMES).map(([id, name]) => [name, id]))
 
   const handleSkipTransfer = useCallback(async () => {
-    if (!cosmosAddress || !evmAddress || fundingAssets.length === 0) return
+    if (!cosmosAddress || !evmAddress || fundingAssets.length === 0) {
+      console.error('Missing required data for transfer')
+      return
+    }
 
     const selectedAsset = fundingAssets[0]
-    console.log(
-      'routeProperties',
-      selectedAsset.coin.amount.toString(),
-      selectedAsset.coin.denom,
-      chainConfig.id,
-      selectedAsset.coin.amount.toString(),
-      selectedAsset.coin.denom,
-      'ethereum',
-    )
+
     try {
-      if (!selectedAsset.chain) throw new Error('Chain not found')
+      if (!selectedAsset.chain) throw new Error('Chain not found for selected asset')
 
       const route = await skipClient.route({
-        sourceAssetDenom: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
+        allowMultiTx: true,
+        allowUnsafe: true,
+        cumulativeAffiliateFeeBPS: '0',
+        experimentalFeatures: ['hyperlane'],
+        smartRelay: true,
+        smartSwapOptions: {
+          splitRoutes: true,
+          evmSwaps: true,
+        },
+        sourceAssetDenom: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
         sourceAssetChainID: '137',
         destAssetDenom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
         destAssetChainID: 'neutron-1',
-        amountIn: '20000000',
+        amountIn: selectedAsset.coin.amount.toString(),
       })
-      console.log('route', route)
 
-      const assets = await skipClient.assets({
-        includeEvmAssets: true,
-      })
-      console.log('assets:', assets)
+      console.log('Received route:', route)
 
-      const userAddresses = await Promise.all(
-        route.requiredChainAddresses.map(async (chainID) => ({
-          chainID,
-          address: chainID === 'neutron-1' ? cosmosAddress : evmAddress,
-        })),
-      )
+      const userAddresses = route.requiredChainAddresses.map((chainID) => ({
+        chainID,
+        address: chainID === 'neutron-1' || chainID === 'osmosis-1' ? cosmosAddress : evmAddress,
+      }))
 
+      console.log('User addresses:', userAddresses)
+
+      console.log('Executing route...')
       await skipClient.executeRoute({
         route,
         userAddresses,
+        onTransactionCompleted: async (chainID, txHash, status) => {
+          console.log('Transaction completed:', { chainID, txHash, status })
+        },
       })
+      console.log('Route execution completed')
     } catch (error) {
       console.error('Skip transfer failed:', error)
+      if (error instanceof Error) {
+        console.error('Error message:', error.message)
+        console.error('Error stack:', error.stack)
+      }
     }
-  }, [cosmosAddress, evmAddress, fundingAssets, chainConfig, skipClient])
+  }, [cosmosAddress, evmAddress, fundingAssets, skipClient])
 
   const handleSelectAssetsClick = useCallback(() => {
     useStore.setState({
