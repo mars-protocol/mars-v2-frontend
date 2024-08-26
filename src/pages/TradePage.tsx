@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import AccountDetailsCard from 'components/trade/AccountDetailsCard'
@@ -22,16 +22,39 @@ export default function TradePage() {
     return page === 'trade-advanced'
   }, [page])
 
-  const [tradingPairAdvanced] = useLocalStorage<Settings['tradingPairAdvanced']>(
+  const [tradingPairAdvanced, setTradingPairAdvanced] = useLocalStorage<
+    Settings['tradingPairAdvanced']
+  >(
     chainConfig.id + '/' + LocalStorageKeys.TRADING_PAIR_ADVANCED,
     DEFAULT_SETTINGS.tradingPairAdvanced,
   )
-  const [tradingPairSimple] = useLocalStorage<Settings['tradingPairSimple']>(
+  const [tradingPairSimple, setTraidingPairSimple] = useLocalStorage<Settings['tradingPairSimple']>(
     chainConfig.id + '/' + LocalStorageKeys.TRADING_PAIR_SIMPLE,
     DEFAULT_SETTINGS.tradingPairSimple,
   )
-
   const assets = useTradeEnabledAssets()
+
+  useEffect(() => {
+    if (
+      !assets.find(byDenom(tradingPairSimple.buy)) ||
+      !assets.find(byDenom(tradingPairSimple.sell))
+    )
+      setTraidingPairSimple(chainConfig.defaultTradingPair)
+    if (
+      !assets.find(byDenom(tradingPairAdvanced.buy)) ||
+      !assets.find(byDenom(tradingPairAdvanced.sell))
+    )
+      setTradingPairAdvanced(chainConfig.defaultTradingPair)
+  }, [
+    assets,
+    tradingPairSimple,
+    setTraidingPairSimple,
+    chainConfig,
+    tradingPairAdvanced.buy,
+    tradingPairAdvanced.sell,
+    setTradingPairAdvanced,
+  ])
+
   const assetOverlayState = useStore((s) => s.assetOverlayState)
   const buyAsset = useMemo(
     () =>

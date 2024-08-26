@@ -33,6 +33,8 @@ export default function AddFarmAssetsModalContent(props: Props) {
     () =>
       filteredMarkets.reduce(
         (acc, market) => {
+          if (!market.asset.isBorrowEnabled) return acc
+
           if (
             market.asset.denom === props.farm.denoms.primary ||
             market.asset.denom === props.farm.denoms.secondary
