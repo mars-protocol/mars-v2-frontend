@@ -106,7 +106,7 @@ const Neutron1: ChainConfig = {
   gasPrice: '0.015untrn',
   hls: false,
   perps: false,
-  farm: true,
+  farm: false,
   anyAsset: true,
 }
 
