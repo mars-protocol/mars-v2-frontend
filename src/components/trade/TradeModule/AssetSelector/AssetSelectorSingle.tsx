@@ -69,17 +69,19 @@ export default function AssetSelectorSingle(props: Props) {
         onClick={() => useStore.setState({ assetOverlayState: 'sell' })}
         asset={sellAsset}
       />
-      <AssetOverlay
-        state={assetOverlayState}
-        onChangeState={handleChangeState}
-        buyAsset={buyAsset}
-        sellAsset={sellAsset}
-        onChangeBuyAsset={handleChangeBuyAsset}
-        onChangeSellAsset={handleChangeSellAsset}
-        onSwapAssets={handleSwapAssets}
-        buyAssets={allAssets}
-        type='single'
-      />
+      {(assetOverlayState === 'buy' || assetOverlayState === 'sell') && (
+        <AssetOverlay
+          state={assetOverlayState}
+          onChangeState={handleChangeState}
+          buyAsset={buyAsset}
+          sellAsset={sellAsset}
+          onChangeBuyAsset={handleChangeBuyAsset}
+          onChangeSellAsset={handleChangeSellAsset}
+          onSwapAssets={handleSwapAssets}
+          buyAssets={allAssets}
+          type='single'
+        />
+      )}
     </div>
   )
 }
