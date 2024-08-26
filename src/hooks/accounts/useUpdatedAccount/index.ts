@@ -183,7 +183,6 @@ export function useUpdatedAccount(account?: Account) {
       addDeposits([])
       addLends([])
 
-      const asset = assets.find((asset) => asset.denom === addCoin.denom)
       const { deposit, lend } = getDepositAndLendCoinsToSpend(removeCoin, account)
       const currentDebtCoin = account?.debts.find(byDenom(addCoin.denom))
       let usedAmountForDebt = BN_ZERO
@@ -206,14 +205,11 @@ export function useUpdatedAccount(account?: Account) {
         addCoin.amount.minus(usedAmountForDebt),
       )
 
-      if (!asset?.isBorrowEnabled || target === 'deposit') {
-        addDeposits(repay ? [remainingAddCoin] : [addCoin])
-      } else {
-        addLends(repay ? [remainingAddCoin] : [addCoin])
-      }
+      if (target === 'deposit') addDeposits(repay ? [remainingAddCoin] : [addCoin])
+      if (target === 'lend') addLends(repay ? [remainingAddCoin] : [addCoin])
       if (debtCoin.amount.isGreaterThan(BN_ZERO)) addDebts([debtCoin])
     },
-    [account, assets],
+    [account],
   )
 
   const simulateHlsStakingDeposit = useCallback(
