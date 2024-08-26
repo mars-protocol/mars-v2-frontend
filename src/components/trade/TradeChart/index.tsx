@@ -16,9 +16,10 @@ import {
   enabledFeatures,
   enabledFeaturesMobile,
 } from 'components/trade/TradeChart/constants'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import { BNCoin } from 'types/classes/BNCoin'
 import { ChartingLibraryWidgetOptions, ResolutionString, widget } from 'utils/charting_library'
@@ -32,11 +33,15 @@ interface Props {
 }
 
 export default function TradeChart(props: Props) {
+  const chainConfig = useChainConfig()
   const [chartInterval, _] = useLocalStorage<ResolutionString>(
     LocalStorageKeys.CHART_INTERVAL,
-    DEFAULT_SETTINGS.chartInterval,
+    getDefaultChainSettings(chainConfig).chartInterval,
   )
-  const [theme, __] = useLocalStorage<string>(LocalStorageKeys.THEME, DEFAULT_SETTINGS.theme)
+  const [theme, __] = useLocalStorage<string>(
+    LocalStorageKeys.THEME,
+    getDefaultChainSettings(chainConfig).theme,
+  )
   const [ratio, priceBuyAsset, priceSellAsset] = useMemo(() => {
     const priceBuyAsset = props.buyAsset?.price?.amount
     const priceSellAsset = props.sellAsset?.price?.amount

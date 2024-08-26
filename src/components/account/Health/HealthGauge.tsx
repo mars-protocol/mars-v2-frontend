@@ -3,10 +3,11 @@ import { useMemo } from 'react'
 
 import HealthIcon from 'components/account/Health/HealthIcon'
 import HealthTooltip from 'components/account/Health/HealthTooltip'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthColorAndLabel from 'hooks/health-computer/useHealthColor'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import { computeHealthGaugePercentage } from 'utils/accounts'
 import { getHealthIndicatorColors } from 'utils/healthIndicator'
 
@@ -31,11 +32,12 @@ export const HealthGauge = ({
   healthFactor = 0,
   updatedHealthFactor = 0,
 }: Props) => {
+  const chainConfig = useChainConfig()
   const color = useHealthColorAndLabel(health, 'text')
   const updatedColor = useHealthColorAndLabel(updatedHealth ?? 0, 'text')
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
-    DEFAULT_SETTINGS.reduceMotion,
+    getDefaultChainSettings(chainConfig).reduceMotion,
   )
   const percentage = useMemo(() => computeHealthGaugePercentage(health), [health])
   const updatedPercentage = useMemo(

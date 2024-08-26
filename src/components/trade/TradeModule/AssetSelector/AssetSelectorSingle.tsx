@@ -4,7 +4,7 @@ import { SwapIcon } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import AssetButton from 'components/trade/TradeModule/AssetSelector/AssetButton'
 import AssetOverlay from 'components/trade/TradeModule/AssetSelector/AssetOverlay'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -20,7 +20,7 @@ export default function AssetSelectorSingle(props: Props) {
   const chainConfig = useChainConfig()
   const [_, setTradingPairAdvanced] = useLocalStorage<Settings['tradingPairAdvanced']>(
     chainConfig.id + '/' + LocalStorageKeys.TRADING_PAIR_ADVANCED,
-    DEFAULT_SETTINGS.tradingPairAdvanced,
+    getDefaultChainSettings(chainConfig).tradingPairAdvanced,
   )
   const { buyAsset, sellAsset } = props
   const assetOverlayState = useStore((s) => s.assetOverlayState)
@@ -69,17 +69,19 @@ export default function AssetSelectorSingle(props: Props) {
         onClick={() => useStore.setState({ assetOverlayState: 'sell' })}
         asset={sellAsset}
       />
-      <AssetOverlay
-        state={assetOverlayState}
-        onChangeState={handleChangeState}
-        buyAsset={buyAsset}
-        sellAsset={sellAsset}
-        onChangeBuyAsset={handleChangeBuyAsset}
-        onChangeSellAsset={handleChangeSellAsset}
-        onSwapAssets={handleSwapAssets}
-        buyAssets={allAssets}
-        type='single'
-      />
+      {(assetOverlayState === 'buy' || assetOverlayState === 'sell') && (
+        <AssetOverlay
+          state={assetOverlayState}
+          onChangeState={handleChangeState}
+          buyAsset={buyAsset}
+          sellAsset={sellAsset}
+          onChangeBuyAsset={handleChangeBuyAsset}
+          onChangeSellAsset={handleChangeSellAsset}
+          onSwapAssets={handleSwapAssets}
+          buyAssets={allAssets}
+          type='single'
+        />
+      )}
     </div>
   )
 }

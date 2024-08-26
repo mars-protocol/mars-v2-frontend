@@ -15,7 +15,7 @@ import AutoRepayToggle from 'components/trade/TradeModule/SwapForm/AutoRepayTogg
 import MarginToggle from 'components/trade/TradeModule/SwapForm/MarginToggle'
 import OrderTypeSelector from 'components/trade/TradeModule/SwapForm/OrderTypeSelector'
 import TradeSummary from 'components/trade/TradeModule/SwapForm/TradeSummary'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
@@ -48,7 +48,10 @@ export default function SwapForm(props: Props) {
   const useAutoRepay = useStore((s) => s.useAutoRepay)
   const account = useCurrentAccount()
   const swap = useStore((s) => s.swap)
-  const [slippage] = useLocalStorage(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
+  const [slippage] = useLocalStorage(
+    LocalStorageKeys.SLIPPAGE,
+    getDefaultChainSettings(chainConfig).slippage,
+  )
   const { computeMaxSwapAmount } = useHealthComputer(account)
   const [tradeDirection, setTradeDirection] = useState<TradeDirection>('long')
   const markets = useMarkets()

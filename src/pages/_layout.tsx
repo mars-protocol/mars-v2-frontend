@@ -13,7 +13,7 @@ import PageMetadata from 'components/common/PageMetadata'
 import Text from 'components/common/Text'
 import Toaster from 'components/common/Toaster'
 import Header from 'components/header/Header'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -60,7 +60,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const chainConfig = useChainConfig()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
-    DEFAULT_SETTINGS.reduceMotion,
+    getDefaultChainSettings(chainConfig).reduceMotion,
   )
   const accountDetailsExpanded = useStore((s) => s.accountDetailsExpanded)
   const isFullWidth =
@@ -71,10 +71,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!window) return
-    const theme = localStorage.getItem(LocalStorageKeys.THEME) ?? DEFAULT_SETTINGS.theme
+    const theme =
+      localStorage.getItem(LocalStorageKeys.THEME) ?? getDefaultChainSettings(chainConfig).theme
     const root = window.document.documentElement
     root.setAttribute('data-theme', theme)
-  }, [])
+  }, [chainConfig])
 
   useEffect(() => {
     if (currentChainId !== chainConfig.id) {
