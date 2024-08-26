@@ -4,8 +4,9 @@ import { ReactNode } from 'react'
 
 import { Questionmark } from 'components/common/Icons'
 import TooltipContent from 'components/common/Tooltip/TooltipContent'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 
 interface Props extends TippyProps {
@@ -21,9 +22,10 @@ interface Props extends TippyProps {
 }
 
 export const Tooltip = (props: Props) => {
+  const chainConfig = useChainConfig()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
-    DEFAULT_SETTINGS.reduceMotion,
+    getDefaultChainSettings(chainConfig).reduceMotion,
   )
 
   const isInWalletAssetModal = document.getElementById('wallet-assets-modal')

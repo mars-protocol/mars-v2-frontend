@@ -1,12 +1,12 @@
 import { useCallback, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-import { SearchParams } from 'types/enums'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import { SearchParams } from 'types/enums'
 import { getSearchParamsObject } from 'utils/route'
 
 export default function usePerpsAsset() {
@@ -16,7 +16,10 @@ export default function usePerpsAsset() {
   const perpsAssetInParams = searchParams.get('perpsMarket')
   const [perpsAssetInLocalStorage, setPerpsAssetInLocalStorage] = useLocalStorage<
     Settings['perpsAsset']
-  >(chainConfig.id + '/' + LocalStorageKeys.PERPS_ASSET, DEFAULT_SETTINGS.perpsAsset)
+  >(
+    chainConfig.id + '/' + LocalStorageKeys.PERPS_ASSET,
+    getDefaultChainSettings(chainConfig).perpsAsset,
+  )
 
   const updatePerpsAsset = useCallback(
     (denom: string, manage?: boolean) => {

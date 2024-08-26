@@ -16,8 +16,9 @@ import {
 import { glowElement } from 'components/common/Button/utils'
 import { CircularProgress } from 'components/common/CircularProgress'
 import { ChevronDown } from 'components/common/Icons'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 
 const Button = React.forwardRef(function Button(
@@ -45,9 +46,10 @@ const Button = React.forwardRef(function Button(
   }: ButtonProps,
   ref,
 ) {
+  const chainConfig = useChainConfig()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
-    DEFAULT_SETTINGS.reduceMotion,
+    getDefaultChainSettings(chainConfig).reduceMotion,
   )
   const isDisabled = disabled || showProgressIndicator
   const shouldShowText = text && !children

@@ -2,8 +2,9 @@ import classNames from 'classnames'
 import { ReactElement, ReactNode } from 'react'
 
 import { Tooltip } from 'components/common/Tooltip'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 
 interface Props {
@@ -25,9 +26,10 @@ export const Gauge = ({
   tooltip,
   icon,
 }: Props) => {
+  const chainConfig = useChainConfig()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
-    DEFAULT_SETTINGS.reduceMotion,
+    getDefaultChainSettings(chainConfig).reduceMotion,
   )
   const radius = 16
   const percentageValue = percentage > 100 ? 100 : percentage < 0 ? 0 : percentage

@@ -2,16 +2,18 @@ import classNames from 'classnames'
 import { useEffect, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { getPage } from 'utils/route'
 
 export default function Background() {
+  const chainConfig = useChainConfig()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
-    DEFAULT_SETTINGS.reduceMotion,
+    getDefaultChainSettings(chainConfig).reduceMotion,
   )
   const { pathname } = useLocation()
   const page = getPage(pathname)

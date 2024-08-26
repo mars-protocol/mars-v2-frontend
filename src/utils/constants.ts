@@ -3,7 +3,7 @@ export const defaultFee = (chainConfig: ChainConfig) => {
     amount: [
       {
         denom: chainConfig.isOsmosis ? 'uosmo' : 'ntrn',
-        amount: '70000',
+        amount: chainConfig.isOsmosis ? '90000' : '70000',
       },
     ],
     gas: '15000000',

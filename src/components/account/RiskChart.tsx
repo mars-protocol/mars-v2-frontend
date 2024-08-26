@@ -11,21 +11,23 @@ import {
 
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import { formatValue } from 'utils/formatters'
 
 export const RiskChart = ({ data }: RiskChartProps) => {
+  const chainConfig = useChainConfig()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
-    DEFAULT_SETTINGS.reduceMotion,
+    getDefaultChainSettings(chainConfig).reduceMotion,
   )
   const currentRisk = BN_ZERO
 
   return (
-    <div className='flex w-full flex-wrap overflow-hidden py-2'>
+    <div className='flex flex-wrap w-full py-2 overflow-hidden'>
       <FormattedNumber
         className='px-3 pb-2 text-lg'
         amount={currentRisk.multipliedBy(100).toNumber()}

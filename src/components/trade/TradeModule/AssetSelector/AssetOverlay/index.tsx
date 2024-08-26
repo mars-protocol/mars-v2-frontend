@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 
 import EscButton from 'components/common/Button/EscButton'
@@ -12,6 +12,7 @@ import PairsList from 'components/trade/TradeModule/AssetSelector/PairsList'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useFilteredAssets from 'hooks/assets/useFilteredAssets'
+import { CircularProgress } from 'components/common/CircularProgress'
 
 interface Props {
   state: OverlayState
@@ -35,6 +36,8 @@ function MarketSubheadLine(props: { title: string }) {
 }
 
 export default function AssetOverlay(props: Props) {
+  const [loading, setLoading] = useState<boolean>(true)
+
   const { assets, searchString, onChangeSearch } = useFilteredAssets(props.buyAssets)
   const account = useCurrentAccount()
   const whitelistedAssets = useDepositEnabledAssets()
@@ -100,6 +103,12 @@ export default function AssetOverlay(props: Props) {
     return [activePerpsPositions, availablePerpsMarkets]
   }, [assets, account])
 
+  useEffect(() => {
+    if (assets.length > 0) {
+      setLoading(false)
+    }
+  }, [assets])
+
   return (
     <Overlay
       className='left-0 flex flex-col w-full overflow-hidden h-screen-full md:h-auto top-18 md:inset-0'
@@ -110,81 +119,89 @@ export default function AssetOverlay(props: Props) {
         <Text>{props.type !== 'single' ? 'Select a market' : 'Select asset'}</Text>
         <EscButton onClick={handleClose} enableKeyPress />
       </div>
-      {props.type === 'pair' && (
-        <StablesFilter
-          stables={stableAssets}
-          selectedStables={selectedStables}
-          onFilter={setSelectedStables}
-        />
-      )}
-      <Divider />
-      <div className='p-4'>
-        <SearchBar
-          key={props.state}
-          value={searchString}
-          onChange={onChangeSearch}
-          placeholder='Search for e.g. "ATOM" or "Cosmos"'
-          autoFocus={!isMobile}
-        />
-      </div>
-      <Divider />
-      {props.type === 'perps' && activePerpsPositions.length > 0 && (
+      {loading ? (
+        <div className='w-full h-full flex items-center justify-center'>
+          <CircularProgress size={80} />
+        </div>
+      ) : (
         <>
-          <MarketSubheadLine title='Active Positions' />
-          <AssetList
-            assets={activePerpsPositions}
-            type='perps'
-            onChangeAsset={onChangeBuyAsset}
-            isOpen
-            toggleOpen={() => {}}
-            activeAsset={props.buyAsset}
-          />
-        </>
-      )}
-      {props.type === 'perps' && availablePerpsMarkets.length > 0 && (
-        <>
-          <MarketSubheadLine title='Available Markets' />
-          <AssetList
-            assets={availablePerpsMarkets}
-            type='perps'
-            onChangeAsset={onChangeBuyAsset}
-            isOpen
-            toggleOpen={() => {}}
-            activeAsset={props.buyAsset}
-          />
-        </>
-      )}
-
-      {props.type === 'pair' && (
-        <PairsList
-          assets={assets}
-          stables={selectedStables}
-          isOpen={props.state === 'pair'}
-          toggleOpen={handleToggle}
-          onChangeAssetPair={onChangeAssetPair}
-          activeAsset={props.buyAsset}
-        />
-      )}
-
-      {props.type === 'single' && (
-        <>
-          <AssetList
-            type='buy'
-            assets={assets}
-            isOpen={props.state === 'buy'}
-            toggleOpen={handleToggle}
-            onChangeAsset={onChangeBuyAsset}
-            activeAsset={props.buyAsset}
-          />
+          {props.type === 'pair' && (
+            <StablesFilter
+              stables={stableAssets}
+              selectedStables={selectedStables}
+              onFilter={setSelectedStables}
+            />
+          )}
           <Divider />
-          <AssetList
-            type='sell'
-            assets={sellAssets}
-            isOpen={props.state === 'sell'}
-            toggleOpen={handleToggle}
-            onChangeAsset={onChangeSellAsset}
-            activeAsset={props.sellAsset}
-          />
+          <div className='p-4'>
+            <SearchBar
+              key={props.state}
+              value={searchString}
+              onChange={onChangeSearch}
+              placeholder='Search for e.g. "ATOM" or "Cosmos"'
+              autoFocus={!isMobile}
+            />
+          </div>
+          <Divider />
+          {props.type === 'perps' && activePerpsPositions.length > 0 && (
+            <>
+              <MarketSubheadLine title='Active Positions' />
+              <AssetList
+                assets={activePerpsPositions}
+                type='perps'
+                onChangeAsset={onChangeBuyAsset}
+                isOpen
+                toggleOpen={() => {}}
+                activeAsset={props.buyAsset}
+              />
+            </>
+          )}
+          {props.type === 'perps' && availablePerpsMarkets.length > 0 && (
+            <>
+              <MarketSubheadLine title='Available Markets' />
+              <AssetList
+                assets={availablePerpsMarkets}
+                type='perps'
+                onChangeAsset={onChangeBuyAsset}
+                isOpen
+                toggleOpen={() => {}}
+                activeAsset={props.buyAsset}
+              />
+            </>
+          )}
+
+          {props.type === 'pair' && (
+            <PairsList
+              assets={assets}
+              stables={selectedStables}
+              isOpen={props.state === 'pair'}
+              toggleOpen={handleToggle}
+              onChangeAssetPair={onChangeAssetPair}
+              activeAsset={props.buyAsset}
+            />
+          )}
+
+          {props.type === 'single' && (
+            <>
+              <AssetList
+                type='buy'
+                assets={assets}
+                isOpen={props.state === 'buy'}
+                toggleOpen={handleToggle}
+                onChangeAsset={onChangeBuyAsset}
+                activeAsset={props.buyAsset}
+              />
+              <Divider />
+              <AssetList
+                type='sell'
+                assets={sellAssets}
+                isOpen={props.state === 'sell'}
+                toggleOpen={handleToggle}
+                onChangeAsset={onChangeSellAsset}
+                activeAsset={props.sellAsset}
+              />
+            </>
+          )}
         </>
       )}
     </Overlay>

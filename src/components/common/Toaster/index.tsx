@@ -8,7 +8,7 @@ import { CircularProgress } from 'components/common/CircularProgress'
 import { ChevronDown, Cross, CrossCircled, ExternalLink } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAssetsNoOraclePrices from 'hooks/assets/useAssetsNoOraclePrices'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -62,11 +62,11 @@ export function generateToastContent(content: ToastSuccess['content'], assets: A
 }
 
 export default function Toaster() {
+  const chainConfig = useChainConfig()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
-    DEFAULT_SETTINGS.reduceMotion,
+    getDefaultChainSettings(chainConfig).reduceMotion,
   )
-  const chainConfig = useChainConfig()
   const { data: assets } = useAssetsNoOraclePrices()
 
   const toast = useStore((s) => s.toast)

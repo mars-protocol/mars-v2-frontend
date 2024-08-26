@@ -7,7 +7,7 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import Skeleton from 'components/portfolio/Card/Skeleton'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useAccount from 'hooks/accounts/useAccount'
@@ -24,12 +24,14 @@ import {
   getAccountPositionValues,
 } from 'utils/accounts'
 import { getRoute } from 'utils/route'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 interface Props {
   accountId: string
 }
 
 export default function PortfolioCard(props: Props) {
+  const chainConfig = useChainConfig()
   const { data: account } = useAccount(props.accountId)
   const { health, healthFactor } = useHealthComputer(account)
   const { address: urlAddress } = useParams()
@@ -44,7 +46,7 @@ export default function PortfolioCard(props: Props) {
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
-    DEFAULT_SETTINGS.reduceMotion,
+    getDefaultChainSettings(chainConfig).reduceMotion,
   )
 
   const [deposits, lends, debts, vaults, stakedAstroLps] = useMemo(() => {

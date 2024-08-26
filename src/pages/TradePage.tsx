@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom'
 import AccountDetailsCard from 'components/trade/AccountDetailsCard'
 import TradeChart from 'components/trade/TradeChart'
 import TradeModule from 'components/trade/TradeModule'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -26,25 +26,26 @@ export default function TradePage() {
     Settings['tradingPairAdvanced']
   >(
     chainConfig.id + '/' + LocalStorageKeys.TRADING_PAIR_ADVANCED,
-    DEFAULT_SETTINGS.tradingPairAdvanced,
+    getDefaultChainSettings(chainConfig).tradingPairAdvanced,
   )
   const [tradingPairSimple, setTraidingPairSimple] = useLocalStorage<Settings['tradingPairSimple']>(
     chainConfig.id + '/' + LocalStorageKeys.TRADING_PAIR_SIMPLE,
-    DEFAULT_SETTINGS.tradingPairSimple,
+    getDefaultChainSettings(chainConfig).tradingPairSimple,
   )
   const assets = useTradeEnabledAssets()
 
   useEffect(() => {
+    if (localStorage.getItem(LocalStorageKeys.CURRENT_CHAIN_ID) !== chainConfig.id) return
     if (
       !assets.find(byDenom(tradingPairSimple.buy)) ||
       !assets.find(byDenom(tradingPairSimple.sell))
     )
-      setTraidingPairSimple(chainConfig.defaultTradingPair)
+      setTraidingPairSimple(getDefaultChainSettings(chainConfig).tradingPairSimple)
     if (
       !assets.find(byDenom(tradingPairAdvanced.buy)) ||
       !assets.find(byDenom(tradingPairAdvanced.sell))
     )
-      setTradingPairAdvanced(chainConfig.defaultTradingPair)
+      setTradingPairAdvanced(getDefaultChainSettings(chainConfig).tradingPairSimple)
   }, [
     assets,
     tradingPairSimple,
@@ -53,6 +54,7 @@ export default function TradePage() {
     tradingPairAdvanced.buy,
     tradingPairAdvanced.sell,
     setTradingPairAdvanced,
+    tradingPairAdvanced,
   ])
 
   const assetOverlayState = useStore((s) => s.assetOverlayState)

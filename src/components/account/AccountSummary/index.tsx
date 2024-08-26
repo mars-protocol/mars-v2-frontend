@@ -8,7 +8,7 @@ import AccountSummaryHeader from 'components/account/AccountSummary/AccountSumma
 import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import Accordion from 'components/common/Accordion'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
@@ -34,8 +34,8 @@ export default function AccountSummary(props: Props) {
     ? `${chainConfig.id}/${LocalStorageKeys.ACCOUNT_SUMMARY_IN_MODAL_TABS_EXPANDED}`
     : `${chainConfig.id}/${LocalStorageKeys.ACCOUNT_SUMMARY_TABS_EXPANDED}`
   const defaultSetting = isInModal
-    ? DEFAULT_SETTINGS.accountSummaryInModalTabsExpanded
-    : DEFAULT_SETTINGS.accountSummaryTabsExpanded
+    ? getDefaultChainSettings(chainConfig).accountSummaryInModalTabsExpanded
+    : getDefaultChainSettings(chainConfig).accountSummaryTabsExpanded
   const [accountSummaryTabs, setAccountSummaryTabs] = useLocalStorage<boolean[]>(
     storageKey,
     defaultSetting,
