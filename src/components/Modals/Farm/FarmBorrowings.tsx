@@ -23,6 +23,7 @@ import { useSWRConfig } from 'swr'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { findCoinByDenom } from 'utils/assets'
+import { HF_THRESHOLD } from 'utils/constants'
 import { getFarmActions } from 'utils/farm'
 import { formatPercent } from 'utils/formatters'
 import { mergeBNCoinArrays } from 'utils/helpers'
@@ -255,9 +256,10 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
           )
         })}
       </div>
-      {updatedHealthFactor < 1 && (
+      {updatedHealthFactor <= HF_THRESHOLD && (
         <Callout type={CalloutType.WARNING}>
-          You can not provide this much liquidity as your Accounts Health Factor would drop below 1.
+          You can not provide this much liquidity as your Accounts Health Factor would end up too
+          close to 1.
         </Callout>
       )}
       <Button
@@ -266,11 +268,7 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
         text='Deposit'
         rightIcon={<ArrowRight />}
         showProgressIndicator={isCalculating}
-        disabled={
-          updatedHealthFactor < 1 ||
-          [...props.deposits, ...props.reclaims].length === 0 ||
-          props.depositCapReachedCoins.length > 0
-        }
+        disabled={updatedHealthFactor <= HF_THRESHOLD || props.depositCapReachedCoins.length > 0}
       />
     </div>
   )

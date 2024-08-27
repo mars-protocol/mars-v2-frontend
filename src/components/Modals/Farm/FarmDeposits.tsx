@@ -20,6 +20,7 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { accumulateAmounts } from 'utils/accounts'
 import { byDenom } from 'utils/array'
+import { HF_THRESHOLD } from 'utils/constants'
 import { BN, getValueFromBNCoins } from 'utils/helpers'
 
 interface Props {
@@ -287,7 +288,7 @@ export default function FarmDeposits(props: Props) {
             options={{ abbreviated: false, minDecimals: 2, maxDecimals: 2 }}
           />
         </div>
-        {updatedHealthFactor < 1 && (
+        {updatedHealthFactor <= HF_THRESHOLD && (
           <Callout type={CalloutType.WARNING}>
             You can not provide this much liquidity as your Accounts Health Factor would drop below
             1.
@@ -295,7 +296,7 @@ export default function FarmDeposits(props: Props) {
         )}
         <Button
           onClick={() => props.toggleOpen(1)}
-          disabled={updatedHealthFactor < 1}
+          disabled={updatedHealthFactor <= HF_THRESHOLD}
           className='w-full'
           text='Continue'
           rightIcon={<ArrowRight />}
