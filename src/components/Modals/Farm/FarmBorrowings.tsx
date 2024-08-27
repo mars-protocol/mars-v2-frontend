@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import Button from 'components/common/Button'
+import { Callout, CalloutType } from 'components/common/Callout'
 import DepositCapMessage from 'components/common/DepositCapMessage'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
@@ -40,6 +41,7 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
   const chainConfig = useChainConfig()
   const { isAutoLendEnabledForCurrentAccount: isAutoLend } = useAutoLend()
   const [isCalculating, setIsCaluclating] = useState(false)
+  const { healthFactor: updatedHealthFactor } = useHealthComputer(updatedAccount)
 
   const calculateSliderPercentage = (maxBorrowAmounts: BNCoin[], borrowings: BNCoin[]) => {
     if (borrowings.length === 1) {
@@ -249,6 +251,11 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
           )
         })}
       </div>
+      {updatedHealthFactor < 1 && (
+        <Callout type={CalloutType.WARNING}>
+          You can not provide this much liquidity as your Accounts Health Factor would drop below 1.
+        </Callout>
+      )}
       <Button
         onClick={onConfirm}
         color='primary'
@@ -256,6 +263,7 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
         rightIcon={<ArrowRight />}
         showProgressIndicator={isCalculating}
         disabled={
+          updatedHealthFactor < 1 ||
           [...props.deposits, ...props.reclaims].length === 0 ||
           props.depositCapReachedCoins.length > 0
         }
