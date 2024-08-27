@@ -19,6 +19,7 @@ import useMarkets from 'hooks/markets/useMarkets'
 import useSlippage from 'hooks/settings/useSlippage'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
+import { useSWRConfig } from 'swr'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { findCoinByDenom } from 'utils/assets'
@@ -27,6 +28,7 @@ import { formatPercent } from 'utils/formatters'
 import { mergeBNCoinArrays } from 'utils/helpers'
 
 export default function FarmBorrowings(props: FarmBorrowingsProps) {
+  const { mutate } = useSWRConfig()
   const assets = useDepositEnabledAssets()
   const { borrowings, onChangeBorrowings, type } = props
   const isAstroLp = type === 'astroLp'
@@ -172,16 +174,18 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
       isAutoLend,
       isAstroLp,
     )
-    depositIntoFarm({
+
+    useStore.setState({ farmModal: null })
+    setIsCaluclating(false)
+    await depositIntoFarm({
       accountId: updatedAccount.id,
       actions,
       deposits: isAstroLp ? mergeBNCoinArrays(props.deposits, props.reclaims) : props.deposits,
       borrowings: props.borrowings,
       kind: 'default' as AccountKind,
     })
-
-    setIsCaluclating(false)
-    useStore.setState({ farmModal: null })
+    await mutate(`chains/${chainConfig.id}/accounts/${updatedAccount.id}`)
+    await mutate(`chains/${chainConfig.id}/astroLps/${updatedAccount.id}/staked-astro-lp-rewards`)
   }
 
   return (
