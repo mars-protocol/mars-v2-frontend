@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import Button from 'components/common/Button'
+import { Callout, CalloutType } from 'components/common/Callout'
 import DepositCapMessage from 'components/common/DepositCapMessage'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
@@ -18,14 +19,17 @@ import useMarkets from 'hooks/markets/useMarkets'
 import useSlippage from 'hooks/settings/useSlippage'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
+import { useSWRConfig } from 'swr'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { findCoinByDenom } from 'utils/assets'
+import { HF_THRESHOLD } from 'utils/constants'
 import { getFarmActions } from 'utils/farm'
 import { formatPercent } from 'utils/formatters'
 import { mergeBNCoinArrays } from 'utils/helpers'
 
 export default function FarmBorrowings(props: FarmBorrowingsProps) {
+  const { mutate } = useSWRConfig()
   const assets = useDepositEnabledAssets()
   const { borrowings, onChangeBorrowings, type } = props
   const isAstroLp = type === 'astroLp'
@@ -40,6 +44,7 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
   const chainConfig = useChainConfig()
   const { isAutoLendEnabledForCurrentAccount: isAutoLend } = useAutoLend()
   const [isCalculating, setIsCaluclating] = useState(false)
+  const { healthFactor: updatedHealthFactor } = useHealthComputer(updatedAccount)
 
   const calculateSliderPercentage = (maxBorrowAmounts: BNCoin[], borrowings: BNCoin[]) => {
     if (borrowings.length === 1) {
@@ -170,16 +175,18 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
       isAutoLend,
       isAstroLp,
     )
-    depositIntoFarm({
+
+    useStore.setState({ farmModal: null })
+    setIsCaluclating(false)
+    await depositIntoFarm({
       accountId: updatedAccount.id,
       actions,
       deposits: isAstroLp ? mergeBNCoinArrays(props.deposits, props.reclaims) : props.deposits,
       borrowings: props.borrowings,
       kind: 'default' as AccountKind,
     })
-
-    setIsCaluclating(false)
-    useStore.setState({ farmModal: null })
+    await mutate(`chains/${chainConfig.id}/accounts/${updatedAccount.id}`)
+    await mutate(`chains/${chainConfig.id}/astroLps/${updatedAccount.id}/staked-astro-lp-rewards`)
   }
 
   return (
@@ -249,16 +256,19 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
           )
         })}
       </div>
+      {updatedHealthFactor <= HF_THRESHOLD && (
+        <Callout type={CalloutType.WARNING}>
+          You can not provide this much liquidity as your Accounts Health Factor would end up too
+          close to 1.
+        </Callout>
+      )}
       <Button
         onClick={onConfirm}
         color='primary'
         text='Deposit'
         rightIcon={<ArrowRight />}
         showProgressIndicator={isCalculating}
-        disabled={
-          [...props.deposits, ...props.reclaims].length === 0 ||
-          props.depositCapReachedCoins.length > 0
-        }
+        disabled={updatedHealthFactor <= HF_THRESHOLD || props.depositCapReachedCoins.length > 0}
       />
     </div>
   )

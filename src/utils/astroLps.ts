@@ -128,11 +128,13 @@ export function getEnterAstroLpActions(
   secondaryCoin: BNCoin,
   slippage: number,
 ): Action[] {
+  const coins = [] as ActionCoin[]
+  if (secondaryCoin.amount.isGreaterThan(0)) coins.push(secondaryCoin.toActionCoin())
+  if (primaryCoin.amount.isGreaterThan(0)) coins.push(primaryCoin.toActionCoin())
   return [
     {
       provide_liquidity: {
-        // Smart Contact demands that secondary coin is first
-        coins_in: [secondaryCoin.toActionCoin(), primaryCoin.toActionCoin()],
+        coins_in: coins,
         lp_token_out: astroLp.denoms.lp,
         slippage: slippage.toString(),
       },

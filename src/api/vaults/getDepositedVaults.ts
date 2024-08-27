@@ -28,7 +28,6 @@ async function getUnlocksAtTimestamp(
 ) {
   try {
     const client = await getClient(getUrl(chainConfig.endpoints.rpc))
-
     const vaultExtension = (await cacheFn(
       () =>
         client.queryContractSmart(vaultAddress, {

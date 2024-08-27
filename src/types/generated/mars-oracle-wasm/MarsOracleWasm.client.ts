@@ -12,12 +12,13 @@ import {
   ArrayOfPriceResponse,
   ArrayOfPriceSourceResponseForString,
   ConfigResponse,
-  OsmosisPriceSourceForString,
   OwnerUpdate,
   PriceResponse,
-  PriceSourceResponseForString
-} from './MarsOracleOsmosis.types'
-export interface MarsOracleOsmosisReadOnlyInterface {
+  PriceSourceResponseForString,
+  WasmOracleCustomExecuteMsg,
+  WasmPriceSourceForString
+} from './MarsOracleWasm.types'
+export interface MarsOracleWasmReadOnlyInterface {
   contractAddress: string
   config: () => Promise<ConfigResponse>
   priceSource: ({ denom }: { denom: string }) => Promise<PriceSourceResponseForString>
@@ -39,7 +40,7 @@ export interface MarsOracleOsmosisReadOnlyInterface {
     startAfter?: string
   }) => Promise<ArrayOfPriceResponse>
 }
-export class MarsOracleOsmosisQueryClient implements MarsOracleOsmosisReadOnlyInterface {
+export class MarsOracleWasmQueryClient implements MarsOracleWasmReadOnlyInterface {
   client: CosmWasmClient
   contractAddress: string
   constructor(client: CosmWasmClient, contractAddress: string) {
@@ -103,7 +104,7 @@ export class MarsOracleOsmosisQueryClient implements MarsOracleOsmosisReadOnlyIn
     })
   }
 }
-export interface MarsOracleOsmosisInterface extends MarsOracleOsmosisReadOnlyInterface {
+export interface MarsOracleWasmInterface extends MarsOracleWasmReadOnlyInterface {
   contractAddress: string
   sender: string
   setPriceSource: (
@@ -112,7 +113,7 @@ export interface MarsOracleOsmosisInterface extends MarsOracleOsmosisReadOnlyInt
       priceSource,
     }: {
       denom: string
-      priceSource: OsmosisPriceSourceForString
+      priceSource: WasmPriceSourceForString
     },
     fee?: number | StdFee | 'auto',
     memo?: string,
@@ -144,11 +145,16 @@ export interface MarsOracleOsmosisInterface extends MarsOracleOsmosisReadOnlyInt
     memo?: string,
     _funds?: Coin[],
   ) => Promise<ExecuteResult>
-  custom: (fee?: number | StdFee | 'auto', memo?: string, _funds?: Coin[]) => Promise<ExecuteResult>
+  custom: (
+    wasmOracleCustomExecuteMsg: WasmOracleCustomExecuteMsg,
+    fee?: number | StdFee | 'auto',
+    memo?: string,
+    _funds?: Coin[],
+  ) => Promise<ExecuteResult>
 }
-export class MarsOracleOsmosisClient
-  extends MarsOracleOsmosisQueryClient
-  implements MarsOracleOsmosisInterface
+export class MarsOracleWasmClient
+  extends MarsOracleWasmQueryClient
+  implements MarsOracleWasmInterface
 {
   client: SigningCosmWasmClient
   sender: string
@@ -170,7 +176,7 @@ export class MarsOracleOsmosisClient
       priceSource,
     }: {
       denom: string
-      priceSource: OsmosisPriceSourceForString
+      priceSource: WasmPriceSourceForString
     },
     fee: number | StdFee | 'auto' = 'auto',
     memo?: string,
@@ -254,6 +260,7 @@ export class MarsOracleOsmosisClient
     )
   }
   custom = async (
+    wasmOracleCustomExecuteMsg: WasmOracleCustomExecuteMsg,
     fee: number | StdFee | 'auto' = 'auto',
     memo?: string,
     _funds?: Coin[],
@@ -262,7 +269,7 @@ export class MarsOracleOsmosisClient
       this.sender,
       this.contractAddress,
       {
-        custom: {},
+        custom: wasmOracleCustomExecuteMsg,
       },
       fee,
       memo,

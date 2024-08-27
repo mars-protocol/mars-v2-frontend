@@ -19,7 +19,7 @@ export default function AstroLpManage(props: Props) {
       farmModal: {
         farm: props.astroLp,
         isDeposited: true,
-        selectedBorrowDenoms: [props.astroLp.denoms.secondary],
+        selectedBorrowDenoms: [],
         action: 'deposit',
         type: 'astroLp',
       },
@@ -31,7 +31,7 @@ export default function AstroLpManage(props: Props) {
       farmModal: {
         farm: props.astroLp,
         isDeposited: true,
-        selectedBorrowDenoms: [props.astroLp.denoms.secondary],
+        selectedBorrowDenoms: [],
         action: 'withdraw',
         type: 'astroLp',
       },

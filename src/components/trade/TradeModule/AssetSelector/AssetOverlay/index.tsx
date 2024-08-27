@@ -120,7 +120,7 @@ export default function AssetOverlay(props: Props) {
         <EscButton onClick={handleClose} enableKeyPress />
       </div>
       {loading ? (
-        <div className='w-full h-full flex items-center justify-center'>
+        <div className='flex items-center justify-center w-full h-full'>
           <CircularProgress size={80} />
         </div>
       ) : (

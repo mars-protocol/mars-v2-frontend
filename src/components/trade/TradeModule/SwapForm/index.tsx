@@ -166,15 +166,18 @@ export default function SwapForm(props: Props) {
 
   const debouncedUpdateAccount = useMemo(
     () =>
-      debounce((removeCoin: BNCoin, addCoin: BNCoin, debtCoin: BNCoin) => {
-        simulateTrade(
-          removeCoin,
-          addCoin,
-          debtCoin,
-          isAutoLendEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
-          isAutoRepayChecked,
-        )
-      }, 250),
+      debounce(
+        (removeCoin: BNCoin, addCoin: BNCoin, debtCoin: BNCoin, isBorrowEnabled: boolean) => {
+          simulateTrade(
+            removeCoin,
+            addCoin,
+            debtCoin,
+            isAutoLendEnabled && isBorrowEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
+            isAutoRepayChecked,
+          )
+        },
+        250,
+      ),
     [simulateTrade, isAutoLendEnabled, isAutoRepayChecked],
   )
 
@@ -220,14 +223,13 @@ export default function SwapForm(props: Props) {
   )
 
   useEffect(() => {
-    setInputAssetAmount(BN_ZERO)
     setMarginChecked(isBorrowEnabled ? useMargin : false)
     setAutoRepayChecked(isRepayable ? useAutoRepay : false)
     simulateTrade(
       BNCoin.fromDenomAndBigNumber(inputAsset.denom, BN_ZERO),
       BNCoin.fromDenomAndBigNumber(outputAsset.denom, BN_ZERO),
       BNCoin.fromDenomAndBigNumber(inputAsset.denom, BN_ZERO),
-      isAutoLendEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
+      isAutoLendEnabled && outputAsset.isBorrowEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
       isAutoRepayChecked,
     )
   }, [
@@ -236,6 +238,7 @@ export default function SwapForm(props: Props) {
     useMargin,
     useAutoRepay,
     outputAsset.denom,
+    outputAsset.isBorrowEnabled,
     inputAsset.denom,
     isAutoLendEnabled,
     isAutoRepayChecked,
@@ -263,12 +266,13 @@ export default function SwapForm(props: Props) {
     const addCoin = BNCoin.fromDenomAndBigNumber(outputAsset.denom, outputAssetAmount)
     const debtCoin = BNCoin.fromDenomAndBigNumber(inputAsset.denom, addDebtAmount)
 
-    debouncedUpdateAccount(removeCoin, addCoin, debtCoin)
+    debouncedUpdateAccount(removeCoin, addCoin, debtCoin, outputAsset.isBorrowEnabled ?? true)
   }, [
     inputAssetAmount,
     outputAssetAmount,
     inputMarginThreshold,
     outputAsset.denom,
+    outputAsset.isBorrowEnabled,
     inputAsset.denom,
     debouncedUpdateAccount,
     modal,

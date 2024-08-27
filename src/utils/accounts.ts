@@ -462,3 +462,12 @@ export function convertCoinArrayIntoBNCoinArrayAndRemoveEmptyCoins(coins: Coin[]
   })
   return BNCoins
 }
+
+export function removeEmptyCoins(coins: Coin[]) {
+  const newCoins = [] as Coin[]
+  coins.forEach((coin) => {
+    if (coin.amount === '0') return
+    newCoins.push(coin)
+  })
+  return newCoins
+}

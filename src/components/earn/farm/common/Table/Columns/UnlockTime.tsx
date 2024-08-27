@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import React from 'react'
 
 import Text from 'components/common/Text'
 import { produceCountdown } from 'utils/formatters'
