@@ -1,6 +1,7 @@
 import { getCreditManagerQueryClient } from 'api/cosmwasm-client'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
+import { removeEmptyCoins } from 'utils/accounts'
 import { getAssetSymbolByDenom } from 'utils/assets'
 import { BN } from 'utils/helpers'
 import { getVaultNameByCoins } from 'utils/vaults'
@@ -432,49 +433,49 @@ export function getToastContentsFromGroupedTransactionCoin(
     case 'borrow':
       toastContents.push({
         text: 'Borrowed',
-        coins,
+        coins: removeEmptyCoins(coins),
       })
       break
     case 'deposit':
       toastContents.push({
         text: isHLS ? 'Deposited into HLS account' : 'Deposited',
-        coins,
+        coins: removeEmptyCoins(coins),
       })
       break
     case 'deposit_from_wallet':
       toastContents.push({
         text: 'Deposited from wallet',
-        coins,
+        coins: removeEmptyCoins(coins),
       })
       break
     case 'lend':
       toastContents.push({
         text: target === 'Red Bank' ? 'Deposited' : 'Lent',
-        coins,
+        coins: removeEmptyCoins(coins),
       })
       break
     case 'reclaim':
       toastContents.push({
         text: 'Unlent',
-        coins,
+        coins: removeEmptyCoins(coins),
       })
       break
     case 'repay':
       toastContents.push({
         text: 'Repaid',
-        coins,
+        coins: removeEmptyCoins(coins),
       })
       break
     case 'swap':
       toastContents.push({
         text: 'Swapped',
-        coins,
+        coins: removeEmptyCoins(coins),
       })
       break
     case 'withdraw':
       toastContents.push({
         text: 'Withdrew to wallet',
-        coins,
+        coins: removeEmptyCoins(coins),
       })
       break
     case 'farm':
@@ -584,7 +585,7 @@ export function getToastContentsFromGroupedTransactionCoin(
     case 'claim_rewards':
       toastContents.push({
         text: 'Claimed rewards',
-        coins,
+        coins: removeEmptyCoins(coins),
       })
       break
   }
