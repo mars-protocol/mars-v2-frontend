@@ -202,7 +202,7 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
             key={`input-${coin.denom}`}
             amount={coin.amount}
             asset={asset}
-            max={maxAmount.plus(coin.amount)}
+            max={maxAmount}
             maxText='Max Borrow'
             onChange={(amount) => updateAssets(coin.denom, amount)}
             onDelete={() => onDelete(coin.denom)}
