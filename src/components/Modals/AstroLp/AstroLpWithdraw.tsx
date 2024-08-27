@@ -13,6 +13,7 @@ import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useAssets from 'hooks/assets/useAssets'
 import useStakedAstroLpRewards from 'hooks/incentives/useStakedAstroLpRewards'
 import useStore from 'store'
+import { useSWRConfig } from 'swr'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
@@ -24,6 +25,7 @@ interface Props {
 
 export default function AstroLpWithdraw(props: Props) {
   const { account, astroLp } = props
+  const { mutate } = useSWRConfig()
   const { data: assets } = useAssets()
   const astroLpAsset = assets.find(byDenom(astroLp.denoms.lp))
   const { simulateUnstakeAstroLp } = useUpdatedAccount(account)
@@ -60,16 +62,18 @@ export default function AstroLpWithdraw(props: Props) {
     [isAutoLend, astroLp, simulateUnstakeAstroLp, withdrawAmount, currentLpRewards],
   )
 
-  const onClick = useCallback(() => {
-    withdrawFromAstroLps({
+  const onClick = useCallback(async () => {
+    useStore.setState({
+      farmModal: null,
+    })
+    await withdrawFromAstroLps({
       accountId: account.id,
       astroLps: [props.astroLp],
       amount: withdrawAmount.toString(),
     })
-    useStore.setState({
-      farmModal: null,
-    })
-  }, [account.id, props.astroLp, withdrawAmount, withdrawFromAstroLps])
+    await mutate(`chains/${chainConfig.id}/accounts/${account.id}`)
+    await mutate(`chains/${chainConfig.id}/astroLps/${account.id}/staked-astro-lp-rewards`)
+  }, [account.id, chainConfig.id, mutate, props.astroLp, withdrawAmount, withdrawFromAstroLps])
 
   if (!astroLpAsset) return null
 
