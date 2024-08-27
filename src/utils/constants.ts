@@ -24,4 +24,4 @@ export const DEFAULT_PORTFOLIO_STATS = [
 
 export const ENABLE_AUTO_REPAY = true
 export const STANDARD_SWAP_FEE = 0.002
-export const HF_THRESHOLD = 1.05
+export const HF_THRESHOLD = 1.03
