@@ -259,7 +259,7 @@ function getCoinsFromEvent(event: TransactionEvent) {
   event.attributes.forEach((attr: TransactionEventAttribute) => {
     const amountDenomString = denomAmountActions.includes(attr.key) ? attr.value : undefined
     if (amountDenomString) {
-      const coin = getCoinFromAmountDenomString(amountDenomString)
+      const coin = getCoinFromAmountDenomString(amountDenomString.trim(), true)
       if (coin) coins.push({ coin: coin })
     }
   })
