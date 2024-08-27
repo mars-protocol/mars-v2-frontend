@@ -42,11 +42,10 @@ export default function Name(props: Props) {
     status = vault.status as VaultStatus
   }
 
-  if (!primaryAsset || !poolAsset) return null
-
+  if (!primaryAsset && !poolAsset) return null
   return (
     <div className='flex'>
-      {vault.denoms.secondary === '' ? (
+      {primaryAsset && vault.denoms.secondary === '' ? (
         <AssetImage asset={primaryAsset} className='w-8 h-8' />
       ) : (
         <DoubleLogo primaryDenom={vault.denoms.primary} secondaryDenom={vault.denoms.secondary} />
@@ -59,7 +58,8 @@ export default function Name(props: Props) {
           <Text size='xs' className='text-white/40' tag='span'>
             {vault.provider}
           </Text>
-          {poolAsset.campaigns.length > 0 &&
+          {poolAsset &&
+            poolAsset.campaigns.length > 0 &&
             poolAsset.campaigns.map((campaign, index) => (
               <AssetCampaignCopy
                 asset={poolAsset}
