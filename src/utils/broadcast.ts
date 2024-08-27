@@ -259,7 +259,7 @@ function getCoinsFromEvent(event: TransactionEvent) {
   event.attributes.forEach((attr: TransactionEventAttribute) => {
     const amountDenomString = denomAmountActions.includes(attr.key) ? attr.value : undefined
     if (amountDenomString) {
-      const coin = getCoinFromAmountDenomString(amountDenomString.trim(), true)
+      const coin = getCoinFromAmountDenomString(amountDenomString.trim())
       if (coin) coins.push({ coin: coin })
     }
   })
@@ -310,8 +310,8 @@ function getCoinFromSwapEvent(event: TransactionEvent) {
     return { tokenIn: undefined, tokenOut: undefined }
 
   return {
-    tokenIn: getCoinFromAmountDenomString(tokenInAmountDenomString),
-    tokenOut: getCoinFromAmountDenomString(tokenOutAmountDenomString),
+    tokenIn: getCoinFromAmountDenomString(tokenInAmountDenomString.trim()),
+    tokenOut: getCoinFromAmountDenomString(tokenOutAmountDenomString.trim()),
   }
 }
 
@@ -322,7 +322,7 @@ function findUpdateCoinBalanceAndAddDeposit(
   if (event.attributes.find((a) => a.key === 'action')?.value !== 'update_coin_balance') return
   const amountDenomString = event.attributes.find((a) => a.key === 'coin')?.value
   if (!amountDenomString) return
-  const result = getCoinFromAmountDenomString(amountDenomString.trim(), true)
+  const result = getCoinFromAmountDenomString(amountDenomString.trim())
   if (!result) return
 
   const depositFromWallet = transactionCoins.find(
@@ -375,18 +375,14 @@ function getVaultTokensFromEvent(event: TransactionEvent): BNCoin[] | undefined 
     ?.value.split(',')
   if (!denomAndAmountStringArray) return
   if (denomAndAmountStringArray.length !== 2) return
-  const vaultToken1 = getCoinFromAmountDenomString(denomAndAmountStringArray[0].trim(), true)
-  const vaultToken2 = getCoinFromAmountDenomString(denomAndAmountStringArray[1].trim(), true)
+  const vaultToken1 = getCoinFromAmountDenomString(denomAndAmountStringArray[0].trim())
+  const vaultToken2 = getCoinFromAmountDenomString(denomAndAmountStringArray[1].trim())
   if (!vaultToken1 || !vaultToken2) return
   return [vaultToken1, vaultToken2]
 }
 
-function getCoinFromAmountDenomString(
-  amountDenomString: string,
-  allowZero?: boolean,
-): BNCoin | undefined {
-  if (amountDenomString.charAt(0) === '0' && !allowZero) return
-  if (amountDenomString.charAt(0) === '0' && allowZero)
+function getCoinFromAmountDenomString(amountDenomString: string): BNCoin | undefined {
+  if (amountDenomString.charAt(0) === '0')
     return BNCoin.fromDenomAndBigNumber(amountDenomString.substring(1), BN_ZERO)
   const regex = /(?:(\d+).*)/g
   const matches = regex.exec(amountDenomString)
