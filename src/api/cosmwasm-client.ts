@@ -4,6 +4,7 @@ import { MarsCreditManagerQueryClient } from 'types/generated/mars-credit-manage
 import { MarsIncentivesQueryClient } from 'types/generated/mars-incentives/MarsIncentives.client'
 import { MarsMockVaultQueryClient } from 'types/generated/mars-mock-vault/MarsMockVault.client'
 import { MarsOracleOsmosisQueryClient } from 'types/generated/mars-oracle-osmosis/MarsOracleOsmosis.client'
+import { MarsOracleWasmQueryClient } from 'types/generated/mars-oracle-wasm/MarsOracleWasm.client'
 import { MarsParamsQueryClient } from 'types/generated/mars-params/MarsParams.client'
 import { MarsRedBankQueryClient } from 'types/generated/mars-red-bank/MarsRedBank.client'
 import { getUrl } from 'utils/url'
@@ -65,7 +66,7 @@ const getParamsQueryClient = async (chainConfig: ChainConfig) => {
   }
 }
 
-const getOracleQueryClient = async (chainConfig: ChainConfig) => {
+const getOracleQueryClientOsmosis = async (chainConfig: ChainConfig) => {
   try {
     const contract = chainConfig.contracts.oracle
     const rpc = getUrl(chainConfig.endpoints.rpc)
@@ -74,6 +75,23 @@ const getOracleQueryClient = async (chainConfig: ChainConfig) => {
     if (!_oracleQueryClient.get(key)) {
       const client = await getClient(rpc)
       _oracleQueryClient.set(key, new MarsOracleOsmosisQueryClient(client, contract))
+    }
+
+    return _oracleQueryClient.get(key)!
+  } catch (error) {
+    throw error
+  }
+}
+
+const getOracleQueryClientNeutron = async (chainConfig: ChainConfig) => {
+  try {
+    const contract = chainConfig.contracts.oracle
+    const rpc = getUrl(chainConfig.endpoints.rpc)
+    const key = rpc + contract
+
+    if (!_oracleQueryClient.get(key)) {
+      const client = await getClient(rpc)
+      _oracleQueryClient.set(key, new MarsOracleWasmQueryClient(client, contract))
     }
 
     return _oracleQueryClient.get(key)!
@@ -146,7 +164,8 @@ export {
   getClient,
   getCreditManagerQueryClient,
   getIncentivesQueryClient,
-  getOracleQueryClient,
+  getOracleQueryClientNeutron,
+  getOracleQueryClientOsmosis,
   getParamsQueryClient,
   /* PERPS
   getPerpsQueryClient,

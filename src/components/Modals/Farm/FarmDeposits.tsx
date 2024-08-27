@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 import { useCallback, useMemo, useState } from 'react'
 
 import Button from 'components/common/Button'
+import { Callout, CalloutType } from 'components/common/Callout'
 import DepositCapMessage from 'components/common/DepositCapMessage'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
@@ -14,9 +15,12 @@ import TokenInput from 'components/common/TokenInput'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { accumulateAmounts } from 'utils/accounts'
 import { byDenom } from 'utils/array'
+import { HF_THRESHOLD } from 'utils/constants'
 import { BN, getValueFromBNCoins } from 'utils/helpers'
 
 interface Props {
@@ -197,6 +201,8 @@ export default function FarmDeposits(props: Props) {
   const getWarningText = useCallback((asset: Asset) => {
     return `You don't have ${asset.symbol} balance in your account. Toggle custom amount to deposit.`
   }, [])
+  const updatedAccount = useStore((s) => s.updatedAccount)
+  const { healthFactor: updatedHealthFactor } = useHealthComputer(updatedAccount)
 
   return (
     <div className='flex flex-col'>
@@ -282,8 +288,15 @@ export default function FarmDeposits(props: Props) {
             options={{ abbreviated: false, minDecimals: 2, maxDecimals: 2 }}
           />
         </div>
+        {updatedHealthFactor <= HF_THRESHOLD && (
+          <Callout type={CalloutType.WARNING}>
+            You can not provide this much liquidity as your Accounts Health Factor would drop below
+            1.
+          </Callout>
+        )}
         <Button
           onClick={() => props.toggleOpen(1)}
+          disabled={updatedHealthFactor <= HF_THRESHOLD}
           className='w-full'
           text='Continue'
           rightIcon={<ArrowRight />}
