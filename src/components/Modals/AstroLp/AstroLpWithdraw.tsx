@@ -93,6 +93,7 @@ export default function AstroLpWithdraw(props: Props) {
             onChange={onChange}
             maxText='Available'
             warningMessages={[]}
+            className='w-full'
           />
           {primaryAsset && secondaryAsset && (
             <>
