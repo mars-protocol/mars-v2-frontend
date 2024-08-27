@@ -54,10 +54,7 @@ export default function FarmModalContentHeader(props: Props) {
     if (!isAstroLp) {
       const vault = updatedAccount?.vaults.find((v) => v.denoms.lp === farm.denoms.lp)
       if (!vault) return BN_ZERO
-      return vault.values.primary
-        .plus(vault.values.secondary)
-        .dividedBy(2)
-        .shiftedBy(-PRICE_ORACLE_DECIMALS)
+      return vault.values.primary.plus(vault.values.secondary).shiftedBy(-PRICE_ORACLE_DECIMALS)
     }
 
     const astroLpPosition = updatedAccount?.stakedAstroLps.find(
@@ -65,7 +62,7 @@ export default function FarmModalContentHeader(props: Props) {
     )
     if (!astroLpPosition) return BN_ZERO
 
-    return astroLpPosition.amount.dividedBy(2)
+    return astroLpPosition.amount
   }, [isAstroLp, updatedAccount?.stakedAstroLps, updatedAccount?.vaults, farm.denoms.lp])
 
   const campaignTypes =
