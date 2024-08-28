@@ -1,7 +1,6 @@
 import { getBalance } from '@wagmi/core'
 import { config } from 'config/ethereumConfig'
 import { arbitrum, base, celo, mainnet, optimism, polygon, zkSync } from '@wagmi/core/chains'
-import { Chain } from 'viem'
 
 export const USDC_ADDRESSES: Record<number | string, `0x${string}`> = {
   [mainnet.id]: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // Ethereum USDC
@@ -13,14 +12,38 @@ export const USDC_ADDRESSES: Record<number | string, `0x${string}`> = {
   [zkSync.id]: '0x1d17CBcF0D6D143135aE902365D2E5e2A16538D4', // zkSync USDC
 }
 
-export const chainNameToViemChain: Record<string, Chain> = {
-  [mainnet.id]: mainnet,
-  [base.id]: base,
-  [arbitrum.id]: arbitrum,
-  [celo.id]: celo,
-  [optimism.id]: optimism,
-  [polygon.id]: polygon,
-  [zkSync.id]: zkSync,
+export const chainNameToUSDCAttributes: Record<
+  string,
+  { chainID: number; assetAddress: `0x${string}` }
+> = {
+  Ethereum: {
+    chainID: mainnet.id,
+    assetAddress: USDC_ADDRESSES[mainnet.id],
+  },
+  Arbitrum: {
+    chainID: arbitrum.id,
+    assetAddress: USDC_ADDRESSES[arbitrum.id],
+  },
+  Base: {
+    chainID: base.id,
+    assetAddress: USDC_ADDRESSES[base.id],
+  },
+  Celo: {
+    chainID: celo.id,
+    assetAddress: USDC_ADDRESSES[celo.id],
+  },
+  Optimism: {
+    chainID: optimism.id,
+    assetAddress: USDC_ADDRESSES[optimism.id],
+  },
+  Polygon: {
+    chainID: polygon.id,
+    assetAddress: USDC_ADDRESSES[polygon.id],
+  },
+  zkSync: {
+    chainID: zkSync.id,
+    assetAddress: USDC_ADDRESSES[zkSync.id],
+  },
 }
 
 const CHAIN_IDS = [mainnet.id, base.id, arbitrum.id, celo.id, optimism.id, polygon.id, zkSync.id]

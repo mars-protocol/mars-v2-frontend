@@ -23,7 +23,7 @@ import Button from 'components/common/Button'
 import getAccountIds from 'api/wallets/getAccountIds'
 import { SkipClient } from '@skip-go/client'
 import { WalletClient } from 'viem'
-import { CHAIN_NAMES, chainNameToViemChain, USDC_ADDRESSES } from 'utils/fetchUSDCBalance'
+import { CHAIN_NAMES, chainNameToUSDCAttributes } from 'utils/fetchUSDCBalance'
 import { getWalletClient } from '@wagmi/core'
 import { config } from 'config/ethereumConfig'
 
@@ -90,8 +90,6 @@ export default function AccountFundContent(props: Props) {
     [],
   )
 
-  const CHAIN_IDS = Object.fromEntries(Object.entries(CHAIN_NAMES).map(([id, name]) => [name, id]))
-
   const handleSkipTransfer = useCallback(async () => {
     if (!cosmosAddress || !evmAddress || fundingAssets.length === 0) {
       console.error('Missing required data for transfer')
@@ -113,8 +111,8 @@ export default function AccountFundContent(props: Props) {
           splitRoutes: true,
           evmSwaps: true,
         },
-        sourceAssetDenom: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
-        sourceAssetChainID: '137',
+        sourceAssetDenom: chainNameToUSDCAttributes[selectedAsset.chain].assetAddress,
+        sourceAssetChainID: chainNameToUSDCAttributes[selectedAsset.chain].chainID.toString(),
         destAssetDenom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
         destAssetChainID: 'neutron-1',
         amountIn: selectedAsset.coin.amount.toString(),
