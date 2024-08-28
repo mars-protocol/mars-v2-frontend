@@ -8,7 +8,7 @@ import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendi
 import SummarySkeleton from 'components/portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
 import useAccounts from 'hooks/accounts/useAccounts'
-import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
@@ -25,7 +25,7 @@ export default function PortfolioSummary() {
   const { data: accounts } = useAccounts('default', urlAddress || walletAddress)
   const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
-  const assets = useDepositEnabledAssets()
+  const assets = useWhitelistedAssets()
   const astroLpAprs = useAstroLpAprs()
 
   const stats = useMemo(() => {
@@ -36,6 +36,9 @@ export default function PortfolioSummary() {
         combinedAccount.deposits = combinedAccount.deposits.concat(account.deposits)
         combinedAccount.lends = combinedAccount.lends.concat(account.lends)
         combinedAccount.vaults = combinedAccount.vaults.concat(account.vaults)
+        combinedAccount.stakedAstroLps = combinedAccount.stakedAstroLps.concat(
+          account.stakedAstroLps,
+        )
         return combinedAccount
       },
       {
