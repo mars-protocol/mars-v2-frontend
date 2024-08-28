@@ -5,16 +5,16 @@ import { Callout, CalloutType } from 'components/common/Callout'
 import { CircularProgress } from 'components/common/CircularProgress'
 import Divider from 'components/common/Divider'
 import { FormattedNumber } from 'components/common/FormattedNumber'
+import { Gear } from 'components/common/Icons'
 import { RouteInfo } from 'components/common/RouteInfo'
 import SummaryLine from 'components/common/SummaryLine'
-import Text from 'components/common/Text'
-import { Tooltip } from 'components/common/Tooltip'
 import { BN_ZERO } from 'constants/math'
 import useLiquidationPrice from 'hooks/prices/useLiquidationPrice'
 import useSlippage from 'hooks/settings/useSlippage'
 import { useMemo } from 'react'
 import { formatPercent } from 'utils/formatters'
 import { getMinAmountOutFromRouteInfo } from 'utils/swap'
+import useStore from 'store'
 
 interface Props {
   borrowAmount: BigNumber
@@ -64,15 +64,18 @@ export default function TradeSummary(props: Props) {
 
   return (
     <div className='flex flex-col w-full space-y-2'>
-      {routeInfo?.priceImpact && routeInfo.priceImpact.toNumber() > 1 && (
+      {routeInfo && routeInfo.priceImpact.toNumber() > 1 && (
         <Callout type={CalloutType.WARNING}>
-          The price impact of your trade is above 1%. Please review before submitting the
-          transaction.
+          Your trade's price impact exceeds 1%. Please review before submitting.
         </Callout>
       )}
       {routeInfo && slippage * 100 > 1 && (
         <Callout type={CalloutType.WARNING}>
-          The slippage of your trade is above 1%. Please review before submitting the transaction.
+          Your trade's slippage exceeds 1%. Please review before submitting or update it here
+          <Gear
+            className='inline h-3.5 w-3.5 ml-1 cursor-pointer'
+            onClick={() => useStore.setState({ settingsModal: true })}
+          />
         </Callout>
       )}
       <div

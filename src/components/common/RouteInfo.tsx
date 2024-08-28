@@ -54,6 +54,9 @@ export function RouteInfo(props: Props) {
             <FormattedNumber
               amount={props.route.priceImpact.toNumber() || 0}
               options={{ suffix: '%' }}
+              className={classNames({
+                'text-info': props.route.priceImpact.toNumber() > 1,
+              })}
             />
           </SummaryLine>
           <SummaryLine
