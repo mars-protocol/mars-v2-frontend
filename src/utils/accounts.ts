@@ -43,7 +43,7 @@ export const calculateAccountValue = (
   account: Account | AccountChange,
   assets: Asset[],
 ): BigNumber => {
-  if (!account[type] || !assets) return BN_ZERO
+  if (!account || !account[type] || !assets) return BN_ZERO
 
   if (type === 'vaults') {
     return (
