@@ -1,5 +1,6 @@
 import useSWR from 'swr'
 
+import { PERPS_DEFAULT_ACTION } from 'constants/perps'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useClients from 'hooks/chain/useClients'
 import { useAllPerpsParams } from 'hooks/perps/usePerpsParams'
@@ -13,7 +14,7 @@ export default function useAllPerpsDenomStates() {
     clients && perpsParams && `chains/${chainConfig.id}/perps/state`,
     () => {
       const promises = perpsParams!.map((perp) =>
-        clients!.perps.perpDenomState({ action: 'default', denom: perp.denom }),
+        clients!.perps.perpDenomState({ ...PERPS_DEFAULT_ACTION, denom: perp.denom }),
       )
 
       return Promise.all(promises)

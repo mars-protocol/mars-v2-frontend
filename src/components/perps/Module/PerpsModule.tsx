@@ -115,7 +115,7 @@ export function PerpsModule() {
     if (tradeDirection === 'short') maxAmount = maxAmount.plus(previousAmount)
     if (tradeDirection === 'long') maxAmount = maxAmount.minus(previousAmount)
 
-    maxAmount = BigNumber.max(maxAmount, 0).plus(1000000000)
+    maxAmount = BigNumber.max(maxAmount, 0).plus(100_000_000_000)
     let maxLeverage = 1
 
     if (!hasActivePosition) {

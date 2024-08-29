@@ -1,11 +1,12 @@
 import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-import { SearchParams } from 'types/enums'
 import DropDownButton from 'components/common/Button/DropDownButton'
 import { Cross, Edit } from 'components/common/Icons'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
+import { SearchParams } from 'types/enums'
 import { getSearchParamsObject } from 'utils/route'
 
 export const MANAGE_META = { id: 'manage', header: 'Manage' }
@@ -18,7 +19,7 @@ export default function Manage(props: Props) {
   const currentAccount = useCurrentAccount()
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const closePerpPosition = useStore((s) => s.closePerpPosition)
+  const executePerpOrder = useStore((s) => s.executePerpOrder)
   const ITEMS: DropDownItem[] = useMemo(
     () => [
       {
@@ -37,16 +38,20 @@ export default function Manage(props: Props) {
         text: 'Close Position',
         onClick: async () => {
           if (!currentAccount) return
-          await closePerpPosition({
+          await executePerpOrder({
             accountId: currentAccount.id,
-            denom: props.perpPosition.asset.denom,
+            coin: BNCoin.fromDenomAndBigNumber(
+              props.perpPosition.asset.denom,
+              props.perpPosition.amount.negated(),
+            ),
           })
         },
       },
     ],
     [
-      closePerpPosition,
       currentAccount,
+      executePerpOrder,
+      props.perpPosition.amount,
       props.perpPosition.asset.denom,
       searchParams,
       setSearchParams,

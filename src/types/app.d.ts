@@ -994,12 +994,10 @@ interface BroadcastSlice {
     isPythUpdate?: boolean
   }) => Promise<BroadcastResult>
   lend: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
-  closePerpPosition: (options: { accountId: string; denom: string }) => Promise<boolean>
-  openPerpPosition: (options: { accountId: string; coin: BNCoin }) => Promise<boolean>
-  modifyPerpPosition: (options: {
+  executePerpOrder: (options: {
     accountId: string
     coin: BNCoin
-    changeDirection: boolean
+    reduceOnly?: boolean
   }) => Promise<boolean>
   reclaim: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
   repay: (options: {
