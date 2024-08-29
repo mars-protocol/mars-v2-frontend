@@ -229,9 +229,7 @@ export function convertAccountToPositions(account: Account): Positions {
       amount: lend.amount.toString(),
       denom: lend.denom,
     })),
-    perps: [],
     staked_astro_lps: account.stakedAstroLps?.map((stakedAstroLp) => stakedAstroLp.toCoin()) ?? [],
-    /* PERPS
     perps: account.perps.map((perpPosition) => {
       return {
         base_denom: perpPosition.baseDenom,
@@ -268,7 +266,6 @@ export function convertAccountToPositions(account: Account): Positions {
         },
       }
     }),
-    */
     vaults: account.vaults.map(
       (vault) =>
         ({
@@ -328,7 +325,6 @@ export function cloneAccount(account: Account): Account {
     })),
     stakedAstroLps:
       account.stakedAstroLps?.map((stakedAstroLp) => new BNCoin(stakedAstroLp.toCoin())) ?? [],
-    /* PERPS
     perps: account.perps.map((perpPosition) => ({
       ...perpPosition,
       amount: perpPosition.amount,
@@ -348,7 +344,6 @@ export function cloneAccount(account: Account): Account {
           })),
         }
       : null,
-    */
   }
 }
 

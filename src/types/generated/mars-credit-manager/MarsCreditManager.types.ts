@@ -104,6 +104,24 @@ export type Action =
       }
     }
   | {
+      deposit_to_perp_vault: ActionCoin
+    }
+  | {
+      unlock_from_perp_vault: {
+        shares: Uint128
+      }
+    }
+  | {
+      withdraw_from_perp_vault: {}
+    }
+  | {
+      execute_perp_order: {
+        denom: string
+        order_size: SignedUint
+        reduce_only?: boolean | null
+      }
+    }
+  | {
       enter_vault: {
         coin: ActionCoin
         vault: VaultBaseForString
@@ -139,7 +157,7 @@ export type Action =
         coin_in: ActionCoin
         denom_out: string
         min_receive?: Uint128
-        slippage?: Decimal
+        slippage?: string
         route?: SwapperRoute | null
       }
     }
@@ -204,6 +222,7 @@ export type SwapperRoute =
       osmo: OsmoRoute
     }
 export type AccountNftBaseForString = string
+export type PerpsBaseForString = string
 export type OwnerUpdate =
   | {
       propose_new_owner: {
@@ -292,7 +311,26 @@ export type CallbackMsg =
     }
   | {
       assert_deposit_caps: {
-        denoms: string[]
+        denoms: {
+          [k: string]: Uint128 | null
+        }
+      }
+    }
+  | {
+      deposit_to_perp_vault: {
+        account_id: string
+        coin: ActionCoin
+      }
+    }
+  | {
+      unlock_from_perp_vault: {
+        account_id: string
+        shares: Uint128
+      }
+    }
+  | {
+      withdraw_from_perp_vault: {
+        account_id: string
       }
     }
   | {
@@ -317,6 +355,14 @@ export type CallbackMsg =
       }
     }
   | {
+      execute_perp_order: {
+        account_id: string
+        denom: string
+        reduce_only?: boolean | null
+        size: SignedUint
+      }
+    }
+  | {
       request_vault_unlock: {
         account_id: string
         amount: Uint128
@@ -328,6 +374,11 @@ export type CallbackMsg =
         account_id: string
         position_id: number
         vault: VaultBaseForAddr
+      }
+    }
+  | {
+      close_all_perps: {
+        account_id: string
       }
     }
   | {
@@ -343,8 +394,7 @@ export type CallbackMsg =
         account_id: string
         coin_in: ActionCoin
         denom_out: string
-        min_receive?: Uint128
-        slippage?: Decimal
+        min_receive: Uint128
         route?: SwapperRoute | null
       }
     }
@@ -442,6 +492,11 @@ export interface ActionCoin {
   amount: ActionAmount
   denom: string
 }
+export interface SignedUint {
+  abs: Uint128
+  negative: boolean
+  [k: string]: unknown
+}
 export interface VaultBaseForString {
   address: string
 }
@@ -466,6 +521,8 @@ export interface ConfigUpdates {
   max_slippage?: Decimal | null
   max_unlocking_positions?: Uint128 | null
   oracle?: OracleBaseForString | null
+  params?: ParamsBaseForString | null
+  perps?: PerpsBaseForString | null
   red_bank?: RedBankUnchecked | null
   rewards_collector?: string | null
   swapper?: SwapperBaseForString | null
@@ -509,6 +566,7 @@ export type QueryMsg =
   | {
       positions: {
         account_id: string
+        action?: ActionKind | null
       }
     }
   | {
@@ -560,6 +618,7 @@ export type QueryMsg =
         start_after?: string | null
       }
     }
+export type ActionKind = 'default' | 'liquidation'
 export type VaultPositionAmount =
   | {
       unlocked: VaultAmount
@@ -629,6 +688,7 @@ export interface ConfigResponse {
   oracle: string
   ownership: OwnerResponse
   params: string
+  perps: string
   red_bank: string
   rewards_collector?: RewardsCollector | null
   swapper: string
@@ -652,6 +712,8 @@ export interface Positions {
   debts: DebtAmount[]
   deposits: Coin[]
   lends: Coin[]
+  perp_vault?: PerpVaultPosition | null
+  perps: PerpPosition[]
   staked_astro_lps: Coin[]
   vaults: VaultPosition[]
 }
@@ -659,6 +721,40 @@ export interface DebtAmount {
   amount: Uint128
   denom: string
   shares: Uint128
+}
+export interface PerpVaultPosition {
+  denom: string
+  deposit: PerpVaultDeposit
+  unlocks: PerpVaultUnlock[]
+}
+export interface PerpVaultDeposit {
+  amount: Uint128
+  shares: Uint128
+}
+export interface PerpVaultUnlock {
+  amount: Uint128
+  cooldown_end: number
+  created_at: number
+  shares: Uint128
+}
+export interface PerpPosition {
+  base_denom: string
+  closing_fee_rate: Decimal
+  current_exec_price: Decimal
+  current_price: Decimal
+  denom: string
+  entry_exec_price: Decimal
+  entry_price: Decimal
+  realised_pnl: PnlAmounts
+  size: SignedUint
+  unrealised_pnl: PnlAmounts
+}
+export interface PnlAmounts {
+  accrued_funding: SignedUint
+  closing_fee: SignedUint
+  opening_fee: SignedUint
+  pnl: SignedUint
+  price_pnl: SignedUint
 }
 export type ArrayOfVaultBinding = VaultBinding[]
 export interface VaultBinding {

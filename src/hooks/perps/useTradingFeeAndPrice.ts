@@ -68,10 +68,7 @@ export default function useTradingFeeAndPrice(
             opening: BN(closingPositionFees.opening_fee).plus(openingPositionFees.opening_fee),
             closing: BN(closingPositionFees.closing_fee).plus(openingPositionFees.closing_fee),
           },
-          /* PERPS
           rate: perpsParams ? BN(perpsParams.closingFeeRate) : BN(0.0005),
-          */
-          rate: BN(0.0005),
         }),
       )
     },

@@ -5,11 +5,9 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-export type Decimal = string
 export interface InstantiateMsg {
   address_provider: string
   owner: string
-  target_health_factor: Decimal
 }
 export type ExecuteMsg =
   | {
@@ -21,13 +19,13 @@ export type ExecuteMsg =
       }
     }
   | {
-      update_target_health_factor: Decimal
-    }
-  | {
       update_asset_params: AssetParamsUpdate
     }
   | {
       update_vault_config: VaultConfigUpdate
+    }
+  | {
+      update_perp_params: PerpParamsUpdate
     }
   | {
       emergency_update: EmergencyUpdate
@@ -52,6 +50,7 @@ export type AssetParamsUpdate = {
     params: AssetParamsBaseForString
   }
 }
+export type Decimal = string
 export type HlsAssetTypeForString =
   | {
       coin: {
@@ -67,6 +66,11 @@ export type Uint128 = string
 export type VaultConfigUpdate = {
   add_or_update: {
     config: VaultConfigBaseForString
+  }
+}
+export type PerpParamsUpdate = {
+  add_or_update: {
+    params: PerpParams
   }
 }
 export type EmergencyUpdate =
@@ -90,6 +94,7 @@ export type RedBankEmergencyUpdate = {
   disable_borrowing: string
 }
 export interface AssetParamsBaseForString {
+  close_factor: Decimal
   credit_manager: CmSettingsForString
   denom: string
   deposit_cap: Uint128
@@ -131,6 +136,18 @@ export interface Coin {
   denom: string
   [k: string]: unknown
 }
+export interface PerpParams {
+  closing_fee_rate: Decimal
+  denom: string
+  liquidation_threshold: Decimal
+  max_loan_to_value: Decimal
+  max_long_oi_value: Uint128
+  max_net_oi_value: Uint128
+  max_position_value?: Uint128 | null
+  max_short_oi_value: Uint128
+  min_position_value: Uint128
+  opening_fee_rate: Decimal
+}
 export type QueryMsg =
   | {
       owner: {}
@@ -167,7 +184,15 @@ export type QueryMsg =
       }
     }
   | {
-      target_health_factor: {}
+      perp_params: {
+        denom: string
+      }
+    }
+  | {
+      all_perp_params: {
+        limit?: number | null
+        start_after?: string | null
+      }
     }
   | {
       total_deposit: {
@@ -194,6 +219,7 @@ export type HlsAssetTypeForAddr =
 export type Addr = string
 export type ArrayOfAssetParamsBaseForAddr = AssetParamsBaseForAddr[]
 export interface AssetParamsBaseForAddr {
+  close_factor: Decimal
   credit_manager: CmSettingsForAddr
   denom: string
   deposit_cap: Uint128
@@ -212,6 +238,7 @@ export interface HlsParamsBaseForAddr {
   liquidation_threshold: Decimal
   max_loan_to_value: Decimal
 }
+export type ArrayOfPerpParams = PerpParams[]
 export interface PaginationResponseForTotalDepositResponse {
   data: TotalDepositResponse[]
   metadata: Metadata

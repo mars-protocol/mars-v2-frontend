@@ -3,6 +3,7 @@ import { getCreditManagerQueryClient } from 'api/cosmwasm-client'
 import getDepositedVaults from 'api/vaults/getDepositedVaults'
 import { Positions } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { convertCoinArrayIntoBNCoinArrayAndRemoveEmptyCoins } from 'utils/accounts'
+import { resolvePerpsPositions, resolvePerpsVaultPositions } from 'utils/resolvers'
 
 export default async function getAccount(
   chainConfig: ChainConfig,
@@ -31,10 +32,8 @@ export default async function getAccount(
       lends: convertCoinArrayIntoBNCoinArrayAndRemoveEmptyCoins(accountPosition.lends),
       deposits: convertCoinArrayIntoBNCoinArrayAndRemoveEmptyCoins(accountPosition.deposits),
       vaults: depositedVaults,
-      /*PERPS 
       perpsVault: resolvePerpsVaultPositions(accountPosition.perp_vault),
       perps: resolvePerpsPositions(accountPosition.perps, assets),
-      */
       stakedAstroLps: convertCoinArrayIntoBNCoinArrayAndRemoveEmptyCoins(stakedAstroLps),
       kind: accountKind,
     }

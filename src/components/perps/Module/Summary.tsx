@@ -78,9 +78,8 @@ export default function PerpsSummary(props: Props) {
 
   const disabled = useMemo(() => props.amount.isZero(), [props.amount])
 
-  /*PERPS
   const tradingFeeTooltip = useMemo(() => {
-    let text = 'Trading Fees'
+    const text = 'Trading Fees'
     if (!perpsParams) return text
     if (
       props.amount
@@ -93,8 +92,6 @@ export default function PerpsSummary(props: Props) {
 
     return `${perpsParams.closingFeeRate.times(100)}% ${text}`
   }, [perpsParams, props.amount, props.previousAmount])
-  */
-  const tradingFeeTooltip = ''
 
   return (
     <div className='flex flex-col bg-white bg-opacity-5 rounded border-[1px] border-white/20'>

@@ -32,8 +32,8 @@ interface Account {
   lends: BNCoin[]
   vaults: DepositedVault[]
   stakedAstroLps: BNCoin[]
-  perps?: PerpsPosition[]
-  perpsVault?: PerpsVaultPositions | null
+  perps: PerpsPosition[]
+  perpsVault: PerpsVaultPositions | null
   kind: AccountKind
 }
 
@@ -43,8 +43,8 @@ interface AccountChange extends Account {
   lends?: BNCoin[]
   vaults?: DepositedVault[]
   stakedAstroLps?: BNCoin[]
-  perps?: PerpsPosition[]
-  perpsVault?: PerpsVaultPositions
+  perps: PerpsPosition[]
+  perpsVault: PerpsVaultPositions
 }
 
 interface AccountBalanceRow {
