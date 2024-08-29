@@ -64,11 +64,6 @@ export default function Asset(props: Props) {
           {asset.campaigns.map((campaign, index) => (
             <AssetCampaignCopy size='xs' asset={asset} key={index} campaign={campaign} />
           ))}
-          {asset.chainName && (
-            <Text size='xs' className='text-white/60'>
-              {asset.chainName}
-            </Text>
-          )}
         </div>
         {asset.chainName && (
           <Text size='xs' className='text-white/60'>
