@@ -409,8 +409,14 @@ export function getAccountSummaryStats(
   astroLpAprs: Apr[],
   isHls?: boolean,
 ) {
-  const [deposits, lends, debts, vaults, stakedAstroLps] = getAccountPositionValues(account, assets)
-  const positionValue = deposits.plus(lends).plus(vaults).plus(stakedAstroLps)
+  const [deposits, lends, debts, vaults, perps, perpsVault, stakedAstroLps] =
+    getAccountPositionValues(account, assets)
+  const positionValue = deposits
+    .plus(lends)
+    .plus(vaults)
+    .plus(perps)
+    .plus(perpsVault)
+    .plus(stakedAstroLps)
   const apr = calculateAccountApr(
     account,
     borrowAssets,
@@ -422,7 +428,6 @@ export function getAccountSummaryStats(
     isHls,
   )
   const leverage = calculateAccountLeverage(account, assets)
-
   return {
     positionValue: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionValue),
     debts: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, debts),

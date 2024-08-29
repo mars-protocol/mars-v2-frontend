@@ -9,22 +9,17 @@ import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendi
 import Skeleton from 'components/portfolio/Card/Skeleton'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import { BN_ZERO } from 'constants/math'
 import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
-import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
-import {
-  calculateAccountApr,
-  calculateAccountLeverage,
-  getAccountPositionValues,
-} from 'utils/accounts'
+import { getAccountSummaryStats } from 'utils/accounts'
 import { getRoute } from 'utils/route'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 
 interface Props {
   accountId: string
@@ -42,46 +37,29 @@ export default function PortfolioCard(props: Props) {
   const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
   const [searchParams] = useSearchParams()
-  const assets = useDepositEnabledAssets()
+  const assets = useWhitelistedAssets()
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     getDefaultChainSettings(chainConfig).reduceMotion,
   )
 
-  const [deposits, lends, debts, vaults, stakedAstroLps] = useMemo(() => {
-    if (!assets.length || !account) return Array(4).fill(BN_ZERO)
-    return getAccountPositionValues(account, assets)
-  }, [account, assets])
-
-  const leverage = useMemo(() => {
-    if (!assets.length || !account) return BN_ZERO
-    return calculateAccountLeverage(account, assets)
-  }, [account, assets])
-
-  const apr = useMemo(() => {
-    if (!lendingAssets.length || !borrowAssets.length || !assets.length || !account) return null
-    return calculateAccountApr(
-      account,
-      borrowAssets,
-      lendingAssets,
-      hlsStrategies,
-      assets,
-      vaultAprs,
-      astroLpAprs,
-      account.kind === 'high_levered_strategy',
-    )
-  }, [lendingAssets, borrowAssets, account, hlsStrategies, assets, vaultAprs, astroLpAprs])
+  const { netWorth, apr, leverage } = getAccountSummaryStats(
+    account as Account,
+    borrowAssets,
+    lendingAssets,
+    hlsStrategies,
+    assets,
+    vaultAprs,
+    astroLpAprs,
+  )
 
   const stats: { title: ReactNode; sub: string }[] = useMemo(() => {
     const isLoaded = account && assets.length && apr !== null
     return [
       {
         title: isLoaded ? (
-          <FormattedNumber
-            amount={deposits.plus(lends).plus(vaults).plus(stakedAstroLps).minus(debts).toNumber()}
-            options={{ prefix: '$' }}
-          />
+          <FormattedNumber amount={netWorth.amount.toNumber()} options={{ prefix: '$' }} />
         ) : (
           <Loading />
         ),
@@ -104,7 +82,7 @@ export default function PortfolioCard(props: Props) {
         sub: 'APR',
       },
     ]
-  }, [account, assets, deposits, lends, vaults, stakedAstroLps, debts, leverage, apr])
+  }, [account, assets, apr, leverage, netWorth])
 
   if (!account) {
     return (
