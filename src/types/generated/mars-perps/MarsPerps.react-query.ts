@@ -11,13 +11,14 @@ import { StdFee } from '@cosmjs/amino'
 import {
   OracleBaseForString,
   ParamsBaseForString,
+  Decimal,
   InstantiateMsg,
   ExecuteMsg,
   OwnerUpdate,
-  Decimal,
   Uint128,
   ActionKind,
   SignedUint,
+  PerpParams,
   QueryMsg,
   ConfigForString,
   Accounting,
@@ -687,6 +688,52 @@ export function useMarsPerpsOwnerQuery<TData = OwnerResponse>({
     },
   )
 }
+export interface MarsPerpsUpdateParamsMutation {
+  client: MarsPerpsClient
+  msg: {
+    params: PerpParams
+  }
+  args?: {
+    fee?: number | StdFee | 'auto'
+    memo?: string
+    funds?: Coin[]
+  }
+}
+export function useMarsPerpsUpdateParamsMutation(
+  options?: Omit<
+    UseMutationOptions<ExecuteResult, Error, MarsPerpsUpdateParamsMutation>,
+    'mutationFn'
+  >,
+) {
+  return useMutation<ExecuteResult, Error, MarsPerpsUpdateParamsMutation>(
+    ({ client, msg, args: { fee, memo, funds } = {} }) =>
+      client.updateParams(msg, fee, memo, funds),
+    options,
+  )
+}
+export interface MarsPerpsDeleverageMutation {
+  client: MarsPerpsClient
+  msg: {
+    accountId: string
+    denom: string
+  }
+  args?: {
+    fee?: number | StdFee | 'auto'
+    memo?: string
+    funds?: Coin[]
+  }
+}
+export function useMarsPerpsDeleverageMutation(
+  options?: Omit<
+    UseMutationOptions<ExecuteResult, Error, MarsPerpsDeleverageMutation>,
+    'mutationFn'
+  >,
+) {
+  return useMutation<ExecuteResult, Error, MarsPerpsDeleverageMutation>(
+    ({ client, msg, args: { fee, memo, funds } = {} }) => client.deleverage(msg, fee, memo, funds),
+    options,
+  )
+}
 export interface MarsPerpsCloseAllPositionsMutation {
   client: MarsPerpsClient
   msg: {
@@ -792,75 +839,6 @@ export function useMarsPerpsDepositMutation(
 ) {
   return useMutation<ExecuteResult, Error, MarsPerpsDepositMutation>(
     ({ client, msg, args: { fee, memo, funds } = {} }) => client.deposit(msg, fee, memo, funds),
-    options,
-  )
-}
-export interface MarsPerpsDisableDenomMutation {
-  client: MarsPerpsClient
-  msg: {
-    denom: string
-  }
-  args?: {
-    fee?: number | StdFee | 'auto'
-    memo?: string
-    funds?: Coin[]
-  }
-}
-export function useMarsPerpsDisableDenomMutation(
-  options?: Omit<
-    UseMutationOptions<ExecuteResult, Error, MarsPerpsDisableDenomMutation>,
-    'mutationFn'
-  >,
-) {
-  return useMutation<ExecuteResult, Error, MarsPerpsDisableDenomMutation>(
-    ({ client, msg, args: { fee, memo, funds } = {} }) =>
-      client.disableDenom(msg, fee, memo, funds),
-    options,
-  )
-}
-export interface MarsPerpsEnableDenomMutation {
-  client: MarsPerpsClient
-  msg: {
-    denom: string
-  }
-  args?: {
-    fee?: number | StdFee | 'auto'
-    memo?: string
-    funds?: Coin[]
-  }
-}
-export function useMarsPerpsEnableDenomMutation(
-  options?: Omit<
-    UseMutationOptions<ExecuteResult, Error, MarsPerpsEnableDenomMutation>,
-    'mutationFn'
-  >,
-) {
-  return useMutation<ExecuteResult, Error, MarsPerpsEnableDenomMutation>(
-    ({ client, msg, args: { fee, memo, funds } = {} }) => client.enableDenom(msg, fee, memo, funds),
-    options,
-  )
-}
-export interface MarsPerpsInitDenomMutation {
-  client: MarsPerpsClient
-  msg: {
-    denom: string
-    maxFundingVelocity: Decimal
-    skewScale: Uint128
-  }
-  args?: {
-    fee?: number | StdFee | 'auto'
-    memo?: string
-    funds?: Coin[]
-  }
-}
-export function useMarsPerpsInitDenomMutation(
-  options?: Omit<
-    UseMutationOptions<ExecuteResult, Error, MarsPerpsInitDenomMutation>,
-    'mutationFn'
-  >,
-) {
-  return useMutation<ExecuteResult, Error, MarsPerpsInitDenomMutation>(
-    ({ client, msg, args: { fee, memo, funds } = {} }) => client.initDenom(msg, fee, memo, funds),
     options,
   )
 }

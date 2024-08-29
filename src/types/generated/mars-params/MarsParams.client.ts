@@ -20,6 +20,7 @@ import {
   EmergencyUpdate,
   CmEmergencyUpdate,
   RedBankEmergencyUpdate,
+  PerpsEmergencyUpdate,
   AssetParamsBaseForString,
   CmSettingsForString,
   HlsParamsBaseForString,

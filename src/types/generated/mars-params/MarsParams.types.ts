@@ -80,6 +80,9 @@ export type EmergencyUpdate =
   | {
       red_bank: RedBankEmergencyUpdate
     }
+  | {
+      perps: PerpsEmergencyUpdate
+    }
 export type CmEmergencyUpdate =
   | {
       set_zero_max_ltv_on_vault: string
@@ -90,8 +93,18 @@ export type CmEmergencyUpdate =
   | {
       disallow_coin: string
     }
-export type RedBankEmergencyUpdate = {
-  disable_borrowing: string
+  | {
+      disable_withdraw: string
+    }
+export type RedBankEmergencyUpdate =
+  | {
+      disable_borrowing: string
+    }
+  | {
+      disable_withdraw: string
+    }
+export type PerpsEmergencyUpdate = {
+  disable_trading: string
 }
 export interface AssetParamsBaseForString {
   close_factor: Decimal
@@ -107,6 +120,7 @@ export interface AssetParamsBaseForString {
 export interface CmSettingsForString {
   hls?: HlsParamsBaseForString | null
   whitelisted: boolean
+  withdraw_enabled: boolean
 }
 export interface HlsParamsBaseForString {
   correlations: HlsAssetTypeForString[]
@@ -122,6 +136,7 @@ export interface LiquidationBonus {
 export interface RedBankSettings {
   borrow_enabled: boolean
   deposit_enabled: boolean
+  withdraw_enabled: boolean
 }
 export interface VaultConfigBaseForString {
   addr: string
@@ -139,7 +154,9 @@ export interface Coin {
 export interface PerpParams {
   closing_fee_rate: Decimal
   denom: string
+  enabled: boolean
   liquidation_threshold: Decimal
+  max_funding_velocity: Decimal
   max_loan_to_value: Decimal
   max_long_oi_value: Uint128
   max_net_oi_value: Uint128
@@ -147,6 +164,7 @@ export interface PerpParams {
   max_short_oi_value: Uint128
   min_position_value: Uint128
   opening_fee_rate: Decimal
+  skew_scale: Uint128
 }
 export type QueryMsg =
   | {
@@ -232,6 +250,7 @@ export interface AssetParamsBaseForAddr {
 export interface CmSettingsForAddr {
   hls?: HlsParamsBaseForAddr | null
   whitelisted: boolean
+  withdraw_enabled: boolean
 }
 export interface HlsParamsBaseForAddr {
   correlations: HlsAssetTypeForAddr[]

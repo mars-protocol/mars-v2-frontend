@@ -7,34 +7,21 @@
 
 export type OracleBaseForString = string
 export type ParamsBaseForString = string
+export type Decimal = string
 export interface InstantiateMsg {
+  address_provider: string
   base_denom: string
   cooldown_period: number
   credit_manager: string
   max_positions: number
   oracle: OracleBaseForString
   params: ParamsBaseForString
+  protocol_fee_rate: Decimal
+  target_vault_collaterization_ratio: Decimal
 }
 export type ExecuteMsg =
   | {
       update_owner: OwnerUpdate
-    }
-  | {
-      init_denom: {
-        denom: string
-        max_funding_velocity: Decimal
-        skew_scale: Uint128
-      }
-    }
-  | {
-      enable_denom: {
-        denom: string
-      }
-    }
-  | {
-      disable_denom: {
-        denom: string
-      }
     }
   | {
       deposit: {
@@ -66,6 +53,17 @@ export type ExecuteMsg =
         action?: ActionKind | null
       }
     }
+  | {
+      deleverage: {
+        account_id: string
+        denom: string
+      }
+    }
+  | {
+      update_params: {
+        params: PerpParams
+      }
+    }
 export type OwnerUpdate =
   | {
       propose_new_owner: {
@@ -81,13 +79,27 @@ export type OwnerUpdate =
       }
     }
   | 'clear_emergency_owner'
-export type Decimal = string
 export type Uint128 = string
 export type ActionKind = 'default' | 'liquidation'
 export interface SignedUint {
   abs: Uint128
   negative: boolean
   [k: string]: unknown
+}
+export interface PerpParams {
+  closing_fee_rate: Decimal
+  denom: string
+  enabled: boolean
+  liquidation_threshold: Decimal
+  max_funding_velocity: Decimal
+  max_loan_to_value: Decimal
+  max_long_oi_value: Uint128
+  max_net_oi_value: Uint128
+  max_position_value?: Uint128 | null
+  max_short_oi_value: Uint128
+  min_position_value: Uint128
+  opening_fee_rate: Decimal
+  skew_scale: Uint128
 }
 export type QueryMsg =
   | {
@@ -194,12 +206,15 @@ export type QueryMsg =
       }
     }
 export interface ConfigForString {
+  address_provider: string
   base_denom: string
   cooldown_period: number
   credit_manager: string
   max_positions: number
   oracle: OracleBaseForString
   params: ParamsBaseForString
+  protocol_fee_rate: Decimal
+  target_vault_collaterization_ratio: Decimal
 }
 export interface Accounting {
   balance: Balance

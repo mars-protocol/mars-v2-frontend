@@ -5,27 +5,35 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { StdFee } from '@cosmjs/amino'
+import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tanstack/react-query'
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
-import { UseMutationOptions, UseQueryOptions, useMutation, useQuery } from '@tanstack/react-query'
+import { StdFee } from '@cosmjs/amino'
 import {
-  MarsSwapperOsmosisClient,
-  MarsSwapperOsmosisQueryClient,
-} from './MarsSwapperOsmosis.client'
-import {
+  InstantiateMsg,
+  ExecuteMsg,
+  OwnerUpdate,
+  OsmosisRoute,
+  Uint128,
+  SwapperRoute,
   Addr,
-  ArrayOfRouteResponseForEmpty,
+  SwapAmountInRoute,
   Coin,
+  AstroRoute,
+  AstroSwap,
+  OsmoRoute,
+  OsmoSwap,
+  OsmosisConfig,
+  QueryMsg,
   Empty,
   EstimateExactInSwapResponse,
-  OsmosisConfig,
-  OsmosisRoute,
   OwnerResponse,
-  OwnerUpdate,
   RouteResponseForEmpty,
-  SwapperRoute,
-  Uint128
+  ArrayOfRouteResponseForEmpty,
 } from './MarsSwapperOsmosis.types'
+import {
+  MarsSwapperOsmosisQueryClient,
+  MarsSwapperOsmosisClient,
+} from './MarsSwapperOsmosis.client'
 export const marsSwapperOsmosisQueryKeys = {
   contract: [
     {
@@ -255,8 +263,7 @@ export interface MarsSwapperOsmosisSwapExactInMutation {
   msg: {
     coinIn: Coin
     denomOut: string
-    minReceive?: Uint128
-    slippage?: Decimal
+    minReceive: Uint128
     route?: SwapperRoute
   }
   args?: {

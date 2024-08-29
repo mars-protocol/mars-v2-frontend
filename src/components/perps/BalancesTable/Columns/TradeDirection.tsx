@@ -15,6 +15,7 @@ export default function TradeDirection(props: Props) {
   return (
     <Text
       size='xs'
+      tag='div'
       className={classNames(
         'capitalize px-2 py-0.5 rounded-sm inline-block',
         tradeDirection === 'short' && 'text-error bg-error/20',

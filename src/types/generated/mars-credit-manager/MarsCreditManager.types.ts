@@ -31,12 +31,6 @@ export type ExecuteMsg =
       create_credit_account: AccountKind
     }
   | {
-      create_credit_account_v2: {
-        account_id?: string | null
-        kind: AccountKind
-      }
-    }
-  | {
       update_credit_account: {
         account_id?: string | null
         account_kind?: AccountKind | null
@@ -64,6 +58,12 @@ export type ExecuteMsg =
     }
   | {
       callback: CallbackMsg
+    }
+  | {
+      update_balance_after_deleverage: {
+        account_id: string
+        pnl: PnL
+      }
     }
 export type AccountKind =
   | ('default' | 'high_levered_strategy')
@@ -483,6 +483,14 @@ export type LiquidateRequestForVaultBaseForAddr =
       staked_astro_lp: string
     }
 export type ChangeExpected = 'increase' | 'decrease'
+export type PnL =
+  | 'break_even'
+  | {
+      profit: Coin
+    }
+  | {
+      loss: Coin
+    }
 export interface Coin {
   amount: Uint128
   denom: string

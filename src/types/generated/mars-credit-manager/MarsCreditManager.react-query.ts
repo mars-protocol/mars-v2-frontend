@@ -38,6 +38,7 @@ import {
   HealthState,
   LiquidateRequestForVaultBaseForAddr,
   ChangeExpected,
+  PnL,
   Coin,
   ActionCoin,
   SignedUint,
@@ -605,6 +606,30 @@ export function useMarsCreditManagerAccountKindQuery<TData = AccountKind>({
     },
   )
 }
+export interface MarsCreditManagerUpdateBalanceAfterDeleverageMutation {
+  client: MarsCreditManagerClient
+  msg: {
+    accountId: string
+    pnl: PnL
+  }
+  args?: {
+    fee?: number | StdFee | 'auto'
+    memo?: string
+    funds?: Coin[]
+  }
+}
+export function useMarsCreditManagerUpdateBalanceAfterDeleverageMutation(
+  options?: Omit<
+    UseMutationOptions<ExecuteResult, Error, MarsCreditManagerUpdateBalanceAfterDeleverageMutation>,
+    'mutationFn'
+  >,
+) {
+  return useMutation<ExecuteResult, Error, MarsCreditManagerUpdateBalanceAfterDeleverageMutation>(
+    ({ client, msg, args: { fee, memo, funds } = {} }) =>
+      client.updateBalanceAfterDeleverage(msg, fee, memo, funds),
+    options,
+  )
+}
 export interface MarsCreditManagerCallbackMutation {
   client: MarsCreditManagerClient
   msg: CallbackMsg
@@ -737,30 +762,6 @@ export function useMarsCreditManagerUpdateCreditAccountMutation(
   return useMutation<ExecuteResult, Error, MarsCreditManagerUpdateCreditAccountMutation>(
     ({ client, msg, args: { fee, memo, funds } = {} }) =>
       client.updateCreditAccount(msg, fee, memo, funds),
-    options,
-  )
-}
-export interface MarsCreditManagerCreateCreditAccountV2Mutation {
-  client: MarsCreditManagerClient
-  msg: {
-    accountId?: string
-    kind: AccountKind
-  }
-  args?: {
-    fee?: number | StdFee | 'auto'
-    memo?: string
-    funds?: Coin[]
-  }
-}
-export function useMarsCreditManagerCreateCreditAccountV2Mutation(
-  options?: Omit<
-    UseMutationOptions<ExecuteResult, Error, MarsCreditManagerCreateCreditAccountV2Mutation>,
-    'mutationFn'
-  >,
-) {
-  return useMutation<ExecuteResult, Error, MarsCreditManagerCreateCreditAccountV2Mutation>(
-    ({ client, msg, args: { fee, memo, funds } = {} }) =>
-      client.createCreditAccountV2(msg, fee, memo, funds),
     options,
   )
 }

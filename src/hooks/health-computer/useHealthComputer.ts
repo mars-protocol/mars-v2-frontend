@@ -12,10 +12,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultPositionValue } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { VaultConfigBaseForString } from 'types/generated/mars-params/MarsParams.types'
+import { PerpDenomState } from 'types/generated/mars-perps/MarsPerps.types'
 import {
   AssetParamsBaseForAddr,
   HealthComputer,
-  PerpDenomState,
   PerpParams,
   Positions,
 } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
@@ -180,7 +180,6 @@ export default function useHealthComputer(account?: Account) {
       },
       positions: { ...positions, perps: [] },
       perps_data: {
-        denom_states: denomStates,
         params: perpsParamsData,
       },
     } as HealthComputer
