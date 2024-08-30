@@ -75,7 +75,7 @@ export default function TradeSummary(props: Props) {
         <Callout type={CalloutType.WARNING}>
           Your slippage exceeds 1%. Please review the Summary before submitting the transaction or
           change your Slippage in the
-          <span style={{ display: 'inline-block' }}>
+          <span className='inline-block'>
             <Button
               onClick={() => useStore.setState({ settingsModal: true })}
               variant='transparent'
