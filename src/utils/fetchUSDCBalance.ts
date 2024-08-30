@@ -12,6 +12,40 @@ const USDC_ADDRESSES: Record<number, `0x${string}`> = {
   [zkSync.id]: '0x1d17CBcF0D6D143135aE902365D2E5e2A16538D4', // zkSync USDC
 }
 
+export const chainNameToUSDCAttributes: Record<
+  string,
+  { chainID: number; assetAddress: `0x${string}` }
+> = {
+  Ethereum: {
+    chainID: mainnet.id,
+    assetAddress: USDC_ADDRESSES[mainnet.id],
+  },
+  Arbitrum: {
+    chainID: arbitrum.id,
+    assetAddress: USDC_ADDRESSES[arbitrum.id],
+  },
+  Base: {
+    chainID: base.id,
+    assetAddress: USDC_ADDRESSES[base.id],
+  },
+  Celo: {
+    chainID: celo.id,
+    assetAddress: USDC_ADDRESSES[celo.id],
+  },
+  Optimism: {
+    chainID: optimism.id,
+    assetAddress: USDC_ADDRESSES[optimism.id],
+  },
+  Polygon: {
+    chainID: polygon.id,
+    assetAddress: USDC_ADDRESSES[polygon.id],
+  },
+  zkSync: {
+    chainID: zkSync.id,
+    assetAddress: USDC_ADDRESSES[zkSync.id],
+  },
+}
+
 const CHAIN_IDS = [mainnet.id, base.id, arbitrum.id, celo.id, optimism.id, polygon.id, zkSync.id]
 
 export const CHAIN_NAMES: Record<number, string> = {
