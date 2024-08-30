@@ -6,13 +6,13 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import Skeleton from 'components/portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
-import useAssets from 'hooks/assets/useAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 
 interface Props {
   account: Account
@@ -27,7 +27,7 @@ function Content(props: Props) {
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const { data: hlsStrategies } = useHLSStakingAssets()
-  const { data: assets } = useAssets()
+  const assets = useWhitelistedAssets()
   const astroLpAprs = useAstroLpAprs()
 
   const stats = useMemo(() => {
@@ -75,7 +75,7 @@ function Content(props: Props) {
         title: (
           <FormattedNumber
             className='text-xl'
-            amount={isNaN(leverage.toNumber()) ? 1 : leverage.toNumber()}
+            amount={leverage.toNumber() || 1}
             options={{ suffix: 'x' }}
           />
         ),
