@@ -26,8 +26,9 @@ export default function ErrorPage() {
             An error occured!
           </Text>
           <Text size='sm' className='w-full leading-4 text-center text-white/70'>
-            The Mars Protocol app encountered an error. Please click the button below to reset your
-            local storage, as this is the most common issue when the app is crashing.
+            The Mars Protocol app encountered an error. <br />
+            Please click the button below to reset your local storage, as this is the most common
+            issue when the app is crashing.
             <br />
             If this doesn't solve your problem, please contact a moderator on{' '}
             <TextLink
@@ -52,7 +53,7 @@ export default function ErrorPage() {
           </Text>
           <Button
             onClick={onButtonClick}
-            className='mt-4 min-w-[150px]'
+            className='min-w-[150px]'
             text='Reset Local Storage'
             color='secondary'
             showProgressIndicator={clicked}
