@@ -11,7 +11,7 @@ export const getDefaultChainSettings = (chainConfig: ChainConfig) => {
     tradingPairSimple: chainConfig.defaultTradingPair,
     tradingPairAdvanced: chainConfig.defaultTradingPair,
     displayCurrency: ORACLE_DENOM,
-    slippage: 0.02,
+    slippage: 0.01,
     tutorial: true,
     migrationBanner: true,
     perpsAsset: '',
