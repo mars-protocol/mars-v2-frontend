@@ -9,7 +9,6 @@ import Card from 'components/common/Card'
 import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
-import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useAssets from 'hooks/assets/useAssets'
 import useStakedAstroLpRewards from 'hooks/incentives/useStakedAstroLpRewards'
 import useStore from 'store'
@@ -21,14 +20,20 @@ import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 interface Props {
   account: Account
   astroLp: DepositedAstroLp
+  simulateUnstakeAstroLp: (
+    isAutoLend: boolean,
+    BNCoin: BNCoin,
+    astroLp: DepositedAstroLp,
+    currentLpRewards: BNCoin[],
+  ) => void
 }
 
 export default function AstroLpWithdraw(props: Props) {
-  const { account, astroLp } = props
+  const { account, astroLp, simulateUnstakeAstroLp } = props
+
   const { mutate } = useSWRConfig()
   const { data: assets } = useAssets()
   const astroLpAsset = assets.find(byDenom(astroLp.denoms.lp))
-  const { simulateUnstakeAstroLp } = useUpdatedAccount(account)
   const [withdrawAmount, setWithdrawAmount] = useState(BN_ZERO)
   const withdrawFromAstroLps = useStore((s) => s.withdrawFromAstroLps)
   const chainConfig = useStore((s) => s.chainConfig)
