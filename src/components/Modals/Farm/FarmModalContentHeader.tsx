@@ -79,7 +79,7 @@ export default function FarmModalContentHeader(props: Props) {
               <FormattedNumber amount={farm?.apy ?? 0} options={{ suffix: '%' }} animate />
               <FormattedNumber
                 className='ml-2 text-xs'
-                amount={farm?.apy ?? 0 / 365}
+                amount={(farm?.apy ?? 0) / 365}
                 options={{ suffix: '%/day' }}
                 parentheses
                 animate

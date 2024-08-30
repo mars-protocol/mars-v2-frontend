@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react'
 import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
 import Button from 'components/common/Button'
 import { ArrowDownLine, ArrowUpLine, TrashBin } from 'components/common/Icons'
-import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import { calculateAccountBalanceValue } from 'utils/accounts'
@@ -19,7 +19,7 @@ export default function ManageAccount(props: Props) {
   const { pathname } = useLocation()
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
-  const assets = useDepositEnabledAssets()
+  const assets = useWhitelistedAssets()
   const isHls = account.kind === 'high_levered_strategy'
   const positionBalance = useMemo(
     () => (!account ? null : calculateAccountBalanceValue(account, assets)),

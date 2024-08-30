@@ -12,6 +12,7 @@ import Footer from 'components/common/Footer'
 import PageMetadata from 'components/common/PageMetadata'
 import Text from 'components/common/Text'
 import Toaster from 'components/common/Toaster'
+import ErrorBoundary from 'components/error/ErrorBoundary'
 import Header from 'components/header/Header'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
@@ -84,7 +85,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }, [chainConfig.id, currentChainId, setCurrentChainId])
 
   return (
-    <>
+    <ErrorBoundary>
       <SWRConfig value={{ use: [debugSWR] }}>
         <Suspense
           fallback={
@@ -131,6 +132,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <Toaster />
         </Suspense>
       </SWRConfig>
-    </>
+    </ErrorBoundary>
   )
 }
