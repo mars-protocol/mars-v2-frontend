@@ -167,7 +167,7 @@
               storage, please click the button below.
             </p>
             <button
-              onclick="onFooClick()"
+              onclick="onButtonClick()"
               class="min-w-[150px] reset-button relative z-1 flex items-center appearance-none break-normal outline-none transition-all hover:cursor-pointer transition-color text-sm px-4 py-1.5 min-h-8 border border-white/30 bg-transparent hover:bg-white/20 active:bg-white/40 focus:bg-white/20 rounded-sm text-white shadow-button justify-center group"
               id=""
               tabindex="0"
@@ -191,7 +191,7 @@
       </div>
     </main>
     <script>
-      function onFooClick() {
+      function onButtonClick() {
         localStorage.clear()
         document.querySelector('.reset-button').innerHTML =
           '<div class="relative inline-block" style="width: 12px; height: 12px;"><div class="block absolute w-4/5 h-4/5 m-[10%] rounded-full animate-progress border border-transparent border-l-white" style="border-width: 1.2px;"></div><div class="block absolute w-4/5 h-4/5 m-[10%] rounded-full animate-progress border border-transparent border-l-white" style="animation-delay: -0.45s; border-width: 1.2px;"></div><div class="block absolute w-4/5 h-4/5 m-[10%] rounded-full animate-progress border border-transparent border-l-white" style="animation-delay: -0.3s; border-width: 1.2px;"></div><div class="block absolute w-4/5 h-4/5 m-[10%] rounded-full animate-progress border border-transparent border-l-white" style="animation-delay: -0.15s; border-width: 1.2px;"></div></div>'
