@@ -58,11 +58,11 @@ export function RouteInfo(props: Props) {
               amount={props.route.priceImpact.toNumber() || 0}
               options={{ suffix: '%' }}
               className={classNames({
-                'text-info': props.route.priceImpact.toNumber() > 1,
+                'text-info': props.route.priceImpact.toNumber() > 5,
               })}
             />
           </SummaryLine>
-          {chainConfig.id !== ChainInfoID.Neutron1 && (
+          {chainConfig.isOsmosis && (
             <SummaryLine
               label={`Swap fees ${
                 props.route.fee

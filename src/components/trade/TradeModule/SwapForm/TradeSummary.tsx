@@ -15,6 +15,7 @@ import { useMemo } from 'react'
 import { formatPercent } from 'utils/formatters'
 import { getMinAmountOutFromRouteInfo } from 'utils/swap'
 import useStore from 'store'
+import Button from 'components/common/Button'
 
 interface Props {
   borrowAmount: BigNumber
@@ -64,18 +65,26 @@ export default function TradeSummary(props: Props) {
 
   return (
     <div className='flex flex-col w-full space-y-2'>
-      {routeInfo && routeInfo.priceImpact.toNumber() > 1 && (
+      {routeInfo && routeInfo.priceImpact.toNumber() > 5 && (
         <Callout type={CalloutType.WARNING}>
-          Your trade's price impact exceeds 1%. Please review before submitting.
+          Your trade's price impact exceeds 5%. Please review the Summary before submitting the
+          transaction.
         </Callout>
       )}
       {routeInfo && slippage * 100 > 1 && (
         <Callout type={CalloutType.WARNING}>
-          Your trade's slippage exceeds 1%. Please review before submitting or update it here
-          <Gear
-            className='inline h-3.5 w-3.5 ml-1 cursor-pointer'
-            onClick={() => useStore.setState({ settingsModal: true })}
-          />
+          Your slippage exceeds 1%. Please review the Summary before submitting the transaction or
+          change your Slippage in the
+          <span style={{ display: 'inline-block' }}>
+            <Button
+              onClick={() => useStore.setState({ settingsModal: true })}
+              variant='transparent'
+              color='quaternary'
+              size='xs'
+              className='underline hover:no-underline'
+              text='Settings'
+            />
+          </span>
         </Callout>
       )}
       <div
