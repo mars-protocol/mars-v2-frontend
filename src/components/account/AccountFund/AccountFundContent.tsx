@@ -98,10 +98,6 @@ export default function AccountFundContent(props: Props) {
   }
   const handleSkipTransfer = useCallback(
     async (selectedAsset: WrappedBNCoin) => {
-      const chains = await skipClient.chains({
-        includeEVM: true,
-        onlyTestnets: true,
-      })
       if (!cosmosAddress || !evmAddress || !selectedAsset) {
         console.error('Missing required data for transfer')
         return
@@ -109,6 +105,25 @@ export default function AccountFundContent(props: Props) {
 
       try {
         if (!selectedAsset.chain) throw new Error('Chain not found for selected asset')
+
+        const expectedChainAttributes = chainNameToUSDCAttributes[selectedAsset.chain]
+        if (!expectedChainAttributes) {
+          console.error(`No chain attributes found for denom: ${selectedAsset.coin.denom}`)
+          return
+        }
+
+        if (chainConfig.id.toString() !== expectedChainAttributes.chainID.toString()) {
+          const { switchChain } = await getWalletClient(config, {
+            chainId: expectedChainAttributes.chainID,
+          })
+
+          if (switchChain) {
+            await switchChain({ id: expectedChainAttributes.chainID })
+          } else {
+            console.error('Unable to switch network. Network switch function not available.')
+            return
+          }
+        }
 
         const route = await skipClient.route({
           allowMultiTx: true,
@@ -127,16 +142,11 @@ export default function AccountFundContent(props: Props) {
           amountIn: selectedAsset.coin.amount.toString(),
         })
 
-        console.log('Received route:', route)
-
         const userAddresses = route.requiredChainAddresses.map((chainID: string) => ({
           chainID,
           address: chainID === chainConfig.id.toString() ? cosmosAddress : evmAddress,
         }))
 
-        console.log('User addresses:', userAddresses)
-
-        console.log('Executing route...')
         const transactionPromise = skipClient.executeRoute({
           route,
           userAddresses,
@@ -156,7 +166,6 @@ export default function AccountFundContent(props: Props) {
         })
 
         await wrappedTransactionPromise
-        console.log('Route execution completed')
       } catch (error) {
         console.error('Skip transfer failed:', error)
         if (error instanceof Error) {
