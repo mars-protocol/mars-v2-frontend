@@ -1,12 +1,12 @@
 import useSWR from 'swr'
 
 import getHLSStakingAccounts from 'api/hls/getHLSStakingAccounts'
-import useAssets from 'hooks/assets/useAssets'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 
 export default function useHLSStakingAccounts(address?: string) {
   const chainConfig = useChainConfig()
-  const { data: assets } = useAssets()
+  const assets = useWhitelistedAssets()
 
   return useSWR(
     `${address}/hlsStakingAccounts`,

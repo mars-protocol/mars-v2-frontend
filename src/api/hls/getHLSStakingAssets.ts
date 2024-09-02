@@ -1,25 +1,36 @@
 import { getParamsQueryClient } from 'api/cosmwasm-client'
-import getStakingAprs from 'api/hls/getAprs'
 import getAssetParams from 'api/params/getAssetParams'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 import { resolveHLSStrategies } from 'utils/resolvers'
 
-export default async function getHLSStakingAssets(chainConfig: ChainConfig, assets: Asset[]) {
+export default async function getHLSStakingAssets(
+  chainConfig: ChainConfig,
+  assets: Asset[],
+  apys: AssetCampaignApy[],
+) {
   const stakingAssetDenoms = assets.filter((asset) => asset.isStaking).map((asset) => asset.denom)
   const assetParams = await getAssetParams(chainConfig)
   const HLSAssets = assetParams
     .filter((asset) => asset.credit_manager.hls)
     .filter((asset) => {
+      const underlyingAsset = assets.find(byDenom(asset.denom))
+      if (!underlyingAsset) return
       const correlations = asset.credit_manager.hls?.correlations.filter((correlation) => {
         return 'coin' in correlation
       })
 
-      const correlatedDenoms = correlations
-        ?.map((correlation) => (correlation as { coin: { denom: string } }).coin.denom)
-        .filter((denoms) => !denoms.includes('gamm/pool/'))
+      const correlatedAssets = [] as Asset[]
+      correlations?.forEach((correlation) => {
+        const asset = assets.find(byDenom((correlation as { coin: { denom: string } }).coin.denom))
+        if (asset) correlatedAssets.push(asset)
+      })
 
-      if (!correlatedDenoms?.length) return false
+      const filteredAssets = correlatedAssets?.filter(
+        (asset) => !asset?.isBorrowEnabled && !asset?.isPoolToken && asset.isStaking,
+      )
+
+      const correlatedDenoms = filteredAssets?.map((asset) => asset?.denom)
 
       return stakingAssetDenoms.some((denom) => correlatedDenoms?.includes(denom))
     })
@@ -29,11 +40,12 @@ export default async function getHLSStakingAssets(chainConfig: ChainConfig, asse
     client.totalDeposit({ denom: strategy.denoms.deposit }),
   )
 
-  const aprs = await getStakingAprs(chainConfig.endpoints.aprs.stride)
-
   return Promise.all(depositCaps$).then((depositCaps) => {
     return depositCaps.map((depositCap, index) => {
-      const borrowSymbol = assets.find(byDenom(strategies[index].denoms.borrow))?.symbol
+      const depositAssetCampaigns = assets.find(
+        byDenom(strategies[index].denoms.deposit),
+      )?.campaigns
+      const apy = depositAssetCampaigns?.find((campaign) => campaign.type === 'apy')?.apy ?? 0
       return {
         ...strategies[index],
         depositCap: {
@@ -41,7 +53,7 @@ export default async function getHLSStakingAssets(chainConfig: ChainConfig, asse
           used: BN(depositCap.amount),
           max: BN(depositCap.cap),
         },
-        apy: (aprs.find((stakingApr) => stakingApr.denom === borrowSymbol)?.strideYield || 0) * 100,
+        apy,
       } as HLSStrategy
     })
   })
