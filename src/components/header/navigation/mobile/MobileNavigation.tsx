@@ -9,6 +9,7 @@ import { ChevronDown } from 'components/common/Icons'
 import Settings from 'components/common/Settings'
 import Text from 'components/common/Text'
 import ChainSelect from 'components/header/ChainSelect'
+import RewardsCenter from 'components/header/RewardsCenter'
 import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -119,6 +120,14 @@ export default function MobileNavigation(props: Props) {
             <Text size='sm'>Account:</Text>
             <div className='relative'>
               <AccountMenu />
+            </div>
+          </div>
+        )}
+        {address && (
+          <div className='flex items-center justify-between w-full'>
+            <Text size='sm'>Rewards Center:</Text>
+            <div className='relative'>
+              <RewardsCenter />
             </div>
           </div>
         )}

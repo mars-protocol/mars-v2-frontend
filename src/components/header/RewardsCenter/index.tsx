@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import Button from 'components/common/Button'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import { Logo } from 'components/common/Icons'
+import { Cross, Logo } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import SwitchWithText from 'components/common/Switch/SwitchWithText'
 import Text from 'components/common/Text'
@@ -105,7 +105,9 @@ export default function RewardsCenter(props: Props) {
         </div>
       </Button>
       <Overlay
-        className={'mt-2 right-0 top-8 w-[420px] flex flex-wrap'}
+        className={
+          'mt-2 right-0 md:top-8 top-16 content-start h-screen-full pb-20 md:pb-0 md:h-auto overflow-y-scroll scrollbar-hide w-full md:w-[420px] flex flex-wrap'
+        }
         show={showRewardsCenter}
         setShow={setShowRewardsCenter}
       >
@@ -118,6 +120,16 @@ export default function RewardsCenter(props: Props) {
           <Text size='lg' className='font-bold'>
             Rewards Center
           </Text>
+          <div className='absolute top-2 right-2 md:hidden'>
+            <Button
+              onClick={() => setShowRewardsCenter(false)}
+              leftIcon={<Cross />}
+              iconClassName='w-3'
+              color='tertiary'
+              className='w-8 h-8'
+              size='xs'
+            />
+          </div>
         </div>
         <div className='flex flex-col w-full gap-4 px-4 py-5'>
           {!isOsmosis && (
