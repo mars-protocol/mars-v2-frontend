@@ -34,8 +34,13 @@ function AstroLpModal(props: Props) {
     useStore.setState({ farmModal: null })
   }, [])
 
-  const { addedDebts, removedDeposits, removedLends, simulateAstroLpDeposit } =
-    useUpdatedAccount(currentAccount)
+  const {
+    addedDebts,
+    removedDeposits,
+    removedLends,
+    simulateAstroLpDeposit,
+    simulateUnstakeAstroLp,
+  } = useUpdatedAccount(currentAccount)
 
   return (
     <Modal
@@ -64,7 +69,11 @@ function AstroLpModal(props: Props) {
           simulateAstroLpDeposit={simulateAstroLpDeposit}
         />
       ) : (
-        <AstroLpWithdraw account={currentAccount} astroLp={astroLp as DepositedAstroLp} />
+        <AstroLpWithdraw
+          account={currentAccount}
+          simulateUnstakeAstroLp={simulateUnstakeAstroLp}
+          astroLp={astroLp as DepositedAstroLp}
+        />
       )}
     </Modal>
   )

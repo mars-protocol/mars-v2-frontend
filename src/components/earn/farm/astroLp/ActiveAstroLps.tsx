@@ -5,6 +5,7 @@ import ActiveAstroLpsTable from 'components/earn/farm/astroLp/Table/ActiveAstroL
 import useActiveAstroLpsColumns from 'components/earn/farm/astroLp/Table/Columns/useActiveAstroLpsColumns'
 import useAssets from 'hooks/assets/useAssets'
 import useDepositedAstroLps from 'hooks/astroLp/useDepositedAstroLps'
+
 export function ActiveAstroLps() {
   const { data: assets } = useAssets()
   const activeAstroLps = useDepositedAstroLps()

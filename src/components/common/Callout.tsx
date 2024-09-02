@@ -5,7 +5,7 @@ import { ExclamationMarkTriangle, InfoCircle } from 'components/common/Icons'
 import Text from 'components/common/Text'
 
 interface Props {
-  children: string
+  children: string | React.ReactNode
   className?: string
   type: CalloutType
 }

@@ -30,7 +30,7 @@ import useStore from 'store'
 import { getCurrentChainId } from 'utils/getCurrentChainId'
 import { BN } from 'utils/helpers'
 
-const slippages = [0.02, 0.03]
+const slippages = [0.01, 0.02]
 
 export default function SettingsModal() {
   const chainConfig = useChainConfig()

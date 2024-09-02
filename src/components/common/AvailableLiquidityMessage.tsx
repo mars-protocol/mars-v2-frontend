@@ -10,7 +10,7 @@ export default function AvailableLiquidityMessage(props: Props) {
   return (
     <div className='flex items-start p-4 bg-white/5'>
       <div className='flex flex-col gap-2'>
-        <Text size='sm'>Not enough Liquidty!</Text>
+        <Text size='sm'>Not enough Liquidity!</Text>
         <Text size='xs' className='text-white/40'>
           {`This transaction would exceed the amount of ${market.asset.symbol} currently available for borrowing on Mars.`}
         </Text>
