@@ -123,7 +123,7 @@ export default function MobileNavigation(props: Props) {
             </div>
           </div>
         )}
-        {address && (
+        {address && account && (
           <div className='flex items-center justify-between w-full'>
             <Text size='sm'>Rewards Center:</Text>
             <div className='relative'>
