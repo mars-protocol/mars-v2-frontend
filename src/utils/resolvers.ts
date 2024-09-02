@@ -68,17 +68,15 @@ export function resolveHLSStrategies(
     })
 
     let correlatedDenoms: string[] | undefined
-
     if (type === 'coin') {
       correlatedDenoms = correlations
         ?.map((correlation) => (correlation as { coin: { denom: string } }).coin.denom)
-        .filter((denoms) => !denoms.includes('gamm/pool/'))
+        .filter((denoms) => !denoms.includes('gamm/pool/') && !denoms.includes('/share'))
     } else {
       correlatedDenoms = correlations?.map(
         (correlation) => (correlation as { vault: { addr: string } }).vault.addr,
       )
     }
-
     if (!correlatedDenoms?.length) return
 
     correlatedDenoms.forEach((correlatedDenom) =>

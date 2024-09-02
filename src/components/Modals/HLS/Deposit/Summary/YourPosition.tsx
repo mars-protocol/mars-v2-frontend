@@ -65,7 +65,7 @@ export default function YourPosition(props: Props) {
         onClick={props.onClickBtn}
         text='Approve Funding Transaction'
         rightIcon={<ArrowRight />}
-        className='mt-1 w-full mt-6'
+        className='w-full mt-6 '
         disabled={props.disabled}
       />
     </Container>
