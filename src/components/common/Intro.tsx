@@ -53,6 +53,18 @@ function IntroBackground(props: { bg: Props['bg'] }) {
           <GridPlanet />
         </div>
       )
+    case 'vaults-official':
+      return (
+        <div className='absolute top-0 right-0 block w-140 opacity-5'>
+          <GridTire />
+        </div>
+      )
+    case 'vaults-community':
+      return (
+        <div className='absolute top-0 right-0 block w-140 opacity-5'>
+          <GridLandscape />
+        </div>
+      )
     case 'perps-vault':
       return (
         <div className='absolute top-0 right-0 block w-150 opacity-60'>
