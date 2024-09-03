@@ -199,6 +199,16 @@ interface DepositedAstroLpAccounts {
   astroLp: DepositedAstroLp
 }
 
+interface Vaults {
+  vaultName: string
+  vaultSub: string
+  apy: number
+  tvl: number
+  fee: number
+  freezePeriod: number
+  actions: string
+}
+
 interface StakingApr {
   chainId: string
   currentYield: number
