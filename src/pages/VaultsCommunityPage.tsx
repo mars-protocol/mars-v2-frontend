@@ -1,14 +1,14 @@
+import { ArrowRight } from 'components/common/Icons'
 import Tab from 'components/earn/Tab'
+import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
+import { AvailableCommunityVaults } from 'components/vaults/community/table/AvailableCommunityVaults'
 import VaultsCommunityIntro from 'components/vaults/community/VaultsCommunityIntro'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import { VAUTLS_TABS } from 'constants/pages'
+import { INFO_ITEMS } from 'constants/warningDialog'
 import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import { VAUTLS_TABS } from 'constants/pages'
-import { AvailableCommunityVaults } from 'components/vaults/community/table/AvailableCommunityVaults'
-import { ArrowRight } from 'components/common/Icons'
-import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { useCallback, useEffect } from 'react'
-import { INFO_ITEMS } from 'constants/warningDialog'
 
 export default function VaultsCommunityPage() {
   const [showVaultWarning, setShowVaultWarning] = useLocalStorage<boolean>(

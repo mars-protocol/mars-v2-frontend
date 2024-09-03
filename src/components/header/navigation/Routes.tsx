@@ -41,6 +41,8 @@ export default function Routes() {
         <Route path='/vaults-community' element={<VaultsCommunityPage />} />
         {chainConfig.hls && <Route path='/hls-staking' element={<HlsStakingPage />} />}
         {chainConfig.hls && <Route path='/hls-farm' element={<HlsFarmPage />} />}
+        <Route path='/vaults-official' element={<VaultsOfficialPage />} />
+        <Route path='/vaults-community' element={<VaultsCommunityPage />} />
         <Route path='/' element={<TradePage />} />
         <Route path='/wallets/:address'>
           <Route path='execute' element={<ExecuteMessagePage />} />
@@ -55,6 +57,8 @@ export default function Routes() {
           <Route path='vaults-community' element={<VaultsCommunityPage />} />
           {chainConfig.hls && <Route path='hls-staking' element={<HlsStakingPage />} />}
           {chainConfig.hls && <Route path='hls-farm' element={<HlsFarmPage />} />}
+          <Route path='vaults-official' element={<VaultsOfficialPage />} />
+          <Route path='vaults-community' element={<VaultsCommunityPage />} />
           <Route path='v1' element={<V1Page />} />
           <Route path='portfolio/:accountId'>
             <Route path='' element={<PortfolioAccountPage />} />
