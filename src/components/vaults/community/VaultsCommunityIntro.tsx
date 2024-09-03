@@ -1,4 +1,5 @@
 import Button from 'components/common/Button'
+import ActionButton from 'components/common/Button/ActionButton'
 import { Plus, PlusSquared } from 'components/common/Icons'
 import Intro from 'components/common/Intro'
 import { DocURL } from 'types/enums'
@@ -15,7 +16,7 @@ export default function VaultsCommunityIntro() {
         </>
       }
     >
-      <Button text='Create Vault' leftIcon={<Plus />} onClick={() => {}} color='primary' />
+      <ActionButton text='Create Vault' color='primary' leftIcon={<Plus />} onClick={() => {}} />
       <Button
         text='Learn more'
         leftIcon={<PlusSquared />}
