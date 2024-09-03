@@ -1127,6 +1127,7 @@ interface CommonSlice {
   isHLS: boolean
   isV1: boolean
   assets: Asset[]
+  hlsBorrowAmount: BigNumber | null
 }
 
 interface FocusComponent {

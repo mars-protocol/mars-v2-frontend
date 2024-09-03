@@ -34,7 +34,7 @@ export default function useDepositedColumns(props: Props) {
     () => [
       {
         ...NAME_META,
-        cell: ({ row }) => <Name strategy={row.original.strategy} />,
+        cell: ({ row }) => <Name strategy={row.original.strategy} account={row.original} />,
       },
       {
         ...ACCOUNT_META,
