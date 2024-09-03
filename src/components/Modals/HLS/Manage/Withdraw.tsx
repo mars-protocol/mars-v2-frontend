@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import Button from 'components/common/Button'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
@@ -8,63 +8,54 @@ import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { byDenom } from 'utils/array'
 import { getHealthFactorMessage } from 'utils/messages'
 
 interface Props {
   account: Account
-  action: HlsStakingManageAction
   collateralAsset: Asset
 }
 
 export default function Withdraw(props: Props) {
-  const { removedDeposits, removeDeposits, updatedAccount } = useUpdatedAccount(props.account)
+  const { collateralAsset, account } = props
+  const { simulateWithdraw, updatedAccount } = useUpdatedAccount(account)
   const { computeMaxWithdrawAmount } = useHealthComputer(updatedAccount)
   const assets = useDepositEnabledAssets()
+  const [amount, setAmount] = useState(BN_ZERO)
   const withdraw = useStore((s) => s.withdraw)
+  const extraWithdrawAmount = computeMaxWithdrawAmount(collateralAsset.denom)
   const handleChange = useCallback(
-    (amount: BigNumber) =>
-      removeDeposits([BNCoin.fromDenomAndBigNumber(props.collateralAsset.denom, amount)]),
-    [removeDeposits, props.collateralAsset.denom],
+    (newAmount: BigNumber) => {
+      setAmount(newAmount)
+      simulateWithdraw(false, BNCoin.fromDenomAndBigNumber(collateralAsset.denom, newAmount))
+    },
+    [collateralAsset.denom, simulateWithdraw],
   )
 
-  const removedDeposit = useMemo(
-    () => removedDeposits.find(byDenom(props.collateralAsset.denom)),
-    [props.collateralAsset.denom, removedDeposits],
-  )
-
-  const maxWithdrawAmount = useMemo(() => {
-    const currentWithdrawAmount = removedDeposit?.amount || BN_ZERO
-    const extraWithdrawAmount = computeMaxWithdrawAmount(props.collateralAsset.denom)
-    return currentWithdrawAmount.plus(extraWithdrawAmount)
-  }, [computeMaxWithdrawAmount, props.collateralAsset.denom, removedDeposit?.amount])
+  const maxWithdrawAmount = useMemo(() => extraWithdrawAmount.plus(amount), [])
 
   const onClick = useCallback(() => {
     useStore.setState({ hlsManageModal: null })
-    if (!removedDeposit) return
     withdraw({
-      accountId: props.account.id,
-      coins: [{ coin: removedDeposit }],
+      accountId: account.id,
+      coins: [{ coin: BNCoin.fromDenomAndBigNumber(props.collateralAsset.denom, amount) }],
       borrow: [],
       reclaims: [],
     })
-  }, [props.account.id, removedDeposit, withdraw])
-
-  const withdrawAmount = useMemo(() => removedDeposit?.amount || BN_ZERO, [removedDeposit?.amount])
+  }, [account.id, amount, props.collateralAsset.denom, withdraw])
 
   const warningMessages = useMemo(() => {
-    if (maxWithdrawAmount.isLessThan(withdrawAmount) || maxWithdrawAmount.isZero()) {
+    if (maxWithdrawAmount.isLessThan(amount) || maxWithdrawAmount.isZero()) {
       return [
         getHealthFactorMessage(props.collateralAsset.denom, maxWithdrawAmount, 'withdraw', assets),
       ]
     }
     return []
-  }, [assets, maxWithdrawAmount, props.collateralAsset.denom, withdrawAmount])
+  }, [assets, maxWithdrawAmount, props.collateralAsset.denom, amount])
 
   return (
     <>
       <TokenInputWithSlider
-        amount={withdrawAmount}
+        amount={amount}
         asset={props.collateralAsset}
         max={maxWithdrawAmount}
         onChange={handleChange}
@@ -74,7 +65,7 @@ export default function Withdraw(props: Props) {
       <Button
         onClick={onClick}
         text='Withdraw'
-        disabled={withdrawAmount.isZero() || warningMessages.length !== 0}
+        disabled={amount.isZero() || warningMessages.length !== 0}
       />
     </>
   )
