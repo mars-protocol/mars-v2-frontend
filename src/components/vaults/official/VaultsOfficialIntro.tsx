@@ -15,7 +15,6 @@ export default function VaultsOfficialIntro() {
         </>
       }
     >
-      <Button text='Community Vault' onClick={() => {}} color='primary' />
       <Button
         text='Learn more'
         leftIcon={<PlusSquared />}

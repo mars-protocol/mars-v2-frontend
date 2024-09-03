@@ -181,6 +181,16 @@ interface DepositedHlsStrategy extends HlsStrategy {
   depositedAmount: BigNumber
 }
 
+interface Vaults {
+  vaultName: string
+  vaultSub: string
+  apy: number
+  tvl: number
+  fee: number
+  freezePeriod: number
+  actions: string
+}
+
 interface HlsFarm {
   farm: AstroLp
   borrowAsset: Asset
