@@ -1,7 +1,7 @@
 import Tab from 'components/earn/Tab'
+import { AvailableOfficialVaults } from 'components/vaults/official/table/AvailableOfficialVaults'
 import VaultsOfficialIntro from 'components/vaults/official/VaultsOfficialIntro'
 import { VAUTLS_TABS } from 'constants/pages'
-import { AvailableOfficialVaults } from 'components/vaults/official/table/AvailableOfficialVaults'
 
 export default function VaultsOfficialPage() {
   return (
