@@ -417,6 +417,8 @@ type Page =
   | 'portfolio/{accountId}'
   | 'hls-farm'
   | 'hls-staking'
+  | 'vaults-official'
+  | 'vaults-community'
   | 'governance'
   | 'execute'
   | 'v1'
