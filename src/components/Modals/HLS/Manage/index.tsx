@@ -1,5 +1,3 @@
-import React, { useCallback } from 'react'
-
 import Header from 'components/Modals/HLS/Header'
 import ChangeLeverage from 'components/Modals/HLS/Manage/ChangeLeverage'
 import Deposit from 'components/Modals/HLS/Manage/Deposit'
@@ -41,21 +39,6 @@ function HlsModal(props: Props) {
     useStore.setState({ hlsManageModal: null })
   }
 
-  const ContentComponent = useCallback(() => {
-    switch (props.action) {
-      case 'deposit':
-        return <Deposit {...props} />
-      case 'withdraw':
-        return <Withdraw {...props} />
-      case 'repay':
-        return <Repay {...props} />
-      case 'leverage':
-        return <ChangeLeverage {...props} />
-      default:
-        return null
-    }
-  }, [props])
-
   return (
     <ModalContentWithSummary
       account={props.account}
@@ -68,8 +51,18 @@ function HlsModal(props: Props) {
         />
       }
       onClose={handleClose}
-      content={<ContentComponent />}
+      content={<ContentComponent {...props} />}
       isContentCard
     />
   )
+}
+
+function ContentComponent(props: Props) {
+  const { action } = props
+
+  if (action === 'deposit') return <Deposit {...props} />
+  if (action === 'withdraw') return <Withdraw {...props} />
+  if (action === 'repay') return <Repay {...props} />
+  if (action === 'leverage') return <ChangeLeverage {...props} />
+  return null
 }
