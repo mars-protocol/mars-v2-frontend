@@ -127,7 +127,7 @@ function PerpsVaultModal(props: Props) {
     <ModalContentWithSummary
       isContentCard
       subHeader={<SubHeader />}
-      headerClassName='p-0'
+      headerClassName='pl-2 pr-2.5 py-3'
       account={account}
       content={
         <>

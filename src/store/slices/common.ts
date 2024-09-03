@@ -22,5 +22,6 @@ export default function createCommonSlice(set: SetState<CommonSlice>, get: GetSt
     isHLS: false,
     isV1: false,
     assets: [],
+    hlsBorrowAmount: null,
   }
 }
