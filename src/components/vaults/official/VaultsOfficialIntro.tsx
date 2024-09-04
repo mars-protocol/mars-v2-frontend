@@ -6,7 +6,7 @@ import { PlusSquared } from 'components/common/Icons'
 export default function VaultsOfficialIntro() {
   return (
     <Intro
-      bg='vaults-official'
+      bg='vaults'
       text={
         <>
           <span className='text-white'>Mars official vaults</span> is an automated strategy where
