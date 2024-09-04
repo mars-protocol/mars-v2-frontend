@@ -3,6 +3,7 @@ import useOfficialVaultsColumns from 'components/vaults/official/table/useOffici
 import { vaultsOfficialDummyData } from 'components/vaults/dummyData'
 
 export function AvailableOfficialVaults() {
+  // TODO: Implement data and isLoading
   const columns = useOfficialVaultsColumns({ isLoading: false })
 
   return (

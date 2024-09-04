@@ -1,13 +1,13 @@
-import Button from 'components/common/Button'
 import ActionButton from 'components/common/Button/ActionButton'
-import { Account, ArrowRight, HandCoins, Plus, PlusSquared, Wallet } from 'components/common/Icons'
+import Button from 'components/common/Button'
 import Intro from 'components/common/Intro'
-import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import { useCallback } from 'react'
+import { Account, ArrowRight, HandCoins, Plus, PlusSquared, Wallet } from 'components/common/Icons'
+import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
 import { DocURL } from 'types/enums'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import { useCallback } from 'react'
 
 export default function VaultsCommunityIntro() {
   const [showVaultInformation, setShowVaultInformation] = useLocalStorage<boolean>(
@@ -68,6 +68,7 @@ export default function VaultsCommunityIntro() {
         leftIcon={<PlusSquared />}
         onClick={(e) => {
           e.preventDefault()
+          // TODO: add docs URL
           window.open(DocURL.DOCS_URL, '_blank')
         }}
         color='secondary'

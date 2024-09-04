@@ -4,7 +4,7 @@ import Loading from 'components/common/Loading'
 export const TVL_META = {
   accessorKey: 'tvl',
   header: 'TVL',
-  meta: { className: 'min-w-20' },
+  meta: { className: 'w-25' },
 }
 
 interface Props {

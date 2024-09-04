@@ -17,6 +17,7 @@ interface Props {
 
 export default function useCommunityVaultsColumns(props: Props) {
   const { isLoading } = props
+
   return useMemo<ColumnDef<Vaults>[]>(
     () => [
       {

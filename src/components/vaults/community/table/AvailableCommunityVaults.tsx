@@ -3,6 +3,7 @@ import useCommunityVaultsColumns from 'components/vaults/community/table/useComm
 import { vaultsCommunityDummyData } from 'components/vaults/dummyData'
 
 export function AvailableCommunityVaults() {
+  // TODO: Implement isLoading and data
   const columns = useCommunityVaultsColumns({ isLoading: false })
 
   return (

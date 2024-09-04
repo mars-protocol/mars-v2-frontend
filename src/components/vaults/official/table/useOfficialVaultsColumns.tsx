@@ -17,6 +17,7 @@ interface Props {
 
 export default function useOfficialVaultsColumns(props: Props) {
   const { isLoading } = props
+
   return useMemo<ColumnDef<Vaults>[]>(
     () => [
       {
@@ -41,7 +42,7 @@ export default function useOfficialVaultsColumns(props: Props) {
       },
       {
         ...DEPOSIT_META,
-        cell: ({ row }) => <DepositOfficial value={row.original.actions} isLoading={isLoading} />,
+        cell: () => <DepositOfficial isLoading={isLoading} />,
       },
     ],
     [isLoading],

@@ -4,7 +4,7 @@ import Loading from 'components/common/Loading'
 export const FEE_META = {
   accessorKey: 'fee',
   header: 'Fee',
-  meta: { className: 'min-w-20' },
+  meta: { className: 'w-25' },
 }
 
 interface Props {

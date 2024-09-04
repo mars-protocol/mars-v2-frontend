@@ -181,13 +181,13 @@ interface DepositedHLSStrategy extends HLSStrategy {
 }
 
 interface Vaults {
+  // TODO: update with correct types
   vaultName: string
   vaultSub: string
   apy: number
   tvl: number
   fee: number
   freezePeriod: number
-  actions: string
 }
 
 interface StakingApr {
