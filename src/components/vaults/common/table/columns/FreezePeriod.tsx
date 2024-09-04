@@ -1,4 +1,5 @@
 import { FormattedNumber } from 'components/common/FormattedNumber'
+import Loading from 'components/common/Loading'
 
 export const FREEZE_PERIOD_META = {
   accessorKey: 'freeze_period',
@@ -12,7 +13,9 @@ interface Props {
 }
 
 export default function FreezePeriod(props: Props) {
-  const { value } = props
+  const { value, isLoading } = props
+
+  if (isLoading) return <Loading />
 
   return (
     <FormattedNumber

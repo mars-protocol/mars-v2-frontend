@@ -7,42 +7,43 @@ import Apy, { APY_META } from 'components/vaults/common/table/columns/Apy'
 import FreezePeriod, {
   FREEZE_PERIOD_META,
 } from 'components/vaults/common/table/columns/FreezePeriod'
-import Deposit, { DEPOSIT_META } from 'components/vaults/common/table/columns/Deposit'
+import DepositOfficial, {
+  DEPOSIT_META,
+} from 'components/vaults/official/table/column/DepositOfficial'
 
 interface Props {
   isLoading: boolean
 }
 
-export default function useAvailableVaultsColumns(props: Props) {
+export default function useOfficialVaultsColumns(props: Props) {
+  const { isLoading } = props
   return useMemo<ColumnDef<Vaults>[]>(
     () => [
       {
         ...NAME_META,
-        cell: ({ row }) => <Name value={row.original as Vaults} />,
+        cell: ({ row }) => <Name value={row.original as Vaults} isLoading={isLoading} />,
       },
       {
         ...TVL_META,
-        cell: ({ row }) => <Tvl value={row.original.tvl} isLoading={props.isLoading} />,
+        cell: ({ row }) => <Tvl value={row.original.tvl} isLoading={isLoading} />,
       },
       {
         ...APY_META,
-        cell: ({ row }) => <Apy value={row.original.apy} isLoading={props.isLoading} />,
+        cell: ({ row }) => <Apy value={row.original.apy} isLoading={isLoading} />,
       },
       {
         ...FEE_META,
-        cell: ({ row }) => <Fee value={row.original.fee} isLoading={props.isLoading} />,
+        cell: ({ row }) => <Fee value={row.original.fee} isLoading={isLoading} />,
       },
       {
         ...FREEZE_PERIOD_META,
-        cell: ({ row }) => (
-          <FreezePeriod value={row.original.freezePeriod} isLoading={props.isLoading} />
-        ),
+        cell: ({ row }) => <FreezePeriod value={row.original.freezePeriod} isLoading={isLoading} />,
       },
       {
         ...DEPOSIT_META,
-        cell: ({ row }) => <Deposit value={row.original.actions} isLoading={props.isLoading} />,
+        cell: ({ row }) => <DepositOfficial value={row.original.actions} isLoading={isLoading} />,
       },
     ],
-    [props.isLoading],
+    [isLoading],
   )
 }
