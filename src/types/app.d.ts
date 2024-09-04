@@ -427,7 +427,7 @@ type Page =
   | 'portfolio/{accountId}'
   | 'hls-farm'
   | 'hls-staking'
-  | 'vaults-official'
+  | 'vaults'
   | 'vaults-community'
   | 'governance'
   | 'execute'
@@ -1300,6 +1300,8 @@ interface AlertDialogConfig {
   negativeButton?: AlertDialogButton
   positiveButton?: AlertDialogButton
   title?: string
+  modalClassName?: string
+  titleClassName?: string
 }
 
 interface BorrowModal {

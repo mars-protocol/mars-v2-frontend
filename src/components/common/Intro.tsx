@@ -30,12 +30,14 @@ function IntroBackground(props: { bg: Props['bg'] }) {
         </div>
       )
     case 'lend':
+    case 'vaults':
       return (
         <div className='absolute top-0 right-0 block w-180 opacity-5'>
           <GridTire />
         </div>
       )
     case 'farm':
+    case 'vaults-community':
       return (
         <div className='absolute top-0 right-0 block w-140 opacity-5'>
           <GridLandscape />
@@ -51,18 +53,6 @@ function IntroBackground(props: { bg: Props['bg'] }) {
       return (
         <div className='absolute top-0 right-0 block w-110 opacity-10'>
           <GridPlanet />
-        </div>
-      )
-    case 'vaults-official':
-      return (
-        <div className='absolute top-0 right-0 block w-140 opacity-5'>
-          <GridTire />
-        </div>
-      )
-    case 'vaults-community':
-      return (
-        <div className='absolute top-0 right-0 block w-140 opacity-5'>
-          <GridLandscape />
         </div>
       )
     case 'perps-vault':

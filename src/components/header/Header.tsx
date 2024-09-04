@@ -53,7 +53,7 @@ const menuTree = (chainConfig: ChainConfig): MenuTreeEntry[] => [
     label: 'Earn',
   },
   { pages: ['borrow'], label: 'Borrow' },
-  { pages: ['vaults-official', 'vaults-community'] as Page[], label: 'Vaults' },
+  { pages: ['vaults', 'vaults-community'] as Page[], label: 'Vaults' },
   ...(chainConfig.hls
     ? [{ pages: ['hls-staking', 'hls-farm'] as Page[], label: 'High Leverage' }]
     : []),

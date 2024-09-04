@@ -22,7 +22,7 @@ interface Props {
 }
 
 function AlertDialog(props: Props) {
-  const { title, icon, content, negativeButton, positiveButton, checkbox, header } = props.config
+  const { title, icon, content, negativeButton, positiveButton, checkbox, header, titleClassName, modalClassName } = props.config
 
   const [toggle, handleToggle] = useToggle()
 
@@ -50,12 +50,14 @@ function AlertDialog(props: Props) {
                 {icon}
               </div>
             )}
-            <Text size='2xl'>{title ?? ''}</Text>
+            <Text size='2xl' className={titleClassName}>
+            {title ?? ''}
+          </Text>
           </div>
         )
       }
-      className='md:h-auto h-screen-full'
-      modalClassName='max-w-screen-full md:max-w-modal-md h-screen-full flex items-center justify-center '
+      className={classNames('md:h-auto h-screen-full', modalClassName)}
+      modalClassName='max-w-screen-full md:max-w-modal-md h-screen-full flex items-center justify-center'
       headerClassName='p-4 md:p-6'
       contentClassName='md:px-6 md:pb-6 p-4'
       hideCloseBtn
