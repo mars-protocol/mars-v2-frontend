@@ -61,18 +61,6 @@ function IntroBackground(props: { bg: Props['bg'] }) {
           <PerpsVault />
         </div>
       )
-    case 'vaults-official':
-      return (
-        <div className='absolute top-0 right-0 block w-140 opacity-5'>
-          <GridTire />
-        </div>
-      )
-    case 'vaults-community':
-      return (
-        <div className='absolute top-0 right-0 block w-140 opacity-5'>
-          <GridLandscape />
-        </div>
-      )
     default:
       return (
         <div className='absolute bottom-0 right-0 block w-3/4 md:w-120 opacity-5'>
