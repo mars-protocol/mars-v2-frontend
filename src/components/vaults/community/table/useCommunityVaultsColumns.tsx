@@ -7,9 +7,7 @@ import Apy, { APY_META } from 'components/vaults/common/table/columns/Apy'
 import FreezePeriod, {
   FREEZE_PERIOD_META,
 } from 'components/vaults/common/table/columns/FreezePeriod'
-import DepositCommunity, {
-  DEPOSIT_META,
-} from 'components/vaults/community/table/column/DepositCommunity'
+import Details, { DETAILS_META } from 'components/vaults/community/table/column/Details'
 
 interface Props {
   isLoading: boolean
@@ -41,8 +39,8 @@ export default function useCommunityVaultsColumns(props: Props) {
         cell: ({ row }) => <FreezePeriod value={row.original.freezePeriod} isLoading={isLoading} />,
       },
       {
-        ...DEPOSIT_META,
-        cell: () => <DepositCommunity isLoading={isLoading} />,
+        ...DETAILS_META,
+        cell: () => <Details isLoading={isLoading} />,
       },
     ],
     [isLoading],

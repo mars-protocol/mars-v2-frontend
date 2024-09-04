@@ -7,8 +7,8 @@ import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import { useCallback } from 'react'
 
-export const DEPOSIT_META = {
-  accessorKey: 'deposit',
+export const DETAILS_META = {
+  accessorKey: 'details',
   header: '',
   enableSorting: false,
   meta: { className: 'w-40' },
@@ -18,7 +18,7 @@ interface Props {
   isLoading: boolean
 }
 
-export default function DepositCommunity(props: Props) {
+export default function Details(props: Props) {
   const { isLoading } = props
 
   const [showVaultWarning, setShowVaultWarning] = useLocalStorage<boolean>(
@@ -64,7 +64,7 @@ export default function DepositCommunity(props: Props) {
       <ActionButton
         onClick={handleOnClick}
         color='tertiary'
-        text='Deposit'
+        text='Details'
         leftIcon={<Plus />}
         short
       />
