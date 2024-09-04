@@ -4,7 +4,7 @@ import Loading from 'components/common/Loading'
 export const FREEZE_PERIOD_META = {
   accessorKey: 'freeze_period',
   header: 'Freeze Period',
-  meta: { className: 'min-w-20' },
+  meta: { className: 'w-30' },
 }
 
 interface Props {

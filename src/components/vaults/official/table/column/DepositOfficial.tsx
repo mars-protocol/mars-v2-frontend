@@ -6,18 +6,17 @@ export const DEPOSIT_META = {
   accessorKey: 'deposit',
   header: '',
   enableSorting: false,
-  meta: { className: 'min-w-20' },
+  meta: { className: 'w-40' },
 }
 
 interface Props {
   isLoading: boolean
-  value: string
 }
 
 export default function DepositOfficial(props: Props) {
-  const { value } = props
+  const { isLoading } = props
 
-  if (props.isLoading) return <Loading />
+  if (isLoading) return <Loading />
 
   return (
     <div className='flex items-center justify-end'>

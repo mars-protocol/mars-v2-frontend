@@ -1,7 +1,7 @@
 import Button from 'components/common/Button'
-import { PlusSquared } from 'components/common/Icons'
 import Intro from 'components/common/Intro'
 import { DocURL } from 'types/enums'
+import { PlusSquared } from 'components/common/Icons'
 
 export default function VaultsOfficialIntro() {
   return (
@@ -20,6 +20,7 @@ export default function VaultsOfficialIntro() {
         leftIcon={<PlusSquared />}
         onClick={(e) => {
           e.preventDefault()
+          // TODO: add docs URL
           window.open(DocURL.DOCS_URL, '_blank')
         }}
         color='secondary'

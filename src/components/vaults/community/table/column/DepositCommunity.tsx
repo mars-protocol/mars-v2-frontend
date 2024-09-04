@@ -11,7 +11,7 @@ export const DEPOSIT_META = {
   accessorKey: 'deposit',
   header: '',
   enableSorting: false,
-  meta: { className: 'min-w-20' },
+  meta: { className: 'w-40' },
 }
 
 interface Props {
