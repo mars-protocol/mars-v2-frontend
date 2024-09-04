@@ -13,7 +13,7 @@ interface Props {
   isLoading: boolean
 }
 
-export default function DepositOfficial(props: Props) {
+export default function Deposit(props: Props) {
   const { isLoading } = props
 
   if (isLoading) return <Loading />
