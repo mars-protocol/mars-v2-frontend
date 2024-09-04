@@ -32,4 +32,5 @@ export enum LocalStorageKeys {
   SHOW_PERPS_VAULT_BANNER = 'showPerpsVaultBanner',
   FUNDING_RATE_INTERVAL = 'fundingRateInterval',
   VAULT_COMMUNITY_WARNING = 'vaultCommunityWarning',
+  VAULT_COMMUNITY_INFORMATION = 'vaultCommunityInformation',
 }
