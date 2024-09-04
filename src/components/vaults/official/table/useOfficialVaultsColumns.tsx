@@ -7,9 +7,7 @@ import Apy, { APY_META } from 'components/vaults/common/table/columns/Apy'
 import FreezePeriod, {
   FREEZE_PERIOD_META,
 } from 'components/vaults/common/table/columns/FreezePeriod'
-import DepositOfficial, {
-  DEPOSIT_META,
-} from 'components/vaults/official/table/column/DepositOfficial'
+import Deposit, { DEPOSIT_META } from 'components/vaults/official/table/column/Deposit'
 
 interface Props {
   isLoading: boolean
@@ -42,7 +40,7 @@ export default function useOfficialVaultsColumns(props: Props) {
       },
       {
         ...DEPOSIT_META,
-        cell: () => <DepositOfficial isLoading={isLoading} />,
+        cell: () => <Deposit isLoading={isLoading} />,
       },
     ],
     [isLoading],
