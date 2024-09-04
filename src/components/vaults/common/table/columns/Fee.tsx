@@ -15,7 +15,7 @@ interface Props {
 export default function Fee(props: Props) {
   const { value, isLoading } = props
 
-  if (props.isLoading) return <Loading />
+  if (isLoading) return <Loading />
 
   return (
     <FormattedNumber

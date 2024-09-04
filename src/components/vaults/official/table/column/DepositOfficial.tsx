@@ -1,4 +1,3 @@
-import Button from 'components/common/Button'
 import ActionButton from 'components/common/Button/ActionButton'
 import { Plus } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
@@ -15,7 +14,7 @@ interface Props {
   value: string
 }
 
-export default function Deposit(props: Props) {
+export default function DepositOfficial(props: Props) {
   const { value } = props
 
   if (props.isLoading) return <Loading />
