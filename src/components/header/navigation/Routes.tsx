@@ -37,7 +37,7 @@ export default function Routes() {
         <Route path='/v1' element={<V1Page />} />
         {chainConfig.hls && <Route path='/hls-staking' element={<HLSStakingPage />} />}
         {chainConfig.hls && <Route path='/hls-farm' element={<HLSFarmPage />} />}
-        <Route path='/vaults-official' element={<VaultsOfficialPage />} />
+        <Route path='/vaults' element={<VaultsOfficialPage />} />
         <Route path='/vaults-community' element={<VaultsCommunityPage />} />
         <Route path='/' element={<TradePage />} />
         <Route path='/wallets/:address'>
@@ -51,7 +51,7 @@ export default function Routes() {
           <Route path='portfolio' element={<PortfolioPage />} />
           {chainConfig.hls && <Route path='hls-staking' element={<HLSStakingPage />} />}
           {chainConfig.hls && <Route path='hls-farm' element={<HLSFarmPage />} />}
-          <Route path='vaults-official' element={<VaultsOfficialPage />} />
+          <Route path='vaults' element={<VaultsOfficialPage />} />
           <Route path='vaults-community' element={<VaultsCommunityPage />} />
           <Route path='v1' element={<V1Page />} />
           <Route path='portfolio/:accountId'>

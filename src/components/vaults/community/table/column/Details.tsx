@@ -1,8 +1,9 @@
-import ActionButton from 'components/common/Button/ActionButton'
-import { ArrowRight, CrossCircled, Flag, Plus, TrashBin } from 'components/common/Icons'
+import Button from 'components/common/Button'
+import { ArrowRight } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
 import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import { INFO_ITEMS } from 'constants/warningDialog'
 import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import { useCallback } from 'react'
@@ -22,9 +23,10 @@ export default function Details(props: Props) {
   const { isLoading } = props
 
   const [showVaultWarning, setShowVaultWarning] = useLocalStorage<boolean>(
-    LocalStorageKeys.VAULT_COMMUNITY_WARNING,
+    LocalStorageKeys.VAULT_DEPOSIT_WARNING,
     true,
   )
+
   const { open: showAlertDialog, close } = useAlertDialog()
 
   const handleOnClick = useCallback(() => {
@@ -37,7 +39,6 @@ export default function Details(props: Props) {
     showAlertDialog({
       title: 'Proceed with caution',
       content: <AlertDialogItems items={INFO_ITEMS} />,
-
       positiveButton: {
         text: 'Continue',
         icon: <ArrowRight />,
@@ -54,6 +55,8 @@ export default function Details(props: Props) {
         text: "Don't show again",
         onClick: (isChecked: boolean) => setShowVaultWarning(!isChecked),
       },
+      modalClassName: '!bg-info/20',
+      titleClassName: 'text-info',
     })
   }, [close, showAlertDialog, showVaultWarning, setShowVaultWarning])
 
@@ -61,34 +64,7 @@ export default function Details(props: Props) {
 
   return (
     <div className='flex items-center justify-end'>
-      <ActionButton
-        onClick={handleOnClick}
-        color='tertiary'
-        text='Details'
-        leftIcon={<Plus />}
-        short
-      />
+      <Button onClick={handleOnClick} color='tertiary' text='Details' />
     </div>
   )
 }
-
-const INFO_ITEMS = [
-  {
-    icon: <CrossCircled />,
-    title: 'Community vaults are not moderated ',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum arcu enim, cursus vel nulla quis, euismod molestie est.',
-  },
-  {
-    icon: <Flag />,
-    title: 'Your funds may be at risk',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum arcu enim, cursus vel nulla quis, euismod molestie est.',
-  },
-  {
-    icon: <TrashBin />,
-    title: 'Lorem ipsum dolor sit amet',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum arcu enim, cursus vel nulla quis, euismod molestie est.',
-  },
-]
