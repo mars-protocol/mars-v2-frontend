@@ -1,5 +1,5 @@
 import ActionButton from 'components/common/Button/ActionButton'
-import { ArrowRight, Circle, Plus, TrashBin, Wallet } from 'components/common/Icons'
+import { ArrowRight, CrossCircled, Flag, Plus, TrashBin } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
 import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
@@ -74,13 +74,13 @@ export default function DepositCommunity(props: Props) {
 
 const INFO_ITEMS = [
   {
-    icon: <Circle />,
+    icon: <CrossCircled />,
     title: 'Community vaults are not moderated ',
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum arcu enim, cursus vel nulla quis, euismod molestie est.',
   },
   {
-    icon: <Wallet />,
+    icon: <Flag />,
     title: 'Your funds may be at risk',
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum arcu enim, cursus vel nulla quis, euismod molestie est.',

@@ -24,4 +24,5 @@ export enum LocalStorageKeys {
   REST_ENDPOINT = 'restEndpoint',
   REWARDS_CENTER_TYPE = 'rewardsCenterType',
   VAULT_COMMUNITY_WARNING = 'vaultCommunityWarning',
+  VAULT_COMMUNITY_INFORMATION = 'vaultCommunityInformation',
 }
