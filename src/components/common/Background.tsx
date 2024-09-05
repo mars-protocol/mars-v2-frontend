@@ -17,11 +17,14 @@ export default function Background() {
   )
   const { pathname } = useLocation()
   const page = getPage(pathname, chainConfig)
-  const [isHls, isV1] = useMemo(() => [page.split('-')[0] === 'hls', page === 'v1'], [page])
+  const [isHls, isV1, isVaults] = useMemo(
+    () => [page.split('-')[0] === 'hls', page === 'v1', page.split('-')[0] === 'vaults'],
+    [page],
+  )
 
   useEffect(() => {
-    useStore.setState({ isHls, isV1 })
-  }, [isHls, isV1])
+    useStore.setState({ isHls, isV1, isVaults: isVaults })
+  }, [isHls, isV1, isVaults])
 
   const [primaryOrbClassName, secondaryOrbClassName, tertiaryOrbClassName, bodyClassName] =
     useMemo(() => {

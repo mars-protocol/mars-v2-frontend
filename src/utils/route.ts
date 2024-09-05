@@ -41,6 +41,8 @@ export function getPage(pathname: string, chainConfig: ChainConfig): Page {
     'hls-farm',
     'hls-staking',
     'execute',
+    'vaults',
+    'vaults-community',
     'v1',
   ]
   const segments = pathname.split('/')
