@@ -1233,6 +1233,7 @@ interface CommonSlice {
   useAutoRepay: boolean
   isOracleStale: boolean
   isHls: boolean
+  isVaults: boolean
   isV1: boolean
   assets: Asset[]
   perpsBaseDenom?: string
