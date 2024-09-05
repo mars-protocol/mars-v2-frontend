@@ -46,6 +46,7 @@ interface AccountDetailsControllerProps {
 export default function AccountDetailsController(props: AccountDetailsControllerProps) {
   const address = useStore((s) => s.address)
   const isHLS = useStore((s) => s.isHLS)
+  const isVaults = useStore((s) => s.isVaults)
   const isV1 = useStore((s) => s.isV1)
   const { data: _, isLoading } = useAccounts('default', address)
   const { data: accountIds } = useAccountIds(address, false, true)
@@ -54,7 +55,8 @@ export default function AccountDetailsController(props: AccountDetailsController
   const account = useCurrentAccount()
   const focusComponent = useStore((s) => s.focusComponent)
   const isOwnAccount = accountId && accountIds?.includes(accountId)
-  const hideAccountDetails = !address || focusComponent || !isOwnAccount || isHLS || isV1
+  const hideAccountDetails =
+    !address || focusComponent || !isOwnAccount || isHLS || isVaults || isV1
   const isLoadingAccountDetails = (isLoading && accountId && !focusComponent) || !account
 
   if (hideAccountDetails) return null

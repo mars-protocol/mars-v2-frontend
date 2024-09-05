@@ -1137,6 +1137,7 @@ interface CommonSlice {
   useAutoRepay: boolean
   isOracleStale: boolean
   isHLS: boolean
+  isVaults: boolean
   isV1: boolean
   assets: Asset[]
 }

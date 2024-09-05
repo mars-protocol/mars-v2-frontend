@@ -20,6 +20,7 @@ export default function createCommonSlice(set: SetState<CommonSlice>, get: GetSt
     useAutoRepay: true,
     isOracleStale: false,
     isHLS: false,
+    isVaults: false,
     isV1: false,
     assets: [],
   }
