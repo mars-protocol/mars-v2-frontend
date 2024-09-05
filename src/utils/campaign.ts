@@ -1,5 +1,5 @@
-import { byDenom } from './array'
-import { formatValue, getCoinValue } from './formatters'
+import { byDenom } from 'utils/array'
+import { formatValue, getCoinValue } from 'utils/formatters'
 
 export function getDailyAccountPoints(
   account: Account,
