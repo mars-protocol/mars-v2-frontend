@@ -10,10 +10,12 @@ import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSli
 import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useDepositActions from 'hooks/hls/useDepositActions'
 import useMarket from 'hooks/markets/useMarket'
+import useRouteInfo from 'hooks/trade/useRouteInfo'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -39,7 +41,7 @@ export default function Deposit(props: Props) {
   const { addedDeposits, addedDebts, updatedAccount, addedTrades, simulateHlsStakingDeposit } =
     useUpdatedAccount(props.account)
   const { computeMaxBorrowAmount } = useHealthComputer(updatedAccount)
-
+  const chainConfig = useChainConfig()
   const assets = useDepositEnabledAssets()
   const [keepLeverage, toggleKeepLeverage] = useToggle(true)
   const collateralAssetAmountInWallet = BN(
@@ -76,6 +78,7 @@ export default function Deposit(props: Props) {
     [addedDebts, props.borrowMarket.asset.denom],
   )
 
+  const { data: routeInfo } = useRouteInfo(borrowCoin.denom, depositCoin.denom, borrowCoin.amount)
   const warningMessages = useMemo(() => {
     const messages: string[] = []
     const capLeft = props.account.strategy.depositCap.max.minus(
@@ -130,7 +133,7 @@ export default function Deposit(props: Props) {
     props.borrowMarket.liquidity,
   ])
 
-  const actions = useDepositActions({ depositCoin, borrowCoin })
+  const actions = useDepositActions({ depositCoin, borrowCoin, chainConfig, routeInfo })
 
   const currentDebt: BigNumber = useMemo(
     () => props.account.debts.find(byDenom(props.borrowMarket.asset.denom))?.amount || BN_ZERO,

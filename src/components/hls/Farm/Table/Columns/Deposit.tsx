@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 
-import Button from 'components/common/Button'
+import ActionButton from 'components/common/Button/ActionButton'
 import { ArrowRight, Circle, TrashBin, Wallet } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
 import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
@@ -64,7 +64,7 @@ export default function Deposit(props: Props) {
 
   return (
     <div className='flex items-center justify-end'>
-      <Button onClick={handleOnClick} color='tertiary' text='Deposit' />
+      <ActionButton onClick={handleOnClick} color='tertiary' text='Deposit' short />
     </div>
   )
 }

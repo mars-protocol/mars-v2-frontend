@@ -54,7 +54,11 @@ export default function useHLSClosePositionActions(props: Props): {
     )
   }, [routeInfoForCollateralAmount, collateralAmount, slippage])
 
-  const { data: routeInfo } = useRouteInfo(collateralDenom, borrowDenom, swapInAmount)
+  const { data: routeInfo } = useRouteInfo(
+    collateralDenom,
+    borrowDenom,
+    swapInAmount.integerValue(),
+  )
 
   return useMemo<{
     actions: Action[] | null
