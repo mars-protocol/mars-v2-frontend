@@ -31,7 +31,10 @@ export default function Withdraw(props: Props) {
     [collateralAsset.denom, simulateWithdraw],
   )
 
-  const maxWithdrawAmount = useMemo(() => extraWithdrawAmount.plus(amount), [])
+  const maxWithdrawAmount = useMemo(
+    () => extraWithdrawAmount.plus(amount),
+    [amount, extraWithdrawAmount],
+  )
 
   const onClick = useCallback(() => {
     useStore.setState({ hlsManageModal: null })

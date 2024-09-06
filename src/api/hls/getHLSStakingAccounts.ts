@@ -5,12 +5,11 @@ import { calculateAccountLeverage, getAccountPositionValues, isAccountEmpty } fr
 export default async function getHLSStakingAccounts(
   chainConfig: ChainConfig,
   assets: Asset[],
-  apys: AssetCampaignApy[],
   address?: string,
 ): Promise<HLSAccountWithStrategy[]> {
   const accounts = await getAccounts('high_levered_strategy', chainConfig, assets, address)
   const activeAccounts = accounts.filter((account) => !isAccountEmpty(account))
-  const hlsStrategies = await getHLSStakingAssets(chainConfig, assets, apys)
+  const hlsStrategies = await getHLSStakingAssets(chainConfig, assets)
   const hlsAccountsWithStrategy: HLSAccountWithStrategy[] = []
 
   activeAccounts.forEach((account) => {

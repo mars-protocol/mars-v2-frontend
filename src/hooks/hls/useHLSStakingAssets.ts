@@ -11,7 +11,7 @@ export default function useHLSStakingAssets() {
   const { data: apys } = useCampaignApys()
   return useSWR(
     `chains/${chainConfig.id}/assets/hls/staking`,
-    () => getHLSStakingAssets(chainConfig, assets, apys),
+    () => getHLSStakingAssets(chainConfig, assets),
     {
       fallbackData: [],
       revalidateOnFocus: false,
