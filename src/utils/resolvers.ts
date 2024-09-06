@@ -18,8 +18,8 @@ export function resolveMarketResponse(
     return {
       asset,
       apy: {
-        borrow: convertAprToApy(Number(marketResponse.borrow_rate), 365) * 100,
-        deposit: convertAprToApy(Number(marketResponse.liquidity_rate), 365) * 100,
+        borrow: convertAprToApy(Number(marketResponse.borrow_rate) * 100, 365),
+        deposit: convertAprToApy(Number(marketResponse.liquidity_rate) * 100, 365),
       },
       debt: marketResponse.debt ?? BN_ZERO,
       deposits: marketResponse.deposits ?? BN_ZERO,
