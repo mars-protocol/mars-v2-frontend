@@ -4,12 +4,7 @@ import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 import { resolveHLSStrategies } from 'utils/resolvers'
 
-export default async function getHLSStakingAssets(
-  chainConfig: ChainConfig,
-  assets: Asset[],
-  apys: AssetCampaignApy[],
-) {
-  const stakingAssetDenoms = assets.filter((asset) => asset.isStaking).map((asset) => asset.denom)
+export default async function getHLSStakingAssets(chainConfig: ChainConfig, assets: Asset[]) {
   const assetParams = await getAssetParams(chainConfig)
   const HLSAssets = assetParams
     .filter((asset) => asset.credit_manager.hls)
@@ -19,20 +14,21 @@ export default async function getHLSStakingAssets(
       const correlations = asset.credit_manager.hls?.correlations.filter((correlation) => {
         return 'coin' in correlation
       })
-
+      if (underlyingAsset.isBorrowEnabled) return
       const correlatedAssets = [] as Asset[]
       correlations?.forEach((correlation) => {
         const asset = assets.find(byDenom((correlation as { coin: { denom: string } }).coin.denom))
         if (asset) correlatedAssets.push(asset)
       })
 
-      const filteredAssets = correlatedAssets?.filter(
-        (asset) => !asset?.isBorrowEnabled && !asset?.isPoolToken && asset.isStaking,
-      )
+      const filteredAssets = correlatedAssets?.filter((asset) => !asset?.isPoolToken)
 
       const correlatedDenoms = filteredAssets?.map((asset) => asset?.denom)
+      const correlatedAssetParams = assetParams.filter((asset) =>
+        correlatedDenoms?.includes(asset.denom),
+      )
 
-      return stakingAssetDenoms.some((denom) => correlatedDenoms?.includes(denom))
+      return correlatedAssetParams
     })
   const strategies = resolveHLSStrategies('coin', HLSAssets)
   const client = await getParamsQueryClient(chainConfig)
