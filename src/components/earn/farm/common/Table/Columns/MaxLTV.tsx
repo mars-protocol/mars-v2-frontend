@@ -3,7 +3,7 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 export const LTV_MAX_META = {
   accessorKey: 'ltv.max',
   header: 'Max LTV',
-  meta: { className: 'min-w-28' },
+  meta: { className: 'w-24' },
 }
 
 interface Props {
