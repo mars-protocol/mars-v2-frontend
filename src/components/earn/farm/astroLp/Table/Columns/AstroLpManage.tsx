@@ -4,7 +4,12 @@ import DropDownButton from 'components/common/Button/DropDownButton'
 import { AccountArrowDown, Plus } from 'components/common/Icons'
 import useStore from 'store'
 
-export const MANAGE_META = { accessorKey: 'details', enableSorting: false, header: '' }
+export const MANAGE_META = {
+  accessorKey: 'details',
+  enableSorting: false,
+  header: '',
+  meta: { className: 'w-30' },
+}
 
 interface Props {
   astroLp: DepositedAstroLp
