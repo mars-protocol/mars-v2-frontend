@@ -43,6 +43,7 @@ export function getPage(pathname: string, chainConfig: ChainConfig): Page {
     'execute',
     'vaults',
     'vaults-community',
+    'vaults-community/create',
     'v1',
   ]
   const segments = pathname.split('/')

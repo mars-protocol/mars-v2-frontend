@@ -23,7 +23,7 @@ export default function Background() {
   )
 
   useEffect(() => {
-    useStore.setState({ isHls, isV1, isVaults: isVaults })
+    useStore.setState({ isHls, isV1, isVaults })
   }, [isHls, isV1, isVaults])
 
   const [primaryOrbClassName, secondaryOrbClassName, tertiaryOrbClassName, bodyClassName] =
@@ -39,9 +39,16 @@ export default function Background() {
           'bg-body md:bg-v1 md:blur-[2px]',
         ]
       }
-
+      if (isVaults) {
+        return [
+          'bg-orb-primary-vaults',
+          'bg-orb-secondary-vaults',
+          'bg-orb-tertiary-vaults',
+          'bg-body',
+        ]
+      }
       return ['bg-orb-primary', 'bg-orb-secondary', 'bg-orb-tertiary', 'bg-body']
-    }, [isHls, isV1])
+    }, [isHls, isV1, isVaults])
 
   return (
     <div
@@ -76,7 +83,7 @@ export default function Background() {
           'bottom-[-20vw] right-[-10vw]',
           'blur-orb-secondary',
           secondaryOrbClassName,
-          'translate-x-0 translate-y-0  rounded-full opacity-30',
+          'translate-x-0 translate-y-0 rounded-full opacity-30',
           !reduceMotion && 'transition-bg duration-1000 delay-300',
         )}
       />
