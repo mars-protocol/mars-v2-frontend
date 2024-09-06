@@ -15,6 +15,7 @@ import TradePage from 'pages/TradePage'
 import V1Page from 'pages/V1Page'
 import VaultsOfficialPage from 'pages/VaultsOfficialPage'
 import VaultsCommunityPage from 'pages/VaultsCommunityPage'
+import CreateVault from 'components/vaults/community/CreateVault'
 import PerpsVaultPage from 'pages/PerpsVaultPage'
 
 export default function Routes() {
@@ -40,7 +41,9 @@ export default function Routes() {
         {chainConfig.hls && <Route path='/hls-staking' element={<HlsStakingPage />} />}
         {chainConfig.hls && <Route path='/hls-farm' element={<HlsFarmPage />} />}
         <Route path='/vaults' element={<VaultsOfficialPage />} />
-        <Route path='/vaults-community' element={<VaultsCommunityPage />} />
+        <Route path='/vaults-community' element={<VaultsCommunityPage />}>
+          <Route path='create' element={<CreateVault />} />
+        </Route>
         <Route path='/' element={<TradePage />} />
         <Route path='/wallets/:address'>
           <Route path='execute' element={<ExecuteMessagePage />} />
@@ -55,7 +58,9 @@ export default function Routes() {
           {chainConfig.hls && <Route path='hls-staking' element={<HlsStakingPage />} />}
           {chainConfig.hls && <Route path='hls-farm' element={<HlsFarmPage />} />}
           <Route path='vaults' element={<VaultsOfficialPage />} />
-          <Route path='vaults-community' element={<VaultsCommunityPage />} />
+          <Route path='vaults-community' element={<VaultsCommunityPage />}>
+            <Route path='create' element={<CreateVault />} />
+          </Route>
           <Route path='v1' element={<V1Page />} />
           <Route path='portfolio/:accountId'>
             <Route path='' element={<PortfolioAccountPage />} />

@@ -8,6 +8,11 @@ import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems
 import { DocURL } from 'types/enums'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { useCallback } from 'react'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import useStore from 'store'
+import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
+import CreateVault from './CreateVault'
+import { getPage, getRoute } from 'utils/route'
 
 export default function VaultsCommunityIntro() {
   const [showVaultInformation, setShowVaultInformation] = useLocalStorage<boolean>(
@@ -16,10 +21,27 @@ export default function VaultsCommunityIntro() {
   )
   const { open: showAlertDialog, close } = useAlertDialog()
 
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const [searchParams] = useSearchParams()
+  const address = useStore((s) => s.address)
+
   const handleOnClick = useCallback(() => {
     if (!showVaultInformation) {
       // TODO
       // opencreatevaultmodal
+      navigate('/vaults-community/create')
+      // navigate(getRoute(getPage(`${pathname}/create`), searchParams, address))
+
+      useStore.setState({
+        focusComponent: {
+          component: <CreateVault />,
+          onClose: () => {
+            // navigate('/vaults-community')
+            navigate(getRoute(getPage(pathname), searchParams, address))
+          },
+        },
+      })
       return
     }
 
@@ -30,7 +52,9 @@ export default function VaultsCommunityIntro() {
       positiveButton: {
         text: 'Continue',
         icon: <ArrowRight />,
-        onClick: () => {},
+        onClick: () => {
+          navigate('/vaults-community/create')
+        },
       },
       negativeButton: {
         text: 'Cancel',
@@ -57,12 +81,7 @@ export default function VaultsCommunityIntro() {
         </>
       }
     >
-      <ActionButton
-        text='Create Vault'
-        color='primary'
-        leftIcon={<Plus />}
-        onClick={handleOnClick}
-      />
+      <Button text='Create Vault' color='primary' leftIcon={<Plus />} onClick={handleOnClick} />
       <Button
         text='Learn more'
         leftIcon={<PlusSquared />}
