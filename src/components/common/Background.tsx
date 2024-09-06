@@ -17,14 +17,19 @@ export default function Background() {
   )
   const { pathname } = useLocation()
   const page = getPage(pathname)
-  const [isHLS, isV1, isVaults] = useMemo(
-    () => [page.split('-')[0] === 'hls', page === 'v1', page.split('-')[0] === 'vaults'],
-    [page],
+  const [isHLS, isV1, isVaults, isVaultsCreate] = useMemo(
+    () => [
+      page.split('-')[0] === 'hls',
+      page === 'v1',
+      page.split('-')[0] === 'vaults',
+      pathname === '/vaults-community/create',
+    ],
+    [page, pathname],
   )
 
   useEffect(() => {
-    useStore.setState({ isHLS: isHLS, isV1: isV1, isVaults: isVaults })
-  }, [isHLS, isV1, isVaults])
+    useStore.setState({ isHLS, isV1, isVaults, isVaultsCreate })
+  }, [isHLS, isV1, isVaults, isVaultsCreate])
 
   const [primaryOrbClassName, secondaryOrbClassName, tertiaryOrbClassName, bodyClassName] =
     useMemo(() => {
@@ -39,9 +44,12 @@ export default function Background() {
           'bg-body md:bg-v1 md:blur-[2px]',
         ]
       }
+      if (isVaultsCreate) {
+        return ['bg-[#6B69DB]', 'bg-[#6B69DB]', 'bg-orb-tertiary-hls', 'bg-body-[#6B69DB]']
+      }
 
       return ['bg-orb-primary', 'bg-orb-secondary', 'bg-orb-tertiary', 'bg-body']
-    }, [isHLS, isV1])
+    }, [isHLS, isV1, isVaultsCreate])
 
   return (
     <div

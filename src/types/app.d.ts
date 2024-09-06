@@ -393,6 +393,7 @@ type Page =
   | 'hls-staking'
   | 'vaults'
   | 'vaults-community'
+  | 'vaults-community/create'
   | 'governance'
   | 'execute'
   | 'v1'
@@ -1138,6 +1139,7 @@ interface CommonSlice {
   isOracleStale: boolean
   isHLS: boolean
   isVaults: boolean
+  isVaultsCreate: boolean
   isV1: boolean
   assets: Asset[]
 }
