@@ -6,11 +6,13 @@ import Text from 'components/common/Text'
 interface Props {
   onChange: (value: boolean) => void
   value: boolean
+  name: string
   className?: string
 }
 
 export default function HLSSwitch(props: Props) {
-  const { onChange, value, className } = props
+  const { onChange, value, name, className } = props
+
   return (
     <div className={classNames('mb-6 flex w-full items-start justify-between', className)}>
       <div className='flex flex-wrap max-w-full w-full'>
@@ -27,14 +29,14 @@ export default function HLSSwitch(props: Props) {
               color='quaternary'
               size='xs'
               //   TODO: add link and update styling for the link
-              className='hover:underline text-mars'
+              className='hover:underline !text-mars'
               text='Learn more...'
             />
           </span>
         </Text>
       </div>
       <div className='flex flex-wrap justify-end'>
-        <Switch name={'HLSVault'} checked={value} onChange={onChange} />
+        <Switch name={name} checked={value} onChange={onChange} />
       </div>
     </div>
   )
