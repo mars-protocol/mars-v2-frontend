@@ -9,13 +9,16 @@ interface Props {
   options?: Array<{ label: string; value: any }>
   maxLength?: number
   value: string
-  onChange: (value: string) => void
+  // update TS
+  onChange: (value: any) => void
+  onClick?: (value: string) => void
   placeholder?: string
   label?: string
+  required?: boolean
 }
 
 export default function Input(props: Props) {
-  const { type, suffix, options, maxLength, value, onChange, placeholder, label } = props
+  const { type, suffix, options, maxLength, value, onChange, placeholder, label, required } = props
   const [inputValue, setInputValue] = useState(value)
 
   useEffect(() => {
@@ -32,7 +35,12 @@ export default function Input(props: Props) {
 
   return (
     <div className='mt-2'>
-      {label && <label className='text-xs'>{label}</label>}
+      {label && (
+        <label className='text-xs flex items-center'>
+          {label}
+          {required && <span className='text-error ml-1'>*</span>}
+        </label>
+      )}
 
       {type === 'dropdown' ? (
         <Select
@@ -40,7 +48,11 @@ export default function Input(props: Props) {
             label: option.label,
             value: option.value,
           }))}
-          onChange={() => {}}
+          onChange={(newValue) => {
+            setInputValue(newValue)
+            onChange(newValue)
+          }}
+          defaultValue={value}
           className='relative w-full rounded-sm bg-white/5 border border-white/10 text-white/70'
           containerClassName='mt-2'
         />
