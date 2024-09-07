@@ -45,15 +45,16 @@ export default function CreateVault() {
     setEnableHLSVault(value)
   }, [])
 
-  //   const handleSelectAssetsClick = useCallback(() => {
-  //     useStore.setState({
-  //       walletAssetsModal: {
-  //         isOpen: true,
-  //         selectedDenoms: [],
-  //         isBorrow: false,
-  //       },
-  //     })
-  //   }, [])
+  const handleSelectAssetsClick = useCallback(() => {
+    // e.preventDefault()
+    // useStore.setState({
+    //   walletAssetsModal: {
+    //     isOpen: true,
+    //     selectedDenoms: [],
+    //     isBorrow: false,
+    //   },
+    // })
+  }, [])
 
   return (
     <FullOverlayContent
@@ -79,25 +80,13 @@ export default function CreateVault() {
               <HLSSwitch onChange={handleHLSSwitch} name='enableHLSVault' value={enableHLSVault} />
 
               <Input
-                type='text'
-                value={''}
-                onChange={() => {}}
-                onClick={() => {}}
+                type='button'
+                value={'USDC'}
+                onClick={handleSelectAssetsClick}
                 label='Vault Deposit Asset'
+                suffix={<ArrowRight />}
                 required
               />
-              {/* <Text size='xs' className='text-white/50'>
-                Vault Deposit Asset
-              </Text>
-
-              <Button
-                onClick={() => {}}
-                variant='solid'
-                color='tertiary'
-                size='sm'
-                //   TODO: add link and update styling for the link
-                className='w-full'
-              /> */}
             </div>
 
             <div className='border border-white/5' />
@@ -107,7 +96,6 @@ export default function CreateVault() {
                 type='dropdown'
                 options={options}
                 value={withdrawFreezePeriod}
-                // onChange={() => {}}
                 onChange={handleWithdrawFreezePeriodChange}
                 label='Withdraw Freeze Period'
               />
@@ -163,6 +151,8 @@ export default function CreateVault() {
               rightIcon={<ArrowRight />}
               className='w-full md:w-auto'
               text='Create Vault Account (1/2)'
+              // TODO: disable if form is not filled
+              // disabled={}
             />
           </div>
         </form>

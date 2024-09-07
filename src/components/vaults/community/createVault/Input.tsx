@@ -4,21 +4,33 @@ import Text from 'components/common/Text'
 import React, { useEffect, useState } from 'react'
 
 interface Props {
-  type: 'text' | 'dropdown' | 'textarea'
-  suffix?: string
+  type: 'text' | 'dropdown' | 'textarea' | 'button'
+  value: string
+  suffix?: string | JSX.Element
+  // TODO: update TS
   options?: Array<{ label: string; value: any }>
   maxLength?: number
-  value: string
   // update TS
-  onChange: (value: any) => void
-  onClick?: (value: string) => void
+  onChange?: (value: any) => void
+  onClick?: () => void
   placeholder?: string
   label?: string
   required?: boolean
 }
 
 export default function Input(props: Props) {
-  const { type, suffix, options, maxLength, value, onChange, placeholder, label, required } = props
+  const {
+    type,
+    suffix,
+    options,
+    maxLength,
+    value,
+    onChange = () => {},
+    onClick,
+    placeholder,
+    label,
+    required,
+  } = props
   const [inputValue, setInputValue] = useState(value)
 
   useEffect(() => {
@@ -42,7 +54,17 @@ export default function Input(props: Props) {
         </label>
       )}
 
-      {type === 'dropdown' ? (
+      {type === 'button' ? (
+        // Handle as a button
+        <button
+          onClick={onClick}
+          className='w-full px-4 py-3 mt-2 flex justify-between items-center rounded-sm bg-white/5 border border-white/10 focus:border-white/20 focus:bg-white/10 hover:cursor-pointer'
+        >
+          {/* TODO: asset image */}
+          {value}
+          {suffix && <span className='h-4 w-4'>{suffix}</span>}
+        </button>
+      ) : type === 'dropdown' ? (
         <Select
           options={(options || []).map((option) => ({
             label: option.label,
