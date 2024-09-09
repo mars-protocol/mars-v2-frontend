@@ -62,9 +62,11 @@ module.exports = {
     'gradient-droplets',
     'gradient-stride',
     'gradient-lido',
+    'gradient-milkyway',
     'droplets',
     'stride',
     'lido',
+    'milkyway',
   ],
   theme: {
     extend: {
@@ -505,11 +507,14 @@ module.exports = {
           background:
             'linear-gradient(rgb(101, 98, 255) 11.28%, rgb(0, 163, 255) 61.02%, rgb(99, 214, 210) 100%)',
         },
+        '.gradient-milkyway': {
+          background: 'linear-gradient(90deg, #FEf7F1 0%, #FDE2FB 50%, #FDE4FC 100%)',
+        },
         '.number': {
           whiteSpace: 'nowrap',
           fontFeatureSettings: '"tnum" on',
         },
-        '.slider-mask': {
+        '.sliDer-mask': {
           mask: 'linear-gradient(hsl(var(--color-white)) 0 0)',
         },
         '.text-3xs': { fontSize: '9px', lineHeight: '12px' },
@@ -603,6 +608,12 @@ module.exports = {
         '.lido': {
           background:
             'linear-gradient(90deg, rgb(101, 98, 255) 11.28%, rgb(0, 163, 255) 61.02%, rgb(99, 214, 210) 100%)',
+          '-webkit-background-clip': 'text',
+          '-webkit-text-fill-color': 'transparent',
+          fontWeight: 600,
+        },
+        '.milkyway': {
+          background: 'linear-gradient(90deg, #FEf7F1 0%, #FDE2FB 50%, #FDE4FC 100%)',
           '-webkit-background-clip': 'text',
           '-webkit-text-fill-color': 'transparent',
           fontWeight: 600,
