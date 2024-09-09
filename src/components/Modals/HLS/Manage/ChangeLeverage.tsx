@@ -130,8 +130,6 @@ export default function ChangeLeverage(props: Props) {
   )
 
   const handleOnClick = useCallback(() => {
-    if (!routeInfo) return
-
     useStore.setState({ hlsManageModal: null })
     if (currentDebt.isEqualTo(previousDebt)) return
     const actions = getHlsStakingChangeLevActions(
@@ -207,6 +205,7 @@ export default function ChangeLeverage(props: Props) {
     props.collateralAsset.denom,
   ])
 
+  const isCheckingRoute = currentDebt.isEqualTo(previousDebt) || warningMessages.length !== 0
   return (
     <>
       <TokenInputWithSlider
@@ -225,8 +224,8 @@ export default function ChangeLeverage(props: Props) {
         <LeverageSummary asset={props.borrowMarket.asset} positionValue={positionValue} apy={apy} />
         <Button
           onClick={handleOnClick}
-          text='Confirm'
-          disabled={currentDebt.isEqualTo(previousDebt) || warningMessages.length !== 0}
+          text={!isCheckingRoute && !routeInfo ? 'Loading Swap Route...' : 'Confirm'}
+          disabled={isCheckingRoute || !routeInfo}
         />
       </div>
     </>
