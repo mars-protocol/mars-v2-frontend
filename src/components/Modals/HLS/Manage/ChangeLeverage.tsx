@@ -130,6 +130,7 @@ export default function ChangeLeverage(props: Props) {
   )
 
   const handleOnClick = useCallback(() => {
+    if (!routeInfo) return
     useStore.setState({ hlsManageModal: null })
     if (currentDebt.isEqualTo(previousDebt)) return
     const actions = getHlsStakingChangeLevActions(

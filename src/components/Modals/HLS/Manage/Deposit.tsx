@@ -106,8 +106,8 @@ export default function Deposit(props: Props) {
   ])
 
   const maxBorrowAmount = useMemo(
-    () => computeMaxBorrowAmount(props.borrowMarket.asset.denom, 'deposit'),
-    [computeMaxBorrowAmount, props.borrowMarket.asset.denom],
+    () => computeMaxBorrowAmount(props.borrowMarket.asset.denom, 'deposit').plus(borrowCoin.amount),
+    [borrowCoin.amount, computeMaxBorrowAmount, props.borrowMarket.asset.denom],
   )
 
   const borrowWarningMessages = useMemo(() => {
