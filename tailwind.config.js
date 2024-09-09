@@ -514,7 +514,7 @@ module.exports = {
           whiteSpace: 'nowrap',
           fontFeatureSettings: '"tnum" on',
         },
-        '.sliDer-mask': {
+        '.slider-mask': {
           mask: 'linear-gradient(hsl(var(--color-white)) 0 0)',
         },
         '.text-3xs': { fontSize: '9px', lineHeight: '12px' },
