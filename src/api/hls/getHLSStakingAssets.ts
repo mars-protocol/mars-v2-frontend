@@ -47,7 +47,7 @@ export default async function getHLSStakingAssets(chainConfig: ChainConfig, asse
         depositCap: {
           denom: depositCap.denom,
           used: BN(depositCap.amount),
-          max: BN(depositCap.cap),
+          max: BN(depositCap.cap).times(0.95),
         },
         apy,
       } as HLSStrategy
