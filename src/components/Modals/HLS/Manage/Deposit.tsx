@@ -224,6 +224,9 @@ export default function Deposit(props: Props) {
     ],
   )
 
+  const isCheckingRoute =
+    depositCoin.amount.isZero() || !!warningMessages.length || !!borrowWarningMessages.length
+
   return (
     <>
       <div>
@@ -250,12 +253,8 @@ export default function Deposit(props: Props) {
         <SummaryItems items={items} />
         <Button
           onClick={handleDeposit}
-          text='Deposit'
-          disabled={
-            depositCoin.amount.isZero() ||
-            !!warningMessages.length ||
-            !!borrowWarningMessages.length
-          }
+          text={!isCheckingRoute && !routeInfo ? 'Loading Swap Route...' : 'Deposit'}
+          disabled={isCheckingRoute || !routeInfo}
         />
       </div>
     </>
