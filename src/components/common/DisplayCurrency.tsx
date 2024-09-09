@@ -96,7 +96,7 @@ export default function DisplayCurrency(props: Props) {
       <Text tag='div' className={classNames(className, 'flex flex-wrap justify-end items-center')}>
         N/A
         <Tooltip
-          content='There is currently no price source availible for this Asset'
+          content='There is currently no price source available for this Asset'
           type='info'
           className='ml-1'
         >

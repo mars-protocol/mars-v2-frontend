@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import { Logo } from 'components/common/Icons'
 import Select from 'components/common/Select'
 import Text from 'components/common/Text'
 import React, { useEffect, useState } from 'react'
@@ -61,7 +62,11 @@ export default function Input(props: Props) {
           className='w-full px-4 py-3 mt-2 flex justify-between items-center rounded-sm bg-white/5 border border-white/10 focus:border-white/20 focus:bg-white/10 hover:cursor-pointer'
         >
           {/* TODO: asset image */}
-          {value}
+          <div className='flex gap-2'>
+            <Logo className='h-6 w-6' />
+            {value}
+          </div>
+
           {suffix && <span className='h-4 w-4'>{suffix}</span>}
         </button>
       ) : type === 'dropdown' ? (
