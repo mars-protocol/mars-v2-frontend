@@ -104,7 +104,7 @@ const Neutron1: ChainConfig = {
   },
   features: ['ibc-transfer', 'ibc-go'],
   gasPrice: '0.015untrn',
-  hls: false,
+  hls: true,
   perps: false,
   farm: true,
   anyAsset: true,

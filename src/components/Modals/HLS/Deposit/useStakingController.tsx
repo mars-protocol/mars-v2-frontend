@@ -77,6 +77,7 @@ export default function useStakingController(props: Props) {
   const onChangeDebt = useCallback(
     (amount: BigNumber) => {
       setBorrowAmount(amount)
+      useStore.setState({ hlsBorrowAmount: amount })
     },
     [setBorrowAmount],
   )

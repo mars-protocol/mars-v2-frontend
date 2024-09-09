@@ -69,17 +69,15 @@ export function resolveHLSStrategies(
     })
 
     let correlatedDenoms: string[] | undefined
-
     if (type === 'coin') {
       correlatedDenoms = correlations
         ?.map((correlation) => (correlation as { coin: { denom: string } }).coin.denom)
-        .filter((denoms) => !denoms.includes('gamm/pool/'))
+        .filter((denoms) => !denoms.includes('gamm/pool/') && !denoms.includes('/share'))
     } else {
       correlatedDenoms = correlations?.map(
         (correlation) => (correlation as { vault: { addr: string } }).vault.addr,
       )
     }
-
     if (!correlatedDenoms?.length) return
 
     correlatedDenoms.forEach((correlatedDenom) =>
@@ -88,8 +86,8 @@ export function resolveHLSStrategies(
         maxLeverage: getLeverageFromLTV(+asset.credit_manager.hls!.max_loan_to_value),
         maxLTV: +asset.credit_manager.hls!.max_loan_to_value,
         denoms: {
-          deposit: correlatedDenom,
-          borrow: asset.denom,
+          deposit: asset.denom,
+          borrow: correlatedDenom,
         },
       }),
     )

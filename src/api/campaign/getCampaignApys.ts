@@ -32,9 +32,16 @@ export default async function getCampaignApys(
           })
         })
       } else {
+        const apyData =
+          apyStructure.length === 1 ? data[apyStructure[0]] : data[apyStructure[0]][apyStructure[1]]
+        const denomData =
+          denomStructure.length === 1
+            ? data[denomStructure[0]]
+            : data[denomStructure[0]][denomStructure[1]]
+
         apys.push({
-          apy: processApyData(data[apyStructure[0]][apyStructure[1]], isApr, isPercent),
-          denom: data[denomStructure[0]][denomStructure[1]],
+          apy: processApyData(apyData, isApr, isPercent),
+          denom: denomData,
         })
       }
     })

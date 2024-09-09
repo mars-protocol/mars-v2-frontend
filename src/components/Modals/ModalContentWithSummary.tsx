@@ -39,7 +39,7 @@ export default function ModalContentWithSummary(props: Props) {
     <Modal
       {...props}
       headerClassName={classNames(
-        'gradient-header pl-2 pr-2.5 py-3 border-b-white/5 border-b',
+        'gradient-header border-b-white/5 border-b',
         props.headerClassName,
       )}
       contentClassName={classNames(
