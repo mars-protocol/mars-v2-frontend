@@ -4,13 +4,12 @@ import FullOverlayContent from 'components/common/FullOverlayContent'
 import Button from 'components/common/Button'
 import Card from 'components/common/Card'
 import Text from 'components/common/Text'
-import classNames from 'classnames'
 import HLSSwitch from './createVault/HLSSwitch'
 import PerformanceFee from 'components/vaults/community/createVault/PerformanceFee'
 import Input from 'components/vaults/community/createVault/Input'
 import { ArrowRight } from 'components/common/Icons'
-import Divider from 'components/common/Divider'
-import useStore from 'store'
+import useToggle from 'hooks/common/useToggle'
+import AssetSelect from 'components/vaults/community/createVault/AssetSelect'
 
 const options = [
   { label: '24 hours', value: '24' },
@@ -20,12 +19,24 @@ const options = [
   { label: '7 days', value: '168' },
   { label: '14 days', value: '336' },
 ]
+const assets = [
+  { id: 1, label: 'USDC', value: 'USDC' },
+  { id: 2, label: 'wBTC', value: 'wBTC' },
+  { id: 3, label: 'wETH', value: 'wETH' },
+  { id: 4, label: 'ATOM', value: 'ATOM' },
+  { id: 5, label: 'NEUTRON', value: 'NEUTRON' },
+]
 
 export default function CreateVault() {
   const [withdrawFreezePeriod, setWithdrawFreezePeriod] = useState<string>('24')
-  const [enableHLSVault, setEnableHLSVault] = useState<boolean>(false)
+  const [selectedAsset, setSelectedAsset] = useState({
+    label: 'USDC',
+    value: 'USDC',
+  })
 
-  console.log('Withdraw Freeze Period before:', withdrawFreezePeriod)
+  const [enableHLSVault, setEnableHLSVault] = useState<boolean>(false)
+  const [showMenu, setShowMenu] = useToggle()
+
   const navigate = useNavigate()
   const isLoading = false
 
@@ -37,7 +48,6 @@ export default function CreateVault() {
   }
 
   const handleWithdrawFreezePeriodChange = useCallback((value: string) => {
-    console.log('Withdraw Freeze Period:', value)
     setWithdrawFreezePeriod(value)
   }, [])
 
@@ -45,22 +55,21 @@ export default function CreateVault() {
     setEnableHLSVault(value)
   }, [])
 
-  const handleSelectAssetsClick = useCallback(() => {
-    // e.preventDefault()
-    // useStore.setState({
-    //   walletAssetsModal: {
-    //     isOpen: true,
-    //     selectedDenoms: [],
-    //     isBorrow: false,
-    //   },
-    // })
+  const handleSelectAssetsClick = useCallback((e) => {
+    // TODO
+    e.preventDefault()
+    setShowMenu(true)
   }, [])
+
+  // const handleChangeState = useCallback(() => {
+  //   useStore.setState({ assetOverlayState: 'closed' })
+  // }, [])
 
   return (
     <FullOverlayContent
       title='Create Vault'
       copy='We’ll require you to authorise a transaction in your wallet in order to begin.'
-      className='md:w-full max-w-modal'
+      className='md:w-full max-w-modal md:relative'
     >
       <Card className='p-2 md:p-6 bg-white/5 w-full'>
         <form className='flex flex-col space-y-6 mb-4'>
@@ -81,11 +90,17 @@ export default function CreateVault() {
 
               <Input
                 type='button'
-                value={'USDC'}
+                value={selectedAsset.label}
                 onClick={handleSelectAssetsClick}
                 label='Vault Deposit Asset'
                 suffix={<ArrowRight />}
                 required
+              />
+              <AssetSelect
+                showMenu={showMenu}
+                setShowMenu={setShowMenu}
+                assets={assets}
+                setSelectedAsset={setSelectedAsset}
               />
             </div>
 
