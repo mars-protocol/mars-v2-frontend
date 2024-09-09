@@ -16,7 +16,7 @@ interface Props {
 export default function useHLSClosePositionActions(props: Props): {
   actions: Action[] | null
   changes: HlsClosingChanges | null
-  hasRouteError: boolean
+  isLoadingRoute: boolean
 } {
   const [slippage] = useSlippage()
   const isOsmosis = useIsOsmosis()
@@ -63,7 +63,7 @@ export default function useHLSClosePositionActions(props: Props): {
   return useMemo<{
     actions: Action[] | null
     changes: HlsClosingChanges | null
-    hasRouteError: boolean
+    isLoadingRoute: boolean
   }>(() => {
     const swapExactIn =
       debtAmount.isZero() || !routeInfo
@@ -109,7 +109,7 @@ export default function useHLSClosePositionActions(props: Props): {
                 BNCoin.fromDenomAndBigNumber(collateralDenom, collateralAmount.minus(swapInAmount)),
               ],
       },
-      hasRouteError: !debtAmount.isZero() && !routeInfo,
+      isLoadingRoute: !debtAmount.isZero() && !routeInfo,
     }
   }, [
     borrowDenom,
