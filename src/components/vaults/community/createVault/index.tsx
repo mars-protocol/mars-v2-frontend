@@ -46,12 +46,11 @@ export default function CreateVault() {
     console.log('Create vault logic goes here.')
     //  await for the response. once I have the response with the vault address, proceed to next page
 
-    // Simulate creating a vault address
+    // temp vault address
     const tempVaultAddress = 'tempvaultaddress'
 
     navigate(`/vaults/${tempVaultAddress}/mint-account`)
 
-    // If there's any overlay or modal open that needs to be adjusted, do it here
     useStore.setState({
       focusComponent: {
         component: <CreateVaultAccount />,
@@ -70,7 +69,7 @@ export default function CreateVault() {
     setEnableHLSVault(value)
   }, [])
 
-  const handleSelectAssetsClick = useCallback((e) => {
+  const handleSelectAssetsClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     // TODO
     e.preventDefault()
     setShowMenu(true)
