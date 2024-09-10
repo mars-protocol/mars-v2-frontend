@@ -1,15 +1,14 @@
-import { useCallback } from 'react'
-
+import EscButton from 'components/common/Button/EscButton'
 import Text from 'components/common/Text'
 import SearchBar from 'components/common/SearchBar'
-import { ChevronDown, Logo } from 'components/common/Icons'
-import EscButton from 'components/common/Button/EscButton'
 import Overlay from 'components/common/Overlay'
+import { useCallback } from 'react'
+import { ChevronDown, Logo } from 'components/common/Icons'
 
 interface Props {
   showMenu: boolean
   setShowMenu: (show: boolean) => void
-  // TODO: update TS
+  // TODO: update TS once we know assets type
   assets: any[]
   setSelectedAsset: (asset: any) => void
 }
@@ -18,7 +17,6 @@ export default function AssetSelect(props: Props) {
   const { showMenu, setShowMenu, assets, setSelectedAsset } = props
 
   const handleCloseModal = useCallback(() => {
-    console.log('Select Asset Modal Closed')
     setShowMenu(false)
   }, [setShowMenu])
 
