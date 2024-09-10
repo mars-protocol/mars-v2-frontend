@@ -152,9 +152,9 @@ export default function useAccountBalancesColumns(
                 denom={row.original.denom}
                 type={row.original.type}
               />,
-              row.original.denom,
+              isWhitelisted,
             ),
-            row.original.denom,
+            isWhitelisted,
           ),
       },
     ]
