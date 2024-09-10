@@ -1,17 +1,17 @@
 import classNames from 'classnames'
-import { Logo } from 'components/common/Icons'
 import Select from 'components/common/Select'
 import Text from 'components/common/Text'
 import React, { useEffect, useState } from 'react'
+import { Logo } from 'components/common/Icons'
 
 interface Props {
   type: 'text' | 'dropdown' | 'textarea' | 'button'
   value: string
   suffix?: string | JSX.Element
-  // TODO: update TS
+  // TODO: update TS once we know value
   options?: Array<{ label: string; value: any }>
   maxLength?: number
-  // update TS
+  // update TS once we know value
   onChange?: (value: any) => void
   onClick?: () => void
   placeholder?: string
@@ -56,8 +56,8 @@ export default function Input(props: Props) {
       )}
 
       {type === 'button' ? (
-        // Handle as a button
         <button
+          type='button'
           onClick={onClick}
           className='w-full px-4 py-3 mt-2 flex justify-between items-center rounded-sm bg-white/5 border border-white/10 focus:border-white/20 focus:bg-white/10 hover:cursor-pointer'
         >

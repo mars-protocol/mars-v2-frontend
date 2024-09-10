@@ -18,7 +18,6 @@ export default function VaultsCommunityIntro() {
     true,
   )
   const { open: showAlertDialog, close } = useAlertDialog()
-
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const [searchParams] = useSearchParams()
@@ -38,7 +37,7 @@ export default function VaultsCommunityIntro() {
         },
       },
     })
-  }, [])
+  }, [address, navigate, pathname, searchParams])
 
   const handleOnClick = useCallback(() => {
     if (!showVaultInformation) {
