@@ -20,6 +20,7 @@ export default function CreateVaultAccount() {
         </div>
 
         <Button
+          // TODO: add Crate vault acc logic
           onClick={() => {}}
           variant='solid'
           color='primary'

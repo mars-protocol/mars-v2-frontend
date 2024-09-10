@@ -23,6 +23,7 @@ export default function PerformanceFee() {
 
   return (
     <div className='w-full mb-6 space-y-3'>
+      {/* TODO: add logic for max number for fees */}
       <Input
         type='text'
         value={feeValue}

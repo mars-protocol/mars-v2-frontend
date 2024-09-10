@@ -1,16 +1,17 @@
 import AssetSelect from 'components/vaults/community/createVault/AssetSelect'
 import Button from 'components/common/Button'
 import CreateVaultOverlay from 'components/vaults/community/createVault/CreateVaultOverlay'
-import HLSSwitch from './HLSSwitch'
+import CreateVaultAccount from 'components/vaults/community/createVault/CreateVaultAccount'
+import HLSSwitch from 'components/vaults/community/createVault/HLSSwitch'
 import Input from 'components/vaults/community/createVault/Input'
 import PerformanceFee from 'components/vaults/community/createVault/PerformanceFee'
 import Text from 'components/common/Text'
 import useToggle from 'hooks/common/useToggle'
-import React, { useCallback, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ArrowRight } from 'components/common/Icons'
 import useStore from 'store'
-import CreateVaultAccount from './CreateVaultAccount'
+import React, { useCallback, useState } from 'react'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { ArrowRight } from 'components/common/Icons'
+import { getPage, getRoute } from 'utils/route'
 
 const options = [
   { label: '24 hours', value: '24' },
@@ -37,29 +38,34 @@ export default function CreateVault() {
 
   const [enableHLSVault, setEnableHLSVault] = useState<boolean>(false)
   const [showMenu, setShowMenu] = useToggle()
+  const { pathname } = useLocation()
+  const [searchParams] = useSearchParams()
+  const address = useStore((s) => s.address)
 
   const navigate = useNavigate()
 
   const handleCreate = useCallback(() => {
     // TODO: Implement create vault logic
-
-    console.log('Create vault logic goes here.')
     //  await for the response. once I have the response with the vault address, proceed to next page
 
     // temp vault address
     const tempVaultAddress = 'tempvaultaddress'
 
-    navigate(`/vaults/${tempVaultAddress}/mint-account`)
+    const baseUrl = address
+      ? `/wallets/${address}/vaults/${tempVaultAddress}/mint-account`
+      : `/vaults/${tempVaultAddress}/mint-account`
+
+    navigate(baseUrl)
 
     useStore.setState({
       focusComponent: {
         component: <CreateVaultAccount />,
         onClose: () => {
-          navigate('/vaults-community')
+          navigate(getRoute(getPage(pathname), searchParams, address))
         },
       },
     })
-  }, [navigate])
+  }, [navigate, pathname, searchParams, address])
 
   const handleWithdrawFreezePeriodChange = useCallback((value: string) => {
     setWithdrawFreezePeriod(value)
@@ -69,9 +75,7 @@ export default function CreateVault() {
     setEnableHLSVault(value)
   }, [])
 
-  const handleSelectAssetsClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    // TODO
-    e.preventDefault()
+  const handleSelectAssetsClick = useCallback(() => {
     setShowMenu(true)
   }, [])
 
@@ -82,6 +86,7 @@ export default function CreateVault() {
           <div className='flex-1 space-y-8'>
             <Input
               type='text'
+              // TODO: add value and onChange
               value={''}
               onChange={() => {}}
               label='Vault title'
@@ -122,6 +127,7 @@ export default function CreateVault() {
 
             <Input
               type='textarea'
+              // TODO: add value and onChange
               value={''}
               onChange={() => {}}
               label='Description'
