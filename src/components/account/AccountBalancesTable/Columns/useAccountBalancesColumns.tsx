@@ -60,9 +60,9 @@ export default function useAccountBalancesColumns(
           wrapWithTooltip(
             applyRowStyling(
               <Asset type={row.original.type} symbol={row.original.symbol} />,
-              row.original.denom,
+              isWhitelisted,
             ),
-            row.original.denom,
+            isWhitelisted,
           ),
       },
       {
