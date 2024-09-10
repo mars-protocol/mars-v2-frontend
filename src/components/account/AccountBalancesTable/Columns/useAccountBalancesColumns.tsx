@@ -33,8 +33,8 @@ export default function useAccountBalancesColumns(
     const asset = useAsset(row.original.denom)
     const isWhitelisted = !!asset?.isWhitelisted
 
-    const wrapWithTooltip = (content: React.ReactNode, denom: string) => {
-      if (isWhitelisted(denom)) return content
+    const wrapWithTooltip = (content: React.ReactNode, isWhitelisted: boolean) => {
+      if (isWhitelisted) return content
       return (
         <Tooltip
           type='info'
