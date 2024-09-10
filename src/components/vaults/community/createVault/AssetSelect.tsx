@@ -45,8 +45,11 @@ export default function AssetSelect(props: Props) {
           onChange={() => {}}
         />
       </div>
-      {assets.map((asset) => (
-        <div className='w-full px-4 py-3 flex justify-between items-center outline-none border-b border-white/10 hover:cursor-pointer'>
+      {assets.map((asset, index) => (
+        <div
+          className='w-full px-4 py-3 flex justify-between items-center outline-none border-b border-white/10 hover:cursor-pointer'
+          key={index}
+        >
           <div className='w-full flex items-center gap-2' onClick={() => handleSelectAsset(asset)}>
             {/* TODO: temp asset picture */}
             <Logo className='h-6 w-6' />
