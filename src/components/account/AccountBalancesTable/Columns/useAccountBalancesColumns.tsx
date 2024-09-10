@@ -30,7 +30,8 @@ export default function useAccountBalancesColumns(
   const { computeLiquidationPrice } = useHealthComputer(updatedAccount ?? account)
 
   return useMemo<ColumnDef<AccountBalanceRow>[]>(() => {
-    const isWhitelisted = (denom: string) => whitelistedAssets.find(byDenom(denom)) !== undefined
+    const asset = useAsset(row.original.denom)
+    const isWhitelisted = !!asset?.isWhitelisted
 
     const wrapWithTooltip = (content: React.ReactNode, denom: string) => {
       if (isWhitelisted(denom)) return content
