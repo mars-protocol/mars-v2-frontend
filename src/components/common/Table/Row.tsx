@@ -18,9 +18,11 @@ interface Props<T> {
 function getBorderColor(
   type: TableType,
   row: AccountBalanceRow | AccountStrategyRow | AccountPerpRow,
+  isWhitelisted: boolean,
 ) {
   if (type === 'strategies') return ''
   if (type === 'balances') {
+    if (!isWhitelisted) return 'border-grey-dark'
     const balancesRow = row as AccountBalanceRow
     return balancesRow.type === 'borrow' ? 'border-loss' : 'border-profit'
   }
@@ -32,6 +34,7 @@ function getBorderColor(
 export default function Row<T>(props: Props<T>) {
   const { renderExpanded, table, row, type, spacingClassName, isSelectable } = props
   const canExpand = !!renderExpanded
+  const isWhitelisted = (row.original as any).isWhitelisted !== false
 
   return (
     <>
@@ -43,6 +46,7 @@ export default function Row<T>(props: Props<T>) {
           canExpand && row.getIsExpanded()
             ? 'is-expanded border-t gradient-header'
             : 'hover:bg-white/5',
+          !isWhitelisted && 'opacity-50 hover:opacity-100',
         )}
         onClick={(e) => {
           e.preventDefault()
@@ -71,7 +75,9 @@ export default function Row<T>(props: Props<T>) {
                   type !== 'strategies' &&
                   LEFT_ALIGNED_ROWS.includes(cell.column.id) &&
                   'border-l',
-                type && type !== 'strategies' && getBorderColor(type, cell.row.original as any),
+                type &&
+                  type !== 'strategies' &&
+                  getBorderColor(type, cell.row.original as any, isWhitelisted),
                 cell.column.columnDef.meta?.className,
               )}
             >

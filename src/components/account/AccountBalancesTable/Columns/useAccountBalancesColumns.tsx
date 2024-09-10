@@ -18,6 +18,7 @@ import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useMarkets from 'hooks/markets/useMarkets'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
+import { Tooltip } from 'components/common/Tooltip'
 
 export default function useAccountBalancesColumns(
   account: Account,
@@ -29,45 +30,89 @@ export default function useAccountBalancesColumns(
   const { computeLiquidationPrice } = useHealthComputer(updatedAccount ?? account)
 
   return useMemo<ColumnDef<AccountBalanceRow>[]>(() => {
+    const isWhitelisted = (denom: string) => whitelistedAssets.find(byDenom(denom)) !== undefined
+
+    const wrapWithTooltip = (content: React.ReactNode, denom: string) => {
+      if (isWhitelisted(denom)) return content
+      return (
+        <Tooltip
+          type='info'
+          content="This asset is not whitelisted and doesn't count as collateral"
+        >
+          <div className='cursor-help'>{content}</div>
+        </Tooltip>
+      )
+    }
+
+    const applyRowStyling = (children: React.ReactNode, denom: string) => (
+      <div
+        className={`flex items-center ${!isWhitelisted(denom) ? 'opacity-50 hover:opacity-100' : ''}`}
+      >
+        {children}
+      </div>
+    )
+
     return [
       {
         ...ASSET_META,
-        cell: ({ row }) => <Asset type={row.original.type} symbol={row.original.symbol} />,
+        cell: ({ row }) =>
+          wrapWithTooltip(
+            applyRowStyling(
+              <Asset type={row.original.type} symbol={row.original.symbol} />,
+              row.original.denom,
+            ),
+            row.original.denom,
+          ),
       },
       {
         ...VALUE_META,
-        cell: ({ row }) => (
-          <Value
-            amountChange={row.original.amountChange}
-            value={row.original.value}
-            type={row.original.type}
-          />
-        ),
+        cell: ({ row }) =>
+          wrapWithTooltip(
+            applyRowStyling(
+              <Value
+                amountChange={row.original.amountChange}
+                value={row.original.value}
+                type={row.original.type}
+              />,
+              row.original.denom,
+            ),
+            row.original.denom,
+          ),
         sortingFn: valueBalancesSortingFn,
       },
       {
         ...SIZE_META,
-        cell: ({ row }) => (
-          <Size
-            size={row.original.size}
-            amountChange={row.original.amountChange}
-            denom={row.original.denom}
-            type={row.original.type}
-          />
-        ),
+        cell: ({ row }) =>
+          wrapWithTooltip(
+            applyRowStyling(
+              <Size
+                size={row.original.size}
+                amountChange={row.original.amountChange}
+                denom={row.original.denom}
+                type={row.original.type}
+              />,
+              row.original.denom,
+            ),
+            row.original.denom,
+          ),
         sortingFn: sizeSortingFn,
       },
       ...(showLiquidationPrice
         ? [
             {
               ...PRICE_META,
-              cell: ({ row }: { row: Row<AccountBalanceRow> }) => (
-                <Price
-                  type={row.original.type}
-                  amount={row.original.amount.toNumber()}
-                  denom={row.original.denom}
-                />
-              ),
+              cell: ({ row }: { row: Row<AccountBalanceRow> }) =>
+                wrapWithTooltip(
+                  applyRowStyling(
+                    <Price
+                      type={row.original.type}
+                      amount={row.original.amount.toNumber()}
+                      denom={row.original.denom}
+                    />,
+                    row.original.denom,
+                  ),
+                  row.original.denom,
+                ),
             },
           ]
         : []),
@@ -77,29 +122,39 @@ export default function useAccountBalancesColumns(
               ...LIQ_META,
               className: 'min-w-30 w-40',
               enableSorting: false,
-              cell: ({ row }: { row: Row<AccountBalanceRow> }) => (
-                <LiqPrice
-                  denom={row.original.denom}
-                  computeLiquidationPrice={computeLiquidationPrice}
-                  type={row.original.type}
-                  amount={row.original.amount.toNumber()}
-                  account={updatedAccount ?? account}
-                  isWhitelisted={whitelistedAssets.find(byDenom(row.original.denom)) !== undefined}
-                />
-              ),
+              cell: ({ row }: { row: Row<AccountBalanceRow> }) =>
+                wrapWithTooltip(
+                  applyRowStyling(
+                    <LiqPrice
+                      denom={row.original.denom}
+                      computeLiquidationPrice={computeLiquidationPrice}
+                      type={row.original.type}
+                      amount={row.original.amount.toNumber()}
+                      account={updatedAccount ?? account}
+                      isWhitelisted={isWhitelisted(row.original.denom)}
+                    />,
+                    row.original.denom,
+                  ),
+                  row.original.denom,
+                ),
             },
           ]
         : []),
       {
         ...APY_META,
-        cell: ({ row }) => (
-          <Apy
-            apy={row.original.apy}
-            markets={markets}
-            denom={row.original.denom}
-            type={row.original.type}
-          />
-        ),
+        cell: ({ row }) =>
+          wrapWithTooltip(
+            applyRowStyling(
+              <Apy
+                apy={row.original.apy}
+                markets={markets}
+                denom={row.original.denom}
+                type={row.original.type}
+              />,
+              row.original.denom,
+            ),
+            row.original.denom,
+          ),
       },
     ]
   }, [
