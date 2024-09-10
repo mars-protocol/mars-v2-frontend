@@ -132,11 +132,11 @@ export default function useAccountBalancesColumns(
                       type={row.original.type}
                       amount={row.original.amount.toNumber()}
                       account={updatedAccount ?? account}
-                      isWhitelisted={isWhitelisted(row.original.denom)}
+                      isWhitelisted={isWhitelisted}
                     />,
-                    row.original.denom,
+                    isWhitelisted,
                   ),
-                  row.original.denom,
+                  isWhitelisted,
                 ),
             },
           ]
