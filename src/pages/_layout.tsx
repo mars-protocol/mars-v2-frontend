@@ -21,6 +21,7 @@ import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { debugSWR } from 'utils/middleware'
+import SkipBridgeModal from 'components/Modals/SkipBridgeModal'
 
 interface Props {
   focusComponent: FocusComponent | null
@@ -121,6 +122,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               mobileNavExpanded && isMobile && '-ml-full',
             )}
           >
+            <SkipBridgeModal />
             <PageContainer focusComponent={focusComponent} fullWidth={isFullWidth}>
               {children}
             </PageContainer>

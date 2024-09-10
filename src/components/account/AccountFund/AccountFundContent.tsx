@@ -18,7 +18,7 @@ import EVMAccountSection from 'components/account/AccountFund/EVMAccountSection'
 import AccountFundingAssets from 'components/account/AccountFund/AccountFundingAssets'
 import { ArrowRight, Plus } from 'components/common/Icons'
 import Button from 'components/common/Button'
-import { SkipClient, TxStatusResponse } from '@skip-go/client'
+import { SkipClient, StatusState, TxStatusResponse } from '@skip-go/client'
 import { WalletClient } from 'viem'
 import { chainNameToUSDCAttributes } from 'utils/fetchUSDCBalance'
 import { getWalletClient } from '@wagmi/core'
@@ -27,6 +27,7 @@ import useBaseAsset from 'hooks/assets/useBasetAsset'
 import { useNavigate } from 'react-router-dom'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import { getPage, getRoute } from 'utils/route'
+import { Callout, CalloutType } from 'components/common/Callout'
 
 interface Props {
   account?: Account
@@ -89,6 +90,9 @@ export default function AccountFundContent(props: Props) {
       }),
     [chainConfig],
   )
+  const [showMinimumUSDCValueOverlay, setShowMinimumUSDCValueOverlay] = useState(false)
+
+  const MINIMUM_USDC = 50000
 
   const wrapTransactionPromise = (promise: Promise<void>): Promise<BroadcastResult> => {
     return promise.then(
@@ -96,6 +100,49 @@ export default function AccountFundContent(props: Props) {
       (error) => ({ success: false, error }) as BroadcastResult,
     )
   }
+  interface SkipBridgeTransaction {
+    txHash: string
+    chainID: string
+    explorerLink: string
+    status: StatusState
+  }
+
+  const [skipBridge, setSkipBridge] = useState<SkipBridgeTransaction | null>(() => {
+    const savedSkipBridge = localStorage.getItem('skipBridge')
+    return savedSkipBridge && savedSkipBridge !== 'undefined' ? JSON.parse(savedSkipBridge) : null
+  })
+
+  const updateSkipBridge = useCallback((newTransaction: SkipBridgeTransaction) => {
+    setSkipBridge(newTransaction)
+    localStorage.setItem('skipBridge', JSON.stringify(newTransaction))
+  }, [])
+
+  useEffect(() => {
+    if (skipBridge && skipBridge.status === 'STATE_PENDING') {
+      const checkTransactionStatus = async () => {
+        try {
+          const response = await fetch(
+            `https://api.skip.build/v2/tx/status?chain_id=${skipBridge.chainID}&tx_hash=${skipBridge.txHash}`,
+          )
+          const skipStatus = await response.json()
+
+          if (skipStatus.status === 'STATE_COMPLETED') {
+            updateSkipBridge({
+              ...skipBridge,
+              status: 'STATE_COMPLETED',
+            })
+          }
+        } catch (error) {
+          console.error('Failed to fetch Skip status:', error)
+        }
+      }
+
+      const intervalId = setInterval(checkTransactionStatus, 10000)
+
+      return () => clearInterval(intervalId)
+    }
+  }, [skipBridge, updateSkipBridge])
+
   const handleSkipTransfer = useCallback(
     async (selectedAsset: WrappedBNCoin) => {
       if (!cosmosAddress || !evmAddress || !selectedAsset) {
@@ -105,6 +152,16 @@ export default function AccountFundContent(props: Props) {
 
       try {
         if (!selectedAsset.chain) throw new Error('Chain not found for selected asset')
+        let osmosisAddress = ''
+        try {
+          if (window.keplr) {
+            await window.keplr.enable('osmosis-1')
+            const key = await window.keplr.getKey('osmosis-1')
+            osmosisAddress = key.bech32Address
+          }
+        } catch (error) {
+          console.error('Failed to get Osmosis address:', error)
+        }
 
         const expectedChainAttributes = chainNameToUSDCAttributes[selectedAsset.chain]
         if (!expectedChainAttributes) {
@@ -125,6 +182,15 @@ export default function AccountFundContent(props: Props) {
           }
         }
 
+        if (BN(selectedAsset.coin.amount).isLessThan(MINIMUM_USDC)) {
+          console.log('Minimum USDC value not reached', BN(selectedAsset.coin.amount))
+          setShowMinimumUSDCValueOverlay(true)
+          return
+        } else {
+          console.log('Minimum USDC value reached', BN(selectedAsset.coin.amount))
+          setShowMinimumUSDCValueOverlay(false)
+        }
+
         const route = await skipClient.route({
           allowMultiTx: true,
           allowUnsafe: true,
@@ -142,22 +208,41 @@ export default function AccountFundContent(props: Props) {
           amountIn: selectedAsset.coin.amount.toString(),
         })
 
-        const userAddresses = route.requiredChainAddresses.map((chainID: string) => ({
-          chainID,
-          address: chainID === chainConfig.id.toString() ? cosmosAddress : evmAddress,
-        }))
+        const userAddresses = route.requiredChainAddresses.map((chainID: string) => {
+          if (chainID === chainConfig.id.toString()) {
+            return { chainID, address: cosmosAddress }
+          } else if (chainID === 'osmosis-1') {
+            return { chainID, address: osmosisAddress || cosmosAddress }
+          } else {
+            return { chainID, address: evmAddress }
+          }
+        })
 
         const transactionPromise = skipClient.executeRoute({
           route,
           userAddresses,
+          slippageTolerancePercent: '3',
+          onTransactionTracked: async (txInfo: {
+            txHash: string
+            chainID: string
+            explorerLink: string
+          }) => {
+            console.log('Transaction tracked:', txInfo)
+            updateSkipBridge({
+              ...txInfo,
+              status: 'STATE_PENDING',
+            })
+          },
           onTransactionCompleted: async (
             chainID: string,
             txHash: string,
             status: TxStatusResponse,
           ) => {
             console.log('Transaction completed:', { chainID, txHash, status })
+            updateSkipBridge({ txHash, chainID, explorerLink: '', status: status.status })
           },
         })
+
         const wrappedTransactionPromise = wrapTransactionPromise(transactionPromise)
 
         useStore.getState().handleTransaction({
@@ -174,8 +259,9 @@ export default function AccountFundContent(props: Props) {
         }
       }
     },
-    [chainConfig, cosmosAddress, evmAddress, skipClient],
+    [chainConfig, cosmosAddress, evmAddress, skipClient, updateSkipBridge],
   )
+
   const handleSelectAssetsClick = useCallback(() => {
     useStore.setState({
       walletAssetsModal: {
@@ -289,6 +375,11 @@ export default function AccountFundContent(props: Props) {
           updateFundingAssets={updateFundingAssets}
           isFullPage={props.isFullPage}
         />
+        {showMinimumUSDCValueOverlay && (
+          <Callout type={CalloutType.WARNING} className='mt-4'>
+            Please select an asset with a value greater than 0.05 USDC.
+          </Callout>
+        )}
         <Button
           className='w-full mt-4'
           text='Select Assets'
