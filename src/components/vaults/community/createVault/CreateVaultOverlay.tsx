@@ -1,20 +1,22 @@
+import classNames from 'classnames'
 import Card from 'components/common/Card'
 import FullOverlayContent from 'components/common/FullOverlayContent'
 
 interface Props {
   children: React.ReactNode
+  cardClassName?: string
 }
 
 export default function CreateVaultOverlay(props: Props) {
-  const { children } = props
+  const { children, cardClassName } = props
 
   return (
     <FullOverlayContent
       title='Create Vault'
       copy='We’ll require you to authorise a transaction in your wallet in order to begin.'
-      className='md:w-full max-w-modal md:relative'
+      className='max-w-modal md:w-full md:relative'
     >
-      <Card className='p-2 md:p-6 bg-white/5 w-full'>{children}</Card>
+      <Card className={classNames('p-2 md:p-6 bg-white/5 w-full', cardClassName)}>{children}</Card>
     </FullOverlayContent>
   )
 }
