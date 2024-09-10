@@ -110,9 +110,9 @@ export default function useAccountBalancesColumns(
                       amount={row.original.amount.toNumber()}
                       denom={row.original.denom}
                     />,
-                    row.original.denom,
+                    isWhitelisted,
                   ),
-                  row.original.denom,
+                  isWhitelisted,
                 ),
             },
           ]
