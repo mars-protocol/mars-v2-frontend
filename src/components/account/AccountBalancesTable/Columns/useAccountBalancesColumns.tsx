@@ -45,9 +45,9 @@ export default function useAccountBalancesColumns(
       )
     }
 
-    const applyRowStyling = (children: React.ReactNode, denom: string) => (
+    const applyRowStyling = (children: React.ReactNode, isWhitelisted: boolean) => (
       <div
-        className={`flex items-center ${!isWhitelisted(denom) ? 'opacity-80 hover:opacity-100' : ''}`}
+        className={classNames('flex items-center', !isWhitelisted && 'opacity-80 hover:opacity-100')}
       >
         {children}
       </div>
