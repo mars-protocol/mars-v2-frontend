@@ -46,7 +46,6 @@ export default function Row<T>(props: Props<T>) {
           canExpand && row.getIsExpanded()
             ? 'is-expanded border-t gradient-header'
             : 'hover:bg-white/5',
-          !isWhitelisted && 'opacity-50 hover:opacity-100',
         )}
         onClick={(e) => {
           e.preventDefault()
