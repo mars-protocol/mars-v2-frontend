@@ -75,9 +75,9 @@ export default function useAccountBalancesColumns(
                 value={row.original.value}
                 type={row.original.type}
               />,
-              row.original.denom,
+              isWhitelisted,
             ),
-            row.original.denom,
+            isWhitelisted,
           ),
         sortingFn: valueBalancesSortingFn,
       },
