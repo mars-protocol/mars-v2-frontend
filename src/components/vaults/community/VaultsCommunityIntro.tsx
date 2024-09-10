@@ -1,17 +1,15 @@
-import ActionButton from 'components/common/Button/ActionButton'
 import Button from 'components/common/Button'
+import CreateVault from 'components/vaults/community/createVault/index'
 import Intro from 'components/common/Intro'
 import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useStore from 'store'
 import { Account, ArrowRight, HandCoins, Plus, PlusSquared, Wallet } from 'components/common/Icons'
 import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
 import { DocURL } from 'types/enums'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { useCallback } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import useStore from 'store'
-import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
-import CreateVault from './CreateVault'
 import { getPage, getRoute } from 'utils/route'
 
 export default function VaultsCommunityIntro() {
@@ -26,22 +24,25 @@ export default function VaultsCommunityIntro() {
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
 
+  const openCreateVaultOverlay = useCallback(() => {
+    // TODO: check for better option how to construct the route
+    const baseUrl = address ? `/wallets/${address}/vaults/create` : '/vaults/create'
+
+    navigate(baseUrl)
+
+    useStore.setState({
+      focusComponent: {
+        component: <CreateVault />,
+        onClose: () => {
+          navigate(getRoute(getPage(pathname), searchParams, address))
+        },
+      },
+    })
+  }, [])
+
   const handleOnClick = useCallback(() => {
     if (!showVaultInformation) {
-      // TODO
-      // opencreatevaultmodal
-      navigate('/vaults-community/create')
-      // navigate(getRoute(getPage(`${pathname}/create`), searchParams, address))
-
-      useStore.setState({
-        focusComponent: {
-          component: <CreateVault />,
-          onClose: () => {
-            // navigate('/vaults-community')
-            navigate(getRoute(getPage(pathname), searchParams, address))
-          },
-        },
-      })
+      openCreateVaultOverlay()
       return
     }
 
@@ -52,9 +53,7 @@ export default function VaultsCommunityIntro() {
       positiveButton: {
         text: 'Continue',
         icon: <ArrowRight />,
-        onClick: () => {
-          navigate('/vaults-community/create')
-        },
+        onClick: openCreateVaultOverlay,
       },
       negativeButton: {
         text: 'Cancel',
@@ -68,7 +67,13 @@ export default function VaultsCommunityIntro() {
         onClick: (isChecked: boolean) => setShowVaultInformation(!isChecked),
       },
     })
-  }, [close, showAlertDialog, showVaultInformation, setShowVaultInformation])
+  }, [
+    close,
+    showAlertDialog,
+    showVaultInformation,
+    setShowVaultInformation,
+    openCreateVaultOverlay,
+  ])
 
   return (
     <Intro

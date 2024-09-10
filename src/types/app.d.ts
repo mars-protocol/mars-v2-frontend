@@ -393,7 +393,7 @@ type Page =
   | 'hls-staking'
   | 'vaults'
   | 'vaults-community'
-  | 'vaults-community/create'
+  | 'vaults/{vaultId}'
   | 'governance'
   | 'execute'
   | 'v1'

@@ -22,7 +22,7 @@ export default function Background() {
       page.split('-')[0] === 'hls',
       page === 'v1',
       page.split('-')[0] === 'vaults',
-      pathname === '/vaults-community/create',
+      pathname === '/vaults/create',
     ],
     [page, pathname],
   )
