@@ -13,7 +13,7 @@ export enum LocalStorageKeys {
   TUTORIAL = 'tutorial',
   TRANSACTIONS = 'transactions',
   MIGRATION_BANNER = 'migrationBanner',
-  HLSINFORMATION = 'hlsInformation',
+  HLS_INFORMATION = 'hlsInformation',
   CURRENT_CHAIN_ID = 'currentChainId',
   PERPS_ASSET = 'perpsAsset',
   UPDATE_ORACLE = 'updateOracle',

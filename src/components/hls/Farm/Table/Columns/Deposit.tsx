@@ -21,7 +21,7 @@ export default function Deposit(props: Props) {
   const { strategy, vault } = props
 
   const [showHlsInfo, setShowHlsInfo] = useLocalStorage<boolean>(
-    LocalStorageKeys.HLSINFORMATION,
+    LocalStorageKeys.HLS_INFORMATION,
     true,
   )
 

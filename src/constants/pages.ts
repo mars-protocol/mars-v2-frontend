@@ -3,7 +3,7 @@ export const EARN_TABS: Tab[] = [
   { page: 'farm', name: 'Farm' },
 ]
 
-export const HLSTABS: Tab[] = [
+export const HLS_TABS: Tab[] = [
   { page: 'hls-staking', name: 'Staking' },
   { page: 'hls-farm', name: 'Farm' },
 ]

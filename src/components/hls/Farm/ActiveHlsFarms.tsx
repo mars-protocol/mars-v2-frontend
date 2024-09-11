@@ -15,7 +15,6 @@ export function ActiveHlsFarms() {
   const activeHlsFarms = useDepositedAstroLps(accounts)
   const activeColumns = useActiveHlsFarmsColumns(assets)
 
-  console.log(accounts)
   const tabs: CardTab[] = useMemo(
     () => [
       {

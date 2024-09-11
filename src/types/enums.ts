@@ -6,7 +6,7 @@ export enum DocURL {
   COUNCIL = 'https://daodao.zone/dao/neutron1pxjszcmmdxwtw9kv533u3hcudl6qahsa42chcs24gervf4ge40usaw3pcr/home',
   DOCS_URL = 'https://docs.marsprotocol.io/',
   FARM_INTRO_URL = 'https://docs.marsprotocol.io/docs/learn/tutorials/farming/farming-intro',
-  HLSINTRO_URL = 'https://docs.marsprotocol.io/docs/learn/mars-v2/high-leveraged-strategies/high-leveraged-strategies-intro',
+  HLS_INTRO_URL = 'https://docs.marsprotocol.io/docs/learn/mars-v2/high-leveraged-strategies/high-leveraged-strategies-intro',
   MANAGE_ACCOUNT_URL = 'https://docs.marsprotocol.io/docs/learn/tutorials/credit-accounts/credit-accounts-intro',
   ROVER_INTRO_URL = 'https://docs.marsprotocol.io/docs/learn/mars-v2/credit-accounts',
   PRIVACY_POLICY_URL = 'https://docs.marsprotocol.io/docs/overview/legal/privacy-policy',
